@@ -1,76 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752660AbeDILAW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 07:00:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53848 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751738AbeDILAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 07:00:21 -0400
-Subject: Re: [PATCH] KVM: vmx: unify adjacent #ifdefs
-To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <1522861162-47491-1-git-send-email-pbonzini@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <99fdeb91-a57b-86bb-7103-3f0a6ac65ccd@redhat.com>
-Date: Mon, 9 Apr 2018 13:00:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <1522861162-47491-1-git-send-email-pbonzini@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752672AbeDILAc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 07:00:32 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33238 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751738AbeDILAa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 07:00:30 -0400
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.vnet.ibm.com>
+Subject: [PATCH] perf list: Add s390 support for detailed/verbose pmu event description
+Date: Mon,  9 Apr 2018 13:00:15 +0200
+X-Mailer: git-send-email 2.13.5
+X-TM-AS-GCONF: 00
+x-cbid: 18040911-0008-0000-0000-000004E84F2E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18040911-0009-0000-0000-00001E7B72E2
+Message-Id: <20180409110015.20793-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804090120
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.04.2018 18:59, Paolo Bonzini wrote:
-> vmx_save_host_state has multiple ifdefs for CONFIG_X86_64 that have
-> no other code between them.  Simplify by reducing them to a single
-> conditional.
-> 
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> ---
->  arch/x86/kvm/vmx.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 939c8724feb4..a1572461786e 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -2392,20 +2392,16 @@ static void vmx_save_host_state(struct kvm_vcpu *vcpu)
->  #ifdef CONFIG_X86_64
->  	savesegment(ds, vmx->host_state.ds_sel);
->  	savesegment(es, vmx->host_state.es_sel);
-> -#endif
->  
-> -#ifdef CONFIG_X86_64
->  	vmcs_writel(HOST_FS_BASE, current->thread.fsbase);
->  	vmcs_writel(HOST_GS_BASE, cpu_kernelmode_gs_base(cpu));
-> -#else
-> -	vmcs_writel(HOST_FS_BASE, segment_base(vmx->host_state.fs_sel));
-> -	vmcs_writel(HOST_GS_BASE, segment_base(vmx->host_state.gs_sel));
-> -#endif
->  
-> -#ifdef CONFIG_X86_64
->  	vmx->msr_host_kernel_gs_base = current->thread.gsbase;
->  	if (is_long_mode(&vmx->vcpu))
->  		wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
-> +#else
-> +	vmcs_writel(HOST_FS_BASE, segment_base(vmx->host_state.fs_sel));
-> +	vmcs_writel(HOST_GS_BASE, segment_base(vmx->host_state.gs_sel));
->  #endif
->  	if (boot_cpu_has(X86_FEATURE_MPX))
->  		rdmsrl(MSR_IA32_BNDCFGS, vmx->host_state.msr_host_bndcfgs);
-> 
+From: Thomas Richter <tmricht@linux.vnet.ibm.com>
 
-Much better indeed :)
+Perf list with flags -d and -v print a description (-d) or
+a very verbose explanation (-v) of CPU specific counter events.
+These descriptions are provided with the json files in
+directory pmu-events/arch/s390/*.json.
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+Display of these descriptions on s390 requires the
+corresponding json files.
 
+On s390 this does not work because function is_pmu_core()
+does not detect the s390 directory name where the
+CPU specific events are listed. On x86 it is
+  /sys/bus/event_source/devices/cpu
+whereas on s390 it is
+  /sys/bus/event_source/devices/cpum_cf
+  /sys/bus/event_source/devices/cpum_sf
+
+Fix this by adding s390 directory name testing to
+function is_pmu_core(). This is the same approach as taken for
+arm platform.
+
+Output before:
+[root@s35lp76 perf]# ./perf list -d pmu
+List of pre-defined events (to be used in -e):
+
+  cpum_cf/AES_BLOCKED_CYCLES/      [Kernel PMU event]
+  cpum_cf/AES_BLOCKED_FUNCTIONS/   [Kernel PMU event]
+  cpum_cf/AES_CYCLES/              [Kernel PMU event]
+  cpum_cf/AES_FUNCTIONS/           [Kernel PMU event]
+  ....
+  cpum_cf/TX_NC_TEND/              [Kernel PMU event]
+  cpum_cf/VX_BCD_EXECUTION_SLOTS/  [Kernel PMU event]
+  cpum_sf/SF_CYCLES_BASIC/         [Kernel PMU event]
+
+Output after:
+[root@s35lp76 perf]# ./perf list -d pmu
+List of pre-defined events (to be used in -e):
+
+  cpum_cf/AES_BLOCKED_CYCLES/      [Kernel PMU event]
+  cpum_cf/AES_BLOCKED_FUNCTIONS/   [Kernel PMU event]
+  cpum_cf/AES_CYCLES/              [Kernel PMU event]
+  cpum_cf/AES_FUNCTIONS/           [Kernel PMU event]
+  ....
+  cpum_cf/TX_NC_TEND/              [Kernel PMU event]
+  cpum_cf/VX_BCD_EXECUTION_SLOTS/  [Kernel PMU event]
+  cpum_sf/SF_CYCLES_BASIC/         [Kernel PMU event]
+
+3906:
+  bcd_dfp_execution_slots
+       [BCD DFP Execution Slots]
+  decimal_instructions
+       [Decimal Instructions]
+  dtlb2_gpage_writes
+       [DTLB2 GPAGE Writes]
+  dtlb2_hpage_writes
+       [DTLB2 HPAGE Writes]
+  dtlb2_misses
+       [DTLB2 Misses]
+  dtlb2_writes
+       [DTLB2 Writes]
+  itlb2_misses
+       [ITLB2 Misses]
+  itlb2_writes
+       [ITLB2 Writes]
+  l1c_tlb2_misses
+       [L1C TLB2 Misses]
+  .....
+
+cfvn 3:
+  cpu_cycles
+       [CPU Cycles]
+  instructions
+       [Instructions]
+  l1d_dir_writes
+       [L1D Directory Writes]
+  l1d_penalty_cycles
+       [L1D Penalty Cycles]
+  l1i_dir_writes
+       [L1I Directory Writes]
+  l1i_penalty_cycles
+       [L1I Penalty Cycles]
+  problem_state_cpu_cycles
+       [Problem State CPU Cycles]
+  problem_state_instructions
+       [Problem State Instructions]
+  ....
+
+csvn generic:
+  aes_blocked_cycles
+       [AES Blocked Cycles]
+  aes_blocked_functions
+       [AES Blocked Functions]
+  aes_cycles
+       [AES Cycles]
+  aes_functions
+       [AES Functions]
+  dea_blocked_cycles
+       [DEA Blocked Cycles]
+  dea_blocked_functions
+       [DEA Blocked Functions]
+  ....
+
+Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+---
+ tools/perf/util/pmu.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 1111d5bf15ca..8675ddf558c6 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -562,6 +562,12 @@ static int is_pmu_core(const char *name)
+ 	if (stat(path, &st) == 0)
+ 		return 1;
+ 
++	/* Look for cpu sysfs (specific to s390) */
++	scnprintf(path, PATH_MAX, "%s/bus/event_source/devices/%s",
++		  sysfs, name);
++	if (stat(path, &st) == 0)
++		return 1;
++
+ 	return 0;
+ }
+ 
 -- 
-
-Thanks,
-
-David / dhildenb
+2.14.3
