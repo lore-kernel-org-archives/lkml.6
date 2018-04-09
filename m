@@ -1,74 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753108AbeDIRL0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 13:11:26 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:46596 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751728AbeDIRLX (ORCPT
+        id S1753720AbeDIRML (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 13:12:11 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33491 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751291AbeDIRMJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 13:11:23 -0400
-X-Google-Smtp-Source: AIpwx48l+OITt8HXh7tQUB6dT1TInKl3vZ9JOtLIKUHx0To3nHQlLuesYBvc4NM/V1XmFDXcUcq614PYqRiejo/iDx4=
+        Mon, 9 Apr 2018 13:12:09 -0400
+Date: Mon, 9 Apr 2018 10:11:25 -0700
+From: tip-bot for Andy Lutomirski <tipbot@zytor.com>
+Message-ID: <tip-071ccc966ba5db1ac8f5c24b0faebb37698f68db@git.kernel.org>
+Cc: luto@kernel.org, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, mingo@kernel.org, peterz@infradead.org,
+        linux@dominikbrodowski.net, hpa@zytor.com, tglx@linutronix.de,
+        bp@alien8.de
+Reply-To: hpa@zytor.com, linux@dominikbrodowski.net, peterz@infradead.org,
+        tglx@linutronix.de, bp@alien8.de, linux-kernel@vger.kernel.org,
+        luto@kernel.org, mingo@kernel.org, torvalds@linux-foundation.org
+In-Reply-To: <90aab80c1f906e70742eaa4512e3c9b5e62d59d4.1522794757.git.luto@kernel.org>
+References: <90aab80c1f906e70742eaa4512e3c9b5e62d59d4.1522794757.git.luto@kernel.org>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/entry/64: Drop idtentry's manual stack switch for
+ user entries
+Git-Commit-ID: 071ccc966ba5db1ac8f5c24b0faebb37698f68db
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <CAOSf1CGjFOPPQPYNA=uLFJnVyNXQnsoBb8rm2qFi8uuUHmw8ZA@mail.gmail.com>
-References: <20180409131619.0bc5fb45@canb.auug.org.au> <CAOSf1CHToZ5+k90n_sgh_9ezJjXpx21E5-K66TWkdU7t7kUiEw@mail.gmail.com>
- <CAOSf1CGjFOPPQPYNA=uLFJnVyNXQnsoBb8rm2qFi8uuUHmw8ZA@mail.gmail.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Mon, 9 Apr 2018 10:11:22 -0700
-Message-ID: <CAPcyv4icJ8DRgaBfsJc22AtBz2EOJLK9mGkM_4fi6wLD7L9-OA@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the nvdimm tree
-To: Oliver <oohall@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Device Tree <devicetree@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 9, 2018 at 12:34 AM, Oliver <oohall@gmail.com> wrote:
-> On Mon, Apr 9, 2018 at 1:38 PM, Oliver <oohall@gmail.com> wrote:
->> On Mon, Apr 9, 2018 at 1:16 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>> Hi Dan,
->>>
->>> After merging the nvdimm tree, today's linux-next build (x86_64
->>> allmodconfig) failed like this:
->>>
->>> ERROR: "of_node_to_nid" [drivers/nvdimm/of_pmem.ko] undefined!
->>>
->>> Caused by commit
->>>
->>>   717197608952 ("libnvdimm: Add device-tree based driver")
->>>
->>> X86 seems to not have a version of of_node_to_nid() even though CONFIG_OF
->>> and CONFIG_NUMA are both 'y' in this build.
->>
->> It's a side effect of a driver selecting CONFIG_OF accidently. There's
->> a patch to fix this in the drm-misc-next tree:
->>
->> https://lkml.org/lkml/2018/4/3/17
->>
->>> I have used the nvdimm tree from next-20180406 for today.
->>
->> That works too.
->
-> Hmm, on closer inspection this is actually a bug in the of driver. The
-> patch above fixes the specific problem that we hit on ia64 due to
-> CONFIG_OF being selected by accident, but the underlying issue will
-> affect any platform that doesn't provide an implementation of
-> of_node_to_nid().
->
-> The fundamental problem is that the various actual implementations of
-> of_node_to_nid (ppc, sparc and the generic one in of_numa.c) export
-> the symbol. While the fallback implementation does not because it is
-> defined as a weak symbol. As a result we'll get this build failure iff
-> there's a call to of_node_to_nid() in a module.
->
-> The one-line fix is just to delete the call to of_node_to_nid() in
-> of_pmem.c. I have a patch that adds a Kconfig options and removes the
-> weak symbol games. That needs Acks from the ppc, sparc and DT
-> maintainers though so it'll take longer to organise.
+Commit-ID:  071ccc966ba5db1ac8f5c24b0faebb37698f68db
+Gitweb:     https://git.kernel.org/tip/071ccc966ba5db1ac8f5c24b0faebb37698f68db
+Author:     Andy Lutomirski <luto@kernel.org>
+AuthorDate: Tue, 3 Apr 2018 15:39:26 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 9 Apr 2018 18:23:50 +0200
 
-How about just marking OF_PMEM as bool for the time being until all of
-these other reworks land upstream?
+x86/entry/64: Drop idtentry's manual stack switch for user entries
+
+For non-paranoid entries, idtentry knows how to switch from the
+kernel stack to the user stack, as does error_entry.  This results
+in pointless duplication and code bloat.  Make idtentry stop
+thinking about stacks for non-paranoid entries.
+
+This reduces text size by 5377 bytes.
+
+This goes back to the following commit:
+
+  7f2590a110b8 ("x86/entry/64: Use a per-CPU trampoline stack for IDT entries")
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/90aab80c1f906e70742eaa4512e3c9b5e62d59d4.1522794757.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/entry/entry_64.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 9b114675fbc0..e237913a056b 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -908,7 +908,7 @@ ENTRY(\sym)
+ 	pushq	$-1				/* ORIG_RAX: no syscall to restart */
+ 	.endif
+ 
+-	.if \paranoid < 2
++	.if \paranoid == 1
+ 	testb	$3, CS-ORIG_RAX(%rsp)		/* If coming from userspace, switch stacks */
+ 	jnz	.Lfrom_usermode_switch_stack_\@
+ 	.endif
+@@ -955,7 +955,7 @@ ENTRY(\sym)
+ 	jmp	error_exit
+ 	.endif
+ 
+-	.if \paranoid < 2
++	.if \paranoid == 1
+ 	/*
+ 	 * Entry from userspace.  Switch stacks and treat it
+ 	 * as a normal entry.  This means that paranoid handlers
