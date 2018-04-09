@@ -1,79 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754967AbeDIUKf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 16:10:35 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:40463 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754943AbeDIUK3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 16:10:29 -0400
-X-Google-Smtp-Source: AIpwx4+Nnn3n0lclk/VUejSDgd6otkt3Jeoj7usZzkqHP4BaoyoDkbeAGMWYcwvJJgn1fn1H+frINw==
-Date: Mon, 9 Apr 2018 15:10:27 -0500
-From: Rob Herring <robh@kernel.org>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 2/8] DT: reset: renesas,rzn1-reboot: document RZ/N1
- reboot driver
-Message-ID: <20180409201027.ydlvyx72mrt5fphh@rob-hp-laptop>
-References: <1522309629-10152-1-git-send-email-michel.pollet@bp.renesas.com>
- <1522309629-10152-3-git-send-email-michel.pollet@bp.renesas.com>
+        id S1754694AbeDIURv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 16:17:51 -0400
+Received: from anholt.net ([50.246.234.109]:53698 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752369AbeDIURu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 16:17:50 -0400
+From: Eric Anholt <eric@anholt.net>
+To: Daniel J Blueman <daniel@quora.org>, dri-devel@lists.freedesktop.org
+Cc: Dave Airlie <airlied@redhat.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        boris.brezillon@bootlin.com
+Subject: Re: drm/vc4: false-positive negative cursor position warning
+In-Reply-To: <CAMVG2svG=HaK15JwZwg7PRJUR26FHrzSz3-OL01jz1wikHe+oQ@mail.gmail.com>
+References: <CAMVG2svG=HaK15JwZwg7PRJUR26FHrzSz3-OL01jz1wikHe+oQ@mail.gmail.com>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date: Mon, 09 Apr 2018 13:17:47 -0700
+Message-ID: <87efjow2vo.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522309629-10152-3-git-send-email-michel.pollet@bp.renesas.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 29, 2018 at 08:46:58AM +0100, Michel Pollet wrote:
-> The Renesas RZ/N1 Family (Part #R9A06G0xx) requires a driver
-> as part of the sysctrl MFD to handle rebooting the CA7 cores.
-> This documents the driver bindings.
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> ---
->  .../bindings/power/renesas,rzn1-reboot.txt           | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
-> new file mode 100644
-> index 0000000..f592769
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/renesas,rzn1-reboot.txt
-> @@ -0,0 +1,20 @@
-> +DT bindings for the Renesas RZ/N1 Reboot Driver
-> +
-> +== Reboot Driver Node ==
-> +
-> +The reboot driver is always a subnode of the system controller node, see
-> +renesas,rzn1-sysctrl.txt for details.
-> +
-> +Bindings:
-> ++ Required:
-> +	compatible = "renesas,rzn1-reboot";
-> +
-> +Example:
-> +	sysctrl: sysctrl@4000c000 {
-> +		compatible = "renesas,rzn1-sysctrl", "syscon", "simple-mfd";
+--=-=-=
+Content-Type: text/plain
 
-Are there other functions for this block? If so, please define a 
-complete binding for the block.
+Daniel J Blueman <daniel@quora.org> writes:
 
-> +		reg = <0x4000c000 0x1000>;
-> +
-> +		reboot {
-> +			compatible = "renesas,rzn1-reboot";
+> Hi Eric et al,
+>
+> In a number of windowing environments (eg GNOME 3) on Raspberry Pi 3B
+> on 4.16.0 arm64, the mouse cursor top-left gets down to x,y -4,-4,
+> tripping WARN_ON_ONCE(plane->state->crtc_x < 0 || plane->state->crtc_y
+> < 0) [1], which therefore seems false-positive.
+>
+> Git history doesn't turn up any reason, eg it could cause undefined
+> hardware behaviour, which it doesn't appear to, so would it be better
+> to drop the warning, or adjust it to trip on x or y < -4 or so? If so,
+> I'll prepare a patch to adjust it.
 
-Why is this node needed? The driver for "renesas,rzn1-sysctrl" should 
-be able to register as a reboot handler/driver/provider.
+Ccing Boris, who's been doing work on the async update path.
 
-Rob
+Take a look at vc4_plane_setup_clipping_and_scaling(state) -- that has
+the corrections necessary for negative x/y.  We're calling that too late
+(through the avc4_plane_atomic_check() path) for this function's usage
+of the offsets[].
+
+Since it affects the computed src_w/h, we'd have to update those as well
+in our async update.  Our async update is racy in a way that makes me
+uncomfortable -- the HVS could process our display list at any point in
+our writel() sequence, which is not very atomic.  Maybe we should be
+using a double-buffered HVS display list per element, and then have the
+main display list jump into each element's current display list and back
+out, so that we can do async flips to new plane state by just commiting
+a single writel() to the new HVS display element list.
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlrLymsACgkQtdYpNtH8
+nuj5fg//XBsczp78xkJVye15Ntq5VUgYlDQnk3p1gVgxWK6V3RnTO36VPZONwp4d
+khLQNqavaZq2dakrEdDeFevp+FxwqpNEcahv9iuQrUaouE1BMO9fyvs6yztnw3i6
+efuSDRSGMWYhOPiH68vl2rrGWwjRuxGR0IXBtnhBEgqQr6lXYpxODaETrefhKZyS
+AUDfIIMrmzv/Q8H6FEuACFcmeVXmwPCnS0CfnJEaXTy4c6izh4PxqbN9aeZFm+ih
+63bUQ8DXTPkSAVkEB2n4o2olW++SlEzDcj/xk1UJIPCJfEK8VKravUE5dVrP9GA7
+UG5klqKCLcWc0oNh4O5V0UHPQLC+wQpgTufbhsfKbikhr19FP2xCpWCN8DINYYdN
+TFoTbFraNN2nxYe6fVpYDTlCqPPwsefAbCD9oC5QT2XDzyjYYBTxQrHOnh7FojBd
+XoPkX7g0SY0nn/+poQJA+hfWWgQqzytcSli6hqTo466C6JtQryJlkQVgN5rmnZFG
+c7llKvfmyK81m4iTbbDD2VLurIlPSTwKNZRAvG1FUa5T6B5cVj+3gY4C7O/BiSMU
+OCnRfuLMcHb/5AYr5F+QqiPXFaPwobnKJ1hfpmNFX8PNcMJNa+UOF67W4pHaK6yl
+vm1VHAKA0uXZFntGftYCcOoTIxXafhgGHBTem3VeGCjJXNZtHrw=
+=YPEv
+-----END PGP SIGNATURE-----
+--=-=-=--
