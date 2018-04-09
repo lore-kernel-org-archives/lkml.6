@@ -1,57 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753831AbeDITuX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 15:50:23 -0400
-Received: from mga07.intel.com ([134.134.136.100]:25634 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751549AbeDITuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 15:50:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,427,1517904000";
-   d="scan'208";a="32920959"
-Subject: Re: [PATCH 00/11] [v5] Use global pages with PTI
-To: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org
-References: <20180406205501.24A1A4E7@viggo.jf.intel.com>
- <c96373d0-c16a-4463-147c-8624ad90af61@amd.com>
- <b9802f89-93b3-b535-742c-f84e9f5be832@linux.intel.com>
- <1b45ffd1-99bb-4ac1-fb65-0de3e42c1c0a@amd.com>
-Cc: linux-mm@kvack.org, aarcange@redhat.com, luto@kernel.org,
-        torvalds@linux-foundation.org, keescook@google.com, hughd@google.com,
-        jgross@suse.com, x86@kernel.org, namit@vmware.com
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <f87b6f47-2416-4c12-55dd-5f0cb86f1464@linux.intel.com>
-Date: Mon, 9 Apr 2018 12:50:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753751AbeDITyi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 15:54:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41252 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751549AbeDITyh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 15:54:37 -0400
+Date: Mon, 9 Apr 2018 22:54:34 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stefan Hajnoczi <stefanha@redhat.com>,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jason Wang <jasowang@redhat.com>, KVM list <kvm@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] vhost: fix vhost_vq_access_ok() log check
+Message-ID: <20180409224842-mutt-send-email-mst@kernel.org>
+References: <20180409131021.5132-1-stefanha@redhat.com>
+ <CA+55aFzJ_JPtU5SjAHHv--p3ZcAw4gVidxvrLLZF7w+kbHCNdg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1b45ffd1-99bb-4ac1-fb65-0de3e42c1c0a@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFzJ_JPtU5SjAHHv--p3ZcAw4gVidxvrLLZF7w+kbHCNdg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/09/2018 11:59 AM, Tom Lendacky wrote:
-> On 4/9/2018 1:17 PM, Dave Hansen wrote:
->> On 04/09/2018 11:04 AM, Tom Lendacky wrote:
->>> On 4/6/2018 3:55 PM, Dave Hansen wrote:
->>>> Changes from v4
->>>>  * Fix compile error reported by Tom Lendacky
->>> This built with CONFIG_RANDOMIZE_BASE=y, but failed to boot successfully.
->>> I think you're missing the initialization of __default_kernel_pte_mask in
->>> kaslr.c.
->>
->> This should be simple to fix (just add a -1 instead of 0), but let me
->> double-check and actually boot the fix.
+On Mon, Apr 09, 2018 at 09:52:13AM -0700, Linus Torvalds wrote:
+> On Mon, Apr 9, 2018 at 6:10 AM, Stefan Hajnoczi <stefanha@redhat.com> wrote:
+> > @@ -1246,7 +1246,7 @@ int vhost_vq_access_ok(struct vhost_virtqueue *vq)
+> >  {
+> >         int ret = vq_log_access_ok(vq, vq->log_base);
+> >
+> > -       if (ret || vq->iotlb)
+> > +       if (!ret || vq->iotlb)
+> >                 return ret;
 > 
-> Yup, added an "= ~0" and everything is good.
+> That logic is still very non-obvious.
+> 
+> This code already had one bug because of an odd illegible test
+> sequence. Let's not keep the crazy code.
+> 
+> Why not just do the *obvious* thing, and get rid of "ret" entirely,
+> and make the damn thing return a boolean, and then just write it all
+> as
+> 
+>     /* Caller should have vq mutex and device mutex */
+>     bool vhost_vq_access_ok(struct vhost_virtqueue *vq)
+>     {
+>             if (!vq_log_access_ok(vq, vq->log_base))
+>                     return false;
+> 
+>             if (vq->iotlb || vq_access_ok(vq, vq->num, vq->desc,
+> vq->avail, vq->used);
+>     }
+> 
+> which makes the logic obvious: if vq_log_access_ok() fails, then then
+> vhost_vq_access_ok() fails unconditionally.
+> 
+> Otherwise, we need to have an iotlb, or a successful vq_access_ok() check.
+> 
+> Doesn't that all make more sense, and avoid the insane "ret" value use
+> that is really quite subtle?
+> 
+>                     Linus
 
-I'm testing at this commit in the tip tree:
 
-0564258... x86/pti: Leave kernel text global for !PCID
+I agree it's cleaner.
 
-It seems to boot OK with RANDOMIZE_BASE=y for both PCID and non-PCID
-configuration.  Could you send along your .config so I can try to reproduce?
+Stefan, I reposted your patch on netdev (since the breakage got applied
+there too).
+
+Would you like to self-nak it and post v2? Pls remember to CC netdev.
+
+-- 
+MST
