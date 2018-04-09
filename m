@@ -1,89 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752951AbeDIPgg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 11:36:36 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44466 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751623AbeDIPge (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 11:36:34 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B1AD0602B6
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Mon, 9 Apr 2018 09:36:31 -0600
-From: Lina Iyer <ilina@codeaurora.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, evgreen@chromium.org,
-        dianders@chromium.org
-Subject: Re: [PATCH v5 04/10] drivers: qcom: rpmh: add RPMH helper functions
-Message-ID: <20180409153631.GB19682@codeaurora.org>
-References: <20180405161834.3850-1-ilina@codeaurora.org>
- <20180405161834.3850-5-ilina@codeaurora.org>
- <152306410070.94378.2738189478665128271@swboyd.mtv.corp.google.com>
+        id S1753165AbeDIPgp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 11:36:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55435 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751623AbeDIPgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 11:36:43 -0400
+Date: Mon, 9 Apr 2018 17:34:09 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Chao Yu <yuchao0@huawei.com>,
+        Minchan Kim <minchan@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        Chris Fries <cfries@google.com>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Message-ID: <20180409153409.nqsklemu3igacgbj@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Michal Hocko <mhocko@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Chao Yu <yuchao0@huawei.com>,
+        Minchan Kim <minchan@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        Chris Fries <cfries@google.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org
+References: <20180409015815.235943-1-minchan@kernel.org>
+ <20180409024925.GA21889@bombadil.infradead.org>
+ <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
+ <20180409111403.GA31652@bombadil.infradead.org>
+ <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
+ <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
+ <20180409124852.GE21835@dhcp22.suse.cz>
+ <20180409134114.GA30963@bombadil.infradead.org>
+ <20180409135215.GH21835@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <152306410070.94378.2738189478665128271@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180409135215.GH21835@dhcp22.suse.cz>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06 2018 at 19:21 -0600, Stephen Boyd wrote:
->Quoting Lina Iyer (2018-04-05 09:18:28)
->> diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
->> new file mode 100644
->> index 000000000000..95334d4c1ede
->> --- /dev/null
->> +++ b/include/soc/qcom/rpmh.h
->> @@ -0,0 +1,34 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#ifndef __SOC_QCOM_RPMH_H__
->> +#define __SOC_QCOM_RPMH_H__
->> +
->> +#include <soc/qcom/tcs.h>
->> +#include <linux/platform_device.h>
->> +
->> +struct rpmh_client;
->> +
->> +#if IS_ENABLED(CONFIG_QCOM_RPMH)
->> +int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
->> +              const struct tcs_cmd *cmd, u32 n);
->> +
->> +struct rpmh_client *rpmh_get_client(struct platform_device *pdev);
->> +
->> +void rpmh_release(struct rpmh_client *rc);
->
->Please get rid of this 'client' layer and fold it into the rpmh driver.
->Everything that uses the rpmh_client is a child device of the rpmh
->device so they should be able to just pass in their device pointer as
->their 'handle' and have the rpmh driver take that, get the parent device
->pointer, and pull an rpmh_drv structure out of there. The 'common' code
->can go into the base rpmh driver and get used from there and then we
->don't have to hop between two files to see how rpmh is used by the
->consumers. Code complexity goes down this way.
+On Mon, Apr 09, 2018 at 03:52:15PM +0200, Michal Hocko wrote:
+> On Mon 09-04-18 06:41:14, Matthew Wilcox wrote:
+> > On Mon, Apr 09, 2018 at 02:48:52PM +0200, Michal Hocko wrote:
+> > > On Mon 09-04-18 20:25:06, Chao Yu wrote:
+> > > [...]
+> > > > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > > > index c85cccc2e800..cc63f8c448f0 100644
+> > > > --- a/fs/f2fs/inode.c
+> > > > +++ b/fs/f2fs/inode.c
+> > > > @@ -339,10 +339,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+> > > >  make_now:
+> > > >  	if (ino == F2FS_NODE_INO(sbi)) {
+> > > >  		inode->i_mapping->a_ops = &f2fs_node_aops;
+> > > > -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> > > > +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+> > > 
+> > > An unrelated question. Why do you make all allocations for the mapping
+> > > NOFS automatically? What kind of reclaim recursion problems are you
+> > > trying to prevent?
+> > 
+> > It's worth noting that this is endemic in filesystems.
+> 
+> Yes, and I have strong suspicion that this is a mindless copy&pasting...
+> Well, xfs had a good reason for it in the past - mostly to handle deep
+> call stacks on complicated storage setups in the past when we used to
+> trigger IO from the direct reclaim. I am not sure whether there are
+> other reasons to keep the status quo except for finding somebody brave
+> enough to post the patch, do all the due testing.
+> 
+> > $ git grep mapping_set_gfp_mask.*FS
+> > drivers/block/loop.c:   mapping_set_gfp_mask(mapping, lo->old_gfp_mask & ~(__GFP_IO|__GFP_FS));
+> > fs/btrfs/disk-io.c:     mapping_set_gfp_mask(fs_info->btree_inode->i_mapping, GFP_NOFS);
 
-That would be not be a good idea. This layer is not just providing an
-API interface. There is resource buffering, handling of memory for
-requests and downstream quirks and debug going on in this layer. It
-would be unwise to clobber the hardware centric rpmh-rsc layer. If you
-look at the series as a whole, you would understand why this is
-necessary. I plan to build more on top of these patches in the future as
-we add support for system low power modes. The complexity doesn't go
-away, it just thrown in to another file, which is already decently
-sized.
+Thi was added in 1561deda687eef0
+(https://git.kernel.org/linus/1561deda687eef0e9506) and probably after a
+deadlock report.
 
-I could try to use the device as a handle, and internally work on
-getting the drv and other information from it, if that helps. But I do
-not want to clobber these two files together. It doesn't help
-maintainability.
+The changelog mentions the potential recursion from fs -> allocation -> fs,
+but I'm not sure if this still happens on the MM side today.
 
-Thanks,
-Lina
+For the filesystem part, I think the key functions of the callchain are
+still there.
+
+The code was been added in 2011 and the 2nd hunk of the patch added a
+code that's not present today AFAICS, so this is worth revisiting.
+
+I still don't understand how it's related to the GFP_HIGHUSER_MOVABLE,
+this patch is from time where the metadata pages were possibly allocated
+from HIGHMEM but this was removed later in a65917156e345946db
+(https://git.kernel.org/linus/a65917156e345946db).
