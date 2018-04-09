@@ -1,67 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752304AbeDIHmr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 03:42:47 -0400
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:35523 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751581AbeDIHmp (ORCPT
+        id S1752137AbeDIHqW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 03:46:22 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:45795 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751140AbeDIHqU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 03:42:45 -0400
-X-Google-Smtp-Source: AIpwx49J0W6VdiwwhtHbjkke6WDbUoKdqChcOYhF7catGS/XVl2gRNRd0MPpxGcCZG7SMtfYilwzzA==
-Date: Mon, 9 Apr 2018 09:42:41 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: Race-free unlinking of directory entries
-Message-ID: <20180409074241.2ibvhh3g5lzxnt4g@pali>
-References: <20171220191844.wnb3bgkpreg2tjia@pali>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20171220191844.wnb3bgkpreg2tjia@pali>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Mon, 9 Apr 2018 03:46:20 -0400
+X-Google-Smtp-Source: AIpwx4+4e+KFgKnmST7Y0DDeTzBQqjxS0FaS9c/kdCsdcVbL/C+7mS/+mijlG88A1DH0f3YZVvCKVg==
+From: "Oliver O'Halloran" <oohall@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: sfr@canb.auug.org.au, linux-nvdimm@lists.01.org,
+        "Oliver O'Halloran" <oohall@gmail.com>, devicetree@vger.kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] drivers/of: Introduce ARCH_HAS_OWN_OF_NUMA
+Date: Mon,  9 Apr 2018 17:46:04 +1000
+Message-Id: <20180409074604.17671-1-oohall@gmail.com>
+X-Mailer: git-send-email 2.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi! I would like to remind this my older email about race free
-unlinking. Is there any plan to provide such support?
+Some OF platforms (pseries and some SPARC systems) has their own
+implementations of NUMA affinity detection rather than using the generic
+OF_NUMA driver, which mainly exists for arm64. For other platforms one
+of two fallbacks provided by the base OF driver are used depending on
+CONFIG_NUMA.
 
-On Wednesday 20 December 2017 20:18:44 Pali Rohár wrote:
-> Hi!
-> 
-> Linux kernel currently does not provide any race-free way for calling
-> unlink() syscall on file entry which points to opened file descriptor.
-> 
-> On the other hand Linux kernel already provides race-free way for
-> creating file entry by linkat() syscall with AT_EMPTY_PATH or
-> AT_SYMLINK_FOLLOW flags. unlinkat() does not.
-> 
-> There was already discussion about unlink issue in bugzilla:
-> https://bugzilla.kernel.org/show_bug.cgi?id=93441
-> 
-> Because file descriptor describes inode number which can be stored in
-> more directories as hard links, there is a proposed funlinkat() syscall
-> with following API:
-> 
-> int funlinkat(int fd, int dirfd, const char *pathname, int flags);
-> 
-> It should atomically check if file descriptor fd and pathname (according
-> to dirfd) are same, and if then just unlinkat(dirfd, pathname, flags).
-> If are not same, throw error.
-> 
-> What userspace application basically needs:
-> 
-> Open file, test it stat (or probably content) and based on test result
-> decide if file needs to be removed or not.
-> 
-> Or delete a file behind a file descriptor opened with O_PATH.
-> 
-> Both cases are currently not possible without introducing race condition
-> between open/stat and unlink. Between those two calls, some other
-> process can exchange files.
+In the CONFIG_NUMA=n case the fallback is an inline function in of.h.
+In the =y case the fallback is a real function which is defined as a
+weak symbol so that it may be overwritten by the architecture if desired.
 
+The problem with this arrangement is that the real implementations all
+export of_node_to_nid(). Unfortunately it's not possible to export the
+fallback since it would clash with the non-weak version. As a result
+we get build failures when:
+
+a) CONFIG_NUMA=y && CONFIG_OF=y, and
+b) The platform doesn't implement of_node_to_nid(), and
+c) A module uses of_node_to_nid()
+
+Given b) will be true for most platforms this is fairly easy to hit
+and has been observed on ia64 and x86.
+
+This patch remedies the problem by introducing the ARCH_HAS_OWN_OF_NUMA
+Kconfig option which is selected if an architecture provides an
+implementation of of_node_to_nid(). If a platform does not use it's own,
+or the generic OF_NUMA, then always use the inline fallback in of.h so
+we don't need to futz around with exports.
+
+Cc: devicetree@vger.kernel.org
+Cc: sparclinux@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Fixes: 298535c00a2c ("of, numa: Add NUMA of binding implementation.")
+Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
+---
+ arch/powerpc/Kconfig | 1 +
+ arch/sparc/Kconfig   | 1 +
+ drivers/of/Kconfig   | 3 +++
+ drivers/of/base.c    | 7 -------
+ include/linux/of.h   | 2 +-
+ 5 files changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index c32a181a7cbb..74ce5f3564ae 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -625,6 +625,7 @@ config NUMA
+ 	bool "NUMA support"
+ 	depends on PPC64
+ 	default y if SMP && PPC_PSERIES
++	select ARCH_HAS_OWN_OF_NUMA
+ 
+ config NODES_SHIFT
+ 	int
+diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
+index 8767e45f1b2b..f8071f1c3edb 100644
+--- a/arch/sparc/Kconfig
++++ b/arch/sparc/Kconfig
+@@ -299,6 +299,7 @@ config GENERIC_LOCKBREAK
+ config NUMA
+ 	bool "NUMA support"
+ 	depends on SPARC64 && SMP
++	select ARCH_HAS_OWN_OF_NUMA
+ 
+ config NODES_SHIFT
+ 	int "Maximum NUMA Nodes (as a power of 2)"
+diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+index ad3fcad4d75b..01c62b747b25 100644
+--- a/drivers/of/Kconfig
++++ b/drivers/of/Kconfig
+@@ -103,4 +103,7 @@ config OF_OVERLAY
+ config OF_NUMA
+ 	bool
+ 
++config ARCH_HAS_OWN_OF_NUMA
++	bool
++
+ endif # OF
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 848f549164cd..82a9584bb0e2 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -84,13 +84,6 @@ int of_n_size_cells(struct device_node *np)
+ }
+ EXPORT_SYMBOL(of_n_size_cells);
+ 
+-#ifdef CONFIG_NUMA
+-int __weak of_node_to_nid(struct device_node *np)
+-{
+-	return NUMA_NO_NODE;
+-}
+-#endif
+-
+ static struct device_node **phandle_cache;
+ static u32 phandle_cache_mask;
+ 
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 4d25e4f952d9..9bb42dac5e65 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -942,7 +942,7 @@ static inline int of_cpu_node_to_id(struct device_node *np)
+ #define of_node_cmp(s1, s2)		strcasecmp((s1), (s2))
+ #endif
+ 
+-#if defined(CONFIG_OF) && defined(CONFIG_NUMA)
++#if defined(CONFIG_OF_NUMA) || defined(CONFIG_ARCH_HAS_OWN_OF_NUMA)
+ extern int of_node_to_nid(struct device_node *np);
+ #else
+ static inline int of_node_to_nid(struct device_node *device)
 -- 
-Pali Rohár
-pali.rohar@gmail.com
+2.9.5
