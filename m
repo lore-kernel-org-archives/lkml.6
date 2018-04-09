@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4029176-1523245767-2-18082026802392631271
+X-Cyrus-Session-Id: sloti22d1t05-4029176-1523245744-2-10090517368083355087
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523245767; b=LUtA7XCK/UjHvy/gDUEKh8XJI10JUsLq7I010LtEIf7zAOGAfz
-    6xHY8Z3YX5JUMPN256oLUTFDHoBbngjokPfdXlsR8hB/PMnRCrh5Z9qOdFsov/Ld
-    jyx9Xie6x4U+rZmcJMqP0MNFNToFHscaWsZCHQxWN7eNbcM8Dw4N5hC67ym/hLmo
-    ClAKsm8wlYwEg0KorTeHmdREptQui3zBTP9bmF++v0s9Y2oTrCG3wa+7wOu/edzA
-    hvMYSH5fyq09NfzVN527ss6YA6bxnMy1FEEZcwqJdeL5pLRsWspz8fUhT8fuTSkh
-    mwElcwZ3dTSXo9SgLd/bTkvjzwANdNZFrRnQ==
+    1523245743; b=T1/wztvXPUtcCiZZkbj9ta4U8Ip3AVn6pkA6Ldj5f8eYZltePJ
+    eRYcI7xEJ9QxyviAfwztRmcwMe16xqn5N2YFKWLdZLUHkhJ2t3GAxsI8USySyx86
+    5T6XKWtQxY1/sfX7M6BXQGJY4kX2jUa2285bhiRTFYgSKKG6sccNosNHV9zx2mJY
+    wmpKevQpPD3aDMIQjwCKq7kQwrOJSFhvwqEC3b8nbMxWpYBpblGE/FJ6uNR2CPTg
+    9Nndp20Hvss+r+2oGk0+AWxjk3uJrehdMr3TBrumOgQp6w++BM37iWItnzzSCm3W
+    AqQT16WlC9iphtjIqr1qAUlURCKYKjLtPMQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1523245767; bh=DmxEhCYZd4
-    RGO08GTDVOAh+sM6Ycff6It5U9dlr0EY0=; b=u5RpIA3iLs7V2AMyjIva3RolCW
-    qGQbO26ZPKK/6Om3H/VZ5QkNhLOX94TH030ySi/lSEnR9DCjxiqD6O7yxbOb+qNo
-    8ZKSnXyFY2HyJ5cHMEX1ZaobR+Iln1UYxI6R0pJaKYF90zrycAsfQzpuU/v9INUE
-    1+b5Wp904QcgezTBeB02u+LulV2wR3utdZ/9NihaK/k6rHn0hltKYyUAATwN2wb/
-    ObsT4r4WpnqWQ1UseHe2GXHJ8hqfqTorbAw/O/b6NO/MT+4YoJoheyWfqAuTIqDT
-    emZDxCfB6SYPztqGNZYtMznEIImpqVMoY7tgjCWDOZVwYyShoOee9Tes7HMQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PwH4BPdc x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    :mime-version:sender:list-id; s=fm2; t=1523245743; bh=+Nh5OfBqUb
+    6QojyusF33h4UxSk1m23JIqHsIc585VZw=; b=AK2BPpM2oLgWjOArPd9GDFRDCf
+    xVwEaqXy4mcRTJ/d46zqr11h2T6PZ26ch0MEUZ2D3rW83qvjcLP10RiJp/vYdMf5
+    LY1HGtSB3dcZLF9BCAQV8yKbn1TzLg5/0Kg4YW9NlbKeTXMqaKOP5gXTw1AbUGLK
+    c89tSvrBEQDMwgyP/HjiZ3IaUZh1IHOVhnBDz2DCHNYDJk1pQlvbyPpdaUEw9Ltm
+    pYbrP0iMrBSY221WiE3jf4P7pSe/7I3KXtDI1LG0wvY4AuU0VX67etlVpnJT9H+g
+    pfEI3CCi7gGkzhZpv7xLt5qgCT5tA25Hcu72+eixdUz/vybqjqyiuSHwpBPg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=S7G9+S4c x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -39,9 +39,9 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=PwH4BPdc x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=S7G9+S4c x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
     dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
@@ -51,36 +51,43 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfANoJGK46/n+99Y/j3VVbGp+8a4fkGOTVTole2aQSEE9KMqI3xuQiG9lnaYAIQzR6YoDUEpMRSfY1I2cBg5AER0hX1Cp75a2rzrMc7yWlZa6hkzqkkwi
-    /3R6D302f7rhep4TdJ8ygJTipzzfYh27chA07lO7Jleq9OmDyMVdvemDe7JLux1vg7AfOzHGJAF4cypuZLYn5wfB1QLSk9YQCup5ZvIToPnyJ6Hom+apha8J
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCjCzkof81yo/HpRL/np5j20ILErLY07VYyzu9M8Ag3uzhAnhswLmp6UofGdI7KXZpyrkoZDQYdqfsO/U3afH+Pr3P90x7THzWTobInnlc+SnAYTJJZM
+    KHyDMrd3kGhIRIjuNv5J8pFiEVMmYwm0zF3H+7aifO/xaQFLKURCpKUXYxC46IuSUIJ4uoEE/gkrzlYAP1Z0pf2H30d6Ogh56Abb2MJNLSBOM0jS6eKQ7o0s
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
     a=mw6kJ3eo-EIA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=Lf-vpJhqX20A:10 a=pFyQfRViAAAA:8 a=yMhMjlubAAAA:8 a=SmiJZe1Tek8jb6qnnVkA:9
-    a=iwWnhPSIv5rQQBxf:21 a=7Xb5lxL9i_YMrfAL:21 a=wPNLvfGTeEIA:10
-    a=oJz5jJLG1JtSoe7EL652:22
+    a=Lf-vpJhqX20A:10 a=i0EeH86SAAAA:8 a=VwQbUJbxAAAA:8 a=UtV5FjuMAAAA:8
+    a=o8Bf2xIQAAAA:8 a=IXr_WNlcAAAA:8 a=yPCof4ZbAAAA:8 a=pGLkceISAAAA:8
+    a=Z4Rwk6OoAAAA:8 a=yMhMjlubAAAA:8 a=FreliyUT6uAS0AdjSgsA:9 a=wPNLvfGTeEIA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=ehT88nhQmDs7a44Z_RBH:22 a=kLeBEu5l8tkQtVp4YdQK:22
+    a=K24ECnMRWNUKRqF_MnsZ:22 a=HkZW87K1Qel5hWWM3VKY:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752121AbeDIDtM (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 8 Apr 2018 23:49:12 -0400
-Received: from mail-bn3nam01on0100.outbound.protection.outlook.com ([104.47.33.100]:20288
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S1754122AbeDIAUF (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 8 Apr 2018 20:20:05 -0400
+Received: from mail-sn1nam02on0102.outbound.protection.outlook.com ([104.47.36.102]:30848
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754064AbeDIATb (ORCPT <rfc822;stable@vger.kernel.org>);
-        Sun, 8 Apr 2018 20:19:31 -0400
+        id S1754085AbeDIATf (ORCPT <rfc822;stable@vger.kernel.org>);
+        Sun, 8 Apr 2018 20:19:35 -0400
 From: Sasha Levin <Alexander.Levin@microsoft.com>
 To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Christoph Hellwig <hch@lst.de>, Palmer Dabbelt <palmer@sifive.com>,
+CC: piaojun <piaojun@huawei.com>, Mark Fasheh <mfasheh@versity.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.15 110/189] riscv: disable SUM in the exception
- handler
-Thread-Topic: [PATCH AUTOSEL for 4.15 110/189] riscv: disable SUM in the
- exception handler
-Thread-Index: AQHTz5g/xo90ID6+0UGf0YFrIE8+dw==
-Date: Mon, 9 Apr 2018 00:18:13 +0000
-Message-ID: <20180409001637.162453-110-alexander.levin@microsoft.com>
+Subject: [PATCH AUTOSEL for 4.15 118/189] ocfs2: return error when we attempt
+ to access a dirty bh in jbd2
+Thread-Topic: [PATCH AUTOSEL for 4.15 118/189] ocfs2: return error when we
+ attempt to access a dirty bh in jbd2
+Thread-Index: AQHTz5hDAbfzY7ZqZE2JsfzWCSYbNA==
+Date: Mon, 9 Apr 2018 00:18:19 +0000
+Message-ID: <20180409001637.162453-118-alexander.levin@microsoft.com>
 References: <20180409001637.162453-1-alexander.levin@microsoft.com>
 In-Reply-To: <20180409001637.162453-1-alexander.levin@microsoft.com>
 Accept-Language: en-US
@@ -89,81 +96,132 @@ X-MS-Has-Attach:
 X-MS-TNEF-Correlator: 
 x-originating-ip: [52.168.54.252]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1063;7:40G2cevw1GIzcXrJXhL2U9sBLcpBErTz37L8zIposRjb0HBSuw1MuLBRY+VQPX+qy5s4KXoZw6uLF+jVCaYn3p2zrrg9tvfaQcuoVc3I58PzVNbKDXk3yitxBQXb3xbKhlSThemwsN61xX3bzAOZc8Z6VpQfqFwB2tUyqH3QafUwhwGdh4oeOgETG7N4n7jBCm36JchF/1Zv7ScZDGON0ROle67cxSGtEdBiAsRgAmsTJWBU+pRyH80nyr2e8TS+;20:/1iw9l7OvqsBjr+o97zbxONkbr7dwJKYU7qoIqcbJi8MW/PlbmceVjIGLSU7CT77+HYDTnwvDjBXTQiTI7nvnIWf/7l0DJnSg/JDH6Nzb+7zIZzhBdUqxznnugevqRE7e4D6eteB6DZimV45zkTqIMecxIAaZsjvGbMagYLAFP4=
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0726;7:Pzv/utd/0Sot7nBDzmLdnOSXrOv6QBk0p+TN9f4i+fx6H10lFESbpUTsp1OHm4vuokoEbVnAkJGnnm4gn3z8vGEZIC8JPIlx/9TSM/mcgEWATO4o2n/S0Im6UIHG0bOMOuh/SqwGYo2LVoXebwm5GZAAWvg4RXEe3hyVdwZrUe3lXP40uyRquut34IX/wJG7q5XrSOZTHVTi4wqLIUjDnJPdslRi+6bruPWNQniBGbHMXR+cG77BTAoVprk5yXiV;20:n+f8o47McnuMIKTZEk4vvVHIMl4kIf7rMImsYCoQKCagz6FPFeZceIRrcnjpq3YZvAUAF/1exltYe2x/nrBaOnnbSV5rU/h0BOJOndmEu7gJTwQEN0DffXF1YnkSzIgGz/p4os+jo9hx4z3Ajr/S56BB5nLH1zN/vNk5C2OOfPc=
 x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 2832af2a-fc41-4d0e-ba3a-08d59daf8ceb
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB1063;
-x-ms-traffictypediagnostic: DM5PR2101MB1063:
+X-MS-Office365-Filtering-Correlation-Id: 585d644c-0690-42ef-bfa5-08d59daf8f5e
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0726;
+x-ms-traffictypediagnostic: DM5PR2101MB0726:
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB1063537CF061EF0EE377243FFBBF0@DM5PR2101MB1063.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB1063;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1063;
+x-microsoft-antispam-prvs: <DM5PR2101MB072613DF772E42EF8334D0FFFBBF0@DM5PR2101MB0726.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(50582790962513)(85827821059158)(42068640409301)(146099531331640);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR2101MB0726;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0726;
 x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(39860400002)(376002)(396003)(366004)(189003)(199004)(2900100001)(6436002)(7736002)(10090500001)(102836004)(3660700001)(6506007)(76176011)(305945005)(4326008)(5250100002)(97736004)(26005)(25786009)(6512007)(2906002)(81166006)(106356001)(107886003)(68736007)(14454004)(86612001)(66066001)(10290500003)(59450400001)(6666003)(5660300001)(81156014)(478600001)(476003)(486006)(6486002)(72206003)(3280700002)(99286004)(105586002)(36756003)(1076002)(2616005)(11346002)(53936002)(446003)(8676002)(186003)(3846002)(54906003)(6116002)(2501003)(8936002)(316002)(110136005)(86362001)(22452003)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1063;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: VIP7CAy98ceYcJF62IE/GH9CVNi0qP0hHQlpejAMQTV+jEASv3pQXAlr+48Htdt0no0ZlDerIhpPTehBKHOThGv9sEynTBDf9y564hGNxL6cGcprUZeXUDRtuM1ZhN/N4t/kemVFS83YD/pYd1w74k61/jzgpw/+OkWAhoFCEp7MiwSw+yMYTL7UXEEt5ZvMUvMgwyl/0oC0i+dvBFsnvHiBSSV/stJ893w3v+zFQ5zX3bYW8Ios5aeJ4sDY3UqhT6XT4Q710rxjfDH4W4p5Cap7/NrfhBrQs2uiATPXt6zBphtmzVPCm78/jGjhCay/PIaOzmQ4MP9GTuGQ3klzTXWv9up5Zy3bMDG7s/TRRXjhLW+JjSN9NC32AGa3sxro95nafFJG0HQ12Vl06gDExG/P/8sbQq1+NHfooq7Gtc8=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(39380400002)(39860400002)(396003)(376002)(43544003)(199004)(189003)(39060400002)(6306002)(6486002)(26005)(6512007)(4326008)(81166006)(6666003)(6436002)(81156014)(8676002)(97736004)(186003)(36756003)(72206003)(53936002)(107886003)(2906002)(966005)(86362001)(76176011)(110136005)(305945005)(10090500001)(486006)(551934003)(3660700001)(102836004)(5660300001)(14454004)(476003)(86612001)(446003)(99286004)(68736007)(66066001)(11346002)(54906003)(2616005)(1076002)(7736002)(5250100002)(25786009)(8936002)(478600001)(2900100001)(2501003)(3280700002)(105586002)(59450400001)(316002)(106356001)(22452003)(6506007)(3846002)(10290500003)(6116002)(22906009)(14143004)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0726;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: LrfDceaoITrKbbQ6ppETsHfHO1p1wScMvDTGA29RVrxbdYQXE8QshiMtsfr9a5lZYIg8e45ubnW4EzatDSZaixCT47Rr8hPaDvwcc+pUcVqUp4CkQ0nk3iWHEtVtrw2CM3/RCmCswncEdrOeTNHDjsW7Gj5FelXPQjSDdT2gejn+oTpAlke54bnHoAzG9qPAun3MeF3gU3CiAoXFjyIaD0T+5HuOR9qbhEbqiJFHWAGVsDYFxW5K/JmceU1ibjBzWvdd9gTzo67sZuEzRrphz13MKc/wYit6iMeYpGhbCeRVqLscf9S95uqM88j5w8bKLG7iuFk4K0P8nHgk3OPpBOuYGXw5+6L46NFbjf8Jksh8g2aXdDVPUsVzD4cdyLNX+MvTPwXrSDOVKpwFpfv4UzpWtc6k2i+Sd4ZOMjsbSL4=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2832af2a-fc41-4d0e-ba3a-08d59daf8ceb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:18:13.2248
+X-MS-Exchange-CrossTenant-Network-Message-Id: 585d644c-0690-42ef-bfa5-08d59daf8f5e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:18:19.7556
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1063
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0726
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Christoph Hellwig <hch@lst.de>
+From: piaojun <piaojun@huawei.com>
 
-[ Upstream commit fe9b842f72921fb18b93cf47a255f374289ef242 ]
+[ Upstream commit d984187e3a1ad7d12447a7ab2c43ce3717a2b5b3 ]
 
-The SUM bit is enabled at the beginning of the copy_{to,from}_user and
-{get,put}_user routines, and cleared before they return.  But these user
-copy helper can be interrupted by exceptions, in which case the SUM bit
-will remain set, which leads to elevated privileges for the code running
-in exception context, as that can now access userspace address space
-unconditionally.  This frequently happens when the user copy routines
-access freshly allocated user memory that hasn't been faulted in, and a
-pagefault needs to be taken before the user copy routines can continue.
+We should not reuse the dirty bh in jbd2 directly due to the following
+situation:
 
-Fix this by unconditionally clearing SUM when the exception handler is
-called - the restore code will automatically restore it based on the
-saved value.
+1. When removing extent rec, we will dirty the bhs of extent rec and
+   truncate log at the same time, and hand them over to jbd2.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+2. The bhs are submitted to jbd2 area successfully.
+
+3. The write-back thread of device help flush the bhs to disk but
+   encounter write error due to abnormal storage link.
+
+4. After a while the storage link become normal. Truncate log flush
+   worker triggered by the next space reclaiming found the dirty bh of
+   truncate log and clear its 'BH_Write_EIO' and then set it uptodate in
+   __ocfs2_journal_access():
+
+   ocfs2_truncate_log_worker
+     ocfs2_flush_truncate_log
+       __ocfs2_flush_truncate_log
+         ocfs2_replay_truncate_records
+           ocfs2_journal_access_di
+             __ocfs2_journal_access // here we clear io_error and set 'tl_b=
+h' uptodata.
+
+5. Then jbd2 will flush the bh of truncate log to disk, but the bh of
+   extent rec is still in error state, and unfortunately nobody will
+   take care of it.
+
+6. At last the space of extent rec was not reduced, but truncate log
+   flush worker have given it back to globalalloc. That will cause
+   duplicate cluster problem which could be identified by fsck.ocfs2.
+
+Sadly we can hardly revert this but set fs read-only in case of ruining
+atomicity and consistency of space reclaim.
+
+Link: http://lkml.kernel.org/r/5A6E8092.8090701@huawei.com
+Fixes: acf8fdbe6afb ("ocfs2: do not BUG if buffer not uptodate in __ocfs2_j=
+ournal_access")
+Signed-off-by: Jun Piao <piaojun@huawei.com>
+Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Cc: Mark Fasheh <mfasheh@versity.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 ---
- arch/riscv/kernel/entry.S | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ fs/ocfs2/journal.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 7404ec222406..87fc045be51f 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -78,10 +78,13 @@ _save_context:
- 	REG_S x31, PT_T6(sp)
+diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+index 36304434eacf..e5dcea6cee5f 100644
+--- a/fs/ocfs2/journal.c
++++ b/fs/ocfs2/journal.c
+@@ -666,23 +666,24 @@ static int __ocfs2_journal_access(handle_t *handle,
+ 	/* we can safely remove this assertion after testing. */
+ 	if (!buffer_uptodate(bh)) {
+ 		mlog(ML_ERROR, "giving me a buffer that's not uptodate!\n");
+-		mlog(ML_ERROR, "b_blocknr=3D%llu\n",
+-		     (unsigned long long)bh->b_blocknr);
++		mlog(ML_ERROR, "b_blocknr=3D%llu, b_state=3D0x%lx\n",
++		     (unsigned long long)bh->b_blocknr, bh->b_state);
 =20
- 	/*
--	 * Disable FPU to detect illegal usage of
--	 * floating point in kernel space
-+	 * Disable user-mode memory access as it should only be set in the
-+	 * actual user copy routines.
-+	 *
-+	 * Disable the FPU to detect illegal usage of floating point in kernel
-+	 * space.
- 	 */
--	li t0, SR_FS
-+	li t0, SR_SUM | SR_FS
-=20
- 	REG_L s0, TASK_TI_USER_SP(tp)
- 	csrrc s1, sstatus, t0
+ 		lock_buffer(bh);
+ 		/*
+-		 * A previous attempt to write this buffer head failed.
+-		 * Nothing we can do but to retry the write and hope for
+-		 * the best.
++		 * A previous transaction with a couple of buffer heads fail
++		 * to checkpoint, so all the bhs are marked as BH_Write_EIO.
++		 * For current transaction, the bh is just among those error
++		 * bhs which previous transaction handle. We can't just clear
++		 * its BH_Write_EIO and reuse directly, since other bhs are
++		 * not written to disk yet and that will cause metadata
++		 * inconsistency. So we should set fs read-only to avoid
++		 * further damage.
+ 		 */
+ 		if (buffer_write_io_error(bh) && !buffer_uptodate(bh)) {
+-			clear_buffer_write_io_error(bh);
+-			set_buffer_uptodate(bh);
+-		}
+-
+-		if (!buffer_uptodate(bh)) {
+ 			unlock_buffer(bh);
+-			return -EIO;
++			return ocfs2_error(osb->sb, "A previous attempt to "
++					"write this buffer head failed\n");
+ 		}
+ 		unlock_buffer(bh);
+ 	}
 --=20
 2.15.1
