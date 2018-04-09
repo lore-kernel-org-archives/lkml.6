@@ -1,62 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754807AbeDIUIl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 16:08:41 -0400
-Received: from mail-pf0-f181.google.com ([209.85.192.181]:34830 "EHLO
-        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754782AbeDIUIe (ORCPT
+        id S1754864AbeDIUJ0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 16:09:26 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:34210 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754792AbeDIUIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 16:08:34 -0400
-X-Google-Smtp-Source: AIpwx4/Uwschzs0zc5ElY5OXA1n0SdXgRPAuuz4sakKjG6pG8MNb8WrQdU5q2wt0Jvx3LUuvFlegdQ==
-Date: Mon, 9 Apr 2018 13:08:31 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Christoph Hellwig <hch@infradead.org>
-cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-doc@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>,
-        mhocko@kernel.org, aneesh.kumar@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, mpe@ellerman.id.au,
-        benh@kernel.crashing.org, paulus@samba.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Vineet Gupta <vgupta@synopsys.com>, Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <albert@sifive.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [PATCH 2/3] mm: replace __HAVE_ARCH_PTE_SPECIAL
-In-Reply-To: <20180409175757.GA12938@infradead.org>
-Message-ID: <alpine.DEB.2.21.1804091307480.56406@chino.kir.corp.google.com>
-References: <1523282229-20731-1-git-send-email-ldufour@linux.vnet.ibm.com> <1523282229-20731-3-git-send-email-ldufour@linux.vnet.ibm.com> <20180409175757.GA12938@infradead.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 9 Apr 2018 16:08:40 -0400
+X-Google-Smtp-Source: AIpwx4+06PZsxgISfv3W2dp4zG3bEAbXTZpUkfwEmKDcb1AyBX3nz65AyBo4ukl9s8K47bWKjTp3YA==
+Date: Mon, 9 Apr 2018 13:09:04 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: martin.petersen@oracle.com, kishon@ti.com, jejb@linux.vnet.ibm.com,
+        subhashj@codeaurora.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/1] scsi/ufs: qcom: Don't enable PHY_QCOM_UFS by default
+Message-ID: <20180409200904.GL453@tuxbook-pro>
+References: <20180409132404.20876-1-vivek.gautam@codeaurora.org>
+ <20180409165127.GK453@tuxbook-pro>
+ <2588cd12-081a-5fad-7ef5-af78b18168eb@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2588cd12-081a-5fad-7ef5-af78b18168eb@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Apr 2018, Christoph Hellwig wrote:
+On Mon 09 Apr 10:38 PDT 2018, Vivek Gautam wrote:
+> On 4/9/2018 10:21 PM, Bjorn Andersson wrote:
+> > On Mon 09 Apr 06:24 PDT 2018, Vivek Gautam wrote:
+[..]
+> > > diff --git a/include/linux/phy/phy-qcom-ufs.h b/include/linux/phy/phy-qcom-ufs.h
+> > > index 0a2c18a9771d..1388c2a2965e 100644
+> > > --- a/include/linux/phy/phy-qcom-ufs.h
+> > > +++ b/include/linux/phy/phy-qcom-ufs.h
+> > > @@ -31,8 +31,21 @@ void ufs_qcom_phy_enable_dev_ref_clk(struct phy *phy);
+> > >    */
+> > >   void ufs_qcom_phy_disable_dev_ref_clk(struct phy *phy);
+> > > +#if IS_ENABLED(CONFIG_PHY_QCOM_UFS)
+> > >   int ufs_qcom_phy_set_tx_lane_enable(struct phy *phy, u32 tx_lanes);
+> > >   void ufs_qcom_phy_save_controller_version(struct phy *phy,
+> > > -			u8 major, u16 minor, u16 step);
+> > > +					  u8 major, u16 minor, u16 step);
+> > > +#else
+> > > +static inline int ufs_qcom_phy_set_tx_lane_enable(struct phy *phy, u32 tx_lanes)
+> > > +{
+> > > +	return -ENOSYS;
+> > > +}
+> > > +
+> > > +static inline void ufs_qcom_phy_save_controller_version(struct phy *phy,
+> > > +							u8 major, u16 minor,
+> > > +							u16 step)
+> > > +{
+> > > +}
+> > > +#endif /* PHY_QCOM_UFS */
+> > What's the timeline for getting rid of the references to these
+> > functions? I presume that code depending on these being here will
+> > compile but won't actually work?
+> 
+> Yes, these inline definitions are just to keep ufs-qcom happy with the
+> direct
+> calls that it makes to these functions.
+> As you would know these couple of functions are just used by the 20nm phy.
+> However, we don't have any platform yet in the upstream that enables this
+> phy.
+> I am hoping that we will eventually get rid of these functions when we
+> further
+> clean up ufs-qcom driver.
+> 
 
-> > -#ifdef __HAVE_ARCH_PTE_SPECIAL
-> > +#ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
-> >  # define HAVE_PTE_SPECIAL 1
-> >  #else
-> >  # define HAVE_PTE_SPECIAL 0
-> 
-> I'd say kill this odd indirection and just use the
-> CONFIG_ARCH_HAS_PTE_SPECIAL symbol directly.
-> 
-> 
+I see, but that means that we're calling this function with a struct phy
+that might not be a struct ufs_qcom_phy and as such a defconfig with
+both enabled will have undefined outcome for the migrated phys.
 
-Agree, and I think it would be easier to audit/review if patches 1 and 3 
-were folded together to see the relationship between the newly added 
-selects and what #define's it is replacing.  Otherwise, looks good!
+In particular we do expect that the same kernel will boot on db820c and
+sdm845-mtp, so we will have to enable support for the 14nm & 20nm phy
+driver (and we don't want random crashes because someone happened to
+enable it).
+
+
+So either we add the 10nm support to the existing driver or I think we
+should migrate, at least, the 14nm support to the QMP driver (and mark
+the remaining 20nm BROKEN for now).
+
+Regardless of the path chosen this should be cleaned up to the point
+where all three phys are supported.
+
+Regards,
+Bjorn
