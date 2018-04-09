@@ -1,79 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752663AbeDINcL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:32:11 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:34080 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752136AbeDINby (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752598AbeDINby (ORCPT <rfc822;w@1wt.eu>);
         Mon, 9 Apr 2018 09:31:54 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w39DVh16027797
-X-Nifty-SrcIP: [209.85.217.175]
-X-Google-Smtp-Source: AIpwx48Yu88yFQKgyd6ZWs1rRwEG7zA+feCGJHeUhOzYcFvZE6S/RfthsKEbmiLgPZagsAwXi83S4eSdqooYQZbvlhQ=
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6732 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752364AbeDINbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 09:31:19 -0400
+From: Dongjiu Geng <gengdongjiu@huawei.com>
+To: <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@linaro.org>,
+        <marc.zyngier@arm.com>, <james.morse@arm.com>, <linux@armlinux.org.uk>,
+        <catalin.marinas@arm.com>, <rjw@rjwysocki.net>, <bp@alien8.de>,
+        <lenb@kernel.org>, <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>, <linux-acpi@vger.kernel.org>,
+        <devel@acpica.org>
+CC: <gengdongjiu@huawei.com>, <huangshaoyu@huawei.com>,
+        <zhengxiang9@huawei.com>
+Subject: [PATCH v11 4/4] arm64: handle NOTIFY_SEI notification by the APEI driver
+Date: Tue, 10 Apr 2018 05:36:36 +0800
+Message-ID: <1523309796-36423-5-git-send-email-gengdongjiu@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1523309796-36423-1-git-send-email-gengdongjiu@huawei.com>
+References: <1523309796-36423-1-git-send-email-gengdongjiu@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20180408213528.26758-1-linux@rasmusvillemoes.dk>
-References: <CAK7LNARvTJJR=fa9_NyvwfX9z+f51Ha9XQzLrmVakVWUV4eAQw@mail.gmail.com>
- <20180408213528.26758-1-linux@rasmusvillemoes.dk>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 9 Apr 2018 22:31:02 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARmy0COjgWgSa7uB426Me_jAmeJCDSQkJWZoTVwqoA1CA@mail.gmail.com>
-Message-ID: <CAK7LNARmy0COjgWgSa7uB426Me_jAmeJCDSQkJWZoTVwqoA1CA@mail.gmail.com>
-Subject: Re: [PATCH v2] Kbuild: fix # escaping in .cmd files for future Make
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.143.28.90]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w39DWH8I005583
 
-2018-04-09 6:35 GMT+09:00 Rasmus Villemoes <linux@rasmusvillemoes.dk>:
-> I tried building using a freshly built Make (4.2.1-69-g8a731d1), but
-> already the objtool build broke with
->
-> orc_dump.c: In function ‘orc_dump’:
-> orc_dump.c:106:2: error: ‘elf_getshnum’ is deprecated [-Werror=deprecated-declarations]
->   if (elf_getshdrnum(elf, &nr_sections)) {
->
-> Turns out that with that new Make, the backslash was not removed, so cpp
-> didn't see a #include directive, grep found nothing, and
-> -DLIBELF_USE_DEPRECATED was wrongly put in CFLAGS.
->
-> Now, that new Make behaviour is documented in their NEWS file:
->
->   * WARNING: Backward-incompatibility!
->     Number signs (#) appearing inside a macro reference or function invocation
->     no longer introduce comments and should not be escaped with backslashes:
->     thus a call such as:
->       foo := $(shell echo '#')
->     is legal.  Previously the number sign needed to be escaped, for example:
->       foo := $(shell echo '\#')
->     Now this latter will resolve to "\#".  If you want to write makefiles
->     portable to both versions, assign the number sign to a variable:
->       C := \#
->       foo := $(shell echo '$C')
->     This was claimed to be fixed in 3.81, but wasn't, for some reason.
->     To detect this change search for 'nocomment' in the .FEATURES variable.
->
-> This also fixes up the two make-cmd instances to replace # with $(pound)
-> rather than with \#. There might very well be other places that need
-> similar fixup in preparation for whatever future Make release contains
-> the above change, but at least this builds an x86_64 defconfig with the
-> new make.
->
-> Fixes: https://bugzilla.kernel.org/show_bug.cgi?id=197847
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> ---
+Add a helper to handle the NOTIFY_SEI notification, when kernel
+gets the NOTIFY_SEI notification, call this helper and let APEI
+driver to handle this notification.
 
-Applied to linux-kbuild.  Thanks!
+Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+---
+ arch/arm64/include/asm/system_misc.h |  1 +
+ arch/arm64/kernel/traps.c            |  4 ++++
+ arch/arm64/mm/fault.c                | 10 ++++++++++
+ 3 files changed, 15 insertions(+)
 
-
+diff --git a/arch/arm64/include/asm/system_misc.h b/arch/arm64/include/asm/system_misc.h
+index 07aa8e3..9ee13ad 100644
+--- a/arch/arm64/include/asm/system_misc.h
++++ b/arch/arm64/include/asm/system_misc.h
+@@ -57,6 +57,7 @@ void hook_debug_fault_code(int nr, int (*fn)(unsigned long, unsigned int,
+ })
+ 
+ int handle_guest_sea(phys_addr_t addr, unsigned int esr);
++int handle_guest_sei(void);
+ 
+ #endif	/* __ASSEMBLY__ */
+ 
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index bbb0fde..d888eb2 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -681,6 +681,10 @@ bool arm64_is_fatal_ras_serror(struct pt_regs *regs, unsigned int esr)
+ {
+ 	u32 aet = arm64_ras_serror_get_severity(esr);
+ 
++	/* The APEI driver may handle this RAS error. */
++	if (!handle_guest_sei())
++		return false;
++
+ 	switch (aet) {
+ 	case ESR_ELx_AET_CE:	/* corrected error */
+ 	case ESR_ELx_AET_UEO:	/* restartable, not yet consumed */
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index f76bb2c..8f29bd8 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -683,6 +683,16 @@ int handle_guest_sea(phys_addr_t addr, unsigned int esr)
+ 	return ret;
+ }
+ 
++int handle_guest_sei(void)
++{
++	int ret = -ENOENT;
++
++	if (IS_ENABLED(CONFIG_ACPI_APEI_SEI))
++		ret = ghes_notify_sei();
++
++	return ret;
++}
++
+ asmlinkage void __exception do_mem_abort(unsigned long addr, unsigned int esr,
+ 					 struct pt_regs *regs)
+ {
 -- 
-Best Regards
-Masahiro Yamada
+1.9.1
