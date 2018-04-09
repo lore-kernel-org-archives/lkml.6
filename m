@@ -1,85 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752182AbeDIHih (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 03:38:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39910 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751770AbeDIHig (ORCPT
+        id S1752260AbeDIHkE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 03:40:04 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:54788 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751549AbeDIHkC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 03:38:36 -0400
-Date: Mon, 9 Apr 2018 09:38:27 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
-Cc: Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: uprobes/perf: KASAN: use-after-free in uprobe_perf_close
-Message-ID: <20180409073827.GS4082@hirez.programming.kicks-ass.net>
-References: <4da123ee-1ad1-fbd3-d5c0-bd9f5ed26434@lab.ntt.co.jp>
- <20180222163715.GA1485@redhat.com>
- <20180222170427.GQ25181@hirez.programming.kicks-ass.net>
- <20180222170947.GW25235@hirez.programming.kicks-ass.net>
- <20180222174041.GA2802@redhat.com>
- <35f890f7-1194-4509-a1e4-d63d1c7d22ab@lab.ntt.co.jp>
+        Mon, 9 Apr 2018 03:40:02 -0400
+X-Google-Smtp-Source: AIpwx4/82WV973lQcr1HXezl2ycTUSAQCNei9LcvOHO8sbpBq2Z3Kk1M2LZR1H4blEBOtleP+bgYjMC0GDB/5kbwfJQms6jYtIwY
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <35f890f7-1194-4509-a1e4-d63d1c7d22ab@lab.ntt.co.jp>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Date: Mon, 09 Apr 2018 00:40:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <94eb2c0ce3aa7551d30569658325@google.com>
+Subject: WARNING in notify_change
+From: syzbot <syzbot+2b74da47f048a5046135@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 06, 2018 at 06:49:10PM +0900, Prashant Bhole wrote:
-> Sorry for late reply. I tried these changes. It didn't fix the problem. With
+Hello,
 
-He, sorry for completely forgetting about this one :/
+syzbot hit the following crash on upstream commit
+3fd14cdcc05a682b03743683ce3a726898b20555 (Fri Apr 6 19:15:41 2018 +0000)
+Merge tag 'mtd/for-4.17' of git://git.infradead.org/linux-mtd
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=2b74da47f048a5046135
 
-> these changes, the use-after-free access of task_struct occurs at
-> _free_event() for the last remaining event.
-> 
-> In your changes, I tried keeping get/put_task_struct() in
-> perf_alloc_context()/put_ctx() intact and The problem did not occur. Changes
-> are mentioned below.
+So far this crash happened 3 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5084712116682752
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=6394049002995712
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=4711531803574272
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-5813481738265533882
+compiler: gcc (GCC) 8.0.1 20180301 (experimental)
 
-Yes, I think you're right in that this is the cleanest solution; it adds
-reference counting to the exact pointer we're using.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+2b74da47f048a5046135@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index c98cce4ceebd..65889d2b5ae2 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -4109,6 +4109,8 @@ static void _free_event(struct perf_event *event)
-> 
->  	if (event->ctx)
->  		put_ctx(event->ctx);
-> +	if (event->hw.target)
-> +		put_task_struct(event->hw.target);
-> 
->  	exclusive_event_destroy(event);
->  	module_put(event->pmu->module);
-> @@ -9593,6 +9595,7 @@ perf_event_alloc(struct perf_event_attr *attr, int
-> cpu,
->  		 * and we cannot use the ctx information because we need the
->  		 * pmu before we get a ctx.
->  		 */
-> +		get_task_struct(task);
->  		event->hw.target = task;
->  	}
-> 
-> @@ -9708,6 +9711,8 @@ perf_event_alloc(struct perf_event_attr *attr, int
-> cpu,
->  		perf_detach_cgroup(event);
->  	if (event->ns)
->  		put_pid_ns(event->ns);
-> +	if (task)
+WARNING: CPU: 1 PID: 4470 at fs/attr.c:213 notify_change+0xd94/0x10c0  
+fs/attr.c:213
+Kernel panic - not syncing: panic_on_warn set ...
 
-Should this not too be 'event->hw.target', for consistency and clarity?
+CPU: 1 PID: 4470 Comm: syzkaller570118 Not tainted 4.16.0+ #4
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  panic+0x22f/0x4de kernel/panic.c:183
+  __warn.cold.8+0x163/0x1a3 kernel/panic.c:547
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:991
+RIP: 0010:notify_change+0xd94/0x10c0 fs/attr.c:213
+RSP: 0018:ffff8801ad76f860 EFLAGS: 00010293
+RAX: ffff8801d9f66680 RBX: ffff8801d32d4630 RCX: ffffffff81c36578
+RDX: 0000000000000000 RSI: ffffffff81c371b4 RDI: 0000000000000007
+RBP: ffff8801ad76f930 R08: ffff8801d9f66680 R09: ffffed003a65a8e2
+R10: ffffed003a65a8e2 R11: ffff8801d32d4717 R12: 0000000000004200
+R13: ffff8801ad76f970 R14: ffff8801d5260ce0 R15: 1ffff10035aedf18
+  __remove_privs fs/inode.c:1813 [inline]
+  file_remove_privs+0x2bf/0x530 fs/inode.c:1835
+  __generic_file_write_iter+0x169/0x5e0 mm/filemap.c:3209
+  blkdev_write_iter+0x233/0x420 fs/block_dev.c:1908
+  call_write_iter include/linux/fs.h:1782 [inline]
+  new_sync_write fs/read_write.c:474 [inline]
+  __vfs_write+0x5bc/0x880 fs/read_write.c:487
+  vfs_write+0x1f8/0x560 fs/read_write.c:549
+  ksys_write+0xf9/0x250 fs/read_write.c:598
+  SYSC_write fs/read_write.c:610 [inline]
+  SyS_write+0x24/0x30 fs/read_write.c:607
+  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x445c59
+RSP: 002b:00007f76203b7d38 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445c59
+RDX: 0000000000000050 RSI: 0000000020000400 RDI: 0000000000000008
+RBP: 0000000000000005 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000293 R12: 00000000006dac20
+R13: 0000000000000006 R14: 0030656c69662f2e R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-> +		put_task_struct(task);
->  	kfree(event);
-> 
->  	return ERR_PTR(err);
+
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
