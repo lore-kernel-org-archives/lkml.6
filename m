@@ -1,174 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752551AbeDIJsT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 05:48:19 -0400
-Received: from mga14.intel.com ([192.55.52.115]:44797 "EHLO mga14.intel.com"
+        id S1752482AbeDIJ4G (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 05:56:06 -0400
+Received: from mga03.intel.com ([134.134.136.65]:20397 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751367AbeDIJsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 05:48:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1752061AbeDIJ4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 05:56:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,426,1517904000";
-   d="scan'208";a="35629637"
-Date: Mon, 9 Apr 2018 12:48:14 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Manfred Spraul <manfred@colorfullife.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] ipc/shm: fix use-after-free of shm file via
- remap_file_pages()
-Message-ID: <20180409094813.bsjc3u2hnsrdyiuk@black.fi.intel.com>
-References: <94eb2c06f65e5e2467055d036889@google.com>
- <20180409043039.28915-1-ebiggers3@gmail.com>
+   d="scan'208";a="35631042"
+Subject: Re: [PATCH v5 1/3] perf/core: store context switch out type into Perf
+ trace
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+References: <ff228fc5-5742-a5fe-8cad-79704742672c@linux.intel.com>
+ <9ff84e83-a0ca-dd82-a6d0-cb951689be74@linux.intel.com>
+ <20180409092603.GY4043@hirez.programming.kicks-ass.net>
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <37886fed-e39f-3aa1-d909-0c91e746adc7@linux.intel.com>
+Date: Mon, 9 Apr 2018 12:56:00 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180409043039.28915-1-ebiggers3@gmail.com>
-User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
+In-Reply-To: <20180409092603.GY4043@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 04:30:39AM +0000, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On 09.04.2018 12:26, Peter Zijlstra wrote:
+> On Mon, Apr 09, 2018 at 10:25:32AM +0300, Alexey Budankov wrote:
+>>
+>> Store preempting context switch out event into Perf trace as a part of 
+>> PERF_RECORD_SWITCH[_CPU_WIDE] record.
+>>
+>> Percentage of preempting and non-preempting context switches help 
+>> understanding the nature of workloads (CPU or IO bound) that are running 
+>> on a machine;
+>>
+>> The event is treated as preemption one when task->state value of the 
+>> thread being switched out is TASK_RUNNING. Event type encoding is 
+>> implemented using PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit;
+>> 	
+>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 > 
-> syzbot reported a use-after-free of shm_file_data(file)->file->f_op in
-> shm_get_unmapped_area(), called via sys_remap_file_pages().
-> Unfortunately it couldn't generate a reproducer, but I found a bug which
-> I think caused it.  When remap_file_pages() is passed a full System V
-> shared memory segment, the memory is first unmapped, then a new map is
-> created using the ->vm_file.  Between these steps, the shm ID can be
-> removed and reused for a new shm segment.  But, shm_mmap() only checks
-> whether the ID is currently valid before calling the underlying file's
-> ->mmap(); it doesn't check whether it was reused.  Thus it can use the
-> wrong underlying file, one that was already freed.
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > 
-> Fix this by making the "outer" shm file (the one that gets put in
-> ->vm_file) hold a reference to the real shm file, and by making
-> __shm_open() require that the file associated with the shm ID matches
-> the one associated with the "outer" file.
+> Acme, I'm thinking you should route this, since most of the changes are
+> actually to the tool.
 > 
-> Commit 1ac0b6dec656 ("ipc/shm: handle removed segments gracefully in
-> shm_mmap()") almost fixed this bug, but it didn't go far enough because
-> it didn't consider the case where the shm ID is reused.
+>> diff --git a/kernel/events/core.c b/kernel/events/core.c
+>> index fc1c330c6bd6..872a5aaa77eb 100644
+>> --- a/kernel/events/core.c
+>> +++ b/kernel/events/core.c
+>> @@ -7584,6 +7584,10 @@ static void perf_event_switch(struct task_struct *task,
+>>  		},
+>>  	};
+>>  
+>> +	if (!sched_in && task->state == TASK_RUNNING)
+>> +		switch_event.event_id.header.misc |=
+>> +				PERF_RECORD_MISC_SWITCH_OUT_PREEMPT;
+> 
+> I typically prefer {} over any multi-line expression.
 
-Right. Thanks for catching this.
+Yep, makes sense. Sorry for missing that here.
 
-> The following program usually reproduces this bug:
 > 
-> 	#include <stdlib.h>
-> 	#include <sys/shm.h>
-> 	#include <sys/syscall.h>
-> 	#include <unistd.h>
+>>  	perf_iterate_sb(perf_event_switch_output,
+>>  		       &switch_event,
+>>  		       NULL);
 > 
-> 	int main()
-> 	{
-> 		int is_parent = (fork() != 0);
-> 		srand(getpid());
-> 		for (;;) {
-> 			int id = shmget(0xF00F, 4096, IPC_CREAT|0700);
-> 			if (is_parent) {
-> 				void *addr = shmat(id, NULL, 0);
-> 				usleep(rand() % 50);
-> 				while (!syscall(__NR_remap_file_pages, addr, 4096, 0, 0, 0));
-> 			} else {
-> 				usleep(rand() % 50);
-> 				shmctl(id, IPC_RMID, NULL);
-> 			}
-> 		}
-> 	}
-> 
-> It causes the following NULL pointer dereference due to a 'struct file'
-> being used while it's being freed.  (I couldn't actually get a KASAN
-> use-after-free splat like in the syzbot report.  But I think it's
-> possible with this bug; it would just take a more extraordinary race...)
-> 
-> 	BUG: unable to handle kernel NULL pointer dereference at 0000000000000058
-> 	PGD 0 P4D 0
-> 	Oops: 0000 [#1] SMP NOPTI
-> 	CPU: 9 PID: 258 Comm: syz_ipc Not tainted 4.16.0-05140-gf8cf2f16a7c95 #189
-> 	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
-> 	RIP: 0010:d_inode include/linux/dcache.h:519 [inline]
-> 	RIP: 0010:touch_atime+0x25/0xd0 fs/inode.c:1724
-> 	[...]
-> 	Call Trace:
-> 	 file_accessed include/linux/fs.h:2063 [inline]
-> 	 shmem_mmap+0x25/0x40 mm/shmem.c:2149
-> 	 call_mmap include/linux/fs.h:1789 [inline]
-> 	 shm_mmap+0x34/0x80 ipc/shm.c:465
-> 	 call_mmap include/linux/fs.h:1789 [inline]
-> 	 mmap_region+0x309/0x5b0 mm/mmap.c:1712
-> 	 do_mmap+0x294/0x4a0 mm/mmap.c:1483
-> 	 do_mmap_pgoff include/linux/mm.h:2235 [inline]
-> 	 SYSC_remap_file_pages mm/mmap.c:2853 [inline]
-> 	 SyS_remap_file_pages+0x232/0x310 mm/mmap.c:2769
-> 	 do_syscall_64+0x64/0x1a0 arch/x86/entry/common.c:287
-> 	 entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> 
-> Reported-by: syzbot+d11f321e7f1923157eac80aa990b446596f46439@syzkaller.appspotmail.com
-> Fixes: c8d78c1823f4 ("mm: replace remap_file_pages() syscall with emulation")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  ipc/shm.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/ipc/shm.c b/ipc/shm.c
-> index acefe44fefefa..c80c5691a9970 100644
-> --- a/ipc/shm.c
-> +++ b/ipc/shm.c
-> @@ -225,6 +225,12 @@ static int __shm_open(struct vm_area_struct *vma)
->  	if (IS_ERR(shp))
->  		return PTR_ERR(shp);
->  
-> +	if (shp->shm_file != sfd->file) {
-> +		/* ID was reused */
-> +		shm_unlock(shp);
-> +		return -EINVAL;
-> +	}
-> +
->  	shp->shm_atim = ktime_get_real_seconds();
->  	ipc_update_pid(&shp->shm_lprid, task_tgid(current));
->  	shp->shm_nattch++;
-> @@ -455,8 +461,9 @@ static int shm_mmap(struct file *file, struct vm_area_struct *vma)
->  	int ret;
->  
->  	/*
-> -	 * In case of remap_file_pages() emulation, the file can represent
-> -	 * removed IPC ID: propogate shm_lock() error to caller.
-> +	 * In case of remap_file_pages() emulation, the file can represent an
-> +	 * IPC ID that was removed, and possibly even reused by another shm
-> +	 * segment already.  Propagate this case as an error to caller.
->  	 */
->  	ret = __shm_open(vma);
->  	if (ret)
-> @@ -480,6 +487,7 @@ static int shm_release(struct inode *ino, struct file *file)
->  	struct shm_file_data *sfd = shm_file_data(file);
->  
->  	put_ipc_ns(sfd->ns);
-> +	fput(sfd->file);
->  	shm_file_data(file) = NULL;
->  	kfree(sfd);
->  	return 0;
-> @@ -1432,7 +1440,7 @@ long do_shmat(int shmid, char __user *shmaddr, int shmflg,
->  	file->f_mapping = shp->shm_file->f_mapping;
->  	sfd->id = shp->shm_perm.id;
->  	sfd->ns = get_ipc_ns(ns);
-> -	sfd->file = shp->shm_file;
-> +	sfd->file = get_file(shp->shm_file);
->  	sfd->vm_ops = NULL;
->  
->  	err = security_mmap_file(file, prot, flags);
-
-Hm. Why do we need sfd->file refcounting now? It's not obvious to me.
-
-Looks like it's either a separate bug or an unneeded change.
-
--- 
- Kirill A. Shutemov
