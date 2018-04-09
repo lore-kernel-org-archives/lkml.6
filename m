@@ -1,86 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753560AbeDIWFB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 18:05:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45662 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751611AbeDIWE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 18:04:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64E8C21785
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Mon, 9 Apr 2018 18:04:54 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: kernel test robot <xiaolong.ye@intel.com>
-Cc: linux-kernel@vger.kernel.org, lkp@01.org
-Subject: Re: [lkp-robot] [init, tracing]  2580d6b795:
- BUG:kernel_reboot-without-warning_in_boot_stage
-Message-ID: <20180409180454.1310abea@gandalf.local.home>
-In-Reply-To: <20180409053252.GB27349@yexl-desktop>
-References: <20180406191334.357550809@goodmis.org>
-        <20180409053252.GB27349@yexl-desktop>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752212AbeDIWM0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 18:12:26 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:35053 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751624AbeDIWMW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 18:12:22 -0400
+X-Google-Smtp-Source: AIpwx49J/T361yrsX7bFVgS16YKP25E5SCh67BqEOCfL979MZzLdBFGjoJRB9EcUcTeGwWckf6txqw==
+Date: Mon, 9 Apr 2018 15:12:18 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, linux-ide@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert "ata: ahci-platform: add reset control support"
+Message-ID: <20180409221218.GJ3126663@devbig577.frc2.facebook.com>
+References: <1523237554-7928-1-git-send-email-hayashi.kunihiko@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523237554-7928-1-git-send-email-hayashi.kunihiko@socionext.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Apr 2018 13:32:52 +0800
-kernel test robot <xiaolong.ye@intel.com> wrote:
+On Mon, Apr 09, 2018 at 10:32:34AM +0900, Kunihiko Hayashi wrote:
+> This reverts commit f0f56716fc3e5d547fd7811eb218a30ed0695605.
+> 
+> According to Thierry's view,
+> https://www.spinics.net/lists/linux-ide/msg55357.html
+> some hardware-specific drivers already use their own resets,
+> and the common reset might make a path to occur double controls of resets.
+> 
+> For now, revert the commit that adds reset control support to ahci-platform,
+> and hold until the solution is confirmed not be affect all hardware-specific
+> drivers.
+> 
+> Fixes: f0f56716fc3e ("ata: ahci-platform: add reset control support")
+> Reported-by: Thierry Reding <thierry.reding@gmail.com>
+> Suggested-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 
-> FYI, we noticed the following commit (built with gcc-7):
-> 
-> commit: 2580d6b795e25879c825a0891cf67390f665b11f ("init, tracing: Have printk come through the trace events for initcall_debug")
-> url: https://github.com/0day-ci/linux/commits/Steven-Rostedt/init-tracing/20180407-130743
-> 
-> 
-> in testcase: boot
-> 
-> on test machine: qemu-system-x86_64 -enable-kvm -cpu Nehalem -smp 2 -m 512M
-> 
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> 
-> 
-> +------------------------------------------------------------------+------------+------------+
-> |                                                                  | ecf6709d07 | 2580d6b795 |
-> +------------------------------------------------------------------+------------+------------+
-> | boot_successes                                                   | 0          | 0          |
-> | boot_failures                                                    | 8          | 8          |
-> | invoked_oom-killer:gfp_mask=0x                                   | 8          |            |
-> | Mem-Info                                                         | 8          |            |
-> | Kernel_panic-not_syncing:Out_of_memory_and_no_killable_processes | 8          |            |
-> | BUG:kernel_reboot-without-warning_in_boot_stage                  | 0          | 8          |
-> +------------------------------------------------------------------+------------+------------+
+Applied to libata/for-4.17-fixes.
 
-What does this mean?
+Thanks.
 
-> 
-> 
-> 
-> [    0.000000] RAMDISK: [mem 0x1b7e2000-0x1ffcffff]
-> [    0.000000] ACPI: Early table checksum verification disabled
-> [    0.000000] ACPI: RSDP 0x00000000000F6860 000014 (v00 BOCHS )
-> [    0.000000] ACPI: RSDT 0x000000001FFE1628 000030 (v01 BOCHS  BXPCRSDT 00000001 BXPC 00000001)
-> [    0.000000] ACPI: FACP 0x000000001FFE147C 000074 (v01 BOCHS  BXPCFACP 00000001 BXPC 00000001)
-> BUG: kernel reboot-without-warning in boot stage
-> 
-> Elapsed time: 10
-> 
-> #!/bin/bash
-> 
-> 
-> 
-> To reproduce:
-> 
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         bin/lkp qemu -k <bzImage> job-script  # job-script is attached in this email
-> 
-
-The config boots fine for me. But I don't have the setup to run the
-above and get it to work, nor the time to figure out why it doesn't
-work.
-
--- Steve
+-- 
+tejun
