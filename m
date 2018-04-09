@@ -1,52 +1,52 @@
 Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AIpwx4+NcO9BjHsw00Xs67mCCFRum1ltZsH54FkCSEHb+elaD9vt1zfVi2XMWbp6thnCg6XbJfEY
-ARC-Seal: i=1; a=rsa-sha256; t=1523517480; cv=none;
+X-Google-Smtp-Source: AIpwx4+J9hOGIYOu8V0q0XJv7f7QiB4ZhYB8ZOt/+afvJsrk566TFpTbRk2unPX6/7mDRmPKt28Z
+ARC-Seal: i=1; a=rsa-sha256; t=1523294236; cv=none;
         d=google.com; s=arc-20160816;
-        b=u0SzUDsoFaHV7swPzR8i6fIBMQnKBYH/daDjx12kHfG2vTfOH9VqMCnr4IcIkPQwQy
-         B9xGx/cYw8ndLW1xBnOEOoeeZCEzJCA8WzRqxBi/YP0bliXiUtNTrS0iMihTviry2vvd
-         DDyEfB/sXsLIw9GIaHeGT86QqqF+JhBR94LS8RsRoiz0FfCaIg99657GjgceIu51J+pM
-         lwAcUiVuDljonLHvNWkJIE6Zqi4VqqvsL/0mL1ONZ5UMl84tGhuqbRPaQ8uIuZodGosE
-         tYdXdFNWm2kIpjWSnjABuwB4TnSoiWUIvTyyRmPrV8OajkkOZqIHlvkFJ2TQ2nsCWQ03
-         Woig==
+        b=EE1rpZM1VbWENqhGULN+uvES5L7+JwmiRmrF78hRQcZm48MYtVvyRQyZHoexl0keR4
+         liUlb5cCRB12vLz3lTuhBprsa6e/g3IUf1kcGinx8yS+ajoXq1FLNJvTj6bCd8/9BNdk
+         sHXroYFkNM2ptA2s7RFvUvYWhIixT9hlVSTzHade2KKyffdCQK6DJpQIy5hsWrRUMsA7
+         /xgccmXGuro5y/YMBsmIxheyX3AKIqJfF1didr8crL9MHS3VuZ3o5MEeHJtnR3GDYTLj
+         hnVmgmzCv5NXzoNYLxlUi88+BrhDIKDbCkCrcgIIYJVIcxX0MqyqmfxeC2FSFU8c2sZW
+         H9Dg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=precedence:content-disposition:content-transfer-encoding
          :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
          :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=XLwqIQKRvhFs4MtxeLCHdkLfLtlMJU4SIboDwcl1EQM=;
-        b=UJ/5Se3e6noutUIlxFDZo2qRpYUXFCcMMAjvYNnxLwF/3j5BWYYg/dvBNUzRTIQ5ds
-         xiIIqVWrBdqP5My+IjXPo+SbsqxH4YleIzGmrbgz9IJibDFwBJ/jq5NSbLqpKbxinCU8
-         GBDb6sd8QkYhp6IchEKt67NBgMpl6Bj+5VhIkbh7JnWPMbxgqdAPFlhA76SRtPto3hbU
-         7As/SvYm1WrozxMc244zPfpP3VdZF0xC4D/vnWvHZ/yoxH/KSwxjwIlzzWW1kmjoPdJ7
-         f8YU4l71xi8axtaKonssoL+nYPOhkQuEiXmVtiRboiYD4rE5QLu3iM/IF63Q0sjyiFSF
-         x/VA==
+        bh=OArWgqfxvZYv9VKnxmLOwTPWeRrvPnsEb8bTt28NHoI=;
+        b=NzeTlzPyk8N+i1bwmBykPd/kNr+70RA0wOxds+JYM6Al7AHILdm2VBOdwf27aG8lU4
+         SeWVWXtme/DUUloFHqQhrjtPQGBygUPuRhG+ziWF8EMwuNx9ZqthtNL1R40cO2oBeg4B
+         yplAyS97Htu32R6VGsD/Pk/eHM9wTlPbmDeqJg7YJ3TGi/Un/+fy9Bbgh097/dLwZ6Bk
+         E7z3iEutgmhAGskISvCWXNkzojCgctw3wkvyA1kZrQk7rs5srufB+g56YPPRI9zmdf65
+         fHJxGafrFu6TczSOG1I1ypeUdLbDhxF1nPS9S6IpbNppOU/cmuC3atwDTixAeemA5i+P
+         KMfw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Thu, 12 Apr 2018 00:17:04 -0700
+Date: Mon, 9 Apr 2018 10:16:33 -0700
 Sender: tip tree robot <tipbot@zytor.com>
 From: tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-8c06c7740d191b9055cb9be920579d5ecdd26303@git.kernel.org>
-Cc: gregkh@linuxfoundation.org, peterz@infradead.org, tglx@linutronix.de,
-        namit@vmware.com, hpa@zytor.com, torvalds@linux-foundation.org,
-        keescook@google.com, luto@kernel.org, bp@alien8.de, hughd@google.com,
-        dwmw2@infradead.org, jgross@suse.com, mingo@kernel.org,
-        jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
-        arjan@linux.intel.com, dave.hansen@linux.intel.com,
-        dan.j.williams@intel.com, aarcange@redhat.com
-Reply-To: gregkh@linuxfoundation.org, peterz@infradead.org, tglx@linutronix.de,
-        namit@vmware.com, hpa@zytor.com, torvalds@linux-foundation.org,
-        keescook@google.com, luto@kernel.org, bp@alien8.de, hughd@google.com,
-        dwmw2@infradead.org, jgross@suse.com, jpoimboe@redhat.com,
-        mingo@kernel.org, arjan@linux.intel.com, linux-kernel@vger.kernel.org,
-        dave.hansen@linux.intel.com, dan.j.williams@intel.com,
-        aarcange@redhat.com
+Message-ID: <tip-0564258fb2cfe6876738665314445bf391f450e2@git.kernel.org>
+Cc: torvalds@linux-foundation.org, hughd@google.com, arjan@linux.intel.com,
+        luto@kernel.org, namit@vmware.com, aarcange@redhat.com,
+        gregkh@linuxfoundation.org, bp@alien8.de, dwmw2@infradead.org,
+        mingo@kernel.org, jgross@suse.com, keescook@google.com,
+        linux-kernel@vger.kernel.org, jpoimboe@redhat.com,
+        dave.hansen@linux.intel.com, hpa@zytor.com, tglx@linutronix.de,
+        peterz@infradead.org, dan.j.williams@intel.com
+Reply-To: aarcange@redhat.com, namit@vmware.com, gregkh@linuxfoundation.org,
+        arjan@linux.intel.com, luto@kernel.org, torvalds@linux-foundation.org,
+        hughd@google.com, jgross@suse.com, mingo@kernel.org,
+        keescook@google.com, bp@alien8.de, dwmw2@infradead.org,
+        linux-kernel@vger.kernel.org, jpoimboe@redhat.com, tglx@linutronix.de,
+        dan.j.williams@intel.com, peterz@infradead.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com
 In-Reply-To: <20180406205518.E3D989EB@viggo.jf.intel.com>
 References: <20180406205518.E3D989EB@viggo.jf.intel.com>
 To: linux-tip-commits@vger.kernel.org
 Subject: [tip:x86/pti] x86/pti: Leave kernel text global for !PCID
-Git-Commit-ID: 8c06c7740d191b9055cb9be920579d5ecdd26303
+Git-Commit-ID: 0564258fb2cfe6876738665314445bf391f450e2
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,16 +57,16 @@ Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597289777108065729?=
-X-GMAIL-MSGID: =?utf-8?q?1597523865553186234?=
+X-GMAIL-MSGID: =?utf-8?q?1597289777108065729?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  8c06c7740d191b9055cb9be920579d5ecdd26303
-Gitweb:     https://git.kernel.org/tip/8c06c7740d191b9055cb9be920579d5ecdd26303
+Commit-ID:  0564258fb2cfe6876738665314445bf391f450e2
+Gitweb:     https://git.kernel.org/tip/0564258fb2cfe6876738665314445bf391f450e2
 Author:     Dave Hansen <dave.hansen@linux.intel.com>
 AuthorDate: Fri, 6 Apr 2018 13:55:18 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 12 Apr 2018 09:06:00 +0200
+CommitDate: Mon, 9 Apr 2018 18:27:34 +0200
 
 x86/pti: Leave kernel text global for !PCID
 
