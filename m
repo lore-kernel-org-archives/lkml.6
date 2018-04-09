@@ -1,167 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752556AbeDIVY3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 17:24:29 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:35990 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751505AbeDIVYY (ORCPT
+        id S1752202AbeDIVaQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 17:30:16 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:54344 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751505AbeDIVaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 17:24:24 -0400
-Date: Mon, 9 Apr 2018 23:24:18 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To: Rob Herring <robh@kernel.org>
-Cc: Milo Kim <Milo.Kim@ti.com>, Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Tony Lindgren <tony@atomide.com>, Jingoo Han <jingoohan1@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCHv4 09/10] dt-bindings: mfd: ti-lmu: update for backlight
-Message-ID: <20180409212418.mc4yjau4hjdbdqbm@earth.universe>
-References: <20180330172414.26575-1-sebastian.reichel@collabora.co.uk>
- <20180330172414.26575-10-sebastian.reichel@collabora.co.uk>
- <20180409210638.hugfap4ega3bwgou@rob-hp-laptop>
+        Mon, 9 Apr 2018 17:30:13 -0400
+X-IronPort-AV: E=Sophos;i="5.48,429,1517846400";
+   d="scan'208";a="178618167"
+From: Bart Van Assche <Bart.VanAssche@wdc.com>
+To: "ming.lei@redhat.com" <ming.lei@redhat.com>
+CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "wakko@animx.eu.org" <wakko@animx.eu.org>
+Subject: Re: 4.15.14 crash with iscsi target and dvd
+Thread-Topic: 4.15.14 crash with iscsi target and dvd
+Thread-Index: AQHTyTSBb5uvLpZh0kGvcKoLkXFdJKPq6GkAgABbqICAAIUdgIAAU3eAgAAfGYCAAw0ygIADtuOAgAAFnoCAAAO2AIAChmAAgAAEUYCAAX/aAIAB6+aA
+Date: Mon, 9 Apr 2018 21:30:11 +0000
+Message-ID: <f9467e78ce05446e7a89f06713c36fb638d1b6ad.camel@wdc.com>
+References: <b68bf187c9cde1c36489fc5ab2187ca8750a1292.camel@wdc.com>
+         <20180401113721.GA8471@animx.eu.org> <20180401163604.GB25011@animx.eu.org>
+         <20180401182723.GA31755@animx.eu.org>
+         <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
+         <20180406014644.GA16112@animx.eu.org> <20180406020651.GB16112@animx.eu.org>
+         <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
+         <20180407165335.GA2515@animx.eu.org>
+         <1ff8d234cc565ba9701ce31899fca5faa597e050.camel@wdc.com>
+         <20180408160254.GA22869@animx.eu.org>
+In-Reply-To: <20180408160254.GA22869@animx.eu.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com;
+x-originating-ip: [184.169.45.4]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0704;7:P/jXO8gUwBtId6oCDoM1Ijme/mGVHFVix2NDdYr6mmmVhkR2vh23CcV2BnDnQMEOfh3RV0P327mAKoyj5Y1WkntpE6Hfo3LHLUyxy6yKgKo5upGX3d0havEFoo8xlvgUuaBWLzW9pyeWsfJN7yK5sCpa25rDxQ3wVHxASef9L+C7QrUam/azYE5KLdeiKjJ9QMncHdUSz6U71+X+XOZJYUPdSJamN4BT12P8UHM9mtHPbfyRhS/Ldbwci9KBmy22;20:8/HDcUUv9iN7Oryup8vWEtfXCid5qPtDgbhlOa00ZhUQvksXBA3FxcMRuO2mobgTkry3xXDHTEMqRdrHBqxyIGWLpYVelOxLkZ3KrYqL3dQ/4up0OMJSYEr6efP/s0SbXMh5mWJsakLy20LmLpNEzge5bgaYBjOFukiAD//G3uA=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+X-MS-Office365-Filtering-Correlation-Id: eb05e965-3f38-4934-0762-08d59e611342
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(3008032)(48565401081)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0704;
+x-ms-traffictypediagnostic: MWHPR04MB0704:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB0704FD8BF422800F7C7C194A98BF0@MWHPR04MB0704.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(788757137089)(67672495146484)(278021516957215)(15185016700835);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231221)(944501327)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:MWHPR04MB0704;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0704;
+x-forefront-prvs: 0637FCE711
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39380400002)(39860400002)(376002)(396003)(346002)(199004)(189003)(377424004)(6506007)(486006)(446003)(6486002)(575784001)(229853002)(86362001)(99286004)(118296001)(5640700003)(476003)(5660300001)(106356001)(316002)(8936002)(105586002)(76176011)(7736002)(2501003)(5250100002)(11346002)(97736004)(93886005)(2616005)(3660700001)(6306002)(6512007)(66066001)(81156014)(39060400002)(53936002)(6916009)(2351001)(59450400001)(2906002)(102836004)(25786009)(8676002)(81166006)(3280700002)(6246003)(68736007)(305945005)(26005)(6436002)(6116002)(72206003)(478600001)(966005)(54906003)(3846002)(4326008)(2900100001)(14454004)(36756003)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0704;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: L42KG6duqCmY4SLbGpgsnhCZL9s9/YP2xNIJLQWcENEG76EUYcbtC8nLXBF9PMKWrwJNtZ0wDFZ0DF291nqtMEk7tC+5jywLvc81E7hgwzeB0Yj3t46HCIhmPfv6FtPweyVqtmoanyBT75aTOtVwYMoCpW6SEQALIbebSaR2GoHSFIqSn2uCy5wi5JRHh0miKwOL9NbP8YMY2Gf7Ke8Lyx0Nap7CvCg7NOelKWCjT3lceaoUPPopKrOmMkxMKZ5ExRCnoKl4KRTGuq2PQKHvl4BY/14PRRzFGNfKSxFCdkSDmg/RxiCbO3bnsqHlgZ36eFhtjWKNqjpocwHvl0ZgzZB9YoaH2oMzx0S/Ytm6heqIlmW8lY5j9DARS+nIg2uMX9wtYfn1px51sYGxas7ofa5cnrF4F3AGUQoVNiVzWtE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C98B9809A64A8347B903667442CD7287@namprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4qhglwb5ohir5hrp"
-Content-Disposition: inline
-In-Reply-To: <20180409210638.hugfap4ega3bwgou@rob-hp-laptop>
-User-Agent: NeoMutt/20180323
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb05e965-3f38-4934-0762-08d59e611342
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 21:30:11.2872
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0704
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w39LUN3k009726
 
+On Sun, 2018-04-08 at 12:02 -0400, Wakko Warner wrote:
+> I finished with git bisect.  Here's the output:
+> 84c8590646d5b35804bac60eb58b145839b5893e is the first bad commit
+> commit 84c8590646d5b35804bac60eb58b145839b5893e
+> Author: Ming Lei <tom.leiming@gmail.com>
+> Date:   Fri Nov 11 20:05:32 2016 +0800
+> 
+>     target: avoid accessing .bi_vcnt directly
+>     
+>     When the bio is full, bio_add_pc_page() will return zero,
+>     so use this information tell when the bio is full.
+>     
+>     Also replace access to .bi_vcnt for pr_debug() with bio_segments().
+>     
+>     Reviewed-by: Christoph Hellwig <hch@lst.de>
+>     Signed-off-by: Ming Lei <tom.leiming@gmail.com>
+>     Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+>     Signed-off-by: Jens Axboe <axboe@fb.com>
+> 
+> :040000 040000 a3ebbb71c52ee4eb8c3be4d033b81179211bf704 de39a328dbd1b18519946b3ad46d9302886e0dd0 M      drivers
+> 
+> I did a diff between HEAD^ and HEAD and manually patched the file from
+> 4.15.14.  It's not an exact revert.  I'm running it now and it's working.
+> I'll do a better test later on.  Here's the patch:
+> 
+> --- a/drivers/target/target_core_pscsi.c	2018-02-04 14:31:31.077316617 -0500
+> +++ b/drivers/target/target_core_pscsi.c	2018-04-08 11:43:49.588641374 -0400
+> @@ -915,7 +915,9 @@
+>  					bio, page, bytes, off);
+>  			pr_debug("PSCSI: bio->bi_vcnt: %d nr_vecs: %d\n",
+>  				bio_segments(bio), nr_vecs);
+> -			if (rc != bytes) {
+> +			if (rc != bytes)
+> +				goto fail;
+> +			if (bio->bi_vcnt > nr_vecs) {
+>  				pr_debug("PSCSI: Reached bio->bi_vcnt max:"
+>  					" %d i: %d bio: %p, allocating another"
+>  					" bio\n", bio->bi_vcnt, i, bio);
 
---4qhglwb5ohir5hrp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Ming,
 
-Hi,
+Can you have a look at this? The start of this e-mail thread is available at
+https://www.mail-archive.com/linux-scsi@vger.kernel.org/msg72574.html.
 
-On Mon, Apr 09, 2018 at 04:06:38PM -0500, Rob Herring wrote:
-> On Fri, Mar 30, 2018 at 07:24:13PM +0200, Sebastian Reichel wrote:
-> > Update binding to integrate the backlight feature directly into
-> > the main node, as suggested by Rob Herring.
-> >=20
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> > ---
-> >  Documentation/devicetree/bindings/mfd/ti-lmu.txt | 119 ++++++++++++---=
---------
-> >  1 file changed, 60 insertions(+), 59 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/mfd/ti-lmu.txt b/Documen=
-tation/devicetree/bindings/mfd/ti-lmu.txt
-> > index c885cf89b8ce..b3433e95dfa5 100644
-> > --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> > +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> > @@ -28,10 +28,9 @@ Required properties:
-> > =20
-> >  Optional property:
-> >    - enable-gpios: A GPIO specifier for hardware enable pin.
-> > -
-> > -Required node:
-> > -  - backlight: All LMU devices have backlight child nodes.
-> > -               For the properties, please refer to [1].
-> > +  - pwm-names: Should be either "lmu-backlight" or unset
-> > +  - pwm: This should be a PWM specifier following ../pwm/pwm.txt and m=
-ust
-> > +         only be specified, if the backlight should be used in PWM mod=
-e.
-> > =20
-> >  Optional nodes:
-> >    - fault-monitor: Hardware fault monitoring driver for LM3633 and LM3=
-697.
-> > @@ -42,8 +41,31 @@ Optional nodes:
-> >    - leds: LED properties for LM3633. Please refer to [2].
-> >    - regulators: Regulator properties for LM3631 and LM3632.
-> >                  Please refer to [3].
-> > +  - bank0, bank1, bank2: This contains the backlight configuration
-> > +                         for each backlight control bank.
-> > +
-> > +Required properties in the bank subnodes:
-> > +  - label: A string describing the backlight. Should contain "keyboard"
-> > +           for a keyboard backlight and "lcd" for LCD panel backlights.
-> > +  - ti,led-sources: A list of channels, that should be driven. Each ch=
-annel
-> > +                    should only be driven by one bank.
-> > +
-> > +Optional properties in the bank subnodes:
-> > +  - default-brightness-level: Backlight initial brightness value.
-> > +                              Type is <u32>. It is set as soon as back=
-light
-> > +			      device is created.
-> > +			      0 ~ 2047 =3D LM3631, LM3632, LM3633, LM3695 and
-> > +					 LM3697
-> > +			      0 ~ 255  =3D LM3532
-> > +  - ti,ramp-up-ms, ti,ramp-down-ms: Light dimming effect properties.
-> > +				    Type is <u32>. Unit is millisecond.
-> > +					0 ~ 65 ms    =3D LM3532
-> > +					0 ~ 4000 ms  =3D LM3631
-> > +					0 ~ 16000 ms =3D LM3633 and LM3697
-> > +  - pwm-period: PWM period. Only valid in PWM brightness mode.
-> > +                Type is <u32>. If this property is missing, then contr=
-ol
-> > +		mode is set to I2C by default.
-> > =20
-> > -[1] ../leds/backlight/ti-lmu-backlight.txt
-> >  [2] ../leds/leds-lm3633.txt
-> >  [3] ../regulator/lm363x-regulator.txt
-> > =20
-> > @@ -53,14 +75,11 @@ lm3532@38 {
-> > =20
-> >  	enable-gpios =3D <&pioC 2 GPIO_ACTIVE_HIGH>;
-> > =20
-> > -	backlight {
-> > -		compatible =3D "ti,lm3532-backlight";
-> > -
-> > -		lcd {
-> > -			led-sources =3D <0 1 2>;
-> > -			ramp-up-msec =3D <30>;
-> > -			ramp-down-msec =3D <0>;
-> > -		};
-> > +	bank0 {
-> > +		label =3D "lcd";
-> > +		led-sources =3D <0 1 2>;
-> > +		ramp-up-msec =3D <30>;
-> > +		ramp-down-msec =3D <0>;
->=20
-> Looks like it was already wrong, but these are missing the vendor=20
-> prefixes.
+Thanks,
 
-Oops. I will add the vendor prefix.
-
->=20
-> >  	};
-> >  };
-> > =20
-> > @@ -105,13 +124,10 @@ lm3631@29 {
->=20
-> Are so many examples really needed? Examples aren't supposed to=20
-> enumerate all possible options...
-
-I will remove a few in the next version.
-
--- Sebastian
-
---4qhglwb5ohir5hrp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlrL2fwACgkQ2O7X88g7
-+pqipA/8CzzOPLEkxt1n41yjFNMYPxh15gjiyxiy75x4MR/Vy3MLFR6KY6JEqeVY
-+JV6wwX1LAW8YsqK9t0hL8xS++2L2TU1+caBSdL8eaZbS5YHV/a+5WFy+67Cz06N
-xiJxAf0GtQSZLN+1cyquFYpWLEONdio4/j1Cd6hQ/AjR8wXoGLbjX+P0bVlISbY0
-801L3oNoPrLNbu9BRZD13M3LTgzaF8kqFCMaFik8cGJ/yf8wdwgJbQFVzm4wC5B3
-QnDJYwmHlukeBH0Qmr9u83pW192bbhXIaIajETAozXprtfvV2PhSeYyLsvEZjZ8y
-qxZ9Rb2szMPzBCiV0+QgiaxPypWqB4JY0y0kD99oWYYCOvRiJYEIBv8LyTM44Q47
-UwXWYYvUM4M2lzMQo6rYrFwyUE35WqgpuCWHBSzVqus3xSsLriJ1jR0ZDGDERYj7
-rN9EuqizGzStxxQaF+8Yjt2k0b8nS6gpONq8gL2Kyje0SGds6B41GUuRWxXybVBr
-MquTfpkBYJbhzYdn8UVIJFItW/fbpHzNEnaqq/JWlmDnsNOMfQTpdhpbANcaVAda
-fZLxNOQTx7EgrNj6m5jQEfqNbizhPSLfc/88hZbEzpy5rgLbncI1WZj0XyKsN0Pd
-TjPdrjHnRDa3VHypHuLMCZXv+Mb4lpat6mf0aMb47xTvDvCinjw=
-=kR+z
------END PGP SIGNATURE-----
-
---4qhglwb5ohir5hrp--
+Bart.
