@@ -1,71 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752895AbeDIN6Z (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:58:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39518 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751455AbeDIN6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 09:58:23 -0400
-Date: Mon, 9 Apr 2018 16:58:19 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Stefan Hajnoczi <stefanha@redhat.com>
-Cc: virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, jasowang@redhat.com, kvm@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] vhost: fix vhost_vq_access_ok() log check
-Message-ID: <20180409165805-mutt-send-email-mst@kernel.org>
-References: <20180409131021.5132-1-stefanha@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180409131021.5132-1-stefanha@redhat.com>
+        id S1752806AbeDIN73 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 09:59:29 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:37681 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752458AbeDIN71 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 09:59:27 -0400
+X-Google-Smtp-Source: AIpwx4+jszKO24bYpHp6sSpTIJWc/DY4saHMPL4kXBFna132drqxazK9SaLJO5a5FYxgMy1uJaZwqw==
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org
+Subject: [PATCH 0/2] clk: honor CLK_MUX_ROUND_CLOSEST in mux
+Date: Mon,  9 Apr 2018 15:59:19 +0200
+Message-Id: <20180409135921.5617-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 09:10:21PM +0800, Stefan Hajnoczi wrote:
-> Commit d65026c6c62e7d9616c8ceb5a53b68bcdc050525 ("vhost: validate log
-> when IOTLB is enabled") introduced a regression.  The logic was
-> originally:
-> 
->   if (vq->iotlb)
->       return 1;
->   return A && B;
-> 
-> After the patch the short-circuit logic for A was inverted:
-> 
->   if (A || vq->iotlb)
->       return A;
->   return B;
-> 
-> The correct logic is:
-> 
->   if (!A || vq->iotlb)
->       return A;
->   return B;
-> 
-> Reported-by: syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com
-> Cc: Jason Wang <jasowang@redhat.com>
-> Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+CLK_MUX_ROUND_CLOSEST is part of clk_mux and meson's clk_regmap
+documentation, so it should be honored by the determine_rate() callback.
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+It is note the case ATM. The series fixes this problem.
 
-> ---
->  drivers/vhost/vhost.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index 5320039671b7..f6af4210679a 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -1246,7 +1246,7 @@ int vhost_vq_access_ok(struct vhost_virtqueue *vq)
->  {
->  	int ret = vq_log_access_ok(vq, vq->log_base);
->  
-> -	if (ret || vq->iotlb)
-> +	if (!ret || vq->iotlb)
->  		return ret;
->  
->  	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used);
-> -- 
-> 2.14.3
+Jerome Brunet (2):
+  clk: honor CLK_MUX_ROUND_CLOSEST in generic clk mux
+  clk: meson: honor CLK_MUX_ROUND_CLOSEST in clk_regmap
+
+ drivers/clk/clk-mux.c          | 10 +++++++++-
+ drivers/clk/clk.c              |  7 ++++---
+ drivers/clk/meson/clk-regmap.c | 11 ++++++++++-
+ include/linux/clk-provider.h   |  3 +++
+ 4 files changed, 26 insertions(+), 5 deletions(-)
+
+-- 
+2.14.3
