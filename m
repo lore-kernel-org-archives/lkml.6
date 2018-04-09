@@ -1,46 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeDILks (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 07:40:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56204 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751742AbeDILkr (ORCPT
+        id S1752081AbeDILnU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 07:43:20 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:34479 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751549AbeDILnT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 07:40:47 -0400
-Date: Mon, 9 Apr 2018 13:40:34 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
-        Ingo Molnar <mingo@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: uprobes/perf: KASAN: use-after-free in uprobe_perf_close
-Message-ID: <20180409114034.GW4082@hirez.programming.kicks-ass.net>
-References: <4da123ee-1ad1-fbd3-d5c0-bd9f5ed26434@lab.ntt.co.jp>
- <20180222163715.GA1485@redhat.com>
- <20180222170427.GQ25181@hirez.programming.kicks-ass.net>
- <20180222170947.GW25235@hirez.programming.kicks-ass.net>
- <20180222174041.GA2802@redhat.com>
- <35f890f7-1194-4509-a1e4-d63d1c7d22ab@lab.ntt.co.jp>
- <20180409073827.GS4082@hirez.programming.kicks-ass.net>
- <20180409104010.GA22993@redhat.com>
+        Mon, 9 Apr 2018 07:43:19 -0400
+Subject: Re: [PATCH RESEND v6 0/6] provide power off support for iMX6 with
+ external PMIC
+To: Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>
+Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+ <20180409113744.GA14582@dragon> <20180409114022.GE11532@sirena.org.uk>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+Message-ID: <c3883979-8658-96d2-e62f-396aa5be332d@pengutronix.de>
+Date: Mon, 9 Apr 2018 13:43:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180409104010.GA22993@redhat.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180409114022.GE11532@sirena.org.uk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="g2pCk8Uj56ePxjNGAzQrsZUJfDr8wByNL"
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
+X-SA-Exim-Mail-From: o.rempel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 12:40:10PM +0200, Oleg Nesterov wrote:
-> But I still think that we should (try to) remove put_task_struct() from put_ctx().
-> 
-> Quite possibly I missed something, but I think it only adds some confusion. Once
-> again, even if ctx can't go away you can't use ctx->task without TASK_TOMBSTONE
-> check, exactly because this task can exit. So why perf_event_context should add
-> another reference?
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--g2pCk8Uj56ePxjNGAzQrsZUJfDr8wByNL
+Content-Type: multipart/mixed; boundary="TvrTA2pS7JKYsMy9WzeD1NqvW6wOQ9FIE";
+ protected-headers="v1"
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>
+Cc: kernel@pengutronix.de, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Russell King <linux@armlinux.org.uk>
+Message-ID: <c3883979-8658-96d2-e62f-396aa5be332d@pengutronix.de>
+Subject: Re: [PATCH RESEND v6 0/6] provide power off support for iMX6 with
+ external PMIC
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+ <20180409113744.GA14582@dragon> <20180409114022.GE11532@sirena.org.uk>
+In-Reply-To: <20180409114022.GE11532@sirena.org.uk>
 
-Ah, I see what you mean. Yes that might be possible.
+--TvrTA2pS7JKYsMy9WzeD1NqvW6wOQ9FIE
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+
+On 09.04.2018 13:40, Mark Brown wrote:
+> On Mon, Apr 09, 2018 at 07:37:45PM +0800, Shawn Guo wrote:
+>> On Mon, Mar 05, 2018 at 11:25:17AM +0100, Oleksij Rempel wrote:
+>=20
+>>> As this patch set touches multiple subsystems I think it would make
+>>> sense for Shawn Guo to take the all patch set.
+>>> The only part which didn't receive an ACK is regulator stuff. So I wo=
+uld
+>>> hope that Mark Brown can ACK it.
+>=20
+>> Besides regulator changes, I did not see an ACK on kernel/reboot.c
+>> either.
+>=20
+> Right, that's the big blocker here.
+>=20
+
+Ok, Who should ACK it?
+
+
+--TvrTA2pS7JKYsMy9WzeD1NqvW6wOQ9FIE--
+
+--g2pCk8Uj56ePxjNGAzQrsZUJfDr8wByNL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlrLUccACgkQdQOiSHVI
+77TVsgf/aAmByLZtRwbKkAWW7yBOKHJxklPPJ7/V6ZHppEhiX2Imv+F91ikGcpwX
+ubux4WNizQ3gFZtU40RCOC4twLnty3lh2w1DUR9+H+79EwZGTo4NcQdYtrx1NYW8
+yvGFx3bZtMvVwk/ABGgzj5Uix39nrtY1+G9Tar+VDjT1xMrTRNggj/UVGVo90a55
+IqUf+U4h3UCrUD0bOL4768yuOSK2CukOUL02Xh+JVLFoMIkcfMdYk7pb6jMt6uen
+GcphITM8GkhHxLYbV9tQ3tnVuYH5w0s1HsL9Lt+NhrTJruw77vwxfw4Vkb2YDDgh
+CEjde5aDNPqUnZs49NgYKZcEGYWP/Q==
+=M5YS
+-----END PGP SIGNATURE-----
+
+--g2pCk8Uj56ePxjNGAzQrsZUJfDr8wByNL--
