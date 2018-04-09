@@ -1,46 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752140AbeDIHyS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 03:54:18 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.165]:20935 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751581AbeDIHyQ (ORCPT
+        id S1751794AbeDIH4h (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 03:56:37 -0400
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:37160 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750759AbeDIH4g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 03:54:16 -0400
-X-RZG-AUTH: :P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9x24dP3Zg1I6xSGfZ
-X-RZG-CLASS-ID: mo00
-From: Stephan Mueller <smueller@chronox.de>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: syzbot <syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] AF_ALG: register completely initialized request in list
-Date: Mon, 09 Apr 2018 09:54:12 +0200
-Message-ID: <3223691.KS9TZr8pPl@tauon.chronox.de>
-In-Reply-To: <CACT4Y+bGDOi-+vVs=-eD=wHaUbFz2ZVO13yF8hq4cU4dkGXorg@mail.gmail.com>
-References: <00000000000092ad87056950ef9e@google.com> <3337259.MW9pfDCdka@positron.chronox.de> <CACT4Y+bGDOi-+vVs=-eD=wHaUbFz2ZVO13yF8hq4cU4dkGXorg@mail.gmail.com>
+        Mon, 9 Apr 2018 03:56:36 -0400
+X-Google-Smtp-Source: AIpwx4/uq0WAqA/ZHR3r//zvp3nfv2TAF9zwxE+9+a2h2rqJmGhiPpIZw1o+RPm4ku2whO2+nkh1Ww==
+Date: Mon, 9 Apr 2018 09:56:32 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Philippe CORNU <philippe.cornu@st.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Vincent ABRIOU <vincent.abriou@st.com>
+Subject: Re: [PATCH] drm: clarify adjusted_mode for a bridge connected to a
+ crtc
+Message-ID: <20180409075632.GC31310@phenom.ffwll.local>
+Mail-Followup-To: Philippe CORNU <philippe.cornu@st.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Vincent ABRIOU <vincent.abriou@st.com>
+References: <20180226121605.12050-1-philippe.cornu@st.com>
+ <1765089.gI5krnOhAB@avalon>
+ <a8c52302-2e70-ab55-54c0-dfde8b42e430@st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a8c52302-2e70-ab55-54c0-dfde8b42e430@st.com>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 9. April 2018, 09:51:13 CEST schrieb Dmitry Vyukov:
-
-Hi Dmitry,
-
-> You can ask syzbot to test by replying to its report email with a test
-> command, see:
-> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#communication
-> -with-syzbot
+On Fri, Apr 06, 2018 at 03:28:27PM +0000, Philippe CORNU wrote:
+> Hi Laurent,
 > 
-> Note that all testing of KMSAN bugs needs to go to KMSAN tree, for details
-> see:
-> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#kmsan-bugs
+> On 04/06/2018 04:53 PM, Laurent Pinchart wrote:
+> > Hi Philippe,
+> > 
+> > Thank you for the patch.
+> > 
+> > On Monday, 26 February 2018 14:16:04 EEST Philippe Cornu wrote:
+> >> This patch clarifies the adjusted_mode documentation
+> >> for a bridge directly connected to a crtc.
+> >>
+> >> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+> >> ---
+> >> This patch is linked to the discussion https://lkml.org/lkml/2018/1/25/367
+> >>
+> >>   include/drm/drm_bridge.h | 3 ++-
+> >>   1 file changed, 2 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> >> index 3270fec46979..b5f3c070467c 100644
+> >> --- a/include/drm/drm_bridge.h
+> >> +++ b/include/drm/drm_bridge.h
+> >> @@ -177,7 +177,8 @@ struct drm_bridge_funcs {
+> >>   	 * pipeline has been called already. If the bridge is the first element
+> >>   	 * then this would be &drm_encoder_helper_funcs.mode_set. The display
+> >>   	 * pipe (i.e.  clocks and timing signals) is off when this function is
+> >> -	 * called.
+> >> +	 * called. If the bridge is connected to the crtc, the adjusted_mode
+> >> +	 * parameter is the one defined in &drm_crtc_state.adjusted_mode.
+> > 
+> > Unless I'm mistaken this will always be the mode stored in
+> > &drm_crtc_state.adjusted_mode (at least for atomic drivers), regardless of
+> > whether the bridge is the first in the chain (connected to the CRTC) or not.
+> > What is important to document is that we have a single adjusted_mode for the
+> > whole chain of bridges, and that it corresponds to the mode output by the CRTC
+> > for the first bridge. Bridges further in the chain can look at that mode,
+> > although there will probably be nothing of interest to them there.
+> > 
+> > How about the following text ?
+> > 
+> >      /**
+> >       * @mode_set:
+> >       *
+> >       * This callback should set the given mode on the bridge. It is called
+> >       * after the @mode_set callback for the preceding element in the display
+> >       * pipeline has been called already. If the bridge is the first element
+> >       * then this would be &drm_encoder_helper_funcs.mode_set. The display
+> >       * pipe (i.e.  clocks and timing signals) is off when this function is
+> >       * called.
+> >       *
+> >       * The adjusted_mode parameter corresponds to the mode output by the CRTC
+> >       * for the first bridge in the chain. It can be different from the mode
+> >       * parameter that contains the desired mode for the connector at the end
+> >       * of the bridges chain, for instance when the first bridge in the chain
+> >       * performs scaling. The adjusted mode is mostly useful for the first
+> >       * bridge in the chain and is likely irrelevant for the other bridges.
+> >       *
+> >       * For atomic drivers the adjusted_mode is the mode stored in
+> >       * &drm_crtc_state.adjusted_mode.
+> >       *
+> >       * NOTE:
+> >       *
+> >       * If a need arises to store and access modes adjusted for other locations
+> >       * than the connection between the CRTC and the first bridge, the DRM
+> >       * framework will have to be extended with DRM bridge states.
+> >     	 */
+> > 
+> > Then I think we should also update the documentation of
+> > drm_crtc_state.adjusted_mode accordingly:
+> > 
+> >      /*
+> >       * @adjusted_mode:
+> >       *
+> >       * Internal display timings which can be used by the driver to handle
+> >       * differences between the mode requested by userspace in @mode and what
+> >       * is actually programmed into the hardware.
+> >       *
+> >       * For drivers using drm_bridge, this store the hardware display timings
+> >       * used between the CRTC and the first bridge. For other drivers, the
+> >       * meaning of the adjusted_mode field is purely driver implementation
+> >       * defined information, and will usually be used to store the hardware
+> >       * display timings used between the CRTC and encoder blocks.
+> >       */
+> > 
+> 
+> Your proposal is very clear and understandable. I will make a new patch 
+> version based on it.
 
-Thank you. I will resend the patch later today with the proper tags.
-
-Ciao
-Stephan
+Just to avoid confusion: Needs to be a fully new patch on top of latest
+drm-misc-next, since no rebasing in a group maintained tree.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
