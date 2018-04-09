@@ -1,81 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753463AbeDIScV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 14:32:21 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:34236 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752065AbeDIScT (ORCPT
+        id S1752283AbeDIShR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 14:37:17 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:46072 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751610AbeDIShQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 14:32:19 -0400
-X-Google-Smtp-Source: AIpwx4/CBXcKHfVXSoq/qnhA6+nc5i0DilKYE0waEUi1xpk1ikY9IMBq1TlR02JAa779JnfItajG+J+Aw1E79TUmPsQ=
+        Mon, 9 Apr 2018 14:37:16 -0400
+X-Google-Smtp-Source: AIpwx4+cgCFJXFvB/K0DPblk4rGIFu4CqWXP422S5fhcxq23F4bihs2ZiSh1hVW6WDvbc/bYYZ+Azg==
+Date: Mon, 9 Apr 2018 13:37:13 -0500
+From: Rob Herring <robh@kernel.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>, Jacopo Mondi <jacopo@jmondi.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 4/5] drm: bridge: lvds-encoder: allow specifying the
+ input bus format
+Message-ID: <20180409183713.xk7qt4mukb24vr64@rob-hp-laptop>
+References: <20180326212447.7380-1-peda@axentia.se>
+ <20180326212447.7380-5-peda@axentia.se>
 MIME-Version: 1.0
-In-Reply-To: <2679696.GDoj5zcZOu@natalenko.name>
-References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5jL8oLV2xvjBVYv_SNXr74LdgpXEmU7K+cLYpD7jh2chgw@mail.gmail.com>
- <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com> <2679696.GDoj5zcZOu@natalenko.name>
-From: Kees Cook <keescook@chromium.org>
-Date: Mon, 9 Apr 2018 11:32:17 -0700
-X-Google-Sender-Auth: LnhaNSR4blZu6scNoZPyst7tDzY
-Message-ID: <CAGXu5jLG9ia+zBNcPt+q+BpJayoUuYwXitOgeHmh=7sPp-s87A@mail.gmail.com>
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-To: Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc: David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
-        paolo.valente@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180326212447.7380-5-peda@axentia.se>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 8, 2018 at 12:07 PM, Oleksandr Natalenko
-<oleksandr@natalenko.name> wrote:
-> So far, I wasn't able to trigger this with mq-deadline (or without blk-mq).
-> Maybe, this has something to do with blk-mq+BFQ re-queuing, or it's just me
-> not being persistent enough.
+On Mon, Mar 26, 2018 at 11:24:46PM +0200, Peter Rosin wrote:
+> If the bridge changes the bus format, allow this to be described in
+> the bridge, instead of providing false information about the bus
+> format of the connector or panel.
 
-Ah, this detail I didn't have. I've changed my environment to
+I guess this is dead, but I'll comment here anyway because this issue 
+has come up several times and I think something is needed.
 
-build with:
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+> ---
+>  .../bindings/display/bridge/lvds-transmitter.txt   |  6 ++++++
+>  drivers/gpu/drm/bridge/lvds-encoder.c              | 25 ++++++++++++++++++++++
+>  2 files changed, 31 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
+> index 50220190c203..8d40a2069252 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
+> +++ b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
+> @@ -30,6 +30,12 @@ Required properties:
+>    device-specific version corresponding to the device first
+>    followed by the generic version.
+>  
+> +Optional properties:
+> +
+> +- interface-pix-fmt:
+> +  List of valid input bus formats of the encoder. Recognized bus formats
+> +  are listed in ../bus-format.txt
 
-CONFIG_BLK_MQ_PCI=y
-CONFIG_BLK_MQ_VIRTIO=y
-CONFIG_IOSCHED_BFQ=y
+We already have bus interface properties defined in 
+media/video-interfaces.txt. It's the same problem though the bus/pixel 
+formats are somewhat different. "bus-width" is probably enough to handle 
+your particular case, but I'd imagine that could easily not be the case. 
+If so, we should extend the existing binding rather than diverge with 
+something new.
 
-boot with scsi_mod.use_blk_mq=1
-
-and select BFQ in the scheduler:
-
-# cat /sys/block/sd?/queue/scheduler
-mq-deadline kyber [bfq] none
-mq-deadline kyber [bfq] none
-
-Even with this, I'm not seeing anything yet...
-
-> It looks like this code path was re-written completely with 17cb960f29c2, but
-> it went merged for the upcoming v4.17 only, and thus I haven't tried it yet.
->
-> Kees took a brief look at it already: [1]. This is what smartctl does [2]
-> (just a usual strace capture when the bug is not triggered).
->
-> Christoph, do you have some idea on why this can happen?
->
-> Thanks.
->
-> Regards,
->   Oleksandr
->
-> [1] https://marc.info/?l=linux-scsi&m=152287333013845&w=2
-> [2] https://gist.github.com/pfactum/6f58f8891468aeba1ab2cc9f45668735
-
-The thing I can't figure out is how req->sense is slipping forward in
-(and even beyond!) the allocation.
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+Rob
