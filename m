@@ -1,192 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751916AbeDIL0a (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 07:26:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33650 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751653AbeDIL03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 07:26:29 -0400
-Subject: Re: [PATCH v2] kvm: nVMX: Introduce KVM_CAP_STATE
-To: KarimAllah Ahmed <karahmed@amazon.de>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Jim Mattson <jmattson@google.com>, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-References: <1523263049-31993-1-git-send-email-karahmed@amazon.de>
-From: David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <4c04756b-d72c-1ff3-5ede-e70fa83d20e5@redhat.com>
-Date: Mon, 9 Apr 2018 13:26:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S1751978AbeDIL1M (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 07:27:12 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34378 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751667AbeDIL1K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 07:27:10 -0400
+Date: Mon, 9 Apr 2018 12:27:03 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Sergey Suloev <ssuloev@orpaltech.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH v3 3/6] spi: sun6i: restrict transfer length in PIO-mode
+Message-ID: <20180409112703.GD11532@sirena.org.uk>
+References: <20180405091913.ky4dnmszoobn2xry@flea>
+ <ee4adb1e-caf6-32f6-33d6-d8dd94d232cf@orpaltech.com>
+ <20180405131735.GB12349@sirena.org.uk>
+ <8159c3a5-af74-9f13-aedb-7ecc708bdff6@orpaltech.com>
+ <20180406073441.xesojvzc3deljhoy@flea>
+ <204e97cb-2f39-00f0-fd4e-3aa9a51f7cac@orpaltech.com>
+ <20180409092730.2moyhl5aaktjwbyn@flea>
+ <94a394bd-89bf-9334-c500-4cbadf4c1044@orpaltech.com>
+ <20180409105001.GC11532@sirena.org.uk>
+ <67c2006b-17f2-2459-e3c9-e91e3c694d8c@orpaltech.com>
 MIME-Version: 1.0
-In-Reply-To: <1523263049-31993-1-git-send-email-karahmed@amazon.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="8nsIa27JVQLqB7/C"
+Content-Disposition: inline
+In-Reply-To: <67c2006b-17f2-2459-e3c9-e91e3c694d8c@orpaltech.com>
+X-Cookie: Professional sample - not for sale.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.04.2018 10:37, KarimAllah Ahmed wrote:
-> From: Jim Mattson <jmattson@google.com>
-> 
-> For nested virtualization L0 KVM is managing a bit of state for L2 guests,
-> this state can not be captured through the currently available IOCTLs. In
-> fact the state captured through all of these IOCTLs is usually a mix of L1
-> and L2 state. It is also dependent on whether the L2 guest was running at
-> the moment when the process was interrupted to save its state.
-> 
-> With this capability, there are two new vcpu ioctls: KVM_GET_VMX_STATE and
-> KVM_SET_VMX_STATE. These can be used for saving and restoring a VM that is
-> in VMX operation.
-> 
 
-Very nice work!
+--8nsIa27JVQLqB7/C
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->  
-> +static int get_vmcs_cache(struct kvm_vcpu *vcpu,
-> +			  struct kvm_state __user *user_kvm_state)
-> +{
-> +	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> +	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
-> +
-> +	/*
-> +	 * When running L2, the authoritative vmcs12 state is in the
-> +	 * vmcs02. When running L1, the authoritative vmcs12 state is
-> +	 * in the shadow vmcs linked to vmcs01, unless
-> +	 * sync_shadow_vmcs is set, in which case, the authoritative
-> +	 * vmcs12 state is in the vmcs12 already.
-> +	 */
-> +	if (is_guest_mode(vcpu))
-> +		sync_vmcs12(vcpu, vmcs12);
-> +	else if (enable_shadow_vmcs && !vmx->nested.sync_shadow_vmcs)
-> +		copy_shadow_to_vmcs12(vmx);
-> +
-> +	if (copy_to_user(user_kvm_state->data, vmcs12, sizeof(*vmcs12)))
-> +		return -EFAULT;
-> +
-> +	/*
-> +	 * Force a nested exit that guarantees that any state capture
-> +	 * afterwards by any IOCTLs (MSRs, etc) will not capture a mix of L1
-> +	 * and L2 state.> +	 *
+On Mon, Apr 09, 2018 at 02:10:40PM +0300, Sergey Suloev wrote:
+> On 04/09/2018 01:50 PM, Mark Brown wrote:
+> > On Mon, Apr 09, 2018 at 01:26:23PM +0300, Sergey Suloev wrote:
 
-I totally understand why this is nice, I am worried about the
-implications. Let's assume migration fails and we want to continue
-running the guest on the source. We would now have a "bad" state.
+> > > Because current implementation tries to send more than FIFO-depth of =
+data in
+> > > a single call to "transfer_one" which is wrong.
 
-How is this to be handled (e.g. is a SET_STATE necessary?)? I think this
-implication should be documented for KVM_GET_STATE.
+> > No, that's absolutely not the case.  All any of these functions has to
+> > do is transfer whatever they were asked to, how they do it is not at all
+> > important to the framework.
 
-> +	 * One example where that would lead to an issue is the TSC DEADLINE
-> +	 * MSR vs the guest TSC. If the L2 guest is running, the guest TSC will
-> +	 * be the L2 TSC while the TSC deadline MSR will contain the L1 TSC
-> +	 * deadline MSR. That would lead to a very large (and wrong) "expire"
-> +	 * diff when LAPIC is initialized during instance restore (i.e. the
-> +	 * instance will appear to have hanged!).
-> +	 */
-> +	if (is_guest_mode(vcpu))
-> +		nested_vmx_vmexit(vcpu, -1, 0, 0);
-> +
-> +	return 0;
-> +}
-> +
-> +static int get_vmx_state(struct kvm_vcpu *vcpu,
-> +			 struct kvm_state __user *user_kvm_state)
-> +{
-> +	u32 user_data_size;
-> +	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> +	struct kvm_state kvm_state = {
-> +		.flags = 0,
-> +		.format = 0,
-> +		.size = sizeof(kvm_state),
-> +		.vmx.vmxon_pa = -1ull,
-> +		.vmx.vmcs_pa = -1ull,
-> +	};
-> +
-> +	if (copy_from_user(&user_data_size, &user_kvm_state->size,
-> +			   sizeof(user_data_size)))
-> +		return -EFAULT;
-> +
-> +	if (nested_vmx_allowed(vcpu) && vmx->nested.vmxon) {
-> +		kvm_state.vmx.vmxon_pa = vmx->nested.vmxon_ptr;
-> +		kvm_state.vmx.vmcs_pa = vmx->nested.current_vmptr;
-> +
-> +		if (vmx->nested.current_vmptr != -1ull)
-> +			kvm_state.size += VMCS12_SIZE;
-> +
-> +		if (is_guest_mode(vcpu)) {
-> +			kvm_state.flags |= KVM_STATE_GUEST_MODE;
-> +
-> +			if (vmx->nested.nested_run_pending)
-> +				kvm_state.flags |= KVM_STATE_RUN_PENDING;
-> +		}
-> +	}
-> +
-> +	if (user_data_size < kvm_state.size) {
-> +		if (copy_to_user(&user_kvm_state->size, &kvm_state.size,
-> +				 sizeof(kvm_state.size)))
-> +			return -EFAULT;
-> +		return -E2BIG;
-> +	}
-> +
-> +	if (copy_to_user(user_kvm_state, &kvm_state, sizeof(kvm_state)))
-> +		return -EFAULT;
-> +
-> +	if (vmx->nested.current_vmptr == -1ull)
-> +		return 0;
-> +
-> +	return get_vmcs_cache(vcpu, user_kvm_state);
-> +}
-> +
-> +static int set_vmcs_cache(struct kvm_vcpu *vcpu,
-> +			  struct kvm_state __user *user_kvm_state,
-> +			  struct kvm_state *kvm_state)
-> +
-> +{
-> +	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> +	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
-> +	u32 exit_qual;
-> +	int ret;
-> +
-> +	if ((kvm_state->size < (sizeof(*vmcs12) + sizeof(*kvm_state))) ||
-> +	    kvm_state->vmx.vmcs_pa == kvm_state->vmx.vmxon_pa ||
-> +	    !page_address_valid(vcpu, kvm_state->vmx.vmcs_pa))
-> +		return -EINVAL;
-> +
-> +	if (copy_from_user(vmcs12, user_kvm_state->data, sizeof(*vmcs12)))
-> +		return -EFAULT;
-> +
-> +	if (vmcs12->revision_id != VMCS12_REVISION)
-> +		return -EINVAL;
-> +
-> +	set_current_vmptr(vmx, kvm_state->vmx.vmcs_pa);
-> +
-> +	if (!(kvm_state->flags & KVM_STATE_GUEST_MODE))
-> +		return 0;
-> +
-> +	if (check_vmentry_prereqs(vcpu, vmcs12) ||
-> +	    check_vmentry_postreqs(vcpu, vmcs12, &exit_qual))
-> +		return -EINVAL;
-> +
-> +	ret = enter_vmx_non_root_mode(vcpu, true);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * This request will result in a call to
-> +	 * nested_get_vmcs12_pages before the next VM-entry.
-> +	 */
-> +	kvm_make_request(KVM_REQ_GET_VMCS12_PAGES, vcpu);
+> I think you don't fully understand the issue. Let's talk about sun4i and=
+=A0
+> sun6i SPI=A0 drivers separately.
 
-Can you elaborate (+document) why this is needed instead of trying to
-get the page right away?
+> sun4i
 
-Thanks!
+> 1)it is correctly declaring max_transfer_size=3DFIFO depth for PIO mode=
+=A0 but
+> transfer_one() function doesn't follow the declaration allowing PIO
+> transfers longer than FIFO depth=A0 by just refilling FIFO using 3/4 FIFO
+> empty interrupt. I can definitely state here that long transfers WON'T WO=
+RK
+> on real hardware. I tested it and that's why I can say that. But as soon =
+as
+> sun4i SPI driver=A0 is correctly declaring max_transfer_size then "smart"
+> clients will work well by limiting a single transfer size to FIFO depth. I
+> tested it with real hardware, again.
 
--- 
+None of this is in the slightest bit related to the use of transfer_one()=
+=20
+vs transfer_one_message().  These are all implementation details and
+will so far as I can tell apply equally to both APIs.
 
-Thanks,
+--8nsIa27JVQLqB7/C
+Content-Type: application/pgp-signature; name="signature.asc"
 
-David / dhildenb
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrLTgYACgkQJNaLcl1U
+h9DvMwf8CIj4UsGLjuBE1zeTHE3Qwaw0ed1LshStN6fkryKqAdUNIVlIY7ONiww/
+bOuzFEc38tlqkXZoTf09t4NgIbtzo6Ua5xAsjUK0Om2aNUhqfgjmBGJclBzXwkPm
+jRVUwLjcWMpxNkDEDpKUWJssD71Ir2/ynreXDTF5//avov+C+MbQUpDXZPjZXUpG
+Jxt8oSTe3GwZ10HXlhrShtYG3G90H30kNNyjOoRtRYT+D7xSJg8BROVxnHMX0YDM
+wysz+mFs9Rl1RGRdEz66GBxwFgtMmwrUR+Uiu/ZDpgCSqGcPPLnKWj899zsYDH1U
+Qpy9J34vjIch6at14BEkpqnNnX4qYg==
+=wTgl
+-----END PGP SIGNATURE-----
+
+--8nsIa27JVQLqB7/C--
