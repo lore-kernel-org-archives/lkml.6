@@ -1,108 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752924AbeDIN7v (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 09:59:51 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:39191 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752498AbeDIN72 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 09:59:28 -0400
-X-Google-Smtp-Source: AIpwx48sEHwReNOWR5fstPHW6j6IXw3Nvm7fYqIUBCvXDDWzD3bHR2depuHUsvaEQLBNNoaxKJlmZA==
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org
-Subject: [PATCH 1/2] clk: honor CLK_MUX_ROUND_CLOSEST in generic clk mux
-Date: Mon,  9 Apr 2018 15:59:20 +0200
-Message-Id: <20180409135921.5617-2-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180409135921.5617-1-jbrunet@baylibre.com>
-References: <20180409135921.5617-1-jbrunet@baylibre.com>
+        id S1752100AbeDIOCT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 10:02:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47724 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751522AbeDIOCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 10:02:17 -0400
+Date: Mon, 9 Apr 2018 16:02:15 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Petr Mladek <pmladek@suse.com>
+cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] livepatch: Add an extra flag to distinguish registered
+ patches
+In-Reply-To: <20180323120028.31451-5-pmladek@suse.com>
+Message-ID: <alpine.LSU.2.21.1804091556110.20943@pobox.suse.cz>
+References: <20180323120028.31451-1-pmladek@suse.com> <20180323120028.31451-5-pmladek@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CLK_MUX_ROUND_CLOSEST is part of the clk_mux documentation but clk_mux
-directly calls __clk_mux_determine_rate(), which overrides the flag.
-As result, if clk_mux is instantiated with CLK_MUX_ROUND_CLOSEST, the
-flag will be ignored and the clock rounded down.
+On Fri, 23 Mar 2018, Petr Mladek wrote:
 
-To solve this, this patch expose clk_mux_determine_rate_flags() in the
-clk-provider API and uses it in the determine_rate() callback of clk_mux.
+> The initial implementation of the atomic replace feature keeps the replaced
+> patches on the stack. But people would like to remove the replaced patches
+> from different reasons that will be described in the following patch.
+> 
+> This patch is just a small preparation step. We will need to keep
+> the replaced patches registered even when they are not longer on the stack.
 
-Fixes: 15a02c1f6dd7 ("clk: Add __clk_mux_determine_rate_closest")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk-mux.c        | 10 +++++++++-
- drivers/clk/clk.c            |  7 ++++---
- include/linux/clk-provider.h |  3 +++
- 3 files changed, 16 insertions(+), 4 deletions(-)
+s/not longer/no longer/
 
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index ac4a042f8658..1628b93655ed 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -112,10 +112,18 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 index)
- 	return 0;
- }
- 
-+static int clk_mux_determine_rate(struct clk_hw *hw,
-+				  struct clk_rate_request *req)
-+{
-+	struct clk_mux *mux = to_clk_mux(hw);
-+
-+	return clk_mux_determine_rate_flags(hw, req, mux->flags);
-+}
-+
- const struct clk_ops clk_mux_ops = {
- 	.get_parent = clk_mux_get_parent,
- 	.set_parent = clk_mux_set_parent,
--	.determine_rate = __clk_mux_determine_rate,
-+	.determine_rate = clk_mux_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_mux_ops);
- 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ea67ac81c6f9..7af555f0e60c 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -426,9 +426,9 @@ static bool mux_is_better_rate(unsigned long rate, unsigned long now,
- 	return now <= rate && now > best;
- }
- 
--static int
--clk_mux_determine_rate_flags(struct clk_hw *hw, struct clk_rate_request *req,
--			     unsigned long flags)
-+int clk_mux_determine_rate_flags(struct clk_hw *hw,
-+				 struct clk_rate_request *req,
-+				 unsigned long flags)
- {
- 	struct clk_core *core = hw->core, *parent, *best_parent = NULL;
- 	int i, num_parents, ret;
-@@ -488,6 +488,7 @@ clk_mux_determine_rate_flags(struct clk_hw *hw, struct clk_rate_request *req,
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(clk_mux_determine_rate_flags);
- 
- struct clk *__clk_lookup(const char *name)
- {
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 210a890008f9..1d25e149c1c5 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -765,6 +765,9 @@ int __clk_mux_determine_rate(struct clk_hw *hw,
- int __clk_determine_rate(struct clk_hw *core, struct clk_rate_request *req);
- int __clk_mux_determine_rate_closest(struct clk_hw *hw,
- 				     struct clk_rate_request *req);
-+int clk_mux_determine_rate_flags(struct clk_hw *hw,
-+				 struct clk_rate_request *req,
-+				 unsigned long flags);
- void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
- void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
- 			   unsigned long max_rate);
--- 
-2.14.3
+> It is because they are typically unregistered by the module exit script.
+> 
+> Therefore we need to detect the registered patches another way. 
+
+"in another way", "differently"?
+
+> We could
+> not use kobj.state_initialized because it is racy. The kobject is destroyed
+> by an asynchronous call and could not be synchronized using klp_mutex.
+> 
+> This patch solves the problem by adding a flag into struct klp_patch.
+> It is manipulated under klp_mutex and therefore it is safe. It is easy
+> to understand and it is enough in most situations.
+> 
+> The function klp_is_patch_registered() is not longer needed. Though
+
+s/not longer/no longer/
+
+s/Though/So/ ?
+
+> it was renamed to klp_is_patch_on_stack() and used in __klp_enable_patch()
+> as a new sanity check.
+> 
+> This patch does not change the existing behavior.
+
+In my opinion it could be easier for a review to squash the patch into the 
+next one.
+
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Jessica Yu <jeyu@kernel.org>
+> Cc: Jiri Kosina <jikos@kernel.org>
+> Cc: Miroslav Benes <mbenes@suse.cz>
+> Cc: Jason Baron <jbaron@akamai.com>
+> ---
+>  include/linux/livepatch.h |  2 ++
+>  kernel/livepatch/core.c   | 24 ++++++++++++++++++------
+>  2 files changed, 20 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
+> index f28af280f9e0..d6e6d8176995 100644
+> --- a/include/linux/livepatch.h
+> +++ b/include/linux/livepatch.h
+> @@ -150,6 +150,7 @@ struct klp_object {
+>   * @list:	list node for global list of registered patches
+>   * @kobj:	kobject for sysfs resources
+>   * @obj_list:	dynamic list of the object entries
+> + * @registered: reliable way to check registration status
+>   * @enabled:	the patch is enabled (but operation may be incomplete)
+>   * @finish:	for waiting till it is safe to remove the patch module
+>   */
+> @@ -163,6 +164,7 @@ struct klp_patch {
+>  	struct list_head list;
+>  	struct kobject kobj;
+>  	struct list_head obj_list;
+> +	bool registered;
+>  	bool enabled;
+>  	struct completion finish;
+>  };
+> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+> index 18c400bd9a33..70c67a834e9a 100644
+> --- a/kernel/livepatch/core.c
+> +++ b/kernel/livepatch/core.c
+> @@ -45,6 +45,11 @@
+>   */
+>  DEFINE_MUTEX(klp_mutex);
+>  
+> +/*
+> + * Stack of patches. It defines the order in which the patches can be enabled.
+> + * Only patches on this stack might be enabled. New patches are added when
+> + * registered. They are removed when they are unregistered.
+> + */
+>  static LIST_HEAD(klp_patches);
+>  
+>  static struct kobject *klp_root_kobj;
+> @@ -97,7 +102,7 @@ static void klp_find_object_module(struct klp_object *obj)
+>  	mutex_unlock(&module_mutex);
+>  }
+>  
+> -static bool klp_is_patch_registered(struct klp_patch *patch)
+> +static bool klp_is_patch_on_stack(struct klp_patch *patch)
+>  {
+>  	struct klp_patch *mypatch;
+>  
+> @@ -378,7 +383,7 @@ int klp_disable_patch(struct klp_patch *patch)
+>  
+>  	mutex_lock(&klp_mutex);
+>  
+> -	if (!klp_is_patch_registered(patch)) {
+> +	if (!patch->registered) {
+
+I don't see any actual problem, but I'd feel safer if we preserve 
+klp_is_patch_on_stack() even somewhere in disable path.
+
+Miroslav
