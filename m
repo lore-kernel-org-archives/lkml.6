@@ -1,154 +1,377 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751916AbeDIMaq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 08:30:46 -0400
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:33710 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751548AbeDIMap (ORCPT
+        id S1751650AbeDIMeR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 08:34:17 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:37117 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750759AbeDIMeO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 08:30:45 -0400
-X-Google-Smtp-Source: AIpwx4/nrhAqK/LQtaLONKkAseZxdxdKHMW0DSGfEPSNZuIRzlY1QbShqhrBQvoY81Pc+EkC0jE+zg==
-Date: Mon, 9 Apr 2018 14:30:42 +0200
-From: Christoffer Dall <cdall@kernel.org>
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Peter Maydell <peter.maydell@linaro.org>,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu
-Subject: Re: [REPOST PATCH] arm/arm64: KVM: Add PSCI version selection API
-Message-ID: <20180409123042.GD10904@cbox>
-References: <20180215175803.6870-1-marc.zyngier@arm.com>
- <db215c1e-0ce8-32e4-d131-e790bebf353e@redhat.com>
- <86o9k63f7a.wl-marc.zyngier@arm.com>
- <CAFEAcA8XYV=oSX81ON4CGDt0kfG1cgROqj30OC2Ov=bYhLSYig@mail.gmail.com>
- <20180306092134.4bfbz34yhqfrfdlf@kamzik.brq.redhat.com>
- <8042f946-49bf-5fc1-f513-4b76ccd5f7d6@arm.com>
- <CAFEAcA-t1QvjW6eFQ4U+8odj0p_01F8sktpvN9KrZ1Kc-FhtnQ@mail.gmail.com>
- <86169dc0-b13c-fab9-eaca-363d3873ad10@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86169dc0-b13c-fab9-eaca-363d3873ad10@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Mon, 9 Apr 2018 08:34:14 -0400
+X-Google-Smtp-Source: AIpwx48pPj0D8fvvtNDoUgU1mwLWxOXVPKRGPYwO8HHJAW6AcwvROwSah6ONP+iD597A1+x0gMvz3Q==
+From: Geliang Tang <geliangtang@gmail.com>
+To: Phillip Lougher <phillip@squashfs.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc: Geliang Tang <geliangtang@gmail.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] squashfs: Add posix acl support
+Date: Mon,  9 Apr 2018 20:34:03 +0800
+Message-Id: <af77c1f80e2725c4cf1bf106d6add820b3b0eed5.1523276963.git.geliangtang@gmail.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 07:26:48PM +0000, Marc Zyngier wrote:
-> On 15/03/18 19:13, Peter Maydell wrote:
-> > On 15 March 2018 at 19:00, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> >> On 06/03/18 09:21, Andrew Jones wrote:
-> >>> On Mon, Mar 05, 2018 at 04:47:55PM +0000, Peter Maydell wrote:
-> >>>> On 2 March 2018 at 11:11, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> >>>>> On Fri, 02 Mar 2018 10:44:48 +0000,
-> >>>>> Auger Eric wrote:
-> >>>>>> I understand the get/set is called as part of the migration process.
-> >>>>>> So my understanding is the benefit of this series is migration fails in
-> >>>>>> those cases:
-> >>>>>>
-> >>>>>>> =0.2 source -> 0.1 destination
-> >>>>>> 0.1 source -> >=0.2 destination
-> >>>>>
-> >>>>> It also fails in the case where you migrate a 1.0 guest to something
-> >>>>> that cannot support it.
-> >>>>
-> >>>> I think it would be useful if we could write out the various
-> >>>> combinations of source, destination and what we expect/want to
-> >>>> have happen. My gut feeling here is that we're sacrificing
-> >>>> exact migration compatibility in favour of having the guest
-> >>>> automatically get the variant-2 mitigations, but it's not clear
-> >>>> to me exactly which migration combinations that's intended to
-> >>>> happen for. Marc?
-> >>>>
-> >>>> If this wasn't a mitigation issue the desired behaviour would be
-> >>>> straightforward:
-> >>>>  * kernel should default to 0.2 on the basis that
-> >>>>    that's what it did before
-> >>>>  * new QEMU version should enable 1.0 by default for virt-2.12
-> >>>>    and 0.2 for virt-2.11 and earlier
-> >>>>  * PSCI version info shouldn't appear in migration stream unless
-> >>>>    it's something other than 0.2
-> >>>> But that would leave some setups (which?) unnecessarily without the
-> >>>> mitigation, so we're not doing that. The question is, exactly
-> >>>> what *are* we aiming for?
-> >>>
-> >>> The reason Marc dropped this patch from the series it was first introduced
-> >>> in was because we didn't have the aim 100% understood. We want the
-> >>> mitigation by default, but also to have the least chance of migration
-> >>> failure, and when we must fail (because we're not doing the
-> >>> straightforward approach listed above, which would prevent failures), then
-> >>> we want to fail with the least amount of damage to the user.
-> >>>
-> >>> I experimented with a couple different approaches and provided tables[1]
-> >>> with my results. I even recommended an approach, but I may have changed
-> >>> my mind after reading Marc's follow-up[2]. The thread continues from
-> >>> there as well with follow-ups from Christoffer, Marc, and myself. Anyway,
-> >>> Marc did this repost for us to debate it and work out the best approach
-> >>> here.
-> >> It doesn't look like we've made much progress on this, which makes me
-> >> think that we probably don't need anything of the like.
-> > 
-> > I was waiting for a better explanation from you of what we're trying to
-> > achieve. If you want to take the "do nothing" approach then a list
-> > also of what migrations succeed/fail/break in that case would also
-> > be useful.
-> > 
-> > (I am somewhat lazily trying to avoid having to spend time reverse
-> > engineering the "what are we trying to do and what effects are
-> > we accepting" parts from the patch and the code that's already gone
-> > into the kernel.)
-> 
-> OK, let me (re)state the problem:
-> 
-> For a guest that requests PSCI 0.2 (i.e. all guests from the past 4 or 5
-> years), we now silently upgrade the PSCI version to 1.0 allowing the new
-> SMCCC to be discovered, and the ARCH_WORKAROUND_1 service to be called.
-> 
-> Things get funny, specially with migration (and the way QEMU works).
-> 
-> If we "do nothing":
-> 
-> (1) A guest migrating from an "old" host to a "new" host will silently
-> see its PSCI version upgraded. Not a big deal in my opinion, as 1.0 is a
-> strict superset of 0.2 (apart from the version number...).
-> 
-> (2) A guest migrating from a "new" host to an "old" host will silently
-> loose its Spectre v2 mitigation. That's quite a big deal.
-> 
-> (3, not related to migration) A guest having a hardcoded knowledge of
-> PSCI 0.2 will se that we've changed something, and may decide to catch
-> fire. Oh well.
-> 
-> If we take this patch:
-> 
-> (1) still exists
+Add posix acl (Access Control Lists) support for squashfs, which is
+marked as a todo item in squashfs' documentation.  This patch implements
+the squashfs_get_acl function to read file's acl information from its
+xattr lists.
 
-No problem, IMHO.
+Signed-off-by: Geliang Tang <geliangtang@gmail.com>
+---
+ Documentation/filesystems/squashfs.txt |  2 -
+ fs/squashfs/Kconfig                    | 11 ++++++
+ fs/squashfs/Makefile                   |  1 +
+ fs/squashfs/acl.c                      | 69 ++++++++++++++++++++++++++++++++++
+ fs/squashfs/acl.h                      | 27 +++++++++++++
+ fs/squashfs/inode.c                    |  4 +-
+ fs/squashfs/namei.c                    |  6 ++-
+ fs/squashfs/squashfs_fs.h              | 12 +++---
+ fs/squashfs/super.c                    |  3 ++
+ fs/squashfs/symlink.c                  |  6 ++-
+ fs/squashfs/xattr.c                    | 13 ++++++-
+ fs/squashfs/xattr.h                    |  8 ++++
+ 12 files changed, 149 insertions(+), 13 deletions(-)
+ create mode 100644 fs/squashfs/acl.c
+ create mode 100644 fs/squashfs/acl.h
 
-> 
-> (2) will now fail to migrate. I see this as a feature.
-
-Yes, I agree.  This is actually the most important reason for doing
-anything beyond what's already merged.
-
-> 
-> (3) can be worked around by setting the "PSCI version pseudo register"
-> to 0.2.
-
-Nice to have, but we're probably not expecting this to be of major
-concern.  I initially thought it was a nice debugging feature as well,
-but that may be a ridiculous point.
-
-> 
-> These are the main things I can think of at the moment.
-
-So I think we we should merge this patch.
-
-If userspace then wants to support "migrate from explicitly set v0.2 new
-kernel to old kernel", then it must add specific support to filter out
-the register from the register list; not that I think anyone will need
-that or bother to implement it.
-
-In other words, I think you should merge this:
-
-Reviewed-by: Christoffer Dall <cdall@kernel.org>
+diff --git a/Documentation/filesystems/squashfs.txt b/Documentation/filesystems/squashfs.txt
+index e5274f84dc56..539fad6b4db0 100644
+--- a/Documentation/filesystems/squashfs.txt
++++ b/Documentation/filesystems/squashfs.txt
+@@ -235,8 +235,6 @@ list using a second xattr id lookup table.
+ 4.1 Todo list
+ -------------
+ 
+-Implement ACL support.
+-
+ 4.2 Squashfs internal cache
+ ---------------------------
+ 
+diff --git a/fs/squashfs/Kconfig b/fs/squashfs/Kconfig
+index 1adb3346b9d6..f9587bcf9dd9 100644
+--- a/fs/squashfs/Kconfig
++++ b/fs/squashfs/Kconfig
+@@ -107,6 +107,17 @@ config SQUASHFS_XATTR
+ 
+ 	  If unsure, say N.
+ 
++config SQUASHFS_POSIX_ACL
++	bool "Squashfs POSIX ACL support"
++	depends on SQUASHFS_XATTR
++	select FS_POSIX_ACL
++	help
++	  Saying Y here includes support for Access Control Lists (acls).
++	  Acls are used to define more fine-grained discretionary access
++	  rights for files and directories (see the acl(5) manual page).
++
++	  If unsure, say N.
++
+ config SQUASHFS_ZLIB
+ 	bool "Include support for ZLIB compressed file systems"
+ 	depends on SQUASHFS
+diff --git a/fs/squashfs/Makefile b/fs/squashfs/Makefile
+index 7bd9b8b856d0..73bc1c8a8df6 100644
+--- a/fs/squashfs/Makefile
++++ b/fs/squashfs/Makefile
+@@ -12,6 +12,7 @@ squashfs-$(CONFIG_SQUASHFS_DECOMP_SINGLE) += decompressor_single.o
+ squashfs-$(CONFIG_SQUASHFS_DECOMP_MULTI) += decompressor_multi.o
+ squashfs-$(CONFIG_SQUASHFS_DECOMP_MULTI_PERCPU) += decompressor_multi_percpu.o
+ squashfs-$(CONFIG_SQUASHFS_XATTR) += xattr.o xattr_id.o
++squashfs-$(CONFIG_SQUASHFS_POSIX_ACL) += acl.o
+ squashfs-$(CONFIG_SQUASHFS_LZ4) += lz4_wrapper.o
+ squashfs-$(CONFIG_SQUASHFS_LZO) += lzo_wrapper.o
+ squashfs-$(CONFIG_SQUASHFS_XZ) += xz_wrapper.o
+diff --git a/fs/squashfs/acl.c b/fs/squashfs/acl.c
+new file mode 100644
+index 000000000000..1c9eb2d13c2b
+--- /dev/null
++++ b/fs/squashfs/acl.c
+@@ -0,0 +1,69 @@
++/*
++ * Squashfs - a compressed read only filesystem for Linux
++ *
++ * Copyright (c) 2018
++ * Phillip Lougher <phillip@squashfs.org.uk>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version 2,
++ * or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
++ *
++ * acl.c
++ */
++
++#include <linux/init.h>
++#include <linux/fs.h>
++#include <linux/slab.h>
++#include "squashfs_fs.h"
++#include "xattr.h"
++#include "acl.h"
++
++struct posix_acl *squashfs_get_acl(struct inode *inode, int type)
++{
++	int name_index;
++	char *name;
++	struct posix_acl *acl = NULL;
++	char *value = NULL;
++	int retval;
++
++	switch (type) {
++	case ACL_TYPE_ACCESS:
++		name_index = SQUASHFS_XATTR_POSIX_ACL_ACCESS;
++		name = XATTR_POSIX_ACL_ACCESS;
++		break;
++	case ACL_TYPE_DEFAULT:
++		name_index = SQUASHFS_XATTR_POSIX_ACL_DEFAULT;
++		name = XATTR_POSIX_ACL_DEFAULT;
++		break;
++	default:
++		BUG();
++	}
++
++	retval = squashfs_xattr_get(inode, name_index, name, NULL, 0);
++	if (retval > 0) {
++		value = kmalloc(retval, GFP_KERNEL);
++		if (!value)
++			return ERR_PTR(-ENOMEM);
++		retval = squashfs_xattr_get(inode, name_index, name, value, retval);
++	}
++	if (retval > 0)
++		acl = posix_acl_from_xattr(&init_user_ns, value, retval);
++	else if (retval == -ENODATA || retval == -ENOSYS)
++		acl = NULL;
++	else
++		acl = ERR_PTR(retval);
++
++	kfree(value);
++
++	return acl;
++}
+diff --git a/fs/squashfs/acl.h b/fs/squashfs/acl.h
+new file mode 100644
+index 000000000000..a9f5fa45bc96
+--- /dev/null
++++ b/fs/squashfs/acl.h
+@@ -0,0 +1,27 @@
++/*
++ * Squashfs - a compressed read only filesystem for Linux
++ *
++ * Copyright (c) 2018
++ * Phillip Lougher <phillip@squashfs.org.uk>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version 2,
++ * or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
++ *
++ * acl.h
++ */
++
++#include <linux/fs.h>
++#include <linux/posix_acl_xattr.h>
++
++extern struct posix_acl *squashfs_get_acl(struct inode *inode, int type);
+diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
+index e9793b1e49a5..2035a1acffd7 100644
+--- a/fs/squashfs/inode.c
++++ b/fs/squashfs/inode.c
+@@ -48,6 +48,7 @@
+ #include "squashfs_fs_i.h"
+ #include "squashfs.h"
+ #include "xattr.h"
++#include "acl.h"
+ 
+ /*
+  * Initialise VFS inode with the base inode information common to all
+@@ -425,6 +426,7 @@ int squashfs_read_inode(struct inode *inode, long long ino)
+ 
+ 
+ const struct inode_operations squashfs_inode_ops = {
+-	.listxattr = squashfs_listxattr
++	.listxattr	= squashfs_listxattr,
++	.get_acl	= squashfs_get_acl
+ };
+ 
+diff --git a/fs/squashfs/namei.c b/fs/squashfs/namei.c
+index 40c10d9974c9..33ad74780040 100644
+--- a/fs/squashfs/namei.c
++++ b/fs/squashfs/namei.c
+@@ -64,6 +64,7 @@
+ #include "squashfs_fs_i.h"
+ #include "squashfs.h"
+ #include "xattr.h"
++#include "acl.h"
+ 
+ /*
+  * Lookup name in the directory index, returning the location of the metadata
+@@ -246,6 +247,7 @@ static struct dentry *squashfs_lookup(struct inode *dir, struct dentry *dentry,
+ 
+ 
+ const struct inode_operations squashfs_dir_inode_ops = {
+-	.lookup = squashfs_lookup,
+-	.listxattr = squashfs_listxattr
++	.lookup		= squashfs_lookup,
++	.listxattr	= squashfs_listxattr,
++	.get_acl	= squashfs_get_acl
+ };
+diff --git a/fs/squashfs/squashfs_fs.h b/fs/squashfs/squashfs_fs.h
+index 24d12fd14177..c7ac9fc4f8f4 100644
+--- a/fs/squashfs/squashfs_fs.h
++++ b/fs/squashfs/squashfs_fs.h
+@@ -107,11 +107,13 @@
+ #define SQUASHFS_MAX_DIR_TYPE		7
+ 
+ /* Xattr types */
+-#define SQUASHFS_XATTR_USER             0
+-#define SQUASHFS_XATTR_TRUSTED          1
+-#define SQUASHFS_XATTR_SECURITY         2
+-#define SQUASHFS_XATTR_VALUE_OOL        256
+-#define SQUASHFS_XATTR_PREFIX_MASK      0xff
++#define SQUASHFS_XATTR_USER			0
++#define SQUASHFS_XATTR_POSIX_ACL_ACCESS		1
++#define SQUASHFS_XATTR_POSIX_ACL_DEFAULT	2
++#define SQUASHFS_XATTR_TRUSTED			3
++#define SQUASHFS_XATTR_SECURITY			4
++#define SQUASHFS_XATTR_VALUE_OOL		256
++#define SQUASHFS_XATTR_PREFIX_MASK		0xff
+ 
+ /* Flag whether block is compressed or uncompressed, bit is set if block is
+  * uncompressed */
+diff --git a/fs/squashfs/super.c b/fs/squashfs/super.c
+index 8a73b97217c8..beea564f1063 100644
+--- a/fs/squashfs/super.c
++++ b/fs/squashfs/super.c
+@@ -196,6 +196,9 @@ static int squashfs_fill_super(struct super_block *sb, void *data, int silent)
+ 
+ 	sb->s_maxbytes = MAX_LFS_FILESIZE;
+ 	sb->s_flags |= SB_RDONLY;
++#ifdef CONFIG_SQUASHFS_POSIX_ACL
++	sb->s_flags |= SB_POSIXACL;
++#endif
+ 	sb->s_op = &squashfs_super_ops;
+ 
+ 	err = -ENOMEM;
+diff --git a/fs/squashfs/symlink.c b/fs/squashfs/symlink.c
+index befeba0fa70a..a7f30d890905 100644
+--- a/fs/squashfs/symlink.c
++++ b/fs/squashfs/symlink.c
+@@ -42,6 +42,7 @@
+ #include "squashfs_fs_i.h"
+ #include "squashfs.h"
+ #include "xattr.h"
++#include "acl.h"
+ 
+ static int squashfs_symlink_readpage(struct file *file, struct page *page)
+ {
+@@ -118,7 +119,8 @@ const struct address_space_operations squashfs_symlink_aops = {
+ };
+ 
+ const struct inode_operations squashfs_symlink_inode_ops = {
+-	.get_link = page_get_link,
+-	.listxattr = squashfs_listxattr
++	.get_link	= page_get_link,
++	.listxattr	= squashfs_listxattr,
++	.get_acl	= squashfs_get_acl
+ };
+ 
+diff --git a/fs/squashfs/xattr.c b/fs/squashfs/xattr.c
+index 1548b3784548..a1d773b5b0bc 100644
+--- a/fs/squashfs/xattr.c
++++ b/fs/squashfs/xattr.c
+@@ -33,6 +33,7 @@
+ #include "squashfs_fs_sb.h"
+ #include "squashfs_fs_i.h"
+ #include "squashfs.h"
++#include "acl.h"
+ 
+ static const struct xattr_handler *squashfs_xattr_handler(int);
+ 
+@@ -115,7 +116,7 @@ ssize_t squashfs_listxattr(struct dentry *d, char *buffer,
+ }
+ 
+ 
+-static int squashfs_xattr_get(struct inode *inode, int name_index,
++int squashfs_xattr_get(struct inode *inode, int name_index,
+ 	const char *name, void *buffer, size_t buffer_size)
+ {
+ 	struct super_block *sb = inode->i_sb;
+@@ -265,6 +266,12 @@ static const struct xattr_handler *squashfs_xattr_handler(int type)
+ 	switch (type & SQUASHFS_XATTR_PREFIX_MASK) {
+ 	case SQUASHFS_XATTR_USER:
+ 		return &squashfs_xattr_user_handler;
++#ifdef CONFIG_SQUASHFS_POSIX_ACL
++	case SQUASHFS_XATTR_POSIX_ACL_ACCESS:
++		return &posix_acl_access_xattr_handler;
++	case SQUASHFS_XATTR_POSIX_ACL_DEFAULT:
++		return &posix_acl_default_xattr_handler;
++#endif
+ 	case SQUASHFS_XATTR_TRUSTED:
+ 		return &squashfs_xattr_trusted_handler;
+ 	case SQUASHFS_XATTR_SECURITY:
+@@ -277,6 +284,10 @@ static const struct xattr_handler *squashfs_xattr_handler(int type)
+ 
+ const struct xattr_handler *squashfs_xattr_handlers[] = {
+ 	&squashfs_xattr_user_handler,
++#ifdef CONFIG_SQUASHFS_POSIX_ACL
++	&posix_acl_access_xattr_handler,
++	&posix_acl_default_xattr_handler,
++#endif
+ 	&squashfs_xattr_trusted_handler,
+ 	&squashfs_xattr_security_handler,
+ 	NULL
+diff --git a/fs/squashfs/xattr.h b/fs/squashfs/xattr.h
+index afe70f815e3d..ac08650c08cc 100644
+--- a/fs/squashfs/xattr.h
++++ b/fs/squashfs/xattr.h
+@@ -26,6 +26,8 @@ extern __le64 *squashfs_read_xattr_id_table(struct super_block *, u64,
+ 		u64 *, int *);
+ extern int squashfs_xattr_lookup(struct super_block *, unsigned int, int *,
+ 		unsigned int *, unsigned long long *);
++extern int squashfs_xattr_get(struct inode *inode, int name_index,
++	const char *name, void *buffer, size_t buffer_size);
+ #else
+ static inline __le64 *squashfs_read_xattr_id_table(struct super_block *sb,
+ 		u64 start, u64 *xattr_table_start, int *xattr_ids)
+@@ -41,6 +43,12 @@ static inline int squashfs_xattr_lookup(struct super_block *sb,
+ {
+ 	return 0;
+ }
++
++static int squashfs_xattr_get(struct inode *inode, int name_index,
++	const char *name, void *buffer, size_t buffer_size)
++{
++	return 0;
++}
+ #define squashfs_listxattr NULL
+ #define squashfs_xattr_handlers NULL
+ #endif
+-- 
+2.14.1
