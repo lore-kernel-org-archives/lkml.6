@@ -1,65 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754551AbeDIUgl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 16:36:41 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:44918 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754076AbeDIUgi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 16:36:38 -0400
-X-Google-Smtp-Source: AIpwx4/T5DKMjOOo2WAGrROGFjVOFi+eW3IPOMCdL2rOCw5tcsw6S+AhBKIlSqyO0gCRASPpDo03hg==
-Date: Mon, 9 Apr 2018 13:36:35 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        id S1754343AbeDIUkH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 16:40:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53894 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753480AbeDIUkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 16:40:02 -0400
+Date: Mon, 9 Apr 2018 13:26:41 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
         Manfred Spraul <manfred@colorfullife.com>,
         "Eric W . Biederman" <ebiederm@xmission.com>,
         syzkaller-bugs@googlegroups.com
 Subject: Re: [PATCH] ipc/shm: fix use-after-free of shm file via
  remap_file_pages()
-Message-ID: <20180409203635.GD203367@gmail.com>
+Message-ID: <20180409202641.j773oepagmhcb2nh@linux-n805>
+Mail-Followup-To: Eric Biggers <ebiggers3@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Manfred Spraul <manfred@colorfullife.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        syzkaller-bugs@googlegroups.com
 References: <94eb2c06f65e5e2467055d036889@google.com>
  <20180409043039.28915-1-ebiggers3@gmail.com>
  <20180409094813.bsjc3u2hnsrdyiuk@black.fi.intel.com>
  <20180409185016.GA203367@gmail.com>
  <20180409201232.3rweldbjtvxjj5ql@linux-n805>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
 In-Reply-To: <20180409201232.3rweldbjtvxjj5ql@linux-n805>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 01:12:32PM -0700, Davidlohr Bueso wrote:
-> On Mon, 09 Apr 2018, Eric Biggers wrote:
-> 
-> > It's necessary because if we don't hold a reference to sfd->file, then it can be
-> > a stale pointer when we compare it in __shm_open().  In particular, if the new
-> > struct file happened to be allocated at the same address as the old one, then
-> > 'sfd->file == shp->shm_file' so the mmap would be allowed.  But, it will be a
-> > different shm segment than was intended.  The caller may not even have
-> > permissions to map it normally, yet it would be done anyway.
-> > 
-> > In the end it's just broken to have a pointer to something that can be freed out
-> > from under you...
-> 
-> So this is actually handled by shm_nattch, serialized by the ipc perm->lock.
-> shm_destroy() is called when 0, which in turn does the fput(shm_file). Note
-> that shm_file is given a count of 1 when a new segment is created (deep in
-> get_empty_filp()). So I don't think the pointer is going anywhere, or am I missing
-> something?
-> 
-> Thanks,
-> Davidlohr
+On Mon, 09 Apr 2018, Davidlohr Bueso wrote:
+>So I don't think the pointer is going anywhere, or am I missing
+>something?
 
-In the remap_file_pages() case, a reference is taken to the ->vm_file, then the
-segment is unmapped.  If that brings ->shm_nattch to 0, then the underlying shm
-segment and ID can be removed, which (currently) causes the real shm file to be
-freed.  But, the outer file still exists and will have ->mmap() called on it.
-That's why the outer file needs to hold a reference to the real shm file.
-
-Eric
+Ah, yes, wrong pointer, this is sdf->file -- sorry for the noise.
