@@ -1,90 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752370AbeDIHll (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 03:41:41 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50401 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751875AbeDIHlk (ORCPT
+        id S1752304AbeDIHmr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 03:42:47 -0400
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:35523 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751581AbeDIHmp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 03:41:40 -0400
-From: Aaron Ma <aaron.ma@canonical.com>
-To: jikos@kernel.org, benjamin.tissoires@redhat.com,
-        aaron.ma@canonical.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] HID: i2c-hid: Fix resume issue on Raydium touchscreen device
-Date: Mon,  9 Apr 2018 15:41:31 +0800
-Message-Id: <1523259691-7672-1-git-send-email-aaron.ma@canonical.com>
-X-Mailer: git-send-email 1.8.5.5
+        Mon, 9 Apr 2018 03:42:45 -0400
+X-Google-Smtp-Source: AIpwx49J0W6VdiwwhtHbjkke6WDbUoKdqChcOYhF7catGS/XVl2gRNRd0MPpxGcCZG7SMtfYilwzzA==
+Date: Mon, 9 Apr 2018 09:42:41 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Subject: Re: Race-free unlinking of directory entries
+Message-ID: <20180409074241.2ibvhh3g5lzxnt4g@pali>
+References: <20171220191844.wnb3bgkpreg2tjia@pali>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20171220191844.wnb3bgkpreg2tjia@pali>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When Rayd touchscreen resumed from S3, it issues too many errors like:
-i2c_hid i2c-RAYD0001:00: i2c_hid_get_input: incomplete report (58/5442)
+Hi! I would like to remind this my older email about race free
+unlinking. Is there any plan to provide such support?
 
-And all the report data are corrupted, touchscreen is unresponsive.
+On Wednesday 20 December 2017 20:18:44 Pali Rohár wrote:
+> Hi!
+> 
+> Linux kernel currently does not provide any race-free way for calling
+> unlink() syscall on file entry which points to opened file descriptor.
+> 
+> On the other hand Linux kernel already provides race-free way for
+> creating file entry by linkat() syscall with AT_EMPTY_PATH or
+> AT_SYMLINK_FOLLOW flags. unlinkat() does not.
+> 
+> There was already discussion about unlink issue in bugzilla:
+> https://bugzilla.kernel.org/show_bug.cgi?id=93441
+> 
+> Because file descriptor describes inode number which can be stored in
+> more directories as hard links, there is a proposed funlinkat() syscall
+> with following API:
+> 
+> int funlinkat(int fd, int dirfd, const char *pathname, int flags);
+> 
+> It should atomically check if file descriptor fd and pathname (according
+> to dirfd) are same, and if then just unlinkat(dirfd, pathname, flags).
+> If are not same, throw error.
+> 
+> What userspace application basically needs:
+> 
+> Open file, test it stat (or probably content) and based on test result
+> decide if file needs to be removed or not.
+> 
+> Or delete a file behind a file descriptor opened with O_PATH.
+> 
+> Both cases are currently not possible without introducing race condition
+> between open/stat and unlink. Between those two calls, some other
+> process can exchange files.
 
-Fix this by re-sending report description command after resume.
-Add device ID as a quirk.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
----
- drivers/hid/hid-ids.h         |  3 +++
- drivers/hid/i2c-hid/i2c-hid.c | 13 +++++++++++++
- 2 files changed, 16 insertions(+)
-
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 5a3a7ead3012..0b5cc910f62e 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -525,6 +525,9 @@
- #define I2C_VENDOR_ID_HANTICK		0x0911
- #define I2C_PRODUCT_ID_HANTICK_5288	0x5288
- 
-+#define I2C_VENDOR_ID_RAYD		0x2386
-+#define I2C_PRODUCT_ID_RAYD_3118	0x3118
-+
- #define USB_VENDOR_ID_HANWANG		0x0b57
- #define USB_DEVICE_ID_HANWANG_TABLET_FIRST	0x5000
- #define USB_DEVICE_ID_HANWANG_TABLET_LAST	0x8fff
-diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
-index 97689e98e53f..615a91ac93bd 100644
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -47,6 +47,7 @@
- /* quirks to control the device */
- #define I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV	BIT(0)
- #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
-+#define I2C_HID_QUIRK_RESEND_REPORT_DESCR	BIT(2)
- 
- /* flags */
- #define I2C_HID_STARTED		0
-@@ -171,6 +172,8 @@ static const struct i2c_hid_quirks {
- 		I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV },
- 	{ I2C_VENDOR_ID_HANTICK, I2C_PRODUCT_ID_HANTICK_5288,
- 		I2C_HID_QUIRK_NO_IRQ_AFTER_RESET },
-+	{ I2C_VENDOR_ID_RAYD, I2C_PRODUCT_ID_RAYD_3118,
-+		I2C_HID_QUIRK_RESEND_REPORT_DESCR },
- 	{ 0, 0 }
- };
- 
-@@ -1220,6 +1223,16 @@ static int i2c_hid_resume(struct device *dev)
- 	if (ret)
- 		return ret;
- 
-+	/* RAYDIUM device (2386:3118) need to re-send report descr cmd
-+	 * after resume, after this it will be back normal.
-+	 * otherwise it issues too many incomplete reports.
-+	 */
-+	if (ihid->quirks & I2C_HID_QUIRK_RESEND_REPORT_DESCR) {
-+		ret = i2c_hid_command(client, &hid_report_descr_cmd, NULL, 0);
-+		if (!ret)
-+			return ret;
-+	}
-+
- 	if (hid->driver && hid->driver->reset_resume) {
- 		ret = hid->driver->reset_resume(hid);
- 		return ret;
 -- 
-2.14.3
+Pali Rohár
+pali.rohar@gmail.com
