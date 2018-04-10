@@ -1,93 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752140AbeDJRGI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 13:06:08 -0400
-Received: from mail-ot0-f181.google.com ([74.125.82.181]:44103 "EHLO
-        mail-ot0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752078AbeDJRGC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 13:06:02 -0400
-X-Google-Smtp-Source: AIpwx4/gsV3h/tF8E51YfG0BEDak9nOCq0zDTQuPdWnk9c/jA99QQ5q5+4TEqQ8pXcRXkDFH9NHYhQ==
+        id S1752249AbeDJRGR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 13:06:17 -0400
+Received: from verein.lst.de ([213.95.11.211]:45472 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752078AbeDJRGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 13:06:16 -0400
+Date: Tue, 10 Apr 2018 19:06:15 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Christoph Hellwig <hch@lst.de>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] swiotlb: Fix unexpected swiotlb_alloc_coherent()
+        failures
+Message-ID: <20180410170615.GA27589@lst.de>
+References: <20180410170513.22834-1-tiwai@suse.de>
 MIME-Version: 1.0
-References: <1522304274-18989-1-git-send-email-tdas@codeaurora.org>
- <1522304274-18989-2-git-send-email-tdas@codeaurora.org> <CAE=gft6-FggNjP0nj6XrLN1rQqnep_PHHWg2fiRUrM8ZBf36Sg@mail.gmail.com>
- <65abfb98-802a-d7aa-5213-9fcd531b18d9@codeaurora.org> <152297026107.143116.8868825918169537109@swboyd.mtv.corp.google.com>
-In-Reply-To: <152297026107.143116.8868825918169537109@swboyd.mtv.corp.google.com>
-From: Evan Green <evgreen@chromium.org>
-Date: Tue, 10 Apr 2018 17:05:23 +0000
-X-Gmail-Original-Message-ID: <CAE=gft6q8ELJCN5JU5svS6cYHO65GMFKTVrHT9wu_mpr-j1-xw@mail.gmail.com>
-Message-ID: <CAE=gft6q8ELJCN5JU5svS6cYHO65GMFKTVrHT9wu_mpr-j1-xw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-To: sboyd@kernel.org
-Cc: tdas@codeaurora.org, sboyd@codeaurora.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, okukatla@codeaurora.org,
-        anischal@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, collinsd@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180410170513.22834-1-tiwai@suse.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 5, 2018 at 4:17 PM Stephen Boyd <sboyd@kernel.org> wrote:
+On Tue, Apr 10, 2018 at 07:05:13PM +0200, Takashi Iwai wrote:
+> The code refactoring by commit 0176adb00406 ("swiotlb: refactor
+> coherent buffer allocation") made swiotlb_alloc_buffer() almost always
+> failing due to a thinko: namely, the function evaluates the
+> dma_coherent_ok() call incorrectly and dealing as if it's invalid.
+> This ends up with weird errors like iwlwifi probe failure or amdgpu
+> screen flickering.
+> 
+> This patch corrects the logic error.
 
-> Quoting Taniya Das (2018-04-02 03:33:26)
-> >
-> > >
-> > >> +
-> > >> +#include "common.h"
-> > >> +#include "clk-regmap.h"
-> > >> +
-> > >> +#define CLK_RPMH_ARC_EN_OFFSET 0
-> > >> +#define CLK_RPMH_VRM_EN_OFFSET 4
-> > >> +#define CLK_RPMH_VRM_OFF_VAL 0
-> > >> +#define CLK_RPMH_VRM_ON_VAL 1
-> > >> +#define CLK_RPMH_APPS_RSC_AO_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE)
-| \
-> > >> +                                        BIT(RPMH_ACTIVE_ONLY_STATE))
-> > >> +#define CLK_RPMH_APPS_RSC_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
-> > >> +                                     BIT(RPMH_ACTIVE_ONLY_STATE) | \
-> > >> +                                     BIT(RPMH_SLEEP_STATE))
-> > >> +struct clk_rpmh {
-> > >> +       const char *res_name;
-> > >> +       u32 res_addr;
-> > >> +       u32 res_en_offset;
-> > >> +       u32 res_on_val;
-> > >> +       u32 res_off_val;
-> > >> +       u32 state;
-> > >> +       u32 aggr_state;
-> > >> +       u32 last_sent_aggr_state;
-> > >> +       u32 valid_state_mask;
-> > >> +       struct rpmh_client *rpmh_client;
-> > >> +       unsigned long rate;
-> > >> +       struct clk_rpmh *peer;
-> > >> +       struct clk_hw hw;
-> > >
-> > > I believe this member should go at the beginning of the structure. At
-least
-> > > that's what everyone else seems to do, and that's what the clk.txt
-> > > documentation seems to ask for.
-> > >
-> >
-> > Yes I missed that, would update it in the next patch series.
+This looks ok, although even hitting this code is a bad sign.  Do you
+know why the previous dma_direct_alloc didn't succeed?
 
-> Where is the documentation asking for that? There isn't any place that
-> clk_hw should be in a structure. container_of() can figure it out all
-> the time, and that macro is preferred instead of plain casts from one
-> type to another because it provides slightly more type safety.
-
-Perhaps I'm reading too strictly into the documentation, but this was the
-passage that gave me that idea:
-
-To construct a clk hardware structure for your platform you must define
-the following::
-
-struct clk_foo {
-struct clk_hw hw;
-... hardware specific data goes here ...
-};
-
--Evan
+> 
+> Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1088658
+> Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1088902
+> Fixes: 0176adb00406 ("swiotlb: refactor coherent buffer allocation")
+> Cc: <stable@vger.kernel.org> # v4.16+
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> ---
+>  lib/swiotlb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/lib/swiotlb.c b/lib/swiotlb.c
+> index 47aeb04c1997..de7cc540450f 100644
+> --- a/lib/swiotlb.c
+> +++ b/lib/swiotlb.c
+> @@ -719,7 +719,7 @@ swiotlb_alloc_buffer(struct device *dev, size_t size, dma_addr_t *dma_handle,
+>  		goto out_warn;
+>  
+>  	*dma_handle = __phys_to_dma(dev, phys_addr);
+> -	if (dma_coherent_ok(dev, *dma_handle, size))
+> +	if (!dma_coherent_ok(dev, *dma_handle, size))
+>  		goto out_unmap;
+>  
+>  	memset(phys_to_virt(phys_addr), 0, size);
+> -- 
+> 2.16.3
+---end quoted text---
