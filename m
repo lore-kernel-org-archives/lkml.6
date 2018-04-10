@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752936AbeDJMwC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:52:02 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:50966 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752840AbeDJMv4 (ORCPT
+        id S1753072AbeDJMwm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:52:42 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:44194 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753126AbeDJMwB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:51:56 -0400
+        Tue, 10 Apr 2018 08:52:01 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -23,9 +23,9 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/5] soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of open coding
-Date: Tue, 10 Apr 2018 14:51:39 +0200
-Message-Id: <1523364701-15383-4-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 2/5] ARM: timer-sp: Use of_clk_get_parent_count() instead of open coding
+Date: Tue, 10 Apr 2018 14:51:38 +0200
+Message-Id: <1523364701-15383-3-git-send-email-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
 References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
@@ -33,43 +33,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As of_clk_get_parent_count() returns zero on failure, while
-of_count_phandle_with_args() might return a negative error code, this
-also fixes the issue of possibly using a negative number in the
-allocation below.
-
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 This depends on "[PATCH v2 1/5] clk: Extract OF clock helpers in
 <linux/of_clk.h>".
 
 v2:
-  - of_clk_get_parent_count() was moved to <linux/of_clk.h>.
+  - of_clk_get_parent_count() was moved to <linux/of_clk.h>,
+  - Dropped RFC, as a dummy is now available in the !CONFIG_COMMON_CLK
+    case.
 ---
- drivers/soc/rockchip/pm_domains.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clocksource/timer-sp804.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
-index 53efc386b1ada8cf..13913d40c8213e36 100644
---- a/drivers/soc/rockchip/pm_domains.c
-+++ b/drivers/soc/rockchip/pm_domains.c
-@@ -14,6 +14,7 @@
- #include <linux/pm_clock.h>
- #include <linux/pm_domain.h>
+diff --git a/drivers/clocksource/timer-sp804.c b/drivers/clocksource/timer-sp804.c
+index 3ac9dec9a03852f9..e01222ea888ff9d2 100644
+--- a/drivers/clocksource/timer-sp804.c
++++ b/drivers/clocksource/timer-sp804.c
+@@ -27,6 +27,7 @@
+ #include <linux/io.h>
+ #include <linux/of.h>
  #include <linux/of_address.h>
 +#include <linux/of_clk.h>
- #include <linux/of_platform.h>
- #include <linux/clk.h>
- #include <linux/regmap.h>
-@@ -400,8 +401,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
- 	pd->info = pd_info;
- 	pd->pmu = pmu;
+ #include <linux/of_irq.h>
+ #include <linux/sched_clock.h>
  
--	pd->num_clks = of_count_phandle_with_args(node, "clocks",
--						  "#clock-cells");
-+	pd->num_clks = of_clk_get_parent_count(node);
- 	if (pd->num_clks > 0) {
- 		pd->clks = devm_kcalloc(pmu->dev, pd->num_clks,
- 					sizeof(*pd->clks), GFP_KERNEL);
+@@ -245,7 +246,7 @@ static int __init sp804_of_init(struct device_node *np)
+ 		clk1 = NULL;
+ 
+ 	/* Get the 2nd clock if the timer has 3 timer clocks */
+-	if (of_count_phandle_with_args(np, "clocks", "#clock-cells") == 3) {
++	if (of_clk_get_parent_count(np) == 3) {
+ 		clk2 = of_clk_get(np, 1);
+ 		if (IS_ERR(clk2)) {
+ 			pr_err("sp804: %s clock not found: %d\n", np->name,
 -- 
 2.7.4
