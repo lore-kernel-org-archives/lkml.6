@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48loyoT+ECnGW56CZuyB5y05d8DzhRFVX2CVGLicQTpPIjBRNW+drp7UrJJRseV4Fx8ZSWw
-ARC-Seal: i=1; a=rsa-sha256; t=1523399804; cv=none;
+X-Google-Smtp-Source: AIpwx48fhfXrMCXPvRyXbKagA0I+sWMYTTME2w8DY8VTauS3gk6IFEJ9beCMrD9wDQwBXvK7Goog
+ARC-Seal: i=1; a=rsa-sha256; t=1523399802; cv=none;
         d=google.com; s=arc-20160816;
-        b=mtRBVhMd+vsCwSUeH3BLroynIpyZoytfFZsTMPLWZnGn/UtSlJcs6H1iHgPiNvT41s
-         wHjbmkTsnTsbTexAWMzcS1Uhd2W9uzNiSbZLJT3EdPLZ9jBtfhGYCUgfX5ioaIyYpW0f
-         iyFbAVTMfL3e95ttHDduPijP529fAwIG7DKHx4DYy+AMlq+GKL0usxyvrxc5CtgbZhij
-         U+EWZNeBamXsYlTJVaFBcREUkaamg2bv31ti/3hOL7AIXRS0qnNUpZO4WLxnuXl7hcV0
-         YbdroqSF6ccuFPp94x4XkorKpQw1EkC9CL+9gU2tubVHrK5z7FdPpk9F7RDib2wpxoCN
-         yhVw==
+        b=CnyDff/lvRUmTtov2dz3cfwR1YeUJBqDQaRbe95nDXaQJGzXkoBM334L4dxWtRz9u5
+         tMuLN1KnyPoaVcQFl8RqRkuxKd3i1BAlFbQR4ddi12d2QPyNaNR1fKHJioYKiEA2QbM8
+         NlQiycucJn1gZWO9cez0fxcRudCmOTFjtt7dnq2iiKSnzuesDWNLLVhsJs+Db4/cogpF
+         H7R2xtJ9eEmpHeJzdQhifxIdEt2Z1t2QhJNWDTe878CvVX0Plheeqv97OFoDg1uVUymY
+         IjiqaXfH3gmvUxHor9iQDw8NvefUZV2Dwc6cFEqPHdcDjPc9ukWaG+loFpKBZfdMMSSA
+         57Fg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wCR3u8BxWyiy7XW9LCdlQVsiaT0/ULFw7D8BbfpwN1I=;
-        b=lAwW5y7v6FKCNOsQPO5c2YzQO5wg5o7xR5PE8FkRu8k1rUaWGvmXZLCW9VnVFiTEQz
-         5QihOw/IN20R527bT3A1LUrrpuUVuZ5WenNawhlZpncPXtx76I0wWh+spXsK9yMbb7zg
-         nyYb9GASNuNTiOP97WvsGeIx2TJwzS6GmrjhDOp15yFflUHovkCc+gZy75KKNOxoHMEN
-         hnpFaGuiIhtUoUeGCsDr+QIf36VODKZQeu94Kp0IOg6tEh0Wm/EYLOjgSORFiQZDpvT/
-         jNWiUigjhzHPli5DFqeQAs+BF91aQvzbbe6tpVbUG6QEg8iay3TTEU9WzgS1DUUGtmbH
-         YO0A==
+        bh=qFuU25A9yZRtixQTeCoR0qPBFemykALT0r5Zw5wb47I=;
+        b=0CKi1wpKd6sSz9UNPDVHGfYHf6kPkufkt3zY3uW10iBNz2P5+WOwcWHIYuOuPuTe8R
+         floOSRWx3IEnD4NTJk62BY7JQ4+iBgOaT6kReCOHRM5yY+jUaUYCZPXyVnbNODMDjfhD
+         IOMInTIL02IzrK6UUbL346KpCXHuNQbwW1MXgsEJXHBWrPBi5uigSLQrtaa5y0H2jMaZ
+         ylgYWsvBOl0WU6luz1haqjxLg2SqkIiOYKk5iwljmWD7tL490AQ1wxUYfOxDWGruWENj
+         Z8Jstpd410VFjfoCmj5ndOgwoX15UbrjckUfI9l/2Su7DhsPVVHIJQ1rCh1A9zaGR4DZ
+         WPRw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stanislaw Gruszka <sgruszka@redhat.com>,
-	Enrico Mioso <mrkiko.rs@gmail.com>,
-	Kalle Valo <kvalo@codeaurora.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-edac <linux-edac@vger.kernel.org>,
+	Borislav Petkov <bp@suse.de>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 050/138] rt2x00: do not pause queue unconditionally on error path
-Date: Wed, 11 Apr 2018 00:24:00 +0200
-Message-Id: <20180410212907.918717345@linuxfoundation.org>
+Subject: [PATCH 4.14 066/138] EDAC, mv64x60: Fix an error handling path
+Date: Wed, 11 Apr 2018 00:24:16 +0200
+Message-Id: <20180410212909.762307985@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399967509576176?=
-X-GMAIL-MSGID: =?utf-8?q?1597400473876864003?=
+X-GMAIL-THRID: =?utf-8?q?1597400025524274247?=
+X-GMAIL-MSGID: =?utf-8?q?1597400470785565703?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,68 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stanislaw Gruszka <sgruszka@redhat.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit 6dd80efd75ce7c2dbd9f117cf585ee2b33a42ee1 ]
+[ Upstream commit 68fa24f9121c04ef146b5158f538c8b32f285be5 ]
 
-Pausing queue without checking threshold is racy with txdone path.
-Moreover we do not need pause queue on any error, but only if queue
-is full - in case when we send RTS frame ( other cases of almost full
-queue are already handled in rt2x00queue_write_tx_frame() ).
+We should not call edac_mc_del_mc() if a corresponding call to
+edac_mc_add_mc() has not been performed yet.
 
-Patch fixes of theoretically possible problem of pausing empty
-queue.
+So here, we should go to err instead of err2 to branch at the right
+place of the error handling path.
 
-Signed-off-by: Stanislaw Gruszka <sgruszka@redhat.com>
-Tested-by: Enrico Mioso <mrkiko.rs@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180107205400.14068-1-christophe.jaillet@wanadoo.fr
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ralink/rt2x00/rt2x00mac.c |   22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ drivers/edac/mv64x60_edac.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ralink/rt2x00/rt2x00mac.c
-+++ b/drivers/net/wireless/ralink/rt2x00/rt2x00mac.c
-@@ -142,15 +142,25 @@ void rt2x00mac_tx(struct ieee80211_hw *h
- 	if (!rt2x00dev->ops->hw->set_rts_threshold &&
- 	    (tx_info->control.rates[0].flags & (IEEE80211_TX_RC_USE_RTS_CTS |
- 						IEEE80211_TX_RC_USE_CTS_PROTECT))) {
--		if (rt2x00queue_available(queue) <= 1)
--			goto exit_fail;
-+		if (rt2x00queue_available(queue) <= 1) {
-+			/*
-+			 * Recheck for full queue under lock to avoid race
-+			 * conditions with rt2x00lib_txdone().
-+			 */
-+			spin_lock(&queue->tx_lock);
-+			if (rt2x00queue_threshold(queue))
-+				rt2x00queue_pause_queue(queue);
-+			spin_unlock(&queue->tx_lock);
-+
-+			goto exit_free_skb;
-+		}
- 
- 		if (rt2x00mac_tx_rts_cts(rt2x00dev, queue, skb))
--			goto exit_fail;
-+			goto exit_free_skb;
+--- a/drivers/edac/mv64x60_edac.c
++++ b/drivers/edac/mv64x60_edac.c
+@@ -758,7 +758,7 @@ static int mv64x60_mc_err_probe(struct p
+ 		/* Non-ECC RAM? */
+ 		printk(KERN_WARNING "%s: No ECC DIMMs discovered\n", __func__);
+ 		res = -ENODEV;
+-		goto err2;
++		goto err;
  	}
  
- 	if (unlikely(rt2x00queue_write_tx_frame(queue, skb, control->sta, false)))
--		goto exit_fail;
-+		goto exit_free_skb;
- 
- 	/*
- 	 * Pausing queue has to be serialized with rt2x00lib_txdone(). Note
-@@ -164,10 +174,6 @@ void rt2x00mac_tx(struct ieee80211_hw *h
- 
- 	return;
- 
-- exit_fail:
--	spin_lock(&queue->tx_lock);
--	rt2x00queue_pause_queue(queue);
--	spin_unlock(&queue->tx_lock);
-  exit_free_skb:
- 	ieee80211_free_txskb(hw, skb);
- }
+ 	edac_dbg(3, "init mci\n");
