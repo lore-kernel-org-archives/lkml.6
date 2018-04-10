@@ -1,69 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752391AbeDJJbx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 05:31:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50528 "EHLO mx2.suse.de"
+        id S1752561AbeDJJcp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 05:32:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50606 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752196AbeDJJbv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:31:51 -0400
-Date: Tue, 10 Apr 2018 11:31:47 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Miroslav Benes <mbenes@suse.cz>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Jiri Kosina <jikos@kernel.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] livepatch: Add atomic replace
-Message-ID: <20180410093147.agf7a3wcr2kjslkc@pathway.suse.cz>
-References: <20180323120028.31451-1-pmladek@suse.com>
- <20180323120028.31451-4-pmladek@suse.com>
- <20180406220530.snglx7m3quye34wp@treble>
- <alpine.LSU.2.21.1804091547190.20943@pobox.suse.cz>
+        id S1751770AbeDJJco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 05:32:44 -0400
+Date: Tue, 10 Apr 2018 11:32:41 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Chris Fries <cfries@google.com>
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Message-ID: <20180410093241.GA21835@dhcp22.suse.cz>
+References: <20180409015815.235943-1-minchan@kernel.org>
+ <20180410082243.GW21835@dhcp22.suse.cz>
+ <20180410085531.m2xvzi7nenbrgbve@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.1804091547190.20943@pobox.suse.cz>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180410085531.m2xvzi7nenbrgbve@quack2.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2018-04-09 15:53:03, Miroslav Benes wrote:
-> > > +	 * see klp_init_object_loaded().
-> > > +	 */
-> > > +	if (!func->new_func && !func->nop)
-> > >  		return -EINVAL;
+On Tue 10-04-18 10:55:31, Jan Kara wrote:
+> On Tue 10-04-18 10:22:43, Michal Hocko wrote:
+> > On Mon 09-04-18 10:58:15, Minchan Kim wrote:
+> > > Recently, I got a report like below.
+> > > 
+> > > [ 7858.792946] [<ffffff80086f4de0>] __list_del_entry+0x30/0xd0
+> > > [ 7858.792951] [<ffffff8008362018>] list_lru_del+0xac/0x1ac
+> > > [ 7858.792957] [<ffffff800830f04c>] page_cache_tree_insert+0xd8/0x110
+> > > [ 7858.792962] [<ffffff8008310188>] __add_to_page_cache_locked+0xf8/0x4e0
+> > > [ 7858.792967] [<ffffff800830ff34>] add_to_page_cache_lru+0x50/0x1ac
+> > > [ 7858.792972] [<ffffff800830fdd0>] pagecache_get_page+0x468/0x57c
+> > > [ 7858.792979] [<ffffff80085d081c>] __get_node_page+0x84/0x764
+> > > [ 7858.792986] [<ffffff800859cd94>] f2fs_iget+0x264/0xdc8
+> > > [ 7858.792991] [<ffffff800859ee00>] f2fs_lookup+0x3b4/0x660
+> > > [ 7858.792998] [<ffffff80083d2540>] lookup_slow+0x1e4/0x348
+> > > [ 7858.793003] [<ffffff80083d0eb8>] walk_component+0x21c/0x320
+> > > [ 7858.793008] [<ffffff80083d0010>] path_lookupat+0x90/0x1bc
+> > > [ 7858.793013] [<ffffff80083cfe6c>] filename_lookup+0x8c/0x1a0
+> > > [ 7858.793018] [<ffffff80083c52d0>] vfs_fstatat+0x84/0x10c
+> > > [ 7858.793023] [<ffffff80083c5b00>] SyS_newfstatat+0x28/0x64
+> > > 
+> > > v4.9 kenrel already has the d3798ae8c6f3,("mm: filemap: don't
+> > > plant shadow entries without radix tree node") so I thought
+> > > it should be okay. When I was googling, I found others report
+> > > such problem and I think current kernel still has the problem.
+> > > 
+> > > https://bugzilla.redhat.com/show_bug.cgi?id=1431567
+> > > https://bugzilla.redhat.com/show_bug.cgi?id=1420335
+> > > 
+> > > It assumes shadow entry of radix tree relies on the init state
+> > > that node->private_list allocated should be list_empty state.
+> > > Currently, it's initailized in SLAB constructor which means
+> > > node of radix tree would be initialized only when *slub allocates
+> > > new page*, not *new object*. So, if some FS or subsystem pass
+> > > gfp_mask to __GFP_ZERO, slub allocator will do memset blindly.
+> > > That means allocated node can have !list_empty(node->private_list).
+> > > It ends up calling NULL deference at workingset_update_node by
+> > > failing list_empty check.
+> > > 
+> > > This patch should fix it.
+> > > 
+> > > Fixes: 449dd6984d0e ("mm: keep page cache radix tree nodes in check")
+> > > Reported-by: Chris Fries <cfries@google.com>
+> > > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > > Cc: Jan Kara <jack@suse.cz>
+> > > Signed-off-by: Minchan Kim <minchan@kernel.org>
 > > 
-> > >  
-> > >  	INIT_LIST_HEAD(&func->stack_node);
-> > > @@ -742,6 +920,9 @@ static int klp_init_object_loaded(struct klp_patch *patch,
-> > >  			return -ENOENT;
-> > >  		}
-> > >  
-> > > +		if (func->nop)
-> > > +			func->new_func = (void *)func->old_addr;
-> > > +
+> > Regardless of whether it makes sense to use __GFP_ZERO from the upper
+> > layer or not, it is subtle as hell to rely on the pre-existing state
+> > for a newly allocated object. So yes this makes perfect sense.
 > > 
-> > These changes make it more obvious that 'new_func' isn't quite the right
-> > name.  It should really be 'new_addr' IMO.
+> > Do we want CC: stable?
+> > Acked-by: Michal Hocko <mhocko@suse.com>
 > 
-> I think we wanted to point out the difference from old_addr which is 
-> initialized with the symbol name while new_func is initialized with the 
-> new function itself (function pointer). I agree though that it looks 
-> awkward in this context and I'm not against changing it to new_addr.
+> Well, for hot allocations we do rely on previous state a lot. After all
+> that's what slab constructor was created for. Whether radix tree node
+> allocation is such a hot path is a question for debate, I agree.
 
-I am fine with the rename. I was confused by "new_func" several times
-in the past. "new_addr" makes it clear that we are setting an address in
-compare with the name in "old_name".
+I really doubt that LIST_INIT is something to notice for the radix tree
+allocation. So I would rather have safe code than rely on the previous
+state which is really subtle.
 
-
-> Petr, could you also add a note to the changelog why we need to setup 
-> new_func for nop functions, please? It's not obvious because of the hack 
-> in klp_ftrace_handler() 
-> (klp_cancel_transition()->...->klp_check_stack_func() needs it).
-
-Yup.
-
-Best Regards,
-Petr
+Btw. I am not a huge fan of ctor semantic as we have it. I am not really
+sure all users understand when it is called...
+-- 
+Michal Hocko
+SUSE Labs
