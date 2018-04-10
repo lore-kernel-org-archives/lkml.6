@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48yaldjO3mvk/ETLJDcRd1L2VqFPShS3FxThcqVTiLyg++aRVACmHmCM9gztW05dQMIgyyL
-ARC-Seal: i=1; a=rsa-sha256; t=1523399853; cv=none;
+X-Google-Smtp-Source: AIpwx487MzexlsjHvVoXPGfo8fNEqbET5P4SWUgV/hihh/ZbfLJV4gL0SSTTeb8akCnRFld18vQv
+ARC-Seal: i=1; a=rsa-sha256; t=1523399847; cv=none;
         d=google.com; s=arc-20160816;
-        b=Vs76K2Ea5Fjp/z80Y92FT53ezIMU5NBKSpWTx8wrcSwL1XEGNxqXf31N0zOsFP8KMu
-         0955y3tQ0Wjk9nmREZ6GZapOxOTDRWQ/12NSZZyNb8nBTLa1DIJl7UdNDIb9zIOXwxED
-         lZ0GLqwsUDaNrQLRAIwsh/I6IVYjCNVzA5oZHZMmQRvJVZltoi1DHWNI1a1tSc7YRgys
-         Mn5VNkEa4EFGfsR67AyDERMPkAdni+VdDaotpQsg/toVtLQGU/akFwDtMsC6bZw8ioZ4
-         DgRMEQ0wdYK7k8FE0lvAIQhJCxQyUniovxwPmD/u6LFycPTvKxM+THMQWCX21qbrW13I
-         Q69w==
+        b=zKp3yv7iw3Kp9vNHSKtGPAia4U0LSajJoLrtNAbox0ZnC6GiZjVYHFPG7RMuxfdXXw
+         PLhQHWuNwQnFh8n7Nz352Dp/5E8/lACPgQkIX+XCiohvl5otPCi4CmcLkUxTe+KTgkFn
+         IRRq47uz3h6RTjOugv+zeyNlLyYTPJuqTtzJOpYXuKsU2zbiU6koyUhDsxVzPmNaobzA
+         rP9fF6vDsozoFCSzl2NUvsd2MMTd7TYSeK8R/iMRRC/fND+78OElwWLoqmUFqLwW7PX4
+         t6GzXQyd8o4V4OUauO1MfVCNlEkYMTuArqtKrusyjsdZdac5oaVOQYnVepGk0A+xkfZ6
+         aNag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yeCf8WIG6WNZ3TQijIuZDoGFIYRBtfqz3CLoJGM8DAI=;
-        b=xpldzl7ldVXxrpEd3QgR7tOqYDNleS4OFkqFq0Zs+Ux5bSL54dcwfg1EYlWbIMQS87
-         EDoFViAsKuHFms5dd8pQkKGoIw7+noGC11p6CFE+jw575KpIN8JYb+Tz3m3EDJFX2eno
-         YGyAWTCaDeHVz+gQuKUr8vim6meN/vTKJCKCI5Meslf7opAqDC2z3xmWuPbityrLsy4B
-         7UfomiUs1whFza/opa+FB7F7qBpC2cl2W/mJKqq0qJMfc3G3yY6X7cz64G6r5YfDKBrU
-         3nSRvyeyWu7j4VSkkP4j6WoLPyurPwJ5fYDmeFSyg9bUale6QOXvQsNST2FV7tp0wzYp
-         l1NQ==
+        bh=OBRRTgw6P56+udod8GlSeW9vGZljzt0aa7nrC9qK+oc=;
+        b=k7uLtCR8j12j1bsr+vFsg6u2BbOALBsKZ1q6Ls1VzDEMvf6ma4HvDHJSIXrttswrEU
+         LtfE3MI/a8z5XyF2SKjlmL9OE3Vp3OpeX8p4gLNziEOSkiXUrV9OqmzgFewncVhJl2HS
+         yiTnrjCZl3tfrSMlWu8s721/LyVIvhIRJq5bwfLnk6UCJnzH+O1o7W3CaedhAIsC/49Q
+         O+ahqfewoCna1YmvZwjJETuzb4rtZWG035ZOczSVo/BZpapaTfDSXdcR/Avf0IvLfR6x
+         hBhxAGhVLhCpKWQ2r4FIPEupniDC7j0qbUrayZifEkKHMHzzK2sgUT/SAPvYw6UW1+/2
+         f5Ng==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sumit Saxena <sumit.saxena@broadcom.com>,
-	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 070/138] scsi: megaraid_sas: Error handling for invalid ldcount provided by firmware in RAID map
-Date: Wed, 11 Apr 2018 00:24:20 +0200
-Message-Id: <20180410212910.248591048@linuxfoundation.org>
+	Ashok Raj <ashok.raj@intel.com>,
+	Borislav Petkov <bp@suse.de>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 085/138] x86/microcode: Propagate return value from updating functions
+Date: Wed, 11 Apr 2018 00:24:35 +0200
+Message-Id: <20180410212912.064918346@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -42,8 +51,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400074797676914?=
-X-GMAIL-MSGID: =?utf-8?q?1597400524468030670?=
+X-GMAIL-THRID: =?utf-8?q?1597400094363480142?=
+X-GMAIL-MSGID: =?utf-8?q?1597400518542246473?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,74 +60,227 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+From: Borislav Petkov <bp@suse.de>
 
+commit 3f1f576a195aa266813cbd4ca70291deb61e0129 upstream.
 
-[ Upstream commit 7ada701d0d5e5c6d357e157a72b841db3e8d03f4 ]
+... so that callers can know when microcode was updated and act
+accordingly.
 
-Currently driver does not validate ldcount provided by firmware.  If the
-value is invalid, fail RAID map validation accordingly.  This issue is
-rare to hit in field and is fixed as part of code review.
-
-Signed-off-by: Sumit Saxena <sumit.saxena@broadcom.com>
-Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Tested-by: Ashok Raj <ashok.raj@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Ashok Raj <ashok.raj@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180216112640.11554-2-bp@alien8.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/scsi/megaraid/megaraid_sas_fp.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/drivers/scsi/megaraid/megaraid_sas_fp.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fp.c
-@@ -168,7 +168,7 @@ static struct MR_LD_SPAN *MR_LdSpanPtrGe
- /*
-  * This function will Populate Driver Map using firmware raid map
-  */
--void MR_PopulateDrvRaidMap(struct megasas_instance *instance)
-+static int MR_PopulateDrvRaidMap(struct megasas_instance *instance)
- {
- 	struct fusion_context *fusion = instance->ctrl_context;
- 	struct MR_FW_RAID_MAP_ALL     *fw_map_old    = NULL;
-@@ -259,7 +259,7 @@ void MR_PopulateDrvRaidMap(struct megasa
- 		ld_count = (u16)le16_to_cpu(fw_map_ext->ldCount);
- 		if (ld_count > MAX_LOGICAL_DRIVES_EXT) {
- 			dev_dbg(&instance->pdev->dev, "megaraid_sas: LD count exposed in RAID map in not valid\n");
--			return;
-+			return 1;
- 		}
+---
+ arch/x86/include/asm/microcode.h      |    9 +++++++--
+ arch/x86/kernel/cpu/microcode/amd.c   |   10 +++++-----
+ arch/x86/kernel/cpu/microcode/core.c  |   33 +++++++++++++++++----------------
+ arch/x86/kernel/cpu/microcode/intel.c |   10 +++++-----
+ 4 files changed, 34 insertions(+), 28 deletions(-)
+
+--- a/arch/x86/include/asm/microcode.h
++++ b/arch/x86/include/asm/microcode.h
+@@ -37,7 +37,12 @@ struct cpu_signature {
  
- 		pDrvRaidMap->ldCount = (__le16)cpu_to_le16(ld_count);
-@@ -285,6 +285,12 @@ void MR_PopulateDrvRaidMap(struct megasa
- 			fusion->ld_map[(instance->map_id & 1)];
- 		pFwRaidMap = &fw_map_old->raidMap;
- 		ld_count = (u16)le32_to_cpu(pFwRaidMap->ldCount);
-+		if (ld_count > MAX_LOGICAL_DRIVES) {
-+			dev_dbg(&instance->pdev->dev,
-+				"LD count exposed in RAID map in not valid\n");
-+			return 1;
-+		}
-+
- 		pDrvRaidMap->totalSize = pFwRaidMap->totalSize;
- 		pDrvRaidMap->ldCount = (__le16)cpu_to_le16(ld_count);
- 		pDrvRaidMap->fpPdIoTimeoutSec = pFwRaidMap->fpPdIoTimeoutSec;
-@@ -300,6 +306,8 @@ void MR_PopulateDrvRaidMap(struct megasa
- 			sizeof(struct MR_DEV_HANDLE_INFO) *
- 			MAX_RAIDMAP_PHYSICAL_DEVICES);
- 	}
-+
-+	return 0;
+ struct device;
+ 
+-enum ucode_state { UCODE_ERROR, UCODE_OK, UCODE_NFOUND };
++enum ucode_state {
++	UCODE_OK	= 0,
++	UCODE_UPDATED,
++	UCODE_NFOUND,
++	UCODE_ERROR,
++};
+ 
+ struct microcode_ops {
+ 	enum ucode_state (*request_microcode_user) (int cpu,
+@@ -54,7 +59,7 @@ struct microcode_ops {
+ 	 * are being called.
+ 	 * See also the "Synchronization" section in microcode_core.c.
+ 	 */
+-	int (*apply_microcode) (int cpu);
++	enum ucode_state (*apply_microcode) (int cpu);
+ 	int (*collect_cpu_info) (int cpu, struct cpu_signature *csig);
+ };
+ 
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -498,7 +498,7 @@ static unsigned int verify_patch_size(u8
+ 	return patch_size;
  }
  
- /*
-@@ -317,8 +325,8 @@ u8 MR_ValidateMapInfo(struct megasas_ins
- 	u16 ld;
- 	u32 expected_size;
+-static int apply_microcode_amd(int cpu)
++static enum ucode_state apply_microcode_amd(int cpu)
+ {
+ 	struct cpuinfo_x86 *c = &cpu_data(cpu);
+ 	struct microcode_amd *mc_amd;
+@@ -512,7 +512,7 @@ static int apply_microcode_amd(int cpu)
  
--
--	MR_PopulateDrvRaidMap(instance);
-+	if (MR_PopulateDrvRaidMap(instance))
-+		return 0;
+ 	p = find_patch(cpu);
+ 	if (!p)
+-		return 0;
++		return UCODE_NFOUND;
  
- 	fusion = instance->ctrl_context;
- 	drv_map = fusion->ld_drv_map[(instance->map_id & 1)];
+ 	mc_amd  = p->data;
+ 	uci->mc = p->data;
+@@ -523,13 +523,13 @@ static int apply_microcode_amd(int cpu)
+ 	if (rev >= mc_amd->hdr.patch_id) {
+ 		c->microcode = rev;
+ 		uci->cpu_sig.rev = rev;
+-		return 0;
++		return UCODE_OK;
+ 	}
+ 
+ 	if (__apply_microcode_amd(mc_amd)) {
+ 		pr_err("CPU%d: update failed for patch_level=0x%08x\n",
+ 			cpu, mc_amd->hdr.patch_id);
+-		return -1;
++		return UCODE_ERROR;
+ 	}
+ 	pr_info("CPU%d: new patch_level=0x%08x\n", cpu,
+ 		mc_amd->hdr.patch_id);
+@@ -537,7 +537,7 @@ static int apply_microcode_amd(int cpu)
+ 	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
+ 	c->microcode = mc_amd->hdr.patch_id;
+ 
+-	return 0;
++	return UCODE_UPDATED;
+ }
+ 
+ static int install_equiv_cpu_table(const u8 *buf)
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -374,7 +374,7 @@ static int collect_cpu_info(int cpu)
+ }
+ 
+ struct apply_microcode_ctx {
+-	int err;
++	enum ucode_state err;
+ };
+ 
+ static void apply_microcode_local(void *arg)
+@@ -489,31 +489,29 @@ static void __exit microcode_dev_exit(vo
+ /* fake device for request_firmware */
+ static struct platform_device	*microcode_pdev;
+ 
+-static int reload_for_cpu(int cpu)
++static enum ucode_state reload_for_cpu(int cpu)
+ {
+ 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
+ 	enum ucode_state ustate;
+-	int err = 0;
+ 
+ 	if (!uci->valid)
+-		return err;
++		return UCODE_OK;
+ 
+ 	ustate = microcode_ops->request_microcode_fw(cpu, &microcode_pdev->dev, true);
+-	if (ustate == UCODE_OK)
+-		apply_microcode_on_target(cpu);
+-	else
+-		if (ustate == UCODE_ERROR)
+-			err = -EINVAL;
+-	return err;
++	if (ustate != UCODE_OK)
++		return ustate;
++
++	return apply_microcode_on_target(cpu);
+ }
+ 
+ static ssize_t reload_store(struct device *dev,
+ 			    struct device_attribute *attr,
+ 			    const char *buf, size_t size)
+ {
++	enum ucode_state tmp_ret = UCODE_OK;
+ 	unsigned long val;
++	ssize_t ret = 0;
+ 	int cpu;
+-	ssize_t ret = 0, tmp_ret;
+ 
+ 	ret = kstrtoul(buf, 0, &val);
+ 	if (ret)
+@@ -526,15 +524,18 @@ static ssize_t reload_store(struct devic
+ 	mutex_lock(&microcode_mutex);
+ 	for_each_online_cpu(cpu) {
+ 		tmp_ret = reload_for_cpu(cpu);
+-		if (tmp_ret != 0)
++		if (tmp_ret > UCODE_NFOUND) {
+ 			pr_warn("Error reloading microcode on CPU %d\n", cpu);
+ 
+-		/* save retval of the first encountered reload error */
+-		if (!ret)
+-			ret = tmp_ret;
++			/* set retval for the first encountered reload error */
++			if (!ret)
++				ret = -EINVAL;
++		}
+ 	}
+-	if (!ret)
++
++	if (!ret && tmp_ret == UCODE_UPDATED)
+ 		perf_check_microcode();
++
+ 	mutex_unlock(&microcode_mutex);
+ 	put_online_cpus();
+ 
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -772,7 +772,7 @@ static int collect_cpu_info(int cpu_num,
+ 	return 0;
+ }
+ 
+-static int apply_microcode_intel(int cpu)
++static enum ucode_state apply_microcode_intel(int cpu)
+ {
+ 	struct microcode_intel *mc;
+ 	struct ucode_cpu_info *uci;
+@@ -782,7 +782,7 @@ static int apply_microcode_intel(int cpu
+ 
+ 	/* We should bind the task to the CPU */
+ 	if (WARN_ON(raw_smp_processor_id() != cpu))
+-		return -1;
++		return UCODE_ERROR;
+ 
+ 	uci = ucode_cpu_info + cpu;
+ 	mc = uci->mc;
+@@ -790,7 +790,7 @@ static int apply_microcode_intel(int cpu
+ 		/* Look for a newer patch in our cache: */
+ 		mc = find_patch(uci);
+ 		if (!mc)
+-			return 0;
++			return UCODE_NFOUND;
+ 	}
+ 
+ 	/* write microcode via MSR 0x79 */
+@@ -801,7 +801,7 @@ static int apply_microcode_intel(int cpu
+ 	if (rev != mc->hdr.rev) {
+ 		pr_err("CPU%d update to revision 0x%x failed\n",
+ 		       cpu, mc->hdr.rev);
+-		return -1;
++		return UCODE_ERROR;
+ 	}
+ 
+ 	if (rev != prev_rev) {
+@@ -818,7 +818,7 @@ static int apply_microcode_intel(int cpu
+ 	uci->cpu_sig.rev = rev;
+ 	c->microcode = rev;
+ 
+-	return 0;
++	return UCODE_UPDATED;
+ }
+ 
+ static enum ucode_state generic_load_microcode(int cpu, void *data, size_t size,
