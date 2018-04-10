@@ -1,419 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752690AbeDJT5Q (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 15:57:16 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:50431 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751611AbeDJT5O (ORCPT
+        id S1752785AbeDJT6Q (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 15:58:16 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:45528 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752345AbeDJT6O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 15:57:14 -0400
-X-Google-Smtp-Source: AIpwx4+tybBKQSFNlhFhpNrhFnQ6JTNK4cNPXLcbzQLOvTrpaEPIjfDDDEOkzkxgv/CHSGnlzO/UqA==
+        Tue, 10 Apr 2018 15:58:14 -0400
+From: Song Liu <songliubraving@fb.com>
+To: Vince Weaver <vincent.weaver@maine.edu>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "mingo@kernel.org" <mingo@kernel.org>
+Subject: Re: perf: fuzzer leads to trace_kprobe: Could not insert message
+ flood
+Thread-Topic: perf: fuzzer leads to trace_kprobe: Could not insert message
+ flood
+Thread-Index: AQHT0NsKF6lgcxb36UeZZJCEysMOEaP6arGA
+Date: Tue, 10 Apr 2018 19:57:50 +0000
+Message-ID: <A3B3905F-3364-462A-BE02-B01D52482791@fb.com>
+References: <alpine.DEB.2.21.1804101043490.6068@macbook-air>
+In-Reply-To: <alpine.DEB.2.21.1804101043490.6068@macbook-air>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.6.18)
+x-originating-ip: [2620:10d:c090:200::6:6de2]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR15MB1756;7:uaxyyk7I076fdjaytXgsknRrVM0YuN9SQwM7M718FJo4T9fD+noItaBUL1DztK6lNvV5ILu28YgOoSxYWjtcQTejnumZPM0rJWSJrvoGPjwWjWc4Mc4bVn8JtedydbAIbZctbxw/900A8/5FDgCC7vkZzCh8l+VzCT1g+xi6MyDz178bTtxVhB4nAloS+0UcBZYmxOToIwVhftNdByli0hNlzYihaOzua2ljOOe4A+7it+Cqhpj5+91n6ee4UR58;20:h0YWn2LtKQQg+bNa2VI60PAEtO2gnPnWzLg069r3DAApDbilrKyGOvpFLjQm2tHq5sOU5BQVr00ZAYjOmX05yTghjUlXZAyn353/aHPa8fzMPaoRhDblVbg1M6ibwbNgiUMAYdVdow0xvfuhV+wpksjVsJJJVHb/896otRvFuRU=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR15MB1756;
+x-ms-traffictypediagnostic: DM5PR15MB1756:
+x-microsoft-antispam-prvs: <DM5PR15MB17565A6C605177B9B161D809B3BE0@DM5PR15MB1756.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(15185016700835)(67672495146484);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(11241501184)(944501327)(52105095)(10201501046)(3002001)(6041310)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR15MB1756;BCL:0;PCL:0;RULEID:;SRVR:DM5PR15MB1756;
+x-forefront-prvs: 0638FD5066
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(366004)(376002)(39860400002)(346002)(51914003)(199004)(189003)(36756003)(229853002)(6306002)(966005)(8936002)(76176011)(305945005)(99286004)(25786009)(106356001)(2900100001)(5660300001)(6486002)(478600001)(57306001)(6916009)(86362001)(102836004)(8676002)(186003)(6246003)(3280700002)(3660700001)(97736004)(446003)(81156014)(53936002)(5250100002)(6506007)(46003)(486006)(81166006)(6512007)(105586002)(68736007)(53546011)(50226002)(83716003)(316002)(54906003)(2906002)(4326008)(2171002)(11346002)(2616005)(14454004)(33656002)(476003)(6116002)(15650500001)(82746002)(6436002)(7736002)(59450400001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR15MB1756;H:DM5PR15MB1548.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: n3xxTTncDOg0tKJnWtPRqxdnkfC32VcXbFv1/ea/IZOzmopQ92FwIUx3Ouz2B669CCGeyGry9Oxi2xBDptzWcNdy11bM9b9Cdk5CWuIv9+VfrGiNBuIdwvWGSO1evtfc4njvabRylrEz+vAu+q+4HRPXMNzuTvlBLKBHYLVnbesG3pMvZPk082m6pTy/geL90vavRTiVFgiTdQrIVv5WssfAyP+tbkI03f5dFIPM+B1VqRNWK+JTfdzMluJg2ozBqtfxcRZzZg8KRaw0/5QDhKur1VWOeDM3pqNVdnJwYD2pl64SCau3656Xo8XJEH8Cus1fe/GpYPdOwkJ7xf4r7rJoRmWmNTym3kNs1Om92irY+3LFhVFp8Z6fCcAeB689oR3fbrFiQ0Te04S7+fBQjx7T9DnZChws3RYf/yZvrZs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <A339817453B4AD45A5871491263FE1B6@namprd15.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <20180329013143.22527-5-ran.wang_1@nxp.com>
-References: <20180329013143.22527-1-ran.wang_1@nxp.com> <20180329013143.22527-5-ran.wang_1@nxp.com>
-From: Li Yang <leoyang.li@nxp.com>
-Date: Tue, 10 Apr 2018 14:57:11 -0500
-X-Gmail-Original-Message-ID: <CADRPPNQXH3+eGNV417BRVnFZgPoTF7aut32DmZZ-0xJKB9TJ9Q@mail.gmail.com>
-Message-ID: <CADRPPNQXH3+eGNV417BRVnFZgPoTF7aut32DmZZ-0xJKB9TJ9Q@mail.gmail.com>
-Subject: Re: [PATCH 5/5] powerpc:dts:pm: add power management node
-To: Ran Wang <ran.wang_1@nxp.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Scott Wood <oss@buserror.net>, Kumar Gala <galak@kernel.crashing.org>,
-        Zhao Chenhui <chenhui.zhao@freescale.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Office365-Filtering-Correlation-Id: cef312a2-4033-455f-f7cb-08d59f1d5741
+X-MS-Exchange-CrossTenant-Network-Message-Id: cef312a2-4033-455f-f7cb-08d59f1d5741
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Apr 2018 19:57:50.8977
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1756
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-10_08:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3AJwM0N024844
 
-On Wed, Mar 28, 2018 at 8:31 PM, Ran Wang <ran.wang_1@nxp.com> wrote:
-> Enable Power Management feature on device tree, including MPC8536,
-> MPC8544, MPC8548, MPC8572, P1010, P1020, P1021, P1022, P2020, P2041,
-> P3041, T104X, T1024.
 
-There are no device tree bindings documented for the properties and
-compatible strings used in the patch. Please update the binding
-documents first before adding them into device tree.
 
->
-> Signed-off-by: Zhao Chenhui <chenhui.zhao@freescale.com>
-> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-> ---
->  arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi |   14 ++++++-
->  arch/powerpc/boot/dts/fsl/mpc8544si-post.dtsi |    2 +
->  arch/powerpc/boot/dts/fsl/mpc8548si-post.dtsi |    2 +
->  arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi |    2 +
->  arch/powerpc/boot/dts/fsl/p1010si-post.dtsi   |    8 ++++
->  arch/powerpc/boot/dts/fsl/p1020si-post.dtsi   |    5 +++
->  arch/powerpc/boot/dts/fsl/p1021si-post.dtsi   |    5 +++
->  arch/powerpc/boot/dts/fsl/p1022si-post.dtsi   |    9 +++--
->  arch/powerpc/boot/dts/fsl/p2020si-post.dtsi   |   14 +++++++
->  arch/powerpc/boot/dts/fsl/pq3-power.dtsi      |   48 +++++++++++++++++++++++++
->  arch/powerpc/boot/dts/fsl/t1024rdb.dts        |    2 +-
->  arch/powerpc/boot/dts/fsl/t1040rdb.dts        |    2 +-
->  arch/powerpc/boot/dts/fsl/t1042rdb.dts        |    2 +-
->  arch/powerpc/boot/dts/fsl/t1042rdb_pi.dts     |    2 +-
->  14 files changed, 108 insertions(+), 9 deletions(-)
->  create mode 100644 arch/powerpc/boot/dts/fsl/pq3-power.dtsi
->
-> diff --git a/arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi b/arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi
-> index 4193570..fba40a1 100644
-> --- a/arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi
-> @@ -199,6 +199,10 @@
->
->  /include/ "pq3-dma-0.dtsi"
->  /include/ "pq3-etsec1-0.dtsi"
-> +       enet0: ethernet@24000 {
-> +               fsl,wake-on-filer;
-> +               fsl,pmc-handle = <&etsec1_clk>;
-> +       };
->  /include/ "pq3-etsec1-timer-0.dtsi"
->
->         usb@22000 {
-> @@ -222,9 +226,10 @@
->         };
->
->  /include/ "pq3-etsec1-2.dtsi"
-> -
-> -       ethernet@26000 {
-> +       enet2: ethernet@26000 {
->                 cell-index = <1>;
-> +               fsl,wake-on-filer;
-> +               fsl,pmc-handle = <&etsec3_clk>;
->         };
->
->         usb@2b000 {
-> @@ -249,4 +254,9 @@
->                 reg = <0xe0000 0x1000>;
->                 fsl,has-rstcr;
->         };
-> +
-> +/include/ "pq3-power.dtsi"
-> +       power@e0070 {
-> +               compatible = "fsl,mpc8536-pmc", "fsl,mpc8548-pmc";
-> +       };
->  };
-> diff --git a/arch/powerpc/boot/dts/fsl/mpc8544si-post.dtsi b/arch/powerpc/boot/dts/fsl/mpc8544si-post.dtsi
-> index b68eb11..ea7416a 100644
-> --- a/arch/powerpc/boot/dts/fsl/mpc8544si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/mpc8544si-post.dtsi
-> @@ -188,4 +188,6 @@
->                 reg = <0xe0000 0x1000>;
->                 fsl,has-rstcr;
->         };
-> +
-> +/include/ "pq3-power.dtsi"
->  };
-> diff --git a/arch/powerpc/boot/dts/fsl/mpc8548si-post.dtsi b/arch/powerpc/boot/dts/fsl/mpc8548si-post.dtsi
-> index 579d76c..dddb737 100644
-> --- a/arch/powerpc/boot/dts/fsl/mpc8548si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/mpc8548si-post.dtsi
-> @@ -156,4 +156,6 @@
->                 reg = <0xe0000 0x1000>;
->                 fsl,has-rstcr;
->         };
-> +
-> +/include/ "pq3-power.dtsi"
->  };
-> diff --git a/arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi b/arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi
-> index 49294cf..40a6cff 100644
-> --- a/arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi
-> @@ -193,4 +193,6 @@
->                 reg = <0xe0000 0x1000>;
->                 fsl,has-rstcr;
->         };
-> +
-> +/include/ "pq3-power.dtsi"
->  };
-> diff --git a/arch/powerpc/boot/dts/fsl/p1010si-post.dtsi b/arch/powerpc/boot/dts/fsl/p1010si-post.dtsi
-> index 1b4aafc..47b62a8 100644
-> --- a/arch/powerpc/boot/dts/fsl/p1010si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p1010si-post.dtsi
-> @@ -173,6 +173,8 @@
->
->  /include/ "pq3-etsec2-0.dtsi"
->         enet0: ethernet@b0000 {
-> +               fsl,pmc-handle = <&etsec1_clk>;
-> +
->                 queue-group@b0000 {
->                         fsl,rx-bit-map = <0xff>;
->                         fsl,tx-bit-map = <0xff>;
-> @@ -181,6 +183,8 @@
->
->  /include/ "pq3-etsec2-1.dtsi"
->         enet1: ethernet@b1000 {
-> +               fsl,pmc-handle = <&etsec2_clk>;
-> +
->                 queue-group@b1000 {
->                         fsl,rx-bit-map = <0xff>;
->                         fsl,tx-bit-map = <0xff>;
-> @@ -189,6 +193,8 @@
->
->  /include/ "pq3-etsec2-2.dtsi"
->         enet2: ethernet@b2000 {
-> +               fsl,pmc-handle = <&etsec3_clk>;
-> +
->                 queue-group@b2000 {
->                         fsl,rx-bit-map = <0xff>;
->                         fsl,tx-bit-map = <0xff>;
-> @@ -201,4 +207,6 @@
->                 reg = <0xe0000 0x1000>;
->                 fsl,has-rstcr;
->         };
-> +
-> +/include/ "pq3-power.dtsi"
->  };
-> diff --git a/arch/powerpc/boot/dts/fsl/p1020si-post.dtsi b/arch/powerpc/boot/dts/fsl/p1020si-post.dtsi
-> index 642dc3a..cc4c746 100644
-> --- a/arch/powerpc/boot/dts/fsl/p1020si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p1020si-post.dtsi
-> @@ -163,14 +163,17 @@
->
->  /include/ "pq3-etsec2-0.dtsi"
->         enet0: enet0_grp2: ethernet@b0000 {
-> +               fsl,pmc-handle = <&etsec1_clk>;
->         };
->
->  /include/ "pq3-etsec2-1.dtsi"
->         enet1: enet1_grp2: ethernet@b1000 {
-> +               fsl,pmc-handle = <&etsec2_clk>;
->         };
->
->  /include/ "pq3-etsec2-2.dtsi"
->         enet2: enet2_grp2: ethernet@b2000 {
-> +               fsl,pmc-handle = <&etsec3_clk>;
->         };
->
->         global-utilities@e0000 {
-> @@ -178,6 +181,8 @@
->                 reg = <0xe0000 0x1000>;
->                 fsl,has-rstcr;
->         };
-> +
-> +/include/ "pq3-power.dtsi"
->  };
->
->  /include/ "pq3-etsec2-grp2-0.dtsi"
-> diff --git a/arch/powerpc/boot/dts/fsl/p1021si-post.dtsi b/arch/powerpc/boot/dts/fsl/p1021si-post.dtsi
-> index 407cb5f..378195d 100644
-> --- a/arch/powerpc/boot/dts/fsl/p1021si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p1021si-post.dtsi
-> @@ -159,14 +159,17 @@
->
->  /include/ "pq3-etsec2-0.dtsi"
->         enet0: enet0_grp2: ethernet@b0000 {
-> +               fsl,pmc-handle = <&etsec1_clk>;
->         };
->
->  /include/ "pq3-etsec2-1.dtsi"
->         enet1: enet1_grp2: ethernet@b1000 {
-> +               fsl,pmc-handle = <&etsec2_clk>;
->         };
->
->  /include/ "pq3-etsec2-2.dtsi"
->         enet2: enet2_grp2: ethernet@b2000 {
-> +               fsl,pmc-handle = <&etsec3_clk>;
->         };
->
->         global-utilities@e0000 {
-> @@ -174,6 +177,8 @@
->                 reg = <0xe0000 0x1000>;
->                 fsl,has-rstcr;
->         };
-> +
-> +/include/ "pq3-power.dtsi"
->  };
->
->  &qe {
-> diff --git a/arch/powerpc/boot/dts/fsl/p1022si-post.dtsi b/arch/powerpc/boot/dts/fsl/p1022si-post.dtsi
-> index 5f51b7b..6ac21e8 100644
-> --- a/arch/powerpc/boot/dts/fsl/p1022si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p1022si-post.dtsi
-> @@ -225,11 +225,13 @@
->  /include/ "pq3-etsec2-0.dtsi"
->         enet0: enet0_grp2: ethernet@b0000 {
->                 fsl,wake-on-filer;
-> +               fsl,pmc-handle = <&etsec1_clk>;
->         };
->
->  /include/ "pq3-etsec2-1.dtsi"
->         enet1: enet1_grp2: ethernet@b1000 {
->                 fsl,wake-on-filer;
-> +               fsl,pmc-handle = <&etsec2_clk>;
->         };
->
->         global-utilities@e0000 {
-> @@ -238,9 +240,10 @@
->                 fsl,has-rstcr;
->         };
->
-> -       power@e0070{
-> -               compatible = "fsl,mpc8536-pmc", "fsl,mpc8548-pmc";
-> -               reg = <0xe0070 0x20>;
-> +/include/ "pq3-power.dtsi"
-> +       power@e0070 {
-> +               compatible = "fsl,p1022-pmc", "fsl,mpc8536-pmc",
-> +                               "fsl,mpc8548-pmc";
->         };
->
->  };
-> diff --git a/arch/powerpc/boot/dts/fsl/p2020si-post.dtsi b/arch/powerpc/boot/dts/fsl/p2020si-post.dtsi
-> index 884e01b..2c4787c 100644
-> --- a/arch/powerpc/boot/dts/fsl/p2020si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p2020si-post.dtsi
-> @@ -175,6 +175,10 @@
->                 compatible = "fsl-usb2-dr-v1.6", "fsl-usb2-dr";
->         };
->  /include/ "pq3-etsec1-0.dtsi"
-> +       enet0: ethernet@24000 {
-> +               fsl,pmc-handle = <&etsec1_clk>;
-> +
-> +       };
->  /include/ "pq3-etsec1-timer-0.dtsi"
->
->         ptp_clock@24e00 {
-> @@ -183,7 +187,15 @@
->
->
->  /include/ "pq3-etsec1-1.dtsi"
-> +       enet1: ethernet@25000 {
-> +               fsl,pmc-handle = <&etsec2_clk>;
-> +       };
-> +
->  /include/ "pq3-etsec1-2.dtsi"
-> +       enet2: ethernet@26000 {
-> +               fsl,pmc-handle = <&etsec3_clk>;
-> +       };
-> +
->  /include/ "pq3-esdhc-0.dtsi"
->         sdhc@2e000 {
->                 compatible = "fsl,p2020-esdhc", "fsl,esdhc";
-> @@ -198,4 +210,6 @@
->                 reg = <0xe0000 0x1000>;
->                 fsl,has-rstcr;
->         };
-> +
-> +/include/ "pq3-power.dtsi"
->  };
-> diff --git a/arch/powerpc/boot/dts/fsl/pq3-power.dtsi b/arch/powerpc/boot/dts/fsl/pq3-power.dtsi
-> new file mode 100644
-> index 0000000..5a760b3
-> --- /dev/null
-> +++ b/arch/powerpc/boot/dts/fsl/pq3-power.dtsi
-> @@ -0,0 +1,48 @@
-> +/*
-> + * PQ3 Power Management device tree stub
-> + *
-> + * Copyright 2012-2013 Freescale Semiconductor Inc.
-> + *
-> + * Redistribution and use in source and binary forms, with or without
-> + * modification, are permitted provided that the following conditions are met:
-> + *     * Redistributions of source code must retain the above copyright
-> + *       notice, this list of conditions and the following disclaimer.
-> + *     * Redistributions in binary form must reproduce the above copyright
-> + *       notice, this list of conditions and the following disclaimer in the
-> + *       documentation and/or other materials provided with the distribution.
-> + *     * Neither the name of Freescale Semiconductor nor the
-> + *       names of its contributors may be used to endorse or promote products
-> + *       derived from this software without specific prior written permission.
-> + *
-> + *
-> + * ALTERNATIVELY, this software may be distributed under the terms of the
-> + * GNU General Public License ("GPL") as published by the Free Software
-> + * Foundation, either version 2 of that License or (at your option) any
-> + * later version.
-> + *
-> + * THIS SOFTWARE IS PROVIDED BY Freescale Semiconductor ``AS IS'' AND ANY
-> + * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-> + * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-> + * DISCLAIMED. IN NO EVENT SHALL Freescale Semiconductor BE LIABLE FOR ANY
-> + * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-> + * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-> + * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-> + * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-> + * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-> + * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-> + */
-> +
-> +power@e0070 {
-> +       compatible = "fsl,mpc8548-pmc";
-> +       reg = <0xe0070 0x20>;
-> +
-> +       etsec1_clk: soc-clk@24 {
-> +               fsl,pmcdr-mask = <0x00000080>;
-> +       };
-> +       etsec2_clk: soc-clk@25 {
-> +               fsl,pmcdr-mask = <0x00000040>;
-> +       };
-> +       etsec3_clk: soc-clk@26 {
-> +               fsl,pmcdr-mask = <0x00000020>;
-> +       };
-> +};
-> diff --git a/arch/powerpc/boot/dts/fsl/t1024rdb.dts b/arch/powerpc/boot/dts/fsl/t1024rdb.dts
-> index 73a6453..95fc694 100644
-> --- a/arch/powerpc/boot/dts/fsl/t1024rdb.dts
-> +++ b/arch/powerpc/boot/dts/fsl/t1024rdb.dts
-> @@ -91,7 +91,7 @@
->                 board-control@2,0 {
->                         #address-cells = <1>;
->                         #size-cells = <1>;
-> -                       compatible = "fsl,t1024-cpld";
-> +                       compatible = "fsl,t1024-cpld", "fsl,deepsleep-cpld";
->                         reg = <3 0 0x300>;
->                         ranges = <0 3 0 0x300>;
->                         bank-width = <1>;
-> diff --git a/arch/powerpc/boot/dts/fsl/t1040rdb.dts b/arch/powerpc/boot/dts/fsl/t1040rdb.dts
-> index 65ff34c..825665c 100644
-> --- a/arch/powerpc/boot/dts/fsl/t1040rdb.dts
-> +++ b/arch/powerpc/boot/dts/fsl/t1040rdb.dts
-> @@ -70,7 +70,7 @@
->
->         ifc: localbus@ffe124000 {
->                 cpld@3,0 {
-> -                       compatible = "fsl,t1040rdb-cpld";
-> +                       compatible = "fsl,t104xrdb-cpld", "fsl,deepsleep-cpld";
->                 };
->         };
->  };
-> diff --git a/arch/powerpc/boot/dts/fsl/t1042rdb.dts b/arch/powerpc/boot/dts/fsl/t1042rdb.dts
-> index 3ebb712..0997643 100644
-> --- a/arch/powerpc/boot/dts/fsl/t1042rdb.dts
-> +++ b/arch/powerpc/boot/dts/fsl/t1042rdb.dts
-> @@ -68,7 +68,7 @@
->
->         ifc: localbus@ffe124000 {
->                 cpld@3,0 {
-> -                       compatible = "fsl,t1042rdb-cpld";
-> +                       compatible = "fsl,t104xrdb-cpld", "fsl,deepsleep-cpld";
->                 };
->         };
->  };
-> diff --git a/arch/powerpc/boot/dts/fsl/t1042rdb_pi.dts b/arch/powerpc/boot/dts/fsl/t1042rdb_pi.dts
-> index 8ec3ff4..b10cab1 100644
-> --- a/arch/powerpc/boot/dts/fsl/t1042rdb_pi.dts
-> +++ b/arch/powerpc/boot/dts/fsl/t1042rdb_pi.dts
-> @@ -41,7 +41,7 @@
->
->         ifc: localbus@ffe124000 {
->                 cpld@3,0 {
-> -                       compatible = "fsl,t1042rdb_pi-cpld";
-> +                       compatible = "fsl,t104xrdb-cpld", "fsl,deepsleep-cpld";
->                 };
->         };
->
-> --
-> 1.7.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> On Apr 10, 2018, at 7:48 AM, Vince Weaver <vincent.weaver@maine.edu> wrote:
+> 
+> Author: Song Liu <songliubraving@fb.com>
+> Date:   Wed Dec 6 14:45:15 2017 -0800
+> 
+> When running the perf_fuzzer on a current git checkout my logs are flooded 
+> with messages such as this:
+> [71487.869077] trace_kprobe: Could not insert probe at unknown+0: -22
+> [71488.174479] trace_kprobe: Could not insert probe at unknown+0: -22
+> 
+> Presumably this is due to the introduction of the perf_kprobe PMU in
+> 	commit e12f03d7031a977356e3d7b75a68c2185ff8d155
+> 	Author: Song Liu <songliubraving@fb.com>
+> 	Date:   Wed Dec 6 14:45:15 2017 -0800
+> 
+> Is there a way to get this error disabled, or else rate-limited?
+> 
+> Vince
+
+Hi Vince, 
+
+Thanks for the report. 
+
+This is a new API that creates probe together with perf_event_open(). Based on 
+my limited understanding of perf_fuzzer, it doesn't understand this API, and uses 
+it in an abnormal way. I would recommend perf_fuzzer to understand this new
+API and test it. For more information about using this API, please refer to the 
+man-page diff available at:
+
+      https://patchwork.kernel.org/patch/10097283/
+
+Thanks again for the test and report. Please let me know if you have further 
+questions. 
+
+Best, 
+Song
