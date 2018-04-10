@@ -1,56 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753108AbeDJMiW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:38:22 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:41310 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752584AbeDJMiS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:38:18 -0400
-X-Google-Smtp-Source: AIpwx4+RDvo4uuiGchV7/J7vEmosA5WpT3rJ8ro6IwA/XYrGjYhhQ3v2mq3CGtRVvhcjZJ//UhqhEQ==
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: Kai.Makisara@kolumbus.fi, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 1/2] scsi: st: Replace GFP_ATOMIC with GFP_KERNEL in st_probe
-Date: Tue, 10 Apr 2018 20:37:59 +0800
-Message-Id: <1523363879-31242-1-git-send-email-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        id S1753169AbeDJMi3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:38:29 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:50876 "EHLO gum.cmpxchg.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752584AbeDJMi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 08:38:27 -0400
+Date: Tue, 10 Apr 2018 08:39:46 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Michal Hocko <mhocko@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Minchan Kim <minchan@kernel.org>, Christopher Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>,
+        Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Message-ID: <20180410123946.GA6334@cmpxchg.org>
+References: <20180409015815.235943-1-minchan@kernel.org>
+ <20180409024925.GA21889@bombadil.infradead.org>
+ <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
+ <20180409111403.GA31652@bombadil.infradead.org>
+ <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
+ <20180409183827.GD17558@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180409194044.GA15295@bombadil.infradead.org>
+ <20180410082643.GX21835@dhcp22.suse.cz>
+ <20180410120528.GB22118@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180410120528.GB22118@bombadil.infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-st_probe() is never called in atomic context.
+On Tue, Apr 10, 2018 at 05:05:28AM -0700, Matthew Wilcox wrote:
+> On Tue, Apr 10, 2018 at 10:26:43AM +0200, Michal Hocko wrote:
+> > On Mon 09-04-18 12:40:44, Matthew Wilcox wrote:
+> > > The problem is that the mapping gfp flags are used not only for allocating
+> > > pages, but also for allocating the page cache data structures that hold
+> > > the pages.  F2FS is the only filesystem that set the __GFP_ZERO bit,
+> > > so it's the first time anyone's noticed that the page cache passes the
+> > > __GFP_ZERO bit through to the radix tree allocation routines, which
+> > > causes the radix tree nodes to be zeroed instead of constructed.
+> > > 
+> > > I think the right solution to this is:
+> > 
+> > This just hides the underlying problem that the node is not fully and
+> > properly initialized. Relying on the previous released state is just too
+> > subtle.
+> 
+> That's the fundamental design of slab-with-constructors.  The user provides
+> a constructor, so all newly allocagted objects are initialised to a known
+> state, then the user will restore the object to that state when it frees
+> the object to slab.
 
-st_probe() is only set as ".probe" in struct scsi_driver.
+Fully agreed. I'm surprised there is so much pushback to what Willy is
+saying here, this stuff has been established for years.
 
-Despite never getting called from atomic context,
-st_probe() calls kzalloc() with GFP_ATOMIC,
-which does not sleep for allocation.
-GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
-which can sleep and improve the possibility of sucessful allocation.
+> > Are you going to blacklist all potential gfp flags that come
+> > from the mapping? This is just unmaintainable! If anything this should
+> > be an explicit & with the allowed set of allowed flags.
+> 
+> Oh, I agree that using the set of flags used to allocate the page
+> in order to allocate the radix tree nodes is a pretty horrible idea.
+> 
+> Your suggestion, then, is:
+> 
+> -	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
+> +	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
 
-This is found by a static analysis tool named DCNS written by myself.
-And I also manually check it.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/scsi/st.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
-index 94e402e..1da42f3 100644
---- a/drivers/scsi/st.c
-+++ b/drivers/scsi/st.c
-@@ -4290,7 +4290,7 @@ static int st_probe(struct device *dev)
- 		goto out_buffer_free;
- 	}
- 
--	tpnt = kzalloc(sizeof(struct scsi_tape), GFP_ATOMIC);
-+	tpnt = kzalloc(sizeof(struct scsi_tape), GFP_KERNEL);
- 	if (tpnt == NULL) {
- 		sdev_printk(KERN_ERR, SDp,
- 			    "st: Can't allocate device descriptor.\n");
--- 
-1.9.1
+That looks reasonable to me.
