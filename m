@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752016AbeDJFUQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 01:20:16 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:65223 "EHLO
+        id S1752093AbeDJFUV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 01:20:21 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:20186 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751778AbeDJFUN (ORCPT
+        by vger.kernel.org with ESMTP id S1751595AbeDJFUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 01:20:13 -0400
+        Tue, 10 Apr 2018 01:20:16 -0400
 From: Philippe Cornu <philippe.cornu@st.com>
 To: Archit Taneja <architt@codeaurora.org>,
         Andrzej Hajda <a.hajda@samsung.com>,
@@ -19,9 +19,9 @@ CC: Yannick Fertre <yannick.fertre@st.com>,
         Philippe Cornu <philippe.cornu@st.com>,
         Benjamin Gaignard <benjamin.gaignard@linaro.org>,
         Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH 1/2] dt-bindings/display/bridge: sii902x: add optional power supplies
-Date: Tue, 10 Apr 2018 07:19:26 +0200
-Message-ID: <20180410051927.8268-2-philippe.cornu@st.com>
+Subject: [PATCH 2/2] drm/bridge: sii902x: add optional power supplies
+Date: Tue, 10 Apr 2018 07:19:27 +0200
+Message-ID: <20180410051927.8268-3-philippe.cornu@st.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180410051927.8268-1-philippe.cornu@st.com>
 References: <20180410051927.8268-1-philippe.cornu@st.com>
@@ -40,22 +40,107 @@ found in the document named
 
 Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
 ---
- Documentation/devicetree/bindings/display/bridge/sii902x.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/bridge/sii902x.c | 39 +++++++++++++++++++++++++++++++++++----
+ 1 file changed, 35 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/sii902x.txt b/Documentation/devicetree/bindings/display/bridge/sii902x.txt
-index 56a3e68ccb80..cf53678fe574 100644
---- a/Documentation/devicetree/bindings/display/bridge/sii902x.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/sii902x.txt
-@@ -8,6 +8,9 @@ Optional properties:
- 	- interrupts-extended or interrupt-parent + interrupts: describe
- 	  the interrupt line used to inform the host about hotplug events.
- 	- reset-gpios: OF device-tree gpio specification for RST_N pin.
-+	- iovcc-supply: I/O supply voltage (1.8V or 3.3V, host-dependent).
-+	- avcc12-supply: TMDS analog supply voltage (1.2V).
-+	- cvcc12-supply: Digital core supply voltage (1.2V).
+diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+index 60373d7eb220..e17ba6db1ec8 100644
+--- a/drivers/gpu/drm/bridge/sii902x.c
++++ b/drivers/gpu/drm/bridge/sii902x.c
+@@ -24,6 +24,7 @@
+ #include <linux/i2c.h>
+ #include <linux/module.h>
+ #include <linux/regmap.h>
++#include <linux/regulator/consumer.h>
  
- Optional subnodes:
- 	- video input: this subnode can contain a video input port node
+ #include <drm/drmP.h>
+ #include <drm/drm_atomic_helper.h>
+@@ -86,6 +87,7 @@ struct sii902x {
+ 	struct drm_bridge bridge;
+ 	struct drm_connector connector;
+ 	struct gpio_desc *reset_gpio;
++	struct regulator_bulk_data supplies[3];
+ };
+ 
+ static inline struct sii902x *bridge_to_sii902x(struct drm_bridge *bridge)
+@@ -392,23 +394,43 @@ static int sii902x_probe(struct i2c_client *client,
+ 		return PTR_ERR(sii902x->reset_gpio);
+ 	}
+ 
++	sii902x->supplies[0].supply = "iovcc";
++	sii902x->supplies[1].supply = "avcc12";
++	sii902x->supplies[2].supply = "cvcc12";
++	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(sii902x->supplies),
++				      sii902x->supplies);
++	if (ret) {
++		dev_err(dev, "regulator_bulk_get failed\n");
++		return ret;
++	}
++
++	ret = regulator_bulk_enable(ARRAY_SIZE(sii902x->supplies),
++				    sii902x->supplies);
++	if (ret) {
++		dev_err(dev, "regulator_bulk_enable failed\n");
++		return ret;
++	}
++
++	usleep_range(10000, 20000);
++
+ 	sii902x_reset(sii902x);
+ 
+ 	ret = regmap_write(sii902x->regmap, SII902X_REG_TPI_RQB, 0x0);
+ 	if (ret)
+-		return ret;
++		goto err_disable_regulator;
+ 
+ 	ret = regmap_bulk_read(sii902x->regmap, SII902X_REG_CHIPID(0),
+ 			       &chipid, 4);
+ 	if (ret) {
+ 		dev_err(dev, "regmap_read failed %d\n", ret);
+-		return ret;
++		goto err_disable_regulator;
+ 	}
+ 
+ 	if (chipid[0] != 0xb0) {
+ 		dev_err(dev, "Invalid chipid: %02x (expecting 0xb0)\n",
+ 			chipid[0]);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto err_disable_regulator;
+ 	}
+ 
+ 	/* Clear all pending interrupts */
+@@ -424,7 +446,7 @@ static int sii902x_probe(struct i2c_client *client,
+ 						IRQF_ONESHOT, dev_name(dev),
+ 						sii902x);
+ 		if (ret)
+-			return ret;
++			goto err_disable_regulator;
+ 	}
+ 
+ 	sii902x->bridge.funcs = &sii902x_bridge_funcs;
+@@ -434,6 +456,12 @@ static int sii902x_probe(struct i2c_client *client,
+ 	i2c_set_clientdata(client, sii902x);
+ 
+ 	return 0;
++
++err_disable_regulator:
++	regulator_bulk_disable(ARRAY_SIZE(sii902x->supplies),
++			       sii902x->supplies);
++
++	return ret;
+ }
+ 
+ static int sii902x_remove(struct i2c_client *client)
+@@ -443,6 +471,9 @@ static int sii902x_remove(struct i2c_client *client)
+ 
+ 	drm_bridge_remove(&sii902x->bridge);
+ 
++	regulator_bulk_disable(ARRAY_SIZE(sii902x->supplies),
++			       sii902x->supplies);
++
+ 	return 0;
+ }
+ 
 -- 
 2.15.1
