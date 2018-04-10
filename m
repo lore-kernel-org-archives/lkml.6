@@ -1,66 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752430AbeDJIAD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:00:03 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:35750 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752052AbeDJIAC (ORCPT
+        id S1752517AbeDJIAa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 04:00:30 -0400
+Received: from smtprelay.synopsys.com ([198.182.60.111]:49379 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752272AbeDJIA2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:00:02 -0400
-X-Google-Smtp-Source: AIpwx4/2GRBA3nSKzyi8laK5TYMfcqwDJ/p2coaOSTXSl1eO3uNRDkWskunrkicySUW3DbxXeP5qH+Oi0lu402kSDZI=
+        Tue, 10 Apr 2018 04:00:28 -0400
+Subject: Re: [PATCH v2 6/9] PCI: dwc: Define maximum number of vectors
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
+ <bf7062c863f33b2951acc586b1f22d3497ee2f10.1523266508.git.gustavo.pimentel@synopsys.com>
+ <20180409160356.GA14533@e107981-ln.cambridge.arm.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <a75bab38-55b7-b788-5ab4-b777fad2b7ff@synopsys.com>
+Date: Tue, 10 Apr 2018 08:59:30 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
-References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 10 Apr 2018 10:00:01 +0200
-X-Google-Sender-Auth: b9ciASoCtUd7BuJ6c9PMwYuKnzY
-Message-ID: <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>
-Subject: Re: Subject: [PATCH] [PATCH] time: tick-sched: use bool for tick_stopped
-To: yuankuiz@codeaurora.org
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, aulmck@linux.vnet.ibm.com,
-        Ingo Molnar <mingo@kernel.org>, Len Brown <len.brown@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180409160356.GA14533@e107981-ln.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 9:33 AM,  <yuankuiz@codeaurora.org> wrote:
-> From: John Zhao <yuankuiz@codeaurora.org>
->
-> Variable tick_stopped returned by tick_nohz_tick_stopped
-> can have only true / forse values. Since the return type
-> of the tick_nohz_tick_stopped is also bool, variable
-> tick_stopped nice to have data type as bool in place of int.
-> Moreover, the executed instructions cost could be minimal
-> without potiential data type conversion.
->
-> Signed-off-by: John Zhao <yuankuiz@codeaurora.org>
-> ---
->  kernel/time/tick-sched.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/time/tick-sched.h b/kernel/time/tick-sched.h
-> index 6de959a..4d34309 100644
-> --- a/kernel/time/tick-sched.h
-> +++ b/kernel/time/tick-sched.h
-> @@ -48,8 +48,8 @@ struct tick_sched {
->         unsigned long                   check_clocks;
->         enum tick_nohz_mode             nohz_mode;
->
-> +       bool                            tick_stopped    : 1;
->         unsigned int                    inidle          : 1;
-> -       unsigned int                    tick_stopped    : 1;
->         unsigned int                    idle_active     : 1;
->         unsigned int                    do_timer_last   : 1;
->         unsigned int                    got_idle_tick   : 1;
+Hi Lorenzo,
 
-I don't think this is a good idea at all.
+On 09/04/2018 17:03, Lorenzo Pieralisi wrote:
+> On Mon, Apr 09, 2018 at 10:41:15AM +0100, Gustavo Pimentel wrote:
+>> Adds a callback that defines the maximum number of vectors that can be use
+>> by the Root Complex.
+>>
+>> Since this is a parameter associated to each SoC IP setting, makes sense to
+>> be configurable and easily visible to future modifications.
+>>
+>> The designware IP supports a maximum of 256 vectors.
+> 
+> I think that a DT property instead of a callback would have made more
+> sense - I struggle to see the point in defining a callback to initialize
+> a variable, this can be done in the generic dwc code (and a DT binding).
 
-Please see https://lkml.org/lkml/2017/11/21/384 for example.
+The addition of this callback was done in MSI-X patch series before I take over
+the PCIe Designware driver responsibility. However I remember a thread in which
+this subject was discussed (see [1]), maybe this could bring some light about
+the motive why is was done like this. If you don't agree I can do patch after
+this series only focusing on this topic in order to do like to suggested.
 
-Thanks!
+[1] -> https://www.spinics.net/lists/linux-pci/msg61835.html
+> 
+> Lorenzo
+> 
+>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>> ---
+>> Change v1->v2:
+>> - Nothing changed, just to follow the patch set version.
+>>
+>>  drivers/pci/dwc/pcie-designware-plat.c | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/pci/dwc/pcie-designware-plat.c b/drivers/pci/dwc/pcie-designware-plat.c
+>> index 5382a7a..94da252 100644
+>> --- a/drivers/pci/dwc/pcie-designware-plat.c
+>> +++ b/drivers/pci/dwc/pcie-designware-plat.c
+>> @@ -48,8 +48,14 @@ static int dw_plat_pcie_host_init(struct pcie_port *pp)
+>>  	return 0;
+>>  }
+>>  
+>> +static void dw_plat_set_num_vectors(struct pcie_port *pp)
+>> +{
+>> +	pp->num_vectors = MAX_MSI_IRQS;
+>> +}
+>> +
+>>  static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
+>>  	.host_init = dw_plat_pcie_host_init,
+>> +	.set_num_vectors = dw_plat_set_num_vectors,
+>>  };
+>>  
+>>  static int dw_plat_pcie_establish_link(struct dw_pcie *pci)
+>> -- 
+>> 2.7.4
+>>
+>>
+
+Regards,
+Gustavo
