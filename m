@@ -1,49 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752432AbeDJHnZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 03:43:25 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:51601 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752272AbeDJHnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 03:43:24 -0400
-From: Chao Yu <yuchao0@huawei.com>
-To: <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2] f2fs: turn down IO priority of discard from background
-Date: Tue, 10 Apr 2018 15:43:09 +0800
-Message-ID: <20180410074309.13531-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
+        id S1752279AbeDJHpt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 03:45:49 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56978 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751874AbeDJHpr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 03:45:47 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 10 Apr 2018 15:45:46 +0800
+From: yuankuiz@codeaurora.org
+To: linux-pm@vger.kernel.org
+Cc: rjw@rjwysocki.net, fweisbec@gmail.com, peterz@infradead.org,
+        tglx@linutronix.de, mingo@kernel.org, len.brown@intel.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] [PATCH] time: tick-sched: use bool for tick_stopped
+In-Reply-To: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
+References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
+Message-ID: <9ee70560651fefffcc61949d8a37315d@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to avoid interfering normal r/w IO, let's turn down IO
-priority of discard issued from background.
+ From: John Zhao <yuankuiz@codeaurora.org>
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Variable tick_stopped returned by tick_nohz_tick_stopped
+can only be true / false values. Since the return type
+of the tick_nohz_tick_stopped is also bool, variable
+tick_stopped nice to have data type as bool in place of int.
+Moreover, the executed instructions cost could be minimal
+without potiential data type conversion.
+
+Signed-off-by: John Zhao <yuankuiz@codeaurora.org>
 ---
-v2:
-- correct commit message.
- fs/f2fs/segment.c | 1 +
- 1 file changed, 1 insertion(+)
+  kernel/time/tick-sched.h | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index aabe0d6b8307..5e708debeb9c 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1723,6 +1723,7 @@ void init_discard_policy(struct discard_policy *dpolicy,
- 		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
- 		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
- 		dpolicy->io_aware = true;
-+		dpolicy->sync = false;
- 	} else if (discard_type == DPOLICY_FORCE) {
- 		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
- 		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
--- 
-2.15.0.55.gc2ece9dc4de6
+diff --git a/kernel/time/tick-sched.h b/kernel/time/tick-sched.h
+index 6de959a..4d34309 100644
+--- a/kernel/time/tick-sched.h
++++ b/kernel/time/tick-sched.h
+@@ -48,8 +48,8 @@ struct tick_sched {
+  	unsigned long			check_clocks;
+  	enum tick_nohz_mode		nohz_mode;
+
++	bool				tick_stopped	: 1;
+  	unsigned int			inidle		: 1;
+-	unsigned int			tick_stopped	: 1;
+  	unsigned int			idle_active	: 1;
+  	unsigned int			do_timer_last	: 1;
+  	unsigned int			got_idle_tick	: 1;
