@@ -1,38 +1,83 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+7TDkp48FWFUm8YKRlfAPy+yV5SHJ7Ak9LMxDmL+Zz/aCZ7/OxzTgzBBiyDeDVlvyvjLtv
-ARC-Seal: i=1; a=rsa-sha256; t=1523399464; cv=none;
-        d=google.com; s=arc-20160816;
-        b=voS9pUz6L25GULxRPSY/WRjO02HgGwZisDw1zEDDLGRoxSPlHTO363VJDnVRsA7TgV
-         KQN3rjXe0STUXuiswDulPC82Kv/jrfecIafN7zbuADSJHb1USadA2xz6k6xTfVLTXXp5
-         jCta95DnluUFIdcdhT8pARRXepT+wpq8TZojFVT9pZPgCp3dZTGzsUppxsobg2JPtUbk
-         /zQKzu3+3mELc5u/MTvZrcBn8t2tD1cHGdJ0SmNon1JKNl44RHSmoah7YoPvhVNHqhur
-         DQMVrJjer+1Pjnmu/mv1WhP87KY6DDtSB8XJ0x5a5E9puWCRzDkUW/SWu4yk3uMHFJXT
-         LCoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=7Zzhaj1Z+Xsk2m1hJbC/yVbPYnJzhd/dEhB3y/AUi8U=;
-        b=SkCxUWJvg++AQsFf6hRVl4oQ4TLVR2yQOJXi5k30f5vRapdnu3lEoXLoB8/7rfMqa3
-         BDbPkH3g3vnM4xsLGVfSWW/ug7oyhbogg0QRFPdZzQfC08IxqblvgBDN1bvRdMaDxMzI
-         KFzHDIgP5aTD+vnzei9QrGn0SFVZzfJXidHeUsu/H0t/GUxF7Iew2riF6vdZvBKcRz34
-         hao/RYE8o3/c9y5lS1iKFAMS6/y/iRvzpqb10PgTrYLJE+RjapCfsdBMBRPYLEt2QTrf
-         LNvjbA0caMFYuZdG0bGT7fVmkA/DnZI4xVXBjPmk7HTUf7U3aHy4sXNO7q6DofFw3rRT
-         6M+A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-713601-1523399463-2-13381922907163490810
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523399462; b=C+Dxa4eH+gASjIIBlJb+b0mOeoGSPaiSwJV5Nn6t+NXKPHto4M
+    PHoMP9Bw/+8yPRwc+f6K3ECgK/vksF9ahj5v2vl2uJv7ql3RKfBtLrJpvUACpayK
+    709ltldinFnSBBY2g3jHvVS4pzpTHjwqG6bAPnM7XOrw/sjYApKKQ92mrWOurx/x
+    vkE5pZcSf+kGhlHZ/EezZyj4IKzSX5rUDF2A8TuXxcMZIEwGeKJ4FsTj03SzbnE+
+    CRvxhZ+r3wQMCbEbITbmnV5+eCD+mP9LnpuCC0r7dMwsHqK53WEX3G1TgxPtIG6M
+    vFsLDY5vELcYv3gNlJMwoLekM26xRdbZeTBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523399462; bh=mpBI5Am+kqg/bKyEgRHzsTqX9ecmo0
+    rrH6wEFJk8uGs=; b=ClmPGq+x5BDJkJMdpwTj8s830pnOzfn/oQMq8CYHij7ENL
+    dQNS9mn88mw0CJL4uB1Oa67Kbg0ujyR6mo/+jVjo8WXGRhtCT2j1Fiifv74w+KDi
+    Up3kLnszPTV7/QY/y/OsrwCgbaQYcdZThHrtbZGHjPRp2UKqjzRW3oRdcdrw8FBJ
+    kHVAtNZGAHbLZzdvGG5DwoI4U8SzrpOuG18lwCfQscVfRd5RxJYQ6AFzJALFiNxL
+    b9/UlOF2mrh1RYox65BxHZlezK66YIaNB45M4r3JybA7KdY1dNOT5fQnIJ5V62MN
+    fMPqT/xzcxerS+WlS3th7Jpcup8ptvXuJIok/sKw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfC3r1hxdZz/9kHqPtos+vqOITKww1b64YHyDN+gIaL8xXrQzzy8LJRjM0T3Y8Rvbqr63NdK2rlvgOwRTtzt4eYz5Az9KLvCEoSuAz/92kuNZwgZvJU8f
+    6xsYTELQHe9/nHJy3eQ631Dkw16InbSzg7h+nAK671QqO7LcydEbs2ITghcIVBkGLD7D2fI1TcndJKFT+3HlC6dI9y1cZkETXTld9jaizSvNtPkMBFKeOdaq
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=CbDCq_QkAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=4q1Si5jR-L8UMUJKs8cA:9 a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754709AbeDJWa7 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 18:30:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40206 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752785AbeDJWa4 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:30:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 099/168] sdhci: Advertise 2.0v supply on SDIO host controller
-Date: Wed, 11 Apr 2018 00:24:01 +0200
-Message-Id: <20180410212804.467826963@linuxfoundation.org>
+        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
+        Mark Bloch <markb@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.15 096/168] RDMA/cma: Fix rdma_cm path querying for RoCE
+Date: Wed, 11 Apr 2018 00:23:58 +0200
+Message-Id: <20180410212804.335965237@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -40,10 +85,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400117368517441?=
-X-GMAIL-MSGID: =?utf-8?q?1597400117368517441?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,57 +95,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Parav Pandit <parav@mellanox.com>
 
 
-[ Upstream commit 2a609abe71ca59e4bd7139e161eaca2144ae6f2e ]
+[ Upstream commit 89838118a515847d3e5c904d2e022779a7173bec ]
 
-On Intel Edison the Broadcom Wi-Fi card, which is connected to SDIO,
-requires 2.0v, while the host, according to Intel Merrifield TRM,
-supports 1.8v supply only.
+The 'if' logic in ucma_query_path was broken with OPA was introduced
+and started to treat RoCE paths as as OPA paths. Invert the logic
+of the 'if' so only OPA paths are treated as OPA paths.
 
-The card announces itself as
+Otherwise the path records returned to rdma_cma users are mangled
+when in RoCE mode.
 
-  mmc2: new ultra high speed DDR50 SDIO card at address 0001
-
-Introduce a custom OCR mask for SDIO host controller on Intel Merrifield
-and add a special case to sdhci_set_power_noreg() to override 2.0v supply
-by enforcing 1.8v power choice.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 57520751445b ("IB/SA: Add OPA path record type")
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Reviewed-by: Mark Bloch <markb@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/sdhci-pci-core.c |    2 ++
- drivers/mmc/host/sdhci.c          |    7 +++++++
- 2 files changed, 9 insertions(+)
+ drivers/infiniband/core/ucma.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -805,6 +805,8 @@ static int intel_mrfld_mmc_probe_slot(st
- 		slot->host->quirks2 |= SDHCI_QUIRK2_NO_1_8_V;
- 		break;
- 	case INTEL_MRFLD_SDIO:
-+		/* Advertise 2.0v for compatibility with the SDIO card's OCR */
-+		slot->host->ocr_mask = MMC_VDD_20_21 | MMC_VDD_165_195;
- 		slot->host->mmc->caps |= MMC_CAP_NONREMOVABLE |
- 					 MMC_CAP_POWER_OFF_CARD;
- 		break;
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1470,6 +1470,13 @@ void sdhci_set_power_noreg(struct sdhci_
- 	if (mode != MMC_POWER_OFF) {
- 		switch (1 << vdd) {
- 		case MMC_VDD_165_195:
-+		/*
-+		 * Without a regulator, SDHCI does not support 2.0v
-+		 * so we only get here if the driver deliberately
-+		 * added the 2.0v range to ocr_avail. Map it to 1.8v
-+		 * for the purpose of turning on the power.
-+		 */
-+		case MMC_VDD_20_21:
- 			pwr = SDHCI_POWER_180;
- 			break;
- 		case MMC_VDD_29_30:
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -914,13 +914,14 @@ static ssize_t ucma_query_path(struct uc
+ 
+ 		resp->path_data[i].flags = IB_PATH_GMP | IB_PATH_PRIMARY |
+ 					   IB_PATH_BIDIRECTIONAL;
+-		if (rec->rec_type == SA_PATH_REC_TYPE_IB) {
+-			ib_sa_pack_path(rec, &resp->path_data[i].path_rec);
+-		} else {
++		if (rec->rec_type == SA_PATH_REC_TYPE_OPA) {
+ 			struct sa_path_rec ib;
+ 
+ 			sa_convert_path_opa_to_ib(&ib, rec);
+ 			ib_sa_pack_path(&ib, &resp->path_data[i].path_rec);
++
++		} else {
++			ib_sa_pack_path(rec, &resp->path_data[i].path_rec);
+ 		}
+ 	}
+ 
