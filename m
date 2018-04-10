@@ -1,141 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751919AbeDJQS7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 12:18:59 -0400
-Received: from foss.arm.com ([217.140.101.70]:40568 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751589AbeDJQS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 12:18:57 -0400
-Subject: Re: [PATCH] irqchip/gic-v3: Support v2m frame backwards compatibility
- mode
-To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>, linux-arm-msm@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Hanna Hawa <hannah@marvell.com>,
-        =?UTF-8?Q?Miqu=c3=a8l_Raynal?= <miquel.raynal@bootlin.com>
-References: <20170320223614.1351-1-sboyd@codeaurora.org>
- <bac1e827-3860-d92c-7bb4-eaf9840c608f@arm.com>
- <20180410170155.6e07113d@windsurf>
- <a4451252-35e4-e63f-8cca-a072f90fa9ad@arm.com>
- <20180410174118.0aa1d137@windsurf>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <0611f696-e542-b4a0-415f-657bb3ac9230@arm.com>
-Date: Tue, 10 Apr 2018 17:18:54 +0100
+        id S1752091AbeDJQUm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 12:20:42 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43714 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752009AbeDJQUk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 12:20:40 -0400
+Subject: Re: [PATCH v9 17/24] mm: Protect mm_rb tree with a rwlock
+To: David Rientjes <rientjes@google.com>
+Cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        akpm@linux-foundation.org, kirill@shutemov.name, ak@linux.intel.com,
+        mhocko@kernel.org, dave@stgolabs.net, jack@suse.cz,
+        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
+        mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1520963994-28477-18-git-send-email-ldufour@linux.vnet.ibm.com>
+ <alpine.DEB.2.20.1804021711090.34466@chino.kir.corp.google.com>
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Date: Tue, 10 Apr 2018 18:20:25 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180410174118.0aa1d137@windsurf>
+In-Reply-To: <alpine.DEB.2.20.1804021711090.34466@chino.kir.corp.google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18041016-0044-0000-0000-00000545A61A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041016-0045-0000-0000-00002885D725
+Message-Id: <8191409a-d7aa-6476-6aa9-1d1c4dced788@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-10_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804100155
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/04/18 16:41, Thomas Petazzoni wrote:
-> Hello,
+
+
+On 03/04/2018 02:11, David Rientjes wrote:
+> On Tue, 13 Mar 2018, Laurent Dufour wrote:
 > 
-> Thanks for your feedback!
-> 
-> On Tue, 10 Apr 2018 16:23:00 +0100, Marc Zyngier wrote:
-> 
->>> In the current Marvell Armada 7K/8K, we have a unit called the ICU
->>> that turns wired level interrupts on one side of the chip into MSIs,
->>> signaled to the GIC through a special unit called GICP, which allowed
->>> to trigger SPIs in the GIC-400 by doing memory writes. See
->>> irq-mvebu-icu.c and irq-mvebu-gicp.c for the two sides of the story
->>> (MSI consumer and MSI provider). We have one hack between those two
->>> drivers: because those interrupts are level-triggered, we need the
->>> addresses of two registers, while 'struct msi_msg' only allows to pass
->>> one address, assuming MSIs are edge-triggered.  
+>> This change is inspired by the Peter's proposal patch [1] which was
+>> protecting the VMA using SRCU. Unfortunately, SRCU is not scaling well in
+>> that particular case, and it is introducing major performance degradation
+>> due to excessive scheduling operations.
 >>
->> So effectively, the GICP/GIC400 combination is a poor-man GICv3 MBI
->> (Message Based Interrupt -- we love overloaded acronyms) implementation.
-> 
-> Yes, that's what it is. I thought it was already clear for you, since
-> you already spent a great deal of time working with me on ICU/GICP back
-> when it was submitted and merged (and thank you for that!).
-
-I was just trying to give some context here for those who don't really
-follow the nightmarish state that we deal with... ;-)
-
-> 
->>> Marc, let me know how we can collaborate on this topic. I'm able to
->>> either test some preliminary patches, or work on such patches if
->>> necessary (preferably with some initial directions).  
+>> To allow access to the mm_rb tree without grabbing the mmap_sem, this patch
+>> is protecting it access using a rwlock.  As the mm_rb tree is a O(log n)
+>> search it is safe to protect it using such a lock.  The VMA cache is not
+>> protected by the new rwlock and it should not be used without holding the
+>> mmap_sem.
 >>
->> I have a vague idea how to support this. Given that level-triggered MSIs
->> have to be platform MSIs (because it is just madness otherwise), we can
->> probably store an extra message in the struct platform_msi_desc for the
->> "lower the line" write.
+>> To allow the picked VMA structure to be used once the rwlock is released, a
+>> use count is added to the VMA structure. When the VMA is allocated it is
+>> set to 1.  Each time the VMA is picked with the rwlock held its use count
+>> is incremented. Each time the VMA is released it is decremented. When the
+>> use count hits zero, this means that the VMA is no more used and should be
+>> freed.
+>>
+>> This patch is preparing for 2 kind of VMA access :
+>>  - as usual, under the control of the mmap_sem,
+>>  - without holding the mmap_sem for the speculative page fault handler.
+>>
+>> Access done under the control the mmap_sem doesn't require to grab the
+>> rwlock to protect read access to the mm_rb tree, but access in write must
+>> be done under the protection of the rwlock too. This affects inserting and
+>> removing of elements in the RB tree.
+>>
+>> The patch is introducing 2 new functions:
+>>  - vma_get() to find a VMA based on an address by holding the new rwlock.
+>>  - vma_put() to release the VMA when its no more used.
+>> These services are designed to be used when access are made to the RB tree
+>> without holding the mmap_sem.
+>>
+>> When a VMA is removed from the RB tree, its vma->vm_rb field is cleared and
+>> we rely on the WMB done when releasing the rwlock to serialize the write
+>> with the RMB done in a later patch to check for the VMA's validity.
+>>
+>> When free_vma is called, the file associated with the VMA is closed
+>> immediately, but the policy and the file structure remained in used until
+>> the VMA's use count reach 0, which may happens later when exiting an
+>> in progress speculative page fault.
+>>
+>> [1] https://patchwork.kernel.org/patch/5108281/
+>>
+>> Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+>> Cc: Matthew Wilcox <willy@infradead.org>
+>> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 > 
-> Is there a problem with extending the msi_msg structure with an
-> additional address ? It could be transparent for existing users of
-> msi_msg, who would continue to use just address_lo/address_hi/data,
-> while users needing level-triggered MSIs would use the new fields in
-> addition to the existing ones. But perhaps I'm missing something.
+> Can __free_vma() be generalized for mm/nommu.c's delete_vma() and 
+> do_mmap()?
 
-At least two reasons:
+Good question !
+I guess if there is no mmu, there is no page fault, so no speculative page
+fault and this patch is clearly required by the speculative page fault handler.
+By the I should probably make CONFIG_SPECULATIVE_PAGE_FAULT dependent on
+CONFIG_MMU.
 
-- I don't want to put an extra overhead on everyone else, as about 99.9%
-of the msi_msg users are sane (read: PCI), and I'm quite happy to put
-the overhead on the [expletive] crazy designs.
+This being said, if your idea is to extend the mm_rb tree rwlocking to the
+nommu case, then this is another story, and I wondering if there is a real need
+in such case. But I've to admit I'm not so familliar with kernel built for
+mmuless systems.
 
-- The fact that GICv3 requires a different address and the same data is
-an implementation detail. Let's say that I invent a new interrupt
-controller that requires bit 31 of the data to indicate whether this is
-a set or a clear, and uses the same address. Now your scheme doesn't work.
+Am I missing something ?
 
-So I really want a different message altogether.
-
-> 
->> On activation, you'd get two callbacks, probably with a flag of some
->> sort to indicate whether this is for the rising or falling edge.
-> 
-> What you call "activation" is when ->write_msg() gets called on the MSI
-> consumer side, to configure its HW so that it knows how to trigger its
-> MSIs ?
-
-The write_msi is indeed part of the activation, together with
-compose_msg. That's the phase where we actually commit the HW resources,
-and plumb everything together.
-
-> 
->> The thing I'm unclear about so far is how to let the generic MSI layer
->> know that we're dealing with such an interrupt without make a total
->> mess of everything. It is probably done by marking the interrupt
->> level triggered, but there are some corner cases.
-> 
-> Certainly me not fully understand the generic MSI layer, but why does
-> it need to be aware of the interrupt being level vs. edge ?
-
-See the above reasoning about the two messages. If you notice that the
-MSI is level, you know that you'll need a second message for the clear.
-
-> 
->> And if that works, the PCI stuff will come for free (it is just a
->> matter of implementing a new irqdomain on top of the base GICv3 one).
-> 
-> I've lost you here :)
-
-Same as usual. GICv3 already implements a domain for all the interrupts
-it services, and we just need to bolt an MBI-specific domain on top (the
-equivalent of your GICP). At that stage, we can create the usual
-platform and PCI MSI domains that are used by the drivers.
-
-> 
->> I'll try to spend some time on it in the coming couple of weeks, but
->> will have to rely on you for the testing (as I don't have much in the
->> way of HW).
-> 
-> I can definitely make some tests, I have actual HW to test this.
-
-Cool, thanks.
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Thanks,
+Laurent.
