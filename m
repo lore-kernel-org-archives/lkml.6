@@ -1,55 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753273AbeDJMjB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:39:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43544 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752927AbeDJMi7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:38:59 -0400
-Date: Tue, 10 Apr 2018 14:38:57 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Minchan Kim <minchan@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Christopher Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
-        Chris Fries <cfries@google.com>,
-        linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Message-ID: <20180410123857.GJ21835@dhcp22.suse.cz>
-References: <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
- <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
- <20180409144958.GA211679@rodete-laptop-imager.corp.google.com>
- <20180409152032.GB11756@bombadil.infradead.org>
- <20180409230409.GA214542@rodete-desktop-imager.corp.google.com>
- <20180410011211.GA31282@bombadil.infradead.org>
- <20180410023339.GB214542@rodete-desktop-imager.corp.google.com>
- <20180410024152.GC31282@bombadil.infradead.org>
- <20180410025903.GA38000@rodete-desktop-imager.corp.google.com>
- <20180410115651.GA22118@bombadil.infradead.org>
+        id S1753359AbeDJMj0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:39:26 -0400
+Received: from galahad.ideasonboard.com ([185.26.127.97]:55750 "EHLO
+        galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752895AbeDJMjX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 08:39:23 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH v2 4/4] arm64: dts: renesas: eagle: Enable HDMI output
+Date: Tue, 10 Apr 2018 15:39:26 +0300
+Message-ID: <3323439.zBQ8E5gyW2@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1523357646-3946-5-git-send-email-jacopo+renesas@jmondi.org>
+References: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org> <1523357646-3946-5-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180410115651.GA22118@bombadil.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3ACdTts024526
 
-On Tue 10-04-18 04:56:51, Matthew Wilcox wrote:
-> On Tue, Apr 10, 2018 at 11:59:03AM +0900, Minchan Kim wrote:
-> > Okay, I hope this version clear current concerns.
+Hi Jacopo,
+
+Thank you for the patch.
+
+On Tuesday, 10 April 2018 13:54:06 EEST Jacopo Mondi wrote:
+> Enable HDMI output on Renesas R-Car V3M Eagle board.
 > 
-> It doesn't.  The right place to warn about GFP_ZERO used with a
-> constructor is _slab_, like the patch I already sent.  We have no idea
-> what other places might have the same bug, and slab is the only place
-> to catch that.
+> The HDMI output is enabled connecting the DU LVDS output to the
+> transparent LVDS converter THC63LVD1024, and successively routing its
+> RGB output to the ADV7511W HDMI encoder.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> [for THC63LVD1024: ]
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+> 
+> ---
+> v1 -> v2:
+> - Squash patches [5/7], [6/7] and [7/7] of v1 in a single patch as
+>   suggested by Laurent
+> - Remove DU pinmuxing as it is used for DU parallel RGB output only used
+>   by Eagle's display expander board not enabled by this series.
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 93 +++++++++++++++++++++++
+>  1 file changed, 93 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts index 3c5f598..1e2191d
+> 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> @@ -31,6 +31,51 @@
+>  		/* first 128MB is reserved for secure area. */
+>  		reg = <0x0 0x48000000 0x0 0x38000000>;
+>  	};
+> +
+> +	hdmi-out {
+> +		compatible = "hdmi-connector";
+> +		type = "a";
+> +
+> +		port {
+> +			hdmi_con_out: endpoint {
+> +				remote-endpoint = <&adv7511_out>;
+> +			};
+> +		};
+> +	};
+> +
+> +	d3p3: regulator-fixed {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "fixed-3.3V";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-boot-on;
+> +		regulator-always-on;
+> +	};
+> +
+> +	thc63lvd1024: lvds-decoder {
 
-I agree with that. Radix tree shouldn't be really that special. I would
-rather get rid of the ctor subtle thingy but if we absolutely have to
-keep it then the GFP_RECLAIM_MASK filtering and a warning in slab for
-__GFP_ZERO looks like a reasonable step forward.
+Nitpicking, no need for a label, you never reference it.
+
+Apart from that, you can keep my Reviewed-by.
+
+> +		compatible = "thine,thc63lvd1024";
+> +
+> +		vcc-supply = <&d3p3>;
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				thc63lvd1024_in: endpoint {
+> +					remote-endpoint = <&lvds0_out>;
+> +				};
+> +			};
+> +
+> +			port@2 {
+> +				reg = <2>;
+> +				thc63lvd1024_out: endpoint {
+> +					remote-endpoint = <&adv7511_in>;
+> +				};
+> +			};
+> +		};
+> +	};
+>  };
+> 
+>  &avb {
+> @@ -68,6 +113,38 @@
+>  		gpio-controller;
+>  		#gpio-cells = <2>;
+>  	};
+> +
+> +	hdmi@39 {
+> +		compatible = "adi,adv7511w";
+> +		reg = <0x39>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
+> +
+> +		adi,input-depth = <8>;
+> +		adi,input-colorspace = "rgb";
+> +		adi,input-clock = "1x";
+> +		adi,input-style = <1>;
+> +		adi,input-justification = "evenly";
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				adv7511_in: endpoint {
+> +					remote-endpoint = <&thc63lvd1024_out>;
+> +				};
+> +			};
+> +
+> +			port@1 {
+> +				reg = <1>;
+> +				adv7511_out: endpoint {
+> +					remote-endpoint = <&hdmi_con_out>;
+> +				};
+> +			};
+> +		};
+> +	};
+>  };
+> 
+>  &pfc {
+> @@ -93,3 +170,19 @@
+> 
+>  	status = "okay";
+>  };
+> +
+> +&du {
+> +	status = "okay";
+> +};
+> +
+> +&lvds0 {
+> +	status = "okay";
+> +
+> +	ports {
+> +		port@1 {
+> +			lvds0_out: endpoint {
+> +				remote-endpoint = <&thc63lvd1024_in>;
+> +			};
+> +		};
+> +	};
+> +};
+
 -- 
-Michal Hocko
-SUSE Labs
+Regards,
+
+Laurent Pinchart
