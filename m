@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753537AbeDJMnq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:43:46 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:57481 "EHLO
+        id S1753585AbeDJMn4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:43:56 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:57510 "EHLO
         mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753106AbeDJMnm (ORCPT
+        with ESMTP id S1753543AbeDJMnu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:43:42 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180410124340epoutp0316a982fba9afa283c051781574f99cb1~kE6-9KQrE0503205032epoutp03_
-X-AuditID: b6c32a45-6ebff70000000fe4-bc-5accb17c8053
+        Tue, 10 Apr 2018 08:43:50 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180410124348epoutp0309a8d209531412d9b2004bc8abb979a3~kE7HgKHL80547905479epoutp03w
+X-AuditID: b6c32a48-8c1ff70000000ff2-7b-5accb18420bd
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To: Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>
@@ -22,92 +22,77 @@ Cc: Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>,
         Jun Nie <jun.nie@linaro.org>, Baoyou Xie <baoyou.xie@linaro.org>,
         Shawn Guo <shawnguo@kernel.org>, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH 07/17] thermal: hisi_thermal: enable/check sensor after its
+Subject: [PATCH 08/17] thermal: qcom: tsens: enable/check sensor after its
  setup is finished
-Date: Tue, 10 Apr 2018 14:42:01 +0200
-Message-id: <1523364131-31059-8-git-send-email-b.zolnierkie@samsung.com>
+Date: Tue, 10 Apr 2018 14:42:02 +0200
+Message-id: <1523364131-31059-9-git-send-email-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 1.9.1
 In-reply-to: <1523364131-31059-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0hTURzHO9u9Z3fm4jYlDxr+seoPjSxD46ChlUY3VFBChEHYyotam65N
-        TaPAR5SvmT21tSw0UYcPtOlMJzjN9yPEuImZZYqYb1pmVlLNzf8+h9/nfL+/A4fiizWkKxWf
-        kMSqEmRyCXQgmjo9fA/dqB+UHtnUQ1xfXEfiWUsPwDWaLgI/f8eRuD1jFOC/XxZI3G/M5OFb
-        2lICv5yZEuDRFh3EFs0bgHXLHwR4ZqoA4jmDC26oHIN4o6WEwG2TFnBiN5O50g0Z7achyLzW
-        fhQwjeO+TJnpK49p0OdAZoIzQUaTtQyZAoMeMEauhM/0Fq0TTM+YkcdYGtzDRVKH4zGsPD6F
-        VR0OuOAQ93h6ASpzdqZyFRaQDvTCXCCkEO2DLL1FRC5woMR0M0CGZ/l822EdoPyah/xtq/xt
-        lt1qBWi8PNdu/QKofMkMrRak/dC9O3qQCyjKmQ5BhmrK6vDpJwRanejaSnKio9EQN01YmaAP
-        oPWVvC0W0QzSbAzb29xRX/cD0spC+iz63bZCWoMQfVeAvk2ZoE0KRnX9esLGTmi+xyCwsRua
-        1dcD24UsgH40m+yphQCZ6sQ29kedPSNbDXx6F8ru3BRYt0a0CGXftisMGrlfbe86iQa6SqHt
-        xTqAWo2ZZCFwfQF26MEeVqlWxLLqo0pvL7VMoU5OiPW6lKhoAFufxPN0MygeDu0ANAUkjqJC
-        84BUTMpS1GmKDoAovsRZJK8ZlIpFMbK066wqMVqVLGfVHcCNIiQuovSw/yM6VpbEXmFZJava
-        nvIooWs6CGweFx3sNy2OrMovR17dd8pcs1Abwa1F1fZxfvBiamXG/qBS4ue5EXO7T1kwN62b
-        H624+eq9OXD9T9KER/GZp58tkctr3ORclbI36BEvqin1vCpK2KWpWkjxF3v5h9ftLbpGTo8e
-        i44IWTzlaFzSwjYyQNGYRevCvudxodoWCaGOk3l78lVq2T/GkINQIAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrELMWRmVeSWpSXmKPExsVy+t9jAd3qjWeiDH7PU7HYOGM9q8Wzz8cZ
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0hTYRjG/XbOzo7DxXFafmj4xyoiS2th8WURJiInKpIIognaIU8q21Q2
+        NTWIecnWUrOim4pputDhJcfUZbNkXqZmiS2WqF0sMbW8ISkadtmO/vd7v+d5v/d54SUxcT7f
+        l0xITGFViYxCQgjx5o5dBwNzG/tl+77NbEaNDxv4aGLRBlBdQReOHr938FF7lh2gv19/8FFf
+        SzYP5RY/wVHV+JgA2VtLCbRY0AlQ6eyIAI2PFRJo0uSDjNVDBFppLcNR26dFEOpJZ891E3Tx
+        5zcE/bz4o4BuGj5AV1qmeLTRcIOgRx0Wgi7ImSXoQpMB0C2OMozuebCM07ahFh69aPSPFMmE
+        R2JZRUIaq9p79IIwXlu/AJLHiPTWknqBBrzj64A7Calg2GtaFeiAkBRTZgCb9S0EVywDeK/g
+        Jb7hKrxWjnHCCwCze5v5XLEKoKbE7nIRVAi8fd0AdIAkvakT0FRLOj0Y9QiH86NdmPPdi4qG
+        jpEYpx2ndsAe/QrhZBFFw6aV+vVh/rC3+64rnjt1HP5um3PNgtQtAXT8vLOeOxz+yR8AHHvB
+        aZtJwLEfnDA0Aq4hB8AlswXjhCIALQ1ijg/DDtug6yOM2gS1HWsCZzhIiaA2b91Cw8m8fh7H
+        x2DtM/P6wqUAzuSN84qAbzlwM4AtbLJaGceq9ycHB6kZpTo1MS7oYpLSCFw3EkCbQfvbk1ZA
+        kUDiIUKvXsvEfCZNnaG0AkhiEm+Roq5fJhbFMhmZrCopRpWqYNVW4EfiEh+R5tR/iYpjUlg5
+        yyazqg2VR7r7akDEQJRcXHF2MMx42aJvk/RJuwaGdfE770uryLWrl/Te4qjAdMWkJ1ON6+14
+        l/y0JsdRHmuLDHH7YPrFbD0nnSI0Vdqn4dboom2d2y2dueV7ZFk18vOBmUszEaShIvRQwoJx
+        oH1eLtltvjJ9s++L9vsZR0WlVFfj52G0LzvCJLg6npEGYCo18w+tZQvmHwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrELMWRmVeSWpSXmKPExsVy+t9jAd2WjWeiDPbcYrXYOGM9q8Wzz8cZ
         Ldb2HmWxmH/lGqvFgcbLjBb/H71mtTi1vYnJomXWIhaLJU8esltc3jWHzeJz7xFGiznvbrNb
         PHnYx2bxYou4xaYVN9gsfu6ax2Kx995nRgdBj6b3x9g8Zt0/y+axc9Zddo+tt0w9Fu95yeSx
         aVUnm8eda3vYPHqb37F59G1Zxeix/do8Zo8T07+zeBy/sZ3J4/MmuQDeKC6blNSczLLUIn27
-        BK6MaY9fsxV0cldcW/6ZsYFxFWcXIyeHhICJxNLzzSwgtpDATkaJsx26XYxcQPYvRokXS9tY
-        QRJsAlYSE9tXMXYxcnCICHhLbFnDAVLDLDCTRaJt6lNGkBphgXiJs9cegw1iEVCV+P6+G8zm
-        FfCQ6P15jhlimZzEyWOTwWZyCnhK/N77nhVkphBQzbcp1hMYeRYwMqxilEwtKM5Nzy02KjDK
-        Sy3XK07MLS7NS9dLzs/dxAgM+W2Htfp3MD5eEn+IUYCDUYmHd8LB01FCrIllxZW5hxglOJiV
-        RHhz1p6JEuJNSaysSi3Kjy8qzUktPsQozcGiJM7Ln38sUkggPbEkNTs1tSC1CCbLxMEp1cC4
-        KPKGjMRC051TTt6b6y/0n2fZXZdVC76tv63Bcsv3atDeB1pHrNqWzP9st/PRFGYG9RAD3WsZ
-        pnVzd9nOvnV4Vu7/hZ03dj+fM71+gzvX4aVhmleeLzi+ytBrna/JZw3vvIUs0+IW3jp9JaE5
-        +VZueabQtkKBBw9ubNwraSUYN8tVdtvkogazx0osxRmJhlrMRcWJAL8Boj91AgAA
-X-CMS-MailID: 20180410124339epcas2p31bdbdc3d5fc602b3c7fe60b02e8faacd
+        BK6MjnUfGQseslXsmr2OvYHxEmsXIyeHhICJRF/rAuYuRi4OIYGdjBLv3s5hg3B+MUpsPPeX
+        BaSKTcBKYmL7KsYuRg4OEQFviS1rOEBqmAVmski0TX0KFhcWiJO4djsepJxFQFXixNKfbCA2
+        r4CHxNaf61gglslJnDw2GWwxp4CnxO+971lBWoWAar5NsZ7AyLOAkWEVo2RqQXFuem6xUYFR
+        Xmq5XnFibnFpXrpecn7uJkZgyG87rNW/g/HxkvhDjAIcjEo8vBMOno4SYk0sK67MPcQowcGs
+        JMKbs/ZMlBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe/vxjkUIC6YklqdmpqQWpRTBZJg5OqQbG
+        0gPfWDt0pvtX7NmhHxsjt03BLbp/qt3UWQff5vHX7ryYd4/jSZblipn603sCu9WkbrBvq2Kc
+        eml7xrZS6SBhaQvrLE1rqYx7yXN+XZa333mMg+P1le+8OjbLH+166Hm8deezG+/MH2gmzHJQ
+        WLYlxY7r5lWzNNt+1/9BbTbe0koBO870GeopsRRnJBpqMRcVJwIAFPf+X3UCAAA=
+X-CMS-MailID: 20180410124348epcas2p3ca37509a4054ba323bc40080b86b842c
 X-Msg-Generator: CA
 CMS-TYPE: 102P
-X-CMS-RootMailID: 20180410124339epcas2p31bdbdc3d5fc602b3c7fe60b02e8faacd
-X-RootMTR: 20180410124339epcas2p31bdbdc3d5fc602b3c7fe60b02e8faacd
+X-CMS-RootMailID: 20180410124348epcas2p3ca37509a4054ba323bc40080b86b842c
+X-RootMTR: 20180410124348epcas2p3ca37509a4054ba323bc40080b86b842c
 References: <1523364131-31059-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180410124339epcas2p31bdbdc3d5fc602b3c7fe60b02e8faacd@epcas2p3.samsung.com>
+        <CGME20180410124348epcas2p3ca37509a4054ba323bc40080b86b842c@epcas2p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Enable/check sensor after checking ntrips and doing chipset specific
-  enable operation.
-
-* Remove superfluous second sensor enable/check attempt.
+Enable/check sensor after setting tmdev->sensor[i].tzd and calling
+chipset specific enable operation.
 
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/thermal/hisi_thermal.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/thermal/qcom/tsens.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
-index 1936eb4..d4c5055 100644
---- a/drivers/thermal/hisi_thermal.c
-+++ b/drivers/thermal/hisi_thermal.c
-@@ -488,9 +488,6 @@ static int hisi_thermal_register_sensor(struct platform_device *pdev,
- 		return ret;
- 	}
+diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
+index 0d119c1..da44494 100644
+--- a/drivers/thermal/qcom/tsens.c
++++ b/drivers/thermal/qcom/tsens.c
+@@ -102,13 +102,13 @@ static int tsens_register(struct tsens_device *tmdev)
+ 		if (IS_ERR(tzd))
+ 			continue;
  
--	thermal_zone_device_toggle(sensor->tzd, true);
--	thermal_zone_device_check(sensor->tzd);
+-		thermal_zone_device_toggle(tzd, true);
+-		thermal_zone_device_check(tzd);
 -
- 	trip = of_thermal_get_trip_points(sensor->tzd);
+ 		tmdev->sensor[i].tzd = tzd;
  
- 	for (i = 0; i < of_thermal_get_ntrips(sensor->tzd); i++) {
-@@ -553,6 +550,9 @@ static int hisi_thermal_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	thermal_zone_device_toggle((&data->sensor)->tzd, true);
-+	thermal_zone_device_check((&data->sensor)->tzd);
+ 		if (tmdev->ops->enable)
+ 			tmdev->ops->enable(tmdev, i);
 +
- 	if (data->irq) {
- 		ret = devm_request_threaded_irq(dev, data->irq, NULL,
- 				hisi_thermal_alarm_irq_thread,
-@@ -563,9 +563,6 @@ static int hisi_thermal_probe(struct platform_device *pdev)
- 		}
++		thermal_zone_device_toggle(tzd, true);
++		thermal_zone_device_check(tzd);
  	}
- 
--	thermal_zone_device_toggle((&data->sensor)->tzd, true);
--	thermal_zone_device_check((&data->sensor)->tzd);
--
  	return 0;
  }
- 
 -- 
 1.9.1
