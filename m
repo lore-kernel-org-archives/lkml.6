@@ -1,66 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752609AbeDJKNe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 06:13:34 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:22587 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752057AbeDJKNd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 06:13:33 -0400
-Subject: Re: KASAN: null-ptr-deref Read in xattr_getsecurity
-To: syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-References: <0000000000008d2e0d05697a693d@google.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <9d192497-8b1e-ca8d-0ed8-b3324ee1e361@I-love.SAKURA.ne.jp>
-Date: Tue, 10 Apr 2018 19:13:23 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <0000000000008d2e0d05697a693d@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752696AbeDJKP3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 06:15:29 -0400
+Received: from mga03.intel.com ([134.134.136.65]:27012 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751929AbeDJKP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 06:15:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,431,1517904000";
+   d="scan'208";a="45674737"
+From: Yu Chen <yu.c.chen@intel.com>
+To: Len Brown <lenb@kernel.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Artem Bityutskiy <artem.bityutskiy@intel.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chen Yu <yu.c.chen@intel.com>
+Subject: [PATCH][RFC] tools/power turbostat: if --max_loop, print for specific time of loops
+Date: Tue, 10 Apr 2018 18:18:31 +0800
+Message-Id: <20180410101831.28530-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From 904d07a6eb014f3df0c5a1ebfcfd4323276a9a76 Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Tue, 10 Apr 2018 15:15:16 +0900
-Subject: [PATCH] commoncap: Handle memory allocation failure.
+From: Chen Yu <yu.c.chen@intel.com>
 
-syzbot is reporting NULL pointer dereference at xattr_getsecurity() [1],
-for cap_inode_getsecurity() is returning sizeof(struct vfs_cap_data) when
-memory allocation failed. Return -ENOMEM if memory allocation failed.
+There's a use case during test to only print specific round of loops
+if --interval is specified, for example, with this patch applied:
 
-[1] https://syzkaller.appspot.com/bug?id=a55ba438506fe68649a5f50d2d82d56b365e0107
+turbostat -i 5 --max_loops 4
+will capture 4 samples with 5 seconds interval.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Fixes: 8db6c34f1dbc8e06 ("Introduce v3 namespaced file capabilities")
-Reported-by: syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>
-Cc: stable <stable@vger.kernel.org> # 4.14+
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 ---
- security/commoncap.c | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/power/x86/turbostat/turbostat.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 48620c9..1ce701f 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -449,6 +449,8 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
- 				magic |= VFS_CAP_FLAGS_EFFECTIVE;
- 			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
- 			cap->magic_etc = cpu_to_le32(magic);
-+		} else {
-+			size = -ENOMEM;
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
+index bd9c6b31a504..a35418a59468 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -48,6 +48,7 @@ char *proc_stat = "/proc/stat";
+ FILE *outf;
+ int *fd_percpu;
+ struct timespec interval_ts = {5, 0};
++unsigned int max_loops;
+ unsigned int debug;
+ unsigned int quiet;
+ unsigned int sums_need_wide_columns;
+@@ -470,6 +471,7 @@ void help(void)
+ 	"		{core | package | j,k,l..m,n-p }\n"
+ 	"--quiet	skip decoding system configuration header\n"
+ 	"--interval sec	Override default 5-second measurement interval\n"
++	"--max_loops times	The number of loops if interval is specified\n"
+ 	"--help		print this help message\n"
+ 	"--list		list column headers only\n"
+ 	"--out file	create or truncate \"file\" for all output\n"
+@@ -2565,6 +2567,7 @@ void turbostat_loop()
+ {
+ 	int retval;
+ 	int restarted = 0;
++	int loops = 0;
+ 
+ restart:
+ 	restarted++;
+@@ -2583,6 +2586,7 @@ void turbostat_loop()
+ 	restarted = 0;
+ 	gettimeofday(&tv_even, (struct timezone *)NULL);
+ 
++	loops = 0;
+ 	while (1) {
+ 		if (for_all_proc_cpus(cpu_is_not_present)) {
+ 			re_initialize();
+@@ -2626,6 +2630,9 @@ void turbostat_loop()
+ 		compute_average(ODD_COUNTERS);
+ 		format_all_counters(ODD_COUNTERS);
+ 		flush_output_stdout();
++
++		if (++loops >= (max_loops/2))
++			break;
+ 	}
+ }
+ 
+@@ -5009,12 +5016,13 @@ void cmdline(int argc, char **argv)
+ 		{"Summary",	no_argument,		0, 'S'},
+ 		{"TCC",		required_argument,	0, 'T'},
+ 		{"version",	no_argument,		0, 'v' },
++		{"max_loops",	required_argument,	0, 'x'},
+ 		{0,		0,			0,  0 }
+ 	};
+ 
+ 	progname = argv[0];
+ 
+-	while ((opt = getopt_long_only(argc, argv, "+C:c:Ddhi:JM:m:o:qST:v",
++	while ((opt = getopt_long_only(argc, argv, "+C:c:Ddhi:JM:m:o:qST:vx:",
+ 				long_options, &option_index)) != -1) {
+ 		switch (opt) {
+ 		case 'a':
+@@ -5076,6 +5084,15 @@ void cmdline(int argc, char **argv)
+ 			print_version();
+ 			exit(0);
+ 			break;
++		case 'x':
++			{
++				unsigned int loops = strtod(optarg, NULL);
++
++				if (loops % 2)
++					loops++;
++				max_loops = loops;
++			}
++			break;
  		}
  	}
- 	kfree(tmpbuf);
---
-1.8.3.1
+ }
+-- 
+2.13.6
