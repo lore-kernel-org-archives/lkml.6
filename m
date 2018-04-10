@@ -1,67 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753194AbeDJUSI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 16:18:08 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50660 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752467AbeDJUSG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 16:18:06 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 91DF26076A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH] PCI: quirk HT1100 & HT2000 and one HT2100 Root Ports for
- Extended Tags
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, sulrich@codeaurora.org,
-        timur@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-References: <1522882209-9743-1-git-send-email-okaya@codeaurora.org>
- <20180410194144.GD54986@bhelgaas-glaptop.roam.corp.google.com>
- <20180410195008.GE54986@bhelgaas-glaptop.roam.corp.google.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <1c94361d-7a8d-ad18-12e5-1612326a54db@codeaurora.org>
-Date: Tue, 10 Apr 2018 16:18:01 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753326AbeDJUWy convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 16:22:54 -0400
+Received: from mail.maltai.hu ([80.77.124.117]:38040 "EHLO mail.maltai.hu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752339AbeDJUWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 16:22:53 -0400
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-In-Reply-To: <20180410195008.GE54986@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Inbox SMTP, Inbox Webmail, I Sell Sure Spamming Toolz
+To: linux-kernel@vger.kernel.org
+From: "Mr Spamming" <csuri.zsuzsanna@maltai.hu>
+Date: Tue, 10 Apr 2018 21:13:41 +0100
+Reply-To: export.ltd@hotmail.com
+Message-Id: <20180410201323.ACE0C4B2F91@mail.maltai.hu>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/10/2018 3:50 PM, Bjorn Helgaas wrote:
-> On Tue, Apr 10, 2018 at 02:41:44PM -0500, Bjorn Helgaas wrote:
->> On Wed, Apr 04, 2018 at 06:50:09PM -0400, Sinan Kaya wrote:
->>> Per PCIe r3.1, sec 2.2.6.2 and 7.8.4, a Requester may not use 8-bit Tags
->>> unless its Extended Tag Field Enable is set, but all Receivers/Completers
->>> must handle 8-bit Tags correctly regardless of their Extended Tag Field
->>> Enable.
->>>
->>> Some devices do not handle 8-bit Tags as Completers, so add a quirk for
->>> them.  If we find such a device, we disable Extended Tags for the entire
->>> hierarchy to make peer-to-peer DMA possible.
->>>
->>> The Broadcom HT1100/HT2000/HT2100 seems to have issues with handling 8-bit
->>> tags.  Mark it as broken.
->>>
->>> Fixes: 60db3a4d8cc9 ("PCI: Enable PCIe Extended Tags if supported")
->>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=196197
->>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
->> Applied to pci/enumeration for v4.18, thanks!
-> Actually, this is a really annoying issue and I think the fix is
-> appropriate for v4.17, so I moved it to my for-linus branch.
-> 
+I Sell Sure Spamming Toolz 
+What we have on Stock Daily 
 
-I agree. It causes boot issues on some AMD Opteron machines. It should
-probably be back-ported too. 
+Inbox Webmail
+Inbox SMTP
+Fresh USA email leads
+Fresh Canada email leads
+Fresh Loan email leads
+Fresh Business emails leads
+Real Eastate email leads
+Conference delegates email leads
+Fresh Job Seaker emails
+cPanel HTTP and HTTPs
+Shell Zip/Unzipp
+Mailer
+RDP
+All ScamPages
+Bank ScamPage
 
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Add me on whatsapp or call me
+
+Watsapp: +2348107268246
+
+Only Real buyers
