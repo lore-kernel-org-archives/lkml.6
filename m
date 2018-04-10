@@ -1,54 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753236AbeDJMdS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:33:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55546 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753205AbeDJMdO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:33:14 -0400
-Date: Tue, 10 Apr 2018 14:33:05 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: yuankuiz@codeaurora.org, Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, aulmck@linux.vnet.ibm.com,
-        Ingo Molnar <mingo@kernel.org>, Len Brown <len.brown@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        apw@canonical.com, joe@perches.com
-Subject: Re: Subject: [PATCH] [PATCH] time: tick-sched: use bool for
- tick_stopped
-Message-ID: <20180410123305.GF4082@hirez.programming.kicks-ass.net>
-References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
- <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>
+        id S1753424AbeDJMga (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:36:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36606 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753394AbeDJMg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 08:36:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7458821771
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 10 Apr 2018 08:36:25 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>
+Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal
+ OOM_SCORE_ADJ_MIN
+Message-ID: <20180410083625.2c904ab2@gandalf.local.home>
+In-Reply-To: <20180410122706.GH21835@dhcp22.suse.cz>
+References: <20180410061447.GQ21835@dhcp22.suse.cz>
+        <CAGWkznGrugH0VqJyd5ZPiSBMOZ4SbbNpKiHVXM27Q-ep4SYb-Q@mail.gmail.com>
+        <20180410074921.GU21835@dhcp22.suse.cz>
+        <CAGWkznHQSZ5jPF2njOp0BritTmKiGOToq5bAz1bhzzmFi_01nA@mail.gmail.com>
+        <20180410081231.GV21835@dhcp22.suse.cz>
+        <CAGWkznEM=AX=3LWDmgyz4GRkWy81TNdFQQXZ7+W4=Ek4ZsnsJw@mail.gmail.com>
+        <20180410090128.GY21835@dhcp22.suse.cz>
+        <CAGWkznEf0siz1-RFSJwuKCjUtbKM=P1djo2Nc7sU1GS0AgWv2w@mail.gmail.com>
+        <20180410104902.GC21835@dhcp22.suse.cz>
+        <20180410082316.263d34ec@gandalf.local.home>
+        <20180410122706.GH21835@dhcp22.suse.cz>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 10:00:01AM +0200, Rafael J. Wysocki wrote:
-> On Tue, Apr 10, 2018 at 9:33 AM,  <yuankuiz@codeaurora.org> wrote:
-> > +++ b/kernel/time/tick-sched.h
-> > @@ -48,8 +48,8 @@ struct tick_sched {
-> >         unsigned long                   check_clocks;
-> >         enum tick_nohz_mode             nohz_mode;
-> >
-> > +       bool                            tick_stopped    : 1;
-> >         unsigned int                    inidle          : 1;
-> > -       unsigned int                    tick_stopped    : 1;
-> >         unsigned int                    idle_active     : 1;
-> >         unsigned int                    do_timer_last   : 1;
-> >         unsigned int                    got_idle_tick   : 1;
-> 
-> I don't think this is a good idea at all.
-> 
-> Please see https://lkml.org/lkml/2017/11/21/384 for example.
+On Tue, 10 Apr 2018 14:27:06 +0200
+Michal Hocko <mhocko@kernel.org> wrote:
 
-Joe, apw, could we get Checkpatch to whinge about _Bool in composite
-types? That should immediately also disqualify using it as the base type
-of bitfields.
+> I would rather that the code outside of MM not touch implementation
+> details like OOM_SCORE_ADJ_MIN. It is really hard to get rid of abusers
+> whenever you try to change something in MM then. Especially when the
+> usecase is quite dubious.
+
+Fair enough. I was reluctant to use the OOM_SCORE_ADJ_MIN in this case.
+
+Perhaps I can create an option that lets users decide how they want to
+allocate.
+
+For people like Joel, it will try hard (by default) and set oom_origin,
+but the user could also set an option "no_mem_reclaim", where it will
+not set oom_origin, but will also use NORETRY as well, where it wont
+trigger OOM and will not be the designated victim of OOM. But it will
+likely not allocate memory if the system is under heavy use. Then for
+Zhaoyang's tests, all he has to do is to set that option (or clear it,
+if the option is "mem_reclaim", which is what I'll probably call it).
+
+-- Steve
