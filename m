@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/UaQ6zBfZeDPu+O7h+TioRiy6ixc08EMrHLgJM42C+eI/GxitOPlDvHtHZ97HxtpzoEKnS
-ARC-Seal: i=1; a=rsa-sha256; t=1523399407; cv=none;
+X-Google-Smtp-Source: AIpwx4/FPEtLMvekfiwmiGPquVFqZ0iacvKULT+kLl409z8t3hzaPI8ooqOG6Trf3a91Q9+onbdt
+ARC-Seal: i=1; a=rsa-sha256; t=1523399405; cv=none;
         d=google.com; s=arc-20160816;
-        b=ICQ4SZ0sUDUzm1OKkBezSAoXjXOTpS68z1R+CGNzH9ZmAxkTi3opYaqcdiNvNXUkRS
-         eiLpyNyGkf7MTLno6EDq8kaIl/I5yaPHXIKFlzflOLtfEEddmv1tRF9pfo+23kQpFjYH
-         DrKSH3BhH4p5XZTDVydnMTDzdDWIlukGrF/UQdnsfIdqdvsmmRmvRt6Wd/qA14wTGaGy
-         hvYVSUWocUnB0WGv7XqxS2AXiIUScq5wdfWXakomvo8l3lbIgKGTVirsktFas1hX15rl
-         I9DzgGeHB69QevCe/Z2ihR0cOAk1s9lsOxzO27CJKOliO89oJJUiUtTQvW16i9DbJ3Ox
-         B1yQ==
+        b=g5eKxg4mMRTRrLtQVhcbP5MUOe6u5j7YelYYy0NR0eNKKt7WCIE9xp+W0IjWUitmGf
+         xsMpFcPAJteueJHqy1OXbUqQ5oqFCrEo2qdD2eRxY7SPmfR1GVq9AbGm6LvcxMOtd/6+
+         ikCCT4IJBxSn9rAqkkCQFnqW3jGt2sSi6KBEhDHgTXjOovtjlCctKEnZTCTySMi9JrU3
+         wXggpOOB5f+snzLAltqOg3uKdlZQ3z1ALiKe1cq8A1mZ+ErXWQGL+Y/DMrXCUuNGl6nh
+         uCA+0HMwYNIBWW4UhR3N7NL7EXa1I4+Ad+iRlIxX8jQxu6OLJDwBHnFarKl/La5f03w7
+         UmVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NXUBaGSHg6DPxKhXlntqnHz9CQmfGcc11UUYC0e5rVU=;
-        b=USUT5cc6Y4H/sEkSn5nVV7JBlvATPlvr4JeXM9AstW9zt5MHL4TT1zQUdMXcI+zUv+
-         DEK5G7/GcG+wuckh4A38/mH5sVX8fKXOWpEJ2WLvG9pSBgvpBaHBg8ETZ4fBZiCiXD78
-         4+dxq/x6iAXnw/PTmcUdzrrnzVVsW01+LRZk1esLEF98ehYF9+3mmbe5Oulsnf+M7BVc
-         qvlC/SoqWvZimeRll2zwrkJmsqcMS7HD7UC14C1KC7fSA6NBMWStMROKzaox/S6hRfCg
-         A2CFWEPcrEPlbSWBjv3OrEPPXh4uKJz22jU1pk7fToCBMs74Rck1M7hFyUiBMuZ3Dy7w
-         TA3A==
+        bh=xKwnQ9bPhmo7kBryyIaCCvxmW20DDO4P9CxfQ0Qu9wU=;
+        b=HIvGV4ic65H0crDXtALnzRt/Ys7uknf8wT22z+GcXIlCWrfjGuXItg1t8UiPjlHFwX
+         Xx+LDfmlRZnsi52f7aEI/MHmEN33n/LH1ZiPuNkv7o72/Dk4UV59nkLzAg6R7CNwdCXv
+         6CYhzPDwfFxTNwVgEbucdZA+v6awrLmSPGnAy4pp3/7BUr8JjmxcarutyrSWKx+evdIz
+         xDdC0rL25s9mXa5l0XmGx25J9OR30P5rOnTXB9QsgYhUU0GGWwo5AzkT/mUjPagRYopJ
+         LQTXMIgzWEzy+KvJo5ZHEVSG3b0vAqIvE5FUM5e+Eo3sYT5hJDLYO/esA3TanYPf5wUc
+         Y6KQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jason Yan <yanaijie@huawei.com>,
-	John Garry <john.garry@huawei.com>,
-	chenqilin <chenqilin2@huawei.com>,
-	chenxiang <chenxiang66@hisilicon.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Hannes Reinecke <hare@suse.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Gal Pressman <galp@mellanox.com>,
+	Saeed Mahameed <saeedm@mellanox.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 077/168] scsi: libsas: fix memory leak in sas_smp_get_phy_events()
-Date: Wed, 11 Apr 2018 00:23:39 +0200
-Message-Id: <20180410212803.555086065@linuxfoundation.org>
+Subject: [PATCH 4.15 076/168] net: Fix netdev_WARN_ONCE macro
+Date: Wed, 11 Apr 2018 00:23:38 +0200
+Message-Id: <20180410212803.513922398@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -46,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400057700696475?=
-X-GMAIL-MSGID: =?utf-8?q?1597400057700696475?=
+X-GMAIL-THRID: =?utf-8?q?1597400054126401407?=
+X-GMAIL-MSGID: =?utf-8?q?1597400054126401407?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,40 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Yan <yanaijie@huawei.com>
+From: Gal Pressman <galp@mellanox.com>
 
 
-[ Upstream commit 4a491b1ab11ca0556d2fda1ff1301e862a2d44c4 ]
+[ Upstream commit 72dd831e24cc9487a9cd534fdd675fe97e3c1839 ]
 
-We've got a memory leak with the following producer:
+netdev_WARN_ONCE is broken (whoops..), this fix will remove the
+unnecessary "condition" parameter, add the missing comma and change
+"arg" to "args".
 
-while true;
-do cat /sys/class/sas_phy/phy-1:0:12/invalid_dword_count >/dev/null;
-done
-
-The buffer req is allocated and not freed after we return. Fix it.
-
-Fixes: 2908d778ab3e ("[SCSI] aic94xx: new driver")
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-CC: John Garry <john.garry@huawei.com>
-CC: chenqilin <chenqilin2@huawei.com>
-CC: chenxiang <chenxiang66@hisilicon.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 375ef2b1f0d0 ("net: Introduce netdev_*_once functions")
+Signed-off-by: Gal Pressman <galp@mellanox.com>
+Reviewed-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/libsas/sas_expander.c |    1 +
- 1 file changed, 1 insertion(+)
+ include/linux/netdevice.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/scsi/libsas/sas_expander.c
-+++ b/drivers/scsi/libsas/sas_expander.c
-@@ -695,6 +695,7 @@ int sas_smp_get_phy_events(struct sas_ph
- 	phy->phy_reset_problem_count = scsi_to_u32(&resp[24]);
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -4402,8 +4402,8 @@ do {								\
+ 	WARN(1, "netdevice: %s%s\n" format, netdev_name(dev),	\
+ 	     netdev_reg_state(dev), ##args)
  
-  out:
-+	kfree(req);
- 	kfree(resp);
- 	return res;
+-#define netdev_WARN_ONCE(dev, condition, format, arg...)		\
+-	WARN_ONCE(1, "netdevice: %s%s\n" format, netdev_name(dev)	\
++#define netdev_WARN_ONCE(dev, format, args...)				\
++	WARN_ONCE(1, "netdevice: %s%s\n" format, netdev_name(dev),	\
+ 		  netdev_reg_state(dev), ##args)
  
+ /* netif printk helpers, similar to netdev_printk */
