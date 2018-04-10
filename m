@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4863mLU6XrLZfajzcViUgcynBJguWbLwPHi5DFmRknowMagdT7+HOWk3lZe+ChuTQzTyJc0
-ARC-Seal: i=1; a=rsa-sha256; t=1523399596; cv=none;
+X-Google-Smtp-Source: AIpwx48NV5vzTQJvUWjaEskf1gu384asHhbakYTMp1aNKr5T1V/AEC22StblYc0ZzSI6nFWpLL8K
+ARC-Seal: i=1; a=rsa-sha256; t=1523399594; cv=none;
         d=google.com; s=arc-20160816;
-        b=Y/ov/BKDMRuTH10NalnKGFS9brq8PCyocd4Gv6P0XDLdrpG6coIzLNMOPcjSy3+Sui
-         jrUBt0oAtyQpvkZ2tEWVSiHWUpbnAQPyw1i6X1ifxt52QWmfFvV/cIAl8BygZvMq0w62
-         sqbaTy+3nSi/UqYmXU1SqJHNZj172mIfSGwTbCBmCFCI5CHqD6CNBYNqNeXZN4MSZ7fA
-         YUu2EQFXowwinTyEg2wBUvSIxPGhLltehaP+Fn/rbsNMei/iSvbRpu0bzDegdVjgUeyA
-         nwcQ0SSi+0eLlU13ldmeHHAmRzhtrPJqXxvJZA0Rv9SsfUQ7QJgQolqd1CawvxPGJ5fX
-         puhw==
+        b=RimYK4A+QfBbjLWKfOBd+71HCwE338AuO+xGdugdNxn5LY4ze5UR2BElOkYwFlUhcW
+         miMGe/osfJMeeI3RrMSQPrWTxGUbmyYRCLdEWTVxWmfsVMFw9nszrFTw5sjKG0PvS+J+
+         qNQZ3KEOv8xHiOSpLHi5WvALtmgUrN70dv1sscP6AspigM3wJBuzMnVqUr5Y8eom8pqf
+         ymrsTajW9/+ch0+tdHW3jsgx3Nr3ty/JEMay5wAwvWFJ4T0TnH+0iiZoOlCvjALG/1Fl
+         e7ITQd4ZQGelKCoWmKz+Xy6FzWfds0pSDi1QH3rHHk06JBzW2lxXDKfCOFSLcFUMnrvb
+         HL0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6fsfoEBK+8UHLmmrFZfx7pm1e7ACfAnxxUh95UjD3oc=;
-        b=jj2MyiqB6KwTmXy6kc5a/xCim5e/Bjdgpq9S5IHVGdBJrDDby5owjoH/qFl1SeHnoa
-         z8iZtejLbsax+SyYGt1udwaks6sJLVrgSM/DGSNEOpAyF4JpjJYKrfDrfVXtEzxbLtvi
-         qJOWir8Mp9ZcLr6nviZohO+jiyKZwGMlLQ9s4tnCHSPDoBA8QddPagfEYF4j1GxEyXAG
-         PGaUOMJzchnKLRQ3vtUVHnUULSxC1MuoBAcrV6tO8zV5dtJXdT4oJbDFEY2hMGMj0enP
-         HfHK3mj4yd4h8GNhs8lFVu40EHpXy2aEN7Fx6gHyhFG1+OC1E6Jr/UvUICfkn1XUrQCe
-         0I7Q==
+        bh=/Bb1c+m3WbOvdTpYMqgjy8FP6fNzBq71s1v2ab+GIYA=;
+        b=Y/dAfDvgSrz+cx/7fzXkLj27UrkCorTXngrkrmlD+Mdrvywh6mad+c7oajQNnRe/dH
+         /ZCtT2sWLF2KA6mJ2Spp8GgsLnjJWSfbOddfhsWUIs4ae2tg9wdOV9YZ7ghI2SXyfTvL
+         vADUxm4dKWrtkxXZe/QbEqeX5l95H3KdDCj2xvvL7VOV9wKm8YEvTGXpULxrTLJPSyeU
+         n2pactkl6hGHrBQpVek20WGrA//2jNwFF7CYd6pBvduPUvOEfjc+Jh0LLrB6H0/nu3uT
+         nGq84Ke1w/io80nWvgbuxMfCzy30hKyvXjTFyL6e6UrZ5AXuag0IXWT2NHLgSbTMHyu9
+         aiMA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
+	Jianlin Shi <jishi@redhat.com>,
 	Xin Long <lucien.xin@gmail.com>,
-	Jiri Pirko <jiri@mellanox.com>,
+	David Ahern <dsa@cumulusnetworks.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 166/168] team: move dev_mc_sync after master_upper_dev_link in team_port_add
-Date: Wed, 11 Apr 2018 00:25:08 +0200
-Message-Id: <20180410212808.289995216@linuxfoundation.org>
+Subject: [PATCH 4.15 165/168] route: check sysctl_fib_multipath_use_neigh earlier than hash
+Date: Wed, 11 Apr 2018 00:25:07 +0200
+Message-Id: <20180410212808.247986797@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400255758993490?=
-X-GMAIL-MSGID: =?utf-8?q?1597400255758993490?=
+X-GMAIL-THRID: =?utf-8?q?1597400252666806621?=
+X-GMAIL-MSGID: =?utf-8?q?1597400252666806621?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,59 +54,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Xin Long <lucien.xin@gmail.com>
 
 
-[ Upstream commit 982cf3b3999d39a2eaca0a65542df33c19b5d814 ]
+[ Upstream commit 6174a30df1b902e1fedbd728f5343937e83e64e6 ]
 
-The same fix as in 'bonding: move dev_mc_sync after master_upper_dev_link
-in bond_enslave' is needed for team driver.
+Prior to this patch, when one packet is hashed into path [1]
+(hash <= nh_upper_bound) and it's neigh is dead, it will try
+path [2]. However, if path [2]'s neigh is alive but it's
+hash > nh_upper_bound, it will not return this alive path.
+This packet will never be sent even if path [2] is alive.
 
-The panic can be reproduced easily:
+ 3.3.3.1/24:
+  nexthop via 1.1.1.254 dev eth1 weight 1 <--[1] (dead neigh)
+  nexthop via 2.2.2.254 dev eth2 weight 1 <--[2]
 
-  ip link add team1 type team
-  ip link set team1 up
-  ip link add link team1 vlan1 type vlan id 80
-  ip link set vlan1 master team1
+With sysctl_fib_multipath_use_neigh set is supposed to find an
+available path respecting to the l3/l4 hash. But if there is
+no available route with this hash, it should at least return
+an alive route even with other hash.
 
-Fixes: cb41c997d444 ("team: team should sync the port's uc/mc addrs when add a port")
+This patch is to fix it by processing fib_multipath_use_neigh
+earlier than the hash check, so that it will at least return
+an alive route if there is when fib_multipath_use_neigh is
+enabled. It's also compatible with before when there are alive
+routes with the l3/l4 hash.
+
+Fixes: a6db4494d218 ("net: ipv4: Consider failed nexthops in multipath routes")
+Reported-by: Jianlin Shi <jishi@redhat.com>
 Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
+Acked-by: David Ahern <dsa@cumulusnetworks.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/team/team.c |   12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ net/ipv4/fib_semantics.c |   20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -1197,11 +1197,6 @@ static int team_port_add(struct team *te
- 		goto err_dev_open;
- 	}
+--- a/net/ipv4/fib_semantics.c
++++ b/net/ipv4/fib_semantics.c
+@@ -1746,18 +1746,20 @@ void fib_select_multipath(struct fib_res
+ 	bool first = false;
  
--	netif_addr_lock_bh(dev);
--	dev_uc_sync_multiple(port_dev, dev);
--	dev_mc_sync_multiple(port_dev, dev);
--	netif_addr_unlock_bh(dev);
--
- 	err = vlan_vids_add_by_dev(port_dev, dev);
- 	if (err) {
- 		netdev_err(dev, "Failed to add vlan ids to device %s\n",
-@@ -1241,6 +1236,11 @@ static int team_port_add(struct team *te
- 		goto err_option_port_add;
- 	}
- 
-+	netif_addr_lock_bh(dev);
-+	dev_uc_sync_multiple(port_dev, dev);
-+	dev_mc_sync_multiple(port_dev, dev);
-+	netif_addr_unlock_bh(dev);
+ 	for_nexthops(fi) {
++		if (net->ipv4.sysctl_fib_multipath_use_neigh) {
++			if (!fib_good_nh(nh))
++				continue;
++			if (!first) {
++				res->nh_sel = nhsel;
++				first = true;
++			}
++		}
 +
- 	port->index = -1;
- 	list_add_tail_rcu(&port->list, &team->port_list);
- 	team_port_enable(team, port);
-@@ -1265,8 +1265,6 @@ err_enable_netpoll:
- 	vlan_vids_del_by_dev(port_dev, dev);
+ 		if (hash > atomic_read(&nh->nh_upper_bound))
+ 			continue;
  
- err_vids_add:
--	dev_uc_unsync(port_dev, dev);
--	dev_mc_unsync(port_dev, dev);
- 	dev_close(port_dev);
- 
- err_dev_open:
+-		if (!net->ipv4.sysctl_fib_multipath_use_neigh ||
+-		    fib_good_nh(nh)) {
+-			res->nh_sel = nhsel;
+-			return;
+-		}
+-		if (!first) {
+-			res->nh_sel = nhsel;
+-			first = true;
+-		}
++		res->nh_sel = nhsel;
++		return;
+ 	} endfor_nexthops(fi);
+ }
+ #endif
