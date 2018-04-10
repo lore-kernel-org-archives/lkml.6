@@ -1,63 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752296AbeDJS2s (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 14:28:48 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:53243 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751886AbeDJS2q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 14:28:46 -0400
-Date: Tue, 10 Apr 2018 20:28:13 +0200 (CEST)
-From: Stefan Wahren <stefan.wahren@i2se.com>
-To: Rob Herring <robh+dt@kernel.org>, Eric Anholt <eric@anholt.net>,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-rpi-kernel@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>, Jon Mason <jonmason@broadcom.com>,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
-Message-ID: <8806871.109949.1523384893773@email.1und1.de>
-In-Reply-To: <20180409230040.1100-1-eric@anholt.net>
-References: <20180409230040.1100-1-eric@anholt.net>
-Subject: Re: [PATCH 1/3] drm/vc4: Remove the need for the GPU-subsystem DT
- node.
+        id S1751945AbeDJSci convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 14:32:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34870 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751546AbeDJScg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 14:32:36 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21D4921785
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev22
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:+Ni4vqGRATeWo/zO1CNwIHfGVUGn7SnUgd8l95ureQg20LO786a
- 35TWB2A3y2ploFE2CaJnUtj7pOPgQ9BUUw4xIlYZKkoCebuISe6nalaZuqIZybEEZJZsQDG
- oLV8wczj0NHSgWxCUwHaRJesDPsnW4m7cYtbEJDeq8cp7ZzgD7XtqTW3ImhPAiqxtp0lHoK
- CbxmrvhF4iEuQzeq+ahAQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:knRPB1+DPpU=:zcg5MFrGQjOMqVgfNgs9l+
- NNo4JWR83Ijw4UEw1QMUoxV25wrLhBpalIgKnYoFeQ1RytAvGviGgJqQ/xz2gmJmkz4qLJNI8
- VsYAdLQhutf3cSVZkl6UbYlTJI6esNkypE7XL8eCuox27Phmtisc3Kl7B7ytZCLcqEqlskNyg
- 28bCGqIRxu+sDDvTGBLJc7mHymT0Ytyv1xDJxgItNsDnlVZpzIkt/GBEiNIcmMo0MnGjFljdc
- GzdZnhKq5lGKw0pNLCA5Akd3fqTSZ0JmnIn03B8vQ3yY1JrSYRgVZlo/KTSaV/gL5czSzqJhI
- n3uYzS6ToQ49x0CgvvALeCpvZAugGAlihM+KQtp0N6bs5sCSK6pXcuA603URCMCoQyZlG8IzQ
- HVUd5MqKKja2h+CohXKyjfODvygqhJ/tPIfVuEslhzNZjJ1Lr7Ndgw8E0FHsk2UJfw67/nq8h
- 9RtodknLifkXuVWxvFJ3ZJ2UwkHeu1f4b0Mcla4n1/sXYXumOUPFS62LuWo+SyKmftZ5EFTN5
- UHmbZOU9U4uuWzvvKdqZUGrPxRCkP7zBlHdq0WEtOj+YhwAjF/1vLMc2ZzDlHd3YYLf23HziP
- WSGJXjV/fLXngMbjRoVlylGS4B074qSTykrvidv40pxQw3/Cdq/SNeLf9TXMBOEkGCuC6aTti
- vGHewDv5E3SGfetOMFVBDIAINzhWtorvNWyMhD+d9+K+wGwG0ImWGor2ugVHAv7sgDKBRdMLJ
- wW8iiEaTeA5StnI9OCk5Bfku/uAXpUfujUy2TvdYhZQ3JBevBX9WA1DnBIg=
+Content-Transfer-Encoding: 8BIT
+To: Doug Anderson <dianders@chromium.org>,
+        Manu Gautam <mgautam@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAD=FV=XqH69_LXcCyTS1nF5fHpen=PnRxd-WTz=y3dKvMsRtuw@mail.gmail.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org,
+        Varadarajan Narayanan <varada@codeaurora.org>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Fengguang Wu <fengguang.wu@intel.com>
+References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
+ <1522321466-21755-3-git-send-email-mgautam@codeaurora.org>
+ <CAD=FV=XtviSYq=2w=Ld1xq5U2VPy=u=q6a3+4qd2zVGB+f9P8A@mail.gmail.com>
+ <CAD=FV=WGEKy98De_zH9rp+g-tE2YuVK2vRxLJrjeeSx=ijBAww@mail.gmail.com>
+ <19c66b02-4f8e-902a-9397-21e7690db7b8@codeaurora.org>
+ <CAD=FV=XqH69_LXcCyTS1nF5fHpen=PnRxd-WTz=y3dKvMsRtuw@mail.gmail.com>
+Message-ID: <152338515540.180276.4273344163431724770@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v4 2/7] phy: qcom-qmp: Enable pipe_clk before PHY initialization
+Date: Tue, 10 Apr 2018 11:32:35 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
-
-> Eric Anholt <eric@anholt.net> hat am 10. April 2018 um 01:00 geschrieben:
+Quoting Doug Anderson (2018-04-10 08:05:27)
+> On Mon, Apr 9, 2018 at 11:36 PM, Manu Gautam <mgautam@codeaurora.org> wrote:
+> > On 3/30/2018 2:24 AM, Doug Anderson wrote:
+> >> Oh!  This is what you did in the previous version of the patch, then you said:
+> >>
+> >> "That is still needed as PHY might take some time to generate pipe_clk
+> >> after its PLL is locked".
+> >>
+> >> It's really going to take more than the 200 us that the clock driver
+> >> is giving it?  If so, I'd prefer to increase the amount of time waited
+> >> in the clock driver, or adding a fixed delay _before_ the clk_enable()
+> >> so that the 200 us that the clock driver gives it would be enough.
+> >>
+> >> I'm just not a fan of ignoring status bits if it can be helped.
+> >
+> > I too would want to do that but it is not just about the delay.
+> > As per QMP PHY hardware designers, pipe_clk should be enabled in GCC
+> > as first thing in the PHY initialization sequence. Same sequence also has
+> > been used in downstream phy driver always.
+> > Changing the sequence might work but I would like to stick to the HPG
+> > recommendation and avoid any deviation as PHY issues are very hard to
+> > debug.
 > 
+> So hardware guys tell you that you're _supposed to_ ignore the clock
+> ready bit for that clock and just hope it turns on and settles in time
+> once power comes on for the clock?  That doesn't seem ideal.  My guess
+> is that it's a bug in the specification that the QMP PHY hardware
+> designers gave you.
 > 
-> The GPU subsystem node was a workaround to have a central device to
-> bind V3D and display to.  Following the lead of 246774d17fc0
-> ("drm/etnaviv: remove the need for a gpu-subsystem DT node"), remove
-> the subsystem node usage and just create a platform device for the DRM
-> device to attach to if any of the subsystem devices are present.
+> Stephen can feel free to override me if he disagrees since he's in
+> charge of the clock part of this, but IMHO we should get the
+> specification fixed and turn things on in the order that lets us check
+> the status bits.
+> 
 
-i didn't test it. Does the code change keep the backward compatibility with older DT?
+Presumably there's a PLL "enable" bit in the QMP phy init sequence that
+we can use to enable the PLL output at a bypass rate and then enable the
+clk in GCC and then resume the PLL enable sequence. That would allow us
+to make sure the clk is working.
+
+Are the branches in GCC ever turned on or off at runtime though? Or do
+we just turn them on because they're defaulted off out of reset and then
+leave them on?
+
+I ask because it may be easier to never expose these clks in Linux, hit
+the enable bits in the branches during clk driver probe, and then act
+like they never exist because we don't really use them.
