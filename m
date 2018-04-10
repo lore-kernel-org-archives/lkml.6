@@ -1,127 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752264AbeDJI0s (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:26:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43533 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751836AbeDJI0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:26:46 -0400
-Date: Tue, 10 Apr 2018 10:26:43 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Minchan Kim <minchan@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
-        Chris Fries <cfries@google.com>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Message-ID: <20180410082643.GX21835@dhcp22.suse.cz>
-References: <20180409015815.235943-1-minchan@kernel.org>
- <20180409024925.GA21889@bombadil.infradead.org>
- <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
- <20180409111403.GA31652@bombadil.infradead.org>
- <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
- <20180409183827.GD17558@jaegeuk-macbookpro.roam.corp.google.com>
- <20180409194044.GA15295@bombadil.infradead.org>
+        id S1752469AbeDJI1F (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 04:27:05 -0400
+Received: from mail-pf0-f171.google.com ([209.85.192.171]:34071 "EHLO
+        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752381AbeDJI1D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 04:27:03 -0400
+X-Google-Smtp-Source: AIpwx4+3vIIv+13NGBhoj26JQgPcniQQDQCZHCo0sxwksSHyST4nzkhrl3elgMpu+Kyma+Uts6o6YQ==
+Date: Tue, 10 Apr 2018 18:26:51 +1000
+From: Nicholas Piggin <npiggin@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>, linuxppc-dev@lists.ozlabs.org,
+        kvm-ppc@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: Occasionally losing the tick_sched_timer
+Message-ID: <20180410182651.727b5ae7@roar.ozlabs.ibm.com>
+In-Reply-To: <alpine.DEB.2.21.1804100923430.2058@nanos.tec.linutronix.de>
+References: <20180410121618.4fffffcc@roar.ozlabs.ibm.com>
+        <alpine.DEB.2.21.1804100923430.2058@nanos.tec.linutronix.de>
+Organization: IBM
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180409194044.GA15295@bombadil.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 09-04-18 12:40:44, Matthew Wilcox wrote:
-> On Mon, Apr 09, 2018 at 11:38:27AM -0700, Jaegeuk Kim wrote:
-> > On 04/09, Minchan Kim wrote:
-> > > On Mon, Apr 09, 2018 at 04:14:03AM -0700, Matthew Wilcox wrote:
-> > > > On Mon, Apr 09, 2018 at 12:09:30PM +0900, Minchan Kim wrote:
-> > > > > On Sun, Apr 08, 2018 at 07:49:25PM -0700, Matthew Wilcox wrote:
-> > > > > > On Mon, Apr 09, 2018 at 10:58:15AM +0900, Minchan Kim wrote:
-> > > > > > > It assumes shadow entry of radix tree relies on the init state
-> > > > > > > that node->private_list allocated should be list_empty state.
-> > > > > > > Currently, it's initailized in SLAB constructor which means
-> > > > > > > node of radix tree would be initialized only when *slub allocates
-> > > > > > > new page*, not *new object*. So, if some FS or subsystem pass
-> > > > > > > gfp_mask to __GFP_ZERO, slub allocator will do memset blindly.
-> > > > > > 
-> > > > > > Wait, what?  Who's declaring their radix tree with GFP_ZERO flags?
-> > > > > > I don't see anyone using INIT_RADIX_TREE or RADIX_TREE or RADIX_TREE_INIT
-> > > > > > with GFP_ZERO.
-> > > > > 
-> > > > > Look at fs/f2fs/inode.c
-> > > > > mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-> > > > > 
-> > > > > __add_to_page_cache_locked
-> > > > >   radix_tree_maybe_preload
-> > > > > 
-> > > > > add_to_page_cache_lru
-> > > > > 
-> > > > > What's the wrong with setting __GFP_ZERO with mapping->gfp_mask?
-> > > > 
-> > > > Because it's a stupid thing to do.  Pages are allocated and then filled
-> > > > from disk.  Zeroing them before DMAing to them is just a waste of time.
-> > > 
-> > > Every FSes do address_space to read pages from storage? I'm not sure.
-> > > 
-> > > If you're right, we need to insert WARN_ON to catch up __GFP_ZERO
-> > > on mapping_set_gfp_mask at the beginning and remove all of those
-> > > stupid thins. 
-> > > 
-> > > Jaegeuk, why do you need __GFP_ZERO? Could you explain?
+On Tue, 10 Apr 2018 09:42:29 +0200 (CEST)
+Thomas Gleixner <tglx@linutronix.de> wrote:
+
+> Nick,
+> 
+> On Tue, 10 Apr 2018, Nicholas Piggin wrote:
+> > We are seeing rare hard lockup watchdog timeouts, a CPU seems to have no
+> > more timers scheduled, despite hard and soft lockup watchdogs should have
+> > their heart beat timers and probably many others.
+> >
+> > The reproducer we have is running a KVM workload. The lockup is in the
+> > host kernel, quite rare but we may be able to slowly test things.
 > > 
-> > Comment says "__GFP_ZERO returns a zeroed page on success."
+> > I have a sysrq+q snippet. CPU3 is the stuck one, you can see its tick has
+> > stopped for a long time and no hrtimer active. Included CPU4 for what the
+> > other CPUs look like.
 > > 
-> > The f2fs maintains two inodes to manage some metadata in the page cache,
-> > which requires zeroed data when introducing a new structure. It's not
-> > a big deal to avoid __GFP_ZERO for whatever performance reasons tho, does
-> > it only matters with f2fs?
+> > Thomas do you have any ideas on what we might look for, or if we can add
+> > some BUG_ON()s to catch this at its source?  
 > 
-> This isn't a performance issue.
-> 
-> The problem is that the mapping gfp flags are used not only for allocating
-> pages, but also for allocating the page cache data structures that hold
-> the pages.  F2FS is the only filesystem that set the __GFP_ZERO bit,
-> so it's the first time anyone's noticed that the page cache passes the
-> __GFP_ZERO bit through to the radix tree allocation routines, which
-> causes the radix tree nodes to be zeroed instead of constructed.
-> 
-> I think the right solution to this is:
+> Not really. Tracing might be a more efficient tool that random BUG_ONs.
 
-This just hides the underlying problem that the node is not fully and
-properly initialized. Relying on the previous released state is just too
-subtle. Are you going to blacklist all potential gfp flags that come
-from the mapping? This is just unmaintainable! If anything this should
-be an explicit & with the allowed set of allowed flags.
+Sure, we could try that. Any suggestions? timer events?
 
 > 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index c2147682f4c3..a87a523eea8e 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -785,7 +785,7 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
->  	VM_BUG_ON_PAGE(!PageLocked(new), new);
->  	VM_BUG_ON_PAGE(new->mapping, new);
->  
-> -	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
-> +	error = radix_tree_preload(gfp_mask & ~(__GFP_HIGHMEM | __GFP_ZERO));
->  	if (!error) {
->  		struct address_space *mapping = old->mapping;
->  		void (*freepage)(struct page *);
-> @@ -841,7 +841,8 @@ static int __add_to_page_cache_locked(struct page *page,
->  			return error;
->  	}
->  
-> -	error = radix_tree_maybe_preload(gfp_mask & ~__GFP_HIGHMEM);
-> +	error = radix_tree_maybe_preload(gfp_mask &
-> +			~(__GFP_HIGHMEM | __GFP_ZERO));
->  	if (error) {
->  		if (!huge)
->  			mem_cgroup_cancel_charge(page, memcg, false);
+> > - CPU3 is sitting in its cpuidle loop (polling idle with all other idle
+> >   states disabled).
+> > 
+> > - `taskset -c 3 ls` basically revived the CPU and got timers running again.  
+> 
+> Which is not surprising because that kicks the CPU out of idle and starts
+> the tick timer again.
 
--- 
-Michal Hocko
-SUSE Labs
+Yep.
+ 
+> Does this restart the watchdog timers as well?
+
+I think so, but now you ask I'm not 100% sure we directly observed it.
+We can check that next time it locks up.
+
+> > cpu: 3
+> >  clock 0:
+> >   .base:       00000000df30f5ab
+> >   .index:      0
+> >   .resolution: 1 nsecs
+> >   .get_time:   ktime_get
+> >   .offset:     0 nsecs
+> > active timers:  
+> 
+> So in theory the soft lockup watchdog hrtimer should be queued here.
+> 
+> >   .expires_next   : 9223372036854775807 nsecs
+> >   .hres_active    : 1
+> >   .nr_events      : 1446533
+> >   .nr_retries     : 1434
+> >   .nr_hangs       : 0
+> >   .max_hang_time  : 0
+> >   .nohz_mode      : 2
+> >   .last_tick      : 17763120000000 nsecs
+> >   .tick_stopped   : 1
+> >   .idle_jiffies   : 4296713609
+> >   .idle_calls     : 2573133
+> >   .idle_sleeps    : 1957794  
+> 
+> >   .idle_waketime  : 59550238131639 nsecs
+> >   .idle_sleeptime : 17504617295679 nsecs
+> >   .iowait_sleeptime: 719978688 nsecs
+> >   .last_jiffies   : 4296713608  
+> 
+> So this was the last time when the CPU came out of idle:
+> 
+> >   .idle_exittime  : 17763110009176 nsecs  
+> 
+> Here it went back into idle:
+> 
+> >   .idle_entrytime : 17763129999625 nsecs  
+> 
+> And this was the next timer wheel timer due for expiry:
+> 
+> >   .next_timer     : 17763130000000
+> >   .idle_expires   : 17763130000000 nsecs  
+> 
+> which makes no sense whatsoever, but this might be stale information. Can't
+> tell.
+
+Wouldn't we expect to see that if there is a timer that was missed
+somehow because the tick_sched_timer was not set?
+
+> 
+> > cpu: 4
+> >  clock 0:
+> >   .base:       0000000007d8226b
+> >   .index:      0
+> >   .resolution: 1 nsecs
+> >   .get_time:   ktime_get
+> >   .offset:     0 nsecs
+> > active timers: #0: <00000000a73e543a>, tick_sched_timer, S:01
+> >  	 	 # expires at 59552950000000-59552950000000 nsecs [in 2685654802 to 2685654802 nsecs]  
+> 
+> The tick timer is scheduled because the next timer wheel timer is due at
+> 59552950000000, which might be the hard watchdog timer
+> 
+> >  		 #1: <000000009b4a3b88>, hrtimer_wakeup, S:01
+> >		 # expires at 59602585423025-59602642458243 nsecs [in 52321077827 to 52378113045 nsecs]  
+> 
+> That might be the soft lockup hrtimer.
+> 
+> I'd try to gather more information about the chain of events via tracing
+> and stop the tracer once the lockup detector hits.
+
+Okay will do, thanks for taking a look.
+
+Thanks,
+Nick
