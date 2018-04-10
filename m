@@ -1,61 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751825AbeDJSKH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 14:10:07 -0400
-Received: from mail-qt0-f169.google.com ([209.85.216.169]:45395 "EHLO
-        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751367AbeDJSKF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 14:10:05 -0400
-X-Google-Smtp-Source: AIpwx4/coVVqb6IkYR6D1M3S8fIFXTc2zyXTly7/O2jidN3Ynt6Qtxsq5czDSnYVvYDS1gKpBmkyZl7/SGmMSOK+ZQw=
+        id S1752163AbeDJSKX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 14:10:23 -0400
+Received: from verein.lst.de ([213.95.11.211]:45691 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751876AbeDJSKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 14:10:22 -0400
+Date: Tue, 10 Apr 2018 20:10:20 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Takashi Iwai <tiwai@suse.de>, Christoph Hellwig <hch@lst.de>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: [PATCH] swiotlb: Fix unexpected swiotlb_alloc_coherent()
+        failures
+Message-ID: <20180410181020.GA28565@lst.de>
+References: <20180410170513.22834-1-tiwai@suse.de> <20180410170615.GA27589@lst.de> <s5hzi2bat25.wl-tiwai@suse.de> <40618b9c-786d-7f5f-3f5b-fc1dd8375846@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75VcXpXZ+Ue7Cz0ORupgUjLTCiEwFYb2cs9kePX6EbEs-+w@mail.gmail.com>
-References: <cover.1523376423.git.hns@goldelico.com> <a5b37e5feff8a58dc63799ec76ef906695fd7239.1523376423.git.hns@goldelico.com>
- <CAHp75VcXpXZ+Ue7Cz0ORupgUjLTCiEwFYb2cs9kePX6EbEs-+w@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 10 Apr 2018 21:10:04 +0300
-Message-ID: <CAHp75VfCV4b5YWgYvkZkonz+TCn1JRD3idwLpEfcZTD99xqtxw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] gpio: pca953x: set the PCA_PCAL flag also when
- matching by DT
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel
-        <letux-kernel@openphoenux.org>,
-        kernel@pyra-handheld.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <40618b9c-786d-7f5f-3f5b-fc1dd8375846@arm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 9:08 PM, Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Tue, Apr 10, 2018 at 7:07 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
->> The of_device_table is missing the PCA_PCAL flag so the
->> pcal6524 would be operated in tca6424 compatibility mode which
->> does not handle the new interrupt mask registers.
->
->
->> +       { .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_INT |
->> +                                                           PCA_PCAL), },
->> +       { .compatible = "nxp,pcal9555a", .data = OF_953X(16, PCA_INT |
->> +                                                            PCA_PCAL), },
->
-> Sorry didn't comment this earlier, though I think one line still
-> better to read disregard of 80 char limit.
+On Tue, Apr 10, 2018 at 06:50:04PM +0100, Robin Murphy wrote:
+> In the first one, the machine appears to have enough RAM that most of it is 
+> beyond the device's 36-bit DMA mask, thus it's fairly likely for the 
+> initial direct alloc to come back with something unsuitable.
 
-Another possible solution:
-
-#define PCA_LATCH_INT (PCA_PCAL | PCA_INT)
-
-or alike
-
--- 
-With Best Regards,
-Andy Shevchenko
+But we should try a GFP_DMA32 allocation first, so this is a bit
+surprising.
