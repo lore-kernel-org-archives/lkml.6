@@ -1,62 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754120AbeDJNtq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 09:49:46 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36514 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754073AbeDJNth (ORCPT
+        id S1753975AbeDJN4J (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 09:56:09 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:36448 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752925AbeDJNz7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 09:49:37 -0400
-Date: Tue, 10 Apr 2018 14:49:33 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "sxauwsk@163.com" <sxauwsk@163.com>
-Cc: linux-spi <linux-spi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] spi: cadence: Add usleep_range() for
- cdns_spi_fill_tx_fifo()
-Message-ID: <20180410134933.GA14657@sirena.org.uk>
-References: <201804102112307962582@163.com>
+        Tue, 10 Apr 2018 09:55:59 -0400
+X-Google-Smtp-Source: AIpwx49nEHup1ZkbT++4VeCEjsSin7YkmFBMK36rC/lxmMth/jdAqDJcXy6Ys12JMtZm8FtP+fwIdQ==
+Date: Tue, 10 Apr 2018 08:55:57 -0500
+From: Rob Herring <robh@kernel.org>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: galak@codeaurora.org, andy.shevchenko@gmail.com,
+        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+Subject: Re: [PATCH v2 4/5] DTS: Bindings: pca953x driver provides an
+ optional vcc-supply property
+Message-ID: <20180410135557.umt5sgxrx23dirpo@rob-hp-laptop>
+References: <cover.1522868422.git.hns@goldelico.com>
+ <e8e6fae4436e5390c7c4e831c9eb127d3f8cc65b.1522868423.git.hns@goldelico.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="liOOAslEiF7prFVr"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201804102112307962582@163.com>
-X-Cookie: You will lose an important disk file.
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <e8e6fae4436e5390c7c4e831c9eb127d3f8cc65b.1522868423.git.hns@goldelico.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 04, 2018 at 09:00:23PM +0200, H. Nikolaus Schaller wrote:
+> So let's describe this property in the bindings.
 
---liOOAslEiF7prFVr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It's not what the driver for some OS has. The h/w has a Vcc supply, so 
+let's add a property for it...
 
-On Tue, Apr 10, 2018 at 09:12:32PM +0800, sxauwsk@163.com wrote:
->=20
->=20
->=20
->=20
-> sxauwsk@163.com
+> 
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Please submit patches in the format described in SubmittingPatches, my
-mail program isn't seeing anything in the mail except what's quoted
-above.
+Otherwise,
 
---liOOAslEiF7prFVr
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: Rob Herring <robh@kernel.org>
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrMwOwACgkQJNaLcl1U
-h9APAQf7BP7KGe3JfFfM/JgwY7/wn+RHBnhTLUGrWgS3pHuS2qfGUEGLnD82rR2e
-DX2Xo+lVxcjPRgFedAsJ+qh84gUbkAW69sSuLJkYj8xrUefxszupdLUZqas5ne4B
-vb0wQU38JMIQYWrnefhq7aMxxP5HdAuMRltvRakZB9ecm335+zyVSRt5JkjcKXkA
-mDXL8x36fLSIipu68res2tzZv4H4uw1LuLxW7QtmgLhm65W8GnhOx5IaHVgffUft
-H54TRd047aj6eQPUCBXpyzIe9pjORlTqe3RgIijqmmjyPLqCK2Nw/KlyetcA7aw4
-YPHVUpyK4EJ1hbuTpJ6MbytJ4NFaSg==
-=X3hj
------END PGP SIGNATURE-----
-
---liOOAslEiF7prFVr--
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+> index d2a937682836..6a7cddb187c1 100644
+> --- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+> @@ -35,6 +35,7 @@ Required properties:
+>  Optional properties:
+>   - reset-gpios: GPIO specification for the RESET input. This is an
+>  		active low signal to the PCA953x.
+> + - vcc-supply:	power supply regulator.
+>  
+>  Example:
+>  
+> -- 
+> 2.12.2
+> 
