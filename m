@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49ae7JdhsNfSFXPFBtiS5D3+PFffBOF3OM8A3QX/TC9DGr986BXL86s5GdmBk+tTEf+coeU
-ARC-Seal: i=1; a=rsa-sha256; t=1523399329; cv=none;
+X-Google-Smtp-Source: AIpwx4+AJMbOcrJZfXYiSCAtyAXB28c/OrHR9ac5NL9lIE4ukfmn7PkKwTSuAyQFfDX2XFlp7WAY
+ARC-Seal: i=1; a=rsa-sha256; t=1523399326; cv=none;
         d=google.com; s=arc-20160816;
-        b=SWmaKBzdRTYrUEchGRbw/y/INgew2vMOb6UotmO8P8cJWgI81xFSd3xtT+dWzjjYoo
-         6t49aFXIYeYxzt4fKJSNEoQOdj2z20Tz7Pm7vytjSPU6077glm2jYXR8CKwVKLtDoiKb
-         MuadVvUTzWAQCbdhbzAXDAfJlfALuJo+kCT1LzxNFbjqVc1IMOWi84nki5tiZ0Fc96jv
-         c/gl0tVltydJue6pO8npJ19UBK4agZLAU6n5Tv/lrlyVrqTk6O0UyvXx75Vow12Ztfix
-         c15Q+Ldy7YNkGmRhHJ+wfj21n0/2osWPCA78BmhdfLYsWkUFnSmFcGljaW7hUTDh+niS
-         d+FQ==
+        b=dF3QMx6et76CJ0GxhfLUMFLeS3hfoYQZzOJbjUq9DZtcsrtuJENKvK/qNc31OUp/IY
+         ABMub7A0eanpvTDzX2+i5XVJuo1rzMqY7BLFLmkxVH7+9vIfRLKXMMbg1BzbbApyy87n
+         /Rmfc17AUsZArdLiZxcLzny/TDpgut+oAJD1LEWfe2cmlqBPiRdIZRw1wa2xq4+uPOjZ
+         srGsT8mWq5ep4kTFJgAeHU7bP3KjT/qvooGo8eGMM9wAIjPCRdRugJsnaZKVI/H+Z5Vd
+         oZfyfSjg+50EVD5y3+qAHX+9Z0lHqfLZJnV4n/iSgFbXknQW2I0xuBcZZ3VLw0DEr0WY
+         rMSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=TGrRXSxrVQcad35tIBivESRDU53D40KE8Ej4hgoFd2c=;
-        b=TyNMzBG+Rf+3CxwRhAr8uJNLb6V+VWkrNCp2QihVkTe4IErN6xq0NHb6jt4L4pjkXh
-         Q7wPPIurph7FR9Shl0QiThpIfOAqEvlerbuUU0yB6m59KFr6UhB1OSAkodcpplULTJ9r
-         /pcdd1Jd3PO2ivNdv9OCokXp9MXtUfZGwfDQ0EaKH+q3zzZyi5Q4zvbcWqDpkLsuKpzG
-         A1lGnAjxzzt0kaFx/ec2vLd0gcgBo6J4vDXFZ1dLjsW/iCpigpkqUzTrShe97yRfDBcN
-         svntXK8lmtTqpiTRQCINztL/xGCGTGKvp5PXSNRm3JQagMJqxCSGOfWp16HYlDCm9Dj0
-         1KVw==
+        bh=ZI1X5S+2K2qKmMab1LqzB7V5LFTRQd1Gp3+3JZUzlJ8=;
+        b=dTjfKQjY7n/jCiwLvyP4pZ7kOSMTbHqBl+8NQAOz+0xH7IwU0dqqh0NdTMPXvYvzE6
+         i7ryQ5cBO1trSS0l291tlnFjIpnxRcCOIaNTiWsq2FYDHrEEfFHq1AzRZnynEXSFQRv/
+         Vxw7WthNJOmlnRqO6OSKvTzth2buztO0n3WNxpImvKzYcIQCJrCYIbJBJJHj2SceG8DT
+         fr5PkyibY47gb5SghRVzNdw1ia3bIMCTfvuufQOczuUuYl25YGjmgUaMpzba5Ref3rDm
+         Zzk7pHobATAhxYxutois1BdSs0R3A9R/V0D0vcmnw8hWtOqvKvhyXykQCLMSzmpBNP0N
+         W/lg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jian Shen <shenjian15@huawei.com>,
-	Peng Li <lipeng321@huawei.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Daniel Jurgens <danielj@mellanox.com>,
+	Parav Pandit <parav@mellanox.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Jason Gunthorpe <jgg@mellanox.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 068/168] net: hns3: Fix an error of total drop packet statistics
-Date: Wed, 11 Apr 2018 00:23:30 +0200
-Message-Id: <20180410212803.096339984@linuxfoundation.org>
+Subject: [PATCH 4.15 067/168] net/mlx5: Fix race for multiple RoCE enable
+Date: Wed, 11 Apr 2018 00:23:29 +0200
+Message-Id: <20180410212803.048734444@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399975210554692?=
-X-GMAIL-MSGID: =?utf-8?q?1597399975210554692?=
+X-GMAIL-THRID: =?utf-8?q?1597399972510226774?=
+X-GMAIL-MSGID: =?utf-8?q?1597399972510226774?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,62 +52,92 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jian Shen <shenjian15@huawei.com>
+From: Daniel Jurgens <danielj@mellanox.com>
 
 
-[ Upstream commit d2a5dca8404871be683c6bbc175ebf9c56dd2865 ]
+[ Upstream commit 734dc065fc41f6143ff88225aa5d335cb1e0f6aa ]
 
-The dropped tx/rx packets number of each tqp should also
-be counted into the total drop tx/rx packets numbers.
+There are two potential problems with the existing implementation.
 
-Fixes: 76ad4f0ee74 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+1. Enable and disable can race after the atomic operations.
+2. If a command fails the refcount is left in an inconsistent state.
+
+Introduce a lock and perform error checking.
+
+Fixes: a6f7d2aff623 ("net/mlx5: Add support for multiple RoCE enable")
+Signed-off-by: Daniel Jurgens <danielj@mellanox.com>
+Reviewed-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/vport.c |   33 +++++++++++++++++++-----
+ include/linux/mlx5/driver.h                     |    2 -
+ 2 files changed, 28 insertions(+), 7 deletions(-)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
-@@ -1055,6 +1055,8 @@ hns3_nic_get_stats64(struct net_device *
- 	u64 rx_bytes = 0;
- 	u64 tx_pkts = 0;
- 	u64 rx_pkts = 0;
-+	u64 tx_drop = 0;
-+	u64 rx_drop = 0;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/vport.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/vport.c
+@@ -36,6 +36,9 @@
+ #include <linux/mlx5/vport.h>
+ #include "mlx5_core.h"
  
- 	for (idx = 0; idx < queue_num; idx++) {
- 		/* fetch the tx stats */
-@@ -1063,6 +1065,8 @@ hns3_nic_get_stats64(struct net_device *
- 			start = u64_stats_fetch_begin_irq(&ring->syncp);
- 			tx_bytes += ring->stats.tx_bytes;
- 			tx_pkts += ring->stats.tx_pkts;
-+			tx_drop += ring->stats.tx_busy;
-+			tx_drop += ring->stats.sw_err_cnt;
- 		} while (u64_stats_fetch_retry_irq(&ring->syncp, start));
++/* Mutex to hold while enabling or disabling RoCE */
++static DEFINE_MUTEX(mlx5_roce_en_lock);
++
+ static int _mlx5_query_vport_state(struct mlx5_core_dev *mdev, u8 opmod,
+ 				   u16 vport, u32 *out, int outlen)
+ {
+@@ -998,17 +1001,35 @@ static int mlx5_nic_vport_update_roce_st
  
- 		/* fetch the rx stats */
-@@ -1071,6 +1075,9 @@ hns3_nic_get_stats64(struct net_device *
- 			start = u64_stats_fetch_begin_irq(&ring->syncp);
- 			rx_bytes += ring->stats.rx_bytes;
- 			rx_pkts += ring->stats.rx_pkts;
-+			rx_drop += ring->stats.non_vld_descs;
-+			rx_drop += ring->stats.err_pkt_len;
-+			rx_drop += ring->stats.l2_err;
- 		} while (u64_stats_fetch_retry_irq(&ring->syncp, start));
- 	}
+ int mlx5_nic_vport_enable_roce(struct mlx5_core_dev *mdev)
+ {
+-	if (atomic_inc_return(&mdev->roce.roce_en) != 1)
+-		return 0;
+-	return mlx5_nic_vport_update_roce_state(mdev, MLX5_VPORT_ROCE_ENABLED);
++	int err = 0;
++
++	mutex_lock(&mlx5_roce_en_lock);
++	if (!mdev->roce.roce_en)
++		err = mlx5_nic_vport_update_roce_state(mdev, MLX5_VPORT_ROCE_ENABLED);
++
++	if (!err)
++		mdev->roce.roce_en++;
++	mutex_unlock(&mlx5_roce_en_lock);
++
++	return err;
+ }
+ EXPORT_SYMBOL_GPL(mlx5_nic_vport_enable_roce);
  
-@@ -1086,8 +1093,8 @@ hns3_nic_get_stats64(struct net_device *
- 	stats->rx_missed_errors = netdev->stats.rx_missed_errors;
+ int mlx5_nic_vport_disable_roce(struct mlx5_core_dev *mdev)
+ {
+-	if (atomic_dec_return(&mdev->roce.roce_en) != 0)
+-		return 0;
+-	return mlx5_nic_vport_update_roce_state(mdev, MLX5_VPORT_ROCE_DISABLED);
++	int err = 0;
++
++	mutex_lock(&mlx5_roce_en_lock);
++	if (mdev->roce.roce_en) {
++		mdev->roce.roce_en--;
++		if (mdev->roce.roce_en == 0)
++			err = mlx5_nic_vport_update_roce_state(mdev, MLX5_VPORT_ROCE_DISABLED);
++
++		if (err)
++			mdev->roce.roce_en++;
++	}
++	mutex_unlock(&mlx5_roce_en_lock);
++	return err;
+ }
+ EXPORT_SYMBOL_GPL(mlx5_nic_vport_disable_roce);
  
- 	stats->tx_errors = netdev->stats.tx_errors;
--	stats->rx_dropped = netdev->stats.rx_dropped;
--	stats->tx_dropped = netdev->stats.tx_dropped;
-+	stats->rx_dropped = rx_drop + netdev->stats.rx_dropped;
-+	stats->tx_dropped = tx_drop + netdev->stats.tx_dropped;
- 	stats->collisions = netdev->stats.collisions;
- 	stats->rx_over_errors = netdev->stats.rx_over_errors;
- 	stats->rx_frame_errors = netdev->stats.rx_frame_errors;
+--- a/include/linux/mlx5/driver.h
++++ b/include/linux/mlx5/driver.h
+@@ -826,7 +826,7 @@ struct mlx5_core_dev {
+ 	struct mlx5e_resources  mlx5e_res;
+ 	struct {
+ 		struct mlx5_rsvd_gids	reserved_gids;
+-		atomic_t                roce_en;
++		u32			roce_en;
+ 	} roce;
+ #ifdef CONFIG_MLX5_FPGA
+ 	struct mlx5_fpga_device *fpga;
