@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/TvYXddesK0jDWBY+bVzYpzIpWNp9nC4WmOf4yeet+9u6ER0Ji0rwfZEFtOwpcSYGEhZJt
-ARC-Seal: i=1; a=rsa-sha256; t=1523399534; cv=none;
+X-Google-Smtp-Source: AIpwx4+A19iNnOZQZu75SVyGpLcCWPQQBJ4bN0Nae7bcUh2GBOWNsKybzvbHnuwtPpXBp+nElkoT
+ARC-Seal: i=1; a=rsa-sha256; t=1523399531; cv=none;
         d=google.com; s=arc-20160816;
-        b=HwOtEJc0sqfw05dzzgjfhxqlqrdStZcUjnMGNJzmb6UYHC6K4MlGKlo78gZSByUDIU
-         2b98PGfgB+9xx1KulL9NnergxToH5CcAqBBr22rSnyyM1BLq6hOOPsYax72GsVIDs7ww
-         1dZQa490qS+pPAFSM8/CTAhKSREGpVFrcdF7qtV+Ki1gg6Z/zkmgviZ6+2NqUZg2q5sc
-         U17+woHm7faMeQULumo060PhCQjf/mN1qrsyFt0KSN8pciuwFnmG1VYk7B1Em4avtKVO
-         J7+NwqTCXYHq1QtJPM5rc1l35Rd19X3TqBKB3MaL8Mgo/E+0+0nOhiyK/yrsHiawjLFF
-         ksJA==
+        b=TgCaDxJ5VFcXLrDQ4Qq9Q1AvKFjh2EPLPdWqFMhegbnm7koxnQfykxs98Tm4S+X1vb
+         C458tmo0Uhd9eqvUvbLHcYNFvbHN/NRVEkoFxG7wpJ5oa1TQWzxJ6IbkGH39SfDm9pHO
+         TkO0QtboPelEHFHIYxHaroZ3T++MdEw4esUc2CznJOi8CJkjanXBmw51eLShbO1MDm2c
+         YaXaiQfC22iBB+r1puXkzKt8t3jMQEDirusgHMiVUBn2g9wqy4FCfVulHYF3b6tdo+yB
+         vakhna/GKr4QiQafdY07YMPwpD5vr6i22j+Wrm+O5k9ovSQbg07lZwImhEfTY/Li6sxx
+         vsmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yGjCethwPTHq5Rmv8v4renPguUkZTnu5+b6rK3EfYy8=;
-        b=H/1lEELvpuHeLLr2U5Ag0ttVwIa6sNFMo3BoaQiYKWSqDgmUtFz5n71IUB7PjzA/SV
-         yo/+nTp4vu0iOphTeDiXkg7BQKo39eeQsTiKc1/X1JA36tjZoS6mGHrIAmuixT7QCfkC
-         wAzqmHNKobT3w0pyFaDG0LRHaTx8aTw/d7Gyqt/hscFwsgqUYI0ag42IXHOPChA06o+1
-         6ljzen8mbzEUjeK58K2XvPV9m4EvBUFsQwqUU20+8uROpiFm/0IVqNyO1CfuJZ3rgUtH
-         KgYx/r5HmfnNe4jaNODARMbRQaayrC6vHtxEYqNsKJQHgHBsgaNXgxjbAbmgx4IRyYCs
-         sbTw==
+        bh=pJxoq604Q9g/NVRaCRXKPEv79o/eCpE68yM1ONTHi8o=;
+        b=XLfk54s9YV3trCUEe5QIeeGgCEKcgQKkLPNfSglPQWDF2Bmz7+ShX9p6tIQPKixCKk
+         buyaRyPK5A0gDHEzq7R7WxFE1bhh4QerB7eI4ht/zk0a7AHLvqK+7JjdxrBUie03P9OU
+         W9AWiKmUw0lnZVwJRknJbcuM6j6CjvAuzjSS7mWcOSoWzE2tXeJKq8+67ZjDGWvOXWKn
+         +c7GcEhny02lLn1EI6Wn5vCBJiDU+qH45LZGC5I+MGDp1pz6gP0/CD3ntqrTDbQwco/H
+         X6iLFXWHULGdORS/0eLDKeLTTAC3UF9lo0meOEchFMF29+gHEOapv/bH892+BlsfLctg
+         uUoA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,10 +27,13 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Eric Dumazet <edumazet@google.com>,
+	Vlad Yasevich <vyasevich@gmail.com>,
+	Neil Horman <nhorman@tuxdriver.com>,
+	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 143/168] net: fool proof dev_valid_name()
-Date: Wed, 11 Apr 2018 00:24:45 +0200
-Message-Id: <20180410212807.172759547@linuxfoundation.org>
+Subject: [PATCH 4.15 134/168] sctp: do not leak kernel memory to user space
+Date: Wed, 11 Apr 2018 00:24:36 +0200
+Message-Id: <20180410212806.755664896@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -40,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399718871471315?=
-X-GMAIL-MSGID: =?utf-8?q?1597400190313494765?=
+X-GMAIL-THRID: =?utf-8?q?1597399707487357504?=
+X-GMAIL-MSGID: =?utf-8?q?1597400187585781836?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,27 +55,90 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit a9d48205d0aedda021fc3728972a9e9934c2b9de ]
+[ Upstream commit 6780db244d6b1537d139dea0ec8aad10cf9e4adb ]
 
-We want to use dev_valid_name() to validate tunnel names,
-so better use strnlen(name, IFNAMSIZ) than strlen(name) to make
-sure to not upset KASAN.
+syzbot produced a nice report [1]
 
+Issue here is that a recvmmsg() managed to leak 8 bytes of kernel memory
+to user space, because sin_zero (padding field) was not properly cleared.
+
+[1]
+BUG: KMSAN: uninit-value in copy_to_user include/linux/uaccess.h:184 [inline]
+BUG: KMSAN: uninit-value in move_addr_to_user+0x32e/0x530 net/socket.c:227
+CPU: 1 PID: 3586 Comm: syzkaller481044 Not tainted 4.16.0+ #82
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+ kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+ kmsan_internal_check_memory+0x164/0x1d0 mm/kmsan/kmsan.c:1176
+ kmsan_copy_to_user+0x69/0x160 mm/kmsan/kmsan.c:1199
+ copy_to_user include/linux/uaccess.h:184 [inline]
+ move_addr_to_user+0x32e/0x530 net/socket.c:227
+ ___sys_recvmsg+0x4e2/0x810 net/socket.c:2211
+ __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
+ SYSC_recvmmsg+0x29b/0x3e0 net/socket.c:2394
+ SyS_recvmmsg+0x76/0xa0 net/socket.c:2378
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x4401c9
+RSP: 002b:00007ffc56f73098 EFLAGS: 00000217 ORIG_RAX: 000000000000012b
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004401c9
+RDX: 0000000000000001 RSI: 0000000020003ac0 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000020003bc0 R09: 0000000000000010
+R10: 0000000000000000 R11: 0000000000000217 R12: 0000000000401af0
+R13: 0000000000401b80 R14: 0000000000000000 R15: 0000000000000000
+
+Local variable description: ----addr@___sys_recvmsg
+Variable was created at:
+ ___sys_recvmsg+0xd5/0x810 net/socket.c:2172
+ __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
+
+Bytes 8-15 of 16 are uninitialized
+
+==================================================================
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 3586 Comm: syzkaller481044 Tainted: G    B            4.16.0+ #82
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+ panic+0x39d/0x940 kernel/panic.c:183
+ kmsan_report+0x238/0x240 mm/kmsan/kmsan.c:1083
+ kmsan_internal_check_memory+0x164/0x1d0 mm/kmsan/kmsan.c:1176
+ kmsan_copy_to_user+0x69/0x160 mm/kmsan/kmsan.c:1199
+ copy_to_user include/linux/uaccess.h:184 [inline]
+ move_addr_to_user+0x32e/0x530 net/socket.c:227
+ ___sys_recvmsg+0x4e2/0x810 net/socket.c:2211
+ __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
+ SYSC_recvmmsg+0x29b/0x3e0 net/socket.c:2394
+ SyS_recvmmsg+0x76/0xa0 net/socket.c:2378
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc:	Vlad Yasevich <vyasevich@gmail.com>
+Cc:	Neil Horman <nhorman@tuxdriver.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sctp/ipv6.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -1027,7 +1027,7 @@ bool dev_valid_name(const char *name)
- {
- 	if (*name == '\0')
- 		return false;
--	if (strlen(name) >= IFNAMSIZ)
-+	if (strnlen(name, IFNAMSIZ) == IFNAMSIZ)
- 		return false;
- 	if (!strcmp(name, ".") || !strcmp(name, ".."))
- 		return false;
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -728,8 +728,10 @@ static int sctp_v6_addr_to_user(struct s
+ 			sctp_v6_map_v4(addr);
+ 	}
+ 
+-	if (addr->sa.sa_family == AF_INET)
++	if (addr->sa.sa_family == AF_INET) {
++		memset(addr->v4.sin_zero, 0, sizeof(addr->v4.sin_zero));
+ 		return sizeof(struct sockaddr_in);
++	}
+ 	return sizeof(struct sockaddr_in6);
+ }
+ 
