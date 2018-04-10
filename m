@@ -1,91 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752768AbeDJTd4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 15:33:56 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:60775 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751991AbeDJTdz (ORCPT
+        id S1753143AbeDJTg1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 15:36:27 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:42507 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751611AbeDJTgZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 15:33:55 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R511e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01355;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T-zSYy5_1523388816;
-Subject: Re: [v3 PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-To: Cyrill Gorcunov <gorcunov@gmail.com>
-Cc: Michal Hocko <mhocko@kernel.org>, adobriyan@gmail.com,
-        willy@infradead.org, mguzik@redhat.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1523310774-40300-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180410090917.GZ21835@dhcp22.suse.cz> <20180410094047.GB2041@uranus.lan>
- <20180410104215.GB21835@dhcp22.suse.cz> <20180410110242.GC2041@uranus.lan>
- <20180410111001.GD21835@dhcp22.suse.cz> <20180410122804.GD2041@uranus.lan>
- <097488c7-ab18-367b-c435-7c26d149c619@linux.alibaba.com>
- <8c19f1fb-7baf-fef3-032d-4e93cfc63932@linux.alibaba.com>
- <20180410191742.GE2041@uranus.lan>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <e868b50d-88a3-a649-d998-b7f2bb2c40aa@linux.alibaba.com>
-Date: Tue, 10 Apr 2018 12:33:35 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Tue, 10 Apr 2018 15:36:25 -0400
+X-Google-Smtp-Source: AIpwx4/C5nOuMczH+nHZIAry8JfztJTa1Refxfe0bkI3w2yVqvu2VijW0C4n2ykftC+yWfWVWCSFqg==
+Date: Tue, 10 Apr 2018 12:36:21 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Lina Iyer <ilina@codeaurora.org>
+Cc: Stephen Boyd <swboyd@chromium.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, rnayak@codeaurora.org,
+        linux-kernel@vger.kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 02/10] dt-bindings: introduce RPMH RSC bindings for
+ Qualcomm SoCs
+Message-ID: <20180410193621.GB6727@builder>
+References: <20180405161834.3850-1-ilina@codeaurora.org>
+ <20180405161834.3850-3-ilina@codeaurora.org>
+ <152306368031.94378.14957212064809086345@swboyd.mtv.corp.google.com>
+ <20180409160800.GC19682@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180410191742.GE2041@uranus.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409160800.GC19682@codeaurora.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon 09 Apr 09:08 PDT 2018, Lina Iyer wrote:
 
+> On Fri, Apr 06 2018 at 19:14 -0600, Stephen Boyd wrote:
+> > Quoting Lina Iyer (2018-04-05 09:18:26)
+> > > diff --git a/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+[..]
+> > > +Example 1:
+> > > +
+> > > +For a TCS whose RSC base address is is 0x179C0000 and is at a DRV id of 2, the
+> > > +register offsets for DRV2 start at 0D00, the register calculations are like
+> > > +this -
+> > > +First tuple: 0x179C0000 + 0x10000 * 2 = 0x179E0000
+> > > +Second tuple: 0x179E0000 + 0xD00 = 0x179E0D00
+> > > +
+> > > +       apps_rsc: rsc@179e000 {
+> > > +               label = "apps_rsc";
+> > > +               compatible = "qcom,rpmh-rsc";
+> > > +               reg = <0x179e0000 0x10000>, <0x179e0d00 0x3000>;
+> > 
+> > The first reg property overlaps the second one. Does this second one
+> > ever move around? I would hardcode it in the driver to be 0xd00 away
+> > from the drv base instead of specifying it in DT if it's the same all
+> > the time.
+[..]
+> > 
+> The DRV is the voter for an execution environment (Linux, Hypervisor,
+> ATF) in the RSC. The RSC has a lot of other registers that Linux is not
+> privy to. They are access restricted. The memory organization of the RSC
+> mandates that we know the DRV id to access registers specific to the
+> DRV. Unfortunately, not all RSC have identical DRV configuration and the
+> register space is also variable depending on the capability of the RSC.
+> There are functionalities supported by other RSCs in the SoC that are
+> not supported by the RSC associated with the application processor,
+> while not many RSCs' support multiple DRVs. Therefore it doesn't benefit
+> describing the whole RSC as it is not usable from Linux (because of
+> access restrictions).
+> 
 
-On 4/10/18 12:17 PM, Cyrill Gorcunov wrote:
-> On Tue, Apr 10, 2018 at 11:28:13AM -0700, Yang Shi wrote:
->>> At the first glance, it looks feasible to me. Will look into deeper
->>> later.
->> A further look told me this might be *not* feasible.
->>
->> It looks the new lock will not break check_data_rlimit since in my patch
->> both start_brk and brk is protected by mmap_sem. The code flow might look
->> like below:
->>
->> CPU A                             CPU B
->> --------                       --------
->> prctl                               sys_brk
->>                                        down_write
->> check_data_rlimit           check_data_rlimit (need mm->start_brk)
->>                                        set brk
->> down_write                    up_write
->> set start_brk
->> set brk
->> up_write
->>
->> If CPU A gets the mmap_sem first, it will set start_brk and brk, then CPU B
->> will check with the new start_brk. And, prctl doesn't care if sys_brk is run
->> before it since it gets the new start_brk and brk from parameter.
->>
->> If we protect start_brk and brk with the new lock, sys_brk might get old
->> start_brk, then sys_brk might break rlimit check silently, is that right?
->>
->> So, it looks using new lock in prctl and keeping mmap_sem in brk path has
->> race condition.
-> I fear so. The check_data_rlimit implies that all elements involved into
-> validation (brk, start_brk, start_data, end_data) are not changed unpredicably
-> until written back into mm. In turn if we guard start_brk,brk only (as
-> it is done in the patch) the check_data_rlimit may pass on wrong data
-> I think. And as you mentioned the race above exact the example of such
-> situation. I think for prctl case we can simply left use of mmap_sem
-> as it were before the patch, after all this syscall is really in cold
-> path all the time.
+I generally prefer that we describe the hardware blocks as accurate as
+possible, instead of applying current restrictions on Linux onto the
+description. This ensures that we can reuse the binding and drivers in
+configurations not considered today. However, afaict we still have the
+problem that we need a way to express where in the RSC our TCS sits.
 
-The race condition is just valid when protecting start_brk, brk, 
-start_data and end_data with the new lock, but keep using mmap_sem in 
-brk path.
+Regardless of what's right or not, the given example causes the driver
+to fail probing, so something needs to be changed. (Making the drv size
+0xd00 is functional but doesn't really relate to any bondary in the
+register space).
 
-So, we should just need make a little tweak to have mmap_sem protect 
-start_brk, brk, start_data and end_data, then have the new lock protect 
-others so that we still can remove mmap_sem in proc as the patch is 
-aimed to do.
-
-Yang
-
->
-> 	Cyrill
+Regards,
+Bjorn
