@@ -1,127 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753021AbeDJNAr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 09:00:47 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:54210 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753323AbeDJM6w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753372AbeDJM6w (ORCPT <rfc822;w@1wt.eu>);
         Tue, 10 Apr 2018 08:58:52 -0400
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:58155 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752775AbeDJM6u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 08:58:50 -0400
 From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
         Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
         robh+dt@kernel.org, mark.rutland@arm.com
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH v3 10/10] PCI: dwc: Replace magic number by defines
-Date: Tue, 10 Apr 2018 13:58:42 +0100
-Message-Id: <35bd2edce6ad5df2c9ffceadc4b554ed131d9c86.1523360166.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH v3 00/10] Designware EP support and code clean up
+Date: Tue, 10 Apr 2018 13:58:32 +0100
+Message-Id: <cover.1523360166.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1523360166.git.gustavo.pimentel@synopsys.com>
-References: <cover.1523360166.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1523360166.git.gustavo.pimentel@synopsys.com>
-References: <cover.1523360166.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace magic numbers by a well known define in order to make the code
-human readable and also facilitate the code reusability.
+The patch set was made against the Bjorn's next branch.
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
----
-Change v1->v2:
-- Nothing changed, just to follow the patch set version.
-Change v2->v3:
-- Nothing changed, just to follow the patch set version.
+Adds support Designware EP support.
 
- drivers/pci/dwc/pcie-designware-host.c | 34 ++++++++++++++++++++--------------
- drivers/pci/dwc/pcie-designware.h      |  1 +
- 2 files changed, 21 insertions(+), 14 deletions(-)
+Increases the maximum number of interrupts allowed for Designware IP
+controller.
 
-diff --git a/drivers/pci/dwc/pcie-designware-host.c b/drivers/pci/dwc/pcie-designware-host.c
-index 8e6fed4..ff43b0f 100644
---- a/drivers/pci/dwc/pcie-designware-host.c
-+++ b/drivers/pci/dwc/pcie-designware-host.c
-@@ -83,18 +83,23 @@ irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
- 	num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
- 
- 	for (i = 0; i < num_ctrls; i++) {
--		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12, 4,
--				    &val);
-+		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS +
-+					(i * MSI_REG_CTRL_BLOCK_SIZE),
-+				    4, &val);
- 		if (!val)
- 			continue;
- 
- 		ret = IRQ_HANDLED;
- 		pos = 0;
--		while ((pos = find_next_bit((unsigned long *) &val, 32,
--					    pos)) != 32) {
--			irq = irq_find_mapping(pp->irq_domain, i * 32 + pos);
-+		while ((pos = find_next_bit((unsigned long *) &val,
-+					    MAX_MSI_IRQS_PER_CTRL,
-+					    pos)) != MAX_MSI_IRQS_PER_CTRL) {
-+			irq = irq_find_mapping(pp->irq_domain,
-+					       (i * MAX_MSI_IRQS_PER_CTRL) +
-+					       pos);
- 			generic_handle_irq(irq);
--			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12,
-+			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS +
-+						(i * MSI_REG_CTRL_BLOCK_SIZE),
- 					    4, 1 << pos);
- 			pos++;
- 		}
-@@ -157,9 +162,9 @@ static void dw_pci_bottom_mask(struct irq_data *data)
- 	if (pp->ops->msi_clear_irq) {
- 		pp->ops->msi_clear_irq(pp, data->hwirq);
- 	} else {
--		ctrl = data->hwirq / 32;
--		res = ctrl * 12;
--		bit = data->hwirq % 32;
-+		ctrl = data->hwirq / MAX_MSI_IRQS_PER_CTRL;
-+		res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
-+		bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
- 
- 		pp->irq_status[ctrl] &= ~(1 << bit);
- 		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4,
-@@ -180,9 +185,9 @@ static void dw_pci_bottom_unmask(struct irq_data *data)
- 	if (pp->ops->msi_set_irq) {
- 		pp->ops->msi_set_irq(pp, data->hwirq);
- 	} else {
--		ctrl = data->hwirq / 32;
--		res = ctrl * 12;
--		bit = data->hwirq % 32;
-+		ctrl = data->hwirq / MAX_MSI_IRQS_PER_CTRL;
-+		res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
-+		bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
- 
- 		pp->irq_status[ctrl] |= 1 << bit;
- 		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4,
-@@ -652,8 +657,9 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
- 
- 	/* Initialize IRQ Status array */
- 	for (ctrl = 0; ctrl < num_ctrls; ctrl++)
--		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_ENABLE + (ctrl * 12), 4,
--				    &pp->irq_status[ctrl]);
-+		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_ENABLE +
-+					(ctrl * MSI_REG_CTRL_BLOCK_SIZE),
-+				    4, &pp->irq_status[ctrl]);
- 
- 	/* Setup RC BARs */
- 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0x00000004);
-diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-designware.h
-index fe811db..bee4e25 100644
---- a/drivers/pci/dwc/pcie-designware.h
-+++ b/drivers/pci/dwc/pcie-designware.h
-@@ -110,6 +110,7 @@
- #define MAX_MSI_IRQS			256
- #define MAX_MSI_IRQS_PER_CTRL		32
- #define MAX_MSI_CTRLS			(MAX_MSI_IRQS / MAX_MSI_IRQS_PER_CTRL)
-+#define MSI_REG_CTRL_BLOCK_SIZE		12
- #define MSI_DEF_NUM_VECTORS		32
- 
- /* Maximum number of inbound/outbound iATUs */
+Does a code cleanup on Designware driver:
+ - Replaces magic numbers without a easy meaning by a well known define
+   that helps the human compreension.
+ - Replaces a division by 2 by a simple right shift rotation of 1 bit.
+ - Fixes all first letter characters on comments and debug messages to
+   upper case to maintain coherency.
+
+Gustavo Pimentel (10):
+  bindings: PCI: designware: Example update
+  PCI: dwc: Add support for endpoint mode
+  PCI: endpoint: functions/pci-epf-test: Add second entry
+  bindings: PCI: designware: Add support for the EP in Designware driver
+  PCI: Adds device ID for Synopsys Sample Endpoint.
+  misc: pci_endpoint_test: Add designware EP entry
+  PCI: dwc: Define maximum number of vectors
+  PCI: dwc: Replace lower into upper case characters
+  PCI: dwc: Small computation improvement
+  PCI: dwc: Replace magic number by defines
+
+ .../devicetree/bindings/pci/designware-pcie.txt    |  27 +++-
+ drivers/misc/pci_endpoint_test.c                   |   1 +
+ drivers/pci/dwc/Kconfig                            |  45 ++++--
+ drivers/pci/dwc/pcie-designware-ep.c               |  16 +--
+ drivers/pci/dwc/pcie-designware-host.c             |  77 +++++-----
+ drivers/pci/dwc/pcie-designware-plat.c             | 159 +++++++++++++++++++--
+ drivers/pci/dwc/pcie-designware.c                  |  22 +--
+ drivers/pci/dwc/pcie-designware.h                  |   1 +
+ drivers/pci/endpoint/functions/pci-epf-test.c      |   8 ++
+ include/linux/pci_ids.h                            |   1 +
+ 10 files changed, 277 insertions(+), 80 deletions(-)
+
 -- 
 2.7.4
