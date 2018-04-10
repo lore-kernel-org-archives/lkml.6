@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49vXPa7fXW2RnTkKB/NHeFlf/t3s+FOPeLTbdGe62fUWs+81UYL6kr2jmT9KZowQBBdJk1A
-ARC-Seal: i=1; a=rsa-sha256; t=1523399765; cv=none;
+X-Google-Smtp-Source: AIpwx493ymnoZKZvUVcwL9U2J0VtTZzw9BtMYfMc8cBNwCJMPND+i2/M+kezoHOtyw/eHWcKEkry
+ARC-Seal: i=1; a=rsa-sha256; t=1523399761; cv=none;
         d=google.com; s=arc-20160816;
-        b=cpJMDF6mfapNdimJEG2oQjeyN3TEn+sWH04TYMdGRyg8LfE+avGc1GTCl5jaaX1hTe
-         TmGQxwsHxG+VxZjEQMCeqBmAt4X2sBNvRvKng3oQHtymguzONCU6PzW/bW8fLMctD5fP
-         GAWN2V9LExQ2H0+YwpRxiwOHSdbXaffESer0K3SMeqEkLb1ufwSaVKvRYhRhNrghgIIr
-         khLUiwigMhEQ0pWZpk3PUp/cHkTY0vCRaKjgUKz5R4d8FIyxlysWHosstxAj4bHqZ35P
-         L0rX9pQ2WN8WXX+p+LQ6grEhI6UohlIrfhrABwU4tTsxoHhz7LoAHICF9NT+sZDg5Y6G
-         7d4w==
+        b=ATytVXKPUz3cXEq0zedCNoIZ84qVHN7n0pQoQkYP0isvCQBAVfNkuWGWtR5z2cbuyq
+         QRb7V3ZIE07ihzf2BPi4AcmuXC2J8NT+6Ihvu/soYusH3jN0mX0CLiZmYE7nlh+ZdMa+
+         jcNF5DvpMjDnRzs2pJdb+OBjg/3IjixHuPmvcI6ICW9dkpkwJCgNiYxHGNveeuGB7ISv
+         ii4p0+DvLuLBWKyj9saze8f4FSfg0y7s6fFVii8lO34Ib41e6d1zspv+bW/a1NWzZ/mO
+         5Z9gPLDInUTW+XxLvk41fn8JUTfG12sAJIhUEu3WmJUvFhUgcDABub655iZF+GcVqG+e
+         bLyA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Isp4NHX9TO3RkQoNFweQ8rbbB+3/mZOABk94fKj2qMY=;
-        b=yAKwHGZ8O8YScvT3o0ERKNX6VeDS/xToLFAnK1ArIFgLRjFhR+RJTRthb1wuniNu2M
-         0FHw3xN5+RJLJp9ehAyrjILSXOXo5VMZZzoveD88mKCsJieegbunqrCz7eUmdXHKyN/u
-         lEOwX91gKZU5FLpU8+4k0xREhvbMBooKuvHG07cQVIGQuPlYE0Y36NYp/5+BhKG61lv7
-         BX/r2shhzVfajzOUdWlYC6fR0w6xwj306XL0sJcsAt7YgTAN3MaaBBvwJUEFrON+b03L
-         /VhTIoiQA7LmFj9qA5Ek/mR/h/ZJ5CNw/YXZHOloCQsGHyVTPivI1RlSA7kLZ/1T1G8C
-         mCQQ==
+        bh=gw2lFcRBsIJJI2e71x+z54D4zNLNMlfzlHy+ns8owM0=;
+        b=0I0n0VwaPhBIliq/isLBBj9Vwvg4LtRvqqjb4hlpvMSdlarJ4eoHuWp0EPPGHvaWJ8
+         5Trcw8qMXVEth2vJAyT62Ym+S8AORztp9GSvMTciCHPtyE8BovguYDjkD1eDQ7ULf+p8
+         kHvhNYl9Kqyux1r4DqLS1iW0kUbS2RB6inAjUGAsQwvFQWU6SWG+sk6I1CjcnPZLswpf
+         4dGxmDH7ri4pg6c3q9xPVtZhB2SbRB6AczXzFfqRl67o2ZK+vZABG87TaFVG08g/7lvp
+         /ZralTzTzePRTob5yWyNEt9azXR8/U+Q8ltTpEVazv43Zgu2oC7PCvZZ0ZxrrYLlHxwd
+         56Pw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Fuyun Liang <liangfuyun1@huawei.com>,
-	Peng Li <lipeng321@huawei.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	NeilBrown <neilb@suse.com>,
+	Andreas Dilger <andreas.dilger@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 056/138] net: hns3: fix for changing MTU
-Date: Wed, 11 Apr 2018 00:24:06 +0200
-Message-Id: <20180410212908.583415353@linuxfoundation.org>
+Subject: [PATCH 4.14 047/138] staging: lustre: disable preempt while sampling processor id.
+Date: Wed, 11 Apr 2018 00:23:57 +0200
+Message-Id: <20180410212907.554789447@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399984249014896?=
-X-GMAIL-MSGID: =?utf-8?q?1597400432454166132?=
+X-GMAIL-THRID: =?utf-8?q?1597399958975311347?=
+X-GMAIL-MSGID: =?utf-8?q?1597400428705679432?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,31 +50,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fuyun Liang <liangfuyun1@huawei.com>
+From: NeilBrown <neilb@suse.com>
 
 
-[ Upstream commit 5bad95a1e55f4d5bb41e130db859d57eaf1b1549 ]
+[ Upstream commit dbeccabf5294e80f7cc9ee566746c42211bed736 ]
 
-when changing MTU, The new MTU must need to be set to netdevice.
+Calling smp_processor_id() without disabling preemption
+triggers a warning (if CONFIG_DEBUG_PREEMPT).
+I think the result of cfs_cpt_current() is only used as a hint for
+load balancing, rather than as a precise and stable indicator of
+the current CPU.  So it doesn't need to be called with
+preemption disabled.
 
-Fixes: a8e8b7ff3517 ("net: hns3: Add support to change MTU in HNS3 hardware")
-Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+So disable preemption inside cfs_cpt_current() to silence the warning.
+
+Signed-off-by: NeilBrown <neilb@suse.com>
+Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/staging/lustre/lnet/libcfs/linux/linux-cpu.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
-@@ -1313,6 +1313,8 @@ static int hns3_nic_change_mtu(struct ne
- 		return ret;
- 	}
+--- a/drivers/staging/lustre/lnet/libcfs/linux/linux-cpu.c
++++ b/drivers/staging/lustre/lnet/libcfs/linux/linux-cpu.c
+@@ -528,19 +528,20 @@ EXPORT_SYMBOL(cfs_cpt_spread_node);
+ int
+ cfs_cpt_current(struct cfs_cpt_table *cptab, int remap)
+ {
+-	int cpu = smp_processor_id();
+-	int cpt = cptab->ctb_cpu2cpt[cpu];
++	int cpu;
++	int cpt;
  
-+	netdev->mtu = new_mtu;
-+
- 	/* if the netdev was running earlier, bring it up again */
- 	if (if_running && hns3_nic_net_open(netdev))
- 		ret = -EINVAL;
+-	if (cpt < 0) {
+-		if (!remap)
+-			return cpt;
++	preempt_disable();
++	cpu = smp_processor_id();
++	cpt = cptab->ctb_cpu2cpt[cpu];
+ 
++	if (cpt < 0 && remap) {
+ 		/* don't return negative value for safety of upper layer,
+ 		 * instead we shadow the unknown cpu to a valid partition ID
+ 		 */
+ 		cpt = cpu % cptab->ctb_nparts;
+ 	}
+-
++	preempt_enable();
+ 	return cpt;
+ }
+ EXPORT_SYMBOL(cfs_cpt_current);
