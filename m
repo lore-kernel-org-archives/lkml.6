@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48kjJyhs3qh97FlPDh/6kFCrSwqT0ZXVpadtUfjcECp9Nqr5iRdrRTCPPcyv7VVT38QaOFT
-ARC-Seal: i=1; a=rsa-sha256; t=1523399566; cv=none;
+X-Google-Smtp-Source: AIpwx4+CZJZO8uODLS3tS0U4rdLSIc3SB4Cyyech9IAwhfZuvqxaXCbG446A+yu1NXicTRrFu7i+
+ARC-Seal: i=1; a=rsa-sha256; t=1523399564; cv=none;
         d=google.com; s=arc-20160816;
-        b=FhmbrBx+GSWD+MkcWerxD7xNIYmiQ8Jp11+wD7zn23XkvjlOESwsJcunTpSnhskqDi
-         Zg/xcUrHDx8Debwxj7G13we9bY7jFJ5KOWC8Ajn4/YduY1uRf8AEjrsHW+KNcY8gNPJ2
-         1bKLyN9AzIhBtVi3hvgIgbgfVW2CwrmMvHWQF/wa+UCuFItz42bNRuHz0BLz2F80mfic
-         l2uljDGj6X2uScC7+5VioD9zBnzRuK6aFTGi0b8teBunTtlwYtvP+crWdZY4svPxEFL7
-         7TwdqGkUUiACmRfEkFHfHD6SI5m+P64/YflbyG3O05HzY/WfND6zXIH1k9v3Z5Xdybvn
-         crgw==
+        b=wYs1pzNTcUJY1N/qWGD/ltcCq3AzG81CfUXIfkd4Q+gdXO3qdMK0xOVSGyUHtbIyaJ
+         mcFG1xIqN09+jylwY5/aCxvxMdcy8XCZAYeZ+o4uQf6aO6o57OP2eGjd/u8DLh7n/MjP
+         pFkXyWwfyXEYU/Emu+1JYV2BX56Z5f0s43k5rfPPhpa1Mp282214n9kL/8m9KBzE4dr/
+         vmG9cTLFYfMDwSwVdKbNGTmFtbZaJFmsFH4vVkhQKGhBK4A7xQaEGTtrXkmai0pgb3P0
+         Wshh7RanO4oFYo+7A79WdjtdceIqRtsWVAp+j/zgzGStvHftMShHPL1MICRqC/449Jvv
+         9+zw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=t6blN8JmqumQm60G8XGZ6lWUZRL9dXUCs12aJC74CKI=;
-        b=QPFsEnvDF5zQqFubB1J8ZKNnlxo3CoyDzfhivaUAULdEZhgPEz/moiCBUWEZWX2+W0
-         2CgLnnFkZ/E50RWZ7ERK9kA+maWFiOmc3fEPAfDgP4LoL/tzlTBtkfCSWV8kVQDJyvAG
-         vY4NYf24SjmtGc1+ETg71q590N6VbCcLehHM2QhtD99qbHZQMbgnCOffV2C3UADRh8is
-         gmY1sUONO7S+OE6X+GQftvl9G9Z5xSdyB5U2/4AbJU5hIX79N1QSVSjG4IxxaNh9/yyz
-         m/Ou+aEctk2OMSCKlAuZQWWDqzL8tTEqDBrHpFgijDAMWq0aQ3h+pmPAnQ/ld7S+o4pA
-         VnMw==
+        bh=7UQV4E1ZEORC77wBOah8F412WCsgb82mOL9dWxHFSsw=;
+        b=T/2f7Co6Be06DBt2t/MeqkI238hMtxYW0Pj4ouQbozO7d0CYuDBZnRmpDQeht2rx/m
+         C1WLrq+wok/uwPqrd5j/pFY22wLQgtqYrTRWFrPidCEncDjSAUUDgRXfBgfdXYqGNSVf
+         YdiAu3xvPJuy3dy4f1BXXI2qnO3DW+8BnTn7OP5liQc5Yoa/RaFtlN9zv36HPYOk8kw7
+         lFnER+ZOgZzONjGjBtCUpOa4kIliYGaXnTrbl9D4azPfIWC7EWbJzGMHnysymcnjV/E0
+         efrlAxux0+zbAW3g3lo4GxDpQ6Spn7YYgGPF9zDkun+kSN3Ju2fZ+WwV47A5qbFqsinf
+         Gfxg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 136/168] sky2: Increase D3 delay to sky2 stops working after suspend
-Date: Wed, 11 Apr 2018 00:24:38 +0200
-Message-Id: <20180410212806.840677404@linuxfoundation.org>
+	Jianbo Liu <jianbol@mellanox.com>,
+	Or Gerlitz <ogerlitz@mellanox.com>,
+	Roi Dayan <roid@mellanox.com>,
+	Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.15 153/168] net/mlx5e: Fix memory usage issues in offloading TC flows
+Date: Wed, 11 Apr 2018 00:24:55 +0200
+Message-Id: <20180410212807.585405833@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399712936546104?=
-X-GMAIL-MSGID: =?utf-8?q?1597400224410886535?=
+X-GMAIL-THRID: =?utf-8?q?1597400221014414332?=
+X-GMAIL-MSGID: =?utf-8?q?1597400221014414332?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,34 +51,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Jianbo Liu <jianbol@mellanox.com>
 
 
-[ Upstream commit afb133637071be6deeb8b3d0e55593ffbf63c527 ]
+[ Upstream commit af1607c37d9d85a66fbcf43b7f11bf3d94b9bb69 ]
 
-The sky2 ethernet stops working after system resume from suspend:
-[ 582.852065] sky2 0000:04:00.0: Refused to change power state, currently in D3
+For NIC flows, the parsed attributes are not freed when we exit
+successfully from mlx5e_configure_flower().
 
-The current 150ms delay is not enough, change it to 200ms can solve the
-issue.
+There is possible double free for eswitch flows. If error is returned
+from rhashtable_insert_fast(), the parse attrs will be freed in
+mlx5e_tc_del_flow(), but they will be freed again before exiting
+mlx5e_configure_flower().
 
-BugLink: https://bugs.launchpad.net/bugs/1758507
-Cc: Stable <stable@vger.kernel.org>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+To fix both issues we do the following:
+(1) change the condition that determines if to issue the free call to
+    check if this flow is NIC flow, or it does not have encap action.
+(2) reorder the code such that that the check and free calls are done
+    before we attempt to add into the hash table.
+
+Fixes: 232c001398ae ('net/mlx5e: Add support to neighbour update flow')
+Signed-off-by: Jianbo Liu <jianbol@mellanox.com>
+Reviewed-by: Or Gerlitz <ogerlitz@mellanox.com>
+Reviewed-by: Roi Dayan <roid@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/sky2.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/net/ethernet/marvell/sky2.c
-+++ b/drivers/net/ethernet/marvell/sky2.c
-@@ -5087,7 +5087,7 @@ static int sky2_probe(struct pci_dev *pd
- 	INIT_WORK(&hw->restart_work, sky2_restart);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+@@ -2102,19 +2102,19 @@ int mlx5e_configure_flower(struct mlx5e_
+ 	if (err != -EAGAIN)
+ 		flow->flags |= MLX5E_TC_FLOW_OFFLOADED;
  
- 	pci_set_drvdata(pdev, hw);
--	pdev->d3_delay = 150;
-+	pdev->d3_delay = 200;
++	if (!(flow->flags & MLX5E_TC_FLOW_ESWITCH) ||
++	    !(flow->esw_attr->action & MLX5_FLOW_CONTEXT_ACTION_ENCAP))
++		kvfree(parse_attr);
++
+ 	err = rhashtable_insert_fast(&tc->ht, &flow->node,
+ 				     tc->ht_params);
+-	if (err)
+-		goto err_del_rule;
++	if (err) {
++		mlx5e_tc_del_flow(priv, flow);
++		kfree(flow);
++	}
  
- 	return 0;
+-	if (flow->flags & MLX5E_TC_FLOW_ESWITCH &&
+-	    !(flow->esw_attr->action & MLX5_FLOW_CONTEXT_ACTION_ENCAP))
+-		kvfree(parse_attr);
+ 	return err;
  
+-err_del_rule:
+-	mlx5e_tc_del_flow(priv, flow);
+-
+ err_free:
+ 	kvfree(parse_attr);
+ 	kfree(flow);
