@@ -1,27 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754163AbeDJPOi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 11:14:38 -0400
-Received: from smtprelay0143.hostedemail.com ([216.40.44.143]:38672 "EHLO
+        id S1754206AbeDJPPA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 11:15:00 -0400
+Received: from smtprelay0148.hostedemail.com ([216.40.44.148]:51908 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753685AbeDJPOg (ORCPT
+        by vger.kernel.org with ESMTP id S1753097AbeDJPO6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 11:14:36 -0400
+        Tue, 10 Apr 2018 11:14:58 -0400
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:541:599:800:960:966:968:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2196:2199:2393:2553:2559:2562:2691:2692:2828:2903:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3870:3871:3872:3873:3874:4321:4385:5007:9010:9040:9121:10004:10400:10848:11232:11233:11658:11914:12043:12262:12296:12438:12555:12679:12740:12760:12895:13069:13163:13184:13229:13311:13357:13439:13891:13972:14093:14096:14097:14181:14659:14721:21080:21365:21451:21627:21740:30029:30045:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: flock94_280e7bcf8a446
-X-Filterd-Recvd-Size: 2770
-Message-ID: <a3ffaea6a161e667854127d2e021a04034985a97.camel@perches.com>
-Subject: Re: [PATCH] MAINTAINERS: remove me as maintainer for I2C host
- drivers
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::,RULES_HIT:41:355:379:541:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1801:2198:2199:2393:2525:2553:2559:2564:2682:2685:2691:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4605:5007:7903:8985:9025:9121:10004:10400:10848:11026:11232:11233:11658:11914:12043:12296:12663:12740:12760:12895:13069:13161:13229:13311:13357:13439:14181:14581:14659:14721:21080:21433:21451:21627:30054:30060:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
+X-HE-Tag: fuel07_2b0159758bd38
+X-Filterd-Recvd-Size: 3167
+Message-ID: <bece0d90535709ef39006adb5f481993d6063929.camel@perches.com>
+Subject: Re: Subject: [PATCH] [PATCH] time: tick-sched: use bool for
+ tick_stopped
 From: Joe Perches <joe@perches.com>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 10 Apr 2018 08:14:33 -0700
-In-Reply-To: <20180410144654.fg2pbvh4d2y3rucv@katana>
-References: <20180410141125.4477-1-wsa@the-dreams.de>
-         <f0ce07bdb69602450ea1681936706b16962ce41f.camel@perches.com>
-         <20180410144654.fg2pbvh4d2y3rucv@katana>
+To: Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: yuankuiz@codeaurora.org, Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>, aulmck@linux.vnet.ibm.com,
+        Ingo Molnar <mingo@kernel.org>, Len Brown <len.brown@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        apw@canonical.com
+Date: Tue, 10 Apr 2018 08:14:54 -0700
+In-Reply-To: <20180410123305.GF4082@hirez.programming.kicks-ass.net>
+References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
+         <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>
+         <20180410123305.GF4082@hirez.programming.kicks-ass.net>
 Content-Type: text/plain; charset="ISO-8859-1"
 X-Mailer: Evolution 3.28.0-4 
 Mime-Version: 1.0
@@ -30,46 +37,46 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-04-10 at 16:46 +0200, Wolfram Sang wrote:
-> > As far as I understand, all this seems correct to me.
+On Tue, 2018-04-10 at 14:33 +0200, Peter Zijlstra wrote:
+> On Tue, Apr 10, 2018 at 10:00:01AM +0200, Rafael J. Wysocki wrote:
+> > On Tue, Apr 10, 2018 at 9:33 AM,  <yuankuiz@codeaurora.org> wrote:
+> > > +++ b/kernel/time/tick-sched.h
+> > > @@ -48,8 +48,8 @@ struct tick_sched {
+> > >         unsigned long                   check_clocks;
+> > >         enum tick_nohz_mode             nohz_mode;
+> > > 
+> > > +       bool                            tick_stopped    : 1;
+> > >         unsigned int                    inidle          : 1;
+> > > -       unsigned int                    tick_stopped    : 1;
+> > >         unsigned int                    idle_active     : 1;
+> > >         unsigned int                    do_timer_last   : 1;
+> > >         unsigned int                    got_idle_tick   : 1;
+> > 
+> > I don't think this is a good idea at all.
+> > 
+> > Please see https://lkml.org/lkml/2017/11/21/384 for example.
 > 
-> Good. Thank you, Joe!
-> /
-> > You want to maintain the core files in drivers/i2c/
-> > but not any files in any of algos/, busses/, or muxes/.
-> 
-> More specific: I don't want get_maintainer.pl to print me as a
-> maintainer for these drivers.
+> Joe, apw, could we get Checkpatch to whinge about _Bool in composite
+> types? That should immediately also disqualify using it as the base type
+> of bitfields.
 
-I believe get_maintainer.pl is still going to do that for
-awhile as you are a commit signer for several of these driver
-files.  Files that are not either "supported" or "maintained"
-by default add the --git-fallback option.
+Whinging about bool <foo> : <x> seems entirely sensible
+and straightforward to do.
 
-For instance, With your patch:
-$ ./scripts/get_maintainer.pl -f drivers/i2c/algos/i2c-algo-bit.c
-Wolfram Sang <wsa+renesas@sang-engineering.com> (commit_signer:3/2=100%,authored:1/2=50%,added_lines:5/15=33%)
-Jean Delvare <jdelvare@suse.de> (commit_signer:1/2=50%,authored:1/2=50%,added_lines:10/15=67%,removed_lines:3/3=100%)
-linux-i2c@vger.kernel.org (open list:I2C SUBSYSTEM DRIVERS)
-linux-kernel@vger.kernel.org (open list)
+I'm not so sure about bool in structs as a patch context
+could be adding a bool to local stack definitions and
+there's no real ability to determine if the bool is in a
+struct or on the stack.
 
-Your name should not be shown after a year or so unless you
-actually sign-off on patches to those subdirectories.
+Also, I think there's nothing really wrong with using
+bool in structs.  Steven Rostedt's rationale in
+https://lkml.org/lkml/2017/11/21/207 isn't really right
+as sizeof(int) is 4 not 1 and sizeof(bool) is 1 on arches
+without alignment issues.  I believe when using gcc,
+sizeof(bool) is always 1 and there may be alignment padding
+added on some arches.  Dunno.
 
-btw: You signed-off using 2 different addresses on one
-of those patches.  I think that's odd.
+But I think the battle is already lost anyway.
 
-commit 3e5f06bed72fe72166a6778f630241a893f67799
-Author: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date:   Mon Dec 4 09:16:18 2017 +0100
-
-    i2c: algo-bit: init the bus to a known state
-    
-    Ensure the bus is free when we register the adapter. Before the SCL/SDA
-    wires were in an unknown state. It used to work because sending a byte
-    has a retry mechanism which was triggered if the bus was initially in a
-    non-free state. But the graceful way to do it is to initialize
-    correctly.
-    
-    Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-    Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+git grep -P  '(?<!static|extern)\s+bool\s+\w+\s*;' include | wc -l
+1543
