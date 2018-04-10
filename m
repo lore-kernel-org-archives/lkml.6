@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48sNSMAc1vI6/oWUjCuAxi8KKihIqPVrIDQcjUWGg7GG/x3Drn0cnPZxhd3sdER5z5uEt4o
-ARC-Seal: i=1; a=rsa-sha256; t=1523399098; cv=none;
+X-Google-Smtp-Source: AIpwx4/EoSkqwaXTgnlMq8QWym84BNSeTReDYMMttoetdadHUOUPfFaIJT4KWh3yC7kjkaA1BNCo
+ARC-Seal: i=1; a=rsa-sha256; t=1523399095; cv=none;
         d=google.com; s=arc-20160816;
-        b=GcnbOUdM4mIu3wTe8y5Z9PHLxHvc4Wzkeuz33dMf5p/HLqpxVdawHvXwqtX5jZ933K
-         14r0lva/bIUQw8PXjCaqv+LbDMwFFEogUPnUr25l1IBVkS0hkd8BFDA2hcjC+tS5/5ep
-         d6qIKEou5CGzjp9e7SHht34ZCEEiBAo/PS4lbG+e0UMmfgbxHk/+UH3INpetFVtVGd2D
-         IQus2MjSP6tPJ4jJu5q5KKctiz/G8JrogPJx+Bv7sUSAheugBjyt/TY7ghMnbfCvOuOh
-         qdPX3q6g41MaMBeYErc+y5rxSvQI8bpXRHzUbKGWGKRi+S2W4cGTwILIZdIV2VfscgCa
-         QECg==
+        b=mFPIGb4dBnHtWtIypOAvNHN4MX+d9GavLCltcDKCGqtFbstyLKNebH7pR0h/nhyA8B
+         8p4hCFYJvcBzKODGXEwb7qh1G4tuam/8oBG5gWQkAWjpeiOUXyTelAx8W2oFb+MeUK67
+         812ifRXQpkYXeRaXIX4dT1rYc6sxvjYJLmLsnaAmRyTG3Cc5h6+KBbpO2GckqCwVOZYT
+         s+iNb+W1Lwq+tHW1a/Ta7ay7PWRSVBeh5ItDYqA/STCzMhwuvuP2Sq+bdc5etkZQj38A
+         kzCw877Yu+lGhe1OqFW58zenRTd4R5H2AzLNfwvd5hz0hVOSiO4AtW0AQW8kXbG84FgS
+         XOrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=FR9dURViGkVP+PPMx2TIQihMVNbRpO+JtysSj/Bns+4=;
-        b=Iy3ruMTovz9U4S8V5ENoCUBc8gC4TA6l+W+DWTTBzlWeE6slmx6QnwZTwZNtp5nhGS
-         rPo6YNZu5ocAN8f1cxIplZ27w5gqfOxoyJuWpd48UaxNtZS86CKmAotV1Gnjc3AdQ4BQ
-         mgDlEGUayOwHJTQUU7XcukmREp8hdK702KHhn0HQ3A/p3C8QSPu86gvJidM6bhBxrHAR
-         khOxJZUyhiqa/pw8oGYTIe3OFFqksyoi42skn6NnC91yXeGrD0Is3L90UlSMworb2xy9
-         aRE4cDuITJ6U824TX33MGnd1OWHj+jMHgYIH1I5U3w9nkadxuW/SKKLarNHKEq/dpckO
-         ZHHQ==
+        bh=UzxTZtYlm6ZlAw6L4iUuPbzrJVh6ojo5qQ72yhFYBJc=;
+        b=aDzzgT/4t0oC8+8TS71YQR3iOwkLYl6KoxofrYpzbvcH9koHJ33u0tnWNJYXDj7rpG
+         OeWGbIZIiWhxtMSQwE3yTA9jf46fXQv7d/W5DQ2lB4qz96JK1YS/vbdPe1DkmPuqHH9I
+         2DXXqDLGn6WGyqdUeqjN3IqcP12ltZeO9NB6ZpgIQWR1Zs4o3BcxL7st5y80y5f/gYDQ
+         0/qigvo21qShKkRB3zHwBv2LOxW1aHtT9EsC7oOXqb8+/teYCBmiEWm0/mKojVIs+lVJ
+         hRb6OWV0X9SSFlz/YJOF6UOrtZhWLE8Vm8jrYSwdUcE15+gUErcrheDivFotHQ0jcPFR
+         wn9A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
-	Jakub Kicinski <jakub.kicinski@netronome.com>,
+	Lucas Bates <lucasb@mojatatu.com>,
+	Davide Caratti <dcaratti@redhat.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 18/18] nfp: use full 40 bits of the NSP buffer address
-Date: Wed, 11 Apr 2018 00:23:53 +0200
-Message-Id: <20180410212759.535570297@linuxfoundation.org>
+Subject: [PATCH 4.16 05/18] net/sched: fix NULL dereference in the error path of tcf_bpf_init()
+Date: Wed, 11 Apr 2018 00:23:40 +0200
+Message-Id: <20180410212758.837254911@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212758.564682823@linuxfoundation.org>
 References: <20180410212758.564682823@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399732880753270?=
-X-GMAIL-MSGID: =?utf-8?q?1597399732880753270?=
+X-GMAIL-THRID: =?utf-8?q?1597399729810513986?=
+X-GMAIL-MSGID: =?utf-8?q?1597399729810513986?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,60 +50,98 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
 
-[ Upstream commit 1489bbd10e16079ce30a53d3c22a431fd47af791 ]
+[ Upstream commit 3239534a79ee6f20cffd974173a1e62e0730e8ac ]
 
-The NSP default buffer is a piece of NFP memory where additional
-command data can be placed.  Its format has been copied from
-host buffer, but the PCIe selection bits do not make sense in
-this case.  If those get masked out from a NFP address - writes
-to random place in the chip memory may be issued and crash the
-device.
+when tcf_bpf_init_from_ops() fails (e.g. because of program having invalid
+number of instructions), tcf_bpf_cfg_cleanup() calls bpf_prog_put(NULL) or
+bpf_prog_destroy(NULL). Unless CONFIG_BPF_SYSCALL is unset, this causes
+the following error:
 
-Even in the general NSP buffer case, it doesn't make sense to have the
-PCIe selection bits there anymore. These are unused at the moment, and
-when it becomes necessary, the PCIe selection bits should rather be
-moved to another register to utilise more bits for the buffer address.
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000020
+ PGD 800000007345a067 P4D 800000007345a067 PUD 340e1067 PMD 0
+ Oops: 0000 [#1] SMP PTI
+ Modules linked in: act_bpf(E) ip6table_filter ip6_tables iptable_filter binfmt_misc ext4 mbcache jbd2 crct10dif_pclmul crc32_pclmul ghash_clmulni_intel snd_hda_codec_generic pcbc snd_hda_intel snd_hda_codec snd_hda_core snd_hwdep snd_seq snd_seq_device snd_pcm aesni_intel crypto_simd glue_helper cryptd joydev snd_timer snd virtio_balloon pcspkr soundcore i2c_piix4 nfsd auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c ata_generic pata_acpi qxl drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm virtio_blk drm virtio_net virtio_console i2c_core crc32c_intel serio_raw virtio_pci ata_piix libata virtio_ring floppy virtio dm_mirror dm_region_hash dm_log dm_mod [last unloaded: act_bpf]
+ CPU: 3 PID: 5654 Comm: tc Tainted: G            E    4.16.0.bpf_test+ #408
+ Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+ RIP: 0010:__bpf_prog_put+0xc/0xc0
+ RSP: 0018:ffff9594003ef728 EFLAGS: 00010202
+ RAX: 0000000000000000 RBX: ffff9594003ef758 RCX: 0000000000000024
+ RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+ RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000044
+ R10: 0000000000000220 R11: ffff8a7ab9f17131 R12: 0000000000000000
+ R13: ffff8a7ab7c3c8e0 R14: 0000000000000001 R15: ffff8a7ab88f1054
+ FS:  00007fcb2f17c740(0000) GS:ffff8a7abfd80000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 0000000000000020 CR3: 000000007c888006 CR4: 00000000001606e0
+ Call Trace:
+  tcf_bpf_cfg_cleanup+0x2f/0x40 [act_bpf]
+  tcf_bpf_cleanup+0x4c/0x70 [act_bpf]
+  __tcf_idr_release+0x79/0x140
+  tcf_bpf_init+0x125/0x330 [act_bpf]
+  tcf_action_init_1+0x2cc/0x430
+  ? get_page_from_freelist+0x3f0/0x11b0
+  tcf_action_init+0xd3/0x1b0
+  tc_ctl_action+0x18b/0x240
+  rtnetlink_rcv_msg+0x29c/0x310
+  ? _cond_resched+0x15/0x30
+  ? __kmalloc_node_track_caller+0x1b9/0x270
+  ? rtnl_calcit.isra.29+0x100/0x100
+  netlink_rcv_skb+0xd2/0x110
+  netlink_unicast+0x17c/0x230
+  netlink_sendmsg+0x2cd/0x3c0
+  sock_sendmsg+0x30/0x40
+  ___sys_sendmsg+0x27a/0x290
+  ? mem_cgroup_commit_charge+0x80/0x130
+  ? page_add_new_anon_rmap+0x73/0xc0
+  ? do_anonymous_page+0x2a2/0x560
+  ? __handle_mm_fault+0xc75/0xe20
+  __sys_sendmsg+0x58/0xa0
+  do_syscall_64+0x6e/0x1a0
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+ RIP: 0033:0x7fcb2e58eba0
+ RSP: 002b:00007ffc93c496c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+ RAX: ffffffffffffffda RBX: 00007ffc93c497f0 RCX: 00007fcb2e58eba0
+ RDX: 0000000000000000 RSI: 00007ffc93c49740 RDI: 0000000000000003
+ RBP: 000000005ac6a646 R08: 0000000000000002 R09: 0000000000000000
+ R10: 00007ffc93c49120 R11: 0000000000000246 R12: 0000000000000000
+ R13: 00007ffc93c49804 R14: 0000000000000001 R15: 000000000066afa0
+ Code: 5f 00 48 8b 43 20 48 c7 c7 70 2f 7c b8 c7 40 10 00 00 00 00 5b e9 a5 8b 61 00 0f 1f 44 00 00 0f 1f 44 00 00 41 54 55 48 89 fd 53 <48> 8b 47 20 f0 ff 08 74 05 5b 5d 41 5c c3 41 89 f4 0f 1f 44 00
+ RIP: __bpf_prog_put+0xc/0xc0 RSP: ffff9594003ef728
+ CR2: 0000000000000020
 
-This has never been an issue because the buffer used to be
-allocated in memory with less-than-38-bit-long address but that
-is about to change.
+Fix it in tcf_bpf_cfg_cleanup(), ensuring that bpf_prog_{put,destroy}(f)
+is called only when f is not NULL.
 
-Fixes: 1a64821c6af7 ("nfp: add support for service processor access")
-Signed-off-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Fixes: bbc09e7842a5 ("net/sched: fix idr leak on the error path of tcf_bpf_init()")
+Reported-by: Lucas Bates <lucasb@mojatatu.com>
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ net/sched/act_bpf.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c
-@@ -71,10 +71,11 @@
- /* CPP address to retrieve the data from */
- #define NSP_BUFFER		0x10
- #define   NSP_BUFFER_CPP	GENMASK_ULL(63, 40)
--#define   NSP_BUFFER_PCIE	GENMASK_ULL(39, 38)
--#define   NSP_BUFFER_ADDRESS	GENMASK_ULL(37, 0)
-+#define   NSP_BUFFER_ADDRESS	GENMASK_ULL(39, 0)
+--- a/net/sched/act_bpf.c
++++ b/net/sched/act_bpf.c
+@@ -248,10 +248,14 @@ static int tcf_bpf_init_from_efd(struct
  
- #define NSP_DFLT_BUFFER		0x18
-+#define   NSP_DFLT_BUFFER_CPP	GENMASK_ULL(63, 40)
-+#define   NSP_DFLT_BUFFER_ADDRESS	GENMASK_ULL(39, 0)
+ static void tcf_bpf_cfg_cleanup(const struct tcf_bpf_cfg *cfg)
+ {
+-	if (cfg->is_ebpf)
+-		bpf_prog_put(cfg->filter);
+-	else
+-		bpf_prog_destroy(cfg->filter);
++	struct bpf_prog *filter = cfg->filter;
++
++	if (filter) {
++		if (cfg->is_ebpf)
++			bpf_prog_put(filter);
++		else
++			bpf_prog_destroy(filter);
++	}
  
- #define NSP_DFLT_BUFFER_CONFIG	0x20
- #define   NSP_DFLT_BUFFER_SIZE_MB	GENMASK_ULL(7, 0)
-@@ -427,8 +428,8 @@ __nfp_nsp_command_buf(struct nfp_nsp *ns
- 	if (err < 0)
- 		return err;
- 
--	cpp_id = FIELD_GET(NSP_BUFFER_CPP, reg) << 8;
--	cpp_buf = FIELD_GET(NSP_BUFFER_ADDRESS, reg);
-+	cpp_id = FIELD_GET(NSP_DFLT_BUFFER_CPP, reg) << 8;
-+	cpp_buf = FIELD_GET(NSP_DFLT_BUFFER_ADDRESS, reg);
- 
- 	if (in_buf && in_size) {
- 		err = nfp_cpp_write(cpp, cpp_id, cpp_buf, in_buf, in_size);
+ 	kfree(cfg->bpf_ops);
+ 	kfree(cfg->bpf_name);
