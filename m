@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/jvuI+FLR/GPcHr2ZytWu/P/Vguw4rQBdYxXp8zS2LY99BgoX+VfbkX9edYmLgFK0oo72q
-ARC-Seal: i=1; a=rsa-sha256; t=1523399063; cv=none;
+X-Google-Smtp-Source: AIpwx49BYuDdvKGoTcct5FY/yz5wZvMHzLIVvugQJi4r4ucn8IzA8qYHi3uccxE1HHnLhrOIXzim
+ARC-Seal: i=1; a=rsa-sha256; t=1523399060; cv=none;
         d=google.com; s=arc-20160816;
-        b=CkjgKff262Ykd0Ae6CtBZ4k0qioU+DYOkPiClflJN9I4o4roLnFGsX0F7JrZrMR4U5
-         xwHyOVz7ijtwiFNaJDPdDsR920lwZvCJrBUhwLS9Fx69auwRskWEyocBKJahUgYkb3pc
-         GxLmgN4ZtPDB5SKIhpy0Ew4rSFftqSFdFF6m9TEBEDWZDPMpnPSYPVmvpNPOcOc2stJz
-         GuOT3y2vySDDZsffnpbMr+mA+zVcL0Q9QveNTG28wUcIU4rwQUiA1z4gnE2x41geLdXu
-         AFQxILcHhOGHzKlSmMAKie17Us8PTVpW7/ythD4f0TKa1uFnLC8k7F5o3cmOOjnBitf7
-         7gdQ==
+        b=s5Ms0ExhMpE74FdCeaOmZ2/IofOBDIfrMUdTzeK9fNQwjsWJg07Pn3Ep8ePqlllxra
+         Kq0mzHlx22ZMp98QP+XkUeMRx4fvzPdk3exfhn+JSrTbFPA3yfsXY6iL64utaev3DFx/
+         IMOYEqI/92dX7K8thcDsR8D4qEe02wEF8PKKPvtvMDhSLxo7AwEsDNyRzp+s2AQtq1rc
+         2j/yh3mS4YzX9OYGywc9P/Xk3tCFURJClQ2VABEKfFUFNpZ9css/kzWg0jt8JkNN5b5l
+         7WFIcOQzmedUsy7stxTA+Br3Subm9LEA9LUvEdik3OjTaiCloWhE0tkHbne6wK0FN9H5
+         Nfgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=sSKvyGEXyBLSxP0giGfELYDR/frN3KSrohHBWnQRAdA=;
-        b=TIgacZXIhdn9rD9jM7ybxkOzZOh/cs4c4m959zJQKZK31OIvmBGppL8Pzq/H9+58qJ
-         uTyTeH8AtOHExihljx38Fl2rvGiZgwFVPGRE1AKH7gA151g8BqyJjG6tAj//pOAAYuCZ
-         lxa0U+AgznZwHEo3SjR6braCkGKlvGbQBuyMzxJ4+aqIYBfgZEp3dRw+NUNjHVcML27v
-         osxRbRb3QykdSAhIKBkdWrlRV1h+P+hP8oooQFjfleJ1SDJHruVwh4j7CXbBFhLAjAEh
-         J3uxASIJ9YokUy2eTc91uMDv8tJwKkrHPMbxDXk/US7vufSd+iapVNSvfvBElzxB7OWe
-         atsg==
+        bh=zEQ8N40iIsno1tpxutKcVVkWocfTNsxhhPjdbaV+nNA=;
+        b=tVJCuqV56oABsE61+sT1M2+E6Vdxj755rKv5VjoETkcvgLyXLXb+1sgWsn4BzPlOV9
+         Gn7KY01uvhcvPMJE4KRP14sKGwzXfWiOAuOaVPInSuPd1VHd38So1U9vVhlu7NeKDhAT
+         m1ohNE7Tb7obK2DBDA1yjfEVCPbLWeMNIncbn4NsPoQN0jNvHG2Vqw3qFpkbeZr/iPgZ
+         U6zgj3XBo+IXSXkm3NpqsqS/8jJgo4qOUEOyRrrZTEzEHOBuKQxE9ZofZkaG4YSdZD1/
+         DvftIoJiqeRMRfEcY62/Ki07ls5wPnxzOIVklU3WucIoke4mCPQjfoAF0craLt1YMN+n
+         wErA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
+	Kees Cook <keescook@chromium.org>,
+	Guenter Roeck <linux@roeck-us.net>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 06/18] pptp: remove a buggy dst release in pptp_connect()
-Date: Wed, 11 Apr 2018 00:23:41 +0200
-Message-Id: <20180410212758.885451569@linuxfoundation.org>
+Subject: [PATCH 4.16 01/18] sparc64: Oracle DAX driver depends on SPARC64
+Date: Wed, 11 Apr 2018 00:23:36 +0200
+Message-Id: <20180410212758.638047196@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212758.564682823@linuxfoundation.org>
 References: <20180410212758.564682823@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399696387961448?=
-X-GMAIL-MSGID: =?utf-8?q?1597399696387961448?=
+X-GMAIL-THRID: =?utf-8?q?1597399692722941424?=
+X-GMAIL-MSGID: =?utf-8?q?1597399692722941424?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,113 +49,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
+commit 9c548bb5823dfcf7a16c6e65976d84d9581208c9 upstream.
 
-[ Upstream commit bfacfb457b36911a10140b8cb3ce76a74883ac5a ]
+sparc:allmodconfig fails to build as follows.
 
-Once dst has been cached in socket via sk_setup_caps(),
-it is illegal to call ip_rt_put() (or dst_release()),
-since sk_setup_caps() did not change dst refcount.
+ERROR: "mdesc_release" [drivers/sbus/char/oradax.ko] undefined!
+ERROR: "sun4v_hvapi_register" [drivers/sbus/char/oradax.ko] undefined!
+ERROR: "mdesc_get_property" [drivers/sbus/char/oradax.ko] undefined!
+ERROR: "mdesc_node_by_name" [drivers/sbus/char/oradax.ko] undefined!
+ERROR: "mdesc_grab" [drivers/sbus/char/oradax.ko] undefined!
+ERROR: "sun4v_ccb_info" [drivers/sbus/char/oradax.ko] undefined!
+ERROR: "sun4v_ccb_submit" [drivers/sbus/char/oradax.ko] undefined!
+ERROR: "sun4v_ccb_kill" [drivers/sbus/char/oradax.ko] undefined!
 
-We can still dereference it since we hold socket lock.
+The symbols are only available with SPARC64 builds, thus the driver
+depends on it.
 
-Caugth by syzbot :
-
-BUG: KASAN: use-after-free in atomic_dec_return include/asm-generic/atomic-instrumented.h:198 [inline]
-BUG: KASAN: use-after-free in dst_release+0x27/0xa0 net/core/dst.c:185
-Write of size 4 at addr ffff8801c54dc040 by task syz-executor4/20088
-
-CPU: 1 PID: 20088 Comm: syz-executor4 Not tainted 4.16.0+ #376
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x1a7/0x27d lib/dump_stack.c:53
- print_address_description+0x73/0x250 mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report+0x23c/0x360 mm/kasan/report.c:412
- check_memory_region_inline mm/kasan/kasan.c:260 [inline]
- check_memory_region+0x137/0x190 mm/kasan/kasan.c:267
- kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
- atomic_dec_return include/asm-generic/atomic-instrumented.h:198 [inline]
- dst_release+0x27/0xa0 net/core/dst.c:185
- sk_dst_set include/net/sock.h:1812 [inline]
- sk_dst_reset include/net/sock.h:1824 [inline]
- sock_setbindtodevice net/core/sock.c:610 [inline]
- sock_setsockopt+0x431/0x1b20 net/core/sock.c:707
- SYSC_setsockopt net/socket.c:1845 [inline]
- SyS_setsockopt+0x2ff/0x360 net/socket.c:1828
- do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x4552d9
-RSP: 002b:00007f4878126c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007f48781276d4 RCX: 00000000004552d9
-RDX: 0000000000000019 RSI: 0000000000000001 RDI: 0000000000000013
-RBP: 000000000072bea0 R08: 0000000000000010 R09: 0000000000000000
-R10: 00000000200010c0 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000526 R14: 00000000006fac30 R15: 0000000000000000
-
-Allocated by task 20088:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:447
- set_track mm/kasan/kasan.c:459 [inline]
- kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
- kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:489
- kmem_cache_alloc+0x12e/0x760 mm/slab.c:3542
- dst_alloc+0x11f/0x1a0 net/core/dst.c:104
- rt_dst_alloc+0xe9/0x540 net/ipv4/route.c:1520
- __mkroute_output net/ipv4/route.c:2265 [inline]
- ip_route_output_key_hash_rcu+0xa49/0x2c60 net/ipv4/route.c:2493
- ip_route_output_key_hash+0x20b/0x370 net/ipv4/route.c:2322
- __ip_route_output_key include/net/route.h:126 [inline]
- ip_route_output_flow+0x26/0xa0 net/ipv4/route.c:2577
- ip_route_output_ports include/net/route.h:163 [inline]
- pptp_connect+0xa84/0x1170 drivers/net/ppp/pptp.c:453
- SYSC_connect+0x213/0x4a0 net/socket.c:1639
- SyS_connect+0x24/0x30 net/socket.c:1620
- do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-Freed by task 20082:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:447
- set_track mm/kasan/kasan.c:459 [inline]
- __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
- kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
- __cache_free mm/slab.c:3486 [inline]
- kmem_cache_free+0x83/0x2a0 mm/slab.c:3744
- dst_destroy+0x266/0x380 net/core/dst.c:140
- dst_destroy_rcu+0x16/0x20 net/core/dst.c:153
- __rcu_reclaim kernel/rcu/rcu.h:178 [inline]
- rcu_do_batch kernel/rcu/tree.c:2675 [inline]
- invoke_rcu_callbacks kernel/rcu/tree.c:2930 [inline]
- __rcu_process_callbacks kernel/rcu/tree.c:2897 [inline]
- rcu_process_callbacks+0xd6c/0x17b0 kernel/rcu/tree.c:2914
- __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
-
-The buggy address belongs to the object at ffff8801c54dc000
- which belongs to the cache ip_dst_cache of size 168
-The buggy address is located 64 bytes inside of
- 168-byte region [ffff8801c54dc000, ffff8801c54dc0a8)
-The buggy address belongs to the page:
-page:ffffea0007153700 count:1 mapcount:0 mapping:ffff8801c54dc000 index:0x0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffff8801c54dc000 0000000000000000 0000000100000010
-raw: ffffea0006b34b20 ffffea0006b6c1e0 ffff8801d674a1c0 0000000000000000
-page dumped because: kasan: bad access detected
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
+Fixes: dd0273284c74 ("sparc64: Oracle DAX driver")
+Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ppp/pptp.c |    1 -
- 1 file changed, 1 deletion(-)
 
---- a/drivers/net/ppp/pptp.c
-+++ b/drivers/net/ppp/pptp.c
-@@ -464,7 +464,6 @@ static int pptp_connect(struct socket *s
- 	po->chan.mtu = dst_mtu(&rt->dst);
- 	if (!po->chan.mtu)
- 		po->chan.mtu = PPP_MRU;
--	ip_rt_put(rt);
- 	po->chan.mtu -= PPTP_HEADER_OVERHEAD;
+---
+ drivers/sbus/char/Kconfig |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/sbus/char/Kconfig
++++ b/drivers/sbus/char/Kconfig
+@@ -72,7 +72,8 @@ config DISPLAY7SEG
  
- 	po->chan.hdrlen = 2 + sizeof(struct pptp_gre_header);
+ config ORACLE_DAX
+ 	tristate "Oracle Data Analytics Accelerator"
+-	default m if SPARC64
++	depends on SPARC64
++	default m
+ 	help
+ 	 Driver for Oracle Data Analytics Accelerator, which is
+ 	 a coprocessor that performs database operations in hardware.
