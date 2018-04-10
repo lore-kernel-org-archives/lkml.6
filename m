@@ -1,102 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752587AbeDJKF4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 06:05:56 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43403 "EHLO mail.bootlin.com"
+        id S1752541AbeDJKF3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 06:05:29 -0400
+Received: from mga09.intel.com ([134.134.136.24]:24752 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752062AbeDJKFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 06:05:54 -0400
-Date: Tue, 10 Apr 2018 12:05:42 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 6/9] mtd: nand: qcom: support for checking read errors
- for last codeword
-Message-ID: <20180410120542.24ea9ddb@xps13>
-In-Reply-To: <1522845745-6624-7-git-send-email-absahu@codeaurora.org>
-References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
-        <1522845745-6624-7-git-send-email-absahu@codeaurora.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1752472AbeDJKF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 06:05:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,431,1517904000";
+   d="scan'208";a="190266198"
+Message-ID: <1523354722.21176.431.camel@linux.intel.com>
+Subject: Re: [PATCH v4 3/9] vsprintf: Do not check address of well-known
+ strings
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org
+Date: Tue, 10 Apr 2018 13:05:22 +0300
+In-Reply-To: <20180409121933.ftvmhhr37fmngfu3@pathway.suse.cz>
+References: <20180404085843.16050-1-pmladek@suse.com>
+         <20180404085843.16050-4-pmladek@suse.com>
+         <0ff89c4e-e20d-467e-de36-61e3a5557c7d@rasmusvillemoes.dk>
+         <20180406091543.sh6efp24kflluxco@pathway.suse.cz>
+         <1523110355.21176.412.camel@linux.intel.com>
+         <20180409121933.ftvmhhr37fmngfu3@pathway.suse.cz>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1+b1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
+On Mon, 2018-04-09 at 14:19 +0200, Petr Mladek wrote:
+> On Sat 2018-04-07 17:12:35, Andy Shevchenko wrote:
+> > On Fri, 2018-04-06 at 11:15 +0200, Petr Mladek wrote:
+> > > On Thu 2018-04-05 15:30:51, Rasmus Villemoes wrote:
+> > > > On 2018-04-04 10:58, Petr Mladek wrote:
 
-On Wed,  4 Apr 2018 18:12:22 +0530, Abhishek Sahu
-<absahu@codeaurora.org> wrote:
-
-> Add boolean function argument in parse_read_errors to identify
-> whether the read error has been called for complete page read or
-> only last codeword read. This will help in subsequent patches to
-> detect ECC errors in case of last codeword read.
-
-Can you explain when this happen: "last codeword read"? I don't see the
-use case.
-
-Thanks,
-Miquèl
-
+> > > > > 
+> > > > Please leave string() alone, except for moving the < PAGE_SIZE
+> > > > check
+> > > > to
+> > > > a new helper checked_string (feel free to find a better name),
+> > > > and
+> > > > use
+> > > > checked_string for handling %s and possibly the few other cases
+> > > > where
+> > > > we're passing a user-supplied pointer. That avoids cluttering
+> > > > the
+> > > > entire
+> > > > file with double-underscore calls, and e.g. in the %pO case,
+> > > > it's
+> > > > easier
+> > > > to understand why one uses two different *string() helpers if
+> > > > the
+> > > > name
+> > > > of one somehow conveys how it is different from the other.
+> > > 
+> > > I understand your reasoning. I thought about exactly this as well.
+> > > My problem is that string() will then be unsafe. It might be
+> > > dangerous
+> > > when porting patches.
+> > 
+> > I agree with Rasmus, and your argument here from my point of view
+> > kinda
+> > weak. Are we really going to backport this patches? Why? We lived
+> > w/o
+> > them for a long time. What's changed now?
 > 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
->  drivers/mtd/nand/qcom_nandc.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
-> index ba43752..dce97e8 100644
-> --- a/drivers/mtd/nand/qcom_nandc.c
-> +++ b/drivers/mtd/nand/qcom_nandc.c
-> @@ -1570,7 +1570,7 @@ struct read_stats {
->   * errors. this is equivalent to what 'ecc->correct()' would do.
->   */
->  static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
-> -			     u8 *oob_buf)
-> +			     u8 *oob_buf, bool last_cw)
->  {
->  	struct nand_chip *chip = &host->chip;
->  	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
-> @@ -1579,12 +1579,12 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
->  	unsigned int max_bitflips = 0;
->  	struct read_stats *buf;
->  	bool flash_op_err = false;
-> -	int i;
-> +	int i, cw_cnt = last_cw ? 1 : ecc->steps;
->  
->  	buf = (struct read_stats *)nandc->reg_read_buf;
->  	nandc_read_buffer_sync(nandc, true);
->  
-> -	for (i = 0; i < ecc->steps; i++, buf++) {
-> +	for (i = 0; i < cw_cnt; i++, buf++) {
->  		u32 flash, buffer, erased_cw;
->  		int data_len, oob_len;
->  
-> @@ -1743,7 +1743,8 @@ static int read_page_ecc(struct qcom_nand_host *host, u8 *data_buf,
->  	free_descs(nandc);
->  
->  	if (!ret)
-> -		ret = parse_read_errors(host, data_buf_start, oob_buf_start);
-> +		ret = parse_read_errors(host, data_buf_start, oob_buf_start,
-> +					false);
->  
->  	return ret;
->  }
+> Someone might have out-of-tree patch that adds yet another format
+> specifier. It might call string() that checks for (null) now but
+> it it won't if we rename it as you suggest. People used to safe
+> string() might miss this when the patch is send upstream for
+> inclusion, ...
 
-
+This is even weaker argument. Sorry, but I don't care about out-of-tree
+core patches. If they have them, they are doing completely wrong, or the
+patches are crappy.
 
 -- 
-Miquel Raynal, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
