@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/guMn578Bsjw4mEmMTWC1KUdUEcyHjtXfBtMsK42BqDLuuHWoq9WogLZdhC6lDTB1hDH0t
-ARC-Seal: i=1; a=rsa-sha256; t=1523399648; cv=none;
+X-Google-Smtp-Source: AIpwx4+odYE8oDFwISGklm1GPH1GHf7wf50f0YAN1PT7johhE6n+Jcj5CzgiuNBWLC7aaSycs9UG
+ARC-Seal: i=1; a=rsa-sha256; t=1523399642; cv=none;
         d=google.com; s=arc-20160816;
-        b=ht1TvDc59BwqTSAoW6YMCQxrugp98A3DcaFhxmsnzuM3fQ931gfLwJ7MQ2D4cmSluw
-         IbVf6cuwNWHxlzLtEff1WfLo0a5gaCuo6zzpZE5rArZ6dPF28GGuKif6ob5aNq4TSMlJ
-         7G5LtcYAgGt0YiQjY7CAUgCqILipjEjDM3AFPmggKEF/MKFr4inoXE5clgTXcVI0jtps
-         P00Gj2wn6+4WlEKmC8OfTjPGlfiVgTXEoWhIL47ymNRlOgdmbFyv95S6qHkdTu7dCWtf
-         L4C6sbaA5fVddh1Ru6yndoxN/ixRg1f4Fb56i8AoPd9hAJUTSbG7LGn32Y52p3SmJ/mY
-         K98w==
+        b=uhHQah1wdL9qZ0LureZm86veqfVhcuVRZ9iWMHMU8M3qEWcNvl6ZqMUrIBElaY0qBs
+         yo3TPWYcIA0Jq5+g9aEpqogpBrWfJWJNhzevlf6syTNJZ92dAVkjUqDuvgkfP+QbnXFj
+         qu1LvHlaTipkDu0Y3svjc8Irk9JbnqA0Nxv43eVpwHdfWpqkZ3SUwOWU18FJv/Gr3CZZ
+         Oaw4xmkWsHE8wJicsbqLVm7rK6I7cxHXi3N3IxhxYWsUYr6ek+bO+guBe9SWYedZQpeM
+         GVYPUVQMQPcATTWZvPEa0KPaIpDqVe8wy6NVAFv6xvdDThFkpruOsFDDvdi1OT0p5+sM
+         tuZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gooQ9amF4vhYhayEMMzUJXhkm3KH/rOyRs84SZPU3Zo=;
-        b=BBvBAO9WAz+jEGUt+jfY+kHxRVlSGmbM/AzhstEsY5FlFsDh3c7+mSvLn3iFW90nYk
-         tnhZaWodk3DGabuMkXG/ZlMyqflZl6UYqUrBPZ7oACyXOjpnrM2loMKe4i2rZB6XJHZ+
-         6G2OAaRT59EAvPT9a7+l9uOm6eFPn2rWyOzdWv3jL8FK+3QQIKm2z8mj6t0i6iu91VO0
-         XdMw1rNSICy52nmZ7exFGGVHQ+upCA8R81qiUg6G2+irZgy3YB79O5McpcSfastiSvCB
-         PhIZdcwCXjgiYb3mas+SIx5Auv4Oxue6W9q/lYCQFlCr+bAcNSJwyr9nMcIX+HTjIKPP
-         29XQ==
+        bh=lFSW/RxJOPeoHGU40Y8lT5cRBneh2NSAvSnuEQZTAYg=;
+        b=jS0HGJNKt2Ngv4c4+/xsDHkXmgJzdYVjwbVbaLOY2LX043UyTGI7f7rkG2jskLkrwp
+         I1+c7nP3mFnB1xn+jbjFkXoCDx2jfgHC6Wak3pRV55S18xWggt/xeo9/yiU8AKzFxpiR
+         5IxFBj5XVQtVdoFPQ9CQdk/fNOFXsIifBMgO85QL/Hf6sb0cAWUcfv5MFY0uEyjgraWA
+         fYg1BZai0+3MIy3OabMbD0GGFX3zXq+nXnzaIWfh+zNKTKjKB3mMlOSXvLmu0nj0HF+V
+         9NyVt2uPfSNMGBrBuk8exbfoKEqlkXpTtBx1RYPqqMgwQ0BeGWmJCzG1dI0S1u7UiY7i
+         4H7w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jianlin Shi <jishi@redhat.com>,
-	Hangbin Liu <liuhangbin@gmail.com>,
-	Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 014/138] l2tp: fix missing print session offset info
-Date: Wed, 11 Apr 2018 00:23:24 +0200
-Message-Id: <20180410212903.781429198@linuxfoundation.org>
+Subject: [PATCH 4.14 004/138] clk: meson: mpll: use 64-bit maths in params_from_rate
+Date: Wed, 11 Apr 2018 00:23:14 +0200
+Message-Id: <20180410212902.589492631@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399876281543493?=
-X-GMAIL-MSGID: =?utf-8?q?1597400310032929457?=
+X-GMAIL-THRID: =?utf-8?q?1597399806964398934?=
+X-GMAIL-MSGID: =?utf-8?q?1597400303686056531?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,33 +50,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
 
-[ Upstream commit 820da5357572715c6235ba3b3daa2d5b43a1198f ]
+[ Upstream commit 86aacdca66774051cbc0958110a48074b57a060b ]
 
-Report offset parameter in L2TP_CMD_SESSION_GET command if
-it has been configured by userspace
+"rem * SDM_DEN" can easily overflow on the 32-bit Meson8 and Meson8b
+SoCs if the "remainder" (after the division operation) is greater than
+262143Hz. This is likely to happen since the input clock for the MPLLs
+on Meson8 and Meson8b is "fixed_pll", which is running at a rate of
+2550MHz.
 
-Fixes: 309795f4bec ("l2tp: Add netlink control API for L2TP")
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+One example where this was observed to be problematic was the Ethernet
+clock calculation (which takes MPLL2 as input). When requesting a rate
+of 125MHz there is a remainder of 2500000Hz.
+The resulting MPLL2 rate before this patch was 127488329Hz.
+The resulting MPLL2 rate after this patch is 124999103Hz.
+
+Commit b609338b26f5 ("clk: meson: mpll: use 64bit math in
+rate_from_params") already fixed a similar issue in rate_from_params.
+
+Fixes: 007e6e5c5f01d3 ("clk: meson: mpll: add rw operation")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/l2tp/l2tp_netlink.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/meson/clk-mpll.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/l2tp/l2tp_netlink.c
-+++ b/net/l2tp/l2tp_netlink.c
-@@ -765,6 +765,8 @@ static int l2tp_nl_session_send(struct s
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -98,7 +98,7 @@ static void params_from_rate(unsigned lo
+ 		*sdm = SDM_DEN - 1;
+ 	} else {
+ 		*n2 = div;
+-		*sdm = DIV_ROUND_UP(rem * SDM_DEN, requested_rate);
++		*sdm = DIV_ROUND_UP_ULL((u64)rem * SDM_DEN, requested_rate);
+ 	}
+ }
  
- 	if ((session->ifname[0] &&
- 	     nla_put_string(skb, L2TP_ATTR_IFNAME, session->ifname)) ||
-+	    (session->offset &&
-+	     nla_put_u16(skb, L2TP_ATTR_OFFSET, session->offset)) ||
- 	    (session->cookie_len &&
- 	     nla_put(skb, L2TP_ATTR_COOKIE, session->cookie_len,
- 		     &session->cookie[0])) ||
