@@ -1,94 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752946AbeDJK4a (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 06:56:30 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:55377 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752925AbeDJK40 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 06:56:26 -0400
-X-Originating-IP: 2.224.242.101
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sergei.shtylyov@cogentembedded.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 2/4] arm64: dts: renesas: r8a77970: add DU support
-Date: Tue, 10 Apr 2018 12:54:04 +0200
-Message-Id: <1523357646-3946-3-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
+        id S1753112AbeDJK6Y (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 06:58:24 -0400
+Received: from osg.samsung.com ([64.30.133.232]:54877 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752392AbeDJK6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 06:58:22 -0400
+Subject: Re: [PATCH] ieee802154: mcr20a: Fix memory leak in mcr20a_probe
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Xue Liu <liuxuenetmail@gmail.com>,
+        Alexander Aring <alex.aring@gmail.com>
+Cc: linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180405162006.GA2199@embeddedor.com>
+From: Stefan Schmidt <stefan@osg.samsung.com>
+Message-ID: <59fce20c-0450-e59b-4db4-94bbb2372c9c@osg.samsung.com>
+Date: Tue, 10 Apr 2018 12:58:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180405162006.GA2199@embeddedor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hello.
 
-Define the generic R8A77970 part of the DU device node.
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
+On 04/05/2018 06:20 PM, Gustavo A. R. Silva wrote:
+> Free allocated memory for pdata before return.
+>
+> Addresses-Coverity-ID: 1466096 ("Resource leak")
+> Fixes: 8c6ad9cc5157 ("ieee802154: Add NXP MCR20A IEEE 802.15.4 transceiver driver")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/net/ieee802154/mcr20a.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/net/ieee802154/mcr20a.c b/drivers/net/ieee802154/mcr20a.c
+> index 55a22c7..944470d 100644
+> --- a/drivers/net/ieee802154/mcr20a.c
+> +++ b/drivers/net/ieee802154/mcr20a.c
+> @@ -1267,7 +1267,7 @@ mcr20a_probe(struct spi_device *spi)
+>  	ret = mcr20a_get_platform_data(spi, pdata);
+>  	if (ret < 0) {
+>  		dev_crit(&spi->dev, "mcr20a_get_platform_data failed.\n");
+> -		return ret;
+> +		goto free_pdata;
+>  	}
+>  
+>  	/* init reset gpio */
+> @@ -1275,7 +1275,7 @@ mcr20a_probe(struct spi_device *spi)
+>  		ret = devm_gpio_request_one(&spi->dev, pdata->rst_gpio,
+>  					    GPIOF_OUT_INIT_HIGH, "reset");
+>  		if (ret)
+> -			return ret;
+> +			goto free_pdata;
+>  	}
+>  
+>  	/* reset mcr20a */
+> @@ -1291,7 +1291,8 @@ mcr20a_probe(struct spi_device *spi)
+>  	hw = ieee802154_alloc_hw(sizeof(*lp), &mcr20a_hw_ops);
+>  	if (!hw) {
+>  		dev_crit(&spi->dev, "ieee802154_alloc_hw failed\n");
+> -		return -ENOMEM;
+> +		ret = -ENOMEM;
+> +		goto free_pdata;
+>  	}
+>  
+>  	/* init mcr20a local data */
+> @@ -1366,6 +1367,8 @@ mcr20a_probe(struct spi_device *spi)
+>  
+>  free_dev:
+>  	ieee802154_free_hw(lp->hw);
+> +free_pdata:
+> +	kfree(pdata);
+>  
+>  	return ret;
+>  }
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+This patch has been applied to the wpan tree and will be
+part of the next pull request to net. Thanks!
 
----
-v1 -> v2:
-- Rename the du_out_lvds endpoint to comply with the name used in other
-  Renesas board DTS files
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index a3ef3bd..ae5797d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -635,6 +635,34 @@
- 			resets = <&cpg 623>;
- 			renesas,fcp = <&fcpvd0>;
- 		};
-+
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a77970";
-+			reg = <0 0xfeb00000 0 0x80000>;
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>;
-+			clock-names = "du.0";
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			vsps = <&vspd0>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
-+		};
- 	};
- 
- 	timer {
--- 
-2.7.4
+regards
+Stefan Schmidt
