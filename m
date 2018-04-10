@@ -1,103 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753055AbeDJJOY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 05:14:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48456 "EHLO mx2.suse.de"
+        id S1752711AbeDJJYP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 05:24:15 -0400
+Received: from mga14.intel.com ([192.55.52.115]:55585 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752426AbeDJJOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:14:23 -0400
-Date: Tue, 10 Apr 2018 11:14:21 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Petr Mladek <pmladek@suse.com>
-cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/8] livepatch: Remove Nop structures when unused
-In-Reply-To: <20180323120028.31451-7-pmladek@suse.com>
-Message-ID: <alpine.LSU.2.21.1804091632440.20943@pobox.suse.cz>
-References: <20180323120028.31451-1-pmladek@suse.com> <20180323120028.31451-7-pmladek@suse.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1751630AbeDJJYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 05:24:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,431,1517904000";
+   d="scan'208";a="42137238"
+From: "Liang, Cunming" <cunming.liang@intel.com>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+        "Bie, Tiwei" <tiwei.bie@intel.com>, Jason Wang <jasowang@redhat.com>
+CC: "mst@redhat.com" <mst@redhat.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "ddutile@redhat.com" <ddutile@redhat.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "Daly, Dan" <dan.daly@intel.com>,
+        "Wang, Zhihong" <zhihong.wang@intel.com>,
+        "Tan, Jianfeng" <jianfeng.tan@intel.com>,
+        "Wang, Xiao W" <xiao.w.wang@intel.com>
+Subject: RE: [virtio-dev] Re: [RFC] vhost: introduce mdev based hardware
+ vhost backend
+Thread-Topic: [virtio-dev] Re: [RFC] vhost: introduce mdev based hardware
+ vhost backend
+Thread-Index: AQHT0HcQQbFx4V+vkUC8YiB5aZTOcaP46ciAgAAwtoCAAJIZYA==
+Date: Tue, 10 Apr 2018 09:23:53 +0000
+Message-ID: <D0158A423229094DA7ABF71CF2FA0DA34E9222F4@SHSMSX104.ccr.corp.intel.com>
+References: <20180402152330.4158-1-tiwei.bie@intel.com>
+ <622f4bd7-1249-5545-dc5a-5a92b64f5c26@redhat.com>
+ <20180410045723.rftsb7l4l3ip2ioi@debian>
+ <7ee31a12-a370-fc43-82a6-2235f598e970@redhat.com>
+In-Reply-To: <7ee31a12-a370-fc43-82a6-2235f598e970@redhat.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3A9ONBt009648
 
-On Fri, 23 Mar 2018, Petr Mladek wrote:
 
-> Replaced patches are removed from the stack when the transition is
-> finished. It means that Nop structures will never be needed again
-> and can be removed. Why should we care?
-> 
->   + Nop structures make false feeling that the function is patched
->     even though the ftrace handler has no effect.
-> 
->   + Ftrace handlers are not completely for free. They cause slowdown that
->     might be visible in some workloads. The ftrace-related slowdown might
->     actually be the reason why the function is not longer patched in
->     the new cumulative patch. One would expect that cumulative patch
->     would allow to solve these problems as well.
-> 
->   + Cumulative patches are supposed to replace any earlier version of
->     the patch. The amount of NOPs depends on which version was replaced.
->     This multiplies the amount of scenarios that might happen.
-> 
->     One might say that NOPs are innocent. But there are even optimized
->     NOP instructions for different processor, for example, see
->     arch/x86/kernel/alternative.c. And klp_ftrace_handler() is much
->     more complicated.
-> 
->   + It sounds natural to clean up a mess that is not longer needed.
->     It could only be worse if we do not do it.
-> 
-> This patch allows to unpatch and free the dynamic structures independently
-> when the transition finishes.
-> 
-> The free part is a bit tricky because kobject free callbacks are called
-> asynchronously. We could not wait for them easily. Fortunately, we do
-> not have to. Any further access can be avoided by removing them from
-> the dynamic lists.
-> 
-> Finally, the patch become the first on the stack when enabled. The replace
-> functionality will not longer be needed. Let's clear patch->replace to
-> avoid the special handling when it is eventually disabled/enabled again.
-> 
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> ---
->  include/linux/livepatch.h     |  6 ++++++
->  kernel/livepatch/core.c       | 42 +++++++++++++++++++++++++++++++++++-------
->  kernel/livepatch/core.h       |  1 +
->  kernel/livepatch/patch.c      | 31 ++++++++++++++++++++++++++-----
->  kernel/livepatch/patch.h      |  1 +
->  kernel/livepatch/transition.c | 26 +++++++++++++++++++++++++-
->  6 files changed, 94 insertions(+), 13 deletions(-)
-> 
-> diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-> index d6e6d8176995..1635b30bb1ec 100644
-> --- a/include/linux/livepatch.h
-> +++ b/include/linux/livepatch.h
-> @@ -172,6 +172,9 @@ struct klp_patch {
->  #define klp_for_each_object_static(patch, obj) \
->  	for (obj = patch->objs; obj->funcs || obj->name; obj++)
->  
-> +#define klp_for_each_object_safe(patch, obj, tmp_obj)		\
-> +	list_for_each_entry_safe(obj, tmp_obj, &patch->obj_list, node)
-> +
->  #define klp_for_each_object(patch, obj)	\
->  	list_for_each_entry(obj, &patch->obj_list, node)
->  
-> @@ -180,6 +183,9 @@ struct klp_patch {
->  	     func->old_name || func->new_func || func->old_sympos; \
->  	     func++)
->  
-> +#define klp_for_each_func_safe(obj, func, tmp_func)			\
-> +	list_for_each_entry_safe(func, tmp_func, &obj->func_list, node)
-> +
->  #define klp_for_each_func(obj, func)	\
->  	list_for_each_entry(func, &obj->func_list, node)
 
-Is there a benefit of the newly added iterators?
+> -----Original Message-----
+> From: Paolo Bonzini [mailto:pbonzini@redhat.com]
+> Sent: Tuesday, April 10, 2018 3:52 PM
+> To: Bie, Tiwei <tiwei.bie@intel.com>; Jason Wang <jasowang@redhat.com>
+> Cc: mst@redhat.com; alex.williamson@redhat.com; ddutile@redhat.com;
+> Duyck, Alexander H <alexander.h.duyck@intel.com>; virtio-dev@lists.oasis-
+> open.org; linux-kernel@vger.kernel.org; kvm@vger.kernel.org;
+> virtualization@lists.linux-foundation.org; netdev@vger.kernel.org; Daly, Dan
+> <dan.daly@intel.com>; Liang, Cunming <cunming.liang@intel.com>; Wang,
+> Zhihong <zhihong.wang@intel.com>; Tan, Jianfeng <jianfeng.tan@intel.com>;
+> Wang, Xiao W <xiao.w.wang@intel.com>
+> Subject: Re: [virtio-dev] Re: [RFC] vhost: introduce mdev based hardware
+> vhost backend
+> 
+> On 10/04/2018 06:57, Tiwei Bie wrote:
+> >> So you just move the abstraction layer from qemu to kernel, and you
+> >> still need different drivers in kernel for different device
+> >> interfaces of accelerators. This looks even more complex than leaving
+> >> it in qemu. As you said, another idea is to implement userspace vhost
+> >> backend for accelerators which seems easier and could co-work with
+> >> other parts of qemu without inventing new type of messages.
+> >
+> > I'm not quite sure. Do you think it's acceptable to add various vendor
+> > specific hardware drivers in QEMU?
+> 
+> I think so.  We have vendor-specific quirks, and at some point there was an
+> idea of using quirks to implement (vendor-specific) live migration support for
+> assigned devices.
 
-Miroslav
+Vendor-specific quirks of accessing VGA is a small portion. Other major portions are still handled by guest driver.
+
+While in this case, when saying various vendor specific drivers in QEMU, it says QEMU takes over and provides the entire user space device drivers. Some parts are even not relevant to vhost, they're basic device function enabling. Moreover, it could be different kinds of devices(network/block/...) under vhost. No matter # of vendors or # of types, total LOC is not small.
+
+The idea is to avoid introducing these extra complexity out of QEMU, keeping vhost adapter simple. As vhost protocol is de factor standard, it leverages kernel device driver to provide the diversity. Changing once in QEMU, then it supports multi-vendor devices whose drivers naturally providing kernel driver there.
+
+If QEMU is going to build a user space driver framework there, we're open mind on that, even leveraging DPDK as the underlay library. Looking forward to more others' comments from community.
+
+Steve
+
+> 
+> Paolo
