@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48HImSyf/IkchSNjNJQYVLdoFzgGhkNyjwE8ro2+fMq75BVXY3J9D7wD9gLttfSb20qR5/d
-ARC-Seal: i=1; a=rsa-sha256; t=1523399263; cv=none;
+X-Google-Smtp-Source: AIpwx4+M2IgizWSdBHGiXPLfVzL7QXcnd404/KLsJt4CafRCh3stOhTAokgBScQ5TNElM/h8jg8V
+ARC-Seal: i=1; a=rsa-sha256; t=1523399260; cv=none;
         d=google.com; s=arc-20160816;
-        b=jacRpEaZD+l1SWUu0sFAt12fmvztQcXH2ujbwrjsovbqNq3iU28Cuvkk0+0ovhe9Qj
-         LFvqFXs0OZ69Ypi6FEp0VAVVOClBNNLYh8WWrvGdXBxmxDwwfwHfJR1q+QLwJEOn+X8J
-         AbN1E/3tE31FSPDkiEtsY8Oop/GiD90UpHQXs/Cj4mJGTvUNlAyMqADIZX8WOb96/Kzb
-         KL0IJL8ueG9PLl8KioQDQqR8a7r94xA69E0OVUhynVedNi3sGXKVZpu3mkGYlY1egALi
-         ccZ8GGl6QicFd6BSoMQUQ3BJSutOqSqtmYLu+f+e85az9snkPfsyRmqrn7RIZGsVRdwN
-         pIfA==
+        b=bByeTr0Sf4AfvsnSKopwClYM8ICSuxLYzA7Jum43WksAX25AjOtXdyXNCqFgaV4Uti
+         XnOTA6EPdZZLTPrQv7m6klUGRPiJ1smNGeor0pzus+Tn/6OJrh5HinZXEHkZs6GA9L0p
+         weIJeWDHBX3oxnbPNkOIuQMYDg4FxLss7lU2hrUOa1ABZ7xckz7mmzcs4c8WCSm8wSt1
+         aOvSOqZ37Q4vrY+rgNSdqm6MED0OdZ8DUK9cJCDqhW1x0gJWaXHkYfRvhNskLbGmtQSx
+         mF33L8XqIqjL/kq7qVlM1fZ9Oj+3Vp/G6NeX014zvCRsA8h0eeylvl1obw3dN936lYvA
+         v5XQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Qmghk9TwPIl5uJojkPANETPUU1WDwI4lfNOp6Jp1FpE=;
-        b=CcDDBwyhtH0fibZFSpf8BQYAKoArsAWCesg5OgX45AjCdFCJMuNZ7IyLxVn3SRFupA
-         5fyhqnv7rnl5ybfrL1Ns6D0TXtN2dxBUapxB0CJH0ZbdggbL4futEAIgdXldBIUwvLGu
-         aUdZFrfpTmVf73048yMESwlmCw2HP2k4hx2UuoYuo2a33dgY7e+plWldE6NjZfdxXs6j
-         OTBvaTUqQ+BUMeBge7WeVM+X5GJNa8S5E1mYndjQeeWGQHztPYT4iegihyLzpem3m5cS
-         Dfzi7o1p9d8VldUXlSfy5AKOEK7i3ieLZjWph11PXlC7+3PLVn3gxTp3Fv7GpHNxWr7C
-         vZzA==
+        bh=AnSVY4HFky6kt5GtXJdX6YPLCwvA+30iik69LXg9NZM=;
+        b=hECECjvMjLk4QQs4/xKcy9x4/qu67OM991uE+6yD6PC3O+Rin8HlhNazAN/HpqyCC/
+         mkRgjD1PAk1CsgDY6PSb2pai7R8Fs6Vuhj5MnsZLOPuwK1ekYSersJL9aIS01p1W59J+
+         7ik3rBWu3D894oKfxGGTOcDUMHh4O9ou9o8LMlW88rxsV5SvCVzKzgTlqMqhNJIjFD02
+         xdARSTPRsgF0ddOEvS3zIYnWN/Az3NfaKZ6RLCIbmWeAa3zDa3rcjdUYSKOanofXwuNH
+         VubYF0KcI2YN7d1EqeQJ0gs0akDtslWD8DoOLFemYb6HaT7/TCRpzGx1Ko4kQLLiy4g5
+         PuSQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Peter=20Gro=C3=9Fe?= <pegro@friiks.de>,
-	Johannes Berg <johannes.berg@intel.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 045/168] mac80211: Fix setting TX power on monitor interfaces
-Date: Wed, 11 Apr 2018 00:23:07 +0200
-Message-Id: <20180410212802.130251471@linuxfoundation.org>
+Subject: [PATCH 4.15 044/168] ACPI: EC: Fix debugfs_create_*() usage
+Date: Wed, 11 Apr 2018 00:23:06 +0200
+Message-Id: <20180410212802.078100959@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399905951439472?=
-X-GMAIL-MSGID: =?utf-8?q?1597399905951439472?=
+X-GMAIL-THRID: =?utf-8?q?1597399902846957647?=
+X-GMAIL-MSGID: =?utf-8?q?1597399902846957647?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,121 +50,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Peter Gro�e" <pegro@friiks.de>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
 
-[ Upstream commit 3a3713ec360138f806c6fc368d1de570f692b347 ]
+[ Upstream commit 3522f867c13b63cf62acdf1b8ca5664c549a716a ]
 
-Instead of calling ieee80211_recalc_txpower on monitor interfaces
-directly, call it using the virtual monitor interface, if one exists.
+acpi_ec.gpe is "unsigned long", hence treating it as "u32" would expose
+the wrong half on big-endian 64-bit systems.  Fix this by changing its
+type to "u32" and removing the cast, as all other code already uses u32
+or sometimes even only u8.
 
-In case of a single monitor interface given, reject setting TX power,
-if no virtual monitor interface exists.
-
-That being checked, don't warn in ieee80211_bss_info_change_notify,
-after setting TX power on a monitor interface.
-
-Fixes warning:
-------------[ cut here ]------------
- WARNING: CPU: 0 PID: 2193 at net/mac80211/driver-ops.h:167
- ieee80211_bss_info_change_notify+0x111/0x190 Modules linked in: uvcvideo
- videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_core
-rndis_host cdc_ether usbnet mii tp_smapi(O) thinkpad_ec(O) ohci_hcd vboxpci(O)
- vboxnetadp(O) vboxnetflt(O) v boxdrv(O) x86_pkg_temp_thermal kvm_intel kvm
- irqbypass iwldvm iwlwifi ehci_pci ehci_hcd tpm_tis tpm_tis_core tpm CPU: 0
- PID: 2193 Comm: iw Tainted: G           O    4.12.12-gentoo #2 task:
- ffff880186fd5cc0 task.stack: ffffc90001b54000 RIP:
- 0010:ieee80211_bss_info_change_notify+0x111/0x190 RSP: 0018:ffffc90001b57a10
- EFLAGS: 00010246 RAX: 0000000000000006 RBX: ffff8801052ce840 RCX:
- 0000000000000064 RDX: 00000000fffffffc RSI: 0000000000040000 RDI:
- ffff8801052ce840 RBP: ffffc90001b57a38 R08: 0000000000000062 R09:
- 0000000000000000 R10: ffff8802144b5000 R11: ffff880049dc4614 R12:
- 0000000000040000 R13: 0000000000000064 R14: ffff8802105f0760 R15:
- ffffc90001b57b48 FS:  00007f92644b4580(0000) GS:ffff88021e200000(0000)
- knlGS:0000000000000000 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 00007f9263c109f0 CR3: 00000001df850000 CR4: 00000000000406f0
- Call Trace:
-  ieee80211_recalc_txpower+0x33/0x40
-  ieee80211_set_tx_power+0x40/0x180
-  nl80211_set_wiphy+0x32e/0x950
-
-Reported-by: Peter Große <pegro@friiks.de>
-Signed-off-by: Peter Große <pegro@friiks.de>
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-
+Fixes: 1195a098168fcacf (ACPI: Provide /sys/kernel/debug/ec/...)
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/cfg.c        |   28 +++++++++++++++++++++++++++-
- net/mac80211/driver-ops.h |    3 ++-
- 2 files changed, 29 insertions(+), 2 deletions(-)
+ drivers/acpi/ec.c       |    2 +-
+ drivers/acpi/ec_sys.c   |    2 +-
+ drivers/acpi/internal.h |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -2373,10 +2373,17 @@ static int ieee80211_set_tx_power(struct
- 	struct ieee80211_sub_if_data *sdata;
- 	enum nl80211_tx_power_setting txp_type = type;
- 	bool update_txp_type = false;
-+	bool has_monitor = false;
- 
- 	if (wdev) {
- 		sdata = IEEE80211_WDEV_TO_SUB_IF(wdev);
- 
-+		if (sdata->vif.type == NL80211_IFTYPE_MONITOR) {
-+			sdata = rtnl_dereference(local->monitor_sdata);
-+			if (!sdata)
-+				return -EOPNOTSUPP;
-+		}
-+
- 		switch (type) {
- 		case NL80211_TX_POWER_AUTOMATIC:
- 			sdata->user_power_level = IEEE80211_UNSET_POWER_LEVEL;
-@@ -2415,15 +2422,34 @@ static int ieee80211_set_tx_power(struct
- 
- 	mutex_lock(&local->iflist_mtx);
- 	list_for_each_entry(sdata, &local->interfaces, list) {
-+		if (sdata->vif.type == NL80211_IFTYPE_MONITOR) {
-+			has_monitor = true;
-+			continue;
-+		}
- 		sdata->user_power_level = local->user_power_level;
- 		if (txp_type != sdata->vif.bss_conf.txpower_type)
- 			update_txp_type = true;
- 		sdata->vif.bss_conf.txpower_type = txp_type;
+--- a/drivers/acpi/ec.c
++++ b/drivers/acpi/ec.c
+@@ -1516,7 +1516,7 @@ static int acpi_ec_setup(struct acpi_ec
  	}
--	list_for_each_entry(sdata, &local->interfaces, list)
-+	list_for_each_entry(sdata, &local->interfaces, list) {
-+		if (sdata->vif.type == NL80211_IFTYPE_MONITOR)
-+			continue;
- 		ieee80211_recalc_txpower(sdata, update_txp_type);
-+	}
- 	mutex_unlock(&local->iflist_mtx);
  
-+	if (has_monitor) {
-+		sdata = rtnl_dereference(local->monitor_sdata);
-+		if (sdata) {
-+			sdata->user_power_level = local->user_power_level;
-+			if (txp_type != sdata->vif.bss_conf.txpower_type)
-+				update_txp_type = true;
-+			sdata->vif.bss_conf.txpower_type = txp_type;
-+
-+			ieee80211_recalc_txpower(sdata, update_txp_type);
-+		}
-+	}
-+
- 	return 0;
+ 	acpi_handle_info(ec->handle,
+-			 "GPE=0x%lx, EC_CMD/EC_SC=0x%lx, EC_DATA=0x%lx\n",
++			 "GPE=0x%x, EC_CMD/EC_SC=0x%lx, EC_DATA=0x%lx\n",
+ 			 ec->gpe, ec->command_addr, ec->data_addr);
+ 	return ret;
  }
+--- a/drivers/acpi/ec_sys.c
++++ b/drivers/acpi/ec_sys.c
+@@ -128,7 +128,7 @@ static int acpi_ec_add_debugfs(struct ac
+ 		return -ENOMEM;
+ 	}
  
---- a/net/mac80211/driver-ops.h
-+++ b/net/mac80211/driver-ops.h
-@@ -165,7 +165,8 @@ static inline void drv_bss_info_changed(
- 	if (WARN_ON_ONCE(sdata->vif.type == NL80211_IFTYPE_P2P_DEVICE ||
- 			 sdata->vif.type == NL80211_IFTYPE_NAN ||
- 			 (sdata->vif.type == NL80211_IFTYPE_MONITOR &&
--			  !sdata->vif.mu_mimo_owner)))
-+			  !sdata->vif.mu_mimo_owner &&
-+			  !(changed & BSS_CHANGED_TXPOWER))))
- 		return;
- 
- 	if (!check_sdata_in_driver(sdata))
+-	if (!debugfs_create_x32("gpe", 0444, dev_dir, (u32 *)&first_ec->gpe))
++	if (!debugfs_create_x32("gpe", 0444, dev_dir, &first_ec->gpe))
+ 		goto error;
+ 	if (!debugfs_create_bool("use_global_lock", 0444, dev_dir,
+ 				 &first_ec->global_lock))
+--- a/drivers/acpi/internal.h
++++ b/drivers/acpi/internal.h
+@@ -159,7 +159,7 @@ static inline void acpi_early_processor_
+    -------------------------------------------------------------------------- */
+ struct acpi_ec {
+ 	acpi_handle handle;
+-	unsigned long gpe;
++	u32 gpe;
+ 	unsigned long command_addr;
+ 	unsigned long data_addr;
+ 	bool global_lock;
