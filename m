@@ -1,72 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753042AbeDJM4z (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:56:55 -0400
-Received: from mga04.intel.com ([192.55.52.120]:65190 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752958AbeDJM4x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:56:53 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,432,1517904000";
-   d="scan'208";a="45711019"
-Date: Tue, 10 Apr 2018 21:00:02 +0800
-From: Yu Chen <yu.c.chen@intel.com>
-To: "Bityutskiy, Artem" <artem.bityutskiy@intel.com>
-Cc: "lenb@kernel.org" <lenb@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
-Subject: Re: [PATCH][RFC] tools/power turbostat: if --max_loop, print for
- specific time of loops
-Message-ID: <20180410130002.GB29464@yu-chen.sh.intel.com>
-References: <20180410101831.28530-1-yu.c.chen@intel.com>
- <1523358141.2753.194.camel@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523358141.2753.194.camel@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1753244AbeDJM6H (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:58:07 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:35000 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753164AbeDJM6E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 08:58:04 -0400
+X-Google-Smtp-Source: AIpwx4/vyM7dGd7ERS+7RkgBkXywwrfEsmIP9rlvkUor81hB65uVGwIK+o+2WxXyBRgw30V2aesDUQ==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: dvhart@infradead.org, andy@infradead.org
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] platform: x86: intel_scu_ipc: Replace mdelay with usleep_range in intel_scu_ipc_i2c_cntrl
+Date: Tue, 10 Apr 2018 20:57:56 +0800
+Message-Id: <1523365076-31461-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Tue, Apr 10, 2018 at 07:02:22PM +0800, Bityutskiy, Artem wrote:
-> On Tue, 2018-04-10 at 18:18 +0800, Yu Chen wrote:
-> > @@ -5076,6 +5084,15 @@ void cmdline(int argc, char **argv)
-> >                         print_version();
-> >                         exit(0);
-> >                         break;
-> > +               case 'x':
-> > +                       {
-> > +                               unsigned int loops = strtod(optarg, NULL);
-> 
-> It would make sense to error out here if you get a value <= 0.
-> 
-OK.
-> > +
-> > +                               if (loops % 2)
-> > +                                       loops++;
-> 
-> What is this for?
-> 
-It was intended to make the number of loops even for simplify.
-But after rethink about this, it might not be necessary. I'll
-change it.
+intel_scu_ipc_i2c_cntrl() calls mutex_lock(), which indicates
+this function is not called in atomic context.
 
-> > +                               max_loops = loops;
-> 
-> Is the "loops" variable really needed? Can you strtod directly to
-> max_loops?
-If the sanity check for user input is added then I think the local
-variable is needed.
+Despite never getting called from atomic context, 
+intel_scu_ipc_i2c_cntrl() calls mdelay to busily wait.
+This is not necessary and can be replaced with usleep_range to
+avoid busy waiting.
 
-Thanks,
-Yu
-> 
-> -- 
-> Best Regards,
-> Artem Bityutskiy
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/platform/x86/intel_scu_ipc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/platform/x86/intel_scu_ipc.c b/drivers/platform/x86/intel_scu_ipc.c
+index 2c85f75..75c8fef 100644
+--- a/drivers/platform/x86/intel_scu_ipc.c
++++ b/drivers/platform/x86/intel_scu_ipc.c
+@@ -584,11 +584,11 @@ int intel_scu_ipc_i2c_cntrl(u32 addr, u32 *data)
+ 	if (cmd == IPC_I2C_READ) {
+ 		writel(addr, scu->i2c_base + IPC_I2C_CNTRL_ADDR);
+ 		/* Write not getting updated without delay */
+-		mdelay(1);
++		usleep_range(1000, 2000);
+ 		*data = readl(scu->i2c_base + I2C_DATA_ADDR);
+ 	} else if (cmd == IPC_I2C_WRITE) {
+ 		writel(*data, scu->i2c_base + I2C_DATA_ADDR);
+-		mdelay(1);
++		usleep_range(1000, 2000);
+ 		writel(addr, scu->i2c_base + IPC_I2C_CNTRL_ADDR);
+ 	} else {
+ 		dev_err(scu->dev,
+-- 
+1.9.1
