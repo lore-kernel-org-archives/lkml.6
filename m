@@ -1,65 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752556AbeDJIyw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:54:52 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41182 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752064AbeDJIyu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:54:50 -0400
+        id S1752576AbeDJIzf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 04:55:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46290 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752182AbeDJIze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 04:55:34 -0400
+Date: Tue, 10 Apr 2018 10:55:31 +0200
+From: Jan Kara <jack@suse.cz>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        Chris Fries <cfries@google.com>
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Message-ID: <20180410085531.m2xvzi7nenbrgbve@quack2.suse.cz>
+References: <20180409015815.235943-1-minchan@kernel.org>
+ <20180410082243.GW21835@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Tue, 10 Apr 2018 16:54:49 +0800
-From: yuankuiz@codeaurora.org
-To: linux-pm@vger.kernel.org
-Cc: rjw@rjwysocki.net, fweisbec@gmail.com, peterz@infradead.org,
-        tglx@linutronix.de, mingo@kernel.org, len.brown@intel.com,
-        linux-kernel@vger.kernel.org, linux-pm-owner@vger.kernel.org
-Subject: Re: [PATCH] time: tick-sched: use bool for tick_stopped
-In-Reply-To: <ab6167c5ea5be81f0482a7da54d781a4@codeaurora.org>
-References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
- <9ee70560651fefffcc61949d8a37315d@codeaurora.org>
- <ab6167c5ea5be81f0482a7da54d781a4@codeaurora.org>
-Message-ID: <2ff99a214053551fc28c9024322306eb@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180410082243.GW21835@dhcp22.suse.cz>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Subject and commit message have been updated due for typo.
-This patch is based on the tip of linux-pm-cpuild branch.
+On Tue 10-04-18 10:22:43, Michal Hocko wrote:
+> On Mon 09-04-18 10:58:15, Minchan Kim wrote:
+> > Recently, I got a report like below.
+> > 
+> > [ 7858.792946] [<ffffff80086f4de0>] __list_del_entry+0x30/0xd0
+> > [ 7858.792951] [<ffffff8008362018>] list_lru_del+0xac/0x1ac
+> > [ 7858.792957] [<ffffff800830f04c>] page_cache_tree_insert+0xd8/0x110
+> > [ 7858.792962] [<ffffff8008310188>] __add_to_page_cache_locked+0xf8/0x4e0
+> > [ 7858.792967] [<ffffff800830ff34>] add_to_page_cache_lru+0x50/0x1ac
+> > [ 7858.792972] [<ffffff800830fdd0>] pagecache_get_page+0x468/0x57c
+> > [ 7858.792979] [<ffffff80085d081c>] __get_node_page+0x84/0x764
+> > [ 7858.792986] [<ffffff800859cd94>] f2fs_iget+0x264/0xdc8
+> > [ 7858.792991] [<ffffff800859ee00>] f2fs_lookup+0x3b4/0x660
+> > [ 7858.792998] [<ffffff80083d2540>] lookup_slow+0x1e4/0x348
+> > [ 7858.793003] [<ffffff80083d0eb8>] walk_component+0x21c/0x320
+> > [ 7858.793008] [<ffffff80083d0010>] path_lookupat+0x90/0x1bc
+> > [ 7858.793013] [<ffffff80083cfe6c>] filename_lookup+0x8c/0x1a0
+> > [ 7858.793018] [<ffffff80083c52d0>] vfs_fstatat+0x84/0x10c
+> > [ 7858.793023] [<ffffff80083c5b00>] SyS_newfstatat+0x28/0x64
+> > 
+> > v4.9 kenrel already has the d3798ae8c6f3,("mm: filemap: don't
+> > plant shadow entries without radix tree node") so I thought
+> > it should be okay. When I was googling, I found others report
+> > such problem and I think current kernel still has the problem.
+> > 
+> > https://bugzilla.redhat.com/show_bug.cgi?id=1431567
+> > https://bugzilla.redhat.com/show_bug.cgi?id=1420335
+> > 
+> > It assumes shadow entry of radix tree relies on the init state
+> > that node->private_list allocated should be list_empty state.
+> > Currently, it's initailized in SLAB constructor which means
+> > node of radix tree would be initialized only when *slub allocates
+> > new page*, not *new object*. So, if some FS or subsystem pass
+> > gfp_mask to __GFP_ZERO, slub allocator will do memset blindly.
+> > That means allocated node can have !list_empty(node->private_list).
+> > It ends up calling NULL deference at workingset_update_node by
+> > failing list_empty check.
+> > 
+> > This patch should fix it.
+> > 
+> > Fixes: 449dd6984d0e ("mm: keep page cache radix tree nodes in check")
+> > Reported-by: Chris Fries <cfries@google.com>
+> > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > Cc: Jan Kara <jack@suse.cz>
+> > Signed-off-by: Minchan Kim <minchan@kernel.org>
+> 
+> Regardless of whether it makes sense to use __GFP_ZERO from the upper
+> layer or not, it is subtle as hell to rely on the pre-existing state
+> for a newly allocated object. So yes this makes perfect sense.
+> 
+> Do we want CC: stable?
+> Acked-by: Michal Hocko <mhocko@suse.com>
 
-Thanks
+Well, for hot allocations we do rely on previous state a lot. After all
+that's what slab constructor was created for. Whether radix tree node
+allocation is such a hot path is a question for debate, I agree.
 
-On 2018-04-10 04:51 PM, yuankuiz@codeaurora.org wrote:
-> From: John Zhao <yuankuiz@codeaurora.org>
-> 
-> Variable tick_stopped returned by tick_nohz_tick_stopped
-> can only be true / false values. Since the return type
-> of the tick_nohz_tick_stopped is also bool, variable
-> tick_stopped nice to have data type as 'bool' in place of
-> the 'unsigned int'.
-> Moreover, the executed instructions cost could be minimal
-> without potiential data type conversion.
-> 
-> Signed-off-by: John Zhao <yuankuiz@codeaurora.org>
-> ---
->  kernel/time/tick-sched.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/time/tick-sched.h b/kernel/time/tick-sched.h
-> index 6de959a..4d34309 100644
-> --- a/kernel/time/tick-sched.h
-> +++ b/kernel/time/tick-sched.h
-> @@ -48,8 +48,8 @@ struct tick_sched {
->  	unsigned long			check_clocks;
->  	enum tick_nohz_mode		nohz_mode;
-> 
-> +	bool				tick_stopped	: 1;
->  	unsigned int			inidle		: 1;
-> -	unsigned int			tick_stopped	: 1;
->  	unsigned int			idle_active	: 1;
->  	unsigned int			do_timer_last	: 1;
->  	unsigned int			got_idle_tick	: 1;
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
