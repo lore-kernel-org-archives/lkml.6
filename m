@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753014AbeDJK4k (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 06:56:40 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:60111 "EHLO
+        id S1752981AbeDJK4j (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 06:56:39 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:43029 "EHLO
         relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752402AbeDJK4f (ORCPT
+        with ESMTP id S1752793AbeDJK4h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 06:56:35 -0400
+        Tue, 10 Apr 2018 06:56:37 -0400
 X-Originating-IP: 2.224.242.101
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
@@ -17,9 +17,9 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-kernel@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 3/4] arm64: dts: renesas: r8a77970: add LVDS support
-Date: Tue, 10 Apr 2018 12:54:05 +0200
-Message-Id: <1523357646-3946-4-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH v2 4/4] arm64: dts: renesas: eagle: Enable HDMI output
+Date: Tue, 10 Apr 2018 12:54:06 +0200
+Message-Id: <1523357646-3946-5-git-send-email-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
@@ -30,60 +30,142 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Enable HDMI output on Renesas R-Car V3M Eagle board.
 
-Add the LVDS device to r8a77970.dtsi in a disabled state. Also connect
-the it to the LVDS output of the DU.
+The HDMI output is enabled connecting the DU LVDS output to the
+transparent LVDS converter THC63LVD1024, and successively routing its
+RGB output to the ADV7511W HDMI encoder.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+[for THC63LVD1024: ]
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
 ---
 v1 -> v2:
-- Rebased on the modified endpoint name and changed patch subject to
-  comply with other patches in the series from Sergei.
+- Squash patches [5/7], [6/7] and [7/7] of v1 in a single patch as
+  suggested by Laurent
+- Remove DU pinmuxing as it is used for DU parallel RGB output only used
+  by Eagle's display expander board not enabled by this series.
 ---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 93 ++++++++++++++++++++++++++
+ 1 file changed, 93 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index ae5797d..ae15355 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -659,6 +659,33 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+index 3c5f598..1e2191d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+@@ -31,6 +31,51 @@
+ 		/* first 128MB is reserved for secure area. */
+ 		reg = <0x0 0x48000000 0x0 0x38000000>;
+ 	};
++
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_out: endpoint {
++				remote-endpoint = <&adv7511_out>;
++			};
++		};
++	};
++
++	d3p3: regulator-fixed {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	thc63lvd1024: lvds-decoder {
++		compatible = "thine,thc63lvd1024";
++
++		vcc-supply = <&d3p3>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				thc63lvd1024_in: endpoint {
++					remote-endpoint = <&lvds0_out>;
++				};
++			};
++
++			port@2 {
++				reg = <2>;
++				thc63lvd1024_out: endpoint {
++					remote-endpoint = <&adv7511_in>;
 +				};
 +			};
 +		};
++	};
+ };
+
+ &avb {
+@@ -68,6 +113,38 @@
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 	};
 +
-+		lvds0: lvds@feb90000 {
-+			compatible = "renesas,r8a77970-lvds";
-+			reg = <0 0xfeb90000 0 0x14>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 727>;
-+			status = "disabled";
++	hdmi@39 {
++		compatible = "adi,adv7511w";
++		reg = <0x39>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++		adi,input-style = <1>;
++		adi,input-justification = "evenly";
 +
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7511_in: endpoint {
++					remote-endpoint = <&thc63lvd1024_out>;
 +				};
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
- 					};
- 				};
- 			};
--- 
++			};
++
++			port@1 {
++				reg = <1>;
++				adv7511_out: endpoint {
++					remote-endpoint = <&hdmi_con_out>;
++				};
++			};
++		};
++	};
+ };
+
+ &pfc {
+@@ -93,3 +170,19 @@
+
+ 	status = "okay";
+ };
++
++&du {
++	status = "okay";
++};
++
++&lvds0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			lvds0_out: endpoint {
++				remote-endpoint = <&thc63lvd1024_in>;
++			};
++		};
++	};
++};
+--
 2.7.4
