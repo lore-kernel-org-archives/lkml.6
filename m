@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+Pe/iaPkpUf5TKjA2EBDNCoL+q0JZ82gmIbfahq7fwIPQFVNm6pnvg4SJa2blbBtwJspqT
-ARC-Seal: i=1; a=rsa-sha256; t=1523399171; cv=none;
+X-Google-Smtp-Source: AIpwx48Pm3v4nU8TlBHVTtbFu/yYVjPIT2LXVYH5JY1qUQ4wG3lHbZPbqsrKC7/dX25+JS22mvs9
+ARC-Seal: i=1; a=rsa-sha256; t=1523399168; cv=none;
         d=google.com; s=arc-20160816;
-        b=QOhkwM+IFzw7T/ajkcQvtREGlv1lOPzK4Bn7kv2jASP9j8EhtDogQ/hq/Xr/GOLqEI
-         Hby4vowvTN+O0gzOcVvK3s9OIL49PR3K5RjsI2wIkVFENcCbgvc8dkSxnpT7pnoSuMUE
-         s2ezg40K4/rZktKXiCkxETymU57o2XhwPn3k8gklAX6zwTmjVXhAoiRaeIBgYTijNhqr
-         mVzo7+M8UfMY2ZZRYyet0k1N1gNGYl+55VVc0o5YaBPn7znxUHWFY5gRSM+5ZNcAkjea
-         gmdDvPQ1VB72EEC56SB5be5jAz083kegLHWhTYKrX24pGbEu2uPiMWBFnCTGdN8m9Qlb
-         XLsw==
+        b=XuTjoLX8BHlgK+1Sy1hRtLCpTsWA2uFaAbmQxhQQ9+fiprYprphzJqD50kw1uQhyrD
+         KFAjglUKZENYO2IMd/wba7NqyhYKndKSJOfT00KXPwYg2VvLny42VzPJOkePWi8AqQVe
+         Y0eC6cZde9v2mRFsklv43P0vMwgF3ohGhy73HaJ8Ndc1hPE8crVMs4P4s4FT0YUCu9w6
+         i+LsN0X5SAS6Q/cWRX5xms+W6YYL9/0tDzGMBvOfe9w3L/IWgzdI6rD9dddNY3uT756C
+         n+Gn/BTK4bDeQkglW8Qq0mh0W34jeq3yf/3Jxc1MC1rIvHz2I4F1cJbhdp5QtP+jTP9P
+         CjVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IIrVx8DLoEQL9ltgbrREcwNtoOiNnDtW7liRstkdrmo=;
-        b=BDgM49ufa7ElqEXGNUfk2Egp6IZTDQQDGSYQBm832sDCyLEH+3WO2V5Yq6Xxs5c+Ge
-         1xWxp+RKh3FRskTD2fYMXU1k3ZVIpOL69jYY8fGbufWMd8vkFE2fT4nhIN5uV2Kx2dm6
-         4c5ceVelvZZ8UE+vehNcusx4CbnlXKfLqPaDNjTvL3NvHZIaIynQUxeMfleXXqLAKb8R
-         wkWSU6nn4JZL0q0/XR0moeNEWDPUT9QiiQOamBVqDCd4JK51exS8re9lN4D7kz6Fqvu7
-         1w73jjuU4KoLjQG/vOAI3232DYfsvRuSPoBb4PzPpmyfXJg9tqqt0TQh1EGgI6iL9uAb
-         muWg==
+        bh=AgXgSZP9UiAZgJbaqBybBWl3VNu8YVX/gxhK7uPLF5s=;
+        b=E6dqhNutVNrxXt40KOXEdyLGBUJ/1xCvY/23vOSudC/GPAuYk8mmVcXX7l+uNVLiW1
+         KwxRwRzedxcIBuEPw1Frtqjb7urC3wr3/fkEKMWS/hk0n2oNadDsHE6N0ShS14OyFkib
+         U0GNJoZGuDTFtM/Uf/SBoZoiIahqQUCY/vhDur4CSb7gkmE8BqRPmm8bCHeGwoq1x48T
+         ZfQBeKJgut8QfjUUU1NdWuiuHbhJfPNZYBDI557GvlYeuzPwU9wjMTbTQwG6pBfMvf/t
+         h2ESQERW7YrvqCTLAd9B2IjOouxPwLB5GRzORb1UrOz9ZUf/b4YBD1CM3bZwU27mgcq1
+         5Jug==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-	Shawn Guo <shawnguo@kernel.org>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 005/168] ARM: dts: ls1021a: add "fsl,ls1021a-esdhc" compatible string to esdhc node
-Date: Wed, 11 Apr 2018 00:22:27 +0200
-Message-Id: <20180410212800.456211733@linuxfoundation.org>
+Subject: [PATCH 4.15 004/168] clk: meson: mpll: use 64-bit maths in params_from_rate
+Date: Wed, 11 Apr 2018 00:22:26 +0200
+Message-Id: <20180410212800.398693109@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399809934543808?=
-X-GMAIL-MSGID: =?utf-8?q?1597399809934543808?=
+X-GMAIL-THRID: =?utf-8?q?1597399806964398934?=
+X-GMAIL-MSGID: =?utf-8?q?1597399806964398934?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,33 +50,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
 
-[ Upstream commit d5c7b4d5ac2237a6da7ced3adfe6b8bf769f8cc6 ]
+[ Upstream commit 86aacdca66774051cbc0958110a48074b57a060b ]
 
-Commit a22950c888e3 (mmc: sdhci-of-esdhc: add quirk
-SDHCI_QUIRK_BROKEN_TIMEOUT_VAL for ls1021a) added logic to the driver to
-enable the broken timeout val quirk for ls1021a, but did not add the
-corresponding compatible string to the device tree, so it didn't really
-have any effect. Fix that.
+"rem * SDM_DEN" can easily overflow on the 32-bit Meson8 and Meson8b
+SoCs if the "remainder" (after the division operation) is greater than
+262143Hz. This is likely to happen since the input clock for the MPLLs
+on Meson8 and Meson8b is "fixed_pll", which is running at a rate of
+2550MHz.
 
-Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+One example where this was observed to be problematic was the Ethernet
+clock calculation (which takes MPLL2 as input). When requesting a rate
+of 125MHz there is a remainder of 2500000Hz.
+The resulting MPLL2 rate before this patch was 127488329Hz.
+The resulting MPLL2 rate after this patch is 124999103Hz.
+
+Commit b609338b26f5 ("clk: meson: mpll: use 64bit math in
+rate_from_params") already fixed a similar issue in rate_from_params.
+
+Fixes: 007e6e5c5f01d3 ("clk: meson: mpll: add rw operation")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/ls1021a.dtsi |    2 +-
+ drivers/clk/meson/clk-mpll.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/ls1021a.dtsi
-+++ b/arch/arm/boot/dts/ls1021a.dtsi
-@@ -155,7 +155,7 @@
- 		};
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -98,7 +98,7 @@ static void params_from_rate(unsigned lo
+ 		*sdm = SDM_DEN - 1;
+ 	} else {
+ 		*n2 = div;
+-		*sdm = DIV_ROUND_UP(rem * SDM_DEN, requested_rate);
++		*sdm = DIV_ROUND_UP_ULL((u64)rem * SDM_DEN, requested_rate);
+ 	}
+ }
  
- 		esdhc: esdhc@1560000 {
--			compatible = "fsl,esdhc";
-+			compatible = "fsl,ls1021a-esdhc", "fsl,esdhc";
- 			reg = <0x0 0x1560000 0x0 0x10000>;
- 			interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <0>;
