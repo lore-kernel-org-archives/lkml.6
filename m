@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+UOqSaJHFQnXAxLV+vKm6oQrpRUSFagvXoZ8p0hL+nKj6EYGsrz3Ua1FD6bdfEveF8IMww
-ARC-Seal: i=1; a=rsa-sha256; t=1523399771; cv=none;
+X-Google-Smtp-Source: AIpwx4/+lX6s67IKq6E12O9Oacsb/0W67RMtipMy3mDN5J4SYvqtG/1WiMN9DUpxG9VTtVcbCcv/
+ARC-Seal: i=1; a=rsa-sha256; t=1523399767; cv=none;
         d=google.com; s=arc-20160816;
-        b=F7DWKIDUxB/cW6TADkbsyOq3Evah4K7msz9j61q7205w1HgCkVyfRgqndQ9EXir6PV
-         k2m0k6coy4RZQcChOz4OxcxiBTQuN8qRPcnzWP9YJGrEoIgS1xGDZhJKHZFqWxRB/8lv
-         pqB48V9GUpwF14aBOW+jBqRroxiFL8tNIBYh9iSH/72TCN+0P8FK+Ux4pIJ7A4o5CDH4
-         ldQ8nJciTt4HOVjStcYrv5e48QIvRePd+3sGJ29fyreNJovcWw49Z40mAR+NhwnKlJMx
-         5WL/w39om73tzXnwFo04eXSumUPY/nMLQwZP3kkc7CZE+JYxLmqa5QnzLvi5lFfNM8s0
-         HI6Q==
+        b=cshFdeZmbYns/3ErQw7Tr+XFYrtsPXiaDUrGZOBXVmyAREzQNOVaOcB+OHCCntVoo+
+         lM166Mt8yWT4KH4GIQuvtzyGRDsQyrLz60HDcEpKddHYMrGFhHvfcmgvA+A/JG6NegSV
+         2CFrFL0OZXMfzjvCwoXjxQmEUqhxDrRODuJZ7p4EZ9gCeTwXd+gEQnjc/0acp6mEdfDr
+         k8wybLnhnqO0yFIU63b12luWPF14aP6m1imoj/bQAeLp1Tx7WzVNnW63+72r0Mb7cWpG
+         ALUCi5U80hKqu9PMYLGhHmhvdjBZqKfi9eWyVdhFQly23XXnwglT4SaF+ZN4GZj/Vaa0
+         ViSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=lDZpQYtmtY4FfmQ1W/V6dfXWJHHweV6B8oDkIfpXxbQ=;
-        b=EmDoDXxx/w5geAPnqGWRWz9ErdtXSd8hgTGDWyod6E46XU6YYOUESeXKupr6ZPwKWB
-         65Q+55fo/tD4mL/ulK2KhchJVFHN0sV++cFpZqU54ZGUSg9RNEuyeHQHwsIhfLg61XYQ
-         oT5Dt3F+RFZHhTE8behoAVhz81l7tEp42ApSL6NKRcxXwDB6KGVFdtHOchgNSCQi3GzC
-         BMF8cjyMps9TBEaT3BpFy/L0ETzfOfujMLj5o4MWhCDGMfcvA+ekx2OlRxO0Q/H1+GN1
-         bgvm2d0BmGOw2562mMeMQ5yiH5ziL0krElTpDryqBjGR85YMitKAKY9b8mAgxtNs0Fco
-         jE7g==
+        bh=Q3dWdJkLqjKYBgHFEulLkkFt9u+HMEmdo+aDNai25uk=;
+        b=AwhW+n1WFyH9BWfMNU0QYRHZiJgGy8zV9eIZhLoJXX0akVevpdqfGv36PBRFze218d
+         /5PfoY3hvTVGGjuJinckod73NCIPGq2i6sVMvYy/8fNcAINhwGWKvYrJXgC2zRKRTVHZ
+         0UY03L2LFDN4nGfpbLhP4GJXVrzwke8pNqjRwd7pewIONlWXdn+zpYgT+4KNIHQ0DqVI
+         zqCBwfXFAu/5yXMx6ButIQVddIVt29ruHFO+olh3LlUH6wS/y910vCfO5AbXbsQfVWN7
+         Gx72QWZxq7DqKdYAreUvV/3HebPKsAt+RZERByGi1zyZxt35zlK/RNrPihY31RRmwzAv
+         cDZA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tang Junhui <tang.junhui@zte.com.cn>,
+	Hua Rui <huarui.dev@gmail.com>,
 	Michael Lyle <mlyle@lyle.org>,
 	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 058/138] bcache: stop writeback thread after detaching
-Date: Wed, 11 Apr 2018 00:24:08 +0200
-Message-Id: <20180410212908.834750246@linuxfoundation.org>
+Subject: [PATCH 4.14 057/138] bcache: ret IOERR when read meets metadata error
+Date: Wed, 11 Apr 2018 00:24:07 +0200
+Message-Id: <20180410212908.693693913@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400013609893201?=
-X-GMAIL-MSGID: =?utf-8?q?1597400437947239190?=
+X-GMAIL-THRID: =?utf-8?q?1597400072268634043?=
+X-GMAIL-MSGID: =?utf-8?q?1597400434989066811?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,50 +51,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tang Junhui <tang.junhui@zte.com.cn>
+From: Rui Hua <huarui.dev@gmail.com>
 
 
-[ Upstream commit 8d29c4426b9f8afaccf28de414fde8a722b35fdf ]
+[ Upstream commit b221fc130c49c50f4c2250d22e873420765a9fa2 ]
 
-Currently, when a cached device detaching from cache, writeback thread is
-not stopped, and writeback_rate_update work is not canceled. For example,
-after the following command:
-echo 1 >/sys/block/sdb/bcache/detach
-you can still see the writeback thread. Then you attach the device to the
-cache again, bcache will create another writeback thread, for example,
-after below command:
-echo  ba0fb5cd-658a-4533-9806-6ce166d883b9 > /sys/block/sdb/bcache/attach
-then you will see 2 writeback threads.
-This patch stops writeback thread and cancels writeback_rate_update work
-when cached device detaching from cache.
+The read request might meet error when searching the btree, but the error
+was not handled in cache_lookup(), and this kind of metadata failure will
+not go into cached_dev_read_error(), finally, the upper layer will receive
+bi_status=0.  In this patch we judge the metadata error by the return
+value of bch_btree_map_keys(), there are two potential paths give rise to
+the error:
 
-Compare with patch v1, this v2 patch moves code down into the register
-lock for safety in case of any future changes as Coly and Mike suggested.
+1. Because the btree is not totally cached in memery, we maybe get error
+   when read btree node from cache device (see bch_btree_node_get()), the
+   likely errno is -EIO, -ENOMEM
 
-[edit by mlyle: commit log spelling/formatting]
+2. When read miss happens, bch_btree_insert_check_key() will be called to
+   insert a "replace_key" to btree(see cached_dev_cache_miss(), just for
+   doing preparatory work before insert the missed data to cache device),
+   a failure can also happen in this situation, the likely errno is
+   -ENOMEM
 
-Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
+bch_btree_map_keys() will return MAP_DONE in normal scenario, but we will
+get either -EIO or -ENOMEM in above two cases. if this happened, we should
+NOT recover data from backing device (when cache device is dirty) because
+we don't know whether bkeys the read request covered are all clean.  And
+after that happened, s->iop.status is still its initially value(0) before
+we submit s->bio.bio, we set it to BLK_STS_IOERR, so it can go into
+cached_dev_read_error(), and finally it can be passed to upper layer, or
+recovered by reread from backing device.
+
+[edit by mlyle: patch formatting, word-wrap, comment spelling,
+commit log format]
+
+Signed-off-by: Hua Rui <huarui.dev@gmail.com>
 Reviewed-by: Michael Lyle <mlyle@lyle.org>
 Signed-off-by: Michael Lyle <mlyle@lyle.org>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/bcache/super.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/md/bcache/request.c |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -893,6 +893,12 @@ static void cached_dev_detach_finish(str
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -568,6 +568,7 @@ static void cache_lookup(struct closure
+ {
+ 	struct search *s = container_of(cl, struct search, iop.cl);
+ 	struct bio *bio = &s->bio.bio;
++	struct cached_dev *dc;
+ 	int ret;
  
- 	mutex_lock(&bch_register_lock);
+ 	bch_btree_op_init(&s->op, -1);
+@@ -580,6 +581,27 @@ static void cache_lookup(struct closure
+ 		return;
+ 	}
  
-+	cancel_delayed_work_sync(&dc->writeback_rate_update);
-+	if (!IS_ERR_OR_NULL(dc->writeback_thread)) {
-+		kthread_stop(dc->writeback_thread);
-+		dc->writeback_thread = NULL;
++	/*
++	 * We might meet err when searching the btree, If that happens, we will
++	 * get negative ret, in this scenario we should not recover data from
++	 * backing device (when cache device is dirty) because we don't know
++	 * whether bkeys the read request covered are all clean.
++	 *
++	 * And after that happened, s->iop.status is still its initial value
++	 * before we submit s->bio.bio
++	 */
++	if (ret < 0) {
++		BUG_ON(ret == -EINTR);
++		if (s->d && s->d->c &&
++				!UUID_FLASH_ONLY(&s->d->c->uuids[s->d->id])) {
++			dc = container_of(s->d, struct cached_dev, disk);
++			if (dc && atomic_read(&dc->has_dirty))
++				s->recoverable = false;
++		}
++		if (!s->iop.status)
++			s->iop.status = BLK_STS_IOERR;
 +	}
 +
- 	memset(&dc->sb.set_uuid, 0, 16);
- 	SET_BDEV_STATE(&dc->sb, BDEV_STATE_NONE);
+ 	closure_return(cl);
+ }
  
