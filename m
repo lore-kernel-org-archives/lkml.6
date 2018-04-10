@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+4KTx1cuRkAi0FToU3puH0AtluPjqeASex7XipC1fMpA80XBezuEor1nyPLZtbwxPyoLbO
-ARC-Seal: i=1; a=rsa-sha256; t=1523399845; cv=none;
+X-Google-Smtp-Source: AIpwx49geO+mOIDJqhVlKucKcquvFyBkbraeooq3A9tZnhpCS5NNLWmvH5j2gD8KYcT0Aka3hzb2
+ARC-Seal: i=1; a=rsa-sha256; t=1523399841; cv=none;
         d=google.com; s=arc-20160816;
-        b=ioDHXJsGvXU6r6QbIcq9ryD9JsjSjvkVOtcaYbb3XvPHGPeWKaZlSM4x6X0SoJF2YV
-         QYF6Q8YwtoTTkq56m6Rk0nuA4VVchFICHHNq7QG9yKtxe+b5VcImmG7QEAMv11dRuNaw
-         xN1pnDZK6iFKo5NEGp+ZwDisRma3vPJSPdHr7ZAcJPZY+4UIXTS/Ok4fgJrEYrmbPGWx
-         +3jXpXPLj8u2tfSN8q9u64VY8hiqV5m7PlBVj09lzu9BKXym2mY0+8EVHHlQehMmLDJp
-         Kguah56Wgb5fxLquDIrzJKWjgqAeEZ+nsQICUtFZW7xk+TrfC42e9c3rGlFV4poWwIR+
-         +HcQ==
+        b=MJ6iTgBhA4DnQkiHWcMf+RhxquWOdZ2Tf/f9McEXRF/R8/r4enhepl/9BAYR0JMc6m
+         vgu4GEBRvm72nBY0B8nvJXA3q4xiyevtlIhPlaJp513kErI3OsMcPwSAX+8odoV/nswK
+         wN3KY+QaegzBVSNI9NQI0eVMleGCbAwKNPDryod/C6U2rMlfO2qVmG7QN7f1+kqzjtz5
+         KgML8ShXx+tdsTbfyivbU7OA4WjWzzyi9EMIqmF1PWcnTDPKS4f9ifgfO3vdKpgROJFN
+         Z5kFOHGWL/TJpVVPGzGUkiDkgNRsWEZ9iXTXtFzcUZ5YZVApD2FAdsNc/dM/ouO0fU/D
+         rDjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=JFqQZ+JjQ1eTfwR/dkYDVVq5MMwh3ER5tL3Ug0U7aZk=;
-        b=YAfba2rzE3F/7PEVeb8eaa/PYW9g9u9n2sf7glCg7pDI3CFWrDt0tC9h3+zNcB5c48
-         qN2pYthM9jIdepIYpVAxctcDTARtPBK0Jb5Fz7zeBX8WMOlGESDpdUSWqhZnUr6Jqswi
-         jtmllvmljSfje0KbM3NwF8bPPTErGZOGHjQh4rbIlTu4PxxvGvVWsOU7hXZEfjKgwsml
-         p3q0sY7MnepTkmSDqIZj5mHIeUSL3j8IGWWO+ufqjDhImrZnlzk4E3/bgyCqkwQqURuO
-         B8NrU7R03Z7zvGNTYvD02VgF/LzddRkIZN+KWyEyjxuGheSvByVZCEJI75ZDsT9p/JYC
-         JEBw==
+        bh=PNFgTWNKkrUCH5GBHpvDChK52uyFrHMgRFPj3fOBHZI=;
+        b=Xt/cqShh/69TraKVRHdNGI4GpTGozzYFlE3EKa8yyGZnTqJo5Mg/ElBsX/brDUsosz
+         7hkVOIif0jrovDrGCZaEFkQkEZ8Jlv4pTUitkoYSUMxRUoeUmnMRJCUxW9J44C0/u7qF
+         h9EkCCobjLd5sjVColz5GnsZhV/5sL6QQCTum++S2pQLObutPbLvzU1pcPrkXgqRz+FE
+         odVSIcoK15w4mFl1bEhv1MOAXvpXRnEhGiI4P1NFqKEObsdwXliV00AKrQzwlQHtFX15
+         8nQIGrK698WXebBl6jtUw7Kgjy3mp2Z8BZ1QGFd8RQ7HrFYa2rN9D9IHsVTPMCEYbSdU
+         6oKw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Matthias Kaehlcke <mka@google.com>
-Subject: [PATCH 4.14 084/138] crypto: arm64/aes-ce-cipher - move assembler code to .S file
-Date: Wed, 11 Apr 2018 00:24:34 +0200
-Message-Id: <20180410212911.975031640@linuxfoundation.org>
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Matthias Kaehlcke <mka@chromium.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 083/138] objtool: Add Clang support
+Date: Wed, 11 Apr 2018 00:24:33 +0200
+Message-Id: <20180410212911.858115266@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400516022254196?=
-X-GMAIL-MSGID: =?utf-8?q?1597400516022254196?=
+X-GMAIL-THRID: =?utf-8?q?1597400512537270748?=
+X-GMAIL-MSGID: =?utf-8?q?1597400512537270748?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,621 +53,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit 019cd46984d04703a39924178f503a98436ac0d7 upstream.
+commit 3c1f05835cbf9fdfe60b81c718d82ceb94b6c55e upstream.
 
-Most crypto drivers involving kernel mode NEON take care to put the code
-that actually touches the NEON register file in a separate compilation
-unit, to prevent the compiler from reordering code that preserves or
-restores the NEON context with code that may corrupt it. This is
-necessary because we currently have no way to express the restrictions
-imposed upon use of the NEON in kernel mode in a way that the compiler
-understands.
+Since the ORC unwinder was made the default on x86_64, Clang-built
+defconfig kernels have triggered some new objtool warnings:
 
-However, in the case of aes-ce-cipher, it did not seem unreasonable to
-deviate from this rule, given how it does not seem possible for the
-compiler to reorder cross object function calls with asm blocks whose
-in- and output constraints reflect that it reads from and writes to
-memory.
+  drivers/gpu/drm/i915/i915_gpu_error.o: warning: objtool: i915_error_printf()+0x6c: return with modified stack frame
+  drivers/gpu/drm/i915/intel_display.o: warning: objtool: pipe_config_err()+0xa6: return with modified stack frame
 
-Now that LTO is being proposed for the arm64 kernel, it is time to
-revisit this. The link time optimization may replace the function
-calls to kernel_neon_begin() and kernel_neon_end() with instantiations
-of the IR that make up its implementation, allowing further reordering
-with the asm block.
+The problem is that objtool has never seen clang-built binaries before.
 
-So let's clean this up, and move the asm() blocks into a separate .S
-file.
+Shockingly enough, objtool is apparently able to follow the code flow
+mostly fine, except for one instruction sequence.  Instead of a LEAVE
+instruction, clang restores RSP and RBP the long way:
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-By: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Matthias Kaehlcke <mka@google.com>
+   67c:   48 89 ec                mov    %rbp,%rsp
+   67f:   5d                      pop    %rbp
+
+Teach objtool about this new code sequence.
+
+Reported-and-test-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthias Kaehlcke <mka@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/fce88ce81c356eedcae7f00ed349cfaddb3363cc.1521741586.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/crypto/Makefile        |    2 
- arch/arm64/crypto/aes-ce-cipher.c |  281 --------------------------------------
- arch/arm64/crypto/aes-ce-core.S   |   87 +++++++++++
- arch/arm64/crypto/aes-ce-glue.c   |  190 +++++++++++++++++++++++++
- 4 files changed, 278 insertions(+), 282 deletions(-)
+ tools/objtool/check.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/arch/arm64/crypto/Makefile
-+++ b/arch/arm64/crypto/Makefile
-@@ -24,7 +24,7 @@ obj-$(CONFIG_CRYPTO_CRC32_ARM64_CE) += c
- crc32-ce-y:= crc32-ce-core.o crc32-ce-glue.o
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1385,6 +1385,17 @@ static int update_insn_state(struct inst
+ 				state->vals[op->dest.reg].offset = -state->stack_size;
+ 			}
  
- obj-$(CONFIG_CRYPTO_AES_ARM64_CE) += aes-ce-cipher.o
--CFLAGS_aes-ce-cipher.o += -march=armv8-a+crypto
-+aes-ce-cipher-y := aes-ce-core.o aes-ce-glue.o
++			else if (op->src.reg == CFI_BP && op->dest.reg == CFI_SP &&
++				 cfa->base == CFI_BP) {
++
++				/*
++				 * mov %rbp, %rsp
++				 *
++				 * Restore the original stack pointer (Clang).
++				 */
++				state->stack_size = -state->regs[CFI_BP].offset;
++			}
++
+ 			else if (op->dest.reg == cfa->base) {
  
- obj-$(CONFIG_CRYPTO_AES_ARM64_CE_CCM) += aes-ce-ccm.o
- aes-ce-ccm-y := aes-ce-ccm-glue.o aes-ce-ccm-core.o
---- a/arch/arm64/crypto/aes-ce-cipher.c
-+++ /dev/null
-@@ -1,281 +0,0 @@
--/*
-- * aes-ce-cipher.c - core AES cipher using ARMv8 Crypto Extensions
-- *
-- * Copyright (C) 2013 - 2017 Linaro Ltd <ard.biesheuvel@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--
--#include <asm/neon.h>
--#include <asm/simd.h>
--#include <asm/unaligned.h>
--#include <crypto/aes.h>
--#include <linux/cpufeature.h>
--#include <linux/crypto.h>
--#include <linux/module.h>
--
--#include "aes-ce-setkey.h"
--
--MODULE_DESCRIPTION("Synchronous AES cipher using ARMv8 Crypto Extensions");
--MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
--MODULE_LICENSE("GPL v2");
--
--asmlinkage void __aes_arm64_encrypt(u32 *rk, u8 *out, const u8 *in, int rounds);
--asmlinkage void __aes_arm64_decrypt(u32 *rk, u8 *out, const u8 *in, int rounds);
--
--struct aes_block {
--	u8 b[AES_BLOCK_SIZE];
--};
--
--static int num_rounds(struct crypto_aes_ctx *ctx)
--{
--	/*
--	 * # of rounds specified by AES:
--	 * 128 bit key		10 rounds
--	 * 192 bit key		12 rounds
--	 * 256 bit key		14 rounds
--	 * => n byte key	=> 6 + (n/4) rounds
--	 */
--	return 6 + ctx->key_length / 4;
--}
--
--static void aes_cipher_encrypt(struct crypto_tfm *tfm, u8 dst[], u8 const src[])
--{
--	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
--	struct aes_block *out = (struct aes_block *)dst;
--	struct aes_block const *in = (struct aes_block *)src;
--	void *dummy0;
--	int dummy1;
--
--	if (!may_use_simd()) {
--		__aes_arm64_encrypt(ctx->key_enc, dst, src, num_rounds(ctx));
--		return;
--	}
--
--	kernel_neon_begin();
--
--	__asm__("	ld1	{v0.16b}, %[in]			;"
--		"	ld1	{v1.4s}, [%[key]], #16		;"
--		"	cmp	%w[rounds], #10			;"
--		"	bmi	0f				;"
--		"	bne	3f				;"
--		"	mov	v3.16b, v1.16b			;"
--		"	b	2f				;"
--		"0:	mov	v2.16b, v1.16b			;"
--		"	ld1	{v3.4s}, [%[key]], #16		;"
--		"1:	aese	v0.16b, v2.16b			;"
--		"	aesmc	v0.16b, v0.16b			;"
--		"2:	ld1	{v1.4s}, [%[key]], #16		;"
--		"	aese	v0.16b, v3.16b			;"
--		"	aesmc	v0.16b, v0.16b			;"
--		"3:	ld1	{v2.4s}, [%[key]], #16		;"
--		"	subs	%w[rounds], %w[rounds], #3	;"
--		"	aese	v0.16b, v1.16b			;"
--		"	aesmc	v0.16b, v0.16b			;"
--		"	ld1	{v3.4s}, [%[key]], #16		;"
--		"	bpl	1b				;"
--		"	aese	v0.16b, v2.16b			;"
--		"	eor	v0.16b, v0.16b, v3.16b		;"
--		"	st1	{v0.16b}, %[out]		;"
--
--	:	[out]		"=Q"(*out),
--		[key]		"=r"(dummy0),
--		[rounds]	"=r"(dummy1)
--	:	[in]		"Q"(*in),
--				"1"(ctx->key_enc),
--				"2"(num_rounds(ctx) - 2)
--	:	"cc");
--
--	kernel_neon_end();
--}
--
--static void aes_cipher_decrypt(struct crypto_tfm *tfm, u8 dst[], u8 const src[])
--{
--	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
--	struct aes_block *out = (struct aes_block *)dst;
--	struct aes_block const *in = (struct aes_block *)src;
--	void *dummy0;
--	int dummy1;
--
--	if (!may_use_simd()) {
--		__aes_arm64_decrypt(ctx->key_dec, dst, src, num_rounds(ctx));
--		return;
--	}
--
--	kernel_neon_begin();
--
--	__asm__("	ld1	{v0.16b}, %[in]			;"
--		"	ld1	{v1.4s}, [%[key]], #16		;"
--		"	cmp	%w[rounds], #10			;"
--		"	bmi	0f				;"
--		"	bne	3f				;"
--		"	mov	v3.16b, v1.16b			;"
--		"	b	2f				;"
--		"0:	mov	v2.16b, v1.16b			;"
--		"	ld1	{v3.4s}, [%[key]], #16		;"
--		"1:	aesd	v0.16b, v2.16b			;"
--		"	aesimc	v0.16b, v0.16b			;"
--		"2:	ld1	{v1.4s}, [%[key]], #16		;"
--		"	aesd	v0.16b, v3.16b			;"
--		"	aesimc	v0.16b, v0.16b			;"
--		"3:	ld1	{v2.4s}, [%[key]], #16		;"
--		"	subs	%w[rounds], %w[rounds], #3	;"
--		"	aesd	v0.16b, v1.16b			;"
--		"	aesimc	v0.16b, v0.16b			;"
--		"	ld1	{v3.4s}, [%[key]], #16		;"
--		"	bpl	1b				;"
--		"	aesd	v0.16b, v2.16b			;"
--		"	eor	v0.16b, v0.16b, v3.16b		;"
--		"	st1	{v0.16b}, %[out]		;"
--
--	:	[out]		"=Q"(*out),
--		[key]		"=r"(dummy0),
--		[rounds]	"=r"(dummy1)
--	:	[in]		"Q"(*in),
--				"1"(ctx->key_dec),
--				"2"(num_rounds(ctx) - 2)
--	:	"cc");
--
--	kernel_neon_end();
--}
--
--/*
-- * aes_sub() - use the aese instruction to perform the AES sbox substitution
-- *             on each byte in 'input'
-- */
--static u32 aes_sub(u32 input)
--{
--	u32 ret;
--
--	__asm__("dup	v1.4s, %w[in]		;"
--		"movi	v0.16b, #0		;"
--		"aese	v0.16b, v1.16b		;"
--		"umov	%w[out], v0.4s[0]	;"
--
--	:	[out]	"=r"(ret)
--	:	[in]	"r"(input)
--	:		"v0","v1");
--
--	return ret;
--}
--
--int ce_aes_expandkey(struct crypto_aes_ctx *ctx, const u8 *in_key,
--		     unsigned int key_len)
--{
--	/*
--	 * The AES key schedule round constants
--	 */
--	static u8 const rcon[] = {
--		0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36,
--	};
--
--	u32 kwords = key_len / sizeof(u32);
--	struct aes_block *key_enc, *key_dec;
--	int i, j;
--
--	if (key_len != AES_KEYSIZE_128 &&
--	    key_len != AES_KEYSIZE_192 &&
--	    key_len != AES_KEYSIZE_256)
--		return -EINVAL;
--
--	ctx->key_length = key_len;
--	for (i = 0; i < kwords; i++)
--		ctx->key_enc[i] = get_unaligned_le32(in_key + i * sizeof(u32));
--
--	kernel_neon_begin();
--	for (i = 0; i < sizeof(rcon); i++) {
--		u32 *rki = ctx->key_enc + (i * kwords);
--		u32 *rko = rki + kwords;
--
--		rko[0] = ror32(aes_sub(rki[kwords - 1]), 8) ^ rcon[i] ^ rki[0];
--		rko[1] = rko[0] ^ rki[1];
--		rko[2] = rko[1] ^ rki[2];
--		rko[3] = rko[2] ^ rki[3];
--
--		if (key_len == AES_KEYSIZE_192) {
--			if (i >= 7)
--				break;
--			rko[4] = rko[3] ^ rki[4];
--			rko[5] = rko[4] ^ rki[5];
--		} else if (key_len == AES_KEYSIZE_256) {
--			if (i >= 6)
--				break;
--			rko[4] = aes_sub(rko[3]) ^ rki[4];
--			rko[5] = rko[4] ^ rki[5];
--			rko[6] = rko[5] ^ rki[6];
--			rko[7] = rko[6] ^ rki[7];
--		}
--	}
--
--	/*
--	 * Generate the decryption keys for the Equivalent Inverse Cipher.
--	 * This involves reversing the order of the round keys, and applying
--	 * the Inverse Mix Columns transformation on all but the first and
--	 * the last one.
--	 */
--	key_enc = (struct aes_block *)ctx->key_enc;
--	key_dec = (struct aes_block *)ctx->key_dec;
--	j = num_rounds(ctx);
--
--	key_dec[0] = key_enc[j];
--	for (i = 1, j--; j > 0; i++, j--)
--		__asm__("ld1	{v0.4s}, %[in]		;"
--			"aesimc	v1.16b, v0.16b		;"
--			"st1	{v1.4s}, %[out]	;"
--
--		:	[out]	"=Q"(key_dec[i])
--		:	[in]	"Q"(key_enc[j])
--		:		"v0","v1");
--	key_dec[i] = key_enc[0];
--
--	kernel_neon_end();
--	return 0;
--}
--EXPORT_SYMBOL(ce_aes_expandkey);
--
--int ce_aes_setkey(struct crypto_tfm *tfm, const u8 *in_key,
--		  unsigned int key_len)
--{
--	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
--	int ret;
--
--	ret = ce_aes_expandkey(ctx, in_key, key_len);
--	if (!ret)
--		return 0;
--
--	tfm->crt_flags |= CRYPTO_TFM_RES_BAD_KEY_LEN;
--	return -EINVAL;
--}
--EXPORT_SYMBOL(ce_aes_setkey);
--
--static struct crypto_alg aes_alg = {
--	.cra_name		= "aes",
--	.cra_driver_name	= "aes-ce",
--	.cra_priority		= 250,
--	.cra_flags		= CRYPTO_ALG_TYPE_CIPHER,
--	.cra_blocksize		= AES_BLOCK_SIZE,
--	.cra_ctxsize		= sizeof(struct crypto_aes_ctx),
--	.cra_module		= THIS_MODULE,
--	.cra_cipher = {
--		.cia_min_keysize	= AES_MIN_KEY_SIZE,
--		.cia_max_keysize	= AES_MAX_KEY_SIZE,
--		.cia_setkey		= ce_aes_setkey,
--		.cia_encrypt		= aes_cipher_encrypt,
--		.cia_decrypt		= aes_cipher_decrypt
--	}
--};
--
--static int __init aes_mod_init(void)
--{
--	return crypto_register_alg(&aes_alg);
--}
--
--static void __exit aes_mod_exit(void)
--{
--	crypto_unregister_alg(&aes_alg);
--}
--
--module_cpu_feature_match(AES, aes_mod_init);
--module_exit(aes_mod_exit);
---- /dev/null
-+++ b/arch/arm64/crypto/aes-ce-core.S
-@@ -0,0 +1,87 @@
-+/*
-+ * Copyright (C) 2013 - 2017 Linaro Ltd <ard.biesheuvel@linaro.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/linkage.h>
-+#include <asm/assembler.h>
-+
-+	.arch		armv8-a+crypto
-+
-+ENTRY(__aes_ce_encrypt)
-+	sub		w3, w3, #2
-+	ld1		{v0.16b}, [x2]
-+	ld1		{v1.4s}, [x0], #16
-+	cmp		w3, #10
-+	bmi		0f
-+	bne		3f
-+	mov		v3.16b, v1.16b
-+	b		2f
-+0:	mov		v2.16b, v1.16b
-+	ld1		{v3.4s}, [x0], #16
-+1:	aese		v0.16b, v2.16b
-+	aesmc		v0.16b, v0.16b
-+2:	ld1		{v1.4s}, [x0], #16
-+	aese		v0.16b, v3.16b
-+	aesmc		v0.16b, v0.16b
-+3:	ld1		{v2.4s}, [x0], #16
-+	subs		w3, w3, #3
-+	aese		v0.16b, v1.16b
-+	aesmc		v0.16b, v0.16b
-+	ld1		{v3.4s}, [x0], #16
-+	bpl		1b
-+	aese		v0.16b, v2.16b
-+	eor		v0.16b, v0.16b, v3.16b
-+	st1		{v0.16b}, [x1]
-+	ret
-+ENDPROC(__aes_ce_encrypt)
-+
-+ENTRY(__aes_ce_decrypt)
-+	sub		w3, w3, #2
-+	ld1		{v0.16b}, [x2]
-+	ld1		{v1.4s}, [x0], #16
-+	cmp		w3, #10
-+	bmi		0f
-+	bne		3f
-+	mov		v3.16b, v1.16b
-+	b		2f
-+0:	mov		v2.16b, v1.16b
-+	ld1		{v3.4s}, [x0], #16
-+1:	aesd		v0.16b, v2.16b
-+	aesimc		v0.16b, v0.16b
-+2:	ld1		{v1.4s}, [x0], #16
-+	aesd		v0.16b, v3.16b
-+	aesimc		v0.16b, v0.16b
-+3:	ld1		{v2.4s}, [x0], #16
-+	subs		w3, w3, #3
-+	aesd		v0.16b, v1.16b
-+	aesimc		v0.16b, v0.16b
-+	ld1		{v3.4s}, [x0], #16
-+	bpl		1b
-+	aesd		v0.16b, v2.16b
-+	eor		v0.16b, v0.16b, v3.16b
-+	st1		{v0.16b}, [x1]
-+	ret
-+ENDPROC(__aes_ce_decrypt)
-+
-+/*
-+ * __aes_ce_sub() - use the aese instruction to perform the AES sbox
-+ *                  substitution on each byte in 'input'
-+ */
-+ENTRY(__aes_ce_sub)
-+	dup		v1.4s, w0
-+	movi		v0.16b, #0
-+	aese		v0.16b, v1.16b
-+	umov		w0, v0.s[0]
-+	ret
-+ENDPROC(__aes_ce_sub)
-+
-+ENTRY(__aes_ce_invert)
-+	ld1		{v0.4s}, [x1]
-+	aesimc		v1.16b, v0.16b
-+	st1		{v1.4s}, [x0]
-+	ret
-+ENDPROC(__aes_ce_invert)
---- /dev/null
-+++ b/arch/arm64/crypto/aes-ce-glue.c
-@@ -0,0 +1,190 @@
-+/*
-+ * aes-ce-cipher.c - core AES cipher using ARMv8 Crypto Extensions
-+ *
-+ * Copyright (C) 2013 - 2017 Linaro Ltd <ard.biesheuvel@linaro.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <asm/neon.h>
-+#include <asm/simd.h>
-+#include <asm/unaligned.h>
-+#include <crypto/aes.h>
-+#include <linux/cpufeature.h>
-+#include <linux/crypto.h>
-+#include <linux/module.h>
-+
-+#include "aes-ce-setkey.h"
-+
-+MODULE_DESCRIPTION("Synchronous AES cipher using ARMv8 Crypto Extensions");
-+MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
-+MODULE_LICENSE("GPL v2");
-+
-+asmlinkage void __aes_arm64_encrypt(u32 *rk, u8 *out, const u8 *in, int rounds);
-+asmlinkage void __aes_arm64_decrypt(u32 *rk, u8 *out, const u8 *in, int rounds);
-+
-+struct aes_block {
-+	u8 b[AES_BLOCK_SIZE];
-+};
-+
-+asmlinkage void __aes_ce_encrypt(u32 *rk, u8 *out, const u8 *in, int rounds);
-+asmlinkage void __aes_ce_decrypt(u32 *rk, u8 *out, const u8 *in, int rounds);
-+
-+asmlinkage u32 __aes_ce_sub(u32 l);
-+asmlinkage void __aes_ce_invert(struct aes_block *out,
-+				const struct aes_block *in);
-+
-+static int num_rounds(struct crypto_aes_ctx *ctx)
-+{
-+	/*
-+	 * # of rounds specified by AES:
-+	 * 128 bit key		10 rounds
-+	 * 192 bit key		12 rounds
-+	 * 256 bit key		14 rounds
-+	 * => n byte key	=> 6 + (n/4) rounds
-+	 */
-+	return 6 + ctx->key_length / 4;
-+}
-+
-+static void aes_cipher_encrypt(struct crypto_tfm *tfm, u8 dst[], u8 const src[])
-+{
-+	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
-+
-+	if (!may_use_simd()) {
-+		__aes_arm64_encrypt(ctx->key_enc, dst, src, num_rounds(ctx));
-+		return;
-+	}
-+
-+	kernel_neon_begin();
-+	__aes_ce_encrypt(ctx->key_enc, dst, src, num_rounds(ctx));
-+	kernel_neon_end();
-+}
-+
-+static void aes_cipher_decrypt(struct crypto_tfm *tfm, u8 dst[], u8 const src[])
-+{
-+	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
-+
-+	if (!may_use_simd()) {
-+		__aes_arm64_decrypt(ctx->key_dec, dst, src, num_rounds(ctx));
-+		return;
-+	}
-+
-+	kernel_neon_begin();
-+	__aes_ce_decrypt(ctx->key_dec, dst, src, num_rounds(ctx));
-+	kernel_neon_end();
-+}
-+
-+int ce_aes_expandkey(struct crypto_aes_ctx *ctx, const u8 *in_key,
-+		     unsigned int key_len)
-+{
-+	/*
-+	 * The AES key schedule round constants
-+	 */
-+	static u8 const rcon[] = {
-+		0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36,
-+	};
-+
-+	u32 kwords = key_len / sizeof(u32);
-+	struct aes_block *key_enc, *key_dec;
-+	int i, j;
-+
-+	if (key_len != AES_KEYSIZE_128 &&
-+	    key_len != AES_KEYSIZE_192 &&
-+	    key_len != AES_KEYSIZE_256)
-+		return -EINVAL;
-+
-+	ctx->key_length = key_len;
-+	for (i = 0; i < kwords; i++)
-+		ctx->key_enc[i] = get_unaligned_le32(in_key + i * sizeof(u32));
-+
-+	kernel_neon_begin();
-+	for (i = 0; i < sizeof(rcon); i++) {
-+		u32 *rki = ctx->key_enc + (i * kwords);
-+		u32 *rko = rki + kwords;
-+
-+		rko[0] = ror32(__aes_ce_sub(rki[kwords - 1]), 8) ^ rcon[i] ^ rki[0];
-+		rko[1] = rko[0] ^ rki[1];
-+		rko[2] = rko[1] ^ rki[2];
-+		rko[3] = rko[2] ^ rki[3];
-+
-+		if (key_len == AES_KEYSIZE_192) {
-+			if (i >= 7)
-+				break;
-+			rko[4] = rko[3] ^ rki[4];
-+			rko[5] = rko[4] ^ rki[5];
-+		} else if (key_len == AES_KEYSIZE_256) {
-+			if (i >= 6)
-+				break;
-+			rko[4] = __aes_ce_sub(rko[3]) ^ rki[4];
-+			rko[5] = rko[4] ^ rki[5];
-+			rko[6] = rko[5] ^ rki[6];
-+			rko[7] = rko[6] ^ rki[7];
-+		}
-+	}
-+
-+	/*
-+	 * Generate the decryption keys for the Equivalent Inverse Cipher.
-+	 * This involves reversing the order of the round keys, and applying
-+	 * the Inverse Mix Columns transformation on all but the first and
-+	 * the last one.
-+	 */
-+	key_enc = (struct aes_block *)ctx->key_enc;
-+	key_dec = (struct aes_block *)ctx->key_dec;
-+	j = num_rounds(ctx);
-+
-+	key_dec[0] = key_enc[j];
-+	for (i = 1, j--; j > 0; i++, j--)
-+		__aes_ce_invert(key_dec + i, key_enc + j);
-+	key_dec[i] = key_enc[0];
-+
-+	kernel_neon_end();
-+	return 0;
-+}
-+EXPORT_SYMBOL(ce_aes_expandkey);
-+
-+int ce_aes_setkey(struct crypto_tfm *tfm, const u8 *in_key,
-+		  unsigned int key_len)
-+{
-+	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
-+	int ret;
-+
-+	ret = ce_aes_expandkey(ctx, in_key, key_len);
-+	if (!ret)
-+		return 0;
-+
-+	tfm->crt_flags |= CRYPTO_TFM_RES_BAD_KEY_LEN;
-+	return -EINVAL;
-+}
-+EXPORT_SYMBOL(ce_aes_setkey);
-+
-+static struct crypto_alg aes_alg = {
-+	.cra_name		= "aes",
-+	.cra_driver_name	= "aes-ce",
-+	.cra_priority		= 250,
-+	.cra_flags		= CRYPTO_ALG_TYPE_CIPHER,
-+	.cra_blocksize		= AES_BLOCK_SIZE,
-+	.cra_ctxsize		= sizeof(struct crypto_aes_ctx),
-+	.cra_module		= THIS_MODULE,
-+	.cra_cipher = {
-+		.cia_min_keysize	= AES_MIN_KEY_SIZE,
-+		.cia_max_keysize	= AES_MAX_KEY_SIZE,
-+		.cia_setkey		= ce_aes_setkey,
-+		.cia_encrypt		= aes_cipher_encrypt,
-+		.cia_decrypt		= aes_cipher_decrypt
-+	}
-+};
-+
-+static int __init aes_mod_init(void)
-+{
-+	return crypto_register_alg(&aes_alg);
-+}
-+
-+static void __exit aes_mod_exit(void)
-+{
-+	crypto_unregister_alg(&aes_alg);
-+}
-+
-+module_cpu_feature_match(AES, aes_mod_init);
-+module_exit(aes_mod_exit);
+ 				/* mov %reg, %rsp */
