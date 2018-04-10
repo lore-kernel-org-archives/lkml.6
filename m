@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49XDvsPS7saUSFq/b9xs+AZ0riWY4gY382iJkfkcOcXpQPibOkBkLzYDi2LsfP9LmcnpJ7s
-ARC-Seal: i=1; a=rsa-sha256; t=1523399398; cv=none;
+X-Google-Smtp-Source: AIpwx49cahtjHEFdqizblYFWKEacpGIxgfEKcYFTj4z5lffp0o/l823fRrQrc28dqVVDiH+V/mjh
+ARC-Seal: i=1; a=rsa-sha256; t=1523399395; cv=none;
         d=google.com; s=arc-20160816;
-        b=iVkVMQRUGKkDZXdXLLCtUezwwA/quqzGACXwvxtc+cA7dTZPhy1DnLi3eis6dWsHmg
-         PmOuqdqDV/VYmBMWFRIbeezZrzz4CxQxjyJ2a/HwAfVZExzCLixarUqzwjr1TpwVHoie
-         McRG4puuCxJTlNbcAzDiiDgmjxKRX3YUJCwW3jq4jWEtvqQLZfFMipiAJvYfx//KTih7
-         E2LTFBwfMI3miHebgjscNvkzk62i6OJiIkeZuE2tOWZfVScR6UMWNQAjF8ipxLzXnmGJ
-         QkKbxnwDPVdR69PAmTH+FDz56PgNRCrbpKvrsYEA51R6iHdkJ1tCQaK0ezEIOAe36fFi
-         egdg==
+        b=Iua+3O9OuGea/+Va+p0xsI8sujmKi0O4rCqaGmDqTfwVawrmilByctVoefPXhgBWpM
+         v4SShLTRFRZi/TOTWNOZi9X6a+JvTy0FfdED9Ns6XyMR9iGoewNp7VVR3ZU52JlXKrMS
+         QYg21/63/uiimCGcQapmxrmZwQu+OCBOaLmGeyt7+pusb6sm9Rbf5kec8DdWUN8ByKWy
+         gTz1kp/DWs5DlyinaTVeRj/aqxVNlK4cMfzpfr6PkabvdXGJn+6o2NCmx/o06WasgEQE
+         TnC+JtuVW8B7LdDma/vKHDZi8n3lsCm9teN1zq5mRFzlVJ+l+uv+UOccm7HT2fqUulIr
+         iq0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PK17IMzNt4+/g7Wo7FU1A0Z5zcescpLYyf7zGAiSX8I=;
-        b=t0+7Hdlj0/ezixK5/WCpsu8BMQUdPvBbEGaKBDCaflg1nI70FFAIuavdavLNBlrh9F
-         lCFT0Gurj+goYAVEP2bd4aPOdwd5BjBd3oDWFMXhIgd808Aw7QSs0Tx3sKCq/HZsFvtX
-         ijOo1FYJkkCaksqPj0U4DM951GIUpUrn5bX09EnHheH6DXH4H/3X0ZF2MF+BjM3b1Lgp
-         OwCIqM7dR7Sic6YrS2CLZLo3CghwpR2QbfxtFeBfW5XWwuCVJSOKoSgaajK3Y3YGW34n
-         /3qrlWRcGwgnSzV+ovi2hJjd9suX4voFGJz0NyCH62LD4vFhPyslhr7WRbEASWsnhvK/
-         QjZg==
+        bh=8In49jJwn31I/o/8iQCwOFJiEfMlLipXff47myKEqqM=;
+        b=lZYEHtMeuxnXWyyPODWwHfOjCLR5OpBdbclL1cGRWVsZ4TSkwcWFbnoRUGmBwDxjYf
+         Hc7sY9OJRfeiwqJbAKt++2TF0tg5TjEB+Ow8ChKyh8y7X1rClTjsmTVqpMzWZ1rtNgKN
+         MPNFLKfPERjj3xOGdUaCOhI+sGi0Vum9hgX/kvVstLFhoQ6riZEsgdcaL6vQU6RnF3Cy
+         7n5yesMiIeUaWC2uqSwykKPLKXCQ9ZnrvrYHdbAzCFKdntYwHb8hw1kZk06sRZRC9bLL
+         Ktj903RsGffGJZ+qtkVlGvTdB9rJzEcW5XY28LVswQef5zhtr8IaKn9GQzHYrOqbSm6m
+         wgCw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arjun Vynipadath <arjun@chelsio.com>,
-	Ganesh Goudar <ganeshgr@chelsio.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Tang Junhui <tang.junhui@zte.com.cn>,
+	Michael Lyle <mlyle@lyle.org>,
+	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 092/168] cxgb4vf: Fix SGE FL buffer initialization logic for 64K pages
-Date: Wed, 11 Apr 2018 00:23:54 +0200
-Message-Id: <20180410212804.168651435@linuxfoundation.org>
+Subject: [PATCH 4.15 074/168] bcache: segregate flash only volume write streams
+Date: Wed, 11 Apr 2018 00:23:36 +0200
+Message-Id: <20180410212803.372546299@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400047926607571?=
-X-GMAIL-MSGID: =?utf-8?q?1597400047926607571?=
+X-GMAIL-THRID: =?utf-8?q?1597400044698557036?=
+X-GMAIL-MSGID: =?utf-8?q?1597400044698557036?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,70 +51,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arjun Vynipadath <arjun@chelsio.com>
+From: Tang Junhui <tang.junhui@zte.com.cn>
 
 
-[ Upstream commit ea0a42109aee7b92e631c4eb3f2219fadf58acdd ]
+[ Upstream commit 4eca1cb28d8b0574ca4f1f48e9331c5f852d43b9 ]
 
-We'd come in with SGE_FL_BUFFER_SIZE[0] and [1] both equal to 64KB and
-the extant logic would flag that as an error. This was already fixed in
-cxgb4 driver with "92ddcc7 cxgb4: Fix some small bugs in
-t4_sge_init_soft() when our Page Size is 64KB".
+In such scenario that there are some flash only volumes
+, and some cached devices, when many tasks request these devices in
+writeback mode, the write IOs may fall to the same bucket as bellow:
+| cached data | flash data | cached data | cached data| flash data|
+then after writeback of these cached devices, the bucket would
+be like bellow bucket:
+| free | flash data | free | free | flash data |
 
-Original Work by: Casey Leedom <leedom@chelsio.com>
-Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+So, there are many free space in this bucket, but since data of flash
+only volumes still exists, so this bucket cannot be reclaimable,
+which would cause waste of bucket space.
+
+In this patch, we segregate flash only volume write streams from
+cached devices, so data from flash only volumes and cached devices
+can store in different buckets.
+
+Compare to v1 patch, this patch do not add a additionally open bucket
+list, and it is try best to segregate flash only volume write streams
+from cached devices, sectors of flash only volumes may still be mixed
+with dirty sectors of cached device, but the number is very small.
+
+[mlyle: fixed commit log formatting, permissions, line endings]
+
+Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4vf/sge.c |   23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ drivers/md/bcache/alloc.c |   19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
-@@ -2619,8 +2619,8 @@ void t4vf_sge_stop(struct adapter *adapt
- int t4vf_sge_init(struct adapter *adapter)
- {
- 	struct sge_params *sge_params = &adapter->params.sge;
--	u32 fl0 = sge_params->sge_fl_buffer_size[0];
--	u32 fl1 = sge_params->sge_fl_buffer_size[1];
-+	u32 fl_small_pg = sge_params->sge_fl_buffer_size[0];
-+	u32 fl_large_pg = sge_params->sge_fl_buffer_size[1];
- 	struct sge *s = &adapter->sge;
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -525,15 +525,21 @@ struct open_bucket {
  
- 	/*
-@@ -2628,9 +2628,20 @@ int t4vf_sge_init(struct adapter *adapte
- 	 * the Physical Function Driver.  Ideally we should be able to deal
- 	 * with _any_ configuration.  Practice is different ...
- 	 */
--	if (fl0 != PAGE_SIZE || (fl1 != 0 && fl1 <= fl0)) {
-+
-+	/* We only bother using the Large Page logic if the Large Page Buffer
-+	 * is larger than our Page Size Buffer.
-+	 */
-+	if (fl_large_pg <= fl_small_pg)
-+		fl_large_pg = 0;
-+
-+	/* The Page Size Buffer must be exactly equal to our Page Size and the
-+	 * Large Page Size Buffer should be 0 (per above) or a power of 2.
-+	 */
-+	if (fl_small_pg != PAGE_SIZE ||
-+	    (fl_large_pg & (fl_large_pg - 1)) != 0) {
- 		dev_err(adapter->pdev_dev, "bad SGE FL buffer sizes [%d, %d]\n",
--			fl0, fl1);
-+			fl_small_pg, fl_large_pg);
- 		return -EINVAL;
- 	}
- 	if ((sge_params->sge_control & RXPKTCPLMODE_F) !=
-@@ -2642,8 +2653,8 @@ int t4vf_sge_init(struct adapter *adapte
- 	/*
- 	 * Now translate the adapter parameters into our internal forms.
- 	 */
--	if (fl1)
--		s->fl_pg_order = ilog2(fl1) - PAGE_SHIFT;
-+	if (fl_large_pg)
-+		s->fl_pg_order = ilog2(fl_large_pg) - PAGE_SHIFT;
- 	s->stat_len = ((sge_params->sge_control & EGRSTATUSPAGESIZE_F)
- 			? 128 : 64);
- 	s->pktshift = PKTSHIFT_G(sge_params->sge_control);
+ /*
+  * We keep multiple buckets open for writes, and try to segregate different
+- * write streams for better cache utilization: first we look for a bucket where
+- * the last write to it was sequential with the current write, and failing that
+- * we look for a bucket that was last used by the same task.
++ * write streams for better cache utilization: first we try to segregate flash
++ * only volume write streams from cached devices, secondly we look for a bucket
++ * where the last write to it was sequential with the current write, and
++ * failing that we look for a bucket that was last used by the same task.
+  *
+  * The ideas is if you've got multiple tasks pulling data into the cache at the
+  * same time, you'll get better cache utilization if you try to segregate their
+  * data and preserve locality.
+  *
+- * For example, say you've starting Firefox at the same time you're copying a
++ * For example, dirty sectors of flash only volume is not reclaimable, if their
++ * dirty sectors mixed with dirty sectors of cached device, such buckets will
++ * be marked as dirty and won't be reclaimed, though the dirty data of cached
++ * device have been written back to backend device.
++ *
++ * And say you've starting Firefox at the same time you're copying a
+  * bunch of files. Firefox will likely end up being fairly hot and stay in the
+  * cache awhile, but the data you copied might not be; if you wrote all that
+  * data to the same buckets it'd get invalidated at the same time.
+@@ -550,7 +556,10 @@ static struct open_bucket *pick_data_buc
+ 	struct open_bucket *ret, *ret_task = NULL;
+ 
+ 	list_for_each_entry_reverse(ret, &c->data_buckets, list)
+-		if (!bkey_cmp(&ret->key, search))
++		if (UUID_FLASH_ONLY(&c->uuids[KEY_INODE(&ret->key)]) !=
++		    UUID_FLASH_ONLY(&c->uuids[KEY_INODE(search)]))
++			continue;
++		else if (!bkey_cmp(&ret->key, search))
+ 			goto found;
+ 		else if (ret->last_write_point == write_point)
+ 			ret_task = ret;
