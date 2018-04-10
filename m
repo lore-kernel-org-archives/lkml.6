@@ -1,85 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752690AbeDJJyA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 05:54:00 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38893 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752487AbeDJJx6 (ORCPT
+        id S1752713AbeDJJzT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 05:55:19 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:42759 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752345AbeDJJzR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:53:58 -0400
-X-Google-Smtp-Source: AIpwx49UVxA1/a9kyGUPUlFopD2k9ki28MyZps8XTcxFaFVHhmZD5avB8fL26PwS27N8rVTTsETzBA==
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javierm@redhat.com>,
-        devicetree@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Nick Dyer <nick@shmanahar.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] Input: atmel_mxt_ts - add missing compatible strings to OF device table
-Date: Tue, 10 Apr 2018 11:53:40 +0200
-Message-Id: <20180410095340.24074-1-javierm@redhat.com>
-X-Mailer: git-send-email 2.14.3
+        Tue, 10 Apr 2018 05:55:17 -0400
+X-Google-Smtp-Source: AIpwx487KXMCBTVqt2FAcZwl04itJ6djJweppiIUY5T3uFbh6vmmkG14fhoe8k5QBNz1I8o6B6gC7+4QQYPo99FrnfU=
+MIME-Version: 1.0
+In-Reply-To: <20180405162006.GA2199@embeddedor.com>
+References: <20180405162006.GA2199@embeddedor.com>
+From: Xue Liu <liuxuenetmail@gmail.com>
+Date: Tue, 10 Apr 2018 11:54:36 +0200
+Message-ID: <CAJuUDwtUUv_nMEwijRydWmseL1aYOAoAfEdLVnoHWPWKdVgS-A@mail.gmail.com>
+Subject: Re: [PATCH] ieee802154: mcr20a: Fix memory leak in mcr20a_probe
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Alexander Aring <alex.aring@gmail.com>,
+        Stefan Schmidt <stefan@osg.samsung.com>,
+        linux-wpan - ML <linux-wpan@vger.kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit af503716ac14 ("i2c: core: report OF style module alias for devices
-registered via OF") fixed how the I2C core reports the module alias when
-devices are registered via OF.
+Hallo,
 
-But the atmel_mxt_ts driver only has an "atmel,maxtouch" compatible in its
-OF device ID table, so if a Device Tree is using a different one, autoload
-won't be working for the module (the matching works because the I2C device
-ID table is used as a fallback).
+Thanks for the fix. It looks good.
 
-So add compatible strings for each of the entries in the I2C device table.
+ACK-by: Xue Liu <liuxuenetmail@gmail.com>
 
-Fixes: af503716ac14 ("i2c: core: report OF style module alias for devices registered via OF")
-Reported-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
----
-
- Documentation/devicetree/bindings/input/atmel,maxtouch.txt | 6 +++++-
- drivers/input/touchscreen/atmel_mxt_ts.c                   | 4 ++++
- 2 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-index 23e3abc3fdef..cd43fb8bc2ce 100644
---- a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-+++ b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-@@ -1,8 +1,12 @@
- Atmel maXTouch touchscreen/touchpad
- 
- Required properties:
--- compatible:
-+- compatible: Must be one of the following
-+    atmel,qt602240_ts
-+    atmel,atmel_mxt_ts
-+    atmel,atmel_mxt_tp
-     atmel,maxtouch
-+    atmel,mXT224
- 
- - reg: The I2C address of the device
- 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index 7659bc48f1db..e8ef83f168d6 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -3238,7 +3238,11 @@ static int __maybe_unused mxt_resume(struct device *dev)
- static SIMPLE_DEV_PM_OPS(mxt_pm_ops, mxt_suspend, mxt_resume);
- 
- static const struct of_device_id mxt_of_match[] = {
-+	{ .compatible = "atmel,qt602240_ts", },
-+	{ .compatible = "atmel,atmel_mxt_ts", },
-+	{ .compatible = "atmel,atmel_mxt_tp", },
- 	{ .compatible = "atmel,maxtouch", },
-+	{ .compatible = "atmel,mXT224", },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, mxt_of_match);
--- 
-2.14.3
+On 5 April 2018 at 18:20, Gustavo A. R. Silva <gustavo@embeddedor.com> wrote:
+> Free allocated memory for pdata before return.
+>
+> Addresses-Coverity-ID: 1466096 ("Resource leak")
+> Fixes: 8c6ad9cc5157 ("ieee802154: Add NXP MCR20A IEEE 802.15.4 transceiver driver")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/net/ieee802154/mcr20a.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/net/ieee802154/mcr20a.c b/drivers/net/ieee802154/mcr20a.c
+> index 55a22c7..944470d 100644
+> --- a/drivers/net/ieee802154/mcr20a.c
+> +++ b/drivers/net/ieee802154/mcr20a.c
+> @@ -1267,7 +1267,7 @@ mcr20a_probe(struct spi_device *spi)
+>         ret = mcr20a_get_platform_data(spi, pdata);
+>         if (ret < 0) {
+>                 dev_crit(&spi->dev, "mcr20a_get_platform_data failed.\n");
+> -               return ret;
+> +               goto free_pdata;
+>         }
+>
+>         /* init reset gpio */
+> @@ -1275,7 +1275,7 @@ mcr20a_probe(struct spi_device *spi)
+>                 ret = devm_gpio_request_one(&spi->dev, pdata->rst_gpio,
+>                                             GPIOF_OUT_INIT_HIGH, "reset");
+>                 if (ret)
+> -                       return ret;
+> +                       goto free_pdata;
+>         }
+>
+>         /* reset mcr20a */
+> @@ -1291,7 +1291,8 @@ mcr20a_probe(struct spi_device *spi)
+>         hw = ieee802154_alloc_hw(sizeof(*lp), &mcr20a_hw_ops);
+>         if (!hw) {
+>                 dev_crit(&spi->dev, "ieee802154_alloc_hw failed\n");
+> -               return -ENOMEM;
+> +               ret = -ENOMEM;
+> +               goto free_pdata;
+>         }
+>
+>         /* init mcr20a local data */
+> @@ -1366,6 +1367,8 @@ mcr20a_probe(struct spi_device *spi)
+>
+>  free_dev:
+>         ieee802154_free_hw(lp->hw);
+> +free_pdata:
+> +       kfree(pdata);
+>
+>         return ret;
+>  }
+> --
+> 2.7.4
+>
