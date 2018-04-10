@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49P3OdNuRF9Lqf8jxz89xBDnLip2URO5hkqKj4BmFpOtZ4czG4TsABqmF3xNa9Mtdsz92LP
-ARC-Seal: i=1; a=rsa-sha256; t=1523399308; cv=none;
+X-Google-Smtp-Source: AIpwx4+VARpUT0woivenUjHZ9Jo/IoGcrlNK9AZbx8EdAlu9xYOZJMfTcPtD5t5oDcgdMDdyu+i6
+ARC-Seal: i=1; a=rsa-sha256; t=1523399305; cv=none;
         d=google.com; s=arc-20160816;
-        b=tIoWmp1WX9E3byQW3GSR9BbZPJ5W+nAV9p0vPKKkg1koTp7X/LIcZlviJzBNYhxdon
-         ZVAi2LJJB22LvysxkrTlIGOAJky7/CiAbzq8XTDNpK/cGAFMbXwnvfFBNcWAEjqYT+c3
-         F/Y28deHkBZW1AO94vlkCO978RWn3hp+6OpaXX55l3vKMhnzE607egv58SaCacw6M5Nc
-         AZYeS3G+gz+9Ox5XNYwXN9XM1pVC7CattQ4gZVGTDrf/0R/0WqlqAfwVNarZ5PKj5dTw
-         l5AhSuMu0QKN/V9rFCX909ZyCJxO16K2Md1VgaJ3YrXmrhWV/7hrr+mLxDD1kRFJOl1n
-         5AkA==
+        b=LolL7m7BsrFuUpGRvKwNbSG1B8zRV25oxcduSHxVvygMzQ2EACEd4QFYDPykQt1TO/
+         Q1sHtmINMszauGG6WkWBWuQEM4504g50PqZGqTYbS9N5a1coFXSlcL/WK831gCrHUsY6
+         up1u1t+NTqoXFP0Wg6hFYc+9FOK65c2wAnD2pM9fyyAOsj4OMLYacVqBxcpT+ELj1UL5
+         c62FPzRNQqVbKCHa/JOoQ8SJuxruIaxQ6HM1MkVGXglT+xlTDZilLrArovy3vD8msiZp
+         rsGmrCB2jQJJxyEMybyOoDetjpxFRpWGuD+XB2dE9jRlMmE95YRynP+O3ESsX7JG+zAv
+         ffew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=S17tD0Vy9p55V3yZd37sBmm/l94gRsI0hcxuTFa47iE=;
-        b=r8pUZIV8qsbzTpKebRp8E41GV4EyTpAe7fWHd7E4Ci58VVVQzdreARod7G8VeMG9hP
-         8yHRF83OQC5GVF8dtOI9/FPM040/+fZmGbcDFAvePufrJLmiWOErnO9r2xgECQm9b7uh
-         TmejWqj+tvmXYvoXaK/8VOxMEEUQ0j/+fcRyPmrMIwfDXUAgSJ0LAxG3gisia/l1m2kp
-         7nhvT/nb510iC0y+tkhce7hzwjAohSioGJeKY4rQeGhIzW27vAdLrE07i+VyHp+QKufE
-         wnDAFJISlbouuKS5skzSNr2UhY1wyu8a2VABF7wAE7PVkgk7n8LeIe2R9NUqyw5QLfXH
-         khjQ==
+        bh=SCCEChsNrRSBiLYczgKdoUMY6cUdf1Y77rVnFREiXvw=;
+        b=Bj0R9JZLl3VcNX618wfqlTf10qkJM1qcNPmZvxBQabWc2oWmm/tw86rXSPOYOQ6RoD
+         BzgT4H+6Eb82nVY8gpEQaJbVuQhRt3Ldu9/2LcgJebTgozBTna0JyLCZzGEknLe5B+g5
+         FeNo1kAaoJLsqc4lLljoNRjiAy7t9cqjcw2accNsVO+XZocSD/u+Z5nBB0gxvU+ngLqW
+         qAWLfA2MG7n2IhO2IKKk4OxJ+KBXMkHPnqj6a81H0CBnvj5In5+x4JtwtaNPQkbEDRPe
+         yV6eX5UK3kJgzEPuHqDkLjIBads01U+nxdKbjssdmqi4xI9HUmHhRgDS9gIQjM+oaE5W
+         pgXQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Maciej Purski <m.purski@samsung.com>,
-	Guenter Roeck <linux@roeck-us.net>,
+	Lijun Ou <oulijun@huawei.com>,
+	Yixian Liu <liuyixian@huawei.com>,
+	"Wei Hu (Xavier)" <xavier.huwei@huawei.com>,
+	Leon Romanovsky <leonro@mellanox.com>,
+	Jason Gunthorpe <jgg@mellanox.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 030/168] hwmon: (ina2xx) Make calibration register value fixed
-Date: Wed, 11 Apr 2018 00:22:52 +0200
-Message-Id: <20180410212801.483084083@linuxfoundation.org>
+Subject: [PATCH 4.15 039/168] RDMA/hns: Update the usage of sr_max and rr_max field
+Date: Wed, 11 Apr 2018 00:23:01 +0200
+Message-Id: <20180410212801.854640922@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399952621184160?=
-X-GMAIL-MSGID: =?utf-8?q?1597399952621184160?=
+X-GMAIL-THRID: =?utf-8?q?1597399950157696347?=
+X-GMAIL-MSGID: =?utf-8?q?1597399950157696347?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,212 +53,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Maciej Purski <m.purski@samsung.com>
+From: oulijun <oulijun@huawei.com>
 
 
-[ Upstream commit 5d389b125186cf254ad5b8015763ac07c151aea4 ]
+[ Upstream commit 4f3f7a704b3bff9e4eb322ab3c989b505f7562eb ]
 
-Calibration register is used for calculating current register in
-hardware according to datasheet:
-current = shunt_volt * calib_register / 2048 (ina 226)
-current = shunt_volt * calib_register / 4096 (ina 219)
+This patch fixes the usage with sr_max filed and rr_max of qp
+context when modify qp. Its modifications include:
+1. Adjust location of filling sr_max filed of qpc
+2. Only assign the number of responder resource if
+   IB_QP_MAX_DEST_RD_ATOMIC bit is set
+3. Only assign the number of outstanding resource if
+   IB_QP_MAX_QP_RD_ATOMIC
+4. Fix the assgin algorithms for the field of sr_max
+   and rr_max of qp context
 
-Fix calib_register value to 2048 for ina226 and 4096 for ina 219 in
-order to avoid truncation error and provide best precision allowed
-by shunt_voltage measurement. Make current scale value follow changes
-of shunt_resistor from sysfs as calib_register value is now fixed.
-
-Power_lsb value should also follow shunt_resistor changes as stated in
-datasheet:
-power_lsb = 25 * current_lsb (ina 226)
-power_lsb = 20 * current_lsb (ina 219)
-
-Signed-off-by: Maciej Purski <m.purski@samsung.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Lijun Ou <oulijun@huawei.com>
+Signed-off-by: Yixian Liu <liuyixian@huawei.com>
+Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwmon/ina2xx.c |   87 ++++++++++++++++++++++++++++---------------------
- 1 file changed, 50 insertions(+), 37 deletions(-)
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c |   27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
 
---- a/drivers/hwmon/ina2xx.c
-+++ b/drivers/hwmon/ina2xx.c
-@@ -95,18 +95,20 @@ enum ina2xx_ids { ina219, ina226 };
- 
- struct ina2xx_config {
- 	u16 config_default;
--	int calibration_factor;
-+	int calibration_value;
- 	int registers;
- 	int shunt_div;
- 	int bus_voltage_shift;
- 	int bus_voltage_lsb;	/* uV */
--	int power_lsb;		/* uW */
-+	int power_lsb_factor;
- };
- 
- struct ina2xx_data {
- 	const struct ina2xx_config *config;
- 
- 	long rshunt;
-+	long current_lsb_uA;
-+	long power_lsb_uW;
- 	struct mutex config_lock;
- 	struct regmap *regmap;
- 
-@@ -116,21 +118,21 @@ struct ina2xx_data {
- static const struct ina2xx_config ina2xx_config[] = {
- 	[ina219] = {
- 		.config_default = INA219_CONFIG_DEFAULT,
--		.calibration_factor = 40960000,
-+		.calibration_value = 4096,
- 		.registers = INA219_REGISTERS,
- 		.shunt_div = 100,
- 		.bus_voltage_shift = 3,
- 		.bus_voltage_lsb = 4000,
--		.power_lsb = 20000,
-+		.power_lsb_factor = 20,
- 	},
- 	[ina226] = {
- 		.config_default = INA226_CONFIG_DEFAULT,
--		.calibration_factor = 5120000,
-+		.calibration_value = 2048,
- 		.registers = INA226_REGISTERS,
- 		.shunt_div = 400,
- 		.bus_voltage_shift = 0,
- 		.bus_voltage_lsb = 1250,
--		.power_lsb = 25000,
-+		.power_lsb_factor = 25,
- 	},
- };
- 
-@@ -169,12 +171,16 @@ static u16 ina226_interval_to_reg(int in
- 	return INA226_SHIFT_AVG(avg_bits);
- }
- 
-+/*
-+ * Calibration register is set to the best value, which eliminates
-+ * truncation errors on calculating current register in hardware.
-+ * According to datasheet (eq. 3) the best values are 2048 for
-+ * ina226 and 4096 for ina219. They are hardcoded as calibration_value.
-+ */
- static int ina2xx_calibrate(struct ina2xx_data *data)
- {
--	u16 val = DIV_ROUND_CLOSEST(data->config->calibration_factor,
--				    data->rshunt);
--
--	return regmap_write(data->regmap, INA2XX_CALIBRATION, val);
-+	return regmap_write(data->regmap, INA2XX_CALIBRATION,
-+			    data->config->calibration_value);
- }
- 
- /*
-@@ -187,10 +193,6 @@ static int ina2xx_init(struct ina2xx_dat
- 	if (ret < 0)
- 		return ret;
- 
--	/*
--	 * Set current LSB to 1mA, shunt is in uOhms
--	 * (equation 13 in datasheet).
--	 */
- 	return ina2xx_calibrate(data);
- }
- 
-@@ -268,15 +270,15 @@ static int ina2xx_get_value(struct ina2x
- 		val = DIV_ROUND_CLOSEST(val, 1000);
- 		break;
- 	case INA2XX_POWER:
--		val = regval * data->config->power_lsb;
-+		val = regval * data->power_lsb_uW;
- 		break;
- 	case INA2XX_CURRENT:
--		/* signed register, LSB=1mA (selected), in mA */
--		val = (s16)regval;
-+		/* signed register, result in mA */
-+		val = regval * data->current_lsb_uA;
-+		val = DIV_ROUND_CLOSEST(val, 1000);
- 		break;
- 	case INA2XX_CALIBRATION:
--		val = DIV_ROUND_CLOSEST(data->config->calibration_factor,
--					regval);
-+		val = regval;
- 		break;
- 	default:
- 		/* programmer goofed */
-@@ -304,9 +306,32 @@ static ssize_t ina2xx_show_value(struct
- 			ina2xx_get_value(data, attr->index, regval));
- }
- 
--static ssize_t ina2xx_set_shunt(struct device *dev,
--				struct device_attribute *da,
--				const char *buf, size_t count)
-+/*
-+ * In order to keep calibration register value fixed, the product
-+ * of current_lsb and shunt_resistor should also be fixed and equal
-+ * to shunt_voltage_lsb = 1 / shunt_div multiplied by 10^9 in order
-+ * to keep the scale.
-+ */
-+static int ina2xx_set_shunt(struct ina2xx_data *data, long val)
-+{
-+	unsigned int dividend = DIV_ROUND_CLOSEST(1000000000,
-+						  data->config->shunt_div);
-+	if (val <= 0 || val > dividend)
-+		return -EINVAL;
-+
-+	mutex_lock(&data->config_lock);
-+	data->rshunt = val;
-+	data->current_lsb_uA = DIV_ROUND_CLOSEST(dividend, val);
-+	data->power_lsb_uW = data->config->power_lsb_factor *
-+			     data->current_lsb_uA;
-+	mutex_unlock(&data->config_lock);
-+
-+	return 0;
-+}
-+
-+static ssize_t ina2xx_store_shunt(struct device *dev,
-+				  struct device_attribute *da,
-+				  const char *buf, size_t count)
- {
- 	unsigned long val;
- 	int status;
-@@ -316,18 +341,9 @@ static ssize_t ina2xx_set_shunt(struct d
- 	if (status < 0)
- 		return status;
- 
--	if (val == 0 ||
--	    /* Values greater than the calibration factor make no sense. */
--	    val > data->config->calibration_factor)
--		return -EINVAL;
--
--	mutex_lock(&data->config_lock);
--	data->rshunt = val;
--	status = ina2xx_calibrate(data);
--	mutex_unlock(&data->config_lock);
-+	status = ina2xx_set_shunt(data, val);
- 	if (status < 0)
- 		return status;
--
- 	return count;
- }
- 
-@@ -387,7 +403,7 @@ static SENSOR_DEVICE_ATTR(power1_input,
- 
- /* shunt resistance */
- static SENSOR_DEVICE_ATTR(shunt_resistor, S_IRUGO | S_IWUSR,
--			  ina2xx_show_value, ina2xx_set_shunt,
-+			  ina2xx_show_value, ina2xx_store_shunt,
- 			  INA2XX_CALIBRATION);
- 
- /* update interval (ina226 only) */
-@@ -448,10 +464,7 @@ static int ina2xx_probe(struct i2c_clien
- 			val = INA2XX_RSHUNT_DEFAULT;
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -2463,11 +2463,14 @@ static int modify_qp_init_to_rtr(struct
+ 		roce_set_bit(qpc_mask->byte_28_at_fl, V2_QPC_BYTE_28_LBI_S, 0);
  	}
  
--	if (val <= 0 || val > data->config->calibration_factor)
--		return -ENODEV;
--
--	data->rshunt = val;
-+	ina2xx_set_shunt(data, val);
+-	roce_set_field(context->byte_140_raq, V2_QPC_BYTE_140_RR_MAX_M,
+-		       V2_QPC_BYTE_140_RR_MAX_S,
+-		       ilog2((unsigned int)attr->max_dest_rd_atomic));
+-	roce_set_field(qpc_mask->byte_140_raq, V2_QPC_BYTE_140_RR_MAX_M,
+-		       V2_QPC_BYTE_140_RR_MAX_S, 0);
++	if ((attr_mask & IB_QP_MAX_DEST_RD_ATOMIC) &&
++	     attr->max_dest_rd_atomic) {
++		roce_set_field(context->byte_140_raq, V2_QPC_BYTE_140_RR_MAX_M,
++			       V2_QPC_BYTE_140_RR_MAX_S,
++			       fls(attr->max_dest_rd_atomic - 1));
++		roce_set_field(qpc_mask->byte_140_raq, V2_QPC_BYTE_140_RR_MAX_M,
++			       V2_QPC_BYTE_140_RR_MAX_S, 0);
++	}
  
- 	ina2xx_regmap_config.max_register = data->config->registers;
+ 	roce_set_field(context->byte_56_dqpn_err, V2_QPC_BYTE_56_DQPN_M,
+ 		       V2_QPC_BYTE_56_DQPN_S, attr->dest_qp_num);
+@@ -2557,12 +2560,6 @@ static int modify_qp_init_to_rtr(struct
+ 		       V2_QPC_BYTE_168_LP_SGEN_INI_M,
+ 		       V2_QPC_BYTE_168_LP_SGEN_INI_S, 0);
+ 
+-	roce_set_field(context->byte_208_irrl, V2_QPC_BYTE_208_SR_MAX_M,
+-		       V2_QPC_BYTE_208_SR_MAX_S,
+-		       ilog2((unsigned int)attr->max_rd_atomic));
+-	roce_set_field(qpc_mask->byte_208_irrl, V2_QPC_BYTE_208_SR_MAX_M,
+-		       V2_QPC_BYTE_208_SR_MAX_S, 0);
+-
+ 	roce_set_field(context->byte_28_at_fl, V2_QPC_BYTE_28_SL_M,
+ 		       V2_QPC_BYTE_28_SL_S, rdma_ah_get_sl(&attr->ah_attr));
+ 	roce_set_field(qpc_mask->byte_28_at_fl, V2_QPC_BYTE_28_SL_M,
+@@ -2766,6 +2763,14 @@ static int modify_qp_rtr_to_rts(struct i
+ 	roce_set_field(qpc_mask->byte_196_sq_psn, V2_QPC_BYTE_196_SQ_MAX_PSN_M,
+ 		       V2_QPC_BYTE_196_SQ_MAX_PSN_S, 0);
+ 
++	if ((attr_mask & IB_QP_MAX_QP_RD_ATOMIC) && attr->max_rd_atomic) {
++		roce_set_field(context->byte_208_irrl, V2_QPC_BYTE_208_SR_MAX_M,
++			       V2_QPC_BYTE_208_SR_MAX_S,
++			       fls(attr->max_rd_atomic - 1));
++		roce_set_field(qpc_mask->byte_208_irrl,
++			       V2_QPC_BYTE_208_SR_MAX_M,
++			       V2_QPC_BYTE_208_SR_MAX_S, 0);
++	}
+ 	return 0;
+ }
  
