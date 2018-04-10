@@ -1,37 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752539AbeDJIoS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:44:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48134 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752474AbeDJIoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:44:17 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20180403132713.cffx5mpfrnwuokeh@wfg-t540p.sh.intel.com>
-References: <20180403132713.cffx5mpfrnwuokeh@wfg-t540p.sh.intel.com> <201804021242.NgXgixG7%fengguang.wu@intel.com> <152261524532.30503.16094079179209557382.stgit@warthog.procyon.org.uk> <18231.1522761410@warthog.procyon.org.uk>
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: dhowells@redhat.com, kbuild test robot <lkp@intel.com>,
-        kbuild-all@01.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/45] C++: Set compilation as C++ for .c files
+        id S1752638AbeDJIpU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 04:45:20 -0400
+Received: from smtp03.citrix.com ([162.221.156.55]:28561 "EHLO
+        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751966AbeDJIpR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 04:45:17 -0400
+X-IronPort-AV: E=Sophos;i="5.48,431,1517875200";
+   d="scan'208";a="51099963"
+Date: Tue, 10 Apr 2018 09:35:44 +0100
+From: Wei Liu <wei.liu2@citrix.com>
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+CC: <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>,
+        <jgross@suse.com>, Wei Liu <wei.liu2@citrix.com>
+Subject: Re: [Xen-devel] [PATCH] xen/pvh: Indicate
+ XENFEAT_linux_rsdp_unrestricted to Xen
+Message-ID: <20180410083544.q54rapngqie4ler3@citrix.com>
+References: <1523299904-18199-1-git-send-email-boris.ostrovsky@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <19627.1523349854.1@warthog.procyon.org.uk>
-Date: Tue, 10 Apr 2018 09:44:14 +0100
-Message-ID: <19628.1523349854@warthog.procyon.org.uk>
+Content-Disposition: inline
+In-Reply-To: <1523299904-18199-1-git-send-email-boris.ostrovsky@oracle.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fengguang,
+On Mon, Apr 09, 2018 at 02:51:44PM -0400, Boris Ostrovsky wrote:
+> Pre-4.17 kernels ignored start_info's rsdp_paddr pointer and instead
+> relied on finding RSDP in standard location in BIOS RO memory. This
+> has worked since that's where Xen used to place it.
+> 
+> However, with recent Xen change (commit 4a5733771e6f ("libxl: put RSDP
+> for PVH guest near 4GB")) it prefers to keep RSDP at a "non-standard"
+> address. Even though as of commit b17d9d1df3c3 ("x86/xen: Add pvh
+> specific rsdp address retrieval function") Linux is able to find RSDP,
+> for back-compatibility reasons we need to indicate to Xen that we can
+> handle this, an we do so by setting XENFEAT_linux_rsdp_unrestricted
+> flag in ELF notes.
+> 
+> (Also take this opportunity and sync features.h header file with Xen)
+> 
+> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-There's another kbuild test that's probably worth adding if you don't do it
-already: create a c++ source file that just #includes all the exported UAPI
-headers and then try to build it.  This should catch words like "private"
-cropping up in structs.
-
-Thanks,
-David
+Reviewed-by: Wei Liu <wei.liu2@citrix.com>
