@@ -1,137 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752505AbeDJS4Q (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 14:56:16 -0400
-Received: from mail-cys01nam02on0051.outbound.protection.outlook.com ([104.47.37.51]:31264
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751600AbeDJS4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 14:56:15 -0400
-From: Deepak Singh Rawat <drawat@vmware.com>
-To: Lukasz Spintzyk <lukasz.spintzyk@displaylink.com>
-CC: "airlied@linux.ie" <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-graphics-maintainer <linux-graphics-maintainer@vmware.com>,
-        "robdclark@gmail.com" <robdclark@gmail.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Sinclair Yeh <syeh@vmware.com>
-Subject: RE: [RFC 0/3] drm: page-flip with damage
-Thread-Topic: [RFC 0/3] drm: page-flip with damage
-Thread-Index: AQHTzG/KwKs3+5anc0ah+4EEcE3MZaP5reKAgACyU8A=
-Date: Tue, 10 Apr 2018 18:56:12 +0000
-Message-ID: <SN6PR05MB39502480F2F2F8CA12A45848BABE0@SN6PR05MB3950.namprd05.prod.outlook.com>
-References: <1522885748-67122-1-git-send-email-drawat@vmware.com>
- <5f3e1c8a-d2b9-41f9-46f6-2b7f8c736de8@displaylink.com>
-In-Reply-To: <5f3e1c8a-d2b9-41f9-46f6-2b7f8c736de8@displaylink.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=drawat@vmware.com;
-x-originating-ip: [66.170.99.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR05MB4030;7:uy2i/Iy77a0ly3yx6328fAmXAfBAPcP+pv++3NrL9YoiunQcQxjt3jPPWbIlq6atMio1Urzo1Pzbxd007slp64ggMx9C/T70nWxy9wiJgf+Hab7RuqYJasc1SLDlsV8eUc7OhdktPHWVcm4R1Z0bunGEtlbzZio0Sz7CuAATENrShYc6RP0IXE+gznDW9krBqp0M9+l8xdUi+xcepoqSyDixsT7bb89daaX6XUEiJALL7vcY6AZk7GZRvlBLm9tu;20:MnLg5mNEcugYZ1I8lWZENctNKKVEXX3QTUhDo7gyZNfO9AB+h1LNnN4S4Wu2CmDQVTdZ6WZOIRhNhX409zHfg6WGW4qNihQGdm8G/6rp5154eJrsS0RirUmfLkKqmvh3W1sVOW34QtE8KHYOlZEWtS2Z7w0gOyOj/IYUo4T5VsI=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-X-MS-Office365-Filtering-Correlation-Id: bf827fd0-bc21-4ee7-aef4-08d59f14bae6
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:SN6PR05MB4030;
-x-ms-traffictypediagnostic: SN6PR05MB4030:
-x-ld-processed: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0,ExtAddr
-x-microsoft-antispam-prvs: <SN6PR05MB4030FCB7C6E1DF388F9B8C3DBABE0@SN6PR05MB4030.namprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231221)(944501327)(52105095)(93006095)(93001095)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:SN6PR05MB4030;BCL:0;PCL:0;RULEID:;SRVR:SN6PR05MB4030;
-x-forefront-prvs: 0638FD5066
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(39380400002)(346002)(396003)(376002)(53754006)(199004)(189003)(99286004)(6436002)(55016002)(68736007)(53936002)(54906003)(316002)(6916009)(2900100001)(9686003)(3846002)(5250100002)(476003)(6116002)(3280700002)(3660700001)(5890100001)(59450400001)(11346002)(6506007)(102836004)(105586002)(446003)(106356001)(81166006)(8676002)(81156014)(2906002)(14454004)(8936002)(6246003)(7696005)(76176011)(478600001)(97736004)(86362001)(66066001)(74316002)(7736002)(229853002)(25786009)(26005)(305945005)(486006)(186003)(39060400002)(4326008)(33656002)(107886003)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR05MB4030;H:SN6PR05MB3950.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: XDnhDzh8zrlDpmkkBTaDRELq9m30k6kMpsbhnMsWw7djrTfXn5/f7IeeA8UIQOIkuVJGmYpUBMTw7vTIlk5hegm2oRh7tiA1ZEQkGD1OxRIrAHpIMyUie6KQy1U3ajk1GupPnfZ7UTh2YsQrREcV2PAyLdKsEr0k7VpZFavBPU3QCs04fCXwvveT8DOMfG9afoGy63RNZ5G1yMzaCrvFtT4n6htwmE8zshsUynnyZX9/KChoNxZm2Adwq6R2tARaYP1KW2zMnK5NwL14rgphWOuL+EpMmNf9vuJ55TNY2ThSxHQ8JUNaqWPDfGHGoxXTvKg3olWY6bYHloUBjpUW/gcxvwagT24Fq8VN502zr65Qp22mLWuoJGmwI2x7uSX77doKu1UdaM5Trm3ObWWj1dLiaqDUWpYRko3oWog8SZE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1752552AbeDJS6Q (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 14:58:16 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35310 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751629AbeDJS6O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 14:58:14 -0400
+X-Google-Smtp-Source: AIpwx4/UiHgK9Nefr70+6xPHJvjvDiifoVf1rUb4m4CSNSw9wv93lIHz2hgX95JWqLrtAzAwfx+1AA==
+Date: Tue, 10 Apr 2018 11:58:54 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Niklas Cassel <niklas.cassel@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] firmware: qcom: scm: Fix crash in qcom_scm_call_atomic1()
+Message-ID: <20180410185854.GB23948@tuxbook-pro>
+References: <20180409214016.21219-1-niklas.cassel@linaro.org>
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf827fd0-bc21-4ee7-aef4-08d59f14bae6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Apr 2018 18:56:12.5229
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR05MB4030
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409214016.21219-1-niklas.cassel@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3AIuLjW020657
 
->Hi,
->
->Many thanks that you have picked it up.
->Unfortunately I didn't had time to work on it for a while.
->
->I am ok with what you have done, ihmo the review is going in good direction.
->I will try not to miss your update of it.
->From my side I can say that damage rects with frame-buffer coordinates are perfectly fine for DisplayLink case.
->
->Btw I have noticed that there is also a patch from Rob Clark that is supplying helper for legacy dirtyfb callback.
->Maybe we should unify the naming of the rects. Here we have "damage_clips", Clark's patch has 'dirty_rects' notion.
->On other hand existing legacy dirtyfb callback in drm_framebuffer_funcs is also using 'clip_rects' :).
+On Mon 09 Apr 14:40 PDT 2018, Niklas Cassel wrote:
 
-The reason to name it damage is inspired by eglSwapBuffersWithDamageKHR
-which user-space will be calling before submitting a page-flip. So it makes naming
-consistent and in sync with user-space.
+> qcom_scm_call_atomic1() can crash with a NULL pointer dereference at
+> qcom_scm_call_atomic1+0x30/0x48.
+> 
+> disassembly of qcom_scm_call_atomic1():
+> ...
+> <0xc08d73b0 <+12>: ldr r3, [r12]
+> ... (no instruction explicitly modifies r12)
+> 0xc08d73cc <+40>: smc 0
+> ... (no instruction explicitly modifies r12)
+> 0xc08d73d4 <+48>: ldr r3, [r12] <- crashing instruction
+> ...
+> 
+> Since the first ldr is successful, and since r12 isn't explicitly
+> modified by any instruction between the first and the second ldr,
+> it must have been modified by the smc call, which is ok,
+> since r12 is caller save according to the AAPCS.
+> 
+> Add r12 to the clobber list so that the compiler knows that the
+> callee potentially overwrites the value in r12.
+> Clobber descriptions may not in any way overlap with an input or
+> output operand.
+> 
 
->
->Thanks
->
->Łukasz Spintzyk
->
->On 05/04/2018 01:49, Deepak Rawat wrote:
->Hi All,
->
->This is extension to Lukasz Spintzyk earlier draft of damage interface for drm.
->Bascially a new plane property is added called "DAMAGE_CLIPS" which is simply
->an array of drm_rect (exported to userspace as drm_mode_rect). The clips
->represents damage in framebuffer coordinate of attached fb to the plane.
->
->Helper iterator is added to traverse the damage rectangles and get the damage
->clips in framebuffer, plane or crtc coordinates as need by driver
->implementation. Finally a helper to reset damage in case need full update is
->required. Drivers interested in page-flip with damage should call this from
->atomic_check hook.
->
->With the RFC for atomic implementation of dirtyfb ioctl I was thinking
->should we need to consider dirty_fb flags, especially
->DRM_MODE_FB_DIRTY_ANNOTATE_COPY to be passed with atomic
->DAMAGE_CLIPS property blob? I didn't considered that untill now. If no driver
->uses that in my opinion for simplicity this can be ignored?
->
->About overlaping of damage rectangles is also not finalized. This really
->depends on driver specific implementation and can be left open-ended?
->
->My knowledge is limited to vmwgfx so would like to hear about other driver use
->cases and this can be modified in keeping other drivers need.
->
->Going forward driver implementation for vmwgfx and user-space implementation
->of kmscube/weston will be next step to test the changes.
->
->Thanks,
->Deepak
->
->Deepak Rawat (2):
->drm: Add helper iterator functions to iterate over plane damage.
->drm: Add helper to validate damage during modeset_check
->
->Lukasz Spintzyk (1):
->drm: Add DAMAGE_CLIPS property to plane
->
->drivers/gpu/drm/drm_atomic.c | 42 +++++++++
->drivers/gpu/drm/drm_atomic_helper.c | 173 ++++++++++++++++++++++++++++++++++++
->drivers/gpu/drm/drm_mode_config.c | 5 ++
->drivers/gpu/drm/drm_plane.c | 12 +++
->include/drm/drm_atomic_helper.h | 41 +++++++++
->include/drm/drm_mode_config.h | 15 ++++
->include/drm/drm_plane.h | 16 ++++
->include/uapi/drm/drm_mode.h | 15 ++++
->8 files changed, 319 insertions(+)
->
->-- 
->2.7.4
->
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> ---
+>  drivers/firmware/qcom_scm-32.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/firmware/qcom_scm-32.c b/drivers/firmware/qcom_scm-32.c
+> index dfbd894d5bb7..4e24e591ae74 100644
+> --- a/drivers/firmware/qcom_scm-32.c
+> +++ b/drivers/firmware/qcom_scm-32.c
+> @@ -147,7 +147,7 @@ static u32 smc(u32 cmd_addr)
+>  			"smc	#0	@ switch to secure world\n"
+>  			: "=r" (r0)
+>  			: "r" (r0), "r" (r1), "r" (r2)
+> -			: "r3");
+> +			: "r3", "r12");
+>  	} while (r0 == QCOM_SCM_INTERRUPTED);
+>  
+>  	return r0;
+> @@ -263,7 +263,7 @@ static s32 qcom_scm_call_atomic1(u32 svc, u32 cmd, u32 arg1)
+>  			"smc    #0      @ switch to secure world\n"
+>  			: "=r" (r0)
+>  			: "r" (r0), "r" (r1), "r" (r2)
+> -			: "r3");
+> +			: "r3", "r12");
+>  	return r0;
+>  }
+>  
+> @@ -298,7 +298,7 @@ static s32 qcom_scm_call_atomic2(u32 svc, u32 cmd, u32 arg1, u32 arg2)
+>  			"smc    #0      @ switch to secure world\n"
+>  			: "=r" (r0)
+>  			: "r" (r0), "r" (r1), "r" (r2), "r" (r3)
+> -			);
+> +			: "r12");
+>  	return r0;
+>  }
+>  
+> @@ -328,7 +328,7 @@ u32 qcom_scm_get_version(void)
+>  			"smc	#0	@ switch to secure world\n"
+>  			: "=r" (r0), "=r" (r1)
+>  			: "r" (r0), "r" (r1)
+> -			: "r2", "r3");
+> +			: "r2", "r3", "r12");
+>  	} while (r0 == QCOM_SCM_INTERRUPTED);
+>  
+>  	version = r1;
+> -- 
+> 2.14.3
+> 
