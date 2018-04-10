@@ -1,133 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752137AbeDJHXG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 03:23:06 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7165 "EHLO huawei.com"
+        id S1752172AbeDJH0B (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 03:26:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42390 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751794AbeDJHXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 03:23:04 -0400
-Subject: Re: [PATCH] f2fs: enlarge block plug coverage
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20180404085404.82184-1-yuchao0@huawei.com>
- <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
- <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
- <20180409180241.GC17558@jaegeuk-macbookpro.roam.corp.google.com>
- <967b8819-da9a-b609-6a22-db8df5c7ec6c@huawei.com>
- <20180410041033.GE47598@jaegeuk-macbookpro.roam.corp.google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <ff3990f2-5785-045e-30c5-62a9f8352d74@huawei.com>
-Date: Tue, 10 Apr 2018 15:22:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1751490AbeDJH0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 03:26:00 -0400
+Subject: Re: [RFC] vhost: introduce mdev based hardware vhost backend
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: mst@redhat.com, alex.williamson@redhat.com, ddutile@redhat.com,
+        alexander.h.duyck@intel.com, virtio-dev@lists.oasis-open.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        dan.daly@intel.com, cunming.liang@intel.com, zhihong.wang@intel.com,
+        jianfeng.tan@intel.com, xiao.w.wang@intel.com
+References: <20180402152330.4158-1-tiwei.bie@intel.com>
+ <622f4bd7-1249-5545-dc5a-5a92b64f5c26@redhat.com>
+ <20180410045723.rftsb7l4l3ip2ioi@debian>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <30a63fff-7599-640a-361f-a27e5783012a@redhat.com>
+Date: Tue, 10 Apr 2018 15:25:45 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180410041033.GE47598@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20180410045723.rftsb7l4l3ip2ioi@debian>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/10 12:10, Jaegeuk Kim wrote:
-> On 04/10, Chao Yu wrote:
->> On 2018/4/10 2:02, Jaegeuk Kim wrote:
->>> On 04/08, Chao Yu wrote:
->>>> On 2018/4/5 11:51, Jaegeuk Kim wrote:
->>>>> On 04/04, Chao Yu wrote:
->>>>>> This patch enlarges block plug coverage in __issue_discard_cmd, in
->>>>>> order to collect more pending bios before issuing them, to avoid
->>>>>> being disturbed by previous discard I/O in IO aware discard mode.
->>>>>
->>>>> Hmm, then we need to wait for huge discard IO for over 10 secs, which
->>>>
->>>> We found that total discard latency is rely on total discard number we issued
->>>> last time instead of range or length discard covered. IMO, if we don't change
->>>> .max_requests value, we will not suffer longer latency.
->>>>
->>>>> will affect following read/write IOs accordingly. In order to avoid that,
->>>>> we actually need to limit the discard size.
->>
->> Do you mean limit discard count or discard length?
-> 
-> Both of them.
-> 
->>
->>>>
->>>> If you are worry about I/O interference in between discard and rw, I suggest to
->>>> decrease .max_requests value.
->>>
->>> What do you mean? This will produce more pending requests in the queue?
->>
->> I mean after applying this patch, we can queue more discard IOs in plug inside
->> task, otherwise, previous issued discard in block layer can make is_idle() be false,
->> then it can stop IO awared user to issue pending discard command.
-> 
-> Then, unplug will issue lots of discard commands, which affects the following rw
-> latencies. My preference would be issuing discard commands one by one as much as
-> possible.
 
-Hmm.. for you concern, we can turn down IO priority of discard from background?
 
-Thanks,
+On 2018年04月10日 12:57, Tiwei Bie wrote:
+> On Tue, Apr 10, 2018 at 10:52:52AM +0800, Jason Wang wrote:
+>> On 2018年04月02日 23:23, Tiwei Bie wrote:
+>>> This patch introduces a mdev (mediated device) based hardware
+>>> vhost backend. This backend is an abstraction of the various
+>>> hardware vhost accelerators (potentially any device that uses
+>>> virtio ring can be used as a vhost accelerator). Some generic
+>>> mdev parent ops are provided for accelerator drivers to support
+>>> generating mdev instances.
+>>>
+>>> What's this
+>>> ===========
+>>>
+>>> The idea is that we can setup a virtio ring compatible device
+>>> with the messages available at the vhost-backend. Originally,
+>>> these messages are used to implement a software vhost backend,
+>>> but now we will use these messages to setup a virtio ring
+>>> compatible hardware device. Then the hardware device will be
+>>> able to work with the guest virtio driver in the VM just like
+>>> what the software backend does. That is to say, we can implement
+>>> a hardware based vhost backend in QEMU, and any virtio ring
+>>> compatible devices potentially can be used with this backend.
+>>> (We also call it vDPA -- vhost Data Path Acceleration).
+>>>
+>>> One problem is that, different virtio ring compatible devices
+>>> may have different device interfaces. That is to say, we will
+>>> need different drivers in QEMU. It could be troublesome. And
+>>> that's what this patch trying to fix. The idea behind this
+>>> patch is very simple: mdev is a standard way to emulate device
+>>> in kernel.
+>> So you just move the abstraction layer from qemu to kernel, and you still
+>> need different drivers in kernel for different device interfaces of
+>> accelerators. This looks even more complex than leaving it in qemu. As you
+>> said, another idea is to implement userspace vhost backend for accelerators
+>> which seems easier and could co-work with other parts of qemu without
+>> inventing new type of messages.
+> I'm not quite sure. Do you think it's acceptable to
+> add various vendor specific hardware drivers in QEMU?
+>
 
-> 
->>
->> Thanks,
->>
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>> Thanks,
->>>>>
->>>>>>
->>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>>>> ---
->>>>>>  fs/f2fs/segment.c | 7 +++++--
->>>>>>  1 file changed, 5 insertions(+), 2 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>>> index 8f0b5ba46315..4287e208c040 100644
->>>>>> --- a/fs/f2fs/segment.c
->>>>>> +++ b/fs/f2fs/segment.c
->>>>>> @@ -1208,10 +1208,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>>>>>  		pend_list = &dcc->pend_list[i];
->>>>>>  
->>>>>>  		mutex_lock(&dcc->cmd_lock);
->>>>>> +
->>>>>> +		blk_start_plug(&plug);
->>>>>> +
->>>>>>  		if (list_empty(pend_list))
->>>>>>  			goto next;
->>>>>>  		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
->>>>>> -		blk_start_plug(&plug);
->>>>>>  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
->>>>>>  			f2fs_bug_on(sbi, dc->state != D_PREP);
->>>>>>  
->>>>>> @@ -1227,8 +1229,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>>>>>  			if (++iter >= dpolicy->max_requests)
->>>>>>  				break;
->>>>>>  		}
->>>>>> -		blk_finish_plug(&plug);
->>>>>>  next:
->>>>>> +		blk_finish_plug(&plug);
->>>>>> +
->>>>>>  		mutex_unlock(&dcc->cmd_lock);
->>>>>>  
->>>>>>  		if (iter >= dpolicy->max_requests)
->>>>>> -- 
->>>>>> 2.15.0.55.gc2ece9dc4de6
->>>>>
->>>>> .
->>>>>
->>>
->>> .
->>>
-> 
-> .
-> 
+I don't object but we need to figure out the advantages of doing it in 
+qemu too.
+
+Thanks
