@@ -1,88 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752404AbeDJKE4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 06:04:56 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:40069 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752147AbeDJKEy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 06:04:54 -0400
-X-Google-Smtp-Source: AIpwx4+Xu4/wjAIzM677Roo0ITYwhKCo97V56/ysh2eTkaaV/goW/0G3Nlv9+0MVYabuVx4Ys0DTEw==
-Subject: Re: [RFC,v2,9/9] hyper_dmabuf: threaded interrupt in Xen-backend
-To: Dongwon Kim <dongwon.kim@intel.com>, linux-kernel@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org, xen-devel@lists.xenproject.org
-Cc: dri-devel@lists.freedesktop.org, mateuszx.potrola@intel.com
-References: <20180214015008.9513-10-dongwon.kim@intel.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <b644b126-b4aa-0dd7-34f3-6c105cc79490@gmail.com>
-Date: Tue, 10 Apr 2018 13:04:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752587AbeDJKF4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 06:05:56 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:43403 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752062AbeDJKFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 06:05:54 -0400
+Date: Tue, 10 Apr 2018 12:05:42 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 6/9] mtd: nand: qcom: support for checking read errors
+ for last codeword
+Message-ID: <20180410120542.24ea9ddb@xps13>
+In-Reply-To: <1522845745-6624-7-git-send-email-absahu@codeaurora.org>
+References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+        <1522845745-6624-7-git-send-email-absahu@codeaurora.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180214015008.9513-10-dongwon.kim@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/14/2018 03:50 AM, Dongwon Kim wrote:
-> Use threaded interrupt intead of regular one because most part of ISR
-> is time-critical and possibly sleeps
->
-> Signed-off-by: Dongwon Kim <dongwon.kim@intel.com>
+Hi Abhishek,
+
+On Wed,  4 Apr 2018 18:12:22 +0530, Abhishek Sahu
+<absahu@codeaurora.org> wrote:
+
+> Add boolean function argument in parse_read_errors to identify
+> whether the read error has been called for complete page read or
+> only last codeword read. This will help in subsequent patches to
+> detect ECC errors in case of last codeword read.
+
+Can you explain when this happen: "last codeword read"? I don't see the
+use case.
+
+Thanks,
+Miquèl
+
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
 > ---
->   .../hyper_dmabuf/backends/xen/hyper_dmabuf_xen_comm.c | 19 +++++++++++--------
->   1 file changed, 11 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_comm.c b/drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_comm.c
-> index 30bc4b6304ac..65af5ddfb2d7 100644
-> --- a/drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_comm.c
-> +++ b/drivers/dma-buf/hyper_dmabuf/backends/xen/hyper_dmabuf_xen_comm.c
-> @@ -332,11 +332,14 @@ int xen_be_init_tx_rbuf(int domid)
->   	}
->   
->   	/* setting up interrupt */
-> -	ret = bind_evtchn_to_irqhandler(alloc_unbound.port,
-> -					front_ring_isr, 0,
-> -					NULL, (void *) ring_info);
-> +	ring_info->irq = bind_evtchn_to_irq(alloc_unbound.port);
->   
-> -	if (ret < 0) {
-> +	ret = request_threaded_irq(ring_info->irq,
-> +				   NULL,
-> +				   front_ring_isr,
-> +				   IRQF_ONESHOT, NULL, ring_info);
-> +
-Why don't you go with threaded IRQ from the beginning and change it
-in the patch #9?
-> +	if (ret != 0) {
->   		dev_err(hy_drv_priv->dev,
->   			"Failed to setup event channel\n");
->   		close.port = alloc_unbound.port;
-> @@ -348,7 +351,6 @@ int xen_be_init_tx_rbuf(int domid)
->   	}
->   
->   	ring_info->rdomain = domid;
-> -	ring_info->irq = ret;
->   	ring_info->port = alloc_unbound.port;
->   
->   	mutex_init(&ring_info->lock);
-> @@ -535,9 +537,10 @@ int xen_be_init_rx_rbuf(int domid)
->   	if (!xen_comm_find_tx_ring(domid))
->   		ret = xen_be_init_tx_rbuf(domid);
->   
-> -	ret = request_irq(ring_info->irq,
-> -			  back_ring_isr, 0,
-> -			  NULL, (void *)ring_info);
-> +	ret = request_threaded_irq(ring_info->irq,
-> +				   NULL,
-> +				   back_ring_isr, IRQF_ONESHOT,
-> +				   NULL, (void *)ring_info);
->   
-Ditto
->   	return ret;
->   
->
->
+>  drivers/mtd/nand/qcom_nandc.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
+> index ba43752..dce97e8 100644
+> --- a/drivers/mtd/nand/qcom_nandc.c
+> +++ b/drivers/mtd/nand/qcom_nandc.c
+> @@ -1570,7 +1570,7 @@ struct read_stats {
+>   * errors. this is equivalent to what 'ecc->correct()' would do.
+>   */
+>  static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
+> -			     u8 *oob_buf)
+> +			     u8 *oob_buf, bool last_cw)
+>  {
+>  	struct nand_chip *chip = &host->chip;
+>  	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+> @@ -1579,12 +1579,12 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
+>  	unsigned int max_bitflips = 0;
+>  	struct read_stats *buf;
+>  	bool flash_op_err = false;
+> -	int i;
+> +	int i, cw_cnt = last_cw ? 1 : ecc->steps;
+>  
+>  	buf = (struct read_stats *)nandc->reg_read_buf;
+>  	nandc_read_buffer_sync(nandc, true);
+>  
+> -	for (i = 0; i < ecc->steps; i++, buf++) {
+> +	for (i = 0; i < cw_cnt; i++, buf++) {
+>  		u32 flash, buffer, erased_cw;
+>  		int data_len, oob_len;
+>  
+> @@ -1743,7 +1743,8 @@ static int read_page_ecc(struct qcom_nand_host *host, u8 *data_buf,
+>  	free_descs(nandc);
+>  
+>  	if (!ret)
+> -		ret = parse_read_errors(host, data_buf_start, oob_buf_start);
+> +		ret = parse_read_errors(host, data_buf_start, oob_buf_start,
+> +					false);
+>  
+>  	return ret;
+>  }
+
+
+
+-- 
+Miquel Raynal, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
