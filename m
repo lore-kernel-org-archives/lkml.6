@@ -1,84 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-713601-1523399761-2-3206540480298345169
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523399760; b=FzbKK3t8JXlsbORdqPzsDiZngeleFJBLyHte6gbnCWDmUzL5bQ
-    frotm/9sJwThSEtOgHy2LVhEU8XseRLoSNEOHLHoQ4f2ss6xcDkceNP3qThjO5jh
-    TzEx09z1fLVL2l74wa/LW4HDimqyX2m25rL0eiHM0SaSgOvvlk8a/Q6n7eL4bybZ
-    f3e7VfYtSlawmLF7kCa+MTa1cxM9zFZJdEPZ1unrBMMZX8fpHx7+S/5ZW1S92zP5
-    9i7D3nokpTYxXEotJDp7v8sZARfxsvSbfkgPoK2e0XHrTWVps2VH6jc9R/MZ14/p
-    A14qWgDIoskmwHLWmG4KmfLSdaw2Esu03b3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523399760; bh=29R4bCp9M+BSLKadpxcU9LcOevhLmP
-    CxOHN7ZF6DBL4=; b=Jb2yk4B9CKYpMZSQvxHzXcSwGg6tP+ysRo9xq/PbAAYuwk
-    ug1fLgO+e9S37LvN5MXyvtu8bPD8EvRoJ7wQjxdRuv4ZqmW39N5460MM+B7AJhMC
-    VSBBpeaJAT+qZv/AMouAESP70idOE+K8zUNj/yVE0L90N+qx1E8bznwKmt4DeYZ4
-    avMu05F/OaN8oQioewWsdKNb5D8hRf7kaAGLz+/TzZirc2Q0KxeRKzEkpl5YAPVf
-    jJPIV+CAGLEkr/wVOa2B0dRXn6qtq4xNwbi13qlLSP6wsPuVJxw3KuIAhTHJ53Lf
-    hxTWuWsGM1eHfJFgj3TcvmhxaH0Z2Hvaf09ua0nQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMyIR+sb9q5GQg7Lfk4Q42h4KM+5uRDchm6Q8+Am6Cfn7cGPcxXEU5o7XKBNpKk0qfAQcmGlWudLDtKlX9tgeN35Yn1pM9daPEI/u6sI8QIRV8JiQs/2
-    nQ8aOwaCyCurpgpnvle9ew7s4zxHa+peci0xpLpJl4GY1G6p42SspGQCQ+Pht+DZxDQMyHIUlYnCliI9zUKbnShOz01l/Ad+lSA6yGqEpMzWSkT5vNj0Lnzu
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=tBb2bbeoAAAA:8 a=hD80L64hAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=fWKlrDiykeHFxDw9_GIA:9 a=8ucZNSXJFggmK-ra:21 a=IMCvk_XUfX2MPB_8:21
-    a=QEXdDO2ut3YA:10 a=gup2V7nj8fQA:10 a=Oj-tNtZlA1e06AYgeCfH:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755581AbeDJWf6 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 18:35:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42320 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754620AbeDJWf4 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:35:56 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx482XjDLOxk9vmjvTF1BpuYFJqhHzFFeM8ebY/aSIJW50GpMUaweIeEMpo+kYVUnR8A+rAzu
+ARC-Seal: i=1; a=rsa-sha256; t=1523399759; cv=none;
+        d=google.com; s=arc-20160816;
+        b=GrRiKmfftvupizRnowXKI64kasCg97M38R99TIysdH5U/LYyPkCz7orv+p2eRHQzUg
+         11hotnb9TIlNhCNTKvh/EKFDTic9dWuJ5akMNSSVY2EJBJAki+qB9IKENdUbzlvixVtx
+         0ifh6BD1uYihlEUKD/D0vRd7i/2/Iria2in8EUQNqfLA9gAI20+56D/diNw4Fwuajyif
+         4K9yRZ/5jI+v5/WFDOJfZ3Fhpbdrd1T+Ri4IJGnEgfX/cKvxBQlpWF24VbbfGYVIaurx
+         gcwCVNVVEAI1j1MUdmyaeIvkw4pXwS8uat0kh+hj4Lebfr1D2FZhsK/jBDnuG7j79utC
+         uFww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=88EWt0D12lggXxgmMRK+BtzmIYDM8FTWPnbqlCtZnro=;
+        b=R37CHcsWYRyu4hRdTkv+skBXbfR/8UuK++TaoPSAjDSNNOm3ryhLsUKAChk+m0leZT
+         RLhPnU6UxZtD/r6NVtw4uNM/a7tTlSXgwVCRaB9itX4L8RGmjeCzG/aWUKc0aJd3UW0z
+         VQqfQGUHvhQdu46AVeChROgGeM4exGPGGsQxrUAnYFxHmKnzrZ970LOENtFQa70TJdJ0
+         BsWtj4uJTVgMTvNQ5MS0IWMyV/sb5PtmY5gpQlb9xPwvh8jzrOyhVrOTH1+ugQUOFbOr
+         8gpcVZlXEutelg2YKp9B9Btk+ceTUeyidfdC65Q9KKz/TYanKVwMvkdBA1YEEnPtFsBa
+         TEuQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Pieter \"PoroCYon\" Sluys" <pcy@national.shitposting.agency>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 035/138] vfb: fix video mode and line_length being set when loaded
-Date: Wed, 11 Apr 2018 00:23:45 +0200
-Message-Id: <20180410212906.201407102@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 026/138] media: videobuf2-core: dont go out of the buffer range
+Date: Wed, 11 Apr 2018 00:23:36 +0200
+Message-Id: <20180410212905.165065613@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -86,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597399933288310575?=
+X-GMAIL-MSGID: =?utf-8?q?1597400425758612372?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -96,103 +50,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Pieter \\\"PoroCYon\\\" Sluys" <pcy@national.shitposting.agency>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
 
-[ Upstream commit 7b9faf5df0ac495a1a3d7cdb64921c179f9008ac ]
+[ Upstream commit df93dc61b0d8b19a5c9db545cf3fcc24f88dfde4 ]
 
-Currently, when loading the vfb module, the newly created fbdev
-has a line_length of 0, and its video mode would be PSEUDOCOLOR
-regardless of color depth. (The former could be worked around by
-calling the FBIOPUT_VSCREENINFO ioctl with having the FBACTIVIATE_FORCE
-flag set.) This patch automatically sets the line_length correctly,
-and the video mode is derived from the bit depth now as well.
+Currently, there's no check if an invalid buffer range
+is passed. However, while testing DVB memory mapped apps,
+I got this:
 
-Thanks to Geert Uytterhoeven for confirming the bug and helping me with
-the patch.
+   videobuf2_core: VB: num_buffers -2143943680, buffer 33, index -2143943647
+   unable to handle kernel paging request at ffff888b773c0890
+   IP: __vb2_queue_alloc+0x134/0x4e0 [videobuf2_core]
+   PGD 4142c7067 P4D 4142c7067 PUD 0
+   Oops: 0002 [#1] SMP
+   Modules linked in: xt_CHECKSUM iptable_mangle ipt_MASQUERADE nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables bluetooth rfkill ecdh_generic binfmt_misc rc_dvbsky sp2 ts2020 intel_rapl x86_pkg_temp_thermal dvb_usb_dvbsky intel_powerclamp dvb_usb_v2 coretemp m88ds3103 kvm_intel i2c_mux dvb_core snd_hda_codec_hdmi crct10dif_pclmul crc32_pclmul videobuf2_vmalloc videobuf2_memops snd_hda_intel ghash_clmulni_intel videobuf2_core snd_hda_codec rc_core mei_me intel_cstate snd_hwdep snd_hda_core videodev intel_uncore snd_pcm mei media tpm_tis tpm_tis_core intel_rapl_perf tpm snd_timer lpc_ich snd soundcore kvm irqbypass libcrc32c i915 i2c_algo_bit drm_kms_helper
+   e1000e ptp drm crc32c_intel video pps_core
+   CPU: 3 PID: 1776 Comm: dvbv5-zap Not tainted 4.14.0+ #78
+   Hardware name:                  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
+   task: ffff88877c73bc80 task.stack: ffffb7c402418000
+   RIP: 0010:__vb2_queue_alloc+0x134/0x4e0 [videobuf2_core]
+   RSP: 0018:ffffb7c40241bc60 EFLAGS: 00010246
+   RAX: 0000000080360421 RBX: 0000000000000021 RCX: 000000000000000a
+   RDX: ffffb7c40241bcf4 RSI: ffff888780362c60 RDI: ffff888796d8e130
+   RBP: ffffb7c40241bcc8 R08: 0000000000000316 R09: 0000000000000004
+   R10: ffff888780362c00 R11: 0000000000000001 R12: 000000000002f000
+   R13: ffff8887758be700 R14: 0000000000021000 R15: 0000000000000001
+   FS:  00007f2849024740(0000) GS:ffff888796d80000(0000) knlGS:0000000000000000
+   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+   CR2: ffff888b773c0890 CR3: 000000043beb2005 CR4: 00000000003606e0
+   Call Trace:
+    vb2_core_reqbufs+0x226/0x420 [videobuf2_core]
+    dvb_vb2_reqbufs+0x2d/0xc0 [dvb_core]
+    dvb_dvr_do_ioctl+0x98/0x1d0 [dvb_core]
+    dvb_usercopy+0x53/0x1b0 [dvb_core]
+    ? dvb_demux_ioctl+0x20/0x20 [dvb_core]
+    ? tty_ldisc_deref+0x16/0x20
+    ? tty_write+0x1f9/0x310
+    ? process_echoes+0x70/0x70
+    dvb_dvr_ioctl+0x15/0x20 [dvb_core]
+    do_vfs_ioctl+0xa5/0x600
+    SyS_ioctl+0x79/0x90
+    entry_SYSCALL_64_fastpath+0x1a/0xa5
+   RIP: 0033:0x7f28486f7ea7
+   RSP: 002b:00007ffc13b2db18 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+   RAX: ffffffffffffffda RBX: 000055b10fc06130 RCX: 00007f28486f7ea7
+   RDX: 00007ffc13b2db48 RSI: 00000000c0086f3c RDI: 0000000000000007
+   RBP: 0000000000000203 R08: 000055b10df1e02c R09: 000000000000002e
+   R10: 0036b42415108357 R11: 0000000000000246 R12: 0000000000000000
+   R13: 00007f2849062f60 R14: 00000000000001f1 R15: 00007ffc13b2da54
+   Code: 74 0a 60 8b 0a 48 83 c0 30 48 83 c2 04 89 48 d0 89 48 d4 48 39 f0 75 eb 41 8b 42 08 83 7d d4 01 41 c7 82 ec 01 00 00 ff ff ff ff <4d> 89 94 c5 88 00 00 00 74 14 83 c3 01 41 39 dc 0f 85 f1 fe ff
+   RIP: __vb2_queue_alloc+0x134/0x4e0 [videobuf2_core] RSP: ffffb7c40241bc60
+   CR2: ffff888b773c0890
 
-Output of `fbset -i' before the patch:
-mode "1366x768-60"
-    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
-    geometry 1366 768 1366 768 32
-    timings 13806 120 10 14 3 32 5
-    rgba 8/0,8/8,8/16,8/24
-endmode
+So, add a sanity check in order to prevent going past array.
 
-Frame buffer device information:
-    Name        : Virtual FB
-    Address     : 0xffffaa1405d85000
-    Size        : 4196352
-    Type        : PACKED PIXELS
-    Visual      : PSEUDOCOLOR
-    XPanStep    : 1
-    YPanStep    : 1
-    YWrapStep   : 1
-    LineLength  : 0                    <-- note this
-    Accelerator : No
-
-After:
-mode "1366x768-60"
-    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
-    geometry 1366 768 1366 768 32
-    timings 13806 120 10 14 3 32 5
-    rgba 8/0,8/8,8/16,8/24
-endmode
-
-Frame buffer device information:
-    Name        : Virtual FB
-    Address     : 0xffffaa1405d85000
-    Size        : 4196352
-    Type        : PACKED PIXELS
-    Visual      : TRUECOLOR
-    XPanStep    : 1
-    YPanStep    : 1
-    YWrapStep   : 1
-    LineLength  : 5464
-    Accelerator : No
-
-Signed-off-by: "Pieter \"PoroCYon\" Sluys" <pcy@national.shitposting.agency>
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-[b.zolnierkie: minor fixups]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/vfb.c |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/media/v4l2-core/videobuf2-core.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/video/fbdev/vfb.c
-+++ b/drivers/video/fbdev/vfb.c
-@@ -239,8 +239,23 @@ static int vfb_check_var(struct fb_var_s
-  */
- static int vfb_set_par(struct fb_info *info)
- {
-+	switch (info->var.bits_per_pixel) {
-+	case 1:
-+		info->fix.visual = FB_VISUAL_MONO01;
-+		break;
-+	case 8:
-+		info->fix.visual = FB_VISUAL_PSEUDOCOLOR;
-+		break;
-+	case 16:
-+	case 24:
-+	case 32:
-+		info->fix.visual = FB_VISUAL_TRUECOLOR;
-+		break;
-+	}
-+
- 	info->fix.line_length = get_line_length(info->var.xres_virtual,
- 						info->var.bits_per_pixel);
-+
- 	return 0;
- }
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -332,6 +332,10 @@ static int __vb2_queue_alloc(struct vb2_
+ 	struct vb2_buffer *vb;
+ 	int ret;
  
-@@ -450,6 +465,8 @@ static int vfb_probe(struct platform_dev
- 		goto err2;
- 	platform_set_drvdata(dev, info);
- 
-+	vfb_set_par(info);
++	/* Ensure that q->num_buffers+num_buffers is below VB2_MAX_FRAME */
++	num_buffers = min_t(unsigned int, num_buffers,
++			    VB2_MAX_FRAME - q->num_buffers);
 +
- 	fb_info(info, "Virtual frame buffer device, using %ldK of video memory\n",
- 		videomemorysize >> 10);
- 	return 0;
+ 	for (buffer = 0; buffer < num_buffers; ++buffer) {
+ 		/* Allocate videobuf buffer structures */
+ 		vb = kzalloc(q->buf_struct_size, GFP_KERNEL);
