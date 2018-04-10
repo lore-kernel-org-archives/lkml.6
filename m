@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+AgBSrqiemi0jixmZmp1+IuT72iAcR5axuSQGkc0NA3amSvy8s9YFS55EJ4WuIHxuKnkH6
-ARC-Seal: i=1; a=rsa-sha256; t=1523399254; cv=none;
+X-Google-Smtp-Source: AIpwx49kuA+gP8mUWcK71q8ODCArx01AbZtzttjzair+NsJz86WwX3+yiT7PPE1YbNYHncgfRKii
+ARC-Seal: i=1; a=rsa-sha256; t=1523399251; cv=none;
         d=google.com; s=arc-20160816;
-        b=pb3sxyznGUDO/H2SjaL4lUA3ljxpQQW+HksU1RzfOdgtlgbQ6Xj2udlaMoK7LXL5rD
-         2t9k5CYD8iIuxRhqRyztT2kMN1f6S+X3Dzr5hMeaJX1Ge2tnIpjjI6jqQZRmBZGSW/6K
-         2tCWD9vA0iOr8gdq+YAyWz88pg2m0pFGyJteWfspo9udL+EFuuYfRgroMLdaoV37L9G5
-         Nlzfx28YbkTXboXbFOyTUNGnkwUJHSXgfW0l3Y3jRElSylX3s1LJF1gAoUGtG1Q3CkLA
-         cms5wndw0BiDmDB3wgPMKU7d68zrDFbHkwtnZ3GCdDv5bKxAhG55Zkchmi1CBwzvtVqG
-         y/Lw==
+        b=anRL3AyEQNRPRtpACm/QPuXDioyCeNU/dvcpIp5PdQRNwUBy9NHT4Xx03qurzGCQTT
+         x16aeBz43sqdxtdd5Et0pGN8QY+QWRHmnjd+K6czSSVS2UWNA1Yie+kEn59n3pOrzwvJ
+         chuBgB5dP/ovb8huVCm9beUz9VryfodxwBRoVo80CYSiNFUIVCMvraWVN9riwb4s8nBX
+         6YOVvDknV/AUcG2GL/xF7JPsByCMYi3edeN1ppVmEgjfcBTH61wAA/5VhHWOuX5A/m84
+         9EsvP9yqGs3WnEgCmqajUXbYA30fLQUGKKY2J1NgvW0NwlcLFU+3KzuAoT1/SRp1Pl5U
+         3Y5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZFqV/FZDeAL2la2l7jm3FnhP4v0WLagaSTQJuYFgnow=;
-        b=RnBcYGKnjn8nWZgfJrAdl6e2FWOkMzV+mV2WznrjGLheOotXTK9xZWysLxNYstvuSV
-         d0ONo0AAUxM1I/lruQdf+UnjTUuZx1hzEZQ85/Mw4YdyZL1Tl9CNldkLj72VvTf+pSsI
-         BWLbuAsc2c2doum6O6T8v9JmYCYZCskoeccmuG8zQy9k+VQH2ZuKGB9txj3cuESLRF3o
-         I+IIxU5XQKNKawfCjflgRRdq4kj3Ulxdg1XThbEVVEidJNW+/kaocfoBSH1XzBZz2IMH
-         BIau/oRTeJBk60mA5TZxXrN0rJB6WnDC+L1WS95T9ueXbLRgsCPDI6lN22avKJ4Hrv1Q
-         yDZA==
+        bh=wQZSy+ye6Ad1xcrcZF6IyjYDJ6L1zFkibUYeg7W5CEs=;
+        b=FH3GG4QdTC3GY9DsoJeruU7pb4Hkr/JBfJnzAgYY1j0XxWhS6w2QgQZ4ph7xUXNKYX
+         LgeHj4oOogcXg5wq6xaKEDZvixuSzoSirdWJAUQM1vhsIXlgb3H8QfxYFdzxE/XXGmzq
+         su/Ok8DCEolzcKrq3Nrn3qa+hL2jfuQr827CnkFOtyB3oMBI648mDrVBT8dcJWF9nkUW
+         hiciCmiq9EK4n2pa6/Cw2cL+suXfmBjL3zk9WNI/RBltbidxT5Cyjm0E1bb687Wa/ZZ4
+         y2qB3jtbiG3Unt0388IXD47ylhys9wEtxJtEcFscpSAOaDEv7GPSzvbzrzzICqB8Cxy0
+         sHkQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stafford Horne <shorne@gmail.com>,
-	Wei Yongjun <weiyongjun1@huawei.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
+	Chaitra P B <chaitra.basappa@broadcom.com>,
+	Suganath Prabu S <suganath-prabu.subramani@broadcom.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 042/168] irqchip/ompic: fix return value check in ompic_of_init()
-Date: Wed, 11 Apr 2018 00:23:04 +0200
-Message-Id: <20180410212801.998320075@linuxfoundation.org>
+Subject: [PATCH 4.15 041/168] scsi: mpt3sas: Proper handling of set/clear of "ATA command pending" flag.
+Date: Wed, 11 Apr 2018 00:23:03 +0200
+Message-Id: <20180410212801.945729289@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399896405460783?=
-X-GMAIL-MSGID: =?utf-8?q?1597399896405460783?=
+X-GMAIL-THRID: =?utf-8?q?1597399893403341474?=
+X-GMAIL-MSGID: =?utf-8?q?1597399893403341474?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,36 +51,97 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Wei Yongjun <weiyongjun1@huawei.com>
+From: Chaitra P B <chaitra.basappa@broadcom.com>
 
 
-[ Upstream commit 404e6bea10662f0e142748353169d25378271e49 ]
+[ Upstream commit f49d4aed1315a7b766d855f1367142e682b0cc87 ]
 
-In case of error, the function ioremap() returns NULL pointer not
-ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+1. In IO path, setting of "ATA command pending" flag early before device
+   removal, invalid device handle etc., checks causes any new commands
+   to be always returned with SAM_STAT_BUSY and when the driver removes
+   the drive the SML issues SYNC Cache command and that command is
+   always returned with SAM_STAT_BUSY and thus making SYNC Cache command
+   to requeued.
 
-Fixes: 9b54470afd83 ("irqchip: add initial support for ompic")
-Acked-by: Stafford Horne <shorne@gmail.com>
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+2. If the driver gets an ATA PT command for a SATA drive then the driver
+   set "ATA command pending" flag in device specific data structure not
+   to allow any further commands until the ATA PT command is completed.
+   However, after setting the flag if the driver decides to return the
+   command back to upper layers without actually issuing to the firmware
+   (i.e., returns from qcmd failure return paths) then the corresponding
+   flag is not cleared and this prevents the driver from sending any new
+   commands to the drive.
+
+This patch fixes above two issues by setting of "ATA command pending"
+flag after checking for whether device deleted, invalid device handle,
+device busy with task management. And by setting "ATA command pending"
+flag to false in all of the qcmd failure return paths after setting the
+flag.
+
+Signed-off-by: Chaitra P B <chaitra.basappa@broadcom.com>
+Signed-off-by: Suganath Prabu S <suganath-prabu.subramani@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/irqchip/irq-ompic.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c |   28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
---- a/drivers/irqchip/irq-ompic.c
-+++ b/drivers/irqchip/irq-ompic.c
-@@ -171,9 +171,9 @@ static int __init ompic_of_init(struct d
- 
- 	/* Setup the device */
- 	ompic_base = ioremap(res.start, resource_size(&res));
--	if (IS_ERR(ompic_base)) {
-+	if (!ompic_base) {
- 		pr_err("ompic: unable to map registers");
--		return PTR_ERR(ompic_base);
-+		return -ENOMEM;
+--- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+@@ -4761,19 +4761,6 @@ scsih_qcmd(struct Scsi_Host *shost, stru
+ 		return 0;
  	}
  
- 	irq = irq_of_parse_and_map(node, 0);
+-	/*
+-	 * Bug work around for firmware SATL handling.  The loop
+-	 * is based on atomic operations and ensures consistency
+-	 * since we're lockless at this point
+-	 */
+-	do {
+-		if (test_bit(0, &sas_device_priv_data->ata_command_pending)) {
+-			scmd->result = SAM_STAT_BUSY;
+-			scmd->scsi_done(scmd);
+-			return 0;
+-		}
+-	} while (_scsih_set_satl_pending(scmd, true));
+-
+ 	sas_target_priv_data = sas_device_priv_data->sas_target;
+ 
+ 	/* invalid device handle */
+@@ -4799,6 +4786,19 @@ scsih_qcmd(struct Scsi_Host *shost, stru
+ 	    sas_device_priv_data->block)
+ 		return SCSI_MLQUEUE_DEVICE_BUSY;
+ 
++	/*
++	 * Bug work around for firmware SATL handling.  The loop
++	 * is based on atomic operations and ensures consistency
++	 * since we're lockless at this point
++	 */
++	do {
++		if (test_bit(0, &sas_device_priv_data->ata_command_pending)) {
++			scmd->result = SAM_STAT_BUSY;
++			scmd->scsi_done(scmd);
++			return 0;
++		}
++	} while (_scsih_set_satl_pending(scmd, true));
++
+ 	if (scmd->sc_data_direction == DMA_FROM_DEVICE)
+ 		mpi_control = MPI2_SCSIIO_CONTROL_READ;
+ 	else if (scmd->sc_data_direction == DMA_TO_DEVICE)
+@@ -4826,6 +4826,7 @@ scsih_qcmd(struct Scsi_Host *shost, stru
+ 	if (!smid) {
+ 		pr_err(MPT3SAS_FMT "%s: failed obtaining a smid\n",
+ 		    ioc->name, __func__);
++		_scsih_set_satl_pending(scmd, false);
+ 		goto out;
+ 	}
+ 	mpi_request = mpt3sas_base_get_msg_frame(ioc, smid);
+@@ -4857,6 +4858,7 @@ scsih_qcmd(struct Scsi_Host *shost, stru
+ 		pcie_device = sas_target_priv_data->pcie_dev;
+ 		if (ioc->build_sg_scmd(ioc, scmd, smid, pcie_device)) {
+ 			mpt3sas_base_free_smid(ioc, smid);
++			_scsih_set_satl_pending(scmd, false);
+ 			goto out;
+ 		}
+ 	} else
