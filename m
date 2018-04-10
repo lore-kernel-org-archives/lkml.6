@@ -1,136 +1,89 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3875449-1523365671-2-16779047294769986432
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523365670; b=i3FOJAve0rp2s8b45cMe2x3+K4VkiqLxIk04CtlK07ZsXgsyKF
-    PyWc6pBOUSdfh43dnKg2k7f66Wm/TM/2VsZDFpOR72tLTwhB/xgNv1oVEtQwDlGN
-    U8PN3nAwYJ3fbhIONpHicGtBdzaMuREINLfmcHDjwJz/R2UaFUnd10BLSW/XYIVn
-    VT9aqTIFwlRsfbITl8PJv1dG/mvS/0+I7QFcPev0ujhsl5YpysEF8Y6AeF0zlujR
-    XiTfhHG+NwCBsWF9Gx2LtvMWg1JPeNtIiDcOEm6pUDpvk0IsMJpuhSlXhOlv5MGa
-    wNwLnq8COiuguGwNHlnCznk3JNN/f2pULMmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523365670; bh=vQyNRLSKY52aRp5d5gtAc50dF/i6Ky
-    Dl1a6zi7R360I=; b=n6lvrtj9Bn8oucaKP761JeL9lJFXV080LHiUuydukFNTrH
-    JkvHX1z9dWWSnQ3OZGS4q+r2y0DHPXIBiRU1nBXHUeRskwpHcuOxJU1C13yVf0Rn
-    fz5cB1Vu5R5uI3cjeY4DEPoMw3Dgy3L+V5dBXhyZ3rMAY1iQW8k/vheh5/9m+O1P
-    fMNeLIEz2xPpDRlN42DJO+3LnNDOZgpQ0Y2b7xvHaZOLEsICPL3WwBiYEkHGIq1v
-    3kZsZWc2WxazNghlSWqxatvTTOb1tY9+2OcdJOp6hcjmV7UschwfL7eCOmnqJirK
-    QRm+zfB8yk5cHYLUiICROj3wG4wtCqIT7uvdwZbQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGduAkkYnZWRIQRusuF/fO1t9XzikcKQo2h6i0cJD0NzIlTbdtko2AhLD7W56x1IV5R/AoAsfy41xINw7IULta/Y0P4dzjJtW+5HhgjQAc3r70ZbAaXq
-    Awd7rmX5N5X41XzyDYMvwYFD0mYJyoQvOG73R+8gcDjuqU0gvDDurlVEbtQyTQQ5exP37HPxXs1cHKJSi9Cnqenjrx3/usTc5zeU3kGzxUarcJu7ByS5ovQj
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=yMhMjlubAAAA:8 a=VwQbUJbxAAAA:8 a=wFfjXEGv2hVsUhVf7DgA:9 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752807AbeDJNHr (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 09:07:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46983 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752752AbeDJNHr (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 10 Apr 2018 09:07:47 -0400
-Date: Tue, 10 Apr 2018 15:07:42 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] slab: __GFP_ZERO is incompatible with a constructor
-Message-ID: <20180410130742.GM21835@dhcp22.suse.cz>
-References: <20180410125351.15837-1-willy@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180410125351.15837-1-willy@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <dave.hansen@linux.intel.com>
+X-Google-Smtp-Source: AIpwx4/UKFASPWoUgkbWDa8SNWp6+csm9P/HJ1DACABLjiLodYZ+D9anq3GSCq/aHZdc7ygakgzT
+ARC-Seal: i=1; a=rsa-sha256; t=1523391204; cv=none;
+        d=google.com; s=arc-20160816;
+        b=yi2ExqYMk4KTs+TLW1GygLKIbG80chhTVYP52vY2v8SjR0wMyrq9E0MQ8rfBgr4vTR
+         GjOvEs6uUHooA06Z+VJnXcC2eOr2ReTwA6Qd4mfcPnDKUWicGtpPBwkLe381XM+Cu6en
+         anV+yidRg45uAjjSQ5vKh2Cba6Htul+NhP3N/JIvA2ycDc1/2/pSJ/vwqLSrBWH5Dyy6
+         AEjROjvhZ4lGOstmZIOnX/bXTm3LWhb6YoROh8p9MAkeGhhD6ovvqDonojeLdKMW7rep
+         +94I68teChxBvHu0ttspg4Tv56bfEu2qSvRfdEsN9gRNkfOOtsxdM/SLiHVy2dEVmTH6
+         IUwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:from:cc:to:subject:arc-authentication-results;
+        bh=UB96DoK7XzVERBGQh3EPR/JVTN1i42EgnPkZRY6CclA=;
+        b=OtMTa296aU3KASI/JbL3KqiueU89Dv1wzMx9Zml9kSB2fOWhu6E808nwhgDIstBeOD
+         nmpD4r3E5taOuDwff1zwoXBpgODnP3BlYoeVXWn3yx0ditcbEGRf3cg4nuyGKsEQG4oF
+         dR4/8LrcrkoFvutoV5HbeOBRsFuNMpsEmDFfbnc88+kWXu/foqP7Mwc8xFmGc1SmR177
+         n/DXE/6Mk4yke5MC+8SELJwd7mCeV7utFB9bAYPWgvn5NIGZgJuGM4fkdBPNdIn5jEY3
+         lKYGpS+KoWHBMekqDDPVG4xFZoG2f9v1lEYielIfoOhAjSThJyJPVS8LRfOytEq5t5W/
+         /62A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,433,1517904000";
+   d="scan'208";a="45838632"
+Subject: [PATCH] x86, boot: initialize __default_kernel_pte_mask in KASLR code
+To: linux-kernel@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,thomas.lendacky@amd.com,efault@gmx.de,luto@kernel.org,arjan@linux.intel.com,bp@alien8.de,dan.j.williams@intel.com,dwmw2@infradead.org,gregkh@linuxfoundation.org,hughd@google.com,jpoimboe@redhat.com,jgross@suse.com,keescook@google.com,torvalds@linux-foundation.org,namit@vmware.com,peterz@infradead.org,tglx@linutronix.de,linux-mm@kvack.org
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Tue, 10 Apr 2018 13:10:11 -0700
+Message-Id: <20180410201011.F823E22B@viggo.jf.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597391456307737450?=
+X-GMAIL-MSGID: =?utf-8?q?1597391456307737450?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue 10-04-18 05:53:50, Matthew Wilcox wrote:
-> From: Matthew Wilcox <mawilcox@microsoft.com>
-> 
-> __GFP_ZERO requests that the object be initialised to all-zeroes,
-> while the purpose of a constructor is to initialise an object to a
-> particular pattern.  We cannot do both.  Add a warning to catch any
-> users who mistakenly pass a __GFP_ZERO flag when allocating a slab with
-> a constructor.
-> 
-> Fixes: d07dbea46405 ("Slab allocators: support __GFP_ZERO in all allocators")
-> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-> Cc: stable@vger.kernel.org
-> ---
->  mm/slab.c | 6 ++++--
->  mm/slob.c | 4 +++-
->  mm/slub.c | 6 ++++--
->  3 files changed, 11 insertions(+), 5 deletions(-)
-> 
-> diff --git a/mm/slab.c b/mm/slab.c
-> index 38d3f4fd17d7..8b2cb7db85db 100644
-> --- a/mm/slab.c
-> +++ b/mm/slab.c
-> @@ -3313,8 +3313,10 @@ slab_alloc_node(struct kmem_cache *cachep, gfp_t flags, int nodeid,
->  	local_irq_restore(save_flags);
->  	ptr = cache_alloc_debugcheck_after(cachep, flags, ptr, caller);
->  
-> -	if (unlikely(flags & __GFP_ZERO) && ptr)
-> -		memset(ptr, 0, cachep->object_size);
-> +	if (unlikely(flags & __GFP_ZERO) && ptr) {
-> +		if (!WARN_ON_ONCE(cachep->ctor))
-> +			memset(ptr, 0, cachep->object_size);
-> +	}
->  
->  	slab_post_alloc_hook(cachep, flags, 1, &ptr);
->  	return ptr;
 
-Why don't we need to cover this in slab_alloc and kmem_cache_alloc_bulk as well?
+The somewhat discrete arch/x86/boot/compressed code shares headers with
+the main kernel, but needs its own copies of some variables.  The copy
+of __default_kernel_pte_mask did not get initialized correctly and has
+been reported to cause boot failures when KASLR is in use by Tom
+Lendacky and Mike Galibrath.
 
-Other than that this patch makes sense to me.
--- 
-Michal Hocko
-SUSE Labs
+I've oddly been unable to reproduce these, but the fix is simple and
+confirmed to work by Tom and Mike.
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Fixes: 64c80759408f ("x86/mm: Do not auto-massage page protections")
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Kees Cook <keescook@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nadav Amit <namit@vmware.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+---
+
+ b/arch/x86/boot/compressed/kaslr.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff -puN arch/x86/boot/compressed/kaslr.c~x86-boot-initialize-__default_kernel_pte_mask arch/x86/boot/compressed/kaslr.c
+--- a/arch/x86/boot/compressed/kaslr.c~x86-boot-initialize-__default_kernel_pte_mask	2018-04-10 13:02:22.359914088 -0700
++++ b/arch/x86/boot/compressed/kaslr.c	2018-04-10 13:02:40.389914043 -0700
+@@ -54,8 +54,8 @@ unsigned int ptrs_per_p4d __ro_after_ini
+ 
+ extern unsigned long get_cmd_line_ptr(void);
+ 
+-/* Used by PAGE_KERN* macros: */
+-pteval_t __default_kernel_pte_mask __read_mostly;
++/* Used by PAGE_KERN* macros, do not mask off any bits by default: */
++pteval_t __default_kernel_pte_mask __read_mostly = ~0;
+ 
+ /* Simplified build-specific string for starting entropy. */
+ static const char build_str[] = UTS_RELEASE " (" LINUX_COMPILE_BY "@"
+_
