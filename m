@@ -1,81 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752200AbeDJS0u (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 14:26:50 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:35088 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751589AbeDJS0s (ORCPT
+        id S1752248AbeDJS2a (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 14:28:30 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:51483 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751918AbeDJS22 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 14:26:48 -0400
-X-Google-Smtp-Source: AIpwx49GsfCXlU/LHXlDOfxgkqUVZowI038A/dlGus2cEtfeOi+8DKL2g5NJIrBsYSaxmscCopjmGw==
-Date: Tue, 10 Apr 2018 11:27:29 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Loic PALLARDY <loic.pallardy@st.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH 2/3] rpmsg: Only invoke announce_create for rpdev with
- endpoints
-Message-ID: <20180410182729.GB1510@tuxbook-pro>
-References: <20180327210643.3436-1-bjorn.andersson@linaro.org>
- <20180327210643.3436-3-bjorn.andersson@linaro.org>
- <3c952b4ca0cc4666ba01cf0dbe605248@SFHDAG7NODE2.st.com>
+        Tue, 10 Apr 2018 14:28:28 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R301e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T-zQyaw_1523384895;
+Subject: Re: [v3 PATCH] mm: introduce arg_lock to protect arg_start|end and
+ env_start|end in mm_struct
+From: Yang Shi <yang.shi@linux.alibaba.com>
+To: Cyrill Gorcunov <gorcunov@gmail.com>, Michal Hocko <mhocko@kernel.org>
+Cc: adobriyan@gmail.com, willy@infradead.org, mguzik@redhat.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1523310774-40300-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180410090917.GZ21835@dhcp22.suse.cz> <20180410094047.GB2041@uranus.lan>
+ <20180410104215.GB21835@dhcp22.suse.cz> <20180410110242.GC2041@uranus.lan>
+ <20180410111001.GD21835@dhcp22.suse.cz> <20180410122804.GD2041@uranus.lan>
+ <097488c7-ab18-367b-c435-7c26d149c619@linux.alibaba.com>
+Message-ID: <8c19f1fb-7baf-fef3-032d-4e93cfc63932@linux.alibaba.com>
+Date: Tue, 10 Apr 2018 11:28:13 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3c952b4ca0cc4666ba01cf0dbe605248@SFHDAG7NODE2.st.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <097488c7-ab18-367b-c435-7c26d149c619@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 03 Apr 02:12 PDT 2018, Loic PALLARDY wrote:
-> > -----Original Message-----
-> > From: linux-remoteproc-owner@vger.kernel.org [mailto:linux-remoteproc-
-> > owner@vger.kernel.org] On Behalf Of Bjorn Andersson
-[..]
-> > diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> > index dffa3aab7178..e85d2691d2cf 100644
-> > --- a/drivers/rpmsg/rpmsg_core.c
-> > +++ b/drivers/rpmsg/rpmsg_core.c
-> > @@ -442,7 +442,7 @@ static int rpmsg_dev_probe(struct device *dev)
-> >  		goto out;
-> >  	}
-> > 
-> > -	if (rpdev->ops->announce_create)
-> > +	if (ept && rpdev->ops->announce_create)
-> 
-> This check is already part of virtio_rpmsg.c (see line 341)
-> 	/* need to tell remote processor's name service about this channel ? */
-> 	if (rpdev->announce && rpdev->ept &&
-> 	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
 
-The introduction of rpdev->ept in this check was done by Henri, as he
-was implementing rpmsg_char support for virtio_rpmsg:
 
-b2599ebffb2d ("rpmsg: virtio_rpmsg_bus: fix announce for devices without endpoint")
+On 4/10/18 9:21 AM, Yang Shi wrote:
+>
+>
+> On 4/10/18 5:28 AM, Cyrill Gorcunov wrote:
+>> On Tue, Apr 10, 2018 at 01:10:01PM +0200, Michal Hocko wrote:
+>>>> Because do_brk does vma manipulations, for this reason it's
+>>>> running under down_write_killable(&mm->mmap_sem). Or you
+>>>> mean something else?
+>>> Yes, all we need the new lock for is to get a consistent view on brk
+>>> values. I am simply asking whether there is something fundamentally
+>>> wrong by doing the update inside the new lock while keeping the 
+>>> original
+>>> mmap_sem locking in the brk path. That would allow us to drop the
+>>> mmap_sem lock in the proc path when looking at brk values.
+>> Michal gimme some time. I guess  we might do so, but I need some
+>> spare time to take more precise look into the code, hopefully today
+>> evening. Also I've a suspicion that we've wracked check_data_rlimit
+>> with this new lock in prctl. Need to verify it again.
+>
+> I see you guys points. We might be able to move the drop of mmap_sem 
+> before setting mm->brk in sys_brk since mmap_sem should be used to 
+> protect vma manipulation only, then protect the value modify with the 
+> new arg_lock. Then we can eliminate mmap_sem stuff in prctl path, and 
+> it also prevents from wrecking check_data_rlimit.
+>
+> At the first glance, it looks feasible to me. Will look into deeper 
+> later.
 
-It's there because the rpmsg_device will not have a primary endpoint and
-as such there's no communication channel to announce. We could add this
-check in each implementation of announce, but I think it's a common
-issue.
+A further look told me this might be *not* feasible.
 
-> 
-> should it be part of qcom_smd driver too? (but each implementation will duplicate checks)
-> Or may have a generic check in the core including rpdev->announce as well (and doing virtio_rpmsg.c clean-up)
-> 
+It looks the new lock will not break check_data_rlimit since in my patch 
+both start_brk and brk is protected by mmap_sem. The code flow might 
+look like below:
 
-I think we want to remove the ept check in virtio_rpmsg, to reduce that
-part of the duplication at least.
+CPU A                             CPU B
+--------                       --------
+prctl                               sys_brk
+                                       down_write
+check_data_rlimit           check_data_rlimit (need mm->start_brk)
+                                       set brk
+down_write                    up_write
+set start_brk
+set brk
+up_write
 
-> Change will become:
-> 	if (rpdev->announce && ept && rpdev->ops->announce_create)
-> 
 
-That might make sense, let's see what Wendy comes up with related to
-rpmsg_char and supporting Linux-side services, as I suspect that this
-handling might be affected.
+If CPU A gets the mmap_sem first, it will set start_brk and brk, then 
+CPU B will check with the new start_brk. And, prctl doesn't care if 
+sys_brk is run before it since it gets the new start_brk and brk from 
+parameter.
 
-Regards,
-Bjorn
+If we protect start_brk and brk with the new lock, sys_brk might get old 
+start_brk, then sys_brk might break rlimit check silently, is that right?
+
+So, it looks using new lock in prctl and keeping mmap_sem in brk path 
+has race condition.
+
+Thanks,
+Yang
+
+>
+> Thanks,
+> Yang
+>
+>
