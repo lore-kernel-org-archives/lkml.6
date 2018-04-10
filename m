@@ -1,105 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751942AbeDJQp5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 12:45:57 -0400
-Received: from mail-io0-f171.google.com ([209.85.223.171]:32774 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751490AbeDJQp4 (ORCPT
+        id S1752064AbeDJQrn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 12:47:43 -0400
+Received: from smtprelay0190.hostedemail.com ([216.40.44.190]:55721 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751624AbeDJQrm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 12:45:56 -0400
-X-Google-Smtp-Source: AIpwx4+Fv0SogUjy9YYw2mHDIoaSIF7AC6hs0ZuJFg61GwzgQomC4F55JRvMSfc+4BSMV3K2WePHL2mo1pPFqD9Eg9c=
-MIME-Version: 1.0
-In-Reply-To: <20180410091311.20bd8ccc@gandalf.local.home>
-References: <20180410061447.GQ21835@dhcp22.suse.cz> <CAGWkznGrugH0VqJyd5ZPiSBMOZ4SbbNpKiHVXM27Q-ep4SYb-Q@mail.gmail.com>
- <20180410074921.GU21835@dhcp22.suse.cz> <CAGWkznHQSZ5jPF2njOp0BritTmKiGOToq5bAz1bhzzmFi_01nA@mail.gmail.com>
- <20180410081231.GV21835@dhcp22.suse.cz> <CAGWkznEM=AX=3LWDmgyz4GRkWy81TNdFQQXZ7+W4=Ek4ZsnsJw@mail.gmail.com>
- <20180410090128.GY21835@dhcp22.suse.cz> <CAGWkznEf0siz1-RFSJwuKCjUtbKM=P1djo2Nc7sU1GS0AgWv2w@mail.gmail.com>
- <20180410104902.GC21835@dhcp22.suse.cz> <20180410082316.263d34ec@gandalf.local.home>
- <20180410122706.GH21835@dhcp22.suse.cz> <20180410083625.2c904ab2@gandalf.local.home>
- <20180410091311.20bd8ccc@gandalf.local.home>
-From: Joel Fernandes <joelaf@google.com>
-Date: Tue, 10 Apr 2018 09:45:54 -0700
-Message-ID: <CAJWu+oo5iUDjCnbhhJ7x2BGeuL6FDAVqFCa5tcTikVh5OtxfRA@mail.gmail.com>
-Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal OOM_SCORE_ADJ_MIN
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 10 Apr 2018 12:47:42 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:541:599:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2560:2564:2682:2685:2692:2693:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3000:3022:3138:3139:3140:3141:3142:3354:3622:3865:3867:3868:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:7903:8527:9010:9025:9040:10004:10400:10848:11232:11658:11914:12043:12740:12760:12895:13069:13076:13311:13357:13439:14096:14097:14180:14181:14659:14721:21060:21080:21451:21627:21740:30054:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
+X-HE-Tag: snake40_7d29fd2a70407
+X-Filterd-Recvd-Size: 2621
+Message-ID: <695c3bd58a41b1f902c0deabf7552fcd5a89b53f.camel@perches.com>
+Subject: Re: [PATCH] MAINTAINERS: remove me as maintainer for I2C host
+ drivers
+From: Joe Perches <joe@perches.com>
+To: Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 10 Apr 2018 09:47:38 -0700
+In-Reply-To: <29ab4b56-f857-a2d6-0b28-833896e9f47c@axentia.se>
+References: <20180410141125.4477-1-wsa@the-dreams.de>
+         <68529743-2df6-f07f-b3db-720e09b765c3@axentia.se>
+         <20180410155250.rjrfd6v5unqlf25m@ninjato>
+         <29ab4b56-f857-a2d6-0b28-833896e9f47c@axentia.se>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.0-4 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+On Tue, 2018-04-10 at 18:42 +0200, Peter Rosin wrote:
+> On 2018-04-10 17:52, Wolfram Sang wrote:
+> > Hi Peter,
+> > 
+> > > Hmm, I think you are ducking out from the i2c-mux-pinctrl driver as well.
+> > > Was that the intent?
+> > 
+> > Oops, nope! Sorry, I just forgot about the demux (I think you mean that
+> > one) driver and will create a seperate entry for it.
+> 
+> Right, I meant the demux...
+> 
+> > > 
+> > > > +I2C SUBSYSTEM DRIVERS
+> > > > +L:	linux-i2c@vger.kernel.org
+> > > > +W:	https://i2c.wiki.kernel.org/
+> > > > +Q:	https://patchwork.ozlabs.org/project/linux-i2c/list/
+> > > > +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git
+> > > > +S:	Odd Fixes
+> > > > +F:	Documentation/devicetree/bindings/i2c/
+> > > > +F:	drivers/i2c/*/
+> > > > +
+> > > 
+> > > And this includes all the other muxes, i.e. those that are "mine". Maybe
+> > > not a problem, but what do I know?
+> > 
+> > Sorry again, I really didn't want to dump something on you or leave you
+> > all alone with the muxes. I was just so focussed on the host drivers
+> > that muxes simply slipped through my mind :( I can add myself to the
+> > muxes section again, no problem. I'll let you decidei what you prefer,
+> > both is fine for me. You are doing a great job there!
+> 
+> No no, you don't need to add yourself there. I understand the mux drivers,
+> and it's pretty quiet, so no need for that. What I was worrying about was
+> this "Odd Fixes" fallback entry needlessly covering the muxes when they
+> are covered elsewhere.
 
-On Tue, Apr 10, 2018 at 6:13 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Tue, 10 Apr 2018 08:36:25 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
->
->> On Tue, 10 Apr 2018 14:27:06 +0200
->> Michal Hocko <mhocko@kernel.org> wrote:
->>
->> > I would rather that the code outside of MM not touch implementation
->> > details like OOM_SCORE_ADJ_MIN. It is really hard to get rid of abusers
->> > whenever you try to change something in MM then. Especially when the
->> > usecase is quite dubious.
->>
->> Fair enough. I was reluctant to use the OOM_SCORE_ADJ_MIN in this case.
->>
->> Perhaps I can create an option that lets users decide how they want to
->> allocate.
->>
->> For people like Joel, it will try hard (by default) and set oom_origin,
->> but the user could also set an option "no_mem_reclaim", where it will
->> not set oom_origin, but will also use NORETRY as well, where it wont
->> trigger OOM and will not be the designated victim of OOM. But it will
->> likely not allocate memory if the system is under heavy use. Then for
->> Zhaoyang's tests, all he has to do is to set that option (or clear it,
->> if the option is "mem_reclaim", which is what I'll probably call it).
->>
->
->
-> Something like this:
->
-> -- Steve
->
-> diff --git a/include/linux/ring_buffer.h b/include/linux/ring_buffer.h
-> index a0233edc0718..807e2bcb21b3 100644
-> --- a/include/linux/ring_buffer.h
-> +++ b/include/linux/ring_buffer.h
-> @@ -106,7 +106,8 @@ __poll_t ring_buffer_poll_wait(struct ring_buffer *buffer, int cpu,
->
->  void ring_buffer_free(struct ring_buffer *buffer);
->
-> -int ring_buffer_resize(struct ring_buffer *buffer, unsigned long size, int cpu);
-> +int ring_buffer_resize(struct ring_buffer *buffer, unsigned long size,
-> +                       int cpu, int rbflags);
->
->  void ring_buffer_change_overwrite(struct ring_buffer *buffer, int val);
->
-> @@ -201,6 +202,7 @@ int ring_buffer_print_page_header(struct trace_seq *s);
->
->  enum ring_buffer_flags {
->         RB_FL_OVERWRITE         = 1 << 0,
-> +       RB_FL_NO_RECLAIM        = 1 << 1,
+If you want to exclude drivers/i2c/muxes from the
+subsystem drivers block then you could add
 
-But the thing is, set_oom_origin doesn't seem to be doing the
-desirable thing every time anyway as per my tests last week [1] and
-the si_mem_available check alone seems to be working fine for me (and
-also Zhaoyang as he mentioned).
-
-Since the problem Zhaoyang is now referring to is caused because of
-calling set_oom_origin in the first place, can we not just drop that
-patch and avoid adding more complexity?
-
-IMHO I feel like for things like RB memory allocation, we shouldn't
-add a knob if we don't need to.
-
-Also I think Zhaoyang is developing for Android too since he mentioned
-he ran CTS tests so we both have the same "usecase" but he can feel
-free to correct me if that's not the case ;)
-
-thanks,
-
-- Joel
-[1] https://www.spinics.net/lists/linux-mm/msg149227.html
+X:	drivers/i2c/muxes/
