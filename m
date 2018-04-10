@@ -1,150 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752016AbeDJCdt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 22:33:49 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42228 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751543AbeDJCdr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 22:33:47 -0400
-X-Google-Smtp-Source: AIpwx48wMVDw2q9KKrczA76UGnJuDZvuyY4kCYvKWCPGL8viHyZ6UVwOBceCsI3csBzKWW1UvQn0WA==
-Date: Tue, 10 Apr 2018 11:33:39 +0900
-From: Minchan Kim <minchan@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
-        Chris Fries <cfries@google.com>,
-        linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Message-ID: <20180410023339.GB214542@rodete-desktop-imager.corp.google.com>
-References: <20180409015815.235943-1-minchan@kernel.org>
- <20180409024925.GA21889@bombadil.infradead.org>
- <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
- <20180409111403.GA31652@bombadil.infradead.org>
- <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
- <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
- <20180409144958.GA211679@rodete-laptop-imager.corp.google.com>
- <20180409152032.GB11756@bombadil.infradead.org>
- <20180409230409.GA214542@rodete-desktop-imager.corp.google.com>
- <20180410011211.GA31282@bombadil.infradead.org>
+        id S1752099AbeDJCeJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 22:34:09 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36187 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752065AbeDJCeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 22:34:08 -0400
+Subject: Re: [PATCH] f2fs: enlarge block plug coverage
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20180404085404.82184-1-yuchao0@huawei.com>
+ <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
+ <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
+ <20180409180241.GC17558@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <967b8819-da9a-b609-6a22-db8df5c7ec6c@huawei.com>
+Date: Tue, 10 Apr 2018 10:34:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180410011211.GA31282@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180409180241.GC17558@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 06:12:11PM -0700, Matthew Wilcox wrote:
-> On Tue, Apr 10, 2018 at 08:04:09AM +0900, Minchan Kim wrote:
-> > On Mon, Apr 09, 2018 at 08:20:32AM -0700, Matthew Wilcox wrote:
-> > > I don't think this is something the radix tree should know about.
-> > 
-> > Because shadow entry implementation is hidden by radix tree implemetation.
-> > IOW, radix tree user cannot know how it works.
+On 2018/4/10 2:02, Jaegeuk Kim wrote:
+> On 04/08, Chao Yu wrote:
+>> On 2018/4/5 11:51, Jaegeuk Kim wrote:
+>>> On 04/04, Chao Yu wrote:
+>>>> This patch enlarges block plug coverage in __issue_discard_cmd, in
+>>>> order to collect more pending bios before issuing them, to avoid
+>>>> being disturbed by previous discard I/O in IO aware discard mode.
+>>>
+>>> Hmm, then we need to wait for huge discard IO for over 10 secs, which
+>>
+>> We found that total discard latency is rely on total discard number we issued
+>> last time instead of range or length discard covered. IMO, if we don't change
+>> .max_requests value, we will not suffer longer latency.
+>>
+>>> will affect following read/write IOs accordingly. In order to avoid that,
+>>> we actually need to limit the discard size.
+
+Do you mean limit discard count or discard length?
+
+>>
+>> If you are worry about I/O interference in between discard and rw, I suggest to
+>> decrease .max_requests value.
 > 
-> I have no idea what you mean.
-> 
-> > > SLAB should be checking for it (the patch I posted earlier in this
-> > 
-> > I don't think it's right approach. SLAB constructor can initialize
-> > some metadata for slab page populated as well as page zeroing.
-> > However, __GFP_ZERO means only clearing pages, not metadata.
-> > So it's different semantic. No need to mix out.
-> 
-> No, __GFP_ZERO is specified to clear the allocated memory whether
-> you're allocating from alloc_pages or from slab.  What makes no sense
-> is allocating an object from slab with a constructor *and* __GFP_ZERO.
-> They're in conflict, and slab can't fulfill both of those requirements.
+> What do you mean? This will produce more pending requests in the queue?
 
-It's a stable material. If you really think it does make sense,
-please submit patch separately.
+I mean after applying this patch, we can queue more discard IOs in plug inside
+task, otherwise, previous issued discard in block layer can make is_idle() be false,
+then it can stop IO awared user to issue pending discard command.
+
+Thanks,
 
 > 
-> > > thread), but the right place to filter this out is in the caller of
-> > > radix_tree_maybe_preload -- it's already filtering out HIGHMEM pages,
-> > > and should filter out GFP_ZERO too.
-> > 
-> > radix_tree_[maybe]_preload is exported API, which are error-prone
-> > for out of modules or upcoming customers.
-> > 
-> > More proper place is __radix_tree_preload.
+>>
+>> Thanks,
+>>
+>>>
+>>> Thanks,
+>>>
+>>>>
+>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>>  fs/f2fs/segment.c | 7 +++++--
+>>>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>> index 8f0b5ba46315..4287e208c040 100644
+>>>> --- a/fs/f2fs/segment.c
+>>>> +++ b/fs/f2fs/segment.c
+>>>> @@ -1208,10 +1208,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>  		pend_list = &dcc->pend_list[i];
+>>>>  
+>>>>  		mutex_lock(&dcc->cmd_lock);
+>>>> +
+>>>> +		blk_start_plug(&plug);
+>>>> +
+>>>>  		if (list_empty(pend_list))
+>>>>  			goto next;
+>>>>  		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
+>>>> -		blk_start_plug(&plug);
+>>>>  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
+>>>>  			f2fs_bug_on(sbi, dc->state != D_PREP);
+>>>>  
+>>>> @@ -1227,8 +1229,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>  			if (++iter >= dpolicy->max_requests)
+>>>>  				break;
+>>>>  		}
+>>>> -		blk_finish_plug(&plug);
+>>>>  next:
+>>>> +		blk_finish_plug(&plug);
+>>>> +
+>>>>  		mutex_unlock(&dcc->cmd_lock);
+>>>>  
+>>>>  		if (iter >= dpolicy->max_requests)
+>>>> -- 
+>>>> 2.15.0.55.gc2ece9dc4de6
+>>>
+>>> .
+>>>
 > 
-> I could not disagree with you more.  It is the responsibility of the
-> callers of radix_tree_preload to avoid calling it with nonsense flags
-> like __GFP_DMA, __GFP_HIGHMEM or __GFP_ZERO.
-
-How about this?
-
-It would fix current problem and warn potential bugs as well.
-radix_tree_preload already has done such warning and
-radix_tree_maybe_preload has skipping for misbehaivor gfp.
-
->From 27ecf7a009d3570d1155c528c7f08040ede68ed3 Mon Sep 17 00:00:00 2001
-From: Minchan Kim <minchan@kernel.org>
-Date: Tue, 10 Apr 2018 11:20:11 +0900
-Subject: [PATCH v2] mm: workingset: fix NULL ptr dereference
-
-It assumes shadow entries of radix tree rely on the init state
-that node->private_list allocated newly is list_empty state
-for the working. Currently, it's initailized in SLAB constructor
-which means node of radix tree would be initialized only when
-*slub allocates new page*, not *slub alloctes new object*.
-
-If some FS or subsystem pass gfp_mask to __GFP_ZERO, that means
-newly allocated node can have !list_empty(node->private_list)
-by memset of slab allocator. It ends up calling NULL deference
-at workingset_update_node by failing list_empty check.
-
-This patch fixes it.
-
-Fixes: 449dd6984d0e ("mm: keep page cache radix tree nodes in check")
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>
-Cc: Christopher Lameter <cl@linux.com>
-Cc: linux-fsdevel@vger.kernel.org
-Reported-by: Chris Fries <cfries@google.com>
-Signed-off-by: Minchan Kim <minchan@kernel.org>
----
- lib/radix-tree.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index da9e10c827df..9d68f2a7888e 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -511,6 +511,16 @@ int radix_tree_preload(gfp_t gfp_mask)
- {
- 	/* Warn on non-sensical use... */
- 	WARN_ON_ONCE(!gfpflags_allow_blocking(gfp_mask));
-+	/*
-+	 * New allocate node must have node->private_list as INIT_LIST_HEAD
-+	 * state by workingset shadow memory implementation.
-+	 * If user pass  __GFP_ZERO by mistake, slab allocator will clear
-+	 * node->private_list, which makes a BUG. Rather than going Oops,
-+	 * just fix and warn about it.
-+	 */
-+	if (WARN_ON(gfp_mask & __GFP_ZERO))
-+		gfp_mask &= ~GFP_ZERO
-+
- 	return __radix_tree_preload(gfp_mask, RADIX_TREE_PRELOAD_SIZE);
- }
- EXPORT_SYMBOL(radix_tree_preload);
-@@ -522,7 +532,7 @@ EXPORT_SYMBOL(radix_tree_preload);
-  */
- int radix_tree_maybe_preload(gfp_t gfp_mask)
- {
--	if (gfpflags_allow_blocking(gfp_mask))
-+	if (gfpflags_allow_blocking(gfp_mask) && !(gfp_mask & __GFP_ZERO))
- 		return __radix_tree_preload(gfp_mask, RADIX_TREE_PRELOAD_SIZE);
- 	/* Preloading doesn't help anything with this gfp mask, skip it */
- 	preempt_disable();
--- 
-2.17.0.484.g0c8726318c-goog
+> .
+> 
