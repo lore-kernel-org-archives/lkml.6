@@ -1,80 +1,170 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523462943; cv=none;
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AIpwx48Frw0CpYCqTwLxylUwr3IORdFXRFGWx+djV5xa9AaEejneDs52aY64qyowGjQCpAOYkCjG
+ARC-Seal: i=1; a=rsa-sha256; t=1523341002; cv=none;
         d=google.com; s=arc-20160816;
-        b=h2mms4INXBVvhiKazB4a51BME4GdYAy5yNESuCYQRp3+RLpmebhBdYD9VipPJVmbf/
-         4rgLNPR1ggGD/baNO9m2JBZB3AKZsJ3D3CCso2BsbBtGconieXIphfZzOGUxEiTpS4Ly
-         KOhUmXYUrIAkb1ECyqTWG/gGsuB/VTTw/KdjoxpA4vY7Bund1C8inBFCSI8mL0wsHs/A
-         8H1n7ZKn/u2l58SsYIJ8uYOA2iQD+VG1IuOsqPRa3TJpBU7BDWglw2CSfDo6ASdbdvGU
-         deNlDL4ej0z4X/CvtpPedNNlNm+LxrgQr+o7ms0up12Xr8OIMYpPP0JXUkmg61e6XuYK
-         UzVQ==
+        b=Ta4Ezoc4q2cUKWswoSAH/CvmNSoiDHnvXC4G/kXpr5Te2t3RRTj9NTQ4iApB4TvE3b
+         8YSlgLneUoEnvRhYCuGpkWHW/ZFvTXYtCjkkxXwIRWD/BxopP6o4H6URcwjBGvaffZqS
+         KUN9jQL/jJLe9P56sswd2UpjO84Wz6aCF+6VuYtSUaieAGjB068Bv+AWZ1wCInGml0Gy
+         MEj5/Jz9WZ82iSuNHynKkn/Ei8fky2LGhtilzIIVpp1AV+hAwaifv/NsE0mPxD20wiKz
+         GGJq+/+3LkqGGTz1Q98FUDKzrz9CbzibKFMZQL8UsQuvz/2s0N3C3bUTdforF49uSST2
+         Bm9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=cP/J5Jkw/bZZWKAGPNrJzLQaOw6YbWSt/NEdgxx/ZrQ=;
-        b=02P1uYcxQhhrF1QUTaS06oPfkXN6Ku7W/kqH4lm8tKmr5NZNvvcr3cBk9WV8EaV8N2
-         HGADAWFjTbBHH5j0/ARyIcgg4uw4stkVrWpODpN3qkw+J9/Lch687R/MWizMrF9o37NW
-         1gKbtOvYnFDYo545GN+1cMmlMBBLt35KmaSotevSpiNBhJTcqAlxhu45riDfZaLAP/7P
-         ZEZYTGJav2b325pEjXnsardihXW7OULY5ZqXb5x5BQdSmvBW97bkIEOQtddiVGteBEgl
-         3z5EWmn2xIUh1PBArsMGNOq8VgLfJmMwxLHrseVc4L1odeqvwc6xpnQOUWkje1O4cpok
-         /cMg==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:dkim-filter:arc-authentication-results;
+        bh=RvR9Bo53++xLkOuKN6YSUuOa3L3xWVEODCcJegW0uRw=;
+        b=s4Eu4H1+RaLwCizjGNaHnv5XxWRGmFcpUyGPT9/KrspOIFU3VHB9ONvK/rAIMC4SQX
+         1VECYBGF532Q2w3i5y36SgjROnIYqO7OtlAxbK4SvBcTi/cXSTO6zf4VMQPL1ovDWdFs
+         by6+ZkZkCpJIofH5/EDFxy59KcipZDExWaunhTUES77K+lnxx84tWjdk46tI9MpVoBor
+         bAzkBkexMcQcqkBUu6jFPLqrHb2sTj12db+bm9yxlwqFhTVQXS1ZjyyRN+kw4RhSEwrw
+         bE9uEpLyN5zEiBkRnoMCvcOrsgJhd53rhBw8hhuD39tr5uWGx5seogJT9H+n0mN9GHAt
+         VeGQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=SC/gjGKm;
-       dkim=pass header.i=@chromium.org header.s=google header.b=Ckx92gJN;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=MCG5Po0r;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.91 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=SC/gjGKm;
-       dkim=pass header.i=@chromium.org header.s=google header.b=Ckx92gJN;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AIpwx4+t+S11NFoQv4eTmttgdLphhzb1lfeeg3oQOlsiMm1Td9AzvNDG/7Aqy3myhd4enXPB2RrsDUpsKAg2arPk5KU=
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=MCG5Po0r;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.91 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w3A6GOLo003264
+X-Nifty-SrcIP: [209.85.213.52]
 MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <CAK7LNASerehkH2391jHcXoqysiw-PWuxHsAgqHp+7vp04q+tYA@mail.gmail.com>
+In-Reply-To: <CAGXu5jJQfYXqsF7pcRsUtY9Mrw+Yi_Y6+CBAwDrQT_4kpUiHDA@mail.gmail.com>
 References: <1522128575-5326-1-git-send-email-yamada.masahiro@socionext.com>
- <1522128575-5326-20-git-send-email-yamada.masahiro@socionext.com>
- <CAGXu5jJB3AKMC8U--H61eUkFJeMogLMq00dBUUrfg4n2b4FbOQ@mail.gmail.com> <CAK7LNASerehkH2391jHcXoqysiw-PWuxHsAgqHp+7vp04q+tYA@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 11 Apr 2018 09:09:02 -0700
-X-Google-Sender-Auth: clfSe22GyYsYgoYzkGUxH2KEpDM
-Message-ID: <CAGXu5j+8OZ6cfQ9km1Y0Lgb3_vVCvgpqdacAPHDikvH_S=gnVQ@mail.gmail.com>
-Subject: Re: [PATCH v2 19/21] gcc-plugins: test GCC plugin support in Kconfig
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
-	Ulf Magnusson <ulfalizer@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>,
-	"Luis R . Rodriguez" <mcgrof@kernel.org>, Nicolas Pitre <nico@linaro.org>, LKML <linux-kernel@vger.kernel.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>, Emese Revfy <re.emese@gmail.com>
+ <1522128575-5326-21-git-send-email-yamada.masahiro@socionext.com> <CAGXu5jJQfYXqsF7pcRsUtY9Mrw+Yi_Y6+CBAwDrQT_4kpUiHDA@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Tue, 10 Apr 2018 15:15:43 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATJidxieoNoo=CTk_-BpKJv8dwq+q1MAmsRDivd6ZrotQ@mail.gmail.com>
+Message-ID: <CAK7LNATJidxieoNoo=CTk_-BpKJv8dwq+q1MAmsRDivd6ZrotQ@mail.gmail.com>
+Subject: Re: [PATCH v2 20/21] gcc-plugins: enable GCC_PLUGINS for COMPILE_TEST
+To: Kees Cook <keescook@chromium.org>
+Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Nicolas Pitre <nico@linaro.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596067545439308966?=
-X-GMAIL-MSGID: =?utf-8?q?1597466680087879988?=
+X-GMAIL-THRID: =?utf-8?q?1596067568210936951?=
+X-GMAIL-MSGID: =?utf-8?q?1597338814454948853?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Apr 11, 2018 at 8:55 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> No.
-> There is no problem to use a compiler without plugin support.
+2018-03-28 20:47 GMT+09:00 Kees Cook <keescook@chromium.org>:
+> On Mon, Mar 26, 2018 at 10:29 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> The plugin availability is checked in Kconfig, so all{yes,mod}config
+>> will not be bothered.  Remove 'depends on !COMPILE_TEST'.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> ---
+>>
+>> Changes in v2:
+>>   - Remove more 'depends on'
+>>
+>>  arch/Kconfig | 4 ----
+>>  1 file changed, 4 deletions(-)
+>>
+>> diff --git a/arch/Kconfig b/arch/Kconfig
+>> index 88cc925..b07094c 100644
+>> --- a/arch/Kconfig
+>> +++ b/arch/Kconfig
+>> @@ -414,7 +414,6 @@ menuconfig GCC_PLUGINS
+>>         bool "GCC plugins"
+>>         depends on HAVE_GCC_PLUGINS
+>>         depends on $(success $srctree/scripts/gcc-plugin.sh $HOSTCXX $CC)
+>> -       depends on !COMPILE_TEST
+>>         help
+>>           GCC plugins are loadable modules that provide extra features to the
+>>           compiler. They are useful for runtime instrumentation and static analysis.
 >
-> If a user does not want to use plugin in the first place,
-> why does he/she need to be bothered by such information in stderr?
+> This one is nice, yes! We get coverage for anyone with plugin support.
+>
+>> @@ -424,7 +423,6 @@ menuconfig GCC_PLUGINS
+>>  config GCC_PLUGIN_CYC_COMPLEXITY
+>>         bool "Compute the cyclomatic complexity of a function" if EXPERT
+>>         depends on GCC_PLUGINS
+>> -       depends on !COMPILE_TEST
+>>         help
+>>           The complexity M of a function's control flow graph is defined as:
+>>            M = E - N + 2P
+>> @@ -487,7 +485,6 @@ config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
+>>  config GCC_PLUGIN_STRUCTLEAK_VERBOSE
+>>         bool "Report forcefully initialized variables"
+>>         depends on GCC_PLUGIN_STRUCTLEAK
+>> -       depends on !COMPILE_TEST
+>>         help
+>>           This option will cause a warning to be printed each time the
+>>           structleak plugin finds a variable it thinks needs to be
+>> @@ -527,7 +524,6 @@ config GCC_PLUGIN_RANDSTRUCT
+>>  config GCC_PLUGIN_RANDSTRUCT_PERFORMANCE
+>>         bool "Use cacheline-aware structure randomization"
+>>         depends on GCC_PLUGIN_RANDSTRUCT
+>> -       depends on !COMPILE_TEST
+>>         help
+>>           If you say Y here, the RANDSTRUCT randomization will make a
+>>           best effort at restricting randomization to cacheline-sized
+>
+> All three of these, though, please leave as they were. They're either
+> needlessly noisy for COMPILE_TEST (GCC_PLUGIN_CYC_COMPLEXITY and
+> *_VERBOSE),
 
-So, I don't think it's needed for the first version of this, but it'd
-be nice to have a way for end users to discover _why_ some option they
-want is unavailable. Having them dig through the Kconfigs, edit
-scripts to see stderr again, running those by hand, etc, is really
-unfriendly. If, instead, stderr was visible from the menuconfig "help"
-for a Kconfig, it could serve as automatic documentation for why
-something wasn't enabled. I don't mean for stderr to get sprayed out
-during a regular "make"; I agree: that would be ugly and pointless.
-I'd just like some way for the reason behind an option being disabled
-to be discoverable in some way.
 
--Kees
+CONFIG_GCC_PLUGIN_CYC_COMPLEXITY is crazily annoying.
+I wonder if the right thing might be to dump the log to
+a separate report file instead of messing up the console,
+but this is a different issue.
+So I will keep this as-is.
+
+
+
+
+CONFIG_GCC_PLUGIN_STRUCTLEAK_VERBOSE prinkles
+ 'userspace variable will be forcibly initialized'
+
+If this is a matter of warning level,
+we generally control this by W= option
+as you see in scripts/Makefile.extrawarn
+
+But, maybe I am wrong.  I will keep this as-is
+until I figure out what is the right thing to do
+for warning verbosity.
+
+
+
+
+> or reduce the COMPILE_TEST coverage
+> (GCC_PLUGIN_RANDSTRUCT_PERFORMANCE).
+>
+
+Can you explain a bit more about GCC_PLUGIN_RANDSTRUCT_PERFORMANCE?
+
+IIUC, this option reduces the randomization.
+
+Is it related to COMPILE_TEST coverage?
+
+
+
+
+
+
+> (And perhaps a comment is needed to explain these to avoid confusion
+> in the future?)
+>
+> -Kees
+>
+> --
+> Kees Cook
+> Pixel Security
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
 
 -- 
-Kees Cook
-Pixel Security
+Best Regards
+Masahiro Yamada
