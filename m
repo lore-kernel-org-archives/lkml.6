@@ -1,75 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753169AbeDJMi3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:38:29 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:50876 "EHLO gum.cmpxchg.org"
+        id S1753189AbeDJMih (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:38:37 -0400
+Received: from mout.gmx.net ([212.227.17.21]:46689 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752584AbeDJMi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:38:27 -0400
-Date: Tue, 10 Apr 2018 08:39:46 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Michal Hocko <mhocko@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Minchan Kim <minchan@kernel.org>, Christopher Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>,
-        Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Message-ID: <20180410123946.GA6334@cmpxchg.org>
-References: <20180409015815.235943-1-minchan@kernel.org>
- <20180409024925.GA21889@bombadil.infradead.org>
- <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
- <20180409111403.GA31652@bombadil.infradead.org>
- <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
- <20180409183827.GD17558@jaegeuk-macbookpro.roam.corp.google.com>
- <20180409194044.GA15295@bombadil.infradead.org>
- <20180410082643.GX21835@dhcp22.suse.cz>
- <20180410120528.GB22118@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180410120528.GB22118@bombadil.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1752846AbeDJMie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 08:38:34 -0400
+Message-ID: <1523363877.4942.2.camel@gmx.de>
+Subject: Re: x86-tip.today (4cdf573)  early instaboot
+From: Mike Galbraith <efault@gmx.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Date: Tue, 10 Apr 2018 14:37:57 +0200
+In-Reply-To: <20180410085917.bo526ueprf7zfare@gmail.com>
+References: <1523347959.4724.2.camel@gmx.de>
+         <20180410085917.bo526ueprf7zfare@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:/BRZYU1/d+t+xUbdt218l12Dye9DeYZe7slrgtH3EGK9FNlBNhB
+ 0rJYiOwpiVXXc/HyMoBpX2Z/VgNjYJtr6MM+GM+KxUiwSTdcHrcjWRhXWGFJSOSVVbR65jA
+ 3XloBKRBkOpUUZe3WiXJoaDLgb0LB4rbmEIh4VU+3cSLIZKy3p11/Li8P6vZ3qMVkVmhVxs
+ QuteG9cJA9BlTJBZEzKWA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:YUoKsin8dXg=:HdxKGo5bkCbUrqnttRjOAo
+ kd4jQ11/BvWbtZFKR9BNEhJV9uzrG5De72OOACwHfnbCEJcKITW6r5bz6DSAho23F8lHd4tx5
+ IGyBlO74w9khW+M3AF4erdMdHCZl45gdmZ+e4/zG4/3jnQHjO5YXSb+5BQhqBh860UM1gtGiO
+ 1o4Kn+y9m8yLn6cFWxf1s54h6o1Vdu0Eh01PjiOhHru/rlEOCQ4hgR2h1IfPUaOY06G30HF/t
+ jHS0oR0Z3L1pPkhHnKiFniggafdzWF4VRN7zxQCnXzHSExSCtyuvqmVBoQpO9aeSH2UfHo+5t
+ JbxRK+8BHaj8UGRx7GhUQd/dqxoN728QHmD8WsdnsdZMaqqOSfPo5WAaKso/sgb4o8nZ6mYxL
+ Uy5AkwydtpEJJEI6Tb4B/SrPRt9MeuAvaxY0b0zne8Y/bT/0VGvFHsdZp1SR8mH0hjhLA0RhB
+ Y/2zOWtBEXmG24Gx2++fAQc9KS3iHI/SakYtDnpvdTePBbX+mTnYOKDJ7d1+JImU0oVvlEpPx
+ lmsawnuCDwmhPuCfa0Su4URoqc8qk15ktSdMP/C//syt3jFlrtYdyO3kG0ywmvTI/u5ptEHiE
+ sXgoZeMECWz/zvysuoxDTzLuZkAOQKp5md4SRqezRWnwKU+yolUG9/fFxcNhfrLCcIA6jlSxj
+ DdqMLm1uMwwxFUFJUB2b2pAG/HLMv8PrDbYd/watQVzJCRyX1bg8c6guAqEi8A8NnmSrK/5Vf
+ bUQRP2UkZSX8rT5JtPMxc896iHnV+NaITL+KL+OaWBFumdgFWw1XrIQMNJQdaDcp4B9gm6x6f
+ jrplRtrXNkEvF/TMzFHUfvEE0Tjqn4b5ONY6LqTnKKsnSGUNng=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 05:05:28AM -0700, Matthew Wilcox wrote:
-> On Tue, Apr 10, 2018 at 10:26:43AM +0200, Michal Hocko wrote:
-> > On Mon 09-04-18 12:40:44, Matthew Wilcox wrote:
-> > > The problem is that the mapping gfp flags are used not only for allocating
-> > > pages, but also for allocating the page cache data structures that hold
-> > > the pages.  F2FS is the only filesystem that set the __GFP_ZERO bit,
-> > > so it's the first time anyone's noticed that the page cache passes the
-> > > __GFP_ZERO bit through to the radix tree allocation routines, which
-> > > causes the radix tree nodes to be zeroed instead of constructed.
-> > > 
-> > > I think the right solution to this is:
+On Tue, 2018-04-10 at 10:59 +0200, Ingo Molnar wrote:
+> * Mike Galbraith <efault@gmx.de> wrote:
+> 
+> > Hi Ingo,
 > > 
-> > This just hides the underlying problem that the node is not fully and
-> > properly initialized. Relying on the previous released state is just too
-> > subtle.
+> > FYI, my i4790 box reboots immediately.. or close enough to it that you
+> > see nothing at all before again meeting the bios splash.  Master with
+> > the ~same config works fine.  I haven't poked around yet (work).
 > 
-> That's the fundamental design of slab-with-constructors.  The user provides
-> a constructor, so all newly allocagted objects are initialised to a known
-> state, then the user will restore the object to that state when it frees
-> the object to slab.
+> Hm, so there's been a few 'dangerous' pieces of work merged yesterday-ish.
+> 
+> Prime suspects would be:
+> 
+>  triton:~/tip> gll linus..x86/pti
+> 
+>  0564258fb2cf: x86/pti: Leave kernel text global for !PCID
+>  a5df4f1f0d78: x86/pti: Never implicitly clear _PAGE_GLOBAL for kernel image
+>  e0bb456e3250: x86/pti: Enable global pages for shared areas
+>  efad2b415152: x86/mm: Do not forbid _PAGE_RW before init for __ro_after_init
+>  4ddee6efdcd0: x86/mm: Comment _PAGE_GLOBAL mystery
+>  e71e836f463d: x86/mm: Remove extra filtering in pageattr code
+>  64c80759408f: x86/mm: Do not auto-massage page protections  <== WOOF
+>  6baf4bec02db: x86/espfix: Document use of _PAGE_GLOBAL
+>  8a57f4849f4f: x86/mm: Introduce "default" kernel PTE mask
+>  606c7193d5fb: x86/mm: Undo double _PAGE_PSE clearing
+>  d1440b23c922: x86/mm: Factor out pageattr _PAGE_GLOBAL setting
+>  ee1400dda318: Merge branch 'linus' into x86/pti to pick up upstream changes
+>  071ccc966ba5: x86/entry/64: Drop idtentry's manual stack switch for user entries
+>  9820e1c3376c: x86/uapi: Fix asm/bootparam.h userspace compilation errors
+> 
+> ... which you could test via 0564258fb2cf: if that insta-reboots too then 
+> 9820e1c3376c^1 is expected to work and 4 bisection steps should pinpoint the 
+> guilty commit ...
 
-Fully agreed. I'm surprised there is so much pushback to what Willy is
-saying here, this stuff has been established for years.
+Thanks.  I already had a full bisect running, so ended up doing more
+than 4 steps, but ended up at the above.
 
-> > Are you going to blacklist all potential gfp flags that come
-> > from the mapping? This is just unmaintainable! If anything this should
-> > be an explicit & with the allowed set of allowed flags.
-> 
-> Oh, I agree that using the set of flags used to allocate the page
-> in order to allocate the radix tree nodes is a pretty horrible idea.
-> 
-> Your suggestion, then, is:
-> 
-> -	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
-> +	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
-
-That looks reasonable to me.
+	-Mike
