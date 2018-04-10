@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49BYuDdvKGoTcct5FY/yz5wZvMHzLIVvugQJi4r4ucn8IzA8qYHi3uccxE1HHnLhrOIXzim
-ARC-Seal: i=1; a=rsa-sha256; t=1523399060; cv=none;
+X-Google-Smtp-Source: AIpwx49vmmmhFnse1iNMguYm3HeaLjgQNvc5WbuIqguGk/nRNIprpYhpakJejtAYGp6ARSDnMw/L
+ARC-Seal: i=1; a=rsa-sha256; t=1523399057; cv=none;
         d=google.com; s=arc-20160816;
-        b=s5Ms0ExhMpE74FdCeaOmZ2/IofOBDIfrMUdTzeK9fNQwjsWJg07Pn3Ep8ePqlllxra
-         Kq0mzHlx22ZMp98QP+XkUeMRx4fvzPdk3exfhn+JSrTbFPA3yfsXY6iL64utaev3DFx/
-         IMOYEqI/92dX7K8thcDsR8D4qEe02wEF8PKKPvtvMDhSLxo7AwEsDNyRzp+s2AQtq1rc
-         2j/yh3mS4YzX9OYGywc9P/Xk3tCFURJClQ2VABEKfFUFNpZ9css/kzWg0jt8JkNN5b5l
-         7WFIcOQzmedUsy7stxTA+Br3Subm9LEA9LUvEdik3OjTaiCloWhE0tkHbne6wK0FN9H5
-         Nfgw==
+        b=EXCuDgFVMkQ9KPWFy77XXHklHht8szJsLKU06giJfiCMEm5Im1GeRjycx8etoiSXXr
+         dQOrs//5ea0UHoDE1ewgk3Twnl1vWh4HbZ9xQ1601HsHs7w4jr2Tds3zuu0STdphs5Eq
+         xuRMLH4UXwwlGKhfG8gbLzwStt/TtsyB0W36XUPbDtNqQP7/5YJSRaFkUMWnOtNL1+lF
+         QUUma1r0dLwHoDjEgLZwByQ3BIdPFZKvuqFnxzpmkZn85O/YDajWjiibepVig/8lfZ4p
+         BP1xwO2fps0oXqN3cYMKMCv8bs2Jch7M5sFI3YszTMH9sp33MT+iUwCVhtoeFqCa46OM
+         Ko3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zEQ8N40iIsno1tpxutKcVVkWocfTNsxhhPjdbaV+nNA=;
-        b=tVJCuqV56oABsE61+sT1M2+E6Vdxj755rKv5VjoETkcvgLyXLXb+1sgWsn4BzPlOV9
-         Gn7KY01uvhcvPMJE4KRP14sKGwzXfWiOAuOaVPInSuPd1VHd38So1U9vVhlu7NeKDhAT
-         m1ohNE7Tb7obK2DBDA1yjfEVCPbLWeMNIncbn4NsPoQN0jNvHG2Vqw3qFpkbeZr/iPgZ
-         U6zgj3XBo+IXSXkm3NpqsqS/8jJgo4qOUEOyRrrZTEzEHOBuKQxE9ZofZkaG4YSdZD1/
-         DvftIoJiqeRMRfEcY62/Ki07ls5wPnxzOIVklU3WucIoke4mCPQjfoAF0craLt1YMN+n
-         wErA==
+        bh=knhYDf/PmtRsb8DOaIMKBOD7kR+3AxCuRzvn6UvisAg=;
+        b=r5Kod/znSHH0+MqlUwV8LnxmqMM7O3gVbB0Lp0L0x77sn3Bvc9Lal03vTG6MpI80sC
+         PYjIm6khUYuP0EXRr043l25MDt/mtciZGp3ZINUWOgRYxMYqLaiGnmM2A9fi/0Yk1P9o
+         DRFZVpVExLtI8xQHgKCVCWn+Ra5kfBqmVepG+sd9W59TzVHmxeFzrILi7AV/sOVrdwfg
+         juL6ilbVRayko/tEp8ECDsXCMcpdNMndJ/qzGubZNvnBHbOWOZTFmb/tticeeuFU594V
+         BKm28Nq/eTJKepyDYe2b3VNBrRKGp6lFB2zLHzeDq9tevrN7sJc+q0xZDfYdTOiZMvRX
+         iuwQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kees Cook <keescook@chromium.org>,
-	Guenter Roeck <linux@roeck-us.net>,
+	Jeff Barnhill <0xeffeff@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 01/18] sparc64: Oracle DAX driver depends on SPARC64
-Date: Wed, 11 Apr 2018 00:23:36 +0200
-Message-Id: <20180410212758.638047196@linuxfoundation.org>
+Subject: [PATCH 4.16 04/18] net/ipv6: Increment OUTxxx counters after netfilter hook
+Date: Wed, 11 Apr 2018 00:23:39 +0200
+Message-Id: <20180410212758.789994485@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212758.564682823@linuxfoundation.org>
 References: <20180410212758.564682823@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399692722941424?=
-X-GMAIL-MSGID: =?utf-8?q?1597399692722941424?=
+X-GMAIL-THRID: =?utf-8?q?1597399689892438728?=
+X-GMAIL-MSGID: =?utf-8?q?1597399689892438728?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,43 +49,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Jeff Barnhill <0xeffeff@gmail.com>
 
-commit 9c548bb5823dfcf7a16c6e65976d84d9581208c9 upstream.
 
-sparc:allmodconfig fails to build as follows.
+[ Upstream commit 71a1c915238c970cd9bdd5bf158b1279d6b6d55b ]
 
-ERROR: "mdesc_release" [drivers/sbus/char/oradax.ko] undefined!
-ERROR: "sun4v_hvapi_register" [drivers/sbus/char/oradax.ko] undefined!
-ERROR: "mdesc_get_property" [drivers/sbus/char/oradax.ko] undefined!
-ERROR: "mdesc_node_by_name" [drivers/sbus/char/oradax.ko] undefined!
-ERROR: "mdesc_grab" [drivers/sbus/char/oradax.ko] undefined!
-ERROR: "sun4v_ccb_info" [drivers/sbus/char/oradax.ko] undefined!
-ERROR: "sun4v_ccb_submit" [drivers/sbus/char/oradax.ko] undefined!
-ERROR: "sun4v_ccb_kill" [drivers/sbus/char/oradax.ko] undefined!
+At the end of ip6_forward(), IPSTATS_MIB_OUTFORWDATAGRAMS and
+IPSTATS_MIB_OUTOCTETS are incremented immediately before the NF_HOOK call
+for NFPROTO_IPV6 / NF_INET_FORWARD.  As a result, these counters get
+incremented regardless of whether or not the netfilter hook allows the
+packet to continue being processed.  This change increments the counters
+in ip6_forward_finish() so that it will not happen if the netfilter hook
+chooses to terminate the packet, which is similar to how IPv4 works.
 
-The symbols are only available with SPARC64 builds, thus the driver
-depends on it.
-
-Fixes: dd0273284c74 ("sparc64: Oracle DAX driver")
-Cc: Kees Cook <keescook@chromium.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Jeff Barnhill <0xeffeff@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/sbus/char/Kconfig |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/ipv6/ip6_output.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/sbus/char/Kconfig
-+++ b/drivers/sbus/char/Kconfig
-@@ -72,7 +72,8 @@ config DISPLAY7SEG
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -375,6 +375,11 @@ static int ip6_forward_proxy_check(struc
+ static inline int ip6_forward_finish(struct net *net, struct sock *sk,
+ 				     struct sk_buff *skb)
+ {
++	struct dst_entry *dst = skb_dst(skb);
++
++	__IP6_INC_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTFORWDATAGRAMS);
++	__IP6_ADD_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTOCTETS, skb->len);
++
+ 	return dst_output(net, sk, skb);
+ }
  
- config ORACLE_DAX
- 	tristate "Oracle Data Analytics Accelerator"
--	default m if SPARC64
-+	depends on SPARC64
-+	default m
- 	help
- 	 Driver for Oracle Data Analytics Accelerator, which is
- 	 a coprocessor that performs database operations in hardware.
+@@ -569,8 +574,6 @@ int ip6_forward(struct sk_buff *skb)
+ 
+ 	hdr->hop_limit--;
+ 
+-	__IP6_INC_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTFORWDATAGRAMS);
+-	__IP6_ADD_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTOCTETS, skb->len);
+ 	return NF_HOOK(NFPROTO_IPV6, NF_INET_FORWARD,
+ 		       net, NULL, skb, skb->dev, dst->dev,
+ 		       ip6_forward_finish);
