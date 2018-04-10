@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+M2IgizWSdBHGiXPLfVzL7QXcnd404/KLsJt4CafRCh3stOhTAokgBScQ5TNElM/h8jg8V
-ARC-Seal: i=1; a=rsa-sha256; t=1523399260; cv=none;
+X-Google-Smtp-Source: AIpwx4+AgBSrqiemi0jixmZmp1+IuT72iAcR5axuSQGkc0NA3amSvy8s9YFS55EJ4WuIHxuKnkH6
+ARC-Seal: i=1; a=rsa-sha256; t=1523399254; cv=none;
         d=google.com; s=arc-20160816;
-        b=bByeTr0Sf4AfvsnSKopwClYM8ICSuxLYzA7Jum43WksAX25AjOtXdyXNCqFgaV4Uti
-         XnOTA6EPdZZLTPrQv7m6klUGRPiJ1smNGeor0pzus+Tn/6OJrh5HinZXEHkZs6GA9L0p
-         weIJeWDHBX3oxnbPNkOIuQMYDg4FxLss7lU2hrUOa1ABZ7xckz7mmzcs4c8WCSm8wSt1
-         aOvSOqZ37Q4vrY+rgNSdqm6MED0OdZ8DUK9cJCDqhW1x0gJWaXHkYfRvhNskLbGmtQSx
-         mF33L8XqIqjL/kq7qVlM1fZ9Oj+3Vp/G6NeX014zvCRsA8h0eeylvl1obw3dN936lYvA
-         v5XQ==
+        b=pb3sxyznGUDO/H2SjaL4lUA3ljxpQQW+HksU1RzfOdgtlgbQ6Xj2udlaMoK7LXL5rD
+         2t9k5CYD8iIuxRhqRyztT2kMN1f6S+X3Dzr5hMeaJX1Ge2tnIpjjI6jqQZRmBZGSW/6K
+         2tCWD9vA0iOr8gdq+YAyWz88pg2m0pFGyJteWfspo9udL+EFuuYfRgroMLdaoV37L9G5
+         Nlzfx28YbkTXboXbFOyTUNGnkwUJHSXgfW0l3Y3jRElSylX3s1LJF1gAoUGtG1Q3CkLA
+         cms5wndw0BiDmDB3wgPMKU7d68zrDFbHkwtnZ3GCdDv5bKxAhG55Zkchmi1CBwzvtVqG
+         y/Lw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AnSVY4HFky6kt5GtXJdX6YPLCwvA+30iik69LXg9NZM=;
-        b=hECECjvMjLk4QQs4/xKcy9x4/qu67OM991uE+6yD6PC3O+Rin8HlhNazAN/HpqyCC/
-         mkRgjD1PAk1CsgDY6PSb2pai7R8Fs6Vuhj5MnsZLOPuwK1ekYSersJL9aIS01p1W59J+
-         7ik3rBWu3D894oKfxGGTOcDUMHh4O9ou9o8LMlW88rxsV5SvCVzKzgTlqMqhNJIjFD02
-         xdARSTPRsgF0ddOEvS3zIYnWN/Az3NfaKZ6RLCIbmWeAa3zDa3rcjdUYSKOanofXwuNH
-         VubYF0KcI2YN7d1EqeQJ0gs0akDtslWD8DoOLFemYb6HaT7/TCRpzGx1Ko4kQLLiy4g5
-         PuSQ==
+        bh=ZFqV/FZDeAL2la2l7jm3FnhP4v0WLagaSTQJuYFgnow=;
+        b=RnBcYGKnjn8nWZgfJrAdl6e2FWOkMzV+mV2WznrjGLheOotXTK9xZWysLxNYstvuSV
+         d0ONo0AAUxM1I/lruQdf+UnjTUuZx1hzEZQ85/Mw4YdyZL1Tl9CNldkLj72VvTf+pSsI
+         BWLbuAsc2c2doum6O6T8v9JmYCYZCskoeccmuG8zQy9k+VQH2ZuKGB9txj3cuESLRF3o
+         I+IIxU5XQKNKawfCjflgRRdq4kj3Ulxdg1XThbEVVEidJNW+/kaocfoBSH1XzBZz2IMH
+         BIau/oRTeJBk60mA5TZxXrN0rJB6WnDC+L1WS95T9ueXbLRgsCPDI6lN22avKJ4Hrv1Q
+         yDZA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Stafford Horne <shorne@gmail.com>,
+	Wei Yongjun <weiyongjun1@huawei.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 044/168] ACPI: EC: Fix debugfs_create_*() usage
-Date: Wed, 11 Apr 2018 00:23:06 +0200
-Message-Id: <20180410212802.078100959@linuxfoundation.org>
+Subject: [PATCH 4.15 042/168] irqchip/ompic: fix return value check in ompic_of_init()
+Date: Wed, 11 Apr 2018 00:23:04 +0200
+Message-Id: <20180410212801.998320075@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399902846957647?=
-X-GMAIL-MSGID: =?utf-8?q?1597399902846957647?=
+X-GMAIL-THRID: =?utf-8?q?1597399896405460783?=
+X-GMAIL-MSGID: =?utf-8?q?1597399896405460783?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,57 +51,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
 
-[ Upstream commit 3522f867c13b63cf62acdf1b8ca5664c549a716a ]
+[ Upstream commit 404e6bea10662f0e142748353169d25378271e49 ]
 
-acpi_ec.gpe is "unsigned long", hence treating it as "u32" would expose
-the wrong half on big-endian 64-bit systems.  Fix this by changing its
-type to "u32" and removing the cast, as all other code already uses u32
-or sometimes even only u8.
+In case of error, the function ioremap() returns NULL pointer not
+ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
 
-Fixes: 1195a098168fcacf (ACPI: Provide /sys/kernel/debug/ec/...)
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 9b54470afd83 ("irqchip: add initial support for ompic")
+Acked-by: Stafford Horne <shorne@gmail.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/ec.c       |    2 +-
- drivers/acpi/ec_sys.c   |    2 +-
- drivers/acpi/internal.h |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/irqchip/irq-ompic.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/acpi/ec.c
-+++ b/drivers/acpi/ec.c
-@@ -1516,7 +1516,7 @@ static int acpi_ec_setup(struct acpi_ec
+--- a/drivers/irqchip/irq-ompic.c
++++ b/drivers/irqchip/irq-ompic.c
+@@ -171,9 +171,9 @@ static int __init ompic_of_init(struct d
+ 
+ 	/* Setup the device */
+ 	ompic_base = ioremap(res.start, resource_size(&res));
+-	if (IS_ERR(ompic_base)) {
++	if (!ompic_base) {
+ 		pr_err("ompic: unable to map registers");
+-		return PTR_ERR(ompic_base);
++		return -ENOMEM;
  	}
  
- 	acpi_handle_info(ec->handle,
--			 "GPE=0x%lx, EC_CMD/EC_SC=0x%lx, EC_DATA=0x%lx\n",
-+			 "GPE=0x%x, EC_CMD/EC_SC=0x%lx, EC_DATA=0x%lx\n",
- 			 ec->gpe, ec->command_addr, ec->data_addr);
- 	return ret;
- }
---- a/drivers/acpi/ec_sys.c
-+++ b/drivers/acpi/ec_sys.c
-@@ -128,7 +128,7 @@ static int acpi_ec_add_debugfs(struct ac
- 		return -ENOMEM;
- 	}
- 
--	if (!debugfs_create_x32("gpe", 0444, dev_dir, (u32 *)&first_ec->gpe))
-+	if (!debugfs_create_x32("gpe", 0444, dev_dir, &first_ec->gpe))
- 		goto error;
- 	if (!debugfs_create_bool("use_global_lock", 0444, dev_dir,
- 				 &first_ec->global_lock))
---- a/drivers/acpi/internal.h
-+++ b/drivers/acpi/internal.h
-@@ -159,7 +159,7 @@ static inline void acpi_early_processor_
-    -------------------------------------------------------------------------- */
- struct acpi_ec {
- 	acpi_handle handle;
--	unsigned long gpe;
-+	u32 gpe;
- 	unsigned long command_addr;
- 	unsigned long data_addr;
- 	bool global_lock;
+ 	irq = irq_of_parse_and_map(node, 0);
