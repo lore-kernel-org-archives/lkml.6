@@ -1,107 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752552AbeDJS6Q (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 14:58:16 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35310 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751629AbeDJS6O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 14:58:14 -0400
-X-Google-Smtp-Source: AIpwx4/UiHgK9Nefr70+6xPHJvjvDiifoVf1rUb4m4CSNSw9wv93lIHz2hgX95JWqLrtAzAwfx+1AA==
-Date: Tue, 10 Apr 2018 11:58:54 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Niklas Cassel <niklas.cassel@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firmware: qcom: scm: Fix crash in qcom_scm_call_atomic1()
-Message-ID: <20180410185854.GB23948@tuxbook-pro>
-References: <20180409214016.21219-1-niklas.cassel@linaro.org>
+        id S1752323AbeDJTFR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 15:05:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44700 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751589AbeDJTFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 15:05:16 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DF0A217BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 10 Apr 2018 15:05:12 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Joel Fernandes <joelaf@google.com>
+Cc: Michal Hocko <mhocko@kernel.org>,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal
+ OOM_SCORE_ADJ_MIN
+Message-ID: <20180410150512.189f849c@gandalf.local.home>
+In-Reply-To: <CAJWu+ooC4hCK31srhBFoAf=qwfFFOyTGsjRRJ9PdxaVsb6waQQ@mail.gmail.com>
+References: <20180410061447.GQ21835@dhcp22.suse.cz>
+        <CAGWkznGrugH0VqJyd5ZPiSBMOZ4SbbNpKiHVXM27Q-ep4SYb-Q@mail.gmail.com>
+        <20180410074921.GU21835@dhcp22.suse.cz>
+        <CAGWkznHQSZ5jPF2njOp0BritTmKiGOToq5bAz1bhzzmFi_01nA@mail.gmail.com>
+        <20180410081231.GV21835@dhcp22.suse.cz>
+        <CAGWkznEM=AX=3LWDmgyz4GRkWy81TNdFQQXZ7+W4=Ek4ZsnsJw@mail.gmail.com>
+        <20180410090128.GY21835@dhcp22.suse.cz>
+        <CAGWkznEf0siz1-RFSJwuKCjUtbKM=P1djo2Nc7sU1GS0AgWv2w@mail.gmail.com>
+        <20180410104902.GC21835@dhcp22.suse.cz>
+        <20180410082316.263d34ec@gandalf.local.home>
+        <20180410122706.GH21835@dhcp22.suse.cz>
+        <20180410083625.2c904ab2@gandalf.local.home>
+        <20180410091311.20bd8ccc@gandalf.local.home>
+        <CAJWu+oo5iUDjCnbhhJ7x2BGeuL6FDAVqFCa5tcTikVh5OtxfRA@mail.gmail.com>
+        <20180410140036.650a8732@gandalf.local.home>
+        <CAJWu+ooC4hCK31srhBFoAf=qwfFFOyTGsjRRJ9PdxaVsb6waQQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180409214016.21219-1-niklas.cassel@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 09 Apr 14:40 PDT 2018, Niklas Cassel wrote:
+On Tue, 10 Apr 2018 11:39:24 -0700
+Joel Fernandes <joelaf@google.com> wrote:
 
-> qcom_scm_call_atomic1() can crash with a NULL pointer dereference at
-> qcom_scm_call_atomic1+0x30/0x48.
-> 
-> disassembly of qcom_scm_call_atomic1():
-> ...
-> <0xc08d73b0 <+12>: ldr r3, [r12]
-> ... (no instruction explicitly modifies r12)
-> 0xc08d73cc <+40>: smc 0
-> ... (no instruction explicitly modifies r12)
-> 0xc08d73d4 <+48>: ldr r3, [r12] <- crashing instruction
-> ...
-> 
-> Since the first ldr is successful, and since r12 isn't explicitly
-> modified by any instruction between the first and the second ldr,
-> it must have been modified by the smc call, which is ok,
-> since r12 is caller save according to the AAPCS.
-> 
-> Add r12 to the clobber list so that the compiler knows that the
-> callee potentially overwrites the value in r12.
-> Clobber descriptions may not in any way overlap with an input or
-> output operand.
-> 
+> Yes I agree. So lets just do that and no other patches additional
+> patches are needed then. Let me know if there's anything else I
+> missed?
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Yeah, I think there's really no other issue. I'm not going to apply
+more patches.
 
-Regards,
-Bjorn
+> 
+> Also I got a bit confused, I reread all the threads. Zhaoyang's
+> current issue is that the OOM hint *IS* working which is what
+> triggered your patch to toggle the behavior through an option. Where
+> was in this message we are discussing that the OOM hint doesn't always
+> work which is not Zhaoyang's current issue. Let me know if I missed
+> something? Sorry if I did.
 
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> ---
->  drivers/firmware/qcom_scm-32.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/firmware/qcom_scm-32.c b/drivers/firmware/qcom_scm-32.c
-> index dfbd894d5bb7..4e24e591ae74 100644
-> --- a/drivers/firmware/qcom_scm-32.c
-> +++ b/drivers/firmware/qcom_scm-32.c
-> @@ -147,7 +147,7 @@ static u32 smc(u32 cmd_addr)
->  			"smc	#0	@ switch to secure world\n"
->  			: "=r" (r0)
->  			: "r" (r0), "r" (r1), "r" (r2)
-> -			: "r3");
-> +			: "r3", "r12");
->  	} while (r0 == QCOM_SCM_INTERRUPTED);
->  
->  	return r0;
-> @@ -263,7 +263,7 @@ static s32 qcom_scm_call_atomic1(u32 svc, u32 cmd, u32 arg1)
->  			"smc    #0      @ switch to secure world\n"
->  			: "=r" (r0)
->  			: "r" (r0), "r" (r1), "r" (r2)
-> -			: "r3");
-> +			: "r3", "r12");
->  	return r0;
->  }
->  
-> @@ -298,7 +298,7 @@ static s32 qcom_scm_call_atomic2(u32 svc, u32 cmd, u32 arg1, u32 arg2)
->  			"smc    #0      @ switch to secure world\n"
->  			: "=r" (r0)
->  			: "r" (r0), "r" (r1), "r" (r2), "r" (r3)
-> -			);
-> +			: "r12");
->  	return r0;
->  }
->  
-> @@ -328,7 +328,7 @@ u32 qcom_scm_get_version(void)
->  			"smc	#0	@ switch to secure world\n"
->  			: "=r" (r0), "=r" (r1)
->  			: "r" (r0), "r" (r1)
-> -			: "r2", "r3");
-> +			: "r2", "r3", "r12");
->  	} while (r0 == QCOM_SCM_INTERRUPTED);
->  
->  	version = r1;
-> -- 
-> 2.14.3
-> 
+Right, it's that if someone does extend the ring buffer page size while
+the system is about to go into OOM, it may be triggered to get killed
+even though it's not the culprit of the memory problems. But again,
+this is really pushing what happens in the real world. That's the
+problem with stress test cases. What happens when it triggers something
+that will never actually happen in normal environments, and the fix
+just complicates everything for really no benefit.
+
+-- Steve
