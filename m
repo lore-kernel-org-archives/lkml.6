@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48q1rUPl4yqx3LtUuviqPcVPsBjRcS6NyGWgc9IP3QuIuNZdDjhEtPN0fR4gXsvs10s7E4I
-ARC-Seal: i=1; a=rsa-sha256; t=1523399213; cv=none;
+X-Google-Smtp-Source: AIpwx49wF9iuFXM2TYchynFWx2sPe/6R1AwzlCc/NJdiytU6f/HC7v1Yy+iRmAZ8otR/YB1D7iVR
+ARC-Seal: i=1; a=rsa-sha256; t=1523399210; cv=none;
         d=google.com; s=arc-20160816;
-        b=BHuVWxzAJvP4OGdxSgpCGhWXk6ryOHF/3PzMpcIONQAUiopSoHQ9xTSGuhnblcy3Vl
-         s5JlasVHlzCXfmjZF7Bkv9HR8bNGhsqcYWca6f5JSSxaKc550481UpOeHIzuePQ6THKn
-         0KBnI33k0/nGOTy5zrCtw1vsGk1jiacTIySBaBVF7LVeTbqUmltONJaMxqQaPk5ckdtZ
-         diqMouC7ZUqyxkKq8rU+auo4gFJy7WLmPAJB3S0KKpxHXNQZ+pqW67z297P/Ashh+hEX
-         3L2bKwaLaMDLUyBZvfVxzXZBBphZvdClnMdb2F7wEczHYoncfzQyuha/gm6VYdMUSwyT
-         pKOQ==
+        b=DTPP6Aq8Kejhm3sB5bjMQ3Ybz4xQN7qVNwZHfhg/O6KIcDpBEvzywFSZ3mG0uANb86
+         +1ZU6m5yAkxFn1Ql7hvdUL1luoUbTjycApIDQ0TNBP465WRt0u4BBX0yXQR9dj4XA1EB
+         81PfTkGsuk7vDvgbvAZCf1uS96eY0GJuZ1jgfc/sWYc4pV61kI5vepun2ZQIxIdKXSdl
+         UgUAWecKUDThiHMJK/B/I4/qmV/6AA+ETkqpVXUUnD/E92xyr3oe6H07EImVAiWKOR5F
+         EPViOCHptJRZl539UFe2VCNPLNowgbR9/9+UQ4JSunvksTRi6TMG4mAJMyMjJCfllmi/
+         mw4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qdpYN8eG4ECDyZUdpfefGiGurB9MX7TW8xpZodwympE=;
-        b=oNDVXBgmPY1TWOcmskuVZvbawZRZKct3SBGXlJ2ghR2Izl/CLHI4G+lCIQti0YPfGb
-         LN3CRO2rRwF+yH64uXsDCGzFQITxxZu2iVBWZrUy/M9EnrBqHqaQkvHoZpNJw9jwge7I
-         kWl0Y+GWQsewUTii0996HgoQ5f7eoen4lHTqhgp+kP3dBVehUUJo2CTTXqJWonFm14Jj
-         5Kb0HrCCwslIZevOeqZ6glg0wBqAU+o4ty+z9UK6sxKvwfmXUsJIBdN2NYKje/FwHfLq
-         9rAAYRimE0kGgI/bm1REZdtADMGoeJENRDnLBniYCXnjEIGd6xY+ueF+SUZ/L0NNERc1
-         1T0Q==
+        bh=FAplxqT4zNK9+/08kjEMdRbHnuaE6vgoFAOINkw64zQ=;
+        b=ckclpp5diEIvSMN/67eSvY1gW0IBlFMi4M66iMVajbrhZNDl/5CcAR4s/F6tIbACgw
+         K/8QV/aaalBnvyuyDeA0CXgI8bAN5T+dkR2n/1gXsJcWhYNCBw0SUAcBwqZZKB3fkGIL
+         3IJd5NMqeyYFECbSyRUF8uKoQGspNXsOVBXsKyp2ReTKOr3yHJGr8rjsOPppG+PZdqc0
+         Q6FzgJvIcT/R/ROiaOXJD3RypatzDp7qeUuBjgugelTAymxra6Lv1pN12MofjMe7jWeC
+         eHUf43wT1CopiOafSjmjxEjLu3avRbpB1+SO58n5r+72tlBc3rVQRumRbkJQGomJ/qnS
+         NGcg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-	Willem de Bruijn <willemb@google.com>,
+	Nogah Frankel <nogahf@mellanox.com>,
+	Yuval Mintz <yuvalm@mellanox.com>,
+	Jiri Pirko <jiri@mellanox.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 027/168] selftests/net: fix bugs in address and port initialization
-Date: Wed, 11 Apr 2018 00:22:49 +0200
-Message-Id: <20180410212801.355499320@linuxfoundation.org>
+Subject: [PATCH 4.15 026/168] net_sch: red: Fix the new offload indication
+Date: Wed, 11 Apr 2018 00:22:48 +0200
+Message-Id: <20180410212801.312204330@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399853915126118?=
-X-GMAIL-MSGID: =?utf-8?q?1597399853915126118?=
+X-GMAIL-THRID: =?utf-8?q?1597399850662683170?=
+X-GMAIL-MSGID: =?utf-8?q?1597399850662683170?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,110 +52,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+From: Nogah Frankel <nogahf@mellanox.com>
 
 
-[ Upstream commit d36f45e5b46723cf2d4147173e18c52d4143176d ]
+[ Upstream commit 8234af2db3614d78b49e77ef46ea8cfab6586568 ]
 
-Address/port initialization should work correctly regardless
-of the order in which command line arguments are supplied,
-E.g, cfg_port should be used to connect to the remote host
-even if it is processed after -D, src/dst address initialization
-should not require that [-4|-6] be specified before
-the -S or -D args, receiver should be able to bind to *.<cfg_port>
+Update the offload flag, TCQ_F_OFFLOADED, in each dump call (and ignore
+the offloading function return value in relation to this flag).
+This is done because a qdisc is being initialized, and therefore offloaded
+before being grafted. Since the ability of the driver to offload the qdisc
+depends on its location, a qdisc can be offloaded and un-offloaded by graft
+calls, that doesn't effect the qdisc itself.
 
-Achieve this by making sure that the address/port structures
-are initialized after all command line options are parsed.
-
-Store cfg_port in host-byte order, and use htons()
-to set up the sin_port/sin6_port before bind/connect,
-so that the network system calls get the correct values
-in network-byte order.
-
-Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Acked-by: Willem de Bruijn <willemb@google.com>
+Fixes: 428a68af3a7c ("net: sched: Move to new offload indication in RED"
+Signed-off-by: Nogah Frankel <nogahf@mellanox.com>
+Reviewed-by: Yuval Mintz <yuvalm@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/net/msg_zerocopy.c |   21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+ net/sched/sch_red.c |   26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
---- a/tools/testing/selftests/net/msg_zerocopy.c
-+++ b/tools/testing/selftests/net/msg_zerocopy.c
-@@ -259,22 +259,28 @@ static int setup_ip6h(struct ipv6hdr *ip
- 	return sizeof(*ip6h);
+--- a/net/sched/sch_red.c
++++ b/net/sched/sch_red.c
+@@ -157,7 +157,6 @@ static int red_offload(struct Qdisc *sch
+ 		.handle = sch->handle,
+ 		.parent = sch->parent,
+ 	};
+-	int err;
+ 
+ 	if (!tc_can_offload(dev) || !dev->netdev_ops->ndo_setup_tc)
+ 		return -EOPNOTSUPP;
+@@ -172,14 +171,7 @@ static int red_offload(struct Qdisc *sch
+ 		opt.command = TC_RED_DESTROY;
+ 	}
+ 
+-	err = dev->netdev_ops->ndo_setup_tc(dev, TC_SETUP_QDISC_RED, &opt);
+-
+-	if (!err && enable)
+-		sch->flags |= TCQ_F_OFFLOADED;
+-	else
+-		sch->flags &= ~TCQ_F_OFFLOADED;
+-
+-	return err;
++	return dev->netdev_ops->ndo_setup_tc(dev, TC_SETUP_QDISC_RED, &opt);
  }
  
--static void setup_sockaddr(int domain, const char *str_addr, void *sockaddr)
+ static void red_destroy(struct Qdisc *sch)
+@@ -294,12 +286,22 @@ static int red_dump_offload_stats(struct
+ 			.stats.qstats = &sch->qstats,
+ 		},
+ 	};
++	int err;
 +
-+static void setup_sockaddr(int domain, const char *str_addr,
-+			   struct sockaddr_storage *sockaddr)
- {
- 	struct sockaddr_in6 *addr6 = (void *) sockaddr;
- 	struct sockaddr_in *addr4 = (void *) sockaddr;
++	sch->flags &= ~TCQ_F_OFFLOADED;
  
- 	switch (domain) {
- 	case PF_INET:
-+		memset(addr4, 0, sizeof(*addr4));
- 		addr4->sin_family = AF_INET;
- 		addr4->sin_port = htons(cfg_port);
--		if (inet_pton(AF_INET, str_addr, &(addr4->sin_addr)) != 1)
-+		if (str_addr &&
-+		    inet_pton(AF_INET, str_addr, &(addr4->sin_addr)) != 1)
- 			error(1, 0, "ipv4 parse error: %s", str_addr);
- 		break;
- 	case PF_INET6:
-+		memset(addr6, 0, sizeof(*addr6));
- 		addr6->sin6_family = AF_INET6;
- 		addr6->sin6_port = htons(cfg_port);
--		if (inet_pton(AF_INET6, str_addr, &(addr6->sin6_addr)) != 1)
-+		if (str_addr &&
-+		    inet_pton(AF_INET6, str_addr, &(addr6->sin6_addr)) != 1)
- 			error(1, 0, "ipv6 parse error: %s", str_addr);
- 		break;
- 	default:
-@@ -603,6 +609,7 @@ static void parse_opts(int argc, char **
- 				    sizeof(struct tcphdr) -
- 				    40 /* max tcp options */;
- 	int c;
-+	char *daddr = NULL, *saddr = NULL;
+-	if (!(sch->flags & TCQ_F_OFFLOADED))
++	if (!tc_can_offload(dev) || !dev->netdev_ops->ndo_setup_tc)
++		return 0;
++
++	err = dev->netdev_ops->ndo_setup_tc(dev, TC_SETUP_QDISC_RED,
++					    &hw_stats);
++	if (err == -EOPNOTSUPP)
+ 		return 0;
  
- 	cfg_payload_len = max_payload_len;
+-	return dev->netdev_ops->ndo_setup_tc(dev, TC_SETUP_QDISC_RED,
+-					     &hw_stats);
++	if (!err)
++		sch->flags |= TCQ_F_OFFLOADED;
++
++	return err;
+ }
  
-@@ -627,7 +634,7 @@ static void parse_opts(int argc, char **
- 			cfg_cpu = strtol(optarg, NULL, 0);
- 			break;
- 		case 'D':
--			setup_sockaddr(cfg_family, optarg, &cfg_dst_addr);
-+			daddr = optarg;
- 			break;
- 		case 'i':
- 			cfg_ifindex = if_nametoindex(optarg);
-@@ -638,7 +645,7 @@ static void parse_opts(int argc, char **
- 			cfg_cork_mixed = true;
- 			break;
- 		case 'p':
--			cfg_port = htons(strtoul(optarg, NULL, 0));
-+			cfg_port = strtoul(optarg, NULL, 0);
- 			break;
- 		case 'r':
- 			cfg_rx = true;
-@@ -647,7 +654,7 @@ static void parse_opts(int argc, char **
- 			cfg_payload_len = strtoul(optarg, NULL, 0);
- 			break;
- 		case 'S':
--			setup_sockaddr(cfg_family, optarg, &cfg_src_addr);
-+			saddr = optarg;
- 			break;
- 		case 't':
- 			cfg_runtime_ms = 200 + strtoul(optarg, NULL, 10) * 1000;
-@@ -660,6 +667,8 @@ static void parse_opts(int argc, char **
- 			break;
- 		}
- 	}
-+	setup_sockaddr(cfg_family, daddr, &cfg_dst_addr);
-+	setup_sockaddr(cfg_family, saddr, &cfg_src_addr);
- 
- 	if (cfg_payload_len > max_payload_len)
- 		error(1, 0, "-s: payload exceeds max (%d)", max_payload_len);
+ static int red_dump(struct Qdisc *sch, struct sk_buff *skb)
