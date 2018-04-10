@@ -1,178 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752616AbeDJIS5 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:18:57 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:38608 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752314AbeDJIS4 (ORCPT
+        id S1752323AbeDJIVY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 04:21:24 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59076 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751825AbeDJIVX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:18:56 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [RFC] UBIFS authentication
-From: David Gstir <david@sigma-star.at>
-In-Reply-To: <20180410070210.4chxbjlijoohpo5c@pengutronix.de>
-Date: Tue, 10 Apr 2018 10:18:51 +0200
-Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Content-Transfer-Encoding: 8BIT
-Message-Id: <53E660CA-9F26-40C6-9C37-652F847BC737@sigma-star.at>
-References: <E6D3BD02-AF3A-4B75-92FD-A8A07B4C9C51@sigma-star.at>
- <20180409095912.f7d35y7yjdnj2ffz@pengutronix.de>
- <9EEA8AD6-E46F-45B7-8A85-98E4CC82B1D3@sigma-star.at>
- <20180410070210.4chxbjlijoohpo5c@pengutronix.de>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-X-Mailer: Apple Mail (2.3445.6.18)
+        Tue, 10 Apr 2018 04:21:23 -0400
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2 7/9] trace_uprobe/sdt: Fix multiple update of same
+ reference counter
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: mhiramat@kernel.org, peterz@infradead.org, srikar@linux.vnet.ibm.com,
+        rostedt@goodmis.org, acme@kernel.org, ananth@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
+        alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
+        jolsa@redhat.com, kan.liang@intel.com, kjlx@templeofstupid.com,
+        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
+        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+References: <20180404083110.18647-1-ravi.bangoria@linux.vnet.ibm.com>
+ <20180404083110.18647-8-ravi.bangoria@linux.vnet.ibm.com>
+ <20180409132928.GA25722@redhat.com>
+Date: Tue, 10 Apr 2018 13:49:12 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180409132928.GA25722@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18041008-0012-0000-0000-000005C9051B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041008-0013-0000-0000-000019452F19
+Message-Id: <84c1e60f-8aad-a0ce-59af-4fcb3f77df94@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-10_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804100084
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sascha,
+Hi Oleg,
 
-> On 10.04.2018, at 09:02, Sascha Hauer <s.hauer@pengutronix.de> wrote:
-> 
-> On Mon, Apr 09, 2018 at 05:23:05PM +0200, David Gstir wrote:
->> Hi Sascha,
->> 
->>> On 09.04.2018, at 11:59, Sascha Hauer <s.hauer@pengutronix.de> wrote:
->>> 
->>> Hi David,
->>> 
->>> On Wed, Jan 17, 2018 at 04:19:14PM +0100, David Gstir wrote:
->>>> Hi everybody!
->>>> 
->>>> ### Index Authentication
->>>> 
->>>> Through UBIFS' concept of a wandering tree, it already takes care of only
->>>> updating and persisting changed parts from leaf node up to the root node
->>>> of the full B+ tree. This enables us to augment the index nodes of the tree
->>>> with a hash over each node's child nodes. As a result, the index basically also
->>>> a Merkle tree. Since the leaf nodes of the index contain the actual filesystem
->>>> data, the hashes of their parent index nodes thus cover all the file contents
->>>> and file metadata. When a file changes, the UBIFS index is updated accordingly
->>>> from the leaf nodes up to the root node including the master node. This process
->>>> can be hooked to recompute the hash only for each changed node at the same time.
->>>> Whenever a file is read, UBIFS can verify the hashes from each leaf node up to
->>>> the root node to ensure the node's integrity.
->>>> 
->>>> To ensure the authenticity of the whole index, the UBIFS master node stores a
->>>> keyed hash (HMAC) over its own contents (which includes the location of the root
->>>> node) and the root node of the index tree. As mentioned above, the master node
->>>> is always written to the flash whenever the index is persisted (ie. on index
->>>> commit).
->>>> 
->>>> Using this approach only UBIFS index nodes and the master node are changed to
->>>> include a hash. All other types of nodes will remain unchanged. This reduces
->>>> the storage overhead which is precious for users of UBIFS (ie. embedded
->>>> devices).
->>>> 
->>>> 
->>>>                                           HMAC Master Node
->>>>                                                |
->>>>                     ' ' ' ' ' ' ' ' ' ' ' ' ' '|' '
->>>>                     '     +---------------+    o  '
->>>>                     '     |  Master Node  |       '
->>>>                     '     +---------------+       '       Hash Index Node #1
->>>>                     '             |               '                |
->>>>      . . . . . . . .'. . . . . .  v . . . . . . . . . . . . . . . .|. . . . .
->>>>      .              '      +---------------+      '                o        .
->>>>      .              '      | Index Node #1 |      '                         .
->>>>      .              '      +---------------+      '                         .
->>>>      .              '        |    ...   |  (fanout: 8)                      .
->>>>      .              ' ' ' '  | ' ' ' '  | ' ' ' ' '                         .
->>>>      .               +-------+          +------+                            .
->>>>      .               |                         |                            .
->>>>      .     ' ' ' ' ' v ' ' ' ' '  ' ' ' ' ' '  v  ' ' ' ' ' ' ' ' ' ' '     .
->>>>      .     ' +---------------+ '  '     +---------------+             '     .
->>>>      .     ' | Index Node #2 | '  '     | Index Node #3 |             '     .
->>>>      .     ' +---------------+ '  '     +---------------+             '     .
->>>>      .     '   |   ...         '  '        |   ...   |                '     .
->>>>      . . . ' . v . . . . . . . '. ' . . .  v . . . . v . . . . . . . .' . . .
->>>>            ' +-----------+     '  '+----------+  +-----------+        '
->>>>            ' | Data Node |     '  '| INO Node |  | DENT Node |        '
->>>>            ' +-----------+     '  '+----------+  +-----------+        '
->>>>            '  o                '  '                                o  '
->>>>            ' '|' ' ' ' ' ' ' ' '  ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' '|' '
->>>>               |                                                    |
->>>>         Hash Index Node #2                                Hash Index Node #3
->>> 
->>> When a hash covers an index node and also its children then of course
->>> this is really space efficient, but this also means that in order to
->>> read a node we always have to read all of its children. Also adding a
->>> new leaf node means rehashing all siblings. Is it really worth paying
->>> this price to save a few bytes for more hashes?
->>> I would rather suggest to add a hash per child to each index node.
->> 
->> What you propose is a simple tradeoff between the required on-flash storage
->> space and the amount of read operations needed to verify the index node integrity.
->> 
->> To get some numbers here: In case of SHA256 and a fanout of 8, we'd store an
->> additional 224 bytes per index node and safe 7 index node reads per tree level.
-> 
-> To get some more numbers I analyzed some typical rootfs here. It has:
-> 
-> 16137 data nodes with total size 41802586
-> uncompressed data size:          62380950
-> 2116 inode nodes with total size   347042
-> 2115 dent nodes with total size    148790
-> 2911 idx nodes with total size     547068
-> Total number of branches: 23278
-> 
-> With a SHA256 per branch this would add another 744896 bytes or 1.7%
-> overhead to the image (1.1% if using the uncompressed data size as base).
+On 04/09/2018 06:59 PM, Oleg Nesterov wrote:
+> On 04/04, Ravi Bangoria wrote:
+>> +static void sdt_add_mm_list(struct trace_uprobe *tu, struct mm_struct *mm)
+>> +{
+>> +	struct mmu_notifier *mn;
+>> +	struct sdt_mm_list *sml = kzalloc(sizeof(*sml), GFP_KERNEL);
+>> +
+>> +	if (!sml)
+>> +		return;
+>> +	sml->mm = mm;
+>> +	list_add(&(sml->list), &(tu->sml.list));
+>> +
+>> +	/* Register mmu_notifier for this mm. */
+>> +	mn = kzalloc(sizeof(*mn), GFP_KERNEL);
+>> +	if (!mn)
+>> +		return;
+>> +
+>> +	mn->ops = &sdt_mmu_notifier_ops;
+>> +	__mmu_notifier_register(mn, mm);
+>> +}
+> and what if __mmu_notifier_register() fails simply because signal_pending() == T?
+> see mm_take_all_locks().
+>
+> at first glance this all look suspicious and sub-optimal,
 
-Yes, that matches my calculations. But IMHO these 1.7% matter and
-we should not give them up that easily.
+Yes. I should have added checks for failure cases.
+Will fix them in v3.
 
+Thanks for the review,
+Ravi
 
-
->> I hope it is clear that having a single hash does _not_ mean we have to read
->> the whole tree! :)
->> 
->> Considering that UBIFS is mostly used in embedded where storage space is rather
->> precious, we opted for storing a single hash. But sure, storing a hash per
->> branch/child  is a possibility and we have to discuss if that is acceptable
->> in most use cases.
->> 
->> As for adding new leaf nodes: If we add a leaf node, we'll always have to recompute
->> the hash of every index node on the path to the root node. Even with a hash per
->> branch/child. In case of TNC split/merge operations likely even more.
->> But I don't get why you think that would mean we have to recompute the hash
->> on all siblings of that nodes? Or do you simply mean that we have to re-read all
->> those siblings to compute the hash on the parent?
-> 
-> I mean that before we can use the "DENT Node" in the picture above we
-> also have to verify the "INO Node". To get there, we also have to verify
-> the unrelated "Index Node #2". so in reality we have to verify
-> seven unrelated leaf nodes and another seven unrelated nodes per tree
-> level before we can use a node. When changing nodes we have to make sure
-> all the unrelated nodes stay in memory or we have to read them back from
-> the device. Of course, some of the unrelated nodes will be used anyway
-> in the next few moments, nevertheless I can imagine we pay a significant
-> performance penalty for this.
-
-Are you sure about that? The UBIFS TNC will first of all try to cache as
-much as possible and I'd argue that most of the time the nodes required
-for a hash will already be in memory. Even if we have to load the nodes
-from memory, we could consider changing the cache semantics of the TNC
-to optimize for that. Richard did some tests related to this at the UBI
-level [1]. But that is something that we will have to evaluate once
-we have a first PoC implementation of UBIFS authentication.
-
-Anyways, I get what you mean and I agree that this is surely an optimization
-worth pursuing! Also, note that the whole thing is rather a concept instead
-of a detailed implementation guide, so there are bound to be things that
-can be optimized. :)
-
-
-> read/write throughput is another very precious resource on embedded
-> systems ;)
-
-Yep! :D
-
-Thanks,
-David
-
-[1] http://lists.infradead.org/pipermail/linux-mtd/2016-July/068521.html
+>  but let me repeat that
+> I didn't read this version yet.
+>
+> Oleg.
+>
