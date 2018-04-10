@@ -1,85 +1,270 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752309AbeDJJmT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 05:42:19 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:62432 "EHLO mx1.mailbox.org"
+        id S1752404AbeDJJoo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 05:44:44 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42911 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751611AbeDJJmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:42:18 -0400
-Date: Tue, 10 Apr 2018 11:41:36 +0200
-From: Christian Brauner <christian.brauner@getenv.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Christian Brauner <christian.brauner@ubuntu.com>,
-        gregkh@linuxfoundation.org, containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, ebiederm@xmission.com,
-        torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 4/4 v5 RESEND] selftests: add devpts selftests
-Message-ID: <20180410094136.GA3438@mailbox.org>
-References: <20180313165527.24038-1-christian.brauner@ubuntu.com>
- <20180313165527.24038-5-christian.brauner@ubuntu.com>
- <87efjnbn0j.fsf@concordia.ellerman.id.au>
- <20180410084208.GA14520@mailbox.org>
- <87bmerbe1f.fsf@concordia.ellerman.id.au>
+        id S1752286AbeDJJol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 05:44:41 -0400
+Date: Tue, 10 Apr 2018 11:44:28 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 8/9] mtd: nand: qcom: helper function for raw read
+Message-ID: <20180410114428.68d59c8d@xps13>
+In-Reply-To: <1522845745-6624-9-git-send-email-absahu@codeaurora.org>
+References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+        <1522845745-6624-9-git-send-email-absahu@codeaurora.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87bmerbe1f.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 07:34:36PM +1000, Michael Ellerman wrote:
-> Christian Brauner <christian.brauner@ubuntu.com> writes:
-> > On Tue, Apr 10, 2018 at 04:20:44PM +1000, Michael Ellerman wrote:
-> >> Christian Brauner <christian.brauner@ubuntu.com> writes:
-> >> > diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> >> > index 7442dfb73b7f..dbda89c9d9b9 100644
-> >> > --- a/tools/testing/selftests/Makefile
-> >> > +++ b/tools/testing/selftests/Makefile
-> >> > @@ -7,6 +7,7 @@ TARGETS += cpufreq
-> >> >  TARGETS += cpu-hotplug
-> >> >  TARGETS += efivarfs
-> >> >  TARGETS += exec
-> >> > +TARGETS += filesystems
-> >>    ^ This, and ...
-> >> 
-> >> > diff --git a/tools/testing/selftests/filesystems/Makefile b/tools/testing/selftests/filesystems/Makefile
-> >> > index 13a73bf725b5..4e6d09fb166f 100644
-> >> > --- a/tools/testing/selftests/filesystems/Makefile
-> >> > +++ b/tools/testing/selftests/filesystems/Makefile
-> >> > @@ -1,5 +1,5 @@
-> >> >  # SPDX-License-Identifier: GPL-2.0
-> >> > -TEST_PROGS := dnotify_test
-> >> > +TEST_PROGS := dnotify_test devpts_pts
-> >>                  ^
-> >>                  this ...
-> >> 
-> >> Have the unfortunate effect of running dnotify_test as part of the
-> >> default selftest run.
-> >> 
-> >> dnotify_test boils down to:
-> >> 
-> >> 	while (1) {
-> >> 		pause();
-> >> 		printf("Got event on fd=%d\n", event_fd);
-> >> 	}
-> >> 
-> >> 
-> >> ie. an infinite loop :)
-> >
-> > Hi Michael,
-> >
-> > Ugh, didn't notice this before. Weird test.
-> 
-> No worries. It looks like it was copied from Documentation where it was
-> really just sample code, rather than a test.
->  
-> >> I'll send a patch to fix it.
-> >
-> > Excellent, you can likely route it through Greg's tty tree.
-> 
-> I've sent it to the kselftest list as well as Greg, so whoever wants to
-> merge it is fine by me.
+Hi Abhishek,
 
-Perfect, thanks!
-Christian
+On Wed,  4 Apr 2018 18:12:24 +0530, Abhishek Sahu
+<absahu@codeaurora.org> wrote:
+
+> This patch does minor code reorganization for raw reads.
+> Currently the raw read is required for complete page but for
+> subsequent patches related with erased codeword bit flips
+> detection, only few CW should be read. So, this patch adds
+> helper function and introduces the read CW bitmask which
+> specifies which CW reads are required in complete page.
+
+I am not sure this is the right approach for subpage reads. If the
+controller supports it, you should just enable it in chip->options.
+
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
+>  drivers/mtd/nand/qcom_nandc.c | 186 +++++++++++++++++++++++++-----------------
+>  1 file changed, 110 insertions(+), 76 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
+> index 40c790e..f5d1fa4 100644
+> --- a/drivers/mtd/nand/qcom_nandc.c
+> +++ b/drivers/mtd/nand/qcom_nandc.c
+> @@ -1590,6 +1590,114 @@ static int check_flash_errors(struct qcom_nand_host *host, int cw_cnt)
+>  }
+>  
+>  /*
+> + * Helper to perform the page raw read operation. The read_cw_mask will be
+> + * used to specify the codewords for which the data should be read. The
+> + * single page contains multiple CW. Sometime, only few CW data is required
+> + * in complete page. Also, start address will be determined with
+> + * this CW mask to skip unnecessary data copy from NAND flash device. Then,
+> + * actual data copy from NAND controller to data buffer will be done only
+> + * for the CWs which have the mask set.
+> + */
+> +static int
+> +nandc_read_page_raw(struct mtd_info *mtd, struct nand_chip *chip,
+> +		    u8 *data_buf, u8 *oob_buf,
+> +		    int page, unsigned long read_cw_mask)
+> +{
+> +	struct qcom_nand_host *host = to_qcom_nand_host(chip);
+> +	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+> +	struct nand_ecc_ctrl *ecc = &chip->ecc;
+> +	int i, ret;
+> +	int read_loc, start_step, last_step;
+> +
+> +	nand_read_page_op(chip, page, 0, NULL, 0);
+> +
+> +	host->use_ecc = false;
+> +	start_step = ffs(read_cw_mask) - 1;
+> +	last_step = fls(read_cw_mask);
+> +
+> +	clear_bam_transaction(nandc);
+> +	set_address(host, host->cw_size * start_step, page);
+> +	update_rw_regs(host, last_step - start_step, true);
+> +	config_nand_page_read(nandc);
+> +
+> +	for (i = start_step; i < last_step; i++) {
+> +		int data_size1, data_size2, oob_size1, oob_size2;
+> +		int reg_off = FLASH_BUF_ACC;
+> +
+> +		data_size1 = mtd->writesize - host->cw_size * (ecc->steps - 1);
+> +		oob_size1 = host->bbm_size;
+> +
+> +		if (i == (ecc->steps - 1)) {
+> +			data_size2 = ecc->size - data_size1 -
+> +				     ((ecc->steps - 1) << 2);
+> +			oob_size2 = (ecc->steps << 2) + host->ecc_bytes_hw +
+> +				    host->spare_bytes;
+> +		} else {
+> +			data_size2 = host->cw_data - data_size1;
+> +			oob_size2 = host->ecc_bytes_hw + host->spare_bytes;
+> +		}
+> +
+> +		/*
+> +		 * Don't perform actual data copy from NAND controller to data
+> +		 * buffer through DMA for this codeword
+> +		 */
+> +		if (!(read_cw_mask & BIT(i))) {
+> +			if (nandc->props->is_bam)
+> +				nandc_set_read_loc(nandc, 0, 0, 0, 1);
+> +
+> +			config_nand_cw_read(nandc, false);
+> +
+> +			data_buf += data_size1 + data_size2;
+> +			oob_buf += oob_size1 + oob_size2;
+> +
+> +			continue;
+> +		}
+> +
+> +		if (nandc->props->is_bam) {
+> +			read_loc = 0;
+> +			nandc_set_read_loc(nandc, 0, read_loc, data_size1, 0);
+> +			read_loc += data_size1;
+> +
+> +			nandc_set_read_loc(nandc, 1, read_loc, oob_size1, 0);
+> +			read_loc += oob_size1;
+> +
+> +			nandc_set_read_loc(nandc, 2, read_loc, data_size2, 0);
+> +			read_loc += data_size2;
+> +
+> +			nandc_set_read_loc(nandc, 3, read_loc, oob_size2, 1);
+> +		}
+> +
+> +		config_nand_cw_read(nandc, false);
+> +
+> +		read_data_dma(nandc, reg_off, data_buf, data_size1, 0);
+> +		reg_off += data_size1;
+> +		data_buf += data_size1;
+> +
+> +		read_data_dma(nandc, reg_off, oob_buf, oob_size1, 0);
+> +		reg_off += oob_size1;
+> +		oob_buf += oob_size1;
+> +
+> +		read_data_dma(nandc, reg_off, data_buf, data_size2, 0);
+> +		reg_off += data_size2;
+> +		data_buf += data_size2;
+> +
+> +		read_data_dma(nandc, reg_off, oob_buf, oob_size2, 0);
+> +		oob_buf += oob_size2;
+> +	}
+> +
+> +	ret = submit_descs(nandc);
+> +	if (ret)
+> +		dev_err(nandc->dev, "failure to read raw page\n");
+> +
+> +	free_descs(nandc);
+> +
+> +	if (!ret)
+> +		ret = check_flash_errors(host, last_step - start_step);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+>   * reads back status registers set by the controller to notify page read
+>   * errors. this is equivalent to what 'ecc->correct()' would do.
+>   */
+> @@ -1839,82 +1947,8 @@ static int qcom_nandc_read_page_raw(struct mtd_info *mtd,
+>  				    struct nand_chip *chip, uint8_t *buf,
+>  				    int oob_required, int page)
+>  {
+> -	struct qcom_nand_host *host = to_qcom_nand_host(chip);
+> -	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+> -	u8 *data_buf, *oob_buf;
+> -	struct nand_ecc_ctrl *ecc = &chip->ecc;
+> -	int i, ret;
+> -	int read_loc;
+> -
+> -	nand_read_page_op(chip, page, 0, NULL, 0);
+> -	data_buf = buf;
+> -	oob_buf = chip->oob_poi;
+> -
+> -	host->use_ecc = false;
+> -
+> -	clear_bam_transaction(nandc);
+> -	update_rw_regs(host, ecc->steps, true);
+> -	config_nand_page_read(nandc);
+> -
+> -	for (i = 0; i < ecc->steps; i++) {
+> -		int data_size1, data_size2, oob_size1, oob_size2;
+> -		int reg_off = FLASH_BUF_ACC;
+> -
+> -		data_size1 = mtd->writesize - host->cw_size * (ecc->steps - 1);
+> -		oob_size1 = host->bbm_size;
+> -
+> -		if (i == (ecc->steps - 1)) {
+> -			data_size2 = ecc->size - data_size1 -
+> -				     ((ecc->steps - 1) << 2);
+> -			oob_size2 = (ecc->steps << 2) + host->ecc_bytes_hw +
+> -				    host->spare_bytes;
+> -		} else {
+> -			data_size2 = host->cw_data - data_size1;
+> -			oob_size2 = host->ecc_bytes_hw + host->spare_bytes;
+> -		}
+> -
+> -		if (nandc->props->is_bam) {
+> -			read_loc = 0;
+> -			nandc_set_read_loc(nandc, 0, read_loc, data_size1, 0);
+> -			read_loc += data_size1;
+> -
+> -			nandc_set_read_loc(nandc, 1, read_loc, oob_size1, 0);
+> -			read_loc += oob_size1;
+> -
+> -			nandc_set_read_loc(nandc, 2, read_loc, data_size2, 0);
+> -			read_loc += data_size2;
+> -
+> -			nandc_set_read_loc(nandc, 3, read_loc, oob_size2, 1);
+> -		}
+> -
+> -		config_nand_cw_read(nandc, false);
+> -
+> -		read_data_dma(nandc, reg_off, data_buf, data_size1, 0);
+> -		reg_off += data_size1;
+> -		data_buf += data_size1;
+> -
+> -		read_data_dma(nandc, reg_off, oob_buf, oob_size1, 0);
+> -		reg_off += oob_size1;
+> -		oob_buf += oob_size1;
+> -
+> -		read_data_dma(nandc, reg_off, data_buf, data_size2, 0);
+> -		reg_off += data_size2;
+> -		data_buf += data_size2;
+> -
+> -		read_data_dma(nandc, reg_off, oob_buf, oob_size2, 0);
+> -		oob_buf += oob_size2;
+> -	}
+> -
+> -	ret = submit_descs(nandc);
+> -	if (ret)
+> -		dev_err(nandc->dev, "failure to read raw page\n");
+> -
+> -	free_descs(nandc);
+> -
+> -	if (!ret)
+> -		ret = check_flash_errors(host, ecc->steps);
+> -
+> -	return 0;
+> +	return nandc_read_page_raw(mtd, chip, buf, chip->oob_poi, page,
+> +				   BIT(chip->ecc.steps) - 1);
+
+I don't understand this. chip->ecc.steps is constant, right? So you
+always ask for the same subpage?
+
+>  }
+>  
+>  /* implements ecc->read_oob() */
+
+
+
+-- 
+Miquel Raynal, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
