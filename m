@@ -1,135 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754217AbeDJOse (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:48:34 -0400
-Received: from mga04.intel.com ([192.55.52.120]:6315 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753468AbeDJOsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:48:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,432,1517904000";
-   d="scan'208";a="219272517"
-From: Yu Chen <yu.c.chen@intel.com>
-To: Len Brown <lenb@kernel.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Artem Bityutskiy <artem.bityutskiy@intel.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chen Yu <yu.c.chen@intel.com>
-Subject: [PATCH][v2] tools/power turbostat: if --max_loop, print for specific time of loops
-Date: Tue, 10 Apr 2018 22:51:41 +0800
-Message-Id: <20180410145141.31166-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.13.6
+        id S1754050AbeDJOtU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:49:20 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58032 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753118AbeDJOtS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 10:49:18 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 10 Apr 2018 22:49:16 +0800
+From: yuankuiz@codeaurora.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pm-owner@vger.kernel.org
+Subject: Re: [PATCH] time: tick-sched: use bool for tick_stopped
+In-Reply-To: <2f7755fae34bb65ef0a4b5a11c67f431@codeaurora.org>
+References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
+ <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>
+ <f253686d26b3470f0e9b60502eb62315@codeaurora.org>
+ <alpine.DEB.2.21.1804101110080.2058@nanos.tec.linutronix.de>
+ <a7d6dddd7d4f9fdc0be8f94251af237f@codeaurora.org>
+ <alpine.DEB.2.21.1804101242110.2058@nanos.tec.linutronix.de>
+ <2f7755fae34bb65ef0a4b5a11c67f431@codeaurora.org>
+Message-ID: <c3e05a4aad4895046401519dc83fa623@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen Yu <yu.c.chen@intel.com>
+Typo...
 
-There's a use case during test to only print specific round of loops
-if --iterations is specified, for example, with this patch applied:
+On 2018-04-10 10:08 PM, yuankuiz@codeaurora.org wrote:
+> On 2018-04-10 07:06 PM, Thomas Gleixner wrote:
+>> On Tue, 10 Apr 2018, yuankuiz@codeaurora.org wrote:
+>>> On 2018-04-10 05:10 PM, Thomas Gleixner wrote:
+>>> > On Tue, 10 Apr 2018, yuankuiz@codeaurora.org wrote:
+>>> > > On 2018-04-10 04:00 PM, Rafael J. Wysocki wrote:
+>>> > > > On Tue, Apr 10, 2018 at 9:33 AM,  <yuankuiz@codeaurora.org> wrote:
+>>> > > > > From: John Zhao <yuankuiz@codeaurora.org>
+>>> > > > >
+>>> > > > > Variable tick_stopped returned by tick_nohz_tick_stopped
+>>> > > > > can have only true / false values. Since the return type
+>>> > > > > of the tick_nohz_tick_stopped is also bool, variable
+>>> > > > > tick_stopped nice to have data type as bool in place of unsigned int.
+>>> > > > > Moreover, the executed instructions cost could be minimal
+>>> > > > > without potiential data type conversion.
+>>> > > > >
+>>> > > > > Signed-off-by: John Zhao <yuankuiz@codeaurora.org>
+>>> > > > > ---
+>>> > > > >  kernel/time/tick-sched.h | 2 +-
+>>> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+>>> > > > >
+>>> > > > > diff --git a/kernel/time/tick-sched.h b/kernel/time/tick-sched.h
+>>> > > > > index 6de959a..4d34309 100644
+>>> > > > > --- a/kernel/time/tick-sched.h
+>>> > > > > +++ b/kernel/time/tick-sched.h
+>>> > > > > @@ -48,8 +48,8 @@ struct tick_sched {
+>>> > > > >         unsigned long                   check_clocks;
+>>> > > > >         enum tick_nohz_mode             nohz_mode;
+>>> > > > >
+>>> > > > > +       bool                            tick_stopped    : 1;
+>>> > > > >         unsigned int                    inidle          : 1;
+>>> > > > > -       unsigned int                    tick_stopped    : 1;
+>>> > > > >         unsigned int                    idle_active     : 1;
+>>> > > > >         unsigned int                    do_timer_last   : 1;
+>>> > > > >         unsigned int                    got_idle_tick   : 1;
+>>> > > >
+>>> > > > I don't think this is a good idea at all.
+>>> > > >
+>>> > > > Please see https://lkml.org/lkml/2017/11/21/384 for example.
+>>> > > [ZJ] Thanks for this sharing. Looks like, this patch fall into the case of
+>>> > > "Maybe".
+>>> >
+>>> > This patch falls into the case 'pointless' because it adds extra storage
+>>> [ZJ] 1 bit vs 1 bit. no more.
+>> 
+>> Groan. No. Care to look at the data structure? You create a new 
+>> storage,
+> [ZJ] Say, {unsigned int, unsigned int, unsigned int, unsigned int,
+> unsigned int} becomes
+>           {bool        , unsigned int, unsigned int, unsigned int, 
+> unsigned int}
+> As specified by the rule No.10 at the section 6.7.2.1 of C99 TC2 as:
+> "If enough space remains, a bit-field that immediately follows another
+> bit-field in a
+> structure shall be packed into adjacent bits of the same unit." What
+> is the new storage so far?
+> 
+>> which is incidentally merged into the other bitfield by the compiler 
+>> at a
+>> different bit position, but there is no guarantee that a compiler does
+>> that. It's free to use distinct storage for that bool based bit.
+> [ZJ] Per the rule No.10 at section 6.7.2.1 of C99 TC2 as:
+> " If insufficient space remains, whether  a  bit-field  that  does
+> not  fit  is  put  into
+> the  next  unit  or overlaps  adjacent  units  is 
+> implementation-defined."
+> So, implementation is never mind which type will be stored if any.
+> 
+>> >> > for no benefit at all.
+>>> [ZJ] tick_stopped is returned by the tick_nohz_tick_stopped() which 
+>>> is bool.
+>>> The benefit is no any potiential type conversion could be minded.
+>> 
+>> A bit stays a bit. 'bool foo : 1;' or 'unsigned int foo : 1' has to be
+>> evaluated as a bit. So there is a type conversion from BIT to bool 
+>> required
+>> because BIT != bool.
+> [ZJ] Per the rule No.9 at section 6.7.2.1 of C99 TC2 as:
+> "If  the  value  0  or  1  is  stored  into  a  nonzero-width
+> bit-field  of  types
+> _Bool, the value of the bit-field shall compare equal to the value 
+> stored."
+> Obviously, it is nothing related to type conversion actually.
+>> 
+>> By chance the evaluation can be done by evaluating the byte in which 
+>> the
+>> bit is placed just because the compiler knows that the remaining bits 
+>> are
+>> not used. There is no guarantee that this is done, it happens to be 
+>> true
+>> for a particular compiler.
+> [ZJ] Actually, such as GCC owe that kind of guarantee to be promised by 
+> ABI.
+>> 
+>> But that does not make it any more interesting. It just makes the code
+>> harder to read and eventually leads to bigger storage.
+> [ZJ] To get the benctifit to be profiled, it is given as:
+> number of instructions of function tick_nohz_tick_stopped():
+[ZJ] Here, I used is not the tick_nohz_tick_stopped(), but an 
+evaluation() as:
+#include <stdio.h>
+#include <stdbool.h>
 
-turbostat -i 5 -t 4
-will capture 4 samples with 5 seconds interval.
+struct tick_sched {
+         unsigned int inidle             : 1;
+         unsigned int tick_stopped       : 1;
+};
 
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
- tools/power/x86/turbostat/turbostat.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+bool get_status()
+{
+         struct tick_sched *ts;
+         ts->tick_stopped = 1;
+         return ts->tick_stopped;
+}
 
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-index bd9c6b31a504..7a09291765af 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -48,6 +48,7 @@ char *proc_stat = "/proc/stat";
- FILE *outf;
- int *fd_percpu;
- struct timespec interval_ts = {5, 0};
-+int iterations;
- unsigned int debug;
- unsigned int quiet;
- unsigned int sums_need_wide_columns;
-@@ -470,6 +471,7 @@ void help(void)
- 	"		{core | package | j,k,l..m,n-p }\n"
- 	"--quiet	skip decoding system configuration header\n"
- 	"--interval sec	Override default 5-second measurement interval\n"
-+	"--iterations loops	The number of loops if interval is specified\n"
- 	"--help		print this help message\n"
- 	"--list		list column headers only\n"
- 	"--out file	create or truncate \"file\" for all output\n"
-@@ -2565,6 +2567,7 @@ void turbostat_loop()
- {
- 	int retval;
- 	int restarted = 0;
-+	int loops = 0;
- 
- restart:
- 	restarted++;
-@@ -2583,6 +2586,7 @@ void turbostat_loop()
- 	restarted = 0;
- 	gettimeofday(&tv_even, (struct timezone *)NULL);
- 
-+	loops = 0;
- 	while (1) {
- 		if (for_all_proc_cpus(cpu_is_not_present)) {
- 			re_initialize();
-@@ -2607,6 +2611,10 @@ void turbostat_loop()
- 		compute_average(EVEN_COUNTERS);
- 		format_all_counters(EVEN_COUNTERS);
- 		flush_output_stdout();
-+
-+		if (iterations && (++loops >= iterations))
-+			break;
-+
- 		nanosleep(&interval_ts, NULL);
- 		if (snapshot_proc_sysfs_files())
- 			goto restart;
-@@ -2626,6 +2634,9 @@ void turbostat_loop()
- 		compute_average(ODD_COUNTERS);
- 		format_all_counters(ODD_COUNTERS);
- 		flush_output_stdout();
-+
-+		if (iterations && (++loops >= iterations))
-+			break;
- 	}
- }
- 
-@@ -4999,6 +5010,7 @@ void cmdline(int argc, char **argv)
- 		{"Dump",	no_argument,		0, 'D'},
- 		{"debug",	no_argument,		0, 'd'},	/* internal, not documented */
- 		{"interval",	required_argument,	0, 'i'},
-+		{"iterations",	required_argument,	0, 't'},
- 		{"help",	no_argument,		0, 'h'},
- 		{"hide",	required_argument,	0, 'H'},	// meh, -h taken by --help
- 		{"Joules",	no_argument,		0, 'J'},
-@@ -5014,7 +5026,7 @@ void cmdline(int argc, char **argv)
- 
- 	progname = argv[0];
- 
--	while ((opt = getopt_long_only(argc, argv, "+C:c:Ddhi:JM:m:o:qST:v",
-+	while ((opt = getopt_long_only(argc, argv, "+C:c:Ddhi:JM:m:o:qST:vt:",
- 				long_options, &option_index)) != -1) {
- 		switch (opt) {
- 		case 'a':
-@@ -5069,6 +5081,18 @@ void cmdline(int argc, char **argv)
- 		case 'S':
- 			summary_only++;
- 			break;
-+		case 't':
-+			{
-+				int loops = strtod(optarg, NULL);
-+
-+				if (loops <= 0) {
-+					fprintf(outf, "loops %d should be positive number\n",
-+						iterations);
-+					exit(2);
-+				}
-+				iterations = loops;
-+			}
-+			break;
- 		case 'T':
- 			tcc_activation_temp_override = atoi(optarg);
- 			break;
--- 
-2.13.6
+int main()
+{
+         if (get_status()) return 0;
+         return 0;
+}
+
+[ZJ] Toggle the declaration of tick_stopped in side of the tick_sched 
+structure for comparison.
+
+
+>                         original: 17
+>                         patched:  14
+>      Which was saved is:
+>                movzbl	%al, %eax
+>                testl	%eax, %eax
+>                setne    %al
+>      Say, 3 / 17 = 17 % could be gained in the instruction executed
+> for this function can be evaluated.
+> 
+> Note:
+>      The environment I used is:
+>                OS : Ubuntu Desktop 16.04 LTS
+>                gcc: 6.3.0                       (without optimization
+> for in general purpose)
+> 
+>> 
+
+Just FYI.
+
+Thanks,
+ZJ
