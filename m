@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+rYi7LzLwStWit56TkjCyVin2FD0t/T0J42crmJesALThTmluORTRZ0vrbmnNeoHRhiArS
-ARC-Seal: i=1; a=rsa-sha256; t=1523399574; cv=none;
+X-Google-Smtp-Source: AIpwx4+qvNrymOopopo01M6mQn3yLLZbU0DWdkDjpI8sfCZUkUy4SrlzaIyyi+eCC+LDghZEtvPh
+ARC-Seal: i=1; a=rsa-sha256; t=1523399572; cv=none;
         d=google.com; s=arc-20160816;
-        b=V1PBGkpgU8MQjacWu2hv2xeP8/pGfcA1570I8QRvhwBuZtzhlAe8urd+gja/LJNxAC
-         fWCtkOIlv1lFG3fMruNekkwRuX1vtdrX7gn5bO/XNvZDbFaDKeGw+v2snTalpizorbDN
-         Ydi7OXXFqZSDm3AZIAkK5g30sZCv9C7WOTUewj1fJ3aenuiQayvi/DXxkUL1UqkA7eHE
-         MS5JUkqcYrD/Ke6P2iwNsBqjqhl1dcUEkpQ8+ZBxSd8C6nizO5TsLXQRbFdO/1sclMaN
-         Zifc6ovFoXKK4BSYicRLKX2C8XwllZQcbVYKJ66NGHIMuciTA4JVPY9F7dFQfpp9KnRF
-         Csqw==
+        b=RKuVO+1SpX3Z8u31ELUIY350VRorCFpw+1QRJ/UtgPVf4/W3GFX28/eINCGeMds3eV
+         lfhenUTKu3kc9TN6GRYge2xE6j36VRftN93mDJxxUedVsH+8iEy0rZnwu0OH/Pf2tGjV
+         ODZsNILilQ8HOYkjW1fjtS4ZPJaMH3X/r6mQR1+zlx0m323xsNSvx9TC9r2Cm8QbO3pg
+         yo8ZC4aJYqtzY/W0q5fBW6u3Oeh9CJ1yV/F35C8K5ZQADwnIB7N7NGFPdMPGjj8sMXs7
+         qLckgNGPFQ65ak+wSgr46w9KkKiDJBjDnG6qroipZlfIUwJXQ6cGu610lZrq6XCY6tDd
+         gMbw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=H8mqPQvo2KVQTXq3CqX5ZO6pntX4GO1HioD0kL7ye68=;
-        b=tfzg2HA77f35/Wi94JCfgri7MU0kG4w825d0MdAGcRXzi5Cpm19ysV6rZpTeaiHvML
-         MiRfm4yQTtFNQxaYm34zBj6d3v2znL2+/zRGgXtxD3N+Muub519sBYg22Wquj3ASdmPJ
-         dgtNDUU/lHN0AC4xiaqSvAg060/pcsmaUVbpKm16VzsMrwLDpzBpvdYkDItK9Wbgu8Jj
-         rEglP0v3bSWsUKUfajHvyAn3ZGe37IiwqpEFBjx7jvqArBSheu9+A3bDTxWIl+cna6tI
-         mt9NkyP+tUQ9CIWaMOxG/Vq18879OtVegENGXzxQq0QktpulEh8SRtEW4jBfXNTgK43z
-         +tng==
+        bh=nLZ2D21g4inWILg+i4yM8jbcrF/FKRXsC1shrgggLQA=;
+        b=FKBGE/+Io0r8HXlJmSE3V9DPzfDKlXUvaL1LiUl2r+7VBJE247Aglk8v9/Rv73ChWI
+         ca2wifF6zxmG0i52Dxh/aI1xAjIwhE3cp+Cns90PwpQzLcqT+g1Q6ZlrTuru7FYKpEaX
+         JNtfJPEGRY9jbhd1vVcfCyBhJFAy9DDe7+SpwGSvWdrGxdTrwfRRyhny+3LzrtXfkqk5
+         YNlnuTRZ/sAjTP1ol/qvNRCq2XC+mg0FZYvepz/SUaA7vTskM1SivPNhubThytKPK+yy
+         PeAetdpyWwce6mSWJVfozoP5cUTRMVa+gpO/pckj8J8+bNTwHIrb5t9ISpRqxrCgHTzz
+         Soiw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Miguel Fadon Perlines <mfadon@teldat.com>,
-	David Ahern <dsahern@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Hangbin Liu <liuhangbin@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 139/168] vrf: Fix use after free and double free in vrf_finish_output
-Date: Wed, 11 Apr 2018 00:24:41 +0200
-Message-Id: <20180410212806.989341969@linuxfoundation.org>
+Subject: [PATCH 4.15 138/168] vlan: also check phy_driver ts_info for vlans real device
+Date: Wed, 11 Apr 2018 00:24:40 +0200
+Message-Id: <20180410212806.946793178@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400232573875068?=
-X-GMAIL-MSGID: =?utf-8?q?1597400232573875068?=
+X-GMAIL-THRID: =?utf-8?q?1597399716023236832?=
+X-GMAIL-MSGID: =?utf-8?q?1597400229578230063?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,42 +50,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
 
-[ Upstream commit 82dd0d2a9a76fc8fa2b18d80b987d455728bf83a ]
+[ Upstream commit ec1d8ccb07deaf30fd0508af6755364ac47dc08d ]
 
-Miguel reported an skb use after free / double free in vrf_finish_output
-when neigh_output returns an error. The vrf driver should return after
-the call to neigh_output as it takes over the skb on error path as well.
+Just like function ethtool_get_ts_info(), we should also consider the
+phy_driver ts_info call back. For example, driver dp83640.
 
-Patch is a simplified version of Miguel's patch which was written for 4.9,
-and updated to top of tree.
-
-Fixes: 8f58336d3f78a ("net: Add ethernet header for pass through VRF device")
-Signed-off-by: Miguel Fadon Perlines <mfadon@teldat.com>
-Signed-off-by: David Ahern <dsahern@gmail.com>
+Fixes: 37dd9255b2f6 ("vlan: Pass ethtool get_ts_info queries to real device.")
+Acked-by: Richard Cochran <richardcochran@gmail.com>
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/vrf.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/8021q/vlan_dev.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/net/vrf.c
-+++ b/drivers/net/vrf.c
-@@ -578,12 +578,13 @@ static int vrf_finish_output(struct net
- 	if (!IS_ERR(neigh)) {
- 		sock_confirm_neigh(skb, neigh);
- 		ret = neigh_output(neigh, skb);
-+		rcu_read_unlock_bh();
-+		return ret;
- 	}
+--- a/net/8021q/vlan_dev.c
++++ b/net/8021q/vlan_dev.c
+@@ -29,6 +29,7 @@
+ #include <linux/net_tstamp.h>
+ #include <linux/etherdevice.h>
+ #include <linux/ethtool.h>
++#include <linux/phy.h>
+ #include <net/arp.h>
+ #include <net/switchdev.h>
  
- 	rcu_read_unlock_bh();
- err:
--	if (unlikely(ret < 0))
--		vrf_tx_error(skb->dev, skb);
-+	vrf_tx_error(skb->dev, skb);
- 	return ret;
- }
+@@ -665,8 +666,11 @@ static int vlan_ethtool_get_ts_info(stru
+ {
+ 	const struct vlan_dev_priv *vlan = vlan_dev_priv(dev);
+ 	const struct ethtool_ops *ops = vlan->real_dev->ethtool_ops;
++	struct phy_device *phydev = vlan->real_dev->phydev;
  
+-	if (ops->get_ts_info) {
++	if (phydev && phydev->drv && phydev->drv->ts_info) {
++		 return phydev->drv->ts_info(phydev, info);
++	} else if (ops->get_ts_info) {
+ 		return ops->get_ts_info(vlan->real_dev, info);
+ 	} else {
+ 		info->so_timestamping = SOF_TIMESTAMPING_RX_SOFTWARE |
