@@ -1,653 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752775AbeDJLPO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 07:15:14 -0400
-Received: from mga04.intel.com ([192.55.52.120]:61226 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752323AbeDJLPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 07:15:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,431,1517904000";
-   d="scan'208";a="190279974"
-Subject: Re: [4.9, 1/1] mmc: sdhci-dwc-mshc-pci: synopsys dwc mshc support
-To: Prabu Thangamuthu <Prabu.T@synopsys.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Cc: Manjunath M Bettegowda <Manjunath.MB@synopsys.com>
-References: <705D14B1C7978B40A723277C067CEDE2010A99681A@IN01WEMBXB.internal.synopsys.com>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <f966d948-eec3-522d-6023-210978f6da44@intel.com>
-Date: Tue, 10 Apr 2018 14:14:13 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752445AbeDJLRW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 07:17:22 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:32954 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751600AbeDJLRV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 07:17:21 -0400
+X-Google-Smtp-Source: AIpwx4/N1LbLmn3puFfHe+HDKgQ5IUlye6t6D1NxPDfCco+j9GXiJrqhO3LLTcCJ+d86D/SEssft9A==
+Date: Tue, 10 Apr 2018 14:16:32 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Michal Hocko <mhocko@kernel.org>, Zi Yan <zi.yan@sent.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: shmem: enable thp migration (Re: [PATCH v1] mm:
+ consider non-anonymous thp as unmovable page)
+Message-ID: <20180410111632.xtrxmop7p5v2mopj@node.shutemov.name>
+References: <20180403083451.GG5501@dhcp22.suse.cz>
+ <20180403105411.hknofkbn6rzs26oz@node.shutemov.name>
+ <20180405085927.GC6312@dhcp22.suse.cz>
+ <20180405122838.6a6b35psizem4tcy@node.shutemov.name>
+ <20180405124830.GJ6312@dhcp22.suse.cz>
+ <20180405134045.7axuun6d7ufobzj4@node.shutemov.name>
+ <20180405150547.GN6312@dhcp22.suse.cz>
+ <20180405155551.wchleyaf4rxooj6m@node.shutemov.name>
+ <20180405160317.GP6312@dhcp22.suse.cz>
+ <20180406030706.GA2434@hori1.linux.bs1.fc.nec.co.jp>
 MIME-Version: 1.0
-In-Reply-To: <705D14B1C7978B40A723277C067CEDE2010A99681A@IN01WEMBXB.internal.synopsys.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180406030706.GA2434@hori1.linux.bs1.fc.nec.co.jp>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On Fri, Apr 06, 2018 at 03:07:11AM +0000, Naoya Horiguchi wrote:
+> Hi everyone,
+> 
+> On Thu, Apr 05, 2018 at 06:03:17PM +0200, Michal Hocko wrote:
+> > On Thu 05-04-18 18:55:51, Kirill A. Shutemov wrote:
+> > > On Thu, Apr 05, 2018 at 05:05:47PM +0200, Michal Hocko wrote:
+> > > > On Thu 05-04-18 16:40:45, Kirill A. Shutemov wrote:
+> > > > > On Thu, Apr 05, 2018 at 02:48:30PM +0200, Michal Hocko wrote:
+> > > > [...]
+> > > > > > RIght, I confused the two. What is the proper layer to fix that then?
+> > > > > > rmap_walk_file?
+> > > > > 
+> > > > > Maybe something like this? Totally untested.
+> > > > 
+> > > > This looks way too complex. Why cannot we simply split THP page cache
+> > > > during migration?
+> > > 
+> > > This way we unify the codepath for archictures that don't support THP
+> > > migration and shmem THP.
+> > 
+> > But why? There shouldn't be really nothing to prevent THP (anon or
+> > shemem) to be migratable. If we cannot migrate it at once we can always
+> > split it. So why should we add another thp specific handling all over
+> > the place?
+> 
+> If thp migration works fine for shmem, we can keep anon/shmem thp to
+> be migratable and we don't need any ad-hoc workaround.
+> So I wrote a patch to enable it.
+> This patch does not change any shmem specific code, so I think that
+> it works for file thp (not only shmem,) but I don't test it yet.
+> 
+> Thanks,
+> Naoya Horiguchi
+> -----
+> From e31ec037701d1cc76b26226e4b66d8c783d40889 Mon Sep 17 00:00:00 2001
+> From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> Date: Fri, 6 Apr 2018 10:58:35 +0900
+> Subject: [PATCH] mm: enable thp migration for shmem thp
+> 
+> My testing for the latest kernel supporting thp migration showed an
+> infinite loop in offlining the memory block that is filled with shmem
+> thps.  We can get out of the loop with a signal, but kernel should
+> return with failure in this case.
+> 
+> What happens in the loop is that scan_movable_pages() repeats returning
+> the same pfn without any progress. That's because page migration always
+> fails for shmem thps.
+> 
+> In memory offline code, memory blocks containing unmovable pages should
+> be prevented from being offline targets by has_unmovable_pages() inside
+> start_isolate_page_range(). So it's possible to change migratability
+> for non-anonymous thps to avoid the issue, but it introduces more complex
+> and thp-specific handling in migration code, so it might not good.
+> 
+> So this patch is suggesting to fix the issue by enabling thp migration
+> for shmem thp. Both of anon/shmem thp are migratable so we don't need
+> precheck about the type of thps.
+> 
+> Fixes: commit 72b39cfc4d75 ("mm, memory_hotplug: do not fail offlining too early")
+> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> Cc: stable@vger.kernel.org # v4.15+
 
-Not sure what is going on this this patch.  Apart from the mangled mail, it
-is not clear it is intended for upstream?
+This looks sane to me.
 
-Regards
-Adrian
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-On 28/03/18 18:28, Prabu Thangamuthu wrote:
-> Synopsys DWC MSHC IP is complaint to SD Standard Host Controller Interface
-> 
-> specification. This patch is to enable DWC MSHC controller on HPAS-DX
-> 
-> platform connected using PCIe interface.
-> 
->  
-> 
-> As clock generation logic is implemented in MMCM block of HAPS-DX platform,
-> 
-> we need separate functions to control the MMCM module to generate required
-> 
-> clocks with respect to the mode of operation. Also we have the platform
-> 
-> specific set_power function to support different VDD's of eMMC device.
-> 
->  
-> 
-> Signed-off-by: Prabu Thangamuthu <prabu.t@synopsys.com>
-> 
-> ---
-> 
-> MAINTAINERS                           |   7 ++
-> 
-> drivers/mmc/host/Makefile             |   3 +-
-> 
-> drivers/mmc/host/sdhci-dwc-mshc-pci.c | 137 ++++++++++++++++++++++++++++++++++
-> 
-> drivers/mmc/host/sdhci-dwc-mshc-pci.h |  44 +++++++++++
-> 
-> drivers/mmc/host/sdhci-pci-core.c     |  25 +++++++
-> 
-> 5 files changed, 215 insertions(+), 1 deletion(-)
-> 
-> create mode 100644 drivers/mmc/host/sdhci-dwc-mshc-pci.c
-> 
-> create mode 100644 drivers/mmc/host/sdhci-dwc-mshc-pci.h
-> 
->  
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> 
-> index 63cefa6..869b92b 100644
-> 
-> --- a/MAINTAINERS
-> 
-> +++ b/MAINTAINERS
-> 
-> @@ -10808,6 +10808,13 @@ S:                Maintained
-> 
-> F:           drivers/mmc/host/sdhci*
-> 
-> F:           include/linux/mmc/sdhci*
-> 
-> +SYNOPSYS SDHCI COMPLIANT DWC MSHC DRIVER
-> 
-> +M:        Prabu Thangamuthu <prabu.t@synopsys.com>
-> 
-> +M:        Manjunath M B <manjumb@synopsys.com>
-> 
-> +L:          linux-mmc@vger.kernel.org
-> 
-> +S:          Maintained
-> 
-> +F:          drivers/mmc/host/sdhci-dwc*
-> 
-> +
-> 
-> SECURE COMPUTING
-> 
-> M:         Kees Cook <keescook@chromium.org>
-> 
-> R:           Andy Lutomirski <luto@amacapital.net>
-> 
-> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-> 
-> index e2bdaaf4..e83355f 100644
-> 
-> --- a/drivers/mmc/host/Makefile
-> 
-> +++ b/drivers/mmc/host/Makefile
-> 
-> @@ -9,7 +9,8 @@ obj-$(CONFIG_MMC_MXC)                   += mxcmmc.o
-> 
-> obj-$(CONFIG_MMC_MXS)                        += mxs-mmc.o
-> 
-> obj-$(CONFIG_MMC_SDHCI)                     += sdhci.o
-> 
-> obj-$(CONFIG_MMC_SDHCI_PCI)            += sdhci-pci.o
-> 
-> -sdhci-pci-y                                         += sdhci-pci-core.o
-> sdhci-pci-o2micro.o
-> 
-> +sdhci-pci-y                                        += sdhci-pci-core.o
-> sdhci-pci-o2micro.o \
-> 
-> +                                                               
-> sdhci-dwc-mshc-pci.o
-> 
-> obj-$(subst m,y,$(CONFIG_MMC_SDHCI_PCI))   += sdhci-pci-data.o
-> 
-> obj-$(CONFIG_MMC_SDHCI_ACPI)         += sdhci-acpi.o
-> 
-> obj-$(CONFIG_MMC_SDHCI_PXAV3)     += sdhci-pxav3.o
-> 
-> diff --git a/drivers/mmc/host/sdhci-dwc-mshc-pci.c
-> b/drivers/mmc/host/sdhci-dwc-mshc-pci.c
-> 
-> new file mode 100644
-> 
-> index 0000000..2f91ef7
-> 
-> --- /dev/null
-> 
-> +++ b/drivers/mmc/host/sdhci-dwc-mshc-pci.c
-> 
-> @@ -0,0 +1,137 @@
-> 
-> +/*
-> 
-> + * SDHCI driver for Synopsys DWC_MSHC controller
-> 
-> + *
-> 
-> + * Copyright (C) 2017-2018 Synopsys, Inc. (www.synopsys.com)
-> 
-> + *
-> 
-> + * Authors:
-> 
-> + *          Prabu Thangamuthu <prabut@synopsys.com>
-> 
-> + *          Manjunath M B <manjumb@synopsys.com>
-> 
-> + *
-> 
-> + * This program is free software; you can redistribute it and/or modify
-> 
-> + * it under the terms of the GNU General Public License version 2 as
-> 
-> + * published by the Free Software Foundation.
-> 
-> + */
-> 
-> +
-> 
-> +#include <linux/pci.h>
-> 
-> +#include <linux/delay.h>
-> 
-> +#include <linux/module.h>
-> 
-> +#include <linux/moduleparam.h>
-> 
-> +
-> 
-> +#include "sdhci.h"
-> 
-> +#include "sdhci-pci.h"
-> 
-> +#include "sdhci-dwc-mshc-pci.h"
-> 
-> +
-> 
-> +#define DRIVER_NAME "sdhci_snps"
-> 
-> +
-> 
-> +/* Default emmc vdd is set to 1.8V */
-> 
-> +static unsigned int emmc_vdd = SDHC_EMMC_VDD_180V;
-> 
-> +module_param(emmc_vdd, int, 0444);
-> 
-> +
-> 
-> +void sdhci_snps_set_clock(struct sdhci_host *host, unsigned int clock)
-> 
-> +{
-> 
-> +             u16 clk = 0;
-> 
-> +             u32 reg = 0;
-> 
-> +             u32 vendor_ptr = 0;
-> 
-> +
-> 
-> +             vendor_ptr = sdhci_readw(host, SDHCI_VENDOR_PTR_R);
-> 
-> +
-> 
-> +             /* Disable Software managed rx tuning */
-> 
-> +             reg = sdhci_readl(host, (SDHC_AT_CTRL_R + vendor_ptr));
-> 
-> +             reg &= ~SDHC_SW_TUNE_EN;
-> 
-> +             sdhci_writel(host, reg, (SDHC_AT_CTRL_R + vendor_ptr));
-> 
-> +
-> 
-> +             if (clock <= 52000000) {
-> 
-> +                             sdhci_set_clock(host, clock);
-> 
-> +             } else {
-> 
-> +                             /* Assert reset to MMCM */
-> 
-> +                             reg = sdhci_readl(host, (SDHC_GPIO_OUT +
-> vendor_ptr));
-> 
-> +                             reg |= SDHC_CCLK_MMCM_RST;
-> 
-> +                             sdhci_writel(host, reg, (SDHC_GPIO_OUT +
-> vendor_ptr));
-> 
-> +
-> 
-> +                             /* Configure MMCM*/
-> 
-> +                             sdhci_writel(host, DIV_REG_100_MHZ,
-> SDHC_MMCM_DIV_REG);
-> 
-> +                             sdhci_writel(host, CLKFBOUT_100_MHZ,
-> 
-> +                                                            
-> SDHC_MMCM_CLKFBOUT);
-> 
-> +
-> 
-> +                             /* De-assert reset to MMCM*/
-> 
-> +                             reg = sdhci_readl(host, (SDHC_GPIO_OUT +
-> vendor_ptr));
-> 
-> +                             reg &= ~SDHC_CCLK_MMCM_RST;
-> 
-> +                             sdhci_writel(host, reg, (SDHC_GPIO_OUT +
-> vendor_ptr));
-> 
-> +
-> 
-> +                             /* Enable clock */
-> 
-> +                             clk = SDHCI_PROG_CLOCK_MODE | SDHCI_CLOCK_INT_EN |
-> 
-> +                                             SDHCI_CLOCK_CARD_EN;
-> 
-> +                             sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
-> 
-> +             }
-> 
-> +}
-> 
-> +EXPORT_SYMBOL_GPL(sdhci_snps_set_clock);
-> 
-> +
-> 
-> +void sdhci_snps_set_power(struct sdhci_host *host, unsigned char mode,
-> 
-> +                                  unsigned short vdd)
-> 
-> +{
-> 
-> +             u8 pwr = 0;
-> 
-> +             u16 ctrl;
-> 
-> +
-> 
-> +             if (mode != MMC_POWER_OFF) {
-> 
-> +                             switch (1 << vdd) {
-> 
-> +                             case MMC_VDD_165_195:
-> 
-> +                                             pwr = SDHCI_POWER_180;
-> 
-> +                                             break;
-> 
-> +                             case MMC_VDD_29_30:
-> 
-> +                             case MMC_VDD_30_31:
-> 
-> +                                             pwr = SDHCI_POWER_300;
-> 
-> +                                             break;
-> 
-> +                             case MMC_VDD_32_33:
-> 
-> +                             case MMC_VDD_33_34:
-> 
-> +                                             pwr = SDHCI_POWER_330;
-> 
-> +                                             break;
-> 
-> +                             default:
-> 
-> +                                             WARN(1, "%s: Invalid vdd %#x\n",
-> 
-> +                                                  mmc_hostname(host->mmc),
-> vdd);
-> 
-> +                                             break;
-> 
-> +                             }
-> 
-> +             }
-> 
-> +
-> 
-> +             if (host->pwr == pwr)
-> 
-> +                             return;
-> 
-> +
-> 
-> +             host->pwr = pwr;
-> 
-> +
-> 
-> +             if (pwr == 0) {
-> 
-> +                             sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
-> 
-> +             } else {
-> 
-> +                             sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
-> 
-> +
-> 
-> +                             /*
-> 
-> +                             * Enable it for eMMC phy cfg1 test with 1.8V mode
-> 
-> +                             */
-> 
-> +                             if (emmc_vdd == SDHC_EMMC_VDD_180V) {
-> 
-> +                                             pwr = SDHCI_POWER_180;
-> 
-> +                                             sdhci_writeb(host, pwr,
-> SDHCI_POWER_CONTROL);
-> 
-> +
-> 
-> +                                             ctrl = sdhci_readw(host,
-> SDHCI_HOST_CONTROL2);
-> 
-> +                                             /*
-> 
-> +                                             * Enable 1.8V Signal Enable in
-> the Host Control2
-> 
-> +                                             * register
-> 
-> +                                             */
-> 
-> +                                             ctrl |= SDHCI_CTRL_VDD_180;
-> 
-> +                                             sdhci_writew(host, ctrl,
-> SDHCI_HOST_CONTROL2);
-> 
-> +                             }
-> 
-> +                             pwr |= SDHCI_POWER_ON;
-> 
-> +
-> 
-> +                             sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
-> 
-> +             }
-> 
-> +}
-> 
-> +EXPORT_SYMBOL_GPL(sdhci_snps_set_power);
-> 
-> +
-> 
-> +int sdhci_snps_pci_probe_slot(struct sdhci_pci_slot *slot)
-> 
-> +{
-> 
-> +             slot->host->caps = sdhci_readl(host, SDHCI_CAPABILITIES);
-> 
-> +             slot->host->caps1 = sdhci_readl(host, SDHCI_CAPABILITIES_1);
-> 
-> +
-> 
-> +             return 0;
-> 
-> +}
-> 
-> +EXPORT_SYMBOL_GPL(sdhci_snps_pci_probe_slot);
-> 
-> +
-> 
-> +MODULE_PARM_DESC(emmc_vdd, "VDD to configure eMMC device supply voltage");
-> 
-> +
-> 
-> diff --git a/drivers/mmc/host/sdhci-dwc-mshc-pci.h
-> b/drivers/mmc/host/sdhci-dwc-mshc-pci.h
-> 
-> new file mode 100644
-> 
-> index 0000000..97f5529
-> 
-> --- /dev/null
-> 
-> +++ b/drivers/mmc/host/sdhci-dwc-mshc-pci.h
-> 
-> @@ -0,0 +1,44 @@
-> 
-> +/*
-> 
-> + * SDHCI driver for Synopsys DWC_MSHC controller
-> 
-> + *
-> 
-> + * Copyright (C) 2017-2018 Synopsys, Inc. (www.synopsys.com)
-> 
-> + *
-> 
-> + * Authors:
-> 
-> + *          Prabu Thangamuthu <prabut@synopsys.com>
-> 
-> + *          Manjunath M B <manjumb@synopsys.com>
-> 
-> + *
-> 
-> + * This program is free software; you can redistribute it and/or modify
-> 
-> + * it under the terms of the GNU General Public License version 2 as
-> 
-> + * published by the Free Software Foundation.
-> 
-> + */
-> 
-> +
-> 
-> +#ifndef __SDHCI_DWC_MSHC_PCI_H__
-> 
-> +#define __SDHCI_DWC_MSHC_PCI_H__
-> 
-> +
-> 
-> +#define SDHCI_VENDOR_PTR_R                                    0xE8
-> 
-> +
-> 
-> +/* Module Parameters */
-> 
-> +#define SDHC_EMMC_VDD_330V                                 33
-> 
-> +#define SDHC_EMMC_VDD_180V                                 18
-> 
-> +
-> 
-> +/* Synopsys Vendor Specific Registers */
-> 
-> +#define SDHC_GPIO_OUT                          0x34
-> 
-> +#define SDHC_AT_CTRL_R                                                0x40
-> 
-> +
-> 
-> +#define SDHC_SW_TUNE_EN                                          0x00000010
-> 
-> +
-> 
-> +/* MMCM DRP */
-> 
-> +#define SDHC_MMCM_DIV_REG                                   0x1020
-> 
-> +#define DIV_REG_100_MHZ                                            0x1145
-> 
-> +
-> 
-> +#define SDHC_MMCM_CLKFBOUT                                0x1024
-> 
-> +#define CLKFBOUT_100_MHZ                         0x0000
-> 
-> +
-> 
-> +#define SDHC_CCLK_MMCM_RST                                 0x00000001
-> 
-> +
-> 
-> +int sdhci_snps_pci_probe_slot(struct sdhci_pci_slot *slot);
-> 
-> +void sdhci_snps_set_clock(struct sdhci_host *host, unsigned int clock);
-> 
-> +void sdhci_snps_set_power(struct sdhci_host *host, unsigned char mode,
-> 
-> +                                  unsigned short vdd);
-> 
-> +
-> 
-> +#endif
-> 
-> diff --git a/drivers/mmc/host/sdhci-pci-core.c
-> b/drivers/mmc/host/sdhci-pci-core.c
-> 
-> index b0b9ceb..f16ae5b 100644
-> 
-> --- a/drivers/mmc/host/sdhci-pci-core.c
-> 
-> +++ b/drivers/mmc/host/sdhci-pci-core.c
-> 
-> @@ -31,6 +31,7 @@
-> 
-> #include "sdhci.h"
-> 
-> #include "sdhci-pci.h"
-> 
-> #include "sdhci-pci-o2micro.h"
-> 
-> +#include "sdhci-dwc-mshc-pci.h"
-> 
->  static int sdhci_pci_enable_dma(struct sdhci_host *host);
-> 
-> static void sdhci_pci_set_bus_width(struct sdhci_host *host, int width);
-> 
-> @@ -79,6 +80,23 @@ static int ricoh_mmc_resume(struct sdhci_pci_chip *chip)
-> 
->                return 0;
-> 
-> }
-> 
-> +/* Synopsys DWC MSHC Controller based on SDHCI-PCI */
-> 
-> +static const struct sdhci_ops sdhci_snps_ops = {
-> 
-> +             .set_clock            = sdhci_snps_set_clock,
-> 
-> +             .set_power         = sdhci_snps_set_power,
-> 
-> +             .enable_dma     = sdhci_pci_enable_dma,
-> 
-> +             .set_bus_width = sdhci_pci_set_bus_width,
-> 
-> +             .reset                    = sdhci_reset,
-> 
-> +             .set_uhs_signaling = sdhci_set_uhs_signaling,
-> 
-> +             .hw_reset                           = sdhci_pci_hw_reset,
-> 
-> +             .select_drive_strength  = sdhci_pci_select_drive_strength,
-> 
-> +};
-> 
-> +
-> 
-> +static const struct sdhci_pci_fixes sdhci_snps = {
-> 
-> +             .probe_slot        = sdhci_snps_pci_probe_slot,
-> 
-> +             .ops                       = &sdhci_snps_ops,
-> 
-> +};
-> 
-> +
-> 
-> static const struct sdhci_pci_fixes sdhci_ricoh = {
-> 
->                .probe                  = ricoh_probe,
-> 
->                .quirks                  = SDHCI_QUIRK_32BIT_DMA_ADDR |
-> 
-> @@ -857,6 +875,13 @@ static int amd_probe(struct sdhci_pci_chip *chip)
-> 
->  static const struct pci_device_id pci_ids[] = {
-> 
->                {
-> 
-> +                             .vendor                = 0x16c3,            
-> /* Synopsys Vendor ID */
-> 
-> +                             .device                 = 0xc202,            
-> /* IPK HAPS_Dx */
-> 
-> +                             .subvendor         = PCI_ANY_ID,
-> 
-> +                             .subdevice          = PCI_ANY_ID,
-> 
-> +                             .driver_data       = (kernel_ulong_t)&sdhci_snps,
-> 
-> +             },
-> 
-> +             {
-> 
->                                .vendor                = PCI_VENDOR_ID_RICOH,
-> 
->                                .device                 =
-> PCI_DEVICE_ID_RICOH_R5C822,
-> 
->                                .subvendor         = PCI_ANY_ID,
-> 
-> -- 
-> 
-> 1.9.1
-> 
->  
-> 
+As, yeah, as you mentioned down the thread it's not a stable material
+
+-- 
+ Kirill A. Shutemov
