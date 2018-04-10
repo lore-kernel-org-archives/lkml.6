@@ -1,41 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752076AbeDJAlZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 20:41:25 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:53844 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751978AbeDJAlU (ORCPT
+        id S1751744AbeDJAr4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 20:47:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38832 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeDJArz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 20:41:20 -0400
-X-Google-Smtp-Source: AIpwx49J9eh7VC3Dx1fNZm/333qA9XLO8BC/98FRcao7zm3ulmHMTiepPGI2s6wZ8c/2ZWNjHchVERNK5gUFjsvPAP8=
-MIME-Version: 1.0
-In-Reply-To: <2863317.1ZoR41yQkl@bear>
-References: <20180311150151.GB15443@localhost> <2863317.1ZoR41yQkl@bear>
-From: Frank Mori Hess <fmh6jj@gmail.com>
-Date: Mon, 9 Apr 2018 20:41:18 -0400
-Message-ID: <CAJz5OpdV1=L3fsQESZusAp8Cir9wE-VqPXqBa=zOGjBcPE78DA@mail.gmail.com>
-Subject: Re: [PATCH v4] dmaengine: pl330: flush before wait, and add dev burst support.
-To: dmaengine@vger.kernel.org
-Cc: Vinod Koul <vinod.koul@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 9 Apr 2018 20:47:55 -0400
+Date: Mon, 9 Apr 2018 17:47:53 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Jerome Glisse" <jglisse@redhat.com>,
+        Daniel Colascione <dancol@google.com>, Zi Yan <zi.yan@cs.rutgers.edu>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Subject: Re: [PATCH -mm] mm, pagemap: Fix swap offset value for PMD
+ migration entry
+Message-Id: <20180409174753.4b959a5b3ff732b8f96f5a14@linux-foundation.org>
+In-Reply-To: <20180408033737.10897-1-ying.huang@intel.com>
+References: <20180408033737.10897-1-ying.huang@intel.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Mar 13, 2018 at 2:34 PM, Frank Mori Hess <fmh6jj@gmail.com> wrote:
-> Do DMAFLUSHP _before_ the first DMAWFP to ensure controller
-> and peripheral are in agreement about dma request state before first
-> transfer.  Add support for burst transfers to/from peripherals. In the new
-> scheme, the controller does as many burst transfers as it can then
-> transfers the remaining dregs with either single transfers for
-> peripherals, or with a reduced size burst for memory-to-memory transfers.
+On Sun,  8 Apr 2018 11:37:37 +0800 "Huang, Ying" <ying.huang@intel.com> wrote:
 
-Hi, what is the state of this patch?  I just noticed in patchwork it
-is now listed as "Not applicable"?  The original broken-by-wordwrap
-patch is listed as "Accepted"?
+> From: Huang Ying <ying.huang@intel.com>
+> 
+> The swap offset reported by /proc/<pid>/pagemap may be not correct for
+> PMD migration entry.  If addr passed into pagemap_range() isn't
 
-https://patchwork.kernel.org/project/linux-dmaengine/list/?submitter=178687&state=*
+pagemap_pmd_range(), yes?
 
-I found it has a bug handling dregs btw, I'll include a fix for that
-in the next version or as a follow-on patch as appropriate.
+> aligned with PMD start address,
+
+How can this situation come about?
+
+> the swap offset reported doesn't
+> reflect this.  And in the loop to report information of each sub-page,
+> the swap offset isn't increased accordingly as that for PFN.
+> 
+> BTW: migration swap entries have PFN information, do we need to
+> restrict whether to show them?
+
+For what reason?  Address obfuscation?
