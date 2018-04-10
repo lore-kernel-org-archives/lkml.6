@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752283AbeDJCmL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 22:42:11 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:60797 "EHLO
+        id S1752260AbeDJCmJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 22:42:09 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:60795 "EHLO
         rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752210AbeDJCmI (ORCPT
+        with ESMTP id S1752200AbeDJCmH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 22:42:08 -0400
+        Mon, 9 Apr 2018 22:42:07 -0400
 Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID w3A2fuNC026282, This message is accepted by code: ctloc85258
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID w3A2fvdH026293, This message is accepted by code: ctloc85258
 From: <pkshih@realtek.com>
 To: <kvalo@codeaurora.org>
 CC: <Larry.Finger@lwfinger.net>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 6/9] rtlwifi: btcoex: remove comments that are not meaningful
-Date: Tue, 10 Apr 2018 10:41:41 +0800
-Message-ID: <20180410024144.5027-7-pkshih@realtek.com>
+Subject: [PATCH v2 8/9] rtlwifi: btcoex: Add struct members to replace global varaibles
+Date: Tue, 10 Apr 2018 10:41:43 +0800
+Message-ID: <20180410024144.5027-9-pkshih@realtek.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180410024144.5027-1-pkshih@realtek.com>
 References: <20180410024144.5027-1-pkshih@realtek.com>
@@ -27,227 +27,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ping-Ke Shih <pkshih@realtek.com>
 
-The comments aren't meaningful and the use of '***...***' isn't upstream
-style, so remove them. This patch doesn't change any code.
+Chip specific context plays as global variables that will not support
+multiple devices simultaneously. This patch adds 'union' fields to hold
+the variables, and next patch will remove all of them.
+
+To use the declaration of fields in halbtcoutsrc.h, I move the including
+order in header file halbt_precomp.h, and declare two struct terms for
+chip specific header files.
 
 Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
 ---
- .../realtek/rtlwifi/btcoexist/halbtc8192e2ant.c    | 22 +-------------------
- .../realtek/rtlwifi/btcoexist/halbtc8723b1ant.c    | 24 +---------------------
- .../realtek/rtlwifi/btcoexist/halbtc8723b2ant.c    | 23 ++-------------------
- .../realtek/rtlwifi/btcoexist/halbtc8821a1ant.c    | 22 +-------------------
- .../realtek/rtlwifi/btcoexist/halbtc8821a2ant.c    | 23 +--------------------
- 5 files changed, 6 insertions(+), 108 deletions(-)
+ .../realtek/rtlwifi/btcoexist/halbt_precomp.h      |  6 +++++-
+ .../realtek/rtlwifi/btcoexist/halbtcoutsrc.h       | 24 ++++++++++++++++++++++
+ 2 files changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
-index 8fce371749d3..959af05117d7 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8192e2ant.c
-@@ -22,23 +22,9 @@
-  * Larry Finger <Larry.Finger@lwfinger.net>
-  *
-  *****************************************************************************/
--/**************************************************************
-- * Description:
-- *
-- * This file is for RTL8192E Co-exist mechanism
-- *
-- * History
-- * 2012/11/15 Cosa first check in.
-- *
-- **************************************************************/
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbt_precomp.h b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbt_precomp.h
+index 858318fd3d63..e21222b48c2c 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbt_precomp.h
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbt_precomp.h
+@@ -35,7 +35,6 @@
+ #include "../ps.h"
+ #include "../pci.h"
  
--/**************************************************************
-- *   include files
-- **************************************************************/
- #include "halbt_precomp.h"
--/**************************************************************
-- *   Global variables, these are static variables
-- **************************************************************/
+-#include "halbtcoutsrc.h"
+ 
+ /* Interface type */
+ #define RT_PCI_INTERFACE	1
+@@ -43,6 +42,9 @@
+ #define RT_SDIO_INTERFACE	3
+ #define DEV_BUS_TYPE		RT_PCI_INTERFACE
+ 
++struct btc_coexist;
++struct wifi_only_cfg;
 +
- static struct coex_dm_8192e_2ant glcoex_dm_8192e_2ant;
- static struct coex_dm_8192e_2ant *coex_dm = &glcoex_dm_8192e_2ant;
- static struct coex_sta_8192e_2ant glcoex_sta_8192e_2ant;
-@@ -53,12 +39,6 @@ static const char *const glbt_info_src_8192e_2ant[] = {
- static u32 glcoex_ver_date_8192e_2ant = 20130902;
- static u32 glcoex_ver_8192e_2ant = 0x34;
+ #include "halbtc8192e2ant.h"
+ #include "halbtc8723b1ant.h"
+ #include "halbtc8723b2ant.h"
+@@ -52,6 +54,8 @@
+ #include "halbtc8822b2ant.h"
+ #include "halbtc8822bwifionly.h"
  
--/**************************************************************
-- *   local function proto type if needed
-- **************************************************************/
--/**************************************************************
-- *   local function start with btc8192e2ant_
-- **************************************************************/
- static u8 btc8192e2ant_bt_rssi_state(struct btc_coexist *btcoexist,
- 				     u8 level_num, u8 rssi_thresh,
- 				     u8 rssi_thresh1)
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.c
-index 59553db020ef..e97e907e66cd 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.c
-@@ -23,23 +23,8 @@
-  *
-  *****************************************************************************/
- 
--/***************************************************************
-- * Description:
-- *
-- * This file is for RTL8723B Co-exist mechanism
-- *
-- * History
-- * 2012/11/15 Cosa first check in.
-- *
-- ***************************************************************/
--
--/***************************************************************
-- * include files
-- ***************************************************************/
- #include "halbt_precomp.h"
--/***************************************************************
-- * Global variables, these are static variables
-- ***************************************************************/
++#include "halbtcoutsrc.h"
 +
- static struct coex_dm_8723b_1ant glcoex_dm_8723b_1ant;
- static struct coex_dm_8723b_1ant *coex_dm = &glcoex_dm_8723b_1ant;
- static struct coex_sta_8723b_1ant glcoex_sta_8723b_1ant;
-@@ -54,13 +39,6 @@ static const char *const glbt_info_src_8723b_1ant[] = {
- static u32 glcoex_ver_date_8723b_1ant = 20130918;
- static u32 glcoex_ver_8723b_1ant = 0x47;
+ #define GetDefaultAdapter(padapter)	padapter
  
--/***************************************************************
-- * local function proto type if needed
-- ***************************************************************/
--/***************************************************************
-- * local function start with halbtc8723b1ant_
-- ***************************************************************/
--
- static void halbtc8723b1ant_updatera_mask(struct btc_coexist *btcoexist,
- 					  bool force_exec, u32 dis_rate_mask)
- {
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
-index 73ec31972944..e9a7f303cdda 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b2ant.c
-@@ -22,22 +22,9 @@
-  * Larry Finger <Larry.Finger@lwfinger.net>
-  *
-  *****************************************************************************/
--/***************************************************************
-- * Description:
-- *
-- * This file is for RTL8723B Co-exist mechanism
-- *
-- * History
-- * 2012/11/15 Cosa first check in.
-- *
-- **************************************************************/
--/**************************************************************
-- * include files
-- **************************************************************/
+ #define BIT0	0x00000001
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
+index 9eae87d19120..46355ce32f1b 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
+@@ -693,6 +693,30 @@ struct btc_coexist {
+ 	enum btc_chip_interface	chip_interface;
+ 	struct btc_bt_link_info bt_link_info;
+ 
++	/* context for each chip */
++	union {
++		struct coex_dm_8192e_2ant coex_dm_8192e_2ant;
++		struct coex_dm_8723b_1ant coex_dm_8723b_1ant;
++		struct coex_dm_8723b_2ant coex_dm_8723b_2ant;
++		struct coex_dm_8821a_1ant coex_dm_8821a_1ant;
++		struct coex_dm_8821a_2ant coex_dm_8821a_2ant;
++		struct coex_dm_8822b_1ant coex_dm_8822b_1ant;
++		struct coex_dm_8822b_2ant coex_dm_8822b_2ant;
++	};
++	union {
++		struct coex_sta_8192e_2ant coex_sta_8192e_2ant;
++		struct coex_sta_8723b_1ant coex_sta_8723b_1ant;
++		struct coex_sta_8723b_2ant coex_sta_8723b_2ant;
++		struct coex_sta_8821a_1ant coex_sta_8821a_1ant;
++		struct coex_sta_8821a_2ant coex_sta_8821a_2ant;
++		struct coex_sta_8822b_1ant coex_sta_8822b_1ant;
++		struct coex_sta_8822b_2ant coex_sta_8822b_2ant;
++	};
++	union {
++		struct rfe_type_8822b_1ant rfe_type_8822b_1ant;
++		struct rfe_type_8822b_2ant rfe_type_8822b_2ant;
++	};
 +
- #include "halbt_precomp.h"
--/**************************************************************
-- * Global variables, these are static variables
-- **************************************************************/
-+
- static struct coex_dm_8723b_2ant glcoex_dm_8723b_2ant;
- static struct coex_dm_8723b_2ant *coex_dm = &glcoex_dm_8723b_2ant;
- static struct coex_sta_8723b_2ant glcoex_sta_8723b_2ant;
-@@ -52,12 +39,6 @@ static const char *const glbt_info_src_8723b_2ant[] = {
- static u32 glcoex_ver_date_8723b_2ant = 20131113;
- static u32 glcoex_ver_8723b_2ant = 0x3f;
- 
--/**************************************************************
-- * local function proto type if needed
-- **************************************************************/
--/**************************************************************
-- * local function start with btc8723b2ant_
-- **************************************************************/
- static u8 btc8723b2ant_bt_rssi_state(struct btc_coexist *btcoexist,
- 				     u8 level_num, u8 rssi_thresh,
- 				     u8 rssi_thresh1)
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a1ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a1ant.c
-index 202597cf8915..39dc5966700b 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a1ant.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a1ant.c
-@@ -23,23 +23,8 @@
-  *
-  *****************************************************************************/
- 
--/**************************************************************
-- * Description:
-- *
-- * This file is for RTL8821A Co-exist mechanism
-- *
-- * History
-- * 2012/11/15 Cosa first check in.
-- *
-- **************************************************************/
--
--/**************************************************************
-- * include files
-- **************************************************************/
- #include "halbt_precomp.h"
--/**************************************************************
-- * Global variables, these are static variables
-- **************************************************************/
-+
- static struct coex_dm_8821a_1ant glcoex_dm_8821a_1ant;
- static struct coex_dm_8821a_1ant *coex_dm = &glcoex_dm_8821a_1ant;
- static struct coex_sta_8821a_1ant glcoex_sta_8821a_1ant;
-@@ -56,11 +41,6 @@ static const char *const glbt_info_src_8821a_1ant[] = {
- static u32 glcoex_ver_date_8821a_1ant = 20130816;
- static u32 glcoex_ver_8821a_1ant = 0x41;
- 
--/**************************************************************
-- * local function proto type if needed
-- *
-- * local function start with btc8821a1ant_
-- **************************************************************/
- static u8 btc8821a1ant_bt_rssi_state(struct btc_coexist *btcoexist,
- 				     u8 level_num, u8 rssi_thresh,
- 				     u8 rssi_thresh1)
-diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c
-index 2202d5e18977..264796616d8a 100644
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c
-@@ -23,24 +23,8 @@
-  *
-  *****************************************************************************/
- 
--/************************************************************
-- * Description:
-- *
-- * This file is for RTL8821A Co-exist mechanism
-- *
-- * History
-- * 2012/08/22 Cosa first check in.
-- * 2012/11/14 Cosa Revise for 8821A 2Ant out sourcing.
-- *
-- ************************************************************/
--
--/************************************************************
-- * include files
-- ************************************************************/
- #include "halbt_precomp.h"
--/************************************************************
-- * Global variables, these are static variables
-- ************************************************************/
-+
- static struct coex_dm_8821a_2ant glcoex_dm_8821a_2ant;
- static struct coex_dm_8821a_2ant *coex_dm = &glcoex_dm_8821a_2ant;
- static struct coex_sta_8821a_2ant glcoex_sta_8821a_2ant;
-@@ -55,11 +39,6 @@ static const char *const glbt_info_src_8821a_2ant[] = {
- static u32 glcoex_ver_date_8821a_2ant = 20130618;
- static u32 glcoex_ver_8821a_2ant = 0x5050;
- 
--/************************************************************
-- * local function proto type if needed
-- *
-- * local function start with btc8821a2ant_
-- ************************************************************/
- static u8 btc8821a2ant_bt_rssi_state(struct btc_coexist *btcoexist,
- 				     u8 level_num, u8 rssi_thresh,
- 				     u8 rssi_thresh1)
+ 	/* boolean variables to replace BT_AUTO_REPORT_ONLY_XXXXY_ZANT
+ 	 * configuration parameters
+ 	 */
 -- 
 2.15.1
