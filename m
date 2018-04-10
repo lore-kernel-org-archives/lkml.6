@@ -1,143 +1,261 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753901AbeDJN2e (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 09:28:34 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:42863 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753280AbeDJN2b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 09:28:31 -0400
-X-Google-Smtp-Source: AIpwx489lrfatH4yxZiYqbSqUsRzBtvH9EAeTbCyjE+H1yms9r8F+qcFqqqaMRrdYgsEGvxsqTQcEA==
-Date: Tue, 10 Apr 2018 22:28:22 +0900
-From: Minchan Kim <minchan@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Michal Hocko <mhocko@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
-        Chris Fries <cfries@google.com>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Message-ID: <20180410132822.GA32026@rodete-laptop-imager.corp.google.com>
-References: <20180409015815.235943-1-minchan@kernel.org>
- <20180409024925.GA21889@bombadil.infradead.org>
- <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
- <20180409111403.GA31652@bombadil.infradead.org>
- <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
- <20180409183827.GD17558@jaegeuk-macbookpro.roam.corp.google.com>
- <20180409194044.GA15295@bombadil.infradead.org>
- <20180410082643.GX21835@dhcp22.suse.cz>
- <20180410120528.GB22118@bombadil.infradead.org>
+        id S1754008AbeDJN3Q (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 09:29:16 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43486 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753104AbeDJN3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 09:29:15 -0400
+Date: Tue, 10 Apr 2018 16:29:13 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: virtualization@lists.linux-foundation.org,
+        syzkaller-bugs@googlegroups.com,
+        Linus Torvalds <torvalds@linux-foundation.org>, kvm@vger.kernel.org,
+        jasowang@redhat.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] vhost: return bool from *_access_ok() functions
+Message-ID: <20180410162838-mutt-send-email-mst@kernel.org>
+References: <20180410052630.11270-1-stefanha@redhat.com>
+ <20180410052630.11270-3-stefanha@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180410120528.GB22118@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180410052630.11270-3-stefanha@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 05:05:28AM -0700, Matthew Wilcox wrote:
-> On Tue, Apr 10, 2018 at 10:26:43AM +0200, Michal Hocko wrote:
-> > On Mon 09-04-18 12:40:44, Matthew Wilcox wrote:
-> > > The problem is that the mapping gfp flags are used not only for allocating
-> > > pages, but also for allocating the page cache data structures that hold
-> > > the pages.  F2FS is the only filesystem that set the __GFP_ZERO bit,
-> > > so it's the first time anyone's noticed that the page cache passes the
-> > > __GFP_ZERO bit through to the radix tree allocation routines, which
-> > > causes the radix tree nodes to be zeroed instead of constructed.
-> > > 
-> > > I think the right solution to this is:
-> > 
-> > This just hides the underlying problem that the node is not fully and
-> > properly initialized. Relying on the previous released state is just too
-> > subtle.
+On Tue, Apr 10, 2018 at 01:26:30PM +0800, Stefan Hajnoczi wrote:
+> Currently vhost *_access_ok() functions return int.  This is error-prone
+> because there are two popular conventions:
 > 
-> That's the fundamental design of slab-with-constructors.  The user provides
-> a constructor, so all newly allocagted objects are initialised to a known
-> state, then the user will restore the object to that state when it frees
-> the object to slab.
+> 1. 0 means failure, 1 means success
+> 2. -errno means failure, 0 means success
 > 
-> > Are you going to blacklist all potential gfp flags that come
-> > from the mapping? This is just unmaintainable! If anything this should
-> > be an explicit & with the allowed set of allowed flags.
+> Although vhost mostly uses #1, it does not do so consistently.
+> umem_access_ok() uses #2.
 > 
-> Oh, I agree that using the set of flags used to allocate the page
-> in order to allocate the radix tree nodes is a pretty horrible idea.
+> This patch changes the return type from int to bool so that false means
+> failure and true means success.  This eliminates a potential source of
+> errors.
 > 
-> Your suggestion, then, is:
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+
+> ---
+>  drivers/vhost/vhost.h |  4 ++--
+>  drivers/vhost/vhost.c | 66 +++++++++++++++++++++++++--------------------------
+>  2 files changed, 35 insertions(+), 35 deletions(-)
 > 
-> -	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
-> +	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
-> 
-> correct?
-> 
-
-Looks much better.
-
-Finally, it seems everyone agree on this. However, I won't include
-warning part of slab allocator because I think it's improve stuff
-not bug fix so it could be separted.
-If anyone really want to include it in this stable patch,
-please discuss with slub maintainers before.
-
-Thanks for the reivew, Matthew, Michal, Jan and Johannes.
-
->From 652bb75124896fa040df78b98496a354f54fc524 Mon Sep 17 00:00:00 2001
-From: Minchan Kim <minchan@kernel.org>
-Date: Tue, 10 Apr 2018 22:13:50 +0900
-Subject: [PATCH v4] mm: workingset: fix NULL ptr dereference
-
-GFP mask passed to page cache functions (often coming from
-mapping->gfp_mask) is used both for allocation of page cache page and for
-allocation of radix tree metadata necessary to add the page to the page
-cache. When the mask contains __GFP_ZERO (as is the case for some f2fs
-metadata mappings), this breaks radix tree code as that code expects
-allocated radix tree nodes to be properly initialized by the slab
-constructor and not zeroed. In particular node->private_list is failing
-list_empty() check and the following list operation in
-workingset_update_node() will dereference NULL.
-
-Fix the problem by removing non-reclimable flags by GFP_RECLAIM_MASK
-for radix tree allocations.
-
-Fixes: 449dd6984d0e ("mm: keep page cache radix tree nodes in check")
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>
-Cc: Christopher Lameter <cl@linux.com>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Reported-by: Chris Fries <cfries@google.com>
-Signed-off-by: Minchan Kim <minchan@kernel.org>
----
- mm/filemap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/filemap.c b/mm/filemap.c
-index ab77e19ab09c..5f3311edfea4 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -786,7 +786,7 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
- 	VM_BUG_ON_PAGE(!PageLocked(new), new);
- 	VM_BUG_ON_PAGE(new->mapping, new);
- 
--	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
-+	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
- 	if (!error) {
- 		struct address_space *mapping = old->mapping;
- 		void (*freepage)(struct page *);
-@@ -842,7 +842,7 @@ static int __add_to_page_cache_locked(struct page *page,
- 			return error;
- 	}
- 
--	error = radix_tree_maybe_preload(gfp_mask & ~__GFP_HIGHMEM);
-+	error = radix_tree_maybe_preload(gfp_mask & GFP_RECLAIM_MASK);
- 	if (error) {
- 		if (!huge)
- 			mem_cgroup_cancel_charge(page, memcg, false);
--- 
-2.17.0.484.g0c8726318c-goog
+> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+> index ac4b6056f19a..6e00fa57af09 100644
+> --- a/drivers/vhost/vhost.h
+> +++ b/drivers/vhost/vhost.h
+> @@ -178,8 +178,8 @@ void vhost_dev_cleanup(struct vhost_dev *);
+>  void vhost_dev_stop(struct vhost_dev *);
+>  long vhost_dev_ioctl(struct vhost_dev *, unsigned int ioctl, void __user *argp);
+>  long vhost_vring_ioctl(struct vhost_dev *d, int ioctl, void __user *argp);
+> -int vhost_vq_access_ok(struct vhost_virtqueue *vq);
+> -int vhost_log_access_ok(struct vhost_dev *);
+> +bool vhost_vq_access_ok(struct vhost_virtqueue *vq);
+> +bool vhost_log_access_ok(struct vhost_dev *);
+>  
+>  int vhost_get_vq_desc(struct vhost_virtqueue *,
+>  		      struct iovec iov[], unsigned int iov_count,
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index 93fd0c75b0d8..b6a082ef33dd 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -641,14 +641,14 @@ void vhost_dev_cleanup(struct vhost_dev *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(vhost_dev_cleanup);
+>  
+> -static int log_access_ok(void __user *log_base, u64 addr, unsigned long sz)
+> +static bool log_access_ok(void __user *log_base, u64 addr, unsigned long sz)
+>  {
+>  	u64 a = addr / VHOST_PAGE_SIZE / 8;
+>  
+>  	/* Make sure 64 bit math will not overflow. */
+>  	if (a > ULONG_MAX - (unsigned long)log_base ||
+>  	    a + (unsigned long)log_base > ULONG_MAX)
+> -		return 0;
+> +		return false;
+>  
+>  	return access_ok(VERIFY_WRITE, log_base + a,
+>  			 (sz + VHOST_PAGE_SIZE * 8 - 1) / VHOST_PAGE_SIZE / 8);
+> @@ -661,30 +661,30 @@ static bool vhost_overflow(u64 uaddr, u64 size)
+>  }
+>  
+>  /* Caller should have vq mutex and device mutex. */
+> -static int vq_memory_access_ok(void __user *log_base, struct vhost_umem *umem,
+> -			       int log_all)
+> +static bool vq_memory_access_ok(void __user *log_base, struct vhost_umem *umem,
+> +				int log_all)
+>  {
+>  	struct vhost_umem_node *node;
+>  
+>  	if (!umem)
+> -		return 0;
+> +		return false;
+>  
+>  	list_for_each_entry(node, &umem->umem_list, link) {
+>  		unsigned long a = node->userspace_addr;
+>  
+>  		if (vhost_overflow(node->userspace_addr, node->size))
+> -			return 0;
+> +			return false;
+>  
+>  
+>  		if (!access_ok(VERIFY_WRITE, (void __user *)a,
+>  				    node->size))
+> -			return 0;
+> +			return false;
+>  		else if (log_all && !log_access_ok(log_base,
+>  						   node->start,
+>  						   node->size))
+> -			return 0;
+> +			return false;
+>  	}
+> -	return 1;
+> +	return true;
+>  }
+>  
+>  static inline void __user *vhost_vq_meta_fetch(struct vhost_virtqueue *vq,
+> @@ -701,13 +701,13 @@ static inline void __user *vhost_vq_meta_fetch(struct vhost_virtqueue *vq,
+>  
+>  /* Can we switch to this memory table? */
+>  /* Caller should have device mutex but not vq mutex */
+> -static int memory_access_ok(struct vhost_dev *d, struct vhost_umem *umem,
+> -			    int log_all)
+> +static bool memory_access_ok(struct vhost_dev *d, struct vhost_umem *umem,
+> +			     int log_all)
+>  {
+>  	int i;
+>  
+>  	for (i = 0; i < d->nvqs; ++i) {
+> -		int ok;
+> +		bool ok;
+>  		bool log;
+>  
+>  		mutex_lock(&d->vqs[i]->mutex);
+> @@ -717,12 +717,12 @@ static int memory_access_ok(struct vhost_dev *d, struct vhost_umem *umem,
+>  			ok = vq_memory_access_ok(d->vqs[i]->log_base,
+>  						 umem, log);
+>  		else
+> -			ok = 1;
+> +			ok = true;
+>  		mutex_unlock(&d->vqs[i]->mutex);
+>  		if (!ok)
+> -			return 0;
+> +			return false;
+>  	}
+> -	return 1;
+> +	return true;
+>  }
+>  
+>  static int translate_desc(struct vhost_virtqueue *vq, u64 addr, u32 len,
+> @@ -959,21 +959,21 @@ static void vhost_iotlb_notify_vq(struct vhost_dev *d,
+>  	spin_unlock(&d->iotlb_lock);
+>  }
+>  
+> -static int umem_access_ok(u64 uaddr, u64 size, int access)
+> +static bool umem_access_ok(u64 uaddr, u64 size, int access)
+>  {
+>  	unsigned long a = uaddr;
+>  
+>  	/* Make sure 64 bit math will not overflow. */
+>  	if (vhost_overflow(uaddr, size))
+> -		return -EFAULT;
+> +		return false;
+>  
+>  	if ((access & VHOST_ACCESS_RO) &&
+>  	    !access_ok(VERIFY_READ, (void __user *)a, size))
+> -		return -EFAULT;
+> +		return false;
+>  	if ((access & VHOST_ACCESS_WO) &&
+>  	    !access_ok(VERIFY_WRITE, (void __user *)a, size))
+> -		return -EFAULT;
+> -	return 0;
+> +		return false;
+> +	return true;
+>  }
+>  
+>  static int vhost_process_iotlb_msg(struct vhost_dev *dev,
+> @@ -988,7 +988,7 @@ static int vhost_process_iotlb_msg(struct vhost_dev *dev,
+>  			ret = -EFAULT;
+>  			break;
+>  		}
+> -		if (umem_access_ok(msg->uaddr, msg->size, msg->perm)) {
+> +		if (!umem_access_ok(msg->uaddr, msg->size, msg->perm)) {
+>  			ret = -EFAULT;
+>  			break;
+>  		}
+> @@ -1135,10 +1135,10 @@ static int vhost_iotlb_miss(struct vhost_virtqueue *vq, u64 iova, int access)
+>  	return 0;
+>  }
+>  
+> -static int vq_access_ok(struct vhost_virtqueue *vq, unsigned int num,
+> -			struct vring_desc __user *desc,
+> -			struct vring_avail __user *avail,
+> -			struct vring_used __user *used)
+> +static bool vq_access_ok(struct vhost_virtqueue *vq, unsigned int num,
+> +			 struct vring_desc __user *desc,
+> +			 struct vring_avail __user *avail,
+> +			 struct vring_used __user *used)
+>  
+>  {
+>  	size_t s = vhost_has_feature(vq, VIRTIO_RING_F_EVENT_IDX) ? 2 : 0;
+> @@ -1161,8 +1161,8 @@ static void vhost_vq_meta_update(struct vhost_virtqueue *vq,
+>  		vq->meta_iotlb[type] = node;
+>  }
+>  
+> -static int iotlb_access_ok(struct vhost_virtqueue *vq,
+> -			   int access, u64 addr, u64 len, int type)
+> +static bool iotlb_access_ok(struct vhost_virtqueue *vq,
+> +			    int access, u64 addr, u64 len, int type)
+>  {
+>  	const struct vhost_umem_node *node;
+>  	struct vhost_umem *umem = vq->iotlb;
+> @@ -1220,7 +1220,7 @@ EXPORT_SYMBOL_GPL(vq_iotlb_prefetch);
+>  
+>  /* Can we log writes? */
+>  /* Caller should have device mutex but not vq mutex */
+> -int vhost_log_access_ok(struct vhost_dev *dev)
+> +bool vhost_log_access_ok(struct vhost_dev *dev)
+>  {
+>  	return memory_access_ok(dev, dev->umem, 1);
+>  }
+> @@ -1228,8 +1228,8 @@ EXPORT_SYMBOL_GPL(vhost_log_access_ok);
+>  
+>  /* Verify access for write logging. */
+>  /* Caller should have vq mutex and device mutex */
+> -static int vq_log_access_ok(struct vhost_virtqueue *vq,
+> -			    void __user *log_base)
+> +static bool vq_log_access_ok(struct vhost_virtqueue *vq,
+> +			     void __user *log_base)
+>  {
+>  	size_t s = vhost_has_feature(vq, VIRTIO_RING_F_EVENT_IDX) ? 2 : 0;
+>  
+> @@ -1242,14 +1242,14 @@ static int vq_log_access_ok(struct vhost_virtqueue *vq,
+>  
+>  /* Can we start vq? */
+>  /* Caller should have vq mutex and device mutex */
+> -int vhost_vq_access_ok(struct vhost_virtqueue *vq)
+> +bool vhost_vq_access_ok(struct vhost_virtqueue *vq)
+>  {
+>  	if (!vq_log_access_ok(vq, vq->log_base))
+> -		return 0;
+> +		return false;
+>  
+>  	/* Access validation occurs at prefetch time with IOTLB */
+>  	if (vq->iotlb)
+> -		return 1;
+> +		return true;
+>  
+>  	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used);
+>  }
+> -- 
+> 2.14.3
