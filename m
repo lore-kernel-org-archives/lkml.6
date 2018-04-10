@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+aJ/EjA9kWTUGCCL8EyMRwvZek4MEkvuKh+YTV4OSFmYGOvHyqTswaRVxGa5f/I/Qod90A
-ARC-Seal: i=1; a=rsa-sha256; t=1523399243; cv=none;
+X-Google-Smtp-Source: AIpwx49sMeZzIr4e0H0r+2BJv/WvMtE0vnaw+PDLFflWqMh+DCuu1MmJKvNpcEW/wSmHR0Xv3mR3
+ARC-Seal: i=1; a=rsa-sha256; t=1523399240; cv=none;
         d=google.com; s=arc-20160816;
-        b=ijf2Uk7LNuB20dm57M/4nElCi15Sg79TThT7ljwdkRvmDDh7cdN9H7iUo1s1ir+aSU
-         5zLOtSbfNx2nP4oMThzrO7L65aZ2T7yMZNSdKsfgRVofUOq6TCX/3yawpEUqp5NFFYQl
-         Cupwy7vfXzXq6kSWeNVMppyWA19vxif04evJpKmCA+f3axmI+fzvuVFMxjqnNVWhGxlZ
-         wgGPKLufhRS/GgKmXP9Zh+NlF0FU3Ek1YREcrctC2fUqp18uveNOPzX7zg+JSidcl1j0
-         vBBeG2SR/iidzgauSZBGjR7ZDaSZ5RTq7TtpRmoRNmKq66r0nG7gzUTeThbqXCmsHiv+
-         86dg==
+        b=yxTP/uOI2+n3bnQlK42wYfzH9ZF776NDP5cR2SJtN2dBuIaahh3BoY3UMAVVeAtM99
+         QaKIlmakpaZfMyTiZRDL2kG4dCFI9vu0r59K8wk2Ji1Aj2xGfoXM4CjrvRei7tTbO8vb
+         kN41HTddvwYTLifBgrpYLyM0XhBsf8AdLw5xxqsAwIDOKeg3DXUk82Yyp40uofXdDWTS
+         2uktp096qQuPZGSGArmpBj+zp/PsvOhM+ozEBZFXkC8WxMhgl2DVqhIw2ftW0yyRZHws
+         gBrvA7KshJSWss8qEo877O3CiAngUXFEfgic2OSzIjJkrdcJhsVU8gMK2qP6Ly8K5xD5
+         z2mA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LDhEviO4VM1r0IE6E4bsdUKxoX3bMl9IoNxz2DYXHf4=;
-        b=LUbCBKqAnp++AqECf5FvtUHjbiwWDoJkdD6AiH45yGYN17aKyeqL1Mi1968aAUIg67
-         mnatcXN+jIRfJqas6PDEibv+YFzoTzsNSZEmwFqJoWXgIsuzeZvmUG+nSxU63AkvIohz
-         1LRoe/eTpFKqFdGWmrA02PHyG+SElhjG/VVI8RmQHfKF0Iz4v6Me2Y4JmPgqt0Hd9irQ
-         Ad2fqwTDtO9BtNIr6d0If+r1BnP9Sy5DT1+1ifgdtk6UwzC886xHzEMg9pouo7camAMp
-         PkQi5ZfAME9DbepFgNrwRhAn/HdR2Ah48Y2Eef5DOqhBfsni09lPoheZJ8Z0LTy6SpFQ
-         znYQ==
+        bh=nDQe+aUKskCXHbOxap3KzfGOBlpARPFtjRxvJ1Z3Iak=;
+        b=Z4eReF/XYaFhxla6d891fuVozlyvguF741GOjUqrFwWbdJ9qeGkp0p/BQrdr0mmA2H
+         f5ENmxHnlSekPFzKcERZm8n6hIueCTBU7zVM3yELA42SLUKqzJbXvTayPPe3Cf1LbVQ3
+         cy29MJKqCpaHYPSrNCayhR+KfF7MzDJLnTj0adtT6vHsz0ihxmhyalZA5JWLHIiWm5ck
+         6dbyD26nUgJP9BiqhrGk33YtyCKMWkk0qr6Zms/6eSWxwkH1N+1qszmJI2/ub4J4hNjb
+         c06NqZQqXDIoGX2luDo0seKyYip9JM+NBOyEpIOSOfBFdAAaOqDaa4Jh2BP0DfUXD4TK
+         UdQg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Thomas Richter <tmricht@linux.vnet.ibm.com>,
-	Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Paul Clarke <pc@us.ibm.com>,
-	bhargavb <bhargavaramudu@gmail.com>,
-	linux-rt-users@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 009/168] perf probe: Find versioned symbols from map
-Date: Wed, 11 Apr 2018 00:22:31 +0200
-Message-Id: <20180410212800.619524126@linuxfoundation.org>
+Subject: [PATCH 4.15 018/168] ACPI / video: Default lcd_only to true on Win8-ready and newer machines
+Date: Wed, 11 Apr 2018 00:22:40 +0200
+Message-Id: <20180410212800.994682816@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -46,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399884410254344?=
-X-GMAIL-MSGID: =?utf-8?q?1597399884410254344?=
+X-GMAIL-THRID: =?utf-8?q?1597399882007140427?=
+X-GMAIL-MSGID: =?utf-8?q?1597399882007140427?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,139 +50,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Hans de Goede <hdegoede@redhat.com>
 
 
-[ Upstream commit 4b3a2716dd785fabb9f6ac80c1d53cb29a88169d ]
+[ Upstream commit 5928c281524fe451114e04f1dfa11246a37e859f ]
 
-Commit d80406453ad4 ("perf symbols: Allow user probes on versioned
-symbols") allows user to find default versioned symbols (with "@@") in
-map. However, it did not enable normal versioned symbol (with "@") for
-perf-probe.  E.g.
+We're seeing a lot of bogus backlight interfaces on newer machines without
+a LCD such as desktops, servers and HDMI sticks. This causes userspace to
+show a non-functional brightness slider in e.g. the GNOME3 system menu,
+which is undesirable. And, in general, we should simply just not register
+a non functional backlight interface.
 
-  =====
-  # ./perf probe -x /lib64/libc-2.25.so malloc_get_state
-  Failed to find symbol malloc_get_state in /usr/lib64/libc-2.25.so
-    Error: Failed to add events.
-  =====
+Checking the LCD flag causes the bogus acpi_video backlight interfaces to
+go away (on the machines this was tested on).
 
-This solves above issue by improving perf-probe symbol search function,
-as below.
+This change sets the lcd_only option by default on any machines which
+are Win8-ready, to fix this.
 
-  =====
-  # ./perf probe -x /lib64/libc-2.25.so malloc_get_state
-  Added new event:
-    probe_libc:malloc_get_state (on malloc_get_state in /usr/lib64/libc-2.25.so)
+This is not entirely without a risk of regressions, but video_detect.c
+already prefers native-backlight interfaces over the acpi_video one
+on Win8-ready machines, calling acpi_video_unregister_backlight() as soon
+as a native interface shows up. This is done because the ACPI backlight
+interface often is broken on Win8-ready machines, because win8 does not
+seem to actually use it.
 
-  You can now use it in all perf tools, such as:
+So in practice we already end up not registering the ACPI backlight
+interface on (most) Win8-ready machines with a LCD panel, thus this
+change does not change anything for (most) machines with a LCD panel
+and on machines without a LCD panel we actually don't want to register
+any backlight interfaces.
 
-	  perf record -e probe_libc:malloc_get_state -aR sleep 1
+This has been tested on the following machines and fixes a bogus backlight
+interface showing up there:
+ - Desktop with an Asrock B150M Pro4S/D3 m.b. using i5-6500 builtin gfx
+ - Intel Compute Stick STK1AW32SC
+ - Meegopad T08 HDMI stick
 
-  # ./perf probe -l
-    probe_libc:malloc_get_state (on malloc_get_state@GLIBC_2.2.5 in /usr/lib64/libc-2.25.so)
-  =====
+Bogus backlight interfaces have also been reported on:
+ - Desktop with Asus H87I-Plus m.b.
+ - Desktop with ASRock B75M-ITX m.b.
+ - Desktop with Gigabyte Z87-D3HP m.b.
+ - Dell PowerEdge T20 desktop
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reviewed-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Acked-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Paul Clarke <pc@us.ibm.com>
-Cc: bhargavb <bhargavaramudu@gmail.com>
-Cc: linux-rt-users@vger.kernel.org
-Link: http://lkml.kernel.org/r/151275049269.24652.1639103455496216255.stgit@devbox
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=1097436
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=1133327
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=1133329
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=1133646
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/arch/powerpc/util/sym-handling.c |    8 ++++++++
- tools/perf/util/probe-event.c               |   20 ++++++++++++++++++--
- tools/perf/util/symbol.c                    |    5 +++++
- tools/perf/util/symbol.h                    |    1 +
- 4 files changed, 32 insertions(+), 2 deletions(-)
+ drivers/acpi/acpi_video.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- a/tools/perf/arch/powerpc/util/sym-handling.c
-+++ b/tools/perf/arch/powerpc/util/sym-handling.c
-@@ -64,6 +64,14 @@ int arch__compare_symbol_names_n(const c
+--- a/drivers/acpi/acpi_video.c
++++ b/drivers/acpi/acpi_video.c
+@@ -80,8 +80,8 @@ MODULE_PARM_DESC(report_key_events,
+ static bool device_id_scheme = false;
+ module_param(device_id_scheme, bool, 0444);
  
- 	return strncmp(namea, nameb, n);
- }
-+
-+const char *arch__normalize_symbol_name(const char *name)
-+{
-+	/* Skip over initial dot */
-+	if (name && *name == '.')
-+		name++;
-+	return name;
-+}
- #endif
+-static bool only_lcd = false;
+-module_param(only_lcd, bool, 0444);
++static int only_lcd = -1;
++module_param(only_lcd, int, 0444);
  
- #if defined(_CALL_ELF) && _CALL_ELF == 2
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -2792,16 +2792,32 @@ static int find_probe_functions(struct m
- 	int found = 0;
- 	struct symbol *sym;
- 	struct rb_node *tmp;
-+	const char *norm, *ver;
-+	char *buf = NULL;
- 
- 	if (map__load(map) < 0)
- 		return 0;
- 
- 	map__for_each_symbol(map, sym, tmp) {
--		if (strglobmatch(sym->name, name)) {
-+		norm = arch__normalize_symbol_name(sym->name);
-+		if (!norm)
-+			continue;
-+
-+		/* We don't care about default symbol or not */
-+		ver = strchr(norm, '@');
-+		if (ver) {
-+			buf = strndup(norm, ver - norm);
-+			if (!buf)
-+				return -ENOMEM;
-+			norm = buf;
-+		}
-+		if (strglobmatch(norm, name)) {
- 			found++;
- 			if (syms && found < probe_conf.max_probes)
- 				syms[found - 1] = sym;
- 		}
-+		if (buf)
-+			zfree(&buf);
+ static int register_count;
+ static DEFINE_MUTEX(register_count_mutex);
+@@ -2136,6 +2136,16 @@ int acpi_video_register(void)
+ 		goto leave;
  	}
  
- 	return found;
-@@ -2847,7 +2863,7 @@ static int find_probe_trace_events_from_
- 	 * same name but different addresses, this lists all the symbols.
- 	 */
- 	num_matched_functions = find_probe_functions(map, pp->function, syms);
--	if (num_matched_functions == 0) {
-+	if (num_matched_functions <= 0) {
- 		pr_err("Failed to find symbol %s in %s\n", pp->function,
- 			pev->target ? : "kernel");
- 		ret = -ENOENT;
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -94,6 +94,11 @@ static int prefix_underscores_count(cons
- 	return tail - str;
- }
- 
-+const char * __weak arch__normalize_symbol_name(const char *name)
-+{
-+	return name;
-+}
++	/*
++	 * We're seeing a lot of bogus backlight interfaces on newer machines
++	 * without a LCD such as desktops, servers and HDMI sticks. Checking
++	 * the lcd flag fixes this, so enable this on any machines which are
++	 * win8 ready (where we also prefer the native backlight driver, so
++	 * normally the acpi_video code should not register there anyways).
++	 */
++	if (only_lcd == -1)
++		only_lcd = acpi_osi_is_win8();
 +
- int __weak arch__compare_symbol_names(const char *namea, const char *nameb)
- {
- 	return strcmp(namea, nameb);
---- a/tools/perf/util/symbol.h
-+++ b/tools/perf/util/symbol.h
-@@ -349,6 +349,7 @@ bool elf__needs_adjust_symbols(GElf_Ehdr
- void arch__sym_update(struct symbol *s, GElf_Sym *sym);
- #endif
+ 	dmi_check_system(video_dmi_table);
  
-+const char *arch__normalize_symbol_name(const char *name);
- #define SYMBOL_A 0
- #define SYMBOL_B 1
- 
+ 	ret = acpi_bus_register_driver(&acpi_video_bus);
