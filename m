@@ -1,75 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752041AbeDJQza (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 12:55:30 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:40518 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751884AbeDJQz2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 12:55:28 -0400
-Subject: Re: [PATCH v3 3/3] mm: restructure memfd code
-To: Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        =?UTF-8?Q?Marc-Andr=c3=a9_Lureau?= <marcandre.lureau@gmail.com>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20180409230505.18953-1-mike.kravetz@oracle.com>
- <20180409230505.18953-4-mike.kravetz@oracle.com>
-From: Khalid Aziz <khalid.aziz@oracle.com>
-Organization: Oracle Corp
-Message-ID: <bfcae61d-e34e-e04d-62f5-a5359df8fcf1@oracle.com>
-Date: Tue, 10 Apr 2018 10:55:04 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752168AbeDJQ70 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 12:59:26 -0400
+Received: from bues.ch ([80.190.117.144]:60700 "EHLO bues.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751862AbeDJQ7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 12:59:25 -0400
+Date: Tue, 10 Apr 2018 18:57:56 +0200
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: Larry.Finger@lwfinger.net, kvalo@codeaurora.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        b43-dev@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: wireless: b43legacy: Replace GFP_ATOMIC with
+ GFP_KERNEL in dma_tx_fragment
+Message-ID: <20180410185756.35d4f601@wiggum>
+In-Reply-To: <1523368459-32128-1-git-send-email-baijiaju1990@gmail.com>
+References: <1523368459-32128-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180409230505.18953-4-mike.kravetz@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8859 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804100161
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/WVMap.eqQB3oii5eY0bDS=t"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/09/2018 05:05 PM, Mike Kravetz wrote:
-> With the addition of memfd hugetlbfs support, we now have the situation
-> where memfd depends on TMPFS -or- HUGETLBFS.  Previously, memfd was only
-> supported on tmpfs, so it made sense that the code resided in shmem.c.
-> In the current code, memfd is only functional if TMPFS is defined.  If
-> HUGETLFS is defined and TMPFS is not defined, then memfd functionality
-> will not be available for hugetlbfs.  This does not cause BUGs, just a
-> lack of potentially desired functionality.
-> 
-> Code is restructured in the following way:
-> - include/linux/memfd.h is a new file containing memfd specific
->    definitions previously contained in shmem_fs.h.
-> - mm/memfd.c is a new file containing memfd specific code previously
->    contained in shmem.c.
-> - memfd specific code is removed from shmem_fs.h and shmem.c.
-> - A new config option MEMFD_CREATE is added that is defined if TMPFS
->    or HUGETLBFS is defined.
-> 
-> No functional changes are made to the code: restructuring only.
-> 
-> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-> ---
->   fs/Kconfig               |   3 +
->   fs/fcntl.c               |   2 +-
->   include/linux/memfd.h    |  16 +++
->   include/linux/shmem_fs.h |  13 --
->   mm/Makefile              |   1 +
->   mm/memfd.c               | 344 +++++++++++++++++++++++++++++++++++++++++++++++
->   mm/shmem.c               | 323 --------------------------------------------
->   7 files changed, 365 insertions(+), 337 deletions(-)
->   create mode 100644 include/linux/memfd.h
->   create mode 100644 mm/memfd.c
-> 
+--Sig_/WVMap.eqQB3oii5eY0bDS=t
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
+On Tue, 10 Apr 2018 21:54:19 +0800
+Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
+
+> dma_tx_fragment() is never called in atomic context.
+>=20
+> dma_tx_fragment() is only called by b43legacy_dma_tx(), which is=20
+> only called by b43legacy_tx_work().
+> b43legacy_tx_work() is only set a parameter of INIT_WORK() in=20
+> b43legacy_wireless_init().
+>=20
+> Despite never getting called from atomic context,
+> dma_tx_fragment() calls alloc_skb() with GFP_ATOMIC,
+> which does not sleep for allocation.
+> GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+> which can sleep and improve the possibility of sucessful allocation.
+>=20
+> This is found by a static analysis tool named DCNS written by myself.
+> And I also manually check it.
+>=20
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  drivers/net/wireless/broadcom/b43legacy/dma.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/net/wireless/broadcom/b43legacy/dma.c b/drivers/net/=
+wireless/broadcom/b43legacy/dma.c
+> index cfa617d..2f0c64c 100644
+> --- a/drivers/net/wireless/broadcom/b43legacy/dma.c
+> +++ b/drivers/net/wireless/broadcom/b43legacy/dma.c
+> @@ -1064,7 +1064,7 @@ static int dma_tx_fragment(struct b43legacy_dmaring=
+ *ring,
+>  	meta->dmaaddr =3D map_descbuffer(ring, skb->data, skb->len, 1);
+>  	/* create a bounce buffer in zone_dma on mapping failure. */
+>  	if (b43legacy_dma_mapping_error(ring, meta->dmaaddr, skb->len, 1)) {
+> -		bounce_skb =3D alloc_skb(skb->len, GFP_ATOMIC | GFP_DMA);
+> +		bounce_skb =3D alloc_skb(skb->len, GFP_KERNEL | GFP_DMA);
+>  		if (!bounce_skb) {
+>  			ring->current_slot =3D old_top_slot;
+>  			ring->used_slots =3D old_used_slots;
+
+
+Ack.
+I think the GFP_ATOMIC came from the days where we did DMA operations
+under spinlock instead of mutex.
+
+The same thing can be done in b43.
+
+Also=20
+setup_rx_descbuffer(ring, desc, meta, GFP_ATOMIC)
+could be GFP_KERNEL in dma_rx().
+This function is called from IRQ thread context.
+
+--=20
+Michael
+
+--Sig_/WVMap.eqQB3oii5eY0bDS=t
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlrM7RQACgkQ9TK+HZCN
+iw7W1BAAtHAEX2oOYhWd7U+Yt94oXiUeISSBfPl3GIbE5DCx9R4gAUcT9aknAfEC
+VOOMmaMDeFbiqsEBfcmWezPOobyBCifS5n+r/IIU8vcTip818LPspmbpOKcTDsLY
+XDT27WNEvi0vPBuqbauTza+7V+60ZPoMtA0+FmgE7Wfn1wg1Esi85SfGYyf/b7rL
+ZOFofH9rusxLR3pTvpxdN4qg0Umcgv/+tF+diHKsDnrnFnXF9NV3ZRdI+lTz+U31
+8hDFqLTBAlssVQkChrferto50bSDl+DVjaeCe+jTchqisb69Ulb0znzJpbEhJVp6
+rrTEujZh1vmoc1aCunKH8UTEGzrSMxoMCCIyChSUUKe7XMWNRFtFAVEFjJINMcEU
+SwB2d4Mu2bxZPzP2iQROGfLUitA+HRLbNXp3eXqcB5yX/JpyBZYZTGSCtAoOb8M0
+5MKdAJ47Cv6rORyySeg2Zv3dgoKeikcDNw+pHoshZsNF/7eobnNYUsGVZKnbk+XY
+ITTTxPBzTuKDgDRUicEGLfidcks809Z4rChdXRzy7h/NqIhxFHVH1nIXKUW0QU90
+N+mfnEkRgERfKQaKcxUl19ygOiWrOsDDeW8SQKIuM41R5qcWYJDu2qUILztMVqOY
+E6fxGqpiwrZxIpiHKlNpzhokfSxmL3tqGGNOFzvt0g7RLod2kik=
+=OQBN
+-----END PGP SIGNATURE-----
+
+--Sig_/WVMap.eqQB3oii5eY0bDS=t--
