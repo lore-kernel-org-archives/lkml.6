@@ -1,78 +1,133 @@
-Return-Path: <kernel-hardening-return-12952-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/LH7mGJMNGgkwI5BQ2YkMRi5VKEdMY7alih1att66kSseAqewdHuzUMFvf8zzp8oHN0VAU
-ARC-Seal: i=1; a=rsa-sha256; t=1523347754; cv=none;
-        d=google.com; s=arc-20160816;
-        b=qcfsOj/+Tq/z4ZJPgkmsnpM2GCwDWw1pNmSPBy/5zIZ4gROp4MSwikVzIbhQPypS1a
-         n843DSvpd9zVqCD6XhGYPegx1H7jQOFDouwUFfqxfvfFKhpsFQZrjWzm4AmJUjpAurk8
-         gcAKEjITeqPAb+/syFjgFMUluS3znNOIHNw/t+hUZ+/nrTXLqlLewIPlv8FOWo++UPHP
-         p11gNXv7rTLcX4j0XrrTYHAmvsNvCuBoqMovTDX2+VlR1BG3RHlprZVMNtY6eQ67wnoR
-         1GAWi8CV5fTA7Ly2zt2WeHV2Lq4Fkonc9v9A0TDsGfY4/CB0vb4XgG4bWxOzVcazWXmq
-         vfpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=2f5rHh0E/Rlu479F6N6wLZP/WfJxeUAtyKXCnNq9Hao=;
-        b=S6VTDl3lIpl56EPAFiJ9gxmWCFpPdjvTLqV15cRnbRMYN1e+uFsjJtOt9LSQgNLRrk
-         QQcX+kF94PSaaVFqrykpN59tr/9+mYJolBzirCNndQDz3sfmjIwoIiuXcg3g7jmlZkid
-         xxK/zBaXO/2csjIHQRSTBKfvAE1VbtyorR9iC60DxzRTwD3YUQ3uVmN+UJi9kFqJkCJz
-         oRiQN6WS24guv5uX7vnpYdLkE4GNccOYGwHpkrRZIVM2O9MWmsCah0d+pxyoFbNXbzsu
-         5zjSqPJOxWI7TmGgE9+CEeKj7uAeeS5D7MRJlsQXVyk5hJ+9wZYiRJBUUoAMCkxgbCDG
-         w7tg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=eJBwdRCM;
-       spf=pass (google.com: domain of kernel-hardening-return-12952-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12952-gregkh=linuxfoundation.org@lists.openwall.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=eJBwdRCM;
-       spf=pass (google.com: domain of kernel-hardening-return-12952-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12952-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-4028164-1523371844-2-7804198048749822381
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523371843; b=oo0yCm/AezlJcGaod1VjzTM7OwmqwqgxVPn5EETlUArr3gK8gU
+    UOExx8TuMeoR/WtM9ETi+FTx4FPSksOiW8NGCdYKTuP7BOfl9Q558X9zydnZYzHm
+    E0NH/9O89pS0e2fAw7TimcX4MmRhiaDabf5xkKXuctAN6eneARdXImL8jEIJ/7pk
+    frQz7TZouJctpngAWN33XxcxvcLN+SkVeoYDbCbOTzX3AG69FjA5j+W7kiWZuXmf
+    AGIeL8a3ra0vIstLBuh/93shfdnQxF8b6ZYyhbgtySakPPGn+SSjjg6EgCT/rG7F
+    hvNe58j/AzZiB21MYqSiEgwrn5Cas2UOEAiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1523371843; bh=aAzt+
+    CKH3AVuAyj8Luv6MM0h15YXIX1gBfqPfXvDU1E=; b=ffgsTq5OPJQyg1isuSw/F
+    YQpxWzRhvqviRMGUDFMBm8dqgX4k4widLzl0/Mj8yC5Ti9M+6JHduTmXwL6ZZ9i3
+    LXxLOH0y90Xrk1G/GQTxuaGwi+flu5KG+SlvrtCc1XwcgQ1vbFQn5QvRfeQq9u/E
+    GoaKRPhtF4/cueyfwbEjlJnNNrTQ0wxwZIyEtLTXvskobwtY9rNDb7lOGvmF9IZF
+    ScAQNSWQdHpoFTEoCzrMnw89RyPbVICVuJVkbd9jzxD4CFuB/B60RehOhwhHGUFY
+    hrCzANLPD3TIr0vUCzRm1avKhr8CkAwW5ZWloineN8Pi8+CChLoTyROG42w5jgxO
+    w==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=KIokrD5K x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=o4ra4+UY;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=KIokrD5K x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=o4ra4+UY;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfNWkulXxkLvCpKx2lpT/g099G2ebYberT8l64/wQXr4+DLPoV9Qdxb4DLdOlGRJ9Yw+9qZPkrcj7kUknsWOHG66y8FhvQf9WFWLesZhKjVW3ydTQQHjD
+    P+3bHY8G44mRaQjJgU5mh8Q6MrTFwjQsG7auTz8dqsKRUSeYNpJsSd+LeC5/Kg3Ikf1ZBJnSdpwSEzwQZGkPkdk/KmS5aNdvUHAdN8NoTKwDAx9EOC/GzIL8
+    5sx9lOx4xYZF7QyrX+MHaw==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=8JIjIOzEf4AA:10 a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
+    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=M0ud_3F98hEB2rtAdiIA:9 a=CjuIK1q_8ugA:10
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AIpwx4/bjCi8OCoKKP9ZcBCCmlN3oyUdAWSVQxH9vJeeZfSVVhKjQ9C7yiPnJDAuXcx3MYaf5oRQ5Q==
+From: Eyal Ilsar <edilsar@gmail.com>
+To: aditya.shankar@microchip.com, ganesh.krishna@microchip.com,
+ gregkh@linuxfoundation.org
+Subject: [PATCH] staging: wilc1000: Remove unnecessary braces {} around single
+ statement block
+Date: Wed, 11 Apr 2018 00:49:55 +1000
+Message-Id: <1523371795-5090-1-git-send-email-edilsar@gmail.com>
+X-Mailer: git-send-email 2.7.4
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20180409210717.3852-1-labbott@redhat.com>
-References: <20180409210717.3852-1-labbott@redhat.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Apr 2018 10:08:56 +0200
-X-Google-Sender-Auth: 9xpVFHFS5qHOtuIypTyVsjweHy4
-Message-ID: <CAMuHMdVnXc+SrUEteb-v4Kb9FtXJcaWmdK63-oTK0f2KxBThsQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: xra1403: Switch to a fixed upper bound for registers
-To: Laura Abbott <labbott@redhat.com>
-Cc: Nandor Han <nandor.han@ge.com>, Kees Cook <keescook@chromium.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597304277503728499?=
-X-GMAIL-MSGID: =?utf-8?q?1597345894866193714?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Laura,
+Remove unnecessary braces {} around an 'if' statement block with a single 
+statement. Issue found by checkpatch.
+Signed-off-by: Eyal Ilsar<edilsar@gmail.com>
+---
+This is part of my take on the Eudyptula challenge
 
-On Mon, Apr 9, 2018 at 11:07 PM, Laura Abbott <labbott@redhat.com> wrote:
-> Geert Uytterhoeven pointed out that the number of register was a
-> fixed upper bound so there's no need to use a dynamically allocated
-> array in place of a VLA. Use the defined upper bound.
->
-> Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
+ drivers/staging/wilc1000/wilc_wfi_cfgoperations.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks for your patch!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+index 205304c..325afe1 100644
+--- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
++++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
+@@ -284,9 +284,8 @@ static void remove_network_from_shadow(struct timer_list *unused)
+ 		}
+ 	}
+ 
+-	if (last_scanned_cnt != 0) {
++	if (last_scanned_cnt != 0)
+ 		mod_timer(&hAgingTimer, jiffies + msecs_to_jiffies(AGING_TIME));
+-	}
+ }
+ 
+ static void clear_duringIP(struct timer_list *unused)
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
