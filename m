@@ -1,41 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754071AbeDJONG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:13:06 -0400
-Received: from sender-of-o51.zoho.com ([135.84.80.216]:21089 "EHLO
-        sender-of-o51.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753133AbeDJOND (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:13:03 -0400
-Date: Tue, 10 Apr 2018 08:12:59 -0600
-From: Thomas Fjellstrom <thomas@fjellstrom.ca>
-To: "linux-kernel" <linux-kernel@vger.kernel.org>
-Message-ID: <162afe714f8.b3d0e35172666.3338804793531720120@fjellstrom.ca>
-In-Reply-To: 
-Subject: Methods to intercept accesses to mmaped page from userspace, or
- pretend to be mmio range
+        id S1753953AbeDJONu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:13:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54623 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753171AbeDJONt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 10:13:49 -0400
+Date: Tue, 10 Apr 2018 16:13:45 +0200
+From: Petr Tesarik <ptesarik@suse.cz>
+To: Dave Young <dyoung@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Xunlei Pang <xlpang@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "=?UTF-8?B?TWFyYy1BbmRyw6k=?= Lureau" <marcandre.lureau@redhat.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] kexec: export PG_swapbacked to VMCOREINFO
+Message-ID: <20180410161345.142e142d@ezekiel.suse.cz>
+Organization: SUSE Linux, s.r.o.
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Priority: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Since commit 6326fec1122cde256bd2a8c63f2606e08e44ce1d PG_swapcache
+is an alias for PG_owner_priv_1, which may be also used for other
+purposes. To know whether the bit indeed has the PG_swapcache
+meaning, it is necessary to check PG_swapbacked, hence this bit must
+be exported.
 
-I'm working on a little driver that wants to pretend to be a section of mmio so it can intercept accesses, or intercept accesses to a page after it's been mmaped in by a user space program. So far I haven't found a method that works.
+Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+---
+ kernel/crash_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I had been trying to allocate a page, and in the fault handler try and mark the page as readonly, and attempt to check for that in the next fault but as soon as the page is accessed its just assigned now, and there's no more faults (obviously). Other methods include trying ptrace but that seems not accessible from kernel modules, and inserting a uprobe on the instruction after the current one in the fault handler so I can remark the page as readonly but that requires some "clever" platform specific code to parse instructions which I'd prefer not to have to do. I don't really care about intercepting reads, but it might be something I care about at some point. At the very least I'd like to trap all writes, do some magic and then let the access proceede (or emulate it). I looked at providing my own pci bus and device, but I'm not sure that'd actually work.
-
-For some background, I'm trying to emulate the /dev/gpiomem char device from the raspberry pi that lets userspace programs mmap in the gpio registers on the bcm283x SoC.
-
-Is there any way to do what I want to do in a kernel module?
-
-Thanks,
-
+diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+index a93590cdd9e1..f7674d676889 100644
+--- a/kernel/crash_core.c
++++ b/kernel/crash_core.c
+@@ -454,6 +454,7 @@ static int __init crash_save_vmcoreinfo_init(void)
+ 	VMCOREINFO_NUMBER(PG_lru);
+ 	VMCOREINFO_NUMBER(PG_private);
+ 	VMCOREINFO_NUMBER(PG_swapcache);
++	VMCOREINFO_NUMBER(PG_swapbacked);
+ 	VMCOREINFO_NUMBER(PG_slab);
+ #ifdef CONFIG_MEMORY_FAILURE
+ 	VMCOREINFO_NUMBER(PG_hwpoison);
 -- 
-Thomas Fjellstrom
-thomas@fjellstrom.ca
+2.13.6
