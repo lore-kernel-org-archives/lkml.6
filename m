@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48S6KkrEnf85x51sLJIS/8QeLQHUf9oA/ANF5obYzA5CDj0VGhjCErsLcyFZUyna7X+vLO9
-ARC-Seal: i=1; a=rsa-sha256; t=1523399906; cv=none;
+X-Google-Smtp-Source: AIpwx48H/wRwhapnCj590OmaSt6/Zn2m1Czz2mAHE+KXZ8WR/gvTwROmuco+n1yf4p5jf5eupbqc
+ARC-Seal: i=1; a=rsa-sha256; t=1523399903; cv=none;
         d=google.com; s=arc-20160816;
-        b=fVpv5TOQrnoLhps/tAVg6HKSoatxtem9y4Ia35GtArGdBbapJAVYc2qYJppaYTkPQ3
-         gocWhCKIV8pUqOPVcKzHWDHu/Y0K929ylL13F0h/aEwg88QO6/xdiWOAZTromfNMjRB1
-         Qb/Wtzt6L6X+CnSv0qXdWmGWfn+h9JJSSkxFr3nd/YlFEXR2huE2Y2R5eIKME/jwobZF
-         zINFVgH8MBdNb0mGZdCXgiH7rkew4Y+zRH4m2biOed3kCmrP2+4STy/rJ28X54MWw4TJ
-         ot01H4S7PLc+HXymN8wyqC9RJdrGK6hY+d7cUgusRvNtJ453Og6qBATE4Er6g2dX+oU/
-         GRuw==
+        b=009td8O2lAr2gmju5E6HjyZ+w39VptPA7jT2YCtmk5PMN21uddJ+/mM/CaNh+edZ2P
+         0e0dVAPE1u79z+smX42menMnTI0/r0fjoM4iG8u9M0bSgA8UEES33AbIa+1cS6sREbNY
+         LePq6HizKohRjEoMdwN1pqSeNYK/0V5Ak+rcn9i6qg6ces7+UUDqitQI3bzkZDwsUAOX
+         wGq4+P8/CMGNpb5EmfH0GdHfAJHmc4mQrV3qC1BAH+LtQMxsxZY755SlJ50kPTZdaPPC
+         UkSxUCX81r2KX3Mz7xjLy5cVukeX4BFuuQwzH/aZpWIkG3Em6yY3jYeL8+sYK8qMS63u
+         hefw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=feu4uUw5pqIrJCiHy43C6cWmprnPjFpyR5cQH6ZO3ug=;
-        b=zu2UC8ASCI6Zs/ZXmil0l+NiQjvH7h+PWxxSM+UbAgSeY06VpPAmRtYM+ShXP1mv0w
-         HPGyIaGi58cyobqqWB2WSyTMCicTccRds0PJ6F+eLkXY5SdNsoSmZrnSF21xG/nPVDFI
-         CRVDcrnHGffvtqYXyetpxXBm40EVWm84xsHDpsI+TjzCiHfPW/QsOXDJY0CoVg1V0zWt
-         NiHMOM+JE1t4Vqw3+qdpCIKVLRzePylvESlTG79tToMLxw6q9lieiVVkiVygzpellAmN
-         +Flh5RoMUT1EP+AQl0x0Tc/1di9OIuvt2L3ixIFEpywcgWumeYnrbzXqz8yHDPsR8tKb
-         hhIQ==
+        bh=abLtZqHv0TRc6jP5VU8OLV4Ul5+4wqbPDUZBCJAbuGk=;
+        b=xi0TgOueNqRCcpz23nwJv/KQehuInAGY+l1rGSdjeFd9PTyYNzeu8hoyA6UYHkLgNl
+         W5TjuSqTpTkclWx6EeG6eLoZOPrBloo0NlLUvsnsuWSIKczYVMjiNRxOGUl/pHQhB2ES
+         ov3S5xQ25c7lqOCc4x/nhPrGQS7peo3FXRbjhSWvEuO+FjGy80DfpSbG0oHU411l6gdo
+         4vt/nzz5YgB45DlaTOlon2zevCgwXXq1Vpdl9CO74an2s1cP9TcUwvB56zv5W3iSI9CW
+         fYnKvLK2lbljO0dO0FGRe8CpSjh1CTyC1HO56sJQDm1gma29oi3Lm31Pw44AqqUIcy+b
+         OUXw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Borislav Petkov <bp@suse.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Ashok Raj <ashok.raj@intel.com>,
-	Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Subject: [PATCH 4.14 088/138] x86/microcode: Get rid of struct apply_microcode_ctx
-Date: Wed, 11 Apr 2018 00:24:38 +0200
-Message-Id: <20180410212912.404765272@linuxfoundation.org>
+	Lucas Bates <lucasb@mojatatu.com>,
+	Davide Caratti <dcaratti@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 105/138] net/sched: fix NULL dereference in the error path of tcf_bpf_init()
+Date: Wed, 11 Apr 2018 00:24:55 +0200
+Message-Id: <20180410212914.405477149@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400102659058161?=
-X-GMAIL-MSGID: =?utf-8?q?1597400579984963368?=
+X-GMAIL-THRID: =?utf-8?q?1597399729810513986?=
+X-GMAIL-MSGID: =?utf-8?q?1597400577008868935?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,61 +50,98 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Davide Caratti <dcaratti@redhat.com>
 
-commit 854857f5944c59a881ff607b37ed9ed41d031a3b upstream.
 
-It is a useless remnant from earlier times. Use the ucode_state enum
-directly.
+[ Upstream commit 3239534a79ee6f20cffd974173a1e62e0730e8ac ]
 
-No functional change.
+when tcf_bpf_init_from_ops() fails (e.g. because of program having invalid
+number of instructions), tcf_bpf_cfg_cleanup() calls bpf_prog_put(NULL) or
+bpf_prog_destroy(NULL). Unless CONFIG_BPF_SYSCALL is unset, this causes
+the following error:
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
-Tested-by: Ashok Raj <ashok.raj@intel.com>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Link: https://lkml.kernel.org/r/20180228102846.13447-2-bp@alien8.de
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000020
+ PGD 800000007345a067 P4D 800000007345a067 PUD 340e1067 PMD 0
+ Oops: 0000 [#1] SMP PTI
+ Modules linked in: act_bpf(E) ip6table_filter ip6_tables iptable_filter binfmt_misc ext4 mbcache jbd2 crct10dif_pclmul crc32_pclmul ghash_clmulni_intel snd_hda_codec_generic pcbc snd_hda_intel snd_hda_codec snd_hda_core snd_hwdep snd_seq snd_seq_device snd_pcm aesni_intel crypto_simd glue_helper cryptd joydev snd_timer snd virtio_balloon pcspkr soundcore i2c_piix4 nfsd auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c ata_generic pata_acpi qxl drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm virtio_blk drm virtio_net virtio_console i2c_core crc32c_intel serio_raw virtio_pci ata_piix libata virtio_ring floppy virtio dm_mirror dm_region_hash dm_log dm_mod [last unloaded: act_bpf]
+ CPU: 3 PID: 5654 Comm: tc Tainted: G            E    4.16.0.bpf_test+ #408
+ Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+ RIP: 0010:__bpf_prog_put+0xc/0xc0
+ RSP: 0018:ffff9594003ef728 EFLAGS: 00010202
+ RAX: 0000000000000000 RBX: ffff9594003ef758 RCX: 0000000000000024
+ RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+ RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000044
+ R10: 0000000000000220 R11: ffff8a7ab9f17131 R12: 0000000000000000
+ R13: ffff8a7ab7c3c8e0 R14: 0000000000000001 R15: ffff8a7ab88f1054
+ FS:  00007fcb2f17c740(0000) GS:ffff8a7abfd80000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 0000000000000020 CR3: 000000007c888006 CR4: 00000000001606e0
+ Call Trace:
+  tcf_bpf_cfg_cleanup+0x2f/0x40 [act_bpf]
+  tcf_bpf_cleanup+0x4c/0x70 [act_bpf]
+  __tcf_idr_release+0x79/0x140
+  tcf_bpf_init+0x125/0x330 [act_bpf]
+  tcf_action_init_1+0x2cc/0x430
+  ? get_page_from_freelist+0x3f0/0x11b0
+  tcf_action_init+0xd3/0x1b0
+  tc_ctl_action+0x18b/0x240
+  rtnetlink_rcv_msg+0x29c/0x310
+  ? _cond_resched+0x15/0x30
+  ? __kmalloc_node_track_caller+0x1b9/0x270
+  ? rtnl_calcit.isra.29+0x100/0x100
+  netlink_rcv_skb+0xd2/0x110
+  netlink_unicast+0x17c/0x230
+  netlink_sendmsg+0x2cd/0x3c0
+  sock_sendmsg+0x30/0x40
+  ___sys_sendmsg+0x27a/0x290
+  ? mem_cgroup_commit_charge+0x80/0x130
+  ? page_add_new_anon_rmap+0x73/0xc0
+  ? do_anonymous_page+0x2a2/0x560
+  ? __handle_mm_fault+0xc75/0xe20
+  __sys_sendmsg+0x58/0xa0
+  do_syscall_64+0x6e/0x1a0
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+ RIP: 0033:0x7fcb2e58eba0
+ RSP: 002b:00007ffc93c496c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+ RAX: ffffffffffffffda RBX: 00007ffc93c497f0 RCX: 00007fcb2e58eba0
+ RDX: 0000000000000000 RSI: 00007ffc93c49740 RDI: 0000000000000003
+ RBP: 000000005ac6a646 R08: 0000000000000002 R09: 0000000000000000
+ R10: 00007ffc93c49120 R11: 0000000000000246 R12: 0000000000000000
+ R13: 00007ffc93c49804 R14: 0000000000000001 R15: 000000000066afa0
+ Code: 5f 00 48 8b 43 20 48 c7 c7 70 2f 7c b8 c7 40 10 00 00 00 00 5b e9 a5 8b 61 00 0f 1f 44 00 00 0f 1f 44 00 00 41 54 55 48 89 fd 53 <48> 8b 47 20 f0 ff 08 74 05 5b 5d 41 5c c3 41 89 f4 0f 1f 44 00
+ RIP: __bpf_prog_put+0xc/0xc0 RSP: ffff9594003ef728
+ CR2: 0000000000000020
+
+Fix it in tcf_bpf_cfg_cleanup(), ensuring that bpf_prog_{put,destroy}(f)
+is called only when f is not NULL.
+
+Fixes: bbc09e7842a5 ("net/sched: fix idr leak on the error path of tcf_bpf_init()")
+Reported-by: Lucas Bates <lucasb@mojatatu.com>
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kernel/cpu/microcode/core.c |   19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+ net/sched/act_bpf.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -373,26 +373,23 @@ static int collect_cpu_info(int cpu)
- 	return ret;
- }
+--- a/net/sched/act_bpf.c
++++ b/net/sched/act_bpf.c
+@@ -248,10 +248,14 @@ static int tcf_bpf_init_from_efd(struct
  
--struct apply_microcode_ctx {
--	enum ucode_state err;
--};
--
- static void apply_microcode_local(void *arg)
+ static void tcf_bpf_cfg_cleanup(const struct tcf_bpf_cfg *cfg)
  {
--	struct apply_microcode_ctx *ctx = arg;
-+	enum ucode_state *err = arg;
- 
--	ctx->err = microcode_ops->apply_microcode(smp_processor_id());
-+	*err = microcode_ops->apply_microcode(smp_processor_id());
- }
- 
- static int apply_microcode_on_target(int cpu)
- {
--	struct apply_microcode_ctx ctx = { .err = 0 };
-+	enum ucode_state err;
- 	int ret;
- 
--	ret = smp_call_function_single(cpu, apply_microcode_local, &ctx, 1);
--	if (!ret)
--		ret = ctx.err;
--
-+	ret = smp_call_function_single(cpu, apply_microcode_local, &err, 1);
-+	if (!ret) {
-+		if (err == UCODE_ERROR)
-+			ret = 1;
+-	if (cfg->is_ebpf)
+-		bpf_prog_put(cfg->filter);
+-	else
+-		bpf_prog_destroy(cfg->filter);
++	struct bpf_prog *filter = cfg->filter;
++
++	if (filter) {
++		if (cfg->is_ebpf)
++			bpf_prog_put(filter);
++		else
++			bpf_prog_destroy(filter);
 +	}
- 	return ret;
- }
  
+ 	kfree(cfg->bpf_ops);
+ 	kfree(cfg->bpf_name);
