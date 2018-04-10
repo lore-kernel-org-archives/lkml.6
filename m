@@ -1,54 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752242AbeDJHds (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 03:33:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47844 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751490AbeDJHdq (ORCPT
+        id S1752291AbeDJHfU convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 03:35:20 -0400
+Received: from mail-qt0-f172.google.com ([209.85.216.172]:38206 "EHLO
+        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751825AbeDJHfS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 03:33:46 -0400
+        Tue, 10 Apr 2018 03:35:18 -0400
+X-Google-Smtp-Source: AIpwx498N86DjxJhJUeQj/KYQXTee+/0XJR81vMRfqB4R7sbY6OYelb8yd2l/1NhO4H79Ik8YhHHCbFd29V3wZrZkUQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Tue, 10 Apr 2018 15:33:44 +0800
-From: yuankuiz@codeaurora.org
-To: linux-pm@vger.kernel.org
-Cc: rjw@rjwysocki.net, fweisbec@gmail.com, peterz@infradead.org,
-        tglx@linutronix.de, aulmck@linux.vnet.ibm.com, mingo@kernel.org,
-        len.brown@intel.com, linux-kernel@vger.kernel.org
-Subject: Subject: [PATCH] [PATCH] time: tick-sched: use bool for tick_stopped
-Message-ID: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+In-Reply-To: <000301d3d08f$24b356b0$6e1a0410$@emc.com.tw>
+References: <20180405132537.3218-1-benjamin.tissoires@redhat.com>
+ <20180405235126.GB57189@dtor-ws> <CAO-hwJLY=OR1bk2y9c-6MZzoAYzorH9MEKf70=dnhqz8s-dCQg@mail.gmail.com>
+ <000301d3d08f$24b356b0$6e1a0410$@emc.com.tw>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date: Tue, 10 Apr 2018 09:35:17 +0200
+Message-ID: <CAO-hwJKM51-N=ffO2sfZ6-j=L+qEsUt_bFJ+YOdJboROodPmOg@mail.gmail.com>
+Subject: Re: [PATCH 0/8] Input: support for latest Lenovo thinkpads (series 80)
+To: =?UTF-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Oliver Haessler <oliver@redhat.com>, Benjamin Berg <bberg@redhat.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- From: John Zhao <yuankuiz@codeaurora.org>
+Hi KT,
 
-Variable tick_stopped returned by tick_nohz_tick_stopped
-can have only true / forse values. Since the return type
-of the tick_nohz_tick_stopped is also bool, variable
-tick_stopped nice to have data type as bool in place of int.
-Moreover, the executed instructions cost could be minimal
-without potiential data type conversion.
+On Tue, Apr 10, 2018 at 7:45 AM, 廖崇榮 <kt.liao@emc.com.tw> wrote:
+> Hi Benjamin,
+>
+> Thanks so much for your patch.
+>
+> I have tested them for Elan Gen5/Gen6(new) touchpad with SMbus/PS2.
+> It works fine in my thinkpad so far but I find an issue today after lid-close/open.
+>
+> I am not sure if you can see it in T480S , I "guess" it may be relative to i2c_i801.
+>
+> The lid-close will enter deep sleep and cut touchpad power.
+> I can see the resume flow after lid-open and SMbus-initial try to request hello package but fail.
+> Strangely, I can't see any SMbus host signal on LA scope after power-on.
 
-Signed-off-by: John Zhao <yuankuiz@codeaurora.org>
----
-  kernel/time/tick-sched.h | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
+That's weird. I do not see this, by either closing the lid or directly
+calling 'systemctl suspend'.
+On my system, i2c-i801 is also compiled as a module but psmouse is not
+(directly in vmlinuz).
 
-diff --git a/kernel/time/tick-sched.h b/kernel/time/tick-sched.h
-index 6de959a..4d34309 100644
---- a/kernel/time/tick-sched.h
-+++ b/kernel/time/tick-sched.h
-@@ -48,8 +48,8 @@ struct tick_sched {
-  	unsigned long			check_clocks;
-  	enum tick_nohz_mode		nohz_mode;
+>
+> I can't switch to SMbus after rmmod/modprobe psmouse because error happen in elantech_create_smbus.
 
-+	bool				tick_stopped	: 1;
-  	unsigned int			inidle		: 1;
--	unsigned int			tick_stopped	: 1;
-  	unsigned int			idle_active	: 1;
-  	unsigned int			do_timer_last	: 1;
-  	unsigned int			got_idle_tick	: 1;
+If the SMBus adapter is failing, it is somewhat expected. Reloading
+psmouse will force a re-trigger of the SMBus probe function, but if
+the underlying communication fails, there is no way for psmouse to
+know it failed, so the PS/2 node will disappear. And the SMBus device
+will not be there.
+
+> It will be recovered only if I rmmod/modprobe i2c_i801 first.
+
+Just to be sure, what happens if you rmmod/modprobe elan_i2c instead
+of i2c_i801?
+
+And which kernel are you running? On a vanilla 4.16 + Dmitry's next
+branch I do not see such issues.
+
+>
+> Do you have any idea about it?
+
+If reloading elan_i2c doesn't fix the situation, it must be in
+i2c_i801. But this is weird that this happens on your platform but not
+on my t480s going into S3.
+
+Cheers,
+Benjamin
+
+>
+> Thanks
+> KT
+> -----Original Message-----
+> From: Benjamin Tissoires [mailto:benjamin.tissoires@redhat.com]
+> Sent: Friday, April 06, 2018 2:51 PM
+> To: Dmitry Torokhov
+> Cc: 廖崇榮; Oliver Haessler; Benjamin Berg; open list:HID CORE LAYER; lkml
+> Subject: Re: [PATCH 0/8] Input: support for latest Lenovo thinkpads (series 80)
+>
+> Hi Dmitry,
+>
+> On Fri, Apr 6, 2018 at 1:51 AM, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+>> Hi Benjamin,
+>>
+>> On Thu, Apr 05, 2018 at 03:25:29PM +0200, Benjamin Tissoires wrote:
+>>> Hi Dmitry,
+>>>
+>>> well, this year, Lenovo gave us a surprise and decided to not use the
+>>> same touchpad/trackstick in all its model. And by default, the
+>>> support under Linux is less than ideal.
+>>>
+>>> Please find a series that should fix those issues. Compared to the 60
+>>> series, there do not seem to e BIOS table issues this time, and
+>>> suspend/resume works fine thanks to your latest trackstick fixes.
+>>>
+>>> The T480s is a different beast, as it uses an Elan touchpad.
+>>> I have been carrying the patches 3-6 for a while and tested previous
+>>> versions on various Elan PS/2 hardware without an issue as far as I
+>>> could tell. I was lacking tests from users with SMBus as all the
+>>> laptops I tried where puer PS/2.
+>>>
+>>> Anyway, it would be cool if you could have a look at the series.
+>>
+>> I am mostly happy with the series, but I would love to hear KT's take
+>> on it.
+>
+> thanks for the quick review.
+> I worked closely with KT for this series. He helped me a lot for the tiny firmware changes that were required. However, quoting his email from Tuesday:
+> "There will be a spring vacation in Taiwan from tomorrow." I guess we won't hear from him until the end of next week as we always have a backlog of urgent things to do after holidays...
+>
+> Cheers,
+> Benjamin
+>
