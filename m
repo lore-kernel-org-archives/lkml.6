@@ -1,602 +1,211 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753982AbeDJNqD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 09:46:03 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:46839 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753956AbeDJNqA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 09:46:00 -0400
-X-Google-Smtp-Source: AIpwx4+76D6b39W4z6BkLS8ShTkADSq+PWkg+3HNhYv98yy8bdsRdCT3oMN/5tKKCsxwV2Bc93uUrg==
-Date: Tue, 10 Apr 2018 08:45:58 -0500
-From: Rob Herring <robh@kernel.org>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] ARM: dts: tpc: Device tree description of the iMX6Q
- TPC board
-Message-ID: <20180410134558.fzilfgqvavbdiget@rob-hp-laptop>
-References: <20180403165945.3981-1-lukma@denx.de>
+        id S1754032AbeDJNr1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 09:47:27 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:54186 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752810AbeDJNrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 09:47:25 -0400
+Date: Tue, 10 Apr 2018 14:47:06 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Quentin Schulz <quentin.schulz@bootlin.com>
+CC: Jonathan Cameron <jic23@kernel.org>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        <devicetree@vger.kernel.org>, <alexandre.belloni@bootlin.com>,
+        <linux-iio@vger.kernel.org>, <dmitry.torokhov@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <ludovic.desroches@microchip.com>,
+        <linux-input@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 00/10]  Add support for SAMA5D2 touchscreen
+Message-ID: <20180410144706.00007600@huawei.com>
+In-Reply-To: <20180410073812.xbt3n6oegr23nlff@qschulz>
+References: <1522153963-1121-1-git-send-email-eugen.hristev@microchip.com>
+        <20180330140212.57dad66d@archlinux>
+        <20180410073812.xbt3n6oegr23nlff@qschulz>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180403165945.3981-1-lukma@denx.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 03, 2018 at 06:59:45PM +0200, Lukasz Majewski wrote:
-> This commit adds device tree description of Kieback & Peter GmbH
-> iMX6Q TPC board.
+On Tue, 10 Apr 2018 09:38:12 +0200
+Quentin Schulz <quentin.schulz@bootlin.com> wrote:
+
+> Hi Jonathan and Eugen,
 > 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> On Fri, Mar 30, 2018 at 02:02:12PM +0100, Jonathan Cameron wrote:
+> > On Tue, 27 Mar 2018 15:32:33 +0300
+> > Eugen Hristev <eugen.hristev@microchip.com> wrote:
+> >   
+> > > Hello,
+> > > 
+> > > This patch series is a rework of my previous series named:
+> > > [PATCH 00/14] iio: triggers: add consumer support
+> > > 
+> > > In few words, this is the implementation of splitting the functionality
+> > > of the IP block ADC device in SAMA5D2 SoC from ADC with touchscreen
+> > > support. In order to avoid having a MFD device, two separate
+> > > drivers that would work on same register base and split the IRQ,etc,
+> > > as advised on the mailing list, I created a consumer driver for the
+> > > channels, that will connect to the ADC as described in the device tree.
+> > > 
+> > > I have collected feedback from everyone and here is the result:
+> > > I have added a new generic resistive touchscreen driver, which acts
+> > > as a iio consumer for the given channels and will create an input
+> > > device and report the events. It uses a callback buffer to register
+> > > to the IIO device and waits for data to be pushed.
+> > > Inside the IIO device, I have kept a similar approach with the first version
+> > > of the series, except that now the driver can take multiple buffers, and
+> > > will configure the touchscreen part of the hardware device if the specific
+> > > channels are requested.
+> > > 
+> > > The SAMA5D2 ADC driver registers three new channels: two for the
+> > > position on the X and Y axis, and one for the touch pressure.
+> > > When channels are requested, it will check if the touchscreen channel mask
+> > > includes the requested channels (it is possible that the consumer driver
+> > > will not request pressure for example). If it's the case, it will work
+> > > in touchscreen mode, and will refuse to do usual analog-digital conversion,
+> > > because we have a single trigger and the touchscreen needs it.
+> > > When the scan mask will include only old channels, the driver will function
+> > > in the same way as before. If the scan mask somehow is a mix of the two (the
+> > > masks intersect), the driver will refuse to work whatsoever (cannot have both
+> > > in the same time).
+> > > The driver allows reading raw data for the new channels, if claim direct
+> > > mode works: no touchscreen driver requested anything. The new channels can
+> > > act like the old ones. However, when requesting these channels, the usual
+> > > trigger will not work and will not be enabled. The touchscreen channels
+> > > require special trigger and irq configuration: pen detect, no pen detect
+> > > and a periodic trigger to sample the touchscreen position and pressure.
+> > > If the user attempts to use another trigger while there is a buffer
+> > > that already requested the touchscreen channels (thus the trigger), the
+> > > driver will refuse to comply.
+> > > 
+> > > In order to have defines for the channel numbers, I added a bindings include
+> > > file that goes on a separate commit :
+> > > dt-bindings: iio: adc: at91-sama5d2_adc: add channel specific consumer info
+> > > This should go in the same tree with the following commits :
+> > >   ARM: dts: at91: sama5d2: add channel cells for ADC device
+> > >   ARM: dts: at91: sama5d2: Add resistive touch device
+> > > 
+> > > as build will break because these commits depend on the binding one
+> > > which creates the included header file.
+> > > 
+> > > After the discussions earlier this year on the mailing list, I hope this
+> > > rework of the patches is much better and fulfills all the requirements
+> > > for this implementation.  
+> > As I said in one of the later patches, I like this a lot.
+> > It is a good blend of the moderately nasty handling needed in the ADC
+> > driver with a lovely generic input driver.
+> > 
+> > Very nice!  Hope everyone else agrees ;)
+> >   
 > 
-> ---
-> Changes for v2:
-> - SDPX license identifiers used
-> - Separate regulators
-> - Proper beeper driver
-> - Use of the lcd panel (with compatible) instead of timings provided in
->   device tree
-> - Add IRQ types (like IRQ_TYPE_EDGE_FALLING) and GPIO active levels (like
->   GPIO_ACTIVE_HIGH)
-> - Remove not needed nodes
-> - Make W=1 dtbs compilation with no errors
-> ---
->  .../devicetree/bindings/vendor-prefixes.txt        |   1 +
->  arch/arm/boot/dts/Makefile                         |   1 +
->  arch/arm/boot/dts/imx6q-kp-tpc.dts                 |  23 ++
->  arch/arm/boot/dts/imx6q-kp.dtsi                    | 460 +++++++++++++++++++++
->  4 files changed, 485 insertions(+)
->  create mode 100644 arch/arm/boot/dts/imx6q-kp-tpc.dts
->  create mode 100644 arch/arm/boot/dts/imx6q-kp.dtsi
+> I'd love to see a generic touchscreen driver being an iio consumer!
 > 
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> index ae850d6c0ad3..8ff7eadc8bef 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> @@ -181,6 +181,7 @@ karo	Ka-Ro electronics GmbH
->  keithkoep	Keith & Koep GmbH
->  keymile	Keymile GmbH
->  khadas	Khadas
-> +kiebackpeter    Kieback & Peter GmbH
->  kinetic Kinetic Technologies
->  kingnovel	Kingnovel Technology Co., Ltd.
->  kosagi	Sutajio Ko-Usagi PTE Ltd.
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index ade7a38543dc..c148c4cf28f2 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -459,6 +459,7 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
->  	imx6q-icore-ofcap10.dtb \
->  	imx6q-icore-ofcap12.dtb \
->  	imx6q-icore-rqs.dtb \
-> +	imx6q-kp-tpc.dtb \
->  	imx6q-marsboard.dtb \
->  	imx6q-mccmon6.dtb \
->  	imx6q-nitrogen6x.dtb \
-> diff --git a/arch/arm/boot/dts/imx6q-kp-tpc.dts b/arch/arm/boot/dts/imx6q-kp-tpc.dts
-> new file mode 100644
-> index 000000000000..b5646040b516
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx6q-kp-tpc.dts
-> @@ -0,0 +1,23 @@
-> +/*
-> + * Copyright 2018
-> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-> + *
-> + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> However, I've already a case that can't be handled unfortunately.
+> 
+> I posted ~2 years ago a patch series[1] for touchscreen support for
+> Allwinner SoCs that are using their ADC (also) for touchscreen purpose.
+> 
+> It's been a very long time, I'm trying the hardest I can with my
+> "IIRC-skills".
+> 
+> There are several problems:
+>   - Data is stored in one register as a queue following this scheme:
+>     X @t=0 coord, Y @t=0 coord, X @t=1 coord, Y @t=1 coord, X @t=2
+>     coord, Y @t=2 coord, etc...
+> 
+>     Thus, I suppose I've only one channel and not two for coordinates.
 
-This goes on the first line. checkpatch.pl will tell you this.
+As I read this, no you don't.  You have two channels going through a
+very short on chip hw fifo.  They need to be reported as two channels
+with data appropriate reformatted to reflect that before being pushed
+to the IIO buffer interfaces.
 
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "imx6q-kp.dtsi"
-> +
-> +/ {
-> +	model = "Freescale i.MX6 Qwuad K+P TPC Board";
-> +	compatible = "kiebackpeter,imx6q-tpc", "fsl,imx6q";
-> +
-> +	memory: memory@10000000 {
-> +		reg = <0x10000000 0x40000000>;
-> +	};
-> +};
-> +
-> +&ipu1_di0_disp0 {
-> +	remote-endpoint = <&lcd_display_in>;
-> +};
-> diff --git a/arch/arm/boot/dts/imx6q-kp.dtsi b/arch/arm/boot/dts/imx6q-kp.dtsi
-> new file mode 100644
-> index 000000000000..acf6d40ca227
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx6q-kp.dtsi
-> @@ -0,0 +1,460 @@
-> +/*
-> + * Copyright 2018
-> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-> + *
-> + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "imx6q.dtsi"
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/pwm/pwm.h>
-> +#include <dt-bindings/sound/fsl-imx-audmux.h>
-> +
-> +/ {
-> +	backlight_lcd: backlight-lcd {
-> +		compatible = "pwm-backlight";
-> +		pwms = <&pwm1 0 5000000>;
-> +		brightness-levels = <  0   1   2   3   4   5   6   7   8   9
+> 
+>   - The first data stored after an up event is absolutely unreliable so
+>   I have to flush it, thus I need to use another API call to have the
+>   touchscreen driver do some logic with a whole queue only when it's
+>   after an up event (it doesn't really make sense to do so in the IIO
+>   driver, does it?).
 
-There's a property now so you don't have to list every single value and 
-can just say "<0 255>". It's not landed yet though. See "dt-bindings: 
-pwm-backlight: add a num-interpolation-steps property". 
+If it is garbage data I don't see any real problem with doing it in
+the IIO driver.  But obviously I don't have details to hand so there
+may be some complexity in this - I'm not sure the IIO driver knows
+enough about what is going on to distinguish that this data is bad.
 
-> +				      10  11  12  13  14  15  16  17  18  19
-> +				      20  21  22  23  24  25  26  27  28  29
-> +				      30  31  32  33  34  35  36  37  38  39
-> +				      40  41  42  43  44  45  46  47  48  49
-> +				      50  51  52  53  54  55  56  57  58  59
-> +				      60  61  62  63  64  65  66  67  68  69
-> +				      70  71  72  73  74  75  76  77  78  79
-> +				      80  81  82  83  84  85  86  87  88  89
-> +				      90  91  92  93  94  95  96  97  98  99
-> +				     100 101 102 103 104 105 106 107 108 109
-> +				     110 111 112 113 114 115 116 117 118 119
-> +				     120 121 122 123 124 125 126 127 128 129
-> +				     130 131 132 133 134 135 136 137 138 139
-> +				     140 141 142 143 144 145 146 147 148 149
-> +				     150 151 152 153 154 155 156 157 158 159
-> +				     160 161 162 163 164 165 166 167 168 169
-> +				     170 171 172 173 174 175 176 177 178 179
-> +				     180 181 182 183 184 185 186 187 188 189
-> +				     190 191 192 193 194 195 196 197 198 199
-> +				     200 201 202 203 204 205 206 207 208 209
-> +				     210 211 212 213 214 215 216 217 218 219
-> +				     220 221 222 223 224 225 226 227 228 229
-> +				     230 231 232 233 234 235 236 237 238 239
-> +				     240 241 242 243 244 245 246 247 248 249
-> +				     250 251 252 253 254 255>;
-> +		default-brightness-level = <250>;
-> +		status = "okay";
+> 
+>   - This up event is an interrupt.. that is configurable from the same
+>   set of registers than for the ADC, so I need an mfd,
+Hmm.  So there are various options here other than using an mfd.
 
-This isn't an existing node, so you don't need to override status.
+1. Could use the event to 'filter' the trigger being used to drive the
+data flow to the touch screen driver. So, as far as the touch screen
+driver is concerned it gets good data only when a touch is in progress.
+We present it as a 'magic' trigger that can be associated with the
+device that happens to have this property.
 
-> +	};
-> +
-> +	beeper {
-> +		compatible = "pwm-beeper";
-> +		pwms = <&pwm2 0 500000>; //2kHz
-> +	};
-> +
-> +	lcd_display: disp0 {
-> +		compatible = "fsl,imx-parallel-display";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		interface-pix-fmt = "rgb24";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_ipu1>;
-> +		status = "okay";
+2. Could actually write the (long missing) in kernel API for IIO events and
+support the touch as a threshold falling event and add support for
+handling to the touchscreen driver.
+> 
+> What are your thoughts (and maybe workarounds?) on those issues?
+> 
+Not trivial and at some point we'll be different enough from the generic
+driver that it makes sense to perhaps have a couple of 'classes' of generic
+touch screen to cover common options without making thing too complex.
+That might be in one driver, and it might not.
 
-Necessary?
-
-> +
-> +		port@0 {
-> +			reg = <0>;
-> +
-> +			lcd_display_in: endpoint {
-> +				remote-endpoint = <&ipu1_di0_disp0>;
-> +			};
-> +		};
-> +
-> +		port@1 {
-> +			reg = <1>;
-> +
-> +			lcd_display_out: endpoint {
-> +				remote-endpoint = <&lcd_panel_in>;
-> +			};
-> +		};
-> +	};
-> +
-> +	lcd_panel: lcd-panel {
-> +		compatible = "auo,g070vvn01";
-> +		backlight = <&backlight_lcd>;
-> +		bus-format-override = "rgb565";
-
-This is not documented.
-
-> +		power-supply = <&reg_display>;
-> +
-> +		port {
-> +			lcd_panel_in: endpoint {
-> +				remote-endpoint = <&lcd_display_out>;
-> +			};
-> +		};
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +
-> +		green {
-> +			label = "led1";
-> +			gpios = <&gpio3 16 GPIO_ACTIVE_HIGH>;
-> +			linux,default-trigger = "gpio";
-> +			default-state = "off";
-> +		};
-> +
-> +		red {
-> +			label = "led0";
-> +			gpios = <&gpio3 23 GPIO_ACTIVE_HIGH>;
-> +			linux,default-trigger = "gpio";
-> +			default-state = "off";
-> +		};
-> +	};
-> +
-> +	reg_3p3v: regulator-3p3v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "3P3V";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	reg_audio: regulator-audio {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "sgtl5000-supply";
-> +		gpio = <&gpio6 31 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +		regulator-always-on;
-> +	};
-> +
-> +	reg_display: regulator-display {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "display-supply";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	reg_usb_h1_vbus: regulator-usb_h1_vbus {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "usb_h1_vbus";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		enable-active-high;
-> +	};
-> +
-> +	sound {
-> +		compatible = "simple-audio-card";
-> +		simple-audio-card,name = "imx6q-sgtl5000-audio";
-> +		simple-audio-card,format = "i2s";
-> +		simple-audio-card,bitclock-master = <&codec_dai>;
-> +		simple-audio-card,frame-master = <&codec_dai>;
-> +
-> +		cpu_dai: simple-audio-card,cpu {
-> +			sound-dai = <&ssi1>;
-> +		};
-> +
-> +		codec_dai: simple-audio-card,codec {
-> +			sound-dai = <&codec>;
-> +		};
-> +	};
-> +};
-> +
-> +&audmux {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_audmux>;
-> +	status = "okay";
-> +
-> +	ssi1 {
-> +		fsl,audmux-port = <0>;
-> +		fsl,port-config = <
-> +			(IMX_AUDMUX_V2_PTCR_SYN |
-> +			IMX_AUDMUX_V2_PTCR_TFSEL(2) |
-> +			IMX_AUDMUX_V2_PTCR_TCSEL(2) |
-> +			IMX_AUDMUX_V2_PTCR_TFSDIR |
-> +			IMX_AUDMUX_V2_PTCR_TCLKDIR)
-> +			IMX_AUDMUX_V2_PDCR_RXDSEL(2)
-> +		>;
-> +	};
-> +
-> +	aud3 {
-> +		fsl,audmux-port = <2>;
-> +		fsl,port-config = <
-> +			IMX_AUDMUX_V2_PTCR_SYN
-> +			IMX_AUDMUX_V2_PDCR_RXDSEL(0)
-> +		>;
-> +	};
-> +};
-> +
-> +&fec {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_enet>;
-> +	phy-mode = "rgmii";
-> +	fsl,magic-packet;
-> +	status = "okay";
-> +};
-> +
-> +&i2c1 {
-> +	clock-frequency = <400000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_i2c1>;
-> +	status = "okay";
-> +
-> +	goodix_ts@5d {
-
-touchscreen@5d
-
-> +		compatible = "goodix,gt911";
-> +		reg = <0x5d>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_ts>;
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <9 IRQ_TYPE_EDGE_FALLING>;
-> +		irq-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
-> +		reset-gpios = <&gpio5 2 GPIO_ACTIVE_HIGH>;
-> +	};
-> +
-> +	rx8025@32 {
-> +		compatible = "dallas,rx8025";
-> +		reg = <0x32>;
-> +	};
-> +};
-> +
-> +&i2c2 {
-> +	clock-frequency = <400000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_i2c2>;
-> +	status = "okay";
-> +
-> +	codec: sgtl5000@a {
-
-audio-codec@a
-
-> +		compatible = "fsl,sgtl5000";
-> +		#sound-dai-cells = <0>;
-> +		reg = <0x0a>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_codec>;
-> +		clocks = <&clks IMX6QDL_CLK_CKO>;
-> +		VDDA-supply = <&reg_3p3v>;
-> +		VDDIO-supply = <&reg_3p3v>;
-> +	};
-> +};
-> +
-> +&iomuxc {
-> +	pinctrl_audmux: audmuxgrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_CSI0_DAT7__AUD3_RXD		0x130b0
-> +			MX6QDL_PAD_CSI0_DAT4__AUD3_TXC		0x130b0
-> +			MX6QDL_PAD_CSI0_DAT5__AUD3_TXD		0x110b0
-> +			MX6QDL_PAD_CSI0_DAT6__AUD3_TXFS	0x130b0
-> +		>;
-> +	};
-> +
-> +	pinctrl_codec: codecgrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_EIM_BCLK__GPIO6_IO31   0x1b0b0
-> +			/* sgtl5000 sys_mclk clock routed to CLKO1 */
-> +			MX6QDL_PAD_GPIO_0__CCM_CLKO1      0x000b0
-> +		>;
-> +	};
-> +
-> +	pinctrl_enet: enetgrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_ENET_MDIO__ENET_MDIO	0x1b0b0
-> +			MX6QDL_PAD_ENET_MDC__ENET_MDC		0x1b0b0
-> +			MX6QDL_PAD_RGMII_TXC__RGMII_TXC	0x1b0b0
-> +			MX6QDL_PAD_RGMII_TD0__RGMII_TD0	0x1b0b0
-> +			MX6QDL_PAD_RGMII_TD1__RGMII_TD1	0x1b0b0
-> +			MX6QDL_PAD_RGMII_TD2__RGMII_TD2	0x1b0b0
-> +			MX6QDL_PAD_RGMII_TD3__RGMII_TD3	0x1b0b0
-> +			MX6QDL_PAD_RGMII_TX_CTL__RGMII_TX_CTL	0x1b0b0
-> +			MX6QDL_PAD_ENET_REF_CLK__ENET_TX_CLK	0x1b0b0
-> +			MX6QDL_PAD_RGMII_RXC__RGMII_RXC	0x1b0b0
-> +			MX6QDL_PAD_RGMII_RD0__RGMII_RD0	0x1b0b0
-> +			MX6QDL_PAD_RGMII_RD1__RGMII_RD1	0x1b0b0
-> +			MX6QDL_PAD_RGMII_RD2__RGMII_RD2	0x1b0b0
-> +			MX6QDL_PAD_RGMII_RD3__RGMII_RD3	0x1b0b0
-> +			MX6QDL_PAD_RGMII_RX_CTL__RGMII_RX_CTL	0x1b0b0
-> +			MX6QDL_PAD_GPIO_16__ENET_REF_CLK 0x4001b0a8
-> +		>;
-> +	};
-> +
-> +	pinctrl_flexcan1: can1grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_GPIO_7__FLEXCAN1_TX        0x1b0b0
-> +			MX6QDL_PAD_GPIO_8__FLEXCAN1_RX        0x1b0b0
-> +		>;
-> +	};
-> +
-> +	pinctrl_flexcan2: can2grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_KEY_COL4__FLEXCAN2_TX        0x1b0b0
-> +			MX6QDL_PAD_KEY_ROW4__FLEXCAN2_RX        0x1b0b0
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c1: i2c1grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_CSI0_DAT8__I2C1_SDA	0x4001b8b1
-> +			MX6QDL_PAD_CSI0_DAT9__I2C1_SCL	0x4001b8b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_i2c2: i2c2grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_KEY_COL3__I2C2_SCL	0x4001b8b1
-> +			MX6QDL_PAD_KEY_ROW3__I2C2_SDA	0x4001b8b1
-> +		 >;
-> +	};
-> +
-> +	pinctrl_ipu1: ipu1grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_DI0_DISP_CLK__IPU1_DI0_DISP_CLK 0x10
-> +			MX6QDL_PAD_DI0_PIN15__IPU1_DI0_PIN15       0x10
-> +			MX6QDL_PAD_DI0_PIN2__IPU1_DI0_PIN02        0x10
-> +			MX6QDL_PAD_DI0_PIN3__IPU1_DI0_PIN03        0x10
-> +			MX6QDL_PAD_DISP0_DAT0__IPU1_DISP0_DATA00   0x10
-> +			MX6QDL_PAD_DISP0_DAT1__IPU1_DISP0_DATA01   0x10
-> +			MX6QDL_PAD_DISP0_DAT2__IPU1_DISP0_DATA02   0x10
-> +			MX6QDL_PAD_DISP0_DAT3__IPU1_DISP0_DATA03   0x10
-> +			MX6QDL_PAD_DISP0_DAT4__IPU1_DISP0_DATA04   0x10
-> +			MX6QDL_PAD_DISP0_DAT5__IPU1_DISP0_DATA05   0x10
-> +			MX6QDL_PAD_DISP0_DAT6__IPU1_DISP0_DATA06   0x10
-> +			MX6QDL_PAD_DISP0_DAT7__IPU1_DISP0_DATA07   0x10
-> +			MX6QDL_PAD_DISP0_DAT8__IPU1_DISP0_DATA08   0x10
-> +			MX6QDL_PAD_DISP0_DAT9__IPU1_DISP0_DATA09   0x10
-> +			MX6QDL_PAD_DISP0_DAT10__IPU1_DISP0_DATA10  0x10
-> +			MX6QDL_PAD_DISP0_DAT11__IPU1_DISP0_DATA11  0x10
-> +			MX6QDL_PAD_DISP0_DAT12__IPU1_DISP0_DATA12  0x10
-> +			MX6QDL_PAD_DISP0_DAT13__IPU1_DISP0_DATA13  0x10
-> +			MX6QDL_PAD_DISP0_DAT14__IPU1_DISP0_DATA14  0x10
-> +			MX6QDL_PAD_DISP0_DAT15__IPU1_DISP0_DATA15  0x10
-> +			MX6QDL_PAD_DISP0_DAT16__IPU1_DISP0_DATA16  0x10
-> +			MX6QDL_PAD_DISP0_DAT17__IPU1_DISP0_DATA17  0x10
-> +			MX6QDL_PAD_DISP0_DAT18__IPU1_DISP0_DATA18  0x10
-> +			MX6QDL_PAD_DISP0_DAT19__IPU1_DISP0_DATA19  0x10
-> +			MX6QDL_PAD_DISP0_DAT20__IPU1_DISP0_DATA20  0x10
-> +			MX6QDL_PAD_DISP0_DAT21__IPU1_DISP0_DATA21  0x10
-> +			MX6QDL_PAD_DISP0_DAT22__IPU1_DISP0_DATA22  0x10
-> +			MX6QDL_PAD_DISP0_DAT23__IPU1_DISP0_DATA23  0x10
-> +		>;
-> +	};
-> +
-> +	pinctrl_pwm1: pwm1grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_SD1_DAT3__PWM1_OUT		0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_pwm2: pwm2grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_SD1_DAT2__PWM2_OUT		0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_ts: tsgrp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_GPIO_9__GPIO1_IO09 0x1b0b0
-> +			MX6QDL_PAD_EIM_A25__GPIO5_IO02 0x1b0b0
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart1: uart1grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_SD3_DAT7__UART1_TX_DATA	0x1b0b1
-> +			MX6QDL_PAD_SD3_DAT6__UART1_RX_DATA	0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_uart2: uart2grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_EIM_D26__UART2_TX_DATA       0x1b0b1
-> +			MX6QDL_PAD_EIM_D27__UART2_RX_DATA       0x1b0b1
-> +			MX6QDL_PAD_EIM_D28__UART2_CTS_B         0x1b0b1
-> +			MX6QDL_PAD_EIM_D29__UART2_RTS_B         0x1b0b1
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc2: usdhc2grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_SD2_CMD__SD2_CMD		0x17059
-> +			MX6QDL_PAD_SD2_CLK__SD2_CLK		0x10059
-> +			MX6QDL_PAD_SD2_DAT0__SD2_DATA0		0x17059
-> +			MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x17059
-> +			MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x17059
-> +			MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x17059
-> +		>;
-> +	};
-> +
-> +	pinctrl_usdhc4: usdhc4grp {
-> +		fsl,pins = <
-> +			MX6QDL_PAD_SD4_CMD__SD4_CMD		0x17059
-> +			MX6QDL_PAD_SD4_CLK__SD4_CLK		0x10059
-> +			MX6QDL_PAD_SD4_DAT0__SD4_DATA0		0x17059
-> +			MX6QDL_PAD_SD4_DAT1__SD4_DATA1		0x17059
-> +			MX6QDL_PAD_SD4_DAT2__SD4_DATA2		0x17059
-> +			MX6QDL_PAD_SD4_DAT3__SD4_DATA3		0x17059
-> +			MX6QDL_PAD_SD4_DAT4__SD4_DATA4		0x17059
-> +			MX6QDL_PAD_SD4_DAT5__SD4_DATA5		0x17059
-> +			MX6QDL_PAD_SD4_DAT6__SD4_DATA6		0x17059
-> +			MX6QDL_PAD_SD4_DAT7__SD4_DATA7		0x17059
-> +		>;
-> +	};
-> +};
-> +
-> +&can1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_flexcan1>;
-> +};
-> +
-> +&can2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_flexcan2>;
-> +};
-> +
-> +&pwm1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_pwm1>;
-> +	status = "okay";
-> +};
-> +
-> +&pwm2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_pwm2>;
-> +	status = "okay";
-> +};
-> +
-> +&ssi1 {
-> +	status = "okay";
-> +};
-> +
-> +&uart1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart1>;
-> +	status = "okay";
-> +};
-> +
-> +&uart2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_uart2>;
-> +	uart-has-rtscts;
-> +};
-> +
-> +&usbh1 {
-> +	status = "okay";
-> +};
-> +
-> +&usdhc2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_usdhc2>;
-> +	bus-width = <4>;
-> +	cd-gpios = <&gpio1 4 GPIO_ACTIVE_LOW>;
-> +	status = "okay";
-> +};
-> +
-> +&usdhc4 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_usdhc4>;
-> +	bus-width = <8>;
-> +	non-removable;
-> +	no-1-8-v;
-> +	keep-power-in-suspend;
-> +	status = "okay";
-> +};
-> +
-> +&wdog1 {
-> +	status = "okay";
-> +};
-> -- 
-> 2.11.0
+> Thanks,
+> Quentin
+> 
+> [1] https://lkml.org/lkml/2016/7/20/156
+> 
+> > Jonathan
+> >   
+> > > 
+> > > Eugen Hristev (10):
+> > >   MAINTAINERS: add generic resistive touchscreen adc
+> > >   iio: Add channel for Position Relative
+> > >   dt-bindings: input: touchscreen: touch_adc: create bindings
+> > >   iio: inkern: add module put/get on iio dev module when requesting
+> > >     channels
+> > >   iio: adc: at91-sama5d2_adc: fix channel configuration for differential
+> > >     channels
+> > >   iio: adc: at91-sama5d2_adc: add support for position and pressure
+> > >     channels
+> > >   input: touchscreen: touch_adc: add generic resistive ADC touchscreen
+> > >   dt-bindings: iio: adc: at91-sama5d2_adc: add channel specific consumer
+> > >     info
+> > >   ARM: dts: at91: sama5d2: add channel cells for ADC device
+> > >   ARM: dts: at91: sama5d2: Add resistive touch device
+> > > 
+> > >  Documentation/ABI/testing/sysfs-bus-iio            |  12 +
+> > >  .../bindings/iio/adc/at91-sama5d2_adc.txt          |   9 +
+> > >  .../bindings/input/touchscreen/touch_adc.txt       |  33 ++
+> > >  MAINTAINERS                                        |   6 +
+> > >  arch/arm/boot/dts/sama5d2.dtsi                     |  12 +
+> > >  drivers/iio/adc/at91-sama5d2_adc.c                 | 491 ++++++++++++++++++++-
+> > >  drivers/iio/industrialio-core.c                    |   1 +
+> > >  drivers/iio/inkern.c                               |   8 +-
+> > >  drivers/input/touchscreen/Kconfig                  |  13 +
+> > >  drivers/input/touchscreen/Makefile                 |   1 +
+> > >  drivers/input/touchscreen/touch_adc.c              | 199 +++++++++
+> > >  include/dt-bindings/iio/adc/at91-sama5d2_adc.h     |  16 +
+> > >  include/uapi/linux/iio/types.h                     |   1 +
+> > >  tools/iio/iio_event_monitor.c                      |   2 +
+> > >  14 files changed, 791 insertions(+), 13 deletions(-)
+> > >  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/touch_adc.txt
+> > >  create mode 100644 drivers/input/touchscreen/touch_adc.c
+> > >  create mode 100644 include/dt-bindings/iio/adc/at91-sama5d2_adc.h
+> > >   
+> > 
+> > 
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel  
 > 
