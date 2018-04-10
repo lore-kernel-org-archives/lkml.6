@@ -1,199 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752561AbeDJISo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:18:44 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:27951 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752202AbeDJISn (ORCPT
+        id S1752616AbeDJIS5 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 04:18:57 -0400
+Received: from lilium.sigma-star.at ([109.75.188.150]:38608 "EHLO
+        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752314AbeDJIS4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:18:43 -0400
-From: Vignesh R <vigneshr@ti.com>
-To: Marek Vasut <marek.vasut@gmail.com>
-CC: Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Vignesh R <vigneshr@ti.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH] mtd: spi-nor: cadence-quadspi: Add DMA support for direct mode reads
-Date: Tue, 10 Apr 2018 13:49:10 +0530
-Message-ID: <20180410081910.858-1-vigneshr@ti.com>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Tue, 10 Apr 2018 04:18:56 -0400
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [RFC] UBIFS authentication
+From: David Gstir <david@sigma-star.at>
+In-Reply-To: <20180410070210.4chxbjlijoohpo5c@pengutronix.de>
+Date: Tue, 10 Apr 2018 10:18:51 +0200
+Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de
+Content-Transfer-Encoding: 8BIT
+Message-Id: <53E660CA-9F26-40C6-9C37-652F847BC737@sigma-star.at>
+References: <E6D3BD02-AF3A-4B75-92FD-A8A07B4C9C51@sigma-star.at>
+ <20180409095912.f7d35y7yjdnj2ffz@pengutronix.de>
+ <9EEA8AD6-E46F-45B7-8A85-98E4CC82B1D3@sigma-star.at>
+ <20180410070210.4chxbjlijoohpo5c@pengutronix.de>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to use DMA over memory mapped reads in direct mode. This
-helps in reducing CPU usage from ~100% to ~10% when reading data from
-flash. For non-DMA'able/vmalloc'd buffers, driver just falls back to CPU
-based memcpy.
+Hi Sascha,
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
----
- drivers/mtd/spi-nor/cadence-quadspi.c | 96 ++++++++++++++++++++++++++-
- 1 file changed, 94 insertions(+), 2 deletions(-)
+> On 10.04.2018, at 09:02, Sascha Hauer <s.hauer@pengutronix.de> wrote:
+> 
+> On Mon, Apr 09, 2018 at 05:23:05PM +0200, David Gstir wrote:
+>> Hi Sascha,
+>> 
+>>> On 09.04.2018, at 11:59, Sascha Hauer <s.hauer@pengutronix.de> wrote:
+>>> 
+>>> Hi David,
+>>> 
+>>> On Wed, Jan 17, 2018 at 04:19:14PM +0100, David Gstir wrote:
+>>>> Hi everybody!
+>>>> 
+>>>> ### Index Authentication
+>>>> 
+>>>> Through UBIFS' concept of a wandering tree, it already takes care of only
+>>>> updating and persisting changed parts from leaf node up to the root node
+>>>> of the full B+ tree. This enables us to augment the index nodes of the tree
+>>>> with a hash over each node's child nodes. As a result, the index basically also
+>>>> a Merkle tree. Since the leaf nodes of the index contain the actual filesystem
+>>>> data, the hashes of their parent index nodes thus cover all the file contents
+>>>> and file metadata. When a file changes, the UBIFS index is updated accordingly
+>>>> from the leaf nodes up to the root node including the master node. This process
+>>>> can be hooked to recompute the hash only for each changed node at the same time.
+>>>> Whenever a file is read, UBIFS can verify the hashes from each leaf node up to
+>>>> the root node to ensure the node's integrity.
+>>>> 
+>>>> To ensure the authenticity of the whole index, the UBIFS master node stores a
+>>>> keyed hash (HMAC) over its own contents (which includes the location of the root
+>>>> node) and the root node of the index tree. As mentioned above, the master node
+>>>> is always written to the flash whenever the index is persisted (ie. on index
+>>>> commit).
+>>>> 
+>>>> Using this approach only UBIFS index nodes and the master node are changed to
+>>>> include a hash. All other types of nodes will remain unchanged. This reduces
+>>>> the storage overhead which is precious for users of UBIFS (ie. embedded
+>>>> devices).
+>>>> 
+>>>> 
+>>>>                                           HMAC Master Node
+>>>>                                                |
+>>>>                     ' ' ' ' ' ' ' ' ' ' ' ' ' '|' '
+>>>>                     '     +---------------+    o  '
+>>>>                     '     |  Master Node  |       '
+>>>>                     '     +---------------+       '       Hash Index Node #1
+>>>>                     '             |               '                |
+>>>>      . . . . . . . .'. . . . . .  v . . . . . . . . . . . . . . . .|. . . . .
+>>>>      .              '      +---------------+      '                o        .
+>>>>      .              '      | Index Node #1 |      '                         .
+>>>>      .              '      +---------------+      '                         .
+>>>>      .              '        |    ...   |  (fanout: 8)                      .
+>>>>      .              ' ' ' '  | ' ' ' '  | ' ' ' ' '                         .
+>>>>      .               +-------+          +------+                            .
+>>>>      .               |                         |                            .
+>>>>      .     ' ' ' ' ' v ' ' ' ' '  ' ' ' ' ' '  v  ' ' ' ' ' ' ' ' ' ' '     .
+>>>>      .     ' +---------------+ '  '     +---------------+             '     .
+>>>>      .     ' | Index Node #2 | '  '     | Index Node #3 |             '     .
+>>>>      .     ' +---------------+ '  '     +---------------+             '     .
+>>>>      .     '   |   ...         '  '        |   ...   |                '     .
+>>>>      . . . ' . v . . . . . . . '. ' . . .  v . . . . v . . . . . . . .' . . .
+>>>>            ' +-----------+     '  '+----------+  +-----------+        '
+>>>>            ' | Data Node |     '  '| INO Node |  | DENT Node |        '
+>>>>            ' +-----------+     '  '+----------+  +-----------+        '
+>>>>            '  o                '  '                                o  '
+>>>>            ' '|' ' ' ' ' ' ' ' '  ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' ' '|' '
+>>>>               |                                                    |
+>>>>         Hash Index Node #2                                Hash Index Node #3
+>>> 
+>>> When a hash covers an index node and also its children then of course
+>>> this is really space efficient, but this also means that in order to
+>>> read a node we always have to read all of its children. Also adding a
+>>> new leaf node means rehashing all siblings. Is it really worth paying
+>>> this price to save a few bytes for more hashes?
+>>> I would rather suggest to add a hash per child to each index node.
+>> 
+>> What you propose is a simple tradeoff between the required on-flash storage
+>> space and the amount of read operations needed to verify the index node integrity.
+>> 
+>> To get some numbers here: In case of SHA256 and a fanout of 8, we'd store an
+>> additional 224 bytes per index node and safe 7 index node reads per tree level.
+> 
+> To get some more numbers I analyzed some typical rootfs here. It has:
+> 
+> 16137 data nodes with total size 41802586
+> uncompressed data size:          62380950
+> 2116 inode nodes with total size   347042
+> 2115 dent nodes with total size    148790
+> 2911 idx nodes with total size     547068
+> Total number of branches: 23278
+> 
+> With a SHA256 per branch this would add another 744896 bytes or 1.7%
+> overhead to the image (1.1% if using the uncompressed data size as base).
 
-diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
-index 4b8e9183489a..2f3a4d4232b3 100644
---- a/drivers/mtd/spi-nor/cadence-quadspi.c
-+++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-@@ -18,6 +18,8 @@
- #include <linux/clk.h>
- #include <linux/completion.h>
- #include <linux/delay.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/dmaengine.h>
- #include <linux/err.h>
- #include <linux/errno.h>
- #include <linux/interrupt.h>
-@@ -73,6 +75,10 @@ struct cqspi_st {
- 	struct completion	transfer_complete;
- 	struct mutex		bus_mutex;
- 
-+	struct dma_chan		*rx_chan;
-+	struct completion	rx_dma_complete;
-+	dma_addr_t		mmap_phys_base;
-+
- 	int			current_cs;
- 	int			current_page_size;
- 	int			current_erase_size;
-@@ -915,11 +921,75 @@ static ssize_t cqspi_write(struct spi_nor *nor, loff_t to,
- 	return len;
- }
- 
-+static void cqspi_rx_dma_callback(void *param)
-+{
-+	struct cqspi_st *cqspi = param;
-+
-+	complete(&cqspi->rx_dma_complete);
-+}
-+
-+static int cqspi_direct_read_execute(struct spi_nor *nor, u_char *buf,
-+				     loff_t from, size_t len)
-+{
-+	struct cqspi_flash_pdata *f_pdata = nor->priv;
-+	struct cqspi_st *cqspi = f_pdata->cqspi;
-+	enum dma_ctrl_flags flags = DMA_CTRL_ACK | DMA_PREP_INTERRUPT;
-+	dma_addr_t dma_src = (dma_addr_t)cqspi->mmap_phys_base + from;
-+	int ret = 0;
-+	struct dma_async_tx_descriptor *tx;
-+	dma_cookie_t cookie;
-+	dma_addr_t dma_dst;
-+
-+	if (!cqspi->rx_chan || !virt_addr_valid(buf)) {
-+		memcpy_fromio(buf, cqspi->ahb_base + from, len);
-+		return 0;
-+	}
-+
-+	dma_dst = dma_map_single(nor->dev, buf, len, DMA_DEV_TO_MEM);
-+	if (dma_mapping_error(nor->dev, dma_dst)) {
-+		dev_err(nor->dev, "dma mapping failed\n");
-+		return -ENOMEM;
-+	}
-+	tx = dmaengine_prep_dma_memcpy(cqspi->rx_chan, dma_dst, dma_src,
-+				       len, flags);
-+	if (!tx) {
-+		dev_err(nor->dev, "device_prep_dma_memcpy error\n");
-+		ret = -EIO;
-+		goto err_unmap;
-+	}
-+
-+	tx->callback = cqspi_rx_dma_callback;
-+	tx->callback_param = cqspi;
-+	cookie = tx->tx_submit(tx);
-+	reinit_completion(&cqspi->rx_dma_complete);
-+
-+	ret = dma_submit_error(cookie);
-+	if (ret) {
-+		dev_err(nor->dev, "dma_submit_error %d\n", cookie);
-+		ret = -EIO;
-+		goto err_unmap;
-+	}
-+
-+	dma_async_issue_pending(cqspi->rx_chan);
-+	ret = wait_for_completion_timeout(&cqspi->rx_dma_complete,
-+					  msecs_to_jiffies(len));
-+	if (ret <= 0) {
-+		dmaengine_terminate_sync(cqspi->rx_chan);
-+		dev_err(nor->dev, "DMA wait_for_completion_timeout\n");
-+		ret = -ETIMEDOUT;
-+		goto err_unmap;
-+	}
-+
-+err_unmap:
-+	dma_unmap_single(nor->dev, dma_dst, len, DMA_DEV_TO_MEM);
-+
-+	return 0;
-+}
-+
- static ssize_t cqspi_read(struct spi_nor *nor, loff_t from,
- 			  size_t len, u_char *buf)
- {
- 	struct cqspi_flash_pdata *f_pdata = nor->priv;
--	struct cqspi_st *cqspi = f_pdata->cqspi;
- 	int ret;
- 
- 	ret = cqspi_set_protocol(nor, 1);
-@@ -931,7 +1001,7 @@ static ssize_t cqspi_read(struct spi_nor *nor, loff_t from,
- 		return ret;
- 
- 	if (f_pdata->use_direct_mode)
--		memcpy_fromio(buf, cqspi->ahb_base + from, len);
-+		ret = cqspi_direct_read_execute(nor, buf, from, len);
- 	else
- 		ret = cqspi_indirect_read_execute(nor, buf, from, len);
- 	if (ret)
-@@ -1100,6 +1170,21 @@ static void cqspi_controller_init(struct cqspi_st *cqspi)
- 	cqspi_controller_enable(cqspi, 1);
- }
- 
-+static void cqspi_request_mmap_dma(struct cqspi_st *cqspi)
-+{
-+	dma_cap_mask_t mask;
-+
-+	dma_cap_zero(mask);
-+	dma_cap_set(DMA_MEMCPY, mask);
-+
-+	cqspi->rx_chan = dma_request_chan_by_mask(&mask);
-+	if (IS_ERR(cqspi->rx_chan)) {
-+		dev_err(&cqspi->pdev->dev, "No Rx DMA available\n");
-+		cqspi->rx_chan = NULL;
-+	}
-+	init_completion(&cqspi->rx_dma_complete);
-+}
-+
- static int cqspi_setup_flash(struct cqspi_st *cqspi, struct device_node *np)
- {
- 	const struct spi_nor_hwcaps hwcaps = {
-@@ -1177,6 +1262,9 @@ static int cqspi_setup_flash(struct cqspi_st *cqspi, struct device_node *np)
- 			f_pdata->use_direct_mode = true;
- 			dev_dbg(nor->dev, "using direct mode for %s\n",
- 				mtd->name);
-+
-+			if (!cqspi->rx_chan)
-+				cqspi_request_mmap_dma(cqspi);
- 		}
- 	}
- 
-@@ -1237,6 +1325,7 @@ static int cqspi_probe(struct platform_device *pdev)
- 		dev_err(dev, "Cannot remap AHB address.\n");
- 		return PTR_ERR(cqspi->ahb_base);
- 	}
-+	cqspi->mmap_phys_base = (dma_addr_t)res_ahb->start;
- 	cqspi->ahb_size = resource_size(res_ahb);
- 
- 	init_completion(&cqspi->transfer_complete);
-@@ -1307,6 +1396,9 @@ static int cqspi_remove(struct platform_device *pdev)
- 
- 	cqspi_controller_enable(cqspi, 0);
- 
-+	if (cqspi->rx_chan)
-+		dma_release_channel(cqspi->rx_chan);
-+
- 	clk_disable_unprepare(cqspi->clk);
- 
- 	pm_runtime_put_sync(&pdev->dev);
--- 
-2.17.0
+Yes, that matches my calculations. But IMHO these 1.7% matter and
+we should not give them up that easily.
+
+
+
+>> I hope it is clear that having a single hash does _not_ mean we have to read
+>> the whole tree! :)
+>> 
+>> Considering that UBIFS is mostly used in embedded where storage space is rather
+>> precious, we opted for storing a single hash. But sure, storing a hash per
+>> branch/child  is a possibility and we have to discuss if that is acceptable
+>> in most use cases.
+>> 
+>> As for adding new leaf nodes: If we add a leaf node, we'll always have to recompute
+>> the hash of every index node on the path to the root node. Even with a hash per
+>> branch/child. In case of TNC split/merge operations likely even more.
+>> But I don't get why you think that would mean we have to recompute the hash
+>> on all siblings of that nodes? Or do you simply mean that we have to re-read all
+>> those siblings to compute the hash on the parent?
+> 
+> I mean that before we can use the "DENT Node" in the picture above we
+> also have to verify the "INO Node". To get there, we also have to verify
+> the unrelated "Index Node #2". so in reality we have to verify
+> seven unrelated leaf nodes and another seven unrelated nodes per tree
+> level before we can use a node. When changing nodes we have to make sure
+> all the unrelated nodes stay in memory or we have to read them back from
+> the device. Of course, some of the unrelated nodes will be used anyway
+> in the next few moments, nevertheless I can imagine we pay a significant
+> performance penalty for this.
+
+Are you sure about that? The UBIFS TNC will first of all try to cache as
+much as possible and I'd argue that most of the time the nodes required
+for a hash will already be in memory. Even if we have to load the nodes
+from memory, we could consider changing the cache semantics of the TNC
+to optimize for that. Richard did some tests related to this at the UBI
+level [1]. But that is something that we will have to evaluate once
+we have a first PoC implementation of UBIFS authentication.
+
+Anyways, I get what you mean and I agree that this is surely an optimization
+worth pursuing! Also, note that the whole thing is rather a concept instead
+of a detailed implementation guide, so there are bound to be things that
+can be optimized. :)
+
+
+> read/write throughput is another very precious resource on embedded
+> systems ;)
+
+Yep! :D
+
+Thanks,
+David
+
+[1] http://lists.infradead.org/pipermail/linux-mtd/2016-July/068521.html
