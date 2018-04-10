@@ -1,75 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752469AbeDJH4Y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 03:56:24 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38338 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752417AbeDJH4W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 03:56:22 -0400
-Date: Tue, 10 Apr 2018 09:56:11 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: SZ Lin =?utf-8?B?KOael+S4iuaZuik=?= <sz.lin@moxa.com>
-Cc: Taiyi Wu <taiyity.wu@moxa.com>,
-        Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH] rtc: tps65910: add bounds checking
-Message-ID: <20180410075610.GA24625@piout.net>
-References: <20180410072417.7078-1-sz.lin@moxa.com>
+        id S1752304AbeDJH4L (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 03:56:11 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:52750 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751778AbeDJH4J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 03:56:09 -0400
+Date: Tue, 10 Apr 2018 09:55:48 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: yuankuiz@codeaurora.org
+cc: linux-pm@vger.kernel.org, rjw@rjwysocki.net, fweisbec@gmail.com,
+        peterz@infradead.org, aulmck@linux.vnet.ibm.com, mingo@kernel.org,
+        len.brown@intel.com, linux-kernel@vger.kernel.org
+Subject: Re: Subject: [PATCH] [PATCH] time: tick-sched: use bool for
+ tick_stopped
+In-Reply-To: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
+Message-ID: <alpine.DEB.2.21.1804100946060.2058@nanos.tec.linutronix.de>
+References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180410072417.7078-1-sz.lin@moxa.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, 10 Apr 2018, yuankuiz@codeaurora.org wrote:
 
-On 10/04/2018 15:24:17+0800, SZ Lin (林上智) wrote:
-> Since tm->tm_year is the offset relative to 1900, it needs to check for
-> positive value to avoid overflow in YEARS_REG register.
+> From: John Zhao <yuankuiz@codeaurora.org>
 > 
-> The system will hang at the following stage on the next boot when overflow
-> has occurred.
-> 
-> [    2.221192] systemd[1]: Time has been changed
-> 
-> This patch fixes the above hanging issue by adding bounds checking.
-> 
+> Variable tick_stopped returned by tick_nohz_tick_stopped
+> can have only true / forse values. Since the return type
+> of the tick_nohz_tick_stopped is also bool, variable
+> tick_stopped nice to have data type as bool in place of int.
 
-Did you test linux-next, this should not happen anymore after
-https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git/commit/?h=rtc-next&id=b3a5ac42ab18b7d1a8f2f072ca0ee76a3b754a43
+The data type is not int. It's part of an integer bitfield and occupies
+exactly one bit of storage, while bool has an architecture dependend size
+and is at least 1 byte, i.e. 8 bit. So with alignment effects you grew the
+size of the data structure and therefore the cache foot print.
 
-> Signed-off-by: Taiyi Wu <taiyity.wu@moxa.com>
-> Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
-> ---
->  drivers/rtc/rtc-tps65910.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/rtc/rtc-tps65910.c b/drivers/rtc/rtc-tps65910.c
-> index d0244d7979fc..6be9f7bb0f1b 100644
-> --- a/drivers/rtc/rtc-tps65910.c
-> +++ b/drivers/rtc/rtc-tps65910.c
-> @@ -105,6 +105,12 @@ static int tps65910_rtc_set_time(struct device *dev, struct rtc_time *tm)
->  	struct tps65910 *tps = dev_get_drvdata(dev->parent);
->  	int ret;
->  
-> +	if ((tm->tm_year - 100) < 0) {
-> +		dev_err(dev, "the requested year %d is unsupported\n",
-> +			1900 + tm->tm_year);
-> +		return -EINVAL;
-> +	}
-> +
->  	rtc_data[0] = bin2bcd(tm->tm_sec);
->  	rtc_data[1] = bin2bcd(tm->tm_min);
->  	rtc_data[2] = bin2bcd(tm->tm_hour);
-> -- 
-> 2.17.0
-> 
+This is not about 'nice to have' ....
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
+
+	tglx
