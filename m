@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49osAfnPEW+fUIZwEo+SC8F4Af+vd5XMsZxknC3eX7Hf5QRTverHoCF30j/Rm5KiSrOvoNc
-ARC-Seal: i=1; a=rsa-sha256; t=1523399318; cv=none;
+X-Google-Smtp-Source: AIpwx4+otr+YNmlEYh1V6E0b7spdrGy6kQ7xpk6jPB/gcv7lsJPWfw16pBiw+2lnWghTMs/3sKFI
+ARC-Seal: i=1; a=rsa-sha256; t=1523399316; cv=none;
         d=google.com; s=arc-20160816;
-        b=bjhUmd0G6eetGDiIvOPdfreboFhBkQpxZmNpGh/Sg6YxOmqfH4lxTiIdlWtJ9iwe/T
-         bWVILZFRlwylVwq94/jdSMd3dUm1XQM4x4+TN2cYCDeqwNd+Bo0+l0rry28aEdp+YHBk
-         mzRXgPDsL+PKpBIFsQY0X3xJBYrS+qzkC/lpsmGu5TncKQnamw7xSTC/J+JSMbhjEgnl
-         2L/rCrsOJSIlEDQx9HjLeYvNRpgN3AhMM8wSsbhvwWfXnL5bqbMfVDaGncy2kRVLB2bJ
-         gCDdlFXBkeWGN/uRHYKwaiS+fZ10PekHbAwYzFdmj36UzAOG3fqT6Mneph354nBxlW+z
-         UZ4Q==
+        b=mX24YzD0JL+w8jWQ5FZY8iPut6oMK0cXFeQ10J0nXR7CQ+F9Fb7dWRcmk4XR6EPNj2
+         HXHPN4A5oJfMz1rjmeiSQnAspbxDYHUcMKq8k2xAPjXOL1tw9O8kFZTGL2lPzMFm68xE
+         CvulHTEt6RH7Yi3oRg0wiZQCy0sBrqv/4AveiM2XK7sgDob4bpwb6yHLbPb9B7uelFrR
+         ZgGfP1D+prCxyAogEbopwl+5H7SfC0k+ZV43bedTcjTJrwBl2qXLXuKvfRlmlo7LEnef
+         orn0xVMof1CL2tWdMMtoAsPyRr8llkYgCDaxJ8CzYV2e3tqFwCsKgaD33jIbS1VVsPZs
+         M4IA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2glE9qLglcjXLHbC+Mij9n7JhYo31uuvCr2KoAHToVY=;
-        b=vDW2j50lbFGAYR2UfxW6Ry9U1F6Ic1XHh4v3qFvvRXl69VuZpb8XGSr2OAxkgs+PQ6
-         c4iwS/TrT3cMZcEuiQVjFQJrJSJ8qtgzMWQnpzqBCZZuibPrZ+gqEdpml+y3ONI6mk1H
-         mvwYLkpxNpwF+075pnPm2Uzgyw+DyFFvnPZn1IpBwHblpgoxBnLbOd72Wr7Ep4OfZnoc
-         uRi/TKKjPC+H0fqjNRHsEEbaAsmtqSBZ2rvWNVS8uVX4qu0XxpQNQd0mVEqQhbiJ5PQL
-         VJbglkEAhC5HNAaXw9kUN5vsQ5LpzaREclc3UQG2AhdG5eCidbU0A7mquwcpUUXGZBFA
-         p8jQ==
+        bh=2hGT2r7OhZckF8CgkdpQyujHX9wytnH+bmL5cqIuRv0=;
+        b=wf1l551r2Kw2F+LR0QzTqLOzTs1xVpZZjpflApqVTPktfv/lkib9ui+1O6T143k6pP
+         Db1a5GP2bWXtGcfSXopap0qlTCT4TX7HFQ7FiwkrvcXb/7Ejsg70UNifHEgigMnRPSLK
+         WrWWsCRUoEFCvC2Z6B1C8+/9pUjYArUiFGj31rUbsVJVzKGDGPuoq4jhLn/Sm1nslh5D
+         /Q2qrhCb8sOaiZ0VjK3pGZ/4DYJ0Xb10Mb71TXxQPgc2T7oeXrUhLGcgrLuTBXi76sEu
+         6yURpNmtNPIbKUlsby9aiEN+SVlqNRt9Y9B7OEa7p60+E2BBGR/51Vyeyu+aQ2JqP6TY
+         /x0w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chen-Yu Tsai <wens@csie.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Mark Brown <broonie@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 064/168] power: supply: axp288_charger: Properly stop work on probe-error / remove
-Date: Wed, 11 Apr 2018 00:23:26 +0200
-Message-Id: <20180410212802.923079752@linuxfoundation.org>
+Subject: [PATCH 4.15 063/168] ASoC: Intel: sst: Fix the return value of sst_send_byte_stream_mrfld()
+Date: Wed, 11 Apr 2018 00:23:25 +0200
+Message-Id: <20180410212802.879658066@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399963869125189?=
-X-GMAIL-MSGID: =?utf-8?q?1597399963869125189?=
+X-GMAIL-THRID: =?utf-8?q?1597399961609133580?=
+X-GMAIL-MSGID: =?utf-8?q?1597399961609133580?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,55 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit 165c2357744e41391902a2a72dd170beb60c28d5 ]
+[ Upstream commit eaadb1caa966a91128297b754e90b7c92b350a00 ]
 
-Properly stop any work we may have queued on probe-errors / remove.
+In some error handling paths, an error code is assiegned to 'ret'.
+However, the function always return 0.
 
-Rather then adding a remove driver callback for this, and goto style
-error handling to probe, use a devm_action for this.
+Fix it and return the error code if such an error paths is taken.
 
-The devm_action gets registered before we register any of the extcon
-notifiers which may queue the work, devm does cleanup in reverse order,
-so this ensures that the notifiers are removed before we cancel the work.
-
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Fixes: 3d9ff34622ba ("ASoC: Intel: sst: add stream operations")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/power/supply/axp288_charger.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ sound/soc/intel/atom/sst/sst_stream.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/power/supply/axp288_charger.c
-+++ b/drivers/power/supply/axp288_charger.c
-@@ -785,6 +785,14 @@ static int charger_init_hw_regs(struct a
- 	return 0;
+--- a/sound/soc/intel/atom/sst/sst_stream.c
++++ b/sound/soc/intel/atom/sst/sst_stream.c
+@@ -220,7 +220,7 @@ int sst_send_byte_stream_mrfld(struct in
+ 		sst_free_block(sst_drv_ctx, block);
+ out:
+ 	test_and_clear_bit(pvt_id, &sst_drv_ctx->pvt_id);
+-	return 0;
++	return ret;
  }
  
-+static void axp288_charger_cancel_work(void *data)
-+{
-+	struct axp288_chrg_info *info = data;
-+
-+	cancel_work_sync(&info->otg.work);
-+	cancel_work_sync(&info->cable.work);
-+}
-+
- static int axp288_charger_probe(struct platform_device *pdev)
- {
- 	int ret, i, pirq;
-@@ -836,6 +844,11 @@ static int axp288_charger_probe(struct p
- 		return ret;
- 	}
- 
-+	/* Cancel our work on cleanup, register this before the notifiers */
-+	ret = devm_add_action(dev, axp288_charger_cancel_work, info);
-+	if (ret)
-+		return ret;
-+
- 	/* Register for extcon notification */
- 	INIT_WORK(&info->cable.work, axp288_charger_extcon_evt_worker);
- 	info->cable.nb[0].notifier_call = axp288_charger_handle_cable0_evt;
+ /*
