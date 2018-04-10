@@ -1,93 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752700AbeDJIsQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:48:16 -0400
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:41340 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752430AbeDJIsO (ORCPT
+        id S1752724AbeDJIsp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 04:48:45 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:57474 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752081AbeDJIso (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:48:14 -0400
-X-Google-Smtp-Source: AIpwx4+QzQjmlyME8jy3KL4CJ7a2VtMxOa0q5hmVtMPM9xctRRJjM/c7df9dnllwcqhfyO/UzrNXkg==
-Date: Tue, 10 Apr 2018 11:48:10 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: adobriyan@gmail.com, mhocko@kernel.org, willy@infradead.org,
-        mguzik@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v3 PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-Message-ID: <20180410084810.GA2041@uranus.lan>
-References: <1523310774-40300-1-git-send-email-yang.shi@linux.alibaba.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523310774-40300-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Tue, 10 Apr 2018 04:48:44 -0400
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: qla2xxx-upstream@qlogic.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: qla2xxx: reduce the time granularity of qla2x00_eh_wait_on_command
+Date: Tue, 10 Apr 2018 16:48:35 +0800
+Message-Id: <1523350115-4026-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8858 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=828
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804100089
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 05:52:54AM +0800, Yang Shi wrote:
-> mmap_sem is on the hot path of kernel, and it very contended, but it is
-> abused too. It is used to protect arg_start|end and evn_start|end when
-> reading /proc/$PID/cmdline and /proc/$PID/environ, but it doesn't make
-> sense since those proc files just expect to read 4 values atomically and
-> not related to VM, they could be set to arbitrary values by C/R.
-> 
-> And, the mmap_sem contention may cause unexpected issue like below:
-> 
-> INFO: task ps:14018 blocked for more than 120 seconds.
->        Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> message.
->  ps              D    0 14018      1 0x00000004
->   ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->   ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->   00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->  Call Trace:
->   [<ffffffff817154d0>] ? __schedule+0x250/0x730
->   [<ffffffff817159e6>] schedule+0x36/0x80
->   [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->   [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->   [<ffffffff81717db0>] down_read+0x20/0x40
->   [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->   [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
->   [<ffffffff81241d87>] __vfs_read+0x37/0x150
->   [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
->   [<ffffffff81242266>] vfs_read+0x96/0x130
->   [<ffffffff812437b5>] SyS_read+0x55/0xc0
->   [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
-> 
-> Both Alexey Dobriyan and Michal Hocko suggested to use dedicated lock
-> for them to mitigate the abuse of mmap_sem.
-> 
-> So, introduce a new spinlock in mm_struct to protect the concurrent
-> access to arg_start|end, env_start|end and others except start_brk and
-> brk, which are still protected by mmap_sem to avoid concurrent access
-> from do_brk().
-> 
-> This patch just eliminates the abuse of mmap_sem, but it can't resolve the
-> above hung task warning completely since the later access_remote_vm() call
-> needs acquire mmap_sem. The mmap_sem scalability issue will be solved in the
-> future.
-> 
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> Cc: Alexey Dobriyan <adobriyan@gmail.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Mateusz Guzik <mguzik@redhat.com>
-> Cc: Cyrill Gorcunov <gorcunov@gmail.com>
-> ---
-> v2 --> v3:
-> * Restored down_write in prctl syscall
-> * Elaborate the limitation of this patch suggested by Michal
-> * Protect those fields by the new lock except brk and start_brk per Michal's
->   suggestion
-> * Based off Cyrill's non PR_SET_MM_MAP oprations deprecation patch
->   (https://lkml.org/lkml/2018/4/5/541)
+If the cmd has not be returned after aborted by qla2x00_eh_abort,
+we have to wait for it. However, the time is 1000ms at least currently.
+If there are a lot cmds need to be aborted, the delay could be long
+enough to lead to panic due to such as hung task, ocfs2 heartbeat,
+etc, just before scsi recovery works.
+Change the granularity to 1ms, even though more context switches
+would be introduced, but it should be ok as it is not hot path.
 
-For prctl part
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ drivers/scsi/qla2xxx/qla_os.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Cyrill Gorcunov <gorcunov@openvz.org>
-
-thanks!
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 5c5dcca4..9f52ad9 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -1072,7 +1072,7 @@ qla2xxx_mqueuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd,
+ static int
+ qla2x00_eh_wait_on_command(struct scsi_cmnd *cmd)
+ {
+-#define ABORT_POLLING_PERIOD	1000
++#define ABORT_POLLING_PERIOD	1
+ #define ABORT_WAIT_ITER		((2 * 1000) / (ABORT_POLLING_PERIOD))
+ 	unsigned long wait_iter = ABORT_WAIT_ITER;
+ 	scsi_qla_host_t *vha = shost_priv(cmd->device->host);
+-- 
+2.7.4
