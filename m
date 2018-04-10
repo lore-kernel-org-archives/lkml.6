@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-843308-1523402328-2-4720816074669696021
+X-Cyrus-Session-Id: sloti22d1t05-843308-1523402324-2-7507256164964849493
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523402328; b=SZO6YAAfCicXoahh2ExVub4XT95tpZ7dvW8SudynwfZm319D+P
-    +8AkgHPoqC36zdam6m1N/73ZpM9KvaLMCc09y0liuvUdxfAg8sYjECsSjhCbXI2N
-    8pgwBelOoaPbiOwzvXg2JwJKEbmVn0ruAtLmIP+0WgCXyUd9g0l9ahcVXIvBO5j3
-    +cjoKflSefx+iNelATmTQnWNwxt9enpo+ed06XiNTp4KEYbKEp286t1Ws/ry6lvv
-    XE/+4PHyl0Mk5eu/d460OQbWC8W8mLrAIA4BQBppeP0BU7CEKf5cmNtMCbSa7Apx
-    F4NgmpcRWhpkrbE+F2lvui3nQljTSgS3GNcQ==
+    1523402324; b=qi2laiY3mmHyyoipL4p2nCJ0WV+dJlIGOJhIvWgj7oQcVRDQZ5
+    P1TxcBqejMz/1u/YsmMvvU8ezInLz/MR+Co/jZPeLt7/c5PmDhyjk7awivpJKpWR
+    SaKSguVZV5iJwuP8ABOFLLm4rjfx/tmrHkKx1Pl9qvNZJESVOmyCl3dQh74Nkm86
+    2zGZjCzdAcCYIprJU1dMazBWNkiIuN6smCZRcMteE48+us2vHaNzHakXiRnlfhsx
+    rfxwuv3dafvxvzoqdDCis5d3VQlrkFINfRo+k6tlEaJe4Wzh5F0WyJBlWbgTGGVh
+    uEHmHMIumtsGJQxskJDaRct7CwRUMiw82o4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523402328; bh=4mjljQKNgwViFTHl0J0DW6WDMeBh19
-    PEYRgWbzTnhpA=; b=t1JQbpkDwyDbKIcuM/gdffCVfoBad8ievCBxBpssfWLgIk
-    UtbOF13IJ8QBdzEzzHzx7RTmpIwGvFbrh4KpTdNIQ42HQLPCEZfhp8GnGS8RXZmO
-    c9hwyQzUdv11FlyN+pSZcVphTDkI7zGR7eU9TEwtYbbHQjBICSsrIB80+z8BiToA
-    osslOSZ/UF9DoNBuaJdrNf5lZPUAgndeBNUFinFFh/40A3L+dUR5DE4NUQlLJ1IS
-    U2nSgj8gl7fzC1Y79MC3Ca/9tW6WqwpoQm3i8/CQ21/OZ8F6ygjbj9De0nwQh9be
-    jhQzMb47Qz8BumHgn2HxWKUPU9ETyk+DzPpQuTXA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523402324; bh=RhZZBkBqatZq0e22shFVaToDECPbFl
+    UTcpcUxDYoIHA=; b=M3WdTParc1Fv/6AreJc0xJgJrta7XwAinIcku30HJ8xpdZ
+    B/uJS3+5SCeZYDdIy0FL7MsPOuAjtQOJqKF0T8CASQ2c4loV/WeqoqZsEurA2dAk
+    UUcjyrQw4r8sRzCuXohRt0zvdQvsS1LIHPkajZ31C3MEuDm3mnIZzjyZGy9ea341
+    8lCkRvhfIWlkwjQtMNjXmV9qVgZT+rWkERLLMpjfv6U2xyrLGgs9OcYX6/SfCJey
+    NpRTsbMVIEaynhgYcuEv8LV6TU1x0nuaMQH7o+5fuV0DdGPxIqnE9+7HmnfXPXU7
+    ZjRvvwSCj+3DF08e+DddjihxR6Cel3VPcfqCcpvQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,31 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNHgmrnDBkOnDN/+Kg5fvuXuByS2fgerGM8aomBFdQi3fU5fPbTW2PS8ldkFSiOm9wEFrwoQSiwZigHgSWNCPL7E8leo36JaZWCVxxPx7Oakg5b4Zaqd
-    yG7OVnUayF3lnzrCahvnZW/Md6wOm8Y9F36JyY1k22Zy/FVbIkuNPAfVVRfbMZ3lEP34N11m/VY+KeM9OCEuOZZRX5dDC1Glq28l4Z9F4KQd/DLqz2jGYHWs
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfAjPp6f4wcNPBV61UrqoZj/iV4MeqUd44JCoKteFBHV8S+K2esqjJ8mVVqxyDmXH2jNBuWBKoPB9Y0gy+l1bwpEcnc++6WhAOLNMeHklWu+OcTWUz246
+    jivfHA1YcM/Jb+FfCZeghfn7AnTqdnvrzV2gX+n0k3jAKmpmZMEsS7VbK9br/O11Dzw9q9ENORudLwRk9q3MTJBFGd12xEnVq0pI7yuBk2GF5ET/oMt9vCwc
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=XYAwZIGsAAAA:8 a=1XWaLZrsAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=xjiEcAeqPzjcIN34KbYA:9 a=QEXdDO2ut3YA:10 a=E8ToXWR_bxluHZ7gmE-Z:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=h6DYfe-N_5DcBJBIuqkA:9
+    a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754785AbeDJWbX (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 18:31:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40340 "EHLO
+        id S1753172AbeDJXS3 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 19:18:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40354 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754763AbeDJWbU (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:31:20 -0400
+        with ESMTP id S1754788AbeDJWbX (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:31:23 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
-        Raghuram Chary J <raghuramchary.jallipalli@microchip.com>,
+        stable@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 123/168] lan78xx: Crash in lan78xx_writ_reg (Workqueue: events lan78xx_deferred_multicast_write)
-Date: Wed, 11 Apr 2018 00:24:25 +0200
-Message-Id: <20180410212805.809495859@linuxfoundation.org>
+Subject: [PATCH 4.15 124/168] net: dsa: Discard frames from unused ports
+Date: Wed, 11 Apr 2018 00:24:26 +0200
+Message-Id: <20180410212805.848782700@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -93,82 +93,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Raghuram Chary J <raghuramchary.jallipalli@microchip.com>
+From: Andrew Lunn <andrew@lunn.ch>
 
 
-[ Upstream commit 2d2d99ec13f62d5d2cecb6169dfdb6bbe05356d0 ]
+[ Upstream commit fc5f33768cca7144f8d793205b229d46740d183b ]
 
-Description:
-Crash was reported with syzkaller pointing to lan78xx_write_reg routine.
+The Marvell switches under some conditions will pass a frame to the
+host with the port being the CPU port. Such frames are invalid, and
+should be dropped. Not dropping them can result in a crash when
+incrementing the receive statistics for an invalid port.
 
-Root-cause:
-Proper cleanup of workqueues and init/setup routines was not happening
-in failure conditions.
-
-Fix:
-Handled the error conditions by cleaning up the queues and init/setup
-routines.
-
-Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
-Reported-by: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Raghuram Chary J <raghuramchary.jallipalli@microchip.com>
+Reported-by: Chris Healy <cphealy@gmail.com>
+Fixes: 91da11f870f0 ("net: Distributed Switch Architecture protocol support")
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/lan78xx.c |   23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ net/dsa/dsa_priv.h |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -2863,8 +2863,7 @@ static int lan78xx_bind(struct lan78xx_n
- 	if (ret < 0) {
- 		netdev_warn(dev->net,
- 			    "lan78xx_setup_irq_domain() failed : %d", ret);
--		kfree(pdata);
--		return ret;
-+		goto out1;
- 	}
+--- a/net/dsa/dsa_priv.h
++++ b/net/dsa/dsa_priv.h
+@@ -117,6 +117,7 @@ static inline struct net_device *dsa_mas
+ 	struct dsa_port *cpu_dp = dev->dsa_ptr;
+ 	struct dsa_switch_tree *dst = cpu_dp->dst;
+ 	struct dsa_switch *ds;
++	struct dsa_port *slave_port;
  
- 	dev->net->hard_header_len += TX_OVERHEAD;
-@@ -2872,14 +2871,32 @@ static int lan78xx_bind(struct lan78xx_n
+ 	if (device < 0 || device >= DSA_MAX_SWITCHES)
+ 		return NULL;
+@@ -128,7 +129,12 @@ static inline struct net_device *dsa_mas
+ 	if (port < 0 || port >= ds->num_ports)
+ 		return NULL;
  
- 	/* Init all registers */
- 	ret = lan78xx_reset(dev);
-+	if (ret) {
-+		netdev_warn(dev->net, "Registers INIT FAILED....");
-+		goto out2;
-+	}
- 
- 	ret = lan78xx_mdio_init(dev);
-+	if (ret) {
-+		netdev_warn(dev->net, "MDIO INIT FAILED.....");
-+		goto out2;
-+	}
- 
- 	dev->net->flags |= IFF_MULTICAST;
- 
- 	pdata->wol = WAKE_MAGIC;
- 
- 	return ret;
+-	return ds->ports[port].slave;
++	slave_port = &ds->ports[port];
 +
-+out2:
-+	lan78xx_remove_irq_domain(dev);
++	if (unlikely(slave_port->type != DSA_PORT_TYPE_USER))
++		return NULL;
 +
-+out1:
-+	netdev_warn(dev->net, "Bind routine FAILED");
-+	cancel_work_sync(&pdata->set_multicast);
-+	cancel_work_sync(&pdata->set_vlan);
-+	kfree(pdata);
-+	return ret;
++	return slave_port->slave;
  }
  
- static void lan78xx_unbind(struct lan78xx_net *dev, struct usb_interface *intf)
-@@ -2891,6 +2908,8 @@ static void lan78xx_unbind(struct lan78x
- 	lan78xx_remove_mdio(dev);
- 
- 	if (pdata) {
-+		cancel_work_sync(&pdata->set_multicast);
-+		cancel_work_sync(&pdata->set_vlan);
- 		netif_dbg(dev, ifdown, dev->net, "free pdata");
- 		kfree(pdata);
- 		pdata = NULL;
+ /* port.c */
