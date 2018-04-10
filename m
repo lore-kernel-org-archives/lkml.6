@@ -1,66 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752424AbeDJBRn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 21:17:43 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:42228 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751552AbeDJBRl (ORCPT
+        id S1752474AbeDJBSJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 21:18:09 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:41370 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752083AbeDJBSH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 21:17:41 -0400
-X-Google-Smtp-Source: AIpwx4/CMq8Lho+WDwJafbNAqqr5kLozyTqn8sUhOswhssRvFpcnQT7nzf8X5AcLwaelOvuWHaF8ew==
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: jon.maloy@ericsson.com, ying.xue@windriver.com, davem@davemloft.net
-Cc: netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH v2] net: tipc: Replace GFP_ATOMIC with GFP_KERNEL in tipc_mon_create
-Date: Tue, 10 Apr 2018 09:17:33 +0800
-Message-Id: <1523323053-28127-1-git-send-email-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 9 Apr 2018 21:18:07 -0400
+To: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Bart Van Assche <Bart.VanAssche@sandisk.com>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>
+Subject: Re: [PATCH v2] qla2xxx: correctly shift host byte
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20180409122423.32231-1-jthumshirn@suse.de>
+Date: Mon, 09 Apr 2018 21:17:59 -0400
+In-Reply-To: <20180409122423.32231-1-jthumshirn@suse.de> (Johannes Thumshirn's
+        message of "Mon, 9 Apr 2018 14:24:23 +0200")
+Message-ID: <yq1muyb3lmg.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8858 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=637
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804100012
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tipc_mon_create() is never called in atomic context.
 
-The call chain ending up at dn_route_init() is:
-[1] tipc_mon_create() <- tipc_enable_bearer() <- tipc_nl_bearer_enable()
-tipc_nl_bearer_enable() calls rtnl_lock(), which indicates this function
-is not called in atomic context.
+Johannes,
 
-Despite never getting called from atomic context,
-tipc_mon_create() calls kzalloc() with GFP_ATOMIC,
-which does not sleep for allocation.
-GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
-which can sleep and improve the possibility of sucessful allocation.
+> The SCSI host byte has to be shifted by 16 not 6.
+>
+> As Bart pointed out this patch does not change any functionality
+> because DID_OK == 0, but a wrong shift is irritating for the reviewer.
 
-This is found by a static analysis tool named DCNS written by myself.
-And I also manually check it.
+Applied to 4.17/scsi-fixes. Thank you!
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
-v2:
-* Modify the description of GFP_ATOMIC in v1.
-  Thank Eric for good advice.
----
- net/tipc/monitor.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/net/tipc/monitor.c b/net/tipc/monitor.c
-index 9e109bb..9714d80 100644
---- a/net/tipc/monitor.c
-+++ b/net/tipc/monitor.c
-@@ -604,9 +604,9 @@ int tipc_mon_create(struct net *net, int bearer_id)
- 	if (tn->monitors[bearer_id])
- 		return 0;
- 
--	mon = kzalloc(sizeof(*mon), GFP_ATOMIC);
--	self = kzalloc(sizeof(*self), GFP_ATOMIC);
--	dom = kzalloc(sizeof(*dom), GFP_ATOMIC);
-+	mon = kzalloc(sizeof(*mon), GFP_KERNEL);
-+	self = kzalloc(sizeof(*self), GFP_KERNEL);
-+	dom = kzalloc(sizeof(*dom), GFP_KERNEL);
- 	if (!mon || !self || !dom) {
- 		kfree(mon);
- 		kfree(self);
 -- 
-1.9.1
+Martin K. Petersen	Oracle Linux Engineering
