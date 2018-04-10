@@ -1,89 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752323AbeDJIVY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:21:24 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59076 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751825AbeDJIVX (ORCPT
+        id S1752404AbeDJIWf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 04:22:35 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:52162 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752246AbeDJIWd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:21:23 -0400
-From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2 7/9] trace_uprobe/sdt: Fix multiple update of same
- reference counter
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: mhiramat@kernel.org, peterz@infradead.org, srikar@linux.vnet.ibm.com,
-        rostedt@goodmis.org, acme@kernel.org, ananth@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
-        alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
-        jolsa@redhat.com, kan.liang@intel.com, kjlx@templeofstupid.com,
-        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
-        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-References: <20180404083110.18647-1-ravi.bangoria@linux.vnet.ibm.com>
- <20180404083110.18647-8-ravi.bangoria@linux.vnet.ibm.com>
- <20180409132928.GA25722@redhat.com>
-Date: Tue, 10 Apr 2018 13:49:12 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180409132928.GA25722@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        Tue, 10 Apr 2018 04:22:33 -0400
+From: Loic PALLARDY <loic.pallardy@st.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>
+CC: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+Subject: RE: [PATCH 2/3] rpmsg: Only invoke announce_create for rpdev with
+ endpoints
+Thread-Topic: [PATCH 2/3] rpmsg: Only invoke announce_create for rpdev with
+ endpoints
+Thread-Index: AQHTxg+bYYNojr61C0O04JApu470KKPuyIPQgArwfwA=
+Date: Tue, 10 Apr 2018 08:22:29 +0000
+Message-ID: <180d35d3568c4755a76ec740142c7a59@SFHDAG7NODE2.st.com>
+References: <20180327210643.3436-1-bjorn.andersson@linaro.org>
+ <20180327210643.3436-3-bjorn.andersson@linaro.org>
+Accept-Language: fr-FR, en-US
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18041008-0012-0000-0000-000005C9051B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041008-0013-0000-0000-000019452F19
-Message-Id: <84c1e60f-8aad-a0ce-59af-4fcb3f77df94@linux.vnet.ibm.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.46]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-10_03:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804100084
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Oleg,
+Hi Bjorn,
 
-On 04/09/2018 06:59 PM, Oleg Nesterov wrote:
-> On 04/04, Ravi Bangoria wrote:
->> +static void sdt_add_mm_list(struct trace_uprobe *tu, struct mm_struct *mm)
->> +{
->> +	struct mmu_notifier *mn;
->> +	struct sdt_mm_list *sml = kzalloc(sizeof(*sml), GFP_KERNEL);
->> +
->> +	if (!sml)
->> +		return;
->> +	sml->mm = mm;
->> +	list_add(&(sml->list), &(tu->sml.list));
->> +
->> +	/* Register mmu_notifier for this mm. */
->> +	mn = kzalloc(sizeof(*mn), GFP_KERNEL);
->> +	if (!mn)
->> +		return;
->> +
->> +	mn->ops = &sdt_mmu_notifier_ops;
->> +	__mmu_notifier_register(mn, mm);
->> +}
-> and what if __mmu_notifier_register() fails simply because signal_pending() == T?
-> see mm_take_all_locks().
->
-> at first glance this all look suspicious and sub-optimal,
+> -----Original Message-----
+> From: Loic PALLARDY
+> Sent: Tuesday, April 03, 2018 11:13 AM
+> To: 'Bjorn Andersson' <bjorn.andersson@linaro.org>; Ohad Ben-Cohen
+> <ohad@wizery.com>
+> Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> arm-msm@vger.kernel.org
+> Subject: RE: [PATCH 2/3] rpmsg: Only invoke announce_create for rpdev with
+> endpoints
+> 
+> Hi Bjorn,
+> 
+> > -----Original Message-----
+> > From: linux-remoteproc-owner@vger.kernel.org [mailto:linux-
+> remoteproc-
+> > owner@vger.kernel.org] On Behalf Of Bjorn Andersson
+> > Sent: Tuesday, March 27, 2018 11:07 PM
+> > To: Ohad Ben-Cohen <ohad@wizery.com>; Bjorn Andersson
+> > <bjorn.andersson@linaro.org>
+> > Cc: linux-remoteproc@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-
+> > arm-msm@vger.kernel.org
+> > Subject: [PATCH 2/3] rpmsg: Only invoke announce_create for rpdev with
+> > endpoints
+> >
+> > For special rpmsg devices without a primary endpoint there is nothing to
+> > announce so don't call the backend announce create function if we didn't
+> > create an endpoint.
+> >
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> >  drivers/rpmsg/rpmsg_core.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> > index dffa3aab7178..e85d2691d2cf 100644
+> > --- a/drivers/rpmsg/rpmsg_core.c
+> > +++ b/drivers/rpmsg/rpmsg_core.c
+> > @@ -442,7 +442,7 @@ static int rpmsg_dev_probe(struct device *dev)
+> >  		goto out;
+> >  	}
+> >
+> > -	if (rpdev->ops->announce_create)
+> > +	if (ept && rpdev->ops->announce_create)
+> 
+> This check is already part of virtio_rpmsg.c (see line 341)
+> 	/* need to tell remote processor's name service about this channel ?
+> */
+> 	if (rpdev->announce && rpdev->ept &&
+> 	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
+> 
+> should it be part of qcom_smd driver too? (but each implementation will
+> duplicate checks)
+> Or may have a generic check in the core including rpdev->announce as well
+> (and doing virtio_rpmsg.c clean-up)
+> 
+> Change will become:
+> 	if (rpdev->announce && ept && rpdev->ops->announce_create)
+> 
+> Regards,
+> Loic
 
-Yes. I should have added checks for failure cases.
-Will fix them in v3.
+I'll appreciate if you reply to the review comments before merging patch and sending pull request.
 
-Thanks for the review,
-Ravi
+Regards,
+Loic
 
->  but let me repeat that
-> I didn't read this version yet.
->
-> Oleg.
->
+> >  		err = rpdev->ops->announce_create(rpdev);
+> >  out:
+> >  	return err;
+> > --
+> > 2.16.2
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-remoteproc"
+> in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
