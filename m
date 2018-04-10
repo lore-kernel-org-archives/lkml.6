@@ -1,67 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754086AbeDJObI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:31:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56118 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753047AbeDJObH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:31:07 -0400
-Date: Tue, 10 Apr 2018 16:31:05 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Petr Mladek <pmladek@suse.com>
-cc: Joe Lawrence <joe.lawrence@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lpechacek@suse.com, nstange@suse.de
-Subject: Re: [PATCH] selftests/livepatch: introduce tests
-In-Reply-To: <20180409140549.q6jybx3zirnsl2pp@pathway.suse.cz>
-Message-ID: <alpine.LSU.2.21.1804101625090.8026@pobox.suse.cz>
-References: <1522266588-11806-1-git-send-email-joe.lawrence@redhat.com> <1522266588-11806-2-git-send-email-joe.lawrence@redhat.com> <20180407023646.k3gjrgjwzhwgu6fq@treble> <20180408154231.ihnglqyya5nric4q@redhat.com>
- <20180409140549.q6jybx3zirnsl2pp@pathway.suse.cz>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1754115AbeDJOcP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:32:15 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44866 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753089AbeDJOcM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 10:32:12 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2563A607EF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Subject: Re: ath10k: fix spelling mistake: "tiggers" -> "triggers"
+From: Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180329165949.29155-1-colin.king@canonical.com>
+References: <20180329165949.29155-1-colin.king@canonical.com>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180410143212.4F86260C64@smtp.codeaurora.org>
+Date: Tue, 10 Apr 2018 14:32:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Colin Ian King <colin.king@canonical.com> wrote:
 
-> > > I love this.  Nice work!
-
-Yes, it looks really good.
-
-> > > As you and Petr discussed, it would be nice to get rid of some of the
-> > > delays, and also the callback tests will be very important.
-> > 
-> > I've got v2 WIP that minimizes the delays, cleans up build flags, and
-> > adds a basic shadow variable test.
+> Trivial fix to spelling mistake in message text
 > 
-> Sounds great.
-> 
-> > Since these tests are based on top of Petr's current patchsets for
-> > atomic replace and shadow variables, it probably makes sense for those
-> > to merge first.  I can post test results to his patchsets if that helps.
-> 
-> Sounds good to me. We could synchronize the merge. But I think that it
-> will not be a big deal if we would merge the atomic replace slightly
-> earlier if the tests needed some more love.
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Well, it depends. Josh wants the patch first and then atomic replace. So 
-we can merge selftests for all features we currently have and tests for 
-atomic replace could go with it.
+Patch applied to ath-next branch of ath.git, thanks.
 
-> > These tests are basically a mash up of some of the tedious callback
-> > Documentation and shadow variable sample livepatches.  Since there will
-> > be a lot of duplication, should we just remove redundant doc/samples in
-> > favor of these tests?
-> 
-> Yup, it does not make sense to maintain two copies of basically
-> the same modules.
+6ce36faeac35 ath10k: fix spelling mistake: "tiggers" -> "triggers"
 
-Yes, but I'd leave a basic sample module there (that is, the first sample 
-we had should stay).
+-- 
+https://patchwork.kernel.org/patch/10315725/
 
-Libor and Nicolai from SUSE CCed. We have some internal tests as well and 
-it would be great to join forces.
-
-Regards,
-Miroslav
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
