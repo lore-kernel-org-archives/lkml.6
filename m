@@ -1,111 +1,532 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752491AbeDJH57 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 03:57:59 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:53895 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752369AbeDJH55 (ORCPT
+        id S1752541AbeDJH6Z (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 03:58:25 -0400
+Received: from smtp03.citrix.com ([162.221.156.55]:1790 "EHLO
+        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752379AbeDJH6Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 03:57:57 -0400
-X-Originating-IP: 2.224.242.101
-Date: Tue, 10 Apr 2018 09:57:52 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, robin.murphy@arm.com,
-        dalias@libc.org, ysato@users.sourceforge.jp, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org
-Subject: Re: [PATCH] base: dma-mapping: Postpone cpu addr translation on
- mmap()
-Message-ID: <20180410075752.GB20945@w540>
-References: <1523293148-18726-1-git-send-email-jacopo+renesas@jmondi.org>
- <20180409175251.GA5426@infradead.org>
+        Tue, 10 Apr 2018 03:58:24 -0400
+X-IronPort-AV: E=Sophos;i="5.48,431,1517875200";
+   d="scan'208";a="51097975"
+From: Paul Durrant <paul.durrant@citrix.com>
+To: <xen-devel@lists.xenproject.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: Paul Durrant <paul.durrant@citrix.com>,
+        Juergen Gross <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Stefano Stabellini <sstabellini@kernel.org>
+Subject: [PATCH v4] xen/privcmd: add IOCTL_PRIVCMD_MMAP_RESOURCE
+Date: Tue, 10 Apr 2018 08:58:20 +0100
+Message-ID: <20180410075820.11081-1-paul.durrant@citrix.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="n5G3y24fV3/VEqbx"
-Content-Disposition: inline
-In-Reply-To: <20180409175251.GA5426@infradead.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+My recent Xen patch series introduces a new HYPERVISOR_memory_op to
+support direct priv-mapping of certain guest resources (such as ioreq
+pages, used by emulators) by a tools domain, rather than having to access
+such resources via the guest P2M.
 
---n5G3y24fV3/VEqbx
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+This patch adds the necessary infrastructure to the privcmd driver and
+Xen MMU code to support direct resource mapping.
 
-Hi Christoph,
+NOTE: The adjustment in the MMU code is partially cosmetic. Xen will now
+      allow a PV tools domain to map guest pages either by GFN or MFN, thus
+      the term 'mfn' has been swapped for 'pfn' in the lower layers of the
+      remap code.
 
-On Mon, Apr 09, 2018 at 10:52:51AM -0700, Christoph Hellwig wrote:
-> On Mon, Apr 09, 2018 at 06:59:08PM +0200, Jacopo Mondi wrote:
-> > I'm still a bit puzzled on what happens if dma_mmap_from_dev_coherent() fails.
-> > Does a dma_mmap_from_dev_coherent() failure guarantee anyhow that the
-> > successive virt_to_page() isn't problematic as it is today?
-> > Or is it the
-> >  	if (off < count && user_count <= (count - off))
-> > check that makes the translation safe?
->
-> It doesn't.  I think one major issue is that we should not simply fall
-> to dma_common_mmap if no method is required, but need every instance of
-> dma_map_ops to explicitly opt into an mmap method that is known to work.
+Signed-off-by: Paul Durrant <paul.durrant@citrix.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+---
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>
 
-I see.. this patch thus just postpones the problem...
+v4:
+ - Remove stray line of debug that causes a build warning on ARM 32-bit
 
->
-> >  #ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
-> >  	unsigned long user_count = vma_pages(vma);
-> >  	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> > -	unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
-> >  	unsigned long off = vma->vm_pgoff;
-> > +	unsigned long pfn;
-> >
-> >  	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-> >
-> > @@ -235,6 +235,7 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
-> >  		return ret;
-> >
-> >  	if (off < count && user_count <= (count - off)) {
-> > +		pfn = page_to_pfn(virt_to_page(cpu_addr));
-> >  		ret = remap_pfn_range(vma, vma->vm_start,
-> >  				      pfn + off,
-> >  				      user_count << PAGE_SHIFT,
->
-> Why not:
->
-> 		ret = remap_pfn_range(vma, vma->vm_start,
-> 				page_to_pfn(virt_to_page(cpu_addr)) + off,
->
-> and save the temp variable?
+v3:
+ - Addres comments from Boris
+ - Fix ARM build
 
-Sure, it's better... Should I send a v2 or considering your above
-comment this patch is just a mitigation and should be ditched in
-favour of a proper solution (which requires a much more considerable amount
-of work though)?
+v2:
+ - Fix bug when mapping multiple pages of a resource
+---
+ arch/arm/xen/enlighten.c       |  11 ++++
+ arch/x86/xen/mmu.c             |  60 +++++++++++++------
+ drivers/xen/privcmd.c          | 128 +++++++++++++++++++++++++++++++++++++++++
+ include/uapi/xen/privcmd.h     |  11 ++++
+ include/xen/interface/memory.h |  66 +++++++++++++++++++++
+ include/xen/interface/xen.h    |   7 ++-
+ include/xen/xen-ops.h          |  24 +++++++-
+ 7 files changed, 286 insertions(+), 21 deletions(-)
 
-Thanks
-   j
-
---n5G3y24fV3/VEqbx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJazG6AAAoJEHI0Bo8WoVY86H0P/2SMs4laMyttAVmvylDfTO4w
-p8rssvBm/Qt20vZDkznGlLX2++8JAY4AMtdwjEvx+RrJHzvvjoziIYEIguZFv1IA
-8sM/N2i7+4KpHeJsUJtQ0ckcxbxyGXZsz2BOMsUFtmsa0lo0U0B1W9mCfpxaj5sn
-MApicnmKxUBlfbbFzgoug4+l2bdOWkWtO1Es6t9Ky08kUySfcHq38InjrnyOGC3V
-ERjohSe5N8+FMzySnnpDQ2tqkCJ03vOrQa4WG301fsLADrkWzQ6qmItfyfIe3k2X
-8A8VScaqG1u2p4yNUoJfmfKvGWkEmiiz6rqyesOVQHkCmmrDNyT+lpZsejpWg/qQ
-HhG7f8q72CxMY4vsj8j2o5fSc9LNplVabEAGCOBDvU+S4SQcWTapnMhGv1hEXNzW
-P3eMzDTcLQwmRoOHd1ZLkRKVtpWanH5UZQYsnLIg2dtz3j2x5JGE9N7W7CeMWsyn
-9nGmY47qBvnNszGNY5R/wBTzaiPzbsFM0uKfW9eeedxHwb3yR1S+f7qeBKHm/H7u
-rpUPOYU6GaJyxfjUUE+t+dFJYKrUf3VTxMCbViEAZBu5HgG9LiveADvSLyNPxJec
-tMkTMv2Tplq9GxiFDNB+nZGlr7DwMpoWc/5qZg+v0TshwdtLony7cdtD0Us+Gg9t
-oe7/84v/+s4N7PLfgU6I
-=BwgV
------END PGP SIGNATURE-----
-
---n5G3y24fV3/VEqbx--
+diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
+index ba7f4c8f5c3e..8073625371f5 100644
+--- a/arch/arm/xen/enlighten.c
++++ b/arch/arm/xen/enlighten.c
+@@ -89,6 +89,17 @@ int xen_unmap_domain_gfn_range(struct vm_area_struct *vma,
+ }
+ EXPORT_SYMBOL_GPL(xen_unmap_domain_gfn_range);
+ 
++/* Not used by XENFEAT_auto_translated guests. */
++int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
++			       unsigned long addr,
++			       xen_pfn_t *mfn, int nr,
++			       int *err_ptr, pgprot_t prot,
++			       unsigned int domid, struct page **pages)
++{
++	return -ENOSYS;
++}
++EXPORT_SYMBOL_GPL(xen_remap_domain_mfn_array);
++
+ static void xen_read_wallclock(struct timespec64 *ts)
+ {
+ 	u32 version;
+diff --git a/arch/x86/xen/mmu.c b/arch/x86/xen/mmu.c
+index d33e7dbe3129..af2960cb7a3e 100644
+--- a/arch/x86/xen/mmu.c
++++ b/arch/x86/xen/mmu.c
+@@ -65,37 +65,44 @@ static void xen_flush_tlb_all(void)
+ #define REMAP_BATCH_SIZE 16
+ 
+ struct remap_data {
+-	xen_pfn_t *mfn;
++	xen_pfn_t *pfn;
+ 	bool contiguous;
++	bool no_translate;
+ 	pgprot_t prot;
+ 	struct mmu_update *mmu_update;
+ };
+ 
+-static int remap_area_mfn_pte_fn(pte_t *ptep, pgtable_t token,
++static int remap_area_pfn_pte_fn(pte_t *ptep, pgtable_t token,
+ 				 unsigned long addr, void *data)
+ {
+ 	struct remap_data *rmd = data;
+-	pte_t pte = pte_mkspecial(mfn_pte(*rmd->mfn, rmd->prot));
++	pte_t pte = pte_mkspecial(mfn_pte(*rmd->pfn, rmd->prot));
+ 
+-	/* If we have a contiguous range, just update the mfn itself,
+-	   else update pointer to be "next mfn". */
++	/*
++	 * If we have a contiguous range, just update the pfn itself,
++	 * else update pointer to be "next pfn".
++	 */
+ 	if (rmd->contiguous)
+-		(*rmd->mfn)++;
++		(*rmd->pfn)++;
+ 	else
+-		rmd->mfn++;
++		rmd->pfn++;
+ 
+-	rmd->mmu_update->ptr = virt_to_machine(ptep).maddr | MMU_NORMAL_PT_UPDATE;
++	rmd->mmu_update->ptr = virt_to_machine(ptep).maddr;
++	rmd->mmu_update->ptr |= rmd->no_translate ?
++		MMU_PT_UPDATE_NO_TRANSLATE :
++		MMU_NORMAL_PT_UPDATE;
+ 	rmd->mmu_update->val = pte_val_ma(pte);
+ 	rmd->mmu_update++;
+ 
+ 	return 0;
+ }
+ 
+-static int do_remap_gfn(struct vm_area_struct *vma,
++static int do_remap_pfn(struct vm_area_struct *vma,
+ 			unsigned long addr,
+-			xen_pfn_t *gfn, int nr,
++			xen_pfn_t *pfn, int nr,
+ 			int *err_ptr, pgprot_t prot,
+-			unsigned domid,
++			unsigned int domid,
++			bool no_translate,
+ 			struct page **pages)
+ {
+ 	int err = 0;
+@@ -106,11 +113,14 @@ static int do_remap_gfn(struct vm_area_struct *vma,
+ 
+ 	BUG_ON(!((vma->vm_flags & (VM_PFNMAP | VM_IO)) == (VM_PFNMAP | VM_IO)));
+ 
+-	rmd.mfn = gfn;
++	rmd.pfn = pfn;
+ 	rmd.prot = prot;
+-	/* We use the err_ptr to indicate if there we are doing a contiguous
+-	 * mapping or a discontigious mapping. */
++	/*
++	 * We use the err_ptr to indicate if there we are doing a contiguous
++	 * mapping or a discontigious mapping.
++	 */
+ 	rmd.contiguous = !err_ptr;
++	rmd.no_translate = no_translate;
+ 
+ 	while (nr) {
+ 		int index = 0;
+@@ -121,7 +131,7 @@ static int do_remap_gfn(struct vm_area_struct *vma,
+ 
+ 		rmd.mmu_update = mmu_update;
+ 		err = apply_to_page_range(vma->vm_mm, addr, range,
+-					  remap_area_mfn_pte_fn, &rmd);
++					  remap_area_pfn_pte_fn, &rmd);
+ 		if (err)
+ 			goto out;
+ 
+@@ -175,7 +185,8 @@ int xen_remap_domain_gfn_range(struct vm_area_struct *vma,
+ 	if (xen_feature(XENFEAT_auto_translated_physmap))
+ 		return -EOPNOTSUPP;
+ 
+-	return do_remap_gfn(vma, addr, &gfn, nr, NULL, prot, domid, pages);
++	return do_remap_pfn(vma, addr, &gfn, nr, NULL, prot, domid, false,
++			    pages);
+ }
+ EXPORT_SYMBOL_GPL(xen_remap_domain_gfn_range);
+ 
+@@ -194,10 +205,25 @@ int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
+ 	 * cause of "wrong memory was mapped in".
+ 	 */
+ 	BUG_ON(err_ptr == NULL);
+-	return do_remap_gfn(vma, addr, gfn, nr, err_ptr, prot, domid, pages);
++	return do_remap_pfn(vma, addr, gfn, nr, err_ptr, prot, domid,
++			    false, pages);
+ }
+ EXPORT_SYMBOL_GPL(xen_remap_domain_gfn_array);
+ 
++int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
++			       unsigned long addr,
++			       xen_pfn_t *mfn, int nr,
++			       int *err_ptr, pgprot_t prot,
++			       unsigned int domid, struct page **pages)
++{
++	if (xen_feature(XENFEAT_auto_translated_physmap))
++		return -EOPNOTSUPP;
++
++	return do_remap_pfn(vma, addr, mfn, nr, err_ptr, prot, domid,
++			    true, pages);
++}
++EXPORT_SYMBOL_GPL(xen_remap_domain_mfn_array);
++
+ /* Returns: 0 success */
+ int xen_unmap_domain_gfn_range(struct vm_area_struct *vma,
+ 			       int nr, struct page **pages)
+diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
+index 1c909183c42a..455d40cb00c3 100644
+--- a/drivers/xen/privcmd.c
++++ b/drivers/xen/privcmd.c
+@@ -33,6 +33,7 @@
+ #include <xen/xen.h>
+ #include <xen/privcmd.h>
+ #include <xen/interface/xen.h>
++#include <xen/interface/memory.h>
+ #include <xen/interface/hvm/dm_op.h>
+ #include <xen/features.h>
+ #include <xen/page.h>
+@@ -722,6 +723,129 @@ static long privcmd_ioctl_restrict(struct file *file, void __user *udata)
+ 	return 0;
+ }
+ 
++struct remap_pfn {
++	struct mm_struct *mm;
++	struct page **pages;
++	pgprot_t prot;
++	unsigned long i;
++};
++
++static int remap_pfn_fn(pte_t *ptep, pgtable_t token, unsigned long addr,
++			void *data)
++{
++	struct remap_pfn *r = data;
++	struct page *page = r->pages[r->i];
++	pte_t pte = pte_mkspecial(pfn_pte(page_to_pfn(page), r->prot));
++
++	set_pte_at(r->mm, addr, ptep, pte);
++	r->i++;
++
++	return 0;
++}
++
++static long privcmd_ioctl_mmap_resource(struct file *file, void __user *udata)
++{
++	struct privcmd_data *data = file->private_data;
++	struct mm_struct *mm = current->mm;
++	struct vm_area_struct *vma;
++	struct privcmd_mmap_resource kdata;
++	xen_pfn_t *pfns = NULL;
++	struct xen_mem_acquire_resource xdata;
++	int rc;
++
++	if (copy_from_user(&kdata, udata, sizeof(kdata)))
++		return -EFAULT;
++
++	/* If restriction is in place, check the domid matches */
++	if (data->domid != DOMID_INVALID && data->domid != kdata.dom)
++		return -EPERM;
++
++	down_write(&mm->mmap_sem);
++
++	vma = find_vma(mm, kdata.addr);
++	if (!vma || vma->vm_ops != &privcmd_vm_ops) {
++		rc = -EINVAL;
++		goto out;
++	}
++
++	pfns = kcalloc(kdata.num, sizeof(*pfns), GFP_KERNEL);
++	if (!pfns) {
++		rc = -ENOMEM;
++		goto out;
++	}
++
++	if (xen_feature(XENFEAT_auto_translated_physmap)) {
++		struct page **pages;
++		unsigned int i;
++
++		rc = alloc_empty_pages(vma, kdata.num);
++		if (rc < 0)
++			goto out;
++
++		pages = vma->vm_private_data;
++		for (i = 0; i < kdata.num; i++)
++			pfns[i] = page_to_pfn(pages[i]);
++	} else
++		vma->vm_private_data = PRIV_VMA_LOCKED;
++
++	memset(&xdata, 0, sizeof(xdata));
++	xdata.domid = kdata.dom;
++	xdata.type = kdata.type;
++	xdata.id = kdata.id;
++	xdata.frame = kdata.idx;
++	xdata.nr_frames = kdata.num;
++	set_xen_guest_handle(xdata.frame_list, pfns);
++
++	xen_preemptible_hcall_begin();
++	rc = HYPERVISOR_memory_op(XENMEM_acquire_resource, &xdata);
++	xen_preemptible_hcall_end();
++
++	if (rc)
++		goto out;
++
++	if (xen_feature(XENFEAT_auto_translated_physmap)) {
++		struct remap_pfn r = {
++			.mm = vma->vm_mm,
++			.pages = vma->vm_private_data,
++			.prot = vma->vm_page_prot,
++		};
++
++		rc = apply_to_page_range(r.mm, kdata.addr,
++					 kdata.num << PAGE_SHIFT,
++					 remap_pfn_fn, &r);
++	} else {
++		unsigned int domid =
++			(xdata.flags & XENMEM_rsrc_acq_caller_owned) ?
++			DOMID_SELF : kdata.dom;
++		int num;
++
++		num = xen_remap_domain_mfn_array(vma,
++						 kdata.addr & PAGE_MASK,
++						 pfns, kdata.num, (int *)pfns,
++						 vma->vm_page_prot,
++						 domid,
++						 vma->vm_private_data);
++		if (num < 0)
++			rc = num;
++		else if (num != kdata.num) {
++			unsigned int i;
++
++			for (i = 0; i < num; i++) {
++				rc = pfns[i];
++				if (rc < 0)
++					break;
++			}
++		} else
++			rc = 0;
++	}
++
++out:
++	up_write(&mm->mmap_sem);
++	kfree(pfns);
++
++	return rc;
++}
++
+ static long privcmd_ioctl(struct file *file,
+ 			  unsigned int cmd, unsigned long data)
+ {
+@@ -753,6 +877,10 @@ static long privcmd_ioctl(struct file *file,
+ 		ret = privcmd_ioctl_restrict(file, udata);
+ 		break;
+ 
++	case IOCTL_PRIVCMD_MMAP_RESOURCE:
++		ret = privcmd_ioctl_mmap_resource(file, udata);
++		break;
++
+ 	default:
+ 		break;
+ 	}
+diff --git a/include/uapi/xen/privcmd.h b/include/uapi/xen/privcmd.h
+index 39d3e7b8e993..d2029556083e 100644
+--- a/include/uapi/xen/privcmd.h
++++ b/include/uapi/xen/privcmd.h
+@@ -89,6 +89,15 @@ struct privcmd_dm_op {
+ 	const struct privcmd_dm_op_buf __user *ubufs;
+ };
+ 
++struct privcmd_mmap_resource {
++	domid_t dom;
++	__u32 type;
++	__u32 id;
++	__u32 idx;
++	__u64 num;
++	__u64 addr;
++};
++
+ /*
+  * @cmd: IOCTL_PRIVCMD_HYPERCALL
+  * @arg: &privcmd_hypercall_t
+@@ -114,5 +123,7 @@ struct privcmd_dm_op {
+ 	_IOC(_IOC_NONE, 'P', 5, sizeof(struct privcmd_dm_op))
+ #define IOCTL_PRIVCMD_RESTRICT					\
+ 	_IOC(_IOC_NONE, 'P', 6, sizeof(domid_t))
++#define IOCTL_PRIVCMD_MMAP_RESOURCE				\
++	_IOC(_IOC_NONE, 'P', 7, sizeof(struct privcmd_mmap_resource))
+ 
+ #endif /* __LINUX_PUBLIC_PRIVCMD_H__ */
+diff --git a/include/xen/interface/memory.h b/include/xen/interface/memory.h
+index 583dd93b3016..4c5751c26f87 100644
+--- a/include/xen/interface/memory.h
++++ b/include/xen/interface/memory.h
+@@ -265,4 +265,70 @@ struct xen_remove_from_physmap {
+ };
+ DEFINE_GUEST_HANDLE_STRUCT(xen_remove_from_physmap);
+ 
++/*
++ * Get the pages for a particular guest resource, so that they can be
++ * mapped directly by a tools domain.
++ */
++#define XENMEM_acquire_resource 28
++struct xen_mem_acquire_resource {
++    /* IN - The domain whose resource is to be mapped */
++    domid_t domid;
++    /* IN - the type of resource */
++    uint16_t type;
++
++#define XENMEM_resource_ioreq_server 0
++#define XENMEM_resource_grant_table 1
++
++    /*
++     * IN - a type-specific resource identifier, which must be zero
++     *      unless stated otherwise.
++     *
++     * type == XENMEM_resource_ioreq_server -> id == ioreq server id
++     * type == XENMEM_resource_grant_table -> id defined below
++     */
++    uint32_t id;
++
++#define XENMEM_resource_grant_table_id_shared 0
++#define XENMEM_resource_grant_table_id_status 1
++
++    /* IN/OUT - As an IN parameter number of frames of the resource
++     *          to be mapped. However, if the specified value is 0 and
++     *          frame_list is NULL then this field will be set to the
++     *          maximum value supported by the implementation on return.
++     */
++    uint32_t nr_frames;
++    /*
++     * OUT - Must be zero on entry. On return this may contain a bitwise
++     *       OR of the following values.
++     */
++    uint32_t flags;
++
++    /* The resource pages have been assigned to the calling domain */
++#define _XENMEM_rsrc_acq_caller_owned 0
++#define XENMEM_rsrc_acq_caller_owned (1u << _XENMEM_rsrc_acq_caller_owned)
++
++    /*
++     * IN - the index of the initial frame to be mapped. This parameter
++     *      is ignored if nr_frames is 0.
++     */
++    uint64_t frame;
++
++#define XENMEM_resource_ioreq_server_frame_bufioreq 0
++#define XENMEM_resource_ioreq_server_frame_ioreq(n) (1 + (n))
++
++    /*
++     * IN/OUT - If the tools domain is PV then, upon return, frame_list
++     *          will be populated with the MFNs of the resource.
++     *          If the tools domain is HVM then it is expected that, on
++     *          entry, frame_list will be populated with a list of GFNs
++     *          that will be mapped to the MFNs of the resource.
++     *          If -EIO is returned then the frame_list has only been
++     *          partially mapped and it is up to the caller to unmap all
++     *          the GFNs.
++     *          This parameter may be NULL if nr_frames is 0.
++     */
++    GUEST_HANDLE(xen_pfn_t) frame_list;
++};
++DEFINE_GUEST_HANDLE_STRUCT(xen_mem_acquire_resource);
++
+ #endif /* __XEN_PUBLIC_MEMORY_H__ */
+diff --git a/include/xen/interface/xen.h b/include/xen/interface/xen.h
+index 4f4830ef8f93..8bfb242f433e 100644
+--- a/include/xen/interface/xen.h
++++ b/include/xen/interface/xen.h
+@@ -265,9 +265,10 @@
+  *
+  * PAT (bit 7 on) --> PWT (bit 3 on) and clear bit 7.
+  */
+-#define MMU_NORMAL_PT_UPDATE      0 /* checked '*ptr = val'. ptr is MA.       */
+-#define MMU_MACHPHYS_UPDATE       1 /* ptr = MA of frame to modify entry for  */
+-#define MMU_PT_UPDATE_PRESERVE_AD 2 /* atomically: *ptr = val | (*ptr&(A|D)) */
++#define MMU_NORMAL_PT_UPDATE       0 /* checked '*ptr = val'. ptr is MA.      */
++#define MMU_MACHPHYS_UPDATE        1 /* ptr = MA of frame to modify entry for */
++#define MMU_PT_UPDATE_PRESERVE_AD  2 /* atomically: *ptr = val | (*ptr&(A|D)) */
++#define MMU_PT_UPDATE_NO_TRANSLATE 3 /* checked '*ptr = val'. ptr is MA.      */
+ 
+ /*
+  * MMU EXTENDED OPERATIONS
+diff --git a/include/xen/xen-ops.h b/include/xen/xen-ops.h
+index fd23e42c6024..fd18c974a619 100644
+--- a/include/xen/xen-ops.h
++++ b/include/xen/xen-ops.h
+@@ -63,7 +63,7 @@ static inline void xen_destroy_contiguous_region(phys_addr_t pstart,
+ struct vm_area_struct;
+ 
+ /*
+- * xen_remap_domain_gfn_array() - map an array of foreign frames
++ * xen_remap_domain_gfn_array() - map an array of foreign frames by gfn
+  * @vma:     VMA to map the pages into
+  * @addr:    Address at which to map the pages
+  * @gfn:     Array of GFNs to map
+@@ -86,6 +86,28 @@ int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
+ 			       unsigned domid,
+ 			       struct page **pages);
+ 
++/*
++ * xen_remap_domain_mfn_array() - map an array of foreign frames by mfn
++ * @vma:     VMA to map the pages into
++ * @addr:    Address at which to map the pages
++ * @mfn:     Array of MFNs to map
++ * @nr:      Number entries in the MFN array
++ * @err_ptr: Returns per-MFN error status.
++ * @prot:    page protection mask
++ * @domid:   Domain owning the pages
++ * @pages:   Array of pages if this domain has an auto-translated physmap
++ *
++ * @mfn and @err_ptr may point to the same buffer, the MFNs will be
++ * overwritten by the error codes after they are mapped.
++ *
++ * Returns the number of successfully mapped frames, or a -ve error
++ * code.
++ */
++int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
++			       unsigned long addr, xen_pfn_t *mfn, int nr,
++			       int *err_ptr, pgprot_t prot,
++			       unsigned int domid, struct page **pages);
++
+ /* xen_remap_domain_gfn_range() - map a range of foreign frames
+  * @vma:     VMA to map the pages into
+  * @addr:    Address at which to map the pages
+-- 
+2.11.0
