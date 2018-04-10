@@ -1,66 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753235AbeDJMiv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:38:51 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34827 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753198AbeDJMis (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:38:48 -0400
-X-Google-Smtp-Source: AIpwx4+2I3UT43Gn/69o8SmQlA0naAefoCv/AsJi1LHn/aVAlkssoV5uOJW9baPlmBGgvCV6SEFS2A==
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: Kai.Makisara@kolumbus.fi, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 2/2] scsi: st: Replace GFP_ATOMIC with GFP_KERNEL in new_tape_buffer
-Date: Tue, 10 Apr 2018 20:38:42 +0800
-Message-Id: <1523363922-31330-1-git-send-email-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        id S1753273AbeDJMjB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:39:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43544 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752927AbeDJMi7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 08:38:59 -0400
+Date: Tue, 10 Apr 2018 14:38:57 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Minchan Kim <minchan@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Christopher Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        Chris Fries <cfries@google.com>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Message-ID: <20180410123857.GJ21835@dhcp22.suse.cz>
+References: <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
+ <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
+ <20180409144958.GA211679@rodete-laptop-imager.corp.google.com>
+ <20180409152032.GB11756@bombadil.infradead.org>
+ <20180409230409.GA214542@rodete-desktop-imager.corp.google.com>
+ <20180410011211.GA31282@bombadil.infradead.org>
+ <20180410023339.GB214542@rodete-desktop-imager.corp.google.com>
+ <20180410024152.GC31282@bombadil.infradead.org>
+ <20180410025903.GA38000@rodete-desktop-imager.corp.google.com>
+ <20180410115651.GA22118@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180410115651.GA22118@bombadil.infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-new_tape_buffer() is never called in atomic context.
+On Tue 10-04-18 04:56:51, Matthew Wilcox wrote:
+> On Tue, Apr 10, 2018 at 11:59:03AM +0900, Minchan Kim wrote:
+> > Okay, I hope this version clear current concerns.
+> 
+> It doesn't.  The right place to warn about GFP_ZERO used with a
+> constructor is _slab_, like the patch I already sent.  We have no idea
+> what other places might have the same bug, and slab is the only place
+> to catch that.
 
-new_tape_buffer() is only called by st_probe(),
-which is only set as ".probe" in struct scsi_driver.
-
-Despite never getting called from atomic context,
-new_tape_buffer() calls kzalloc() with GFP_ATOMIC,
-which does not sleep for allocation.
-GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
-which can sleep and improve the possibility of sucessful allocation.
-
-This is found by a static analysis tool named DCNS written by myself.
-And I also manually check it.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/scsi/st.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
-index 94e402e..b987f6d 100644
---- a/drivers/scsi/st.c
-+++ b/drivers/scsi/st.c
-@@ -3878,7 +3878,7 @@ static struct st_buffer *new_tape_buffer(int need_dma, int max_sg)
- {
- 	struct st_buffer *tb;
- 
--	tb = kzalloc(sizeof(struct st_buffer), GFP_ATOMIC);
-+	tb = kzalloc(sizeof(struct st_buffer), GFP_KERNEL);
- 	if (!tb) {
- 		printk(KERN_NOTICE "st: Can't allocate new tape buffer.\n");
- 		return NULL;
-@@ -3889,7 +3889,7 @@ static struct st_buffer *new_tape_buffer(int need_dma, int max_sg)
- 	tb->buffer_size = 0;
- 
- 	tb->reserved_pages = kzalloc(max_sg * sizeof(struct page *),
--				     GFP_ATOMIC);
-+				     GFP_KERNEL);
- 	if (!tb->reserved_pages) {
- 		kfree(tb);
- 		return NULL;
+I agree with that. Radix tree shouldn't be really that special. I would
+rather get rid of the ctor subtle thingy but if we absolutely have to
+keep it then the GFP_RECLAIM_MASK filtering and a warning in slab for
+__GFP_ZERO looks like a reasonable step forward.
 -- 
-1.9.1
+Michal Hocko
+SUSE Labs
