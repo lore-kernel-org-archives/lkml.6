@@ -1,45 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752635AbeDJHjS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 03:39:18 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6735 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751963AbeDJHjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 03:39:15 -0400
-Subject: Re: [PATCH] f2fs: set deadline to drop expired inmem pages
-To: <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20180408081312.6190-1-yuchao0@huawei.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <09fd3144-d1c5-ca02-178d-b467d6fbe0e1@huawei.com>
-Date: Tue, 10 Apr 2018 15:38:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1752226AbeDJHmi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 03:42:38 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:52708 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751778AbeDJHmg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 03:42:36 -0400
+Date: Tue, 10 Apr 2018 09:42:29 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Nicholas Piggin <npiggin@gmail.com>
+cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>, linuxppc-dev@lists.ozlabs.org,
+        kvm-ppc@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: Occasionally losing the tick_sched_timer
+In-Reply-To: <20180410121618.4fffffcc@roar.ozlabs.ibm.com>
+Message-ID: <alpine.DEB.2.21.1804100923430.2058@nanos.tec.linutronix.de>
+References: <20180410121618.4fffffcc@roar.ozlabs.ibm.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180408081312.6190-1-yuchao0@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jaegeuk,
+Nick,
 
-On 2018/4/8 16:13, Chao Yu wrote:
-> f2fs doesn't allow abuse on atomic write class interface, so except
-> limiting in-mem pages' total memory usage capacity, we need to limit
-> start-commit time as well, otherwise we may run into infinite loop
-> during foreground GC because target blocks in victim segment are
-> belong to atomic opened file for long time.
+On Tue, 10 Apr 2018, Nicholas Piggin wrote:
+> We are seeing rare hard lockup watchdog timeouts, a CPU seems to have no
+> more timers scheduled, despite hard and soft lockup watchdogs should have
+> their heart beat timers and probably many others.
+>
+> The reproducer we have is running a KVM workload. The lockup is in the
+> host kernel, quite rare but we may be able to slowly test things.
 > 
-> Now, we will check the condition with f2fs_balance_fs_bg in
-> background threads, once if user doesn't commit data exceeding 30
-> seconds, we will drop all cached data, so I expect it can keep our
-> system running safely to prevent Dos attack.
+> I have a sysrq+q snippet. CPU3 is the stuck one, you can see its tick has
+> stopped for a long time and no hrtimer active. Included CPU4 for what the
+> other CPUs look like.
+> 
+> Thomas do you have any ideas on what we might look for, or if we can add
+> some BUG_ON()s to catch this at its source?
 
-Is it worth to add this patch to avoid abuse on atomic write interface by user?
+Not really. Tracing might be a more efficient tool that random BUG_ONs.
+
+> - CPU3 is sitting in its cpuidle loop (polling idle with all other idle
+>   states disabled).
+> 
+> - `taskset -c 3 ls` basically revived the CPU and got timers running again.
+
+Which is not surprising because that kicks the CPU out of idle and starts
+the tick timer again.
+
+Does this restart the watchdog timers as well?
+
+> cpu: 3
+>  clock 0:
+>   .base:       00000000df30f5ab
+>   .index:      0
+>   .resolution: 1 nsecs
+>   .get_time:   ktime_get
+>   .offset:     0 nsecs
+> active timers:
+
+So in theory the soft lockup watchdog hrtimer should be queued here.
+
+>   .expires_next   : 9223372036854775807 nsecs
+>   .hres_active    : 1
+>   .nr_events      : 1446533
+>   .nr_retries     : 1434
+>   .nr_hangs       : 0
+>   .max_hang_time  : 0
+>   .nohz_mode      : 2
+>   .last_tick      : 17763120000000 nsecs
+>   .tick_stopped   : 1
+>   .idle_jiffies   : 4296713609
+>   .idle_calls     : 2573133
+>   .idle_sleeps    : 1957794
+
+>   .idle_waketime  : 59550238131639 nsecs
+>   .idle_sleeptime : 17504617295679 nsecs
+>   .iowait_sleeptime: 719978688 nsecs
+>   .last_jiffies   : 4296713608
+
+So this was the last time when the CPU came out of idle:
+
+>   .idle_exittime  : 17763110009176 nsecs
+
+Here it went back into idle:
+
+>   .idle_entrytime : 17763129999625 nsecs
+
+And this was the next timer wheel timer due for expiry:
+
+>   .next_timer     : 17763130000000
+>   .idle_expires   : 17763130000000 nsecs
+
+which makes no sense whatsoever, but this might be stale information. Can't
+tell.
+
+> cpu: 4
+>  clock 0:
+>   .base:       0000000007d8226b
+>   .index:      0
+>   .resolution: 1 nsecs
+>   .get_time:   ktime_get
+>   .offset:     0 nsecs
+> active timers: #0: <00000000a73e543a>, tick_sched_timer, S:01
+>  	 	 # expires at 59552950000000-59552950000000 nsecs [in 2685654802 to 2685654802 nsecs]
+
+The tick timer is scheduled because the next timer wheel timer is due at
+59552950000000, which might be the hard watchdog timer
+
+>  		 #1: <000000009b4a3b88>, hrtimer_wakeup, S:01
+>		 # expires at 59602585423025-59602642458243 nsecs [in 52321077827 to 52378113045 nsecs]
+
+That might be the soft lockup hrtimer.
+
+I'd try to gather more information about the chain of events via tracing
+and stop the tracer once the lockup detector hits.
+
 Thanks,
+
+	tglx
