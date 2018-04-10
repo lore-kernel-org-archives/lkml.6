@@ -1,62 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752289AbeDJGsJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 02:48:09 -0400
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:36870 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752078AbeDJGsI (ORCPT
+        id S1752241AbeDJGxx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 02:53:53 -0400
+Received: from mail-vk0-f42.google.com ([209.85.213.42]:40166 "EHLO
+        mail-vk0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751815AbeDJGxu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 02:48:08 -0400
-X-Google-Smtp-Source: AIpwx48YgW3l/R8tJG3VQlQjqiimC8ua4knJhXeLqTIBRzjgDvEnX+Qievhpb0PRLxVyYQtF6CT2lQ==
-Reply-To: christian.koenig@amd.com
-Subject: Re: AMD graphics performance regression in 4.15 and later
-To: Jean-Marc Valin <jmvalin@mozilla.com>, christian.koenig@amd.com,
-        airlied@linux.ie, alexander.deucher@amd.com, Felix.Kuehling@amd.com,
-        labbott@redhat.com, akpm@linux-foundation.org, michel.daenzer@amd.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <c743b220-0395-eef3-4405-a21cdbe8eee1@mozilla.com>
- <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com>
- <a96df0b8-fc22-4438-646d-2f0096dfcc84@mozilla.com>
- <6cebabff-908f-5ebe-4252-760773c4cd6f@amd.com>
- <312ed341-7052-a61e-331f-d1e8fd5b477e@mozilla.com>
- <d136f940-d807-d2f7-30a7-8617f130912d@amd.com>
- <77866d66-2728-8295-d7ee-9975dbf64b99@mozilla.com>
- <55e1712b-6567-50c5-3789-53dd1ccddb94@gmail.com>
- <76a30815-28e3-e798-03de-a3cdfade4c64@mozilla.com>
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <cb69fe04-988d-b337-057d-589cb0622e84@gmail.com>
-Date: Tue, 10 Apr 2018 08:48:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 10 Apr 2018 02:53:50 -0400
+X-Google-Smtp-Source: AIpwx4+5wgDwAZCEeY9K/J9ugPTYJ9w+2Vyl8wygY0EPq83DbtrXz1a8CfSP6SynpWXGKXqFPyhCRH8g9W79PSmDwJ0=
 MIME-Version: 1.0
-In-Reply-To: <76a30815-28e3-e798-03de-a3cdfade4c64@mozilla.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <3d7b5a707e216e19eb3defe0586bfbc8@natalenko.name>
+References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5jL8oLV2xvjBVYv_SNXr74LdgpXEmU7K+cLYpD7jh2chgw@mail.gmail.com>
+ <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com>
+ <2679696.GDoj5zcZOu@natalenko.name> <CAGXu5jLG9ia+zBNcPt+q+BpJayoUuYwXitOgeHmh=7sPp-s87A@mail.gmail.com>
+ <51a7e805058ef7f35b226cbbf0ccc4ff@natalenko.name> <CAGXu5jKRrdYjuyLSvc4k4mqttkM7zw-96poQ1GYqRRgPqZFOYQ@mail.gmail.com>
+ <3d7b5a707e216e19eb3defe0586bfbc8@natalenko.name>
+From: Kees Cook <keescook@chromium.org>
+Date: Mon, 9 Apr 2018 23:53:49 -0700
+X-Google-Sender-Auth: 2p0hA3PZUD1d9l6mmwSlNZzCxjw
+Message-ID: <CAGXu5j+9BJcR63bsqQpqaKrvcgOpWyDzgpD-zRrf1qq7v=Z2CA@mail.gmail.com>
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+To: Oleksandr Natalenko <oleksandr@natalenko.name>
+Cc: David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 09.04.2018 um 17:17 schrieb Jean-Marc Valin:
-> On 04/09/2018 05:42 AM, Christian König wrote:
->> Backporting all the detection logic is to invasive, but you could just
->> go into drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c and forcefull use the
->> other code path.
->>
->> Just look out for "#ifdef CONFIG_SWIOTLB" checks and disable those.
-> Do you mean just taking the 4.15 code as is and replacing
-> "#ifdef CONFIG_SWIOTLB" with "#if 0" in
-> drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c or are you talking about using a
-> different version of drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c ?
+On Mon, Apr 9, 2018 at 11:35 PM, Oleksandr Natalenko
+<oleksandr@natalenko.name> wrote:
+> Did your system hang on smartctl hammering too? Have you got some stack
+> traces to compare with mine ones?
 
-Yes, exactly. The code then won't work any more on some ARMs or systems 
-with more than 1TB of memory, but I don't think you care about that :)
+Unfortunately I only had a single hang with no dumps. I haven't been
+able to reproduce it since. :(
 
-Christian.
+-Kees
 
->
-> 	Jean-Marc
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+-- 
+Kees Cook
+Pixel Security
