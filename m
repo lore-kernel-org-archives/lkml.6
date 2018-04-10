@@ -1,111 +1,154 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1523418145; cv=none;
-        d=google.com; s=arc-20160816;
-        b=FHp1iAUGMwBYrk6sZJulr50isQ8HgS1Vn61Kh5kzhtKs0y9FQnnubtBSeN3F5HPgyx
-         Ck5I00S8ANWpTu2j0pGXeSlpbHJwiskHyNAh98whHBE+1PWFUz8DfJGuy2fcAWbP95Nc
-         muRPp8rQMfeh/GiwlrnZ78USf4QxdDTp9S5EXF/LhzEZu2mecUnh0LO4OlGtiG9d957i
-         DxEFHttekA0OR2aAcbo5v3uRb73u9HolmvH/sYh0zGr42Jv8jFfVGKiP8eeiZc7EgpaV
-         UrVs9f9SzLX1a+gmf+EZ1GWMLcc1rbhdZsFkfEIi4HuNJzZyBhaWdwOkroV9oP+ro0wt
-         cf9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=rrw6QYxN+buKfDf/hFZ7VfzKWtoIbYvGmFszo2RBB8Q=;
-        b=DKTb+oIlZ5qHygPlGQn5sR9iPxt4MKaXGcqw0wRgUicq5ilORvgiPgCEGGtXcsMfA8
-         EMuZb7TUdOrPOqZ3Wh7XLinDwMNgOYMwYJZJFnm0jPBoZaAzi1y1bT0ToDHGyRK8tzT8
-         Hb0R3Ys4Vim99o4hHxt8rv7UXFrCF3CjF31hoy60lS5A/DmB6U23zyWedIrCc+zgDGrx
-         QGUPRjErqd0Va1NZ0PzFmHhbMLco/NAOl9zjSoj5zV/tMh4iS+6AMBM/rFb9NVbT/BM7
-         2x0U1wmhbO6ENBEVKd/DajLTB0/5jPGXso0nqFf2PVx5cV+ICu9f/UTccrrfn3UAGkCR
-         S7rw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AIpwx4+KaRLY1Yd7CSGCydIi/SftQlRnPm9LzIJjU1cBz/1yKbgZCkdUOlnN63k9Wh2Nu9OrbjcYGw==
-Message-ID: <5acd8420.9d4a1c0a.46373.4317@mx.google.com>
-Date: Tue, 10 Apr 2018 20:42:24 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.14.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.14.33-139-gb8a8fc70e6b2
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-807177-1523400291-3-17297602250543696559
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523400290; b=wP2A22FPRxU2XiDSZz8Jff5XXSQuPJxggctM3M8UtuvczyUi+X
+    PyJQ45+zmZ/ZHGID8lWYhDt14BK+CPHgcEWIpUUYFkKACxiKNZ7bi15T2DZd7FTg
+    qy+QtgUpHmo1mMaIGQ2fmlYOeUI5JivytgHsUcDL9aNIeOM+OUqr1IIFeO8rQnGm
+    Hk1A0UGoTBxhhlk3rRn7PYwSi6JB2f/yLSI4DUyrRkd7rQ59q0GAjDw4IaRrIcvW
+    e+2+EP3prpaOHeBo9f6seFaIHTLMpztPFftbIDUiHm07d0NVt0/JsetTAmfbUzS1
+    hgiWWSdb1J4B4tYXq+ZM0SqnGeuFLaOIa8vw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523400290; bh=DtaLSEhJn8UQT+IuEyVWlR5Se7Eku7
+    rThDm+OYF3NwE=; b=JtgQlP8JzPSugF9i8AO8nao2uaGB2K65+YjBoI9vjcG0VS
+    GhVgXZYIvJbrUVV0zxBT4fnh3304fDKsxKS9gJmQCR/jXP3s6kAWpONUoxP++CZ6
+    EjG/oUEu5xisycO2RGXjCRw7rhK4j7aNES0o0rEy0LXIf83IYisCy83lqqN2Ace0
+    y2FgRDRY6V73K8UnDo/481hwFnYQXp09qIf4oz7TvVKe+NP01A4kuwNOuU9CCT43
+    urlrXUfyz72yPG8+zePB8qneAHoXmtpgirKgSQLKJbcs7c190ZSsxFTwHTkW3PuP
+    lSChKZiephcAI+81uwCSAcGg03ZuphORulE5TGVQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfEOq4izcmO9+AdHcZUX7UtQjH+pGZDT5r8WZZti4qbOIHt76rHS8s7Vl+QQzkJy6BMXcGB+3bxLmiV3Riw3Csa4wwnZBtDo6JEfid21SGLwX8KKk2B6i
+    luxJkyBLL8FtcWwaf0uSNOXfrKz6r80f5ARPQPSEXuTvGAtmF6lSHRE9rNdL+3O/hF6nBIslwxK53w/9+saHFfxYwVsQxrA1ASWT7rxs1f7uz3M04ZYHbQsL
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=LD2kUS3hAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=4SiPEF0nf0Au0LVNftYA:9
+    a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19 a=RMwhbzCppy37cwDk:21 a=n2JqHAWrMti0Flh7:21
+    a=QEXdDO2ut3YA:10 a=FTB9xuwByZgvWSGbqjUc:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932578AbeDJWjU (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 18:39:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45188 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932556AbeDJWjT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:39:19 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 125/138] nfp: use full 40 bits of the NSP buffer address
+Date: Wed, 11 Apr 2018 00:25:15 +0200
+Message-Id: <20180410212916.718222404@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 000/138] 4.14.34-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597400299930471454?=
-X-GMAIL-MSGID: =?utf-8?q?1597419704970798787?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.14.y boot: 82 boots: 5 failed, 74 passed with 3 untried/u=
-nknown (v4.14.33-139-gb8a8fc70e6b2)
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.14.y/kernel/v4.14.33-139-gb8a8fc70e6b2/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
-y/kernel/v4.14.33-139-gb8a8fc70e6b2/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.14.y
-Git Describe: v4.14.33-139-gb8a8fc70e6b2
-Git Commit: b8a8fc70e6b2de144668a066f87e4f94203c0caf
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 40 unique boards, 15 SoC families, 15 builds out of 185
+From: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
 
-Boot Regressions Detected:
 
-arm:
+[ Upstream commit 1489bbd10e16079ce30a53d3c22a431fd47af791 ]
 
-    multi_v5_defconfig:
-        at91sam9x25ek:
-            lab-free-electrons: new failure (last pass: v4.14.33-100-g0538e=
-3088854)
+The NSP default buffer is a piece of NFP memory where additional
+command data can be placed.  Its format has been copied from
+host buffer, but the PCIe selection bits do not make sense in
+this case.  If those get masked out from a NFP address - writes
+to random place in the chip memory may be issued and crash the
+device.
 
-    multi_v7_defconfig:
-        imx6ul-pico-hobbit_rootfs:nfs:
-            lab-pengutronix: new failure (last pass: v4.14.33-100-g0538e308=
-8854)
-        sama5d36ek:
-            lab-free-electrons: new failure (last pass: v4.14.33-100-g0538e=
-3088854)
+Even in the general NSP buffer case, it doesn't make sense to have the
+PCIe selection bits there anymore. These are unused at the moment, and
+when it becomes necessary, the PCIe selection bits should rather be
+moved to another register to utilise more bits for the buffer address.
 
-    mvebu_v7_defconfig:
-        armada-xp-linksys-mamba:
-            lab-free-electrons: new failure (last pass: v4.14.33-100-g0538e=
-3088854)
+This has never been an issue because the buffer used to be
+allocated in memory with less-than-38-bit-long address but that
+is about to change.
 
-    sunxi_defconfig:
-        sun8i-a83t-allwinner-h8homlet-v2:
-            lab-free-electrons: failing since 1 day (last pass: v4.14.32-68=
--g78c25922bb37 - first fail: v4.14.33-87-g3f2310a574a9)
-
-Boot Failures Detected:
-
-arm:
-
-    sunxi_defconfig
-        sun8i-a83t-allwinner-h8homlet-v2: 1 failed lab
-
-    multi_v7_defconfig
-        imx6ul-pico-hobbit_rootfs:nfs: 1 failed lab
-        sama5d36ek: 1 failed lab
-
-    multi_v5_defconfig
-        at91sam9x25ek: 1 failed lab
-
-    mvebu_v7_defconfig
-        armada-xp-linksys-mamba: 1 failed lab
-
+Fixes: 1a64821c6af7 ("nfp: add support for service processor access")
+Signed-off-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
+Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-For more info write to <info@kernelci.org>
+ drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+--- a/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c
++++ b/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c
+@@ -68,10 +68,11 @@
+ /* CPP address to retrieve the data from */
+ #define NSP_BUFFER		0x10
+ #define   NSP_BUFFER_CPP	GENMASK_ULL(63, 40)
+-#define   NSP_BUFFER_PCIE	GENMASK_ULL(39, 38)
+-#define   NSP_BUFFER_ADDRESS	GENMASK_ULL(37, 0)
++#define   NSP_BUFFER_ADDRESS	GENMASK_ULL(39, 0)
+ 
+ #define NSP_DFLT_BUFFER		0x18
++#define   NSP_DFLT_BUFFER_CPP	GENMASK_ULL(63, 40)
++#define   NSP_DFLT_BUFFER_ADDRESS	GENMASK_ULL(39, 0)
+ 
+ #define NSP_DFLT_BUFFER_CONFIG	0x20
+ #define   NSP_DFLT_BUFFER_SIZE_MB	GENMASK_ULL(7, 0)
+@@ -412,8 +413,8 @@ static int nfp_nsp_command_buf(struct nf
+ 	if (err < 0)
+ 		return err;
+ 
+-	cpp_id = FIELD_GET(NSP_BUFFER_CPP, reg) << 8;
+-	cpp_buf = FIELD_GET(NSP_BUFFER_ADDRESS, reg);
++	cpp_id = FIELD_GET(NSP_DFLT_BUFFER_CPP, reg) << 8;
++	cpp_buf = FIELD_GET(NSP_DFLT_BUFFER_ADDRESS, reg);
+ 
+ 	if (in_buf && in_size) {
+ 		err = nfp_cpp_write(cpp, cpp_id, cpp_buf, in_buf, in_size);
