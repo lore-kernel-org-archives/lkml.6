@@ -1,153 +1,277 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752279AbeDJP65 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 11:58:57 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40392 "EHLO
+        id S1752484AbeDJP7l (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 11:59:41 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40450 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751896AbeDJP6z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 11:58:55 -0400
-Subject: Re: [PATCH v2 2/2] mm: remove odd HAVE_PTE_SPECIAL
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-doc@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>,
-        mhocko@kernel.org, aneesh.kumar@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, mpe@ellerman.id.au,
-        benh@kernel.crashing.org, paulus@samba.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Vineet Gupta <vgupta@synopsys.com>, Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <albert@sifive.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        David Rientjes <rientjes@google.com>
-References: <1523373951-10981-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1523373951-10981-3-git-send-email-ldufour@linux.vnet.ibm.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <3f20ac8b-20b8-f052-bc44-dcc0316354ca@arm.com>
-Date: Tue, 10 Apr 2018 16:58:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1523373951-10981-3-git-send-email-ldufour@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1751490AbeDJP7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 11:59:39 -0400
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>
+Subject: [PATCH v2] cpufreq/schedutil: Cleanup, document and fix iowait boost
+Date: Tue, 10 Apr 2018 16:59:31 +0100
+Message-Id: <20180410155931.31973-1-patrick.bellasi@arm.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/04/18 16:25, Laurent Dufour wrote:
-> Remove the additional define HAVE_PTE_SPECIAL and rely directly on
-> CONFIG_ARCH_HAS_PTE_SPECIAL.
-> 
-> There is no functional change introduced by this patch
-> 
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> ---
->   mm/memory.c | 23 ++++++++++-------------
->   1 file changed, 10 insertions(+), 13 deletions(-)
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 96910c625daa..53b6344a90d2 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -817,19 +817,13 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
->    * PFNMAP mappings in order to support COWable mappings.
->    *
->    */
-> -#ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
-> -# define HAVE_PTE_SPECIAL 1
-> -#else
-> -# define HAVE_PTE_SPECIAL 0
-> -#endif
->   struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
->   			     pte_t pte, bool with_public_device)
->   {
->   	unsigned long pfn = pte_pfn(pte);
->   
-> -	if (HAVE_PTE_SPECIAL) {
-> -		if (likely(!pte_special(pte)))
-> -			goto check_pfn;
-> +#ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
+The iowait boosting code has been recently updated to add a progressive
+boosting behavior which allows to be less aggressive in boosting tasks
+doing only sporadic IO operations, thus being more energy efficient for
+example on mobile platforms.
 
-Nit: Couldn't you use IS_ENABLED(CONFIG_ARCH_HAS_PTE_SPECIAL) within the 
-existing code structure to avoid having to add these #ifdefs?
+The current code is now however a bit convoluted. Some functionalities
+(e.g. iowait boost reset) are replicated in different paths and their
+documentation is slightly misaligned.
 
-Robin.
+Moreover, from a functional stadpoint, the iowait boosting is also not
+always reset in systems where cpufreq policies are not shared, each CPU
+has his own policy. Indeed, when a CPU is idle for a long time we keep
+doubling the boosting instead of resetting it to the minimum frequency,
+as expected by the TICK_NSEC logic, whenever a task wakes up from IO.
 
-> +	if (unlikely(pte_special(pte))) {
->   		if (vma->vm_ops && vma->vm_ops->find_special_page)
->   			return vma->vm_ops->find_special_page(vma, addr);
->   		if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
-> @@ -862,7 +856,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
->   		return NULL;
->   	}
->   
-> -	/* !HAVE_PTE_SPECIAL case follows: */
-> +#else	/* CONFIG_ARCH_HAS_PTE_SPECIAL */
->   
->   	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
->   		if (vma->vm_flags & VM_MIXEDMAP) {
-> @@ -881,7 +875,8 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
->   
->   	if (is_zero_pfn(pfn))
->   		return NULL;
-> -check_pfn:
-> +#endif /* CONFIG_ARCH_HAS_PTE_SPECIAL */
-> +
->   	if (unlikely(pfn > highest_memmap_pfn)) {
->   		print_bad_pte(vma, addr, pte, NULL);
->   		return NULL;
-> @@ -891,7 +886,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
->   	 * NOTE! We still have PageReserved() pages in the page tables.
->   	 * eg. VDSO mappings can cause them to exist.
->   	 */
-> -out:
-> +out: __maybe_unused
->   	return pfn_to_page(pfn);
->   }
->   
-> @@ -904,7 +899,7 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
->   	/*
->   	 * There is no pmd_special() but there may be special pmds, e.g.
->   	 * in a direct-access (dax) mapping, so let's just replicate the
-> -	 * !HAVE_PTE_SPECIAL case from vm_normal_page() here.
-> +	 * !CONFIG_ARCH_HAS_PTE_SPECIAL case from vm_normal_page() here.
->   	 */
->   	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
->   		if (vma->vm_flags & VM_MIXEDMAP) {
-> @@ -1926,6 +1921,7 @@ static int __vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
->   
->   	track_pfn_insert(vma, &pgprot, pfn);
->   
-> +#ifndef CONFIG_ARCH_HAS_PTE_SPECIAL
->   	/*
->   	 * If we don't have pte special, then we have to use the pfn_valid()
->   	 * based VM_MIXEDMAP scheme (see vm_normal_page), and thus we *must*
-> @@ -1933,7 +1929,7 @@ static int __vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
->   	 * than insert_pfn).  If a zero_pfn were inserted into a VM_MIXEDMAP
->   	 * without pte special, it would there be refcounted as a normal page.
->   	 */
-> -	if (!HAVE_PTE_SPECIAL && !pfn_t_devmap(pfn) && pfn_t_valid(pfn)) {
-> +	if (!pfn_t_devmap(pfn) && pfn_t_valid(pfn)) {
->   		struct page *page;
->   
->   		/*
-> @@ -1944,6 +1940,7 @@ static int __vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
->   		page = pfn_to_page(pfn_t_to_pfn(pfn));
->   		return insert_page(vma, addr, page, pgprot);
->   	}
-> +#endif
->   	return insert_pfn(vma, addr, pfn, pgprot, mkwrite);
->   }
->   
-> 
+Let's cleanup the code by consolidating all the IO wait boosting related
+functionality inside the already existing functions and better define
+their role:
+
+- sugov_set_iowait_boost: is now in charge only to set/increase the IO
+     wait boost, every time a task wakes up from an IO wait.
+
+- sugov_iowait_boost: is now in charge to reset/reduce the IO wait
+     boost, every time a sugov update is triggered, as well as
+     to (eventually) enforce the currently required IO boost value.
+
+This is possible since these two functions are already used one after
+the other, both in single and shared frequency domains, following the
+same template:
+
+   /* Configure IO boost, if required */
+   sugov_set_iowait_boost()
+
+   /* Return here if freq change is in progress or throttled */
+
+   /* Collect and aggregate utilization information */
+   sugov_get_util()
+   sugov_aggregate_util()
+
+   /* Add IO boost if currently enabled */
+   sugov_iowait_boost()
+
+As a extra bonus, let's also add the documentation for these two
+functions and better align the in-code documentation.
+
+Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+Reported-by: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: Steve Muckle <smuckle@google.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+
+---
+Changes in v2:
+- Fix return in sugov_iowait_boost()'s reset code (Viresh)
+- Add iowait boost reset for sugov_update_single() (Viresh)
+- Title changed to reflact the fix from previous point
+
+Based on today's tip/sched/core:
+   b720342 sched/core: Update preempt_notifier_key to modern API
+---
+ kernel/sched/cpufreq_schedutil.c | 120 ++++++++++++++++++++++++++-------------
+ 1 file changed, 81 insertions(+), 39 deletions(-)
+
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 2b124811947d..2a2ae3a0e41f 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -51,7 +51,7 @@ struct sugov_cpu {
+ 	bool			iowait_boost_pending;
+ 	unsigned int		iowait_boost;
+ 	unsigned int		iowait_boost_max;
+-	u64 last_update;
++	u64			last_update;
+ 
+ 	/* The fields below are only needed when sharing a policy: */
+ 	unsigned long		util_cfs;
+@@ -201,43 +201,97 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+ 	return min(util, sg_cpu->max);
+ }
+ 
+-static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
++/**
++ * sugov_set_iowait_boost updates the IO boost at each wakeup from IO.
++ * @sg_cpu: the sugov data for the CPU to boost
++ * @time:   the update time from the caller
++ * @flags:  SCHED_CPUFREQ_IOWAIT if the task is waking up after an IO wait
++ *
++ * Each time a task wakes up after an IO operation, the CPU utilization can be
++ * boosted to a certain utilization which is doubled at each wakeup
++ * from IO, starting from the utilization of the minimum OPP to that of the
++ * maximum one.
++ */
++static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
++				   unsigned int flags)
+ {
+-	if (flags & SCHED_CPUFREQ_IOWAIT) {
+-		if (sg_cpu->iowait_boost_pending)
+-			return;
+-
+-		sg_cpu->iowait_boost_pending = true;
++	bool iowait = flags & SCHED_CPUFREQ_IOWAIT;
+ 
+-		if (sg_cpu->iowait_boost) {
+-			sg_cpu->iowait_boost <<= 1;
+-			if (sg_cpu->iowait_boost > sg_cpu->iowait_boost_max)
+-				sg_cpu->iowait_boost = sg_cpu->iowait_boost_max;
+-		} else {
+-			sg_cpu->iowait_boost = sg_cpu->sg_policy->policy->min;
+-		}
+-	} else if (sg_cpu->iowait_boost) {
++	/* Reset boost if the CPU appears to have been idle enough */
++	if (sg_cpu->iowait_boost) {
+ 		s64 delta_ns = time - sg_cpu->last_update;
+ 
+-		/* Clear iowait_boost if the CPU apprears to have been idle. */
+ 		if (delta_ns > TICK_NSEC) {
+-			sg_cpu->iowait_boost = 0;
+-			sg_cpu->iowait_boost_pending = false;
++			sg_cpu->iowait_boost = iowait
++				? sg_cpu->sg_policy->policy->min : 0;
++			sg_cpu->iowait_boost_pending = iowait;
++			return;
+ 		}
+ 	}
++
++	/* Boost only tasks waking up after IO */
++	if (!iowait)
++		return;
++
++	/* Ensure IO boost doubles only one time at each frequency increase */
++	if (sg_cpu->iowait_boost_pending)
++		return;
++	sg_cpu->iowait_boost_pending = true;
++
++	/* Double the IO boost at each frequency increase */
++	if (sg_cpu->iowait_boost) {
++		sg_cpu->iowait_boost <<= 1;
++		if (sg_cpu->iowait_boost > sg_cpu->iowait_boost_max)
++			sg_cpu->iowait_boost = sg_cpu->iowait_boost_max;
++		return;
++	}
++
++	/* At first wakeup after IO, start with minimum boost */
++	sg_cpu->iowait_boost = sg_cpu->sg_policy->policy->min;
+ }
+ 
+-static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, unsigned long *util,
+-			       unsigned long *max)
++/**
++ * sugov_iowait_boost boosts a CPU after a wakeup from IO.
++ * @sg_cpu: the sugov data for the cpu to boost
++ * @time:   the update time from the caller
++ * @util:   the utilization to (eventually) boost
++ * @max:    the maximum value the utilization can be boosted to
++ *
++ * A CPU running a task which woken up after an IO operation can have its
++ * utilization boosted to speed up the completion of those IO operations.
++ * The IO boost value is increased each time a task wakes up from IO, in
++ * sugov_set_iowait_boost(), and it's instead decreased by this function,
++ * each time an increase has not been requested (!iowait_boost_pending).
++ *
++ * A CPU which also appears to have been idle for at least one tick has also
++ * its IO boost utilization reset.
++ *
++ * This mechanism is designed to boost high frequently IO waiting tasks, while
++ * being more conservative on tasks which does sporadic IO operations.
++ */
++static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
++			       unsigned long *util, unsigned long *max)
+ {
+ 	unsigned int boost_util, boost_max;
++	s64 delta_ns;
+ 
++	/* No IOWait boost active */
+ 	if (!sg_cpu->iowait_boost)
+ 		return;
+ 
++	/* Clear boost if the CPU appears to have been idle enough */
++	delta_ns = time - sg_cpu->last_update;
++	if (delta_ns > TICK_NSEC) {
++		sg_cpu->iowait_boost = 0;
++		sg_cpu->iowait_boost_pending = false;
++		return;
++	}
++
++	/* An IO waiting task has just woken up, use the boost value */
+ 	if (sg_cpu->iowait_boost_pending) {
+ 		sg_cpu->iowait_boost_pending = false;
+ 	} else {
++		/* Reduce the boost value otherwise */
+ 		sg_cpu->iowait_boost >>= 1;
+ 		if (sg_cpu->iowait_boost < sg_cpu->sg_policy->policy->min) {
+ 			sg_cpu->iowait_boost = 0;
+@@ -248,6 +302,10 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, unsigned long *util,
+ 	boost_util = sg_cpu->iowait_boost;
+ 	boost_max = sg_cpu->iowait_boost_max;
+ 
++	/*
++	 * A CPU is boosted only if its current utilization is smaller then
++	 * the current IO boost level.
++	 */
+ 	if (*util * boost_max < *max * boost_util) {
+ 		*util = boost_util;
+ 		*max = boost_max;
+@@ -299,7 +357,7 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+ 	sugov_get_util(sg_cpu);
+ 	max = sg_cpu->max;
+ 	util = sugov_aggregate_util(sg_cpu);
+-	sugov_iowait_boost(sg_cpu, &util, &max);
++	sugov_iowait_boost(sg_cpu, time, &util, &max);
+ 	next_f = get_next_freq(sg_policy, util, max);
+ 	/*
+ 	 * Do not reduce the frequency if the CPU has not been idle
+@@ -325,28 +383,12 @@ static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
+ 	for_each_cpu(j, policy->cpus) {
+ 		struct sugov_cpu *j_sg_cpu = &per_cpu(sugov_cpu, j);
+ 		unsigned long j_util, j_max;
+-		s64 delta_ns;
+ 
+ 		sugov_get_util(j_sg_cpu);
+-
+-		/*
+-		 * If the CFS CPU utilization was last updated before the
+-		 * previous frequency update and the time elapsed between the
+-		 * last update of the CPU utilization and the last frequency
+-		 * update is long enough, reset iowait_boost and util_cfs, as
+-		 * they are now probably stale. However, still consider the
+-		 * CPU contribution if it has some DEADLINE utilization
+-		 * (util_dl).
+-		 */
+-		delta_ns = time - j_sg_cpu->last_update;
+-		if (delta_ns > TICK_NSEC) {
+-			j_sg_cpu->iowait_boost = 0;
+-			j_sg_cpu->iowait_boost_pending = false;
+-		}
+-
+ 		j_max = j_sg_cpu->max;
+ 		j_util = sugov_aggregate_util(j_sg_cpu);
+-		sugov_iowait_boost(j_sg_cpu, &j_util, &j_max);
++		sugov_iowait_boost(j_sg_cpu, time, &j_util, &j_max);
++
+ 		if (j_util * max > j_max * util) {
+ 			util = j_util;
+ 			max = j_max;
+-- 
+2.15.1
