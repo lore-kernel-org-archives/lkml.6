@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+fLY4a6o6VqRpJieW9x+zaPBCIVZnyu4HOhRbIr94k8LtqKm3mUNfAjonMeJSc8f67WBwl
-ARC-Seal: i=1; a=rsa-sha256; t=1523399588; cv=none;
+X-Google-Smtp-Source: AIpwx4+ahP+62vRGO6LzgtnVCKsz7Zny9DLfSd5dN4IV5CT5eU2hnd4I3s7kC6gMepuzVwz98aGN
+ARC-Seal: i=1; a=rsa-sha256; t=1523399586; cv=none;
         d=google.com; s=arc-20160816;
-        b=SEJKMZjAIrtQpEWeOL0XXzrhG62zIoHNOi6T6OA73+XWLCmFoFLoC9uf0ehqFzSesu
-         1RRWkFz4LN1XdbBTy4T5vPHx02+lBBRfDcejI0fJkOd4qEyWajW17JuNOFxg6fjoOFaN
-         OtFSCrFNv1fu7KitIp4I+6iEN/oKl8p/oFrk2HFoL2j2IbI+KEGYSL9CeNYm4Zf5uzH9
-         Le6SCJmQS3YhQWCk9mi7P5kkO3AlGmtNDj5kDj1BASMqDrLsfOTstBtdBgir84JiRfnt
-         zxKhdRT/WkUejMUoL56aUbOkJWWxrS9ONEx1V+OQPc834KSDh1BDAp2URHv7SDgdftrj
-         rCTw==
+        b=OVZYnQiFvYX4l/Z5tQgdV4irRSzJ4TmVEX1zHA2L/M+o/vhXnmVElorL+16qv3KsXy
+         Ln08I5NQxwzDk3+2mO+QrE5/gRNh4RqHR09Y7fqUkQv/dNEqEcUBxCgTxQtST65IVlCJ
+         2gB9nBjpRM2snhvfB5BH4IXbgi3/xz2SgWM7LyxRHI0o1kBJ89K63yykykdFLgTNtIa+
+         7MrZ2yYS/pVMd9PF8zAyGdIZccU92wQDBbDKlDLJ5Gt8iLgWIFqfjTK+Cb2zAwEvE1bq
+         9DmZX9ZbboIL7Qwta8Y5iIcmUJ/uYhDdwE7ezfMBbI3HxlxadRqIFCekoiSRmNFWqqms
+         p/xw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IUrBv36s8zWoiM6yaTR03OMANKF74uCn5cvI7a5X8iM=;
-        b=SPYbvJwFw+3eNuFPRhdL93qCHccST+Ep515MrFChqHZEjTVHS9+MVte2PSzE3VynCA
-         d2nNXajIqK9rj0aKfPziMXozqAKYJVxnvRy+3KJeePPmAL1EFe6Nn/pJM37izjNHsuOc
-         8gkTWZN4QSslDJcvJQP3aw26i3DazRZuY4FFJk+vvD4kTZgIyT0EhoZIcwfPF+t7BmEd
-         qGTjb1DPs3pzBNpCvIamcxcurb9B6I5vF5eMxsfCqtim5letpgkSkUtPVr+A74wbYEJ7
-         fbnjGNG4O/BHT+lsJdglFpmAFpzwsz3hbwONk3lNNcsqNXSycm82TWctUNxKbcpKYQ82
-         zKZg==
+        bh=dvhN93XXhp4ZFxpFFc6JoYyxx0GU5TFXMVbIlU34v3A=;
+        b=Pp/lV6dOnF9KM6c7BgS2ObuFYJfD2bp66/mPsmOaLmWigBOrbLOUWM9BKyJstm8HRK
+         Hrsyj2KQvjRdCoJryU7Tbrr0C8eu+dBf045NHyJewFrjckvvQec5R7HHPnsFmUAeQVWg
+         p24dEQTWeZs3adljkUMC6GpmEDyzKTsiA09O0R54b2RbIk5jjpBDlKZ8SVYwOd0hO2tR
+         +VW2xuJ3JyPyVPs1+4R0NIso6RoMFWlXtTPgPEkZ3JkOESKWOv6RlQv3wJyDqhi8gjoT
+         yLFs1nQO8VJpc8zDSc7g2GgPWcdvmgPjC7FDqk7bQjqiar03RZOjO/qGQZNYj40W2GJj
+         RAdQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
-	Jakub Kicinski <jakub.kicinski@netronome.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 155/168] nfp: use full 40 bits of the NSP buffer address
-Date: Wed, 11 Apr 2018 00:24:57 +0200
-Message-Id: <20180410212807.683545279@linuxfoundation.org>
+	David Miller <davem@davemloft.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH 4.15 133/168] r8169: fix setting driver_data after register_netdev
+Date: Wed, 11 Apr 2018 00:24:35 +0200
+Message-Id: <20180410212806.641864901@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399732880753270?=
-X-GMAIL-MSGID: =?utf-8?q?1597400246905306182?=
+X-GMAIL-THRID: =?utf-8?q?1597400244259520403?=
+X-GMAIL-MSGID: =?utf-8?q?1597400244259520403?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,60 +49,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
 
-[ Upstream commit 1489bbd10e16079ce30a53d3c22a431fd47af791 ]
+[ Upstream commit 19c9ea363a244f85f90a424f9936e6d56449e33c ]
 
-The NSP default buffer is a piece of NFP memory where additional
-command data can be placed.  Its format has been copied from
-host buffer, but the PCIe selection bits do not make sense in
-this case.  If those get masked out from a NFP address - writes
-to random place in the chip memory may be issued and crash the
-device.
+pci_set_drvdata() is called only after registering the net_device,
+therefore we could run into a NPE if one of the functions using
+driver_data is called before it's set.
 
-Even in the general NSP buffer case, it doesn't make sense to have the
-PCIe selection bits there anymore. These are unused at the moment, and
-when it becomes necessary, the PCIe selection bits should rather be
-moved to another register to utilise more bits for the buffer address.
+Fix this by calling pci_set_drvdata() before registering the
+net_device.
 
-This has never been an issue because the buffer used to be
-allocated in memory with less-than-38-bit-long address but that
-is about to change.
+This fix is a candidate for stable. As far as I can see the
+bug has been there in kernel version 3.2 already, therefore
+I can't provide a reference which commit is fixed by it.
 
-Fixes: 1a64821c6af7 ("nfp: add support for service processor access")
-Signed-off-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+The fix may need small adjustments per kernel version because
+due to other changes the label which is jumped to if
+register_netdev() fails has changed over time.
+
+Reported-by: David Miller <davem@davemloft.net>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/realtek/r8169.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c
-@@ -68,10 +68,11 @@
- /* CPP address to retrieve the data from */
- #define NSP_BUFFER		0x10
- #define   NSP_BUFFER_CPP	GENMASK_ULL(63, 40)
--#define   NSP_BUFFER_PCIE	GENMASK_ULL(39, 38)
--#define   NSP_BUFFER_ADDRESS	GENMASK_ULL(37, 0)
-+#define   NSP_BUFFER_ADDRESS	GENMASK_ULL(39, 0)
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -8699,12 +8699,12 @@ static int rtl_init_one(struct pci_dev *
+ 		goto err_out_msi_5;
+ 	}
  
- #define NSP_DFLT_BUFFER		0x18
-+#define   NSP_DFLT_BUFFER_CPP	GENMASK_ULL(63, 40)
-+#define   NSP_DFLT_BUFFER_ADDRESS	GENMASK_ULL(39, 0)
++	pci_set_drvdata(pdev, dev);
++
+ 	rc = register_netdev(dev);
+ 	if (rc < 0)
+ 		goto err_out_cnt_6;
  
- #define NSP_DFLT_BUFFER_CONFIG	0x20
- #define   NSP_DFLT_BUFFER_SIZE_MB	GENMASK_ULL(7, 0)
-@@ -412,8 +413,8 @@ static int nfp_nsp_command_buf(struct nf
- 	if (err < 0)
- 		return err;
- 
--	cpp_id = FIELD_GET(NSP_BUFFER_CPP, reg) << 8;
--	cpp_buf = FIELD_GET(NSP_BUFFER_ADDRESS, reg);
-+	cpp_id = FIELD_GET(NSP_DFLT_BUFFER_CPP, reg) << 8;
-+	cpp_buf = FIELD_GET(NSP_DFLT_BUFFER_ADDRESS, reg);
- 
- 	if (in_buf && in_size) {
- 		err = nfp_cpp_write(cpp, cpp_id, cpp_buf, in_buf, in_size);
+-	pci_set_drvdata(pdev, dev);
+-
+ 	netif_info(tp, probe, dev, "%s at 0x%p, %pM, XID %08x IRQ %d\n",
+ 		   rtl_chip_infos[chipset].name, ioaddr, dev->dev_addr,
+ 		   (u32)(RTL_R32(TxConfig) & 0x9cf0f8ff), pdev->irq);
