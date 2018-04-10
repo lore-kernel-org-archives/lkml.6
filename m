@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+AJMbOcrJZfXYiSCAtyAXB28c/OrHR9ac5NL9lIE4ukfmn7PkKwTSuAyQFfDX2XFlp7WAY
-ARC-Seal: i=1; a=rsa-sha256; t=1523399326; cv=none;
+X-Google-Smtp-Source: AIpwx4/nOKkxRaxFu+JM7D1Pc4uzl++HGlYftgd4xiyQDgIuwUfOEJ7sG2bGPxVVK1dE3R1djzsa
+ARC-Seal: i=1; a=rsa-sha256; t=1523399324; cv=none;
         d=google.com; s=arc-20160816;
-        b=dF3QMx6et76CJ0GxhfLUMFLeS3hfoYQZzOJbjUq9DZtcsrtuJENKvK/qNc31OUp/IY
-         ABMub7A0eanpvTDzX2+i5XVJuo1rzMqY7BLFLmkxVH7+9vIfRLKXMMbg1BzbbApyy87n
-         /Rmfc17AUsZArdLiZxcLzny/TDpgut+oAJD1LEWfe2cmlqBPiRdIZRw1wa2xq4+uPOjZ
-         srGsT8mWq5ep4kTFJgAeHU7bP3KjT/qvooGo8eGMM9wAIjPCRdRugJsnaZKVI/H+Z5Vd
-         oZfyfSjg+50EVD5y3+qAHX+9Z0lHqfLZJnV4n/iSgFbXknQW2I0xuBcZZ3VLw0DEr0WY
-         rMSg==
+        b=drKsWcGdILlt+Qh1fu53FvtR+rTFwYbpj4RDUe4wQ47pVo9Gnrcn65V9UqOqnxM3OB
+         CUgIUEXZAsi5E56Ah3XAs64S4/fVKDmbC0sg9w0DKFLxx45Stu6xDZ6pKNBbuAbdWJ2r
+         cgvXqPNG3KVh5haJuG9dpAtfzumW7Xkedv6cHFVk7Guqo0uUWOJM/GR3sYV3hE8Q48JI
+         7AyPdx7St5+dxHrd6SFyOEWdYr+qKi2e0xH2Yo0TM1sKpP5rHYCrVCIq6wzsVBMoXwOp
+         fLlELR+bp/1ztgi6n0J7MMN/uwO7VpQ3A6fB0Q4JUYuatHXxunsF3CJ71EZCg5NECdfW
+         juiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZI1X5S+2K2qKmMab1LqzB7V5LFTRQd1Gp3+3JZUzlJ8=;
-        b=dTjfKQjY7n/jCiwLvyP4pZ7kOSMTbHqBl+8NQAOz+0xH7IwU0dqqh0NdTMPXvYvzE6
-         i7ryQ5cBO1trSS0l291tlnFjIpnxRcCOIaNTiWsq2FYDHrEEfFHq1AzRZnynEXSFQRv/
-         Vxw7WthNJOmlnRqO6OSKvTzth2buztO0n3WNxpImvKzYcIQCJrCYIbJBJJHj2SceG8DT
-         fr5PkyibY47gb5SghRVzNdw1ia3bIMCTfvuufQOczuUuYl25YGjmgUaMpzba5Ref3rDm
-         Zzk7pHobATAhxYxutois1BdSs0R3A9R/V0D0vcmnw8hWtOqvKvhyXykQCLMSzmpBNP0N
-         W/lg==
+        bh=pL3jl7onsRS2+YMlRz0vz4MXcXLfazrpZxczy70MlZI=;
+        b=jlAXgxKxg6B4sVdZAZNHrnwc/2jTPuem66ZpD6qJdneJ4NQYGCCCXPiBr3vMQlpI5M
+         cB4+JrLfpZVBcYjf3IbcG59TY+JNsVrDrtZHgaRHg1HRUPurJIoH94vIoweFKi+6qpJm
+         WoBLQXpRlM8jFJEc0N0JV+hZ66ZeEeVs6Gh/o/sGJVy0i1QnYHDarZJy0ZySqzY11jDN
+         Bo/ZvBBFKumZ6hRjBMOpR1snaY0YlveY3NieLHDSZogxYad2U3Rd8G3ZG/szTl49KCCM
+         mKdG/C0kK68Dtfq4J8HMCHBY8Z9SK62kjeQHtfo+bAjSUe/TNM/osvNX92Qo7a2aueHN
+         rloA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Daniel Jurgens <danielj@mellanox.com>,
-	Parav Pandit <parav@mellanox.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Jason Gunthorpe <jgg@mellanox.com>,
+	Colin Ian King <colin.king@canonical.com>,
+	Kalle Valo <kvalo@codeaurora.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 067/168] net/mlx5: Fix race for multiple RoCE enable
-Date: Wed, 11 Apr 2018 00:23:29 +0200
-Message-Id: <20180410212803.048734444@linuxfoundation.org>
+Subject: [PATCH 4.15 066/168] wl1251: check return from call to wl1251_acx_arp_ip_filter
+Date: Wed, 11 Apr 2018 00:23:28 +0200
+Message-Id: <20180410212803.006342973@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399972510226774?=
-X-GMAIL-MSGID: =?utf-8?q?1597399972510226774?=
+X-GMAIL-THRID: =?utf-8?q?1597399970061957195?=
+X-GMAIL-MSGID: =?utf-8?q?1597399970061957195?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,92 +50,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Jurgens <danielj@mellanox.com>
+From: Colin Ian King <colin.king@canonical.com>
 
 
-[ Upstream commit 734dc065fc41f6143ff88225aa5d335cb1e0f6aa ]
+[ Upstream commit ac1181c60822292176ab96912208ec9f9819faf8 ]
 
-There are two potential problems with the existing implementation.
+Currently the less than zero error check on ret is incorrect
+as it is checking a far earlier ret assignment rather than the
+return from the call to wl1251_acx_arp_ip_filter. Fix this by
+adding in the missing assginment.
 
-1. Enable and disable can race after the atomic operations.
-2. If a command fails the refcount is left in an inconsistent state.
+Detected by CoverityScan, CID#1164835 ("Logically dead code")
 
-Introduce a lock and perform error checking.
-
-Fixes: a6f7d2aff623 ("net/mlx5: Add support for multiple RoCE enable")
-Signed-off-by: Daniel Jurgens <danielj@mellanox.com>
-Reviewed-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 204cc5c44fb6 ("wl1251: implement hardware ARP filtering")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/vport.c |   33 +++++++++++++++++++-----
- include/linux/mlx5/driver.h                     |    2 -
- 2 files changed, 28 insertions(+), 7 deletions(-)
+ drivers/net/wireless/ti/wl1251/main.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/vport.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/vport.c
-@@ -36,6 +36,9 @@
- #include <linux/mlx5/vport.h>
- #include "mlx5_core.h"
+--- a/drivers/net/wireless/ti/wl1251/main.c
++++ b/drivers/net/wireless/ti/wl1251/main.c
+@@ -1200,8 +1200,7 @@ static void wl1251_op_bss_info_changed(s
+ 		WARN_ON(wl->bss_type != BSS_TYPE_STA_BSS);
  
-+/* Mutex to hold while enabling or disabling RoCE */
-+static DEFINE_MUTEX(mlx5_roce_en_lock);
-+
- static int _mlx5_query_vport_state(struct mlx5_core_dev *mdev, u8 opmod,
- 				   u16 vport, u32 *out, int outlen)
- {
-@@ -998,17 +1001,35 @@ static int mlx5_nic_vport_update_roce_st
- 
- int mlx5_nic_vport_enable_roce(struct mlx5_core_dev *mdev)
- {
--	if (atomic_inc_return(&mdev->roce.roce_en) != 1)
--		return 0;
--	return mlx5_nic_vport_update_roce_state(mdev, MLX5_VPORT_ROCE_ENABLED);
-+	int err = 0;
-+
-+	mutex_lock(&mlx5_roce_en_lock);
-+	if (!mdev->roce.roce_en)
-+		err = mlx5_nic_vport_update_roce_state(mdev, MLX5_VPORT_ROCE_ENABLED);
-+
-+	if (!err)
-+		mdev->roce.roce_en++;
-+	mutex_unlock(&mlx5_roce_en_lock);
-+
-+	return err;
- }
- EXPORT_SYMBOL_GPL(mlx5_nic_vport_enable_roce);
- 
- int mlx5_nic_vport_disable_roce(struct mlx5_core_dev *mdev)
- {
--	if (atomic_dec_return(&mdev->roce.roce_en) != 0)
--		return 0;
--	return mlx5_nic_vport_update_roce_state(mdev, MLX5_VPORT_ROCE_DISABLED);
-+	int err = 0;
-+
-+	mutex_lock(&mlx5_roce_en_lock);
-+	if (mdev->roce.roce_en) {
-+		mdev->roce.roce_en--;
-+		if (mdev->roce.roce_en == 0)
-+			err = mlx5_nic_vport_update_roce_state(mdev, MLX5_VPORT_ROCE_DISABLED);
-+
-+		if (err)
-+			mdev->roce.roce_en++;
-+	}
-+	mutex_unlock(&mlx5_roce_en_lock);
-+	return err;
- }
- EXPORT_SYMBOL_GPL(mlx5_nic_vport_disable_roce);
- 
---- a/include/linux/mlx5/driver.h
-+++ b/include/linux/mlx5/driver.h
-@@ -826,7 +826,7 @@ struct mlx5_core_dev {
- 	struct mlx5e_resources  mlx5e_res;
- 	struct {
- 		struct mlx5_rsvd_gids	reserved_gids;
--		atomic_t                roce_en;
-+		u32			roce_en;
- 	} roce;
- #ifdef CONFIG_MLX5_FPGA
- 	struct mlx5_fpga_device *fpga;
+ 		enable = bss_conf->arp_addr_cnt == 1 && bss_conf->assoc;
+-		wl1251_acx_arp_ip_filter(wl, enable, addr);
+-
++		ret = wl1251_acx_arp_ip_filter(wl, enable, addr);
+ 		if (ret < 0)
+ 			goto out_sleep;
+ 	}
