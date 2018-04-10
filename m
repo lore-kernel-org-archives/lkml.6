@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/b96VuwxRdH3GPHE4b2tdKFCgJmApYBvyRfUYS+ZmRlBtT/VtrtnL2KZEISQNT9q9yGIya
-ARC-Seal: i=1; a=rsa-sha256; t=1523399196; cv=none;
+X-Google-Smtp-Source: AIpwx4+Dt0JP2AvcT1+h1e170VBTep+Ql2QY24IExOW4ifhDk9c6ocokBrX0VgKhrIPUP4YtEXrI
+ARC-Seal: i=1; a=rsa-sha256; t=1523399193; cv=none;
         d=google.com; s=arc-20160816;
-        b=Z2EIp/XU+o7AqswsDY6+mClPSh/mkvtpK/oYPwHlMc64yM1U42WmVTh768fE4TGkY5
-         uefgH2qEouhTuDJbrmCagodRk3SunJO85EEpYcCyIlT5YuRVEI16yRYdIadzNDKbHa7V
-         8eTr9ec4ci+sRfb55lmWYRgtKwVHMnUlMMhajjZzk1bWpMq5WRHB/g7AcdjFEN9jIAln
-         0wTGhdwJh9LmQt6GRbnDYUFzopJrh1D2Dhciubcmvs7drn/brKQvjgW5drcPTZrKVcwx
-         BM4ndwBJ9NDkDBcqNMqYgE7j42tNpwyZ3Hh+Fh3mUCU1F/ALhfET/+PRhFtBCWFMD7lL
-         rC8w==
+        b=wY6qUcH7kwNZsHleITn0LtlNbS1z5hv+s0bYMtgjgvnVIhpROuDYW5attdyBY9Vd4x
+         USB2UdW62cMJNjd5uj4Osoih8NooENVgpgjzUSusQxTc3HdttIwUOf1zXQm5zKJOiblt
+         JJ1I72ww8kdIorRzJ1ihdhaw83zMJTGISsuMJMnNwA3jEYO8VeLlbafDvs8GD24nEF19
+         19o/7IVCc/Xjo2w8UnT2LjfMKOktxofb2ldVgOHdsFI3gH9SyJu6D6HerHLnWcitEGZH
+         dmy9bDxKR7SMiOzZ1P7VIgdg9Fj5sqV42Rf0oBoVWoTXiJGvpdXLUIra+9usRl8fjPAB
+         NF1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/mzRTBRI79PokizBSGJ+KkaCnnPiRDm24/Egy44fN/Y=;
-        b=WJGalSEDiZe7VSPaOLntG45uig4NuchJJ5f13d1rRQ7SS66U1g8d933r76I+vXCzVP
-         cdphK5koyJRcHTnYvgypKPtplajHtc2N2XF6JR9bYPMEwWdiUm8kTWvPN+GXk0/IqtXW
-         UJL8u5oNirbqFsuLWmPDP/rpA0EiG4jc5xQqGzK4UDYJ9tir8ok8NpU5+mpwxC69xHEv
-         NqFDEzf+taavhIVe7ml7wx6PgvsSX3ZRdJqPGuE/IsbQ39HDHQVGhNBajtJZ/rRSRwPm
-         05N/M0CsXIuVf30Eqtxh1ZrlXajtenWgwgcb+xat8qP4E6XrU+B67NYFI32aTtDnJ3Zv
-         X0bA==
+        bh=hwDpd3wUw41AoBP+B6Zdj7AP24XCG5uyRExZruCdoJQ=;
+        b=E1A290olXyGtFRrW4pyI6OdT9LzU/JDX/YtXU4OrzGYuODsHWArwq80h3T2DyOo785
+         flWrRBs14yx1tIg3J85z7cQo2VA0g6OS/BG8VMIlrCu7KBkWZS9mxAXnj55QiU3BN6Xz
+         K7jkO+kagkcJJhgvgEMkxZxnJNvFNVfkPZuMCwwqa4vc7pzzov4nMe07NFEVhbHAWbrR
+         YhkSIirXMMIeyzOMHZJkKa0Zhx7L6Ir6tOvfYIHA7PV5HAAXGKZANtj4IHSrVbUkN3Xb
+         TSp8J+XE3oLX23apSxSLnwAHO2ColSdkZiCDwEDRK5tfBVhfIOhWPFyB1FevLxsTgVEU
+         Oj8Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	NeilBrown <neilb@suse.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
+	Maor Gottlieb <maorg@mellanox.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Jason Gunthorpe <jgg@mellanox.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 021/168] VFS: close race between getcwd() and d_move()
-Date: Wed, 11 Apr 2018 00:22:43 +0200
-Message-Id: <20180410212801.104739278@linuxfoundation.org>
+Subject: [PATCH 4.15 020/168] IB/mlx5: Report inner RSS capability
+Date: Wed, 11 Apr 2018 00:22:42 +0200
+Message-Id: <20180410212801.064957313@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399835658092669?=
-X-GMAIL-MSGID: =?utf-8?q?1597399835658092669?=
+X-GMAIL-THRID: =?utf-8?q?1597399833356313407?=
+X-GMAIL-MSGID: =?utf-8?q?1597399833356313407?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,112 +51,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: NeilBrown <neilb@suse.com>
+From: Maor Gottlieb <maorg@mellanox.com>
 
 
-[ Upstream commit 61647823aa920e395afcce4b57c32afb51456cab ]
+[ Upstream commit 4e2b53a5cb5a8243284dd7ec4980d2dc556e79f0 ]
 
-d_move() will call __d_drop() and then __d_rehash()
-on the dentry being moved.  This creates a small window
-when the dentry appears to be unhashed.  Many tests
-of d_unhashed() are made under ->d_lock and so are safe
-from racing with this window, but some aren't.
-In particular, getcwd() calls d_unlinked() (which calls
-d_unhashed()) without d_lock protection, so it can race.
+Add missing inner RSS support capability as part of
+the RSS supported fields.
 
-This races has been seen in practice with lustre, which uses d_move() as
-part of name lookup.  See:
-   https://jira.hpdd.intel.com/browse/LU-9735
-It could race with a regular rename(), and result in ENOENT instead
-of either the 'before' or 'after' name.
+In addition change MLX5_RX_HASH_INNER to 1UL << 31 in
+order to define it as unsigned.
 
-The race can be demonstrated with a simple program which
-has two threads, one renaming a directory back and forth
-while another calls getcwd() within that directory: it should never
-fail, but does.  See:
-  https://patchwork.kernel.org/patch/9455345/
-
-We could fix this race by taking d_lock and rechecking when
-d_unhashed() reports true.  Alternately when can remove the window,
-which is the approach this patch takes.
-
-___d_drop() is introduce which does *not* clear d_hash.pprev
-so the dentry still appears to be hashed.  __d_drop() calls
-___d_drop(), then clears d_hash.pprev.
-__d_move() now uses ___d_drop() and only clears d_hash.pprev
-when not rehashing.
-
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: 309fa3470fca ("IB/mlx5: Add support for RSS on the inner packet")
+Signed-off-by: Maor Gottlieb <maorg@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/dcache.c |   23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+ drivers/infiniband/hw/mlx5/main.c |    3 ++-
+ include/uapi/rdma/mlx5-abi.h      |    2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -468,9 +468,11 @@ static void dentry_lru_add(struct dentry
-  * d_drop() is used mainly for stuff that wants to invalidate a dentry for some
-  * reason (NFS timeouts or autofs deletes).
-  *
-- * __d_drop requires dentry->d_lock.
-+ * __d_drop requires dentry->d_lock
-+ * ___d_drop doesn't mark dentry as "unhashed"
-+ *   (dentry->d_hash.pprev will be LIST_POISON2, not NULL).
-  */
--void __d_drop(struct dentry *dentry)
-+static void ___d_drop(struct dentry *dentry)
- {
- 	if (!d_unhashed(dentry)) {
- 		struct hlist_bl_head *b;
-@@ -486,12 +488,17 @@ void __d_drop(struct dentry *dentry)
+--- a/drivers/infiniband/hw/mlx5/main.c
++++ b/drivers/infiniband/hw/mlx5/main.c
+@@ -682,7 +682,8 @@ static int mlx5_ib_query_device(struct i
+ 						MLX5_RX_HASH_SRC_PORT_TCP |
+ 						MLX5_RX_HASH_DST_PORT_TCP |
+ 						MLX5_RX_HASH_SRC_PORT_UDP |
+-						MLX5_RX_HASH_DST_PORT_UDP;
++						MLX5_RX_HASH_DST_PORT_UDP |
++						MLX5_RX_HASH_INNER;
+ 			resp.response_length += sizeof(resp.rss_caps);
+ 		}
+ 	} else {
+--- a/include/uapi/rdma/mlx5-abi.h
++++ b/include/uapi/rdma/mlx5-abi.h
+@@ -307,7 +307,7 @@ enum mlx5_rx_hash_fields {
+ 	MLX5_RX_HASH_SRC_PORT_UDP	= 1 << 6,
+ 	MLX5_RX_HASH_DST_PORT_UDP	= 1 << 7,
+ 	/* Save bits for future fields */
+-	MLX5_RX_HASH_INNER		= 1 << 31
++	MLX5_RX_HASH_INNER		= (1UL << 31),
+ };
  
- 		hlist_bl_lock(b);
- 		__hlist_bl_del(&dentry->d_hash);
--		dentry->d_hash.pprev = NULL;
- 		hlist_bl_unlock(b);
- 		/* After this call, in-progress rcu-walk path lookup will fail. */
- 		write_seqcount_invalidate(&dentry->d_seq);
- 	}
- }
-+
-+void __d_drop(struct dentry *dentry)
-+{
-+	___d_drop(dentry);
-+	dentry->d_hash.pprev = NULL;
-+}
- EXPORT_SYMBOL(__d_drop);
- 
- void d_drop(struct dentry *dentry)
-@@ -2386,7 +2393,7 @@ EXPORT_SYMBOL(d_delete);
- static void __d_rehash(struct dentry *entry)
- {
- 	struct hlist_bl_head *b = d_hash(entry->d_name.hash);
--	BUG_ON(!d_unhashed(entry));
-+
- 	hlist_bl_lock(b);
- 	hlist_bl_add_head_rcu(&entry->d_hash, b);
- 	hlist_bl_unlock(b);
-@@ -2821,9 +2828,9 @@ static void __d_move(struct dentry *dent
- 	write_seqcount_begin_nested(&target->d_seq, DENTRY_D_LOCK_NESTED);
- 
- 	/* unhash both */
--	/* __d_drop does write_seqcount_barrier, but they're OK to nest. */
--	__d_drop(dentry);
--	__d_drop(target);
-+	/* ___d_drop does write_seqcount_barrier, but they're OK to nest. */
-+	___d_drop(dentry);
-+	___d_drop(target);
- 
- 	/* Switch the names.. */
- 	if (exchange)
-@@ -2835,6 +2842,8 @@ static void __d_move(struct dentry *dent
- 	__d_rehash(dentry);
- 	if (exchange)
- 		__d_rehash(target);
-+	else
-+		target->d_hash.pprev = NULL;
- 
- 	/* ... and switch them in the tree */
- 	if (IS_ROOT(dentry)) {
+ struct mlx5_ib_create_qp_rss {
