@@ -1,84 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754612AbeDJXnI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 19:43:08 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:54123 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752988AbeDJW0J (ORCPT
+        id S1754755AbeDJXnc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 19:43:32 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46600 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753423AbeDJXn2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 18:26:09 -0400
-X-Google-Smtp-Source: AIpwx4/iJUfJBn7ACpQYZv6FyRphpbEISg+PpXjW7lavrzipJcHwNRTp+CIw2y76AqbL+iIhJf1ZqQ==
-From: Alex Elder <elder@linaro.org>
-To: andy.gross@linaro.org
-Cc: clew@codeaurora.org, aneela@codeaurora.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/6] soc: qcom: smem: byte swap values properly
-Date: Tue, 10 Apr 2018 17:25:39 -0500
-Message-Id: <20180410222542.29474-4-elder@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180410222542.29474-1-elder@linaro.org>
-References: <20180410222542.29474-1-elder@linaro.org>
+        Tue, 10 Apr 2018 19:43:28 -0400
+Date: Tue, 10 Apr 2018 16:44:25 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, Tejun Heo <tj@kernel.org>,
+        Jann Horn <jannh@google.com>, Benjamin LaHaise <bcrl@kvack.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Simplifying our RCU models
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <CA+55aFyOi1XnSqHtg=VfcUiBL+egNL==NRX1Zaeihe8W5OJVgw@mail.gmail.com>
+ <20180305030949.GP3918@linux.vnet.ibm.com>
+ <20180305082441.4hao2z4dqn2n5on6@gmail.com>
+ <87po4izj67.fsf_-_@xmission.com>
+ <20180305161446.GQ3918@linux.vnet.ibm.com>
+ <20180306084738.tcs4ggbby77phlbh@gmail.com>
+ <20180306203906.GA3918@linux.vnet.ibm.com>
+ <20180307155444.GA10367@linux.vnet.ibm.com>
+ <CA+55aFzyycJWD2xuo7wSptJ=D045yiZnmO+7iY6CapDvge_uCw@mail.gmail.com>
+ <20180308204524.GW3918@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180308204524.GW3918@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18041023-0052-0000-0000-000002D858C8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008833; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000256; SDB=6.01016077; UDB=6.00518136; IPR=6.00795324;
+ MB=3.00020511; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-10 23:43:24
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041023-0053-0000-0000-00005C48CB00
+Message-Id: <20180410234425.GA30784@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-10_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804100216
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Two places report an error when a partition header is found to
-not contain the right canary value.  The error messages do not
-properly byte swap the host ids.  Fix this, and adjust the format
-specificier to match the 16-bit unsigned data type.
+On Thu, Mar 08, 2018 at 12:45:24PM -0800, Paul E. McKenney wrote:
+> On Wed, Mar 07, 2018 at 10:48:50AM -0800, Linus Torvalds wrote:
+> > On Wed, Mar 7, 2018 at 7:54 AM, Paul E. McKenney
+> > <paulmck@linux.vnet.ibm.com> wrote:
+> > >
+> > > Ah, and any thoughts on how best to get feedback from the various people
+> > > who would need to reprogram their fingers?  Or is everyone already on
+> > > board with changing these various names?
+> > 
+> > I really would prefer to not see massive re-naming unless there is a
+> > really good reason for it.
+> > 
+> > I'm all for simplifying RCU from a million different versions down to
+> > just a few thousand, but I'm definitely not convinced we want to do
+> > any search-and-replace.
+> 
+> I am currently in the design (more accurately, reredesign phase) for
+> the simplification.  It is quite possible that there is a good reason
+> for at least some renaming, but in that case, I would come back later
+> with that as a separate proposal.
 
-Move the error handling for a bad canary value to the end of
-qcom_smem_alloc_private().  This avoids some long lines, and
-reduces the distraction of handling this unexpected problem.
+And I really am still working on this.  It is a bit tricky, but still
+looks doable.  More likely to be ready for 4.19 than 4.18, though.
 
-Signed-off-by: Alex Elder <elder@linaro.org>
----
- drivers/soc/qcom/smem.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
-index 3102aa94aec2..82f0908b90e1 100644
---- a/drivers/soc/qcom/smem.c
-+++ b/drivers/soc/qcom/smem.c
-@@ -365,13 +365,8 @@ static int qcom_smem_alloc_private(struct qcom_smem *smem,
- 	cached = phdr_to_last_cached_entry(phdr);
- 
- 	while (hdr < end) {
--		if (hdr->canary != SMEM_PRIVATE_CANARY) {
--			dev_err(smem->dev,
--				"Found invalid canary in hosts %d:%d partition\n",
--				phdr->host0, phdr->host1);
--			return -EINVAL;
--		}
--
-+		if (hdr->canary != SMEM_PRIVATE_CANARY)
-+			goto bad_canary;
- 		if (le16_to_cpu(hdr->item) == item)
- 			return -EEXIST;
- 
-@@ -400,6 +395,11 @@ static int qcom_smem_alloc_private(struct qcom_smem *smem,
- 	le32_add_cpu(&phdr->offset_free_uncached, alloc_size);
- 
- 	return 0;
-+bad_canary:
-+	dev_err(smem->dev, "Found invalid canary in hosts %hu:%hu partition\n",
-+		le16_to_cpu(phdr->host0), le16_to_cpu(phdr->host1));
-+
-+	return -EINVAL;
- }
- 
- static int qcom_smem_alloc_global(struct qcom_smem *smem,
-@@ -563,8 +563,8 @@ static void *qcom_smem_get_private(struct qcom_smem *smem,
- 	return ERR_PTR(-ENOENT);
- 
- invalid_canary:
--	dev_err(smem->dev, "Found invalid canary in hosts %d:%d partition\n",
--			phdr->host0, phdr->host1);
-+	dev_err(smem->dev, "Found invalid canary in hosts %hu:%hu partition\n",
-+			le16_to_cpu(phdr->host0), le16_to_cpu(phdr->host1));
- 
- 	return ERR_PTR(-EINVAL);
- }
--- 
-2.14.1
+							Thanx, Paul
