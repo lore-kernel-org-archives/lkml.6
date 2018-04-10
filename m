@@ -1,82 +1,109 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1523426546; cv=none;
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx48sNSMAc1vI6/oWUjCuAxi8KKihIqPVrIDQcjUWGg7GG/x3Drn0cnPZxhd3sdER5z5uEt4o
+ARC-Seal: i=1; a=rsa-sha256; t=1523399098; cv=none;
         d=google.com; s=arc-20160816;
-        b=OAXGJG8Q9UYGAgV454E6FKv/iiPEDkBGfhe794ZKbfsJoElBWNDAn8Z8k0fwH+zHa8
-         67NIe65RFdd+fvpbXywwQyD00ua1vdv5UoBG7mlBsNukonVK8XwyirEEv1Q3FmvblMtX
-         keaKDsUJJ1qlLzCCeX9DmaYaj/EAMs9rPjMfPa1ukHRXS8U5BjKm6NpGGtYKrW7kowxS
-         SXUtKvP4jRLK/PtNqwp2ik2MJAhNt8qvvNf1nsmnY2deSCJJ2xTLdyaTXsBkZemYujK5
-         IwPX4TXcN7Zwrv6rtV9yaK8WCKNcVotgPDJtMpu7Zktu2Lkj/zwa0cUz0KW+DC0tkrqF
-         S7/w==
+        b=GcnbOUdM4mIu3wTe8y5Z9PHLxHvc4Wzkeuz33dMf5p/HLqpxVdawHvXwqtX5jZ933K
+         14r0lva/bIUQw8PXjCaqv+LbDMwFFEogUPnUr25l1IBVkS0hkd8BFDA2hcjC+tS5/5ep
+         d6qIKEou5CGzjp9e7SHht34ZCEEiBAo/PS4lbG+e0UMmfgbxHk/+UH3INpetFVtVGd2D
+         IQus2MjSP6tPJ4jJu5q5KKctiz/G8JrogPJx+Bv7sUSAheugBjyt/TY7ghMnbfCvOuOh
+         qdPX3q6g41MaMBeYErc+y5rxSvQI8bpXRHzUbKGWGKRi+S2W4cGTwILIZdIV2VfscgCa
+         QECg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=qpTJU6xJsJbAdtX2Y/0nwDPUR7yXYpSUdTjyeYss1sM=;
-        b=TwuYksPdYHsq8wQs8DclDl3twZqE5RTYch6VAHpXjxq+ZWPPyHvgKW8RqXVhjlO0wZ
-         6QRw5Vyl44tUdfPwczv9rGO/X5VvxkPACWd82dU3kRcLMe9zqiJpDZcr5a8aWsaWp5pV
-         1DRzPvr7ZowwLoHo34vrSV0j5bhN9BWACTNH6TVSrVRlucYbNHtFjbO6exfMjFr8Zzi+
-         z0wq1jSeRxHxcJ81rbZZi0/woEeeuQpRTh0gqWQY9F9UA844+ZkhVy2iP8KnaI6bITVM
-         av8cyEf6rIA01CypHMQvJ4YaBsmqIfMXy8HY8vc/EuxB++0sdtSeu8rMz/1QB5UO73P1
-         QeGQ==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=FR9dURViGkVP+PPMx2TIQihMVNbRpO+JtysSj/Bns+4=;
+        b=Iy3ruMTovz9U4S8V5ENoCUBc8gC4TA6l+W+DWTTBzlWeE6slmx6QnwZTwZNtp5nhGS
+         rPo6YNZu5ocAN8f1cxIplZ27w5gqfOxoyJuWpd48UaxNtZS86CKmAotV1Gnjc3AdQ4BQ
+         mgDlEGUayOwHJTQUU7XcukmREp8hdK702KHhn0HQ3A/p3C8QSPu86gvJidM6bhBxrHAR
+         khOxJZUyhiqa/pw8oGYTIe3OFFqksyoi42skn6NnC91yXeGrD0Is3L90UlSMworb2xy9
+         aRE4cDuITJ6U824TX33MGnd1OWHj+jMHgYIH1I5U3w9nkadxuW/SKKLarNHKEq/dpckO
+         ZHHQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AIpwx4/ZZ3CLmnK0HY9uzlAj0/51oDrsByZ2fcQNmIUYxZNjdN56RBKHOKEZtVrYXJY9xnfq/Dug1w==
-Message-ID: <5acda4f1.4d2f1c0a.7055a.3560@mx.google.com>
-Date: Tue, 10 Apr 2018 23:02:25 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.16.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.16.1-19-g132318e83781
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+	Jakub Kicinski <jakub.kicinski@netronome.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 18/18] nfp: use full 40 bits of the NSP buffer address
+Date: Wed, 11 Apr 2018 00:23:53 +0200
+Message-Id: <20180410212759.535570297@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212758.564682823@linuxfoundation.org>
 References: <20180410212758.564682823@linuxfoundation.org>
-Subject: Re: [PATCH 4.16 00/18] 4.16.2-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597399674077980265?=
-X-GMAIL-MSGID: =?utf-8?q?1597428515073747816?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597399732880753270?=
+X-GMAIL-MSGID: =?utf-8?q?1597399732880753270?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.16.y boot: 82 boots: 1 failed, 79 passed with 2 untried/u=
-nknown (v4.16.1-19-g132318e83781)
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.16.y/kernel/v4.16.1-19-g132318e83781/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.16.=
-y/kernel/v4.16.1-19-g132318e83781/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.16.y
-Git Describe: v4.16.1-19-g132318e83781
-Git Commit: 132318e8378141c48aab973d050dc5c780da65db
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 40 unique boards, 15 SoC families, 15 builds out of 186
+From: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
 
-Boot Regressions Detected:
 
-arm:
+[ Upstream commit 1489bbd10e16079ce30a53d3c22a431fd47af791 ]
 
-    multi_v7_defconfig:
-        sun5i-gr8-chip-pro:
-            lab-free-electrons: new failure (last pass: v4.16.1)
+The NSP default buffer is a piece of NFP memory where additional
+command data can be placed.  Its format has been copied from
+host buffer, but the PCIe selection bits do not make sense in
+this case.  If those get masked out from a NFP address - writes
+to random place in the chip memory may be issued and crash the
+device.
 
-Boot Failure Detected:
+Even in the general NSP buffer case, it doesn't make sense to have the
+PCIe selection bits there anymore. These are unused at the moment, and
+when it becomes necessary, the PCIe selection bits should rather be
+moved to another register to utilise more bits for the buffer address.
 
-arm:
+This has never been an issue because the buffer used to be
+allocated in memory with less-than-38-bit-long address but that
+is about to change.
 
-    multi_v7_defconfig
-        sun5i-gr8-chip-pro: 1 failed lab
-
+Fixes: 1a64821c6af7 ("nfp: add support for service processor access")
+Signed-off-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
+Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
-For more info write to <info@kernelci.org>
+ drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+--- a/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c
++++ b/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c
+@@ -71,10 +71,11 @@
+ /* CPP address to retrieve the data from */
+ #define NSP_BUFFER		0x10
+ #define   NSP_BUFFER_CPP	GENMASK_ULL(63, 40)
+-#define   NSP_BUFFER_PCIE	GENMASK_ULL(39, 38)
+-#define   NSP_BUFFER_ADDRESS	GENMASK_ULL(37, 0)
++#define   NSP_BUFFER_ADDRESS	GENMASK_ULL(39, 0)
+ 
+ #define NSP_DFLT_BUFFER		0x18
++#define   NSP_DFLT_BUFFER_CPP	GENMASK_ULL(63, 40)
++#define   NSP_DFLT_BUFFER_ADDRESS	GENMASK_ULL(39, 0)
+ 
+ #define NSP_DFLT_BUFFER_CONFIG	0x20
+ #define   NSP_DFLT_BUFFER_SIZE_MB	GENMASK_ULL(7, 0)
+@@ -427,8 +428,8 @@ __nfp_nsp_command_buf(struct nfp_nsp *ns
+ 	if (err < 0)
+ 		return err;
+ 
+-	cpp_id = FIELD_GET(NSP_BUFFER_CPP, reg) << 8;
+-	cpp_buf = FIELD_GET(NSP_BUFFER_ADDRESS, reg);
++	cpp_id = FIELD_GET(NSP_DFLT_BUFFER_CPP, reg) << 8;
++	cpp_buf = FIELD_GET(NSP_DFLT_BUFFER_ADDRESS, reg);
+ 
+ 	if (in_buf && in_size) {
+ 		err = nfp_cpp_write(cpp, cpp_id, cpp_buf, in_buf, in_size);
