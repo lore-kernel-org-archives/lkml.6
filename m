@@ -1,82 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753942AbeDJNWl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 09:22:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49638 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752859AbeDJNWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 09:22:39 -0400
-Date: Tue, 10 Apr 2018 16:22:35 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Stefan Hajnoczi <stefanha@redhat.com>
-Cc: virtualization@lists.linux-foundation.org,
-        syzkaller-bugs@googlegroups.com,
-        Linus Torvalds <torvalds@linux-foundation.org>, kvm@vger.kernel.org,
-        jasowang@redhat.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] vhost: fix vhost_vq_access_ok() log check
-Message-ID: <20180410161905-mutt-send-email-mst@kernel.org>
-References: <20180410052630.11270-1-stefanha@redhat.com>
- <20180410052630.11270-2-stefanha@redhat.com>
+        id S1753463AbeDJNZC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 09:25:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55530 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752919AbeDJNZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 09:25:01 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DC8521738
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Subject: [PATCH v1 0/2] microblaze/PCI: Remove unused code
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Michal Simek <monstr@monstr.eu>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 10 Apr 2018 08:24:59 -0500
+Message-ID: <152336656418.18958.17017091754578447948.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180410052630.11270-2-stefanha@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 01:26:29PM +0800, Stefan Hajnoczi wrote:
-> Commit d65026c6c62e7d9616c8ceb5a53b68bcdc050525 ("vhost: validate log
-> when IOTLB is enabled") introduced a regression.  The logic was
-> originally:
-> 
->   if (vq->iotlb)
->       return 1;
->   return A && B;
-> 
-> After the patch the short-circuit logic for A was inverted:
-> 
->   if (A || vq->iotlb)
->       return A;
->   return B;
-> 
-> This patch fixes the regression by rewriting the checks in the obvious
-> way, no longer returning A when vq->iotlb is non-NULL (which is hard to
-> understand).
-> 
-> Reported-by: syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com
-> Cc: Jason Wang <jasowang@redhat.com>
-> Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+Remove some unused microblaze PCI code.
 
-This patch only makes sense after patch 2/2 is applied.
-Otherwise the logic seems reversed below.
+I can merge these via PCI if you like, Michal.  I have some related
+changes coming for some sparc resource claim issues.  Or it's fine if
+you pick them up.
 
-Can you pls squash these two?
+---
 
-> ---
->  drivers/vhost/vhost.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index 5320039671b7..93fd0c75b0d8 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -1244,10 +1244,12 @@ static int vq_log_access_ok(struct vhost_virtqueue *vq,
->  /* Caller should have vq mutex and device mutex */
->  int vhost_vq_access_ok(struct vhost_virtqueue *vq)
->  {
-> -	int ret = vq_log_access_ok(vq, vq->log_base);
-> +	if (!vq_log_access_ok(vq, vq->log_base))
-> +		return 0;
->  
-> -	if (ret || vq->iotlb)
-> -		return ret;
-> +	/* Access validation occurs at prefetch time with IOTLB */
-> +	if (vq->iotlb)
-> +		return 1;
->  
->  	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used);
->  }
-> -- 
-> 2.14.3
+Bjorn Helgaas (2):
+      microblaze/PCI: Remove pcibios_finish_adding_to_bus() dead code
+      microblaze/PCI: Remove pcibios_claim_one_bus() dead code
+
+
+ arch/microblaze/include/asm/pci.h |    4 --
+ arch/microblaze/pci/pci-common.c  |   61 -------------------------------------
+ 2 files changed, 65 deletions(-)
