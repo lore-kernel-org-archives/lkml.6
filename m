@@ -1,44 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754474AbeDJNx7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 09:53:59 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:46306 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753206AbeDJNx4 (ORCPT
+        id S1754476AbeDJNyd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 09:54:33 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38000 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753598AbeDJNya (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 09:53:56 -0400
-X-Google-Smtp-Source: AIpwx48jrZzSB3Q8n7uUlarKQYgpaaP7yix3U/hwzBc98xGvUVgjfZfDvH26BBGEWec0mv6RNTxdBg==
-Date: Tue, 10 Apr 2018 08:53:53 -0500
-From: Rob Herring <robh@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linus.walleij@linaro.org, afaerber@suse.de, liuwei@actions-semi.com,
-        mp-cs@actions-semi.com, 96boards@ucrobotics.com,
-        devicetree@vger.kernel.org, andy.shevchenko@gmail.com,
-        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
-        bdong@ucrobotics.com, manivannanece23@gmail.com
-Subject: Re: [PATCH v7 4/9] dt-bindings: gpio: Add gpio nodes for Actions
- S900 SoC
-Message-ID: <20180410135353.yyyv54ik6nkimb6j@rob-hp-laptop>
-References: <20180404172258.7678-1-manivannan.sadhasivam@linaro.org>
- <20180404172258.7678-5-manivannan.sadhasivam@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404172258.7678-5-manivannan.sadhasivam@linaro.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Tue, 10 Apr 2018 09:54:30 -0400
+X-Google-Smtp-Source: AIpwx4+Ljy3pM2mBTUvaY8XDGglczYXAjjqa7vd53HfqyBmrPnfnMjHBi6vgI7lT/5XkqHDkRqFv7w==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: Larry.Finger@lwfinger.net, kvalo@codeaurora.org
+Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] net: wireless: b43legacy: Replace GFP_ATOMIC with GFP_KERNEL in dma_tx_fragment
+Date: Tue, 10 Apr 2018 21:54:19 +0800
+Message-Id: <1523368459-32128-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 10:52:53PM +0530, Manivannan Sadhasivam wrote:
-> Add gpio nodes for Actions Semi S900 SoC.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  .../devicetree/bindings/gpio/actions,owl-gpio.txt  | 87 ++++++++++++++++++++++
->  1 file changed, 87 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/actions,owl-gpio.txt
+dma_tx_fragment() is never called in atomic context.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+dma_tx_fragment() is only called by b43legacy_dma_tx(), which is 
+only called by b43legacy_tx_work().
+b43legacy_tx_work() is only set a parameter of INIT_WORK() in 
+b43legacy_wireless_init().
+
+Despite never getting called from atomic context,
+dma_tx_fragment() calls alloc_skb() with GFP_ATOMIC,
+which does not sleep for allocation.
+GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+which can sleep and improve the possibility of sucessful allocation.
+
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/net/wireless/broadcom/b43legacy/dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/broadcom/b43legacy/dma.c b/drivers/net/wireless/broadcom/b43legacy/dma.c
+index cfa617d..2f0c64c 100644
+--- a/drivers/net/wireless/broadcom/b43legacy/dma.c
++++ b/drivers/net/wireless/broadcom/b43legacy/dma.c
+@@ -1064,7 +1064,7 @@ static int dma_tx_fragment(struct b43legacy_dmaring *ring,
+ 	meta->dmaaddr = map_descbuffer(ring, skb->data, skb->len, 1);
+ 	/* create a bounce buffer in zone_dma on mapping failure. */
+ 	if (b43legacy_dma_mapping_error(ring, meta->dmaaddr, skb->len, 1)) {
+-		bounce_skb = alloc_skb(skb->len, GFP_ATOMIC | GFP_DMA);
++		bounce_skb = alloc_skb(skb->len, GFP_KERNEL | GFP_DMA);
+ 		if (!bounce_skb) {
+ 			ring->current_slot = old_top_slot;
+ 			ring->used_slots = old_used_slots;
+-- 
+1.9.1
