@@ -1,11 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-807177-1523400256-2-15430967151580635450
+X-Cyrus-Session-Id: sloti22d1t05-807177-1523400248-2-15648597314768995780
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523400255; b=n1DlLXcR/Dj9p3R89Bq6+pDp0isBausZ11hdjztolVmFPa8GBl
-    oQIcTElzrQz4QteUZi/wBAzevS+SUE7XrBia5uS1M8zQNOW04x5C0bgqBuVIFjaD
-    qv6LmDow8XEo3mYghVtU5lZ9ikKLxomqtQi+mYVg2ADZXtm4/pY5rJJVx6d53c7l
-    4fQwapoQy26+/t+0XEysoep3hcH3r2mttaXb2v5tNuvEyXEtrj2FHquiOLp9H7E1
-    joS16CiDrRQYFSvN0HFv/JUhDAmCKmuZB6lStcyf3zaL90gP44G6vExberpXtfNN
-    BxWlfF0e5QF9a4c+lXUDzKHjJ0oIhNwGcmyw==
+    1523400248; b=SxtjYVHTLVSImOa//MW4EOW1ur05zv2uN6iB7oj28yRhY3KUNe
+    9q+CNj66oVWILE65M2fQru7BeRUBDgCDSmoaIh84UCt+H7ZbNNf02SqqFSTvv1VU
+    goMY9D3p5dgR5FLHg5ygu6K75BdDX2DYdsy6Ye3PFjIJk/jl8QN5+zsMPdTP1V0A
+    q/m2csgdrC5C415VIIis4c+ETng0gTwQUnovsIocCM6NPF0Wn0WvVwU9eK9x8BsJ
+    QiBbffNZFIZC/X1engUI/FDz1egSt3dRjOl/jFA0ZBNc9Kw96XcpuuRyw8LJVKNW
+    IOMhfdFwmFZ1BUOm7FhfuKCjG7Immd0D+3Jw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523400255; bh=v29F7x/V4G8OVCWugBIA+yTQAH9BL/
-    iebSfi61ky/d8=; b=dcIonWj0ESlwiwuHcGXxPqX/IxBiuCWQxdtTHyyD8u33mA
-    Lc1szhYATujA9vijH0H0lnPVQ/Z6djhxLfDYT8A3uTzPGX1v7i3Xq1h5lPTwcejz
-    orEz8EjzjHPOV+7wPmQt/aw2ZfJbKhbrtv2H3+Gdvpm9wkni9eP4TVSlcTzhHudC
-    1tmUHMj2ynV3jW7WQqQnGGZIoETfrKlI7Ut1D+uivZhFNLHC54hZpQD/hGiC8Tbw
-    UZQ0XdaVRlwNCOK303QvaB9EqScv8Z1Ley+h4uPoDiePdSP91ypIeolz26cwmXP6
-    UeRq5yPzjR0tVXJUtXRB/9QTcD4liM9sS1zcZAsw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523400248; bh=9DAOJSPWw1lBRNn7lN+qtNjcY5Pa/M
+    XucXz0VitE28g=; b=iYq7KNU8TuFcErTygnjIR2koqMkrdS1MxfeJIU61QgiHF+
+    6KNuMcHMa/LW8jZ4V08fkOrus8oZcwjyagw9WNL5Hhx1xlYZPCKC+KQwtLb7adof
+    2oXK4s4GyOV7LAJFzXW02oUNHIT1voXnJ7OwJk/b+SItoY7VsczGqG/iSSnWqP2z
+    PbmSWKfutLQK+FCmU6z2T9Culdftra7DJ37WSBy4Oq6mWckbJOqjs+o+4c2gzxPX
+    nPsKiuHsAzyO9UOUoEZQeA4Deb/wrqY0+k6mVTZ8aLnykQj8EHdrAjZdhW4tL4Yl
+    dZo/w6EeHneKx/4tpoCUDf9RST9mwOHq2RgfLBvA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,35 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHA202jtFY4vZppnWfjXvScPnDuIkLDelUFvF23WsL6tnXKzsn81WIlIvZ/XQ0nO4y65YF8eQdzt7hGD7q79HsnxyoT87hWmdh4ePIafrOmF7HOI8aBZ
-    RhkcgXa9VUo+r/KWmpy7OaZ39X6qBDSwCZmijxNMISHmMYKgzSZcHVJvG4vAVGsffaj4KH3SmCF8r4zFYIQeryxnLfpGSbGgKBM3HpZ5wtI/XO3hJQ3AxSpo
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGLYM3Fgxw+NblWuPYdDVQK38qqHuDu/AxlXVATdEGLFH4EVbxgDoKd7Bh9dCwOMxceW73pycw8yg3IqXILXE3BI/NV40xx+Y3L32uisuUsAeUX2T0xG
+    3vFwKRTxcthJRkWqQfRmRvVijOys/rsLrhVuGyxR9TT24TiDO9GvL2iUqL0+b959y5DUTY0mWWpLnYnPyku6Npr6RvLuaVQuYRCkoqHYqf8LdBni4K9ATD5P
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=1XWaLZrsAAAA:8 a=h-jsSio6AAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=qkIx0ayPLVXy8fWxizoA:9 a=QEXdDO2ut3YA:10 a=cKCw3X4OOXbpJNOXdmIM:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=1XWaLZrsAAAA:8 a=pGLkceISAAAA:8 a=vmLDa1wCAAAA:8 a=4RBUngkUAAAA:8
+    a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=vFSZ3zM42u_8h33ZmkgA:9
+    a=Yi6rcVn594lHFDS6:21 a=KKgrvbZCQR5esraY:21 a=QEXdDO2ut3YA:10
+    a=h8Bt5HTj68qkN2fS7gvA:22 a=_sbA2Q-Kp09kWB8D3iXc:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932608AbeDJWj1 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 18:39:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45212 "EHLO
+        id S932621AbeDJWjb (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 18:39:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45244 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932601AbeDJWjZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:39:25 -0400
+        with ESMTP id S932601AbeDJWj2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:39:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Herbert <tom@quantonium.net>,
-        David Lebrun <dlebrun@google.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        syzbot <syzkaller@googlegroups.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 126/138] ipv6: sr: fix seg6 encap performances with TSO enabled
-Date: Wed, 11 Apr 2018 00:25:16 +0200
-Message-Id: <20180410212916.819488015@linuxfoundation.org>
+Subject: [PATCH 4.14 109/138] sctp: sctp_sockaddr_af must check minimal addr length for AF_INET6
+Date: Wed, 11 Apr 2018 00:24:59 +0200
+Message-Id: <20180410212914.851493093@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -93,94 +97,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Lebrun <dlebrun@google.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 5807b22c9164a21cd1077a9bc587f0bba361f72d ]
+[ Upstream commit 81e98370293afcb58340ce8bd71af7b97f925c26 ]
 
-Enabling TSO can lead to abysmal performances when using seg6 in
-encap mode, such as with the ixgbe driver. This patch adds a call to
-iptunnel_handle_offloads() to remove the encapsulation bit if needed.
+Check must happen before call to ipv6_addr_v4mapped()
 
-Before:
-root@comp4-seg6bpf:~# iperf3 -c fc00::55
-Connecting to host fc00::55, port 5201
-[  4] local fc45::4 port 36592 connected to fc00::55 port 5201
-[ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-1.00   sec   196 KBytes  1.60 Mbits/sec   47   6.66 KBytes
-[  4]   1.00-2.00   sec   304 KBytes  2.49 Mbits/sec  100   5.33 KBytes
-[  4]   2.00-3.00   sec   284 KBytes  2.32 Mbits/sec   92   5.33 KBytes
+syzbot report was :
 
-After:
-root@comp4-seg6bpf:~# iperf3 -c fc00::55
-Connecting to host fc00::55, port 5201
-[  4] local fc45::4 port 43062 connected to fc00::55 port 5201
-[ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
-[  4]   0.00-1.00   sec  1.03 GBytes  8.89 Gbits/sec    0    743 KBytes
-[  4]   1.00-2.00   sec  1.03 GBytes  8.87 Gbits/sec    0    743 KBytes
-[  4]   2.00-3.00   sec  1.03 GBytes  8.87 Gbits/sec    0    743 KBytes
+BUG: KMSAN: uninit-value in sctp_sockaddr_af net/sctp/socket.c:359 [inline]
+BUG: KMSAN: uninit-value in sctp_do_bind+0x60f/0xdc0 net/sctp/socket.c:384
+CPU: 0 PID: 3576 Comm: syzkaller968804 Not tainted 4.16.0+ #82
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+ kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+ __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
+ sctp_sockaddr_af net/sctp/socket.c:359 [inline]
+ sctp_do_bind+0x60f/0xdc0 net/sctp/socket.c:384
+ sctp_bind+0x149/0x190 net/sctp/socket.c:332
+ inet6_bind+0x1fd/0x1820 net/ipv6/af_inet6.c:293
+ SYSC_bind+0x3f2/0x4b0 net/socket.c:1474
+ SyS_bind+0x54/0x80 net/socket.c:1460
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x43fd49
+RSP: 002b:00007ffe99df3d28 EFLAGS: 00000213 ORIG_RAX: 0000000000000031
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fd49
+RDX: 0000000000000010 RSI: 0000000020000000 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401670
+R13: 0000000000401700 R14: 0000000000000000 R15: 0000000000000000
 
-Reported-by: Tom Herbert <tom@quantonium.net>
-Fixes: 6c8702c60b88 ("ipv6: sr: add support for SRH encapsulation and injection with lwtunnels")
-Signed-off-by: David Lebrun <dlebrun@google.com>
+Local variable description: ----address@SYSC_bind
+Variable was created at:
+ SYSC_bind+0x6f/0x4b0 net/socket.c:1461
+ SyS_bind+0x54/0x80 net/socket.c:1460
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Vlad Yasevich <vyasevich@gmail.com>
+Cc: Neil Horman <nhorman@tuxdriver.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/seg6_iptunnel.c |   16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ net/sctp/socket.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/net/ipv6/seg6_iptunnel.c
-+++ b/net/ipv6/seg6_iptunnel.c
-@@ -16,6 +16,7 @@
- #include <linux/net.h>
- #include <linux/module.h>
- #include <net/ip.h>
-+#include <net/ip_tunnels.h>
- #include <net/lwtunnel.h>
- #include <net/netevent.h>
- #include <net/netns/generic.h>
-@@ -211,11 +212,6 @@ static int seg6_do_srh(struct sk_buff *s
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -337,11 +337,14 @@ static struct sctp_af *sctp_sockaddr_af(
+ 	if (!opt->pf->af_supported(addr->sa.sa_family, opt))
+ 		return NULL;
  
- 	tinfo = seg6_encap_lwtunnel(dst->lwtstate);
+-	/* V4 mapped address are really of AF_INET family */
+-	if (addr->sa.sa_family == AF_INET6 &&
+-	    ipv6_addr_v4mapped(&addr->v6.sin6_addr) &&
+-	    !opt->pf->af_supported(AF_INET, opt))
+-		return NULL;
++	if (addr->sa.sa_family == AF_INET6) {
++		if (len < SIN6_LEN_RFC2133)
++			return NULL;
++		/* V4 mapped address are really of AF_INET family */
++		if (ipv6_addr_v4mapped(&addr->v6.sin6_addr) &&
++		    !opt->pf->af_supported(AF_INET, opt))
++			return NULL;
++	}
  
--	if (likely(!skb->encapsulation)) {
--		skb_reset_inner_headers(skb);
--		skb->encapsulation = 1;
--	}
--
- 	switch (tinfo->mode) {
- 	case SEG6_IPTUN_MODE_INLINE:
- 		if (skb->protocol != htons(ETH_P_IPV6))
-@@ -224,10 +220,12 @@ static int seg6_do_srh(struct sk_buff *s
- 		err = seg6_do_srh_inline(skb, tinfo->srh);
- 		if (err)
- 			return err;
--
--		skb_reset_inner_headers(skb);
- 		break;
- 	case SEG6_IPTUN_MODE_ENCAP:
-+		err = iptunnel_handle_offloads(skb, SKB_GSO_IPXIP6);
-+		if (err)
-+			return err;
-+
- 		if (skb->protocol == htons(ETH_P_IPV6))
- 			proto = IPPROTO_IPV6;
- 		else if (skb->protocol == htons(ETH_P_IP))
-@@ -239,6 +237,8 @@ static int seg6_do_srh(struct sk_buff *s
- 		if (err)
- 			return err;
- 
-+		skb_set_inner_transport_header(skb, skb_transport_offset(skb));
-+		skb_set_inner_protocol(skb, skb->protocol);
- 		skb->protocol = htons(ETH_P_IPV6);
- 		break;
- 	case SEG6_IPTUN_MODE_L2ENCAP:
-@@ -262,8 +262,6 @@ static int seg6_do_srh(struct sk_buff *s
- 	ipv6_hdr(skb)->payload_len = htons(skb->len - sizeof(struct ipv6hdr));
- 	skb_set_transport_header(skb, sizeof(struct ipv6hdr));
- 
--	skb_set_inner_protocol(skb, skb->protocol);
--
- 	return 0;
- }
- 
+ 	/* If we get this far, af is valid. */
+ 	af = sctp_get_af_specific(addr->sa.sa_family);
