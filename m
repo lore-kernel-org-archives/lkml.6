@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48Kk3ttMsohFxchGY4s96MGGc4yCYkupUHMPHFASr0A0/TwCxx6IW0yNDwPdKdJEHb3opj+
-ARC-Seal: i=1; a=rsa-sha256; t=1523399887; cv=none;
+X-Google-Smtp-Source: AIpwx48CIxU0+qBuM3LycV2rnPYJOyVkduDQ4uFe0+IXLDfsVqn//WnMk6o04LwW2glIbU+Mnpo5
+ARC-Seal: i=1; a=rsa-sha256; t=1523399884; cv=none;
         d=google.com; s=arc-20160816;
-        b=omQu44wKIhhcvCs/HnIcg0cOQP8vEdzgXztzUaMPpwNzqZE7WKdh3maQFklkzgqTtH
-         IcAWt4f6vNv5/F1qk6Ofd5UOLwHvP7R8BmfYHd3VrWPvS8gdO/xVJmwDu1DIaYHY9awv
-         PiX+xI5UzCJGUO2j8oKCs2D6lXAOM6O7GYWOWR1AJqHrVgbfK9RWrOtl3/MWlOWSvccJ
-         4dAWkOacxZ8ek8Hs6Ir3YhBmT4ruPv2v1R1aGhsDagvK73K46Nql5XkmHlYezDKqmQ5w
-         ZowaHOoiaEI5Bq7c1/4xOXPmHbvXFDP5w+edBQtlkjvD/z7Jmo+flc97R8VFtncoYPqT
-         U+wA==
+        b=0VhligOSXeVqTtgYCr6OfbTHisTZDQzPwIg3/CfmOBfF62URO5D/eWKIChaEBbv5gr
+         41/Jj3VBcAvfi68RJqYvRYqSgyxMnoRrAKYgUKIqvrEShnRmbcie/vtfY1QbEjDTIsLW
+         oHMGvU51cEkeDAPW2NbZ9sIjN5S/84UGkN7qrLRJfbIN8dMP7C5P4H8t2xSDobp+33Kq
+         SuH5qx7n0/UixdXjGqzZZ3u5Cupj9XBUa8oGXfHwwR6zBGXAaARXuua6Wt7hPJcfNV5A
+         D6ud5E1e+4xRbI6/nsmTzz425OE9bK5XqWbEW+HvVYSx6vM+c0BuOrresXyDPv0u6XNv
+         Es/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ivF8aLS22O7Ui79aYvljUA6stsMVdE4vjaI7qMEXVwQ=;
-        b=I8BWLofNMAnvHhaTFAB1TnA2FE2DdBcmoxV9Q3wXT+tIBjmeRhaD3O0S1XYk7COmq5
-         xC0jo9DQMqKcszx7UHeACLOGhGkk0VbF/+tANzXKuWnlYDlCErVx120fuGvhnVlZbQ2Q
-         dSEbQxKl1PTpeSyZ8SNsAOmOZXT9nEHn55/8bJJoXseuxzdWUz8jQIicZ+me08iMKU3u
-         9PqexUNaNEbSjFuw/G2Jp3gairddOU2e3hADO1OTHCjPmeRQyp5ReXh/cgEdXoflT6qF
-         AGhJ2CnZ5mRbwryz5lfCPuZQT45O64GsGCv4FcKlw7RG3GWERdsYUUw8iXGSDuAnNUls
-         EXpA==
+        bh=DlnoRRdlBY3z+BqOEBzNXfNdHAnnuDcGWUID0KImLHI=;
+        b=J/z2eRHotrsl75ld68LyC44N0KiHn1CqhqW31EdbmgSOT48DvvtCCjXdk8XEfSkdJV
+         LzjAeiQp5UWVIHTm3LnYXv9qGIgqN7LRMkzJEWu4UdbD4bMot6N6b0Uanwb40HmcbOj1
+         4Dg6HSOjdiIaL2ADD3zd3u/DdteBEcrd4AFPwQ76AsM9ghQgejfzq+WshjcUWC4tNLv3
+         YjcglHaeeV8p6SsnbX3p4/qd0EZL79kV6PfXlaxVrv9qVFGQEeRcbmH6MGoMu5F7ANnk
+         OcWYfTGDEoepUgGQWdG4eh+/9vXafWDmPYnVLyg1qq2Lxc3DOSeR35DZGhP4sdehcz4t
+         BYwQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andrey Konovalov <andreyknvl@google.com>,
-	Raghuram Chary J <raghuramchary.jallipalli@microchip.com>,
+	syzbot+91e6f9932ff122fa4410@syzkaller.appspotmail.com,
+	Paolo Abeni <pabeni@redhat.com>,
+	Eric Dumazet <edumazet@google.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 099/138] lan78xx: Crash in lan78xx_writ_reg (Workqueue: events lan78xx_deferred_multicast_write)
-Date: Wed, 11 Apr 2018 00:24:49 +0200
-Message-Id: <20180410212913.661481818@linuxfoundation.org>
+Subject: [PATCH 4.14 098/138] ipv6: the entire IPv6 header chain must fit the first fragment
+Date: Wed, 11 Apr 2018 00:24:48 +0200
+Message-Id: <20180410212913.551099596@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400133742270469?=
-X-GMAIL-MSGID: =?utf-8?q?1597400559924150823?=
+X-GMAIL-THRID: =?utf-8?q?1597400181936050508?=
+X-GMAIL-MSGID: =?utf-8?q?1597400557054377766?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,82 +51,119 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Raghuram Chary J <raghuramchary.jallipalli@microchip.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
 
-[ Upstream commit 2d2d99ec13f62d5d2cecb6169dfdb6bbe05356d0 ]
+[ Upstream commit 10b8a3de603df7b96004179b1b33b1708c76d144 ]
 
-Description:
-Crash was reported with syzkaller pointing to lan78xx_write_reg routine.
+While building ipv6 datagram we currently allow arbitrary large
+extheaders, even beyond pmtu size. The syzbot has found a way
+to exploit the above to trigger the following splat:
 
-Root-cause:
-Proper cleanup of workqueues and init/setup routines was not happening
-in failure conditions.
+kernel BUG at ./include/linux/skbuff.h:2073!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 4230 Comm: syzkaller672661 Not tainted 4.16.0-rc2+ #326
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+RIP: 0010:__skb_pull include/linux/skbuff.h:2073 [inline]
+RIP: 0010:__ip6_make_skb+0x1ac8/0x2190 net/ipv6/ip6_output.c:1636
+RSP: 0018:ffff8801bc18f0f0 EFLAGS: 00010293
+RAX: ffff8801b17400c0 RBX: 0000000000000738 RCX: ffffffff84f01828
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8801b415ac18
+RBP: ffff8801bc18f360 R08: ffff8801b4576844 R09: 0000000000000000
+R10: ffff8801bc18f380 R11: ffffed00367aee4e R12: 00000000000000d6
+R13: ffff8801b415a740 R14: dffffc0000000000 R15: ffff8801b45767c0
+FS:  0000000001535880(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000002000b000 CR3: 00000001b4123001 CR4: 00000000001606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  ip6_finish_skb include/net/ipv6.h:969 [inline]
+  udp_v6_push_pending_frames+0x269/0x3b0 net/ipv6/udp.c:1073
+  udpv6_sendmsg+0x2a96/0x3400 net/ipv6/udp.c:1343
+  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:764
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg+0xca/0x110 net/socket.c:640
+  ___sys_sendmsg+0x320/0x8b0 net/socket.c:2046
+  __sys_sendmmsg+0x1ee/0x620 net/socket.c:2136
+  SYSC_sendmmsg net/socket.c:2167 [inline]
+  SyS_sendmmsg+0x35/0x60 net/socket.c:2162
+  do_syscall_64+0x280/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x4404c9
+RSP: 002b:00007ffdce35f948 EFLAGS: 00000217 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004404c9
+RDX: 0000000000000003 RSI: 0000000020001f00 RDI: 0000000000000003
+RBP: 00000000006cb018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 0000000020000080 R11: 0000000000000217 R12: 0000000000401df0
+R13: 0000000000401e80 R14: 0000000000000000 R15: 0000000000000000
+Code: ff e8 1d 5e b9 fc e9 15 e9 ff ff e8 13 5e b9 fc e9 44 e8 ff ff e8 29
+5e b9 fc e9 c0 e6 ff ff e8 3f f3 80 fc 0f 0b e8 38 f3 80 fc <0f> 0b 49 8d
+87 80 00 00 00 4d 8d 87 84 00 00 00 48 89 85 20 fe
+RIP: __skb_pull include/linux/skbuff.h:2073 [inline] RSP: ffff8801bc18f0f0
+RIP: __ip6_make_skb+0x1ac8/0x2190 net/ipv6/ip6_output.c:1636 RSP:
+ffff8801bc18f0f0
 
-Fix:
-Handled the error conditions by cleaning up the queues and init/setup
-routines.
+As stated by RFC 7112 section 5:
 
-Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
-Reported-by: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Raghuram Chary J <raghuramchary.jallipalli@microchip.com>
+   When a host fragments an IPv6 datagram, it MUST include the entire
+   IPv6 Header Chain in the First Fragment.
+
+So this patch addresses the issue dropping datagrams with excessive
+extheader length. It also updates the error path to report to the
+calling socket nonnegative pmtu values.
+
+The issue apparently predates git history.
+
+v1 -> v2: cleanup error path, as per Eric's suggestion
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: syzbot+91e6f9932ff122fa4410@syzkaller.appspotmail.com
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/lan78xx.c |   23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ net/ipv6/ip6_output.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -2863,8 +2863,7 @@ static int lan78xx_bind(struct lan78xx_n
- 	if (ret < 0) {
- 		netdev_warn(dev->net,
- 			    "lan78xx_setup_irq_domain() failed : %d", ret);
--		kfree(pdata);
--		return ret;
-+		goto out1;
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -1245,7 +1245,7 @@ static int __ip6_append_data(struct sock
+ 			     const struct sockcm_cookie *sockc)
+ {
+ 	struct sk_buff *skb, *skb_prev = NULL;
+-	unsigned int maxfraglen, fragheaderlen, mtu, orig_mtu;
++	unsigned int maxfraglen, fragheaderlen, mtu, orig_mtu, pmtu;
+ 	int exthdrlen = 0;
+ 	int dst_exthdrlen = 0;
+ 	int hh_len;
+@@ -1281,6 +1281,12 @@ static int __ip6_append_data(struct sock
+ 		      sizeof(struct frag_hdr) : 0) +
+ 		     rt->rt6i_nfheader_len;
+ 
++	/* as per RFC 7112 section 5, the entire IPv6 Header Chain must fit
++	 * the first fragment
++	 */
++	if (headersize + transhdrlen > mtu)
++		goto emsgsize;
++
+ 	if (cork->length + length > mtu - headersize && ipc6->dontfrag &&
+ 	    (sk->sk_protocol == IPPROTO_UDP ||
+ 	     sk->sk_protocol == IPPROTO_RAW)) {
+@@ -1296,9 +1302,8 @@ static int __ip6_append_data(struct sock
+ 
+ 	if (cork->length + length > maxnonfragsize - headersize) {
+ emsgsize:
+-		ipv6_local_error(sk, EMSGSIZE, fl6,
+-				 mtu - headersize +
+-				 sizeof(struct ipv6hdr));
++		pmtu = max_t(int, mtu - headersize + sizeof(struct ipv6hdr), 0);
++		ipv6_local_error(sk, EMSGSIZE, fl6, pmtu);
+ 		return -EMSGSIZE;
  	}
  
- 	dev->net->hard_header_len += TX_OVERHEAD;
-@@ -2872,14 +2871,32 @@ static int lan78xx_bind(struct lan78xx_n
- 
- 	/* Init all registers */
- 	ret = lan78xx_reset(dev);
-+	if (ret) {
-+		netdev_warn(dev->net, "Registers INIT FAILED....");
-+		goto out2;
-+	}
- 
- 	ret = lan78xx_mdio_init(dev);
-+	if (ret) {
-+		netdev_warn(dev->net, "MDIO INIT FAILED.....");
-+		goto out2;
-+	}
- 
- 	dev->net->flags |= IFF_MULTICAST;
- 
- 	pdata->wol = WAKE_MAGIC;
- 
- 	return ret;
-+
-+out2:
-+	lan78xx_remove_irq_domain(dev);
-+
-+out1:
-+	netdev_warn(dev->net, "Bind routine FAILED");
-+	cancel_work_sync(&pdata->set_multicast);
-+	cancel_work_sync(&pdata->set_vlan);
-+	kfree(pdata);
-+	return ret;
- }
- 
- static void lan78xx_unbind(struct lan78xx_net *dev, struct usb_interface *intf)
-@@ -2891,6 +2908,8 @@ static void lan78xx_unbind(struct lan78x
- 	lan78xx_remove_mdio(dev);
- 
- 	if (pdata) {
-+		cancel_work_sync(&pdata->set_multicast);
-+		cancel_work_sync(&pdata->set_vlan);
- 		netif_dbg(dev, ifdown, dev->net, "free pdata");
- 		kfree(pdata);
- 		pdata = NULL;
