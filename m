@@ -1,112 +1,85 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-899921-1524473745-2-7970055485607567294
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524473744; b=Ns16EluozIXb3UPlQknp6jjPwQrJ415qCk1wcgjoRyAzLa2pFV
-    w1Qjy/2UTlxtI/AJgNyONPTepx7ISD/uWPEsHiPfXjWmyHlQrNAkkwzhqTguzy5Q
-    X9OApaIWve3wUUTyeN/UBH3T3mwjpfgUzZCmrT25OkhMqP+Gz7PYFw3LduvQh/2Y
-    wSvAHXzOF90ftBUHL5OokVMlcLT0EIpQCBfaZTUf+VtZm8LxMegHhRQkcPtqT0VX
-    G3F+YCCSTBM3FFJEP3vmfPKWKeWQQYkrY4HoyIN1gWcSbXUmTlu8vyobCCbVoDmi
-    sFoZpII/gnrhmf0c/3ndD6SqjYTIw9wme1Cw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1524473744; bh=OabwlFmv/Xo+xH/DlpJajz0AG8jGZc
-    1mkBij8NHSMAc=; b=iIm50SIzhc+mUselIOmf3ozAHbnbmiY+M+4fzTu/TtZTa3
-    pjssAoTlUHfwE17ZRoR+3ejTdGslP+h6tz0XBtL1U5ZMEVdw0UKNHmAbXMeQ+r0d
-    Ris91p8lIEs+3Wj2JwcpgZoml51OzRTay47cVN5m4CaZ+O4PUfldftPQoofqI7AK
-    6BZAnL69F7Atg4oji4lVkrUfdwSRBciqW8IgqiR7HOSetb/wJ69NVchBmPQoymAY
-    d9a3/wX25KTNecjWuBWt0RQScnRoYpZf+WSF5KnzPMzwGrB//Cgss/ErpufU2sTy
-    uNJJ7ETzhoQEBD+GixdEG/kc/+anjE+S6TNZcifg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b=JaQawK2N x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xilinx.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=hr4vqV9I;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=xilinx.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b=JaQawK2N x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xilinx.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=hr4vqV9I;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=xilinx.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfE01tb4C6pHCRIhQK3kb3nA/KtJYmD0Ch9vmR7yUsMmJd8lQi9tLSt3jYchL9to80x7dqNOlU9wUCSW23mVHlmPWy2C0pwU5ZVxuTQEoUy8zziclMalr
-    I9wB/jnasxazdnXQUMmuWJipYipYjzEtzGUJkJFHqoz+/wc/f+8XyKBLGo70LEXreQX6YmGGDw3bk13CbXGZE3vDrL0x4yilh+CdvUgxkMwTZXgHFwA7jPDx
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=Am4ss40yAAAA:8
-    a=VwQbUJbxAAAA:8 a=zME09AzrzR2lX3ZMDE4A:9 a=x8gzFH9gYPwA:10
-    a=lf-hbUz_c89dky27wAWH:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754503AbeDWIz2 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 23 Apr 2018 04:55:28 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:33990 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754397AbeDWIz1 (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Mon, 23 Apr 2018 04:55:27 -0400
-X-Google-Smtp-Source: AIpwx49Dmayl2Dzv4J1Eoj96XxF9BvgzQj48+8wY/Ntf4op/9hEg3B/PQ3SH+GhbO+ds+AWNDgud3w==
+Return-Path: <monstr@monstr.eu>
+ARC-Seal: i=1; a=rsa-sha256; t=1523368856; cv=none;
+        d=google.com; s=arc-20160816;
+        b=KkwA0LT+u5pqOsM3nxv2/JY2jOj65NrldsipvDWMISgTV149aEzw5QC+nUsOQywtO9
+         ddaxczqcG06TIacOLc21Lvlx+uo8xaPALjGwMceYpj+fbXAbJuX7THIr4VO8VUtabj1h
+         kwiI10fGOTnw/6hjCfaxwevro3vZo4s3HcejnZUQHKWTj+SdlRMSSRM2bwTtkPoRltmT
+         hnPub4CbWEcjgMg7hZbdGDv1pFPxGekXvjb0OCmT5tBGpjw1J63lhZ6cxeIp5dmSRsKR
+         7RYmJ1qNQ0DAFIguT6e9GuYxB9DMUcGcxBEzMTkfmr7CrSSo5s4t0BTuy+C8dsWczlHb
+         fJqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:sender:dkim-signature
+         :arc-authentication-results;
+        bh=XceanB33lgKu2mE1fbaQbTI19XeLbC9l6iR/ljDQk80=;
+        b=Gb2F5RkYbPdajUE2B029Fi/noZ59ZUq+etIjiC6QrxFkEs7cWyU1gDoLaeg/nU09lr
+         oUM/PQFkagsmW5SJYWlhAex+GmZBexcs1Ak7wocuve80f3VLX2i2x+UuZUenIcBHgkI5
+         Yylsyq+aIa90yGooqxar7vs40HiB30c6YNMneVhi70MdNQNlloc8Rv4UbSsjqTtwlUj2
+         zgNSNam3riUIEh3ctSbKfyFU8Dkx5ZHqhb4KguGZMbJ/3PLBVs8d9RwNTLKqE/AwuA6O
+         6NgNj4nrRav+HK+ZDQYNJxfNjPas6MHMV5+dX2eEqCM9D/nchq99E1nYIaERsn8/ZOD4
+         b5gw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@monstr-eu.20150623.gappssmtp.com header.s=20150623 header.b=wMIbGqzu;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of monstr@monstr.eu) smtp.mailfrom=monstr@monstr.eu
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@monstr-eu.20150623.gappssmtp.com header.s=20150623 header.b=wMIbGqzu;
+       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of monstr@monstr.eu) smtp.mailfrom=monstr@monstr.eu
+X-Google-Smtp-Source: AIpwx4/g3yynR+2zar7r3sBn6HTIgNcOwaS4h5bct4OP8FV+yyhhDTaYUUGz6R1VXCmEAsRwsICOYw==
+Sender: Michal Simek <monstr@monstr.eu>
 From: Michal Simek <michal.simek@xilinx.com>
-To: linux-kernel@vger.kernel.org, monstr@monstr.eu
-Cc: Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RESEND PATCH] tty: serial: xuartps: Setup early console when uartclk is also passed
-Date: Mon, 23 Apr 2018 10:55:21 +0200
-Message-Id: <777dc4f87d27e9db383ef04bd21b8aebbb2b2015.1524473714.git.michal.simek@xilinx.com>
-X-Mailer: git-send-email 2.17.0
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	monstr@monstr.eu
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] microblaze: Fix simpleImage format generation
+Date: Tue, 10 Apr 2018 16:00:46 +0200
+Message-Id: <b1738933cc6be175d4f97f11c00a05c0f3f81cad.1523368843.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597368022192081099?=
+X-GMAIL-MSGID: =?utf-8?q?1597368022192081099?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Baudrate calculation depends on requested baudrate and uart clock.
-This patch is checking that uartclk is also passed.
-
-The same logic is used 8250_early.c/init_port function.
+simpleImage generation was broken for some time. This patch is fixing
+steps how simpleImage.*.ub file is generated. Steps are objdump of
+vmlinux and create .ub.
+Also make sure that there is striped elf version with .strip suffix.
 
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
 
- drivers/tty/serial/xilinx_uartps.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/microblaze/boot/Makefile | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index 19d370779767..0fc9de20843c 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -1142,7 +1142,7 @@ static int __init cdns_early_console_setup(struct earlycon_device *device,
- 	/* only set baud if specified on command line - otherwise
- 	 * assume it has been initialized by a boot loader.
- 	 */
--	if (device->baud) {
-+	if (port->uartclk && device->baud) {
- 		u32 cd = 0, bdiv = 0;
- 		u32 mr;
- 		int div8;
+diff --git a/arch/microblaze/boot/Makefile b/arch/microblaze/boot/Makefile
+index fd46385a4c97..600e5a198bd2 100644
+--- a/arch/microblaze/boot/Makefile
++++ b/arch/microblaze/boot/Makefile
+@@ -22,17 +22,19 @@ $(obj)/linux.bin.gz: $(obj)/linux.bin FORCE
+ quiet_cmd_cp = CP      $< $@$2
+ 	cmd_cp = cat $< >$@$2 || (rm -f $@ && echo false)
+ 
+-quiet_cmd_strip = STRIP   $@
++quiet_cmd_strip = STRIP   $< $@$2
+ 	cmd_strip = $(STRIP) -K microblaze_start -K _end -K __log_buf \
+-				-K _fdt_start vmlinux -o $@
++				-K _fdt_start $< -o $@$2
+ 
+ UIMAGE_LOADADDR = $(CONFIG_KERNEL_BASE_ADDR)
++UIMAGE_IN = $@
++UIMAGE_OUT = $@.ub
+ 
+ $(obj)/simpleImage.%: vmlinux FORCE
+ 	$(call if_changed,cp,.unstrip)
+ 	$(call if_changed,objcopy)
+ 	$(call if_changed,uimage)
+-	$(call if_changed,strip)
+-	@echo 'Kernel: $@ is ready' ' (#'`cat .version`')'
++	$(call if_changed,strip,.strip)
++	@echo 'Kernel: $(UIMAGE_OUT) is ready' ' (#'`cat .version`')'
+ 
+ clean-files += simpleImage.*.unstrip linux.bin.ub
 -- 
-2.17.0
-
+1.9.1
