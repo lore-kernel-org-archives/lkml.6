@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/nJA5efLC2hOzSnbWSJI+6c3dYzGSwhAWSVgxLdGqNScu4p2CrNf7slYdtZHBKAKkAwiL2
-ARC-Seal: i=1; a=rsa-sha256; t=1523399300; cv=none;
+X-Google-Smtp-Source: AIpwx494rmdOakFIeqZ5jKcMCZl8/yqgivgG0ZgBcW3M3SLCRD9IsGnPH9kukFYTMjZRSYZ55E1V
+ARC-Seal: i=1; a=rsa-sha256; t=1523399297; cv=none;
         d=google.com; s=arc-20160816;
-        b=JmDmgqH1YdC9YtOfhc/lOdqva7gN2EyR59HRtaN8uaTxm72avKI3OLf2ES6CmIHdrz
-         9cSU3cvsyHhPE8SYcNGoPF+/QYYQ1UnrEyq2I+Itar+PbM9Qej7yR1FvmQ6iOIGbplCH
-         ozcJvv0WZlDegpW633swkOgRaFKUqe1ZtB5hKL56sR53h6fmV+QCcho5BEhHA7seeSNv
-         d3uvjy6ga8UmGY9TNXkIlDAOv2fNiEmXCfl3+xcd3yPLBry61E0Rrxwf8InR0WNykuSo
-         //LgeYDw5g00a12DsXVlXlQh/siol1nUMyQrdze0oFfsrRPVE/2Ifqp0aRcyrt4eJ88x
-         rfwQ==
+        b=CyEPbOj3hTb4i+PfCd37yUpddqGNzBfsfeqBoiGP9Y2l5U/I6zRL/tAHRUO3QJmdWW
+         nCD2XZ4a3TYAkoReCch/sTR7vOcuSA5zrvokQmgZPpoP9daCYUApW8NdEXHhJanHBK3i
+         GFc1DkvBSgKB7nPyXrlsxS3uPKViz99zzyMYaAfj0DOlFE7zEK5FQwjbTTXvnHaudY/Q
+         JooW44ofrCZkMkxqQsD+zkj43WsA3BtWgebDuj6TK+iaZPDzMJYB3qn9qWcl63I+cbaE
+         lzNenMqoMM5CTIgTqCXgy6fLjP6gIAg68jcHuey/OL+DuKDO0DGklfsJKzXZvhMoPWo9
+         F8Yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=CHpVUMOiwffBCGW1kvpi+dPnHRU+8xCtK79+hIGb9QE=;
-        b=RMB3TJnH5amXpC3opuXXlUdFphINL3Jnv5DHkGNp4WhLnZB966SJWkU6ivDZCjhQR7
-         19W/1/0zSTc1ce3i9ciGjAwszkzNkHdR2e5JFqbXFyoQbThtZMNljHOAKiJoKjWVLpNU
-         ROVzXuhdGVCazsMwVnglFPe/MCEKNTEJgnCxJNU5aSMHcqauQqIfCWaNyutNLIHNMpg9
-         jroL+Ui7IeabqAk7qaJAgiLR79xuU3hj8upR7YFLSbznSbIBqi2gk7D8vCfhrwvHeA4q
-         PeXJ6kz7xjO3I641g/tEBbxckOIsoaJ2O8fDDj3zf631yCYF+Ni+nNtiriO4FfkBYQtx
-         Bjbw==
+        bh=XvviqZAl8ooJ2seRFemcPK2lc0WpeXofCgXkiSY5tNc=;
+        b=sSTJfoTYs0CdDAR1zUCsmsKsUdBwb8Prtwb4b5ZfO/tbfgCKIR0sUGOkBeovRbRd+u
+         wj0gq+hrE88elHisP8Wp5dSmNeN4Rh0h+r8eT7rkd5sMS8zWGH2HuZxT203cPGc1PBj8
+         nqpwHhRTYNgG1A0jwiRCb6k+8TYV+SJq+Izb8liVGtwLFrpXBgf357fYE5CqHwe566B5
+         2HFvKHcTdKaOT9OG3H4opp26o3NM8Z6E+ujZHRGD9hfQXJe6P2qljmkuKy71eelgUyIt
+         fKQOzzbrhIO54o6AJsVRnXkoKOPC2BzZQi96bUj0rEybyFCX/VKsE0EehD+UnTH5lxJg
+         GSug==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Alex Estrin <alex.estrin@intel.com>,
-	Jason Gunthorpe <jgg@mellanox.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Jordan Crouse <jcrouse@codeaurora.org>,
+	Rob Clark <robdclark@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 037/168] IB/ipoib: Fix for notify send CQ failure messages
-Date: Wed, 11 Apr 2018 00:22:59 +0200
-Message-Id: <20180410212801.774621395@linuxfoundation.org>
+Subject: [PATCH 4.15 036/168] drm/msm: Fix NULL deref in adreno_load_gpu
+Date: Wed, 11 Apr 2018 00:22:58 +0200
+Message-Id: <20180410212801.728309262@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399944991430694?=
-X-GMAIL-MSGID: =?utf-8?q?1597399944991430694?=
+X-GMAIL-THRID: =?utf-8?q?1597399941861017772?=
+X-GMAIL-MSGID: =?utf-8?q?1597399941861017772?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,56 +51,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alex Estrin <alex.estrin@intel.com>
+From: Archit Taneja <architt@codeaurora.org>
 
 
-[ Upstream commit 809cb6955650d892c6ef95f1d55f28fceded0ce1 ]
+[ Upstream commit 9dcfbc182f1aac0aa5ea194733d21e67dd2ba1fd ]
 
-If IB_CQ_REPORT_MISSED_EVENTS flag is passed in ib_req_notify_cq()
-it may return positive value indicating non-empty CQ.
-If return code not verified the log might be flooded with false
-warning messages "request notify on send CQ failed".
+The msm/kms driver should work even if there is no GPU device specified
+in DT. Currently, we get a NULL dereference crash in adreno_load_gpu
+since the driver assumes that priv->gpu_pdev is non-NULL.
 
-Fixes: 8966e28d2e40 ("IB/ipoib: Use NAPI in UD/TX flows")
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Alex Estrin <alex.estrin@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Perform an additional check on priv->gpu_pdev before trying to retrieve
+the msm_gpu pointer from it.
+
+v2: Incorporate Jordan's comments:
+- Simplify the check to share the same error message.
+- Use dev_err_once() to avoid an error message every time we open the
+  drm device fd.
+
+Fixes: eec874ce5ff1 (drm/msm/adreno: load gpu at probe/bind time)
+
+Signed-off-by: Archit Taneja <architt@codeaurora.org>
+Acked-by: Jordan Crouse <jcrouse@codeaurora.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_cm.c |   10 ++++++----
- drivers/infiniband/ulp/ipoib/ipoib_ib.c |    2 +-
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/msm/adreno/adreno_device.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-@@ -766,12 +766,14 @@ void ipoib_cm_send(struct net_device *de
- 	skb_orphan(skb);
- 	skb_dst_drop(skb);
+--- a/drivers/gpu/drm/msm/adreno/adreno_device.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
+@@ -125,11 +125,14 @@ struct msm_gpu *adreno_load_gpu(struct d
+ {
+ 	struct msm_drm_private *priv = dev->dev_private;
+ 	struct platform_device *pdev = priv->gpu_pdev;
+-	struct msm_gpu *gpu = platform_get_drvdata(priv->gpu_pdev);
++	struct msm_gpu *gpu = NULL;
+ 	int ret;
  
--	if (netif_queue_stopped(dev))
--		if (ib_req_notify_cq(priv->send_cq, IB_CQ_NEXT_COMP |
--				     IB_CQ_REPORT_MISSED_EVENTS)) {
-+	if (netif_queue_stopped(dev)) {
-+		rc = ib_req_notify_cq(priv->send_cq, IB_CQ_NEXT_COMP |
-+				      IB_CQ_REPORT_MISSED_EVENTS);
-+		if (unlikely(rc < 0))
- 			ipoib_warn(priv, "IPoIB/CM:request notify on send CQ failed\n");
-+		else if (rc)
- 			napi_schedule(&priv->send_napi);
--		}
-+	}
++	if (pdev)
++		gpu = platform_get_drvdata(pdev);
++
+ 	if (!gpu) {
+-		dev_err(dev->dev, "no adreno device\n");
++		dev_err_once(dev->dev, "no GPU device was found\n");
+ 		return NULL;
+ 	}
  
- 	rc = post_send(priv, tx, tx->tx_head & (ipoib_sendq_size - 1), tx_req);
- 	if (unlikely(rc)) {
---- a/drivers/infiniband/ulp/ipoib/ipoib_ib.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
-@@ -644,7 +644,7 @@ int ipoib_send(struct net_device *dev, s
- 
- 	if (netif_queue_stopped(dev))
- 		if (ib_req_notify_cq(priv->send_cq, IB_CQ_NEXT_COMP |
--				     IB_CQ_REPORT_MISSED_EVENTS))
-+				     IB_CQ_REPORT_MISSED_EVENTS) < 0)
- 			ipoib_warn(priv, "request notify on send CQ failed\n");
- 
- 	rc = post_send(priv, priv->tx_head & (ipoib_sendq_size - 1),
