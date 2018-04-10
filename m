@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-713601-1523400099-2-9862226961888433129
+X-Cyrus-Session-Id: sloti22d1t05-713595-1523400078-2-1710972630408000879
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523400098; b=GZV+53b5CxAuxUALNiJaH8jbC+qcqL5ooeOMdj11M6GI7DXW3r
-    NSid5zefQxyMrZIZfTNsYRWPUxbXBneLiv6eN12xHRuJAsN2ybPp9XfAVJheA6qY
-    zFoLQevkqE2KkBARZ9BkgcBMlL1EL6l/4/y8Xln5akxS4OoOjNYob3D5+16xLlTF
-    z/qwmjcwuzyM2369KxKfIrql6Kr1TJ5I0hhN1/8SAb7H2mybIJJ4svGFPKx0v7xz
-    ll3JhV4zVtQkdCEBYm/ANUMeM5sNCJIkwY5/6mVtP3EzgVSpA0NURjZ0b1MtsfIw
-    kJzoDDMXSCut1YEh5zzQ8yQL6zU09d/sYJ8A==
+    1523400077; b=jbm0hKsv3dKzA2z3hbqFMQEuFC1lYlK/+fKkx64KMmrqzZjvAi
+    LZX0OkzOJ60FGnbB0WJFLOpa9EcJ6qiGi8MfwxscV40VlfgfPhLtKPrLR2+izFj3
+    hahau6aCJeNgL8uZSgNW+7mwszeGxdKwyUVGrjN3hsegNePDFJQyEtE2G3DIk1R/
+    LKAJqnPBXbPYmOinI8FE8hziesx3y8jcrNDUVSt45OzXacHWL9Uras1QF7AR6ipA
+    hexzQq1K08eocuYptguY6xRCJ32gZIzapziPhgMqmuO5dqrKNhn/MhpBI9IIJZNh
+    2qSJ8OKdxmohR/a8rCH5QR4VfHbE2HM02rSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523400098; bh=DpQmsxTQuG65e66D/L0ObDgQfLaQNH
-    0Pw62xpNMNGNM=; b=ePsZGw8S0GHrmeM7iREECms+gYvXJ6ejCW7V3FPsHWIIBK
-    8594+yLuWxGT4c/mQItmww79PqVFRJzCRIPIOXYoovijcto5eoAfF84f89c611w6
-    FMYIVmX2+TF6X1s5bPbJ9yHDQ+i+aWJ6D8VM3DA9u8UBW6ny+Y424299ik/oE7sP
-    TRHPlaLFieZceo+KilZteC/c3jCwDaTsiRdvuUMCpt/uig/tFgIaw4FnkhwcwKhc
-    Fo8yaPq+ZdpFu1+LUHnXi8/ciSTVCwOZXhITNZYI05gFBHfHydeBKXerMjEmgpON
-    I6a/HuXNGfXFtX7Nnm4XWPxjSMsDDqW0c7BuW+9w==
+    :list-id; s=fm2; t=1523400077; bh=293TuL66H7nRjWKTA/nNS9gC/CvNMQ
+    xoaMCDEt6l6b4=; b=ZdBEwUwPiCXvPU9YzqaPvYpifD8EK/BNQh0W0ebh8A6S7w
+    ix7bHSvLJx/QpMPjjbADZHBJHZHsOjCfQgqA/JybU3VvFbPAcNMUBY4k8YcRCA9Q
+    s+yiVzGEosWsLkeI+GnPB5DCbEom+GqbPrWgkN5nMK6HwdhQrKl64ZT6ZZUcDtem
+    uOa/Jt3OzZjWwTcFUbVIACOZsEuO7LLVfABn2tq+Brnb0gmzrCrC/aKEXZb74Vtz
+    T3ae60J/F/TAJQHGCNJvzkR5M2GqCsroUqyN94HfdvzUqobsiIapUdhkfjX/rKtY
+    wrAF9ROtCwdBmvZUUTTbn1hdBCMWgRvC8YjDxPOw==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,32 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFqMuxgGeXlSTWimlqUsltr4+CP51+HlspBxoThdmjFEg9o7RKNGLvwBpcHhCOrHFWDLFvXsmPUH7JK3jc+FvrBhp42dHYMNzJ2kibf8HdCYpPzVtDjg
-    tw/GmIAwgDS4y1o7RI1Zd5XJBZW4ugSjF6HOaSH7fq2DKLTK0roWR8wLdL8EDefJoPK7xtO7Zp/o5aZQ4FAZpheITXu0EbgbEQLRa0/1Je0YkhwuvOalj92V
+X-CM-Envelope: MS4wfOKAOd/9HdPZ8Icn22zOJjl9Yaq5ixR2EdFX+YUjxqCpHL0Jkig2oAq5E8E1lmWFQAI88Vne9+sq7G58rOmDN5YfBkvp0Lj0K7Xdjbauj04AtQW1B5/v
+    sXz7xblJ3gmhBIg9qOWbGDP3NZy0sDgxGBLzY2JcyqZEL6oeQlE+Bc76b2GvLunF79zX/ZYPHCvX/m2qgY/GmEk0FAi7/gNUn2+Ol/6QpBJcWd7C7IktXRyj
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=FOH2dFAWAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=onqfME7SEjK7dH_x2_EA:9
-    a=QEXdDO2ut3YA:10 a=i3VuKzQdj-NEYjvDI-p3:22 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8 a=CDq0vqnqAAAA:8 a=J1Y8HTJGAAAA:8
+    a=ag1SF4gXAAAA:8 a=dG3OLzM3V4zPhyV1mVEA:9 a=QEXdDO2ut3YA:10
+    a=Xn7iXEen_xUG9zZOO_Hb:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932722AbeDJWkS (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 18:40:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46640 "EHLO
+        id S1753442AbeDJWlB (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 18:41:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46766 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932691AbeDJWkQ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:40:16 -0400
+        with ESMTP id S932691AbeDJWkX (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:40:23 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Watson <davejwatson@fb.com>,
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        David Ahern <dsa@cumulusnetworks.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 131/138] strparser: Fix sign of err codes
-Date: Wed, 11 Apr 2018 00:25:21 +0200
-Message-Id: <20180410212917.448177033@linuxfoundation.org>
+Subject: [PATCH 4.14 135/138] route: check sysctl_fib_multipath_use_neigh earlier than hash
+Date: Wed, 11 Apr 2018 00:25:25 +0200
+Message-Id: <20180410212917.938793265@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -92,49 +94,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dave Watson <davejwatson@fb.com>
+From: Xin Long <lucien.xin@gmail.com>
 
 
-[ Upstream commit cd00edc179863848abab5cc5683de5b7b5f70954 ]
+[ Upstream commit 6174a30df1b902e1fedbd728f5343937e83e64e6 ]
 
-strp_parser_err is called with a negative code everywhere, which then
-calls abort_parser with a negative code.  strp_msg_timeout calls
-abort_parser directly with a positive code.  Negate ETIMEDOUT
-to match signed-ness of other calls.
+Prior to this patch, when one packet is hashed into path [1]
+(hash <= nh_upper_bound) and it's neigh is dead, it will try
+path [2]. However, if path [2]'s neigh is alive but it's
+hash > nh_upper_bound, it will not return this alive path.
+This packet will never be sent even if path [2] is alive.
 
-The default abort_parser callback, strp_abort_strp, sets
-sk->sk_err to err.  Also negate the error here so sk_err always
-holds a positive value, as the rest of the net code expects.  Currently
-a negative sk_err can result in endless loops, or user code that
-thinks it actually sent/received err bytes.
+ 3.3.3.1/24:
+  nexthop via 1.1.1.254 dev eth1 weight 1 <--[1] (dead neigh)
+  nexthop via 2.2.2.254 dev eth2 weight 1 <--[2]
 
-Found while testing net/tls_sw recv path.
+With sysctl_fib_multipath_use_neigh set is supposed to find an
+available path respecting to the l3/l4 hash. But if there is
+no available route with this hash, it should at least return
+an alive route even with other hash.
 
-Fixes: 43a0c6751a322847 ("strparser: Stream parser for messages")
-Signed-off-by: Dave Watson <davejwatson@fb.com>
+This patch is to fix it by processing fib_multipath_use_neigh
+earlier than the hash check, so that it will at least return
+an alive route if there is when fib_multipath_use_neigh is
+enabled. It's also compatible with before when there are alive
+routes with the l3/l4 hash.
+
+Fixes: a6db4494d218 ("net: ipv4: Consider failed nexthops in multipath routes")
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: David Ahern <dsa@cumulusnetworks.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/strparser/strparser.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ipv4/fib_semantics.c |   20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
---- a/net/strparser/strparser.c
-+++ b/net/strparser/strparser.c
-@@ -60,7 +60,7 @@ static void strp_abort_strp(struct strpa
- 		struct sock *sk = strp->sk;
+--- a/net/ipv4/fib_semantics.c
++++ b/net/ipv4/fib_semantics.c
+@@ -1755,18 +1755,20 @@ void fib_select_multipath(struct fib_res
+ 	bool first = false;
  
- 		/* Report an error on the lower socket */
--		sk->sk_err = err;
-+		sk->sk_err = -err;
- 		sk->sk_error_report(sk);
- 	}
- }
-@@ -458,7 +458,7 @@ static void strp_msg_timeout(struct work
- 	/* Message assembly timed out */
- 	STRP_STATS_INCR(strp->stats.msg_timeouts);
- 	strp->cb.lock(strp);
--	strp->cb.abort_parser(strp, ETIMEDOUT);
-+	strp->cb.abort_parser(strp, -ETIMEDOUT);
- 	strp->cb.unlock(strp);
- }
+ 	for_nexthops(fi) {
++		if (net->ipv4.sysctl_fib_multipath_use_neigh) {
++			if (!fib_good_nh(nh))
++				continue;
++			if (!first) {
++				res->nh_sel = nhsel;
++				first = true;
++			}
++		}
++
+ 		if (hash > atomic_read(&nh->nh_upper_bound))
+ 			continue;
  
+-		if (!net->ipv4.sysctl_fib_multipath_use_neigh ||
+-		    fib_good_nh(nh)) {
+-			res->nh_sel = nhsel;
+-			return;
+-		}
+-		if (!first) {
+-			res->nh_sel = nhsel;
+-			first = true;
+-		}
++		res->nh_sel = nhsel;
++		return;
+ 	} endfor_nexthops(fi);
+ }
+ #endif
