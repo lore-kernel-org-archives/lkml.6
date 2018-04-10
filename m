@@ -1,105 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752178AbeDJVAL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 17:00:11 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37704 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751611AbeDJVAJ (ORCPT
+        id S1752202AbeDJVB2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 17:01:28 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:50805 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751611AbeDJVB0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 17:00:09 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3DC2160249
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: amd-gfx@lists.freedesktop.org, timur@codeaurora.org,
-        sulrich@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Felix Kuehling <Felix.Kuehling@amd.com>, Monk Liu <Monk.Liu@amd.com>,
-        Roger He <Hongbo.He@amd.com>, Jim Qu <Jim.Qu@amd.com>,
-        Emily Deng <Emily.Deng@amd.com>, Feifei Xu <Feifei.Xu@amd.com>,
-        Huang Rui <ray.huang@amd.com>, Tom St Denis <tom.stdenis@amd.com>,
-        David Panariti <David.Panariti@amd.com>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V2] drm/amdgpu: limit DMA size to PAGE_SIZE for scatter-gather buffers
-Date: Tue, 10 Apr 2018 16:59:55 -0400
-Message-Id: <1523394001-4615-1-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 10 Apr 2018 17:01:26 -0400
+To: ebiederm@xmission.com
+Cc: syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com,
+        serge@hallyn.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org
+Subject: Re: KASAN: null-ptr-deref Read in xattr_getsecurity
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <0000000000008d2e0d05697a693d@google.com>
+        <9d192497-8b1e-ca8d-0ed8-b3324ee1e361@I-love.SAKURA.ne.jp>
+        <87o9irw2ad.fsf@xmission.com>
+In-Reply-To: <87o9irw2ad.fsf@xmission.com>
+Message-Id: <201804110600.CCF73450.FFOOQtSFOLHMVJ@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Wed, 11 Apr 2018 06:00:44 +0900
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Code is expecing to observe the same number of buffers returned from
-dma_map_sg() function compared to sg_alloc_table_from_pages(). This
-doesn't hold true universally especially for systems with IOMMU.
+Eric W. Biederman wrote:
+> Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> writes:
+> 
+> > From 904d07a6eb014f3df0c5a1ebfcfd4323276a9a76 Mon Sep 17 00:00:00 2001
+> > From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > Date: Tue, 10 Apr 2018 15:15:16 +0900
+> > Subject: [PATCH] commoncap: Handle memory allocation failure.
+> >
+> > syzbot is reporting NULL pointer dereference at xattr_getsecurity() [1],
+> > for cap_inode_getsecurity() is returning sizeof(struct vfs_cap_data) when
+> > memory allocation failed. Return -ENOMEM if memory allocation failed.
+> >
+> > [1] https://syzkaller.appspot.com/bug?id=a55ba438506fe68649a5f50d2d82d56b365e0107
+> 
+> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> 
+> Tetsuo I can pick this up, or do you have preferred path for getting
+> this change merged?
 
-IOMMU driver tries to combine buffers into a single DMA address as much
-as it can. The right thing is to tell the DMA layer how much combining
-IOMMU can do.
-
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
----
- drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c | 2 +-
- drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c | 1 +
- drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c | 1 +
- drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c | 1 +
- 4 files changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
-index 8e28270..1b031eb 100644
---- a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
-@@ -851,7 +851,7 @@ static int gmc_v6_0_sw_init(void *handle)
- 		pci_set_consistent_dma_mask(adev->pdev, DMA_BIT_MASK(32));
- 		dev_warn(adev->dev, "amdgpu: No coherent DMA available.\n");
- 	}
--
-+	dma_set_max_seg_size(adev->dev, PAGE_SIZE);
- 	r = gmc_v6_0_init_microcode(adev);
- 	if (r) {
- 		dev_err(adev->dev, "Failed to load mc firmware!\n");
-diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
-index 86e9d682..0a4b2cc1 100644
---- a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
-@@ -999,6 +999,7 @@ static int gmc_v7_0_sw_init(void *handle)
- 		pci_set_consistent_dma_mask(adev->pdev, DMA_BIT_MASK(32));
- 		pr_warn("amdgpu: No coherent DMA available\n");
- 	}
-+	dma_set_max_seg_size(adev->dev, PAGE_SIZE);
- 
- 	r = gmc_v7_0_init_microcode(adev);
- 	if (r) {
-diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
-index 9a813d8..b171529 100644
---- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
-@@ -1096,6 +1096,7 @@ static int gmc_v8_0_sw_init(void *handle)
- 		pci_set_consistent_dma_mask(adev->pdev, DMA_BIT_MASK(32));
- 		pr_warn("amdgpu: No coherent DMA available\n");
- 	}
-+	dma_set_max_seg_size(adev->dev, PAGE_SIZE);
- 
- 	r = gmc_v8_0_init_microcode(adev);
- 	if (r) {
-diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
-index 3b7e7af..36e658ab 100644
---- a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
-@@ -855,6 +855,7 @@ static int gmc_v9_0_sw_init(void *handle)
- 		pci_set_consistent_dma_mask(adev->pdev, DMA_BIT_MASK(32));
- 		printk(KERN_WARNING "amdgpu: No coherent DMA available.\n");
- 	}
-+	dma_set_max_seg_size(adev->dev, PAGE_SIZE);
- 
- 	r = gmc_v9_0_mc_init(adev);
- 	if (r)
--- 
-2.7.4
+I don't have preferred path. You can pick this up. Thanks.
