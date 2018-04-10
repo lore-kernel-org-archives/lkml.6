@@ -1,67 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752107AbeDJPlN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 11:41:13 -0400
-Received: from smtprelay0128.hostedemail.com ([216.40.44.128]:43749 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751604AbeDJPlL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 11:41:11 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::,RULES_HIT:41:355:379:541:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3351:3865:3870:3871:4321:5007:10004:10400:10848:11658:11914:12043:12048:12555:12760:12895:12986:13069:13311:13357:13439:14181:14394:14659:14721:21080:21627:30054:30060:30070,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: pest08_7e34442566f4e
-X-Filterd-Recvd-Size: 2214
-Message-ID: <e22fb871b1b7f2fda4b22f3a24e0d7f092eb612c.camel@perches.com>
-Subject: [PATCH] checkpatch: whinge about bool bitfields
-From: Joe Perches <joe@perches.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Whitcroft <apw@canonical.com>
-Cc: yuankuiz@codeaurora.org, Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, paulmck@linux.vnet.ibm.com,
-        Ingo Molnar <mingo@kernel.org>, Len Brown <len.brown@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Tue, 10 Apr 2018 08:41:05 -0700
-In-Reply-To: <20180410123305.GF4082@hirez.programming.kicks-ass.net>
-References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
-         <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>
-         <20180410123305.GF4082@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.0-4 
-Mime-Version: 1.0
+        id S1751991AbeDJPlY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 11:41:24 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53565 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751604AbeDJPlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 11:41:20 -0400
+Date: Tue, 10 Apr 2018 17:41:18 +0200
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>, linux-arm-msm@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Hanna Hawa <hannah@marvell.com>,
+        =?UTF-8?B?TWlxdcOobA==?= Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH] irqchip/gic-v3: Support v2m frame backwards
+ compatibility mode
+Message-ID: <20180410174118.0aa1d137@windsurf>
+In-Reply-To: <a4451252-35e4-e63f-8cca-a072f90fa9ad@arm.com>
+References: <20170320223614.1351-1-sboyd@codeaurora.org>
+        <bac1e827-3860-d92c-7bb4-eaf9840c608f@arm.com>
+        <20180410170155.6e07113d@windsurf>
+        <a4451252-35e4-e63f-8cca-a072f90fa9ad@arm.com>
+Organization: Bootlin (formerly Free Electrons)
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using bool in a bitfield isn't a good idea as the
-alignment behavior is arch implementation defined.
+Hello,
 
-Suggest using unsigned int or u<8|16|32> instead.
+Thanks for your feedback!
 
-Signed-off-by: Joe Perches <joe@perches.com>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
----
- scripts/checkpatch.pl | 6 ++++++
- 1 file changed, 6 insertions(+)
+On Tue, 10 Apr 2018 16:23:00 +0100, Marc Zyngier wrote:
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index eb534d48140e..e16d6713f236 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -6251,6 +6251,12 @@ sub process {
- 			}
- 		}
- 
-+# check for bool bitfields
-+		if ($sline =~ /^.\s+bool\s*$Ident\s*:\s*\d+\s*;/) {
-+			WARN("BOOL_BITFIELD",
-+			     "Avoid using bool as bitfield.  Prefer bool bitfields as unsigned int or u<8|16|32>\n" . $herecurr);
-+		}
-+
- # check for semaphores initialized locked
- 		if ($line =~ /^.\s*sema_init.+,\W?0\W?\)/) {
- 			WARN("CONSIDER_COMPLETION",
+> > In the current Marvell Armada 7K/8K, we have a unit called the ICU
+> > that turns wired level interrupts on one side of the chip into MSIs,
+> > signaled to the GIC through a special unit called GICP, which allowed
+> > to trigger SPIs in the GIC-400 by doing memory writes. See
+> > irq-mvebu-icu.c and irq-mvebu-gicp.c for the two sides of the story
+> > (MSI consumer and MSI provider). We have one hack between those two
+> > drivers: because those interrupts are level-triggered, we need the
+> > addresses of two registers, while 'struct msi_msg' only allows to pass
+> > one address, assuming MSIs are edge-triggered.  
+> 
+> So effectively, the GICP/GIC400 combination is a poor-man GICv3 MBI
+> (Message Based Interrupt -- we love overloaded acronyms) implementation.
+
+Yes, that's what it is. I thought it was already clear for you, since
+you already spent a great deal of time working with me on ICU/GICP back
+when it was submitted and merged (and thank you for that!).
+
+> > Marc, let me know how we can collaborate on this topic. I'm able to
+> > either test some preliminary patches, or work on such patches if
+> > necessary (preferably with some initial directions).  
+> 
+> I have a vague idea how to support this. Given that level-triggered MSIs
+> have to be platform MSIs (because it is just madness otherwise), we can
+> probably store an extra message in the struct platform_msi_desc for the
+> "lower the line" write.
+
+Is there a problem with extending the msi_msg structure with an
+additional address ? It could be transparent for existing users of
+msi_msg, who would continue to use just address_lo/address_hi/data,
+while users needing level-triggered MSIs would use the new fields in
+addition to the existing ones. But perhaps I'm missing something.
+
+> On activation, you'd get two callbacks, probably with a flag of some
+> sort to indicate whether this is for the rising or falling edge.
+
+What you call "activation" is when ->write_msg() gets called on the MSI
+consumer side, to configure its HW so that it knows how to trigger its
+MSIs ?
+
+> The thing I'm unclear about so far is how to let the generic MSI layer
+> know that we're dealing with such an interrupt without make a total
+> mess of everything. It is probably done by marking the interrupt
+> level triggered, but there are some corner cases.
+
+Certainly me not fully understand the generic MSI layer, but why does
+it need to be aware of the interrupt being level vs. edge ?
+
+> And if that works, the PCI stuff will come for free (it is just a
+> matter of implementing a new irqdomain on top of the base GICv3 one).
+
+I've lost you here :)
+
+> I'll try to spend some time on it in the coming couple of weeks, but
+> will have to rely on you for the testing (as I don't have much in the
+> way of HW).
+
+I can definitely make some tests, I have actual HW to test this.
+
+Best regards,
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
