@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/cNfJyq/yIMSF303gL6pwze0yLNUXb+kAJwR+aXw8voPACIWHj1VDeRmZAn+4eKQ4z02iM
-ARC-Seal: i=1; a=rsa-sha256; t=1523399721; cv=none;
+X-Google-Smtp-Source: AIpwx4+GuCFTpWnvAxDz2CvQCgye6NIQSRVeBMO/DviCJkYBtcT+/ynBAYAQwObB57r1La+RJcOR
+ARC-Seal: i=1; a=rsa-sha256; t=1523399715; cv=none;
         d=google.com; s=arc-20160816;
-        b=IH5KdDw17ZZ5kIExSE+Qq0e+RAUflIo83aBSkv/vkzP/OPtzu8MpZL7CBcNVzjsLVs
-         0RqWzWEKpYN8XdbCRETltR4I/I8lMNYkKgb/s0uv0YK1KtciI14ewhBOQBpkMRp2m5PL
-         2rZNeNvCuc4mz88yk32wkwkwlSye2BSjuYaqn9JEYNaxJMwycqX301kwy0k2ibq1s/a2
-         Mc6wJoMdWr+PmFAJQ7oWoEu45xmykxuofUKNIw0Kcv0lPVkKkQ2DsepIXr+t2P7FLBHq
-         g9upi9kn21E/2g1YxSNQThZLpZGwKcuGkqhvqHqqK9pZrf0WlMc9kQZns5ow/NRkSyJ9
-         EMxg==
+        b=gM4y/c7N4dOrJg6ERs5W4GGrueQtv7oA7StR+rBXbbZvAFHhmz5mpqzvtlD5qZBs+M
+         EPOwia78gqnMhk3yYkdgXC0meKK6hQu3AjdDr2ylAQagqUdXmNPWY4EJrAB8MTf1MjMH
+         1D+8dvMRwH8VeTpySp09Bwi/XVF9R5/+f7D6kDy+YnaHXLuYk47AhBIrz1ixYAZ9K1pi
+         HgNZc1HA1gKKXDktk25O10+FQyTrva+O+XwX52ArOjKDQzm41J/9mfH6GQSFJWVROGs7
+         KhH+yXO4hWDBLHRJkhQ1kJ9WKQr22y3jMwMH6l45eTJDgEN9TCYQW5+xD3k4iZRrL8UE
+         eXtw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ox8L8boABGwHDdN6tZij1wfkJ4FIIEdt0vZuYedmsYk=;
-        b=yQ3eh4WlstfqCHjiDJDOllE5mOll9Ms6pIVkC6GDbKoqoUdcbUsykJzyiYktFQ7AUk
-         W6Ifyr1uVVKF/lb09+T41IuqRmSaifF9x7PvdxNezSMzQhZN1JUFhWqZqfVL1mG0d1yf
-         0A4U5kP4k9BveJxHtz7OOBguXTf3UqCFkZE6MXMDkT3BoMFdpbdjPW5RsYoHeciyQ2uS
-         LvpDFAFRLEstkULezRGo0XfqjfVPsMHEuJZwsH6dV1DXpjArx8yhXKORdkXGjn0b3ATQ
-         hoxAsItU5IhPEYP4TruKFKXz32WpvJ6ZepUdytZMhlQ+z9Ti7dwnwMdLVw6MZ682x03V
-         WEzQ==
+        bh=wp+/TY2Rw/J8sCnCC+38uFqrVpSOkoKs6phpFbhU3fw=;
+        b=NuNmdgAJlZrks6Fw6RHDSMIXD2SM15QDYaRyqTVcrBCEdO3RedxU+BGfSDPMA5Ox+J
+         lAJWb4BzMWuOr2mExAHh4PIKRRLrRf6kLrvpPDPqp1EfZyNqKJ8iRFjaTV3t8O9xX5B1
+         XYXamDEEEg5Oyu/oHGcabQ5dms6VVE4P2AEcus0323lZF+4ju+a5fexRPrkHi/SwAp0Q
+         JyXEbgb8Bo+le2HN7l1tMJPN0liEB+rMW4qKwcPfBC8GjUqRZhG641RrIv9FPQTkyFJq
+         FNB/67s4dPEcwYLp8bncBjVfdgPvtJDjXlUJzlpKvaC5xatOGVKK6RZEWcEcndR2zY6n
+         DHTg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Yi Zhang <yi.zhang@redhat.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
+	Sebastian Sanchez <sebastian.sanchez@intel.com>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Dennis Dalessandro <dennis.dalessandro@intel.com>,
+	Doug Ledford <dledford@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 040/138] blk-mq: fix race between updating nr_hw_queues and switching io sched
-Date: Wed, 11 Apr 2018 00:23:50 +0200
-Message-Id: <20180410212906.727621952@linuxfoundation.org>
+Subject: [PATCH 4.14 038/138] IB/rdmavt: Allocate CQ memory on the correct node
+Date: Wed, 11 Apr 2018 00:23:48 +0200
+Message-Id: <20180410212906.508110410@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399955811932366?=
-X-GMAIL-MSGID: =?utf-8?q?1597400385823597083?=
+X-GMAIL-THRID: =?utf-8?q?1597399930853720496?=
+X-GMAIL-MSGID: =?utf-8?q?1597400380080097298?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,46 +52,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
 
-[ Upstream commit fb350e0ad99359768e1e80b4784692031ec340e4 ]
+[ Upstream commit db9a2c6f9b6196b889b98e961cb9a37617b11ccf ]
 
-In both elevator_switch_mq() and blk_mq_update_nr_hw_queues(), sched tags
-can be allocated, and q->nr_hw_queue is used, and race is inevitable, for
-example: blk_mq_init_sched() may trigger use-after-free on hctx, which is
-freed in blk_mq_realloc_hw_ctxs() when nr_hw_queues is decreased.
+CQ allocation does not ensure that completion queue entries
+and the completion queue structure are allocated on the correct
+numa node.
 
-This patch fixes the race be holding q->sysfs_lock.
+Fix by allocating the rvt_cq and kernel CQ entries on the device node,
+leaving the user CQ entries on the default local node.  Also ensure
+CQ resizes use the correct allocator when extending a CQ.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reported-by: Yi Zhang <yi.zhang@redhat.com>
-Tested-by: Yi Zhang <yi.zhang@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reviewed-by: Sebastian Sanchez <sebastian.sanchez@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/blk-mq.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/infiniband/sw/rdmavt/cq.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2314,6 +2314,9 @@ static void blk_mq_realloc_hw_ctxs(struc
- 	struct blk_mq_hw_ctx **hctxs = q->queue_hw_ctx;
+--- a/drivers/infiniband/sw/rdmavt/cq.c
++++ b/drivers/infiniband/sw/rdmavt/cq.c
+@@ -198,7 +198,7 @@ struct ib_cq *rvt_create_cq(struct ib_de
+ 		return ERR_PTR(-EINVAL);
  
- 	blk_mq_sysfs_unregister(q);
-+
-+	/* protect against switching io scheduler  */
-+	mutex_lock(&q->sysfs_lock);
- 	for (i = 0; i < set->nr_hw_queues; i++) {
- 		int node;
+ 	/* Allocate the completion queue structure. */
+-	cq = kzalloc(sizeof(*cq), GFP_KERNEL);
++	cq = kzalloc_node(sizeof(*cq), GFP_KERNEL, rdi->dparms.node);
+ 	if (!cq)
+ 		return ERR_PTR(-ENOMEM);
  
-@@ -2358,6 +2361,7 @@ static void blk_mq_realloc_hw_ctxs(struc
- 		}
- 	}
- 	q->nr_hw_queues = i;
-+	mutex_unlock(&q->sysfs_lock);
- 	blk_mq_sysfs_register(q);
- }
+@@ -214,7 +214,9 @@ struct ib_cq *rvt_create_cq(struct ib_de
+ 		sz += sizeof(struct ib_uverbs_wc) * (entries + 1);
+ 	else
+ 		sz += sizeof(struct ib_wc) * (entries + 1);
+-	wc = vmalloc_user(sz);
++	wc = udata ?
++		vmalloc_user(sz) :
++		vzalloc_node(sz, rdi->dparms.node);
+ 	if (!wc) {
+ 		ret = ERR_PTR(-ENOMEM);
+ 		goto bail_cq;
+@@ -369,7 +371,9 @@ int rvt_resize_cq(struct ib_cq *ibcq, in
+ 		sz += sizeof(struct ib_uverbs_wc) * (cqe + 1);
+ 	else
+ 		sz += sizeof(struct ib_wc) * (cqe + 1);
+-	wc = vmalloc_user(sz);
++	wc = udata ?
++		vmalloc_user(sz) :
++		vzalloc_node(sz, rdi->dparms.node);
+ 	if (!wc)
+ 		return -ENOMEM;
  
