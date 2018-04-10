@@ -1,209 +1,112 @@
-Return-Path: <kernel-hardening-return-12950-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4+3FRzP6pCQvxSG6lTeEfQOkq3pVz0peF/nmVR91dnOZyvVcho3cpzphTUViA6qSjqhBeqf
-ARC-Seal: i=1; a=rsa-sha256; t=1523345522; cv=none;
+Return-Path: <kuninori.morimoto.gx@renesas.com>
+X-Google-Smtp-Source: AIpwx48pL8TNdOMEzszQdmHsYQ+d2XPU35ae8gp3sRS/ZvqT1RMDhikCbG7PxHZ5kldyXqBEnDCD
+ARC-Seal: i=1; a=rsa-sha256; t=1523343193; cv=none;
         d=google.com; s=arc-20160816;
-        b=kB3clgTiJIpSkhC8S0QbALYFqpW3Qn999xypg/9ZF/HBeelNDC0fkXqvhJr12YXXWG
-         73Rf8J1rsSuceOQbXMPwbkTCAuJgTE7KqMjUFz+uu0+XnYb0/t9Q+Q4RPKncHvdCNbTT
-         jTCqYB2vJsHNxnTYdp3ZnX134Zx1l3zeNeL1uy3K2JY7dkS+OUiMZTa9ACcGsqbH3rgw
-         AYVyYjWvXWP8RaZEVH0lqvZzs4B1pMQuIodaeOtGhdhX0DK0aaVZixhGjlq10U6aoyak
-         6XMwzvNcpJYDnatKkM5n5bCTmWNfW5P3TgHMwvje6uIQbu3Jj51eBn6kcDWzrPwwpai/
-         KaIQ==
+        b=r+zKJdVuWOgpoGw2RWBznoFIgQ2XT6i2OCAxDow3B83Pc4lj2ERTrqUMuvd+8zmbXV
+         AYZQgYMCniuQzmFmUVetR3cCsC2idPfwC94XR2gIvFLDb//G7oqfkAR7xhDytqFcMW2z
+         pUobpgbSMz1+LDXBBOK0jl3uGKCsUNELehIj415tX8Wdcjq7ocjIlOFlUrUMN2DbfC+y
+         7M9ax7tuj9kuDLWnMaqB3oQ/INYNv3aKX4aBCCkSp78ZnkCMdiVSuvDI9Iz724ORyziw
+         W9Y/DAZjtlh+BlzT+qWVY6vfkTw6dZBUAiHx8Fw13MNnycnHxnlxuT5Yyei5RhbKON96
+         08Dw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
+        h=spamdiagnosticmetadata:spamdiagnosticoutput:date:mime-version:cc:to
+         :user-agent:subject:from:message-id:dkim-signature
          :arc-authentication-results;
-        bh=KkoAn0XKI3SIyBj98Z9iP8iiibOgEVzCiE0UvoSvhKw=;
-        b=cayxEeaOOPN3a/b3Q/wzKrWdvYi5/lVmjTJ+gbFdvgydoPSLbi0ypf85RMKXKKo58D
-         4JfZlnoY/GFD1LEooAKtS8p8vgRdDYtDGwx4Z/+/wytfRqOTvAbxMq5eEgheISdL63e4
-         8341J1skaU5tUkp1rwCZ2+XKTzbPvO20PQvblkYU1O2vJzC+pIkJl/22z7iMli3E9KtU
-         tLB17RVAoS8GZMwRIcPwEfYUrFjaTAPYLJjQBubxP1HXmUpNcWSyd4OxvczEeK4d7jSu
-         TR6V88PLWSCVR1ygKLHdOGr7n82SI2SIZDTUb4Fhyf8Mg7rJZBZe5wqVGGMeXzvDM0Tx
-         2YRA==
+        bh=aSRV6qtGEDOvHQaHwpMlcvs8CaEQknXajwR5Zw5WZhA=;
+        b=FBOC18Jd1d+Pho27mFsnsn6uSO49r1ZjF5xd0SsvE3N99nULQ79QbkiMIuR5YF61FJ
+         gpZl19j4to2FL9Yg6U7wfdPTw19sKOAPpltkoI8OItknAVkQg7RFkH34BGFubrjeckPu
+         vbocYkx07YaKMoKbNbmM4tWeFHjrzY+3tipO457Lbm6lPdYxScCabTLiEnhxu3eCewxd
+         tNAKShtXN6hvybqAXpviPZwgPeZ+rEbCL/XkoasAFvheDewRU5AC9fKNDI0MvBMAqVNv
+         KBaZHgcpe1m2vg9ByMtBFAIFza9zFSF7G7nnCbZJqYmFEtOl/fE4MPg02hTtP0+lRMte
+         j/HA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pr7wp6oi;
-       spf=pass (google.com: domain of kernel-hardening-return-12950-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12950-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@renesasgroup.onmicrosoft.com header.s=selector1-renesas-com header.b=B2hgwgZe;
+       spf=pass (google.com: domain of kuninori.morimoto.gx@renesas.com designates 210.160.252.172 as permitted sender) smtp.mailfrom=kuninori.morimoto.gx@renesas.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pr7wp6oi;
-       spf=pass (google.com: domain of kernel-hardening-return-12950-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12950-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: kpark3469@gmail.com
-To: kernel-hardening@lists.openwall.com
-Cc: catalin.marinas@arm.com,
-	keescook@chromium.org,
-	will.deacon@arm.com,
-	mark.rutland@arm.com,
-	james.morse@arm.com,
-	panand@redhat.com,
-	keun-o.park@darkmatter.ae,
-	psodagud@codeaurora.org,
-	jpoimboe@redhat.com,
-	mingo@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] x86: usercopy: reimplement arch_within_stack_frames with unwinder
-Date: Tue, 10 Apr 2018 11:30:47 +0400
-Message-Id: <1523345447-10725-4-git-send-email-kpark3469@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523345447-10725-3-git-send-email-kpark3469@gmail.com>
-References: <1523345447-10725-1-git-send-email-kpark3469@gmail.com>
- <1523345447-10725-2-git-send-email-kpark3469@gmail.com>
- <1523345447-10725-3-git-send-email-kpark3469@gmail.com>
+       dkim=pass header.i=@renesasgroup.onmicrosoft.com header.s=selector1-renesas-com header.b=B2hgwgZe;
+       spf=pass (google.com: domain of kuninori.morimoto.gx@renesas.com designates 210.160.252.172 as permitted sender) smtp.mailfrom=kuninori.morimoto.gx@renesas.com
+X-IronPort-AV: E=Sophos;i="5.48,430,1517842800";
+   d="scan'208";a="277742214"
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com;
+Message-ID: <87bmerv9ll.wl%kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH 0/2] add kobject/of_node read() function
+User-Agent: Wanderlust/2.15.9 Emacs/24.3 Mule/6.0
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date: Tue, 10 Apr 2018 06:53:10 +0000
+X-Originating-IP: [211.11.155.138]
+X-ClientProxiedBy: TY1PR01CA0167.jpnprd01.prod.outlook.com (2603:1096:402::19)
+ To TYAPR01MB2078.jpnprd01.prod.outlook.com (2603:1096:404:8::10)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b4ecb132-5ffb-46a4-9264-08d59eafb90b
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(4604075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:TYAPR01MB2078;
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2078;3:zQF3ss80fCz26UmAc38d04fUClgosUIkdWloq+odx52yUNSTnXV8HjzWiEMhfzFwFr8WSw3Ouk8AQApJEeLJgXhaxiUggTh55ZIYZS+gg+pzRij8cg4rdm7pD0JZsPmP+gV4Jk3o9+++KnuXfJtpWHCWzn8aB4bmo2JPhZafB5xRBrZ1uly4oPxuJK859ZqLlX7C6+JdP8PscKLVJbbVdmBSYVBgk+6Y9KtMv8qTS0Z6K4v8n2ls2o6iwDb9JBEk;25:s/ewH7WmR1JijDsNI5UJKDNoKMN6FK0N+XlIR9tu/KUPNFl2YDP6ze/v+xgKIrPrX806h6tNYYUdJiXaR/K7XEMSIngSURj8mJF8aod3RQPM+PMRbuf+S7Trfp7Huni+eJqmQ9bSd4yXdvhWPyRyjkVTVuUTCF+Zhp4rvBRp+gNGFZ039O2f20yoeamY1RVGURuNjogFvEugEsY2PFAckDIY/A+Y62DSVj9VmgOOwjTl48C2V4wS8nLWCHybGYLUnPE1WGdNX03M67GSdmtZiHk32G59UrjCOQRWZlsQ3qniGD0qmqdFvPcNDpM4zxiJdAd76uqQgKQrINO2Qi6kDg==;31:NiLVn6VEX6SBBxix3QLiX5Fqtiql5lsJu4BpTC2VN5JEGz8dJacpQuMA64juvvbvdxEZpy4Df66SdAwK/3RWHqv2Ms7u9G7Zi8GDlJ1+bqVsckVGp+xDYOKc5KwRZJfgPqJFkf1v7bw24Ihscui9l6dw+ig23JyY82IDslW2j/ed4zgVFMMhogm2IC2S3eVpkaoSLSy0y8ofu5amWsvO+KfraLd0UoxTJw1A5xUa3yQ=
+X-MS-TrafficTypeDiagnostic: TYAPR01MB2078:
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2078;20:4AY27qzJmg/6x66BVj25hQd+4CSC7/2dmmXMB3/DmG1CFsH4sYQ50TSjqJq8vArCv17ZrzNReGyNHqlTP+5M4ZkVI5tE5n9qS9zR1qy6Ndf8BeUPuOcTqegoHfs5aPhPZyW1jacb0JGpyUowLCzGrtxNxF5/Arnxnb28MQw6S70qPi5BILHL9MWn+VjGDbKMwMqcnrqQQpQGqvbdV3wm4iFR/p3BP6RfFgIkCeAFZr+1vvtpekNJdCy0VlsKvmZlAni88yYZv4SghfNQHFJnQ+ZjWOiF189CICiBhSV0g1mCJqe+ddPMwHIFXq520JLTYT0YHqcrTjnjgF/Gb/3+vP/ZfFkyp3JZGNmcf+gzWzgdb2hkb9r9B/YF2DHu9wgmFgaYNwYcQmuhuzgZwStzra/XeZqGMgdBoGEXavyvKU/ySokMIq1KrcldrF+lkW99kNhRrQqLmN1F/DzzJqdoNKNvsASG3zoUrRqbq5W58RurpAK3In1Mov23dLuRvW5k;4:eOlZdkiDTXN+uWfeqkr467luM4WvxCiplkwxMl3Pa/wnf0wBkBXz7O+9pwM3Z0Eje4DjEVM1vQZV3a+EDn2b09MuInHJn3tj++g1/UA5ry0FXt034L7fI21TSHgPUkC43SgzzX0exdclEu9kJmOpU9RdGvNC6dMekgfNquy1i3M5Dwrqn61DUcM9Ri9/2UW1PmGMPpsoui3Jb7S5Vwt3MEeyRkfb6S0hYsmqygpZaQujp25xSCG2QR7vZulfA52+V+HOsLh5+nnQe5XotvZjzg==
+X-Microsoft-Antispam-PRVS: <TYAPR01MB20786E2FEBC72D846033A9D1D4BE0@TYAPR01MB2078.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231221)(944501327)(52105095)(93006095)(93001095)(3002001)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:TYAPR01MB2078;BCL:0;PCL:0;RULEID:;SRVR:TYAPR01MB2078;
+X-Forefront-PRVS: 0638FD5066
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(376002)(346002)(396003)(39380400002)(39860400002)(189003)(199004)(23726003)(8936002)(86362001)(6116002)(69596002)(3846002)(5660300001)(53416004)(50466002)(58126008)(68736007)(105586002)(7736002)(305945005)(2906002)(316002)(4326008)(7696005)(110136005)(47776003)(66066001)(106356001)(16586007)(52116002)(26005)(478600001)(53936002)(956004)(39060400002)(2616005)(25786009)(81156014)(81166006)(97736004)(476003)(386003)(8676002)(16526019)(186003)(486006)(36756003)(6486002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB2078;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TYAPR01MB2078;23:3vMKDa5HWouhTGZpgm88JvprR/dfbCdpsVNtnjEh2?=
+ =?us-ascii?Q?Mu/Sq75klpmpjLXvV3EbPAL4aRKlS+gpdvGsJyJmPjS2x730na2Dr0hjMGnE?=
+ =?us-ascii?Q?hpjGxSVMh74qscshAxh0GHLzU5C7c0QJVj+MiyKTVmMEbqlINEkWfyI/LhPc?=
+ =?us-ascii?Q?GHkt5qGG2a+VnPdEfL5ubSfqle+p9FguqQ6DupBDv8rADgAVPDCiw+54AuVa?=
+ =?us-ascii?Q?3c7OuzRm3BvJ0sXs0cU37BwciC+oKCzRzrlmqh7FVzf/pRcnkNaSlgTVBiWq?=
+ =?us-ascii?Q?njQTHCADsh6Qxj+MBBs++/nz3P3CLcXCx7Kg1+y8ce3UhxxofoVKSh2m9ZAi?=
+ =?us-ascii?Q?43TpfDsliMcVdT4ejAhmu/QpPTGazRRJaoqVs4ipGTp/r31dQND9ekkxdOG3?=
+ =?us-ascii?Q?b6l3yPItPt0JKvWO2ndFAl8ejivmPhKyXB/VwGA7tZqvu+VMJLSWsnvxnU+G?=
+ =?us-ascii?Q?ZnqFEuD65VTjjeJcMcbbiQEVR37wyRkhXys6qM8bV1/+fpdhBE9QKwIIey90?=
+ =?us-ascii?Q?9/4ulSaV0yL14OqfcgCuHYBTBMSd6k32aEvG41UspFDNjZDmNpycjsdZtWPh?=
+ =?us-ascii?Q?qJasDvJCmh+NAKlqUCla/G/jGqbuh4msibpoYvopOhcV1/5RKha8o0imMHGD?=
+ =?us-ascii?Q?bwOf8Y4/46bGa8XCj1XP40GdK3HtvNk2k9pzJ/maLNLVica7NZktlnDK/jud?=
+ =?us-ascii?Q?aWQ4OE+RonnS+OFLPfIdbZ1RKA0nl5TthVrfOi7GXeYOvY301qinSHw9agZv?=
+ =?us-ascii?Q?JSnkF3SbyaOKrY2rbfTz/kkOUrTH06+vNmRG80yiwZVEntxHdN0SB4QApHKa?=
+ =?us-ascii?Q?a0+rp+aG/WfQMUtaXT3RBWIiCe7n4BP7DNGMsRLgHx+HFy5nkQL/x4lEKvqD?=
+ =?us-ascii?Q?2d3ePQjVpvKOkTgwGn30ESu4bFi9ihApQBXr/F3/k1IyOXovxhQeIF+fe4dP?=
+ =?us-ascii?Q?+BgFnrwWTwDWLyO2IGcnhQTlJ+88OHDws3aaYH1heq4xNlZkl4cWR3G5gGIj?=
+ =?us-ascii?Q?tfqhvZuyXAgV8c5M+SOV7tM5ZsBGJbXr7F9Hw4gbwGN3pTuvRovKl8MIj54o?=
+ =?us-ascii?Q?uzj4g1fLyBFzFzRjNHIEenmajxOR8PQxUj8AQX5t9eluZOJeC2IbE9fwimaG?=
+ =?us-ascii?Q?H9zqD3ncpEBA/87xNdrYz//h+BiXcA58HeCbMcnfJOH12woPOQfLg=3D=3D?=
+X-Microsoft-Antispam-Message-Info: XEzkblfSQVTV82KvQ+P68Gx6BDADxymUT2I0ildiPz6ZJREojaHRhLwnmftdXlv6BcbWJqQ3VMc7WocBDB41gVLiqbO7IA+7FGv2cil/OeAV+PR9l28dBd02uoRW8NoyXHLpMKtlMXBkyaEY58mEOj9orYgKWUum6HIZOJAQ6bfzxvcnl0Fob+Z6wSvEBm9b
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2078;6:fCIbMDy/sUrIhh1APo7FSSZDPWrCJIFMc3KtTbuLQtEoMZjSA762vtuu8Xgy32AVbVmEBfb9230nvIKX/K3Z4Bk5eRe3QCKWIHkd3nbPebfwBDbhwTffVtxdot9mt4DWz0+dbe3qiW6AGwOXL+X8zxuRRqJe7buNP25pYuH4Tl5pbhLi8ylVZyBCcHQecR55q/Z1ULkx7MiHw2H3dfNGcthOQNhdg3RYP4lTUqEa6V0KylzXrMaehyCrEOTmI9ZNw1vGAyFYq1xp3Adyox7Up+wppsrVPdvhF08cX15G9/x/MxHaNAshw0wDyaNMKCcCEvvylfC0VtwC3OleMk7iW61Ldf+Wh6rpAb9/dQUmjO36L0tcO+VMEP7G8yJQ1kNE9MO0Rt7viluxuB71CNPNMzQbFfHDmxE0zMC+wxBXrnPOW1L2C/CZn4F+yQdbcdP06ht2GdEWh/SSBoqAi9yLRQ==;5:rRn/Pw89PF8WlnfqHCoD67bgMudMhbP3qvyjpJYo5N/SIkCAxULqpJ0f1peQ0tfJKJLG0Hfo4b/g+dD0K7Dzf7BLATOzdnFtbFWFGOSWPePZObTLc8HKTaAcNBuUVHxzaNPA9n+RNL2ov2l+Bxq82S/iqB+ZYuoaf+cSwCdAMWU=;24:gPiFtPUnWDk/NK2Z0Cz8ghHo+gWUO/5+3prWCuICtIW2/ORyaXEQZMlr+/kpQ4sDZXlDkprMdYNgipDZ6btlecVOmMgQa0vV4mTkA6kY0UA=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2078;7:pbnWrJwb81+KLvRZS9g4CXoEibKXMfYqzm4nKE4cGFzEcdIByJ0Aji62VxqT8T1+IjUWb/9Y48kRWIFVxygVhbD8OPYS4Pprx3vBfL+z0vsEtFfpNQA5j/YYwGnFWovdYJ1QaCgIFEyYM8tB1H8xRnRdJbn/amtB65/bqfHvQ+a12++/Ko2QK5AksRC+vYEP91DkB4VTGCcqC+VFFrQVYXPH4VEoV1zaTrFLO7LHiX+imlFNlkmq8z7G9tlUdfWb;20:SqNILFU39iBU18e0Em4bQtKq0ow43Q4N6iOlEj8ESCbchuaAZrwbykoDI8OQOk8OQW/LODceKFRh3n/L4+kBfIXNaVPoHh6CADojPSJ6eTgaWixLZtpFdGR7u2NKhi78c1TV6fIwxaDAfC7cjb2rgkg1rEQo+QkGFkjutzxjyl8=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2018 06:53:10.3020 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b4ecb132-5ffb-46a4-9264-08d59eafb90b
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2078
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597343554456540478?=
-X-GMAIL-MSGID: =?utf-8?q?1597343554456540478?=
+X-GMAIL-THRID: =?utf-8?q?1597341113039670906?=
+X-GMAIL-MSGID: =?utf-8?q?1597341113039670906?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Sahara <keun-o.park@darkmatter.ae>
 
-The old arch_within_stack_frames which used the frame pointer is
-now reimplemented to use frame pointer unwinder apis. So the main
-functionality is same as before.
+Hi Greg, Rob, Frank
 
-Signed-off-by: Sahara <keun-o.park@darkmatter.ae>
----
- arch/x86/include/asm/unwind.h  |  5 ++++
- arch/x86/kernel/stacktrace.c   | 64 +++++++++++++++++++++++++++++++++---------
- arch/x86/kernel/unwind_frame.c |  4 +--
- 3 files changed, 57 insertions(+), 16 deletions(-)
+We are using {kobject_/of_node_}get/put() for increment/decrement
+counter. But, because we don't have counter read() function,
+confirming it (mainly for debug purpose) is a little bit difficult.
+These patches add read() function for it.
 
-diff --git a/arch/x86/include/asm/unwind.h b/arch/x86/include/asm/unwind.h
-index 1f86e1b..6f04906f 100644
---- a/arch/x86/include/asm/unwind.h
-+++ b/arch/x86/include/asm/unwind.h
-@@ -87,6 +87,11 @@ void unwind_init(void);
- void unwind_module_init(struct module *mod, void *orc_ip, size_t orc_ip_size,
- 			void *orc, size_t orc_size);
- #else
-+#ifdef CONFIG_UNWINDER_FRAME_POINTER
-+#define FRAME_HEADER_SIZE (sizeof(long) * 2)
-+size_t regs_size(struct pt_regs *regs);
-+#endif
-+
- static inline void unwind_init(void) {}
- static inline
- void unwind_module_init(struct module *mod, void *orc_ip, size_t orc_ip_size,
-diff --git a/arch/x86/kernel/stacktrace.c b/arch/x86/kernel/stacktrace.c
-index ff178a0..3de1105 100644
---- a/arch/x86/kernel/stacktrace.c
-+++ b/arch/x86/kernel/stacktrace.c
-@@ -13,6 +13,33 @@
- #include <asm/unwind.h>
- 
- 
-+static inline void *get_cur_frame(struct unwind_state *state)
-+{
-+	void *frame = NULL;
-+
-+#if defined(CONFIG_UNWINDER_FRAME_POINTER)
-+	if (state->regs)
-+		frame = (void *)state->regs;
-+	else
-+		frame = (void *)state->bp;
-+#endif
-+	return frame;
-+}
-+
-+static inline void *get_frame_end(struct unwind_state *state)
-+{
-+	void *frame_end = NULL;
-+
-+#if defined(CONFIG_UNWINDER_FRAME_POINTER)
-+	if (state->regs) {
-+		frame_end = (void *)state->regs + regs_size(state->regs);
-+	} else {
-+		frame_end = (void *)state->bp + FRAME_HEADER_SIZE;
-+	}
-+#endif
-+	return frame_end;
-+}
-+
- /*
-  * Walks up the stack frames to make sure that the specified object is
-  * entirely contained by a single stack frame.
-@@ -26,31 +53,42 @@ int arch_within_stack_frames(const void * const stack,
- 			     const void * const stackend,
- 			     const void *obj, unsigned long len)
- {
--#if defined(CONFIG_FRAME_POINTER)
--	const void *frame = NULL;
--	const void *oldframe;
--
--	oldframe = __builtin_frame_address(2);
--	if (oldframe)
--		frame = __builtin_frame_address(3);
-+#if defined(CONFIG_UNWINDER_FRAME_POINTER)
-+	struct unwind_state state;
-+	void *prev_frame_end = NULL;
- 	/*
- 	 * low ----------------------------------------------> high
- 	 * [saved bp][saved ip][args][local vars][saved bp][saved ip]
- 	 *                     ^----------------^
- 	 *               allow copies only within here
-+	 *
-+	 * Skip 3 non-inlined frames: arch_within_stack_frames(),
-+	 * check_stack_object() and __check_object_size().
-+	 *
- 	 */
--	while (stack <= frame && frame < stackend) {
-+	unsigned int discard_frames = 3;
-+
-+	for (unwind_start(&state, current, NULL, NULL); !unwind_done(&state);
-+	     unwind_next_frame(&state)) {
- 		/*
- 		 * If obj + len extends past the last frame, this
- 		 * check won't pass and the next frame will be 0,
- 		 * causing us to bail out and correctly report
- 		 * the copy as invalid.
- 		 */
--		if (obj + len <= frame)
--			return obj >= oldframe + 2 * sizeof(void *) ?
--				GOOD_FRAME : BAD_STACK;
--		oldframe = frame;
--		frame = *(const void * const *)frame;
-+		if (discard_frames) {
-+			discard_frames--;
-+		} else {
-+			void *frame = get_cur_frame(&state);
-+
-+			if (!frame || !prev_frame_end)
-+				return NOT_STACK;
-+			if (obj + len <= frame)
-+				return obj >= prev_frame_end ?
-+						GOOD_FRAME : BAD_STACK;
-+		}
-+		/* save current frame end before move to next frame */
-+		prev_frame_end = get_frame_end(&state);
- 	}
- 	return BAD_STACK;
- #else
-diff --git a/arch/x86/kernel/unwind_frame.c b/arch/x86/kernel/unwind_frame.c
-index 3dc26f9..c8bfa5c 100644
---- a/arch/x86/kernel/unwind_frame.c
-+++ b/arch/x86/kernel/unwind_frame.c
-@@ -8,8 +8,6 @@
- #include <asm/stacktrace.h>
- #include <asm/unwind.h>
- 
--#define FRAME_HEADER_SIZE (sizeof(long) * 2)
--
- unsigned long unwind_get_return_address(struct unwind_state *state)
- {
- 	if (unwind_done(state))
-@@ -69,7 +67,7 @@ static void unwind_dump(struct unwind_state *state)
- 	}
- }
- 
--static size_t regs_size(struct pt_regs *regs)
-+size_t regs_size(struct pt_regs *regs)
- {
- 	/* x86_32 regs from kernel mode are two words shorter: */
- 	if (IS_ENABLED(CONFIG_X86_32) && !user_mode(regs))
+Kuninori Morimoto (2):
+  kobject: add kobject_read()
+  of: add of_node_read()
+
+ drivers/of/dynamic.c    | 14 ++++++++++++++
+ include/linux/kobject.h |  1 +
+ include/linux/of.h      |  5 +++++
+ lib/kobject.c           | 18 ++++++++++++++++++
+ 4 files changed, 38 insertions(+)
+
 -- 
-2.7.4
+1.9.1
