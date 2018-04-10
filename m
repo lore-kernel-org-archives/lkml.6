@@ -1,66 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752214AbeDJRrc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 13:47:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41450 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751505AbeDJRra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 13:47:30 -0400
-Date: Tue, 10 Apr 2018 12:47:29 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Evgenii Shatokhin <eshatokhin@virtuozzo.com>
-Cc: Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>,
-        Jiri Kosina <jikos@kernel.org>, Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 05/10] livepatch: Support separate list for replaced
- patches.
-Message-ID: <20180410174729.nsamiif73pynfla4@treble>
-References: <20180319214324.riyp233trtfxbeto@treble>
- <20180320122538.t75rplwhmhtap5q2@pathway.suse.cz>
- <20180320201502.2skkk3ld4zk2dxwg@treble>
- <20180323094507.smsqc5ft3yajnwqt@pathway.suse.cz>
- <20180323224410.vuq5cabfprqhd6ej@treble>
- <20180326101107.bbloeh5l276on7uz@pathway.suse.cz>
- <20180406195049.dtfebzfdkbvv6yex@treble>
- <20180410083455.l26dgo5kx4cy7bc7@pathway.suse.cz>
- <alpine.LSU.2.21.1804101355050.8026@pobox.suse.cz>
- <127f954c-88c6-30cb-bf14-7ab2fad70158@virtuozzo.com>
+        id S1751929AbeDJRuI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 13:50:08 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41218 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751600AbeDJRuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 13:50:07 -0400
+Subject: Re: [PATCH] swiotlb: Fix unexpected swiotlb_alloc_coherent() failures
+To: Takashi Iwai <tiwai@suse.de>, Christoph Hellwig <hch@lst.de>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <20180410170513.22834-1-tiwai@suse.de>
+ <20180410170615.GA27589@lst.de> <s5hzi2bat25.wl-tiwai@suse.de>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <40618b9c-786d-7f5f-3f5b-fc1dd8375846@arm.com>
+Date: Tue, 10 Apr 2018 18:50:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <127f954c-88c6-30cb-bf14-7ab2fad70158@virtuozzo.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+In-Reply-To: <s5hzi2bat25.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > I agree here. Practically we use only cumulative replacement patches at
-> > SUSE. So with that in mind I don't care about the stacking much. But, it
-> > may make sense for someone else. Evgenii mentioned they used it for
-> > hotfixes. Therefore I'm reluctant to remove it completely.
+On 10/04/18 18:07, Takashi Iwai wrote:
+> On Tue, 10 Apr 2018 19:06:15 +0200,
+> Christoph Hellwig wrote:
+>>
+>> On Tue, Apr 10, 2018 at 07:05:13PM +0200, Takashi Iwai wrote:
+>>> The code refactoring by commit 0176adb00406 ("swiotlb: refactor
+>>> coherent buffer allocation") made swiotlb_alloc_buffer() almost always
+>>> failing due to a thinko: namely, the function evaluates the
+>>> dma_coherent_ok() call incorrectly and dealing as if it's invalid.
+>>> This ends up with weird errors like iwlwifi probe failure or amdgpu
+>>> screen flickering.
+>>>
+>>> This patch corrects the logic error.
+>>
+>> This looks ok, although even hitting this code is a bad sign.  Do you
+>> know why the previous dma_direct_alloc didn't succeed?
 > 
-> Well, it was convenient in some cases to provide a hot fix for a given bug
-> on top of our official cumulative patch. So far, such fixes were only used
-> on a few of the customers' machines (where they were needed ASAP). It just
-> made it easier to see where is the common set of fixes and where is the
-> customer-specific addition.
+> That I have no idea, sorry.  I just figured out the regression just
+> from the dmesg output of 4.16 kernel in bugzilla reports.
+> Could you take a look at the bugzilla reports there?
+
+In the first one, the machine appears to have enough RAM that most of it 
+is beyond the device's 36-bit DMA mask, thus it's fairly likely for the 
+initial direct alloc to come back with something unsuitable.
+
+Robin.
+
 > 
-> I think, we can use cumulative patches in such cases too without much
-> additional effort. For example, we can encode the distinction (base set of
-> fixes + addition) in the module name or somewhere else.
 > 
-> So, I think, it is fine for us, if stacking support is removed. Especially
-> if that makes the implementation of livepatch less complex and more
-> reliable.
-
-Just to clarify, I think we are just proposing the removal of the
-enforcement of the stacking order.  We will still allow multiple
-non-replace patches to be applied.  We just won't enforce which patches
-can be disabled/removed at any given time.
-
-So I think your old way of doing things (individual unrelated patches on
-top of a cumulative patch) would still work.
-
--- 
-Josh
+> thanks,
+> 
+> Takashi
+> 
+>>> Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1088658
+>>> Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1088902
+>>> Fixes: 0176adb00406 ("swiotlb: refactor coherent buffer allocation")
+>>> Cc: <stable@vger.kernel.org> # v4.16+
+>>> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+>>> ---
+>>>   lib/swiotlb.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/lib/swiotlb.c b/lib/swiotlb.c
+>>> index 47aeb04c1997..de7cc540450f 100644
+>>> --- a/lib/swiotlb.c
+>>> +++ b/lib/swiotlb.c
+>>> @@ -719,7 +719,7 @@ swiotlb_alloc_buffer(struct device *dev, size_t size, dma_addr_t *dma_handle,
+>>>   		goto out_warn;
+>>>   
+>>>   	*dma_handle = __phys_to_dma(dev, phys_addr);
+>>> -	if (dma_coherent_ok(dev, *dma_handle, size))
+>>> +	if (!dma_coherent_ok(dev, *dma_handle, size))
+>>>   		goto out_unmap;
+>>>   
+>>>   	memset(phys_to_virt(phys_addr), 0, size);
+>>> -- 
+>>> 2.16.3
+>> ---end quoted text---
+>>
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> 
