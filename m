@@ -1,186 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752866AbeDJIhO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:37:14 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:28987 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752147AbeDJIhM (ORCPT
+        id S1752888AbeDJIid (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 04:38:33 -0400
+Received: from mail-it0-f51.google.com ([209.85.214.51]:53897 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751888AbeDJIib (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:37:12 -0400
-X-IronPort-AV: E=Sophos;i="5.48,431,1517842800";
-   d="scan'208";a="277754516"
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com, buserror+upstream@gmail.com,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v4 8/8] reset: Renesas RZ/N1 reboot driver
-Date: Tue, 10 Apr 2018 09:30:08 +0100
-Message-Id: <1523349015-37985-9-git-send-email-michel.pollet@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
+        Tue, 10 Apr 2018 04:38:31 -0400
+X-Google-Smtp-Source: AIpwx4/vZHwOZ3c7NnyRtkxlfyzeYFY6vltG+dwc1PrPXcNtr5MYtlC8Hz8f3QBAkST/vpiAKmFZoL+SjpcX/3B88sY=
+MIME-Version: 1.0
+In-Reply-To: <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com>
+References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Date: Tue, 10 Apr 2018 17:38:29 +0900
+Message-ID: <CA+Ln22Eabq0HH6YmCSFwLd68w3DU4xTX2BiNAeLe_tnG6282Xg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:SAMSUNG SOC CLOCK DRIVERS"
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-gpio@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3A8cdbF005216
 
-The Renesas RZ/N1 Family (Part #R9A06G0xx) needs a small driver
-to reboot the Cortex-A7 cores. This driver is a sub driver of
-the sysctrl MFD.
+2018-04-10 16:06 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
+> On Sun, Apr 8, 2018 at 8:07 PM, Paweł Chmiel
+> <pawel.mikolaj.chmiel@gmail.com> wrote:
+>> All banks with GPIO interrupts should be at beginning
+>> of bank array and without any other types of banks between them.
+>> This order is expected by exynos_eint_gpio_irq, when doing
+>> interrupt group to bank translation.
+>> Otherwise, kernel NULL pointer dereference would happen
+>> when trying to handle interrupt, due to wrong bank being looked up.
+>> Observed on s5pv210, when trying to handle gpj0 interrupt,
+>> where kernel was mapping it to gpi bank.
+>
+> Thanks for the patch. The issue looks real although one thing was
+> missed - there is a gap in SVC group between GPK2 and GPL0 (pointed by
+> Marek Szyprowski):
+>
+> 0x0 - EINT_23 - gpk0
+> 0x1 - EINT_24 - gpk1
+> 0x2 - EINT_25 - gpk2
+> 0x4 - EINT_27 - gpl0
+> 0x7 - EINT_8 - gpm0
+>
+> Maybe this should be done differently - to remove such hidden
+> requirement entirely in favor of another parameter of
+> EXYNOS_PIN_BANK_EINTG argument?
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- drivers/power/reset/Kconfig       |   7 +++
- drivers/power/reset/Makefile      |   1 +
- drivers/power/reset/rzn1-reboot.c | 105 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 113 insertions(+)
- create mode 100644 drivers/power/reset/rzn1-reboot.c
+Perhaps let's limit this patch to s5pv210 and Exynos5410 alone, where
+a simple swap of bank order in the arrays should be okay.
 
-diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-index df58fc8..1416d88 100644
---- a/drivers/power/reset/Kconfig
-+++ b/drivers/power/reset/Kconfig
-@@ -144,6 +144,13 @@ config POWER_RESET_RESTART
- 	  Instead they restart, and u-boot holds the SoC until the
- 	  user presses a key. u-boot then boots into Linux.
- 
-+config POWER_RESET_RZN1
-+	bool "Renesas RZ/N1 reboot driver"
-+	depends on ARCH_RZN1
-+	help
-+	  This driver allows rebooting the CA7 cores of the
-+	  Renesas RZ/N1 Family of SoC (Part # R9A06G0xx).
-+
- config POWER_RESET_ST
- 	bool "ST restart driver"
- 	depends on ARCH_STI
-diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
-index 7778c74..bad9702 100644
---- a/drivers/power/reset/Makefile
-+++ b/drivers/power/reset/Makefile
-@@ -16,6 +16,7 @@ obj-$(CONFIG_POWER_RESET_PIIX4_POWEROFF) += piix4-poweroff.o
- obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
- obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
- obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
-+obj-$(CONFIG_POWER_RESET_RZN1) += rzn1-reboot.o
- obj-$(CONFIG_POWER_RESET_ST) += st-poweroff.o
- obj-$(CONFIG_POWER_RESET_VERSATILE) += arm-versatile-reboot.o
- obj-$(CONFIG_POWER_RESET_VEXPRESS) += vexpress-poweroff.o
-diff --git a/drivers/power/reset/rzn1-reboot.c b/drivers/power/reset/rzn1-reboot.c
-new file mode 100644
-index 0000000..29b568c
---- /dev/null
-+++ b/drivers/power/reset/rzn1-reboot.c
-@@ -0,0 +1,105 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * RZ/N1 reboot driver
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-+ * Derived from zx-reboot.c
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/notifier.h>
-+#include <linux/platform_device.h>
-+#include <linux/reboot.h>
-+#include <linux/regmap.h>
-+
-+/* Definitions from the SDK rzn1-sysctrl.h autogenerated file */
-+#define RZN1_SYSCTRL_REG_RSTEN			0x120
-+#define RZN1_SYSCTRL_REG_RSTEN_MRESET_EN		0
-+#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN		1
-+#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN_MASK		0x6
-+#define RZN1_SYSCTRL_REG_RSTEN_WDM3RST_EN		3
-+#define RZN1_SYSCTRL_REG_RSTEN_CM3LOCKUPRST_EN		4
-+#define RZN1_SYSCTRL_REG_RSTEN_CM3SYSRESET_EN		5
-+#define RZN1_SYSCTRL_REG_RSTEN_SWRST_EN			6
-+#define RZN1_SYSCTRL_REG_RSTCTRL		0x198
-+#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ		1
-+#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ_MASK	0x6
-+#define RZN1_SYSCTRL_REG_RSTCTRL_WDM3RST_REQ		3
-+#define RZN1_SYSCTRL_REG_RSTCTRL_CM3LOCKUPRST_REQ	4
-+#define RZN1_SYSCTRL_REG_RSTCTRL_CM3SYSRESET_REQ	5
-+#define RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ		6
-+
-+static struct regmap *sysctrl;
-+
-+static int rzn1_reboot_handler(struct notifier_block *this,
-+			      unsigned long mode, void *cmd)
-+{
-+	regmap_write_bits(sysctrl,
-+			RZN1_SYSCTRL_REG_RSTEN,
-+			BIT(RZN1_SYSCTRL_REG_RSTEN_SWRST_EN) |
-+				BIT(RZN1_SYSCTRL_REG_RSTEN_MRESET_EN),
-+			BIT(RZN1_SYSCTRL_REG_RSTEN_SWRST_EN) |
-+				BIT(RZN1_SYSCTRL_REG_RSTEN_MRESET_EN));
-+	regmap_write_bits(sysctrl,
-+			RZN1_SYSCTRL_REG_RSTCTRL,
-+			BIT(RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ),
-+			BIT(RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ));
-+
-+	mdelay(50);
-+	pr_emerg("Unable to restart system\n");
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static struct notifier_block rzn1_reboot_nb = {
-+	.notifier_call = rzn1_reboot_handler,
-+	.priority = 128,
-+};
-+
-+static int rzn1_reboot_probe(struct platform_device *pdev)
-+{
-+	int err;
-+	struct device *parent;
-+
-+	parent = pdev->dev.parent;
-+	if (!parent || !parent->of_node) {
-+		dev_err(&pdev->dev, "couldn't find sysctrl node\n");
-+		return -ENODEV;
-+	}
-+	sysctrl = syscon_node_to_regmap(parent->of_node);
-+	if (IS_ERR(sysctrl)) {
-+		dev_err(&pdev->dev, "couldn't find find regmap\n");
-+		return PTR_ERR(sysctrl);
-+	}
-+	err = register_restart_handler(&rzn1_reboot_nb);
-+	if (err) {
-+		dev_err(&pdev->dev, "register restart handler failed(err=%d)\n",
-+			err);
-+	}
-+
-+	return err;
-+}
-+
-+static const struct of_device_id rzn1_reboot_of_match[] = {
-+	{ .compatible = "renesas,rzn1-reboot" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, rzn1_reboot_of_match);
-+
-+static struct platform_driver rzn1_reboot_driver = {
-+	.probe = rzn1_reboot_probe,
-+	.driver = {
-+		.name = "rzn1-reboot",
-+		.of_match_table = rzn1_reboot_of_match,
-+	},
-+};
-+module_platform_driver(rzn1_reboot_driver);
-+
-+MODULE_DESCRIPTION("RZ/N1 reboot driver");
-+MODULE_AUTHOR("Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+We might also need to have some fixes on 4x12, because I noticed that
+in exynos4x12_pin_banks0[] there is a hole in eint_offsets between
+gpd1 and gpf0 and exynos4x12_pin_banks1[] starts with gpk0 that has
+eint_offset equal to 0x08 (not 0).
+
+> Anyway if such hidden requirement
+> stays, then please document it in the source code (it maybe next to
+> PIN order... or next macro... or also in exynos_eint_gpio_irq()).
+>
+> Beside that please add cc-stable and appropriate fixes tag,
+
+Agreed. Probably the only safe way of documenting this is to put it
+inside each bank array, so that when someone creates a copy/paste for
+new SoC, the comment is clearly visible... Perhaps something like:
+
+/* Must start with EINTG banks, ordered by EINT group number. */
+
+Best regards,
+Tomasz
