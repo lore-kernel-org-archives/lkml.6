@@ -1,161 +1,141 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2881586-1523466894-2-9447667205782779623
+X-Cyrus-Session-Id: sloti22d1t05-713601-1523400083-2-7306140077890362171
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523466894; b=J7UbQEHjQXXeqH7dameVhK+3gNDJnLyChNneEEsQQ9+2BTgSKw
-    en1xIlZYhJ4N5Pl3D8b6/jd/jwoJwy8UJATEu2xwGLOprr6d0C7lKfCcn9ctAt6P
-    AK70OM6ODb9dj+BRSTvn+FkxmdIOg4GQ4jULpUnASHa2tM9DTKmQtiZk4eTeZ/9s
-    Q4Hdimwqc9JjPxXn9LZSSimoBKjM8w9A6Jj15vMVwavpYj9Ils3fwRcYONrfqc2l
-    2efRb/H0ZgS7m6NAfABZEGZqWzdzUlpavQAsrPqpji+38BYhVh7fXbmAceCs1LvQ
-    cy0PGFZ3oVjoZohVwIVv4tvyHu/W53v9uCUw==
+    1523400082; b=pEJdL5/CeUg3ymqeUwsgTKNUAL9T2cZkWEJnKFwQSrF7QRWNxu
+    +h+aH1SXjgYvyOe1BNBfKXm6BAuOS5nW4SWlHAqBG0edkid9ctInUR0IK3aJs5m3
+    NaKEJqwlw06j1uB2QFGgvJbMWApsLMGLuZ6ttQfzHGFPqFpNz+yESGNK13LVI1oZ
+    QqeF/tYiKIZlS9jd7PBd7PQL9WcQ/rjC9dcEHQKkquFfmZs6eRhutd15LDj2tGu+
+    qWo0hJIo303D16MbWsiFDtXYBWZexllBNT3E5iV8tlS8addrnj1UlW54kkwfvTGW
+    yunxFZuSIJPsVWIPD7ZWH3kXxji03iK/Lqfw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1523466894;
-    bh=fSLvaRjE2p/jUrkDL5E038iOkcUPxENN+TaK53izEP0=; b=tBKGZbjlemId
-    Tdfr3UOppGlVFq5LdXpzPpQz2VOETWERB2yl75yOZCKtQJs5vFhVdaGRMC6nYdl5
-    0pdKeGymzCByaR3kQvdKQthk3s9fnmvKuVMp8YKF0YbqBbwfiD1ofE4OnOOx7Mne
-    vWBinsL0hj/9MZc2NisYKmmrKFR9mBcm7DcCNKJcKRDpijtPGk3jPPR9/GmR04MF
-    JIrN0bMaCQA9PkM6//+aSrBmZUchi5UVX3/TzXbuejxZGmZZ4zZcpJOlf798v/bj
-    z1soALVLGGGdQmRuZ78nfF+0OrHNKjGiTo5BTXjGyCq9mVqpkbqWBbGsi+WxO4ur
-    YtOJfaN+kg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523400082; bh=woi7oeHj2QGaPmtXXDKkjhuy1hn7OX
+    coRMzNq86jIRg=; b=TNhcUGYcOsxpaJlwEIxobHiU5sV8liXwG0q2haTmbIX0Gy
+    U2n/Woo3RV7UYxSRGqAGZygz57YBDJPwuc0Rz6PrxcM07j4VgflqdX12b894g67G
+    xBknNq7Q1g5gqDZb28NUBOqP62/K69n3MDDKNrTFqZjtZG8fA4D+Dp/N2porMZDs
+    /G+JVOMYaknltDcX7+lnx+5HBRanmXa+AOInAPH+Dl204NxZ/0DwOu0QgDvsU3Rk
+    x7a26gH1dBt6YNOiQy15sHtkGHktW7zdXV4IQA/fKfGB3WazNJbefD4YL2xCxVZz
+    kxC4iEl+W5RybIHnrmD1+dvxXWQSGh9jvEloWbOQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJCyMHp8bIDXU7mIA/uN999EWxBNOXrunEl+yWagQHGCUw3aCm/rjh61IVp4ok8pCAJn5QwP3aER00V0pXUiWyIF8ymWGPffd4K6VvpgRB01ZCtoYZ6N
-    BskdCl09X8PztQ2zt0ZiAaeoDNF41AZ+z4L5Woqr5+oVIZUqz7XQjvyLcErEusKmp8fxCSQMqcj1EEkZElyDEU7q9HtbmPnNQlJGEEmCWB9PzJbYilk7lUgJ
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=DFuB5R5a5QQA:10
-    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=8-vRK6DNSD7UNujOA5sA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfNRBc1TFvgbw+TkT9X7Dr1h7xU0sCkKIhBh4/J7iKGZHCsITzd+KwUn5kEN+FAKL9O4CeP0jx0nBnQVTJPuLyIPl3Ymon9nQfnbEWHzRL7hhZfdNL+8G
+    DBYFoL+N0y2db3dQQrIifZ4648NNeSGuJI5lanA3NPjdkwlXUEYAqcuvK4W5Rhgp0qXQDLLpLC1TMCeSkaxtkWhrxe/V5pnNdwqYUyt6dUC3Dch7ICjmFFN4
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=20KFwNOVAAAA:8 a=hSkVLCK3AAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=pLoruLiFDANQYzNcO30A:9 a=1p09Xky88IM9OuM4:21 a=6VQx6ZM_NQrM1O5F:21
+    a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753707AbeDKROk (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 13:14:40 -0400
-Received: from osg.samsung.com ([64.30.133.232]:57063 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753681AbeDKROj (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 11 Apr 2018 13:14:39 -0400
-Subject: Re: [PATCH 4.14 000/138] 4.14.34-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
-References: <20180410212902.121524696@linuxfoundation.org>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=shuahkh@osg.samsung.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <0da41acf-1228-4e09-9a07-237e2cda8004@osg.samsung.com>
-Date: Wed, 11 Apr 2018 11:14:37 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
+        id S932747AbeDJWkX (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 18:40:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46734 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932736AbeDJWkV (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:40:21 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com,
+        Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 134/138] vhost: validate log when IOTLB is enabled
+Date: Wed, 11 Apr 2018 00:25:24 +0200
+Message-Id: <20180410212917.818627954@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180410212902.121524696@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/10/2018 04:23 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.34 release.
-> There are 138 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu Apr 12 21:28:20 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.34-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Compiled and booted on my test system. No dmesg regressions.
+------------------
 
-thanks,
--- Shuah
+From: Jason Wang <jasowang@redhat.com>
+
+
+[ Upstream commit d65026c6c62e7d9616c8ceb5a53b68bcdc050525 ]
+
+Vq log_base is the userspace address of bitmap which has nothing to do
+with IOTLB. So it needs to be validated unconditionally otherwise we
+may try use 0 as log_base which may lead to pin pages that will lead
+unexpected result (e.g trigger BUG_ON() in set_bit_to_user()).
+
+Fixes: 6b1e6cc7855b0 ("vhost: new device IOTLB API")
+Reported-by: syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/vhost/vhost.c |   14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -1252,14 +1252,12 @@ static int vq_log_access_ok(struct vhost
+ /* Caller should have vq mutex and device mutex */
+ int vhost_vq_access_ok(struct vhost_virtqueue *vq)
+ {
+-	if (vq->iotlb) {
+-		/* When device IOTLB was used, the access validation
+-		 * will be validated during prefetching.
+-		 */
+-		return 1;
+-	}
+-	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used) &&
+-		vq_log_access_ok(vq, vq->log_base);
++	int ret = vq_log_access_ok(vq, vq->log_base);
++
++	if (ret || vq->iotlb)
++		return ret;
++
++	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used);
+ }
+ EXPORT_SYMBOL_GPL(vhost_vq_access_ok);
+ 
