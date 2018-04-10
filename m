@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753519AbeDJUiC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 16:38:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36188 "EHLO
+        id S1752584AbeDJUml (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 16:42:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38196 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751629AbeDJUiB (ORCPT
+        with ESMTP id S1751799AbeDJUmk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 16:38:01 -0400
-Date: Tue, 10 Apr 2018 13:37:59 -0700
+        Tue, 10 Apr 2018 16:42:40 -0400
+Date: Tue, 10 Apr 2018 13:42:39 -0700
 From: Andrew Morton <akpm@linux-foundation.org>
-To: Greg Thelen <gthelen@google.com>
-Cc: Wang Long <wanglong19@meituan.com>, Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
-        npiggin@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3] writeback: safer lock nesting
-Message-Id: <20180410133759.8ffd3170e5aaa7eb7eddcba6@linux-foundation.org>
-In-Reply-To: <20180410005908.167976-1-gthelen@google.com>
-References: <201804080259.VS5U0mKT%fengguang.wu@intel.com>
-        <20180410005908.167976-1-gthelen@google.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Ram Pai <linuxram@us.ibm.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        Michael Henders <hendersm@shaw.ca>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] resource: Fix integer overflow at reallocation
+Message-Id: <20180410134239.483fe34525db647f2f3d1ece@linux-foundation.org>
+In-Reply-To: <s5hpo37d5l8.wl-tiwai@suse.de>
+References: <20180408072026.27365-1-tiwai@suse.de>
+        <20180409172326.944143fd13db2601e4dee9b0@linux-foundation.org>
+        <s5hpo37d5l8.wl-tiwai@suse.de>
 X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -26,167 +26,56 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  9 Apr 2018 17:59:08 -0700 Greg Thelen <gthelen@google.com> wrote:
+On Tue, 10 Apr 2018 06:54:11 +0200 Takashi Iwai <tiwai@suse.de> wrote:
 
-> lock_page_memcg()/unlock_page_memcg() use spin_lock_irqsave/restore() if
-> the page's memcg is undergoing move accounting, which occurs when a
-> process leaves its memcg for a new one that has
-> memory.move_charge_at_immigrate set.
+> On Tue, 10 Apr 2018 02:23:26 +0200,
+> Andrew Morton wrote:
+> > 
+> > On Sun,  8 Apr 2018 09:20:26 +0200 Takashi Iwai <tiwai@suse.de> wrote:
+> > 
+> > > We've got a bug report indicating a kernel panic at booting on an
+> > > x86-32 system, and it turned out to be the invalid resource assigned
+> > > after PCI resource reallocation.  __find_resource() first aligns the
+> > > resource start address and resets the end address with start+size-1
+> > > accordingly, then checks whether it's contained.  Here the end address
+> > > may overflow the integer, although resource_contains() still returns
+> > > true because the function validates only start and end address.  So
+> > > this ends up with returning an invalid resource (start > end).
+> > > 
+> > > There was already an attempt to cover such a problem in the commit
+> > > 47ea91b4052d ("Resource: fix wrong resource window calculation"), but
+> > > this case is an overseen one.
+> > > 
+> > > This patch adds the validity check in resource_contains() to see
+> > > whether the given resource has a valid range for avoiding the integer
+> > > overflow problem.
+> > > 
+> > > ...
+> > >
+> > > --- a/include/linux/ioport.h
+> > > +++ b/include/linux/ioport.h
+> > > @@ -212,6 +212,9 @@ static inline bool resource_contains(struct resource *r1, struct resource *r2)
+> > >  		return false;
+> > >  	if (r1->flags & IORESOURCE_UNSET || r2->flags & IORESOURCE_UNSET)
+> > >  		return false;
+> > > +	/* sanity check whether it's a valid resource range */
+> > > +	if (r2->end < r2->start)
+> > > +		return false;
+> > >  	return r1->start <= r2->start && r1->end >= r2->end;
+> > >  }
+> > 
+> > This doesn't look like the correct place to handle this?  Clearly .end
+> > < .start is an invalid state for a resource and we should never have
+> > constructed such a thing in the first place?  So adding a check at the
+> > place where this resource was initially created seems to be the correct
+> > fix?
 > 
-> unlocked_inode_to_wb_begin,end() use spin_lock_irq/spin_unlock_irq() if the
-> given inode is switching writeback domains.  Switches occur when enough
-> writes are issued from a new domain.
-> 
-> This existing pattern is thus suspicious:
->     lock_page_memcg(page);
->     unlocked_inode_to_wb_begin(inode, &locked);
->     ...
->     unlocked_inode_to_wb_end(inode, locked);
->     unlock_page_memcg(page);
-> 
-> If both inode switch and process memcg migration are both in-flight then
-> unlocked_inode_to_wb_end() will unconditionally enable interrupts while
-> still holding the lock_page_memcg() irq spinlock.  This suggests the
-> possibility of deadlock if an interrupt occurs before
-> unlock_page_memcg().
-> 
->     truncate
->     __cancel_dirty_page
->     lock_page_memcg
->     unlocked_inode_to_wb_begin
->     unlocked_inode_to_wb_end
->     <interrupts mistakenly enabled>
->                                     <interrupt>
->                                     end_page_writeback
->                                     test_clear_page_writeback
->                                     lock_page_memcg
->                                     <deadlock>
->     unlock_page_memcg
-> 
-> Due to configuration limitations this deadlock is not currently possible
-> because we don't mix cgroup writeback (a cgroupv2 feature) and
-> memory.move_charge_at_immigrate (a cgroupv1 feature).
-> 
-> If the kernel is hacked to always claim inode switching and memcg
-> moving_account, then this script triggers lockup in less than a minute:
->   cd /mnt/cgroup/memory
->   mkdir a b
->   echo 1 > a/memory.move_charge_at_immigrate
->   echo 1 > b/memory.move_charge_at_immigrate
->   (
->     echo $BASHPID > a/cgroup.procs
->     while true; do
->       dd if=/dev/zero of=/mnt/big bs=1M count=256
->     done
->   ) &
->   while true; do
->     sync
->   done &
->   sleep 1h &
->   SLEEP=$!
->   while true; do
->     echo $SLEEP > a/cgroup.procs
->     echo $SLEEP > b/cgroup.procs
->   done
-> 
-> Given the deadlock is not currently possible, it's debatable if there's
-> any reason to modify the kernel.  I suggest we should to prevent future
-> surprises.
-> 
-> ...
->
-> Changelog since v2:
-> - explicitly initialize wb_lock_cookie to silence compiler warnings.
+> Yes, that was also my first thought and actually the v1 patch was like
+> that.
 
-But only in some places.  What's up with that?
+Yes, I do prefer.
 
->
-> ...
->
-> --- a/include/linux/backing-dev.h
-> +++ b/include/linux/backing-dev.h
-> @@ -346,7 +346,7 @@ static inline struct bdi_writeback *inode_to_wb(const struct inode *inode)
->  /**
->   * unlocked_inode_to_wb_begin - begin unlocked inode wb access transaction
->   * @inode: target inode
-> - * @lockedp: temp bool output param, to be passed to the end function
-> + * @cookie: output param, to be passed to the end function
->   *
->   * The caller wants to access the wb associated with @inode but isn't
->   * holding inode->i_lock, mapping->tree_lock or wb->list_lock.  This
-> @@ -354,12 +354,11 @@ static inline struct bdi_writeback *inode_to_wb(const struct inode *inode)
->   * association doesn't change until the transaction is finished with
->   * unlocked_inode_to_wb_end().
->   *
-> - * The caller must call unlocked_inode_to_wb_end() with *@lockdep
-> - * afterwards and can't sleep during transaction.  IRQ may or may not be
-> - * disabled on return.
-> + * The caller must call unlocked_inode_to_wb_end() with *@cookie afterwards and
-> + * can't sleep during transaction.  IRQ may or may not be disabled on return.
->   */
+>  The v2 one was by Ram's suggestion so that we can cover
+> potential bugs by all other callers as well.
 
-Grammar is a bit awkward here,
-
->
-> ...
->
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2501,13 +2501,13 @@ void account_page_redirty(struct page *page)
->  	if (mapping && mapping_cap_account_dirty(mapping)) {
->  		struct inode *inode = mapping->host;
->  		struct bdi_writeback *wb;
-> -		bool locked;
-> +		struct wb_lock_cookie cookie = {0};
-
-Trivia: it's better to use "= {}" here.  That has the same effect and
-it doesn't assume that the first field is a scalar.  And indeed, the
-first field is a bool so it should be {false}!
-
-
-So...
-
-
---- a/include/linux/backing-dev.h~writeback-safer-lock-nesting-fix
-+++ a/include/linux/backing-dev.h
-@@ -355,7 +355,8 @@ static inline struct bdi_writeback *inod
-  * unlocked_inode_to_wb_end().
-  *
-  * The caller must call unlocked_inode_to_wb_end() with *@cookie afterwards and
-- * can't sleep during transaction.  IRQ may or may not be disabled on return.
-+ * can't sleep during the transaction.  IRQs may or may not be disabled on
-+ * return.
-  */
- static inline struct bdi_writeback *
- unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie *cookie)
---- a/mm/page-writeback.c~writeback-safer-lock-nesting-fix
-+++ a/mm/page-writeback.c
-@@ -2501,7 +2501,7 @@ void account_page_redirty(struct page *p
- 	if (mapping && mapping_cap_account_dirty(mapping)) {
- 		struct inode *inode = mapping->host;
- 		struct bdi_writeback *wb;
--		struct wb_lock_cookie cookie = {0};
-+		struct wb_lock_cookie cookie = {};
- 
- 		wb = unlocked_inode_to_wb_begin(inode, &cookie);
- 		current->nr_dirtied--;
-@@ -2613,7 +2613,7 @@ void __cancel_dirty_page(struct page *pa
- 	if (mapping_cap_account_dirty(mapping)) {
- 		struct inode *inode = mapping->host;
- 		struct bdi_writeback *wb;
--		struct wb_lock_cookie cookie = {0};
-+		struct wb_lock_cookie cookie = {};
- 
- 		lock_page_memcg(page);
- 		wb = unlocked_inode_to_wb_begin(inode, &cookie);
-@@ -2653,7 +2653,7 @@ int clear_page_dirty_for_io(struct page
- 	if (mapping && mapping_cap_account_dirty(mapping)) {
- 		struct inode *inode = mapping->host;
- 		struct bdi_writeback *wb;
--		struct wb_lock_cookie cookie = {0};
-+		struct wb_lock_cookie cookie = {};
- 
- 		/*
- 		 * Yes, Virginia, this is indeed insane.
-
-But I wonder about the remaining uninitialized wb_lock_cookies?
+That could be done as a separate thing?
