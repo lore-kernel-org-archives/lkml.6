@@ -1,141 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753821AbeDJOkW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:40:22 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43357 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752955AbeDJOkU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:40:20 -0400
-Date: Tue, 10 Apr 2018 07:40:10 -0700
-From: "tip-bot for Kirill A. Shutemov" <tipbot@zytor.com>
-Message-ID: <tip-d94a155c59c98c19b98ee949eaab6a0312bbd6be@git.kernel.org>
-Cc: kai.huang@linux.intel.com, mingo@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, dave.hansen@intel.com, thomas.lendacky@amd.com,
-        linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com
-Reply-To: mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        kai.huang@linux.intel.com, kirill.shutemov@linux.intel.com,
-        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-        thomas.lendacky@amd.com
-In-Reply-To: <20180410092704.41106-1-kirill.shutemov@linux.intel.com>
-References: <20180410092704.41106-1-kirill.shutemov@linux.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/cpu: Prevent cpuinfo_x86::x86_phys_bits
- adjustment corruption
-Git-Commit-ID: d94a155c59c98c19b98ee949eaab6a0312bbd6be
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1754116AbeDJOlP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:41:15 -0400
+Received: from mga06.intel.com ([134.134.136.31]:10647 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753124AbeDJOlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 10:41:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,432,1517904000";
+   d="scan'208";a="190333314"
+Subject: Re: [PATCH v1]: perf/x86: store user space frame-pointer value on a
+ sample
+From: Alexey Budankov <alexey.budankov@linux.intel.com>
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <086d45fb-a099-4ae9-2854-943447e86010@linux.intel.com>
+ <20180406153144.GA9010@tassilo.jf.intel.com>
+ <df5f38d8-9b35-0309-527a-c7b7b35c635b@linux.intel.com>
+ <20180406195310.GB9010@tassilo.jf.intel.com>
+ <ddb220da-eb32-a9bb-f742-8fe5d5588974@linux.intel.com>
+ <2a42b621-e7b2-b761-beb8-dfef11b2afb3@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <3f6238cd-7bb7-4baf-b371-e428d489495b@linux.intel.com>
+Date: Tue, 10 Apr 2018 17:41:08 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <2a42b621-e7b2-b761-beb8-dfef11b2afb3@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d94a155c59c98c19b98ee949eaab6a0312bbd6be
-Gitweb:     https://git.kernel.org/tip/d94a155c59c98c19b98ee949eaab6a0312bbd6be
-Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate: Tue, 10 Apr 2018 12:27:04 +0300
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 10 Apr 2018 16:33:21 +0200
+On 09.04.2018 8:23, Alexey Budankov wrote:
+> On 07.04.2018 9:18, Alexey Budankov wrote:
+>> On 06.04.2018 22:53, Andi Kleen wrote:
+>>> On Fri, Apr 06, 2018 at 10:06:26PM +0300, Alexey Budankov wrote:
+>>>> On 06.04.2018 18:31, Andi Kleen wrote:
+>>>>>> diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
+>>>>>> index e47b2dbbdef3..9284048cf5b0 100644
+>>>>>> --- a/arch/x86/kernel/perf_regs.c
+>>>>>> +++ b/arch/x86/kernel/perf_regs.c
+>>>>>> @@ -157,6 +157,15 @@ void perf_get_regs_user(struct perf_regs *regs_user,
+>>>>>>  	 */
+>>>>>>  	regs_user_copy->bx = -1;
+>>>>>>  	regs_user_copy->bp = -1;
+>>>>>> +	if (user_64bit_mode(user_regs)) {
+>>>>>
+>>>>> Why is it 64bit only? Should work on 32bit too.
+>>>>
+>>>> bp register is a part of i386 syscall ABI 
+>>>> (http://man7.org/linux/man-pages/man2/syscall.2.html) 
+>>>> so not sure if it will make any sense for 32bit processes. 
+>>>
+>>> Both 32bit and 64bit use the same frame pointer, if they
+>>> use frame pointer.
+>>
+>> Well let me check the same scenario for 32bit binary.
+> 
+> Here is what I have when profiling 32bit process on the patched 64bit 
+> kernel w/o 32bit frame-pointer exposure:
+> 
+> vmlinux ! try_to_wake_up - [unknown source file]
+> vmlinux ! wake_up_q + 0x3e - [unknown source file]
+> vmlinux ! futex_wake + 0x141 - [unknown source file]
+> vmlinux ! do_futex + 0x49b - [unknown source file]
+> vmlinux ! compat_SyS_futex + 0x123 - [unknown source file]
+> vmlinux ! do_fast_syscall_32 + 0xb9 - [unknown source file]
+> vmlinux ! entry_SYSENTER_compat + 0x7e - [unknown source file]
+> ==> [vdso] ! __kernel_vsyscall + 0x8 - [unknown source file]
+> ==> libc-2.26.so ! syscall + 0x26 - [unknown source file]
+> ==> futex32-fp ! main + 0xba - [unknown source file]
+> ==> libc-2.26.so ! __libc_start_main + 0xf2 - [unknown source file]
+> 
+> so stack is unwound till the top. However if I enable 32bit exposure 
+> then the stack looks like this:
+> 
+> vmlinux ! try_to_wake_up - [unknown source file]
+> vmlinux ! wake_up_q + 0x3e - [unknown source file]
+> vmlinux ! futex_wake + 0x141 - [unknown source file]
+> vmlinux ! do_futex + 0x49b - [unknown source file]
+> vmlinux ! compat_SyS_futex + 0x123 - [unknown source file]
+> vmlinux ! do_fast_syscall_32 + 0xb9 - [unknown source file]
+> vmlinux ! entry_SYSENTER_compat + 0x7e - [unknown source file]
+> ==> [vdso] ! [vdso] + 0x1058 - [unknown source file]
+> ==> vmlinux ! [Skipped stack frame(s)] + 0x1 - [unknown source file]
 
-x86/cpu: Prevent cpuinfo_x86::x86_phys_bits adjustment corruption
+Investigated more on that unwind failure case above and it turns out that
+in case of system wide monitoring there may be several modules named equally 
+but of different architecture, e.g. vdso like in that case above, so unwinding 
+code needs to be smart enough to distinguish between the modules to choose 
+proper one when walking stack on a sample. Well, lifting the restriction 
+on the frame-pointer architecture looks reasonable.
 
-Some features (Intel MKTME, AMD SME) reduce the number of effectively
-available physical address bits. cpuinfo_x86::x86_phys_bits is adjusted
-accordingly during the early cpu feature detection.
+In order to enable unwinding code for that mixed mode case above 
+it is required to expose module architecture to unwinding code.
 
-Though if get_cpu_cap() is called later again then this adjustement is
-overwritten. That happens in setup_pku(), which is called after
-detect_tme().
+Thanks,
+Alexey
 
-To address this, extract the address sizes enumeration into a separate
-function, which is only called only from early_identify_cpu() and from
-generic_identify().
-
-This makes get_cpu_cap() safe to be called later during boot proccess
-without overwriting cpuinfo_x86::x86_phys_bits.
-
-[ tglx: Massaged changelog ]
-
-Fixes: cb06d8e3d020 ("x86/tme: Detect if TME and MKTME is activated by BIOS")
-Reported-by: Kai Huang <kai.huang@linux.intel.com>
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: linux-mm@kvack.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/20180410092704.41106-1-kirill.shutemov@linux.intel.com
-
----
- arch/x86/kernel/cpu/common.c | 32 ++++++++++++++++++++------------
- 1 file changed, 20 insertions(+), 12 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 348cf4821240..2981bf287ef5 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -848,18 +848,6 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		c->x86_power = edx;
- 	}
- 
--	if (c->extended_cpuid_level >= 0x80000008) {
--		cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
--
--		c->x86_virt_bits = (eax >> 8) & 0xff;
--		c->x86_phys_bits = eax & 0xff;
--		c->x86_capability[CPUID_8000_0008_EBX] = ebx;
--	}
--#ifdef CONFIG_X86_32
--	else if (cpu_has(c, X86_FEATURE_PAE) || cpu_has(c, X86_FEATURE_PSE36))
--		c->x86_phys_bits = 36;
--#endif
--
- 	if (c->extended_cpuid_level >= 0x8000000a)
- 		c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
- 
-@@ -874,6 +862,23 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 	apply_forced_caps(c);
- }
- 
-+static void get_cpu_address_sizes(struct cpuinfo_x86 *c)
-+{
-+	u32 eax, ebx, ecx, edx;
-+
-+	if (c->extended_cpuid_level >= 0x80000008) {
-+		cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
-+
-+		c->x86_virt_bits = (eax >> 8) & 0xff;
-+		c->x86_phys_bits = eax & 0xff;
-+		c->x86_capability[CPUID_8000_0008_EBX] = ebx;
-+	}
-+#ifdef CONFIG_X86_32
-+	else if (cpu_has(c, X86_FEATURE_PAE) || cpu_has(c, X86_FEATURE_PSE36))
-+		c->x86_phys_bits = 36;
-+#endif
-+}
-+
- static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
- {
- #ifdef CONFIG_X86_32
-@@ -965,6 +970,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
- 		cpu_detect(c);
- 		get_cpu_vendor(c);
- 		get_cpu_cap(c);
-+		get_cpu_address_sizes(c);
- 		setup_force_cpu_cap(X86_FEATURE_CPUID);
- 
- 		if (this_cpu->c_early_init)
-@@ -1097,6 +1103,8 @@ static void generic_identify(struct cpuinfo_x86 *c)
- 
- 	get_cpu_cap(c);
- 
-+	get_cpu_address_sizes(c);
-+
- 	if (c->cpuid_level >= 0x00000001) {
- 		c->initial_apicid = (cpuid_ebx(1) >> 24) & 0xFF;
- #ifdef CONFIG_X86_32
+> 
+> and x86_64 perf report --stdio shows this:
+> 
+> ...
+> unwind: target platform=x86 is not supported
+> ...
+> # Samples: 140K of event 'cycles'
+> # Event count (approx.): 93688193797
+> #
+> # Children      Self  Command     Shared Object     Symbol                                        
+> # ........  ........  ..........  ................  .........................
+> #
+>     86.00%    14.40%  futex32-fp  [kernel.vmlinux]  [k] entry_SYSENTER_compat
+>             |
+>             ---entry_SYSENTER_compat
+>                |          
+>                 --71.60%--do_fast_syscall_32
+>                           |          
+>                           |--54.62%--compat_sys_futex
+>                           |          |          
+>                           |           --53.67%--do_futex
+> 
+> I am not sure it is worth exposing frame pointer for 32bit too.
+> 
+> -Alexey
+> 
+>> If the issue exists for it too and is fixed by the exposing bp
+>> then it is obviously worth this improvement.
+>>
+>> -Alexey
+>>
+>>>
+>>> -Andi
+>>>
+>>
+>>
+> 
