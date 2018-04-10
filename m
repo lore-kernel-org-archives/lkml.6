@@ -1,80 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752816AbeDJJEX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 05:04:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46540 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752788AbeDJJEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:04:22 -0400
-Subject: Re: [PATCH] X86/VMX: Disable VMX preempition timer if MWAIT is not
- intercepted
-To: KarimAllah Ahmed <karahmed@amazon.de>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-References: <1523350211-5747-1-git-send-email-karahmed@amazon.de>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <2cd149f0-6ebe-59fc-addb-8b4b05e07d80@redhat.com>
-Date: Tue, 10 Apr 2018 11:04:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1523350211-5747-1-git-send-email-karahmed@amazon.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752919AbeDJJFa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 05:05:30 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:41998 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752487AbeDJJF2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 05:05:28 -0400
+X-Google-Smtp-Source: AIpwx48dl0vkYmVqOZ3EJdkri+rD2w4jfJL1Nd0fAlWSKoz+a1olmiWyg7fq9e7WfrohXwxv70t8TA==
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        devicetree@vger.kernel.org
+Subject: [PATCH] of: Don't create platform device for OPP tables
+Date: Tue, 10 Apr 2018 14:35:22 +0530
+Message-Id: <b70afd25fc48ad4d677e4e53951f2138cd34b85e.1523351100.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.15.0.194.g9af6a3dea062
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/04/2018 10:50, KarimAllah Ahmed wrote:
->  	WARN_ON(preemptible());
-> -	if (!kvm_x86_ops->set_hv_timer)
-> +	if (!kvm_x86_ops->has_hv_timer ||
-> +	    !kvm_x86_ops->has_hv_timer(apic->vcpu))
->  		return false;
->  
->  	if (!apic_lvtt_period(apic) && atomic_read(&ktimer->pending))
+The OPP tables are present as separate nodes, whose phandle is used in
+the "operating-points-v2" property of devices. Currently the OF core
+creates a platform device for the OPP table unconditionally, which is
+not used by any kernel code.
 
-Why not just return -ENOTSUP from vmx_set_hv_timer?
+Skip creating OPP table platform devices.
 
-Thanks,
+Reported-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/of/platform.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Paolo
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index c00d81dfac0b..aaae5d90433d 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -356,6 +356,12 @@ static int of_platform_bus_create(struct device_node *bus,
+ 		return 0;
+ 	}
+ 
++	/* OPP tables have separate nodes, but we don't want devices for them */
++	if (unlikely(of_device_is_compatible(bus, "operating-points-v2"))) {
++		pr_debug("%s() - skipping OPP node %pOF\n", __func__, bus);
++		return 0;
++	}
++
+ 	if (of_node_check_flag(bus, OF_POPULATED_BUS)) {
+ 		pr_debug("%s() - skipping %pOF, already populated\n",
+ 			__func__, bus);
+-- 
+2.15.0.194.g9af6a3dea062
