@@ -1,31 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753236AbeDJUPc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 16:15:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54793 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752057AbeDJUPb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 16:15:31 -0400
-Subject: Re: [RFC] mm, slab: reschedule cache_reap() on the same CPU
-To: Tejun Heo <tj@kernel.org>
-Cc: Christopher Lameter <cl@linux.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        David Rientjes <rientjes@google.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>
-References: <20180410081531.18053-1-vbabka@suse.cz>
- <alpine.DEB.2.20.1804100907160.27333@nuc-kabylake>
- <983c61d1-1444-db1f-65c1-3b519ac4d57b@suse.cz>
- <20180410195247.GQ3126663@devbig577.frc2.facebook.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <d4983f13-2c02-6082-f980-a6623ab363e6@suse.cz>
-Date: Tue, 10 Apr 2018 22:13:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753194AbeDJUSI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 16:18:08 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50660 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752467AbeDJUSG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 16:18:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 91DF26076A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH] PCI: quirk HT1100 & HT2000 and one HT2100 Root Ports for
+ Extended Tags
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, sulrich@codeaurora.org,
+        timur@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <1522882209-9743-1-git-send-email-okaya@codeaurora.org>
+ <20180410194144.GD54986@bhelgaas-glaptop.roam.corp.google.com>
+ <20180410195008.GE54986@bhelgaas-glaptop.roam.corp.google.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <1c94361d-7a8d-ad18-12e5-1612326a54db@codeaurora.org>
+Date: Tue, 10 Apr 2018 16:18:01 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180410195247.GQ3126663@devbig577.frc2.facebook.com>
+In-Reply-To: <20180410195008.GE54986@bhelgaas-glaptop.roam.corp.google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -33,52 +35,33 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/10/2018 09:53 PM, Tejun Heo wrote:
-> Hello,
-> 
-> On Tue, Apr 10, 2018 at 09:40:19PM +0200, Vlastimil Babka wrote:
->> On 04/10/2018 04:12 PM, Christopher Lameter wrote:
->>> On Tue, 10 Apr 2018, Vlastimil Babka wrote:
+On 4/10/2018 3:50 PM, Bjorn Helgaas wrote:
+> On Tue, Apr 10, 2018 at 02:41:44PM -0500, Bjorn Helgaas wrote:
+>> On Wed, Apr 04, 2018 at 06:50:09PM -0400, Sinan Kaya wrote:
+>>> Per PCIe r3.1, sec 2.2.6.2 and 7.8.4, a Requester may not use 8-bit Tags
+>>> unless its Extended Tag Field Enable is set, but all Receivers/Completers
+>>> must handle 8-bit Tags correctly regardless of their Extended Tag Field
+>>> Enable.
 >>>
->>>> cache_reap() is initially scheduled in start_cpu_timer() via
->>>> schedule_delayed_work_on(). But then the next iterations are scheduled via
->>>> schedule_delayed_work(), thus using WORK_CPU_UNBOUND.
+>>> Some devices do not handle 8-bit Tags as Completers, so add a quirk for
+>>> them.  If we find such a device, we disable Extended Tags for the entire
+>>> hierarchy to make peer-to-peer DMA possible.
 >>>
->>> That is a bug.. cache_reap must run on the same cpu since it deals with
->>> the per cpu queues of the current cpu. Scheduled_delayed_work() used to
->>> guarantee running on teh same cpu.
->>
->> Did it? When did it stop? (which stable kernels should we backport to?)
-> 
-> It goes back to v4.5 - ef557180447f ("workqueue: schedule
-> WORK_CPU_UNBOUND work on wq_unbound_cpumask CPUs") which made
-> WQ_CPU_UNBOUND on percpu workqueues honor wq_unbound_cpusmask so that
-> cpu isolation works better.  Unless the force_rr option or
-> unbound_cpumask is set, it still follows local cpu.
-
-I see, thanks.
-
->> So is my assumption correct that without specifying a CPU, the next work
->> might be processed on a different cpu than the current one, *and also*
->> be executed with a kthread/u* that can migrate to another cpu *in the
->> middle of the work*? Tejun?
-> 
-> For percpu work items, they'll keep executing on the same cpu it
-> started on unless the cpu goes down while executing.
-
-Right, but before this patch, with just schedule_delayed_work() i.e.
-non-percpu? If such work can migrate in the middle, the slab bug is
-potentially much more serious.
-
->>> schedule_delayed_work_on(smp_processor_id(), work, round_jiffies_relative(REAPTIMEOUT_AC));
+>>> The Broadcom HT1100/HT2000/HT2100 seems to have issues with handling 8-bit
+>>> tags.  Mark it as broken.
 >>>
->>> instead all of the other changes?
->>
->> If we can rely on that 100%, sure.
+>>> Fixes: 60db3a4d8cc9 ("PCI: Enable PCIe Extended Tags if supported")
+>>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=196197
+>>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+>> Applied to pci/enumeration for v4.18, thanks!
+> Actually, this is a really annoying issue and I think the fix is
+> appropriate for v4.17, so I moved it to my for-linus branch.
 > 
-> Yeah, you can.
 
-Great, thanks.
+I agree. It causes boot issues on some AMD Opteron machines. It should
+probably be back-ported too. 
 
-> Thanks.
-> 
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
