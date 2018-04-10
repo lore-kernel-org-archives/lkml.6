@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48BQBv6wfy/WKaJMA26Buqe0+Ud2wrxQva6BIS0ip0u4AWBvhTGlfxrrraPQbutZI7uI1Pw
-ARC-Seal: i=1; a=rsa-sha256; t=1523399693; cv=none;
+X-Google-Smtp-Source: AIpwx4+ZsuEyXRk3tx9TXrHFT9F2aZKqPUFb3cCJKhcCVprT4lpwlnem4RsVcWDo03M2w6VqPjvj
+ARC-Seal: i=1; a=rsa-sha256; t=1523399690; cv=none;
         d=google.com; s=arc-20160816;
-        b=BEVCTHjMeKDdwWdvzn821jYRr4LlvjJnUhhBKMay0tCkBC9NmUnjTqQ2J14LwVv+NN
-         LYlLHQ9ud38Ns4uiSL34EHnDstuIvwI0VqlqCyh0k3drHgu+QT/VaQGumvlmdQL8dEeL
-         hU6uhbWH3M75JQZv98Bh/Na988024swJen+0lEse3pbmRejpBxtuSLU6cw45Zfw9svB2
-         OwJezJHBrEzjX4ObdnAL3N33EtCt85pzQBEHKcntTOeCVmhfRZALc/RiyqGIclcK8QCO
-         aPbk3M76nBkBMxH2YR7TEAG2xCcYC6hRitciACSLi0FIQyG+1MBdPFQB3a/xniP33dAi
-         Xptw==
+        b=TsLSvnotupnPuRRynIj85LLiKHB3b3iq/2j58ExkLoKYfZhLCGCPMJsxtPAR0aXbrJ
+         IR7d3CJ5m/xBx2hAnWdERS56xTuisO+jyHDXCrxBvlBpxI73JOs8OMuWICIWK+fEar0M
+         abiylNvoGG5cWp6H+Muhu/4s+XPUysAYoyErvzZkQv0W2tEep8F0AuIqmZ3bIZqpox+t
+         3LeyHzI1ToIX2R5TzavMFAecTXBhEPOwritYoMMxGEGq4X3/Q9VzIOEkfSc/lXihJm/5
+         XyJjJr0PgU2ZOgFxDuz+IfgOfdyXtGdjP51Sk6gUKtbdoH74O26/6TDwo3KcsCpSaWj6
+         vWHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yOygl7RoU4Ch5lsK/idhxNZwdV+7XtkelWEY41YL3wM=;
-        b=me1AWtV6tCGiDZjMFYqVsRhI+TGgsGVAT6AaxNmUQoDkwo75lGISSTnGgSugffNf08
-         qYGE8k8ju9vz1/1CA3WpowhoCrzyfAmVtX2YpvyvQoEJzPkIoVHja8BNrk/LpKR+lrJb
-         f6TFWEO2oNEiGkgLrmAoytJ0nO4M/+Fdknvl4/4HDY8mbyFRDYAG03dsBlHB+HGOSWzM
-         Xs78V9z3oH6ek54OWtft0gd2G5sOjXQU0Z+/0Ezz4QwvKh3IwDaqUjTmWXF/gom4GSER
-         F0xX08g3LTyfVt6YbTWogYLPVFboo2q5FXkRS+Whxx5EF2x1XRLVz41lBzSXVQ6nzV/E
-         6dRQ==
+        bh=fW9aZECdn2DuSp/ypUVov37yT1KU486Ka7m/F8E2Xx0=;
+        b=XsrMcS4XNb/7JRq3A2qJYFmTLXYqfslarfCi2cUcTaMcrRTVZD6KNmruy6aQbRZZMV
+         CBkADitRzEkfnUbRk49Cl7iWLWqIYWre79w3WS9WlcB0QsKsH6G9mPFkl7+aT5JN/szG
+         9AsSoZvBJ38bNrlql7/JGP+dvAre41wc61X7wbpJWsMHddtr4AHshGzalEnv88+8Izvr
+         b/4JR79S5WwvP4JrjCZ9voemAhdaFdRumrrerfXtgaxrtklXWirAyEty/mjYqmRXhzjq
+         egDNjzhA/hx6sNzWyO7+jM4HrydET0FsVO04XV4Qh27vKKrvDbOte88yQcBk8O5r2Yo5
+         h+6A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Thomas Richter <tmricht@linux.vnet.ibm.com>,
-	Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Paul Clarke <pc@us.ibm.com>,
-	bhargavb <bhargavaramudu@gmail.com>,
-	linux-rt-users@vger.kernel.org,
+	Yi Zeng <yizeng@asrmicro.com>,
+	Zhang Rui <rui.zhang@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 009/138] perf probe: Find versioned symbols from map
-Date: Wed, 11 Apr 2018 00:23:19 +0200
-Message-Id: <20180410212903.244714179@linuxfoundation.org>
+Subject: [PATCH 4.14 008/138] thermal: power_allocator: fix one race condition issue for thermal_instances list
+Date: Wed, 11 Apr 2018 00:23:18 +0200
+Message-Id: <20180410212903.139209142@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -46,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399884410254344?=
-X-GMAIL-MSGID: =?utf-8?q?1597400357050322208?=
+X-GMAIL-THRID: =?utf-8?q?1597399820028511058?=
+X-GMAIL-MSGID: =?utf-8?q?1597400354088111741?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,139 +50,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Yi Zeng <yizeng@asrmicro.com>
 
 
-[ Upstream commit 4b3a2716dd785fabb9f6ac80c1d53cb29a88169d ]
+[ Upstream commit a5de11d67dcd268b8d0beb73dc374de5e97f0caf ]
 
-Commit d80406453ad4 ("perf symbols: Allow user probes on versioned
-symbols") allows user to find default versioned symbols (with "@@") in
-map. However, it did not enable normal versioned symbol (with "@") for
-perf-probe.  E.g.
+When invoking allow_maximum_power and traverse tz->thermal_instances,
+we should grab thermal_zone_device->lock to avoid race condition. For
+example, during the system reboot, if the mali GPU device implements
+device shutdown callback and unregister GPU devfreq cooling device,
+the deleted list head may be accessed to cause panic, as the following
+log shows:
 
-  =====
-  # ./perf probe -x /lib64/libc-2.25.so malloc_get_state
-  Failed to find symbol malloc_get_state in /usr/lib64/libc-2.25.so
-    Error: Failed to add events.
-  =====
+[   33.551070] c3 25 (kworker/3:0) Unable to handle kernel paging request at virtual address dead000000000070
+[   33.566708] c3 25 (kworker/3:0) pgd = ffffffc0ed290000
+[   33.572071] c3 25 (kworker/3:0) [dead000000000070] *pgd=00000001ed292003, *pud=00000001ed292003, *pmd=0000000000000000
+[   33.581515] c3 25 (kworker/3:0) Internal error: Oops: 96000004 [#1] PREEMPT SMP
+[   33.599761] c3 25 (kworker/3:0) CPU: 3 PID: 25 Comm: kworker/3:0 Not tainted 4.4.35+ #912
+[   33.614137] c3 25 (kworker/3:0) Workqueue: events_freezable thermal_zone_device_check
+[   33.620245] c3 25 (kworker/3:0) task: ffffffc0f32e4200 ti: ffffffc0f32f0000 task.ti: ffffffc0f32f0000
+[   33.629466] c3 25 (kworker/3:0) PC is at power_allocator_throttle+0x7c8/0x8a4
+[   33.636609] c3 25 (kworker/3:0) LR is at power_allocator_throttle+0x808/0x8a4
+[   33.643742] c3 25 (kworker/3:0) pc : [<ffffff8008683dd0>] lr : [<ffffff8008683e10>] pstate: 20000145
+[   33.652874] c3 25 (kworker/3:0) sp : ffffffc0f32f3bb0
+[   34.468519] c3 25 (kworker/3:0) Process kworker/3:0 (pid: 25, stack limit = 0xffffffc0f32f0020)
+[   34.477220] c3 25 (kworker/3:0) Stack: (0xffffffc0f32f3bb0 to 0xffffffc0f32f4000)
+[   34.819822] c3 25 (kworker/3:0) Call trace:
+[   34.824021] c3 25 (kworker/3:0) Exception stack(0xffffffc0f32f39c0 to 0xffffffc0f32f3af0)
+[   34.924993] c3 25 (kworker/3:0) [<ffffff8008683dd0>] power_allocator_throttle+0x7c8/0x8a4
+[   34.933184] c3 25 (kworker/3:0) [<ffffff80086807f4>] handle_thermal_trip.part.25+0x70/0x224
+[   34.941545] c3 25 (kworker/3:0) [<ffffff8008680a68>] thermal_zone_device_update+0xc0/0x20c
+[   34.949818] c3 25 (kworker/3:0) [<ffffff8008680bd4>] thermal_zone_device_check+0x20/0x2c
+[   34.957924] c3 25 (kworker/3:0) [<ffffff80080b93a4>] process_one_work+0x168/0x458
+[   34.965414] c3 25 (kworker/3:0) [<ffffff80080ba068>] worker_thread+0x13c/0x4b4
+[   34.972650] c3 25 (kworker/3:0) [<ffffff80080c0a4c>] kthread+0xe8/0xfc
+[   34.979187] c3 25 (kworker/3:0) [<ffffff8008084e90>] ret_from_fork+0x10/0x40
+[   34.986244] c3 25 (kworker/3:0) Code: f9405e73 eb1302bf d102e273 54ffc460 (b9402a61)
+[   34.994339] c3 25 (kworker/3:0) ---[ end trace 32057901e3b7e1db ]---
 
-This solves above issue by improving perf-probe symbol search function,
-as below.
-
-  =====
-  # ./perf probe -x /lib64/libc-2.25.so malloc_get_state
-  Added new event:
-    probe_libc:malloc_get_state (on malloc_get_state in /usr/lib64/libc-2.25.so)
-
-  You can now use it in all perf tools, such as:
-
-	  perf record -e probe_libc:malloc_get_state -aR sleep 1
-
-  # ./perf probe -l
-    probe_libc:malloc_get_state (on malloc_get_state@GLIBC_2.2.5 in /usr/lib64/libc-2.25.so)
-  =====
-
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reviewed-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Acked-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Paul Clarke <pc@us.ibm.com>
-Cc: bhargavb <bhargavaramudu@gmail.com>
-Cc: linux-rt-users@vger.kernel.org
-Link: http://lkml.kernel.org/r/151275049269.24652.1639103455496216255.stgit@devbox
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Yi Zeng <yizeng@asrmicro.com>
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/arch/powerpc/util/sym-handling.c |    8 ++++++++
- tools/perf/util/probe-event.c               |   20 ++++++++++++++++++--
- tools/perf/util/symbol.c                    |    5 +++++
- tools/perf/util/symbol.h                    |    1 +
- 4 files changed, 32 insertions(+), 2 deletions(-)
+ drivers/thermal/power_allocator.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/tools/perf/arch/powerpc/util/sym-handling.c
-+++ b/tools/perf/arch/powerpc/util/sym-handling.c
-@@ -64,6 +64,14 @@ int arch__compare_symbol_names_n(const c
+--- a/drivers/thermal/power_allocator.c
++++ b/drivers/thermal/power_allocator.c
+@@ -523,6 +523,7 @@ static void allow_maximum_power(struct t
+ 	struct thermal_instance *instance;
+ 	struct power_allocator_params *params = tz->governor_data;
  
- 	return strncmp(namea, nameb, n);
- }
-+
-+const char *arch__normalize_symbol_name(const char *name)
-+{
-+	/* Skip over initial dot */
-+	if (name && *name == '.')
-+		name++;
-+	return name;
-+}
- #endif
- 
- #if defined(_CALL_ELF) && _CALL_ELF == 2
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -2792,16 +2792,32 @@ static int find_probe_functions(struct m
- 	int found = 0;
- 	struct symbol *sym;
- 	struct rb_node *tmp;
-+	const char *norm, *ver;
-+	char *buf = NULL;
- 
- 	if (map__load(map) < 0)
- 		return 0;
- 
- 	map__for_each_symbol(map, sym, tmp) {
--		if (strglobmatch(sym->name, name)) {
-+		norm = arch__normalize_symbol_name(sym->name);
-+		if (!norm)
-+			continue;
-+
-+		/* We don't care about default symbol or not */
-+		ver = strchr(norm, '@');
-+		if (ver) {
-+			buf = strndup(norm, ver - norm);
-+			if (!buf)
-+				return -ENOMEM;
-+			norm = buf;
-+		}
-+		if (strglobmatch(norm, name)) {
- 			found++;
- 			if (syms && found < probe_conf.max_probes)
- 				syms[found - 1] = sym;
- 		}
-+		if (buf)
-+			zfree(&buf);
++	mutex_lock(&tz->lock);
+ 	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+ 		if ((instance->trip != params->trip_max_desired_temperature) ||
+ 		    (!cdev_is_power_actor(instance->cdev)))
+@@ -534,6 +535,7 @@ static void allow_maximum_power(struct t
+ 		mutex_unlock(&instance->cdev->lock);
+ 		thermal_cdev_update(instance->cdev);
  	}
- 
- 	return found;
-@@ -2847,7 +2863,7 @@ static int find_probe_trace_events_from_
- 	 * same name but different addresses, this lists all the symbols.
- 	 */
- 	num_matched_functions = find_probe_functions(map, pp->function, syms);
--	if (num_matched_functions == 0) {
-+	if (num_matched_functions <= 0) {
- 		pr_err("Failed to find symbol %s in %s\n", pp->function,
- 			pev->target ? : "kernel");
- 		ret = -ENOENT;
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -93,6 +93,11 @@ static int prefix_underscores_count(cons
- 	return tail - str;
++	mutex_unlock(&tz->lock);
  }
  
-+const char * __weak arch__normalize_symbol_name(const char *name)
-+{
-+	return name;
-+}
-+
- int __weak arch__compare_symbol_names(const char *namea, const char *nameb)
- {
- 	return strcmp(namea, nameb);
---- a/tools/perf/util/symbol.h
-+++ b/tools/perf/util/symbol.h
-@@ -347,6 +347,7 @@ bool elf__needs_adjust_symbols(GElf_Ehdr
- void arch__sym_update(struct symbol *s, GElf_Sym *sym);
- #endif
- 
-+const char *arch__normalize_symbol_name(const char *name);
- #define SYMBOL_A 0
- #define SYMBOL_B 1
- 
+ /**
