@@ -1,95 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752279AbeDJHtY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 03:49:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40258 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752052AbeDJHtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 03:49:23 -0400
-Date: Tue, 10 Apr 2018 09:49:21 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal
- OOM_SCORE_ADJ_MIN
-Message-ID: <20180410074921.GU21835@dhcp22.suse.cz>
-References: <CAGWkznHVGTpvfQOvaOGP6fYDWh0Os0pYXTC3gG_qvW6mCDuybQ@mail.gmail.com>
- <20180408084717.62ee4f9e@gandalf.local.home>
- <CAGWkznEQbaw7HMvE1pbVDMriOL8yW74Ka5UEci4YFRdLnVbFzA@mail.gmail.com>
- <20180409094944.6399b211@gandalf.local.home>
- <CAGWkznEhy7Fard=6E3X_qUezXd33RdKV9CVeONWL=6EQ1bokEw@mail.gmail.com>
- <CAGWkznEuGCZq600XjCtp3hzgN2LrCgwSAfoLwQR7jTw5p=qHoQ@mail.gmail.com>
- <20180409231230.1ab99e85@vmware.local.home>
- <CAGWkznG8-zmfE5iqPUVP+sztasa1zLPWE28qBiZ_tq524JznPw@mail.gmail.com>
- <20180410061447.GQ21835@dhcp22.suse.cz>
- <CAGWkznGrugH0VqJyd5ZPiSBMOZ4SbbNpKiHVXM27Q-ep4SYb-Q@mail.gmail.com>
+        id S1752262AbeDJHxU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 03:53:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43404 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751490AbeDJHxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 03:53:18 -0400
+Subject: Re: [virtio-dev] Re: [RFC] vhost: introduce mdev based hardware vhost
+ backend
+To: Tiwei Bie <tiwei.bie@intel.com>, Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, alex.williamson@redhat.com, ddutile@redhat.com,
+        alexander.h.duyck@intel.com, virtio-dev@lists.oasis-open.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        dan.daly@intel.com, cunming.liang@intel.com, zhihong.wang@intel.com,
+        jianfeng.tan@intel.com, xiao.w.wang@intel.com
+References: <20180402152330.4158-1-tiwei.bie@intel.com>
+ <622f4bd7-1249-5545-dc5a-5a92b64f5c26@redhat.com>
+ <20180410045723.rftsb7l4l3ip2ioi@debian>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
+ UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
+ AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
+ sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
+ FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
+ VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
+ Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
+ znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
+ IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
+ du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
+ dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
+ utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
+ Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
+ wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
+ fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
+ 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
+ zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
+ oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
+ uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
+ plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
+ HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
+ 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
+ iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
+ 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
+ /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
+ 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <7ee31a12-a370-fc43-82a6-2235f598e970@redhat.com>
+Date: Tue, 10 Apr 2018 09:51:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGWkznGrugH0VqJyd5ZPiSBMOZ4SbbNpKiHVXM27Q-ep4SYb-Q@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180410045723.rftsb7l4l3ip2ioi@debian>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 10-04-18 14:39:35, Zhaoyang Huang wrote:
-> On Tue, Apr 10, 2018 at 2:14 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> > On Tue 10-04-18 11:41:44, Zhaoyang Huang wrote:
-> >> On Tue, Apr 10, 2018 at 11:12 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> >> > On Tue, 10 Apr 2018 10:32:36 +0800
-> >> > Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
-> >> >
-> >> >> For bellowing scenario, process A have no intension to exhaust the
-> >> >> memory, but will be likely to be selected by OOM for we set
-> >> >> OOM_CORE_ADJ_MIN for it.
-> >> >> process A(-1000)                                          process B
-> >> >>
-> >> >>   i = si_mem_available();
-> >> >>        if (i < nr_pages)
-> >> >>            return -ENOMEM;
-> >> >>                                                    schedule
-> >> >>                                                 --------------->
-> >> >> allocate huge memory
-> >> >>                                                 <-------------
-> >> >> if (user_thread)
-> >> >>   set_current_oom_origin();
-> >> >>
-> >> >>   for (i = 0; i < nr_pages; i++) {
-> >> >>          bpage = kzalloc_node
-> >> >
-> >> > Is this really an issue though?
-> >> >
-> >> > Seriously, do you think you will ever hit this?
-> >> >
-> >> > How often do you increase the size of the ftrace ring buffer? For this
-> >> > to be an issue, the system has to trigger an OOM at the exact moment
-> >> > you decide to increase the size of the ring buffer. That would be an
-> >> > impressive attack, with little to gain.
-> >> >
-> >> > Ask the memory management people. If they think this could be a
-> >> > problem, then I'll be happy to take your patch.
-> >> >
-> >> > -- Steve
-> >> add Michael for review.
-> >> Hi Michael,
-> >> I would like suggest Steve NOT to set OOM_CORE_ADJ_MIN for the process
-> >> with adj = -1000 when setting the user space process as potential
-> >> victim of OOM.
-> >
-> > OOM_SCORE_ADJ_MIN means "hide the process from the OOM killer completely".
-> > So what exactly do you want to achieve here? Because from the above it
-> > sounds like opposite things. /me confused...
-> >
-> Steve's patch intend to have the process be OOM's victim when it
-> over-allocating pages for ring buffer. I amend a patch over to protect
-> process with OOM_SCORE_ADJ_MIN from doing so. Because it will make
-> such process to be selected by current OOM's way of
-> selecting.(consider OOM_FLAG_ORIGIN first before the adj)
+On 10/04/2018 06:57, Tiwei Bie wrote:
+>> So you just move the abstraction layer from qemu to kernel, and you still
+>> need different drivers in kernel for different device interfaces of
+>> accelerators. This looks even more complex than leaving it in qemu. As you
+>> said, another idea is to implement userspace vhost backend for accelerators
+>> which seems easier and could co-work with other parts of qemu without
+>> inventing new type of messages.
+> 
+> I'm not quite sure. Do you think it's acceptable to
+> add various vendor specific hardware drivers in QEMU?
 
-I just wouldn't really care unless there is an existing and reasonable
-usecase for an application which updates the ring buffer size _and_ it
-is OOM disabled at the same time.
--- 
-Michal Hocko
-SUSE Labs
+I think so.  We have vendor-specific quirks, and at some point there was
+an idea of using quirks to implement (vendor-specific) live migration
+support for assigned devices.
+
+Paolo
