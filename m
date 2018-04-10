@@ -1,72 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752140AbeDJBMS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 21:12:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34504 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751526AbeDJBMP (ORCPT
+        id S1751856AbeDJBPN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 21:15:13 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33810 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751552AbeDJBPM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 21:12:15 -0400
-Date: Mon, 9 Apr 2018 18:12:11 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
-        Chris Fries <cfries@google.com>,
-        linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Message-ID: <20180410011211.GA31282@bombadil.infradead.org>
-References: <20180409015815.235943-1-minchan@kernel.org>
- <20180409024925.GA21889@bombadil.infradead.org>
- <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
- <20180409111403.GA31652@bombadil.infradead.org>
- <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
- <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
- <20180409144958.GA211679@rodete-laptop-imager.corp.google.com>
- <20180409152032.GB11756@bombadil.infradead.org>
- <20180409230409.GA214542@rodete-desktop-imager.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180409230409.GA214542@rodete-desktop-imager.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Mon, 9 Apr 2018 21:15:12 -0400
+X-Google-Smtp-Source: AIpwx49WEBlR+lamSeASF/XaiEItiGq0DPoVpbMkbd3ED9JZo5vOdG33MYdObGOQk1BZbT+m/n7MuA==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: gerrit@erg.abdn.ac.uk, davem@davemloft.net
+Cc: dccp@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH v2] net: dccp: Replace GFP_ATOMIC with GFP_KERNEL in dccp_init
+Date: Tue, 10 Apr 2018 09:14:58 +0800
+Message-Id: <1523322898-27833-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 08:04:09AM +0900, Minchan Kim wrote:
-> On Mon, Apr 09, 2018 at 08:20:32AM -0700, Matthew Wilcox wrote:
-> > I don't think this is something the radix tree should know about.
-> 
-> Because shadow entry implementation is hidden by radix tree implemetation.
-> IOW, radix tree user cannot know how it works.
+dccp_init() is never called in atomic context.
+This function is only set as a parameter of module_init().
 
-I have no idea what you mean.
+Despite never getting called from atomic context,
+dccp_init() calls __get_free_pages() with GFP_ATOMIC,
+which does not sleep for allocation.
+GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+which can sleep and improve the possibility of sucessful allocation.
 
-> > SLAB should be checking for it (the patch I posted earlier in this
-> 
-> I don't think it's right approach. SLAB constructor can initialize
-> some metadata for slab page populated as well as page zeroing.
-> However, __GFP_ZERO means only clearing pages, not metadata.
-> So it's different semantic. No need to mix out.
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
 
-No, __GFP_ZERO is specified to clear the allocated memory whether
-you're allocating from alloc_pages or from slab.  What makes no sense
-is allocating an object from slab with a constructor *and* __GFP_ZERO.
-They're in conflict, and slab can't fulfill both of those requirements.
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+v2:
+* Modify the description of GFP_ATOMIC in v1.
+  Thank Eric for good advice.
+---
+ net/dccp/proto.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> > thread), but the right place to filter this out is in the caller of
-> > radix_tree_maybe_preload -- it's already filtering out HIGHMEM pages,
-> > and should filter out GFP_ZERO too.
-> 
-> radix_tree_[maybe]_preload is exported API, which are error-prone
-> for out of modules or upcoming customers.
-> 
-> More proper place is __radix_tree_preload.
-
-I could not disagree with you more.  It is the responsibility of the
-callers of radix_tree_preload to avoid calling it with nonsense flags
-like __GFP_DMA, __GFP_HIGHMEM or __GFP_ZERO.
+diff --git a/net/dccp/proto.c b/net/dccp/proto.c
+index b68168f..f63ba93 100644
+--- a/net/dccp/proto.c
++++ b/net/dccp/proto.c
+@@ -1159,7 +1159,7 @@ static int __init dccp_init(void)
+ 			hash_size--;
+ 		dccp_hashinfo.ehash_mask = hash_size - 1;
+ 		dccp_hashinfo.ehash = (struct inet_ehash_bucket *)
+-			__get_free_pages(GFP_ATOMIC|__GFP_NOWARN, ehash_order);
++			__get_free_pages(GFP_KERNEL|__GFP_NOWARN, ehash_order);
+ 	} while (!dccp_hashinfo.ehash && --ehash_order > 0);
+ 
+ 	if (!dccp_hashinfo.ehash) {
+@@ -1182,7 +1182,7 @@ static int __init dccp_init(void)
+ 		    bhash_order > 0)
+ 			continue;
+ 		dccp_hashinfo.bhash = (struct inet_bind_hashbucket *)
+-			__get_free_pages(GFP_ATOMIC|__GFP_NOWARN, bhash_order);
++			__get_free_pages(GFP_KERNEL|__GFP_NOWARN, bhash_order);
+ 	} while (!dccp_hashinfo.bhash && --bhash_order >= 0);
+ 
+ 	if (!dccp_hashinfo.bhash) {
+-- 
+1.9.1
