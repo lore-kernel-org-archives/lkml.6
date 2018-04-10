@@ -1,146 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754116AbeDJOlP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:41:15 -0400
-Received: from mga06.intel.com ([134.134.136.31]:10647 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753124AbeDJOlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:41:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,432,1517904000";
-   d="scan'208";a="190333314"
-Subject: Re: [PATCH v1]: perf/x86: store user space frame-pointer value on a
- sample
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <086d45fb-a099-4ae9-2854-943447e86010@linux.intel.com>
- <20180406153144.GA9010@tassilo.jf.intel.com>
- <df5f38d8-9b35-0309-527a-c7b7b35c635b@linux.intel.com>
- <20180406195310.GB9010@tassilo.jf.intel.com>
- <ddb220da-eb32-a9bb-f742-8fe5d5588974@linux.intel.com>
- <2a42b621-e7b2-b761-beb8-dfef11b2afb3@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <3f6238cd-7bb7-4baf-b371-e428d489495b@linux.intel.com>
-Date: Tue, 10 Apr 2018 17:41:08 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754171AbeDJOlU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:41:20 -0400
+Received: from mail-qt0-f178.google.com ([209.85.216.178]:36866 "EHLO
+        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754135AbeDJOlQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 10:41:16 -0400
+X-Google-Smtp-Source: AIpwx49mnShFwqEqyF4gspUCnbCrM9qgew2XW1V5YGXpt9TTGhuxTVwWlnogZ+xj737oosvQwMXzw/rAZ3Rp1R+1GnI=
 MIME-Version: 1.0
-In-Reply-To: <2a42b621-e7b2-b761-beb8-dfef11b2afb3@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <69ab73657c5e75db94fab027c9957dbbb73047a7.1522868423.git.hns@goldelico.com>
+References: <cover.1522868422.git.hns@goldelico.com> <69ab73657c5e75db94fab027c9957dbbb73047a7.1522868423.git.hns@goldelico.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 10 Apr 2018 17:41:14 +0300
+Message-ID: <CAHp75Ve5ecXJmMoO5Yy65VqR-FwnD+wMmhP=bOJ_Oxsgz8R1SQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] gpio: pca953x: add register definitions for
+ pcal6524 and fix address calculation
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Courbot <gnurou@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Discussions about the Letux Kernel
+        <letux-kernel@openphoenux.org>,
+        kernel@pyra-handheld.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.04.2018 8:23, Alexey Budankov wrote:
-> On 07.04.2018 9:18, Alexey Budankov wrote:
->> On 06.04.2018 22:53, Andi Kleen wrote:
->>> On Fri, Apr 06, 2018 at 10:06:26PM +0300, Alexey Budankov wrote:
->>>> On 06.04.2018 18:31, Andi Kleen wrote:
->>>>>> diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
->>>>>> index e47b2dbbdef3..9284048cf5b0 100644
->>>>>> --- a/arch/x86/kernel/perf_regs.c
->>>>>> +++ b/arch/x86/kernel/perf_regs.c
->>>>>> @@ -157,6 +157,15 @@ void perf_get_regs_user(struct perf_regs *regs_user,
->>>>>>  	 */
->>>>>>  	regs_user_copy->bx = -1;
->>>>>>  	regs_user_copy->bp = -1;
->>>>>> +	if (user_64bit_mode(user_regs)) {
->>>>>
->>>>> Why is it 64bit only? Should work on 32bit too.
->>>>
->>>> bp register is a part of i386 syscall ABI 
->>>> (http://man7.org/linux/man-pages/man2/syscall.2.html) 
->>>> so not sure if it will make any sense for 32bit processes. 
->>>
->>> Both 32bit and 64bit use the same frame pointer, if they
->>> use frame pointer.
->>
->> Well let me check the same scenario for 32bit binary.
-> 
-> Here is what I have when profiling 32bit process on the patched 64bit 
-> kernel w/o 32bit frame-pointer exposure:
-> 
-> vmlinux ! try_to_wake_up - [unknown source file]
-> vmlinux ! wake_up_q + 0x3e - [unknown source file]
-> vmlinux ! futex_wake + 0x141 - [unknown source file]
-> vmlinux ! do_futex + 0x49b - [unknown source file]
-> vmlinux ! compat_SyS_futex + 0x123 - [unknown source file]
-> vmlinux ! do_fast_syscall_32 + 0xb9 - [unknown source file]
-> vmlinux ! entry_SYSENTER_compat + 0x7e - [unknown source file]
-> ==> [vdso] ! __kernel_vsyscall + 0x8 - [unknown source file]
-> ==> libc-2.26.so ! syscall + 0x26 - [unknown source file]
-> ==> futex32-fp ! main + 0xba - [unknown source file]
-> ==> libc-2.26.so ! __libc_start_main + 0xf2 - [unknown source file]
-> 
-> so stack is unwound till the top. However if I enable 32bit exposure 
-> then the stack looks like this:
-> 
-> vmlinux ! try_to_wake_up - [unknown source file]
-> vmlinux ! wake_up_q + 0x3e - [unknown source file]
-> vmlinux ! futex_wake + 0x141 - [unknown source file]
-> vmlinux ! do_futex + 0x49b - [unknown source file]
-> vmlinux ! compat_SyS_futex + 0x123 - [unknown source file]
-> vmlinux ! do_fast_syscall_32 + 0xb9 - [unknown source file]
-> vmlinux ! entry_SYSENTER_compat + 0x7e - [unknown source file]
-> ==> [vdso] ! [vdso] + 0x1058 - [unknown source file]
-> ==> vmlinux ! [Skipped stack frame(s)] + 0x1 - [unknown source file]
+On Wed, Apr 4, 2018 at 10:00 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+> PCAL chips ("L" seems to stand for "latched") have additional
+> registers starting at address 0x40 to control the latches,
+> interrupt mask, pull-up and pull down etc.
+>
+> The constants are so far defined in a way that they fit for
+> the pcal9555a when shifted by the number of banks, i.e. multiplied
+> by 2.
+>
+> Now the pcal6524 has 3 banks which means the relative offset
+> must be multiplied by 4 which gives a wrong result if not done
+> carefully, since the base offset is already included in the offset.
+>
+> For the basic registers shared with all pca93xx/tca64xx chips
+> there is no such offset.
+>
+> Therefore, we add code to adjust the register number for exended
+> registers in this case.
+>
+> And we add additional register offset constants (not yet used by
+> the driver code) which are specific to the pcal6524.
 
-Investigated more on that unwind failure case above and it turns out that
-in case of system wide monitoring there may be several modules named equally 
-but of different architecture, e.g. vdso like in that case above, so unwinding 
-code needs to be smart enough to distinguish between the modules to choose 
-proper one when walking stack on a sample. Well, lifting the restriction 
-on the frame-pointer architecture looks reasonable.
+> -#define PCAL953X_IN_LATCH      34
+> -#define PCAL953X_INT_MASK      37
+> -#define PCAL953X_INT_STAT      38
 
-In order to enable unwinding code for that mixed mode case above 
-it is required to expose module architecture to unwinding code.
+I prefer either to change first all the rest to be 2 digit hex values
+first, or leave decimal in this patch.
 
-Thanks,
-Alexey
+> +#define PCAL953X_OUT_STRENGTH  0x20
+> +#define PCAL953X_IN_LATCH      0x22
+> +#define PCAL953X_PULL_EN       0x23
+> +#define PCAL953X_PULL_SEL      0x24
+> +#define PCAL953X_INT_MASK      0x25
+> +#define PCAL953X_INT_STAT      0x26
+> +#define PCAL953X_OUT_CONF      0x27
+> +
+> +#define PCAL6524_INT_EDGE      0x28
+> +#define PCAL6524_INT_CLR       0x2a
+> +#define PCAL6524_IN_STATUS     0x2b
+> +#define PCAL6524_OUT_INDCONF   0x2c
+> +#define PCAL6524_DEBOUNCE      0x2d
 
-> 
-> and x86_64 perf report --stdio shows this:
-> 
-> ...
-> unwind: target platform=x86 is not supported
-> ...
-> # Samples: 140K of event 'cycles'
-> # Event count (approx.): 93688193797
-> #
-> # Children      Self  Command     Shared Object     Symbol                                        
-> # ........  ........  ..........  ................  .........................
-> #
->     86.00%    14.40%  futex32-fp  [kernel.vmlinux]  [k] entry_SYSENTER_compat
->             |
->             ---entry_SYSENTER_compat
->                |          
->                 --71.60%--do_fast_syscall_32
->                           |          
->                           |--54.62%--compat_sys_futex
->                           |          |          
->                           |           --53.67%--do_futex
-> 
-> I am not sure it is worth exposing frame pointer for 32bit too.
-> 
-> -Alexey
-> 
->> If the issue exists for it too and is fixed by the exposing bp
->> then it is obviously worth this improvement.
->>
->> -Alexey
->>
->>>
->>> -Andi
->>>
->>
->>
-> 
+> +       /* adjust register address for pcal6524 */
+> +       if (reg >= PCAL953X_OUT_STRENGTH)
+> +               reg -= PCAL953X_OUT_STRENGTH >> 1;
+
+I don't like this condition. Can we avoid relying on the register
+offset in regard to some flag / compatible string / etc?
+
+> +       /* adjust register address for pcal6524 */
+> +       if (reg >= PCAL953X_OUT_STRENGTH)
+> +               reg -= PCAL953X_OUT_STRENGTH >> 1;
+
+Ditto.
+
+-- 
+With Best Regards,
+Andy Shevchenko
