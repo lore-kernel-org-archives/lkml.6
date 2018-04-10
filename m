@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49KhqSS3M/kk+zVjbWDCpfKa2IVao18sDoK4IKV9k+ctonqbNvXo3302p44CNXomUy7JjhM
-ARC-Seal: i=1; a=rsa-sha256; t=1523399341; cv=none;
+X-Google-Smtp-Source: AIpwx48JiSbpest2PjnRwKX05vsEqANAdgyrizjpEuYionraFTHRTl13P20s0igL96BdZC9EGQSQ
+ARC-Seal: i=1; a=rsa-sha256; t=1523399338; cv=none;
         d=google.com; s=arc-20160816;
-        b=uS/C92QgINPnzcgcleRUymweG7AAYwhYINQ8cRZycZmFFryzGRZOdu74YXm3q3TZT3
-         X6EIdOUoWbLF0A5fRCyBxUJSqPwPZmEEI2xRUrHkxtxmLmwmvC3n0LdQCgkSI50/5F3S
-         QDxDsSM644+EThhXMzZ7l26tPCKXgbikCHdULOLXu+DLvoSGGobJ0maBWHBqfdW+bz2e
-         KuI6FXfIDMwgozdOYMCs1H6oNhr2mxXJ8cPQsXEBSu8WmyqhbrtJyUcs645SlYdYLLid
-         0EObd1UxR9zTFk0oV9j0sYhf+QH10vQ27gx2RA5AVTNLSD+gSBhMGIJQb5jFTGc8vvC2
-         cRYg==
+        b=VAIkAuSKTiJsKNB8tLC+ttgm/3aGZcUpifdTT7kWhDljqh0tly1gB24xCw+tj1angI
+         cXOFy/YjcCxwttZfdx6NwDnp3lBWG+9cTF9Yut3F9a5jlysqItWw4CMKuRDBNCoQoFoP
+         lS60dVhgpA2hYxFayd6XtTd2SH6QksddDbQiX+SopK4vgjGfzm4htuuou+BWIOP98bf8
+         h9Mo9Ha9UP4zI1HY6ChPk17WckFBMY0P2eSK6jLfBsF2fS3AhO8JyfnE/dPIYc8Vkz/O
+         N9vhdsPZE1DcJCbP3WObFGNKejxVK8KIQNJsfmdC0c2lKlAfG1Xi44NJ4ASF0xaxpGqO
+         pt7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=CaTtowvVAZ+XDgPwcWH4QuEeXw57ZPbDGff2pb/e8t8=;
-        b=p6CHPnUk0b6eWxI2qlsHL/irC5s5VVWfB2K6Y+WmJpZKRY5xf0SC90o3D8+YUwn7UB
-         zadZ4m4WC7moWMbZytAyvGzH1TyGuW9M3Fn8dIqsoxjRIW5pB/3ok4EhPByCw6PCufuY
-         GexAXUfsXyqXAKEthYt/+Wg2DajDd1ZP8Z8JYmFU98QFjKiRfxy82ni9qVTAl9srDZN9
-         aMh/g4dAEw5vpSkQoZChh2wRHOafd6ZdIliG6Ku0utP2tykXevjrNkhA6/PoEs4+u/sg
-         Tv0aVRZD0Le87AIt8BT/4l/IFycNgqZ1DnfKPc1D3yCiHqnvR+LqlC4ulb0QeEH2c3rK
-         GGXg==
+        bh=+heoV3HAnskpreWr5+2yWz7dXuMTPqRgLt/KVWx5nQM=;
+        b=C4nGn6cD4GkOWJp49X2yH0U6sW/0Xgid6sp3y7P78xACSH+TVWS0ENCf22jAbUNuW8
+         kawjWzbM0eGbs0Kf1ju/8MhboQCiLAbuan6tCQaBv6DPdUBU+PffYbxkW61iE12FR4+w
+         EDYFtNazJGKC8xfwXyqItkjHjT2YY6CYZVzQtRDRVeyVaEmTIKaQuuu2RC/FvchLte+w
+         nLo0VbI56KmOTw3OFKOFoDWWLjQdQHBlVC+IDCW2/dYwm8eGO1YHc68ZPGNXpAvgcL5s
+         AaCmQl5todXoM0NDaL3+zUYOke4mLMttIchPr8Hy01ZFjvkriTN7BzGfbqRJqgMCkra0
+         xGoA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andrea Adami <andrea.adami@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Daniel Thompson <daniel.thompson@linaro.org>,
-	Lee Jones <lee.jones@linaro.org>,
+	Fuyun Liang <liangfuyun1@huawei.com>,
+	Peng Li <lipeng321@huawei.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 054/168] backlight: tdo24m: Fix the SPI CS between transfers
-Date: Wed, 11 Apr 2018 00:23:16 +0200
-Message-Id: <20180410212802.508966761@linuxfoundation.org>
+Subject: [PATCH 4.15 071/168] net: hns3: fix for changing MTU
+Date: Wed, 11 Apr 2018 00:23:33 +0200
+Message-Id: <20180410212803.218501589@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399987909827945?=
-X-GMAIL-MSGID: =?utf-8?q?1597399987909827945?=
+X-GMAIL-THRID: =?utf-8?q?1597399984249014896?=
+X-GMAIL-MSGID: =?utf-8?q?1597399984249014896?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,79 +51,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Robert Jarzmik <robert.jarzmik@free.fr>
+From: Fuyun Liang <liangfuyun1@huawei.com>
 
 
-[ Upstream commit 2023b0524a6310e9ea80daf085f51c71bff9289f ]
+[ Upstream commit 5bad95a1e55f4d5bb41e130db859d57eaf1b1549 ]
 
-Currently the LCD display (TD035S) on the cm-x300 platform is broken and
-remains blank.
+when changing MTU, The new MTU must need to be set to netdevice.
 
-The TD0245S specification requires that the chipselect is toggled
-between commands sent to the panel. This was also the purpose of the
-former patch of commit f64dcac0b124 ("backlight: tdo24m: ensure chip
-select changes between transfers").
-
-Unfortunately, the "cs_change" field of a SPI transfer is
-misleading. Its true meaning is that for a SPI message holding multiple
-transfers, the chip select is toggled between each transfer, but for the
-last transfer it remains asserted.
-
-In this driver, all the SPI messages contain exactly one transfer, which
-means that each transfer is the last of its message, and as a
-consequence the chip select is never toggled.
-
-Actually, there was a second bug hidding the first one, hence the
-problem was not seen until v4.6. This problem was fixed by commit
-a52db659c79c ("spi: pxa2xx: Fix cs_change management") for PXA based
-boards.
-
-This fix makes the TD035S work again on a cm-x300 board. The same
-applies to other PXA boards, ie. corgi and tosa.
-
-Fixes: a52db659c79c ("spi: pxa2xx: Fix cs_change management")
-Reported-by: Andrea Adami <andrea.adami@gmail.com>
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Fixes: a8e8b7ff3517 ("net: hns3: Add support to change MTU in HNS3 hardware")
+Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/backlight/corgi_lcd.c |    2 +-
- drivers/video/backlight/tdo24m.c    |    2 +-
- drivers/video/backlight/tosa_lcd.c  |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/video/backlight/corgi_lcd.c
-+++ b/drivers/video/backlight/corgi_lcd.c
-@@ -177,7 +177,7 @@ static int corgi_ssp_lcdtg_send(struct c
- 	struct spi_message msg;
- 	struct spi_transfer xfer = {
- 		.len		= 1,
--		.cs_change	= 1,
-+		.cs_change	= 0,
- 		.tx_buf		= lcd->buf,
- 	};
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
+@@ -1324,6 +1324,8 @@ static int hns3_nic_change_mtu(struct ne
+ 		return ret;
+ 	}
  
---- a/drivers/video/backlight/tdo24m.c
-+++ b/drivers/video/backlight/tdo24m.c
-@@ -369,7 +369,7 @@ static int tdo24m_probe(struct spi_devic
- 
- 	spi_message_init(m);
- 
--	x->cs_change = 1;
-+	x->cs_change = 0;
- 	x->tx_buf = &lcd->buf[0];
- 	spi_message_add_tail(x, m);
- 
---- a/drivers/video/backlight/tosa_lcd.c
-+++ b/drivers/video/backlight/tosa_lcd.c
-@@ -49,7 +49,7 @@ static int tosa_tg_send(struct spi_devic
- 	struct spi_message msg;
- 	struct spi_transfer xfer = {
- 		.len		= 1,
--		.cs_change	= 1,
-+		.cs_change	= 0,
- 		.tx_buf		= buf,
- 	};
- 
++	netdev->mtu = new_mtu;
++
+ 	/* if the netdev was running earlier, bring it up again */
+ 	if (if_running && hns3_nic_net_open(netdev))
+ 		ret = -EINVAL;
