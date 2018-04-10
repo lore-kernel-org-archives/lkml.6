@@ -1,127 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752859AbeDJK4M (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 06:56:12 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37524 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751942AbeDJK4K (ORCPT
+        id S1752892AbeDJK4P (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 06:56:15 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:39517 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752842AbeDJK4M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 06:56:10 -0400
-X-Google-Smtp-Source: AIpwx4+YOboz0rpCCuA7IOrlqbwZf6onGbDFbpEGGuo1cdGoUg5QQl/SfJRX8dBnmiyv+faT4EiM3w==
-Date: Tue, 10 Apr 2018 16:26:06 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Todd Kjos <tkjos@android.com>,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH] cpufreq/schedutil: Cleanup and document iowait boost
-Message-ID: <20180410105606.GH7671@vireshk-i7>
-References: <20180328090721.26068-1-patrick.bellasi@arm.com>
- <20180405095858.GP3572@vireshk-i7>
- <20180410104349.GE14248@e110439-lin>
+        Tue, 10 Apr 2018 06:56:12 -0400
+X-Originating-IP: 2.224.242.101
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
+        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        sergei.shtylyov@cogentembedded.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] V3M-Eagle HDMI output enablement
+Date: Tue, 10 Apr 2018 12:54:02 +0200
+Message-Id: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180410104349.GE14248@e110439-lin>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10-04-18, 11:43, Patrick Bellasi wrote:
-> On 05-Apr 15:28, Viresh Kumar wrote:
-> What about this new version for the two functions,
-> just compile tested:
-> 
-> ---8<---
-> 
-> static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
-> 				   unsigned int flags)
-> {
-> 	bool iowait = flags & SCHED_CPUFREQ_IOWAIT;
-> 
-> 	/* Reset boost if the CPU appears to have been idle enough */
-> 	if (sg_cpu->iowait_boost) {
-> 		s64 delta_ns = time - sg_cpu->last_update;
-> 
-> 		if (delta_ns > TICK_NSEC) {
-> 			sg_cpu->iowait_boost = iowait
-> 				? sg_cpu->sg_policy->policy->min : 0;
+Hello,
+   this series enables HDMI display on V3M Eagle board.
 
-Yeah, I see you are trying to optimize it a bit here but this makes
-things more confusing I would say :)
+The v2 of this series is based on Linus' master, as it already contains the
+pull request for arm64 DT is merged already, and it includes enablement of
+R8A77970 basic components such as PFC, GPIOs and I2c.
 
-I would just set iowait_boost to 0 and drop the return; from below and
-let the code fall through and reach the end of this routine.
+Compared to to v1 I have not included
+[PATCH 1/7] arm64: dts: renesas: r8a77970: add FCPVD support
+as Simon has already included this in his tree for v4.18.
 
-> 			sg_cpu->iowait_boost_pending = iowait;
-> 			return;
-> 		}
-> 	}
-> 
-> 	/* Boost only tasks waking up after IO */
-> 	if (!iowait)
-> 		return;
-> 
-> 	/* Ensure IO boost doubles only one time at each frequency increase */
-> 	if (sg_cpu->iowait_boost_pending)
-> 		return;
-> 	sg_cpu->iowait_boost_pending = true;
-> 
-> 	/* Double the IO boost at each frequency increase */
-> 	if (sg_cpu->iowait_boost) {
-> 		sg_cpu->iowait_boost <<= 1;
-> 		if (sg_cpu->iowait_boost > sg_cpu->iowait_boost_max)
-> 			sg_cpu->iowait_boost = sg_cpu->iowait_boost_max;
-> 		return;
-> 	}
-> 
-> 	/* At first wakeup after IO, start with minimum boost */
-> 	sg_cpu->iowait_boost = sg_cpu->sg_policy->policy->min;
-> }
-> 
-> static void sugov_iowait_boost(struct sugov_cpu *sg_cpu,
-> 			       unsigned long *util, unsigned long *max)
-> {
-> 	unsigned int boost_util, boost_max;
-> 
->         /* No IOWait boost active */
->         if (!sg_cpu->iowait_boost)
->                 return;
-> 
-> 	/* An IO waiting task has just woken up, use the boost value */
-> 	if (sg_cpu->iowait_boost_pending) {
-> 		sg_cpu->iowait_boost_pending = false;
-> 	} else {
-> 		/* Reduce the boost value otherwise */
-> 		sg_cpu->iowait_boost >>= 1;
-> 		if (sg_cpu->iowait_boost < sg_cpu->sg_policy->policy->min) {
-> 			sg_cpu->iowait_boost = 0;
-> 			return;
-> 		}
-> 	}
-> 
-> 	boost_util = sg_cpu->iowait_boost;
-> 	boost_max = sg_cpu->iowait_boost_max;
-> 
-> 	/*
-> 	 * A CPU is boosted only if its current utilization is smaller then
-> 	 * the current IO boost level.
-> 	 */
-> 	if (*util * boost_max < *max * boost_util) {
-> 		*util = boost_util;
-> 		*max = boost_max;
-> 	}
-> }
+Indivual patches contains the changelog, the biggest overall change is that
+HDMI output enablement, previously split in 3 patches is now performed in a
+single patch for arch/arm64/boot/dts/renesas/r8a77970-eagle.dts as suggested
+by Laurent.
 
-So this is quite different than what you proposed, it is only fixing
-the existing problem which I pointed out to. Looks fine, not much
-changed really from the current state of code.
+The series depends on THC63LVD1024 driver, currently submitted for inclusion
+[PATCH v8 0/2]  drm: Add Thine THC63LVD1024 LVDS decoder bridge
+currently available at:
+git://jmondi.org/linux lvds-bridge/linus-master/v8
 
--- 
-viresh
+Thanks
+  j
+
+v1 -> v2:
+- Add Laurent's reviewed by tags
+- Fixup patch 5, 6 and 7 of v1
+- Remove DU digital output pin muxing
+- Update thc63lvd1024 to use the new bindings with mandatory power supply
+- Minor fixes (changes are described individually in each patch)
+
+Jacopo Mondi (1):
+  arm64: dts: renesas: eagle: Enable HDMI output
+
+Niklas Söderlund (1):
+  arm64: dts: renesas: r8a77970: add LVDS support
+
+Sergei Shtylyov (2):
+  arm64: dts: renesas: r8a77970: add VSPD support
+  arm64: dts: renesas: r8a77970: add DU support
+
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 82 ++++++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi      | 65 ++++++++++++++++++++
+ 2 files changed, 147 insertions(+)
+
+--
+2.7.4
