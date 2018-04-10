@@ -1,102 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752355AbeDJGiY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 02:38:24 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40112 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752211AbeDJGiX (ORCPT
+        id S1752594AbeDJGji (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 02:39:38 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53842 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751820AbeDJGjg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 02:38:23 -0400
-Date: Tue, 10 Apr 2018 08:38:20 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Milo Kim <Milo.Kim@ti.com>, Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
-        Jingoo Han <jingoohan1@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCHv4 08/10] backlight: add TI LMU backlight driver
-Message-ID: <20180410063820.GA5793@amd>
-References: <20180330172414.26575-1-sebastian.reichel@collabora.co.uk>
- <20180330172414.26575-9-sebastian.reichel@collabora.co.uk>
- <20180403104908.GD6758@amd>
- <20180409155433.zxqs2b2k2xzn6kon@earth.universe>
+        Tue, 10 Apr 2018 02:39:36 -0400
+X-Google-Smtp-Source: AIpwx4+SUpFQbyKTx82InlnJaEwnDxb5AJYW0x8DIsayF9+xYJtuFyztDNmgN1qLSKuld9gFEI4QMGfh3QsuTm80iFU=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
-Content-Disposition: inline
-In-Reply-To: <20180409155433.zxqs2b2k2xzn6kon@earth.universe>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180410061447.GQ21835@dhcp22.suse.cz>
+References: <1523153783-20579-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+ <20180407234812.2bf2b24b@gandalf.local.home> <CAGWkznHVGTpvfQOvaOGP6fYDWh0Os0pYXTC3gG_qvW6mCDuybQ@mail.gmail.com>
+ <20180408084717.62ee4f9e@gandalf.local.home> <CAGWkznEQbaw7HMvE1pbVDMriOL8yW74Ka5UEci4YFRdLnVbFzA@mail.gmail.com>
+ <20180409094944.6399b211@gandalf.local.home> <CAGWkznEhy7Fard=6E3X_qUezXd33RdKV9CVeONWL=6EQ1bokEw@mail.gmail.com>
+ <CAGWkznEuGCZq600XjCtp3hzgN2LrCgwSAfoLwQR7jTw5p=qHoQ@mail.gmail.com>
+ <20180409231230.1ab99e85@vmware.local.home> <CAGWkznG8-zmfE5iqPUVP+sztasa1zLPWE28qBiZ_tq524JznPw@mail.gmail.com>
+ <20180410061447.GQ21835@dhcp22.suse.cz>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Tue, 10 Apr 2018 14:39:35 +0800
+Message-ID: <CAGWkznGrugH0VqJyd5ZPiSBMOZ4SbbNpKiHVXM27Q-ep4SYb-Q@mail.gmail.com>
+Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal OOM_SCORE_ADJ_MIN
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---d6Gm4EdcadzBjdND
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> > > +static int ti_lmu_bl_add_device(struct ti_lmu_bank *lmu_bank)
-> > > +{
-> > > +	switch (lmu_bank->type) {
-> > > +	case TI_LMU_BL:
-> > > +		return ti_lmu_bl_register_backlight(lmu_bank);
-> > > +	case TI_LMU_LED:
-> > > +		return ti_lmu_bl_register_led(lmu_bank);
-> > > +	default:
-> > > +		return -EINVAL;
-> > > +	}
-> > > +}
-> >=20
-> > Ok, this is somehow unusual/crazy. Single driver with two
-> > interfaces.
-> >=20
-> > Do we need the LED interface for something?
-> >
-> > If yes, I believe reasonable solution would be to always provide LED
-> > interface, and then have "backlight-trigger" which that would provide
-> > backlight interface for arbitrary LED.
->=20
-> Userspace expects keyboard backlight to be exposed via the LED
-> subsystem and display backlight via the backlight subsystem.
-
-Ok.
-
-> I considered always exposing the banks via the LED subsystem and
-> using a generic backlight driver. That brings its own problems,
-> since there is a dependency between the display and the backlight.
-> This is described in DT using a phandle. Getting the right backlight
-> device from the phandle will become very tricky with this approach.
-
-I believe we have to do this.
-
-Virtually any LED can be used as a backlight, and we don't really want
-to add two personalities to all the LED drivers.
-
-And it should not be too bad: LED will just have default trigger,
-which will say this LED corresponds to this display device. I believe
-someone wanted to do that for USB/ethernet activity.
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---d6Gm4EdcadzBjdND
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrMW9wACgkQMOfwapXb+vIkBACfZR1KTKRlSldNfZMrF8WODxgj
-MYsAn3UeGWYrf6edRoHD6WA/OeY7EWcj
-=Ma6V
------END PGP SIGNATURE-----
-
---d6Gm4EdcadzBjdND--
+On Tue, Apr 10, 2018 at 2:14 PM, Michal Hocko <mhocko@kernel.org> wrote:
+> On Tue 10-04-18 11:41:44, Zhaoyang Huang wrote:
+>> On Tue, Apr 10, 2018 at 11:12 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
+>> > On Tue, 10 Apr 2018 10:32:36 +0800
+>> > Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
+>> >
+>> >> For bellowing scenario, process A have no intension to exhaust the
+>> >> memory, but will be likely to be selected by OOM for we set
+>> >> OOM_CORE_ADJ_MIN for it.
+>> >> process A(-1000)                                          process B
+>> >>
+>> >>   i = si_mem_available();
+>> >>        if (i < nr_pages)
+>> >>            return -ENOMEM;
+>> >>                                                    schedule
+>> >>                                                 --------------->
+>> >> allocate huge memory
+>> >>                                                 <-------------
+>> >> if (user_thread)
+>> >>   set_current_oom_origin();
+>> >>
+>> >>   for (i = 0; i < nr_pages; i++) {
+>> >>          bpage = kzalloc_node
+>> >
+>> > Is this really an issue though?
+>> >
+>> > Seriously, do you think you will ever hit this?
+>> >
+>> > How often do you increase the size of the ftrace ring buffer? For this
+>> > to be an issue, the system has to trigger an OOM at the exact moment
+>> > you decide to increase the size of the ring buffer. That would be an
+>> > impressive attack, with little to gain.
+>> >
+>> > Ask the memory management people. If they think this could be a
+>> > problem, then I'll be happy to take your patch.
+>> >
+>> > -- Steve
+>> add Michael for review.
+>> Hi Michael,
+>> I would like suggest Steve NOT to set OOM_CORE_ADJ_MIN for the process
+>> with adj = -1000 when setting the user space process as potential
+>> victim of OOM.
+>
+> OOM_SCORE_ADJ_MIN means "hide the process from the OOM killer completely".
+> So what exactly do you want to achieve here? Because from the above it
+> sounds like opposite things. /me confused...
+>
+> --
+> Michal Hocko
+> SUSE Labs
+Steve's patch intend to have the process be OOM's victim when it
+over-allocating pages for ring buffer. I amend a patch over to protect
+process with OOM_SCORE_ADJ_MIN from doing so. Because it will make
+such process to be selected by current OOM's way of
+selecting.(consider OOM_FLAG_ORIGIN first before the adj)
