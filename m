@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+rDA6bR98HR3ejMJetvz8ooRawTLbCEmk6LLgy3tjYXlSe5Num0Ox+u7mrANNnqHBd13gZ
-ARC-Seal: i=1; a=rsa-sha256; t=1523399344; cv=none;
+X-Google-Smtp-Source: AIpwx49KhqSS3M/kk+zVjbWDCpfKa2IVao18sDoK4IKV9k+ctonqbNvXo3302p44CNXomUy7JjhM
+ARC-Seal: i=1; a=rsa-sha256; t=1523399341; cv=none;
         d=google.com; s=arc-20160816;
-        b=m7dGgGtCUxbLxs0NIhqMJr+iieCYlOyWc1JoPL8kI9B9Q5Ewh6JvmeWdEhE8avYiN6
-         7PKLZnDDum9SAq7Pu4C4CkSdNuykJS4ZL+npoK7uuJO5df5YD4hC8EKVw9gCXR1+yHMd
-         B2VetIBhZLSA0RXA+HXbsZo3gRrt+v/Ui8fcX54xgN4dIOEexigsd3/sfzIuJpwqxfk6
-         sEemjYTCp2A4MdYkfbiFD/zU2f/w8ThK8WQcLRg0Qsx40RwKT6fe5w7wCKUU0s6Tlc4s
-         ts3m+5Dcy6r3nppwMCHFF6fUV21LRJU4ML48w7K0Xx71wKq8bz0rzEKJmi9bah1wH4Bo
-         CAyA==
+        b=uS/C92QgINPnzcgcleRUymweG7AAYwhYINQ8cRZycZmFFryzGRZOdu74YXm3q3TZT3
+         X6EIdOUoWbLF0A5fRCyBxUJSqPwPZmEEI2xRUrHkxtxmLmwmvC3n0LdQCgkSI50/5F3S
+         QDxDsSM644+EThhXMzZ7l26tPCKXgbikCHdULOLXu+DLvoSGGobJ0maBWHBqfdW+bz2e
+         KuI6FXfIDMwgozdOYMCs1H6oNhr2mxXJ8cPQsXEBSu8WmyqhbrtJyUcs645SlYdYLLid
+         0EObd1UxR9zTFk0oV9j0sYhf+QH10vQ27gx2RA5AVTNLSD+gSBhMGIJQb5jFTGc8vvC2
+         cRYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=V9P+xnDmHyfVi0u3LA35F8D6EyjSyuU1sR9ExEYNwP0=;
-        b=xo3U7o5JnNm6CR50UEOFAPj5YLi2N6sL3NiLIR/xZCc5IF72JJ4YLMbguo/2N7v3xp
-         ZgjT3iIybXiCeVGfes7snLceqDDk9HISyEkq64zXcdCB09pYj3ypldgrPjvpZjQ7iq/5
-         Wb7p+PH2DarW8Sb+fSeq3e1R0ZZX6FZo201S7asnIxsDJsxgOydcPnN2gsUOuFeVfdwZ
-         hXPiKni2Et2F/unihSVuI6+Yjo1GaFQhjKf7mgmRQ4IvGgn3sM5nYJy7QqvZR/OJpv8x
-         OI0KXrH7OwUzA6efb0kbyNkVF5bHO1dMBqhubEXDSVXimdcpCgd5UNHf63hG9OYP0Vhs
-         oJ/A==
+        bh=CaTtowvVAZ+XDgPwcWH4QuEeXw57ZPbDGff2pb/e8t8=;
+        b=p6CHPnUk0b6eWxI2qlsHL/irC5s5VVWfB2K6Y+WmJpZKRY5xf0SC90o3D8+YUwn7UB
+         zadZ4m4WC7moWMbZytAyvGzH1TyGuW9M3Fn8dIqsoxjRIW5pB/3ok4EhPByCw6PCufuY
+         GexAXUfsXyqXAKEthYt/+Wg2DajDd1ZP8Z8JYmFU98QFjKiRfxy82ni9qVTAl9srDZN9
+         aMh/g4dAEw5vpSkQoZChh2wRHOafd6ZdIliG6Ku0utP2tykXevjrNkhA6/PoEs4+u/sg
+         Tv0aVRZD0Le87AIt8BT/4l/IFycNgqZ1DnfKPc1D3yCiHqnvR+LqlC4ulb0QeEH2c3rK
+         GGXg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Roy Shterman <roys@lightbitslabs.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Max Gurtovoy <maxg@mellanox.com>,
-	Christoph Hellwig <hch@lst.de>,
+	Andrea Adami <andrea.adami@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Daniel Thompson <daniel.thompson@linaro.org>,
+	Lee Jones <lee.jones@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 055/168] nvme-fabrics: protect against module unload during create_ctrl
-Date: Wed, 11 Apr 2018 00:23:17 +0200
-Message-Id: <20180410212802.545411901@linuxfoundation.org>
+Subject: [PATCH 4.15 054/168] backlight: tdo24m: Fix the SPI CS between transfers
+Date: Wed, 11 Apr 2018 00:23:16 +0200
+Message-Id: <20180410212802.508966761@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399991153206972?=
-X-GMAIL-MSGID: =?utf-8?q?1597399991153206972?=
+X-GMAIL-THRID: =?utf-8?q?1597399987909827945?=
+X-GMAIL-MSGID: =?utf-8?q?1597399987909827945?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,135 +52,79 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Roy Shterman <roys@lightbitslabs.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
 
 
-[ Upstream commit 0de5cd367c6aa2a31a1c931628f778f79f8ef22e ]
+[ Upstream commit 2023b0524a6310e9ea80daf085f51c71bff9289f ]
 
-NVMe transport driver module unload may (and usually does) trigger
-iteration over the active controllers and delete them all (sometimes
-under a mutex).  However, a controller can be created concurrently with
-module unload which can lead to leakage of resources (most important char
-device node leakage) in case the controller creation occured after the
-unload delete and drain sequence.  To protect against this, we take a
-module reference to guarantee that the nvme transport driver is not
-unloaded while creating a controller.
+Currently the LCD display (TD035S) on the cm-x300 platform is broken and
+remains blank.
 
-Signed-off-by: Roy Shterman <roys@lightbitslabs.com>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+The TD0245S specification requires that the chipselect is toggled
+between commands sent to the panel. This was also the purpose of the
+former patch of commit f64dcac0b124 ("backlight: tdo24m: ensure chip
+select changes between transfers").
+
+Unfortunately, the "cs_change" field of a SPI transfer is
+misleading. Its true meaning is that for a SPI message holding multiple
+transfers, the chip select is toggled between each transfer, but for the
+last transfer it remains asserted.
+
+In this driver, all the SPI messages contain exactly one transfer, which
+means that each transfer is the last of its message, and as a
+consequence the chip select is never toggled.
+
+Actually, there was a second bug hidding the first one, hence the
+problem was not seen until v4.6. This problem was fixed by commit
+a52db659c79c ("spi: pxa2xx: Fix cs_change management") for PXA based
+boards.
+
+This fix makes the TD035S work again on a cm-x300 board. The same
+applies to other PXA boards, ie. corgi and tosa.
+
+Fixes: a52db659c79c ("spi: pxa2xx: Fix cs_change management")
+Reported-by: Andrea Adami <andrea.adami@gmail.com>
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/host/fabrics.c |   17 +++++++++++++----
- drivers/nvme/host/fabrics.h |    2 ++
- drivers/nvme/host/fc.c      |    1 +
- drivers/nvme/host/rdma.c    |    1 +
- drivers/nvme/target/loop.c  |    1 +
- 5 files changed, 18 insertions(+), 4 deletions(-)
+ drivers/video/backlight/corgi_lcd.c |    2 +-
+ drivers/video/backlight/tdo24m.c    |    2 +-
+ drivers/video/backlight/tosa_lcd.c  |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/nvme/host/fabrics.c
-+++ b/drivers/nvme/host/fabrics.c
-@@ -493,7 +493,7 @@ EXPORT_SYMBOL_GPL(nvmf_should_reconnect)
-  */
- int nvmf_register_transport(struct nvmf_transport_ops *ops)
- {
--	if (!ops->create_ctrl)
-+	if (!ops->create_ctrl || !ops->module)
- 		return -EINVAL;
+--- a/drivers/video/backlight/corgi_lcd.c
++++ b/drivers/video/backlight/corgi_lcd.c
+@@ -177,7 +177,7 @@ static int corgi_ssp_lcdtg_send(struct c
+ 	struct spi_message msg;
+ 	struct spi_transfer xfer = {
+ 		.len		= 1,
+-		.cs_change	= 1,
++		.cs_change	= 0,
+ 		.tx_buf		= lcd->buf,
+ 	};
  
- 	down_write(&nvmf_transports_rwsem);
-@@ -869,32 +869,41 @@ nvmf_create_ctrl(struct device *dev, con
- 		goto out_unlock;
- 	}
+--- a/drivers/video/backlight/tdo24m.c
++++ b/drivers/video/backlight/tdo24m.c
+@@ -369,7 +369,7 @@ static int tdo24m_probe(struct spi_devic
  
-+	if (!try_module_get(ops->module)) {
-+		ret = -EBUSY;
-+		goto out_unlock;
-+	}
-+
- 	ret = nvmf_check_required_opts(opts, ops->required_opts);
- 	if (ret)
--		goto out_unlock;
-+		goto out_module_put;
- 	ret = nvmf_check_allowed_opts(opts, NVMF_ALLOWED_OPTS |
- 				ops->allowed_opts | ops->required_opts);
- 	if (ret)
--		goto out_unlock;
-+		goto out_module_put;
+ 	spi_message_init(m);
  
- 	ctrl = ops->create_ctrl(dev, opts);
- 	if (IS_ERR(ctrl)) {
- 		ret = PTR_ERR(ctrl);
--		goto out_unlock;
-+		goto out_module_put;
- 	}
+-	x->cs_change = 1;
++	x->cs_change = 0;
+ 	x->tx_buf = &lcd->buf[0];
+ 	spi_message_add_tail(x, m);
  
- 	if (strcmp(ctrl->subsys->subnqn, opts->subsysnqn)) {
- 		dev_warn(ctrl->device,
- 			"controller returned incorrect NQN: \"%s\".\n",
- 			ctrl->subsys->subnqn);
-+		module_put(ops->module);
- 		up_read(&nvmf_transports_rwsem);
- 		nvme_delete_ctrl_sync(ctrl);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
-+	module_put(ops->module);
- 	up_read(&nvmf_transports_rwsem);
- 	return ctrl;
- 
-+out_module_put:
-+	module_put(ops->module);
- out_unlock:
- 	up_read(&nvmf_transports_rwsem);
- out_free_opts:
---- a/drivers/nvme/host/fabrics.h
-+++ b/drivers/nvme/host/fabrics.h
-@@ -108,6 +108,7 @@ struct nvmf_ctrl_options {
-  *			       fabric implementation of NVMe fabrics.
-  * @entry:		Used by the fabrics library to add the new
-  *			registration entry to its linked-list internal tree.
-+ * @module:             Transport module reference
-  * @name:		Name of the NVMe fabric driver implementation.
-  * @required_opts:	sysfs command-line options that must be specified
-  *			when adding a new NVMe controller.
-@@ -126,6 +127,7 @@ struct nvmf_ctrl_options {
-  */
- struct nvmf_transport_ops {
- 	struct list_head	entry;
-+	struct module		*module;
- 	const char		*name;
- 	int			required_opts;
- 	int			allowed_opts;
---- a/drivers/nvme/host/fc.c
-+++ b/drivers/nvme/host/fc.c
-@@ -3380,6 +3380,7 @@ nvme_fc_create_ctrl(struct device *dev,
- 
- static struct nvmf_transport_ops nvme_fc_transport = {
- 	.name		= "fc",
-+	.module		= THIS_MODULE,
- 	.required_opts	= NVMF_OPT_TRADDR | NVMF_OPT_HOST_TRADDR,
- 	.allowed_opts	= NVMF_OPT_RECONNECT_DELAY | NVMF_OPT_CTRL_LOSS_TMO,
- 	.create_ctrl	= nvme_fc_create_ctrl,
---- a/drivers/nvme/host/rdma.c
-+++ b/drivers/nvme/host/rdma.c
-@@ -2018,6 +2018,7 @@ out_free_ctrl:
- 
- static struct nvmf_transport_ops nvme_rdma_transport = {
- 	.name		= "rdma",
-+	.module		= THIS_MODULE,
- 	.required_opts	= NVMF_OPT_TRADDR,
- 	.allowed_opts	= NVMF_OPT_TRSVCID | NVMF_OPT_RECONNECT_DELAY |
- 			  NVMF_OPT_HOST_TRADDR | NVMF_OPT_CTRL_LOSS_TMO,
---- a/drivers/nvme/target/loop.c
-+++ b/drivers/nvme/target/loop.c
-@@ -686,6 +686,7 @@ static struct nvmet_fabrics_ops nvme_loo
- 
- static struct nvmf_transport_ops nvme_loop_transport = {
- 	.name		= "loop",
-+	.module		= THIS_MODULE,
- 	.create_ctrl	= nvme_loop_create_ctrl,
- };
+--- a/drivers/video/backlight/tosa_lcd.c
++++ b/drivers/video/backlight/tosa_lcd.c
+@@ -49,7 +49,7 @@ static int tosa_tg_send(struct spi_devic
+ 	struct spi_message msg;
+ 	struct spi_transfer xfer = {
+ 		.len		= 1,
+-		.cs_change	= 1,
++		.cs_change	= 0,
+ 		.tx_buf		= buf,
+ 	};
  
