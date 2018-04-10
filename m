@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/lDYYV6kdT8HWIt0mHsCvdU/r/LqfeqnzReYqrI0jvwzAZMacjei7fT3bkSn3lTYwuRXyf
-ARC-Seal: i=1; a=rsa-sha256; t=1523399869; cv=none;
+X-Google-Smtp-Source: AIpwx49a8NV7zYfzHoucXi/FsTcEj3pnF5iQqtr80Ib9U4ttAQPPVGYbw62Njo74okTY9RzRNw8e
+ARC-Seal: i=1; a=rsa-sha256; t=1523399867; cv=none;
         d=google.com; s=arc-20160816;
-        b=Eal3biu7/146KygCo/a4OESOnKbN+NWgSYDmU4Ge5mKPDvDY4ED+iUOPuh/oCEZhiT
-         ZdiJ4TFWtrwK4bzDTyZCsaYZvizqFm2EN0C4cGJW02lkZ8v6DBdPgBlCEkrGsAY1lRPq
-         vPMmJS5Q2QiX5xkh/NT9mETuNvY4gBPI8xp4L4AVo2TdnHsV7asBNJ5eLz2nR9NaRIuU
-         bRKeLPgQc5tN3lpPHXW9dx4sVcx01FV7bBGcRLl2oV8H9IQaoCNjQG5NC9d1FmQfvOEG
-         0uHeSxDhDv02l7I/bdYg45pLxPdO69j8S+5ifqLwvMjqby8beGxTv6pZGTx7GOK+dbk/
-         3w8A==
+        b=DtKweWgMEGcTcwIFfssqtSJwGlgZiFgvfcwai//gnwNcVYx9lrJU+Z4GEZu9vVSSwO
+         /pIpqj6QOSbRi75vmiSS9ImNMAxfXz8hXFEFpearI+Ild3c4N59d9eJVeWcm/iAYlGV5
+         CQLCz61o1LP/8lQu7iciIh+iCY0rBuI1V3Ge0UJ9+cw7KUUIIiJoqoT8p4JACVLyHUSp
+         EydrqBqukd5Y1CubeRslkQ2Ps2M2PuHdKszQ23bB+GhQIo3hlQKRvR06q4Br/wi3Y0rf
+         6+hhQh0cm7fRI0dcGXjWqTXIBQWEgCW6zJdxifTByRNTPFgEkMBzunMam50E8L9gNZz9
+         O8mw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=VKj6Q7wIIcsr8L/LAhhsxJo4xhzHK7fQYD1AUPBTeUc=;
-        b=SrQCHG8Nodf6RN3zlEfcd2D7zPKNSdAPHtoTZbU8J7xHJAxwOAkwc5rWP5pGmGGdkk
-         WjWRKw5f9jDv2nw/bSAo+QqBN+0Hjeg3PFkWRv9VkaI+PgfO6Xln5AVnjc7L6zdffb6W
-         NrtSc9Vm+cJxKuzeAkxdPeXaG33Sc+kcWJlvsQHNX4oHdz9s/DXL3pboznIux5Tk38KV
-         qd/km33oOJfE01fKSV5+pMH1AeYx7hqQB759AShvQesYUjV+L9T9K9r2ToxH4O5ry0Hv
-         8Gu9nfmXPwDCod8B2Fqn5HMlXYK5nYGyU25hMR/Pdf5uDqsvWkSwW1IH8fCR+MlqCxbp
-         pJ/A==
+        bh=JXaymgDGUZ3KXmpr416jPo+y+MF/pJ3Fu6eRrS8brYc=;
+        b=vfy5EJZIxQIe7WBGK1f3YTFuQOM/hgAcLf9O0eWalyDRFwQ0CLOW5JHSG+yBdqAI6T
+         PK2y1K4mEqrGFLwDNLLILelDSYqvXwuASez/ED9aenFRKViYistSCZVknfcM4GhHHu1e
+         lfhNcevQoBnUCvphhipUD7x7gLmfF58VAtvFWD9RfqEbIkrHCRmBSyWfxNh4lKVNUzPx
+         oYvNEbBwPA4+x+ojgbl4v2qynGHh3Ui2X8UXG66yhEzJK/X5iBINE3Yk+AdXWjSBSXdP
+         PAJ4FdK/DJ28n6GvsNiOqYgZmKpuPiNi924YQT34W/WPG8rJulpoOgkuE/ycL/wechnl
+         XhkA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 076/138] ibmvnic: Dont handle RX interrupts when not up.
-Date: Wed, 11 Apr 2018 00:24:26 +0200
-Message-Id: <20180410212910.981912187@linuxfoundation.org>
+Subject: [PATCH 4.14 075/138] sdhci: Advertise 2.0v supply on SDIO host controller
+Date: Wed, 11 Apr 2018 00:24:25 +0200
+Message-Id: <20180410212910.844252189@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400119837448195?=
-X-GMAIL-MSGID: =?utf-8?q?1597400541767801147?=
+X-GMAIL-THRID: =?utf-8?q?1597400117368517441?=
+X-GMAIL-MSGID: =?utf-8?q?1597400539236459956?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,47 +51,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
 
-[ Upstream commit 09fb35ead58cd557aa9b20576d15816bc91a4deb ]
+[ Upstream commit 2a609abe71ca59e4bd7139e161eaca2144ae6f2e ]
 
-Initiating a kdump via the command line can cause a pending interrupt
-to be handled by the ibmvnic driver when initializing the sub-CRQ
-irqs during driver initialization.
+On Intel Edison the Broadcom Wi-Fi card, which is connected to SDIO,
+requires 2.0v, while the host, according to Intel Merrifield TRM,
+supports 1.8v supply only.
 
-NIP [d000000000ca34f0] ibmvnic_interrupt_rx+0x40/0xd0 [ibmvnic]
-LR [c000000008132ef0] __handle_irq_event_percpu+0xa0/0x2f0
-Call Trace:
-[c000000047fcfde0] [c000000008132ef0] __handle_irq_event_percpu+0xa0/0x2f0
-[c000000047fcfea0] [c00000000813317c] handle_irq_event_percpu+0x3c/0x90
-[c000000047fcfee0] [c00000000813323c] handle_irq_event+0x6c/0xd0
-[c000000047fcff10] [c0000000081385e0] handle_fasteoi_irq+0xf0/0x250
-[c000000047fcff40] [c0000000081320a0] generic_handle_irq+0x50/0x80
-[c000000047fcff60] [c000000008014984] __do_irq+0x84/0x1d0
-[c000000047fcff90] [c000000008027564] call_do_irq+0x14/0x24
-[c00000003c92af00] [c000000008014b70] do_IRQ+0xa0/0x120
-[c00000003c92af50] [c000000008002594] hardware_interrupt_common+0x114/0x180
+The card announces itself as
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  mmc2: new ultra high speed DDR50 SDIO card at address 0001
+
+Introduce a custom OCR mask for SDIO host controller on Intel Merrifield
+and add a special case to sdhci_set_power_noreg() to override 2.0v supply
+by enforcing 1.8v power choice.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ibm/ibmvnic.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/mmc/host/sdhci-pci-core.c |    2 ++
+ drivers/mmc/host/sdhci.c          |    7 +++++++
+ 2 files changed, 9 insertions(+)
 
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -2209,6 +2209,12 @@ static irqreturn_t ibmvnic_interrupt_rx(
- 	struct ibmvnic_sub_crq_queue *scrq = instance;
- 	struct ibmvnic_adapter *adapter = scrq->adapter;
- 
-+	/* When booting a kdump kernel we can hit pending interrupts
-+	 * prior to completing driver initialization.
-+	 */
-+	if (unlikely(adapter->state != VNIC_OPEN))
-+		return IRQ_NONE;
-+
- 	adapter->rx_stats_buffers[scrq->scrq_num].interrupts++;
- 
- 	if (napi_schedule_prep(&adapter->napi[scrq->scrq_num])) {
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -806,6 +806,8 @@ static int intel_mrfld_mmc_probe_slot(st
+ 		slot->host->quirks2 |= SDHCI_QUIRK2_NO_1_8_V;
+ 		break;
+ 	case INTEL_MRFLD_SDIO:
++		/* Advertise 2.0v for compatibility with the SDIO card's OCR */
++		slot->host->ocr_mask = MMC_VDD_20_21 | MMC_VDD_165_195;
+ 		slot->host->mmc->caps |= MMC_CAP_NONREMOVABLE |
+ 					 MMC_CAP_POWER_OFF_CARD;
+ 		break;
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1470,6 +1470,13 @@ void sdhci_set_power_noreg(struct sdhci_
+ 	if (mode != MMC_POWER_OFF) {
+ 		switch (1 << vdd) {
+ 		case MMC_VDD_165_195:
++		/*
++		 * Without a regulator, SDHCI does not support 2.0v
++		 * so we only get here if the driver deliberately
++		 * added the 2.0v range to ocr_avail. Map it to 1.8v
++		 * for the purpose of turning on the power.
++		 */
++		case MMC_VDD_20_21:
+ 			pwr = SDHCI_POWER_180;
+ 			break;
+ 		case MMC_VDD_29_30:
