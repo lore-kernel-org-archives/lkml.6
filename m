@@ -1,92 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752804AbeDJSf2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 14:35:28 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41512 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752677AbeDJSev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 14:34:51 -0400
-Subject: Re: [PATCH] irqchip/gic-v3: Support v2m frame backwards compatibility
- mode
-To: Stephen Boyd <sboyd@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: Jason Cooper <jason@lakedaemon.net>, linux-arm-msm@vger.kernel.org,
-        Hanna Hawa <hannah@marvell.com>, Stephen Boyd <sboyd@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        =?UTF-8?Q?Miqu=c3=a8l_Raynal?= <miquel.raynal@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org
-References: <20170320223614.1351-1-sboyd@codeaurora.org>
- <bac1e827-3860-d92c-7bb4-eaf9840c608f@arm.com>
- <20180410170155.6e07113d@windsurf>
- <a4451252-35e4-e63f-8cca-a072f90fa9ad@arm.com>
- <152338426182.180276.1835672071236851795@swboyd.mtv.corp.google.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <05b943f7-b3f0-ebdf-06e7-140000442a77@arm.com>
-Date: Tue, 10 Apr 2018 19:34:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753198AbeDJSjd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 14:39:33 -0400
+Received: from mail-it0-f46.google.com ([209.85.214.46]:53719 "EHLO
+        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753151AbeDJSj0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 14:39:26 -0400
+X-Google-Smtp-Source: AIpwx48sC1JBws/QjmVEomY1r/PAku608Tws9YbuGxB3QftBaNWjXb0VDWqa1spYiUn3BizvQYrb4y1arMImZijqu0w=
 MIME-Version: 1.0
-In-Reply-To: <152338426182.180276.1835672071236851795@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180410140036.650a8732@gandalf.local.home>
+References: <20180410061447.GQ21835@dhcp22.suse.cz> <CAGWkznGrugH0VqJyd5ZPiSBMOZ4SbbNpKiHVXM27Q-ep4SYb-Q@mail.gmail.com>
+ <20180410074921.GU21835@dhcp22.suse.cz> <CAGWkznHQSZ5jPF2njOp0BritTmKiGOToq5bAz1bhzzmFi_01nA@mail.gmail.com>
+ <20180410081231.GV21835@dhcp22.suse.cz> <CAGWkznEM=AX=3LWDmgyz4GRkWy81TNdFQQXZ7+W4=Ek4ZsnsJw@mail.gmail.com>
+ <20180410090128.GY21835@dhcp22.suse.cz> <CAGWkznEf0siz1-RFSJwuKCjUtbKM=P1djo2Nc7sU1GS0AgWv2w@mail.gmail.com>
+ <20180410104902.GC21835@dhcp22.suse.cz> <20180410082316.263d34ec@gandalf.local.home>
+ <20180410122706.GH21835@dhcp22.suse.cz> <20180410083625.2c904ab2@gandalf.local.home>
+ <20180410091311.20bd8ccc@gandalf.local.home> <CAJWu+oo5iUDjCnbhhJ7x2BGeuL6FDAVqFCa5tcTikVh5OtxfRA@mail.gmail.com>
+ <20180410140036.650a8732@gandalf.local.home>
+From: Joel Fernandes <joelaf@google.com>
+Date: Tue, 10 Apr 2018 11:39:24 -0700
+Message-ID: <CAJWu+ooC4hCK31srhBFoAf=qwfFFOyTGsjRRJ9PdxaVsb6waQQ@mail.gmail.com>
+Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal OOM_SCORE_ADJ_MIN
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Michal Hocko <mhocko@kernel.org>,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+Hi Steve,
 
-On 10/04/18 19:17, Stephen Boyd wrote:
-> Quoting Marc Zyngier (2018-04-10 08:23:00)
->> On 10/04/18 16:01, Thomas Petazzoni wrote:
+On Tue, Apr 10, 2018 at 11:00 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> On Tue, 10 Apr 2018 09:45:54 -0700
+> Joel Fernandes <joelaf@google.com> wrote:
+>
+>> > diff --git a/include/linux/ring_buffer.h b/include/linux/ring_buffer.h
+>> > index a0233edc0718..807e2bcb21b3 100644
+>> > --- a/include/linux/ring_buffer.h
+>> > +++ b/include/linux/ring_buffer.h
+>> > @@ -106,7 +106,8 @@ __poll_t ring_buffer_poll_wait(struct ring_buffer *buffer, int cpu,
+>> >
+>> >  void ring_buffer_free(struct ring_buffer *buffer);
+>> >
+>> > -int ring_buffer_resize(struct ring_buffer *buffer, unsigned long size, int cpu);
+>> > +int ring_buffer_resize(struct ring_buffer *buffer, unsigned long size,
+>> > +                       int cpu, int rbflags);
+>> >
+>> >  void ring_buffer_change_overwrite(struct ring_buffer *buffer, int val);
+>> >
+>> > @@ -201,6 +202,7 @@ int ring_buffer_print_page_header(struct trace_seq *s);
+>> >
+>> >  enum ring_buffer_flags {
+>> >         RB_FL_OVERWRITE         = 1 << 0,
+>> > +       RB_FL_NO_RECLAIM        = 1 << 1,
 >>
->>> In the upcoming Armada 8KP, we have a GICv3, which has built-in support
->>> for memory-triggered SPIs, thanks to the GICD_SETSPI_NSR and
->>> GICD_CLRSPI_NSR, and the ICU will directly use this GICv3
->>> functionality. We would therefore very much like to have this GICv3
->>> feature provided as a MSI controller, which as Marc said would require
->>> supporting level-triggered MSIs.
->>>
->>> Marc, let me know how we can collaborate on this topic. I'm able to
->>> either test some preliminary patches, or work on such patches if
->>> necessary (preferably with some initial directions).
+>> But the thing is, set_oom_origin doesn't seem to be doing the
+>> desirable thing every time anyway as per my tests last week [1] and
+>> the si_mem_available check alone seems to be working fine for me (and
+>> also Zhaoyang as he mentioned).
+>
+> But did you try it with just plain GFP_KERNEL, and not RETRY_MAYFAIL.
+
+Yes I tried it with just GFP_KERNEL as well. What I did based on your
+suggestion for testing the OOM hint is:
+1. Comment the si_mem_available check
+2. Do only GFP_KERNEL
+
+The system gets destabilized with this combination even with the OOM
+hint. These threads are here:
+https://lkml.org/lkml/2018/4/5/720
+
+> My tests would always trigger the allocating task without the
+> RETRY_MAYFAIL, but with RETRY_MAYFAIL it would sometimes take out other
+> tasks.
+>
 >>
->> I have a vague idea how to support this. Given that level-triggered MSIs
->> have to be platform MSIs (because it is just madness otherwise), we can
->> probably store an extra message in the struct platform_msi_desc for the
->> "lower the line" write. On activation, you'd get two callbacks, probably
->> with a flag of some sort to indicate whether this is for the rising or
->> falling edge. The thing I'm unclear about so far is how to let the
->> generic MSI layer know that we're dealing with such an interrupt without
->> make a total mess of everything. It is probably done by marking the
->> interrupt level triggered, but there are some corner cases.
+>> Since the problem Zhaoyang is now referring to is caused because of
+>> calling set_oom_origin in the first place, can we not just drop that
+>> patch and avoid adding more complexity?
+>
+> Actually, I'm thinking of dropping the MAYFAIL part. It really should
+> be the one targeted if you are extending the ring buffer.
+
+This then sounds like it should be fixed in -mm code? If we're giving
+the hint and its not getting killed there then that's an -mm issue.
+
+> I could add two loops. One that does NORETRY without the oom origin,
+> and if it succeeds, its fine. But if it requires reclaim, it will then
+> set oom_origin and go harder (where it should be the one targeted).
+>
+> But that may be pointless, because if NORETRY succeeds, there's not
+> really any likelihood of oom triggering in the first place.
+
+Yes.
+
+>
 >>
->> And if that works, the PCI stuff will come for free (it is just a matter
->> of implementing a new irqdomain on top of the base GICv3 one).
+>> IMHO I feel like for things like RB memory allocation, we shouldn't
+>> add a knob if we don't need to.
+>
+> It was just a suggestion.
+
+Cool, I understand.
+
 >>
->> I'll try to spend some time on it in the coming couple of weeks, but
->> will have to rely on you for the testing (as I don't have much in the
->> way of HW).
-> 
-> I resent these patches late last year[1]. On the HW I had at the time we
-> were trying to support PCIe devices and we didn't need level interrupts.
-> I thought Marc had agreed to accept the patches without the level
-> interrupt support as long as we described the range of interrupts that
-> were supported but that doesn't seem to be the case anymore.
+>> Also I think Zhaoyang is developing for Android too since he mentioned
+>> he ran CTS tests so we both have the same "usecase" but he can feel
+>> free to correct me if that's not the case ;)
+>
+> I think if you are really worried with the task being killed by oom,
+> then I agree with Michal and just fork a process to do the allocation
+> for you.
 
-My suggestion was to add the same level of functionality to the GICv3
-driver, and not to reuse the GICv2m driver. This would have allowed us
-to enable level interrupts at a later time. Obviously, I wasn't clear
-enough about what I wanted to see.
+Yes I agree. So lets just do that and no other patches additional
+patches are needed then. Let me know if there's anything else I
+missed?
 
-So this time, we'll do it the other way around: plug in level
-interrupts, and PCI/MSI will (mostly) appear for free.
+Also I got a bit confused, I reread all the threads. Zhaoyang's
+current issue is that the OOM hint *IS* working which is what
+triggered your patch to toggle the behavior through an option. Where
+was in this message we are discussing that the OOM hint doesn't always
+work which is not Zhaoyang's current issue. Let me know if I missed
+something? Sorry if I did.
 
-Thanks,
+thanks,
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+- Joel
