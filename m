@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753690AbeDJM7F (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:59:05 -0400
-Received: from smtprelay.synopsys.com ([198.182.47.9]:58182 "EHLO
+        id S1753658AbeDJM7D (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:59:03 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:54196 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753236AbeDJM6v (ORCPT
+        with ESMTP id S1753198AbeDJM6v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Apr 2018 08:58:51 -0400
 From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
@@ -13,9 +13,9 @@ To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
         robh+dt@kernel.org, mark.rutland@arm.com
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH v3 06/10] misc: pci_endpoint_test: Add designware EP entry
-Date: Tue, 10 Apr 2018 13:58:38 +0100
-Message-Id: <c03dcd1306ba3a8351f27b4485272c4ec364ec2c.1523360166.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH v3 07/10] PCI: dwc: Define maximum number of vectors
+Date: Tue, 10 Apr 2018 13:58:39 +0100
+Message-Id: <04c2a7739be0a211e2123c54bf55368624a3ecd1.1523360166.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1523360166.git.gustavo.pimentel@synopsys.com>
 References: <cover.1523360166.git.gustavo.pimentel@synopsys.com>
@@ -25,31 +25,42 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds the designware EP device ID entry to pci_endpoint_test driver table
-to allow this device to be recognize and handle by the pci_endpoint_test
-driver.
+Adds a callback that defines the maximum number of vectors that can be use
+by the Root Complex.
+
+Since this is a parameter associated to each SoC IP setting, makes sense to
+be configurable and easily visible to future modifications.
+
+The designware IP supports a maximum of 256 vectors.
 
 Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 ---
 Change v1->v2:
-- Changed device id following Kishon's suggestion.
+- Nothing changed, just to follow the patch set version.
 Change v2->v3:
 - Nothing changed, just to follow the patch set version.
 
- drivers/misc/pci_endpoint_test.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/dwc/pcie-designware-plat.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index fe8897e..37db0fc 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -634,6 +634,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
- static const struct pci_device_id pci_endpoint_test_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_SYNOPSYS, PCI_DEVICE_ID_SYNOPSYS_SMPL_EP) },
- 	{ }
+diff --git a/drivers/pci/dwc/pcie-designware-plat.c b/drivers/pci/dwc/pcie-designware-plat.c
+index 4be9c3a..04afa80 100644
+--- a/drivers/pci/dwc/pcie-designware-plat.c
++++ b/drivers/pci/dwc/pcie-designware-plat.c
+@@ -48,8 +48,14 @@ static int dw_plat_pcie_host_init(struct pcie_port *pp)
+ 	return 0;
+ }
+ 
++static void dw_plat_set_num_vectors(struct pcie_port *pp)
++{
++	pp->num_vectors = MAX_MSI_IRQS;
++}
++
+ static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
+ 	.host_init = dw_plat_pcie_host_init,
++	.set_num_vectors = dw_plat_set_num_vectors,
  };
- MODULE_DEVICE_TABLE(pci, pci_endpoint_test_tbl);
+ 
+ static int dw_plat_pcie_establish_link(struct dw_pcie *pci)
 -- 
 2.7.4
