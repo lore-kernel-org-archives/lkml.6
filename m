@@ -1,74 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752410AbeDJI6K (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:58:10 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:14026 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751504AbeDJI6I (ORCPT
+        id S1752688AbeDJI7X (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 04:59:23 -0400
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:39949 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752364AbeDJI7V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:58:08 -0400
-From: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <arnaud.pouliquen@st.com>
-Subject: [PATCH] remoteproc: fix crashed parameter logic on stop call.
-Date: Tue, 10 Apr 2018 10:57:25 +0200
-Message-ID: <1523350645-19073-1-git-send-email-arnaud.pouliquen@st.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 10 Apr 2018 04:59:21 -0400
+X-Google-Smtp-Source: AIpwx49j+wYrWtyh/dUOAzSFOV1yreT6nyKh4tqrepzQd+5jUarGelsd7JGUrvY6vEooLusLrEttbQ==
+Date: Tue, 10 Apr 2018 10:59:17 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Mike Galbraith <efault@gmx.de>
+Cc: Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: x86-tip.today (4cdf573)  early instaboot
+Message-ID: <20180410085917.bo526ueprf7zfare@gmail.com>
+References: <1523347959.4724.2.camel@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.162]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-10_03:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523347959.4724.2.camel@gmx.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix rproc_add_subdev parameter name and inverse the crashed logic.
 
-Fixes: "remoteproc: Pass type of shutdown to subdev remove"
+* Mike Galbraith <efault@gmx.de> wrote:
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
----
- drivers/remoteproc/remoteproc_core.c | 4 ++--
- include/linux/remoteproc.h           | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+> Hi Ingo,
+> 
+> FYI, my i4790 box reboots immediately.. or close enough to it that you
+> see nothing at all before again meeting the bios splash.  Master with
+> the ~same config works fine.  I haven't poked around yet (work).
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 6d9c583..a9609d9 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1163,7 +1163,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 	if (ret)
- 		return ret;
- 
--	ret = rproc_stop(rproc, false);
-+	ret = rproc_stop(rproc, true);
- 	if (ret)
- 		goto unlock_mutex;
- 
-@@ -1316,7 +1316,7 @@ void rproc_shutdown(struct rproc *rproc)
- 	if (!atomic_dec_and_test(&rproc->power))
- 		goto out;
- 
--	ret = rproc_stop(rproc, true);
-+	ret = rproc_stop(rproc, false);
- 	if (ret) {
- 		atomic_inc(&rproc->power);
- 		goto out;
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index d09a9c7..dfdaede9 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -569,7 +569,7 @@ static inline struct rproc *vdev_to_rproc(struct virtio_device *vdev)
- void rproc_add_subdev(struct rproc *rproc,
- 		      struct rproc_subdev *subdev,
- 		      int (*probe)(struct rproc_subdev *subdev),
--		      void (*remove)(struct rproc_subdev *subdev, bool graceful));
-+		      void (*remove)(struct rproc_subdev *subdev, bool crashed));
- 
- void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *subdev);
- 
--- 
-2.7.4
+Hm, so there's been a few 'dangerous' pieces of work merged yesterday-ish.
+
+Prime suspects would be:
+
+ triton:~/tip> gll linus..x86/pti
+
+ 0564258fb2cf: x86/pti: Leave kernel text global for !PCID
+ a5df4f1f0d78: x86/pti: Never implicitly clear _PAGE_GLOBAL for kernel image
+ e0bb456e3250: x86/pti: Enable global pages for shared areas
+ efad2b415152: x86/mm: Do not forbid _PAGE_RW before init for __ro_after_init
+ 4ddee6efdcd0: x86/mm: Comment _PAGE_GLOBAL mystery
+ e71e836f463d: x86/mm: Remove extra filtering in pageattr code
+ 64c80759408f: x86/mm: Do not auto-massage page protections
+ 6baf4bec02db: x86/espfix: Document use of _PAGE_GLOBAL
+ 8a57f4849f4f: x86/mm: Introduce "default" kernel PTE mask
+ 606c7193d5fb: x86/mm: Undo double _PAGE_PSE clearing
+ d1440b23c922: x86/mm: Factor out pageattr _PAGE_GLOBAL setting
+ ee1400dda318: Merge branch 'linus' into x86/pti to pick up upstream changes
+ 071ccc966ba5: x86/entry/64: Drop idtentry's manual stack switch for user entries
+ 9820e1c3376c: x86/uapi: Fix asm/bootparam.h userspace compilation errors
+
+... which you could test via 0564258fb2cf: if that insta-reboots too then 
+9820e1c3376c^1 is expected to work and 4 bisection steps should pinpoint the 
+guilty commit ...
+
+But there's also the syscall rework:
+
+ triton:~/tip> gll linus..x86/asm
+ c76fc9826075: syscalls/x86: Adapt syscall_wrapper.h to the new syscall stub naming convention
+ d5a00528b58c: syscalls/core, syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()
+ 5ac9efa3c50d: syscalls/core, syscalls/x86: Clean up compat syscall stub naming convention
+ e145242ea0df: syscalls/core, syscalls/x86: Clean up syscall stub naming convention
+ 6dc936f175cc: syscalls/x86: Extend register clearing on syscall entry to lower registers
+ f8781c4a2263: syscalls/x86: Unconditionally enable 'struct pt_regs' based syscalls on x86_64
+ ebeb8c82ffaf: syscalls/x86: Use 'struct pt_regs' based syscall calling for IA32_EMULATION and x32
+ 7303e30ec1d8: syscalls/core: Prepare CONFIG_ARCH_HAS_SYSCALL_WRAPPER=y for compat syscalls
+ fa697140f9a2: syscalls/x86: Use 'struct pt_regs' based syscall calling convention for 64-bit syscalls
+ 1bd21c6c21e8: syscalls/core: Introduce CONFIG_ARCH_HAS_SYSCALL_WRAPPER=y
+ dfe64506c01e: x86/syscalls: Don't pointlessly reload the system call number
+
+... which you could test via c76fc9826075: if that insta-reboots then 
+dfe64506c01e^1 should be good and 4 bisection steps should suffice.
+
+Thanks,
+
+	Ingo
