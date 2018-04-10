@@ -1,65 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752241AbeDJH0G (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 03:26:06 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:40983 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752184AbeDJH0C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 03:26:02 -0400
-X-Google-Smtp-Source: AIpwx4/9NEbrG4UEU1Kpxizi3Q/9ahCc/W03T6yB6pNSD0OB8enL3BWow36tI7hdfAQzg4EpN9qiuA==
-From: =?UTF-8?q?SZ=20Lin=20=28=E6=9E=97=E4=B8=8A=E6=99=BA=29?=
-        <sz.lin@moxa.com>
-Cc: =?UTF-8?q?SZ=20Lin=20=28=E6=9E=97=E4=B8=8A=E6=99=BA=29?=
-        <sz.lin@moxa.com>,
-        Taiyi Wu <taiyity.wu@moxa.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] rtc: tps65910: add bounds checking
-Date: Tue, 10 Apr 2018 15:24:17 +0800
-Message-Id: <20180410072417.7078-1-sz.lin@moxa.com>
-X-Mailer: git-send-email 2.17.0
+        id S1752286AbeDJH0c (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 03:26:32 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6734 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751778AbeDJH0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 03:26:30 -0400
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: turn down IO priority of discard from background
+Date: Tue, 10 Apr 2018 15:26:08 +0800
+Message-ID: <20180410072608.12323-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To: unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since tm->tm_year is the offset relative to 1900, it needs to check for
-positive value to avoid overflow in YEARS_REG register.
+In order to interfere normal r/w IO, let's turn down IO priority of
+discard issued from background.
 
-The system will hang at the following stage on the next boot when overflow
-has occurred.
-
-[    2.221192] systemd[1]: Time has been changed
-
-This patch fixes the above hanging issue by adding bounds checking.
-
-Signed-off-by: Taiyi Wu <taiyity.wu@moxa.com>
-Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- drivers/rtc/rtc-tps65910.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/f2fs/segment.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/rtc/rtc-tps65910.c b/drivers/rtc/rtc-tps65910.c
-index d0244d7979fc..6be9f7bb0f1b 100644
---- a/drivers/rtc/rtc-tps65910.c
-+++ b/drivers/rtc/rtc-tps65910.c
-@@ -105,6 +105,12 @@ static int tps65910_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	struct tps65910 *tps = dev_get_drvdata(dev->parent);
- 	int ret;
- 
-+	if ((tm->tm_year - 100) < 0) {
-+		dev_err(dev, "the requested year %d is unsupported\n",
-+			1900 + tm->tm_year);
-+		return -EINVAL;
-+	}
-+
- 	rtc_data[0] = bin2bcd(tm->tm_sec);
- 	rtc_data[1] = bin2bcd(tm->tm_min);
- 	rtc_data[2] = bin2bcd(tm->tm_hour);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index aabe0d6b8307..5e708debeb9c 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1723,6 +1723,7 @@ void init_discard_policy(struct discard_policy *dpolicy,
+ 		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+ 		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+ 		dpolicy->io_aware = true;
++		dpolicy->sync = false;
+ 	} else if (discard_type == DPOLICY_FORCE) {
+ 		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+ 		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
 -- 
-2.17.0
+2.15.0.55.gc2ece9dc4de6
