@@ -1,143 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752250AbeDJIH7 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:07:59 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38587 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751778AbeDJIH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:07:57 -0400
-Date: Tue, 10 Apr 2018 10:07:45 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Abhishek Sahu <absahu@codeaurora.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 1/9] mtd: nand: qcom: use the ecc strength from device
- parameter
-Message-ID: <20180410100745.625d66f8@bbrezillon>
-In-Reply-To: <20180410095558.34c4d91f@xps13>
-References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
-        <1522845745-6624-2-git-send-email-absahu@codeaurora.org>
-        <20180406143133.67f33d33@xps13>
-        <23c8330d00d4d9b62c4c1ab597cbb22b@codeaurora.org>
-        <20180410094657.63ac7ec9@xps13>
-        <20180410095558.34c4d91f@xps13>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752334AbeDJIIN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 04:08:13 -0400
+Received: from mail-ot0-f172.google.com ([74.125.82.172]:41887 "EHLO
+        mail-ot0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752289AbeDJIIL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 04:08:11 -0400
+X-Google-Smtp-Source: AIpwx4/HdBZ1xzlTSnHf8i2T2RZ4o4IxM70EdwRfupEeDNnq+7ony4X3teXkg1phCyrulsmqitF/s+MLGjjb2K1Pnjc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <557074eb-e988-8ff5-bec0-c85bb9dcb8ec@ti.com>
+References: <99031524fa147e72451d26f54b24f36093c0d3fa.1523255712.git.baolin.wang@linaro.org>
+ <557074eb-e988-8ff5-bec0-c85bb9dcb8ec@ti.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Tue, 10 Apr 2018 16:08:10 +0800
+Message-ID: <CAMz4kuJ7SHYMvs9ST+u27dZg3mXCc0QW3sv+=HE4ogJXiC+8gw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] i2c: sprd: Prevent i2c accesses after suspend is called
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Mark Brown <broonie@kernel.org>,
+        linux-i2c@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Apr 2018 09:55:58 +0200
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+Hi Grygorii,
 
-> > Hi Abhishek,
-> > 
-> > On Tue, 10 Apr 2018 11:39:35 +0530, Abhishek Sahu
-> > <absahu@codeaurora.org> wrote:
-> >   
-> > > On 2018-04-06 18:01, Miquel Raynal wrote:    
-> > > > Hi Abhishek,
-> > > > 
-> > > > On Wed,  4 Apr 2018 18:12:17 +0530, Abhishek Sahu
-> > > > <absahu@codeaurora.org> wrote:
-> > > >       
-> > > >> Currently the driver uses the ECC strength specified in
-> > > >> device tree. The ONFI or JEDEC device parameter page
-> > > >> contains the ‘ECC correctability’ field which indicates the
-> > > >> number of bits that the host should be able to correct per
-> > > >> 512 bytes of data.      
-> > > > 
-> > > > This is misleading. This field is not about the controller but rather
-> > > > the chip requirements in terms of minimal strength for nominal use.
-> > > >       
-> > > 
-> > >   Thanks Miquel.
-> > > 
-> > >   Yes. Its NAND chip requirement. I have used the description for
-> > >   NAND ONFI param page
-> > > 
-> > >   5.6.1.24. Byte 112: Number of bits ECC correctability
-> > >   This field indicates the number of bits that the host should be
-> > >   able to correct per 512 bytes of data.
-> > >     
-> > > >> The ecc correctability is assigned in
-> > > >> chip parameter during device probe time. QPIC/EBI2 NAND
-> > > >> supports 4/8-bit ecc correction. The Same kind of board
-> > > >> can have different NAND parts so use the ecc strength
-> > > >> from device parameter (if its non zero) instead of
-> > > >> device tree.      
-> > > > 
-> > > > That is not what you do.
-> > > > 
-> > > > What you do is forcing the strength to be 8-bit per ECC chunk if the
-> > > > NAND chip requires at least 8-bit/chunk strength.
-> > > > 
-> > > > The DT property is here to force a strength. Otherwise, Linux will
-> > > > propose to the NAND controller to use the minimum strength required by
-> > > > the chip (from either the ONFI/JEDEC parameter page or from a static
-> > > > table).
-> > > >       
-> > > 
-> > >   The main problem is that the same kind of boards can have different
-> > >   NAND parts.
-> > > 
-> > >   Lets assume, we have following 2 cases.
-> > > 
-> > >   1. Non ONFI/JEDEC device for which chip->ecc_strength_ds
-> > >      will be zero. In this case, the ecc->strength from DT
-> > >      will be used    
-> > 
-> > No, the strength from DT will always be used if the property is
-> > present, no matter the type of chip.
-> >   
-> > >   2. ONFI/JEDEC device for which chip->ecc_strength_ds > 8.
-> > >      Since QCOM nand controller can not support
-> > >      ECC correction greater than 8 bits so we can use 8 bit ECC
-> > >      itself instead of failing NAND boot completely.    
-> > 
-> > I understand that. But this is still not what you do.
-> >   
-> > >     
-> > > > IMHO, you have two solutions:
-> > > > 1/ Remove these properties from the board DT (breaks DT backward
-> > > > compatibility though);      
-> > > 
-> > >   - nand-ecc-strength: This is optional property in nand.txt and
-> > >     Required property in qcom_nandc.txt.    
-> > 
-> > Well, this property is not controller specific but chip specific. The
-> > controller driver does not rely on it, so this property should not be
-> > required.
-> >   
-> > > We can't remove since
-> > >     if the device is Non ONFI/JEDEC, then ecc strength will come
-> > >     from DT only.    
-> > 
-> > We can remove it and let the core handle this (as this is generic to
-> > all raw NANDs and not specific to this controller driver). Try it out!
-> > 
-> > However if the defaults value do not match your expectations, I think
-> > you can add your non-ONFI/JEDEC chip in 'nand_ids.c', this should fill
-> > your strength_ds field and let you avoid using these properties.  
-> 
-> Actually nand_ids.c should not be filled anymore, instead you can
-> implement this detection thanks to the part full name in the vendor
-> code nand_samsung.c, nand_micron.c, nand_macronix.c, nand_hynix.c, etc.
+On 10 April 2018 at 04:56, Grygorii Strashko <grygorii.strashko@ti.com> wrote:
+>
+>
+> On 04/09/2018 01:40 AM, Baolin Wang wrote:
+>> Add one flag to indicate if the i2c controller has been in suspend state,
+>> which can prevent i2c accesses after i2c controller is suspended following
+>> system suspend.
+>
+> This usually indicates some bigger problem - there should be no i2c access to
+>  the I2C driver once it's suspended. But if happens -
+> it means suspend dependencies between drivers are broken or there some
+> scheduling primitives are not disabled properly.
 
-Usually you don't have to go that far, and the ECC requirements are
-encoded somewhere in the ID (after byte 2). When that's not the
-case, you may have to check the full ID.
+Correct. But on Spreadtrum platform there are some I2C slave devices
+(like some sensors), they do not care the system suspend, and we can
+not control them. So we can add this flag to make sure I2C driver can
+be accessed safely no matter considering other slaves's dependency
+like other drivers did (i2c-tegra.c, i2c-brcmstb.c and i2c-zx2967.c).
+Thanks for your comments.
 
-> Depending on what part you are using, it might already work.
-
-Yep.
+-- 
+Baolin.wang
+Best Regards
