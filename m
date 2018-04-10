@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48+HKINlP7se7zyP2DHlwZN/+q2AS7Q0pc5WzzOG4OnljTmPxs6rtc+VoRuWuMikoiJtKfN
-ARC-Seal: i=1; a=rsa-sha256; t=1523399800; cv=none;
+X-Google-Smtp-Source: AIpwx49cV4B2eePcuMuLHTHKOFDovKiYGXEkRnGHP/fdPPstapoz/Xc39Rif8V0gDkpFISzj1nLv
+ARC-Seal: i=1; a=rsa-sha256; t=1523399793; cv=none;
         d=google.com; s=arc-20160816;
-        b=oM5mF3AqUurMM5fTDAYZyAgc5o5c33jXEqGHCOnElhM9r0GXtRpuynonUmmh78AQ1T
-         jVsh8WF2zFp8mhe9XQJCJzWBjBU4+hARjlZavIy1xZn7xVjg0370g9iUq59NFjAH/LI9
-         zIORa6q+9JTdYPLidVlTQMbJpMlXgFwdPIutJkpXndn0dvglCAE0hI59JV2LVHV72uDL
-         Rgi4TfCOr55jG3ACgU/13WyAgrMtk6mScbSkySP7VVrJ+DBl/O2HtTxirzisYuAr7fZj
-         zJax8WwWIqKd1ZHGcJP5lMgjgtzQ08JTTWFhO6dEEiMIQ90llEAonHcY9RKWtFCtxGV+
-         UizQ==
+        b=I6EV8FawNjIX8xDLbnOj1xuRx2wpQpcFXh1sjO1RzuDT02GE3K5lHadnB2bGi+NCKZ
+         M0ZPsZYmngcjF+kUYjoZtOt813qKa5E6X1f/3GJ1y2w+02VjzrvGDrio9+D9h1W/zPtL
+         bHLLgNhrKfWqLgit1UPm6j2zBTSZLsr5ypt4JEFB8D8rFMZu7+BTzAmq5xZrQ4kd/ZqH
+         GaKb3Lum2WYI3YowD6ilGOQMpwbqjj/kvy9v/qh//yIfuD5/cDRi3k0vhe6W0gx6qIut
+         GS5S2rNaRNUqyYhjTqjs7wAW5Y0SOQlcBvVjds3pSBnJ3pvWUADAZi8mzyh5J02jvDce
+         dPkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UGkDYiOOpOelxj7AZg+76zPwMgtCNN2COgQcX+MeO6g=;
-        b=VYSHOydw6XT+zHPDFBQkJEzF8UQJGu/bVFmdkIynfZy8p7PrnMMER82DDiG7ZorTXa
-         vfwlbxGfNZTGZ94WTEV3WmtWSfK6+BQ6I/ErL7YOMT2CuKjKA6stRbbK8Wjqp8vcz+R9
-         bIvdInNJlfs1aZq+fDf7CauZc7x3NOcXH5wF6nhJvlOo6tZOW4Esk4M+iUtm/9dzi5Ll
-         g3UQSQHcq2L3sRIlLWutmTHEfi/0Q/XX2bqTuRGAUAVpvbpRyMeTzK72VG0VJWEaYtpf
-         +t+7YNXdhItfEZSKSJvQNlJ1Q5P3NjCvQxOoZ5vewL/jdZEvmlUNNhIAdkDsGNhcYvHp
-         k7JA==
+        bh=i/AvWV2jDA6UxViYdmX/wj185ZrRn3hSbDhnZ1BdI6U=;
+        b=XlMIEwSi4TxappNYI2Q+erdoB+0X0UPRqZJOthY+2NbRVMMebnTLtvvnUGNRZ9l+j9
+         c0dbV82S+laYt+IBXKg/44cMkaZi6S5fqcwv0I88DsoH1gv03+wtxaY4tlKwya5fUW+o
+         aO+Q6h68KQnr47uJZuqIG5RutvVjt6wgCwWwbxTITh7yUu6EZf/Vn9pPOyzJ1O6TnvOM
+         wNsZSU6eALWrrKoS2cuE5TD0GUyE8kpFegJGuk20Gksd26VvoIY6gH5U9C3TbSPI+wQC
+         9TBUHzeKIozqj2Gb1eQ+iKph45dUWc2SW8I/zC4gmRssnAY5nOAVfV25bQFL8C6O1vu0
+         oKnQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	chenxiang <chenxiang66@hisilicon.com>,
-	John Garry <john.garry@huawei.com>,
-	Jason Yan <yanaijie@huawei.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Hannes Reinecke <hare@suse.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Mark Brown <broonie@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 062/138] scsi: libsas: initialize sas_phy status according to response of DISCOVER
-Date: Wed, 11 Apr 2018 00:24:12 +0200
-Message-Id: <20180410212909.329692446@linuxfoundation.org>
+Subject: [PATCH 4.14 048/138] ASoC: Intel: sst: Fix the return value of sst_send_byte_stream_mrfld()
+Date: Wed, 11 Apr 2018 00:23:58 +0200
+Message-Id: <20180410212907.679789760@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -45,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400062767198893?=
-X-GMAIL-MSGID: =?utf-8?q?1597400469219879771?=
+X-GMAIL-THRID: =?utf-8?q?1597399961609133580?=
+X-GMAIL-MSGID: =?utf-8?q?1597400462037141950?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,42 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: chenxiang <chenxiang66@hisilicon.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit affc67788fe5dfffad5cda3d461db5cf2b2ff2b0 ]
+[ Upstream commit eaadb1caa966a91128297b754e90b7c92b350a00 ]
 
-The status of SAS PHY is in sas_phy->enabled. There is an issue that the
-status of a remote SAS PHY may be initialized incorrectly: if disable
-remote SAS PHY through sysfs interface (such as echo 0 >
-/sys/class/sas_phy/phy-1:0:0/enable), then reboot the system, and we
-will find the status of remote SAS PHY which is disabled before is
-1 (cat /sys/class/sas_phy/phy-1:0:0/enable). But actually the status of
-remote SAS PHY is disabled and the device attached is not found.
+In some error handling paths, an error code is assiegned to 'ret'.
+However, the function always return 0.
 
-In SAS protocol, NEGOTIATED LOGICAL LINK RATE field of DISCOVER response
-is 0x1 when remote SAS PHY is disabled. So initialize sas_phy->enabled
-according to the value of NEGOTIATED LOGICAL LINK RATE field.
+Fix it and return the error code if such an error paths is taken.
 
-Signed-off-by: chenxiang <chenxiang66@hisilicon.com>
-Reviewed-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 3d9ff34622ba ("ASoC: Intel: sst: add stream operations")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/libsas/sas_expander.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/intel/atom/sst/sst_stream.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/libsas/sas_expander.c
-+++ b/drivers/scsi/libsas/sas_expander.c
-@@ -293,6 +293,7 @@ static void sas_set_ex_phy(struct domain
- 	phy->phy->minimum_linkrate = dr->pmin_linkrate;
- 	phy->phy->maximum_linkrate = dr->pmax_linkrate;
- 	phy->phy->negotiated_linkrate = phy->linkrate;
-+	phy->phy->enabled = (phy->linkrate != SAS_PHY_DISABLED);
+--- a/sound/soc/intel/atom/sst/sst_stream.c
++++ b/sound/soc/intel/atom/sst/sst_stream.c
+@@ -221,7 +221,7 @@ int sst_send_byte_stream_mrfld(struct in
+ 		sst_free_block(sst_drv_ctx, block);
+ out:
+ 	test_and_clear_bit(pvt_id, &sst_drv_ctx->pvt_id);
+-	return 0;
++	return ret;
+ }
  
-  skip:
- 	if (new_phy)
+ /*
