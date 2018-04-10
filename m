@@ -1,113 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752099AbeDJCeJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 22:34:09 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:36187 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752065AbeDJCeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 22:34:08 -0400
-Subject: Re: [PATCH] f2fs: enlarge block plug coverage
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20180404085404.82184-1-yuchao0@huawei.com>
- <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
- <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
- <20180409180241.GC17558@jaegeuk-macbookpro.roam.corp.google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <967b8819-da9a-b609-6a22-db8df5c7ec6c@huawei.com>
-Date: Tue, 10 Apr 2018 10:34:04 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1751775AbeDJCiX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 22:38:23 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:43311 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751550AbeDJCiV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 22:38:21 -0400
+X-Google-Smtp-Source: AIpwx48pYVsk1woJuJoS37Yu2jidkQHdLhq6sr4Wjzi3kC3qaqClyn2fMOYVvXuPsJK9n5p+wJMBMJ6wPcDwpL2GIUA=
 MIME-Version: 1.0
-In-Reply-To: <20180409180241.GC17558@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAMuHMdUy6C4OoGF44e_34+XjsQHe6RwfoesfBzcM8baEHUwzXw@mail.gmail.com>
+References: <cover.1522546571.git.fthain@telegraphics.com.au>
+ <cdba869f704b457bc617007738870b9e1bdef9d3.1522546571.git.fthain@telegraphics.com.au>
+ <CAMuHMdUy6C4OoGF44e_34+XjsQHe6RwfoesfBzcM8baEHUwzXw@mail.gmail.com>
+From: Michael Schmitz <schmitzmic@gmail.com>
+Date: Tue, 10 Apr 2018 14:38:21 +1200
+Message-ID: <CAOmrzkL4BCoKZ64-scfqcF5XsyeQLhC+XdG3V--3YWzq7WSfoA@mail.gmail.com>
+Subject: Re: [PATCH 03/12] m68k/mac: Don't remap SWIM MMIO region
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Finn Thain <fthain@telegraphics.com.au>,
+        Laurent Vivier <lvivier@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/10 2:02, Jaegeuk Kim wrote:
-> On 04/08, Chao Yu wrote:
->> On 2018/4/5 11:51, Jaegeuk Kim wrote:
->>> On 04/04, Chao Yu wrote:
->>>> This patch enlarges block plug coverage in __issue_discard_cmd, in
->>>> order to collect more pending bios before issuing them, to avoid
->>>> being disturbed by previous discard I/O in IO aware discard mode.
->>>
->>> Hmm, then we need to wait for huge discard IO for over 10 secs, which
->>
->> We found that total discard latency is rely on total discard number we issued
->> last time instead of range or length discard covered. IMO, if we don't change
->> .max_requests value, we will not suffer longer latency.
->>
->>> will affect following read/write IOs accordingly. In order to avoid that,
->>> we actually need to limit the discard size.
+Hi Geert,
 
-Do you mean limit discard count or discard length?
+I haven't seen that weird behaviour in quite some time - we discussed
+changing the arch_initcall to some later priority at that time but I
+never got around to trying that. No change to mappings in head.S
+either as far as I could see.
 
+Was there any rearrangement of MM init relative to arch init since?
+
+Cheers,
+
+  Michael
+
+
+On Tue, Apr 10, 2018 at 12:54 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Hi Finn,
+>
+> On Sun, Apr 1, 2018 at 3:41 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
+>> For reasons I don't understand, calling ioremap() then iounmap() on
+>> the SWIM MMIO region causes a hang on 68030 (but not on 68040).
+>
+> Michael Schmitz also notices strange things with ioremap() on '030.
+>
+>> There's no need to call ioremap() for the SWIM address range, as it lies
+>> within the usual IO device region at 0x5000 0000, which is already mapped.
+>
+> by head.S, right?
+>
+>> --- a/drivers/block/swim.c
+>> +++ b/drivers/block/swim.c
+>> @@ -911,7 +911,7 @@ static int swim_probe(struct platform_device *dev)
+>>                 goto out;
+>>         }
 >>
->> If you are worry about I/O interference in between discard and rw, I suggest to
->> decrease .max_requests value.
-> 
-> What do you mean? This will produce more pending requests in the queue?
-
-I mean after applying this patch, we can queue more discard IOs in plug inside
-task, otherwise, previous issued discard in block layer can make is_idle() be false,
-then it can stop IO awared user to issue pending discard command.
-
-Thanks,
-
-> 
->>
->> Thanks,
->>
->>>
->>> Thanks,
->>>
->>>>
->>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>> ---
->>>>  fs/f2fs/segment.c | 7 +++++--
->>>>  1 file changed, 5 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>> index 8f0b5ba46315..4287e208c040 100644
->>>> --- a/fs/f2fs/segment.c
->>>> +++ b/fs/f2fs/segment.c
->>>> @@ -1208,10 +1208,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>>>  		pend_list = &dcc->pend_list[i];
->>>>  
->>>>  		mutex_lock(&dcc->cmd_lock);
->>>> +
->>>> +		blk_start_plug(&plug);
->>>> +
->>>>  		if (list_empty(pend_list))
->>>>  			goto next;
->>>>  		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
->>>> -		blk_start_plug(&plug);
->>>>  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
->>>>  			f2fs_bug_on(sbi, dc->state != D_PREP);
->>>>  
->>>> @@ -1227,8 +1229,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>>>  			if (++iter >= dpolicy->max_requests)
->>>>  				break;
->>>>  		}
->>>> -		blk_finish_plug(&plug);
->>>>  next:
->>>> +		blk_finish_plug(&plug);
->>>> +
->>>>  		mutex_unlock(&dcc->cmd_lock);
->>>>  
->>>>  		if (iter >= dpolicy->max_requests)
->>>> -- 
->>>> 2.15.0.55.gc2ece9dc4de6
->>>
->>> .
->>>
-> 
-> .
-> 
+>> -       swim_base = ioremap(res->start, resource_size(res));
+>> +       swim_base = (struct swim __iomem *)res->start;
+>
+> I guess you need a __force to please sparse?
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-m68k" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
