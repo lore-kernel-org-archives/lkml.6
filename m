@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4958kq6uglnwzeR8T4Z/ZPR1I3vxz6ttyCFQa7a6ooT4Spp/I5UwrU+6Bb6HGHfiYjE2B6+
-ARC-Seal: i=1; a=rsa-sha256; t=1523399676; cv=none;
+X-Google-Smtp-Source: AIpwx4/yT0zuEEoyMd8Fadn5hsx+aEOBqgOLTb8osvZs+C3gMRTnUpt3mgjVTSEdeVQ61iAG4t0x
+ARC-Seal: i=1; a=rsa-sha256; t=1523399673; cv=none;
         d=google.com; s=arc-20160816;
-        b=Lqmyx5s4qCwV77SrMQSpBrYsmhn9AMaqMwtDk+iHb5Amu1F6KK3IXarSdCh6HCtnai
-         Bd4WHHQSI8CcM0q+8ObaJAmS7kcEvcTf9N8/KSas+6miXQugZ9r5Bhh+r8bzbBZ8IetL
-         CvJ4OEWiFP5q/J++2dUPJwiDPs1j172uk5jQyjBkfFUNsHKr+NUPX+783y9CU6bV4JgG
-         2mhZ+qxcl6X/UC+f6DLTsL7oawZ3MLRm355hbiFMnZxgdTVUffSY+mICn333s7x94FEU
-         aXOEh/+zm15x9PLfL2LTjzuVEJmciMXvc05W22j/VF9Y+eXVGJfg5wTPXBtqKdC1XJNq
-         +tRg==
+        b=0bW22cwW0AeBM/dCoa3X+e/bQlmo8XtwE22OkOa/i1uq0dCww4XWP6DPcdl/C0AlQJ
+         q4MRXZx+RdLOqkvBTlRvUAZuqls3J3hxH75tzAT+8rweKJ/OOlf8Bj5q05F15QNGfjKt
+         ZHUITCxFKjlBsFvhp5gqbMMsOmN0bK4NFWfMfcX8Rc9orvVjt1u3cCa0vRwU/rxktBui
+         nohr8HI7ipEwclo+hzU1Crn/6hlmhUZwBiH56zYM9Vt5oFmoiHjcznAL2M4+hprjCPaD
+         c+4mQrU4gEpcyqubxO6fq+JoLQe7RvbhhiVcYZgq2q3vVLMQa9SEB0Meu+H2ylEqJ8zX
+         JQRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=0Ryogu9M8NVamZMxwPTEWuNB5hrtz+WYd2ciZlM4C8w=;
-        b=JQTnMSBCrEPBP2t24mb6TyG1F9wpHQiN5Pfj9hPj4ZYSy0o3g9flvq660m/mvJWCLM
-         LL2uT0h4ScAcXvNNMelSZno2LjzChH7bgAQkMtb5BMFC+bl4U0+W/UxPy+atCR2J1gIw
-         YK6e3zX3t7olAVeG0+U6NtqJJbvB0w9VZcw3k3XYagtCmze22Z0dRf8Z6I31IstoAJl+
-         cifQtyACOkXfZXOlgfnuBIwTdgS+iE3td6Iqk0vPau1Jz6cRbS7UmhLOOGzeimLOd3cX
-         X72qf9KApDoPyo5r7Fw5wqGXjyMBP1SeD22QXmPXQ9A8T9cjdTCph1VgOD348MTMJawo
-         j5MQ==
+        bh=FaxGGyQ9e01tZvkoe7dWlnh3ALvDW6hEg1ncY6DwnVw=;
+        b=Yd6xqB2PPjlu504JE8tlLR+hlgVv+hCIDmVaVox+jLR/1v5WyHDV38C8RGaIxTqSbg
+         MLwWkidh8K0KU6Af4iqqYRxNIVI2DF3y49tQa7LS51bwkNOIGbXda23Jt1IG+7dup55g
+         CnRLe9GC488jar0w870o5AIqawYtjfYsX8AhIAnbtHn+95F3PCMwT9Iw0XCa7fvEwWxZ
+         WwQeTiul7gH31DLFlNwp1nuiMn9LDVJecn97MNq5t630E7JxG16MkkAI4rORp07Tx3oh
+         e3Jz5rHF6AUmamu53RQ8jWwiEevEPKOmDjCTRGVj67eykxN5LIeFcSjuC1KcEIh9OGZf
+         FvrQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Leon Romanovsky <leonro@mellanox.com>,
-	Jason Gunthorpe <jgg@mellanox.com>,
+	Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+	Shawn Guo <shawnguo@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 023/138] RDMA/cma: Mark end of CMA ID messages
-Date: Wed, 11 Apr 2018 00:23:33 +0200
-Message-Id: <20180410212904.832231974@linuxfoundation.org>
+Subject: [PATCH 4.14 005/138] ARM: dts: ls1021a: add "fsl,ls1021a-esdhc" compatible string to esdhc node
+Date: Wed, 11 Apr 2018 00:23:15 +0200
+Message-Id: <20180410212902.713448661@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399861846819457?=
-X-GMAIL-MSGID: =?utf-8?q?1597400339257697041?=
+X-GMAIL-THRID: =?utf-8?q?1597399809934543808?=
+X-GMAIL-MSGID: =?utf-8?q?1597400336373107637?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,31 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
 
 
-[ Upstream commit e48e5e198fb6ec77c91047a694022f0fefa45292 ]
+[ Upstream commit d5c7b4d5ac2237a6da7ced3adfe6b8bf769f8cc6 ]
 
-The commit 1a1c116f3dcf ("RDMA/netlink: Simplify the put_msg and put_attr")
-removes nlmsg_len calculation in ibnl_put_attr causing netlink messages and
-caused to miss source and destination addresses.
+Commit a22950c888e3 (mmc: sdhci-of-esdhc: add quirk
+SDHCI_QUIRK_BROKEN_TIMEOUT_VAL for ls1021a) added logic to the driver to
+enable the broken timeout val quirk for ls1021a, but did not add the
+corresponding compatible string to the device tree, so it didn't really
+have any effect. Fix that.
 
-Fixes: 1a1c116f3dcf ("RDMA/netlink: Simplify the put_msg and put_attr")
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/cma.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/ls1021a.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -4453,6 +4453,7 @@ static int cma_get_id_stats(struct sk_bu
- 			id_stats->qp_type	= id->qp_type;
+--- a/arch/arm/boot/dts/ls1021a.dtsi
++++ b/arch/arm/boot/dts/ls1021a.dtsi
+@@ -155,7 +155,7 @@
+ 		};
  
- 			i_id++;
-+			nlmsg_end(skb, nlh);
- 		}
- 
- 		cb->args[1] = 0;
+ 		esdhc: esdhc@1560000 {
+-			compatible = "fsl,esdhc";
++			compatible = "fsl,ls1021a-esdhc", "fsl,esdhc";
+ 			reg = <0x0 0x1560000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-frequency = <0>;
