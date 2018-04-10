@@ -1,161 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751875AbeDJGJj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 02:09:39 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49262 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751490AbeDJGJi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 02:09:38 -0400
+        id S1751916AbeDJGOw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 02:14:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33197 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751490AbeDJGOv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 02:14:51 -0400
+Date: Tue, 10 Apr 2018 08:14:47 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal
+ OOM_SCORE_ADJ_MIN
+Message-ID: <20180410061447.GQ21835@dhcp22.suse.cz>
+References: <1523153783-20579-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+ <20180407234812.2bf2b24b@gandalf.local.home>
+ <CAGWkznHVGTpvfQOvaOGP6fYDWh0Os0pYXTC3gG_qvW6mCDuybQ@mail.gmail.com>
+ <20180408084717.62ee4f9e@gandalf.local.home>
+ <CAGWkznEQbaw7HMvE1pbVDMriOL8yW74Ka5UEci4YFRdLnVbFzA@mail.gmail.com>
+ <20180409094944.6399b211@gandalf.local.home>
+ <CAGWkznEhy7Fard=6E3X_qUezXd33RdKV9CVeONWL=6EQ1bokEw@mail.gmail.com>
+ <CAGWkznEuGCZq600XjCtp3hzgN2LrCgwSAfoLwQR7jTw5p=qHoQ@mail.gmail.com>
+ <20180409231230.1ab99e85@vmware.local.home>
+ <CAGWkznG8-zmfE5iqPUVP+sztasa1zLPWE28qBiZ_tq524JznPw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Tue, 10 Apr 2018 11:39:35 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 1/9] mtd: nand: qcom: use the ecc strength from device
- parameter
-In-Reply-To: <20180406143133.67f33d33@xps13>
-References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
- <1522845745-6624-2-git-send-email-absahu@codeaurora.org>
- <20180406143133.67f33d33@xps13>
-Message-ID: <23c8330d00d4d9b62c4c1ab597cbb22b@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGWkznG8-zmfE5iqPUVP+sztasa1zLPWE28qBiZ_tq524JznPw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-06 18:01, Miquel Raynal wrote:
-> Hi Abhishek,
-> 
-> On Wed,  4 Apr 2018 18:12:17 +0530, Abhishek Sahu
-> <absahu@codeaurora.org> wrote:
-> 
->> Currently the driver uses the ECC strength specified in
->> device tree. The ONFI or JEDEC device parameter page
->> contains the ‘ECC correctability’ field which indicates the
->> number of bits that the host should be able to correct per
->> 512 bytes of data.
-> 
-> This is misleading. This field is not about the controller but rather
-> the chip requirements in terms of minimal strength for nominal use.
-> 
+On Tue 10-04-18 11:41:44, Zhaoyang Huang wrote:
+> On Tue, Apr 10, 2018 at 11:12 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> > On Tue, 10 Apr 2018 10:32:36 +0800
+> > Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
+> >
+> >> For bellowing scenario, process A have no intension to exhaust the
+> >> memory, but will be likely to be selected by OOM for we set
+> >> OOM_CORE_ADJ_MIN for it.
+> >> process A(-1000)                                          process B
+> >>
+> >>   i = si_mem_available();
+> >>        if (i < nr_pages)
+> >>            return -ENOMEM;
+> >>                                                    schedule
+> >>                                                 --------------->
+> >> allocate huge memory
+> >>                                                 <-------------
+> >> if (user_thread)
+> >>   set_current_oom_origin();
+> >>
+> >>   for (i = 0; i < nr_pages; i++) {
+> >>          bpage = kzalloc_node
+> >
+> > Is this really an issue though?
+> >
+> > Seriously, do you think you will ever hit this?
+> >
+> > How often do you increase the size of the ftrace ring buffer? For this
+> > to be an issue, the system has to trigger an OOM at the exact moment
+> > you decide to increase the size of the ring buffer. That would be an
+> > impressive attack, with little to gain.
+> >
+> > Ask the memory management people. If they think this could be a
+> > problem, then I'll be happy to take your patch.
+> >
+> > -- Steve
+> add Michael for review.
+> Hi Michael,
+> I would like suggest Steve NOT to set OOM_CORE_ADJ_MIN for the process
+> with adj = -1000 when setting the user space process as potential
+> victim of OOM.
 
-  Thanks Miquel.
+OOM_SCORE_ADJ_MIN means "hide the process from the OOM killer completely".
+So what exactly do you want to achieve here? Because from the above it
+sounds like opposite things. /me confused...
 
-  Yes. Its NAND chip requirement. I have used the description for
-  NAND ONFI param page
-
-  5.6.1.24. Byte 112: Number of bits ECC correctability
-  This field indicates the number of bits that the host should be
-  able to correct per 512 bytes of data.
-
->> The ecc correctability is assigned in
->> chip parameter during device probe time. QPIC/EBI2 NAND
->> supports 4/8-bit ecc correction. The Same kind of board
->> can have different NAND parts so use the ecc strength
->> from device parameter (if its non zero) instead of
->> device tree.
-> 
-> That is not what you do.
-> 
-> What you do is forcing the strength to be 8-bit per ECC chunk if the
-> NAND chip requires at least 8-bit/chunk strength.
-> 
-> The DT property is here to force a strength. Otherwise, Linux will
-> propose to the NAND controller to use the minimum strength required by
-> the chip (from either the ONFI/JEDEC parameter page or from a static
-> table).
-> 
-
-  The main problem is that the same kind of boards can have different
-  NAND parts.
-
-  Lets assume, we have following 2 cases.
-
-  1. Non ONFI/JEDEC device for which chip->ecc_strength_ds
-     will be zero. In this case, the ecc->strength from DT
-     will be used
-  2. ONFI/JEDEC device for which chip->ecc_strength_ds > 8.
-     Since QCOM nand controller can not support
-     ECC correction greater than 8 bits so we can use 8 bit ECC
-     itself instead of failing NAND boot completely.
-
-> IMHO, you have two solutions:
-> 1/ Remove these properties from the board DT (breaks DT backward
-> compatibility though);
-
-  - nand-ecc-strength: This is optional property in nand.txt and
-    Required property in qcom_nandc.txt. We can't remove since
-    if the device is Non ONFI/JEDEC, then ecc strength will come
-    from DT only.
-
-> 2/ Create another DT for the board.
-> 
-
-  Its not about board but about part. We have IPQ8074 HK01 board
-  with 4 bit ECC chip/8 bit ECC chip/non ONFI/JEDEC chip.
-
-> However, there is something to do in this driver: the strength chosen
-> should be limited to the controller capabilities (8-bit/512B if I
-> understand correctly). In this case you have two options: either you
-> limit the strength like the size [1] if (ecc->strength > 8);
-
-  Limiting the strength will make all the boards with ecc strength > 8
-  to fail completely
-
-> just limit the maximum strength to 8 like this [2] and the core will
-> spawn a warning in the dmesg telling that the ECC strength used is
-> below the NAND chip requirements.
-
-  Yes its good idea. I can update the patch with dmesg warning.
-
-  Thanks,
-  Abhishek
-
-> 
-> Thanks,
-> Miquèl
-> 
-> [1]
-> https://elixir.bootlin.com/linux/latest/source/drivers/mtd/nand/qcom_nandc.c#L2332
-> [2] http://code.bulix.org/nyf63w-315268
-> 
-> 
->> 
->> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->> ---
->>  drivers/mtd/nand/qcom_nandc.c | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->> 
->> diff --git a/drivers/mtd/nand/qcom_nandc.c 
->> b/drivers/mtd/nand/qcom_nandc.c
->> index 563b759..8dd40de 100644
->> --- a/drivers/mtd/nand/qcom_nandc.c
->> +++ b/drivers/mtd/nand/qcom_nandc.c
->> @@ -2334,6 +2334,14 @@ static int qcom_nand_host_setup(struct 
->> qcom_nand_host *host)
->>  		return -EINVAL;
->>  	}
->> 
->> +	/*
->> +	 * Read the required ecc strength from NAND device and overwrite
->> +	 * the device tree ecc strength for devices which require
->> +	 * ecc correctability bits >= 8
->> +	 */
->> +	if (chip->ecc_strength_ds >= 8)
->> +		ecc->strength = 8;
->> +
->>  	wide_bus = chip->options & NAND_BUSWIDTH_16 ? true : false;
->> 
->>  	if (ecc->strength >= 8) {
+-- 
+Michal Hocko
+SUSE Labs
