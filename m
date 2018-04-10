@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+9DbIdpr6hxaPTI9Hikjf2fFK2cMAzM0tT9hldEAzpfVxMQgpG4J2GbKCLZYWECJklCL5z
-ARC-Seal: i=1; a=rsa-sha256; t=1523399355; cv=none;
+X-Google-Smtp-Source: AIpwx48ciFQa5OToaGXPC/l5GQWV/E8bqu7VbkmSodAjT0J0psZFBwFV4YJgJ+x5bvQLnHOhhqk1
+ARC-Seal: i=1; a=rsa-sha256; t=1523399352; cv=none;
         d=google.com; s=arc-20160816;
-        b=lx9nT3pzll/DUH3NrDK2eEPDCsCsx51MMZ6HZp4UQQaYHDpcKBZ5d/RAYO4FkaUieD
-         hQqKKoxk1347UH5cQqd2Df/holA3EWdq9AAkvKTUZrCHWi6ETvjzlRawFnGDTsPJENlu
-         cD0dkrPpvQGDwQomTRSkaeivwKcN/0kurkUyMUsl5YlbFjO5WzcrSpq71KB5grliWrCI
-         RzOFzgS4iWH0/qKV6M2lZir/I5ySyJ1lSe8wXjeUH/D413w8YZfEMlhth5jHsM1QmTzq
-         bgtUj9UnY01AhVoCVXtBTj+jJJgi98lSbJNW29wb/WNWjoy/jvAr/eNyFEb9hJ4GNCfl
-         LyWw==
+        b=HVM/u7UPWrBfn4sBqnGh0IxZ4orcfm3/hvnEzzY5obxtd2DmQp0/pOh42yqERK6Lww
+         mnYnALsT5/EtyqyOoIkv4z2xVsANw3sqb5HU7H2sgAVS1qeEKLyrqPlV+6jL7fUIUeOo
+         YIfN7uZC6pinypxH+S3c1tFMEDH0NBxaAerfB3Z6AXLsYrFQcm7oeBBDcIwepDo3Yyuc
+         EgHnUzcBRREODlOzvqADcTx8qj0bp+oYmnFQkqRAfBuvMheo/dItgmuB6dux342sRT6g
+         pmkvujEq9o68Ys3gtLLeBqrLtamitxUvFmWwfyUBa33EnyrVsv2dIU9fsvaQHgUpFg5L
+         s4jA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=0bdZ2W7o21NOUT65l7Ul++mGqi2sRI7VbdXuzcI9qsY=;
-        b=nEBHgrMiOJsoLeSPK7gz8bC1OSh33sy2BP4IMoAitufIxjbZjA7op8Tlpwj45o4Xa9
-         2Tt+8lgJM2fFIQPi+pmh7jkBBnjWD1R6iMax/8sUoyUmPIVbou2hnC39SlTPXrzSZKLN
-         LTL0ZnOMUNCl3chGwS+iAdqsXBKwCB702RHS4++Kop0oRkc2nbbKZLk2A+bY5bIC6+Rj
-         3UdV63a+Gapq7llrccJ3woy0+b+9PvQ2XeImI2hJWmhNjXJScBhXTtkvOza9kN0gcDHr
-         szPyOQco3nwGnUZclaQlwwKAenQdbmyogfdD4i4ctSJB7hqRrM/jbHWh2WVz/h5PnIjT
-         lRFg==
+        bh=2W3g3E3oHEL+idXNgy5S3hU/5WgpZCOpxhep77uJ7G4=;
+        b=ghkcc83OCJ/CVK/M5Qk9HKsA4OQcQaBHkNflq7+Qs+seoXW8vC376gRER3wtbjjt1Q
+         pSoiO3EqWyBPtp9Sdo7MDio9tbrIeYEr54B9K0veBSHsFA1vZ1GOdFlPxOh0J6Tg+dnj
+         QwbqrlsgKKO/oT6N75xCMz1jAbK9o7PDJlOeLxP5m7hf1GW76zQYVSxdjwkXW89IwSq6
+         uhXVXV2uGZi4OcEcSMmNpIWiNvkAsgKze0U+N32O+W3FDnV6YdKim5AX2XjLy7TzEtn9
+         nQL31+jtzCJyd/u1CZqQsVDZl3/eHsirWLwIpHdEUiB9T1rHxMnmlNWnMCuxw1QG18gK
+         IC3w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	James Smart <james.smart@broadcom.com>,
 	Christoph Hellwig <hch@lst.de>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 059/168] nvme_fcloop: fix abort race condition
-Date: Wed, 11 Apr 2018 00:23:21 +0200
-Message-Id: <20180410212802.716886067@linuxfoundation.org>
+Subject: [PATCH 4.15 058/168] nvme_fcloop: disassocate local port structs
+Date: Wed, 11 Apr 2018 00:23:20 +0200
+Message-Id: <20180410212802.680195717@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400002066547044?=
-X-GMAIL-MSGID: =?utf-8?q?1597400002066547044?=
+X-GMAIL-THRID: =?utf-8?q?1597399999553319289?=
+X-GMAIL-MSGID: =?utf-8?q?1597399999553319289?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,59 +53,121 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: James Smart <jsmart2021@gmail.com>
 
 
-[ Upstream commit 278e096063f1914fccfc77a617be9fc8dbb31b0e ]
+[ Upstream commit 6fda20283e55b9d288cd56822ce39fc8e64f2208 ]
 
-A test case revealed a race condition of an i/o completing on a thread
-parallel to the delete_association generating the aborts for the
-outstanding ios on the controller.  The i/o completion was freeing the
-target fcloop context, thus the abort task referenced the just-freed
-memory.
+The current fcloop driver gets its lport structure from the private
+area co-allocated with the fc_localport. All is fine except the
+teardown path, which wants to wait on the completion, which is marked
+complete by the delete_localport callback performed after
+unregister_localport.  The issue is, the nvme_fc transport frees the
+localport structure immediately after delete_localport is called,
+meaning the original routine is trying to wait on a complete that
+was just freed.
 
-Correct by clearing the target/initiator cross pointers in the io
-completion and abort tasks before calling the callbacks. On aborts
-that detect already finished io's, ensure the complete context is
-called.
+Change such that a lport struct is allocated coincident with the
+addition and registration of a localport. The private area of the
+localport now contains just a backpointer to the real lport struct.
+Now, the completion can be waited for, and after completing, the
+new structure can be kfree'd.
 
 Signed-off-by: James Smart <james.smart@broadcom.com>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/target/fcloop.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/nvme/target/fcloop.c |   35 +++++++++++++++++++++++++----------
+ 1 file changed, 25 insertions(+), 10 deletions(-)
 
 --- a/drivers/nvme/target/fcloop.c
 +++ b/drivers/nvme/target/fcloop.c
-@@ -374,6 +374,7 @@ fcloop_tgt_fcprqst_done_work(struct work
+@@ -204,6 +204,10 @@ struct fcloop_lport {
+ 	struct completion unreg_done;
+ };
  
- 	spin_lock(&tfcp_req->reqlock);
- 	fcpreq = tfcp_req->fcpreq;
-+	tfcp_req->fcpreq = NULL;
- 	spin_unlock(&tfcp_req->reqlock);
- 
- 	if (tport->remoteport && fcpreq) {
-@@ -615,11 +616,7 @@ fcloop_fcp_abort(struct nvme_fc_local_po
- 
- 	if (!tfcp_req)
- 		/* abort has already been called */
--		return;
--
--	if (rport->targetport)
--		nvmet_fc_rcv_fcp_abort(rport->targetport,
--					&tfcp_req->tgt_fcp_req);
-+		goto finish;
- 
- 	/* break initiator/target relationship for io */
- 	spin_lock(&tfcp_req->reqlock);
-@@ -627,6 +624,11 @@ fcloop_fcp_abort(struct nvme_fc_local_po
- 	tfcp_req->fcpreq = NULL;
- 	spin_unlock(&tfcp_req->reqlock);
- 
-+	if (rport->targetport)
-+		nvmet_fc_rcv_fcp_abort(rport->targetport,
-+					&tfcp_req->tgt_fcp_req);
++struct fcloop_lport_priv {
++	struct fcloop_lport *lport;
++};
 +
-+finish:
- 	/* post the aborted io completion */
- 	fcpreq->status = -ECANCELED;
- 	schedule_work(&inireq->iniwork);
+ struct fcloop_rport {
+ 	struct nvme_fc_remote_port *remoteport;
+ 	struct nvmet_fc_target_port *targetport;
+@@ -657,7 +661,8 @@ fcloop_nport_get(struct fcloop_nport *np
+ static void
+ fcloop_localport_delete(struct nvme_fc_local_port *localport)
+ {
+-	struct fcloop_lport *lport = localport->private;
++	struct fcloop_lport_priv *lport_priv = localport->private;
++	struct fcloop_lport *lport = lport_priv->lport;
+ 
+ 	/* release any threads waiting for the unreg to complete */
+ 	complete(&lport->unreg_done);
+@@ -697,7 +702,7 @@ static struct nvme_fc_port_template fcte
+ 	.max_dif_sgl_segments	= FCLOOP_SGL_SEGS,
+ 	.dma_boundary		= FCLOOP_DMABOUND_4G,
+ 	/* sizes of additional private data for data structures */
+-	.local_priv_sz		= sizeof(struct fcloop_lport),
++	.local_priv_sz		= sizeof(struct fcloop_lport_priv),
+ 	.remote_priv_sz		= sizeof(struct fcloop_rport),
+ 	.lsrqst_priv_sz		= sizeof(struct fcloop_lsreq),
+ 	.fcprqst_priv_sz	= sizeof(struct fcloop_ini_fcpreq),
+@@ -728,11 +733,17 @@ fcloop_create_local_port(struct device *
+ 	struct fcloop_ctrl_options *opts;
+ 	struct nvme_fc_local_port *localport;
+ 	struct fcloop_lport *lport;
+-	int ret;
++	struct fcloop_lport_priv *lport_priv;
++	unsigned long flags;
++	int ret = -ENOMEM;
++
++	lport = kzalloc(sizeof(*lport), GFP_KERNEL);
++	if (!lport)
++		return -ENOMEM;
+ 
+ 	opts = kzalloc(sizeof(*opts), GFP_KERNEL);
+ 	if (!opts)
+-		return -ENOMEM;
++		goto out_free_lport;
+ 
+ 	ret = fcloop_parse_options(opts, buf);
+ 	if (ret)
+@@ -752,23 +763,25 @@ fcloop_create_local_port(struct device *
+ 
+ 	ret = nvme_fc_register_localport(&pinfo, &fctemplate, NULL, &localport);
+ 	if (!ret) {
+-		unsigned long flags;
+-
+ 		/* success */
+-		lport = localport->private;
++		lport_priv = localport->private;
++		lport_priv->lport = lport;
++
+ 		lport->localport = localport;
+ 		INIT_LIST_HEAD(&lport->lport_list);
+ 
+ 		spin_lock_irqsave(&fcloop_lock, flags);
+ 		list_add_tail(&lport->lport_list, &fcloop_lports);
+ 		spin_unlock_irqrestore(&fcloop_lock, flags);
+-
+-		/* mark all of the input buffer consumed */
+-		ret = count;
+ 	}
+ 
+ out_free_opts:
+ 	kfree(opts);
++out_free_lport:
++	/* free only if we're going to fail */
++	if (ret)
++		kfree(lport);
++
+ 	return ret ? ret : count;
+ }
+ 
+@@ -790,6 +803,8 @@ __wait_localport_unreg(struct fcloop_lpo
+ 
+ 	wait_for_completion(&lport->unreg_done);
+ 
++	kfree(lport);
++
+ 	return ret;
+ }
+ 
