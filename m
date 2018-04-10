@@ -1,87 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753187AbeDJTgg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 15:36:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753154AbeDJTge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 15:36:34 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15446217BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Tue, 10 Apr 2018 14:36:31 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Desnes A. Nunes do Rosario" <desnesn@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com
-Subject: Re: [PATCH, RESEND, pci, v2] pci: Delete PCI disabling informational
- messages
-Message-ID: <20180410193631.GC54986@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180404151035.12140-1-desnesn@linux.vnet.ibm.com>
+        id S1753219AbeDJTh2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 15:37:28 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38426 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752668AbeDJTh1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 15:37:27 -0400
+Date: Tue, 10 Apr 2018 21:37:08 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>
+Subject: Re: [PATCH v2] cpufreq/schedutil: Cleanup, document and fix iowait
+ boost
+Message-ID: <20180410193708.GE4043@hirez.programming.kicks-ass.net>
+References: <20180410155931.31973-1-patrick.bellasi@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180404151035.12140-1-desnesn@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180410155931.31973-1-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 12:10:35PM -0300, Desnes A. Nunes do Rosario wrote:
-> The disabling informational messages on the PCI subsystem should be deleted
-> since they do not represent any real value for the system logs.
+On Tue, Apr 10, 2018 at 04:59:31PM +0100, Patrick Bellasi wrote:
+> The iowait boosting code has been recently updated to add a progressive
+> boosting behavior which allows to be less aggressive in boosting tasks
+> doing only sporadic IO operations, thus being more energy efficient for
+> example on mobile platforms.
 > 
-> These messages are either not presented, or presented for all PCI devices
-> (e.g., powerpc now realigns all PCI devices to its page size). Thus, they
-> are flooding system logs and can be interpreted as a false positive for
-> total PCI failure on the system.
-> 
-> [root@system user]# dmesg | grep -i disabling
-> [    0.692270] pci 0000:00:00.0: Disabling memory decoding and releasing memory resources
-> [    0.692324] pci 0000:00:00.0: disabling bridge mem windows
-> [    0.729134] pci 0001:00:00.0: Disabling memory decoding and releasing memory resources
-> [    0.737352] pci 0001:00:00.0: disabling bridge mem windows
-> [    0.776295] pci 0002:00:00.0: Disabling memory decoding and releasing memory resources
-> [    0.784509] pci 0002:00:00.0: disabling bridge mem windows
-> ... and goes on for all PCI devices on the system ...
-> 
-> Fixes: 38274637699 ("powerpc/powernv: Override pcibios_default_alignment() to force PCI devices to be page aligned")
-> Signed-off-by: Desnes A. Nunes do Rosario <desnesn@linux.vnet.ibm.com>
+> The current code is now however a bit convoluted. Some functionalities
+> (e.g. iowait boost reset) are replicated in different paths and their
+> documentation is slightly misaligned.
 
-Applied to pci/resource for v4.18, thanks!
+While your patch does seem to improve things, it still has duplicated
+bits in. Eg. the TICK_NSEC clearing exists in both functions.
 
-I should have gotten this in for v4.17, but I didn't; sorry about that.
+> - sugov_set_iowait_boost: is now in charge only to set/increase the IO
+>      wait boost, every time a task wakes up from an IO wait.
+> 
+> - sugov_iowait_boost: is now in charge to reset/reduce the IO wait
+>      boost, every time a sugov update is triggered, as well as
+>      to (eventually) enforce the currently required IO boost value.
 
-> ---
->  drivers/pci/pci.c       | 1 -
->  drivers/pci/setup-res.c | 2 --
->  2 files changed, 3 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 8c71d1a66cdd..1563ce1ee091 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5505,7 +5505,6 @@ void pci_reassigndev_resource_alignment(struct pci_dev *dev)
->  		return;
->  	}
+I'm not sold on those function names; feels like we can do better,
+although I'm struggling to come up with anything sensible just now.
+
+
 >  
-> -	pci_info(dev, "Disabling memory decoding and releasing memory resources\n");
->  	pci_read_config_word(dev, PCI_COMMAND, &command);
->  	command &= ~PCI_COMMAND_MEMORY;
->  	pci_write_config_word(dev, PCI_COMMAND, command);
-> diff --git a/drivers/pci/setup-res.c b/drivers/pci/setup-res.c
-> index 369d48d6c6f1..6bd35e8e7cde 100644
-> --- a/drivers/pci/setup-res.c
-> +++ b/drivers/pci/setup-res.c
-> @@ -172,8 +172,6 @@ EXPORT_SYMBOL(pci_claim_resource);
->  
->  void pci_disable_bridge_window(struct pci_dev *dev)
->  {
-> -	pci_info(dev, "disabling bridge mem windows\n");
-> -
->  	/* MMIO Base/Limit */
->  	pci_write_config_dword(dev, PCI_MEMORY_BASE, 0x0000fff0);
->  
-> -- 
-> 2.14.3
-> 
+>  		if (delta_ns > TICK_NSEC) {
+> +			sg_cpu->iowait_boost = iowait
+> +				? sg_cpu->sg_policy->policy->min : 0;
+> +			sg_cpu->iowait_boost_pending = iowait;
+> +			return;
+>  		}
+
+> +	if (delta_ns > TICK_NSEC) {
+> +		sg_cpu->iowait_boost = 0;
+> +		sg_cpu->iowait_boost_pending = false;
+> +		return;
+> +	}
+
+Looks like something we can maybe put in a helper or something.
