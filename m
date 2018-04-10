@@ -1,356 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752262AbeDJJ7J (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 05:59:09 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:36250 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751611AbeDJJ7I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:59:08 -0400
-X-Google-Smtp-Source: AIpwx49oil6hSf51MU5xrhLDchGYVO+Z+t/Dfd6+Hc7DfNUDMlY5oXS8JKqbkM4ybDcRKXGE6PO3ow==
-Subject: Re: [RFC, v2, 4/9] hyper_dmabuf: user private data attached to
- hyper_DMABUF
-To: Dongwon Kim <dongwon.kim@intel.com>, linux-kernel@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org, xen-devel@lists.xenproject.org
-Cc: dri-devel@lists.freedesktop.org, mateuszx.potrola@intel.com
-References: <20180214015008.9513-5-dongwon.kim@intel.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <d963ebfb-18fb-efd7-f262-c50769ac4cbe@gmail.com>
-Date: Tue, 10 Apr 2018 12:59:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752265AbeDJKDw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 06:03:52 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:43354 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751611AbeDJKDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 06:03:50 -0400
+Date: Tue, 10 Apr 2018 12:03:38 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 5/9] mtd: nand: qcom: parse read errors for read oob
+ also
+Message-ID: <20180410120338.663d5925@xps13>
+In-Reply-To: <1522845745-6624-6-git-send-email-absahu@codeaurora.org>
+References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+        <1522845745-6624-6-git-send-email-absahu@codeaurora.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180214015008.9513-5-dongwon.kim@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/14/2018 03:50 AM, Dongwon Kim wrote:
-> Define a private data (e.g. meta data for the buffer) attached to
-> each hyper_DMABUF structure. This data is provided by userapace via
-> export_remote IOCTL and its size can be up to 192 bytes.
->
-> Signed-off-by: Dongwon Kim <dongwon.kim@intel.com>
-> Signed-off-by: Mateusz Polrola <mateuszx.potrola@intel.com>
-> ---
->   drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ioctl.c  | 83 ++++++++++++++++++++--
->   drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.c    | 36 +++++++++-
->   drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.h    |  2 +-
->   .../dma-buf/hyper_dmabuf/hyper_dmabuf_sgl_proc.c   |  1 +
->   drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_struct.h | 12 ++++
->   include/uapi/linux/hyper_dmabuf.h                  |  4 ++
->   6 files changed, 132 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ioctl.c b/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ioctl.c
-> index 020a5590a254..168ccf98f710 100644
-> --- a/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ioctl.c
-> +++ b/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_ioctl.c
-> @@ -103,6 +103,11 @@ static int send_export_msg(struct exported_sgt_info *exported,
->   		}
->   	}
->   
-> +	op[8] = exported->sz_priv;
-> +
-> +	/* driver/application specific private info */
-> +	memcpy(&op[9], exported->priv, op[8]);
-> +
->   	req = kcalloc(1, sizeof(*req), GFP_KERNEL);
->   
->   	if (!req)
-> @@ -120,8 +125,9 @@ static int send_export_msg(struct exported_sgt_info *exported,
->   
->   /* Fast path exporting routine in case same buffer is already exported.
->    *
-> - * If same buffer is still valid and exist in EXPORT LIST it returns 0 so
-> - * that remaining normal export process can be skipped.
-> + * If same buffer is still valid and exist in EXPORT LIST, it only updates
-> + * user-private data for the buffer and returns 0 so that that it can skip
-> + * normal export process.
->    *
->    * If "unexport" is scheduled for the buffer, it cancels it since the buffer
->    * is being re-exported.
-> @@ -129,7 +135,7 @@ static int send_export_msg(struct exported_sgt_info *exported,
->    * return '1' if reexport is needed, return '0' if succeeds, return
->    * Kernel error code if something goes wrong
->    */
-> -static int fastpath_export(hyper_dmabuf_id_t hid)
-> +static int fastpath_export(hyper_dmabuf_id_t hid, int sz_priv, char *priv)
->   {
->   	int reexport = 1;
->   	int ret = 0;
-> @@ -155,6 +161,46 @@ static int fastpath_export(hyper_dmabuf_id_t hid)
->   		exported->unexport_sched = false;
->   	}
->   
-> +	/* if there's any change in size of private data.
-> +	 * we reallocate space for private data with new size
-> +	 */
-> +	if (sz_priv != exported->sz_priv) {
-> +		kfree(exported->priv);
-> +
-> +		/* truncating size */
-> +		if (sz_priv > MAX_SIZE_PRIV_DATA)
-> +			exported->sz_priv = MAX_SIZE_PRIV_DATA;
-> +		else
-> +			exported->sz_priv = sz_priv;
-> +
-> +		exported->priv = kcalloc(1, exported->sz_priv,
-> +					 GFP_KERNEL);
-> +
-> +		if (!exported->priv) {
-> +			hyper_dmabuf_remove_exported(exported->hid);
-> +			hyper_dmabuf_cleanup_sgt_info(exported, true);
-> +			kfree(exported);
-> +			return -ENOMEM;
-> +		}
-> +	}
-> +
-> +	/* update private data in sgt_info with new ones */
-> +	ret = copy_from_user(exported->priv, priv, exported->sz_priv);
-> +	if (ret) {
-> +		dev_err(hy_drv_priv->dev,
-> +			"Failed to load a new private data\n");
-> +		ret = -EINVAL;
-> +	} else {
-> +		/* send an export msg for updating priv in importer */
-> +		ret = send_export_msg(exported, NULL);
-> +
-> +		if (ret < 0) {
-> +			dev_err(hy_drv_priv->dev,
-> +				"Failed to send a new private data\n");
-> +			ret = -EBUSY;
-> +		}
-> +	}
-> +
->   	return ret;
->   }
->   
-> @@ -191,7 +237,8 @@ static int hyper_dmabuf_export_remote_ioctl(struct file *filp, void *data)
->   					     export_remote_attr->remote_domain);
->   
->   	if (hid.id != -1) {
-> -		ret = fastpath_export(hid);
-> +		ret = fastpath_export(hid, export_remote_attr->sz_priv,
-> +				      export_remote_attr->priv);
->   
->   		/* return if fastpath_export succeeds or
->   		 * gets some fatal error
-> @@ -225,6 +272,24 @@ static int hyper_dmabuf_export_remote_ioctl(struct file *filp, void *data)
->   		goto fail_sgt_info_creation;
->   	}
->   
-> +	/* possible truncation */
-> +	if (export_remote_attr->sz_priv > MAX_SIZE_PRIV_DATA)
-> +		exported->sz_priv = MAX_SIZE_PRIV_DATA;
-> +	else
-> +		exported->sz_priv = export_remote_attr->sz_priv;
-> +
-> +	/* creating buffer for private data of buffer */
-> +	if (exported->sz_priv != 0) {
-> +		exported->priv = kcalloc(1, exported->sz_priv, GFP_KERNEL);
-> +
-> +		if (!exported->priv) {
-> +			ret = -ENOMEM;
-> +			goto fail_priv_creation;
-> +		}
-> +	} else {
-> +		dev_err(hy_drv_priv->dev, "size is 0\n");
-> +	}
-> +
->   	exported->hid = hyper_dmabuf_get_hid();
->   
->   	/* no more exported dmabuf allowed */
-> @@ -279,6 +344,10 @@ static int hyper_dmabuf_export_remote_ioctl(struct file *filp, void *data)
->   	INIT_LIST_HEAD(&exported->va_kmapped->list);
->   	INIT_LIST_HEAD(&exported->va_vmapped->list);
->   
-> +	/* copy private data to sgt_info */
-> +	ret = copy_from_user(exported->priv, export_remote_attr->priv,
-> +			     exported->sz_priv);
-> +
->   	if (ret) {
->   		dev_err(hy_drv_priv->dev,
->   			"failed to load private data\n");
-> @@ -337,6 +406,9 @@ static int hyper_dmabuf_export_remote_ioctl(struct file *filp, void *data)
->   
->   fail_map_active_attached:
->   	kfree(exported->active_sgts);
-> +	kfree(exported->priv);
-> +
-> +fail_priv_creation:
->   	kfree(exported);
->   
->   fail_map_active_sgts:
-> @@ -567,6 +639,9 @@ static void delayed_unexport(struct work_struct *work)
->   		/* register hyper_dmabuf_id to the list for reuse */
->   		hyper_dmabuf_store_hid(exported->hid);
->   
-> +		if (exported->sz_priv > 0 && !exported->priv)
-> +			kfree(exported->priv);
-> +
->   		kfree(exported);
->   	}
->   }
-> diff --git a/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.c b/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.c
-> index 129b2ff2af2b..7176fa8fb139 100644
-> --- a/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.c
-> +++ b/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.c
-> @@ -60,9 +60,12 @@ void hyper_dmabuf_create_req(struct hyper_dmabuf_req *req,
->   		 * op5 : offset of data in the first page
->   		 * op6 : length of data in the last page
->   		 * op7 : top-level reference number for shared pages
-> +		 * op8 : size of private data (from op9)
-> +		 * op9 ~ : Driver-specific private data
-> +		 *	   (e.g. graphic buffer's meta info)
->   		 */
->   
-> -		memcpy(&req->op[0], &op[0], 8 * sizeof(int) + op[8]);
-> +		memcpy(&req->op[0], &op[0], 9 * sizeof(int) + op[8]);
->   		break;
->   
->   	case HYPER_DMABUF_NOTIFY_UNEXPORT:
-> @@ -116,6 +119,9 @@ static void cmd_process_work(struct work_struct *work)
->   		 * op5 : offset of data in the first page
->   		 * op6 : length of data in the last page
->   		 * op7 : top-level reference number for shared pages
-> +		 * op8 : size of private data (from op9)
-> +		 * op9 ~ : Driver-specific private data
-> +		 *         (e.g. graphic buffer's meta info)
->   		 */
->   
->   		/* if nents == 0, it means it is a message only for
-> @@ -135,6 +141,24 @@ static void cmd_process_work(struct work_struct *work)
->   				break;
->   			}
->   
-> +			/* if size of new private data is different,
-> +			 * we reallocate it.
-> +			 */
-> +			if (imported->sz_priv != req->op[8]) {
-> +				kfree(imported->priv);
-> +				imported->sz_priv = req->op[8];
-> +				imported->priv = kcalloc(1, req->op[8],
-> +							 GFP_KERNEL);
-> +				if (!imported->priv) {
-> +					/* set it invalid */
-> +					imported->valid = 0;
-> +					break;
-> +				}
-> +			}
-> +
-> +			/* updating priv data */
-> +			memcpy(imported->priv, &req->op[9], req->op[8]);
-> +
->   			break;
->   		}
->   
-> @@ -143,6 +167,14 @@ static void cmd_process_work(struct work_struct *work)
->   		if (!imported)
->   			break;
->   
-> +		imported->sz_priv = req->op[8];
-> +		imported->priv = kcalloc(1, req->op[8], GFP_KERNEL);
-BTW, there are plenty of the code using kcalloc with 1 element
-Why not simply kzalloc?
-> +
-> +		if (!imported->priv) {
-> +			kfree(imported);
-> +			break;
-> +		}
-> +
->   		imported->hid.id = req->op[0];
->   
->   		for (i = 0; i < 3; i++)
-> @@ -162,6 +194,8 @@ static void cmd_process_work(struct work_struct *work)
->   		dev_dbg(hy_drv_priv->dev, "\tlast len %d\n", req->op[6]);
->   		dev_dbg(hy_drv_priv->dev, "\tgrefid %d\n", req->op[7]);
->   
-> +		memcpy(imported->priv, &req->op[9], req->op[8]);
-> +
->   		imported->valid = true;
->   		hyper_dmabuf_register_imported(imported);
->   
-> diff --git a/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.h b/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.h
-> index 59f1528e9b1e..63a39d068d69 100644
-> --- a/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.h
-> +++ b/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_msg.h
-> @@ -27,7 +27,7 @@
->   #ifndef __HYPER_DMABUF_MSG_H__
->   #define __HYPER_DMABUF_MSG_H__
->   
-> -#define MAX_NUMBER_OF_OPERANDS 8
-> +#define MAX_NUMBER_OF_OPERANDS 64
->   
-So now the req/resp below become (64 + 3) ints long, 268 bytes
-4096 / 268...
+Hi Abhishek,
 
->   struct hyper_dmabuf_req {
->   	unsigned int req_id;
-> diff --git a/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_sgl_proc.c b/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_sgl_proc.c
-> index d92ae13d8a30..9032f89e0cd0 100644
-> --- a/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_sgl_proc.c
-> +++ b/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_sgl_proc.c
-> @@ -251,6 +251,7 @@ int hyper_dmabuf_cleanup_sgt_info(struct exported_sgt_info *exported,
->   	kfree(exported->active_attached);
->   	kfree(exported->va_kmapped);
->   	kfree(exported->va_vmapped);
-> +	kfree(exported->priv);
->   
->   	return 0;
->   }
-> diff --git a/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_struct.h b/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_struct.h
-> index 144e3821fbc2..a1220bbf8d0c 100644
-> --- a/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_struct.h
-> +++ b/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_struct.h
-> @@ -101,6 +101,12 @@ struct exported_sgt_info {
->   	 * the buffer can be completely freed.
->   	 */
->   	struct file *filp;
+On Wed,  4 Apr 2018 18:12:21 +0530, Abhishek Sahu
+<absahu@codeaurora.org> wrote:
+
+> read_page and read_oob both calls the read_page_ecc function.
+> The QCOM NAND controller protect the OOB available bytes with
+> ECC so read errors should be checked for read_oob also. Now
+> this patch moves the error checking code inside read_page_ecc
+> so caller does not have to check explicitly for read errors.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+
+Nitpick: the prefix should be "mtd: rawnand: qcom: " now as this driver
+has been moved to drivers/mtd/nand/raw/.
+
+Otherwise:
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+
+> ---
+>  drivers/mtd/nand/qcom_nandc.c | 19 ++++++-------------
+>  1 file changed, 6 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
+> index 0ebcc55..ba43752 100644
+> --- a/drivers/mtd/nand/qcom_nandc.c
+> +++ b/drivers/mtd/nand/qcom_nandc.c
+> @@ -1676,6 +1676,7 @@ static int read_page_ecc(struct qcom_nand_host *host, u8 *data_buf,
+>  	struct nand_chip *chip = &host->chip;
+>  	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+>  	struct nand_ecc_ctrl *ecc = &chip->ecc;
+> +	u8 *data_buf_start = data_buf, *oob_buf_start = oob_buf;
+>  	int i, ret;
+>  
+>  	config_nand_page_read(nandc);
+> @@ -1741,6 +1742,9 @@ static int read_page_ecc(struct qcom_nand_host *host, u8 *data_buf,
+>  
+>  	free_descs(nandc);
+>  
+> +	if (!ret)
+> +		ret = parse_read_errors(host, data_buf_start, oob_buf_start);
 > +
-> +	/* size of private */
-> +	size_t sz_priv;
-> +
-> +	/* private data associated with the exported buffer */
-> +	char *priv;
->   };
->   
->   /* imported_sgt_info contains information about imported DMA_BUF
-> @@ -126,6 +132,12 @@ struct imported_sgt_info {
->   	void *refs_info;
->   	bool valid;
->   	int importers;
-> +
-> +	/* size of private */
-> +	size_t sz_priv;
-> +
-> +	/* private data associated with the exported buffer */
-> +	char *priv;
->   };
->   
->   #endif /* __HYPER_DMABUF_STRUCT_H__ */
-> diff --git a/include/uapi/linux/hyper_dmabuf.h b/include/uapi/linux/hyper_dmabuf.h
-> index caaae2da9d4d..36794a4af811 100644
-> --- a/include/uapi/linux/hyper_dmabuf.h
-> +++ b/include/uapi/linux/hyper_dmabuf.h
-> @@ -25,6 +25,8 @@
->   #ifndef __LINUX_PUBLIC_HYPER_DMABUF_H__
->   #define __LINUX_PUBLIC_HYPER_DMABUF_H__
->   
-> +#define MAX_SIZE_PRIV_DATA 192
-> +
->   typedef struct {
->   	int id;
->   	int rng_key[3]; /* 12bytes long random number */
-> @@ -56,6 +58,8 @@ struct ioctl_hyper_dmabuf_export_remote {
->   	int remote_domain;
->   	/* exported dma buf id */
->   	hyper_dmabuf_id_t hid;
-> +	int sz_priv;
-> +	char *priv;
->   };
->   
->   #define IOCTL_HYPER_DMABUF_EXPORT_FD \
->
+>  	return ret;
+>  }
+>  
+> @@ -1786,20 +1790,14 @@ static int qcom_nandc_read_page(struct mtd_info *mtd, struct nand_chip *chip,
+>  	struct qcom_nand_host *host = to_qcom_nand_host(chip);
+>  	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+>  	u8 *data_buf, *oob_buf = NULL;
+> -	int ret;
+>  
+>  	nand_read_page_op(chip, page, 0, NULL, 0);
+>  	data_buf = buf;
+>  	oob_buf = oob_required ? chip->oob_poi : NULL;
+>  
+>  	clear_bam_transaction(nandc);
+> -	ret = read_page_ecc(host, data_buf, oob_buf);
+> -	if (ret) {
+> -		dev_err(nandc->dev, "failure to read page\n");
+> -		return ret;
+> -	}
+>  
+> -	return parse_read_errors(host, data_buf, oob_buf);
+> +	return read_page_ecc(host, data_buf, oob_buf);
+>  }
+>  
+>  /* implements ecc->read_page_raw() */
+> @@ -1889,7 +1887,6 @@ static int qcom_nandc_read_oob(struct mtd_info *mtd, struct nand_chip *chip,
+>  	struct qcom_nand_host *host = to_qcom_nand_host(chip);
+>  	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+>  	struct nand_ecc_ctrl *ecc = &chip->ecc;
+> -	int ret;
+>  
+>  	clear_read_regs(nandc);
+>  	clear_bam_transaction(nandc);
+> @@ -1898,11 +1895,7 @@ static int qcom_nandc_read_oob(struct mtd_info *mtd, struct nand_chip *chip,
+>  	set_address(host, 0, page);
+>  	update_rw_regs(host, ecc->steps, true);
+>  
+> -	ret = read_page_ecc(host, NULL, chip->oob_poi);
+> -	if (ret)
+> -		dev_err(nandc->dev, "failure to read oob\n");
+> -
+> -	return ret;
+> +	return read_page_ecc(host, NULL, chip->oob_poi);
+>  }
+>  
+>  /* implements ecc->write_page() */
+
+
+
+-- 
+Miquel Raynal, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
