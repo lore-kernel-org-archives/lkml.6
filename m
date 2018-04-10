@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/6IeBhZ0EgN7HZku3/Ome4eDs0wooxg2P1tL9euUWB5zdQFUnIuOh8Loq8gk0X4JNi674o
-ARC-Seal: i=1; a=rsa-sha256; t=1523399360; cv=none;
+X-Google-Smtp-Source: AIpwx4+/u9yhjFzHpc9m8mmjV/rZFXWY11A7/XMsqe84tkpn12A0CYcef1+F+h+VhVn96DNu4R+z
+ARC-Seal: i=1; a=rsa-sha256; t=1523399357; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ql56nC8vVrQ2eYNErIMjweNozDfv72IRCcHkCMirooZXY58dw3sUNrwKMUbxY9PwOy
-         6LrZAjhmjOP/xJdAZQbiLVksBaM9FgZ4R9XH7sRZHvl8fYW558xDDJnax/gXNLS4hI8C
-         6BBEQVbnrNOQJFRfLAy2QVfm6EUlN1q54NkNMihidIfYD+Bjame4boQFP/l7VZbny0j4
-         vPUQcuNlRV9Z2hAWb+Zmhl4OVinrhHM2gM+fDWrkqed31R8v2vuCBlf32seTjLh8DMCf
-         XmmiGzd+0vsgP8FpcbI4bk9lrgoPnyistVtdF1/ueMkf2K+ENHN6+YdcvXvurtwQsw/E
-         740w==
+        b=YsFhSt3sGzSkG0AEeys03IO7AKPpxZ7qfqrAGon9W3Y6738Ke70Djl6iNETSjbG9QF
+         3Vem7VlzEUZmCoYTiiSntk0Pe8xRjhGLkPh6GqrlGPuDBYPr2ZB8nN91JDQ83UOC3EpS
+         yVHNWdc0dbXZuCD5dV+i+cWlWbRBRRx+tRdnp1uAjof6sbR8T5arWx5A0E4Brs83H8Yb
+         ShAFH6IRAYHN2yGBqIcdLbTQ7kcYJILrNvykwSQpikXf8sB9qa3fjxiKLd6wAVFR9V4H
+         OJYH3QKKX2xW9XZi7sKToOBFj+s5hnEYKSU/1ZIOPHAEPxHIxsSuN6q6ONgPClrTB5D7
+         itvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BwSt9SR7ToDX7nJOztAuuIQ3i99jSq52obRkzZ/dCWs=;
-        b=vp2rs37yMks5H/C4ZBnJEKHuys2B9Pu5OrnCmhW7aRgMijJeK8qxubRag/yQnfrlbY
-         vbp/ej+/RcIN+U1YHM7w55oKTGBVwr89wwtD1nu6KqbNdBUN1Gess/SR5GVp/+e5B8X2
-         F8jKwCSmcLw6aWLIzT3pd0aOtKWuj4PQciyhlvzkcaXxLX+9nUOgygtZgnnLPGPAsmIp
-         5jjEB7qynjvLLKJuVpcRoJVRVCjBSP8oxZjXKhmQTC/+GmVUCSuuh/OZd4BxdHp/G0MQ
-         UhosWQNFH9rL32uKFOdsySFBu+TbZ+PlaDu8u+GZlUpqVYOJ2JlUkfs73/iS6/nuOFUW
-         isfQ==
+        bh=Q0wrpepCqLtKHS2xlYVr/u8Kl6HsKGqARJj4dtjpPfM=;
+        b=UWB7Hd47o+/00y64pEJHHeouOTI/k+3Aw0gdMKgGalmPP+cMmChziSooHVESMz+QMh
+         v+Y+eUb8PCYtPq4yf7zqNf03meLXXdBcCEFg4NYlPmc5Q6aIpN8s9Vi62FLID1ohOfuj
+         pCOlwPwfEliNM6+0EevWQHf1VfNB+/4lCz7Zt8S8f3P2IfTL4Lni2BEBfR0HA8YrYivn
+         ItOHL8UXMG7aFpSQ1g2idu8Jqz+/3KipxRRVNDOxi+T2TkG3gnhQhmQTh/UN6A6sdqyi
+         TEOvTveQQCYG5tDMwXpiX7hmNr4TrWPWUd9jGqCsmMZ40K283LvuKqNxMf/w+Ip41Rxz
+         Q9qA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jin Yao <yao.jin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	William Roberts <william.c.roberts@intel.com>,
+	Philip Tricca <philip.b.tricca@intel.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 061/168] perf report: Fix a no annotate browser displayed issue
-Date: Wed, 11 Apr 2018 00:23:23 +0200
-Message-Id: <20180410212802.798227844@linuxfoundation.org>
+Subject: [PATCH 4.15 060/168] tpm: return a TPM_RC_COMMAND_CODE response if command is not implemented
+Date: Wed, 11 Apr 2018 00:23:22 +0200
+Message-Id: <20180410212802.755183069@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -46,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400008123802873?=
-X-GMAIL-MSGID: =?utf-8?q?1597400008123802873?=
+X-GMAIL-THRID: =?utf-8?q?1597400004824783636?=
+X-GMAIL-MSGID: =?utf-8?q?1597400004824783636?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,85 +53,138 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jin Yao <yao.jin@linux.intel.com>
+From: Javier Martinez Canillas <javierm@redhat.com>
 
 
-[ Upstream commit 40c39e3046411f84bab82f66783ff3593e2bcd9b ]
+[ Upstream commit 095531f891e627e408606f2da4008d3d53e6748a ]
 
-When enabling '-b' option in perf record, for example,
+According to the TPM Library Specification, a TPM device must do a command
+header validation before processing and return a TPM_RC_COMMAND_CODE code
+if the command is not implemented.
 
-  perf record -b ...
-  perf report
+So user-space will expect to handle that response as an error. But if the
+in-kernel resource manager is used (/dev/tpmrm?), an -EINVAL errno code is
+returned instead if the command isn't implemented. This confuses userspace
+since it doesn't expect that error value.
 
-and then browsing the annotate browser from perf report (press 'A'), it
-would fail (annotate browser can't be displayed).
+This also isn't consistent with the behavior when not using TPM spaces and
+accessing the TPM directly (/dev/tpm?). In this case, the command is sent
+to the TPM even when not implemented and the TPM responds with an error.
 
-It's because the '.add_entry_cb' op of struct report is overwritten by
-hist_iter__branch_callback() in builtin-report.c. But this function doesn't do
-something like mapping symbols and sources. So next, do_annotate() will return
-directly.
+Instead of returning an -EINVAL errno code when the tpm_validate_command()
+function fails, synthesize a TPM command response so user-space can get a
+TPM_RC_COMMAND_CODE as expected when a chip doesn't implement the command.
 
-        notes = symbol__annotation(act->ms.sym);
-        if (!notes->src)
-                return 0;
+The TPM only sets 12 of the 32 bits in the TPM_RC response, so the TSS and
+TAB specifications define that higher layers in the stack should use some
+of the unused 20 bits to specify from which level of the stack the error
+is coming from.
 
-This patch adds the lost code to hist_iter__branch_callback (refer to
-hist_iter__report_callback).
+Since the TPM_RC_COMMAND_CODE response code is sent by the kernel resource
+manager, set the error level to the TAB/RM layer so user-space is aware of
+this.
 
-v2:
-
-Fix a crash bug when perform 'perf report --stdio'.
-
-The reason is that we init the symbol annotation only in browser mode, it
-doesn't allocate/init resources for stdio mode.
-
-So now in hist_iter__branch_callback(), it will return directly if it's not in
-browser mode.
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1514284963-18587-1-git-send-email-yao.jin@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: William Roberts <william.c.roberts@intel.com>
+Reviewed-by: Philip Tricca <philip.b.tricca@intel.com>
+Reviewed-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/builtin-report.c |   18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ drivers/char/tpm/tpm-interface.c |   28 ++++++++++++++++++++--------
+ drivers/char/tpm/tpm.h           |    5 +++++
+ 2 files changed, 25 insertions(+), 8 deletions(-)
 
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -162,12 +162,28 @@ static int hist_iter__branch_callback(st
- 	struct hist_entry *he = iter->he;
- 	struct report *rep = arg;
- 	struct branch_info *bi;
-+	struct perf_sample *sample = iter->sample;
-+	struct perf_evsel *evsel = iter->evsel;
-+	int err;
-+
-+	if (!ui__has_annotation())
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -328,7 +328,7 @@ unsigned long tpm_calc_ordinal_duration(
+ }
+ EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+ 
+-static bool tpm_validate_command(struct tpm_chip *chip,
++static int tpm_validate_command(struct tpm_chip *chip,
+ 				 struct tpm_space *space,
+ 				 const u8 *cmd,
+ 				 size_t len)
+@@ -340,10 +340,10 @@ static bool tpm_validate_command(struct
+ 	unsigned int nr_handles;
+ 
+ 	if (len < TPM_HEADER_SIZE)
+-		return false;
++		return -EINVAL;
+ 
+ 	if (!space)
+-		return true;
 +		return 0;
-+
-+	hist__account_cycles(sample->branch_stack, al, sample,
-+			     rep->nonany_branch_mode);
  
- 	bi = he->branch_info;
-+	err = addr_map_symbol__inc_samples(&bi->from, sample, evsel->idx);
-+	if (err)
-+		goto out;
-+
-+	err = addr_map_symbol__inc_samples(&bi->to, sample, evsel->idx);
-+
- 	branch_type_count(&rep->brtype_stat, &bi->flags,
- 			  bi->from.addr, bi->to.addr);
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
+ 		cc = be32_to_cpu(header->ordinal);
+@@ -352,7 +352,7 @@ static bool tpm_validate_command(struct
+ 		if (i < 0) {
+ 			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
+ 				cc);
+-			return false;
++			return -EOPNOTSUPP;
+ 		}
  
--	return 0;
-+out:
-+	return err;
+ 		attrs = chip->cc_attrs_tbl[i];
+@@ -362,11 +362,11 @@ static bool tpm_validate_command(struct
+ 			goto err_len;
+ 	}
+ 
+-	return true;
++	return 0;
+ err_len:
+ 	dev_dbg(&chip->dev,
+ 		"%s: insufficient command length %zu", __func__, len);
+-	return false;
++	return -EINVAL;
  }
  
- static int process_sample_event(struct perf_tool *tool,
+ /**
+@@ -391,8 +391,20 @@ ssize_t tpm_transmit(struct tpm_chip *ch
+ 	unsigned long stop;
+ 	bool need_locality;
+ 
+-	if (!tpm_validate_command(chip, space, buf, bufsiz))
+-		return -EINVAL;
++	rc = tpm_validate_command(chip, space, buf, bufsiz);
++	if (rc == -EINVAL)
++		return rc;
++	/*
++	 * If the command is not implemented by the TPM, synthesize a
++	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
++	 */
++	if (rc == -EOPNOTSUPP) {
++		header->length = cpu_to_be32(sizeof(*header));
++		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
++		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
++						  TSS2_RESMGR_TPM_RC_LAYER);
++		return bufsiz;
++	}
+ 
+ 	if (bufsiz > TPM_BUFSIZE)
+ 		bufsiz = TPM_BUFSIZE;
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -93,12 +93,17 @@ enum tpm2_structures {
+ 	TPM2_ST_SESSIONS	= 0x8002,
+ };
+ 
++/* Indicates from what layer of the software stack the error comes from */
++#define TSS2_RC_LAYER_SHIFT	 16
++#define TSS2_RESMGR_TPM_RC_LAYER (11 << TSS2_RC_LAYER_SHIFT)
++
+ enum tpm2_return_codes {
+ 	TPM2_RC_SUCCESS		= 0x0000,
+ 	TPM2_RC_HASH		= 0x0083, /* RC_FMT1 */
+ 	TPM2_RC_HANDLE		= 0x008B,
+ 	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
+ 	TPM2_RC_DISABLED	= 0x0120,
++	TPM2_RC_COMMAND_CODE    = 0x0143,
+ 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
+ 	TPM2_RC_REFERENCE_H0	= 0x0910,
+ };
