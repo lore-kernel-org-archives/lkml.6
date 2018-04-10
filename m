@@ -1,157 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752121AbeDJDQT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 23:16:19 -0400
-Received: from mga02.intel.com ([134.134.136.20]:28807 "EHLO mga02.intel.com"
+        id S1752076AbeDJDXm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 23:23:42 -0400
+Received: from mga09.intel.com ([134.134.136.24]:5724 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751629AbeDJDQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 23:16:17 -0400
+        id S1751629AbeDJDXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 23:23:41 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,430,1517904000";
-   d="scan'208";a="46534565"
-Date: Tue, 10 Apr 2018 11:14:01 +0800
-From: Ye Xiaolong <xiaolong.ye@intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, lkp@01.org
-Subject: Re: [lkp-robot] [init, tracing]  2580d6b795:
- BUG:kernel_reboot-without-warning_in_boot_stage
-Message-ID: <20180410031401.GF17893@yexl-desktop>
-References: <20180406191334.357550809@goodmis.org>
- <20180409053252.GB27349@yexl-desktop>
- <20180409180454.1310abea@gandalf.local.home>
- <20180410012340.GA17893@yexl-desktop>
- <20180409224152.4d7fe6b7@vmware.local.home>
+   d="scan'208";a="46535620"
+Date: Tue, 10 Apr 2018 11:21:34 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, wexu@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        jfreimann@redhat.com
+Subject: Re: [RFC v2] virtio: support packed ring
+Message-ID: <20180410032134.qco4ut2s3lo2zgsc@debian>
+References: <20180401141216.8969-1-tiwei.bie@intel.com>
+ <5cf4d5d6-c416-28af-0568-750e9f654710@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180409224152.4d7fe6b7@vmware.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5cf4d5d6-c416-28af-0568-750e9f654710@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/09, Steven Rostedt wrote:
->On Tue, 10 Apr 2018 09:23:40 +0800
->Ye Xiaolong <xiaolong.ye@intel.com> wrote:
->
->> Hi, Steven
->> 
->> On 04/09, Steven Rostedt wrote:
->> >On Mon, 9 Apr 2018 13:32:52 +0800
->> >kernel test robot <xiaolong.ye@intel.com> wrote:
->> >  
->> >> FYI, we noticed the following commit (built with gcc-7):
->> >> 
->> >> commit: 2580d6b795e25879c825a0891cf67390f665b11f ("init, tracing: Have printk come through the trace events for initcall_debug")
->> >> url: https://github.com/0day-ci/linux/commits/Steven-Rostedt/init-tracing/20180407-130743
->> >> 
->> >> 
->> >> in testcase: boot
->> >> 
->> >> on test machine: qemu-system-x86_64 -enable-kvm -cpu Nehalem -smp 2 -m 512M
->> >> 
->> >> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
->> >> 
->> >> 
->> >> +------------------------------------------------------------------+------------+------------+
->> >> |                                                                  | ecf6709d07 | 2580d6b795 |
->> >> +------------------------------------------------------------------+------------+------------+
->> >> | boot_successes                                                   | 0          | 0          |
->> >> | boot_failures                                                    | 8          | 8          |
->> >> | invoked_oom-killer:gfp_mask=0x                                   | 8          |            |
->> >> | Mem-Info                                                         | 8          |            |
->> >> | Kernel_panic-not_syncing:Out_of_memory_and_no_killable_processes | 8          |            |
->> >> | BUG:kernel_reboot-without-warning_in_boot_stage                  | 0          | 8          |
->> >> +------------------------------------------------------------------+------------+------------+  
->> >
->> >What does this mean?  
->> 
->> It means BUG:BUG:kernel_reboot-without-warning_in_boot_stage occurred 8 times
->> in boot tests for commit 2580d6b795, while 0 time for its parent ecf6709d07.
->
->I don't have a commit 2580d6b795.
->
->The commit with the title "init, tracing: Have printk come through the
->trace events for initcall_debug" is 4e37958d1288ce. linux-next doesn't
->have that commit sha1 either.
+On Tue, Apr 10, 2018 at 10:55:25AM +0800, Jason Wang wrote:
+> On 2018年04月01日 22:12, Tiwei Bie wrote:
+> > Hello everyone,
+> > 
+> > This RFC implements packed ring support for virtio driver.
+> > 
+> > The code was tested with DPDK vhost (testpmd/vhost-PMD) implemented
+> > by Jens at http://dpdk.org/ml/archives/dev/2018-January/089417.html
+> > Minor changes are needed for the vhost code, e.g. to kick the guest.
+> > 
+> > TODO:
+> > - Refinements and bug fixes;
+> > - Split into small patches;
+> > - Test indirect descriptor support;
+> > - Test/fix event suppression support;
+> > - Test devices other than net;
+> > 
+> > RFC v1 -> RFC v2:
+> > - Add indirect descriptor support - compile test only;
+> > - Add event suppression supprt - compile test only;
+> > - Move vring_packed_init() out of uapi (Jason, MST);
+> > - Merge two loops into one in virtqueue_add_packed() (Jason);
+> > - Split vring_unmap_one() for packed ring and split ring (Jason);
+> > - Avoid using '%' operator (Jason);
+> > - Rename free_head -> next_avail_idx (Jason);
+> > - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
+> > - Some other refinements and bug fixes;
+> > 
+> > Thanks!
+> 
+> Will try to review this later.
+> 
+> But it would be better if you can split it (more than 1000 lines is too big
+> to be reviewed easily). E.g you can at least split it into three patches,
+> new structures, datapath, and event suppression.
+> 
 
-This commit was generated by 0day service, it captured your email patchset which posted
-on LKML and then applied it on top of 06dd3dfeea60 and performed build/boot tests accordingly.
+No problem! It's on my TODO list. I'll get it done in the next version.
 
->
->
->> 
->> >  
->> >> 
->> >> 
->> >> 
->> >> [    0.000000] RAMDISK: [mem 0x1b7e2000-0x1ffcffff]
->> >> [    0.000000] ACPI: Early table checksum verification disabled
->> >> [    0.000000] ACPI: RSDP 0x00000000000F6860 000014 (v00 BOCHS )
->> >> [    0.000000] ACPI: RSDT 0x000000001FFE1628 000030 (v01 BOCHS  BXPCRSDT 00000001 BXPC 00000001)
->> >> [    0.000000] ACPI: FACP 0x000000001FFE147C 000074 (v01 BOCHS  BXPCFACP 00000001 BXPC 00000001)
->> >> BUG: kernel reboot-without-warning in boot stage
->> >> 
->> >> Elapsed time: 10
->> >> 
->> >> #!/bin/bash
->> >> 
->> >> 
->> >> 
->> >> To reproduce:
->> >> 
->> >>         git clone https://github.com/intel/lkp-tests.git
->> >>         cd lkp-tests
->> >>         bin/lkp qemu -k <bzImage> job-script  # job-script is attached in this email
->> >>   
->> >
->> >The config boots fine for me. But I don't have the setup to run the
->> >above and get it to work, nor the time to figure out why it doesn't
->> >work.  
->> 
->> Could you paste your failure log here, we can see if there is something we can help.
->
->I tried it on a more up-to-date box, after checking out my commit with
->the title you say is an error. I compiled your config with gcc (GCC)
->7.3.1 20180130 (Red Hat 7.3.1-2), and ran the above (which did work).
->It ended after it got to a login prompt.
->
->---
->[..]
->[   10.588029] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
->[   10.589363] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
->[   10.590385] cfg80211: failed to load regulatory.db
->[   10.610002] Freeing unused kernel memory: 1980K
->[   10.610533] Write protecting the kernel read-only data: 49152k
->[   10.615728] Freeing unused kernel memory: 2028K
->[   10.620754] Freeing unused kernel memory: 464K
->INIT: version 2.88 booting
->/etc/rcS.d/S00fbsetup: line 3: /sbin/modprobe: not found
->
->Please wait: booting...
->[   10.676861] rc (151) used greatest stack depth: 27848 bytes left
->Starting udev
->[   10.750281] udevd[175]: starting version 3.1.5
->[   10.759923] udevd (175) used greatest stack depth: 27696 bytes left
->[   11.129999] udevadm (178) used greatest stack depth: 26696 bytes left
->Populating dev cache
->INIT: Entering runlevel: 5
->Configuring network interfaces... done.
->Starting syslogd/klogd: done
->
->Poky (Yocto Project Reference Distro) 2.1 qemux86-64 /dev/ttyS0
->
->qemux86-64 login:
->---
->
->What am I suppose to see?
->
-
-So I figure the gap may be 0day bot applied your patchset to a inappropriate base. 
-
-Thanks,
-Xiaolong
->-- Steve
->
+Thanks!
