@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx482PQzOgl86TicUprUgJUATjEh0cQufWk+jD/xqIGQYrYefSCbm/H0E7ocCs+7mK7gja60/
-ARC-Seal: i=1; a=rsa-sha256; t=1523399065; cv=none;
+X-Google-Smtp-Source: AIpwx4/jvuI+FLR/GPcHr2ZytWu/P/Vguw4rQBdYxXp8zS2LY99BgoX+VfbkX9edYmLgFK0oo72q
+ARC-Seal: i=1; a=rsa-sha256; t=1523399063; cv=none;
         d=google.com; s=arc-20160816;
-        b=OiLxajd7vTouBsfVp9/mEJ6Z6mnWih8tD0Ev1w6v1yIEDgHgTPCvqvlBFgRkYkluOV
-         ABbH9FsDxHuBpxy1Wn/u8Yj+4CGBIninGLnvxuxQIj81ZPHz8OeIsa136flAzHK3duo9
-         OFEDER6gqU8XN5mS7+jPBGnwmwIK46wp0j6TvmZ/XpT3N/E5DYA0L11JpSgRqvOldnbE
-         oDXQhO5Xl/3hFN8kQklCCBCGakSP86fMW4EgWptPPnaL2U+AibNLWYM8nmEEfyIPKppT
-         FLdj8qf08NOxInfXnCRJwOwilSZKPKfAG6SwnPgrHoDLWItuV28NfxKYmIVWOTJ2O05s
-         zqvg==
+        b=CkjgKff262Ykd0Ae6CtBZ4k0qioU+DYOkPiClflJN9I4o4roLnFGsX0F7JrZrMR4U5
+         xwHyOVz7ijtwiFNaJDPdDsR920lwZvCJrBUhwLS9Fx69auwRskWEyocBKJahUgYkb3pc
+         GxLmgN4ZtPDB5SKIhpy0Ew4rSFftqSFdFF6m9TEBEDWZDPMpnPSYPVmvpNPOcOc2stJz
+         GuOT3y2vySDDZsffnpbMr+mA+zVcL0Q9QveNTG28wUcIU4rwQUiA1z4gnE2x41geLdXu
+         AFQxILcHhOGHzKlSmMAKie17Us8PTVpW7/ythD4f0TKa1uFnLC8k7F5o3cmOOjnBitf7
+         7gdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=VVEXSbCJLs+A+xn6z8FjdXvgcUQtjayvYD5btt7e9Nw=;
-        b=scJtNv5z6MIN00NaeXZhbKcAl9tcVjHtScS0tTKwa1eKO6Wp1n+99pI3DKB+icMOy4
-         UQApDQBOp8/flhqRzTyd1aPJF99lO39b5pPkNlI2zrXw0P6jeV6pMQCiXwhyjhkIQZbI
-         2LzB5l+ziFxBNbpqOM/iA3xnlIuhttPsEqN2ls4DWDGqQHadmu0PFtjeuPEdIdLjwCYp
-         WCAkpYETb2vF4dbQYIz0jgJodwgegPgwo/WJD4SY26v31VqGfwOuajIqTZvgJMJFZthu
-         akh9NTt8YwHMmQKJTRN/LOtUDPz37qxFhkZXoGKeVkFVnjqcMbGtfOmzgGqyTxHutgsr
-         hhJw==
+        bh=sSKvyGEXyBLSxP0giGfELYDR/frN3KSrohHBWnQRAdA=;
+        b=TIgacZXIhdn9rD9jM7ybxkOzZOh/cs4c4m959zJQKZK31OIvmBGppL8Pzq/H9+58qJ
+         uTyTeH8AtOHExihljx38Fl2rvGiZgwFVPGRE1AKH7gA151g8BqyJjG6tAj//pOAAYuCZ
+         lxa0U+AgznZwHEo3SjR6braCkGKlvGbQBuyMzxJ4+aqIYBfgZEp3dRw+NUNjHVcML27v
+         osxRbRb3QykdSAhIKBkdWrlRV1h+P+hP8oooQFjfleJ1SDJHruVwh4j7CXbBFhLAjAEh
+         J3uxASIJ9YokUy2eTc91uMDv8tJwKkrHPMbxDXk/US7vufSd+iapVNSvfvBElzxB7OWe
+         atsg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -28,9 +28,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Eric Dumazet <edumazet@google.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 15/18] ip6_tunnel: better validate user provided tunnel names
-Date: Wed, 11 Apr 2018 00:23:50 +0200
-Message-Id: <20180410212759.384487900@linuxfoundation.org>
+Subject: [PATCH 4.16 06/18] pptp: remove a buggy dst release in pptp_connect()
+Date: Wed, 11 Apr 2018 00:23:41 +0200
+Message-Id: <20180410212758.885451569@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212758.564682823@linuxfoundation.org>
 References: <20180410212758.564682823@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399698628036818?=
-X-GMAIL-MSGID: =?utf-8?q?1597399698628036818?=
+X-GMAIL-THRID: =?utf-8?q?1597399696387961448?=
+X-GMAIL-MSGID: =?utf-8?q?1597399696387961448?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,39 +52,110 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit db7a65e3ab78e5b1c4b17c0870ebee35a4ee3257 ]
+[ Upstream commit bfacfb457b36911a10140b8cb3ce76a74883ac5a ]
 
-Use valid_name() to make sure user does not provide illegal
-device name.
+Once dst has been cached in socket via sk_setup_caps(),
+it is illegal to call ip_rt_put() (or dst_release()),
+since sk_setup_caps() did not change dst refcount.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+We can still dereference it since we hold socket lock.
+
+Caugth by syzbot :
+
+BUG: KASAN: use-after-free in atomic_dec_return include/asm-generic/atomic-instrumented.h:198 [inline]
+BUG: KASAN: use-after-free in dst_release+0x27/0xa0 net/core/dst.c:185
+Write of size 4 at addr ffff8801c54dc040 by task syz-executor4/20088
+
+CPU: 1 PID: 20088 Comm: syz-executor4 Not tainted 4.16.0+ #376
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x1a7/0x27d lib/dump_stack.c:53
+ print_address_description+0x73/0x250 mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report+0x23c/0x360 mm/kasan/report.c:412
+ check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+ check_memory_region+0x137/0x190 mm/kasan/kasan.c:267
+ kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
+ atomic_dec_return include/asm-generic/atomic-instrumented.h:198 [inline]
+ dst_release+0x27/0xa0 net/core/dst.c:185
+ sk_dst_set include/net/sock.h:1812 [inline]
+ sk_dst_reset include/net/sock.h:1824 [inline]
+ sock_setbindtodevice net/core/sock.c:610 [inline]
+ sock_setsockopt+0x431/0x1b20 net/core/sock.c:707
+ SYSC_setsockopt net/socket.c:1845 [inline]
+ SyS_setsockopt+0x2ff/0x360 net/socket.c:1828
+ do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x4552d9
+RSP: 002b:00007f4878126c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007f48781276d4 RCX: 00000000004552d9
+RDX: 0000000000000019 RSI: 0000000000000001 RDI: 0000000000000013
+RBP: 000000000072bea0 R08: 0000000000000010 R09: 0000000000000000
+R10: 00000000200010c0 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000000526 R14: 00000000006fac30 R15: 0000000000000000
+
+Allocated by task 20088:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+ set_track mm/kasan/kasan.c:459 [inline]
+ kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
+ kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:489
+ kmem_cache_alloc+0x12e/0x760 mm/slab.c:3542
+ dst_alloc+0x11f/0x1a0 net/core/dst.c:104
+ rt_dst_alloc+0xe9/0x540 net/ipv4/route.c:1520
+ __mkroute_output net/ipv4/route.c:2265 [inline]
+ ip_route_output_key_hash_rcu+0xa49/0x2c60 net/ipv4/route.c:2493
+ ip_route_output_key_hash+0x20b/0x370 net/ipv4/route.c:2322
+ __ip_route_output_key include/net/route.h:126 [inline]
+ ip_route_output_flow+0x26/0xa0 net/ipv4/route.c:2577
+ ip_route_output_ports include/net/route.h:163 [inline]
+ pptp_connect+0xa84/0x1170 drivers/net/ppp/pptp.c:453
+ SYSC_connect+0x213/0x4a0 net/socket.c:1639
+ SyS_connect+0x24/0x30 net/socket.c:1620
+ do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+Freed by task 20082:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+ set_track mm/kasan/kasan.c:459 [inline]
+ __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
+ kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
+ __cache_free mm/slab.c:3486 [inline]
+ kmem_cache_free+0x83/0x2a0 mm/slab.c:3744
+ dst_destroy+0x266/0x380 net/core/dst.c:140
+ dst_destroy_rcu+0x16/0x20 net/core/dst.c:153
+ __rcu_reclaim kernel/rcu/rcu.h:178 [inline]
+ rcu_do_batch kernel/rcu/tree.c:2675 [inline]
+ invoke_rcu_callbacks kernel/rcu/tree.c:2930 [inline]
+ __rcu_process_callbacks kernel/rcu/tree.c:2897 [inline]
+ rcu_process_callbacks+0xd6c/0x17b0 kernel/rcu/tree.c:2914
+ __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
+
+The buggy address belongs to the object at ffff8801c54dc000
+ which belongs to the cache ip_dst_cache of size 168
+The buggy address is located 64 bytes inside of
+ 168-byte region [ffff8801c54dc000, ffff8801c54dc0a8)
+The buggy address belongs to the page:
+page:ffffea0007153700 count:1 mapcount:0 mapping:ffff8801c54dc000 index:0x0
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffff8801c54dc000 0000000000000000 0000000100000010
+raw: ffffea0006b34b20 ffffea0006b6c1e0 ffff8801d674a1c0 0000000000000000
+page dumped because: kasan: bad access detected
+
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_tunnel.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/ppp/pptp.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/net/ipv6/ip6_tunnel.c
-+++ b/net/ipv6/ip6_tunnel.c
-@@ -297,13 +297,16 @@ static struct ip6_tnl *ip6_tnl_create(st
- 	struct net_device *dev;
- 	struct ip6_tnl *t;
- 	char name[IFNAMSIZ];
--	int err = -ENOMEM;
-+	int err = -E2BIG;
+--- a/drivers/net/ppp/pptp.c
++++ b/drivers/net/ppp/pptp.c
+@@ -464,7 +464,6 @@ static int pptp_connect(struct socket *s
+ 	po->chan.mtu = dst_mtu(&rt->dst);
+ 	if (!po->chan.mtu)
+ 		po->chan.mtu = PPP_MRU;
+-	ip_rt_put(rt);
+ 	po->chan.mtu -= PPTP_HEADER_OVERHEAD;
  
--	if (p->name[0])
-+	if (p->name[0]) {
-+		if (!dev_valid_name(p->name))
-+			goto failed;
- 		strlcpy(name, p->name, IFNAMSIZ);
--	else
-+	} else {
- 		sprintf(name, "ip6tnl%%d");
--
-+	}
-+	err = -ENOMEM;
- 	dev = alloc_netdev(sizeof(*t), name, NET_NAME_UNKNOWN,
- 			   ip6_tnl_dev_setup);
- 	if (!dev)
+ 	po->chan.hdrlen = 2 + sizeof(struct pptp_gre_header);
