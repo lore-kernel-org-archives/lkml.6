@@ -1,48 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752426AbeDJIrE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:47:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48620 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751992AbeDJIrD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:47:03 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <1735b3a4-2792-0ce4-3bf4-94fee5b50ff6@infradead.org>
-References: <1735b3a4-2792-0ce4-3bf4-94fee5b50ff6@infradead.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: dhowells@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
-        keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Mat Martineau <mathew.j.martineau@linux.intel.com>
-Subject: Re: [PATCH] uapi/linux/keyctl.h: don't use C++ reserved keyword as a struct member name
+        id S1752700AbeDJIsQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 04:48:16 -0400
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:41340 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752430AbeDJIsO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 04:48:14 -0400
+X-Google-Smtp-Source: AIpwx4+QzQjmlyME8jy3KL4CJ7a2VtMxOa0q5hmVtMPM9xctRRJjM/c7df9dnllwcqhfyO/UzrNXkg==
+Date: Tue, 10 Apr 2018 11:48:10 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: adobriyan@gmail.com, mhocko@kernel.org, willy@infradead.org,
+        mguzik@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v3 PATCH] mm: introduce arg_lock to protect arg_start|end and
+ env_start|end in mm_struct
+Message-ID: <20180410084810.GA2041@uranus.lan>
+References: <1523310774-40300-1-git-send-email-yang.shi@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <19744.1523350020.1@warthog.procyon.org.uk>
-Date: Tue, 10 Apr 2018 09:47:00 +0100
-Message-ID: <19745.1523350020@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523310774-40300-1-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Randy Dunlap <rdunlap@infradead.org> wrote:
-
-> Since this header is in "include/uapi/linux/", apparently people
-> want to use it in userspace programs -- even in C++ ones.
-> However, the header uses a C++ reserved keyword ("private"),
-> so change that to "dh_private" instead to allow the header file
-> to be used in C++ userspace.
+On Tue, Apr 10, 2018 at 05:52:54AM +0800, Yang Shi wrote:
+> mmap_sem is on the hot path of kernel, and it very contended, but it is
+> abused too. It is used to protect arg_start|end and evn_start|end when
+> reading /proc/$PID/cmdline and /proc/$PID/environ, but it doesn't make
+> sense since those proc files just expect to read 4 values atomically and
+> not related to VM, they could be set to arbitrary values by C/R.
 > 
-> Fixes: https://bugzilla.kernel.org/show_bug.cgi?id=191051
+> And, the mmap_sem contention may cause unexpected issue like below:
+> 
+> INFO: task ps:14018 blocked for more than 120 seconds.
+>        Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+>  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+> message.
+>  ps              D    0 14018      1 0x00000004
+>   ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+>   ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+>   00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+>  Call Trace:
+>   [<ffffffff817154d0>] ? __schedule+0x250/0x730
+>   [<ffffffff817159e6>] schedule+0x36/0x80
+>   [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+>   [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+>   [<ffffffff81717db0>] down_read+0x20/0x40
+>   [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+>   [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
+>   [<ffffffff81241d87>] __vfs_read+0x37/0x150
+>   [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
+>   [<ffffffff81242266>] vfs_read+0x96/0x130
+>   [<ffffffff812437b5>] SyS_read+0x55/0xc0
+>   [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
+> 
+> Both Alexey Dobriyan and Michal Hocko suggested to use dedicated lock
+> for them to mitigate the abuse of mmap_sem.
+> 
+> So, introduce a new spinlock in mm_struct to protect the concurrent
+> access to arg_start|end, env_start|end and others except start_brk and
+> brk, which are still protected by mmap_sem to avoid concurrent access
+> from do_brk().
+> 
+> This patch just eliminates the abuse of mmap_sem, but it can't resolve the
+> above hung task warning completely since the later access_remote_vm() call
+> needs acquire mmap_sem. The mmap_sem scalability issue will be solved in the
+> future.
+> 
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> Cc: Alexey Dobriyan <adobriyan@gmail.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Mateusz Guzik <mguzik@redhat.com>
+> Cc: Cyrill Gorcunov <gorcunov@gmail.com>
+> ---
+> v2 --> v3:
+> * Restored down_write in prctl syscall
+> * Elaborate the limitation of this patch suggested by Michal
+> * Protect those fields by the new lock except brk and start_brk per Michal's
+>   suggestion
+> * Based off Cyrill's non PR_SET_MM_MAP oprations deprecation patch
+>   (https://lkml.org/lkml/2018/4/5/541)
 
-Ugh.  Yeah.  This is a UAPI breaker, but I think we have to do it, despite it
-being 2 years old.  Maybe wrap that element in a #ifdef so it's still allowed
-in C?
+For prctl part
 
-cc'ing Mat Martineau as he's the originator of the structure.
+Acked-by: Cyrill Gorcunov <gorcunov@openvz.org>
 
-David
+thanks!
