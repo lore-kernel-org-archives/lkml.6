@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx494rmdOakFIeqZ5jKcMCZl8/yqgivgG0ZgBcW3M3SLCRD9IsGnPH9kukFYTMjZRSYZ55E1V
-ARC-Seal: i=1; a=rsa-sha256; t=1523399297; cv=none;
+X-Google-Smtp-Source: AIpwx48mXj1dck3psjjeifnSc9PpkxXAwY8HX3j6EJl611tKB5PBjVK03aDiSjQK+r6NLDCj6BYE
+ARC-Seal: i=1; a=rsa-sha256; t=1523399295; cv=none;
         d=google.com; s=arc-20160816;
-        b=CyEPbOj3hTb4i+PfCd37yUpddqGNzBfsfeqBoiGP9Y2l5U/I6zRL/tAHRUO3QJmdWW
-         nCD2XZ4a3TYAkoReCch/sTR7vOcuSA5zrvokQmgZPpoP9daCYUApW8NdEXHhJanHBK3i
-         GFc1DkvBSgKB7nPyXrlsxS3uPKViz99zzyMYaAfj0DOlFE7zEK5FQwjbTTXvnHaudY/Q
-         JooW44ofrCZkMkxqQsD+zkj43WsA3BtWgebDuj6TK+iaZPDzMJYB3qn9qWcl63I+cbaE
-         lzNenMqoMM5CTIgTqCXgy6fLjP6gIAg68jcHuey/OL+DuKDO0DGklfsJKzXZvhMoPWo9
-         F8Yg==
+        b=Fp79jj0ml6I9Fhq9vHA/ib1Eq9J6B/y/kLePv53wKG12as2h+aWOd4Wzyn31zrYaqB
+         tuopIigWKSzTXBV6OdFAK7/F5yxLBS76raePrfdBHzkQJWJxmrJD9Do/VcaIma6bFg9R
+         teYWkSkNpcIvvlj6JtM20SQqBAWHMIQ/I+41GgDHptXBeOKD22qHQhT+eyc42en9Xemy
+         cCKYYPlmA54prpUY55IJqES3SKxwR9ZepD5v0LzlXZQ8E6WAHmFmrJO5uwZq6jl/cuBe
+         HvI6rxKxnRA6l7Vgzu6wnF2XVlSgqzPqUcOSMEnEhP8/obN1dYZHY+KdGKytg6aTVPZn
+         bd1w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XvviqZAl8ooJ2seRFemcPK2lc0WpeXofCgXkiSY5tNc=;
-        b=sSTJfoTYs0CdDAR1zUCsmsKsUdBwb8Prtwb4b5ZfO/tbfgCKIR0sUGOkBeovRbRd+u
-         wj0gq+hrE88elHisP8Wp5dSmNeN4Rh0h+r8eT7rkd5sMS8zWGH2HuZxT203cPGc1PBj8
-         nqpwHhRTYNgG1A0jwiRCb6k+8TYV+SJq+Izb8liVGtwLFrpXBgf357fYE5CqHwe566B5
-         2HFvKHcTdKaOT9OG3H4opp26o3NM8Z6E+ujZHRGD9hfQXJe6P2qljmkuKy71eelgUyIt
-         fKQOzzbrhIO54o6AJsVRnXkoKOPC2BzZQi96bUj0rEybyFCX/VKsE0EehD+UnTH5lxJg
-         GSug==
+        bh=Qx+c4O37P2bYJhF5AWoWl5lzTGceGTDiJ6HbkNEnQbM=;
+        b=yftunVYQ8jcRAx9w+KYUX5jlxmbW3QiQf8h9Tnd5U8Afa4KQ6wAzB91QBMyXYcPnfn
+         QjMh5Tp4ogRcuBIChIgK7qwX4DLADN1E+LH5t/r4pkOTnRhWb+ezreQ+AZRjb1bctqGX
+         01QFDeErpOB9L0DEdJ6tIzGpNsNYveL10W9msNJfukReTJb7V4fhcc+Vc992XqbqLAx2
+         bUyZ9kNp8J0SxynV/PEHpc9i+4bYVnVQ9rRV8kDHijUI9BPlthP7RpQWUeijeo16jnmQ
+         mt02kgv9r03vUMqwJG3MsZL3iO+5c1i0MyB1+4oeOAbe6/rPzqfLpqk4n8yj5T+bPqrl
+         2hBg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Archit Taneja <architt@codeaurora.org>,
-	Jordan Crouse <jcrouse@codeaurora.org>,
-	Rob Clark <robdclark@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mark Brown <broonie@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 036/168] drm/msm: Fix NULL deref in adreno_load_gpu
-Date: Wed, 11 Apr 2018 00:22:58 +0200
-Message-Id: <20180410212801.728309262@linuxfoundation.org>
+Subject: [PATCH 4.15 035/168] ASoC: Intel: cht_bsw_rt5645: Analog Mic support
+Date: Wed, 11 Apr 2018 00:22:57 +0200
+Message-Id: <20180410212801.691934506@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399941861017772?=
-X-GMAIL-MSGID: =?utf-8?q?1597399941861017772?=
+X-GMAIL-THRID: =?utf-8?q?1597399939365598429?=
+X-GMAIL-MSGID: =?utf-8?q?1597399939365598429?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,50 +50,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Archit Taneja <architt@codeaurora.org>
+From: Hans de Goede <hdegoede@redhat.com>
 
 
-[ Upstream commit 9dcfbc182f1aac0aa5ea194733d21e67dd2ba1fd ]
+[ Upstream commit b70b309950418437bbd2a30afd169c4f09dee3e5 ]
 
-The msm/kms driver should work even if there is no GPU device specified
-in DT. Currently, we get a NULL dereference crash in adreno_load_gpu
-since the driver assumes that priv->gpu_pdev is non-NULL.
+Various Cherry Trail boards with a rt5645 codec have an analog mic
+connected to IN2P + IN2N. The mic on this boards also needs micbias to
+be enabled, on some boards micbias1 is used and on others micbias2, so
+we enable both.
 
-Perform an additional check on priv->gpu_pdev before trying to retrieve
-the msm_gpu pointer from it.
+This commit adds a new "Int Analog Mic" DAPM widget for this, so that we
+do not end up enabling micbias on boards with a digital mic which uses
+the already present "Int Mic" widget. Some existing UCM files already
+refer to "Int Mic" for their "Internal Analog Microphones" SectionDevice,
+but these don't work anyways since they enable the RECMIX BST1 Switch
+instead of the BST2 switch.
 
-v2: Incorporate Jordan's comments:
-- Simplify the check to share the same error message.
-- Use dev_err_once() to avoid an error message every time we open the
-  drm device fd.
-
-Fixes: eec874ce5ff1 (drm/msm/adreno: load gpu at probe/bind time)
-
-Signed-off-by: Archit Taneja <architt@codeaurora.org>
-Acked-by: Jordan Crouse <jcrouse@codeaurora.org>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/msm/adreno/adreno_device.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ sound/soc/intel/boards/cht_bsw_rt5645.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/gpu/drm/msm/adreno/adreno_device.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
-@@ -125,11 +125,14 @@ struct msm_gpu *adreno_load_gpu(struct d
- {
- 	struct msm_drm_private *priv = dev->dev_private;
- 	struct platform_device *pdev = priv->gpu_pdev;
--	struct msm_gpu *gpu = platform_get_drvdata(priv->gpu_pdev);
-+	struct msm_gpu *gpu = NULL;
- 	int ret;
+--- a/sound/soc/intel/boards/cht_bsw_rt5645.c
++++ b/sound/soc/intel/boards/cht_bsw_rt5645.c
+@@ -118,6 +118,7 @@ static const struct snd_soc_dapm_widget
+ 	SND_SOC_DAPM_HP("Headphone", NULL),
+ 	SND_SOC_DAPM_MIC("Headset Mic", NULL),
+ 	SND_SOC_DAPM_MIC("Int Mic", NULL),
++	SND_SOC_DAPM_MIC("Int Analog Mic", NULL),
+ 	SND_SOC_DAPM_SPK("Ext Spk", NULL),
+ 	SND_SOC_DAPM_SUPPLY("Platform Clock", SND_SOC_NOPM, 0, 0,
+ 			platform_clock_control, SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD),
+@@ -128,6 +129,8 @@ static const struct snd_soc_dapm_route c
+ 	{"IN1N", NULL, "Headset Mic"},
+ 	{"DMIC L1", NULL, "Int Mic"},
+ 	{"DMIC R1", NULL, "Int Mic"},
++	{"IN2P", NULL, "Int Analog Mic"},
++	{"IN2N", NULL, "Int Analog Mic"},
+ 	{"Headphone", NULL, "HPOL"},
+ 	{"Headphone", NULL, "HPOR"},
+ 	{"Ext Spk", NULL, "SPOL"},
+@@ -135,6 +138,9 @@ static const struct snd_soc_dapm_route c
+ 	{"Headphone", NULL, "Platform Clock"},
+ 	{"Headset Mic", NULL, "Platform Clock"},
+ 	{"Int Mic", NULL, "Platform Clock"},
++	{"Int Analog Mic", NULL, "Platform Clock"},
++	{"Int Analog Mic", NULL, "micbias1"},
++	{"Int Analog Mic", NULL, "micbias2"},
+ 	{"Ext Spk", NULL, "Platform Clock"},
+ };
  
-+	if (pdev)
-+		gpu = platform_get_drvdata(pdev);
-+
- 	if (!gpu) {
--		dev_err(dev->dev, "no adreno device\n");
-+		dev_err_once(dev->dev, "no GPU device was found\n");
- 		return NULL;
- 	}
+@@ -189,6 +195,7 @@ static const struct snd_kcontrol_new cht
+ 	SOC_DAPM_PIN_SWITCH("Headphone"),
+ 	SOC_DAPM_PIN_SWITCH("Headset Mic"),
+ 	SOC_DAPM_PIN_SWITCH("Int Mic"),
++	SOC_DAPM_PIN_SWITCH("Int Analog Mic"),
+ 	SOC_DAPM_PIN_SWITCH("Ext Spk"),
+ };
  
