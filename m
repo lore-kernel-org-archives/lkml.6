@@ -1,92 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751875AbeDJFzY convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 01:55:24 -0400
-Received: from emcscan.emc.com.tw ([192.72.220.5]:41094 "EHLO
-        emcscan.emc.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751589AbeDJFzW (ORCPT
+        id S1751875AbeDJGJj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 02:09:39 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49262 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751490AbeDJGJi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 01:55:22 -0400
-From: =?utf-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>
-To: "'Benjamin Tissoires'" <benjamin.tissoires@redhat.com>,
-        "'Dmitry Torokhov'" <dmitry.torokhov@gmail.com>
-Cc: "'Oliver Haessler'" <oliver@redhat.com>,
-        "'Benjamin Berg'" <bberg@redhat.com>,
-        "'open list:HID CORE LAYER'" <linux-input@vger.kernel.org>,
-        "'lkml'" <linux-kernel@vger.kernel.org>
-References: <20180405132537.3218-1-benjamin.tissoires@redhat.com> <20180405235126.GB57189@dtor-ws> <CAO-hwJLY=OR1bk2y9c-6MZzoAYzorH9MEKf70=dnhqz8s-dCQg@mail.gmail.com>
-In-Reply-To: <CAO-hwJLY=OR1bk2y9c-6MZzoAYzorH9MEKf70=dnhqz8s-dCQg@mail.gmail.com>
-Subject: RE: [PATCH 0/8] Input: support for latest Lenovo thinkpads (series 80)
-Date: Tue, 10 Apr 2018 13:45:33 +0800
-Message-ID: <000301d3d08f$24b356b0$6e1a0410$@emc.com.tw>
+        Tue, 10 Apr 2018 02:09:38 -0400
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AQGx3tF9q04NbCgqaz93Ar88cJmSXgH4DjZEAnkTkxGkGcUBEA==
-Content-Language: zh-tw
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date: Tue, 10 Apr 2018 11:39:35 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 1/9] mtd: nand: qcom: use the ecc strength from device
+ parameter
+In-Reply-To: <20180406143133.67f33d33@xps13>
+References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+ <1522845745-6624-2-git-send-email-absahu@codeaurora.org>
+ <20180406143133.67f33d33@xps13>
+Message-ID: <23c8330d00d4d9b62c4c1ab597cbb22b@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Benjamin,
+On 2018-04-06 18:01, Miquel Raynal wrote:
+> Hi Abhishek,
+> 
+> On Wed,  4 Apr 2018 18:12:17 +0530, Abhishek Sahu
+> <absahu@codeaurora.org> wrote:
+> 
+>> Currently the driver uses the ECC strength specified in
+>> device tree. The ONFI or JEDEC device parameter page
+>> contains the ‘ECC correctability’ field which indicates the
+>> number of bits that the host should be able to correct per
+>> 512 bytes of data.
+> 
+> This is misleading. This field is not about the controller but rather
+> the chip requirements in terms of minimal strength for nominal use.
+> 
 
-Thanks so much for your patch.
+  Thanks Miquel.
 
-I have tested them for Elan Gen5/Gen6(new) touchpad with SMbus/PS2.
-It works fine in my thinkpad so far but I find an issue today after lid-close/open.
+  Yes. Its NAND chip requirement. I have used the description for
+  NAND ONFI param page
 
-I am not sure if you can see it in T480S , I "guess" it may be relative to i2c_i801.
+  5.6.1.24. Byte 112: Number of bits ECC correctability
+  This field indicates the number of bits that the host should be
+  able to correct per 512 bytes of data.
 
-The lid-close will enter deep sleep and cut touchpad power. 
-I can see the resume flow after lid-open and SMbus-initial try to request hello package but fail.
-Strangely, I can't see any SMbus host signal on LA scope after power-on.
+>> The ecc correctability is assigned in
+>> chip parameter during device probe time. QPIC/EBI2 NAND
+>> supports 4/8-bit ecc correction. The Same kind of board
+>> can have different NAND parts so use the ecc strength
+>> from device parameter (if its non zero) instead of
+>> device tree.
+> 
+> That is not what you do.
+> 
+> What you do is forcing the strength to be 8-bit per ECC chunk if the
+> NAND chip requires at least 8-bit/chunk strength.
+> 
+> The DT property is here to force a strength. Otherwise, Linux will
+> propose to the NAND controller to use the minimum strength required by
+> the chip (from either the ONFI/JEDEC parameter page or from a static
+> table).
+> 
 
-I can't switch to SMbus after rmmod/modprobe psmouse because error happen in elantech_create_smbus.
-It will be recovered only if I rmmod/modprobe i2c_i801 first.
+  The main problem is that the same kind of boards can have different
+  NAND parts.
 
-Do you have any idea about it?
+  Lets assume, we have following 2 cases.
 
-Thanks
-KT
------Original Message-----
-From: Benjamin Tissoires [mailto:benjamin.tissoires@redhat.com] 
-Sent: Friday, April 06, 2018 2:51 PM
-To: Dmitry Torokhov
-Cc: 廖崇榮; Oliver Haessler; Benjamin Berg; open list:HID CORE LAYER; lkml
-Subject: Re: [PATCH 0/8] Input: support for latest Lenovo thinkpads (series 80)
+  1. Non ONFI/JEDEC device for which chip->ecc_strength_ds
+     will be zero. In this case, the ecc->strength from DT
+     will be used
+  2. ONFI/JEDEC device for which chip->ecc_strength_ds > 8.
+     Since QCOM nand controller can not support
+     ECC correction greater than 8 bits so we can use 8 bit ECC
+     itself instead of failing NAND boot completely.
 
-Hi Dmitry,
+> IMHO, you have two solutions:
+> 1/ Remove these properties from the board DT (breaks DT backward
+> compatibility though);
 
-On Fri, Apr 6, 2018 at 1:51 AM, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> Hi Benjamin,
->
-> On Thu, Apr 05, 2018 at 03:25:29PM +0200, Benjamin Tissoires wrote:
->> Hi Dmitry,
->>
->> well, this year, Lenovo gave us a surprise and decided to not use the 
->> same touchpad/trackstick in all its model. And by default, the 
->> support under Linux is less than ideal.
->>
->> Please find a series that should fix those issues. Compared to the 60 
->> series, there do not seem to e BIOS table issues this time, and 
->> suspend/resume works fine thanks to your latest trackstick fixes.
->>
->> The T480s is a different beast, as it uses an Elan touchpad.
->> I have been carrying the patches 3-6 for a while and tested previous 
->> versions on various Elan PS/2 hardware without an issue as far as I 
->> could tell. I was lacking tests from users with SMBus as all the 
->> laptops I tried where puer PS/2.
->>
->> Anyway, it would be cool if you could have a look at the series.
->
-> I am mostly happy with the series, but I would love to hear KT's take 
-> on it.
+  - nand-ecc-strength: This is optional property in nand.txt and
+    Required property in qcom_nandc.txt. We can't remove since
+    if the device is Non ONFI/JEDEC, then ecc strength will come
+    from DT only.
 
-thanks for the quick review.
-I worked closely with KT for this series. He helped me a lot for the tiny firmware changes that were required. However, quoting his email from Tuesday:
-"There will be a spring vacation in Taiwan from tomorrow." I guess we won't hear from him until the end of next week as we always have a backlog of urgent things to do after holidays...
+> 2/ Create another DT for the board.
+> 
 
-Cheers,
-Benjamin
+  Its not about board but about part. We have IPQ8074 HK01 board
+  with 4 bit ECC chip/8 bit ECC chip/non ONFI/JEDEC chip.
+
+> However, there is something to do in this driver: the strength chosen
+> should be limited to the controller capabilities (8-bit/512B if I
+> understand correctly). In this case you have two options: either you
+> limit the strength like the size [1] if (ecc->strength > 8);
+
+  Limiting the strength will make all the boards with ecc strength > 8
+  to fail completely
+
+> just limit the maximum strength to 8 like this [2] and the core will
+> spawn a warning in the dmesg telling that the ECC strength used is
+> below the NAND chip requirements.
+
+  Yes its good idea. I can update the patch with dmesg warning.
+
+  Thanks,
+  Abhishek
+
+> 
+> Thanks,
+> Miquèl
+> 
+> [1]
+> https://elixir.bootlin.com/linux/latest/source/drivers/mtd/nand/qcom_nandc.c#L2332
+> [2] http://code.bulix.org/nyf63w-315268
+> 
+> 
+>> 
+>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+>> ---
+>>  drivers/mtd/nand/qcom_nandc.c | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>> 
+>> diff --git a/drivers/mtd/nand/qcom_nandc.c 
+>> b/drivers/mtd/nand/qcom_nandc.c
+>> index 563b759..8dd40de 100644
+>> --- a/drivers/mtd/nand/qcom_nandc.c
+>> +++ b/drivers/mtd/nand/qcom_nandc.c
+>> @@ -2334,6 +2334,14 @@ static int qcom_nand_host_setup(struct 
+>> qcom_nand_host *host)
+>>  		return -EINVAL;
+>>  	}
+>> 
+>> +	/*
+>> +	 * Read the required ecc strength from NAND device and overwrite
+>> +	 * the device tree ecc strength for devices which require
+>> +	 * ecc correctability bits >= 8
+>> +	 */
+>> +	if (chip->ecc_strength_ds >= 8)
+>> +		ecc->strength = 8;
+>> +
+>>  	wide_bus = chip->options & NAND_BUSWIDTH_16 ? true : false;
+>> 
+>>  	if (ecc->strength >= 8) {
