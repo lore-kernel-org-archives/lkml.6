@@ -1,172 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752054AbeDJWFv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 18:05:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46404 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751600AbeDJWFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 18:05:49 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6901421745
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 10 Apr 2018 18:05:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Zhou Chengming <zhouchengming1@huawei.com>
-Cc: <linux-kernel@vger.kernel.org>, <mingo@redhat.com>,
-        <peterz@infradead.org>, <huawei.libin@huawei.com>
-Subject: Re: [PATCH] sched/rt.c: pick and check task if
- double_lock_balance() unlock the rq
-Message-ID: <20180410180546.4159134c@gandalf.local.home>
-In-Reply-To: <1505112709-102019-1-git-send-email-zhouchengming1@huawei.com>
-References: <1505112709-102019-1-git-send-email-zhouchengming1@huawei.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752241AbeDJWJu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 18:09:50 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44174 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751770AbeDJWJs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 18:09:48 -0400
+X-Google-Smtp-Source: AIpwx48vs1Mev0td/UnWBn8sdynlefMFMDb90dybcAjZP0IjDtWSyY+PlQkS+ekDkZI1uY4TlbYYIg==
+Date: Tue, 10 Apr 2018 12:09:44 -1000
+From: Joey Pabalinas <joeypabalinas@gmail.com>
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: Joey Pabalinas <joeypabalinas@gmail.com>, linux-sparse@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Martin Uecker <Martin.Uecker@med.uni-goettingen.de>,
+        Al Viro <viro@ZenIV.linux.org.uk>, Christopher Li <sparse@chrisli.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] sparse: add -Wpointer-arith flag to toggle
+ sizeof(void) warnings
+Message-ID: <20180410220944.vnpzmugf5xbdsnpl@gmail.com>
+References: <20180410010204.qeudkkru4jilun3v@gmail.com>
+ <20180410194117.ei4eo3kaxvv2ezdx@ltop.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uuv24zrkmtttto3j"
+Content-Disposition: inline
+In-Reply-To: <20180410194117.ei4eo3kaxvv2ezdx@ltop.local>
+User-Agent: NeoMutt/20180323-62-378db9
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Peter,
+--uuv24zrkmtttto3j
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Going through my inbox, I stumbled across this one. And it doesn't
-appear to be addressed.
+On Tue, Apr 10, 2018 at 09:41:19PM +0200, Luc Van Oostenryck wrote:
+> Thank you very much.
+>=20
+> There is just a problem with the test but it's my fault as I
+> pointed to you to my tree but the master tree lack a lot of fixes
+> and have problems when dereferencing function pointers.
+> So, for the master tree, I propose to use a version with these
+> tests removed:
+> 	git://github.com/lucvoo/sparse-dev.git pointer-arith-v3
 
-I think this patch is a reasonable solution.
+Not a problem; I will rebase it on the v0.5.2-rc1 tag and
+take out the function pointer test-case.
 
-One small nit below though, but other than that.
+--=20
+Cheers,
+Joey Pabalinas
 
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+--uuv24zrkmtttto3j
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-On Mon, 11 Sep 2017 14:51:49 +0800
-Zhou Chengming <zhouchengming1@huawei.com> wrote:
+iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlrNNigACgkQruvLfWhy
+VBkyDxAAh5rSE9rwBu5Qe35V2SM8oPxZ7lo50mLDX6wKNYD2lXg7WYgT1jhtk6J1
+CjrxPnO5KtpFGDO0dr9g1gMf1NQ8CcgeLRcIL+FN4jM1vdDozcvOod0AgOg1wNQP
+95oboPSHBPvWFcUPPP/Wjm8KJKez23dfJwGVoIDX9e3LvXtN3Pc3igr0fLkQC2uP
+jDDQvRJ5kzdR+S2qDjmvEv2ueiaE3GWPsoDjVt4JCWVGrMsens6kh5VY9Rz+IuND
+PeLUOGmFBXZDNrfwSRVIIXavpbs5YdSbYzBPsIEWjtto4I1YBkWCHBAUFlvAg5l5
+FmE/ESxmKY4z/5JvGmP6soZU/mt19P6LQe8nr2l1MPaPbKIabsUUp48mGG2cF542
+cJi9XpgJzMr6Ltq0d2ZKANCZJ3sUNSYUfUX7k2oS119b8kJa3wOIvJmL8JzmkOp0
+EXKxnE3A10DGSv6bLIO1JfJmLzYlavEFS2MS8ww0pRR2SJ3cCAgEewJMhSo/jDWD
+8paMMaA3SvnePUJpWv7RZa3vdFzjC2nPp49L6vsjlHbaVzMDjTMAbQe3Zne6tsKe
+UXwt+mgIuGDzw5EZ0j0OuQSza30Je0Gkwu4JhLBd46/DO+bkn3cF5tXvXvXLAfm/
+SlJGIti2WgQ308iCO755dsusUGWhnkVLAEs5mAsFncQ+ZhQ+ZVc=
+=cweM
+-----END PGP SIGNATURE-----
 
-> push_rt_task() pick the first pushable task and find an eligible
-> lowest_rq, then double_lock_balance(rq, lowest_rq). So if
-> double_lock_balance() unlock the rq (when double_lock_balance() return 1),
-> we have to check if this task is still on the rq.
-> 
-> The problem is that the check conditions are not sufficient:
-> 
-> if (unlikely(task_rq(task) != rq ||
-> 	     !cpumask_test_cpu(lowest_rq->cpu, &task->cpus_allowed) ||
-> 	     task_running(rq, task) ||
-> 	     !rt_task(task) ||
-> 	     !task_on_rq_queued(task))) {
-> 
-> cpu2				cpu1			cpu0
-> push_rt_task(rq1)
->   pick task_A on rq1
->   find rq0
->     double_lock_balance(rq1, rq0)
->       unlock(rq1)
-> 				rq1 __schedule
-> 				  pick task_A run
-> 				task_A sleep (dequeued)
->       lock(rq0)
->       lock(rq1)
->     do_above_check(task_A)
->       task_rq(task_A) == rq1
->       cpus_allowed unchanged
->       task_running == false
->       rt_task(task_A) == true
-> 							try_to_wake_up(task_A)
-> 							  select_cpu = cpu3
-> 							  enqueue(rq3, task_A)
-> 							  task_A->on_rq = 1
->       task_on_rq_queued(task_A)
->     above_check passed, return rq0
->     ...
->     migrate task_A from rq1 to rq0
-> 
-> So we can't rely on these checks of task_A to make sure the task_A is
-> still on the rq1, even though we hold the rq1->lock. This patch will
-> repick the first pushable task to be sure the task is still on the rq.
-> 
-> Signed-off-by: Zhou Chengming <zhouchengming1@huawei.com>
-> ---
->  kernel/sched/rt.c | 49 +++++++++++++++++++++++--------------------------
->  1 file changed, 23 insertions(+), 26 deletions(-)
-> 
-> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> index 45caf93..787b721 100644
-> --- a/kernel/sched/rt.c
-> +++ b/kernel/sched/rt.c
-> @@ -1703,6 +1703,26 @@ static int find_lowest_rq(struct task_struct *task)
->  	return -1;
->  }
->  
-> +static struct task_struct *pick_next_pushable_task(struct rq *rq)
-> +{
-> +	struct task_struct *p;
-> +
-> +	if (!has_pushable_tasks(rq))
-> +		return NULL;
-> +
-> +	p = plist_first_entry(&rq->rt.pushable_tasks,
-> +			      struct task_struct, pushable_tasks);
-> +
-> +	BUG_ON(rq->cpu != task_cpu(p));
-> +	BUG_ON(task_current(rq, p));
-> +	BUG_ON(p->nr_cpus_allowed <= 1);
-> +
-> +	BUG_ON(!task_on_rq_queued(p));
-> +	BUG_ON(!rt_task(p));
-> +
-> +	return p;
-> +}
-> +
->  /* Will lock the rq it finds */
->  static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
->  {
-> @@ -1734,13 +1754,10 @@ static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
->  			 * We had to unlock the run queue. In
->  			 * the mean time, task could have
->  			 * migrated already or had its affinity changed.
-> -			 * Also make sure that it wasn't scheduled on its rq.
->  			 */
-> -			if (unlikely(task_rq(task) != rq ||
-> -				     !cpumask_test_cpu(lowest_rq->cpu, &task->cpus_allowed) ||
-> -				     task_running(rq, task) ||
-> -				     !rt_task(task) ||
-> -				     !task_on_rq_queued(task))) {
-> +			struct task_struct *next_task = pick_next_pushable_task(rq);
-
-I would put the above declaration before the above comment.
-
--- Steve
-
-> +			if (unlikely(next_task != task ||
-> +				     !cpumask_test_cpu(lowest_rq->cpu, &task->cpus_allowed))) {
->  
->  				double_unlock_balance(rq, lowest_rq);
->  				lowest_rq = NULL;
-> @@ -1760,26 +1777,6 @@ static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
->  	return lowest_rq;
->  }
->  
-> -static struct task_struct *pick_next_pushable_task(struct rq *rq)
-> -{
-> -	struct task_struct *p;
-> -
-> -	if (!has_pushable_tasks(rq))
-> -		return NULL;
-> -
-> -	p = plist_first_entry(&rq->rt.pushable_tasks,
-> -			      struct task_struct, pushable_tasks);
-> -
-> -	BUG_ON(rq->cpu != task_cpu(p));
-> -	BUG_ON(task_current(rq, p));
-> -	BUG_ON(p->nr_cpus_allowed <= 1);
-> -
-> -	BUG_ON(!task_on_rq_queued(p));
-> -	BUG_ON(!rt_task(p));
-> -
-> -	return p;
-> -}
-> -
->  /*
->   * If the current CPU has more than one RT task, see if the non
->   * running task can migrate over to a CPU that is running a task
+--uuv24zrkmtttto3j--
