@@ -1,187 +1,800 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752616AbeDJJv4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 05:51:56 -0400
-Received: from mail-sn1nam01on0074.outbound.protection.outlook.com ([104.47.32.74]:35280
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752016AbeDJJvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:51:54 -0400
-Authentication-Results: spf=pass (sender IP is 137.71.25.55)
- smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=analog.com;
-From: Stefan Popa <stefan.popa@analog.com>
-To: <sre@kernel.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stefan.popa@analog.com>
-Subject: [PATCH v2 3/3] adp5061: Add support for charging voltage limit enable
-Date: Tue, 10 Apr 2018 12:51:42 +0300
-Message-ID: <1523353902-23748-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1522829896-8087-1-git-send-email-stefan.popa@analog.com>
-References: <1522829896-8087-1-git-send-email-stefan.popa@analog.com>
+        id S1752656AbeDJJw4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 05:52:56 -0400
+Received: from mail-lf0-f45.google.com ([209.85.215.45]:44999 "EHLO
+        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752392AbeDJJwx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 05:52:53 -0400
+X-Google-Smtp-Source: AIpwx4+qIf0xsRSH9Rl5gVf2mBjTwqQLel5OYKuZf/VXxIArujEmS9jjcFfnyjJ97Axh3DstySIc3A==
+Subject: Re: [RFC, v2, 2/9] hyper_dmabuf: architecture specification and
+ reference guide
+To: Dongwon Kim <dongwon.kim@intel.com>, linux-kernel@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org, xen-devel@lists.xenproject.org
+Cc: dri-devel@lists.freedesktop.org, mateuszx.potrola@intel.com
+References: <20180214015008.9513-3-dongwon.kim@intel.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <8d262b12-a73c-1ba1-4b08-b82b75a37b14@gmail.com>
+Date: Tue, 10 Apr 2018 12:52:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(396003)(346002)(39380400002)(39860400002)(2980300002)(438002)(199004)(189003)(50944005)(54906003)(246002)(316002)(50226002)(336012)(4326008)(426003)(478600001)(72206003)(7696005)(6916009)(106002)(77096007)(126002)(8936002)(11346002)(486006)(2616005)(446003)(16586007)(48376002)(6666003)(476003)(5660300001)(186003)(76176011)(356003)(8676002)(59450400001)(7636002)(26005)(305945005)(51416003)(107886003)(2906002)(50466002)(47776003)(36756003)(106466001)(2351001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB3049;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD027;1:gdT6AoGKihhKvMNvADgpt8JKmCkAFQut9KqXaKYVbx6SLo03fhrI01zhQaaQ7h7EQ+a5e+vRFTWezqQwHNq0Z+N+OBGEG7MnueUNbzsWg1SZEdAxEuUPjaU8VzsZ2DkR
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ac125fdd-fdb8-499c-4d17-08d59ec8afe6
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4604075)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:DM5PR03MB3049;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3049;3:ly/I67Dedi+nL3T+nYJSznywCb72X1qgCDDq62dFEQe5rWEyeGP5Tk0DFfCKh2vj6wQUiQCdj5RYluRB9pkbODK8fDL/zN5KtiVycfCcV1/1qoOYhtCwgiaF47YJaRNbKitRLBiVFV4ctJITXjPULj1oVIaUHbyqEe4LmIRtfzXY4D+qS5nkjl/w70Q9wWaeeqaxvCVgo1nWq8T6Nl9MDEE3ozw+feq4JMW8cZCwTWRsfRNTjNI4SyzEtDOxeFewcDeUWqNDwUhtkvo5kLWC0Lb0GSw+9SLWrAEF8MHfnnVdzgnTJ+awwp8grMafe8FgX56i5KFhNiCahRyCpuhbjGhimK8YFRg4BFi6zGWhmXo=;25:UsVjQI1dZrJJGhdYgczDHTR6mYvDi4oiqchQUXBW4eiuV86cOCixyxrLJCV/kV7oIc9Oyby3RWCa5ht94TbzIBSIkUFR2/WCu8RtC2FVDXeUZRGyQim5UWC02Un047ZJhlSXm1VjH5AdcbucgZSKZtHXXGeg2TYItwDrUKezPl5xwUn14cg6akWvkuC86BGGA59hlUQD0wmMQ8YfJDUVbNhW47HMd4u4IDfuQPAisO5N2yoV17E3qIorzKpp5MbfBferPss07PJSci9KX8RJBXrEEbmBOLswcTkGImvTPWmYszlXwrgzfb9GijJESEMYOaRxk6bkc9QsUkGFOSk6sA==
-X-MS-TrafficTypeDiagnostic: DM5PR03MB3049:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3049;31:7kw+hmScLzj3/XgEqGDC7IxLPXmvc6LOFtpH6QD+renYNg4JBxEWKTW0Cw8dn3uKk9DIlbIW+L9sJZtME8Ey+KxIDT9cYCAMZPsEgZ8pXSYKF9sD6GsJkTT9HjfwSeaOYY8/gv/1cchVDkK2Gk5j1ykdxt+RhJkg7ylJAXdRj2FCk+dyyPoGY0ujxv4eAY1bb/af4wgxTFvBOUTzxVE160g7RrqWzUWXPVt4AyKV14k=;20:CWxzEulSdP8VnAv6HcKKdTVNBGI8TvtWxgSvZKJpkNOMFAwig/9PBJKstdi3yLkDBTIjC7AvVfF6hgI9+QVvjcCkFQwALdBbu2f48LmigBpxYyQHISEDM3ehsD6QEzP0mRQxLdUMG9+aVRtyKzsvknoAD1rTLtX7TuOn3epRu4Y+8V6GPovPZT7pE227M/A//C1JaWDemoIcDXz2eee7QQQuu4bEoF4LetVop3Rb+h2Q/SBoDpEv/KOLCAj54JoF4OSQ4eYmpavIwb6CIO42hMLISi1VNwV01KQjFbPNK8VCBZ9LmIUR1d6Go+CrSJFcPI67XYkK+JX0UGBf+z7k8YX9E0Ci4lqMpQh+rtri6cs7SK58Bfm4kaIaCiuVBu7sg7/08Zcdu8ZvymTE7iQuw9cWQ3OKA0XGBe4mdvYM9YaENTi0BmHEiB6JLv40q85PBu2iF9E255KojmDjKj461iF3HWb2FQXfyCD5qIICWpwIsEYhlftHD3iWH/IsOiG/
-X-Microsoft-Antispam-PRVS: <DM5PR03MB304938BD68AD5A2F97ABE9AC9DBE0@DM5PR03MB3049.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(232431446821674);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(3002001)(10201501046)(3231221)(944501327)(52105095)(6055026)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR03MB3049;BCL:0;PCL:0;RULEID:;SRVR:DM5PR03MB3049;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3049;4:VBQ5KeV1jlG8dm4iBnaeP6HIShCKd/L1ya3Lq1UdJuVnkrl/7w1PqZyQ+jPSJGKoIPDajqat7j3N/dN0MjDLIoT4wePEMPb+eJtxey1XVGPh029q03j3x30UaA+E5snQ9RQF3fDtWLcXZeTYauL9XZV/DYkMVfUtMMXsiwYIDt6z7DYYwWfKHQ5oVG56Dg1rHb+30i5kcK/D4lg2YO76/NdcJwYM2Nj8Ln4oSdxwwMW2+8MaRvfXJ+IPQ+y3MRE8D7hhvNYLO2sXzIPEGxQJPWfXsYx0VVUmMR7e78vDQhTmlDTKsUGUCvh2B9KzeZbV
-X-Forefront-PRVS: 0638FD5066
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR03MB3049;23:xi0Zo6OzKg9vSQnMl9Ekrh99+6ncenAY5wtZ78X6s?=
- =?us-ascii?Q?LHroe0iS5YH847V3FGRUi/uV3ckRJPMwPM6d8agr/jkt5PTaBkWAcmcXWeVh?=
- =?us-ascii?Q?0oDEt7HXzie1POQnVTrPdc+WzxBgDq7dR8mqwYVbw3rbJytiLfj9PAsLK5WX?=
- =?us-ascii?Q?bQbRc3JV6wOyBpAukRwRHmZdlfH87T2vCYWDsiWpz293zV2x6vZ7THmg87rg?=
- =?us-ascii?Q?AEdgX7xUUtJ7qEDZ6WfZ0RwtnDp0X3Hk1dmsH8gCN81ceEOGssfntgvtiuy/?=
- =?us-ascii?Q?2XEbj5ODtVRd2ka9AH5w7/Rsi0WUCqKku3nrM9J30Ibn5/kHkp1+v2KJ1sm7?=
- =?us-ascii?Q?m70xjnCAcr4dBYu6lDm6hrqsdcSHKn3us9D+Jhh8qTMBQax2Aq0KjIMbkFWi?=
- =?us-ascii?Q?J8ErAq9gF4zso/tO4BVDpfDyW6OFEXVFguTL4pg1ai45XoBD/nNcaTNB7/io?=
- =?us-ascii?Q?lq3o1wks0bf/tSgyYlHN/onlTmdjl/biLr9ZnnChF+Td1ukzpphnFsHDgnNb?=
- =?us-ascii?Q?IP3CJe4PP5qU+tfRMBgsVQZ0KZ2MSudVp9b9x7v3RTTorVBpa3PhYnN5zHhD?=
- =?us-ascii?Q?kJhBjjo1G/Qk+5mnhGNGTJgUzlAtu9vFmR+zkzGKvm0FcZppnlGtzlAt5RjG?=
- =?us-ascii?Q?KPaJ0RbynUTBoZY2DQQQC0j8tmtmIusy6pRj/9UIPKaiRXeshIU0G1iErd0U?=
- =?us-ascii?Q?Y4luYl0GzGmTJpdg3o78r6m1U+BpYuNm3Yx3uNP3TdgL1FCOhr3+ssLJUprK?=
- =?us-ascii?Q?2/TrK/dm1H+tG9NZFMpVp+mEbIK97ciTmn+qYgftxCIwp3QwG63vV0aa3nrQ?=
- =?us-ascii?Q?ERB05qiKTa40u3R7rQ7UmAkvU61cmCOys4RbwzppPtYaYoJDi1rBQSFWSEY9?=
- =?us-ascii?Q?K49svmcxyLFr0LOjgy1QJAr12/Jc+mG0Y7RLOyMeG2qXmp8759cPLgABlhpI?=
- =?us-ascii?Q?9BBqD14/MFzv4WAsYdaV8lJNz0a46tMWAddELj9ueHgOKZVcwgJ9jLHLEtAg?=
- =?us-ascii?Q?4IjchtV3UFgzaubiOl4s8FtpH20Rc3CPwDiXu7F2f1u/D9ndCAfIiFWyR8D6?=
- =?us-ascii?Q?+LHY8AYsZQutsG632gtipvCWXNvkp87E7VJ+cYCH3zpoJjrvvVvx2tQacWei?=
- =?us-ascii?Q?zI0HAtpdcQ=3D?=
-X-Microsoft-Antispam-Message-Info: 69iWOmcd4qFPFooO6fsYXw6WvybmpQAFnCU0YQcwfR12C7IoSaTtUWJTUw3u/WPpnt9bwji4IeqpGK/M90k94GJThN/s9aCOBe6y+DXBMsdyrfV4Zl28uKt8QowWTKuYLR/UKDBMKILRVrHQnGEUR2K2CYDd+rK8qaZZZcGjqg+u8/5u0X5+yf/CdDXCI5LD
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3049;6:HoTgCJUMp8pIT84HvLAtq63PciekfW5UDiqQSzHjum2UQR7MMXYP0fYPjMn/4OrezM+TF2KqMyMzaXmXYtmoIFO3eb8jQ4AJAtkG2XAbZHtiHfkhgp++dAM8rzj/ppo11xpUjMi92Sc+Tu+6btqRWvrbHQXg1O7FsiFBFuqmvDGKgKAy4RyDYmayNVxdk8w+XcbFo/KADk6JG09jznqqIbuWucUSb9rdvWv7EgzzZCUdldPRTWl7paO9x/cePkvC1RM2YDpabXvGvr1yYHg/HlEgO1EUS0LoKbKaiQBnZpOQztHr0HCk1OpJ3/o1tyj28cL7pIdBp1BRAuS/iFUdDgq8CuK2pUfAtvT7yZFcqy8B1qt2y06sWt0x9j3oipaTaTmoDADPZKL7g1hIgGInimQyhUt/bYlaqOXudf4asH6Ms2tBx+XN2JvRfBPlSyJd+7Ps95xHX8hsth6SJXMgQQ==;5:XbUTWPBN0huH1G783+1q1ldlkoRmbdb4OCSMU0ELbCUNYcYrooJ2m+XZICYqEEuMkX3Og6LLOvIK3y+itH4mEVQKWJ8SD+LqwNSSnMZGuU0MZLK95vdiuPxkzh+fbSktsCaUtz4TJxm3zfDsrcjiv2Vn7q6k9Sm9HEj81JYk8Mg=;24:YMoXc0EkZCSKYgn7J4tMzg9FCY9IlEo/TfkCPbm2oIw2eRlE9h9mrU7mugiShuFXS4Mktp+6RNoV9SZVuZGLhH7f9wjp+/GIoM0mVYjbuvA=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3049;7:bcBdlHGFKp5bb6oyQRK7YdnZ9HazRRTwT1ooksc2Ng/2gjRhr2voPgQTjGi0xTeeLRMFCqzoIt9OWrRtj8bdncJWCMqrzYCclFTlwI/jwIQU8u7/Sb1cE+Ftf8MspQFjuKsrBQRhF121Q7N4BwzRFuhytrwa0wmj3LMGRafg4AS/CrRtbn5FXCSG+IbpDpTJuzD/NqwihgP9Gs9PTtoXwFmRgSrUVps98wiyCmuEFRa3Yngq8OQErZEMxkckSpsX
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2018 09:51:52.2830
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac125fdd-fdb8-499c-4d17-08d59ec8afe6
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB3049
+In-Reply-To: <20180214015008.9513-3-dongwon.kim@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the option to activate/deactivate the charging voltage
-limit. If activated, the charger prevents charging until the battery
-voltage drops below the VCHG_VLIM threshold.
+Sorry for top-posting
 
-This option is not configurable via the power_supply properties,
-therefore, access via sysfs was provided to examine and modify this
-attribute on the fly.
+Can we have all this go into some header file which
 
-Signed-off-by: Stefan Popa <stefan.popa@analog.com>
----
-Changes in v2:
-  - Fixed the kbuild test error by changing the type of the
-    charging_vlim_enabled_show() and charging_vlim_enabled_store()
-    functions from int to ssize_t.
+will not only describe the structures/commands/responses/etc,
 
- .../ABI/testing/sysfs-class-power-adp5061          | 13 ++++++
- drivers/power/supply/adp5061.c                     | 46 ++++++++++++++++++++++
- 2 files changed, 59 insertions(+)
+but will also allow drivers to use those directly without
 
-diff --git a/Documentation/ABI/testing/sysfs-class-power-adp5061 b/Documentation/ABI/testing/sysfs-class-power-adp5061
-index 0d056aa..25064c1 100644
---- a/Documentation/ABI/testing/sysfs-class-power-adp5061
-+++ b/Documentation/ABI/testing/sysfs-class-power-adp5061
-@@ -8,3 +8,16 @@ Description:
- 	Valid values:
- 		- 1: enabled
- 		- 0: disabled
-+
-+What: /sys/class/power_supply/adp5061/charging_vlim_enabled
-+Description:
-+	Enable/disable charging voltage limit
-+
-+	The ADP5061 charging voltage limit can be enabled by setting
-+	this attribute to 1. When enabled, the charger prevents charging
-+	until the battery voltage drops bellow the VCHG_VLIM threshold.
-+	See device datasheet for details.
-+
-+	Valid values:
-+		- 1: enabled
-+		- 0: disabled
-diff --git a/drivers/power/supply/adp5061.c b/drivers/power/supply/adp5061.c
-index 99871e6..9716059 100644
---- a/drivers/power/supply/adp5061.c
-+++ b/drivers/power/supply/adp5061.c
-@@ -84,6 +84,10 @@
- #define ADP5061_FUNC_SET_1_EN_CHG_MSK		BIT(0)
- #define ADP5061_FUNC_SET_1_EN_CHG_MODE(x)	(((x) & 0x01) << 0)
- 
-+/* ADP5061_FUNC_SET_2 */
-+#define ADP5061_FUNC_SET_2_EN_CHG_VLIM_MSK	BIT(5)
-+#define ADP5061_FUNC_SET_2_EN_CHG_VLIM_MODE(x)	(((x) & 0x01) << 5)
-+
- #define ADP5061_NO_BATTERY	0x01
- #define ADP5061_ICHG_MAX	1300 // mA
- 
-@@ -737,10 +741,52 @@ static ssize_t charging_enabled_store(struct device *dev,
- 	return count;
- }
- 
-+static ssize_t charging_vlim_enabled_show(struct device *dev,
-+				      struct device_attribute *attr,
-+				      char *buf)
-+{
-+	struct power_supply *psy = dev_get_drvdata(dev);
-+	struct adp5061_state *st = power_supply_get_drvdata(psy);
-+	unsigned int regval;
-+	int ret;
-+
-+	ret = regmap_read(st->regmap, ADP5061_FUNC_SET_2, &regval);
-+	if (ret < 0)
-+		return ret;
-+
-+	regval = (regval & ADP5061_FUNC_SET_2_EN_CHG_VLIM_MSK) >> 5;
-+	return sprintf(buf, "%d\n", regval);
-+}
-+
-+static ssize_t charging_vlim_enabled_store(struct device *dev,
-+				       struct device_attribute *attr,
-+				       const char *buf, size_t count)
-+{
-+	struct power_supply *psy = dev_get_drvdata(dev);
-+	struct adp5061_state *st = power_supply_get_drvdata(psy);
-+	u8 chg_vlim_en;
-+	int ret;
-+
-+	ret = kstrtou8(buf, 0, &chg_vlim_en);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = regmap_update_bits(st->regmap, ADP5061_FUNC_SET_2,
-+			ADP5061_FUNC_SET_2_EN_CHG_VLIM_MSK,
-+			ADP5061_FUNC_SET_2_EN_CHG_VLIM_MODE(!!chg_vlim_en));
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return count;
-+}
-+
- static DEVICE_ATTR_RW(charging_enabled);
-+static DEVICE_ATTR_RW(charging_vlim_enabled);
- 
- static struct attribute *adp5061_attributes[] = {
- 	&dev_attr_charging_enabled.attr,
-+	&dev_attr_charging_vlim_enabled.attr,
- 	NULL
- };
- 
--- 
-2.7.4
+defining the same one more time in the code? For example,
+
+this is how it is done in Xen [1]. This way, you can keep
+
+documentation and the protocol implementation in sync easily
+
+
+On 02/14/2018 03:50 AM, Dongwon Kim wrote:
+> Reference document for hyper_DMABUF driver
+>
+> Documentation/hyper-dmabuf-sharing.txt
+>
+> Signed-off-by: Dongwon Kim <dongwon.kim@intel.com>
+> ---
+>   Documentation/hyper-dmabuf-sharing.txt | 734 +++++++++++++++++++++++++++++++++
+>   1 file changed, 734 insertions(+)
+>   create mode 100644 Documentation/hyper-dmabuf-sharing.txt
+>
+> diff --git a/Documentation/hyper-dmabuf-sharing.txt b/Documentation/hyper-dmabuf-sharing.txt
+> new file mode 100644
+> index 000000000000..928e411931e3
+> --- /dev/null
+> +++ b/Documentation/hyper-dmabuf-sharing.txt
+> @@ -0,0 +1,734 @@
+> +Linux Hyper DMABUF Driver
+> +
+> +------------------------------------------------------------------------------
+> +Section 1. Overview
+> +------------------------------------------------------------------------------
+> +
+> +Hyper_DMABUF driver is a Linux device driver running on multiple Virtual
+> +achines (VMs), which expands DMA-BUF sharing capability to the VM environment
+> +where multiple different OS instances need to share same physical data without
+> +data-copy across VMs.
+> +
+> +To share a DMA_BUF across VMs, an instance of the Hyper_DMABUF drv on the
+> +exporting VM (so called, “exporter”) imports a local DMA_BUF from the original
+> +producer of the buffer, then re-exports it with an unique ID, hyper_dmabuf_id
+> +for the buffer to the importing VM (so called, “importer”).
+> +
+> +Another instance of the Hyper_DMABUF driver on importer registers
+> +a hyper_dmabuf_id together with reference information for the shared physical
+> +pages associated with the DMA_BUF to its database when the export happens.
+> +
+> +The actual mapping of the DMA_BUF on the importer’s side is done by
+> +the Hyper_DMABUF driver when user space issues the IOCTL command to access
+> +the shared DMA_BUF. The Hyper_DMABUF driver works as both an importing and
+> +exporting driver as is, that is, no special configuration is required.
+> +Consequently, only a single module per VM is needed to enable cross-VM DMA_BUF
+> +exchange.
+> +
+> +------------------------------------------------------------------------------
+> +Section 2. Architecture
+> +------------------------------------------------------------------------------
+> +
+> +1. Hyper_DMABUF ID
+> +
+> +hyper_dmabuf_id is a global handle for shared DMA BUFs, which is compatible
+> +across VMs. It is a key used by the importer to retrieve information about
+> +shared Kernel pages behind the DMA_BUF structure from the IMPORT list. When
+> +a DMA_BUF is exported to another domain, its hyper_dmabuf_id and META data
+> +are also kept in the EXPORT list by the exporter for further synchronization
+> +of control over the DMA_BUF.
+> +
+> +hyper_dmabuf_id is “targeted”, meaning it is valid only in exporting (owner of
+> +the buffer) and importing VMs, where the corresponding hyper_dmabuf_id is
+> +stored in their database (EXPORT and IMPORT lists).
+> +
+> +A user-space application specifies the targeted VM id in the user parameter
+> +when it calls the IOCTL command to export shared DMA_BUF to another VM.
+> +
+> +hyper_dmabuf_id_t is a data type for hyper_dmabuf_id. It is defined as 16-byte
+> +data structure, and it contains id and rng_key[3] as elements for
+> +the structure.
+> +
+> +typedef struct {
+> +        int id;
+> +        int rng_key[3]; /* 12bytes long random number */
+> +} hyper_dmabuf_id_t;
+> +
+> +The first element in the hyper_dmabuf_id structure, int id is combined data of
+> +a count number generated by the driver running on the exporter and
+> +the exporter’s ID. The VM’s ID is a one byte value and located at the field’s
+> +SB in int id. The remaining three bytes in int id are reserved for a count
+> +number.
+> +
+> +However, there is a limit related to this count number, which is 1000.
+> +Therefore, only little more than a byte starting from the LSB is actually used
+> +for storing this count number.
+> +
+> +#define HYPER_DMABUF_ID_CREATE(domid, id) \
+> +        ((((domid) & 0xFF) << 24) | ((id) & 0xFFFFFF))
+> +
+> +This limit on the count number directly means the maximum number of DMA BUFs
+> +that  can be shared simultaneously by one VM. The second element of
+> +hyper_dmabuf_id, that is int rng_key[3], is an array of three integers. These
+> +numbers are generated by Linux’s native random number generation mechanism.
+> +This field is added to enhance the security of the Hyper DMABUF driver by
+> +maximizing the entropy of hyper_dmabuf_id (that is, preventing it from being
+> +guessed by a security attacker).
+> +
+> +Once DMA_BUF is no longer shared, the hyper_dmabuf_id associated with
+> +the DMA_BUF is released, but the count number in hyper_dmabuf_id is saved in
+> +the ID list for reuse. However, random keys stored in int rng_key[3] are not
+> +reused. Instead, those keys are always filled with freshly generated random
+> +keys for security.
+> +
+> +2. IOCTLs
+> +
+> +a. IOCTL_HYPER_DMABUF_TX_CH_SETUP
+> +
+> +This type of IOCTL is used for initialization of a one-directional transmit
+> +communication channel with a remote domain.
+> +
+> +The user space argument for this type of IOCTL is defined as:
+> +
+> +struct ioctl_hyper_dmabuf_tx_ch_setup {
+> +    /* IN parameters */
+> +    /* Remote domain id */
+> +    int remote_domain;
+> +};
+> +
+> +b. IOCTL_HYPER_DMABUF_RX_CH_SETUP
+> +
+> +This type of IOCTL is used for initialization of a one-directional receive
+> +communication channel with a remote domain.
+> +
+> +The user space argument for this type of IOCTL is defined as:
+> +
+> +struct ioctl_hyper_dmabuf_rx_ch_setup {
+> +    /* IN parameters */
+> +    /* Source domain id */
+> +    int source_domain;
+> +};
+> +
+> +c. IOCTL_HYPER_DMABUF_EXPORT_REMOTE
+> +
+> +This type of IOCTL is used to export a DMA BUF to another VM. When a user
+> +space application makes this call to the driver, it extracts Kernel pages
+> +associated with the DMA_BUF, then makes those shared with the importing VM.
+> +
+> +All reference information for this shared pages and hyper_dmabuf_id is
+> +created, then passed to the importing domain through a communications
+> +channel for synchronous registration. In the meantime, the hyper_dmabuf_id
+> +for the shared DMA_BUF is also returned to user-space application.
+> +
+> +This IOCTL can accept a reference to “user-defined” data as well as a FD
+> +for the DMA BUF. This private data is then attached to the DMA BUF and
+> +exported together with it.
+> +
+> +More details regarding this private data can be found in chapter for
+> +“Hyper_DMABUF Private Data”.
+> +
+> +The user space argument for this type of IOCTL is defined as:
+> +
+> +struct ioctl_hyper_dmabuf_export_remote {
+> +    /* IN parameters */
+> +    /* DMA buf fd to be exported */
+> +    int dmabuf_fd;
+> +    /* Domain id to which buffer should be exported */
+> +    int remote_domain;
+> +    /* exported dma buf id */
+> +    hyper_dmabuf_id_t hid;
+> +    /* size of private data */
+> +    int sz_priv;
+> +    /* ptr to the private data for Hyper_DMABUF */
+> +    char *priv;
+> +};
+> +
+> +d. IOCTL_HYPER_DMABUF_EXPORT_FD
+> +
+> +The importing VM uses this IOCTL to import and re-export a shared DMA_BUF
+> +locally to the end-consumer using the standard Linux DMA_BUF framework.
+> +Upon IOCTL call, the Hyper_DMABUF driver finds the reference information
+> +of the shared DMA_BUF with the given hyper_dmabuf_id, then maps all shared
+> +pages in its own Kernel space. The driver then constructs a scatter-gather
+> +list with those mapped pages and creates a brand-new DMA_BUF with the list,
+> +which is eventually exported with a file descriptor to the local consumer.
+> +
+> +The user space argument for this type of IOCTL is defined as:
+> +
+> +struct ioctl_hyper_dmabuf_export_fd {
+> +    /* IN parameters */
+> +    /* hyper dmabuf id to be imported */
+> +    int hyper_dmabuf_id;
+> +    /* flags */
+> +    int flags;
+> +    /* OUT parameters */
+> +    /* exported dma buf fd */
+> +    int fd;
+> +};
+> +
+> +e. IOCTL_HYPER_DMABUF_UNEXPORT
+> +
+> +This type of IOCTL is used when it is necessary to terminate the current
+> +sharing of a DMA_BUF. When called, the driver first checks if there are any
+> +consumers actively using the DMA_BUF. Then, it unexports it if it is not
+> +mapped or used by any consumers. Otherwise, it postpones unexporting, but
+> +makes the buffer invalid to prevent any further import of the same DMA_BUF.
+> +DMA_BUF is completely unexported after the last consumer releases it.
+> +
+> +”Unexport” means removing all reference information about the DMA_BUF from the
+> +LISTs and make all pages private again.
+> +
+> +The user space argument for this type of IOCTL is defined as:
+> +
+> +struct ioctl_hyper_dmabuf_unexport {
+> +    /* IN parameters */
+> +    /* hyper dmabuf id to be unexported */
+> +    int hyper_dmabuf_id;
+> +    /* delay in ms by which unexport processing will be postponed */
+> +    int delay_ms;
+> +    /* OUT parameters */
+> +    /* Status of request */
+> +    int status;
+> +};
+> +
+> +f. IOCTL_HYPER_DMABUF_QUERY
+> +
+> +This IOCTL is used to retrieve specific information about a DMA_BUF that
+> +is being shared.
+> +
+> +The user space argument for this type of IOCTL is defined as:
+> +
+> +struct ioctl_hyper_dmabuf_query {
+> +    /* in parameters */
+> +    /* hyper dmabuf id to be queried */
+> +    int hyper_dmabuf_id;
+> +    /* item to be queried */
+> +    int item;
+> +    /* OUT parameters */
+> +    /* output of query */
+> +    /* info can be either value or reference */
+> +    unsigned long info;
+> +};
+> +
+> +<Available Queries>
+> +
+> +HYPER_DMABUF_QUERY_TYPE
+> + - Return the type of DMA_BUF from the current domain, Exported or Imported.
+> +
+> +HYPER_DMABUF_QUERY_EXPORTER
+> + - Return the exporting domain’s ID of a shared DMA_BUF.
+> +
+> +HYPER_DMABUF_QUERY_IMPORTER
+> + - Return the importing domain’s ID of a shared DMA_BUF.
+> +
+> +HYPER_DMABUF_QUERY_SIZE
+> + - Return the size of a shared DMA_BUF in bytes.
+> +
+> +HYPER_DMABUF_QUERY_BUSY
+> + - Return ‘true’ if a shared DMA_BUF is currently used
+> +   (mapped by the end-consumer).
+> +
+> +HYPER_DMABUF_QUERY_UNEXPORTED
+> + - Return ‘true’ if a shared DMA_BUF is not valid anymore
+> +   (so it does not allow a new consumer to map it).
+> +
+> +HYPER_DMABUF_QUERY_DELAYED_UNEXPORTED
+> + - Return ‘true’ if a shared DMA_BUF is scheduled to be unexported
+> +   (but is still valid) within a fixed time.
+> +
+> +HYPER_DMABUF_QUERY_PRIV_INFO
+> + - Return ‘private’ data attached to shared DMA_BUF to the user space.
+> +   ‘unsigned long info’ is the user space pointer for the buffer, where
+> +   private data will be copied to.
+> +
+> +HYPER_DMABUF_QUERY_PRIV_INFO_SIZE
+> + - Return the size of the private data attached to the shared DMA_BUF.
+> +
+> +3. Event Polling
+> +
+> +Event-polling can be enabled optionally by selecting the Kernel config option,
+> +Enable event-generation and polling operation under xen/hypervisor in Kernel’s
+> +menuconfig. The event-polling mechanism includes the generation of
+> +an import-event, adding it to the event-queue and providing a notification to
+> +the application so that it can retrieve the event data from the queue.
+> +
+> +For this mechanism, “Poll” and “Read” operations are added to the Hyper_DMABUF
+> +driver. A user application that polls the driver goes into a sleep state until
+> +there is a new event added to the queue. An application uses “Read” to retrieve
+> +event data from the event queue. Event data contains the hyper_dmabuf_id and
+> +the private data of the buffer that has been received by the importer.
+> +
+> +For more information on private data, refer to Section 3.5).
+> +Using this method, it is possible to lower the risk of the hyper_dmabuf_id and
+> +other sensitive information about the shared buffer (for example, meta-data
+> +for shared images) being leaked while being transferred to the importer because
+> +all of this data is shared as “private info” at the driver level. However,
+> +please note there should be a way for the importer to find the correct DMA_BUF
+> +in this case when there are multiple Hyper_DMABUFs being shared simultaneously.
+> +For example, the surface name or the surface ID of a specific rendering surface
+> +needs to be sent to the importer in advance before it is exported in a surface-
+> +sharing use-case.
+> +
+> +Each event data given to the user-space consists of a header and the private
+> +information of the buffer. The data type is defined as follows:
+> +
+> +struct hyper_dmabuf_event_hdr {
+> +        int event_type; /* one type only for now - new import */
+> +        hyper_dmabuf_id_t hid; /* hyper_dmabuf_id of specific hyper_dmabuf */
+> +        int size; /* size of data */
+> +};
+> +
+> +struct hyper_dmabuf_event_data {
+> +        struct hyper_dmabuf_event_hdr hdr;
+> +        void *data; /* private data */
+> +};
+> +
+> +4. Hyper_DMABUF Private Data
+> +
+> +Each Hyper_DMABUF can come with private data, the size of which can be up to
+> +AX_SIZE_PRIV_DATA (currently 192 byte). This private data is just a chunk of
+> +plain data attached to every Hyper_DMABUF. It is guaranteed to be synchronized
+> +across VMs, exporter and importer. This private data does not have any specific
+> +structure defined at the driver level, so any “user-defined” format or
+> +structure can be used. In addition, there is no dedicated use-case for this
+> +data. It can be used virtually for any purpose. For example, it can be used to
+> +share meta-data such as dimension and color formats for shared images in
+> +a surface sharing model. Another example is when we share protected media
+> +contents.
+> +
+> +This private data can be used to transfer flags related to content protection
+> +information on streamed media to the importer.
+> +
+> +Private data is initially generated when a buffer is exported for the first
+> +time. Then, it is updated whenever the same buffer is re-exported. During the
+> +re-exporting process, the Hyper_DMABUF driver only updates private data on
+> +both sides with new data from user-space since the same buffer already exists
+> +on both the IMPORT LIST and EXPORT LIST.
+> +
+> +There are two different ways to retrieve this private data from user-space.
+> +The first way is to use “Read” on the Hyper_DMABUF driver. “Read” returns the
+> +data of events containing private data of the buffer. The second way is to
+> +make a query to Hyper_DMABUF. There are two query items,
+> +HYPER_DMABUF_QUERY_PRIV_INFO and HYPER_DMABUF_QUERY_PRIV_INFO_SIZE available
+> +for retrieving private data and its size.
+> +
+> +5. Scatter-Gather List Table (SGT) Management
+> +
+> +SGT management is the core part of the Hyper_DMABUF driver that manages an
+> +SGT, a representation of the group of kernel pages associated with a DMA_BUF.
+> +This block includes four different sub-blocks:
+> +
+> +a. Hyper_DMABUF_id Manager
+> +
+> +This ID manager is responsible for generating a hyper_dmabuf_id for an
+> +exported DMA_BUF. When an ID is requested, the ID Manager first checks if
+> +there are any reusable IDs left in the list and returns one of those,
+> +if available. Otherwise, it creates the next count number and returns it
+> +to the caller.
+> +
+> +b. SGT Creator
+> +
+> +The SGT (struct sg_table) contains information about the DMA_BUF such as
+> +references to all kernel pages for the buffer and their connections. The
+> +SGT Creator creates a new SGT on the importer side with pages shared by
+> +the hypervisor.
+> +
+> +c. Kernel Page Extractor
+> +
+> +The Page Extractor extracts pages from a given SGT before those pages
+> +are shared.
+> +
+> +d. List Manager Interface
+> +
+> +The SGT manger also interacts with export and import list managers. It
+> +sends out information (for example, hyper_dmabuf_id, reference, and
+> +DMA_BUF information) about the exported or imported DMA_BUFs to the
+> +list manager. Also, on IOCTL request, it asks the list manager to find
+> +and return the information for a corresponding DMA_BUF in the list.
+> +
+> +6. DMA-BUF Interface
+> +
+> +The DMA-BUF interface provides standard methods to manage DMA_BUFs
+> +reconstructed by the Hyper_DMABUF driver from shared pages. All of the
+> +relevant operations are listed in struct dma_buf_ops. These operations
+> +are standard DMA_BUF operations, therefore they follow standard DMA BUF
+> +protocols.
+> +
+> +Each DMA_BUF operation communicates with the exporter at the end of the
+> +routine for “indirect DMA_BUF synchronization”.
+> +
+> +7. Export/Import List Management
+> +
+> +Whenever a DMA_BUF is shared and exported, its information is added to the
+> +database (EXPORT-list) on the exporting VM. Similarly, information about an
+> +imported DMA_BUF is added to the importing database (IMPORT list) on the
+> +importing VM, when the export happens.
+> +
+> +All of the entries in the lists are needed to manage the exported/imported
+> +DMA_BUF more efficiently. Both lists are implemented as Linux hash tables.
+> +The key to the list is hyper_dmabuf_id and the output is the information of
+> +the DMA_BUF. The List Manager manages all requests from other blocks and
+> +transactions within lists to ensure that all entries are up-to-date and
+> +that the list structure is consistent.
+> +
+> +The List Manager provides basic functionality, such as:
+> +
+> +- Adding to the List
+> +- Removal from the List
+> +- Finding information about a DMA_BUF, given the hyper_dmabuf_id
+> +
+> +8. Page Sharing by Hypercalls
+> +
+> +The Hyper_DMABUF driver assumes that there is a native page-by-page memory
+> +sharing mechanism available on the hypervisor. Referencing a group of pages
+> +that are being shared is what the driver expects from “backend” APIs or the
+> +hypervisor itself.
+> +
+> +For the example, xen backend integrated in current code base utilizes Xen’s
+> +grant-table interface for sharing the underlying kernel pages (struct *page).
+> +
+> +More details about grant-table interface can be found at the following locations:
+> +
+> +https://wiki.xen.org/wiki/Grant_Table
+> +https://xenbits.xen.org/docs/4.6-testing/misc/grant-tables.txt
+> +
+> +9. Message Handling
+> +
+> +The exporter and importer can each create a message that consists of an opcode
+> +(command) and operands (parameters) and send it to each other.
+> +
+> +The message format is defined as:
+> +
+> +struct hyper_dmabuf_req {
+> +        unsigned int req_id; /* Sequence number. Used for RING BUF
+> +                                synchronization */
+> +        unsigned int stat; /* Status.Response from receiver. */
+> +        unsigned int cmd;  /* Opcode */
+> +        unsigned int op[MAX_NUMBER_OF_OPERANDS]; /* Operands */
+> +};
+> +
+> +The following table gives the list of opcodes:
+> +
+> +<Opcodes in Message to Exporter/Importer>
+> +
+> +HYPER_DMABUF_EXPORT (exporter --> importer)
+> + - Export a DMA_BUF to the importer. The importer registers the corresponding
+> +   DMA_BUF in its IMPORT LIST when the message is received.
+> +
+> +HYPER_DMABUF_EXPORT_FD (importer --> exporter)
+> + - Locally exported as FD. The importer sends out this command to the exporter
+> +   to notify that the buffer is now locally exported (mapped and used).
+> +
+> +HYPER_DMABUF_EXPORT_FD_FAILED (importer --> exporter)
+> + - Failed while exporting locally. The importer sends out this command to the
+> +   exporter to notify the exporter that the EXPORT_FD failed.
+> +
+> +HYPER_DMABUF_NOTIFY_UNEXPORT (exporter --> importer)
+> + - Termination of sharing. The exporter notifies the importer that the DMA_BUF
+> +   has been unexported.
+> +
+> +HYPER_DMABUF_OPS_TO_REMOTE (importer --> exporter)
+> + - Not implemented yet.
+> +
+> +HYPER_DMABUF_OPS_TO_SOURCE (exporter --> importer)
+> + - DMA_BUF ops to the exporter, for DMA_BUF upstream synchronization.
+> +   Note: Implemented but it is done asynchronously due to performance issues.
+> +
+> +The following table shows the list of operands for each opcode.
+> +
+> +<Operands in Message to Exporter/Importer>
+> +
+> +- HYPER_DMABUF_EXPORT
+> +
+> +op0 to op3 – hyper_dmabuf_id
+> +op4 – number of pages to be shared
+> +op5 – offset of data in the first page
+> +op6 – length of data in the last page
+> +op7 – reference number for the group of shared pages
+> +op8 – size of private data
+> +op9 to (op9+op8)  – private data
+> +
+> +- HYPER_DMABUF_EXPORT_FD
+> +
+> +op0 to op3 – hyper_dmabuf_id
+> +
+> +- HYPER_DMABUF_EXPORT_FD_FAILED
+> +
+> +op0 to op3 – hyper_dmabuf_id
+> +
+> +- HYPER_DMABUF_NOTIFY_UNEXPORT
+> +
+> +op0 to op3 – hyper_dmabuf_id
+> +
+> +- HYPER_DMABUF_OPS_TO_REMOTE(Not implemented)
+> +
+> +- HYPER_DMABUF_OPS_TO_SOURCE
+> +
+> +op0 to op3 – hyper_dmabuf_id
+> +op4 – type of DMA_BUF operation
+> +
+> +9. Inter VM (Domain) Communication
+> +
+> +Two different types of inter-domain communication channels are required,
+> +one in kernel space and the other in user space. The communication channel
+> +in user space is for transmitting or receiving the hyper_dmabuf_id. Since
+> +there is no specific security (for example, encryption) involved in the
+> +generation of a global id at the driver level, it is highly recommended that
+> +the customer’s user application set up a very secure channel for exchanging
+> +hyper_dmabuf_id between VMs.
+> +
+> +The communication channel in kernel space is required for exchanging messages
+> +from “message management” block between two VMs. In the current reference
+> +backend for Xen hypervisor, Xen ring-buffer and event-channel mechanisms are
+> +used for message exchange between impoter and exporter.
+> +
+> +10. What are required in hypervisor
+> +
+> +emory sharing and message communication between VMs
+> +
+> +------------------------------------------------------------------------------
+> +Section 3. Hyper DMABUF Sharing Flow
+> +------------------------------------------------------------------------------
+> +
+> +1. Exporting
+> +
+> +To export a DMA_BUF to another VM, user space has to call an IOCTL
+> +(IOCTL_HYPER_DMABUF_EXPORT_REMOTE) with a file descriptor for the buffer given
+> +by the original exporter. The Hyper_DMABUF driver maps a DMA_BUF locally, then
+> +issues a hyper_dmabuf_id and SGT for the DMA_BUF, which is registered to the
+> +EXPORT list. Then, all pages for the SGT are extracted and each individual
+> +page is shared via a hypervisor-specific memory sharing mechanism
+> +(for example, in Xen this is grant-table).
+> +
+> +One important requirement on this memory sharing method is that it needs to
+> +create a single integer value that represents the list of pages, which can
+> +then be used by the importer for retrieving the group of shared pages.  For
+> +this, the “Backend” in the reference driver utilizes the multiple level
+> +addressing mechanism.
+> +
+> +Once the integer reference to the list of pages is created, the exporter
+> +builds the “export” command and sends it to the importer, then notifies the
+> +importer.
+> +
+> +2. Importing
+> +
+> +The Import process is divided into two sections. One is the registration
+> +of DMA_BUF from the exporter. The other is the actual mapping of the buffer
+> +before accessing the data in the buffer. The former (termed “Registration”)
+> +happens on an export event (that is, the export command with an interrupt)
+> +in the exporter.
+> +
+> +The latter (termed “Mapping”) is done asynchronously when the driver gets the
+> +IOCTL call from user space. When the importer gets an interrupt from the
+> +exporter, it checks the command in the receiving queue and if it is an
+> +“export” command, the registration process is started. It first finds
+> +hyper_dmabuf_id and the integer reference for the shared pages, then stores
+> +all of that information together with the “domain id” of the exporting domain
+> +in the IMPORT LIST.
+> +
+> +In the case where “event-polling” is enabled (Kernel Config - Enable event-
+> +generation and polling operation), a “new sharing available” event is
+> +generated right after the reference info for the new shared DMA_BUF is
+> +registered to the IMPORT LIST. This event is added to the event-queue.
+> +
+> +The user process that polls Hyper_DMABUF driver wakes up when this event-queue
+> +is not empty and is able to read back event data from the queue using the
+> +driver’s “Read” function. Once the user-application calls EXPORT_FD IOCTL with
+> +the proper parameters including hyper_dmabuf_id, the Hyper_DMABUF driver
+> +retrieves information about the matched DMA_BUF from the IMPORT LIST. Then, it
+> +maps all pages shared (referenced by the integer reference) in its kernel
+> +space and creates its own DMA_BUF referencing the same shared pages. After
+> +this, it exports this new DMA_BUF to the other drivers with a file descriptor.
+> +DMA_BUF can then be used just in the same way a local DMA_BUF is.
+> +
+> +3. Indirect Synchronization of DMA_BUF
+> +
+> +Synchronization of a DMA_BUF within a single OS is automatically achieved
+> +because all of importer’s DMA_BUF operations are done using functions defined
+> +on the exporter’s side, which means there is one central place that has full
+> +control over the DMA_BUF. In other words, any primary activities such as
+> +attaching/detaching and mapping/un-mapping are all captured by the exporter,
+> +meaning that the exporter knows basic information such as who is using the
+> +DMA_BUF and how it is being used. This, however, is not applicable if this
+> +sharing is done beyond a single OS because kernel space (where the exporter’s
+> +DMA_BUF operations reside) is simply not visible to the importing VM.
+> +
+> +Therefore, “indirect synchronization” was introduced as an alternative solution,
+> +which is now implemented in the Hyper_DMABUF driver. This technique makes
+> +the exporter create a shadow DMA_BUF when the end-consumer of the buffer maps
+> +the DMA_BUF, then duplicates any DMA_BUF operations performed on
+> +the importer’s side. Through this “indirect synchronization”, the exporter is
+> +able to virtually track all activities done by the consumer (mostly reference
+> +counter) as if those are done in exporter’s local system.
+> +
+> +------------------------------------------------------------------------------
+> +Section 4. Hypervisor Backend Interface
+> +------------------------------------------------------------------------------
+> +
+> +The Hyper_DMABUF driver has a standard “Backend” structure that contains
+> +mappings to various functions designed for a specific Hypervisor. Most of
+> +these API functions should provide a low-level implementation of communication
+> +and memory sharing capability that utilize a Hypervisor’s native mechanisms.
+> +
+> +struct hyper_dmabuf_backend_ops {
+> +        /* retreiving id of current virtual machine */
+> +        int (*get_vm_id)(void);
+> +        /* get pages shared via hypervisor-specific method */
+> +        int (*share_pages)(struct page **, int, int, void **);
+> +        /* make shared pages unshared via hypervisor specific method */
+> +        int (*unshare_pages)(void **, int);
+> +        /* map remotely shared pages on importer's side via
+> +         *  hypervisor-specific method
+> +         */
+> +        struct page ** (*map_shared_pages)(int, int, int, void **);
+> +        /* unmap and free shared pages on importer's side via
+> +         *  hypervisor-specific method
+> +         */
+> +        int (*unmap_shared_pages)(void **, int);
+> +        /* initialize communication environment */
+> +        int (*init_comm_env)(void);
+> +        /* destroy communication channel */
+> +        void (*destroy_comm)(void);
+> +        /* upstream ch setup (receiving and responding) */
+> +        int (*init_rx_ch)(int);
+> +        /* downstream ch setup (transmitting and parsing responses) */
+> +        int (*init_tx_ch)(int);
+> +        /* send msg via communication ch */
+> +        int (*send_req)(int, struct hyper_dmabuf_req *, int);
+> +};
+> +
+> +<Hypervisor-specific Backend Structure>
+> +
+> +1. get_vm_id
+> +
+> +	Returns the VM (domain) ID
+> +
+> +	Input:
+> +
+> +		-ID of the current domain
+> +
+> +	Output:
+> +
+> +		None
+> +
+> +2. share_pages
+> +
+> +	Get pages shared via hypervisor-specific method and return one reference
+> +	ID that represents the complete list of shared pages
+> +
+> +	Input:
+> +
+> +		-Array of pages
+> +		-ID of importing VM
+> +		-Number of pages
+> +		-Hypervisor specific Representation of reference info of shared
+> +		 pages
+> +
+> +	Output:
+> +
+> +		-Hypervisor specific integer value that represents all of
+> +		 the shared pages
+> +
+> +3. unshare_pages
+> +
+> +	Stop sharing pages
+> +
+> +	Input:
+> +
+> +		-Hypervisor specific Representation of reference info of shared
+> +		 pages
+> +		-Number of shared pages
+> +
+> +	Output:
+> +
+> +		0
+> +
+> +4. map_shared_pages
+> +
+> +	Map shared pages locally using a hypervisor-specific method
+> +
+> +	Input:
+> +
+> +		-Reference number that represents all of shared pages
+> +		-ID of exporting VM, Number of pages
+> +		-Reference information for any purpose
+> +
+> +	Output:
+> +
+> +		-An array of shared pages (struct page**)
+> +
+> +5. unmap_shared_pages
+> +
+> +	Unmap shared pages
+> +
+> +	Input:
+> +
+> +		-Hypervisor specific Representation of reference info of shared pages
+> +
+> +	Output:
+> +
+> +		-0 (successful) or one of Standard Kernel errors
+> +
+> +6. init_comm_env
+> +
+> +	Setup infrastructure needed for communication channel
+> +
+> +	Input:
+> +
+> +		None
+> +
+> +	Output:
+> +
+> +		None
+> +
+> +7. destroy_comm
+> +
+> +	Cleanup everything done via init_comm_env
+> +
+> +	Input:
+> +
+> +		None
+> +
+> +	Output:
+> +
+> +		None
+> +
+> +8. init_rx_ch
+> +
+> +	Configure receive channel
+> +
+> +	Input:
+> +
+> +		-ID of VM on the other side of the channel
+> +
+> +	Output:
+> +
+> +		-0 (successful) or one of Standard Kernel errors
+> +
+> +9. init_tx_ch
+> +
+> +	Configure transmit channel
+> +
+> +	Input:
+> +
+> +		-ID of VM on the other side of the channel
+> +
+> +	Output:
+> +
+> +		-0 (success) or one of Standard Kernel errors
+> +
+> +10. send_req
+> +
+> +	Send message to other VM
+> +
+> +	Input:
+> +
+> +		-ID of VM that receives the message
+> +		-Message
+> +
+> +	Output:
+> +
+> +		-0 (success) or one of Standard Kernel errors
+> +
+> +-------------------------------------------------------------------------------
+> +-------------------------------------------------------------------------------
+>
+
+[1] 
+https://elixir.bootlin.com/linux/v4.16.1/source/include/xen/interface/io/kbdif.h
