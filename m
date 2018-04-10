@@ -1,94 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753989AbeDJN14 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 09:27:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57952 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752584AbeDJN1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 09:27:54 -0400
-Date: Tue, 10 Apr 2018 16:27:51 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Stefan Hajnoczi <stefanha@redhat.com>
-Cc: virtualization@lists.linux-foundation.org,
-        syzkaller-bugs@googlegroups.com,
-        Linus Torvalds <torvalds@linux-foundation.org>, kvm@vger.kernel.org,
-        jasowang@redhat.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] vhost: fix vhost_vq_access_ok() log check
-Message-ID: <20180410162522-mutt-send-email-mst@kernel.org>
-References: <20180410052630.11270-1-stefanha@redhat.com>
- <20180410052630.11270-2-stefanha@redhat.com>
- <20180410161905-mutt-send-email-mst@kernel.org>
+        id S1753901AbeDJN2e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 09:28:34 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:42863 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753280AbeDJN2b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 09:28:31 -0400
+X-Google-Smtp-Source: AIpwx489lrfatH4yxZiYqbSqUsRzBtvH9EAeTbCyjE+H1yms9r8F+qcFqqqaMRrdYgsEGvxsqTQcEA==
+Date: Tue, 10 Apr 2018 22:28:22 +0900
+From: Minchan Kim <minchan@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Michal Hocko <mhocko@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        Chris Fries <cfries@google.com>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Message-ID: <20180410132822.GA32026@rodete-laptop-imager.corp.google.com>
+References: <20180409015815.235943-1-minchan@kernel.org>
+ <20180409024925.GA21889@bombadil.infradead.org>
+ <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
+ <20180409111403.GA31652@bombadil.infradead.org>
+ <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
+ <20180409183827.GD17558@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180409194044.GA15295@bombadil.infradead.org>
+ <20180410082643.GX21835@dhcp22.suse.cz>
+ <20180410120528.GB22118@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180410161905-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180410120528.GB22118@bombadil.infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 04:22:35PM +0300, Michael S. Tsirkin wrote:
-> On Tue, Apr 10, 2018 at 01:26:29PM +0800, Stefan Hajnoczi wrote:
-> > Commit d65026c6c62e7d9616c8ceb5a53b68bcdc050525 ("vhost: validate log
-> > when IOTLB is enabled") introduced a regression.  The logic was
-> > originally:
+On Tue, Apr 10, 2018 at 05:05:28AM -0700, Matthew Wilcox wrote:
+> On Tue, Apr 10, 2018 at 10:26:43AM +0200, Michal Hocko wrote:
+> > On Mon 09-04-18 12:40:44, Matthew Wilcox wrote:
+> > > The problem is that the mapping gfp flags are used not only for allocating
+> > > pages, but also for allocating the page cache data structures that hold
+> > > the pages.  F2FS is the only filesystem that set the __GFP_ZERO bit,
+> > > so it's the first time anyone's noticed that the page cache passes the
+> > > __GFP_ZERO bit through to the radix tree allocation routines, which
+> > > causes the radix tree nodes to be zeroed instead of constructed.
+> > > 
+> > > I think the right solution to this is:
 > > 
-> >   if (vq->iotlb)
-> >       return 1;
-> >   return A && B;
-> > 
-> > After the patch the short-circuit logic for A was inverted:
-> > 
-> >   if (A || vq->iotlb)
-> >       return A;
-> >   return B;
-> > 
-> > This patch fixes the regression by rewriting the checks in the obvious
-> > way, no longer returning A when vq->iotlb is non-NULL (which is hard to
-> > understand).
-> > 
-> > Reported-by: syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com
-> > Cc: Jason Wang <jasowang@redhat.com>
-> > Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+> > This just hides the underlying problem that the node is not fully and
+> > properly initialized. Relying on the previous released state is just too
+> > subtle.
 > 
-> This patch only makes sense after patch 2/2 is applied.
-> Otherwise the logic seems reversed below.
+> That's the fundamental design of slab-with-constructors.  The user provides
+> a constructor, so all newly allocagted objects are initialised to a known
+> state, then the user will restore the object to that state when it frees
+> the object to slab.
 > 
-> Can you pls squash these two?
+> > Are you going to blacklist all potential gfp flags that come
+> > from the mapping? This is just unmaintainable! If anything this should
+> > be an explicit & with the allowed set of allowed flags.
+> 
+> Oh, I agree that using the set of flags used to allocate the page
+> in order to allocate the radix tree nodes is a pretty horrible idea.
+> 
+> Your suggestion, then, is:
+> 
+> -	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
+> +	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
+> 
+> correct?
+> 
 
-Oh, in fact the patch is ok. This just goes to show
-that patch 2/2 is useful. But squashing is not required.
-Sorry about the noise.
+Looks much better.
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Fixes: d65026c6c ("vhost: validate log when IOTLB is enabled")
+Finally, it seems everyone agree on this. However, I won't include
+warning part of slab allocator because I think it's improve stuff
+not bug fix so it could be separted.
+If anyone really want to include it in this stable patch,
+please discuss with slub maintainers before.
 
-probably stable material since patch it fixes was queued to stable?
+Thanks for the reivew, Matthew, Michal, Jan and Johannes.
 
+>From 652bb75124896fa040df78b98496a354f54fc524 Mon Sep 17 00:00:00 2001
+From: Minchan Kim <minchan@kernel.org>
+Date: Tue, 10 Apr 2018 22:13:50 +0900
+Subject: [PATCH v4] mm: workingset: fix NULL ptr dereference
 
-> > ---
-> >  drivers/vhost/vhost.c | 8 +++++---
-> >  1 file changed, 5 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> > index 5320039671b7..93fd0c75b0d8 100644
-> > --- a/drivers/vhost/vhost.c
-> > +++ b/drivers/vhost/vhost.c
-> > @@ -1244,10 +1244,12 @@ static int vq_log_access_ok(struct vhost_virtqueue *vq,
-> >  /* Caller should have vq mutex and device mutex */
-> >  int vhost_vq_access_ok(struct vhost_virtqueue *vq)
-> >  {
-> > -	int ret = vq_log_access_ok(vq, vq->log_base);
-> > +	if (!vq_log_access_ok(vq, vq->log_base))
-> > +		return 0;
-> >  
-> > -	if (ret || vq->iotlb)
-> > -		return ret;
-> > +	/* Access validation occurs at prefetch time with IOTLB */
-> > +	if (vq->iotlb)
-> > +		return 1;
-> >  
-> >  	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used);
-> >  }
-> > -- 
-> > 2.14.3
+GFP mask passed to page cache functions (often coming from
+mapping->gfp_mask) is used both for allocation of page cache page and for
+allocation of radix tree metadata necessary to add the page to the page
+cache. When the mask contains __GFP_ZERO (as is the case for some f2fs
+metadata mappings), this breaks radix tree code as that code expects
+allocated radix tree nodes to be properly initialized by the slab
+constructor and not zeroed. In particular node->private_list is failing
+list_empty() check and the following list operation in
+workingset_update_node() will dereference NULL.
+
+Fix the problem by removing non-reclimable flags by GFP_RECLAIM_MASK
+for radix tree allocations.
+
+Fixes: 449dd6984d0e ("mm: keep page cache radix tree nodes in check")
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>
+Cc: Christopher Lameter <cl@linux.com>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Reported-by: Chris Fries <cfries@google.com>
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+---
+ mm/filemap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index ab77e19ab09c..5f3311edfea4 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -786,7 +786,7 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
+ 	VM_BUG_ON_PAGE(!PageLocked(new), new);
+ 	VM_BUG_ON_PAGE(new->mapping, new);
+ 
+-	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
++	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
+ 	if (!error) {
+ 		struct address_space *mapping = old->mapping;
+ 		void (*freepage)(struct page *);
+@@ -842,7 +842,7 @@ static int __add_to_page_cache_locked(struct page *page,
+ 			return error;
+ 	}
+ 
+-	error = radix_tree_maybe_preload(gfp_mask & ~__GFP_HIGHMEM);
++	error = radix_tree_maybe_preload(gfp_mask & GFP_RECLAIM_MASK);
+ 	if (error) {
+ 		if (!huge)
+ 			mem_cgroup_cancel_charge(page, memcg, false);
+-- 
+2.17.0.484.g0c8726318c-goog
