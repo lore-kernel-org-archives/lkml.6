@@ -1,217 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752491AbeDJKMo convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 06:12:44 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43453 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752172AbeDJKMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 06:12:43 -0400
-Date: Tue, 10 Apr 2018 12:12:30 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 7/9] mtd: nand: qcom: check for operation errors in case
- of raw read
-Message-ID: <20180410121230.1ffdd473@xps13>
-In-Reply-To: <1522845745-6624-8-git-send-email-absahu@codeaurora.org>
-References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
-        <1522845745-6624-8-git-send-email-absahu@codeaurora.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752609AbeDJKNe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 06:13:34 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:22587 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752057AbeDJKNd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 06:13:33 -0400
+Subject: Re: KASAN: null-ptr-deref Read in xattr_getsecurity
+To: syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+References: <0000000000008d2e0d05697a693d@google.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <9d192497-8b1e-ca8d-0ed8-b3324ee1e361@I-love.SAKURA.ne.jp>
+Date: Tue, 10 Apr 2018 19:13:23 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <0000000000008d2e0d05697a693d@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
+>From 904d07a6eb014f3df0c5a1ebfcfd4323276a9a76 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Tue, 10 Apr 2018 15:15:16 +0900
+Subject: [PATCH] commoncap: Handle memory allocation failure.
 
-On Wed,  4 Apr 2018 18:12:23 +0530, Abhishek Sahu
-<absahu@codeaurora.org> wrote:
+syzbot is reporting NULL pointer dereference at xattr_getsecurity() [1],
+for cap_inode_getsecurity() is returning sizeof(struct vfs_cap_data) when
+memory allocation failed. Return -ENOMEM if memory allocation failed.
 
-> Currently there is no error checking for raw read. For raw
-> reads, there won’t be any ECC failure but the operational
-> failures are possible so schedule the NAND_FLASH_STATUS read
-> after each codeword.
-> 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
->  drivers/mtd/nand/qcom_nandc.c | 56 +++++++++++++++++++++++++++++++++++--------
->  1 file changed, 46 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
-> index dce97e8..40c790e 100644
-> --- a/drivers/mtd/nand/qcom_nandc.c
-> +++ b/drivers/mtd/nand/qcom_nandc.c
-> @@ -1099,7 +1099,8 @@ static void config_nand_page_read(struct qcom_nand_controller *nandc)
->   * Helper to prepare DMA descriptors for configuring registers
->   * before reading each codeword in NAND page.
->   */
-> -static void config_nand_cw_read(struct qcom_nand_controller *nandc)
-> +static void
-> +config_nand_cw_read(struct qcom_nand_controller *nandc, bool use_ecc)
->  {
->  	if (nandc->props->is_bam)
->  		write_reg_dma(nandc, NAND_READ_LOCATION_0, 4,
-> @@ -1108,19 +1109,25 @@ static void config_nand_cw_read(struct qcom_nand_controller *nandc)
->  	write_reg_dma(nandc, NAND_FLASH_CMD, 1, NAND_BAM_NEXT_SGL);
->  	write_reg_dma(nandc, NAND_EXEC_CMD, 1, NAND_BAM_NEXT_SGL);
->  
-> -	read_reg_dma(nandc, NAND_FLASH_STATUS, 2, 0);
-> -	read_reg_dma(nandc, NAND_ERASED_CW_DETECT_STATUS, 1,
-> -		     NAND_BAM_NEXT_SGL);
-> +	if (use_ecc) {
-> +		read_reg_dma(nandc, NAND_FLASH_STATUS, 2, 0);
-> +		read_reg_dma(nandc, NAND_ERASED_CW_DETECT_STATUS, 1,
-> +			     NAND_BAM_NEXT_SGL);
-> +	} else {
-> +		read_reg_dma(nandc, NAND_FLASH_STATUS, 1, NAND_BAM_NEXT_SGL);
-> +	}
->  }
->  
->  /*
->   * Helper to prepare dma descriptors to configure registers needed for reading a
->   * single codeword in page
->   */
-> -static void config_nand_single_cw_page_read(struct qcom_nand_controller *nandc)
-> +static void
-> +config_nand_single_cw_page_read(struct qcom_nand_controller *nandc,
-> +				bool use_ecc)
->  {
->  	config_nand_page_read(nandc);
-> -	config_nand_cw_read(nandc);
-> +	config_nand_cw_read(nandc, use_ecc);
->  }
->  
->  /*
-> @@ -1201,7 +1208,7 @@ static int nandc_param(struct qcom_nand_host *host)
->  	nandc->buf_count = 512;
->  	memset(nandc->data_buffer, 0xff, nandc->buf_count);
->  
-> -	config_nand_single_cw_page_read(nandc);
-> +	config_nand_single_cw_page_read(nandc, false);
->  
->  	read_data_dma(nandc, FLASH_BUF_ACC, nandc->data_buffer,
->  		      nandc->buf_count, 0);
-> @@ -1565,6 +1572,23 @@ struct read_stats {
->  	__le32 erased_cw;
->  };
->  
-> +/* reads back FLASH_STATUS register set by the controller */
-> +static int check_flash_errors(struct qcom_nand_host *host, int cw_cnt)
-> +{
-> +	struct nand_chip *chip = &host->chip;
-> +	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
-> +	int i;
-> +
-> +	for (i = 0; i < cw_cnt; i++) {
-> +		u32 flash = le32_to_cpu(nandc->reg_read_buf[i]);
-> +
-> +		if (flash & (FS_OP_ERR | FS_MPU_ERR))
-> +			return -EIO;
+[1] https://syzkaller.appspot.com/bug?id=a55ba438506fe68649a5f50d2d82d56b365e0107
 
-This is already checked in parse_read_error(), maybe it would be
-preferable to have different path inside this function depending on the
-'raw' nature of the operation?
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Fixes: 8db6c34f1dbc8e06 ("Introduce v3 namespaced file capabilities")
+Reported-by: syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>
+Cc: stable <stable@vger.kernel.org> # 4.14+
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+---
+ security/commoncap.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * reads back status registers set by the controller to notify page read
->   * errors. this is equivalent to what 'ecc->correct()' would do.
-> @@ -1707,7 +1731,7 @@ static int read_page_ecc(struct qcom_nand_host *host, u8 *data_buf,
->  			}
->  		}
->  
-> -		config_nand_cw_read(nandc);
-> +		config_nand_cw_read(nandc, true);
->  
->  		if (data_buf)
->  			read_data_dma(nandc, FLASH_BUF_ACC, data_buf,
-> @@ -1771,7 +1795,7 @@ static int copy_last_cw(struct qcom_nand_host *host, int page)
->  	set_address(host, host->cw_size * (ecc->steps - 1), page);
->  	update_rw_regs(host, 1, true);
->  
-> -	config_nand_single_cw_page_read(nandc);
-> +	config_nand_single_cw_page_read(nandc, host->use_ecc);
->  
->  	read_data_dma(nandc, FLASH_BUF_ACC, nandc->data_buffer, size, 0);
->  
-> @@ -1781,6 +1805,15 @@ static int copy_last_cw(struct qcom_nand_host *host, int page)
->  
->  	free_descs(nandc);
->  
-> +	if (!ret) {
-> +		if (host->use_ecc)
-> +			ret = parse_read_errors(host, nandc->data_buffer,
-> +						nandc->data_buffer + size,
-> +						true);
-> +		else
-> +			ret = check_flash_errors(host, 1);
-
-This way you would avoid this ^
-
-> +	}
-> +
-
-As a general way, I don't like very much this kind of error checking
-structure:
-
-if (!ret)
-        ret = something();
-...
-return ret;
-
-I would rather prefer:
-
-if (ret)
-        return ret;
-
-return something();
-
->  	return ret;
->  }
->  
-> @@ -1854,7 +1887,7 @@ static int qcom_nandc_read_page_raw(struct mtd_info *mtd,
->  			nandc_set_read_loc(nandc, 3, read_loc, oob_size2, 1);
->  		}
->  
-> -		config_nand_cw_read(nandc);
-> +		config_nand_cw_read(nandc, false);
->  
->  		read_data_dma(nandc, reg_off, data_buf, data_size1, 0);
->  		reg_off += data_size1;
-> @@ -1878,6 +1911,9 @@ static int qcom_nandc_read_page_raw(struct mtd_info *mtd,
->  
->  	free_descs(nandc);
->  
-> +	if (!ret)
-> +		ret = check_flash_errors(host, ecc->steps);
-> +
-
-There is not point in doing ret = ... if you return 0 right after.
-Please check what would be the most appropriate.
-
->  	return 0;
->  }
->  
-
-Thanks,
-Miquèl
-
--- 
-Miquel Raynal, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 48620c9..1ce701f 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -449,6 +449,8 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+ 				magic |= VFS_CAP_FLAGS_EFFECTIVE;
+ 			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
+ 			cap->magic_etc = cpu_to_le32(magic);
++		} else {
++			size = -ENOMEM;
+ 		}
+ 	}
+ 	kfree(tmpbuf);
+--
+1.8.3.1
