@@ -1,77 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752921AbeDJK4X (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 06:56:23 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:44979 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752610AbeDJK4U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 06:56:20 -0400
-X-Originating-IP: 2.224.242.101
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: horms@verge.net.au, magnus.damm@gmail.com, geert@linux-m68k.org,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        sergei.shtylyov@cogentembedded.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 1/4] arm64: dts: renesas: r8a77970: add VSPD support
-Date: Tue, 10 Apr 2018 12:54:03 +0200
-Message-Id: <1523357646-3946-2-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
+        id S1752958AbeDJK4b (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 06:56:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59629 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752927AbeDJK41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 06:56:27 -0400
+Date: Tue, 10 Apr 2018 12:56:25 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] livepatch: Add an extra flag to distinguish
+ registered patches
+Message-ID: <20180410105625.4o4ozkpmanevytnh@pathway.suse.cz>
+References: <20180323120028.31451-1-pmladek@suse.com>
+ <20180323120028.31451-5-pmladek@suse.com>
+ <alpine.LSU.2.21.1804091556110.20943@pobox.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1804091556110.20943@pobox.suse.cz>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Mon 2018-04-09 16:02:15, Miroslav Benes wrote:
+> On Fri, 23 Mar 2018, Petr Mladek wrote:
+> 
+> > The initial implementation of the atomic replace feature keeps the replaced
+> > patches on the stack. But people would like to remove the replaced patches
+> > from different reasons that will be described in the following patch.
+> > 
+> > This patch is just a small preparation step. We will need to keep
+> > the replaced patches registered even when they are not longer on the stack.
+> 
+> In my opinion it could be easier for a review to squash the patch into the 
+> next one.
 
-Describe VSPD0 in the R8A77970 device tree; it will be used by DU in
-the next patch...
+OK, I'll squash them.
 
-Based on the original (and large) patch by Daisuke Matsushita
-<daisuke.matsushita.ns@hitachi.com>.
 
-Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
+> > index f28af280f9e0..d6e6d8176995 100644
+> > --- a/include/linux/livepatch.h
+> > +++ b/include/linux/livepatch.h
+> > @@ -378,7 +383,7 @@ int klp_disable_patch(struct klp_patch *patch)
+> >  
+> >  	mutex_lock(&klp_mutex);
+> >  
+> > -	if (!klp_is_patch_registered(patch)) {
+> > +	if (!patch->registered) {
+> 
+> I don't see any actual problem, but I'd feel safer if we preserve 
+> klp_is_patch_on_stack() even somewhere in disable path.
 
----
+It is strictly needed in klp_enable_patch() which will be better
+visible if I squash it with the next patch.
 
-v1 -> v2:
-- Extend the memory region to include V6_CLUTn_TBL* registers.
----
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+The use in klp_disable_patch() is optional. I do not have problems
+to add it there though. If Josh does not see it as too paranoid,
+I'll add it.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 97c27ef..a3ef3bd 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -625,6 +625,16 @@
- 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 603>;
- 		};
-+
-+		vspd0: vsp@fea20000 {
-+			compatible = "renesas,vsp2";
-+			reg = <0 0xfea20000 0 0x8000>;
-+			interrupts = <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 623>;
-+			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
-+			resets = <&cpg 623>;
-+			renesas,fcp = <&fcpvd0>;
-+		};
- 	};
- 
- 	timer {
--- 
-2.7.4
+Best Regards,
+Petr
