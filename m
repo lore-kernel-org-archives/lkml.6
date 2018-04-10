@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753985AbeDJNZR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 09:25:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55740 "EHLO mail.kernel.org"
+        id S1753948AbeDJNZK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 09:25:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752847AbeDJNZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 09:25:14 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBDC621738
+        id S1753828AbeDJNZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 09:25:07 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DE6B21738
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v1 2/2] microblaze/PCI: Remove pcibios_claim_one_bus() dead
- code
+Subject: [PATCH v1 1/2] microblaze/PCI: Remove
+ pcibios_finish_adding_to_bus() dead code
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: Michal Simek <monstr@monstr.eu>
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 10 Apr 2018 08:25:12 -0500
-Message-ID: <152336671276.18958.18175353602437569251.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date: Tue, 10 Apr 2018 08:25:06 -0500
+Message-ID: <152336670611.18958.11721407615659058726.stgit@bhelgaas-glaptop.roam.corp.google.com>
 In-Reply-To: <152336656418.18958.17017091754578447948.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <152336656418.18958.17017091754578447948.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
@@ -28,71 +28,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bjorn Helgaas <bhelgaas@google.com>
 
-pcibios_claim_one_bus() is defined but never used.  Remove it.
+pcibios_finish_adding_to_bus() is defined but never used.  Remove it.
 
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
  arch/microblaze/include/asm/pci.h |    2 --
- arch/microblaze/pci/pci-common.c  |   37 -------------------------------------
- 2 files changed, 39 deletions(-)
+ arch/microblaze/pci/pci-common.c  |   24 ------------------------
+ 2 files changed, 26 deletions(-)
 
 diff --git a/arch/microblaze/include/asm/pci.h b/arch/microblaze/include/asm/pci.h
-index 4a96480e7716..7cfb90010f16 100644
+index 114b93488193..4a96480e7716 100644
 --- a/arch/microblaze/include/asm/pci.h
 +++ b/arch/microblaze/include/asm/pci.h
-@@ -67,8 +67,6 @@ extern int pci_mmap_legacy_page_range(struct pci_bus *bus,
-  */
- #define PCI_DMA_BUS_IS_PHYS     (1)
+@@ -69,8 +69,6 @@ extern int pci_mmap_legacy_page_range(struct pci_bus *bus,
  
--extern void pcibios_claim_one_bus(struct pci_bus *b);
+ extern void pcibios_claim_one_bus(struct pci_bus *b);
+ 
+-extern void pcibios_finish_adding_to_bus(struct pci_bus *bus);
 -
  extern void pcibios_resource_survey(void);
  
  struct file;
 diff --git a/arch/microblaze/pci/pci-common.c b/arch/microblaze/pci/pci-common.c
-index 61494c4379f9..6a4e5b32a90e 100644
+index ae79e8638d50..61494c4379f9 100644
 --- a/arch/microblaze/pci/pci-common.c
 +++ b/arch/microblaze/pci/pci-common.c
-@@ -996,43 +996,6 @@ void __init pcibios_resource_survey(void)
- 	pci_assign_unassigned_resources();
+@@ -1033,30 +1033,6 @@ void pcibios_claim_one_bus(struct pci_bus *bus)
  }
+ EXPORT_SYMBOL_GPL(pcibios_claim_one_bus);
  
--/* This is used by the PCI hotplug driver to allocate resource
-- * of newly plugged busses. We can try to consolidate with the
-- * rest of the code later, for now, keep it as-is as our main
-- * resource allocation function doesn't deal with sub-trees yet.
+-
+-/* pcibios_finish_adding_to_bus
+- *
+- * This is to be called by the hotplug code after devices have been
+- * added to a bus, this include calling it for a PHB that is just
+- * being added
 - */
--void pcibios_claim_one_bus(struct pci_bus *bus)
+-void pcibios_finish_adding_to_bus(struct pci_bus *bus)
 -{
--	struct pci_dev *dev;
--	struct pci_bus *child_bus;
+-	pr_debug("PCI: Finishing adding to hotplug bus %04x:%02x\n",
+-		 pci_domain_nr(bus), bus->number);
 -
--	list_for_each_entry(dev, &bus->devices, bus_list) {
--		int i;
+-	/* Allocate bus and devices resources */
+-	pcibios_allocate_bus_resources(bus);
+-	pcibios_claim_one_bus(bus);
 -
--		for (i = 0; i < PCI_NUM_RESOURCES; i++) {
--			struct resource *r = &dev->resource[i];
+-	/* Add new devices to global lists.  Register in proc, sysfs. */
+-	pci_bus_add_devices(bus);
 -
--			if (r->parent || !r->start || !r->flags)
--				continue;
--
--			pr_debug("PCI: Claiming %s: ", pci_name(dev));
--			pr_debug("Resource %d: %016llx..%016llx [%x]\n",
--				 i, (unsigned long long)r->start,
--				 (unsigned long long)r->end,
--				 (unsigned int)r->flags);
--
--			if (pci_claim_resource(dev, i) == 0)
--				continue;
--
--			pci_claim_bridge_resource(dev, i);
--		}
--	}
--
--	list_for_each_entry(child_bus, &bus->children, node)
--		pcibios_claim_one_bus(child_bus);
+-	/* Fixup EEH */
+-	/* eeh_add_device_tree_late(bus); */
 -}
--EXPORT_SYMBOL_GPL(pcibios_claim_one_bus);
+-EXPORT_SYMBOL_GPL(pcibios_finish_adding_to_bus);
 -
  static void pcibios_setup_phb_resources(struct pci_controller *hose,
  					struct list_head *resources)
