@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+PWJO8eB6biO0FhgRmtObf0jYAT+yy2EkHe6DFV4k6Y/oaTGoEuV0rDM83BJAFVimkxnca
-ARC-Seal: i=1; a=rsa-sha256; t=1523399737; cv=none;
+X-Google-Smtp-Source: AIpwx48+AffO1+ZQfRGdc0hJbVl4vURDcwHpVnOhTrM/vKSNhwHz2jHokp6DXJmzY69OZ5EAnOZQ
+ARC-Seal: i=1; a=rsa-sha256; t=1523399734; cv=none;
         d=google.com; s=arc-20160816;
-        b=1DQVjaEHepL7lGCT/NGEsvJbF1WNEJsqe0ZO5XmdgTDGO9Pu1b5jHOv3E4R2lktiqE
-         ZeAVhakWhAD3YG5wQ2d4vqIW8Q4qYhgxLLZRc7qC+pWMMAKawvbvTfBKOLRtgqQMuswG
-         dW467qGRLLNXnIfkeUbCvb2Stv7IqvgeKcsTtk0wDe6RaNs6v4GB4vvuc5y4xNFEgzov
-         kQ3vzNCLX+L72ixijxD+G6hM1eZqh0j0vEFdKbLgHQrelvkJnFBGpW6z6lt7rU4VyzVQ
-         hRlTB3B9uwT54WktrgvEpr4VH7XK0lRfzNdm7dK4N/DlYRrkrXd/b6G3slIhoKTIEWCi
-         5GNw==
+        b=euYFmQvNfpyPq2bkYig3uGFOaUVEz+ba8xhw1ZbjAiFMuYfyYFS6xzT+w5SIXBku+4
+         9eIgyotFI5GVVdrCRh73tJns9Il4IUz/1TL1iD4D69KJeRnuJZD6zpukt8lFv0ipf7pV
+         Z0xqFeRVPEDquO59k+QNr3gN0t78gUJeB5RdJtcxIh4vXM+AdyqHPI71rovGDQ+B7NgC
+         Bj7Ceywb0rcfYUzisA+PxS7QDcZHZM+IkdbpuTzW7BBCTIFmBCjNXcdHHHf1HEoTfdCz
+         xMaGfIFhLRIx/azYiwKn3Lye5HrV9hIBj8wUySyQ1Eo6mn7EAvZPen9GSzJBvSpL8LNC
+         hDYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Vwo2eukSPB96s4Esb+Ps12VFTNfD72NO3mJGbVAsiYY=;
-        b=AqIQrWGJfkTJARfEDLe9plF0IucbguS7qDHv5q+FlsL7q7sD+8bsDUFpeEjfWLMf5K
-         6laqdrtzIZ0mVEiJAkbQcwQsdaX58mmFTDa9if4Nvcd0IVyL+qvOV228+b2CB8YG/08C
-         KkLpyHRljhogAotdB+5nN00FlM5nvIWw8Ofw/PLcaxEF873UiEir3pFkzhPTr1s5DbSC
-         XJn70Np6J66aF/I2YaPl+LTC7LV5clvrPrJegWCFXJGFERjixrfzv4LfSBseyhAxVlac
-         PZaBMMdwYPeDb+481qT2s0H5HhXLnTtmUktxJGAEwvtR3KxxX4vMQmYHOjDOMWvWTAi5
-         foHA==
+        bh=21gzbpCqpAZyV6qkbJv8yGEg1NK2OTG8DUbExni2wb8=;
+        b=nvoH7OcQpikegiNXMJ0Zl6DQN6KFd9F0Mkoo964pr+sNl1kcJbkw5YfYhcArUuaaj2
+         sRRTLtKJdWRveMlj2zs9dF9Bq1goXQYfCUUzmBgt+OS7xlZ4GEfC3T0nXe+vQieG+pzq
+         u4TTnOIZo3brQZoZEOR2KvnEHcmN+LL4BLt2apeQIPKfslWkI+JlQy+JrD0sCKHLPDED
+         x/9IkffbRFx4RsbUhsPBVa0s+rMqcZ0ILZluKHpndufV9XZ/Vo10ADVgorL5oiSzCIVF
+         Ik0Aj2/Knge+GDT1RfSoiPJu9775qmSMHNPsyZQk2+PXKSqpxqo8/sysec+gYG1tgU5B
+         VmQA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mark Brown <broonie@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	William Roberts <william.c.roberts@intel.com>,
+	Philip Tricca <philip.b.tricca@intel.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 028/138] ASoC: Intel: cht_bsw_rt5645: Analog Mic support
-Date: Wed, 11 Apr 2018 00:23:38 +0200
-Message-Id: <20180410212905.408078644@linuxfoundation.org>
+Subject: [PATCH 4.14 045/138] tpm: return a TPM_RC_COMMAND_CODE response if command is not implemented
+Date: Wed, 11 Apr 2018 00:23:55 +0200
+Message-Id: <20180410212907.338094843@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -41,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399939365598429?=
-X-GMAIL-MSGID: =?utf-8?q?1597400402705951268?=
+X-GMAIL-THRID: =?utf-8?q?1597400004824783636?=
+X-GMAIL-MSGID: =?utf-8?q?1597400400286474938?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,65 +53,138 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Javier Martinez Canillas <javierm@redhat.com>
 
 
-[ Upstream commit b70b309950418437bbd2a30afd169c4f09dee3e5 ]
+[ Upstream commit 095531f891e627e408606f2da4008d3d53e6748a ]
 
-Various Cherry Trail boards with a rt5645 codec have an analog mic
-connected to IN2P + IN2N. The mic on this boards also needs micbias to
-be enabled, on some boards micbias1 is used and on others micbias2, so
-we enable both.
+According to the TPM Library Specification, a TPM device must do a command
+header validation before processing and return a TPM_RC_COMMAND_CODE code
+if the command is not implemented.
 
-This commit adds a new "Int Analog Mic" DAPM widget for this, so that we
-do not end up enabling micbias on boards with a digital mic which uses
-the already present "Int Mic" widget. Some existing UCM files already
-refer to "Int Mic" for their "Internal Analog Microphones" SectionDevice,
-but these don't work anyways since they enable the RECMIX BST1 Switch
-instead of the BST2 switch.
+So user-space will expect to handle that response as an error. But if the
+in-kernel resource manager is used (/dev/tpmrm?), an -EINVAL errno code is
+returned instead if the command isn't implemented. This confuses userspace
+since it doesn't expect that error value.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+This also isn't consistent with the behavior when not using TPM spaces and
+accessing the TPM directly (/dev/tpm?). In this case, the command is sent
+to the TPM even when not implemented and the TPM responds with an error.
+
+Instead of returning an -EINVAL errno code when the tpm_validate_command()
+function fails, synthesize a TPM command response so user-space can get a
+TPM_RC_COMMAND_CODE as expected when a chip doesn't implement the command.
+
+The TPM only sets 12 of the 32 bits in the TPM_RC response, so the TSS and
+TAB specifications define that higher layers in the stack should use some
+of the unused 20 bits to specify from which level of the stack the error
+is coming from.
+
+Since the TPM_RC_COMMAND_CODE response code is sent by the kernel resource
+manager, set the error level to the TAB/RM layer so user-space is aware of
+this.
+
+Suggested-by: Jason Gunthorpe <jgg@ziepe.ca>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: William Roberts <william.c.roberts@intel.com>
+Reviewed-by: Philip Tricca <philip.b.tricca@intel.com>
+Reviewed-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen  <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/intel/boards/cht_bsw_rt5645.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/char/tpm/tpm-interface.c |   28 ++++++++++++++++++++--------
+ drivers/char/tpm/tpm.h           |    5 +++++
+ 2 files changed, 25 insertions(+), 8 deletions(-)
 
---- a/sound/soc/intel/boards/cht_bsw_rt5645.c
-+++ b/sound/soc/intel/boards/cht_bsw_rt5645.c
-@@ -133,6 +133,7 @@ static const struct snd_soc_dapm_widget
- 	SND_SOC_DAPM_HP("Headphone", NULL),
- 	SND_SOC_DAPM_MIC("Headset Mic", NULL),
- 	SND_SOC_DAPM_MIC("Int Mic", NULL),
-+	SND_SOC_DAPM_MIC("Int Analog Mic", NULL),
- 	SND_SOC_DAPM_SPK("Ext Spk", NULL),
- 	SND_SOC_DAPM_SUPPLY("Platform Clock", SND_SOC_NOPM, 0, 0,
- 			platform_clock_control, SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD),
-@@ -143,6 +144,8 @@ static const struct snd_soc_dapm_route c
- 	{"IN1N", NULL, "Headset Mic"},
- 	{"DMIC L1", NULL, "Int Mic"},
- 	{"DMIC R1", NULL, "Int Mic"},
-+	{"IN2P", NULL, "Int Analog Mic"},
-+	{"IN2N", NULL, "Int Analog Mic"},
- 	{"Headphone", NULL, "HPOL"},
- 	{"Headphone", NULL, "HPOR"},
- 	{"Ext Spk", NULL, "SPOL"},
-@@ -150,6 +153,9 @@ static const struct snd_soc_dapm_route c
- 	{"Headphone", NULL, "Platform Clock"},
- 	{"Headset Mic", NULL, "Platform Clock"},
- 	{"Int Mic", NULL, "Platform Clock"},
-+	{"Int Analog Mic", NULL, "Platform Clock"},
-+	{"Int Analog Mic", NULL, "micbias1"},
-+	{"Int Analog Mic", NULL, "micbias2"},
- 	{"Ext Spk", NULL, "Platform Clock"},
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -328,7 +328,7 @@ unsigned long tpm_calc_ordinal_duration(
+ }
+ EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+ 
+-static bool tpm_validate_command(struct tpm_chip *chip,
++static int tpm_validate_command(struct tpm_chip *chip,
+ 				 struct tpm_space *space,
+ 				 const u8 *cmd,
+ 				 size_t len)
+@@ -340,10 +340,10 @@ static bool tpm_validate_command(struct
+ 	unsigned int nr_handles;
+ 
+ 	if (len < TPM_HEADER_SIZE)
+-		return false;
++		return -EINVAL;
+ 
+ 	if (!space)
+-		return true;
++		return 0;
+ 
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
+ 		cc = be32_to_cpu(header->ordinal);
+@@ -352,7 +352,7 @@ static bool tpm_validate_command(struct
+ 		if (i < 0) {
+ 			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
+ 				cc);
+-			return false;
++			return -EOPNOTSUPP;
+ 		}
+ 
+ 		attrs = chip->cc_attrs_tbl[i];
+@@ -362,11 +362,11 @@ static bool tpm_validate_command(struct
+ 			goto err_len;
+ 	}
+ 
+-	return true;
++	return 0;
+ err_len:
+ 	dev_dbg(&chip->dev,
+ 		"%s: insufficient command length %zu", __func__, len);
+-	return false;
++	return -EINVAL;
+ }
+ 
+ /**
+@@ -391,8 +391,20 @@ ssize_t tpm_transmit(struct tpm_chip *ch
+ 	unsigned long stop;
+ 	bool need_locality;
+ 
+-	if (!tpm_validate_command(chip, space, buf, bufsiz))
+-		return -EINVAL;
++	rc = tpm_validate_command(chip, space, buf, bufsiz);
++	if (rc == -EINVAL)
++		return rc;
++	/*
++	 * If the command is not implemented by the TPM, synthesize a
++	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
++	 */
++	if (rc == -EOPNOTSUPP) {
++		header->length = cpu_to_be32(sizeof(*header));
++		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
++		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
++						  TSS2_RESMGR_TPM_RC_LAYER);
++		return bufsiz;
++	}
+ 
+ 	if (bufsiz > TPM_BUFSIZE)
+ 		bufsiz = TPM_BUFSIZE;
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -93,12 +93,17 @@ enum tpm2_structures {
+ 	TPM2_ST_SESSIONS	= 0x8002,
  };
  
-@@ -204,6 +210,7 @@ static const struct snd_kcontrol_new cht
- 	SOC_DAPM_PIN_SWITCH("Headphone"),
- 	SOC_DAPM_PIN_SWITCH("Headset Mic"),
- 	SOC_DAPM_PIN_SWITCH("Int Mic"),
-+	SOC_DAPM_PIN_SWITCH("Int Analog Mic"),
- 	SOC_DAPM_PIN_SWITCH("Ext Spk"),
++/* Indicates from what layer of the software stack the error comes from */
++#define TSS2_RC_LAYER_SHIFT	 16
++#define TSS2_RESMGR_TPM_RC_LAYER (11 << TSS2_RC_LAYER_SHIFT)
++
+ enum tpm2_return_codes {
+ 	TPM2_RC_SUCCESS		= 0x0000,
+ 	TPM2_RC_HASH		= 0x0083, /* RC_FMT1 */
+ 	TPM2_RC_HANDLE		= 0x008B,
+ 	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
+ 	TPM2_RC_DISABLED	= 0x0120,
++	TPM2_RC_COMMAND_CODE    = 0x0143,
+ 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
+ 	TPM2_RC_REFERENCE_H0	= 0x0910,
  };
- 
