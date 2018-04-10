@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752909AbeDJMmp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:42:45 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:57282 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751178AbeDJMmn (ORCPT
+        id S1752996AbeDJMmz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:42:55 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:32552 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752932AbeDJMmv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:42:43 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180410124241epoutp034b181d0652d7669442f607944479d436~kE6JAMMh-0547905479epoutp03f
-X-AuditID: b6c32a47-0fbff70000000fe8-24-5accb14101b9
+        Tue, 10 Apr 2018 08:42:51 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180410124249epoutp01132be7dac7a6204caa09cb3cd35ed13c~kE6QlzQU52465424654epoutp01y
+X-AuditID: b6c32a39-591ff70000000ff4-6d-5accb1482a89
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To: Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>
@@ -22,148 +22,236 @@ Cc: Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>,
         Jun Nie <jun.nie@linaro.org>, Baoyou Xie <baoyou.xie@linaro.org>,
         Shawn Guo <shawnguo@kernel.org>, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH 00/17] thermal: enable/check sensor after its setup is
- finished
-Date: Tue, 10 Apr 2018 14:41:54 +0200
-Message-id: <1523364131-31059-1-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH 01/17] thermal: add thermal_zone_device_toggle() helper
+Date: Tue, 10 Apr 2018 14:41:55 +0200
+Message-id: <1523364131-31059-2-git-send-email-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 1.9.1
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0hTYRjHfbdzzo7D6eko+epIY6WS5Oyi8lYSClaHyqjoQwysRh7UdCo7
-        all9sClmgpdQsMRbXiJmIo45zaaZus3mUkQTSUss0zSawkSxkmoe/fZ7+P+ey4eHFNJ/MF8y
-        KTWDVacqU2SEGDP0H4gIiW6zKQ61j3igtietOJp3WABqKTJhqHZ8Ake9D8YA+vvlB46sHRoB
-        yqusx1Dj3KwIjXVVEchRNABQlX1KhOZmiwn0Xe+NdC8mCbTRVYOh7s8OELWL0SybCaZy5j3B
-        vKr8JGLaP4YzDcZFAaPTPiKY6QkjwRTl2gmmWK8FTMdEjZAZrFjHGMtkh4Bx6PwuShTiyHg2
-        JSmLVYeevCFOnDL2EumW4DvWsk8gByz5FwJXElJhsMdaLCwEYpKmOgEsGZoR8cU6gLnDJuGO
-        1WhuFvDBawAXm+q3rV8A/jTatiyCOg4fP9SCQkCSXtQ5qH9JOh0h9RSDK9POSSTpSV2Cpjza
-        iRgVAB1LtLNTQjHQbjfg/C4/+M5chjtbIfWbgN9Wx3GnD6kYOKjdyzuecMmiF/EshfPaNsD7
-        uQCudRq3jy4F0NhK83wC9ltGtxYIKXdY0L8p4mdKYEE+zSMDi+tSeTsabsw5CCfTVBx8NvAB
-        LwU+dcBFC3az6ZwqgeWOpB+Vc0oVl5maIL+ZptKBrZ8IPtMJDMPn+wBFApmbpPTtkILGlVlc
-        tqoPQFIo85KktNgUtCRemX2XVaddV2emsFwfkJKYzFuSE/s/ohKUGWwyy6az6p1UQLr65oDY
-        W8agLEZTErMQW5JvkCbe62kwBzXnnqqpsuIH7y90jkhHl/dc0QRG5n8tvzrqs65Nep7Vgbrc
-        9NUr/lXdRJyHNSA6rQC6l5vCKyJOi23ja7UyY1ezS2jTmxL5hfDVqfLsfaubAdeOteNDctXZ
-        xtH9l28HRmnyk8OqQ+btC9UyjEtUHg4WqjnlPzHRo8oPAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsVy+t9jAV2HjWeiDD41s1hsnLGe1eLZ5+OM
+In-reply-to: <1523364131-31059-1-git-send-email-b.zolnierkie@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0iTYRTHe/Ze9m41eZu3RyWDYWCK1iLpKUsthF7RovrmPlRD39xw6tp0
+        ZBB5ibygZiWmQ9TUD7ka4tKcOkvntWZGGWKleb/HjDStTK05/fY/z/93nv85cChMmEW4U/L4
+        RFYVL1WISD7+ov2gnx9T2ys5PLXshmqLagg0vdQNkD63E0dlHwcI1JraD9Dm+AKB3jSkcdAd
+        bQWOqibHuKi/qYRES7kdAJVYv3DR5FgeiWbrXJHhySCJfjeV4qjl6xII2cukLXaRjHbkLck0
+        aoe5TP3nAKbSNMdhDLoskhkaMJFMbrqVZPLqdIBpGCjFmJ5HqzjTPdjAYZYMnhcEEv7JaFYh
+        17CqQ0FX+bK15XxMuRBww2LIAynA6pcNeBSkj8LmMj2RDfiUkDYCaK1aIO3FKoA95gpyhxox
+        LnLtRjOAGZmfuDZDSP8B0NgXYdMkfQLez9CBbEBRTnQ4rHtG2XiMLsbh96FOzMY40mdh00QO
+        ZmNw+gCsKdtnexbQDFyf/saxZ3nC110PCZvm0WFwrWVxazpI3+PCVytt2wOFwtam1O0GRzjf
+        Xce1/QlpD/ih85SdTwdwxWjC7Ew+gKYaoV0Hwvbu91sBGO0ArT9zCHuvAGbe3UYYWDXftR11
+        GlqHjBz7uiUA1s945wP3crBLB1xYpTouhlWLlQH+ammcOik+xj8qIc4Atg7E57gRdPVFmAFN
+        AdEeQX6bRSIkpBp1cpwZQAoTOQkU+l6JUBAtTb7JqhKuqJIUrNoMPChc5CqYivhv0THSRDaW
+        ZZWsasflUDz3FODAD1ekJmt5TgoiYfzyzO3Z4c3Rd8FE78Vr3oqw9Q3OXNDfgpeA1MsDn8bK
+        q5NcZRZZc//8Oc0RF96ZAnHturOkoyMt9JblktZt48f+wUqN7FgKbg7SBEY+cJwodxZHUtd/
+        +RZtFFb7e2G7g0e80oufFwZEoceNxOjK+WjfEBGulknFPphKLf0H81IqaBwDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrELMWRmVeSWpSXmKPExsVy+t9jAV2PjWeiDBqncVlsnLGe1eLZ5+OM
         Fmt7j7JYzL9yjdXiQONlRov/j16zWpza3sRk0TJrEYvFkicP2S0u75rDZvG59wijxZx3t9kt
         njzsY7N4sUXcYtOKG2wWP3fNY7HYe+8zo4OgR9P7Y2wes+6fZfPYOesuu8fWW6Yei/e8ZPLY
         tKqTzePOtT1sHr3N79g8+rasYvTYfm0es8eJ6d9ZPI7f2M7k8XmTXABvFJdNSmpOZllqkb5d
-        AlfG7T0H2AqOa1WcmnyXsYHxlXwXIyeHhICJxJJjq5m6GLk4hAR2Mko8/7SMFSQhJPCLUeLg
-        cTYQm03ASmJi+yrGLkYODhEBb4ktazhA6pkFZrJItE19yghSIyzgL3Hs8Bd2kBoWAVWJz6+E
-        QMK8Ah4S795tY4XYJSdx8thk1gmMXAsYGVYxSqYWFOem5xYbFRjlpZbrFSfmFpfmpesl5+du
-        YgSG8LbDWv07GB8viT/EKMDBqMTDO+Hg6Sgh1sSy4srcQ4wSHMxKIrw5a89ECfGmJFZWpRbl
-        xxeV5qQWH2KU5mBREuflzz8WKSSQnliSmp2aWpBaBJNl4uCUamCU71m52XvZed2XJtHPEi1r
-        2z9xJj6vTPk72XHDUuE92YttWy7se7155bWdiyYFXQjtUK8qEqv3jGw3V9MLeXQ5vyXUqPx3
-        UKOvdcarZ74fHA5e/WlYEmt++mboxN9Xt9w3NBN6XvT3oKel0Oys1Acdh7rvvjxy2O22FPeR
-        vR/sY13Tf65dH8ylxFKckWioxVxUnAgAhMR9eF0CAAA=
-X-CMS-MailID: 20180410124240epcas2p25c8979583c41f147ac34c49faf30aa14
+        AlfG7y8TmAtem1ac3tTH2MD4TreLkZNDQsBE4v6O9+xdjFwcQgI7GSUePTvOBuH8YpT4s20P
+        M0gVm4CVxMT2VYxdjBwcIgLeElvWcIDUMAvMZJFom/qUEaRGWMBdYtfjHmaQGhYBVYn182VB
+        wrwCHhJ/n71hglgmJ3Hy2GRWEJtTwFPi9973rCDlQkA136ZYT2DkWcDIsIpRMrWgODc9t9io
+        wDAvtVyvODG3uDQvXS85P3cTIzDktx3W6tvBeH9J/CFGAQ5GJR7eCQdPRwmxJpYVV+YeYpTg
+        YFYS4c1ZeyZKiDclsbIqtSg/vqg0J7X4EKM0B4uSOO/tvGORQgLpiSWp2ampBalFMFkmDk6p
+        BsasaV0R7D1KKpf/Lg+yuDuPe7pNbNye5wZrFI4xXOqfe+vESv9zuaGPBFv8E3ojjU9l5LLu
+        UW/5IRVgwPhJNzHyHtNhpWqehEP2D1/4B/IxBgm/nt2edPAYv84vNZbfRgeje5bP53jTfa9Y
+        4UxSne6WiORDMzuWVOQxm+7bqGggKu99sfkclxJLcUaioRZzUXEiAOTgZ951AgAA
+X-CMS-MailID: 20180410124248epcas1p453f74df4e183f9d68de255847c093d4e
 X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180410124240epcas2p25c8979583c41f147ac34c49faf30aa14
-X-RootMTR: 20180410124240epcas2p25c8979583c41f147ac34c49faf30aa14
-References: <CGME20180410124240epcas2p25c8979583c41f147ac34c49faf30aa14@epcas2p2.samsung.com>
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20180410124248epcas1p453f74df4e183f9d68de255847c093d4e
+X-RootMTR: 20180410124248epcas1p453f74df4e183f9d68de255847c093d4e
+References: <1523364131-31059-1-git-send-email-b.zolnierkie@samsung.com>
+        <CGME20180410124248epcas1p453f74df4e183f9d68de255847c093d4e@epcas1p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Add thermal_zone_device_toggle() helper. Then update core code and
+drivers to use it.
 
-[devm]_thermal_zone_of_sensor_register() is used to register
-thermal sensor by thermal drivers using DeviceTree. Besides
-registering sensor this function also immediately enables it
-(using ->set_mode method) and then checks it with a update call
-to the thermal core (which ends up using ->get_temp method).
-For many DT thermal drivers this causes a problem because
-[devm]_thermal_zone_of_sensor_register() need to be called in
-order to obtain data about thermal trips which are then used to
-finish hardware sensor setup (only after which ->get_temp can
-be used). The issue has been observed when using Samsung Exynos
-thermal driver and fixed internally in the driver in commit
-d8efad71e5b6 ("thermal: exynos: Reading temperature makes sense
-only when TMU is turned on"). However after this commit there
-are now following warnings from the thermal core visible:
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ drivers/thermal/hisi_thermal.c     | 14 ++------------
+ drivers/thermal/of-thermal.c       |  2 +-
+ drivers/thermal/rockchip_thermal.c | 22 +++++-----------------
+ drivers/thermal/thermal_helpers.c  | 15 +++++++++++++++
+ drivers/thermal/thermal_sysfs.c    |  8 +++++---
+ include/linux/thermal.h            |  1 +
+ 6 files changed, 29 insertions(+), 33 deletions(-)
 
-[    3.453602] thermal thermal_zone0: failed to read out thermal zone (-22)
-[    3.483468] thermal thermal_zone1: failed to read out thermal zone (-22)
-[    3.505965] thermal thermal_zone2: failed to read out thermal zone (-22)
-[    3.528455] thermal thermal_zone3: failed to read out thermal zone (-22)
-[    3.550939] thermal thermal_zone4: failed to read out thermal zone (-22)
-
-This patchset attempts to directly address the thermal core
-problem with [devm]_thermal_zone_of_sensor_register() and
-affected DT thermal drivers. In order to achieve this sensor
-registration, enable and check operations are separated and
-corresponding drivers are modified to use the new helpers to
-enable and check sensor explicitly.
-
-Tested on Exynos5422 based Odroid-XU3 Lite board (aforementioned
-warnings from the thermal core are now gone).
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-
-Bartlomiej Zolnierkiewicz (17):
-  thermal: add thermal_zone_device_toggle() helper
-  thermal: separate sensor registration and enable
-  thermal: add thermal_zone_device_check() helper
-  thermal: do sensor checking explicitly in drivers
-  thermal: bcm2835: enable/check sensor after its setup is finished
-  thermal: brcmstb: enable/check sensor after its setup is finished
-  thermal: hisi_thermal: enable/check sensor after its setup is finished
-  thermal: qcom: tsens: enable/check sensor after its setup is finished
-  thermal: qoriq: enable/check sensor after its setup is finished
-  thermal: rcar_gen3_thermal: enable/check sensor after its setup is
-    finished
-  thermal: rockchip_thermal: enable/check sensor after its setup is
-    finished
-  thermal: exynos: enable/check sensor after its setup is finished
-  thermal: tegra: enable/check sensor after its setup is finished
-  thermal: ti-soc-thermal: enable/check sensor after its setup is
-    finished
-  thermal: uniphier: enable/check sensor after its setup is
-    finished
-  thermal: zx2967: enable/check sensor after its setup is finished
-  thermal: warn on attempts to read temperature on disabled sensors
-
- drivers/acpi/thermal.c                             |  5 ++--
- drivers/net/ethernet/mellanox/mlxsw/core_thermal.c |  1 -
- drivers/platform/x86/acerhdf.c                     |  6 +++-
- drivers/regulator/max8973-regulator.c              |  3 +-
- drivers/thermal/broadcom/bcm2835_thermal.c         |  3 ++
- drivers/thermal/broadcom/brcmstb_thermal.c         |  3 ++
- drivers/thermal/broadcom/ns-thermal.c              |  3 ++
- drivers/thermal/da9062-thermal.c                   |  7 ++---
- drivers/thermal/db8500_thermal.c                   |  5 +++-
- drivers/thermal/hisi_thermal.c                     | 22 ++++----------
- drivers/thermal/imx_thermal.c                      |  3 +-
- drivers/thermal/int340x_thermal/int3400_thermal.c  |  1 +
- drivers/thermal/intel_bxt_pmic_thermal.c           |  3 +-
- drivers/thermal/intel_soc_dts_iosf.c               |  3 +-
- drivers/thermal/max77620_thermal.c                 |  6 ++--
- drivers/thermal/mtk_thermal.c                      |  3 ++
- drivers/thermal/of-thermal.c                       |  6 ++--
- drivers/thermal/qcom-spmi-temp-alarm.c             |  5 +++-
- drivers/thermal/qcom/tsens.c                       |  6 ++++
- drivers/thermal/qoriq_thermal.c                    |  3 ++
- drivers/thermal/rcar_gen3_thermal.c                |  7 +++--
- drivers/thermal/rcar_thermal.c                     |  8 +++--
- drivers/thermal/rockchip_thermal.c                 | 34 ++++++++++------------
- drivers/thermal/samsung/exynos_tmu.c               |  7 ++++-
- drivers/thermal/st/st_thermal_memmap.c             |  3 +-
- drivers/thermal/tango_thermal.c                    |  5 ++++
- drivers/thermal/tegra/soctherm.c                   |  3 ++
- drivers/thermal/tegra/tegra-bpmp-thermal.c         |  3 ++
- drivers/thermal/thermal-generic-adc.c              |  3 ++
- drivers/thermal/thermal_core.c                     | 14 ++++-----
- drivers/thermal/thermal_helpers.c                  | 33 +++++++++++++++++++++
- drivers/thermal/thermal_sysfs.c                    | 17 +++++++----
- drivers/thermal/ti-soc-thermal/ti-thermal-common.c |  7 ++++-
- drivers/thermal/uniphier_thermal.c                 |  6 +++-
- drivers/thermal/x86_pkg_temp_thermal.c             |  2 +-
- drivers/thermal/zx2967_thermal.c                   |  3 ++
- include/linux/thermal.h                            |  5 ++++
- 37 files changed, 173 insertions(+), 84 deletions(-)
-
+diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
+index 761d055..9428499 100644
+--- a/drivers/thermal/hisi_thermal.c
++++ b/drivers/thermal/hisi_thermal.c
+@@ -515,15 +515,6 @@ static int hisi_thermal_register_sensor(struct platform_device *pdev,
+ };
+ MODULE_DEVICE_TABLE(of, of_hisi_thermal_match);
+ 
+-static void hisi_thermal_toggle_sensor(struct hisi_thermal_sensor *sensor,
+-				       bool on)
+-{
+-	struct thermal_zone_device *tzd = sensor->tzd;
+-
+-	tzd->ops->set_mode(tzd,
+-		on ? THERMAL_DEVICE_ENABLED : THERMAL_DEVICE_DISABLED);
+-}
+-
+ static int hisi_thermal_probe(struct platform_device *pdev)
+ {
+ 	struct hisi_thermal_data *data;
+@@ -571,7 +562,7 @@ static int hisi_thermal_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	hisi_thermal_toggle_sensor(&data->sensor, true);
++	thermal_zone_device_toggle((&data->sensor)->tzd, true);
+ 
+ 	return 0;
+ }
+@@ -579,9 +570,8 @@ static int hisi_thermal_probe(struct platform_device *pdev)
+ static int hisi_thermal_remove(struct platform_device *pdev)
+ {
+ 	struct hisi_thermal_data *data = platform_get_drvdata(pdev);
+-	struct hisi_thermal_sensor *sensor = &data->sensor;
+ 
+-	hisi_thermal_toggle_sensor(sensor, false);
++	thermal_zone_device_toggle((&data->sensor)->tzd, false);
+ 
+ 	data->disable_sensor(data);
+ 
+diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
+index e09f035..f138b78 100644
+--- a/drivers/thermal/of-thermal.c
++++ b/drivers/thermal/of-thermal.c
+@@ -510,7 +510,7 @@ struct thermal_zone_device *
+ 			tzd = thermal_zone_of_add_sensor(child, sensor_np,
+ 							 data, ops);
+ 			if (!IS_ERR(tzd))
+-				tzd->ops->set_mode(tzd, THERMAL_DEVICE_ENABLED);
++				thermal_zone_device_toggle(tzd, true);
+ 
+ 			of_node_put(sensor_specs.np);
+ 			of_node_put(child);
+diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
+index f36375d..c191e41 100644
+--- a/drivers/thermal/rockchip_thermal.c
++++ b/drivers/thermal/rockchip_thermal.c
+@@ -1022,15 +1022,6 @@ static void rk_tsadcv2_tshut_mode(int chn, void __iomem *regs,
+ };
+ MODULE_DEVICE_TABLE(of, of_rockchip_thermal_match);
+ 
+-static void
+-rockchip_thermal_toggle_sensor(struct rockchip_thermal_sensor *sensor, bool on)
+-{
+-	struct thermal_zone_device *tzd = sensor->tzd;
+-
+-	tzd->ops->set_mode(tzd,
+-		on ? THERMAL_DEVICE_ENABLED : THERMAL_DEVICE_DISABLED);
+-}
+-
+ static irqreturn_t rockchip_thermal_alarm_irq_thread(int irq, void *dev)
+ {
+ 	struct rockchip_thermal_data *thermal = dev;
+@@ -1292,7 +1283,7 @@ static int rockchip_thermal_probe(struct platform_device *pdev)
+ 	thermal->chip->control(thermal->regs, true);
+ 
+ 	for (i = 0; i < thermal->chip->chn_num; i++)
+-		rockchip_thermal_toggle_sensor(&thermal->sensors[i], true);
++		thermal_zone_device_toggle((&thermal->sensors[i])->tzd, true);
+ 
+ 	platform_set_drvdata(pdev, thermal);
+ 
+@@ -1311,11 +1302,8 @@ static int rockchip_thermal_remove(struct platform_device *pdev)
+ 	struct rockchip_thermal_data *thermal = platform_get_drvdata(pdev);
+ 	int i;
+ 
+-	for (i = 0; i < thermal->chip->chn_num; i++) {
+-		struct rockchip_thermal_sensor *sensor = &thermal->sensors[i];
+-
+-		rockchip_thermal_toggle_sensor(sensor, false);
+-	}
++	for (i = 0; i < thermal->chip->chn_num; i++)
++		thermal_zone_device_toggle((&thermal->sensors[i])->tzd, false);
+ 
+ 	thermal->chip->control(thermal->regs, false);
+ 
+@@ -1332,7 +1320,7 @@ static int __maybe_unused rockchip_thermal_suspend(struct device *dev)
+ 	int i;
+ 
+ 	for (i = 0; i < thermal->chip->chn_num; i++)
+-		rockchip_thermal_toggle_sensor(&thermal->sensors[i], false);
++		thermal_zone_device_toggle((&thermal->sensors[i])->tzd, false);
+ 
+ 	thermal->chip->control(thermal->regs, false);
+ 
+@@ -1383,7 +1371,7 @@ static int __maybe_unused rockchip_thermal_resume(struct device *dev)
+ 	thermal->chip->control(thermal->regs, true);
+ 
+ 	for (i = 0; i < thermal->chip->chn_num; i++)
+-		rockchip_thermal_toggle_sensor(&thermal->sensors[i], true);
++		thermal_zone_device_toggle((&thermal->sensors[i])->tzd, true);
+ 
+ 	pinctrl_pm_select_default_state(dev);
+ 
+diff --git a/drivers/thermal/thermal_helpers.c b/drivers/thermal/thermal_helpers.c
+index eb03d7e..d5db101 100644
+--- a/drivers/thermal/thermal_helpers.c
++++ b/drivers/thermal/thermal_helpers.c
+@@ -227,3 +227,18 @@ int thermal_zone_get_offset(struct thermal_zone_device *tz)
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(thermal_zone_get_offset);
++
++/**
++ * thermal_zone_device_toggle() - enables/disables thermal zone device
++ * @tz: a valid pointer to a struct thermal_zone_device
++ *
++ * Enables/Disables thermal zone device.
++ *
++ * Return: On success returns 0, an error code otherwise.
++ */
++int thermal_zone_device_toggle(struct thermal_zone_device *tz, bool on)
++{
++	return tz->ops->set_mode(tz,
++		on ? THERMAL_DEVICE_ENABLED : THERMAL_DEVICE_DISABLED);
++}
++EXPORT_SYMBOL_GPL(thermal_zone_device_toggle);
+diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
+index 23b5e0a..343f52b 100644
+--- a/drivers/thermal/thermal_sysfs.c
++++ b/drivers/thermal/thermal_sysfs.c
+@@ -72,17 +72,19 @@
+ {
+ 	struct thermal_zone_device *tz = to_thermal_zone(dev);
+ 	int result;
++	bool on;
+ 
+ 	if (!tz->ops->set_mode)
+ 		return -EPERM;
+ 
+ 	if (!strncmp(buf, "enabled", sizeof("enabled") - 1))
+-		result = tz->ops->set_mode(tz, THERMAL_DEVICE_ENABLED);
++		on = true;
+ 	else if (!strncmp(buf, "disabled", sizeof("disabled") - 1))
+-		result = tz->ops->set_mode(tz, THERMAL_DEVICE_DISABLED);
++		on = false;
+ 	else
+-		result = -EINVAL;
++		return -EINVAL;
+ 
++	result = thermal_zone_device_toggle(tz, on);
+ 	if (result)
+ 		return result;
+ 
+diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+index 7834be6..4fbbabe 100644
+--- a/include/linux/thermal.h
++++ b/include/linux/thermal.h
+@@ -467,6 +467,7 @@ struct thermal_cooling_device *
+ int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp);
+ int thermal_zone_get_slope(struct thermal_zone_device *tz);
+ int thermal_zone_get_offset(struct thermal_zone_device *tz);
++int thermal_zone_device_toggle(struct thermal_zone_device *tz, bool on);
+ 
+ int get_tz_trend(struct thermal_zone_device *, int);
+ struct thermal_instance *get_thermal_instance(struct thermal_zone_device *,
 -- 
 1.9.1
