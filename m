@@ -1,33 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752163AbeDJBPs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 21:15:48 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35130 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751543AbeDJBPr (ORCPT
+        id S1752222AbeDJBQQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 21:16:16 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:43243 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeDJBQO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 21:15:47 -0400
-X-Google-Smtp-Source: AIpwx49JDJPEhTytg1khjyra0tQorxusong0qkqaGZQ08sXQY7/sxESxV3qy2awbmEBGpZuMnKvpMg==
+        Mon, 9 Apr 2018 21:16:14 -0400
+X-Google-Smtp-Source: AIpwx4/jmw4H36S0f1ahLfStt01A6AUavej7daicYAoMH5KIQQDeaPPXv3KyXC066A8tRMysZFTnTw==
 From: Jia-Ju Bai <baijiaju1990@gmail.com>
 To: gerrit@erg.abdn.ac.uk, davem@davemloft.net
 Cc: dccp@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH v2] net: decnet: Replace GFP_ATOMIC with GFP_KERNEL in dn_route_init
-Date: Tue, 10 Apr 2018 09:15:40 +0800
-Message-Id: <1523322940-27892-1-git-send-email-baijiaju1990@gmail.com>
+Subject: [PATCH v2] net: tipc: Replace GFP_ATOMIC with GFP_KERNEL in tipc_mon_create
+Date: Tue, 10 Apr 2018 09:16:08 +0800
+Message-Id: <1523322968-27947-1-git-send-email-baijiaju1990@gmail.com>
 X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dn_route_init() is never called in atomic context.
+tipc_mon_create() is never called in atomic context.
 
 The call chain ending up at dn_route_init() is:
-[1] dn_route_init() <- decnet_init()
-decnet_init() is only set as a parameter of module_init().
+[1] tipc_mon_create() <- tipc_enable_bearer() <- tipc_nl_bearer_enable()
+tipc_nl_bearer_enable() calls rtnl_lock(), which indicates this function
+is not called in atomic context.
 
 Despite never getting called from atomic context,
-dn_route_init() calls __get_free_pages() with GFP_ATOMIC,
+tipc_mon_create() calls kzalloc() with GFP_ATOMIC,
 which does not sleep for allocation.
 GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
 which can sleep and improve the possibility of sucessful allocation.
@@ -41,21 +42,25 @@ v2:
 * Modify the description of GFP_ATOMIC in v1.
   Thank Eric for good advice.
 ---
- net/decnet/dn_route.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/tipc/monitor.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/net/decnet/dn_route.c b/net/decnet/dn_route.c
-index 0bd3afd..59ed12a 100644
---- a/net/decnet/dn_route.c
-+++ b/net/decnet/dn_route.c
-@@ -1898,7 +1898,7 @@ void __init dn_route_init(void)
- 		while(dn_rt_hash_mask & (dn_rt_hash_mask - 1))
- 			dn_rt_hash_mask--;
- 		dn_rt_hash_table = (struct dn_rt_hash_bucket *)
--			__get_free_pages(GFP_ATOMIC, order);
-+			__get_free_pages(GFP_KERNEL, order);
- 	} while (dn_rt_hash_table == NULL && --order > 0);
+diff --git a/net/tipc/monitor.c b/net/tipc/monitor.c
+index 9e109bb..9714d80 100644
+--- a/net/tipc/monitor.c
++++ b/net/tipc/monitor.c
+@@ -604,9 +604,9 @@ int tipc_mon_create(struct net *net, int bearer_id)
+ 	if (tn->monitors[bearer_id])
+ 		return 0;
  
- 	if (!dn_rt_hash_table)
+-	mon = kzalloc(sizeof(*mon), GFP_ATOMIC);
+-	self = kzalloc(sizeof(*self), GFP_ATOMIC);
+-	dom = kzalloc(sizeof(*dom), GFP_ATOMIC);
++	mon = kzalloc(sizeof(*mon), GFP_KERNEL);
++	self = kzalloc(sizeof(*self), GFP_KERNEL);
++	dom = kzalloc(sizeof(*dom), GFP_KERNEL);
+ 	if (!mon || !self || !dom) {
+ 		kfree(mon);
+ 		kfree(self);
 -- 
 1.9.1
