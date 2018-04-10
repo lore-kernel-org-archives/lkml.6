@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49qA/bYEbNtSMwacjrngxorf+NFZCNmroNZvRRIaANjSl2JY1zWq4Vv29tXzp2YmDXfnGKf
-ARC-Seal: i=1; a=rsa-sha256; t=1523399699; cv=none;
+X-Google-Smtp-Source: AIpwx48BQBv6wfy/WKaJMA26Buqe0+Ud2wrxQva6BIS0ip0u4AWBvhTGlfxrrraPQbutZI7uI1Pw
+ARC-Seal: i=1; a=rsa-sha256; t=1523399693; cv=none;
         d=google.com; s=arc-20160816;
-        b=UOu9hpy2/nbF0iVTZ8AShC1yQdUzf0BIz269W3Q+7XD+LPRtIr2xXUzChY/3cQpbOL
-         hxmt4TRQwmIy5srCiDm9yaNg2Onli274ncXwOiSabqG42Edx/hCHyGhS4qTbrJC/8BqV
-         bNnt3zZn5UPIRBox3FHIO//eNDmEOHp+NDALpB2Z8oP6qs6VM223+37Nbz3keKuIKxOe
-         hZZATv92FgpOnlr2zh0MQo+Eb5MpmiibmFitgkU3SW8YuLgcZL6edf/652/p7UJ1yt6l
-         pKaJGFiCPTmtHSnMhxKgmqeeK3W9ETyQTk9LQMsKnf7jyrJO35ipnTil2vUNHaba0UV0
-         HOBg==
+        b=BEVCTHjMeKDdwWdvzn821jYRr4LlvjJnUhhBKMay0tCkBC9NmUnjTqQ2J14LwVv+NN
+         LYlLHQ9ud38Ns4uiSL34EHnDstuIvwI0VqlqCyh0k3drHgu+QT/VaQGumvlmdQL8dEeL
+         hU6uhbWH3M75JQZv98Bh/Na988024swJen+0lEse3pbmRejpBxtuSLU6cw45Zfw9svB2
+         OwJezJHBrEzjX4ObdnAL3N33EtCt85pzQBEHKcntTOeCVmhfRZALc/RiyqGIclcK8QCO
+         aPbk3M76nBkBMxH2YR7TEAG2xCcYC6hRitciACSLi0FIQyG+1MBdPFQB3a/xniP33dAi
+         Xptw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rDwNVi5Nx2aFGsoOmQbRM34Iu1azgd6IfyfsDkIJ6vg=;
-        b=TJ9cNyXey/G1IG6EJ9+gkWCq7yfepn4IAE5SY898Wx8Gs4hx4Bag7XbtrEXVUwWeiQ
-         0gSMskvFFoAzLhW4kTsKlzwx1p/ZUbyxnk5cLPsbIgP2nUKz3i6/DBo6lbFE0AE2sKLH
-         ABu70latQCCMxMqgMINM52C3Gkqfuny/em9xorW5Zg0mxwRydcCtaeyLfWzEU85pt0+H
-         LtojFGRK+3ofaaEDWBAjheBq1OKbg1LPIG6cpnEdu2PCHdd9+wAlI+Kmdzy3abJdI+Y7
-         khdGSjNegCl6MpRQsEe7F47X85E+j3zUg13IwbQE5oIUAPgle42F6IaHhu9n0NjK+qH6
-         kv4Q==
+        bh=yOygl7RoU4Ch5lsK/idhxNZwdV+7XtkelWEY41YL3wM=;
+        b=me1AWtV6tCGiDZjMFYqVsRhI+TGgsGVAT6AaxNmUQoDkwo75lGISSTnGgSugffNf08
+         qYGE8k8ju9vz1/1CA3WpowhoCrzyfAmVtX2YpvyvQoEJzPkIoVHja8BNrk/LpKR+lrJb
+         f6TFWEO2oNEiGkgLrmAoytJ0nO4M/+Fdknvl4/4HDY8mbyFRDYAG03dsBlHB+HGOSWzM
+         Xs78V9z3oH6ek54OWtft0gd2G5sOjXQU0Z+/0Ezz4QwvKh3IwDaqUjTmWXF/gom4GSER
+         F0xX08g3LTyfVt6YbTWogYLPVFboo2q5FXkRS+Whxx5EF2x1XRLVz41lBzSXVQ6nzV/E
+         6dRQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mengting Zhang <zhangmengting@huawei.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Thomas Richter <tmricht@linux.vnet.ibm.com>,
+	Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
 	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Jiri Olsa <jolsa@redhat.com>,
-	Cheng Jian <cj.chengjian@huawei.com>,
-	Li Bin <huawei.libin@huawei.com>,
-	Wang Nan <wangnan0@huawei.com>,
+	Paul Clarke <pc@us.ibm.com>,
+	bhargavb <bhargavaramudu@gmail.com>,
+	linux-rt-users@vger.kernel.org,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 011/138] perf evsel: Enable ignore_missing_thread for pid option
-Date: Wed, 11 Apr 2018 00:23:21 +0200
-Message-Id: <20180410212903.460139042@linuxfoundation.org>
+Subject: [PATCH 4.14 009/138] perf probe: Find versioned symbols from map
+Date: Wed, 11 Apr 2018 00:23:19 +0200
+Message-Id: <20180410212903.244714179@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -45,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399865451816464?=
-X-GMAIL-MSGID: =?utf-8?q?1597400362980839789?=
+X-GMAIL-THRID: =?utf-8?q?1597399884410254344?=
+X-GMAIL-MSGID: =?utf-8?q?1597400357050322208?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,183 +55,139 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mengting Zhang <zhangmengting@huawei.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
 
-[ Upstream commit ca8000684ec4e66f965e1f9547a3c6cb834154ca ]
+[ Upstream commit 4b3a2716dd785fabb9f6ac80c1d53cb29a88169d ]
 
-While monitoring a multithread process with pid option, perf sometimes
-may return sys_perf_event_open failure with 3(No such process) if any of
-the process's threads die before we open the event. However, we want
-perf continue monitoring the remaining threads and do not exit with
-error.
+Commit d80406453ad4 ("perf symbols: Allow user probes on versioned
+symbols") allows user to find default versioned symbols (with "@@") in
+map. However, it did not enable normal versioned symbol (with "@") for
+perf-probe.  E.g.
 
-Here, the patch enables perf_evsel::ignore_missing_thread for -p option
-to ignore complete failure if any of threads die before we open the event.
-But it may still return sys_perf_event_open failure with 22(Invalid) if we
-monitors several event groups.
+  =====
+  # ./perf probe -x /lib64/libc-2.25.so malloc_get_state
+  Failed to find symbol malloc_get_state in /usr/lib64/libc-2.25.so
+    Error: Failed to add events.
+  =====
 
-        sys_perf_event_open: pid 28960  cpu 40  group_fd 118202  flags 0x8
-        sys_perf_event_open: pid 28961  cpu 40  group_fd 118203  flags 0x8
-        WARNING: Ignored open failure for pid 28962
-        sys_perf_event_open: pid 28962  cpu 40  group_fd [118203]  flags 0x8
-        sys_perf_event_open failed, error -22
+This solves above issue by improving perf-probe symbol search function,
+as below.
 
-That is because when we ignore a missing thread, we change the thread_idx
-without dealing with its fds, FD(evsel, cpu, thread). Then get_group_fd()
-may return a wrong group_fd for the next thread and sys_perf_event_open()
-return with 22.
+  =====
+  # ./perf probe -x /lib64/libc-2.25.so malloc_get_state
+  Added new event:
+    probe_libc:malloc_get_state (on malloc_get_state in /usr/lib64/libc-2.25.so)
 
-        sys_perf_event_open(){
-           ...
-           if (group_fd != -1)
-               perf_fget_light()//to get corresponding group_leader by group_fd
-           ...
-           if (group_leader)
-              if (group_leader->ctx->task != ctx->task)//should on the same task
-                   goto err_context
-           ...
-        }
+  You can now use it in all perf tools, such as:
 
-This patch also fixes this bug by introducing perf_evsel__remove_fd() and
-update_fds to allow removing fds for the missing thread.
+	  perf record -e probe_libc:malloc_get_state -aR sleep 1
 
-Changes since v1:
-- Change group_fd__remove() into a more genetic way without changing code logic
-- Remove redundant condition
+  # ./perf probe -l
+    probe_libc:malloc_get_state (on malloc_get_state@GLIBC_2.2.5 in /usr/lib64/libc-2.25.so)
+  =====
 
-Changes since v2:
-- Use a proper function name and add some comment.
-- Multiline comment style fixes.
-
-Committer testing:
-
-Before this patch the recently added 'perf stat --per-thread' for system
-wide counting would race while enumerating all threads using /proc:
-
-  [root@jouet ~]# perf stat --per-thread
-  failed to parse CPUs map: No such file or directory
-
-   Usage: perf stat [<options>] [<command>]
-
-      -C, --cpu <cpu>       list of cpus to monitor in system-wide
-      -a, --all-cpus        system-wide collection from all CPUs
-  [root@jouet ~]# perf stat --per-thread
-  failed to parse CPUs map: No such file or directory
-
-   Usage: perf stat [<options>] [<command>]
-
-      -C, --cpu <cpu>       list of cpus to monitor in system-wide
-      -a, --all-cpus        system-wide collection from all CPUs
-  [root@jouet ~]#
-
-When, say, the kernel was being built, so lots of shortlived threads,
-after this patch this doesn't happen.
-
-Signed-off-by: Mengting Zhang <zhangmengting@huawei.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Acked-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Acked-by: Jiri Olsa <jolsa@redhat.com>
-Cc: Cheng Jian <cj.chengjian@huawei.com>
-Cc: Li Bin <huawei.libin@huawei.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/r/1513148513-6974-1-git-send-email-zhangmengting@huawei.com
-[ Remove one use 'evlist' alias variable ]
+Cc: Paul Clarke <pc@us.ibm.com>
+Cc: bhargavb <bhargavaramudu@gmail.com>
+Cc: linux-rt-users@vger.kernel.org
+Link: http://lkml.kernel.org/r/151275049269.24652.1639103455496216255.stgit@devbox
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/builtin-record.c |    4 +--
- tools/perf/util/evsel.c     |   47 ++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 47 insertions(+), 4 deletions(-)
+ tools/perf/arch/powerpc/util/sym-handling.c |    8 ++++++++
+ tools/perf/util/probe-event.c               |   20 ++++++++++++++++++--
+ tools/perf/util/symbol.c                    |    5 +++++
+ tools/perf/util/symbol.h                    |    1 +
+ 4 files changed, 32 insertions(+), 2 deletions(-)
 
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -1856,8 +1856,8 @@ int cmd_record(int argc, const char **ar
- 		goto out;
+--- a/tools/perf/arch/powerpc/util/sym-handling.c
++++ b/tools/perf/arch/powerpc/util/sym-handling.c
+@@ -64,6 +64,14 @@ int arch__compare_symbol_names_n(const c
+ 
+ 	return strncmp(namea, nameb, n);
+ }
++
++const char *arch__normalize_symbol_name(const char *name)
++{
++	/* Skip over initial dot */
++	if (name && *name == '.')
++		name++;
++	return name;
++}
+ #endif
+ 
+ #if defined(_CALL_ELF) && _CALL_ELF == 2
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -2792,16 +2792,32 @@ static int find_probe_functions(struct m
+ 	int found = 0;
+ 	struct symbol *sym;
+ 	struct rb_node *tmp;
++	const char *norm, *ver;
++	char *buf = NULL;
+ 
+ 	if (map__load(map) < 0)
+ 		return 0;
+ 
+ 	map__for_each_symbol(map, sym, tmp) {
+-		if (strglobmatch(sym->name, name)) {
++		norm = arch__normalize_symbol_name(sym->name);
++		if (!norm)
++			continue;
++
++		/* We don't care about default symbol or not */
++		ver = strchr(norm, '@');
++		if (ver) {
++			buf = strndup(norm, ver - norm);
++			if (!buf)
++				return -ENOMEM;
++			norm = buf;
++		}
++		if (strglobmatch(norm, name)) {
+ 			found++;
+ 			if (syms && found < probe_conf.max_probes)
+ 				syms[found - 1] = sym;
+ 		}
++		if (buf)
++			zfree(&buf);
  	}
  
--	/* Enable ignoring missing threads when -u option is defined. */
--	rec->opts.ignore_missing_thread = rec->opts.target.uid != UINT_MAX;
-+	/* Enable ignoring missing threads when -u/-p option is defined. */
-+	rec->opts.ignore_missing_thread = rec->opts.target.uid != UINT_MAX || rec->opts.target.pid;
- 
- 	err = -ENOMEM;
- 	if (perf_evlist__create_maps(rec->evlist, &rec->opts.target) < 0)
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1591,10 +1591,46 @@ static int __open_attr__fprintf(FILE *fp
- 	return fprintf(fp, "  %-32s %s\n", name, val);
+ 	return found;
+@@ -2847,7 +2863,7 @@ static int find_probe_trace_events_from_
+ 	 * same name but different addresses, this lists all the symbols.
+ 	 */
+ 	num_matched_functions = find_probe_functions(map, pp->function, syms);
+-	if (num_matched_functions == 0) {
++	if (num_matched_functions <= 0) {
+ 		pr_err("Failed to find symbol %s in %s\n", pp->function,
+ 			pev->target ? : "kernel");
+ 		ret = -ENOENT;
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -93,6 +93,11 @@ static int prefix_underscores_count(cons
+ 	return tail - str;
  }
  
-+static void perf_evsel__remove_fd(struct perf_evsel *pos,
-+				  int nr_cpus, int nr_threads,
-+				  int thread_idx)
++const char * __weak arch__normalize_symbol_name(const char *name)
 +{
-+	for (int cpu = 0; cpu < nr_cpus; cpu++)
-+		for (int thread = thread_idx; thread < nr_threads - 1; thread++)
-+			FD(pos, cpu, thread) = FD(pos, cpu, thread + 1);
++	return name;
 +}
 +
-+static int update_fds(struct perf_evsel *evsel,
-+		      int nr_cpus, int cpu_idx,
-+		      int nr_threads, int thread_idx)
-+{
-+	struct perf_evsel *pos;
-+
-+	if (cpu_idx >= nr_cpus || thread_idx >= nr_threads)
-+		return -EINVAL;
-+
-+	evlist__for_each_entry(evsel->evlist, pos) {
-+		nr_cpus = pos != evsel ? nr_cpus : cpu_idx;
-+
-+		perf_evsel__remove_fd(pos, nr_cpus, nr_threads, thread_idx);
-+
-+		/*
-+		 * Since fds for next evsel has not been created,
-+		 * there is no need to iterate whole event list.
-+		 */
-+		if (pos == evsel)
-+			break;
-+	}
-+	return 0;
-+}
-+
- static bool ignore_missing_thread(struct perf_evsel *evsel,
-+				  int nr_cpus, int cpu,
- 				  struct thread_map *threads,
- 				  int thread, int err)
+ int __weak arch__compare_symbol_names(const char *namea, const char *nameb)
  {
-+	pid_t ignore_pid = thread_map__pid(threads, thread);
-+
- 	if (!evsel->ignore_missing_thread)
- 		return false;
+ 	return strcmp(namea, nameb);
+--- a/tools/perf/util/symbol.h
++++ b/tools/perf/util/symbol.h
+@@ -347,6 +347,7 @@ bool elf__needs_adjust_symbols(GElf_Ehdr
+ void arch__sym_update(struct symbol *s, GElf_Sym *sym);
+ #endif
  
-@@ -1610,11 +1646,18 @@ static bool ignore_missing_thread(struct
- 	if (threads->nr == 1)
- 		return false;
++const char *arch__normalize_symbol_name(const char *name);
+ #define SYMBOL_A 0
+ #define SYMBOL_B 1
  
-+	/*
-+	 * We should remove fd for missing_thread first
-+	 * because thread_map__remove() will decrease threads->nr.
-+	 */
-+	if (update_fds(evsel, nr_cpus, cpu, threads->nr, thread))
-+		return false;
-+
- 	if (thread_map__remove(threads, thread))
- 		return false;
- 
- 	pr_warning("WARNING: Ignored open failure for pid %d\n",
--		   thread_map__pid(threads, thread));
-+		   ignore_pid);
- 	return true;
- }
- 
-@@ -1719,7 +1762,7 @@ retry_open:
- 			if (fd < 0) {
- 				err = -errno;
- 
--				if (ignore_missing_thread(evsel, threads, thread, err)) {
-+				if (ignore_missing_thread(evsel, cpus->nr, cpu, threads, thread, err)) {
- 					/*
- 					 * We just removed 1 thread, so take a step
- 					 * back on thread index and lower the upper
