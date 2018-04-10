@@ -1,90 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753176AbeDJJGi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 05:06:38 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:10525 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753126AbeDJJG2 (ORCPT
+        id S1753211AbeDJJGv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 05:06:51 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34857 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753126AbeDJJGs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:06:28 -0400
-X-IronPort-AV: E=Sophos;i="5.48,431,1517900400";
-   d="scan'208";a="13113664"
-From: Eugen Hristev <eugen.hristev@microchip.com>
-To: <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
-        <alexandre.belloni@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
-        <dmitry.torokhov@gmail.com>, <robh@kernel.org>
-CC: Eugen Hristev <eugen.hristev@microchip.com>
-Subject: [PATCH v3 09/11] dt-bindings: iio: adc: at91-sama5d2_adc: add channel specific consumer info
-Date: Tue, 10 Apr 2018 11:57:55 +0300
-Message-ID: <1523350677-27106-10-git-send-email-eugen.hristev@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523350677-27106-1-git-send-email-eugen.hristev@microchip.com>
-References: <1523350677-27106-1-git-send-email-eugen.hristev@microchip.com>
+        Tue, 10 Apr 2018 05:06:48 -0400
+X-Google-Smtp-Source: AIpwx4+NmjaJeKPIjjJ6Qgv1GlyLS8I4HgQuWTa2zAwfdmzVfne/ElIFYrZSQRjE4KedkGffSn+lbQ==
+Date: Tue, 10 Apr 2018 11:06:43 +0200
+From: Ognjen Galic <smclt30p@gmail.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1] battery: Add the ThinkPad battery status quirk
+Message-ID: <20180410090643.GA26554@thinkpad>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added defines for channel consumer device-tree binding
+The EC/ACPI firmware on Lenovo ThinkPads used to report a status
+of "Unknown" when the battery is between the charge start and charge
+stop thresholds. On Windows, it reports "Not Charging" so the quirk
+has been added to fix the "Unknown" state.
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+The chosen new state when the battery is not charging is "Fully Charged"
+because a status of "Not Charging" breaks almost all applications in
+userspace that depend on upower, because upower in itself can't handle
+a state of "Not Charging", defaulting to "Unknown".
+
+When we report "Fully Charged" instead of "Unknown", the userspace handles
+everything just fine, displaying for example: "Fully Charged, 59%" in Xfce.
+
+This is a re-write of: https://patchwork.kernel.org/patch/10205359/
+
+Signed-off-by: Ognjen Galic <smclt30p@gmail.com>
 ---
- .../devicetree/bindings/iio/adc/at91-sama5d2_adc.txt     |  9 +++++++++
- include/dt-bindings/iio/adc/at91-sama5d2_adc.h           | 16 ++++++++++++++++
- 2 files changed, 25 insertions(+)
- create mode 100644 include/dt-bindings/iio/adc/at91-sama5d2_adc.h
+ drivers/acpi/battery.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt b/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
-index 6469a4c..4a3c1d4 100644
---- a/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
-+++ b/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
-@@ -21,6 +21,14 @@ Optional properties:
-   - dmas: Phandle to dma channel for the ADC.
-   - dma-names: Must be "rx" when dmas property is being used.
-   See ../../dma/dma.txt for details.
-+  - #io-channel-cells: in case consumer drivers are attached, this must be 1.
-+  See <Documentation/devicetree/bindings/iio/iio-bindings.txt> for details.
-+
-+Properties for consumer drivers:
-+  - Consumer drivers can be connected to this producer device, as specified
-+  in <Documentation/devicetree/bindings/iio/iio-bindings.txt>
-+  - Channels exposed are specified in:
-+  <dt-bindings/iio/adc/at91-sama5d2_adc.txt>
- 
- Example:
- 
-@@ -38,4 +46,5 @@ adc: adc@fc030000 {
- 	atmel,trigger-edge-type = <IRQ_TYPE_EDGE_BOTH>;
- 	dmas = <&dma0 (AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) | AT91_XDMAC_DT_PERID(25))>;
- 	dma-names = "rx";
-+	#io-channel-cells = <1>;
+diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+index bdb24d63..cb4457a7 100644
+--- a/drivers/acpi/battery.c
++++ b/drivers/acpi/battery.c
+@@ -74,6 +74,7 @@ static async_cookie_t async_cookie;
+ static bool battery_driver_registered;
+ static int battery_bix_broken_package;
+ static int battery_notification_delay_ms;
++static int battery_quirk_thinkpad_full;
+ static unsigned int cache_time = 1000;
+ module_param(cache_time, uint, 0644);
+ MODULE_PARM_DESC(cache_time, "cache time in milliseconds");
+@@ -233,7 +234,8 @@ static int acpi_battery_get_property(struct power_supply *psy,
+ 			val->intval = POWER_SUPPLY_STATUS_DISCHARGING;
+ 		else if (battery->state & ACPI_BATTERY_STATE_CHARGING)
+ 			val->intval = POWER_SUPPLY_STATUS_CHARGING;
+-		else if (acpi_battery_is_charged(battery))
++		else if (acpi_battery_is_charged(battery) ||
++				battery_quirk_thinkpad_full)
+ 			val->intval = POWER_SUPPLY_STATUS_FULL;
+ 		else
+ 			val->intval = POWER_SUPPLY_STATUS_UNKNOWN;
+@@ -1332,6 +1334,13 @@ battery_notification_delay_quirk(const struct dmi_system_id *d)
+ 	return 0;
  }
-diff --git a/include/dt-bindings/iio/adc/at91-sama5d2_adc.h b/include/dt-bindings/iio/adc/at91-sama5d2_adc.h
-new file mode 100644
-index 0000000..70f99db
---- /dev/null
-+++ b/include/dt-bindings/iio/adc/at91-sama5d2_adc.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * This header provides constants for configuring the AT91 SAMA5D2 ADC
-+ */
+ 
++static int __init
++battery_thinkpad_full_charged_quirk(const struct dmi_system_id *d)
++{
++	battery_quirk_thinkpad_full = 1;
++	return 0;
++}
 +
-+#ifndef _DT_BINDINGS_IIO_ADC_AT91_SAMA5D2_ADC_H
-+#define _DT_BINDINGS_IIO_ADC_AT91_SAMA5D2_ADC_H
-+
-+/* X relative position channel index */
-+#define AT91_SAMA5D2_ADC_X_CHANNEL		24
-+/* Y relative position channel index */
-+#define AT91_SAMA5D2_ADC_Y_CHANNEL		25
-+/* pressure channel index */
-+#define AT91_SAMA5D2_ADC_P_CHANNEL		26
-+
-+#endif
+ static const struct dmi_system_id bat_dmi_table[] __initconst = {
+ 	{
+ 		.callback = battery_bix_broken_package_quirk,
+@@ -1349,6 +1358,14 @@ static const struct dmi_system_id bat_dmi_table[] __initconst = {
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Aspire V5-573G"),
+ 		},
+ 	},
++	{
++		.callback = battery_thinkpad_full_charged_quirk,
++		.ident = "Lenovo ThinkPad",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad"),
++		},
++	},
+ 	{},
+ };
+ 
 -- 
-2.7.4
+2.15.1
