@@ -1,87 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752713AbeDJJzT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 05:55:19 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:42759 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752345AbeDJJzR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:55:17 -0400
-X-Google-Smtp-Source: AIpwx487KXMCBTVqt2FAcZwl04itJ6djJweppiIUY5T3uFbh6vmmkG14fhoe8k5QBNz1I8o6B6gC7+4QQYPo99FrnfU=
+        id S1752753AbeDJJ4M (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 05:56:12 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35940 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752491AbeDJJ4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 05:56:11 -0400
+Date: Tue, 10 Apr 2018 10:56:02 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 6/9] PCI: dwc: Define maximum number of vectors
+Message-ID: <20180410095602.GA27363@e107981-ln.cambridge.arm.com>
+References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
+ <bf7062c863f33b2951acc586b1f22d3497ee2f10.1523266508.git.gustavo.pimentel@synopsys.com>
+ <20180409160356.GA14533@e107981-ln.cambridge.arm.com>
+ <a75bab38-55b7-b788-5ab4-b777fad2b7ff@synopsys.com>
 MIME-Version: 1.0
-In-Reply-To: <20180405162006.GA2199@embeddedor.com>
-References: <20180405162006.GA2199@embeddedor.com>
-From: Xue Liu <liuxuenetmail@gmail.com>
-Date: Tue, 10 Apr 2018 11:54:36 +0200
-Message-ID: <CAJuUDwtUUv_nMEwijRydWmseL1aYOAoAfEdLVnoHWPWKdVgS-A@mail.gmail.com>
-Subject: Re: [PATCH] ieee802154: mcr20a: Fix memory leak in mcr20a_probe
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Alexander Aring <alex.aring@gmail.com>,
-        Stefan Schmidt <stefan@osg.samsung.com>,
-        linux-wpan - ML <linux-wpan@vger.kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a75bab38-55b7-b788-5ab4-b777fad2b7ff@synopsys.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo,
+On Tue, Apr 10, 2018 at 08:59:30AM +0100, Gustavo Pimentel wrote:
+> Hi Lorenzo,
+> 
+> On 09/04/2018 17:03, Lorenzo Pieralisi wrote:
+> > On Mon, Apr 09, 2018 at 10:41:15AM +0100, Gustavo Pimentel wrote:
+> >> Adds a callback that defines the maximum number of vectors that can be use
+> >> by the Root Complex.
+> >>
+> >> Since this is a parameter associated to each SoC IP setting, makes sense to
+> >> be configurable and easily visible to future modifications.
+> >>
+> >> The designware IP supports a maximum of 256 vectors.
+> > 
+> > I think that a DT property instead of a callback would have made more
+> > sense - I struggle to see the point in defining a callback to initialize
+> > a variable, this can be done in the generic dwc code (and a DT binding).
+> 
+> The addition of this callback was done in MSI-X patch series before I take over
+> the PCIe Designware driver responsibility. However I remember a thread in which
+> this subject was discussed (see [1]), maybe this could bring some light about
+> the motive why is was done like this. If you don't agree I can do patch after
+> this series only focusing on this topic in order to do like to suggested.
+> 
+> [1] -> https://www.spinics.net/lists/linux-pci/msg61835.html
 
-Thanks for the fix. It looks good.
+Lucas has a point - it is fine to handle them as you do in this patch,
+it does not make much sense to add a property for something that
+strictly depends on the compatible string.
 
-ACK-by: Xue Liu <liuxuenetmail@gmail.com>
-
-On 5 April 2018 at 18:20, Gustavo A. R. Silva <gustavo@embeddedor.com> wrote:
-> Free allocated memory for pdata before return.
->
-> Addresses-Coverity-ID: 1466096 ("Resource leak")
-> Fixes: 8c6ad9cc5157 ("ieee802154: Add NXP MCR20A IEEE 802.15.4 transceiver driver")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/net/ieee802154/mcr20a.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/net/ieee802154/mcr20a.c b/drivers/net/ieee802154/mcr20a.c
-> index 55a22c7..944470d 100644
-> --- a/drivers/net/ieee802154/mcr20a.c
-> +++ b/drivers/net/ieee802154/mcr20a.c
-> @@ -1267,7 +1267,7 @@ mcr20a_probe(struct spi_device *spi)
->         ret = mcr20a_get_platform_data(spi, pdata);
->         if (ret < 0) {
->                 dev_crit(&spi->dev, "mcr20a_get_platform_data failed.\n");
-> -               return ret;
-> +               goto free_pdata;
->         }
->
->         /* init reset gpio */
-> @@ -1275,7 +1275,7 @@ mcr20a_probe(struct spi_device *spi)
->                 ret = devm_gpio_request_one(&spi->dev, pdata->rst_gpio,
->                                             GPIOF_OUT_INIT_HIGH, "reset");
->                 if (ret)
-> -                       return ret;
-> +                       goto free_pdata;
->         }
->
->         /* reset mcr20a */
-> @@ -1291,7 +1291,8 @@ mcr20a_probe(struct spi_device *spi)
->         hw = ieee802154_alloc_hw(sizeof(*lp), &mcr20a_hw_ops);
->         if (!hw) {
->                 dev_crit(&spi->dev, "ieee802154_alloc_hw failed\n");
-> -               return -ENOMEM;
-> +               ret = -ENOMEM;
-> +               goto free_pdata;
->         }
->
->         /* init mcr20a local data */
-> @@ -1366,6 +1367,8 @@ mcr20a_probe(struct spi_device *spi)
->
->  free_dev:
->         ieee802154_free_hw(lp->hw);
-> +free_pdata:
-> +       kfree(pdata);
->
->         return ret;
->  }
-> --
-> 2.7.4
->
+Thanks,
+Lorenzo
