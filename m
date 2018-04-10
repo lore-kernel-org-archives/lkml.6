@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48cfog375NvUMKJv6zMJBEwJ1302G7WV2Dl81R77Co5Q4k6c16TIDW05Bjk/xyNIsNUvyoz
-ARC-Seal: i=1; a=rsa-sha256; t=1523399401; cv=none;
+X-Google-Smtp-Source: AIpwx49XDvsPS7saUSFq/b9xs+AZ0riWY4gY382iJkfkcOcXpQPibOkBkLzYDi2LsfP9LmcnpJ7s
+ARC-Seal: i=1; a=rsa-sha256; t=1523399398; cv=none;
         d=google.com; s=arc-20160816;
-        b=GdL3vXB5mtD8s39oo6VFdb3K7BM9UP3Zk12rweeiMKXJxWYoZkyZw2yaoZM5UC/HA/
-         Y2/0UT6EWeJFlyPRLIbuCDnfI9Qxh1K++YZvVhBW+F4GTQgmSp5gE94Od13udvCwvumU
-         ZBJ4LScg6JK8JKHRWxRCd0mzm/t1Ph9l8e73VXyG3AYeISRVmbi8pMy3atwJgtZ3Ixpu
-         BqJVsKP+AjXCWDxP0PWWCDauA/yc5F1lzsW00i/1CokBallgkKtj9tkzNTAABw5Fy2GS
-         /ANMWzEB+3+Tkoll+cwEm3l9ou3mBZtyXvqVhAwTGBNrpBOW00xtschvqoBJIge+Dyk2
-         C+ng==
+        b=iVkVMQRUGKkDZXdXLLCtUezwwA/quqzGACXwvxtc+cA7dTZPhy1DnLi3eis6dWsHmg
+         PmOuqdqDV/VYmBMWFRIbeezZrzz4CxQxjyJ2a/HwAfVZExzCLixarUqzwjr1TpwVHoie
+         McRG4puuCxJTlNbcAzDiiDgmjxKRX3YUJCwW3jq4jWEtvqQLZfFMipiAJvYfx//KTih7
+         E2LTFBwfMI3miHebgjscNvkzk62i6OJiIkeZuE2tOWZfVScR6UMWNQAjF8ipxLzXnmGJ
+         QkKbxnwDPVdR69PAmTH+FDz56PgNRCrbpKvrsYEA51R6iHdkJ1tCQaK0ezEIOAe36fFi
+         egdg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1VxyJcbs1+eF6eUK35+r8F/OCmf1XwFIZpRlCKRvxpc=;
-        b=hWkfV2CCAI9awrfgw1yI6+qC9yJVhBxL1u22cIM9JialbJM4maq2hA1O+LW7oWkqa8
-         ST4UlvsDc6WLSl5QR+PngL4uS8LdUUVWv49zm4mbpTdgx/TQH3gvSh0iDXMkh3PFQVNz
-         uNpKFwvDb2oopqTUSl/PJx7WKD6Jz/539MuGou6VUYEdDPg9IOCNLZ1gBk+45+azqjuD
-         NLxV2M01cb6vNpN5xv/r9cZDNKdZgVeGHIh+XHfeDOnoe57gDnjTyFmpm/xe9DrwJFXk
-         Tf8ysftaStS8zC7OlLRMlZbwHCIxoBjdRAhEEg2+zcuOZ0naXiUmnjZGhBSUz//XOoj8
-         E44w==
+        bh=PK17IMzNt4+/g7Wo7FU1A0Z5zcescpLYyf7zGAiSX8I=;
+        b=t0+7Hdlj0/ezixK5/WCpsu8BMQUdPvBbEGaKBDCaflg1nI70FFAIuavdavLNBlrh9F
+         lCFT0Gurj+goYAVEP2bd4aPOdwd5BjBd3oDWFMXhIgd808Aw7QSs0Tx3sKCq/HZsFvtX
+         ijOo1FYJkkCaksqPj0U4DM951GIUpUrn5bX09EnHheH6DXH4H/3X0ZF2MF+BjM3b1Lgp
+         OwCIqM7dR7Sic6YrS2CLZLo3CghwpR2QbfxtFeBfW5XWwuCVJSOKoSgaajK3Y3YGW34n
+         /3qrlWRcGwgnSzV+ovi2hJjd9suX4voFGJz0NyCH62LD4vFhPyslhr7WRbEASWsnhvK/
+         QjZg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,20 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yijing Wang <wangyijing@huawei.com>,
-	John Garry <john.garry@huawei.com>,
-	Johannes Thumshirn <jthumshirn@suse.de>,
-	Ewan Milne <emilne@redhat.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Tomas Henzl <thenzl@redhat.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Hannes Reinecke <hare@suse.com>,
-	Jason Yan <yanaijie@huawei.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Arjun Vynipadath <arjun@chelsio.com>,
+	Ganesh Goudar <ganeshgr@chelsio.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 075/168] scsi: libsas: Use dynamic alloced work to avoid sas event lost
-Date: Wed, 11 Apr 2018 00:23:37 +0200
-Message-Id: <20180410212803.464355400@linuxfoundation.org>
+Subject: [PATCH 4.15 092/168] cxgb4vf: Fix SGE FL buffer initialization logic for 64K pages
+Date: Wed, 11 Apr 2018 00:23:54 +0200
+Message-Id: <20180410212804.168651435@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -49,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400050719701604?=
-X-GMAIL-MSGID: =?utf-8?q?1597400050719701604?=
+X-GMAIL-THRID: =?utf-8?q?1597400047926607571?=
+X-GMAIL-MSGID: =?utf-8?q?1597400047926607571?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,457 +51,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Yan <yanaijie@huawei.com>
+From: Arjun Vynipadath <arjun@chelsio.com>
 
 
-[ Upstream commit 1c393b970e0f4070e4376d45f89a2d19a5c895d0 ]
+[ Upstream commit ea0a42109aee7b92e631c4eb3f2219fadf58acdd ]
 
-Now libsas hotplug work is static, every sas event type has its own
-static work, LLDD driver queues the hotplug work into shost->work_q.  If
-LLDD driver burst posts lots hotplug events to libsas, the hotplug
-events may pending in the workqueue like
+We'd come in with SGE_FL_BUFFER_SIZE[0] and [1] both equal to 64KB and
+the extant logic would flag that as an error. This was already fixed in
+cxgb4 driver with "92ddcc7 cxgb4: Fix some small bugs in
+t4_sge_init_soft() when our Page Size is 64KB".
 
-shost->work_q
-new work[PORTE_BYTES_DMAED] --> |[PHYE_LOSS_OF_SIGNAL][PORTE_BYTES_DMAED] -> processing
-                                |<-------wait worker to process-------->|
-
-In this case, a new PORTE_BYTES_DMAED event coming, libsas try to queue
-it to shost->work_q, but this work is already pending, so it would be
-lost. Finally, libsas delete the related sas port and sas devices, but
-LLDD driver expect libsas add the sas port and devices(last sas event).
-
-This patch use dynamic allocated work to avoid this issue.
-
-Signed-off-by: Yijing Wang <wangyijing@huawei.com>
-CC: John Garry <john.garry@huawei.com>
-CC: Johannes Thumshirn <jthumshirn@suse.de>
-CC: Ewan Milne <emilne@redhat.com>
-CC: Christoph Hellwig <hch@lst.de>
-CC: Tomas Henzl <thenzl@redhat.com>
-CC: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Original Work by: Casey Leedom <leedom@chelsio.com>
+Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
+Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/libsas/sas_event.c    |   74 ++++++++++++++++++++++++++++---------
- drivers/scsi/libsas/sas_init.c     |   27 ++++++++++++-
- drivers/scsi/libsas/sas_internal.h |    6 +++
- drivers/scsi/libsas/sas_phy.c      |   44 ++++------------------
- drivers/scsi/libsas/sas_port.c     |   18 ++++-----
- include/scsi/libsas.h              |   17 +++++---
- 6 files changed, 115 insertions(+), 71 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb4vf/sge.c |   23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
---- a/drivers/scsi/libsas/sas_event.c
-+++ b/drivers/scsi/libsas/sas_event.c
-@@ -29,7 +29,8 @@
- 
- int sas_queue_work(struct sas_ha_struct *ha, struct sas_work *sw)
+--- a/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
++++ b/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
+@@ -2619,8 +2619,8 @@ void t4vf_sge_stop(struct adapter *adapt
+ int t4vf_sge_init(struct adapter *adapter)
  {
--	int rc = 0;
-+	/* it's added to the defer_q when draining so return succeed */
-+	int rc = 1;
+ 	struct sge_params *sge_params = &adapter->params.sge;
+-	u32 fl0 = sge_params->sge_fl_buffer_size[0];
+-	u32 fl1 = sge_params->sge_fl_buffer_size[1];
++	u32 fl_small_pg = sge_params->sge_fl_buffer_size[0];
++	u32 fl_large_pg = sge_params->sge_fl_buffer_size[1];
+ 	struct sge *s = &adapter->sge;
  
- 	if (!test_bit(SAS_HA_REGISTERED, &ha->state))
- 		return 0;
-@@ -44,19 +45,15 @@ int sas_queue_work(struct sas_ha_struct
- 	return rc;
- }
- 
--static int sas_queue_event(int event, unsigned long *pending,
--			    struct sas_work *work,
-+static int sas_queue_event(int event, struct sas_work *work,
- 			    struct sas_ha_struct *ha)
- {
--	int rc = 0;
-+	unsigned long flags;
-+	int rc;
- 
--	if (!test_and_set_bit(event, pending)) {
--		unsigned long flags;
--
--		spin_lock_irqsave(&ha->lock, flags);
--		rc = sas_queue_work(ha, work);
--		spin_unlock_irqrestore(&ha->lock, flags);
--	}
-+	spin_lock_irqsave(&ha->lock, flags);
-+	rc = sas_queue_work(ha, work);
-+	spin_unlock_irqrestore(&ha->lock, flags);
- 
- 	return rc;
- }
-@@ -66,6 +63,7 @@ void __sas_drain_work(struct sas_ha_stru
- {
- 	struct workqueue_struct *wq = ha->core.shost->work_q;
- 	struct sas_work *sw, *_sw;
-+	int ret;
- 
- 	set_bit(SAS_HA_DRAINING, &ha->state);
- 	/* flush submitters */
-@@ -78,7 +76,10 @@ void __sas_drain_work(struct sas_ha_stru
- 	clear_bit(SAS_HA_DRAINING, &ha->state);
- 	list_for_each_entry_safe(sw, _sw, &ha->defer_q, drain_node) {
- 		list_del_init(&sw->drain_node);
--		sas_queue_work(ha, sw);
-+		ret = sas_queue_work(ha, sw);
-+		if (ret != 1)
-+			sas_free_event(to_asd_sas_event(&sw->work));
+ 	/*
+@@ -2628,9 +2628,20 @@ int t4vf_sge_init(struct adapter *adapte
+ 	 * the Physical Function Driver.  Ideally we should be able to deal
+ 	 * with _any_ configuration.  Practice is different ...
+ 	 */
+-	if (fl0 != PAGE_SIZE || (fl1 != 0 && fl1 <= fl0)) {
 +
++	/* We only bother using the Large Page logic if the Large Page Buffer
++	 * is larger than our Page Size Buffer.
++	 */
++	if (fl_large_pg <= fl_small_pg)
++		fl_large_pg = 0;
++
++	/* The Page Size Buffer must be exactly equal to our Page Size and the
++	 * Large Page Size Buffer should be 0 (per above) or a power of 2.
++	 */
++	if (fl_small_pg != PAGE_SIZE ||
++	    (fl_large_pg & (fl_large_pg - 1)) != 0) {
+ 		dev_err(adapter->pdev_dev, "bad SGE FL buffer sizes [%d, %d]\n",
+-			fl0, fl1);
++			fl_small_pg, fl_large_pg);
+ 		return -EINVAL;
  	}
- 	spin_unlock_irq(&ha->lock);
- }
-@@ -119,29 +120,68 @@ void sas_enable_revalidation(struct sas_
- 		if (!test_and_clear_bit(ev, &d->pending))
- 			continue;
- 
--		sas_queue_event(ev, &d->pending, &d->disc_work[ev].work, ha);
-+		sas_queue_event(ev, &d->disc_work[ev].work, ha);
- 	}
- 	mutex_unlock(&ha->disco_mutex);
- }
- 
-+
-+static void sas_port_event_worker(struct work_struct *work)
-+{
-+	struct asd_sas_event *ev = to_asd_sas_event(work);
-+
-+	sas_port_event_fns[ev->event](work);
-+	sas_free_event(ev);
-+}
-+
-+static void sas_phy_event_worker(struct work_struct *work)
-+{
-+	struct asd_sas_event *ev = to_asd_sas_event(work);
-+
-+	sas_phy_event_fns[ev->event](work);
-+	sas_free_event(ev);
-+}
-+
- static int sas_notify_port_event(struct asd_sas_phy *phy, enum port_event event)
- {
-+	struct asd_sas_event *ev;
- 	struct sas_ha_struct *ha = phy->ha;
-+	int ret;
- 
- 	BUG_ON(event >= PORT_NUM_EVENTS);
- 
--	return sas_queue_event(event, &phy->port_events_pending,
--			       &phy->port_events[event].work, ha);
-+	ev = sas_alloc_event(phy);
-+	if (!ev)
-+		return -ENOMEM;
-+
-+	INIT_SAS_EVENT(ev, sas_port_event_worker, phy, event);
-+
-+	ret = sas_queue_event(event, &ev->work, ha);
-+	if (ret != 1)
-+		sas_free_event(ev);
-+
-+	return ret;
- }
- 
- int sas_notify_phy_event(struct asd_sas_phy *phy, enum phy_event event)
- {
-+	struct asd_sas_event *ev;
- 	struct sas_ha_struct *ha = phy->ha;
-+	int ret;
- 
- 	BUG_ON(event >= PHY_NUM_EVENTS);
- 
--	return sas_queue_event(event, &phy->phy_events_pending,
--			       &phy->phy_events[event].work, ha);
-+	ev = sas_alloc_event(phy);
-+	if (!ev)
-+		return -ENOMEM;
-+
-+	INIT_SAS_EVENT(ev, sas_phy_event_worker, phy, event);
-+
-+	ret = sas_queue_event(event, &ev->work, ha);
-+	if (ret != 1)
-+		sas_free_event(ev);
-+
-+	return ret;
- }
- 
- int sas_init_events(struct sas_ha_struct *sas_ha)
---- a/drivers/scsi/libsas/sas_init.c
-+++ b/drivers/scsi/libsas/sas_init.c
-@@ -39,6 +39,7 @@
- #include "../scsi_sas_internal.h"
- 
- static struct kmem_cache *sas_task_cache;
-+static struct kmem_cache *sas_event_cache;
- 
- struct sas_task *sas_alloc_task(gfp_t flags)
- {
-@@ -364,8 +365,6 @@ void sas_prep_resume_ha(struct sas_ha_st
- 		struct asd_sas_phy *phy = ha->sas_phy[i];
- 
- 		memset(phy->attached_sas_addr, 0, SAS_ADDR_SIZE);
--		phy->port_events_pending = 0;
--		phy->phy_events_pending = 0;
- 		phy->frame_rcvd_size = 0;
- 	}
- }
-@@ -555,20 +554,42 @@ sas_domain_attach_transport(struct sas_d
- }
- EXPORT_SYMBOL_GPL(sas_domain_attach_transport);
- 
-+
-+struct asd_sas_event *sas_alloc_event(struct asd_sas_phy *phy)
-+{
-+	gfp_t flags = in_interrupt() ? GFP_ATOMIC : GFP_KERNEL;
-+
-+	return kmem_cache_zalloc(sas_event_cache, flags);
-+}
-+
-+void sas_free_event(struct asd_sas_event *event)
-+{
-+	kmem_cache_free(sas_event_cache, event);
-+}
-+
- /* ---------- SAS Class register/unregister ---------- */
- 
- static int __init sas_class_init(void)
- {
- 	sas_task_cache = KMEM_CACHE(sas_task, SLAB_HWCACHE_ALIGN);
- 	if (!sas_task_cache)
--		return -ENOMEM;
-+		goto out;
-+
-+	sas_event_cache = KMEM_CACHE(asd_sas_event, SLAB_HWCACHE_ALIGN);
-+	if (!sas_event_cache)
-+		goto free_task_kmem;
- 
- 	return 0;
-+free_task_kmem:
-+	kmem_cache_destroy(sas_task_cache);
-+out:
-+	return -ENOMEM;
- }
- 
- static void __exit sas_class_exit(void)
- {
- 	kmem_cache_destroy(sas_task_cache);
-+	kmem_cache_destroy(sas_event_cache);
- }
- 
- MODULE_AUTHOR("Luben Tuikov <luben_tuikov@adaptec.com>");
---- a/drivers/scsi/libsas/sas_internal.h
-+++ b/drivers/scsi/libsas/sas_internal.h
-@@ -61,6 +61,9 @@ int sas_show_oob_mode(enum sas_oob_mode
- int  sas_register_phys(struct sas_ha_struct *sas_ha);
- void sas_unregister_phys(struct sas_ha_struct *sas_ha);
- 
-+struct asd_sas_event *sas_alloc_event(struct asd_sas_phy *phy);
-+void sas_free_event(struct asd_sas_event *event);
-+
- int  sas_register_ports(struct sas_ha_struct *sas_ha);
- void sas_unregister_ports(struct sas_ha_struct *sas_ha);
- 
-@@ -99,6 +102,9 @@ void sas_hae_reset(struct work_struct *w
- 
- void sas_free_device(struct kref *kref);
- 
-+extern const work_func_t sas_phy_event_fns[PHY_NUM_EVENTS];
-+extern const work_func_t sas_port_event_fns[PORT_NUM_EVENTS];
-+
- #ifdef CONFIG_SCSI_SAS_HOST_SMP
- extern void sas_smp_host_handler(struct bsg_job *job, struct Scsi_Host *shost);
- #else
---- a/drivers/scsi/libsas/sas_phy.c
-+++ b/drivers/scsi/libsas/sas_phy.c
-@@ -35,7 +35,6 @@ static void sas_phye_loss_of_signal(stru
- 	struct asd_sas_event *ev = to_asd_sas_event(work);
- 	struct asd_sas_phy *phy = ev->phy;
- 
--	clear_bit(PHYE_LOSS_OF_SIGNAL, &phy->phy_events_pending);
- 	phy->error = 0;
- 	sas_deform_port(phy, 1);
- }
-@@ -45,7 +44,6 @@ static void sas_phye_oob_done(struct wor
- 	struct asd_sas_event *ev = to_asd_sas_event(work);
- 	struct asd_sas_phy *phy = ev->phy;
- 
--	clear_bit(PHYE_OOB_DONE, &phy->phy_events_pending);
- 	phy->error = 0;
- }
- 
-@@ -58,8 +56,6 @@ static void sas_phye_oob_error(struct wo
- 	struct sas_internal *i =
- 		to_sas_internal(sas_ha->core.shost->transportt);
- 
--	clear_bit(PHYE_OOB_ERROR, &phy->phy_events_pending);
--
- 	sas_deform_port(phy, 1);
- 
- 	if (!port && phy->enabled && i->dft->lldd_control_phy) {
-@@ -88,8 +84,6 @@ static void sas_phye_spinup_hold(struct
- 	struct sas_internal *i =
- 		to_sas_internal(sas_ha->core.shost->transportt);
- 
--	clear_bit(PHYE_SPINUP_HOLD, &phy->phy_events_pending);
--
- 	phy->error = 0;
- 	i->dft->lldd_control_phy(phy, PHY_FUNC_RELEASE_SPINUP_HOLD, NULL);
- }
-@@ -99,8 +93,6 @@ static void sas_phye_resume_timeout(stru
- 	struct asd_sas_event *ev = to_asd_sas_event(work);
- 	struct asd_sas_phy *phy = ev->phy;
- 
--	clear_bit(PHYE_RESUME_TIMEOUT, &phy->phy_events_pending);
--
- 	/* phew, lldd got the phy back in the nick of time */
- 	if (!phy->suspended) {
- 		dev_info(&phy->phy->dev, "resume timeout cancelled\n");
-@@ -119,39 +111,12 @@ int sas_register_phys(struct sas_ha_stru
- {
- 	int i;
- 
--	static const work_func_t sas_phy_event_fns[PHY_NUM_EVENTS] = {
--		[PHYE_LOSS_OF_SIGNAL] = sas_phye_loss_of_signal,
--		[PHYE_OOB_DONE] = sas_phye_oob_done,
--		[PHYE_OOB_ERROR] = sas_phye_oob_error,
--		[PHYE_SPINUP_HOLD] = sas_phye_spinup_hold,
--		[PHYE_RESUME_TIMEOUT] = sas_phye_resume_timeout,
--
--	};
--
--	static const work_func_t sas_port_event_fns[PORT_NUM_EVENTS] = {
--		[PORTE_BYTES_DMAED] = sas_porte_bytes_dmaed,
--		[PORTE_BROADCAST_RCVD] = sas_porte_broadcast_rcvd,
--		[PORTE_LINK_RESET_ERR] = sas_porte_link_reset_err,
--		[PORTE_TIMER_EVENT] = sas_porte_timer_event,
--		[PORTE_HARD_RESET] = sas_porte_hard_reset,
--	};
--
- 	/* Now register the phys. */
- 	for (i = 0; i < sas_ha->num_phys; i++) {
--		int k;
- 		struct asd_sas_phy *phy = sas_ha->sas_phy[i];
- 
- 		phy->error = 0;
- 		INIT_LIST_HEAD(&phy->port_phy_el);
--		for (k = 0; k < PORT_NUM_EVENTS; k++) {
--			INIT_SAS_WORK(&phy->port_events[k].work, sas_port_event_fns[k]);
--			phy->port_events[k].phy = phy;
--		}
--
--		for (k = 0; k < PHY_NUM_EVENTS; k++) {
--			INIT_SAS_WORK(&phy->phy_events[k].work, sas_phy_event_fns[k]);
--			phy->phy_events[k].phy = phy;
--		}
- 
- 		phy->port = NULL;
- 		phy->ha = sas_ha;
-@@ -179,3 +144,12 @@ int sas_register_phys(struct sas_ha_stru
- 
- 	return 0;
- }
-+
-+const work_func_t sas_phy_event_fns[PHY_NUM_EVENTS] = {
-+	[PHYE_LOSS_OF_SIGNAL] = sas_phye_loss_of_signal,
-+	[PHYE_OOB_DONE] = sas_phye_oob_done,
-+	[PHYE_OOB_ERROR] = sas_phye_oob_error,
-+	[PHYE_SPINUP_HOLD] = sas_phye_spinup_hold,
-+	[PHYE_RESUME_TIMEOUT] = sas_phye_resume_timeout,
-+
-+};
---- a/drivers/scsi/libsas/sas_port.c
-+++ b/drivers/scsi/libsas/sas_port.c
-@@ -261,8 +261,6 @@ void sas_porte_bytes_dmaed(struct work_s
- 	struct asd_sas_event *ev = to_asd_sas_event(work);
- 	struct asd_sas_phy *phy = ev->phy;
- 
--	clear_bit(PORTE_BYTES_DMAED, &phy->port_events_pending);
--
- 	sas_form_port(phy);
- }
- 
-@@ -273,8 +271,6 @@ void sas_porte_broadcast_rcvd(struct wor
- 	unsigned long flags;
- 	u32 prim;
- 
--	clear_bit(PORTE_BROADCAST_RCVD, &phy->port_events_pending);
--
- 	spin_lock_irqsave(&phy->sas_prim_lock, flags);
- 	prim = phy->sas_prim;
- 	spin_unlock_irqrestore(&phy->sas_prim_lock, flags);
-@@ -288,8 +284,6 @@ void sas_porte_link_reset_err(struct wor
- 	struct asd_sas_event *ev = to_asd_sas_event(work);
- 	struct asd_sas_phy *phy = ev->phy;
- 
--	clear_bit(PORTE_LINK_RESET_ERR, &phy->port_events_pending);
--
- 	sas_deform_port(phy, 1);
- }
- 
-@@ -298,8 +292,6 @@ void sas_porte_timer_event(struct work_s
- 	struct asd_sas_event *ev = to_asd_sas_event(work);
- 	struct asd_sas_phy *phy = ev->phy;
- 
--	clear_bit(PORTE_TIMER_EVENT, &phy->port_events_pending);
--
- 	sas_deform_port(phy, 1);
- }
- 
-@@ -308,8 +300,6 @@ void sas_porte_hard_reset(struct work_st
- 	struct asd_sas_event *ev = to_asd_sas_event(work);
- 	struct asd_sas_phy *phy = ev->phy;
- 
--	clear_bit(PORTE_HARD_RESET, &phy->port_events_pending);
--
- 	sas_deform_port(phy, 1);
- }
- 
-@@ -353,3 +343,11 @@ void sas_unregister_ports(struct sas_ha_
- 			sas_deform_port(sas_ha->sas_phy[i], 0);
- 
- }
-+
-+const work_func_t sas_port_event_fns[PORT_NUM_EVENTS] = {
-+	[PORTE_BYTES_DMAED] = sas_porte_bytes_dmaed,
-+	[PORTE_BROADCAST_RCVD] = sas_porte_broadcast_rcvd,
-+	[PORTE_LINK_RESET_ERR] = sas_porte_link_reset_err,
-+	[PORTE_TIMER_EVENT] = sas_porte_timer_event,
-+	[PORTE_HARD_RESET] = sas_porte_hard_reset,
-+};
---- a/include/scsi/libsas.h
-+++ b/include/scsi/libsas.h
-@@ -292,6 +292,7 @@ struct asd_sas_port {
- struct asd_sas_event {
- 	struct sas_work work;
- 	struct asd_sas_phy *phy;
-+	int event;
- };
- 
- static inline struct asd_sas_event *to_asd_sas_event(struct work_struct *work)
-@@ -301,17 +302,21 @@ static inline struct asd_sas_event *to_a
- 	return ev;
- }
- 
-+static inline void INIT_SAS_EVENT(struct asd_sas_event *ev,
-+		void (*fn)(struct work_struct *),
-+		struct asd_sas_phy *phy, int event)
-+{
-+	INIT_SAS_WORK(&ev->work, fn);
-+	ev->phy = phy;
-+	ev->event = event;
-+}
-+
-+
- /* The phy pretty much is controlled by the LLDD.
-  * The class only reads those fields.
-  */
- struct asd_sas_phy {
- /* private: */
--	struct asd_sas_event   port_events[PORT_NUM_EVENTS];
--	struct asd_sas_event   phy_events[PHY_NUM_EVENTS];
--
--	unsigned long port_events_pending;
--	unsigned long phy_events_pending;
--
- 	int error;
- 	int suspended;
- 
+ 	if ((sge_params->sge_control & RXPKTCPLMODE_F) !=
+@@ -2642,8 +2653,8 @@ int t4vf_sge_init(struct adapter *adapte
+ 	/*
+ 	 * Now translate the adapter parameters into our internal forms.
+ 	 */
+-	if (fl1)
+-		s->fl_pg_order = ilog2(fl1) - PAGE_SHIFT;
++	if (fl_large_pg)
++		s->fl_pg_order = ilog2(fl_large_pg) - PAGE_SHIFT;
+ 	s->stat_len = ((sge_params->sge_control & EGRSTATUSPAGESIZE_F)
+ 			? 128 : 64);
+ 	s->pktshift = PKTSHIFT_G(sge_params->sge_control);
