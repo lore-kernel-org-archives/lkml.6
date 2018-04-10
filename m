@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48pO3L9TAhB9Q9IKiPvl+E/9URMlgE5kTpE5tM/yryP9nxhTCwG8lAmlkZEdKsCRNppRvP2
-ARC-Seal: i=1; a=rsa-sha256; t=1523399934; cv=none;
+X-Google-Smtp-Source: AIpwx49n8g+v2nbI3eu0Ff9h1BZCjFNmBxVNHhyN4L6BqX9u51Kg3F/Z9OKql2J6ZCmOYgxiQ6s9
+ARC-Seal: i=1; a=rsa-sha256; t=1523399931; cv=none;
         d=google.com; s=arc-20160816;
-        b=0X1q47oiXX/lD76iKy0w+ZAfNK9vQ3oXP54s5pey1CfiDnmYrpDoBgGlrgns9ayV7v
-         19gLVJXCDWMjzUP9ednUvi4O7ngo8n6cf10ODk9xVbkYeOaExLWE/LQAEaAQ4GopW080
-         0L+wI7gvxZ0hxJvD1/jrVx18zl6II9veLGJ4kTkuOCo4xn3LTzfZRG5qSMloXUkXR5zM
-         TUzAXOdvXISOKtSj/emXZMjsqbnD7358nnIKwFxCDLs1EuSs58qjk6/mrDWHVm7KjaV8
-         dRzjsIKs2XNAghUSCVj8zu8GVUZHbEJ5O9Uk0RGstxjKPM4aWZabFUYPDJk77rxvak30
-         FfDg==
+        b=eO9dQP4p173EexQ1heSHWvpCUMeYOOgfNqxJmhB7/hf08kJKym0/YXZYaT3ymPV+l3
+         sr9+gg9vrndG4yc50z7Ikh7kEWgiqmtvG3S/fY0dVo7gaYzRKpkddP5x4WqwA60qTJU8
+         ti8PuMKclHMGJ3MTQsc2kjEompsIyVBmdpkS4GFFVMVd360fR1Sax5PY4Geqrs0YNH0N
+         l3FK2C8t1uNGerw/oZIHjbDk3z8KDpE+FZr2cxi5YTN2+2gKvtc47Jj8grGWdxP3Brgy
+         kAwJ5LXAtSepQXngi4Tj0BcyDYzUhRXbti6ycvwq9irntccwkJE+fQubbSDX043wzd3u
+         dZsA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=lILDBbfDVBrjKdhXMw2q6l2RKpdYvxXO4+fjO8+A3eM=;
-        b=VE31SDOojaVqOFf+tifZ5+0u9/7pZP39h7ABBBR8WznpFS+aBcdBymVVnkI3R1jea4
-         j2V7PLtrD0n59JOmGtYzc0E0vey7KFDyN18XxqoD1ja7b83OdWXpRBEOTyqEXHo3P49o
-         dL16oa0KzAkVV028YE8Y9Sv2ulxS4R55P0nH/mV8XQkEdPgfDwInnrOZ+SmWndqyGVRo
-         PEZOFaYQc7xd4c1hSgiVsls/kyVc3mMb4dgcqZeJxxanzRXArA9HWLdI+KnEmIWI8Iw/
-         Wa8shUatfOFsyaL1DdQxoyx/dbxxd+yL6UoeYxIC4Jmi25otovmyDaulRfI+Z2g5UPBa
-         AVfw==
+        bh=pN6C5zDUiJ0m/k/mZaKq0xAU+VQBxz9DiSAZVelq4pU=;
+        b=ogo/yk2E/JwpVxsxVf5hvs4wvLufP/nfih/hSsBJBUxhbqYQsuu1/zSAsPFonLXG4i
+         zZF5cvU7+oi+U+KvZsFc2yQu7vehYtNaNUy8X34zUH5DN7vxI4VNoyi+cIIxvmmsAgEf
+         i4lqwLnOsZcH1cu72wOV81+YmHgXjE1wJ4IS/Da8wN5DvvJf68bt9PZVGmPxJJ6xrvv/
+         XBLNumyMciKyBKEsCY6M+l8HCBD0/6wM3ec5/zpIm5fVplplT/XV/nmKr9btDCkJZMNn
+         qkdDL9plhDt1A2ytaHts9b5ITZZTfRCKdXzNW3NguEjsI7FKCdTNscrxbEAc2UzYzFgH
+         2XTw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Xin Long <lucien.xin@gmail.com>,
-	Andy Gospodarek <andy@greyhouse.net>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 116/138] bonding: process the err returned by dev_set_allmulti properly in bond_enslave
-Date: Wed, 11 Apr 2018 00:25:06 +0200
-Message-Id: <20180410212915.642286449@linuxfoundation.org>
+	David Miller <davem@davemloft.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH 4.14 107/138] r8169: fix setting driver_data after register_netdev
+Date: Wed, 11 Apr 2018 00:24:57 +0200
+Message-Id: <20180410212914.642411927@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400241445808107?=
-X-GMAIL-MSGID: =?utf-8?q?1597400609151909919?=
+X-GMAIL-THRID: =?utf-8?q?1597400244259520403?=
+X-GMAIL-MSGID: =?utf-8?q?1597400606988530994?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,36 +49,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
 
-[ Upstream commit 9f5a90c107741b864398f4ac0014711a8c1d8474 ]
+[ Upstream commit 19c9ea363a244f85f90a424f9936e6d56449e33c ]
 
-When dev_set_promiscuity(1) succeeds but dev_set_allmulti(1) fails,
-dev_set_promiscuity(-1) should be done before going to the err path.
-Otherwise, dev->promiscuity will leak.
+pci_set_drvdata() is called only after registering the net_device,
+therefore we could run into a NPE if one of the functions using
+driver_data is called before it's set.
 
-Fixes: 7e1a1ac1fbaa ("bonding: Check return of dev_set_promiscuity/allmulti")
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Andy Gospodarek <andy@greyhouse.net>
+Fix this by calling pci_set_drvdata() before registering the
+net_device.
+
+This fix is a candidate for stable. As far as I can see the
+bug has been there in kernel version 3.2 already, therefore
+I can't provide a reference which commit is fixed by it.
+
+The fix may need small adjustments per kernel version because
+due to other changes the label which is jumped to if
+register_netdev() fails has changed over time.
+
+Reported-by: David Miller <davem@davemloft.net>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_main.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/realtek/r8169.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1702,8 +1702,11 @@ int bond_enslave(struct net_device *bond
- 		/* set allmulti level to new slave */
- 		if (bond_dev->flags & IFF_ALLMULTI) {
- 			res = dev_set_allmulti(slave_dev, 1);
--			if (res)
-+			if (res) {
-+				if (bond_dev->flags & IFF_PROMISC)
-+					dev_set_promiscuity(slave_dev, -1);
- 				goto err_sysfs_del;
-+			}
- 		}
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -8466,12 +8466,12 @@ static int rtl_init_one(struct pci_dev *
+ 		goto err_out_msi_5;
+ 	}
  
- 		netif_addr_lock_bh(bond_dev);
++	pci_set_drvdata(pdev, dev);
++
+ 	rc = register_netdev(dev);
+ 	if (rc < 0)
+ 		goto err_out_cnt_6;
+ 
+-	pci_set_drvdata(pdev, dev);
+-
+ 	netif_info(tp, probe, dev, "%s at 0x%p, %pM, XID %08x IRQ %d\n",
+ 		   rtl_chip_infos[chipset].name, ioaddr, dev->dev_addr,
+ 		   (u32)(RTL_R32(TxConfig) & 0x9cf0f8ff), pdev->irq);
