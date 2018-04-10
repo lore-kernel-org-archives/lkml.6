@@ -1,73 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751916AbeDJA0O (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 20:26:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51750 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751799AbeDJA0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 20:26:13 -0400
-Date: Tue, 10 Apr 2018 08:26:07 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        pagupta@redhat.com, linux-mm@kvack.org,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v3 2/4] mm/sparsemem: Defer the ms->section_mem_map
- clearing
-Message-ID: <20180410002607.GK19345@localhost.localdomain>
-References: <20180228032657.32385-1-bhe@redhat.com>
- <20180228032657.32385-3-bhe@redhat.com>
- <8e147320-50f5-f809-31d2-992c35ecc418@intel.com>
- <20180408065055.GA19345@localhost.localdomain>
- <fa2bb08a-42cc-c0cc-31c0-39d6e14f6f92@intel.com>
+        id S1751673AbeDJAc6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 20:32:58 -0400
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:50848 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeDJAc5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 20:32:57 -0400
+X-Google-Smtp-Source: AIpwx48m8xTuEZmTgGJT/mmuyxU1fhp/U9esFq8W7hYKFEeMOdkvC0FMnRXeDGyy8WYOMxvyG7osLXfLVFH6M0knYFM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fa2bb08a-42cc-c0cc-31c0-39d6e14f6f92@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180409094944.6399b211@gandalf.local.home>
+References: <1523153783-20579-1-git-send-email-zhaoyang.huang@spreadtrum.com>
+ <20180407234812.2bf2b24b@gandalf.local.home> <CAGWkznHVGTpvfQOvaOGP6fYDWh0Os0pYXTC3gG_qvW6mCDuybQ@mail.gmail.com>
+ <20180408084717.62ee4f9e@gandalf.local.home> <CAGWkznEQbaw7HMvE1pbVDMriOL8yW74Ka5UEci4YFRdLnVbFzA@mail.gmail.com>
+ <20180409094944.6399b211@gandalf.local.home>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Tue, 10 Apr 2018 08:32:56 +0800
+Message-ID: <CAGWkznEhy7Fard=6E3X_qUezXd33RdKV9CVeONWL=6EQ1bokEw@mail.gmail.com>
+Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal OOM_SCORE_ADJ_MIN
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/09/18 at 09:02am, Dave Hansen wrote:
-> On 04/07/2018 11:50 PM, Baoquan He wrote:
-> >> Should the " = 0" instead be clearing SECTION_MARKED_PRESENT or
-> >> something?  That would make it easier to match the code up with the code
-> >> that it is effectively undoing.
-> > 
-> > Not sure if I understand your question correctly. From memory_present(),
-> > information encoded into ms->section_mem_map including numa node,
-> > SECTION_IS_ONLINE and SECTION_MARKED_PRESENT. Not sure if it's OK to only
-> > clear SECTION_MARKED_PRESENT.  People may wrongly check SECTION_IS_ONLINE
-> > and do something on this memory section?
-> 
-> What is mean is that, instead of:
-
-I mean that in memory_present() all present sections are marked with
-below information.
-
-	ms->section_mem_map = (nid << SECTION_NID_SHIFT) |
-			      SECTION_MARKED_PRESENT |
-			      SECTION_IS_ONLINE;
-
-Later in sparse_init(), if we failed to allocate mem map, the
-corresponding section need clear its ->section_mem_map. The existing
-code does the clearing with: 
-
-	ms->section_mem_map = 0;
-
-If with 'ms->section_mem_map &= ~SECTION_MARKED_PRESENT', the nid and
-SECTION_IS_ONLINE are still left in ms->section_mem_map. Someone may
-probably mistakenly check if this section is online and do something, or
-still get nid from this section. Just worried.
-
-> 
-> 	
-> 	ms->section_mem_map = 0;
-> 
-> we could literally do:
-> 
-> 	ms->section_mem_map &= ~SECTION_MARKED_PRESENT;
-> 
-> That does the same thing in practice, but makes the _intent_ much more
-> clear.
+On Mon, Apr 9, 2018 at 9:49 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> On Mon, 9 Apr 2018 08:56:01 +0800
+> Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
+>
+>> >>
+>> >>         if (oom_task_origin(task)) {
+>> >>                 points = ULONG_MAX;
+>> >>                 goto select;
+>> >>         }
+>> >>
+>> >>         points = oom_badness(task, NULL, oc->nodemask, oc->totalpages);
+>> >>         if (!points || points < oc->chosen_points)
+>> >>                 goto next;
+>> >
+>> > And what's wrong with that?
+>> >
+>> > -- Steve
+>> I think the original thought of OOM is the flag 'OOM_SCORE_ADJ_MIN' is
+>> most likely to be set by process himself via accessing the proc file,
+>> if it does so, OOM can select it as the victim. except, it is
+>> reluctant to choose the critical process to be killed, so I suggest
+>> not to set such heavy flag as OOM_SCORE_ADJ_MIN on behalf of -1000
+>> process.
+>
+> Really, I don't think tasks that are setting OOM_CORE_ADJ_MIN should be
+> allocating a lot of memory in the kernel (via ring buffer). It sounds
+> like a good way to wreck havoc on the system.
+>
+> It's basically saying, "I'm going to take up all memory, but don't kill
+> me, just kill some random user on the system".
+>
+> -- Steve
+Sure, but the memory status is dynamic, the process could also exceed the limit
+at the moment even it check the available memory before. We have to
+add protection
+for such kind of risk. It could also happen that the critical process
+be preempted by
+another huge memory allocating process, which may cause insufficient memory when
+it schedule back.
