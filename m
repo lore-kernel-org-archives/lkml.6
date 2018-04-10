@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49vmmmhFnse1iNMguYm3HeaLjgQNvc5WbuIqguGk/nRNIprpYhpakJejtAYGp6ARSDnMw/L
-ARC-Seal: i=1; a=rsa-sha256; t=1523399057; cv=none;
+X-Google-Smtp-Source: AIpwx48xn3LQfYZOO95D0bebl+le52WxxcVxnfxLnsFcjKTj4xTzUnwKRyPgtJKsu2vAX2xinTJy
+ARC-Seal: i=1; a=rsa-sha256; t=1523399054; cv=none;
         d=google.com; s=arc-20160816;
-        b=EXCuDgFVMkQ9KPWFy77XXHklHht8szJsLKU06giJfiCMEm5Im1GeRjycx8etoiSXXr
-         dQOrs//5ea0UHoDE1ewgk3Twnl1vWh4HbZ9xQ1601HsHs7w4jr2Tds3zuu0STdphs5Eq
-         xuRMLH4UXwwlGKhfG8gbLzwStt/TtsyB0W36XUPbDtNqQP7/5YJSRaFkUMWnOtNL1+lF
-         QUUma1r0dLwHoDjEgLZwByQ3BIdPFZKvuqFnxzpmkZn85O/YDajWjiibepVig/8lfZ4p
-         BP1xwO2fps0oXqN3cYMKMCv8bs2Jch7M5sFI3YszTMH9sp33MT+iUwCVhtoeFqCa46OM
-         Ko3A==
+        b=Gl99lkLddKcX27rxy50qRmkKRPva80KfJrBh5mi5KiYgdmT+ke8Brw9BmO2I03MeCx
+         A3hBTJwEdsSfNgict2PYjZ+Xnwdr4xAXTOy9yzV5mHdTsTnkrlOtyoUXslPwVj0miFgx
+         urL/R4QME829CCjvw9SOX3QWaFef2BeEbNXakCuvSXzIFL7o10MNhADVJJZtXedwPt01
+         QYY3T3VGe9fiWqBW1mqLX1Bb1gN3LWFvgsPrdDwcLbQHgbQVHFv8tPAKtGVc8q+3Ig3w
+         Kk79ffLymEdCuIdPUE4ieoyf2eMZ/8mb8m0CE63hL7aVKAmz/QFaCuMb+FPSsAgRG48I
+         JkvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=knhYDf/PmtRsb8DOaIMKBOD7kR+3AxCuRzvn6UvisAg=;
-        b=r5Kod/znSHH0+MqlUwV8LnxmqMM7O3gVbB0Lp0L0x77sn3Bvc9Lal03vTG6MpI80sC
-         PYjIm6khUYuP0EXRr043l25MDt/mtciZGp3ZINUWOgRYxMYqLaiGnmM2A9fi/0Yk1P9o
-         DRFZVpVExLtI8xQHgKCVCWn+Ra5kfBqmVepG+sd9W59TzVHmxeFzrILi7AV/sOVrdwfg
-         juL6ilbVRayko/tEp8ECDsXCMcpdNMndJ/qzGubZNvnBHbOWOZTFmb/tticeeuFU594V
-         BKm28Nq/eTJKepyDYe2b3VNBrRKGp6lFB2zLHzeDq9tevrN7sJc+q0xZDfYdTOiZMvRX
-         iuwQ==
+        bh=2kLI1KA4W8u1HXdRgSmoUolsSip+tQj+cRjdG+5cxq0=;
+        b=Xme0kRqwKkGXr4GEN7hRRyWAi7zdrK0hwIN2q/x6HVxbLbirQjt27ZsZgoKXf4e4NE
+         DHlQG2pfqbaHrDvCw1kvOIvu8BP1QlkgJUxlSfxr/wznaYjcdi4om+tTRYFDr2vFl4at
+         9iY9eikrx4uaoK9BaqGoMBK57Q3i3NfcxgqHfkYAafdZw4jDSVDOgK/3USq+mwph+aJ8
+         s/lK2CJgSFqm6pp6IC/UU9aYohBg8N3kRIO6qTsp5xu3FzsmjIJZyTqZiuXAl6bJhROQ
+         ku+QNp/cM3B1UExzTrW2MZTHr40zQcNsqOMnZLzh0ME9nEjxx3h1FLl1xuBCIR98Vdhn
+         UK1w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jeff Barnhill <0xeffeff@gmail.com>,
+	Chris Healy <cphealy@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 04/18] net/ipv6: Increment OUTxxx counters after netfilter hook
-Date: Wed, 11 Apr 2018 00:23:39 +0200
-Message-Id: <20180410212758.789994485@linuxfoundation.org>
+Subject: [PATCH 4.16 03/18] net: dsa: Discard frames from unused ports
+Date: Wed, 11 Apr 2018 00:23:38 +0200
+Message-Id: <20180410212758.734898358@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212758.564682823@linuxfoundation.org>
 References: <20180410212758.564682823@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399689892438728?=
-X-GMAIL-MSGID: =?utf-8?q?1597399689892438728?=
+X-GMAIL-THRID: =?utf-8?q?1597399686484701021?=
+X-GMAIL-MSGID: =?utf-8?q?1597399686484701021?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,46 +51,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jeff Barnhill <0xeffeff@gmail.com>
+From: Andrew Lunn <andrew@lunn.ch>
 
 
-[ Upstream commit 71a1c915238c970cd9bdd5bf158b1279d6b6d55b ]
+[ Upstream commit fc5f33768cca7144f8d793205b229d46740d183b ]
 
-At the end of ip6_forward(), IPSTATS_MIB_OUTFORWDATAGRAMS and
-IPSTATS_MIB_OUTOCTETS are incremented immediately before the NF_HOOK call
-for NFPROTO_IPV6 / NF_INET_FORWARD.  As a result, these counters get
-incremented regardless of whether or not the netfilter hook allows the
-packet to continue being processed.  This change increments the counters
-in ip6_forward_finish() so that it will not happen if the netfilter hook
-chooses to terminate the packet, which is similar to how IPv4 works.
+The Marvell switches under some conditions will pass a frame to the
+host with the port being the CPU port. Such frames are invalid, and
+should be dropped. Not dropping them can result in a crash when
+incrementing the receive statistics for an invalid port.
 
-Signed-off-by: Jeff Barnhill <0xeffeff@gmail.com>
+Reported-by: Chris Healy <cphealy@gmail.com>
+Fixes: 91da11f870f0 ("net: Distributed Switch Architecture protocol support")
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_output.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ net/dsa/dsa_priv.h |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -375,6 +375,11 @@ static int ip6_forward_proxy_check(struc
- static inline int ip6_forward_finish(struct net *net, struct sock *sk,
- 				     struct sk_buff *skb)
- {
-+	struct dst_entry *dst = skb_dst(skb);
+--- a/net/dsa/dsa_priv.h
++++ b/net/dsa/dsa_priv.h
+@@ -126,6 +126,7 @@ static inline struct net_device *dsa_mas
+ 	struct dsa_port *cpu_dp = dev->dsa_ptr;
+ 	struct dsa_switch_tree *dst = cpu_dp->dst;
+ 	struct dsa_switch *ds;
++	struct dsa_port *slave_port;
+ 
+ 	if (device < 0 || device >= DSA_MAX_SWITCHES)
+ 		return NULL;
+@@ -137,7 +138,12 @@ static inline struct net_device *dsa_mas
+ 	if (port < 0 || port >= ds->num_ports)
+ 		return NULL;
+ 
+-	return ds->ports[port].slave;
++	slave_port = &ds->ports[port];
 +
-+	__IP6_INC_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTFORWDATAGRAMS);
-+	__IP6_ADD_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTOCTETS, skb->len);
++	if (unlikely(slave_port->type != DSA_PORT_TYPE_USER))
++		return NULL;
 +
- 	return dst_output(net, sk, skb);
++	return slave_port->slave;
  }
  
-@@ -569,8 +574,6 @@ int ip6_forward(struct sk_buff *skb)
- 
- 	hdr->hop_limit--;
- 
--	__IP6_INC_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTFORWDATAGRAMS);
--	__IP6_ADD_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTOCTETS, skb->len);
- 	return NF_HOOK(NFPROTO_IPV6, NF_INET_FORWARD,
- 		       net, NULL, skb, skb->dev, dst->dev,
- 		       ip6_forward_finish);
+ /* port.c */
