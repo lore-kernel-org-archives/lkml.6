@@ -1,80 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752781AbeDJJBd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 05:01:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47050 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752368AbeDJJBb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:01:31 -0400
-Date: Tue, 10 Apr 2018 11:01:28 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal
- OOM_SCORE_ADJ_MIN
-Message-ID: <20180410090128.GY21835@dhcp22.suse.cz>
-References: <CAGWkznEhy7Fard=6E3X_qUezXd33RdKV9CVeONWL=6EQ1bokEw@mail.gmail.com>
- <CAGWkznEuGCZq600XjCtp3hzgN2LrCgwSAfoLwQR7jTw5p=qHoQ@mail.gmail.com>
- <20180409231230.1ab99e85@vmware.local.home>
- <CAGWkznG8-zmfE5iqPUVP+sztasa1zLPWE28qBiZ_tq524JznPw@mail.gmail.com>
- <20180410061447.GQ21835@dhcp22.suse.cz>
- <CAGWkznGrugH0VqJyd5ZPiSBMOZ4SbbNpKiHVXM27Q-ep4SYb-Q@mail.gmail.com>
- <20180410074921.GU21835@dhcp22.suse.cz>
- <CAGWkznHQSZ5jPF2njOp0BritTmKiGOToq5bAz1bhzzmFi_01nA@mail.gmail.com>
- <20180410081231.GV21835@dhcp22.suse.cz>
- <CAGWkznEM=AX=3LWDmgyz4GRkWy81TNdFQQXZ7+W4=Ek4ZsnsJw@mail.gmail.com>
+        id S1752816AbeDJJEX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 05:04:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46540 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752788AbeDJJEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 05:04:22 -0400
+Subject: Re: [PATCH] X86/VMX: Disable VMX preempition timer if MWAIT is not
+ intercepted
+To: KarimAllah Ahmed <karahmed@amazon.de>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+References: <1523350211-5747-1-git-send-email-karahmed@amazon.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2cd149f0-6ebe-59fc-addb-8b4b05e07d80@redhat.com>
+Date: Tue, 10 Apr 2018 11:04:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGWkznEM=AX=3LWDmgyz4GRkWy81TNdFQQXZ7+W4=Ek4ZsnsJw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1523350211-5747-1-git-send-email-karahmed@amazon.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 10-04-18 16:38:32, Zhaoyang Huang wrote:
-> On Tue, Apr 10, 2018 at 4:12 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> > On Tue 10-04-18 16:04:40, Zhaoyang Huang wrote:
-> >> On Tue, Apr 10, 2018 at 3:49 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> >> > On Tue 10-04-18 14:39:35, Zhaoyang Huang wrote:
-> >> >> On Tue, Apr 10, 2018 at 2:14 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> > [...]
-> >> >> > OOM_SCORE_ADJ_MIN means "hide the process from the OOM killer completely".
-> >> >> > So what exactly do you want to achieve here? Because from the above it
-> >> >> > sounds like opposite things. /me confused...
-> >> >> >
-> >> >> Steve's patch intend to have the process be OOM's victim when it
-> >> >> over-allocating pages for ring buffer. I amend a patch over to protect
-> >> >> process with OOM_SCORE_ADJ_MIN from doing so. Because it will make
-> >> >> such process to be selected by current OOM's way of
-> >> >> selecting.(consider OOM_FLAG_ORIGIN first before the adj)
-> >> >
-> >> > I just wouldn't really care unless there is an existing and reasonable
-> >> > usecase for an application which updates the ring buffer size _and_ it
-> >> > is OOM disabled at the same time.
-> >> There is indeed such kind of test case on my android system, which is
-> >> known as CTS and Monkey etc.
-> >
-> > Does the test simulate a real workload? I mean we have two things here
-> >
-> > oom disabled task and an updater of the ftrace ring buffer to a
-> > potentially large size. The second can be completely isolated to a
-> > different context, no? So why do they run in the single user process
-> > context?
-> ok. I think there are some misunderstandings here. Let me try to
-> explain more by my poor English. There is just one thing here. The
-> updater is originally a oom disabled task with adj=OOM_SCORE_ADJ_MIN.
-> With Steven's patch, it will periodically become a oom killable task
-> by calling set_current_oom_origin() for user process which is
-> enlarging the ring buffer. What I am doing here is limit the user
-> process to the ones that adj > -1000.
+On 10/04/2018 10:50, KarimAllah Ahmed wrote:
+>  	WARN_ON(preemptible());
+> -	if (!kvm_x86_ops->set_hv_timer)
+> +	if (!kvm_x86_ops->has_hv_timer ||
+> +	    !kvm_x86_ops->has_hv_timer(apic->vcpu))
+>  		return false;
+>  
+>  	if (!apic_lvtt_period(apic) && atomic_read(&ktimer->pending))
 
-I've understood that part. And I am arguing whether this is really such
-an important case to play further tricks. Wouldn't it be much simpler to
-put the updater out to a separate process? OOM disabled processes
-shouldn't really do unexpectedly large allocations. Full stop. Otherwise
-you risk a large system disruptions.
--- 
-Michal Hocko
-SUSE Labs
+Why not just return -ENOTSUP from vmx_set_hv_timer?
+
+Thanks,
+
+Paolo
