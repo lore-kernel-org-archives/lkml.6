@@ -1,79 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752571AbeDJLmA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 07:42:00 -0400
-Received: from mga12.intel.com ([192.55.52.136]:22532 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752172AbeDJLl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 07:41:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,431,1517904000";
-   d="scan'208";a="219225770"
-Message-ID: <1523360515.21176.434.camel@linux.intel.com>
-Subject: Re: [PATCH v4 4/9] vsprintf: Consolidate handling of unknown
- pointer specifiers
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org
-Date: Tue, 10 Apr 2018 14:41:55 +0300
-In-Reply-To: <20180409135028.ymyvsqxup7zm5vgc@pathway.suse.cz>
-References: <20180404085843.16050-1-pmladek@suse.com>
-         <20180404085843.16050-5-pmladek@suse.com>
-         <1523111200.21176.416.camel@linux.intel.com>
-         <20180409135028.ymyvsqxup7zm5vgc@pathway.suse.cz>
-Organization: Intel Finland Oy
+        id S1752750AbeDJLmK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 07:42:10 -0400
+Received: from mail-pf0-f176.google.com ([209.85.192.176]:33669 "EHLO
+        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752408AbeDJLmI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 07:42:08 -0400
+X-Google-Smtp-Source: AIpwx4/H3SCK1yr+AXB/bKQV+HXVOsRu0RU2XbicNrzR9wQjZ8W+Iblq1sTEWCFK2PMkwuL6MvF0jffPHXVPJ6V034o=
+MIME-Version: 1.0
+In-Reply-To: <59a08949-7e2f-42ff-edda-f24a6c624551@I-love.SAKURA.ne.jp>
+References: <f403043a9be410acd1055fe5f72e@google.com> <652eab47-81b5-3249-3c78-427eeec45fbc@I-love.SAKURA.ne.jp>
+ <2e093801-6d71-6747-42df-52f191811ad0@I-love.SAKURA.ne.jp>
+ <87bdec75-3c59-6587-2436-1470263ab11f@kernel.dk> <59a08949-7e2f-42ff-edda-f24a6c624551@I-love.SAKURA.ne.jp>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 10 Apr 2018 13:41:47 +0200
+Message-ID: <CACT4Y+a-_Z69xmLypVi=vrtCEEBGp=zy0Wp8SuLJzYtZ_ShBgw@mail.gmail.com>
+Subject: Re: INFO: task hung in __blkdev_get
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Jens Axboe <axboe@kernel.dk>, Ming Lei <tom.leiming@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        syzbot
+        <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Omar Sandoval <osandov@fb.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-04-09 at 15:50 +0200, Petr Mladek wrote:
-> On Sat 2018-04-07 17:26:40, Andy Shevchenko wrote:
-> > On Wed, 2018-04-04 at 10:58 +0200, Petr Mladek wrote:
+On Tue, Apr 10, 2018 at 12:55 PM, Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> Hello.
+>
+> Since syzbot is reporting so many hung up bug which involves /dev/loopX ,
+> is it possible to "temporarily" apply below patch for testing under syzbot
 
-> > This change collides with my patch series. Can you elaborate what
-> > your
-> > thoughts are about my patches? Are you going incorporate them to
-> > your
-> > series? Should I send them independently?
-> 
-> Good question. I think that the best solution will be that I go
-> over your patchset and just add all valid ones into printk.git
-> for-4.18.
+Unfortunately it's not possible, for full explanation please see:
+https://github.com/google/syzkaller/blob/master/docs/syzbot.md#no-custom-patches
 
-I think about 1-7 and 9 that can go as is before your changes.
-And patch 8 postpone
 
->  Then I will base v5 of this patchset on top of it.
-
-I'm going for vacation tomorrow. Can you just take them into your series
-or apply to your tree?
-
-> I should have done this earlier. But I did not expect that long
-> way for the access-check stuff. We originally planned to
-> do the access check first, see
-> https://lkml.kernel.org/r/1520000254.10722.389.camel@linux.intel.com
-
-Yeah, I didn't consider that your one patch became a series...
-
-> But the access check patchset still need some love, so it makes
-> sense to switch the order.
-
-I agree.
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+> ( after "block/loop: fix deadlock after loop_set_status" and
+> "loop: fix LOOP_GET_STATUS lock imbalance" in linux-block.git#for-linus
+> are merged into linux.git )?
+>
+> I haven't got a smoking gun by lockdep, but I noticed that
+>
+>   [upstream] INFO: task hung in lo_open (2)
+>   https://syzkaller.appspot.com/bug?id=1f93b57f496d969efb9fb24167f6f9de5ee068fd
+>
+> contained "lo->lo_ctl_mutex => bdev->bd_mutex" locking order
+>
+>   2 locks held by syz-executor6/15084:
+>    #0:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<00000000cc154b8d>] lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
+>    #1:  (&bdev->bd_mutex){+.+.}, at: [<0000000058b7c5b5>] blkdev_reread_part+0x1e/0x40 block/ioctl.c:192
+>
+> while commit f028f3b2f987ebc6 ("loop: fix circular locking in loop_clr_fd()")
+> says that
+>
+>   * Calling fput holding lo_ctl_mutex triggers a circular
+>   * lock dependency possibility warning as fput can take
+>   * bd_mutex which is usually taken before lo_ctl_mutex.
+>
+> which implies that the locking order should be "bdev->bd_mutex => lo->lo_ctl_mutex"
+> and also says that use of "_nested" version might mask some other real bugs
+> which could be the bug syzbot is frequently reporting as hung tasks...
+>
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index 264abaa..5559b15 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -1360,7 +1360,7 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
+>         struct loop_device *lo = bdev->bd_disk->private_data;
+>         int err;
+>
+> -       err = mutex_lock_killable_nested(&lo->lo_ctl_mutex, 1);
+> +       err = mutex_lock_killable(&lo->lo_ctl_mutex);
+>         if (err)
+>                 goto out_unlocked;
+>
+>
