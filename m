@@ -1,75 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752729AbeDJTtZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 15:49:25 -0400
-Received: from sauhun.de ([88.99.104.3]:43264 "EHLO pokefinder.org"
+        id S1753217AbeDJTuM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 15:50:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751914AbeDJTtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 15:49:23 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-i2c@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>, Joe Perches <joe@perches.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH v2 1/2] MAINTAINERS: remove me as maintainer for I2C host drivers
-Date: Tue, 10 Apr 2018 21:49:13 +0200
-Message-Id: <20180410194914.7268-1-wsa@the-dreams.de>
-X-Mailer: git-send-email 2.11.0
+        id S1753168AbeDJTuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 15:50:10 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F339721785
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Tue, 10 Apr 2018 14:50:08 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Sinan Kaya <okaya@codeaurora.org>
+Cc: linux-pci@vger.kernel.org, sulrich@codeaurora.org,
+        timur@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] PCI: quirk HT1100 & HT2000 and one HT2100 Root Ports for
+ Extended Tags
+Message-ID: <20180410195008.GE54986@bhelgaas-glaptop.roam.corp.google.com>
+References: <1522882209-9743-1-git-send-email-okaya@codeaurora.org>
+ <20180410194144.GD54986@bhelgaas-glaptop.roam.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180410194144.GD54986@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The number of I2C host controller drivers keeps increasing, and although
-I had some success acquiring specific driver maintainers, my bandwidth
-is by far not enough to act as a fallback for the rest of the drivers.
-To reflect this status-quo in MAINTAINERS, add a seperate entry for I2C
-host drivers, let the I2C list (= community) be the contact point, and
-mark this section as "Odd fixes".
+On Tue, Apr 10, 2018 at 02:41:44PM -0500, Bjorn Helgaas wrote:
+> On Wed, Apr 04, 2018 at 06:50:09PM -0400, Sinan Kaya wrote:
+> > Per PCIe r3.1, sec 2.2.6.2 and 7.8.4, a Requester may not use 8-bit Tags
+> > unless its Extended Tag Field Enable is set, but all Receivers/Completers
+> > must handle 8-bit Tags correctly regardless of their Extended Tag Field
+> > Enable.
+> > 
+> > Some devices do not handle 8-bit Tags as Completers, so add a quirk for
+> > them.  If we find such a device, we disable Extended Tags for the entire
+> > hierarchy to make peer-to-peer DMA possible.
+> > 
+> > The Broadcom HT1100/HT2000/HT2100 seems to have issues with handling 8-bit
+> > tags.  Mark it as broken.
+> > 
+> > Fixes: 60db3a4d8cc9 ("PCI: Enable PCIe Extended Tags if supported")
+> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=196197
+> > Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> 
+> Applied to pci/enumeration for v4.18, thanks!
 
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
----
+Actually, this is a really annoying issue and I think the fix is
+appropriate for v4.17, so I moved it to my for-linus branch.
 
-Changes since v1:
-* explicitly state which files from include/linux I keep maintaining
-* rename the new section to HOST DRIVERS instead of just DRIVERS
-* explicitly state which subdirs belong to the HOST DRIVERS section
-
- MAINTAINERS | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 342895717506..1fe9149fa062 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6580,15 +6580,25 @@ W:	https://i2c.wiki.kernel.org/
- Q:	https://patchwork.ozlabs.org/project/linux-i2c/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git
- S:	Maintained
--F:	Documentation/devicetree/bindings/i2c/
-+F:	Documentation/devicetree/bindings/i2c/i2c.txt
- F:	Documentation/i2c/
--F:	drivers/i2c/
--F:	drivers/i2c/*/
-+F:	drivers/i2c/*
- F:	include/linux/i2c.h
--F:	include/linux/i2c-*.h
-+F:	include/linux/i2c-dev.h
-+F:	include/linux/i2c-smbus.h
- F:	include/uapi/linux/i2c.h
- F:	include/uapi/linux/i2c-*.h
- 
-+I2C SUBSYSTEM HOST DRIVERS
-+L:	linux-i2c@vger.kernel.org
-+W:	https://i2c.wiki.kernel.org/
-+Q:	https://patchwork.ozlabs.org/project/linux-i2c/list/
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git
-+S:	Odd Fixes
-+F:	Documentation/devicetree/bindings/i2c/
-+F:	drivers/i2c/algos/
-+F:	drivers/i2c/busses/
-+
- I2C-TAOS-EVM DRIVER
- M:	Jean Delvare <jdelvare@suse.com>
- L:	linux-i2c@vger.kernel.org
--- 
-2.11.0
+> > ---
+> >  drivers/pci/quirks.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > index 8b14bd3..f012742 100644
+> > --- a/drivers/pci/quirks.c
+> > +++ b/drivers/pci/quirks.c
+> > @@ -4813,9 +4813,13 @@ static void quirk_no_ext_tags(struct pci_dev *pdev)
+> >  
+> >  	pci_walk_bus(bridge->bus, pci_configure_extended_tags, NULL);
+> >  }
+> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0132, quirk_no_ext_tags);
+> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0140, quirk_no_ext_tags);
+> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0141, quirk_no_ext_tags);
+> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0142, quirk_no_ext_tags);
+> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0144, quirk_no_ext_tags);
+> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0420, quirk_no_ext_tags);
+> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0422, quirk_no_ext_tags);
+> >  
+> >  #ifdef CONFIG_PCI_ATS
+> >  /*
+> > -- 
+> > 2.7.4
+> > 
+> > 
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
