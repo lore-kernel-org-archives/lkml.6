@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-843308-1523402350-2-10152368612882617764
+X-Cyrus-Session-Id: sloti22d1t05-843308-1523402328-2-4720816074669696021
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523402350; b=JgDJnaiDgv79BUXBmP5uz+vPh+SjL6AUWe2zAJG/fyKidhiA80
-    5nQIsQuhrVHEmZwOBN+c0TwvEimDw95Q+CvueyNWhGTSJ5a7uS5yyCym5cx1IUhE
-    sYPyoj1OKl63KhvuocqU4fdKSriph6hgNgqRp/EYtwsZi5FhjdGdOcY7WPSdHA8H
-    x0/ETWCYdGJT8NG1Bu2yaBrv1UHWjtDUBN/UBJPSaDi8QzwuaXGP3bAifXUWDGo8
-    DTMudmHE2cznRPI7Q1AAUlr1ho7zsoNbDIqE/vh761QSkK0pFqrKQdjt0X0fh8rv
-    qq0HXQbV1G99kCUCulDApXYgu46OkQpno2nQ==
+    1523402328; b=SZO6YAAfCicXoahh2ExVub4XT95tpZ7dvW8SudynwfZm319D+P
+    +8AkgHPoqC36zdam6m1N/73ZpM9KvaLMCc09y0liuvUdxfAg8sYjECsSjhCbXI2N
+    8pgwBelOoaPbiOwzvXg2JwJKEbmVn0ruAtLmIP+0WgCXyUd9g0l9ahcVXIvBO5j3
+    +cjoKflSefx+iNelATmTQnWNwxt9enpo+ed06XiNTp4KEYbKEp286t1Ws/ry6lvv
+    XE/+4PHyl0Mk5eu/d460OQbWC8W8mLrAIA4BQBppeP0BU7CEKf5cmNtMCbSa7Apx
+    F4NgmpcRWhpkrbE+F2lvui3nQljTSgS3GNcQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523402350; bh=vDraaTi7ZRa7xGlWLEe28qagsUCKuM
-    GmYemv5Va3q+g=; b=oZegW7d/r8I42g3yt6sAs1ZuAYw58ZW3TTjfMyCLkZRP1B
-    N/jO2idW5HxnnxQUnR55r0N9ifKAIS6An/XuSf6BMWMVJ3Xy2T7+OnTg+cpHwZxZ
-    raDfGstGFFdAd/NypPGhjEHFT5lLKpvZ5BxRtLmS2oMEcguQng63ROLaDH5r+jhi
-    U8/fsJNu5/DNKeSLFmrUb7ZQbKmFDfkr8g7cxloACIY+WQWT7G+8ctS28lwSg49C
-    X4exjuLZH0EXNRa3ekvSFXGOj6s8IehRlxtLCqbypT3t4q+uy+ZORgnFtyv9wh0a
-    G2ONmaUc1yRsCp0h5fBGqhA9JCWzGRK4BczeZRmA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523402328; bh=4mjljQKNgwViFTHl0J0DW6WDMeBh19
+    PEYRgWbzTnhpA=; b=t1JQbpkDwyDbKIcuM/gdffCVfoBad8ievCBxBpssfWLgIk
+    UtbOF13IJ8QBdzEzzHzx7RTmpIwGvFbrh4KpTdNIQ42HQLPCEZfhp8GnGS8RXZmO
+    c9hwyQzUdv11FlyN+pSZcVphTDkI7zGR7eU9TEwtYbbHQjBICSsrIB80+z8BiToA
+    osslOSZ/UF9DoNBuaJdrNf5lZPUAgndeBNUFinFFh/40A3L+dUR5DE4NUQlLJ1IS
+    U2nSgj8gl7fzC1Y79MC3Ca/9tW6WqwpoQm3i8/CQ21/OZ8F6ygjbj9De0nwQh9be
+    jhQzMb47Qz8BumHgn2HxWKUPU9ETyk+DzPpQuTXA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,31 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIVtiyECsJ6hd9IhfCOtvp4C6ZBRYlzioufUZ2A26G7Ti76ySge3rNC0KkxqqNa7tAfcC+9flGthhCDNv+0SYdnBGxDwPBEv4Wle3P7nticRGz3nUm3p
-    ViiwIIRENL27/KNfXIBu5M0e+8p5MvafzRITrOyl01re9bxMkVKsh+2ZcHjnXhffhfHecBAIYE5KJIY+mpTcnE8se51YaaGUb8AvYvCsDVGuG7Cl4M6/3vmR
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNHgmrnDBkOnDN/+Kg5fvuXuByS2fgerGM8aomBFdQi3fU5fPbTW2PS8ldkFSiOm9wEFrwoQSiwZigHgSWNCPL7E8leo36JaZWCVxxPx7Oakg5b4Zaqd
+    yG7OVnUayF3lnzrCahvnZW/Md6wOm8Y9F36JyY1k22Zy/FVbIkuNPAfVVRfbMZ3lEP34N11m/VY+KeM9OCEuOZZRX5dDC1Glq28l4Z9F4KQd/DLqz2jGYHWs
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=zd2uoN0lAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8
-    a=nOdykIpmWu9aoI1BNPwA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=XYAwZIGsAAAA:8 a=1XWaLZrsAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=xjiEcAeqPzjcIN34KbYA:9 a=QEXdDO2ut3YA:10 a=E8ToXWR_bxluHZ7gmE-Z:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751886AbeDJXSw (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 19:18:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40318 "EHLO
+        id S1754785AbeDJWbX (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 18:31:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40340 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754769AbeDJWbS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:31:18 -0400
+        with ESMTP id S1754763AbeDJWbU (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:31:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
-        Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Subject: [PATCH 4.15 114/168] x86/microcode/intel: Writeback and invalidate caches before updating microcode
-Date: Wed, 11 Apr 2018 00:24:16 +0200
-Message-Id: <20180410212805.280595107@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
+        Raghuram Chary J <raghuramchary.jallipalli@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 123/168] lan78xx: Crash in lan78xx_writ_reg (Workqueue: events lan78xx_deferred_multicast_write)
+Date: Wed, 11 Apr 2018 00:24:25 +0200
+Message-Id: <20180410212805.809495859@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -95,56 +93,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ashok Raj <ashok.raj@intel.com>
+From: Raghuram Chary J <raghuramchary.jallipalli@microchip.com>
 
-commit 91df9fdf51492aec9fed6b4cbd33160886740f47 upstream.
 
-Updating microcode is less error prone when caches have been flushed and
-depending on what exactly the microcode is updating. For example, some
-of the issues around certain Broadwell parts can be addressed by doing a
-full cache flush.
+[ Upstream commit 2d2d99ec13f62d5d2cecb6169dfdb6bbe05356d0 ]
 
-[ Borislav: Massage it and use native_wbinvd() in both cases. ]
+Description:
+Crash was reported with syzkaller pointing to lan78xx_write_reg routine.
 
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
-Tested-by: Ashok Raj <ashok.raj@intel.com>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Link: http://lkml.kernel.org/r/1519352533-15992-3-git-send-email-ashok.raj@intel.com
-Link: https://lkml.kernel.org/r/20180228102846.13447-4-bp@alien8.de
+Root-cause:
+Proper cleanup of workqueues and init/setup routines was not happening
+in failure conditions.
+
+Fix:
+Handled the error conditions by cleaning up the queues and init/setup
+routines.
+
+Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
+Reported-by: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Raghuram Chary J <raghuramchary.jallipalli@microchip.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kernel/cpu/microcode/intel.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/net/usb/lan78xx.c |   23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -600,6 +600,12 @@ static int apply_microcode_early(struct
- 		return UCODE_OK;
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -2863,8 +2863,7 @@ static int lan78xx_bind(struct lan78xx_n
+ 	if (ret < 0) {
+ 		netdev_warn(dev->net,
+ 			    "lan78xx_setup_irq_domain() failed : %d", ret);
+-		kfree(pdata);
+-		return ret;
++		goto out1;
  	}
  
-+	/*
-+	 * Writeback and invalidate caches before updating microcode to avoid
-+	 * internal issues depending on what the microcode is updating.
-+	 */
-+	native_wbinvd();
+ 	dev->net->hard_header_len += TX_OVERHEAD;
+@@ -2872,14 +2871,32 @@ static int lan78xx_bind(struct lan78xx_n
+ 
+ 	/* Init all registers */
+ 	ret = lan78xx_reset(dev);
++	if (ret) {
++		netdev_warn(dev->net, "Registers INIT FAILED....");
++		goto out2;
++	}
+ 
+ 	ret = lan78xx_mdio_init(dev);
++	if (ret) {
++		netdev_warn(dev->net, "MDIO INIT FAILED.....");
++		goto out2;
++	}
+ 
+ 	dev->net->flags |= IFF_MULTICAST;
+ 
+ 	pdata->wol = WAKE_MAGIC;
+ 
+ 	return ret;
 +
- 	/* write microcode via MSR 0x79 */
- 	native_wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
- 
-@@ -816,6 +822,12 @@ static enum ucode_state apply_microcode_
- 		return UCODE_OK;
- 	}
- 
-+	/*
-+	 * Writeback and invalidate caches before updating microcode to avoid
-+	 * internal issues depending on what the microcode is updating.
-+	 */
-+	native_wbinvd();
++out2:
++	lan78xx_remove_irq_domain(dev);
 +
- 	/* write microcode via MSR 0x79 */
- 	wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
++out1:
++	netdev_warn(dev->net, "Bind routine FAILED");
++	cancel_work_sync(&pdata->set_multicast);
++	cancel_work_sync(&pdata->set_vlan);
++	kfree(pdata);
++	return ret;
+ }
  
+ static void lan78xx_unbind(struct lan78xx_net *dev, struct usb_interface *intf)
+@@ -2891,6 +2908,8 @@ static void lan78xx_unbind(struct lan78x
+ 	lan78xx_remove_mdio(dev);
+ 
+ 	if (pdata) {
++		cancel_work_sync(&pdata->set_multicast);
++		cancel_work_sync(&pdata->set_vlan);
+ 		netif_dbg(dev, ifdown, dev->net, "free pdata");
+ 		kfree(pdata);
+ 		pdata = NULL;
