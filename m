@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-843308-1523402384-2-15233636159053467806
+X-Cyrus-Session-Id: sloti22d1t05-843308-1523402368-2-15347707263566359301
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523402383; b=sl8d/SKUj+pSDHFjzYgBK7dHYP7Rbu2OYAV90FAl6zlXOn6lOD
-    s+v9zPjHkxnOxB9tWrOwUcAx3kDxVOMTRJ3Vb+OqHCizZGUqbivsGittpgfdXV7i
-    XGUNb7IaE0158J3v/iIu0AmuccuR/h75mZapVRdxfEdqUK3y3U9Xm+ujkp3Sqya7
-    udJ6FXazqDeWq39YSktSSMxd7F8qX45PwmuyGZbGpJQeKg6MW0y8O/vHo60jwT0l
-    rYZsPxfEV7E07Kmdq7DGpcLwn3qsyhapgu1QioATKQVDRVaJYbn8JEOmvmf4h/ry
-    q7SmOpXoOY7HYg74A+25Te21/lVukCGKx7Rw==
+    1523402368; b=gQHp/aw/1EkwrrXj9bhKwJHsfERZGlur6ZRVn/TFPB/d6EpkOi
+    h1RrmcjJPHtBcvbv2njAhJEkMzIAZFk3hVMPK69zFkK6mPhgek1G7ZHuQeQv36V7
+    sf6oTtvMcLu2UEo0pIiWAP2n01o9jOyGGQiPXIglaBe6LSXbMxpnr5W37yPG4Eiz
+    cz9MZICFVtxdkciQAviQoptJWtwb6EABxgZ/hcmtMQY/ZBwKbeS2HZ5Zwh6cYnQs
+    5NXVHyv4NDPycA0H7/wT6C1AFANt0kaTvQ0Wrj8SVi4XzPUXM19HOcJT3JOVTHZu
+    taEQyvu7GqkfDhorEeGhThwGVJq7ZTSiDAsw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523402383; bh=zNUxtYfkD3Y30SPyYCdxKKWYJdMDIW
-    Za7cL+7FXgdbc=; b=MI2+H13sIT4lg9Agn9M7S8CklX/ltuLDVcTCxuAQXqLKmV
-    fq1a3Y1f7bN2UrXARnf9EtdnBHZyESPp3gys2wQzFueJr00lyX9JgvpGsOueiWtn
-    A3WF+0IOxW2nuh9PnbDbp6fj/+OjTuw2H+D2vDNRJd5JM0Rm59fX15cr3OwGeo9R
-    AKYA5KPMLdsphq9iUuk9QIMuTpJprSTtfnrllweUo1kp0ZI/bD9BeragCiO1ivS6
-    k7e9jD2HgniXIGluLJtsFxfsgVUf/OkHDwPq8fzKMUCjasTyJGykPASwCdD3+eT9
-    A+A05FroKZEwBIbeXtc24v/ECRDlxwM+ALV83S6w==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523402368; bh=PpHtFS2Sx9JusOxSs1/jpWlDF5JxKJ
+    0gh2sxr4EKUT4=; b=vIGi1BLEAr1H1tGbKf8E/EjfZw0iHel48Y3N0TEY22qwQN
+    KcSg4j0x7SI/wJed2oH5jBpGbuXqQDvoCFaaXcGIOdyZ1OW4OJ46U9zKfcVOcjUb
+    YHbW86cqhdJs7diJEVakGg9+62yA40n6814q4TWmUhpukHuQBIbzczp3MikmVMve
+    uOkFH0/UlkD5bIiqI/eDH+bmZK3JXox+JRp0oDcOt3A87P1s4wF85x5iLWm0XjlE
+    SiiGEZUEGZOfhl5Gf9mWILN30hdJFWqjRSqrtDL+9j0v8KkdoB3LIvJ5UU6zxARE
+    2f506jSh1dp8/UIDY68i7fEG1+RbkwUi+JzVqcFA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,30 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMZ9erSJ3/Llcg4umtJr80khdbMmRODN4FztijKP860h8Sk/tcDq0b8CiOkpdF6W8VUdbwWAbQ8aZn7/wfufr/v4PIFOy+1HzlnNuhhsbpfmwtz7F5UT
-    dTOvq5+5wl2AUKEYj+LFKPsIuGusRnpsYOpUB4X8ls5+LJ25CJYvr6k2ikIg3YpFXeLmBjB4rg08Mm1mq6wEF43+asImsjniOX03iQdWtv6Vs+X7jd4fQIvY
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfDk3kfRSRsySukkGgLOssgzIEqSjfOuBk4XLot5DCWtO8GpSWzWcVPp1hosES/fxGAXD4gTDUtZ9vUW32hAHpCP0qkfXaeo7cIkN6kbH8pXyQa9zlnAH
+    aigNwllsJvrOry/mzUmtY2J64iVkqVP0EOPbbH5vVYq8zNhObudxU/67daP5XouUNQBPArQtP5o4yDPaGiB6Km02Vvk4v7dh1huj0KeWvZ4CJclQfj/RlvDV
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=NEAV23lmAAAA:8 a=PjuYqXk4AAAA:8 a=iP7vMvkZAAAA:8
-    a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=tG9g4SPsdckd7zDvgwcA:9
-    a=QEXdDO2ut3YA:10 a=SKixG8JwDLmn6dAKAxWB:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VnNF1IyMAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=RfMhqW7RfyIWFs3lHvoA:9 a=nEq7sdQvkJOcl83t:21 a=Zk-p52Gu6lFtUBGp:21
+    a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754278AbeDJXT1 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 19:19:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40278 "EHLO
+        id S1754738AbeDJWbJ (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 18:31:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40268 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754740AbeDJWbJ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:31:09 -0400
+        with ESMTP id S1752785AbeDJWbH (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:31:07 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 101/168] Input: goodix - disable IRQs while suspended
-Date: Wed, 11 Apr 2018 00:24:03 +0200
-Message-Id: <20180410212804.549445970@linuxfoundation.org>
+Subject: [PATCH 4.15 100/168] ibmvnic: Dont handle RX interrupts when not up.
+Date: Wed, 11 Apr 2018 00:24:02 +0200
+Message-Id: <20180410212804.512329940@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -94,60 +92,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Nathan Fontenot <nfont@linux.vnet.ibm.com>
 
 
-[ Upstream commit faec44b6838312484d63e82286087cf2d5ebb891 ]
+[ Upstream commit 09fb35ead58cd557aa9b20576d15816bc91a4deb ]
 
-We should not try to do any i2c transfers before the controller is
-resumed (which happens before our resume method gets called).
+Initiating a kdump via the command line can cause a pending interrupt
+to be handled by the ibmvnic driver when initializing the sub-CRQ
+irqs during driver initialization.
 
-So we need to disable our IRQ while suspended to enforce this. The
-code paths for devices with GPIOs for the int and reset pins already
-disable the IRQ the through goodix_free_irq().
+NIP [d000000000ca34f0] ibmvnic_interrupt_rx+0x40/0xd0 [ibmvnic]
+LR [c000000008132ef0] __handle_irq_event_percpu+0xa0/0x2f0
+Call Trace:
+[c000000047fcfde0] [c000000008132ef0] __handle_irq_event_percpu+0xa0/0x2f0
+[c000000047fcfea0] [c00000000813317c] handle_irq_event_percpu+0x3c/0x90
+[c000000047fcfee0] [c00000000813323c] handle_irq_event+0x6c/0xd0
+[c000000047fcff10] [c0000000081385e0] handle_fasteoi_irq+0xf0/0x250
+[c000000047fcff40] [c0000000081320a0] generic_handle_irq+0x50/0x80
+[c000000047fcff60] [c000000008014984] __do_irq+0x84/0x1d0
+[c000000047fcff90] [c000000008027564] call_do_irq+0x14/0x24
+[c00000003c92af00] [c000000008014b70] do_IRQ+0xa0/0x120
+[c00000003c92af50] [c000000008002594] hardware_interrupt_common+0x114/0x180
 
-This commit also disables the IRQ while suspended for devices without
-GPIOs for the int and reset pins.
-
-This fixes the i2c bus sometimes getting stuck after a suspend/resume
-causing the touchscreen to sometimes not work after a suspend/resume.
-This has been tested on a GPD pocked device.
-
-BugLink: https://github.com/nexus511/gpd-ubuntu-packages/issues/10
-BugLink: https://www.reddit.com/r/GPDPocket/comments/7niut2/fix_for_broken_touch_after_resume_all_linux/
-Tested-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Bastien Nocera <hadess@hadess.net>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/input/touchscreen/goodix.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/ibm/ibmvnic.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -878,8 +878,10 @@ static int __maybe_unused goodix_suspend
- 	int error;
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -2484,6 +2484,12 @@ static irqreturn_t ibmvnic_interrupt_rx(
+ 	struct ibmvnic_sub_crq_queue *scrq = instance;
+ 	struct ibmvnic_adapter *adapter = scrq->adapter;
  
- 	/* We need gpio pins to suspend/resume */
--	if (!ts->gpiod_int || !ts->gpiod_rst)
-+	if (!ts->gpiod_int || !ts->gpiod_rst) {
-+		disable_irq(client->irq);
- 		return 0;
-+	}
++	/* When booting a kdump kernel we can hit pending interrupts
++	 * prior to completing driver initialization.
++	 */
++	if (unlikely(adapter->state != VNIC_OPEN))
++		return IRQ_NONE;
++
+ 	adapter->rx_stats_buffers[scrq->scrq_num].interrupts++;
  
- 	wait_for_completion(&ts->firmware_loading_complete);
- 
-@@ -919,8 +921,10 @@ static int __maybe_unused goodix_resume(
- 	struct goodix_ts_data *ts = i2c_get_clientdata(client);
- 	int error;
- 
--	if (!ts->gpiod_int || !ts->gpiod_rst)
-+	if (!ts->gpiod_int || !ts->gpiod_rst) {
-+		enable_irq(client->irq);
- 		return 0;
-+	}
- 
- 	/*
- 	 * Exit sleep mode by outputting HIGH level to INT pin
+ 	if (napi_schedule_prep(&adapter->napi[scrq->scrq_num])) {
