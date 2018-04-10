@@ -1,48 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753213AbeDJUou (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 16:44:50 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:42553 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753040AbeDJUor (ORCPT
+        id S1751919AbeDJUqL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 16:46:11 -0400
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:37753 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751546AbeDJUqK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 16:44:47 -0400
-X-Google-Smtp-Source: AIpwx481Iye6CoddmKWdedAbzWjU9DpCSIsR+w18WD7cctFO6ijoLnxsmE/Fkh+BVRnb6+6V/zpP7Q==
-Date: Tue, 10 Apr 2018 13:44:46 -0700 (PDT)
-X-Google-Original-Date: Tue, 10 Apr 2018 13:41:36 PDT (-0700)
-Subject: Re: [PATCH v2 1/2] mm: introduce ARCH_HAS_PTE_SPECIAL
-In-Reply-To: <20180410160932.GB3614@bombadil.infradead.org>
-CC: ldufour@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-doc@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, jglisse@redhat.com, mhocko@kernel.org,
-        aneesh.kumar@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        corbet@lwn.net, catalin.marinas@arm.com,
-        Will Deacon <will.deacon@arm.com>, ysato@users.sourceforge.jp,
-        dalias@libc.org, davem@davemloft.net, tglx@linutronix.de,
-        mingo@redhat.com, vgupta@synopsys.com, albert@sifive.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, rientjes@google.com
-From: Palmer Dabbelt <palmer@sifive.com>
-To: willy@infradead.org
-Message-ID: <mhng-dc76549e-6083-49a7-af3f-2638193f6698@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Tue, 10 Apr 2018 16:46:10 -0400
+Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: Martin Steigerwald <martin@lichtvoll.de>
+Cc: Tejun Heo <tj@kernel.org>, Sitsofe Wheeler <sitsofe@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, Stefan Haberland <sth@linux.vnet.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.vnet.ibm.com>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>
+Subject: Re: [PATCH] blk-mq: Directly schedule q->timeout_work when aborting a request
+Date: Tue, 10 Apr 2018 22:46:07 +0200
+Message-ID: <2410059.9M3ptFeZvf@merkaba>
+In-Reply-To: <2699418.6CV4rbzP8d@merkaba>
+References: <CALjAwxh-PVYFnYFCJpGOja+m5SzZ8Sa4J7ohxdK=r8NyOF-EMA@mail.gmail.com> <20180402220458.GJ388343@devbig577.frc2.facebook.com> <2699418.6CV4rbzP8d@merkaba>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Apr 2018 09:09:32 PDT (-0700), willy@infradead.org wrote:
-> On Tue, Apr 10, 2018 at 05:25:50PM +0200, Laurent Dufour wrote:
->>  arch/powerpc/include/asm/pte-common.h                  | 3 ---
->>  arch/riscv/Kconfig                                     | 1 +
->>  arch/s390/Kconfig                                      | 1 +
->
-> You forgot to delete __HAVE_ARCH_PTE_SPECIAL from
-> arch/riscv/include/asm/pgtable-bits.h
+Martin Steigerwald - 10.04.18, 20:43:
+> Tejun Heo - 03.04.18, 00:04:
+> > Request abortion is performed by overriding deadline to now and
+> > scheduling timeout handling immediately.  For the latter part, the
+> > code was using mod_timer(timeout, 0) which can't guarantee that the
+> > timer runs afterwards.  Let's schedule the underlying work item
+> > directly instead.
+> > 
+> > This fixes the hangs during probing reported by Sitsofe but it isn't
+> > yet clear to me how the failure can happen reliably if it's just the
+> > above described race condition.
+> 
+> Compiling a 4.16.1 kernel with that patch to test whether this fixes
+> the boot hang I reported in:
+> 
+> [Possible REGRESSION, 4.16-rc4] Error updating SMART data during
+> runtime and boot failures with blk_mq_terminate_expired in backtrace
+> https://bugzilla.kernel.org/show_bug.cgi?id=199077
 
-Thanks -- I was looking for that but couldn't find it and assumed I'd just 
-misunderstood something.
+Fails as well, see
+
+https://bugzilla.kernel.org/show_bug.cgi?id=199077#c8
+
+for photo with (part of) backtrace.
+
+> The "Error updating SMART data during runtime" thing I reported there
+> as well may still be another (independent) issue.
+> 
+> > Signed-off-by: Tejun Heo <tj@kernel.org>
+> > Reported-by: Sitsofe Wheeler <sitsofe@gmail.com>
+> > Reported-by: Meelis Roos <mroos@linux.ee>
+> > Fixes: 358f70da49d7 ("blk-mq: make blk_abort_request() trigger
+> > timeout path") Cc: stable@vger.kernel.org # v4.16
+> > Link:
+> > http://lkml.kernel.org/r/CALjAwxh-PVYFnYFCJpGOja+m5SzZ8Sa4J7ohxdK=r8
+> > NyOF-EM A@mail.gmail.com Link:
+> > http://lkml.kernel.org/r/alpine.LRH.2.21.1802261049140.4893@math.ut.
+> > ee --- Hello,
+> > 
+> > I don't have the full explanation yet but here's a preliminary
+> > patch.
+> > 
+> > Thanks.
+> > 
+> >  block/blk-timeout.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/block/blk-timeout.c b/block/blk-timeout.c
+> > index a05e367..f0e6e41 100644
+> > --- a/block/blk-timeout.c
+> > +++ b/block/blk-timeout.c
+> > @@ -165,7 +165,7 @@ void blk_abort_request(struct request *req)
+> > 
+> >  		 * No need for fancy synchronizations.
+> >  		 */
+> >  		
+> >  		blk_rq_set_deadline(req, jiffies);
+> > 
+> > -		mod_timer(&req->q->timeout, 0);
+> > +		kblockd_schedule_work(&req->q->timeout_work);
+> > 
+> >  	} else {
+> >  	
+> >  		if (blk_mark_rq_complete(req))
+> >  		
+> >  			return;
+
+
+-- 
+Martin
