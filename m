@@ -1,118 +1,108 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4038955-1523372392-2-6124691332960337399
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_HI -5, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523372391; b=QAJeExToasfPiZpRaF0vIS6pNoy0QbWjakxE2uwTshsXp5xZ45
-    nikAlLRGbstwo3lqg4Zc7JnULktKbvqMwxh3J7Zp8FfWbhtqBKCLti8p+L17lvcq
-    +iEBQ8Bs/FfVkSkjxVTFWC1QBP9qbeqGqcpJmBJgLgsnSgSP04GEVHlMmHt+RirL
-    aTovlN7FFD0esfCpt05y3QR22jwlRVYZ3hW4CL1DskQoIOJD7KcYrQhQlVIqrjR5
-    UtqouBgIieK4AOLdnjh1fe/a2NUl144AYaQ77RJB2lPUUyoCPBrA4tvnp6V22VLo
-    Z/YCsiCIQ777Vu9rvvfV27zcQ/0G4Q9CyuKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523372391; bh=6MZ/JLUSgVAZ/pzLkqV1cOg9NIU+qN
-    MutuC0wwyAK9Q=; b=twgYq4R3hJFJEs3428pNofwUZbIeqny1btSp8a6Cynz2E7
-    xl7FkFFkhKYavIkT4j+Fskk/KrZIOu2K/8tLpVKAMgPfXv1e12qi5eazQP0jzZVs
-    troPMWRM911uJc8eZwVZNO9cgHBEfT8uLDzdT5WgHKnqCArwCnuF/4wTk2zKMqRz
-    mb0381qOdDOUIvQT4sPa5RnrmiHYpbMTxWLT/ppvEIZX/rC4NGp+QdxCrLxZtAJG
-    30pJtTp5uYwmp3IaEfv6+Kz9FkXsDmLkWHPFFkV2saCMXNBtlHiYvSuIpi9F9Cft
-    CIJc4V6MFS0KXuhA9U9h9CALLuWfugSzlAJCThqw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=bllqBAr0 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=CD6Dpv99;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=bllqBAr0 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=CD6Dpv99;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfD6qOSapMsLA7Jb8f6fPCxvdW0NymKXhCFaodto9ss8L2dB8c+pnENTkfZ6C/h9p5UN7ytE8vHA79zpuJb8rmk1mA8tMpmh7NiZjviTOov5+muJToovr
-    5bsQPYhDc3sqbrCjiWUf/ZymLWVx6duNOVB7KEWeyYmuQT3bnn3Z3agoDSY36s0aBTjPlBUrJUyHwSCsiUDVb8XEZzoKaQvt4ZvX5iTT/OhOw9V7OMYF/SnX
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=F2e83xq_C__GpNM0TzkA:9 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753890AbeDJO7f (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 10:59:35 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35754 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753694AbeDJO7e (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Tue, 10 Apr 2018 10:59:34 -0400
-X-Google-Smtp-Source: AIpwx4+mVfXynMdQ9kQIDR5S0epBSY+5mNb0M+HBBhlgXpMbCgC5gUhaiFh/wgkMmEoaICiFPzq1gg==
-Date: Tue, 10 Apr 2018 16:59:28 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: davem@davemloft.net, andreas@kemnade.info, johan@kernel.org,
-        johannes.berg@intel.com, stephen@networkplumber.org,
-        Linyu.Yuan@alcatel-sbell.com.cn, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: usb: hso: Replace GFP_ATOMIC with GFP_KERNEL in
- hso_create_device
-Message-ID: <20180410145928.GC10795@localhost>
-References: <1523370924-32425-1-git-send-email-baijiaju1990@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523370924-32425-1-git-send-email-baijiaju1990@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Return-Path: <benh@kernel.crashing.org>
+X-Google-Smtp-Source: AIpwx4877wuwFhHRG4QmUt8s2qXv4i0XLbUZ+82eI0Z/wcppEetQlh82b28CjLQaLPa+YyWeJpjD
+ARC-Seal: i=1; a=rsa-sha256; t=1523351870; cv=none;
+        d=google.com; s=arc-20160816;
+        b=M8FTEx5Ded1mpSV8ivY8Zj3tCorr7JXZP4RGjwyVD4Uy7SAMU/P6gz54HOOccEqZdB
+         QyT/TGYQ03HdHZ9PYWTVFhX/m6WbWpsKQasq6Mfxg9VM2btsmG2kp6UsRKg7T3DARzuU
+         verd8BPyV8u3UI+8ZqkN/WiDfct9eNBz0be0sM6hZmIavD48U8wFELx5kisc6CGTQBL7
+         +Ed6TEr3IIaBu0VAgAjl1IDMp98dHwHEBKa9m6tLusUpagx6EupFq9fzdw87GQAVnSir
+         nkCaMLYwfI3Huf4TZ4cbfmlUQ/JFxQhi7mZIL+e6tLttdJx1isbegBOUlMfEKYi6qJgN
+         5mBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:date:cc:to:from:subject
+         :message-id:arc-authentication-results;
+        bh=DkwjiTuW0b5+zlGlhXnqGMhrrg0v3sEdiPgd3MX3gp0=;
+        b=wGXnwLHvuSpj6XMeZyUMrQBjdcejggN6i2O9oX6KrgqhVCF6izsOHwq6+DmSNK9VEN
+         mr+nLUgpJK4er5POjwe2KRn+aMP+ZpJPtEQ1nsZWTJmLOZks9uT8N7U0+BOv7tZle7E2
+         A3Xxjz/gEUBqhfK1rHI0lmXavhiw0/dlC+nDB3sAzdvaDjmNuu/XGsxOdS33RzlD4jh+
+         ntzy5tPRoH4ToI/PhaWXwSA8Cv2m+Qs1apaJ7THImEs4GmRBTFOicMv3UrkmiAUzDXDc
+         bmtLcLufn2ya0MGC8bh0RymHkS4R8yyqQMEgl2lngFIHxqKC+MBCEaYBF3VzPYbVAstH
+         zt4w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of benh@kernel.crashing.org designates 63.228.1.57 as permitted sender) smtp.mailfrom=benh@kernel.crashing.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of benh@kernel.crashing.org designates 63.228.1.57 as permitted sender) smtp.mailfrom=benh@kernel.crashing.org
+Message-ID: <1523351850.11062.80.camel@kernel.crashing.org>
+Subject: How to expose various BMC chip controls ?
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann
+	 <arnd@arndb.de>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew
+ Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel.stanley@au1.ibm.com>,
+        Jeremy
+ Kerr <jeremy.kerr@au1.ibm.com>
+Date: Tue, 10 Apr 2018 19:17:30 +1000
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597350209516531918?=
+X-GMAIL-MSGID: =?utf-8?q?1597350209516531918?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 10, 2018 at 10:35:24PM +0800, Jia-Ju Bai wrote:
-> hso_create_device() is never called in atomic context.
-> 
-> The call chains ending up at hso_create_device() are:
-> [1] hso_create_device() <- hso_create_bulk_serial_device() <- hso_probe()
-> [2] hso_create_device() <- hso_create_mux_serial_device() <- hso_probe()
-> [3] hso_create_device() <- hso_create_net_device() <- hso_probe()
-> hso_probe() is set as ".probe" in struct usb_driver, 
-> so it is not called in atomic context.
-> 
-> Despite never getting called from atomic context,
-> hso_create_device() calls kzalloc() with GFP_ATOMIC,
-> which does not sleep for allocation.
-> GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
-> which can sleep and improve the possibility of sucessful allocation.
-> 
-> This is found by a static analysis tool named DCNS written by myself.
-> And I also manually check it.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Hi Folks !
 
-Thanks for the patch. This looks good to me.
+I would like to discuss something we need to solve for BMC chips before
+we start implementing a solution that you'll reject upstream :-)
 
-Reviewed-by: Johan Hovold <johan@kernel.org>
+So quick recap: the BMC chip is the management controller of your
+server, typically some kind of specialized ARM SoC which controls a
+variety of things ranging from power supply, fans, inventory, flash, to
+having even a built-in GPU connected to the main server processor via
+PCIe etc...
 
-Johan
+As part of the OpenBMC project, we have been contributing (along with
+others from Google etc...) a bunch of upstream drivers to support the
+BMC chips from Aspeed which are quite popular. There's work in progress
+to also upstream other vendor(s) chip support.
+
+For most things, we can write appropriate drivers.
+
+However, there's a range of things for which there is no good fit for
+dedicated per-function kernel drivers in the BMC:
+
+The BMC chips have a variety of control bits and pieces (registers)
+that affect the host in all sorts of ways. A few semi-random examples:
+
+ - Scratch registers that the host BIOS can read via LPC that contain
+system specific details of interest to the BIOS itself. The
+content/format is specific to a given BIOS <-> BMC userspace pair.
+
+ - Similar ones related to the built-in VGA (the one the host sees on
+PCIe, it doesn't appear as a device on the BMC side). Used to pass some
+wiring information to the VGA BIOS and the Linux driver among others.
+
+ - Bits controlling which parts of the BMC the host can access remotely
+via either LPC or PCIe. (Visibility of the VGA to the host, of the BMC
+PCIe system-controller device, opening of various windows from the host
+into the BMC address space etc...)
+
+ - ... and a few more
+
+Those things tend to be fairly system specific. Meaning that what's
+written in them (or read from them) and when it's written in these
+registers should be under userspace control on the BMC. There isn't
+necessarily many registers that need to be exposed that way, here too,
+which specific ones is rather system specific.
+
+But /dev/mem isn't a solution :-)
+
+So one simple idea I had, you tell me if it can fly, is to have some
+driver for the SoC as a whole (thinking of syscon here...) expose a
+selection of these things via sysfs.
+
+The list being potentially system specific, it would be provided to
+the kernel via the device-tree (binding tbd) where we would effectively
+provide a list of names, register offset, start bit, bitfield size.
+
+Any better idea ? It's a fairly simple problem, and the above solution
+would be very little code, but I just don't want us to go down a rabbit
+hole if some of you have religious objections to some of it :)
+
+Cheers,
+Ben.
