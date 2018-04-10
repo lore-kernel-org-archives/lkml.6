@@ -1,121 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754191AbeDJPFc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 11:05:32 -0400
-Received: from mail-vk0-f45.google.com ([209.85.213.45]:38918 "EHLO
-        mail-vk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754120AbeDJPF3 (ORCPT
+        id S1754050AbeDJPLI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 11:11:08 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33950 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753118AbeDJPLG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 11:05:29 -0400
-X-Google-Smtp-Source: AIpwx48Buh2cDeeBcSCPfuIRr799fpJZZsK2G6bcub/X5D7aRVeQeEeQg0w44etQSp85i8fJM3IBIsMATYBvoVlCjVY=
+        Tue, 10 Apr 2018 11:11:06 -0400
+Subject: Re: [PATCH 2/3] mm: replace __HAVE_ARCH_PTE_SPECIAL
+To: David Rientjes <rientjes@google.com>,
+        Christoph Hellwig <hch@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        linux-doc@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>,
+        mhocko@kernel.org, aneesh.kumar@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, mpe@ellerman.id.au,
+        benh@kernel.crashing.org, paulus@samba.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Vineet Gupta <vgupta@synopsys.com>, Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <albert@sifive.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+References: <1523282229-20731-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1523282229-20731-3-git-send-email-ldufour@linux.vnet.ibm.com>
+ <20180409175757.GA12938@infradead.org>
+ <alpine.DEB.2.21.1804091307480.56406@chino.kir.corp.google.com>
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Date: Tue, 10 Apr 2018 17:10:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <19c66b02-4f8e-902a-9397-21e7690db7b8@codeaurora.org>
-References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
- <1522321466-21755-3-git-send-email-mgautam@codeaurora.org>
- <CAD=FV=XtviSYq=2w=Ld1xq5U2VPy=u=q6a3+4qd2zVGB+f9P8A@mail.gmail.com>
- <CAD=FV=WGEKy98De_zH9rp+g-tE2YuVK2vRxLJrjeeSx=ijBAww@mail.gmail.com> <19c66b02-4f8e-902a-9397-21e7690db7b8@codeaurora.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 10 Apr 2018 08:05:27 -0700
-X-Google-Sender-Auth: bR6swPEaMz1xUI4Wn_RgJXzpngw
-Message-ID: <CAD=FV=XqH69_LXcCyTS1nF5fHpen=PnRxd-WTz=y3dKvMsRtuw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/7] phy: qcom-qmp: Enable pipe_clk before PHY initialization
-To: Manu Gautam <mgautam@codeaurora.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org,
-        Varadarajan Narayanan <varada@codeaurora.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Fengguang Wu <fengguang.wu@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.21.1804091307480.56406@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18041015-0012-0000-0000-000005C933E2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041015-0013-0000-0000-000019456010
+Message-Id: <3a330851-d545-ebd8-e74c-c44e12220c24@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-10_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804100146
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Mon, Apr 9, 2018 at 11:36 PM, Manu Gautam <mgautam@codeaurora.org> wrote:
-> Hi,
+On 09/04/2018 22:08, David Rientjes wrote:
+> On Mon, 9 Apr 2018, Christoph Hellwig wrote:
+> 
+>>> -#ifdef __HAVE_ARCH_PTE_SPECIAL
+>>> +#ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
+>>>  # define HAVE_PTE_SPECIAL 1
+>>>  #else
+>>>  # define HAVE_PTE_SPECIAL 0
+>>
+>> I'd say kill this odd indirection and just use the
+>> CONFIG_ARCH_HAS_PTE_SPECIAL symbol directly.
+>>
+>>
+> 
+> Agree, and I think it would be easier to audit/review if patches 1 and 3 
+> were folded together to see the relationship between the newly added 
+> selects and what #define's it is replacing.  Otherwise, looks good!
 >
->
-> On 3/30/2018 2:24 AM, Doug Anderson wrote:
->> Hi,
->>
->> On Thu, Mar 29, 2018 at 11:44 AM, Doug Anderson <dianders@chromium.org> wrote:
->>> Hi,
->>>
->>> On Thu, Mar 29, 2018 at 4:04 AM, Manu Gautam <mgautam@codeaurora.org> wrote:
->>>> QMP PHY for USB/PCIE requires pipe_clk for locking of
->>>> retime buffers at the pipe interface. Driver checks for
->>>> PHY_STATUS without enabling pipe_clk due to which
->>>> phy_init() fails with initialization timeout.
->>>> Though pipe_clk is output from PHY (after PLL is programmed
->>>> during initialization sequence) to GCC clock_ctl and then fed
->>>> back to PHY but for PHY_STATUS register to reflect successful
->>>> initialization pipe_clk from GCC must be present.
->>>> Since, clock driver now ignores status_check for pipe_clk on
->>>> clk_enable/disable, driver can safely enable/disable pipe_clk
->>>> from phy_init/exit.
->>>>
->>>> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
->>>> ---
->>>>  drivers/phy/qualcomm/phy-qcom-qmp.c | 22 ++++++++--------------
->>>>  1 file changed, 8 insertions(+), 14 deletions(-)
->>> Overall this looks much better than the previous version.  Thanks!  :)
->>>
->>> I wonder one thing though.  You describe the original problem as this:
->>>
->>> 1. If you don't turn the clock on in qcom_qmp_phy_init() then the PHY
->>> never sets the "ready" status.
->>>
->>> 2. If you don't have the PHY powered on / out of reset (which happens
->>> in qcom_qmp_phy_init()) then when you enable/disable the clock it
->>> doesn't properly update the status.  That's why you needed patch #1 in
->>> this series.
->>>
->>>
->>> I wonder: could you solve the above _without_ needing to use
->>> BRANCH_HALT_DELAY in the clock driver?  Specifically, can you tell me
->>> what happens if you put the clk_prepare_enable() after you've powered
->>> on the PHY and taken it out of reset but before you check the status?
->>> Said another way, put the "clk_prepare_enable(qphy->pipe_clk)" call
->>> right before the "readl_poll_timeout" of the ready status?
->>>
->>>
->>> If you do that, you'll turn everything on.  Then you'll check that the
->>> clock's status is OK and then that the PHY's status is OK.
->> Oh!  This is what you did in the previous version of the patch, then you said:
->>
->> "That is still needed as PHY might take some time to generate pipe_clk
->> after its PLL is locked".
->>
->> It's really going to take more than the 200 us that the clock driver
->> is giving it?  If so, I'd prefer to increase the amount of time waited
->> in the clock driver, or adding a fixed delay _before_ the clk_enable()
->> so that the 200 us that the clock driver gives it would be enough.
->>
->> I'm just not a fan of ignoring status bits if it can be helped.
->
-> I too would want to do that but it is not just about the delay.
-> As per QMP PHY hardware designers, pipe_clk should be enabled in GCC
-> as first thing in the PHY initialization sequence. Same sequence also has
-> been used in downstream phy driver always.
-> Changing the sequence might work but I would like to stick to the HPG
-> recommendation and avoid any deviation as PHY issues are very hard to
-> debug.
 
-So hardware guys tell you that you're _supposed to_ ignore the clock
-ready bit for that clock and just hope it turns on and settles in time
-once power comes on for the clock?  That doesn't seem ideal.  My guess
-is that it's a bug in the specification that the QMP PHY hardware
-designers gave you.
+Ok I will fold the 3 patches and introduce a new one removing HAVE_PTE_SPECIAL.
 
-Stephen can feel free to override me if he disagrees since he's in
-charge of the clock part of this, but IMHO we should get the
-specification fixed and turn things on in the order that lets us check
-the status bits.
-
-
--Doug
+Thanks,
+Laurent.
