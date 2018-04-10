@@ -1,69 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753962AbeDJNZL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 09:25:11 -0400
-Received: from mail-pf0-f171.google.com ([209.85.192.171]:37187 "EHLO
-        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753713AbeDJNZH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 09:25:07 -0400
-X-Google-Smtp-Source: AIpwx4+FHM3QhvckqlqpRJtYy/wLinWne60N1xDzWgm7hn0DPtksfu0HiJm/2VpCPtR8oRsZJKjRmkakJx2MlSVZBXs=
+        id S1753985AbeDJNZR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 09:25:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55740 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752847AbeDJNZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 09:25:14 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBDC621738
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Subject: [PATCH v1 2/2] microblaze/PCI: Remove pcibios_claim_one_bus() dead
+ code
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Michal Simek <monstr@monstr.eu>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 10 Apr 2018 08:25:12 -0500
+Message-ID: <152336671276.18958.18175353602437569251.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <152336656418.18958.17017091754578447948.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152336656418.18958.17017091754578447948.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-In-Reply-To: <201804102204.BDF48937.LMHJVFOFFOOSQt@I-love.SAKURA.ne.jp>
-References: <652eab47-81b5-3249-3c78-427eeec45fbc@I-love.SAKURA.ne.jp>
- <2e093801-6d71-6747-42df-52f191811ad0@I-love.SAKURA.ne.jp>
- <87bdec75-3c59-6587-2436-1470263ab11f@kernel.dk> <59a08949-7e2f-42ff-edda-f24a6c624551@I-love.SAKURA.ne.jp>
- <CACT4Y+a-_Z69xmLypVi=vrtCEEBGp=zy0Wp8SuLJzYtZ_ShBgw@mail.gmail.com> <201804102204.BDF48937.LMHJVFOFFOOSQt@I-love.SAKURA.ne.jp>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 10 Apr 2018 15:24:46 +0200
-Message-ID: <CACT4Y+Z0+r+JknT3uYWbjQ36XrSWfYnVkGYcj6FZ0RvgiCF0Yg@mail.gmail.com>
-Subject: Re: INFO: task hung in __blkdev_get
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Jens Axboe <axboe@kernel.dk>, Ming Lei <tom.leiming@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        syzbot
-        <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Omar Sandoval <osandov@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 3:04 PM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> Dmitry Vyukov wrote:
->> On Tue, Apr 10, 2018 at 12:55 PM, Tetsuo Handa
->> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->> > Hello.
->> >
->> > Since syzbot is reporting so many hung up bug which involves /dev/loopX ,
->> > is it possible to "temporarily" apply below patch for testing under syzbot
->>
->> Unfortunately it's not possible, for full explanation please see:
->> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#no-custom-patches
->>
->
-> I mean, sending custom patch to linux.git for -rc and revert the custom patch
-> before -final is released. It won't take so much period until we get the result.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-Ah, I see, then I guess it wasn't a question to me.
+pcibios_claim_one_bus() is defined but never used.  Remove it.
 
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ arch/microblaze/include/asm/pci.h |    2 --
+ arch/microblaze/pci/pci-common.c  |   37 -------------------------------------
+ 2 files changed, 39 deletions(-)
 
-> If syzbot can test arbitrary git tree instead of linux.git, making a branch
-> which contains custom patches would be possible.
-
-syzbot tests a set of trees (also net-next and bpf-next at the
-moment). But see this reply to Takashi re a similar request:
-https://groups.google.com/forum/#!msg/syzkaller-bugs/7ucgCkAJKSk/skZjgavRAQAJ
-Note that a syzkaller instances will produce several hundreds of
-different crashes within a day, and then a big question is what to do
-with them.
-
-What's perfectly possible though is running syzkaller locally, and you
-can do it on just any tree you want. I've recently put a script that
-setups syzkaller end-to-end with config, compiler and image that
-syzbot uses:
-https://github.com/google/syzkaller/blob/master/tools/demo_setup.sh
-(that uses v4.13, but you can change this to any kernel version).
+diff --git a/arch/microblaze/include/asm/pci.h b/arch/microblaze/include/asm/pci.h
+index 4a96480e7716..7cfb90010f16 100644
+--- a/arch/microblaze/include/asm/pci.h
++++ b/arch/microblaze/include/asm/pci.h
+@@ -67,8 +67,6 @@ extern int pci_mmap_legacy_page_range(struct pci_bus *bus,
+  */
+ #define PCI_DMA_BUS_IS_PHYS     (1)
+ 
+-extern void pcibios_claim_one_bus(struct pci_bus *b);
+-
+ extern void pcibios_resource_survey(void);
+ 
+ struct file;
+diff --git a/arch/microblaze/pci/pci-common.c b/arch/microblaze/pci/pci-common.c
+index 61494c4379f9..6a4e5b32a90e 100644
+--- a/arch/microblaze/pci/pci-common.c
++++ b/arch/microblaze/pci/pci-common.c
+@@ -996,43 +996,6 @@ void __init pcibios_resource_survey(void)
+ 	pci_assign_unassigned_resources();
+ }
+ 
+-/* This is used by the PCI hotplug driver to allocate resource
+- * of newly plugged busses. We can try to consolidate with the
+- * rest of the code later, for now, keep it as-is as our main
+- * resource allocation function doesn't deal with sub-trees yet.
+- */
+-void pcibios_claim_one_bus(struct pci_bus *bus)
+-{
+-	struct pci_dev *dev;
+-	struct pci_bus *child_bus;
+-
+-	list_for_each_entry(dev, &bus->devices, bus_list) {
+-		int i;
+-
+-		for (i = 0; i < PCI_NUM_RESOURCES; i++) {
+-			struct resource *r = &dev->resource[i];
+-
+-			if (r->parent || !r->start || !r->flags)
+-				continue;
+-
+-			pr_debug("PCI: Claiming %s: ", pci_name(dev));
+-			pr_debug("Resource %d: %016llx..%016llx [%x]\n",
+-				 i, (unsigned long long)r->start,
+-				 (unsigned long long)r->end,
+-				 (unsigned int)r->flags);
+-
+-			if (pci_claim_resource(dev, i) == 0)
+-				continue;
+-
+-			pci_claim_bridge_resource(dev, i);
+-		}
+-	}
+-
+-	list_for_each_entry(child_bus, &bus->children, node)
+-		pcibios_claim_one_bus(child_bus);
+-}
+-EXPORT_SYMBOL_GPL(pcibios_claim_one_bus);
+-
+ static void pcibios_setup_phb_resources(struct pci_controller *hose,
+ 					struct list_head *resources)
+ {
