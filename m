@@ -1,252 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752246AbeDJF1V (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 01:27:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33596 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751595AbeDJF1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 01:27:18 -0400
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: virtualization@lists.linux-foundation.org
-Cc: syzkaller-bugs@googlegroups.com, mst@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>, kvm@vger.kernel.org,
-        jasowang@redhat.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, Stefan Hajnoczi <stefanha@redhat.com>
-Subject: [PATCH v2 2/2] vhost: return bool from *_access_ok() functions
-Date: Tue, 10 Apr 2018 13:26:30 +0800
-Message-Id: <20180410052630.11270-3-stefanha@redhat.com>
-In-Reply-To: <20180410052630.11270-1-stefanha@redhat.com>
-References: <20180410052630.11270-1-stefanha@redhat.com>
+        id S1752304AbeDJF2Z (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 01:28:25 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54725 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751825AbeDJF2Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 01:28:24 -0400
+Date: Mon, 9 Apr 2018 22:28:13 -0700
+From: tip-bot for Adrian Hunter <tipbot@zytor.com>
+Message-ID: <tip-b238db655796e74b59d9ece58b645ad0b494d615@git.kernel.org>
+Cc: hpa@zytor.com, mingo@kernel.org, jolsa@redhat.com,
+        linux-kernel@vger.kernel.org, adrian.hunter@intel.com, acme@redhat.com,
+        tglx@linutronix.de
+Reply-To: acme@redhat.com, tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org,
+        adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
+        jolsa@redhat.com
+In-Reply-To: <1520327598-1317-8-git-send-email-adrian.hunter@intel.com>
+References: <1520327598-1317-8-git-send-email-adrian.hunter@intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf auxtrace: Make auxtrace_queues__add_buffer()
+ do CPU filtering
+Git-Commit-ID: b238db655796e74b59d9ece58b645ad0b494d615
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently vhost *_access_ok() functions return int.  This is error-prone
-because there are two popular conventions:
+Commit-ID:  b238db655796e74b59d9ece58b645ad0b494d615
+Gitweb:     https://git.kernel.org/tip/b238db655796e74b59d9ece58b645ad0b494d615
+Author:     Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate: Tue, 6 Mar 2018 11:13:18 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Fri, 6 Apr 2018 09:40:41 -0300
 
-1. 0 means failure, 1 means success
-2. -errno means failure, 0 means success
+perf auxtrace: Make auxtrace_queues__add_buffer() do CPU filtering
 
-Although vhost mostly uses #1, it does not do so consistently.
-umem_access_ok() uses #2.
+In preparation for supporting AUX area sampling buffers,
+auxtrace_queues__add_buffer() needs to be more generic. To that end, move
+CPU filtering into it.
 
-This patch changes the return type from int to bool so that false means
-failure and true means success.  This eliminates a potential source of
-errors.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/1520327598-1317-8-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/vhost/vhost.h |  4 ++--
- drivers/vhost/vhost.c | 66 +++++++++++++++++++++++++--------------------------
- 2 files changed, 35 insertions(+), 35 deletions(-)
+ tools/perf/util/auxtrace.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index ac4b6056f19a..6e00fa57af09 100644
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -178,8 +178,8 @@ void vhost_dev_cleanup(struct vhost_dev *);
- void vhost_dev_stop(struct vhost_dev *);
- long vhost_dev_ioctl(struct vhost_dev *, unsigned int ioctl, void __user *argp);
- long vhost_vring_ioctl(struct vhost_dev *d, int ioctl, void __user *argp);
--int vhost_vq_access_ok(struct vhost_virtqueue *vq);
--int vhost_log_access_ok(struct vhost_dev *);
-+bool vhost_vq_access_ok(struct vhost_virtqueue *vq);
-+bool vhost_log_access_ok(struct vhost_dev *);
- 
- int vhost_get_vq_desc(struct vhost_virtqueue *,
- 		      struct iovec iov[], unsigned int iov_count,
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 93fd0c75b0d8..b6a082ef33dd 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -641,14 +641,14 @@ void vhost_dev_cleanup(struct vhost_dev *dev)
- }
- EXPORT_SYMBOL_GPL(vhost_dev_cleanup);
- 
--static int log_access_ok(void __user *log_base, u64 addr, unsigned long sz)
-+static bool log_access_ok(void __user *log_base, u64 addr, unsigned long sz)
- {
- 	u64 a = addr / VHOST_PAGE_SIZE / 8;
- 
- 	/* Make sure 64 bit math will not overflow. */
- 	if (a > ULONG_MAX - (unsigned long)log_base ||
- 	    a + (unsigned long)log_base > ULONG_MAX)
--		return 0;
-+		return false;
- 
- 	return access_ok(VERIFY_WRITE, log_base + a,
- 			 (sz + VHOST_PAGE_SIZE * 8 - 1) / VHOST_PAGE_SIZE / 8);
-@@ -661,30 +661,30 @@ static bool vhost_overflow(u64 uaddr, u64 size)
- }
- 
- /* Caller should have vq mutex and device mutex. */
--static int vq_memory_access_ok(void __user *log_base, struct vhost_umem *umem,
--			       int log_all)
-+static bool vq_memory_access_ok(void __user *log_base, struct vhost_umem *umem,
-+				int log_all)
- {
- 	struct vhost_umem_node *node;
- 
- 	if (!umem)
--		return 0;
-+		return false;
- 
- 	list_for_each_entry(node, &umem->umem_list, link) {
- 		unsigned long a = node->userspace_addr;
- 
- 		if (vhost_overflow(node->userspace_addr, node->size))
--			return 0;
-+			return false;
- 
- 
- 		if (!access_ok(VERIFY_WRITE, (void __user *)a,
- 				    node->size))
--			return 0;
-+			return false;
- 		else if (log_all && !log_access_ok(log_base,
- 						   node->start,
- 						   node->size))
--			return 0;
-+			return false;
- 	}
--	return 1;
-+	return true;
- }
- 
- static inline void __user *vhost_vq_meta_fetch(struct vhost_virtqueue *vq,
-@@ -701,13 +701,13 @@ static inline void __user *vhost_vq_meta_fetch(struct vhost_virtqueue *vq,
- 
- /* Can we switch to this memory table? */
- /* Caller should have device mutex but not vq mutex */
--static int memory_access_ok(struct vhost_dev *d, struct vhost_umem *umem,
--			    int log_all)
-+static bool memory_access_ok(struct vhost_dev *d, struct vhost_umem *umem,
-+			     int log_all)
- {
- 	int i;
- 
- 	for (i = 0; i < d->nvqs; ++i) {
--		int ok;
-+		bool ok;
- 		bool log;
- 
- 		mutex_lock(&d->vqs[i]->mutex);
-@@ -717,12 +717,12 @@ static int memory_access_ok(struct vhost_dev *d, struct vhost_umem *umem,
- 			ok = vq_memory_access_ok(d->vqs[i]->log_base,
- 						 umem, log);
- 		else
--			ok = 1;
-+			ok = true;
- 		mutex_unlock(&d->vqs[i]->mutex);
- 		if (!ok)
--			return 0;
-+			return false;
- 	}
--	return 1;
-+	return true;
- }
- 
- static int translate_desc(struct vhost_virtqueue *vq, u64 addr, u32 len,
-@@ -959,21 +959,21 @@ static void vhost_iotlb_notify_vq(struct vhost_dev *d,
- 	spin_unlock(&d->iotlb_lock);
- }
- 
--static int umem_access_ok(u64 uaddr, u64 size, int access)
-+static bool umem_access_ok(u64 uaddr, u64 size, int access)
- {
- 	unsigned long a = uaddr;
- 
- 	/* Make sure 64 bit math will not overflow. */
- 	if (vhost_overflow(uaddr, size))
--		return -EFAULT;
-+		return false;
- 
- 	if ((access & VHOST_ACCESS_RO) &&
- 	    !access_ok(VERIFY_READ, (void __user *)a, size))
--		return -EFAULT;
-+		return false;
- 	if ((access & VHOST_ACCESS_WO) &&
- 	    !access_ok(VERIFY_WRITE, (void __user *)a, size))
--		return -EFAULT;
--	return 0;
-+		return false;
-+	return true;
- }
- 
- static int vhost_process_iotlb_msg(struct vhost_dev *dev,
-@@ -988,7 +988,7 @@ static int vhost_process_iotlb_msg(struct vhost_dev *dev,
- 			ret = -EFAULT;
- 			break;
- 		}
--		if (umem_access_ok(msg->uaddr, msg->size, msg->perm)) {
-+		if (!umem_access_ok(msg->uaddr, msg->size, msg->perm)) {
- 			ret = -EFAULT;
- 			break;
- 		}
-@@ -1135,10 +1135,10 @@ static int vhost_iotlb_miss(struct vhost_virtqueue *vq, u64 iova, int access)
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index e1aff91c54a8..857de69a5361 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -302,6 +302,13 @@ static int auxtrace_queues__split_buffer(struct auxtrace_queues *queues,
  	return 0;
  }
  
--static int vq_access_ok(struct vhost_virtqueue *vq, unsigned int num,
--			struct vring_desc __user *desc,
--			struct vring_avail __user *avail,
--			struct vring_used __user *used)
-+static bool vq_access_ok(struct vhost_virtqueue *vq, unsigned int num,
-+			 struct vring_desc __user *desc,
-+			 struct vring_avail __user *avail,
-+			 struct vring_used __user *used)
- 
++static bool filter_cpu(struct perf_session *session, int cpu)
++{
++	unsigned long *cpu_bitmap = session->itrace_synth_opts->cpu_bitmap;
++
++	return cpu_bitmap && cpu != -1 && !test_bit(cpu, cpu_bitmap);
++}
++
+ static int auxtrace_queues__add_buffer(struct auxtrace_queues *queues,
+ 				       struct perf_session *session,
+ 				       unsigned int idx,
+@@ -310,6 +317,9 @@ static int auxtrace_queues__add_buffer(struct auxtrace_queues *queues,
  {
- 	size_t s = vhost_has_feature(vq, VIRTIO_RING_F_EVENT_IDX) ? 2 : 0;
-@@ -1161,8 +1161,8 @@ static void vhost_vq_meta_update(struct vhost_virtqueue *vq,
- 		vq->meta_iotlb[type] = node;
+ 	int err = -ENOMEM;
+ 
++	if (filter_cpu(session, buffer->cpu))
++		return 0;
++
+ 	buffer = memdup(buffer, sizeof(*buffer));
+ 	if (!buffer)
+ 		return -ENOMEM;
+@@ -344,13 +354,6 @@ out_free:
+ 	return err;
  }
  
--static int iotlb_access_ok(struct vhost_virtqueue *vq,
--			   int access, u64 addr, u64 len, int type)
-+static bool iotlb_access_ok(struct vhost_virtqueue *vq,
-+			    int access, u64 addr, u64 len, int type)
- {
- 	const struct vhost_umem_node *node;
- 	struct vhost_umem *umem = vq->iotlb;
-@@ -1220,7 +1220,7 @@ EXPORT_SYMBOL_GPL(vq_iotlb_prefetch);
+-static bool filter_cpu(struct perf_session *session, int cpu)
+-{
+-	unsigned long *cpu_bitmap = session->itrace_synth_opts->cpu_bitmap;
+-
+-	return cpu_bitmap && cpu != -1 && !test_bit(cpu, cpu_bitmap);
+-}
+-
+ int auxtrace_queues__add_event(struct auxtrace_queues *queues,
+ 			       struct perf_session *session,
+ 			       union perf_event *event, off_t data_offset,
+@@ -367,9 +370,6 @@ int auxtrace_queues__add_event(struct auxtrace_queues *queues,
+ 	};
+ 	unsigned int idx = event->auxtrace.idx;
  
- /* Can we log writes? */
- /* Caller should have device mutex but not vq mutex */
--int vhost_log_access_ok(struct vhost_dev *dev)
-+bool vhost_log_access_ok(struct vhost_dev *dev)
- {
- 	return memory_access_ok(dev, dev->umem, 1);
- }
-@@ -1228,8 +1228,8 @@ EXPORT_SYMBOL_GPL(vhost_log_access_ok);
- 
- /* Verify access for write logging. */
- /* Caller should have vq mutex and device mutex */
--static int vq_log_access_ok(struct vhost_virtqueue *vq,
--			    void __user *log_base)
-+static bool vq_log_access_ok(struct vhost_virtqueue *vq,
-+			     void __user *log_base)
- {
- 	size_t s = vhost_has_feature(vq, VIRTIO_RING_F_EVENT_IDX) ? 2 : 0;
- 
-@@ -1242,14 +1242,14 @@ static int vq_log_access_ok(struct vhost_virtqueue *vq,
- 
- /* Can we start vq? */
- /* Caller should have vq mutex and device mutex */
--int vhost_vq_access_ok(struct vhost_virtqueue *vq)
-+bool vhost_vq_access_ok(struct vhost_virtqueue *vq)
- {
- 	if (!vq_log_access_ok(vq, vq->log_base))
+-	if (filter_cpu(session, event->auxtrace.cpu))
 -		return 0;
-+		return false;
- 
- 	/* Access validation occurs at prefetch time with IOTLB */
- 	if (vq->iotlb)
--		return 1;
-+		return true;
- 
- 	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used);
+-
+ 	return auxtrace_queues__add_buffer(queues, session, idx, &buffer,
+ 					   buffer_ptr);
  }
--- 
-2.14.3
