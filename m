@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+WwtZLbRSHLL6uCVJdm3ys8OWSW/TYus9k2pbB+zTF/l0aCyShBgUQ9JdGGNuttnsMRjKp
-ARC-Seal: i=1; a=rsa-sha256; t=1523399507; cv=none;
+X-Google-Smtp-Source: AIpwx49HtLbax1F4lauJV8puTkVhxroeex7qtyahy0VN5vHFJM/n9BtBALOeBGB8AIWOGUD8Pj9v
+ARC-Seal: i=1; a=rsa-sha256; t=1523399504; cv=none;
         d=google.com; s=arc-20160816;
-        b=QtjNbyIuh268pAai90J1fee59QuvQtYqHrgGlqXnH6A4UO2/7i40R4Zamx3RLyQlJW
-         6+KixNnLt1dLSeTQ35qKkqF+BI3KiG2JNEriHTDiakxk+dRfOUPSA/P1pZkYYnnGvMHd
-         Lf+yKSiwhKEmy7brfX8PUBJBWgk0WwGpgVCtNkndcNGatFFHC/ENTgmfTj1qspoIWa5/
-         XtqQxoQt4/Lyqve0t3hoHjXpJbiItQzwaOeCJ4v99/FOReSXFbxOYo2rhU0CNGboPUal
-         ntoPU8wG4aZ5zgVZYYqbNdQIS9QjvA2Aa5hYuspCSj0iyFO2wXNev25rgz9JncAGp/Q8
-         GmOA==
+        b=X9pAApJjAmifz8SGoO1x+3/FKSJgdv/yFfbkUf0dEF84ZFkGcZyC0GAhz4ht2p3fo3
+         fmx8/UE/ywYvKa91rYjhh6IkerBzRkgFZ18ORS6abc1sh9CZ1wzMTwSb8JFEipJmzVJY
+         nffAunXXNnbxJDXm1dobWba5krCvMO/ryQ0FjGhWlK0ESTC4hoBIJPres50BhO+3aWCy
+         9Bn90VWi0DzwcT97c69rO39IjBYCmfTsiUPgYemqdkG5WtCfpTGrte8dEVGkNNInaRtn
+         YBzxVvrUVU6G0SeL+J2IwwGzLhRwrOX8RIFQ0/ph93BskNdwaHg0J6nXVg6GrDqQOb/F
+         mb3A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=SUII8IWb0zhavL97uyfTXbnKwk2ffEezTCLesvTEC3o=;
-        b=TBjjUXDqacbR7DsjECslXl2JzLV4UhA5WHZN9x507/GR69zlZU6g0cOQUm2ECkOW/t
-         cyO2/98DorDB5FnqrWqL7zottNwc8dHq80aJDhsmMecxjqhxQsqP4twORe+YNsj+OVm2
-         BKGZcliAU7pWtPdxbnmTDAOPmSLbWTn+0d3emrx3lI+4/nOHPg2/tyLHApJvhz+EnoaJ
-         goDvr2kS5isn/5BvKlNFvC5C0N/rerF+APh9SxBzmN/+1rPerMjbGcwbPZQMBA2INqeg
-         MJ667P/OzGXkR83e4fhY1DiGAxYFjJZWzrnemq3lJaGeccTt9SxZAoM/ogJRkt1yOUzJ
-         RKtQ==
+        bh=E5/u/eXXOK+nHGoq4wa3QMC1WNo2nDuDNhj+RSdW4xs=;
+        b=iQWwLoHewW5/N6l6wAXZQQtd957walxdPmSyR44R/AYP0N22ylM9pZXuO0k2ioxO1e
+         xMqyPotVOM+XRJlYdDNVsbxGz1NT1AVkI97sfFeOqttcxZ4Hi6YJY7UWmWDFzRx0JApG
+         4HdbkG4C4yKrPzmuHaFGm674bBU3cdMIuUCPFENUPByuz7NvLGWvSgxcS1Rod1v0cykZ
+         iGKzwDcmHSj2FszyrzNPb9xp+SvZe/wpctqTGqAZp+FvT6J++m05DepERYNfWq1DyTTW
+         HpD8hRQCfQphDaPlGy7bQp+O8+NiGeu9WndY3bLm9L5rh6wNZxcn4eHCHbg0Z8fL7raD
+         NpQw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ashok Raj <ashok.raj@intel.com>,
-	Borislav Petkov <bp@suse.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Subject: [PATCH 4.15 115/168] x86/microcode: Do not upload microcode if CPUs are offline
-Date: Wed, 11 Apr 2018 00:24:17 +0200
-Message-Id: <20180410212805.319101844@linuxfoundation.org>
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 132/168] pptp: remove a buggy dst release in pptp_connect()
+Date: Wed, 11 Apr 2018 00:24:34 +0200
+Message-Id: <20180410212806.574389618@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400161395758639?=
-X-GMAIL-MSGID: =?utf-8?q?1597400161395758639?=
+X-GMAIL-THRID: =?utf-8?q?1597399696387961448?=
+X-GMAIL-MSGID: =?utf-8?q?1597400158987393033?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,70 +49,113 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ashok Raj <ashok.raj@intel.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 30ec26da9967d0d785abc24073129a34c3211777 upstream.
 
-Avoid loading microcode if any of the CPUs are offline, and issue a
-warning. Having different microcode revisions on the system at any time
-is outright dangerous.
+[ Upstream commit bfacfb457b36911a10140b8cb3ce76a74883ac5a ]
 
-[ Borislav: Massage changelog. ]
+Once dst has been cached in socket via sk_setup_caps(),
+it is illegal to call ip_rt_put() (or dst_release()),
+since sk_setup_caps() did not change dst refcount.
 
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
-Tested-by: Ashok Raj <ashok.raj@intel.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Link: http://lkml.kernel.org/r/1519352533-15992-4-git-send-email-ashok.raj@intel.com
-Link: https://lkml.kernel.org/r/20180228102846.13447-5-bp@alien8.de
+We can still dereference it since we hold socket lock.
+
+Caugth by syzbot :
+
+BUG: KASAN: use-after-free in atomic_dec_return include/asm-generic/atomic-instrumented.h:198 [inline]
+BUG: KASAN: use-after-free in dst_release+0x27/0xa0 net/core/dst.c:185
+Write of size 4 at addr ffff8801c54dc040 by task syz-executor4/20088
+
+CPU: 1 PID: 20088 Comm: syz-executor4 Not tainted 4.16.0+ #376
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x1a7/0x27d lib/dump_stack.c:53
+ print_address_description+0x73/0x250 mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report+0x23c/0x360 mm/kasan/report.c:412
+ check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+ check_memory_region+0x137/0x190 mm/kasan/kasan.c:267
+ kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
+ atomic_dec_return include/asm-generic/atomic-instrumented.h:198 [inline]
+ dst_release+0x27/0xa0 net/core/dst.c:185
+ sk_dst_set include/net/sock.h:1812 [inline]
+ sk_dst_reset include/net/sock.h:1824 [inline]
+ sock_setbindtodevice net/core/sock.c:610 [inline]
+ sock_setsockopt+0x431/0x1b20 net/core/sock.c:707
+ SYSC_setsockopt net/socket.c:1845 [inline]
+ SyS_setsockopt+0x2ff/0x360 net/socket.c:1828
+ do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x4552d9
+RSP: 002b:00007f4878126c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007f48781276d4 RCX: 00000000004552d9
+RDX: 0000000000000019 RSI: 0000000000000001 RDI: 0000000000000013
+RBP: 000000000072bea0 R08: 0000000000000010 R09: 0000000000000000
+R10: 00000000200010c0 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000000526 R14: 00000000006fac30 R15: 0000000000000000
+
+Allocated by task 20088:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+ set_track mm/kasan/kasan.c:459 [inline]
+ kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
+ kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:489
+ kmem_cache_alloc+0x12e/0x760 mm/slab.c:3542
+ dst_alloc+0x11f/0x1a0 net/core/dst.c:104
+ rt_dst_alloc+0xe9/0x540 net/ipv4/route.c:1520
+ __mkroute_output net/ipv4/route.c:2265 [inline]
+ ip_route_output_key_hash_rcu+0xa49/0x2c60 net/ipv4/route.c:2493
+ ip_route_output_key_hash+0x20b/0x370 net/ipv4/route.c:2322
+ __ip_route_output_key include/net/route.h:126 [inline]
+ ip_route_output_flow+0x26/0xa0 net/ipv4/route.c:2577
+ ip_route_output_ports include/net/route.h:163 [inline]
+ pptp_connect+0xa84/0x1170 drivers/net/ppp/pptp.c:453
+ SYSC_connect+0x213/0x4a0 net/socket.c:1639
+ SyS_connect+0x24/0x30 net/socket.c:1620
+ do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+Freed by task 20082:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+ set_track mm/kasan/kasan.c:459 [inline]
+ __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
+ kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
+ __cache_free mm/slab.c:3486 [inline]
+ kmem_cache_free+0x83/0x2a0 mm/slab.c:3744
+ dst_destroy+0x266/0x380 net/core/dst.c:140
+ dst_destroy_rcu+0x16/0x20 net/core/dst.c:153
+ __rcu_reclaim kernel/rcu/rcu.h:178 [inline]
+ rcu_do_batch kernel/rcu/tree.c:2675 [inline]
+ invoke_rcu_callbacks kernel/rcu/tree.c:2930 [inline]
+ __rcu_process_callbacks kernel/rcu/tree.c:2897 [inline]
+ rcu_process_callbacks+0xd6c/0x17b0 kernel/rcu/tree.c:2914
+ __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
+
+The buggy address belongs to the object at ffff8801c54dc000
+ which belongs to the cache ip_dst_cache of size 168
+The buggy address is located 64 bytes inside of
+ 168-byte region [ffff8801c54dc000, ffff8801c54dc0a8)
+The buggy address belongs to the page:
+page:ffffea0007153700 count:1 mapcount:0 mapping:ffff8801c54dc000 index:0x0
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffff8801c54dc000 0000000000000000 0000000100000010
+raw: ffffea0006b34b20 ffffea0006b6c1e0 ffff8801d674a1c0 0000000000000000
+page dumped because: kasan: bad access detected
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kernel/cpu/microcode/core.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/net/ppp/pptp.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -486,6 +486,16 @@ static void __exit microcode_dev_exit(vo
- /* fake device for request_firmware */
- static struct platform_device	*microcode_pdev;
+--- a/drivers/net/ppp/pptp.c
++++ b/drivers/net/ppp/pptp.c
+@@ -464,7 +464,6 @@ static int pptp_connect(struct socket *s
+ 	po->chan.mtu = dst_mtu(&rt->dst);
+ 	if (!po->chan.mtu)
+ 		po->chan.mtu = PPP_MRU;
+-	ip_rt_put(rt);
+ 	po->chan.mtu -= PPTP_HEADER_OVERHEAD;
  
-+static int check_online_cpus(void)
-+{
-+	if (num_online_cpus() == num_present_cpus())
-+		return 0;
-+
-+	pr_err("Not all CPUs online, aborting microcode update.\n");
-+
-+	return -EINVAL;
-+}
-+
- static enum ucode_state reload_for_cpu(int cpu)
- {
- 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
-@@ -519,7 +529,13 @@ static ssize_t reload_store(struct devic
- 		return size;
- 
- 	get_online_cpus();
-+
-+	ret = check_online_cpus();
-+	if (ret)
-+		goto put;
-+
- 	mutex_lock(&microcode_mutex);
-+
- 	for_each_online_cpu(cpu) {
- 		tmp_ret = reload_for_cpu(cpu);
- 		if (tmp_ret > UCODE_NFOUND) {
-@@ -538,6 +554,8 @@ static ssize_t reload_store(struct devic
- 		microcode_check();
- 
- 	mutex_unlock(&microcode_mutex);
-+
-+put:
- 	put_online_cpus();
- 
- 	if (!ret)
+ 	po->chan.hdrlen = 2 + sizeof(struct pptp_gre_header);
