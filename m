@@ -1,77 +1,79 @@
-Return-Path: <peterz@infradead.org>
-X-Google-Smtp-Source: AIpwx4/5PZ97Xe6JFm3Le5VT+4HQKA0jmZ0TGGdkgROoWAG+Swujw+9zFBdXXDs3W/xuL5nY1Sid
-ARC-Seal: i=1; a=rsa-sha256; t=1523361304; cv=none;
+Return-Path: <dietmar.eggemann@arm.com>
+X-Google-Smtp-Source: AIpwx48XfTBZrQNuhOzgFAohdPpqpYBZlZsRMqma5OJsCRm2PMgFoIryTpqqu/t4jzDbNac6etAK
+ARC-Seal: i=1; a=rsa-sha256; t=1523361812; cv=none;
         d=google.com; s=arc-20160816;
-        b=0dIhcvhK7aMjGqFcRZllOo1cMkE/8MWBKAiXIA/bBcPPMY6rVNn/u2iQ/X6phU3J9y
-         dqkkg85r2rhNTBsI5spi5jrhB8R63B0j2d35njiEUup8UXWBj1O4xU+lS3WyWCMM0lBl
-         gKV1UwWVBy8J1fuGsZpQ0HuwAHRFNt4Vcx3ape+I0oZY8roUphmpYCGBhVunyUn0k1//
-         gWiJWP6BWhkPxM4W/OTAyc6RC4kuT/cwN6kmxmxVVxPwHVnd9NGufsw7Fe0tsHHQsdgT
-         YGoWQWuteicHFm01QEwx5JWAmivITY+SwqGa9KTz+8f2b7/1eNCBw4ULHZvf6Y2Z2583
-         viEw==
+        b=iKzo9HXFLxfb4hEW1wrf9HQChm1myuYmjsA6KwEso4J6N3mlzgoQv6lg5Wnu+ji2zi
+         ztKr12CMn2VvKjK20utNSjdBnn9GFywyZ0vg9dPQubADGr+BwwpILJAwmFfEn7x4C+lU
+         D0PInXvJZdIX8i1vQKz8byHPzov+xBLAd27Of5+TBsuLWH8iHGueXK9+0VqD1xdNcuOn
+         r682lUg/Tr/5yQyAyRD4IqIfk3vCVq61IbEsGe0SPanVvY9ICKJhyVwdYjfWsJ15own2
+         YVk1Fv5Lij4OXBHTG9hZaEaYPN7iJjxvwYRAQLbD0Hr3WpwUJBm4OV08flzF7rp87lWW
+         1isw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=kNUQ8mH7lxvqXddoMmUwBHX6YBzBWA5S/Z80+u75PJU=;
-        b=gbvkxOotAtzDIj4CncD0Gpk0pfcctAgTZT4/zl7Eic5HqIEHKaU8oN41Wssri3xeLh
-         so9kCE6wOpKFq0/cf/aowzuGPkJatkdB6wOZAOheYfrrEXWhwVJx/EMvvRuPrF+eteSj
-         EGBJ9v9eTe46mepLnGZaXNz8PcvULmTdY0rrf8PDjVyehdxcHZ+fasjtIQ0dgRP0S0Vi
-         t/X7l+rUtEPeI+CTSLcG5bwxPntJI2fBsT0sFWquUBQNhiYoLxk9Vums0O4JhFPFqLvG
-         QVKaZvKRS0pP/pm/DCU9X6Rwl0RArRE77AqIBJ3uHRt/ydyieNlL+CY+HUQFsjoXry2K
-         P7xg==
+        bh=8rC8o5CTTVpcH9+Oit7h7urY7qdn+bu4K+pHaozfUkU=;
+        b=rgGJJ/qbuB50iOWkZTMB5NEy3jViu5Pftof2mWXq4aMD45++aj+IbrXN+QOCEHzsmn
+         iBavm66axsddk7GwH6e+apYJLNWHvfVp6hq1rMrpQ/IAf8HakxEJV3MPvI2dKtcznDUC
+         ocw1+QiyY3bQeDM9avgl44CRQyqa0RoavnxCRYan/0Iq1DizWvLHzJ7VmDEyL7tBsn/i
+         OSPR7kvamqNxJ/Rn9crpXtFYZIXgmqsgbGzt1rAYMgoygUqusnEAJCMZXCvMUtHg7h7U
+         x6dCA87AiZOYh65aahKcJKooIcjyYoIKNfsqJ1l1Oa4APEj1PQwOxIEGYWMnHjWil1Ko
+         zmCA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=kwECHkuq;
-       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=peterz@infradead.org
+       spf=pass (google.com: domain of dietmar.eggemann@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=dietmar.eggemann@arm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=kwECHkuq;
-       spf=pass (google.com: best guess record for domain of peterz@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=peterz@infradead.org
-Date: Tue, 10 Apr 2018 13:54:57 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: linux-kernel@vger.kernel.org, Quentin Perret <quentin.perret@arm.com>,
-	Thara Gopinath <thara.gopinath@linaro.org>,
-	linux-pm@vger.kernel.org,
-	Morten Rasmussen <morten.rasmussen@arm.com>,
-	Chris Redpath <chris.redpath@arm.com>,
-	Patrick Bellasi <patrick.bellasi@arm.com>,
-	Valentin Schneider <valentin.schneider@arm.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Todd Kjos <tkjos@google.com>, Joel Fernandes <joelaf@google.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steve Muckle <smuckle@google.com>,
-	Eduardo Valentin <edubezval@gmail.com>
+       spf=pass (google.com: domain of dietmar.eggemann@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=dietmar.eggemann@arm.com
 Subject: Re: [RFC PATCH v2 2/6] sched: Introduce energy models of CPUs
-Message-ID: <20180410115457.GB4043@hirez.programming.kicks-ass.net>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Quentin Perret <quentin.perret@arm.com>,
+ Thara Gopinath <thara.gopinath@linaro.org>, linux-pm@vger.kernel.org,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Chris Redpath <chris.redpath@arm.com>,
+ Patrick Bellasi <patrick.bellasi@arm.com>,
+ Valentin Schneider <valentin.schneider@arm.com>,
+ "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Todd Kjos <tkjos@google.com>,
+ Joel Fernandes <joelaf@google.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Steve Muckle <smuckle@google.com>, Eduardo Valentin <edubezval@gmail.com>
 References: <20180406153607.17815-1-dietmar.eggemann@arm.com>
  <20180406153607.17815-3-dietmar.eggemann@arm.com>
+ <20180410115457.GB4043@hirez.programming.kicks-ass.net>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <2e35ede9-0926-836b-4068-8d12b6296597@arm.com>
+Date: Tue, 10 Apr 2018 14:03:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180406153607.17815-3-dietmar.eggemann@arm.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180410115457.GB4043@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597011681114649781?=
-X-GMAIL-MSGID: =?utf-8?q?1597360103460522422?=
+X-GMAIL-MSGID: =?utf-8?q?1597360636408984538?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Apr 06, 2018 at 04:36:03PM +0100, Dietmar Eggemann wrote:
-> +		/*
-> +		 * Build the energy model of one CPU, and link it to all CPUs
-> +		 * in its frequency domain. This should be correct as long as
-> +		 * they share the same micro-architecture.
-> +		 */
+On 04/10/2018 01:54 PM, Peter Zijlstra wrote:
+> On Fri, Apr 06, 2018 at 04:36:03PM +0100, Dietmar Eggemann wrote:
+>> +		/*
+>> +		 * Build the energy model of one CPU, and link it to all CPUs
+>> +		 * in its frequency domain. This should be correct as long as
+>> +		 * they share the same micro-architecture.
+>> +		 */
+> 
+> Aside from the whole PM_OPP question; you should assert that assumption.
+> Put an explicit check for the uarch in and FAIL the init if that isn't
+> met.
+> 
+> I don't think it makes _ANY_ kind of sense to share a frequency domain
+> across uarchs and we should be very clear we're not going to support
+> anything like that.
+> 
+> I know DynamiQ strictly speaking allows that, but since it's insane, we
+> should consider that a bug in DynamiQ.
 
-Aside from the whole PM_OPP question; you should assert that assumption.
-Put an explicit check for the uarch in and FAIL the init if that isn't
-met.
-
-I don't think it makes _ANY_ kind of sense to share a frequency domain
-across uarchs and we should be very clear we're not going to support
-anything like that.
-
-I know DynamiQ strictly speaking allows that, but since it's insane, we
-should consider that a bug in DynamiQ.
+Totally agree! We will add this assert. One open question of the current 
+EAS design solved ;-)
