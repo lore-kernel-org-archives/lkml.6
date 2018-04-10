@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/T0i+PSNQonFExpK5D5MNokJy/FPcu+BLjvIY4qDkZpfCqSWhGqeU4yJ0YxVu6IoZtPjFY
-ARC-Seal: i=1; a=rsa-sha256; t=1523399424; cv=none;
+X-Google-Smtp-Source: AIpwx4/QZSmM7E35qAWTlEqmtKkO5Y9Lcv2S/WwLAbasB3NmJxmcPDL1roVoSRW1YlbdLD/846tn
+ARC-Seal: i=1; a=rsa-sha256; t=1523399421; cv=none;
         d=google.com; s=arc-20160816;
-        b=ugX7Gfn20vNY169X6fQSm1/7XOdDd3YHmK+JxRju8L5km/2E7XYkX7wKFzIu721HYE
-         2eQBScf7sgBtraNOrtvqNt+Yd2Q43fwU93FDtE/73HgqGFYQX/blt4IClESmJEItnw1c
-         ru0+N7QM6dDE8AbVod6LofnxxBvb7aQu0KgckCLvWEK2N+K7N5drLexlVZIfdW4Vid8O
-         W4ISrpS32uOZNNv06JLGxki/1LVZ2vH3TWZR7v4bdPePLUbTUMjuW68g2lNKMPiS6Zpx
-         JRFTG/SGX4GGiAyvkhdPwTIeNdCt1e+s6AXZ67ZBAjf491sKepL0aMBIzpXUhrBA7jzD
-         t6Uw==
+        b=AhChLsIb7HqhFXF/UnRp7zAuxhBOWuAIrAvQcRx9pb0qhLaO7fv9WaX2yKhO/LJyJK
+         ToYCmWbYujDmP1/zr+ekFmDrjfQDCI0FIBLfARa9FyvWVI7xxAjHEsbeLCKkEiM7fAuo
+         QL1e82YW/9GOVHF/EvFgot4Lj/ewFAJDrbL+w0heibcgVQ5aJKSfeXN7nhBOUMTIjoOD
+         YX3r1+opsOjtvWBbyU/QB6SdNO0ygw076nyxZU9lIbcqijlpe8mFNP+pI9PpwxViQunz
+         qwOKggbJiQfpRTAnfud0U8fShWUsaqh0KRZ+7J7vN9D8x8Yyc1qnIdilrYNQ5D6nWPdL
+         zTaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=YBpCUqs48yebc02wcvEPKUmTEFVrW6ofpw77q1xBiZc=;
-        b=L6rKg97bPA05qOCoxFOE6ijN9xon1dXf9tGjGFi0Qu/U67odDiXsaABdn6n4sHiktf
-         5LR7+IMNQzs2ycaOT3axKC0bRYJ2bx7u9PN1PYUAz8uZ9Fh8tLZSUtmxrEEnqDUKFco3
-         4qmyz+mrFK3SfGM7ywc7GCHHvr8C60LqP//vdKoRPKmbnqdeoRp6FtKovjc7izHiJeCq
-         zN/ev3GGxwWrkiGxezScuNT+4hLP7jAizZP9lzUHEHQjBRbJr4GsOBzxRL2vLpdPkzLH
-         NQZQiap1SiRQi9R70wcb/bj/7cGTbdN4VjC7tAklJqKmPlhokIWZiXLyqEXebgLjJFzd
-         2itA==
+        bh=l8kDVyzY0/pEJ91LTzp6d5z5iicbEV5ASZhyexPCqZI=;
+        b=XwYDvzQNrfn+UJ+d2p6q+0+iMmat2rLjqKszFSKd8VwJY4GkgpC8zhr38SOJ9QCTvo
+         SNs6W5eQF4HnpbJ3DgSobj45/la/ZqY9wAc2ubNkP5Y1uRfhDA0Prf1alHv4jWg+XZ/V
+         2TBHTN6WDL3UdgO6BBVDz7G0XcBINBAp0zNuUQ7JGdKAFSkxyGS+EI4SWH9MUQBt/RIw
+         zSekqKRoaUWvuKud6juB43XdD264TNJhyPFh9KFBx+rlYVNwe61TyylyNyRfVW1Dxt8v
+         9xfoQLwfR4SfHR4Q0pYxZ+l44lsiY2IAICqjGkRnA9TKWDpbSuN6t0hoNuS2n6cMYga8
+         q/8g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sumit Saxena <sumit.saxena@broadcom.com>,
-	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Hua Rui <huarui.dev@gmail.com>,
+	Michael Lyle <mlyle@lyle.org>,
+	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 094/168] scsi: megaraid_sas: Error handling for invalid ldcount provided by firmware in RAID map
-Date: Wed, 11 Apr 2018 00:23:56 +0200
-Message-Id: <20180410212804.249800752@linuxfoundation.org>
+Subject: [PATCH 4.15 072/168] bcache: ret IOERR when read meets metadata error
+Date: Wed, 11 Apr 2018 00:23:34 +0200
+Message-Id: <20180410212803.260884103@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400074797676914?=
-X-GMAIL-MSGID: =?utf-8?q?1597400074797676914?=
+X-GMAIL-THRID: =?utf-8?q?1597400072268634043?=
+X-GMAIL-MSGID: =?utf-8?q?1597400072268634043?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,74 +51,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+From: Rui Hua <huarui.dev@gmail.com>
 
 
-[ Upstream commit 7ada701d0d5e5c6d357e157a72b841db3e8d03f4 ]
+[ Upstream commit b221fc130c49c50f4c2250d22e873420765a9fa2 ]
 
-Currently driver does not validate ldcount provided by firmware.  If the
-value is invalid, fail RAID map validation accordingly.  This issue is
-rare to hit in field and is fixed as part of code review.
+The read request might meet error when searching the btree, but the error
+was not handled in cache_lookup(), and this kind of metadata failure will
+not go into cached_dev_read_error(), finally, the upper layer will receive
+bi_status=0.  In this patch we judge the metadata error by the return
+value of bch_btree_map_keys(), there are two potential paths give rise to
+the error:
 
-Signed-off-by: Sumit Saxena <sumit.saxena@broadcom.com>
-Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+1. Because the btree is not totally cached in memery, we maybe get error
+   when read btree node from cache device (see bch_btree_node_get()), the
+   likely errno is -EIO, -ENOMEM
+
+2. When read miss happens, bch_btree_insert_check_key() will be called to
+   insert a "replace_key" to btree(see cached_dev_cache_miss(), just for
+   doing preparatory work before insert the missed data to cache device),
+   a failure can also happen in this situation, the likely errno is
+   -ENOMEM
+
+bch_btree_map_keys() will return MAP_DONE in normal scenario, but we will
+get either -EIO or -ENOMEM in above two cases. if this happened, we should
+NOT recover data from backing device (when cache device is dirty) because
+we don't know whether bkeys the read request covered are all clean.  And
+after that happened, s->iop.status is still its initially value(0) before
+we submit s->bio.bio, we set it to BLK_STS_IOERR, so it can go into
+cached_dev_read_error(), and finally it can be passed to upper layer, or
+recovered by reread from backing device.
+
+[edit by mlyle: patch formatting, word-wrap, comment spelling,
+commit log format]
+
+Signed-off-by: Hua Rui <huarui.dev@gmail.com>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/megaraid/megaraid_sas_fp.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/md/bcache/request.c |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
---- a/drivers/scsi/megaraid/megaraid_sas_fp.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fp.c
-@@ -168,7 +168,7 @@ static struct MR_LD_SPAN *MR_LdSpanPtrGe
- /*
-  * This function will Populate Driver Map using firmware raid map
-  */
--void MR_PopulateDrvRaidMap(struct megasas_instance *instance)
-+static int MR_PopulateDrvRaidMap(struct megasas_instance *instance)
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -576,6 +576,7 @@ static void cache_lookup(struct closure
  {
- 	struct fusion_context *fusion = instance->ctrl_context;
- 	struct MR_FW_RAID_MAP_ALL     *fw_map_old    = NULL;
-@@ -259,7 +259,7 @@ void MR_PopulateDrvRaidMap(struct megasa
- 		ld_count = (u16)le16_to_cpu(fw_map_ext->ldCount);
- 		if (ld_count > MAX_LOGICAL_DRIVES_EXT) {
- 			dev_dbg(&instance->pdev->dev, "megaraid_sas: LD count exposed in RAID map in not valid\n");
--			return;
-+			return 1;
- 		}
+ 	struct search *s = container_of(cl, struct search, iop.cl);
+ 	struct bio *bio = &s->bio.bio;
++	struct cached_dev *dc;
+ 	int ret;
  
- 		pDrvRaidMap->ldCount = (__le16)cpu_to_le16(ld_count);
-@@ -285,6 +285,12 @@ void MR_PopulateDrvRaidMap(struct megasa
- 			fusion->ld_map[(instance->map_id & 1)];
- 		pFwRaidMap = &fw_map_old->raidMap;
- 		ld_count = (u16)le32_to_cpu(pFwRaidMap->ldCount);
-+		if (ld_count > MAX_LOGICAL_DRIVES) {
-+			dev_dbg(&instance->pdev->dev,
-+				"LD count exposed in RAID map in not valid\n");
-+			return 1;
-+		}
-+
- 		pDrvRaidMap->totalSize = pFwRaidMap->totalSize;
- 		pDrvRaidMap->ldCount = (__le16)cpu_to_le16(ld_count);
- 		pDrvRaidMap->fpPdIoTimeoutSec = pFwRaidMap->fpPdIoTimeoutSec;
-@@ -300,6 +306,8 @@ void MR_PopulateDrvRaidMap(struct megasa
- 			sizeof(struct MR_DEV_HANDLE_INFO) *
- 			MAX_RAIDMAP_PHYSICAL_DEVICES);
+ 	bch_btree_op_init(&s->op, -1);
+@@ -588,6 +589,27 @@ static void cache_lookup(struct closure
+ 		return;
  	}
+ 
++	/*
++	 * We might meet err when searching the btree, If that happens, we will
++	 * get negative ret, in this scenario we should not recover data from
++	 * backing device (when cache device is dirty) because we don't know
++	 * whether bkeys the read request covered are all clean.
++	 *
++	 * And after that happened, s->iop.status is still its initial value
++	 * before we submit s->bio.bio
++	 */
++	if (ret < 0) {
++		BUG_ON(ret == -EINTR);
++		if (s->d && s->d->c &&
++				!UUID_FLASH_ONLY(&s->d->c->uuids[s->d->id])) {
++			dc = container_of(s->d, struct cached_dev, disk);
++			if (dc && atomic_read(&dc->has_dirty))
++				s->recoverable = false;
++		}
++		if (!s->iop.status)
++			s->iop.status = BLK_STS_IOERR;
++	}
 +
-+	return 0;
+ 	closure_return(cl);
  }
  
- /*
-@@ -317,8 +325,8 @@ u8 MR_ValidateMapInfo(struct megasas_ins
- 	u16 ld;
- 	u32 expected_size;
- 
--
--	MR_PopulateDrvRaidMap(instance);
-+	if (MR_PopulateDrvRaidMap(instance))
-+		return 0;
- 
- 	fusion = instance->ctrl_context;
- 	drv_map = fusion->ld_drv_map[(instance->map_id & 1)];
