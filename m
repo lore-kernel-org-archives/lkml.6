@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49OuBlAsa6QxYiUSWXz6s8vEXRDM9BTlMeGuPTHCdYaGbqS6LYi4AOo6bwVCi52VRBtvri1
-ARC-Seal: i=1; a=rsa-sha256; t=1523399363; cv=none;
+X-Google-Smtp-Source: AIpwx4/6IeBhZ0EgN7HZku3/Ome4eDs0wooxg2P1tL9euUWB5zdQFUnIuOh8Loq8gk0X4JNi674o
+ARC-Seal: i=1; a=rsa-sha256; t=1523399360; cv=none;
         d=google.com; s=arc-20160816;
-        b=LK7AYw91XrFj1eXiNcZ1tKx6y6meWzvWPF5JPcoWQJVQm8ZRororJZybcesalLh+LS
-         bS1suVUlJ2O+OlSrkEtsvASIj3DQtmh1idJyenx5zp462TlBBHk1iuAkMftoTd6DYUzV
-         /yOJ7ofvEyMXW9MAaoG9vzlo/4sOl2jlrW9fvipLkhjTP/LGxGggJ6Gc9TIkVyqe/EpY
-         I3rlJSkk9edxmDOcA4jp6LdARGQhXLsdhkM8sO2Fao9Ji2lkRxsQOZrbJLtzisS0v1Ti
-         DAjg+DpWXUo/yyHaSZeDg4nDwYNuzQdzSz8/6fdWG9ozhYJ6WU8x7f14PEw68zpVGijX
-         EF6g==
+        b=Ql56nC8vVrQ2eYNErIMjweNozDfv72IRCcHkCMirooZXY58dw3sUNrwKMUbxY9PwOy
+         6LrZAjhmjOP/xJdAZQbiLVksBaM9FgZ4R9XH7sRZHvl8fYW558xDDJnax/gXNLS4hI8C
+         6BBEQVbnrNOQJFRfLAy2QVfm6EUlN1q54NkNMihidIfYD+Bjame4boQFP/l7VZbny0j4
+         vPUQcuNlRV9Z2hAWb+Zmhl4OVinrhHM2gM+fDWrkqed31R8v2vuCBlf32seTjLh8DMCf
+         XmmiGzd+0vsgP8FpcbI4bk9lrgoPnyistVtdF1/ueMkf2K+ENHN6+YdcvXvurtwQsw/E
+         740w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=uuQQeR7U55zSGlD+Fz3kBKwyx6c8ktONK/z2rjhWIO0=;
-        b=Oo7+ACxsUXvvx6RMO1OcZDax6TxcG4ueFiARaTBkLQpVjzDs1qASPcKSW5EJaUF63q
-         cnfaG8p/27DSLbc2TMtHJR00XI6UFLNOXaLTYCJmusPTTcmGI/8JXrtAwglposMktQHD
-         Y8KJRD1enPehs2yahPZgiF7HeUMvUl23Jyy2oLBTy84qyL9bRvX+3a2/nffH6Ddg5dVw
-         PPAk4+pV/KAwGVgry0XTz/JvSfJZEDRqhCzwOP+HAhPr8hgoQn1hv1HqrzRPVMguZtYQ
-         FqrpopNeY9syTOTWejH3xNJEJwC0hMhreLiwgQDhvkSfSdiMY5/h1JzYZy9El10J5L1W
-         jBow==
+        bh=BwSt9SR7ToDX7nJOztAuuIQ3i99jSq52obRkzZ/dCWs=;
+        b=vp2rs37yMks5H/C4ZBnJEKHuys2B9Pu5OrnCmhW7aRgMijJeK8qxubRag/yQnfrlbY
+         vbp/ej+/RcIN+U1YHM7w55oKTGBVwr89wwtD1nu6KqbNdBUN1Gess/SR5GVp/+e5B8X2
+         F8jKwCSmcLw6aWLIzT3pd0aOtKWuj4PQciyhlvzkcaXxLX+9nUOgygtZgnnLPGPAsmIp
+         5jjEB7qynjvLLKJuVpcRoJVRVCjBSP8oxZjXKhmQTC/+GmVUCSuuh/OZd4BxdHp/G0MQ
+         UhosWQNFH9rL32uKFOdsySFBu+TbZ+PlaDu8u+GZlUpqVYOJ2JlUkfs73/iS6/nuOFUW
+         isfQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Yi Zhang <yi.zhang@redhat.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
+	Jin Yao <yao.jin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 052/168] blk-mq: avoid to map CPU into stale hw queue
-Date: Wed, 11 Apr 2018 00:23:14 +0200
-Message-Id: <20180410212802.420517904@linuxfoundation.org>
+Subject: [PATCH 4.15 061/168] perf report: Fix a no annotate browser displayed issue
+Date: Wed, 11 Apr 2018 00:23:23 +0200
+Message-Id: <20180410212802.798227844@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -43,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400010791462123?=
-X-GMAIL-MSGID: =?utf-8?q?1597400010791462123?=
+X-GMAIL-THRID: =?utf-8?q?1597400008123802873?=
+X-GMAIL-MSGID: =?utf-8?q?1597400008123802873?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,100 +55,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Jin Yao <yao.jin@linux.intel.com>
 
 
-[ Upstream commit 7d4901a90d02500c8011472a060f9b2e60e6e605 ]
+[ Upstream commit 40c39e3046411f84bab82f66783ff3593e2bcd9b ]
 
-blk_mq_pci_map_queues() may not map one CPU into any hw queue, but its
-previous map isn't cleared yet, and may point to one stale hw queue
-index.
+When enabling '-b' option in perf record, for example,
 
-This patch fixes the following issue by clearing the mapping table before
-setting it up in blk_mq_pci_map_queues().
+  perf record -b ...
+  perf report
 
-This patches fixes this following issue reported by Zhang Yi:
+and then browsing the annotate browser from perf report (press 'A'), it
+would fail (annotate browser can't be displayed).
 
-[  101.202734] BUG: unable to handle kernel NULL pointer dereference at 0000000094d3013f
-[  101.211487] IP: blk_mq_map_swqueue+0xbc/0x200
-[  101.216346] PGD 0 P4D 0
-[  101.219171] Oops: 0000 [#1] SMP
-[  101.222674] Modules linked in: sunrpc ipmi_ssif vfat fat intel_rapl sb_edac x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel intel_cstate intel_uncore mxm_wmi intel_rapl_perf iTCO_wdt ipmi_si ipmi_devintf pcspkr iTCO_vendor_support sg dcdbas ipmi_msghandler wmi mei_me lpc_ich shpchp mei acpi_power_meter dm_multipath ip_tables xfs libcrc32c sd_mod mgag200 i2c_algo_bit drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm drm ahci libahci crc32c_intel libata tg3 nvme nvme_core megaraid_sas ptp i2c_core pps_core dm_mirror dm_region_hash dm_log dm_mod
-[  101.284881] CPU: 0 PID: 504 Comm: kworker/u25:5 Not tainted 4.15.0-rc2 #1
-[  101.292455] Hardware name: Dell Inc. PowerEdge R730xd/072T6D, BIOS 2.5.5 08/16/2017
-[  101.301001] Workqueue: nvme-wq nvme_reset_work [nvme]
-[  101.306636] task: 00000000f2c53190 task.stack: 000000002da874f9
-[  101.313241] RIP: 0010:blk_mq_map_swqueue+0xbc/0x200
-[  101.318681] RSP: 0018:ffffc9000234fd70 EFLAGS: 00010282
-[  101.324511] RAX: ffff88047ffc9480 RBX: ffff88047e130850 RCX: 0000000000000000
-[  101.332471] RDX: ffffe8ffffd40580 RSI: ffff88047e509b40 RDI: ffff88046f37a008
-[  101.340432] RBP: 000000000000000b R08: ffff88046f37a008 R09: 0000000011f94280
-[  101.348392] R10: ffff88047ffd4d00 R11: 0000000000000000 R12: ffff88046f37a008
-[  101.356353] R13: ffff88047e130f38 R14: 000000000000000b R15: ffff88046f37a558
-[  101.364314] FS:  0000000000000000(0000) GS:ffff880277c00000(0000) knlGS:0000000000000000
-[  101.373342] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  101.379753] CR2: 0000000000000098 CR3: 000000047f409004 CR4: 00000000001606f0
-[  101.387714] Call Trace:
-[  101.390445]  blk_mq_update_nr_hw_queues+0xbf/0x130
-[  101.395791]  nvme_reset_work+0x6f4/0xc06 [nvme]
-[  101.400848]  ? pick_next_task_fair+0x290/0x5f0
-[  101.405807]  ? __switch_to+0x1f5/0x430
-[  101.409988]  ? put_prev_entity+0x2f/0xd0
-[  101.414365]  process_one_work+0x141/0x340
-[  101.418836]  worker_thread+0x47/0x3e0
-[  101.422921]  kthread+0xf5/0x130
-[  101.426424]  ? rescuer_thread+0x380/0x380
-[  101.430896]  ? kthread_associate_blkcg+0x90/0x90
-[  101.436048]  ret_from_fork+0x1f/0x30
-[  101.440034] Code: 48 83 3c ca 00 0f 84 2b 01 00 00 48 63 cd 48 8b 93 10 01 00 00 8b 0c 88 48 8b 83 20 01 00 00 4a 03 14 f5 60 04 af 81 48 8b 0c c8 <48> 8b 81 98 00 00 00 f0 4c 0f ab 30 8b 81 f8 00 00 00 89 42 44
-[  101.461116] RIP: blk_mq_map_swqueue+0xbc/0x200 RSP: ffffc9000234fd70
-[  101.468205] CR2: 0000000000000098
-[  101.471907] ---[ end trace 5fe710f98228a3ca ]---
-[  101.482489] Kernel panic - not syncing: Fatal exception
-[  101.488505] Kernel Offset: disabled
-[  101.497752] ---[ end Kernel panic - not syncing: Fatal exception
+It's because the '.add_entry_cb' op of struct report is overwritten by
+hist_iter__branch_callback() in builtin-report.c. But this function doesn't do
+something like mapping symbols and sources. So next, do_annotate() will return
+directly.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Suggested-by: Christoph Hellwig <hch@lst.de>
-Reported-by: Yi Zhang <yi.zhang@redhat.com>
-Tested-by: Yi Zhang <yi.zhang@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+        notes = symbol__annotation(act->ms.sym);
+        if (!notes->src)
+                return 0;
+
+This patch adds the lost code to hist_iter__branch_callback (refer to
+hist_iter__report_callback).
+
+v2:
+
+Fix a crash bug when perform 'perf report --stdio'.
+
+The reason is that we init the symbol annotation only in browser mode, it
+doesn't allocate/init resources for stdio mode.
+
+So now in hist_iter__branch_callback(), it will return directly if it's not in
+browser mode.
+
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1514284963-18587-1-git-send-email-yao.jin@linux.intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/blk-mq.c |   22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ tools/perf/builtin-report.c |   18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2603,9 +2603,27 @@ static int blk_mq_alloc_rq_maps(struct b
- 
- static int blk_mq_update_queue_map(struct blk_mq_tag_set *set)
- {
--	if (set->ops->map_queues)
-+	if (set->ops->map_queues) {
-+		int cpu;
-+		/*
-+		 * transport .map_queues is usually done in the following
-+		 * way:
-+		 *
-+		 * for (queue = 0; queue < set->nr_hw_queues; queue++) {
-+		 * 	mask = get_cpu_mask(queue)
-+		 * 	for_each_cpu(cpu, mask)
-+		 * 		set->mq_map[cpu] = queue;
-+		 * }
-+		 *
-+		 * When we need to remap, the table has to be cleared for
-+		 * killing stale mapping since one CPU may not be mapped
-+		 * to any hw queue.
-+		 */
-+		for_each_possible_cpu(cpu)
-+			set->mq_map[cpu] = 0;
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -162,12 +162,28 @@ static int hist_iter__branch_callback(st
+ 	struct hist_entry *he = iter->he;
+ 	struct report *rep = arg;
+ 	struct branch_info *bi;
++	struct perf_sample *sample = iter->sample;
++	struct perf_evsel *evsel = iter->evsel;
++	int err;
 +
- 		return set->ops->map_queues(set);
--	else
-+	} else
- 		return blk_mq_map_queues(set);
++	if (!ui__has_annotation())
++		return 0;
++
++	hist__account_cycles(sample->branch_stack, al, sample,
++			     rep->nonany_branch_mode);
+ 
+ 	bi = he->branch_info;
++	err = addr_map_symbol__inc_samples(&bi->from, sample, evsel->idx);
++	if (err)
++		goto out;
++
++	err = addr_map_symbol__inc_samples(&bi->to, sample, evsel->idx);
++
+ 	branch_type_count(&rep->brtype_stat, &bi->flags,
+ 			  bi->from.addr, bi->to.addr);
+ 
+-	return 0;
++out:
++	return err;
  }
  
+ static int process_sample_event(struct perf_tool *tool,
