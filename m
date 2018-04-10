@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48PNPkCnVyHn7mHcZnll+anX5QdS2xQtwAMzJf47RyhIghctIxrHtuX2FAu6ccIXk9+wfvU
-ARC-Seal: i=1; a=rsa-sha256; t=1523399292; cv=none;
+X-Google-Smtp-Source: AIpwx4/5ZmeIWah+tgzsT5POROI7DRIpnE/h5AfmoieuDzq4ndI8f8oUSFjpqmUVS1D7GOftEo78
+ARC-Seal: i=1; a=rsa-sha256; t=1523399289; cv=none;
         d=google.com; s=arc-20160816;
-        b=ObFLQHkLM/FmRvWGg2eXEa4aixJxJT1Q+ZLt1AKKrZV/HjH+siBET+tSSpUEXeh7o2
-         TVTpBg68GwflUn/c+r0sIsJ3C5VSJTcWGO/sHiINhkFtr6hpcL2lutS1JB293cbVyUAp
-         B3pXAZYuYL7+4lIVtZYm+rfQ9jzt/2a3126Gl3j3R8HC5a/7UIshPs4pSp8lgDVPjuxw
-         Wv1G7I/tXS4rZEpSL1H2Y5LRYy6j7M9HJVZqwW+E1h2vN1sfabVyVNGTqB92ME+33nBF
-         6mstD4S82lPwCje8L3EYte5lAQ+EMF+fuQRozKL6xK6/pmvq2To9C3LU30mN92NePI0L
-         dnrg==
+        b=KFnRIevYueEU9QD8YUXyE9Qsq5FKpwsus06tItuYE2LmO+YGaeloFByy2ebgGNrreJ
+         PnPs86WxicvnzyOjoXmVeggQxcWIRyZGUjhWwap4iFvhvd8ayhoooNY1A9GS6HnoH3yV
+         x5sBlkxSu8+tpLInH6W7bTxIKDSJrZi/rOU4Zppd7H7gIBnXImzBMmLxBJZVSJMRlsqt
+         X0FgI0xCt10pupMttRxmQbcJk4w/3Fvw/+wCh1hbBsv3+AKH0WSo40m1iYA97MeTQ2o+
+         U/YyH+qLY30thbD79h6qzWc03fIrBgHAUDnsauwuhxfBlDRNueuKIrJE4Yx+nxZcONSO
+         LzqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=wNSvMDusv8VVTXWdnu1GBO8Wjb9pjUGpRPffoFcNK74=;
-        b=ivEsLYJoupxcWKCpissQOyvFmrrClkP/XyiiLotCm1U4gtfVpLJODx7yriAxusi70P
-         BYht3iJmDf8anK7Lg/7/1ie1nKFC3U7v0YBNKvXe8eKGg1I9KVNgA4X/kDIAZjizLbII
-         ZpyLx3lw38bEXCRvDT+T5eIqMGCHbyXqy7jxNYFfOVb5Kk7X6meSDGMK3aDcgPzap4dP
-         u4SzDRjth9UuGHWKAmfCSy12bxvERfAILaDwj2JbW8vrg7zN6f/kkzyP8ptEYAZYke1G
-         6/EQQpgCwN79HVp/J2IwTITlwmwc3Ua8c9XiNtBuHjjZl9ythQ4zp+6DqP1nFvduIexL
-         AumQ==
+        bh=OBW1sRbLzvSEYldCQ9A7vz0z/znK8byM5ZsnOy+F4Yw=;
+        b=Yu6wgrAD0N/DplFu4UX1V2BCrmnsUGD4AFwRMLre1ODCKayvrPi/lY3aMcvraX8NGQ
+         Z8YeBGfGMY6UNnb5/2HQ5ka3CqOUDiMEdsXYP2F42Oi2RQ2BAaxBxPNPEwKeNOspYuAJ
+         3Mz+xeJJtyejbkyO12DsX1qZ5/EwwQ/K5iGG0g7ODEh2rWWEU11UxvNcqSSkDloJer1s
+         CCNQzyihBbmcdWE4Am72De+lVEdAgAhI0KcpiDJFrKG6EjQhtVqPliABq2CuDJnoWj6S
+         lr9Tj5LdcYcq2tW+P95SOuQsI/SGDT2IwU1KygyKkp8m3H0cKCQA7naUtGNUTWEJUobk
+         MqQg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Pardha Saradhi K <pardha.saradhi.kesapragada@intel.com>,
-	Sanyog Kale <sanyog.r.kale@intel.com>,
-	Guneshwor Singh <guneshwor.o.singh@intel.com>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Mark Brown <broonie@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 034/168] ASoC: Intel: Skylake: Disable clock gating during firmware and library download
-Date: Wed, 11 Apr 2018 00:22:56 +0200
-Message-Id: <20180410212801.648223132@linuxfoundation.org>
+Subject: [PATCH 4.15 033/168] media: videobuf2-core: dont go out of the buffer range
+Date: Wed, 11 Apr 2018 00:22:55 +0200
+Message-Id: <20180410212801.611780763@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -44,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399936619580458?=
-X-GMAIL-MSGID: =?utf-8?q?1597399936619580458?=
+X-GMAIL-THRID: =?utf-8?q?1597399933288310575?=
+X-GMAIL-MSGID: =?utf-8?q?1597399933288310575?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,54 +50,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pardha Saradhi K <pardha.saradhi.kesapragada@intel.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
 
-[ Upstream commit d5cc0a1fcbb5ddbef9fdd4c4a978da3254ddbf37 ]
+[ Upstream commit df93dc61b0d8b19a5c9db545cf3fcc24f88dfde4 ]
 
-During firmware and library download, sometimes it is observed that
-firmware and library download is timed-out resulting into probe failure.
+Currently, there's no check if an invalid buffer range
+is passed. However, while testing DVB memory mapped apps,
+I got this:
 
-This patch disables dynamic clock gating while firmware and library
-download.
+   videobuf2_core: VB: num_buffers -2143943680, buffer 33, index -2143943647
+   unable to handle kernel paging request at ffff888b773c0890
+   IP: __vb2_queue_alloc+0x134/0x4e0 [videobuf2_core]
+   PGD 4142c7067 P4D 4142c7067 PUD 0
+   Oops: 0002 [#1] SMP
+   Modules linked in: xt_CHECKSUM iptable_mangle ipt_MASQUERADE nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables bluetooth rfkill ecdh_generic binfmt_misc rc_dvbsky sp2 ts2020 intel_rapl x86_pkg_temp_thermal dvb_usb_dvbsky intel_powerclamp dvb_usb_v2 coretemp m88ds3103 kvm_intel i2c_mux dvb_core snd_hda_codec_hdmi crct10dif_pclmul crc32_pclmul videobuf2_vmalloc videobuf2_memops snd_hda_intel ghash_clmulni_intel videobuf2_core snd_hda_codec rc_core mei_me intel_cstate snd_hwdep snd_hda_core videodev intel_uncore snd_pcm mei media tpm_tis tpm_tis_core intel_rapl_perf tpm snd_timer lpc_ich snd soundcore kvm irqbypass libcrc32c i915 i2c_algo_bit drm_kms_helper
+   e1000e ptp drm crc32c_intel video pps_core
+   CPU: 3 PID: 1776 Comm: dvbv5-zap Not tainted 4.14.0+ #78
+   Hardware name:                  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
+   task: ffff88877c73bc80 task.stack: ffffb7c402418000
+   RIP: 0010:__vb2_queue_alloc+0x134/0x4e0 [videobuf2_core]
+   RSP: 0018:ffffb7c40241bc60 EFLAGS: 00010246
+   RAX: 0000000080360421 RBX: 0000000000000021 RCX: 000000000000000a
+   RDX: ffffb7c40241bcf4 RSI: ffff888780362c60 RDI: ffff888796d8e130
+   RBP: ffffb7c40241bcc8 R08: 0000000000000316 R09: 0000000000000004
+   R10: ffff888780362c00 R11: 0000000000000001 R12: 000000000002f000
+   R13: ffff8887758be700 R14: 0000000000021000 R15: 0000000000000001
+   FS:  00007f2849024740(0000) GS:ffff888796d80000(0000) knlGS:0000000000000000
+   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+   CR2: ffff888b773c0890 CR3: 000000043beb2005 CR4: 00000000003606e0
+   Call Trace:
+    vb2_core_reqbufs+0x226/0x420 [videobuf2_core]
+    dvb_vb2_reqbufs+0x2d/0xc0 [dvb_core]
+    dvb_dvr_do_ioctl+0x98/0x1d0 [dvb_core]
+    dvb_usercopy+0x53/0x1b0 [dvb_core]
+    ? dvb_demux_ioctl+0x20/0x20 [dvb_core]
+    ? tty_ldisc_deref+0x16/0x20
+    ? tty_write+0x1f9/0x310
+    ? process_echoes+0x70/0x70
+    dvb_dvr_ioctl+0x15/0x20 [dvb_core]
+    do_vfs_ioctl+0xa5/0x600
+    SyS_ioctl+0x79/0x90
+    entry_SYSCALL_64_fastpath+0x1a/0xa5
+   RIP: 0033:0x7f28486f7ea7
+   RSP: 002b:00007ffc13b2db18 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+   RAX: ffffffffffffffda RBX: 000055b10fc06130 RCX: 00007f28486f7ea7
+   RDX: 00007ffc13b2db48 RSI: 00000000c0086f3c RDI: 0000000000000007
+   RBP: 0000000000000203 R08: 000055b10df1e02c R09: 000000000000002e
+   R10: 0036b42415108357 R11: 0000000000000246 R12: 0000000000000000
+   R13: 00007f2849062f60 R14: 00000000000001f1 R15: 00007ffc13b2da54
+   Code: 74 0a 60 8b 0a 48 83 c0 30 48 83 c2 04 89 48 d0 89 48 d4 48 39 f0 75 eb 41 8b 42 08 83 7d d4 01 41 c7 82 ec 01 00 00 ff ff ff ff <4d> 89 94 c5 88 00 00 00 74 14 83 c3 01 41 39 dc 0f 85 f1 fe ff
+   RIP: __vb2_queue_alloc+0x134/0x4e0 [videobuf2_core] RSP: ffffb7c40241bc60
+   CR2: ffff888b773c0890
 
-Signed-off-by: Pardha Saradhi K <pardha.saradhi.kesapragada@intel.com>
-Signed-off-by: Sanyog Kale <sanyog.r.kale@intel.com>
-Signed-off-by: Guneshwor Singh <guneshwor.o.singh@intel.com>
-Acked-By: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+So, add a sanity check in order to prevent going past array.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/intel/skylake/skl-messages.c |    4 ++++
- sound/soc/intel/skylake/skl-pcm.c      |    4 ++++
- 2 files changed, 8 insertions(+)
+ drivers/media/v4l2-core/videobuf2-core.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/sound/soc/intel/skylake/skl-messages.c
-+++ b/sound/soc/intel/skylake/skl-messages.c
-@@ -404,7 +404,11 @@ int skl_resume_dsp(struct skl *skl)
- 	if (skl->skl_sst->is_first_boot == true)
- 		return 0;
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -332,6 +332,10 @@ static int __vb2_queue_alloc(struct vb2_
+ 	struct vb2_buffer *vb;
+ 	int ret;
  
-+	/* disable dynamic clock gating during fw and lib download */
-+	ctx->enable_miscbdcge(ctx->dev, false);
++	/* Ensure that q->num_buffers+num_buffers is below VB2_MAX_FRAME */
++	num_buffers = min_t(unsigned int, num_buffers,
++			    VB2_MAX_FRAME - q->num_buffers);
 +
- 	ret = skl_dsp_wake(ctx->dsp);
-+	ctx->enable_miscbdcge(ctx->dev, true);
- 	if (ret < 0)
- 		return ret;
- 
---- a/sound/soc/intel/skylake/skl-pcm.c
-+++ b/sound/soc/intel/skylake/skl-pcm.c
-@@ -1343,7 +1343,11 @@ static int skl_platform_soc_probe(struct
- 			return -EIO;
- 		}
- 
-+		/* disable dynamic clock gating during fw and lib download */
-+		skl->skl_sst->enable_miscbdcge(platform->dev, false);
-+
- 		ret = ops->init_fw(platform->dev, skl->skl_sst);
-+		skl->skl_sst->enable_miscbdcge(platform->dev, true);
- 		if (ret < 0) {
- 			dev_err(platform->dev, "Failed to boot first fw: %d\n", ret);
- 			return ret;
+ 	for (buffer = 0; buffer < num_buffers; ++buffer) {
+ 		/* Allocate videobuf buffer structures */
+ 		vb = kzalloc(q->buf_struct_size, GFP_KERNEL);
