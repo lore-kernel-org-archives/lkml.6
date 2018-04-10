@@ -1,68 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753130AbeDJMbR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:31:17 -0400
-Received: from mga11.intel.com ([192.55.52.93]:15795 "EHLO mga11.intel.com"
+        id S1752981AbeDJMdC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:33:02 -0400
+Received: from sauhun.de ([88.99.104.3]:40108 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752781AbeDJMbQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:31:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,432,1517904000";
-   d="scan'208";a="32243827"
-Message-ID: <d7989ecd5e2d6463636ba291128b525b89cb2521.camel@linux.intel.com>
-Subject: Re: [PATCH] tpm: moves the delay_msec increment after sleep in
- tpm_transmit()
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de, tpmdd@selhorst.net,
-        jgunthorpe@obsidianresearch.com
-Date: Tue, 10 Apr 2018 15:31:09 +0300
-In-Reply-To: <1523284198.16421.196.camel@linux.vnet.ibm.com>
-References: <20180402162006.5030-1-nayna@linux.vnet.ibm.com>
-         <20180405101210.GA21636@linux.intel.com>
-         <95af65a1-e618-5cdf-fb81-56434f1aa973@linux.vnet.ibm.com>
-         <20180407103610.GA22542@linux.intel.com>
-         <1523284198.16421.196.camel@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.0-4 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752759AbeDJMdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 08:33:00 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org
+Subject: [PATCH RESEND] backlight: pwm_bl: don't use GPIOF_* with gpiod_get_direction
+Date: Tue, 10 Apr 2018 14:32:40 +0200
+Message-Id: <20180410123241.25745-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-04-09 at 10:29 -0400, Mimi Zohar wrote:
-> On Sat, 2018-04-07 at 13:36 +0300, Jarkko Sakkinen wrote:
-> > On Fri, Apr 06, 2018 at 02:03:37PM +0530, Nayna Jain wrote:
-> > > On 04/05/2018 03:42 PM, Jarkko Sakkinen wrote:
-> > > > On Mon, Apr 02, 2018 at 09:50:06PM +0530, Nayna Jain wrote:
-> > > > > Commit e2fb992d82c6 ("tpm: add retry logic") introduced a new loop to
-> > > > > handle the TPM2_RC_RETRY error. The loop retries the command after
-> > > > > sleeping for the specified time, which is incremented exponentially in
-> > > > > every iteration. This patch fixes the initial sleep to be the default
-> > > > > sleep time.
-> > > > 
-> > > > I think I understand the code change but do not understand what the
-> > > > long description.
-> > > 
-> > > It tells that the first sleep is delay_msec * 2 and not delay_msec.
-> > 
-> > So the problem is that the loop doubles the time before sleeping
-> > for the first time. This is missing from the description. Please
-> > refine it in some way.
-> 
-> Sure, how about replacing the last line of the patch description with:
->     Unfortunately, the loop doubles the time before sleeping, causing the
->     initial sleep to be doubled.  This patch fixes the initial sleep time.
-> 
-> If this change is acceptable, do you want to make the change or should Nayna
-> repost the patch?
+The documentation was wrong, gpiod_get_direction() returns 0/1 instead
+of the GPIOF_* flags. The docs were fixed with commit 94fc73094abe47
+("gpio: correct docs about return value of gpiod_get_direction"). Now,
+fix this user (until a better, system-wide solution is in place).
 
-No need. I'll move on to testing.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+---
 
-/Jarkko
+Changes since V1:
+	* rebased to top-of-linus-tree
+	* added tag from Daniel, thanks!
+
+Through which tree does this need to go?
+
+ drivers/video/backlight/pwm_bl.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index 1c2289ddd555..0fa7d2bd0e48 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -301,14 +301,14 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 
+ 	/*
+ 	 * If the GPIO is not known to be already configured as output, that
+-	 * is, if gpiod_get_direction returns either GPIOF_DIR_IN or -EINVAL,
+-	 * change the direction to output and set the GPIO as active.
++	 * is, if gpiod_get_direction returns either 1 or -EINVAL, change the
++	 * direction to output and set the GPIO as active.
+ 	 * Do not force the GPIO to active when it was already output as it
+ 	 * could cause backlight flickering or we would enable the backlight too
+ 	 * early. Leave the decision of the initial backlight state for later.
+ 	 */
+ 	if (pb->enable_gpio &&
+-	    gpiod_get_direction(pb->enable_gpio) != GPIOF_DIR_OUT)
++	    gpiod_get_direction(pb->enable_gpio) != 0)
+ 		gpiod_direction_output(pb->enable_gpio, 1);
+ 
+ 	pb->power_supply = devm_regulator_get(&pdev->dev, "power");
+-- 
+2.11.0
