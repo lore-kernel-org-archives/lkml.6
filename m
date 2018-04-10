@@ -1,63 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754053AbeDJOMM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:12:12 -0400
-Received: from resqmta-ch2-05v.sys.comcast.net ([69.252.207.37]:60988 "EHLO
-        resqmta-ch2-05v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753145AbeDJOML (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:12:11 -0400
-Date: Tue, 10 Apr 2018 09:12:08 -0500 (CDT)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Vlastimil Babka <vbabka@suse.cz>
-cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        David Rientjes <rientjes@google.com>,
-        Pekka Enberg <penberg@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC] mm, slab: reschedule cache_reap() on the same CPU
-In-Reply-To: <20180410081531.18053-1-vbabka@suse.cz>
-Message-ID: <alpine.DEB.2.20.1804100907160.27333@nuc-kabylake>
-References: <20180410081531.18053-1-vbabka@suse.cz>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S1753957AbeDJONA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:13:00 -0400
+Received: from mga12.intel.com ([192.55.52.136]:29038 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753089AbeDJOM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 10:12:59 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,432,1517904000";
+   d="scan'208";a="31599145"
+Date: Tue, 10 Apr 2018 19:47:22 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Adam.Thomson.Opensource@diasemi.com,
+        Jia-Ju Bai <baijiaju1990@gmail.com>, lgirdwood@gmail.com,
+        sathyanarayana.nujella@intel.com, broonie@kernel.org, perex@perex.cz,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH] sound: soc: intel: bxt_da7219_max98357a:
+ Replace GFP_ATOMIC with GFP_KERNEL in broxton_audio_probe
+Message-ID: <20180410141721.GQ6014@localhost>
+References: <1523270781-22627-1-git-send-email-baijiaju1990@gmail.com>
+ <482591fb-bf12-2e0a-e0ef-2ae0b4095000@linux.intel.com>
+ <s5h3704dvad.wl-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfBecCrriSZ6UjdErba0pdGr4zaSMsSrwcfsjIjt6VAB4PFHDZDW1s9yittUW/6VuUbjSx5zGXz8j1+HS+Ycrmx3r7HNAsupsHD1sKO9y8SCpkzH5nLS0
- X+9haX+NHX/Ao+70uX9kRnVj2ErulcQzkHIm+7Xksty3d4jd4p62+MzCXh2PSy7IagWLjq+b6qrR74jwMxFMCv5qZ36LCWQ9Y20JaDtNKWZL5kfjRiLaHbN8
- 3Hs/OdlWyYriXcgRsJM1KYKsS66HSPskvJ8KmwowEcdtA+Bg9hXtnEBRMHucpIud81GF2qxsa/VJqU3ysRwJPHaWw5Up9eyqqi2BRLR+NQirdnUNIeY9xo6b
- tOQVaGSVFooy93iY5Ycwr4vkBbdl7yyR3WbIpdyDMe55vCDvqJCybNiOsF2aKm9S0A4NGQKtQXH8q8dqPru6589TtlpFdHYrh8DdDUmBHgVnLAO9HkM=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <s5h3704dvad.wl-tiwai@suse.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Apr 2018, Vlastimil Babka wrote:
+On Mon, Apr 09, 2018 at 09:39:06PM +0200, Takashi Iwai wrote:
+> On Mon, 09 Apr 2018 20:57:43 +0200,
+> Pierre-Louis Bossart wrote:
+> > 
+> > On 4/9/18 5:46 AM, Jia-Ju Bai wrote:
+> > > broxton_audio_probe() is never called in atomic context.
+> > > This function is only set as ".probe" in "struct platform_driver".
+> > >
+> > > Despite never getting called from atomic context,
+> > > broxton_audio_probe() calls devm_kzalloc() with GFP_ATOMIC,
+> > > which waits busily for allocation.
+> > > GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+> > > to avoid busy waiting and improve the possibility of sucessful allocation.
+> > 
+> > [answering for the series]
+> > Humm, this is interesting.
+> > If indeed we can afford to sleep then the change should be done on ALL
+> > 14 boards in sound/soc/intel/boards which follow the same code
+> > pattern.
+> > If we cannot sleep then then none of these changes should be applied.
+> > Liam and Vinod?
+> 
+> It must be sleepable context as it's a standard platform driver probe
+> callback.
+> 
+> And now looking at grep output, only sound/soc/intel contains so many
+> calls with GFP_ATOMIC.  I bet that almost all can be done with
+> GFP_KERNEL, maybe only one or two in atom/sst would be conditionally
+> with GFP_ATOMIC.
 
-> cache_reap() is initially scheduled in start_cpu_timer() via
-> schedule_delayed_work_on(). But then the next iterations are scheduled via
-> schedule_delayed_work(), thus using WORK_CPU_UNBOUND.
+Yeah I don't see many cases which would warrant atomic context, I will review
+them and fix these after merge window closes. Clearly machines have no
+reason for that, and I guess most are copy-paste from 1st culprit
 
-That is a bug.. cache_reap must run on the same cpu since it deals with
-the per cpu queues of the current cpu. Scheduled_delayed_work() used to
-guarantee running on teh same cpu.
-
-> This patch makes sure schedule_delayed_work_on() is used with the proper cpu
-> when scheduling the next iteration. The cpu is stored with delayed_work on a
-> new slab_reap_work_struct super-structure.
-
-The current cpu is readily available via smp_processor_id(). Why a
-super structure?
-
-> @@ -4074,7 +4086,8 @@ static void cache_reap(struct work_struct *w)
->  	next_reap_node();
->  out:
->  	/* Set up the next iteration */
-> -	schedule_delayed_work(work, round_jiffies_relative(REAPTIMEOUT_AC));
-> +	schedule_delayed_work_on(reap_work->cpu, work,
-> +					round_jiffies_relative(REAPTIMEOUT_AC));
-
-schedule_delayed_work_on(smp_processor_id(), work, round_jiffies_relative(REAPTIMEOUT_AC));
-
-instead all of the other changes?
+-- 
+~Vinod
