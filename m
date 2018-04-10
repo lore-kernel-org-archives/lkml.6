@@ -1,38 +1,82 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+iD545HGzK278FHRicLrfCnRccqeg610A8Hf92uOQ0jjlal7R1loNPtArvZ3HZS6hZvQPf
-ARC-Seal: i=1; a=rsa-sha256; t=1523399651; cv=none;
-        d=google.com; s=arc-20160816;
-        b=jDtaVtFQt9oQxR+ica0AfbItyuhaU9VcOiNekqXHLmbH4nqroRUja8bAP0790KsjKT
-         UTxgsSkOj9tyt+SfWcGrQCDgkCnC1000gugYhAh7IT14S1/ovlRoOkQ7b5cFX2cgfQaQ
-         AyAmVZKI/gcOcDcFz/KT7S/jzTvRnUAZcFfarT4qZ9DB7fSaU1G1v3Mc7DoGy9OKtInU
-         HMw60LdU8fA2fMPSBFOt3T6VUjAkYyEQ54LeLEPxxLeEZq2w6ajCK0SxLg5hAXM7rXAl
-         /QreQT7lbUrgjrdn85JeuubM43v418nCivHBCX9MlZqez9cuoXl9a67OcjA6DV7dRun5
-         OeIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=Vt2xzBvWVwBF9k6alg/+OXs1eN6/7o/ZL/alQHXbwt4=;
-        b=fVJdSDfz/zuzC4drR7CFADyhhDJjaL2zQtv5QRgCp2eSrhWSgJlXQTzqsh6U41gMqa
-         5LLmkE5C4RTiaeoekXlGFfgyUkhlQbMlCVid5JdWlQY6jnb11CU68kVKeY2byJX9zCp5
-         cOPRw1atUdb4ME6KDrrsz4Xln4RFsD8b4vbdZiuhSisI0zG3eYl5vubawtAHZJDhvcZb
-         sEYE60h/IXfdyGIBH9UBnY055ILvGVOWUmdUT5GAsDOlm30jAm7hptGEu8X8W7dBYoPE
-         0rFDMnd3I2aZxqy9IWy28hO/UupbEzUQ/cyfma9tZ27vkRcdeG5ABV2jC/2bnrMewW/b
-         +Pqg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-713601-1523399651-2-12314879255830671031
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523399650; b=u6mPOocDAtphPEfzKk1SzOwX4vBl6zEeChvmwyfCMo+oS8wwhl
+    oC//LUijaRg6HdnK9Bi0TW6NqS3Rh6Tf2+A53kj5TpCK/Y/3eTBRx57IouVIyBrD
+    tdGhLNeRajCh51anvvv0YwHEEwLLAzAixxJWfcrlASRFzc0iKT3ENq6fDhtFdCI+
+    /nmS4LfT0Ans6wPvFQNNdjvPy3pnbOKtfl+hU/EjMtwBNC0u7zTp1YVhMvBudDBS
+    WTj2Y5jB/oj1w/6RGHUoaxxFFgpAsVij48CMDhB6XcZ82D6Ve4HFIxR51xzliEv5
+    aiZDJ9XHiOzjynDCDyfJFWh+N9EKibD3O44Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523399650; bh=+nG5G3jdv55ZqU+o07ZQpbCTFfo/IU
+    bdiP7M3Ijrrk0=; b=LJkUi4aC45aaY7zAxA0g7UYn0Lm7ryQqZJzXOzUFiabLvJ
+    oOgpSPAiY1f+74lU+e+Bxe3giqp4Y1avKuKOJkwbnyQlWSauz3Q9HalG4MytBHVR
+    VAfafY/DX6+euh1rICE2x11CViHxSRtRBFalsV9Aqd4KLOr0/COcrrYSOn1YqHeS
+    mwl33zetHYtGd+0rVbLXmAWOgJjWiQrV0IavBdL4JVafsxOVfAarE2OJ48AbBF8N
+    s7PbUZ9Ti8S2iZ9iWjVZaK2kuVQ0h6QIF05WSg5gDnxpPX7XAJa7XgwflZB3ZFdv
+    eyyI5oNzlMtFGd2xevgGIjDATEjJFmyxXbcnKZQQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfBjVDdWWhR77iEQeK0FgErpMZi++DhyUP4dV6oj0x6iBHmIR6QJkqZcBNrv8hg9BVqxKw8LVuFmkcKb0FvcIuyH87rJMUBoLvP7USlH65n/p2Oyp/vek
+    VmWQqz//eOyu2801YdjdHEj+7aPIwtmU98wKxguZYxeFcz/vSDWl2v531WYuGDl3rkL+oW1SSV1h5QbCj8lLAd6+VmhceUuHeMdKnnQ1ib+F16e/jJADnmhO
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=i0EeH86SAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=R7Tl_P__Q-iyW6jnybsA:9 a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1755374AbeDJWeH (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 18:34:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41604 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755349AbeDJWeF (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:34:05 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-	Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 015/138] rds; Reset rs->rs_bound_addr in rds_add_bound() failure path
-Date: Wed, 11 Apr 2018 00:23:25 +0200
-Message-Id: <20180410212903.899344475@linuxfoundation.org>
+        stable@vger.kernel.org, Fuyun Liang <liangfuyun1@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 013/138] net: hns3: fix for getting auto-negotiation state in hclge_get_autoneg
+Date: Wed, 11 Apr 2018 00:23:23 +0200
+Message-Id: <20180410212903.684791911@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -40,10 +84,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399879201708927?=
-X-GMAIL-MSGID: =?utf-8?q?1597400313135205459?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,52 +94,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+From: Fuyun Liang <liangfuyun1@huawei.com>
 
 
-[ Upstream commit 7ae0c649c47f1c5d2db8cee6dd75855970af1669 ]
+[ Upstream commit 27b5bf49f0924fd62d2b1ef8467b40773973da34 ]
 
-If the rds_sock is not added to the bind_hash_table, we must
-reset rs_bound_addr so that rds_remove_bound will not trip on
-this rds_sock.
+When phy exists, we use the value of phydev.autoneg to represent the
+auto-negotiation state of hardware. Otherwise, we use the value of
+mac.autoneg to represent it.
 
-rds_add_bound() does a rds_sock_put() in this failure path, so
-failing to reset rs_bound_addr will result in a socket refcount
-bug, and will trigger a WARN_ON with the stack shown below when
-the application subsequently tries to close the PF_RDS socket.
+This patch fixes for getting a error value of auto-negotiation state in
+hclge_get_autoneg().
 
-     WARNING: CPU: 20 PID: 19499 at net/rds/af_rds.c:496 \
-		rds_sock_destruct+0x15/0x30 [rds]
-       :
-     __sk_destruct+0x21/0x190
-     rds_remove_bound.part.13+0xb6/0x140 [rds]
-     rds_release+0x71/0x120 [rds]
-     sock_release+0x1a/0x70
-     sock_close+0xe/0x20
-     __fput+0xd5/0x210
-     task_work_run+0x82/0xa0
-     do_exit+0x2ce/0xb30
-     ? syscall_trace_enter+0x1cc/0x2b0
-     do_group_exit+0x39/0xa0
-     SyS_exit_group+0x10/0x10
-     do_syscall_64+0x61/0x1a0
-
-Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
+Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/rds/bind.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/net/rds/bind.c
-+++ b/net/rds/bind.c
-@@ -114,6 +114,7 @@ static int rds_add_bound(struct rds_sock
- 			  rs, &addr, (int)ntohs(*port));
- 			break;
- 		} else {
-+			rs->rs_bound_addr = 0;
- 			rds_sock_put(rs);
- 			ret = -ENOMEM;
- 			break;
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -2092,6 +2092,10 @@ static int hclge_get_autoneg(struct hnae
+ {
+ 	struct hclge_vport *vport = hclge_get_vport(handle);
+ 	struct hclge_dev *hdev = vport->back;
++	struct phy_device *phydev = hdev->hw.mac.phydev;
++
++	if (phydev)
++		return phydev->autoneg;
+ 
+ 	hclge_query_autoneg_result(hdev);
+ 
