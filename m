@@ -1,94 +1,213 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754171AbeDJOlU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:41:20 -0400
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:36866 "EHLO
-        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754135AbeDJOlQ (ORCPT
+        id S1754208AbeDJOlZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:41:25 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50231 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754135AbeDJOlW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:41:16 -0400
-X-Google-Smtp-Source: AIpwx49mnShFwqEqyF4gspUCnbCrM9qgew2XW1V5YGXpt9TTGhuxTVwWlnogZ+xj737oosvQwMXzw/rAZ3Rp1R+1GnI=
+        Tue, 10 Apr 2018 10:41:22 -0400
+Date: Tue, 10 Apr 2018 07:40:40 -0700
+From: tip-bot for Li RongQing <tipbot@zytor.com>
+Message-ID: <tip-57e95bee9f89560c5952409be8b41a4a2b7e384c@git.kernel.org>
+Cc: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        peterz@infradead.org, lirongqing@baidu.com,
+        linux-kernel@vger.kernel.org, douly.fnst@cn.fujitsu.com
+Reply-To: mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        peterz@infradead.org, lirongqing@baidu.com,
+        linux-kernel@vger.kernel.org, douly.fnst@cn.fujitsu.com
+In-Reply-To: <1523322966-10296-1-git-send-email-lirongqing@baidu.com>
+References: <1523322966-10296-1-git-send-email-lirongqing@baidu.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/apic: Fix signedness bug in APIC ID validity
+ checks
+Git-Commit-ID: 57e95bee9f89560c5952409be8b41a4a2b7e384c
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <69ab73657c5e75db94fab027c9957dbbb73047a7.1522868423.git.hns@goldelico.com>
-References: <cover.1522868422.git.hns@goldelico.com> <69ab73657c5e75db94fab027c9957dbbb73047a7.1522868423.git.hns@goldelico.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 10 Apr 2018 17:41:14 +0300
-Message-ID: <CAHp75Ve5ecXJmMoO5Yy65VqR-FwnD+wMmhP=bOJ_Oxsgz8R1SQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] gpio: pca953x: add register definitions for
- pcal6524 and fix address calculation
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel
-        <letux-kernel@openphoenux.org>,
-        kernel@pyra-handheld.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 4, 2018 at 10:00 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
-> PCAL chips ("L" seems to stand for "latched") have additional
-> registers starting at address 0x40 to control the latches,
-> interrupt mask, pull-up and pull down etc.
->
-> The constants are so far defined in a way that they fit for
-> the pcal9555a when shifted by the number of banks, i.e. multiplied
-> by 2.
->
-> Now the pcal6524 has 3 banks which means the relative offset
-> must be multiplied by 4 which gives a wrong result if not done
-> carefully, since the base offset is already included in the offset.
->
-> For the basic registers shared with all pca93xx/tca64xx chips
-> there is no such offset.
->
-> Therefore, we add code to adjust the register number for exended
-> registers in this case.
->
-> And we add additional register offset constants (not yet used by
-> the driver code) which are specific to the pcal6524.
+Commit-ID:  57e95bee9f89560c5952409be8b41a4a2b7e384c
+Gitweb:     https://git.kernel.org/tip/57e95bee9f89560c5952409be8b41a4a2b7e384c
+Author:     Li RongQing <lirongqing@baidu.com>
+AuthorDate: Tue, 10 Apr 2018 09:16:06 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 10 Apr 2018 16:33:21 +0200
 
-> -#define PCAL953X_IN_LATCH      34
-> -#define PCAL953X_INT_MASK      37
-> -#define PCAL953X_INT_STAT      38
+x86/apic: Fix signedness bug in APIC ID validity checks
 
-I prefer either to change first all the rest to be 2 digit hex values
-first, or leave decimal in this patch.
+The APIC ID as parsed from ACPI MADT is validity checked with the
+apic->apic_id_valid() callback, which depends on the selected APIC type.
 
-> +#define PCAL953X_OUT_STRENGTH  0x20
-> +#define PCAL953X_IN_LATCH      0x22
-> +#define PCAL953X_PULL_EN       0x23
-> +#define PCAL953X_PULL_SEL      0x24
-> +#define PCAL953X_INT_MASK      0x25
-> +#define PCAL953X_INT_STAT      0x26
-> +#define PCAL953X_OUT_CONF      0x27
-> +
-> +#define PCAL6524_INT_EDGE      0x28
-> +#define PCAL6524_INT_CLR       0x2a
-> +#define PCAL6524_IN_STATUS     0x2b
-> +#define PCAL6524_OUT_INDCONF   0x2c
-> +#define PCAL6524_DEBOUNCE      0x2d
+For non X2APIC types APIC IDs >= 0xFF are invalid, but values > 0x7FFFFFFF
+are detected as valid. This happens because the 'apicid' argument of the
+apic_id_valid() callback is type 'int'. So the resulting comparison
 
-> +       /* adjust register address for pcal6524 */
-> +       if (reg >= PCAL953X_OUT_STRENGTH)
-> +               reg -= PCAL953X_OUT_STRENGTH >> 1;
+   apicid < 0xFF
 
-I don't like this condition. Can we avoid relying on the register
-offset in regard to some flag / compatible string / etc?
+evaluates to true for all unsigned int values > 0x7FFFFFFF which are handed
+to default_apic_id_valid(). As a consequence, invalid APIC IDs in !X2APIC
+mode are considered valid and accounted as possible CPUs.
 
-> +       /* adjust register address for pcal6524 */
-> +       if (reg >= PCAL953X_OUT_STRENGTH)
-> +               reg -= PCAL953X_OUT_STRENGTH >> 1;
+Change the apicid argument type of the apic_id_valid() callback to u32 so
+the evaluation is unsigned and returns the correct result.
 
-Ditto.
+[ tglx: Massaged changelog ]
 
--- 
-With Best Regards,
-Andy Shevchenko
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Cc: jgross@suse.com
+Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/1523322966-10296-1-git-send-email-lirongqing@baidu.com
+
+---
+ arch/x86/include/asm/apic.h          |  4 ++--
+ arch/x86/kernel/acpi/boot.c          | 13 ++++++++-----
+ arch/x86/kernel/apic/apic_common.c   |  2 +-
+ arch/x86/kernel/apic/apic_numachip.c |  2 +-
+ arch/x86/kernel/apic/x2apic.h        |  2 +-
+ arch/x86/kernel/apic/x2apic_phys.c   |  2 +-
+ arch/x86/kernel/apic/x2apic_uv_x.c   |  2 +-
+ arch/x86/xen/apic.c                  |  2 +-
+ 8 files changed, 16 insertions(+), 13 deletions(-)
+
+diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
+index 98722773391d..f01eef8b392e 100644
+--- a/arch/x86/include/asm/apic.h
++++ b/arch/x86/include/asm/apic.h
+@@ -319,7 +319,7 @@ struct apic {
+ 	/* Probe, setup and smpboot functions */
+ 	int	(*probe)(void);
+ 	int	(*acpi_madt_oem_check)(char *oem_id, char *oem_table_id);
+-	int	(*apic_id_valid)(int apicid);
++	int	(*apic_id_valid)(u32 apicid);
+ 	int	(*apic_id_registered)(void);
+ 
+ 	bool	(*check_apicid_used)(physid_mask_t *map, int apicid);
+@@ -492,7 +492,7 @@ static inline unsigned int read_apic_id(void)
+ 	return apic->get_apic_id(reg);
+ }
+ 
+-extern int default_apic_id_valid(int apicid);
++extern int default_apic_id_valid(u32 apicid);
+ extern int default_acpi_madt_oem_check(char *, char *);
+ extern void default_setup_apic_routing(void);
+ 
+diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+index 2aa92094b59d..cc7ddc932cf2 100644
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -200,7 +200,7 @@ acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
+ {
+ 	struct acpi_madt_local_x2apic *processor = NULL;
+ #ifdef CONFIG_X86_X2APIC
+-	int apic_id;
++	u32 apic_id;
+ 	u8 enabled;
+ #endif
+ 
+@@ -222,10 +222,13 @@ acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
+ 	 * to not preallocating memory for all NR_CPUS
+ 	 * when we use CPU hotplug.
+ 	 */
+-	if (!apic->apic_id_valid(apic_id) && enabled)
+-		printk(KERN_WARNING PREFIX "x2apic entry ignored\n");
+-	else
+-		acpi_register_lapic(apic_id, processor->uid, enabled);
++	if (!apic->apic_id_valid(apic_id)) {
++		if (enabled)
++			printk(KERN_WARNING PREFIX "x2apic entry ignored\n");
++		return 0;
++	}
++
++	acpi_register_lapic(apic_id, processor->uid, enabled);
+ #else
+ 	printk(KERN_WARNING PREFIX "x2apic entry ignored\n");
+ #endif
+diff --git a/arch/x86/kernel/apic/apic_common.c b/arch/x86/kernel/apic/apic_common.c
+index a360801779ae..02b4839478b1 100644
+--- a/arch/x86/kernel/apic/apic_common.c
++++ b/arch/x86/kernel/apic/apic_common.c
+@@ -40,7 +40,7 @@ int default_check_phys_apicid_present(int phys_apicid)
+ 	return physid_isset(phys_apicid, phys_cpu_present_map);
+ }
+ 
+-int default_apic_id_valid(int apicid)
++int default_apic_id_valid(u32 apicid)
+ {
+ 	return (apicid < 255);
+ }
+diff --git a/arch/x86/kernel/apic/apic_numachip.c b/arch/x86/kernel/apic/apic_numachip.c
+index 134e04506ab4..78778b54f904 100644
+--- a/arch/x86/kernel/apic/apic_numachip.c
++++ b/arch/x86/kernel/apic/apic_numachip.c
+@@ -56,7 +56,7 @@ static u32 numachip2_set_apic_id(unsigned int id)
+ 	return id << 24;
+ }
+ 
+-static int numachip_apic_id_valid(int apicid)
++static int numachip_apic_id_valid(u32 apicid)
+ {
+ 	/* Trust what bootloader passes in MADT */
+ 	return 1;
+diff --git a/arch/x86/kernel/apic/x2apic.h b/arch/x86/kernel/apic/x2apic.h
+index b107de381cb5..a49b3604027f 100644
+--- a/arch/x86/kernel/apic/x2apic.h
++++ b/arch/x86/kernel/apic/x2apic.h
+@@ -1,6 +1,6 @@
+ /* Common bits for X2APIC cluster/physical modes. */
+ 
+-int x2apic_apic_id_valid(int apicid);
++int x2apic_apic_id_valid(u32 apicid);
+ int x2apic_apic_id_registered(void);
+ void __x2apic_send_IPI_dest(unsigned int apicid, int vector, unsigned int dest);
+ unsigned int x2apic_get_apic_id(unsigned long id);
+diff --git a/arch/x86/kernel/apic/x2apic_phys.c b/arch/x86/kernel/apic/x2apic_phys.c
+index f8d9d69994e6..e972405eb2b5 100644
+--- a/arch/x86/kernel/apic/x2apic_phys.c
++++ b/arch/x86/kernel/apic/x2apic_phys.c
+@@ -101,7 +101,7 @@ static int x2apic_phys_probe(void)
+ }
+ 
+ /* Common x2apic functions, also used by x2apic_cluster */
+-int x2apic_apic_id_valid(int apicid)
++int x2apic_apic_id_valid(u32 apicid)
+ {
+ 	return 1;
+ }
+diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
+index f11910b44638..efaf2d4f9c3c 100644
+--- a/arch/x86/kernel/apic/x2apic_uv_x.c
++++ b/arch/x86/kernel/apic/x2apic_uv_x.c
+@@ -557,7 +557,7 @@ static void uv_send_IPI_all(int vector)
+ 	uv_send_IPI_mask(cpu_online_mask, vector);
+ }
+ 
+-static int uv_apic_id_valid(int apicid)
++static int uv_apic_id_valid(u32 apicid)
+ {
+ 	return 1;
+ }
+diff --git a/arch/x86/xen/apic.c b/arch/x86/xen/apic.c
+index de58533d3664..2fa79e2e73ea 100644
+--- a/arch/x86/xen/apic.c
++++ b/arch/x86/xen/apic.c
+@@ -112,7 +112,7 @@ static int xen_madt_oem_check(char *oem_id, char *oem_table_id)
+ 	return xen_pv_domain();
+ }
+ 
+-static int xen_id_always_valid(int apicid)
++static int xen_id_always_valid(u32 apicid)
+ {
+ 	return 1;
+ }
