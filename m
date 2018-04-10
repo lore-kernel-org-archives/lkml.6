@@ -1,54 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753628AbeDJNEn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 09:04:43 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:20593 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753197AbeDJNEk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753562AbeDJNEk convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
         Tue, 10 Apr 2018 09:04:40 -0400
-To: dvyukov@google.com, axboe@kernel.dk
-Cc: tom.leiming@gmail.com, mingo@redhat.com, peterz@infradead.org,
-        bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        osandov@fb.com
-Subject: Re: INFO: task hung in __blkdev_get
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <652eab47-81b5-3249-3c78-427eeec45fbc@I-love.SAKURA.ne.jp>
-        <2e093801-6d71-6747-42df-52f191811ad0@I-love.SAKURA.ne.jp>
-        <87bdec75-3c59-6587-2436-1470263ab11f@kernel.dk>
-        <59a08949-7e2f-42ff-edda-f24a6c624551@I-love.SAKURA.ne.jp>
-        <CACT4Y+a-_Z69xmLypVi=vrtCEEBGp=zy0Wp8SuLJzYtZ_ShBgw@mail.gmail.com>
-In-Reply-To: <CACT4Y+a-_Z69xmLypVi=vrtCEEBGp=zy0Wp8SuLJzYtZ_ShBgw@mail.gmail.com>
-Message-Id: <201804102204.BDF48937.LMHJVFOFFOOSQt@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Tue, 10 Apr 2018 22:04:36 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Received: from gloria.sntech.de ([95.129.55.99]:55074 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753073AbeDJNEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 09:04:38 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Thierry Reding <thierry.reding@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        linux-rockchip@lists.infradead.org, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, kernel@collabora.com
+Subject: Re: [RESEND PATCH v6 5/5] ARM: dts: rockchip: set PWM delay backlight settings for Minnie
+Date: Tue, 10 Apr 2018 15:04:22 +0200
+Message-ID: <217634691.qDbm1hq3Bz@phil>
+In-Reply-To: <20180328170327.5395-5-enric.balletbo@collabora.com>
+References: <20180328170327.5395-1-enric.balletbo@collabora.com> <20180328170327.5395-5-enric.balletbo@collabora.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Vyukov wrote:
-> On Tue, Apr 10, 2018 at 12:55 PM, Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> > Hello.
-> >
-> > Since syzbot is reporting so many hung up bug which involves /dev/loopX ,
-> > is it possible to "temporarily" apply below patch for testing under syzbot
+Am Mittwoch, 28. März 2018, 19:03:27 CEST schrieb Enric Balletbo i Serra:
+> The minnie devices comes with an AUO B101EAN01 panel which is different
+> from default veyron devices, thus the power on/off timing sequence is
+> slightly different. The datasheet specifies a pwm delay of 200 ms, so
+> update the PMW delay proprieties accordingly.
 > 
-> Unfortunately it's not possible, for full explanation please see:
-> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#no-custom-patches
-> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
 
-I mean, sending custom patch to linux.git for -rc and revert the custom patch
-before -final is released. It won't take so much period until we get the result.
+applied for 4.18
 
-If syzbot can test arbitrary git tree instead of linux.git, making a branch
-which contains custom patches would be possible.
-
-> 
-> > ( after "block/loop: fix deadlock after loop_set_status" and
-> > "loop: fix LOOP_GET_STATUS lock imbalance" in linux-block.git#for-linus
-> > are merged into linux.git )?
+Thanks
+Heiko
