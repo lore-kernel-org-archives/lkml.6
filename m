@@ -1,122 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751505AbeDJEKg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 00:10:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55420 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750789AbeDJEKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 00:10:35 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0D921738
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Mon, 9 Apr 2018 21:10:33 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        chao@kernel.org
-Subject: Re: [PATCH] f2fs: enlarge block plug coverage
-Message-ID: <20180410041033.GE47598@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180404085404.82184-1-yuchao0@huawei.com>
- <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
- <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
- <20180409180241.GC17558@jaegeuk-macbookpro.roam.corp.google.com>
- <967b8819-da9a-b609-6a22-db8df5c7ec6c@huawei.com>
+        id S1751589AbeDJETo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 00:19:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50332 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751286AbeDJETm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 00:19:42 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6738E60540
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH 5/7] arm64: dts: msm8996: Add rpmpd device node
+To: Stephen Boyd <sboyd@kernel.org>, andy.gross@linaro.org,
+        ulf.hansson@linaro.org, viresh.kumar@linaro.org
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180316040824.21472-1-rnayak@codeaurora.org>
+ <20180316040824.21472-6-rnayak@codeaurora.org>
+ <152328979897.180276.15963925877442657158@swboyd.mtv.corp.google.com>
+From: Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <37ec8f55-8726-1ce1-70f6-3dfac7198158@codeaurora.org>
+Date: Tue, 10 Apr 2018 09:49:37 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <967b8819-da9a-b609-6a22-db8df5c7ec6c@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <152328979897.180276.15963925877442657158@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/10, Chao Yu wrote:
-> On 2018/4/10 2:02, Jaegeuk Kim wrote:
-> > On 04/08, Chao Yu wrote:
-> >> On 2018/4/5 11:51, Jaegeuk Kim wrote:
-> >>> On 04/04, Chao Yu wrote:
-> >>>> This patch enlarges block plug coverage in __issue_discard_cmd, in
-> >>>> order to collect more pending bios before issuing them, to avoid
-> >>>> being disturbed by previous discard I/O in IO aware discard mode.
-> >>>
-> >>> Hmm, then we need to wait for huge discard IO for over 10 secs, which
-> >>
-> >> We found that total discard latency is rely on total discard number we issued
-> >> last time instead of range or length discard covered. IMO, if we don't change
-> >> .max_requests value, we will not suffer longer latency.
-> >>
-> >>> will affect following read/write IOs accordingly. In order to avoid that,
-> >>> we actually need to limit the discard size.
-> 
-> Do you mean limit discard count or discard length?
 
-Both of them.
 
+On 04/09/2018 09:33 PM, Stephen Boyd wrote:
+> Quoting Rajendra Nayak (2018-03-15 21:08:22)
+>> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+>> index 0a6f7952bbb1..43757a078146 100644
+>> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+>> @@ -297,6 +297,52 @@
+>>                                 #clock-cells = <1>;
+>>                         };
+>>  
+>> +                       rpmpd: qcom,rpmpd {
 > 
-> >>
-> >> If you are worry about I/O interference in between discard and rw, I suggest to
-> >> decrease .max_requests value.
-> > 
-> > What do you mean? This will produce more pending requests in the queue?
+> power-controller? power-domain-controller? power-domains? Or something
+> like that.
 > 
-> I mean after applying this patch, we can queue more discard IOs in plug inside
-> task, otherwise, previous issued discard in block layer can make is_idle() be false,
-> then it can stop IO awared user to issue pending discard command.
+>> +                               compatible = "qcom,rpmpd-msm8996";
+>> +                               #power-domain-cells = <1>;
+>> +                               operating-points-v2 = <&rpmpd_opp_table>, /* cx */
+>> +                                                     <&rpmpd_opp_table>, /* cx_ao */
+>> +                                                     <&rpmpd_opp_table>, /* cx_vfc */
+>> +                                                     <&rpmpd_opp_table>, /* mx */
+>> +                                                     <&rpmpd_opp_table>, /* mx_ao */
+>> +                                                     <&rpmpd_opp_table>, /* sscx */
+>> +                                                     <&rpmpd_opp_table>; /* sscx_vfc */
+>> +                       };
+>> +
+>> +                       rpmpd_opp_table: opp-table {
+> 
+> This should go into the root of the tree? Otherwise it may be populated
+> by the RPMh platform populate code which would be odd. We should go and
+> update the platform populate code to always ignore operating-points-v2
+> compatible nodes too.
+> 
+>> +                               compatible = "operating-points-v2", "operating-points-v2-qcom";
+> 
+> This is backwards? I thought more specific compatible went first.
 
-Then, unplug will issue lots of discard commands, which affects the following rw
-latencies. My preference would be issuing discard commands one by one as much as
-possible.
+thanks for the review, will fixup all of these when I respin.
 
-> 
-> Thanks,
-> 
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >>>> ---
-> >>>>  fs/f2fs/segment.c | 7 +++++--
-> >>>>  1 file changed, 5 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>>> index 8f0b5ba46315..4287e208c040 100644
-> >>>> --- a/fs/f2fs/segment.c
-> >>>> +++ b/fs/f2fs/segment.c
-> >>>> @@ -1208,10 +1208,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>>>  		pend_list = &dcc->pend_list[i];
-> >>>>  
-> >>>>  		mutex_lock(&dcc->cmd_lock);
-> >>>> +
-> >>>> +		blk_start_plug(&plug);
-> >>>> +
-> >>>>  		if (list_empty(pend_list))
-> >>>>  			goto next;
-> >>>>  		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
-> >>>> -		blk_start_plug(&plug);
-> >>>>  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
-> >>>>  			f2fs_bug_on(sbi, dc->state != D_PREP);
-> >>>>  
-> >>>> @@ -1227,8 +1229,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>>>  			if (++iter >= dpolicy->max_requests)
-> >>>>  				break;
-> >>>>  		}
-> >>>> -		blk_finish_plug(&plug);
-> >>>>  next:
-> >>>> +		blk_finish_plug(&plug);
-> >>>> +
-> >>>>  		mutex_unlock(&dcc->cmd_lock);
-> >>>>  
-> >>>>  		if (iter >= dpolicy->max_requests)
-> >>>> -- 
-> >>>> 2.15.0.55.gc2ece9dc4de6
-> >>>
-> >>> .
-> >>>
-> > 
-> > .
-> > 
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
