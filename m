@@ -1,61 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752140AbeDJQVi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 12:21:38 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:57464 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751504AbeDJQVh (ORCPT
+        id S1752226AbeDJQVy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 12:21:54 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:54500 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752181AbeDJQVw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 12:21:37 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T-zOUsd_1523377282;
-Subject: Re: [v3 PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-To: Cyrill Gorcunov <gorcunov@gmail.com>, Michal Hocko <mhocko@kernel.org>
-Cc: adobriyan@gmail.com, willy@infradead.org, mguzik@redhat.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1523310774-40300-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180410090917.GZ21835@dhcp22.suse.cz> <20180410094047.GB2041@uranus.lan>
- <20180410104215.GB21835@dhcp22.suse.cz> <20180410110242.GC2041@uranus.lan>
- <20180410111001.GD21835@dhcp22.suse.cz> <20180410122804.GD2041@uranus.lan>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <097488c7-ab18-367b-c435-7c26d149c619@linux.alibaba.com>
-Date: Tue, 10 Apr 2018 09:21:19 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Tue, 10 Apr 2018 12:21:52 -0400
+Date: Tue, 10 Apr 2018 12:21:36 -0400
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: Re: [PATCH v3] X86/VMX: Disable VMX preemption timer if MWAIT is not
+ intercepted
+Message-ID: <20180410162136.GA6602@char.us.oracle.com>
+References: <1523362546-20909-1-git-send-email-karahmed@amazon.de>
 MIME-Version: 1.0
-In-Reply-To: <20180410122804.GD2041@uranus.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523362546-20909-1-git-send-email-karahmed@amazon.de>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8858 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=587
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804100157
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Apr 10, 2018 at 02:15:46PM +0200, KarimAllah Ahmed wrote:
+> The VMX-preemption timer is used by KVM as a way to set deadlines for the
+> guest (i.e. timer emulation). That was safe till very recently when
+> capability KVM_X86_DISABLE_EXITS_MWAIT to disable intercepting MWAIT was
+> introduced. According to Intel SDM 25.5.1:
 
-
-On 4/10/18 5:28 AM, Cyrill Gorcunov wrote:
-> On Tue, Apr 10, 2018 at 01:10:01PM +0200, Michal Hocko wrote:
->>> Because do_brk does vma manipulations, for this reason it's
->>> running under down_write_killable(&mm->mmap_sem). Or you
->>> mean something else?
->> Yes, all we need the new lock for is to get a consistent view on brk
->> values. I am simply asking whether there is something fundamentally
->> wrong by doing the update inside the new lock while keeping the original
->> mmap_sem locking in the brk path. That would allow us to drop the
->> mmap_sem lock in the proc path when looking at brk values.
-> Michal gimme some time. I guess  we might do so, but I need some
-> spare time to take more precise look into the code, hopefully today
-> evening. Also I've a suspicion that we've wracked check_data_rlimit
-> with this new lock in prctl. Need to verify it again.
-
-I see you guys points. We might be able to move the drop of mmap_sem 
-before setting mm->brk in sys_brk since mmap_sem should be used to 
-protect vma manipulation only, then protect the value modify with the 
-new arg_lock. Then we can eliminate mmap_sem stuff in prctl path, and it 
-also prevents from wrecking check_data_rlimit.
-
-At the first glance, it looks feasible to me. Will look into deeper later.
-
-Thanks,
-Yang
+Would it make sense to remove the '25.5.1' and just have the chapter name, etc
+as those do move around?
