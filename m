@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+UQRprrjfkZ+YoDK8bI73BqiNn8oxQD8REM+tiTrsq9BMXR9VS3sLxU8QO/zTYOTSQKX/Q
-ARC-Seal: i=1; a=rsa-sha256; t=1523399704; cv=none;
+X-Google-Smtp-Source: AIpwx4+iHSSQMSdrlInKvEEI1cPwiYoizHHIwzMur9EZ9dfVEJ7XoYyHtUprF90LSo2tUHLmwzsT
+ARC-Seal: i=1; a=rsa-sha256; t=1523399701; cv=none;
         d=google.com; s=arc-20160816;
-        b=yaAJVXG24FbeCglnxOw4Lj0y5m0Vd0m6NRoy53nDz8l1wJ+5bFRQyojsXKDqCybTnG
-         NoQTurT5TJXrJ3xgJwwZuSn6KJ5rSjfCp7hN5vSl17ULydgWOOwAjj+UIuAyUBieqX9v
-         4fidiC+gTZ5FRG19rf282eKREebUUH77/o3MHrzTHesvGLDxirYXjOd6UYhrmahbxYib
-         0RKavtknLhR0jmBuE0ehfeNr1SLOoUx25gpCeOLWafS6tEfIlJyP5APyKH07jhXv818d
-         wIUi9qvLTTQKZPgvGL3tTAkkqRFvA0PhHsZlj8z52XJ0JFKxNiegJMRKCsvESHur1FPx
-         XGBg==
+        b=WpWGXV+J6Fvu3YWYePz5o1q8V5AkweoBHoC0nzmj9mZbKKzFOvawX9iq9oUBYcPWgD
+         DrrYdzeWBKAneGQRmqj6lpMEtXt9sl3QHaoJHDYEwdmtpRyCaTblfvKBsVxTfqWF044+
+         E89lkqw9Iyzi1KCGreSsqQWbVHKJ028CuowE4MOmqsV6+nfmbLh6RHnkkBKvCr82+xQZ
+         3iXH0iqnh2O/33Yd7K6rea2gOw7uHwhKDSpGoe05MCMsdU2suR6V9tygdAAfqJ8uJhNs
+         zH5jPKIw1a9tVs+VzYdaSsKz2tBnf1UMAovBpXDM2RXj00DHC1PYaK2wgyo9o0h7nRxB
+         bY8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4uxZzGL3UKtDvBEu29e03rw+wjUJVvL1fOK0tJl9JE0=;
-        b=mQb68DXqck0qpRY9H/WQlPt8kFLvii8xgA7KHrlOa8JYNw3ih26h6kttRclzG2iEOg
-         2QZcnfrGLSIfxhnLhY6LI4QjC4UJnTs0qLAEbvn/Q1pUGrG8jwU+I3XNc5fpcgUZ88ZN
-         dbz1OSFXs1MJYfRWwsTRWIJoodGrmz19ied0TeXvFo0yAcnFLt7D4cmPupRYK6ooiJPB
-         Tu7T4zkEb+ZQr0x50ey7Rp61i2y3V3kV5wTWSVcO0AzTxVRpgcemuMVofR0VV+zav9eM
-         8cd8IlZ1Sx5O7e6tDHSJiO9J6h/XmIyY2kzP6k/Opr8oX+e/e1dglw0H4U2cBDQdqruT
-         OkPA==
+        bh=PFjxhHG3U/iLvgKy52762USHC3tFu61f+3Izkz4zxcA=;
+        b=bBfC1m3mGxbSOCOzHackl9remJC4ariJoJkNenCIPKpmNHPKGb0jgX9A8DhMBx/1b3
+         XQ11Lv1i3wwMxXjducjfuxK6w5399fEepxLFuK9i3UZVUOCZiSCWZMiUajuwrzAp2EtD
+         peglAhjzhzYA+8Plgy/yids+jUKG+a+E7mq1iFE4HdpNo7eKmf2NDZnvCOKPfcUzFsIz
+         yt6dlkbq/vEG6PPmAhJekRM9xdczoq7jx1U5vBf7suM8wd01HzItQpLCByDPk2pt2pZt
+         kVrx5h+G1OR/3ci3SXf0ErltO6M7v6BrH64PiYRG+oSXMn2+qdggxynnu5Vvly9ZNmqp
+         OvUQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>,
-	Jason Gunthorpe <jgg@mellanox.com>,
+	Peng Li <lipeng321@huawei.com>,
+	Mingguang Qu <qumingguang@huawei.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 003/138] i40iw: Validate correct IRD/ORD connection parameters
-Date: Wed, 11 Apr 2018 00:23:13 +0200
-Message-Id: <20180410212902.471577814@linuxfoundation.org>
+Subject: [PATCH 4.14 012/138] net: hns3: free the ring_data structrue when change tqps
+Date: Wed, 11 Apr 2018 00:23:22 +0200
+Message-Id: <20180410212903.575782322@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399804350146233?=
-X-GMAIL-MSGID: =?utf-8?q?1597400368188323278?=
+X-GMAIL-THRID: =?utf-8?q?1597399868116740967?=
+X-GMAIL-MSGID: =?utf-8?q?1597400365565483708?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,45 +51,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tatyana Nikolova <tatyana.e.nikolova@intel.com>
+From: Peng Li <lipeng321@huawei.com>
 
 
-[ Upstream commit ce9ce74145aa6814a370a9ff4f5a1d719baaced1 ]
+[ Upstream commit 99fdf6b1cadf41bb253408589788f025027274f3 ]
 
-Casting to u16 before validating IRD/ORD connection
-parameters could cause recording wrong IRD/ORD values
-in the cm_node. Validate the IRD/ORD parameters as
-they are passed by the application before recording
-them.
+This patch fixes a memory leak problems in change tqps process,
+the function hns3_uninit_all_ring and hns3_init_all_ring
+may be called many times.
 
-Fixes: f27b4746f378 ("i40iw: add connection management code")
-Signed-off-by: Tatyana Nikolova <tatyana.e.nikolova@intel.com>
-Signed-off-by: Shiraz Saleem <shiraz.saleem@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Mingguang Qu <qumingguang@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/i40iw/i40iw_cm.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/infiniband/hw/i40iw/i40iw_cm.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_cm.c
-@@ -125,7 +125,8 @@ static u8 i40iw_derive_hw_ird_setting(u1
-  * @conn_ird: connection IRD
-  * @conn_ord: connection ORD
-  */
--static void i40iw_record_ird_ord(struct i40iw_cm_node *cm_node, u16 conn_ird, u16 conn_ord)
-+static void i40iw_record_ird_ord(struct i40iw_cm_node *cm_node, u32 conn_ird,
-+				 u32 conn_ord)
- {
- 	if (conn_ird > I40IW_MAX_IRD_SIZE)
- 		conn_ird = I40IW_MAX_IRD_SIZE;
-@@ -3841,7 +3842,7 @@ int i40iw_connect(struct iw_cm_id *cm_id
- 	}
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
+@@ -2687,8 +2687,12 @@ static int hns3_uninit_all_ring(struct h
+ 			h->ae_algo->ops->reset_queue(h, i);
  
- 	cm_node->apbvt_set = true;
--	i40iw_record_ird_ord(cm_node, (u16)conn_param->ird, (u16)conn_param->ord);
-+	i40iw_record_ird_ord(cm_node, conn_param->ird, conn_param->ord);
- 	if (cm_node->send_rdma0_op == SEND_RDMA_READ_ZERO &&
- 	    !cm_node->ord_size)
- 		cm_node->ord_size = 1;
+ 		hns3_fini_ring(priv->ring_data[i].ring);
++		devm_kfree(priv->dev, priv->ring_data[i].ring);
+ 		hns3_fini_ring(priv->ring_data[i + h->kinfo.num_tqps].ring);
++		devm_kfree(priv->dev,
++			   priv->ring_data[i + h->kinfo.num_tqps].ring);
+ 	}
++	devm_kfree(priv->dev, priv->ring_data);
+ 
+ 	return 0;
+ }
