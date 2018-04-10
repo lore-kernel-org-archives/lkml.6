@@ -1,99 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752585AbeDJKUv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 06:20:51 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:46330 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751611AbeDJKUt (ORCPT
+        id S1752663AbeDJKVg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 06:21:36 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:39672 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752262AbeDJKVe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 06:20:49 -0400
-X-Google-Smtp-Source: AIpwx4/FXMmxT0/uq1NccEkU3j5c+4zZ79Kcd5nvB0QXTGUCt2M7+FV/fHoAxocPpBVOX+NGL0qOxXCyHmWLtT7HpGk=
+        Tue, 10 Apr 2018 06:21:34 -0400
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=rf@opensource.cirrus.com
+Subject: Re: [REGRESSION][BISECTED] i.MX6 pinctrl hogs stopped working
+To: =?UTF-8?Q?Mika_Penttil=c3=a4?= <mika.penttila@nextfour.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <8b07e30a-7dd1-7923-dc50-b84f0e43e9e9@nextfour.com>
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+Message-ID: <1d3c6099-3b33-d5dd-e12b-903586dc79f3@opensource.cirrus.com>
+Date: Tue, 10 Apr 2018 11:21:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180410095340.24074-1-javierm@redhat.com>
-References: <20180410095340.24074-1-javierm@redhat.com>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Tue, 10 Apr 2018 12:20:47 +0200
-Message-ID: <CAFqH_50O=V2jh3FDJ+udqL_F2s5W4G+KF1USHR_dKaT82_3EXw@mail.gmail.com>
-Subject: Re: [PATCH] Input: atmel_mxt_ts - add missing compatible strings to
- OF device table
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Nick Dyer <nick@shmanahar.org>, Mark Rutland <mark.rutland@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8b07e30a-7dd1-7923-dc50-b84f0e43e9e9@nextfour.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=969 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1804100104
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Javier!
+On 04/04/18 06:33, Mika Penttilä wrote:
+> Hi!
+> 
+> Reverting this made the hogs on a i.MX6 board work again. :
+> 
+> 
+> commit b89405b6102fcc3746f43697b826028caa94c823
+> Author: Richard Fitzgerald <rf@opensource.cirrus.com>
+> Date:   Wed Feb 28 15:53:06 2018 +0000
+> 
+>      pinctrl: devicetree: Fix dt_to_map_one_config handling of hogs
+> 
+> 
+> 
+> --Mika
+> 
 
-2018-04-10 11:53 GMT+02:00 Javier Martinez Canillas <javierm@redhat.com>:
-> Commit af503716ac14 ("i2c: core: report OF style module alias for devices
-> registered via OF") fixed how the I2C core reports the module alias when
-> devices are registered via OF.
->
-> But the atmel_mxt_ts driver only has an "atmel,maxtouch" compatible in its
-> OF device ID table, so if a Device Tree is using a different one, autoload
-> won't be working for the module (the matching works because the I2C device
-> ID table is used as a fallback).
->
-> So add compatible strings for each of the entries in the I2C device table.
->
-> Fixes: af503716ac14 ("i2c: core: report OF style module alias for devices registered via OF")
-> Reported-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-> ---
->
->  Documentation/devicetree/bindings/input/atmel,maxtouch.txt | 6 +++++-
->  drivers/input/touchscreen/atmel_mxt_ts.c                   | 4 ++++
->  2 files changed, 9 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-> index 23e3abc3fdef..cd43fb8bc2ce 100644
-> --- a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-> +++ b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-> @@ -1,8 +1,12 @@
->  Atmel maXTouch touchscreen/touchpad
->
->  Required properties:
-> -- compatible:
-> +- compatible: Must be one of the following
-> +    atmel,qt602240_ts
-> +    atmel,atmel_mxt_ts
-> +    atmel,atmel_mxt_tp
->      atmel,maxtouch
-> +    atmel,mXT224
->
->  - reg: The I2C address of the device
->
-> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-> index 7659bc48f1db..e8ef83f168d6 100644
-> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
-> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> @@ -3238,7 +3238,11 @@ static int __maybe_unused mxt_resume(struct device *dev)
->  static SIMPLE_DEV_PM_OPS(mxt_pm_ops, mxt_suspend, mxt_resume);
->
->  static const struct of_device_id mxt_of_match[] = {
-> +       { .compatible = "atmel,qt602240_ts", },
-> +       { .compatible = "atmel,atmel_mxt_ts", },
-> +       { .compatible = "atmel,atmel_mxt_tp", },
->         { .compatible = "atmel,maxtouch", },
-> +       { .compatible = "atmel,mXT224", },
->         {},
->  };
->  MODULE_DEVICE_TABLE(of, mxt_of_match);
-> --
-> 2.14.3
->
+I think you should check whether the bug is with the i.MX6 driver
+relying on the previous buggy behaviour of pinctrl. I haven't got
+i.MX6 hardware to test myself.
 
-The Samsung Chromebook Plus is one of the affected devices, with
-current mainline the module is not autoloaded, this patch fixes the
-issue.
+The bug I fixed in that patch was that when pinctrl is probing a
+pinctrl driver it would try to apply all the pinctrl settings
+listed in a dt node to the pinctrl driver it is probing instead
+of the pinctrl drivers they actually refer to. This was a bug
+introduced by an earlier patch (which unfortunately I forgot to
+include a fixes line reference to)
 
-Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+   pinctrl: core: Use delayed work for hogs
+
+So if a pinctrl driver "A" had a dependency on another pinctrl
+driver "B" those dependencies wouldn't be properly created because
+all the "B" pinctrl DT entries would be attempted against "A"
+instead of "B". This caused failures if a pinctrl driver had a
+dependency on another pinctrl driver, of if creating a pinctrl
+driver that is a child of an MFD and that MFD has dependencies
+on another pinctrl driver.
