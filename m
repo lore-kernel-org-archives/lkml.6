@@ -1,81 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753999AbeDJOq5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:46:57 -0400
-Received: from www.zeus03.de ([194.117.254.33]:34324 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753149AbeDJOq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:46:56 -0400
-X-UD-Smtp-Session: l3s3148p1@hiXxl39p9pMgAwDPW8txAAId4P/+oMhl
-Date: Tue, 10 Apr 2018 16:46:54 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Joe Perches <joe@perches.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: remove me as maintainer for I2C host drivers
-Message-ID: <20180410144654.fg2pbvh4d2y3rucv@katana>
-References: <20180410141125.4477-1-wsa@the-dreams.de>
- <f0ce07bdb69602450ea1681936706b16962ce41f.camel@perches.com>
+        id S1754097AbeDJOrG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:47:06 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:42957 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753562AbeDJOrE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 10:47:04 -0400
+X-Google-Smtp-Source: AIpwx48/9d79M5mijrj9+rKDWzM2ZEQQDILNK0eE7u/JzXzCwAPGBBNm8Ri5r90dB4KQkvX3J01nQUvrF2k4S5wqORU=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zbllqjolnqtxdax7"
-Content-Disposition: inline
-In-Reply-To: <f0ce07bdb69602450ea1681936706b16962ce41f.camel@perches.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <87feac02-e955-1897-d4a4-d6d6d1082e45@gmail.com>
+References: <1523276721-4982-1-git-send-email-geert+renesas@glider.be>
+ <9bea3ad8-7e84-87c2-9963-de81ad4cb3bf@gmail.com> <CAMuHMdWHoxrq-tj=QznAhuZ8eC22gTTgWFi9HgyqT9pNfJFJyw@mail.gmail.com>
+ <87feac02-e955-1897-d4a4-d6d6d1082e45@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 10 Apr 2018 16:47:02 +0200
+X-Google-Sender-Auth: s0T9rAF1H_Tp0GA68m5Sy9tDus0
+Message-ID: <CAMuHMdWm96dPSx8bms0esFaDhCri9daon0UT4x=qEqeK2XFnTA@mail.gmail.com>
+Subject: Re: [PATCH] mtd: partitions: Handle add_mtd_device() failures gracefully
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Marek,
 
---zbllqjolnqtxdax7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tue, Apr 10, 2018 at 4:37 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+> On 04/10/2018 03:26 PM, Geert Uytterhoeven wrote:
+>> On Mon, Apr 9, 2018 at 11:59 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
+>>> On 04/09/2018 02:25 PM, Geert Uytterhoeven wrote:
+>>>> Currently add_mtd_device() failures are plainly ignored, which may lead
+>>>> to kernel crashes later.
+>>
+>>>> Fix this by ignoring and freeing partitions that failed to add in
+>>>> add_mtd_partitions().  The same issue is present in mtd_add_partition(),
+>>>> so fix that as well.
+>>>>
+>>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>> ---
+>>>> I don't know if it is worthwhile factoring out the common handling.
+>>>>
+>>>> Should allocate_partition() fail instead?  There's a comment saying
+>>>> "let's register it anyway to preserve ordering".
+>>
+>>>> --- a/drivers/mtd/mtdpart.c
+>>>> +++ b/drivers/mtd/mtdpart.c
+>>
+>>>> @@ -746,7 +753,15 @@ int add_mtd_partitions(struct mtd_info *master,
+>>>>               list_add(&slave->list, &mtd_partitions);
+>>>>               mutex_unlock(&mtd_partitions_mutex);
+>>>>
+>>>> -             add_mtd_device(&slave->mtd);
+>>>> +             ret = add_mtd_device(&slave->mtd);
+>>>> +             if (ret) {
+>>>> +                     mutex_lock(&mtd_partitions_mutex);
+>>>> +                     list_del(&slave->list);
+>>>> +                     mutex_unlock(&mtd_partitions_mutex);
+>>>> +                     free_partition(slave);
+>>>> +                     continue;
+>>>> +             }
+>>>
+>>> Why is the partition even in the list in the first place ? Can we avoid
+>>> adding it rather than adding and removing it ?
+>>
+>> Hence my question "Should allocate_partition() fail instead?".
+>> Note that if we go that route, it should be a "soft" failure, as we
+>> probably don't
+>> want to drop all other partitions on the device.
+> Is the number of partitions ie. in /proc/mtdparts an ABI ?
 
+I don't know.
 
-> As far as I understand, all this seems correct to me.
+Gr{oetje,eeting}s,
 
-Good. Thank you, Joe!
+                        Geert
 
-> You want to maintain the core files in drivers/i2c/
-> but not any files in any of algos/, busses/, or muxes/.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-More specific: I don't want get_maintainer.pl to print me as a
-maintainer for these drivers. This gives a wrong impression to users. I
-am not actively maintaining these drivers, I am collecting the odd
-fixes (and also review some of them as time permits).
-
-> You might also want to specify which of the
-> include/linux/i2c-*.h files you actually want to oversee
-> as well.  It seems some are driver specific.
-
-I am just now working on that. Most of them can easily be moved to
-platform_data.
-
-> But the git entry for the drivers seems maybe a bit of an issue.  Are
-> you intending to somehow pick up patches approved by the i2c
-> community?
-
-Yes, I will still be doing that. I think I will also be the one doing
-most review for those odd fixes nonetheless.
-
-
---zbllqjolnqtxdax7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrMzloACgkQFA3kzBSg
-KbYzKBAApv1Ex0A54fCqYM629/6Rxw/k7yU+dFeYBPuss+YUFYgnVINRdgSI9n8E
-pmLiFkTImNwVlMozVD9AxJO6FukuWKyapG/amBwU6E8b90eLD8bg0ZZHXeIFoTxc
-rXXxMNBUm3nCu1a2I30PM3D/2I+Mz9sO6Fbyww2hc7q7ithFBjIJ+RjOuBb5EwnZ
-WSTHbZKsZujKL8CErDL8Y8qWwdlnCYFQsZhlsY0gHeftldMbzXT5IHPmneRjg003
-DJmviVkwNBm27ogwRki339OPp6hOotVhJV6e5ZImgmpy0xYjPrQRS+pqkyQ68oLs
-BywyIXNB4QSz26MxNqF2sIypZy+fe+8TMg3zXLFgxunT6tID4GzGFEhpAQwxXglt
-RHsN8zA6uvkszCkDVnX5hMG5y1kENbjX5KSpC882gyyqpzQaqgg/W/1vb7jfylBF
-FzOJiUoQP8uVk6rEzDXvskR+GHGzvVwOAembCKu3QqUCjnfa7Q0HLOr1Gv+0KnMG
-WlfbrTsW0/PYg3Qp2GV2duueg+NhlYfM5CC8bO+GBJjqtTHMC8XZqZq0dQkVc5AK
-gbFb14avPkGjbH/Mvf5t1RcwiRW5IoxzoL6M8Ln81E+Rt7GkNH7E5dKvwNqQ2lZJ
-da64Ofik65/ktyUdvDMnISjJw4tuhcSSNzzsej9rZVlPHSTIY58=
-=Giub
------END PGP SIGNATURE-----
-
---zbllqjolnqtxdax7--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
