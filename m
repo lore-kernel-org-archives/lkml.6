@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/yT0zuEEoyMd8Fadn5hsx+aEOBqgOLTb8osvZs+C3gMRTnUpt3mgjVTSEdeVQ61iAG4t0x
-ARC-Seal: i=1; a=rsa-sha256; t=1523399673; cv=none;
+X-Google-Smtp-Source: AIpwx4+IQfXRG4i7mgLIcGBmweZCqrsV3bsazUa67v+uiiDgKjgPEZtPV081w1dx2KMlTwNIFv/0
+ARC-Seal: i=1; a=rsa-sha256; t=1523399671; cv=none;
         d=google.com; s=arc-20160816;
-        b=0bW22cwW0AeBM/dCoa3X+e/bQlmo8XtwE22OkOa/i1uq0dCww4XWP6DPcdl/C0AlQJ
-         q4MRXZx+RdLOqkvBTlRvUAZuqls3J3hxH75tzAT+8rweKJ/OOlf8Bj5q05F15QNGfjKt
-         ZHUITCxFKjlBsFvhp5gqbMMsOmN0bK4NFWfMfcX8Rc9orvVjt1u3cCa0vRwU/rxktBui
-         nohr8HI7ipEwclo+hzU1Crn/6hlmhUZwBiH56zYM9Vt5oFmoiHjcznAL2M4+hprjCPaD
-         c+4mQrU4gEpcyqubxO6fq+JoLQe7RvbhhiVcYZgq2q3vVLMQa9SEB0Meu+H2ylEqJ8zX
-         JQRg==
+        b=jPCIc1jQbw4Z104EbwZFIlSXYxKbzJ+ZyYqQYeF8OOFUVkeH1Xdx2V2GBdr6izin5H
+         72mcGeXWNBGctgoVEGNy6QN4ElXxOBs7/lUS/aYbI7xCsBY+3XI0wobMF7JdjjJNaNVj
+         HYZliycDgr1UizdeWekhscpjELnMGW0Zoo3/YRhxpx5pvXu+/QViFZuHoatnxIJwgAqM
+         oqQlBGkTP3dL7Zoc6pMQZ6nV0fGlDLzmdjPRJGTj2aEBafbfmfvWWL0fLldvHRcu3jiS
+         O4YqGU0Un4y8ZAIbwWlBXwfWGWmedLJryX49i7FHgRcOvpXcZU40tocQtIo/Of8ilWT2
+         +1Nw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=FaxGGyQ9e01tZvkoe7dWlnh3ALvDW6hEg1ncY6DwnVw=;
-        b=Yd6xqB2PPjlu504JE8tlLR+hlgVv+hCIDmVaVox+jLR/1v5WyHDV38C8RGaIxTqSbg
-         MLwWkidh8K0KU6Af4iqqYRxNIVI2DF3y49tQa7LS51bwkNOIGbXda23Jt1IG+7dup55g
-         CnRLe9GC488jar0w870o5AIqawYtjfYsX8AhIAnbtHn+95F3PCMwT9Iw0XCa7fvEwWxZ
-         WwQeTiul7gH31DLFlNwp1nuiMn9LDVJecn97MNq5t630E7JxG16MkkAI4rORp07Tx3oh
-         e3Jz5rHF6AUmamu53RQ8jWwiEevEPKOmDjCTRGVj67eykxN5LIeFcSjuC1KcEIh9OGZf
-         FvrQ==
+        bh=MCzjJG2VoJ3MWgzBPABNBGNR5EVbHqEkvgfupEMTUj0=;
+        b=Nsfx3HfvuA+qOScnslOQ4fYO7Lv7OLSummHL39fKkDbV6/vaHW5t32J0eZgCDAGtmb
+         M+70AOKMaUR57B3Zyvh893QhFDJg1R3woEKTlAnv9zkx+aoNdNYgBGDicQg0Hd9vOI7a
+         rYKA6lEpWE5S3rl5DzWCqYRdLFf5r3J/7WPixhD0wwXOpMg5jJ4kz+u2Ljb9l2fOgqOr
+         oYl+TW0yFQMSIKeEH+vOCg1TIa0Gs9BocvmeWqFYbZ7a03mmiVjfnqfZ7VfcHFPW0KP9
+         ZKtsPbsbFn2g7yuhizUAW0HobbNak4ek+RORBrWvJv05DeHP6TMyvUF11oXCDmX3/YBw
+         MYLQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-	Shawn Guo <shawnguo@kernel.org>,
+	Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 005/138] ARM: dts: ls1021a: add "fsl,ls1021a-esdhc" compatible string to esdhc node
-Date: Wed, 11 Apr 2018 00:23:15 +0200
-Message-Id: <20180410212902.713448661@linuxfoundation.org>
+Subject: [PATCH 4.14 022/138] selftests/net: fix bugs in address and port initialization
+Date: Wed, 11 Apr 2018 00:23:32 +0200
+Message-Id: <20180410212904.718109800@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399809934543808?=
-X-GMAIL-MSGID: =?utf-8?q?1597400336373107637?=
+X-GMAIL-THRID: =?utf-8?q?1597399853915126118?=
+X-GMAIL-MSGID: =?utf-8?q?1597400333630958916?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,33 +51,110 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
 
 
-[ Upstream commit d5c7b4d5ac2237a6da7ced3adfe6b8bf769f8cc6 ]
+[ Upstream commit d36f45e5b46723cf2d4147173e18c52d4143176d ]
 
-Commit a22950c888e3 (mmc: sdhci-of-esdhc: add quirk
-SDHCI_QUIRK_BROKEN_TIMEOUT_VAL for ls1021a) added logic to the driver to
-enable the broken timeout val quirk for ls1021a, but did not add the
-corresponding compatible string to the device tree, so it didn't really
-have any effect. Fix that.
+Address/port initialization should work correctly regardless
+of the order in which command line arguments are supplied,
+E.g, cfg_port should be used to connect to the remote host
+even if it is processed after -D, src/dst address initialization
+should not require that [-4|-6] be specified before
+the -S or -D args, receiver should be able to bind to *.<cfg_port>
 
-Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Achieve this by making sure that the address/port structures
+are initialized after all command line options are parsed.
+
+Store cfg_port in host-byte order, and use htons()
+to set up the sin_port/sin6_port before bind/connect,
+so that the network system calls get the correct values
+in network-byte order.
+
+Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Acked-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/ls1021a.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/net/msg_zerocopy.c |   21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
---- a/arch/arm/boot/dts/ls1021a.dtsi
-+++ b/arch/arm/boot/dts/ls1021a.dtsi
-@@ -155,7 +155,7 @@
- 		};
+--- a/tools/testing/selftests/net/msg_zerocopy.c
++++ b/tools/testing/selftests/net/msg_zerocopy.c
+@@ -259,22 +259,28 @@ static int setup_ip6h(struct ipv6hdr *ip
+ 	return sizeof(*ip6h);
+ }
  
- 		esdhc: esdhc@1560000 {
--			compatible = "fsl,esdhc";
-+			compatible = "fsl,ls1021a-esdhc", "fsl,esdhc";
- 			reg = <0x0 0x1560000 0x0 0x10000>;
- 			interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <0>;
+-static void setup_sockaddr(int domain, const char *str_addr, void *sockaddr)
++
++static void setup_sockaddr(int domain, const char *str_addr,
++			   struct sockaddr_storage *sockaddr)
+ {
+ 	struct sockaddr_in6 *addr6 = (void *) sockaddr;
+ 	struct sockaddr_in *addr4 = (void *) sockaddr;
+ 
+ 	switch (domain) {
+ 	case PF_INET:
++		memset(addr4, 0, sizeof(*addr4));
+ 		addr4->sin_family = AF_INET;
+ 		addr4->sin_port = htons(cfg_port);
+-		if (inet_pton(AF_INET, str_addr, &(addr4->sin_addr)) != 1)
++		if (str_addr &&
++		    inet_pton(AF_INET, str_addr, &(addr4->sin_addr)) != 1)
+ 			error(1, 0, "ipv4 parse error: %s", str_addr);
+ 		break;
+ 	case PF_INET6:
++		memset(addr6, 0, sizeof(*addr6));
+ 		addr6->sin6_family = AF_INET6;
+ 		addr6->sin6_port = htons(cfg_port);
+-		if (inet_pton(AF_INET6, str_addr, &(addr6->sin6_addr)) != 1)
++		if (str_addr &&
++		    inet_pton(AF_INET6, str_addr, &(addr6->sin6_addr)) != 1)
+ 			error(1, 0, "ipv6 parse error: %s", str_addr);
+ 		break;
+ 	default:
+@@ -603,6 +609,7 @@ static void parse_opts(int argc, char **
+ 				    sizeof(struct tcphdr) -
+ 				    40 /* max tcp options */;
+ 	int c;
++	char *daddr = NULL, *saddr = NULL;
+ 
+ 	cfg_payload_len = max_payload_len;
+ 
+@@ -627,7 +634,7 @@ static void parse_opts(int argc, char **
+ 			cfg_cpu = strtol(optarg, NULL, 0);
+ 			break;
+ 		case 'D':
+-			setup_sockaddr(cfg_family, optarg, &cfg_dst_addr);
++			daddr = optarg;
+ 			break;
+ 		case 'i':
+ 			cfg_ifindex = if_nametoindex(optarg);
+@@ -638,7 +645,7 @@ static void parse_opts(int argc, char **
+ 			cfg_cork_mixed = true;
+ 			break;
+ 		case 'p':
+-			cfg_port = htons(strtoul(optarg, NULL, 0));
++			cfg_port = strtoul(optarg, NULL, 0);
+ 			break;
+ 		case 'r':
+ 			cfg_rx = true;
+@@ -647,7 +654,7 @@ static void parse_opts(int argc, char **
+ 			cfg_payload_len = strtoul(optarg, NULL, 0);
+ 			break;
+ 		case 'S':
+-			setup_sockaddr(cfg_family, optarg, &cfg_src_addr);
++			saddr = optarg;
+ 			break;
+ 		case 't':
+ 			cfg_runtime_ms = 200 + strtoul(optarg, NULL, 10) * 1000;
+@@ -660,6 +667,8 @@ static void parse_opts(int argc, char **
+ 			break;
+ 		}
+ 	}
++	setup_sockaddr(cfg_family, daddr, &cfg_dst_addr);
++	setup_sockaddr(cfg_family, saddr, &cfg_src_addr);
+ 
+ 	if (cfg_payload_len > max_payload_len)
+ 		error(1, 0, "-s: payload exceeds max (%d)", max_payload_len);
