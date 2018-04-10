@@ -1,14 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751882AbeDJQyx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 12:54:53 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:47298 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751624AbeDJQyw (ORCPT
+        id S1752041AbeDJQza (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 12:55:30 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:40518 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751884AbeDJQz2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 12:54:52 -0400
-Subject: Re: [PATCH v3 2/3] mm/shmem: update file sealing comments and file
- checking
+        Tue, 10 Apr 2018 12:55:28 -0400
+Subject: Re: [PATCH v3 3/3] mm: restructure memfd code
 To: Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
 Cc: Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
@@ -18,15 +17,15 @@ Cc: Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
         David Herrmann <dh.herrmann@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>
 References: <20180409230505.18953-1-mike.kravetz@oracle.com>
- <20180409230505.18953-3-mike.kravetz@oracle.com>
+ <20180409230505.18953-4-mike.kravetz@oracle.com>
 From: Khalid Aziz <khalid.aziz@oracle.com>
 Organization: Oracle Corp
-Message-ID: <e710688c-1086-f9e4-6589-e4b5641ae30c@oracle.com>
-Date: Tue, 10 Apr 2018 10:54:21 -0600
+Message-ID: <bfcae61d-e34e-e04d-62f5-a5359df8fcf1@oracle.com>
+Date: Tue, 10 Apr 2018 10:55:04 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180409230505.18953-3-mike.kravetz@oracle.com>
+In-Reply-To: <20180409230505.18953-4-mike.kravetz@oracle.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -40,16 +39,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 04/09/2018 05:05 PM, Mike Kravetz wrote:
-> In preparation for memfd code restucture, update comments dealing
-> with file sealing to indicate that tmpfs and hugetlbfs are the
-> supported filesystems.  Also, change file pointer checks in
-> memfd_file_seals_ptr to use defined routines instead of directly
-> referencing file_operation structs.
+> With the addition of memfd hugetlbfs support, we now have the situation
+> where memfd depends on TMPFS -or- HUGETLBFS.  Previously, memfd was only
+> supported on tmpfs, so it made sense that the code resided in shmem.c.
+> In the current code, memfd is only functional if TMPFS is defined.  If
+> HUGETLFS is defined and TMPFS is not defined, then memfd functionality
+> will not be available for hugetlbfs.  This does not cause BUGs, just a
+> lack of potentially desired functionality.
+> 
+> Code is restructured in the following way:
+> - include/linux/memfd.h is a new file containing memfd specific
+>    definitions previously contained in shmem_fs.h.
+> - mm/memfd.c is a new file containing memfd specific code previously
+>    contained in shmem.c.
+> - memfd specific code is removed from shmem_fs.h and shmem.c.
+> - A new config option MEMFD_CREATE is added that is defined if TMPFS
+>    or HUGETLBFS is defined.
+> 
+> No functional changes are made to the code: restructuring only.
 > 
 > Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 > ---
->   mm/shmem.c | 29 +++++++++++++++--------------
->   1 file changed, 15 insertions(+), 14 deletions(-)
->
+>   fs/Kconfig               |   3 +
+>   fs/fcntl.c               |   2 +-
+>   include/linux/memfd.h    |  16 +++
+>   include/linux/shmem_fs.h |  13 --
+>   mm/Makefile              |   1 +
+>   mm/memfd.c               | 344 +++++++++++++++++++++++++++++++++++++++++++++++
+>   mm/shmem.c               | 323 --------------------------------------------
+>   7 files changed, 365 insertions(+), 337 deletions(-)
+>   create mode 100644 include/linux/memfd.h
+>   create mode 100644 mm/memfd.c
+> 
 
 Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
