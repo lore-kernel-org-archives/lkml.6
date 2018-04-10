@@ -1,112 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752763AbeDJJAj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 05:00:39 -0400
-Received: from mga01.intel.com ([192.55.52.88]:20088 "EHLO mga01.intel.com"
+        id S1752781AbeDJJBd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 05:01:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47050 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752242AbeDJJAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:00:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,431,1517904000";
-   d="scan'208";a="219179049"
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-CC: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-Thread-Topic: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-Thread-Index: AQHTzovCXbr+Xqq9jkSj9yBS1IttZ6P4GCYAgAGeicA=
-Date: Tue, 10 Apr 2018 09:00:32 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
-References: <20180407161236.22969-1-tomas.winkler@intel.com>
- <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
-In-Reply-To: <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjAwMjAxYmYtNGFhOC00NGRiLWE0ODgtOTM5OWU2YmU3NTVhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJhVG9WazFzZ05kXC9JMGIwTm51VmN0RUhXalpqcmNJWm96ZVVNQzY1eGlmYnZLZ3M1Vys4bUhwOXdubXR0SlRBSCJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.255.201.153]
-Content-Type: text/plain; charset="utf-8"
+        id S1752368AbeDJJBb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 05:01:31 -0400
+Date: Tue, 10 Apr 2018 11:01:28 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal
+ OOM_SCORE_ADJ_MIN
+Message-ID: <20180410090128.GY21835@dhcp22.suse.cz>
+References: <CAGWkznEhy7Fard=6E3X_qUezXd33RdKV9CVeONWL=6EQ1bokEw@mail.gmail.com>
+ <CAGWkznEuGCZq600XjCtp3hzgN2LrCgwSAfoLwQR7jTw5p=qHoQ@mail.gmail.com>
+ <20180409231230.1ab99e85@vmware.local.home>
+ <CAGWkznG8-zmfE5iqPUVP+sztasa1zLPWE28qBiZ_tq524JznPw@mail.gmail.com>
+ <20180410061447.GQ21835@dhcp22.suse.cz>
+ <CAGWkznGrugH0VqJyd5ZPiSBMOZ4SbbNpKiHVXM27Q-ep4SYb-Q@mail.gmail.com>
+ <20180410074921.GU21835@dhcp22.suse.cz>
+ <CAGWkznHQSZ5jPF2njOp0BritTmKiGOToq5bAz1bhzzmFi_01nA@mail.gmail.com>
+ <20180410081231.GV21835@dhcp22.suse.cz>
+ <CAGWkznEM=AX=3LWDmgyz4GRkWy81TNdFQQXZ7+W4=Ek4ZsnsJw@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGWkznEM=AX=3LWDmgyz4GRkWy81TNdFQQXZ7+W4=Ek4ZsnsJw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3A90iWd008750
 
-> 
-> On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
-> > In crb_map_io() function, __crb_request_locality() is called prior to
-> > crb_cmd_ready(), but if one of the consecutive function fails the flow
-> > bails out instead of trying to relinquish locality.
-> > This patch adds goto jump to __crb_relinquish_locality() on the error path.
+On Tue 10-04-18 16:38:32, Zhaoyang Huang wrote:
+> On Tue, Apr 10, 2018 at 4:12 PM, Michal Hocko <mhocko@kernel.org> wrote:
+> > On Tue 10-04-18 16:04:40, Zhaoyang Huang wrote:
+> >> On Tue, Apr 10, 2018 at 3:49 PM, Michal Hocko <mhocko@kernel.org> wrote:
+> >> > On Tue 10-04-18 14:39:35, Zhaoyang Huang wrote:
+> >> >> On Tue, Apr 10, 2018 at 2:14 PM, Michal Hocko <mhocko@kernel.org> wrote:
+> > [...]
+> >> >> > OOM_SCORE_ADJ_MIN means "hide the process from the OOM killer completely".
+> >> >> > So what exactly do you want to achieve here? Because from the above it
+> >> >> > sounds like opposite things. /me confused...
+> >> >> >
+> >> >> Steve's patch intend to have the process be OOM's victim when it
+> >> >> over-allocating pages for ring buffer. I amend a patch over to protect
+> >> >> process with OOM_SCORE_ADJ_MIN from doing so. Because it will make
+> >> >> such process to be selected by current OOM's way of
+> >> >> selecting.(consider OOM_FLAG_ORIGIN first before the adj)
+> >> >
+> >> > I just wouldn't really care unless there is an existing and reasonable
+> >> > usecase for an application which updates the ring buffer size _and_ it
+> >> > is OOM disabled at the same time.
+> >> There is indeed such kind of test case on my android system, which is
+> >> known as CTS and Monkey etc.
 > >
-> > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after
-> > granting
-> > locality)
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > ---
-> >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > Does the test simulate a real workload? I mean we have two things here
 > >
-> > diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-> > index 7f78482cd157..34fbc6cb097b 100644
-> > --- a/drivers/char/tpm/tpm_crb.c
-> > +++ b/drivers/char/tpm/tpm_crb.c
-> > @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device *device,
-> > struct crb_priv *priv,
-> >
-> >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
-> >  				   sizeof(struct crb_regs_tail));
-> > -	if (IS_ERR(priv->regs_t))
-> > -		return PTR_ERR(priv->regs_t);
-> > +	if (IS_ERR(priv->regs_t)) {
-> > +		ret = PTR_ERR(priv->regs_t);
-> > +		goto out_relinquish_locality;
-> > +	}
-> >
-> >  	/*
-> >  	 * PTT HW bug w/a: wake up the device to access @@ -520,7 +522,7
-> @@
-> > static int crb_map_io(struct acpi_device *device, struct crb_priv
-> > *priv,
-> >  	 */
-> >  	ret = crb_cmd_ready(dev, priv);
-> >  	if (ret)
-> > -		return ret;
-> > +		goto out_relinquish_locality;
-> >
-> >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
-> >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
-> > @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device *device,
-> > struct crb_priv *priv,
-> >
-> >  	crb_go_idle(dev, priv);
-> >
-> > +out_relinquish_locality:
-> > +
-> >  	__crb_relinquish_locality(dev, priv, 0);
-> >
-> >  	return ret;
-> 
-> Thanks, please just call it before returning in the error path.
+> > oom disabled task and an updater of the ftrace ring buffer to a
+> > potentially large size. The second can be completely isolated to a
+> > different context, no? So why do they run in the single user process
+> > context?
+> ok. I think there are some misunderstandings here. Let me try to
+> explain more by my poor English. There is just one thing here. The
+> updater is originally a oom disabled task with adj=OOM_SCORE_ADJ_MIN.
+> With Steven's patch, it will periodically become a oom killable task
+> by calling set_current_oom_origin() for user process which is
+> enlarging the ring buffer. What I am doing here is limit the user
+> process to the ones that adj > -1000.
 
-Can you please elaborate why, isn't the centralized exiting of functions preferred kernel coding style? 
-https://www.kernel.org/doc/html/v4.11/process/coding-style.html#centralized-exiting-of-functions 
-
-Thanks
-Tomas
-
-> 
-> /Jarkko
+I've understood that part. And I am arguing whether this is really such
+an important case to play further tricks. Wouldn't it be much simpler to
+put the updater out to a separate process? OOM disabled processes
+shouldn't really do unexpectedly large allocations. Full stop. Otherwise
+you risk a large system disruptions.
+-- 
+Michal Hocko
+SUSE Labs
