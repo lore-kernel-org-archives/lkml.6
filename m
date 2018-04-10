@@ -1,59 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754476AbeDJNyd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 09:54:33 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38000 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753598AbeDJNya (ORCPT
+        id S1754120AbeDJNtq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 09:49:46 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36514 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754073AbeDJNth (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 09:54:30 -0400
-X-Google-Smtp-Source: AIpwx4+Ljy3pM2mBTUvaY8XDGglczYXAjjqa7vd53HfqyBmrPnfnMjHBi6vgI7lT/5XkqHDkRqFv7w==
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: Larry.Finger@lwfinger.net, kvalo@codeaurora.org
-Cc: linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] net: wireless: b43legacy: Replace GFP_ATOMIC with GFP_KERNEL in dma_tx_fragment
-Date: Tue, 10 Apr 2018 21:54:19 +0800
-Message-Id: <1523368459-32128-1-git-send-email-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Tue, 10 Apr 2018 09:49:37 -0400
+Date: Tue, 10 Apr 2018 14:49:33 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "sxauwsk@163.com" <sxauwsk@163.com>
+Cc: linux-spi <linux-spi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] spi: cadence: Add usleep_range() for
+ cdns_spi_fill_tx_fifo()
+Message-ID: <20180410134933.GA14657@sirena.org.uk>
+References: <201804102112307962582@163.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="liOOAslEiF7prFVr"
+Content-Disposition: inline
+In-Reply-To: <201804102112307962582@163.com>
+X-Cookie: You will lose an important disk file.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dma_tx_fragment() is never called in atomic context.
 
-dma_tx_fragment() is only called by b43legacy_dma_tx(), which is 
-only called by b43legacy_tx_work().
-b43legacy_tx_work() is only set a parameter of INIT_WORK() in 
-b43legacy_wireless_init().
+--liOOAslEiF7prFVr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Despite never getting called from atomic context,
-dma_tx_fragment() calls alloc_skb() with GFP_ATOMIC,
-which does not sleep for allocation.
-GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
-which can sleep and improve the possibility of sucessful allocation.
+On Tue, Apr 10, 2018 at 09:12:32PM +0800, sxauwsk@163.com wrote:
+>=20
+>=20
+>=20
+>=20
+> sxauwsk@163.com
 
-This is found by a static analysis tool named DCNS written by myself.
-And I also manually check it.
+Please submit patches in the format described in SubmittingPatches, my
+mail program isn't seeing anything in the mail except what's quoted
+above.
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/net/wireless/broadcom/b43legacy/dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--liOOAslEiF7prFVr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/net/wireless/broadcom/b43legacy/dma.c b/drivers/net/wireless/broadcom/b43legacy/dma.c
-index cfa617d..2f0c64c 100644
---- a/drivers/net/wireless/broadcom/b43legacy/dma.c
-+++ b/drivers/net/wireless/broadcom/b43legacy/dma.c
-@@ -1064,7 +1064,7 @@ static int dma_tx_fragment(struct b43legacy_dmaring *ring,
- 	meta->dmaaddr = map_descbuffer(ring, skb->data, skb->len, 1);
- 	/* create a bounce buffer in zone_dma on mapping failure. */
- 	if (b43legacy_dma_mapping_error(ring, meta->dmaaddr, skb->len, 1)) {
--		bounce_skb = alloc_skb(skb->len, GFP_ATOMIC | GFP_DMA);
-+		bounce_skb = alloc_skb(skb->len, GFP_KERNEL | GFP_DMA);
- 		if (!bounce_skb) {
- 			ring->current_slot = old_top_slot;
- 			ring->used_slots = old_used_slots;
--- 
-1.9.1
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrMwOwACgkQJNaLcl1U
+h9APAQf7BP7KGe3JfFfM/JgwY7/wn+RHBnhTLUGrWgS3pHuS2qfGUEGLnD82rR2e
+DX2Xo+lVxcjPRgFedAsJ+qh84gUbkAW69sSuLJkYj8xrUefxszupdLUZqas5ne4B
+vb0wQU38JMIQYWrnefhq7aMxxP5HdAuMRltvRakZB9ecm335+zyVSRt5JkjcKXkA
+mDXL8x36fLSIipu68res2tzZv4H4uw1LuLxW7QtmgLhm65W8GnhOx5IaHVgffUft
+H54TRd047aj6eQPUCBXpyzIe9pjORlTqe3RgIijqmmjyPLqCK2Nw/KlyetcA7aw4
+YPHVUpyK4EJ1hbuTpJ6MbytJ4NFaSg==
+=X3hj
+-----END PGP SIGNATURE-----
+
+--liOOAslEiF7prFVr--
