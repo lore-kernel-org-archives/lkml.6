@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49OTZuhvZ4xBNtJ5Mwi1uSL2Duwtzul3+REZpj0Iu6ISNwYC9PzIOutJUpyDikajzXQ9zMH
-ARC-Seal: i=1; a=rsa-sha256; t=1523399925; cv=none;
+X-Google-Smtp-Source: AIpwx49o4ZjKr9eyVun14kXkXPRwLmX6NHSLdnDeTGwiqnkY/oYuIFmX6ZOIxAaR3J7N6MC0HfSy
+ARC-Seal: i=1; a=rsa-sha256; t=1523399922; cv=none;
         d=google.com; s=arc-20160816;
-        b=wR2GnC+76K0m2p1vxMi5vefmL7zW7WJ2a9sHMUWZz3ZwKyJrtVZQvwWtVs7/fFfzVN
-         7gpRqEXb+ouIIO11eyE/0AYpMWrWU8LpktCGEvurrrVtOsR2VYJFu68hZoxK6EmThbNU
-         rB7tplNtORJN+/AsRROaCEYsYyy8AP9L0FPKfnb7nuUe+DWn2/SIuN080ATYNwBetfdb
-         FN24qjfIPVLLBSIVduZCh7UZfzWSGtCT+qvrmUCDp71BTVjYpxIv5ppunmA1DoSUz15A
-         n9dKu6j2OyvYGwb5EjkFK92YV7blH44BIFQ/oAKrK/5vHi6/2EuObtE30R9SeoefnKbD
-         toGw==
+        b=Y4U+aD9O0TtPoawsnp2fVRuxeK1e6ipvjLdF9IAuim8jDcXYYNaB0bDzPQpRHZXoaH
+         w69Zzwiu/Ae5vF8jxr3GZvjbDxgrlIAO1JIq0raA2/noJGz62NR7RphxTIiNVLYFAQBk
+         Lv87eH2g+I9Cu3X76H5YfaAkMU9ST90irPdcspJItfYIoRGOMCrlngc3BG0StskFC+bw
+         eSGoRwkM1W1JXVWnPfM9JrRoCqReSZlK84jZzsWc9Lbyc4/gC15Zuu4tKsrUn2ZNVVUB
+         reoeysE2xBvTB7Dw2ULbsFVdYIgoUlrE1bjEz6AjYx4J7mNH5evNEtEiV3L7e6h4LUKq
+         Oigg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=m08hRyvQYDlCsrj6nhebuHJL8CCqkwVyUB8dXn/K0aA=;
-        b=tQ4cgpO9TopkYk5647YV41MLzjQVh3c1rl7WfzHgaDTik2mM5RnXgYpFHxo3KOggSG
-         NP1p3IL2sT5Lk/9sO9PcwQHV0Rk2AJHxwH0tYhpprC/XuegRB7sj0LpQCJqeiUyID+vg
-         xbeVa5jSxMr0psF3E58Gq9ZX7Mw69/V+kKT8VnXWHmJ0qqnS0bgaOqYhgNtYvWMac7P4
-         4MYL0eT60JUM7QPooY28n1z0clCroyoOC4POsA/0TuFG/Oe9BFn9PWGgjTZDAOBU3a6i
-         g4dBchaq8qiH3MRZ+ChcxOcxnhKun7qy/Fc36Hxb/Z3enuzaYgKKeFKgJ+7Wp4EZY+y5
-         dlJA==
+        bh=Ei/34cN+X9fBf/1lob2eAgABe/NoLPBmTTAhu9tRXFc=;
+        b=jfYHLzwwnJtAswpXwFYEVbqsRzd55vMrd78vA2C/gJZbj7Y8NrcQo21qCPrQkX1DSB
+         PywQ8PhUq2sB941bFhJJmC1sTbhMzSen+DzeW3res5h3K7qiz8GgtkxWT5EE2ulw0qUK
+         xTCQVxfVS+TGslt4ysAoN1IpP05bz5zpFMREeU6eGRAQJtjH3+9v0JkJ3ZwjfFrjSIFh
+         DKtfNSj3XKv40Xkb+DY7XHH0j7sgACPn7MEb0PwPtobUzHojF4nwvFDkZvWvsm3bgNAR
+         NsJimxav6XQfQPensGqc2aE2ul9aOWzH1sI/Mt6TXwdhshhnKu7dQjER6kuoHINlGf9h
+         e1bg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Emanuel Czirai <xftroxgpx@protonmail.com>,
+	Ashok Raj <ashok.raj@intel.com>,
 	Borislav Petkov <bp@suse.de>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Ashok Raj <ashok.raj@intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>
-Subject: [PATCH 4.14 095/138] x86/microcode: Attempt late loading only when new microcode is present
-Date: Wed, 11 Apr 2018 00:24:45 +0200
-Message-Id: <20180410212913.215180092@linuxfoundation.org>
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Subject: [PATCH 4.14 094/138] x86/microcode: Synchronize late microcode loading
+Date: Wed, 11 Apr 2018 00:24:44 +0200
+Message-Id: <20180410212913.109294047@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400173391081776?=
-X-GMAIL-MSGID: =?utf-8?q?1597400600885173825?=
+X-GMAIL-THRID: =?utf-8?q?1597400170922459032?=
+X-GMAIL-MSGID: =?utf-8?q?1597400596930505690?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,146 +52,212 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Ashok Raj <ashok.raj@intel.com>
 
-commit 2613f36ed965d0e5a595a1d931fd3b480e82d6fd upstream.
+commit a5321aec6412b20b5ad15db2d6b916c05349dbff upstream.
 
-Return UCODE_NEW from the scanning functions to denote that new microcode
-was found and only then attempt the expensive synchronization dance.
+Original idea by Ashok, completely rewritten by Borislav.
 
-Reported-by: Emanuel Czirai <xftroxgpx@protonmail.com>
+Before you read any further: the early loading method is still the
+preferred one and you should always do that. The following patch is
+improving the late loading mechanism for long running jobs and cloud use
+cases.
+
+Gather all cores and serialize the microcode update on them by doing it
+one-by-one to make the late update process as reliable as possible and
+avoid potential issues caused by the microcode update.
+
+[ Borislav: Rewrite completely. ]
+
+Co-developed-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Ashok Raj <ashok.raj@intel.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Emanuel Czirai <xftroxgpx@protonmail.com>
-Tested-by: Ashok Raj <ashok.raj@intel.com>
 Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
-Link: https://lkml.kernel.org/r/20180314183615.17629-1-bp@alien8.de
+Tested-by: Ashok Raj <ashok.raj@intel.com>
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Link: https://lkml.kernel.org/r/20180228102846.13447-8-bp@alien8.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/microcode.h      |    1 +
- arch/x86/kernel/cpu/microcode/amd.c   |   34 +++++++++++++++++++++-------------
- arch/x86/kernel/cpu/microcode/core.c  |    8 +++-----
- arch/x86/kernel/cpu/microcode/intel.c |    4 +++-
- 4 files changed, 28 insertions(+), 19 deletions(-)
+ arch/x86/kernel/cpu/microcode/core.c |  118 +++++++++++++++++++++++++++--------
+ 1 file changed, 92 insertions(+), 26 deletions(-)
 
---- a/arch/x86/include/asm/microcode.h
-+++ b/arch/x86/include/asm/microcode.h
-@@ -39,6 +39,7 @@ struct device;
- 
- enum ucode_state {
- 	UCODE_OK	= 0,
-+	UCODE_NEW,
- 	UCODE_UPDATED,
- 	UCODE_NFOUND,
- 	UCODE_ERROR,
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -339,7 +339,7 @@ int __init save_microcode_in_initrd_amd(
- 		return -EINVAL;
- 
- 	ret = load_microcode_amd(true, x86_family(cpuid_1_eax), desc.data, desc.size);
--	if (ret != UCODE_OK)
-+	if (ret > UCODE_UPDATED)
- 		return -EINVAL;
- 
- 	return 0;
-@@ -683,27 +683,35 @@ static enum ucode_state __load_microcode
- static enum ucode_state
- load_microcode_amd(bool save, u8 family, const u8 *data, size_t size)
- {
-+	struct ucode_patch *p;
- 	enum ucode_state ret;
- 
- 	/* free old equiv table */
- 	free_equiv_cpu_table();
- 
- 	ret = __load_microcode_amd(family, data, size);
--
--	if (ret != UCODE_OK)
-+	if (ret != UCODE_OK) {
- 		cleanup();
-+		return ret;
-+	}
- 
--#ifdef CONFIG_X86_32
--	/* save BSP's matching patch for early load */
--	if (save) {
--		struct ucode_patch *p = find_patch(0);
--		if (p) {
--			memset(amd_ucode_patch, 0, PATCH_MAX_SIZE);
--			memcpy(amd_ucode_patch, p->data, min_t(u32, ksize(p->data),
--							       PATCH_MAX_SIZE));
--		}
-+	p = find_patch(0);
-+	if (!p) {
-+		return ret;
-+	} else {
-+		if (boot_cpu_data.microcode == p->patch_id)
-+			return ret;
-+
-+		ret = UCODE_NEW;
- 	}
--#endif
-+
-+	/* save BSP's matching patch for early load */
-+	if (!save)
-+		return ret;
-+
-+	memset(amd_ucode_patch, 0, PATCH_MAX_SIZE);
-+	memcpy(amd_ucode_patch, p->data, min_t(u32, ksize(p->data), PATCH_MAX_SIZE));
-+
- 	return ret;
- }
- 
 --- a/arch/x86/kernel/cpu/microcode/core.c
 +++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -607,7 +607,7 @@ static ssize_t reload_store(struct devic
- 		return size;
+@@ -22,13 +22,16 @@
+ #define pr_fmt(fmt) "microcode: " fmt
  
- 	tmp_ret = microcode_ops->request_microcode_fw(bsp, &microcode_pdev->dev, true);
--	if (tmp_ret != UCODE_OK)
-+	if (tmp_ret != UCODE_NEW)
- 		return size;
+ #include <linux/platform_device.h>
++#include <linux/stop_machine.h>
+ #include <linux/syscore_ops.h>
+ #include <linux/miscdevice.h>
+ #include <linux/capability.h>
+ #include <linux/firmware.h>
+ #include <linux/kernel.h>
++#include <linux/delay.h>
+ #include <linux/mutex.h>
+ #include <linux/cpu.h>
++#include <linux/nmi.h>
+ #include <linux/fs.h>
+ #include <linux/mm.h>
  
- 	get_online_cpus();
-@@ -691,10 +691,8 @@ static enum ucode_state microcode_init_c
- 	if (system_state != SYSTEM_RUNNING)
- 		return UCODE_NFOUND;
+@@ -64,6 +67,11 @@ LIST_HEAD(microcode_cache);
+  */
+ static DEFINE_MUTEX(microcode_mutex);
  
--	ustate = microcode_ops->request_microcode_fw(cpu, &microcode_pdev->dev,
--						     refresh_fw);
--
--	if (ustate == UCODE_OK) {
-+	ustate = microcode_ops->request_microcode_fw(cpu, &microcode_pdev->dev, refresh_fw);
-+	if (ustate == UCODE_NEW) {
- 		pr_debug("CPU%d updated upon init\n", cpu);
- 		apply_microcode_on_target(cpu);
- 	}
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -862,6 +862,7 @@ static enum ucode_state generic_load_mic
- 	unsigned int leftover = size;
- 	unsigned int curr_mc_size = 0, new_mc_size = 0;
- 	unsigned int csig, cpf;
-+	enum ucode_state ret = UCODE_OK;
++/*
++ * Serialize late loading so that CPUs get updated one-by-one.
++ */
++static DEFINE_SPINLOCK(update_lock);
++
+ struct ucode_cpu_info		ucode_cpu_info[NR_CPUS];
  
- 	while (leftover) {
- 		struct microcode_header_intel mc_header;
-@@ -903,6 +904,7 @@ static enum ucode_state generic_load_mic
- 			new_mc  = mc;
- 			new_mc_size = mc_size;
- 			mc = NULL;	/* trigger new vmalloc */
-+			ret = UCODE_NEW;
- 		}
+ struct cpu_info_ctx {
+@@ -486,6 +494,19 @@ static void __exit microcode_dev_exit(vo
+ /* fake device for request_firmware */
+ static struct platform_device	*microcode_pdev;
  
- 		ucode_ptr += mc_size;
-@@ -932,7 +934,7 @@ static enum ucode_state generic_load_mic
- 	pr_debug("CPU%d found a matching microcode update with version 0x%x (current=0x%x)\n",
- 		 cpu, new_rev, uci->cpu_sig.rev);
++/*
++ * Late loading dance. Why the heavy-handed stomp_machine effort?
++ *
++ * - HT siblings must be idle and not execute other code while the other sibling
++ *   is loading microcode in order to avoid any negative interactions caused by
++ *   the loading.
++ *
++ * - In addition, microcode update on the cores must be serialized until this
++ *   requirement can be relaxed in the future. Right now, this is conservative
++ *   and good.
++ */
++#define SPINUNIT 100 /* 100 nsec */
++
+ static int check_online_cpus(void)
+ {
+ 	if (num_online_cpus() == num_present_cpus())
+@@ -496,23 +517,85 @@ static int check_online_cpus(void)
+ 	return -EINVAL;
+ }
  
--	return UCODE_OK;
+-static enum ucode_state reload_for_cpu(int cpu)
++static atomic_t late_cpus;
++
++/*
++ * Returns:
++ * < 0 - on error
++ *   0 - no update done
++ *   1 - microcode was updated
++ */
++static int __reload_late(void *info)
+ {
+-	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
++	unsigned int timeout = NSEC_PER_SEC;
++	int all_cpus = num_online_cpus();
++	int cpu = smp_processor_id();
++	enum ucode_state err;
++	int ret = 0;
++
++	atomic_dec(&late_cpus);
++
++	/*
++	 * Wait for all CPUs to arrive. A load will not be attempted unless all
++	 * CPUs show up.
++	 * */
++	while (atomic_read(&late_cpus)) {
++		if (timeout < SPINUNIT) {
++			pr_err("Timeout while waiting for CPUs rendezvous, remaining: %d\n",
++				atomic_read(&late_cpus));
++			return -1;
++		}
++
++		ndelay(SPINUNIT);
++		timeout -= SPINUNIT;
++
++		touch_nmi_watchdog();
++	}
++
++	spin_lock(&update_lock);
++	apply_microcode_local(&err);
++	spin_unlock(&update_lock);
++
++	if (err > UCODE_NFOUND) {
++		pr_warn("Error reloading microcode on CPU %d\n", cpu);
++		ret = -1;
++	} else if (err == UCODE_UPDATED) {
++		ret = 1;
++	}
+ 
+-	if (!uci->valid)
+-		return UCODE_OK;
++	atomic_inc(&late_cpus);
+ 
+-	return apply_microcode_on_target(cpu);
++	while (atomic_read(&late_cpus) != all_cpus)
++		cpu_relax();
++
++	return ret;
++}
++
++/*
++ * Reload microcode late on all CPUs. Wait for a sec until they
++ * all gather together.
++ */
++static int microcode_reload_late(void)
++{
++	int ret;
++
++	atomic_set(&late_cpus, num_online_cpus());
++
++	ret = stop_machine_cpuslocked(__reload_late, NULL, cpu_online_mask);
++	if (ret < 0)
++		return ret;
++	else if (ret > 0)
++		microcode_check();
++
 +	return ret;
  }
  
- static int get_ucode_fw(void *to, const void *from, size_t n)
+ static ssize_t reload_store(struct device *dev,
+ 			    struct device_attribute *attr,
+ 			    const char *buf, size_t size)
+ {
+-	int cpu, bsp = boot_cpu_data.cpu_index;
+ 	enum ucode_state tmp_ret = UCODE_OK;
+-	bool do_callback = false;
++	int bsp = boot_cpu_data.cpu_index;
+ 	unsigned long val;
+ 	ssize_t ret = 0;
+ 
+@@ -534,30 +617,13 @@ static ssize_t reload_store(struct devic
+ 		goto put;
+ 
+ 	mutex_lock(&microcode_mutex);
+-
+-	for_each_online_cpu(cpu) {
+-		tmp_ret = reload_for_cpu(cpu);
+-		if (tmp_ret > UCODE_NFOUND) {
+-			pr_warn("Error reloading microcode on CPU %d\n", cpu);
+-
+-			/* set retval for the first encountered reload error */
+-			if (!ret)
+-				ret = -EINVAL;
+-		}
+-
+-		if (tmp_ret == UCODE_UPDATED)
+-			do_callback = true;
+-	}
+-
+-	if (!ret && do_callback)
+-		microcode_check();
+-
++	ret = microcode_reload_late();
+ 	mutex_unlock(&microcode_mutex);
+ 
+ put:
+ 	put_online_cpus();
+ 
+-	if (!ret)
++	if (ret >= 0)
+ 		ret = size;
+ 
+ 	return ret;
