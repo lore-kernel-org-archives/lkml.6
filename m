@@ -1,68 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752033AbeDJCkE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 22:40:04 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40428 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751629AbeDJCkC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 22:40:02 -0400
-X-Google-Smtp-Source: AIpwx4/slVL9DgMbRJlvRiqC1yF0j+qr5Z5lYKCi6mDJeycf5bMvQLdjjLrUPtzy0YUnfDm4bE57HKm0BQKbFoszIUU=
+        id S1752068AbeDJCl4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 22:41:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56874 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751550AbeDJClz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 22:41:55 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8DF621456
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 9 Apr 2018 22:41:52 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ye Xiaolong <xiaolong.ye@intel.com>
+Cc: linux-kernel@vger.kernel.org, lkp@01.org
+Subject: Re: [lkp-robot] [init, tracing]  2580d6b795:
+ BUG:kernel_reboot-without-warning_in_boot_stage
+Message-ID: <20180409224152.4d7fe6b7@vmware.local.home>
+In-Reply-To: <20180410012340.GA17893@yexl-desktop>
+References: <20180406191334.357550809@goodmis.org>
+        <20180409053252.GB27349@yexl-desktop>
+        <20180409180454.1310abea@gandalf.local.home>
+        <20180410012340.GA17893@yexl-desktop>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180409.105039.310935818370762783.davem@davemloft.net>
-References: <1523273714-17264-1-git-send-email-acelan.kao@canonical.com>
- <1523273714-17264-2-git-send-email-acelan.kao@canonical.com>
- <20180409123910.GB31060@lunn.ch> <20180409.105039.310935818370762783.davem@davemloft.net>
-From: AceLan Kao <acelan.kao@canonical.com>
-Date: Tue, 10 Apr 2018 10:40:00 +0800
-Message-ID: <CAFv23Q=QYastpgLxHiwr_PSdoeWfEjiNp6x2F9kM5EYhRee2hA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] alx: add disable_wol paramenter
-To: David Miller <davem@davemloft.net>
-Cc: andrew@lunn.ch, jcliburn@gmail.com, chris.snook@gmail.com,
-        rakesh@tuxera.com, netdev@vger.kernel.org,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The problem is I don't have a machine with that wakeup issue, and I
-need WoL feature.
-Instead of spreading "alx with WoL" dkms package everywhere, I would
-like to see it's supported in the driver and is disabled by default.
+On Tue, 10 Apr 2018 09:23:40 +0800
+Ye Xiaolong <xiaolong.ye@intel.com> wrote:
 
-Moreover, the wakeup issue may come from old Atheros chips, or result
-from buggy BIOS.
-With the WoL has been removed from the driver, no one will report
-issue about that, and we don't have any chance to find a fix for it.
+> Hi, Steven
+> 
+> On 04/09, Steven Rostedt wrote:
+> >On Mon, 9 Apr 2018 13:32:52 +0800
+> >kernel test robot <xiaolong.ye@intel.com> wrote:
+> >  
+> >> FYI, we noticed the following commit (built with gcc-7):
+> >> 
+> >> commit: 2580d6b795e25879c825a0891cf67390f665b11f ("init, tracing: Have printk come through the trace events for initcall_debug")
+> >> url: https://github.com/0day-ci/linux/commits/Steven-Rostedt/init-tracing/20180407-130743
+> >> 
+> >> 
+> >> in testcase: boot
+> >> 
+> >> on test machine: qemu-system-x86_64 -enable-kvm -cpu Nehalem -smp 2 -m 512M
+> >> 
+> >> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> >> 
+> >> 
+> >> +------------------------------------------------------------------+------------+------------+
+> >> |                                                                  | ecf6709d07 | 2580d6b795 |
+> >> +------------------------------------------------------------------+------------+------------+
+> >> | boot_successes                                                   | 0          | 0          |
+> >> | boot_failures                                                    | 8          | 8          |
+> >> | invoked_oom-killer:gfp_mask=0x                                   | 8          |            |
+> >> | Mem-Info                                                         | 8          |            |
+> >> | Kernel_panic-not_syncing:Out_of_memory_and_no_killable_processes | 8          |            |
+> >> | BUG:kernel_reboot-without-warning_in_boot_stage                  | 0          | 8          |
+> >> +------------------------------------------------------------------+------------+------------+  
+> >
+> >What does this mean?  
+> 
+> It means BUG:BUG:kernel_reboot-without-warning_in_boot_stage occurred 8 times
+> in boot tests for commit 2580d6b795, while 0 time for its parent ecf6709d07.
 
-Adding this feature back is not covering a paper on the issue, it
-makes people have a chance to examine this feature.
+I don't have a commit 2580d6b795.
 
-2018-04-09 22:50 GMT+08:00 David Miller <davem@davemloft.net>:
-> From: Andrew Lunn <andrew@lunn.ch>
-> Date: Mon, 9 Apr 2018 14:39:10 +0200
->
->> On Mon, Apr 09, 2018 at 07:35:14PM +0800, AceLan Kao wrote:
->>> The WoL feature was reported broken and will lead to
->>> the system resume immediately after suspending.
->>> This symptom is not happening on every system, so adding
->>> disable_wol option and disable WoL by default to prevent the issue from
->>> happening again.
->>
->>>  const char alx_drv_name[] = "alx";
->>>
->>> +/* disable WoL by default */
->>> +bool disable_wol = 1;
->>> +module_param(disable_wol, bool, 0);
->>> +MODULE_PARM_DESC(disable_wol, "Disable Wake on Lan feature");
->>> +
->>
->> Hi AceLan
->>
->> This seems like you are papering over the cracks. And module
->> parameters are not liked.
->>
->> Please try to find the real problem.
->
-> Agreed.
+The commit with the title "init, tracing: Have printk come through the
+trace events for initcall_debug" is 4e37958d1288ce. linux-next doesn't
+have that commit sha1 either.
+
+
+> 
+> >  
+> >> 
+> >> 
+> >> 
+> >> [    0.000000] RAMDISK: [mem 0x1b7e2000-0x1ffcffff]
+> >> [    0.000000] ACPI: Early table checksum verification disabled
+> >> [    0.000000] ACPI: RSDP 0x00000000000F6860 000014 (v00 BOCHS )
+> >> [    0.000000] ACPI: RSDT 0x000000001FFE1628 000030 (v01 BOCHS  BXPCRSDT 00000001 BXPC 00000001)
+> >> [    0.000000] ACPI: FACP 0x000000001FFE147C 000074 (v01 BOCHS  BXPCFACP 00000001 BXPC 00000001)
+> >> BUG: kernel reboot-without-warning in boot stage
+> >> 
+> >> Elapsed time: 10
+> >> 
+> >> #!/bin/bash
+> >> 
+> >> 
+> >> 
+> >> To reproduce:
+> >> 
+> >>         git clone https://github.com/intel/lkp-tests.git
+> >>         cd lkp-tests
+> >>         bin/lkp qemu -k <bzImage> job-script  # job-script is attached in this email
+> >>   
+> >
+> >The config boots fine for me. But I don't have the setup to run the
+> >above and get it to work, nor the time to figure out why it doesn't
+> >work.  
+> 
+> Could you paste your failure log here, we can see if there is something we can help.
+
+I tried it on a more up-to-date box, after checking out my commit with
+the title you say is an error. I compiled your config with gcc (GCC)
+7.3.1 20180130 (Red Hat 7.3.1-2), and ran the above (which did work).
+It ended after it got to a login prompt.
+
+---
+[..]
+[   10.588029] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[   10.589363] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
+[   10.590385] cfg80211: failed to load regulatory.db
+[   10.610002] Freeing unused kernel memory: 1980K
+[   10.610533] Write protecting the kernel read-only data: 49152k
+[   10.615728] Freeing unused kernel memory: 2028K
+[   10.620754] Freeing unused kernel memory: 464K
+INIT: version 2.88 booting
+/etc/rcS.d/S00fbsetup: line 3: /sbin/modprobe: not found
+
+Please wait: booting...
+[   10.676861] rc (151) used greatest stack depth: 27848 bytes left
+Starting udev
+[   10.750281] udevd[175]: starting version 3.1.5
+[   10.759923] udevd (175) used greatest stack depth: 27696 bytes left
+[   11.129999] udevadm (178) used greatest stack depth: 26696 bytes left
+Populating dev cache
+INIT: Entering runlevel: 5
+Configuring network interfaces... done.
+Starting syslogd/klogd: done
+
+Poky (Yocto Project Reference Distro) 2.1 qemux86-64 /dev/ttyS0
+
+qemux86-64 login:
+---
+
+What am I suppose to see?
+
+-- Steve
