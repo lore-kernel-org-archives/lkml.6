@@ -1,77 +1,76 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4113313-1523373506-2-7133152116725526323
+X-Cyrus-Session-Id: sloti22d1t05-3892947-1523368013-2-14233500369577908550
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='cz',
+  MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523373505; b=tCZE9LBUsE//24XNNxXbCzy8n4pEV6W8fF4ymoOonrepAnD9Tb
-    sg4GlRI6MUTZ41wUuVnNE551VeobHAG8N9yKUWQLv8TczBG6tyxz6EGq0adUQI3R
-    hzdUrBrY6WrZwGuU8juYX1lCQjbSjiZel18Pj47a1Ced2p7ShO6AL524ee0ZzTqq
-    S3Use9ZKXuhzPUNsTL8ZO7CXhBJKHaRFpT1/GGDGPdoU+V23EEzQgJRWcnBDQIHx
-    DE/hTZZOt/I5XjIBR5wz4D3sWHc7uIEgNbj76HAQdU6L9BC7uwn/2aj5JVs3g40Z
-    uUQ0+hUpuAPx3spkWeiM1lNg3hGJ/bTIXmzg==
+    1523368012; b=A6M59U0v1auHSN2cBmPGZpGSDfCemDVUeD91p95/qyZJcVAn4S
+    Itfg0f26kB8dC39qPmBgMZJzwLNptTYqlJvkRWgoMqiPRfym43DM4zCyjpa4C+5D
+    IWlhUYHqYTXa/xo4SkHlIv5PUF4Hthr7VQWcpm707cAxuLhdcAX2p4iagxlumBwj
+    8rtZDNSyz3bM8R/3xIbTqgqfZcvULNxgZ+PXvZPf2gokJvgovyoEu3/2Jhx7+tmw
+    2dYmnmsnuJYOnJbHD1WemM4RzMbuRGDGW9W4TCEaYAyduGjO+qDvrkhQZje8wnfq
+    Df3Tg+et8/1mGHdA/UtYJj1zKwUAiKmCNqgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523373505; bh=GM0E410he/T0weN7g4vekv+a7uKLWY
-    KHbXjZ1cYq34U=; b=QWw6fHNciYOu5LPSta2aHi9T8+Diog6tmm8d8YABwZKyIb
-    Qlsy8Qd3hucaPm8fZodIs3CPgu5O80bGJCaSzPyAoyg+chVp9d+nOY8Xqy/GgC8z
-    XSjSw2FodvaR9hl3ElOzzoOQfJaF0pOjjhBJ2IHNrZ0aVfWF74E7MnN2LJ01K1TN
-    lfWldZ/1VnWEGnSw1mS0FMc4hzxY2R2HcuZTjRbLkr1QUrE0d3p7l2G5DRuCYYI+
-    /mroV0/qjBwapNwWZAOvK4vk6H4zkjWIhpsC3a77hFWrZ5GrLjuEkO7EeHaDtatA
-    W8hZElBE1KzTTzeh4eia78lqZhLiF4+WEIglysvg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523368012; bh=ZvDqPxlUfEm2l/af8ko8f4WaHB5gLt
+    pKDZR9JzO7cls=; b=ST28joIvd41z8A3Up+tk8SaSC0WM5Pf67HuDhOP/xpBQY1
+    7fC2VYWU8D6wMY+PwPUJIE2THTTrwh5VwdWD+ah0YPCLc+wUKUWU7CM7072h4Ne4
+    ctuYeDeFxoDsrF1DmnykrTxUr6I/BjQ+FdMUyQVXBXxBkrjtw3+AiL0ZxE2dVX/I
+    4rKMEFjHdoh439rn6nXTuYlbTBnvwgB6Cj+gLDAjZmDuxQbfw38BA9PYEhLya2Xo
+    kAv1EeQMZFYSiuL2S6dk/tHDhI0ObgPcwrnSP81OdKK75SnpdlpMGlrQ762rZU5T
+    JeN4vqpY/W+3kjmb5/jf6MvCWz8fzAvfxMWh2W1w==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIK1e2rewQ6P145qYkhB3rSfTUklIAVu/U6Uy0hd/d1BtHDHvv03dOLtXySiCT9YcpuFpix+1WMqJa4tDjD16SfK7VU+5BMBuRJHiQo1ScYj5xV5vLZk
-    Qx1rQkWWFERztB96kePJAD8Uw2u2QJjupX355GBq6/AbUrmt2ShrtLbcH73Dfih6gfo8SEuCDtuWQr7g0dX0ZegTW3lEamnKg9NEH36emluf5Pt/q1nHZxgy
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCv1GTHmowJ9oyq1YjU6CnEOWyxsc0dasM5s6mP4Ptw7NKlpsbNioWPApC4FP++oLwPWkc92CNB2RcwGTNGua7YQ9aL8Ai3bznwFcawEjkk7x/xA9Wi3
+    bHd79bXAvuzvbq/+Eh8Ldo5foRL8qqCt7uvWMIO20s57XWf1DzY9eoaBWogB7oRl2CrECR2gBboj56MdHOpmzTO+od63kNcGe/4qGl4h3gu3JDd05lJ/nRC7
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=yMhMjlubAAAA:8 a=1xFAWjtEmyH3FZ6zVwQA:9 a=CjuIK1q_8ugA:10
+    a=yMhMjlubAAAA:8 a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8 a=Cb-ZYbnvyzChmF_QQssA:9
+    a=BDhKxnAnP7y38y7t:21 a=IzC0K2XU_l9OM5o0:21 a=CjuIK1q_8ugA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=WzC6qhA0u3u7Ye7llzcV:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753911AbeDJPSX (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 11:18:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34458 "EHLO mail.kernel.org"
+        id S1753091AbeDJNqt (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 09:46:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52002 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753884AbeDJPSW (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 10 Apr 2018 11:18:22 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE7AF217BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Tue, 10 Apr 2018 08:18:20 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+        id S1752874AbeDJNqt (ORCPT <rfc822;stable@vger.kernel.org>);
+        Tue, 10 Apr 2018 09:46:49 -0400
+Date: Tue, 10 Apr 2018 15:46:46 +0200
+From: Jan Kara <jack@suse.cz>
 To: Matthew Wilcox <willy@infradead.org>
-Cc: Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org,
-        Matthew Wilcox <mawilcox@microsoft.com>,
+Cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
         Christoph Lameter <cl@linux.com>,
         Pekka Enberg <penberg@kernel.org>,
         David Rientjes <rientjes@google.com>,
@@ -82,76 +81,90 @@ Cc: Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org,
         Mel Gorman <mgorman@techsingularity.net>,
         stable@vger.kernel.org
 Subject: Re: [PATCH 2/2] page cache: Mask off unwanted GFP flags
-Message-ID: <20180410151820.GA69325@jaegeuk-macbookpro.roam.corp.google.com>
+Message-ID: <20180410134646.p5wuhl6fwtg6megr@quack2.suse.cz>
 References: <20180410125351.15837-1-willy@infradead.org>
  <20180410125351.15837-2-willy@infradead.org>
- <20180410134545.GA35354@rodete-laptop-imager.corp.google.com>
- <20180410140223.GE22118@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180410140223.GE22118@bombadil.infradead.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20180410125351.15837-2-willy@infradead.org>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/10, Matthew Wilcox wrote:
-> On Tue, Apr 10, 2018 at 10:45:45PM +0900, Minchan Kim wrote:
-> > On Tue, Apr 10, 2018 at 05:53:51AM -0700, Matthew Wilcox wrote:
-> > > From: Matthew Wilcox <mawilcox@microsoft.com>
-> > > 
-> > > The page cache has used the mapping's GFP flags for allocating
-> > > radix tree nodes for a long time.  It took care to always mask off the
-> > > __GFP_HIGHMEM flag, and masked off other flags in other paths, but the
-> > > __GFP_ZERO flag was still able to sneak through.  The __GFP_DMA and
-> > > __GFP_DMA32 flags would also have been able to sneak through if they
-> > > were ever used.  Fix them all by using GFP_RECLAIM_MASK at the innermost
-> > > location, and remove it from earlier in the callchain.
-> > > 
-> > > Fixes: 19f99cee206c ("f2fs: add core inode operations")
-> > 
-> > Why this patch fix 19f99cee206c instead of 449dd6984d0e?
-> > F2FS doesn't have any problem before introducing 449dd6984d0e?
+On Tue 10-04-18 05:53:51, Matthew Wilcox wrote:
+> From: Matthew Wilcox <mawilcox@microsoft.com>
 > 
-> Well, there's the problem.  This bug is the combination of three different
-> things:
+> The page cache has used the mapping's GFP flags for allocating
+> radix tree nodes for a long time.  It took care to always mask off the
+> __GFP_HIGHMEM flag, and masked off other flags in other paths, but the
+> __GFP_ZERO flag was still able to sneak through.  The __GFP_DMA and
+> __GFP_DMA32 flags would also have been able to sneak through if they
+> were ever used.  Fix them all by using GFP_RECLAIM_MASK at the innermost
+> location, and remove it from earlier in the callchain.
 > 
-> 1. The working set code relying on list_empty.
-> 2. The page cache not filtering out the bad flags.
-> 3. F2FS specifying a flag nobody had ever specified before.
+> Fixes: 19f99cee206c ("f2fs: add core inode operations")
+> Reported-by: Minchan Kim <minchan@kernel.org>
+> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+> Cc: stable@vger.kernel.org
+
+Looks good to me. You can add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  mm/filemap.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 > 
-> So what single patch does this patch fix?  I don't think it really matters.
-
-Hope there'd be someone who does care about patch description though, IMHO,
-this fixes the MM regression introduced by:
-449dd6984d0e ("mm: keep page cache radix tree nodes in check") merged in v3.15,
-2014.
-
-19f99cee206c ("f2fs: add core inode operations) merged in v3.8, 2012, just
-revealed this out. In fact, I've never hit this bug in old kernels.
-
->From the user viewpoint, may I suggest to describe what kind of symptom we're
-able to see due to this bug?
-
-Something like:
-
-[ 7858.792946] [<ffffff80086f4de0>] __list_del_entry+0x30/0xd0
-[ 7858.792951] [<ffffff8008362018>] list_lru_del+0xac/0x1ac
-[ 7858.792957] [<ffffff800830f04c>] page_cache_tree_insert+0xd8/0x110
-[ 7858.792962] [<ffffff8008310188>] __add_to_page_cache_locked+0xf8/0x4e0
-[ 7858.792967] [<ffffff800830ff34>] add_to_page_cache_lru+0x50/0x1ac
-[ 7858.792972] [<ffffff800830fdd0>] pagecache_get_page+0x468/0x57c
-[ 7858.792979] [<ffffff80085d081c>] __get_node_page+0x84/0x764
-[ 7858.792986] [<ffffff800859cd94>] f2fs_iget+0x264/0xdc8
-[ 7858.792991] [<ffffff800859ee00>] f2fs_lookup+0x3b4/0x660
-[ 7858.792998] [<ffffff80083d2540>] lookup_slow+0x1e4/0x348
-[ 7858.793003] [<ffffff80083d0eb8>] walk_component+0x21c/0x320
-[ 7858.793008] [<ffffff80083d0010>] path_lookupat+0x90/0x1bc
-[ 7858.793013] [<ffffff80083cfe6c>] filename_lookup+0x8c/0x1a0
-[ 7858.793018] [<ffffff80083c52d0>] vfs_fstatat+0x84/0x10c
-[ 7858.793023] [<ffffff80083c5b00>] SyS_newfstatat+0x28/0x64
-
-Thanks,
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index c2147682f4c3..1a4bfc5ed3dc 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -785,7 +785,7 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
+>  	VM_BUG_ON_PAGE(!PageLocked(new), new);
+>  	VM_BUG_ON_PAGE(new->mapping, new);
+>  
+> -	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
+> +	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
+>  	if (!error) {
+>  		struct address_space *mapping = old->mapping;
+>  		void (*freepage)(struct page *);
+> @@ -841,7 +841,7 @@ static int __add_to_page_cache_locked(struct page *page,
+>  			return error;
+>  	}
+>  
+> -	error = radix_tree_maybe_preload(gfp_mask & ~__GFP_HIGHMEM);
+> +	error = radix_tree_maybe_preload(gfp_mask & GFP_RECLAIM_MASK);
+>  	if (error) {
+>  		if (!huge)
+>  			mem_cgroup_cancel_charge(page, memcg, false);
+> @@ -1574,8 +1574,7 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t offset,
+>  		if (fgp_flags & FGP_ACCESSED)
+>  			__SetPageReferenced(page);
+>  
+> -		err = add_to_page_cache_lru(page, mapping, offset,
+> -				gfp_mask & GFP_RECLAIM_MASK);
+> +		err = add_to_page_cache_lru(page, mapping, offset, gfp_mask);
+>  		if (unlikely(err)) {
+>  			put_page(page);
+>  			page = NULL;
+> @@ -2378,7 +2377,7 @@ static int page_cache_read(struct file *file, pgoff_t offset, gfp_t gfp_mask)
+>  		if (!page)
+>  			return -ENOMEM;
+>  
+> -		ret = add_to_page_cache_lru(page, mapping, offset, gfp_mask & GFP_KERNEL);
+> +		ret = add_to_page_cache_lru(page, mapping, offset, gfp_mask);
+>  		if (ret == 0)
+>  			ret = mapping->a_ops->readpage(file, page);
+>  		else if (ret == -EEXIST)
+> -- 
+> 2.16.3
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
