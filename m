@@ -1,150 +1,151 @@
-Return-Path: <Alexander.Levin@microsoft.com>
-X-Google-Smtp-Source: AIpwx4/8qBnAgKwMhLsUIJDFlqOZxZ/xqQopHMGZQrSOuro3ChlUDma+DxWgpsWCHGcK8AiqkQWs
-ARC-Seal: i=1; a=rsa-sha256; t=1523233604; cv=none;
-        d=google.com; s=arc-20160816;
-        b=lXSsErb9064WklrE2po93YUJkA+GMvTrNzHPDqTA/NiOSFWrw0Ebr8mi0s7boFYq8r
-         6Nqahy35X0FvJQ8L8LqtjPOjVCIeE6Qy5AO6j5NLqbfxVLfvEdRzgybwGSqh5I6K4VqR
-         AF6CI3ImDbaLzm/txWD1x0yLgYuBTh3AkvkTEv446YGyoxaHgg/F3eCXwoNuH5sW8DkR
-         oO8cbzGP6SBuRv+XUDIBRHW39W3EZNEqOJVkm8gZiKUypyoXXFaC7ERP6oBL7ucgRpUO
-         mYMjp4wpjPuwi7ZLrNp+qO7BcSYrUsnVwwH9R5FFA3IbaCSOyHH0n2UGGQDo7NdoRKbo
-         Z0GQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
-         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
-         :references:message-id:date:thread-index:thread-topic:subject:cc:to
-         :from:dkim-signature:arc-authentication-results;
-        bh=2ryWCcpzvTqVZnEp2VrgJ+OXBI5PJDwrMzQXP0zoAnI=;
-        b=xWxCHNawFLV1Zn9tSWrjR0V977YbFniKcR0HXSR5tML8UM/hJt42pljF5On4L7uy7s
-         gC3JssUeIrLue288G3pKW/UR0xoDX1qwFuCXnXpEWD8EMSdR4rNtovz2SAur0XuRnr8a
-         jFEuVRmpg2mFw/V53lpioplmao8KMc7qmypvL9A6tNXIBfN3AoEv/gF+pXWvtySasacG
-         sD+w2UqJUEsP/qgPJ//S3kwO61UAO2aib0Gz8TEtsvNJ5RVlszft8VMrP26l8z352VNR
-         9x4lecIYWfYuyYSxH/qdA5UoGCe4i5vzMJQf511cnaqxR41oEdJS0QqQkMgsHQFWlLxq
-         wmaw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=XSfElTo1;
-       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.42.132 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@microsoft.com header.s=selector1 header.b=XSfElTo1;
-       spf=pass (google.com: domain of alexander.levin@microsoft.com designates 104.47.42.132 as permitted sender) smtp.mailfrom=Alexander.Levin@microsoft.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=microsoft.com
-From: Sasha Levin <Alexander.Levin@microsoft.com>
-To: "stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Suzuki K Poulose <suzuki.poulose@arm.com>, Mathieu Poirier
-	<mathieu.poirier@linaro.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Sasha Levin <Alexander.Levin@microsoft.com>
-Subject: [PATCH AUTOSEL for 4.9 021/293] coresight: Fix reference count for
- software sources
-Thread-Topic: [PATCH AUTOSEL for 4.9 021/293] coresight: Fix reference count
- for software sources
-Thread-Index: AQHTz5juRR8fuS0wuUGF4s8gRqbvOw==
-Date: Mon, 9 Apr 2018 00:23:06 +0000
-Message-ID: <20180409002239.163177-21-alexander.levin@microsoft.com>
-References: <20180409002239.163177-1-alexander.levin@microsoft.com>
-In-Reply-To: <20180409002239.163177-1-alexander.levin@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0885;7:xKyHSLUFDRUue0yZ19MRDLvH3bsBLphjpfxnrvx+pC/yr1NeXMtDtFca+YiAMrAjWIeNXC6hgVJ/rOUT8y4fGNo8yUsihWrstnwH8RJUrdVyYHOD2ds2QJCxq0BKhNzdWIMvdx8QZ6I8u7zMXYpDU0r1YJnzP1L8hq3gstA+k1n89V3jOCFmpEVcL0Q7nY6au0yew7U0ky5bRq5U3w//tmAzWifVr7HEXjvTbV892HstQrOEpBm989tA4Oy99axw;20:pYKNQpSeMwOEhAsfTU+IAApghoEypNfo43Xg5/hYtK8aeyUQ7hraxnEqYd6P1g09tWpoim5B3dyYfz6fjJgmBL0me3a2SGOwRs/jTENOUkoEE6K/MjSNYKaeSIBVO5VHP8Vkg+gacqPdgiNJW/2sDIvH5//u37MKiQgCBMgeDdw=
-x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: af7c97e1-1ea3-4500-08c5-08d59db09165
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4604075)(3008032)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:DM5PR2101MB0885;
-x-ms-traffictypediagnostic: DM5PR2101MB0885:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-prvs: <DM5PR2101MB0885BD7C274E2148A119B1F8FBBF0@DM5PR2101MB0885.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(278428928389397)(89211679590171);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0885;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0885;
-x-forefront-prvs: 0637FCE711
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(346002)(376002)(396003)(39380400002)(189003)(199004)(2906002)(68736007)(22452003)(316002)(6512007)(5660300001)(6666003)(54906003)(110136005)(486006)(6486002)(102836004)(36756003)(14454004)(99286004)(86612001)(105586002)(72206003)(106356001)(2900100001)(1076002)(97736004)(10090500001)(3280700002)(5250100002)(6436002)(3660700001)(6116002)(575784001)(3846002)(305945005)(86362001)(59450400001)(66066001)(10290500003)(186003)(81166006)(8936002)(478600001)(476003)(25786009)(81156014)(8676002)(4326008)(7736002)(2501003)(107886003)(6506007)(2616005)(26005)(76176011)(446003)(53936002)(11346002)(22906009)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0885;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: TLAdVloJdDxUUlSiKGjDyaOTJITyjx874i5TIuY6noDlI6DPjZr5xXSCnQYYjonj88q/VOQ+if7hum8DfWIWa/QZWXYXQ+rfZFMQEp3EDazAAmPx+FbY0UQ90yqxt7hizZv81GhGMRd4llMM4lfSfz4C5vZDoF9elYjCHMYQokBytsC3defmQiyCi1jvbuaTDSEFnOKt5lEnJnSqL37DmxXMzbzPf2yx0mTfUM6UBBy/fjSCFlTQ3sGSGj4MHCdczm8ZE3vLNISFHae4lp0wHB5bBuDiH3yuISn36Xra9GxmgCIJoJiv+3JYaKtMz80gxUAtgvkvYVpJydYBZNUXpOTlLVC2FeQ2Z5fWwfOrVrK2BW1YJLT37b7mfcA96hDhzykPREBa6GpW5rO93JteRoUTqXKbCLT38ZQOH02qH8M=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-814531-1523400619-2-18006465526958749251
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enropt,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523400619; b=pFbpa/k1p77HOeq4XBSzE6VBi7brvhRMK/jlBg17pN3IZ5K1n1
+    44yVsccCXfGmElKG2spii66e2OnhggGiTatl9lPxgGi4i7x159kk/mTMVdJl3tz9
+    y8w3FbnjDlnZK+IZU2iMbiD7AJs46kU7V3ulAYW2+KNGmXx+tX2W/F4AjYNSody4
+    1021Es5RhfNwmr2tWlSxpdPoD3p0QAHinTqIeeh3XqjLkzo8vpwHIMbguUJDsS9K
+    zSHc2l+rH9K0HvOOIx9EWeLFSv9KmJ468LVnnGTbiabPV/nD1ho1wr+wLT327oXw
+    MFj7WM0vyeTFxN+nMbwglQXpse2ckrTZuvVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1523400619; bh=KFIaa
+    RrSgt0L/krCjXxmdfMTMqhGB/KxhZws2mecYCU=; b=Wy9ELKtMFmZrQEZK0fqR9
+    s/g8uBUHoTjn9GvG8IhERFlIS7ZeMuqgjEQOnEc25o+/Ek7raqvxs9AVptY0C9wd
+    fTKMY8Mh6gP51WrYpveTRaUE2ElRYHd+jqucS9zJC6SDsneMrv0W+Bt833a88nXC
+    xtd1NspgcizptDlfO1FffmACqss576a2uNchUFK5OmSgj6ceI5LRbodKMfxJoGtE
+    924dWNgMcc7f235XQzbYH6hARhLY0i+f6CKzzX6nXCjw8gs/VHCGkzHcZfNQSlAK
+    2IsUsjYvsnRjV51UH25iEV5oiAdcJ6yclWNq2j5l0AbO2vitLfA5CWmFLwZOkBPp
+    Q==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=bgx++rbQ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=H4vZwbjZ;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=bgx++rbQ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=H4vZwbjZ;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfJHZ2qpNgwZPY6ydEiOT/YxQDYXZTQ90ITAArLds0tC7a50aDeOmGCyh85Nzo+JsqWu8zernnwu5UbntK00ZDHbs7q0k2r7hNI6XiSqjH9isY1aFd6wL
+    qfUMd+XoW+va3GcCRTV/eTb4op5vUUSsCqhSubTw89py57qTGWYP89yPf5B6AlwFadyokbAItcpD9BWtQUhnQsSbKAnaKRxFIvsmvYBbLC+qxERYcgJng7gJ
+    tEw+zGQbSUruwEsvWtrI3g==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=BkPDqxY9XNgA:10 a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
+    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=2pe1fyuj_EwDJMY5u5IA:9
+    a=+jEqtf1s3R9VXZ0wqowq2kgwd+I=:19 a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22
+    cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AIpwx485yggr5FXzBhNv7TTrDg7MHH4V/2KXLAioTP1W/PUVhZxgVF5zXy+vHUCi3DfYOsPucPXjBg==
+Date: Tue, 10 Apr 2018 19:50:07 -0300
+From: Gabriel Francisco Mandaji <gfmandaji@gmail.com>
+To: gregkh@linuxfoundation.org
+Subject: [PATCH] staging: comedi: cb_pcidas64: fix alignment of function
+ parameters
+Message-ID: <20180410225007.GA5050@gfm-note>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: af7c97e1-1ea3-4500-08c5-08d59db09165
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2018 00:23:06.2529
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0885
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, julia.lawall@lip6.fr,
+ linux-kernel@vger.kernel.org, abbotti@mev.co.uk,
+ lkcamp@lists.libreplanetbr.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597226199791438153?=
-X-GMAIL-MSGID: =?utf-8?q?1597226199791438153?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+Fix most checkpatch.pl issues of type:
 
-[ Upstream commit 022aa1a81b778789ee7cf3124595854276a0330d ]
+CHECK: Alignment should match open parenthesis
 
-For software sources (i.e STM), there could be multiple agents
-generating the trace data, unlike the ETMs. So we need to
-properly do the accounting for the active number of users
-to disable the device when the last user goes away. Right
-now, the reference counting is broken for sources as we skip
-the actions when we detect that the source is enabled.
-
-This patch fixes the problem by adding the refcounting for
-software sources, even when they are enabled.
-
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Reported-by: Robert Walker <robert.walker@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Gabriel Francisco Mandaji <gfmandaji@gmail.com>
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 ---
- drivers/hwtracing/coresight/coresight.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/staging/comedi/drivers/cb_pcidas64.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/co=
-resight/coresight.c
-index 7bf00a0beb6f..4383324ec01c 100644
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -498,6 +498,9 @@ int coresight_enable(struct coresight_device *csdev)
+diff --git a/drivers/staging/comedi/drivers/cb_pcidas64.c b/drivers/staging/comedi/drivers/cb_pcidas64.c
+index fdd81c3..631a703 100644
+--- a/drivers/staging/comedi/drivers/cb_pcidas64.c
++++ b/drivers/staging/comedi/drivers/cb_pcidas64.c
+@@ -2268,14 +2268,14 @@ static inline unsigned int dma_transfer_size(struct comedi_device *dev)
+ }
+ 
+ static u32 ai_convert_counter_6xxx(const struct comedi_device *dev,
+-					const struct comedi_cmd *cmd)
++				   const struct comedi_cmd *cmd)
  {
- 	int cpu, ret =3D 0;
- 	struct list_head *path;
-+	enum coresight_dev_subtype_source subtype;
-+
-+	subtype =3D csdev->subtype.source_subtype;
-=20
- 	mutex_lock(&coresight_mutex);
-=20
-@@ -505,8 +508,16 @@ int coresight_enable(struct coresight_device *csdev)
- 	if (ret)
- 		goto out;
-=20
--	if (csdev->enable)
-+	if (csdev->enable) {
-+		/*
-+		 * There could be multiple applications driving the software
-+		 * source. So keep the refcount for each such user when the
-+		 * source is already enabled.
-+		 */
-+		if (subtype =3D=3D CORESIGHT_DEV_SUBTYPE_SOURCE_SOFTWARE)
-+			atomic_inc(csdev->refcnt);
- 		goto out;
-+	}
-=20
- 	path =3D coresight_build_path(csdev);
- 	if (IS_ERR(path)) {
-@@ -523,7 +534,7 @@ int coresight_enable(struct coresight_device *csdev)
- 	if (ret)
- 		goto err_source;
-=20
--	switch (csdev->subtype.source_subtype) {
-+	switch (subtype) {
- 	case CORESIGHT_DEV_SUBTYPE_SOURCE_PROC:
- 		/*
- 		 * When working from sysFS it is important to keep track
---=20
-2.15.1
+ 	/* supposed to load counter with desired divisor minus 3 */
+ 	return cmd->convert_arg / TIMER_BASE - 3;
+ }
+ 
+ static u32 ai_scan_counter_6xxx(struct comedi_device *dev,
+-				     struct comedi_cmd *cmd)
++				struct comedi_cmd *cmd)
+ {
+ 	u32 count;
+ 
+@@ -2296,7 +2296,7 @@ static u32 ai_scan_counter_6xxx(struct comedi_device *dev,
+ }
+ 
+ static u32 ai_convert_counter_4020(struct comedi_device *dev,
+-					struct comedi_cmd *cmd)
++				   struct comedi_cmd *cmd)
+ {
+ 	struct pcidas64_private *devpriv = dev->private;
+ 	unsigned int divisor;
+-- 
+1.9.1
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
