@@ -1,96 +1,123 @@
 Return-Path: <jae.hyun.yoo@linux.intel.com>
-X-Google-Smtp-Source: AIpwx49+iTm+OwEbfR0t42AKNyP8mOHEaub5pme3Ur3Dm+T9NYn1GKwn+sYhB1sc59tsAXkONMb3
-ARC-Seal: i=1; a=rsa-sha256; t=1523499631; cv=none;
+X-Google-Smtp-Source: AIpwx49EBZinq7CzsIrl9qvKwgDPKWUvbHxe5sSJ0z6z6ktDOZ9NcFZ7f9tLKrtEArJQByMGnHt6
+ARC-Seal: i=1; a=rsa-sha256; t=1523385187; cv=none;
         d=google.com; s=arc-20160816;
-        b=AlO0p1A7HgNLYYaEiaQgAJ+sXDP0A8cXTw6yqrV5X1DRmA1WKrcDef27EdroAsADhd
-         ryc/vjY/ui1vm7yrLpPgEhuuhCYKjDcy4MuZv0QTTaZ7hftbAxDYd3sMRLXJrbD+Iibz
-         +MM5cS3fZQeWoYLYJrVJJDMgiMV9pIZpfIqS9NzEndv9LVFB3tLMJUJA8AR9G9DzvxJ9
-         dTExkRgoHLLMVUrqNrIozy0v/J162gyZMD1R/PY4b956qoJZFpT0wQch4F4rpR8iW5/J
-         qhOzPlGTHd7LidKDHfRwWUZgILrEitT7aNNEVXIqz2C0yHBCio7Dog6WpFc8fj1uRG5k
-         CWnA==
+        b=MgBihX3XMM/4Xwye00FR9HSouOd7cIfTZtoqNEgZ8eYZ1BTm+2ALZsVtUm9vcmTqqq
+         RRAUiWwdWtxM2NbG1seKrkX2b6h4Vzv1LMQiEJsbFeUhwvyK3Fo5CGOQvoV0FpOxCvQO
+         t1J9zK6EeWCyO1J3kjDeuf6AZdEWESsDbELtHP3c8LhhMIBixM0pLXkdI6c1Es71i9cE
+         NdmgehqNsLAW1kgWPHYR1wyeHs5idKPvouaFF5U0LrS7hSs3uZ/hzYHCgjuqNFdFjQRl
+         uDGtQVkFlrLWp8VZ2xS8lcJVxRRnO4mMEV1aojEcgWzBJEKS9PLxysuHvxXjnpeSQrwe
+         MeVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=UJsoprSML5r80QY+HyZ/ZXBtBl3cV3mhovRcI8sRSMc=;
-        b=b0dehU2UcYKLwA03aRV9No1vWqEuFujCzcXyLEdz0WqSR5PbHR/0GUUy2A552bO03U
-         /CTkvmTvgDoy06NZ9SJeXC7vl7lewKlTfS9v6WphYuheqhedoeFw0HIkw4da234KpAqa
-         id6toR0BhW1mangn6XQuW6TenbzLc9uFVXwP/4UKons3dr2ncMTl+TKwW/1kaiQYU36K
-         sUu0WPUq3Jb0sa60CM0UGUGj2KJsvaP0Cb/MXFDq+MhCHhMiPYGpctJp/rPrvFq4/Q2x
-         CV9orkgzZp0aGqHVCvkR4jydMNeagbpZFcCsGE1Oprxbqj2RBM4Z9s3qlwKjia+W4sV6
-         7Qwg==
+        bh=CT+iVw53VhZtxdav+/O8yS9aLiCP6qk9zhLpSfOHoWA=;
+        b=sxmd46y+R17kF+sugxZtcUO+9tJPSLNPGATy5ZjRsPU37y8l0X1Zevil17xMFFFb0w
+         fkA72t+5H0C630Irz3poTD0FhKs+SfL+fa+E0HtOB+PmweYaNtMwmNtBUAXEV5W6fRA6
+         uFRZ4zEPRLgv3Fmy+5dNFAhBeI6mXlK+frq40oPpuN+rk7xma1dOiJwDsUe/R50pBehM
+         ZmRZik21+1c8/WJN48/916+8gBDMuZ66tHpyahxlYXsM7pGUQXgb/oNVy0i8dIiPrgqp
+         zQK1iaHF4uC62uINj5kWvgWjH+/QtpUQ2Hd1iVqdg0tohsKf2ygXCfX/Xt9Hr8szMNEa
+         mv5w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 134.134.136.126 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
+       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 134.134.136.126 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
+       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,439,1517904000";
-   d="scan'208";a="36573332"
-Subject: Re: [PATCH v3 05/10] ARM: dts: aspeed: peci: Add PECI node
-To: Joel Stanley <joel@jms.id.au>
-Cc: Alan Cox <alan@linux.intel.com>, Andrew Jeffery <andrew@aj.id.au>,
- Andrew Lunn <andrew@lunn.ch>, Andy Shevchenko <andriy.shevchenko@intel.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Benjamin Herrenschmidt <benh@kernel.crashing.org>,
- Fengguang Wu <fengguang.wu@intel.com>, Greg KH <gregkh@linuxfoundation.org>,
- Guenter Roeck <linux@roeck-us.net>, Haiyue Wang
- <haiyue.wang@linux.intel.com>, James Feist <james.feist@linux.intel.com>,
- Jason M Biils <jason.m.bills@linux.intel.com>,
- Jean Delvare <jdelvare@suse.com>, Julia Cartwright <juliac@eso.teric.us>,
- Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Milton Miller II <miltonm@us.ibm.com>, Pavel Machek <pavel@ucw.cz>,
- Randy Dunlap <rdunlap@infradead.org>,
- Stef van Os <stef.van.os@prodrive-technologies.com>,
- Sumeet R Pawnikar <sumeet.r.pawnikar@intel.com>,
- Vernon Mauery <vernon.mauery@linux.intel.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-doc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
- linux-hwmon@vger.kernel.org, Linux ARM
- <linux-arm-kernel@lists.infradead.org>,
- OpenBMC Maillist <openbmc@lists.ozlabs.org>
-References: <20180410183212.16787-1-jae.hyun.yoo@linux.intel.com>
- <20180410183212.16787-6-jae.hyun.yoo@linux.intel.com>
- <CACPK8Xf7ta43K=POx8J6bAdjvX=wCzy-+HWqHsm+RstQxeetCQ@mail.gmail.com>
+X-IronPort-AV: E=Sophos;i="5.48,433,1517904000";
+   d="scan'208";a="219323803"
 From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <64dae4bb-8049-a09d-d0bb-18f6ec52ea63@linux.intel.com>
-Date: Wed, 11 Apr 2018 19:20:28 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CACPK8Xf7ta43K=POx8J6bAdjvX=wCzy-+HWqHsm+RstQxeetCQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To: Alan Cox <alan@linux.intel.com>,
+	Andrew Jeffery <andrew@aj.id.au>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Fengguang Wu <fengguang.wu@intel.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Haiyue Wang <haiyue.wang@linux.intel.com>,
+	James Feist <james.feist@linux.intel.com>,
+	Jason M Biils <jason.m.bills@linux.intel.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Joel Stanley <joel@jms.id.au>,
+	Julia Cartwright <juliac@eso.teric.us>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Milton Miller II <miltonm@us.ibm.com>,
+	Pavel Machek <pavel@ucw.cz>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Stef van Os <stef.van.os@prodrive-technologies.com>,
+	Sumeet R Pawnikar <sumeet.r.pawnikar@intel.com>,
+	Vernon Mauery <vernon.mauery@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	openbmc@lists.ozlabs.org,
+	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Subject: [PATCH v3 10/10] Add a maintainer for the PECI subsystem
+Date: Tue, 10 Apr 2018 11:32:12 -0700
+Message-Id: <20180410183212.16787-11-jae.hyun.yoo@linux.intel.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180410183212.16787-1-jae.hyun.yoo@linux.intel.com>
+References: <20180410183212.16787-1-jae.hyun.yoo@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597385135685935687?=
-X-GMAIL-MSGID: =?utf-8?q?1597505149926244427?=
+X-GMAIL-THRID: =?utf-8?q?1597385146666746404?=
+X-GMAIL-MSGID: =?utf-8?q?1597385146666746404?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 4/11/2018 4:52 AM, Joel Stanley wrote:
-> On 11 April 2018 at 04:02, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
->> This commit adds PECI bus/adapter node of AST24xx/AST25xx into
->> aspeed-g4 and aspeed-g5.
->>
-> 
-> The patches to the device trees get merged by the ASPEED maintainer
-> (me). Once you have the bindings reviewed you can send the patches to
-> me and the linux-aspeed list (I've got a pending patch to maintainers
-> that will ensure get_maintainers.pl does the right thing as far as
-> email addresses go).
-> 
-> I'd suggest dropping it from your series and re-sending once the
-> bindings and driver are reviewed.
-> 
-> Cheers,
-> 
-> Joel
-> 
+This commit adds a maintainer information for the PECI subsystem.
 
-Do you mean that bindings and driver of ASPEED peci adapter driver 
-including documents?
+Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+Reviewed-by: James Feist <james.feist@linux.intel.com>
+Reviewed-by: Vernon Mauery <vernon.mauery@linux.intel.com>
+Cc: Alan Cox <alan@linux.intel.com>
+Cc: Andrew Jeffery <andrew@aj.id.au>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Jason M Biils <jason.m.bills@linux.intel.com>
+Cc: Jean Delvare <jdelvare@suse.com>
+Cc: Joel Stanley <joel@jms.id.au>
+Cc: Julia Cartwright <juliac@eso.teric.us>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Milton Miller II <miltonm@us.ibm.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stef van Os <stef.van.os@prodrive-technologies.com>
+Cc: Sumeet R Pawnikar <sumeet.r.pawnikar@intel.com>
+---
+ MAINTAINERS | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Thanks,
--Jae
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5cd5ff0e4428..3e6917e1ad31 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10965,6 +10965,16 @@ L:	platform-driver-x86@vger.kernel.org
+ S:	Maintained
+ F:	drivers/platform/x86/peaq-wmi.c
+ 
++PECI SUBSYSTEM
++M:	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
++M:	Jason M Biils <jason.m.bills@linux.intel.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/peci/
++F:	drivers/peci/
++F:	drivers/hwmon/peci-*.c
++F:	include/linux/peci.h
++F:	include/uapi/linux/peci-ioctl.h
++
+ PER-CPU MEMORY ALLOCATOR
+ M:	Tejun Heo <tj@kernel.org>
+ M:	Christoph Lameter <cl@linux.com>
+-- 
+2.16.2
