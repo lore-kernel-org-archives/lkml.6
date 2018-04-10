@@ -1,53 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754178AbeDJOmH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:42:07 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:40791 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753370AbeDJOlO (ORCPT
+        id S1753218AbeDJOoY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:44:24 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:44831 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753097AbeDJOoV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:41:14 -0400
-X-Google-Smtp-Source: AIpwx4+3jkOzcbJW64gWy55eH6nMDDftj4Qk0vlV044wJDJ+OGtgUynL1e23eKCO2YdwPDvxMz47azia5Eg3kMlb4JA=
+        Tue, 10 Apr 2018 10:44:21 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, <linux-security-module@vger.kernel.org>
+References: <0000000000008d2e0d05697a693d@google.com>
+        <9d192497-8b1e-ca8d-0ed8-b3324ee1e361@I-love.SAKURA.ne.jp>
+Date: Tue, 10 Apr 2018 09:42:50 -0500
+In-Reply-To: <9d192497-8b1e-ca8d-0ed8-b3324ee1e361@I-love.SAKURA.ne.jp>
+        (Tetsuo Handa's message of "Tue, 10 Apr 2018 19:13:23 +0900")
+Message-ID: <87o9irw2ad.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1523196197-2072-1-git-send-email-tmaimon77@gmail.com>
-References: <1523196197-2072-1-git-send-email-tmaimon77@gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 10 Apr 2018 16:41:11 +0200
-X-Google-Sender-Auth: Qtzpi3-5EPhQeTp0WeRx0hR_SY8
-Message-ID: <CAK8P3a30uzYXUVBV72+OiAUxdVRD+=VdLg_nH4c1TSxGzfvNCw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/1] arm: npcm: enable L2 cache in NPCM7xx architecture
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: arm-soc <arm@kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-        Joel Stanley <joel@jms.id.au>, DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1f5uVA-0004hd-0l;;;mid=<87o9irw2ad.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.140.30;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18O51KZq88/188jzEqp6jNNUMsjtwSaEAk=
+X-SA-Exim-Connect-IP: 97.119.140.30
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  1.0 T_XMDrugObfuBody_12 obfuscated drug references
+        *  1.0 T_XMDrugObfuBody_04 obfuscated drug references
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 15035 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 2.3 (0.0%), b_tie_ro: 1.59 (0.0%), parse: 0.75 (0.0%),
+        extract_message_metadata: 21 (0.1%), get_uri_detail_list: 1.84 (0.0%),
+        tests_pri_-1000: 2.9 (0.0%), tests_pri_-950: 1.18 (0.0%), tests_pri_-900:
+        1.00 (0.0%), tests_pri_-400: 22 (0.1%), check_bayes: 21 (0.1%), b_tokenize: 7
+        (0.0%), b_tok_get_all: 7 (0.0%), b_comp_prob: 2.0 (0.0%), b_tok_touch_all:
+        3.0 (0.0%), b_finish: 0.55 (0.0%), tests_pri_0: 263 (1.7%),
+        check_dkim_signature: 0.47 (0.0%), check_dkim_adsp: 2.6 (0.0%),
+        tests_pri_500: 14719 (97.9%), poll_dns_idle: 14702 (97.8%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: KASAN: null-ptr-deref Read in xattr_getsecurity
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 8, 2018 at 4:03 PM, Tomer Maimon <tmaimon77@gmail.com> wrote:
-> This patch Enable ARM L2 cache module in Nuvoton NPCM7xx BMC
-> by adding L2 cache parameters into NPCM7xx DT machine start structure.
->
-> At patch V7 arm: npcm: add basic support for Nuvoton BMCs we got comments
-> regarding the flags use in L2 cache module.
-> - https://www.spinics.net/lists/arm-kernel/msg613212.html
->
-> After checking again the L2 cache use in the NPCM7xx,
-> the only L2 cache flag we need to set is L2C_AUX_CTRL_SHARED_OVERRIDE
-> and it is done in the device tree:
-> https://patchwork.kernel.org/patch/10063497/
->
-> L2 cache flag mask allowed all the flag option.
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> writes:
 
-I've applied the patch to my fixes branch now, but took your description above
-instead of the two-line text that you had in the patch itself. I liked
-the longer
-text much better.
+> From 904d07a6eb014f3df0c5a1ebfcfd4323276a9a76 Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Tue, 10 Apr 2018 15:15:16 +0900
+> Subject: [PATCH] commoncap: Handle memory allocation failure.
+>
+> syzbot is reporting NULL pointer dereference at xattr_getsecurity() [1],
+> for cap_inode_getsecurity() is returning sizeof(struct vfs_cap_data) when
+> memory allocation failed. Return -ENOMEM if memory allocation failed.
+>
+> [1] https://syzkaller.appspot.com/bug?id=a55ba438506fe68649a5f50d2d82d56b365e0107
 
-      Arnd
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+
+Tetsuo I can pick this up, or do you have preferred path for getting
+this change merged?
+
+Serge does this fix look ok to you?  I am a bit worried that
+might be a bit brittler but I don't see any issues with this change.
+
+Eric
+
+
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Fixes: 8db6c34f1dbc8e06 ("Introduce v3 namespaced file capabilities")
+> Reported-by: syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>
+> Cc: stable <stable@vger.kernel.org> # 4.14+
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> ---
+>  security/commoncap.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 48620c9..1ce701f 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -449,6 +449,8 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+>  				magic |= VFS_CAP_FLAGS_EFFECTIVE;
+>  			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
+>  			cap->magic_etc = cpu_to_le32(magic);
+> +		} else {
+> +			size = -ENOMEM;
+>  		}
+>  	}
+>  	kfree(tmpbuf);
+> --
+> 1.8.3.1
