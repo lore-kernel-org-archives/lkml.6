@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+7u4qaXg0G6kYc1pOrmhKH31X69m5mTeeYS/LXtjHO2E/K30OnnZZEYyKxHe5jnVAxBYNn
-ARC-Seal: i=1; a=rsa-sha256; t=1523399591; cv=none;
+X-Google-Smtp-Source: AIpwx4+fLY4a6o6VqRpJieW9x+zaPBCIVZnyu4HOhRbIr94k8LtqKm3mUNfAjonMeJSc8f67WBwl
+ARC-Seal: i=1; a=rsa-sha256; t=1523399588; cv=none;
         d=google.com; s=arc-20160816;
-        b=0IxtIRXhABL3j5P68dxz5IOFvxwq2s/UXuJKP6jqpoKwCQmJpAwqvTacoYbx8zIdfP
-         Ro0BEmVXUtBYAHi0KcAvrjs3HMRy5K6MRuRH7eK3hw/STf/xI9FpyYCS/rjW6qEzcfXN
-         Ev/3pjVZrmxHWJNPgH/AUCFcNxHoLF4e2emOgD1tl2I1L4zhhhFa8vFO46dM34AD/Tb0
-         g0tGkgjRJxBBM4SHS9EwL6BeSMNkIHYDm8WFFCmhRWvMjT5DI7Vy3Tn5355DAa2KxnkO
-         QdJfkPhGTR0legGcZUMeUj/baHewIqT88J9wehhPTTKG4VvmjUB3nUL5P7+qVtiWcEIq
-         yPzg==
+        b=SEJKMZjAIrtQpEWeOL0XXzrhG62zIoHNOi6T6OA73+XWLCmFoFLoC9uf0ehqFzSesu
+         1RRWkFz4LN1XdbBTy4T5vPHx02+lBBRfDcejI0fJkOd4qEyWajW17JuNOFxg6fjoOFaN
+         OtFSCrFNv1fu7KitIp4I+6iEN/oKl8p/oFrk2HFoL2j2IbI+KEGYSL9CeNYm4Zf5uzH9
+         Le6SCJmQS3YhQWCk9mi7P5kkO3AlGmtNDj5kDj1BASMqDrLsfOTstBtdBgir84JiRfnt
+         zxKhdRT/WkUejMUoL56aUbOkJWWxrS9ONEx1V+OQPc834KSDh1BDAp2URHv7SDgdftrj
+         rCTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/0ojZ56ezC7SYymsXbPQiOsnOmNswqG++diV3e7kd9U=;
-        b=bzyHBnc3JwTRfvdCs8bV2Wa31PSCXboUs2ci59jWScAsbO/nnkMuZrZRqYMftrB/M7
-         zkl4PZUFIPCyx//meYfeSxvjRigobl7JJO2brHWo+a10gQ23UQyOPIFP/anliaZIqK4U
-         4CwmLJcDJnI+hPiZM9kKuTM66DbcMxNY5AoLuUHInSKNTavTzp76zvHcnrc7Rt2bB2yg
-         j93j23ONaNENd2Bn0NZMCjTqg+xyZZpYO47GxTGg0oXkghhkw5qa4SKQJIa8KoBpLB27
-         Ai6n8sOeM80+AUFvNq5kMvWiNY3aETIh/CaMDkBjibMRvDtghz4PhDqaQdOa7jZ719V+
-         8izg==
+        bh=IUrBv36s8zWoiM6yaTR03OMANKF74uCn5cvI7a5X8iM=;
+        b=SPYbvJwFw+3eNuFPRhdL93qCHccST+Ep515MrFChqHZEjTVHS9+MVte2PSzE3VynCA
+         d2nNXajIqK9rj0aKfPziMXozqAKYJVxnvRy+3KJeePPmAL1EFe6Nn/pJM37izjNHsuOc
+         8gkTWZN4QSslDJcvJQP3aw26i3DazRZuY4FFJk+vvD4kTZgIyT0EhoZIcwfPF+t7BmEd
+         qGTjb1DPs3pzBNpCvIamcxcurb9B6I5vF5eMxsfCqtim5letpgkSkUtPVr+A74wbYEJ7
+         fbnjGNG4O/BHT+lsJdglFpmAFpzwsz3hbwONk3lNNcsqNXSycm82TWctUNxKbcpKYQ82
+         zKZg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com,
-	Jason Wang <jasowang@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
+	Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+	Jakub Kicinski <jakub.kicinski@netronome.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 164/168] vhost: validate log when IOTLB is enabled
-Date: Wed, 11 Apr 2018 00:25:06 +0200
-Message-Id: <20180410212808.207271433@linuxfoundation.org>
+Subject: [PATCH 4.15 155/168] nfp: use full 40 bits of the NSP buffer address
+Date: Wed, 11 Apr 2018 00:24:57 +0200
+Message-Id: <20180410212807.683545279@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400249558780387?=
-X-GMAIL-MSGID: =?utf-8?q?1597400249558780387?=
+X-GMAIL-THRID: =?utf-8?q?1597399732880753270?=
+X-GMAIL-MSGID: =?utf-8?q?1597400246905306182?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,46 +50,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
 
 
-[ Upstream commit d65026c6c62e7d9616c8ceb5a53b68bcdc050525 ]
+[ Upstream commit 1489bbd10e16079ce30a53d3c22a431fd47af791 ]
 
-Vq log_base is the userspace address of bitmap which has nothing to do
-with IOTLB. So it needs to be validated unconditionally otherwise we
-may try use 0 as log_base which may lead to pin pages that will lead
-unexpected result (e.g trigger BUG_ON() in set_bit_to_user()).
+The NSP default buffer is a piece of NFP memory where additional
+command data can be placed.  Its format has been copied from
+host buffer, but the PCIe selection bits do not make sense in
+this case.  If those get masked out from a NFP address - writes
+to random place in the chip memory may be issued and crash the
+device.
 
-Fixes: 6b1e6cc7855b0 ("vhost: new device IOTLB API")
-Reported-by: syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Even in the general NSP buffer case, it doesn't make sense to have the
+PCIe selection bits there anymore. These are unused at the moment, and
+when it becomes necessary, the PCIe selection bits should rather be
+moved to another register to utilise more bits for the buffer address.
+
+This has never been an issue because the buffer used to be
+allocated in memory with less-than-38-bit-long address but that
+is about to change.
+
+Fixes: 1a64821c6af7 ("nfp: add support for service processor access")
+Signed-off-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
+Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/vhost.c |   14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1256,14 +1256,12 @@ static int vq_log_access_ok(struct vhost
- /* Caller should have vq mutex and device mutex */
- int vhost_vq_access_ok(struct vhost_virtqueue *vq)
- {
--	if (vq->iotlb) {
--		/* When device IOTLB was used, the access validation
--		 * will be validated during prefetching.
--		 */
--		return 1;
--	}
--	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used) &&
--		vq_log_access_ok(vq, vq->log_base);
-+	int ret = vq_log_access_ok(vq, vq->log_base);
-+
-+	if (ret || vq->iotlb)
-+		return ret;
-+
-+	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used);
- }
- EXPORT_SYMBOL_GPL(vhost_vq_access_ok);
+--- a/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c
++++ b/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c
+@@ -68,10 +68,11 @@
+ /* CPP address to retrieve the data from */
+ #define NSP_BUFFER		0x10
+ #define   NSP_BUFFER_CPP	GENMASK_ULL(63, 40)
+-#define   NSP_BUFFER_PCIE	GENMASK_ULL(39, 38)
+-#define   NSP_BUFFER_ADDRESS	GENMASK_ULL(37, 0)
++#define   NSP_BUFFER_ADDRESS	GENMASK_ULL(39, 0)
  
+ #define NSP_DFLT_BUFFER		0x18
++#define   NSP_DFLT_BUFFER_CPP	GENMASK_ULL(63, 40)
++#define   NSP_DFLT_BUFFER_ADDRESS	GENMASK_ULL(39, 0)
+ 
+ #define NSP_DFLT_BUFFER_CONFIG	0x20
+ #define   NSP_DFLT_BUFFER_SIZE_MB	GENMASK_ULL(7, 0)
+@@ -412,8 +413,8 @@ static int nfp_nsp_command_buf(struct nf
+ 	if (err < 0)
+ 		return err;
+ 
+-	cpp_id = FIELD_GET(NSP_BUFFER_CPP, reg) << 8;
+-	cpp_buf = FIELD_GET(NSP_BUFFER_ADDRESS, reg);
++	cpp_id = FIELD_GET(NSP_DFLT_BUFFER_CPP, reg) << 8;
++	cpp_buf = FIELD_GET(NSP_DFLT_BUFFER_ADDRESS, reg);
+ 
+ 	if (in_buf && in_size) {
+ 		err = nfp_cpp_write(cpp, cpp_id, cpp_buf, in_buf, in_size);
