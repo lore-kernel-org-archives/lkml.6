@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+JP5mj8qwIvuymjGnDV4oQBP67SxgCdVE1N8a2Z+3xA0p9R3x8ez6BoytVoqj65PaifGqy
-ARC-Seal: i=1; a=rsa-sha256; t=1523399825; cv=none;
+X-Google-Smtp-Source: AIpwx4/EI27sFVmMRFlwWqdUHoVFT3rdKOK1/ehFTCBAIeX8Vq41M4BUrsMvpU7cgqH7KRAMbg93
+ARC-Seal: i=1; a=rsa-sha256; t=1523399821; cv=none;
         d=google.com; s=arc-20160816;
-        b=XDY/rt8RVp82bhlaoSIpWmksxr0zTH6uNa8UBUuUB58XsYLyr/l9OCeGCIqTIgYryY
-         kKDZF90DzySv4M9+zOQOBOsJO/yS0U2A/MiM9gvW6rvLVEl3J9C72LuCW/GKsDVBUm/y
-         olbG0lokp7/gWosjSS15jow37t0ShrBfu+WyZmW1EAgXaqvdKn0Z23jqf0mTAskE/Lz3
-         3SiN9Zwziv2paIG54pLcvPSZ2qAh7jtJzOCcc91wPrr4K6ndK5KRQI2jsUVvH40kgnjW
-         ZAOISDSn3TKVPoorTNT3m4MV3yPa3WpY4y/zKnGfZBhhtbnsiTYND+kZcFHcVx78PQxW
-         OSqg==
+        b=OM9zPeFZ/13kr36L08KAdadoR7gb/DfRl4AKBjzhyA8FiFXSFhymyUW4rj6iXBOAGw
+         gPzfzWBrpTCGGQUtXy7sVvbtpX/ULVQPUMIwasAy8Poyb/5f4c/SaU9Tq/Zmiyn3yNYT
+         nJbpzps77DU+5V3a4qwD3ijVVBmqZnGtawK8lKdnJEmc1s/Kc6KSYTL/yV6ZpioRdXoa
+         BV6CHFsz3ls37Afnk5JMD32xDTpwFuupqJ8h/Z7GLEpuTmquFBsUjBfDNt+9ceR6AhU5
+         soFSFSaUiwYPehUh8s1iqfCLi0IrdtByMWSgwU25x29It4pXXbIvrZ8Hk4gyb4hqYojh
+         GNeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=VMP3YqSt44e1e8bigJw67npbb91AJrwWH0byfXDcggE=;
-        b=u9MmNaOoiz4bPMaeXJCuwYJntfzTIcDDM2CydmDKIzLJR4gsRGuxLY5eY8ftPQvE9w
-         sltitD56SiTH3jDJqAUC+coot3qA+V0lJnLGm3BUHYRiUuwrZno1ykhnZCKcPU75J7IP
-         PFuBWeHNvt+YxGfKH/7mGx9PJyYzpxM9TTj9qwyDCbj/fOhaKtxjJHs+cNu2lzmU9Ypz
-         mipZamEqKryltEU4/R2Df94qTxG5/ihT5H3Fsw2ctidKNAUEdeJDZX6n3ROolbJ2nQGu
-         rIG/+rE8bascag0CxmVh2m70jPFct+hNd8Z11USpBkkmNOVqIAF41dOiUcxpzFhKhsNJ
-         A2jw==
+        bh=Sg4y9PeKmgRYlPk3AGd2GgyvDQzYVtggpbswWeOfRNA=;
+        b=n1DZxbAkZXBVm6WzEr78pnbGQBi1tnV+oi/Xz1R9f89/brWC3azne+piGJoFgZcEV9
+         khju36nr96HCHzRgy8diiT0DoNEjcBP3OY/v23vdW7x9ZlFVKwJAbpcqRznLkagO77N8
+         C6JgpJt84H8JCgf/zBZrGEIoW53WZydrUrcEW2sNUD11KwddzYCnbCeVgSr6ANmmn7Q7
+         v1PimO38YsQ03R7gHWj6X7Eic8jH003WXB+jposhxdPHhspWDPJjMquqmW+A3UNWqzqF
+         W/9KG7zjoyK6KSazmn99yhHoDc9Gx63cCqLj9sf2HwmiHnOjgw9nv3tcfe1NYaWdDVJM
+         m1MQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Bastien Nocera <hadess@hadess.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Andrew Bowers <andrewx.bowers@intel.com>,
+	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 077/138] Input: goodix - disable IRQs while suspended
-Date: Wed, 11 Apr 2018 00:24:27 +0200
-Message-Id: <20180410212911.088525899@linuxfoundation.org>
+Subject: [PATCH 4.14 068/138] i40evf: dont rely on netif_running() outside rtnl_lock()
+Date: Wed, 11 Apr 2018 00:24:18 +0200
+Message-Id: <20180410212910.008358359@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400122613176921?=
-X-GMAIL-MSGID: =?utf-8?q?1597400496011982083?=
+X-GMAIL-THRID: =?utf-8?q?1597400039408034049?=
+X-GMAIL-MSGID: =?utf-8?q?1597400490553866741?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,60 +51,90 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Jacob Keller <jacob.e.keller@intel.com>
 
 
-[ Upstream commit faec44b6838312484d63e82286087cf2d5ebb891 ]
+[ Upstream commit 44b034b406211fc103159f82b9e601e05675c739 ]
 
-We should not try to do any i2c transfers before the controller is
-resumed (which happens before our resume method gets called).
+In i40evf_reset_task we use netif_running() to determine whether or not
+the device is currently up. This allows us to properly free queue memory
+and shut down things before we request the hardware reset.
 
-So we need to disable our IRQ while suspended to enforce this. The
-code paths for devices with GPIOs for the int and reset pins already
-disable the IRQ the through goodix_free_irq().
+It turns out that we cannot be guaranteed of netif_running() returning
+false until the device is fully up, as the kernel core code sets
+__LINK_STATE_START prior to calling .ndo_open. Since we're not holding
+the rtnl_lock(), it's possible that the driver's i40evf_open handler
+function is currently being called while we're resetting.
 
-This commit also disables the IRQ while suspended for devices without
-GPIOs for the int and reset pins.
+We can't simply hold the rtnl_lock() while checking netif_running() as
+this could cause a deadlock with the i40evf_open() function.
+Additionally, we can't avoid the deadlock by holding the rtnl_lock()
+over the whole reset path, as this essentially serializes all resets,
+and can cause massive delays if we have multiple VFs on a system.
 
-This fixes the i2c bus sometimes getting stuck after a suspend/resume
-causing the touchscreen to sometimes not work after a suspend/resume.
-This has been tested on a GPD pocked device.
+Instead, lets just check our own internal state __I40EVF_RUNNING state
+field. This allows us to ensure that the state is correct and is only
+set after we've finished bringing the device up.
 
-BugLink: https://github.com/nexus511/gpd-ubuntu-packages/issues/10
-BugLink: https://www.reddit.com/r/GPDPocket/comments/7niut2/fix_for_broken_touch_after_resume_all_linux/
-Tested-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Bastien Nocera <hadess@hadess.net>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Without this change we might free data structures about device queues
+and other memory before they've been fully allocated.
+
+Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/input/touchscreen/goodix.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/i40evf/i40evf_main.c |   20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -808,8 +808,10 @@ static int __maybe_unused goodix_suspend
- 	int error;
+--- a/drivers/net/ethernet/intel/i40evf/i40evf_main.c
++++ b/drivers/net/ethernet/intel/i40evf/i40evf_main.c
+@@ -1775,7 +1775,11 @@ static void i40evf_disable_vf(struct i40
  
- 	/* We need gpio pins to suspend/resume */
--	if (!ts->gpiod_int || !ts->gpiod_rst)
-+	if (!ts->gpiod_int || !ts->gpiod_rst) {
-+		disable_irq(client->irq);
- 		return 0;
-+	}
+ 	adapter->flags |= I40EVF_FLAG_PF_COMMS_FAILED;
  
- 	wait_for_completion(&ts->firmware_loading_complete);
+-	if (netif_running(adapter->netdev)) {
++	/* We don't use netif_running() because it may be true prior to
++	 * ndo_open() returning, so we can't assume it means all our open
++	 * tasks have finished, since we're not holding the rtnl_lock here.
++	 */
++	if (adapter->state == __I40EVF_RUNNING) {
+ 		set_bit(__I40E_VSI_DOWN, adapter->vsi.state);
+ 		netif_carrier_off(adapter->netdev);
+ 		netif_tx_disable(adapter->netdev);
+@@ -1833,6 +1837,7 @@ static void i40evf_reset_task(struct wor
+ 	struct i40evf_mac_filter *f;
+ 	u32 reg_val;
+ 	int i = 0, err;
++	bool running;
  
-@@ -849,8 +851,10 @@ static int __maybe_unused goodix_resume(
- 	struct goodix_ts_data *ts = i2c_get_clientdata(client);
- 	int error;
+ 	while (test_and_set_bit(__I40EVF_IN_CLIENT_TASK,
+ 				&adapter->crit_section))
+@@ -1892,7 +1897,13 @@ static void i40evf_reset_task(struct wor
+ 	}
  
--	if (!ts->gpiod_int || !ts->gpiod_rst)
-+	if (!ts->gpiod_int || !ts->gpiod_rst) {
-+		enable_irq(client->irq);
- 		return 0;
-+	}
+ continue_reset:
+-	if (netif_running(netdev)) {
++	/* We don't use netif_running() because it may be true prior to
++	 * ndo_open() returning, so we can't assume it means all our open
++	 * tasks have finished, since we're not holding the rtnl_lock here.
++	 */
++	running = (adapter->state == __I40EVF_RUNNING);
++
++	if (running) {
+ 		netif_carrier_off(netdev);
+ 		netif_tx_stop_all_queues(netdev);
+ 		adapter->link_up = false;
+@@ -1936,7 +1947,10 @@ continue_reset:
  
- 	/*
- 	 * Exit sleep mode by outputting HIGH level to INT pin
+ 	mod_timer(&adapter->watchdog_timer, jiffies + 2);
+ 
+-	if (netif_running(adapter->netdev)) {
++	/* We were running when the reset started, so we need to restore some
++	 * state here.
++	 */
++	if (running) {
+ 		/* allocate transmit descriptors */
+ 		err = i40evf_setup_all_tx_resources(adapter);
+ 		if (err)
