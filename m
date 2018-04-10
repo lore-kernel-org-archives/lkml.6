@@ -1,609 +1,213 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752099AbeDJRjk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 13:39:40 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:40141 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751961AbeDJRjh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 13:39:37 -0400
-X-Google-Smtp-Source: AIpwx4+LQJE9UqKXL7YyigElxnmKWZjzrh0yLgIb7YkJ7HSDjJWU9qNpdBS2p/hX8khMvBpcNXSEWA==
-Date: Tue, 10 Apr 2018 10:39:33 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Taniya Das <tdas@codeaurora.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        David Collins <collinsd@codeaurora.org>
-Subject: Re: [[PATCH v2] 1/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-Message-ID: <20180410173933.GA6727@builder>
-References: <1523183533-23171-1-git-send-email-tdas@codeaurora.org>
- <1523183533-23171-2-git-send-email-tdas@codeaurora.org>
+        id S1752172AbeDJRmK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 13:42:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41222 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751770AbeDJRmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 13:42:08 -0400
+Date: Tue, 10 Apr 2018 12:42:06 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 05/10] livepatch: Support separate list for replaced
+ patches.
+Message-ID: <20180410174206.l3uk6lchhzxvn75x@treble>
+References: <20180313224613.sdkdkcvhpqv54s6c@treble>
+ <20180319150207.iz5ecbsogg5lpwac@pathway.suse.cz>
+ <20180319214324.riyp233trtfxbeto@treble>
+ <20180320122538.t75rplwhmhtap5q2@pathway.suse.cz>
+ <20180320201502.2skkk3ld4zk2dxwg@treble>
+ <20180323094507.smsqc5ft3yajnwqt@pathway.suse.cz>
+ <20180323224410.vuq5cabfprqhd6ej@treble>
+ <20180326101107.bbloeh5l276on7uz@pathway.suse.cz>
+ <20180406195049.dtfebzfdkbvv6yex@treble>
+ <20180410083455.l26dgo5kx4cy7bc7@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1523183533-23171-2-git-send-email-tdas@codeaurora.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180410083455.l26dgo5kx4cy7bc7@pathway.suse.cz>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 08 Apr 03:32 PDT 2018, Taniya Das wrote:
-
-> From: Amit Nischal <anischal@codeaurora.org>
+On Tue, Apr 10, 2018 at 10:34:55AM +0200, Petr Mladek wrote:
+> > > > > > We were just recently discussing the possibility of not allowing the
+> > > > > > disabling of patches at all.  If we're not going that far, let's at
+> > > > > > least further restrict it, for the sanity of our code, so we don't have
+> > > > > > to worry about a nasty mismatched stack of enabled/disabled/enabled/etc,
+> > > > > > at least for the cases where 'replace' patches aren't used.
+> > > > > 
+> > > > > I am not completely sure where all these fears come from. From my
+> > > > > point of view, this change is pretty safe and trivial thanks to NOPs
+> > > > > and overall design. It would be a shame to do not have it. But I
+> > > > > might be blind after spending so much time with the feature.
+> > > > 
+> > > > I think you're missing my point.  This isn't about your patch set, per
+> > > > se.  It's really about our existing code.  Today, our patch stack
+> > > > doesn't follow real stack semantics, because patches in the middle might
+> > > > be disabled.  I see that as a problem.
+> > 
+> > No, please read it again.  I wasn't talking about replaced patches.
 > 
-> Add the RPMh clock driver to control the RPMh managed clock resources on
-> some of the Qualcomm Technologies, Inc. SoCs.
+> I was confused by wording "in the middle". It suggested that there
+> might had been enabled patches on the top and the bottom of the stack
+> and some disabled patches in between at the same time (or vice versa).
+> This was not true.
+
+That *was* what I meant.  Consider the following sequence of events:
+
+- Register patch 1
+- Enable patch 1
+- Register patch 2
+- Enable patch 2
+- Disable patch 2
+- Register patch 3
+- Enable patch 3
+
+Notice that patch 2 (in the middle) is disabled, whereas patch 1 (on the
+bottom) and patch 3 (on the top) are enabled.
+
+> Do I understand it correctly that you do not like that the patches
+> on the stack might be in two states (disabled/enabled). This might
+> be translated that you do not like the state when the patch is
+> registered and disabled.
+
+No, that wasn't really what I meant, but I have often wondered whether
+we need such a distinction.
+
+> I wonder if the problem is in the "stack" abstraction. Would it help
+> if we call it "sorted list" or whatever more suitable?
+
+But I don't even see a reason to have a sorted list (more on that
+below).
+
+> Another possibility would be to get rid of the enable/disable states.
+> I mean that the patch will be automatically enabled during
+> registration and removed during unregistration.
+
+I don't see how disabling during unregistration would be possible, since
+the unregister is called from the patch module exit function, which
+can only be called *after* the patch is disabled.
+
+However, we could unregister immediately after disabling (i.e., in
+enabled_store context).
+
+> Or we could rename the operation do add/remove or anything else. In
+> fact, this is how it worked in kGraft.
+
+I'm not sure what renaming would solve, unless you mean to combine
+registration and enablement into a single concept?  Sounds good to me.
+
+> AFAIK, the enable/disabled state made more sense for immediate
+> patches that could not be unloaded. We still need to keep the patches
+> when the transaction is forced. The question is if we need to keep
+> the sysfs entries for loaded but unused patches.
+
+I think we wouldn't need the sysfs entries.  Just disable/unregister
+forced patches like normal, except skipping the module_put().
+
+> > Either way, why do we still need a stack?
 > 
-> Signed-off-by: David Collins <collinsd@codeaurora.org>
-> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  drivers/clk/qcom/Kconfig              |   9 +
->  drivers/clk/qcom/Makefile             |   1 +
->  drivers/clk/qcom/clk-rpmh.c           | 394 ++++++++++++++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,rpmh.h |  25 +++
->  4 files changed, 429 insertions(+)
->  create mode 100644 drivers/clk/qcom/clk-rpmh.c
->  create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
+> Good question. I suggest to agree on some terms first:
 > 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index fbf4532..3697a6a 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -112,6 +112,15 @@ config IPQ_GCC_8074
->  	  i2c, USB, SD/eMMC, etc. Select this for the root clock
->  	  of ipq8074.
->  
-> +config MSM_CLK_RPMH
-
-QCOM_CLK_RPMH
-
-> +	tristate "RPMh Clock Driver"
-> +	depends on COMMON_CLK_QCOM && QCOM_RPMH
-> +	help
-> +	 RPMh manages shared resources on some Qualcomm Technologies, Inc.
-> +	 SoCs. It accepts requests from other hardware subsystems via RSC.
-> +	 Say Y if you want to support the clocks exposed by RPMh on
-> +	 platforms such as sdm845.
-> +
->  config MSM_GCC_8660
->  	tristate "MSM8660 Global Clock Controller"
->  	depends on COMMON_CLK_QCOM
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 230332c..b7da05b 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -23,6 +23,7 @@ obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
->  obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
->  obj-$(CONFIG_MDM_GCC_9615) += gcc-mdm9615.o
->  obj-$(CONFIG_MDM_LCC_9615) += lcc-mdm9615.o
-> +obj-$(CONFIG_MSM_CLK_RPMH) += clk-rpmh.o
->  obj-$(CONFIG_MSM_GCC_8660) += gcc-msm8660.o
->  obj-$(CONFIG_MSM_GCC_8916) += gcc-msm8916.o
->  obj-$(CONFIG_MSM_GCC_8960) += gcc-msm8960.o
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> new file mode 100644
-> index 0000000..763401f
-> --- /dev/null
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -0,0 +1,394 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-
-Unused
-
-> +#include <soc/qcom/cmd-db.h>
-> +#include <soc/qcom/rpmh.h>
-> +
-> +#include <dt-bindings/clock/qcom,rpmh.h>
-> +
-> +#include "common.h"
-> +#include "clk-regmap.h"
-
-Unused
-
-> +
-> +#define CLK_RPMH_ARC_EN_OFFSET 0
-> +#define CLK_RPMH_VRM_EN_OFFSET 4
-> +#define CLK_RPMH_VRM_OFF_VAL 0
-> +#define CLK_RPMH_VRM_ON_VAL 1
-
-Use a bool (true/false) rather than lugging around these two defines.
-
-> +#define CLK_RPMH_APPS_RSC_AO_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
-> +					 BIT(RPMH_ACTIVE_ONLY_STATE))
-> +#define CLK_RPMH_APPS_RSC_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
-> +				      BIT(RPMH_ACTIVE_ONLY_STATE) | \
-> +				      BIT(RPMH_SLEEP_STATE))
-> +struct clk_rpmh {
-> +	struct clk_hw hw;
-> +	const char *res_name;
-> +	u32 res_addr;
-> +	u32 res_en_offset;
-> +	u32 res_on_val;
-> +	u32 res_off_val;
-
-res_off_val is 0 for all clocks.
-
-> +	u32 state;
-> +	u32 aggr_state;
-> +	u32 last_sent_aggr_state;
-
-Through the use of some local variables you shouldn't have to lug around
-aggr_state and last_sent_aggr_state.
-
-> +	u32 valid_state_mask;
-> +	struct rpmh_client *rpmh_client;
-> +	unsigned long rate;
-> +	struct clk_rpmh *peer;
-> +};
-> +
-> +struct rpmh_cc {
-> +	struct clk_onecell_data data;
-> +	struct clk *clks[];
-> +};
-> +
-> +struct clk_rpmh_desc {
-> +	struct clk_hw **clks;
-> +	size_t num_clks;
-> +};
-> +
-> +static DEFINE_MUTEX(rpmh_clk_lock);
-> +
-> +#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name, \
-> +			  _res_en_offset, _res_on, _res_off, _rate, \
-> +			  _state_mask, _state_on_mask)			      \
-> +	static struct clk_rpmh _platform##_##_name_active;		      \
-> +	static struct clk_rpmh _platform##_##_name = {			      \
-> +		.res_name = _res_name,					      \
-> +		.res_en_offset = _res_en_offset,			      \
-> +		.res_on_val = _res_on,					      \
-> +		.res_off_val = _res_off,				      \
-> +		.rate = _rate,						      \
-> +		.peer = &_platform##_##_name_active,			      \
-> +		.valid_state_mask = _state_mask,			      \
-
-This is always CLK_RPMH_APPS_RSC_STATE_MASK
-
-> +		.hw.init = &(struct clk_init_data){			      \
-> +			.ops = &clk_rpmh_ops,			              \
-> +			.name = #_name,					      \
-> +		},							      \
-> +	};								      \
-> +	static struct clk_rpmh _platform##_##_name_active = {		      \
-> +		.res_name = _res_name,					      \
-> +		.res_en_offset = _res_en_offset,			      \
-> +		.res_on_val = _res_on,					      \
-> +		.res_off_val = _res_off,				      \
-> +		.rate = _rate,						      \
-> +		.peer = &_platform##_##_name,				      \
-> +		.valid_state_mask = _state_on_mask,			      \
-
-and this is always CLK_RPMH_APPS_RSC_AO_STATE_MASK. If you just hard
-code them here (until there's a need for them to be anything else) the
-clock list below becomes tidier.
-
-> +		.hw.init = &(struct clk_init_data){			      \
-> +			.ops = &clk_rpmh_ops,				      \
-> +			.name = #_name_active,				      \
-> +		},							      \
-> +	}
-> +
-> +#define DEFINE_CLK_RPMH_ARC(_platform, _name, _name_active, _res_name, \
-> +			    _res_on, _res_off, _rate, _state_mask, \
-> +			    _state_on_mask)				\
-> +	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
-> +			  CLK_RPMH_ARC_EN_OFFSET, _res_on, _res_off, \
-> +			  _rate, _state_mask, _state_on_mask)
-> +
-> +#define DEFINE_CLK_RPMH_VRM(_platform, _name, _name_active, _res_name,	\
-> +			    _rate, _state_mask, _state_on_mask) \
-> +	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
-> +			  CLK_RPMH_VRM_EN_OFFSET, CLK_RPMH_VRM_ON_VAL,	\
-> +			  CLK_RPMH_VRM_OFF_VAL, _rate, _state_mask, \
-> +			  _state_on_mask)
-> +
-> +static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
-> +{
-> +	return container_of(_hw, struct clk_rpmh, hw);
-> +}
-> +
-> +static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
-> +{
-> +	return ((c->last_sent_aggr_state & BIT(state))
-> +		!= (c->aggr_state & BIT(state)));
-> +}
-> +
-> +static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
-> +{
-> +	struct tcs_cmd cmd = { 0 };
-> +	int ret = 0;
-> +
-> +	cmd.addr = c->res_addr + c->res_en_offset;
-> +
-> +	if (has_state_changed(c, RPMH_SLEEP_STATE)) {
-> +		cmd.data = (c->aggr_state & BIT(RPMH_SLEEP_STATE))
-> +				? c->res_on_val : c->res_off_val;
-
-As these values are reused several times in this function you could by
-using some local variables get this down to the much more readable:
-
-		cmd.data = state & BIT(RPMH_SLEEP_STATE) ? on_val : off_val;
-
-And as off_val is 0 for all your clocks you can even drop the latter.
-
-> +		ret = rpmh_write_async(c->rpmh_client, RPMH_SLEEP_STATE,
-> +				       &cmd, 1);
-> +		if (ret) {
-> +			pr_err("%s: rpmh_write_async(%s, state=%d) failed (%d)\n",
-> +			       __func__, c->res_name, RPMH_SLEEP_STATE, ret);
-
-Please drop the __func__, the error string is unique in this driver; and
-rather than passing a constant to a %d actually write your error message
-in a human readable form, like: "set sleep state of %s failed: %d\n".
-
-And please do carry the struct device, so that you can use dev_err()
-instead.
-
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	if (has_state_changed(c, RPMH_WAKE_ONLY_STATE)) {
-> +		cmd.data = (c->aggr_state & BIT(RPMH_WAKE_ONLY_STATE))
-> +				? c->res_on_val : c->res_off_val;
-> +		ret = rpmh_write_async(c->rpmh_client,
-> +				       RPMH_WAKE_ONLY_STATE, &cmd, 1);
-> +		if (ret) {
-> +			pr_err("%s: rpmh_write_async(%s, state=%d) failed (%d)\n"
-
-You're missing a , for this to compile.
-
-> +			       __func__, c->res_name, RPMH_WAKE_ONLY_STATE,
-> +				 ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	if (has_state_changed(c, RPMH_ACTIVE_ONLY_STATE)) {
-> +		cmd.data = (c->aggr_state & BIT(RPMH_ACTIVE_ONLY_STATE))
-> +				? c->res_on_val : c->res_off_val;
-> +		ret = rpmh_write(c->rpmh_client, RPMH_ACTIVE_ONLY_STATE,
-> +				 &cmd, 1);
-> +		if (ret) {
-> +			pr_err("%s: rpmh_write(%s, state=%d) failed (%d)\n",
-> +			       __func__, c->res_name, RPMH_ACTIVE_ONLY_STATE,
-> +				 ret);
-> +			return ret;
-> +		}
-> +	}
-
-But, RPMH_SLEEP_STATE, RPMH_WAKE_ONLY_STATE and RPMH_ACTIVE_ONLY_STATE
-are values in an enum, so you could roll these up in a for loop and
-reduce the duplication.
-
-> +
-> +	c->last_sent_aggr_state = c->aggr_state;
-> +	c->peer->last_sent_aggr_state =  c->last_sent_aggr_state;
-> +
-> +	return 0;
-> +}
-> +
-> +static int clk_rpmh_aggregate_state_send_command(struct clk_rpmh *c,
-> +						bool enable)
-> +{
-> +	/* Update state and aggregate state values based on enable value. */
-> +	c->state = enable ? c->valid_state_mask : 0;
-> +	c->aggr_state = c->state | c->peer->state;
-> +	c->peer->aggr_state = c->aggr_state;
-> +
-> +	ret = clk_rpmh_send_aggregate_command(c);
-
-"ret" doesn't exist.
-
-> +	if (ret && enable)
-> +		c->state = 0;
-> +	else if (ret) {
-
-If you have any part of your conditional wrapped in braces do wrap all
-the others too.
-
-> +		c->state = c->valid_state_mask;
-> +		WARN(1, "clk: %s failed to disable\n", c->res_name);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int clk_rpmh_prepare(struct clk_hw *hw)
-> +{
-> +	struct clk_rpmh *c = to_clk_rpmh(hw);
-> +	int ret = 0;
-> +
-> +	mutex_lock(&rpmh_clk_lock);
-> +
-> +	if (c->state)
-> +		goto out;
-> +
-> +	ret = clk_rpmh_aggregate_state_send_command(c, true);
-> +out:
-> +	mutex_unlock(&rpmh_clk_lock);
-> +	return ret;
-> +};
-> +
-> +static void clk_rpmh_unprepare(struct clk_hw *hw)
-> +{
-> +	struct clk_rpmh *c = to_clk_rpmh(hw);
-> +
-> +	mutex_lock(&rpmh_clk_lock);
-> +
-> +	if (!c->state)
-> +		goto out;
-> +
-> +	clk_rpmh_aggregate_state_send_command(c, false);
-> +out:
-> +	mutex_unlock(&rpmh_clk_lock);
-> +	return;
-> +};
-> +
-> +static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
-> +					  unsigned long parent_rate)
-> +{
-> +	struct clk_rpmh *r = to_clk_rpmh(hw);
-> +
-> +	/*
-> +	 * RPMh clocks have a fixed rate. Return static rate set
-> +	 * at init time.
-> +	 */
-> +	return r->rate;
-> +}
-> +
-> +static const struct clk_ops clk_rpmh_ops = {
-> +	.prepare	= clk_rpmh_prepare,
-> +	.unprepare	= clk_rpmh_unprepare,
-> +	.recalc_rate	= clk_rpmh_recalc_rate,
-> +};
-> +
-> +/* Resource name must match resource id present in cmd-db. */
-> +DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 0x0,
-> +		    19200000, CLK_RPMH_APPS_RSC_STATE_MASK,
-> +		    CLK_RPMH_APPS_RSC_AO_STATE_MASK);
-> +DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2",
-> +		    19200000, CLK_RPMH_APPS_RSC_STATE_MASK,
-> +		    CLK_RPMH_APPS_RSC_AO_STATE_MASK);
-> +DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3",
-> +		    19200000, CLK_RPMH_APPS_RSC_STATE_MASK,
-> +		    CLK_RPMH_APPS_RSC_AO_STATE_MASK);
-> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1",
-> +		    38400000, CLK_RPMH_APPS_RSC_STATE_MASK,
-> +		    CLK_RPMH_APPS_RSC_AO_STATE_MASK);
-> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2",
-> +		    38400000, CLK_RPMH_APPS_RSC_STATE_MASK,
-> +		    CLK_RPMH_APPS_RSC_AO_STATE_MASK);
-> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3",
-> +		    38400000, CLK_RPMH_APPS_RSC_STATE_MASK,
-> +		    CLK_RPMH_APPS_RSC_AO_STATE_MASK);
-> +
-> +static struct clk_hw *sdm845_rpmh_clocks[] = {
-> +	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
-> +	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
-
-Registering these fails with EEXIST because the gcc driver also register
-them.
-
-> +	[RPMH_LN_BB_CLK2]	= &sdm845_ln_bb_clk2.hw,
-> +	[RPMH_LN_BB_CLK2_A]	= &sdm845_ln_bb_clk2_ao.hw,
-> +	[RPMH_LN_BB_CLK3]	= &sdm845_ln_bb_clk3.hw,
-> +	[RPMH_LN_BB_CLK3_A]	= &sdm845_ln_bb_clk3_ao.hw,
-> +	[RPMH_RF_CLK1]		= &sdm845_rf_clk1.hw,
-> +	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
-> +	[RPMH_RF_CLK2]		= &sdm845_rf_clk2.hw,
-> +	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
-> +	[RPMH_RF_CLK3]		= &sdm845_rf_clk3.hw,
-> +	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
-> +};
-> +
-> +static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
-> +	.clks = sdm845_rpmh_clocks,
-> +	.num_clks = ARRAY_SIZE(sdm845_rpmh_clocks),
-> +};
-> +
-> +static const struct of_device_id clk_rpmh_match_table[] = {
-> +	{ .compatible = "qcom,rpmh-clk-sdm845", .data = &clk_rpmh_sdm845},
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
-
-Please move the match_table just prior to the definition of your
-platform_driver.
-
-> +
-> +static int clk_rpmh_probe(struct platform_device *pdev)
-> +{
-> +	struct clk **clks;
-> +	struct clk *clk;
-> +	struct rpmh_cc *rcc;
-> +	struct clk_onecell_data *data;
-> +	int ret;
-> +	size_t num_clks, i;
-> +	struct clk_hw **hw_clks;
-> +	struct clk_rpmh *rpmh_clk;
-> +	const struct clk_rpmh_desc *desc;
-> +	struct property *prop;
-
-prop is unused.
-
-> +	struct rpmh_client *rpmh_client = NULL;
-
-Don't goto err until you have acquired rpmh_client and you don't need to
-initialize this variable.
-
-> +
-> +	desc = of_device_get_match_data(&pdev->dev);
-> +	if (!desc) {
-> +		ret = -EINVAL;
-> +		goto err;
-> +	}
-
-This won't happen, no need to check for it.
-
-> +
-> +	ret = cmd_db_ready();
-> +	if (ret) {
-> +		if (ret != -EPROBE_DEFER) {
-> +			dev_err(&pdev->dev, "Command DB not available (%d)\n",
-> +				ret);
-> +			goto err;
-
-goto err? There's nothing to clean up at this point.
-
-> +		}
-> +		return ret;
-> +	}
-> +
-> +	rpmh_client = rpmh_get_client(pdev);
-> +	if (IS_ERR(rpmh_client)) {
-> +		ret = PTR_ERR(rpmh_client);
-> +		if (ret != -EPROBE_DEFER)
-
-You're getting a handle to your parent, it's not going to return
--EPROBE_DEFER.
-
-> +			dev_err(&pdev->dev, "failed to request RPMh client, ret=%d\n",
-> +				ret);
-> +		return ret;
-> +	}
-> +
-> +	hw_clks = desc->clks;
-> +	num_clks = desc->num_clks;
-> +
-> +	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*clks) * num_clks,
-> +			   GFP_KERNEL);
-> +	if (!rcc) {
-> +		ret = -ENOMEM;
-> +		goto err;
-> +	}
-> +
-> +	clks = rcc->clks;
-> +	data = &rcc->data;
-> +	data->clks = clks;
-> +	data->clk_num = num_clks;
-> +
-> +	for (i = 0; i < num_clks; i++) {
-> +		rpmh_clk = to_clk_rpmh(hw_clks[i]);
-> +		rpmh_clk->res_addr = cmd_db_read_addr(rpmh_clk->res_name);
-> +		if (!rpmh_clk->res_addr) {
-> +			dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
-> +				rpmh_clk->res_name);
-> +			ret = -ENODEV;
-> +			goto err;
-> +		}
-> +
-> +		rpmh_clk->rpmh_client = rpmh_client;
-> +
-> +		clk = devm_clk_register(&pdev->dev, hw_clks[i]);
-> +		if (IS_ERR(clk)) {
-
-Please add:
-
-dev_err(&pdev->dev, "failed to register %s\n", hw_clks[i]->init->name);
-
-> +			ret = PTR_ERR(clk);
-> +			goto err;
-> +		}
-> +
-> +		clks[i] = clk;
-> +	}
-> +
-> +	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
-> +				  data);
-> +	if (ret)
-
-Please add:
-
-dev_err(&pdev->dev, "failed to add clock provider\n");
-
-> +		goto err;
-> +
-> +	dev_info(&pdev->dev, "Registered RPMh clocks\n");
-
-Please don't spam the kernel log.
-
-> +	return ret;
-
-ret can't be anything but 0 here, so let's make it easer to read by
-writing 0 here.
-
-> +
-> +err:
-> +	if (rpmh_client)
-> +		rpmh_release(rpmh_client);
-
-This is annoying (but not your fault).
-
-> +
-> +	dev_err(&pdev->dev, "Error registering RPMh Clock driver (%d)\n", ret);
-
-Testing the driver I got this error message, it didn't help! Had to add
-the two dev_err above, just drop this one.
-
-> +	return ret;
-> +}
-> +
-> +static struct platform_driver clk_rpmh_driver = {
-> +	.probe		= clk_rpmh_probe,
-
-Your driver is tristate and works just fine as a kernel module, so you
-need a remove function to call rpmh_release(rpmh_client) - or we need to
-get rid of the need to call that.
-
-> +	.driver		= {
-> +		.name	= "clk-rpmh",
-> +		.of_match_table = clk_rpmh_match_table,
-> +	},
-> +};
-> +
-> +static int __init clk_rpmh_init(void)
-> +{
-> +	return platform_driver_register(&clk_rpmh_driver);
-> +}
-> +subsys_initcall(clk_rpmh_init);
-> +
-> +static void __exit clk_rpmh_exit(void)
-> +{
-> +	platform_driver_unregister(&clk_rpmh_driver);
-> +}
-> +module_exit(clk_rpmh_exit);
-> +
-> +MODULE_DESCRIPTION("QTI RPMh Clock Driver");
-
-We use "Qualcomm" or "QCOM" in all existing driver, can you please use
-that here too?
-
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:clk-rpmh");
-
-Nothing is going to attempt to autoload a driver based on the alias
-platform:clk-rpmh, so just drop this.
-
-Regards,
-Bjorn
+>    + Independent patches make unrelated changes. Any new function
+>      must not rely on changes done by any other patch.
+> 
+>    + Dependent patches mean that a later patch depend on changes
+>      done by an earlier patch. For example, a new function might
+>      use function added by an earlier patch.
+> 
+>    + Each cumulative patch include all necessary changes. I would say
+>      that it is self-containing and independent. Except that they should
+>      be able to continue using changes made by earlier patches (shadow
+>      variables, callbacks).
+> 
+> 
+> Then we could say:
+> 
+>    + The stack helps to enforce dependencies between dependent
+>      patches. But there is needed also some external solution
+>      that forces loading the patches in the right order.
+> 
+>    + The "replace" feature is useful for cumulative patches.
+>      It allows to remove existing changes and remove unused stuff.
+>      But cumulative patches might be done even _without_ the atomic
+>      replace.
+> 
+>    + Cumulative patches _with_ "replace" flag might be in theory
+>      installed in random order because they handle not-longer patched
+>      functions. Well, some incompatibility might be caused by shadow
+>      variables and callbacks. Therefore it still might make sense
+>      to install them in the right order.
+> 
+>      Cumulative patches _without_ "replace" flag must be installed
+>      in the right order because they do not handle not-longer patched
+>      functions.
+> 
+>      Anyway, for cumulative patches is important the external
+>      ordering (loading modules) and not the stack.
+> 
+> 
+> Back to your question:
+> 
+> The stack is needed for dependent non-cumulative patches.
+> 
+> The cumulative patches with "replace" flag seems the be
+> the most safe and most flexible solution. The question is
+> if we want to force all users to use this mode.
+
+If they have dependencies between modules, they can either a) enforce it
+with tooling, or they can instead b) use 'replace'.
+
+But let's get the module load order enforcement out of the kernel.
+There's no real need for the kernel to do it, and we're not even doing a
+good job at it.
+
+> > > Or we have replace patches that are
+> > > standalone and we allow a smooth transfer from one to another one.
+> > > 
+> > > Anyway, for us, it is much more important the removal of replaced
+> > > patches. We could probably live without the possibility to replace
+> > > disabled patches.
+> > 
+> > I think replacing disabled patches is ok, *if* we get rid of the
+> > illusion of a stack.  The current stack isn't really a stack, it's just
+> > awkward.
+> 
+> I personally do not have problems with it. As I said, I see this as
+> two different modes how the life patches are distributed. The stack
+> is needed for dependent patches. The cumulative patches with
+> "replace" flag are self-contained and independent. They might
+> replace anything.
+> 
+> Well, it would make sense to reduce the amount of possible
+> situations and use cases.
+
+A big +1.
+
+> The question is what is acceptable to others
+
+If there are any objections, this is their chance to speak up :-)
+
+> and if it needs to be done as part of this patch set.
+
+Maybe so, for at least a few reasons:
+
+- This patch set makes the 'stack' obsolete, so it makes sense to remove
+  the 'stack' with it.
+
+- This patch set will already affect tooling, let's make tooling's life
+  easier by making all the related changes at the same time.
+  
+  (Though I'm not quite convinced on this point, would removing the
+  stack affect tooling at all?  If we also combined registration and
+  enablement into a single concept, then it definitely would.)
+
+-- 
+Josh
