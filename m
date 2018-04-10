@@ -1,152 +1,204 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754540AbeDJP0j (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 11:26:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50340 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754493AbeDJP0G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 11:26:06 -0400
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-doc@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>,
-        mhocko@kernel.org, aneesh.kumar@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, mpe@ellerman.id.au,
-        benh@kernel.crashing.org, paulus@samba.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Vineet Gupta <vgupta@synopsys.com>, Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <albert@sifive.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        David Rientjes <rientjes@google.com>
-Subject: [PATCH v2 2/2] mm: remove odd HAVE_PTE_SPECIAL
-Date: Tue, 10 Apr 2018 17:25:51 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523373951-10981-1-git-send-email-ldufour@linux.vnet.ibm.com>
-References: <1523373951-10981-1-git-send-email-ldufour@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18041015-0040-0000-0000-0000044BE4BF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041015-0041-0000-0000-000020F00EB9
-Message-Id: <1523373951-10981-3-git-send-email-ldufour@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-10_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804100148
+        id S1754574AbeDJP3I (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 11:29:08 -0400
+Received: from mga14.intel.com ([192.55.52.115]:7465 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754557AbeDJP3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 11:29:07 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,432,1517904000";
+   d="asc'?scan'208";a="36054861"
+Date: Tue, 10 Apr 2018 21:03:34 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: dma <dmaengine@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: dmaengine updates for v4.17-rc1
+Message-ID: <20180410153333.GR6014@localhost>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the additional define HAVE_PTE_SPECIAL and rely directly on
-CONFIG_ARCH_HAS_PTE_SPECIAL.
 
-There is no functional change introduced by this patch
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
----
- mm/memory.c | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+Hey Linus,
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 96910c625daa..53b6344a90d2 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -817,19 +817,13 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
-  * PFNMAP mappings in order to support COWable mappings.
-  *
-  */
--#ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
--# define HAVE_PTE_SPECIAL 1
--#else
--# define HAVE_PTE_SPECIAL 0
--#endif
- struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
- 			     pte_t pte, bool with_public_device)
- {
- 	unsigned long pfn = pte_pfn(pte);
- 
--	if (HAVE_PTE_SPECIAL) {
--		if (likely(!pte_special(pte)))
--			goto check_pfn;
-+#ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
-+	if (unlikely(pte_special(pte))) {
- 		if (vma->vm_ops && vma->vm_ops->find_special_page)
- 			return vma->vm_ops->find_special_page(vma, addr);
- 		if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
-@@ -862,7 +856,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
- 		return NULL;
- 	}
- 
--	/* !HAVE_PTE_SPECIAL case follows: */
-+#else	/* CONFIG_ARCH_HAS_PTE_SPECIAL */
- 
- 	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
- 		if (vma->vm_flags & VM_MIXEDMAP) {
-@@ -881,7 +875,8 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
- 
- 	if (is_zero_pfn(pfn))
- 		return NULL;
--check_pfn:
-+#endif /* CONFIG_ARCH_HAS_PTE_SPECIAL */
-+
- 	if (unlikely(pfn > highest_memmap_pfn)) {
- 		print_bad_pte(vma, addr, pte, NULL);
- 		return NULL;
-@@ -891,7 +886,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
- 	 * NOTE! We still have PageReserved() pages in the page tables.
- 	 * eg. VDSO mappings can cause them to exist.
- 	 */
--out:
-+out: __maybe_unused
- 	return pfn_to_page(pfn);
- }
- 
-@@ -904,7 +899,7 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
- 	/*
- 	 * There is no pmd_special() but there may be special pmds, e.g.
- 	 * in a direct-access (dax) mapping, so let's just replicate the
--	 * !HAVE_PTE_SPECIAL case from vm_normal_page() here.
-+	 * !CONFIG_ARCH_HAS_PTE_SPECIAL case from vm_normal_page() here.
- 	 */
- 	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
- 		if (vma->vm_flags & VM_MIXEDMAP) {
-@@ -1926,6 +1921,7 @@ static int __vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
- 
- 	track_pfn_insert(vma, &pgprot, pfn);
- 
-+#ifndef CONFIG_ARCH_HAS_PTE_SPECIAL
- 	/*
- 	 * If we don't have pte special, then we have to use the pfn_valid()
- 	 * based VM_MIXEDMAP scheme (see vm_normal_page), and thus we *must*
-@@ -1933,7 +1929,7 @@ static int __vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
- 	 * than insert_pfn).  If a zero_pfn were inserted into a VM_MIXEDMAP
- 	 * without pte special, it would there be refcounted as a normal page.
- 	 */
--	if (!HAVE_PTE_SPECIAL && !pfn_t_devmap(pfn) && pfn_t_valid(pfn)) {
-+	if (!pfn_t_devmap(pfn) && pfn_t_valid(pfn)) {
- 		struct page *page;
- 
- 		/*
-@@ -1944,6 +1940,7 @@ static int __vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
- 		page = pfn_to_page(pfn_t_to_pfn(pfn));
- 		return insert_page(vma, addr, page, pgprot);
- 	}
-+#endif
- 	return insert_pfn(vma, addr, pfn, pgprot, mkwrite);
- }
- 
--- 
-2.7.4
+Here is the pull request for dmaengine updates for v4.17-rc1. Two new
+drivers, updates to couple and off updates to many summarise this request.
+Details below:
+
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+
+are available in the git repository at:
+
+  git://git.infradead.org/users/vkoul/slave-dma.git tags/dmaengine-4.17-rc1
+
+for you to fetch changes up to 2ffb850e23a943acfbeda62599397c863cdd854c:
+
+  Merge branch 'topic/stm' into for-linus (2018-04-10 08:55:58 +0530)
+
+----------------------------------------------------------------
+DMAengine updates for v4.17-rc1
+
+This time we have couple of new drivers along with updates to drivers.
+
+ - new driver for DesignWare AXI DMAC and MediaTek High-Speed DMA controller
+ - stm32 dma and qcom bam dma driver updates
+ - norandom test option for dmatest
+
+----------------------------------------------------------------
+Biju Das (1):
+      dt-bindings: rcar-dmac: Document r8a77470 support
+
+Colin Ian King (1):
+      dmaengine: dw-axi-dmac: fix spelling mistake: "catched" -> "caught"
+
+Eugeniy Paltsev (2):
+      dmaengine: Introduce DW AXI DMAC driver
+      dt-bindings: Document the Synopsys DW AXI DMA bindings
+
+Geert Uytterhoeven (1):
+      dmaengine: rcar-dmac: Fix too early/late system suspend/resume callba=
+cks
+
+Maxime Jayat (1):
+      dmaengine: at_xdmac: fix rare residue corruption
+
+Peter Ujfalusi (1):
+      dmaengine: edma: Check the memory allocation for the memcpy dma device
+
+Pierre Yves MORDRET (7):
+      dmaengine: stm32-dma: threshold manages with bitfield feature
+      dmaengine: stm32-dma: fix incomplete configuration in cyclic mode
+      dmaengine: stm32-dma: fix typo and reported checkpatch warnings
+      dmaengine: stm32-dma: Improve memory burst management
+      dmaengine: stm32-dma: fix DMA IRQ status handling
+      dmaengine: stm32-dma: fix max items per transfer
+      dmaengine: stm32-dma: properly mask irq bits
+
+Pierre-Yves MORDRET (1):
+      dt-bindings: stm32-dma: introduce DMA features bitfield
+
+Qi Hou (1):
+      dmaengine: pl330: fix a race condition in case of threaded irqs
+
+Sean Wang (3):
+      dt-bindings: dmaengine: Add MediaTek High-Speed DMA controller bindin=
+gs
+      dmaengine: mediatek: Add MediaTek High-Speed DMA controller for MT762=
+2 and MT7623 SoC
+      dmaengine: mediatek: update MAINTAINERS entry with MediaTek DMA driver
+
+Sergei Shtylyov (1):
+      DT: dmaengine: renesas,rcar-dmac: document R8A77980 support
+
+Srinivas Kandagatla (5):
+      dmaengine: qcom: bam_dma: make bam clk optional
+      dt-bindings: dmaengine: bam_dma: add remote controlled bindings
+      dmaengine: qcom: bam_dma: get num-channels and num-ees from dt
+      dmaengine: qcom: bam_dma: do not write to global regs in remote mode
+      dmaengine: qcom: bam_dma: disable runtime pm on remote controlled
+
+Thierry Bultel (1):
+      dmaengine: imx-sdma: fix pagefault when channel is disabled during in=
+terrupt
+
+Vinod Koul (10):
+      Merge branch 'topic/dmatest' into for-linus
+      Merge branch 'topic/dw_axi' into for-linus
+      Merge branch 'topic/edma' into for-linus
+      Merge branch 'topic/imx' into for-linus
+      Merge branch 'topic/mtek' into for-linus
+      Merge branch 'topic/pl330' into for-linus
+      Merge branch 'topic/qcom' into for-linus
+      Merge branch 'topic/raid' into for-linus
+      Merge branch 'topic/renesas' into for-linus
+      Merge branch 'topic/stm' into for-linus
+
+Yang Shunyong (1):
+      dmaengine: dmatest: add norandom option
+
+Yoshihiro Shimoda (2):
+      dmaengine: usb-dmac: add binding for r8a77965
+      dmaengine: rcar-dmac: Check the done lists in rcar_dmac_chan_get_resi=
+due()
+
+Zi Yan (1):
+      dmaengine: avoid map_cnt overflow with CONFIG_DMA_ENGINE_RAID
+
+ .../devicetree/bindings/dma/mtk-hsdma.txt          |   33 +
+ .../devicetree/bindings/dma/qcom_bam_dma.txt       |    4 +
+ .../devicetree/bindings/dma/renesas,rcar-dmac.txt  |    2 +
+ .../devicetree/bindings/dma/renesas,usb-dmac.txt   |    1 +
+ .../devicetree/bindings/dma/snps,dw-axi-dmac.txt   |   41 +
+ .../devicetree/bindings/dma/stm32-dma.txt          |    6 +-
+ MAINTAINERS                                        |   15 +
+ drivers/dma/Kconfig                                |   12 +
+ drivers/dma/Makefile                               |    2 +
+ drivers/dma/at_xdmac.c                             |    4 +-
+ drivers/dma/dmatest.c                              |   16 +-
+ drivers/dma/dw-axi-dmac/Makefile                   |    1 +
+ drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c     | 1008 ++++++++++++++++=
++++
+ drivers/dma/dw-axi-dmac/dw-axi-dmac.h              |  334 +++++++
+ drivers/dma/edma.c                                 |    6 +
+ drivers/dma/imx-sdma.c                             |   21 +
+ drivers/dma/mediatek/Kconfig                       |   13 +
+ drivers/dma/mediatek/Makefile                      |    1 +
+ drivers/dma/mediatek/mtk-hsdma.c                   | 1056 ++++++++++++++++=
+++++
+ drivers/dma/pl330.c                                |    6 +-
+ drivers/dma/qcom/bam_dma.c                         |   59 +-
+ drivers/dma/sh/rcar-dmac.c                         |   13 +-
+ drivers/dma/stm32-dma.c                            |  287 +++++-
+ include/linux/dmaengine.h                          |    4 +
+ 24 files changed, 2871 insertions(+), 74 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/mtk-hsdma.txt
+ create mode 100644 Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.=
+txt
+ create mode 100644 drivers/dma/dw-axi-dmac/Makefile
+ create mode 100644 drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
+ create mode 100644 drivers/dma/dw-axi-dmac/dw-axi-dmac.h
+ create mode 100644 drivers/dma/mediatek/Kconfig
+ create mode 100644 drivers/dma/mediatek/Makefile
+ create mode 100644 drivers/dma/mediatek/mtk-hsdma.c
+
+--=20
+~Vinod
+
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJazNlNAAoJEHwUBw8lI4NHM2kP/jxxDjq6it3mpWNJHFQahRZU
++jb/bNn5J+uYMo1w4Ex4mAlybviFgiMRyeFIPVWLL+KSVPWXHgFC/SRKSQpvp4Xk
+52o8gp0SC7IIve+ciItZJzS+D8aKnoDE6NuA5b0WWbpJ9Mua9JjXPHpg1VMT4N1E
+K+rmoJ55CCGxJgBXUBJsIefe/RTnj9p3hHKGVFJTFgCQTEWaXVdTEuPrChwKWp+x
+rHSFOGAVlq7BTM5/gvTl/KvrHTgAwIBNR/17yGG7k+xmUOoNPkwWiQS8+WrsDlSo
+40jKfiDGBiM5qItNmMsaNKDszyjEyz8ahqus8IkYvb/5CdyDLs6NjTPEbjC6aYd1
+eSynT2P1RE626dGQ4krKBCZpSF5K80CNWvPzP9UtZNyq4S+vfQVh3gv8NmGBW7nS
+4biaIkeItcAmpDDBTjwntspszXvHl8l9d9sKUHaNI4wRV6S8qZr54RD6b/cN06Yj
+HqXGRNUPhsbn+13sGgqtYgvDF8/Us3MHSC52XvpmoWpPbU3RGmgjYWy1DasCrzTE
+JED1JWAvGEnaFZ6y8BuqPwJ1hXWt/hL+qzU1eAtmQ7z+Np++Bx8RCwFNSMl5rUbR
++VnGu8vMiaFZnULJKls2BhUotN/fFxEeT76I+OIxsWTe1FHYeBeTRTCVydPlfkML
+6XcEcpsoSwD5CBUefqvH
+=gc6o
+-----END PGP SIGNATURE-----
+
+--ikeVEW9yuYc//A+q--
