@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753784AbeDJMod (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:44:33 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:57810 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753755AbeDJMoa (ORCPT
+        id S1753818AbeDJMoo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:44:44 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:33073 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753130AbeDJMok (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:44:30 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180410124429epoutp03c3e4c4ef792e361065b4b73882650e91~kE7tJOy5V0588705887epoutp03w
-X-AuditID: b6c32a39-579ff70000000ff4-1a-5accb1ac6cba
+        Tue, 10 Apr 2018 08:44:40 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180410124438epoutp01da6f6ff0e6b03f5e81b9e62b008b3955~kE72SCIvu2465424654epoutp01Z
+X-AuditID: b6c32a37-55dff70000000fe6-49-5accb1b5fb09
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To: Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>
@@ -22,81 +22,80 @@ Cc: Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>,
         Jun Nie <jun.nie@linaro.org>, Baoyou Xie <baoyou.xie@linaro.org>,
         Shawn Guo <shawnguo@kernel.org>, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH 13/17] thermal: tegra: enable/check sensor after its setup
- is finished
-Date: Tue, 10 Apr 2018 14:42:07 +0200
-Message-id: <1523364131-31059-14-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH 14/17] thermal: ti-soc-thermal: enable/check sensor after
+ its setup is finished
+Date: Tue, 10 Apr 2018 14:42:08 +0200
+Message-id: <1523364131-31059-15-git-send-email-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 1.9.1
 In-reply-to: <1523364131-31059-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0hTYRjG/TyXnc0mp2n6NVFwKKWRF0j70hSFgiMa9F9hkM48qeRlbCoq
-        BqapOVIMoXLOa4k1FHXNpjbF+yo1qpmK2kUz8ZIXGGlaYG7H/nu+9/m97/O+8FGYSEmIqaTU
-        dFaeKk2WkAL85aCX3+nm9rFov95Ne9T+uJVAS2YjQC2lwziqnZgkUN8dE0D7C2sEeqvPt0V3
-        VQ04ero4z0OmbjWJzKVDAKk3Znlocb6MRMs6Z6R9Nk2i3e4aHPV8MYOwo0z+5gjJqL6Ok0yX
-        6jOP6ZgJYJ4YVmwZraaEZOYmDSRTWrBBMmU6DWD0kzUY8/rRDs4Yp/W2jFnrdlkYLTgfzyYn
-        ZbJy39BYQWJb8Xsgm6Gy2usWeHmgmacEfArSZ6DqYQdQAgElojsB3MtrJLnHDoDNW4YDh7JS
-        E1UCS4OIfgVgW1EEx+wBuDw4TlgMkg6CD4o1Vt6RjoS6ZsrCYHQlDrfmhjEL40BfhYVjBdZk
-        nPaE7U311rqQjoCV232HG7nBNyMV1pn8g/qfnk3CMgjSFTy4Vr1OctAF2P98COO0A1w16njc
-        oi7w43AIxxcAuN1pOGTKATS0ijgdDAeNH6wBGG0PN37dJ7heIbxXdIgwsOlbPcHpcFjYZYmy
-        HKwGcKq4AZQDcR2w0QAnVqZISWAV/rIAH4U0RZGRmuBzIy1FC6w/xPtcJxh5FzUAaApIjgjL
-        +0ejRYQ0U5GdMgAghUkchcktY9EiYbw0O4eVp8XIM5JZxQBwoXCJs/BH1IFFJ0jT2VssK2Pl
-        /11bii/OA6Huw+WxYqP/pcawv5XdwZPXdrI8+adijpvCob2dfc6x3dtXZKreXJmvsO1TyKq4
-        y0WprbJZA+a9XNfvJS/qxVn+A06RpmVXEMbAlbjMk8RosIfdxVnZzRl1tb5WvaSLym8L+L1v
-        t6458TOuI3DL4zo2L5ia8PXaH3PXBAadleCKRKm/NyZXSP8BlYGZsh0DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrILMWRmVeSWpSXmKPExsVy+t9jAd3VG89EGayax22xccZ6Votnn48z
+X-Brightmail-Tracker: H4sIAAAAAAAAAz2SaUhUURiGO3NXhyZuo+hJxWIgIsENs06lthB4Q3/0QxAsqkFvLrkMc1Wy
+        slynMkcNidREK4100qaZ1DEXcmmc3AK1xNzKJVErzcQto3KW+vd+3/u8vHyHQ2Pi24Q9HRET
+        x8ljpFESUojXtu11c6nRdAe7p2s8kSZfTaDpJQNAVUo9jkreDRCoOaUfoD8TXwjUqUsVoPTC
+        RzgqmxqnUH99EYmWlK8BKpofptDUeDaJZqrtkLZ8kETr9cU4ahpbAke3s6kL7SRb+LGHZF8W
+        jlJszZAXW9o4K2C1qlskOzLQSLLKtHmSza5WAVY3UIyxb+6t4qxhUCdgl7ROp0TBQu9QLioi
+        gZO7+Z4XhpfqJjDZMn3p2xqVDMaoTGBFQ2Yf/PVkEmQCIS1m6gDsyU+zDKsATqbU/KfWy0YJ
+        s9EAoOHrJwv1E8DarmbCSJHMIXjnhmrToGkbxh9WV9JGBmMKcPh9RI8ZGWtGCoc3Fk08zuyG
+        5UotbtQi5iRUZZQQ5jYn2NGeZ9JWm/uNpgVTM2TyKJg1sYGZoRPwWcVvS8AazhmqKWMxZBxg
+        n97HzKcBuFLXaOFzAWxUi836MGwz9JqyGLMNzi9nEeasCN5UWBAWlr/oI836GGwZMb6X8eAi
+        ANV3FVQusH8AtqiALSfjo8M43kPm6cpLo/n4mDDXkNhoLTB9EecDdeD524BWwNBAslWU29IV
+        LCakCXxidCuANCaxEUVVdQeLRaHSxMucPPacPD6K41uBA41L7ESfAzYtJkwax13kOBkn/+cK
+        aCv7ZOBe6qevOJJAeUW4T9vMZdkevJoXufqhc6W0PGgmVd3xMN0vZH9ve2DkRlIXURY4O+Py
+        1IsXKBZPz+fnZPkNacYfT1nFaRTvCxyKdqhb4nShsQGEf1rf9SR4wXdg+op3uiN5LbHTZ7Ii
+        MvFV5ZmgvvuyjF0NZx1Tdtr8OL62h83hJTgfLvVwxuS89C+68JM7HgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrELMWRmVeSWpSXmKPExsVy+t9jAd0tG89EGXzfr2qxccZ6Votnn48z
         WqztPcpiMf/KNVaLA42XGS3+P3rNanFqexOTRcusRSwWS548ZLe4vGsOm8Xn3iOMFnPe3Wa3
         ePKwj83ixRZxi00rbrBZ/Nw1j8Vi773PjA6CHk3vj7F5zLp/ls1j56y77B5bb5l6LN7zkslj
         06pONo871/awefQ2v2Pz6NuyitFj+7V5zB4npn9n8Th+YzuTx+dNcgG8UVw2Kak5mWWpRfp2
-        CVwZG9ovMBbc4qjYuOARewPjGvYuRg4OCQETiSuzuboYuTiEBHYySkw9+Iq1i5ETyPnFKNHw
-        lRHEZhOwkpjYvooRpF5EwFtiyxoOkHpmgZksEm1Tn4LVCAtESDw//YsFxGYRUJXYuHwhM4jN
-        K+ApMfPbAXYQW0JATuLksclg8zmB4r/3vmcFmSkk4CHxbYr1BEaeBYwMqxglUwuKc9Nzi40K
-        DPNSy/WKE3OLS/PS9ZLzczcxAgN+22Gtvh2M95fEH2IU4GBU4uGdcPB0lBBrYllxZe4hRgkO
-        ZiUR3py1Z6KEeFMSK6tSi/Lji0pzUosPMUpzsCiJ897OOxYpJJCeWJKanZpakFoEk2Xi4JRq
-        YGTNX76zvNnDNNGuzOndLi5+Hlt2/+n8l6Z5LOL40f4+sVJ+f7C86seEBf137SsdTsy3E/z3
-        yNmS4e3JW/cs9XNaPk6RmLn6u/vaZadufih5wxK9PfKEa/jTXau9FTyWXTXdpi789PKNXcUP
-        1RofKx8U53k719XKhF0xN33uA/aMB5KylSITVimxFGckGmoxFxUnAgB6hSNAdAIAAA==
-X-CMS-MailID: 20180410124427epcas1p371389bc9fdfa2f1582950b68a9121caf
+        CVwZi7c/Yi74ylHx9gd7A+M99i5GTg4JAROJn0vusnYxcnEICexklLh3YQUbhPOLUeLy8rWs
+        IFVsAlYSE9tXMXYxcnCICHhLbFnDAVLDLDCTRaJt6lNGkBphgUSJ5pW3mEFsFgFViRW9m1hA
+        bF4BT4lVrfNZIbbJSZw8NhnM5gSK/977nhVkppCAh8S3KdYTGHkWMDKsYpRMLSjOTc8tNiow
+        zEst1ytOzC0uzUvXS87P3cQIDPlth7X6djDeXxJ/iFGAg1GJh3fCwdNRQqyJZcWVuYcYJTiY
+        lUR4c9aeiRLiTUmsrEotyo8vKs1JLT7EKM3BoiTOezvvWKSQQHpiSWp2ampBahFMlomDU6qB
+        scStsLRmTfTubVwrb5re/mojkjJz3YeHvc/8z9/78SRo58e4F3+PF0zc+uUqn7KF2PXswIKv
+        D85Kf0tN+rp5mdWRl47fWc0sW5lPKf+xs2MwSpimyLJ3a+41oReTorqU/UWv317Ozfj2fC07
+        08OLopYLFySGSeicZlT8+8guXmudw8WpDUfuOyuxFGckGmoxFxUnAgCDojjodQIAAA==
+X-CMS-MailID: 20180410124436epcas1p3422f3653277634b8cc8bef223bc9298f
 X-Msg-Generator: CA
 CMS-TYPE: 101P
-X-CMS-RootMailID: 20180410124427epcas1p371389bc9fdfa2f1582950b68a9121caf
-X-RootMTR: 20180410124427epcas1p371389bc9fdfa2f1582950b68a9121caf
+X-CMS-RootMailID: 20180410124436epcas1p3422f3653277634b8cc8bef223bc9298f
+X-RootMTR: 20180410124436epcas1p3422f3653277634b8cc8bef223bc9298f
 References: <1523364131-31059-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180410124427epcas1p371389bc9fdfa2f1582950b68a9121caf@epcas1p3.samsung.com>
+        <CGME20180410124436epcas1p3422f3653277634b8cc8bef223bc9298f@epcas1p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable/check sensor after setting zone->tz and programming hwtrips.
+Enable sensor after setting sensor data and check sensor after
+writing update interval.
 
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>
+Cc: Keerthy <j-keerthy@ti.com>
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/thermal/tegra/soctherm.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/thermal/ti-soc-thermal/ti-thermal-common.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 9554613..81784b8 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -1400,9 +1400,6 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
- 			goto disable_clocks;
- 		}
- 
--		thermal_zone_device_toggle(z, true);
--		thermal_zone_device_check(z);
--
- 		zone->tz = z;
- 		tegra->thermctl_tzs[soc->ttgs[i]->id] = z;
- 
-@@ -1410,6 +1407,9 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
- 		err = tegra_soctherm_set_hwtrips(&pdev->dev, soc->ttgs[i], z);
- 		if (err)
- 			goto disable_clocks;
-+
-+		thermal_zone_device_toggle(z, true);
-+		thermal_zone_device_check(z);
+diff --git a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+index 3c2299b..a9afbf9 100644
+--- a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
++++ b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+@@ -197,13 +197,15 @@ int ti_thermal_expose_sensor(struct ti_bandgap *bgp, int id,
+ 		return PTR_ERR(data->ti_thermal);
  	}
  
- 	soctherm_debug_init(pdev);
++	ti_bandgap_set_sensor_data(bgp, id, data);
++
+ 	thermal_zone_device_toggle(data->ti_thermal, true);
+-	thermal_zone_device_check(data->ti_thermal);
+ 
+-	ti_bandgap_set_sensor_data(bgp, id, data);
+ 	ti_bandgap_write_update_interval(bgp, data->sensor_id,
+ 					data->ti_thermal->polling_delay);
+ 
++	thermal_zone_device_check(data->ti_thermal);
++
+ 	return 0;
+ }
+ 
 -- 
 1.9.1
