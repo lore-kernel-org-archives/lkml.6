@@ -1,73 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753900AbeDJO3P (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:29:15 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:33847 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753217AbeDJO3N (ORCPT
+        id S1754046AbeDJOaG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:30:06 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43614 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753120AbeDJOaE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:29:13 -0400
-X-Google-Smtp-Source: AIpwx4+lViBhS2NZbCj6H8mJQGOdZFpEOyEIBJ+Qx9syhtt9dgG6Gwr3SMAQ5IDStQBv3bCCIem3/EV26PUyZc9RzvA=
+        Tue, 10 Apr 2018 10:30:04 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 759036014B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <TY1PR01MB17691846E8DFA86DA831B8B9F5BE0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1522246950-9110-1-git-send-email-phil.edworthy@renesas.com>
- <20180409192013.5rytwgoixtyraow3@rob-hp-laptop> <TY1PR01MB1769EC6963CFB3D720D1B9EEF5BE0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <TY1PR01MB17691846E8DFA86DA831B8B9F5BE0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Apr 2018 16:29:11 +0200
-X-Google-Sender-Auth: 03z3l_znoY9NNt5ZvSEeBK3BGVI
-Message-ID: <CAMuHMdUjYT466uPAHSoAWwQL2KaRUfM1njwpBkHwSK9fbGZTag@mail.gmail.com>
-Subject: Re: [PATCH] gpio: dwapb: Add support for 32 interrupts
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Rob Herring <robh@kernel.org>, Hoan Tran <hotran@apm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [next] wil6210: fix potential null dereference of ndev before
+ null check
+From: Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180328174027.31551-1-colin.king@canonical.com>
+References: <20180328174027.31551-1-colin.king@canonical.com>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Maya Erez <merez@codeaurora.org>, linux-wireless@vger.kernel.org,
+        wil6210@qti.qualcomm.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180410143003.A40E460AFB@smtp.codeaurora.org>
+Date: Tue, 10 Apr 2018 14:30:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Phil,
+Colin Ian King <colin.king@canonical.com> wrote:
 
-On Tue, Apr 10, 2018 at 4:23 PM, Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
-> On 10 April 2018 07:24 Phil Edworthy wrote:
->> On 09 April 2018 20:20 Rob Herring wrote:
->> > On Wed, Mar 28, 2018 at 03:22:30PM +0100, Phil Edworthy wrote:
-> [...]
->> > > +- interrupt-mask : a 32-bit bit mask that specifies which interrupts
->> > > +in the list
->> > > +  of interrupts is valid, bit is 1 for a valid irq.
->> >
->> > This is not a standard property and would need a vendor prefix. However,
->> I'd
->> > prefer you just skip any not connected interrupts with an invalid interrupt
->> > number. Then the GPIO number is the index into "interrupts".
->> Makes sense, I'll rework it to do this.
-> Err, what would an invalid interrupt number be?
-> If I use -1, I get a DT parsing error and 0 is certainly valid. If the number is
-> larger than the valid interrupt range I get errors during probe.
+> The pointer ndev is being dereferenced before it is being null checked,
+> hence there is a potential null pointer deference. Fix this by only
+> dereferencing ndev after it has been null checked
+> 
+> Detected by CoverityScan, CID#1467010 ("Dereference before null check")
+> 
+> Fixes: e00243fab84b ("wil6210: infrastructure for multiple virtual interfaces")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Reviewed-by: Maya Erez <merez@codeaurora.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Perhaps using interrupts-extended instead of interrupts?
+Patch applied to ath-next branch of ath.git, thanks.
 
-E.g.
-
-    interrupts-extended = <&intc1 5 1>, <0>, <&intc2 1 0>;
-
-Gr{oetje,eeting}s,
-
-                        Geert
+db5a4d5e1073 wil6210: fix potential null dereference of ndev before null check
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+https://patchwork.kernel.org/patch/10313705/
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
