@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx493zFrdrMkBgo2qKcPtsJJxEeTFBFdBzGHoHXXtoAY8JLftH6XRHsOzMNMkY/OSPj2qpLIL
-ARC-Seal: i=1; a=rsa-sha256; t=1523399413; cv=none;
+X-Google-Smtp-Source: AIpwx491E2eLQJZCXSdluU3u4nYhI1jAEjJdWcu8b4XjflnhCSpaYiWFiAhYZEbzuYZBcCnDuQeR
+ARC-Seal: i=1; a=rsa-sha256; t=1523399410; cv=none;
         d=google.com; s=arc-20160816;
-        b=O4KVDgXfBhXj5eY/3UKBVvpS+bKvfCJ1D5/s/PsoQJwrRFuVLCsPLQ5dXSUhoHX/Ux
-         N8ZHfFHDonH+FGAqdV/B3HpYg6n5TRYc8TqGrLNFUpT+jBZXwcGiwXv31mSHsNlwAuuD
-         Pzg4k3w4EQvLToxXwfPl3Q0NExffYWF9QU8k74KOuo5FVHSMk6YGJkQanCoy/snuWtH5
-         WRCvVlXLkQMuCyR5HR/paKBP4jn9i9j/KKxiPbALmlVFl50sn7PRcQhUg5I5gJz/eL8e
-         xaP7UkazDgZFzzkcM0GlZ21O5Gok7PRYtbzUfdQuYYQdPolox7dQmMOkqruxNkTZJmsw
-         2zZw==
+        b=JIWVHEaAzp5reGS16Ju7AqofnMEwKoOCOl6PO0i2xKK2qE58FAPw2ZcFv4qDBwakl3
+         SnEXz3nXPxZaF94gzn1NCB+/KiqMHH8yl4y5pAa7qp7zCAJN9KZxtxKUO9QuN6K22/1R
+         xbHaCNL+x8tRgCssTZICLQH3e2Ym08zAhtCFadc5lJQGl+Jj5g2FeXNjCQrrylYbGKH4
+         rORmcK/L4fGfQ4i7EpkiF7Pg2cFhDXmRAxEmYEXqgCz+CsiJqf+2WYy1fD4vumzJzzIx
+         YV6Uafz9oIW+6m+7B2QomUWCEBAqSg22ZJLKr5P/6pkbI+NnbLaBUlM5FDOfS0u5uRCS
+         MBKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=byN9pi43cbimSYFLJQpFlsRfEOtOD/YUYWmPa08vpmo=;
-        b=vD7YJVQ6BSoGbRO7rpJGFUrmIhynsqJ8IvC48j3qx43jNo6VwsnhX9eAut3lbNcXSK
-         VHQrSEGtuxyAeCPN1XbNFV3B81+o1mxwfJe+P60pqaeASCAbtd2jnrNatqh0Ngs40/Ih
-         Yn1QDerGQJpJj9OJ7bi7GD5j0TsbNitnWZUExtE8+JCbPLw3RSAKxI7/GYwQQD1jnDZ/
-         0Gv3PdgSPXxRRHAEgO3M4TeqhItUlbFBky912ojHa51GV3MDCSC8UgS7v03ykMe48+N3
-         Ta2huhinkqqRKdPTvTzqireruLTfCBOHTbw7wFj1Hq6gTqb72WHpnWSIjGxXMJlz0mDg
-         eQfQ==
+        bh=tK64RKrBiNmUNUtAV9LJ8auzL3hJ/Q01IzsSOMFznhI=;
+        b=hfskR9EfjQT6DtF1ysChbYefbFmHLA43nE8n4jbfGf8CKp2/+fAkiqUfR35sUkfLVH
+         M3ocRwBqVWkv8IArW6HCD1FIHGepQS50iAhTzmd2KRx1180T0CIehRUSrNaI06NlMfT/
+         Uw9IKxxNN+B8es1Mbx6vsEqL+4QlVCsKN6mraT2qIVZzrlXYrjwjL9wc+JIKrFR8ugBK
+         zuRP2FvvBuFdJXBtQNob2bnoZwnNwkekx6kqSErsUUhu76XELxumPz6woJdAsjRhHbI3
+         aQo5DJ2lyN1YzSLs1I7b5WXvXcpIkj9wE6BQgFjFgaWKkQzqarKjyXOfyPiSrZSxlS/U
+         xhSA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	chenxiang <chenxiang66@hisilicon.com>,
-	John Garry <john.garry@huawei.com>,
 	Jason Yan <yanaijie@huawei.com>,
-	Christoph Hellwig <hch@lst.de>,
+	John Garry <john.garry@huawei.com>,
+	chenqilin <chenqilin2@huawei.com>,
+	chenxiang <chenxiang66@hisilicon.com>,
 	Hannes Reinecke <hare@suse.com>,
+	Christoph Hellwig <hch@lst.de>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 079/168] scsi: libsas: initialize sas_phy status according to response of DISCOVER
-Date: Wed, 11 Apr 2018 00:23:41 +0200
-Message-Id: <20180410212803.646678759@linuxfoundation.org>
+Subject: [PATCH 4.15 078/168] scsi: libsas: fix error when getting phy events
+Date: Wed, 11 Apr 2018 00:23:40 +0200
+Message-Id: <20180410212803.604769837@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -45,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400062767198893?=
-X-GMAIL-MSGID: =?utf-8?q?1597400062767198893?=
+X-GMAIL-THRID: =?utf-8?q?1597400060314382853?=
+X-GMAIL-MSGID: =?utf-8?q?1597400060314382853?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,42 +55,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: chenxiang <chenxiang66@hisilicon.com>
+From: Jason Yan <yanaijie@huawei.com>
 
 
-[ Upstream commit affc67788fe5dfffad5cda3d461db5cf2b2ff2b0 ]
+[ Upstream commit 2b23d9509fd7174b362482cf5f3b5f9a2265bc33 ]
 
-The status of SAS PHY is in sas_phy->enabled. There is an issue that the
-status of a remote SAS PHY may be initialized incorrectly: if disable
-remote SAS PHY through sysfs interface (such as echo 0 >
-/sys/class/sas_phy/phy-1:0:0/enable), then reboot the system, and we
-will find the status of remote SAS PHY which is disabled before is
-1 (cat /sys/class/sas_phy/phy-1:0:0/enable). But actually the status of
-remote SAS PHY is disabled and the device attached is not found.
+The intend purpose here was to goto out if smp_execute_task() returned
+error. Obviously something got screwed up. We will never get these link
+error statistics below:
 
-In SAS protocol, NEGOTIATED LOGICAL LINK RATE field of DISCOVER response
-is 0x1 when remote SAS PHY is disabled. So initialize sas_phy->enabled
-according to the value of NEGOTIATED LOGICAL LINK RATE field.
+~:/sys/class/sas_phy/phy-1:0:12 # cat invalid_dword_count
+0
+~:/sys/class/sas_phy/phy-1:0:12 # cat running_disparity_error_count
+0
+~:/sys/class/sas_phy/phy-1:0:12 # cat loss_of_dword_sync_count
+0
+~:/sys/class/sas_phy/phy-1:0:12 # cat phy_reset_problem_count
+0
 
-Signed-off-by: chenxiang <chenxiang66@hisilicon.com>
-Reviewed-by: John Garry <john.garry@huawei.com>
+Obviously we should goto error handler if smp_execute_task() returns
+non-zero.
+
+Fixes: 2908d778ab3e ("[SCSI] aic94xx: new driver")
 Signed-off-by: Jason Yan <yanaijie@huawei.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+CC: John Garry <john.garry@huawei.com>
+CC: chenqilin <chenqilin2@huawei.com>
+CC: chenxiang <chenxiang66@hisilicon.com>
 Reviewed-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/libsas/sas_expander.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/libsas/sas_expander.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/scsi/libsas/sas_expander.c
 +++ b/drivers/scsi/libsas/sas_expander.c
-@@ -293,6 +293,7 @@ static void sas_set_ex_phy(struct domain
- 	phy->phy->minimum_linkrate = dr->pmin_linkrate;
- 	phy->phy->maximum_linkrate = dr->pmax_linkrate;
- 	phy->phy->negotiated_linkrate = phy->linkrate;
-+	phy->phy->enabled = (phy->linkrate != SAS_PHY_DISABLED);
+@@ -686,7 +686,7 @@ int sas_smp_get_phy_events(struct sas_ph
+ 	res = smp_execute_task(dev, req, RPEL_REQ_SIZE,
+ 			            resp, RPEL_RESP_SIZE);
  
-  skip:
- 	if (new_phy)
+-	if (!res)
++	if (res)
+ 		goto out;
+ 
+ 	phy->invalid_dword_count = scsi_to_u32(&resp[12]);
