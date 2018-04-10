@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48ee8bjO4KC+gHxuI4gE5yz9o29Igf0hs8i8nwJJxPTyxPRyzF6K93BSREMOf/NylwlDSge
-ARC-Seal: i=1; a=rsa-sha256; t=1523399443; cv=none;
+X-Google-Smtp-Source: AIpwx49yD9rmaWbSBLqN/uH9e69VUucSsnOXQ5B5laTQFT1dtt4fSDakdgAML5k6+cFCMtx13GKF
+ARC-Seal: i=1; a=rsa-sha256; t=1523399440; cv=none;
         d=google.com; s=arc-20160816;
-        b=Y/yzFio6TJB7taolaH4Q4raJZy4UV0CueH9Nju0f8MliH64FSxpwwZt25c4mu7fjOF
-         fj2fBelPGFBvLtn6Gpj/BEu8umCT8AQss11JzDIW+bD1HDamqYzRwYDwojZ78Dbzmeg5
-         Q8t1spegd6mSA45DT5xgI+EyUzWOjETEU2TLacEnJvYeEgKMpw1qb/dmdpG+nHRZajSA
-         X3AVeKNGcLGhNiOIX4yEEQpSmxuueNqkZbmPaZwXeiy40EQRdAy/ck7VoT/DKwJFjVFM
-         XkVqns+fcACPvYRpGxYt+N6Uh/uK5dheDqETFr8iWd+qBEss9VBeR7HzgUTlhssC7Gct
-         6S4w==
+        b=yqai4PkeNI6LMK50cXF2PTfAI0eA97+nP3cTPyGo/Xk3Ww9XcDC1UfIFurc5UBsXP8
+         vwqTEcqjX/Z+gg8sKbM6zU/aSWD6FQ+/FJllgMzb+Rj8RWe0bNQWhd97Gdk0vwQNBI6b
+         uCdp6A1uzuxbIwGLad/24Jm49gyl8Gbz7KF+IKBld0mGDA4q163wXv/iknDJiTHaXeVo
+         VywtLA8sYRLhpLhRjOmbCkL16U6qzsRUpe5UAiIepbMyDJRuR81FAJ8gTvuEeLCokuC3
+         cTtaCBP8mPOYGT5uaKOTxeXjw7ZtGdu+xNm220lUYJZRYulsUNhCpaZpomwKLTb4JSrH
+         0i4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=YZKqcgOiIwIkmGoYYScezMYFkyFmGo13NdoodAGqZdc=;
-        b=wTzarNw35rWz4yTfHpB5fsywna45eL4hxW60QiMGJetQEn1lccIb49WLxFv8whrSnZ
-         YTEdpjbtPUTvCXgk+eyJ3nR8h09NWiDb6g88dZkGX5nc7uCH5UQpW9QJPupIazOWmf/P
-         fvr43mId9AKe4TqpeOH/uIvPqjJbvFSQB9efDi+WXLPfmZHkc2V28bjW+jd2D2wkz/Lu
-         6g2LVJxmdAH4Rp5qAGQxaJULaxpWLcB47kUeV8Vi9JqNUx2shZX8FOFbYVjC931wcEJs
-         YJp0VsNqKcwXoYjMILjsmMU4Xcjefof6eV2kQWm0yirrV++kj96C65TSxTbI+Lwmp+b6
-         z+Xw==
+        bh=s/pYd60673XmALbZbXJYTCn4CyznjWkLxHnWEBvOOaI=;
+        b=Lyilk+W3/ysAKgw3648qzxRTqfXKAZeJFFUihwRyMhw1V6XTeYUdjQHlRr3aPW+ZdP
+         IN9bZJEAIpUfmR/rAdxcziMxYpTLXtLQvyRfDb9CXC6mKzNo6i56mj2s6eZ69szwxll2
+         /fe6DUH9u4w5oflLpHSxzspSGT0I7MHGFY5JtWRBrtgez33YTcnlq9AIgdorcXcxqH9B
+         c45twDuog1rXxcjhc8xwG3pbP52kmkpSYJL1ZywL6vqGkXyxd5bsh3auQztnWNJfai50
+         fu8xW8tHubSxQKq2mvNfhlEw5L1JLEz8q3FJ5pWO32IhSH2CcLtQ8t1kazOZP6JJrSJ8
+         exxA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ashok Raj <ashok.raj@intel.com>,
-	Borislav Petkov <bp@suse.de>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arjan van de Ven <arjan@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.15 109/168] x86/microcode: Propagate return value from updating functions
-Date: Wed, 11 Apr 2018 00:24:11 +0200
-Message-Id: <20180410212804.888247498@linuxfoundation.org>
+	Radhakrishna Sripada <radhakrishna.sripada@intel.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Kai Heng Feng <kai.heng.feng@canonical.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: [PATCH 4.15 108/168] drm/i915/cnp: Properly handle VBT ddc pin out of bounds.
+Date: Wed, 11 Apr 2018 00:24:10 +0200
+Message-Id: <20180410212804.844814404@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -51,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400094363480142?=
-X-GMAIL-MSGID: =?utf-8?q?1597400094363480142?=
+X-GMAIL-THRID: =?utf-8?q?1597400091205347540?=
+X-GMAIL-MSGID: =?utf-8?q?1597400091205347540?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -60,227 +52,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-commit 3f1f576a195aa266813cbd4ca70291deb61e0129 upstream.
+commit 6e3322c226f15bc1838007f5a75566f1482b8e40 upstream.
 
-... so that callers can know when microcode was updated and act
-accordingly.
+If the table result is out of bounds on the array map
+there is something really wrong with VBT pin so we don't
+return that vbt_pin, but only return 0 instead.
 
-Tested-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Ashok Raj <ashok.raj@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180216112640.11554-2-bp@alien8.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+This basically reverts commit 'a8e6f3888b05 ("drm/i915/cnp:
+Ignore VBT request for know invalid DDC pin.")'
+
+Also this properly fixes commit 9c3b2689d01f ("drm/i915/cnl:
+Map VBT DDC Pin to BSpec DDC Pin.")
+
+v2: Do in a way that we don't break other platforms. (Jani)
+
+v3: Keep debug message (Jani)
+
+v4: Don't mess with 0 mapping was noticed by Jani and
+    addressed with a simple solution suggested by Lucas
+    that makes this even simpler.
+
+Fixes: a8e6f3888b05 ("drm/i915/cnp: Ignore VBT request for know invalid DDC pin.")
+Fixes: 9c3b2689d01f ("drm/i915/cnl: Map VBT DDC Pin to BSpec DDC Pin.")
+Cc: Radhakrishna Sripada <radhakrishna.sripada@intel.com>
+Cc: Jani Nikula <jani.nikula@intel.com>
+Cc: Kai Heng Feng <kai.heng.feng@canonical.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>
+Suggested-by: Lucas De Marchi <lucas.demarchi@intel.com>
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
+Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180125222524.22059-1-rodrigo.vivi@intel.com
+(cherry picked from commit 3393ce1ed8fc43dbdb83952facaf04e644ca1d54)
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/microcode.h      |    9 +++++++--
- arch/x86/kernel/cpu/microcode/amd.c   |   10 +++++-----
- arch/x86/kernel/cpu/microcode/core.c  |   33 +++++++++++++++++----------------
- arch/x86/kernel/cpu/microcode/intel.c |   10 +++++-----
- 4 files changed, 34 insertions(+), 28 deletions(-)
+ drivers/gpu/drm/i915/intel_bios.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/x86/include/asm/microcode.h
-+++ b/arch/x86/include/asm/microcode.h
-@@ -37,7 +37,12 @@ struct cpu_signature {
- 
- struct device;
- 
--enum ucode_state { UCODE_ERROR, UCODE_OK, UCODE_NFOUND };
-+enum ucode_state {
-+	UCODE_OK	= 0,
-+	UCODE_UPDATED,
-+	UCODE_NFOUND,
-+	UCODE_ERROR,
-+};
- 
- struct microcode_ops {
- 	enum ucode_state (*request_microcode_user) (int cpu,
-@@ -54,7 +59,7 @@ struct microcode_ops {
- 	 * are being called.
- 	 * See also the "Synchronization" section in microcode_core.c.
- 	 */
--	int (*apply_microcode) (int cpu);
-+	enum ucode_state (*apply_microcode) (int cpu);
- 	int (*collect_cpu_info) (int cpu, struct cpu_signature *csig);
- };
- 
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -498,7 +498,7 @@ static unsigned int verify_patch_size(u8
- 	return patch_size;
+--- a/drivers/gpu/drm/i915/intel_bios.c
++++ b/drivers/gpu/drm/i915/intel_bios.c
+@@ -1107,6 +1107,7 @@ static void sanitize_aux_ch(struct drm_i
  }
  
--static int apply_microcode_amd(int cpu)
-+static enum ucode_state apply_microcode_amd(int cpu)
+ static const u8 cnp_ddc_pin_map[] = {
++	[0] = 0, /* N/A */
+ 	[DDC_BUS_DDI_B] = GMBUS_PIN_1_BXT,
+ 	[DDC_BUS_DDI_C] = GMBUS_PIN_2_BXT,
+ 	[DDC_BUS_DDI_D] = GMBUS_PIN_4_CNP, /* sic */
+@@ -1116,9 +1117,9 @@ static const u8 cnp_ddc_pin_map[] = {
+ static u8 map_ddc_pin(struct drm_i915_private *dev_priv, u8 vbt_pin)
  {
- 	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 	struct microcode_amd *mc_amd;
-@@ -512,7 +512,7 @@ static int apply_microcode_amd(int cpu)
- 
- 	p = find_patch(cpu);
- 	if (!p)
--		return 0;
-+		return UCODE_NFOUND;
- 
- 	mc_amd  = p->data;
- 	uci->mc = p->data;
-@@ -523,13 +523,13 @@ static int apply_microcode_amd(int cpu)
- 	if (rev >= mc_amd->hdr.patch_id) {
- 		c->microcode = rev;
- 		uci->cpu_sig.rev = rev;
--		return 0;
-+		return UCODE_OK;
- 	}
- 
- 	if (__apply_microcode_amd(mc_amd)) {
- 		pr_err("CPU%d: update failed for patch_level=0x%08x\n",
- 			cpu, mc_amd->hdr.patch_id);
--		return -1;
-+		return UCODE_ERROR;
- 	}
- 	pr_info("CPU%d: new patch_level=0x%08x\n", cpu,
- 		mc_amd->hdr.patch_id);
-@@ -537,7 +537,7 @@ static int apply_microcode_amd(int cpu)
- 	uci->cpu_sig.rev = mc_amd->hdr.patch_id;
- 	c->microcode = mc_amd->hdr.patch_id;
- 
--	return 0;
-+	return UCODE_UPDATED;
- }
- 
- static int install_equiv_cpu_table(const u8 *buf)
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -374,7 +374,7 @@ static int collect_cpu_info(int cpu)
- }
- 
- struct apply_microcode_ctx {
--	int err;
-+	enum ucode_state err;
- };
- 
- static void apply_microcode_local(void *arg)
-@@ -489,31 +489,29 @@ static void __exit microcode_dev_exit(vo
- /* fake device for request_firmware */
- static struct platform_device	*microcode_pdev;
- 
--static int reload_for_cpu(int cpu)
-+static enum ucode_state reload_for_cpu(int cpu)
- {
- 	struct ucode_cpu_info *uci = ucode_cpu_info + cpu;
- 	enum ucode_state ustate;
--	int err = 0;
- 
- 	if (!uci->valid)
--		return err;
-+		return UCODE_OK;
- 
- 	ustate = microcode_ops->request_microcode_fw(cpu, &microcode_pdev->dev, true);
--	if (ustate == UCODE_OK)
--		apply_microcode_on_target(cpu);
--	else
--		if (ustate == UCODE_ERROR)
--			err = -EINVAL;
--	return err;
-+	if (ustate != UCODE_OK)
-+		return ustate;
-+
-+	return apply_microcode_on_target(cpu);
- }
- 
- static ssize_t reload_store(struct device *dev,
- 			    struct device_attribute *attr,
- 			    const char *buf, size_t size)
- {
-+	enum ucode_state tmp_ret = UCODE_OK;
- 	unsigned long val;
-+	ssize_t ret = 0;
- 	int cpu;
--	ssize_t ret = 0, tmp_ret;
- 
- 	ret = kstrtoul(buf, 0, &val);
- 	if (ret)
-@@ -526,15 +524,18 @@ static ssize_t reload_store(struct devic
- 	mutex_lock(&microcode_mutex);
- 	for_each_online_cpu(cpu) {
- 		tmp_ret = reload_for_cpu(cpu);
--		if (tmp_ret != 0)
-+		if (tmp_ret > UCODE_NFOUND) {
- 			pr_warn("Error reloading microcode on CPU %d\n", cpu);
- 
--		/* save retval of the first encountered reload error */
--		if (!ret)
--			ret = tmp_ret;
-+			/* set retval for the first encountered reload error */
-+			if (!ret)
-+				ret = -EINVAL;
-+		}
- 	}
--	if (!ret)
-+
-+	if (!ret && tmp_ret == UCODE_UPDATED)
- 		perf_check_microcode();
-+
- 	mutex_unlock(&microcode_mutex);
- 	put_online_cpus();
- 
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -772,7 +772,7 @@ static int collect_cpu_info(int cpu_num,
- 	return 0;
- }
- 
--static int apply_microcode_intel(int cpu)
-+static enum ucode_state apply_microcode_intel(int cpu)
- {
- 	struct microcode_intel *mc;
- 	struct ucode_cpu_info *uci;
-@@ -782,7 +782,7 @@ static int apply_microcode_intel(int cpu
- 
- 	/* We should bind the task to the CPU */
- 	if (WARN_ON(raw_smp_processor_id() != cpu))
--		return -1;
-+		return UCODE_ERROR;
- 
- 	uci = ucode_cpu_info + cpu;
- 	mc = uci->mc;
-@@ -790,7 +790,7 @@ static int apply_microcode_intel(int cpu
- 		/* Look for a newer patch in our cache: */
- 		mc = find_patch(uci);
- 		if (!mc)
--			return 0;
-+			return UCODE_NFOUND;
- 	}
- 
- 	/* write microcode via MSR 0x79 */
-@@ -801,7 +801,7 @@ static int apply_microcode_intel(int cpu
- 	if (rev != mc->hdr.rev) {
- 		pr_err("CPU%d update to revision 0x%x failed\n",
- 		       cpu, mc->hdr.rev);
--		return -1;
-+		return UCODE_ERROR;
- 	}
- 
- 	if (rev != prev_rev) {
-@@ -818,7 +818,7 @@ static int apply_microcode_intel(int cpu
- 	uci->cpu_sig.rev = rev;
- 	c->microcode = rev;
- 
--	return 0;
-+	return UCODE_UPDATED;
- }
- 
- static enum ucode_state generic_load_microcode(int cpu, void *data, size_t size,
+ 	if (HAS_PCH_CNP(dev_priv)) {
+-		if (vbt_pin > 0 && vbt_pin < ARRAY_SIZE(cnp_ddc_pin_map))
++		if (vbt_pin < ARRAY_SIZE(cnp_ddc_pin_map)) {
+ 			return cnp_ddc_pin_map[vbt_pin];
+-		if (vbt_pin > GMBUS_PIN_4_CNP) {
++		} else {
+ 			DRM_DEBUG_KMS("Ignoring alternate pin: VBT claims DDC pin %d, which is not valid for this platform\n", vbt_pin);
+ 			return 0;
+ 		}
