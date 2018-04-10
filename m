@@ -1,360 +1,653 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752857AbeDJLNh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 07:13:37 -0400
-Received: from mail-pf0-f169.google.com ([209.85.192.169]:42985 "EHLO
-        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752194AbeDJLNf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 07:13:35 -0400
-X-Google-Smtp-Source: AIpwx4+yESpolj0zg5QgliYDfKgoCtUty8wE0damHIhcVwxXtuw24K1GKOAXTnd1n6TXPoMtWtSXKNMB6GfS8Q2wUPs=
+        id S1752775AbeDJLPO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 07:15:14 -0400
+Received: from mga04.intel.com ([192.55.52.120]:61226 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752323AbeDJLPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 07:15:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,431,1517904000";
+   d="scan'208";a="190279974"
+Subject: Re: [4.9, 1/1] mmc: sdhci-dwc-mshc-pci: synopsys dwc mshc support
+To: Prabu Thangamuthu <Prabu.T@synopsys.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Cc: Manjunath M Bettegowda <Manjunath.MB@synopsys.com>
+References: <705D14B1C7978B40A723277C067CEDE2010A99681A@IN01WEMBXB.internal.synopsys.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <f966d948-eec3-522d-6023-210978f6da44@intel.com>
+Date: Tue, 10 Apr 2018 14:14:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180409181104.GM3948@linux.vnet.ibm.com>
-References: <20180402153332.GM3948@linux.vnet.ibm.com> <CACT4Y+brGUyXsogDsSAakSFq=bh+136JptfS_=sBqkQA1Pc=tQ@mail.gmail.com>
- <20180402162135.GW3948@linux.vnet.ibm.com> <CACT4Y+Yq1Pus2QjLprJ6Hb=nqNtAME419-SYDzbFoXKBsNpPRA@mail.gmail.com>
- <20180402163912.GY3948@linux.vnet.ibm.com> <CACT4Y+Z+PFu8gRSb5Q_nTnvc6uz=-NzcT6numxzDXcmC2dDRFQ@mail.gmail.com>
- <20180402172325.GZ3948@linux.vnet.ibm.com> <CACT4Y+Zx4R9EEUkRA_sFb0d5gEtWicFArBisy9bWK6Lnfqdovw@mail.gmail.com>
- <20180409162050.GH3948@linux.vnet.ibm.com> <CACT4Y+bbaih8hym_n4D5dzDF3ig53+a5XLN0+btATPfmXZAZ7A@mail.gmail.com>
- <20180409181104.GM3948@linux.vnet.ibm.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 10 Apr 2018 13:13:13 +0200
-Message-ID: <CACT4Y+b95OxNFNBMcgHw-LAid2nNBPSYcG=4tyg7z5DinE7bRw@mail.gmail.com>
-Subject: Re: INFO: task hung in perf_trace_event_unreg
-To: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        syzbot <syzbot+2dbc55da20fa246378fd@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <705D14B1C7978B40A723277C067CEDE2010A99681A@IN01WEMBXB.internal.synopsys.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3ABDkwF019811
 
-On Mon, Apr 9, 2018 at 8:11 PM, Paul E. McKenney
-<paulmck@linux.vnet.ibm.com> wrote:
-> On Mon, Apr 09, 2018 at 06:28:16PM +0200, Dmitry Vyukov wrote:
->> On Mon, Apr 9, 2018 at 6:20 PM, Paul E. McKenney
->> <paulmck@linux.vnet.ibm.com> wrote:
->> > On Mon, Apr 09, 2018 at 02:54:20PM +0200, Dmitry Vyukov wrote:
->> >> On Mon, Apr 2, 2018 at 7:23 PM, Paul E. McKenney
->> >> <paulmck@linux.vnet.ibm.com> wrote:
->> >> >> >> >> >>
->> >> >> >> >> >> > Hello,
->> >> >> >> >> >> >
->> >> >> >> >> >> > syzbot hit the following crash on upstream commit
->> >> >> >> >> >> > 0adb32858b0bddf4ada5f364a84ed60b196dbcda (Sun Apr 1 21:20:27 2018 +0000)
->> >> >> >> >> >> > Linux 4.16
->> >> >> >> >> >> > syzbot dashboard link:
->> >> >> >> >> >> > https://syzkaller.appspot.com/bug?extid=2dbc55da20fa246378fd
->> >> >> >> >> >> >
->> >> >> >> >> >> > Unfortunately, I don't have any reproducer for this crash yet.
->> >> >> >> >> >> > Raw console output:
->> >> >> >> >> >> > https://syzkaller.appspot.com/x/log.txt?id=5487937873510400
->> >> >> >> >> >> > Kernel config:
->> >> >> >> >> >> > https://syzkaller.appspot.com/x/.config?id=-2374466361298166459
->> >> >> >> >> >> > compiler: gcc (GCC) 7.1.1 20170620
->> >> >> >> >> >> >
->> >> >> >> >> >> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> >> >> >> >> >> > Reported-by: syzbot+2dbc55da20fa246378fd@syzkaller.appspotmail.com
->> >> >> >> >> >> > It will help syzbot understand when the bug is fixed. See footer for
->> >> >> >> >> >> > details.
->> >> >> >> >> >> > If you forward the report, please keep this part and the footer.
->> >> >> >> >> >> >
->> >> >> >> >> >> > REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount
->> >> >> >> >> >> > option "g ï¿½;eï¿½Kï¿½×«>pquota"
->> >> >> >> >> >
->> >> >> >> >> > Might not hurt to look into the above, though perhaps this is just syzkaller
->> >> >> >> >> > playing around with mount options.
->> >> >> >> >> >
->> >> >> >> >> >> > INFO: task syz-executor3:10803 blocked for more than 120 seconds.
->> >> >> >> >> >> >        Not tainted 4.16.0+ #10
->> >> >> >> >> >> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> >> >> >> >> >> > syz-executor3   D20944 10803   4492 0x80000002
->> >> >> >> >> >> > Call Trace:
->> >> >> >> >> >> >   context_switch kernel/sched/core.c:2862 [inline]
->> >> >> >> >> >> >   __schedule+0x8fb/0x1ec0 kernel/sched/core.c:3440
->> >> >> >> >> >> >   schedule+0xf5/0x430 kernel/sched/core.c:3499
->> >> >> >> >> >> >   schedule_timeout+0x1a3/0x230 kernel/time/timer.c:1777
->> >> >> >> >> >> >   do_wait_for_common kernel/sched/completion.c:86 [inline]
->> >> >> >> >> >> >   __wait_for_common kernel/sched/completion.c:107 [inline]
->> >> >> >> >> >> >   wait_for_common kernel/sched/completion.c:118 [inline]
->> >> >> >> >> >> >   wait_for_completion+0x415/0x770 kernel/sched/completion.c:139
->> >> >> >> >> >> >   __wait_rcu_gp+0x221/0x340 kernel/rcu/update.c:414
->> >> >> >> >> >> >   synchronize_sched.part.64+0xac/0x100 kernel/rcu/tree.c:3212
->> >> >> >> >> >> >   synchronize_sched+0x76/0xf0 kernel/rcu/tree.c:3213
->> >> >> >> >> >>
->> >> >> >> >> >> I don't think this is a perf issue. Looks like something is preventing
->> >> >> >> >> >> rcu_sched from completing. If there's a CPU that is running in kernel
->> >> >> >> >> >> space and never scheduling, that can cause this issue. Or if RCU
->> >> >> >> >> >> somehow missed a transition into idle or user space.
->> >> >> >> >> >
->> >> >> >> >> > The RCU CPU stall warning below strongly supports this position ...
->> >> >> >> >>
->> >> >> >> >> I think this is this guy then:
->> >> >> >> >>
->> >> >> >> >> https://syzkaller.appspot.com/bug?id=17f23b094cd80df750e5b0f8982c521ee6bcbf40
->> >> >> >> >>
->> >> >> >> >> #syz dup: INFO: rcu detected stall in __process_echoes
->> >> >> >> >
->> >> >> >> > Seems likely to me!
->> >> >> >> >
->> >> >> >> >> Looking retrospectively at the various hang/stall bugs that we have, I
->> >> >> >> >> think we need some kind of priority between them. I.e. we have rcu
->> >> >> >> >> stalls, spinlock stalls, workqueue hangs, task hangs, silent machine
->> >> >> >> >> hang and maybe something else. It would be useful if they fire
->> >> >> >> >> deterministically according to priorities. If there is an rcu stall,
->> >> >> >> >> that's always detected as CPU stall. Then if there is no RCU stall,
->> >> >> >> >> but a workqueue stall, then that's always detected as workqueue stall,
->> >> >> >> >> etc.
->> >> >> >> >> Currently if we have an RCU stall (effectively CPU stall), that can be
->> >> >> >> >> detected either RCU stall or a task hung, producing 2 different bug
->> >> >> >> >> reports (which is bad).
->> >> >> >> >> One can say that it's only a matter of tuning timeouts, but at least
->> >> >> >> >> task hung detector has a problem that if you set timeout to X, it can
->> >> >> >> >> detect hung anywhere between X and 2*X. And on one hand we need quite
->> >> >> >> >> large timeout (a minute may not be enough), and on the other hand we
->> >> >> >> >> can't wait for an hour just to make sure that the machine is indeed
->> >> >> >> >> dead (these things happen every few minutes).
->> >> >> >> >
->> >> >> >> > I suppose that we could have a global variable that was set to the
->> >> >> >> > priority of the complaint in question, which would suppress all
->> >> >> >> > lower-priority complaints.  Might need to be opt-in, though -- I would
->> >> >> >> > guess that not everyone is going to be happy with one complaint suppressing
->> >> >> >> > others, especially given the possibility that the two complaints might
->> >> >> >> > be about different things.
->> >> >> >> >
->> >> >> >> > Or did you have something more deft in mind?
->> >> >> >>
->> >> >> >>
->> >> >> >> syzkaller generally looks only at the first report. One does not know
->> >> >> >> if/when there will be a second one, or the second one can be induced
->> >> >> >> by the first one, and we generally want clean reports on a non-tainted
->> >> >> >> kernel. So we don't just need to suppress lower priority ones, we need
->> >> >> >> to produce the right report first.
->> >> >> >> I am thinking maybe setting:
->> >> >> >>  - rcu stalls at 1.5 minutes
->> >> >> >>  - workqueue stalls at 2 minutes
->> >> >> >>  - task hungs at 2.5 minutes
->> >> >> >>  - and no output whatsoever at 3 minutes
->> >> >> >> Do I miss anything? I think at least spinlocks. Should they go before
->> >> >> >> or after rcu?
->> >> >> >
->> >> >> > That is what I know of, but the Linux kernel being what it is, there is
->> >> >> > probably something more out there.  If not now, in a few months.  The
->> >> >> > RCU CPU stall timeout can be set on the kernel-boot command line, but
->> >> >> > you probably already knew that.
->> >> >>
->> >> >> Well, it's all based solely on a large number of patches and stopgaps.
->> >> >> If we fix main problems for today, it's already good.
->> >> >
->> >> > Fair enough!
->> >> >
->> >> >> > Just for comparison, back in DYNIX/ptx days the RCU CPU stall timeout
->> >> >> > was 1.5 -seconds-.  ;-)
->> >> >>
->> >> >> Have you tried to instrument every basic block with a function call to
->> >> >> collect coverage, check every damn memory access for validity, enable
->> >> >> all thinkable and unthinkable debug configs and put the insanest load
->> >> >> one can imagine from a swarm of parallel threads? It makes things a
->> >> >> bit slower ;)
->> >> >
->> >> > Given that we wouldn't have had enough CPU or memory to accommodate
->> >> > all of that back in DYNIX/ptx days, I am forced to answer "no".  ;-)
->> >> >
->> >> >> >> This will require fixing task hung. Have not yet looked at workqueue detector.
->> >> >> >> Does at least RCU respect the given timeout more or less precisely?
->> >> >> >
->> >> >> > Assuming that there is at least one CPU capable of taking scheduling-clock
->> >> >> > interrupts, it should respect the timeout to within a few jiffies.
->> >>
->> >>
->> >> Hi Paul,
->> >>
->> >> Speaking of stalls and rcu, we are seeing lots of crashes that go like this:
->> >>
->> >> INFO: rcu_sched self-detected stall on CPU[  404.992530] INFO:
->> >> rcu_sched detected stalls on CPUs/tasks:
->> >> INFO: rcu_sched self-detected stall on CPU[  454.347448] INFO:
->> >> rcu_sched detected stalls on CPUs/tasks:
->> >> INFO: rcu_sched self-detected stall on CPU[  396.073634] INFO:
->> >> rcu_sched detected stalls on CPUs/tasks:
->> >>
->> >> or like this:
->> >>
->> >> INFO: rcu_sched self-detected stall on CPU
->> >> INFO: rcu_sched detected stalls on CPUs/tasks:
->> >> 0-....: (125000 ticks this GP) idle=0ba/1/4611686018427387906
->> >> softirq=57641/57641 fqs=31151
->> >> 0-....: (125000 ticks this GP) idle=0ba/1/4611686018427387906
->> >> softirq=57641/57641 fqs=31151
->> >>  (t=125002 jiffies g=31656 c=31655 q=910)
->> >>
->> >>  INFO: rcu_sched self-detected stall on CPU
->> >> INFO: rcu_sched detected stalls on CPUs/tasks:
->> >> 0-....: (125000 ticks this GP) idle=49a/1/4611686018427387906
->> >> softirq=65194/65194 fqs=31231
->> >> 0-....: (125000 ticks this GP) idle=49a/1/4611686018427387906
->> >> softirq=65194/65194 fqs=31231
->> >>  (t=125002 jiffies g=34421 c=34420 q=1119)
->> >> (detected by 1, t=125002 jiffies, g=34421, c=34420, q=1119)
->> >>
->> >>
->> >> and then there is an unintelligible mess of 2 reports. Such crashes go
->> >> to trash bin, because we can't even say which function hanged. It
->> >> seems that in all cases 2 different rcu stall detection facilities
->> >> race with each other. Is it possible to make them not race?
->> >
->> > How about the following (untested, not for mainline) patch?  It suppresses
->> > all but the "main" RCU flavor, which is rcu_sched for !PREEMPT builds and
->> > rcu_preempt otherwise.  Either way, this is the RCU flavor corresponding
->> > to synchronize_rcu().  This works well in the common case where there
->> > is almost always an RCU grace period in flight.
->> >
->> > One reason that this patch is not for mainline is that I am working on
->> > merging the RCU-bh, RCU-preempt, and RCU-sched flavors into one thing,
->> > at which point there won't be any races.  But that might be a couple
->> > merge windows away from now.
->> >
->> >                                                         Thanx, Paul
->> >
->> > ------------------------------------------------------------------------
->> >
->> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
->> > index 381b47a68ac6..31f7818f2d63 100644
->> > --- a/kernel/rcu/tree.c
->> > +++ b/kernel/rcu/tree.c
->> > @@ -1552,7 +1552,7 @@ static void check_cpu_stall(struct rcu_state *rsp, struct rcu_data *rdp)
->> >         struct rcu_node *rnp;
->> >
->> >         if ((rcu_cpu_stall_suppress && !rcu_kick_kthreads) ||
->> > -           !rcu_gp_in_progress(rsp))
->> > +           !rcu_gp_in_progress(rsp) || rsp != rcu_state_p)
->> >                 return;
->> >         rcu_stall_kick_kthreads(rsp);
->> >         j = jiffies;
->>
->> But doesn't they both relate to the same rcu flavor? They both say
->> rcu_sched. I assumed that the difference is "self-detected" vs "on
->> CPUs/tasks", i.e. on the current CPU vs on other CPUs.
->
-> Right you are!
->
-> One approach would be to increase the value of RCU_STALL_RAT_DELAY,
-> which is currently two jiffies to (say) 20 jiffies.  This is in
-> kernel/rcu/tree.h.  But this would fail on a sufficiently overloaded
-> system -- and the failure of the two-jiffy delay is a bit of a surprise,
-> given interrupts disabled and all that.  Are you by any chance loaded
-> heavily enough to see vCPU preemption?
->
-> I could avoid at least some of these timing issues instead using cmpxchg()
-> on ->jiffies_stall to allow only one CPU in, but leave the non-atomic
-> update to discourage overly long stall prints from running into the
-> next one.  This is not perfect, either, and is roughly equivalent to
-> setting RCU_STALL_RAT_DELAY to many second's worth of jiffies, but
-> avoiding that minute's delay.  But it should get rid of the duplication
-> in almost all cases, though it could allow a stall warning to overlap
-> with a later stall warning for that same grace period.  Which can
-> already happen anyway.  Also, a tens-of-seconds vCPU preemption can
-> still cause concurrent stall warnings, but if that is happening to you,
-> the concurrent stall warnings are probably the least of your problems.
-> Besides, we do need at least one CPU to actually report the stall, which
-> won't happen if that CPU's vCPU is indefinitely preempted.  So there is
-> only so much I can do about that particular corner case.
->
-> So how does the following (untested) patch work for you?
+Hi
 
-Looks good to me.
+Not sure what is going on this this patch.  Apart from the mangled mail, it
+is not clear it is intended for upstream?
 
-We run on VMs, so we can well have vCPU preemption.
+Regards
+Adrian
 
-
->                                                         Thanx, Paul
->
-> ------------------------------------------------------------------------
->
-> commit 6a5ab1e68f8636d8823bb5a9aee35fc44c2be866
-> Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Date:   Mon Apr 9 11:04:46 2018 -0700
->
->     rcu: Exclude near-simultaneous RCU CPU stall warnings
->
->     There is a two-jiffy delay between the time that a CPU will self-report
->     an RCU CPU stall warning and the time that some other CPU will report a
->     warning on behalf of the first CPU.  This has worked well in the past,
->     but on busy systems, it is possible for the two warnings to overlap,
->     which makes interpreting them extremely difficult.
->
->     This commit therefore uses a cmpxchg-based timing decision that
->     allows only one report in a given one-minute period (assuming default
->     stall-warning Kconfig parameters).  This approach will of course fail
->     if you are seeing minute-long vCPU preemption, but in that case the
->     overlapping RCU CPU stall warnings are the least of your worries.
->
->     Reported-by: Dmitry Vyukov <dvyukov@google.com>
->     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
->
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 381b47a68ac6..b7246bcbf633 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -1429,8 +1429,6 @@ static void print_other_cpu_stall(struct rcu_state *rsp, unsigned long gpnum)
->                 raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
->                 return;
->         }
-> -       WRITE_ONCE(rsp->jiffies_stall,
-> -                  jiffies + 3 * rcu_jiffies_till_stall_check() + 3);
->         raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
->
->         /*
-> @@ -1481,6 +1479,10 @@ static void print_other_cpu_stall(struct rcu_state *rsp, unsigned long gpnum)
->                         sched_show_task(current);
->                 }
->         }
-> +       /* Rewrite if needed in case of slow consoles. */
-> +       if (ULONG_CMP_GE(jiffies, READ_ONCE(rsp->jiffies_stall)))
-> +               WRITE_ONCE(rsp->jiffies_stall,
-> +                          jiffies + 3 * rcu_jiffies_till_stall_check() + 3);
->
->         rcu_check_gp_kthread_starvation(rsp);
->
-> @@ -1525,6 +1527,7 @@ static void print_cpu_stall(struct rcu_state *rsp)
->         rcu_dump_cpu_stacks(rsp);
->
->         raw_spin_lock_irqsave_rcu_node(rnp, flags);
-> +       /* Rewrite if needed in case of slow consoles. */
->         if (ULONG_CMP_GE(jiffies, READ_ONCE(rsp->jiffies_stall)))
->                 WRITE_ONCE(rsp->jiffies_stall,
->                            jiffies + 3 * rcu_jiffies_till_stall_check() + 3);
-> @@ -1548,6 +1551,7 @@ static void check_cpu_stall(struct rcu_state *rsp, struct rcu_data *rdp)
->         unsigned long gpnum;
->         unsigned long gps;
->         unsigned long j;
-> +       unsigned long jn;
->         unsigned long js;
->         struct rcu_node *rnp;
->
-> @@ -1586,14 +1590,17 @@ static void check_cpu_stall(struct rcu_state *rsp, struct rcu_data *rdp)
->             ULONG_CMP_GE(gps, js))
->                 return; /* No stall or GP completed since entering function. */
->         rnp = rdp->mynode;
-> +       jn = jiffies + 3 * rcu_jiffies_till_stall_check() + 3;
->         if (rcu_gp_in_progress(rsp) &&
-> -           (READ_ONCE(rnp->qsmask) & rdp->grpmask)) {
-> +           (READ_ONCE(rnp->qsmask) & rdp->grpmask) &&
-> +           cmpxchg(&rsp->jiffies_stall, js, jn) == js) {
->
->                 /* We haven't checked in, so go dump stack. */
->                 print_cpu_stall(rsp);
->
->         } else if (rcu_gp_in_progress(rsp) &&
-> -                  ULONG_CMP_GE(j, js + RCU_STALL_RAT_DELAY)) {
-> +                  ULONG_CMP_GE(j, js + RCU_STALL_RAT_DELAY) &&
-> +                  cmpxchg(&rsp->jiffies_stall, js, jn) == js) {
->
->                 /* They had a few time units to dump stack, so complain. */
->                 print_other_cpu_stall(rsp, gpnum);
->
+On 28/03/18 18:28, Prabu Thangamuthu wrote:
+> Synopsys DWC MSHC IP is complaint to SD Standard Host Controller Interface
+> 
+> specification. This patch is to enable DWC MSHC controller on HPAS-DX
+> 
+> platform connected using PCIe interface.
+> 
+>  
+> 
+> As clock generation logic is implemented in MMCM block of HAPS-DX platform,
+> 
+> we need separate functions to control the MMCM module to generate required
+> 
+> clocks with respect to the mode of operation. Also we have the platform
+> 
+> specific set_power function to support different VDD's of eMMC device.
+> 
+>  
+> 
+> Signed-off-by: Prabu Thangamuthu <prabu.t@synopsys.com>
+> 
+> ---
+> 
+> MAINTAINERS                           |   7 ++
+> 
+> drivers/mmc/host/Makefile             |   3 +-
+> 
+> drivers/mmc/host/sdhci-dwc-mshc-pci.c | 137 ++++++++++++++++++++++++++++++++++
+> 
+> drivers/mmc/host/sdhci-dwc-mshc-pci.h |  44 +++++++++++
+> 
+> drivers/mmc/host/sdhci-pci-core.c     |  25 +++++++
+> 
+> 5 files changed, 215 insertions(+), 1 deletion(-)
+> 
+> create mode 100644 drivers/mmc/host/sdhci-dwc-mshc-pci.c
+> 
+> create mode 100644 drivers/mmc/host/sdhci-dwc-mshc-pci.h
+> 
+>  
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> 
+> index 63cefa6..869b92b 100644
+> 
+> --- a/MAINTAINERS
+> 
+> +++ b/MAINTAINERS
+> 
+> @@ -10808,6 +10808,13 @@ S:                Maintained
+> 
+> F:           drivers/mmc/host/sdhci*
+> 
+> F:           include/linux/mmc/sdhci*
+> 
+> +SYNOPSYS SDHCI COMPLIANT DWC MSHC DRIVER
+> 
+> +M:        Prabu Thangamuthu <prabu.t@synopsys.com>
+> 
+> +M:        Manjunath M B <manjumb@synopsys.com>
+> 
+> +L:          linux-mmc@vger.kernel.org
+> 
+> +S:          Maintained
+> 
+> +F:          drivers/mmc/host/sdhci-dwc*
+> 
+> +
+> 
+> SECURE COMPUTING
+> 
+> M:         Kees Cook <keescook@chromium.org>
+> 
+> R:           Andy Lutomirski <luto@amacapital.net>
+> 
+> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> 
+> index e2bdaaf4..e83355f 100644
+> 
+> --- a/drivers/mmc/host/Makefile
+> 
+> +++ b/drivers/mmc/host/Makefile
+> 
+> @@ -9,7 +9,8 @@ obj-$(CONFIG_MMC_MXC)                   += mxcmmc.o
+> 
+> obj-$(CONFIG_MMC_MXS)                        += mxs-mmc.o
+> 
+> obj-$(CONFIG_MMC_SDHCI)                     += sdhci.o
+> 
+> obj-$(CONFIG_MMC_SDHCI_PCI)            += sdhci-pci.o
+> 
+> -sdhci-pci-y                                         += sdhci-pci-core.o
+> sdhci-pci-o2micro.o
+> 
+> +sdhci-pci-y                                        += sdhci-pci-core.o
+> sdhci-pci-o2micro.o \
+> 
+> +                                                               
+> sdhci-dwc-mshc-pci.o
+> 
+> obj-$(subst m,y,$(CONFIG_MMC_SDHCI_PCI))   += sdhci-pci-data.o
+> 
+> obj-$(CONFIG_MMC_SDHCI_ACPI)         += sdhci-acpi.o
+> 
+> obj-$(CONFIG_MMC_SDHCI_PXAV3)     += sdhci-pxav3.o
+> 
+> diff --git a/drivers/mmc/host/sdhci-dwc-mshc-pci.c
+> b/drivers/mmc/host/sdhci-dwc-mshc-pci.c
+> 
+> new file mode 100644
+> 
+> index 0000000..2f91ef7
+> 
+> --- /dev/null
+> 
+> +++ b/drivers/mmc/host/sdhci-dwc-mshc-pci.c
+> 
+> @@ -0,0 +1,137 @@
+> 
+> +/*
+> 
+> + * SDHCI driver for Synopsys DWC_MSHC controller
+> 
+> + *
+> 
+> + * Copyright (C) 2017-2018 Synopsys, Inc. (www.synopsys.com)
+> 
+> + *
+> 
+> + * Authors:
+> 
+> + *          Prabu Thangamuthu <prabut@synopsys.com>
+> 
+> + *          Manjunath M B <manjumb@synopsys.com>
+> 
+> + *
+> 
+> + * This program is free software; you can redistribute it and/or modify
+> 
+> + * it under the terms of the GNU General Public License version 2 as
+> 
+> + * published by the Free Software Foundation.
+> 
+> + */
+> 
+> +
+> 
+> +#include <linux/pci.h>
+> 
+> +#include <linux/delay.h>
+> 
+> +#include <linux/module.h>
+> 
+> +#include <linux/moduleparam.h>
+> 
+> +
+> 
+> +#include "sdhci.h"
+> 
+> +#include "sdhci-pci.h"
+> 
+> +#include "sdhci-dwc-mshc-pci.h"
+> 
+> +
+> 
+> +#define DRIVER_NAME "sdhci_snps"
+> 
+> +
+> 
+> +/* Default emmc vdd is set to 1.8V */
+> 
+> +static unsigned int emmc_vdd = SDHC_EMMC_VDD_180V;
+> 
+> +module_param(emmc_vdd, int, 0444);
+> 
+> +
+> 
+> +void sdhci_snps_set_clock(struct sdhci_host *host, unsigned int clock)
+> 
+> +{
+> 
+> +             u16 clk = 0;
+> 
+> +             u32 reg = 0;
+> 
+> +             u32 vendor_ptr = 0;
+> 
+> +
+> 
+> +             vendor_ptr = sdhci_readw(host, SDHCI_VENDOR_PTR_R);
+> 
+> +
+> 
+> +             /* Disable Software managed rx tuning */
+> 
+> +             reg = sdhci_readl(host, (SDHC_AT_CTRL_R + vendor_ptr));
+> 
+> +             reg &= ~SDHC_SW_TUNE_EN;
+> 
+> +             sdhci_writel(host, reg, (SDHC_AT_CTRL_R + vendor_ptr));
+> 
+> +
+> 
+> +             if (clock <= 52000000) {
+> 
+> +                             sdhci_set_clock(host, clock);
+> 
+> +             } else {
+> 
+> +                             /* Assert reset to MMCM */
+> 
+> +                             reg = sdhci_readl(host, (SDHC_GPIO_OUT +
+> vendor_ptr));
+> 
+> +                             reg |= SDHC_CCLK_MMCM_RST;
+> 
+> +                             sdhci_writel(host, reg, (SDHC_GPIO_OUT +
+> vendor_ptr));
+> 
+> +
+> 
+> +                             /* Configure MMCM*/
+> 
+> +                             sdhci_writel(host, DIV_REG_100_MHZ,
+> SDHC_MMCM_DIV_REG);
+> 
+> +                             sdhci_writel(host, CLKFBOUT_100_MHZ,
+> 
+> +                                                            
+> SDHC_MMCM_CLKFBOUT);
+> 
+> +
+> 
+> +                             /* De-assert reset to MMCM*/
+> 
+> +                             reg = sdhci_readl(host, (SDHC_GPIO_OUT +
+> vendor_ptr));
+> 
+> +                             reg &= ~SDHC_CCLK_MMCM_RST;
+> 
+> +                             sdhci_writel(host, reg, (SDHC_GPIO_OUT +
+> vendor_ptr));
+> 
+> +
+> 
+> +                             /* Enable clock */
+> 
+> +                             clk = SDHCI_PROG_CLOCK_MODE | SDHCI_CLOCK_INT_EN |
+> 
+> +                                             SDHCI_CLOCK_CARD_EN;
+> 
+> +                             sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+> 
+> +             }
+> 
+> +}
+> 
+> +EXPORT_SYMBOL_GPL(sdhci_snps_set_clock);
+> 
+> +
+> 
+> +void sdhci_snps_set_power(struct sdhci_host *host, unsigned char mode,
+> 
+> +                                  unsigned short vdd)
+> 
+> +{
+> 
+> +             u8 pwr = 0;
+> 
+> +             u16 ctrl;
+> 
+> +
+> 
+> +             if (mode != MMC_POWER_OFF) {
+> 
+> +                             switch (1 << vdd) {
+> 
+> +                             case MMC_VDD_165_195:
+> 
+> +                                             pwr = SDHCI_POWER_180;
+> 
+> +                                             break;
+> 
+> +                             case MMC_VDD_29_30:
+> 
+> +                             case MMC_VDD_30_31:
+> 
+> +                                             pwr = SDHCI_POWER_300;
+> 
+> +                                             break;
+> 
+> +                             case MMC_VDD_32_33:
+> 
+> +                             case MMC_VDD_33_34:
+> 
+> +                                             pwr = SDHCI_POWER_330;
+> 
+> +                                             break;
+> 
+> +                             default:
+> 
+> +                                             WARN(1, "%s: Invalid vdd %#x\n",
+> 
+> +                                                  mmc_hostname(host->mmc),
+> vdd);
+> 
+> +                                             break;
+> 
+> +                             }
+> 
+> +             }
+> 
+> +
+> 
+> +             if (host->pwr == pwr)
+> 
+> +                             return;
+> 
+> +
+> 
+> +             host->pwr = pwr;
+> 
+> +
+> 
+> +             if (pwr == 0) {
+> 
+> +                             sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
+> 
+> +             } else {
+> 
+> +                             sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
+> 
+> +
+> 
+> +                             /*
+> 
+> +                             * Enable it for eMMC phy cfg1 test with 1.8V mode
+> 
+> +                             */
+> 
+> +                             if (emmc_vdd == SDHC_EMMC_VDD_180V) {
+> 
+> +                                             pwr = SDHCI_POWER_180;
+> 
+> +                                             sdhci_writeb(host, pwr,
+> SDHCI_POWER_CONTROL);
+> 
+> +
+> 
+> +                                             ctrl = sdhci_readw(host,
+> SDHCI_HOST_CONTROL2);
+> 
+> +                                             /*
+> 
+> +                                             * Enable 1.8V Signal Enable in
+> the Host Control2
+> 
+> +                                             * register
+> 
+> +                                             */
+> 
+> +                                             ctrl |= SDHCI_CTRL_VDD_180;
+> 
+> +                                             sdhci_writew(host, ctrl,
+> SDHCI_HOST_CONTROL2);
+> 
+> +                             }
+> 
+> +                             pwr |= SDHCI_POWER_ON;
+> 
+> +
+> 
+> +                             sdhci_writeb(host, pwr, SDHCI_POWER_CONTROL);
+> 
+> +             }
+> 
+> +}
+> 
+> +EXPORT_SYMBOL_GPL(sdhci_snps_set_power);
+> 
+> +
+> 
+> +int sdhci_snps_pci_probe_slot(struct sdhci_pci_slot *slot)
+> 
+> +{
+> 
+> +             slot->host->caps = sdhci_readl(host, SDHCI_CAPABILITIES);
+> 
+> +             slot->host->caps1 = sdhci_readl(host, SDHCI_CAPABILITIES_1);
+> 
+> +
+> 
+> +             return 0;
+> 
+> +}
+> 
+> +EXPORT_SYMBOL_GPL(sdhci_snps_pci_probe_slot);
+> 
+> +
+> 
+> +MODULE_PARM_DESC(emmc_vdd, "VDD to configure eMMC device supply voltage");
+> 
+> +
+> 
+> diff --git a/drivers/mmc/host/sdhci-dwc-mshc-pci.h
+> b/drivers/mmc/host/sdhci-dwc-mshc-pci.h
+> 
+> new file mode 100644
+> 
+> index 0000000..97f5529
+> 
+> --- /dev/null
+> 
+> +++ b/drivers/mmc/host/sdhci-dwc-mshc-pci.h
+> 
+> @@ -0,0 +1,44 @@
+> 
+> +/*
+> 
+> + * SDHCI driver for Synopsys DWC_MSHC controller
+> 
+> + *
+> 
+> + * Copyright (C) 2017-2018 Synopsys, Inc. (www.synopsys.com)
+> 
+> + *
+> 
+> + * Authors:
+> 
+> + *          Prabu Thangamuthu <prabut@synopsys.com>
+> 
+> + *          Manjunath M B <manjumb@synopsys.com>
+> 
+> + *
+> 
+> + * This program is free software; you can redistribute it and/or modify
+> 
+> + * it under the terms of the GNU General Public License version 2 as
+> 
+> + * published by the Free Software Foundation.
+> 
+> + */
+> 
+> +
+> 
+> +#ifndef __SDHCI_DWC_MSHC_PCI_H__
+> 
+> +#define __SDHCI_DWC_MSHC_PCI_H__
+> 
+> +
+> 
+> +#define SDHCI_VENDOR_PTR_R                                    0xE8
+> 
+> +
+> 
+> +/* Module Parameters */
+> 
+> +#define SDHC_EMMC_VDD_330V                                 33
+> 
+> +#define SDHC_EMMC_VDD_180V                                 18
+> 
+> +
+> 
+> +/* Synopsys Vendor Specific Registers */
+> 
+> +#define SDHC_GPIO_OUT                          0x34
+> 
+> +#define SDHC_AT_CTRL_R                                                0x40
+> 
+> +
+> 
+> +#define SDHC_SW_TUNE_EN                                          0x00000010
+> 
+> +
+> 
+> +/* MMCM DRP */
+> 
+> +#define SDHC_MMCM_DIV_REG                                   0x1020
+> 
+> +#define DIV_REG_100_MHZ                                            0x1145
+> 
+> +
+> 
+> +#define SDHC_MMCM_CLKFBOUT                                0x1024
+> 
+> +#define CLKFBOUT_100_MHZ                         0x0000
+> 
+> +
+> 
+> +#define SDHC_CCLK_MMCM_RST                                 0x00000001
+> 
+> +
+> 
+> +int sdhci_snps_pci_probe_slot(struct sdhci_pci_slot *slot);
+> 
+> +void sdhci_snps_set_clock(struct sdhci_host *host, unsigned int clock);
+> 
+> +void sdhci_snps_set_power(struct sdhci_host *host, unsigned char mode,
+> 
+> +                                  unsigned short vdd);
+> 
+> +
+> 
+> +#endif
+> 
+> diff --git a/drivers/mmc/host/sdhci-pci-core.c
+> b/drivers/mmc/host/sdhci-pci-core.c
+> 
+> index b0b9ceb..f16ae5b 100644
+> 
+> --- a/drivers/mmc/host/sdhci-pci-core.c
+> 
+> +++ b/drivers/mmc/host/sdhci-pci-core.c
+> 
+> @@ -31,6 +31,7 @@
+> 
+> #include "sdhci.h"
+> 
+> #include "sdhci-pci.h"
+> 
+> #include "sdhci-pci-o2micro.h"
+> 
+> +#include "sdhci-dwc-mshc-pci.h"
+> 
+>  static int sdhci_pci_enable_dma(struct sdhci_host *host);
+> 
+> static void sdhci_pci_set_bus_width(struct sdhci_host *host, int width);
+> 
+> @@ -79,6 +80,23 @@ static int ricoh_mmc_resume(struct sdhci_pci_chip *chip)
+> 
+>                return 0;
+> 
+> }
+> 
+> +/* Synopsys DWC MSHC Controller based on SDHCI-PCI */
+> 
+> +static const struct sdhci_ops sdhci_snps_ops = {
+> 
+> +             .set_clock            = sdhci_snps_set_clock,
+> 
+> +             .set_power         = sdhci_snps_set_power,
+> 
+> +             .enable_dma     = sdhci_pci_enable_dma,
+> 
+> +             .set_bus_width = sdhci_pci_set_bus_width,
+> 
+> +             .reset                    = sdhci_reset,
+> 
+> +             .set_uhs_signaling = sdhci_set_uhs_signaling,
+> 
+> +             .hw_reset                           = sdhci_pci_hw_reset,
+> 
+> +             .select_drive_strength  = sdhci_pci_select_drive_strength,
+> 
+> +};
+> 
+> +
+> 
+> +static const struct sdhci_pci_fixes sdhci_snps = {
+> 
+> +             .probe_slot        = sdhci_snps_pci_probe_slot,
+> 
+> +             .ops                       = &sdhci_snps_ops,
+> 
+> +};
+> 
+> +
+> 
+> static const struct sdhci_pci_fixes sdhci_ricoh = {
+> 
+>                .probe                  = ricoh_probe,
+> 
+>                .quirks                  = SDHCI_QUIRK_32BIT_DMA_ADDR |
+> 
+> @@ -857,6 +875,13 @@ static int amd_probe(struct sdhci_pci_chip *chip)
+> 
+>  static const struct pci_device_id pci_ids[] = {
+> 
+>                {
+> 
+> +                             .vendor                = 0x16c3,            
+> /* Synopsys Vendor ID */
+> 
+> +                             .device                 = 0xc202,            
+> /* IPK HAPS_Dx */
+> 
+> +                             .subvendor         = PCI_ANY_ID,
+> 
+> +                             .subdevice          = PCI_ANY_ID,
+> 
+> +                             .driver_data       = (kernel_ulong_t)&sdhci_snps,
+> 
+> +             },
+> 
+> +             {
+> 
+>                                .vendor                = PCI_VENDOR_ID_RICOH,
+> 
+>                                .device                 =
+> PCI_DEVICE_ID_RICOH_R5C822,
+> 
+>                                .subvendor         = PCI_ANY_ID,
+> 
+> -- 
+> 
+> 1.9.1
+> 
+>  
+> 
