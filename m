@@ -1,164 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752054AbeDJSTl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 14:19:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58970 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751505AbeDJSTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 14:19:39 -0400
-Date: Tue, 10 Apr 2018 21:19:31 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Wei Wang <wei.w.wang@intel.com>, virtio-dev@lists.oasis-open.org,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@kernel.org, pbonzini@redhat.com,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
-        huangzhichao@huawei.com
-Subject: Re: [PATCH v29 1/4] mm: support reporting free page blocks
-Message-ID: <20180410211719-mutt-send-email-mst@kernel.org>
-References: <1522031994-7246-1-git-send-email-wei.w.wang@intel.com>
- <1522031994-7246-2-git-send-email-wei.w.wang@intel.com>
- <20180326142254.c4129c3a54ade686ee2a5e21@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180326142254.c4129c3a54ade686ee2a5e21@linux-foundation.org>
+        id S1752194AbeDJSUA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 14:20:00 -0400
+Received: from smtprelay0047.hostedemail.com ([216.40.44.47]:45272 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751961AbeDJST6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 14:19:58 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::,RULES_HIT:41:355:379:541:800:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2559:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3865:3866:3867:3868:3870:3871:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:5007:8603:9025:10004:10400:10848:11658:11914:12043:12048:12555:12740:12760:12895:12986:13069:13095:13161:13229:13255:13311:13357:13439:14181:14394:14659:14721:21080:21433:21627:30054:30060:30070,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:22,LUA_SUMMARY:none
+X-HE-Tag: offer42_3995c20971129
+X-Filterd-Recvd-Size: 2801
+Message-ID: <95477c93db187bab6da8a8ba7c57836868446179.camel@perches.com>
+Subject: [PATCH] checkpatch: Add a --strict test for structs with bool
+ member definitions
+From: Joe Perches <joe@perches.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Whitcroft <apw@canonical.com>
+Cc: yuankuiz@codeaurora.org, Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>, paulmck@linux.vnet.ibm.com,
+        Ingo Molnar <mingo@kernel.org>, Len Brown <len.brown@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Tue, 10 Apr 2018 11:19:54 -0700
+In-Reply-To: <e22fb871b1b7f2fda4b22f3a24e0d7f092eb612c.camel@perches.com>
+References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
+         <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>
+         <20180410123305.GF4082@hirez.programming.kicks-ass.net>
+         <e22fb871b1b7f2fda4b22f3a24e0d7f092eb612c.camel@perches.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.0-4 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 26, 2018 at 02:22:54PM -0700, Andrew Morton wrote:
-> On Mon, 26 Mar 2018 10:39:51 +0800 Wei Wang <wei.w.wang@intel.com> wrote:
-> 
-> > This patch adds support to walk through the free page blocks in the
-> > system and report them via a callback function. Some page blocks may
-> > leave the free list after zone->lock is released, so it is the caller's
-> > responsibility to either detect or prevent the use of such pages.
-> > 
-> > One use example of this patch is to accelerate live migration by skipping
-> > the transfer of free pages reported from the guest. A popular method used
-> > by the hypervisor to track which part of memory is written during live
-> > migration is to write-protect all the guest memory. So, those pages that
-> > are reported as free pages but are written after the report function
-> > returns will be captured by the hypervisor, and they will be added to the
-> > next round of memory transfer.
-> > 
-> > ...
-> >
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -4912,6 +4912,102 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
-> >  	show_swap_cache_info();
-> >  }
-> >  
-> > +/*
-> > + * Walk through a free page list and report the found pfn range via the
-> > + * callback.
-> > + *
-> > + * Return 0 if it completes the reporting. Otherwise, return the non-zero
-> > + * value returned from the callback.
-> > + */
-> > +static int walk_free_page_list(void *opaque,
-> > +			       struct zone *zone,
-> > +			       int order,
-> > +			       enum migratetype mt,
-> > +			       int (*report_pfn_range)(void *,
-> > +						       unsigned long,
-> > +						       unsigned long))
-> > +{
-> > +	struct page *page;
-> > +	struct list_head *list;
-> > +	unsigned long pfn, flags;
-> > +	int ret = 0;
-> > +
-> > +	spin_lock_irqsave(&zone->lock, flags);
-> > +	list = &zone->free_area[order].free_list[mt];
-> > +	list_for_each_entry(page, list, lru) {
-> > +		pfn = page_to_pfn(page);
-> > +		ret = report_pfn_range(opaque, pfn, 1 << order);
-> > +		if (ret)
-> > +			break;
-> > +	}
-> > +	spin_unlock_irqrestore(&zone->lock, flags);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +/**
-> > + * walk_free_mem_block - Walk through the free page blocks in the system
-> > + * @opaque: the context passed from the caller
-> > + * @min_order: the minimum order of free lists to check
-> > + * @report_pfn_range: the callback to report the pfn range of the free pages
-> > + *
-> > + * If the callback returns a non-zero value, stop iterating the list of free
-> > + * page blocks. Otherwise, continue to report.
-> > + *
-> > + * Please note that there are no locking guarantees for the callback and
-> > + * that the reported pfn range might be freed or disappear after the
-> > + * callback returns so the caller has to be very careful how it is used.
-> > + *
-> > + * The callback itself must not sleep or perform any operations which would
-> > + * require any memory allocations directly (not even GFP_NOWAIT/GFP_ATOMIC)
-> > + * or via any lock dependency. It is generally advisable to implement
-> > + * the callback as simple as possible and defer any heavy lifting to a
-> > + * different context.
-> > + *
-> > + * There is no guarantee that each free range will be reported only once
-> > + * during one walk_free_mem_block invocation.
-> > + *
-> > + * pfn_to_page on the given range is strongly discouraged and if there is
-> > + * an absolute need for that make sure to contact MM people to discuss
-> > + * potential problems.
-> > + *
-> > + * The function itself might sleep so it cannot be called from atomic
-> > + * contexts.
-> 
-> I don't see how walk_free_mem_block() can sleep.
-> 
-> > + * In general low orders tend to be very volatile and so it makes more
-> > + * sense to query larger ones first for various optimizations which like
-> > + * ballooning etc... This will reduce the overhead as well.
-> > + *
-> > + * Return 0 if it completes the reporting. Otherwise, return the non-zero
-> > + * value returned from the callback.
-> > + */
-> > +int walk_free_mem_block(void *opaque,
-> > +			int min_order,
-> > +			int (*report_pfn_range)(void *opaque,
-> > +			unsigned long pfn,
-> > +			unsigned long num))
-> > +{
-> > +	struct zone *zone;
-> > +	int order;
-> > +	enum migratetype mt;
-> > +	int ret;
-> > +
-> > +	for_each_populated_zone(zone) {
-> > +		for (order = MAX_ORDER - 1; order >= min_order; order--) {
-> > +			for (mt = 0; mt < MIGRATE_TYPES; mt++) {
-> > +				ret = walk_free_page_list(opaque, zone,
-> > +							  order, mt,
-> > +							  report_pfn_range);
-> > +				if (ret)
-> > +					return ret;
-> > +			}
-> > +		}
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(walk_free_mem_block);
-> 
-> This looks like it could take a long time.  Will we end up needing to
-> add cond_resched() in there somewhere?
+A struct with a bool member can have different sizes on various
+architectures because neither bool size nor alignment is standardized.
 
-Andrew, were your questions answered? If yes could I bother you for an ack on this?
+So emit a message on the use of bool in structs only in .h files and
+not .c files.
 
+There is the real possibility that this test could have a false positive
+when a bool is declared as an automatic, so limit the test to .h files
+where the only false positive is for declarations in static inline functions.
 
-> >  static void zoneref_set_zone(struct zone *zone, struct zoneref *zoneref)
-> >  {
-> >  	zoneref->zone = zone;
-> > -- 
-> > 2.7.4
+Signed-off-by: Joe Perches <joe@perches.com>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+---
+ scripts/checkpatch.pl | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index e16d6713f236..24618dffc5cb 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -6257,6 +6257,13 @@ sub process {
+ 			     "Avoid using bool as bitfield.  Prefer bool bitfields as unsigned int or u<8|16|32>\n" . $herecurr);
+ 		}
+ 
++# check for bool use in .h files
++		if ($realfile =~ /\.h$/ &&
++		    $sline =~ /^.\s+bool\s*$Ident\s*(?::\s*d+\s*)?;/) {
++			CHK("BOOL_MEMBER",
++			    "Avoid using bool structure members because of possible alignment issues - see: https://lkml.org/lkml/2017/11/21/384\n" . $herecurr);
++		}
++
+ # check for semaphores initialized locked
+ 		if ($line =~ /^.\s*sema_init.+,\W?0\W?\)/) {
+ 			WARN("CONSIDER_COMPLETION",
+-- 
+2.15.0
