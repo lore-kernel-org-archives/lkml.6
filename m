@@ -1,65 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753328AbeDJJIz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 05:08:55 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:52914 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753105AbeDJJG0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:06:26 -0400
-X-Google-Smtp-Source: AIpwx4825aYAcguLJOcY7uI375pUn/59ATzz+/2tW4+qLtMLP9ywPIY0NdZD0cBHbh5ioS3q3Gq+gg==
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: broonie@kernel.org
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] spi: spi-topcliff-pch: Replace GFP_ATOMIC with GFP_KERNEL in pch_spi_handle_dma
-Date: Tue, 10 Apr 2018 17:06:16 +0800
-Message-Id: <1523351176-29741-1-git-send-email-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        id S1753370AbeDJJJW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 05:09:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47853 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753348AbeDJJJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 05:09:19 -0400
+Date: Tue, 10 Apr 2018 11:09:17 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: adobriyan@gmail.com, willy@infradead.org, mguzik@redhat.com,
+        gorcunov@gmail.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v3 PATCH] mm: introduce arg_lock to protect arg_start|end and
+ env_start|end in mm_struct
+Message-ID: <20180410090917.GZ21835@dhcp22.suse.cz>
+References: <1523310774-40300-1-git-send-email-yang.shi@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523310774-40300-1-git-send-email-yang.shi@linux.alibaba.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pch_spi_handle_dma() is never called in atomic context.
-This function is only called by pch_spi_process_messages().
-pch_spi_process_messages() is only set as a parameter of INIT_WORK() in
-pch_spi_pd_probe().
+On Tue 10-04-18 05:52:54, Yang Shi wrote:
+[...]
+> So, introduce a new spinlock in mm_struct to protect the concurrent
+> access to arg_start|end, env_start|end and others except start_brk and
+> brk, which are still protected by mmap_sem to avoid concurrent access
+> from do_brk().
 
-Despite never getting called from atomic context,
-pch_spi_handle_dma() calls kcalloc() with GFP_ATOMIC,
-which does not sleep for allocation.
-GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
-which can sleep and improve the possibility of sucessful allocation.
-
-This is found by a static analysis tool named DCNS written by myself.
-And I also manually check it.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/spi/spi-topcliff-pch.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
-index 97d1375..dc93ca9 100644
---- a/drivers/spi/spi-topcliff-pch.c
-+++ b/drivers/spi/spi-topcliff-pch.c
-@@ -1007,7 +1007,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
- 	spin_unlock_irqrestore(&data->lock, flags);
- 
- 	/* RX */
--	dma->sg_rx_p = kcalloc(num, sizeof(*dma->sg_rx_p), GFP_ATOMIC);
-+	dma->sg_rx_p = kcalloc(num, sizeof(*dma->sg_rx_p), GFP_KERNEL);
- 	sg_init_table(dma->sg_rx_p, num); /* Initialize SG table */
- 	/* offset, length setting */
- 	sg = dma->sg_rx_p;
-@@ -1067,7 +1067,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
- 		head = 0;
- 	}
- 
--	dma->sg_tx_p = kcalloc(num, sizeof(*dma->sg_tx_p), GFP_ATOMIC);
-+	dma->sg_tx_p = kcalloc(num, sizeof(*dma->sg_tx_p), GFP_KERNEL);
- 	sg_init_table(dma->sg_tx_p, num); /* Initialize SG table */
- 	/* offset, length setting */
- 	sg = dma->sg_tx_p;
+Is there any fundamental problem with brk using the same lock?
 -- 
-1.9.1
+Michal Hocko
+SUSE Labs
