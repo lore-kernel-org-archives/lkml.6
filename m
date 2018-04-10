@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/QZSmM7E35qAWTlEqmtKkO5Y9Lcv2S/WwLAbasB3NmJxmcPDL1roVoSRW1YlbdLD/846tn
-ARC-Seal: i=1; a=rsa-sha256; t=1523399421; cv=none;
+X-Google-Smtp-Source: AIpwx4+gBM8+n47fVoaFtsW2E59aNPYs4vl/LcAIi8Vsa/bFMOQbAHwTx6p42FfnO+dqQ4mH/2Ma
+ARC-Seal: i=1; a=rsa-sha256; t=1523399418; cv=none;
         d=google.com; s=arc-20160816;
-        b=AhChLsIb7HqhFXF/UnRp7zAuxhBOWuAIrAvQcRx9pb0qhLaO7fv9WaX2yKhO/LJyJK
-         ToYCmWbYujDmP1/zr+ekFmDrjfQDCI0FIBLfARa9FyvWVI7xxAjHEsbeLCKkEiM7fAuo
-         QL1e82YW/9GOVHF/EvFgot4Lj/ewFAJDrbL+w0heibcgVQ5aJKSfeXN7nhBOUMTIjoOD
-         YX3r1+opsOjtvWBbyU/QB6SdNO0ygw076nyxZU9lIbcqijlpe8mFNP+pI9PpwxViQunz
-         qwOKggbJiQfpRTAnfud0U8fShWUsaqh0KRZ+7J7vN9D8x8Yyc1qnIdilrYNQ5D6nWPdL
-         zTaA==
+        b=Y6FI6KafUSpOqVg5sMTQy1OZ/c3Mjv/5/0m64pzq7a0rXilKV8nvo0QBLXcZ5DFS06
+         eldCewda8qtyDQsJGe0J3eD3Wa1wDB6HVwIO13Lee130UM8VCuCk3QdM93LItQ8j9iIr
+         o7lXnaKt9UNP1JDrEQ2QCxE84gUyBM8cBfhLUiSctxLafH1H9LnccC5N9YLNCHV8P8B3
+         T7ueCu2ziKzUHXmhGv6+W6JatLPtte3zcbjDGAFNCJCEtluYjN+g/wbVnk5ug0MUPrvA
+         ml1hedyWtoqQy4Dpr4vwzXfHIThLAAloxwst9zK9WfawYczupJXX7fxmYUOZlrk2hMMq
+         VAhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=l8kDVyzY0/pEJ91LTzp6d5z5iicbEV5ASZhyexPCqZI=;
-        b=XwYDvzQNrfn+UJ+d2p6q+0+iMmat2rLjqKszFSKd8VwJY4GkgpC8zhr38SOJ9QCTvo
-         SNs6W5eQF4HnpbJ3DgSobj45/la/ZqY9wAc2ubNkP5Y1uRfhDA0Prf1alHv4jWg+XZ/V
-         2TBHTN6WDL3UdgO6BBVDz7G0XcBINBAp0zNuUQ7JGdKAFSkxyGS+EI4SWH9MUQBt/RIw
-         zSekqKRoaUWvuKud6juB43XdD264TNJhyPFh9KFBx+rlYVNwe61TyylyNyRfVW1Dxt8v
-         9xfoQLwfR4SfHR4Q0pYxZ+l44lsiY2IAICqjGkRnA9TKWDpbSuN6t0hoNuS2n6cMYga8
-         q/8g==
+        bh=gYFx7vn4qWH/bHoYEedcC4Zj3PHaeocBxhR6yBjYtlI=;
+        b=fMoS60B7iUNf8JwwCiEAaNydVbt878WWQ5xCkOxJ+mfrCyt2h9po43RYDB/VI4Kh/g
+         amS5uEnAPzgOc7m8FHHZFJogGciNbaw/2XCAAQZRZil00ULfQ7nKvLz9AdN1DCGFsEs5
+         ztM+8hKxAPHyZdOWY1JLhRoSo7U/tQ2f7k1n3UvfpLeioXsd67+ET/S9bS+ka8RZskFG
+         iL95CpVH2fn+VI5ftJOR0pFecgkdWmlhR4L5eiP+72VTOwzkHFjFbHy+INp615HzIyy1
+         i/X805aEaY2c6Mi7XZMr4ij/I63sVAEh1SbHWaO9MM/1jkwFJQyh1Vc+vkmSmZ1IOEXq
+         Clhw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hua Rui <huarui.dev@gmail.com>,
-	Michael Lyle <mlyle@lyle.org>,
+	Zhang Yi <yizhan@redhat.com>,
+	Ming Lei <ming.lei@redhat.com>,
 	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 072/168] bcache: ret IOERR when read meets metadata error
-Date: Wed, 11 Apr 2018 00:23:34 +0200
-Message-Id: <20180410212803.260884103@linuxfoundation.org>
+Subject: [PATCH 4.15 081/168] blk-mq: fix kernel oops in blk_mq_tag_idle()
+Date: Wed, 11 Apr 2018 00:23:43 +0200
+Message-Id: <20180410212803.727989215@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400072268634043?=
-X-GMAIL-MSGID: =?utf-8?q?1597400072268634043?=
+X-GMAIL-THRID: =?utf-8?q?1597400069099080916?=
+X-GMAIL-MSGID: =?utf-8?q?1597400069099080916?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,85 +51,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rui Hua <huarui.dev@gmail.com>
+From: Ming Lei <ming.lei@redhat.com>
 
 
-[ Upstream commit b221fc130c49c50f4c2250d22e873420765a9fa2 ]
+[ Upstream commit 8ab0b7dc73e1b3e2987d42554b2bff503f692772 ]
 
-The read request might meet error when searching the btree, but the error
-was not handled in cache_lookup(), and this kind of metadata failure will
-not go into cached_dev_read_error(), finally, the upper layer will receive
-bi_status=0.  In this patch we judge the metadata error by the return
-value of bch_btree_map_keys(), there are two potential paths give rise to
-the error:
+HW queues may be unmapped in some cases, such as blk_mq_update_nr_hw_queues(),
+then we need to check it before calling blk_mq_tag_idle(), otherwise
+the following kernel oops can be triggered, so fix it by checking if
+the hw queue is unmapped since it doesn't make sense to idle the tags
+any more after hw queues are unmapped.
 
-1. Because the btree is not totally cached in memery, we maybe get error
-   when read btree node from cache device (see bch_btree_node_get()), the
-   likely errno is -EIO, -ENOMEM
+[  440.771298] Workqueue: nvme-wq nvme_rdma_del_ctrl_work [nvme_rdma]
+[  440.779104] task: ffff894bae755ee0 ti: ffff893bf9bc8000 task.ti: ffff893bf9bc8000
+[  440.788359] RIP: 0010:[<ffffffffb730e2b4>]  [<ffffffffb730e2b4>] __blk_mq_tag_idle+0x24/0x40
+[  440.798697] RSP: 0018:ffff893bf9bcbd10  EFLAGS: 00010286
+[  440.805538] RAX: 0000000000000000 RBX: ffff895bb131dc00 RCX: 000000000000011f
+[  440.814426] RDX: 00000000ffffffff RSI: 0000000000000120 RDI: ffff895bb131dc00
+[  440.823301] RBP: ffff893bf9bcbd10 R08: 000000000001b860 R09: 4a51d361c00c0000
+[  440.832193] R10: b5907f32b4cc7003 R11: ffffd6cabfb57000 R12: ffff894bafd1e008
+[  440.841091] R13: 0000000000000001 R14: ffff895baf770000 R15: 0000000000000080
+[  440.849988] FS:  0000000000000000(0000) GS:ffff894bbdcc0000(0000) knlGS:0000000000000000
+[  440.859955] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  440.867274] CR2: 0000000000000008 CR3: 000000103d098000 CR4: 00000000001407e0
+[  440.876169] Call Trace:
+[  440.879818]  [<ffffffffb7309d68>] blk_mq_exit_hctx+0xd8/0xe0
+[  440.887051]  [<ffffffffb730dc40>] blk_mq_free_queue+0xf0/0x160
+[  440.894465]  [<ffffffffb72ff679>] blk_cleanup_queue+0xd9/0x150
+[  440.901881]  [<ffffffffc08a802b>] nvme_ns_remove+0x5b/0xb0 [nvme_core]
+[  440.910068]  [<ffffffffc08a811b>] nvme_remove_namespaces+0x3b/0x60 [nvme_core]
+[  440.919026]  [<ffffffffc08b817b>] __nvme_rdma_remove_ctrl+0x2b/0xb0 [nvme_rdma]
+[  440.928079]  [<ffffffffc08b8237>] nvme_rdma_del_ctrl_work+0x17/0x20 [nvme_rdma]
+[  440.937126]  [<ffffffffb70ab58a>] process_one_work+0x17a/0x440
+[  440.944517]  [<ffffffffb70ac3a8>] worker_thread+0x278/0x3c0
+[  440.951607]  [<ffffffffb70ac130>] ? manage_workers.isra.24+0x2a0/0x2a0
+[  440.959760]  [<ffffffffb70b352f>] kthread+0xcf/0xe0
+[  440.966055]  [<ffffffffb70b3460>] ? insert_kthread_work+0x40/0x40
+[  440.973715]  [<ffffffffb76d8658>] ret_from_fork+0x58/0x90
+[  440.980586]  [<ffffffffb70b3460>] ? insert_kthread_work+0x40/0x40
+[  440.988229] Code: 5b 41 5c 5d c3 66 90 0f 1f 44 00 00 48 8b 87 20 01 00 00 f0 0f ba 77 40 01 19 d2 85 d2 75 08 c3 0f 1f 80 00 00 00 00 55 48 89 e5 <f0> ff 48 08 48 8d 78 10 e8 7f 0f 05 00 5d c3 0f 1f 00 66 2e 0f
+[  441.011620] RIP  [<ffffffffb730e2b4>] __blk_mq_tag_idle+0x24/0x40
+[  441.019301]  RSP <ffff893bf9bcbd10>
+[  441.024052] CR2: 0000000000000008
 
-2. When read miss happens, bch_btree_insert_check_key() will be called to
-   insert a "replace_key" to btree(see cached_dev_cache_miss(), just for
-   doing preparatory work before insert the missed data to cache device),
-   a failure can also happen in this situation, the likely errno is
-   -ENOMEM
-
-bch_btree_map_keys() will return MAP_DONE in normal scenario, but we will
-get either -EIO or -ENOMEM in above two cases. if this happened, we should
-NOT recover data from backing device (when cache device is dirty) because
-we don't know whether bkeys the read request covered are all clean.  And
-after that happened, s->iop.status is still its initially value(0) before
-we submit s->bio.bio, we set it to BLK_STS_IOERR, so it can go into
-cached_dev_read_error(), and finally it can be passed to upper layer, or
-recovered by reread from backing device.
-
-[edit by mlyle: patch formatting, word-wrap, comment spelling,
-commit log format]
-
-Signed-off-by: Hua Rui <huarui.dev@gmail.com>
-Reviewed-by: Michael Lyle <mlyle@lyle.org>
-Signed-off-by: Michael Lyle <mlyle@lyle.org>
+Reported-by: Zhang Yi <yizhan@redhat.com>
+Tested-by: Zhang Yi <yizhan@redhat.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/bcache/request.c |   22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ block/blk-mq.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@ -576,6 +576,7 @@ static void cache_lookup(struct closure
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1996,7 +1996,8 @@ static void blk_mq_exit_hctx(struct requ
  {
- 	struct search *s = container_of(cl, struct search, iop.cl);
- 	struct bio *bio = &s->bio.bio;
-+	struct cached_dev *dc;
- 	int ret;
+ 	blk_mq_debugfs_unregister_hctx(hctx);
  
- 	bch_btree_op_init(&s->op, -1);
-@@ -588,6 +589,27 @@ static void cache_lookup(struct closure
- 		return;
- 	}
+-	blk_mq_tag_idle(hctx);
++	if (blk_mq_hw_queue_mapped(hctx))
++		blk_mq_tag_idle(hctx);
  
-+	/*
-+	 * We might meet err when searching the btree, If that happens, we will
-+	 * get negative ret, in this scenario we should not recover data from
-+	 * backing device (when cache device is dirty) because we don't know
-+	 * whether bkeys the read request covered are all clean.
-+	 *
-+	 * And after that happened, s->iop.status is still its initial value
-+	 * before we submit s->bio.bio
-+	 */
-+	if (ret < 0) {
-+		BUG_ON(ret == -EINTR);
-+		if (s->d && s->d->c &&
-+				!UUID_FLASH_ONLY(&s->d->c->uuids[s->d->id])) {
-+			dc = container_of(s->d, struct cached_dev, disk);
-+			if (dc && atomic_read(&dc->has_dirty))
-+				s->recoverable = false;
-+		}
-+		if (!s->iop.status)
-+			s->iop.status = BLK_STS_IOERR;
-+	}
-+
- 	closure_return(cl);
- }
- 
+ 	if (set->ops->exit_request)
+ 		set->ops->exit_request(set, hctx->fq->flush_rq, hctx_idx);
