@@ -1,131 +1,134 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3447065-1523351438-2-2031567202649397612
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2410678-1523323771-2-13820482006360243230
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Attached: signature.asc
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523351438; b=wGuBlkCsfnBe7QLsQiJLtgN9bmu9AlXjuRXqCaQtlmY6wjDtop
-    6o/jHZqvGuDV5AhM07I8MtVXfVCO1S+rHVsJi+SERcV/S3OcH6N/HqwbXJiZzUmX
-    lehPj5oMlXJnpmQCKbt3ggtqIhzPRiIcGDt1I4MZkYc6y1hX78dcKKZHn5G0Y/tw
-    dOVIYRKGYSDAxTdl+PzC3koF5YHZ1CpLLVb0kS78MuaeawZ1Yxos/L0DIRFgyX/6
-    36HhwJkWfntzVRFJmiVFUSQmbNPlDV8QQvXBP/b/Tyw28kzNEhwMnFMXhscYZvfK
-    sh9FdANxlsLbM8oMJKJk31BuL2/cpvehLS3A==
+    1523323770; b=FZP3NBvULiodNd2Mb/aCuBcJluQdlkSQRDPdc+aYxzgeCaF4d7
+    42XCocWIDkqY/I4SNxzitWoCf5okBAh6IoNzijpBbyqhM7bzCQSy4bucl6lE4YI7
+    3jrTOKWeUiMC+OIGxfWPH8mowO7mqfPcVKjMuqvWMglRPPoSgsG8hESy9VizBUr5
+    t6Rvbg/BwVhTgGmCNi6qKJrPLnxIGnH6scjkPNU9ffdldm4kehBUD5HokN0xWiBA
+    I5OcDsap3LmkADFUACBOP01nHScpVkqXsV/PWYZCQ2ahVIiRBkxYt8yfCNdNklf2
+    eh+TuX4AaK6/JZqe0bXJwftkpePf/2WviKTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523351438; bh=0FqBM1+gSz+lvjc9Jj64ksvGPWduGf
-    yLkQRKoUqpnCQ=; b=FV3vIJCi12R1FSu8HIYFF06OX8QUZpgh2Dihe2uWv3vJVd
-    P26XRJCgMsDn280LuPYNCQl+wbueQCR4x06w1FjmKQusO6IVY/A/Xr9w1ODNglVF
-    xXhzqPA5u+dMdC32n0LgArmnBQGG80/E+lRK97kya1IbxZSjnd94aqs1yEYF8ClH
-    8Nl0gv2OhT+WzRBpPTyLT9PO4zA4HyVmGYUlM0KOA0pG5JhazoNgF7528FKAFgbf
-    lx+mXxTeeTsMUD9jWQFNRqo0lpLyGU/BdDQo9nPSGq5mjgQvUpPnoV9gYD9GWB/m
-    LhqaBwZRkl0xs05A/nd6zBdsd082S1OZV2blPhCQ==
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1523323770; bh=5gZHkiVCVkZH1cF1aSFquuMr/t09yL
+    W05eeLHtm3Y1w=; b=stoPLlfbFdS26NvTjWMXIvptYb6Yx/8PL7WHRgxHuly35p
+    TZNIvswhpIR1fP3d5+jF29fRCsDCw4LtnSjHft+hOFgy3ecAnPTdM7+aQo7iiM1U
+    cNeKKmSV+kCBy2dn3ZUhBlaSbDlZGsqL2edsH1P+/GUn//AqdYCNyjatbRm5lG5l
+    uPe3G18KwT82OhUQVl49hvvcqEyfuz77nM2lMHwLERElh9Ftd/ncfDiJ5p/td71h
+    IK7SGfvefC1Qy2A8sXG7/RtJ6z9xmqUpYMTZTI/ujiFgsRSoHx1rbRBulrlSWcIo
+    3fnsdyJ2BjVrgaybe++LkilrwYIwomZbOieiybTw==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=the-dreams.de;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=u0U+pAsU x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=PaTa4iJU;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=the-dreams.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=the-dreams.de;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=u0U+pAsU x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=PaTa4iJU;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=the-dreams.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGXVG0yZj3CBGxP4RGQ3tIHcCz3hOdCtGH7Rl0yoBkmuSiGJ5usTOn/WIDCewxBAJTt83f/8t9W05deB46UN0s2n71jiZQ1dZ2xyvKVtwQzfagornD8X
-    x9J4+/JNdv+qhqEbjeCj3amkszBvilfbvhqD8OOgbzplqe3cPLQWG8lQi0TJCzGGQupCgTMrZE/0lScDViEuudho3lh5T/vXoBIFfws1965RxqpBvPsRtWdN
+X-CM-Envelope: MS4wfBJeQIb1kgBGUK0itseyV03sHOAvlCK2//aGKXq4JFcl6LrPwuWIwGEyrJBhgAEClYYI4xK2vTqyhlXthE5xNGVXs6LPVZCtS05mlHVko70WoeGe+c9h
+    fKehMDrF2ZseubkNEyvIMSQbh8lYSAx5ePXw8S5zJBIQEVRm8kqpNs4LrYyZ/b8Nur57tb0zRW225ZWYZsZSL7ZRrxyyN6tEihyiPHG9iQl4d2Yw/o8jl72i
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=r56wvsoRNKPQF_Rh30cA:9
-    a=CjuIK1q_8ugA:10 a=51gvEHhNqAmumGMN5noA:9 a=ONNS8QRKHyMA:10
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=tmjX-nCzVX8A:10
+    a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
+    a=F7M4UJ9ODhekjDxEDoYA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753488AbeDJJKL (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 05:10:11 -0400
-Received: from sauhun.de ([88.99.104.3]:38612 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753478AbeDJJKJ (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:10:09 -0400
-Date: Tue, 10 Apr 2018 11:10:05 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Jason Andryuk <jandryuk@gmail.com>, benjamin.tissoires@redhat.com,
-        andyrtr@archlinux.org, aduggan@synaptics.com,
-        stable@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] i2c: i801: blacklist Host Notify on HP EliteBook G3
- 850
-Message-ID: <20180410091005.2cijsmavmay37d7l@ninjato>
-References: <20180404225643.6b40782f@endymion>
- <20180405183824.13333-1-jandryuk@gmail.com>
- <20180410093836.1e39d9d8@endymion>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="m4t4jerzb3qp4osn"
-Content-Disposition: inline
-In-Reply-To: <20180410093836.1e39d9d8@endymion>
-User-Agent: NeoMutt/20170113 (1.7.2)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+        id S1752134AbeDJB3R (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 9 Apr 2018 21:29:17 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:47083 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeDJB3Q (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Mon, 9 Apr 2018 21:29:16 -0400
+X-Google-Smtp-Source: AIpwx495SAx6vi5PJT3eQN+cW4+fPLKw70IqEnNslKSVnc520+OhosDXZfoYsXkQB/l3q44PcAceTA==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: stern@rowland.harvard.edu, gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] usb: storage: Replace mdelay with msleep in init_freecom
+Date: Tue, 10 Apr 2018 09:29:08 +0800
+Message-Id: <1523323748-28361-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+init_freecom() is never called in atomic context.
 
---m4t4jerzb3qp4osn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+init_freecom() is set as ".initFunction" through UNUSUAL_DEV().
+And ->initFunction() is only called by usb_stor_acquire_resources(), 
+which is only called by usb_stor_probe2().
+usb_stor_probe2() is called by *_probe() functions (like alauda_probe()) 
+for each USB driver.
+*_probe() functions are set ".probe" in struct usb_driver.
+These functions are not called in atomic context.
 
+Despite never getting called from atomic context, init_freecom()
+calls mdelay() to busily wait.
+This is not necessary and can be replaced with msleep() to
+avoid busy waiting.
 
-> >  drivers/i2c/busses/i2c-i801.c | 23 +++++++++++++++++++++++
-> >  1 file changed, 23 insertions(+)
-> > (...)
->=20
-> Wolfram and stable, please hold on with this patch, Jason and I may have
-> found a proper fix so blacklisting would no longer be needed.
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
 
-Awesome, thanks Jean!
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+---
+ drivers/usb/storage/freecom.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/usb/storage/freecom.c b/drivers/usb/storage/freecom.c
+index c0a5d95..c7f886d 100644
+--- a/drivers/usb/storage/freecom.c
++++ b/drivers/usb/storage/freecom.c
+@@ -477,7 +477,7 @@ static int init_freecom(struct us_data *us)
+ 	usb_stor_dbg(us, "result from activate reset is %d\n", result);
+ 
+ 	/* wait 250ms */
+-	mdelay(250);
++	msleep(250);
+ 
+ 	/* clear reset */
+ 	result = usb_stor_control_msg(us, us->send_ctrl_pipe,
+@@ -485,7 +485,7 @@ static int init_freecom(struct us_data *us)
+ 	usb_stor_dbg(us, "result from clear reset is %d\n", result);
+ 
+ 	/* wait 3 seconds */
+-	mdelay(3 * 1000);
++	msleep(3 * 1000);
+ 
+ 	return USB_STOR_TRANSPORT_GOOD;
+ }
+-- 
+1.9.1
 
---m4t4jerzb3qp4osn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrMf2kACgkQFA3kzBSg
-KbYWvw//Q9wCGT6qItgdGnVZHdmaYSrpjjaIXDWiFA17oLAb8ec1fAgKp728yxxz
-FnHFtwiRcggjbHm+aagL7eLgzT1qslalUEcVDx7VvXBd+TjaGO037mh0pxrRBKOF
-CVmY6rw1S7UbDtLiydr8W7mg/INBF8iFfp59UHOEPlcsv8Q/GBLM8hhVFUh7NvEg
-P20GScKfNvXxhT6HewD/uD9hy1fIJj0CUsr5MFYIMJWmV00VLKkLaa0ZPeix+1s0
-VdRmWNKYQZdbWjD+KyhRhCFlLiPu0+AQocNPoNGPR1w9SGsZBCAXjtD/kgahd57V
-v+qfljgjkc92MI5hW13+dqg+ttemj6vJPOo6YW/JQE+ju2GtUyu6+XmvBuQFe5eL
-d7YMKDsn7GX7uP8evm4VqpH/tzPBed+W4E2cVE8xUB1yimIG4bHIdgr8HokTSmMR
-mCXhuAou8Fi9oTylwMqeB+/7JDAmbF3NKsXmDvFucDVl7ozsUAvAfpOpsIqBtemv
-T0fhoPJxtpuwITGVICVyRZDEv/soiuEJbgKJrpRj9tdBcnGjsGfDRYBdlN0aT8jL
-qXbAkoPJWDy+L/k7UC5+PV4uxDkLIX/UwJGgFq7Ush1RGyoPYd8VeF8R8Tx55Dlb
-nHPQ/mrNeG5Pri/e43JSlMsD62rLTUm8iGQZituzKC+luYuaR9A=
-=CGVX
------END PGP SIGNATURE-----
-
---m4t4jerzb3qp4osn--
