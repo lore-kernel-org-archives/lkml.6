@@ -1,75 +1,74 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4028164-1523370872-2-2261604851836748056
+X-Cyrus-Session-Id: sloti22d1t05-3836988-1523364855-2-16509619839012923997
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523370872; b=KE4bKxQ6hFG4U/NIt8Ja/LgyHUGbw56dN1Hf8SH9bkuuxHdvj5
-    +3oi2PsWGj1ezwUmz+07DG3h+G+0mplpu9nmi9/17GnRZdYOu6lIkQaBaS/HSqlq
-    WzsZOern8eSOqoGhnMSbfq6VoVH3Gn6cyeVtolU014ZQ4OciFtnw1E+ecjyGLBhl
-    xw39TowPWlcS5wsdxrgpn2OyKIBoEpWsYv17eqZ02Q5M74XUcKREUEzHvB7IqH+F
-    LCbtewnkgzu3p+FM1XJEflCl7qGfuno173omtHgWwjBGtZVDPvLFd3gz0K48AFU4
-    II20HD1f9KaFv+8t5HkVh+jWDchN7vwhap/g==
+    1523364855; b=Kyd8edGtcJFkopPVGrGQ6B/dTD9N8SKTdGRdEKEPCVenIUuEt2
+    NF7v1lHSEr/cISGh+tRHRtycgEMYLh0C7XCBO4Z61g4cu4wMI0eN3cAF6DkkVfHZ
+    aNopmgQKyYbCMcXdltdl6fjO6B1/nrWdPe6aNT/dF7XYdhVHDOvEi6M29ouvpJcR
+    axahwt0ePKFPCWdjg6qf8Oy4/2akkWmue6E6JZTJC2tMxibpLt22WFMNeKucDdsJ
+    6Bo7DfzUY8VYx3kG/q2szNGsdEv5aeV6R6OzTTMvNycdwstS0hmlcZi9HxNmmpfE
+    OT+Q1ONPK5BrHk0hY8IFVyZ9NGt2XuXNo7+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:in-reply-to
-    :message-id:references:mime-version:content-type:sender:list-id;
-    s=fm2; t=1523370872; bh=9ymNhfC54K43E1+feDzWeAsPnoWxqiqeHcKBHrR
-    akFU=; b=qtiOjSgtumDlgdgRSKIWRXCMdePQScYOrjntWLz7DVqA3Xrv0B1nUhM
-    fIBVUB4aAa2ynKSV31E9W8Q6LGi98u1OcBavCP1ef++XXvtCGHPsEHOkpLfAIDKB
-    Gk1y0c4NNiY/aSUI5KT5HRct6uNWUY1H1inKsy8l3ZPlxpS/vrbEeFPgQ6q6vocu
-    8rYCwR6vg4MQsecqiDOLsDG5ZSz+vRcWmj//YukLm5O0+m0/lhFhoYFHWe0CnOI2
-    knvzESupII4ADBV2djB1dRLX6lVNoPxAffuv8rGOFmYgu9XpIPLfGYS5+9E7Eesn
-    rWPfLkbHw9VR/q83oHeBChbMfQcM3zg==
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1523364855; bh=
+    t0/MCIb67clDqBGWGlt8pU9+LYLE4MxtISJ/mGhj3jY=; b=U3QgalL4wwLZtyT3
+    xzaB4Ur2LTkU+fp1sCBpPWYzKzALjD4rk4veV7yn3Ljj3HZ+95QAa/EJ5sf8jrv3
+    8x2qyZsihx9KV+SxIRrpwCUI08+/bPyw6ifQDaFyXH/C71xR84BNbmcFJ2Yo4d3v
+    X2SmmuzQ8G72ui61u8s+94QT5rPRS0AUS23voxWaIrPrbJTen0612QRkTQEnsM1w
+    H1HAU0ERb3o4wLN8whfB5Lm5ezoY7ZanZz/B+heHpuSQSi3j0wuSkj9jErfuHBMA
+    aLov0PpsE178yLBMzEtOlro5u4DwSP3ZORPws33HumKXbCeMzFANk75Y5tY3dO8O
+    FwdDpw==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.com;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=geZavtue x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.com;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=geZavtue x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOAlPtQPGZ06sM7Ck7A1uuZqdwtNzW8Yp7rQAcRu5viHgnQiSkc6JP07WN/o2cyg9O+TLaNXbv50ZLKyJFJCR7/yVSW9rMpAZ/JdJdvq7hvozWHKdzNo
-    FnOIFbQmw9496BOuBwaceQJXvRh5QKphQwp0eGFu1s1lPYZvykaht2jNO9Sww9qI7XGai+keekGgS+ZD9EbJHr7lOA0TEr/pBSH+ewGN4bgT+7lixvi0+Xr1
+X-CM-Envelope: MS4wfPfR+rJMrab/9X87cFvfYt2ORGFn9mlQEZO+G/z0NSuusO+vMRg2pGkvQxDnKCZnWiJkENFHdMbnMRqA9lTGDK84Im1dYPkKx43r9ATBwb0eGsD6N2MZ
+    Je0r30gmArAp256SjTcH7jRsKRHnuEw9lK9olRhHa9/SR75kl7RNkovI0HMpLiRKi2MdpEZKLb0xpDgAE06uZ9wJA5DcICCU9VKwC0kKOT2u8l4Yf6jijySN
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=khwyK8DuSVkA:10
-    a=Kd1tUaAdevIA:10 a=TnQvLH7FQ8jPiqQ9jnsA:9 a=CjuIK1q_8ugA:10
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=yMhMjlubAAAA:8
+    a=VwQbUJbxAAAA:8 a=RAu74iQbZOYIzub1VMsA:9 a=SlYinwPCV1lBf_Gh:21
+    a=0lZdyOaBekWfuNut:21 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753356AbeDJOe3 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 10:34:29 -0400
-Received: from resqmta-ch2-12v.sys.comcast.net ([69.252.207.44]:33528 "EHLO
-        resqmta-ch2-12v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753258AbeDJOe3 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 10:34:29 -0400
-Date: Tue, 10 Apr 2018 09:26:19 -0500 (CDT)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Matthew Wilcox <willy@infradead.org>
-cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
+        id S1753164AbeDJMyN (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 08:54:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37224 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753187AbeDJMx7 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 08:53:59 -0400
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-mm@kvack.org
+Cc: Matthew Wilcox <mawilcox@microsoft.com>,
+        Christoph Lameter <cl@linux.com>,
         Pekka Enberg <penberg@kernel.org>,
         David Rientjes <rientjes@google.com>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
@@ -78,37 +77,76 @@ cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
         Jeff Layton <jlayton@redhat.com>,
         Mel Gorman <mgorman@techsingularity.net>,
         stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] slab: __GFP_ZERO is incompatible with a
- constructor
-In-Reply-To: <alpine.DEB.2.20.1804100920110.27333@nuc-kabylake>
-Message-ID: <alpine.DEB.2.20.1804100925520.27641@nuc-kabylake>
-References: <20180410125351.15837-1-willy@infradead.org> <alpine.DEB.2.20.1804100920110.27333@nuc-kabylake>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfEoSLJu4PEigK+VC8JBxRPvaQKIrS4szM3RGwOKicFCKKWnBZwmdSF65G4d6YKrdlBZ6k23iycY4eJSkftjo3FZRiXDaGO8C6JXcnbHQFcJt9j0ABPaI
- 7J2LF3TMYAzBAexY+NJtTJORESpH4KChhfGZuyqioEVpFE9eqZQX40njvAkviMkskFG/r2a3UYIGvWgJJXuI9fFZru/GLtRzR354FZY45VpKTwtUPLWlVcaA
- PzCLzG0qDLdasbC1Pec/Xbar/7lCKqYVbK6CwPBIwVFj9RRWkjoTNIlXNPZrle9PW1JR8i4Q2u+VtDEFpyqx5geBOBbgzHgjnDw717Qo1COHryFUkxzG5SpB
- EQnmNhyWw2aZyPb14UoGt6sfOEtOGpFAZ563yRFFI2L8S6PXh9aiB0VubacSwY6amMQHBE5ofAo6vJnO+yzMGissa8/vy6SDDx7HMJqGzMFuwixtdRGLTmuM
- mt9BgtCCdD4fkvgdeowyJ2+ibsYHNOii8ROfX78SBKpEAgr/9V0LBpPtYGo=
+Subject: [PATCH 2/2] page cache: Mask off unwanted GFP flags
+Date: Tue, 10 Apr 2018 05:53:51 -0700
+Message-Id: <20180410125351.15837-2-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180410125351.15837-1-willy@infradead.org>
+References: <20180410125351.15837-1-willy@infradead.org>
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 10 Apr 2018, Christopher Lameter wrote:
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-> On Tue, 10 Apr 2018, Matthew Wilcox wrote:
->
-> > __GFP_ZERO requests that the object be initialised to all-zeroes,
-> > while the purpose of a constructor is to initialise an object to a
-> > particular pattern.  We cannot do both.  Add a warning to catch any
-> > users who mistakenly pass a __GFP_ZERO flag when allocating a slab with
-> > a constructor.
->
-> Can we move this check out of the critical paths and check for
-> a ctor and GFP_ZERO when calling the page allocator? F.e. in
-> allocate_slab()?
+The page cache has used the mapping's GFP flags for allocating
+radix tree nodes for a long time.  It took care to always mask off the
+__GFP_HIGHMEM flag, and masked off other flags in other paths, but the
+__GFP_ZERO flag was still able to sneak through.  The __GFP_DMA and
+__GFP_DMA32 flags would also have been able to sneak through if they
+were ever used.  Fix them all by using GFP_RECLAIM_MASK at the innermost
+location, and remove it from earlier in the callchain.
 
-The ctor's are run at that point from setup_object() so it makes sense.
+Fixes: 19f99cee206c ("f2fs: add core inode operations")
+Reported-by: Minchan Kim <minchan@kernel.org>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: stable@vger.kernel.org
+---
+ mm/filemap.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index c2147682f4c3..1a4bfc5ed3dc 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -785,7 +785,7 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
+ 	VM_BUG_ON_PAGE(!PageLocked(new), new);
+ 	VM_BUG_ON_PAGE(new->mapping, new);
+ 
+-	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
++	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
+ 	if (!error) {
+ 		struct address_space *mapping = old->mapping;
+ 		void (*freepage)(struct page *);
+@@ -841,7 +841,7 @@ static int __add_to_page_cache_locked(struct page *page,
+ 			return error;
+ 	}
+ 
+-	error = radix_tree_maybe_preload(gfp_mask & ~__GFP_HIGHMEM);
++	error = radix_tree_maybe_preload(gfp_mask & GFP_RECLAIM_MASK);
+ 	if (error) {
+ 		if (!huge)
+ 			mem_cgroup_cancel_charge(page, memcg, false);
+@@ -1574,8 +1574,7 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t offset,
+ 		if (fgp_flags & FGP_ACCESSED)
+ 			__SetPageReferenced(page);
+ 
+-		err = add_to_page_cache_lru(page, mapping, offset,
+-				gfp_mask & GFP_RECLAIM_MASK);
++		err = add_to_page_cache_lru(page, mapping, offset, gfp_mask);
+ 		if (unlikely(err)) {
+ 			put_page(page);
+ 			page = NULL;
+@@ -2378,7 +2377,7 @@ static int page_cache_read(struct file *file, pgoff_t offset, gfp_t gfp_mask)
+ 		if (!page)
+ 			return -ENOMEM;
+ 
+-		ret = add_to_page_cache_lru(page, mapping, offset, gfp_mask & GFP_KERNEL);
++		ret = add_to_page_cache_lru(page, mapping, offset, gfp_mask);
+ 		if (ret == 0)
+ 			ret = mapping->a_ops->readpage(file, page);
+ 		else if (ret == -EEXIST)
+-- 
+2.16.3
