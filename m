@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx481YmtQOcAf5GeG9GaSJ4SIFD8gMNFmPLgPBzUP0sEY5y3t+PwCf10q1eCb/m6fqvGtn0EY
-ARC-Seal: i=1; a=rsa-sha256; t=1523399523; cv=none;
+X-Google-Smtp-Source: AIpwx4/qLHxSobbRlO8x178ngAyOrZhTpexnMdId4HeOlVBX2EpUSOsFRa0z0hKLrXYD+RMpANuy
+ARC-Seal: i=1; a=rsa-sha256; t=1523399521; cv=none;
         d=google.com; s=arc-20160816;
-        b=TJqLXcSe+Ld52P0CVz9TGcjE0ojt9rVw1ukC8mxRKXZc1zygijhhep8Rg7mRap7DuE
-         lCdFM7dY0xSnuOoVsRfu8yhFXTiqxKKAIHM/KgpNSpM/s/OKPAxuTpP5C5Tvj6Hx1r8w
-         MOF+9M6iJxqQH8wM+iO2iqFL6Mg5m8XEWxE2W6FvuKeKNQNuPUy/SNf996LvfUBxbqJI
-         SeGw8OuCOeaORKIXszFXu3VjYQomh3owms5ame8N6o2CCmedVrbm+41vNXJmml2yHRJf
-         xEn+fDuYMkmLt3469WTh5SFkPaD/u7OVNDckV0LW1PDy8OdyL2zDZKGZtz0j9vo4JOka
-         FxNQ==
+        b=oFiqDfI67cp+9vdCSYHdJy8WZeBX5MVRRbhmgDP1PAzRnxMpazwITNEnBNl6z4s7+F
+         5BHwjyDAJ32VvUGLmRtNfMU7rAHrYLaK/rX8P0/MDC5JFf0KWMgLgDSrSemesofAlnFM
+         tdUtN7gV0+IbO1PqXgAxsZ8jkb2UgjvFVJY2TsM+3hsV603IBFxyCkpTPQm8LKsBd7Hi
+         iCXMnk5TQrZh4Ck7k4+JD9Jf5XCr8Xith7lvlutdZR9zolxMUcwv/tJkAS76Aa4EKXXS
+         ScItUfB9sx4VQrG7UT5sciqKQj66Nv9OSSvJCJn9JXwEf0ZN2ASig3Zsv+lsCPlUvrOQ
+         E+Wg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=KhCvgzBvwswP0ub4eHfCb7cbkmt8CWKolP2CDmoTBek=;
-        b=xCCTddyJJCK6TnHiakOs59X/YHI5Ik3UbdGrXEAdPj/HX8wewuPXkL8WFygGcPPhws
-         4ySbP7sw6jylMz4513U7lwXnsKILHATj4JvUjsLNJPCoZFOWmnkVbIGY2PgdiwzwGrKc
-         dXYhNvTmcf17ddB1H2JY5auUfcYxEcmlMYpl89pDMyLtbz+zimE1zgTHMULF7+c0zsT3
-         H+zeuK4mNhLJ0xCiJi7+xXbcQZg2axAR0DCx+D6DTSHJSbxipQW/FO/gx3lBfqp95qVf
-         zV2Y7mH22wIVdSHeG6S78VZ0dXo2goPtVGEcKPQneDXAHbokWd+3A1XUiCEbMbLp9mah
-         2zXw==
+        bh=PkY8W+jRy2pZbvXheFNLb1XzPj9JuNkSrXrDIq1aViU=;
+        b=LvustHvxMjMgJmSe8AwoFmaz5BsbWyao3wqtZ41jWLklXvkF8Wfji1hb0X5ejO6vL2
+         CJUw/5WF2nkHNbXT6VWQRJzsTiIKCG+BENeoH0NVut6WJWM7Dx8OercxYJgbn+/g+nOa
+         qDLhHSCWEu1a1SQBDS/BbONy2Y2MChyyV/isRN7vjl88iMo55qHdu22Lpj571TGvnxzU
+         46z2Hg1WIwwyjCLd/Gh8IC+XgV9nUvkfVc9/+T844UB6v7CJ3HPv1ED2S7D8luV0aPhJ
+         XZwe2CdmCZZSdSjJv0Bw5MZC9eqTspbI0RDuQB8mE2phT3fb7YP1JzCESUuLxvjJX0Fa
+         0Xbg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Miguel Fadon Perlines <mfadon@teldat.com>,
-	David Ahern <dsa@cumulusnetworks.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 121/168] arp: fix arp_filter on l3slave devices
-Date: Wed, 11 Apr 2018 00:24:23 +0200
-Message-Id: <20180410212805.710092323@linuxfoundation.org>
+	Emanuel Czirai <xftroxgpx@protonmail.com>,
+	Borislav Petkov <bp@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ashok Raj <ashok.raj@intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>
+Subject: [PATCH 4.15 120/168] x86/microcode: Fix CPU synchronization routine
+Date: Wed, 11 Apr 2018 00:24:22 +0200
+Message-Id: <20180410212805.671434030@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399683900973342?=
-X-GMAIL-MSGID: =?utf-8?q?1597400179442984979?=
+X-GMAIL-THRID: =?utf-8?q?1597400176287333962?=
+X-GMAIL-MSGID: =?utf-8?q?1597400176287333962?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,39 +52,162 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Miguel Fadon Perlines <mfadon@teldat.com>
+From: Borislav Petkov <bp@suse.de>
 
+commit bb8c13d61a629276a162c1d2b1a20a815cbcfbb7 upstream.
 
-[ Upstream commit 58b35f27689b5eb514fc293c332966c226b1b6e4 ]
+Emanuel reported an issue with a hang during microcode update because my
+dumb idea to use one atomic synchronization variable for both rendezvous
+- before and after update - was simply bollocks:
 
-arp_filter performs an ip_route_output search for arp source address and
-checks if output device is the same where the arp request was received,
-if it is not, the arp request is not answered.
+  microcode: microcode_reload_late: late_cpus: 4
+  microcode: __reload_late: cpu 2 entered
+  microcode: __reload_late: cpu 1 entered
+  microcode: __reload_late: cpu 3 entered
+  microcode: __reload_late: cpu 0 entered
+  microcode: __reload_late: cpu 1 left
+  microcode: Timeout while waiting for CPUs rendezvous, remaining: 1
 
-This route lookup is always done on main route table so l3slave devices
-never find the proper route and arp is not answered.
+CPU1 above would finish, leave and the others will still spin waiting for
+it to join.
 
-Passing l3mdev_master_ifindex_rcu(dev) return value as oif fixes the
-lookup for l3slave devices while maintaining same behavior for non
-l3slave devices as this function returns 0 in that case.
+So do two synchronization atomics instead, which makes the code a lot more
+straightforward.
 
-Fixes: 613d09b30f8b ("net: Use VRF device index for lookups on TX")
-Signed-off-by: Miguel Fadon Perlines <mfadon@teldat.com>
-Acked-by: David Ahern <dsa@cumulusnetworks.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Also, since the update is serialized and it also takes quite some time per
+microcode engine, increase the exit timeout by the number of CPUs on the
+system.
+
+That's ok because the moment all CPUs are done, that timeout will be cut
+short.
+
+Furthermore, panic when some of the CPUs timeout when returning from a
+microcode update: we can't allow a system with not all cores updated.
+
+Also, as an optimization, do not do the exit sync if microcode wasn't
+updated.
+
+Reported-by: Emanuel Czirai <xftroxgpx@protonmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Emanuel Czirai <xftroxgpx@protonmail.com>
+Tested-by: Ashok Raj <ashok.raj@intel.com>
+Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
+Link: https://lkml.kernel.org/r/20180314183615.17629-2-bp@alien8.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/arp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/arp.c
-+++ b/net/ipv4/arp.c
-@@ -437,7 +437,7 @@ static int arp_filter(__be32 sip, __be32
- 	/*unsigned long now; */
- 	struct net *net = dev_net(dev);
+---
+ arch/x86/kernel/cpu/microcode/core.c |   68 +++++++++++++++++++++--------------
+ 1 file changed, 41 insertions(+), 27 deletions(-)
+
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -517,7 +517,29 @@ static int check_online_cpus(void)
+ 	return -EINVAL;
+ }
  
--	rt = ip_route_output(net, sip, tip, 0, 0);
-+	rt = ip_route_output(net, sip, tip, 0, l3mdev_master_ifindex_rcu(dev));
- 	if (IS_ERR(rt))
- 		return 1;
- 	if (rt->dst.dev != dev) {
+-static atomic_t late_cpus;
++static atomic_t late_cpus_in;
++static atomic_t late_cpus_out;
++
++static int __wait_for_cpus(atomic_t *t, long long timeout)
++{
++	int all_cpus = num_online_cpus();
++
++	atomic_inc(t);
++
++	while (atomic_read(t) < all_cpus) {
++		if (timeout < SPINUNIT) {
++			pr_err("Timeout while waiting for CPUs rendezvous, remaining: %d\n",
++				all_cpus - atomic_read(t));
++			return 1;
++		}
++
++		ndelay(SPINUNIT);
++		timeout -= SPINUNIT;
++
++		touch_nmi_watchdog();
++	}
++	return 0;
++}
+ 
+ /*
+  * Returns:
+@@ -527,30 +549,16 @@ static atomic_t late_cpus;
+  */
+ static int __reload_late(void *info)
+ {
+-	unsigned int timeout = NSEC_PER_SEC;
+-	int all_cpus = num_online_cpus();
+ 	int cpu = smp_processor_id();
+ 	enum ucode_state err;
+ 	int ret = 0;
+ 
+-	atomic_dec(&late_cpus);
+-
+ 	/*
+ 	 * Wait for all CPUs to arrive. A load will not be attempted unless all
+ 	 * CPUs show up.
+ 	 * */
+-	while (atomic_read(&late_cpus)) {
+-		if (timeout < SPINUNIT) {
+-			pr_err("Timeout while waiting for CPUs rendezvous, remaining: %d\n",
+-				atomic_read(&late_cpus));
+-			return -1;
+-		}
+-
+-		ndelay(SPINUNIT);
+-		timeout -= SPINUNIT;
+-
+-		touch_nmi_watchdog();
+-	}
++	if (__wait_for_cpus(&late_cpus_in, NSEC_PER_SEC))
++		return -1;
+ 
+ 	spin_lock(&update_lock);
+ 	apply_microcode_local(&err);
+@@ -558,15 +566,22 @@ static int __reload_late(void *info)
+ 
+ 	if (err > UCODE_NFOUND) {
+ 		pr_warn("Error reloading microcode on CPU %d\n", cpu);
+-		ret = -1;
+-	} else if (err == UCODE_UPDATED) {
++		return -1;
++	/* siblings return UCODE_OK because their engine got updated already */
++	} else if (err == UCODE_UPDATED || err == UCODE_OK) {
+ 		ret = 1;
++	} else {
++		return ret;
+ 	}
+ 
+-	atomic_inc(&late_cpus);
+-
+-	while (atomic_read(&late_cpus) != all_cpus)
+-		cpu_relax();
++	/*
++	 * Increase the wait timeout to a safe value here since we're
++	 * serializing the microcode update and that could take a while on a
++	 * large number of CPUs. And that is fine as the *actual* timeout will
++	 * be determined by the last CPU finished updating and thus cut short.
++	 */
++	if (__wait_for_cpus(&late_cpus_out, NSEC_PER_SEC * num_online_cpus()))
++		panic("Timeout during microcode update!\n");
+ 
+ 	return ret;
+ }
+@@ -579,12 +594,11 @@ static int microcode_reload_late(void)
+ {
+ 	int ret;
+ 
+-	atomic_set(&late_cpus, num_online_cpus());
++	atomic_set(&late_cpus_in,  0);
++	atomic_set(&late_cpus_out, 0);
+ 
+ 	ret = stop_machine_cpuslocked(__reload_late, NULL, cpu_online_mask);
+-	if (ret < 0)
+-		return ret;
+-	else if (ret > 0)
++	if (ret > 0)
+ 		microcode_check();
+ 
+ 	return ret;
