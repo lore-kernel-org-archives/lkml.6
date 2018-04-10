@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49+mTu5J/4yZIvYDKsPgTIXW8vrvT2VvB2AZ9EoRdwDLIa9ux+Au5MdeDskOZ8omO7SKJr0
-ARC-Seal: i=1; a=rsa-sha256; t=1523399635; cv=none;
+X-Google-Smtp-Source: AIpwx48E5610wsAdCTSw/TRhbJ0PyepLwGJZJaeoUs9IDfFy+dPEkNeOL+YO+QVH/XxbQHseTYQT
+ARC-Seal: i=1; a=rsa-sha256; t=1523399632; cv=none;
         d=google.com; s=arc-20160816;
-        b=nuVc/Ta9Gk0pXBYcJzpJxj0t+ZBck+6eSWHjpe8f36OiuqLtzExlG52dxd4tA/ce9g
-         ENQ7M/gO2GXvrXxMzHG+0VHZ3Ak7Yn/JIwc98WfuqUqzBGjXSsEF85s8MTxzur0iyvL2
-         xI+iIH7zHYgRfL9+j46ULQZhfvlRwviA6RcXTrDOq6FzLGNh1gV57EkRyqclQLO51HmP
-         /O42i+CF7PyR1iCZy8SPiiIllGsycNJ6tc7AbSBsrhVlYkqNXx5iisI82/bRRuQZxsmw
-         GuEw13jXjtXJTqGC8zgtsK4re6jwnUJnhyxxK4bTqgCXGMqTJ9tfD+oFv+9NMs7fduUJ
-         56uQ==
+        b=uFdNetSDTyAzZaaR6CVjaOwRCQ18x569jlStA71ru2/RkE3o+GluA9MQiBr0n0E89B
+         gJgia5JcBf0V4hqjPHCY1BRJk7JYTDyUY08xMdetO43sFdIw1KdpGzX35O8hZ0sb/igq
+         P7qOzGW13HzRKvjqztyRbpx5C1hUmMiDZgUHb9SGmlr2/I5EaVdPSegY4BDITFioyYUQ
+         o4I8Ywn+o8bC+Z8JGaUtPBhv0YMCZ/zXqnQUtlyp38SRD1vOlQ9/QDkjpei+/q55MLyd
+         dPtvc8PJAXWp4gf9vQk+euW6towQkzoDDj729O7V2WL4h9plRMY8y7XAtQYjWxG/k+KI
+         rM5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=q4w6EhEtUcbmyopTXlsNjGVQYI2G5o27coycGzFbfd8=;
-        b=EssJ49gvCDCPRmcheCWReD57q8Ejpj7/L5KV/adr7MFxb8hYozO7PqduGzMnbjEpKd
-         G7X8Bt7bQbbIrqfQ8gsopnTDJeAT3nvkSNkMXtvazwYLDQ+umINlu1ca1W8a3nUvEFjP
-         TjGWGSGWGpfsAhKHNbuFWRiK211lwqCPNoD69apBhs/FT1SxS109DClbixy+w9NF2r1t
-         IDLXVSXTHZ8d/nj6okis3gvmX8XIp09dvH7JPxHXvuHApGK/Y2Wg8VFN7PScvN1+28Jy
-         MBK5gehSLEE0AEhDcaWsgGzzSjIJqS3Zd/UfQVtJEufvcKiEmjNTHcB6QWCNI+auQuGS
-         jKXw==
+        bh=6RmVIAweZhH9uPgsknS6DH4T6HxtW1DSZ/S8JDTSmDY=;
+        b=FflbRm7EX15JewPfd/Tv3k2oFSiKZorq2ClbpXrbJKX4woltbaXvdZ1AAdHm+Bsx3S
+         ycXZNa2JYE2rKWBgS4+eT32iK3kk4/iu01aJOSAkntX9ObgHfRB4XaF4D8jNt0XgIwwI
+         m8EZ6r91pPfPJPH1UpCkvAA/0O8eUdUPECmXut3Vd6PWfQY9zQ13OwH+YtMh+R+oKGfn
+         j7+F0UUSMRfZAlJFkFGHItZHShNA3Y+Pg4J5r+h/cJ1jVqrT5ITTiCa/TeQyVZgXhXLT
+         1or8rmFs8qcwXvlfrMOlQyL5lqWu/3GMkgyog6nFPF8YJjX1OtJhayfa2eq2hfNl05vq
+         HQZw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,20 +29,19 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Shiraz Saleem <shiraz.saleem@intel.com>,
 	Jason Gunthorpe <jgg@mellanox.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 002/138] i40iw: Correct Q1/XF object count equation
-Date: Wed, 11 Apr 2018 00:23:12 +0200
-Message-Id: <20180410212902.368192805@linuxfoundation.org>
+Subject: [PATCH 4.14 001/138] i40iw: Fix sequence number for the first partial FPDU
+Date: Wed, 11 Apr 2018 00:23:11 +0200
+Message-Id: <20180410212902.284736406@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399800260711493?=
-X-GMAIL-MSGID: =?utf-8?q?1597400296524803641?=
+X-GMAIL-THRID: =?utf-8?q?1597399796931292081?=
+X-GMAIL-MSGID: =?utf-8?q?1597400293061675611?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,33 +52,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Shiraz Saleem <shiraz.saleem@intel.com>
 
 
-[ Upstream commit fe99afd1febd74e0ef1fed7e3283f09effe1f4f0 ]
+[ Upstream commit df8b13a1b23356d01dfc4647a5629cdb0f4ce566 ]
 
-Lower Inbound RDMA Read Queue (Q1) object count by a factor of 2
-as it is incorrectly doubled. Also, round up Q1 and Transmit FIFO (XF)
-object count to power of 2 to satisfy hardware requirement.
+Partial FPDU processing is broken as the sequence number
+for the first partial FPDU is wrong due to incorrect
+Q2 buffer offset. The offset should be 64 rather than 16.
 
-Fixes: 86dbcd0f12e9 ("i40iw: add file to handle cqp calls")
+Fixes: 786c6adb3a94 ("i40iw: add puda code")
 Signed-off-by: Shiraz Saleem <shiraz.saleem@intel.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/i40iw/i40iw_ctrl.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/i40iw/i40iw_d.h    |    1 +
+ drivers/infiniband/hw/i40iw/i40iw_puda.c |    2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_ctrl.c
-@@ -3875,8 +3875,10 @@ enum i40iw_status_code i40iw_config_fpm_
- 		hmc_info->hmc_obj[I40IW_HMC_IW_APBVT_ENTRY].cnt = 1;
- 		hmc_info->hmc_obj[I40IW_HMC_IW_MR].cnt = mrwanted;
+--- a/drivers/infiniband/hw/i40iw/i40iw_d.h
++++ b/drivers/infiniband/hw/i40iw/i40iw_d.h
+@@ -93,6 +93,7 @@
+ #define RDMA_OPCODE_MASK        0x0f
+ #define RDMA_READ_REQ_OPCODE    1
+ #define Q2_BAD_FRAME_OFFSET     72
++#define Q2_FPSN_OFFSET          64
+ #define CQE_MAJOR_DRV           0x8000
  
--		hmc_info->hmc_obj[I40IW_HMC_IW_XF].cnt = I40IW_MAX_WQ_ENTRIES * qpwanted;
--		hmc_info->hmc_obj[I40IW_HMC_IW_Q1].cnt = 4 * I40IW_MAX_IRD_SIZE * qpwanted;
-+		hmc_info->hmc_obj[I40IW_HMC_IW_XF].cnt =
-+			roundup_pow_of_two(I40IW_MAX_WQ_ENTRIES * qpwanted);
-+		hmc_info->hmc_obj[I40IW_HMC_IW_Q1].cnt =
-+			roundup_pow_of_two(2 * I40IW_MAX_IRD_SIZE * qpwanted);
- 		hmc_info->hmc_obj[I40IW_HMC_IW_XFFL].cnt =
- 			hmc_info->hmc_obj[I40IW_HMC_IW_XF].cnt / hmc_fpm_misc->xf_block_size;
- 		hmc_info->hmc_obj[I40IW_HMC_IW_Q1FL].cnt =
+ #define I40IW_TERM_SENT 0x01
+--- a/drivers/infiniband/hw/i40iw/i40iw_puda.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_puda.c
+@@ -1376,7 +1376,7 @@ static void i40iw_ieq_handle_exception(s
+ 	u32 *hw_host_ctx = (u32 *)qp->hw_host_ctx;
+ 	u32 rcv_wnd = hw_host_ctx[23];
+ 	/* first partial seq # in q2 */
+-	u32 fps = qp->q2_buf[16];
++	u32 fps = *(u32 *)(qp->q2_buf + Q2_FPSN_OFFSET);
+ 	struct list_head *rxlist = &pfpdu->rxlist;
+ 	struct list_head *plist;
+ 
