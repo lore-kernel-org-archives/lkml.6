@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49F5/CSjFEzEuE1tmB6jeVUC9H+sF7UiEXfhBE3yzy/i7c/dkIsYZo3zvZuQBFuWuU9aUnZ
-ARC-Seal: i=1; a=rsa-sha256; t=1523399607; cv=none;
+X-Google-Smtp-Source: AIpwx49RuMpmcObrt5O08RSDeYf/pVifW5TiM5TOQKyPJIME9MMR0JHXCv7yLlgg08yazwG/1Fmv
+ARC-Seal: i=1; a=rsa-sha256; t=1523399604; cv=none;
         d=google.com; s=arc-20160816;
-        b=Dh/Eaz+YvAYoWiCMc4XOjSnsvTaK1EonH9qv7d8Nzsph6io85yddma2Q5/M8Vt7lbZ
-         XMdm/HjyByGePD5wLx59gvmszsn6LUcQa6IbdQHakdk6n02PuLpBoTKvGYT4oFezl+ay
-         dGH87lDXmME8VjevTsrds9yZBPdcbsPYFZW3sNMLRzg5er3fZtOR80d2FoFfmiDWW7p5
-         XCikV3bjPOvycnj52fZh5T6oJYGCGT+uLPqQSr5sOPqf7Dr+OWA5lJ92UPDRWl/6hK8u
-         bejap80gA0u/jqhzDE+ifbX6tun5QZ6Tk0htqjKT2wj5SRlz1n/L8VdIIH7r9hOVekGw
-         rkAw==
+        b=qRKCcvDF+BBziaiyqxLKlVJMLudkWJCCEMZCYNtzOPDZ9TEqgtIhiIQs9h76tebtFu
+         CUETW6xBLRiYxGTR31mp7HTblp1V34pctkH/VD+8VNHovdlpsKDxma0Dx6B0WgfjlKjg
+         KOVrp3TC0hRI4QltfU48/ofzfNn4bZO58lZzq9vT6yJzJ3QAK9QybMQmiC3rqa9wWwNA
+         EVsduk1cYK94CbR5BFp/T80rsnqda453m/6mjQhV6RjLU8VoqIAElhMbYU8QzBhgXnce
+         tVYJj8CilZkZH6bremF1mj4twCjXzpD99kbjS98eB40zEagnjKMpG4HwmNEjVgJFjHZe
+         GkkQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2jAhZYT/2fTTZEmvKn3+3TwA3M3JPWkIfYJRvND8fs4=;
-        b=gxWHmCygjXLu8OzPRantDbezEBEHCEwcuoAJaZFCUiIBi6lAXR9v94yVknoQwYzi9B
-         gDFlGJoWRsa68N7hpUJz1vS7DpA9jfVwvbiuVZJP4x45A6XGoHDgVoXhhKhZkE07nX1i
-         ts6MgssIh0LqovnT/WdaLDDmUz3TU0vVRThm7htLges/ylBHaKPZlZdmfRjU+DCLQVv5
-         dUJkdPVg3NrVeciuRQv9dyOejtQUeSg6SYcEcSau61drJPBlWXgzHdqTiv2lLmp4Idb3
-         VHCHZlI3f4wZ9VYtKdFYybzN1QTwq+qyBYYEYLKssAkAZ1bkVp9qQK2vPxz62AiwA0Vb
-         vsVw==
+        bh=Gc899m3NPxXKll5a68wg9nzbGR5GHlBAuUUAMOrAZlU=;
+        b=kGJ1vi5gMMpKecOHCaZNyMvNZlje9sGQY43/bFJ+Aj+CHBZH5Yi69igEfeK0lQxk31
+         aAjhQYslEtpTEsuDJ327SUHSzviwlZ83aWM1/VrX9mHZMVqUGtB9Jkch9CelCfuG+M1P
+         WewydH288t1nWYVpVPcb1DIGsG1KawPL+ZnhoijUK88hSTbsYTiktUErLtHcUCrRl3tI
+         KFQ03/plS19hmaBLrfB3qcQfjKaVx/+TsajGL230SFFBnvasWq0uPLwCN2/mpdmi4zgX
+         bTUXf7rtBI6giuOFuhh4jrhwqbUdctJTX78pE5PT9Inh2WdsXTrl8OKeq4lNYHP+YEp/
+         /E1A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jianbo Liu <jianbol@mellanox.com>,
-	Roi Dayan <roid@mellanox.com>,
-	Or Gerlitz <ogerlitz@mellanox.com>,
-	Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.15 157/168] net/mlx5e: Dont override vport admin link state in switchdev mode
-Date: Wed, 11 Apr 2018 00:24:59 +0200
-Message-Id: <20180410212807.770093779@linuxfoundation.org>
+	Tom Herbert <tom@quantonium.net>,
+	David Lebrun <dlebrun@google.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 156/168] ipv6: sr: fix seg6 encap performances with TSO enabled
+Date: Wed, 11 Apr 2018 00:24:58 +0200
+Message-Id: <20180410212807.720578017@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400266858760846?=
-X-GMAIL-MSGID: =?utf-8?q?1597400266858760846?=
+X-GMAIL-THRID: =?utf-8?q?1597400263793116012?=
+X-GMAIL-MSGID: =?utf-8?q?1597400263793116012?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,60 +50,94 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jianbo Liu <jianbol@mellanox.com>
+From: David Lebrun <dlebrun@google.com>
 
 
-The vport admin original link state will be re-applied after returning
-back to legacy mode, it is not right to change the admin link state value
-when in switchdev mode.
+[ Upstream commit 5807b22c9164a21cd1077a9bc587f0bba361f72d ]
 
-Use direct vport commands to alter logical vport state in netdev
-representor open/close flows rather than the administrative eswitch API.
+Enabling TSO can lead to abysmal performances when using seg6 in
+encap mode, such as with the ixgbe driver. This patch adds a call to
+iptunnel_handle_offloads() to remove the encapsulation bit if needed.
 
-Fixes: 20a1ea674783 ('net/mlx5e: Support VF vport link state control for SRIOV switchdev mode')
-Signed-off-by: Jianbo Liu <jianbol@mellanox.com>
-Reviewed-by: Roi Dayan <roid@mellanox.com>
-Reviewed-by: Or Gerlitz <ogerlitz@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Before:
+root@comp4-seg6bpf:~# iperf3 -c fc00::55
+Connecting to host fc00::55, port 5201
+[  4] local fc45::4 port 36592 connected to fc00::55 port 5201
+[ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
+[  4]   0.00-1.00   sec   196 KBytes  1.60 Mbits/sec   47   6.66 KBytes
+[  4]   1.00-2.00   sec   304 KBytes  2.49 Mbits/sec  100   5.33 KBytes
+[  4]   2.00-3.00   sec   284 KBytes  2.32 Mbits/sec   92   5.33 KBytes
+
+After:
+root@comp4-seg6bpf:~# iperf3 -c fc00::55
+Connecting to host fc00::55, port 5201
+[  4] local fc45::4 port 43062 connected to fc00::55 port 5201
+[ ID] Interval           Transfer     Bandwidth       Retr  Cwnd
+[  4]   0.00-1.00   sec  1.03 GBytes  8.89 Gbits/sec    0    743 KBytes
+[  4]   1.00-2.00   sec  1.03 GBytes  8.87 Gbits/sec    0    743 KBytes
+[  4]   2.00-3.00   sec  1.03 GBytes  8.87 Gbits/sec    0    743 KBytes
+
+Reported-by: Tom Herbert <tom@quantonium.net>
+Fixes: 6c8702c60b88 ("ipv6: sr: add support for SRH encapsulation and injection with lwtunnels")
+Signed-off-by: David Lebrun <dlebrun@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_rep.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ net/ipv6/seg6_iptunnel.c |   16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-@@ -611,7 +611,6 @@ static int mlx5e_rep_open(struct net_dev
- 	struct mlx5e_priv *priv = netdev_priv(dev);
- 	struct mlx5e_rep_priv *rpriv = priv->ppriv;
- 	struct mlx5_eswitch_rep *rep = rpriv->rep;
--	struct mlx5_eswitch *esw = priv->mdev->priv.eswitch;
- 	int err;
+--- a/net/ipv6/seg6_iptunnel.c
++++ b/net/ipv6/seg6_iptunnel.c
+@@ -16,6 +16,7 @@
+ #include <linux/net.h>
+ #include <linux/module.h>
+ #include <net/ip.h>
++#include <net/ip_tunnels.h>
+ #include <net/lwtunnel.h>
+ #include <net/netevent.h>
+ #include <net/netns/generic.h>
+@@ -211,11 +212,6 @@ static int seg6_do_srh(struct sk_buff *s
  
- 	mutex_lock(&priv->state_lock);
-@@ -619,8 +618,9 @@ static int mlx5e_rep_open(struct net_dev
- 	if (err)
- 		goto unlock;
+ 	tinfo = seg6_encap_lwtunnel(dst->lwtstate);
  
--	if (!mlx5_eswitch_set_vport_state(esw, rep->vport,
--					  MLX5_ESW_VPORT_ADMIN_STATE_UP))
-+	if (!mlx5_modify_vport_admin_state(priv->mdev,
-+			MLX5_QUERY_VPORT_STATE_IN_OP_MOD_ESW_VPORT,
-+			rep->vport, MLX5_ESW_VPORT_ADMIN_STATE_UP))
- 		netif_carrier_on(dev);
+-	if (likely(!skb->encapsulation)) {
+-		skb_reset_inner_headers(skb);
+-		skb->encapsulation = 1;
+-	}
+-
+ 	switch (tinfo->mode) {
+ 	case SEG6_IPTUN_MODE_INLINE:
+ 		if (skb->protocol != htons(ETH_P_IPV6))
+@@ -224,10 +220,12 @@ static int seg6_do_srh(struct sk_buff *s
+ 		err = seg6_do_srh_inline(skb, tinfo->srh);
+ 		if (err)
+ 			return err;
+-
+-		skb_reset_inner_headers(skb);
+ 		break;
+ 	case SEG6_IPTUN_MODE_ENCAP:
++		err = iptunnel_handle_offloads(skb, SKB_GSO_IPXIP6);
++		if (err)
++			return err;
++
+ 		if (skb->protocol == htons(ETH_P_IPV6))
+ 			proto = IPPROTO_IPV6;
+ 		else if (skb->protocol == htons(ETH_P_IP))
+@@ -239,6 +237,8 @@ static int seg6_do_srh(struct sk_buff *s
+ 		if (err)
+ 			return err;
  
- unlock:
-@@ -633,11 +633,12 @@ static int mlx5e_rep_close(struct net_de
- 	struct mlx5e_priv *priv = netdev_priv(dev);
- 	struct mlx5e_rep_priv *rpriv = priv->ppriv;
- 	struct mlx5_eswitch_rep *rep = rpriv->rep;
--	struct mlx5_eswitch *esw = priv->mdev->priv.eswitch;
- 	int ret;
++		skb_set_inner_transport_header(skb, skb_transport_offset(skb));
++		skb_set_inner_protocol(skb, skb->protocol);
+ 		skb->protocol = htons(ETH_P_IPV6);
+ 		break;
+ 	case SEG6_IPTUN_MODE_L2ENCAP:
+@@ -262,8 +262,6 @@ static int seg6_do_srh(struct sk_buff *s
+ 	ipv6_hdr(skb)->payload_len = htons(skb->len - sizeof(struct ipv6hdr));
+ 	skb_set_transport_header(skb, sizeof(struct ipv6hdr));
  
- 	mutex_lock(&priv->state_lock);
--	(void)mlx5_eswitch_set_vport_state(esw, rep->vport, MLX5_ESW_VPORT_ADMIN_STATE_DOWN);
-+	mlx5_modify_vport_admin_state(priv->mdev,
-+			MLX5_QUERY_VPORT_STATE_IN_OP_MOD_ESW_VPORT,
-+			rep->vport, MLX5_ESW_VPORT_ADMIN_STATE_DOWN);
- 	ret = mlx5e_close_locked(dev);
- 	mutex_unlock(&priv->state_lock);
- 	return ret;
+-	skb_set_inner_protocol(skb, skb->protocol);
+-
+ 	return 0;
+ }
+ 
