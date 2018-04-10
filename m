@@ -1,89 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752125AbeDJS02 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 14:26:28 -0400
-Received: from foss.arm.com ([217.140.101.70]:41404 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752064AbeDJS0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 14:26:25 -0400
-Date: Tue, 10 Apr 2018 19:26:39 +0100
-From: Will Deacon <will.deacon@arm.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, boqun.feng@gmail.com,
-        catalin.marinas@arm.com,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH 2/2] locking/qspinlock: Limit # of spins in
- _Q_PENDING_VAL wait loop
-Message-ID: <20180410182639.GI15514@arm.com>
-References: <1523297332-22720-1-git-send-email-longman@redhat.com>
- <1523297332-22720-2-git-send-email-longman@redhat.com>
+        id S1752200AbeDJS0u (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 14:26:50 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:35088 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751589AbeDJS0s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 14:26:48 -0400
+X-Google-Smtp-Source: AIpwx49GsfCXlU/LHXlDOfxgkqUVZowI038A/dlGus2cEtfeOi+8DKL2g5NJIrBsYSaxmscCopjmGw==
+Date: Tue, 10 Apr 2018 11:27:29 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Loic PALLARDY <loic.pallardy@st.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH 2/3] rpmsg: Only invoke announce_create for rpdev with
+ endpoints
+Message-ID: <20180410182729.GB1510@tuxbook-pro>
+References: <20180327210643.3436-1-bjorn.andersson@linaro.org>
+ <20180327210643.3436-3-bjorn.andersson@linaro.org>
+ <3c952b4ca0cc4666ba01cf0dbe605248@SFHDAG7NODE2.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1523297332-22720-2-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <3c952b4ca0cc4666ba01cf0dbe605248@SFHDAG7NODE2.st.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Waiman,
-
-On Mon, Apr 09, 2018 at 02:08:52PM -0400, Waiman Long wrote:
-> A locker in the pending code path is doing an infinite number of spins
-> when waiting for the _Q_PENDING_VAL to _Q_LOCK_VAL transition. There
-> is a concern that lock starvation can happen concurrent lockers are
-> able to take the lock in the cmpxchg loop without queuing and pass it
-> around amongst themselves.
+On Tue 03 Apr 02:12 PDT 2018, Loic PALLARDY wrote:
+> > -----Original Message-----
+> > From: linux-remoteproc-owner@vger.kernel.org [mailto:linux-remoteproc-
+> > owner@vger.kernel.org] On Behalf Of Bjorn Andersson
+[..]
+> > diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> > index dffa3aab7178..e85d2691d2cf 100644
+> > --- a/drivers/rpmsg/rpmsg_core.c
+> > +++ b/drivers/rpmsg/rpmsg_core.c
+> > @@ -442,7 +442,7 @@ static int rpmsg_dev_probe(struct device *dev)
+> >  		goto out;
+> >  	}
+> > 
+> > -	if (rpdev->ops->announce_create)
+> > +	if (ept && rpdev->ops->announce_create)
 > 
-> To ensure forward progress while still taking advantage of using
-> the pending code path without queuing, the code is now modified
-> to do a limited number of spins before aborting the effort and
-> going to queue itself.
+> This check is already part of virtio_rpmsg.c (see line 341)
+> 	/* need to tell remote processor's name service about this channel ? */
+> 	if (rpdev->announce && rpdev->ept &&
+> 	    virtio_has_feature(vrp->vdev, VIRTIO_RPMSG_F_NS)) {
+
+The introduction of rpdev->ept in this check was done by Henri, as he
+was implementing rpmsg_char support for virtio_rpmsg:
+
+b2599ebffb2d ("rpmsg: virtio_rpmsg_bus: fix announce for devices without endpoint")
+
+It's there because the rpmsg_device will not have a primary endpoint and
+as such there's no communication channel to announce. We could add this
+check in each implementation of announce, but I think it's a common
+issue.
+
 > 
-> Ideally, the spinning times should be at least a few times the typical
-> cacheline load time from memory which I think can be down to 100ns or
-> so for each cacheline load with the newest systems or up to several
-> hundreds ns for older systems.
+> should it be part of qcom_smd driver too? (but each implementation will duplicate checks)
+> Or may have a generic check in the core including rpdev->announce as well (and doing virtio_rpmsg.c clean-up)
 > 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  kernel/locking/qspinlock.c | 19 +++++++++++++++++--
->  1 file changed, 17 insertions(+), 2 deletions(-)
+
+I think we want to remove the ept check in virtio_rpmsg, to reduce that
+part of the duplication at least.
+
+> Change will become:
+> 	if (rpdev->announce && ept && rpdev->ops->announce_create)
 > 
-> diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
-> index 634a49b..35367cc 100644
-> --- a/kernel/locking/qspinlock.c
-> +++ b/kernel/locking/qspinlock.c
-> @@ -82,6 +82,15 @@
->  #endif
->  
->  /*
-> + * The pending bit spinning loop count.
-> + * This parameter can be overridden by another architecture specific
-> + * constant. Default is 512.
-> + */
-> +#ifndef _Q_PENDING_LOOP
-> +#define _Q_PENDING_LOOP	(1 << 9)
-> +#endif
 
-I really dislike heuristics like this because there's never a good number
-to choose and it almost certainly varies between systems and workloads
-rather than just by architecture. However, I've also not managed to come
-up with something better.
+That might make sense, let's see what Wendy comes up with related to
+rpmsg_char and supporting Linux-side services, as I suspect that this
+handling might be affected.
 
-If I rewrite your code slightly to look like:
-
-	if (val == _Q_PENDING_VAL) {
-		int cnt = _Q_PENDING_LOOP;
-		val = atomic_cond_read_relaxed(&lock->val, (VAL != _Q_PENDING_VAL) || !cnt--);
-	}
-
-then architectures that implement atomic_cond_read_relaxed as something
-more interesting than a spinning loop will probably be happy with
-_Q_PENDING_LOOP == 1;
-
-I'll post a v2 tomorrow with that change, and I'll add your stat patch to
-the series too so that everything is kept together.
-
-Will
+Regards,
+Bjorn
