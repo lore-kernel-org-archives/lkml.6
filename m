@@ -1,124 +1,190 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3296075-1523345824-2-13690369361284514519
+X-Cyrus-Session-Id: sloti22d1t05-3054136-1523341780-2-11619715619450754342
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.249, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523345824; b=iUHaCYZTrYnL+LOQLy69sdR6iGs268HFeDVrNBMc6IlVH0kgqi
-    0dOOrnaw6W6UCgNrPqgEeSDeu2UAp0trk5KdmA5Xnj4TutmCDbelI3qdmlnaRo8h
-    YL8UqjJKs+o/bErDCGr9H+6cjT5FFc/VzANN1qQRdIPtGybKjCtSJIRewU0r3n8n
-    A/tzQTRKrhhG5s1M8zZ8KI94vbmoMSuOUjxsp/eHen3dLgZvCSRjYuFQfFidjeYs
-    7lePW5TZM9xQ3sX89xO8TOT9EHOz6Cni2I9OQHnWWClWywC2B9B8GE6xVnz8oSXn
-    bGRDnriAe4jeVEMweyzAC0Ws05pzF+s+30/Q==
+    1523341780; b=oqmi16zv1cbu+UGkEOrgsyh5tgWUTj2RZI8QVy5AU7d+cwCaei
+    iZpxaiMffst8cUB2oGDnStmMOpA3IhEhXpuEfQ620PkWOWLmnD/YQVPhVXW/p830
+    w+X3d7OxzJSbjJTq7yfDSM/I9WZdxlfZVAyLbMLI4Fk1wftoDepcanm7euJnQGBk
+    VcOxGg5W+c2+cTKRO9c5j+YX3ufHGemgoIelgOce+wCT8hiiYeitg2DW17azACSx
+    7I1CrtY/NTpdo6ghYxpLZaHFFyPhZxnJk43HCZOGAL/WTCORcojq9IYQBG52gln8
+    sTS/sJy3XXLCvlY5o0oRix3rrktxT8o4r+xA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1523345824; bh=rkyMR7QuBTJwz8XQxBGzK7u0CL3cF8
-    SVFBCjzdOIENQ=; b=sQxNq9Jri57lj0rEMbiDtpriJTX1/0bAU9zRsh74qfudNv
-    0cizUEZt0Nc9kpP5ACLnx/1DggEQ+sjtBIWOICG/d7NWq4HAd/DjRBsGbjcYpb8d
-    mHxTsw9iEKXDt0XEDd/1xOpkAyfrUPPjLMPAYPmHYF7qYaFdbH+qVTj/06quOqpw
-    xZDj8QLHHLJRgzjBXQ+WvPaPf3Bd7Y306oZrPCHo1JJlXjcDDBzrYXOZUv8puNil
-    4G9mvOK6E+wwjr5fQS3Q8qB5Jeh4IAbyy0SVrIyy8nJUeynX1ShWdq9oug8GVTq/
-    cV2eknqvCtaPoC2kSa+uLk7EmzDg0jdMidMyDT/Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=OM606hmR x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :references:content-type:content-transfer-encoding:mime-version
+    :sender:list-id; s=fm2; t=1523341780; bh=2EfFTx2wVu5kW98VWrw+fva
+    aIxksX6WusPP/GiHmahI=; b=nNBJ3XMrF1PdXGWkTkAGWRv6jlEBUIwyWNOwhsv
+    LJkwEXxsXaPfEE+P3xgqIU1E6qp+oHNNI+d2tib6J/Nwf3rBfT3CrdYYhSjQQKJz
+    kW9Ew9nQZr7cNwcwhOR9i529ckDNV43V7BNMVKPJhYzXkiV8LeXM9w9qxvybHfXs
+    zXSAcjTVjEuGUa/kKFKsPVby+IwPyJIkDD57cf8BzjpDXKBGuVE0HoZjhkJu3fQ3
+    oJSkKTtHB58+wddqKFpLRyBsJcj8Fm/1SXj43wDeKNSTgAJcVyDBdUCLTQ58rdFs
+    LnQ5+9LDUv5nrMByuDVI0q9tjQmDnLTbENXr4GneD42PFYg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=synopsys.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NkYCiESS;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=synopsys.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=OM606hmR x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=synopsys.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NkYCiESS;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=synopsys.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDdwMCw8Izj1ZOKkHBc9a6i6IOLvzejP3DH21io9J+T8uBSkLB+TpHAkV4NmBcQy3rSUITQLJSthJYZDZzIoD9VvzO/AzYccTilfZtNsmCx5Ax9kDfMh
-    GfY5YpqknuJfC0VW3NtB9hjhlJIyTVF3gXRmht1e1htCvEmAmS0BCCYZlsx16jJAjrfaFZ5+XYNkBtDDYmRxkKpEkYnJn1wE5zhqNHFyNxnEFfX3vl/OHJTt
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=tmjX-nCzVX8A:10
-    a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
-    a=edgWQxouFUk1NSNC0jgA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfHv0VY7omrZ0S2iLC74hJlxp7n+klSUa4AyvQnCOzjpLaoAS3DKe5+aeb+8Fhi15iLzKabipNXEjR9Q4D+VBDg67EQnwjO1vktR19YnUg/0p5zi6y9w0
+    KrGLAgnQLgVBuaXzSAeuLJHQDcb4Rb4f5LwmKuXmchy6CksEogz+CQOgx/yBYfCIY5Z608UNZ5At8Qb8IR0clz6iqqs2pQnj1yjFH7coh8GmsuOckDIxVOCV
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=NMaeLcIL3LwA:10 a=kj9zAlcOel0A:10
+    a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10 a=jIQo8A4GAAAA:8 a=VwQbUJbxAAAA:8
+    a=ciVnQoJJoVIaF_P-oXsA:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
+    a=Lf5xNeLK5dgiOs8hzIjU:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752182AbeDJHgu (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 03:36:50 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45362 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751931AbeDJHgt (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Tue, 10 Apr 2018 03:36:49 -0400
-X-Google-Smtp-Source: AIpwx4/RQK173kruTXuXdQgvidfTMD015/Xn+dpJ7P2yDii1KYQMRMUSq0IwUBXPMNjkN+p1GA9qsw==
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 1/2] usb: isp1760: Replace mdelay with msleep in isp1760_init_core
-Date: Tue, 10 Apr 2018 15:36:40 +0800
-Message-Id: <1523345800-29129-1-git-send-email-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        id S1751820AbeDJG30 convert rfc822-to-8bit (ORCPT
+        <rfc822;greg@kroah.com>); Tue, 10 Apr 2018 02:29:26 -0400
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:51374 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751589AbeDJG3Z (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 10 Apr 2018 02:29:25 -0400
+From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+To: Felipe Balbi <balbi@kernel.org>,
+        Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
+        Roger Quadros <rogerq@ti.com>
+CC: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] usb: dwc3: Prevent indefinite sleep in
+ _dwc3_set_mode during suspend/resume
+Thread-Topic: [PATCH v2] usb: dwc3: Prevent indefinite sleep in
+ _dwc3_set_mode during suspend/resume
+Thread-Index: AQHTt7VttcDOmDIowUqzUI1Hi/JpmA==
+Date: Tue, 10 Apr 2018 06:29:20 +0000
+Message-ID: <410670D7E743164D87FA6160E7907A560113AE789A@am04wembxb.internal.synopsys.com>
+References: <1519730526-22274-1-git-send-email-rogerq@ti.com>
+ <a04fafee-7992-ce8b-55a9-afd4c9935462@ti.com>
+ <69517684-bd39-e945-0c9e-ccd52b8050d5@ti.com>
+ <87y3isffog.fsf@linux.intel.com>
+ <5ea0ad17-d538-72ec-ed59-004242c4cd26@ti.com>
+ <410670D7E743164D87FA6160E7907A560113ABB478@am04wembxa.internal.synopsys.com>
+ <87zi38438h.fsf@linux.intel.com>
+ <410670D7E743164D87FA6160E7907A560113ABBA4B@am04wembxa.internal.synopsys.com>
+ <87d100qwc5.fsf@linux.intel.com>
+ <410670D7E743164D87FA6160E7907A560113ABC945@am04wembxa.internal.synopsys.com>
+ <410670D7E743164D87FA6160E7907A560113ABCA0A@am04wembxa.internal.synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.70.63]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-isp1760_init_core() is never called in atomic context.
+Hi Filipe,
 
-The call chains ending up at isp1760_init_core() are:
-[1] isp1760_init_core() <- isp1760_register() <- isp1760_plat_probe()
-[2] isp1760_init_core() <- isp1760_register() <- isp1761_pci_probe()
+On 3/19/2018 5:53 PM, Minas Harutyunyan wrote:
+> Hi,
+> 
+> On 3/19/2018 3:36 PM, Minas Harutyunyan wrote:
+>> Hi,
+>>
+>> On 3/19/2018 12:55 PM, Felipe Balbi wrote:
+>>>
+>>> Hi,
+>>>
+>>> Minas Harutyunyan <Minas.Harutyunyan@synopsys.com> writes:
+>>>>>>>>> Thanks for picking this for -next.
+>>>>>>>>> Is it better to have this in v4.16-rc fixes?
+>>>>>>>>> and also stable? v4.12+
+>>>>>>>>
+>>>>>>>> Well, there was no "Fixes: foobar" or "Cc: stable" lines in the commit
+>>>>>>>> log ;-)
+>>>>>>>>
+>>>>>>>> The best we can do now, is wait for -rc1 and manually send the commit to
+>>>>>>>> stable.
+>>>>>>>>
+>>>>>>>
+>>>>>>> That's fine. Thanks.
+>>>>>>>
+>>>>>>
+>>>>>> Same issue seen in dwc3_gadget_ep_dequeue() function where also used
+>>>>>> wait_event_lock_irq() - as result infinite loop.
+>>>>>
+>>>>> how did this happen? During rmmod dwc3? Or, perhaps, after you unloaded
+>>>>> a gadget driver?
+>>>>>
+>>>> No, not during rmmod's.
+>>>> We using our internal USB testing tool. Test case; ISOC OUT, transfer
+>>>> size N frames. When host starts ISOC OUT traffic then the dwc3 based on
+>>>> "Transfer not ready" event in frame F starts transfers staring from
+>>>> frame F+4 (for bInterval=1) as result 4 requests, which already queued
+>>>> on device side, remain incomplete. Function driver on some timeout
+>>>> trying dequeue these 4 requests (without disabling EP) to complete test.
+>>>> For IN ISOC's these requests completed on MISSED ISOC event, but for
+>>>> ISOC OUT required call dequeue on some timeout.
+>>>
+>>> okay
+>>>
+>>>>>> Actually to fix this issue I updated condition of wait function
+>>>>>> from:
+>>>>>> !(dep->flags & DWC3_EP_END_TRANSFER_PENDING)
+>>>>>> to:
+>>>>>> !(dep->flags & DWC3_EP_END_TRANSFER_PENDING & DWC3_EP_ENABLED)
+>>>>>
+>>>>> you're not fixing anything. You're, essentially, removing the entire
+>>>>> end transfer pending logic.
+>>>> yes, you are right, but how to overcome this infinite loop? Replace
+>>>> wait_event_lock_irq() by  wait_event_interruptible_lock_irq_timeout()?
+>>>
+>>> The best way here would be to figure why we're missing command complete
+>>> IRQ in those cases. According to documentation, we *should* receive that
+>>> interrupt, so why is it missing?
+>>>
+>>
+>> Additional info on test. Core configuration is HS only mode, test speed
+>> HS, core version v2.90a. Maybe it will help to understand cause of issue.
+>> BTW, currently to pass above describe ISOC OUT test we just commented
+>> wait_event_lock_irq() in dwc3_gadget_ep_dequeue() function and
+>> successfully received request completion in function driver.
+>> Thanks,
+>> Minas
+>>
+> 
+> One more info: while function driver call dequeue, host periodically
+> send control read command to get status of test from function - test In
+> Progress or Finished.
+> Thanks,
+> Minas
+> 
 
-isp1760_plat_probe() is set as ".probe" in struct platform_driver.
-isp1761_pci_probe() is set as ".probe" in struct pci_driver.
-These functions are not called in atomic context.
+Your last dwc3 patch series allow us to successfully dequeuing remaining 
+requests without falling in to infinite loop.
 
-Despite never getting called from atomic context, isp1761_pci_probe()
-calls mdelay() to busily wait.
-This is not necessary and can be replaced with msleep() to
-avoid busy waiting.
-
-This is found by a static analysis tool named DCNS written by myself.
-And I also manually check it.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/usb/isp1760/isp1760-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/isp1760/isp1760-core.c b/drivers/usb/isp1760/isp1760-core.c
-index bfa402c..259c3eb 100644
---- a/drivers/usb/isp1760/isp1760-core.c
-+++ b/drivers/usb/isp1760/isp1760-core.c
-@@ -34,7 +34,7 @@ static void isp1760_init_core(struct isp1760_device *isp)
- 	/* Low-level chip reset */
- 	if (isp->rst_gpio) {
- 		gpiod_set_value_cansleep(isp->rst_gpio, 1);
--		mdelay(50);
-+		msleep(50);
- 		gpiod_set_value_cansleep(isp->rst_gpio, 0);
- 	}
- 
--- 
-1.9.1
-
+Thank you,
+Minas
