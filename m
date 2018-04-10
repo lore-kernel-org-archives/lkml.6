@@ -1,49 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752509AbeDJHTo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 03:19:44 -0400
-Received: from mga12.intel.com ([192.55.52.136]:10955 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752415AbeDJHTn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 03:19:43 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,431,1517904000";
-   d="scan'208";a="42112010"
-Date: Tue, 10 Apr 2018 10:19:35 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Jean Delvare <jdelvare@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] firmware: dmi_scan: Fix UUID length safety check
-Message-ID: <20180410071935.GW2173@lahna.fi.intel.com>
-References: <20180409145143.4daa1706@endymion>
+        id S1752137AbeDJHXG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 03:23:06 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7165 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751794AbeDJHXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 03:23:04 -0400
+Subject: Re: [PATCH] f2fs: enlarge block plug coverage
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20180404085404.82184-1-yuchao0@huawei.com>
+ <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
+ <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
+ <20180409180241.GC17558@jaegeuk-macbookpro.roam.corp.google.com>
+ <967b8819-da9a-b609-6a22-db8df5c7ec6c@huawei.com>
+ <20180410041033.GE47598@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <ff3990f2-5785-045e-30c5-62a9f8352d74@huawei.com>
+Date: Tue, 10 Apr 2018 15:22:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180409145143.4daa1706@endymion>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180410041033.GE47598@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 02:51:43PM +0200, Jean Delvare wrote:
-> The test which ensures that the DMI type 1 structure is long enough
-> to hold the UUID is off by one. It would fail if the structure is
-> exactly 24 bytes long, while that's sufficient to hold the UUID.
+On 2018/4/10 12:10, Jaegeuk Kim wrote:
+> On 04/10, Chao Yu wrote:
+>> On 2018/4/10 2:02, Jaegeuk Kim wrote:
+>>> On 04/08, Chao Yu wrote:
+>>>> On 2018/4/5 11:51, Jaegeuk Kim wrote:
+>>>>> On 04/04, Chao Yu wrote:
+>>>>>> This patch enlarges block plug coverage in __issue_discard_cmd, in
+>>>>>> order to collect more pending bios before issuing them, to avoid
+>>>>>> being disturbed by previous discard I/O in IO aware discard mode.
+>>>>>
+>>>>> Hmm, then we need to wait for huge discard IO for over 10 secs, which
+>>>>
+>>>> We found that total discard latency is rely on total discard number we issued
+>>>> last time instead of range or length discard covered. IMO, if we don't change
+>>>> .max_requests value, we will not suffer longer latency.
+>>>>
+>>>>> will affect following read/write IOs accordingly. In order to avoid that,
+>>>>> we actually need to limit the discard size.
+>>
+>> Do you mean limit discard count or discard length?
 > 
-> I don't expect this bug to cause problem in practice because all
-> implementations I have seen had length 8, 25 or 27 bytes, in line
-> with the SMBIOS specifications. But let's fix it still.
+> Both of them.
 > 
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Fixes: a814c3597a6b ("firmware: dmi_scan: Check DMI structure length")
-> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+>>
+>>>>
+>>>> If you are worry about I/O interference in between discard and rw, I suggest to
+>>>> decrease .max_requests value.
+>>>
+>>> What do you mean? This will produce more pending requests in the queue?
+>>
+>> I mean after applying this patch, we can queue more discard IOs in plug inside
+>> task, otherwise, previous issued discard in block layer can make is_idle() be false,
+>> then it can stop IO awared user to issue pending discard command.
+> 
+> Then, unplug will issue lots of discard commands, which affects the following rw
+> latencies. My preference would be issuing discard commands one by one as much as
+> possible.
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Hmm.. for you concern, we can turn down IO priority of discard from background?
+
+Thanks,
+
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>>>
+>>>>> Thanks,
+>>>>>
+>>>>>>
+>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>>>> ---
+>>>>>>  fs/f2fs/segment.c | 7 +++++--
+>>>>>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>>>> index 8f0b5ba46315..4287e208c040 100644
+>>>>>> --- a/fs/f2fs/segment.c
+>>>>>> +++ b/fs/f2fs/segment.c
+>>>>>> @@ -1208,10 +1208,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>>>  		pend_list = &dcc->pend_list[i];
+>>>>>>  
+>>>>>>  		mutex_lock(&dcc->cmd_lock);
+>>>>>> +
+>>>>>> +		blk_start_plug(&plug);
+>>>>>> +
+>>>>>>  		if (list_empty(pend_list))
+>>>>>>  			goto next;
+>>>>>>  		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
+>>>>>> -		blk_start_plug(&plug);
+>>>>>>  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
+>>>>>>  			f2fs_bug_on(sbi, dc->state != D_PREP);
+>>>>>>  
+>>>>>> @@ -1227,8 +1229,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>>>  			if (++iter >= dpolicy->max_requests)
+>>>>>>  				break;
+>>>>>>  		}
+>>>>>> -		blk_finish_plug(&plug);
+>>>>>>  next:
+>>>>>> +		blk_finish_plug(&plug);
+>>>>>> +
+>>>>>>  		mutex_unlock(&dcc->cmd_lock);
+>>>>>>  
+>>>>>>  		if (iter >= dpolicy->max_requests)
+>>>>>> -- 
+>>>>>> 2.15.0.55.gc2ece9dc4de6
+>>>>>
+>>>>> .
+>>>>>
+>>>
+>>> .
+>>>
+> 
+> .
+> 
