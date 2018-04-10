@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48LFV218YnkR14u46ciIMvU5mVvoyaPn5JBVPlAum9Q7/QZBLBblAJ7+mE/sKaYcEQpl3un
-ARC-Seal: i=1; a=rsa-sha256; t=1523399229; cv=none;
+X-Google-Smtp-Source: AIpwx48sYiod4W5Tr+0gJGlG72JoxuWc2klXdMUZ5O22rpgCzpcemz/gr8s2xT9iSVs4pXvnk4LX
+ARC-Seal: i=1; a=rsa-sha256; t=1523399227; cv=none;
         d=google.com; s=arc-20160816;
-        b=Grs/KXXBKugq0Egf6oCEJujBpwnXItPpRMqlCd6IjNsL5xDz4qkKOK/Uujs3T2qsR9
-         msLYuGajPuiyqtq6ScI/6u5d6pERhcDAfkgjuPCXbs3T7wFxG5vhHFgTwntNdoTbLOL+
-         Av2KAgt4bC7J6QoiML+NrULR/UWarBT4qz7gqwTFJ/qjn64c5t9yZ1wFmnew4vu3JX9h
-         76c4moBtnzxdE0FwE3pgbk8aHQnoDqSXFf6tpV2rg1ov0py3Nn8TVlam4qbTCmuNTwvi
-         Rhbb4skhj+8cneoaKVtSm3/aTAYOBSWt7AJGtN1IL1QxFmz+LgGiVa9DmqK5baM+kdWt
-         Dq3g==
+        b=ZzsIIpLQqmohR0/AXlRTORXrztcXSIICIef8O+d9MtW6feav9SMGHrzKwCoYSZLCRO
+         KMpk1xoj7HjPrHEb7Sz8dx7qrqvFQ00mD3hTDcZ90E9uFKPB1SMqMgbDKgBtJdaYzdqF
+         XASthNUvCSmQvawoFnuv//sdFZeLfNcngQrr1JkuBslQFKpg88ENu2hzW60y8uC8YTvG
+         FwtOfYwEJLVq2orjmo/NcE2yjkbm2EB0Z+4dFRkE8eZGMuJqP5X4PTTRu39GJr3ADG0h
+         RyAfQ6PJN0GNZL5JWlNkflBL2xZHmokGX0DRSOFIHjWb1D5meqOQMcDhK2LCODVhKmgl
+         JsGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9kzKEq3hY9krkM4+yYmMEmiTY/UYkpGZsJNELkSgF9U=;
-        b=STN24uMxvBFHLEVEFb5K+NlbVKgvAVSRfBHoWKTL+T4JsfmCr2cEqT22OynxQSQEMz
-         lDkRTb3G5vfr1DYzRDw/5gr2QMdiAfQ4BJ8fB3K2F/vP5SG229J/40KWtdY1Z3NWia6U
-         aZZAY85yhwGLx09j/cinc8LgJ9vfZqZZ+1sDUJvrAAFtIVqcHGX59aF5IHfVueAhCTcr
-         MRbYhn4Pg+y7onju9HqS4qxcmjYm+ageB6FkU4qQSEHeif0fYBY8b14Za4okeePhB+TR
-         eKVIBOrAL9GbI5awpiGotoKkXK0ARDf995DIIJTlyiDcODpCGiUmQwGhrEaY13GfmWt7
-         KG1g==
+        bh=sMxMa4LZ/ppIJ+nv7J+1CvXNPVDmPKaZ+fgEWOwKE14=;
+        b=EUsC/q3w1L1HxAVllc13bnHK+AhuQcxukOXHM04yyW0wAVn0H/iytJLs24ScGearlU
+         d0bvPEFrxybeAemgbk+lQx0jheX045i97TO6BsEWeCA9CJfKeBejKomTlaoKTSayx7+d
+         lVOPWHRieG4EVA9k8MrhHRufxYEXetM/d0RGWN/Bp6IfUpBu5HeXlFWxulIHWbpeSrhW
+         0LMeeMARC/It1TVUiDYrIdQFOO5u4ImCJffZGpFnpdCHorp5aWoxS79LVqw/AcdIuThf
+         DicaPI3bLFBsCJGiYjXgu6AfonvZuKuNj9avAufFCPDUUaG/R3Hc9IeohwNgO5bha4zU
+         POzg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Fuyun Liang <liangfuyun1@huawei.com>,
 	Peng Li <lipeng321@huawei.com>,
+	Mingguang Qu <qumingguang@huawei.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 014/168] net: hns3: fix for getting auto-negotiation state in hclge_get_autoneg
-Date: Wed, 11 Apr 2018 00:22:36 +0200
-Message-Id: <20180410212800.824613837@linuxfoundation.org>
+Subject: [PATCH 4.15 013/168] net: hns3: free the ring_data structrue when change tqps
+Date: Wed, 11 Apr 2018 00:22:35 +0200
+Message-Id: <20180410212800.774687234@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399870427815524?=
-X-GMAIL-MSGID: =?utf-8?q?1597399870427815524?=
+X-GMAIL-THRID: =?utf-8?q?1597399868116740967?=
+X-GMAIL-MSGID: =?utf-8?q?1597399868116740967?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,38 +51,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fuyun Liang <liangfuyun1@huawei.com>
+From: Peng Li <lipeng321@huawei.com>
 
 
-[ Upstream commit 27b5bf49f0924fd62d2b1ef8467b40773973da34 ]
+[ Upstream commit 99fdf6b1cadf41bb253408589788f025027274f3 ]
 
-When phy exists, we use the value of phydev.autoneg to represent the
-auto-negotiation state of hardware. Otherwise, we use the value of
-mac.autoneg to represent it.
+This patch fixes a memory leak problems in change tqps process,
+the function hns3_uninit_all_ring and hns3_init_all_ring
+may be called many times.
 
-This patch fixes for getting a error value of auto-negotiation state in
-hclge_get_autoneg().
-
-Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
-Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Mingguang Qu <qumingguang@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c |    4 ++++
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c |    4 ++++
  1 file changed, 4 insertions(+)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -2189,6 +2189,10 @@ static int hclge_get_autoneg(struct hnae
- {
- 	struct hclge_vport *vport = hclge_get_vport(handle);
- 	struct hclge_dev *hdev = vport->back;
-+	struct phy_device *phydev = hdev->hw.mac.phydev;
-+
-+	if (phydev)
-+		return phydev->autoneg;
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
+@@ -2785,8 +2785,12 @@ int hns3_uninit_all_ring(struct hns3_nic
+ 			h->ae_algo->ops->reset_queue(h, i);
  
- 	hclge_query_autoneg_result(hdev);
+ 		hns3_fini_ring(priv->ring_data[i].ring);
++		devm_kfree(priv->dev, priv->ring_data[i].ring);
+ 		hns3_fini_ring(priv->ring_data[i + h->kinfo.num_tqps].ring);
++		devm_kfree(priv->dev,
++			   priv->ring_data[i + h->kinfo.num_tqps].ring);
+ 	}
++	devm_kfree(priv->dev, priv->ring_data);
  
+ 	return 0;
+ }
