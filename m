@@ -1,143 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753301AbeDJJNY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 05:13:24 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:45516 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752389AbeDJJNW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:13:22 -0400
-X-Google-Smtp-Source: AIpwx4/9fkNfcoZcg5fGtXM6X7I0IooBMzdUsDLuMidLW6txhETDl3VFG1hXEx9OER0BRHy9NoT1Qne931sPSUpVCxA=
+        id S1753055AbeDJJOY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 05:14:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48456 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752426AbeDJJOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 05:14:23 -0400
+Date: Tue, 10 Apr 2018 11:14:21 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Petr Mladek <pmladek@suse.com>
+cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/8] livepatch: Remove Nop structures when unused
+In-Reply-To: <20180323120028.31451-7-pmladek@suse.com>
+Message-ID: <alpine.LSU.2.21.1804091632440.20943@pobox.suse.cz>
+References: <20180323120028.31451-1-pmladek@suse.com> <20180323120028.31451-7-pmladek@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180309141653.GA2871@localhost.localdomain>
-References: <1518185725-69559-1-git-send-email-wanpengli@tencent.com> <20180309141653.GA2871@localhost.localdomain>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Tue, 10 Apr 2018 17:13:21 +0800
-Message-ID: <CANRm+CzKFoo4DfdiHyBiVPYaeMpMBq2MGck+i=qC2y8xfyCgKA@mail.gmail.com>
-Subject: Re: [PATCH v2] target-i386: add KVM_HINTS_DEDICATED performance hint
-To: Eduardo Habkost <ehabkost@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3A9DUTa009573
 
-Hi Eduardo,
-2018-03-09 22:16 GMT+08:00 Eduardo Habkost <ehabkost@redhat.com>:
-> On Fri, Feb 09, 2018 at 06:15:25AM -0800, Wanpeng Li wrote:
->> From: Wanpeng Li <wanpengli@tencent.com>
->>
->> Add KVM_HINTS_DEDICATED performance hint, guest checks this feature bit
->> to determine if they run on dedicated vCPUs, allowing optimizations such
->> as usage of qspinlocks.
->>
->> Cc: Paolo Bonzini <pbonzini@redhat.com>
->> Cc: Radim Krčmář <rkrcmar@redhat.com>
->> Cc: Eduardo Habkost <ehabkost@redhat.com>
->> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
->> ---
->> v1 -> v2:
->>  * add a new feature word
->>
->>  target/i386/cpu.c | 14 ++++++++++++++
->>  target/i386/cpu.h |  3 +++
->>  target/i386/kvm.c |  4 ++++
->>  3 files changed, 21 insertions(+)
->>
->> diff --git a/target/i386/cpu.c b/target/i386/cpu.c
->> index d70954b..e2974ad 100644
->> --- a/target/i386/cpu.c
->> +++ b/target/i386/cpu.c
->> @@ -358,6 +358,20 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
->>          .cpuid_eax = KVM_CPUID_FEATURES, .cpuid_reg = R_EAX,
->>          .tcg_features = TCG_KVM_FEATURES,
->>      },
->> +    [FEAT_KVM_HINTS] = {
->> +        .feat_names = {
->> +            "hint-dedicated", NULL, NULL, NULL,
->
-> I suggest naming it "kvm-hint-dedicated", to indicate it's
-> KVM-specific.
+On Fri, 23 Mar 2018, Petr Mladek wrote:
 
-I found this feature is enabled by default w/o kvm-hint-dedicated
-parameter, any idea how to make it disabled by default?
+> Replaced patches are removed from the stack when the transition is
+> finished. It means that Nop structures will never be needed again
+> and can be removed. Why should we care?
+> 
+>   + Nop structures make false feeling that the function is patched
+>     even though the ftrace handler has no effect.
+> 
+>   + Ftrace handlers are not completely for free. They cause slowdown that
+>     might be visible in some workloads. The ftrace-related slowdown might
+>     actually be the reason why the function is not longer patched in
+>     the new cumulative patch. One would expect that cumulative patch
+>     would allow to solve these problems as well.
+> 
+>   + Cumulative patches are supposed to replace any earlier version of
+>     the patch. The amount of NOPs depends on which version was replaced.
+>     This multiplies the amount of scenarios that might happen.
+> 
+>     One might say that NOPs are innocent. But there are even optimized
+>     NOP instructions for different processor, for example, see
+>     arch/x86/kernel/alternative.c. And klp_ftrace_handler() is much
+>     more complicated.
+> 
+>   + It sounds natural to clean up a mess that is not longer needed.
+>     It could only be worse if we do not do it.
+> 
+> This patch allows to unpatch and free the dynamic structures independently
+> when the transition finishes.
+> 
+> The free part is a bit tricky because kobject free callbacks are called
+> asynchronously. We could not wait for them easily. Fortunately, we do
+> not have to. Any further access can be avoided by removing them from
+> the dynamic lists.
+> 
+> Finally, the patch become the first on the stack when enabled. The replace
+> functionality will not longer be needed. Let's clear patch->replace to
+> avoid the special handling when it is eventually disabled/enabled again.
+> 
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> ---
+>  include/linux/livepatch.h     |  6 ++++++
+>  kernel/livepatch/core.c       | 42 +++++++++++++++++++++++++++++++++++-------
+>  kernel/livepatch/core.h       |  1 +
+>  kernel/livepatch/patch.c      | 31 ++++++++++++++++++++++++++-----
+>  kernel/livepatch/patch.h      |  1 +
+>  kernel/livepatch/transition.c | 26 +++++++++++++++++++++++++-
+>  6 files changed, 94 insertions(+), 13 deletions(-)
+> 
+> diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
+> index d6e6d8176995..1635b30bb1ec 100644
+> --- a/include/linux/livepatch.h
+> +++ b/include/linux/livepatch.h
+> @@ -172,6 +172,9 @@ struct klp_patch {
+>  #define klp_for_each_object_static(patch, obj) \
+>  	for (obj = patch->objs; obj->funcs || obj->name; obj++)
+>  
+> +#define klp_for_each_object_safe(patch, obj, tmp_obj)		\
+> +	list_for_each_entry_safe(obj, tmp_obj, &patch->obj_list, node)
+> +
+>  #define klp_for_each_object(patch, obj)	\
+>  	list_for_each_entry(obj, &patch->obj_list, node)
+>  
+> @@ -180,6 +183,9 @@ struct klp_patch {
+>  	     func->old_name || func->new_func || func->old_sympos; \
+>  	     func++)
+>  
+> +#define klp_for_each_func_safe(obj, func, tmp_func)			\
+> +	list_for_each_entry_safe(func, tmp_func, &obj->func_list, node)
+> +
+>  #define klp_for_each_func(obj, func)	\
+>  	list_for_each_entry(func, &obj->func_list, node)
 
-Regards,
-Wanpeng Li
+Is there a benefit of the newly added iterators?
 
->
-> If there are no objections, I can rename it while applying.
->
-> With the rename:
->
-> Reviewed-by: Eduardo Habkost <ehabkost@redhat.com>
->
->
->> +            NULL, NULL, NULL, NULL,
->> +            NULL, NULL, NULL, NULL,
->> +            NULL, NULL, NULL, NULL,
->> +            NULL, NULL, NULL, NULL,
->> +            NULL, NULL, NULL, NULL,
->> +            NULL, NULL, NULL, NULL,
->> +            NULL, NULL, NULL, NULL,
->> +        },
->> +        .cpuid_eax = KVM_CPUID_FEATURES, .cpuid_reg = R_EDX,
->> +        .tcg_features = TCG_KVM_FEATURES,
->> +    },
->>      [FEAT_HYPERV_EAX] = {
->>          .feat_names = {
->>              NULL /* hv_msr_vp_runtime_access */, NULL /* hv_msr_time_refcount_access */,
->> diff --git a/target/i386/cpu.h b/target/i386/cpu.h
->> index f91e37d..9f73692 100644
->> --- a/target/i386/cpu.h
->> +++ b/target/i386/cpu.h
->> @@ -475,6 +475,7 @@ typedef enum FeatureWord {
->>      FEAT_8000_0008_EBX, /* CPUID[8000_0008].EBX */
->>      FEAT_C000_0001_EDX, /* CPUID[C000_0001].EDX */
->>      FEAT_KVM,           /* CPUID[4000_0001].EAX (KVM_CPUID_FEATURES) */
->> +    FEAT_KVM_HINTS,     /* CPUID[4000_0001].EDX */
->>      FEAT_HYPERV_EAX,    /* CPUID[4000_0003].EAX */
->>      FEAT_HYPERV_EBX,    /* CPUID[4000_0003].EBX */
->>      FEAT_HYPERV_EDX,    /* CPUID[4000_0003].EDX */
->> @@ -670,6 +671,8 @@ typedef uint32_t FeatureWordArray[FEATURE_WORDS];
->>  #define CPUID_7_0_EDX_AVX512_4FMAPS (1U << 3) /* AVX512 Multiply Accumulation Single Precision */
->>  #define CPUID_7_0_EDX_SPEC_CTRL     (1U << 26) /* Speculation Control */
->>
->> +#define KVM_HINTS_DEDICATED (1U << 0)
->> +
->>  #define CPUID_8000_0008_EBX_IBPB    (1U << 12) /* Indirect Branch Prediction Barrier */
->>
->>  #define CPUID_XSAVE_XSAVEOPT   (1U << 0)
->> diff --git a/target/i386/kvm.c b/target/i386/kvm.c
->> index ad4b159..44ee524 100644
->> --- a/target/i386/kvm.c
->> +++ b/target/i386/kvm.c
->> @@ -383,6 +383,9 @@ uint32_t kvm_arch_get_supported_cpuid(KVMState *s, uint32_t function,
->>          if (!kvm_irqchip_in_kernel()) {
->>              ret &= ~(1U << KVM_FEATURE_PV_UNHALT);
->>          }
->> +    } else if (function == KVM_CPUID_FEATURES && reg == R_EDX) {
->> +        ret |= KVM_HINTS_DEDICATED;
->> +        found = 1;
->>      }
->>
->>      /* fallback for older kernels */
->> @@ -801,6 +804,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
->>          c = &cpuid_data.entries[cpuid_i++];
->>          c->function = KVM_CPUID_FEATURES | kvm_base;
->>          c->eax = env->features[FEAT_KVM];
->> +        c->edx = env->features[FEAT_KVM_HINTS];
->>      }
->>
->>      cpu_x86_cpuid(env, 0, 0, &limit, &unused, &unused, &unused);
->> --
->> 2.7.4
->>
->
-> --
-> Eduardo
+Miroslav
