@@ -1,62 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752234AbeDJGrw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 02:47:52 -0400
-Received: from mail-pf0-f179.google.com ([209.85.192.179]:43973 "EHLO
-        mail-pf0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751856AbeDJGrv (ORCPT
+        id S1752289AbeDJGsJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 02:48:09 -0400
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:36870 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752078AbeDJGsI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 02:47:51 -0400
-X-Google-Smtp-Source: AIpwx4+96w2fHUui5FqFfCPNAAW3RpWRWqdwi3Emy1km1HK2VezpRXBc+n9Gcg4cRyfGno2KMNGLmw==
-Date: Mon, 9 Apr 2018 23:47:48 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Andi Kleen <ak@linux.intel.com>
-cc: Laurent Dufour <ldufour@linux.vnet.ibm.com>,
-        paulmck@linux.vnet.ibm.com, peterz@infradead.org,
-        akpm@linux-foundation.org, kirill@shutemov.name, mhocko@kernel.org,
-        dave@stgolabs.net, jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v9 21/24] perf tools: Add support for the SPF perf
- event
-In-Reply-To: <20180327034936.GO13724@tassilo.jf.intel.com>
-Message-ID: <alpine.DEB.2.21.1804092346090.225864@chino.kir.corp.google.com>
-References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com> <1520963994-28477-22-git-send-email-ldufour@linux.vnet.ibm.com> <alpine.DEB.2.20.1803261443560.255554@chino.kir.corp.google.com> <20180327034936.GO13724@tassilo.jf.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 10 Apr 2018 02:48:08 -0400
+X-Google-Smtp-Source: AIpwx48YgW3l/R8tJG3VQlQjqiimC8ua4knJhXeLqTIBRzjgDvEnX+Qievhpb0PRLxVyYQtF6CT2lQ==
+Reply-To: christian.koenig@amd.com
+Subject: Re: AMD graphics performance regression in 4.15 and later
+To: Jean-Marc Valin <jmvalin@mozilla.com>, christian.koenig@amd.com,
+        airlied@linux.ie, alexander.deucher@amd.com, Felix.Kuehling@amd.com,
+        labbott@redhat.com, akpm@linux-foundation.org, michel.daenzer@amd.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <c743b220-0395-eef3-4405-a21cdbe8eee1@mozilla.com>
+ <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com>
+ <a96df0b8-fc22-4438-646d-2f0096dfcc84@mozilla.com>
+ <6cebabff-908f-5ebe-4252-760773c4cd6f@amd.com>
+ <312ed341-7052-a61e-331f-d1e8fd5b477e@mozilla.com>
+ <d136f940-d807-d2f7-30a7-8617f130912d@amd.com>
+ <77866d66-2728-8295-d7ee-9975dbf64b99@mozilla.com>
+ <55e1712b-6567-50c5-3789-53dd1ccddb94@gmail.com>
+ <76a30815-28e3-e798-03de-a3cdfade4c64@mozilla.com>
+From: =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <cb69fe04-988d-b337-057d-589cb0622e84@gmail.com>
+Date: Tue, 10 Apr 2018 08:48:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <76a30815-28e3-e798-03de-a3cdfade4c64@mozilla.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Mar 2018, Andi Kleen wrote:
+Am 09.04.2018 um 17:17 schrieb Jean-Marc Valin:
+> On 04/09/2018 05:42 AM, Christian König wrote:
+>> Backporting all the detection logic is to invasive, but you could just
+>> go into drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c and forcefull use the
+>> other code path.
+>>
+>> Just look out for "#ifdef CONFIG_SWIOTLB" checks and disable those.
+> Do you mean just taking the 4.15 code as is and replacing
+> "#ifdef CONFIG_SWIOTLB" with "#if 0" in
+> drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c or are you talking about using a
+> different version of drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c ?
 
-> > Aside: should there be a new spec_flt field for struct task_struct that 
-> > complements maj_flt and min_flt and be exported through /proc/pid/stat?
-> 
-> No. task_struct is already too bloated. If you need per process tracking 
-> you can always get it through trace points.
-> 
+Yes, exactly. The code then won't work any more on some ARMs or systems 
+with more than 1TB of memory, but I don't think you care about that :)
 
-Hi Andi,
+Christian.
 
-We have
-
-	count_vm_event(PGFAULT);
-	count_memcg_event_mm(vma->vm_mm, PGFAULT);
-
-in handle_mm_fault() but not counterpart for spf.  I think it would be 
-helpful to be able to determine how much faulting can be done 
-speculatively if there is no per-process tracking without tracing.
+>
+> 	Jean-Marc
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
