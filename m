@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48Pm3v4nU8TlBHVTtbFu/yYVjPIT2LXVYH5JY1qUQ4wG3lHbZPbqsrKC7/dX25+JS22mvs9
-ARC-Seal: i=1; a=rsa-sha256; t=1523399168; cv=none;
+X-Google-Smtp-Source: AIpwx4+ctp74kvXsmXg/xI+JT2aLeinZ/ApMtjROsmXCFTCT2E6y5Oa/w+2ds5YtVlMQVZhtvMw8
+ARC-Seal: i=1; a=rsa-sha256; t=1523399165; cv=none;
         d=google.com; s=arc-20160816;
-        b=XuTjoLX8BHlgK+1Sy1hRtLCpTsWA2uFaAbmQxhQQ9+fiprYprphzJqD50kw1uQhyrD
-         KFAjglUKZENYO2IMd/wba7NqyhYKndKSJOfT00KXPwYg2VvLny42VzPJOkePWi8AqQVe
-         Y0eC6cZde9v2mRFsklv43P0vMwgF3ohGhy73HaJ8Ndc1hPE8crVMs4P4s4FT0YUCu9w6
-         i+LsN0X5SAS6Q/cWRX5xms+W6YYL9/0tDzGMBvOfe9w3L/IWgzdI6rD9dddNY3uT756C
-         n+Gn/BTK4bDeQkglW8Qq0mh0W34jeq3yf/3Jxc1MC1rIvHz2I4F1cJbhdp5QtP+jTP9P
-         CjVQ==
+        b=y4BmMYeUPkxfzz8gQuSNiFPNdzhcdd3gK07f1RUMj17qcsNNEOpz68DNIEyPMaPbjb
+         UQXR04JhLjo2Lwu7jcLRE3lY4p2uZRl3zxqia9Q1MD1YPyPc8Jh2dghgItHGckTL4w18
+         fFR4ksRsUV41QfsE99QC6BX4WpwZi1KbLSxov0ZoypeYr6rqRyt4UqFoNIGPKbscS+/s
+         u4m8zkTC7CpaHjvCAly67AsXAZCpOz3C+O59ufwgFb7EH81zJC2mx9MW+Sb4Af7xcf4f
+         QO94a6eldjVn/8FKOwRzA8Ozggp6M0JyF3hYd4TpBVx7HUZ7mCe8hmLZtaNkGwW9YD+P
+         cJGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AgXgSZP9UiAZgJbaqBybBWl3VNu8YVX/gxhK7uPLF5s=;
-        b=E6dqhNutVNrxXt40KOXEdyLGBUJ/1xCvY/23vOSudC/GPAuYk8mmVcXX7l+uNVLiW1
-         KwxRwRzedxcIBuEPw1Frtqjb7urC3wr3/fkEKMWS/hk0n2oNadDsHE6N0ShS14OyFkib
-         U0GNJoZGuDTFtM/Uf/SBoZoiIahqQUCY/vhDur4CSb7gkmE8BqRPmm8bCHeGwoq1x48T
-         ZfQBeKJgut8QfjUUU1NdWuiuHbhJfPNZYBDI557GvlYeuzPwU9wjMTbTQwG6pBfMvf/t
-         h2ESQERW7YrvqCTLAd9B2IjOouxPwLB5GRzORb1UrOz9ZUf/b4YBD1CM3bZwU27mgcq1
-         5Jug==
+        bh=x1Z6LvZBUksDknGWv+/jMGFoPM8RbwFg2CKjMhGTskQ=;
+        b=BXicl1BAjQnqMARWbGINlXTfoYQyVo/9iQTN20hp8Xod9PR1iJ+u8WPur9LMYCqG9I
+         aaA7BkznOVjlCrJtxAnomi/7RmVMYJrsbrXhUTLwfHYhphzKBZ0lGHo6RmVSmUHlA61v
+         oaXD5KGzuLAHbq8f6RrLVkScugnbF3iAh1XTW5ixRG+ZhfRUmbiooex+fcSpRz8gbz/w
+         BsBHY8fZwAgArwN/YfCgf68lueY0+baLcOIzAc4s2XyVeawAbTuToP7bUYggZdKAAxpn
+         KIrqMAb+rnai2ltuMERW9VV/9ijR4mFInScRpdf7338FaW+rwqiSoMvCAo9CCOYkoZse
+         EzyA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
+	Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
+	Shiraz Saleem <shiraz.saleem@intel.com>,
+	Jason Gunthorpe <jgg@mellanox.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 004/168] clk: meson: mpll: use 64-bit maths in params_from_rate
-Date: Wed, 11 Apr 2018 00:22:26 +0200
-Message-Id: <20180410212800.398693109@linuxfoundation.org>
+Subject: [PATCH 4.15 003/168] i40iw: Validate correct IRD/ORD connection parameters
+Date: Wed, 11 Apr 2018 00:22:25 +0200
+Message-Id: <20180410212800.327539566@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399806964398934?=
-X-GMAIL-MSGID: =?utf-8?q?1597399806964398934?=
+X-GMAIL-THRID: =?utf-8?q?1597399804350146233?=
+X-GMAIL-MSGID: =?utf-8?q?1597399804350146233?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,43 +51,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Tatyana Nikolova <tatyana.e.nikolova@intel.com>
 
 
-[ Upstream commit 86aacdca66774051cbc0958110a48074b57a060b ]
+[ Upstream commit ce9ce74145aa6814a370a9ff4f5a1d719baaced1 ]
 
-"rem * SDM_DEN" can easily overflow on the 32-bit Meson8 and Meson8b
-SoCs if the "remainder" (after the division operation) is greater than
-262143Hz. This is likely to happen since the input clock for the MPLLs
-on Meson8 and Meson8b is "fixed_pll", which is running at a rate of
-2550MHz.
+Casting to u16 before validating IRD/ORD connection
+parameters could cause recording wrong IRD/ORD values
+in the cm_node. Validate the IRD/ORD parameters as
+they are passed by the application before recording
+them.
 
-One example where this was observed to be problematic was the Ethernet
-clock calculation (which takes MPLL2 as input). When requesting a rate
-of 125MHz there is a remainder of 2500000Hz.
-The resulting MPLL2 rate before this patch was 127488329Hz.
-The resulting MPLL2 rate after this patch is 124999103Hz.
-
-Commit b609338b26f5 ("clk: meson: mpll: use 64bit math in
-rate_from_params") already fixed a similar issue in rate_from_params.
-
-Fixes: 007e6e5c5f01d3 ("clk: meson: mpll: add rw operation")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Fixes: f27b4746f378 ("i40iw: add connection management code")
+Signed-off-by: Tatyana Nikolova <tatyana.e.nikolova@intel.com>
+Signed-off-by: Shiraz Saleem <shiraz.saleem@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/meson/clk-mpll.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/i40iw/i40iw_cm.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/clk/meson/clk-mpll.c
-+++ b/drivers/clk/meson/clk-mpll.c
-@@ -98,7 +98,7 @@ static void params_from_rate(unsigned lo
- 		*sdm = SDM_DEN - 1;
- 	} else {
- 		*n2 = div;
--		*sdm = DIV_ROUND_UP(rem * SDM_DEN, requested_rate);
-+		*sdm = DIV_ROUND_UP_ULL((u64)rem * SDM_DEN, requested_rate);
+--- a/drivers/infiniband/hw/i40iw/i40iw_cm.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_cm.c
+@@ -125,7 +125,8 @@ static u8 i40iw_derive_hw_ird_setting(u1
+  * @conn_ird: connection IRD
+  * @conn_ord: connection ORD
+  */
+-static void i40iw_record_ird_ord(struct i40iw_cm_node *cm_node, u16 conn_ird, u16 conn_ord)
++static void i40iw_record_ird_ord(struct i40iw_cm_node *cm_node, u32 conn_ird,
++				 u32 conn_ord)
+ {
+ 	if (conn_ird > I40IW_MAX_IRD_SIZE)
+ 		conn_ird = I40IW_MAX_IRD_SIZE;
+@@ -3849,7 +3850,7 @@ int i40iw_connect(struct iw_cm_id *cm_id
  	}
- }
  
+ 	cm_node->apbvt_set = true;
+-	i40iw_record_ird_ord(cm_node, (u16)conn_param->ird, (u16)conn_param->ord);
++	i40iw_record_ird_ord(cm_node, conn_param->ird, conn_param->ord);
+ 	if (cm_node->send_rdma0_op == SEND_RDMA_READ_ZERO &&
+ 	    !cm_node->ord_size)
+ 		cm_node->ord_size = 1;
