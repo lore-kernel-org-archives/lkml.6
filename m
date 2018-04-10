@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/EI27sFVmMRFlwWqdUHoVFT3rdKOK1/ehFTCBAIeX8Vq41M4BUrsMvpU7cgqH7KRAMbg93
-ARC-Seal: i=1; a=rsa-sha256; t=1523399821; cv=none;
+X-Google-Smtp-Source: AIpwx49rrSaiDb2rc2d4m37ixsA/R/i9BSsGGJOb0PzlH5f1RLs2QOMkebUa6Vm29aciJ96hzI9e
+ARC-Seal: i=1; a=rsa-sha256; t=1523399818; cv=none;
         d=google.com; s=arc-20160816;
-        b=OM9zPeFZ/13kr36L08KAdadoR7gb/DfRl4AKBjzhyA8FiFXSFhymyUW4rj6iXBOAGw
-         gPzfzWBrpTCGGQUtXy7sVvbtpX/ULVQPUMIwasAy8Poyb/5f4c/SaU9Tq/Zmiyn3yNYT
-         nJbpzps77DU+5V3a4qwD3ijVVBmqZnGtawK8lKdnJEmc1s/Kc6KSYTL/yV6ZpioRdXoa
-         BV6CHFsz3ls37Afnk5JMD32xDTpwFuupqJ8h/Z7GLEpuTmquFBsUjBfDNt+9ceR6AhU5
-         soFSFSaUiwYPehUh8s1iqfCLi0IrdtByMWSgwU25x29It4pXXbIvrZ8Hk4gyb4hqYojh
-         GNeA==
+        b=fBeGgWR9SuPBqIfxjoRhTl4PZXdvNB6PBAzbpmBKwGIZzoHgfOpntVtzsoo4jsVSIV
+         kAzVxGU2xXxhR4/D9uGeLea2NagC/xuxo1Vx/9dO6pnVHjRi9aWtbLU08eBu8BQb0+DN
+         DvA3xd6xeOYJvU+k5+l3rvdz3ZndRMRRLTSAIqUZyhOKY9Y9ecWbE3RO+8iEV5z4lRqN
+         yPGzeQnq9uvqXqw5wgpqhypxYNRLXbUFn2gLAQgTFFrSrpxoLTb5XKOrQlyTulGpbL2w
+         pxFwtVT0ywYrZlGkboit+TNNz+5bobsYD/sETOu7vQChlWLMZEzL+McTyfS+llBH6w0e
+         uDdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Sg4y9PeKmgRYlPk3AGd2GgyvDQzYVtggpbswWeOfRNA=;
-        b=n1DZxbAkZXBVm6WzEr78pnbGQBi1tnV+oi/Xz1R9f89/brWC3azne+piGJoFgZcEV9
-         khju36nr96HCHzRgy8diiT0DoNEjcBP3OY/v23vdW7x9ZlFVKwJAbpcqRznLkagO77N8
-         C6JgpJt84H8JCgf/zBZrGEIoW53WZydrUrcEW2sNUD11KwddzYCnbCeVgSr6ANmmn7Q7
-         v1PimO38YsQ03R7gHWj6X7Eic8jH003WXB+jposhxdPHhspWDPJjMquqmW+A3UNWqzqF
-         W/9KG7zjoyK6KSazmn99yhHoDc9Gx63cCqLj9sf2HwmiHnOjgw9nv3tcfe1NYaWdDVJM
-         m1MQ==
+        bh=S8erZqKI4xM145zcUmy+eT2pF1c/qDFT5Cv84HnxwR4=;
+        b=eQ3nYKj5uz66zpAyt0DccytQAoCcrUHe0shgbVmfWvh80IaJ55dy4hguC9ext21aeI
+         QOpe/ZIPTKTV9yZtp07BheJo+GjbRfon8onRNlN6hCackj+LiWPytUUvUQwTkJy+c6nl
+         2KQDfegzmBpJbXsVMJ+L1b93Km4fO+dyplcszuTHe7XHHbEX6rdveRk3RCtwOe3Eb+Gj
+         TG+CVANlrXcDxO0YxMlI3KriTrTPHgti9IzoPhvhBgZpKHI5EhkCzxsAvxuJRqTng0KB
+         KOFZYcc2fdsDpSoLdWwX5JN7DeuZOM1hs1Aqusevt/Aovkxm1/4zrwnkSNoQiFu8uyy/
+         kPHw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Andrew Bowers <andrewx.bowers@intel.com>,
-	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+	Jin Yao <yao.jin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 068/138] i40evf: dont rely on netif_running() outside rtnl_lock()
-Date: Wed, 11 Apr 2018 00:24:18 +0200
-Message-Id: <20180410212910.008358359@linuxfoundation.org>
+Subject: [PATCH 4.14 046/138] perf report: Fix a no annotate browser displayed issue
+Date: Wed, 11 Apr 2018 00:23:56 +0200
+Message-Id: <20180410212907.441055486@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -42,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400039408034049?=
-X-GMAIL-MSGID: =?utf-8?q?1597400490553866741?=
+X-GMAIL-THRID: =?utf-8?q?1597400008123802873?=
+X-GMAIL-MSGID: =?utf-8?q?1597400488035440676?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,90 +55,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jacob Keller <jacob.e.keller@intel.com>
+From: Jin Yao <yao.jin@linux.intel.com>
 
 
-[ Upstream commit 44b034b406211fc103159f82b9e601e05675c739 ]
+[ Upstream commit 40c39e3046411f84bab82f66783ff3593e2bcd9b ]
 
-In i40evf_reset_task we use netif_running() to determine whether or not
-the device is currently up. This allows us to properly free queue memory
-and shut down things before we request the hardware reset.
+When enabling '-b' option in perf record, for example,
 
-It turns out that we cannot be guaranteed of netif_running() returning
-false until the device is fully up, as the kernel core code sets
-__LINK_STATE_START prior to calling .ndo_open. Since we're not holding
-the rtnl_lock(), it's possible that the driver's i40evf_open handler
-function is currently being called while we're resetting.
+  perf record -b ...
+  perf report
 
-We can't simply hold the rtnl_lock() while checking netif_running() as
-this could cause a deadlock with the i40evf_open() function.
-Additionally, we can't avoid the deadlock by holding the rtnl_lock()
-over the whole reset path, as this essentially serializes all resets,
-and can cause massive delays if we have multiple VFs on a system.
+and then browsing the annotate browser from perf report (press 'A'), it
+would fail (annotate browser can't be displayed).
 
-Instead, lets just check our own internal state __I40EVF_RUNNING state
-field. This allows us to ensure that the state is correct and is only
-set after we've finished bringing the device up.
+It's because the '.add_entry_cb' op of struct report is overwritten by
+hist_iter__branch_callback() in builtin-report.c. But this function doesn't do
+something like mapping symbols and sources. So next, do_annotate() will return
+directly.
 
-Without this change we might free data structures about device queues
-and other memory before they've been fully allocated.
+        notes = symbol__annotation(act->ms.sym);
+        if (!notes->src)
+                return 0;
 
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+This patch adds the lost code to hist_iter__branch_callback (refer to
+hist_iter__report_callback).
+
+v2:
+
+Fix a crash bug when perform 'perf report --stdio'.
+
+The reason is that we init the symbol annotation only in browser mode, it
+doesn't allocate/init resources for stdio mode.
+
+So now in hist_iter__branch_callback(), it will return directly if it's not in
+browser mode.
+
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1514284963-18587-1-git-send-email-yao.jin@linux.intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/i40evf/i40evf_main.c |   20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ tools/perf/builtin-report.c |   18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/intel/i40evf/i40evf_main.c
-+++ b/drivers/net/ethernet/intel/i40evf/i40evf_main.c
-@@ -1775,7 +1775,11 @@ static void i40evf_disable_vf(struct i40
- 
- 	adapter->flags |= I40EVF_FLAG_PF_COMMS_FAILED;
- 
--	if (netif_running(adapter->netdev)) {
-+	/* We don't use netif_running() because it may be true prior to
-+	 * ndo_open() returning, so we can't assume it means all our open
-+	 * tasks have finished, since we're not holding the rtnl_lock here.
-+	 */
-+	if (adapter->state == __I40EVF_RUNNING) {
- 		set_bit(__I40E_VSI_DOWN, adapter->vsi.state);
- 		netif_carrier_off(adapter->netdev);
- 		netif_tx_disable(adapter->netdev);
-@@ -1833,6 +1837,7 @@ static void i40evf_reset_task(struct wor
- 	struct i40evf_mac_filter *f;
- 	u32 reg_val;
- 	int i = 0, err;
-+	bool running;
- 
- 	while (test_and_set_bit(__I40EVF_IN_CLIENT_TASK,
- 				&adapter->crit_section))
-@@ -1892,7 +1897,13 @@ static void i40evf_reset_task(struct wor
- 	}
- 
- continue_reset:
--	if (netif_running(netdev)) {
-+	/* We don't use netif_running() because it may be true prior to
-+	 * ndo_open() returning, so we can't assume it means all our open
-+	 * tasks have finished, since we're not holding the rtnl_lock here.
-+	 */
-+	running = (adapter->state == __I40EVF_RUNNING);
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -162,12 +162,28 @@ static int hist_iter__branch_callback(st
+ 	struct hist_entry *he = iter->he;
+ 	struct report *rep = arg;
+ 	struct branch_info *bi;
++	struct perf_sample *sample = iter->sample;
++	struct perf_evsel *evsel = iter->evsel;
++	int err;
 +
-+	if (running) {
- 		netif_carrier_off(netdev);
- 		netif_tx_stop_all_queues(netdev);
- 		adapter->link_up = false;
-@@ -1936,7 +1947,10 @@ continue_reset:
++	if (!ui__has_annotation())
++		return 0;
++
++	hist__account_cycles(sample->branch_stack, al, sample,
++			     rep->nonany_branch_mode);
  
- 	mod_timer(&adapter->watchdog_timer, jiffies + 2);
+ 	bi = he->branch_info;
++	err = addr_map_symbol__inc_samples(&bi->from, sample, evsel->idx);
++	if (err)
++		goto out;
++
++	err = addr_map_symbol__inc_samples(&bi->to, sample, evsel->idx);
++
+ 	branch_type_count(&rep->brtype_stat, &bi->flags,
+ 			  bi->from.addr, bi->to.addr);
  
--	if (netif_running(adapter->netdev)) {
-+	/* We were running when the reset started, so we need to restore some
-+	 * state here.
-+	 */
-+	if (running) {
- 		/* allocate transmit descriptors */
- 		err = i40evf_setup_all_tx_resources(adapter);
- 		if (err)
+-	return 0;
++out:
++	return err;
+ }
+ 
+ static int process_sample_event(struct perf_tool *tool,
