@@ -1,11 +1,11 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3243332-1523345977-2-11916134510644836392
+X-Cyrus-Session-Id: sloti22d1t05-2325483-1523319391-2-9537000635617371176
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
@@ -13,102 +13,105 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523345977; b=GyihzUalpxyvrV3dm6srwVadX9jY2VK5QNFN+2sYBoajfp4B3o
-    5ULEBYZNai2Gx2SoTQoPba3KRuYE5wrjbW33GK+/SWB0ajUAZcvJ0jvN0MT3KRUa
-    I/amFSXb5DhPdW2IlFG8jcPhwtRZPyNE0LY65mDMcEAOSB/nbOTGVqz4UKlMYkXs
-    XOgDjey+oDtGl1hwk6KIacSDE4GUAa/OITdUvDQf+pRbGVFCAtL5kvHnwJx6Fwin
-    yOq3c17pKksSZrYj9M5iNPUt4I4PRi39tcYdci0NqRLVTPRMaeHMu5mq7Gg2NQaN
-    9BB9/85Gujh/s/lLIOM6fTInJDE/YELZwiNw==
+    1523319391; b=QgNktv/Dw1Vkf6w7yTolmbTwbpmxSvxZIDJGOgNZKFRgNp2wUX
+    m8A91log4/dPqnuwe+6uabC3uOJXwnVrPftaMdynS++/ihKV8DrDh3z5+Hlo05e4
+    d7ro1Gbl+5MARhduMWoGAMxTYD4yVQWrg1AqmWhn+JjLYFT+7JVQSAG04vy+bJ5S
+    qct8/Wr1swTBMNlWqzvhPLZxLcXbgq+a/9s72IIye/CHt/0z2eF3r3/BblcjJY2K
+    fMk6LO6uWnaEDORuIDJa/gxCT45xZP944P9tx62oJk4WpAgZ+X3//rroDA7+7uVY
+    2Z2jgK4se9Aqvu0KiOBhgakBcUz8W5l3VJFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523345977; bh=HxHxHF5H5qvbYOTMsPgCAvbN8FD2gb
-    bKoEnkoEFYCUs=; b=qr8gGUMQpEVkOdzxbP50qxPU+jLCwwGTQARYK6pTDD7Il6
-    Ac7XZMfHaorJpz1rA6WerkMcFw//sLLbr991dRpQGPGYbxdy9wQDhR9rW/+OgzHk
-    oJtuAWJs58NbY4IpQIk2uieQujhzEQJPHEG9Znu5ILE+pj+8SJ99ZX9lZm9WPKSN
-    U4Hs9J4z0iCr5d1Cj6Nt6SZv/YgJzCcFjBytYaSp9xm3yPEjMcCLozGncWIiJLup
-    bKbMb61E0aghTF7iT+POGxfKttkihuTx2QnDjHrKsCehvkLGUb8qPm4t3nALHMES
-    c3C+NNtCUPEe09HXVuqBZX5NArbAsrcq7QVqfykA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    :mime-version:content-type:sender:list-id; s=fm2; t=1523319391;
+    bh=Qdc2Do3jI0Q8IQPFMApByjgFdB+P7rBVw7jTcmBBhW0=; b=QP+laAgdSrA8
+    xZqO7Wv5/EGoiQTATZ5CiVTbfKlFkYl215ScCY3+pZL569cbYwLtsovKlsaJ7YHz
+    hlPM2fn3UpIh7bL/s0TUJDI9VEcfK02GjwkhUTH/OJHQ6DinGQZM3UnX6W6u+kg6
+    N0TrNpgLHWAn7WXPxLb+PLOXzmFp94R50gMb7JwNrd8RMfBdog2E3RI/MnPLWAly
+    jiAc6R3CZaIKcNE5Yrey27Y/W8MN960h1ZivRGaBsxjdhcj20t5CQfIiVQ/DwJ9H
+    wD746To8CK2musqEqmMYSrSeZUFlReFwzbiKIpKNgIBpc/fG0d8J9JT9bIoHh2CW
+    7cd4OoHZTg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=ziemianowicz.com header.i=marcin@ziemianowicz.com header.b=fQXQ51I6 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=somekey;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ziemianowicz.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ziemianowicz.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=ziemianowicz.com header.i=marcin@ziemianowicz.com header.b=fQXQ51I6 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=somekey;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ziemianowicz.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.intel.com header.result=pass header_org.domain=intel.com header_org.result=pass header_is_org_domain=no;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ziemianowicz.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMhOc0QjOGgfELu+NBDtkH8IJDUEI3BMIW+fq0TvWIG03v9pJ7AvhhjdW4ePE43uJjZjKJ9j8uCmGsjQU+g+DG3bgGSrEZCwYfhe56585jsgxfZTSPsZ
-    aiXR4isCuEVRiqbI3ILDMyh8LRs4UQMSsjpwJ6A9ezPJgPfw84Y/M3pyvOFHHJRPLI1b6OwYq3pE2guzbWJIOfTbsZT6oxIAHzCvEkr8VsAEXGnA9sczlNx+
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfG+cLOJbw5lVJn58tV02XD+AeZA6LJCEJBOmBWfb9VbjIcpRSkFVQYBfwQyuNfHlzSaI2D5vlL14jnAYMQHbxShDgT3i79BPBnWb9ToMhzQ3QDYE56td
+    aDovYvU9gNhHmnpYFL39kbi6JMMGqtwPvCUsGvGXnVAjr3db+Jopf9Lr2NFxQiuqjfieIcLTDSZCKhvjmf49sv3jmZsXsrYtG3K3jXOKBjJi4pY/tUW8MWqw
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=dRc11X9pSsvMjkvCLakA:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=0AA9OZvs-ncA:10 a=VwQbUJbxAAAA:8 a=RPNnV_h2TRwK2Bn0seEA:9 a=CjuIK1q_8ugA:10
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752330AbeDJHjK (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 03:39:10 -0400
-Received: from mga03.intel.com ([134.134.136.65]:19284 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751963AbeDJHjK (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Tue, 10 Apr 2018 03:39:10 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,431,1517904000";
-   d="scan'208";a="45638267"
-Date: Tue, 10 Apr 2018 10:39:06 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Tobias Regnery <tobias.regnery@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: ucsi: fix tracepoint related build error
-Message-ID: <20180410073906.GC10141@kuha.fi.intel.com>
-References: <20180409075517.15362-1-tobias.regnery@gmail.com>
- <20180409100153.GA10141@kuha.fi.intel.com>
- <20180409114053.GA9417@builder>
+        id S1751643AbeDJAQR (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 9 Apr 2018 20:16:17 -0400
+Received: from sender-of-o52.zoho.com ([135.84.80.217]:21329 "EHLO
+        sender-of-o52.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751367AbeDJAQP (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Mon, 9 Apr 2018 20:16:15 -0400
+Date: Mon, 9 Apr 2018 20:15:51 -0400
+From: Marcin Ziemianowicz <marcin@ziemianowicz.com>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: [PATCH v2 0/2] clk: at91: Added more information logging
+Message-ID: <20180410001551.GA62208@hak8or>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180409114053.GA9417@builder>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ZohoMailClient: External
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Tobias,
+This is a series of patches which resolves set_rate() for the PLL not
+having any effect and therefore the USB Host port not working. Also, a
+few messages were added which may be helpful in the future when others
+are working with USB clocking.
 
-On Mon, Apr 09, 2018 at 01:40:53PM +0200, Tobias Regnery wrote:
-> You are right, building a defconfig, enable the UCSI driver and disable
-> CONFIG_FTRACE indeed builds without problems. So it must be some other
-> combination of config options. Attached is the randconfig which triggers
-> the problem with linux-next from today.
-> 
-> Regardless of the root cause, building trace.c conditionally on
-> CONFIG_TRACING works and the build failure goes away. Grepping through
-> the tree this seems to be the right option to depend on, as other users
-> of tracepoints are doing the same.
+Changes since V1:
+  Added patch set cover letter
+  Shortened lines which were over >80 characters long
+  > Comment by Greg Kroah-Hartman about "from" field in email addressed
+  > Comment by Alan Stern about redundant debug lines addressed
 
-Fair enough. I'll send a fix for that.
+hak8or (2):
+  clk: at91: Added more information logging.
+  clk: at91: Fix for PLL set_rate changes not being actually written to
+    PLL peripheral bits
 
-
-Thanks,
+ drivers/clk/at91/clk-pll.c   | 14 +++++++++++++-
+ drivers/clk/at91/clk-usb.c   | 10 ++++++++--
+ drivers/usb/host/ohci-at91.c | 16 ++++++++++------
+ 3 files changed, 31 insertions(+), 9 deletions(-)
 
 -- 
-heikki
+2.17.0
+
+
