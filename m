@@ -1,125 +1,146 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3709085-1522960127-2-11750384301324411973
+X-Cyrus-Session-Id: sloti22d1t05-3892947-1523368295-2-3934440635114814982
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5,
-  T_RP_MATCHES_RCVD -0.01, LANGUAGES enda, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='iso-8859-1'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1522960126; b=EIMNYzbCeC8eNxCXCUQebma0liwoqVl6Nqfsu/hkQsXlmNnsTE
-    mdDvI0a1/ayJccyAA3Fnaabl9szmKrvZPs1wIzoM214kIj+MzIAIahSpfY9P3Dv+
-    ZbGoGSD9ETB7VJm1/EIqejyeQp5COP6n/5eq09JLrcsndmkPwxeUzQee0E73Pjnl
-    /g/AKxChQiFiYPj88dJYlEokZTHelw9iVsGbYSKGmmrqXyzOYY9yJCjnDu2CM1W6
-    7fva51c9/dYSlho60HE1+YN9Y9v5XrI7i9fdeJ5h/3LhnXTGjZpCvJPDvbkaqnPF
-    lH5x10ZDdQqGyvl8VYsHJvyyJpc3ShsAzQ7A==
+    1523368294; b=IAw7LlNF5Zhv5RwW1optO3Wi5zoCU9TWXtIxjP5cfrTMOspbsG
+    rxcpnHggILv3CiMQ7ggsRpL8LCNSXhUFjZy4GJRHC+23DSYn6owzIkgKmi/zx6qB
+    MKUFI69E83l2YbzIzpFI+J9IhpjWuBx5JJjnRwwHxHVLiw65gaYkqitt1KFN8Kj0
+    DXdI1BCWVscBoZz56hEHLBed9ekE69A91YXSr3vnDsN7n1JYxAE02+A37HJkOLk/
+    Wl8Q30bzniZx5XlaIHN54cNAjIfSJZhTsDjHUiTdb8xCQIC+ab64u8Oc4lSeMKSn
+    9OyF7+eJv+XG/7woWms1Xe/8OX1ppHI/nhNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1522960126; bh=gTuJ8r5NWwBR/5EKxtmhfJrB6wRp8N
-    8A/0G1vu8IaoY=; b=t0E+fhEoi4FCkOibNcJsTKJXm7e/YsrzHnxSX7GZg5l0b8
-    y6jzbpkFRlhrtRSI2FTLTjU0FIbLGwqJofawMGJvmDh9Nm9Kn9HtBae+ghLytlIP
-    gxi1hJjk67rHhlYzwdIGjL1B3ejYjC2iBRq2EowlGisZKMxwDSLT/XetZnorRS+j
-    hNK40dP3k6NKWgcA9EUhVX0pwo/MDJyX+fy+pAjkZ9JqZyEY17aaZh0oLLx5BUEB
-    3Mga0je4tP8WdJgSvGnSM2R0szBNSkCh287BMrVuCYgSfV3tkTre2MKYT5hcT0Rt
-    4DKcxNHZUpiiA1Cclf6+uDlof5sr8xVJokJQ758Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=awxrd.com header.i=@awxrd.com header.b=WC61Rsfz x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=Lazb3Kbt x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=awxrd.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :references:in-reply-to:content-type:content-transfer-encoding
+    :mime-version:sender:list-id; s=fm2; t=1523368294; bh=1rzxh5PIAh
+    s6ZBtPgYzbUqFJYTCUHG7K0rxgWdmOrtw=; b=CWMdEsB+jSDgLqdAAQZyxdhjc+
+    t2oUaD3O5Tdd+45z/haUf/fUX9SGiv5JiP5kyFHRmaOYspoe1EVpfRzK+j9j9ROD
+    cwMC16HOxPvT1HR2SGoP6JkjZxBGlp5GLrqcb3qgBy+MZuLGMzxkvIuhMI7kjyzD
+    LEtf+yBzBptHGrrm58hDIeM/mtRDv6C2GrrFJb5dtQxA1wqWnAzEA35m/tJBhkes
+    LmjGGmlThwNTL6Kg+Uud1XvWkUlre4c+tg+d0TCKxt3a2OsFgOHkWcg9vdge5zyu
+    1MEwX+UBD8gSfPwRjQDN4tbVrTziRSJuyJgQr8Qq81froLLaZsZm4cXrUePA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=eb5nuRSp x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=awxrd.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=awxrd.com header.i=@awxrd.com header.b=WC61Rsfz x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=Lazb3Kbt x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=awxrd.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=eb5nuRSp x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=awxrd.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfM9crwx/ZvEs0iRPVuadWAYN6eC059K+0wMYqhdNapf+gIsoVLTBL7nPGBlM0riHWctH/WnEDY9Gc0cb9NvaxkI3uBQsZztKZ+3+J1c3z+xbiav/4EfC
-    vbGAYBL8sW74+QXtszI7S4mY4cE3Llg3EIO8Sx4aMBuoR2q5oamVuCcnGsgXD/rfD/rsyVmM/wjV9ujphIgH5lXm/b5waWLq6IThcvic09Sb5/pPNN3ASTpA
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=vDLGeLTdAAAA:8
-    a=VwQbUJbxAAAA:8 a=i0eTMvnbfTUS0iVQZV4A:9 a=odJAAQQ5ToBQNitR:21
-    a=cNGU9jdt2scwjVbt:21 a=1GWREyU_VPGQROUScI6K:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfIMiy3xVzFB+Wf69paqZQpxDfuZgwnS+d8grzBd8x2g60j28gVXrj0oBjvpbnkIb0GLYAYEjBOKqXwbBGKrT5ExVv3uQdC412PAy4ZUsLK2B8U//TTM4
+    BLJsE8O62b92+Kh2H7frRhEr202WNBe4JD33MVnWE7f45ogjEunUd0XE2kwPOM5Gtp+rKJ0P5x5Sx18IZfPeh7l3zWB1AJQ85AGXaM5q6aJ0hSo8uEqYHbK+
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
+    a=CJ6425Bi3zgA:10 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=Lf-vpJhqX20A:10 a=ZNyxNIxsH9A7wj_SNroA:9 a=wPNLvfGTeEIA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750835AbeDEU2p (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 5 Apr 2018 16:28:45 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:36689 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750726AbeDEU2o (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 5 Apr 2018 16:28:44 -0400
-X-ME-Sender: <xms:_IbGWhnxUVDUG7_iRlXpDvRibQWmB74ZcDR77TStgUqIXHjmFp1GrA>
-From: David Rivshin <drivshin@awxrd.com>
-To: linux-arm-kernel@lists.infradead.org,
-        kgdb-bugreport@lists.sourceforge.net,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Rabin Vincent <rabin@rab.in>
-Subject: [PATCH] arm: kgdb: fix NUMREGBYTES so that gdb_regs[] is the correct size
-Date: Thu,  5 Apr 2018 16:09:16 -0400
-Message-Id: <20180405200916.27964-1-drivshin@awxrd.com>
-X-Mailer: git-send-email 2.14.3
+        id S1753063AbeDJNvR (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 09:51:17 -0400
+Received: from mail-bn3nam01on0135.outbound.protection.outlook.com ([104.47.33.135]:39351
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753957AbeDJNvO (ORCPT <rfc822;stable@vger.kernel.org>);
+        Tue, 10 Apr 2018 09:51:14 -0400
+From: Sasha Levin <Alexander.Levin@microsoft.com>
+To: Sasha Levin <Alexander.Levin@microsoft.com>,
+        David Rivshin <drivshin@awxrd.com>,
+        David Rivshin <DRivshin@allworx.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] arm: kgdb: fix NUMREGBYTES so that gdb_regs[] is the
+ correct size
+Thread-Topic: [PATCH] arm: kgdb: fix NUMREGBYTES so that gdb_regs[] is the
+ correct size
+Thread-Index: AQHT0NL8TGhdTvwwK0SaOeShsWUDdg==
+Date: Tue, 10 Apr 2018 13:51:12 +0000
+Message-ID: <DM5PR2101MB10326AA61D3319DBFE51CDEAFBBE0@DM5PR2101MB1032.namprd21.prod.outlook.com>
+References: <20180405200916.27964-1-drivshin@awxrd.com>
+In-Reply-To: <20180405200916.27964-1-drivshin@awxrd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1045;7:oXB/FwPZqTp4YSLun/2Wtg6NlEB7ucD29qLYWSpl63/b5b+bXEqT07nzMYxgvTRPYWiDrrVSOaQrcHGA9q9NSlmwYpAkQQQs7+00cuflSV1fp5JggmxjpvKl3KFh0KIlj95uJsKl9jClMXDv25GxJC52M9HDs4I7s28Pkp6SAR4tAwzx2b6DSoNKiv9JQj4xrJYQSpw70CTvpL/b0qhsRHBNPmBHTym1Fyn6SaJ/s1HAenas2vP8kmmd0ZjldSYK;20:ZMcsjVwFBAGkgolUAV/c9Pt+XjyIKYc0eM9wwSx4vgJrxF90fDKQZtvDR5B6rUxpL5QGPvv4UuSFQvhCFwY4vqXVFjWhSJw8/tqNT7jL6J4USgjCsGyyvez1oKN5ugzxf/acDoRtySU+lmaii0CxrqmupP9sjCEDFEPZRfErync=
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(3008032)(48565401081)(2017052603328)(7193020);SRVR:DM5PR2101MB1045;
+x-ms-traffictypediagnostic: DM5PR2101MB1045:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com;
+x-microsoft-antispam-prvs: <DM5PR2101MB1045593BB02BD3E073DAB77FFBBE0@DM5PR2101MB1045.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR2101MB1045;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB1045;
+x-forefront-prvs: 0638FD5066
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(39860400002)(396003)(376002)(366004)(189003)(199004)(6246003)(25786009)(2900100001)(4326008)(478600001)(10290500003)(33656002)(3660700001)(3280700002)(229853002)(97736004)(2906002)(8676002)(8936002)(81156014)(81166006)(14454004)(105586002)(66066001)(5660300001)(1511001)(72206003)(68736007)(106356001)(76176011)(7696005)(316002)(110136005)(102836004)(486006)(54906003)(6506007)(22452003)(99286004)(6116002)(3846002)(86362001)(8990500004)(86612001)(2501003)(26005)(5250100002)(9686003)(10090500001)(53936002)(6436002)(55016002)(7736002)(305945005)(476003)(446003)(11346002)(74316002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1045;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: uIl8l+g8n1FlGtGD2M6xc5It+V/OAwmKDsCQPObNTSChlvigsMPyQayEdxdDtRZnZOZq5QB8eVC2gOnSMF2zLGiy4XxZXeejJzAXVjCWauElzlW5y+RHnTdT+iJN1C/6YYgjqwOtWJlSQrZb6jsaGmI0LYr8zB1spPeF1qAgZjnUOavGefqT7luO+v2qgUhTY3UywmcYaZvZCsSEy0ucRbCnTdsSuBhDKwt4VU1L3TU7W1BR/j3jPMXauT5OxkVNk3vwxXLPzd+Z/oVQvwzAchW3u1FKemaDsbavhgUiawoL7Y5aJRUYVfcS2fiS9Zhn0rssoKLssc1fn4HeSOnWoa3hVEeZUTxNaDSZzscRjwx93wx+jvBTW1j8oEVGoEbmp7CNEb2iwWOHRIK7TSnn4jGVDm8lZSovM7l+pSTdbkc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 3df686bc-014f-4040-338d-08d59eea1f2f
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3df686bc-014f-4040-338d-08d59eea1f2f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Apr 2018 13:51:12.3953
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1045
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: David Rivshin <DRivshin@allworx.com>
+Hi,
 
-NUMREGBYTES (which is used as the size for gdb_regs[]) is incorrectly based
-on DBG_MAX_REG_NUM instead of GDB_MAX_REGS. DBG_MAX_REG_NUM is the number
-of total registers, while GDB_MAX_REGS is the number of 'unsigned longs'
-it takes to serialize those registers. Since FP registers require 3
-'unsigned longs' each, DBG_MAX_REG_NUM is smaller than GDB_MAX_REGS.
+[This is an automated email]
 
-This causes GDB 8.0 give the following error on connect:
-"Truncated register 19 in remote 'g' packet"
+This commit has been processed because it contains a "Fixes:" tag,
+fixing commit: 834b2964b7ab kgdb,arm: fix register dump.
 
-This also causes the register serialization/deserialization logic to
-overflow gdb_regs[], overwriting whatever follows.
+The bot has also determined it's probably a bug fixing patch. (score: 97.96=
+82)
 
-Fixes: 834b2964b7ab ("kgdb,arm: fix register dump")
-Cc: <stable@vger.kernel.org> # 2.6.37+
-Signed-off-by: David Rivshin <drivshin@allworx.com>
----
- arch/arm/include/asm/kgdb.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The bot has tested the following trees: v4.16.1, v4.15.16, v4.14.33, v4.9.9=
+3, v4.4.127.
 
-diff --git a/arch/arm/include/asm/kgdb.h b/arch/arm/include/asm/kgdb.h
-index 3b73fdcf3627a..8de1100d10674 100644
---- a/arch/arm/include/asm/kgdb.h
-+++ b/arch/arm/include/asm/kgdb.h
-@@ -77,7 +77,7 @@ extern int kgdb_fault_expected;
- 
- #define KGDB_MAX_NO_CPUS	1
- #define BUFMAX			400
--#define NUMREGBYTES		(DBG_MAX_REG_NUM << 2)
-+#define NUMREGBYTES		(GDB_MAX_REGS << 2)
- #define NUMCRITREGBYTES		(32 << 2)
- 
- #define _R0			0
+v4.16.1: Build OK!
+v4.15.16: Build OK!
+v4.14.33: Build OK!
+v4.9.93: Build OK!
+v4.4.127: Build OK!
 
-base-commit: 0adb32858b0bddf4ada5f364a84ed60b196dbcda
--- 
-2.14.3
+--
+Thanks,
+Sasha=
