@@ -1,85 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751970AbeDJCcj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 22:32:39 -0400
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:35879 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751919AbeDJCci (ORCPT
+        id S1752016AbeDJCdt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 22:33:49 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:42228 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751543AbeDJCdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 22:32:38 -0400
-X-Google-Smtp-Source: AIpwx49eu0NgqvISg7MUzt4JEXp1roeslZ7OD+e6/IoWxvfBgf49JmjGulwrCZjOzzyawgTMmqKmn3VqY1OsfI22Dr8=
+        Mon, 9 Apr 2018 22:33:47 -0400
+X-Google-Smtp-Source: AIpwx48wMVDw2q9KKrczA76UGnJuDZvuyY4kCYvKWCPGL8viHyZ6UVwOBceCsI3csBzKWW1UvQn0WA==
+Date: Tue, 10 Apr 2018 11:33:39 +0900
+From: Minchan Kim <minchan@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        Chris Fries <cfries@google.com>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Message-ID: <20180410023339.GB214542@rodete-desktop-imager.corp.google.com>
+References: <20180409015815.235943-1-minchan@kernel.org>
+ <20180409024925.GA21889@bombadil.infradead.org>
+ <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
+ <20180409111403.GA31652@bombadil.infradead.org>
+ <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
+ <7706245c-2661-f28b-f7f9-8f11e1ae932b@huawei.com>
+ <20180409144958.GA211679@rodete-laptop-imager.corp.google.com>
+ <20180409152032.GB11756@bombadil.infradead.org>
+ <20180409230409.GA214542@rodete-desktop-imager.corp.google.com>
+ <20180410011211.GA31282@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <CAGWkznEhy7Fard=6E3X_qUezXd33RdKV9CVeONWL=6EQ1bokEw@mail.gmail.com>
-References: <1523153783-20579-1-git-send-email-zhaoyang.huang@spreadtrum.com>
- <20180407234812.2bf2b24b@gandalf.local.home> <CAGWkznHVGTpvfQOvaOGP6fYDWh0Os0pYXTC3gG_qvW6mCDuybQ@mail.gmail.com>
- <20180408084717.62ee4f9e@gandalf.local.home> <CAGWkznEQbaw7HMvE1pbVDMriOL8yW74Ka5UEci4YFRdLnVbFzA@mail.gmail.com>
- <20180409094944.6399b211@gandalf.local.home> <CAGWkznEhy7Fard=6E3X_qUezXd33RdKV9CVeONWL=6EQ1bokEw@mail.gmail.com>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Tue, 10 Apr 2018 10:32:36 +0800
-Message-ID: <CAGWkznEuGCZq600XjCtp3hzgN2LrCgwSAfoLwQR7jTw5p=qHoQ@mail.gmail.com>
-Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal OOM_SCORE_ADJ_MIN
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180410011211.GA31282@bombadil.infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 8:32 AM, Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
-> On Mon, Apr 9, 2018 at 9:49 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
->> On Mon, 9 Apr 2018 08:56:01 +0800
->> Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
->>
->>> >>
->>> >>         if (oom_task_origin(task)) {
->>> >>                 points = ULONG_MAX;
->>> >>                 goto select;
->>> >>         }
->>> >>
->>> >>         points = oom_badness(task, NULL, oc->nodemask, oc->totalpages);
->>> >>         if (!points || points < oc->chosen_points)
->>> >>                 goto next;
->>> >
->>> > And what's wrong with that?
->>> >
->>> > -- Steve
->>> I think the original thought of OOM is the flag 'OOM_SCORE_ADJ_MIN' is
->>> most likely to be set by process himself via accessing the proc file,
->>> if it does so, OOM can select it as the victim. except, it is
->>> reluctant to choose the critical process to be killed, so I suggest
->>> not to set such heavy flag as OOM_SCORE_ADJ_MIN on behalf of -1000
->>> process.
->>
->> Really, I don't think tasks that are setting OOM_CORE_ADJ_MIN should be
->> allocating a lot of memory in the kernel (via ring buffer). It sounds
->> like a good way to wreck havoc on the system.
->>
->> It's basically saying, "I'm going to take up all memory, but don't kill
->> me, just kill some random user on the system".
->>
->> -- Steve
-> Sure, but the memory status is dynamic, the process could also exceed the limit
-> at the moment even it check the available memory before. We have to
-> add protection
-> for such kind of risk. It could also happen that the critical process
-> be preempted by
-> another huge memory allocating process, which may cause insufficient memory when
-> it schedule back.
+On Mon, Apr 09, 2018 at 06:12:11PM -0700, Matthew Wilcox wrote:
+> On Tue, Apr 10, 2018 at 08:04:09AM +0900, Minchan Kim wrote:
+> > On Mon, Apr 09, 2018 at 08:20:32AM -0700, Matthew Wilcox wrote:
+> > > I don't think this is something the radix tree should know about.
+> > 
+> > Because shadow entry implementation is hidden by radix tree implemetation.
+> > IOW, radix tree user cannot know how it works.
+> 
+> I have no idea what you mean.
+> 
+> > > SLAB should be checking for it (the patch I posted earlier in this
+> > 
+> > I don't think it's right approach. SLAB constructor can initialize
+> > some metadata for slab page populated as well as page zeroing.
+> > However, __GFP_ZERO means only clearing pages, not metadata.
+> > So it's different semantic. No need to mix out.
+> 
+> No, __GFP_ZERO is specified to clear the allocated memory whether
+> you're allocating from alloc_pages or from slab.  What makes no sense
+> is allocating an object from slab with a constructor *and* __GFP_ZERO.
+> They're in conflict, and slab can't fulfill both of those requirements.
 
-For bellowing scenario, process A have no intension to exhaust the
-memory, but will be likely to be selected by OOM for we set
-OOM_CORE_ADJ_MIN for it.
-process A(-1000)                                          process B
+It's a stable material. If you really think it does make sense,
+please submit patch separately.
 
-  i = si_mem_available();
-       if (i < nr_pages)
-           return -ENOMEM;
-                                                   schedule
-                                                --------------->
-allocate huge memory
-                                                <-------------
-if (user_thread)
-  set_current_oom_origin();
+> 
+> > > thread), but the right place to filter this out is in the caller of
+> > > radix_tree_maybe_preload -- it's already filtering out HIGHMEM pages,
+> > > and should filter out GFP_ZERO too.
+> > 
+> > radix_tree_[maybe]_preload is exported API, which are error-prone
+> > for out of modules or upcoming customers.
+> > 
+> > More proper place is __radix_tree_preload.
+> 
+> I could not disagree with you more.  It is the responsibility of the
+> callers of radix_tree_preload to avoid calling it with nonsense flags
+> like __GFP_DMA, __GFP_HIGHMEM or __GFP_ZERO.
 
-  for (i = 0; i < nr_pages; i++) {
-         bpage = kzalloc_node
+How about this?
+
+It would fix current problem and warn potential bugs as well.
+radix_tree_preload already has done such warning and
+radix_tree_maybe_preload has skipping for misbehaivor gfp.
+
+>From 27ecf7a009d3570d1155c528c7f08040ede68ed3 Mon Sep 17 00:00:00 2001
+From: Minchan Kim <minchan@kernel.org>
+Date: Tue, 10 Apr 2018 11:20:11 +0900
+Subject: [PATCH v2] mm: workingset: fix NULL ptr dereference
+
+It assumes shadow entries of radix tree rely on the init state
+that node->private_list allocated newly is list_empty state
+for the working. Currently, it's initailized in SLAB constructor
+which means node of radix tree would be initialized only when
+*slub allocates new page*, not *slub alloctes new object*.
+
+If some FS or subsystem pass gfp_mask to __GFP_ZERO, that means
+newly allocated node can have !list_empty(node->private_list)
+by memset of slab allocator. It ends up calling NULL deference
+at workingset_update_node by failing list_empty check.
+
+This patch fixes it.
+
+Fixes: 449dd6984d0e ("mm: keep page cache radix tree nodes in check")
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Chao Yu <yuchao0@huawei.com>
+Cc: Christopher Lameter <cl@linux.com>
+Cc: linux-fsdevel@vger.kernel.org
+Reported-by: Chris Fries <cfries@google.com>
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+---
+ lib/radix-tree.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/lib/radix-tree.c b/lib/radix-tree.c
+index da9e10c827df..9d68f2a7888e 100644
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -511,6 +511,16 @@ int radix_tree_preload(gfp_t gfp_mask)
+ {
+ 	/* Warn on non-sensical use... */
+ 	WARN_ON_ONCE(!gfpflags_allow_blocking(gfp_mask));
++	/*
++	 * New allocate node must have node->private_list as INIT_LIST_HEAD
++	 * state by workingset shadow memory implementation.
++	 * If user pass  __GFP_ZERO by mistake, slab allocator will clear
++	 * node->private_list, which makes a BUG. Rather than going Oops,
++	 * just fix and warn about it.
++	 */
++	if (WARN_ON(gfp_mask & __GFP_ZERO))
++		gfp_mask &= ~GFP_ZERO
++
+ 	return __radix_tree_preload(gfp_mask, RADIX_TREE_PRELOAD_SIZE);
+ }
+ EXPORT_SYMBOL(radix_tree_preload);
+@@ -522,7 +532,7 @@ EXPORT_SYMBOL(radix_tree_preload);
+  */
+ int radix_tree_maybe_preload(gfp_t gfp_mask)
+ {
+-	if (gfpflags_allow_blocking(gfp_mask))
++	if (gfpflags_allow_blocking(gfp_mask) && !(gfp_mask & __GFP_ZERO))
+ 		return __radix_tree_preload(gfp_mask, RADIX_TREE_PRELOAD_SIZE);
+ 	/* Preloading doesn't help anything with this gfp mask, skip it */
+ 	preempt_disable();
+-- 
+2.17.0.484.g0c8726318c-goog
