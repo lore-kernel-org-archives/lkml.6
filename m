@@ -1,83 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752750AbeDJLmK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 07:42:10 -0400
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:33669 "EHLO
-        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752408AbeDJLmI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 07:42:08 -0400
-X-Google-Smtp-Source: AIpwx4/H3SCK1yr+AXB/bKQV+HXVOsRu0RU2XbicNrzR9wQjZ8W+Iblq1sTEWCFK2PMkwuL6MvF0jffPHXVPJ6V034o=
+        id S1752785AbeDJLnb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 07:43:31 -0400
+Received: from mga03.intel.com ([134.134.136.65]:30552 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752669AbeDJLna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 07:43:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,431,1517904000";
+   d="scan'208";a="190286798"
+Subject: Re: [RFC PATCH] sdhci: arasan: Add runtime PM support
+To: naranimanish@gmail.com, michal.simek@xilinx.com,
+        ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Manish Narani <mnarani@xilinx.com>
+References: <1522302530-27550-1-git-send-email-naranimanish@gmail.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <29f0aae5-3cee-8a37-f5aa-3830f466a759@intel.com>
+Date: Tue, 10 Apr 2018 14:42:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <59a08949-7e2f-42ff-edda-f24a6c624551@I-love.SAKURA.ne.jp>
-References: <f403043a9be410acd1055fe5f72e@google.com> <652eab47-81b5-3249-3c78-427eeec45fbc@I-love.SAKURA.ne.jp>
- <2e093801-6d71-6747-42df-52f191811ad0@I-love.SAKURA.ne.jp>
- <87bdec75-3c59-6587-2436-1470263ab11f@kernel.dk> <59a08949-7e2f-42ff-edda-f24a6c624551@I-love.SAKURA.ne.jp>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 10 Apr 2018 13:41:47 +0200
-Message-ID: <CACT4Y+a-_Z69xmLypVi=vrtCEEBGp=zy0Wp8SuLJzYtZ_ShBgw@mail.gmail.com>
-Subject: Re: INFO: task hung in __blkdev_get
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Jens Axboe <axboe@kernel.dk>, Ming Lei <tom.leiming@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        syzbot
-        <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Omar Sandoval <osandov@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1522302530-27550-1-git-send-email-naranimanish@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 12:55 PM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> Hello.
->
-> Since syzbot is reporting so many hung up bug which involves /dev/loopX ,
-> is it possible to "temporarily" apply below patch for testing under syzbot
+On 29/03/18 08:48, naranimanish@gmail.com wrote:
+> From: Manish Narani <mnarani@xilinx.com>
+> 
+> This patch adds runtime PM support in Arasan SD driver.
+> 
+> Signed-off-by: Manish Narani <mnarani@xilinx.com>
 
-Unfortunately it's not possible, for full explanation please see:
-https://github.com/google/syzkaller/blob/master/docs/syzbot.md#no-custom-patches
+Just a couple of comments about style.
 
+> ---
+>  drivers/mmc/host/sdhci-of-arasan.c | 83 +++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 81 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
+> index c33a5f7..47196b5 100644
+> --- a/drivers/mmc/host/sdhci-of-arasan.c
+> +++ b/drivers/mmc/host/sdhci-of-arasan.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/module.h>
+>  #include <linux/of_device.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/phy/phy.h>
+>  #include <linux/regmap.h>
+>  #include <linux/of.h>
+> @@ -349,6 +350,75 @@ static const struct sdhci_pltfm_data sdhci_arasan_cqe_pdata = {
+>  			SDHCI_QUIRK2_CLOCK_DIV_ZERO_BROKEN,
+>  };
+>  
+> +#ifdef CONFIG_PM
+> +/**
+> + * sdhci_arasan_runtime_suspend - Suspend method for the driver
+> + * @dev:	Address of the device structure
+> + * Returns 0 on success and error value on error
+> + *
+> + * Put the device in a low power state.
+> + */
 
-> ( after "block/loop: fix deadlock after loop_set_status" and
-> "loop: fix LOOP_GET_STATUS lock imbalance" in linux-block.git#for-linus
-> are merged into linux.git )?
->
-> I haven't got a smoking gun by lockdep, but I noticed that
->
->   [upstream] INFO: task hung in lo_open (2)
->   https://syzkaller.appspot.com/bug?id=1f93b57f496d969efb9fb24167f6f9de5ee068fd
->
-> contained "lo->lo_ctl_mutex => bdev->bd_mutex" locking order
->
->   2 locks held by syz-executor6/15084:
->    #0:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<00000000cc154b8d>] lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
->    #1:  (&bdev->bd_mutex){+.+.}, at: [<0000000058b7c5b5>] blkdev_reread_part+0x1e/0x40 block/ioctl.c:192
->
-> while commit f028f3b2f987ebc6 ("loop: fix circular locking in loop_clr_fd()")
-> says that
->
->   * Calling fput holding lo_ctl_mutex triggers a circular
->   * lock dependency possibility warning as fput can take
->   * bd_mutex which is usually taken before lo_ctl_mutex.
->
-> which implies that the locking order should be "bdev->bd_mutex => lo->lo_ctl_mutex"
-> and also says that use of "_nested" version might mask some other real bugs
-> which could be the bug syzbot is frequently reporting as hung tasks...
->
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index 264abaa..5559b15 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -1360,7 +1360,7 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
->         struct loop_device *lo = bdev->bd_disk->private_data;
->         int err;
->
-> -       err = mutex_lock_killable_nested(&lo->lo_ctl_mutex, 1);
-> +       err = mutex_lock_killable(&lo->lo_ctl_mutex);
->         if (err)
->                 goto out_unlocked;
->
->
+Kernel style is not to put kerneldoc on callback functions.
+
+> +static int sdhci_arasan_runtime_suspend(struct device *dev)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct sdhci_host *host = platform_get_drvdata(pdev);
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_arasan_data *sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
+> +	int ret;
+> +
+> +	ret = sdhci_runtime_suspend_host(host);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (host->tuning_mode != SDHCI_TUNING_MODE_3)
+> +		mmc_retune_needed(host->mmc);
+> +
+> +	clk_disable(pltfm_host->clk);
+> +	clk_disable(sdhci_arasan->clk_ahb);
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * sdhci_arasan_runtime_resume - Resume method for the driver
+> + * @dev:	Address of the device structure
+> + * Returns 0 on success and error value on error
+> + *
+> + * Resume operation after suspend
+> + */
+
+Kernel style is not to put kerneldoc on callback functions.
+
+> +static int sdhci_arasan_runtime_resume(struct device *dev)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct sdhci_host *host = platform_get_drvdata(pdev);
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_arasan_data *sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
+> +	int ret;
+> +
+> +	ret = clk_enable(sdhci_arasan->clk_ahb);
+> +	if (ret) {
+> +		dev_err(dev, "Cannot enable AHB clock.\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_enable(pltfm_host->clk);
+> +	if (ret) {
+> +		dev_err(dev, "Cannot enable SD clock.\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = sdhci_runtime_resume_host(host);
+> +	if (ret)
+> +		goto out;
+> +
+> +	return 0;
+> +out:
+> +	clk_disable(pltfm_host->clk);
+> +	clk_disable(sdhci_arasan->clk_ahb);
+> +
+> +	return ret;
+> +}
+> +#endif /* ! CONFIG_PM */
+> +
+>  #ifdef CONFIG_PM_SLEEP
+>  /**
+>   * sdhci_arasan_suspend - Suspend method for the driver
+> @@ -443,8 +513,11 @@ static int sdhci_arasan_resume(struct device *dev)
+>  }
+>  #endif /* ! CONFIG_PM_SLEEP */
+>  
+> -static SIMPLE_DEV_PM_OPS(sdhci_arasan_dev_pm_ops, sdhci_arasan_suspend,
+> -			 sdhci_arasan_resume);
+> +static const struct dev_pm_ops sdhci_arasan_dev_pm_ops = {
+> +	SET_SYSTEM_SLEEP_PM_OPS(sdhci_arasan_suspend, sdhci_arasan_resume)
+> +	SET_RUNTIME_PM_OPS(sdhci_arasan_runtime_suspend,
+> +			   sdhci_arasan_runtime_resume, NULL)
+> +};
+>  
+>  static const struct of_device_id sdhci_arasan_of_match[] = {
+>  	/* SoC-specific compatible strings w/ soc_ctl_map */
+> @@ -806,6 +879,12 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err_add_host;
+>  
+> +	pm_runtime_set_active(&pdev->dev);
+> +	pm_runtime_enable(&pdev->dev);
+> +	pm_runtime_set_autosuspend_delay(&pdev->dev, 2000);
+> +	pm_runtime_mark_last_busy(&pdev->dev);
+> +	pm_runtime_use_autosuspend(&pdev->dev);
+> +
+>  	return 0;
+>  
+>  err_add_host:
+> 
