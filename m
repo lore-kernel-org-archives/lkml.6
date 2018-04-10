@@ -1,168 +1,96 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3243332-1523345540-2-842821115231886289
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  T_TVD_MIME_EPI 0.01, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
-X-Attached: signature.asc
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523345540; b=TfXyBTiF9YyhtlKVPxUo9nQZ7mo8n+yp2Rk+4AhbQNisyvHjGj
-    XXlXacFG3MiTHYJg8YxG9uMsbUFGMsgoNBG5B4vzgM+U5XLTIEMTFur67kTWt43W
-    hqhunelzO6rJykVQPqVTqiJbQlvN89TsMzdbp6IcD0E14sm8osDU+Yeyld5Pdy8q
-    HiObqPFFqT7F9bA8XOwADu/UVc/1//Cz1CSZdHZA75ng1OnzMcQ+vUQtIibPQ4Hl
-    kJpVBynf2/9YbWabmunatWiZi9rxAWa4juzJkRcIEfpO0KC0IplFoqa6N60Njp5N
-    OMLXQQcapmy6YtGjb/4Tub3CmVqqVHi3Q2EQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:in-reply-to:references
-    :date:message-id:mime-version:content-type:sender:list-id; s=
-    fm2; t=1523345540; bh=LK9C50M/IuX416NXMHLMLiO562nHcXgiPy2SiVw2+I
-    A=; b=ZoYTPDaAw2GNCwYw/lznn0PicLIuCXlMGtDzoMIxxTsA31AxD/t8XCHPh7
-    7AkB5c62JpvC7IFjxwzHrczwQd5ub92CwnYXZYDmlqqUp9VosBd+8b6wicm4XV2Z
-    Krvfi7Ic2UfJSxLr5VRwObh0jGYMGeI/yfDBPyatJbJ/63qauN1IrRTajMmmTuPU
-    ofQBceV/9WCEO3onA2KMNiZ4q4AHpn8lRYDBas/NsZ+b2H6ZpkNm3sCfKOLMTr6e
-    5/GZK6TGG7uBPngTBNmTlizPDnsuE09W2XVStTUGkr6Z2MFbg+S8KtFF9mDH7ekV
-    YmhfjDK3p0LDYgxrNQYr8Y7k59FQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    smime=temperror;
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    smime=temperror;
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNfzlPDykQdR4rHyevIR+kSt7uoCboAtyHSgVdyq603AVE2TsvP/eOXov4UtAcAuFtYsB4Gy4NrQWTejAdgrvBOA42zOKvzaN9id7Ml4YF7XJcsd+p9e
-    5oxrz0Ih0QD6tOYakZQVidiBRBwjRGYyhzjB/8coSaaMJqGv01uPukyJGJD5on/2LriulY7vFxMCXOiZRnhHevCeTuCAa9IMCUjXbw1f+jU9lcjyazOuuatP
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=jIQo8A4GAAAA:8
-    a=m5CLeHLidHpJT6plOkQA:9 a=soZIWM8GMSwtKbCxheMA:9 a=ONNS8QRKHyMA:10
-    a=VwQbUJbxAAAA:8 a=Ndx7yIVex8M7RJDNeXoA:9 a=x8gzFH9gYPwA:10
-    a=Lf5xNeLK5dgiOs8hzIjU:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752498AbeDJHcH (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 03:32:07 -0400
-Received: from mga09.intel.com ([134.134.136.24]:16805 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752469AbeDJHcF (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Tue, 10 Apr 2018 03:32:05 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,431,1517904000";
-   d="asc'?scan'208";a="46585091"
-From: Felipe Balbi <balbi@kernel.org>
-To: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
-        Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>,
-        Roger Quadros <rogerq@ti.com>
-Cc: "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] usb: dwc3: Prevent indefinite sleep in _dwc3_set_mode during suspend/resume
-In-Reply-To: <410670D7E743164D87FA6160E7907A560113AE789A@am04wembxb.internal.synopsys.com>
-References: <1519730526-22274-1-git-send-email-rogerq@ti.com> <a04fafee-7992-ce8b-55a9-afd4c9935462@ti.com> <69517684-bd39-e945-0c9e-ccd52b8050d5@ti.com> <87y3isffog.fsf@linux.intel.com> <5ea0ad17-d538-72ec-ed59-004242c4cd26@ti.com> <410670D7E743164D87FA6160E7907A560113ABB478@am04wembxa.internal.synopsys.com> <87zi38438h.fsf@linux.intel.com> <410670D7E743164D87FA6160E7907A560113ABBA4B@am04wembxa.internal.synopsys.com> <87d100qwc5.fsf@linux.intel.com> <410670D7E743164D87FA6160E7907A560113ABC945@am04wembxa.internal.synopsys.com> <410670D7E743164D87FA6160E7907A560113ABCA0A@am04wembxa.internal.synopsys.com> <410670D7E743164D87FA6160E7907A560113AE789A@am04wembxb.internal.synopsys.com>
-Date: Tue, 10 Apr 2018 10:31:13 +0300
-Message-ID: <87r2nnldq6.fsf@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Return-Path: <kernel-hardening-return-12947-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4+n99hTLhuqqNCESMYCptB4GdUy6gOAF43y5yTT6kv2skmoeQjHN4BdXMQ+AXT9Cdo+sOqj
+ARC-Seal: i=1; a=rsa-sha256; t=1523345492; cv=none;
+        d=google.com; s=arc-20160816;
+        b=iuG7eW6Uek7RkobGO0I18svEhLc1ywwBLiPf2k5Nros51Hudo+JRuOlPebQpj3CCBq
+         vmDk2FERoEUVh3f1eHkd2pWQSreEdSkKQrs5Z7teU4g79eFitkaBO6bG1y7IsbFwJAVF
+         wnHL3vjmdmCrLo5y/Po2/RUnD3WNRb9L6NT2GnFGYWyP75xHloyKq4HFibsZjyNP/nw1
+         Iw8BOj7jfdGnNmSQ33wmq0o1XmXX3cm0TeMMf3HYYjn+aDAzbSLUPoWArwrV8cI9ogLh
+         F6EiGZZuCQIV7l15f/Emxphn5Sov6N1Vfns6CJIeEdQLeBu/WnGlifAb0n1Kes/YeWZc
+         Okmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=wN4oVuPw5D1BDaM1x9hgdeSnp1DNUmZMeRfu5HpjdU0=;
+        b=ofsk8Xeu4R+M2G5qX2Lgq5wfaIBcSJT6hpCBSUHEWKP6iKe4Fb5WFmHa3pe4fe3Hjw
+         4xTi3ObkvYKrG6K/3iGoi/+WvaeTmkmbW1Y396LsW7dXE8Z8262/ycTkZ+idX0xbj87m
+         TVKLGhAOFsiPdD0/YnyXe0rXAiWuRK1jeyZxQTkzdbq1DFCpCsZfgx+DuovsMTpzvT3B
+         2Ik9Q8Y+wEaB9+YEffa6P+uRaE/sdE6YMRjhvFTgTGGsGYttjcWLuQKzCG5f3UYGpr2H
+         s/6xP00K6usGjJptqk1i8qGxbv6vXcVLXZ6qefoCHexv2jwWPpNhpQ7RmFBtUzw6nD1G
+         iTiw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=SislbEi6;
+       spf=pass (google.com: domain of kernel-hardening-return-12947-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12947-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=SislbEi6;
+       spf=pass (google.com: domain of kernel-hardening-return-12947-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12947-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: kpark3469@gmail.com
+To: kernel-hardening@lists.openwall.com
+Cc: catalin.marinas@arm.com,
+	keescook@chromium.org,
+	will.deacon@arm.com,
+	mark.rutland@arm.com,
+	james.morse@arm.com,
+	panand@redhat.com,
+	keun-o.park@darkmatter.ae,
+	psodagud@codeaurora.org,
+	jpoimboe@redhat.com,
+	mingo@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] usercopy: reimplement arch_within_stack_frames
+Date: Tue, 10 Apr 2018 11:30:44 +0400
+Message-Id: <1523345447-10725-1-git-send-email-kpark3469@gmail.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597343523233967320?=
+X-GMAIL-MSGID: =?utf-8?q?1597343523233967320?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+From: Sahara <keun-o.park@darkmatter.ae>
 
+This series of patches introduce the arm64 arch_within_stack_frames
+implementation using stacktrace functions. Also the base code is
+moved from thread_info.h to stacktrace.h. x86 code is reimplemented
+to use frame pointer unwinder functions.
 
-Hi,
+Note: The code is still missing in case of using x86 ORC unwinder and
+guess unwinder.
 
-Minas Harutyunyan <Minas.Harutyunyan@synopsys.com> writes:
->>>>>>> Actually to fix this issue I updated condition of wait function
->>>>>>> from:
->>>>>>> !(dep->flags & DWC3_EP_END_TRANSFER_PENDING)
->>>>>>> to:
->>>>>>> !(dep->flags & DWC3_EP_END_TRANSFER_PENDING & DWC3_EP_ENABLED)
->>>>>>
->>>>>> you're not fixing anything. You're, essentially, removing the entire
->>>>>> end transfer pending logic.
->>>>> yes, you are right, but how to overcome this infinite loop? Replace
->>>>> wait_event_lock_irq() by  wait_event_interruptible_lock_irq_timeout()?
->>>>
->>>> The best way here would be to figure why we're missing command complete
->>>> IRQ in those cases. According to documentation, we *should* receive th=
-at
->>>> interrupt, so why is it missing?
->>>>
->>>
->>> Additional info on test. Core configuration is HS only mode, test speed
->>> HS, core version v2.90a. Maybe it will help to understand cause of issu=
-e.
->>> BTW, currently to pass above describe ISOC OUT test we just commented
->>> wait_event_lock_irq() in dwc3_gadget_ep_dequeue() function and
->>> successfully received request completion in function driver.
->>> Thanks,
->>> Minas
->>>
->>=20
->> One more info: while function driver call dequeue, host periodically
->> send control read command to get status of test from function - test In
->> Progress or Finished.
->> Thanks,
->> Minas
->>=20
->
-> Your last dwc3 patch series allow us to successfully dequeuing remaining=
-=20
-> requests without falling in to infinite loop.
+v2 changes:
+ - Remove 'arm64: usercopy: consider dynamic array stack variable'
+ - minor fix in x86 arch_within_stack_frames code.
+v3 changes:
+ - Fix build problem caused by circular inclusion of header in x86 UP config
+v4 changes:
+ - Fix build problem caused by page_ext.h change
 
-that's cool, thanks :-) I'll just fix the documentation bug I introduced
-heh :-)
+James Morse (1):
+  arm64: usercopy: implement arch_within_stack_frames
 
-=2D-=20
-balbi
+Sahara (2):
+  stacktrace: move arch_within_stack_frames from thread_info.h
+  x86: usercopy: reimplement arch_within_stack_frames with unwinder
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+ arch/arm64/Kconfig                 |  1 +
+ arch/arm64/kernel/stacktrace.c     | 76 +++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/thread_info.h | 51 +---------------------
+ arch/x86/include/asm/unwind.h      |  5 +++
+ arch/x86/kernel/Makefile           |  2 +-
+ arch/x86/kernel/stacktrace.c       | 87 ++++++++++++++++++++++++++++++++++++++
+ arch/x86/kernel/unwind_frame.c     |  4 +-
+ include/linux/stacktrace.h         | 24 +++++++++++
+ include/linux/thread_info.h        | 21 ---------
+ mm/usercopy.c                      |  2 +-
+ 10 files changed, 197 insertions(+), 76 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlrMaEEACgkQzL64meEa
-mQbvnA/8CBNEQFELdDhKM52NnWdqdhpXAXtNPB2xvWMPhXMXyT10H8aM5S6y1S5I
-VNIAk3GcZqWf2Y9aVO362zVhXk0G6MCwtr9oOtd7s2QN/WV6MSPzlRmeyjvT7he2
-LN2jOp//hmd1dLhPQfWddB81DQ3ghw2RVXPvo6J7A+ImKnRyAFMQ/3U3/oGUOJMG
-6/tPviQ7goLpdg4aQE3n9wCfFPx1IOBWNdduOUq1to6pcseWNGIk0DFS/WcXLz5u
-BgtguW8NXbP7XbwThoBpxAC0j1YzD7w8d7l9VfgEM8j8OtUjK2Q0EtlGtVahWqlF
-OESUhPUO0Nic87r8FCPPe20hN6T2MZLZJdHLc7EacVSPnYKSLB9PfjhJ7Vx1169f
-ufSt0WaPyZDmMM8FyO/7SuxR1a+I5+uVgk+8y/Zkl3vqnbNBetjZSQrQELxJV6dr
-W4dzmXfr4WDdN6D++VOTmPGENwcxKOR+LPG+3smfjVIiZIAiNCrGGqSGWfB9PIVP
-0hzOMinhjpLpEjFfL6rjjPWI6RN/amDXtLtq4gfXr7Cc24MSHf/x9FHBZm+0djlU
-aVN2jS4+C3Ls1fEQz7Ka5ixQf3kAFcVCQB+apvZHK7/5+2im23AoQC9/PPtIkf/J
-EH43bpX5M6soi1jnarF4lu8lPPIvwhX4XIXmRj1eNHc6ZTpG4OM=
-=l7az
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+2.7.4
