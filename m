@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/DNiUcuSB0AUg9PnlViplye8boC77MF7n3vvkJP3hUtCyBXVX+0hPzDtANFmAHNuZn4VPY
-ARC-Seal: i=1; a=rsa-sha256; t=1523399181; cv=none;
+X-Google-Smtp-Source: AIpwx4+ivxQBO8ekOmpu1Sz9U+fXenTVdryfGfMDBTREceXwZDiaAoUQDAs+0xBPug9dps/y+Gel
+ARC-Seal: i=1; a=rsa-sha256; t=1523399178; cv=none;
         d=google.com; s=arc-20160816;
-        b=oPTCAjP0jc9xpqeU2fwEDWcBJvBVT2bt31rRBPIqU4OAMKNvxsunAfm0EzIagNoySE
-         CWq90zp5eXGFaIrzCbg4TlkOZ+4ERPgf56Tn0ikQxOJHi4+5ehMvmyCaNJKJIk28Smm0
-         zUK8x1SHt8ZL12xaywM2Zpdcf1mcwNogFh2lUh9UyTxwgjACXhQ9nK9s/6GJGV3dDGyQ
-         j16n4V1PctQh83V0hZzDlt1j59tZi1BHs0HIiZ1Yec/jP/7Egi+jw0w8SnvK7a5pa4v9
-         M/Of/pklhBEuSSKdKKdWMGBLkFEpA5pAiXETY087MfiJ6XdwS852mIgBS9AJj6Szkbp3
-         vWqA==
+        b=QqX8Mrx9auWjbNJgZTDyk7bTwWr4waV49eDbTbiQakP45P83rKaGIK6uHmSk8eqHJI
+         Rozmd906kv2d48PDVOqj4HGLPhRh1CpjwdMOBFzFC/Dqn6wO/hfPCuUjLQRRlWYn4MRd
+         2hr7oC+NWDKviB7EtZQMmWdAXgQHLbShT2N3FYAt5HzjRL6zVatxXX922Xbt5+Ss0kuw
+         2vcmuO8KdlfTOaoDfjnMHEXSGXGbtIdrHl6tvjyH0fXAunH/5/oEilr0mF808iU0VGa9
+         DY2RIZZk5dy1oMr8+bv83YFVXqFBAmaCu88H2s28nJdF2Djak1UXArdvGJOSOMNxHzzq
+         m3TA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=dCb1QcNoDk0rmya2ic3wX61lrX87bsQslav2u6ayPXE=;
-        b=n9mxQoLrUKE+wHa2NqPhyo4R6EDValDVgtm5K0HLMcyVXqZUxQRulnhDbNVIuu31ln
-         lG0guyKjC4GpXokbdtaiq27Lp2dyz4UT4O4kl1WTtQD/TS+5uHZrBD60MXy9GZcB2kLX
-         ZDw9ZdAnJUMt8HrfsqZwKfz8m/stNwePBmycyKSgQmENPo7txkohDd/1CIooIS3rrfj9
-         4AmAspVf9vIWmm0lSZbUp8ws7W1PhT0VhMSC8IPBipZQNBeFg92YNLGzLte8V/4phRqA
-         dHPd1aErBEsa3rdOwTuB/bKod8b++DBnIjCwvp8Kr0JvkAbeSfgO5piq7tbJBGu1vaPg
-         js6Q==
+        bh=sW316FLomJkUk+i/sOFG9Sao4fzBExtnsBoOK7R/dZU=;
+        b=EARGw13KIbNVQ36frOlpKq8WfqR+nTROlmTjOfzDvGQgu2bF91r0mkeIWg8zUL6HIh
+         o5YYnZH+2gvIgNq5hBl7LpDjTmKO20FgBL5A2xIETHInzda+4pwEHD6eiTwheKJcj/RQ
+         2jVuYz/pPUueM6qph5v6ZOVMoUgAEXM713a3bus3ntjY4BMVQu45gApNmAUgYCJS3bin
+         XqDwf/7la6c6lvx8TkWqJbpjQjFgdUoaOqNxvpfgwhIwTaEXBbIKiKD9raJK+3otWKr/
+         3XBhb1o6vy8Zrd0HMmyPsJVL4ZI8fXIXzXVzRDMqYi2H+LSJbGU2JPHH8v6MKC8OEcRJ
+         5eoQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yi Zeng <yizeng@asrmicro.com>,
-	Zhang Rui <rui.zhang@intel.com>,
+	Tobias Brunner <tobias@strongswan.org>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 008/168] thermal: power_allocator: fix one race condition issue for thermal_instances list
-Date: Wed, 11 Apr 2018 00:22:30 +0200
-Message-Id: <20180410212800.581349105@linuxfoundation.org>
+Subject: [PATCH 4.15 007/168] ipv6: Reinject IPv6 packets if IPsec policy matches after SNAT
+Date: Wed, 11 Apr 2018 00:22:29 +0200
+Message-Id: <20180410212800.540615075@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399820028511058?=
-X-GMAIL-MSGID: =?utf-8?q?1597399820028511058?=
+X-GMAIL-THRID: =?utf-8?q?1597399817081333121?=
+X-GMAIL-MSGID: =?utf-8?q?1597399817081333121?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,67 +51,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yi Zeng <yizeng@asrmicro.com>
+From: Tobias Brunner <tobias@strongswan.org>
 
 
-[ Upstream commit a5de11d67dcd268b8d0beb73dc374de5e97f0caf ]
+[ Upstream commit 09ee9dba9611cd382fd360a99ad1c2fa23bfdca8 ]
 
-When invoking allow_maximum_power and traverse tz->thermal_instances,
-we should grab thermal_zone_device->lock to avoid race condition. For
-example, during the system reboot, if the mali GPU device implements
-device shutdown callback and unregister GPU devfreq cooling device,
-the deleted list head may be accessed to cause panic, as the following
-log shows:
+If SNAT modifies the source address the resulting packet might match
+an IPsec policy, reinject the packet if that's the case.
 
-[   33.551070] c3 25 (kworker/3:0) Unable to handle kernel paging request at virtual address dead000000000070
-[   33.566708] c3 25 (kworker/3:0) pgd = ffffffc0ed290000
-[   33.572071] c3 25 (kworker/3:0) [dead000000000070] *pgd=00000001ed292003, *pud=00000001ed292003, *pmd=0000000000000000
-[   33.581515] c3 25 (kworker/3:0) Internal error: Oops: 96000004 [#1] PREEMPT SMP
-[   33.599761] c3 25 (kworker/3:0) CPU: 3 PID: 25 Comm: kworker/3:0 Not tainted 4.4.35+ #912
-[   33.614137] c3 25 (kworker/3:0) Workqueue: events_freezable thermal_zone_device_check
-[   33.620245] c3 25 (kworker/3:0) task: ffffffc0f32e4200 ti: ffffffc0f32f0000 task.ti: ffffffc0f32f0000
-[   33.629466] c3 25 (kworker/3:0) PC is at power_allocator_throttle+0x7c8/0x8a4
-[   33.636609] c3 25 (kworker/3:0) LR is at power_allocator_throttle+0x808/0x8a4
-[   33.643742] c3 25 (kworker/3:0) pc : [<ffffff8008683dd0>] lr : [<ffffff8008683e10>] pstate: 20000145
-[   33.652874] c3 25 (kworker/3:0) sp : ffffffc0f32f3bb0
-[   34.468519] c3 25 (kworker/3:0) Process kworker/3:0 (pid: 25, stack limit = 0xffffffc0f32f0020)
-[   34.477220] c3 25 (kworker/3:0) Stack: (0xffffffc0f32f3bb0 to 0xffffffc0f32f4000)
-[   34.819822] c3 25 (kworker/3:0) Call trace:
-[   34.824021] c3 25 (kworker/3:0) Exception stack(0xffffffc0f32f39c0 to 0xffffffc0f32f3af0)
-[   34.924993] c3 25 (kworker/3:0) [<ffffff8008683dd0>] power_allocator_throttle+0x7c8/0x8a4
-[   34.933184] c3 25 (kworker/3:0) [<ffffff80086807f4>] handle_thermal_trip.part.25+0x70/0x224
-[   34.941545] c3 25 (kworker/3:0) [<ffffff8008680a68>] thermal_zone_device_update+0xc0/0x20c
-[   34.949818] c3 25 (kworker/3:0) [<ffffff8008680bd4>] thermal_zone_device_check+0x20/0x2c
-[   34.957924] c3 25 (kworker/3:0) [<ffffff80080b93a4>] process_one_work+0x168/0x458
-[   34.965414] c3 25 (kworker/3:0) [<ffffff80080ba068>] worker_thread+0x13c/0x4b4
-[   34.972650] c3 25 (kworker/3:0) [<ffffff80080c0a4c>] kthread+0xe8/0xfc
-[   34.979187] c3 25 (kworker/3:0) [<ffffff8008084e90>] ret_from_fork+0x10/0x40
-[   34.986244] c3 25 (kworker/3:0) Code: f9405e73 eb1302bf d102e273 54ffc460 (b9402a61)
-[   34.994339] c3 25 (kworker/3:0) ---[ end trace 32057901e3b7e1db ]---
+The exact same thing is already done for IPv4.
 
-Signed-off-by: Yi Zeng <yizeng@asrmicro.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Signed-off-by: Tobias Brunner <tobias@strongswan.org>
+Acked-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/thermal/power_allocator.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/ipv6/ip6_output.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/thermal/power_allocator.c
-+++ b/drivers/thermal/power_allocator.c
-@@ -523,6 +523,7 @@ static void allow_maximum_power(struct t
- 	struct thermal_instance *instance;
- 	struct power_allocator_params *params = tz->governor_data;
- 
-+	mutex_lock(&tz->lock);
- 	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
- 		if ((instance->trip != params->trip_max_desired_temperature) ||
- 		    (!cdev_is_power_actor(instance->cdev)))
-@@ -534,6 +535,7 @@ static void allow_maximum_power(struct t
- 		mutex_unlock(&instance->cdev->lock);
- 		thermal_cdev_update(instance->cdev);
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -138,6 +138,14 @@ static int ip6_finish_output(struct net
+ 		return ret;
  	}
-+	mutex_unlock(&tz->lock);
- }
  
- /**
++#if defined(CONFIG_NETFILTER) && defined(CONFIG_XFRM)
++	/* Policy lookup after SNAT yielded a new policy */
++	if (skb_dst(skb)->xfrm) {
++		IPCB(skb)->flags |= IPSKB_REROUTED;
++		return dst_output(net, sk, skb);
++	}
++#endif
++
+ 	if ((skb->len > ip6_skb_dst_mtu(skb) && !skb_is_gso(skb)) ||
+ 	    dst_allfrag(skb_dst(skb)) ||
+ 	    (IP6CB(skb)->frag_max_size && skb->len > IP6CB(skb)->frag_max_size))
