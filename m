@@ -1,55 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753296AbeDJMdZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:33:25 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49251 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753203AbeDJMdV (ORCPT
+        id S1753236AbeDJMdS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:33:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55546 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753205AbeDJMdO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:33:21 -0400
-From: Colin King <colin.king@canonical.com>
-To: Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.a.wang@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
-        intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/i915/gvt: fix memory leak of a cmd_entry struct on error exit path
-Date: Tue, 10 Apr 2018 13:33:12 +0100
-Message-Id: <20180410123312.24631-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.15.1
+        Tue, 10 Apr 2018 08:33:14 -0400
+Date: Tue, 10 Apr 2018 14:33:05 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: yuankuiz@codeaurora.org, Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>, aulmck@linux.vnet.ibm.com,
+        Ingo Molnar <mingo@kernel.org>, Len Brown <len.brown@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        apw@canonical.com, joe@perches.com
+Subject: Re: Subject: [PATCH] [PATCH] time: tick-sched: use bool for
+ tick_stopped
+Message-ID: <20180410123305.GF4082@hirez.programming.kicks-ass.net>
+References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
+ <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Apr 10, 2018 at 10:00:01AM +0200, Rafael J. Wysocki wrote:
+> On Tue, Apr 10, 2018 at 9:33 AM,  <yuankuiz@codeaurora.org> wrote:
+> > +++ b/kernel/time/tick-sched.h
+> > @@ -48,8 +48,8 @@ struct tick_sched {
+> >         unsigned long                   check_clocks;
+> >         enum tick_nohz_mode             nohz_mode;
+> >
+> > +       bool                            tick_stopped    : 1;
+> >         unsigned int                    inidle          : 1;
+> > -       unsigned int                    tick_stopped    : 1;
+> >         unsigned int                    idle_active     : 1;
+> >         unsigned int                    do_timer_last   : 1;
+> >         unsigned int                    got_idle_tick   : 1;
+> 
+> I don't think this is a good idea at all.
+> 
+> Please see https://lkml.org/lkml/2017/11/21/384 for example.
 
-The error exit path when a duplicate is found does not kfree and cmd_entry
-struct and hence there is a small memory leak.  Fix this by kfree'ing it.
-
-Detected by CoverityScan, CID#1370198 ("Resource Leak")
-
-Fixes: be1da7070aea ("drm/i915/gvt: vGPU command scanner")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/i915/gvt/cmd_parser.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/i915/gvt/cmd_parser.c b/drivers/gpu/drm/i915/gvt/cmd_parser.c
-index d85939bd7b47..3b6d26c44e37 100644
---- a/drivers/gpu/drm/i915/gvt/cmd_parser.c
-+++ b/drivers/gpu/drm/i915/gvt/cmd_parser.c
-@@ -2864,6 +2864,7 @@ static int init_cmd_table(struct intel_gvt *gvt)
- 		if (info) {
- 			gvt_err("%s %s duplicated\n", e->info->name,
- 					info->name);
-+			kfree(e);
- 			return -EEXIST;
- 		}
- 
--- 
-2.15.1
+Joe, apw, could we get Checkpatch to whinge about _Bool in composite
+types? That should immediately also disqualify using it as the base type
+of bitfields.
