@@ -1,38 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752854AbeDJMHW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:07:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45064 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752408AbeDJMHV (ORCPT
+        id S1752896AbeDJMHq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:07:46 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:53617 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752408AbeDJMHo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:07:21 -0400
-Date: Tue, 10 Apr 2018 05:07:19 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Chris Fries <cfries@google.com>
-Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Message-ID: <20180410120719.GC22118@bombadil.infradead.org>
-References: <20180409015815.235943-1-minchan@kernel.org>
- <20180410082243.GW21835@dhcp22.suse.cz>
- <20180410085531.m2xvzi7nenbrgbve@quack2.suse.cz>
- <20180410093241.GA21835@dhcp22.suse.cz>
- <20180410102845.3ixg2lbnumqn2o6z@quack2.suse.cz>
- <20180410111931.GA5113@rodete-laptop-imager.corp.google.com>
+        Tue, 10 Apr 2018 08:07:44 -0400
+Date: Tue, 10 Apr 2018 14:07:32 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+cc: yuankuiz@codeaurora.org, "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, Len Brown <len.brown@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pm-owner@vger.kernel.org
+Subject: Re: [PATCH] time: tick-sched: use bool for tick_stopped
+In-Reply-To: <20180410112637.GD4082@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1804101407040.2058@nanos.tec.linutronix.de>
+References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org> <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com> <f253686d26b3470f0e9b60502eb62315@codeaurora.org> <alpine.DEB.2.21.1804101110080.2058@nanos.tec.linutronix.de>
+ <a7d6dddd7d4f9fdc0be8f94251af237f@codeaurora.org> <20180410112637.GD4082@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180410111931.GA5113@rodete-laptop-imager.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 08:19:31PM +0900, Minchan Kim wrote:
-> If you're okay for that, I really want to go my original patch
-> Michal already gave Acked-by.
+On Tue, 10 Apr 2018, Peter Zijlstra wrote:
 
-I NAK this patch.  It is completely wrong.
+> On Tue, Apr 10, 2018 at 06:07:17PM +0800, yuankuiz@codeaurora.org wrote:
+> > > > > > @@ -48,8 +48,8 @@ struct tick_sched {
+> > > > > >         unsigned long                   check_clocks;
+> > > > > >         enum tick_nohz_mode             nohz_mode;
+> > > > > >
+> > > > > > +       bool                            tick_stopped    : 1;
+> > > > > >         unsigned int                    inidle          : 1;
+> > > > > > -       unsigned int                    tick_stopped    : 1;
+> > > > > >         unsigned int                    idle_active     : 1;
+> > > > > >         unsigned int                    do_timer_last   : 1;
+> > > > > >         unsigned int                    got_idle_tick   : 1;
+> > > > >
+> > > > > I don't think this is a good idea at all.
+> > > > >
+> > > > > Please see https://lkml.org/lkml/2017/11/21/384 for example.
+> > > > [ZJ] Thanks for this sharing. Looks like, this patch fall into the
+> > > > case of
+> > > > "Maybe".
+> > > 
+> > > This patch falls into the case 'pointless' because it adds extra storage
+> > [ZJ] 1 bit vs 1 bit. no more.
+> 
+> Since its a different type, the bitfields will not be merged. Also I'm
+> surprised a bitfield with base-type _Bool is even allowed.
+> 
+> > > for no benefit at all.
+> > [ZJ] tick_stopped is returned by the tick_nohz_tick_stopped() which is bool.
+> > The benefit is no any potiential type conversion could be minded.
+> 
+> Do you have any actual evidence for that? Is there a compiler stupid
+> enough to generate code to convert a bool to a 1bit value?
+
+Sure, if you do:
+
+> > > > > > +       bool                            tick_stopped    : 1;
+
+which is stupidly allowed by the standard....
