@@ -1,67 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752653AbeDJSly (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 14:41:54 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:37205 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751845AbeDJSlw (ORCPT
+        id S1752807AbeDJSnk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 14:43:40 -0400
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:43705 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751940AbeDJSnj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 14:41:52 -0400
-X-Google-Smtp-Source: AIpwx48MpoufG03WOGbmmZGUjr6yiqBCFGhnac4DBJQyYRySpJiiRliwOQQN0uUoWbZqUNUJAilUJQ==
-Date: Tue, 10 Apr 2018 11:42:31 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: srinivas.kandagatla@linaro.org
-Cc: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org,
-        david.brown@linaro.org, robh+dt@kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: dts: apq8096-db820c: Add micro sd card supplies
-Message-ID: <20180410184231.GA23948@tuxbook-pro>
-References: <20180410135426.15508-1-srinivas.kandagatla@linaro.org>
+        Tue, 10 Apr 2018 14:43:39 -0400
+Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: Tejun Heo <tj@kernel.org>
+Cc: Sitsofe Wheeler <sitsofe@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Stefan Haberland <sth@linux.vnet.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.vnet.ibm.com>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>
+Subject: Re: [PATCH] blk-mq: Directly schedule q->timeout_work when aborting a request
+Date: Tue, 10 Apr 2018 20:43:34 +0200
+Message-ID: <2699418.6CV4rbzP8d@merkaba>
+In-Reply-To: <20180402220458.GJ388343@devbig577.frc2.facebook.com>
+References: <CALjAwxh-PVYFnYFCJpGOja+m5SzZ8Sa4J7ohxdK=r8NyOF-EMA@mail.gmail.com> <CALjAwxj1urPPNadmkmhLngHvYcfhh8d+_vPstPDQHXLiGL0oTw@mail.gmail.com> <20180402220458.GJ388343@devbig577.frc2.facebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180410135426.15508-1-srinivas.kandagatla@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 10 Apr 06:54 PDT 2018, Srinivas Kandagatla wrote:
-
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Tejun Heo - 03.04.18, 00:04:
+> Request abortion is performed by overriding deadline to now and
+> scheduling timeout handling immediately.  For the latter part, the
+> code was using mod_timer(timeout, 0) which can't guarantee that the
+> timer runs afterwards.  Let's schedule the underlying work item
+> directly instead.
 > 
-> This patch adds missing microSD card supplies, without this uSD
-> card will not be detected.
-> 
+> This fixes the hangs during probing reported by Sitsofe but it isn't
+> yet clear to me how the failure can happen reliably if it's just the
+> above described race condition.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Compiling a 4.16.1 kernel with that patch to test whether this fixes the boot 
+hang I reported in:
 
-Regards,
-Bjorn
+[Possible REGRESSION, 4.16-rc4] Error updating SMART data during runtime and 
+boot failures with blk_mq_terminate_expired in backtrace
+https://bugzilla.kernel.org/show_bug.cgi?id=199077
 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
+The "Error updating SMART data during runtime" thing I reported there as well 
+may still be another (independent) issue.
+
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reported-by: Sitsofe Wheeler <sitsofe@gmail.com>
+> Reported-by: Meelis Roos <mroos@linux.ee>
+> Fixes: 358f70da49d7 ("blk-mq: make blk_abort_request() trigger timeout
+> path") Cc: stable@vger.kernel.org # v4.16
+> Link:
+> http://lkml.kernel.org/r/CALjAwxh-PVYFnYFCJpGOja+m5SzZ8Sa4J7ohxdK=r8NyOF-EM
+> A@mail.gmail.com Link:
+> http://lkml.kernel.org/r/alpine.LRH.2.21.1802261049140.4893@math.ut.ee ---
+> Hello,
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-> index 1c8f1b86472d..f8191f64eb84 100644
-> --- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-> @@ -87,6 +87,8 @@
->  			pinctrl-0 = <&sdc2_clk_on &sdc2_cmd_on &sdc2_data_on &sdc2_cd_on>;
->  			pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off &sdc2_cd_off>;
->  			cd-gpios = <&msmgpio 38 0x1>;
-> +			vmmc-supply = <&pm8994_l21>;
-> +			vqmmc-supply = <&pm8994_l13>;
->  			status = "okay";
->  		};
->  
-> -- 
-> 2.16.2
+> I don't have the full explanation yet but here's a preliminary patch.
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Thanks.
+> 
+>  block/blk-timeout.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/block/blk-timeout.c b/block/blk-timeout.c
+> index a05e367..f0e6e41 100644
+> --- a/block/blk-timeout.c
+> +++ b/block/blk-timeout.c
+> @@ -165,7 +165,7 @@ void blk_abort_request(struct request *req)
+>  		 * No need for fancy synchronizations.
+>  		 */
+>  		blk_rq_set_deadline(req, jiffies);
+> -		mod_timer(&req->q->timeout, 0);
+> +		kblockd_schedule_work(&req->q->timeout_work);
+>  	} else {
+>  		if (blk_mark_rq_complete(req))
+>  			return;
+-- 
+Martin
