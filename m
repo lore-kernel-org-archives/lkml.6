@@ -1,154 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753669AbeDJOIL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:08:11 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46590 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752907AbeDJOIJ (ORCPT
+        id S1753927AbeDJOI2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:08:28 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.165]:30440 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753264AbeDJOI0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:08:09 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Tue, 10 Apr 2018 22:08:07 +0800
-From: yuankuiz@codeaurora.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pm-owner@vger.kernel.org
-Subject: Re: [PATCH] time: tick-sched: use bool for tick_stopped
-In-Reply-To: <alpine.DEB.2.21.1804101242110.2058@nanos.tec.linutronix.de>
-References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
- <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>
- <f253686d26b3470f0e9b60502eb62315@codeaurora.org>
- <alpine.DEB.2.21.1804101110080.2058@nanos.tec.linutronix.de>
- <a7d6dddd7d4f9fdc0be8f94251af237f@codeaurora.org>
- <alpine.DEB.2.21.1804101242110.2058@nanos.tec.linutronix.de>
-Message-ID: <2f7755fae34bb65ef0a4b5a11c67f431@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+        Tue, 10 Apr 2018 10:08:26 -0400
+X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WisNN2ETuY
+X-RZG-CLASS-ID: mo00
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH v2 4/5] DTS: Bindings: pca953x driver provides an optional vcc-supply property
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20180410135557.umt5sgxrx23dirpo@rob-hp-laptop>
+Date: Tue, 10 Apr 2018 16:08:14 +0200
+Cc: galak@codeaurora.org, andy.shevchenko@gmail.com,
+        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+Message-Id: <A246E2A2-F360-4099-91E2-8A5A25656A36@goldelico.com>
+References: <cover.1522868422.git.hns@goldelico.com> <e8e6fae4436e5390c7c4e831c9eb127d3f8cc65b.1522868423.git.hns@goldelico.com> <20180410135557.umt5sgxrx23dirpo@rob-hp-laptop>
+To: Rob Herring <robh@kernel.org>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3AE8XkT032561
 
-On 2018-04-10 07:06 PM, Thomas Gleixner wrote:
-> On Tue, 10 Apr 2018, yuankuiz@codeaurora.org wrote:
->> On 2018-04-10 05:10 PM, Thomas Gleixner wrote:
->> > On Tue, 10 Apr 2018, yuankuiz@codeaurora.org wrote:
->> > > On 2018-04-10 04:00 PM, Rafael J. Wysocki wrote:
->> > > > On Tue, Apr 10, 2018 at 9:33 AM,  <yuankuiz@codeaurora.org> wrote:
->> > > > > From: John Zhao <yuankuiz@codeaurora.org>
->> > > > >
->> > > > > Variable tick_stopped returned by tick_nohz_tick_stopped
->> > > > > can have only true / false values. Since the return type
->> > > > > of the tick_nohz_tick_stopped is also bool, variable
->> > > > > tick_stopped nice to have data type as bool in place of unsigned int.
->> > > > > Moreover, the executed instructions cost could be minimal
->> > > > > without potiential data type conversion.
->> > > > >
->> > > > > Signed-off-by: John Zhao <yuankuiz@codeaurora.org>
->> > > > > ---
->> > > > >  kernel/time/tick-sched.h | 2 +-
->> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
->> > > > >
->> > > > > diff --git a/kernel/time/tick-sched.h b/kernel/time/tick-sched.h
->> > > > > index 6de959a..4d34309 100644
->> > > > > --- a/kernel/time/tick-sched.h
->> > > > > +++ b/kernel/time/tick-sched.h
->> > > > > @@ -48,8 +48,8 @@ struct tick_sched {
->> > > > >         unsigned long                   check_clocks;
->> > > > >         enum tick_nohz_mode             nohz_mode;
->> > > > >
->> > > > > +       bool                            tick_stopped    : 1;
->> > > > >         unsigned int                    inidle          : 1;
->> > > > > -       unsigned int                    tick_stopped    : 1;
->> > > > >         unsigned int                    idle_active     : 1;
->> > > > >         unsigned int                    do_timer_last   : 1;
->> > > > >         unsigned int                    got_idle_tick   : 1;
->> > > >
->> > > > I don't think this is a good idea at all.
->> > > >
->> > > > Please see https://lkml.org/lkml/2017/11/21/384 for example.
->> > > [ZJ] Thanks for this sharing. Looks like, this patch fall into the case of
->> > > "Maybe".
->> >
->> > This patch falls into the case 'pointless' because it adds extra storage
->> [ZJ] 1 bit vs 1 bit. no more.
-> 
-> Groan. No. Care to look at the data structure? You create a new 
-> storage,
-[ZJ] Say, {unsigned int, unsigned int, unsigned int, unsigned int, 
-unsigned int} becomes
-           {bool        , unsigned int, unsigned int, unsigned int, 
-unsigned int}
-As specified by the rule No.10 at the section 6.7.2.1 of C99 TC2 as:
-"If enough space remains, a bit-field that immediately follows another 
-bit-field in a
-structure shall be packed into adjacent bits of the same unit." What is 
-the new storage so far?
 
-> which is incidentally merged into the other bitfield by the compiler at 
-> a
-> different bit position, but there is no guarantee that a compiler does
-> that. It's free to use distinct storage for that bool based bit.
-[ZJ] Per the rule No.10 at section 6.7.2.1 of C99 TC2 as:
-" If insufficient space remains, whether  a  bit-field  that  does  not  
-fit  is  put  into
-the  next  unit  or overlaps  adjacent  units  is 
-implementation-defined."
-So, implementation is never mind which type will be stored if any.
+> Am 10.04.2018 um 15:55 schrieb Rob Herring <robh@kernel.org>:
+> 
+> On Wed, Apr 04, 2018 at 09:00:23PM +0200, H. Nikolaus Schaller wrote:
+>> So let's describe this property in the bindings.
+> 
+> It's not what the driver for some OS has. The h/w has a Vcc supply, so 
+> let's add a property for it...
 
-> >> > for no benefit at all.
->> [ZJ] tick_stopped is returned by the tick_nohz_tick_stopped() which is 
->> bool.
->> The benefit is no any potiential type conversion could be minded.
-> 
-> A bit stays a bit. 'bool foo : 1;' or 'unsigned int foo : 1' has to be
-> evaluated as a bit. So there is a type conversion from BIT to bool 
-> required
-> because BIT != bool.
-[ZJ] Per the rule No.9 at section 6.7.2.1 of C99 TC2 as:
-"If  the  value  0  or  1  is  stored  into  a  nonzero-width  bit-field 
-  of  types
-_Bool, the value of the bit-field shall compare equal to the value 
-stored."
-Obviously, it is nothing related to type conversion actually.
-> 
-> By chance the evaluation can be done by evaluating the byte in which 
-> the
-> bit is placed just because the compiler knows that the remaining bits 
-> are
-> not used. There is no guarantee that this is done, it happens to be 
-> true
-> for a particular compiler.
-[ZJ] Actually, such as GCC owe that kind of guarantee to be promised by 
-ABI.
-> 
-> But that does not make it any more interesting. It just makes the code
-> harder to read and eventually leads to bigger storage.
-[ZJ] To get the benctifit to be profiled, it is given as:
-number of instructions of function tick_nohz_tick_stopped():
-                         original: 17
-                         patched:  14
-      Which was saved is:
-                movzbl	%al, %eax
-                testl	%eax, %eax
-                setne    %al
-      Say, 3 / 17 = 17 % could be gained in the instruction executed for 
-this function can be evaluated.
-
-Note:
-      The environment I used is:
-                OS : Ubuntu Desktop 16.04 LTS
-                gcc: 6.3.0                       (without optimization 
-for in general purpose)
+Ah, ok. It is a matter of speaker's standpoint :)
 
 > 
-> Thanks,
+>> 
+>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+>> ---
+>> Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 1 +
+>> 1 file changed, 1 insertion(+)
 > 
-> 	tglx
+> Otherwise,
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+
+Thanks,
+Nikolaus
+
+> 
+>> 
+>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+>> index d2a937682836..6a7cddb187c1 100644
+>> --- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+>> +++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+>> @@ -35,6 +35,7 @@ Required properties:
+>> Optional properties:
+>>  - reset-gpios: GPIO specification for the RESET input. This is an
+>> 		active low signal to the PCA953x.
+>> + - vcc-supply:	power supply regulator.
+>> 
+>> Example:
+>> 
+>> -- 
+>> 2.12.2
+>> 
