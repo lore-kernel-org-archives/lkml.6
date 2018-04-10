@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753549AbeDJM67 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:58:59 -0400
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:58164 "EHLO
+        id S1753488AbeDJM66 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:58:58 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:54191 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752832AbeDJM6u (ORCPT
+        with ESMTP id S1752965AbeDJM6u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Apr 2018 08:58:50 -0400
 From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
@@ -13,9 +13,9 @@ To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
         robh+dt@kernel.org, mark.rutland@arm.com
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH v3 04/10] bindings: PCI: designware: Add support for the EP in Designware driver
-Date: Tue, 10 Apr 2018 13:58:36 +0100
-Message-Id: <d51cbb5f1cb4d87cfd263130cfffc385f25345be.1523360166.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH v3 03/10] PCI: endpoint: functions/pci-epf-test: Add second entry
+Date: Tue, 10 Apr 2018 13:58:35 +0100
+Message-Id: <2f9b5b7f1c1e5f0d0b3ca2decab2b6f3b2788784.1523360166.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1523360166.git.gustavo.pimentel@synopsys.com>
 References: <cover.1523360166.git.gustavo.pimentel@synopsys.com>
@@ -25,47 +25,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device tree binding documentation for the Endpoint in PCIe Designware
-driver.
+Adds a seconds entry on the pci_epf_test_ids structure that disables the
+linkup_notifier parameter on driver.
+
+This allows EPs that doesn't have linkup notification signal to work
+with pcitest.
 
 Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 ---
-Change v1->v2:
- - Add a missing log description.
- - Add "snps,dw-pcie" compatible string following Kishon's suggestion.
 Change v2->v3:
-- Reverted pcie_ep name to pcie.
+ - Added second entry in pci_epf_test_ids structure.
+ - Remove test_reg_bar field assignment on second entry.
 
- Documentation/devicetree/bindings/pci/designware-pcie.txt | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/pci/endpoint/functions/pci-epf-test.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-index f02cd20..3ba2080 100644
---- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-@@ -3,6 +3,7 @@
- Required properties:
- - compatible:
- 	"snps,dw-pcie-rc", "snps,dw-pcie" for RC mode;
-+	"snps,dw-pcie-ep", "snps,dw-pcie" for EP mode;
- - reg: Should contain the configuration address space.
- - reg-names: Must be "config" for the PCIe configuration space.
-     (The old way of getting the configuration address space from "ranges"
-@@ -56,3 +57,15 @@ Example configuration:
- 		#interrupt-cells = <1>;
- 		num-lanes = <1>;
- 	};
-+or
-+	pcie: pcie@dfc00000 {
-+		compatible = "snps,dw-pcie-ep", "snps,dw_pcie";
-+		reg = <0xdfc00000 0x0001000>, /* IP registers 1 */
-+		      <0xdfc01000 0x0001000>, /* IP registers 2 */
-+		      <0xd0000000 0x2000000>; /* Configuration space */
-+		reg-names = "dbi", "dbi2", "addr_space";
-+		device_type = "pci";
-+		num-ib-windows = <6>;
-+		num-ob-windows = <2>;
-+		num-lanes = <1>;
-+	};
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index 7cef851..63dca44 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+ 	return 0;
+ }
+ 
++static const struct pci_epf_test_data data_cfg2 = {
++	.linkup_notifier = false
++};
++
+ static const struct pci_epf_device_id pci_epf_test_ids[] = {
+ 	{
+ 		.name = "pci_epf_test",
+ 	},
++	{
++		.name = "pci_epf_test_cfg2",
++		.driver_data = (kernel_ulong_t)&data_cfg2,
++	},
+ 	{},
+ };
+ 
 -- 
 2.7.4
