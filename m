@@ -1,99 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752690AbeDJMN7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:13:59 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:52493 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752408AbeDJMN5 (ORCPT
+        id S1752770AbeDJMQT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:16:19 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:52096 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752408AbeDJMQS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:13:57 -0400
-X-Originating-IP: 2.224.242.101
-Date: Tue, 10 Apr 2018 14:13:52 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, horms@verge.net.au,
-        magnus.damm@gmail.com, geert@linux-m68k.org,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH v2 3/4] arm64: dts: renesas: r8a77970: add LVDS support
-Message-ID: <20180410121352.GD6436@w540>
-References: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
- <1523357646-3946-4-git-send-email-jacopo+renesas@jmondi.org>
- <0baa0f6e-f275-4a27-c76b-e4f8aec0b5f6@cogentembedded.com>
+        Tue, 10 Apr 2018 08:16:18 -0400
+X-IronPort-AV: E=Sophos;i="5.48,431,1517875200";
+   d="scan'208";a="339309309"
+From: KarimAllah Ahmed <karahmed@amazon.de>
+To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: KarimAllah Ahmed <karahmed@amazon.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH v3] X86/VMX: Disable VMX preemption timer if MWAIT is not intercepted
+Date: Tue, 10 Apr 2018 14:15:46 +0200
+Message-Id: <1523362546-20909-1-git-send-email-karahmed@amazon.de>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="48TaNjbzBVislYPb"
-Content-Disposition: inline
-In-Reply-To: <0baa0f6e-f275-4a27-c76b-e4f8aec0b5f6@cogentembedded.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The VMX-preemption timer is used by KVM as a way to set deadlines for the
+guest (i.e. timer emulation). That was safe till very recently when
+capability KVM_X86_DISABLE_EXITS_MWAIT to disable intercepting MWAIT was
+introduced. According to Intel SDM 25.5.1:
 
---48TaNjbzBVislYPb
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+"""
+The VMX-preemption timer operates in the C-states C0, C1, and C2; it also
+operates in the shutdown and wait-for-SIPI states. If the timer counts down
+to zero in any state other than the wait-for SIPI state, the logical
+processor transitions to the C0 C-state and causes a VM exit; the timer
+does not cause a VM exit if it counts down to zero in the wait-for-SIPI
+state. The timer is not decremented in C-states deeper than C2.
+"""
 
-Hi Sergei,
+Now once the guest issues the MWAIT with a c-state deeper than
+C2 the preemption timer will never wake it up again since it stopped
+ticking! Usually this is compensated by other activities in the system that
+would wake the core from the deep C-state (and cause a VMExit). For
+example, if the host itself is ticking or it received interrupts, etc!
 
-On Tue, Apr 10, 2018 at 03:02:39PM +0300, Sergei Shtylyov wrote:
-> On 04/10/2018 01:54 PM, Jacopo Mondi wrote:
->
-> > From: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
-> >
-> > Add the LVDS device to r8a77970.dtsi in a disabled state. Also connect
-> > the it to the LVDS output of the DU.
-> >
-> > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatec=
-h.se>
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >
-> > ---
-> > v1 -> v2:
-> > - Rebased on the modified endpoint name and changed patch subject to
-> >   comply with other patches in the series from Sergei.
->
->    Stop, what was wrong with my R8A77970 LVDS patch, reposted on the popu=
-lar
-> demand? :-)
->
+So disable the VMX-preemption timer if MWAIT is exposed to the guest!
 
-Nothing wrong, I found out about your right now.
-I see a very small difference as
-         lvds@feb90000 vs lvds-encoder@feb90000
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+---
+v2 -> v3:
+- return -EOPNOTSUPP before any other operation in vmx_set_hv_timer
 
-You can add your signed-off-by ofc if you think that's the case.
+v1 -> v2:
+- Drop everything .. just return -EOPNOTSUPP (pbonzini@) :D
+---
+ arch/x86/kvm/vmx.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-Thanks
-   j
-
-> MBR, Sergei
-
---48TaNjbzBVislYPb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJazKp9AAoJEHI0Bo8WoVY8MlYP/0UNZorlwhPmv0oZ6+PpWmqg
-MqR64kkrWYWhUPoUgGa4yLwx1wpcuDARGDirRBwAPQJSqCz4mR2YN1IjR1Tn31fJ
-rxWjae+N1BQWhmRzvapAWrogmQc59vrAJVCILnrtalUqMCFg6gjsX3WNkhE9tznG
-nj2pK4Jpa3DT0lONo6PNZjMtcsPuWmvJtTHKUuDlElCEZx4wmPkjUvIsJCQtjOeh
-cN2z49O6unMXJeNZB8hnoU+BU9/qHo/RvuwbyrLeqkQNOUiUj/rY98WwLi9Jx+sq
-Nq4R3X0odONsmuWlC1sl7GdSBYYOWbywmkOK3/AbvtpKkYQ4/FmJ+Ni6LoH9UKc3
-8bkgDayGM+7xOb6j4/3OgHiz0s/Nr6pvfnXYN1WBho4RkNnbadfdx4tSAypEu9A9
-3uoXE+hvVzUbSevWSsjvHwmB3MdPMH2HliKp3YUw513F/QfiXgZAUp9c7luKqGcS
-jDR1Y3zXiLYU200ep+BqtR2jKakYSSai+63qlFgZj8PuW8m1M9bEzQvQhDxlPhn4
-dXhMK79wleevaMAv7hGLc2p+X5XRRwqnTY+xVQ+jsnCLr/0N1I8E8+p3NXoxYsIZ
-eNv02rv9iORNmUswkwqvA8fniYCf5soIWGQQftVuzYUTUTKrIJGKfu9A831HyDUT
-WKDn5ZNUyP6jQ/qmeCIj
-=Q4re
------END PGP SIGNATURE-----
-
---48TaNjbzBVislYPb--
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index d2e54e7..31a4204 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -11903,10 +11903,16 @@ static inline int u64_shl_div_u64(u64 a, unsigned int shift,
+ 
+ static int vmx_set_hv_timer(struct kvm_vcpu *vcpu, u64 guest_deadline_tsc)
+ {
+-	struct vcpu_vmx *vmx = to_vmx(vcpu);
+-	u64 tscl = rdtsc();
+-	u64 guest_tscl = kvm_read_l1_tsc(vcpu, tscl);
+-	u64 delta_tsc = max(guest_deadline_tsc, guest_tscl) - guest_tscl;
++	struct vcpu_vmx *vmx;
++	u64 tscl, guest_tscl, delta_tsc;
++
++	if (kvm_pause_in_guest(vcpu->kvm))
++		return -EOPNOTSUPP;
++
++	vmx = to_vmx(vcpu);
++	tscl = rdtsc();
++	guest_tscl = kvm_read_l1_tsc(vcpu, tscl);
++	delta_tsc = max(guest_deadline_tsc, guest_tscl) - guest_tscl;
+ 
+ 	/* Convert to host delta tsc if tsc scaling is enabled */
+ 	if (vcpu->arch.tsc_scaling_ratio != kvm_default_tsc_scaling_ratio &&
+-- 
+2.7.4
