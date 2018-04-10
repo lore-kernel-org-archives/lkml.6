@@ -1,64 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752184AbeDJHFe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 03:05:34 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:56503 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751490AbeDJHFd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 03:05:33 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the pm tree
-Date: Tue, 10 Apr 2018 09:05:39 +0200
-Message-ID: <1542592.dfSYS5dp5n@aspire.rjw.lan>
-In-Reply-To: <20180409112438.6832432f@canb.auug.org.au>
-References: <20180409112438.6832432f@canb.auug.org.au>
+        id S1752327AbeDJHGb convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 03:06:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52538 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751490AbeDJHG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 03:06:29 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8812C217BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+X-Google-Smtp-Source: AIpwx49Fbi8ZypWHSSB7HRW64NuqOvPXSzBkZ3J2rIStonqhV3YHw2w7Fk2xxbsnZ1RkMIe525l3eM2jXhO64Hx0+HI=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Tue, 10 Apr 2018 09:06:26 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com>
+Message-ID: <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
+To: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>, linus.walleij@linaro.org,
+        kgene@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, April 9, 2018 3:24:38 AM CEST Stephen Rothwell wrote:
-> 
-> --Sig_/QL=OZEguM./+7xhHdQruHaV
-> Content-Type: text/plain; charset=US-ASCII
-> Content-Transfer-Encoding: quoted-printable
-> 
-> Hi Rafael,
-> 
-> After merging the pm tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
-> 
-> kernel/time/tick-sched.c: In function 'tick_nohz_idle_exit':
-> kernel/time/tick-sched.c:1162:3: warning: 'now' may be used uninitialized i=
-> n this function [-Wmaybe-uninitialized]
->    __tick_nohz_idle_restart_tick(ts, now);
->    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> kernel/time/tick-sched.c:1146:10: note: 'now' was declared here
->   ktime_t now;
->           ^~~
-> 
-> This appears to be a false positive.
-> 
-> And another in the x86_64 allmodconfig build:
-> 
-> kernel/time/tick-sched.c: In function 'tick_nohz_idle_exit':
-> kernel/time/tick-sched.c:538:2: warning: 'now' may be used uninitialized in=
->  this function [-Wmaybe-uninitialized]
->   update_ts_time_stats(smp_processor_id(), ts, now, NULL);
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> kernel/time/tick-sched.c:1146:10: note: 'now' was declared here
->   ktime_t now;
->           ^~~
-> 
-> also looks like a false positive.
+On Sun, Apr 8, 2018 at 8:07 PM, Paweł Chmiel
+<pawel.mikolaj.chmiel@gmail.com> wrote:
+> All banks with GPIO interrupts should be at beginning
+> of bank array and without any other types of banks between them.
+> This order is expected by exynos_eint_gpio_irq, when doing
+> interrupt group to bank translation.
+> Otherwise, kernel NULL pointer dereference would happen
+> when trying to handle interrupt, due to wrong bank being looked up.
+> Observed on s5pv210, when trying to handle gpj0 interrupt,
+> where kernel was mapping it to gpi bank.
 
-Yes, they are false positives AFAICS.
+Thanks for the patch. The issue looks real although one thing was
+missed - there is a gap in SVC group between GPK2 and GPL0 (pointed by
+Marek Szyprowski):
 
-Cheers,
-Rafael
+0x0 - EINT_23 - gpk0
+0x1 - EINT_24 - gpk1
+0x2 - EINT_25 - gpk2
+0x4 - EINT_27 - gpl0
+0x7 - EINT_8 - gpm0
+
+Maybe this should be done differently - to remove such hidden
+requirement entirely in favor of another parameter of
+EXYNOS_PIN_BANK_EINTG argument? Anyway if such hidden requirement
+stays, then please document it in the source code (it maybe next to
+PIN order... or next macro... or also in exynos_eint_gpio_irq()).
+
+Beside that please add cc-stable and appropriate fixes tag,
+
+Best regards,
+Krzysztof
