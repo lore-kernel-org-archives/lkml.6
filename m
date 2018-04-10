@@ -1,93 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751929AbeDJRuI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 13:50:08 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41218 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751600AbeDJRuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 13:50:07 -0400
-Subject: Re: [PATCH] swiotlb: Fix unexpected swiotlb_alloc_coherent() failures
-To: Takashi Iwai <tiwai@suse.de>, Christoph Hellwig <hch@lst.de>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-References: <20180410170513.22834-1-tiwai@suse.de>
- <20180410170615.GA27589@lst.de> <s5hzi2bat25.wl-tiwai@suse.de>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <40618b9c-786d-7f5f-3f5b-fc1dd8375846@arm.com>
-Date: Tue, 10 Apr 2018 18:50:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752467AbeDJRvL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 13:51:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38124 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752434AbeDJRvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 13:51:08 -0400
+Date: Tue, 10 Apr 2018 12:51:05 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lpechacek@suse.com, nstange@suse.de
+Subject: Re: [PATCH] selftests/livepatch: introduce tests
+Message-ID: <20180410175105.eghfnktjq55vaxto@treble>
+References: <1522266588-11806-1-git-send-email-joe.lawrence@redhat.com>
+ <1522266588-11806-2-git-send-email-joe.lawrence@redhat.com>
+ <20180407023646.k3gjrgjwzhwgu6fq@treble>
+ <20180408154231.ihnglqyya5nric4q@redhat.com>
+ <20180409140549.q6jybx3zirnsl2pp@pathway.suse.cz>
+ <alpine.LSU.2.21.1804101625090.8026@pobox.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <s5hzi2bat25.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1804101625090.8026@pobox.suse.cz>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/04/18 18:07, Takashi Iwai wrote:
-> On Tue, 10 Apr 2018 19:06:15 +0200,
-> Christoph Hellwig wrote:
->>
->> On Tue, Apr 10, 2018 at 07:05:13PM +0200, Takashi Iwai wrote:
->>> The code refactoring by commit 0176adb00406 ("swiotlb: refactor
->>> coherent buffer allocation") made swiotlb_alloc_buffer() almost always
->>> failing due to a thinko: namely, the function evaluates the
->>> dma_coherent_ok() call incorrectly and dealing as if it's invalid.
->>> This ends up with weird errors like iwlwifi probe failure or amdgpu
->>> screen flickering.
->>>
->>> This patch corrects the logic error.
->>
->> This looks ok, although even hitting this code is a bad sign.  Do you
->> know why the previous dma_direct_alloc didn't succeed?
+On Tue, Apr 10, 2018 at 04:31:05PM +0200, Miroslav Benes wrote:
 > 
-> That I have no idea, sorry.  I just figured out the regression just
-> from the dmesg output of 4.16 kernel in bugzilla reports.
-> Could you take a look at the bugzilla reports there?
+> > > > I love this.  Nice work!
+> 
+> Yes, it looks really good.
+> 
+> > > > As you and Petr discussed, it would be nice to get rid of some of the
+> > > > delays, and also the callback tests will be very important.
+> > > 
+> > > I've got v2 WIP that minimizes the delays, cleans up build flags, and
+> > > adds a basic shadow variable test.
+> > 
+> > Sounds great.
+> > 
+> > > Since these tests are based on top of Petr's current patchsets for
+> > > atomic replace and shadow variables, it probably makes sense for those
+> > > to merge first.  I can post test results to his patchsets if that helps.
+> > 
+> > Sounds good to me. We could synchronize the merge. But I think that it
+> > will not be a big deal if we would merge the atomic replace slightly
+> > earlier if the tests needed some more love.
+> 
+> Well, it depends. Josh wants the patch first and then atomic replace. So 
+> we can merge selftests for all features we currently have and tests for 
+> atomic replace could go with it.
 
-In the first one, the machine appears to have enough RAM that most of it 
-is beyond the device's 36-bit DMA mask, thus it's fairly likely for the 
-initial direct alloc to come back with something unsuitable.
+Well, I don't want to add additional work, if it's not needed.  Joe's
+selftests are coming along nicely.  If the selftest patch is merged
+shortly after Petr's set, that's fine with me.  Or maybe Petr can just
+add Joe's patch to the end of his set.
 
-Robin.
-
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
->>> Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1088658
->>> Bugzilla: https://bugzilla.suse.com/show_bug.cgi?id=1088902
->>> Fixes: 0176adb00406 ("swiotlb: refactor coherent buffer allocation")
->>> Cc: <stable@vger.kernel.org> # v4.16+
->>> Signed-off-by: Takashi Iwai <tiwai@suse.de>
->>> ---
->>>   lib/swiotlb.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/lib/swiotlb.c b/lib/swiotlb.c
->>> index 47aeb04c1997..de7cc540450f 100644
->>> --- a/lib/swiotlb.c
->>> +++ b/lib/swiotlb.c
->>> @@ -719,7 +719,7 @@ swiotlb_alloc_buffer(struct device *dev, size_t size, dma_addr_t *dma_handle,
->>>   		goto out_warn;
->>>   
->>>   	*dma_handle = __phys_to_dma(dev, phys_addr);
->>> -	if (dma_coherent_ok(dev, *dma_handle, size))
->>> +	if (!dma_coherent_ok(dev, *dma_handle, size))
->>>   		goto out_unmap;
->>>   
->>>   	memset(phys_to_virt(phys_addr), 0, size);
->>> -- 
->>> 2.16.3
->> ---end quoted text---
->>
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
-> 
+-- 
+Josh
