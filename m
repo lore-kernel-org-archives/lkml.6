@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/EoSkqwaXTgnlMq8QWym84BNSeTReDYMMttoetdadHUOUPfFaIJT4KWh3yC7kjkaA1BNCo
-ARC-Seal: i=1; a=rsa-sha256; t=1523399095; cv=none;
+X-Google-Smtp-Source: AIpwx49XBxisagfY/fzRt5fjwxchFiC1t9WJpm8+w/0Ubg4y4D5JxnRXMwbCCgS+xml9E09BCafb
+ARC-Seal: i=1; a=rsa-sha256; t=1523399093; cv=none;
         d=google.com; s=arc-20160816;
-        b=mFPIGb4dBnHtWtIypOAvNHN4MX+d9GavLCltcDKCGqtFbstyLKNebH7pR0h/nhyA8B
-         8p4hCFYJvcBzKODGXEwb7qh1G4tuam/8oBG5gWQkAWjpeiOUXyTelAx8W2oFb+MeUK67
-         812ifRXQpkYXeRaXIX4dT1rYc6sxvjYJLmLsnaAmRyTG3Cc5h6+KBbpO2GckqCwVOZYT
-         s+iNb+W1Lwq+tHW1a/Ta7ay7PWRSVBeh5ItDYqA/STCzMhwuvuP2Sq+bdc5etkZQj38A
-         kzCw877Yu+lGhe1OqFW58zenRTd4R5H2AzLNfwvd5hz0hVOSiO4AtW0AQW8kXbG84FgS
-         XOrg==
+        b=TibjSIsYt3BoajRRkcnH+5A8KPPBxCmve9geju8caMGh28jhAxkcGGvzzF/FQDSUFP
+         93T1qBPEsO8HTwy5KWqz9+AF3nPI00Ke2OQR5YWlTbykihndFZHzQuQBnk5cTcWiwfre
+         g3OG+/LyJVGLXJ0fHUPKr1GD0btXaIhHF3FwrhC4Uhq+Qheq6R5PgamHzoWQ00XITDQ/
+         8U839I150pdwN0uSzGiFH1aIUgx7QNdcVzrG0ohK7VONwLyOKoHII5g9uWgun9DPfosF
+         4KQgyrNDf7siy6NTtK04D+iyMtmakgjxT9aOXy8+RvZDJnQcZBxvSs1hsL+rXek/2gvT
+         ZQXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=UzxTZtYlm6ZlAw6L4iUuPbzrJVh6ojo5qQ72yhFYBJc=;
-        b=aDzzgT/4t0oC8+8TS71YQR3iOwkLYl6KoxofrYpzbvcH9koHJ33u0tnWNJYXDj7rpG
-         OeWGbIZIiWhxtMSQwE3yTA9jf46fXQv7d/W5DQ2lB4qz96JK1YS/vbdPe1DkmPuqHH9I
-         2DXXqDLGn6WGyqdUeqjN3IqcP12ltZeO9NB6ZpgIQWR1Zs4o3BcxL7st5y80y5f/gYDQ
-         0/qigvo21qShKkRB3zHwBv2LOxW1aHtT9EsC7oOXqb8+/teYCBmiEWm0/mKojVIs+lVJ
-         hRb6OWV0X9SSFlz/YJOF6UOrtZhWLE8Vm8jrYSwdUcE15+gUErcrheDivFotHQ0jcPFR
-         wn9A==
+        bh=PGxSG3D/HG/3mTLTy2/D+ZltJW6DBNsUORCWkbykswA=;
+        b=xOrQtHp1sjJTU6YDVBcGgIfsgBlNFQ+1T/fhIL9IRRjfAPHyqIv5atZE63U35XhJDN
+         QgF1sd79L7uTWH2FNUj+RT5diMA5i3Ib+ckunsRcQljVpwLDnppCpk+m9/u9/xogAPMo
+         Lp9lRVUubIOklegy3ZYnX2Cr2Nw7ST90Zd6yP3SUuCewQOp3fL1Co8cNKzllSUsVE4PV
+         D7yL9liGMf40HPZNOM0cs3CyBbXk8MTlluH5EE08vnHPZhh46fxT5BHe7+ODMf7V0gr4
+         OllZZk80U9Vhs17lSdDQY7UXW2JYXHuTNcQy0rjzDpZBXNhk8pCbV9MpUBdznBtTcsRs
+         gF9A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lucas Bates <lucasb@mojatatu.com>,
-	Davide Caratti <dcaratti@redhat.com>,
+	Eric Dumazet <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 05/18] net/sched: fix NULL dereference in the error path of tcf_bpf_init()
-Date: Wed, 11 Apr 2018 00:23:40 +0200
-Message-Id: <20180410212758.837254911@linuxfoundation.org>
+Subject: [PATCH 4.16 14/18] ip6_gre: better validate user provided tunnel names
+Date: Wed, 11 Apr 2018 00:23:49 +0200
+Message-Id: <20180410212759.338481628@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212758.564682823@linuxfoundation.org>
 References: <20180410212758.564682823@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399729810513986?=
-X-GMAIL-MSGID: =?utf-8?q?1597399729810513986?=
+X-GMAIL-THRID: =?utf-8?q?1597399727147391550?=
+X-GMAIL-MSGID: =?utf-8?q?1597399727147391550?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,98 +50,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 3239534a79ee6f20cffd974173a1e62e0730e8ac ]
+[ Upstream commit 5f42df013b8bc1b6511af7a04bf93b014884ae2a ]
 
-when tcf_bpf_init_from_ops() fails (e.g. because of program having invalid
-number of instructions), tcf_bpf_cfg_cleanup() calls bpf_prog_put(NULL) or
-bpf_prog_destroy(NULL). Unless CONFIG_BPF_SYSCALL is unset, this causes
-the following error:
+Use dev_valid_name() to make sure user does not provide illegal
+device name.
 
- BUG: unable to handle kernel NULL pointer dereference at 0000000000000020
- PGD 800000007345a067 P4D 800000007345a067 PUD 340e1067 PMD 0
- Oops: 0000 [#1] SMP PTI
- Modules linked in: act_bpf(E) ip6table_filter ip6_tables iptable_filter binfmt_misc ext4 mbcache jbd2 crct10dif_pclmul crc32_pclmul ghash_clmulni_intel snd_hda_codec_generic pcbc snd_hda_intel snd_hda_codec snd_hda_core snd_hwdep snd_seq snd_seq_device snd_pcm aesni_intel crypto_simd glue_helper cryptd joydev snd_timer snd virtio_balloon pcspkr soundcore i2c_piix4 nfsd auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c ata_generic pata_acpi qxl drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm virtio_blk drm virtio_net virtio_console i2c_core crc32c_intel serio_raw virtio_pci ata_piix libata virtio_ring floppy virtio dm_mirror dm_region_hash dm_log dm_mod [last unloaded: act_bpf]
- CPU: 3 PID: 5654 Comm: tc Tainted: G            E    4.16.0.bpf_test+ #408
- Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
- RIP: 0010:__bpf_prog_put+0xc/0xc0
- RSP: 0018:ffff9594003ef728 EFLAGS: 00010202
- RAX: 0000000000000000 RBX: ffff9594003ef758 RCX: 0000000000000024
- RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
- RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000044
- R10: 0000000000000220 R11: ffff8a7ab9f17131 R12: 0000000000000000
- R13: ffff8a7ab7c3c8e0 R14: 0000000000000001 R15: ffff8a7ab88f1054
- FS:  00007fcb2f17c740(0000) GS:ffff8a7abfd80000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 0000000000000020 CR3: 000000007c888006 CR4: 00000000001606e0
- Call Trace:
-  tcf_bpf_cfg_cleanup+0x2f/0x40 [act_bpf]
-  tcf_bpf_cleanup+0x4c/0x70 [act_bpf]
-  __tcf_idr_release+0x79/0x140
-  tcf_bpf_init+0x125/0x330 [act_bpf]
-  tcf_action_init_1+0x2cc/0x430
-  ? get_page_from_freelist+0x3f0/0x11b0
-  tcf_action_init+0xd3/0x1b0
-  tc_ctl_action+0x18b/0x240
-  rtnetlink_rcv_msg+0x29c/0x310
-  ? _cond_resched+0x15/0x30
-  ? __kmalloc_node_track_caller+0x1b9/0x270
-  ? rtnl_calcit.isra.29+0x100/0x100
-  netlink_rcv_skb+0xd2/0x110
-  netlink_unicast+0x17c/0x230
-  netlink_sendmsg+0x2cd/0x3c0
-  sock_sendmsg+0x30/0x40
-  ___sys_sendmsg+0x27a/0x290
-  ? mem_cgroup_commit_charge+0x80/0x130
-  ? page_add_new_anon_rmap+0x73/0xc0
-  ? do_anonymous_page+0x2a2/0x560
-  ? __handle_mm_fault+0xc75/0xe20
-  __sys_sendmsg+0x58/0xa0
-  do_syscall_64+0x6e/0x1a0
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
- RIP: 0033:0x7fcb2e58eba0
- RSP: 002b:00007ffc93c496c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
- RAX: ffffffffffffffda RBX: 00007ffc93c497f0 RCX: 00007fcb2e58eba0
- RDX: 0000000000000000 RSI: 00007ffc93c49740 RDI: 0000000000000003
- RBP: 000000005ac6a646 R08: 0000000000000002 R09: 0000000000000000
- R10: 00007ffc93c49120 R11: 0000000000000246 R12: 0000000000000000
- R13: 00007ffc93c49804 R14: 0000000000000001 R15: 000000000066afa0
- Code: 5f 00 48 8b 43 20 48 c7 c7 70 2f 7c b8 c7 40 10 00 00 00 00 5b e9 a5 8b 61 00 0f 1f 44 00 00 0f 1f 44 00 00 41 54 55 48 89 fd 53 <48> 8b 47 20 f0 ff 08 74 05 5b 5d 41 5c c3 41 89 f4 0f 1f 44 00
- RIP: __bpf_prog_put+0xc/0xc0 RSP: ffff9594003ef728
- CR2: 0000000000000020
+syzbot caught the following bug :
 
-Fix it in tcf_bpf_cfg_cleanup(), ensuring that bpf_prog_{put,destroy}(f)
-is called only when f is not NULL.
+BUG: KASAN: stack-out-of-bounds in strlcpy include/linux/string.h:300 [inline]
+BUG: KASAN: stack-out-of-bounds in ip6gre_tunnel_locate+0x334/0x860 net/ipv6/ip6_gre.c:339
+Write of size 20 at addr ffff8801afb9f7b8 by task syzkaller851048/4466
 
-Fixes: bbc09e7842a5 ("net/sched: fix idr leak on the error path of tcf_bpf_init()")
-Reported-by: Lucas Bates <lucasb@mojatatu.com>
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+CPU: 1 PID: 4466 Comm: syzkaller851048 Not tainted 4.16.0+ #1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x1b9/0x29f lib/dump_stack.c:53
+ print_address_description+0x6c/0x20b mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report.cold.7+0xac/0x2f5 mm/kasan/report.c:412
+ check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+ check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+ memcpy+0x37/0x50 mm/kasan/kasan.c:303
+ strlcpy include/linux/string.h:300 [inline]
+ ip6gre_tunnel_locate+0x334/0x860 net/ipv6/ip6_gre.c:339
+ ip6gre_tunnel_ioctl+0x69d/0x12e0 net/ipv6/ip6_gre.c:1195
+ dev_ifsioc+0x43e/0xb90 net/core/dev_ioctl.c:334
+ dev_ioctl+0x69a/0xcc0 net/core/dev_ioctl.c:525
+ sock_ioctl+0x47e/0x680 net/socket.c:1015
+ vfs_ioctl fs/ioctl.c:46 [inline]
+ file_ioctl fs/ioctl.c:500 [inline]
+ do_vfs_ioctl+0x1cf/0x1650 fs/ioctl.c:684
+ ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+ SYSC_ioctl fs/ioctl.c:708 [inline]
+ SyS_ioctl+0x24/0x30 fs/ioctl.c:706
+ do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+Fixes: c12b395a4664 ("gre: Support GRE over IPv6")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_bpf.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ net/ipv6/ip6_gre.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/net/sched/act_bpf.c
-+++ b/net/sched/act_bpf.c
-@@ -248,10 +248,14 @@ static int tcf_bpf_init_from_efd(struct
+--- a/net/ipv6/ip6_gre.c
++++ b/net/ipv6/ip6_gre.c
+@@ -335,11 +335,13 @@ static struct ip6_tnl *ip6gre_tunnel_loc
+ 	if (t || !create)
+ 		return t;
  
- static void tcf_bpf_cfg_cleanup(const struct tcf_bpf_cfg *cfg)
- {
--	if (cfg->is_ebpf)
--		bpf_prog_put(cfg->filter);
+-	if (parms->name[0])
++	if (parms->name[0]) {
++		if (!dev_valid_name(parms->name))
++			return NULL;
+ 		strlcpy(name, parms->name, IFNAMSIZ);
 -	else
--		bpf_prog_destroy(cfg->filter);
-+	struct bpf_prog *filter = cfg->filter;
-+
-+	if (filter) {
-+		if (cfg->is_ebpf)
-+			bpf_prog_put(filter);
-+		else
-+			bpf_prog_destroy(filter);
++	} else {
+ 		strcpy(name, "ip6gre%d");
+-
 +	}
- 
- 	kfree(cfg->bpf_ops);
- 	kfree(cfg->bpf_name);
+ 	dev = alloc_netdev(sizeof(*t), name, NET_NAME_UNKNOWN,
+ 			   ip6gre_tunnel_setup);
+ 	if (!dev)
