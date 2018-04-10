@@ -1,69 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751931AbeDJDMe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 23:12:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37206 "EHLO mail.kernel.org"
+        id S1752121AbeDJDQT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 23:16:19 -0400
+Received: from mga02.intel.com ([134.134.136.20]:28807 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751757AbeDJDMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 23:12:33 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B3E921725
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Mon, 9 Apr 2018 23:12:30 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal
- OOM_SCORE_ADJ_MIN
-Message-ID: <20180409231230.1ab99e85@vmware.local.home>
-In-Reply-To: <CAGWkznEuGCZq600XjCtp3hzgN2LrCgwSAfoLwQR7jTw5p=qHoQ@mail.gmail.com>
-References: <1523153783-20579-1-git-send-email-zhaoyang.huang@spreadtrum.com>
-        <20180407234812.2bf2b24b@gandalf.local.home>
-        <CAGWkznHVGTpvfQOvaOGP6fYDWh0Os0pYXTC3gG_qvW6mCDuybQ@mail.gmail.com>
-        <20180408084717.62ee4f9e@gandalf.local.home>
-        <CAGWkznEQbaw7HMvE1pbVDMriOL8yW74Ka5UEci4YFRdLnVbFzA@mail.gmail.com>
-        <20180409094944.6399b211@gandalf.local.home>
-        <CAGWkznEhy7Fard=6E3X_qUezXd33RdKV9CVeONWL=6EQ1bokEw@mail.gmail.com>
-        <CAGWkznEuGCZq600XjCtp3hzgN2LrCgwSAfoLwQR7jTw5p=qHoQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751629AbeDJDQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 23:16:17 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,430,1517904000";
+   d="scan'208";a="46534565"
+Date: Tue, 10 Apr 2018 11:14:01 +0800
+From: Ye Xiaolong <xiaolong.ye@intel.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, lkp@01.org
+Subject: Re: [lkp-robot] [init, tracing]  2580d6b795:
+ BUG:kernel_reboot-without-warning_in_boot_stage
+Message-ID: <20180410031401.GF17893@yexl-desktop>
+References: <20180406191334.357550809@goodmis.org>
+ <20180409053252.GB27349@yexl-desktop>
+ <20180409180454.1310abea@gandalf.local.home>
+ <20180410012340.GA17893@yexl-desktop>
+ <20180409224152.4d7fe6b7@vmware.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409224152.4d7fe6b7@vmware.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Apr 2018 10:32:36 +0800
-Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
+On 04/09, Steven Rostedt wrote:
+>On Tue, 10 Apr 2018 09:23:40 +0800
+>Ye Xiaolong <xiaolong.ye@intel.com> wrote:
+>
+>> Hi, Steven
+>> 
+>> On 04/09, Steven Rostedt wrote:
+>> >On Mon, 9 Apr 2018 13:32:52 +0800
+>> >kernel test robot <xiaolong.ye@intel.com> wrote:
+>> >  
+>> >> FYI, we noticed the following commit (built with gcc-7):
+>> >> 
+>> >> commit: 2580d6b795e25879c825a0891cf67390f665b11f ("init, tracing: Have printk come through the trace events for initcall_debug")
+>> >> url: https://github.com/0day-ci/linux/commits/Steven-Rostedt/init-tracing/20180407-130743
+>> >> 
+>> >> 
+>> >> in testcase: boot
+>> >> 
+>> >> on test machine: qemu-system-x86_64 -enable-kvm -cpu Nehalem -smp 2 -m 512M
+>> >> 
+>> >> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+>> >> 
+>> >> 
+>> >> +------------------------------------------------------------------+------------+------------+
+>> >> |                                                                  | ecf6709d07 | 2580d6b795 |
+>> >> +------------------------------------------------------------------+------------+------------+
+>> >> | boot_successes                                                   | 0          | 0          |
+>> >> | boot_failures                                                    | 8          | 8          |
+>> >> | invoked_oom-killer:gfp_mask=0x                                   | 8          |            |
+>> >> | Mem-Info                                                         | 8          |            |
+>> >> | Kernel_panic-not_syncing:Out_of_memory_and_no_killable_processes | 8          |            |
+>> >> | BUG:kernel_reboot-without-warning_in_boot_stage                  | 0          | 8          |
+>> >> +------------------------------------------------------------------+------------+------------+  
+>> >
+>> >What does this mean?  
+>> 
+>> It means BUG:BUG:kernel_reboot-without-warning_in_boot_stage occurred 8 times
+>> in boot tests for commit 2580d6b795, while 0 time for its parent ecf6709d07.
+>
+>I don't have a commit 2580d6b795.
+>
+>The commit with the title "init, tracing: Have printk come through the
+>trace events for initcall_debug" is 4e37958d1288ce. linux-next doesn't
+>have that commit sha1 either.
 
-> For bellowing scenario, process A have no intension to exhaust the
-> memory, but will be likely to be selected by OOM for we set
-> OOM_CORE_ADJ_MIN for it.
-> process A(-1000)                                          process B
-> 
->   i = si_mem_available();
->        if (i < nr_pages)
->            return -ENOMEM;
->                                                    schedule
->                                                 --------------->  
-> allocate huge memory
->                                                 <-------------
-> if (user_thread)
->   set_current_oom_origin();
-> 
->   for (i = 0; i < nr_pages; i++) {
->          bpage = kzalloc_node
+This commit was generated by 0day service, it captured your email patchset which posted
+on LKML and then applied it on top of 06dd3dfeea60 and performed build/boot tests accordingly.
 
-Is this really an issue though?
+>
+>
+>> 
+>> >  
+>> >> 
+>> >> 
+>> >> 
+>> >> [    0.000000] RAMDISK: [mem 0x1b7e2000-0x1ffcffff]
+>> >> [    0.000000] ACPI: Early table checksum verification disabled
+>> >> [    0.000000] ACPI: RSDP 0x00000000000F6860 000014 (v00 BOCHS )
+>> >> [    0.000000] ACPI: RSDT 0x000000001FFE1628 000030 (v01 BOCHS  BXPCRSDT 00000001 BXPC 00000001)
+>> >> [    0.000000] ACPI: FACP 0x000000001FFE147C 000074 (v01 BOCHS  BXPCFACP 00000001 BXPC 00000001)
+>> >> BUG: kernel reboot-without-warning in boot stage
+>> >> 
+>> >> Elapsed time: 10
+>> >> 
+>> >> #!/bin/bash
+>> >> 
+>> >> 
+>> >> 
+>> >> To reproduce:
+>> >> 
+>> >>         git clone https://github.com/intel/lkp-tests.git
+>> >>         cd lkp-tests
+>> >>         bin/lkp qemu -k <bzImage> job-script  # job-script is attached in this email
+>> >>   
+>> >
+>> >The config boots fine for me. But I don't have the setup to run the
+>> >above and get it to work, nor the time to figure out why it doesn't
+>> >work.  
+>> 
+>> Could you paste your failure log here, we can see if there is something we can help.
+>
+>I tried it on a more up-to-date box, after checking out my commit with
+>the title you say is an error. I compiled your config with gcc (GCC)
+>7.3.1 20180130 (Red Hat 7.3.1-2), and ran the above (which did work).
+>It ended after it got to a login prompt.
+>
+>---
+>[..]
+>[   10.588029] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+>[   10.589363] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
+>[   10.590385] cfg80211: failed to load regulatory.db
+>[   10.610002] Freeing unused kernel memory: 1980K
+>[   10.610533] Write protecting the kernel read-only data: 49152k
+>[   10.615728] Freeing unused kernel memory: 2028K
+>[   10.620754] Freeing unused kernel memory: 464K
+>INIT: version 2.88 booting
+>/etc/rcS.d/S00fbsetup: line 3: /sbin/modprobe: not found
+>
+>Please wait: booting...
+>[   10.676861] rc (151) used greatest stack depth: 27848 bytes left
+>Starting udev
+>[   10.750281] udevd[175]: starting version 3.1.5
+>[   10.759923] udevd (175) used greatest stack depth: 27696 bytes left
+>[   11.129999] udevadm (178) used greatest stack depth: 26696 bytes left
+>Populating dev cache
+>INIT: Entering runlevel: 5
+>Configuring network interfaces... done.
+>Starting syslogd/klogd: done
+>
+>Poky (Yocto Project Reference Distro) 2.1 qemux86-64 /dev/ttyS0
+>
+>qemux86-64 login:
+>---
+>
+>What am I suppose to see?
+>
 
-Seriously, do you think you will ever hit this?
+So I figure the gap may be 0day bot applied your patchset to a inappropriate base. 
 
-How often do you increase the size of the ftrace ring buffer? For this
-to be an issue, the system has to trigger an OOM at the exact moment
-you decide to increase the size of the ring buffer. That would be an
-impressive attack, with little to gain.
-
-Ask the memory management people. If they think this could be a
-problem, then I'll be happy to take your patch.
-
--- Steve
+Thanks,
+Xiaolong
+>-- Steve
+>
