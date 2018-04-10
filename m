@@ -1,81 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752200AbeDJRqe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 13:46:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52894 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751876AbeDJRqb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 13:46:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 09D1960250
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Tue, 10 Apr 2018 11:46:29 -0600
-From: Lina Iyer <ilina@codeaurora.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, evgreen@chromium.org,
-        dianders@chromium.org,
-        Mahesh Sivasubramanian <msivasub@codeaurora.org>
-Subject: Re: [PATCH v7 [RESEND] 1/2] drivers: qcom: add command DB driver
-Message-ID: <20180410174629.GD19682@codeaurora.org>
-References: <20180406151356.7818-1-ilina@codeaurora.org>
- <20180406151356.7818-2-ilina@codeaurora.org>
- <152305699547.94378.15462587304123828477@swboyd.mtv.corp.google.com>
+        id S1752214AbeDJRrc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 13:47:32 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41450 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751505AbeDJRra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 13:47:30 -0400
+Date: Tue, 10 Apr 2018 12:47:29 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Evgenii Shatokhin <eshatokhin@virtuozzo.com>
+Cc: Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>,
+        Jiri Kosina <jikos@kernel.org>, Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 05/10] livepatch: Support separate list for replaced
+ patches.
+Message-ID: <20180410174729.nsamiif73pynfla4@treble>
+References: <20180319214324.riyp233trtfxbeto@treble>
+ <20180320122538.t75rplwhmhtap5q2@pathway.suse.cz>
+ <20180320201502.2skkk3ld4zk2dxwg@treble>
+ <20180323094507.smsqc5ft3yajnwqt@pathway.suse.cz>
+ <20180323224410.vuq5cabfprqhd6ej@treble>
+ <20180326101107.bbloeh5l276on7uz@pathway.suse.cz>
+ <20180406195049.dtfebzfdkbvv6yex@treble>
+ <20180410083455.l26dgo5kx4cy7bc7@pathway.suse.cz>
+ <alpine.LSU.2.21.1804101355050.8026@pobox.suse.cz>
+ <127f954c-88c6-30cb-bf14-7ab2fad70158@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <152305699547.94378.15462587304123828477@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <127f954c-88c6-30cb-bf14-7ab2fad70158@virtuozzo.com>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06 2018 at 17:23 -0600, Stephen Boyd wrote:
->Quoting Lina Iyer (2018-04-06 08:13:55)
->> From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
->>
->> Command DB is a simple database in the shared memory of QCOM SoCs, that
->> provides information regarding shared resources. Some shared resources
->> in the SoC have properties that are probed dynamically at boot by the
->> remote processor. The information pertaining to the SoC and the platform
->> are made available in the shared memory. Drivers can query this
->> information using predefined strings.
->>
->> Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
->> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
->> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->> ---
->
->I have this patch on top to fix the endian stuff. Care to test it out
->and see if it still works?
->
->From: Stephen Boyd <swboyd@chromium.org>
->Subject: soc: qcom: cmd-db: Make endian-agnostic
->
->This driver deals with memory that is stored in little-endian format.
->Update the structures with the proper little-endian types and then
->do the proper conversions when reading the fields. Note that we compare
->the ids with a memcmp() because we already pad out the string 'id' field
->to exactly 8 bytes with the strncpy() onto the stack.
->
->Signed-off-by: Stephen Boyd <swboyd@chromium.org>
->
->diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
->index b5172049f608..a56dc9edab82 100644
->--- a/drivers/soc/qcom/cmd-db.c
->+++ b/drivers/soc/qcom/cmd-db.c
->@@ -13,18 +13,10 @@
->
-> #define NUM_PRIORITY		2
-> #define MAX_SLV_ID		8
->-#define CMD_DB_MAGIC		0x0C0330DBUL
->+static const char CMD_DB_MAGIC[] = { 0xdb, 0x33, 0x03, 0x0c };
-This has to be { 0xdb, 0x30, 0x03, 0x0c }
+> > I agree here. Practically we use only cumulative replacement patches at
+> > SUSE. So with that in mind I don't care about the stacking much. But, it
+> > may make sense for someone else. Evgenii mentioned they used it for
+> > hotfixes. Therefore I'm reluctant to remove it completely.
+> 
+> Well, it was convenient in some cases to provide a hot fix for a given bug
+> on top of our official cumulative patch. So far, such fixes were only used
+> on a few of the customers' machines (where they were needed ASAP). It just
+> made it easier to see where is the common set of fixes and where is the
+> customer-specific addition.
+> 
+> I think, we can use cumulative patches in such cases too without much
+> additional effort. For example, we can encode the distinction (base set of
+> fixes + addition) in the module name or somewhere else.
+> 
+> So, I think, it is fine for us, if stacking support is removed. Especially
+> if that makes the implementation of livepatch less complex and more
+> reliable.
 
-Otherwise it works.
+Just to clarify, I think we are just proposing the removal of the
+enforcement of the stacking order.  We will still allow multiple
+non-replace patches to be applied.  We just won't enforce which patches
+can be disabled/removed at any given time.
 
-Thanks,
-Lina
+So I think your old way of doing things (individual unrelated patches on
+top of a cumulative patch) would still work.
+
+-- 
+Josh
