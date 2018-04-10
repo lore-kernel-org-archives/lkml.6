@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/BxOrIINHmzc7VhCI8NVx/vB+nKoS/3XnfacMSj4uEGHlrHT+cjtuvL0BOQM5HpN2RBAQp
-ARC-Seal: i=1; a=rsa-sha256; t=1523399828; cv=none;
+X-Google-Smtp-Source: AIpwx4+JP5mj8qwIvuymjGnDV4oQBP67SxgCdVE1N8a2Z+3xA0p9R3x8ez6BoytVoqj65PaifGqy
+ARC-Seal: i=1; a=rsa-sha256; t=1523399825; cv=none;
         d=google.com; s=arc-20160816;
-        b=U3CdxrCO/+hnrxCIYzMMEHEnB+C9VAdlOscABRSYmE6FtK5ZrVoVtHrIPFGNxNzw7r
-         T/rpvZKw4N0pxeD5rZTpsduKdVlHWzS1a0QpD49cRKv+uGsxJ5SCvc7cDfjknamX3D9o
-         dE084mLSA7cDd6cFQXGXDSXwaAw2KF0kUJPv50sPTUnpiOOTa3Mrddat3qx5bCebKMw+
-         CMtttVGUUhwWg0cwWYuJc+upFY3C4Z/pNh+AmsDmhj9ELcC1MjhyxhXy7NyAsL23MRwW
-         xI8VGX0dO7qnwcFS7MqDzgdsY+b9sbyMT3SQZJcKjrneopsrrrEVx7sh+/fbAwaNvwPW
-         uybA==
+        b=XDY/rt8RVp82bhlaoSIpWmksxr0zTH6uNa8UBUuUB58XsYLyr/l9OCeGCIqTIgYryY
+         kKDZF90DzySv4M9+zOQOBOsJO/yS0U2A/MiM9gvW6rvLVEl3J9C72LuCW/GKsDVBUm/y
+         olbG0lokp7/gWosjSS15jow37t0ShrBfu+WyZmW1EAgXaqvdKn0Z23jqf0mTAskE/Lz3
+         3SiN9Zwziv2paIG54pLcvPSZ2qAh7jtJzOCcc91wPrr4K6ndK5KRQI2jsUVvH40kgnjW
+         ZAOISDSn3TKVPoorTNT3m4MV3yPa3WpY4y/zKnGfZBhhtbnsiTYND+kZcFHcVx78PQxW
+         OSqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=K76yLd3ndQiBu4oLHvBiOkVA2zhw+Z6nXW2sgM/daUY=;
-        b=IAD3Nz7R6XcPpBRs69AGc7M5c/IDDp9qB0UiliVRYE4fZ10GPHMDHEAEFEsvbGM3Bf
-         Q7YkiYCWRqF1Ofa4iyOdSDwo6mErXMIg7ZsRoYgno3qU6sVj/eHs60LDmAkp9G5Rh7Cz
-         3paq03EPi93pcYsnKIWI+ZtlCS+Qw1q48Jyh4dFBsEuFrYoFJIXLP1F+ohaEUZq85r2m
-         nbI6PQoa2eEpg0of82s/6hyS7SWg+vpf6U5nF5ddD36aqNEy83miA1kdlj0bwhpiC2BK
-         iVdubXv+FxqFxbA+DWsza1Tf+fQKjZzEAueYRL4sM9mgxLaQiRb3ZU6MlDFVX9LNJueu
-         I9rQ==
+        bh=VMP3YqSt44e1e8bigJw67npbb91AJrwWH0byfXDcggE=;
+        b=u9MmNaOoiz4bPMaeXJCuwYJntfzTIcDDM2CydmDKIzLJR4gsRGuxLY5eY8ftPQvE9w
+         sltitD56SiTH3jDJqAUC+coot3qA+V0lJnLGm3BUHYRiUuwrZno1ykhnZCKcPU75J7IP
+         PFuBWeHNvt+YxGfKH/7mGx9PJyYzpxM9TTj9qwyDCbj/fOhaKtxjJHs+cNu2lzmU9Ypz
+         mipZamEqKryltEU4/R2Df94qTxG5/ihT5H3Fsw2ctidKNAUEdeJDZX6n3ROolbJ2nQGu
+         rIG/+rE8bascag0CxmVh2m70jPFct+hNd8Z11USpBkkmNOVqIAF41dOiUcxpzFhKhsNJ
+         A2jw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@free-electrons.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Bastien Nocera <hadess@hadess.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 078/138] mtd: mtd_oobtest: Handle bitflips during reads
-Date: Wed, 11 Apr 2018 00:24:28 +0200
-Message-Id: <20180410212911.198142284@linuxfoundation.org>
+Subject: [PATCH 4.14 077/138] Input: goodix - disable IRQs while suspended
+Date: Wed, 11 Apr 2018 00:24:27 +0200
+Message-Id: <20180410212911.088525899@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400125818326923?=
-X-GMAIL-MSGID: =?utf-8?q?1597400498848617005?=
+X-GMAIL-THRID: =?utf-8?q?1597400122613176921?=
+X-GMAIL-MSGID: =?utf-8?q?1597400496011982083?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,98 +51,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Miquel Raynal <miquel.raynal@free-electrons.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
 
-[ Upstream commit 12663b442e5ac5aa3d6097cd3f287c71ba46d26e ]
+[ Upstream commit faec44b6838312484d63e82286087cf2d5ebb891 ]
 
-Reads from NAND devices usually trigger bitflips, this is an expected
-behavior. While bitflips are under a given threshold, the MTD core
-returns 0. However, when the number of corrected bitflips is above this
-same threshold, -EUCLEAN is returned to inform the upper layer that this
-block is slightly dying and soon the ECC engine will be overtaken so
-actions should be taken to move the data out of it.
+We should not try to do any i2c transfers before the controller is
+resumed (which happens before our resume method gets called).
 
-This particular condition should not be treated like an error and the
-test should continue.
+So we need to disable our IRQ while suspended to enforce this. The
+code paths for devices with GPIOs for the int and reset pins already
+disable the IRQ the through goodix_free_irq().
 
-Signed-off-by: Miquel Raynal <miquel.raynal@free-electrons.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+This commit also disables the IRQ while suspended for devices without
+GPIOs for the int and reset pins.
+
+This fixes the i2c bus sometimes getting stuck after a suspend/resume
+causing the touchscreen to sometimes not work after a suspend/resume.
+This has been tested on a GPD pocked device.
+
+BugLink: https://github.com/nexus511/gpd-ubuntu-packages/issues/10
+BugLink: https://www.reddit.com/r/GPDPocket/comments/7niut2/fix_for_broken_touch_after_resume_all_linux/
+Tested-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Bastien Nocera <hadess@hadess.net>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mtd/tests/oobtest.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/input/touchscreen/goodix.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/mtd/tests/oobtest.c
-+++ b/drivers/mtd/tests/oobtest.c
-@@ -193,6 +193,9 @@ static int verify_eraseblock(int ebnum)
- 		ops.datbuf    = NULL;
- 		ops.oobbuf    = readbuf;
- 		err = mtd_read_oob(mtd, addr, &ops);
-+		if (mtd_is_bitflip(err))
-+			err = 0;
-+
- 		if (err || ops.oobretlen != use_len) {
- 			pr_err("error: readoob failed at %#llx\n",
- 			       (long long)addr);
-@@ -227,6 +230,9 @@ static int verify_eraseblock(int ebnum)
- 			ops.datbuf    = NULL;
- 			ops.oobbuf    = readbuf;
- 			err = mtd_read_oob(mtd, addr, &ops);
-+			if (mtd_is_bitflip(err))
-+				err = 0;
-+
- 			if (err || ops.oobretlen != mtd->oobavail) {
- 				pr_err("error: readoob failed at %#llx\n",
- 						(long long)addr);
-@@ -286,6 +292,9 @@ static int verify_eraseblock_in_one_go(i
+--- a/drivers/input/touchscreen/goodix.c
++++ b/drivers/input/touchscreen/goodix.c
+@@ -808,8 +808,10 @@ static int __maybe_unused goodix_suspend
+ 	int error;
  
- 	/* read entire block's OOB at one go */
- 	err = mtd_read_oob(mtd, addr, &ops);
-+	if (mtd_is_bitflip(err))
-+		err = 0;
-+
- 	if (err || ops.oobretlen != len) {
- 		pr_err("error: readoob failed at %#llx\n",
- 		       (long long)addr);
-@@ -527,6 +536,9 @@ static int __init mtd_oobtest_init(void)
- 	pr_info("attempting to start read past end of OOB\n");
- 	pr_info("an error is expected...\n");
- 	err = mtd_read_oob(mtd, addr0, &ops);
-+	if (mtd_is_bitflip(err))
-+		err = 0;
-+
- 	if (err) {
- 		pr_info("error occurred as expected\n");
- 		err = 0;
-@@ -571,6 +583,9 @@ static int __init mtd_oobtest_init(void)
- 		pr_info("attempting to read past end of device\n");
- 		pr_info("an error is expected...\n");
- 		err = mtd_read_oob(mtd, mtd->size - mtd->writesize, &ops);
-+		if (mtd_is_bitflip(err))
-+			err = 0;
-+
- 		if (err) {
- 			pr_info("error occurred as expected\n");
- 			err = 0;
-@@ -615,6 +630,9 @@ static int __init mtd_oobtest_init(void)
- 		pr_info("attempting to read past end of device\n");
- 		pr_info("an error is expected...\n");
- 		err = mtd_read_oob(mtd, mtd->size - mtd->writesize, &ops);
-+		if (mtd_is_bitflip(err))
-+			err = 0;
-+
- 		if (err) {
- 			pr_info("error occurred as expected\n");
- 			err = 0;
-@@ -684,6 +702,9 @@ static int __init mtd_oobtest_init(void)
- 		ops.datbuf    = NULL;
- 		ops.oobbuf    = readbuf;
- 		err = mtd_read_oob(mtd, addr, &ops);
-+		if (mtd_is_bitflip(err))
-+			err = 0;
-+
- 		if (err)
- 			goto out;
- 		if (memcmpshow(addr, readbuf, writebuf,
+ 	/* We need gpio pins to suspend/resume */
+-	if (!ts->gpiod_int || !ts->gpiod_rst)
++	if (!ts->gpiod_int || !ts->gpiod_rst) {
++		disable_irq(client->irq);
+ 		return 0;
++	}
+ 
+ 	wait_for_completion(&ts->firmware_loading_complete);
+ 
+@@ -849,8 +851,10 @@ static int __maybe_unused goodix_resume(
+ 	struct goodix_ts_data *ts = i2c_get_clientdata(client);
+ 	int error;
+ 
+-	if (!ts->gpiod_int || !ts->gpiod_rst)
++	if (!ts->gpiod_int || !ts->gpiod_rst) {
++		enable_irq(client->irq);
+ 		return 0;
++	}
+ 
+ 	/*
+ 	 * Exit sleep mode by outputting HIGH level to INT pin
