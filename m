@@ -1,259 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751943AbeDJPkK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 11:40:10 -0400
-Received: from mga18.intel.com ([134.134.136.126]:32739 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751427AbeDJPkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 11:40:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,432,1517904000";
-   d="scan'208";a="32580296"
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-Subject: [PATCH v2]: perf/x86: expose user space frame-pointer value on a
- sample
-Message-ID: <e702f8c9-1bb4-e9fd-cc53-452ed9a82762@linux.intel.com>
-Date: Tue, 10 Apr 2018 18:40:04 +0300
+        id S1752002AbeDJPlG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 11:41:06 -0400
+Received: from mail-db5eur01on0125.outbound.protection.outlook.com ([104.47.2.125]:53941
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751604AbeDJPlE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 11:41:04 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se;
+Subject: Re: [PATCH] MAINTAINERS: remove me as maintainer for I2C host drivers
+To: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>
+References: <20180410141125.4477-1-wsa@the-dreams.de>
+From: Peter Rosin <peda@axentia.se>
+Organization: Axentia Technologies AB
+Message-ID: <68529743-2df6-f07f-b3db-720e09b765c3@axentia.se>
+Date: Tue, 10 Apr 2018 17:40:52 +0200
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <20180410141125.4477-1-wsa@the-dreams.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: AM5PR0402CA0008.eurprd04.prod.outlook.com
+ (2603:10a6:203:90::18) To HE1PR0202MB2777.eurprd02.prod.outlook.com
+ (2603:10a6:3:e8::19)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 46bc24f8-16cd-47cf-f3db-08d59ef976cc
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4604075)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:HE1PR0202MB2777;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;3:t4FRM9elabfslSysUrgsYp24AWGt6WDKE5B+dS5deGuZD47OUA/8DJyJAjThy+FBYDr7MpsZ/muXeT3gHXcEtzNBg3zEbM73BznEauoPm/Pk9+Y3pxeeXWg/UY5vnB5jFCBW9B3808uigBb02OnoJDUjTMXNYY0/jrzfQ0I+Eg6LOM0aczG/cBzlvhlE++dXziOA8nh8jlmAdBPXA1KyoQjve5Cw2wFYn2RGi7Esq5brEMDCF9xShBOTFG3mjXrf;25:SUZ2p1pUqt6sK+uQjx+LIcv88ypftq3VQ1El4fBud4kxOg4TclAQo5O/fY9hMoolbu/ztQ97Fcs1oXIzRkKzpx0qNRtDyW5nrgDb0IVsjkJ4Dy6PWn+OP/upNqHehoDuIfwbWJqAzU21AMDslXbIoVSxPWDO2EWXl2+4ag3hX72sOW6kZ6WgGlvXS+f3WDGGoxm8M3TOVQgNnVQaolnQVBSh0feycI47wMGo1ceS3Zxb1Dtig4iZOA7YqKGnP6wi8KPEzjBkEg9hY1u6V+UZfgYRLCsEaq9lNYItu47kSJ/B8diKobNG5si6E5jbP7IrlAwSsG5W+9xeWQcA7YGxlg==;31:YWxMvCjV2kSe/e+Enw+EfQGr6dlPJs6dAvgJrj45hgVT39xgu1AOe/LWs55ZJ1XOuho90EPE+mGjGxQpOQWwTapBKFYwGEYSW95aS2WedIsQflrWMbOnd8fwVCB//CegkH1kIU/jk2ZASVJ262jCdmCj9Gk9J/NO2e72Dep3ILRQhtt4MWy04ZZasEmRanHCbLOs/5YkpD40hr8czRZUMLhic2m5b0qFOhEkaYziCOo=
+X-MS-TrafficTypeDiagnostic: HE1PR0202MB2777:
+X-Microsoft-Antispam-PRVS: <HE1PR0202MB27772E6FFB7C6D86D3C8B01FBCBE0@HE1PR0202MB2777.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(15185016700835)(84791874153150);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(3002001)(6041310)(20161123564045)(2016111802025)(20161123560045)(20161123558120)(20161123562045)(6043046)(6072148)(201708071742011);SRVR:HE1PR0202MB2777;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0202MB2777;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;4:Ez3rfgylZOjRi17YCz8DuPocfL6swBqxIHTyCwZMPKoX8AE6NViYJEYe6t12xVIsp7rYfyfu2qhlPPsaPqBE1MjJCja1vTt7GVXQtVRT1p8FOfQTb5gucxMQbASh/5NOLSNTSBtcQ3pog7JQ/JkznfeA5lQ58y9IV5ZPavB9a5WvpnaHIew+e+sXCazx4+bO1ISAI7Lfq0chd6F2w/BMCetujc0+AVIaOJ5idzC3cU+p7GwfpZ5rB8Pey1/F3cAw8AfXzizV73FKlqed0JjeKkd+wop45K8k4RtcmYceNJr+Mct4LKblRVPV+zNKYg2RHoimuXlhsc3udEQS6e0QolmMOwxJPaE+dJDBEjgmpVSSvZZj2WPXkQc1Y+grm8dT
+X-Forefront-PRVS: 0638FD5066
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(396003)(39380400002)(366004)(376002)(39830400003)(346002)(377424004)(501624003)(199004)(189003)(316002)(16576012)(6666003)(58126008)(476003)(2906002)(53936002)(6486002)(6246003)(229853002)(4326008)(36756003)(305945005)(7736002)(478600001)(486006)(230700001)(25786009)(3260700006)(31696002)(97736004)(6306002)(117156002)(66066001)(26005)(16526019)(77096007)(74482002)(956004)(50466002)(31686004)(186003)(105586002)(446003)(8676002)(11346002)(64126003)(106356001)(2616005)(8936002)(86362001)(65806001)(47776003)(5660300001)(65826007)(68736007)(2486003)(52146003)(23676004)(6116002)(81156014)(52116002)(36916002)(65956001)(53546011)(386003)(966005)(3846002)(76176011)(81166006)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0202MB2777;H:[192.168.13.3];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjAyMDJNQjI3Nzc7MjM6dHV3c0ZwRUlNa1dDTzJ6RWQrNFpSUzBJ?=
+ =?utf-8?B?ZGtsS1orczR1M00zbWd2cFpiRWhHYmExakllVkVvZTVTYXp4TEw0NG1pQXVQ?=
+ =?utf-8?B?OEczSmZubzhpTC9GVlVqR0lkNzc2NVZnTEFWdGdNQXhiZ2FGVjROd01GU0F0?=
+ =?utf-8?B?OWNQVjJsQk5XYkNVdWN6aXdDbzlKZmRYaTBtdVFaVXJETU9XTXhlQnZVWFpU?=
+ =?utf-8?B?MHhWSUcwcklmWUl6aFBLZmxsNmcveXZjUjJrZ3FSUDNoZjN1Q2g4aFByUnhF?=
+ =?utf-8?B?SERmdEpQRVpBRmVVNHJNTG8xaThZTS9nNWc4cXdqb2xoa0pMaFM2eDBXTnBJ?=
+ =?utf-8?B?MExqd1ljbXpZSVBwbnVlbTFRYlUyT0dOS09uZzBiYW9VUEtxcEtlNGdWYjZB?=
+ =?utf-8?B?L3JpeFVzY0lyamE5SlpaUFVpZ25EQm8rV0VDcDJvNk05NlF4c0JrcHVEeEhu?=
+ =?utf-8?B?NkltUzB2MjM0cWtFR01kSnBRMGZuNmV5MG9FTjloNm5hZFFtSkpTaGgrMi9s?=
+ =?utf-8?B?UlNqVExsVVZJdnY0SmRIeU1xcFVmT1poSFBkbEdFZlRtVVU1ZkluSnpTLzRX?=
+ =?utf-8?B?M2JOcm1LZ29PcDFmNTY3c083V1dqR2FXVlN4OUxCZG51dUNNQ08yWjhmcjZE?=
+ =?utf-8?B?TWJ3cEFpdnlwZHJCMUJIRzhUNkhjdE5sM0podFBYYlNEVGt3c2pDYmFpaEs0?=
+ =?utf-8?B?ekR4M3VFekRhYlUyTWlKMkdXUjBjYkZSdE4wbHo3Z2VWQjNqanhqc1lyK0xn?=
+ =?utf-8?B?QThkdGtydGxPakYxYkJmSDRZTmp1SGNGSUJkNDlIRUhvNjh0UEx2NjhkSFQ5?=
+ =?utf-8?B?TzY4dlhVVkkvOTJjRXFjWkFzUWRDcXA2T0ZINVVPQ0NmKzlwQkg4T2thZEps?=
+ =?utf-8?B?bVJ6V1BxQ0l0eStvOU1nQkJGdUpndVl3dlFYWnpIWW5nYzkyVEV2MjlGRW5N?=
+ =?utf-8?B?RExkZEtUTW1kYk0xRUVRVG5kZHhudk45aUN4RlV3aUt1NC8yQXE0SzZZYTlL?=
+ =?utf-8?B?NEtNV1FIcmxHcFJ0ZXJEQWZ3dlpjdnJnQUFseDFRR1BwRmNwVkZyLzBub1lD?=
+ =?utf-8?B?ZjVxemovdDVScmIzUWI2MXlzeWhSakN1Y1J0RVdvYVFyMTZhcU1qNGdNbjVa?=
+ =?utf-8?B?R2lJdDFVdlp5RUt2a2VPMlk3Z1kyWUxJRC95WGRocDlralQxYWJJSzlUVFE1?=
+ =?utf-8?B?cnVQUnk4TW1ESU5KZERVaWl0RlR6anh3L0FrQk1kbWR4ZkJqUU5aajlKay9w?=
+ =?utf-8?B?d3BVSGZ5TE9kdU5vbFJyTW9KZkptL20rR2k5Ny9lWTFjcFNjaWxWU2tkbEZx?=
+ =?utf-8?B?VEhVUEFhWjY5VlFkMFFCVFRvc204MmM4bFA1MlBLeExrNzA0VC9NSE10STk1?=
+ =?utf-8?B?WUx4UWxoRjBuNlFaWnBhWHkwdm8zdWN4dno3SG5tdXcveXZhTFB3bTNFQlJn?=
+ =?utf-8?B?S1lNMnhNWjRFTko4WnN3ZDFFZ3JLQS9GTURCcHlhcE93UW5obnRiVGhCa1Rk?=
+ =?utf-8?B?UFBZZ212VjRMM0dpek1oV0U4L0FDUDU3RUVDcWZ5dlQrcE1pdGFtOHFFMUZQ?=
+ =?utf-8?B?ckZtNFNLbUtCam5mRW03TkNLeW5RQkZhdmF1MUNPUEpWTzhBSHB1YU8vRlBh?=
+ =?utf-8?B?dm5DVVRRWUoxTDBFbENDbHNFRDIvMzNUeC9xNDZ4VThLSUp0VFprSVhPMXVM?=
+ =?utf-8?B?ZjJFV2F1aGYvOVFvZmc4WGVrL0l6cy9CY2dRN3NkSnBPbXk0L2htdERQM0x4?=
+ =?utf-8?B?OWdNLytYb2Vkei9KRGdxaHczemgwczBrcHNiNEMrdHEyYmRoa2VTMHZaa0RB?=
+ =?utf-8?B?V2R3SnJlZWVDeW5oc2NpbjJ5WkNWMTVJVTY5SjdTZlJ6bk5qWXFITCtJVWUr?=
+ =?utf-8?B?YjdDNXhpL1Zoem5CcE5sM2pYbnY2amtuQ0ZxeXRtMnEyUi9ROFBheVkxU0h3?=
+ =?utf-8?B?anBLc2VKYzNLSmZUZndwRDJlY0c4UEd4cDBUUTNlZ2dpVVhaUlVhVjB5SDI4?=
+ =?utf-8?B?QXZsOW5Fa0I0ME53NHEwUEdsUGxpQkRITkppUU1PalIwek9qQlp6SmtZU1E5?=
+ =?utf-8?B?VE03NUtwcVJjblhoeHo5NEFIa1JseGFPdzBxamowS1JYdU5jK3M1d250SVZS?=
+ =?utf-8?Q?rDdZxXkgDVbvutwFxnFEZrUY7BDV99DrGSVhWqrODs0p+p?=
+X-Microsoft-Antispam-Message-Info: a1nSI6mKbwiWNGKTVW/k1Rc/zo66c+Ryw10Awz+nwUhz5tiZTo0oVYvNzhJTnWa5FluekNPZBUIbMQyTv3sm92KPQpxwsyTr6UBf8p2U1ymY7Yh4tPCUsffXRMpPLR5z+IsCk3y9wDG3WMKqKpGv0s54P8djr9ypbg0w+42OuoCIu1X0uqe31RM/ubIt8C7Y
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;6:2S4/vlvVnmkq+I4NXdy3G0WmY8ufyR3SqvVezmtbtmoR2/cpoZMCjyIdlZIjzD1G/TlgimXWM9Tnd4xQG0zVess7Xev5A7aGJPlGi2l7kGNW7VVwwj3wSJaf8sguKWpkvjfRm75z61Kb6MRp0pHQIwElu0XIbbsoLjdw7XX/+QSdnoUGRyZmUJGyCQw/Cj1KzSdDA/YQ2xllrPwP2MEN80me0U9rlVS7YVlZm2AppbZ+k75llGt1GkjHRJcWxJ0zCNyupWEnsH5eLkJ8UeYqHfenTR2nB5vySxwUZWlSMPj4Sa0oa79aQLBKdtC/WHKkpwywnw6NCo8Ku0WO4u+iDBjDNaUkYRMG/jLamWE8eadLsuy2F+W2CbGoCubwaIgn67McGUa8hxvKSV8UaeqcVpvBLoUyTLA+Hmg9RMitNu2L/XPQbEDUWXSWULpsAFq0T6aQKugnaYzSEsg2p9lfMg==;5:7M5rkxnaEvNWZxHamkrICzgcieGlviQBs2jzqVPVB0T/qHBFyl6BUnAe0D+GZufMttfTxjSBmnR9zQpMUQrgHfdF+DjR5NZMI4TPuqLQvQLThDHrmO08/xt6PBgeGvXHK5UXeQP3GMZ+GgD3F3zYZhPSwrQjZ19dWDZSEUIbpS0=;24:/IwMLKKTu0U/Rqmfpp8F61L93xrk8NdDnVPhxnPP7d8cOBilqDbLYbWflPYUkPYhyGRYDhcqLmB+3fLr5BaIQBvrzZzNdro6feQOlQtL5+Y=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;7:Vph9IArqfx+lh2WdvXAQMBgr1u6W9VrL8CPLtdrysK534DkecGwUPJHo7vb6yuwr1hHMRQk1IIFdLLgt0HpdCfZUJzSO4SW3QRNGXRQiS/kES5T1Ju7QbGuh5Ve9lAS5B59B/v2RJxW1igRITz9s+8LKrjsUjqB8y0GjgYAI5/C5TKPE5P9Y7NSM04vZkJYtDK7c6VbRj5asaZkhgPiYTWPCqKQhf82vd9BWHr70W9ZFqbBlA/A/fAM1uJo7qQGn
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2018 15:41:01.6231 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46bc24f8-16cd-47cf-f3db-08d59ef976cc
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0202MB2777
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-04-10 16:11, Wolfram Sang wrote:
+> The number of I2C host controller drivers keeps increasing, and although
+> I had some success acquiring specific driver maintainers, my bandwidth
+> is by far not enough to act as a fallback for the rest of the drivers.
+> To reflect this status-quo in MAINTAINERS, add a seperate entry for I2C
+> host drivers, let the I2C list (= community) be the contact point, and
+> mark this section as "Odd fixes".
+> 
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+> ---
+> 
+> Joe: my tests worked fine with the file patterns; yet I'd appreciate if you
+> had time to double check them. Thanks!
+> 
+>  MAINTAINERS | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 6d296bdce328..2f7ccdcf76f7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6580,15 +6580,23 @@ W:	https://i2c.wiki.kernel.org/
+>  Q:	https://patchwork.ozlabs.org/project/linux-i2c/list/
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git
+>  S:	Maintained
+> -F:	Documentation/devicetree/bindings/i2c/
+> +F:	Documentation/devicetree/bindings/i2c/i2c.txt
+>  F:	Documentation/i2c/
+> -F:	drivers/i2c/
+> -F:	drivers/i2c/*/
+> +F:	drivers/i2c/*
+>  F:	include/linux/i2c.h
+>  F:	include/linux/i2c-*.h
+>  F:	include/uapi/linux/i2c.h
+>  F:	include/uapi/linux/i2c-*.h
 
-Store user space frame-pointer value (BP register) into Perf trace 
-on a sample for a process so the value becomes available when 
-unwinding call stacks for functions gaining event samples.
+Hmm, I think you are ducking out from the i2c-mux-pinctrl driver as well.
+Was that the intent?
 
-Test executable for the example below was compiled with frame pointer 
-support enabled:
+> +I2C SUBSYSTEM DRIVERS
+> +L:	linux-i2c@vger.kernel.org
+> +W:	https://i2c.wiki.kernel.org/
+> +Q:	https://patchwork.ozlabs.org/project/linux-i2c/list/
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git
+> +S:	Odd Fixes
+> +F:	Documentation/devicetree/bindings/i2c/
+> +F:	drivers/i2c/*/
+> +
 
-g++ -o futex-fp -fpermissive --no-omit-frame-pointer futex.c
+And this includes all the other muxes, i.e. those that are "mine". Maybe
+not a problem, but what do I know?
 
-and profiled using:
+Cheers,
+Peter
 
-tools/perf/perf record --user-regs=IP,SP,BP \
-	-g --call-graph=dwarf,1024 -e cycles -- ./futex-fp
-
-Output of
-
-tools/perf/perf report -i perf.data --stdio 
-
-demonstrates the effect of the patch change so before saving BP 
-value on a sample we have several frames missing above main 
-function frame:
-
-# Samples: 138K of event 'cpu-cycles'
-# Event count (approx.): 92713835335
-#
-# Children      Self  Command   Shared Object     Symbol                                        
-# ........  ........  ........  ................  ..........................
-#
-    96.15%     0.72%  futex-fp  futex-fp          [.] main
-            |          
-            |--95.43%--main
-            |          |          
-            |          |--71.56%--syscall
-            |          |          |          
-            |          |          |--57.28%--entry_SYSCALL_64_after_hwframe
-            |          |          |          |          
-            |          |          |           --56.95%--do_syscall_64
-            |          |          |                     |          
-            |          |          |                      --55.77%--sys_futex
-
-and after saving BP value on a sample we have expected 
-
-	_start
-	__libc_start_main 
-
-frames unwound:
-
-# Samples: 128K of event 'cpu-cycles'
-# Event count (approx.): 85349981034
-#
-# Children      Self  Command   Shared Object     Symbol                                        
-# ........  ........  ........  ................  ..................
-#
-    95.83%     0.00%  futex-fp  futex-fp          [.] _start
-            |
-==>         ---_start
-==>            __libc_start_main
-               main
-               |          
-               |--71.28%--syscall
-               |          |          
-               |          |--55.67%--entry_SYSCALL_64
-               |          |          |          
-               |          |           --55.40%--do_syscall_64
-               |          |                     |          
-               |          |                      --54.21%--sys_futex
-
-
-Testing results:
-
-tools/perf/perf test
- 1: vmlinux symtab matches kallsyms                       : Ok
- 2: Detect openat syscall event                           : Ok
- 3: Detect openat syscall event on all cpus               : Ok
- 4: Read samples using the mmap interface                 : Ok
- 5: Test data source output                               : Ok
- 6: Parse event definition strings                        : Ok
- 7: Simple expression parser                              : Ok
- 8: PERF_RECORD_* events & perf_sample fields             : Ok
- 9: Parse perf pmu format                                 : Ok
-10: DSO data read                                         : Ok
-11: DSO data cache                                        : Ok
-12: DSO data reopen                                       : Ok
-13: Roundtrip evsel->name                                 : Ok
-14: Parse sched tracepoints fields                        : Ok
-15: syscalls:sys_enter_openat event fields                : Ok
-16: Setup struct perf_event_attr                          : Skip
-17: Match and link multiple hists                         : Ok
-18: 'import perf' in python                               : FAILED!
-19: Breakpoint overflow signal handler                    : Ok
-20: Breakpoint overflow sampling                          : Ok
-21: Breakpoint accounting                                 : Ok
-22: Number of exit events of a simple workload            : Ok
-23: Software clock events period values                   : Ok
-24: Object code reading                                   : Ok
-25: Sample parsing                                        : Ok
-26: Use a dummy software event to keep tracking           : Ok
-27: Parse with no sample_id_all bit set                   : Ok
-28: Filter hist entries                                   : Ok
-29: Lookup mmap thread                                    : Ok
-30: Share thread mg                                       : Ok
-31: Sort output of hist entries                           : Ok
-32: Cumulate child hist entries                           : Ok
-33: Track with sched_switch                               : Ok
-34: Filter fds with revents mask in a fdarray             : Ok
-35: Add fd to a fdarray, making it autogrow               : Ok
-36: kmod_path__parse                                      : Ok
-37: Thread map                                            : Ok
-38: LLVM search and compile                               :
-38.1: Basic BPF llvm compile                              : Skip
-38.2: kbuild searching                                    : Skip
-38.3: Compile source for BPF prologue generation          : Skip
-38.4: Compile source for BPF relocation                   : Skip
-39: Session topology                                      : Ok
-40: BPF filter                                            :
-40.1: Basic BPF filtering                                 : Skip
-40.2: BPF pinning                                         : Skip
-40.3: BPF prologue generation                             : Skip
-40.4: BPF relocation checker                              : Skip
-41: Synthesize thread map                                 : Ok
-42: Remove thread map                                     : Ok
-43: Synthesize cpu map                                    : Ok
-44: Synthesize stat config                                : Ok
-45: Synthesize stat                                       : Ok
-46: Synthesize stat round                                 : Ok
-47: Synthesize attr update                                : Ok
-48: Event times                                           : Ok
-49: Read backward ring buffer                             : Ok
-50: Print cpu map                                         : Ok
-51: Probe SDT events                                      : Ok
-52: is_printable_array                                    : Ok
-53: Print bitmap                                          : Ok
-54: perf hooks                                            : Ok
-55: builtin clang support                                 : Skip (not compiled in)
-56: unit_number__scnprintf                                : Ok
-57: mem2node                                              : Ok
-58: x86 rdpmc                                             : Ok
-59: Convert perf time to TSC                              : Ok
-60: DWARF unwind                                          : Ok
-61: x86 instruction decoder - new instructions            : Ok
-62: Use vfs_getname probe to get syscall args filenames   : Ok
-63: Add vfs_getname probe to get syscall args filenames   : Ok
-64: Check open filename arg using perf trace + vfs_getname: Ok
-65: probe libc's inet_pton & backtrace it with ping       : Ok
-
-make -C tools/perf/ build-test
-make: Entering directory '/root/abudanko/kernel/tip/tools/perf'
-- tarpkg: ./tests/perf-targz-src-pkg .
-- /root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP: cd . && make FEATURE_DUMP_COPY=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP  feature-dump
-cd . && make FEATURE_DUMP_COPY=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP feature-dump
-           make_util_map_o_O: cd . && make util/map.o FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.hCniCh5IOV DESTDIR=/tmp/tmp.pE0ZNthwCF
- make_install_prefix_slash_O: cd . && make install prefix=/tmp/krava/ FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.aug1Rs4tNf DESTDIR=/tmp/tmp.Nr57uRH4a7
-         make_no_libunwind_O: cd . && make NO_LIBUNWIND=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.K6mNdV9ny7 DESTDIR=/tmp/tmp.rJ4MiEneK3
-          make_install_bin_O: cd . && make install-bin FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.4qmyWxqRIq DESTDIR=/tmp/tmp.fQ9pvBSPbK
-         make_no_libbionic_O: cd . && make NO_LIBBIONIC=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.Ja0slX338A DESTDIR=/tmp/tmp.QoqYxqLoLM
-            make_no_libbpf_O: cd . && make NO_LIBBPF=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.M4cGuRET89 DESTDIR=/tmp/tmp.yRbVHtN25b
-                  make_doc_O: cd . && make doc FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.vit59hhoQw DESTDIR=/tmp/tmp.Pdf8YRdUZ6
-             make_no_slang_O: cd . && make NO_SLANG=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.HVyxNOBsAd DESTDIR=/tmp/tmp.a0faga36nq
-make_no_libdw_dwarf_unwind_O: cd . && make NO_LIBDW_DWARF_UNWIND=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.wmv42sG9uM DESTDIR=/tmp/tmp.QqGhSX5KBD
-            make_clean_all_O: cd . && make clean all FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.EXQULIs1Lz DESTDIR=/tmp/tmp.R7rWtWOfbj
-              make_no_gtk2_O: cd . && make NO_GTK2=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.Ic7nrL0sJw DESTDIR=/tmp/tmp.CG4zzMpTRo
-     make_util_pmu_bison_o_O: cd . && make util/pmu-bison.o FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.SlTUvMOKNC DESTDIR=/tmp/tmp.EPHTxRCqhZ
-                 make_help_O: cd . && make help FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.8ERtFQpSgy DESTDIR=/tmp/tmp.qm6slgq3vY
-         make_no_libpython_O: cd . && make NO_LIBPYTHON=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.nBDottRklF DESTDIR=/tmp/tmp.wa3Y3kbyuj
-          make_no_auxtrace_O: cd . && make NO_AUXTRACE=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.DUdGkNlbTo DESTDIR=/tmp/tmp.hCudQY48Pl
-          make_no_libaudit_O: cd . && make NO_LIBAUDIT=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.R881i6xKAm DESTDIR=/tmp/tmp.93owQPSDcX
-           make_no_scripts_O: cd . && make NO_LIBPYTHON=1 NO_LIBPERL=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.reGc8rOYV1 DESTDIR=/tmp/tmp.B6QViKjMvW
-      make_with_babeltrace_O: cd . && make LIBBABELTRACE=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.FhQXwacUez DESTDIR=/tmp/tmp.I3nVzmrMkw
-- /root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP_STATIC: cd . && make FEATURE_DUMP_COPY=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP_STATIC  LDFLAGS='-static' feature-dump
-cd . && make FEATURE_DUMP_COPY=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP_STATIC LDFLAGS='-static' feature-dump
-               make_static_O: cd . && make LDFLAGS=-static FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP_STATIC -j8 O=/tmp/tmp.WAd4qqaobf DESTDIR=/tmp/tmp.HQGv9RVti6
-                 make_tags_O: cd . && make tags FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.4exbvnNqL7 DESTDIR=/tmp/tmp.egmegRFPBa
-         make_no_backtrace_O: cd . && make NO_BACKTRACE=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.EVUZhEZdL1 DESTDIR=/tmp/tmp.IU2Hw5iXV9
-                make_debug_O: cd . && make DEBUG=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.82NeGzBeKh DESTDIR=/tmp/tmp.0nDEL657DW
-                make_no_ui_O: cd . && make NO_NEWT=1 NO_SLANG=1 NO_GTK2=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.WPsaGPykuA DESTDIR=/tmp/tmp.BE2i6xrlcz
-              make_minimal_O: cd . && make NO_LIBPERL=1 NO_LIBPYTHON=1 NO_NEWT=1 NO_GTK2=1 NO_DEMANGLE=1 NO_LIBELF=1 NO_LIBUNWIND=1 NO_BACKTRACE=1 NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1 NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1 NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.mqwTCtkYMZ DESTDIR=/tmp/tmp.HAE2gO2Qcc
-       make_install_prefix_O: cd . && make install prefix=/tmp/krava FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.i9spzN3Ffn DESTDIR=/tmp/tmp.HZaM1gdpnX
-            make_no_libelf_O: cd . && make NO_LIBELF=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.yXvEPnLS3l DESTDIR=/tmp/tmp.wDVGcoV12j
-                 make_pure_O: cd . && make FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.Lyk3dyMDUS DESTDIR=/tmp/tmp.X7yG8O8oPZ
-              make_no_newt_O: cd . && make NO_NEWT=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.u2rAAJ77BP DESTDIR=/tmp/tmp.ZO73ixWJ4R
-               make_perf_o_O: cd . && make perf.o FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.PzkhlImKTo DESTDIR=/tmp/tmp.9Z5E1d0ADO
-              make_install_O: cd . && make install FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.LeTMZGGxYu DESTDIR=/tmp/tmp.i0QyvEIrk0
-           make_no_libnuma_O: cd . && make NO_LIBNUMA=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.FBhx6NatXS DESTDIR=/tmp/tmp.1LrUcc5i7s
-           make_no_libperl_O: cd . && make NO_LIBPERL=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.iPoY2Rkjbw DESTDIR=/tmp/tmp.kUsnd09yOc
-       make_with_clangllvm_O: cd . && make LIBCLANGLLVM=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.yA8pvPEJHH DESTDIR=/tmp/tmp.XwY7J5Etvy
-          make_no_demangle_O: cd . && make NO_DEMANGLE=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.NARFUtnpY0 DESTDIR=/tmp/tmp.dR62bKhig0
-OK
-make: Leaving directory '/root/abudanko/kernel/tip/tools/perf'
-
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
-Changes in v2:
-- lifted restriction on frame pointer architecture so it's value is provided
-  as for i386 as for x86_64 processes
-
-MAINTAINERS file lacks references to appropriate folks for reviewing 
-  changes at arch/x86/kernel/perf_regs.c so probably it makes sense to 
-  update the file as well in this respect. 
----
- arch/x86/kernel/perf_regs.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
-index e47b2dbbdef3..8d68658eff7f 100644
---- a/arch/x86/kernel/perf_regs.c
-+++ b/arch/x86/kernel/perf_regs.c
-@@ -156,7 +156,13 @@ void perf_get_regs_user(struct perf_regs *regs_user,
- 	 * Most system calls don't save these registers, don't report them.
- 	 */
- 	regs_user_copy->bx = -1;
--	regs_user_copy->bp = -1;
-+	/*
-+	 * Store user space frame-pointer value on sample
-+	 * to facilitate stack unwinding for cases when
-+	 * user space executable code has such support
-+	 * enabled at compile time;
-+	 */
-+	regs_user_copy->bp = user_regs->bp;
- 	regs_user_copy->r12 = -1;
- 	regs_user_copy->r13 = -1;
- 	regs_user_copy->r14 = -1;
+>  I2C-TAOS-EVM DRIVER
+>  M:	Jean Delvare <jdelvare@suse.com>
+>  L:	linux-i2c@vger.kernel.org
+> 
