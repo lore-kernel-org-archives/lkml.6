@@ -1,286 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752833AbeDJLKL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 07:10:11 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:49198 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751945AbeDJLKI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 07:10:08 -0400
-Subject: Re: [PATCH v2 2/9] PCI: dwc: Add support for endpoint mode
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
- <9ce10e6844863029992a5f4e74c89818615850e3.1523266508.git.gustavo.pimentel@synopsys.com>
- <abb244d5-2697-54da-b64c-25c018f50354@ti.com>
- <667dde5d-70b9-0001-59f9-f2b7cb8d06b8@synopsys.com>
-CC: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <10d70eb7-6966-4ebc-b8ef-5d2a2ff0c5ad@ti.com>
-Date: Tue, 10 Apr 2018 16:39:57 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        id S1752838AbeDJLKy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 07:10:54 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36720 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751774AbeDJLKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 07:10:51 -0400
+Date: Tue, 10 Apr 2018 12:10:43 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>, Lina Iyer <lina.iyer@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 20/25] drivers: firmware: psci: Introduce
+ psci_dt_topology_init()
+Message-ID: <20180410111043.t577a43a3bvjpkc7@lakrids.cambridge.arm.com>
+References: <1521046715-30683-1-git-send-email-ulf.hansson@linaro.org>
+ <1521046715-30683-21-git-send-email-ulf.hansson@linaro.org>
+ <20180314173833.dyu7jtweu233rfi4@lakrids.cambridge.arm.com>
+ <CAPDyKFpJQZ87ViwZxX_yBnKPzgRv5YxbLz=qxScBTMCvY6e2vw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <667dde5d-70b9-0001-59f9-f2b7cb8d06b8@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFpJQZ87ViwZxX_yBnKPzgRv5YxbLz=qxScBTMCvY6e2vw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Apr 10, 2018 at 09:19:26AM +0200, Ulf Hansson wrote:
+> On 14 March 2018 at 18:38, Mark Rutland <mark.rutland@arm.com> wrote:
+> > On Wed, Mar 14, 2018 at 05:58:30PM +0100, Ulf Hansson wrote:
+> >> In case the hierarchical layout is used in DT, we want to initialize the
+> >> corresponding PM domain topology for the CPUs, by using the generic PM
+> >> domain (aka genpd) infrastructure.
+> >>
+> >> At first glance, it may seem feasible to hook into the existing
+> >> psci_dt_init() function, although because it's called quite early in the
+> >> boot sequence, allocating the dynamic data structure for a genpd doesn't
+> >> work.
+> >>
+> >> Therefore, let's export a new init function for PSCI,
+> >> psci_dt_topology_init(), which the ARM machine code should call from a
+> >> suitable initcall.
+> >>
+> >> Succeeding to initialize the PM domain topology, which means at least one
+> >> instance of a genpd becomes created, allows us to continue to enable the
+> >> PSCI OS initiated mode for the platform. If everything turns out fine,
+> >> let's print a message in log to inform the user about the changed mode.
+> >>
+> >> In case of any failures, we stick to the default PSCI Platform Coordinated
+> >> mode.
+> >
+> > For kexec/kdump we'll need to explicitly set the suspend mode to
+> > platform coordinated if for whatever reason we choose not to use OSI.
+> 
+> Could you please elaborate on this? I am not really understanding what
+> you are suggesting me to do and why.
 
-On Tuesday 10 April 2018 04:06 PM, Gustavo Pimentel wrote:
-> Hi Kishon,
-> 
-> On 10/04/2018 06:12, Kishon Vijay Abraham I wrote:
->> Hi,
->>
->> On Monday 09 April 2018 03:11 PM, Gustavo Pimentel wrote:
->>> The PCIe controller dual mode is capable of operating in host mode as well
->>> as endpoint mode by configuration, therefore this patch aims to add
->>> endpoint mode support to the designware driver.
->>>
->>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->>> ---
->>> Change v1->v2:
->>>  - Removed dw_plat_pcie_stop_link empty function.
->>>  - Implemented Kishon's suggestions about dw-pcie-rc and dw-pcie strings.
->>> compatibility.
->>>  - Added second entry on pci_epf_test_ids structure.
->>>
->>>  drivers/pci/dwc/Kconfig                       |  45 ++++++--
->>>  drivers/pci/dwc/pcie-designware-ep.c          |   4 +-
->>>  drivers/pci/dwc/pcie-designware-plat.c        | 153 ++++++++++++++++++++++++--
->>>  drivers/pci/endpoint/functions/pci-epf-test.c |   9 ++
->>>  4 files changed, 190 insertions(+), 21 deletions(-)
->>>
->>> diff --git a/drivers/pci/dwc/Kconfig b/drivers/pci/dwc/Kconfig
->>> index 2f3f5c5..3fd7daf 100644
->>> --- a/drivers/pci/dwc/Kconfig
->>> +++ b/drivers/pci/dwc/Kconfig
->>> @@ -7,8 +7,7 @@ config PCIE_DW
->>>  
->>>  config PCIE_DW_HOST
->>>          bool
->>> -	depends on PCI
->>> -	depends on PCI_MSI_IRQ_DOMAIN
->>> +	depends on PCI && PCI_MSI_IRQ_DOMAIN
->>>          select PCIE_DW
->>>  
->>>  config PCIE_DW_EP
->>> @@ -52,16 +51,42 @@ config PCI_DRA7XX_EP
->>>  
->>>  config PCIE_DW_PLAT
->>>  	bool "Platform bus based DesignWare PCIe Controller"
->>> -	depends on PCI
->>> -	depends on PCI_MSI_IRQ_DOMAIN
->>> -	select PCIE_DW_HOST
->>> -	---help---
->>> -	 This selects the DesignWare PCIe controller support. Select this if
->>> -	 you have a PCIe controller on Platform bus.
->>> +	help
->>> +	  There are two instances of PCIe controller in Designware IP.
->>> +	  This controller can work either as EP or RC. In order to enable
->>> +	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
->>> +	  order to enable device-specific features PCIE_DW_PLAT_EP must be
->>> +	  selected.
->>>  
->>> -	 If you have a controller with this interface, say Y or M here.
->>> +config PCIE_DW_PLAT_HOST
->>> +	bool "Platform bus based DesignWare PCIe Controller - Host mode"
->>> +	depends on PCI && PCI_MSI_IRQ_DOMAIN
->>> +	select PCIE_DW_HOST
->>> +	select PCIE_DW_PLAT
->>> +	default y
->>> +	help
->>> +	  Enables support for the PCIe controller in the Designware IP to
->>> +	  work in host mode. There are two instances of PCIe controller in
->>> +	  Designware IP.
->>> +	  This controller can work either as EP or RC. In order to enable
->>> +	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
->>> +	  order to enable device-specific features PCI_DW_PLAT_EP must be
->>> +	  selected.
->>>  
->>> -	 If unsure, say N.
->>> +config PCIE_DW_PLAT_EP
->>> +	bool "Platform bus based DesignWare PCIe Controller - Endpoint mode"
->>> +	depends on PCI && PCI_MSI_IRQ_DOMAIN
->>> +	depends on PCI_ENDPOINT
->>> +	select PCIE_DW_EP
->>> +	select PCIE_DW_PLAT
->>> +	help
->>> +	  Enables support for the PCIe controller in the Designware IP to
->>> +	  work in endpoint mode. There are two instances of PCIe controller
->>> +	  in Designware IP.
->>> +	  This controller can work either as EP or RC. In order to enable
->>> +	  host-specific features PCIE_DW_PLAT_HOST must be selected and in
->>> +	  order to enable device-specific features PCI_DW_PLAT_EP must be
->>> +	  selected.
->>>  
->>>  config PCI_EXYNOS
->>>  	bool "Samsung Exynos PCIe controller"
->>> diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
->>> index f07678b..4ac135a 100644
->>> --- a/drivers/pci/dwc/pcie-designware-ep.c
->>> +++ b/drivers/pci/dwc/pcie-designware-ep.c
->>> @@ -15,8 +15,10 @@
->>>  void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
->>>  {
->>>  	struct pci_epc *epc = ep->epc;
->>> +	struct pci_epf *epf;
->>>  
->>> -	pci_epc_linkup(epc);
->>> +	list_for_each_entry(epf, &epc->pci_epf, list)
->>> +		pci_epf_linkup(epf);
->>>  }
->>
->> This shouldn't be required anymore.
-> 
-> Ok. I'll revert it.
-> 
->>>  
->>>  static void __dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar,
->>> diff --git a/drivers/pci/dwc/pcie-designware-plat.c b/drivers/pci/dwc/pcie-designware-plat.c
->>> index 5416aa8..5382a7a 100644
->>> --- a/drivers/pci/dwc/pcie-designware-plat.c
->>> +++ b/drivers/pci/dwc/pcie-designware-plat.c
->>> @@ -12,19 +12,29 @@
->>>  #include <linux/interrupt.h>
->>>  #include <linux/kernel.h>
->>>  #include <linux/init.h>
->>> +#include <linux/of_device.h>
->>>  #include <linux/of_gpio.h>
->>>  #include <linux/pci.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/resource.h>
->>>  #include <linux/signal.h>
->>>  #include <linux/types.h>
->>> +#include <linux/regmap.h>
->>>  
->>>  #include "pcie-designware.h"
->>>  
->>>  struct dw_plat_pcie {
->>> -	struct dw_pcie		*pci;
->>> +	struct dw_pcie			*pci;
->>> +	struct regmap			*regmap;
->>> +	enum dw_pcie_device_mode	mode;
->>>  };
->>>  
->>> +struct dw_plat_pcie_of_data {
->>> +	enum dw_pcie_device_mode	mode;
->>> +};
->>> +
->>> +static const struct of_device_id dw_plat_pcie_of_match[];
->>> +
->>>  static int dw_plat_pcie_host_init(struct pcie_port *pp)
->>>  {
->>>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->>> @@ -42,9 +52,53 @@ static const struct dw_pcie_host_ops dw_plat_pcie_host_ops = {
->>>  	.host_init = dw_plat_pcie_host_init,
->>>  };
->>>  
->>> -static int dw_plat_add_pcie_port(struct pcie_port *pp,
->>> +static int dw_plat_pcie_establish_link(struct dw_pcie *pci)
->>> +{
->>> +	return 0;
->>> +}
->>> +
->>> +static const struct dw_pcie_ops dw_pcie_ops = {
->>> +	.start_link = dw_plat_pcie_establish_link,
->>> +};
->>> +
->>> +static void dw_plat_pcie_ep_init(struct dw_pcie_ep *ep)
->>> +{
->>> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->>> +	enum pci_barno bar;
->>> +
->>> +	for (bar = BAR_0; bar <= BAR_5; bar++)
->>> +		dw_pcie_ep_reset_bar(pci, bar);
->>> +}
->>> +
->>> +static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
->>> +				     enum pci_epc_irq_type type,
->>> +				     u8 interrupt_num)
->>> +{
->>> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
->>> +
->>> +	switch (type) {
->>> +	case PCI_EPC_IRQ_LEGACY:
->>> +		dev_err(pci->dev, "EP cannot trigger legacy IRQs\n");
->>> +		return -EINVAL;
->>> +	case PCI_EPC_IRQ_MSI:
->>> +		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
->>> +	default:
->>> +		dev_err(pci->dev, "UNKNOWN IRQ type\n");
->>> +	}
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static struct dw_pcie_ep_ops pcie_ep_ops = {
->>> +	.ep_init = dw_plat_pcie_ep_init,
->>> +	.raise_irq = dw_plat_pcie_ep_raise_irq,
->>> +};
->>> +
->>> +static int dw_plat_add_pcie_port(struct dw_plat_pcie *dw_plat_pcie,
->>>  				 struct platform_device *pdev)
->>>  {
->>> +	struct dw_pcie *pci = dw_plat_pcie->pci;
->>> +	struct pcie_port *pp = &pci->pp;
->>>  	struct device *dev = &pdev->dev;
->>>  	int ret;
->>>  
->>> @@ -63,15 +117,44 @@ static int dw_plat_add_pcie_port(struct pcie_port *pp,
->>>  
->>>  	ret = dw_pcie_host_init(pp);
->>>  	if (ret) {
->>> -		dev_err(dev, "failed to initialize host\n");
->>> +		dev_err(dev, "Failed to initialize host\n");
->>>  		return ret;
->>>  	}
->>>  
->>>  	return 0;
->>>  }
->>>  
->>> -static const struct dw_pcie_ops dw_pcie_ops = {
->>> -};
->>> +static int dw_plat_add_pcie_ep(struct dw_plat_pcie *dw_plat_pcie,
->>> +			       struct platform_device *pdev)
->>> +{
->>> +	int ret;
->>> +	struct dw_pcie_ep *ep;
->>> +	struct resource *res;
->>> +	struct device *dev = &pdev->dev;
->>> +	struct dw_pcie *pci = dw_plat_pcie->pci;
->>> +
->>> +	ep = &pci->ep;
->>> +	ep->ops = &pcie_ep_ops;
->>> +
->>> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbi2");
->>> +	pci->dbi_base2 = devm_ioremap(dev, res->start, resource_size(res));
->>
->> This can throw up a NULL pointer dereferencing error. Use devm_ioremap_resource
->> instead.
-> 
-> I have looked on [1] and [2] and both implementations uses devm_ioremap
-> function, they are also wrong?
-> 
-> [1] -> https://elixir.bootlin.com/linux/latest/source/drivers/pci/dwc/pcie-artpec6.c
-> [2] -> https://elixir.bootlin.com/linux/latest/source/drivers/pci/dwc/pci-dra7xx.c
+Sorry for not being clear.
 
-yes, they are wrong. There was a patch to fix it but somehow dropped
-https://patchwork.kernel.org/patch/10173831/.
+What I'd like to see is that we always call SET_SUSPEND_MODE before
+invoking CPU_SUSPEND. Either deciding early if we can use OSI, or always
+setting it to platform co-ordinated early on in boot and later switching
+it over.
 
-I'll resend them.
+That way we can be sure of the suspend mode, even if we've kexec'd from
+a kernel that had fiddled with it.
 
-Thanks
-Kishon
+> >> Cc: Lina Iyer <ilina@codeaurora.org>
+> >> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+> >> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> >> ---
+> >>  drivers/firmware/psci.c | 31 +++++++++++++++++++++++++++++++
+> >>  include/linux/psci.h    |  2 ++
+> >>  2 files changed, 33 insertions(+)
+> >>
+> >> diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
+> >> index 463f78c..45d55fc 100644
+> >> --- a/drivers/firmware/psci.c
+> >> +++ b/drivers/firmware/psci.c
+> >> @@ -723,6 +723,37 @@ int __init psci_dt_init(void)
+> >>       return ret;
+> >>  }
+> >>
+> >> +int __init psci_dt_topology_init(void)
+> >> +{
+> >> +     struct device_node *np;
+> >> +     int ret;
+> >> +
+> >> +     if (!psci_has_osi_support())
+> >> +             return 0;
+> >> +
+> >> +     np = of_find_matching_node_and_match(NULL, psci_of_match, NULL);
+> >> +     if (!np)
+> >> +             return -ENODEV;
+> >> +
+> >> +     /* Initialize the CPU PM domains based on topology described in DT. */
+> >> +     ret = psci_dt_init_pm_domains(np);
+> >> +     if (ret <= 0)
+> >> +             goto out;
+> >> +
+> >> +     /* Enable OSI mode. */
+> >> +     ret = invoke_psci_fn(PSCI_1_0_FN_SET_SUSPEND_MODE,
+> >> +                          PSCI_1_0_SUSPEND_MODE_OSI, 0, 0);
+> >
+> > IIUC, this patch will need to be moved after the subsequent two patches
+> > to ensure that this series bisects cleanly.
+> 
+> Actually not.
+> 
+> $subject patch adds a new init function, which purpose is to
+> initialize the PSCI PM domains. At this point none is calling it.
+
+Ah. I missed the fact there were no callers. Sorry for the noise!
+
+Thanks,
+Mark.
