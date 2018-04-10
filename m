@@ -1,91 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752622AbeDJKHV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 06:07:21 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34946 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752258AbeDJKHT (ORCPT
+        id S1752394AbeDJKJH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 06:09:07 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:48742 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751862AbeDJKJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 06:07:19 -0400
+        Tue, 10 Apr 2018 06:09:05 -0400
+X-IronPort-AV: E=Sophos;i="5.48,431,1517875200";
+   d="scan'208";a="606137449"
+From: KarimAllah Ahmed <karahmed@amazon.de>
+To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: KarimAllah Ahmed <karahmed@amazon.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH v2] X86/VMX: Disable VMX preemption timer if MWAIT is not intercepted
+Date: Tue, 10 Apr 2018 12:08:42 +0200
+Message-Id: <1523354922-17955-1-git-send-email-karahmed@amazon.de>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Tue, 10 Apr 2018 18:07:17 +0800
-From: yuankuiz@codeaurora.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pm-owner@vger.kernel.org
-Subject: Re: [PATCH] time: tick-sched: use bool for tick_stopped
-In-Reply-To: <alpine.DEB.2.21.1804101110080.2058@nanos.tec.linutronix.de>
-References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
- <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>
- <f253686d26b3470f0e9b60502eb62315@codeaurora.org>
- <alpine.DEB.2.21.1804101110080.2058@nanos.tec.linutronix.de>
-Message-ID: <a7d6dddd7d4f9fdc0be8f94251af237f@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+The VMX-preemption timer is used by KVM as a way to set deadlines for the
+guest (i.e. timer emulation). That was safe till very recently when
+capability KVM_X86_DISABLE_EXITS_MWAIT to disable intercepting MWAIT was
+introduced. According to Intel SDM 25.5.1:
 
-On 2018-04-10 05:10 PM, Thomas Gleixner wrote:
-> On Tue, 10 Apr 2018, yuankuiz@codeaurora.org wrote:
->> On 2018-04-10 04:00 PM, Rafael J. Wysocki wrote:
->> > On Tue, Apr 10, 2018 at 9:33 AM,  <yuankuiz@codeaurora.org> wrote:
->> > > From: John Zhao <yuankuiz@codeaurora.org>
->> > >
->> > > Variable tick_stopped returned by tick_nohz_tick_stopped
->> > > can have only true / false values. Since the return type
->> > > of the tick_nohz_tick_stopped is also bool, variable
->> > > tick_stopped nice to have data type as bool in place of unsigned int.
->> > > Moreover, the executed instructions cost could be minimal
->> > > without potiential data type conversion.
->> > >
->> > > Signed-off-by: John Zhao <yuankuiz@codeaurora.org>
->> > > ---
->> > >  kernel/time/tick-sched.h | 2 +-
->> > >  1 file changed, 1 insertion(+), 1 deletion(-)
->> > >
->> > > diff --git a/kernel/time/tick-sched.h b/kernel/time/tick-sched.h
->> > > index 6de959a..4d34309 100644
->> > > --- a/kernel/time/tick-sched.h
->> > > +++ b/kernel/time/tick-sched.h
->> > > @@ -48,8 +48,8 @@ struct tick_sched {
->> > >         unsigned long                   check_clocks;
->> > >         enum tick_nohz_mode             nohz_mode;
->> > >
->> > > +       bool                            tick_stopped    : 1;
->> > >         unsigned int                    inidle          : 1;
->> > > -       unsigned int                    tick_stopped    : 1;
->> > >         unsigned int                    idle_active     : 1;
->> > >         unsigned int                    do_timer_last   : 1;
->> > >         unsigned int                    got_idle_tick   : 1;
->> >
->> > I don't think this is a good idea at all.
->> >
->> > Please see https://lkml.org/lkml/2017/11/21/384 for example.
->> [ZJ] Thanks for this sharing. Looks like, this patch fall into the 
->> case of
->> "Maybe".
-> 
-> This patch falls into the case 'pointless' because it adds extra 
-> storage
-[ZJ] 1 bit vs 1 bit. no more.
+"""
+The VMX-preemption timer operates in the C-states C0, C1, and C2; it also
+operates in the shutdown and wait-for-SIPI states. If the timer counts down
+to zero in any state other than the wait-for SIPI state, the logical
+processor transitions to the C0 C-state and causes a VM exit; the timer
+does not cause a VM exit if it counts down to zero in the wait-for-SIPI
+state. The timer is not decremented in C-states deeper than C2.
+"""
 
-> for no benefit at all.
-[ZJ] tick_stopped is returned by the tick_nohz_tick_stopped() which is 
-bool.
-The benefit is no any potiential type conversion could be minded.
+Now once the guest issues the MWAIT with a c-state deeper than
+C2 the preemption timer will never wake it up again since it stopped
+ticking! Usually this is compensated by other activities in the system that
+would wake the core from the deep C-state (and cause a VMExit). For
+example, if the host itself is ticking or it received interrupts, etc!
 
-> 
-> Thanks,
-> 
-> 	tglx
+So disable the VMX-preemption timer is MWAIT is exposed to the guest!
+
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+---
+v1 -> v2:
+- Drop everything .. just return -EOPNOTSUPP (pbonzini@) :D
+---
+ arch/x86/kvm/vmx.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index d2e54e7..d99008b 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -11908,6 +11908,9 @@ static int vmx_set_hv_timer(struct kvm_vcpu *vcpu, u64 guest_deadline_tsc)
+ 	u64 guest_tscl = kvm_read_l1_tsc(vcpu, tscl);
+ 	u64 delta_tsc = max(guest_deadline_tsc, guest_tscl) - guest_tscl;
+ 
++	if (kvm_pause_in_guest(vcpu->kvm))
++		return -EOPNOTSUPP;
++
+ 	/* Convert to host delta tsc if tsc scaling is enabled */
+ 	if (vcpu->arch.tsc_scaling_ratio != kvm_default_tsc_scaling_ratio &&
+ 			u64_shl_div_u64(delta_tsc,
+-- 
+2.7.4
