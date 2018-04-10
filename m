@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4852XQaq73OxtQsGxCeznwqMB5WKdAjD8HdNCvIqBnba8k11aVVOSWMatFpIbx2h16GtVb1
-ARC-Seal: i=1; a=rsa-sha256; t=1523399390; cv=none;
+X-Google-Smtp-Source: AIpwx48voyqtDWlcO2bYmdjKQ+kAiYY2rsQHTl25ozxfwANyCqEqKcr9m35jtr91EiYQDvgP/s/0
+ARC-Seal: i=1; a=rsa-sha256; t=1523399387; cv=none;
         d=google.com; s=arc-20160816;
-        b=IorCc1095FwCRtFWFTNO4hnvB4CEoiQjxF3EPXZd8FRJhPyuij+eXbir+LOBqNjE/1
-         wy3/CTld2BdnJJBrc1Z1nn4eF/nfdUZuQmQEjuv8sLZJVWQSoy/oU7bBFotrlJe2QCm+
-         uxZIQMIGqeJa1MbfeKfNEfWM/hY0BT8X9QQlUcyYh4b49s+GgDukRfkPrASsC7W2bD1u
-         g+MifGyE1dmcg4KLfW6lxOsQWlCPlSvvO1IF7KAvfDjuZc/8QGsfVxGFAUb+R/jtWam2
-         gjdGFIO5AKD5ISxV3Q5Sm1kSzlGyyPQLTrRUJ+Z9JZqE9IJElFFnd+xrrBarMs4uN3ea
-         Jzlw==
+        b=f3uKkE4hykbP7B5Uzt/nqX49lhx1jSpIDIgx/KMIvwj88D7kRzIp4cmvTxkFKLBIO6
+         ggltypOrbGC+ShPCnGiSTox6NKtNjoPLDp0Wqqca7vLaG1i+WQK627+o1M13JYvEUgUT
+         Ilc+0g9EdnfEiXISJi/7jchMfJk2SyAgg2rWsYhQRvN2Zp1xLWap0ZFJKNC3EUgx78LA
+         5HOUXbZib0FuqlDWilwgML29RrCUJYpalRACfYJ7LBApuKBstxB/QHxRfdqvEXVEZgbY
+         5f+yVcPgHJW989ampUAbNf96j0M2cdpBCLRtx9wxh+T7Pu8/6lONbTZZEtb9MwBBsOYH
+         IS+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/BNxBXk45oUUMEquCMBQLyV1W8WhzcmTq3/qbBgIIwk=;
-        b=vD8W5WFmqnG2Aj7FZFARO7X9E8DnrFslfxs/+UVnOjCK03oKI6v1LnOLt9dmxXUR4F
-         6+zTflM1pJq/GYOgW/w8jyb3WdLQm7nvzKlKRd9zeAK/KQH05onRnC+hatuwwxc2n25l
-         YGY7LXpVweEczLPBEWFpotjy//iuMmi7siICeSzbk6av7dYpDHhrF7TQjW/mFQd1b318
-         KFfG+31iUSqjEMokdkxTI8OAUWl1IuGmhIy36tXt7Mme+0hX9M67cQw56MtH0YBDpUbp
-         b4X0PtC9Gs2s1O5WRVLr7+Mk/lI6sWDhAzjHhibZkxiRgS4vcg2L4Te03mojnQnwdMbb
-         Cahw==
+        bh=YpRmibwjH0mT8G77tgp2F45z8xCETfvwjVgyPS8byiA=;
+        b=SqX8/v5ku4FsmP2R14AHmDwHUrXFImBj//OVZxg8H7FxfZjUYDLm+4mSA2RXyn9BRx
+         t3Yti709uaim9euXHHAZRodUR0lC3kLxWEgaVaEcMhffZ2lC+fH2GfiKUX9/Xto+VjYA
+         fVooQRf0noMEwbpu9OJ1QU+A257YjYPy/vsxDr8tHel57vIw/tRli8BtIiJ9kzjydTRm
+         PqDbyn0asz2ZsFVhT5eXyvdp3M3Y2VPAwWesuJof6Z/9avbJMm9zLz2f+POI+O7sOXLX
+         2MefpaEmI5Nseg0gr6+cpG11q9yEcPkQNGnWUMTS6B+qqAt54idFTM0+x1lWETkTz6lA
+         Jevw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Andrew Bowers <andrewx.bowers@intel.com>,
-	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 090/168] i40evf: dont rely on netif_running() outside rtnl_lock()
-Date: Wed, 11 Apr 2018 00:23:52 +0200
-Message-Id: <20180410212804.094828797@linuxfoundation.org>
+	Stefan Wahren <stefan.wahren@i2se.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.15 089/168] Bluetooth: hci_bcm: Make shutdown and device wake GPIO optional
+Date: Wed, 11 Apr 2018 00:23:51 +0200
+Message-Id: <20180410212804.054618580@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400039408034049?=
-X-GMAIL-MSGID: =?utf-8?q?1597400039408034049?=
+X-GMAIL-THRID: =?utf-8?q?1597400036426027296?=
+X-GMAIL-MSGID: =?utf-8?q?1597400036426027296?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,90 +50,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jacob Keller <jacob.e.keller@intel.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
+commit ab2f336cb7e629de74d8af06bcaf6b15e4230e19 upstream.
 
-[ Upstream commit 44b034b406211fc103159f82b9e601e05675c739 ]
+According to the devicetree binding the shutdown and device wake
+GPIOs are optional. Since commit 3e81a4ca51a1 ("Bluetooth: hci_bcm:
+Mandate presence of shutdown and device wake GPIO") this driver
+won't probe anymore on Raspberry Pi 3 and Zero W (no device wake GPIO
+connected). So fix this regression by reverting this commit partially.
 
-In i40evf_reset_task we use netif_running() to determine whether or not
-the device is currently up. This allows us to properly free queue memory
-and shut down things before we request the hardware reset.
-
-It turns out that we cannot be guaranteed of netif_running() returning
-false until the device is fully up, as the kernel core code sets
-__LINK_STATE_START prior to calling .ndo_open. Since we're not holding
-the rtnl_lock(), it's possible that the driver's i40evf_open handler
-function is currently being called while we're resetting.
-
-We can't simply hold the rtnl_lock() while checking netif_running() as
-this could cause a deadlock with the i40evf_open() function.
-Additionally, we can't avoid the deadlock by holding the rtnl_lock()
-over the whole reset path, as this essentially serializes all resets,
-and can cause massive delays if we have multiple VFs on a system.
-
-Instead, lets just check our own internal state __I40EVF_RUNNING state
-field. This allows us to ensure that the state is correct and is only
-set after we've finished bringing the device up.
-
-Without this change we might free data structures about device queues
-and other memory before they've been fully allocated.
-
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 3e81a4ca51a1 ("Bluetooth: hci_bcm: Mandate presence of shutdown and device wake GPIO")
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Reviewed-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/intel/i40evf/i40evf_main.c |   20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/intel/i40evf/i40evf_main.c
-+++ b/drivers/net/ethernet/intel/i40evf/i40evf_main.c
-@@ -1796,7 +1796,11 @@ static void i40evf_disable_vf(struct i40
+---
+ drivers/bluetooth/hci_bcm.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -775,12 +775,13 @@ static int bcm_get_resources(struct bcm_
  
- 	adapter->flags |= I40EVF_FLAG_PF_COMMS_FAILED;
+ 	dev->clk = devm_clk_get(dev->dev, NULL);
  
--	if (netif_running(adapter->netdev)) {
-+	/* We don't use netif_running() because it may be true prior to
-+	 * ndo_open() returning, so we can't assume it means all our open
-+	 * tasks have finished, since we're not holding the rtnl_lock here.
-+	 */
-+	if (adapter->state == __I40EVF_RUNNING) {
- 		set_bit(__I40E_VSI_DOWN, adapter->vsi.state);
- 		netif_carrier_off(adapter->netdev);
- 		netif_tx_disable(adapter->netdev);
-@@ -1854,6 +1858,7 @@ static void i40evf_reset_task(struct wor
- 	struct i40evf_mac_filter *f;
- 	u32 reg_val;
- 	int i = 0, err;
-+	bool running;
+-	dev->device_wakeup = devm_gpiod_get(dev->dev, "device-wakeup",
+-					    GPIOD_OUT_LOW);
++	dev->device_wakeup = devm_gpiod_get_optional(dev->dev, "device-wakeup",
++						     GPIOD_OUT_LOW);
+ 	if (IS_ERR(dev->device_wakeup))
+ 		return PTR_ERR(dev->device_wakeup);
  
- 	while (test_and_set_bit(__I40EVF_IN_CLIENT_TASK,
- 				&adapter->crit_section))
-@@ -1913,7 +1918,13 @@ static void i40evf_reset_task(struct wor
- 	}
+-	dev->shutdown = devm_gpiod_get(dev->dev, "shutdown", GPIOD_OUT_LOW);
++	dev->shutdown = devm_gpiod_get_optional(dev->dev, "shutdown",
++						GPIOD_OUT_LOW);
+ 	if (IS_ERR(dev->shutdown))
+ 		return PTR_ERR(dev->shutdown);
  
- continue_reset:
--	if (netif_running(netdev)) {
-+	/* We don't use netif_running() because it may be true prior to
-+	 * ndo_open() returning, so we can't assume it means all our open
-+	 * tasks have finished, since we're not holding the rtnl_lock here.
-+	 */
-+	running = (adapter->state == __I40EVF_RUNNING);
-+
-+	if (running) {
- 		netif_carrier_off(netdev);
- 		netif_tx_stop_all_queues(netdev);
- 		adapter->link_up = false;
-@@ -1964,7 +1975,10 @@ continue_reset:
- 
- 	mod_timer(&adapter->watchdog_timer, jiffies + 2);
- 
--	if (netif_running(adapter->netdev)) {
-+	/* We were running when the reset started, so we need to restore some
-+	 * state here.
-+	 */
-+	if (running) {
- 		/* allocate transmit descriptors */
- 		err = i40evf_setup_all_tx_resources(adapter);
- 		if (err)
