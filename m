@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-713601-1523400026-2-11492390576030142418
+X-Cyrus-Session-Id: sloti22d1t05-713595-1523400000-2-4145970712250742575
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523400026; b=OEE4vZaI4nsbB5OTWDy+skj9L2xr8Q7FKYLsX79j83RIxRAMb1
-    6SewgM2uIfGfwKsRbu6gmYxDrXQd+0ElZF3KquxHw1jaWPpuG7aOHQc+RqZ7U5jh
-    B3ld3SA1N/GxvJlMlqaNm60UvKx9m4uVW+aM3rjUhvi01byzMprwDI8iaqZqHJWR
-    1x4l+8eqCQnGaiF5zPUsbT2aUv6WUvvBHpuKGpQgHvcLRPRREsc0xgza3tv/+amN
-    ZX144rDDXCUHkU0gqH2Bd2l7CQ6gHKywZFAYYavBy70wAUMjJk6/HXhtHmZuEGLy
-    3Nd8Gordbzm4tyrTUFUu9o9ddylRkXIMMHRg==
+    1523400000; b=OUvY8Yn4RVATTriRM/EE4hzn9+HFot7jFv9ciFZC5m8utJalVm
+    wBJZWU42Kg1TRFT8JpoDB8j62tewnW2Es26xAXlbqMUJ5v9qV4cInId2FtbgbF69
+    sSQuWmZt7hgWTro+OGbi3ostkEz6eYSjlq5VWSxQ75dH8KNb1gfVhBNmfrqqzl3C
+    c5eYWUNH6tHsdcEhyipGKbkIoETqFsmqQXBtlynrYFHY2A0zxsW4kEuEEs3XdVAC
+    p3q++lT7BXfq4msHWv7fB1cDe6T3bEAPrSqcID9+4MHCO1F3zlQGtAnsfnIXbwmT
+    0ugphkxppJ4T8uWeCWmRuSrA3BKdN37aWDdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523400026; bh=NQwIspJTZ7GGBLPn6nri4diB96MLIo
-    pcT05tyCiPuw8=; b=Tzw3e5tApweK99inrcOrF3hb9bGvmT9hJl2gBwGgCgmYIF
-    wJmG+f5wfTYoFyLB+qJtyJliGYjOmzIJDpljhkc2tsshm+Eja5eZfNI9TUM7sNIM
-    AmRbrL1KEQ+jJnFJJW6Uc0gmu6Gx8PWfbxH3cQXZE9y4pxJ2knP0a47EpRPAJVZ8
-    aXmW/P1uOBdQ5xdiVo2rwQWlQGo6G4/XGZ8Ae5nKCoto9NMyHGcUm6flg+8ZZaI7
-    pRDUA8ilS2Y8Ij/KDEqFmxJZAN9nhaY/Gn+y8rD5Dx/VayAb6oNt4xFdyMgQgjxY
-    8O8wGUnWJhJilkwQRXFCzzXcEcQe6+O6RCsNb57Q==
+    :list-id; s=fm2; t=1523400000; bh=CKsQ+MN94Nj8BXJgDUtE1fzB74NwlH
+    D8d7f8hNYg7Mo=; b=s0ROZYBXQ836XNdQdTO5R/PBqWSug8dA5qW7nDddB6UUI4
+    XZ9I7/c0FkHwsYH3KUDyx9K4AMIxe8vbdwx9tgR17GwO4sARTUHmp9J548uIEwk/
+    1Li0yrpOuX0m0UrfCNvSLDtnUnqUwfwnm7LlOpmzG0P+NMaq6EdCEVvvBF+ozsIf
+    v9EZix1ZLqRgNUgqRMGNkIvqGAsOGKi/a6nwQS44vA16zrwDsGKl6Cc/zXn9HUmR
+    ++kya5qekfPhY1g5U9JQKlm+dYonEDFpEYN+l79WvSk0l+MOGt53/B8BauLjfEKp
+    7OPNqdXgbJJQmJTa0KsgVfTjEEfuoxKjbUmosokA==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,30 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMkqQ0hbMKMfKxQPl1Q7xZAnbQANFHYrXxGpAQkhQMyd50jbXbunK/VI5XBKwNoqmc2oIfb7O4QGl/MOiVxMuOg2yFDeclJ32l23C53EmR+sxXFZreMV
-    uZpQ9ZQ+57e8RhiFtJgP2KOtbcEYovvmGuMEBbnLpO2Wq3NPMqiwgw67QxTMFp3cvAGfJmHTYh9M1XlAD/Mm0a/1zcjuJuPQppZ8fnxywB5KeAYZxPEyuYkO
+X-CM-Envelope: MS4wfBbxGLXTAeolMLps0668Vq+fOdqF7Br7J+o5+qn2PB0idQEegIy/DJ3eosHptAi7LVRE1nPS7BISJYFt5mFhZqffJ2qIqCqb5QAre0DMLUyRR4W0+tRf
+    Y3kFMWGDuKc5kBhTvh7j/8VOI4YWW5cSNzjdyLkF8g3Htj+dXWQbu7f1dmyJaal/lE5r7U+BDkxz0+AamPEwp3+3mEVLHoZhlxS2NHiL2dJwAWMvSqzYZso7
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=CbDCq_QkAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=21-8QumFperNIO-zfXQA:9
-    a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=1XWaLZrsAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=sngVIByJOSkcrifXhUIA:9
+    a=I2IH7lHG2eRa3Y_W:21 a=eqOfKsFLac_xMFF5:21 a=QEXdDO2ut3YA:10
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932740AbeDJWkW (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 18:40:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46696 "EHLO
+        id S932651AbeDJWjy (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 18:39:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46032 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932691AbeDJWkT (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:40:19 -0400
+        with ESMTP id S932650AbeDJWjx (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:39:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eran Ben Elisha <eranbe@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 132/138] net/mlx4_en: Fix mixed PFC and Global pause user control requests
-Date: Wed, 11 Apr 2018 00:25:22 +0200
-Message-Id: <20180410212917.598222409@linuxfoundation.org>
+Subject: [PATCH 4.14 106/138] pptp: remove a buggy dst release in pptp_connect()
+Date: Wed, 11 Apr 2018 00:24:56 +0200
+Message-Id: <20180410212914.531926969@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -93,232 +92,113 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eran Ben Elisha <eranbe@mellanox.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 6e8814ceb7e8f468659ef9253bd212c07ae19584 ]
+[ Upstream commit bfacfb457b36911a10140b8cb3ce76a74883ac5a ]
 
-Global pause and PFC configuration should be mutually exclusive (i.e. only
-one of them at most can be set). However, once PFC was turned off,
-driver automatically turned Global pause on. This is a bug.
+Once dst has been cached in socket via sk_setup_caps(),
+it is illegal to call ip_rt_put() (or dst_release()),
+since sk_setup_caps() did not change dst refcount.
 
-Fix the driver behaviour to turn off PFC/Global once the user turned the
-other on.
+We can still dereference it since we hold socket lock.
 
-This also fixed a weird behaviour that at a current time, the profile
-had both PFC and global pause configuration turned on, which is
-Hardware-wise impossible and caused returning false positive indication
-to query tools.
+Caugth by syzbot :
 
-In addition, fix error code when setting global pause or PFC to change
-metadata only upon successful change.
+BUG: KASAN: use-after-free in atomic_dec_return include/asm-generic/atomic-instrumented.h:198 [inline]
+BUG: KASAN: use-after-free in dst_release+0x27/0xa0 net/core/dst.c:185
+Write of size 4 at addr ffff8801c54dc040 by task syz-executor4/20088
 
-Also, removed useless debug print.
+CPU: 1 PID: 20088 Comm: syz-executor4 Not tainted 4.16.0+ #376
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x1a7/0x27d lib/dump_stack.c:53
+ print_address_description+0x73/0x250 mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report+0x23c/0x360 mm/kasan/report.c:412
+ check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+ check_memory_region+0x137/0x190 mm/kasan/kasan.c:267
+ kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
+ atomic_dec_return include/asm-generic/atomic-instrumented.h:198 [inline]
+ dst_release+0x27/0xa0 net/core/dst.c:185
+ sk_dst_set include/net/sock.h:1812 [inline]
+ sk_dst_reset include/net/sock.h:1824 [inline]
+ sock_setbindtodevice net/core/sock.c:610 [inline]
+ sock_setsockopt+0x431/0x1b20 net/core/sock.c:707
+ SYSC_setsockopt net/socket.c:1845 [inline]
+ SyS_setsockopt+0x2ff/0x360 net/socket.c:1828
+ do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x4552d9
+RSP: 002b:00007f4878126c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007f48781276d4 RCX: 00000000004552d9
+RDX: 0000000000000019 RSI: 0000000000000001 RDI: 0000000000000013
+RBP: 000000000072bea0 R08: 0000000000000010 R09: 0000000000000000
+R10: 00000000200010c0 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000000526 R14: 00000000006fac30 R15: 0000000000000000
 
-Fixes: af7d51852631 ("net/mlx4_en: Add DCB PFC support through CEE netlink commands")
-Fixes: c27a02cd94d6 ("mlx4_en: Add driver for Mellanox ConnectX 10GbE NIC")
-Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Allocated by task 20088:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+ set_track mm/kasan/kasan.c:459 [inline]
+ kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
+ kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:489
+ kmem_cache_alloc+0x12e/0x760 mm/slab.c:3542
+ dst_alloc+0x11f/0x1a0 net/core/dst.c:104
+ rt_dst_alloc+0xe9/0x540 net/ipv4/route.c:1520
+ __mkroute_output net/ipv4/route.c:2265 [inline]
+ ip_route_output_key_hash_rcu+0xa49/0x2c60 net/ipv4/route.c:2493
+ ip_route_output_key_hash+0x20b/0x370 net/ipv4/route.c:2322
+ __ip_route_output_key include/net/route.h:126 [inline]
+ ip_route_output_flow+0x26/0xa0 net/ipv4/route.c:2577
+ ip_route_output_ports include/net/route.h:163 [inline]
+ pptp_connect+0xa84/0x1170 drivers/net/ppp/pptp.c:453
+ SYSC_connect+0x213/0x4a0 net/socket.c:1639
+ SyS_connect+0x24/0x30 net/socket.c:1620
+ do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+Freed by task 20082:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+ set_track mm/kasan/kasan.c:459 [inline]
+ __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
+ kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
+ __cache_free mm/slab.c:3486 [inline]
+ kmem_cache_free+0x83/0x2a0 mm/slab.c:3744
+ dst_destroy+0x266/0x380 net/core/dst.c:140
+ dst_destroy_rcu+0x16/0x20 net/core/dst.c:153
+ __rcu_reclaim kernel/rcu/rcu.h:178 [inline]
+ rcu_do_batch kernel/rcu/tree.c:2675 [inline]
+ invoke_rcu_callbacks kernel/rcu/tree.c:2930 [inline]
+ __rcu_process_callbacks kernel/rcu/tree.c:2897 [inline]
+ rcu_process_callbacks+0xd6c/0x17b0 kernel/rcu/tree.c:2914
+ __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
+
+The buggy address belongs to the object at ffff8801c54dc000
+ which belongs to the cache ip_dst_cache of size 168
+The buggy address is located 64 bytes inside of
+ 168-byte region [ffff8801c54dc000, ffff8801c54dc0a8)
+The buggy address belongs to the page:
+page:ffffea0007153700 count:1 mapcount:0 mapping:ffff8801c54dc000 index:0x0
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffff8801c54dc000 0000000000000000 0000000100000010
+raw: ffffea0006b34b20 ffffea0006b6c1e0 ffff8801d674a1c0 0000000000000000
+page dumped because: kasan: bad access detected
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/en_dcb_nl.c  |   72 +++++++++++++-----------
- drivers/net/ethernet/mellanox/mlx4/en_ethtool.c |   33 ++++++-----
- drivers/net/ethernet/mellanox/mlx4/en_main.c    |    4 -
- 3 files changed, 62 insertions(+), 47 deletions(-)
+ drivers/net/ppp/pptp.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlx4/en_dcb_nl.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_dcb_nl.c
-@@ -156,57 +156,63 @@ static int mlx4_en_dcbnl_getnumtcs(struc
- static u8 mlx4_en_dcbnl_set_all(struct net_device *netdev)
- {
- 	struct mlx4_en_priv *priv = netdev_priv(netdev);
-+	struct mlx4_en_port_profile *prof = priv->prof;
- 	struct mlx4_en_dev *mdev = priv->mdev;
-+	u8 tx_pause, tx_ppp, rx_pause, rx_ppp;
+--- a/drivers/net/ppp/pptp.c
++++ b/drivers/net/ppp/pptp.c
+@@ -464,7 +464,6 @@ static int pptp_connect(struct socket *s
+ 	po->chan.mtu = dst_mtu(&rt->dst);
+ 	if (!po->chan.mtu)
+ 		po->chan.mtu = PPP_MRU;
+-	ip_rt_put(rt);
+ 	po->chan.mtu -= PPTP_HEADER_OVERHEAD;
  
- 	if (!(priv->dcbx_cap & DCB_CAP_DCBX_VER_CEE))
- 		return 1;
- 
- 	if (priv->cee_config.pfc_state) {
- 		int tc;
-+		rx_ppp = prof->rx_ppp;
-+		tx_ppp = prof->tx_ppp;
- 
--		priv->prof->rx_pause = 0;
--		priv->prof->tx_pause = 0;
- 		for (tc = 0; tc < CEE_DCBX_MAX_PRIO; tc++) {
- 			u8 tc_mask = 1 << tc;
- 
- 			switch (priv->cee_config.dcb_pfc[tc]) {
- 			case pfc_disabled:
--				priv->prof->tx_ppp &= ~tc_mask;
--				priv->prof->rx_ppp &= ~tc_mask;
-+				tx_ppp &= ~tc_mask;
-+				rx_ppp &= ~tc_mask;
- 				break;
- 			case pfc_enabled_full:
--				priv->prof->tx_ppp |= tc_mask;
--				priv->prof->rx_ppp |= tc_mask;
-+				tx_ppp |= tc_mask;
-+				rx_ppp |= tc_mask;
- 				break;
- 			case pfc_enabled_tx:
--				priv->prof->tx_ppp |= tc_mask;
--				priv->prof->rx_ppp &= ~tc_mask;
-+				tx_ppp |= tc_mask;
-+				rx_ppp &= ~tc_mask;
- 				break;
- 			case pfc_enabled_rx:
--				priv->prof->tx_ppp &= ~tc_mask;
--				priv->prof->rx_ppp |= tc_mask;
-+				tx_ppp &= ~tc_mask;
-+				rx_ppp |= tc_mask;
- 				break;
- 			default:
- 				break;
- 			}
- 		}
--		en_dbg(DRV, priv, "Set pfc on\n");
-+		rx_pause = !!(rx_ppp || tx_ppp) ? 0 : prof->rx_pause;
-+		tx_pause = !!(rx_ppp || tx_ppp) ? 0 : prof->tx_pause;
- 	} else {
--		priv->prof->rx_pause = 1;
--		priv->prof->tx_pause = 1;
--		en_dbg(DRV, priv, "Set pfc off\n");
-+		rx_ppp = 0;
-+		tx_ppp = 0;
-+		rx_pause = prof->rx_pause;
-+		tx_pause = prof->tx_pause;
- 	}
- 
- 	if (mlx4_SET_PORT_general(mdev->dev, priv->port,
- 				  priv->rx_skb_size + ETH_FCS_LEN,
--				  priv->prof->tx_pause,
--				  priv->prof->tx_ppp,
--				  priv->prof->rx_pause,
--				  priv->prof->rx_ppp)) {
-+				  tx_pause, tx_ppp, rx_pause, rx_ppp)) {
- 		en_err(priv, "Failed setting pause params\n");
- 		return 1;
- 	}
- 
-+	prof->tx_ppp = tx_ppp;
-+	prof->rx_ppp = rx_ppp;
-+	prof->tx_pause = tx_pause;
-+	prof->rx_pause = rx_pause;
-+
- 	return 0;
- }
- 
-@@ -408,6 +414,7 @@ static int mlx4_en_dcbnl_ieee_setpfc(str
- 	struct mlx4_en_priv *priv = netdev_priv(dev);
- 	struct mlx4_en_port_profile *prof = priv->prof;
- 	struct mlx4_en_dev *mdev = priv->mdev;
-+	u32 tx_pause, tx_ppp, rx_pause, rx_ppp;
- 	int err;
- 
- 	en_dbg(DRV, priv, "cap: 0x%x en: 0x%x mbc: 0x%x delay: %d\n",
-@@ -416,23 +423,26 @@ static int mlx4_en_dcbnl_ieee_setpfc(str
- 			pfc->mbc,
- 			pfc->delay);
- 
--	prof->rx_pause = !pfc->pfc_en;
--	prof->tx_pause = !pfc->pfc_en;
--	prof->rx_ppp = pfc->pfc_en;
--	prof->tx_ppp = pfc->pfc_en;
-+	rx_pause = prof->rx_pause && !pfc->pfc_en;
-+	tx_pause = prof->tx_pause && !pfc->pfc_en;
-+	rx_ppp = pfc->pfc_en;
-+	tx_ppp = pfc->pfc_en;
- 
- 	err = mlx4_SET_PORT_general(mdev->dev, priv->port,
- 				    priv->rx_skb_size + ETH_FCS_LEN,
--				    prof->tx_pause,
--				    prof->tx_ppp,
--				    prof->rx_pause,
--				    prof->rx_ppp);
--	if (err)
-+				    tx_pause, tx_ppp, rx_pause, rx_ppp);
-+	if (err) {
- 		en_err(priv, "Failed setting pause params\n");
--	else
--		mlx4_en_update_pfc_stats_bitmap(mdev->dev, &priv->stats_bitmap,
--						prof->rx_ppp, prof->rx_pause,
--						prof->tx_ppp, prof->tx_pause);
-+		return err;
-+	}
-+
-+	mlx4_en_update_pfc_stats_bitmap(mdev->dev, &priv->stats_bitmap,
-+					rx_ppp, rx_pause, tx_ppp, tx_pause);
-+
-+	prof->tx_ppp = tx_ppp;
-+	prof->rx_ppp = rx_ppp;
-+	prof->rx_pause = rx_pause;
-+	prof->tx_pause = tx_pause;
- 
- 	return err;
- }
---- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-@@ -1046,27 +1046,32 @@ static int mlx4_en_set_pauseparam(struct
- {
- 	struct mlx4_en_priv *priv = netdev_priv(dev);
- 	struct mlx4_en_dev *mdev = priv->mdev;
-+	u8 tx_pause, tx_ppp, rx_pause, rx_ppp;
- 	int err;
- 
- 	if (pause->autoneg)
- 		return -EINVAL;
- 
--	priv->prof->tx_pause = pause->tx_pause != 0;
--	priv->prof->rx_pause = pause->rx_pause != 0;
-+	tx_pause = !!(pause->tx_pause);
-+	rx_pause = !!(pause->rx_pause);
-+	rx_ppp = priv->prof->rx_ppp && !(tx_pause || rx_pause);
-+	tx_ppp = priv->prof->tx_ppp && !(tx_pause || rx_pause);
-+
- 	err = mlx4_SET_PORT_general(mdev->dev, priv->port,
- 				    priv->rx_skb_size + ETH_FCS_LEN,
--				    priv->prof->tx_pause,
--				    priv->prof->tx_ppp,
--				    priv->prof->rx_pause,
--				    priv->prof->rx_ppp);
--	if (err)
--		en_err(priv, "Failed setting pause params\n");
--	else
--		mlx4_en_update_pfc_stats_bitmap(mdev->dev, &priv->stats_bitmap,
--						priv->prof->rx_ppp,
--						priv->prof->rx_pause,
--						priv->prof->tx_ppp,
--						priv->prof->tx_pause);
-+				    tx_pause, tx_ppp, rx_pause, rx_ppp);
-+	if (err) {
-+		en_err(priv, "Failed setting pause params, err = %d\n", err);
-+		return err;
-+	}
-+
-+	mlx4_en_update_pfc_stats_bitmap(mdev->dev, &priv->stats_bitmap,
-+					rx_ppp, rx_pause, tx_ppp, tx_pause);
-+
-+	priv->prof->tx_pause = tx_pause;
-+	priv->prof->rx_pause = rx_pause;
-+	priv->prof->tx_ppp = tx_ppp;
-+	priv->prof->rx_ppp = rx_ppp;
- 
- 	return err;
- }
---- a/drivers/net/ethernet/mellanox/mlx4/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_main.c
-@@ -163,9 +163,9 @@ static void mlx4_en_get_profile(struct m
- 		params->udp_rss = 0;
- 	}
- 	for (i = 1; i <= MLX4_MAX_PORTS; i++) {
--		params->prof[i].rx_pause = 1;
-+		params->prof[i].rx_pause = !(pfcrx || pfctx);
- 		params->prof[i].rx_ppp = pfcrx;
--		params->prof[i].tx_pause = 1;
-+		params->prof[i].tx_pause = !(pfcrx || pfctx);
- 		params->prof[i].tx_ppp = pfctx;
- 		params->prof[i].tx_ring_size = MLX4_EN_DEF_TX_RING_SIZE;
- 		params->prof[i].rx_ring_size = MLX4_EN_DEF_RX_RING_SIZE;
+ 	po->chan.hdrlen = 2 + sizeof(struct pptp_gre_header);
