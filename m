@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49vhg2r/Ecqp41EBUkoUkcJt8hl4YkkhuthSI4uMlKoVOLJOexYKvAu9h8hl/h8K//ypEVW
-ARC-Seal: i=1; a=rsa-sha256; t=1523399488; cv=none;
+X-Google-Smtp-Source: AIpwx4+7TDkp48FWFUm8YKRlfAPy+yV5SHJ7Ak9LMxDmL+Zz/aCZ7/OxzTgzBBiyDeDVlvyvjLtv
+ARC-Seal: i=1; a=rsa-sha256; t=1523399464; cv=none;
         d=google.com; s=arc-20160816;
-        b=mo9YXjjPAwo2ehVEt9YYe5NdJ1reUUy/TMI32XNUIAzLGfrfEG8b8Lx+yO0bsPTS7F
-         612MGAADLLUhJsPRyW2Wia91WU+gddSEJmYGdooacWrerUFl1ND2FvxubF9cCai8sZI/
-         S82/WbOjsA0lXF2OrxONcYGxTRv1v09AvqmyAO/al30tEL9qMdcAvhtVVn+AkspYlHt5
-         kdHWmHlZJx7I39uvESoWtqshGRyDKuO6bA7WAdfB/4oV2z43Pocrd8rl62HH3drI2R4s
-         RdpO/PlaSqtLeeEude2n9JJoiIuNdPFD0GWDLtAiJ31QAWOwXQYhgUwDcq68oYGGbfOR
-         DdkQ==
+        b=voS9pUz6L25GULxRPSY/WRjO02HgGwZisDw1zEDDLGRoxSPlHTO363VJDnVRsA7TgV
+         KQN3rjXe0STUXuiswDulPC82Kv/jrfecIafN7zbuADSJHb1USadA2xz6k6xTfVLTXXp5
+         jCta95DnluUFIdcdhT8pARRXepT+wpq8TZojFVT9pZPgCp3dZTGzsUppxsobg2JPtUbk
+         /zQKzu3+3mELc5u/MTvZrcBn8t2tD1cHGdJ0SmNon1JKNl44RHSmoah7YoPvhVNHqhur
+         DQMVrJjer+1Pjnmu/mv1WhP87KY6DDtSB8XJ0x5a5E9puWCRzDkUW/SWu4yk3uMHFJXT
+         LCoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yZDFanwnwjK/GCeVQS3dYQEHz1/G7MlapZcauY3SiKw=;
-        b=rRUBY7/lJ0DfjvCxSkDcFh4llXUAIgn14H+CAPr7a7xRhmibpVpF/vgL0RKAE9u3R7
-         xJXf7IGv8nlbPmWl771pYBWNLp0Od/ML63ut7YTMHOSpPYn9GbUN8bEx5YejbYSlV2ru
-         EwLr88Fo16O4GiMMjJgYwApnMpppkBZQWiJaK8FAnI/OBKLVsbGjZSWUcwOxmsCynHCh
-         jaHrUH8eVkoM4Lxv/bW4I5Pf5rP6MmV9hvrxeW9ESxnFTR61soO1yELA7zNLkG+7UVBP
-         YhPsgDfrUvocrQj26TDG+6umLpqaaxMYZr9i9YBBuPCfumoQSaj5OhVGjND0/JI6Mv84
-         lmeA==
+        bh=7Zzhaj1Z+Xsk2m1hJbC/yVbPYnJzhd/dEhB3y/AUi8U=;
+        b=SkCxUWJvg++AQsFf6hRVl4oQ4TLVR2yQOJXi5k30f5vRapdnu3lEoXLoB8/7rfMqa3
+         BDbPkH3g3vnM4xsLGVfSWW/ug7oyhbogg0QRFPdZzQfC08IxqblvgBDN1bvRdMaDxMzI
+         KFzHDIgP5aTD+vnzei9QrGn0SFVZzfJXidHeUsu/H0t/GUxF7Iew2riF6vdZvBKcRz34
+         hao/RYE8o3/c9y5lS1iKFAMS6/y/iRvzpqb10PgTrYLJE+RjapCfsdBMBRPYLEt2QTrf
+         LNvjbA0caMFYuZdG0bGT7fVmkA/DnZI4xVXBjPmk7HTUf7U3aHy4sXNO7q6DofFw3rRT
+         6M+A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Donald Sharp <sharpd@cumulusnetworks.com>,
-	David Ahern <dsahern@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 126/168] net/ipv6: Fix route leaking between VRFs
-Date: Wed, 11 Apr 2018 00:24:28 +0200
-Message-Id: <20180410212806.062178301@linuxfoundation.org>
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.15 099/168] sdhci: Advertise 2.0v supply on SDIO host controller
+Date: Wed, 11 Apr 2018 00:24:01 +0200
+Message-Id: <20180410212804.467826963@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400142276464050?=
-X-GMAIL-MSGID: =?utf-8?q?1597400142276464050?=
+X-GMAIL-THRID: =?utf-8?q?1597400117368517441?=
+X-GMAIL-MSGID: =?utf-8?q?1597400117368517441?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,49 +51,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
 
-[ Upstream commit b6cdbc85234b072340b8923e69f49ec293f905dc ]
+[ Upstream commit 2a609abe71ca59e4bd7139e161eaca2144ae6f2e ]
 
-Donald reported that IPv6 route leaking between VRFs is not working.
-The root cause is the strict argument in the call to rt6_lookup when
-validating the nexthop spec.
+On Intel Edison the Broadcom Wi-Fi card, which is connected to SDIO,
+requires 2.0v, while the host, according to Intel Merrifield TRM,
+supports 1.8v supply only.
 
-ip6_route_check_nh validates the gateway and device (if given) of a
-route spec. It in turn could call rt6_lookup (e.g., lookup in a given
-table did not succeed so it falls back to a full lookup) and if so
-sets the strict argument to 1. That means if the egress device is given,
-the route lookup needs to return a result with the same device. This
-strict requirement does not work with VRFs (IPv4 or IPv6) because the
-oif in the flow struct is overridden with the index of the VRF device
-to trigger a match on the l3mdev rule and force the lookup to its table.
+The card announces itself as
 
-The right long term solution is to add an l3mdev index to the flow
-struct such that the oif is not overridden. That solution will not
-backport well, so this patch aims for a simpler solution to relax the
-strict argument if the route spec device is an l3mdev slave. As done
-in other places, use the FLOWI_FLAG_SKIP_NH_OIF to know that the
-RT6_LOOKUP_F_IFACE flag needs to be removed.
+  mmc2: new ultra high speed DDR50 SDIO card at address 0001
 
-Fixes: ca254490c8df ("net: Add VRF support to IPv6 stack")
-Reported-by: Donald Sharp <sharpd@cumulusnetworks.com>
-Signed-off-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Introduce a custom OCR mask for SDIO host controller on Intel Merrifield
+and add a special case to sdhci_set_power_noreg() to override 2.0v supply
+by enforcing 1.8v power choice.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/route.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mmc/host/sdhci-pci-core.c |    2 ++
+ drivers/mmc/host/sdhci.c          |    7 +++++++
+ 2 files changed, 9 insertions(+)
 
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -922,6 +922,9 @@ static struct rt6_info *ip6_pol_route_lo
- 	struct rt6_info *rt, *rt_cache;
- 	struct fib6_node *fn;
- 
-+	if (fl6->flowi6_flags & FLOWI_FLAG_SKIP_NH_OIF)
-+		flags &= ~RT6_LOOKUP_F_IFACE;
-+
- 	rcu_read_lock();
- 	fn = fib6_lookup(&table->tb6_root, &fl6->daddr, &fl6->saddr);
- restart:
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -805,6 +805,8 @@ static int intel_mrfld_mmc_probe_slot(st
+ 		slot->host->quirks2 |= SDHCI_QUIRK2_NO_1_8_V;
+ 		break;
+ 	case INTEL_MRFLD_SDIO:
++		/* Advertise 2.0v for compatibility with the SDIO card's OCR */
++		slot->host->ocr_mask = MMC_VDD_20_21 | MMC_VDD_165_195;
+ 		slot->host->mmc->caps |= MMC_CAP_NONREMOVABLE |
+ 					 MMC_CAP_POWER_OFF_CARD;
+ 		break;
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1470,6 +1470,13 @@ void sdhci_set_power_noreg(struct sdhci_
+ 	if (mode != MMC_POWER_OFF) {
+ 		switch (1 << vdd) {
+ 		case MMC_VDD_165_195:
++		/*
++		 * Without a regulator, SDHCI does not support 2.0v
++		 * so we only get here if the driver deliberately
++		 * added the 2.0v range to ocr_avail. Map it to 1.8v
++		 * for the purpose of turning on the power.
++		 */
++		case MMC_VDD_20_21:
+ 			pwr = SDHCI_POWER_180;
+ 			break;
+ 		case MMC_VDD_29_30:
