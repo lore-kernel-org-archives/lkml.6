@@ -1,158 +1,310 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752361AbeDJGde (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 02:33:34 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6733 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752191AbeDJGdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 02:33:33 -0400
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: don't use GFP_ZERO for page caches
-To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180409190012.21552-1-jaegeuk@kernel.org>
- <20180409204244.GA25905@jaegeuk-macbookpro.roam.corp.google.com>
- <20180410032934.GA47598@jaegeuk-macbookpro.roam.corp.google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <b891c25a-e95e-15ff-faf9-f263bbe05eb3@huawei.com>
-Date: Tue, 10 Apr 2018 14:33:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1752402AbeDJGeC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 02:34:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34536 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752214AbeDJGeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 02:34:00 -0400
+Date: Tue, 10 Apr 2018 08:33:57 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Greg Thelen <gthelen@google.com>
+Cc: Wang Long <wanglong19@meituan.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
+        npiggin@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v3] writeback: safer lock nesting
+Message-ID: <20180410063357.GS21835@dhcp22.suse.cz>
+References: <201804080259.VS5U0mKT%fengguang.wu@intel.com>
+ <20180410005908.167976-1-gthelen@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180410032934.GA47598@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180410005908.167976-1-gthelen@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/10 11:29, Jaegeuk Kim wrote:
-> Change log from v2:
->  - consider IO error case when dealing with metapage
->  - memset by fill_node_footer
+On Mon 09-04-18 17:59:08, Greg Thelen wrote:
+> lock_page_memcg()/unlock_page_memcg() use spin_lock_irqsave/restore() if
+> the page's memcg is undergoing move accounting, which occurs when a
+> process leaves its memcg for a new one that has
+> memory.move_charge_at_immigrate set.
 > 
-> Change log from v1:
->  - don't memset for recovered page
->  
-> Related to https://lkml.org/lkml/2018/4/8/661
+> unlocked_inode_to_wb_begin,end() use spin_lock_irq/spin_unlock_irq() if the
+> given inode is switching writeback domains.  Switches occur when enough
+> writes are issued from a new domain.
 > 
-> Sometimes, we need to write meta data to new allocated block address,
-> then we will allocate a zeroed page in inner inode's address space, and
-> fill partial data in it, and leave other place with zero value which means
-> some fields are initial status.
+> This existing pattern is thus suspicious:
+>     lock_page_memcg(page);
+>     unlocked_inode_to_wb_begin(inode, &locked);
+>     ...
+>     unlocked_inode_to_wb_end(inode, locked);
+>     unlock_page_memcg(page);
 > 
-> There are two inner inodes (meta inode and node inode) setting __GFP_ZERO,
-> I have just checked them, for both of them, we can avoid using __GFP_ZERO,
-> and do initialization by ourselves to avoid unneeded/redundant zeroing
-> from mm.
+> If both inode switch and process memcg migration are both in-flight then
+> unlocked_inode_to_wb_end() will unconditionally enable interrupts while
+> still holding the lock_page_memcg() irq spinlock.  This suggests the
+> possibility of deadlock if an interrupt occurs before
+> unlock_page_memcg().
 > 
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>     truncate
+>     __cancel_dirty_page
+>     lock_page_memcg
+>     unlocked_inode_to_wb_begin
+>     unlocked_inode_to_wb_end
+>     <interrupts mistakenly enabled>
+>                                     <interrupt>
+>                                     end_page_writeback
+>                                     test_clear_page_writeback
+>                                     lock_page_memcg
+>                                     <deadlock>
+>     unlock_page_memcg
+> 
+> Due to configuration limitations this deadlock is not currently possible
+> because we don't mix cgroup writeback (a cgroupv2 feature) and
+> memory.move_charge_at_immigrate (a cgroupv1 feature).
+> 
+> If the kernel is hacked to always claim inode switching and memcg
+> moving_account, then this script triggers lockup in less than a minute:
+>   cd /mnt/cgroup/memory
+>   mkdir a b
+>   echo 1 > a/memory.move_charge_at_immigrate
+>   echo 1 > b/memory.move_charge_at_immigrate
+>   (
+>     echo $BASHPID > a/cgroup.procs
+>     while true; do
+>       dd if=/dev/zero of=/mnt/big bs=1M count=256
+>     done
+>   ) &
+>   while true; do
+>     sync
+>   done &
+>   sleep 1h &
+>   SLEEP=$!
+>   while true; do
+>     echo $SLEEP > a/cgroup.procs
+>     echo $SLEEP > b/cgroup.procs
+>   done
+> 
+
+Very nice changelog!
+
+> Given the deadlock is not currently possible, it's debatable if there's
+> any reason to modify the kernel.  I suggest we should to prevent future
+> surprises.
+
+Agreed!
+
+> Reported-by: Wang Long <wanglong19@meituan.com>
+> Signed-off-by: Greg Thelen <gthelen@google.com>
+> Change-Id: Ibb773e8045852978f6207074491d262f1b3fb613
+
+Not a stable material IMHO but
+Fixes: 682aa8e1a6a1 ("writeback: implement unlocked_inode_to_wb transaction and use it for stat updates")
+AFAIU
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+Thanks!
+
 > ---
->  fs/f2fs/checkpoint.c | 4 +++-
->  fs/f2fs/inode.c      | 4 ++--
->  fs/f2fs/segment.c    | 3 +++
->  fs/f2fs/segment.h    | 1 +
->  4 files changed, 9 insertions(+), 3 deletions(-)
+> Changelog since v2:
+> - explicitly initialize wb_lock_cookie to silence compiler warnings.
 > 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index bf779461df13..2e23b953d304 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -100,8 +100,10 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
->  	 * readonly and make sure do not write checkpoint with non-uptodate
->  	 * meta page.
+> Changelog since v1:
+> - add wb_lock_cookie to record lock context.
+> 
+>  fs/fs-writeback.c                |  7 ++++---
+>  include/linux/backing-dev-defs.h |  5 +++++
+>  include/linux/backing-dev.h      | 30 ++++++++++++++++--------------
+>  mm/page-writeback.c              | 18 +++++++++---------
+>  4 files changed, 34 insertions(+), 26 deletions(-)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 1280f915079b..f4b2f6625913 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -745,11 +745,12 @@ int inode_congested(struct inode *inode, int cong_bits)
 >  	 */
-> -	if (unlikely(!PageUptodate(page)))
-> +	if (unlikely(!PageUptodate(page))) {
-> +		memset(page_address(page), 0, PAGE_SIZE);
->  		f2fs_stop_checkpoint(sbi, false);
-> +	}
->  out:
->  	return page;
+>  	if (inode && inode_to_wb_is_valid(inode)) {
+>  		struct bdi_writeback *wb;
+> -		bool locked, congested;
+> +		struct wb_lock_cookie lock_cookie;
+> +		bool congested;
+>  
+> -		wb = unlocked_inode_to_wb_begin(inode, &locked);
+> +		wb = unlocked_inode_to_wb_begin(inode, &lock_cookie);
+>  		congested = wb_congested(wb, cong_bits);
+> -		unlocked_inode_to_wb_end(inode, locked);
+> +		unlocked_inode_to_wb_end(inode, &lock_cookie);
+>  		return congested;
+>  	}
+>  
+> diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+> index bfe86b54f6c1..0bd432a4d7bd 100644
+> --- a/include/linux/backing-dev-defs.h
+> +++ b/include/linux/backing-dev-defs.h
+> @@ -223,6 +223,11 @@ static inline void set_bdi_congested(struct backing_dev_info *bdi, int sync)
+>  	set_wb_congested(bdi->wb.congested, sync);
 >  }
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index 417c9dcd0269..87535bf63421 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -320,10 +320,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
->  make_now:
->  	if (ino == F2FS_NODE_INO(sbi)) {
->  		inode->i_mapping->a_ops = &f2fs_node_aops;
-> -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-> +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
->  	} else if (ino == F2FS_META_INO(sbi)) {
->  		inode->i_mapping->a_ops = &f2fs_meta_aops;
-> -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
-> +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
->  	} else if (S_ISREG(inode->i_mode)) {
->  		inode->i_op = &f2fs_file_inode_operations;
->  		inode->i_fop = &f2fs_file_operations;
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index a4b8e3e24ccb..1f5db557ab96 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -2021,6 +2021,7 @@ static void write_current_sum_page(struct f2fs_sb_info *sbi,
->  	struct f2fs_summary_block *dst;
 >  
->  	dst = (struct f2fs_summary_block *)page_address(page);
-> +	memset(dst, 0, PAGE_SIZE);
-
-We will fill all summary page later, so we don't need initialize it?
-
+> +struct wb_lock_cookie {
+> +	bool locked;
+> +	unsigned long flags;
+> +};
+> +
+>  #ifdef CONFIG_CGROUP_WRITEBACK
 >  
->  	mutex_lock(&curseg->curseg_mutex);
+>  /**
+> diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
+> index 3e4ce54d84ab..1d744c61d996 100644
+> --- a/include/linux/backing-dev.h
+> +++ b/include/linux/backing-dev.h
+> @@ -346,7 +346,7 @@ static inline struct bdi_writeback *inode_to_wb(const struct inode *inode)
+>  /**
+>   * unlocked_inode_to_wb_begin - begin unlocked inode wb access transaction
+>   * @inode: target inode
+> - * @lockedp: temp bool output param, to be passed to the end function
+> + * @cookie: output param, to be passed to the end function
+>   *
+>   * The caller wants to access the wb associated with @inode but isn't
+>   * holding inode->i_lock, mapping->tree_lock or wb->list_lock.  This
+> @@ -354,12 +354,11 @@ static inline struct bdi_writeback *inode_to_wb(const struct inode *inode)
+>   * association doesn't change until the transaction is finished with
+>   * unlocked_inode_to_wb_end().
+>   *
+> - * The caller must call unlocked_inode_to_wb_end() with *@lockdep
+> - * afterwards and can't sleep during transaction.  IRQ may or may not be
+> - * disabled on return.
+> + * The caller must call unlocked_inode_to_wb_end() with *@cookie afterwards and
+> + * can't sleep during transaction.  IRQ may or may not be disabled on return.
+>   */
+>  static inline struct bdi_writeback *
+> -unlocked_inode_to_wb_begin(struct inode *inode, bool *lockedp)
+> +unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie *cookie)
+>  {
+>  	rcu_read_lock();
 >  
-> @@ -3117,6 +3118,7 @@ static void write_compacted_summaries(struct f2fs_sb_info *sbi, block_t blkaddr)
+> @@ -367,10 +366,10 @@ unlocked_inode_to_wb_begin(struct inode *inode, bool *lockedp)
+>  	 * Paired with store_release in inode_switch_wb_work_fn() and
+>  	 * ensures that we see the new wb if we see cleared I_WB_SWITCH.
+>  	 */
+> -	*lockedp = smp_load_acquire(&inode->i_state) & I_WB_SWITCH;
+> +	cookie->locked = smp_load_acquire(&inode->i_state) & I_WB_SWITCH;
 >  
->  	page = grab_meta_page(sbi, blkaddr++);
->  	kaddr = (unsigned char *)page_address(page);
-> +	memset(kaddr, 0, PAGE_SIZE);
-
-I checked here, we will not use uninitialized space due to:
-
-read_compacted_summaries()
-{
-...
-	if (offset + SUMMARY_SIZE <= PAGE_SIZE - SUM_FOOTER_SIZE)
-		continue;
-...
-}
-
-Are we safe here?
-
+> -	if (unlikely(*lockedp))
+> -		spin_lock_irq(&inode->i_mapping->tree_lock);
+> +	if (unlikely(cookie->locked))
+> +		spin_lock_irqsave(&inode->i_mapping->tree_lock, cookie->flags);
 >  
->  	/* Step 1: write nat cache */
->  	seg_i = CURSEG_I(sbi, CURSEG_HOT_DATA);
-> @@ -3141,6 +3143,7 @@ static void write_compacted_summaries(struct f2fs_sb_info *sbi, block_t blkaddr)
->  			if (!page) {
->  				page = grab_meta_page(sbi, blkaddr++);
->  				kaddr = (unsigned char *)page_address(page);
-> +				memset(kaddr, 0, PAGE_SIZE);
-
-Ditto.
-
->  				written_size = 0;
->  			}
->  			summary = (struct f2fs_summary *)(kaddr + written_size);
-> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-> index 3325d0769723..492ad0c86fa9 100644
-> --- a/fs/f2fs/segment.h
-> +++ b/fs/f2fs/segment.h
-> @@ -375,6 +375,7 @@ static inline void seg_info_to_sit_page(struct f2fs_sb_info *sbi,
->  	int i;
+>  	/*
+>  	 * Protected by either !I_WB_SWITCH + rcu_read_lock() or tree_lock.
+> @@ -382,12 +381,14 @@ unlocked_inode_to_wb_begin(struct inode *inode, bool *lockedp)
+>  /**
+>   * unlocked_inode_to_wb_end - end inode wb access transaction
+>   * @inode: target inode
+> - * @locked: *@lockedp from unlocked_inode_to_wb_begin()
+> + * @cookie: @cookie from unlocked_inode_to_wb_begin()
+>   */
+> -static inline void unlocked_inode_to_wb_end(struct inode *inode, bool locked)
+> +static inline void unlocked_inode_to_wb_end(struct inode *inode,
+> +					    struct wb_lock_cookie *cookie)
+>  {
+> -	if (unlikely(locked))
+> -		spin_unlock_irq(&inode->i_mapping->tree_lock);
+> +	if (unlikely(cookie->locked))
+> +		spin_unlock_irqrestore(&inode->i_mapping->tree_lock,
+> +				       cookie->flags);
 >  
->  	raw_sit = (struct f2fs_sit_block *)page_address(page);
-> +	memset(raw_sit, 0, PAGE_SIZE);
+>  	rcu_read_unlock();
+>  }
+> @@ -434,12 +435,13 @@ static inline struct bdi_writeback *inode_to_wb(struct inode *inode)
+>  }
+>  
+>  static inline struct bdi_writeback *
+> -unlocked_inode_to_wb_begin(struct inode *inode, bool *lockedp)
+> +unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie *cookie)
+>  {
+>  	return inode_to_wb(inode);
+>  }
+>  
+> -static inline void unlocked_inode_to_wb_end(struct inode *inode, bool locked)
+> +static inline void unlocked_inode_to_wb_end(struct inode *inode,
+> +					    struct wb_lock_cookie *cookie)
+>  {
+>  }
+>  
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index 586f31261c83..bc38a2a7a597 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -2501,13 +2501,13 @@ void account_page_redirty(struct page *page)
+>  	if (mapping && mapping_cap_account_dirty(mapping)) {
+>  		struct inode *inode = mapping->host;
+>  		struct bdi_writeback *wb;
+> -		bool locked;
+> +		struct wb_lock_cookie cookie = {0};
+>  
+> -		wb = unlocked_inode_to_wb_begin(inode, &locked);
+> +		wb = unlocked_inode_to_wb_begin(inode, &cookie);
+>  		current->nr_dirtied--;
+>  		dec_node_page_state(page, NR_DIRTIED);
+>  		dec_wb_stat(wb, WB_DIRTIED);
+> -		unlocked_inode_to_wb_end(inode, locked);
+> +		unlocked_inode_to_wb_end(inode, &cookie);
+>  	}
+>  }
+>  EXPORT_SYMBOL(account_page_redirty);
+> @@ -2613,15 +2613,15 @@ void __cancel_dirty_page(struct page *page)
+>  	if (mapping_cap_account_dirty(mapping)) {
+>  		struct inode *inode = mapping->host;
+>  		struct bdi_writeback *wb;
+> -		bool locked;
+> +		struct wb_lock_cookie cookie = {0};
+>  
+>  		lock_page_memcg(page);
+> -		wb = unlocked_inode_to_wb_begin(inode, &locked);
+> +		wb = unlocked_inode_to_wb_begin(inode, &cookie);
+>  
+>  		if (TestClearPageDirty(page))
+>  			account_page_cleaned(page, mapping, wb);
+>  
+> -		unlocked_inode_to_wb_end(inode, locked);
+> +		unlocked_inode_to_wb_end(inode, &cookie);
+>  		unlock_page_memcg(page);
+>  	} else {
+>  		ClearPageDirty(page);
+> @@ -2653,7 +2653,7 @@ int clear_page_dirty_for_io(struct page *page)
+>  	if (mapping && mapping_cap_account_dirty(mapping)) {
+>  		struct inode *inode = mapping->host;
+>  		struct bdi_writeback *wb;
+> -		bool locked;
+> +		struct wb_lock_cookie cookie = {0};
+>  
+>  		/*
+>  		 * Yes, Virginia, this is indeed insane.
+> @@ -2690,14 +2690,14 @@ int clear_page_dirty_for_io(struct page *page)
+>  		 * always locked coming in here, so we get the desired
+>  		 * exclusion.
+>  		 */
+> -		wb = unlocked_inode_to_wb_begin(inode, &locked);
+> +		wb = unlocked_inode_to_wb_begin(inode, &cookie);
+>  		if (TestClearPageDirty(page)) {
+>  			dec_lruvec_page_state(page, NR_FILE_DIRTY);
+>  			dec_zone_page_state(page, NR_ZONE_WRITE_PENDING);
+>  			dec_wb_stat(wb, WB_RECLAIMABLE);
+>  			ret = 1;
+>  		}
+> -		unlocked_inode_to_wb_end(inode, locked);
+> +		unlocked_inode_to_wb_end(inode, &cookie);
+>  		return ret;
+>  	}
+>  	return TestClearPageDirty(page);
+> -- 
+> 2.17.0.484.g0c8726318c-goog
 
-I suspect that root cause of panic is that we don't memset here?
-
-Thanks,
-
->  	for (i = 0; i < end - start; i++) {
->  		rs = &raw_sit->entries[i];
->  		se = get_seg_entry(sbi, start + i);
-> 
+-- 
+Michal Hocko
+SUSE Labs
