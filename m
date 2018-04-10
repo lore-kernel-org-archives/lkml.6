@@ -1,72 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752078AbeDJRMn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 13:12:43 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:46447 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751504AbeDJRMk (ORCPT
+        id S1752211AbeDJRPA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 13:15:00 -0400
+Received: from smtprelay.synopsys.com ([198.182.47.9]:35901 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751676AbeDJROz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 13:12:40 -0400
-X-Google-Smtp-Source: AIpwx48jefJEptaqN117dL/THilhafm407sODNP34kFVd7w4fBUX35hzCEhxTvx70oz5KAMAglHsyg==
-Subject: Re: [PATCH v2 3/4] arm64: dts: renesas: r8a77970: add LVDS support
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, horms@verge.net.au,
-        magnus.damm@gmail.com, geert@linux-m68k.org,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-References: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
- <1523357646-3946-4-git-send-email-jacopo+renesas@jmondi.org>
- <0baa0f6e-f275-4a27-c76b-e4f8aec0b5f6@cogentembedded.com>
- <20180410121352.GD6436@w540>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <9f54ba77-368f-3d0c-cb58-4849672af449@cogentembedded.com>
-Date: Tue, 10 Apr 2018 20:12:36 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180410121352.GD6436@w540>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 8bit
+        Tue, 10 Apr 2018 13:14:55 -0400
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        adouglas@cadence.com, niklas.cassel@axis.com, jesper.nilsson@axis.com
+Cc: linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gustavo.pimentel@synopsys.com
+Subject: [RFC 02/10] PCI: cadence: Update cdns_pcie_ep_raise_irq function signature
+Date: Tue, 10 Apr 2018 18:14:41 +0100
+Message-Id: <52314006c63f8d21907dfaa03207b39e36bb8171.1523379766.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
+References: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
+References: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/10/2018 03:13 PM, jacopo mondi wrote:
+Changes the cdns_pcie_ep_raise_irq function signature, namely the
+interrupt_num variable type from u8 to u16 to accommodate the MSI-X maximum
+interrupts of 2048.
 
->>> From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
->>>
->>> Add the LVDS device to r8a77970.dtsi in a disabled state. Also connect
->>> the it to the LVDS output of the DU.
->>>
->>> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
->>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>>
->>> ---
->>> v1 -> v2:
->>> - Rebased on the modified endpoint name and changed patch subject to
->>>   comply with other patches in the series from Sergei.
->>
->>    Stop, what was wrong with my R8A77970 LVDS patch, reposted on the popular
->> demand? :-)
->>
-> 
-> Nothing wrong, I found out about your right now.
-> I see a very small difference as
->          lvds@feb90000 vs lvds-encoder@feb90000
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+---
+ drivers/pci/cadence/pcie-cadence-ep.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   Yes, I thought the latter was closer to a "generic" name that DT spec requires...
-
-> You can add your signed-off-by ofc if you think that's the case.
-
-   Didn't understand what you mean here...
-
-> Thanks
->    j
-
-MBR, Sergei
+diff --git a/drivers/pci/cadence/pcie-cadence-ep.c b/drivers/pci/cadence/pcie-cadence-ep.c
+index 3d8283e..6d6322c 100644
+--- a/drivers/pci/cadence/pcie-cadence-ep.c
++++ b/drivers/pci/cadence/pcie-cadence-ep.c
+@@ -363,7 +363,7 @@ static int cdns_pcie_ep_send_msi_irq(struct cdns_pcie_ep *ep, u8 fn,
+ }
+ 
+ static int cdns_pcie_ep_raise_irq(struct pci_epc *epc, u8 fn,
+-				  enum pci_epc_irq_type type, u8 interrupt_num)
++				  enum pci_epc_irq_type type, u16 interrupt_num)
+ {
+ 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+ 
+-- 
+2.7.4
