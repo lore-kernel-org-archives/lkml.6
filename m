@@ -1,96 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752210AbeDJIEo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:04:44 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36129 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751892AbeDJIEm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:04:42 -0400
-X-Google-Smtp-Source: AIpwx4+aP8barmEbjxnga/yrSUkx2m2P9NY2BGgdo9bPmvzOPZ1WVwRZPNOQrbsqoZQ0Gf3m12JSyNqyq67OJiEz+yQ=
+        id S1752250AbeDJIH7 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 04:07:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38587 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751778AbeDJIH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 04:07:57 -0400
+Date: Tue, 10 Apr 2018 10:07:45 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Abhishek Sahu <absahu@codeaurora.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 1/9] mtd: nand: qcom: use the ecc strength from device
+ parameter
+Message-ID: <20180410100745.625d66f8@bbrezillon>
+In-Reply-To: <20180410095558.34c4d91f@xps13>
+References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+        <1522845745-6624-2-git-send-email-absahu@codeaurora.org>
+        <20180406143133.67f33d33@xps13>
+        <23c8330d00d4d9b62c4c1ab597cbb22b@codeaurora.org>
+        <20180410094657.63ac7ec9@xps13>
+        <20180410095558.34c4d91f@xps13>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180410074921.GU21835@dhcp22.suse.cz>
-References: <CAGWkznHVGTpvfQOvaOGP6fYDWh0Os0pYXTC3gG_qvW6mCDuybQ@mail.gmail.com>
- <20180408084717.62ee4f9e@gandalf.local.home> <CAGWkznEQbaw7HMvE1pbVDMriOL8yW74Ka5UEci4YFRdLnVbFzA@mail.gmail.com>
- <20180409094944.6399b211@gandalf.local.home> <CAGWkznEhy7Fard=6E3X_qUezXd33RdKV9CVeONWL=6EQ1bokEw@mail.gmail.com>
- <CAGWkznEuGCZq600XjCtp3hzgN2LrCgwSAfoLwQR7jTw5p=qHoQ@mail.gmail.com>
- <20180409231230.1ab99e85@vmware.local.home> <CAGWkznG8-zmfE5iqPUVP+sztasa1zLPWE28qBiZ_tq524JznPw@mail.gmail.com>
- <20180410061447.GQ21835@dhcp22.suse.cz> <CAGWkznGrugH0VqJyd5ZPiSBMOZ4SbbNpKiHVXM27Q-ep4SYb-Q@mail.gmail.com>
- <20180410074921.GU21835@dhcp22.suse.cz>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Tue, 10 Apr 2018 16:04:40 +0800
-Message-ID: <CAGWkznHQSZ5jPF2njOp0BritTmKiGOToq5bAz1bhzzmFi_01nA@mail.gmail.com>
-Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal OOM_SCORE_ADJ_MIN
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 3:49 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> On Tue 10-04-18 14:39:35, Zhaoyang Huang wrote:
->> On Tue, Apr 10, 2018 at 2:14 PM, Michal Hocko <mhocko@kernel.org> wrote:
->> > On Tue 10-04-18 11:41:44, Zhaoyang Huang wrote:
->> >> On Tue, Apr 10, 2018 at 11:12 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
->> >> > On Tue, 10 Apr 2018 10:32:36 +0800
->> >> > Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
->> >> >
->> >> >> For bellowing scenario, process A have no intension to exhaust the
->> >> >> memory, but will be likely to be selected by OOM for we set
->> >> >> OOM_CORE_ADJ_MIN for it.
->> >> >> process A(-1000)                                          process B
->> >> >>
->> >> >>   i = si_mem_available();
->> >> >>        if (i < nr_pages)
->> >> >>            return -ENOMEM;
->> >> >>                                                    schedule
->> >> >>                                                 --------------->
->> >> >> allocate huge memory
->> >> >>                                                 <-------------
->> >> >> if (user_thread)
->> >> >>   set_current_oom_origin();
->> >> >>
->> >> >>   for (i = 0; i < nr_pages; i++) {
->> >> >>          bpage = kzalloc_node
->> >> >
->> >> > Is this really an issue though?
->> >> >
->> >> > Seriously, do you think you will ever hit this?
->> >> >
->> >> > How often do you increase the size of the ftrace ring buffer? For this
->> >> > to be an issue, the system has to trigger an OOM at the exact moment
->> >> > you decide to increase the size of the ring buffer. That would be an
->> >> > impressive attack, with little to gain.
->> >> >
->> >> > Ask the memory management people. If they think this could be a
->> >> > problem, then I'll be happy to take your patch.
->> >> >
->> >> > -- Steve
->> >> add Michael for review.
->> >> Hi Michael,
->> >> I would like suggest Steve NOT to set OOM_CORE_ADJ_MIN for the process
->> >> with adj = -1000 when setting the user space process as potential
->> >> victim of OOM.
->> >
->> > OOM_SCORE_ADJ_MIN means "hide the process from the OOM killer completely".
->> > So what exactly do you want to achieve here? Because from the above it
->> > sounds like opposite things. /me confused...
->> >
->> Steve's patch intend to have the process be OOM's victim when it
->> over-allocating pages for ring buffer. I amend a patch over to protect
->> process with OOM_SCORE_ADJ_MIN from doing so. Because it will make
->> such process to be selected by current OOM's way of
->> selecting.(consider OOM_FLAG_ORIGIN first before the adj)
->
-> I just wouldn't really care unless there is an existing and reasonable
-> usecase for an application which updates the ring buffer size _and_ it
-> is OOM disabled at the same time.
-> --
-> Michal Hocko
-> SUSE Labs
-There is indeed such kind of test case on my android system, which is
-known as CTS and Monkey etc. Furthermore, I think we should make the
-patch to be as safest as possible. Why do we leave a potential risk
-here? There is no side effect for my patch.
+On Tue, 10 Apr 2018 09:55:58 +0200
+Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+
+> > Hi Abhishek,
+> > 
+> > On Tue, 10 Apr 2018 11:39:35 +0530, Abhishek Sahu
+> > <absahu@codeaurora.org> wrote:
+> >   
+> > > On 2018-04-06 18:01, Miquel Raynal wrote:    
+> > > > Hi Abhishek,
+> > > > 
+> > > > On Wed,  4 Apr 2018 18:12:17 +0530, Abhishek Sahu
+> > > > <absahu@codeaurora.org> wrote:
+> > > >       
+> > > >> Currently the driver uses the ECC strength specified in
+> > > >> device tree. The ONFI or JEDEC device parameter page
+> > > >> contains the ‘ECC correctability’ field which indicates the
+> > > >> number of bits that the host should be able to correct per
+> > > >> 512 bytes of data.      
+> > > > 
+> > > > This is misleading. This field is not about the controller but rather
+> > > > the chip requirements in terms of minimal strength for nominal use.
+> > > >       
+> > > 
+> > >   Thanks Miquel.
+> > > 
+> > >   Yes. Its NAND chip requirement. I have used the description for
+> > >   NAND ONFI param page
+> > > 
+> > >   5.6.1.24. Byte 112: Number of bits ECC correctability
+> > >   This field indicates the number of bits that the host should be
+> > >   able to correct per 512 bytes of data.
+> > >     
+> > > >> The ecc correctability is assigned in
+> > > >> chip parameter during device probe time. QPIC/EBI2 NAND
+> > > >> supports 4/8-bit ecc correction. The Same kind of board
+> > > >> can have different NAND parts so use the ecc strength
+> > > >> from device parameter (if its non zero) instead of
+> > > >> device tree.      
+> > > > 
+> > > > That is not what you do.
+> > > > 
+> > > > What you do is forcing the strength to be 8-bit per ECC chunk if the
+> > > > NAND chip requires at least 8-bit/chunk strength.
+> > > > 
+> > > > The DT property is here to force a strength. Otherwise, Linux will
+> > > > propose to the NAND controller to use the minimum strength required by
+> > > > the chip (from either the ONFI/JEDEC parameter page or from a static
+> > > > table).
+> > > >       
+> > > 
+> > >   The main problem is that the same kind of boards can have different
+> > >   NAND parts.
+> > > 
+> > >   Lets assume, we have following 2 cases.
+> > > 
+> > >   1. Non ONFI/JEDEC device for which chip->ecc_strength_ds
+> > >      will be zero. In this case, the ecc->strength from DT
+> > >      will be used    
+> > 
+> > No, the strength from DT will always be used if the property is
+> > present, no matter the type of chip.
+> >   
+> > >   2. ONFI/JEDEC device for which chip->ecc_strength_ds > 8.
+> > >      Since QCOM nand controller can not support
+> > >      ECC correction greater than 8 bits so we can use 8 bit ECC
+> > >      itself instead of failing NAND boot completely.    
+> > 
+> > I understand that. But this is still not what you do.
+> >   
+> > >     
+> > > > IMHO, you have two solutions:
+> > > > 1/ Remove these properties from the board DT (breaks DT backward
+> > > > compatibility though);      
+> > > 
+> > >   - nand-ecc-strength: This is optional property in nand.txt and
+> > >     Required property in qcom_nandc.txt.    
+> > 
+> > Well, this property is not controller specific but chip specific. The
+> > controller driver does not rely on it, so this property should not be
+> > required.
+> >   
+> > > We can't remove since
+> > >     if the device is Non ONFI/JEDEC, then ecc strength will come
+> > >     from DT only.    
+> > 
+> > We can remove it and let the core handle this (as this is generic to
+> > all raw NANDs and not specific to this controller driver). Try it out!
+> > 
+> > However if the defaults value do not match your expectations, I think
+> > you can add your non-ONFI/JEDEC chip in 'nand_ids.c', this should fill
+> > your strength_ds field and let you avoid using these properties.  
+> 
+> Actually nand_ids.c should not be filled anymore, instead you can
+> implement this detection thanks to the part full name in the vendor
+> code nand_samsung.c, nand_micron.c, nand_macronix.c, nand_hynix.c, etc.
+
+Usually you don't have to go that far, and the ECC requirements are
+encoded somewhere in the ID (after byte 2). When that's not the
+case, you may have to check the full ID.
+
+> Depending on what part you are using, it might already work.
+
+Yep.
