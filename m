@@ -1,57 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754174AbeDJOeq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:34:46 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:13700 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753258AbeDJOep (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:34:45 -0400
-To: viro@ZenIV.linux.org.uk
-Cc: syzbot+7a1cff37dbbef9e7ba4c@syzkaller.appspotmail.com,
-        akpm@linux-foundation.org, dhowells@redhat.com, ebiederm@xmission.com,
-        ebiggers3@gmail.com, gs051095@gmail.com, ktkhai@virtuozzo.com,
-        linux-kernel@vger.kernel.org, oleg@redhat.com,
-        pasha.tatashin@oracle.com, riel@redhat.com, rppt@linux.vnet.ibm.com,
-        syzkaller-bugs@googlegroups.com, wangkefeng.wang@huawei.com
-Subject: Re: KASAN: use-after-free Read in alloc_pid
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <94eb2c06406c59cccc0568c527c2@google.com>
-        <000000000000a45f6f05697f173b@google.com>
-In-Reply-To: <000000000000a45f6f05697f173b@google.com>
-Message-Id: <201804102333.BCC87582.MFHFOQFOOJLVtS@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Tue, 10 Apr 2018 23:33:41 +0900
-Mime-Version: 1.0
+        id S1754220AbeDJOgD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:36:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56689 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753345AbeDJOgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 10:36:01 -0400
+Date: Tue, 10 Apr 2018 16:35:59 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Joe Perches <joe@perches.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: s390: defective uses of va_arg in __debug_sprintf_event
+Message-ID: <20180410143559.wlt5sfb2t24q6g3g@pathway.suse.cz>
+References: <1523041723.6127.33.camel@perches.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523041723.6127.33.camel@perches.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot wrote:
-> syzbot has found reproducer for the following crash on upstream commit
-> c18bb396d3d261ebbb4efbc05129c5d354c541e4 (Tue Apr 10 00:04:10 2018 +0000)
-> Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
-> syzbot dashboard link:  
-> https://syzkaller.appspot.com/bug?extid=7a1cff37dbbef9e7ba4c
+On Fri 2018-04-06 12:08:43, Joe Perches wrote:
+> And I found this when looking at another defect
+> in debug_sprintf_event where a %p<foo> extension
+> is unintentionally used via a string concatenation.
+> as pointed out by Rasmus Villemoes
+> ---
+>  arch/s390/kernel/perf_cpum_sf.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-While we are waiting for
+> diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
+> index 1c9ddd7aa5ec..1c449a6f841a 100644
+> --- a/arch/s390/kernel/perf_cpum_sf.c
+> +++ b/arch/s390/kernel/perf_cpum_sf.c
+> @@ -212,9 +212,7 @@ static int realloc_sampling_buffer(struct sf_buffer *sfb,
+>  	 * the sampling buffer origin.
+>  	 */
+>  	if (sfb->sdbt != get_next_sdbt(tail)) {
+> -		debug_sprintf_event(sfdbg, 3, "realloc_sampling_buffer: "
+> -				    "sampling buffer is not linked: origin=%p"
+> -				    "tail=%p\n",
+> +		debug_sprintf_event(sfdbg, 3, "realloc_sampling_buffer: sampling buffer is not linked: origin=%p tail=%p\n",
+>  				    (void *) sfb->sdbt, (void *) tail);
+>  		return -EINVAL;
+>  	}
 
-  rpc_pipefs: fix double-dput()
-  rpc_pipefs: deal with early sget() failures
-  kernfs: deal with early sget() failures
-  procfs: deal with early sget() failures
-  orangefs_kill_sb(): deal with allocation failures
-  nfsd_umount(): deal with early sget() failures
-  nfs: avoid double-free on early sget() failures
-  jffs2_kill_sb(): deal with failed allocations
-  hypfs_kill_super(): deal with failed allocations
+This concatenation fix is correct. %p has many possible specifiers.
+The code takes a simple approach and substitute "%ptail" with the
+pointer value. See the following code in vsnprintf():
 
-in https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/log/?h=for-linus ,
-I think the patch at
+		case FORMAT_TYPE_PTR:
+			str = pointer(fmt, str, end, va_arg(args, void *),
+				      spec);
+			while (isalnum(*fmt))
+				fmt++;
+			break;
 
-  WARNING in kill_block_super
-  https://syzkaller.appspot.com/bug?id=588996a25a2587be2e3a54e8646728fb9cae44e7
+We might debate if vsprintf() should handle this better. Anyway, there
+is a missing space in the above debug_sprintf_event() call.
 
-is better.
+Joe, are you going to send this as a separate patch, your SOB, ...?
+
+Best Regards,
+Petr
