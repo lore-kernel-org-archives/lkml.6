@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+gBM8+n47fVoaFtsW2E59aNPYs4vl/LcAIi8Vsa/bFMOQbAHwTx6p42FfnO+dqQ4mH/2Ma
-ARC-Seal: i=1; a=rsa-sha256; t=1523399418; cv=none;
+X-Google-Smtp-Source: AIpwx49BnVGcVHxV35+JwRrn0GxZeRv4JcIbyJE9TtND+tYI9yEWTjUPnj3ITZ7MBYleOkQ1ON/x
+ARC-Seal: i=1; a=rsa-sha256; t=1523399416; cv=none;
         d=google.com; s=arc-20160816;
-        b=Y6FI6KafUSpOqVg5sMTQy1OZ/c3Mjv/5/0m64pzq7a0rXilKV8nvo0QBLXcZ5DFS06
-         eldCewda8qtyDQsJGe0J3eD3Wa1wDB6HVwIO13Lee130UM8VCuCk3QdM93LItQ8j9iIr
-         o7lXnaKt9UNP1JDrEQ2QCxE84gUyBM8cBfhLUiSctxLafH1H9LnccC5N9YLNCHV8P8B3
-         T7ueCu2ziKzUHXmhGv6+W6JatLPtte3zcbjDGAFNCJCEtluYjN+g/wbVnk5ug0MUPrvA
-         ml1hedyWtoqQy4Dpr4vwzXfHIThLAAloxwst9zK9WfawYczupJXX7fxmYUOZlrk2hMMq
-         VAhg==
+        b=vyR3aTG0JP7XNAjfYRiCENMZSSYZdxmmQuuMEbHVGb5CJcNtrGM15UUnOfUlZWavpw
+         rJAh8BBCG9MkIt8d9ei8jmgjFuWlOzKsnR7FKFpQb9rsXlmr1E1Vyg3384awiH/OKP+f
+         t3QQ7OIklmxFZdHg8RVlEQedmfIKuFhaAKI9oS8QlmTjt2DOQNo7QMQ8gBrild3tVCpT
+         r2v488+BQNfey3lil9hqkXIVMoiSBVlIIs3TByunH3wu9EINsuFcvzTBTfTb3Fk9Bjlj
+         DnS8y+CoealEw0LF2Sp7GEULFiWnYuuy76xBj9hUSK25yWUR7JBy9S+xLzbnKq2gG/U0
+         8HUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gYFx7vn4qWH/bHoYEedcC4Zj3PHaeocBxhR6yBjYtlI=;
-        b=fMoS60B7iUNf8JwwCiEAaNydVbt878WWQ5xCkOxJ+mfrCyt2h9po43RYDB/VI4Kh/g
-         amS5uEnAPzgOc7m8FHHZFJogGciNbaw/2XCAAQZRZil00ULfQ7nKvLz9AdN1DCGFsEs5
-         ztM+8hKxAPHyZdOWY1JLhRoSo7U/tQ2f7k1n3UvfpLeioXsd67+ET/S9bS+ka8RZskFG
-         iL95CpVH2fn+VI5ftJOR0pFecgkdWmlhR4L5eiP+72VTOwzkHFjFbHy+INp615HzIyy1
-         i/X805aEaY2c6Mi7XZMr4ij/I63sVAEh1SbHWaO9MM/1jkwFJQyh1Vc+vkmSmZ1IOEXq
-         Clhw==
+        bh=WiwTsk1MEiV1yytlV9p4YvH8kQC99viClXsq152L4ag=;
+        b=eLDmiaP4y04PWgiaef3X68HPfOq7t/uAuV3hbGU41j7q6nR4Q8dLyngJL36CDccnm+
+         2g/vl+pNQFW8ISUXRZaj6DnLBVyfhRZdWLdYW8nmZhONX4ylfgSIbf9mcGwfQKdMxqca
+         ybVafRWy2toZUkbDUIr4+PiqlEanEllMb0PgR/hhwPl+NDJPCTxdl/xvQeXjLYcwvDSr
+         9PiTvGi4HXxmqDAd3dNeelH/Z8tFfonFmkYRVcRPpuDyfYAc0urCibnIpGckG8DzM5T1
+         I/lLl6kCVNtSwiq3RM0hqCm36J/zpTZ6LsrEq98OqWlkbYdRtkIqKkvIsZaIJKwqr+mO
+         3afg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Zhang Yi <yizhan@redhat.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
+	Feras Daoud <ferasda@mellanox.com>,
+	Saeed Mahameed <saeedm@mellanox.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 081/168] blk-mq: fix kernel oops in blk_mq_tag_idle()
-Date: Wed, 11 Apr 2018 00:23:43 +0200
-Message-Id: <20180410212803.727989215@linuxfoundation.org>
+Subject: [PATCH 4.15 080/168] net/mlx5e: IPoIB, Use correct timestamp in child receive flow
+Date: Wed, 11 Apr 2018 00:23:42 +0200
+Message-Id: <20180410212803.686823298@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400069099080916?=
-X-GMAIL-MSGID: =?utf-8?q?1597400069099080916?=
+X-GMAIL-THRID: =?utf-8?q?1597400066724642274?=
+X-GMAIL-MSGID: =?utf-8?q?1597400066724642274?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,68 +50,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Feras Daoud <ferasda@mellanox.com>
 
 
-[ Upstream commit 8ab0b7dc73e1b3e2987d42554b2bff503f692772 ]
+[ Upstream commit 36e564b76f1862914ad32c35bab433e07da2ebf8 ]
 
-HW queues may be unmapped in some cases, such as blk_mq_update_nr_hw_queues(),
-then we need to check it before calling blk_mq_tag_idle(), otherwise
-the following kernel oops can be triggered, so fix it by checking if
-the hw queue is unmapped since it doesn't make sense to idle the tags
-any more after hw queues are unmapped.
+The current implementation takes the child timestamp object from
+the parent since the rq in mlx5i_complete_rx_cqe belongs to the parent.
+This change fixes the issue by taking the correct timestamp.
 
-[  440.771298] Workqueue: nvme-wq nvme_rdma_del_ctrl_work [nvme_rdma]
-[  440.779104] task: ffff894bae755ee0 ti: ffff893bf9bc8000 task.ti: ffff893bf9bc8000
-[  440.788359] RIP: 0010:[<ffffffffb730e2b4>]  [<ffffffffb730e2b4>] __blk_mq_tag_idle+0x24/0x40
-[  440.798697] RSP: 0018:ffff893bf9bcbd10  EFLAGS: 00010286
-[  440.805538] RAX: 0000000000000000 RBX: ffff895bb131dc00 RCX: 000000000000011f
-[  440.814426] RDX: 00000000ffffffff RSI: 0000000000000120 RDI: ffff895bb131dc00
-[  440.823301] RBP: ffff893bf9bcbd10 R08: 000000000001b860 R09: 4a51d361c00c0000
-[  440.832193] R10: b5907f32b4cc7003 R11: ffffd6cabfb57000 R12: ffff894bafd1e008
-[  440.841091] R13: 0000000000000001 R14: ffff895baf770000 R15: 0000000000000080
-[  440.849988] FS:  0000000000000000(0000) GS:ffff894bbdcc0000(0000) knlGS:0000000000000000
-[  440.859955] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  440.867274] CR2: 0000000000000008 CR3: 000000103d098000 CR4: 00000000001407e0
-[  440.876169] Call Trace:
-[  440.879818]  [<ffffffffb7309d68>] blk_mq_exit_hctx+0xd8/0xe0
-[  440.887051]  [<ffffffffb730dc40>] blk_mq_free_queue+0xf0/0x160
-[  440.894465]  [<ffffffffb72ff679>] blk_cleanup_queue+0xd9/0x150
-[  440.901881]  [<ffffffffc08a802b>] nvme_ns_remove+0x5b/0xb0 [nvme_core]
-[  440.910068]  [<ffffffffc08a811b>] nvme_remove_namespaces+0x3b/0x60 [nvme_core]
-[  440.919026]  [<ffffffffc08b817b>] __nvme_rdma_remove_ctrl+0x2b/0xb0 [nvme_rdma]
-[  440.928079]  [<ffffffffc08b8237>] nvme_rdma_del_ctrl_work+0x17/0x20 [nvme_rdma]
-[  440.937126]  [<ffffffffb70ab58a>] process_one_work+0x17a/0x440
-[  440.944517]  [<ffffffffb70ac3a8>] worker_thread+0x278/0x3c0
-[  440.951607]  [<ffffffffb70ac130>] ? manage_workers.isra.24+0x2a0/0x2a0
-[  440.959760]  [<ffffffffb70b352f>] kthread+0xcf/0xe0
-[  440.966055]  [<ffffffffb70b3460>] ? insert_kthread_work+0x40/0x40
-[  440.973715]  [<ffffffffb76d8658>] ret_from_fork+0x58/0x90
-[  440.980586]  [<ffffffffb70b3460>] ? insert_kthread_work+0x40/0x40
-[  440.988229] Code: 5b 41 5c 5d c3 66 90 0f 1f 44 00 00 48 8b 87 20 01 00 00 f0 0f ba 77 40 01 19 d2 85 d2 75 08 c3 0f 1f 80 00 00 00 00 55 48 89 e5 <f0> ff 48 08 48 8d 78 10 e8 7f 0f 05 00 5d c3 0f 1f 00 66 2e 0f
-[  441.011620] RIP  [<ffffffffb730e2b4>] __blk_mq_tag_idle+0x24/0x40
-[  441.019301]  RSP <ffff893bf9bcbd10>
-[  441.024052] CR2: 0000000000000008
-
-Reported-by: Zhang Yi <yizhan@redhat.com>
-Tested-by: Zhang Yi <yizhan@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 7e7f4780c340 ("net/mlx5e: IPoIB, Use hash-table to map between QPN to child netdev")
+Signed-off-by: Feras Daoud <ferasda@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/blk-mq.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_rx.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -1996,7 +1996,8 @@ static void blk_mq_exit_hctx(struct requ
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
+@@ -1196,7 +1196,9 @@ static inline void mlx5i_complete_rx_cqe
+ 					 u32 cqe_bcnt,
+ 					 struct sk_buff *skb)
  {
- 	blk_mq_debugfs_unregister_hctx(hctx);
++	struct hwtstamp_config *tstamp;
+ 	struct net_device *netdev;
++	struct mlx5e_priv *priv;
+ 	char *pseudo_header;
+ 	u32 qpn;
+ 	u8 *dgid;
+@@ -1215,6 +1217,9 @@ static inline void mlx5i_complete_rx_cqe
+ 		return;
+ 	}
  
--	blk_mq_tag_idle(hctx);
-+	if (blk_mq_hw_queue_mapped(hctx))
-+		blk_mq_tag_idle(hctx);
++	priv = mlx5i_epriv(netdev);
++	tstamp = &priv->tstamp;
++
+ 	g = (be32_to_cpu(cqe->flags_rqpn) >> 28) & 3;
+ 	dgid = skb->data + MLX5_IB_GRH_DGID_OFFSET;
+ 	if ((!g) || dgid[0] != 0xff)
+@@ -1235,7 +1240,7 @@ static inline void mlx5i_complete_rx_cqe
+ 	skb->ip_summed = CHECKSUM_COMPLETE;
+ 	skb->csum = csum_unfold((__force __sum16)cqe->check_sum);
  
- 	if (set->ops->exit_request)
- 		set->ops->exit_request(set, hctx->fq->flush_rq, hctx_idx);
+-	if (unlikely(mlx5e_rx_hw_stamp(rq->tstamp)))
++	if (unlikely(mlx5e_rx_hw_stamp(tstamp)))
+ 		skb_hwtstamps(skb)->hwtstamp =
+ 				mlx5_timecounter_cyc2time(rq->clock, get_cqe_ts(cqe));
+ 
