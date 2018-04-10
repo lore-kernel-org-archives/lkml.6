@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49XBxisagfY/fzRt5fjwxchFiC1t9WJpm8+w/0Ubg4y4D5JxnRXMwbCCgS+xml9E09BCafb
-ARC-Seal: i=1; a=rsa-sha256; t=1523399093; cv=none;
+X-Google-Smtp-Source: AIpwx49xq1xAVDQvJFWZ6lOLRVrhsdtt44jYSAIOfZFIaodb+3SD/1Iv0PXQ7KsWlQkkqzuozy6e
+ARC-Seal: i=1; a=rsa-sha256; t=1523399090; cv=none;
         d=google.com; s=arc-20160816;
-        b=TibjSIsYt3BoajRRkcnH+5A8KPPBxCmve9geju8caMGh28jhAxkcGGvzzF/FQDSUFP
-         93T1qBPEsO8HTwy5KWqz9+AF3nPI00Ke2OQR5YWlTbykihndFZHzQuQBnk5cTcWiwfre
-         g3OG+/LyJVGLXJ0fHUPKr1GD0btXaIhHF3FwrhC4Uhq+Qheq6R5PgamHzoWQ00XITDQ/
-         8U839I150pdwN0uSzGiFH1aIUgx7QNdcVzrG0ohK7VONwLyOKoHII5g9uWgun9DPfosF
-         4KQgyrNDf7siy6NTtK04D+iyMtmakgjxT9aOXy8+RvZDJnQcZBxvSs1hsL+rXek/2gvT
-         ZQXQ==
+        b=y25OzSXUL1gXoIlreru7gKlBSrdkUirIKb3IA81ryE+9YeFhvOolNbzurKu2VNCAfq
+         hBtXvnvLqD3vH6h3sgYxNdG4h/LgRDs/DBcCE/LWMs5QZFZBjwn9i4gahlgPySaMqfjo
+         WqJnz9gW0Jgw07cdhIKbXSajpjYI8L77/r0Ehx6cUa0o10cgj0C/diLp3NPxVOZe9KFV
+         nEDosJHtO6pliM5d9tVzRpsyzd+MPdolbgQWH+5uTd+COK/rqIB0Z9fZbhO0ySVyZsdU
+         2Grm0nbSYNUas2/KFQFqtWdBajrSkm5Xl17RZwCjba5RVjR/g+Wl7ptTa15FkaAtEq8R
+         +6Iw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PGxSG3D/HG/3mTLTy2/D+ZltJW6DBNsUORCWkbykswA=;
-        b=xOrQtHp1sjJTU6YDVBcGgIfsgBlNFQ+1T/fhIL9IRRjfAPHyqIv5atZE63U35XhJDN
-         QgF1sd79L7uTWH2FNUj+RT5diMA5i3Ib+ckunsRcQljVpwLDnppCpk+m9/u9/xogAPMo
-         Lp9lRVUubIOklegy3ZYnX2Cr2Nw7ST90Zd6yP3SUuCewQOp3fL1Co8cNKzllSUsVE4PV
-         D7yL9liGMf40HPZNOM0cs3CyBbXk8MTlluH5EE08vnHPZhh46fxT5BHe7+ODMf7V0gr4
-         OllZZk80U9Vhs17lSdDQY7UXW2JYXHuTNcQy0rjzDpZBXNhk8pCbV9MpUBdznBtTcsRs
-         gF9A==
+        bh=+arqfKyJfTjSpJV1JdTXKWYmspztIIye2gJBn9IM7l4=;
+        b=1G6XmSqFfcHrnFA4T9j/3ackGkWJiCS8zH/Gn9mkGuhaUwTt/9L4Cn5U8o0HNv7xpj
+         vhTzrfY7QgZ0B3wf34qDwKwwhzb5TllaTh0zieRXgjZQp/e4CjESTbBaJhO4tSXCIWa4
+         Xzy+SIjmrxIH+gdcHAFBcUKIiwl8ykWsNor9SpWZDhK+GkZxas3mxmIY9spCqy/8wvV+
+         BcZEsvgNImcX6m4rWTQcw0hmPx1SXaepFEH68u1Kdm2c8KpcHZfKJmy/34Iauw28V02T
+         oyvpXiPNcVpqm1uUbfl/I8YBI7vhtthhXCW3SUFYP/fiQdsdzyNZFYfiTssRLdAhA2Rn
+         Bu3w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Eric Dumazet <edumazet@google.com>,
 	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 14/18] ip6_gre: better validate user provided tunnel names
-Date: Wed, 11 Apr 2018 00:23:49 +0200
-Message-Id: <20180410212759.338481628@linuxfoundation.org>
+Subject: [PATCH 4.16 13/18] ipv6: sit: better validate user provided tunnel names
+Date: Wed, 11 Apr 2018 00:23:48 +0200
+Message-Id: <20180410212759.286373955@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212758.564682823@linuxfoundation.org>
 References: <20180410212758.564682823@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399727147391550?=
-X-GMAIL-MSGID: =?utf-8?q?1597399727147391550?=
+X-GMAIL-THRID: =?utf-8?q?1597399724483027149?=
+X-GMAIL-MSGID: =?utf-8?q?1597399724483027149?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,7 +53,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 5f42df013b8bc1b6511af7a04bf93b014884ae2a ]
+[ Upstream commit b95211e066fc3494b7c115060b2297b4ba21f025 ]
 
 Use dev_valid_name() to make sure user does not provide illegal
 device name.
@@ -61,10 +61,10 @@ device name.
 syzbot caught the following bug :
 
 BUG: KASAN: stack-out-of-bounds in strlcpy include/linux/string.h:300 [inline]
-BUG: KASAN: stack-out-of-bounds in ip6gre_tunnel_locate+0x334/0x860 net/ipv6/ip6_gre.c:339
-Write of size 20 at addr ffff8801afb9f7b8 by task syzkaller851048/4466
+BUG: KASAN: stack-out-of-bounds in ipip6_tunnel_locate+0x63b/0xaa0 net/ipv6/sit.c:254
+Write of size 33 at addr ffff8801b64076d8 by task syzkaller932654/4453
 
-CPU: 1 PID: 4466 Comm: syzkaller851048 Not tainted 4.16.0+ #1
+CPU: 0 PID: 4453 Comm: syzkaller932654 Not tainted 4.16.0+ #1
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
  __dump_stack lib/dump_stack.c:17 [inline]
@@ -76,8 +76,8 @@ Call Trace:
  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
  memcpy+0x37/0x50 mm/kasan/kasan.c:303
  strlcpy include/linux/string.h:300 [inline]
- ip6gre_tunnel_locate+0x334/0x860 net/ipv6/ip6_gre.c:339
- ip6gre_tunnel_ioctl+0x69d/0x12e0 net/ipv6/ip6_gre.c:1195
+ ipip6_tunnel_locate+0x63b/0xaa0 net/ipv6/sit.c:254
+ ipip6_tunnel_ioctl+0xe71/0x241b net/ipv6/sit.c:1221
  dev_ifsioc+0x43e/0xb90 net/core/dev_ioctl.c:334
  dev_ioctl+0x69a/0xcc0 net/core/dev_ioctl.c:525
  sock_ioctl+0x47e/0x680 net/socket.c:1015
@@ -90,31 +90,31 @@ Call Trace:
  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
  entry_SYSCALL_64_after_hwframe+0x42/0xb7
 
-Fixes: c12b395a4664 ("gre: Support GRE over IPv6")
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_gre.c |    8 +++++---
+ net/ipv6/sit.c |    8 +++++---
  1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -335,11 +335,13 @@ static struct ip6_tnl *ip6gre_tunnel_loc
- 	if (t || !create)
- 		return t;
+--- a/net/ipv6/sit.c
++++ b/net/ipv6/sit.c
+@@ -250,11 +250,13 @@ static struct ip_tunnel *ipip6_tunnel_lo
+ 	if (!create)
+ 		goto failed;
  
 -	if (parms->name[0])
 +	if (parms->name[0]) {
 +		if (!dev_valid_name(parms->name))
-+			return NULL;
++			goto failed;
  		strlcpy(name, parms->name, IFNAMSIZ);
 -	else
 +	} else {
- 		strcpy(name, "ip6gre%d");
+ 		strcpy(name, "sit%d");
 -
 +	}
  	dev = alloc_netdev(sizeof(*t), name, NET_NAME_UNKNOWN,
- 			   ip6gre_tunnel_setup);
+ 			   ipip6_tunnel_setup);
  	if (!dev)
