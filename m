@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48qVAV+V2aaXyzO++Js+dY5QvCpV9YQraypAOeUWSn9ggTvPtCHScN8xsGfwnbwEXJ/Kg//
-ARC-Seal: i=1; a=rsa-sha256; t=1523399303; cv=none;
+X-Google-Smtp-Source: AIpwx4/nJA5efLC2hOzSnbWSJI+6c3dYzGSwhAWSVgxLdGqNScu4p2CrNf7slYdtZHBKAKkAwiL2
+ARC-Seal: i=1; a=rsa-sha256; t=1523399300; cv=none;
         d=google.com; s=arc-20160816;
-        b=tVhNvPPemuRwEbt52NnUGbKzPLU9xz09T76SPOn9kEl6zTV2vIvOVjUOZfNbaPVleX
-         BJK8TNy5WmnBZ30q1HbEmnlnkOeZWj/dQVPmGSBRF7wussZi8Muuj7PHp4DOSkIJJ4By
-         5jwCRcbSfwgjj44mMYp4N7VzCZf2zGKSXnWJV0DVYE2hQzdzXvfeTHZbpWLudkubF2TN
-         laz64v/lJI4QY7NLO4i72DGOY0B4A3e3SSB0p6VK9dg40ErJ+Gg2J8UO+Eg1VLUMWd/9
-         CLCRcwFSpjN0ewhPvep1mlaFgUa/tZGrfLMO3fiU2/CF/1eQ8Z5FxSPDMzTkPrjKMl5b
-         c8rw==
+        b=JmDmgqH1YdC9YtOfhc/lOdqva7gN2EyR59HRtaN8uaTxm72avKI3OLf2ES6CmIHdrz
+         9cSU3cvsyHhPE8SYcNGoPF+/QYYQ1UnrEyq2I+Itar+PbM9Qej7yR1FvmQ6iOIGbplCH
+         ozcJvv0WZlDegpW633swkOgRaFKUqe1ZtB5hKL56sR53h6fmV+QCcho5BEhHA7seeSNv
+         d3uvjy6ga8UmGY9TNXkIlDAOv2fNiEmXCfl3+xcd3yPLBry61E0Rrxwf8InR0WNykuSo
+         //LgeYDw5g00a12DsXVlXlQh/siol1nUMyQrdze0oFfsrRPVE/2Ifqp0aRcyrt4eJ88x
+         rfwQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=CbSgfOdMZAQ4MOsO1ZYg65FnSEJdOGpLOAk/zUvPdfc=;
-        b=GU6/+MhCopR/7TCMU6p7wstoxS1LqvrOV5Gd5GZzkqOHHSidkJwuROEZBOX+kc6nME
-         abBEo9kMF91X476TO0pRkF0fr1SxAVL5uSS9zbvwHCkTwhofyZS+NisnLzBjkK8kZsnR
-         /ZlxTTg+nKq18ejqHu/8I+3Co2M2B9KG+iUEsvQP67WGr0qv4tDGpTEnZg8oj3CxaTkl
-         KyizkU6CGypem5WtYL5c81RYZxfZCvAUP3cv6btYiYW39UpCT3RDODt8coonPFwAxReO
-         1DwviDqoo9ZIrzfo5YAiQgMFWg4kyjx7/g260hROgDqIP0wJNbQLHOBzugv6g0HP/8xg
-         M7kA==
+        bh=CHpVUMOiwffBCGW1kvpi+dPnHRU+8xCtK79+hIGb9QE=;
+        b=RMB3TJnH5amXpC3opuXXlUdFphINL3Jnv5DHkGNp4WhLnZB966SJWkU6ivDZCjhQR7
+         19W/1/0zSTc1ce3i9ciGjAwszkzNkHdR2e5JFqbXFyoQbThtZMNljHOAKiJoKjWVLpNU
+         ROVzXuhdGVCazsMwVnglFPe/MCEKNTEJgnCxJNU5aSMHcqauQqIfCWaNyutNLIHNMpg9
+         jroL+Ui7IeabqAk7qaJAgiLR79xuU3hj8upR7YFLSbznSbIBqi2gk7D8vCfhrwvHeA4q
+         PeXJ6kz7xjO3I641g/tEBbxckOIsoaJ2O8fDDj3zf631yCYF+Ni+nNtiriO4FfkBYQtx
+         Bjbw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Mark Brown <broonie@kernel.org>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Alex Estrin <alex.estrin@intel.com>,
+	Jason Gunthorpe <jgg@mellanox.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 038/168] spi: sh-msiof: Fix timeout failures for TX-only DMA transfers
-Date: Wed, 11 Apr 2018 00:23:00 +0200
-Message-Id: <20180410212801.816711702@linuxfoundation.org>
+Subject: [PATCH 4.15 037/168] IB/ipoib: Fix for notify send CQ failure messages
+Date: Wed, 11 Apr 2018 00:22:59 +0200
+Message-Id: <20180410212801.774621395@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399948316723931?=
-X-GMAIL-MSGID: =?utf-8?q?1597399948316723931?=
+X-GMAIL-THRID: =?utf-8?q?1597399944991430694?=
+X-GMAIL-MSGID: =?utf-8?q?1597399944991430694?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,61 +51,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Alex Estrin <alex.estrin@intel.com>
 
 
-[ Upstream commit 89434c3c35081439627baa2225622d5bd12242fe ]
+[ Upstream commit 809cb6955650d892c6ef95f1d55f28fceded0ce1 ]
 
-When using RX (with or without TX), the DMA interrupt triggers
-completion when the RX FIFO has been emptied, i.e. after the full
-transfer has finished.
+If IB_CQ_REPORT_MISSED_EVENTS flag is passed in ib_req_notify_cq()
+it may return positive value indicating non-empty CQ.
+If return code not verified the log might be flooded with false
+warning messages "request notify on send CQ failed".
 
-However, when using TX without RX, the DMA interrupt triggers completion
-as soon as the DMA engine has filled the TX FIFO, i.e. before the full
-transfer has finished.  Then sh_msiof_modify_ctr_wait() will spin until
-the transfer has really finished and the TFSE bit is cleared, for at
-most 1 ms.  For slow speeds and/or large transfers, this may cause
-timeouts and transfer failures:
-
-    spi_sh_msiof e6e10000.spi: failed to shut down hardware
-    74x164 spi2.0: SPI transfer failed: -110
-    spi_master spi2: failed to transfer one message from queue
-    74x164 spi2.0: Failed writing: -110
-
-Fix this by waiting explicitly until the TX FIFO has been emptied.
-
-Based on a patch in the BSP by Hiromitsu Yamasaki.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 8966e28d2e40 ("IB/ipoib: Use NAPI in UD/TX flows")
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Alex Estrin <alex.estrin@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/spi/spi-sh-msiof.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/infiniband/ulp/ipoib/ipoib_cm.c |   10 ++++++----
+ drivers/infiniband/ulp/ipoib/ipoib_ib.c |    2 +-
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -797,11 +797,21 @@ static int sh_msiof_dma_once(struct sh_m
- 		goto stop_dma;
- 	}
+--- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
+@@ -766,12 +766,14 @@ void ipoib_cm_send(struct net_device *de
+ 	skb_orphan(skb);
+ 	skb_dst_drop(skb);
  
--	/* wait for tx fifo to be emptied / rx fifo to be filled */
-+	/* wait for tx/rx DMA completion */
- 	ret = sh_msiof_wait_for_completion(p);
- 	if (ret)
- 		goto stop_reset;
- 
-+	if (!rx) {
-+		reinit_completion(&p->done);
-+		sh_msiof_write(p, IER, IER_TEOFE);
-+
-+		/* wait for tx fifo to be emptied */
-+		ret = sh_msiof_wait_for_completion(p);
-+		if (ret)
-+			goto stop_reset;
+-	if (netif_queue_stopped(dev))
+-		if (ib_req_notify_cq(priv->send_cq, IB_CQ_NEXT_COMP |
+-				     IB_CQ_REPORT_MISSED_EVENTS)) {
++	if (netif_queue_stopped(dev)) {
++		rc = ib_req_notify_cq(priv->send_cq, IB_CQ_NEXT_COMP |
++				      IB_CQ_REPORT_MISSED_EVENTS);
++		if (unlikely(rc < 0))
+ 			ipoib_warn(priv, "IPoIB/CM:request notify on send CQ failed\n");
++		else if (rc)
+ 			napi_schedule(&priv->send_napi);
+-		}
 +	}
-+
- 	/* clear status bits */
- 	sh_msiof_reset_str(p);
  
+ 	rc = post_send(priv, tx, tx->tx_head & (ipoib_sendq_size - 1), tx_req);
+ 	if (unlikely(rc)) {
+--- a/drivers/infiniband/ulp/ipoib/ipoib_ib.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
+@@ -644,7 +644,7 @@ int ipoib_send(struct net_device *dev, s
+ 
+ 	if (netif_queue_stopped(dev))
+ 		if (ib_req_notify_cq(priv->send_cq, IB_CQ_NEXT_COMP |
+-				     IB_CQ_REPORT_MISSED_EVENTS))
++				     IB_CQ_REPORT_MISSED_EVENTS) < 0)
+ 			ipoib_warn(priv, "request notify on send CQ failed\n");
+ 
+ 	rc = post_send(priv, priv->tx_head & (ipoib_sendq_size - 1),
