@@ -1,121 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752765AbeDJKyf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 06:54:35 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:49974 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752333AbeDJKyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 06:54:33 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        open list <linux-kernel@vger.kernel.org>, jcliang@chromium.org,
-        simon xue <xxm@rock-chips.com>, tfiga@chromium.org,
-        Romain Perier <romain.perier@collabora.com>,
-        Yakir Yang <kuankuan.y@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        Liang Chen <cl@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        David Wu <david.wu@rock-chips.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Brian Norris <briannorris@chromium.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Rocky Hao <rocky.hao@rock-chips.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Nickey Yang <nickey.yang@rock-chips.com>, devicetree@vger.kernel.org,
-        Mark Yao <markyao0591@gmail.com>, Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Sugar Zhang <sugar.zhang@rock-chips.com>,
-        Caesar Wang <wxt@rock-chips.com>, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v8 07/14] ARM: dts: rockchip: add clocks in iommu nodes
-Date: Tue, 10 Apr 2018 12:54:17 +0200
-Message-ID: <1720770.fWGWCFZ36p@phil>
-In-Reply-To: <5686492.Vgpi8vPSL1@diego>
-References: <20180323073814.5802-1-jeffy.chen@rock-chips.com> <2255884.b1SkkUdh3X@diego> <5686492.Vgpi8vPSL1@diego>
+        id S1752793AbeDJKzR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 06:55:17 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:30787 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751737AbeDJKzP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 06:55:15 -0400
+Subject: Re: INFO: task hung in __blkdev_get
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Dmitry Vyukov <dvyukov@google.com>, Ming Lei <tom.leiming@gmail.com>,
+        mingo@redhat.com, peterz@infradead.org,
+        syzbot
+        <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        Omar Sandoval <osandov@fb.com>
+References: <f403043a9be410acd1055fe5f72e@google.com>
+ <652eab47-81b5-3249-3c78-427eeec45fbc@I-love.SAKURA.ne.jp>
+ <2e093801-6d71-6747-42df-52f191811ad0@I-love.SAKURA.ne.jp>
+ <87bdec75-3c59-6587-2436-1470263ab11f@kernel.dk>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <59a08949-7e2f-42ff-edda-f24a6c624551@I-love.SAKURA.ne.jp>
+Date: Tue, 10 Apr 2018 19:55:11 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <87bdec75-3c59-6587-2436-1470263ab11f@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 9. April 2018, 23:49:58 CEST schrieb Heiko Stübner:
-> Am Montag, 9. April 2018, 17:55:40 CEST schrieb Heiko Stübner:
-> > Am Montag, 9. April 2018, 17:53:01 CEST schrieb Robin Murphy:
-> > > On 09/04/18 16:44, Heiko Stübner wrote:
-> > > > Hi Tomeu,
-> > > > 
-> > > > Am Montag, 9. April 2018, 16:41:56 CEST schrieb Tomeu Vizoso:
-> > > >> in today's linux-next, the DRM driver fails to probe because the iommu
-> > > >> driver fails to find the aclk. I need to apply this patch for things
-> > > >> to work again.
-> > > > 
-> > > > Thanks for catching that issue.
-> > > > 
-> > > > This seems to expose a backwards-compatibility issue, as this breaks
-> > > > all old devicetrees, so should get a proper fix, apart from me applying
-> > > > the dt-patch I missed.
-> > > > 
-> > > > Looking at the iommu-clock-handling patch, I imagine this part as
-> > > > the culprit:
-> > > > 
-> > > > +	iommu->num_clocks = ARRAY_SIZE(rk_iommu_clocks);
-> > > > +	iommu->clocks = devm_kcalloc(iommu->dev, iommu->num_clocks,
-> > > > +				     sizeof(*iommu->clocks), GFP_KERNEL);
-> > > > +	if (!iommu->clocks)
-> > > > +		return -ENOMEM;
-> > > > 
-> > > > The clk-bulk functions seem to work with simple for loops and
-> > > > should (as the other standard clock functions) just work fine with
-> > > > an empty struct, so I guess a simple
-> > > > 
-> > > > 	if (!iommu->clocks && iommu->num_clocks > 0)
-> > > > 	
-> > > > 		return -ENOMEM;
-> > > > 
-> > > > should hopefully be enough. I'll try to give this a test later on
-> > > > if nobody beats me to it :-)
-> > > 
-> > > But iommu->num_clocks is clearly set to a nonzero compile-time constant
-> > > at this point ;)
-> > > 
-> > > I'd assume it's the return from devm_clk_bulk_get() which needs to
-> > > special-case the "no clocks found" case from any other error, and *then*
-> > > blat num_clocks to 0 if so.
-> > 
-> > you're right of course. Looking at it again, I now clearly see the
-> > ARRAY_SIZE and am wondering what made me think num_clocks would be
-> > runtime-read.
-> > 
-> > Must be those 25°C today ;-)
-> 
-> In any case, this does not seem to fully fix the issue ... or be more exact 
-> seems to be the only issue.
-> 
-> - With 4.16 both pinky and kevin have working displays.
-> - When I was merging display patches to drm-misc, I did boot-tests on
->   both pinky and kevin, keeping their displays in a working state.
-> 
-> - With current torvalds head (iommu not merged yet)
-> e9092d0d9796 ("Fix subtle macro variable shadowing in min_not_zero()")
-> 
-> I get display output on rk3399-kevin (edp), but not on
-> rk3288-pinky (edp + hdmi). [components + hdmi device+modes get
-> recognized correctly though]
-> 
-> - With iommu changes merged I end up with the failing clock issue
->   which can be countered by making the iommu-clocks optional.
-> 
-> - After that I get working display output again on kevin but not pinky.
-> 
-> Looks like this needs bisecting.
+Hello.
 
-And it seems the dwc2 vbus thingy was responsible for the other issue I saw.
-With Tomeus fixup patch applied and the series I sent an hour ago, I now
-get display output again on both kevin (rk3399) and pinky (rk3288).
+Since syzbot is reporting so many hung up bug which involves /dev/loopX ,
+is it possible to "temporarily" apply below patch for testing under syzbot
+( after "block/loop: fix deadlock after loop_set_status" and
+"loop: fix LOOP_GET_STATUS lock imbalance" in linux-block.git#for-linus
+are merged into linux.git )?
 
-Heiko
+I haven't got a smoking gun by lockdep, but I noticed that
+
+  [upstream] INFO: task hung in lo_open (2)
+  https://syzkaller.appspot.com/bug?id=1f93b57f496d969efb9fb24167f6f9de5ee068fd
+
+contained "lo->lo_ctl_mutex => bdev->bd_mutex" locking order
+
+  2 locks held by syz-executor6/15084:
+   #0:  (&lo->lo_ctl_mutex/1){+.+.}, at: [<00000000cc154b8d>] lo_ioctl+0x8b/0x1b70 drivers/block/loop.c:1355
+   #1:  (&bdev->bd_mutex){+.+.}, at: [<0000000058b7c5b5>] blkdev_reread_part+0x1e/0x40 block/ioctl.c:192
+
+while commit f028f3b2f987ebc6 ("loop: fix circular locking in loop_clr_fd()")
+says that
+
+  * Calling fput holding lo_ctl_mutex triggers a circular
+  * lock dependency possibility warning as fput can take
+  * bd_mutex which is usually taken before lo_ctl_mutex.
+
+which implies that the locking order should be "bdev->bd_mutex => lo->lo_ctl_mutex"
+and also says that use of "_nested" version might mask some other real bugs
+which could be the bug syzbot is frequently reporting as hung tasks...
+
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 264abaa..5559b15 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1360,7 +1360,7 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
+ 	struct loop_device *lo = bdev->bd_disk->private_data;
+ 	int err;
+ 
+-	err = mutex_lock_killable_nested(&lo->lo_ctl_mutex, 1);
++	err = mutex_lock_killable(&lo->lo_ctl_mutex);
+ 	if (err)
+ 		goto out_unlocked;
+ 
