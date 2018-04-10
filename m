@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx481ADe0x0Z0DnUD62Y6MJBJ8aWlQTGxGFrdu01FPQ2i/d/SpzdLdU5euELmG2HOTe71Zoux
-ARC-Seal: i=1; a=rsa-sha256; t=1523399188; cv=none;
+X-Google-Smtp-Source: AIpwx4/DNiUcuSB0AUg9PnlViplye8boC77MF7n3vvkJP3hUtCyBXVX+0hPzDtANFmAHNuZn4VPY
+ARC-Seal: i=1; a=rsa-sha256; t=1523399181; cv=none;
         d=google.com; s=arc-20160816;
-        b=se5aWNmo5GIjWwP0Ugz8dIVcfQ0jVtKGRw1vMDx0AmJoFv9FjbxbJjAhDEqxvpk2Su
-         J+r3eggViYGGEL48CARsCPq1jKv7qgmQ7YXMgpq+k67hRLYbJCyw5ihK+urEVJoo199E
-         JSnRXt1C7jNEE8mhdHmm9JpeQ+RrjRoyRoLFvuwpKSGo5JGZjsua4g8KnmfpAFKLSalo
-         kBBevH5nKfaucQpP19R46hXTnA4ah372u11aWtlkcSLLnaulE18zyLwB3mamiSpHdHte
-         rk8ANOQtWu/zS+kPapmdyCpPtR+/WQk7tKySbaHAWE2J63QbgrrD1di0OsUyuzIy3isB
-         Wncg==
+        b=oPTCAjP0jc9xpqeU2fwEDWcBJvBVT2bt31rRBPIqU4OAMKNvxsunAfm0EzIagNoySE
+         CWq90zp5eXGFaIrzCbg4TlkOZ+4ERPgf56Tn0ikQxOJHi4+5ehMvmyCaNJKJIk28Smm0
+         zUK8x1SHt8ZL12xaywM2Zpdcf1mcwNogFh2lUh9UyTxwgjACXhQ9nK9s/6GJGV3dDGyQ
+         j16n4V1PctQh83V0hZzDlt1j59tZi1BHs0HIiZ1Yec/jP/7Egi+jw0w8SnvK7a5pa4v9
+         M/Of/pklhBEuSSKdKKdWMGBLkFEpA5pAiXETY087MfiJ6XdwS852mIgBS9AJj6Szkbp3
+         vWqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=h4C+DiDZiJ0XkFkLbJuZgRE7+hPy416t5uUYJcDaqmo=;
-        b=YtsnSntXxMFbIlshcMUHHJ/h6p8GOQ9BbXWGdP1QS/ulT3sIEou39+xF2S92P+nKVV
-         A5OfL4mfGBfIyXu5KxsI2D/w1YRsNaSXoK5CbUbIGlqpW7rxflTM+DH2WCrUrnTkLDAO
-         EtZSZZs9lRtBFw3tw7L2Kjj1tDkhim4IPLawHgN9VxP6kCG8G6bYqCR4bgaVFxfMz4tZ
-         bBzG64vZhzjhIc9ONInBcU1LKYG1TC1BIaRftOkSFqFmBqZ10jOxTk6C/Z8w5/wW7FtV
-         3JGWLCJouHngnMzKktYrthvzEnutU/uKCCpgzAOdgySM8dH9Ssbuw33t1DyU5+jfYeSW
-         K8eA==
+        bh=dCb1QcNoDk0rmya2ic3wX61lrX87bsQslav2u6ayPXE=;
+        b=n9mxQoLrUKE+wHa2NqPhyo4R6EDValDVgtm5K0HLMcyVXqZUxQRulnhDbNVIuu31ln
+         lG0guyKjC4GpXokbdtaiq27Lp2dyz4UT4O4kl1WTtQD/TS+5uHZrBD60MXy9GZcB2kLX
+         ZDw9ZdAnJUMt8HrfsqZwKfz8m/stNwePBmycyKSgQmENPo7txkohDd/1CIooIS3rrfj9
+         4AmAspVf9vIWmm0lSZbUp8ws7W1PhT0VhMSC8IPBipZQNBeFg92YNLGzLte8V/4phRqA
+         dHPd1aErBEsa3rdOwTuB/bKod8b++DBnIjCwvp8Kr0JvkAbeSfgO5piq7tbJBGu1vaPg
+         js6Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-	Thomas Richter <tmricht@linux.vnet.ibm.com>,
-	Paul Clarke <pc@us.ibm.com>,
-	bhargavb <bhargavaramudu@gmail.com>,
-	linux-rt-users@vger.kernel.org,
+	Yi Zeng <yizeng@asrmicro.com>,
+	Zhang Rui <rui.zhang@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 010/168] perf probe: Add warning message if there is unexpected event name
-Date: Wed, 11 Apr 2018 00:22:32 +0200
-Message-Id: <20180410212800.657227015@linuxfoundation.org>
+Subject: [PATCH 4.15 008/168] thermal: power_allocator: fix one race condition issue for thermal_instances list
+Date: Wed, 11 Apr 2018 00:22:30 +0200
+Message-Id: <20180410212800.581349105@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -46,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399827388871320?=
-X-GMAIL-MSGID: =?utf-8?q?1597399827388871320?=
+X-GMAIL-THRID: =?utf-8?q?1597399820028511058?=
+X-GMAIL-MSGID: =?utf-8?q?1597399820028511058?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,51 +50,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Yi Zeng <yizeng@asrmicro.com>
 
 
-[ Upstream commit 9f5c6d8777a2d962b0eeacb2a16f37da6bea545b ]
+[ Upstream commit a5de11d67dcd268b8d0beb73dc374de5e97f0caf ]
 
-This improve the error message so that user can know event-name error
-before writing new events to kprobe-events interface.
+When invoking allow_maximum_power and traverse tz->thermal_instances,
+we should grab thermal_zone_device->lock to avoid race condition. For
+example, during the system reboot, if the mali GPU device implements
+device shutdown callback and unregister GPU devfreq cooling device,
+the deleted list head may be accessed to cause panic, as the following
+log shows:
 
-E.g.
-   ======
-   #./perf probe -x /lib64/libc-2.25.so malloc_get_state*
-   Internal error: "malloc_get_state@GLIBC_2" is an invalid event name.
-     Error: Failed to add events.
-   ======
+[   33.551070] c3 25 (kworker/3:0) Unable to handle kernel paging request at virtual address dead000000000070
+[   33.566708] c3 25 (kworker/3:0) pgd = ffffffc0ed290000
+[   33.572071] c3 25 (kworker/3:0) [dead000000000070] *pgd=00000001ed292003, *pud=00000001ed292003, *pmd=0000000000000000
+[   33.581515] c3 25 (kworker/3:0) Internal error: Oops: 96000004 [#1] PREEMPT SMP
+[   33.599761] c3 25 (kworker/3:0) CPU: 3 PID: 25 Comm: kworker/3:0 Not tainted 4.4.35+ #912
+[   33.614137] c3 25 (kworker/3:0) Workqueue: events_freezable thermal_zone_device_check
+[   33.620245] c3 25 (kworker/3:0) task: ffffffc0f32e4200 ti: ffffffc0f32f0000 task.ti: ffffffc0f32f0000
+[   33.629466] c3 25 (kworker/3:0) PC is at power_allocator_throttle+0x7c8/0x8a4
+[   33.636609] c3 25 (kworker/3:0) LR is at power_allocator_throttle+0x808/0x8a4
+[   33.643742] c3 25 (kworker/3:0) pc : [<ffffff8008683dd0>] lr : [<ffffff8008683e10>] pstate: 20000145
+[   33.652874] c3 25 (kworker/3:0) sp : ffffffc0f32f3bb0
+[   34.468519] c3 25 (kworker/3:0) Process kworker/3:0 (pid: 25, stack limit = 0xffffffc0f32f0020)
+[   34.477220] c3 25 (kworker/3:0) Stack: (0xffffffc0f32f3bb0 to 0xffffffc0f32f4000)
+[   34.819822] c3 25 (kworker/3:0) Call trace:
+[   34.824021] c3 25 (kworker/3:0) Exception stack(0xffffffc0f32f39c0 to 0xffffffc0f32f3af0)
+[   34.924993] c3 25 (kworker/3:0) [<ffffff8008683dd0>] power_allocator_throttle+0x7c8/0x8a4
+[   34.933184] c3 25 (kworker/3:0) [<ffffff80086807f4>] handle_thermal_trip.part.25+0x70/0x224
+[   34.941545] c3 25 (kworker/3:0) [<ffffff8008680a68>] thermal_zone_device_update+0xc0/0x20c
+[   34.949818] c3 25 (kworker/3:0) [<ffffff8008680bd4>] thermal_zone_device_check+0x20/0x2c
+[   34.957924] c3 25 (kworker/3:0) [<ffffff80080b93a4>] process_one_work+0x168/0x458
+[   34.965414] c3 25 (kworker/3:0) [<ffffff80080ba068>] worker_thread+0x13c/0x4b4
+[   34.972650] c3 25 (kworker/3:0) [<ffffff80080c0a4c>] kthread+0xe8/0xfc
+[   34.979187] c3 25 (kworker/3:0) [<ffffff8008084e90>] ret_from_fork+0x10/0x40
+[   34.986244] c3 25 (kworker/3:0) Code: f9405e73 eb1302bf d102e273 54ffc460 (b9402a61)
+[   34.994339] c3 25 (kworker/3:0) ---[ end trace 32057901e3b7e1db ]---
 
-Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Acked-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Reviewed-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Paul Clarke <pc@us.ibm.com>
-Cc: bhargavb <bhargavaramudu@gmail.com>
-Cc: linux-rt-users@vger.kernel.org
-Link: http://lkml.kernel.org/r/151275040665.24652.5188568529237584489.stgit@devbox
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Yi Zeng <yizeng@asrmicro.com>
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/probe-event.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/thermal/power_allocator.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -2625,6 +2625,14 @@ static int get_new_event_name(char *buf,
+--- a/drivers/thermal/power_allocator.c
++++ b/drivers/thermal/power_allocator.c
+@@ -523,6 +523,7 @@ static void allow_maximum_power(struct t
+ 	struct thermal_instance *instance;
+ 	struct power_allocator_params *params = tz->governor_data;
  
- out:
- 	free(nbase);
-+
-+	/* Final validation */
-+	if (ret >= 0 && !is_c_func_name(buf)) {
-+		pr_warning("Internal error: \"%s\" is an invalid event name.\n",
-+			   buf);
-+		ret = -EINVAL;
-+	}
-+
- 	return ret;
++	mutex_lock(&tz->lock);
+ 	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+ 		if ((instance->trip != params->trip_max_desired_temperature) ||
+ 		    (!cdev_is_power_actor(instance->cdev)))
+@@ -534,6 +535,7 @@ static void allow_maximum_power(struct t
+ 		mutex_unlock(&instance->cdev->lock);
+ 		thermal_cdev_update(instance->cdev);
+ 	}
++	mutex_unlock(&tz->lock);
  }
  
+ /**
