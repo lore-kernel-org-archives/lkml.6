@@ -1,124 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752226AbeDJHmi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 03:42:38 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:52708 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751778AbeDJHmg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 03:42:36 -0400
-Date: Tue, 10 Apr 2018 09:42:29 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Nicholas Piggin <npiggin@gmail.com>
-cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>, linuxppc-dev@lists.ozlabs.org,
-        kvm-ppc@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: Occasionally losing the tick_sched_timer
-In-Reply-To: <20180410121618.4fffffcc@roar.ozlabs.ibm.com>
-Message-ID: <alpine.DEB.2.21.1804100923430.2058@nanos.tec.linutronix.de>
-References: <20180410121618.4fffffcc@roar.ozlabs.ibm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1752432AbeDJHnZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 03:43:25 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51601 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752272AbeDJHnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 03:43:24 -0400
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: turn down IO priority of discard from background
+Date: Tue, 10 Apr 2018 15:43:09 +0800
+Message-ID: <20180410074309.13531-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.15.0.55.gc2ece9dc4de6
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nick,
+In order to avoid interfering normal r/w IO, let's turn down IO
+priority of discard issued from background.
 
-On Tue, 10 Apr 2018, Nicholas Piggin wrote:
-> We are seeing rare hard lockup watchdog timeouts, a CPU seems to have no
-> more timers scheduled, despite hard and soft lockup watchdogs should have
-> their heart beat timers and probably many others.
->
-> The reproducer we have is running a KVM workload. The lockup is in the
-> host kernel, quite rare but we may be able to slowly test things.
-> 
-> I have a sysrq+q snippet. CPU3 is the stuck one, you can see its tick has
-> stopped for a long time and no hrtimer active. Included CPU4 for what the
-> other CPUs look like.
-> 
-> Thomas do you have any ideas on what we might look for, or if we can add
-> some BUG_ON()s to catch this at its source?
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2:
+- correct commit message.
+ fs/f2fs/segment.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Not really. Tracing might be a more efficient tool that random BUG_ONs.
-
-> - CPU3 is sitting in its cpuidle loop (polling idle with all other idle
->   states disabled).
-> 
-> - `taskset -c 3 ls` basically revived the CPU and got timers running again.
-
-Which is not surprising because that kicks the CPU out of idle and starts
-the tick timer again.
-
-Does this restart the watchdog timers as well?
-
-> cpu: 3
->  clock 0:
->   .base:       00000000df30f5ab
->   .index:      0
->   .resolution: 1 nsecs
->   .get_time:   ktime_get
->   .offset:     0 nsecs
-> active timers:
-
-So in theory the soft lockup watchdog hrtimer should be queued here.
-
->   .expires_next   : 9223372036854775807 nsecs
->   .hres_active    : 1
->   .nr_events      : 1446533
->   .nr_retries     : 1434
->   .nr_hangs       : 0
->   .max_hang_time  : 0
->   .nohz_mode      : 2
->   .last_tick      : 17763120000000 nsecs
->   .tick_stopped   : 1
->   .idle_jiffies   : 4296713609
->   .idle_calls     : 2573133
->   .idle_sleeps    : 1957794
-
->   .idle_waketime  : 59550238131639 nsecs
->   .idle_sleeptime : 17504617295679 nsecs
->   .iowait_sleeptime: 719978688 nsecs
->   .last_jiffies   : 4296713608
-
-So this was the last time when the CPU came out of idle:
-
->   .idle_exittime  : 17763110009176 nsecs
-
-Here it went back into idle:
-
->   .idle_entrytime : 17763129999625 nsecs
-
-And this was the next timer wheel timer due for expiry:
-
->   .next_timer     : 17763130000000
->   .idle_expires   : 17763130000000 nsecs
-
-which makes no sense whatsoever, but this might be stale information. Can't
-tell.
-
-> cpu: 4
->  clock 0:
->   .base:       0000000007d8226b
->   .index:      0
->   .resolution: 1 nsecs
->   .get_time:   ktime_get
->   .offset:     0 nsecs
-> active timers: #0: <00000000a73e543a>, tick_sched_timer, S:01
->  	 	 # expires at 59552950000000-59552950000000 nsecs [in 2685654802 to 2685654802 nsecs]
-
-The tick timer is scheduled because the next timer wheel timer is due at
-59552950000000, which might be the hard watchdog timer
-
->  		 #1: <000000009b4a3b88>, hrtimer_wakeup, S:01
->		 # expires at 59602585423025-59602642458243 nsecs [in 52321077827 to 52378113045 nsecs]
-
-That might be the soft lockup hrtimer.
-
-I'd try to gather more information about the chain of events via tracing
-and stop the tracer once the lockup detector hits.
-
-Thanks,
-
-	tglx
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index aabe0d6b8307..5e708debeb9c 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1723,6 +1723,7 @@ void init_discard_policy(struct discard_policy *dpolicy,
+ 		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+ 		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+ 		dpolicy->io_aware = true;
++		dpolicy->sync = false;
+ 	} else if (discard_type == DPOLICY_FORCE) {
+ 		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+ 		dpolicy->max_interval = DEF_MAX_DISCARD_ISSUE_TIME;
+-- 
+2.15.0.55.gc2ece9dc4de6
