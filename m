@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49FbkZF2qifb5NQUlAE5jNm7YunyznRtGkeO9WHQyAPiuyRyo7Un5dM2VIzNMnaErZFcB9X
-ARC-Seal: i=1; a=rsa-sha256; t=1523399663; cv=none;
+X-Google-Smtp-Source: AIpwx4+X+2ZdiFlsKBMPp1mj8luZzcH/dK7hwAg6zkCWBE7Hnt01hAr5qTBi3e28CwmWyDBIPpbw
+ARC-Seal: i=1; a=rsa-sha256; t=1523399660; cv=none;
         d=google.com; s=arc-20160816;
-        b=X9K8ma4b1oLrnrjcU1qlyFd+AJSnlMzavItDEHnP/nM7NWI9rUJtoHrC8b7Kv6f95h
-         ZHxrrNvyu6AwwoaVYWjZ3LiKL21ldsUtdVjnH66TzIOGq8+ip5IPM+at3NOli9MxKozU
-         A4ZmqgmhC1wYjw9yHgfLw4SnbcHedATcAfcHNCJ8cSNOL3qgxOoKEYA9NeOnhrljaa9m
-         fajrxwJGrMeJONEG7H7kRH1sHhQiEp3dnwbLQvME+94zY4jKi1TW3tnNVnPF3dXAT3WN
-         jcgfsWKwoiBHTbqczC0sGM7S6uAJ4NGBsZix+jvN14uWd8aGXEm+z4yJOSB9vIDVYXES
-         r0/g==
+        b=zrwgTQgOKe6qiy/owJuqQYiiP0LMwEvVdg20sw7V2QHfiT2bJ1KT0OVhnKkFohHnWZ
+         yzHempnodrf8KwDXcquyUfIgWg67ZOjl+XFybpvDG7ugK8Ly4C1cpM177tmsRUljnvWq
+         +QZ/L71KHOAGVQlBBXLqC/7A+TV9poMSrqt9DCX77yWoGJjZ5lK3kbGcub48uZ+7GvmQ
+         AOHDbVFbSbDY3fDC2iVIgZYkHmsi1dVy0Lnp7XHKw8zAqLwpzCNTEgEKkLEBfG4qgM2X
+         ZeA8n3+VKcngyk+ZqzJORF7gDaJ2lmVadlZ6da7NHA88aK/HzMKjIuwPviN2vmYCBl6Q
+         jLKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=e/n4KpbMjiaIR+HEeOR+c07AgdKRCQEzSXtCBpmogLU=;
-        b=blm1f5TaZ2hbkcg7Nu2YGEN5puO8EgeCh+kCo8AMISy9YimFajMcZScUSeTbxRNesr
-         +hO5igvDlN1OZyZfBShUpdzDp/QpAAJXxh8wmVf9Cqs/e7LvP9D0EKFYjCthf0E21W3X
-         6EpjJj2e8vr0ULNJi0su1/TeqBS3U9J8sJzezuVixIfZ7R04cytAl+4TD05UK951CdFj
-         b1q9gYbaDmyLJ8G7W7ujzjRdIlEUEhDbDNB5byndVi7abU6wZ8Iqm0/InXzD/Bk7KPT9
-         5v2qjyrSvWHkKLLfrdYvL2/N6KEwoTqbESRFKesZoCpovlbQ3V2xWB+tGCxS9ljFxZOk
-         N5RA==
+        bh=s7c4Z4GtmLcrdgy0kvmOWaCgvh/+p1efmyK3rJnJi+g=;
+        b=NaXkn7VBTOJ6Sp1/M+CpDiL3yUkN7HHmsSEXIJt/DEUtTTRZOb8XzkZVpLy7XNDkh/
+         pyLwn0Jnzf++l+Dzg19M4QAN0nldLY+A4oLBtimXex0HKz1gsZW0Ofckf3cMDli5D5cs
+         LSWAmRsfOMkUBUMeyV1Aajz1+fzovjq6OmDlQx/I8m3+KOK/LJLXirM8xlp57Og5U612
+         GKGm3S3gjjfrGuSE2t63xKVlKpmU6xSU7itAMWnZtxCroKTTyBNbVpH3pyzsIdssrHQe
+         awz4llXWSKj2PMihY1JGRzoz8ZAB13sBiM60k/aZeEYbKQneGZvsyKdX8RCcFP6ZoJEh
+         Vx6g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Wim Van Sebroeck <wim@iguana.be>,
-	Guenter Roeck <linux@roeck-us.net>,
-	linux-watchdog@vger.kernel.org,
+	NeilBrown <neilb@suse.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 019/138] watchdog: dw_wdt: add stop watchdog operation
-Date: Wed, 11 Apr 2018 00:23:29 +0200
-Message-Id: <20180410212904.317032823@linuxfoundation.org>
+Subject: [PATCH 4.14 018/138] VFS: close race between getcwd() and d_move()
+Date: Wed, 11 Apr 2018 00:23:28 +0200
+Message-Id: <20180410212904.195260690@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399838237859694?=
-X-GMAIL-MSGID: =?utf-8?q?1597400324936861693?=
+X-GMAIL-THRID: =?utf-8?q?1597399835658092669?=
+X-GMAIL-MSGID: =?utf-8?q?1597400322056440922?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,72 +50,112 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Oleksij Rempel <o.rempel@pengutronix.de>
+From: NeilBrown <neilb@suse.com>
 
 
-[ Upstream commit 1bfe8889380890efe4943d125124f5a7b48571b0 ]
+[ Upstream commit 61647823aa920e395afcce4b57c32afb51456cab ]
 
-The only way of stopping the watchdog is by resetting it.
-Add the watchdog op for stopping the device and reset if
-a reset line is provided.
+d_move() will call __d_drop() and then __d_rehash()
+on the dentry being moved.  This creates a small window
+when the dentry appears to be unhashed.  Many tests
+of d_unhashed() are made under ->d_lock and so are safe
+from racing with this window, but some aren't.
+In particular, getcwd() calls d_unlinked() (which calls
+d_unhashed()) without d_lock protection, so it can race.
 
-At same time WDOG_HW_RUNNING should be remove from dw_wdt_start.
-As commented by Guenter Roeck:
-dw_wdt sets WDOG_HW_RUNNING in its open function. Result is
-that the kref_get() in watchdog_open() won't be executed. But then
-kref_put() in close will be called since the watchdog now does stop.
-This causes the imbalance.
+This races has been seen in practice with lustre, which uses d_move() as
+part of name lookup.  See:
+   https://jira.hpdd.intel.com/browse/LU-9735
+It could race with a regular rename(), and result in ENOENT instead
+of either the 'before' or 'after' name.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Wim Van Sebroeck <wim@iguana.be>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-watchdog@vger.kernel.org
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
+The race can be demonstrated with a simple program which
+has two threads, one renaming a directory back and forth
+while another calls getcwd() within that directory: it should never
+fail, but does.  See:
+  https://patchwork.kernel.org/patch/9455345/
+
+We could fix this race by taking d_lock and rechecking when
+d_unhashed() reports true.  Alternately when can remove the window,
+which is the approach this patch takes.
+
+___d_drop() is introduce which does *not* clear d_hash.pprev
+so the dentry still appears to be hashed.  __d_drop() calls
+___d_drop(), then clears d_hash.pprev.
+__d_move() now uses ___d_drop() and only clears d_hash.pprev
+when not rehashing.
+
+Signed-off-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/watchdog/dw_wdt.c |   18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ fs/dcache.c |   23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
---- a/drivers/watchdog/dw_wdt.c
-+++ b/drivers/watchdog/dw_wdt.c
-@@ -127,14 +127,27 @@ static int dw_wdt_start(struct watchdog_
- 
- 	dw_wdt_set_timeout(wdd, wdd->timeout);
- 
--	set_bit(WDOG_HW_RUNNING, &wdd->status);
--
- 	writel(WDOG_CONTROL_REG_WDT_EN_MASK,
- 	       dw_wdt->regs + WDOG_CONTROL_REG_OFFSET);
- 
- 	return 0;
- }
- 
-+static int dw_wdt_stop(struct watchdog_device *wdd)
-+{
-+	struct dw_wdt *dw_wdt = to_dw_wdt(wdd);
-+
-+	if (!dw_wdt->rst) {
-+		set_bit(WDOG_HW_RUNNING, &wdd->status);
-+		return 0;
-+	}
-+
-+	reset_control_assert(dw_wdt->rst);
-+	reset_control_deassert(dw_wdt->rst);
-+
-+	return 0;
-+}
-+
- static int dw_wdt_restart(struct watchdog_device *wdd,
- 			  unsigned long action, void *data)
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -468,9 +468,11 @@ static void dentry_lru_add(struct dentry
+  * d_drop() is used mainly for stuff that wants to invalidate a dentry for some
+  * reason (NFS timeouts or autofs deletes).
+  *
+- * __d_drop requires dentry->d_lock.
++ * __d_drop requires dentry->d_lock
++ * ___d_drop doesn't mark dentry as "unhashed"
++ *   (dentry->d_hash.pprev will be LIST_POISON2, not NULL).
+  */
+-void __d_drop(struct dentry *dentry)
++static void ___d_drop(struct dentry *dentry)
  {
-@@ -173,6 +186,7 @@ static const struct watchdog_info dw_wdt
- static const struct watchdog_ops dw_wdt_ops = {
- 	.owner		= THIS_MODULE,
- 	.start		= dw_wdt_start,
-+	.stop		= dw_wdt_stop,
- 	.ping		= dw_wdt_ping,
- 	.set_timeout	= dw_wdt_set_timeout,
- 	.get_timeleft	= dw_wdt_get_timeleft,
+ 	if (!d_unhashed(dentry)) {
+ 		struct hlist_bl_head *b;
+@@ -486,12 +488,17 @@ void __d_drop(struct dentry *dentry)
+ 
+ 		hlist_bl_lock(b);
+ 		__hlist_bl_del(&dentry->d_hash);
+-		dentry->d_hash.pprev = NULL;
+ 		hlist_bl_unlock(b);
+ 		/* After this call, in-progress rcu-walk path lookup will fail. */
+ 		write_seqcount_invalidate(&dentry->d_seq);
+ 	}
+ }
++
++void __d_drop(struct dentry *dentry)
++{
++	___d_drop(dentry);
++	dentry->d_hash.pprev = NULL;
++}
+ EXPORT_SYMBOL(__d_drop);
+ 
+ void d_drop(struct dentry *dentry)
+@@ -2386,7 +2393,7 @@ EXPORT_SYMBOL(d_delete);
+ static void __d_rehash(struct dentry *entry)
+ {
+ 	struct hlist_bl_head *b = d_hash(entry->d_name.hash);
+-	BUG_ON(!d_unhashed(entry));
++
+ 	hlist_bl_lock(b);
+ 	hlist_bl_add_head_rcu(&entry->d_hash, b);
+ 	hlist_bl_unlock(b);
+@@ -2821,9 +2828,9 @@ static void __d_move(struct dentry *dent
+ 	write_seqcount_begin_nested(&target->d_seq, DENTRY_D_LOCK_NESTED);
+ 
+ 	/* unhash both */
+-	/* __d_drop does write_seqcount_barrier, but they're OK to nest. */
+-	__d_drop(dentry);
+-	__d_drop(target);
++	/* ___d_drop does write_seqcount_barrier, but they're OK to nest. */
++	___d_drop(dentry);
++	___d_drop(target);
+ 
+ 	/* Switch the names.. */
+ 	if (exchange)
+@@ -2835,6 +2842,8 @@ static void __d_move(struct dentry *dent
+ 	__d_rehash(dentry);
+ 	if (exchange)
+ 		__d_rehash(target);
++	else
++		target->d_hash.pprev = NULL;
+ 
+ 	/* ... and switch them in the tree */
+ 	if (IS_ROOT(dentry)) {
