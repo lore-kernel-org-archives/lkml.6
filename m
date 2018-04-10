@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-843308-1523402368-2-15347707263566359301
+X-Cyrus-Session-Id: sloti22d1t05-843308-1523402362-2-17868895954454998845
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523402368; b=gQHp/aw/1EkwrrXj9bhKwJHsfERZGlur6ZRVn/TFPB/d6EpkOi
-    h1RrmcjJPHtBcvbv2njAhJEkMzIAZFk3hVMPK69zFkK6mPhgek1G7ZHuQeQv36V7
-    sf6oTtvMcLu2UEo0pIiWAP2n01o9jOyGGQiPXIglaBe6LSXbMxpnr5W37yPG4Eiz
-    cz9MZICFVtxdkciQAviQoptJWtwb6EABxgZ/hcmtMQY/ZBwKbeS2HZ5Zwh6cYnQs
-    5NXVHyv4NDPycA0H7/wT6C1AFANt0kaTvQ0Wrj8SVi4XzPUXM19HOcJT3JOVTHZu
-    taEQyvu7GqkfDhorEeGhThwGVJq7ZTSiDAsw==
+    1523402362; b=IbIIbuSVOoNk+MF+AcMRzMpfGD7kP17DbPkii6S9pl7wEZviyC
+    MtTp+6QaFB7FPChbPUG8NkeTmmRIa+8K+CEBTbE4eldx1ZBvzdc6o792pG4gJFxb
+    AGcCoxZTpzOPOAOjDAUS/JgUnWVQsiAreaAXuugyAYpALpKhD7X8DXNWlR2U0zBH
+    iAQJdFkVu8zJKjef74aWA4w59BE7azBDlP42UBfowrBOlyyC0N/Ml4V1wJCBZROU
+    zcOso6IjhTM9QaK3XoNvQXsOzr6gxUIHxVJTQ66a/+FnoxQkPTi0iWaTpmTfbASG
+    uH2LJpkSoovOiphdU46FJVlowdYgDqHyM/+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523402368; bh=PpHtFS2Sx9JusOxSs1/jpWlDF5JxKJ
-    0gh2sxr4EKUT4=; b=vIGi1BLEAr1H1tGbKf8E/EjfZw0iHel48Y3N0TEY22qwQN
-    KcSg4j0x7SI/wJed2oH5jBpGbuXqQDvoCFaaXcGIOdyZ1OW4OJ46U9zKfcVOcjUb
-    YHbW86cqhdJs7diJEVakGg9+62yA40n6814q4TWmUhpukHuQBIbzczp3MikmVMve
-    uOkFH0/UlkD5bIiqI/eDH+bmZK3JXox+JRp0oDcOt3A87P1s4wF85x5iLWm0XjlE
-    SiiGEZUEGZOfhl5Gf9mWILN30hdJFWqjRSqrtDL+9j0v8KkdoB3LIvJ5UU6zxARE
-    2f506jSh1dp8/UIDY68i7fEG1+RbkwUi+JzVqcFA==
+    :list-id; s=fm2; t=1523402362; bh=y/RCjyM7bYxHBrm0S0jhko2VLkcPgn
+    SzJkkuq5kEDAw=; b=UAXlnf1pC4sQgsoq1YZjupgITpU+II7OyQgwg/9nQCAXTW
+    cnMvppbq7mBbUXwkLbN8MAI6+h7yhTv4LTi5V2+pdfMvcm3t6ZSSDiazre6P95OM
+    XXQLjfBc5/2jRYoWXYqBWuAsMi7xne7gFfGEd8OL75ljYb4HRXdzR2/E8vBk25sy
+    51vEHCebksdnpIH54uk113zGRbVhSK9iocR/NqmnjdnPLP18y5/M19K5V03IMEE5
+    tRGs2WuLtAYfBSsImdsep9clH9uM7gN6TFZEmwScE40f350T7GOQ2xkKmgLkOiw9
+    HNANIE9ux911QM/mS8fIRAqmCDYJ1dbED4Rc1Xwg==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,31 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDk3kfRSRsySukkGgLOssgzIEqSjfOuBk4XLot5DCWtO8GpSWzWcVPp1hosES/fxGAXD4gTDUtZ9vUW32hAHpCP0qkfXaeo7cIkN6kbH8pXyQa9zlnAH
-    aigNwllsJvrOry/mzUmtY2J64iVkqVP0EOPbbH5vVYq8zNhObudxU/67daP5XouUNQBPArQtP5o4yDPaGiB6Km02Vvk4v7dh1huj0KeWvZ4CJclQfj/RlvDV
+X-CM-Envelope: MS4wfHg0i8ZpiiayhRATD245NkuVWg6wbqEQZBWNuWmM8pjd5rlWhOw/LMgDWTtkQgqY+9fmsNObc5VJUAhhhIxh4h/OM77SS/1havAMtAybiYyP+1216MbP
+    GkTcxG0KZ7u1gd19/KJe4LDKIefWelNnn173aQa/sN+OVgPH+53iwfbqEOtrc+tEuMdZgKP5N55k6yl8vmI+tE5iKc/FBQarMUlMDjmr4+IVPEh+XHRP3NRi
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VnNF1IyMAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=RfMhqW7RfyIWFs3lHvoA:9 a=nEq7sdQvkJOcl83t:21 a=Zk-p52Gu6lFtUBGp:21
-    a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=uP1ucDPQAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=e-Ulp4OoBGIv1RnMydUA:9
+    a=QEXdDO2ut3YA:10 a=9a9ggB8z3XFZH39hjkD6:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754738AbeDJWbJ (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 18:31:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40268 "EHLO
+        id S1752989AbeDJWbN (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 18:31:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40292 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752785AbeDJWbH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:31:07 -0400
+        with ESMTP id S1752785AbeDJWbM (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:31:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@free-electrons.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 100/168] ibmvnic: Dont handle RX interrupts when not up.
-Date: Wed, 11 Apr 2018 00:24:02 +0200
-Message-Id: <20180410212804.512329940@linuxfoundation.org>
+Subject: [PATCH 4.15 102/168] mtd: mtd_oobtest: Handle bitflips during reads
+Date: Wed, 11 Apr 2018 00:24:04 +0200
+Message-Id: <20180410212804.588492445@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -92,47 +93,98 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+From: Miquel Raynal <miquel.raynal@free-electrons.com>
 
 
-[ Upstream commit 09fb35ead58cd557aa9b20576d15816bc91a4deb ]
+[ Upstream commit 12663b442e5ac5aa3d6097cd3f287c71ba46d26e ]
 
-Initiating a kdump via the command line can cause a pending interrupt
-to be handled by the ibmvnic driver when initializing the sub-CRQ
-irqs during driver initialization.
+Reads from NAND devices usually trigger bitflips, this is an expected
+behavior. While bitflips are under a given threshold, the MTD core
+returns 0. However, when the number of corrected bitflips is above this
+same threshold, -EUCLEAN is returned to inform the upper layer that this
+block is slightly dying and soon the ECC engine will be overtaken so
+actions should be taken to move the data out of it.
 
-NIP [d000000000ca34f0] ibmvnic_interrupt_rx+0x40/0xd0 [ibmvnic]
-LR [c000000008132ef0] __handle_irq_event_percpu+0xa0/0x2f0
-Call Trace:
-[c000000047fcfde0] [c000000008132ef0] __handle_irq_event_percpu+0xa0/0x2f0
-[c000000047fcfea0] [c00000000813317c] handle_irq_event_percpu+0x3c/0x90
-[c000000047fcfee0] [c00000000813323c] handle_irq_event+0x6c/0xd0
-[c000000047fcff10] [c0000000081385e0] handle_fasteoi_irq+0xf0/0x250
-[c000000047fcff40] [c0000000081320a0] generic_handle_irq+0x50/0x80
-[c000000047fcff60] [c000000008014984] __do_irq+0x84/0x1d0
-[c000000047fcff90] [c000000008027564] call_do_irq+0x14/0x24
-[c00000003c92af00] [c000000008014b70] do_IRQ+0xa0/0x120
-[c00000003c92af50] [c000000008002594] hardware_interrupt_common+0x114/0x180
+This particular condition should not be treated like an error and the
+test should continue.
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Miquel Raynal <miquel.raynal@free-electrons.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ibm/ibmvnic.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/mtd/tests/oobtest.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -2484,6 +2484,12 @@ static irqreturn_t ibmvnic_interrupt_rx(
- 	struct ibmvnic_sub_crq_queue *scrq = instance;
- 	struct ibmvnic_adapter *adapter = scrq->adapter;
- 
-+	/* When booting a kdump kernel we can hit pending interrupts
-+	 * prior to completing driver initialization.
-+	 */
-+	if (unlikely(adapter->state != VNIC_OPEN))
-+		return IRQ_NONE;
+--- a/drivers/mtd/tests/oobtest.c
++++ b/drivers/mtd/tests/oobtest.c
+@@ -193,6 +193,9 @@ static int verify_eraseblock(int ebnum)
+ 		ops.datbuf    = NULL;
+ 		ops.oobbuf    = readbuf;
+ 		err = mtd_read_oob(mtd, addr, &ops);
++		if (mtd_is_bitflip(err))
++			err = 0;
 +
- 	adapter->rx_stats_buffers[scrq->scrq_num].interrupts++;
+ 		if (err || ops.oobretlen != use_len) {
+ 			pr_err("error: readoob failed at %#llx\n",
+ 			       (long long)addr);
+@@ -227,6 +230,9 @@ static int verify_eraseblock(int ebnum)
+ 			ops.datbuf    = NULL;
+ 			ops.oobbuf    = readbuf;
+ 			err = mtd_read_oob(mtd, addr, &ops);
++			if (mtd_is_bitflip(err))
++				err = 0;
++
+ 			if (err || ops.oobretlen != mtd->oobavail) {
+ 				pr_err("error: readoob failed at %#llx\n",
+ 						(long long)addr);
+@@ -286,6 +292,9 @@ static int verify_eraseblock_in_one_go(i
  
- 	if (napi_schedule_prep(&adapter->napi[scrq->scrq_num])) {
+ 	/* read entire block's OOB at one go */
+ 	err = mtd_read_oob(mtd, addr, &ops);
++	if (mtd_is_bitflip(err))
++		err = 0;
++
+ 	if (err || ops.oobretlen != len) {
+ 		pr_err("error: readoob failed at %#llx\n",
+ 		       (long long)addr);
+@@ -527,6 +536,9 @@ static int __init mtd_oobtest_init(void)
+ 	pr_info("attempting to start read past end of OOB\n");
+ 	pr_info("an error is expected...\n");
+ 	err = mtd_read_oob(mtd, addr0, &ops);
++	if (mtd_is_bitflip(err))
++		err = 0;
++
+ 	if (err) {
+ 		pr_info("error occurred as expected\n");
+ 		err = 0;
+@@ -571,6 +583,9 @@ static int __init mtd_oobtest_init(void)
+ 		pr_info("attempting to read past end of device\n");
+ 		pr_info("an error is expected...\n");
+ 		err = mtd_read_oob(mtd, mtd->size - mtd->writesize, &ops);
++		if (mtd_is_bitflip(err))
++			err = 0;
++
+ 		if (err) {
+ 			pr_info("error occurred as expected\n");
+ 			err = 0;
+@@ -615,6 +630,9 @@ static int __init mtd_oobtest_init(void)
+ 		pr_info("attempting to read past end of device\n");
+ 		pr_info("an error is expected...\n");
+ 		err = mtd_read_oob(mtd, mtd->size - mtd->writesize, &ops);
++		if (mtd_is_bitflip(err))
++			err = 0;
++
+ 		if (err) {
+ 			pr_info("error occurred as expected\n");
+ 			err = 0;
+@@ -684,6 +702,9 @@ static int __init mtd_oobtest_init(void)
+ 		ops.datbuf    = NULL;
+ 		ops.oobbuf    = readbuf;
+ 		err = mtd_read_oob(mtd, addr, &ops);
++		if (mtd_is_bitflip(err))
++			err = 0;
++
+ 		if (err)
+ 			goto out;
+ 		if (memcmpshow(addr, readbuf, writebuf,
