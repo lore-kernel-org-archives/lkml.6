@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49BnVGcVHxV35+JwRrn0GxZeRv4JcIbyJE9TtND+tYI9yEWTjUPnj3ITZ7MBYleOkQ1ON/x
-ARC-Seal: i=1; a=rsa-sha256; t=1523399416; cv=none;
+X-Google-Smtp-Source: AIpwx493zFrdrMkBgo2qKcPtsJJxEeTFBFdBzGHoHXXtoAY8JLftH6XRHsOzMNMkY/OSPj2qpLIL
+ARC-Seal: i=1; a=rsa-sha256; t=1523399413; cv=none;
         d=google.com; s=arc-20160816;
-        b=vyR3aTG0JP7XNAjfYRiCENMZSSYZdxmmQuuMEbHVGb5CJcNtrGM15UUnOfUlZWavpw
-         rJAh8BBCG9MkIt8d9ei8jmgjFuWlOzKsnR7FKFpQb9rsXlmr1E1Vyg3384awiH/OKP+f
-         t3QQ7OIklmxFZdHg8RVlEQedmfIKuFhaAKI9oS8QlmTjt2DOQNo7QMQ8gBrild3tVCpT
-         r2v488+BQNfey3lil9hqkXIVMoiSBVlIIs3TByunH3wu9EINsuFcvzTBTfTb3Fk9Bjlj
-         DnS8y+CoealEw0LF2Sp7GEULFiWnYuuy76xBj9hUSK25yWUR7JBy9S+xLzbnKq2gG/U0
-         8HUw==
+        b=O4KVDgXfBhXj5eY/3UKBVvpS+bKvfCJ1D5/s/PsoQJwrRFuVLCsPLQ5dXSUhoHX/Ux
+         N8ZHfFHDonH+FGAqdV/B3HpYg6n5TRYc8TqGrLNFUpT+jBZXwcGiwXv31mSHsNlwAuuD
+         Pzg4k3w4EQvLToxXwfPl3Q0NExffYWF9QU8k74KOuo5FVHSMk6YGJkQanCoy/snuWtH5
+         WRCvVlXLkQMuCyR5HR/paKBP4jn9i9j/KKxiPbALmlVFl50sn7PRcQhUg5I5gJz/eL8e
+         xaP7UkazDgZFzzkcM0GlZ21O5Gok7PRYtbzUfdQuYYQdPolox7dQmMOkqruxNkTZJmsw
+         2zZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WiwTsk1MEiV1yytlV9p4YvH8kQC99viClXsq152L4ag=;
-        b=eLDmiaP4y04PWgiaef3X68HPfOq7t/uAuV3hbGU41j7q6nR4Q8dLyngJL36CDccnm+
-         2g/vl+pNQFW8ISUXRZaj6DnLBVyfhRZdWLdYW8nmZhONX4ylfgSIbf9mcGwfQKdMxqca
-         ybVafRWy2toZUkbDUIr4+PiqlEanEllMb0PgR/hhwPl+NDJPCTxdl/xvQeXjLYcwvDSr
-         9PiTvGi4HXxmqDAd3dNeelH/Z8tFfonFmkYRVcRPpuDyfYAc0urCibnIpGckG8DzM5T1
-         I/lLl6kCVNtSwiq3RM0hqCm36J/zpTZ6LsrEq98OqWlkbYdRtkIqKkvIsZaIJKwqr+mO
-         3afg==
+        bh=byN9pi43cbimSYFLJQpFlsRfEOtOD/YUYWmPa08vpmo=;
+        b=vD7YJVQ6BSoGbRO7rpJGFUrmIhynsqJ8IvC48j3qx43jNo6VwsnhX9eAut3lbNcXSK
+         VHQrSEGtuxyAeCPN1XbNFV3B81+o1mxwfJe+P60pqaeASCAbtd2jnrNatqh0Ngs40/Ih
+         Yn1QDerGQJpJj9OJ7bi7GD5j0TsbNitnWZUExtE8+JCbPLw3RSAKxI7/GYwQQD1jnDZ/
+         0Gv3PdgSPXxRRHAEgO3M4TeqhItUlbFBky912ojHa51GV3MDCSC8UgS7v03ykMe48+N3
+         Ta2huhinkqqRKdPTvTzqireruLTfCBOHTbw7wFj1Hq6gTqb72WHpnWSIjGxXMJlz0mDg
+         eQfQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Feras Daoud <ferasda@mellanox.com>,
-	Saeed Mahameed <saeedm@mellanox.com>,
+	chenxiang <chenxiang66@hisilicon.com>,
+	John Garry <john.garry@huawei.com>,
+	Jason Yan <yanaijie@huawei.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Hannes Reinecke <hare@suse.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 080/168] net/mlx5e: IPoIB, Use correct timestamp in child receive flow
-Date: Wed, 11 Apr 2018 00:23:42 +0200
-Message-Id: <20180410212803.686823298@linuxfoundation.org>
+Subject: [PATCH 4.15 079/168] scsi: libsas: initialize sas_phy status according to response of DISCOVER
+Date: Wed, 11 Apr 2018 00:23:41 +0200
+Message-Id: <20180410212803.646678759@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400066724642274?=
-X-GMAIL-MSGID: =?utf-8?q?1597400066724642274?=
+X-GMAIL-THRID: =?utf-8?q?1597400062767198893?=
+X-GMAIL-MSGID: =?utf-8?q?1597400062767198893?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,52 +54,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Feras Daoud <ferasda@mellanox.com>
+From: chenxiang <chenxiang66@hisilicon.com>
 
 
-[ Upstream commit 36e564b76f1862914ad32c35bab433e07da2ebf8 ]
+[ Upstream commit affc67788fe5dfffad5cda3d461db5cf2b2ff2b0 ]
 
-The current implementation takes the child timestamp object from
-the parent since the rq in mlx5i_complete_rx_cqe belongs to the parent.
-This change fixes the issue by taking the correct timestamp.
+The status of SAS PHY is in sas_phy->enabled. There is an issue that the
+status of a remote SAS PHY may be initialized incorrectly: if disable
+remote SAS PHY through sysfs interface (such as echo 0 >
+/sys/class/sas_phy/phy-1:0:0/enable), then reboot the system, and we
+will find the status of remote SAS PHY which is disabled before is
+1 (cat /sys/class/sas_phy/phy-1:0:0/enable). But actually the status of
+remote SAS PHY is disabled and the device attached is not found.
 
-Fixes: 7e7f4780c340 ("net/mlx5e: IPoIB, Use hash-table to map between QPN to child netdev")
-Signed-off-by: Feras Daoud <ferasda@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+In SAS protocol, NEGOTIATED LOGICAL LINK RATE field of DISCOVER response
+is 0x1 when remote SAS PHY is disabled. So initialize sas_phy->enabled
+according to the value of NEGOTIATED LOGICAL LINK RATE field.
+
+Signed-off-by: chenxiang <chenxiang66@hisilicon.com>
+Reviewed-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_rx.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/scsi/libsas/sas_expander.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx.c
-@@ -1196,7 +1196,9 @@ static inline void mlx5i_complete_rx_cqe
- 					 u32 cqe_bcnt,
- 					 struct sk_buff *skb)
- {
-+	struct hwtstamp_config *tstamp;
- 	struct net_device *netdev;
-+	struct mlx5e_priv *priv;
- 	char *pseudo_header;
- 	u32 qpn;
- 	u8 *dgid;
-@@ -1215,6 +1217,9 @@ static inline void mlx5i_complete_rx_cqe
- 		return;
- 	}
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -293,6 +293,7 @@ static void sas_set_ex_phy(struct domain
+ 	phy->phy->minimum_linkrate = dr->pmin_linkrate;
+ 	phy->phy->maximum_linkrate = dr->pmax_linkrate;
+ 	phy->phy->negotiated_linkrate = phy->linkrate;
++	phy->phy->enabled = (phy->linkrate != SAS_PHY_DISABLED);
  
-+	priv = mlx5i_epriv(netdev);
-+	tstamp = &priv->tstamp;
-+
- 	g = (be32_to_cpu(cqe->flags_rqpn) >> 28) & 3;
- 	dgid = skb->data + MLX5_IB_GRH_DGID_OFFSET;
- 	if ((!g) || dgid[0] != 0xff)
-@@ -1235,7 +1240,7 @@ static inline void mlx5i_complete_rx_cqe
- 	skb->ip_summed = CHECKSUM_COMPLETE;
- 	skb->csum = csum_unfold((__force __sum16)cqe->check_sum);
- 
--	if (unlikely(mlx5e_rx_hw_stamp(rq->tstamp)))
-+	if (unlikely(mlx5e_rx_hw_stamp(tstamp)))
- 		skb_hwtstamps(skb)->hwtstamp =
- 				mlx5_timecounter_cyc2time(rq->clock, get_cqe_ts(cqe));
- 
+  skip:
+ 	if (new_phy)
