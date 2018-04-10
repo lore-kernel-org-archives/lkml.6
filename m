@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48DfgYnm1stR3KnJcZd+wZiW6pcL8WEWjNAsas5BddmMQgUCQnaMq4S0oL5jssqHYhFH++P
-ARC-Seal: i=1; a=rsa-sha256; t=1523399270; cv=none;
+X-Google-Smtp-Source: AIpwx4/z6Nq20IHCdyM3DVCVar6BIIJ29X9Wn9FwX/fsCgb7AnzRfcZIBXHD55AtV8WuA0HR1icG
+ARC-Seal: i=1; a=rsa-sha256; t=1523399266; cv=none;
         d=google.com; s=arc-20160816;
-        b=v8bZMiGsKJcLNNOdwaHP3YI8GttNwrcgep6DtkVDu9OXE7ailmypQPXEIahndpSieE
-         tH13MIZm9LeYXpzBQ0rumw3ig/2BXfQVgif8eNH+UnJxwvPVkZVkUy1YXODsx4dsl0tl
-         pRKnqpIey+qv3EXLcKC9iQobIKNa4PgAE5fqa+cMR0chYHKxNc7XfGrnp3avhaMV7U33
-         i9QLKHEGyWCGacVA98xVk79H85bWyrVh0NHZ9Cgg152J+TS68DsDNGcFc3F5RZhR7rqI
-         zHxClKvqwtudwh9ORqRdhajiLwgZpxIWFlSAVxE6XMZAsnCkJjKCQEO4JpDRx5eRUQJr
-         w2Vw==
+        b=L96PWhP4k1K0eARoaynplb8+INBF8HSfRJEB0MjOqvJvfsxN99SLdIs76cUgtedIpJ
+         WqNsB/I1bEzhoYOXKqYeT0M41HdcldQrTcRJViAYRB8ey5EweCsY24DOjFhJuvXY+1U5
+         +eZrMMyxPeyOnw3OEi6FsceQdhu6XX78KCWY4steE9zpPp3NjkXmbtGBk42M8bf6WE7c
+         S3yP7TWVK8k1RHHOdkNmYqyxEp8UCrr4HYscb9y1BGyhm5o0w9jT60pNSgOqfHuZWNjH
+         zNfQbsp/FK04Ynfj3Nw52TMZuOMuJbp7mnMTApBmhOsU/NFmyL+8TzWiewG3jRcBrSmi
+         g2Ag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=c8WImE7MMXQ/Vt6e1/6aZC4TUgOyn1cpDHY5rQwIEUQ=;
-        b=AAUch7AsHJrXued5cbpVWmkHxYS8aj5RgwaBHOt6iA2CoeRZFtGsHX7DXDlAzM6Yws
-         8gBVmi6sSxDCDEGsXthfiRZg+CfMwxJqx4uIktddcHyqymcpCKVfzO1dxpAJdrGa3/0F
-         Jo9dsFOEwnb7dySYDXij4cDe6FfS/fkV2BtcW89m91ZRgAN0RoamtwHx7nPnfJxKfOtD
-         ueAHXPUXlGHMMB6d3XJiDNZusrd9P79F/FVS2AJWQJC237X+C/X2nAhG8ApH0TbnhOlm
-         1xoMvscqZMrswT9VPpJrHYD0/mGBZ0mVdWGs/Gp81hBbXDrl5ilBUvK2C65lJxCZR6Bu
-         J/0Q==
+        bh=HSqusLhNT4uWbUCPY+cFsU6daGfxQe+0I0i/PqFFyUg=;
+        b=bEMUFhIY2Xmh6ktovB+GYeOktRT8Qm5zFkdSdi+HHMIaYN058OmITxBvq7HEIfnnX0
+         NUuMTF4gMdndX+sMZDFsyie4I45HFVdrgBWRSSBGGW9DZLAR07/FR9vXPyCB+nST9zC0
+         +V+KGgdgBpcaP7OS+A0lH4FT83Orxlca5Y9SmjtLywJXSntstrQ28YblCsG7a7rSEh4F
+         jPpyuIwGTQxMJXcXiI86sOUMAJgA5L7tcRrHalxwzpElP/WLzn7aVGnwOVWqxbIlhU/b
+         OEy3u/NvQCiuCp3ppZ4feYCzh5lNG7UYx+/H/iUyvg0+p3Ls5lB1U0eAwtJBmrtfT1MR
+         vtjw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christian Lamparter <chunkeey@gmail.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
+	"Pieter \"PoroCYon\" Sluys" <pcy@national.shitposting.agency>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 047/168] crypto: crypto4xx - perform aead icv check in the driver
-Date: Wed, 11 Apr 2018 00:23:09 +0200
-Message-Id: <20180410212802.210479322@linuxfoundation.org>
+Subject: [PATCH 4.15 046/168] vfb: fix video mode and line_length being set when loaded
+Date: Wed, 11 Apr 2018 00:23:08 +0200
+Message-Id: <20180410212802.165706545@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399913170962065?=
-X-GMAIL-MSGID: =?utf-8?q?1597399913170962065?=
+X-GMAIL-THRID: =?utf-8?q?1597399909803770777?=
+X-GMAIL-MSGID: =?utf-8?q?1597399909803770777?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,152 +51,103 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christian Lamparter <chunkeey@gmail.com>
+From: "Pieter \\\"PoroCYon\\\" Sluys" <pcy@national.shitposting.agency>
 
 
-[ Upstream commit 0b5a7f71b4c557b15ec54a1b49023bc1b21044cc ]
+[ Upstream commit 7b9faf5df0ac495a1a3d7cdb64921c179f9008ac ]
 
-The ccm-aes-ppc4xx now fails one of testmgr's expected
-failure test cases as such:
+Currently, when loading the vfb module, the newly created fbdev
+has a line_length of 0, and its video mode would be PSEUDOCOLOR
+regardless of color depth. (The former could be worked around by
+calling the FBIOPUT_VSCREENINFO ioctl with having the FBACTIVIATE_FORCE
+flag set.) This patch automatically sets the line_length correctly,
+and the video mode is derived from the bit depth now as well.
 
-|decryption failed on test 10 for ccm-aes-ppc4xx:
-|ret was 0, |expected -EBADMSG
+Thanks to Geert Uytterhoeven for confirming the bug and helping me with
+the patch.
 
-It doesn't look like the hardware sets the authentication failure
-flag. The original vendor source from which this was ported does
-not have any special code or notes about why this would happen or
-if there are any WAs.
+Output of `fbset -i' before the patch:
+mode "1366x768-60"
+    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
+    geometry 1366 768 1366 768 32
+    timings 13806 120 10 14 3 32 5
+    rgba 8/0,8/8,8/16,8/24
+endmode
 
-Hence, this patch converts the aead_done callback handler to
-perform the icv check in the driver. And this fixes the false
-negative and the ccm-aes-ppc4xx passes the selftests once again.
+Frame buffer device information:
+    Name        : Virtual FB
+    Address     : 0xffffaa1405d85000
+    Size        : 4196352
+    Type        : PACKED PIXELS
+    Visual      : PSEUDOCOLOR
+    XPanStep    : 1
+    YPanStep    : 1
+    YWrapStep   : 1
+    LineLength  : 0                    <-- note this
+    Accelerator : No
 
-|name         : ccm(aes)
-|driver       : ccm-aes-ppc4xx
-|module       : crypto4xx
-|priority     : 300
-|refcnt       : 1
-|selftest     : passed
-|internal     : no
-|type         : aead
-|async        : yes
-|blocksize    : 1
-|ivsize       : 16
-|maxauthsize  : 16
-|geniv        : <none>
+After:
+mode "1366x768-60"
+    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
+    geometry 1366 768 1366 768 32
+    timings 13806 120 10 14 3 32 5
+    rgba 8/0,8/8,8/16,8/24
+endmode
 
-Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Frame buffer device information:
+    Name        : Virtual FB
+    Address     : 0xffffaa1405d85000
+    Size        : 4196352
+    Type        : PACKED PIXELS
+    Visual      : TRUECOLOR
+    XPanStep    : 1
+    YPanStep    : 1
+    YWrapStep   : 1
+    LineLength  : 5464
+    Accelerator : No
+
+Signed-off-by: "Pieter \"PoroCYon\" Sluys" <pcy@national.shitposting.agency>
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+[b.zolnierkie: minor fixups]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/amcc/crypto4xx_alg.c  |    6 ---
- drivers/crypto/amcc/crypto4xx_core.c |   54 +++++++++++++++++------------------
- 2 files changed, 28 insertions(+), 32 deletions(-)
+ drivers/video/fbdev/vfb.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
---- a/drivers/crypto/amcc/crypto4xx_alg.c
-+++ b/drivers/crypto/amcc/crypto4xx_alg.c
-@@ -256,10 +256,6 @@ static inline bool crypto4xx_aead_need_f
- 	if (is_ccm && !(req->iv[0] == 1 || req->iv[0] == 3))
- 		return true;
- 
--	/* CCM - fix CBC MAC mismatch in special case */
--	if (is_ccm && decrypt && !req->assoclen)
--		return true;
--
- 	return false;
+--- a/drivers/video/fbdev/vfb.c
++++ b/drivers/video/fbdev/vfb.c
+@@ -239,8 +239,23 @@ static int vfb_check_var(struct fb_var_s
+  */
+ static int vfb_set_par(struct fb_info *info)
+ {
++	switch (info->var.bits_per_pixel) {
++	case 1:
++		info->fix.visual = FB_VISUAL_MONO01;
++		break;
++	case 8:
++		info->fix.visual = FB_VISUAL_PSEUDOCOLOR;
++		break;
++	case 16:
++	case 24:
++	case 32:
++		info->fix.visual = FB_VISUAL_TRUECOLOR;
++		break;
++	}
++
+ 	info->fix.line_length = get_line_length(info->var.xres_virtual,
+ 						info->var.bits_per_pixel);
++
+ 	return 0;
  }
  
-@@ -330,7 +326,7 @@ int crypto4xx_setkey_aes_ccm(struct cryp
- 	sa = (struct dynamic_sa_ctl *) ctx->sa_in;
- 	sa->sa_contents.w = SA_AES_CCM_CONTENTS | (keylen << 2);
+@@ -450,6 +465,8 @@ static int vfb_probe(struct platform_dev
+ 		goto err2;
+ 	platform_set_drvdata(dev, info);
  
--	set_dynamic_sa_command_0(sa, SA_NOT_SAVE_HASH, SA_NOT_SAVE_IV,
-+	set_dynamic_sa_command_0(sa, SA_SAVE_HASH, SA_NOT_SAVE_IV,
- 				 SA_LOAD_HASH_FROM_SA, SA_LOAD_IV_FROM_STATE,
- 				 SA_NO_HEADER_PROC, SA_HASH_ALG_CBC_MAC,
- 				 SA_CIPHER_ALG_AES,
---- a/drivers/crypto/amcc/crypto4xx_core.c
-+++ b/drivers/crypto/amcc/crypto4xx_core.c
-@@ -570,15 +570,14 @@ static void crypto4xx_aead_done(struct c
- 				struct pd_uinfo *pd_uinfo,
- 				struct ce_pd *pd)
- {
--	struct aead_request *aead_req;
--	struct crypto4xx_ctx *ctx;
-+	struct aead_request *aead_req = container_of(pd_uinfo->async_req,
-+		struct aead_request, base);
- 	struct scatterlist *dst = pd_uinfo->dest_va;
-+	size_t cp_len = crypto_aead_authsize(
-+		crypto_aead_reqtfm(aead_req));
-+	u32 icv[cp_len];
- 	int err = 0;
- 
--	aead_req = container_of(pd_uinfo->async_req, struct aead_request,
--				base);
--	ctx  = crypto_tfm_ctx(aead_req->base.tfm);
--
- 	if (pd_uinfo->using_sd) {
- 		crypto4xx_copy_pkt_to_dst(dev, pd, pd_uinfo,
- 					  pd->pd_ctl_len.bf.pkt_len,
-@@ -590,38 +589,39 @@ static void crypto4xx_aead_done(struct c
- 
- 	if (pd_uinfo->sa_va->sa_command_0.bf.dir == DIR_OUTBOUND) {
- 		/* append icv at the end */
--		size_t cp_len = crypto_aead_authsize(
--			crypto_aead_reqtfm(aead_req));
--		u32 icv[cp_len];
--
- 		crypto4xx_memcpy_from_le32(icv, pd_uinfo->sr_va->save_digest,
- 					   cp_len);
- 
- 		scatterwalk_map_and_copy(icv, dst, aead_req->cryptlen,
- 					 cp_len, 1);
-+	} else {
-+		/* check icv at the end */
-+		scatterwalk_map_and_copy(icv, aead_req->src,
-+			aead_req->assoclen + aead_req->cryptlen -
-+			cp_len, cp_len, 0);
++	vfb_set_par(info);
 +
-+		crypto4xx_memcpy_from_le32(icv, icv, cp_len);
-+
-+		if (crypto_memneq(icv, pd_uinfo->sr_va->save_digest, cp_len))
-+			err = -EBADMSG;
- 	}
- 
- 	crypto4xx_ret_sg_desc(dev, pd_uinfo);
- 
- 	if (pd->pd_ctl.bf.status & 0xff) {
--		if (pd->pd_ctl.bf.status & 0x1) {
--			/* authentication error */
--			err = -EBADMSG;
--		} else {
--			if (!__ratelimit(&dev->aead_ratelimit)) {
--				if (pd->pd_ctl.bf.status & 2)
--					pr_err("pad fail error\n");
--				if (pd->pd_ctl.bf.status & 4)
--					pr_err("seqnum fail\n");
--				if (pd->pd_ctl.bf.status & 8)
--					pr_err("error _notify\n");
--				pr_err("aead return err status = 0x%02x\n",
--					pd->pd_ctl.bf.status & 0xff);
--				pr_err("pd pad_ctl = 0x%08x\n",
--					pd->pd_ctl.bf.pd_pad_ctl);
--			}
--			err = -EINVAL;
-+		if (!__ratelimit(&dev->aead_ratelimit)) {
-+			if (pd->pd_ctl.bf.status & 2)
-+				pr_err("pad fail error\n");
-+			if (pd->pd_ctl.bf.status & 4)
-+				pr_err("seqnum fail\n");
-+			if (pd->pd_ctl.bf.status & 8)
-+				pr_err("error _notify\n");
-+			pr_err("aead return err status = 0x%02x\n",
-+				pd->pd_ctl.bf.status & 0xff);
-+			pr_err("pd pad_ctl = 0x%08x\n",
-+				pd->pd_ctl.bf.pd_pad_ctl);
- 		}
-+		err = -EINVAL;
- 	}
- 
- 	if (pd_uinfo->state & PD_ENTRY_BUSY)
+ 	fb_info(info, "Virtual frame buffer device, using %ldK of video memory\n",
+ 		videomemorysize >> 10);
+ 	return 0;
