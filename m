@@ -1,91 +1,123 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48E5610wsAdCTSw/TRhbJ0PyepLwGJZJaeoUs9IDfFy+dPEkNeOL+YO+QVH/XxbQHseTYQT
-ARC-Seal: i=1; a=rsa-sha256; t=1523399632; cv=none;
-        d=google.com; s=arc-20160816;
-        b=uFdNetSDTyAzZaaR6CVjaOwRCQ18x569jlStA71ru2/RkE3o+GluA9MQiBr0n0E89B
-         gJgia5JcBf0V4hqjPHCY1BRJk7JYTDyUY08xMdetO43sFdIw1KdpGzX35O8hZ0sb/igq
-         P7qOzGW13HzRKvjqztyRbpx5C1hUmMiDZgUHb9SGmlr2/I5EaVdPSegY4BDITFioyYUQ
-         o4I8Ywn+o8bC+Z8JGaUtPBhv0YMCZ/zXqnQUtlyp38SRD1vOlQ9/QDkjpei+/q55MLyd
-         dPtvc8PJAXWp4gf9vQk+euW6towQkzoDDj729O7V2WL4h9plRMY8y7XAtQYjWxG/k+KI
-         rM5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=6RmVIAweZhH9uPgsknS6DH4T6HxtW1DSZ/S8JDTSmDY=;
-        b=FflbRm7EX15JewPfd/Tv3k2oFSiKZorq2ClbpXrbJKX4woltbaXvdZ1AAdHm+Bsx3S
-         ycXZNa2JYE2rKWBgS4+eT32iK3kk4/iu01aJOSAkntX9ObgHfRB4XaF4D8jNt0XgIwwI
-         m8EZ6r91pPfPJPH1UpCkvAA/0O8eUdUPECmXut3Vd6PWfQY9zQ13OwH+YtMh+R+oKGfn
-         j7+F0UUSMRfZAlJFkFGHItZHShNA3Y+Pg4J5r+h/cJ1jVqrT5ITTiCa/TeQyVZgXhXLT
-         1or8rmFs8qcwXvlfrMOlQyL5lqWu/3GMkgyog6nFPF8YJjX1OtJhayfa2eq2hfNl05vq
-         HQZw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Shiraz Saleem <shiraz.saleem@intel.com>,
-	Jason Gunthorpe <jgg@mellanox.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 001/138] i40iw: Fix sequence number for the first partial FPDU
-Date: Wed, 11 Apr 2018 00:23:11 +0200
-Message-Id: <20180410212902.284736406@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
-References: <20180410212902.121524696@linuxfoundation.org>
-User-Agent: quilt/0.65
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3765319-1523363671-2-11566459545891381718
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523363670; b=MX+hquBMioub581EtFzOVV0SF7UOHMPveKl49j/3aH78bz+Giv
+    a77krRjwMjbQ3jU3pDQ6SRT8hYwg3itvuTXt5sDK3Lu9H3Z1MfKazdwOANLqhEfu
+    Ar68VZ4DHncAt4sy/+UrB6bnJvihJhZFWPgQJF87BsiclK9c3Ylm7YSMeFXJBhmX
+    43S6ljrAQLq7zKuq0p/SHmDJbaKU3HRqHYRLnRbB0QMRNP4TksiYogiVnJfVSE2b
+    sZetKuAuYcqx2s/wMz1v+5pMFHismYkn2vQ9cgZ65hJRXhQjqQMlfLHOboVbXGiA
+    6TzO8nvlIocsuseGfFn80gWv7txkvrU8dm1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1523363670; bh=2UdB1qrly+xSPqSdqcyhxnOGFR6xxa
+    majeTI1VCuJ00=; b=K64/aXr5mdRP7S6KiLwYIOyJQg3rFKrPD8OUOIEl8Dykp6
+    uK6g965dCJ8ZAeUJ6QsHFy07pa0o6SgXMqHbFxeeVKgiOoDrZycDgLKu10hNIh8w
+    koeQTicoRqquq/zCf/OukRzxa6YjG46UDu8jmELbDBQPs+kbvONCLnbl7jeDzL8u
+    IBtzAQAMnCB4snqkLhoCOOzehAXjcISxcZS+iVr9ZnMonOtQsdmAlBqnEmnfMI2K
+    db8/X3gNdjQrMtj4DTkScjk2AK/gwDCPFLp1Tu5OUQpQB0MksD1hiyXf5usTuwbS
+    oiMIsPyFDuzGNXWU11MbYEn8TbHQEUAOK9UEeLhQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=raspberrypi-org.20150623.gappssmtp.com header.i=@raspberrypi-org.20150623.gappssmtp.com header.b=sl9v3pQS x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dkim=invalid (public key: invalid data, 0-bit  key sha256) header.d=raspberrypi.org header.i=@raspberrypi.org header.b=FPi5QlPe x-bits=0 x-keytype="" x-algorithm=sha256 x-selector=pp;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=raspberrypi.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=PNtcta5Z;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=raspberrypi.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=raspberrypi-org.20150623.gappssmtp.com header.i=@raspberrypi-org.20150623.gappssmtp.com header.b=sl9v3pQS x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dkim=invalid (public key: invalid data, 0-bit  key sha256) header.d=raspberrypi.org header.i=@raspberrypi.org header.b=FPi5QlPe x-bits=0 x-keytype="" x-algorithm=sha256 x-selector=pp;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=raspberrypi.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=PNtcta5Z;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=raspberrypi.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfOHrC22nI1RGVOdStmr+BwnqBjU65JYlGEMsCHpeM2uFu97W3BlQ1J/i8xWReYvbcULLqFSOSMOT+byDYigRlzGd2tqDA0QJFqf8ZkrsS8RTspJM8hP0
+    gGGcZ27TO4V7oO3wRRPE3fy+/6nLwrFkCa7Q/aJEItb+l8q3lKswv7tAMQ5YDzXe2iYqQ7hIkcG0874QYKqpoOgOiAWQ0pQFEOYxArVM3xGRMNx+60tO5H6B
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=WFZIRff2AAAA:8 a=VwQbUJbxAAAA:8 a=dMW1zwEvQVwx_SPhr94A:9 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753299AbeDJMeZ (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 08:34:25 -0400
+Received: from mx08-00252a01.pphosted.com ([91.207.212.211]:50860 "EHLO
+        mx08-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753165AbeDJMeY (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 10 Apr 2018 08:34:24 -0400
+X-Google-Smtp-Source: AIpwx4/pvTMidzzIX71YhW4n/c3tmsL3ExJtQoGTg7qDWwjRdopyngdnnY7H/jfafuQn3lPwSv5Cnw==
+From: Phil Elwell <phil@raspberrypi.org>
+To: Woojung Huh <woojung.huh@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Alexander Graf <agraf@suse.de>,
+        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH] lan78xx: Don't reset the interface on open
+Date: Tue, 10 Apr 2018 13:18:25 +0100
+Message-Id: <1523362705-30032-1-git-send-email-phil@raspberrypi.org>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-10_04:,,
+ signatures=0
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399796931292081?=
-X-GMAIL-MSGID: =?utf-8?q?1597400293061675611?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Commit 92571a1aae40 ("lan78xx: Connect phy early") moves the PHY
+initialisation into lan78xx_probe, but lan78xx_open subsequently calls
+lan78xx_reset. As well as forcing a second round of link negotiation,
+this reset frequently prevents the phy interrupt from being generated
+(even though the link is up), rendering the interface unusable.
 
-------------------
+Fix this issue by removing the lan78xx_reset call from lan78xx_open.
 
-From: Shiraz Saleem <shiraz.saleem@intel.com>
-
-
-[ Upstream commit df8b13a1b23356d01dfc4647a5629cdb0f4ce566 ]
-
-Partial FPDU processing is broken as the sequence number
-for the first partial FPDU is wrong due to incorrect
-Q2 buffer offset. The offset should be 64 rather than 16.
-
-Fixes: 786c6adb3a94 ("i40iw: add puda code")
-Signed-off-by: Shiraz Saleem <shiraz.saleem@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 92571a1aae40 ("lan78xx: Connect phy early")
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
 ---
- drivers/infiniband/hw/i40iw/i40iw_d.h    |    1 +
- drivers/infiniband/hw/i40iw/i40iw_puda.c |    2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/usb/lan78xx.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/drivers/infiniband/hw/i40iw/i40iw_d.h
-+++ b/drivers/infiniband/hw/i40iw/i40iw_d.h
-@@ -93,6 +93,7 @@
- #define RDMA_OPCODE_MASK        0x0f
- #define RDMA_READ_REQ_OPCODE    1
- #define Q2_BAD_FRAME_OFFSET     72
-+#define Q2_FPSN_OFFSET          64
- #define CQE_MAJOR_DRV           0x8000
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index aff105f..108f04a 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -2514,10 +2514,6 @@ static int lan78xx_open(struct net_device *net)
+ 	if (ret < 0)
+ 		goto out;
  
- #define I40IW_TERM_SENT 0x01
---- a/drivers/infiniband/hw/i40iw/i40iw_puda.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_puda.c
-@@ -1376,7 +1376,7 @@ static void i40iw_ieq_handle_exception(s
- 	u32 *hw_host_ctx = (u32 *)qp->hw_host_ctx;
- 	u32 rcv_wnd = hw_host_ctx[23];
- 	/* first partial seq # in q2 */
--	u32 fps = qp->q2_buf[16];
-+	u32 fps = *(u32 *)(qp->q2_buf + Q2_FPSN_OFFSET);
- 	struct list_head *rxlist = &pfpdu->rxlist;
- 	struct list_head *plist;
+-	ret = lan78xx_reset(dev);
+-	if (ret < 0)
+-		goto done;
+-
+ 	phy_start(net->phydev);
  
+ 	netif_dbg(dev, ifup, dev->net, "phy initialised successfully");
+-- 
+2.7.4
+
