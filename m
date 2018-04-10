@@ -1,123 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752245AbeDJGb2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 02:31:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60516 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751799AbeDJGb0 (ORCPT
+        id S1752298AbeDJGbs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 02:31:48 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:42214 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752099AbeDJGbq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 02:31:26 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A38DF602BA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Subject: Re: [PATCH 1/1] scsi/ufs: qcom: Don't enable PHY_QCOM_UFS by default
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: martin.petersen@oracle.com, kishon@ti.com, jejb@linux.vnet.ibm.com,
-        subhashj@codeaurora.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20180409132404.20876-1-vivek.gautam@codeaurora.org>
- <20180409165127.GK453@tuxbook-pro>
- <2588cd12-081a-5fad-7ef5-af78b18168eb@codeaurora.org>
- <20180409200904.GL453@tuxbook-pro>
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <fa02c578-a89e-7934-2e88-d3728957ab71@codeaurora.org>
-Date: Tue, 10 Apr 2018 12:01:19 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 10 Apr 2018 02:31:46 -0400
+X-Google-Smtp-Source: AIpwx49/i0Phw6j27bxRD+WFKQKhWy9FQ2k3Z6l8B1RNUNJfgHJ8ojjXhjfUwKLFRKnLkJ9BdWZm2O/Gd0MPKK12Fmw=
 MIME-Version: 1.0
-In-Reply-To: <20180409200904.GL453@tuxbook-pro>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <20180408013525.GE3036@codeaurora.org>
+References: <20180406142832.2243021-1-arnd@arndb.de> <20180408013525.GE3036@codeaurora.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 10 Apr 2018 08:31:44 +0200
+X-Google-Sender-Auth: uqUAEi4u7Ce8kOLjcDTSkB5AE-U
+Message-ID: <CAK8P3a0ZhHY35rDrg5m4o3fTXugAG3QipnaZQupnUafvKcH6HQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] hexagon: fix ffz/fls/ffs return type
+To: Richard Kuo <rkuo@codeaurora.org>
+Cc: "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 4/10/2018 1:39 AM, Bjorn Andersson wrote:
-> On Mon 09 Apr 10:38 PDT 2018, Vivek Gautam wrote:
->> On 4/9/2018 10:21 PM, Bjorn Andersson wrote:
->>> On Mon 09 Apr 06:24 PDT 2018, Vivek Gautam wrote:
-> [..]
->>>> diff --git a/include/linux/phy/phy-qcom-ufs.h b/include/linux/phy/phy-qcom-ufs.h
->>>> index 0a2c18a9771d..1388c2a2965e 100644
->>>> --- a/include/linux/phy/phy-qcom-ufs.h
->>>> +++ b/include/linux/phy/phy-qcom-ufs.h
->>>> @@ -31,8 +31,21 @@ void ufs_qcom_phy_enable_dev_ref_clk(struct phy *phy);
->>>>     */
->>>>    void ufs_qcom_phy_disable_dev_ref_clk(struct phy *phy);
->>>> +#if IS_ENABLED(CONFIG_PHY_QCOM_UFS)
->>>>    int ufs_qcom_phy_set_tx_lane_enable(struct phy *phy, u32 tx_lanes);
->>>>    void ufs_qcom_phy_save_controller_version(struct phy *phy,
->>>> -			u8 major, u16 minor, u16 step);
->>>> +					  u8 major, u16 minor, u16 step);
->>>> +#else
->>>> +static inline int ufs_qcom_phy_set_tx_lane_enable(struct phy *phy, u32 tx_lanes)
->>>> +{
->>>> +	return -ENOSYS;
->>>> +}
->>>> +
->>>> +static inline void ufs_qcom_phy_save_controller_version(struct phy *phy,
->>>> +							u8 major, u16 minor,
->>>> +							u16 step)
->>>> +{
->>>> +}
->>>> +#endif /* PHY_QCOM_UFS */
->>> What's the timeline for getting rid of the references to these
->>> functions? I presume that code depending on these being here will
->>> compile but won't actually work?
->> Yes, these inline definitions are just to keep ufs-qcom happy with the
->> direct
->> calls that it makes to these functions.
->> As you would know these couple of functions are just used by the 20nm phy.
->> However, we don't have any platform yet in the upstream that enables this
->> phy.
->> I am hoping that we will eventually get rid of these functions when we
->> further
->> clean up ufs-qcom driver.
+On Sun, Apr 8, 2018 at 3:35 AM, Richard Kuo <rkuo@codeaurora.org> wrote:
+> On Fri, Apr 06, 2018 at 04:28:21PM +0200, Arnd Bergmann wrote:
+>> Let's use the same return type as the major architectures to
+>> avoid warnings like
 >>
-> I see, but that means that we're calling this function with a struct phy
-> that might not be a struct ufs_qcom_phy and as such a defconfig with
-> both enabled will have undefined outcome for the migrated phys.
-
-No, we will have to add support for separate phys as sdm845 has phy per 
-each lane,
-and the older struct phy will exist alongside.
-We will call this function only with the older phy pointer.
-
-> In particular we do expect that the same kernel will boot on db820c and
-> sdm845-mtp, so we will have to enable support for the 14nm & 20nm phy
-> driver (and we don't want random crashes because someone happened to
-> enable it).
-
-Right, so we create new struct phy while keeping older one intact to 
-keep the
-ufs-qcom work with both - ufs_qcom_phy and qmp_phy.
-Some of the controller drivers, such as usb/dwc3/ keep support for old 
-and new phys,
-although there the difference is between generic phy and the usb-phy.
-So, I am assuming that if we want to keep ufs-qcom on platforms using 20nm,
-14nm and 10nm phys happy, we will have to keep the phys separately for 
-sometime.
-What do you say about it?
-
-On db820c, we can still work with the ufs_qcom_phy.
-
-Regards
-Vivek
+>> drivers/ata/libahci_platform.c: In function 'ahci_platform_init_host':
+>> drivers/ata/libahci_platform.c:561:12: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+>>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>  arch/hexagon/include/asm/bitops.h | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/hexagon/include/asm/bitops.h b/arch/hexagon/include/asm/bitops.h
+>> index 5e4a59b3ec1b..8790a50b1f5e 100644
+>> --- a/arch/hexagon/include/asm/bitops.h
+>> +++ b/arch/hexagon/include/asm/bitops.h
+>> @@ -194,7 +194,7 @@ static inline int __test_bit(int nr, const volatile unsigned long *addr)
+>>   *
+>>   * Undefined if no zero exists, so code should check against ~0UL first.
+>>   */
+>> -static inline long ffz(int x)
+>> +static inline int ffz(int x)
+>>  {
+>>       int r;
+>>
+>> @@ -211,7 +211,7 @@ static inline long ffz(int x)
+>>   * This is defined the same way as ffs.
+>>   * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+>>   */
+>> -static inline long fls(int x)
+>> +static inline int fls(int x)
+>>  {
+>>       int r;
+>>
+>> @@ -232,7 +232,7 @@ static inline long fls(int x)
+>>   * the libc and compiler builtin ffs routines, therefore
+>>   * differs in spirit from the above ffz (man ffs).
+>>   */
+>> -static inline long ffs(int x)
+>> +static inline int ffs(int x)
+>>  {
+>>       int r;
+>>
 >
 >
-> So either we add the 10nm support to the existing driver or I think we
-> should migrate, at least, the 14nm support to the QMP driver (and mark
-> the remaining 20nm BROKEN for now).
->
-> Regardless of the path chosen this should be cleaned up to the point
-> where all three phys are supported.
->
-> Regards,
-> Bjorn
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Isn't ffz usually long/unsigned long on other architectures?
+
+Yes, that's right. Let's drop my patch for the moment and maybe revisit it
+later. There were only a couple of warnings in an allmodconfig build from
+this one, so it might be better change the generic bitops and the more
+common architectures to all consistently use 'long' or maybe 'unsigned long'
+as the return type for all those functions.
+
+       Arnd
