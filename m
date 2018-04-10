@@ -1,120 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752739AbeDJI77 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:59:59 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40389 "EHLO mail.bootlin.com"
+        id S1752763AbeDJJAj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 05:00:39 -0400
+Received: from mga01.intel.com ([192.55.52.88]:20088 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752351AbeDJI75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:59:57 -0400
-Date: Tue, 10 Apr 2018 10:59:45 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Abhishek Sahu <absahu@codeaurora.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 3/9] mtd: nand: qcom: erased page detection for
- uncorrectable errors only
-Message-ID: <20180410105945.65f2cade@xps13>
-In-Reply-To: <1522845745-6624-4-git-send-email-absahu@codeaurora.org>
-References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
-        <1522845745-6624-4-git-send-email-absahu@codeaurora.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752242AbeDJJAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 05:00:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,431,1517904000";
+   d="scan'208";a="219179049"
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+CC: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+Thread-Topic: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+Thread-Index: AQHTzovCXbr+Xqq9jkSj9yBS1IttZ6P4GCYAgAGeicA=
+Date: Tue, 10 Apr 2018 09:00:32 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
+References: <20180407161236.22969-1-tomas.winkler@intel.com>
+ <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
+In-Reply-To: <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjAwMjAxYmYtNGFhOC00NGRiLWE0ODgtOTM5OWU2YmU3NTVhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJhVG9WazFzZ05kXC9JMGIwTm51VmN0RUhXalpqcmNJWm96ZVVNQzY1eGlmYnZLZ3M1Vys4bUhwOXdubXR0SlRBSCJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.255.201.153]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-
-Hi Abhishek,
-
-On Wed,  4 Apr 2018 18:12:19 +0530, Abhishek Sahu
-<absahu@codeaurora.org> wrote:
-
-> The NAND flash controller generates ECC uncorrectable error
-> first in case of completely erased page. Currently driver
-> applies the erased page detection logic for other operation
-> errors also so fix this and return EIO for other operational
-> errors.
-
-I am sorry I don't understand very well what is the purpose of this
-patch, could you please explain it again?
-
-Do you mean that you want to avoid having rising ECC errors when you
-read erased pages?
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3A90iWd008750
 
 > 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
->  drivers/mtd/nand/qcom_nandc.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+> On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> > In crb_map_io() function, __crb_request_locality() is called prior to
+> > crb_cmd_ready(), but if one of the consecutive function fails the flow
+> > bails out instead of trying to relinquish locality.
+> > This patch adds goto jump to __crb_relinquish_locality() on the error path.
+> >
+> > Fixes: 888d867df441 (tpm: cmd_ready command can be issued only after
+> > granting
+> > locality)
+> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > ---
+> >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+> >  1 file changed, 7 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+> > index 7f78482cd157..34fbc6cb097b 100644
+> > --- a/drivers/char/tpm/tpm_crb.c
+> > +++ b/drivers/char/tpm/tpm_crb.c
+> > @@ -511,8 +511,10 @@ static int crb_map_io(struct acpi_device *device,
+> > struct crb_priv *priv,
+> >
+> >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf->control_address,
+> >  				   sizeof(struct crb_regs_tail));
+> > -	if (IS_ERR(priv->regs_t))
+> > -		return PTR_ERR(priv->regs_t);
+> > +	if (IS_ERR(priv->regs_t)) {
+> > +		ret = PTR_ERR(priv->regs_t);
+> > +		goto out_relinquish_locality;
+> > +	}
+> >
+> >  	/*
+> >  	 * PTT HW bug w/a: wake up the device to access @@ -520,7 +522,7
+> @@
+> > static int crb_map_io(struct acpi_device *device, struct crb_priv
+> > *priv,
+> >  	 */
+> >  	ret = crb_cmd_ready(dev, priv);
+> >  	if (ret)
+> > -		return ret;
+> > +		goto out_relinquish_locality;
+> >
+> >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+> >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> > @@ -565,6 +567,8 @@ static int crb_map_io(struct acpi_device *device,
+> > struct crb_priv *priv,
+> >
+> >  	crb_go_idle(dev, priv);
+> >
+> > +out_relinquish_locality:
+> > +
+> >  	__crb_relinquish_locality(dev, priv, 0);
+> >
+> >  	return ret;
 > 
-> diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
-> index 17321fc..57c16a6 100644
-> --- a/drivers/mtd/nand/qcom_nandc.c
-> +++ b/drivers/mtd/nand/qcom_nandc.c
-> @@ -1578,6 +1578,7 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
->  	struct nand_ecc_ctrl *ecc = &chip->ecc;
->  	unsigned int max_bitflips = 0;
->  	struct read_stats *buf;
-> +	bool flash_op_err = false;
->  	int i;
->  
->  	buf = (struct read_stats *)nandc->reg_read_buf;
-> @@ -1599,7 +1600,7 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
->  		buffer = le32_to_cpu(buf->buffer);
->  		erased_cw = le32_to_cpu(buf->erased_cw);
->  
-> -		if (flash & (FS_OP_ERR | FS_MPU_ERR)) {
-> +		if ((flash & FS_OP_ERR) && (buffer & BS_UNCORRECTABLE_BIT)) {
+> Thanks, please just call it before returning in the error path.
 
-And later you have another "if (buffer & BS_UNCORRECTABLE_BIT)" which
-is then redundant, unless that is not what you actually want to do?
+Can you please elaborate why, isn't the centralized exiting of functions preferred kernel coding style? 
+https://www.kernel.org/doc/html/v4.11/process/coding-style.html#centralized-exiting-of-functions 
 
-Maybe you can add comments before the if ()/ else if () to explain in
-which case you enter each branch.
+Thanks
+Tomas
 
->  			bool erased;
->  
->  			/* ignore erased codeword errors */
-> @@ -1641,6 +1642,8 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
->  						max_t(unsigned int, max_bitflips, ret);
->  				}
->  			}
-> +		} else if (flash & (FS_OP_ERR | FS_MPU_ERR)) {
-> +			flash_op_err = true;
->  		} else {
->  			unsigned int stat;
->  
-> @@ -1654,6 +1657,9 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
->  			oob_buf += oob_len + ecc->bytes;
->  	}
->  
-> +	if (flash_op_err)
-> +		return -EIO;
-> +
-
-In you are propagating an error related to the controller, this is
-fine, but I think you just want to raise the fact that a NAND
-uncorrectable error occurred, in this case you should just increment
-mtd->ecc_stats.failed and return 0 (returning max_bitflips here would be
-fine too has it would be 0 too).
-
->  	return max_bitflips;
->  }
->  
-
-Thanks,
-Miquèl
-
--- 
-Miquel Raynal, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> 
+> /Jarkko
