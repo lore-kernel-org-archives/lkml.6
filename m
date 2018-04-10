@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-496670-1523391710-2-17219176192018591019
+X-Cyrus-Session-Id: sloti22d1t05-4038955-1523370573-2-3984320646554163048
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523391709; b=SJChE2G8mzKBdv5/gj2QN1+NkOXcInzuLoKzXXCS9B0Wr0KqX+
-    s5DM4CbOmk4hueFOR4+wQLDmfTjk33mAnnQUBquvb7iaBWaMxUAt37MpokablZCG
-    WCTLzp82k2bdUUuhcBSN0fNa5cXoNEAIadWYp2NufGV0KtlWspXD3ppxZNjmKUgY
-    ssaZu+57wTZS286pKBlnOhRyT7qT6kE0dpGXwIPo9qhpB/Co0sjY2LHJRwt5+BjU
-    0fj5d9MB3qw9UVDBdBVB8WXMVdbW7s/MNayqXW5FeZuVL/f2R2xd1770h474wX6q
-    lPlfyfiNtEH+wIivGz4Xi2cWQEXPBoWAxz9w==
+    1523370573; b=IbW7AQTS3/A9I3BoKrdUUvMUYP4RnJtZCAb7JvGxuBfGC41vqa
+    /iQyNJ+Wi5ATju1qhOtolT9QmFw1r5QJy2m63bNJiNz1f2czjqA0DrFWyWBeQNys
+    twdtkPhcKqZajm6N57JrfSJe9fj+ukzGw0mXJL7RCLLkKC4CmmmTvO9KGI73FZNY
+    H3lG85nzQudmg7xMtWAv40XYm+Kr5q8MjE83g5VPIBJSMqvrsafoEW9FC4ezCNs8
+    9yHPbtnSNBiSbvhyxCSoDyzaRM0bctxmwguopYosOcULH/+t2HO6KZs24ZGZpR+z
+    tD909s5wB4aWhsXqOqkBHOGafWwpeOQGo0FQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:in-reply-to
     :message-id:references:mime-version:content-type:sender:list-id;
-    s=fm2; t=1523391709; bh=j9MO1HqTLm96M0kzcMJUfWLxWDEH4hFXkQ0B1gT
-    D+W0=; b=kIAw0n7U8R/kMWhxdBWAKhNCeldBg+nqB7A2APWytHCrCRpw1wEkbSI
-    QZE8+90yNK7bwjCQfi/7QMuxSp9706fuRcAjIBAeMBnBpxnAYnXa7VT8U+XZzyzU
-    W6VmmY45DkaJMKdIvgon17q3tQmOjR2xUze6/LxqfESv8wGkeacFb+kGGoYgwXWG
-    OGgK9C2mq1bN+e2vKd69YkxCgc/4TebMvaH1fzC7KxLoztDpNvf/4Our+Hf+QpQg
-    /cdINK2o55twJqpLDIJksP/aCrC1eWzm1qyS3TxCqWEthFUcprqPRw8C7exeU4X0
-    Sl/YllHn9ppcsZaIzqTlveepLMXttiA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    s=fm2; t=1523370573; bh=kV+72ihtaYDJO2J5e9LRtp3hBiPu3Ipbe+XKztJ
+    GgtA=; b=AwRQSWbpDV6j8Uirf87PvJMwcsLSm5rMO1Qo0EMM+REa/D6PPi/DFuW
+    VLfpKI2HvqBjEHug74c9/qqjnDfXxQtJG02wHfZPFZP9j3Liuvr/cZG0CrcONMG4
+    i8urjDTZ1lOCspsdgZksLpGFeDiwLkMMxmA3KMwZ/4gJGJbcoKXaOtZufVhkihYL
+    fKIiU76ISVW3T93HtiprHNQNh8+2xIjj1JdeSARsD3YD4LOGeSouKYc5Ys0ni2i9
+    J39r8SNb9maxIKX0amavEBl0+zX66gM9Rvd2qUas+tCtj4NqunlBDZOeKrz6SOSL
+    n5XbhawU0lJobf8Nv2S3dONAxOcePKg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.com;
@@ -51,26 +51,25 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFsp9SRedBkyRIknfatO0Fgb+pShSeigmYyWrODiFiTdKlAazbMGe1NH9ETvHimRJplAm1Sneot13u0cqHGYncCSLyikIEFK0s7fmkhEjmhtSKAC32ZE
-    eBFWRB9ON1VQrRaIU4nMylr7PAim12ZMpf8E2N2D18STtBNivadn8y2vGnlo5uojNg+5QJ5D8rt4zrPqF3ucoAgBJ+8Mf2bqWnCrtat8hIDeLQlw9QyK8VR4
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOsMPjw2H202gmr/QuTb7ONBXTE+I69ZEg/ybJwTfHBIGCdYq2br3qoN/SmF5O9+hjhNn6aoifBPVwUC3wMX6ociEJjzyINJuOvYFG1W/rG4VXbml9Bw
+    +mlMdnVQG0iREL50G7RHzKLZ00fng8oHmeoKuWdbBDJChYv0P6yg5PqRRwQWRVUKUbXNxH6LJ0cEABiKP+tJzu5x3b2M6BfPabpMTUlVw8OyqZRslyBd0+Mg
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=khwyK8DuSVkA:10
-    a=Kd1tUaAdevIA:10 a=1AlvqKCeFxXN0LRMdjsA:9 a=CjuIK1q_8ugA:10
+    a=Kd1tUaAdevIA:10 a=_luCulpIytyPR5DK9ZkA:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752676AbeDJUVs (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 16:21:48 -0400
-Received: from resqmta-ch2-07v.sys.comcast.net ([69.252.207.39]:58276 "EHLO
-        resqmta-ch2-07v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752064AbeDJUVr (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 16:21:47 -0400
-Date: Tue, 10 Apr 2018 15:21:45 -0500 (CDT)
+        id S1753478AbeDJO3a (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 10:29:30 -0400
+Received: from resqmta-po-12v.sys.comcast.net ([96.114.154.171]:51750 "EHLO
+        resqmta-po-12v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753090AbeDJO3a (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 10:29:30 -0400
+Date: Tue, 10 Apr 2018 09:21:20 -0500 (CDT)
 From: Christopher Lameter <cl@linux.com>
 X-X-Sender: cl@nuc-kabylake
 To: Matthew Wilcox <willy@infradead.org>
-cc: Eric Dumazet <eric.dumazet@gmail.com>, linux-mm@kvack.org,
-        Matthew Wilcox <mawilcox@microsoft.com>,
+cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
         Pekka Enberg <penberg@kernel.org>,
         David Rientjes <rientjes@google.com>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
@@ -81,18 +80,17 @@ cc: Eric Dumazet <eric.dumazet@gmail.com>, linux-mm@kvack.org,
         stable@vger.kernel.org
 Subject: Re: [PATCH 1/2] slab: __GFP_ZERO is incompatible with a
  constructor
-In-Reply-To: <20180410175011.GE3614@bombadil.infradead.org>
-Message-ID: <alpine.DEB.2.20.1804101512350.30225@nuc-kabylake>
-References: <20180410125351.15837-1-willy@infradead.org> <fee8a8bc-3db5-a66a-33cb-0729143ba615@gmail.com> <20180410165054.GC3614@bombadil.infradead.org> <alpine.DEB.2.20.1804101228170.29384@nuc-kabylake> <20180410173841.GD3614@bombadil.infradead.org>
- <alpine.DEB.2.20.1804101244290.29559@nuc-kabylake> <20180410175011.GE3614@bombadil.infradead.org>
+In-Reply-To: <20180410125351.15837-1-willy@infradead.org>
+Message-ID: <alpine.DEB.2.20.1804100920110.27333@nuc-kabylake>
+References: <20180410125351.15837-1-willy@infradead.org>
 User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfPUKRHkC95QsYrsIT/As+M4MSZCyYLCp+5Cst2swZujtOJoUrFHU7zC4Nl1QMG4754OssGAAdlEis2Jnkr3d5BnTplf67r8GdqdzQL8jAnjP5sRgI2Gc
- j3pmFYt3AdHvOHRJLzhj3b6Vcdmh+OYTekB9puRGA0tveYrtyPA3Ft/w1j9B/ZdSJymy1S31mOdgBqtTw7HPaz2WgJqwQqbgClGy0xiG6UJn81qgSKse348b
- yoKp+1qBggTOQLgWOuwmGEzvqJ6f78E3wgj/gvNiV8qyUr5R0i9k91YPOHiX36b4Jrz1tOHk4xRXy+vQwaItR4Z8VEVwR0PDXV34+9BsTgKRH8tV93DgPqrV
- cVGg6cvraYbImt7vG1iJ4DBWp3CBRNFit8iQGmZDHH/8ipyt8ogyGOvULfJQ/YrXm30yxzHYoJ7Out4N0By4ITrTbNlx90A2kU1AVUT0oIi3Bjob/SjagaSR
- 8myGqifIT2oxKk2KqJJEEQvQ9zWEEqcrkBcDiUMv9YXpDi0yV5fzydZGj41mOd1cM6avl+nNpRFrMrpTAjOouxI9aJpkOG/zqwwj/Q==
+X-CMAE-Envelope: MS4wfBkChvRlASOl+lo9K+AwiU6LxkT8MbEcaHqvHcSIW4dO/VptPDF7J9sHRIyTUWWHUETTjtDuFNkXwwvAMK1QDOqYpzVk14uB37kYHnMz2p3jPzJcqkWg
+ PqSMokymvRECmGJdXFVP0nTFDpDQPugXonVf/3wYct1hC/1Olyq/0fFhLZJs6we8gC4S+l4JcJETSr1LhWgQsgu3XDJ/HOBdslJRU9kfYcvXQdHN9+7nf089
+ cWhIf9a2163BPdA1BX3/UBqgTEuoF8AbgCepkUs5UQQs0fnJV4EZKc9d1l3BZiYdn2abjeJQkSJagKZM1x5j63LZkdoQe684gUI7M0Z4/67z5lRD/OxD9E3J
+ bgQ+LxOVmB/UwkGERNMsSFvfcWinUXaht+o3F8Syb5jPscbCw3lWlYaVwlNI0twXiwbyHBvkRJmwXOK5AJ+RpQGXp7DKpCMdkzqg6g6mHzLVQpQLSXO27eCD
+ AYDTRmlWZyYwwj1guyKRmqqMGrd1EBdTIB1aid830uCVSnjgTsoK8zoOcvs=
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
@@ -101,17 +99,12 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 On Tue, 10 Apr 2018, Matthew Wilcox wrote:
 
-> > Objects can be freed and reused and still be accessed from code that
-> > thinks the object is the old and not the new object....
->
-> Yes, I know, that's the point of RCU typesafety.  My point is that an
-> object *which has never been used* can't be accessed.  So you don't *need*
+> __GFP_ZERO requests that the object be initialised to all-zeroes,
+> while the purpose of a constructor is to initialise an object to a
+> particular pattern.  We cannot do both.  Add a warning to catch any
+> users who mistakenly pass a __GFP_ZERO flag when allocating a slab with
 > a constructor.
 
-But the object needs to have the proper contents after it was released and
-re-allocated. Some objects may rely on contents (like list heads)
-surviving the realloc process because access must always be possible.
-
-validate_slab() checks on proper metadata content in a slab
-although it does not access the payload. So that may work you separate
-the payload init from the metadata init.
+Can we move this check out of the critical paths and check for
+a ctor and GFP_ZERO when calling the page allocator? F.e. in
+allocate_slab()?
