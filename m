@@ -1,179 +1,135 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-814531-1523400639-2-7412926937270818670
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES roen, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523400639; b=n028QV5FJQIVlFuvRUOzhKUntfZtwDkVCWxagVr9vT3Q5+CISn
-    xDyKO2XATOgVu3qrZsMNdL8Jk5+Ru06hCIDzg/d0eKcHOJg+fdouSLUBuG2qoGsZ
-    WTbe3VFP0tNQUslVjtOY1WqS5McridL5laqZaKrr4J/33RMBmNx417c5TPPcSFw7
-    VhO3i2XyjJi5qQBoT9SMihJ1zEMOAbf4wynmpimvOVSN1Z8slHYmPmLQ4ZyjgTg9
-    t9hjq6iZ5o0tLuwnnF2H7+CgMKposelXE+up08gT9rtNwyRfkb/tFvECjVLzRYZg
-    1drSH/tJpk0gTNGaZb9pnrCTe5FYS++Zz6sw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:from:to:cc:date:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1523400639;
-    bh=O/1+VwZvrcMSZ9obwTV+STsd1e6jm5UklGjfMFcEXhQ=; b=qg8kI1FHpypY
-    ShTcZfwPE0pW4GV45P4sDT4mWLHGcjwQKccdTD/dG/1mvSe6JU0GMyD4hq1tPGrA
-    OGwLJfYSeR8+8Ekvh9iYV5FLTTpbS1JoOpFznEgx+U+T9fVKLUmDUY9mXSCLhDN6
-    bffkoDcfP0EA+6fYq+sMk2P0Ar/geCySlmFkzXWXn3wnt5zNpIUhpFZdQGTZl8dG
-    v//L5aNBOizCdEH7cVLlMt2fgT/xZJEybnFJ+c8Sa+MUjwpbzWdEVgosGEp66frB
-    fo/izfDp8nc3h9ocF6p4dbDVMIwhIrZRmRx1paRS1qizHff2xAJ6j5efjOyYBwcM
-    bDnQEeFOmw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPA0JhEoykIfuYvZ3P9LKFwGvJ/r+H+eFo8rToGDqfrdh6C0ILm6yrrWgY8VeBYhM9f9vG1Gw5LMEfFKno5nO249W23f6/H2FsibFWxeO44DzIxUSRPc
-    lLaDLVryjDc0odajcdyWnobL4Bx0iaYaoL48MiBtCKBguNxbJBXLCXMzGDRQAaN87wV8Q7dX2noXFjuWLT9yISqC91Kdu0eM1Pnmtb/cCQ9TD8HVKN2dE9sD
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=1FL4lf_29kGO0JYtru8A:9
-    a=tQDV35Sbf7FbmtH7:21 a=aUgsENKXxGY_7Mnw:21 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756229AbeDJWtM (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 18:49:12 -0400
-Received: from mga06.intel.com ([134.134.136.31]:36187 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752865AbeDJWtL (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 10 Apr 2018 18:49:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,433,1517904000";
-   d="scan'208";a="46829025"
-Subject: [PATCH 1/5] libnvdimm, dimm: handle EACCES failures from label reads
-From: Dan Williams <dan.j.williams@intel.com>
-To: linux-nvdimm@lists.01.org
-Cc: stable@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Tue, 10 Apr 2018 15:39:14 -0700
-Message-ID: <152339995442.16061.14476943382736126807.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <152339994885.16061.1760220735664848631.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <152339994885.16061.1760220735664848631.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+Return-Path: <daniel.diaz@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1523398313; cv=none;
+        d=google.com; s=arc-20160816;
+        b=L78RcdPhgukYJL03qEwjeuwuas1317PxBqy5W/RLj3Hghv7Yfm8zdvQzmXweeDLKeQ
+         hVWDyyWOD02o+OH/pw5NWldRN4Dhn0XxBSqhf9deTgzkKOSvlyOPXdSBq7c+DlMrW92T
+         fdLr+3Jcv+GIJINAAK9v+smiyvvCg+jHTizsgf6pJpR6y87F3jC1dK4LcCObNy0Cl94L
+         DUiZIW6XJbmP548KTj+xGG2IbaG7Dx+6kk1CmPaUi1ywD9G0NJDCAEFmYJrtbws+qsk1
+         KqVpGFsAx+bk83JO3loC8n/+n3JBaY/rF76VHXRBV083CoTOiET5IhGtYimXu4+9JvIZ
+         yHDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:dkim-signature:arc-authentication-results;
+        bh=FzYdj1ir5hsaCB5SEkneo6//D13q3KA/6xRS5O7atq0=;
+        b=LYCxUhiwiY50qPqlqhK2fGDH11Pn0pKvqNOHjcfO/JAoyDNAUXh+fwki2Yxw5dy9kR
+         Oz4WViHJnsjsCxhjJsRvmCN1gvO3lmmDjqT5A/VGLR4jTKZRgNzmQdlxKdWK+ZLpzS8e
+         fpxPcM0FgMptABFCJnsuRWYL2cDhB5EYfwGtSj3equJHtw083MkvSGr5TkaeMR4ygKsP
+         OftznltigodGEFC+8oWIWDq9avriOGYL0k578ofzuFQ7EpvDTD+udC2VWgUXc83dbA9h
+         /Z/E/CyaBj66qDKiXb083uiQ7QTJ2KhngIVvQEr7CpTMGyl5CjUuzVyeaYCs5H1ISmJs
+         lgaw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=U3HQ513B;
+       spf=pass (google.com: domain of daniel.diaz@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=daniel.diaz@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=U3HQ513B;
+       spf=pass (google.com: domain of daniel.diaz@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=daniel.diaz@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AIpwx49iEJRRb0Qwrczft/NJ70iOQYL31mZkDR7zhLu9ysh4Sxuen2/q0WGmvGF3KudsitgftGEjQw==
+From: =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>
+To: shuahkh@osg.samsung.com,
+	linux-kselftest@vger.kernel.org
+Cc: =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Thomas Meyer <thomas@m3y3r.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] selftests/intel_pstate: Improve test, minor fixes
+Date: Tue, 10 Apr 2018 17:11:15 -0500
+Message-Id: <1523398277-2066-1-git-send-email-daniel.diaz@linaro.org>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597398910011233262?=
+X-GMAIL-MSGID: =?utf-8?q?1597398910011233262?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The new support for the standard _LSR and _LSW methods neglected to also
-update the nvdimm_init_config_data() and nvdimm_set_config_data() to
-return the translated error code from failed commands. This precision is
-necessary because the locked status that was previously returned on
-ND_CMD_GET_CONFIG_SIZE commands is now returned on
-ND_CMD_{GET,SET}_CONFIG_DATA commands.
+A few changes improve the overall usability of the test:
+* fix a hard-coded maximum frequency (3300),
+* don't adjust the CPU frequency if only evaluating results,
+* fix a comparison for multiple frequencies.
 
-If the kernel misses this indication it can inadvertently fall back to
-label-less mode when it should otherwise avoid all access to locked
-regions.
+A symptom of that last issue looked like this:
+  ./run.sh: line 107: [: too many arguments
+  ./run.sh: line 110: 3099
+  3099
+  3100-3100: syntax error in expression (error token is \"3099
+  3100-3100\")
 
-Cc: <stable@vger.kernel.org>
-Fixes: 4b27db7e26cd ("acpi, nfit: add support for the _LSI, _LSR, and...")
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Because a check will count how many differente frequencies
+there are among the CPUs of the system, and after they are
+tallied another read is performed, which might produce
+different results.
+
+Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
 ---
- drivers/nvdimm/dimm_devs.c |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ tools/testing/selftests/intel_pstate/run.sh | 24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
-index e00d45522b80..8d348b22ba45 100644
---- a/drivers/nvdimm/dimm_devs.c
-+++ b/drivers/nvdimm/dimm_devs.c
-@@ -88,9 +88,9 @@ int nvdimm_init_nsarea(struct nvdimm_drvdata *ndd)
- int nvdimm_init_config_data(struct nvdimm_drvdata *ndd)
- {
- 	struct nvdimm_bus *nvdimm_bus = walk_to_nvdimm_bus(ndd->dev);
-+	int rc = validate_dimm(ndd), cmd_rc = 0;
- 	struct nd_cmd_get_config_data_hdr *cmd;
- 	struct nvdimm_bus_descriptor *nd_desc;
--	int rc = validate_dimm(ndd);
- 	u32 max_cmd_size, config_size;
- 	size_t offset;
+diff --git a/tools/testing/selftests/intel_pstate/run.sh b/tools/testing/selftests/intel_pstate/run.sh
+index c670359..bde31a0 100755
+--- a/tools/testing/selftests/intel_pstate/run.sh
++++ b/tools/testing/selftests/intel_pstate/run.sh
+@@ -48,11 +48,12 @@ function run_test () {
  
-@@ -124,9 +124,11 @@ int nvdimm_init_config_data(struct nvdimm_drvdata *ndd)
- 		cmd->in_offset = offset;
- 		rc = nd_desc->ndctl(nd_desc, to_nvdimm(ndd->dev),
- 				ND_CMD_GET_CONFIG_DATA, cmd,
--				cmd->in_length + sizeof(*cmd), NULL);
--		if (rc || cmd->status) {
--			rc = -ENXIO;
-+				cmd->in_length + sizeof(*cmd), &cmd_rc);
-+		if (rc < 0)
-+			break;
-+		if (cmd_rc < 0) {
-+			rc = cmd_rc;
- 			break;
- 		}
- 		memcpy(ndd->data + offset, cmd->out_buf, cmd->in_length);
-@@ -140,9 +142,9 @@ int nvdimm_init_config_data(struct nvdimm_drvdata *ndd)
- int nvdimm_set_config_data(struct nvdimm_drvdata *ndd, size_t offset,
- 		void *buf, size_t len)
- {
--	int rc = validate_dimm(ndd);
- 	size_t max_cmd_size, buf_offset;
- 	struct nd_cmd_set_config_hdr *cmd;
-+	int rc = validate_dimm(ndd), cmd_rc = 0;
- 	struct nvdimm_bus *nvdimm_bus = walk_to_nvdimm_bus(ndd->dev);
- 	struct nvdimm_bus_descriptor *nd_desc = nvdimm_bus->nd_desc;
+ 	echo "sleeping for 5 seconds"
+ 	sleep 5
+-	num_freqs=$(cat /proc/cpuinfo | grep MHz | sort -u | wc -l)
+-	if [ $num_freqs -le 2 ]; then
+-		cat /proc/cpuinfo | grep MHz | sort -u | tail -1 > /tmp/result.$1
++	grep MHz /proc/cpuinfo | sort -u > /tmp/result.freqs
++	num_freqs=$(wc -l /tmp/result.freqs | awk ' { print $1 } ')
++	if [ $num_freqs -ge 2 ]; then
++		tail -n 1 /tmp/result.freqs > /tmp/result.$1
+ 	else
+-		cat /proc/cpuinfo | grep MHz | sort -u > /tmp/result.$1
++		cp /tmp/result.freqs /tmp/result.$1
+ 	fi
+ 	./msr 0 >> /tmp/result.$1
  
-@@ -164,7 +166,6 @@ int nvdimm_set_config_data(struct nvdimm_drvdata *ndd, size_t offset,
- 	for (buf_offset = 0; len; len -= cmd->in_length,
- 			buf_offset += cmd->in_length) {
- 		size_t cmd_size;
--		u32 *status;
+@@ -82,21 +83,20 @@ _max_freq=$(cpupower frequency-info -l | tail -1 | awk ' { print $2 } ')
+ max_freq=$(($_max_freq / 1000))
  
- 		cmd->in_offset = offset + buf_offset;
- 		cmd->in_length = min(max_cmd_size, len);
-@@ -172,12 +173,13 @@ int nvdimm_set_config_data(struct nvdimm_drvdata *ndd, size_t offset,
  
- 		/* status is output in the last 4-bytes of the command buffer */
- 		cmd_size = sizeof(*cmd) + cmd->in_length + sizeof(u32);
--		status = ((void *) cmd) + cmd_size - sizeof(u32);
+-for freq in `seq $max_freq -100 $min_freq`
++[ $EVALUATE_ONLY -eq 0 ] && for freq in `seq $max_freq -100 $min_freq`
+ do
+ 	echo "Setting maximum frequency to $freq"
+ 	cpupower frequency-set -g powersave --max=${freq}MHz >& /dev/null
+-	[ $EVALUATE_ONLY -eq 0 ] && run_test $freq
++	run_test $freq
+ done
  
- 		rc = nd_desc->ndctl(nd_desc, to_nvdimm(ndd->dev),
--				ND_CMD_SET_CONFIG_DATA, cmd, cmd_size, NULL);
--		if (rc || *status) {
--			rc = rc ? rc : -ENXIO;
-+				ND_CMD_SET_CONFIG_DATA, cmd, cmd_size, &cmd_rc);
-+		if (rc < 0)
-+			break;
-+		if (cmd_rc < 0) {
-+			rc = cmd_rc;
- 			break;
- 		}
- 	}
+-echo "=============================================================================="
++[ $EVALUATE_ONLY -eq 0 ] && cpupower frequency-set -g powersave --max=${max_freq}MHz >& /dev/null
+ 
++echo "=============================================================================="
+ echo "The marketing frequency of the cpu is $mkt_freq MHz"
+ echo "The maximum frequency of the cpu is $max_freq MHz"
+ echo "The minimum frequency of the cpu is $min_freq MHz"
+ 
+-cpupower frequency-set -g powersave --max=${max_freq}MHz >& /dev/null
+-
+ # make a pretty table
+ echo "Target      Actual      Difference     MSR(0x199)     max_perf_pct"
+ for freq in `seq $max_freq -100 $min_freq`
+@@ -104,10 +104,6 @@ do
+ 	result_freq=$(cat /tmp/result.${freq} | grep "cpu MHz" | awk ' { print $4 } ' | awk -F "." ' { print $1 } ')
+ 	msr=$(cat /tmp/result.${freq} | grep "msr" | awk ' { print $3 } ')
+ 	max_perf_pct=$(cat /tmp/result.${freq} | grep "max_perf_pct" | awk ' { print $2 } ' )
+-	if [ $result_freq -eq $freq ]; then
+-		echo " $freq        $result_freq             0          $msr         $(($max_perf_pct*3300))"
+-	else
+-		echo " $freq        $result_freq          $(($result_freq-$freq))          $msr          $(($max_perf_pct*$max_freq))"
+-	fi
++	echo " $freq        $result_freq          $(($result_freq-$freq))          $msr          $(($max_perf_pct*$max_freq))"
+ done
+ exit 0
+-- 
+2.7.4
