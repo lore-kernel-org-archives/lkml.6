@@ -1,92 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754097AbeDJOrG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:47:06 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:42957 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753562AbeDJOrE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:47:04 -0400
-X-Google-Smtp-Source: AIpwx48/9d79M5mijrj9+rKDWzM2ZEQQDILNK0eE7u/JzXzCwAPGBBNm8Ri5r90dB4KQkvX3J01nQUvrF2k4S5wqORU=
+        id S1754169AbeDJOsQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:48:16 -0400
+Received: from h2.hallyn.com ([78.46.35.8]:56932 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753580AbeDJOsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 10:48:14 -0400
+Date: Tue, 10 Apr 2018 09:48:12 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org
+Subject: Re: KASAN: null-ptr-deref Read in xattr_getsecurity
+Message-ID: <20180410144812.GB13386@mail.hallyn.com>
+References: <0000000000008d2e0d05697a693d@google.com>
+ <9d192497-8b1e-ca8d-0ed8-b3324ee1e361@I-love.SAKURA.ne.jp>
+ <87o9irw2ad.fsf@xmission.com>
 MIME-Version: 1.0
-In-Reply-To: <87feac02-e955-1897-d4a4-d6d6d1082e45@gmail.com>
-References: <1523276721-4982-1-git-send-email-geert+renesas@glider.be>
- <9bea3ad8-7e84-87c2-9963-de81ad4cb3bf@gmail.com> <CAMuHMdWHoxrq-tj=QznAhuZ8eC22gTTgWFi9HgyqT9pNfJFJyw@mail.gmail.com>
- <87feac02-e955-1897-d4a4-d6d6d1082e45@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 10 Apr 2018 16:47:02 +0200
-X-Google-Sender-Auth: s0T9rAF1H_Tp0GA68m5Sy9tDus0
-Message-ID: <CAMuHMdWm96dPSx8bms0esFaDhCri9daon0UT4x=qEqeK2XFnTA@mail.gmail.com>
-Subject: Re: [PATCH] mtd: partitions: Handle add_mtd_device() failures gracefully
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87o9irw2ad.fsf@xmission.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marek,
+On Tue, Apr 10, 2018 at 09:42:50AM -0500, Eric W. Biederman wrote:
+> Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> writes:
+> 
+> > From 904d07a6eb014f3df0c5a1ebfcfd4323276a9a76 Mon Sep 17 00:00:00 2001
+> > From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > Date: Tue, 10 Apr 2018 15:15:16 +0900
+> > Subject: [PATCH] commoncap: Handle memory allocation failure.
+> >
+> > syzbot is reporting NULL pointer dereference at xattr_getsecurity() [1],
+> > for cap_inode_getsecurity() is returning sizeof(struct vfs_cap_data) when
+> > memory allocation failed. Return -ENOMEM if memory allocation failed.
+> >
+> > [1] https://syzkaller.appspot.com/bug?id=a55ba438506fe68649a5f50d2d82d56b365e0107
+> 
+> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> 
+> Tetsuo I can pick this up, or do you have preferred path for getting
+> this change merged?
+> 
+> Serge does this fix look ok to you?  I am a bit worried that
 
-On Tue, Apr 10, 2018 at 4:37 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
-> On 04/10/2018 03:26 PM, Geert Uytterhoeven wrote:
->> On Mon, Apr 9, 2018 at 11:59 PM, Marek Vasut <marek.vasut@gmail.com> wrote:
->>> On 04/09/2018 02:25 PM, Geert Uytterhoeven wrote:
->>>> Currently add_mtd_device() failures are plainly ignored, which may lead
->>>> to kernel crashes later.
->>
->>>> Fix this by ignoring and freeing partitions that failed to add in
->>>> add_mtd_partitions().  The same issue is present in mtd_add_partition(),
->>>> so fix that as well.
->>>>
->>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>>> ---
->>>> I don't know if it is worthwhile factoring out the common handling.
->>>>
->>>> Should allocate_partition() fail instead?  There's a comment saying
->>>> "let's register it anyway to preserve ordering".
->>
->>>> --- a/drivers/mtd/mtdpart.c
->>>> +++ b/drivers/mtd/mtdpart.c
->>
->>>> @@ -746,7 +753,15 @@ int add_mtd_partitions(struct mtd_info *master,
->>>>               list_add(&slave->list, &mtd_partitions);
->>>>               mutex_unlock(&mtd_partitions_mutex);
->>>>
->>>> -             add_mtd_device(&slave->mtd);
->>>> +             ret = add_mtd_device(&slave->mtd);
->>>> +             if (ret) {
->>>> +                     mutex_lock(&mtd_partitions_mutex);
->>>> +                     list_del(&slave->list);
->>>> +                     mutex_unlock(&mtd_partitions_mutex);
->>>> +                     free_partition(slave);
->>>> +                     continue;
->>>> +             }
->>>
->>> Why is the partition even in the list in the first place ? Can we avoid
->>> adding it rather than adding and removing it ?
->>
->> Hence my question "Should allocate_partition() fail instead?".
->> Note that if we go that route, it should be a "soft" failure, as we
->> probably don't
->> want to drop all other partitions on the device.
-> Is the number of partitions ie. in /proc/mtdparts an ABI ?
+yup, looks good to me.  would have replied an hour or two ago but lacked
+an lkml-acceptable mailer :)
 
-I don't know.
+thanks,
+serge
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> might be a bit brittler but I don't see any issues with this change.
+> 
+> Eric
+> 
+> 
+> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > Fixes: 8db6c34f1dbc8e06 ("Introduce v3 namespaced file capabilities")
+> > Reported-by: syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>
+> > Cc: stable <stable@vger.kernel.org> # 4.14+
+> > Cc: Serge E. Hallyn <serge@hallyn.com>
+> > Cc: Eric W. Biederman <ebiederm@xmission.com>
+> > ---
+> >  security/commoncap.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/security/commoncap.c b/security/commoncap.c
+> > index 48620c9..1ce701f 100644
+> > --- a/security/commoncap.c
+> > +++ b/security/commoncap.c
+> > @@ -449,6 +449,8 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+> >  				magic |= VFS_CAP_FLAGS_EFFECTIVE;
+> >  			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
+> >  			cap->magic_etc = cpu_to_le32(magic);
+> > +		} else {
+> > +			size = -ENOMEM;
+> >  		}
+> >  	}
+> >  	kfree(tmpbuf);
+> > --
+> > 1.8.3.1
