@@ -1,58 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752746AbeDJLEu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 07:04:50 -0400
-Received: from mail-lf0-f46.google.com ([209.85.215.46]:34354 "EHLO
-        mail-lf0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751943AbeDJLEs (ORCPT
+        id S1752664AbeDJLGk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 07:06:40 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:53440 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751611AbeDJLGj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 07:04:48 -0400
-X-Google-Smtp-Source: AIpwx48sCijvR45PolkiBuo1hu25sR6IRea7tBAo5KyGWIHDl+daoak8WhsCej7P0eyNxQbRgIZPig==
-Subject: Re: [Xen-devel] [RFC, v2, 1/9] hyper_dmabuf: initial upload of
- hyper_dmabuf drv core framework
-To: Julien Grall <julien.grall@arm.com>,
-        Dongwon Kim <dongwon.kim@intel.com>, linux-kernel@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org, xen-devel@lists.xenproject.org
-Cc: mateuszx.potrola@intel.com, dri-devel@lists.freedesktop.org
-References: <20180214015008.9513-2-dongwon.kim@intel.com>
- <7647f032-29ee-ef83-d0a6-b625cef00b72@gmail.com>
- <05859c14-e4a9-db9e-bb4c-35aa26d04c23@arm.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <2cc94762-d027-95bb-9e0d-c72e98da082c@gmail.com>
-Date: Tue, 10 Apr 2018 14:04:45 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 10 Apr 2018 07:06:39 -0400
+Date: Tue, 10 Apr 2018 13:06:26 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: yuankuiz@codeaurora.org
+cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pm-owner@vger.kernel.org
+Subject: Re: [PATCH] time: tick-sched: use bool for tick_stopped
+In-Reply-To: <a7d6dddd7d4f9fdc0be8f94251af237f@codeaurora.org>
+Message-ID: <alpine.DEB.2.21.1804101242110.2058@nanos.tec.linutronix.de>
+References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org> <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com> <f253686d26b3470f0e9b60502eb62315@codeaurora.org> <alpine.DEB.2.21.1804101110080.2058@nanos.tec.linutronix.de>
+ <a7d6dddd7d4f9fdc0be8f94251af237f@codeaurora.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <05859c14-e4a9-db9e-bb4c-35aa26d04c23@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/10/2018 01:47 PM, Julien Grall wrote:
-> Hi,
->
-> On 04/10/2018 09:53 AM, Oleksandr Andrushchenko wrote:
->> On 02/14/2018 03:50 AM, Dongwon Kim wrote:
->>> diff --git a/drivers/dma-buf/hyper_dmabuf/hyper_dmabuf_id.h 
->
-> [...]
->
->>> +#ifndef __HYPER_DMABUF_ID_H__
->>> +#define __HYPER_DMABUF_ID_H__
->>> +
->>> +#define HYPER_DMABUF_ID_CREATE(domid, cnt) \
->>> +    ((((domid) & 0xFF) << 24) | ((cnt) & 0xFFFFFF))
->> I would define hyper_dmabuf_id_t.id as a union or 2 separate
->> fields to avoid his magic
->
-> I am not sure the union would be right here because the layout will 
-> differs between big and little endian.
-Agree
-> So does that value will be passed to other guest?
-As per my understanding yes, with HYPER_DMABUF_EXPORT request
->
-> Cheers,
->
+On Tue, 10 Apr 2018, yuankuiz@codeaurora.org wrote:
+> On 2018-04-10 05:10 PM, Thomas Gleixner wrote:
+> > On Tue, 10 Apr 2018, yuankuiz@codeaurora.org wrote:
+> > > On 2018-04-10 04:00 PM, Rafael J. Wysocki wrote:
+> > > > On Tue, Apr 10, 2018 at 9:33 AM,  <yuankuiz@codeaurora.org> wrote:
+> > > > > From: John Zhao <yuankuiz@codeaurora.org>
+> > > > >
+> > > > > Variable tick_stopped returned by tick_nohz_tick_stopped
+> > > > > can have only true / false values. Since the return type
+> > > > > of the tick_nohz_tick_stopped is also bool, variable
+> > > > > tick_stopped nice to have data type as bool in place of unsigned int.
+> > > > > Moreover, the executed instructions cost could be minimal
+> > > > > without potiential data type conversion.
+> > > > >
+> > > > > Signed-off-by: John Zhao <yuankuiz@codeaurora.org>
+> > > > > ---
+> > > > >  kernel/time/tick-sched.h | 2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > >
+> > > > > diff --git a/kernel/time/tick-sched.h b/kernel/time/tick-sched.h
+> > > > > index 6de959a..4d34309 100644
+> > > > > --- a/kernel/time/tick-sched.h
+> > > > > +++ b/kernel/time/tick-sched.h
+> > > > > @@ -48,8 +48,8 @@ struct tick_sched {
+> > > > >         unsigned long                   check_clocks;
+> > > > >         enum tick_nohz_mode             nohz_mode;
+> > > > >
+> > > > > +       bool                            tick_stopped    : 1;
+> > > > >         unsigned int                    inidle          : 1;
+> > > > > -       unsigned int                    tick_stopped    : 1;
+> > > > >         unsigned int                    idle_active     : 1;
+> > > > >         unsigned int                    do_timer_last   : 1;
+> > > > >         unsigned int                    got_idle_tick   : 1;
+> > > >
+> > > > I don't think this is a good idea at all.
+> > > >
+> > > > Please see https://lkml.org/lkml/2017/11/21/384 for example.
+> > > [ZJ] Thanks for this sharing. Looks like, this patch fall into the case of
+> > > "Maybe".
+> > 
+> > This patch falls into the case 'pointless' because it adds extra storage
+> [ZJ] 1 bit vs 1 bit. no more.
+
+Groan. No. Care to look at the data structure? You create a new storage,
+which is incidentally merged into the other bitfield by the compiler at a
+different bit position, but there is no guarantee that a compiler does
+that. It's free to use distinct storage for that bool based bit.
+
+> > for no benefit at all.
+> [ZJ] tick_stopped is returned by the tick_nohz_tick_stopped() which is bool.
+> The benefit is no any potiential type conversion could be minded.
+
+A bit stays a bit. 'bool foo : 1;' or 'unsigned int foo : 1' has to be
+evaluated as a bit. So there is a type conversion from BIT to bool required
+because BIT != bool.
+
+By chance the evaluation can be done by evaluating the byte in which the
+bit is placed just because the compiler knows that the remaining bits are
+not used. There is no guarantee that this is done, it happens to be true
+for a particular compiler.
+
+But that does not make it any more interesting. It just makes the code
+harder to read and eventually leads to bigger storage.
+
+Thanks,
+
+	tglx
