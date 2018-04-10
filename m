@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+A19iNnOZQZu75SVyGpLcCWPQQBJ4bN0Nae7bcUh2GBOWNsKybzvbHnuwtPpXBp+nElkoT
-ARC-Seal: i=1; a=rsa-sha256; t=1523399531; cv=none;
+X-Google-Smtp-Source: AIpwx4+n7sAZRL4dt1G94r+noZZ0rjaeuKsBgdIDhTzZnV1cHPUq3tdye+Y2Te0zkYc/MuBqHag4
+ARC-Seal: i=1; a=rsa-sha256; t=1523399529; cv=none;
         d=google.com; s=arc-20160816;
-        b=TgCaDxJ5VFcXLrDQ4Qq9Q1AvKFjh2EPLPdWqFMhegbnm7koxnQfykxs98Tm4S+X1vb
-         C458tmo0Uhd9eqvUvbLHcYNFvbHN/NRVEkoFxG7wpJ5oa1TQWzxJ6IbkGH39SfDm9pHO
-         TkO0QtboPelEHFHIYxHaroZ3T++MdEw4esUc2CznJOi8CJkjanXBmw51eLShbO1MDm2c
-         YaXaiQfC22iBB+r1puXkzKt8t3jMQEDirusgHMiVUBn2g9wqy4FCfVulHYF3b6tdo+yB
-         vakhna/GKr4QiQafdY07YMPwpD5vr6i22j+Wrm+O5k9ovSQbg07lZwImhEfTY/Li6sxx
-         vsmw==
+        b=q1aL98JxYoXDRSfcCM7okRmSR6ZHGtAYjY68A93mIa2+edc8nICquMLiNXudyX++bi
+         h//mMIEYLzH5BnuDJVGRMnIjHBDlopX5+TIq8XhOcrpV+95VtCMkumwx3z3GsWTlWyGa
+         ULKT9lKSMX77VZPDVT7pHloqufdVTJUc2oDRJFprpUbcBeoTP/2OSY/W8BJ/EJd/EZ3c
+         KhY3pBSJzW052kOgqIGKBUKTdj4DJwxn8my8K4aMSarEeB4n/Oi3dXzxTCoEmqgmCNtg
+         2gHCMo06D2qZnv9yA6e7pffX7qiNrfZtBDWnm0vOv04Xa8govPFKD7HFqiMonVar6juN
+         bn9Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=pJxoq604Q9g/NVRaCRXKPEv79o/eCpE68yM1ONTHi8o=;
-        b=XLfk54s9YV3trCUEe5QIeeGgCEKcgQKkLPNfSglPQWDF2Bmz7+ShX9p6tIQPKixCKk
-         buyaRyPK5A0gDHEzq7R7WxFE1bhh4QerB7eI4ht/zk0a7AHLvqK+7JjdxrBUie03P9OU
-         W9AWiKmUw0lnZVwJRknJbcuM6j6CjvAuzjSS7mWcOSoWzE2tXeJKq8+67ZjDGWvOXWKn
-         +c7GcEhny02lLn1EI6Wn5vCBJiDU+qH45LZGC5I+MGDp1pz6gP0/CD3ntqrTDbQwco/H
-         X6iLFXWHULGdORS/0eLDKeLTTAC3UF9lo0meOEchFMF29+gHEOapv/bH892+BlsfLctg
-         uUoA==
+        bh=9l60f9h++8G8lIbNQpXB10/CyqSk4v+2ba9DYl/nsG0=;
+        b=GLvlmJpcoJ+8IvBrz4/xgY7zKd3hbp73aV3Bvgq/IImQTxzpHT5on3FHk3ug2UDmN4
+         cG7Hj0UJZ1ZyPU/iJSF3E3HPo6tD7tK1AsYSChuf+Q+CuxP4jCwLjK4QKFCKszwwkZTy
+         Mwsi9y9/YH0+tZ9trbyyONh8In0RcrKdnzZCh/FPOPV8Okw4MncGqvYd/YVBbbauM+ZB
+         BUkFL9rqfshxPqRQMweoAk+kViialbWlB7UEN82qF0df4ohINoXIQrDuuxvHOZEXQ/Tx
+         vEIxb1Mr+F2rtfAmqvzp2CoKfaaVEJwO5l9PNbBdNukifQKRWL9ds+za9Us12cWc7JYI
+         I/MA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Vlad Yasevich <vyasevich@gmail.com>,
-	Neil Horman <nhorman@tuxdriver.com>,
-	syzbot <syzkaller@googlegroups.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 134/168] sctp: do not leak kernel memory to user space
-Date: Wed, 11 Apr 2018 00:24:36 +0200
-Message-Id: <20180410212806.755664896@linuxfoundation.org>
+	Ashok Raj <ashok.raj@intel.com>,
+	Borislav Petkov <bp@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Subject: [PATCH 4.15 113/168] x86/microcode/intel: Check microcode revision before updating sibling threads
+Date: Wed, 11 Apr 2018 00:24:15 +0200
+Message-Id: <20180410212805.186711287@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399707487357504?=
-X-GMAIL-MSGID: =?utf-8?q?1597400187585781836?=
+X-GMAIL-THRID: =?utf-8?q?1597400184770921684?=
+X-GMAIL-MSGID: =?utf-8?q?1597400184770921684?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,93 +52,88 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Ashok Raj <ashok.raj@intel.com>
 
+commit c182d2b7d0ca48e0d6ff16f7d883161238c447ed upstream.
 
-[ Upstream commit 6780db244d6b1537d139dea0ec8aad10cf9e4adb ]
+After updating microcode on one of the threads of a core, the other
+thread sibling automatically gets the update since the microcode
+resources on a hyperthreaded core are shared between the two threads.
 
-syzbot produced a nice report [1]
+Check the microcode revision on the CPU before performing a microcode
+update and thus save us the WRMSR 0x79 because it is a particularly
+expensive operation.
 
-Issue here is that a recvmmsg() managed to leak 8 bytes of kernel memory
-to user space, because sin_zero (padding field) was not properly cleared.
+[ Borislav: Massage changelog and coding style. ]
 
-[1]
-BUG: KMSAN: uninit-value in copy_to_user include/linux/uaccess.h:184 [inline]
-BUG: KMSAN: uninit-value in move_addr_to_user+0x32e/0x530 net/socket.c:227
-CPU: 1 PID: 3586 Comm: syzkaller481044 Not tainted 4.16.0+ #82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:53
- kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
- kmsan_internal_check_memory+0x164/0x1d0 mm/kmsan/kmsan.c:1176
- kmsan_copy_to_user+0x69/0x160 mm/kmsan/kmsan.c:1199
- copy_to_user include/linux/uaccess.h:184 [inline]
- move_addr_to_user+0x32e/0x530 net/socket.c:227
- ___sys_recvmsg+0x4e2/0x810 net/socket.c:2211
- __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
- SYSC_recvmmsg+0x29b/0x3e0 net/socket.c:2394
- SyS_recvmmsg+0x76/0xa0 net/socket.c:2378
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x4401c9
-RSP: 002b:00007ffc56f73098 EFLAGS: 00000217 ORIG_RAX: 000000000000012b
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004401c9
-RDX: 0000000000000001 RSI: 0000000020003ac0 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000020003bc0 R09: 0000000000000010
-R10: 0000000000000000 R11: 0000000000000217 R12: 0000000000401af0
-R13: 0000000000401b80 R14: 0000000000000000 R15: 0000000000000000
-
-Local variable description: ----addr@___sys_recvmsg
-Variable was created at:
- ___sys_recvmsg+0xd5/0x810 net/socket.c:2172
- __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
-
-Bytes 8-15 of 16 are uninitialized
-
-==================================================================
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 1 PID: 3586 Comm: syzkaller481044 Tainted: G    B            4.16.0+ #82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:53
- panic+0x39d/0x940 kernel/panic.c:183
- kmsan_report+0x238/0x240 mm/kmsan/kmsan.c:1083
- kmsan_internal_check_memory+0x164/0x1d0 mm/kmsan/kmsan.c:1176
- kmsan_copy_to_user+0x69/0x160 mm/kmsan/kmsan.c:1199
- copy_to_user include/linux/uaccess.h:184 [inline]
- move_addr_to_user+0x32e/0x530 net/socket.c:227
- ___sys_recvmsg+0x4e2/0x810 net/socket.c:2211
- __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
- SYSC_recvmmsg+0x29b/0x3e0 net/socket.c:2394
- SyS_recvmmsg+0x76/0xa0 net/socket.c:2378
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc:	Vlad Yasevich <vyasevich@gmail.com>
-Cc:	Neil Horman <nhorman@tuxdriver.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Tom Lendacky <thomas.lendacky@amd.com>
+Tested-by: Ashok Raj <ashok.raj@intel.com>
+Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
+Link: http://lkml.kernel.org/r/1519352533-15992-2-git-send-email-ashok.raj@intel.com
+Link: https://lkml.kernel.org/r/20180228102846.13447-3-bp@alien8.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sctp/ipv6.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -728,8 +728,10 @@ static int sctp_v6_addr_to_user(struct s
- 			sctp_v6_map_v4(addr);
+---
+ arch/x86/kernel/cpu/microcode/intel.c |   27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
+
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -589,6 +589,17 @@ static int apply_microcode_early(struct
+ 	if (!mc)
+ 		return 0;
+ 
++	/*
++	 * Save us the MSR write below - which is a particular expensive
++	 * operation - when the other hyperthread has updated the microcode
++	 * already.
++	 */
++	rev = intel_get_microcode_revision();
++	if (rev >= mc->hdr.rev) {
++		uci->cpu_sig.rev = rev;
++		return UCODE_OK;
++	}
++
+ 	/* write microcode via MSR 0x79 */
+ 	native_wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
+ 
+@@ -776,7 +787,7 @@ static enum ucode_state apply_microcode_
+ {
+ 	struct microcode_intel *mc;
+ 	struct ucode_cpu_info *uci;
+-	struct cpuinfo_x86 *c;
++	struct cpuinfo_x86 *c = &cpu_data(cpu);
+ 	static int prev_rev;
+ 	u32 rev;
+ 
+@@ -793,6 +804,18 @@ static enum ucode_state apply_microcode_
+ 			return UCODE_NFOUND;
  	}
  
--	if (addr->sa.sa_family == AF_INET)
-+	if (addr->sa.sa_family == AF_INET) {
-+		memset(addr->v4.sin_zero, 0, sizeof(addr->v4.sin_zero));
- 		return sizeof(struct sockaddr_in);
++	/*
++	 * Save us the MSR write below - which is a particular expensive
++	 * operation - when the other hyperthread has updated the microcode
++	 * already.
++	 */
++	rev = intel_get_microcode_revision();
++	if (rev >= mc->hdr.rev) {
++		uci->cpu_sig.rev = rev;
++		c->microcode = rev;
++		return UCODE_OK;
 +	}
- 	return sizeof(struct sockaddr_in6);
- }
++
+ 	/* write microcode via MSR 0x79 */
+ 	wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
+ 
+@@ -813,8 +836,6 @@ static enum ucode_state apply_microcode_
+ 		prev_rev = rev;
+ 	}
+ 
+-	c = &cpu_data(cpu);
+-
+ 	uci->cpu_sig.rev = rev;
+ 	c->microcode = rev;
  
