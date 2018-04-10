@@ -1,73 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751815AbeDJC3p (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 22:29:45 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:42732 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751543AbeDJC3m (ORCPT
+        id S1751881AbeDJCcS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 22:32:18 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:37981 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751568AbeDJCcR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 22:29:42 -0400
-X-Google-Smtp-Source: AIpwx48d01fgDgFRZWtoyQHjGMePBX0yjCpJ/TTVZ5/Vg9zuh3iheMus+CUz0hCkhNw5BpMHqJGXhqau4aVte3GiUhk=
+        Mon, 9 Apr 2018 22:32:17 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=zoucao@linux.alibaba.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---0T-wddO-_1523327524;
+Message-ID: <5ACC2223.3090907@linux.alibaba.com>
+Date: Tue, 10 Apr 2018 10:32:03 +0800
+From: zoucao-ipc <zoucao@linux.alibaba.com>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:24.0) Gecko/20100101 Thunderbird/24.2.0
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJY-sh+KBVAja=epesGdd=OKJzooeLTpZZD0Z++ZxqzfA@mail.gmail.com>
-References: <20180409074604.17671-1-oohall@gmail.com> <CAL_Jsq+ho2QhmNmPZMDJcfSxposJd=jYDvjhXH8cMAtVFP7n4A@mail.gmail.com>
- <CAPcyv4iCkc7ZSB7Sjk-O7iBWvvTzhTmdccucC4uN6GEu5Bjotw@mail.gmail.com> <CAL_JsqJY-sh+KBVAja=epesGdd=OKJzooeLTpZZD0Z++ZxqzfA@mail.gmail.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Mon, 9 Apr 2018 19:29:41 -0700
-Message-ID: <CAPcyv4gk+5f4msuAYVFnNfZXF_cwfexs8aTj1jbm8R8H8E-MwQ@mail.gmail.com>
-Subject: Re: [PATCH] drivers/of: Introduce ARCH_HAS_OWN_OF_NUMA
-To: Rob Herring <robh@kernel.org>
-Cc: "Oliver O'Halloran" <oohall@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Device Tree <devicetree@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        sparclinux@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+To: tglx@linutronix.de
+CC: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] free e820 reserved memory in bootargs memmap
+References: <20180408064134.77385-1-zoucao@linux.alibaba.com>
+In-Reply-To: <20180408064134.77385-1-zoucao@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 9, 2018 at 6:02 PM, Rob Herring <robh@kernel.org> wrote:
-> On Mon, Apr 9, 2018 at 4:05 PM, Dan Williams <dan.j.williams@intel.com> wrote:
->> On Mon, Apr 9, 2018 at 1:52 PM, Rob Herring <robh@kernel.org> wrote:
->>> On Mon, Apr 9, 2018 at 2:46 AM, Oliver O'Halloran <oohall@gmail.com> wrote:
->>>> Some OF platforms (pseries and some SPARC systems) has their own
->>>> implementations of NUMA affinity detection rather than using the generic
->>>> OF_NUMA driver, which mainly exists for arm64. For other platforms one
->>>> of two fallbacks provided by the base OF driver are used depending on
->>>> CONFIG_NUMA.
->>>>
->>>> In the CONFIG_NUMA=n case the fallback is an inline function in of.h.
->>>> In the =y case the fallback is a real function which is defined as a
->>>> weak symbol so that it may be overwritten by the architecture if desired.
->>>>
->>>> The problem with this arrangement is that the real implementations all
->>>> export of_node_to_nid(). Unfortunately it's not possible to export the
->>>> fallback since it would clash with the non-weak version. As a result
->>>> we get build failures when:
->>>>
->>>> a) CONFIG_NUMA=y && CONFIG_OF=y, and
->>>> b) The platform doesn't implement of_node_to_nid(), and
->>>> c) A module uses of_node_to_nid()
->>>>
->>>> Given b) will be true for most platforms this is fairly easy to hit
->>>> and has been observed on ia64 and x86.
->>>
->>> How specifically do we hit this? The only module I see using
->>> of_node_to_nid in mainline is Cell EDAC driver.
->>
->> The of_pmem driver is using it currently pending for a 4.17 pull
->> request. Stephen hit the compile failure in -next.
->
-> You mean the stuff reviewed last week in the middle of the merge
-> window? Sounds like 4.18 material to me.
+I found commit characters errors, please ignore this path, V2 will be 
+sent soon
 
-It was originally posted for 4.16. The reposting and review came in
-late this cycle, but outside of a critical issue I'd rather not delay
-it again. The build error issue is resolved by not allowing modular
-builds of this driver for now.
-
+On 2018/4/8 下午2:41, zoucao@linux.alibaba.com wrote:
+> add a new chareater "-" in bootargs memmap, you can use this chareater to free
+> e820 reserved memory, for example:
 >
-> Rob
+> reserved iomem:
+> 	cat /proc/iomem:
+> 	......
+> 	00100000-6aefefff : System RAM
+> 	  01000000-0165537a : Kernel code
+> 	  0165537b-01a8873f : Kernel data
+> 	  01c31000-01f4efff : Kernel bss
+> 	  28000000-320fffff : Crash kernel
+> 	6aeff000-6effffff : reserved       --> it is e820 reserved memory
+> 	6f000000-78240fff : System RAM
+> 	......
+>
+>
+> add bootargs memmap=0x4101000-0x6aeff000, to free memory region: 6aeff000-6effffff
+> then 6aeff000-6effffff will be merged into 00100000-78240fff.
+>
+> new iomem:
+> 	cat /proc/iomem:
+> 	......
+> 	00100000-78240fff : System RAM
+> 	  01000000-0165537a : Kernel code
+> 	  0165537b-01a8873f : Kernel data
+> 	  01c31000-01f4efff : Kernel bss
+> 	......
