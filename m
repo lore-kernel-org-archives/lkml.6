@@ -1,117 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752033AbeDJSPq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 14:15:46 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:41589 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751916AbeDJSPn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 14:15:43 -0400
-X-Google-Smtp-Source: AIpwx49/zlFfgPGx/c5Q6yj7535K+NkleARdxovX5r0aBGqSxD8vgO1w+kMNi9mncQQJiM7nZFmWc8yqQEBnbYYgNBA=
+        id S1752100AbeDJSRo convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 14:17:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58190 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751490AbeDJSRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 14:17:43 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 880E221738
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180409070710.GA3844@andestech.com>
-References: <1522051075-6442-2-git-send-email-alankao@andestech.com>
- <mhng-c22f4be6-e89e-42b6-a776-bf4e035c10d4@palmer-si-x1c4> <20180409070710.GA3844@andestech.com>
-From: Alex Solomatnikov <sols@sifive.com>
-Date: Tue, 10 Apr 2018 11:15:41 -0700
-Message-ID: <CAJ2AOiNcqpenYd74LSwa++X_1G_JbgqrJ=YiUpofEof1BWGgrw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] perf: riscv: preliminary RISC-V support
-To: Alan Kao <alankao@andestech.com>
-Cc: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Hu <nickhu@andestech.com>, Greentime Hu <greentime@andestech.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+To: Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <a4451252-35e4-e63f-8cca-a072f90fa9ad@arm.com>
+Cc: Jason Cooper <jason@lakedaemon.net>, linux-arm-msm@vger.kernel.org,
+        Hanna Hawa <hannah@marvell.com>, Stephen Boyd <sboyd@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org
+References: <20170320223614.1351-1-sboyd@codeaurora.org>
+ <bac1e827-3860-d92c-7bb4-eaf9840c608f@arm.com>
+ <20180410170155.6e07113d@windsurf>
+ <a4451252-35e4-e63f-8cca-a072f90fa9ad@arm.com>
+Message-ID: <152338426182.180276.1835672071236851795@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] irqchip/gic-v3: Support v2m frame backwards compatibility mode
+Date: Tue, 10 Apr 2018 11:17:41 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alan,
+Quoting Marc Zyngier (2018-04-10 08:23:00)
+> On 10/04/18 16:01, Thomas Petazzoni wrote:
+> 
+> > In the upcoming Armada 8KP, we have a GICv3, which has built-in support
+> > for memory-triggered SPIs, thanks to the GICD_SETSPI_NSR and
+> > GICD_CLRSPI_NSR, and the ICU will directly use this GICv3
+> > functionality. We would therefore very much like to have this GICv3
+> > feature provided as a MSI controller, which as Marc said would require
+> > supporting level-triggered MSIs.
+> > 
+> > Marc, let me know how we can collaborate on this topic. I'm able to
+> > either test some preliminary patches, or work on such patches if
+> > necessary (preferably with some initial directions).
+> 
+> I have a vague idea how to support this. Given that level-triggered MSIs
+> have to be platform MSIs (because it is just madness otherwise), we can
+> probably store an extra message in the struct platform_msi_desc for the
+> "lower the line" write. On activation, you'd get two callbacks, probably
+> with a flag of some sort to indicate whether this is for the rising or
+> falling edge. The thing I'm unclear about so far is how to let the
+> generic MSI layer know that we're dealing with such an interrupt without
+> make a total mess of everything. It is probably done by marking the
+> interrupt level triggered, but there are some corner cases.
+> 
+> And if that works, the PCI stuff will come for free (it is just a matter
+> of implementing a new irqdomain on top of the base GICv3 one).
+> 
+> I'll try to spend some time on it in the coming couple of weeks, but
+> will have to rely on you for the testing (as I don't have much in the
+> way of HW).
 
-I merged SBI emulation for perf counters and config:
-https://github.com/riscv/riscv-pk/pull/98
+I resent these patches late last year[1]. On the HW I had at the time we
+were trying to support PCIe devices and we didn't need level interrupts.
+I thought Marc had agreed to accept the patches without the level
+interrupt support as long as we described the range of interrupts that
+were supported but that doesn't seem to be the case anymore.
 
-You should be able to write these CSRs.
+Anyway, this is mostly an FYI that I don't have the hardware to test
+with anymore and I'm not going to keep sending patches on this topic.
+Srini should have some hardware to test whatever solution you come up
+with.
 
-Thanks,
-Alex
-
-On Mon, Apr 9, 2018 at 12:07 AM, Alan Kao <alankao@andestech.com> wrote:
-> On Thu, Apr 05, 2018 at 09:47:50AM -0700, Palmer Dabbelt wrote:
->> On Mon, 26 Mar 2018 00:57:54 PDT (-0700), alankao@andestech.com wrote:
->> >This patch provide a basic PMU, riscv_base_pmu, which supports two
->> >general hardware event, instructions and cycles.  Furthermore, this
->> >PMU serves as a reference implementation to ease the portings in
->> >the future.
->> >
->> >riscv_base_pmu should be able to run on any RISC-V machine that
->> >conforms to the Priv-Spec.  Note that the latest qemu model hasn't
->> >fully support a proper behavior of Priv-Spec 1.10 yet, but work
->> >around should be easy with very small fixes.  Please check
->> >https://github.com/riscv/riscv-qemu/pull/115 for future updates.
->> >
->> >Cc: Nick Hu <nickhu@andestech.com>
->> >Cc: Greentime Hu <greentime@andestech.com>
->> >Signed-off-by: Alan Kao <alankao@andestech.com>
->>
->> We should really be able to detect PMU types at runtime (via a device tree
->> entry) rather than requiring that a single PMU is built in to the kernel.
->> This will require a handful of modifications to how this patch works, which
->> I'll try to list below.
->
->> >+menu "PMU type"
->> >+    depends on PERF_EVENTS
->> >+
->> >+config RISCV_BASE_PMU
->> >+    bool "Base Performance Monitoring Unit"
->> >+    def_bool y
->> >+    help
->> >+      A base PMU that serves as a reference implementation and has limited
->> >+      feature of perf.
->> >+
->> >+endmenu
->> >+
->>
->> Rather than a menu where a single PMU can be selected, there should be
->> options to enable or disable support for each PMU type -- this is just like
->> how all our other drivers work.
->>
->
-> I see.  Sure.  The descriptions and implementation will be refined in v3.
->
->> >+struct pmu * __weak __init riscv_init_platform_pmu(void)
->> >+{
->> >+    riscv_pmu = &riscv_base_pmu;
->> >+    return riscv_pmu->pmu;
->> >+}
->>
->> Rather than relying on a weak symbol that gets overridden by other PMU
->> types, this should look through the device tree for a compatible PMU (in the
->> case of just the base PMU it could be any RISC-V hart) and install a PMU
->> handler for it.  There'd probably be some sort of priority scheme here, like
->> there are for other driver subsystems, where we'd pick the best PMU driver
->> that's compatible with the PMUs on every hart.
->>
->> >+
->> >+int __init init_hw_perf_events(void)
->> >+{
->> >+    struct pmu *pmu = riscv_init_platform_pmu();
->> >+
->> >+    perf_irq = NULL;
->> >+    perf_pmu_register(pmu, "cpu", PERF_TYPE_RAW);
->> >+    return 0;
->> >+}
->> >+arch_initcall(init_hw_perf_events);
->>
->> Since we only have a single PMU type right now this isn't critical to handle
->> right away, but we will have to refactor this before adding another PMU.
->
-> I see.  My rough plan is to do the device tree parsing here, and if no specific
-> PMU string is found then just register the base PMU proposed in this patch.
-> How about this idea?
->
-> Thanks.
+[1] http://lkml.kernel.org/r/20171127102408.6631-1-sboyd@codeaurora.org
