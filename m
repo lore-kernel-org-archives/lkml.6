@@ -1,213 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752172AbeDJRmK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 13:42:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41222 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751770AbeDJRmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 13:42:08 -0400
-Date: Tue, 10 Apr 2018 12:42:06 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 05/10] livepatch: Support separate list for replaced
- patches.
-Message-ID: <20180410174206.l3uk6lchhzxvn75x@treble>
-References: <20180313224613.sdkdkcvhpqv54s6c@treble>
- <20180319150207.iz5ecbsogg5lpwac@pathway.suse.cz>
- <20180319214324.riyp233trtfxbeto@treble>
- <20180320122538.t75rplwhmhtap5q2@pathway.suse.cz>
- <20180320201502.2skkk3ld4zk2dxwg@treble>
- <20180323094507.smsqc5ft3yajnwqt@pathway.suse.cz>
- <20180323224410.vuq5cabfprqhd6ej@treble>
- <20180326101107.bbloeh5l276on7uz@pathway.suse.cz>
- <20180406195049.dtfebzfdkbvv6yex@treble>
- <20180410083455.l26dgo5kx4cy7bc7@pathway.suse.cz>
+        id S1752200AbeDJRqe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 13:46:34 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52894 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751876AbeDJRqb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 13:46:31 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 09D1960250
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Tue, 10 Apr 2018 11:46:29 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, evgreen@chromium.org,
+        dianders@chromium.org,
+        Mahesh Sivasubramanian <msivasub@codeaurora.org>
+Subject: Re: [PATCH v7 [RESEND] 1/2] drivers: qcom: add command DB driver
+Message-ID: <20180410174629.GD19682@codeaurora.org>
+References: <20180406151356.7818-1-ilina@codeaurora.org>
+ <20180406151356.7818-2-ilina@codeaurora.org>
+ <152305699547.94378.15462587304123828477@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20180410083455.l26dgo5kx4cy7bc7@pathway.suse.cz>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+In-Reply-To: <152305699547.94378.15462587304123828477@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 10:34:55AM +0200, Petr Mladek wrote:
-> > > > > > We were just recently discussing the possibility of not allowing the
-> > > > > > disabling of patches at all.  If we're not going that far, let's at
-> > > > > > least further restrict it, for the sanity of our code, so we don't have
-> > > > > > to worry about a nasty mismatched stack of enabled/disabled/enabled/etc,
-> > > > > > at least for the cases where 'replace' patches aren't used.
-> > > > > 
-> > > > > I am not completely sure where all these fears come from. From my
-> > > > > point of view, this change is pretty safe and trivial thanks to NOPs
-> > > > > and overall design. It would be a shame to do not have it. But I
-> > > > > might be blind after spending so much time with the feature.
-> > > > 
-> > > > I think you're missing my point.  This isn't about your patch set, per
-> > > > se.  It's really about our existing code.  Today, our patch stack
-> > > > doesn't follow real stack semantics, because patches in the middle might
-> > > > be disabled.  I see that as a problem.
-> > 
-> > No, please read it again.  I wasn't talking about replaced patches.
-> 
-> I was confused by wording "in the middle". It suggested that there
-> might had been enabled patches on the top and the bottom of the stack
-> and some disabled patches in between at the same time (or vice versa).
-> This was not true.
+On Fri, Apr 06 2018 at 17:23 -0600, Stephen Boyd wrote:
+>Quoting Lina Iyer (2018-04-06 08:13:55)
+>> From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+>>
+>> Command DB is a simple database in the shared memory of QCOM SoCs, that
+>> provides information regarding shared resources. Some shared resources
+>> in the SoC have properties that are probed dynamically at boot by the
+>> remote processor. The information pertaining to the SoC and the platform
+>> are made available in the shared memory. Drivers can query this
+>> information using predefined strings.
+>>
+>> Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+>> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> ---
+>
+>I have this patch on top to fix the endian stuff. Care to test it out
+>and see if it still works?
+>
+>From: Stephen Boyd <swboyd@chromium.org>
+>Subject: soc: qcom: cmd-db: Make endian-agnostic
+>
+>This driver deals with memory that is stored in little-endian format.
+>Update the structures with the proper little-endian types and then
+>do the proper conversions when reading the fields. Note that we compare
+>the ids with a memcmp() because we already pad out the string 'id' field
+>to exactly 8 bytes with the strncpy() onto the stack.
+>
+>Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+>
+>diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
+>index b5172049f608..a56dc9edab82 100644
+>--- a/drivers/soc/qcom/cmd-db.c
+>+++ b/drivers/soc/qcom/cmd-db.c
+>@@ -13,18 +13,10 @@
+>
+> #define NUM_PRIORITY		2
+> #define MAX_SLV_ID		8
+>-#define CMD_DB_MAGIC		0x0C0330DBUL
+>+static const char CMD_DB_MAGIC[] = { 0xdb, 0x33, 0x03, 0x0c };
+This has to be { 0xdb, 0x30, 0x03, 0x0c }
 
-That *was* what I meant.  Consider the following sequence of events:
+Otherwise it works.
 
-- Register patch 1
-- Enable patch 1
-- Register patch 2
-- Enable patch 2
-- Disable patch 2
-- Register patch 3
-- Enable patch 3
-
-Notice that patch 2 (in the middle) is disabled, whereas patch 1 (on the
-bottom) and patch 3 (on the top) are enabled.
-
-> Do I understand it correctly that you do not like that the patches
-> on the stack might be in two states (disabled/enabled). This might
-> be translated that you do not like the state when the patch is
-> registered and disabled.
-
-No, that wasn't really what I meant, but I have often wondered whether
-we need such a distinction.
-
-> I wonder if the problem is in the "stack" abstraction. Would it help
-> if we call it "sorted list" or whatever more suitable?
-
-But I don't even see a reason to have a sorted list (more on that
-below).
-
-> Another possibility would be to get rid of the enable/disable states.
-> I mean that the patch will be automatically enabled during
-> registration and removed during unregistration.
-
-I don't see how disabling during unregistration would be possible, since
-the unregister is called from the patch module exit function, which
-can only be called *after* the patch is disabled.
-
-However, we could unregister immediately after disabling (i.e., in
-enabled_store context).
-
-> Or we could rename the operation do add/remove or anything else. In
-> fact, this is how it worked in kGraft.
-
-I'm not sure what renaming would solve, unless you mean to combine
-registration and enablement into a single concept?  Sounds good to me.
-
-> AFAIK, the enable/disabled state made more sense for immediate
-> patches that could not be unloaded. We still need to keep the patches
-> when the transaction is forced. The question is if we need to keep
-> the sysfs entries for loaded but unused patches.
-
-I think we wouldn't need the sysfs entries.  Just disable/unregister
-forced patches like normal, except skipping the module_put().
-
-> > Either way, why do we still need a stack?
-> 
-> Good question. I suggest to agree on some terms first:
-> 
->    + Independent patches make unrelated changes. Any new function
->      must not rely on changes done by any other patch.
-> 
->    + Dependent patches mean that a later patch depend on changes
->      done by an earlier patch. For example, a new function might
->      use function added by an earlier patch.
-> 
->    + Each cumulative patch include all necessary changes. I would say
->      that it is self-containing and independent. Except that they should
->      be able to continue using changes made by earlier patches (shadow
->      variables, callbacks).
-> 
-> 
-> Then we could say:
-> 
->    + The stack helps to enforce dependencies between dependent
->      patches. But there is needed also some external solution
->      that forces loading the patches in the right order.
-> 
->    + The "replace" feature is useful for cumulative patches.
->      It allows to remove existing changes and remove unused stuff.
->      But cumulative patches might be done even _without_ the atomic
->      replace.
-> 
->    + Cumulative patches _with_ "replace" flag might be in theory
->      installed in random order because they handle not-longer patched
->      functions. Well, some incompatibility might be caused by shadow
->      variables and callbacks. Therefore it still might make sense
->      to install them in the right order.
-> 
->      Cumulative patches _without_ "replace" flag must be installed
->      in the right order because they do not handle not-longer patched
->      functions.
-> 
->      Anyway, for cumulative patches is important the external
->      ordering (loading modules) and not the stack.
-> 
-> 
-> Back to your question:
-> 
-> The stack is needed for dependent non-cumulative patches.
-> 
-> The cumulative patches with "replace" flag seems the be
-> the most safe and most flexible solution. The question is
-> if we want to force all users to use this mode.
-
-If they have dependencies between modules, they can either a) enforce it
-with tooling, or they can instead b) use 'replace'.
-
-But let's get the module load order enforcement out of the kernel.
-There's no real need for the kernel to do it, and we're not even doing a
-good job at it.
-
-> > > Or we have replace patches that are
-> > > standalone and we allow a smooth transfer from one to another one.
-> > > 
-> > > Anyway, for us, it is much more important the removal of replaced
-> > > patches. We could probably live without the possibility to replace
-> > > disabled patches.
-> > 
-> > I think replacing disabled patches is ok, *if* we get rid of the
-> > illusion of a stack.  The current stack isn't really a stack, it's just
-> > awkward.
-> 
-> I personally do not have problems with it. As I said, I see this as
-> two different modes how the life patches are distributed. The stack
-> is needed for dependent patches. The cumulative patches with
-> "replace" flag are self-contained and independent. They might
-> replace anything.
-> 
-> Well, it would make sense to reduce the amount of possible
-> situations and use cases.
-
-A big +1.
-
-> The question is what is acceptable to others
-
-If there are any objections, this is their chance to speak up :-)
-
-> and if it needs to be done as part of this patch set.
-
-Maybe so, for at least a few reasons:
-
-- This patch set makes the 'stack' obsolete, so it makes sense to remove
-  the 'stack' with it.
-
-- This patch set will already affect tooling, let's make tooling's life
-  easier by making all the related changes at the same time.
-  
-  (Though I'm not quite convinced on this point, would removing the
-  stack affect tooling at all?  If we also combined registration and
-  enablement into a single concept, then it definitely would.)
-
--- 
-Josh
+Thanks,
+Lina
