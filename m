@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49ZIKWqETPa8QIDkbtTCcpxsZVxHw5L+0ywfB8FlJ6VND4JPMFswa9v7XVXYbkuGenZTTp6
-ARC-Seal: i=1; a=rsa-sha256; t=1523399839; cv=none;
+X-Google-Smtp-Source: AIpwx49lbwSv381F/7+q4N5BDXOi1obtMfspMRccZb7uPdSB7NeBeCba89bpifL1AJbDKUIriNss
+ARC-Seal: i=1; a=rsa-sha256; t=1523399836; cv=none;
         d=google.com; s=arc-20160816;
-        b=hGQNy4qhm/OXqGYL+E4J3PJI55FEDXbwCmCGLmug3G6oXlNPIPVESUa/wdUaEewI9Z
-         z4kISgMBDAgEJXWuyPMvePJpbJ2OO+x8bXAmBcs/sTkkzX3Mg/++PMNQece5Myyn/6f+
-         SLOroVYZQPdci1FxWXbukDmAB8O5uF82nvwdQnNmkDkXEAeC96CP7c3P7sRbb3euDaic
-         i5TWCa6Sgx84Lk1qd3FFJFzka6LDMp1XIhHFVmM3JveSX8aq2leCfqw+uYy5+3/2oAv0
-         0cCAGKPwMwi172YCz+AlKtp3Su+87GpdIOnIx22NGts4K8ts9OhqBdxfEP5cSegED437
-         RPJQ==
+        b=SqdRMSOiBcBA3YOx7BaVrnHU/linZe4L0AgO3zjy69+hoeYqkM0bII1ACPT/WNE4Kr
+         soTxQ8zfPASG15IZn0WZJI8beOBse+gw+ZQEHM4y64urau7XjFa7NSHZ97FZo5TPpDTl
+         G0VQ/B4xKs0JugvmVrZH0mOSlh3FEag/knogUu2Dq67sGoyLRF3EQLRutPlMHA2pd3SU
+         nAKx1kFzNz4GebVP8g8xML8MJwFqzLnNC5Z5r78XkLEwNO3wFSRhwnazNkQM0JTYy4gF
+         EASf/J6gqaR1zZQuE05QSnju1yeRYtLNic21pOKKbHT359yk479g6cikbgziiDDrojXJ
+         xhoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=jdsO/0KbTrjtHHYMr5O3eNYlvkNzKCbHM9gGVd2mWGI=;
-        b=bh4yKvz6bPw5YmvxnJuudCBxSFK7W6d27N+T6fhuPTHUvddAsGv+kL+GM5rV8OpRiV
-         9fW8eN+kPbod0T+Yj0sMtTn7dcT4i7Gemb30FlMr2FlTnaYIZ4fHaCp2GZUH3lEVKGpK
-         ECbr1EZm/j/n8WpAqPJGUvozuGQe5qBULNn2OGs+dhlploO6JKSzSzxtU+1IUjupIxbP
-         I7X9KBd6FfNtt+St8bvrCTm9lu9uJF8a/2wofKwaQWjtertosNZ9dZHieNo0sYcDhalB
-         Kx4q7FtxOT0ar+u7u5QHYsrHFPEU35Q0bui6bgtac5d+hsMrmE30B3HcJ+LGtannnJc6
-         kaSQ==
+        bh=oYCLZK1n3yUP+YlLm7ClBpGddT5Eeay0eXuZhO4y45Y=;
+        b=hRsb8QH+Ib9hFkwK0B/IFckR2HbDyrunQNajikt+DTNf/nfCidv+BHPnAQPEiCUP+v
+         RpXkpYFS51duZtXmWxWOq1bcRDAUR4pKU0Mg1QPa2LVL8GNTXhJbclX6qmY7l2p2Pa3/
+         Ov/cG9MDa2sp59DbY14MpKAf6d1c9hNe2lr0u+IwngtI3XkZaWAuLpSdHlwcsM/oq8QX
+         xDdbAn640zB8pRPGcplt+gyBv2crc8o20wwmSsE483X0TqdUhR8EcC+BuAZXV58wvD1k
+         jBqeJ13Nlk9VQWaW/swNjo2A0WJniZuWDsd67qHHF4DllBLnkhp5LejNT/Ubn7ciFOj1
+         9AGw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	Zhang Rui <rui.zhang@intel.com>,
+	Mike Christie <mchristi@redhat.com>,
+	Nicholas Bellinger <nab@linux-iscsi.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 082/138] thermal: int3400_thermal: fix error handling in int3400_thermal_probe()
-Date: Wed, 11 Apr 2018 00:24:32 +0200
-Message-Id: <20180410212911.704794542@linuxfoundation.org>
+Subject: [PATCH 4.14 081/138] tcmu: release blocks for partially setup cmds
+Date: Wed, 11 Apr 2018 00:24:31 +0200
+Message-Id: <20180410212911.554748451@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400085798126685?=
-X-GMAIL-MSGID: =?utf-8?q?1597400510002268614?=
+X-GMAIL-THRID: =?utf-8?q?1597400083377091029?=
+X-GMAIL-MSGID: =?utf-8?q?1597400506857510196?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,48 +50,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Mike Christie <mchristi@redhat.com>
 
 
-[ Upstream commit 0be86969ae385c5c944286bd9f66068525de15ee ]
+[ Upstream commit 810b8153c4243d2012a6ec002ddd3bbc9a9ae8c2 ]
 
-There are resources that are not dealocated on failure path
-in int3400_thermal_probe().
+If we cannot setup a cmd because we run out of ring space
+or global pages release the blocks before sleeping. This
+prevents a deadlock where dev0 has waiting_blocks set and
+needs N blocks, but dev1 to devX have each allocated N / X blocks
+and also hit the global block limit so they went to sleep.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+find_free_blocks is not able to take the sleeping dev's
+blocks becaause their waiting_blocks is set and even
+if it was not the block returned by find_last_bit could equal
+dbi_max. The latter will probably never happen because
+DATA_BLOCK_BITS is so high but in the next patches
+DATA_BLOCK_BITS and TCMU_GLOBAL_MAX_BLOCKS will be settable so
+it might be lower and could happen.
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Signed-off-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Nicholas Bellinger <nab@linux-iscsi.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/thermal/int340x_thermal/int3400_thermal.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/target/target_core_user.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/thermal/int340x_thermal/int3400_thermal.c
-+++ b/drivers/thermal/int340x_thermal/int3400_thermal.c
-@@ -319,17 +319,21 @@ static int int3400_thermal_probe(struct
+--- a/drivers/target/target_core_user.c
++++ b/drivers/target/target_core_user.c
+@@ -796,6 +796,13 @@ tcmu_queue_cmd_ring(struct tcmu_cmd *tcm
+ 		int ret;
+ 		DEFINE_WAIT(__wait);
  
- 	result = sysfs_create_group(&pdev->dev.kobj, &uuid_attribute_group);
- 	if (result)
--		goto free_zone;
-+		goto free_rel_misc;
++		/*
++		 * Don't leave commands partially setup because the unmap
++		 * thread might need the blocks to make forward progress.
++		 */
++		tcmu_cmd_free_data(tcmu_cmd, tcmu_cmd->dbi_cur);
++		tcmu_cmd_reset_dbi_cur(tcmu_cmd);
++
+ 		prepare_to_wait(&udev->wait_cmdr, &__wait, TASK_INTERRUPTIBLE);
  
- 	result = acpi_install_notify_handler(
- 			priv->adev->handle, ACPI_DEVICE_NOTIFY, int3400_notify,
- 			(void *)priv);
- 	if (result)
--		goto free_zone;
-+		goto free_sysfs;
- 
- 	return 0;
- 
--free_zone:
-+free_sysfs:
-+	sysfs_remove_group(&pdev->dev.kobj, &uuid_attribute_group);
-+free_rel_misc:
-+	if (!priv->rel_misc_dev_res)
-+		acpi_thermal_rel_misc_device_remove(priv->adev->handle);
- 	thermal_zone_device_unregister(priv->thermal);
- free_art_trt:
- 	kfree(priv->trts);
+ 		pr_debug("sleeping for ring space\n");
