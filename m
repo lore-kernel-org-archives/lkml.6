@@ -1,81 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753754AbeDJTls (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 15:41:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54174 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753720AbeDJTlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 15:41:46 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3794921745
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Tue, 10 Apr 2018 14:41:44 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: linux-pci@vger.kernel.org, sulrich@codeaurora.org,
-        timur@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] PCI: quirk HT1100 & HT2000 and one HT2100 Root Ports for
- Extended Tags
-Message-ID: <20180410194144.GD54986@bhelgaas-glaptop.roam.corp.google.com>
-References: <1522882209-9743-1-git-send-email-okaya@codeaurora.org>
+        id S1753842AbeDJTmT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 15:42:19 -0400
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:34889 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753267AbeDJTlX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 15:41:23 -0400
+X-Google-Smtp-Source: AIpwx4+uOMTty1zQn9zBh2MsMtKh2+iZQviCoZrVviPhMtzLWz0HUgv5N521NxZ4yG0NWp479SH+2w==
+Date: Tue, 10 Apr 2018 21:41:19 +0200
+From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To: Joey Pabalinas <joeypabalinas@gmail.com>
+Cc: linux-sparse@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Martin Uecker <Martin.Uecker@med.uni-goettingen.de>,
+        Al Viro <viro@ZenIV.linux.org.uk>, Christopher Li <sparse@chrisli.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] sparse: add -Wpointer-arith flag to toggle
+ sizeof(void) warnings
+Message-ID: <20180410194117.ei4eo3kaxvv2ezdx@ltop.local>
+References: <20180410010204.qeudkkru4jilun3v@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1522882209-9743-1-git-send-email-okaya@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180410010204.qeudkkru4jilun3v@gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 06:50:09PM -0400, Sinan Kaya wrote:
-> Per PCIe r3.1, sec 2.2.6.2 and 7.8.4, a Requester may not use 8-bit Tags
-> unless its Extended Tag Field Enable is set, but all Receivers/Completers
-> must handle 8-bit Tags correctly regardless of their Extended Tag Field
-> Enable.
+On Mon, Apr 09, 2018 at 03:02:04PM -1000, Joey Pabalinas wrote:
+> Recent changes to the min()/max() macros in include/linux/kernel.h
+> have added a lot of noise when compiling the kernel with Sparse checking
+> enabled. This mostly is due to the *huge* increase in the number of
+> sizeof(void) warnings, a larger number of which can safely be ignored.
 > 
-> Some devices do not handle 8-bit Tags as Completers, so add a quirk for
-> them.  If we find such a device, we disable Extended Tags for the entire
-> hierarchy to make peer-to-peer DMA possible.
-> 
-> The Broadcom HT1100/HT2000/HT2100 seems to have issues with handling 8-bit
-> tags.  Mark it as broken.
-> 
-> Fixes: 60db3a4d8cc9 ("PCI: Enable PCIe Extended Tags if supported")
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=196197
-> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 
-Applied to pci/enumeration for v4.18, thanks!
+Thank you very much.
 
-> ---
->  drivers/pci/quirks.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index 8b14bd3..f012742 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -4813,9 +4813,13 @@ static void quirk_no_ext_tags(struct pci_dev *pdev)
->  
->  	pci_walk_bus(bridge->bus, pci_configure_extended_tags, NULL);
->  }
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0132, quirk_no_ext_tags);
->  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0140, quirk_no_ext_tags);
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0141, quirk_no_ext_tags);
->  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0142, quirk_no_ext_tags);
->  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0144, quirk_no_ext_tags);
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0420, quirk_no_ext_tags);
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0422, quirk_no_ext_tags);
->  
->  #ifdef CONFIG_PCI_ATS
->  /*
-> -- 
-> 2.7.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+There is just a problem with the test but it's my fault as I
+pointed to you to my tree but the master tree lack a lot of fixes
+and have problems when dereferencing function pointers.
+So, for the master tree, I propose to use a version with these
+tests removed:
+	git://github.com/lucvoo/sparse-dev.git pointer-arith-v3
+
+Cheers,
+-- Luc
