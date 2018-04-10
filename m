@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx482XjDLOxk9vmjvTF1BpuYFJqhHzFFeM8ebY/aSIJW50GpMUaweIeEMpo+kYVUnR8A+rAzu
-ARC-Seal: i=1; a=rsa-sha256; t=1523399759; cv=none;
+X-Google-Smtp-Source: AIpwx48be+nubbZNzqam8gnpdbJ7QHMInJsv8DH3jkLg3dig3dM2NrsOVYQAC0zXQ2f0FSh/V32T
+ARC-Seal: i=1; a=rsa-sha256; t=1523399753; cv=none;
         d=google.com; s=arc-20160816;
-        b=GrRiKmfftvupizRnowXKI64kasCg97M38R99TIysdH5U/LYyPkCz7orv+p2eRHQzUg
-         11hotnb9TIlNhCNTKvh/EKFDTic9dWuJ5akMNSSVY2EJBJAki+qB9IKENdUbzlvixVtx
-         0ifh6BD1uYihlEUKD/D0vRd7i/2/Iria2in8EUQNqfLA9gAI20+56D/diNw4Fwuajyif
-         4K9yRZ/5jI+v5/WFDOJfZ3Fhpbdrd1T+Ri4IJGnEgfX/cKvxBQlpWF24VbbfGYVIaurx
-         gcwCVNVVEAI1j1MUdmyaeIvkw4pXwS8uat0kh+hj4Lebfr1D2FZhsK/jBDnuG7j79utC
-         uFww==
+        b=CwRinyrPSRSUp5Tdv0yq4zSQBnmuUGNiPy30zJ2vIXWtqXAJxC1ezocCAYnirQLyB4
+         IFE43KEdi1zLFkvktCgxhEoml1x1NTJ9udqk4p+XPmQc7xybMew3L0Nyu9xlX6Gv2SEu
+         B66y3D49WARZRQ20SA50jlZWDfwxFBUzpsBzLK261sEWd6QZDxYGeWUSYFk9Yvh0fJWc
+         VTed3GfX8cxnBluGgDOBMvf6Pp7DMbhJ4yyn+gd1767NdsBmpyq53b18tYJDfYeEjVv6
+         cS5I44f8h3jN262XwSx3WWeg0p6vYcfAToxmIWLrVLBuY/apr+8VyjUvhwq08Bhdlq+J
+         QuJg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=88EWt0D12lggXxgmMRK+BtzmIYDM8FTWPnbqlCtZnro=;
-        b=R37CHcsWYRyu4hRdTkv+skBXbfR/8UuK++TaoPSAjDSNNOm3ryhLsUKAChk+m0leZT
-         RLhPnU6UxZtD/r6NVtw4uNM/a7tTlSXgwVCRaB9itX4L8RGmjeCzG/aWUKc0aJd3UW0z
-         VQqfQGUHvhQdu46AVeChROgGeM4exGPGGsQxrUAnYFxHmKnzrZ970LOENtFQa70TJdJ0
-         BsWtj4uJTVgMTvNQ5MS0IWMyV/sb5PtmY5gpQlb9xPwvh8jzrOyhVrOTH1+ugQUOFbOr
-         8gpcVZlXEutelg2YKp9B9Btk+ceTUeyidfdC65Q9KKz/TYanKVwMvkdBA1YEEnPtFsBa
-         TEuQ==
+        bh=3atcZgmi8sEhtjwrbPoADmrhcm9MDOgf+JiXE+uhjHQ=;
+        b=a6Y4ZC9Yc0otK0vIjy1MecPY+aTs/zmcbdy1bMsylmOd4J85DH5XPLxPdfkc0ErCpq
+         KuCeh5VZRwtgMs+13x9FqohPq3X257ybzO2jlfHEfQ9f/5GryAULl4x0c1wBOkw9s4Rx
+         JB7Bdxms82ETnGNgH/X2VSlmpzKQ0HpD0Lsz50eQoUxLFcX1I1YTfXwBWLAPa8HsBDca
+         tNcOewhD2AuvmXOexr1rSpERwbbmi9ERPLGFI5n+PT+8TaPFJZCOnEFiAcNyGliCy0pz
+         QNcaha7JA4TTt1lRkwOnfFJKjVUSs6VOouQSRjBiJCkS8rQ1si+vmjlBvf9Ics+KHuVP
+         1fZA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	=?UTF-8?q?Peter=20Gro=C3=9Fe?= <pegro@friiks.de>,
+	Johannes Berg <johannes.berg@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 026/138] media: videobuf2-core: dont go out of the buffer range
-Date: Wed, 11 Apr 2018 00:23:36 +0200
-Message-Id: <20180410212905.165065613@linuxfoundation.org>
+Subject: [PATCH 4.14 034/138] mac80211: Fix setting TX power on monitor interfaces
+Date: Wed, 11 Apr 2018 00:23:44 +0200
+Message-Id: <20180410212906.074731000@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399933288310575?=
-X-GMAIL-MSGID: =?utf-8?q?1597400425758612372?=
+X-GMAIL-THRID: =?utf-8?q?1597399905951439472?=
+X-GMAIL-MSGID: =?utf-8?q?1597400420525342644?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,80 +50,121 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+From: "Peter Gro�e" <pegro@friiks.de>
 
 
-[ Upstream commit df93dc61b0d8b19a5c9db545cf3fcc24f88dfde4 ]
+[ Upstream commit 3a3713ec360138f806c6fc368d1de570f692b347 ]
 
-Currently, there's no check if an invalid buffer range
-is passed. However, while testing DVB memory mapped apps,
-I got this:
+Instead of calling ieee80211_recalc_txpower on monitor interfaces
+directly, call it using the virtual monitor interface, if one exists.
 
-   videobuf2_core: VB: num_buffers -2143943680, buffer 33, index -2143943647
-   unable to handle kernel paging request at ffff888b773c0890
-   IP: __vb2_queue_alloc+0x134/0x4e0 [videobuf2_core]
-   PGD 4142c7067 P4D 4142c7067 PUD 0
-   Oops: 0002 [#1] SMP
-   Modules linked in: xt_CHECKSUM iptable_mangle ipt_MASQUERADE nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables bluetooth rfkill ecdh_generic binfmt_misc rc_dvbsky sp2 ts2020 intel_rapl x86_pkg_temp_thermal dvb_usb_dvbsky intel_powerclamp dvb_usb_v2 coretemp m88ds3103 kvm_intel i2c_mux dvb_core snd_hda_codec_hdmi crct10dif_pclmul crc32_pclmul videobuf2_vmalloc videobuf2_memops snd_hda_intel ghash_clmulni_intel videobuf2_core snd_hda_codec rc_core mei_me intel_cstate snd_hwdep snd_hda_core videodev intel_uncore snd_pcm mei media tpm_tis tpm_tis_core intel_rapl_perf tpm snd_timer lpc_ich snd soundcore kvm irqbypass libcrc32c i915 i2c_algo_bit drm_kms_helper
-   e1000e ptp drm crc32c_intel video pps_core
-   CPU: 3 PID: 1776 Comm: dvbv5-zap Not tainted 4.14.0+ #78
-   Hardware name:                  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
-   task: ffff88877c73bc80 task.stack: ffffb7c402418000
-   RIP: 0010:__vb2_queue_alloc+0x134/0x4e0 [videobuf2_core]
-   RSP: 0018:ffffb7c40241bc60 EFLAGS: 00010246
-   RAX: 0000000080360421 RBX: 0000000000000021 RCX: 000000000000000a
-   RDX: ffffb7c40241bcf4 RSI: ffff888780362c60 RDI: ffff888796d8e130
-   RBP: ffffb7c40241bcc8 R08: 0000000000000316 R09: 0000000000000004
-   R10: ffff888780362c00 R11: 0000000000000001 R12: 000000000002f000
-   R13: ffff8887758be700 R14: 0000000000021000 R15: 0000000000000001
-   FS:  00007f2849024740(0000) GS:ffff888796d80000(0000) knlGS:0000000000000000
-   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-   CR2: ffff888b773c0890 CR3: 000000043beb2005 CR4: 00000000003606e0
-   Call Trace:
-    vb2_core_reqbufs+0x226/0x420 [videobuf2_core]
-    dvb_vb2_reqbufs+0x2d/0xc0 [dvb_core]
-    dvb_dvr_do_ioctl+0x98/0x1d0 [dvb_core]
-    dvb_usercopy+0x53/0x1b0 [dvb_core]
-    ? dvb_demux_ioctl+0x20/0x20 [dvb_core]
-    ? tty_ldisc_deref+0x16/0x20
-    ? tty_write+0x1f9/0x310
-    ? process_echoes+0x70/0x70
-    dvb_dvr_ioctl+0x15/0x20 [dvb_core]
-    do_vfs_ioctl+0xa5/0x600
-    SyS_ioctl+0x79/0x90
-    entry_SYSCALL_64_fastpath+0x1a/0xa5
-   RIP: 0033:0x7f28486f7ea7
-   RSP: 002b:00007ffc13b2db18 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-   RAX: ffffffffffffffda RBX: 000055b10fc06130 RCX: 00007f28486f7ea7
-   RDX: 00007ffc13b2db48 RSI: 00000000c0086f3c RDI: 0000000000000007
-   RBP: 0000000000000203 R08: 000055b10df1e02c R09: 000000000000002e
-   R10: 0036b42415108357 R11: 0000000000000246 R12: 0000000000000000
-   R13: 00007f2849062f60 R14: 00000000000001f1 R15: 00007ffc13b2da54
-   Code: 74 0a 60 8b 0a 48 83 c0 30 48 83 c2 04 89 48 d0 89 48 d4 48 39 f0 75 eb 41 8b 42 08 83 7d d4 01 41 c7 82 ec 01 00 00 ff ff ff ff <4d> 89 94 c5 88 00 00 00 74 14 83 c3 01 41 39 dc 0f 85 f1 fe ff
-   RIP: __vb2_queue_alloc+0x134/0x4e0 [videobuf2_core] RSP: ffffb7c40241bc60
-   CR2: ffff888b773c0890
+In case of a single monitor interface given, reject setting TX power,
+if no virtual monitor interface exists.
 
-So, add a sanity check in order to prevent going past array.
+That being checked, don't warn in ieee80211_bss_info_change_notify,
+after setting TX power on a monitor interface.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Fixes warning:
+------------[ cut here ]------------
+ WARNING: CPU: 0 PID: 2193 at net/mac80211/driver-ops.h:167
+ ieee80211_bss_info_change_notify+0x111/0x190 Modules linked in: uvcvideo
+ videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_core
+rndis_host cdc_ether usbnet mii tp_smapi(O) thinkpad_ec(O) ohci_hcd vboxpci(O)
+ vboxnetadp(O) vboxnetflt(O) v boxdrv(O) x86_pkg_temp_thermal kvm_intel kvm
+ irqbypass iwldvm iwlwifi ehci_pci ehci_hcd tpm_tis tpm_tis_core tpm CPU: 0
+ PID: 2193 Comm: iw Tainted: G           O    4.12.12-gentoo #2 task:
+ ffff880186fd5cc0 task.stack: ffffc90001b54000 RIP:
+ 0010:ieee80211_bss_info_change_notify+0x111/0x190 RSP: 0018:ffffc90001b57a10
+ EFLAGS: 00010246 RAX: 0000000000000006 RBX: ffff8801052ce840 RCX:
+ 0000000000000064 RDX: 00000000fffffffc RSI: 0000000000040000 RDI:
+ ffff8801052ce840 RBP: ffffc90001b57a38 R08: 0000000000000062 R09:
+ 0000000000000000 R10: ffff8802144b5000 R11: ffff880049dc4614 R12:
+ 0000000000040000 R13: 0000000000000064 R14: ffff8802105f0760 R15:
+ ffffc90001b57b48 FS:  00007f92644b4580(0000) GS:ffff88021e200000(0000)
+ knlGS:0000000000000000 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 00007f9263c109f0 CR3: 00000001df850000 CR4: 00000000000406f0
+ Call Trace:
+  ieee80211_recalc_txpower+0x33/0x40
+  ieee80211_set_tx_power+0x40/0x180
+  nl80211_set_wiphy+0x32e/0x950
+
+Reported-by: Peter Große <pegro@friiks.de>
+Signed-off-by: Peter Große <pegro@friiks.de>
+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/v4l2-core/videobuf2-core.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/mac80211/cfg.c        |   28 +++++++++++++++++++++++++++-
+ net/mac80211/driver-ops.h |    3 ++-
+ 2 files changed, 29 insertions(+), 2 deletions(-)
 
---- a/drivers/media/v4l2-core/videobuf2-core.c
-+++ b/drivers/media/v4l2-core/videobuf2-core.c
-@@ -332,6 +332,10 @@ static int __vb2_queue_alloc(struct vb2_
- 	struct vb2_buffer *vb;
- 	int ret;
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -2373,10 +2373,17 @@ static int ieee80211_set_tx_power(struct
+ 	struct ieee80211_sub_if_data *sdata;
+ 	enum nl80211_tx_power_setting txp_type = type;
+ 	bool update_txp_type = false;
++	bool has_monitor = false;
  
-+	/* Ensure that q->num_buffers+num_buffers is below VB2_MAX_FRAME */
-+	num_buffers = min_t(unsigned int, num_buffers,
-+			    VB2_MAX_FRAME - q->num_buffers);
+ 	if (wdev) {
+ 		sdata = IEEE80211_WDEV_TO_SUB_IF(wdev);
+ 
++		if (sdata->vif.type == NL80211_IFTYPE_MONITOR) {
++			sdata = rtnl_dereference(local->monitor_sdata);
++			if (!sdata)
++				return -EOPNOTSUPP;
++		}
 +
- 	for (buffer = 0; buffer < num_buffers; ++buffer) {
- 		/* Allocate videobuf buffer structures */
- 		vb = kzalloc(q->buf_struct_size, GFP_KERNEL);
+ 		switch (type) {
+ 		case NL80211_TX_POWER_AUTOMATIC:
+ 			sdata->user_power_level = IEEE80211_UNSET_POWER_LEVEL;
+@@ -2415,15 +2422,34 @@ static int ieee80211_set_tx_power(struct
+ 
+ 	mutex_lock(&local->iflist_mtx);
+ 	list_for_each_entry(sdata, &local->interfaces, list) {
++		if (sdata->vif.type == NL80211_IFTYPE_MONITOR) {
++			has_monitor = true;
++			continue;
++		}
+ 		sdata->user_power_level = local->user_power_level;
+ 		if (txp_type != sdata->vif.bss_conf.txpower_type)
+ 			update_txp_type = true;
+ 		sdata->vif.bss_conf.txpower_type = txp_type;
+ 	}
+-	list_for_each_entry(sdata, &local->interfaces, list)
++	list_for_each_entry(sdata, &local->interfaces, list) {
++		if (sdata->vif.type == NL80211_IFTYPE_MONITOR)
++			continue;
+ 		ieee80211_recalc_txpower(sdata, update_txp_type);
++	}
+ 	mutex_unlock(&local->iflist_mtx);
+ 
++	if (has_monitor) {
++		sdata = rtnl_dereference(local->monitor_sdata);
++		if (sdata) {
++			sdata->user_power_level = local->user_power_level;
++			if (txp_type != sdata->vif.bss_conf.txpower_type)
++				update_txp_type = true;
++			sdata->vif.bss_conf.txpower_type = txp_type;
++
++			ieee80211_recalc_txpower(sdata, update_txp_type);
++		}
++	}
++
+ 	return 0;
+ }
+ 
+--- a/net/mac80211/driver-ops.h
++++ b/net/mac80211/driver-ops.h
+@@ -165,7 +165,8 @@ static inline void drv_bss_info_changed(
+ 	if (WARN_ON_ONCE(sdata->vif.type == NL80211_IFTYPE_P2P_DEVICE ||
+ 			 sdata->vif.type == NL80211_IFTYPE_NAN ||
+ 			 (sdata->vif.type == NL80211_IFTYPE_MONITOR &&
+-			  !sdata->vif.mu_mimo_owner)))
++			  !sdata->vif.mu_mimo_owner &&
++			  !(changed & BSS_CHANGED_TXPOWER))))
+ 		return;
+ 
+ 	if (!check_sdata_in_driver(sdata))
