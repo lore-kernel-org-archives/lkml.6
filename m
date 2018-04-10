@@ -1,69 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753780AbeDJOLp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:11:45 -0400
-Received: from sauhun.de ([88.99.104.3]:40670 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752979AbeDJOLo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:11:44 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-i2c@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH] MAINTAINERS: remove me as maintainer for I2C host drivers
-Date: Tue, 10 Apr 2018 16:11:25 +0200
-Message-Id: <20180410141125.4477-1-wsa@the-dreams.de>
-X-Mailer: git-send-email 2.11.0
+        id S1754053AbeDJOMM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:12:12 -0400
+Received: from resqmta-ch2-05v.sys.comcast.net ([69.252.207.37]:60988 "EHLO
+        resqmta-ch2-05v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753145AbeDJOML (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 10:12:11 -0400
+Date: Tue, 10 Apr 2018 09:12:08 -0500 (CDT)
+From: Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To: Vlastimil Babka <vbabka@suse.cz>
+cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        David Rientjes <rientjes@google.com>,
+        Pekka Enberg <penberg@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [RFC] mm, slab: reschedule cache_reap() on the same CPU
+In-Reply-To: <20180410081531.18053-1-vbabka@suse.cz>
+Message-ID: <alpine.DEB.2.20.1804100907160.27333@nuc-kabylake>
+References: <20180410081531.18053-1-vbabka@suse.cz>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-CMAE-Envelope: MS4wfBecCrriSZ6UjdErba0pdGr4zaSMsSrwcfsjIjt6VAB4PFHDZDW1s9yittUW/6VuUbjSx5zGXz8j1+HS+Ycrmx3r7HNAsupsHD1sKO9y8SCpkzH5nLS0
+ X+9haX+NHX/Ao+70uX9kRnVj2ErulcQzkHIm+7Xksty3d4jd4p62+MzCXh2PSy7IagWLjq+b6qrR74jwMxFMCv5qZ36LCWQ9Y20JaDtNKWZL5kfjRiLaHbN8
+ 3Hs/OdlWyYriXcgRsJM1KYKsS66HSPskvJ8KmwowEcdtA+Bg9hXtnEBRMHucpIud81GF2qxsa/VJqU3ysRwJPHaWw5Up9eyqqi2BRLR+NQirdnUNIeY9xo6b
+ tOQVaGSVFooy93iY5Ycwr4vkBbdl7yyR3WbIpdyDMe55vCDvqJCybNiOsF2aKm9S0A4NGQKtQXH8q8dqPru6589TtlpFdHYrh8DdDUmBHgVnLAO9HkM=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The number of I2C host controller drivers keeps increasing, and although
-I had some success acquiring specific driver maintainers, my bandwidth
-is by far not enough to act as a fallback for the rest of the drivers.
-To reflect this status-quo in MAINTAINERS, add a seperate entry for I2C
-host drivers, let the I2C list (= community) be the contact point, and
-mark this section as "Odd fixes".
+On Tue, 10 Apr 2018, Vlastimil Babka wrote:
 
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
----
+> cache_reap() is initially scheduled in start_cpu_timer() via
+> schedule_delayed_work_on(). But then the next iterations are scheduled via
+> schedule_delayed_work(), thus using WORK_CPU_UNBOUND.
 
-Joe: my tests worked fine with the file patterns; yet I'd appreciate if you
-had time to double check them. Thanks!
+That is a bug.. cache_reap must run on the same cpu since it deals with
+the per cpu queues of the current cpu. Scheduled_delayed_work() used to
+guarantee running on teh same cpu.
 
- MAINTAINERS | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+> This patch makes sure schedule_delayed_work_on() is used with the proper cpu
+> when scheduling the next iteration. The cpu is stored with delayed_work on a
+> new slab_reap_work_struct super-structure.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6d296bdce328..2f7ccdcf76f7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6580,15 +6580,23 @@ W:	https://i2c.wiki.kernel.org/
- Q:	https://patchwork.ozlabs.org/project/linux-i2c/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git
- S:	Maintained
--F:	Documentation/devicetree/bindings/i2c/
-+F:	Documentation/devicetree/bindings/i2c/i2c.txt
- F:	Documentation/i2c/
--F:	drivers/i2c/
--F:	drivers/i2c/*/
-+F:	drivers/i2c/*
- F:	include/linux/i2c.h
- F:	include/linux/i2c-*.h
- F:	include/uapi/linux/i2c.h
- F:	include/uapi/linux/i2c-*.h
- 
-+I2C SUBSYSTEM DRIVERS
-+L:	linux-i2c@vger.kernel.org
-+W:	https://i2c.wiki.kernel.org/
-+Q:	https://patchwork.ozlabs.org/project/linux-i2c/list/
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git
-+S:	Odd Fixes
-+F:	Documentation/devicetree/bindings/i2c/
-+F:	drivers/i2c/*/
-+
- I2C-TAOS-EVM DRIVER
- M:	Jean Delvare <jdelvare@suse.com>
- L:	linux-i2c@vger.kernel.org
--- 
-2.11.0
+The current cpu is readily available via smp_processor_id(). Why a
+super structure?
+
+> @@ -4074,7 +4086,8 @@ static void cache_reap(struct work_struct *w)
+>  	next_reap_node();
+>  out:
+>  	/* Set up the next iteration */
+> -	schedule_delayed_work(work, round_jiffies_relative(REAPTIMEOUT_AC));
+> +	schedule_delayed_work_on(reap_work->cpu, work,
+> +					round_jiffies_relative(REAPTIMEOUT_AC));
+
+schedule_delayed_work_on(smp_processor_id(), work, round_jiffies_relative(REAPTIMEOUT_AC));
+
+instead all of the other changes?
