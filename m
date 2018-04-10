@@ -1,98 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752668AbeDJIgD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:36:03 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:51485 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751888AbeDJIgC (ORCPT
+        id S1752724AbeDJIgJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 04:36:09 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:19423 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751888AbeDJIgG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:36:02 -0400
-X-Google-Smtp-Source: AIpwx4/6lVO9n4UD/Uc6/IaXx/FNaXb3pLhtNfM+f6wcACjjZ6H1SRijPjageIyLwr305Gb56Ay4Mq7ReFF7UJdkBojeItar8aDv
-MIME-Version: 1.0
-Date: Tue, 10 Apr 2018 01:36:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008d2e0d05697a693d@google.com>
-Subject: KASAN: null-ptr-deref Read in xattr_getsecurity
-From: syzbot <syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Tue, 10 Apr 2018 04:36:06 -0400
+X-IronPort-AV: E=Sophos;i="5.48,431,1517842800";
+   d="scan'208";a="277754389"
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com, buserror+upstream@gmail.com,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v4 3/8] dt-bindings: mfd: renesas,rzn1-sysctrl: document RZ/N1 sysctrl node
+Date: Tue, 10 Apr 2018 09:30:03 +0100
+Message-Id: <1523349015-37985-4-git-send-email-michel.pollet@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The Renesas RZ/N1 Family (Part #R9A06G0xx) has a multi-function
+system controller. This documents the node used to encapsulate
+it's sub drivers.
 
-syzbot hit the following crash on upstream commit
-fd40ffc72e2f74c7db61e400903e7d50a88bc0b0 (Mon Apr 9 18:36:05 2018 +0000)
-selinux: fix missing dput() before selinuxfs unmount
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=9369930ca44f29e60e2d
-
-So far this crash happened 41 times on upstream.
-Unfortunately, I don't have any reproducer for this crash yet.
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5421128315043840
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-771321277174894814
-compiler: gcc (GCC) 8.0.1 20180301 (experimental)
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-R13: 0000000000000098 R14: 00000000006f3ee0 R15: 0000000000000002
-==================================================================
-BUG: KASAN: null-ptr-deref in memcpy include/linux/string.h:345 [inline]
-BUG: KASAN: null-ptr-deref in xattr_getsecurity+0x18a/0x1f0 fs/xattr.c:251
-Read of size 20 at addr 0000000000000000 by task syz-executor5/12111
-
-CPU: 0 PID: 12111 Comm: syz-executor5 Not tainted 4.16.0+ #16
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  kasan_report_error mm/kasan/report.c:352 [inline]
-  kasan_report.cold.7+0x13b/0x2f5 mm/kasan/report.c:412
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
-  memcpy+0x23/0x50 mm/kasan/kasan.c:302
-  memcpy include/linux/string.h:345 [inline]
-  xattr_getsecurity+0x18a/0x1f0 fs/xattr.c:251
-  vfs_getxattr+0xf2/0x160 fs/xattr.c:333
-  getxattr+0x139/0x2c0 fs/xattr.c:540
-  SYSC_fgetxattr fs/xattr.c:598 [inline]
-  SyS_fgetxattr+0x109/0x190 fs/xattr.c:589
-  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x455259
-RSP: 002b:00007f20bc46fc68 EFLAGS: 00000246 ORIG_RAX: 00000000000000c1
-RAX: ffffffffffffffda RBX: 00007f20bc4706d4 RCX: 0000000000455259
-RDX: 0000000020000280 RSI: 00000000200002c0 RDI: 0000000000000014
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffffffffffff27 R11: 0000000000000246 R12: 0000000000000015
-R13: 0000000000000098 R14: 00000000006f3ee0 R15: 0000000000000002
-==================================================================
-
-
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
+ .../bindings/mfd/renesas,rzn1-sysctrl.txt          | 23 ++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+diff --git a/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+new file mode 100644
+index 0000000..9897f8f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+@@ -0,0 +1,23 @@
++DT bindings for the Renesas RZ/N1 System Controller
++
++== System Controller Node ==
++
++The system controller node currently only hosts a single sub-node to handle
++the rebooting of the CPU. Eventually it will host the clock driver, SMP
++start handler, watchdog etc.
++
++See renesas,rzn1-reboot.txt for further details.
++
++Bindings:
+++ Required:
++	compatible = "renesas,r9a06g032-sysctrl",
++			"renesas,rzn1-sysctrl",
++			"syscon", "simple-mfd";
++
++Example:
++	sysctrl: sysctrl@4000c000 {
++		compatible = "renesas,r9a06g032-sysctrl",
++				"renesas,rzn1-sysctrl",
++				"syscon", "simple-mfd";
++		reg = <0x4000c000 0x1000>;
++	};
+-- 
+2.7.4
