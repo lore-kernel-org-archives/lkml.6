@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48ciFQa5OToaGXPC/l5GQWV/E8bqu7VbkmSodAjT0J0psZFBwFV4YJgJ+x5bvQLnHOhhqk1
-ARC-Seal: i=1; a=rsa-sha256; t=1523399352; cv=none;
+X-Google-Smtp-Source: AIpwx499oqiFmFSwyR6c/fBXwXUvHNQmLeS2OOlpKFjAFX3BuiA2tZ4i1UJLwd/TmA9YdpDLSTrO
+ARC-Seal: i=1; a=rsa-sha256; t=1523399349; cv=none;
         d=google.com; s=arc-20160816;
-        b=HVM/u7UPWrBfn4sBqnGh0IxZ4orcfm3/hvnEzzY5obxtd2DmQp0/pOh42yqERK6Lww
-         mnYnALsT5/EtyqyOoIkv4z2xVsANw3sqb5HU7H2sgAVS1qeEKLyrqPlV+6jL7fUIUeOo
-         YIfN7uZC6pinypxH+S3c1tFMEDH0NBxaAerfB3Z6AXLsYrFQcm7oeBBDcIwepDo3Yyuc
-         EgHnUzcBRREODlOzvqADcTx8qj0bp+oYmnFQkqRAfBuvMheo/dItgmuB6dux342sRT6g
-         pmkvujEq9o68Ys3gtLLeBqrLtamitxUvFmWwfyUBa33EnyrVsv2dIU9fsvaQHgUpFg5L
-         s4jA==
+        b=Q9+xK8L/gCaTq68WtudJ9NS/MwdQiEcPpSnYfbRJT9wA3NRQ1x47RiIBLvc0BX5qR4
+         2Y/nafFYLNHXukaSymCl9O28ZSRj9UhLGTT6CjIwmVPiEkiJYQNF2aZYN032X8vtmBEG
+         tWVLEOkAyMANJxv0RbVeiptOhlMw0TOrli6pNu6O8z1DZZck+m3BToya40SrwH6mPteM
+         L5VI1aK7nlA0+I0l8ay618sFroMUqUqNBgedf52qzVb2gHC0TrMwPdvmEWn1dFO++okY
+         HjCOUW8JPamvl1V5Ly9rX6jMS0HkgVnyduPePuzDWmG4E5nb2s23J/m7soUrm8Xq9e3S
+         0qrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2W3g3E3oHEL+idXNgy5S3hU/5WgpZCOpxhep77uJ7G4=;
-        b=ghkcc83OCJ/CVK/M5Qk9HKsA4OQcQaBHkNflq7+Qs+seoXW8vC376gRER3wtbjjt1Q
-         pSoiO3EqWyBPtp9Sdo7MDio9tbrIeYEr54B9K0veBSHsFA1vZ1GOdFlPxOh0J6Tg+dnj
-         QwbqrlsgKKO/oT6N75xCMz1jAbK9o7PDJlOeLxP5m7hf1GW76zQYVSxdjwkXW89IwSq6
-         uhXVXV2uGZi4OcEcSMmNpIWiNvkAsgKze0U+N32O+W3FDnV6YdKim5AX2XjLy7TzEtn9
-         nQL31+jtzCJyd/u1CZqQsVDZl3/eHsirWLwIpHdEUiB9T1rHxMnmlNWnMCuxw1QG18gK
-         IC3w==
+        bh=rxSFV+IHdrv43iuZdy9ytktt33Wf8Gdflps1pLV5xbI=;
+        b=ZqGBlebzzeL6jLle0YXd1z8CBwcjeB4lX+q5fsQV1OQnthR+DGjtC202Q4AKwPdTpM
+         Doic8jckluwbo+mGbW/z+WEM6q9zCxsSxyWc4G/+m4QqgnG63jJuCh36qwMq5QDMG+df
+         V2jBG1WJYZnOSPyUiRUBtH0Sky+K2F438NrFFieRHlMlViqlMzePswiSBbH/gUxcUoq3
+         4x4A6s4tp8Me3JgIr8DaRCITVMVA3NQEgLJ2Jiq+lbADHKrbG55tsjiTqWgeuDKF7reg
+         DkHQyQ0UdhMwtM4J0NcsHj76wabojtJBjQ+bajCXMsEQMKWDMRCkQfE30p2vFs+u8PlD
+         XJQg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	James Smart <james.smart@broadcom.com>,
-	Christoph Hellwig <hch@lst.de>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.15 058/168] nvme_fcloop: disassocate local port structs
-Date: Wed, 11 Apr 2018 00:23:20 +0200
-Message-Id: <20180410212802.680195717@linuxfoundation.org>
+Subject: [PATCH 4.15 057/168] pinctrl: baytrail: Enable glitch filter for GPIOs used as interrupts
+Date: Wed, 11 Apr 2018 00:23:19 +0200
+Message-Id: <20180410212802.637537235@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399999553319289?=
-X-GMAIL-MSGID: =?utf-8?q?1597399999553319289?=
+X-GMAIL-THRID: =?utf-8?q?1597399996448030110?=
+X-GMAIL-MSGID: =?utf-8?q?1597399996448030110?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,124 +51,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Smart <jsmart2021@gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
 
-[ Upstream commit 6fda20283e55b9d288cd56822ce39fc8e64f2208 ]
+[ Upstream commit 9291c65b01d1c67ebd56644cb19317ad665c44b3 ]
 
-The current fcloop driver gets its lport structure from the private
-area co-allocated with the fc_localport. All is fine except the
-teardown path, which wants to wait on the completion, which is marked
-complete by the delete_localport callback performed after
-unregister_localport.  The issue is, the nvme_fc transport frees the
-localport structure immediately after delete_localport is called,
-meaning the original routine is trying to wait on a complete that
-was just freed.
+On some systems, some PCB traces attached to GpioInts are routed in such
+a way that they pick up enough interference to constantly (many times per
+second) trigger.
 
-Change such that a lport struct is allocated coincident with the
-addition and registration of a localport. The private area of the
-localport now contains just a backpointer to the real lport struct.
-Now, the completion can be waited for, and after completing, the
-new structure can be kfree'd.
+Enabling glitch-filtering fixes this.
 
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/target/fcloop.c |   35 +++++++++++++++++++++++++----------
- 1 file changed, 25 insertions(+), 10 deletions(-)
+ drivers/pinctrl/intel/pinctrl-baytrail.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/nvme/target/fcloop.c
-+++ b/drivers/nvme/target/fcloop.c
-@@ -204,6 +204,10 @@ struct fcloop_lport {
- 	struct completion unreg_done;
- };
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -46,6 +46,9 @@
+ #define BYT_TRIG_POS		BIT(25)
+ #define BYT_TRIG_LVL		BIT(24)
+ #define BYT_DEBOUNCE_EN		BIT(20)
++#define BYT_GLITCH_FILTER_EN	BIT(19)
++#define BYT_GLITCH_F_SLOW_CLK	BIT(17)
++#define BYT_GLITCH_F_FAST_CLK	BIT(16)
+ #define BYT_PULL_STR_SHIFT	9
+ #define BYT_PULL_STR_MASK	(3 << BYT_PULL_STR_SHIFT)
+ #define BYT_PULL_STR_2K		(0 << BYT_PULL_STR_SHIFT)
+@@ -1579,6 +1582,9 @@ static int byt_irq_type(struct irq_data
+ 	 */
+ 	value &= ~(BYT_DIRECT_IRQ_EN | BYT_TRIG_POS | BYT_TRIG_NEG |
+ 		   BYT_TRIG_LVL);
++	/* Enable glitch filtering */
++	value |= BYT_GLITCH_FILTER_EN | BYT_GLITCH_F_SLOW_CLK |
++		 BYT_GLITCH_F_FAST_CLK;
  
-+struct fcloop_lport_priv {
-+	struct fcloop_lport *lport;
-+};
-+
- struct fcloop_rport {
- 	struct nvme_fc_remote_port *remoteport;
- 	struct nvmet_fc_target_port *targetport;
-@@ -657,7 +661,8 @@ fcloop_nport_get(struct fcloop_nport *np
- static void
- fcloop_localport_delete(struct nvme_fc_local_port *localport)
- {
--	struct fcloop_lport *lport = localport->private;
-+	struct fcloop_lport_priv *lport_priv = localport->private;
-+	struct fcloop_lport *lport = lport_priv->lport;
- 
- 	/* release any threads waiting for the unreg to complete */
- 	complete(&lport->unreg_done);
-@@ -697,7 +702,7 @@ static struct nvme_fc_port_template fcte
- 	.max_dif_sgl_segments	= FCLOOP_SGL_SEGS,
- 	.dma_boundary		= FCLOOP_DMABOUND_4G,
- 	/* sizes of additional private data for data structures */
--	.local_priv_sz		= sizeof(struct fcloop_lport),
-+	.local_priv_sz		= sizeof(struct fcloop_lport_priv),
- 	.remote_priv_sz		= sizeof(struct fcloop_rport),
- 	.lsrqst_priv_sz		= sizeof(struct fcloop_lsreq),
- 	.fcprqst_priv_sz	= sizeof(struct fcloop_ini_fcpreq),
-@@ -728,11 +733,17 @@ fcloop_create_local_port(struct device *
- 	struct fcloop_ctrl_options *opts;
- 	struct nvme_fc_local_port *localport;
- 	struct fcloop_lport *lport;
--	int ret;
-+	struct fcloop_lport_priv *lport_priv;
-+	unsigned long flags;
-+	int ret = -ENOMEM;
-+
-+	lport = kzalloc(sizeof(*lport), GFP_KERNEL);
-+	if (!lport)
-+		return -ENOMEM;
- 
- 	opts = kzalloc(sizeof(*opts), GFP_KERNEL);
- 	if (!opts)
--		return -ENOMEM;
-+		goto out_free_lport;
- 
- 	ret = fcloop_parse_options(opts, buf);
- 	if (ret)
-@@ -752,23 +763,25 @@ fcloop_create_local_port(struct device *
- 
- 	ret = nvme_fc_register_localport(&pinfo, &fctemplate, NULL, &localport);
- 	if (!ret) {
--		unsigned long flags;
--
- 		/* success */
--		lport = localport->private;
-+		lport_priv = localport->private;
-+		lport_priv->lport = lport;
-+
- 		lport->localport = localport;
- 		INIT_LIST_HEAD(&lport->lport_list);
- 
- 		spin_lock_irqsave(&fcloop_lock, flags);
- 		list_add_tail(&lport->lport_list, &fcloop_lports);
- 		spin_unlock_irqrestore(&fcloop_lock, flags);
--
--		/* mark all of the input buffer consumed */
--		ret = count;
- 	}
- 
- out_free_opts:
- 	kfree(opts);
-+out_free_lport:
-+	/* free only if we're going to fail */
-+	if (ret)
-+		kfree(lport);
-+
- 	return ret ? ret : count;
- }
- 
-@@ -790,6 +803,8 @@ __wait_localport_unreg(struct fcloop_lpo
- 
- 	wait_for_completion(&lport->unreg_done);
- 
-+	kfree(lport);
-+
- 	return ret;
- }
+ 	writel(value, reg);
  
