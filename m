@@ -1,99 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751919AbeDJUqL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 16:46:11 -0400
-Received: from mondschein.lichtvoll.de ([194.150.191.11]:37753 "EHLO
-        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751546AbeDJUqK (ORCPT
+        id S1752081AbeDJUrL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 16:47:11 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:37117 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751799AbeDJUrJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 16:46:10 -0400
-Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
-From: Martin Steigerwald <martin@lichtvoll.de>
-To: Martin Steigerwald <martin@lichtvoll.de>
-Cc: Tejun Heo <tj@kernel.org>, Sitsofe Wheeler <sitsofe@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, Stefan Haberland <sth@linux.vnet.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.vnet.ibm.com>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>
-Subject: Re: [PATCH] blk-mq: Directly schedule q->timeout_work when aborting a request
-Date: Tue, 10 Apr 2018 22:46:07 +0200
-Message-ID: <2410059.9M3ptFeZvf@merkaba>
-In-Reply-To: <2699418.6CV4rbzP8d@merkaba>
-References: <CALjAwxh-PVYFnYFCJpGOja+m5SzZ8Sa4J7ohxdK=r8NyOF-EMA@mail.gmail.com> <20180402220458.GJ388343@devbig577.frc2.facebook.com> <2699418.6CV4rbzP8d@merkaba>
+        Tue, 10 Apr 2018 16:47:09 -0400
+X-Google-Smtp-Source: AIpwx49kNGOHR/voPJAHXL8Jyn3xOEoELftqyaU1DAka4zp/EVxJP0wbkK+Eg/iZGP9B/uuZVXFcqQ==
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Anna Schumaker <schumaker.anna@gmail.com>
+Subject: [GIT PULL] Please pull NFS client updates for 4.17
+Message-ID: <176ac3d9-dc2a-0a90-b41a-eb8b5cf006f5@gmail.com>
+Date: Tue, 10 Apr 2018 16:47:05 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Martin Steigerwald - 10.04.18, 20:43:
-> Tejun Heo - 03.04.18, 00:04:
-> > Request abortion is performed by overriding deadline to now and
-> > scheduling timeout handling immediately.  For the latter part, the
-> > code was using mod_timer(timeout, 0) which can't guarantee that the
-> > timer runs afterwards.  Let's schedule the underlying work item
-> > directly instead.
-> > 
-> > This fixes the hangs during probing reported by Sitsofe but it isn't
-> > yet clear to me how the failure can happen reliably if it's just the
-> > above described race condition.
-> 
-> Compiling a 4.16.1 kernel with that patch to test whether this fixes
-> the boot hang I reported in:
-> 
-> [Possible REGRESSION, 4.16-rc4] Error updating SMART data during
-> runtime and boot failures with blk_mq_terminate_expired in backtrace
-> https://bugzilla.kernel.org/show_bug.cgi?id=199077
+Hi Linus,
 
-Fails as well, see
+The following changes since commit 661e50bc853209e41a5c14a290ca4decc43cbfd1:
 
-https://bugzilla.kernel.org/show_bug.cgi?id=199077#c8
+  Linux 4.16-rc4 (2018-03-04 14:54:11 -0800)
 
-for photo with (part of) backtrace.
+are available in the Git repository at:
 
-> The "Error updating SMART data during runtime" thing I reported there
-> as well may still be another (independent) issue.
-> 
-> > Signed-off-by: Tejun Heo <tj@kernel.org>
-> > Reported-by: Sitsofe Wheeler <sitsofe@gmail.com>
-> > Reported-by: Meelis Roos <mroos@linux.ee>
-> > Fixes: 358f70da49d7 ("blk-mq: make blk_abort_request() trigger
-> > timeout path") Cc: stable@vger.kernel.org # v4.16
-> > Link:
-> > http://lkml.kernel.org/r/CALjAwxh-PVYFnYFCJpGOja+m5SzZ8Sa4J7ohxdK=r8
-> > NyOF-EM A@mail.gmail.com Link:
-> > http://lkml.kernel.org/r/alpine.LRH.2.21.1802261049140.4893@math.ut.
-> > ee --- Hello,
-> > 
-> > I don't have the full explanation yet but here's a preliminary
-> > patch.
-> > 
-> > Thanks.
-> > 
-> >  block/blk-timeout.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/block/blk-timeout.c b/block/blk-timeout.c
-> > index a05e367..f0e6e41 100644
-> > --- a/block/blk-timeout.c
-> > +++ b/block/blk-timeout.c
-> > @@ -165,7 +165,7 @@ void blk_abort_request(struct request *req)
-> > 
-> >  		 * No need for fancy synchronizations.
-> >  		 */
-> >  		
-> >  		blk_rq_set_deadline(req, jiffies);
-> > 
-> > -		mod_timer(&req->q->timeout, 0);
-> > +		kblockd_schedule_work(&req->q->timeout_work);
-> > 
-> >  	} else {
-> >  	
-> >  		if (blk_mark_rq_complete(req))
-> >  		
-> >  			return;
+  git://git.linux-nfs.org/projects/anna/linux-nfs.git tags/nfs-for-4.17-1
 
+for you to fetch changes up to 98de9ce6f6660d02aa72d7b9b17696fa68a2ed9b:
 
--- 
-Martin
+  NFS: advance nfs_entry cookie only after decoding completes successfully (2018-04-10 16:06:22 -0400)
+
+----------------------------------------------------------------
+Stable bugfixes:
+- xprtrdma: Fix corner cases when handling device removal # v4.12+
+- xprtrdma: Fix latency regression on NUMA NFS/RDMA clients # v4.15+
+
+Features:
+- New sunrpc tracepoint for RPC pings
+- Finer grained NFSv4 attribute checking
+- Don't unnecessarily return NFS v4 delegations
+
+Other bugfixes and cleanups:
+- Several other small NFSoRDMA cleanups
+- Improvements to the sunrpc RTT measurements
+- A few sunrpc tracepoint cleanups
+- Various fixes for NFS v4 lock notifications
+- Various sunrpc and NFS v4 XDR encoding cleanups
+- Switch to the ida_simple API
+- Fix NFSv4.1 exclusive create
+- Forget acl cache after setattr operation
+- Don't advance the nfs_entry readdir cookie if xdr decoding fails
+
+Cheers,
+Anna
+
+----------------------------------------------------------------
+Chuck Lever (16):
+      xprtrdma: Fix latency regression on NUMA NFS/RDMA clients
+      xprtrdma: Remove arbitrary limit on initiator depth
+      xprtrdma: Remove xprt-specific connect cookie
+      xprtrdma: ->send_request returns -EAGAIN when there are no free MRs
+      xprtrdma: Reduce number of MRs created by rpcrdma_mrs_create
+      xprtrdma: "Support" call-only RPCs
+      xprtrdma: Chain Send to FastReg WRs
+      xprtrdma: Move creation of rl_rdmabuf to rpcrdma_create_req
+      SUNRPC: Move xprt_update_rtt callsite
+      SUNRPC: Make RTT measurement more precise (Receive)
+      SUNRPC: Make RTT measurement more precise (Send)
+      SUNRPC: Make num_reqs a non-atomic integer
+      sunrpc: Simplify synopsis of some trace points
+      sunrpc: Add static trace point to report RPC latency stats
+      sunrpc: Add static trace point to report result of RPC ping
+      xprtrdma: Fix corner cases when handling device removal
+
+Frank Sorenson (1):
+      NFS: advance nfs_entry cookie only after decoding completes successfully
+
+Jeff Layton (3):
+      nfs4: always reset notified flag to false before repolling for lock
+      nfs4: don't compare clientid in nfs4_wake_lock_waiter
+      nfs4: wake any lock waiters on successful RECLAIM_COMPLETE
+
+Matthew Wilcox (1):
+      nfs: Use ida_simple API
+
+Trond Myklebust (25):
+      NFSv4: Fix nfs4_return_incompatible_delegation
+      NFS: Move the delegation return down into nfs4_proc_link()
+      NFS: Move the delegation return down into nfs4_proc_remove()
+      NFS: Move delegation recall into the NFSv4 callback for rename_setup()
+      NFS: Add a delegation return into nfs4_proc_unlink_setup()
+      NFS: Move the delegation return down into _nfs4_do_setattr()
+      NFS: Remove the unused return_delegation() callback
+      NFSv4: Don't return the delegation when not needed by NFSv4.x (x>0)
+      NFS: Convert NFS_INO_INVALID flags to unsigned long
+      NFS: Don't force a revalidation of all attributes if change is missing
+      NFS: Don't redirty the attribute cache in nfs_wcc_update_inode()
+      NFS: Don't force unnecessary cache invalidation in nfs_update_inode()
+      NFS: More fine grained attribute tracking
+      NFSv4: Ignore change attribute invalidations if we hold a delegation
+      SUNRPC: Add helpers for decoding opaque and string types
+      SUNRPC: Add a helper for encoding opaque data inline
+      NFSv4: Allow GFP_NOIO sleeps in decode_attr_owner/decode_attr_group
+      NFSv4; Clean up XDR encoding of type bitmap4
+      NFSv4: Clean up encode_attrs
+      NFSv4: Add a helper to encode/decode struct timespec
+      NFSv4: Don't ask for attributes when ACCESS is protected by a delegation
+      NFSv4: Clean up CB_GETATTR encoding
+      NFSv4: Fix the nfs_inode_set_delegation() arguments
+      NFSv4: Declare the size up to date after it was set.
+      NFSv4.1: Fix exclusive create
+
+chendt (1):
+      NFSv3/acl: forget acl cache after setattr
+
+ fs/nfs/callback_xdr.c             |  37 ++----
+ fs/nfs/delegation.c               |  52 ++++++--
+ fs/nfs/delegation.h               |   7 +-
+ fs/nfs/dir.c                      |  15 +--
+ fs/nfs/inode.c                    | 138 +++++++++++----------
+ fs/nfs/nfs3proc.c                 |  24 ++--
+ fs/nfs/nfs3xdr.c                  |   7 +-
+ fs/nfs/nfs4proc.c                 | 168 ++++++++++++++++++--------
+ fs/nfs/nfs4state.c                |  22 ++--
+ fs/nfs/nfs4xdr.c                  | 245 ++++++++++++++++++--------------------
+ fs/nfs/proc.c                     |  19 ++-
+ fs/nfs/unlink.c                   |   7 +-
+ fs/nfs/write.c                    |   8 +-
+ include/linux/nfs_fs.h            |  35 ++++--
+ include/linux/nfs_xdr.h           |   9 +-
+ include/linux/sunrpc/clnt.h       |   7 ++
+ include/linux/sunrpc/xdr.h        |  94 +++++++++++++++
+ include/linux/sunrpc/xprt.h       |   3 +-
+ include/trace/events/sunrpc.h     | 106 ++++++++++++++---
+ net/sunrpc/clnt.c                 |   8 +-
+ net/sunrpc/sched.c                |  10 +-
+ net/sunrpc/stats.c                |  16 ++-
+ net/sunrpc/sunrpc.h               |   6 -
+ net/sunrpc/xdr.c                  |  82 +++++++++++++
+ net/sunrpc/xprt.c                 |  34 +++---
+ net/sunrpc/xprtrdma/backchannel.c |   7 --
+ net/sunrpc/xprtrdma/fmr_ops.c     |  13 +-
+ net/sunrpc/xprtrdma/frwr_ops.c    |  53 ++++++---
+ net/sunrpc/xprtrdma/rpc_rdma.c    |  32 +++--
+ net/sunrpc/xprtrdma/transport.c   |  43 ++-----
+ net/sunrpc/xprtrdma/verbs.c       |  44 ++++---
+ net/sunrpc/xprtrdma/xprt_rdma.h   |   4 +-
+ net/sunrpc/xprtsock.c             |   4 +
+ 33 files changed, 866 insertions(+), 493 deletions(-)
