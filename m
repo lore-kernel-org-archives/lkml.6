@@ -1,69 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751931AbeDJBf1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 21:35:27 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:42212 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751767AbeDJBf0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 21:35:26 -0400
-Date: Tue, 10 Apr 2018 11:35:13 +1000 (AEST)
-From: Finn Thain <fthain@telegraphics.com.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-cc: Laurent Vivier <lvivier@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 03/12] m68k/mac: Don't remap SWIM MMIO region
-In-Reply-To: <CAMuHMdUy6C4OoGF44e_34+XjsQHe6RwfoesfBzcM8baEHUwzXw@mail.gmail.com>
-Message-ID: <alpine.LNX.2.21.1804101110380.8@nippy.intranet>
-References: <cover.1522546571.git.fthain@telegraphics.com.au> <cdba869f704b457bc617007738870b9e1bdef9d3.1522546571.git.fthain@telegraphics.com.au> <CAMuHMdUy6C4OoGF44e_34+XjsQHe6RwfoesfBzcM8baEHUwzXw@mail.gmail.com>
+        id S1752084AbeDJBft (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 21:35:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35488 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751943AbeDJBfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Apr 2018 21:35:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4E0F217D2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Mon, 9 Apr 2018 18:35:45 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: don't use GFP_ZERO for page caches
+Message-ID: <20180410013545.GA45603@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180409190012.21552-1-jaegeuk@kernel.org>
+ <20180409204244.GA25905@jaegeuk-macbookpro.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409204244.GA25905@jaegeuk-macbookpro.roam.corp.google.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Apr 2018, Geert Uytterhoeven wrote:
+On 04/09, Jaegeuk Kim wrote:
+> Change log from v1:
+>  - don't memset for recovered page
+> 
+> Related to https://lkml.org/lkml/2018/4/8/661
+> 
+> Sometimes, we need to write meta data to new allocated block address,
+> then we will allocate a zeroed page in inner inode's address space, and
+> fill partial data in it, and leave other place with zero value which means
+> some fields are initial status.
+> 
+> There are two inner inodes (meta inode and node inode) setting __GFP_ZERO,
+> I have just checked them, for both of them, we can avoid using __GFP_ZERO,
+> and do initialization by ourselves to avoid unneeded/redundant zeroing
+> from mm.
 
-> Hi Finn,
-> 
-> On Sun, Apr 1, 2018 at 3:41 AM, Finn Thain <fthain@telegraphics.com.au> 
-> wrote:
-> > For reasons I don't understand, calling ioremap() then iounmap() on 
-> > the SWIM MMIO region causes a hang on 68030 (but not on 68040).
-> 
-> Michael Schmitz also notices strange things with ioremap() on '030.
-> 
-> > There's no need to call ioremap() for the SWIM address range, as it 
-> > lies within the usual IO device region at 0x5000 0000, which is 
-> > already mapped.
-> 
-> by head.S, right?
-> 
+Okay, it seems we're missing some more places to reset the memory, since
+I'm still getting a panic. :(
 
-Right. I'll mention that in the commit log when I re-submit this series.
+Thanks,
 
-> > --- a/drivers/block/swim.c
-> > +++ b/drivers/block/swim.c
-> > @@ -911,7 +911,7 @@ static int swim_probe(struct platform_device *dev)
-> >                 goto out;
-> >         }
-> >
-> > -       swim_base = ioremap(res->start, resource_size(res));
-> > +       swim_base = (struct swim __iomem *)res->start;
 > 
-> I guess you need a __force to please sparse?
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/inode.c | 4 ++--
+>  fs/f2fs/node.c  | 3 ++-
+>  2 files changed, 4 insertions(+), 3 deletions(-)
 > 
-
-No, sparse did not find any new issues. It appears there's an old issue 
-elsewhere in the driver though. I'll prepare a new patch for that.
-
--- 
-
-> Gr{oetje,eeting}s,
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 417c9dcd0269..87535bf63421 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -320,10 +320,10 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
+>  make_now:
+>  	if (ino == F2FS_NODE_INO(sbi)) {
+>  		inode->i_mapping->a_ops = &f2fs_node_aops;
+> -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+>  	} else if (ino == F2FS_META_INO(sbi)) {
+>  		inode->i_mapping->a_ops = &f2fs_meta_aops;
+> -		mapping_set_gfp_mask(inode->i_mapping, GFP_F2FS_ZERO);
+> +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+>  	} else if (S_ISREG(inode->i_mode)) {
+>  		inode->i_op = &f2fs_file_inode_operations;
+>  		inode->i_fop = &f2fs_file_operations;
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 9a99243054ba..5a4469093e43 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1096,7 +1096,8 @@ struct page *new_node_page(struct dnode_of_data *dn, unsigned int ofs)
+>  	set_node_addr(sbi, &new_ni, NEW_ADDR, false);
+>  
+>  	f2fs_wait_on_page_writeback(page, NODE, true);
+> -	fill_node_footer(page, dn->nid, dn->inode->i_ino, ofs, true);
+> +	memset(F2FS_NODE(page), 0, PAGE_SIZE);
+> +	fill_node_footer(page, dn->nid, dn->inode->i_ino, ofs, false);
+>  	set_cold_node(page, S_ISDIR(dn->inode->i_mode));
+>  	if (!PageUptodate(page))
+>  		SetPageUptodate(page);
+> -- 
+> 2.15.0.531.g2ccb3012c9-goog
 > 
->                         Geert
 > 
-> 
-
--- 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
