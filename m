@@ -1,82 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-713595-1523399732-2-13704663191671972006
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523399731; b=NSZiG16/pZxQy1HiTSMY1Vlb0qOMTw3a6laQQysY9aqdQMQpzU
-    o1Amtr0EEhAsefkRjz3jIqrAkJNN/pFq0d82+oeD8p5ktAROvKdAMn1pEbR/1DFz
-    Mw7MlJKEOUSZ/q0CuQOLr0BkliAvy6LWgTz394FH//xAvYgpguVkoSrSnu4gZjB+
-    A5W4GVZb5Hm8C7Yu3IKwBazD023QcuU+PtnGO1hAsuDYXEDzmiAcgPFBUdG2K9qv
-    SGG9HDHDkQcT5NmFS1T0ME7PWk6umT3QlxraG+xxXUlDXGou7roHtvMyuGAAEmR8
-    /wH81XFYAxIR+B/YM6CD+SH9nL5PijZA8RnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523399731; bh=KSmIgeTpkok6D+M3ajgV9WubFemeig
-    m07R+nON2xIzk=; b=Ide3VoD/g83KiLtvZvZeD3cr8nTZjImS72XAwkl2T3yc4C
-    PSs+6HieVuAWvfFGSoxROgzqBKihpaIb3N3GjMScI8lYvHpAKdqzTgtOibvZQUBw
-    YCMKoaKQURJ2TlWNYERv0c8iSxIoR+GbC3VTDDCCw4Kv/e+0LphamK0HnyHxQGsA
-    EGeT+PxcMolgEkAtx0IdeQYikJyEH+d7Sm7t2hY6bYrM6qbzk0S0qTxSgJhAbfnZ
-    rw/b6v07Qc6X5Zr6R/l/7Dyzxts25do6cw9JkXm71kOLeS82uZRMa1wjXsJQcA+q
-    DRTsDhV2HGg/URVBYtFIw2YU4AI7KL9qufQA+Ozw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFin3YHnphrQdhQT6MtKVjxOSoltyA6SLo4K5FpPe6d25/fjPfkfmUbkJhmNgxIU4b+CDYF5fen5Lp//GR2atnnI+1vhoZIOWonnEeli3kNOV2j19cuY
-    4mBlZyq4mLwYDcHLpRZdHtU9j+80wp5ccOMks3KQ9mU8ih7eiwBMQF1pSIfcnRxscg13QXELe7MMJz7E9ChD0By7m5lWP/wFapAv7NXxmXjMYGN/Y+GcAaOX
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=KKAkSRfTAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=aZAfa15Jk5teG4y3V6kA:9 a=QEXdDO2ut3YA:10
-    a=cvBusfyB2V15izCimMoJ:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755547AbeDJWf1 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 18:35:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42124 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755543AbeDJWf0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:35:26 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx494vQQ3g1w+hnaIT3pkS+7DPH+aEaAdrTjwPoZbeAh1M9jr4p9jk2ASwjcPW3SDcr1Gz6Pd
+ARC-Seal: i=1; a=rsa-sha256; t=1523399731; cv=none;
+        d=google.com; s=arc-20160816;
+        b=vxKM7cvIfBroztjwg0PnP0wtowv9kXScXIwDtbl9218EB7BD9NUpQe+MqlzlY+FkNg
+         6m+GlZRfOoUjQO0Lr52vZoFvB7GtgJBr97YCf6hG1YFO4W4LMsO9/g0UYnzLZ0kw1r82
+         KWJZGbcxUd83xSDc+i8GsiNnrkkagUjI2AqwU2HgiY85AjjlluXGpcJiUq9vI6vEQX5Q
+         oRiIYFiJNCHNUtAY19fxnnrhNxN/tPLp/SY+HmguIjU8poNb/MKrS6/3wWH55Mcq1zVK
+         H5Qxv3UPpZOZvwzslZ+atwOvfXl4ULOHnBbCruOocph+TqRK85cLOK630VRXevSxJIPX
+         nD0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=JKOzUenDmjKYFrFtU7K3//sEP4BJBbhMUFegO6X+BiQ=;
+        b=gCJA2wARU34h+nCbaGuQkfpOYao2Eg3NTvRRKiTKEWvxuf2LR5vrzetoD+g53tnxYs
+         5UG8u3djFzD/Z4IUyrksGcgQUPY4k2LAhnUsYbnMLzWNwvVW49xC/SZkGYJHYGdCZiwC
+         19He6U8gRt/D7obTRKm808Xj68yQE2NbmBShtj1kQSzlbUQSQ/nPmcYjVf2amTYNmq7f
+         QiECd+GP5IFpgg/EvTpCztQmIN1alx1OiEKypxR15aqci/kCZBJC50aIBhtHQBS/aNiW
+         7nDowWL1VA6wZIicLCLG8+qwVlMRVOSIG1iP97mKCfKjUIIhPRcdpxXSzGbgfHkvWvDd
+         y2gQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 042/138] pinctrl: baytrail: Enable glitch filter for GPIOs used as interrupts
-Date: Wed, 11 Apr 2018 00:23:52 +0200
-Message-Id: <20180410212906.987897709@linuxfoundation.org>
+	stable@vger.kernel.org,
+	James Smart <james.smart@broadcom.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 044/138] nvme_fcloop: fix abort race condition
+Date: Wed, 11 Apr 2018 00:23:54 +0200
+Message-Id: <20180410212907.231417880@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -84,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597400002066547044?=
+X-GMAIL-MSGID: =?utf-8?q?1597400397574278085?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -94,45 +50,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: James Smart <jsmart2021@gmail.com>
 
 
-[ Upstream commit 9291c65b01d1c67ebd56644cb19317ad665c44b3 ]
+[ Upstream commit 278e096063f1914fccfc77a617be9fc8dbb31b0e ]
 
-On some systems, some PCB traces attached to GpioInts are routed in such
-a way that they pick up enough interference to constantly (many times per
-second) trigger.
+A test case revealed a race condition of an i/o completing on a thread
+parallel to the delete_association generating the aborts for the
+outstanding ios on the controller.  The i/o completion was freeing the
+target fcloop context, thus the abort task referenced the just-freed
+memory.
 
-Enabling glitch-filtering fixes this.
+Correct by clearing the target/initiator cross pointers in the io
+completion and abort tasks before calling the callbacks. On aborts
+that detect already finished io's, ensure the complete context is
+called.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/intel/pinctrl-baytrail.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/nvme/target/fcloop.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -46,6 +46,9 @@
- #define BYT_TRIG_POS		BIT(25)
- #define BYT_TRIG_LVL		BIT(24)
- #define BYT_DEBOUNCE_EN		BIT(20)
-+#define BYT_GLITCH_FILTER_EN	BIT(19)
-+#define BYT_GLITCH_F_SLOW_CLK	BIT(17)
-+#define BYT_GLITCH_F_FAST_CLK	BIT(16)
- #define BYT_PULL_STR_SHIFT	9
- #define BYT_PULL_STR_MASK	(3 << BYT_PULL_STR_SHIFT)
- #define BYT_PULL_STR_2K		(0 << BYT_PULL_STR_SHIFT)
-@@ -1579,6 +1582,9 @@ static int byt_irq_type(struct irq_data
- 	 */
- 	value &= ~(BYT_DIRECT_IRQ_EN | BYT_TRIG_POS | BYT_TRIG_NEG |
- 		   BYT_TRIG_LVL);
-+	/* Enable glitch filtering */
-+	value |= BYT_GLITCH_FILTER_EN | BYT_GLITCH_F_SLOW_CLK |
-+		 BYT_GLITCH_F_FAST_CLK;
+--- a/drivers/nvme/target/fcloop.c
++++ b/drivers/nvme/target/fcloop.c
+@@ -374,6 +374,7 @@ fcloop_tgt_fcprqst_done_work(struct work
  
- 	writel(value, reg);
+ 	spin_lock(&tfcp_req->reqlock);
+ 	fcpreq = tfcp_req->fcpreq;
++	tfcp_req->fcpreq = NULL;
+ 	spin_unlock(&tfcp_req->reqlock);
  
+ 	if (tport->remoteport && fcpreq) {
+@@ -615,11 +616,7 @@ fcloop_fcp_abort(struct nvme_fc_local_po
+ 
+ 	if (!tfcp_req)
+ 		/* abort has already been called */
+-		return;
+-
+-	if (rport->targetport)
+-		nvmet_fc_rcv_fcp_abort(rport->targetport,
+-					&tfcp_req->tgt_fcp_req);
++		goto finish;
+ 
+ 	/* break initiator/target relationship for io */
+ 	spin_lock(&tfcp_req->reqlock);
+@@ -627,6 +624,11 @@ fcloop_fcp_abort(struct nvme_fc_local_po
+ 	tfcp_req->fcpreq = NULL;
+ 	spin_unlock(&tfcp_req->reqlock);
+ 
++	if (rport->targetport)
++		nvmet_fc_rcv_fcp_abort(rport->targetport,
++					&tfcp_req->tgt_fcp_req);
++
++finish:
+ 	/* post the aborted io completion */
+ 	fcpreq->status = -ECANCELED;
+ 	schedule_work(&inireq->iniwork);
