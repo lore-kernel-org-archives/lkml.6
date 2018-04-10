@@ -1,87 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752466AbeDJGem (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 02:34:42 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:56082 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752064AbeDJGei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 02:34:38 -0400
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] Revert "powerpc/64: Fix checksum folding in csum_add()"
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, Scott Wood <oss@buserror.net>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Shile Zhang <shile.zhang@nokia.com>
-Message-Id: <20180410063437.217D2653BC@po15720vm.idsi0.si.c-s.fr>
-Date: Tue, 10 Apr 2018 08:34:37 +0200 (CEST)
+        id S1752482AbeDJGfi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 02:35:38 -0400
+Received: from vulcan.natalenko.name ([104.207.131.136]:35580 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751978AbeDJGfg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 02:35:36 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 118CE336167
+Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 10 Apr 2018 08:35:25 +0200
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: Kees Cook <keescook@chromium.org>
+Cc: David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, keescook@google.com
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+In-Reply-To: <CAGXu5jKRrdYjuyLSvc4k4mqttkM7zw-96poQ1GYqRRgPqZFOYQ@mail.gmail.com>
+References: <10360653.ov98egbaqx@natalenko.name>
+ <CAGXu5jL8oLV2xvjBVYv_SNXr74LdgpXEmU7K+cLYpD7jh2chgw@mail.gmail.com>
+ <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com>
+ <2679696.GDoj5zcZOu@natalenko.name>
+ <CAGXu5jLG9ia+zBNcPt+q+BpJayoUuYwXitOgeHmh=7sPp-s87A@mail.gmail.com>
+ <51a7e805058ef7f35b226cbbf0ccc4ff@natalenko.name>
+ <CAGXu5jKRrdYjuyLSvc4k4mqttkM7zw-96poQ1GYqRRgPqZFOYQ@mail.gmail.com>
+Message-ID: <3d7b5a707e216e19eb3defe0586bfbc8@natalenko.name>
+User-Agent: Roundcube Webmail/1.3.5
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=arc-20170712; t=1523342126;
+        h=from:sender:reply-to:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:resent-to:resent-cc:resent-from:resent-sender:resent-message-id:in-reply-to:references:list-id:list-owner:list-unsubscribe:list-subscribe:list-post;
+        bh=RkJjMDwYHIdCt6X1X7NLIRrL/T9GOFVLFdqq1ZYYwUs=;
+        b=JIg6Hw08IP/mikcAUZrDrNv1nQesWqPmWjLqgEQi4Q8RXW++rJjSal2Y4k0KSCnNaK2TqP
+        6Y5VmWkknRNOqgY/tEscgQJWLSC1caCWYnRHYr1fvGfEKDAleUzD2GLxrQhPyqzXLfdjeh
+        SJ7uTXKi0/M4V1fuHnkG4SYtFDfYKbQ=
+ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1523342126; a=rsa-sha256;
+        cv=none;
+        b=kP7eTXhLwpoR6LbW2oi/qVIpQh8pJX9NDrERqynKM7CSd3QWlO5J5CkV5IZGlahl4PaFNtPb8oMknDnvt/6uKWyCQttEEjYRVZ/qdzmVSm7v5i6RRQgPmWT8SZONkFX9378U24qa3GkDrA4eSmlvIPnqowFmsFmBzSa4XnriNJQ=
+ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name
+        smtp.mailfrom=oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 6ad966d7303b70165228dba1ee8da1a05c10eefe.
+Hi.
 
-That commit was pointless, because csum_add() sums two 32 bits
-values, so the sum is 0x1fffffffe at the maximum.
-And then when adding upper part (1) and lower part (0xfffffffe),
-the result is 0xffffffff which doesn't carry.
-Any lower value will not carry either.
+09.04.2018 22:30, Kees Cook wrote:
+>> echo 1 | tee /sys/block/sd*/queue/nr_requests
+> 
+> I can't get this below "4".
 
-And behind the fact that this commit is useless, it also kills the
-whole purpose of having an arch specific inline csum_add()
-because the resulting code gets even worse than what is obtained
-with the generic implementation of csum_add()
+Oops, yeah. It cannot be less than BLKDEV_MIN_RQ (which is 4), so it is 
+enforced explicitly in queue_requests_store(). It is the same for me.
 
-0000000000000240 <.csum_add>:
- 240:	38 00 ff ff 	li      r0,-1
- 244:	7c 84 1a 14 	add     r4,r4,r3
- 248:	78 00 00 20 	clrldi  r0,r0,32
- 24c:	78 89 00 22 	rldicl  r9,r4,32,32
- 250:	7c 80 00 38 	and     r0,r4,r0
- 254:	7c 09 02 14 	add     r0,r9,r0
- 258:	78 09 00 22 	rldicl  r9,r0,32,32
- 25c:	7c 00 4a 14 	add     r0,r0,r9
- 260:	78 03 00 20 	clrldi  r3,r0,32
- 264:	4e 80 00 20 	blr
+>> echo 1 | tee /sys/block/sd*/device/queue_depth
+> 
+> I've got this now too.
+> Ah! dm-crypt too. I'll see if I can get that added easily to my tests.
+> And XFS! You love your corner cases. ;)
 
-In comparison, the generic implementation of csum_add() gives:
+Yeah, so far this wonderful configuration has allowed me to uncover a 
+bunch of bugs, and see, we are not done yet ;).
 
-0000000000000290 <.csum_add>:
- 290:	7c 63 22 14 	add     r3,r3,r4
- 294:	7f 83 20 40 	cmplw   cr7,r3,r4
- 298:	7c 10 10 26 	mfocrf  r0,1
- 29c:	54 00 ef fe 	rlwinm  r0,r0,29,31,31
- 2a0:	7c 60 1a 14 	add     r3,r0,r3
- 2a4:	78 63 00 20 	clrldi  r3,r3,32
- 2a8:	4e 80 00 20 	blr
+> Two other questions, since you can reproduce this easily:
+> - does it reproduce _without_ hardened usercopy? (I would assume yes,
+> but you'd just not get any warning until the hangs started.) If it
+> does reproduce without hardened usercopy, then a new bisect run could
+> narrow the search even more.
 
-And the reverted implementation for PPC64 gives:
+Looks like it cannot be disabled via kernel cmdline, so I have to 
+re-compile the kernel, right? I can certainly do that anyway.
 
-0000000000000240 <.csum_add>:
- 240:	7c 84 1a 14 	add     r4,r4,r3
- 244:	78 80 00 22 	rldicl  r0,r4,32,32
- 248:	7c 80 22 14 	add     r4,r0,r4
- 24c:	78 83 00 20 	clrldi  r3,r4,32
- 250:	4e 80 00 20 	blr
+> - does it reproduce with Linus's current tree?
 
-Fixes: 6ad966d7303b7 ("powerpc/64: Fix checksum folding in csum_add()")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/checksum.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Will try this too.
 
-diff --git a/arch/powerpc/include/asm/checksum.h b/arch/powerpc/include/asm/checksum.h
-index 842124b199b5..4e63787dc3be 100644
---- a/arch/powerpc/include/asm/checksum.h
-+++ b/arch/powerpc/include/asm/checksum.h
-@@ -112,7 +112,7 @@ static inline __wsum csum_add(__wsum csum, __wsum addend)
- 
- #ifdef __powerpc64__
- 	res += (__force u64)addend;
--	return (__force __wsum) from64to32(res);
-+	return (__force __wsum)((u32)res + (res >> 32));
- #else
- 	asm("addc %0,%0,%1;"
- 	    "addze %0,%0;"
--- 
-2.13.3
+> What would imply missing locking, yes? Yikes. But I'd expect
+> use-after-free or something, or bad data, not having the pointer slip
+> forward?
+
+I still think this has something to do with blk-mq re-queuing capability 
+and how BFQ implements it, because there are no sings of issue popping 
+up with Kyber so far.
+
+> Quick update: I added dm-crypt (with XFS on top) and it hung my system
+> almost immediately. I got no warnings at all, though.
+
+Did your system hang on smartctl hammering too? Have you got some stack 
+traces to compare with mine ones?
+
+Regards,
+   Oleksandr
