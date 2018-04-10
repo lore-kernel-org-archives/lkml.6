@@ -1,38 +1,81 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48nsDOmIFkPdN5tqrtEOZqQoHIUqZZFYTxOlrJmr+fTRZVPWqm/dl/poVurqYs+ig/uhlgP
-ARC-Seal: i=1; a=rsa-sha256; t=1523399809; cv=none;
-        d=google.com; s=arc-20160816;
-        b=PFm1qIB5JHaaudXDoNh4ctvAjvTLNmMU8jL2+pvU3Zp+NsSPfUYxEKHtDJtrlOrkzT
-         D2Fk+CzUn0xskVa4bV4cBVxrk63uk0r+COfxOFH5jUHY6gcwoArtwMmM3CRp8X89CdSz
-         zX5VxBjkgxFDcZWW65NcleJtTfafC7OPMFtZ7PAGzpSTR1AcYTNPcCAMDiFRKP4ES/MT
-         jqbYohcxSvq0w2aYscQaT+AGW6Qhjx13etgO3v3L0991WMSGv0M4s4WoAD+1umjgHUnj
-         QMQ3RsnH2/gqmFNnpN6mskIEI2GvHq6chj6ssXvQ4mTpjGN6cgAOvS9+X5V6ukxk2/GY
-         VlzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=grvrTE7riouWQ7Oo/+9DD5k4U9gmV0fVp9tSOhbAiWU=;
-        b=w+hN2v4/1x1auipd8ukeY8HSRDRGx894tCLETlA/4EvspAFEnZA2Kjxk/AdI7rC9e6
-         fbA32B68PqTtbi3QuoE/D+WNtFExY+amTiRYIjRj2CC+7AFv/QinZwGKAxIPcgSW5mei
-         7ljex/wfm7YN87zYcIppmabJecVQu4xkS67rp6P8++s9fhBDJ2mg54JWlHhrSQl52T5c
-         rq3ceT6aLq7TEXb28xGe9kpj/FOoR5pERNrEnWMCoHn5YMQO3RUXSdr2xIbbEVhB6WRR
-         CJtz8JIJ1UR5OUZDv1kwiMuGA/0MmzItF66zkkP4xuUKhlwilUcNamLxUndJ4SeiFtkc
-         x0uQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-713601-1523399810-2-1006683944272206915
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523399809; b=ug4uSxEws3JcHbODJCAautVe7cytJWqGaQIy43Zz6vmQsLMLZ5
+    b5RdeZ9VPiAsM7SzeZNQMzGURrE8MZNAHwiQsQAMvHeLCQUfdS+9JwHByF3YHFom
+    jqjQ5FgYYQ6/IJ0gIhYM194KXifGP6Lg/E9wIavVaqjcjZmtkdmQ6Ojh7Hrjatww
+    mOgfXNz8LiXXBVj6ItFLC6jRd+fCT80c0aEkAvNSUzfROBOKtD5EZ3r7Nrog89xp
+    AGK+RB10JmvoYBBpejOrH3n+MmE4I2E1i7d+Ro2zS5ea98STDvQ9wskx5ilbMUjT
+    2JgxyQiYCnBO+c6zKZFtc0jbGAX2UWjNGyLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523399809; bh=BTX09JlBxOfbpnb1nIZn/CYpFeifqy
+    x/60RRl4LOPGg=; b=CoOOBW+Cm82nX5t4d9DHXawdWeGZoI3JHSmvVEgaVgEbMm
+    OS2kaWoyUlvUGK8ouE4dS6+0Kl3ZdQE6dUs0i9jPzeilneiYILgYEU0aqhVfejZr
+    U86U7O718VBUe38kJTyA7Do0az6lKKpX9x44GFm7QEWn+mwLyXR2rlxI2MPkJq9a
+    u1SOsBurlXmCICkV6Av1q2Z0WF/2AuheNqYWoozmrspehAJ5QxpH5yM201RJxRo7
+    mbLmj9/aqXo38IZWI52Hcu6q5j0kWJaUZcUYuWg0tMj8PRCiAhFAToiR5gp7zFOw
+    QMLFD0YU2+TAXjIuYH9nG3CWUVxJFiqiUhjJvDQQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfKgA9T8tVl5KZYEybfW5cU8ycLQ+KJM51TLiPGJev6adp5Kqu/nb7avBM4ZNZMRNE8GLRHHKPV//f9O4N67UmiquQENxoVwTRbJaKTRjNYzcE55nlx68
+    umB9JXmtw2tdt7emw2WqQAWhxzgn/f1Mxg5IeZ1lVMQ7aovSyMcRwYorJpyCmS+3LSG0puiFFLMzCjwrLqOZqf51v9gyaOzTCOB7d+6l4B4BD+OPG5BsjPJC
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=7Mgd0HYs9-wA:10
+    a=Kd1tUaAdevIA:10 a=DfNHnWVPAAAA:8 a=LpQP-O61AAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=u-OqrgWLNW3bRWNzbpcA:9 a=QEXdDO2ut3YA:10
+    a=rjTVMONInIDnV1a_A2c_:22 a=pioyyrs4ZptJ924tMmac:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1755676AbeDJWgq (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 18:36:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43520 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754811AbeDJWgp (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:36:45 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Jian Shen <shenjian15@huawei.com>,
-	Peng Li <lipeng321@huawei.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 053/138] net: hns3: Fix an error of total drop packet statistics
-Date: Wed, 11 Apr 2018 00:24:03 +0200
-Message-Id: <20180410212908.236927046@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 051/138] wl1251: check return from call to wl1251_acx_arp_ip_filter
+Date: Wed, 11 Apr 2018 00:24:01 +0200
+Message-Id: <20180410212908.028690354@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -40,10 +83,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399975210554692?=
-X-GMAIL-MSGID: =?utf-8?q?1597400478969193663?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,62 +93,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jian Shen <shenjian15@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
 
-[ Upstream commit d2a5dca8404871be683c6bbc175ebf9c56dd2865 ]
+[ Upstream commit ac1181c60822292176ab96912208ec9f9819faf8 ]
 
-The dropped tx/rx packets number of each tqp should also
-be counted into the total drop tx/rx packets numbers.
+Currently the less than zero error check on ret is incorrect
+as it is checking a far earlier ret assignment rather than the
+return from the call to wl1251_acx_arp_ip_filter. Fix this by
+adding in the missing assginment.
 
-Fixes: 76ad4f0ee74 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Detected by CoverityScan, CID#1164835 ("Logically dead code")
+
+Fixes: 204cc5c44fb6 ("wl1251: implement hardware ARP filtering")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/net/wireless/ti/wl1251/main.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_enet.c
-@@ -1060,6 +1060,8 @@ hns3_nic_get_stats64(struct net_device *
- 	u64 rx_bytes = 0;
- 	u64 tx_pkts = 0;
- 	u64 rx_pkts = 0;
-+	u64 tx_drop = 0;
-+	u64 rx_drop = 0;
+--- a/drivers/net/wireless/ti/wl1251/main.c
++++ b/drivers/net/wireless/ti/wl1251/main.c
+@@ -1200,8 +1200,7 @@ static void wl1251_op_bss_info_changed(s
+ 		WARN_ON(wl->bss_type != BSS_TYPE_STA_BSS);
  
- 	for (idx = 0; idx < queue_num; idx++) {
- 		/* fetch the tx stats */
-@@ -1068,6 +1070,8 @@ hns3_nic_get_stats64(struct net_device *
- 			start = u64_stats_fetch_begin_irq(&ring->syncp);
- 			tx_bytes += ring->stats.tx_bytes;
- 			tx_pkts += ring->stats.tx_pkts;
-+			tx_drop += ring->stats.tx_busy;
-+			tx_drop += ring->stats.sw_err_cnt;
- 		} while (u64_stats_fetch_retry_irq(&ring->syncp, start));
- 
- 		/* fetch the rx stats */
-@@ -1076,6 +1080,9 @@ hns3_nic_get_stats64(struct net_device *
- 			start = u64_stats_fetch_begin_irq(&ring->syncp);
- 			rx_bytes += ring->stats.rx_bytes;
- 			rx_pkts += ring->stats.rx_pkts;
-+			rx_drop += ring->stats.non_vld_descs;
-+			rx_drop += ring->stats.err_pkt_len;
-+			rx_drop += ring->stats.l2_err;
- 		} while (u64_stats_fetch_retry_irq(&ring->syncp, start));
+ 		enable = bss_conf->arp_addr_cnt == 1 && bss_conf->assoc;
+-		wl1251_acx_arp_ip_filter(wl, enable, addr);
+-
++		ret = wl1251_acx_arp_ip_filter(wl, enable, addr);
+ 		if (ret < 0)
+ 			goto out_sleep;
  	}
- 
-@@ -1091,8 +1098,8 @@ hns3_nic_get_stats64(struct net_device *
- 	stats->rx_missed_errors = netdev->stats.rx_missed_errors;
- 
- 	stats->tx_errors = netdev->stats.tx_errors;
--	stats->rx_dropped = netdev->stats.rx_dropped;
--	stats->tx_dropped = netdev->stats.tx_dropped;
-+	stats->rx_dropped = rx_drop + netdev->stats.rx_dropped;
-+	stats->tx_dropped = tx_drop + netdev->stats.tx_dropped;
- 	stats->collisions = netdev->stats.collisions;
- 	stats->rx_over_errors = netdev->stats.rx_over_errors;
- 	stats->rx_frame_errors = netdev->stats.rx_frame_errors;
