@@ -1,62 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753424AbeDJMga (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:36:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753394AbeDJMg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:36:28 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7458821771
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 10 Apr 2018 08:36:25 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>
-Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal
- OOM_SCORE_ADJ_MIN
-Message-ID: <20180410083625.2c904ab2@gandalf.local.home>
-In-Reply-To: <20180410122706.GH21835@dhcp22.suse.cz>
-References: <20180410061447.GQ21835@dhcp22.suse.cz>
-        <CAGWkznGrugH0VqJyd5ZPiSBMOZ4SbbNpKiHVXM27Q-ep4SYb-Q@mail.gmail.com>
-        <20180410074921.GU21835@dhcp22.suse.cz>
-        <CAGWkznHQSZ5jPF2njOp0BritTmKiGOToq5bAz1bhzzmFi_01nA@mail.gmail.com>
-        <20180410081231.GV21835@dhcp22.suse.cz>
-        <CAGWkznEM=AX=3LWDmgyz4GRkWy81TNdFQQXZ7+W4=Ek4ZsnsJw@mail.gmail.com>
-        <20180410090128.GY21835@dhcp22.suse.cz>
-        <CAGWkznEf0siz1-RFSJwuKCjUtbKM=P1djo2Nc7sU1GS0AgWv2w@mail.gmail.com>
-        <20180410104902.GC21835@dhcp22.suse.cz>
-        <20180410082316.263d34ec@gandalf.local.home>
-        <20180410122706.GH21835@dhcp22.suse.cz>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1753108AbeDJMiW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:38:22 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:41310 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752584AbeDJMiS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 08:38:18 -0400
+X-Google-Smtp-Source: AIpwx4+RDvo4uuiGchV7/J7vEmosA5WpT3rJ8ro6IwA/XYrGjYhhQ3v2mq3CGtRVvhcjZJ//UhqhEQ==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: Kai.Makisara@kolumbus.fi, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH 1/2] scsi: st: Replace GFP_ATOMIC with GFP_KERNEL in st_probe
+Date: Tue, 10 Apr 2018 20:37:59 +0800
+Message-Id: <1523363879-31242-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Apr 2018 14:27:06 +0200
-Michal Hocko <mhocko@kernel.org> wrote:
+st_probe() is never called in atomic context.
 
-> I would rather that the code outside of MM not touch implementation
-> details like OOM_SCORE_ADJ_MIN. It is really hard to get rid of abusers
-> whenever you try to change something in MM then. Especially when the
-> usecase is quite dubious.
+st_probe() is only set as ".probe" in struct scsi_driver.
 
-Fair enough. I was reluctant to use the OOM_SCORE_ADJ_MIN in this case.
+Despite never getting called from atomic context,
+st_probe() calls kzalloc() with GFP_ATOMIC,
+which does not sleep for allocation.
+GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+which can sleep and improve the possibility of sucessful allocation.
 
-Perhaps I can create an option that lets users decide how they want to
-allocate.
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
 
-For people like Joel, it will try hard (by default) and set oom_origin,
-but the user could also set an option "no_mem_reclaim", where it will
-not set oom_origin, but will also use NORETRY as well, where it wont
-trigger OOM and will not be the designated victim of OOM. But it will
-likely not allocate memory if the system is under heavy use. Then for
-Zhaoyang's tests, all he has to do is to set that option (or clear it,
-if the option is "mem_reclaim", which is what I'll probably call it).
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/scsi/st.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- Steve
+diff --git a/drivers/scsi/st.c b/drivers/scsi/st.c
+index 94e402e..1da42f3 100644
+--- a/drivers/scsi/st.c
++++ b/drivers/scsi/st.c
+@@ -4290,7 +4290,7 @@ static int st_probe(struct device *dev)
+ 		goto out_buffer_free;
+ 	}
+ 
+-	tpnt = kzalloc(sizeof(struct scsi_tape), GFP_ATOMIC);
++	tpnt = kzalloc(sizeof(struct scsi_tape), GFP_KERNEL);
+ 	if (tpnt == NULL) {
+ 		sdev_printk(KERN_ERR, SDp,
+ 			    "st: Can't allocate device descriptor.\n");
+-- 
+1.9.1
