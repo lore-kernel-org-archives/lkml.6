@@ -1,80 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752100AbeDJSRo convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 14:17:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58190 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751490AbeDJSRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 14:17:43 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 880E221738
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <a4451252-35e4-e63f-8cca-a072f90fa9ad@arm.com>
-Cc: Jason Cooper <jason@lakedaemon.net>, linux-arm-msm@vger.kernel.org,
-        Hanna Hawa <hannah@marvell.com>, Stephen Boyd <sboyd@codeaurora.org>,
+        id S1752054AbeDJSTl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 14:19:41 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58970 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751505AbeDJSTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 14:19:39 -0400
+Date: Tue, 10 Apr 2018 21:19:31 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Wei Wang <wei.w.wang@intel.com>, virtio-dev@lists.oasis-open.org,
         linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org
-References: <20170320223614.1351-1-sboyd@codeaurora.org>
- <bac1e827-3860-d92c-7bb4-eaf9840c608f@arm.com>
- <20180410170155.6e07113d@windsurf>
- <a4451252-35e4-e63f-8cca-a072f90fa9ad@arm.com>
-Message-ID: <152338426182.180276.1835672071236851795@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] irqchip/gic-v3: Support v2m frame backwards compatibility mode
-Date: Tue, 10 Apr 2018 11:17:41 -0700
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org, pbonzini@redhat.com,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com, riel@redhat.com,
+        huangzhichao@huawei.com
+Subject: Re: [PATCH v29 1/4] mm: support reporting free page blocks
+Message-ID: <20180410211719-mutt-send-email-mst@kernel.org>
+References: <1522031994-7246-1-git-send-email-wei.w.wang@intel.com>
+ <1522031994-7246-2-git-send-email-wei.w.wang@intel.com>
+ <20180326142254.c4129c3a54ade686ee2a5e21@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180326142254.c4129c3a54ade686ee2a5e21@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Marc Zyngier (2018-04-10 08:23:00)
-> On 10/04/18 16:01, Thomas Petazzoni wrote:
+On Mon, Mar 26, 2018 at 02:22:54PM -0700, Andrew Morton wrote:
+> On Mon, 26 Mar 2018 10:39:51 +0800 Wei Wang <wei.w.wang@intel.com> wrote:
 > 
-> > In the upcoming Armada 8KP, we have a GICv3, which has built-in support
-> > for memory-triggered SPIs, thanks to the GICD_SETSPI_NSR and
-> > GICD_CLRSPI_NSR, and the ICU will directly use this GICv3
-> > functionality. We would therefore very much like to have this GICv3
-> > feature provided as a MSI controller, which as Marc said would require
-> > supporting level-triggered MSIs.
+> > This patch adds support to walk through the free page blocks in the
+> > system and report them via a callback function. Some page blocks may
+> > leave the free list after zone->lock is released, so it is the caller's
+> > responsibility to either detect or prevent the use of such pages.
 > > 
-> > Marc, let me know how we can collaborate on this topic. I'm able to
-> > either test some preliminary patches, or work on such patches if
-> > necessary (preferably with some initial directions).
+> > One use example of this patch is to accelerate live migration by skipping
+> > the transfer of free pages reported from the guest. A popular method used
+> > by the hypervisor to track which part of memory is written during live
+> > migration is to write-protect all the guest memory. So, those pages that
+> > are reported as free pages but are written after the report function
+> > returns will be captured by the hypervisor, and they will be added to the
+> > next round of memory transfer.
+> > 
+> > ...
+> >
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -4912,6 +4912,102 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
+> >  	show_swap_cache_info();
+> >  }
+> >  
+> > +/*
+> > + * Walk through a free page list and report the found pfn range via the
+> > + * callback.
+> > + *
+> > + * Return 0 if it completes the reporting. Otherwise, return the non-zero
+> > + * value returned from the callback.
+> > + */
+> > +static int walk_free_page_list(void *opaque,
+> > +			       struct zone *zone,
+> > +			       int order,
+> > +			       enum migratetype mt,
+> > +			       int (*report_pfn_range)(void *,
+> > +						       unsigned long,
+> > +						       unsigned long))
+> > +{
+> > +	struct page *page;
+> > +	struct list_head *list;
+> > +	unsigned long pfn, flags;
+> > +	int ret = 0;
+> > +
+> > +	spin_lock_irqsave(&zone->lock, flags);
+> > +	list = &zone->free_area[order].free_list[mt];
+> > +	list_for_each_entry(page, list, lru) {
+> > +		pfn = page_to_pfn(page);
+> > +		ret = report_pfn_range(opaque, pfn, 1 << order);
+> > +		if (ret)
+> > +			break;
+> > +	}
+> > +	spin_unlock_irqrestore(&zone->lock, flags);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +/**
+> > + * walk_free_mem_block - Walk through the free page blocks in the system
+> > + * @opaque: the context passed from the caller
+> > + * @min_order: the minimum order of free lists to check
+> > + * @report_pfn_range: the callback to report the pfn range of the free pages
+> > + *
+> > + * If the callback returns a non-zero value, stop iterating the list of free
+> > + * page blocks. Otherwise, continue to report.
+> > + *
+> > + * Please note that there are no locking guarantees for the callback and
+> > + * that the reported pfn range might be freed or disappear after the
+> > + * callback returns so the caller has to be very careful how it is used.
+> > + *
+> > + * The callback itself must not sleep or perform any operations which would
+> > + * require any memory allocations directly (not even GFP_NOWAIT/GFP_ATOMIC)
+> > + * or via any lock dependency. It is generally advisable to implement
+> > + * the callback as simple as possible and defer any heavy lifting to a
+> > + * different context.
+> > + *
+> > + * There is no guarantee that each free range will be reported only once
+> > + * during one walk_free_mem_block invocation.
+> > + *
+> > + * pfn_to_page on the given range is strongly discouraged and if there is
+> > + * an absolute need for that make sure to contact MM people to discuss
+> > + * potential problems.
+> > + *
+> > + * The function itself might sleep so it cannot be called from atomic
+> > + * contexts.
 > 
-> I have a vague idea how to support this. Given that level-triggered MSIs
-> have to be platform MSIs (because it is just madness otherwise), we can
-> probably store an extra message in the struct platform_msi_desc for the
-> "lower the line" write. On activation, you'd get two callbacks, probably
-> with a flag of some sort to indicate whether this is for the rising or
-> falling edge. The thing I'm unclear about so far is how to let the
-> generic MSI layer know that we're dealing with such an interrupt without
-> make a total mess of everything. It is probably done by marking the
-> interrupt level triggered, but there are some corner cases.
+> I don't see how walk_free_mem_block() can sleep.
 > 
-> And if that works, the PCI stuff will come for free (it is just a matter
-> of implementing a new irqdomain on top of the base GICv3 one).
+> > + * In general low orders tend to be very volatile and so it makes more
+> > + * sense to query larger ones first for various optimizations which like
+> > + * ballooning etc... This will reduce the overhead as well.
+> > + *
+> > + * Return 0 if it completes the reporting. Otherwise, return the non-zero
+> > + * value returned from the callback.
+> > + */
+> > +int walk_free_mem_block(void *opaque,
+> > +			int min_order,
+> > +			int (*report_pfn_range)(void *opaque,
+> > +			unsigned long pfn,
+> > +			unsigned long num))
+> > +{
+> > +	struct zone *zone;
+> > +	int order;
+> > +	enum migratetype mt;
+> > +	int ret;
+> > +
+> > +	for_each_populated_zone(zone) {
+> > +		for (order = MAX_ORDER - 1; order >= min_order; order--) {
+> > +			for (mt = 0; mt < MIGRATE_TYPES; mt++) {
+> > +				ret = walk_free_page_list(opaque, zone,
+> > +							  order, mt,
+> > +							  report_pfn_range);
+> > +				if (ret)
+> > +					return ret;
+> > +			}
+> > +		}
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(walk_free_mem_block);
 > 
-> I'll try to spend some time on it in the coming couple of weeks, but
-> will have to rely on you for the testing (as I don't have much in the
-> way of HW).
+> This looks like it could take a long time.  Will we end up needing to
+> add cond_resched() in there somewhere?
 
-I resent these patches late last year[1]. On the HW I had at the time we
-were trying to support PCIe devices and we didn't need level interrupts.
-I thought Marc had agreed to accept the patches without the level
-interrupt support as long as we described the range of interrupts that
-were supported but that doesn't seem to be the case anymore.
+Andrew, were your questions answered? If yes could I bother you for an ack on this?
 
-Anyway, this is mostly an FYI that I don't have the hardware to test
-with anymore and I'm not going to keep sending patches on this topic.
-Srini should have some hardware to test whatever solution you come up
-with.
 
-[1] http://lkml.kernel.org/r/20171127102408.6631-1-sboyd@codeaurora.org
+> >  static void zoneref_set_zone(struct zone *zone, struct zoneref *zoneref)
+> >  {
+> >  	zoneref->zone = zone;
+> > -- 
+> > 2.7.4
