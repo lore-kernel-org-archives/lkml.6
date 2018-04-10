@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753268AbeDJMwG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:52:06 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:53668 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752958AbeDJMv4 (ORCPT
+        id S1752936AbeDJMwC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:52:02 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:50966 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752840AbeDJMv4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Apr 2018 08:51:56 -0400
 From: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -23,59 +23,53 @@ Cc: Rob Herring <robh+dt@kernel.org>,
         linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/5] Use of_clk_get_parent_count() instead of open coding
-Date: Tue, 10 Apr 2018 14:51:36 +0200
-Message-Id: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+Subject: [PATCH v2 3/5] soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of open coding
+Date: Tue, 10 Apr 2018 14:51:39 +0200
+Message-Id: <1523364701-15383-4-git-send-email-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Hi Mike, Stephen, et al,
+As of_clk_get_parent_count() returns zero on failure, while
+of_count_phandle_with_args() might return a negative error code, this
+also fixes the issue of possibly using a negative number in the
+allocation below.
 
-This patch series replaces open-coded versions of
-of_clk_get_parent_count() by calls to the helper function.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This depends on "[PATCH v2 1/5] clk: Extract OF clock helpers in
+<linux/of_clk.h>".
 
-Changes compared to v1:
-  - Move OF clock helpers (a.o. of_clk_get_parent_count()) to their own
-    include file <linux/of_clk.h>, as suggested by Stephen,
-  - Update includes for the above change,
-  - Fix timer-sp804, now a dummy is available in the !CONFIG_COMMON_CLK
-    case,
-  - Fix a new occurrence.
+v2:
+  - of_clk_get_parent_count() was moved to <linux/of_clk.h>.
+---
+ drivers/soc/rockchip/pm_domains.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Note that patches 2-5 depend on the first patch.  To simplify
-dependencies, perhaps the first patch can still make it in v4.17-rc1?
-
-Thanks!
-
-Geert Uytterhoeven (5):
-  clk: Extract OF clock helpers in <linux/of_clk.h>
-  ARM: timer-sp: Use of_clk_get_parent_count() instead of open coding
-  soc: rockchip: power-domain: Use of_clk_get_parent_count() instead of
-    open coding
-  soc/tegra: pmc: Use of_clk_get_parent_count() instead of open coding
-  pinctrl: sunxi: Use of_clk_get_parent_count() instead of open coding
-
- drivers/clocksource/timer-sp804.c     |  3 ++-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c |  4 ++--
- drivers/soc/rockchip/pm_domains.c     |  4 ++--
- drivers/soc/tegra/pmc.c               |  3 ++-
- include/linux/clk-provider.h          | 14 +-------------
- include/linux/of_clk.h                | 29 +++++++++++++++++++++++++++++
- 6 files changed, 38 insertions(+), 19 deletions(-)
- create mode 100644 include/linux/of_clk.h
-
+diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
+index 53efc386b1ada8cf..13913d40c8213e36 100644
+--- a/drivers/soc/rockchip/pm_domains.c
++++ b/drivers/soc/rockchip/pm_domains.c
+@@ -14,6 +14,7 @@
+ #include <linux/pm_clock.h>
+ #include <linux/pm_domain.h>
+ #include <linux/of_address.h>
++#include <linux/of_clk.h>
+ #include <linux/of_platform.h>
+ #include <linux/clk.h>
+ #include <linux/regmap.h>
+@@ -400,8 +401,7 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
+ 	pd->info = pd_info;
+ 	pd->pmu = pmu;
+ 
+-	pd->num_clks = of_count_phandle_with_args(node, "clocks",
+-						  "#clock-cells");
++	pd->num_clks = of_clk_get_parent_count(node);
+ 	if (pd->num_clks > 0) {
+ 		pd->clks = devm_kcalloc(pmu->dev, pd->num_clks,
+ 					sizeof(*pd->clks), GFP_KERNEL);
 -- 
 2.7.4
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
