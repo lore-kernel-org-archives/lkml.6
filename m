@@ -1,83 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752688AbeDJI7X (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 04:59:23 -0400
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:39949 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752364AbeDJI7V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 04:59:21 -0400
-X-Google-Smtp-Source: AIpwx49j+wYrWtyh/dUOAzSFOV1yreT6nyKh4tqrepzQd+5jUarGelsd7JGUrvY6vEooLusLrEttbQ==
-Date: Tue, 10 Apr 2018 10:59:17 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Mike Galbraith <efault@gmx.de>
-Cc: Ingo Molnar <mingo@elte.hu>, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: x86-tip.today (4cdf573)  early instaboot
-Message-ID: <20180410085917.bo526ueprf7zfare@gmail.com>
-References: <1523347959.4724.2.camel@gmx.de>
+        id S1752739AbeDJI77 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 04:59:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40389 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752351AbeDJI75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 04:59:57 -0400
+Date: Tue, 10 Apr 2018 10:59:45 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 3/9] mtd: nand: qcom: erased page detection for
+ uncorrectable errors only
+Message-ID: <20180410105945.65f2cade@xps13>
+In-Reply-To: <1522845745-6624-4-git-send-email-absahu@codeaurora.org>
+References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+        <1522845745-6624-4-git-send-email-absahu@codeaurora.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523347959.4724.2.camel@gmx.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Abhishek,
 
-* Mike Galbraith <efault@gmx.de> wrote:
+On Wed,  4 Apr 2018 18:12:19 +0530, Abhishek Sahu
+<absahu@codeaurora.org> wrote:
 
-> Hi Ingo,
+> The NAND flash controller generates ECC uncorrectable error
+> first in case of completely erased page. Currently driver
+> applies the erased page detection logic for other operation
+> errors also so fix this and return EIO for other operational
+> errors.
+
+I am sorry I don't understand very well what is the purpose of this
+patch, could you please explain it again?
+
+Do you mean that you want to avoid having rising ECC errors when you
+read erased pages?
+
 > 
-> FYI, my i4790 box reboots immediately.. or close enough to it that you
-> see nothing at all before again meeting the bios splash.  Master with
-> the ~same config works fine.  I haven't poked around yet (work).
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
+>  drivers/mtd/nand/qcom_nandc.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/nand/qcom_nandc.c b/drivers/mtd/nand/qcom_nandc.c
+> index 17321fc..57c16a6 100644
+> --- a/drivers/mtd/nand/qcom_nandc.c
+> +++ b/drivers/mtd/nand/qcom_nandc.c
+> @@ -1578,6 +1578,7 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
+>  	struct nand_ecc_ctrl *ecc = &chip->ecc;
+>  	unsigned int max_bitflips = 0;
+>  	struct read_stats *buf;
+> +	bool flash_op_err = false;
+>  	int i;
+>  
+>  	buf = (struct read_stats *)nandc->reg_read_buf;
+> @@ -1599,7 +1600,7 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
+>  		buffer = le32_to_cpu(buf->buffer);
+>  		erased_cw = le32_to_cpu(buf->erased_cw);
+>  
+> -		if (flash & (FS_OP_ERR | FS_MPU_ERR)) {
+> +		if ((flash & FS_OP_ERR) && (buffer & BS_UNCORRECTABLE_BIT)) {
 
-Hm, so there's been a few 'dangerous' pieces of work merged yesterday-ish.
+And later you have another "if (buffer & BS_UNCORRECTABLE_BIT)" which
+is then redundant, unless that is not what you actually want to do?
 
-Prime suspects would be:
+Maybe you can add comments before the if ()/ else if () to explain in
+which case you enter each branch.
 
- triton:~/tip> gll linus..x86/pti
+>  			bool erased;
+>  
+>  			/* ignore erased codeword errors */
+> @@ -1641,6 +1642,8 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
+>  						max_t(unsigned int, max_bitflips, ret);
+>  				}
+>  			}
+> +		} else if (flash & (FS_OP_ERR | FS_MPU_ERR)) {
+> +			flash_op_err = true;
+>  		} else {
+>  			unsigned int stat;
+>  
+> @@ -1654,6 +1657,9 @@ static int parse_read_errors(struct qcom_nand_host *host, u8 *data_buf,
+>  			oob_buf += oob_len + ecc->bytes;
+>  	}
+>  
+> +	if (flash_op_err)
+> +		return -EIO;
+> +
 
- 0564258fb2cf: x86/pti: Leave kernel text global for !PCID
- a5df4f1f0d78: x86/pti: Never implicitly clear _PAGE_GLOBAL for kernel image
- e0bb456e3250: x86/pti: Enable global pages for shared areas
- efad2b415152: x86/mm: Do not forbid _PAGE_RW before init for __ro_after_init
- 4ddee6efdcd0: x86/mm: Comment _PAGE_GLOBAL mystery
- e71e836f463d: x86/mm: Remove extra filtering in pageattr code
- 64c80759408f: x86/mm: Do not auto-massage page protections
- 6baf4bec02db: x86/espfix: Document use of _PAGE_GLOBAL
- 8a57f4849f4f: x86/mm: Introduce "default" kernel PTE mask
- 606c7193d5fb: x86/mm: Undo double _PAGE_PSE clearing
- d1440b23c922: x86/mm: Factor out pageattr _PAGE_GLOBAL setting
- ee1400dda318: Merge branch 'linus' into x86/pti to pick up upstream changes
- 071ccc966ba5: x86/entry/64: Drop idtentry's manual stack switch for user entries
- 9820e1c3376c: x86/uapi: Fix asm/bootparam.h userspace compilation errors
+In you are propagating an error related to the controller, this is
+fine, but I think you just want to raise the fact that a NAND
+uncorrectable error occurred, in this case you should just increment
+mtd->ecc_stats.failed and return 0 (returning max_bitflips here would be
+fine too has it would be 0 too).
 
-... which you could test via 0564258fb2cf: if that insta-reboots too then 
-9820e1c3376c^1 is expected to work and 4 bisection steps should pinpoint the 
-guilty commit ...
-
-But there's also the syscall rework:
-
- triton:~/tip> gll linus..x86/asm
- c76fc9826075: syscalls/x86: Adapt syscall_wrapper.h to the new syscall stub naming convention
- d5a00528b58c: syscalls/core, syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()
- 5ac9efa3c50d: syscalls/core, syscalls/x86: Clean up compat syscall stub naming convention
- e145242ea0df: syscalls/core, syscalls/x86: Clean up syscall stub naming convention
- 6dc936f175cc: syscalls/x86: Extend register clearing on syscall entry to lower registers
- f8781c4a2263: syscalls/x86: Unconditionally enable 'struct pt_regs' based syscalls on x86_64
- ebeb8c82ffaf: syscalls/x86: Use 'struct pt_regs' based syscall calling for IA32_EMULATION and x32
- 7303e30ec1d8: syscalls/core: Prepare CONFIG_ARCH_HAS_SYSCALL_WRAPPER=y for compat syscalls
- fa697140f9a2: syscalls/x86: Use 'struct pt_regs' based syscall calling convention for 64-bit syscalls
- 1bd21c6c21e8: syscalls/core: Introduce CONFIG_ARCH_HAS_SYSCALL_WRAPPER=y
- dfe64506c01e: x86/syscalls: Don't pointlessly reload the system call number
-
-... which you could test via c76fc9826075: if that insta-reboots then 
-dfe64506c01e^1 should be good and 4 bisection steps should suffice.
+>  	return max_bitflips;
+>  }
+>  
 
 Thanks,
+Miquèl
 
-	Ingo
+-- 
+Miquel Raynal, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
