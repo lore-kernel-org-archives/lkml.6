@@ -1,46 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752474AbeDJBSJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 9 Apr 2018 21:18:09 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:41370 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752083AbeDJBSH (ORCPT
+        id S1752505AbeDJBSZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 9 Apr 2018 21:18:25 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:33201 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752083AbeDJBSX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Apr 2018 21:18:07 -0400
-To: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Bart Van Assche <Bart.VanAssche@sandisk.com>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH v2] qla2xxx: correctly shift host byte
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180409122423.32231-1-jthumshirn@suse.de>
-Date: Mon, 09 Apr 2018 21:17:59 -0400
-In-Reply-To: <20180409122423.32231-1-jthumshirn@suse.de> (Johannes Thumshirn's
-        message of "Mon, 9 Apr 2018 14:24:23 +0200")
-Message-ID: <yq1muyb3lmg.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8858 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=637
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804100012
+        Mon, 9 Apr 2018 21:18:23 -0400
+X-Google-Smtp-Source: AIpwx48CLw8qLPfxzG86efgTt/9vXF2p7TWvY9Yz77Z65tTKw2RkTet5PLbVkZccyB37rkz525uVvw==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: davem@davemloft.net, weiwan@google.com, kafai@fb.com,
+        hannes@stressinduktion.org, fw@strlen.de, dsa@cumulusnetworks.com,
+        johannes.berg@intel.com
+Cc: linux-decnet-user@lists.sourceforge.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH v2] net: decnet: Replace GFP_ATOMIC with GFP_KERNEL in dn_route_init
+Date: Tue, 10 Apr 2018 09:18:13 +0800
+Message-Id: <1523323093-28196-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+dn_route_init() is never called in atomic context.
 
-Johannes,
+The call chain ending up at dn_route_init() is:
+[1] dn_route_init() <- decnet_init()
+decnet_init() is only set as a parameter of module_init().
 
-> The SCSI host byte has to be shifted by 16 not 6.
->
-> As Bart pointed out this patch does not change any functionality
-> because DID_OK == 0, but a wrong shift is irritating for the reviewer.
+Despite never getting called from atomic context,
+dn_route_init() calls __get_free_pages() with GFP_ATOMIC,
+which does not sleep for allocation.
+GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+which can sleep and improve the possibility of sucessful allocation.
 
-Applied to 4.17/scsi-fixes. Thank you!
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
 
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+v2:
+* Modify the description of GFP_ATOMIC in v1.
+  Thank Eric for good advice.
+---
+ net/decnet/dn_route.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/decnet/dn_route.c b/net/decnet/dn_route.c
+index 0bd3afd..59ed12a 100644
+--- a/net/decnet/dn_route.c
++++ b/net/decnet/dn_route.c
+@@ -1898,7 +1898,7 @@ void __init dn_route_init(void)
+ 		while(dn_rt_hash_mask & (dn_rt_hash_mask - 1))
+ 			dn_rt_hash_mask--;
+ 		dn_rt_hash_table = (struct dn_rt_hash_bucket *)
+-			__get_free_pages(GFP_ATOMIC, order);
++			__get_free_pages(GFP_KERNEL, order);
+ 	} while (dn_rt_hash_table == NULL && --order > 0);
+ 
+ 	if (!dn_rt_hash_table)
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+1.9.1
