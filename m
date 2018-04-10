@@ -1,27 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752430AbeDJF3a (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 01:29:30 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57669 "EHLO
+        id S1752466AbeDJF37 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 01:29:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47389 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752401AbeDJF32 (ORCPT
+        with ESMTP id S1751892AbeDJF36 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 01:29:28 -0400
-Date: Mon, 9 Apr 2018 22:29:16 -0700
+        Tue, 10 Apr 2018 01:29:58 -0400
+Date: Mon, 9 Apr 2018 22:29:45 -0700
 From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-odryfso74eaarm0z3e4v9owx@git.kernel.org>
-Cc: acme@redhat.com, wangnan0@huawei.com, yao.jin@linux.intel.com,
-        tglx@linutronix.de, jolsa@kernel.org, adrian.hunter@intel.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, namhyung@kernel.org,
-        dsahern@gmail.com, mingo@kernel.org, ak@linux.intel.com
-Reply-To: acme@redhat.com, wangnan0@huawei.com, yao.jin@linux.intel.com,
-        tglx@linutronix.de, jolsa@kernel.org, adrian.hunter@intel.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, dsahern@gmail.com,
-        mingo@kernel.org, namhyung@kernel.org, ak@linux.intel.com
+Message-ID: <tip-vq26rsuwq1cqylpcyvq89c84@git.kernel.org>
+Cc: adrian.hunter@intel.com, naveen.n.rao@linux.vnet.ibm.com,
+        wangnan0@huawei.com, hpa@zytor.com, namhyung@kernel.org,
+        mingo@kernel.org, tglx@linutronix.de, dsahern@gmail.com,
+        acme@redhat.com, sandipan@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org
+Reply-To: dsahern@gmail.com, acme@redhat.com, tglx@linutronix.de,
+        sandipan@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org, wangnan0@huawei.com, adrian.hunter@intel.com,
+        naveen.n.rao@linux.vnet.ibm.com, namhyung@kernel.org, mingo@kernel.org,
+        hpa@zytor.com
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf hists browser: Remove leftover from row
- returned from refresh
-Git-Commit-ID: 94e87a8bd529121ea90219164c65c36ea1d19e56
+Subject: [tip:perf/urgent] perf tools: No need to include namespaces.h in
+ util.h
+Git-Commit-ID: ad0902e0c4004dc95bf15229933012121ff54033
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,85 +36,51 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  94e87a8bd529121ea90219164c65c36ea1d19e56
-Gitweb:     https://git.kernel.org/tip/94e87a8bd529121ea90219164c65c36ea1d19e56
+Commit-ID:  ad0902e0c4004dc95bf15229933012121ff54033
+Gitweb:     https://git.kernel.org/tip/ad0902e0c4004dc95bf15229933012121ff54033
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Fri, 6 Apr 2018 12:11:11 -0300
+AuthorDate: Fri, 6 Apr 2018 14:53:56 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 6 Apr 2018 12:23:25 -0300
+CommitDate: Mon, 9 Apr 2018 10:57:50 -0300
 
-perf hists browser: Remove leftover from row returned from refresh
+perf tools: No need to include namespaces.h in util.h
 
-The per-browser screen refresh routine (ui_browser->refresh()) should
-return the first row that should be cleaned after the rows just printed,
-in case not all rows available on the screen gets filled.
-
-When moving the extra title lines logic from the hists browser to the
-generic ui_browser class, one piece of that logic remained in the hists
-browser and then when going back from the annotate browser to the hists
-browser in a case where fewer lines were displayed in the hists browser,
-for instance when filtering the entries per substring, one line of the
-annotate browser would remain on the screen, fix that.
-
-Example of the screen artifact:
-
-================================================================================
-Samples: 73K of event 'cycles:ppp', 4000 Hz, Event count (approx.): 45172901394
-Overhead  Shared O  Symbol
-   0.30%  [kernel]  [k] __indirect_thunk_start
-   0.09%  [kernel]  [k] __x86_indirect_thunk_r10
-       │      lfence
-================================================================================
-
-Here from 'perf top' the view was zoomed with '/thunk' to functions
-having that substring, then the first was annotated and from the
-annotate browser ESC was pressed, then the first lines were overwritten,
-but the 'lfence' line remained due to the off by one bug fixed in this
-cset.
+The only thing that is needed there is a forward declaration for 'struct
+nsinfo', so disentanble this, which in turns allows built-in clang
+builds, i.e. 'make LIBCLANGLLVM=1 -C tools/perf'.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Sandipan Das <sandipan@linux.vnet.ibm.com>
 Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: ef9ff6017e3c ("perf ui browser: Move the extra title lines from the hists browser")
-Link: https://lkml.kernel.org/n/tip-odryfso74eaarm0z3e4v9owx@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-vq26rsuwq1cqylpcyvq89c84@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/ui/browsers/hists.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ tools/perf/util/util.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index de17e59d9952..0eec06c105c6 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -1744,17 +1744,11 @@ static void ui_browser__hists_init_top(struct ui_browser *browser)
- static unsigned int hist_browser__refresh(struct ui_browser *browser)
- {
- 	unsigned row = 0;
--	u16 header_offset = 0;
- 	struct rb_node *nd;
- 	struct hist_browser *hb = container_of(browser, struct hist_browser, b);
--	struct hists *hists = hb->hists;
--
--	if (hb->show_headers) {
--		struct perf_hpp_list *hpp_list = hists->hpp_list;
+diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
+index 9496365da3d7..c9626c206208 100644
+--- a/tools/perf/util/util.h
++++ b/tools/perf/util/util.h
+@@ -11,8 +11,7 @@
+ #include <stdlib.h>
+ #include <stdarg.h>
+ #include <linux/compiler.h>
+-#include <linux/types.h>
+-#include "namespaces.h"
++#include <sys/types.h>
  
-+	if (hb->show_headers)
- 		hist_browser__show_headers(hb);
--		header_offset = hpp_list->nr_header_lines;
--	}
+ /* General helper functions */
+ void usage(const char *err) __noreturn;
+@@ -26,6 +25,7 @@ static inline void *zalloc(size_t size)
+ #define zfree(ptr) ({ free(*ptr); *ptr = NULL; })
  
- 	ui_browser__hists_init_top(browser);
- 	hb->he_selection = NULL;
-@@ -1792,7 +1786,7 @@ static unsigned int hist_browser__refresh(struct ui_browser *browser)
- 			break;
- 	}
+ struct dirent;
++struct nsinfo;
+ struct strlist;
  
--	return row + header_offset;
-+	return row;
- }
- 
- static struct rb_node *hists__filter_entries(struct rb_node *nd,
+ int mkdir_p(char *path, mode_t mode);
