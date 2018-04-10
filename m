@@ -1,86 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753217AbeDJTuM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 15:50:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57548 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753168AbeDJTuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 15:50:10 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F339721785
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Tue, 10 Apr 2018 14:50:08 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: linux-pci@vger.kernel.org, sulrich@codeaurora.org,
-        timur@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] PCI: quirk HT1100 & HT2000 and one HT2100 Root Ports for
- Extended Tags
-Message-ID: <20180410195008.GE54986@bhelgaas-glaptop.roam.corp.google.com>
-References: <1522882209-9743-1-git-send-email-okaya@codeaurora.org>
- <20180410194144.GD54986@bhelgaas-glaptop.roam.corp.google.com>
+        id S1753238AbeDJTxJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 15:53:09 -0400
+Received: from mail-yb0-f179.google.com ([209.85.213.179]:38884 "EHLO
+        mail-yb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751943AbeDJTxI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 15:53:08 -0400
+X-Google-Smtp-Source: AIpwx4+6Mej9LEbyGTO60nL86c15FdxxFDziHeeqc92ISFMAmJ54WDkZibAAwwsOu0TJfNLUhkIFhw==
+Date: Tue, 10 Apr 2018 12:53:05 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Christopher Lameter <cl@linux.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        David Rientjes <rientjes@google.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [RFC] mm, slab: reschedule cache_reap() on the same CPU
+Message-ID: <20180410195247.GQ3126663@devbig577.frc2.facebook.com>
+References: <20180410081531.18053-1-vbabka@suse.cz>
+ <alpine.DEB.2.20.1804100907160.27333@nuc-kabylake>
+ <983c61d1-1444-db1f-65c1-3b519ac4d57b@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180410194144.GD54986@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <983c61d1-1444-db1f-65c1-3b519ac4d57b@suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 02:41:44PM -0500, Bjorn Helgaas wrote:
-> On Wed, Apr 04, 2018 at 06:50:09PM -0400, Sinan Kaya wrote:
-> > Per PCIe r3.1, sec 2.2.6.2 and 7.8.4, a Requester may not use 8-bit Tags
-> > unless its Extended Tag Field Enable is set, but all Receivers/Completers
-> > must handle 8-bit Tags correctly regardless of their Extended Tag Field
-> > Enable.
+Hello,
+
+On Tue, Apr 10, 2018 at 09:40:19PM +0200, Vlastimil Babka wrote:
+> On 04/10/2018 04:12 PM, Christopher Lameter wrote:
+> > On Tue, 10 Apr 2018, Vlastimil Babka wrote:
 > > 
-> > Some devices do not handle 8-bit Tags as Completers, so add a quirk for
-> > them.  If we find such a device, we disable Extended Tags for the entire
-> > hierarchy to make peer-to-peer DMA possible.
+> >> cache_reap() is initially scheduled in start_cpu_timer() via
+> >> schedule_delayed_work_on(). But then the next iterations are scheduled via
+> >> schedule_delayed_work(), thus using WORK_CPU_UNBOUND.
 > > 
-> > The Broadcom HT1100/HT2000/HT2100 seems to have issues with handling 8-bit
-> > tags.  Mark it as broken.
-> > 
-> > Fixes: 60db3a4d8cc9 ("PCI: Enable PCIe Extended Tags if supported")
-> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=196197
-> > Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> > That is a bug.. cache_reap must run on the same cpu since it deals with
+> > the per cpu queues of the current cpu. Scheduled_delayed_work() used to
+> > guarantee running on teh same cpu.
 > 
-> Applied to pci/enumeration for v4.18, thanks!
+> Did it? When did it stop? (which stable kernels should we backport to?)
 
-Actually, this is a really annoying issue and I think the fix is
-appropriate for v4.17, so I moved it to my for-linus branch.
+It goes back to v4.5 - ef557180447f ("workqueue: schedule
+WORK_CPU_UNBOUND work on wq_unbound_cpumask CPUs") which made
+WQ_CPU_UNBOUND on percpu workqueues honor wq_unbound_cpusmask so that
+cpu isolation works better.  Unless the force_rr option or
+unbound_cpumask is set, it still follows local cpu.
 
-> > ---
-> >  drivers/pci/quirks.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
+> So is my assumption correct that without specifying a CPU, the next work
+> might be processed on a different cpu than the current one, *and also*
+> be executed with a kthread/u* that can migrate to another cpu *in the
+> middle of the work*? Tejun?
+
+For percpu work items, they'll keep executing on the same cpu it
+started on unless the cpu goes down while executing.
+
+> > schedule_delayed_work_on(smp_processor_id(), work, round_jiffies_relative(REAPTIMEOUT_AC));
 > > 
-> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> > index 8b14bd3..f012742 100644
-> > --- a/drivers/pci/quirks.c
-> > +++ b/drivers/pci/quirks.c
-> > @@ -4813,9 +4813,13 @@ static void quirk_no_ext_tags(struct pci_dev *pdev)
-> >  
-> >  	pci_walk_bus(bridge->bus, pci_configure_extended_tags, NULL);
-> >  }
-> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0132, quirk_no_ext_tags);
-> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0140, quirk_no_ext_tags);
-> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0141, quirk_no_ext_tags);
-> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0142, quirk_no_ext_tags);
-> >  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0144, quirk_no_ext_tags);
-> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0420, quirk_no_ext_tags);
-> > +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0422, quirk_no_ext_tags);
-> >  
-> >  #ifdef CONFIG_PCI_ATS
-> >  /*
-> > -- 
-> > 2.7.4
-> > 
-> > 
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> > instead all of the other changes?
+> 
+> If we can rely on that 100%, sure.
+
+Yeah, you can.
+
+Thanks.
+
+-- 
+tejun
