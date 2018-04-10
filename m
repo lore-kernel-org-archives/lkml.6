@@ -1,56 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753666AbeDJJLC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 05:11:02 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:47501 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753051AbeDJJGM (ORCPT
+        id S1753697AbeDJJLK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 05:11:10 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:53050 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753679AbeDJJLI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 05:06:12 -0400
-X-IronPort-AV: E=Sophos;i="5.48,431,1517900400";
-   d="scan'208";a="10408595"
-From: Eugen Hristev <eugen.hristev@microchip.com>
-To: <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
-        <alexandre.belloni@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
-        <dmitry.torokhov@gmail.com>, <robh@kernel.org>
-CC: Eugen Hristev <eugen.hristev@microchip.com>
-Subject: [PATCH v3 04/11] dt-bindings: input: touchscreen: add pressure threshold touchscreen property
-Date: Tue, 10 Apr 2018 11:57:50 +0300
-Message-ID: <1523350677-27106-5-git-send-email-eugen.hristev@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523350677-27106-1-git-send-email-eugen.hristev@microchip.com>
-References: <1523350677-27106-1-git-send-email-eugen.hristev@microchip.com>
+        Tue, 10 Apr 2018 05:11:08 -0400
+Date: Tue, 10 Apr 2018 11:10:53 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: yuankuiz@codeaurora.org
+cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>, aulmck@linux.vnet.ibm.com,
+        Ingo Molnar <mingo@kernel.org>, Len Brown <len.brown@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pm-owner@vger.kernel.org
+Subject: Re: Subject: [PATCH] [PATCH] time: tick-sched: use bool for
+ tick_stopped
+In-Reply-To: <f253686d26b3470f0e9b60502eb62315@codeaurora.org>
+Message-ID: <alpine.DEB.2.21.1804101110080.2058@nanos.tec.linutronix.de>
+References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org> <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com> <f253686d26b3470f0e9b60502eb62315@codeaurora.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a common touchscreen optional property that will specify
-the minimum pressure applied to the screen that is needed
-such that the driver will report the touch event.
+On Tue, 10 Apr 2018, yuankuiz@codeaurora.org wrote:
+> On 2018-04-10 04:00 PM, Rafael J. Wysocki wrote:
+> > On Tue, Apr 10, 2018 at 9:33 AM,  <yuankuiz@codeaurora.org> wrote:
+> > > From: John Zhao <yuankuiz@codeaurora.org>
+> > > 
+> > > Variable tick_stopped returned by tick_nohz_tick_stopped
+> > > can have only true / forse values. Since the return type
+> > > of the tick_nohz_tick_stopped is also bool, variable
+> > > tick_stopped nice to have data type as bool in place of int.
+> > > Moreover, the executed instructions cost could be minimal
+> > > without potiential data type conversion.
+> > > 
+> > > Signed-off-by: John Zhao <yuankuiz@codeaurora.org>
+> > > ---
+> > >  kernel/time/tick-sched.h | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/kernel/time/tick-sched.h b/kernel/time/tick-sched.h
+> > > index 6de959a..4d34309 100644
+> > > --- a/kernel/time/tick-sched.h
+> > > +++ b/kernel/time/tick-sched.h
+> > > @@ -48,8 +48,8 @@ struct tick_sched {
+> > >         unsigned long                   check_clocks;
+> > >         enum tick_nohz_mode             nohz_mode;
+> > > 
+> > > +       bool                            tick_stopped    : 1;
+> > >         unsigned int                    inidle          : 1;
+> > > -       unsigned int                    tick_stopped    : 1;
+> > >         unsigned int                    idle_active     : 1;
+> > >         unsigned int                    do_timer_last   : 1;
+> > >         unsigned int                    got_idle_tick   : 1;
+> > 
+> > I don't think this is a good idea at all.
+> > 
+> > Please see https://lkml.org/lkml/2017/11/21/384 for example.
+> [ZJ] Thanks for this sharing. Looks like, this patch fall into the case of
+> "Maybe".
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
----
- Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt | 3 +++
- 1 file changed, 3 insertions(+)
+This patch falls into the case 'pointless' because it adds extra storage
+for no benefit at all.
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-index 537643e..c84047a 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-+++ b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-@@ -7,6 +7,9 @@ Optional properties for Touchscreens:
- 				  (in pixels)
-  - touchscreen-max-pressure	: maximum reported pressure (arbitrary range
- 				  dependent on the controller)
-+ - touchscreen-threshold-pressure: minimum pressure on the touchscreen to be
-+				  achieved in order for the touchscreen
-+				  driver to report a touch event.
-  - touchscreen-fuzz-x		: horizontal noise value of the absolute input
- 				  device (in pixels)
-  - touchscreen-fuzz-y		: vertical noise value of the absolute input
--- 
-2.7.4
+Thanks,
+
+	tglx
