@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48bC3Pp3uBMCKWNTG93ai15cxsh2DFFSMsszLzkyuR4GiGuOFYy6oP92G+MNErxMQeWsTNF
-ARC-Seal: i=1; a=rsa-sha256; t=1523399687; cv=none;
+X-Google-Smtp-Source: AIpwx48PasdAcbyCSHWqY17OMTSGazPyCOHwatbmjsq+b6uttRdka5hTb5MYcPoZG/LqRFDN5zUj
+ARC-Seal: i=1; a=rsa-sha256; t=1523399685; cv=none;
         d=google.com; s=arc-20160816;
-        b=Jdykm8wTLe2utfGasgDlpTwRLQGCYJsE11PogiGFpSGgXJds5XZKxqLwSig+d2LgyO
-         3UOsfgk19+qZI+UtaaM9dM5rtXb8ZGuVh09nU3XPyHpkkLCvPf1JRstjk2AjRzgyK3tu
-         WW9+Axmw3WUR9e4FYlSqc9fOPQinrm5V9gWtFMk3WcZOJzgSAZV+1IZeBGiXjp5ejPPX
-         cuA/3bFsXt7tuszwa/+nj3DaNL1Q3dyVlsfvfoZ/vvcYj6HMwfyBstb7gFFxqdS7kcfk
-         UzSFQU4BykhvKZphPXn9lns02+1X/HzIbf7ALIHFCceeeCHqIt68O+IqAtnpswwvC5ry
-         ZZLg==
+        b=tL69YOt2Z9u6IZSIIiBtYOGsjxVXtsVNP+EfkIa/MCn0+gjBS5gv+C20jYkJy9tGVR
+         vX6Ew+Gmp/5w41zD0YllugPaV3kb2goqEI2OecMNptCjUZRSHpdQE6nZ3o9KHoRPlCNA
+         FMeMgZQdmVtNTAt75ACWX2BpEUx/wG6x7FF3I2IEIQZrhh3bstkr3rrdYtWjDv/GQAX9
+         WPbT7ZiYGTxY9V1JdWy+wBZ6wnban24YBywyYCyJXvUdhvPe40BzTG2pjjFPmrl/z56X
+         5jGcR+VYH+JfOjXO0Ed8WFPwtUnrS14Lqk5bUuzXSwsCDuKVf4UvVpQC4N3UFHMAdXuU
+         7K1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=i/yjlwbJzQYgtWzstrzij0iLAzvbfw6Co49Gm+5tvoI=;
-        b=DYCLQp3gt/8hBjhZkyX8uIwwH7VeNn85MELHgE66WAVO9YyUWVVQrNDs+53GY73U3p
-         +07njv2A/zhMYfjD4noFosRCRzsvAWk6JJ5QSufqI5ViJbXRV9dOF8gJXUH+0Ax26Uu9
-         YyjhF1gkB2jTDQZgGqyREKLLsb8GdKxQxwzeE8J1i1+lgVu9GPZuVaNKbhhuhq6wxSgp
-         xo84v8AixsJidje8re0Ay+y9oPa8nMXzh+6uXwCaVuRNa1DowphCas7j0fq18EgXvWTt
-         hytknQiUBPnxs1eJTJEpku0cQy2ji7O9cc9UtAhro6C2U2VkymKJ0fWXCZrwXrjib5H5
-         C9Uw==
+        bh=+Xd+ijalEFkRB58+K1JciXGSjnPGJ2XaRzb/yH6BL1Q=;
+        b=fbjB28bNo9wLmIy1VsBB/D20y9pDmaEAI4WhKh1lQRc0K+A2hOd7++sHHM3vuzGwPN
+         6Zsl7IYciyMfI6Zqrx2pIFWtJTvlOwMnmqlXLxtZc1238HlxP2zNE2jdHp/nPulFaiMX
+         76ltxT47Gcs14utChLbm/YdMdGPEqn/oDi9HykUCvZeL6deY8dHpyCgqsHR1vgn6yK9V
+         9mP9TXttFUAhOkj1Mt+zxaVN/nAHiQs4SwWD1518rvh78HsHQCbCENzIfKWbfY2x+dKm
+         tMtIUbwEy5dappTd7RxESUyfWiSS2zJAsRUGNxm7PaL85tg0TvLeQSQQiLT6YWaiK/RW
+         AyFg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tobias Brunner <tobias@strongswan.org>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Ioan Moldovan <ioan.moldovan1999@gmail.com>,
+	Johan Hedberg <johan.hedberg@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 007/138] ipv6: Reinject IPv6 packets if IPsec policy matches after SNAT
-Date: Wed, 11 Apr 2018 00:23:17 +0200
-Message-Id: <20180410212903.008087216@linuxfoundation.org>
+Subject: [PATCH 4.14 006/138] Bluetooth: Add a new 04ca:3015 QCA_ROME device
+Date: Wed, 11 Apr 2018 00:23:16 +0200
+Message-Id: <20180410212902.858455821@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399817081333121?=
-X-GMAIL-MSGID: =?utf-8?q?1597400351236356558?=
+X-GMAIL-THRID: =?utf-8?q?1597399813394842159?=
+X-GMAIL-MSGID: =?utf-8?q?1597400348322674703?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,39 +50,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tobias Brunner <tobias@strongswan.org>
+From: Ioan Moldovan <ioan.moldovan1999@gmail.com>
 
 
-[ Upstream commit 09ee9dba9611cd382fd360a99ad1c2fa23bfdca8 ]
+[ Upstream commit 0a03f98b98c201191e3ba15a0e33f46d8660e1fd ]
 
-If SNAT modifies the source address the resulting packet might match
-an IPsec policy, reinject the packet if that's the case.
+This patch adds the 04ca:3015 (from a QCA9377 board) Bluetooth device
+to the btusb blacklist and makes the kernel use the btqca module
+instead of btusb. The patch is necessary because, without it the
+04ca:3015 device defaults to using the btusb driver, which makes the
+WIFI side of the QCA9377 board unusable (obtains 0 MBps in speedtest,
+when the 04ca:3015 bluetooth is used with an audio headset).
 
-The exact same thing is already done for IPv4.
+/sys/kernel/debug/usb/devices:
 
-Signed-off-by: Tobias Brunner <tobias@strongswan.org>
-Acked-by: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+    T:  Bus=01 Lev=01 Prnt=01 Port=04 Cnt=01 Dev#=  2 Spd=12   MxCh= 0
+    D:  Ver= 2.01 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+    P:  Vendor=04ca ProdID=3015 Rev= 0.01
+    C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
+    I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+    E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+    E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+    E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+    I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+    E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+    E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+    I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+    E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+    E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+    I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+    E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+    E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+    I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+    E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+    E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+    I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+    E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+    E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+    I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+    E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+    E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+
+Signed-off-by: Ioan Moldovan <ioan.moldovan1999@gmail.com>
+Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_output.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/bluetooth/btusb.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -138,6 +138,14 @@ static int ip6_finish_output(struct net
- 		return ret;
- 	}
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -277,6 +277,7 @@ static const struct usb_device_id blackl
+ 	{ USB_DEVICE(0x0489, 0xe09f), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x0489, 0xe0a2), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x04ca, 0x3011), .driver_info = BTUSB_QCA_ROME },
++	{ USB_DEVICE(0x04ca, 0x3015), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x04ca, 0x3016), .driver_info = BTUSB_QCA_ROME },
  
-+#if defined(CONFIG_NETFILTER) && defined(CONFIG_XFRM)
-+	/* Policy lookup after SNAT yielded a new policy */
-+	if (skb_dst(skb)->xfrm) {
-+		IPCB(skb)->flags |= IPSKB_REROUTED;
-+		return dst_output(net, sk, skb);
-+	}
-+#endif
-+
- 	if ((skb->len > ip6_skb_dst_mtu(skb) && !skb_is_gso(skb)) ||
- 	    dst_allfrag(skb_dst(skb)) ||
- 	    (IP6CB(skb)->frag_max_size && skb->len > IP6CB(skb)->frag_max_size))
+ 	/* Broadcom BCM2035 */
