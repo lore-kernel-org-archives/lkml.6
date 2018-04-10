@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-807177-1523400237-2-17152416112410707692
+X-Cyrus-Session-Id: sloti22d1t05-807177-1523400230-2-6326898412477971058
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523400237; b=rF1inJOSz7RoEXDt2yRfgnxwxB2ZoyZJsqej3LEmsjO+U8Fcmx
-    Oayam2oG60FoMKolSu84pBZtAzKLEDoMNzrcD5X97OTR28b/KIQtWFS0khBVBSZ7
-    AZfPKEfPJgNec6csl2dIqLHTn/IhK0bcyZDV8n4uKdy59wWxH2kh6kX3HfiQY9SK
-    N+TMD3M/w8g59qoN0znZtLxAnAukEes2JURSmW4ruspqM96ENbNDfySdjhiaSn1K
-    QxCC7hAo6Qax3LB0PGwu6MxRA3mx57WpVLawWfkIdf/c+lFoKJWb1dXmbYF/t6wj
-    rT30tDPYQPhfdtqsM+S1lN9u6l+rG57Ypnjw==
+    1523400230; b=VM51yKD8474Pc3tnQ8W/Bb90yWfTi8DektMFRUocznQdMJrYug
+    YYcm/uXPkTfAH6VIJvfsF1z9upD5zzc7uBjiwyuw1HK2vrmQQGYx4lsp5xKdnpUa
+    /kOIXwJWmVrAqCTOBru91UZXZgtXNeNWA2ib6PIKK+8b5mXuH5b45Pd0e4CpTmz4
+    6fwsOWRX/W2PRUC842Up6CVEHRMtRzooiOi6Q8ci3tBvJJwj0gTShBG0vatfFf5a
+    rKFRvQIERACYnNAY0GVMdQXDZerrGKGY5m/lmB+IolWSxobwr3ocDr8AxK3CwC9p
+    378Y04SsLFfZnmPJ6UbzIGFJwyB66uCB9hMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523400237; bh=HE86ngVMMgmBj9iih70xM/vEvyKtJe
-    wJJjWrBYNy74s=; b=Ytf2y4PwNwcRVV3LWSyj9i4r1cQNeeS5DF8lrNGhkXx2Gf
-    9z/gnFo5iWutzw9iR4ssye2/bNpC0VKmeRsJJNxmX4ERv32ECZatEwQVQN741cLh
-    nxwwyQTGQoS2ogiNPHjV7c/Wkd2fpDlJGaQtKo3Wmy4vcFiKJpZ0IcketCPQ7Ir2
-    pnEyGXz+dDYGlhCZiP7KZ2mDkOLp1+ot/M2SPKTZCqpaQlqQiFJ3rZ8B2e53+aSG
-    dRpNdZ1xL+M0E+jmJiB2Q3KDnppmOsZIxeNZ5BEeFWaC334VbxUKkOSleQCyY1I3
-    h3gyaHznMI88ptbpQJwwAYFwBZWAUBFZghJ8aZFQ==
+    :list-id; s=fm2; t=1523400230; bh=L5f4DsnvJCEj8mJwS43wiqjrOFN063
+    Y6gaSrGWbDQI8=; b=aJ9qxxqMPFrZK1OHSA7GKLFQBvN9AHXLEJpGGIOtoLEZ5a
+    7zGrRuTluTEGZlfexsO5mmXMb8jP+VXhzsE9Zu9gE0Dj+5z+nE8FKQ9+USulf5yv
+    30d6sTD+7YtHpQlbEtgWz/pYUcqDOsXtXcqecv8ZfUar/sSb13YKhRSjqqyuh1PU
+    xtxSkXc9thuouGa8Y2e5E6pieM3RwZU3FN+E5B+dk/XrMRMnVp40GG+p65fGMGQp
+    D0LyGx+0CSc2OosEiUXxJPQZiDJWl0dza6Quan6auZZqliCo4phnEIfFG+kOL66h
+    9HfTfLClmY/uAfnfZQfc3d1niQDShDoqhu15It8Q==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,34 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfE8oHRbZ3sBNdNfbp3Izu7qaegCdVduXbu69Ivsmo7yRdOcLsrNU1cirvWpAdSUcQiy6sWEbErXRJP1d6GFR8t78Ys3iY8kxDOL+UoNqM35YfCEmB+BD
-    QiBlJHZ7yeYjlkw84EL7vImIvv+Vc5tPPxNNKWRz9cT9yq4tWmJOzXFyfNFSD9C7dOnHb86yF+9oJb011FHVjuLzGY3amGIRemItRs8NnMbEGdr0a87zuF2L
+X-CM-Envelope: MS4wfGm3UDdEj7romPvX6UIx4BzZ2YwDMOQS3+zRbuXXQlszNLSVn+HdhWNp/peoLFFXuvL9OlRWNnECWKHuu+CG5R/GfA1Y/APXfq0O3qi0j/ParGIMwr0H
+    AMz5KfvpNWYURC9GEy0totCi/pzmkOWu9qHw+vuUOOFcoKETnAPcNNHe2h7oTF6ED9HM46cEujdcMCFwKQxqpIQW2Epoo/zhTTOzv0Kn/4l95mDhPh32EdPt
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=DfNHnWVPAAAA:8 a=danhDmx_AAAA:8 a=VwQbUJbxAAAA:8 a=J1Y8HTJGAAAA:8
-    a=ag1SF4gXAAAA:8 a=gJjcm8xDonOmdvZi31gA:9 a=QEXdDO2ut3YA:10
-    a=rjTVMONInIDnV1a_A2c_:22 a=P4VdviVPEcjfz_PVVggX:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8 a=hSkVLCK3AAAA:8 a=J1Y8HTJGAAAA:8
+    a=ag1SF4gXAAAA:8 a=Y7yGX3ukNk2mNxy08agA:9 a=eX1tjFrm8-UU_n7A:21
+    a=iZUM7oMXL7o2SP0L:21 a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22
     a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753991AbeDJWjd (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 18:39:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45262 "EHLO
+        id S1756074AbeDJWjh (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 18:39:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45276 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932636AbeDJWjc (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:39:32 -0400
+        with ESMTP id S1756072AbeDJWjf (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:39:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        stable@vger.kernel.org, Darren Kenny <darren.kenny@oracle.com>,
+        syzbot+c0272972b01b872e604a@syzkaller.appspotmail.com,
+        Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 110/138] sky2: Increase D3 delay to sky2 stops working after suspend
-Date: Wed, 11 Apr 2018 00:25:00 +0200
-Message-Id: <20180410212914.971331458@linuxfoundation.org>
+Subject: [PATCH 4.14 111/138] vhost: correctly remove wait queue during poll failure
+Date: Wed, 11 Apr 2018 00:25:01 +0200
+Message-Id: <20180410212915.098064426@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -94,34 +96,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Jason Wang <jasowang@redhat.com>
 
 
-[ Upstream commit afb133637071be6deeb8b3d0e55593ffbf63c527 ]
+[ Upstream commit dc6455a71c7fc5117977e197f67f71b49f27baba ]
 
-The sky2 ethernet stops working after system resume from suspend:
-[ 582.852065] sky2 0000:04:00.0: Refused to change power state, currently in D3
+We tried to remove vq poll from wait queue, but do not check whether
+or not it was in a list before. This will lead double free. Fixing
+this by switching to use vhost_poll_stop() which zeros poll->wqh after
+removing poll from waitqueue to make sure it won't be freed twice.
 
-The current 150ms delay is not enough, change it to 200ms can solve the
-issue.
-
-BugLink: https://bugs.launchpad.net/bugs/1758507
-Cc: Stable <stable@vger.kernel.org>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: Darren Kenny <darren.kenny@oracle.com>
+Reported-by: syzbot+c0272972b01b872e604a@syzkaller.appspotmail.com
+Fixes: 2b8b328b61c79 ("vhost_net: handle polling errors when setting backend")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/sky2.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/vhost/vhost.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/marvell/sky2.c
-+++ b/drivers/net/ethernet/marvell/sky2.c
-@@ -5087,7 +5087,7 @@ static int sky2_probe(struct pci_dev *pd
- 	INIT_WORK(&hw->restart_work, sky2_restart);
- 
- 	pci_set_drvdata(pdev, hw);
--	pdev->d3_delay = 150;
-+	pdev->d3_delay = 200;
- 
- 	return 0;
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -213,8 +213,7 @@ int vhost_poll_start(struct vhost_poll *
+ 	if (mask)
+ 		vhost_poll_wakeup(&poll->wait, 0, 0, (void *)mask);
+ 	if (mask & POLLERR) {
+-		if (poll->wqh)
+-			remove_wait_queue(poll->wqh, &poll->wait);
++		vhost_poll_stop(poll);
+ 		ret = -EINVAL;
+ 	}
  
