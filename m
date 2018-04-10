@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-713601-1523400180-2-11162073684137328478
+X-Cyrus-Session-Id: sloti22d1t05-713595-1523400167-2-7142922763463179659
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523400179; b=UZWZtJzkSUftEt9c4SXkamFq8OsYhglxyzUaGTo0Zb1ujxtdhZ
-    cJVIEMhtzy+Gi5PzULLwwuZrA0JNgFW1DsPs7mVUDWx/QAU27DYeKYR1RfHr/WFH
-    uL+i4GGSIKh3TzpIgO4YJKZ55RkL/3unUdmsIniQM9CoTKZTKvkDhrYsaAPnW8Ea
-    Msz1BS2YCbMxC1eYuyoWxjPWgvN5P1xIq1NJm8QTjOfPBgwQzDyNzKmDmHuFXxmw
-    csr3Bo6jSf+YwzJAd3YDxVYd5OZOVyckzK8rOz5+mvNlxCzPiogVI8CTugZIGg4H
-    uCftW2lk4O6Cmg1zj/wSeA1cNRwHNklOUQ1g==
+    1523400167; b=WqulS/xsZGON1OgTEhuU6CEKsgA3XNckuKyogYaom+Sk38k/b9
+    rBUiXOQuAREcCkV4L7+pAe2cfk6eOSJJclvy76WZHloh4F5mTrDHrWNS33xtXHxT
+    vXN7RlzIUBVS1LqaYLAHYkE9IX6Im4H9WEiSnFjXryAIDl/3Ozc/BPUlcl3rLyG+
+    LxhdnyqOlnkgI+EahfsitQOCHLxZa/d2YfVFeBRZHvKeYpR1TKJUnMAKS6zcExm5
+    yDRQS4j2avdegP5WeOA4UvKygTVSvbuqy2QKYAupE0j6AFuYnGwdWT1B8sj1njqC
+    OyZfl5D6HaX89qKfvd4OWEH8HcSJI4YIL5yA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523400179; bh=hMYcCPp36PKOUliUrs6eZTaSdkqbZK
-    othgriKS+iu3I=; b=FpRvNFJ86t9m2lZ+WhDZxbrrDMOhINoCqTJ8JU2ie+DdGg
-    VvK90nGNd88FOUECGsnXyKXAGRVcOtJVJmGb4DXRkpY719psbwMlPsNk2XuyutGb
-    ADHCWHGYL+vFf2ZXkk225HCazntvzaoLtDFphoL91+ydZDfWYmlnKkJ2CXRz1myz
-    QGda4BIaJYqv+PCrf4+zw1EMNS2HalUC3CgoM/U+DSd0e96VUkM/MrLeyoawm4+D
-    /3+gQy4/D+f4KpcZY3s4li4YQu7jg9clMOaUQfVb/dVHGUHT333rsu/oZ+cGILIr
-    aMymt7G1XIp5NPuv9YtgeE7sYe2HvhVHP+DRwz2A==
+    :list-id; s=fm2; t=1523400167; bh=0Af6dNiSefOdZ0ywD3OxKR8/Z1W3uT
+    sm8BMbqU9dfX4=; b=ovYDS/LHKzNMLul812dxYq/ArhjL8G6txPaefOLxBlSwoN
+    gRC6+DQ+ojYvgQ63WsTqOM7Gu3olOlu8y2rONweZWvXyaiM8Zhnne4zheA82BIqT
+    AOycz/YcxQ8fJsnm4c7t9yOnl5/oFCxsuh3s94mu0oqD26bTnRQz1SN36F+0mGh7
+    7rdTIPcMJl5LSajSZD9QUOKXSh5dCrv7CUDCt+ysrhOHld25rJabtg8ULtcALXC6
+    9a0KB5T4eTHKhAKhXUewDp1LxYO+1MF4jHdqhFUAwOok32MAnWxi4Wu305eNVeEx
+    YDKqFA7Tkd0Yf0WgzT8qlRyeqhssTkRaW8BpXb2Q==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,30 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPWa8QQY9psdNmxpUYaeAN0IvKDRow90mttWxOnXLz0++c2oLO2cIVOPl26VJJuwDJXdWkent6O8Bfpq+s6K9b/qKEqY6cH8Ue3w/vhU4fS8yfXBGSux
-    M+LimZcvYVn4eQ/sqJ2ZEYXoE0AkNcUAgMOx7n/tB2Aq/Cof1pe1J4BUZu8V4jsTXNio8RLKYOmiU78Gha8Aw36vNLj4X09eEfxtrD7O9mmlQvvIoN+N0frb
+X-CM-Envelope: MS4wfPVCaNKz+MNe10fDkEsYSVs/yPSGY17OZpLh7D9OkY5BYn6qZMfxYlQzNEObpfK2WURVQuAps7mfIlGcOoKLH4esCeQHaN3xCuwYGQD4Pxx9/tYsmtBf
+    Ylu1AKLVQeyQAwaaCkFyD/6QiNyjDdSpvgZf4YQGrt1HPL0ZXNDDqrYBef1gfSYQrSXtvb4VyjAJ6hwvATN1MqjT6Mqm89vs96H2oi8FqJLv+Lm94gqXq3LT
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=CDq0vqnqAAAA:8 a=raxXJfwxAAAA:8 a=J1Y8HTJGAAAA:8
-    a=ag1SF4gXAAAA:8 a=-K2Uu799WqL-7LDaqrwA:9 a=QEXdDO2ut3YA:10
-    a=Xn7iXEen_xUG9zZOO_Hb:22 a=JSjy4Y8GK2L6deCeXoNw:22 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=CbDCq_QkAAAA:8 a=ag1SF4gXAAAA:8 a=d9u0pwqUsCscJSrev_gA:9 a=QEXdDO2ut3YA:10
+    a=1qrBK16LubpBFNPVNq2M:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932652AbeDJWjz (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 18:39:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45940 "EHLO
+        id S1755280AbeDJWmb (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 18:42:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46184 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932225AbeDJWju (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:39:50 -0400
+        with ESMTP id S932669AbeDJWj5 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:39:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 114/138] bonding: fix the err path for dev hwaddr sync in bond_enslave
-Date: Wed, 11 Apr 2018 00:25:04 +0200
-Message-Id: <20180410212915.415796991@linuxfoundation.org>
+        stable@vger.kernel.org, Shahar Klein <shahark@mellanox.com>,
+        Roi Dayan <roid@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 128/138] net/mlx5e: Sync netdev vxlan ports at open
+Date: Wed, 11 Apr 2018 00:25:18 +0200
+Message-Id: <20180410212917.078085639@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -95,54 +92,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Shahar Klein <shahark@mellanox.com>
 
 
-[ Upstream commit 5c78f6bfae2b10ff70e21d343e64584ea6280c26 ]
+[ Upstream commit a117f73dc2430443f23e18367fa545981129c1a6 ]
 
-vlan_vids_add_by_dev is called right after dev hwaddr sync, so on
-the err path it should unsync dev hwaddr. Otherwise, the slave
-dev's hwaddr will never be unsync when this err happens.
+When mlx5_core is loaded it is expected to sync ports
+with all vxlan devices so it can support vxlan encap/decap.
+This is done via udp_tunnel_get_rx_info(). Currently this
+call is set in mlx5e_nic_enable() and if the netdev is not in
+NETREG_REGISTERED state it will not be called.
 
-Fixes: 1ff412ad7714 ("bonding: change the bond's vlan syncing functions with the standard ones")
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Reviewed-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Acked-by: Andy Gospodarek <andy@greyhouse.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Normally on load the netdev state is not NETREG_REGISTERED
+so udp_tunnel_get_rx_info() will not be called.
+
+Moving udp_tunnel_get_rx_info() to mlx5e_open() so
+it will be called on netdev UP event and allow encap/decap.
+
+Fixes: 610e89e05c3f ("net/mlx5e: Don't sync netdev state when not registered")
+Signed-off-by: Shahar Klein <shahark@mellanox.com>
+Reviewed-by: Roi Dayan <roid@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_main.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c |   10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1561,7 +1561,7 @@ int bond_enslave(struct net_device *bond
- 	if (res) {
- 		netdev_err(bond_dev, "Couldn't add bond vlan ids to %s\n",
- 			   slave_dev->name);
--		goto err_close;
-+		goto err_hwaddr_unsync;
- 	}
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -2718,6 +2718,9 @@ int mlx5e_open(struct net_device *netdev
+ 		mlx5_set_port_admin_status(priv->mdev, MLX5_PORT_UP);
+ 	mutex_unlock(&priv->state_lock);
  
- 	prev_slave = bond_last_slave(bond);
-@@ -1751,9 +1751,6 @@ err_unregister:
- 	netdev_rx_handler_unregister(slave_dev);
- 
- err_detach:
--	if (!bond_uses_primary(bond))
--		bond_hw_addr_flush(bond_dev, slave_dev);
--
- 	vlan_vids_del_by_dev(slave_dev, bond_dev);
- 	if (rcu_access_pointer(bond->primary_slave) == new_slave)
- 		RCU_INIT_POINTER(bond->primary_slave, NULL);
-@@ -1767,6 +1764,10 @@ err_detach:
- 	synchronize_rcu();
- 	slave_disable_netpoll(new_slave);
- 
-+err_hwaddr_unsync:
-+	if (!bond_uses_primary(bond))
-+		bond_hw_addr_flush(bond_dev, slave_dev);
++	if (mlx5e_vxlan_allowed(priv->mdev))
++		udp_tunnel_get_rx_info(netdev);
 +
- err_close:
- 	slave_dev->priv_flags &= ~IFF_BONDING;
- 	dev_close(slave_dev);
+ 	return err;
+ }
+ 
+@@ -4276,13 +4279,6 @@ static void mlx5e_nic_enable(struct mlx5
+ 	if (netdev->reg_state != NETREG_REGISTERED)
+ 		return;
+ 
+-	/* Device already registered: sync netdev system state */
+-	if (mlx5e_vxlan_allowed(mdev)) {
+-		rtnl_lock();
+-		udp_tunnel_get_rx_info(netdev);
+-		rtnl_unlock();
+-	}
+-
+ 	queue_work(priv->wq, &priv->set_rx_mode_work);
+ 
+ 	rtnl_lock();
