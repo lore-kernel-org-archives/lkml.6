@@ -1,49 +1,227 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752241AbeDJGxx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 02:53:53 -0400
-Received: from mail-vk0-f42.google.com ([209.85.213.42]:40166 "EHLO
-        mail-vk0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751815AbeDJGxu (ORCPT
+        id S1752417AbeDJGzZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 02:55:25 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47662 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752282AbeDJGzX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 02:53:50 -0400
-X-Google-Smtp-Source: AIpwx4+5wgDwAZCEeY9K/J9ugPTYJ9w+2Vyl8wygY0EPq83DbtrXz1a8CfSP6SynpWXGKXqFPyhCRH8g9W79PSmDwJ0=
+        Tue, 10 Apr 2018 02:55:23 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EFB666079B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+Subject: Re: [PATCH v4 7/7] phy: qcom-qusb2: Add QUSB2 PHYs support for sdm845
+To: Doug Anderson <dianders@chromium.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>
+References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
+ <1522321466-21755-8-git-send-email-mgautam@codeaurora.org>
+ <CAD=FV=X70gNedZjCiKQTOqtDf5UttViAiibgRjCoKWVJZqcKEQ@mail.gmail.com>
+From: Manu Gautam <mgautam@codeaurora.org>
+Message-ID: <bc95c295-df8a-6219-b923-adcb0d7030f0@codeaurora.org>
+Date: Tue, 10 Apr 2018 12:25:10 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <3d7b5a707e216e19eb3defe0586bfbc8@natalenko.name>
-References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5jL8oLV2xvjBVYv_SNXr74LdgpXEmU7K+cLYpD7jh2chgw@mail.gmail.com>
- <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com>
- <2679696.GDoj5zcZOu@natalenko.name> <CAGXu5jLG9ia+zBNcPt+q+BpJayoUuYwXitOgeHmh=7sPp-s87A@mail.gmail.com>
- <51a7e805058ef7f35b226cbbf0ccc4ff@natalenko.name> <CAGXu5jKRrdYjuyLSvc4k4mqttkM7zw-96poQ1GYqRRgPqZFOYQ@mail.gmail.com>
- <3d7b5a707e216e19eb3defe0586bfbc8@natalenko.name>
-From: Kees Cook <keescook@chromium.org>
-Date: Mon, 9 Apr 2018 23:53:49 -0700
-X-Google-Sender-Auth: 2p0hA3PZUD1d9l6mmwSlNZzCxjw
-Message-ID: <CAGXu5j+9BJcR63bsqQpqaKrvcgOpWyDzgpD-zRrf1qq7v=Z2CA@mail.gmail.com>
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-To: Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc: David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
-        paolo.valente@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAD=FV=X70gNedZjCiKQTOqtDf5UttViAiibgRjCoKWVJZqcKEQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 9, 2018 at 11:35 PM, Oleksandr Natalenko
-<oleksandr@natalenko.name> wrote:
-> Did your system hang on smartctl hammering too? Have you got some stack
-> traces to compare with mine ones?
+Hi,
 
-Unfortunately I only had a single hang with no dumps. I haven't been
-able to reproduce it since. :(
 
--Kees
+On 3/30/2018 2:08 AM, Doug Anderson wrote:
+> Hi,
+>
+> On Thu, Mar 29, 2018 at 4:04 AM, Manu Gautam <mgautam@codeaurora.org> wrote:
+>> @@ -241,6 +252,18 @@ struct qusb2_phy_cfg {
+>>   * @tcsr: TCSR syscon register map
+>>   * @cell: nvmem cell containing phy tuning value
+>>   *
+>> + * @override_imp_res_offset: PHY should use different rescode offset
+>> + * @imp_res_offset_value: rescode offset to be updated in IMP_CTRL1 register
+>> + *
+>> + * @override_hstx_trim: PHY should use different HSTX o/p current value
+>> + * @hstx_trim_value: HSTX_TRIM value to be updated in TUNE1 register
+>> + *
+>> + * @override_preemphasis: PHY should use different pre-amphasis amplitude
+>> + * @preemphasis_level: Amplitude Pre-Emphasis to be updated in TUNE1 register
+>> + *
+>> + * @override_preemphasis_width: PHY should use different pre-emphasis duration
+>> + * @preemphasis_width: half/full-width Pre-Emphasis updated via TUNE1
+>> + *
+> nit: spacing here doesn't match spacing in the structure.  AKA: you've
+> smashed together all 8 properties in the structure but not in the
+> description.
+Will fix it.
+>
+>
+>>   * @cfg: phy config data
+>>   * @has_se_clk_scheme: indicate if PHY has single-ended ref clock scheme
+>>   * @phy_initialized: indicate if PHY has been initialized
+>> @@ -259,12 +282,35 @@ struct qusb2_phy {
+>>         struct regmap *tcsr;
+>>         struct nvmem_cell *cell;
+>>
+>> +       bool override_imp_res_offset;
+>> +       u8 imp_res_offset_value;
+>> +       bool override_hstx_trim;
+>> +       u8 hstx_trim_value;
+>> +       bool override_preemphasis;
+>> +       u8 preemphasis_level;
+>> +       bool override_preemphasis_width;
+>> +       u8 preemphasis_width;
+>> +
+>>         const struct qusb2_phy_cfg *cfg;
+>>         bool has_se_clk_scheme;
+>>         bool phy_initialized;
+>>         enum phy_mode mode;
+>>  };
+>>
+>> +static inline void qusb2_write_mask(void __iomem *base, u32 offset,
+>> +                                   u32 val, u32 mask)
+>> +{
+>> +       u32 reg;
+>> +
+>> +       reg = readl(base + offset);
+>> +       reg &= ~mask;
+>> +       reg |= val;
+> "reg |= (val & mask)" instead of just "reg |= val"
+>
+> You don't do any bounds checking of the device tree entries and this
+> will at least make sure that a bad value for a field won't screw up
+> other fields (and so, presumably, it will be easier to find the bug).
+>
+It makes sense. Will change accordingly.
+
+>
+>> +       writel(reg, base + offset);
+>> +
+>> +       /* Ensure above write is completed */
+>> +       readl(base + offset);
+> You're using readl() and writel() which have barriers.  Why do you
+> need this extra readl()?
+
+This requirement comes from AHB2PHY wrapper designers and HPG.
+Also existing qusb2_setbits/clrbits() wrapper already have similar handling.
+
+>
+>
+>> +}
+>> +
+>>  static inline void qusb2_setbits(void __iomem *base, u32 offset, u32 val)
+>>  {
+>>         u32 reg;
+>> @@ -305,6 +351,42 @@ void qcom_qusb2_phy_configure(void __iomem *base,
+>>  }
+>>
+>>  /*
+>> + * Update board specific PHY tuning override values if specified from
+>> + * device tree.
+>> + *
+> nit: remove extra comment line with just a "*" on it.
+Sure.
+>
+>
+>> + */
+>> +static void qusb2_phy_override_phy_params(struct qusb2_phy *qphy)
+>> +{
+>> +       const struct qusb2_phy_cfg *cfg = qphy->cfg;
+>> +
+>> +       if (qphy->override_imp_res_offset)
+>> +               qusb2_write_mask(qphy->base, QUSB2PHY_IMP_CTRL1,
+>> +                            qphy->imp_res_offset_value << IMP_RES_OFFSET_SHIFT,
+>> +                            IMP_RES_OFFSET_MASK);
+>> +
+>> +       if (qphy->override_hstx_trim)
+>> +               qusb2_write_mask(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE1],
+>> +                                qphy->hstx_trim_value << HSTX_TRIM_SHIFT,
+>> +                                HSTX_TRIM_MASK);
+>> +
+>> +       if (qphy->override_preemphasis)
+>> +               qusb2_write_mask(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE1],
+>> +                               qphy->preemphasis_level << PREEMPHASIS_EN_SHIFT,
+>> +                               PREEMPHASIS_EN_MASK);
+>> +
+>> +       if (qphy->override_preemphasis_width) {
+>> +               if (qphy->preemphasis_width)
+>> +                       qusb2_setbits(qphy->base,
+>> +                                     cfg->regs[QUSB2PHY_PORT_TUNE1],
+>> +                                     PREEMPH_HALF_WIDTH);
+>> +               else
+>> +                       qusb2_clrbits(qphy->base,
+>> +                                     cfg->regs[QUSB2PHY_PORT_TUNE1],
+>> +                                     PREEMPH_HALF_WIDTH);
+>> +       }
+>> +}
+>> +
+>> +/*
+>>   * Fetches HS Tx tuning value from nvmem and sets the
+>>   * QUSB2PHY_PORT_TUNE1/2 register.
+>>   * For error case, skip setting the value and use the default value.
+>> @@ -525,6 +607,9 @@ static int qusb2_phy_init(struct phy *phy)
+>>         qcom_qusb2_phy_configure(qphy->base, cfg->regs, cfg->tbl,
+>>                                  cfg->tbl_num);
+>>
+>> +       /* Override board specific PHY tuning values */
+>> +       qusb2_phy_override_phy_params(qphy);
+>> +
+>>         /* Set efuse value for tuning the PHY */
+>>         qusb2_phy_set_tune2_param(qphy);
+>>
+>> @@ -647,7 +732,7 @@ static int qusb2_phy_exit(struct phy *phy)
+>>                 .compatible     = "qcom,msm8996-qusb2-phy",
+>>                 .data           = &msm8996_phy_cfg,
+>>         }, {
+>> -               .compatible     = "qcom,qusb2-v2-phy",
+>> +               .compatible     = "qcom,sdm845-qusb2-phy",
+>>                 .data           = &qusb2_v2_phy_cfg,
+> Can you change the name of the structure to match (AKA include sdm845?)
+
+OK
+>
+>
+>>         },
+>>         { },
+>> @@ -736,6 +821,31 @@ static int qusb2_phy_probe(struct platform_device *pdev)
+>>                 qphy->cell = NULL;
+>>                 dev_dbg(dev, "failed to lookup tune2 hstx trim value\n");
+>>         }
+>> +
+>> +       if (of_find_property(dev->of_node, "qcom,imp-res-offset-value", NULL)) {
+> Get rid of the extra of_find_property().  Just use the error code from
+> the property_read() to know if it was there and you've done two steps
+> in one (read it and know if it was there).
+>
+That is better. Thanks.
+
+>> +               qphy->override_imp_res_offset = true;
+>> +               of_property_read_u8(dev->of_node, "qcom,imp-res-offset-value",
+>> +                                   &qphy->imp_res_offset_value);
+> You probably don't want of_property_read_u8(), even if you intend the
+> property to bit in 8 bits.  You probably want to use
+> of_property_read_u32() to read into a temporary value and then copy
+> that to your 8-bit structure element.
+>
+> If you use of_property_read_u8 then you have to "/bits/ 8" in the
+> device tree and that's ugly and doesn't seem to be what's done very
+> often.  People just always stick a u32 in the device tree.
+
+Sure, will do that.
+
+>
+>
+> -Doug
 
 -- 
-Kees Cook
-Pixel Security
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
