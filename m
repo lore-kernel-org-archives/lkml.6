@@ -1,57 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753821AbeDJNOu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 09:14:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52654 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752857AbeDJNOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 09:14:49 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A8EE20652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 10 Apr 2018 09:14:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>
-Subject: Re: [PATCH v1] ringbuffer: Don't choose the process with adj equal
- OOM_SCORE_ADJ_MIN
-Message-ID: <20180410091446.01c25c3b@gandalf.local.home>
-In-Reply-To: <20180410091311.20bd8ccc@gandalf.local.home>
-References: <20180410061447.GQ21835@dhcp22.suse.cz>
-        <CAGWkznGrugH0VqJyd5ZPiSBMOZ4SbbNpKiHVXM27Q-ep4SYb-Q@mail.gmail.com>
-        <20180410074921.GU21835@dhcp22.suse.cz>
-        <CAGWkznHQSZ5jPF2njOp0BritTmKiGOToq5bAz1bhzzmFi_01nA@mail.gmail.com>
-        <20180410081231.GV21835@dhcp22.suse.cz>
-        <CAGWkznEM=AX=3LWDmgyz4GRkWy81TNdFQQXZ7+W4=Ek4ZsnsJw@mail.gmail.com>
-        <20180410090128.GY21835@dhcp22.suse.cz>
-        <CAGWkznEf0siz1-RFSJwuKCjUtbKM=P1djo2Nc7sU1GS0AgWv2w@mail.gmail.com>
-        <20180410104902.GC21835@dhcp22.suse.cz>
-        <20180410082316.263d34ec@gandalf.local.home>
-        <20180410122706.GH21835@dhcp22.suse.cz>
-        <20180410083625.2c904ab2@gandalf.local.home>
-        <20180410091311.20bd8ccc@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1753864AbeDJNPO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 09:15:14 -0400
+Received: from mail-ua0-f178.google.com ([209.85.217.178]:43109 "EHLO
+        mail-ua0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753826AbeDJNPL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 09:15:11 -0400
+X-Google-Smtp-Source: AIpwx4/tCV4C12e7rfm9rM+nc5gLAlpygwKntUX+irFkqXn/QowRUs5ydG+OHQZYg+gl7deOsyvs5A==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20180313085534.11650-1-vivek.gautam@codeaurora.org>
+ <20180313085534.11650-6-vivek.gautam@codeaurora.org> <61d30fff-1bf8-d2c1-bbe9-f93de836ae77@huawei.com>
+ <7d5af071-ef98-8461-3ce9-e84fc0b3956a@codeaurora.org> <d97872fe-5e8e-cc27-e385-64cea8ea2458@huawei.com>
+In-Reply-To: <d97872fe-5e8e-cc27-e385-64cea8ea2458@huawei.com>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Tue, 10 Apr 2018 13:14:57 +0000
+X-Gmail-Original-Message-ID: <CAAFQd5Cj3qaqt8ACabZwN4ZKaNbF9N9suGVaOKD8-kNxgfeeVA@mail.gmail.com>
+Message-ID: <CAAFQd5Cj3qaqt8ACabZwN4ZKaNbF9N9suGVaOKD8-kNxgfeeVA@mail.gmail.com>
+Subject: Re: [PATCH v9 5/5] iommu/arm-smmu: Add support for qcom,smmu-v2 variant
+To: xieyisheng1@huawei.com
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        gaojianbo@hisilicon.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Apr 2018 09:13:11 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Hi Yisheng,
 
-> Something like this:
+Sorry, I think we missed your question here.
 
-Zhaoyang, would this work for you?
+On Wed, Mar 28, 2018 at 3:12 PM Yisheng Xie <xieyisheng1@huawei.com> wrote:
 
-Then all you need to do is to:
+> Hi Vivek,
 
- echo 0 > /d/tracing/options/mem-reclaim
+> On 2018/3/28 12:37, Vivek Gautam wrote:
+> > Hi Yisheng
+> >
+> >
+> > On 3/28/2018 6:54 AM, Yisheng Xie wrote:
+> >> Hi Vivek,
+> >>
+> >> On 2018/3/13 16:55, Vivek Gautam wrote:
+> >>> +- power-domains:  Specifiers for power domains required to be
+powered on for
+> >>> +                  the SMMU to operate, as per generic power domain
+bindings.
+> >>> +
+> >> In this patchset, power-domains is not used right? And you just do the
+clock gating,
+> >> but not power gating, right?
+> >
+> > We are handling the power-domains too. Please see the example in this
+binding doc.
 
-and then you have the old behavior before Joel's patch. It will use
-NORETRY and also not set up the OOM to kill your task.
+> I see, but I do not find the point in code of these patchset, do you mean
+PMIC(e.g mmcc)
+> will gate the power domain of SMMU(e.g. MDSS_GDSC of mmcc) when PMIC
+suspend?
 
--- Steve
+
+If respective SoC power domains is registered as a standard genpd PM
+domain, then the runtime PM subsystem will take care of power domain
+control at runtime suspend and resume.
+
+Best regards,
+Tomasz
