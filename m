@@ -1,121 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754178AbeDJPXF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 11:23:05 -0400
-Received: from foss.arm.com ([217.140.101.70]:39854 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753097AbeDJPXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 11:23:04 -0400
-Subject: Re: [PATCH] irqchip/gic-v3: Support v2m frame backwards compatibility
- mode
-To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>, linux-arm-msm@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Hanna Hawa <hannah@marvell.com>,
-        =?UTF-8?Q?Miqu=c3=a8l_Raynal?= <miquel.raynal@bootlin.com>
-References: <20170320223614.1351-1-sboyd@codeaurora.org>
- <bac1e827-3860-d92c-7bb4-eaf9840c608f@arm.com>
- <20180410170155.6e07113d@windsurf>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <a4451252-35e4-e63f-8cca-a072f90fa9ad@arm.com>
-Date: Tue, 10 Apr 2018 16:23:00 +0100
+        id S1754338AbeDJPXY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 11:23:24 -0400
+Received: from mailout6.zih.tu-dresden.de ([141.30.67.75]:40820 "EHLO
+        mailout6.zih.tu-dresden.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754224AbeDJPXW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 11:23:22 -0400
+From: Thomas Ilsche <thomas.ilsche@tu-dresden.de>
+Subject: Re: [RFT][PATCH v7.3 5/8] cpuidle: Return nohz hint from
+ cpuidle_select()
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+CC: Peter Zijlstra <peterz@infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Doug Smythies <dsmythies@telus.net>, Rik van Riel <riel@surriel.com>,
+        "Aubrey Li" <aubrey.li@linux.intel.com>,
+        Mike Galbraith <mgalbraith@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <2390019.oHdSGtR3EE@aspire.rjw.lan>
+ <7336733.EjMJpVF2xN@aspire.rjw.lan>
+ <8197de8d-db1f-107e-e224-2b9600bf8a87@tu-dresden.de>
+ <24561274.DadG5k7Qxl@aspire.rjw.lan>
+Message-ID: <079e16b6-2e04-2518-0553-66becab226a6@tu-dresden.de>
+Date: Tue, 10 Apr 2018 17:22:48 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180410170155.6e07113d@windsurf>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <24561274.DadG5k7Qxl@aspire.rjw.lan>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MSX-L106.msx.ad.zih.tu-dresden.de (172.26.34.106) To
+ MSX-L104.msx.ad.zih.tu-dresden.de (172.26.34.104)
+X-PMWin-Version: 4.0.3, Antivirus-Engine: 3.70.2, Antivirus-Data: 5.49
+X-TUD-Virus-Scanned: mailout6.zih.tu-dresden.de
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
-
-On 10/04/18 16:01, Thomas Petazzoni wrote:
-> Hello Marc, Hello Stephen,
-> 
-> On Tue, 21 Mar 2017 09:43:24 +0000, Marc Zyngier wrote:
-> 
->> The whole idea behind this GICD_SETSPI_NSR is to offer a way to signal
->> SPIs using memory transaction, even allowing level interrupts (in
->> combinaison with the GICD_CLRSPI_NSR at offset 0x48). This is *not* a
->> GICv2m at all - only the offset is the same.
+>> However my fundamental concerns about the policy whether to disable the sched
+>> tick remain:
 >>
->> The reasoning is that firmware would program the various devices with
->> the GICD_{CLR,SET}SPI_NSR addresses and the payload, and simply describe
->> this as an SPI in the device tree. Another reason for doing so is that
->> while we can always twist the DT to express anything, this cannot be
->> described in ACPI at all.
->>
->> Also, as you noticed, there is no provision in the architecture to
->> describe the range of message-based SPIs, because any SPI can be
->> signalled through that mechanism. It makes it impossible to distinguish
->> SPIs that are statically allocated (because it is a real wire) from
->> those that can be dynamically allocated (because it is just a number).
->>
->> You end-up having to describe the range of SPIs that can be generated
->> through messages at least on a per SoC basis, and maybe on a per board
->> basis. Not to mention that you're still only describing half of the
->> capability of the HW (what about level interrupts?).
->>
->> If we really want to support this kind of thing, I'd like to see level
->> interrupts supported as a first class citizen in our generic MSI
->> infrastructure, and then the GICv3 message-based SPIs as an client of
->> that infrastructure.
+>> Mixing the precise timer and vague heuristic for the decision is
+>> dangerous. The timer should not be wrong, heuristic may be.
 > 
-> We are trying to support a platform that has a GICv3, and that also
-> uses level-triggered interrupts through GICD_SETSPI_NSR and
-> GICD_CLRSPI_NSR. Therefore, I'm also interested in seeing this
-> functionality of the GICv3 exposed as an MSI controller.
+> Well, I wouldn't say "dangerous".  It may be suboptimal, but even that is not
+> a given.  Besides ->
 > 
-> In the current Marvell Armada 7K/8K, we have a unit called the ICU
-> that turns wired level interrupts on one side of the chip into MSIs,
-> signaled to the GIC through a special unit called GICP, which allowed
-> to trigger SPIs in the GIC-400 by doing memory writes. See
-> irq-mvebu-icu.c and irq-mvebu-gicp.c for the two sides of the story
-> (MSI consumer and MSI provider). We have one hack between those two
-> drivers: because those interrupts are level-triggered, we need the
-> addresses of two registers, while 'struct msi_msg' only allows to pass
-> one address, assuming MSIs are edge-triggered.
-
-So effectively, the GICP/GIC400 combination is a poor-man GICv3 MBI
-(Message Based Interrupt -- we love overloaded acronyms) implementation.
-
-> In the upcoming Armada 8KP, we have a GICv3, which has built-in support
-> for memory-triggered SPIs, thanks to the GICD_SETSPI_NSR and
-> GICD_CLRSPI_NSR, and the ICU will directly use this GICv3
-> functionality. We would therefore very much like to have this GICv3
-> feature provided as a MSI controller, which as Marc said would require
-> supporting level-triggered MSIs.
+>> Decisions should use actual time points rather than the generic tick
+>> duration and residency time. e.g.
+>>         expected_interval < delta_next_us
+>> vs
+>>         expected_interval < TICK_USEC
 > 
-> Marc, let me know how we can collaborate on this topic. I'm able to
-> either test some preliminary patches, or work on such patches if
-> necessary (preferably with some initial directions).
+> -> the role of this check is to justify taking the overhead of stopping the
+> tick and it certainly is justifiable if the governor doesn't anticipate any
+> wakeups (timer or not) in the TICK_USEC range.  It may be justifiable in
+> other cases too, but that's a matter of some more complex checks and may not
+> be worth the extra complexity at all.
 
-I have a vague idea how to support this. Given that level-triggered MSIs
-have to be platform MSIs (because it is just madness otherwise), we can
-probably store an extra message in the struct platform_msi_desc for the
-"lower the line" write. On activation, you'd get two callbacks, probably
-with a flag of some sort to indicate whether this is for the rising or
-falling edge. The thing I'm unclear about so far is how to let the
-generic MSI layer know that we're dealing with such an interrupt without
-make a total mess of everything. It is probably done by marking the
-interrupt level triggered, but there are some corner cases.
+I tried that change. It's just just a bit bulky because I
+cache the result of ktime_to_us(delta_next) early.
 
-And if that works, the PCI stuff will come for free (it is just a matter
-of implementing a new irqdomain on top of the base GICv3 one).
+diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+index a6eca02..cad87bf 100644
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -296,6 +296,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+         unsigned long nr_iowaiters, cpu_load;
+         int resume_latency = dev_pm_qos_raw_read_value(device);
+         ktime_t delta_next;
++       unsigned long delta_next_us;
 
-I'll try to spend some time on it in the coming couple of weeks, but
-will have to rely on you for the testing (as I don't have much in the
-way of HW).
+         if (data->needs_update) {
+                 menu_update(drv, dev);
+@@ -314,6 +315,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+   
+         /* determine the expected residency time, round up */
+         data->next_timer_us = ktime_to_us(tick_nohz_get_sleep_length(&delta_next));
++       delta_next_us = ktime_to_us(delta_next);
+   
+         get_iowait_load(&nr_iowaiters, &cpu_load);
+         data->bucket = which_bucket(data->next_timer_us, nr_iowaiters);
+@@ -364,7 +366,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+                  */
+                 if (data->predicted_us < TICK_USEC)
+                         data->predicted_us = min_t(unsigned int, TICK_USEC,
+-                                                  ktime_to_us(delta_next));
++                                                  delta_next_us);
+         } else {
+                 /*
+                  * Use the performance multiplier and the user-configurable
+@@ -412,9 +414,7 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+          * expected idle duration is shorter than the tick period length.
+          */
+         if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
+-           expected_interval < TICK_USEC) {
+-               unsigned int delta_next_us = ktime_to_us(delta_next);
+-
++           expected_interval < delta_next_us) {
+                 *stop_tick = false;
+   
+                 if (!tick_nohz_tick_stopped() && idx > 0 &&
 
-Thanks,
+This works as a I expect in the sense of stopping the tick more often
+and allowing deeper sleep states in some cases. However, it
+drastically *increases* the power consumption for some affected
+workloads test system (SKL-SP).
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+So while I believe this generally improves the behavior - I can't
+recommend it based on the practical implications. Below are some
+details for the curious:
+
+power consumption for various workload configurations with 250 Hz
+kernels 4.16.0, v9, v9+delta_next patch:
+https://wwwpub.zih.tu-dresden.de/~tilsche/powernightmares/v9_250_Hz_power.png
+
+Practically v9 has the best power consumption in most cases.
+
+The following detailed looks are with 1000 Hz kernels.
+v9 with a synchronized 950 us sleep workload:
+https://wwwpub.zih.tu-dresden.de/~tilsche/powernightmares/v9_poll_sync.png
+v9 with a staggered 950 us sleep workload:
+https://wwwpub.zih.tu-dresden.de/~tilsche/powernightmares/v9_poll_stagger.png
+
+Both show that the sched tick is kept on and this causes more requests
+to C1E than C6
+
+v9+delta_next with a synchronized 950 us sleep workload:
+https://wwwpub.zih.tu-dresden.de/~tilsche/powernightmares/v9_delta_poll_sync.png
+v9+delta_next with a staggered 950 us sleep workload:
+https://wwwpub.zih.tu-dresden.de/~tilsche/powernightmares/v9_delta_poll_stagger.png
+
+No more sched tick, no more C1E requests, but increased power.
+
+Besides:
+- the hardware reports 0 residency in C6 (both core and PKG) for
+   both v9 and v9+delta_next_us.
+- the increased power consumption comes after a ramp-up of ~200 ms
+   for the staggered and ~2 s for the synchronized workload.
+
+For reference traces from an unmodified 4.16.0:
+
+https://wwwpub.zih.tu-dresden.de/~tilsche/powernightmares/v4.16.0_poll_sync.png
+https://wwwpub.zih.tu-dresden.de/~tilsche/powernightmares/v4.16.0_poll_stagger.png
+
+It behaves similar to the delta_next patch but does not show the
+increased power consumption in this exact workload configuration.
+
+I couldn't help to dig into the effect a bit more and am able to
+reproduce it even under unmodified kernels with staggered sleep cycles
+between ~1.2 ms and ~2.5 ms where power is increased by > 40 W.
+
+Anyway, this effect seems to be beyond what the governor should
+consider. It is an example where it doesn't seem possible to decide
+for the optimal C state without considering the state of other cores
+and such unexpected hardware behavior.
+And these are only the results from one system and a limited set of
+workload configurations.
+
+>> For some cases the unmodified sched tick is not efficient as fallback.
+>> Is it feasible to
+>> 1) enable the sched tick when it's currently disabled instead of
+>> blindly choosing a different C state?
+> 
+> It is not "blindly" if you will.  It is very much "consciously". :-)
+> 
+> Restarting the tick from within menu_select() wouldn't work IMO and
+> restarting it from cpuidle_idle_call() every time it was stopped might
+> be wasteful.
+> 
+> It could be done, but AFAICS if the CPU in deep idle is woken up by an
+> occasional interrupt that doesn't set need_resched, it is more likely
+> to go into deep idle again than to go into shallow idle at that point.
+> 
+>> 2) modify the next upcoming sched tick to be better suitable as
+>> fallback timer?
+> 
+> Im not sure what you mean.
+> 
+>> I think with the infrastructure changes it should be possible to
+>> implement the policy I envisioned previously
+>> (https://marc.info/?l=linux-pm&m=151384941425947&w=2), which is based
+>> on the ordering of timers and the heuristically predicted idle time.
+>> If the sleep_length issue is fixed and I have some mechanism for a
+>> modifiable fallback timer, I'll try to demonstrate that on top of your
+>> changes.
+> 
+> Sure.  I'm not against adding more complexity to this in principle, but there
+> needs to be a good enough justification for it.
+> 
+> As I said in one of the previous messages, if simple code gets the job done,
+> the extra complexity may just not be worth it.  That's why I went for very
+> simple code here.  Still, if there is a clear case for making it more complex,
+> that can be done.
+> 
+> Thanks!
+> 
