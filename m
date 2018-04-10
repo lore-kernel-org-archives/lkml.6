@@ -1,102 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752248AbeDJS2a (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 14:28:30 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:51483 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751918AbeDJS22 (ORCPT
+        id S1752296AbeDJS2s (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 14:28:48 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:53243 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751886AbeDJS2q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 14:28:28 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R301e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T-zQyaw_1523384895;
-Subject: Re: [v3 PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-From: Yang Shi <yang.shi@linux.alibaba.com>
-To: Cyrill Gorcunov <gorcunov@gmail.com>, Michal Hocko <mhocko@kernel.org>
-Cc: adobriyan@gmail.com, willy@infradead.org, mguzik@redhat.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1523310774-40300-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180410090917.GZ21835@dhcp22.suse.cz> <20180410094047.GB2041@uranus.lan>
- <20180410104215.GB21835@dhcp22.suse.cz> <20180410110242.GC2041@uranus.lan>
- <20180410111001.GD21835@dhcp22.suse.cz> <20180410122804.GD2041@uranus.lan>
- <097488c7-ab18-367b-c435-7c26d149c619@linux.alibaba.com>
-Message-ID: <8c19f1fb-7baf-fef3-032d-4e93cfc63932@linux.alibaba.com>
-Date: Tue, 10 Apr 2018 11:28:13 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Tue, 10 Apr 2018 14:28:46 -0400
+Date: Tue, 10 Apr 2018 20:28:13 +0200 (CEST)
+From: Stefan Wahren <stefan.wahren@i2se.com>
+To: Rob Herring <robh+dt@kernel.org>, Eric Anholt <eric@anholt.net>,
+        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>, Jon Mason <jonmason@broadcom.com>,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+Message-ID: <8806871.109949.1523384893773@email.1und1.de>
+In-Reply-To: <20180409230040.1100-1-eric@anholt.net>
+References: <20180409230040.1100-1-eric@anholt.net>
+Subject: Re: [PATCH 1/3] drm/vc4: Remove the need for the GPU-subsystem DT
+ node.
 MIME-Version: 1.0
-In-Reply-To: <097488c7-ab18-367b-c435-7c26d149c619@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev22
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:+Ni4vqGRATeWo/zO1CNwIHfGVUGn7SnUgd8l95ureQg20LO786a
+ 35TWB2A3y2ploFE2CaJnUtj7pOPgQ9BUUw4xIlYZKkoCebuISe6nalaZuqIZybEEZJZsQDG
+ oLV8wczj0NHSgWxCUwHaRJesDPsnW4m7cYtbEJDeq8cp7ZzgD7XtqTW3ImhPAiqxtp0lHoK
+ CbxmrvhF4iEuQzeq+ahAQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:knRPB1+DPpU=:zcg5MFrGQjOMqVgfNgs9l+
+ NNo4JWR83Ijw4UEw1QMUoxV25wrLhBpalIgKnYoFeQ1RytAvGviGgJqQ/xz2gmJmkz4qLJNI8
+ VsYAdLQhutf3cSVZkl6UbYlTJI6esNkypE7XL8eCuox27Phmtisc3Kl7B7ytZCLcqEqlskNyg
+ 28bCGqIRxu+sDDvTGBLJc7mHymT0Ytyv1xDJxgItNsDnlVZpzIkt/GBEiNIcmMo0MnGjFljdc
+ GzdZnhKq5lGKw0pNLCA5Akd3fqTSZ0JmnIn03B8vQ3yY1JrSYRgVZlo/KTSaV/gL5czSzqJhI
+ n3uYzS6ToQ49x0CgvvALeCpvZAugGAlihM+KQtp0N6bs5sCSK6pXcuA603URCMCoQyZlG8IzQ
+ HVUd5MqKKja2h+CohXKyjfODvygqhJ/tPIfVuEslhzNZjJ1Lr7Ndgw8E0FHsk2UJfw67/nq8h
+ 9RtodknLifkXuVWxvFJ3ZJ2UwkHeu1f4b0Mcla4n1/sXYXumOUPFS62LuWo+SyKmftZ5EFTN5
+ UHmbZOU9U4uuWzvvKdqZUGrPxRCkP7zBlHdq0WEtOj+YhwAjF/1vLMc2ZzDlHd3YYLf23HziP
+ WSGJXjV/fLXngMbjRoVlylGS4B074qSTykrvidv40pxQw3/Cdq/SNeLf9TXMBOEkGCuC6aTti
+ vGHewDv5E3SGfetOMFVBDIAINzhWtorvNWyMhD+d9+K+wGwG0ImWGor2ugVHAv7sgDKBRdMLJ
+ wW8iiEaTeA5StnI9OCk5Bfku/uAXpUfujUy2TvdYhZQ3JBevBX9WA1DnBIg=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Eric,
 
+> Eric Anholt <eric@anholt.net> hat am 10. April 2018 um 01:00 geschrieben:
+> 
+> 
+> The GPU subsystem node was a workaround to have a central device to
+> bind V3D and display to.  Following the lead of 246774d17fc0
+> ("drm/etnaviv: remove the need for a gpu-subsystem DT node"), remove
+> the subsystem node usage and just create a platform device for the DRM
+> device to attach to if any of the subsystem devices are present.
 
-On 4/10/18 9:21 AM, Yang Shi wrote:
->
->
-> On 4/10/18 5:28 AM, Cyrill Gorcunov wrote:
->> On Tue, Apr 10, 2018 at 01:10:01PM +0200, Michal Hocko wrote:
->>>> Because do_brk does vma manipulations, for this reason it's
->>>> running under down_write_killable(&mm->mmap_sem). Or you
->>>> mean something else?
->>> Yes, all we need the new lock for is to get a consistent view on brk
->>> values. I am simply asking whether there is something fundamentally
->>> wrong by doing the update inside the new lock while keeping the 
->>> original
->>> mmap_sem locking in the brk path. That would allow us to drop the
->>> mmap_sem lock in the proc path when looking at brk values.
->> Michal gimme some time. I guess  we might do so, but I need some
->> spare time to take more precise look into the code, hopefully today
->> evening. Also I've a suspicion that we've wracked check_data_rlimit
->> with this new lock in prctl. Need to verify it again.
->
-> I see you guys points. We might be able to move the drop of mmap_sem 
-> before setting mm->brk in sys_brk since mmap_sem should be used to 
-> protect vma manipulation only, then protect the value modify with the 
-> new arg_lock. Then we can eliminate mmap_sem stuff in prctl path, and 
-> it also prevents from wrecking check_data_rlimit.
->
-> At the first glance, it looks feasible to me. Will look into deeper 
-> later.
-
-A further look told me this might be *not* feasible.
-
-It looks the new lock will not break check_data_rlimit since in my patch 
-both start_brk and brk is protected by mmap_sem. The code flow might 
-look like below:
-
-CPU A                             CPU B
---------                       --------
-prctl                               sys_brk
-                                       down_write
-check_data_rlimit           check_data_rlimit (need mm->start_brk)
-                                       set brk
-down_write                    up_write
-set start_brk
-set brk
-up_write
-
-
-If CPU A gets the mmap_sem first, it will set start_brk and brk, then 
-CPU B will check with the new start_brk. And, prctl doesn't care if 
-sys_brk is run before it since it gets the new start_brk and brk from 
-parameter.
-
-If we protect start_brk and brk with the new lock, sys_brk might get old 
-start_brk, then sys_brk might break rlimit check silently, is that right?
-
-So, it looks using new lock in prctl and keeping mmap_sem in brk path 
-has race condition.
-
-Thanks,
-Yang
-
->
-> Thanks,
-> Yang
->
->
+i didn't test it. Does the code change keep the backward compatibility with older DT?
