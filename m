@@ -1,66 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753975AbeDJN4J (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 09:56:09 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:36448 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752925AbeDJNz7 (ORCPT
+        id S1754043AbeDJN4i (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 09:56:38 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51085 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753370AbeDJN4g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 09:55:59 -0400
-X-Google-Smtp-Source: AIpwx49nEHup1ZkbT++4VeCEjsSin7YkmFBMK36rC/lxmMth/jdAqDJcXy6Ys12JMtZm8FtP+fwIdQ==
-Date: Tue, 10 Apr 2018 08:55:57 -0500
-From: Rob Herring <robh@kernel.org>
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: galak@codeaurora.org, andy.shevchenko@gmail.com,
-        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
-Subject: Re: [PATCH v2 4/5] DTS: Bindings: pca953x driver provides an
- optional vcc-supply property
-Message-ID: <20180410135557.umt5sgxrx23dirpo@rob-hp-laptop>
-References: <cover.1522868422.git.hns@goldelico.com>
- <e8e6fae4436e5390c7c4e831c9eb127d3f8cc65b.1522868423.git.hns@goldelico.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8e6fae4436e5390c7c4e831c9eb127d3f8cc65b.1522868423.git.hns@goldelico.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Tue, 10 Apr 2018 09:56:36 -0400
+X-Google-Smtp-Source: AIpwx4/wu/sGYKmkM/2iDkXIWTjLnePgYSJYnbD9CyBwGxCGac1kUG6JTZ+XWv3xmTVQ6Kx03/XfRg==
+From: srinivas.kandagatla@linaro.org
+To: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org
+Cc: david.brown@linaro.org, robh+dt@kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH] arm64: dts: apq8096-db820c: Add micro sd card supplies
+Date: Tue, 10 Apr 2018 14:54:26 +0100
+Message-Id: <20180410135426.15508-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 09:00:23PM +0200, H. Nikolaus Schaller wrote:
-> So let's describe this property in the bindings.
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-It's not what the driver for some OS has. The h/w has a Vcc supply, so 
-let's add a property for it...
+This patch adds missing microSD card supplies, without this uSD
+card will not be detected.
 
-> 
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> ---
->  Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 1 +
->  1 file changed, 1 insertion(+)
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Otherwise,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-> index d2a937682836..6a7cddb187c1 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-> @@ -35,6 +35,7 @@ Required properties:
->  Optional properties:
->   - reset-gpios: GPIO specification for the RESET input. This is an
->  		active low signal to the PCA953x.
-> + - vcc-supply:	power supply regulator.
->  
->  Example:
->  
-> -- 
-> 2.12.2
-> 
+diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+index 1c8f1b86472d..f8191f64eb84 100644
+--- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
++++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+@@ -87,6 +87,8 @@
+ 			pinctrl-0 = <&sdc2_clk_on &sdc2_cmd_on &sdc2_data_on &sdc2_cd_on>;
+ 			pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off &sdc2_cd_off>;
+ 			cd-gpios = <&msmgpio 38 0x1>;
++			vmmc-supply = <&pm8994_l21>;
++			vqmmc-supply = <&pm8994_l13>;
+ 			status = "okay";
+ 		};
+ 
+-- 
+2.16.2
