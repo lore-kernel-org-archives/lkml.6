@@ -1,61 +1,212 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754263AbeDJOus (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:50:48 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:53246 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753562AbeDJOup (ORCPT
+        id S1754165AbeDJOwU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:52:20 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34541 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753628AbeDJOwT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:50:45 -0400
-Date: Tue, 10 Apr 2018 10:50:43 -0400 (EDT)
-Message-Id: <20180410.105043.1798364865868187298.davem@davemloft.net>
-To: jasowang@redhat.com
-Cc: stefanha@redhat.com, virtualization@lists.linux-foundation.org,
-        syzkaller-bugs@googlegroups.com, mst@redhat.com,
-        torvalds@linux-foundation.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] vhost: fix vhost_vq_access_ok() log check
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <8642c057-e49d-d95d-19e5-6d304f20064e@redhat.com>
-References: <20180410052630.11270-1-stefanha@redhat.com>
-        <8642c057-e49d-d95d-19e5-6d304f20064e@redhat.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-2022-jp
-Content-Transfer-Encoding: 7bit
+        Tue, 10 Apr 2018 10:52:19 -0400
+Date: Tue, 10 Apr 2018 07:51:54 -0700
+From: tip-bot for Li RongQing <tipbot@zytor.com>
+Message-ID: <tip-a774635db5c430cbf21fa5d2f2df3d23aaa8e782@git.kernel.org>
+Cc: douly.fnst@cn.fujitsu.com, lirongqing@baidu.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, hpa@zytor.com,
+        tglx@linutronix.de, mingo@kernel.org
+Reply-To: douly.fnst@cn.fujitsu.com, peterz@infradead.org,
+        lirongqing@baidu.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        hpa@zytor.com, tglx@linutronix.de
+In-Reply-To: <1523322966-10296-1-git-send-email-lirongqing@baidu.com>
+References: <1523322966-10296-1-git-send-email-lirongqing@baidu.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/apic: Fix signedness bug in APIC ID validity
+ checks
+Git-Commit-ID: a774635db5c430cbf21fa5d2f2df3d23aaa8e782
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 10 Apr 2018 14:40:10 +0800
+Commit-ID:  a774635db5c430cbf21fa5d2f2df3d23aaa8e782
+Gitweb:     https://git.kernel.org/tip/a774635db5c430cbf21fa5d2f2df3d23aaa8e782
+Author:     Li RongQing <lirongqing@baidu.com>
+AuthorDate: Tue, 10 Apr 2018 09:16:06 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 10 Apr 2018 16:46:39 +0200
 
-> On 2018年04月10日 13:26, Stefan Hajnoczi wrote:
->> v2:
->>   * Rewrote the conditional to make the vq access check clearer [Linus]
->>   * Added Patch 2 to make the return type consistent and harder to misuse
->>   * [Linus]
->>
->> The first patch fixes the vhost virtqueue access check which was
->> recently
->> broken.  The second patch replaces the int return type with bool to
->> prevent
->> future bugs.
->>
->> Stefan Hajnoczi (2):
->>    vhost: fix vhost_vq_access_ok() log check
->>    vhost: return bool from *_access_ok() functions
->>
->>   drivers/vhost/vhost.h |  4 +--
->>   drivers/vhost/vhost.c | 70
->>   ++++++++++++++++++++++++++-------------------------
->>   2 files changed, 38 insertions(+), 36 deletions(-)
->>
-> 
-> Acked-by: Jason Wang <jasowang@redhat.com>
+x86/apic: Fix signedness bug in APIC ID validity checks
 
-This sereis doesn't apply cleanly to the net tree, please respin
-and add the appropriate Acks and Fixes: tags that Michael and Jason
-have provided.
+The APIC ID as parsed from ACPI MADT is validity checked with the
+apic->apic_id_valid() callback, which depends on the selected APIC type.
 
-Thank you.
+For non X2APIC types APIC IDs >= 0xFF are invalid, but values > 0x7FFFFFFF
+are detected as valid. This happens because the 'apicid' argument of the
+apic_id_valid() callback is type 'int'. So the resulting comparison
+
+   apicid < 0xFF
+
+evaluates to true for all unsigned int values > 0x7FFFFFFF which are handed
+to default_apic_id_valid(). As a consequence, invalid APIC IDs in !X2APIC
+mode are considered valid and accounted as possible CPUs.
+
+Change the apicid argument type of the apic_id_valid() callback to u32 so
+the evaluation is unsigned and returns the correct result.
+
+[ tglx: Massaged changelog ]
+
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Cc: jgross@suse.com
+Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/1523322966-10296-1-git-send-email-lirongqing@baidu.com
+---
+ arch/x86/include/asm/apic.h          |  4 ++--
+ arch/x86/kernel/acpi/boot.c          | 13 ++++++++-----
+ arch/x86/kernel/apic/apic_common.c   |  2 +-
+ arch/x86/kernel/apic/apic_numachip.c |  2 +-
+ arch/x86/kernel/apic/x2apic.h        |  2 +-
+ arch/x86/kernel/apic/x2apic_phys.c   |  2 +-
+ arch/x86/kernel/apic/x2apic_uv_x.c   |  2 +-
+ arch/x86/xen/apic.c                  |  2 +-
+ 8 files changed, 16 insertions(+), 13 deletions(-)
+
+diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
+index 98722773391d..f01eef8b392e 100644
+--- a/arch/x86/include/asm/apic.h
++++ b/arch/x86/include/asm/apic.h
+@@ -319,7 +319,7 @@ struct apic {
+ 	/* Probe, setup and smpboot functions */
+ 	int	(*probe)(void);
+ 	int	(*acpi_madt_oem_check)(char *oem_id, char *oem_table_id);
+-	int	(*apic_id_valid)(int apicid);
++	int	(*apic_id_valid)(u32 apicid);
+ 	int	(*apic_id_registered)(void);
+ 
+ 	bool	(*check_apicid_used)(physid_mask_t *map, int apicid);
+@@ -492,7 +492,7 @@ static inline unsigned int read_apic_id(void)
+ 	return apic->get_apic_id(reg);
+ }
+ 
+-extern int default_apic_id_valid(int apicid);
++extern int default_apic_id_valid(u32 apicid);
+ extern int default_acpi_madt_oem_check(char *, char *);
+ extern void default_setup_apic_routing(void);
+ 
+diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+index 2aa92094b59d..5ee33a6e33bb 100644
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -200,7 +200,7 @@ acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
+ {
+ 	struct acpi_madt_local_x2apic *processor = NULL;
+ #ifdef CONFIG_X86_X2APIC
+-	int apic_id;
++	u32 apic_id;
+ 	u8 enabled;
+ #endif
+ 
+@@ -222,10 +222,13 @@ acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
+ 	 * to not preallocating memory for all NR_CPUS
+ 	 * when we use CPU hotplug.
+ 	 */
+-	if (!apic->apic_id_valid(apic_id) && enabled)
+-		printk(KERN_WARNING PREFIX "x2apic entry ignored\n");
+-	else
+-		acpi_register_lapic(apic_id, processor->uid, enabled);
++	if (!apic->apic_id_valid(apic_id)) {
++		if (enabled)
++			pr_warn(PREFIX "x2apic entry ignored\n");
++		return 0;
++	}
++
++	acpi_register_lapic(apic_id, processor->uid, enabled);
+ #else
+ 	printk(KERN_WARNING PREFIX "x2apic entry ignored\n");
+ #endif
+diff --git a/arch/x86/kernel/apic/apic_common.c b/arch/x86/kernel/apic/apic_common.c
+index a360801779ae..02b4839478b1 100644
+--- a/arch/x86/kernel/apic/apic_common.c
++++ b/arch/x86/kernel/apic/apic_common.c
+@@ -40,7 +40,7 @@ int default_check_phys_apicid_present(int phys_apicid)
+ 	return physid_isset(phys_apicid, phys_cpu_present_map);
+ }
+ 
+-int default_apic_id_valid(int apicid)
++int default_apic_id_valid(u32 apicid)
+ {
+ 	return (apicid < 255);
+ }
+diff --git a/arch/x86/kernel/apic/apic_numachip.c b/arch/x86/kernel/apic/apic_numachip.c
+index 134e04506ab4..78778b54f904 100644
+--- a/arch/x86/kernel/apic/apic_numachip.c
++++ b/arch/x86/kernel/apic/apic_numachip.c
+@@ -56,7 +56,7 @@ static u32 numachip2_set_apic_id(unsigned int id)
+ 	return id << 24;
+ }
+ 
+-static int numachip_apic_id_valid(int apicid)
++static int numachip_apic_id_valid(u32 apicid)
+ {
+ 	/* Trust what bootloader passes in MADT */
+ 	return 1;
+diff --git a/arch/x86/kernel/apic/x2apic.h b/arch/x86/kernel/apic/x2apic.h
+index b107de381cb5..a49b3604027f 100644
+--- a/arch/x86/kernel/apic/x2apic.h
++++ b/arch/x86/kernel/apic/x2apic.h
+@@ -1,6 +1,6 @@
+ /* Common bits for X2APIC cluster/physical modes. */
+ 
+-int x2apic_apic_id_valid(int apicid);
++int x2apic_apic_id_valid(u32 apicid);
+ int x2apic_apic_id_registered(void);
+ void __x2apic_send_IPI_dest(unsigned int apicid, int vector, unsigned int dest);
+ unsigned int x2apic_get_apic_id(unsigned long id);
+diff --git a/arch/x86/kernel/apic/x2apic_phys.c b/arch/x86/kernel/apic/x2apic_phys.c
+index f8d9d69994e6..e972405eb2b5 100644
+--- a/arch/x86/kernel/apic/x2apic_phys.c
++++ b/arch/x86/kernel/apic/x2apic_phys.c
+@@ -101,7 +101,7 @@ static int x2apic_phys_probe(void)
+ }
+ 
+ /* Common x2apic functions, also used by x2apic_cluster */
+-int x2apic_apic_id_valid(int apicid)
++int x2apic_apic_id_valid(u32 apicid)
+ {
+ 	return 1;
+ }
+diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
+index f11910b44638..efaf2d4f9c3c 100644
+--- a/arch/x86/kernel/apic/x2apic_uv_x.c
++++ b/arch/x86/kernel/apic/x2apic_uv_x.c
+@@ -557,7 +557,7 @@ static void uv_send_IPI_all(int vector)
+ 	uv_send_IPI_mask(cpu_online_mask, vector);
+ }
+ 
+-static int uv_apic_id_valid(int apicid)
++static int uv_apic_id_valid(u32 apicid)
+ {
+ 	return 1;
+ }
+diff --git a/arch/x86/xen/apic.c b/arch/x86/xen/apic.c
+index de58533d3664..2fa79e2e73ea 100644
+--- a/arch/x86/xen/apic.c
++++ b/arch/x86/xen/apic.c
+@@ -112,7 +112,7 @@ static int xen_madt_oem_check(char *oem_id, char *oem_table_id)
+ 	return xen_pv_domain();
+ }
+ 
+-static int xen_id_always_valid(int apicid)
++static int xen_id_always_valid(u32 apicid)
+ {
+ 	return 1;
+ }
