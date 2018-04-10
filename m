@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49rrSaiDb2rc2d4m37ixsA/R/i9BSsGGJOb0PzlH5f1RLs2QOMkebUa6Vm29aciJ96hzI9e
-ARC-Seal: i=1; a=rsa-sha256; t=1523399818; cv=none;
+X-Google-Smtp-Source: AIpwx49qqTSYNyf0xj42HlcZjZEzCcykLkgZn86M9sIaXIQT/mhRL+E04l+3qQ3znIT5KJc/LInJ
+ARC-Seal: i=1; a=rsa-sha256; t=1523399815; cv=none;
         d=google.com; s=arc-20160816;
-        b=fBeGgWR9SuPBqIfxjoRhTl4PZXdvNB6PBAzbpmBKwGIZzoHgfOpntVtzsoo4jsVSIV
-         kAzVxGU2xXxhR4/D9uGeLea2NagC/xuxo1Vx/9dO6pnVHjRi9aWtbLU08eBu8BQb0+DN
-         DvA3xd6xeOYJvU+k5+l3rvdz3ZndRMRRLTSAIqUZyhOKY9Y9ecWbE3RO+8iEV5z4lRqN
-         yPGzeQnq9uvqXqw5wgpqhypxYNRLXbUFn2gLAQgTFFrSrpxoLTb5XKOrQlyTulGpbL2w
-         pxFwtVT0ywYrZlGkboit+TNNz+5bobsYD/sETOu7vQChlWLMZEzL+McTyfS+llBH6w0e
-         uDdw==
+        b=p8hCeUQwGSMFz6rxwPsqUGS7CDug8T9LDi4SNAK/jvYCT40qjIyJbm6fpsXMO+uhN+
+         fJorO+pyoT6WVc1Z0eEtncUHSyNQxGkiG2mCbPOTLitwJU4EK3vvv2fK85T+ZfZGSaqO
+         zOzl2sUo5z5LmIzrfespf6DyY8N8XMb5EEHSyrekr/UJYHdgF913/4EubvYJ40ABNFr1
+         Xn44MFYRP2qCw5hJkXe8kKEPwDJFTaZIZ3LTxD9YMToAWnVNhHWrBpaTvIk4rzfSsRWU
+         cvf7+nDRLW3fm/GCCVE/0CFhR8Oi8aQH+byiy1Yti99mMyDeqx1BwiFDRrdTjAhMD6ch
+         YyQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=S8erZqKI4xM145zcUmy+eT2pF1c/qDFT5Cv84HnxwR4=;
-        b=eQ3nYKj5uz66zpAyt0DccytQAoCcrUHe0shgbVmfWvh80IaJ55dy4hguC9ext21aeI
-         QOpe/ZIPTKTV9yZtp07BheJo+GjbRfon8onRNlN6hCackj+LiWPytUUvUQwTkJy+c6nl
-         2KQDfegzmBpJbXsVMJ+L1b93Km4fO+dyplcszuTHe7XHHbEX6rdveRk3RCtwOe3Eb+Gj
-         TG+CVANlrXcDxO0YxMlI3KriTrTPHgti9IzoPhvhBgZpKHI5EhkCzxsAvxuJRqTng0KB
-         KOFZYcc2fdsDpSoLdWwX5JN7DeuZOM1hs1Aqusevt/Aovkxm1/4zrwnkSNoQiFu8uyy/
-         kPHw==
+        bh=d9bF6dnaFaDp/BFxMoNlw9A1QOqNEbTrKuktXG9ERsk=;
+        b=AVBpEMmGrYQsm3Cr5XN4I7E5Mwdf1cKTCKOZr5AGNoTQQsOsGjI/MJUiOJ1C32e83Q
+         QIvsyla5BXoww1n4RF4rSXmn4cdyYq09L4hm6zqMLvcvHUJmu1d4RUvdV2olBHMvsUOF
+         W/Wx5Uq0c0Sc+NpXYSTDnur+JMLz0eNn5gUZ2E9jtp6bMUl86McTlY4Mbuu2GKKcf1Cy
+         syDQlYuRNd5xR4CAQ+PH5icezcPa8T/62lfR7DD4swknkB/tZCG4Y6kNhahcxkolFYP/
+         9wBeFq4Xa2GGeiAM3JZ3OIWPUm6ljRwEEY3MSnzb4/cl/JE4wkSmHxK0bq3ZNFesfb5Z
+         wJLA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jin Yao <yao.jin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
+	Jian Shen <shenjian15@huawei.com>,
+	Peng Li <lipeng321@huawei.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 046/138] perf report: Fix a no annotate browser displayed issue
-Date: Wed, 11 Apr 2018 00:23:56 +0200
-Message-Id: <20180410212907.441055486@linuxfoundation.org>
+Subject: [PATCH 4.14 055/138] net: hns3: Fix an error macro definition of HNS3_TQP_STAT
+Date: Wed, 11 Apr 2018 00:24:05 +0200
+Message-Id: <20180410212908.470870877@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -46,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597400008123802873?=
-X-GMAIL-MSGID: =?utf-8?q?1597400488035440676?=
+X-GMAIL-THRID: =?utf-8?q?1597399981614911872?=
+X-GMAIL-MSGID: =?utf-8?q?1597400485342676389?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,85 +51,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jin Yao <yao.jin@linux.intel.com>
+From: Jian Shen <shenjian15@huawei.com>
 
 
-[ Upstream commit 40c39e3046411f84bab82f66783ff3593e2bcd9b ]
+[ Upstream commit 57ffee737b36dbb81e8e60a37e01791553157a5e ]
 
-When enabling '-b' option in perf record, for example,
+The member "stats_offset" was designed to indicate the offset
+of each member of struct ring_stats in struct hns3_enet_ring,
+but forgot to add the offset of the member in struct ring_stats.
 
-  perf record -b ...
-  perf report
-
-and then browsing the annotate browser from perf report (press 'A'), it
-would fail (annotate browser can't be displayed).
-
-It's because the '.add_entry_cb' op of struct report is overwritten by
-hist_iter__branch_callback() in builtin-report.c. But this function doesn't do
-something like mapping symbols and sources. So next, do_annotate() will return
-directly.
-
-        notes = symbol__annotation(act->ms.sym);
-        if (!notes->src)
-                return 0;
-
-This patch adds the lost code to hist_iter__branch_callback (refer to
-hist_iter__report_callback).
-
-v2:
-
-Fix a crash bug when perform 'perf report --stdio'.
-
-The reason is that we init the symbol annotation only in browser mode, it
-doesn't allocate/init resources for stdio mode.
-
-So now in hist_iter__branch_callback(), it will return directly if it's not in
-browser mode.
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1514284963-18587-1-git-send-email-yao.jin@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 496d03e960a ("net: hns3: Add Ethtool support to HNS3 driver")
+Signed-off-by: Jian Shen <shenjian15@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/builtin-report.c |   18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_ethtool.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -162,12 +162,28 @@ static int hist_iter__branch_callback(st
- 	struct hist_entry *he = iter->he;
- 	struct report *rep = arg;
- 	struct branch_info *bi;
-+	struct perf_sample *sample = iter->sample;
-+	struct perf_evsel *evsel = iter->evsel;
-+	int err;
-+
-+	if (!ui__has_annotation())
-+		return 0;
-+
-+	hist__account_cycles(sample->branch_stack, al, sample,
-+			     rep->nonany_branch_mode);
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hns3_ethtool.c
+@@ -22,7 +22,8 @@ struct hns3_stats {
+ #define HNS3_TQP_STAT(_string, _member)	{			\
+ 	.stats_string = _string,				\
+ 	.stats_size = FIELD_SIZEOF(struct ring_stats, _member),	\
+-	.stats_offset = offsetof(struct hns3_enet_ring, stats),	\
++	.stats_offset = offsetof(struct hns3_enet_ring, stats) +\
++			offsetof(struct ring_stats, _member),   \
+ }								\
  
- 	bi = he->branch_info;
-+	err = addr_map_symbol__inc_samples(&bi->from, sample, evsel->idx);
-+	if (err)
-+		goto out;
-+
-+	err = addr_map_symbol__inc_samples(&bi->to, sample, evsel->idx);
-+
- 	branch_type_count(&rep->brtype_stat, &bi->flags,
- 			  bi->from.addr, bi->to.addr);
- 
--	return 0;
-+out:
-+	return err;
- }
- 
- static int process_sample_event(struct perf_tool *tool,
+ static const struct hns3_stats hns3_txq_stats[] = {
