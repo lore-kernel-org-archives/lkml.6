@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48AOdeZV7uJAiabEoR0p5Fu4v6ms4Je0Uhjep2yugr/86yith9q/ywtXQ8KVnH5sV4nDmlW
-ARC-Seal: i=1; a=rsa-sha256; t=1523399502; cv=none;
+X-Google-Smtp-Source: AIpwx4+6yd61jG5LeqXIXwRRjMgse+nKmGVeSVU8N1Bf1xqsVz8jpq92b/i12ZPsaLogy4NrLBy4
+ARC-Seal: i=1; a=rsa-sha256; t=1523399499; cv=none;
         d=google.com; s=arc-20160816;
-        b=cd4Ry4F+uky9//k+eFOfsN58V6qbV5C9hOwkhRpmhwxJvLIkvw21kVtcNTq12SyZ7n
-         orZnwVDvHVDVaBT05zpZKGfiGfPPHUbf5VyhqGEOtg9pc5Kc4YQY9LvscTkoHvkJtM22
-         8i/jMxojaTgOUDY2fGe4BF82/xdidXDG1cd0w2vT/Gszp0vgJ5ngLVE9GIwAcQHd4cod
-         aK9Rfv471AvsTso9+rttiHfXgVk9i9bGAlj8eGBOIXEQY7lmpy/T/FxfCfIZA2UqjH9z
-         FIJ5paRlQ+oIpj2PT6kvg/YaB9rGZflrrsg8hr5j7XNONgrHjyWYJHPuTomrvNEUqFws
-         mbvQ==
+        b=nRh4Bo4E0ePkpfc7pHOCIxemUS1U5eQleLBQaDj3aq48xtV0EmEP30aIvi0OANQPEF
+         t2ry0y6AWrgjHu/kxk9jYexYCAwxvljyf4nCx4teRx9BnEzSGGeMuyuNxlY5ge/J8C5j
+         gsuqng/lWYuZ9laHwHwTdyj/+dY1KtOtU25MX1qWjlTI/NhhC8JjShPDsBBbS5aGqOup
+         mmTJi2/0oRsccvohXuVQEV8fTZz9CLc0D6i+BB9B69yM5iEDWHUgiwSA53hzQf29Cb5J
+         Wi+RLDBpP75K5KhadSxMCYUpH8+aY+WFX95pvJP7Ovap6e9eIEKWGUiQjsmQkezLuQN2
+         1vng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=SBbNl2R/ghy27aUwAA3X7rBO7ZxW9PsB4L53d+4h07E=;
-        b=dWj+GK28PUiqdcB/mEaYxH2o0VfCHbE5hyP9C53k2r6k+4yzvXAJad0v6G19qWJnGK
-         lx/+OFdlBlzqA45sy3pciOEL7lDjYObFXo/j8r/FdcizTvRBD7yoRF8HnAzJt5Hcs1Lq
-         SvEVLBmQnPDAi1gaRnyFksRVCdKYEDXPVF+vthxsdmwgPZAe9Xjb9KkEs7ki3biXN1WV
-         +sAwuRCCUkZkhT16E3wmNgClNqxHFJ5vu3TrlcD4ZrD4jshOJpC7bC+IruqKleXZGcy0
-         nLQbQoCnCvj5UQr9gTrRrzrZZm1Favyd1rC3YW49B0XZNwJrNJENTYwE1yjzXSrRelFT
-         9Mqw==
+        bh=Pr4purGuqh4BX01NC4v6M54BNu7zRGNIGJ8H8iqhE7o=;
+        b=oeFwczqt5BkCkmUfMW9apU+5Yj2NFJDfvevzUPxawWBqSG55G1RFJDcpkcDI1vV+Nw
+         73R2jH+G7gW5/EN137Pgw75A3Ths0aXyHHT/+XHDI9Qc99AP1+PfkwBqecvjU7oM3DYF
+         /0A7yM/krVscr9YsRp0dv8e8Hagf9iZ5R5zKSPd/0umq6APRJ5jCvntsHLEeB/vLaXWX
+         aK3MFiskJh/3l2lhCHktf2LDOjJnlfz8kExMAdfyRBlUa93vXxlg0vL2f8MvgZUSyQT+
+         gObb05Ut/vtW6Gonetn4djC6GRIxPOv/00Pk/wyB1uk5zxsdxvGTJLHtDfNSK4P9moKJ
+         Fm0Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lucas Bates <lucasb@mojatatu.com>,
-	Davide Caratti <dcaratti@redhat.com>,
+	Craig Dillabaugh <cdillaba@mojatatu.com>,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 131/168] net/sched: fix NULL dereference in the error path of tcf_bpf_init()
-Date: Wed, 11 Apr 2018 00:24:33 +0200
-Message-Id: <20180410212806.378966734@linuxfoundation.org>
+Subject: [PATCH 4.15 130/168] net sched actions: fix dumping which requires several messages to user space
+Date: Wed, 11 Apr 2018 00:24:32 +0200
+Message-Id: <20180410212806.332168763@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212800.144079021@linuxfoundation.org>
 References: <20180410212800.144079021@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597399729810513986?=
-X-GMAIL-MSGID: =?utf-8?q?1597400156311065980?=
+X-GMAIL-THRID: =?utf-8?q?1597400153731397054?=
+X-GMAIL-MSGID: =?utf-8?q?1597400153731397054?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,98 +50,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Craig Dillabaugh <cdillaba@mojatatu.com>
 
 
-[ Upstream commit 3239534a79ee6f20cffd974173a1e62e0730e8ac ]
+[ Upstream commit 734549eb550c0c720bc89e50501f1b1e98cdd841 ]
 
-when tcf_bpf_init_from_ops() fails (e.g. because of program having invalid
-number of instructions), tcf_bpf_cfg_cleanup() calls bpf_prog_put(NULL) or
-bpf_prog_destroy(NULL). Unless CONFIG_BPF_SYSCALL is unset, this causes
-the following error:
+Fixes a bug in the tcf_dump_walker function that can cause some actions
+to not be reported when dumping a large number of actions. This issue
+became more aggrevated when cookies feature was added. In particular
+this issue is manifest when large cookie values are assigned to the
+actions and when enough actions are created that the resulting table
+must be dumped in multiple batches.
 
- BUG: unable to handle kernel NULL pointer dereference at 0000000000000020
- PGD 800000007345a067 P4D 800000007345a067 PUD 340e1067 PMD 0
- Oops: 0000 [#1] SMP PTI
- Modules linked in: act_bpf(E) ip6table_filter ip6_tables iptable_filter binfmt_misc ext4 mbcache jbd2 crct10dif_pclmul crc32_pclmul ghash_clmulni_intel snd_hda_codec_generic pcbc snd_hda_intel snd_hda_codec snd_hda_core snd_hwdep snd_seq snd_seq_device snd_pcm aesni_intel crypto_simd glue_helper cryptd joydev snd_timer snd virtio_balloon pcspkr soundcore i2c_piix4 nfsd auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c ata_generic pata_acpi qxl drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm virtio_blk drm virtio_net virtio_console i2c_core crc32c_intel serio_raw virtio_pci ata_piix libata virtio_ring floppy virtio dm_mirror dm_region_hash dm_log dm_mod [last unloaded: act_bpf]
- CPU: 3 PID: 5654 Comm: tc Tainted: G            E    4.16.0.bpf_test+ #408
- Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
- RIP: 0010:__bpf_prog_put+0xc/0xc0
- RSP: 0018:ffff9594003ef728 EFLAGS: 00010202
- RAX: 0000000000000000 RBX: ffff9594003ef758 RCX: 0000000000000024
- RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
- RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000044
- R10: 0000000000000220 R11: ffff8a7ab9f17131 R12: 0000000000000000
- R13: ffff8a7ab7c3c8e0 R14: 0000000000000001 R15: ffff8a7ab88f1054
- FS:  00007fcb2f17c740(0000) GS:ffff8a7abfd80000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 0000000000000020 CR3: 000000007c888006 CR4: 00000000001606e0
- Call Trace:
-  tcf_bpf_cfg_cleanup+0x2f/0x40 [act_bpf]
-  tcf_bpf_cleanup+0x4c/0x70 [act_bpf]
-  __tcf_idr_release+0x79/0x140
-  tcf_bpf_init+0x125/0x330 [act_bpf]
-  tcf_action_init_1+0x2cc/0x430
-  ? get_page_from_freelist+0x3f0/0x11b0
-  tcf_action_init+0xd3/0x1b0
-  tc_ctl_action+0x18b/0x240
-  rtnetlink_rcv_msg+0x29c/0x310
-  ? _cond_resched+0x15/0x30
-  ? __kmalloc_node_track_caller+0x1b9/0x270
-  ? rtnl_calcit.isra.29+0x100/0x100
-  netlink_rcv_skb+0xd2/0x110
-  netlink_unicast+0x17c/0x230
-  netlink_sendmsg+0x2cd/0x3c0
-  sock_sendmsg+0x30/0x40
-  ___sys_sendmsg+0x27a/0x290
-  ? mem_cgroup_commit_charge+0x80/0x130
-  ? page_add_new_anon_rmap+0x73/0xc0
-  ? do_anonymous_page+0x2a2/0x560
-  ? __handle_mm_fault+0xc75/0xe20
-  __sys_sendmsg+0x58/0xa0
-  do_syscall_64+0x6e/0x1a0
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
- RIP: 0033:0x7fcb2e58eba0
- RSP: 002b:00007ffc93c496c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
- RAX: ffffffffffffffda RBX: 00007ffc93c497f0 RCX: 00007fcb2e58eba0
- RDX: 0000000000000000 RSI: 00007ffc93c49740 RDI: 0000000000000003
- RBP: 000000005ac6a646 R08: 0000000000000002 R09: 0000000000000000
- R10: 00007ffc93c49120 R11: 0000000000000246 R12: 0000000000000000
- R13: 00007ffc93c49804 R14: 0000000000000001 R15: 000000000066afa0
- Code: 5f 00 48 8b 43 20 48 c7 c7 70 2f 7c b8 c7 40 10 00 00 00 00 5b e9 a5 8b 61 00 0f 1f 44 00 00 0f 1f 44 00 00 41 54 55 48 89 fd 53 <48> 8b 47 20 f0 ff 08 74 05 5b 5d 41 5c c3 41 89 f4 0f 1f 44 00
- RIP: __bpf_prog_put+0xc/0xc0 RSP: ffff9594003ef728
- CR2: 0000000000000020
+The number of actions returned in each batch is limited by the total
+number of actions and the memory buffer size.  With small cookies
+the numeric limit is reached before the buffer size limit, which avoids
+the code path triggering this bug. When large cookies are used buffer
+fills before the numeric limit, and the erroneous code path is hit.
 
-Fix it in tcf_bpf_cfg_cleanup(), ensuring that bpf_prog_{put,destroy}(f)
-is called only when f is not NULL.
+For example after creating 32 csum actions with the cookie
+aaaabbbbccccdddd
 
-Fixes: bbc09e7842a5 ("net/sched: fix idr leak on the error path of tcf_bpf_init()")
-Reported-by: Lucas Bates <lucasb@mojatatu.com>
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+$ tc actions ls action csum
+total acts 26
+
+    action order 0: csum (tcp) action continue
+    index 1 ref 1 bind 0
+    cookie aaaabbbbccccdddd
+
+    .....
+
+    action order 25: csum (tcp) action continue
+    index 26 ref 1 bind 0
+    cookie aaaabbbbccccdddd
+total acts 6
+
+    action order 0: csum (tcp) action continue
+    index 28 ref 1 bind 0
+    cookie aaaabbbbccccdddd
+
+    ......
+
+    action order 5: csum (tcp) action continue
+    index 32 ref 1 bind 0
+    cookie aaaabbbbccccdddd
+
+Note that the action with index 27 is omitted from the report.
+
+Fixes: 4b3550ef530c ("[NET_SCHED]: Use nla_nest_start/nla_nest_end")"
+Signed-off-by: Craig Dillabaugh <cdillaba@mojatatu.com>
+Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_bpf.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ net/sched/act_api.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/sched/act_bpf.c
-+++ b/net/sched/act_bpf.c
-@@ -248,10 +248,14 @@ static int tcf_bpf_init_from_efd(struct
+--- a/net/sched/act_api.c
++++ b/net/sched/act_api.c
+@@ -135,8 +135,10 @@ static int tcf_dump_walker(struct tcf_id
+ 			continue;
  
- static void tcf_bpf_cfg_cleanup(const struct tcf_bpf_cfg *cfg)
- {
--	if (cfg->is_ebpf)
--		bpf_prog_put(cfg->filter);
--	else
--		bpf_prog_destroy(cfg->filter);
-+	struct bpf_prog *filter = cfg->filter;
-+
-+	if (filter) {
-+		if (cfg->is_ebpf)
-+			bpf_prog_put(filter);
-+		else
-+			bpf_prog_destroy(filter);
-+	}
- 
- 	kfree(cfg->bpf_ops);
- 	kfree(cfg->bpf_name);
+ 		nest = nla_nest_start(skb, n_i);
+-		if (!nest)
++		if (!nest) {
++			index--;
+ 			goto nla_put_failure;
++		}
+ 		err = tcf_action_dump_1(skb, p, 0, 0);
+ 		if (err < 0) {
+ 			index--;
