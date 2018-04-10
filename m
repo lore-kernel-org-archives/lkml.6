@@ -1,295 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753630AbeDJOSe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 10:18:34 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38978 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753824AbeDJOS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 10:18:28 -0400
-Subject: Re: [PATCH v11 2/4] arm/arm64: KVM: Add KVM_GET/SET_VCPU_EVENTS
-To: Dongjiu Geng <gengdongjiu@huawei.com>, devel@acpica.org
-Cc: rkrcmar@redhat.com, corbet@lwn.net, christoffer.dall@linaro.org,
-        marc.zyngier@arm.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
-        rjw@rjwysocki.net, bp@alien8.de, lenb@kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-acpi@vger.kernel.org, huangshaoyu@huawei.com,
-        zhengxiang9@huawei.com
-References: <1523309796-36423-1-git-send-email-gengdongjiu@huawei.com>
- <1523309796-36423-3-git-send-email-gengdongjiu@huawei.com>
-From: James Morse <james.morse@arm.com>
-Message-ID: <d1d1c262-41ae-1725-7ae0-16d63ac3d372@arm.com>
-Date: Tue, 10 Apr 2018 15:15:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1523309796-36423-3-git-send-email-gengdongjiu@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1754094AbeDJOSn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 10:18:43 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:35248 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754040AbeDJOSj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 10:18:39 -0400
+X-Google-Smtp-Source: AIpwx495chg1HpL3iSAKK56SanpzgBm/SzJNobZUMAqMbuPKanHSV06K/+KkXE40PrsHssD5l+ygUw==
+Message-ID: <1523369916.2998.2.camel@gmail.com>
+Subject: [GIT PULL] c6x updates for 4.17
+From: Mark Salter <msalter1887@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>
+Date: Tue, 10 Apr 2018 10:18:36 -0400
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5 (3.26.5-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dongjiu Geng,
+The following changes since commit 0adb32858b0bddf4ada5f364a84ed60b196dbcda:
 
-On 09/04/18 22:36, Dongjiu Geng wrote:
-> This new IOCTL exports user-invisible states related to SError.
-> Together with appropriate user space changes, it can inject
-> SError with specified syndrome to guest by setup kvm_vcpu_events
-> value.
+  Linux 4.16 (2018-04-01 14:20:27 -0700)
 
-> Also it can support live migration.
+are available in the Git repository at:
 
-Could you explain what user-space is expected to do for this?
-(this is also relevant for snapshot-ing/suspending VMs)
+  git://linux-c6x.org/git/projects/linux-c6x-upstreaming.git tags/for-linus
 
-It's probably worth noting that this solves an existing problem: KVM may make an
-SError pending, but user-space has no way to discover/migrate this.
+for you to fetch changes up to 85fa2cc51104ee5b529ce85b12f4c8421888544f:
 
+  c6x: pass endianness info to sparse (2018-04-10 09:58:58 -0400)
 
-> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-> index 8a3d708..45719b4 100644
-> --- a/Documentation/virtual/kvm/api.txt
-> +++ b/Documentation/virtual/kvm/api.txt
-> @@ -819,11 +819,13 @@ struct kvm_clock_data {
->  
->  Capability: KVM_CAP_VCPU_EVENTS
->  Extended by: KVM_CAP_INTR_SHADOW
-> -Architectures: x86
-> +Architectures: x86, arm, arm64
->  Type: vm ioctl
->  Parameters: struct kvm_vcpu_event (out)
->  Returns: 0 on success, -1 on error
->  
-> +X86:
-> +
->  Gets currently pending exceptions, interrupts, and NMIs as well as related
->  states of the vcpu.
->  
-> @@ -865,15 +867,31 @@ Only two fields are defined in the flags field:
->  - KVM_VCPUEVENT_VALID_SMM may be set in the flags field to signal that
->    smi contains a valid state.
->  
-> +ARM, ARM64:
-> +
-> +Gets currently pending SError exceptions as well as related states of the vcpu.
-> +
-> +struct kvm_vcpu_events {
-> +	struct {
-> +		__u8 serror_pending;
-> +		__u8 serror_has_esr;
-> +		/* Align it to 4 bytes */
-> +		__u8 pad[2];
-> +		__u64 serror_esr;
-> +	} exception;
-> +};
-> +
+----------------------------------------------------------------
+c6x changes 4.17
 
-I'm not convinced we should change this struct from the layout/size x86 has. Its
-confusing for the documentation, is this API call really the same on all
-architectures?
+----------------------------------------------------------------
+Jérémy Lefaure (1):
+      c6x: remove unused KTHREAD_SIZE definition
 
-What if we want to add some future interrupt, NMI or related state? We've found
-ourselves needing to add this API, it seems odd to remove its other uses on x86.
-We can't put them back in the future.
+Luc Van Oostenryck (1):
+      c6x: pass endianness info to sparse
 
-Having a different layout would force user-space to ifdef/duplicate any code
-that accesses this between architectures.
+Randy Dunlap (1):
+      c6x: fix platforms/plldata.c get_coreid build error
 
-
-
-The compiler will want that __u64 to be naturally aligned to 8-bytes, so your
-4-byte padding still causes some secret compiler-padding to be inserted.
-Different versions of the compiler may put it in different places.
-
-
->  4.32 KVM_SET_VCPU_EVENTS
->  
->  Capability: KVM_CAP_VCPU_EVENTS
->  Extended by: KVM_CAP_INTR_SHADOW
-> -Architectures: x86
-> +Architectures: x86, arm, arm64
->  Type: vm ioctl
->  Parameters: struct kvm_vcpu_event (in)
->  Returns: 0 on success, -1 on error
->  
-> +X86:
-> +
->  Set pending exceptions, interrupts, and NMIs as well as related states of the
->  vcpu.
->  
-> @@ -894,6 +912,12 @@ shall be written into the VCPU.
->  
->  KVM_VCPUEVENT_VALID_SMM can only be set if KVM_CAP_X86_SMM is available.
->  
-> +ARM, ARM64:
-> +
-> +Set pending SError exceptions as well as related states of the vcpu.
-> +
-> +See KVM_GET_VCPU_EVENTS for the data structure.
-> +
->  
->  4.33 KVM_GET_DEBUGREGS
->  
-
-
-> diff --git a/arch/arm64/include/uapi/asm/kvm.h b/arch/arm64/include/uapi/asm/kvm.h
-> index 9abbf30..855cc9a 100644
-> --- a/arch/arm64/include/uapi/asm/kvm.h
-> +++ b/arch/arm64/include/uapi/asm/kvm.h
-> @@ -39,6 +39,7 @@
->  #define __KVM_HAVE_GUEST_DEBUG
->  #define __KVM_HAVE_IRQ_LINE
->  #define __KVM_HAVE_READONLY_MEM
-> +#define __KVM_HAVE_VCPU_EVENTS
->  
->  #define KVM_COALESCED_MMIO_PAGE_OFFSET 1
->  
-> @@ -153,6 +154,17 @@ struct kvm_sync_regs {
->  struct kvm_arch_memory_slot {
->  };
->  
-> +/* for KVM_GET/SET_VCPU_EVENTS */
-> +struct kvm_vcpu_events {
-> +	struct {
-> +		__u8 serror_pending;
-> +		__u8 serror_has_esr;
-
-> +		/* Align it to 4 bytes */
-> +		__u8 pad[2];
-
-(padding noted above)
-
-
-> +		__u64 serror_esr;
-> +	} exception;
-> +};
-> +
->  /* If you need to interpret the index values, here is the key: */
->  #define KVM_REG_ARM_COPROC_MASK		0x000000000FFF0000
->  #define KVM_REG_ARM_COPROC_SHIFT	16
-
-
-> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
-> index 5c7f657..42e1222 100644
-> --- a/arch/arm64/kvm/guest.c
-> +++ b/arch/arm64/kvm/guest.c
-> @@ -277,6 +277,37 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
->  	return -EINVAL;
->  }
->  
-> +int kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
-> +			struct kvm_vcpu_events *events)
-> +{
-> +	events->exception.serror_pending = (vcpu_get_hcr(vcpu) & HCR_VSE);
-> +	events->exception.serror_has_esr =
-> +			cpus_have_const_cap(ARM64_HAS_RAS_EXTN) &&
-> +					(!!vcpu_get_vsesr(vcpu));
-
-> +	events->exception.serror_esr = vcpu_get_vsesr(vcpu);
-
-This will return a stale ESR even if nothing is pending. On systems without the
-RAS extensions it will return 'ESR_ELx_ISV' if kvm_inject_vabt() has ever been
-called for this CPU.
-
-Could we hide this behind (pending && has_esr), setting it to 0 otherwise. This
-is just to avoid exposing the stale value.
-
-
-> +
-> +	return 0;
-> +}
-
-> +int kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
-> +			struct kvm_vcpu_events *events)
-> +{
-> +	bool injected = events->exception.serror_pending;
-> +	bool has_esr = events->exception.serror_has_esr;
-> +
-> +	if (injected && has_esr) {
-> +		if (!cpus_have_const_cap(ARM64_HAS_RAS_EXTN))
-> +			return -EINVAL;
-> +
-> +		kvm_set_sei_esr(vcpu, events->exception.serror_esr);
-> +
-> +	} else if (injected) {
-> +		kvm_inject_vabt(vcpu);
-
-Nit: looks like 'injected' is misnamed.
-
-
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  int __attribute_const__ kvm_target_cpu(void)
->  {
->  	unsigned long implementor = read_cpuid_implementor();
-
-
-> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-> index 38c8a64..20e919a 100644
-> --- a/arch/arm64/kvm/reset.c
-> +++ b/arch/arm64/kvm/reset.c
-> @@ -82,6 +82,7 @@ int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm, long ext)
->  		break;
->  	case KVM_CAP_SET_GUEST_DEBUG:
->  	case KVM_CAP_VCPU_ATTRIBUTES:
-> +	case KVM_CAP_VCPU_EVENTS:
->  		r = 1;
->  		break;
->  	default:
-
-> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-> index 7e3941f..945655d 100644
-> --- a/virt/kvm/arm/arm.c
-> +++ b/virt/kvm/arm/arm.c
-> @@ -1051,6 +1051,27 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
->  			return -EFAULT;
->  		return kvm_arm_vcpu_has_attr(vcpu, &attr);
->  	}
-> +	case KVM_GET_VCPU_EVENTS: {
-> +		struct kvm_vcpu_events events;
-> +
-> +		memset(&events, 0, sizeof(struct kvm_vcpu_events));
-
-sizeof(events) is the normal style here, it means if someone changes event's
-type we don't get any surprises...
-
-
-> +		if (kvm_arm_vcpu_get_events(vcpu, &events))
-> +			return -EINVAL;
-> +
-> +		if (copy_to_user(argp, &events, sizeof(struct kvm_vcpu_events)))
-
-sizeof(events)
-
-
-> +			return -EFAULT;
-> +
-> +		return 0;
-> +	}
-> +	case KVM_SET_VCPU_EVENTS: {
-> +		struct kvm_vcpu_events events;
-> +
-> +		if (copy_from_user(&events, argp,
-> +				sizeof(struct kvm_vcpu_events)))
-> +			return -EFAULT;
-> +
-> +		return kvm_arm_vcpu_set_events(vcpu, &events);
-> +	}
->  	default:
->  		return -EINVAL;
->  	}
-> 
-
-Despite KVM_CAP_VCPU_EVENTS not being advertised on 32bit, any attempt to call
-it will still end up in here, but will always fail as the {g,s}et_events() calls
-always return -EINVAL. I don't think this will cause us any problems.
-
-
-Thanks,
-
-James
+ arch/c6x/Makefile             | 1 +
+ arch/c6x/kernel/asm-offsets.c | 1 -
+ arch/c6x/platforms/plldata.c  | 1 +
+ 3 files changed, 2 insertions(+), 1 deletion(-)
