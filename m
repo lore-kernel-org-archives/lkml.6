@@ -1,69 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752981AbeDJMdC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:33:02 -0400
-Received: from sauhun.de ([88.99.104.3]:40108 "EHLO pokefinder.org"
+        id S1753200AbeDJMdM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:33:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42301 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752759AbeDJMdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:33:00 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org
-Subject: [PATCH RESEND] backlight: pwm_bl: don't use GPIOF_* with gpiod_get_direction
-Date: Tue, 10 Apr 2018 14:32:40 +0200
-Message-Id: <20180410123241.25745-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.11.0
+        id S1753044AbeDJMdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 08:33:10 -0400
+Date: Tue, 10 Apr 2018 14:33:06 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Minchan Kim <minchan@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        Chris Fries <cfries@google.com>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
+Message-ID: <20180410123306.GI21835@dhcp22.suse.cz>
+References: <20180409015815.235943-1-minchan@kernel.org>
+ <20180409024925.GA21889@bombadil.infradead.org>
+ <20180409030930.GA214930@rodete-desktop-imager.corp.google.com>
+ <20180409111403.GA31652@bombadil.infradead.org>
+ <20180409112514.GA195937@rodete-laptop-imager.corp.google.com>
+ <20180409183827.GD17558@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180409194044.GA15295@bombadil.infradead.org>
+ <20180410082643.GX21835@dhcp22.suse.cz>
+ <20180410120528.GB22118@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180410120528.GB22118@bombadil.infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The documentation was wrong, gpiod_get_direction() returns 0/1 instead
-of the GPIOF_* flags. The docs were fixed with commit 94fc73094abe47
-("gpio: correct docs about return value of gpiod_get_direction"). Now,
-fix this user (until a better, system-wide solution is in place).
+On Tue 10-04-18 05:05:28, Matthew Wilcox wrote:
+> On Tue, Apr 10, 2018 at 10:26:43AM +0200, Michal Hocko wrote:
+> > On Mon 09-04-18 12:40:44, Matthew Wilcox wrote:
+> > > The problem is that the mapping gfp flags are used not only for allocating
+> > > pages, but also for allocating the page cache data structures that hold
+> > > the pages.  F2FS is the only filesystem that set the __GFP_ZERO bit,
+> > > so it's the first time anyone's noticed that the page cache passes the
+> > > __GFP_ZERO bit through to the radix tree allocation routines, which
+> > > causes the radix tree nodes to be zeroed instead of constructed.
+> > > 
+> > > I think the right solution to this is:
+> > 
+> > This just hides the underlying problem that the node is not fully and
+> > properly initialized. Relying on the previous released state is just too
+> > subtle.
+> 
+> That's the fundamental design of slab-with-constructors.  The user provides
+> a constructor, so all newly allocagted objects are initialised to a known
+> state, then the user will restore the object to that state when it frees
+> the object to slab.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
----
+And that is fundamentally subtle semantic and leads to bugs. So we
+should reconsider whether that is really worth keeping for the radix
+tree.
 
-Changes since V1:
-	* rebased to top-of-linus-tree
-	* added tag from Daniel, thanks!
+> > Are you going to blacklist all potential gfp flags that come
+> > from the mapping? This is just unmaintainable! If anything this should
+> > be an explicit & with the allowed set of allowed flags.
+> 
+> Oh, I agree that using the set of flags used to allocate the page
+> in order to allocate the radix tree nodes is a pretty horrible idea.
+> 
+> Your suggestion, then, is:
+> 
+> -	error = radix_tree_preload(gfp_mask & ~__GFP_HIGHMEM);
+> +	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
+> 
+> correct?
 
-Through which tree does this need to go?
+Something like that, yes.
 
- drivers/video/backlight/pwm_bl.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index 1c2289ddd555..0fa7d2bd0e48 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -301,14 +301,14 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 
- 	/*
- 	 * If the GPIO is not known to be already configured as output, that
--	 * is, if gpiod_get_direction returns either GPIOF_DIR_IN or -EINVAL,
--	 * change the direction to output and set the GPIO as active.
-+	 * is, if gpiod_get_direction returns either 1 or -EINVAL, change the
-+	 * direction to output and set the GPIO as active.
- 	 * Do not force the GPIO to active when it was already output as it
- 	 * could cause backlight flickering or we would enable the backlight too
- 	 * early. Leave the decision of the initial backlight state for later.
- 	 */
- 	if (pb->enable_gpio &&
--	    gpiod_get_direction(pb->enable_gpio) != GPIOF_DIR_OUT)
-+	    gpiod_get_direction(pb->enable_gpio) != 0)
- 		gpiod_direction_output(pb->enable_gpio, 1);
- 
- 	pb->power_supply = devm_regulator_get(&pdev->dev, "power");
 -- 
-2.11.0
+Michal Hocko
+SUSE Labs
