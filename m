@@ -1,43 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753191AbeDJMrT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 08:47:19 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:50908 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753147AbeDJMrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 08:47:18 -0400
-Date: Tue, 10 Apr 2018 08:48:44 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Minchan Kim <minchan@kernel.org>, Christopher Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Chris Fries <cfries@google.com>
-Subject: Re: [PATCH] mm: workingset: fix NULL ptr dereference
-Message-ID: <20180410124844.GC6334@cmpxchg.org>
-References: <20180409015815.235943-1-minchan@kernel.org>
- <20180409024925.GA21889@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180409024925.GA21889@bombadil.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1753219AbeDJMwE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 08:52:04 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:53624 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752907AbeDJMv4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 08:51:56 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 4/5] soc/tegra: pmc: Use of_clk_get_parent_count() instead of open coding
+Date: Tue, 10 Apr 2018 14:51:40 +0200
+Message-Id: <1523364701-15383-5-git-send-email-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 08, 2018 at 07:49:25PM -0700, Matthew Wilcox wrote:
-> @@ -2714,8 +2714,10 @@ static __always_inline void *slab_alloc_node(struct kmem_cache *s,
->  		stat(s, ALLOC_FASTPATH);
->  	}
->  
-> -	if (unlikely(gfpflags & __GFP_ZERO) && object)
-> -		memset(object, 0, s->object_size);
-> +	if (unlikely(gfpflags & __GFP_ZERO) && object) {
-> +		if (!WARN_ON_ONCE(s->ctor))
-> +			memset(object, 0, s->object_size);
-> +	}
->  
->  	slab_post_alloc_hook(s, gfpflags, 1, &object);
+As of_clk_get_parent_count() returns zero on failure, while
+of_count_phandle_with_args() might return a negative error code, this
+also fixes the issue of possibly using a very big number in the
+allocation below.
 
-This looks like a useful check to have. But maybe behind DEBUG_VM?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+This depends on "[PATCH v2 1/5] clk: Extract OF clock helpers in
+<linux/of_clk.h>".
+
+v2:
+  - of_clk_get_parent_count() was moved to <linux/of_clk.h>.
+---
+ drivers/soc/tegra/pmc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index d9fcdb592b3966a5..d8cb48a4b8eb1b78 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -31,6 +31,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_clk.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+@@ -725,7 +726,7 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
+ 	unsigned int i, count;
+ 	int err;
+ 
+-	count = of_count_phandle_with_args(np, "clocks", "#clock-cells");
++	count = of_clk_get_parent_count(np);
+ 	if (count == 0)
+ 		return -ENODEV;
+ 
+-- 
+2.7.4
