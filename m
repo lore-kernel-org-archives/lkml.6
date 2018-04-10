@@ -1,76 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753238AbeDJTxJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 15:53:09 -0400
-Received: from mail-yb0-f179.google.com ([209.85.213.179]:38884 "EHLO
-        mail-yb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751943AbeDJTxI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 15:53:08 -0400
-X-Google-Smtp-Source: AIpwx4+6Mej9LEbyGTO60nL86c15FdxxFDziHeeqc92ISFMAmJ54WDkZibAAwwsOu0TJfNLUhkIFhw==
-Date: Tue, 10 Apr 2018 12:53:05 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Christopher Lameter <cl@linux.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        David Rientjes <rientjes@google.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC] mm, slab: reschedule cache_reap() on the same CPU
-Message-ID: <20180410195247.GQ3126663@devbig577.frc2.facebook.com>
-References: <20180410081531.18053-1-vbabka@suse.cz>
- <alpine.DEB.2.20.1804100907160.27333@nuc-kabylake>
- <983c61d1-1444-db1f-65c1-3b519ac4d57b@suse.cz>
+        id S1752436AbeDJT4G (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 15:56:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59856 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751611AbeDJT4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 15:56:05 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5D7321738
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Tue, 10 Apr 2018 14:55:57 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Desnes A. Nunes do Rosario" <desnesn@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com
+Subject: Re: [PATCH, RESEND, pci, v2] pci: Delete PCI disabling informational
+ messages
+Message-ID: <20180410195556.GF54986@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180404151035.12140-1-desnesn@linux.vnet.ibm.com>
+ <20180410193631.GC54986@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <983c61d1-1444-db1f-65c1-3b519ac4d57b@suse.cz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180410193631.GC54986@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Tue, Apr 10, 2018 at 09:40:19PM +0200, Vlastimil Babka wrote:
-> On 04/10/2018 04:12 PM, Christopher Lameter wrote:
-> > On Tue, 10 Apr 2018, Vlastimil Babka wrote:
+On Tue, Apr 10, 2018 at 02:36:31PM -0500, Bjorn Helgaas wrote:
+> On Wed, Apr 04, 2018 at 12:10:35PM -0300, Desnes A. Nunes do Rosario wrote:
+> > The disabling informational messages on the PCI subsystem should be deleted
+> > since they do not represent any real value for the system logs.
 > > 
-> >> cache_reap() is initially scheduled in start_cpu_timer() via
-> >> schedule_delayed_work_on(). But then the next iterations are scheduled via
-> >> schedule_delayed_work(), thus using WORK_CPU_UNBOUND.
+> > These messages are either not presented, or presented for all PCI devices
+> > (e.g., powerpc now realigns all PCI devices to its page size). Thus, they
+> > are flooding system logs and can be interpreted as a false positive for
+> > total PCI failure on the system.
 > > 
-> > That is a bug.. cache_reap must run on the same cpu since it deals with
-> > the per cpu queues of the current cpu. Scheduled_delayed_work() used to
-> > guarantee running on teh same cpu.
+> > [root@system user]# dmesg | grep -i disabling
+> > [    0.692270] pci 0000:00:00.0: Disabling memory decoding and releasing memory resources
+> > [    0.692324] pci 0000:00:00.0: disabling bridge mem windows
+> > [    0.729134] pci 0001:00:00.0: Disabling memory decoding and releasing memory resources
+> > [    0.737352] pci 0001:00:00.0: disabling bridge mem windows
+> > [    0.776295] pci 0002:00:00.0: Disabling memory decoding and releasing memory resources
+> > [    0.784509] pci 0002:00:00.0: disabling bridge mem windows
+> > ... and goes on for all PCI devices on the system ...
+> > 
+> > Fixes: 38274637699 ("powerpc/powernv: Override pcibios_default_alignment() to force PCI devices to be page aligned")
+> > Signed-off-by: Desnes A. Nunes do Rosario <desnesn@linux.vnet.ibm.com>
 > 
-> Did it? When did it stop? (which stable kernels should we backport to?)
-
-It goes back to v4.5 - ef557180447f ("workqueue: schedule
-WORK_CPU_UNBOUND work on wq_unbound_cpumask CPUs") which made
-WQ_CPU_UNBOUND on percpu workqueues honor wq_unbound_cpusmask so that
-cpu isolation works better.  Unless the force_rr option or
-unbound_cpumask is set, it still follows local cpu.
-
-> So is my assumption correct that without specifying a CPU, the next work
-> might be processed on a different cpu than the current one, *and also*
-> be executed with a kthread/u* that can migrate to another cpu *in the
-> middle of the work*? Tejun?
-
-For percpu work items, they'll keep executing on the same cpu it
-started on unless the cpu goes down while executing.
-
-> > schedule_delayed_work_on(smp_processor_id(), work, round_jiffies_relative(REAPTIMEOUT_AC));
-> > 
-> > instead all of the other changes?
+> Applied to pci/resource for v4.18, thanks!
 > 
-> If we can rely on that 100%, sure.
+> I should have gotten this in for v4.17, but I didn't; sorry about that.
 
-Yeah, you can.
+This is trivial and I'm planning to squeeze a few more things into v4.17,
+so I moved this to my "for-linus" branch for v4.17.
 
-Thanks.
-
--- 
-tejun
+> > ---
+> >  drivers/pci/pci.c       | 1 -
+> >  drivers/pci/setup-res.c | 2 --
+> >  2 files changed, 3 deletions(-)
+> > 
+> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > index 8c71d1a66cdd..1563ce1ee091 100644
+> > --- a/drivers/pci/pci.c
+> > +++ b/drivers/pci/pci.c
+> > @@ -5505,7 +5505,6 @@ void pci_reassigndev_resource_alignment(struct pci_dev *dev)
+> >  		return;
+> >  	}
+> >  
+> > -	pci_info(dev, "Disabling memory decoding and releasing memory resources\n");
+> >  	pci_read_config_word(dev, PCI_COMMAND, &command);
+> >  	command &= ~PCI_COMMAND_MEMORY;
+> >  	pci_write_config_word(dev, PCI_COMMAND, command);
+> > diff --git a/drivers/pci/setup-res.c b/drivers/pci/setup-res.c
+> > index 369d48d6c6f1..6bd35e8e7cde 100644
+> > --- a/drivers/pci/setup-res.c
+> > +++ b/drivers/pci/setup-res.c
+> > @@ -172,8 +172,6 @@ EXPORT_SYMBOL(pci_claim_resource);
+> >  
+> >  void pci_disable_bridge_window(struct pci_dev *dev)
+> >  {
+> > -	pci_info(dev, "disabling bridge mem windows\n");
+> > -
+> >  	/* MMIO Base/Limit */
+> >  	pci_write_config_dword(dev, PCI_MEMORY_BASE, 0x0000fff0);
+> >  
+> > -- 
+> > 2.14.3
+> > 
