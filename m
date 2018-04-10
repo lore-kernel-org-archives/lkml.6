@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-713595-1523400059-2-1459189489896074986
+X-Cyrus-Session-Id: sloti22d1t05-713601-1523400048-2-14376874806494505325
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523400058; b=li2NzgZYOfyAzgU6CWw8vUQyujO9k+MncInMhmQNv6FgWzAiO+
-    gN0DajuIJuwKY1O7D4KOP8/OCDdLQEtLInmu8iWbUjaDNqdU/T4B4U6vOxNwKv6O
-    OPM9kZvP7Mnh6CrcYxaVYjh1GtagYAqHsCBbCgG/A9WCm3Rsy311YrzobaNJCRih
-    L16bCKwGfCW6KaKi9ypwZg18Xfq5w1Y7bzeuZzSQKh9O/7BoGPYqeBS7eN6WTf2u
-    jMt9BTpnr0BVw6DKDAtiYKms4gYawmR0eGqW3Wfb61t7v2jDuPRuCH/ZVxoBA9OF
-    kxREFcee4rt+sq1zQZaAU+66mzNFxpXT/W6g==
+    1523400048; b=MRBNjMLUTRqfv34D6tUkwAbihTv/+3t/OSi/shWrA0JqxEX8M4
+    Nyjd/Q5brKTpEZFgOPCvbI29h791/KpIa1uSL0yF0wCPTfAEaq0G3L3LCxkQ4SJ5
+    lRQEUiGRysYahGHYQ/62LLh1aqXmQsuDOvNAPARqJp3kwTRRYJfv+QNLqYPL4iDN
+    EO73JilNewX7JnVNuJt584nsvlxmbv4PupbQ1d2G+4NkGmWNGJrOJhouyFwZ52XY
+    V0NjJ1epn2FavuY1C2gLPYmB6h6Lctbnr8Z/lTWVJxsAa6WeI8uz20dmnL2gEhaZ
+    3gR37O/qretrO0umjQiQXv72pf4uaV6DGQ0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523400058; bh=EWaEHRRn+5Cq+iw+hFf/jyTBN1nmuU
-    Pm40mcdtVXlRg=; b=sdlaUqBl1dmd+Nef7D+sPYIIWirMTsTGzzhbMHv1iT7WNM
-    xdtphsm6hIv1T67OJ6wCCFn0prKnKOn1dj/LTYpDa7gEiXdj7UzLASgglycGLSyk
-    WhLJsJ2WKibpb3X0TCPQ9SZHlZbz36GKziqZvh2zHrh80WorLu3h4JvyeDklsLGS
-    nbFmSGyDUhQZFEFvkLAHGCEpL+cofYOa2GkmQEirdk9TCL8+fbAb12grN0cHnviR
-    2yBPnbOVeMdl06NKdB2SMLREmHfSNpg9dhER24aAyau33zJJhl9zqeltcH4GibBK
-    OTrHhChqcYq/6x7PZBT6rIjxcPtejdFqTgvn0JrA==
+    :list-id; s=fm2; t=1523400048; bh=4ctmU7kQwfzg8fSXXcO+tODI0ATfgf
+    srkhptShEzj+8=; b=Apol9yNR3FsrbSzExkjeZu7egeBWVxaB0jmUm+/9YcProy
+    Y8SD4dshiWImDka7Q4avl58uuOxchmh5Nh0aeIRoO/TRcGr9oKdp+LH1LNs80+Fq
+    pe6sIrOyGFYDGXWuVwWZMIr5WGJjdczRiDVALnHZ1IlQTvkqP0Gv2BC5+M+WtINd
+    M/rqKIYMrpfscYfRtRNK8rgDH/tO84ibvJdRBLc8Xmm4PhrVDI1B41qI9isblV2t
+    fqmoTBK8i+vVSzaGEMFRYCemJgWvP5klnlRUQ9QmbGg6LgWc3Z1UeasDSi4ck5R+
+    mZszYWU3uCZL1pZsLF/UqII+urtdXRwRIhi2O3zw==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,31 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKAFKWudfJ1sBO36vtFp34t4cSiRaqAKL6Yq3ri6gyiOyXg1CfR89C4+5uxhTRltW7wLMlQtRrPqn+4s7y3ee1AU5iz5eNXf8+HEtvDq66wFFQPswMbA
-    7CtNAXCgiqY4mjkxVsaoGVW3nN9VWfUN4B1FaaLB0QAPYfQFhlsZS2Fstn4CW76h72xxqOGj67MfeOfmziOSGS3JgXdjNBL1Inveigkxe5yHYYSSJzMAD/IT
+X-CM-Envelope: MS4wfH+vanJTHhatE0ijxJowsduxFZGCqNC2XAxVHPIBYDT6X7tA1wtrdn8969a2rAqzJoUEAAmdk29FcyeQghTPA0Gx1Xs6YHcBq10cQ1swiB2yWZbk0chb
+    CROyP9diGxDVMXiIW2n5UTWYkqIt71yKVpBtjKiJAPVA57a03Uu6R+ksAi+EkYVA/H3sxX//GGTrrnCTlDVLTqZjpK0P8b5OAv9xpVCu/ZQ7syQ8xLAJ4itb
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=CbDCq_QkAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=z1OcxMHCoMN4Ka_fV58A:9 a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=CbDCq_QkAAAA:8 a=ag1SF4gXAAAA:8 a=aIfLtaEJsP_qc66f6msA:9 a=QEXdDO2ut3YA:10
+    a=1qrBK16LubpBFNPVNq2M:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932768AbeDJWk1 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 10 Apr 2018 18:40:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46790 "EHLO
+        id S932785AbeDJWkd (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 10 Apr 2018 18:40:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46800 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932736AbeDJWk0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:40:26 -0400
+        with ESMTP id S932779AbeDJWk3 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 10 Apr 2018 18:40:29 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 136/138] team: move dev_mc_sync after master_upper_dev_link in team_port_add
-Date: Wed, 11 Apr 2018 00:25:26 +0200
-Message-Id: <20180410212918.078087566@linuxfoundation.org>
+        stable@vger.kernel.org, Jianbo Liu <jianbol@mellanox.com>,
+        Roi Dayan <roid@mellanox.com>,
+        Or Gerlitz <ogerlitz@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 127/138] net/mlx5e: Dont override vport admin link state in switchdev mode
+Date: Wed, 11 Apr 2018 00:25:17 +0200
+Message-Id: <20180410212916.944498244@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
 References: <20180410212902.121524696@linuxfoundation.org>
@@ -93,62 +93,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Jianbo Liu <jianbol@mellanox.com>
 
 
-[ Upstream commit 982cf3b3999d39a2eaca0a65542df33c19b5d814 ]
+The vport admin original link state will be re-applied after returning
+back to legacy mode, it is not right to change the admin link state value
+when in switchdev mode.
 
-The same fix as in 'bonding: move dev_mc_sync after master_upper_dev_link
-in bond_enslave' is needed for team driver.
+Use direct vport commands to alter logical vport state in netdev
+representor open/close flows rather than the administrative eswitch API.
 
-The panic can be reproduced easily:
-
-  ip link add team1 type team
-  ip link set team1 up
-  ip link add link team1 vlan1 type vlan id 80
-  ip link set vlan1 master team1
-
-Fixes: cb41c997d444 ("team: team should sync the port's uc/mc addrs when add a port")
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 20a1ea674783 ('net/mlx5e: Support VF vport link state control for SRIOV switchdev mode')
+Signed-off-by: Jianbo Liu <jianbol@mellanox.com>
+Reviewed-by: Roi Dayan <roid@mellanox.com>
+Reviewed-by: Or Gerlitz <ogerlitz@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/team/team.c |   12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_rep.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -1197,11 +1197,6 @@ static int team_port_add(struct team *te
- 		goto err_dev_open;
- 	}
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+@@ -610,7 +610,6 @@ static int mlx5e_rep_open(struct net_dev
+ 	struct mlx5e_priv *priv = netdev_priv(dev);
+ 	struct mlx5e_rep_priv *rpriv = priv->ppriv;
+ 	struct mlx5_eswitch_rep *rep = rpriv->rep;
+-	struct mlx5_eswitch *esw = priv->mdev->priv.eswitch;
+ 	int err;
  
--	netif_addr_lock_bh(dev);
--	dev_uc_sync_multiple(port_dev, dev);
--	dev_mc_sync_multiple(port_dev, dev);
--	netif_addr_unlock_bh(dev);
--
- 	err = vlan_vids_add_by_dev(port_dev, dev);
- 	if (err) {
- 		netdev_err(dev, "Failed to add vlan ids to device %s\n",
-@@ -1241,6 +1236,11 @@ static int team_port_add(struct team *te
- 		goto err_option_port_add;
- 	}
+ 	mutex_lock(&priv->state_lock);
+@@ -618,8 +617,9 @@ static int mlx5e_rep_open(struct net_dev
+ 	if (err)
+ 		goto unlock;
  
-+	netif_addr_lock_bh(dev);
-+	dev_uc_sync_multiple(port_dev, dev);
-+	dev_mc_sync_multiple(port_dev, dev);
-+	netif_addr_unlock_bh(dev);
-+
- 	port->index = -1;
- 	list_add_tail_rcu(&port->list, &team->port_list);
- 	team_port_enable(team, port);
-@@ -1265,8 +1265,6 @@ err_enable_netpoll:
- 	vlan_vids_del_by_dev(port_dev, dev);
+-	if (!mlx5_eswitch_set_vport_state(esw, rep->vport,
+-					  MLX5_ESW_VPORT_ADMIN_STATE_UP))
++	if (!mlx5_modify_vport_admin_state(priv->mdev,
++			MLX5_QUERY_VPORT_STATE_IN_OP_MOD_ESW_VPORT,
++			rep->vport, MLX5_ESW_VPORT_ADMIN_STATE_UP))
+ 		netif_carrier_on(dev);
  
- err_vids_add:
--	dev_uc_unsync(port_dev, dev);
--	dev_mc_unsync(port_dev, dev);
- 	dev_close(port_dev);
+ unlock:
+@@ -632,11 +632,12 @@ static int mlx5e_rep_close(struct net_de
+ 	struct mlx5e_priv *priv = netdev_priv(dev);
+ 	struct mlx5e_rep_priv *rpriv = priv->ppriv;
+ 	struct mlx5_eswitch_rep *rep = rpriv->rep;
+-	struct mlx5_eswitch *esw = priv->mdev->priv.eswitch;
+ 	int ret;
  
- err_dev_open:
+ 	mutex_lock(&priv->state_lock);
+-	(void)mlx5_eswitch_set_vport_state(esw, rep->vport, MLX5_ESW_VPORT_ADMIN_STATE_DOWN);
++	mlx5_modify_vport_admin_state(priv->mdev,
++			MLX5_QUERY_VPORT_STATE_IN_OP_MOD_ESW_VPORT,
++			rep->vport, MLX5_ESW_VPORT_ADMIN_STATE_DOWN);
+ 	ret = mlx5e_close_locked(dev);
+ 	mutex_unlock(&priv->state_lock);
+ 	return ret;
