@@ -1,50 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752202AbeDJVB2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 17:01:28 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:50805 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751611AbeDJVB0 (ORCPT
+        id S1752103AbeDJVHZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 17:07:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55452 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751589AbeDJVHY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 17:01:26 -0400
-To: ebiederm@xmission.com
-Cc: syzbot+9369930ca44f29e60e2d@syzkaller.appspotmail.com,
-        serge@hallyn.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org
-Subject: Re: KASAN: null-ptr-deref Read in xattr_getsecurity
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <0000000000008d2e0d05697a693d@google.com>
-        <9d192497-8b1e-ca8d-0ed8-b3324ee1e361@I-love.SAKURA.ne.jp>
-        <87o9irw2ad.fsf@xmission.com>
-In-Reply-To: <87o9irw2ad.fsf@xmission.com>
-Message-Id: <201804110600.CCF73450.FFOOQtSFOLHMVJ@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Wed, 11 Apr 2018 06:00:44 +0900
-Mime-Version: 1.0
+        Tue, 10 Apr 2018 17:07:24 -0400
+Date: Tue, 10 Apr 2018 23:07:16 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Yonghong Song <yhs@fb.com>
+Cc: mingo@kernel.org, ast@fb.com, daniel@iogearbox.net,
+        linux-kernel@vger.kernel.org, x86@kernel.org, kernel-team@fb.com,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] x86/cpufeature: guard asm_volatile_goto usage with
+ CC_HAVE_ASM_GOTO
+Message-ID: <20180410210716.GI4082@hirez.programming.kicks-ass.net>
+References: <20180410204259.3981586-1-yhs@fb.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180410204259.3981586-1-yhs@fb.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eric W. Biederman wrote:
-> Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> writes:
-> 
-> > From 904d07a6eb014f3df0c5a1ebfcfd4323276a9a76 Mon Sep 17 00:00:00 2001
-> > From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> > Date: Tue, 10 Apr 2018 15:15:16 +0900
-> > Subject: [PATCH] commoncap: Handle memory allocation failure.
-> >
-> > syzbot is reporting NULL pointer dereference at xattr_getsecurity() [1],
-> > for cap_inode_getsecurity() is returning sizeof(struct vfs_cap_data) when
-> > memory allocation failed. Return -ENOMEM if memory allocation failed.
-> >
-> > [1] https://syzkaller.appspot.com/bug?id=a55ba438506fe68649a5f50d2d82d56b365e0107
-> 
-> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> 
-> Tetsuo I can pick this up, or do you have preferred path for getting
-> this change merged?
+On Tue, Apr 10, 2018 at 01:42:59PM -0700, Yonghong Song wrote:
+> Commit d0266046ad54 ("x86: Remove FAST_FEATURE_TESTS")
+> removed X86_FAST_FEATURE_TESTS and make macro static_cpu_has() always
+> use __always_inline function _static_cpu_has() funciton.
+> The static_cpu_has() uses gcc feature asm_volatile_goto construct,
+> which is not supported by clang.
 
-I don't have preferred path. You can pick this up. Thanks.
+There will be more unconditional asm-goto usage, clang is in the process
+of growing asm-goto.
