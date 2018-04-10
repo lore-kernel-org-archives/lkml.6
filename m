@@ -1,85 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753143AbeDJTg1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 15:36:27 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:42507 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751611AbeDJTgZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 15:36:25 -0400
-X-Google-Smtp-Source: AIpwx4/C5nOuMczH+nHZIAry8JfztJTa1Refxfe0bkI3w2yVqvu2VijW0C4n2ykftC+yWfWVWCSFqg==
-Date: Tue, 10 Apr 2018 12:36:21 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: Stephen Boyd <swboyd@chromium.org>, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, rnayak@codeaurora.org,
-        linux-kernel@vger.kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 02/10] dt-bindings: introduce RPMH RSC bindings for
- Qualcomm SoCs
-Message-ID: <20180410193621.GB6727@builder>
-References: <20180405161834.3850-1-ilina@codeaurora.org>
- <20180405161834.3850-3-ilina@codeaurora.org>
- <152306368031.94378.14957212064809086345@swboyd.mtv.corp.google.com>
- <20180409160800.GC19682@codeaurora.org>
+        id S1753187AbeDJTgg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 15:36:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52462 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753154AbeDJTge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 15:36:34 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15446217BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Tue, 10 Apr 2018 14:36:31 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Desnes A. Nunes do Rosario" <desnesn@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com
+Subject: Re: [PATCH, RESEND, pci, v2] pci: Delete PCI disabling informational
+ messages
+Message-ID: <20180410193631.GC54986@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180404151035.12140-1-desnesn@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180409160800.GC19682@codeaurora.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180404151035.12140-1-desnesn@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 09 Apr 09:08 PDT 2018, Lina Iyer wrote:
-
-> On Fri, Apr 06 2018 at 19:14 -0600, Stephen Boyd wrote:
-> > Quoting Lina Iyer (2018-04-05 09:18:26)
-> > > diff --git a/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
-[..]
-> > > +Example 1:
-> > > +
-> > > +For a TCS whose RSC base address is is 0x179C0000 and is at a DRV id of 2, the
-> > > +register offsets for DRV2 start at 0D00, the register calculations are like
-> > > +this -
-> > > +First tuple: 0x179C0000 + 0x10000 * 2 = 0x179E0000
-> > > +Second tuple: 0x179E0000 + 0xD00 = 0x179E0D00
-> > > +
-> > > +       apps_rsc: rsc@179e000 {
-> > > +               label = "apps_rsc";
-> > > +               compatible = "qcom,rpmh-rsc";
-> > > +               reg = <0x179e0000 0x10000>, <0x179e0d00 0x3000>;
-> > 
-> > The first reg property overlaps the second one. Does this second one
-> > ever move around? I would hardcode it in the driver to be 0xd00 away
-> > from the drv base instead of specifying it in DT if it's the same all
-> > the time.
-[..]
-> > 
-> The DRV is the voter for an execution environment (Linux, Hypervisor,
-> ATF) in the RSC. The RSC has a lot of other registers that Linux is not
-> privy to. They are access restricted. The memory organization of the RSC
-> mandates that we know the DRV id to access registers specific to the
-> DRV. Unfortunately, not all RSC have identical DRV configuration and the
-> register space is also variable depending on the capability of the RSC.
-> There are functionalities supported by other RSCs in the SoC that are
-> not supported by the RSC associated with the application processor,
-> while not many RSCs' support multiple DRVs. Therefore it doesn't benefit
-> describing the whole RSC as it is not usable from Linux (because of
-> access restrictions).
+On Wed, Apr 04, 2018 at 12:10:35PM -0300, Desnes A. Nunes do Rosario wrote:
+> The disabling informational messages on the PCI subsystem should be deleted
+> since they do not represent any real value for the system logs.
 > 
+> These messages are either not presented, or presented for all PCI devices
+> (e.g., powerpc now realigns all PCI devices to its page size). Thus, they
+> are flooding system logs and can be interpreted as a false positive for
+> total PCI failure on the system.
+> 
+> [root@system user]# dmesg | grep -i disabling
+> [    0.692270] pci 0000:00:00.0: Disabling memory decoding and releasing memory resources
+> [    0.692324] pci 0000:00:00.0: disabling bridge mem windows
+> [    0.729134] pci 0001:00:00.0: Disabling memory decoding and releasing memory resources
+> [    0.737352] pci 0001:00:00.0: disabling bridge mem windows
+> [    0.776295] pci 0002:00:00.0: Disabling memory decoding and releasing memory resources
+> [    0.784509] pci 0002:00:00.0: disabling bridge mem windows
+> ... and goes on for all PCI devices on the system ...
+> 
+> Fixes: 38274637699 ("powerpc/powernv: Override pcibios_default_alignment() to force PCI devices to be page aligned")
+> Signed-off-by: Desnes A. Nunes do Rosario <desnesn@linux.vnet.ibm.com>
 
-I generally prefer that we describe the hardware blocks as accurate as
-possible, instead of applying current restrictions on Linux onto the
-description. This ensures that we can reuse the binding and drivers in
-configurations not considered today. However, afaict we still have the
-problem that we need a way to express where in the RSC our TCS sits.
+Applied to pci/resource for v4.18, thanks!
 
-Regardless of what's right or not, the given example causes the driver
-to fail probing, so something needs to be changed. (Making the drv size
-0xd00 is functional but doesn't really relate to any bondary in the
-register space).
+I should have gotten this in for v4.17, but I didn't; sorry about that.
 
-Regards,
-Bjorn
+> ---
+>  drivers/pci/pci.c       | 1 -
+>  drivers/pci/setup-res.c | 2 --
+>  2 files changed, 3 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 8c71d1a66cdd..1563ce1ee091 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5505,7 +5505,6 @@ void pci_reassigndev_resource_alignment(struct pci_dev *dev)
+>  		return;
+>  	}
+>  
+> -	pci_info(dev, "Disabling memory decoding and releasing memory resources\n");
+>  	pci_read_config_word(dev, PCI_COMMAND, &command);
+>  	command &= ~PCI_COMMAND_MEMORY;
+>  	pci_write_config_word(dev, PCI_COMMAND, command);
+> diff --git a/drivers/pci/setup-res.c b/drivers/pci/setup-res.c
+> index 369d48d6c6f1..6bd35e8e7cde 100644
+> --- a/drivers/pci/setup-res.c
+> +++ b/drivers/pci/setup-res.c
+> @@ -172,8 +172,6 @@ EXPORT_SYMBOL(pci_claim_resource);
+>  
+>  void pci_disable_bridge_window(struct pci_dev *dev)
+>  {
+> -	pci_info(dev, "disabling bridge mem windows\n");
+> -
+>  	/* MMIO Base/Limit */
+>  	pci_write_config_dword(dev, PCI_MEMORY_BASE, 0x0000fff0);
+>  
+> -- 
+> 2.14.3
+> 
