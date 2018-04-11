@@ -1,64 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752167AbeDKWLd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 18:11:33 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55034 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751680AbeDKWLb (ORCPT
+        id S1752381AbeDKWU5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 18:20:57 -0400
+Received: from mail-lf0-f43.google.com ([209.85.215.43]:43547 "EHLO
+        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752302AbeDKWUz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 18:11:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1CE3660386
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-From: Sinan Kaya <okaya@codeaurora.org>
-To: amd-gfx@lists.freedesktop.org, sulrich@codeaurora.org,
-        timur@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>, Monk Liu <Monk.Liu@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Pixel Ding <Pixel.Ding@amd.com>, Horace Chen <horace.chen@amd.com>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V3] drm/amdgpu: limit DMA size to PAGE_SIZE for scatter-gather buffers
-Date: Wed, 11 Apr 2018 18:11:22 -0400
-Message-Id: <1523484684-10426-1-git-send-email-okaya@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 11 Apr 2018 18:20:55 -0400
+X-Google-Smtp-Source: AIpwx482D3l/BsHOP4E3o91KkNm3ZzgUdC6wFQ/kbxOGCXXXoFjsTrGVwMVnURhJQA8I0j/BPrdrM57YMfoKX+kAzAQ=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <7bf2f711-bbd8-cee6-6377-0c4f22db2937@mozilla.com>
+References: <c743b220-0395-eef3-4405-a21cdbe8eee1@mozilla.com>
+ <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com> <a96df0b8-fc22-4438-646d-2f0096dfcc84@mozilla.com>
+ <6cebabff-908f-5ebe-4252-760773c4cd6f@amd.com> <312ed341-7052-a61e-331f-d1e8fd5b477e@mozilla.com>
+ <d136f940-d807-d2f7-30a7-8617f130912d@amd.com> <77866d66-2728-8295-d7ee-9975dbf64b99@mozilla.com>
+ <55e1712b-6567-50c5-3789-53dd1ccddb94@gmail.com> <CAEJqkgiOR3aCGoNquVeEyC1BLMBPmXNjgrmjNeeE9UVfzcJKzg@mail.gmail.com>
+ <dafca4cc-c7ca-a06d-3a17-46240b1d20c3@amd.com> <7bf2f711-bbd8-cee6-6377-0c4f22db2937@mozilla.com>
+From: Gabriel C <nix.or.die@gmail.com>
+Date: Thu, 12 Apr 2018 00:20:24 +0200
+Message-ID: <CAEJqkgj7uCoaScKwjPVBvWuC+=5OfAuQaO3PfM5J=qbA0v4_EQ@mail.gmail.com>
+Subject: Re: AMD graphics performance regression in 4.15 and later
+To: Jean-Marc Valin <jmvalin@mozilla.com>
+Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Dave Airlie <airlied@linux.ie>, alexander.deucher@amd.com,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>, michel.daenzer@amd.com,
+        dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3BML0Iv030405
 
-Code is expecing to observe the same number of buffers returned from
-dma_map_sg() function compared to sg_alloc_table_from_pages(). This
-doesn't hold true universally especially for systems with IOMMU.
+2018-04-11 20:35 GMT+02:00 Jean-Marc Valin <jmvalin@mozilla.com>:
+> On 04/11/2018 05:37 AM, Christian König wrote:
+>>> With your patches my EPYC box is unusable with  4.15++ kernels.
+>>> The whole Desktop is acting weird.  This one is using
+>>> an Cape Verde PRO [Radeon HD 7750/8740 / R7 250E] GPU.
+>>>
+>>> Box is  2 * EPYC 7281 with 128 GB ECC RAM
+>>>
+>>> Also a 14C Xeon box with a HD7700 is broken same way.
+>>
+>> The hardware is irrelevant for this. We need to know what software stack
+>> you use on top of it.
+>
+> Well, the hardware appears to be part of the issue too. I don't think
+> it's a coincidence that Gabriel has the problem on 2xEPYC, I have it on
+> 2xXeon and the previous reported had it on a Core 2 Quad that internally
+> has two dies.
+>
+> I've not yet tested your disable CONFIG_SWIOTLB fix yet -- might try it
+> over the weekend and report what happens.
+>
 
-The hardware actually needs the dma_address on a page by page basis.
-Joining multiple consecutive pages into one entry is just additional
-overhead which we don't need.
-
-Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index af1b879..91abe1a 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -1948,6 +1948,9 @@ int amdgpu_device_init(struct amdgpu_device *adev,
- 	/* init the mode config */
- 	drm_mode_config_init(adev->ddev);
- 
-+	/* limit scatter-gather buffer size to PAGE_SIZE */
-+	dma_set_max_seg_size(adev->dev, PAGE_SIZE);
-+
- 	r = amdgpu_device_ip_init(adev);
- 	if (r) {
- 		/* failed in exclusive mode due to timeout */
--- 
-2.7.4
+To get that right .. is only a matter of disabling SWIOTLB *code*
+while CONFIG_SWIOTLB is still set ?
