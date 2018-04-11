@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+YNUN37ijxOjGKkJksycyUxEVbmaFwXQY0P6y5RqXvlMJyBehRFGRLlcuQPwNMS+M5T2p6
-ARC-Seal: i=1; a=rsa-sha256; t=1523473011; cv=none;
+X-Google-Smtp-Source: AIpwx49qw2+gDKHVqxm7gpmXZUBttdaoK3skMVuuhQ8xzAjzRwnzkdOSO1LxnLC9tIVS5hD6IdNb
+ARC-Seal: i=1; a=rsa-sha256; t=1523473008; cv=none;
         d=google.com; s=arc-20160816;
-        b=MU+KTdRIVqzyr1MOCxksGe1DgZwaKdtnkG4dwp/tQfaCJ5whKLindSMcpbcCedtLeY
-         tpvhXdnTg/SRSq7m0NPiwibdONAKAstPdbRCC3rURq/Md2frMgGyo0bl0IDQF+SGnQ7e
-         BUudfK+sL9tEpySlTqcblY+4Q+Dd4YNcCXpIiD2hRa6dsmgOggbiW8GlfYG54in8CC1I
-         zxn6o0WBMiaQiTievC6gUvyM8i3gHFFQ7kVp0EP3aG66y8UuDHDBBMt8+VJyEsIk8AhC
-         h9wTCApUIsgfAhBbtkjiM5kL6k0n8I6rbj4LrEOg0fN3HAQpEyesmozCyFF/6BvfjXFs
-         Hpcw==
+        b=fA2osGCcXNvMqO8wxy2xCP3Qw9yro+5v/r+AruVSZDQamAreyGqpwWBb9jius8l0mm
+         vX0aHihF4itnj+3Q4N9geeTnOxKyv1b31Qqsb+Rxrku3TnZyRnhVo6O36nUEmmVA7GxE
+         vyvFcy4d90cJNvU8d4Z3tJHUQuHGvnElWEAsgyMefg3Bgp4LXGRd/Wb2FR7+25L5eEwD
+         SmHwRK/GODqUdFvPxUqhyW0zjdcwqXpDqB3N1lzmFtHNQGTlPLsXfWfqbMaNHmADBVSz
+         US1C0aVtbPp4dohpEqi6IsvtVL+4YWtqBVtdtR+I2rqaPSUeq7W6JvfElUgocltpuOXZ
+         O7cA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MgiySfdHpDeGrMoVU4ofZ1BZtraKLR1q8nmUydwO3T0=;
-        b=kLVeMvtL7T53xJp/CYyBnP9tv/XPJKpA6PCT5Kb3H9EzhmDxfVeXAhKLbiE/Duh+Bl
-         83yGA1VjSHei4gp+LBthmAPFqmkUS6h2IcBRv++qdN8aXRazmkKeQpTssXWwQ6nbsPKl
-         OAmqBn0LrKDqaHXAJbA8Rk/qCLN9SyUPsXRySPhOH1CPZPbULvvbX7Vpher0b8COJK66
-         16X/ZTWmoEkwhbQp99WwtveYb9nP3SS9nH2/zwcyfM7lRAckqP9O/3MLE6eT5SAWLY0b
-         YpNYPtZBkgL0CnOYXV4RK24UetY567m2Xh9yHLa9Qc2XS9qzVLj8fB8bwkPhodsueNnW
-         N7Lw==
+        bh=EExqPyOi/9+8sqzx5BByI+6zqpb77EbxuvqSHO9iQFA=;
+        b=SuZo66z3flsVUv/vxQf3BQ1vmVtazQk8UpgmCzgx2H0dE25pLde53pzq3QMtWBbbLd
+         uRRRG5i/OqesvRR6dSPJu5X17FTIhtGqcm0JexLCnOh6zodBD8BDDXxi7IoRww5ZA1xZ
+         IMuDf4KUzEmEGlt7xcqkE3ErSuxq/7WL/1ZU/FXjyZl/oUuyye7Rkw/oldn5AJoMbA/e
+         S4rGwS798Olu2jfHmW1dikTa/DXwTeLR4elaxOIEG2pzHHUWtbHh2jXb8rk3kv6oG+M1
+         BYt3gApUrkHy9NiDr2tyjWl4DkbfGawl/00rXUNh6HtN6Y1AghmaNd18TqzYCE9rvpjs
+         kiyA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stephen Smalley <sds@tycho.nsa.gov>,
-	Paul Moore <paul@paul-moore.com>,
+	Tariq Toukan <tariqt@mellanox.com>,
+	kernel-team@fb.com,
+	Saeed Mahameed <saeedm@mellanox.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 096/310] selinux: do not check open permission on sockets
-Date: Wed, 11 Apr 2018 20:33:55 +0200
-Message-Id: <20180411183626.359291395@linuxfoundation.org>
+Subject: [PATCH 4.9 095/310] net/mlx5: Tolerate irq_set_affinity_hint() failures
+Date: Wed, 11 Apr 2018 20:33:54 +0200
+Message-Id: <20180411183626.322061586@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476669353223127?=
-X-GMAIL-MSGID: =?utf-8?q?1597477236861189973?=
+X-GMAIL-THRID: =?utf-8?q?1597476666941351616?=
+X-GMAIL-MSGID: =?utf-8?q?1597477233829020840?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,61 +51,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stephen Smalley <sds@tycho.nsa.gov>
+From: Tariq Toukan <tariqt@mellanox.com>
 
 
-[ Upstream commit ccb544781d34afdb73a9a73ae53035d824d193bf ]
+[ Upstream commit b665d98edc9ab295169be2fc5bb4e89a46de0a1a ]
 
-open permission is currently only defined for files in the kernel
-(COMMON_FILE_PERMS rather than COMMON_FILE_SOCK_PERMS). Construction of
-an artificial test case that tries to open a socket via /proc/pid/fd will
-generate a recvfrom avc denial because recvfrom and open happen to map to
-the same permission bit in socket vs file classes.
+Add tolerance to failures of irq_set_affinity_hint().
+Its role is to give hints that optimizes performance,
+and should not block the driver load.
 
-open of a socket via /proc/pid/fd is not supported by the kernel regardless
-and will ultimately return ENXIO. But we hit the permission check first and
-can thus produce these odd/misleading denials.  Omit the open check when
-operating on a socket.
+In non-SMP systems, functionality is not available as
+there is a single core, and all these calls definitely
+fail.  Hence, do not call the function and avoid the
+warning prints.
 
-Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Fixes: db058a186f98 ("net/mlx5_core: Set irq affinity hints")
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Cc: kernel-team@fb.com
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/selinux/hooks.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/main.c |   15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2033,8 +2033,9 @@ static inline u32 file_to_av(struct file
- static inline u32 open_file_to_av(struct file *file)
- {
- 	u32 av = file_to_av(file);
-+	struct inode *inode = file_inode(file);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -548,7 +548,6 @@ static int mlx5_irq_set_affinity_hint(st
+ 	struct mlx5_priv *priv  = &mdev->priv;
+ 	struct msix_entry *msix = priv->msix_arr;
+ 	int irq                 = msix[i + MLX5_EQ_VEC_COMP_BASE].vector;
+-	int err;
  
--	if (selinux_policycap_openperm)
-+	if (selinux_policycap_openperm && inode->i_sb->s_magic != SOCKFS_MAGIC)
- 		av |= FILE__OPEN;
+ 	if (!zalloc_cpumask_var(&priv->irq_info[i].mask, GFP_KERNEL)) {
+ 		mlx5_core_warn(mdev, "zalloc_cpumask_var failed");
+@@ -558,18 +557,12 @@ static int mlx5_irq_set_affinity_hint(st
+ 	cpumask_set_cpu(cpumask_local_spread(i, priv->numa_node),
+ 			priv->irq_info[i].mask);
  
- 	return av;
-@@ -3031,6 +3032,7 @@ static int selinux_inode_permission(stru
- static int selinux_inode_setattr(struct dentry *dentry, struct iattr *iattr)
- {
- 	const struct cred *cred = current_cred();
-+	struct inode *inode = d_backing_inode(dentry);
- 	unsigned int ia_valid = iattr->ia_valid;
- 	__u32 av = FILE__WRITE;
+-	err = irq_set_affinity_hint(irq, priv->irq_info[i].mask);
+-	if (err) {
+-		mlx5_core_warn(mdev, "irq_set_affinity_hint failed,irq 0x%.4x",
+-			       irq);
+-		goto err_clear_mask;
+-	}
++#ifdef CONFIG_SMP
++	if (irq_set_affinity_hint(irq, priv->irq_info[i].mask))
++		mlx5_core_warn(mdev, "irq_set_affinity_hint failed, irq 0x%.4x", irq);
++#endif
  
-@@ -3046,8 +3048,10 @@ static int selinux_inode_setattr(struct
- 			ATTR_ATIME_SET | ATTR_MTIME_SET | ATTR_TIMES_SET))
- 		return dentry_has_perm(cred, dentry, FILE__SETATTR);
+ 	return 0;
+-
+-err_clear_mask:
+-	free_cpumask_var(priv->irq_info[i].mask);
+-	return err;
+ }
  
--	if (selinux_policycap_openperm && (ia_valid & ATTR_SIZE)
--			&& !(ia_valid & ATTR_FILE))
-+	if (selinux_policycap_openperm &&
-+	    inode->i_sb->s_magic != SOCKFS_MAGIC &&
-+	    (ia_valid & ATTR_SIZE) &&
-+	    !(ia_valid & ATTR_FILE))
- 		av |= FILE__OPEN;
- 
- 	return dentry_has_perm(cred, dentry, av);
+ static void mlx5_irq_clear_affinity_hint(struct mlx5_core_dev *mdev, int i)
