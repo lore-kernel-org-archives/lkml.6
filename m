@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3308147-1523480287-2-17549187294214207617
+X-Cyrus-Session-Id: sloti22d1t05-3303684-1523480267-2-4580783955923285660
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523480286; b=rKtOAebfmoNEMntTfFSU4V5ciKo5GPA/kYC4QaE3lgSdLB4Zr+
-    5Kwc2ZH8tgtgDWS5Q1hobmOVF9ajeo9WBA3jgBNB1wO00uhowDJuMzloqIGwXCMi
-    vNWK74JzhSff779+I0b5tjQV6bINULCwDlptw87q4lnBs75E2zSEhMRp173NALGJ
-    tQmGPESNa+KGVeTZIcZ6nM4E2lI2Y7ShfUy2NVzPCfctRw1RVuTTNLFBbHZWBFLE
-    VxUBxBfE7o5aBtn+lPBITtKMzQJtd+/oxFP0leeE2UMa9xnFJn7U9P1ZjNm3nber
-    sfu0Nzv/Qg1G5g0qAk1IZh+qEeaed6XPhNSg==
+    1523480266; b=OShMtJlIZAJDRsvAT2hBA7Uemh99e7mq9IpIc7YPm05XgG3H2y
+    qRsMiDGmHQG14tfrnq24CJe8XSEBtboQC4k2AowfPLwsVpCpkHcnfs+quwDiHgqr
+    pXdOtri7hvKNttHdqtchYBxfFU6y9Rh6F9TUMlVavW57kfj3LYPlhYDyuu6dIs+c
+    wFmQHyO9wS+w5pPu2fpEv7kncIsp0t6mDodxd276BMSq1n6ajLfcMQd5YOQJ9aWj
+    ra6e/DoqK6ggoNjJ8x8TDAUVuXtPU5pm+bivHUJ3Ule/WqsIlFokT2hL1Pxqkn5x
+    DeSZdspZYprdGE4HdSQCGq+1388KV2BddLXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523480286; bh=vPFSj6MiKoYkV702A1JPZnSoJTcjLb
-    lf4gE0aHdzqvc=; b=dfIf4BjXQ7Mgf2uKe4yWYuxFxRbaXhESqpYgaTvJu1kCft
-    CFa/DcRG2pm9nlUOMbszMhuXUeEhVoQX36JNte1b5qWnVJF49I3UMbRD0gvI7BEg
-    dhGF06qr87+MDROrGXzJA8EJIjfJxjHYzeo9plv1i8FBSeOwPPnGzJkpc4sw4dyY
-    J/HG9McHuQM/mH6jU4MvkN5/KPBvI1JwliWkGH6ThePlcPBP3XIe/tIYew76BWEw
-    Zu2qdziKJNXHWiHUG6NI2wSrTN0dZseqgKY6B3USdcPARWpfQI7JC6Z8oYd0CmyH
-    Dpgos04ZP2dAqNHCx//GK4im1XRCZ0DY1jzhIPYA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523480266; bh=92pfwNIIjAHjHbSAwPc3QeQG5XQNyx
+    yvv9WjZMfjGjo=; b=rEkPZFdNy8EyxOv+u0VhtPuppYML7u8zstNgrSEBahUe70
+    o/wlf0MyVCfi3vBASZEpDlQPYVrTG8zc6lSIORz2f/kg8BcEpQQyH+XHu+OSbHgJ
+    CFt5dBQmc7C94J+MquP45XQXaOGse7dv3eNDKV/nWGLV9FtRr4AFlzRWTNfskCZe
+    fOQpxTpdc9TNXWrteZnAmN5swLl8SjATHIbYDaoD7ZirLGvKIWiobvvOWxIhGpRJ
+    b0HaqEfGycayhJ3mz1SfRwDmjjuD0TNCDMUUVsC3opnos4GzyW7syd0jJ1wohe3l
+    zToiA9oCQ4p3q3HiCNE2ovI58dsC7qwPU4tYB5vw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,31 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBayNtjKV/WgfMUKmyy5BWDlnisyqkd6ceFDtn+2D7E232iSB7Xx1XrmY1V1R8Df3X9ZYK2qI3tEittjCPLQPoEN4vaPBCFxVoUH8rNgZkN/jqPvb/MY
-    Hej+2xK85JWjRWUZ5G6WwWWeMO+j5d65U6OWPyFT5qa+yQ/jJxmmliQwTlxiUBjL1aM92eRmWmWzngctbpHAiYZRKSKjXw1Je87p4PAwCQfSCE626t2wJrqL
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIvBziIJwPMhHBGND3JxK2wihr6SVJMgJr+HxURgV6BzTd9XouwTqaNt2ahxhy9HQ81+Ek29x+UCnGbEe6SS7Q9HhrjmHONzjViHsNlDD//O8cQA3gPD
+    7W4f27lWwC2pAyixQnqz2YUjWpK0fASyMW6mxfcVrtEsvD+GxZXkAyntfYPvk1aGQhfVqn/kjstzv5zT3ROMxV8ny8yzPWeN/2WxuuKf92rEIQG9hXuIkqkx
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=Byx-y9mGAAAA:8 a=uP1ucDPQAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=qxTC8EC6x8ydEK2nXCcA:9 a=QEXdDO2ut3YA:10 a=9a9ggB8z3XFZH39hjkD6:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VnNF1IyMAAAA:8 a=FOH2dFAWAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=OX198wCGgoSroHnkHdYA:9 a=RSdVLRHgSUcvHvJ1:21 a=mnnycdplF6YCDCJn:21
+    a=QEXdDO2ut3YA:10 a=i3VuKzQdj-NEYjvDI-p3:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755575AbeDKU5q (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:57:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58208 "EHLO
+        id S1755372AbeDKSoV (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:44:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58170 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755390AbeDKSoU (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:44:20 -0400
+        with ESMTP id S1755383AbeDKSoS (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:44:18 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        stable@vger.kernel.org, Wen Xiong <wenxiong@linux.vnet.ibm.com>,
+        Jens Axboe <axboe@fb.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 003/190] rtc: snvs: fix an incorrect check of return value
-Date: Wed, 11 Apr 2018 20:34:09 +0200
-Message-Id: <20180411183550.283394579@linuxfoundation.org>
+Subject: [PATCH 4.4 021/190] blk-mq: NVMe 512B/4K+T10 DIF/DIX format returns I/O error on dd with split op
+Date: Wed, 11 Apr 2018 20:34:27 +0200
+Message-Id: <20180411183551.344306580@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -93,31 +93,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: Wen Xiong <wenxiong@linux.vnet.ibm.com>
 
 
-[ Upstream commit 758929005f06f954b7e1c87a1c9fdb44157b228f ]
+[ Upstream commit f36ea50ca0043e7b1204feaf1d2ba6bd68c08d36 ]
 
-Function devm_regmap_init_mmio() returns an ERR_PTR on error. However,
-in function snvs_rtc_probe() its return value is checked against NULL.
-This patch fixes it by checking the return value with IS_ERR().
+When formatting NVMe to 512B/4K + T10 DIf/DIX, dd with split op returns
+"Input/output error". Looks block layer split the bio after calling
+bio_integrity_prep(bio). This patch fixes the issue.
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Below is how we debug this issue:
+(1)format nvme to 4K block # size with type 2 DIF
+(2)dd with block size bigger than 1024k.
+oflag=direct
+dd: error writing '/dev/nvme0n1': Input/output error
+
+We added some debug code in nvme device driver. It showed us the first
+op and the second op have the same bi and pi address. This is not
+correct.
+
+1st op: nvme0n1 Op:Wr slba 0x505 length 0x100, PI ctrl=0x1400,
+	dsmgmt=0x0, AT=0x0 & RT=0x505
+	Guard 0x00b1, AT 0x0000, RT physical 0x00000505 RT virtual 0x00002828
+
+2nd op: nvme0n1 Op:Wr slba 0x605 length 0x1, PI ctrl=0x1400, dsmgmt=0x0,
+	AT=0x0 & RT=0x605  ==> This op fails and subsequent 5 retires..
+	Guard 0x00b1, AT 0x0000, RT physical 0x00000605 RT virtual 0x00002828
+
+With the fix, It showed us both of the first op and the second op have
+correct bi and pi address.
+
+1st op: nvme2n1 Op:Wr slba 0x505 length 0x100, PI ctrl=0x1400,
+	dsmgmt=0x0, AT=0x0 & RT=0x505
+	Guard 0x5ccb, AT 0x0000, RT physical 0x00000505 RT virtual
+	0x00002828
+2nd op: nvme2n1 Op:Wr slba 0x605 length 0x1, PI ctrl=0x1400, dsmgmt=0x0,
+	AT=0x0 & RT=0x605
+	Guard 0xab4c, AT 0x0000, RT physical 0x00000605 RT virtual
+	0x00003028
+
+Signed-off-by: Wen Xiong <wenxiong@linux.vnet.ibm.com>
+Signed-off-by: Jens Axboe <axboe@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/rtc-snvs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/blk-mq.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/rtc/rtc-snvs.c
-+++ b/drivers/rtc/rtc-snvs.c
-@@ -257,7 +257,7 @@ static int snvs_rtc_probe(struct platfor
- 		of_property_read_u32(pdev->dev.of_node, "offset", &data->offset);
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1252,13 +1252,13 @@ static blk_qc_t blk_mq_make_request(stru
+ 
+ 	blk_queue_bounce(q, &bio);
+ 
++	blk_queue_split(q, &bio, q->bio_split);
++
+ 	if (bio_integrity_enabled(bio) && bio_integrity_prep(bio)) {
+ 		bio_io_error(bio);
+ 		return BLK_QC_T_NONE;
  	}
  
--	if (!data->regmap) {
-+	if (IS_ERR(data->regmap)) {
- 		dev_err(&pdev->dev, "Can't find snvs syscon\n");
- 		return -ENODEV;
- 	}
+-	blk_queue_split(q, &bio, q->bio_split);
+-
+ 	if (!is_flush_fua && !blk_queue_nomerges(q) &&
+ 	    blk_attempt_plug_merge(q, bio, &request_count, &same_queue_rq))
+ 		return BLK_QC_T_NONE;
