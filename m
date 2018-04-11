@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477196-2-11523295365259227881
+X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477186-2-788151518030224758
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477194; b=nDdWZIufZ50vgtfwG80ocHOEz7OvaiwBvlZv36NCvtZTSJDWbO
-    lQ0SAxBvAGQ2qskjrPrX/WBlTwXCSVtAl/1H1jLWbwUardVo+sV/XzKJAeSJdauw
-    o4pDl8z7Y1iDAoCtKlo+45qTZhlETkdTBeqpKtSYgMp9UqGjQ9Zo3UK0u+2lb4Q/
-    4XloDp6ihpUbJk8qTMGjauo+CkP22JUL4Qrtj1IWFmTHuERXUk9kaYvR84euTzYU
-    /ldNSDuT9ibBkriDZS5dW7TH5FAlFBu4BKXEx4kI7jD1HHM1OUcc2jOUyVsgf3Ve
-    +o9NZuMqUglTQHuYu+8DdQj2yypCMDCGKxKA==
+    1523477185; b=jZ6yey5cfNlMl5EJ9zSgRlVoXmJ2Jne8YWL84BxcMdxP4jjcG5
+    Gh060mGVeC070SKC2jYGIwqLUdD2EOZsYo6wrQ3d33kL6IInsOqQS+QfYJMaweOw
+    uOTwXPkcAQ8KRI4WjGhoVHhmTde/JynFIyG+sMxVYZ2+g4EEaXdZzdN320bemTpF
+    MD2gS4P8wrUusDYRvSJ9Z23swAsc5ZpsT3C1EsSH4yNgTZt6kzRivOrjMOhgakU9
+    +CJlivk6vDQPSxjhqb38US4p8t4ZEuIQCZxvkdGCxyS7NbMPFVbmV2HgPWWV3Qff
+    orQ5XOI2Q3tiZ8xCnHkdCn/Oz7QsoGQijmzQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523477194; bh=+NdZxHBPls0HHc0NUxlbY5LoQm0I1A
-    Wgxmo2myukTp8=; b=XhkoW2smfKLDlnTWkEcmo6ABPCDGN87XXTG50Sjn0om9Sx
-    y7xxBdFvMxijRZYa5xxIpyx1HmksJSv+F9pcVY/VKu8T38gbh6o1vQah65jP4WXf
-    2M9BtbGd448lCwlF14pX7XXeMWrcdZXWILpzF2pw6ogiJrF2r3XxsW8iyFUiDBau
-    gtAzpUDszItCcblpbVYgc/lebld9IgQoJ1G1NhZvALZaLcLCcuUpAA01AFX2Yvug
-    hO4zNpDksvf+XRH8Cgpz2PWCBQTDgbVEIb2eGMcS+PVRofTH015OSPNKoGJQ6r7g
-    Jmqo++Cgepv186wIqArr5M9dTn+QGHF3cnu8T6vg==
+    :list-id; s=fm2; t=1523477185; bh=SZ1GwdNtAquJx57JhH8i1l0Q3n4LUk
+    5DKXQCWT6V5bk=; b=vjM7u6MSge2lmTI7D9mlPuMO5LZswMr/YGfomKAiDGJle3
+    htq1ykpF+kWa9ixS41bbmng0H3SwT/u9IExLBiuNpcqBXG7QGWkTPDdy5EZaSXDK
+    Q6M9S8LOdCkXa1XwM39iyZ6w4AGXV3j0aDs0encu86c00nMtzR5nWz2ETkdx/3kR
+    GSrqOpdGb0oEOUJ3sQK97UT23WoUOFzCWz/4J5MuxeYjxFb3ulls1Fr3AYz0R92T
+    1ZXunF0EUcCTAybZIAX+aS39bm2V8MfxNtprFwkgsKSuXSm8zAnd8e/AuZIL1vNS
+    usJo6caPCKTZLrJ0FtAoo14GDzuR0JPP1h8MVWkg==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,31 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFq7zDciqs/BPrqiaKBFTtYWYwjzeEDuMsPnOGutYmnvWANVIswS79LFUsSwSnlbr4tVrTc2oDIoCVG74nnAjqQF+sMyWdYVGjeP8yROncKf3OLgS5Qz
-    0+I970SbgQ2NRZcUjwWk6lE+gZqqfoTuOCg3nr69yS6cIheXeNLR9+5xMYvvC7Jhkv+iFqBto9Xh3r+yHEt6PJgQ2Lb2HiCMTQk/RYQFkfncq1Os9UOLaNh5
+X-CM-Envelope: MS4wfFPttAGI7UpuTC20uOtANpCZWeAul2g//PS/3A+OuEJR/W0w8fpYBPzlMvflmpznaHg1zoE2AdGExdm+F6+r/JbyElbJZMmdKVgCZn4g22GBPsDkCd/a
+    b9ZDyQQ7nSBiAeNGxvNXKssZzTD3qR9EKMRwpkjKuvvZoO4T8pcb5OdVxAlGv3gQElyHgrAxuAfbbm3SjNQYoVl9FC2m4D5ae88aCshsgFyAi1+MTesrZ0f1
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=lVxO5aKw9bYQSbul2mYA:9 a=eIUNyqi2p6PJ-qmE:21 a=uQEfqhBxCgxr_Wf7:21
-    a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=vrZRev11AAAA:8 a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=1fmkquyJTycUkjhl2ZkA:9 a=QEXdDO2ut3YA:10 a=vE9JzVuArQVVuPm_qWxV:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933673AbeDKSzZ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:55:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35264 "EHLO
+        id S933709AbeDKSz3 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:55:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35430 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932962AbeDKSzY (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:55:24 -0400
+        with ESMTP id S933707AbeDKSz2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:55:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ihar Hrachyshka <ihrachys@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, KT Liao <kt.liao@emc.com.tw>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 063/310] arp: honour gratuitous ARP _replies_
-Date: Wed, 11 Apr 2018 20:33:22 +0200
-Message-Id: <20180411183624.941193463@linuxfoundation.org>
+Subject: [PATCH 4.9 034/310] Input: elantech - force relative mode on a certain module
+Date: Wed, 11 Apr 2018 20:32:53 +0200
+Message-Id: <20180411183623.745384441@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -93,79 +93,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ihar Hrachyshka <ihrachys@redhat.com>
+From: KT Liao <kt.liao@emc.com.tw>
 
 
-[ Upstream commit 23d268eb240954e6e78f7cfab04f2b1e79f84489 ]
+[ Upstream commit d899520b0431e70279bfb5066ecb6dc91d0b7072 ]
 
-When arp_accept is 1, gratuitous ARPs are supposed to override matching
-entries irrespective of whether they arrive during locktime. This was
-implemented in commit 56022a8fdd87 ("ipv4: arp: update neighbour address
-when a gratuitous arp is received and arp_accept is set")
+One of Elan modules with sample version is 0x74 and hw_version is 0x03 has
+a bug in absolute mode implementation, so let it run in default PS/2
+relative mode.
 
-There is a glitch in the patch though. RFC 2002, section 4.6, "ARP,
-Proxy ARP, and Gratuitous ARP", defines gratuitous ARPs so that they can
-be either of Request or Reply type. Those Reply gratuitous ARPs can be
-triggered with standard tooling, for example, arping -A option does just
-that.
-
-This patch fixes the glitch, making both Request and Reply flavours of
-gratuitous ARPs to behave identically.
-
-As per RFC, if gratuitous ARPs are of Reply type, their Target Hardware
-Address field should also be set to the link-layer address to which this
-cache entry should be updated. The field is present in ARP over Ethernet
-but not in IEEE 1394. In this patch, I don't consider any broadcasted
-ARP replies as gratuitous if the field is not present, to conform the
-standard. It's not clear whether there is such a thing for IEEE 1394 as
-a gratuitous ARP reply; until it's cleared up, we will ignore such
-broadcasts. Note that they will still update existing ARP cache entries,
-assuming they arrive out of locktime time interval.
-
-Signed-off-by: Ihar Hrachyshka <ihrachys@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: KT Liao <kt.liao@emc.com.tw>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/arp.c |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ drivers/input/mouse/elantech.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/net/ipv4/arp.c
-+++ b/net/ipv4/arp.c
-@@ -658,6 +658,7 @@ static int arp_process(struct net *net,
- 	unsigned char *arp_ptr;
- 	struct rtable *rt;
- 	unsigned char *sha;
-+	unsigned char *tha = NULL;
- 	__be32 sip, tip;
- 	u16 dev_type = dev->type;
- 	int addr_type;
-@@ -729,6 +730,7 @@ static int arp_process(struct net *net,
- 		break;
- #endif
- 	default:
-+		tha = arp_ptr;
- 		arp_ptr += dev->addr_len;
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1711,6 +1711,17 @@ int elantech_init(struct psmouse *psmous
+ 			     etd->samples[0], etd->samples[1], etd->samples[2]);
  	}
- 	memcpy(&tip, arp_ptr, 4);
-@@ -847,8 +849,18 @@ static int arp_process(struct net *net,
- 		   It is possible, that this option should be enabled for some
- 		   devices (strip is candidate)
- 		 */
--		is_garp = arp->ar_op == htons(ARPOP_REQUEST) && tip == sip &&
--			  addr_type == RTN_UNICAST;
-+		is_garp = tip == sip && addr_type == RTN_UNICAST;
-+
-+		/* Unsolicited ARP _replies_ also require target hwaddr to be
-+		 * the same as source.
-+		 */
-+		if (is_garp && arp->ar_op == htons(ARPOP_REPLY))
-+			is_garp =
-+				/* IPv4 over IEEE 1394 doesn't provide target
-+				 * hardware address field in its ARP payload.
-+				 */
-+				tha &&
-+				!memcmp(tha, sha, dev->addr_len);
  
- 		if (!n &&
- 		    ((arp->ar_op == htons(ARPOP_REPLY)  &&
++	if (etd->samples[1] == 0x74 && etd->hw_version == 0x03) {
++		/*
++		 * This module has a bug which makes absolute mode
++		 * unusable, so let's abort so we'll be using standard
++		 * PS/2 protocol.
++		 */
++		psmouse_info(psmouse,
++			     "absolute mode broken, forcing standard PS/2 protocol\n");
++		goto init_fail;
++	}
++
+ 	if (elantech_set_absolute_mode(psmouse)) {
+ 		psmouse_err(psmouse,
+ 			    "failed to put touchpad into absolute mode.\n");
