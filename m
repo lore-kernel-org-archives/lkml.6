@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/v9tHRL6TdXUNHgxJ7Xx/e8S7jQF+ccR34GB2TJtXGHpy9Jl/GAx0EQb1nvxvr0cMS7ZHi
-ARC-Seal: i=1; a=rsa-sha256; t=1523473324; cv=none;
+X-Google-Smtp-Source: AIpwx48c7hv5s0sYdJRVwgRS1g9wT0gNP5Poa+NyQr3Ago/B6BRMeO07DW4vOJVEeYg6hmzfYtkr
+ARC-Seal: i=1; a=rsa-sha256; t=1523473321; cv=none;
         d=google.com; s=arc-20160816;
-        b=AuSVqoIIXi+WnMryZHm8wQTdYX8JQRmuTGLBWeNbXcV9v0OmwGGtq/ljoEqH3I2DfH
-         Y42XfbbIOzbxAvzkmKvoqLwDcZHvkeP61q66BP3eeHX2K+kV+EO803SV4DbQO31rifHV
-         lrvp1azZFH9qidxqr6sVsQ9yvj/VrU4kVyg5KtiR7yFdoQ3CTsKWPRpsNj9wmxxxyKM6
-         OPQ9J5bAgg/tzEK6bGPf70NzEYLjT/Tq5+eYe3XAKK3ay3ZVqi1qczDPoYi5eaxf7AMu
-         w41IUroRoRGn+P6bFY+eXyqu+hx1UxLbh48rdHTUdWiXJu/XRos2GslGxYD0PBXfiCyH
-         5a1g==
+        b=yH7hajmP0Ay9QPyf4/J+MD49WB6zA7eln0jjnaIVukFQnYo3BwHh4QOlmNPk7hwZkx
+         QJm99M0zOEim8aVlqlMmYg7xevY1dxQKEcsI7qqCBHcJHx9aUj0BdHbQFCOQoePa9vEC
+         WemgF2xye1shBb1pGqmOiI6l+rJMKlJMuHfNq9SHwG+uLcTLvJ+sAXQUQGt5n3U21uqj
+         +GUGhRwtrql5kWDVorVAiWlxiDZXQGyg1OteBy3WQ0F+6FdKhVwuKJh2e1X+wikto8kM
+         il9TKNf+MyPQshBDNlcC0qJT3unQIjWZov2UHpEi0GrrcDv+pBA2unXbl5Kq+IG38kKN
+         /1Lg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yfIAeNlb5FI5utVWo09nHOFqQo7Tiha5BfUIbTGfjS0=;
-        b=JdvJpyCmg2Kgo8FXTt0GrlAnfnxTIWRYXyLmNlpyre9KhpN+dzdCZjBrWgkp2fYmcZ
-         ppf+OauydYL1xOYpyftCI7ohwkA73zJ88Z1qG2RjgidPCSkNA/xN3Xrd7P51sRIfR9sR
-         H8ecYhegep3Q/PlGYWQzLW0YKuAzO0vVaLqHRgP5gA2es2qIslu1E/u09YGS+GqmY2EA
-         XJF1uGSJbOkhQL17+4ldR8nXfDDIZG8LQ6L4U2r9pfTqWIfDYWBjdgwao8JhEmHHHc0R
-         RoViOWW+3d6REQPcTqXyGIUMiXgZaKRugF5pOK+40iCkHWWt5qWlXp0DZ9Ej597VtxYv
-         +Slg==
+        bh=ALxHA4HddK1ueULif65HfOj9Gle9DoKbX1HqvA+Y50Q=;
+        b=DNemuWWJYwjxqNLl7F4nUBLkCFugtCIMXEPa6mUIlro7Qvebe4jExWjjkhwSFYlG57
+         vmzPc/Zm0+q7dGyQYGS+3HJmP1ervIhO5VqMq2xHXUhXmfESWtSQxkxL9LjLFUO7Hulw
+         JQ1bjgXJHbdrHQJu+lormRiMbmtvI0LD0AnrVDgGOq4yBT5vzDqgfBK1W5JazmsXR6/g
+         kUGsjL5upWnISVubEGr2UroTKl96yvSLL+lXFaWuiX5z8vuwEwm35NraHr3ukcezD3Zv
+         ZWkq6U0f/yXPFaDdKMKukYRFceWMMEr0HuHiYCcMlOuUo3OUI+lN9K5cIdxjypjpvq0x
+         Vxjw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Mirabito <davidm@metamako.com>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Aaron Brown <aaron.f.brown@intel.com>,
-	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+	Christian Lamparter <chunkeey@googlemail.com>,
+	Andy Gross <andy.gross@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 205/310] e1000e: fix race condition around skb_tstamp_tx()
-Date: Wed, 11 Apr 2018 20:35:44 +0200
-Message-Id: <20180411183631.389041225@linuxfoundation.org>
+Subject: [PATCH 4.9 204/310] ARM: dts: qcom: ipq4019: fix i2c_0 node
+Date: Wed, 11 Apr 2018 20:35:43 +0200
+Message-Id: <20180411183631.350782387@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476237913134414?=
-X-GMAIL-MSGID: =?utf-8?q?1597477565023765823?=
+X-GMAIL-THRID: =?utf-8?q?1597477561693653683?=
+X-GMAIL-MSGID: =?utf-8?q?1597477561693653683?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,70 +50,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jacob Keller <jacob.e.keller@intel.com>
+From: Christian Lamparter <chunkeey@googlemail.com>
 
 
-[ Upstream commit 5012863b7347866764c4a4e58b62fb05346b0d06 ]
+[ Upstream commit 650df439cfb96c303328935559b2d06127a5a0b0 ]
 
-The e1000e driver and related hardware has a limitation on Tx PTP
-packets which requires we limit to timestamping a single packet at once.
-We do this by verifying that we never request a new Tx timestamp while
-we still have a tx_hwtstamp_skb pointer.
+This patch fixes two typos in the i2c_0 node for the ipq4019.
+The reg property length is just 0x600. The core clock is
+GCC_BLSP1_QUP1_I2C_APPS_CLK. GCC_BLSP1_QUP2_I2C_APPS_CLK is
+used by the second i2c.
 
-Unfortunately the driver suffers from a race condition around this. The
-tx_hwtstamp_skb pointer is not set to NULL until after skb_tstamp_tx()
-is called. This function notifies the stack and applications of a new
-timestamp. Even a well behaved application that only sends a new request
-when the first one is finished might be woken up and possibly send
-a packet before we can free the timestamp in the driver again. The
-result is that we needlessly ignore some Tx timestamp requests in this
-corner case.
-
-Fix this by assigning the tx_hwtstamp_skb pointer prior to calling
-skb_tstamp_tx() and use a temporary pointer to hold the timestamped skb
-until that function finishes. This ensures that the application is not
-woken up until the driver is ready to begin timestamping a new packet.
-
-This ensures that well behaved applications do not accidentally race
-with condition to skip Tx timestamps. Obviously an application which
-sends multiple Tx timestamp requests at once will still only timestamp
-one packet at a time. Unfortunately there is nothing we can do about
-this.
-
-Reported-by: David Mirabito <davidm@metamako.com>
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: e76b4284b520ba3 ("qcom: ipq4019: add i2c node to ipq4019 SoC and DK01 device tree")
+Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/e1000e/netdev.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/qcom-ipq4019.dtsi |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -1182,6 +1182,7 @@ static void e1000e_tx_hwtstamp_work(stru
- 	struct e1000_hw *hw = &adapter->hw;
+--- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+@@ -154,10 +154,10 @@
  
- 	if (er32(TSYNCTXCTL) & E1000_TSYNCTXCTL_VALID) {
-+		struct sk_buff *skb = adapter->tx_hwtstamp_skb;
- 		struct skb_shared_hwtstamps shhwtstamps;
- 		u64 txstmp;
- 
-@@ -1190,9 +1191,14 @@ static void e1000e_tx_hwtstamp_work(stru
- 
- 		e1000e_systim_to_hwtstamp(adapter, &shhwtstamps, txstmp);
- 
--		skb_tstamp_tx(adapter->tx_hwtstamp_skb, &shhwtstamps);
--		dev_kfree_skb_any(adapter->tx_hwtstamp_skb);
-+		/* Clear the global tx_hwtstamp_skb pointer and force writes
-+		 * prior to notifying the stack of a Tx timestamp.
-+		 */
- 		adapter->tx_hwtstamp_skb = NULL;
-+		wmb(); /* force write prior to skb_tstamp_tx */
-+
-+		skb_tstamp_tx(skb, &shhwtstamps);
-+		dev_kfree_skb_any(skb);
- 	} else if (time_after(jiffies, adapter->tx_hwtstamp_start
- 			      + adapter->tx_timeout_factor * HZ)) {
- 		dev_kfree_skb_any(adapter->tx_hwtstamp_skb);
+ 		i2c_0: i2c@78b7000 {
+ 			compatible = "qcom,i2c-qup-v2.2.1";
+-			reg = <0x78b7000 0x6000>;
++			reg = <0x78b7000 0x600>;
+ 			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
+-				 <&gcc GCC_BLSP1_QUP2_I2C_APPS_CLK>;
++				 <&gcc GCC_BLSP1_QUP1_I2C_APPS_CLK>;
+ 			clock-names = "iface", "core";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
