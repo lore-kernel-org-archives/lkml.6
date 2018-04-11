@@ -1,116 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751699AbeDKEJe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 00:09:34 -0400
-Received: from mail-it0-f42.google.com ([209.85.214.42]:40160 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750730AbeDKEJc (ORCPT
+        id S1750734AbeDKE2b (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 00:28:31 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56394 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750723AbeDKE23 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 00:09:32 -0400
-X-Google-Smtp-Source: AIpwx4/1RDCH3FUOp2sDUGWap+AA+nTOEyGQ9vBCq8CD/Yz20yKAZ6JQ2EWYIQiANDM0un60CQx7v1TRU8FNYji84PA=
+        Wed, 11 Apr 2018 00:28:29 -0400
+Subject: Re: [PATCH v2 7/9] trace_uprobe/sdt: Fix multiple update of same
+ reference counter
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: mhiramat@kernel.org, peterz@infradead.org, srikar@linux.vnet.ibm.com,
+        rostedt@goodmis.org, acme@kernel.org, ananth@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
+        alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
+        jolsa@redhat.com, kan.liang@intel.com, kjlx@templeofstupid.com,
+        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
+        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+References: <20180404083110.18647-1-ravi.bangoria@linux.vnet.ibm.com>
+ <20180404083110.18647-8-ravi.bangoria@linux.vnet.ibm.com>
+ <20180409132928.GA25722@redhat.com>
+ <84c1e60f-8aad-a0ce-59af-4fcb3f77df94@linux.vnet.ibm.com>
+ <20180410110633.GA29063@redhat.com>
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Date: Wed, 11 Apr 2018 09:58:13 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <87d0z6ttxe.fsf@xmission.com>
-References: <87d0z6ttxe.fsf@xmission.com>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Tue, 10 Apr 2018 21:09:11 -0700
-Message-ID: <CALCETrVR1qHCndoaqXWosy8ckMTyT2RequQTgg0MZUw_sMPwwQ@mail.gmail.com>
-Subject: Re: Q: Can we get rid of __copy_siginfo_to_user32?
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180410110633.GA29063@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18041104-0020-0000-0000-000004107121
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041104-0021-0000-0000-000042A4986A
+Message-Id: <c3bd7507-977e-67b5-9ab0-d70b4908a6f2@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-11_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804110041
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3B49g1B028391
 
-> On Apr 10, 2018, at 6:26 PM, Eric W. Biederman <ebiederm@xmission.com> wrote:
->
->
-> Andy,
->
-> I am looking at copy_siginfo_to_user32 and find it very unfortunate
-> that x86 with _sigchld_x32 needs to be the odd man out.  I am looking
-> at ways to simplify the special case.
->
-> The core of the special case comes from:
-> exit_to_usermode_loop
->  do_signal
->    handle_signal
->       setup_rt_frame
->
->
-> In setup_rt_frame the code looks at ksig to see which kind of signal
-> frame should be written for the signal.
->
-> This leads to the one case in the kernel where copy_siginfo_to_user32
-> does not use is_ia32_syscall() or is_x32_syscall() to see which kind of
-> signal frame it needs to create.
->
-> Andy, since you have been all over the entry point code in recent years
-> do you know if we allow tasks that can do both ia32 and x86_64 system
-> calls?  That seems to be what we the testing of ksig to see which kind
-> of signal frame to setup is all about.
+Hi Oleg,
 
-We do :(
-
-> If we don't allow mixed abi's on x86_64 then can I see if I have a ia32
-> task in setup_rt_frame by just calling is_ia32_syscall()?
+On 04/10/2018 04:36 PM, Oleg Nesterov wrote:
+> Hi Ravi,
 >
-> If we do allow mixed abi's do you know if it would be safe to
-> temporarily play with orig_ax or current_thread_info()->status?
+> On 04/10, Ravi Bangoria wrote:
+>>> and what if __mmu_notifier_register() fails simply because signal_pending() == T?
+>>> see mm_take_all_locks().
+>>>
+>>> at first glance this all look suspicious and sub-optimal,
+>> Yes. I should have added checks for failure cases.
+>> Will fix them in v3.
+> And what can you do if it fails? Nothing except report the problem. But
+> signal_pending() is not the unlikely or error condition, it should not
+> cause the tracing errors.
 
-Maybe, but it’s a real minefield. I think the right fix is to use
-sa_flags's SA_X32_ABI bit instead for the sigchld bit.  In general,
-the is_..._syscall() helpers can't be expected to return anything
-valid in any context other than a syscall, and handle_signal() is not
-a syscall.
+...
 
->
-> My goal is to write two wrappers: copy_siginfo_to_user32_ia32, and
-> copy_siginfo_to_user32_x32 around the ordinary copy_siginfo_to_user32.
-> With only a runtime test to see which ABI we need to implement.
->
-> Aka change:
->>    case SIL_CHLD:
->>        to->si_pid    = from->si_pid;
->>        to->si_uid    = from->si_uid;
->>        to->si_status = from->si_status;
->> #ifdef CONFIG_X86_X32_ABI
->>        if (x32_ABI) {
->>            to->_sifields._sigchld_x32._utime = from->si_utime;
->>            to->_sifields._sigchld_x32._stime = from->si_stime;
->>        } else
->> #endif
->>        {
->>            to->si_utime = from->si_utime;
->>            to->si_stime = from->si_stime;
->>        }
->>        break;
-> to something like:
->>    case SIL_CHLD:
->>        to->si_pid    = from->si_pid;
->>        to->si_uid    = from->si_uid;
->>        to->si_status = from->si_status;
->> #ifdef CONFIG_X86_X32_ABI
->>        if (!is_ia32_syscall()) {
->>            to->_sifields._sigchld_x32._utime = from->si_utime;
->>            to->_sifields._sigchld_x32._stime = from->si_stime;
->>        } else
->> #endif
->>        {
->>            to->si_utime = from->si_utime;
->>            to->si_stime = from->si_stime;
->>        }
->>        break;
->
+> Plus mm_take_all_locks() is very heavy... BTW, uprobe_mmap_callback() is
+> called unconditionally. Whatever it does, can we at least move it after
+> the no_uprobe_events() check? Can't we also check MMF_HAS_UPROBES?
 
-Makes sense, but can you get to sa_flags in there instead?
+Sure, I'll move it after these conditions.
 
-FWIW, I have a branch here:
+> Either way, I do not feel that mmu_notifier is the right tool... Did you
+> consider the uprobe_clear_state() hook we already have?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/log/?h=execve
+Ah! This is really a good idea. We don't need mmu_notifier then.
 
-that contains a *massive* cleanup of some other x86 signal stuff.  I
-need to dust it off and test it better.
+Thanks for suggestion,
+Ravi
