@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+MiwcfMfmyf8yy+Guaxf04TKuxAvxGff3atciDyIPeWL2+yiOsoedHKLUls1K/kS9hgJnf
-ARC-Seal: i=1; a=rsa-sha256; t=1523472677; cv=none;
+X-Google-Smtp-Source: AIpwx48GdS0UVL1abPJrHBOj4wkhpKOFjqHYxOPy/5Sj3C+7aqw33Q+YZh+2ZBYJKtz0oElsmCqZ
+ARC-Seal: i=1; a=rsa-sha256; t=1523472674; cv=none;
         d=google.com; s=arc-20160816;
-        b=pQj2QKRWi5UiSJuRUVjFnjHEIvGHYqObO0FxZgMWj0BfZedKJ99JJPfspGgr4gPGfJ
-         7j35xvsg84Si4szFRI+rjLgaC+p/uPTVGvPsgbDlxXYxHyaYcLJWRMVMQkaisOcRVBDN
-         SyAeGCbpntbP75snYlYFO2HmewfOVGBQ60JwR6d7SusjVY5XWATDmJRSNEhbVv4V/Vdp
-         efuH987vhFf74QSCN+eJeW0b+Uhh211ehDVO9eABVHeanjbIgyh/HyD1jbS0J7fweZjU
-         SZW6y00JJ5yeR5tDu91GcOh5Z5Y3fGY2rkttii5VwhhJtcgC/Uq2fg1O/GMdsG3nYM4a
-         B+Kw==
+        b=f0+g2ikqF6XdcIAcB9P+7FcbmHayDmoTyzg1hiqHMfawlRCjoMbu50TwfoNuyCJJvR
+         BAH0PTI0G/Kn9jUQ+Wg7UdEWb+5w2Sqvm1bvrWqH7WTcS1MZzbkyGXvkqWxJO8/f/0mB
+         TsrgRzgyWJsjOwlHauHui8u98Os5Gdn85+QzC+m2RUNRihw0RTZEVHYd4VqaF0SJTivA
+         hnx5oQo3Mj7HyPGDpZfI2l3ILISLW4mTuYtx7+hQFM8L27YRmMxByxoPk2Zk5dX4JrAG
+         O7zLCJwvr8jSpq42mOTGIRPj7Hw2Nzr2tmFo8eC/GP1GCZcIzq8HGpAPWNvAX2z5qqSV
+         PBcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yxorftkZ79BmdpP10DQA0hi5VoHNZzVF5bwvBR35bms=;
-        b=P2IMM/yignOcra+fhCnQELJvuFsdbytB0ZRkEZljHPGUhF40RLYXjwx4ixjlY46aZu
-         b9S65fhheHDIuNCrv3HuRxzN/CTJuV+3VxPXSwxpJQ+c3fBKWn+iQRC8VdZGGSQBDzh8
-         7dbWKKOjq3FU9rB0Mo/I5d1lOfOw0vQQmrdlrPm8u4Z5rcg/gq8iqyraU09cIBfgdQdQ
-         06sD3G+4V02tHKdO4TAxdXQycYrSvtuhA7XEB+53kGWwgVi+BgpCEGaU+SuICQCb8i2G
-         6E6r7jT7UmcSIm5bGvxwBFDptNi/ECwG7SYyElScUHZlxMPyynoQB8PnfQMcDA/1agy2
-         GW+g==
+        bh=tqsSdDYBvLFOCI4xWyoZiNyllB2B9+HNyYd5nraeOe0=;
+        b=hjKNGaIZhPjuCCjycZxnuhwjluF1GY45ZIrCkGSluBn+tCmRG599pQCHQrKp8uiHga
+         vj3AD4XY6bzYucoPhR6m5v2YpdEBuwZ1TLxSNRmsfBYFk1Ql+u+PKj6hk+muVXi6eQC6
+         2G16bnOej1Fpb0RgBozo+9OdEdulvK3r0tZ3rGrZXkkeuvHAzff0Bwtf3wpKvBg/r+2K
+         aFMMNnlmJfa9gYkQM23t8sKGXdUsVP5b1g9Lw1WNemaF3h7Sa+Aceuong9OMm7SXxOFQ
+         IcVetDWCfdyz7z/iioop5fd2//thCeIawTYBJWY4UEfm5eMLqJCnMBLGafJ8X0LL+2z3
+         K12Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lucas Bates <lucasb@mojatatu.com>,
-	Davide Caratti <dcaratti@redhat.com>,
+	Alexander Potapenko <glider@google.com>,
+	Eric Dumazet <edumazet@google.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 170/190] net/sched: fix NULL dereference in the error path of tcf_bpf_init()
-Date: Wed, 11 Apr 2018 20:36:56 +0200
-Message-Id: <20180411183602.441594958@linuxfoundation.org>
+Subject: [PATCH 4.4 169/190] netlink: make sure nladdr has correct size in netlink_connect()
+Date: Wed, 11 Apr 2018 20:36:55 +0200
+Message-Id: <20180411183602.396992041@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476886809058174?=
-X-GMAIL-MSGID: =?utf-8?q?1597476886809058174?=
+X-GMAIL-THRID: =?utf-8?q?1597476332058088557?=
+X-GMAIL-MSGID: =?utf-8?q?1597476883409787954?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,98 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Alexander Potapenko <glider@google.com>
 
 
-[ Upstream commit 3239534a79ee6f20cffd974173a1e62e0730e8ac ]
+[ Upstream commit 7880287981b60a6808f39f297bb66936e8bdf57a ]
 
-when tcf_bpf_init_from_ops() fails (e.g. because of program having invalid
-number of instructions), tcf_bpf_cfg_cleanup() calls bpf_prog_put(NULL) or
-bpf_prog_destroy(NULL). Unless CONFIG_BPF_SYSCALL is unset, this causes
-the following error:
+KMSAN reports use of uninitialized memory in the case when |alen| is
+smaller than sizeof(struct sockaddr_nl), and therefore |nladdr| isn't
+fully copied from the userspace.
 
- BUG: unable to handle kernel NULL pointer dereference at 0000000000000020
- PGD 800000007345a067 P4D 800000007345a067 PUD 340e1067 PMD 0
- Oops: 0000 [#1] SMP PTI
- Modules linked in: act_bpf(E) ip6table_filter ip6_tables iptable_filter binfmt_misc ext4 mbcache jbd2 crct10dif_pclmul crc32_pclmul ghash_clmulni_intel snd_hda_codec_generic pcbc snd_hda_intel snd_hda_codec snd_hda_core snd_hwdep snd_seq snd_seq_device snd_pcm aesni_intel crypto_simd glue_helper cryptd joydev snd_timer snd virtio_balloon pcspkr soundcore i2c_piix4 nfsd auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c ata_generic pata_acpi qxl drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm virtio_blk drm virtio_net virtio_console i2c_core crc32c_intel serio_raw virtio_pci ata_piix libata virtio_ring floppy virtio dm_mirror dm_region_hash dm_log dm_mod [last unloaded: act_bpf]
- CPU: 3 PID: 5654 Comm: tc Tainted: G            E    4.16.0.bpf_test+ #408
- Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
- RIP: 0010:__bpf_prog_put+0xc/0xc0
- RSP: 0018:ffff9594003ef728 EFLAGS: 00010202
- RAX: 0000000000000000 RBX: ffff9594003ef758 RCX: 0000000000000024
- RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
- RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000044
- R10: 0000000000000220 R11: ffff8a7ab9f17131 R12: 0000000000000000
- R13: ffff8a7ab7c3c8e0 R14: 0000000000000001 R15: ffff8a7ab88f1054
- FS:  00007fcb2f17c740(0000) GS:ffff8a7abfd80000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 0000000000000020 CR3: 000000007c888006 CR4: 00000000001606e0
- Call Trace:
-  tcf_bpf_cfg_cleanup+0x2f/0x40 [act_bpf]
-  tcf_bpf_cleanup+0x4c/0x70 [act_bpf]
-  __tcf_idr_release+0x79/0x140
-  tcf_bpf_init+0x125/0x330 [act_bpf]
-  tcf_action_init_1+0x2cc/0x430
-  ? get_page_from_freelist+0x3f0/0x11b0
-  tcf_action_init+0xd3/0x1b0
-  tc_ctl_action+0x18b/0x240
-  rtnetlink_rcv_msg+0x29c/0x310
-  ? _cond_resched+0x15/0x30
-  ? __kmalloc_node_track_caller+0x1b9/0x270
-  ? rtnl_calcit.isra.29+0x100/0x100
-  netlink_rcv_skb+0xd2/0x110
-  netlink_unicast+0x17c/0x230
-  netlink_sendmsg+0x2cd/0x3c0
-  sock_sendmsg+0x30/0x40
-  ___sys_sendmsg+0x27a/0x290
-  ? mem_cgroup_commit_charge+0x80/0x130
-  ? page_add_new_anon_rmap+0x73/0xc0
-  ? do_anonymous_page+0x2a2/0x560
-  ? __handle_mm_fault+0xc75/0xe20
-  __sys_sendmsg+0x58/0xa0
-  do_syscall_64+0x6e/0x1a0
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
- RIP: 0033:0x7fcb2e58eba0
- RSP: 002b:00007ffc93c496c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
- RAX: ffffffffffffffda RBX: 00007ffc93c497f0 RCX: 00007fcb2e58eba0
- RDX: 0000000000000000 RSI: 00007ffc93c49740 RDI: 0000000000000003
- RBP: 000000005ac6a646 R08: 0000000000000002 R09: 0000000000000000
- R10: 00007ffc93c49120 R11: 0000000000000246 R12: 0000000000000000
- R13: 00007ffc93c49804 R14: 0000000000000001 R15: 000000000066afa0
- Code: 5f 00 48 8b 43 20 48 c7 c7 70 2f 7c b8 c7 40 10 00 00 00 00 5b e9 a5 8b 61 00 0f 1f 44 00 00 0f 1f 44 00 00 41 54 55 48 89 fd 53 <48> 8b 47 20 f0 ff 08 74 05 5b 5d 41 5c c3 41 89 f4 0f 1f 44 00
- RIP: __bpf_prog_put+0xc/0xc0 RSP: ffff9594003ef728
- CR2: 0000000000000020
-
-Fix it in tcf_bpf_cfg_cleanup(), ensuring that bpf_prog_{put,destroy}(f)
-is called only when f is not NULL.
-
-Fixes: bbc09e7842a5 ("net/sched: fix idr leak on the error path of tcf_bpf_init()")
-Reported-by: Lucas Bates <lucasb@mojatatu.com>
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Fixes: 1da177e4c3f41524 ("Linux-2.6.12-rc2")
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_bpf.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ net/netlink/af_netlink.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/sched/act_bpf.c
-+++ b/net/sched/act_bpf.c
-@@ -249,10 +249,14 @@ static int tcf_bpf_init_from_efd(struct
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -1054,6 +1054,9 @@ static int netlink_connect(struct socket
+ 	if (addr->sa_family != AF_NETLINK)
+ 		return -EINVAL;
  
- static void tcf_bpf_cfg_cleanup(const struct tcf_bpf_cfg *cfg)
- {
--	if (cfg->is_ebpf)
--		bpf_prog_put(cfg->filter);
--	else
--		bpf_prog_destroy(cfg->filter);
-+	struct bpf_prog *filter = cfg->filter;
++	if (alen < sizeof(struct sockaddr_nl))
++		return -EINVAL;
 +
-+	if (filter) {
-+		if (cfg->is_ebpf)
-+			bpf_prog_put(filter);
-+		else
-+			bpf_prog_destroy(filter);
-+	}
- 
- 	kfree(cfg->bpf_ops);
- 	kfree(cfg->bpf_name);
+ 	if ((nladdr->nl_groups || nladdr->nl_pid) &&
+ 	    !netlink_allowed(sock, NL_CFG_F_NONROOT_SEND))
+ 		return -EPERM;
