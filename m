@@ -1,127 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752426AbeDKG2j (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 02:28:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40178 "EHLO mail.bootlin.com"
+        id S1752185AbeDKGf6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 02:35:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44552 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751872AbeDKG2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 02:28:37 -0400
-Date: Wed, 11 Apr 2018 08:28:35 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Paul Kocialkowski <contact@paulk.fr>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>
-Subject: Re: [PATCH 1/3] drm/panel: Add RGB666 variant of Innolux AT070TN92
-Message-ID: <20180411062835.oqzd34e2szrnv34b@flea>
-References: <20180410213129.24049-1-contact@paulk.fr>
+        id S1751845AbeDKGf5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 02:35:57 -0400
+Date: Wed, 11 Apr 2018 08:35:54 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
+        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: Re: [PATCH v2 2/2] slab: __GFP_ZERO is incompatible with a
+ constructor
+Message-ID: <20180411063554.GB30893@dhcp22.suse.cz>
+References: <20180411060320.14458-1-willy@infradead.org>
+ <20180411060320.14458-3-willy@infradead.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7tqqpg34pqzskzur"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180410213129.24049-1-contact@paulk.fr>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180411060320.14458-3-willy@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue 10-04-18 23:03:20, Matthew Wilcox wrote:
+> diff --git a/mm/slab.c b/mm/slab.c
+> index 58c8cecc26ab..9ad85fd9fca8 100644
+> --- a/mm/slab.c
+> +++ b/mm/slab.c
+> @@ -2661,6 +2661,7 @@ static struct page *cache_grow_begin(struct kmem_cache *cachep,
+>  				invalid_mask, &invalid_mask, flags, &flags);
+>  		dump_stack();
+>  	}
+> +	BUG_ON(cachep->ctor && (flags & __GFP_ZERO));
 
---7tqqpg34pqzskzur
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+NAK. We really do not want to blow the whole kernel just because
+somebody is doing something stupid. Make it WARN_ON_ONCE and fix up the
+flag.
 
-On Tue, Apr 10, 2018 at 11:31:27PM +0200, Paul Kocialkowski wrote:
-> This adds timings for the RGB666 variant of the Innolux AT070TN92 panel,
-> as found on the Ainol AW1 tablet.
->=20
-> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
-> ---
->  drivers/gpu/drm/panel/panel-simple.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel=
-/panel-simple.c
-> index 5591984a392b..efeb2f2162bc 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -1063,6 +1063,29 @@ static const struct panel_desc innolux_at070tn92 =
-=3D {
->  	.bus_format =3D MEDIA_BUS_FMT_RGB888_1X24,
->  };
-> =20
-> +static const struct drm_display_mode innolux_at070tn92_rgb666_mode =3D {
-> +	.clock =3D 40000,
-> +	.hdisplay =3D 800,
-> +	.hsync_start =3D 800 + 112,
-> +	.hsync_end =3D 800 + 112 + 1,
-> +	.htotal =3D 800 + 112 + 1 + 87,
-> +	.vdisplay =3D 480,
-> +	.vsync_start =3D 480 + 141,
-> +	.vsync_end =3D 480 + 141 + 1,
-> +	.vtotal =3D 480 + 141 + 1 + 38,
-> +	.vrefresh =3D 60,
-> +};
+> +static inline bool slab_no_ctor(struct kmem_cache *s)
+> +{
+> +	if (IS_ENABLED(CONFIG_DEBUG_VM))
+> +		return !WARN_ON_ONCE(s->ctor);
+> +	return true;
+> +}
 
-I'm not sure why you'd need different timings if the only difference
-is the bus width.
+I do realize that you want to keep the hotpath without additional checks
+but if for nothing else this is a really bad misnomer.
+debug_slab_no_ctor()? I can clearly see how somebody uses this blindly
+for a different purpose.
+[...]
+> diff --git a/mm/slub.c b/mm/slub.c
+> index a28488643603..9f8f38a552e5 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -1576,6 +1576,7 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
+>  
+>  	if (gfpflags_allow_blocking(flags))
+>  		local_irq_enable();
+> +	BUG_ON(s->ctor && (flags & __GFP_ZERO));
 
-> +static const struct panel_desc innolux_at070tn92_rgb666 =3D {
-> +	.modes =3D &innolux_at070tn92_rgb666_mode,
-> +	.num_modes =3D 1,
-> +	.size =3D {
-> +		.width =3D 154,
-> +		.height =3D 86,
-> +	},
-> +	.bus_format =3D MEDIA_BUS_FMT_RGB666_1X18,
-> +};
-> +
->  static const struct display_timing innolux_g101ice_l01_timing =3D {
->  	.pixelclock =3D { 60400000, 71100000, 74700000 },
->  	.hactive =3D { 1280, 1280, 1280 },
-> @@ -2105,6 +2128,9 @@ static const struct of_device_id platform_of_match[=
-] =3D {
->  	}, {
->  		.compatible =3D "innolux,at070tn92",
->  		.data =3D &innolux_at070tn92,
-> +	}, {
-> +		.compatible =3D "innolux,at070tn92-rgb666",
-> +		.data =3D &innolux_at070tn92_rgb666,
+No no on this as well.
 
-And this isn't a different device, it's just the integration in the
-board that is different, so you shouldn't have a different compatible
-here, but rather something like the bus-width property documented in
-the Documentation/devicetree/bindings/media/video-interfaces.txt file.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---7tqqpg34pqzskzur
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrNqwUACgkQ0rTAlCFN
-r3QQWQ/+NWa87cWJjJ2jsBdu8HcxgKwidvfuf9dQIu9bLYU0Jd3y7BTcqbbR4XHP
-axE+EeI6M3V6q5VoTEJ2hlDKK8m2mLzFY7wIiDmYKICN1LQOI3S5xZGU8r5bDdUx
-2byxBqtxVV0droDsi8ZEmWCmiKFLUh+fXpjAqQIQN75hosuFv2DpfFysoLw+9hD+
-YUIhI7MQA2OfLg1fcfmXvsfU3Y/KXlw1gR/xRyQv7rBp/PEs0DqmPd+g6UMBHcgP
-FOgm4B3qPL32tBWraYNW2VASz8j55ZpVCqNHtfxeqkjC3Rcg9B6LlUeqmhonJ9jx
-QGKcojZrLkzhbQgb8NfuPEFuZD58twQr6aXfE1L06k1rbMxB1rrK6zU+Vozao2iX
-3yotoFmL0fOu0mo97nXtfj4x4STVUplex9kuWAd8v3qTwtlnFyXxbaUharE6iC53
-OS12+LYk5BQa7e+XU4Fhagqd6KDYnVomDMVE1VSB/rtBGZDWMOYv4F2x6v1u55Yu
-uX2JcYD5LlH0pOLldc8hKpVeAA6FsZ9aS7jFywCbDf30QQk5kTQpY5qqb7fRP3OB
-ZgUaQ6f6tYRdpGnUKKVMImEuYjIJ6U+I5LUsKJBrsuxl69wkeisxxOztIlfayZKv
-cKKzq5DaIDjtpsa7pG3YbQanq1wH4JWTlTznm+ukGPFoDXhP9bY=
-=3vBz
------END PGP SIGNATURE-----
-
---7tqqpg34pqzskzur--
+Othe than that. Once those are fixed, feel free to add
+Acked-by: Michal Hocko <mhocko@suse.com>
+-- 
+Michal Hocko
+SUSE Labs
