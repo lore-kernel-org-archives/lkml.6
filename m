@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+8Iks7JBNXDxH/KjSdfMgnxDMAHY9QgceZ4Gd3+ivBasvLH/XA9NUxzzNsND6elfYjl3Kf
-ARC-Seal: i=1; a=rsa-sha256; t=1523472740; cv=none;
+X-Google-Smtp-Source: AIpwx48RYoogOpZrLpHAf7EUXQ8pz2khqgpwNQotFWZoEWyAE82cnWHZ2WAirOqXOC/YQxb6HPFc
+ARC-Seal: i=1; a=rsa-sha256; t=1523472738; cv=none;
         d=google.com; s=arc-20160816;
-        b=SpE2JmGAnauOLgTJJCBlYPb8B2iXu7i2f/QMcqEOJDE0tR+kXUySkI2vmsAJ2qdqtV
-         uAMlCM40bfN4WJ3WcV3tM7Ne+eUrwaPHJjH7XodU+avjiKp4jGSK73US/de/YFHLRkQs
-         FhCM2Xdit8Pf7Ybo4ua5VaUNU4Vo1Gh9x0N0ng2r0SjWJ6ypQ2Uavej5+jicW0YG98vk
-         DmxoPvxHsWFRnPIBIQnYqu8sEgIRH1tvIhV6PZ6LxBBOdH1CzakuPoI/SIB4NvDlfbpE
-         5Mviw5eCuFSy4mf+uSExbQF728qfUsyvp5nz/DiSq472fcd9vWF2v9nZDYl0osObIch2
-         Zyeg==
+        b=fvU6yJV5dqE+Rawol1Bu/Si21BaCqMqzykRvkA5M/b9hOUtVEpd+U1D9DPKL61fymS
+         DyWsGelR0lH8Rbw2GZXlYw+h5y//7ZTTzbwWKc5tyMiO2dGVPQEtlYar4s30Hucz/BFH
+         3ITT7o5uZAYOfaUNy2pJObxmq9D1U7tGTksEmoenqtLYaEB5vwBke2Qs2rRTqxnVFUaZ
+         EPxGL2VAfUzNKWgobX2fru2VRFlETWI6qxGXAE0w47e0O9/zw95boZvN0PPiutmPAGza
+         cARKhvQaWfvWpyoZ9JdM4Ts4ysFKQoWfIhkc4CnwFaDksTfUzeQp1wkVHpx72Frrm5wI
+         vPVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zHgXW+c8WqkIsWfScyxfjyNFw+s0BNquTPYsUtclVrw=;
-        b=ucxLLV2Dn7IhZT3zArsXZnCxnbqm/rB0wUObMk8rWuNZP52HzS11mVEZOQERZNSayp
-         5xmpLMQ957Iz25NyYmMB3jwyJAZnDt/s1Cv4ZePOtTZMalQxH3qvs83e67xmykVEqoJo
-         gDRwmbCsYdUZiRbaQtqi9+k+yVeUZ0HNLmUt1gh3T2kx5HNkVOBC+n7QgN6xwuZUOlpV
-         HOsL36BxjEmyMlLHFVVZCMOPDJylav1XCfPyiiWFww8Fg+0y2Lp48O2vGmYhgn4y1Kl9
-         m64OzBHANfXvBlEDMM6HVE/PNqXwh7/FlgwhQ9AVkIVuVZtacAe4LUs2yeEika/NBXLC
-         JUpQ==
+        bh=sKBllQJinU6YbgKoDT+NRfloPOPzF9DYRn96dXf289k=;
+        b=G/QcjzSEI0fN66s2AWVdfBxL7SPg+4xKKR31d6VJRh3gPJDQB/KRoXxy8TWnj47aPo
+         qzc3KQZ4CtvyfNzOCqjx576p6r7eXI2Qcilksbg9LZOfTGx2mRJCHXRsn0gUd0qxxbAa
+         gbhQDvph7LlZ2g/u9F6ncmfNT8kdPgZxguUOTi2nphGsAQ4UI1c4N+NRMsA1bfNgchDy
+         Jfzk5a9j7R0Wf/aiUk6ZE6o8HGj3eAGj7YMJULXn/X3wS2lIDx8w7hZz8d8VSeyhY64W
+         K+GFq1TpkVe6GMyHgvpQBS0fwOwjAHZ03MislAwKxaJtgPv8t1+/+cLyfdCrwmYUV34s
+         daOw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Darren Kenny <darren.kenny@oracle.com>,
-	syzbot+c0272972b01b872e604a@syzkaller.appspotmail.com,
-	Jason Wang <jasowang@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 175/190] vhost: correctly remove wait queue during poll failure
-Date: Wed, 11 Apr 2018 20:37:01 +0200
-Message-Id: <20180411183603.177057465@linuxfoundation.org>
+Subject: [PATCH 4.4 174/190] sky2: Increase D3 delay to sky2 stops working after suspend
+Date: Wed, 11 Apr 2018 20:37:00 +0200
+Message-Id: <20180411183602.948041686@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476346549165488?=
-X-GMAIL-MSGID: =?utf-8?q?1597476952720926610?=
+X-GMAIL-THRID: =?utf-8?q?1597476343185334735?=
+X-GMAIL-MSGID: =?utf-8?q?1597476949648981317?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,37 +49,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
 
-[ Upstream commit dc6455a71c7fc5117977e197f67f71b49f27baba ]
+[ Upstream commit afb133637071be6deeb8b3d0e55593ffbf63c527 ]
 
-We tried to remove vq poll from wait queue, but do not check whether
-or not it was in a list before. This will lead double free. Fixing
-this by switching to use vhost_poll_stop() which zeros poll->wqh after
-removing poll from waitqueue to make sure it won't be freed twice.
+The sky2 ethernet stops working after system resume from suspend:
+[ 582.852065] sky2 0000:04:00.0: Refused to change power state, currently in D3
 
-Cc: Darren Kenny <darren.kenny@oracle.com>
-Reported-by: syzbot+c0272972b01b872e604a@syzkaller.appspotmail.com
-Fixes: 2b8b328b61c79 ("vhost_net: handle polling errors when setting backend")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+The current 150ms delay is not enough, change it to 200ms can solve the
+issue.
+
+BugLink: https://bugs.launchpad.net/bugs/1758507
+Cc: Stable <stable@vger.kernel.org>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/vhost.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/sky2.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -173,8 +173,7 @@ int vhost_poll_start(struct vhost_poll *
- 	if (mask)
- 		vhost_poll_wakeup(&poll->wait, 0, 0, (void *)mask);
- 	if (mask & POLLERR) {
--		if (poll->wqh)
--			remove_wait_queue(poll->wqh, &poll->wait);
-+		vhost_poll_stop(poll);
- 		ret = -EINVAL;
- 	}
+--- a/drivers/net/ethernet/marvell/sky2.c
++++ b/drivers/net/ethernet/marvell/sky2.c
+@@ -5079,7 +5079,7 @@ static int sky2_probe(struct pci_dev *pd
+ 	INIT_WORK(&hw->restart_work, sky2_restart);
+ 
+ 	pci_set_drvdata(pdev, hw);
+-	pdev->d3_delay = 150;
++	pdev->d3_delay = 200;
+ 
+ 	return 0;
  
