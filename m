@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+5b7F4iAD2ffHWvKuGXk2Mk1Dw+L/f/Msejl2Vqgi0mYeg5ovB3QYtYBtqUdIkjC3fF44A
-ARC-Seal: i=1; a=rsa-sha256; t=1523473132; cv=none;
+X-Google-Smtp-Source: AIpwx48NgylT3JTFtw0++u14F1VXoBVBHEWMlIM8mZK+Ul3AG+Jp/Fu6VgOquK+cVbpr87g0uEOz
+ARC-Seal: i=1; a=rsa-sha256; t=1523473129; cv=none;
         d=google.com; s=arc-20160816;
-        b=P1SScoT0Up0RA8a/MOm6xHPnkxjhyy+JJE3C5EqYT5D020TWRN4rEs4+H8GRM8Uya2
-         HBfZeC1peoonPWI/61VKsrszNQfT7KoHP0oVH5pZ2HLDHeO4dtLZ59u4U1DMuvq75yk1
-         BRQW4Jka3Hey7LvudchBXXYHDrjrnwSbILthQLREWDt4cyH9VPjgjUSK7UJbqBIUQl+c
-         ZqvaeJ03kB416fVQKRvl/uxvXwJmosNL0Zqmqpno08aIEoJ2iV0hLubmDuZfaxrxXZu3
-         XRiouch1HPFyorSZ7oxkaGtZSXzFskXuIS30yYBr1G9FyRUol3kLZG8P28rD6x1mOIx4
-         lRgg==
+        b=WKkLvvxPh0IT9srn9fv6atvuhgkk87v6RYFunMOMZdqh5ZIDZMtBU7n+UlN7DrRqNF
+         S5y9Mur9wEKv+nZc5jxMvwJUd4DrFRq4Jz8c19Rj19uBBo6+VLFxLPSOh9oxXdCMzjNN
+         Yed1sgcsyuiHm8mOiGMIu80jiYx2feUBkkIfIHXRjMBCYlJ8IfuwYwrXBsB32CEAD/vB
+         /XOKVGsLcyw8pW1RJKID7U2loeXqTpdDYW2cuEslWXbiCQ7w3Kpm2sRge9PJf8M2Mzpj
+         KXFSJc8atIPT/L87rbOtHia+qCbE1f7XULbI+uQkXW+32mJgux8APlQdD4UlqdiZEQGj
+         VS9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=B6+SiMLXUdxlgogPl2D88TSNzZKmoolEsk39vNBCxi8=;
-        b=ideALcffr0A9phAvLyK8hOoJGvmLbLM2D7uzLJTAZ55zZmkaYWfhuXWJcUxL9I8yxr
-         mEmLrsnek1aaReGpKMmWI+Oo4T7ZGAjgShczMkaiUal2UcI3LkCN13YT3b5j4xtGTSg5
-         K03J+8kRHgky2NtA8Li1Rh212ZWQv+x1zmWlqYtFvs2xZBS19OCd990FCYReZe55ok4p
-         lieGNk65cYhNe9LFIBtAtxMc2dGD5Et7XGabk7imzU/L/IhQTGJMjFhNN8grVlrO9cOI
-         H/7G1mJrl/D/E1AAXluTwy8pt8KH8NX+jT5jqOw0ItOG9tWRnxbpuhZJiZD8SToM43+h
-         BPpw==
+        bh=6p2INwaVB7CJ+IgP/r7uspESiJP5bARXuutw5OnFUHM=;
+        b=EOwvhhdaWB7PV3INCI1xhBwJDt8+DrBvQUqYqAAZXeE+ryJQCwgwKuEf2ilhNCflFH
+         aUGGoAWWf8CiB/XIZduu+fcxllOETTuOcgjuS2d+4F7iP5xw4Ye3qFqOS/CMmyQ/VcBO
+         Idi40S9+vqyx7s9ZOmfIItnac6E1fivK5toXHwm+E8mokvxSQC8HIXOzz8N+HcMQaD/6
+         MC516OBsdWMDoUlhQIAdbXH4MWgRivI4Wb/gXPZn4c4TUsbmDfVW6gJCWfJ0/GJqsJxy
+         UcZ3ghKcN0QLDs4z6sgfcp85lXQdJtbi1NgnuLFbPx/r7Iid+T3UaDgqCQBLgLmYOicW
+         3VDw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Michael Schmitz <schmitzmic@gmail.com>,
-	Theodore Tso <tytso@mit.edu>,
+	Maurizio Lombardi <mlombard@redhat.com>,
+	Chad Dupuis <chad.dupuis@cavium.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 106/310] fix race in drivers/char/random.c:get_reg()
-Date: Wed, 11 Apr 2018 20:34:05 +0200
-Message-Id: <20180411183626.773044501@linuxfoundation.org>
+Subject: [PATCH 4.9 105/310] scsi: bnx2fc: fix race condition in bnx2fc_get_host_stats()
+Date: Wed, 11 Apr 2018 20:34:04 +0200
+Message-Id: <20180411183626.735524927@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476151458318513?=
-X-GMAIL-MSGID: =?utf-8?q?1597477363631884122?=
+X-GMAIL-THRID: =?utf-8?q?1597476148506229450?=
+X-GMAIL-MSGID: =?utf-8?q?1597477360663336085?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,47 +51,99 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Schmitz <schmitzmic@gmail.com>
+From: Maurizio Lombardi <mlombard@redhat.com>
 
 
-[ Upstream commit 9dfa7bba35ac08a63565d58c454dccb7e1bb0a08 ]
+[ Upstream commit c2dd893a3b0772d1c680e109b9d5715d7f73022b ]
 
-get_reg() can be reentered on architectures with prioritized interrupts
-(m68k in this case), causing f->reg_index to be incremented after the
-range check. Out of bounds memory access past the pt_regs struct results.
-This will go mostly undetected unless access is beyond end of memory.
+If multiple tasks attempt to read the stats, it may happen that the
+start_req_done completion is re-initialized while still being used by
+another task, causing a list corruption.
 
-Prevent the race by disabling interrupts in get_reg().
+This patch fixes the bug by adding a mutex to serialize the calls to
+bnx2fc_get_host_stats().
 
-Tested on m68k (Atari Falcon, and ARAnyM emulator).
+WARNING: at lib/list_debug.c:48 list_del+0x6e/0xa0() (Not tainted)
+Hardware name: PowerEdge R820
+list_del corruption. prev->next should be ffff882035627d90, but was ffff884069541588
 
-Kudos to Geert Uytterhoeven for helping to trace this race.
+Pid: 40267, comm: perl Not tainted 2.6.32-642.3.1.el6.x86_64 #1
+Call Trace:
+ [<ffffffff8107c691>] ? warn_slowpath_common+0x91/0xe0
+ [<ffffffff8107c796>] ? warn_slowpath_fmt+0x46/0x60
+ [<ffffffff812ad16e>] ? list_del+0x6e/0xa0
+ [<ffffffff81547eed>] ? wait_for_common+0x14d/0x180
+ [<ffffffff8106c4a0>] ? default_wake_function+0x0/0x20
+ [<ffffffff81547fd3>] ? wait_for_completion_timeout+0x13/0x20
+ [<ffffffffa05410b1>] ? bnx2fc_get_host_stats+0xa1/0x280 [bnx2fc]
+ [<ffffffffa04cf630>] ? fc_stat_show+0x90/0xc0 [scsi_transport_fc]
+ [<ffffffffa04cf8b6>] ? show_fcstat_tx_frames+0x16/0x20 [scsi_transport_fc]
+ [<ffffffff8137c647>] ? dev_attr_show+0x27/0x50
+ [<ffffffff8113b9be>] ? __get_free_pages+0xe/0x50
+ [<ffffffff812170e1>] ? sysfs_read_file+0x111/0x200
+ [<ffffffff8119a305>] ? vfs_read+0xb5/0x1a0
+ [<ffffffff8119b0b6>] ? fget_light_pos+0x16/0x50
+ [<ffffffff8119a651>] ? sys_read+0x51/0xb0
+ [<ffffffff810ee1fe>] ? __audit_syscall_exit+0x25e/0x290
+ [<ffffffff8100b0d2>] ? system_call_fastpath+0x16/0x1b
 
-Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
+Acked-by: Chad Dupuis <chad.dupuis@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/char/random.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/scsi/bnx2fc/bnx2fc.h      |    1 +
+ drivers/scsi/bnx2fc/bnx2fc_fcoe.c |   10 ++++++++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -1115,12 +1115,16 @@ static void add_interrupt_bench(cycles_t
- static __u32 get_reg(struct fast_pool *f, struct pt_regs *regs)
- {
- 	__u32 *ptr = (__u32 *) regs;
-+	unsigned long flags;
+--- a/drivers/scsi/bnx2fc/bnx2fc.h
++++ b/drivers/scsi/bnx2fc/bnx2fc.h
+@@ -191,6 +191,7 @@ struct bnx2fc_hba {
+ 	struct bnx2fc_cmd_mgr *cmd_mgr;
+ 	spinlock_t hba_lock;
+ 	struct mutex hba_mutex;
++	struct mutex hba_stats_mutex;
+ 	unsigned long adapter_state;
+ 		#define ADAPTER_STATE_UP		0
+ 		#define ADAPTER_STATE_GOING_DOWN	1
+--- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+@@ -670,15 +670,17 @@ static struct fc_host_statistics *bnx2fc
+ 	if (!fw_stats)
+ 		return NULL;
  
- 	if (regs == NULL)
- 		return 0;
-+	local_irq_save(flags);
- 	if (f->reg_idx >= sizeof(struct pt_regs) / sizeof(__u32))
- 		f->reg_idx = 0;
--	return *(ptr + f->reg_idx++);
-+	ptr += f->reg_idx++;
-+	local_irq_restore(flags);
-+	return *ptr;
++	mutex_lock(&hba->hba_stats_mutex);
++
+ 	bnx2fc_stats = fc_get_host_stats(shost);
+ 
+ 	init_completion(&hba->stat_req_done);
+ 	if (bnx2fc_send_stat_req(hba))
+-		return bnx2fc_stats;
++		goto unlock_stats_mutex;
+ 	rc = wait_for_completion_timeout(&hba->stat_req_done, (2 * HZ));
+ 	if (!rc) {
+ 		BNX2FC_HBA_DBG(lport, "FW stat req timed out\n");
+-		return bnx2fc_stats;
++		goto unlock_stats_mutex;
+ 	}
+ 	BNX2FC_STATS(hba, rx_stat2, fc_crc_cnt);
+ 	bnx2fc_stats->invalid_crc_count += hba->bfw_stats.fc_crc_cnt;
+@@ -700,6 +702,9 @@ static struct fc_host_statistics *bnx2fc
+ 
+ 	memcpy(&hba->prev_stats, hba->stats_buffer,
+ 	       sizeof(struct fcoe_statistics_params));
++
++unlock_stats_mutex:
++	mutex_unlock(&hba->hba_stats_mutex);
+ 	return bnx2fc_stats;
  }
  
- void add_interrupt_randomness(int irq, int irq_flags)
+@@ -1348,6 +1353,7 @@ static struct bnx2fc_hba *bnx2fc_hba_cre
+ 	}
+ 	spin_lock_init(&hba->hba_lock);
+ 	mutex_init(&hba->hba_mutex);
++	mutex_init(&hba->hba_stats_mutex);
+ 
+ 	hba->cnic = cnic;
+ 
