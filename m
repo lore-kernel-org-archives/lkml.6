@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3374234-1523482025-2-8026042689860928770
+X-Cyrus-Session-Id: sloti22d1t05-3397032-1523482011-2-16573603806845473168
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523482025; b=kJlXwydEkB+EOWt7i4X2k93EXp9zLcradczQIxEOIEFEQGs0TH
-    glxIaH8U5tmA54iL27s2ZmDpGOL0hNDzjlMOlUgyuAd1jGByHcIdG7GFpBT6p9lg
-    D9tUW1kbx52zTGos8dinspYVCPeAOsD97wb/ETJyVQ0IZd4kl9cOg8TfT4T6X8tl
-    5OMvP/r9+m3QSsSNG4HARXhaMsNJoauYmQLqtQNV+8hEmvL6h6/34rk/DhGSXmuf
-    gYyS/FUHozj6wvVDJKUfFHGJ9xbzz2X2QhYdNgUBBAHS2W0iCz4mx6my7L73ZLxg
-    uHUlkFZ7sMeu471lQZP+d+SE0n53l1SOGNTA==
+    1523482011; b=sK0eyREb5o/tvzq8XfEqNAdzyjSVoFzq0rllW2S4KHTUPMUIpH
+    zKEx7HazmYJ7ons5kXeTZYriwab5RkjM4h92p9rQ5Uh9KKnEaL47idcEzxe591/G
+    i+bPyVLU6yR6eTXtwGPcGEUzc8N1Z890Q8gDbPHtYTjhwP/9Ucdi+FAuRLyPtbxS
+    68wV9XZm9YAlLI68nh6QftIhAU0ry1W2XTVCg7OMhg5D5kRmZY5gyRb27k5Iw3+s
+    s1sMOWK0aVSXjFQouoWGtJZnXjxlYenJ/w694DCLmAUe5l38E026/HXB2RrjsIqZ
+    TjQ+UsiqX0VpSoZOF4ziN4CiKXGWt6U6XOKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523482025; bh=JtLXvGAPD5lONzeP0j3VWmWNdEFuSA
-    Z7mYlja9X/UqE=; b=RroAmDKgUTmIr0MYj0qXa3CKePdAkU/3Egd1wH2r3KRDQF
-    XEayS1QTKwu6qdMyWJpdWXiG0YTBfo5ot5Wjw1M6XPO1oP6joZrZfLLHybTw67Gl
-    JP49GUdj6XPbKqLAut2IyU1uyAV4UMZQOmdFKjly0V2nuCTdw7HuP9ndIBjdFJZS
-    nxhBrK8Ja9gJhY6GsoxYJe66CCXiNXHaxLx9Iz/KcNwXlmPaUhyq6mcyddNLkWVh
-    4CmquJSbyEBlu8tKurmx5H2UDLsW3qG3Uk42LzUVIeEOAspd+axuaacivKKNaeNM
-    3wvhdi3BhRA0PhH25yGzc7SsigTdDCK9kuVV63dg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523482011; bh=mvKVCjYHe/nJ3jqq6C8Z1WmlTgsT71
+    z/iUwVC6HScl4=; b=fNYTa+q8xmFkV6LlQysQf10vQs+sZv0PggFt366uBA2vbA
+    4ZWCQ9sMxhtf7jOLaWsRrjINf2rzxhqUnF6CJ1I3OPUPQSAgkovhjOcOLcEDYzLG
+    Xx2SJN308S53hnKQ4x0dZE7YTAUWPOdSg1kKq81SVjBsvfsICBP3E+072dCtrnoL
+    F1tN3PD6aLeGpvGrcXvDZjymN5C7vq99oc4PpKuBqKEn6hreM2YrIJZaW70zNSYt
+    Ucon3sqLFi2vEsSsIJi0j8ICAr50xwNTvfjeHNE3nyD9gC7j6WVQbODTa2Rrs/C4
+    fANxoKPgZiUYczvGhILpB+QT+vvfISPs+lPew3XA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,30 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJikVUslbrmsQ8sd3SNhj+9eTMDydDRkYKSfOmBTIGS1hC69gXIq49xgxZdUqAlvEZk+Ere4bMGhmj3ocu3r+LZU3EAUjpuYtOMwY/IC5v4HiIsWIJc5
-    Ec5NZMcJ/F72AVdGZjugrWcF8Nt4IHxob1TN+6zANHN4bjSELV95rEtJzmeBlzLokCJ389/mwyY7QTEF/55juJMAAljyVGDtU5cDIWP5Ckx11ChkBmJRHzM7
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfE1QTMDOLM3TCKfHEi5xOqXxsA3xMADRLcSh/sT+Qw8hDynUy+ts17Dcb2i8hpe+lyWnNERlXKLvyVAFDQA+AM6SeLNLkWw7Gz9T3/sUrx8hq9HexwDF
+    TRmhVZrz/Ycn3PL8dPIpEItUsMA5XhgRGxT4TikYvLrL7yJnxbsU3FYROjHY+Ap03+GWgcuQOofAn631kiJeiD7wJCm2+ACelbAB11Knrz8eAtGuOly66Vq4
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=cm27Pg_UAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=Bz2UWhLJlFZaMJpv9z8A:9 a=QEXdDO2ut3YA:10
-    a=xmb-EsYY8bH0VWELuYED:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=20KFwNOVAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=Kk4NNm4glTtnsDsmpQMA:9
+    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753932AbeDKSiK (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:38:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55250 "EHLO
+        id S1753330AbeDKV0O (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 17:26:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55302 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753668AbeDKSiI (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:38:08 -0400
+        with ESMTP id S1754016AbeDKSiR (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:38:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Micay <danielmicay@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, David Jeffery <djeffery@redhat.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 005/121] bna: Avoid reading past end of buffer
-Date: Wed, 11 Apr 2018 20:35:08 +0200
-Message-Id: <20180411183456.553047660@linuxfoundation.org>
+Subject: [PATCH 3.18 008/121] lockd: fix lockd shutdown race
+Date: Wed, 11 Apr 2018 20:35:11 +0200
+Message-Id: <20180411183456.733325116@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -94,35 +92,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: "J. Bruce Fields" <bfields@redhat.com>
 
 
-[ Upstream commit 9e4eb1ce472fbf7b007f23c88ec11c37265e401c ]
+[ Upstream commit efda760fe95ea15291853c8fa9235c32d319cd98 ]
 
-Using memcpy() from a string that is shorter than the length copied means
-the destination buffer is being filled with arbitrary data from the kernel
-rodata segment. Instead, use strncpy() which will fill the trailing bytes
-with zeros.
+As reported by David Jeffery: "a signal was sent to lockd while lockd
+was shutting down from a request to stop nfs.  The signal causes lockd
+to call restart_grace() which puts the lockd_net structure on the grace
+list.  If this signal is received at the wrong time, it will occur after
+lockd_down_net() has called locks_end_grace() but before
+lockd_down_net() stops the lockd thread.  This leads to lockd putting
+the lockd_net structure back on the grace list, then exiting without
+anything removing it from the list."
 
-This was found with the future CONFIG_FORTIFY_SOURCE feature.
+So, perform the final locks_end_grace() from the the lockd thread; this
+ensures it's serialized with respect to restart_grace().
 
-Cc: Daniel Micay <danielmicay@gmail.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: David Jeffery <djeffery@redhat.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/brocade/bna/bfa_ioc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/lockd/svc.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/brocade/bna/bfa_ioc.c
-+++ b/drivers/net/ethernet/brocade/bna/bfa_ioc.c
-@@ -2856,7 +2856,7 @@ bfa_ioc_get_adapter_optrom_ver(struct bf
- static void
- bfa_ioc_get_adapter_manufacturer(struct bfa_ioc *ioc, char *manufacturer)
+--- a/fs/lockd/svc.c
++++ b/fs/lockd/svc.c
+@@ -129,6 +129,8 @@ lockd(void *vrqstp)
  {
--	memcpy(manufacturer, BFA_MFG_NAME, BFA_ADAPTER_MFG_NAME_LEN);
-+	strncpy(manufacturer, BFA_MFG_NAME, BFA_ADAPTER_MFG_NAME_LEN);
+ 	int		err = 0;
+ 	struct svc_rqst *rqstp = vrqstp;
++	struct net *net = &init_net;
++	struct lockd_net *ln = net_generic(net, lockd_net_id);
+ 
+ 	/* try_to_freeze() is called from svc_recv() */
+ 	set_freezable();
+@@ -173,6 +175,8 @@ lockd(void *vrqstp)
+ 	if (nlmsvc_ops)
+ 		nlmsvc_invalidate_all();
+ 	nlm_shutdown_hosts();
++	cancel_delayed_work_sync(&ln->grace_period_end);
++	locks_end_grace(&ln->lockd_manager);
+ 	return 0;
  }
  
- static void
+@@ -267,8 +271,6 @@ static void lockd_down_net(struct svc_se
+ 	if (ln->nlmsvc_users) {
+ 		if (--ln->nlmsvc_users == 0) {
+ 			nlm_shutdown_hosts_net(net);
+-			cancel_delayed_work_sync(&ln->grace_period_end);
+-			locks_end_grace(&ln->lockd_manager);
+ 			svc_shutdown_net(serv, net);
+ 			dprintk("lockd_down_net: per-net data destroyed; net=%p\n", net);
+ 		}
