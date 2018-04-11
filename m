@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479614-2-7114994433373123801
+X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479596-2-16724922998755222974
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479613; b=bb2txvkyVAhYJJ4744JNTgS+wtXcqluGA4cF18i+slIFd5zFKU
-    sCL+wU9GlvuCbO/AWhLLiAtqPRMKibfIpukcEXahfh0dXtlwhORNH6aD3qe2iP3m
-    CiYsP8vlhzpGwCPa9p9XDg396wf4mu4vIY6QAoP+/uylis2qIgHBPSzuoghpabWx
-    NaNG72ji2M+mERLsMDCPjtZQrN0CJybbIl/C+PYQTw9xsdSb1of3qOEXttx6n9Bh
-    OR1xSxfEJVz0DVU6h+GYscbAb5L0H80R7g22tLnEDdXja7PXtmEqBGOe50bbUi21
-    KMsar791DO3XNE6sYkNCq+F+Bc4HoPw6R6hQ==
+    1523479596; b=km8208tdlnF+Se+x6pfthBXv1R5dQUwAhprC2YE6Q/HhsaihYW
+    WYkQLoiAAr/TDE96C0NYGytM1AjvU+JpMuSijs435bLIG7bS/87waHGvFx2fnbnG
+    U2dqIh3QSZ1Py9kltY43asj8az5XjFO0bTnS5ZcztEc+8TfZbjGaf1bThQOCi3pV
+    DY+AKixPZW+fEuqMNmwlIcIrr19jRJV8jthOdSERXNt4gUijPpwKdqhWO99ROzXU
+    BR83iBmzCOuk06irEytGOVkJ0JN8d75+mAY1mDlMlCl0pXPU01X+RvUgB+F/FYOd
+    xqs+s14WxgBtWHKiGTQ4QyBKOBYSX1ZLS9Qw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479613; bh=bPbdUVWs9n+GzKoIywGlr+hDe6DdbJ
-    pKG+LR8AgfvMk=; b=cVHP34DP6IGvlsuNT5GSFAyA45SGFHGVB6ktTVMcuAeumF
-    S6agh2H8xhZ82ZkGmtXQZfoylzADT0qkNO2yRDa9ZOMvR9FIk3gvuhUTDLm7mmgY
-    33qhAHyfRDg5r/KWOljYrKbL4MZnKRTp8ymOLGA1I08PaRU8u5XpsRitYvE1r3RX
-    AkFPA9ACB01qQZEMMna0NLjq27/R6iDQbTxORIC1tIyzR/QGCIi1sEvf+TUGNSAi
-    xRV+IWtvhhqHYEhPSTO1OYTLzXD0n9qnX6TuRG3hbjasc7cYOFcE4SO6zE4lbLeU
-    Kq3b6YKZv0jp4f+fgV1SRmHPMlQlHDCEfIHO2+2A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479596; bh=C5YTH3QDuKJN5ejYIGLUQkZWKM/x4V
+    f+0spy8Q38eVs=; b=elys0zJvFzpzTrBwpyDQOsYcxrUDuG08ba9cERrw1DQVso
+    IaT99RvYJJppB3ly5MDiCYdzpI6R1tQNt1f6ctv+rFFO1TD55Htrzjoouotcfz0w
+    TKsbSkCB4cxjmvbjDfcHkr6Dq5dOWiqkz6gd6lJhPW/9dz1qKIo7MAWB+Sv6Vs0o
+    PDdaaS/oVkxUGMLR1YU22Z4CLvS+5CJfNWK0q/n+vtefLW9EJcXlRZASBYNxS6uj
+    S4aTgKmC3769sP/MINTzTfmQLQAZ+6d51uOFxG9mCtv2WiKYeZXWRSdE9kNLrxB8
+    MTLlqjO8wgmzJAITv6HyczbH0iTlzTXnpkoZ0FnA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,31 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfP4NERpVnK6sGB4D9stTag/pNzJrcHA0s5Nom67NCqThnmCTWRQQ5SiWsC+Xu999E5+J4k4+q+0zZXNebIoUA1an8Gp5hZ444Lmez5lK81OGkTgo0jTa
-    iPLsTVC80c12dBmTodCHfYXrmNMzpnJ3aTVsL0ifG5wN4yclwrc3BsDN+JAwk9lAvlVyN5zha8HYBnrBnL+fdeGu1OHmSYBaBwH14roVOURBDHQNl76MGBwu
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCKjrqXfGm+T64x0hgL7CbdX3VqMp0Ufq8+HmEbvl/y3/G4FcGbvRsG5ZEidG7QZ4rPflzkXzufZBD5g6BV1q1AwWQ7FAW2ue1mXNd4yQzYUo+8D7E3g
+    xjvsET1A4NlAe1VLT3vJwwY/VdalSPaYqhRev1ID0776lfnGks3qWxTePTwVCukrrlU5Kbnmi3OcIiePy+c0tzIw2sGygydQbN9eewGPwiNFhgvgJQxnlkd3
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=ULtGjE2pG87AcrYebtMA:9
-    a=GriohC-8OQmjiJG_:21 a=FGrdD5REwOa6q-Dz:21 a=QEXdDO2ut3YA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=Iz6zksb9AAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=zU4_mlDSkNBmhn4WFdkA:9 a=QEXdDO2ut3YA:10 a=XZ76h3Q-ufMXbfGU90Ko:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755959AbeDKUqf (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:46:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59002 "EHLO
+        id S1756099AbeDKUqV (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:46:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59048 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755017AbeDKSqj (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:46:39 -0400
+        with ESMTP id S1755758AbeDKSqo (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:46:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eryu Guan <eguan@redhat.com>,
-        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        stable@vger.kernel.org, Roman Kapl <roman.kapl@sysgo.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 074/190] ext4: fix off-by-one on max nr_pages in ext4_find_unwritten_pgoff()
-Date: Wed, 11 Apr 2018 20:35:20 +0200
-Message-Id: <20180411183554.645052661@linuxfoundation.org>
+Subject: [PATCH 4.4 076/190] net: move somaxconn init from sysctl code
+Date: Wed, 11 Apr 2018 20:35:22 +0200
+Message-Id: <20180411183554.904984841@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -93,52 +93,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eryu Guan <eguan@redhat.com>
+From: Roman Kapl <roman.kapl@sysgo.com>
 
 
-[ Upstream commit 624327f8794704c5066b11a52f9da6a09dce7f9a ]
+[ Upstream commit 7c3f1875c66fbc19762760097cabc91849ea0bbb ]
 
-ext4_find_unwritten_pgoff() is used to search for offset of hole or
-data in page range [index, end] (both inclusive), and the max number
-of pages to search should be at least one, if end == index.
-Otherwise the only page is missed and no hole or data is found,
-which is not correct.
+The default value for somaxconn is set in sysctl_core_net_init(), but this
+function is not called when kernel is configured without CONFIG_SYSCTL.
 
-When block size is smaller than page size, this can be demonstrated
-by preallocating a file with size smaller than page size and writing
-data to the last block. E.g. run this xfs_io command on a 1k block
-size ext4 on x86_64 host.
+This results in the kernel not being able to accept TCP connections,
+because the backlog has zero size. Usually, the user ends up with:
+"TCP: request_sock_TCP: Possible SYN flooding on port 7. Dropping request.  Check SNMP counters."
+If SYN cookies are not enabled the connection is rejected.
 
-  # xfs_io -fc "falloc 0 3k" -c "pwrite 2k 1k" \
-  	    -c "seek -d 0" /mnt/ext4/testfile
-  wrote 1024/1024 bytes at offset 2048
-  1 KiB, 1 ops; 0.0000 sec (42.459 MiB/sec and 43478.2609 ops/sec)
-  Whence  Result
-  DATA    EOF
+Before ef547f2ac16 (tcp: remove max_qlen_log), the effects were less
+severe, because the backlog was always at least eight slots long.
 
-Data at offset 2k was missed, and lseek(2) returned ENXIO.
-
-This is unconvered by generic/285 subtest 07 and 08 on ppc64 host,
-where pagesize is 64k. Because a recent change to generic/285
-reduced the preallocated file size to smaller than 64k.
-
-Signed-off-by: Eryu Guan <eguan@redhat.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Roman Kapl <roman.kapl@sysgo.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ext4/file.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/core/net_namespace.c   |   19 +++++++++++++++++++
+ net/core/sysctl_net_core.c |    2 --
+ 2 files changed, 19 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -460,7 +460,7 @@ static int ext4_find_unwritten_pgoff(str
- 		int i, num;
- 		unsigned long nr_pages;
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -310,6 +310,25 @@ out_undo:
+ 	goto out;
+ }
  
--		num = min_t(pgoff_t, end - index, PAGEVEC_SIZE);
-+		num = min_t(pgoff_t, end - index, PAGEVEC_SIZE - 1) + 1;
- 		nr_pages = pagevec_lookup(&pvec, inode->i_mapping, index,
- 					  (pgoff_t)num);
- 		if (nr_pages == 0)
++static int __net_init net_defaults_init_net(struct net *net)
++{
++	net->core.sysctl_somaxconn = SOMAXCONN;
++	return 0;
++}
++
++static struct pernet_operations net_defaults_ops = {
++	.init = net_defaults_init_net,
++};
++
++static __init int net_defaults_init(void)
++{
++	if (register_pernet_subsys(&net_defaults_ops))
++		panic("Cannot initialize net default settings");
++
++	return 0;
++}
++
++core_initcall(net_defaults_init);
+ 
+ #ifdef CONFIG_NET_NS
+ static struct kmem_cache *net_cachep;
+--- a/net/core/sysctl_net_core.c
++++ b/net/core/sysctl_net_core.c
+@@ -429,8 +429,6 @@ static __net_init int sysctl_core_net_in
+ {
+ 	struct ctl_table *tbl;
+ 
+-	net->core.sysctl_somaxconn = SOMAXCONN;
+-
+ 	tbl = netns_core_table;
+ 	if (!net_eq(net, &init_net)) {
+ 		tbl = kmemdup(tbl, sizeof(netns_core_table), GFP_KERNEL);
