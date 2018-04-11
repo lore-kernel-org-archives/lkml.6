@@ -1,144 +1,172 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-382606-1523519023-2-6287577296568278020
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1759335-1523430530-2-2763666260581456574
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523519022; b=MclF5zzrhOewyCXfMKdibND61k7RxrBahLWcbHDBzk2ZW/VS3C
-    /0KK2j7dGaM+jxMg2OANYGjXHP0b+4lKjioU50lkF3BCKUpOg/bPkrrWIf00MKa6
-    EKFYkWiiJPJOebycGxrM8FS7tdwUG0F3GF6A+pud3zQjqqe/BlSbArlmtEi1IXeL
-    /owaJq6btC0Pk24sc9BtEbSZsw7yfeEf4Vgp/JEGtjxmgwcoGvY27HhgCXtcjFju
-    L8ras3Wt+C5E6g5XvzaXRXWwTvwmH8O7asyoZQzRaBh1e78f6nnaDzC6rEFM1gGH
-    r4wI4Sq0cMLgvKUPRKvnhwm1o8NCbk54ELFw==
+    1523430530; b=pPls/lD7nUfCqJ99boxlwQUPpVaexUBtWCFA94Ird5RlNBxGEf
+    moaOjBRQdmkBkcRwFwRvMzWM6fzyrpG7I8E1VEOjIF36HLnuDV3KTBXQzDAfBH7V
+    U/FNUvN2QtFUB8/BefheJ/Kj0nevnyYCKHglLeCTRJa5rx5KTJeTWoLYXR0+uMn2
+    Ea/WrOiDQ2eBD8eOUfqwaePK4CT2AHSe5yiEgwR38HD4AiKre975gisObXVJ61J0
+    12Quxte/KkcJvchm6mo4TGZa11W6dJHV+0oynn5qLOIVZG6ytNLDOsd2on+TaizV
+    Yc2wxphH8+5JHKZNv9pXo+4UPk5HHwFeFDjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:references:from:message-id
-    :date:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1523519022; bh=45UIq
-    IHsxssgN3/UtW+bjhP0QaxjWlfn4N9rxttVBtE=; b=Sl5Ic6M5z7HYCompZ+uJ9
-    VNjpCN3B3zjcFdE6hAqFUgeQBavdgzG/YpeLdMLpx2zvKKxQURa2RKaYVJsaGqnP
-    IjLX7Unzdllq0sBiA+6PetCMV2QxqhU1xSYvey3XqCU7JFomkXsvaJWeYpyXrR1I
-    Sz5zuEIh0we2ZyMYPMy2TI4D/Bbmten1Lov4MPJ/L9s/KgGzkB/5qf5vCiydmMJv
-    PgmRnVyOI73nZA9wWD8aTA/Vpf4Rn+8lYXxjYYZ4NjYT1sBsxHRUjUUsceih492v
-    8FyNHQxAUo//Dg3CIgpjzeHwJ+cwXj1cDkSJvc5iHVfjpG+HaPKbA9vAJNU4eVVS
-    w==
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523430530;
+    bh=4o0U3+PJbGa5yXKayepNe2Oa/NgWK+zGn6rZJD4MIVY=; b=n2QuoXmRnTi8
+    aGdQQ0WXlj1HQVFnyKBuSlUjgHlTRLhDUBLs5EtpUr6kXDsheyxEPP2GkT6YSrcm
+    67ifo9y2TM4rXbF0+uxVd0yN3cLuOYcAo2wbSoTqAAemur2M+2TiEsm3T94I684b
+    GQnpIdZDUQOAlWXkIt2Jbu2MOQv9uBzHDI+Rv/dBiZ2euPpf3wBCYcRLKBH+74K6
+    ojyw/CwAeVnwiu2UpB41OQ1Nbl0lHgiv0EOFLy4NkY6CuBTaM2ZQBy/3TXz5keIv
+    KtQ9X+WhRFytb2bMrdDJlFfWpskWOo4HCtiDX1t4JrhGqcN+72DhAiGbLfXgEpPF
+    UKl1H+5Bag==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microchip.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microchip.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFSnYrBLYoT5zmYgsAXcelN7wR9NgVPrXjIodwEJf0e1OClNjSIFZLTPIkMO9275O2fOJ4SfHk58wG2EpkVjuqP3NJClhow3jMWQA+2x1kAl+U3tFFAC
-    oFEfA8efxoeje2FI7lnJW9LcrK0hIwaHRaX5Nonh8zFhqnjxzoPBzVSxZvglI8WRpS9W+rTZ2l98BO4OVjDW61TMBSba5kKVeO97xeMqBCUDe3yo0joIND8A
-    UkZ1y+NK75awgYjI4fe05A==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
-    a=DDOyTI_5AAAA:8 a=P-qd95z3-qW7mMlPtgIA:9 a=CjuIK1q_8ugA:10 a=D0TqAXdIGyEA:10
-    a=xa8LZTUigIcA:10 a=AjGcO6oz07-iQ99wixmX:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfENyQtHUdDcu3+plV8RPo1zFtIDth1xGauEabq1IzWeNaLG2IsEF7uiCy41tqEMbz/eBdiHonjnmPkZydDXKmMMuyF0EKMTiuPXFOXqpyH9n8J+iCF6W
+    4YwDPF0aVKLVBx6wm+LVbgGSGD0vN9VWNorl3TMePNvM7arSjfZyRSCm0KGSSpves1Ymd4OMi8F0ezUAmOBhGGCeSUZoeGQ+F6yZicvC/wQbnXxjYRFZegF6
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=iox4zFpeAAAA:8 a=VwQbUJbxAAAA:8 a=N4JGzcuXHaGaDQ9-q-EA:9
+    a=pOPVjPZvEb-TnH-g:21 a=Gr5wp24HszOoyxBO:21 a=QEXdDO2ut3YA:10
+    a=WzC6qhA0u3u7Ye7llzcV:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-IronPort-AV: E=Sophos;i="5.48,440,1517900400"; d="scan'208";a="13760300"
-Subject: Re: [PATCH] staging: wilc1000: Remove unnecessary braces {} around
- single statement block
-To: Eyal Ilsar <edilsar@gmail.com>, <aditya.shankar@microchip.com>,
- <ganesh.krishna@microchip.com>, <gregkh@linuxfoundation.org>
-References: <1523371795-5090-1-git-send-email-edilsar@gmail.com>
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Message-ID: <4c3eeecd-ac80-a312-59cb-2b9432a5b5ae@microchip.com>
-Date: Thu, 12 Apr 2018 10:43:32 +0300
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752711AbeDKHIR (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 03:08:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47270 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752706AbeDKHIQ (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 11 Apr 2018 03:08:16 -0400
+Subject: Re: [PATCH] x86/xen: zero MSR_IA32_SPEC_CTRL before suspend
+To: Jan Beulich <JBeulich@suse.com>
+Cc: x86@kernel.org, tglx@linutronix.de, xen-devel@lists.xenproject.org,
+        boris.ostrovsky@oracle.com, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org, hpa@zytor.com
+References: <20180226140818.4849-1-jgross@suse.com>
+ <5AA8F00302000078001B15EE@suse.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <6b59ac31-7e90-1c18-2467-d7d294da6e5b@suse.com>
+Date: Wed, 11 Apr 2018 09:08:12 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1523371795-5090-1-git-send-email-edilsar@gmail.com>
-Content-Language: en-US
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <5AA8F00302000078001B15EE@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
-
-On 10.04.2018 17:49, Eyal Ilsar wrote:
-> Remove unnecessary braces {} around an 'if' statement block with a single 
-> statement. Issue found by checkpatch.
-
-You should add an empty line before "Signed-off" line as stated in [1]. I
-would also add a space b/w your name and your email in Signed-off line as
-is exemplified in [2].
-
-[1]
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#the-canonical-patch-format
-[2] https://www.kernel.org/doc/html/latest/process/sub
-mitting-patches.html#developer-s-certificate-of-origin-1-1
-
-> Signed-off-by: Eyal Ilsar<edilsar@gmail.com>
-> ---
-> This is part of my take on the Eudyptula challenge
+On 14/03/18 09:48, Jan Beulich wrote:
+>>>> On 26.02.18 at 15:08, <jgross@suse.com> wrote:
+>> @@ -35,6 +40,9 @@ void xen_arch_post_suspend(int cancelled)
+>>  
+>>  static void xen_vcpu_notify_restore(void *data)
+>>  {
+>> +	if (xen_pv_domain() && boot_cpu_has(X86_FEATURE_SPEC_CTRL))
+>> +		wrmsrl(MSR_IA32_SPEC_CTRL, this_cpu_read(spec_ctrl));
+>> +
+>>  	/* Boot processor notified via generic timekeeping_resume() */
+>>  	if (smp_processor_id() == 0)
+>>  		return;
+>> @@ -44,7 +52,15 @@ static void xen_vcpu_notify_restore(void *data)
+>>  
+>>  static void xen_vcpu_notify_suspend(void *data)
+>>  {
+>> +	u64 tmp;
+>> +
+>>  	tick_suspend_local();
+>> +
+>> +	if (xen_pv_domain() && boot_cpu_has(X86_FEATURE_SPEC_CTRL)) {
+>> +		rdmsrl(MSR_IA32_SPEC_CTRL, tmp);
+>> +		this_cpu_write(spec_ctrl, tmp);
+>> +		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
+>> +	}
+>>  }
 > 
->  drivers/staging/wilc1000/wilc_wfi_cfgoperations.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> While investigating ways how to do something similar on our old,
+> non-pvops kernels I've started wondering if this solution is actually
+> correct in all cases. Of course discussing this is complicated by the
+> fact that the change there might be a conflict with hasn't landed
+> in Linus'es tree yet (see e.g.
+> https://patchwork.kernel.org/patch/10153843/ for an upstream
+> submission; I haven't been able to find any discussion on that
+> patch or why it isn't upstream yet), but we have it in our various
+> branches. The potential problem I'm seeing is with the clearing
+> and re-setting of SPEC_CTRL around CPUs going idle. While the
+> active CPU could have preemption disabled (if that isn't the case
+> already), the passive CPUs are - afaict - neither under full control
+> of drivers/xen/manage.c:do_suspend() nor excluded yet from
+> any further scheduling activity. Hence with code like this (taken
+> from one of our branches)
 > 
-> diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> index 205304c..325afe1 100644
-> --- a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> +++ b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> @@ -284,9 +284,8 @@ static void remove_network_from_shadow(struct timer_list *unused)
->  		}
->  	}
->  
-> -	if (last_scanned_cnt != 0) {
-> +	if (last_scanned_cnt != 0)
->  		mod_timer(&hAgingTimer, jiffies + msecs_to_jiffies(AGING_TIME));
-> -	}
->  }
->  
->  static void clear_duringIP(struct timer_list *unused)
+> static void mwait_idle(void)
+> {
+> 	if (!current_set_polling_and_test()) {
+> 		trace_cpu_idle_rcuidle(1, smp_processor_id());
+> 		if (this_cpu_has(X86_BUG_CLFLUSH_MONITOR)) {
+> 			smp_mb(); /* quirk */
+> 			clflush((void *)&current_thread_info()->flags);
+> 			smp_mb(); /* quirk */
+> 		}
 > 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+> 		x86_disable_ibrs();
+> 
+> 		__monitor((void *)&current_thread_info()->flags, 0, 0);
+> 		if (!need_resched())
+> 			__sti_mwait(0, 0);
+> 		else
+> 			local_irq_enable();
+> 
+> 		x86_enable_ibrs();
+> 		...
+> 
+> the MSR might get set to non-zero again after having been
+> cleared by the code your patch adds. I therefore think that the
+> only race free solution would be to do the clearing from
+> stop-machine context. But maybe I'm overlooking something.
+
+Currently and with the above mentioned patch there is no problem: Xen pv
+guests always use default_idle(), so mwait_idle() eventually playing
+with MSR_IA32_SPEC_CTRL won't affect us.
+
+In order to ensure that won't change in future default_idle() should
+never modify MSR_IA32_SPEC_CTRL. In case something like that would be
+required we should rather add another idle function doing that.
+
+
+Juergen
