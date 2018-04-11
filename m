@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49BplxF41XXOe1WLyIyVhy8G4SXtGJWkJFEtbf25vjYYANX8UONzreRI2NLHo1MMsZhXn7B
-ARC-Seal: i=1; a=rsa-sha256; t=1523473475; cv=none;
+X-Google-Smtp-Source: AIpwx4+us2m3EQeLCTkNrDqVoDiqXq4nV353qUaNVPgAIa8I+uXL3yyRgPukpB1zGZovjU7DzZ+l
+ARC-Seal: i=1; a=rsa-sha256; t=1523473472; cv=none;
         d=google.com; s=arc-20160816;
-        b=hKvvvtBS9YhfcnkRM9S0WiVEzWWqoexrBRMiseGd0PutJpXGobyUGPvEm6zlsIbvrh
-         f7sgkdFi512q0oZEtm7yo6WvFbMWZYLNkq/ClCCabOeP+rWR2rW/sBRh0pOufZ3aLF9P
-         nZwVSZVihhv0YCdZtSuzUrzEefBRfETBVD67j6xE2mRsEaA+6aWxwsfdhS1bmjEyCHuM
-         OjNO/DprintblB2riU9/AE2LjTYJjitFtctlpJX01EQNCn3AJgaTvOomsPFhT35PshB1
-         a2JzKhSeTkzlRKnRSepKjkFFro6b/erirPLysnf3Z1UtwolKmdd/ZjEe9KCeVPLdSubj
-         zpdA==
+        b=dJOv5D3j6gQf2BaRcevJvDfKPGM5ATe64XIWNx48axBT3+o2/EgHhA12SqXq352zPv
+         YzvP0itRePXnoHxXSaLwXMB3xVE8eohdZa7gLSyt7miCX21sN1G6cQp4dK4M+7Mq5ei9
+         k225zIwlYNBlrHjfsCTNouK6gneJUzv/Ca/NDY3dUGoGlh0nKyjoXatrvy5i01/DhV3e
+         D0M4qpOSwc1+a7dAT53GnEqR0Kqhy1fGtWGLt3uD6pswaybmz5BYLAVlS/2uDlHH050q
+         N8PISc+unr0lvxvIqjMaxf8VyhQjuKPezYsRyXoJQveFp2tAuWcbafOMsO5KWM7yglPV
+         NAdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=EvmZf7pDunr0D9SpdQay3IElfVPG9ybIR1bk+pAIeaA=;
-        b=azfaaBgD2VzwR1Akb4tHcbQsVHXLkQ5CmTu/xNM16qIh+AC2VMQAUWhs0Kq1jCFLvR
-         AFMApllW86uLc6t3YGmeFReSewAszMuZ12r75V97ZEHWPqjLvhrWTARAEueh2jdWjGHh
-         rVzLKPpz215Yf2boJM19lA403T+hZdGRe8ttQ8Jqapykle4Wpf5FosWbasyaChLkW3/Q
-         IhSLmjnyYkTPCVLncBMLP880GpFfcIxO+4oILcJP4VTv7WEAj66S4GJZpenIJN2KmRoI
-         cm2aJJxzG1FNx8wDMoUkwd/T1dnVy5ER/qZz5PBFDqWW51L1zJ+gbM0fbFkBP5QrxBuc
-         H9ZA==
+        bh=jInV9zgxaOgKFlgq3fa4umUhoGr85PguNaaFLoblaOM=;
+        b=QdjQ5xPXVm/u/aQn1JhB5lTtDt2iM/8yyxMWgG0XE9yn7Mli8IQSyW1mZxfehknDhS
+         qct96//jM0FwyVFw3ldtZRLNSt3IIPY3h1DECYdbIiaYzekgUxUoc5KCL1ObXItPSi9z
+         ReNBRGaAbjgLC5ks7a6ZNfpqOKH+bQUSvQlEeP9uoN+H/hEkmdRuaAY96ild1fbOG0Aa
+         Ru0jOnWl/1bAzMboalEWv9gbSL3GGSsZdIlPJkIBfDGSc1VOjl6H7eZt4iInibFGWHI8
+         9xBFM2yRbI06gw7RwEu6UDXbO6EWX2AvPJw+ugwld9ePfAZLwEq78DA35xA5SdevDXH8
+         Up4A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Zhang Yi <yizhan@redhat.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
+	chenxiang <chenxiang66@hisilicon.com>,
+	John Garry <john.garry@huawei.com>,
+	Jason Yan <yanaijie@huawei.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Hannes Reinecke <hare@suse.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 262/310] blk-mq: fix kernel oops in blk_mq_tag_idle()
-Date: Wed, 11 Apr 2018 20:36:41 +0200
-Message-Id: <20180411183633.935508832@linuxfoundation.org>
+Subject: [PATCH 4.9 261/310] scsi: libsas: initialize sas_phy status according to response of DISCOVER
+Date: Wed, 11 Apr 2018 20:36:40 +0200
+Message-Id: <20180411183633.891745764@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476836239327035?=
-X-GMAIL-MSGID: =?utf-8?q?1597477722945279927?=
+X-GMAIL-THRID: =?utf-8?q?1597476300437496411?=
+X-GMAIL-MSGID: =?utf-8?q?1597477720170527894?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,68 +54,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: chenxiang <chenxiang66@hisilicon.com>
 
 
-[ Upstream commit 8ab0b7dc73e1b3e2987d42554b2bff503f692772 ]
+[ Upstream commit affc67788fe5dfffad5cda3d461db5cf2b2ff2b0 ]
 
-HW queues may be unmapped in some cases, such as blk_mq_update_nr_hw_queues(),
-then we need to check it before calling blk_mq_tag_idle(), otherwise
-the following kernel oops can be triggered, so fix it by checking if
-the hw queue is unmapped since it doesn't make sense to idle the tags
-any more after hw queues are unmapped.
+The status of SAS PHY is in sas_phy->enabled. There is an issue that the
+status of a remote SAS PHY may be initialized incorrectly: if disable
+remote SAS PHY through sysfs interface (such as echo 0 >
+/sys/class/sas_phy/phy-1:0:0/enable), then reboot the system, and we
+will find the status of remote SAS PHY which is disabled before is
+1 (cat /sys/class/sas_phy/phy-1:0:0/enable). But actually the status of
+remote SAS PHY is disabled and the device attached is not found.
 
-[  440.771298] Workqueue: nvme-wq nvme_rdma_del_ctrl_work [nvme_rdma]
-[  440.779104] task: ffff894bae755ee0 ti: ffff893bf9bc8000 task.ti: ffff893bf9bc8000
-[  440.788359] RIP: 0010:[<ffffffffb730e2b4>]  [<ffffffffb730e2b4>] __blk_mq_tag_idle+0x24/0x40
-[  440.798697] RSP: 0018:ffff893bf9bcbd10  EFLAGS: 00010286
-[  440.805538] RAX: 0000000000000000 RBX: ffff895bb131dc00 RCX: 000000000000011f
-[  440.814426] RDX: 00000000ffffffff RSI: 0000000000000120 RDI: ffff895bb131dc00
-[  440.823301] RBP: ffff893bf9bcbd10 R08: 000000000001b860 R09: 4a51d361c00c0000
-[  440.832193] R10: b5907f32b4cc7003 R11: ffffd6cabfb57000 R12: ffff894bafd1e008
-[  440.841091] R13: 0000000000000001 R14: ffff895baf770000 R15: 0000000000000080
-[  440.849988] FS:  0000000000000000(0000) GS:ffff894bbdcc0000(0000) knlGS:0000000000000000
-[  440.859955] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  440.867274] CR2: 0000000000000008 CR3: 000000103d098000 CR4: 00000000001407e0
-[  440.876169] Call Trace:
-[  440.879818]  [<ffffffffb7309d68>] blk_mq_exit_hctx+0xd8/0xe0
-[  440.887051]  [<ffffffffb730dc40>] blk_mq_free_queue+0xf0/0x160
-[  440.894465]  [<ffffffffb72ff679>] blk_cleanup_queue+0xd9/0x150
-[  440.901881]  [<ffffffffc08a802b>] nvme_ns_remove+0x5b/0xb0 [nvme_core]
-[  440.910068]  [<ffffffffc08a811b>] nvme_remove_namespaces+0x3b/0x60 [nvme_core]
-[  440.919026]  [<ffffffffc08b817b>] __nvme_rdma_remove_ctrl+0x2b/0xb0 [nvme_rdma]
-[  440.928079]  [<ffffffffc08b8237>] nvme_rdma_del_ctrl_work+0x17/0x20 [nvme_rdma]
-[  440.937126]  [<ffffffffb70ab58a>] process_one_work+0x17a/0x440
-[  440.944517]  [<ffffffffb70ac3a8>] worker_thread+0x278/0x3c0
-[  440.951607]  [<ffffffffb70ac130>] ? manage_workers.isra.24+0x2a0/0x2a0
-[  440.959760]  [<ffffffffb70b352f>] kthread+0xcf/0xe0
-[  440.966055]  [<ffffffffb70b3460>] ? insert_kthread_work+0x40/0x40
-[  440.973715]  [<ffffffffb76d8658>] ret_from_fork+0x58/0x90
-[  440.980586]  [<ffffffffb70b3460>] ? insert_kthread_work+0x40/0x40
-[  440.988229] Code: 5b 41 5c 5d c3 66 90 0f 1f 44 00 00 48 8b 87 20 01 00 00 f0 0f ba 77 40 01 19 d2 85 d2 75 08 c3 0f 1f 80 00 00 00 00 55 48 89 e5 <f0> ff 48 08 48 8d 78 10 e8 7f 0f 05 00 5d c3 0f 1f 00 66 2e 0f
-[  441.011620] RIP  [<ffffffffb730e2b4>] __blk_mq_tag_idle+0x24/0x40
-[  441.019301]  RSP <ffff893bf9bcbd10>
-[  441.024052] CR2: 0000000000000008
+In SAS protocol, NEGOTIATED LOGICAL LINK RATE field of DISCOVER response
+is 0x1 when remote SAS PHY is disabled. So initialize sas_phy->enabled
+according to the value of NEGOTIATED LOGICAL LINK RATE field.
 
-Reported-by: Zhang Yi <yizhan@redhat.com>
-Tested-by: Zhang Yi <yizhan@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: chenxiang <chenxiang66@hisilicon.com>
+Reviewed-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/blk-mq.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/scsi/libsas/sas_expander.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -1592,7 +1592,8 @@ static void blk_mq_exit_hctx(struct requ
- {
- 	unsigned flush_start_tag = set->queue_depth;
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -282,6 +282,7 @@ static void sas_set_ex_phy(struct domain
+ 	phy->phy->minimum_linkrate = dr->pmin_linkrate;
+ 	phy->phy->maximum_linkrate = dr->pmax_linkrate;
+ 	phy->phy->negotiated_linkrate = phy->linkrate;
++	phy->phy->enabled = (phy->linkrate != SAS_PHY_DISABLED);
  
--	blk_mq_tag_idle(hctx);
-+	if (blk_mq_hw_queue_mapped(hctx))
-+		blk_mq_tag_idle(hctx);
- 
- 	if (set->ops->exit_request)
- 		set->ops->exit_request(set->driver_data,
+  skip:
+ 	if (new_phy)
