@@ -1,65 +1,98 @@
-Return-Path: <jic23@kernel.org>
-X-Google-Smtp-Source: AIpwx4/+FlUOqqAl7SdDmGYXX5pBSbbwi3hL9ZfeOSTSyaoTzTqqA3sHvYcJbC1bcCe6iUoWZf0+
-ARC-Seal: i=1; a=rsa-sha256; t=1523814113; cv=none;
+Return-Path: <afd@ti.com>
+X-Google-Smtp-Source: AIpwx4/GUF4iBdh+8mXyikSifEmbHTsJRG79Vksyeqh8Ilrrsfcemg4y3ELH7HCuxOA7qmJLvBdf
+ARC-Seal: i=1; a=rsa-sha256; t=1523460912; cv=none;
         d=google.com; s=arc-20160816;
-        b=zA0EM4l6b+fEqQnxz2Zf3rnmv+qYLKmBsXwSQTMQwLdqyq0N/Q7W8w13IuFkquLDzy
-         0IMHhUgNs8ffctKJoq9kVnEn+UcU4Bjw45o7//vERCKPR9by/C6dfvXguHqZ+tNgnMwE
-         stDBVOag/dt0RDV7TTy97TOdSHCEZYe9xf7PYLAiFnBd0M/zgZe09vHj8gdxAobo1LIu
-         4QlBD1CjR2Lenp62ruTQW7s+Vf6l7me/M/Ms+ccyOZ9wBaMABbCZl679iOiSsO7c40tq
-         cEL8HVXOYIkqoUNBXp7HAavTxqX0D+SICBRBQouLD7cwLcz93sIyehVo/RkUfYbrLU+G
-         JI9w==
+        b=ysmpblxTjUOn07gUDUs6lwUXg8bDAIWlsXRqu3FPX8k/8D2G2HdOMRF4NmKtU8N59G
+         Map7zXGBNTAIbB8g4cvH3vevjuXgo1McYpNZ5sbnElanNJJe2eZY6C6m0hXX6h2kx9uz
+         8HQQv/J/lYBaCZzv0bpeLJrkUXwgVcgBhgETxPgipwCrImUXRSBi4v+itDQ85oVRMRAY
+         JiMQhMaPMjoRNFBEsi2uvG0LvEnjD/Li5D24QdRVeB79NxS+tq0uOuJngtRnKom/DVpi
+         Sj15bC1CgK6YH2hRKI0Y3sdoq96mb5NcCvvmkzdbMD8P0fIsBLWvAgsfCBVlLrodQl4V
+         Mvlw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
-         :arc-authentication-results;
-        bh=PYV0LL6R8Vi/qmX5YGJPLm+arGGwwdlZXsJScEL8JVI=;
-        b=jdN+PCFpHonMey9sbztsFQwdDVsdHI4J9aDdjRQY4axMzaccqvSQw3RRC+kuOzcFjH
-         CQI2EIaKTBqQHZCtCnvF7j/mPmtfE14/MBVIOQnIohomXeuHI56XoCbXXLQ35GMbnn8p
-         ObUTk9Yu1P1whXj2dNzJfL5Y2lGLpgGKh1OkuQ/Pu6eZPS8VUkmdwAGaEA1GjfDodlMe
-         QxebTpjY48sHBpo8bZZvhfqa0+39Ax/O44s+VNOyK5pnhNGFsD0dGnADNn8sy+uI2s1D
-         GqOYx0xzsza0ctyq5Ydh5BvItqPSdf7VTrvFf72RkZVMgLyvWA/kwM6jm2TgPu/j4c+1
-         eSCw==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=jCdkI968dLvu2GU2NXfbBhjfjaIrj3mFF5NZNqtybcY=;
+        b=IuurGL5BM6CPYgE8e68DsdE6jMauroPPU8/bmjRt3Uv1fZYQ3hChKu6bv1BxUmRRY9
+         pmGDGcsLMz+2+d033Ximz906AqtQ7o43iS6oKQ7lt7CizufqKGSjyTvj+WOj/Ta2oJkl
+         UVVRzFiEx64uhjXQV+8tI8HBPjHxvT6Z4QDarKL81TPoNw5bL67Eii5xByYlUexm80+h
+         Mx4uqgXwu1ROXLmvOs19QDBNRPEZuwOukEkAzWCeqCKmfNFCOeZPiJ3Xtp17H5HFPimG
+         TH8Wft6cUME7OEI7Znga9H6KwlJVqqP+lxISCh1j6arQCVkV3jpWVyDpzyZzc1eIzgjM
+         fF2Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=dHALT6Sj;
+       spf=pass (google.com: domain of afd@ti.com designates 198.47.27.80 as permitted sender) smtp.mailfrom=afd@ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CFF92176F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sun, 15 Apr 2018 18:41:46 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
- Lars-Peter Clausen <lars@metafoo.de>, Peter Meerwald-Stadler
- <pmeerw@pmeerw.net>, Rob Herring <robh+dt@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, "David S. Miller" <davem@davemloft.net>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Andrew
- Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>,
- "Andrew F . Davis" <afd@ti.com>, Fabio Estevam <festevam@gmail.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=dHALT6Sj;
+       spf=pass (google.com: domain of afd@ti.com designates 198.47.27.80 as permitted sender) smtp.mailfrom=afd@ti.com;
+       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
 Subject: Re: [PATCH v3 0/2] iio: add unit converter
-Message-ID: <20180415184146.72c1afd3@archlinux>
-In-Reply-To: <20180411141555.15044-1-peda@axentia.se>
+To: Peter Rosin <peda@axentia.se>, <linux-kernel@vger.kernel.org>
+CC: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler
+	<pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andrew Morton
+	<akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Fabio
+ Estevam <festevam@gmail.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
 References: <20180410152802.30958-1-peda@axentia.se>
-	<20180411141555.15044-1-peda@axentia.se>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+ <20180411141555.15044-1-peda@axentia.se>
+From: "Andrew F. Davis" <afd@ti.com>
+Message-ID: <fe90dc62-ef2b-d999-6841-2d9d5943654c@ti.com>
+Date: Wed, 11 Apr 2018 10:34:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180411141555.15044-1-peda@axentia.se>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597373525263580007?=
-X-GMAIL-MSGID: =?utf-8?q?1597834907977731753?=
+X-GMAIL-MSGID: =?utf-8?q?1597464549351080235?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 11 Apr 2018 16:15:53 +0200
-Peter Rosin <peda@axentia.se> wrote:
-
+On 04/11/2018 09:15 AM, Peter Rosin wrote:
 > Hi!
 > 
 > I'm now following up with one more binding for the unit-converter.
-> This time with a real IC, namely LT6106 from Analog Devices. It's
+> This time with a real IC, namely LT6106 from Analog Devices.
+
+This makes more sense to me, I wasn't thinking about more complex ICs
+like this when I made my "resistor being part of the sensing device"
+argument.
+
+I can see how having a new node will probably be needed. It just seems
+strange to ask a resistor for its current, although it is the "device"
+that "knows" how much current if flowing though it..
+
+A case I'm more familiar with, fuel gauges, we have a gauge device that
+has a handle to the battery it is gauging [0], we still ask the
+"fuel-gauge" node to get out the state of charge, not the "battery"
+node, the battery is not a "device" from our perspective.
+
+Thinking more about that, I like your way better, so I recant my earlier
+objections.
+
+Andrew
+
+[0] Documentation/devicetree/bindings/power/supply/bq27xxx.txt
+
+> It's
 > a current sense amplifier. I was a but unsure if I should have
 > the Rin and Rout resistors in the binding or if I instead should
 > have used the "gain". In the end I went with the resistors since
@@ -69,14 +102,6 @@ Peter Rosin <peda@axentia.se> wrote:
 > 
 > Cheers,
 > Peter
-Trivial complaint of the day - why the same title for this email
-as the previous series?  Had me really confused for a minute ;)
-
-Seems like the whole driver is stabilizing.  If we do a v4 please
-pull the whole lot into one series.
-
-Jonathan
-
 > 
 > Peter Rosin (2):
 >   dt-bindings: iio: afe: add binding for adi,lt6106
