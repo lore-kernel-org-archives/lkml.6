@@ -1,66 +1,121 @@
-Return-Path: <keith.busch@intel.com>
-X-Google-Smtp-Source: AIpwx49hadGT8GR3QenFMM1j1K7ZtTHeHkiH1+FFEdh/4nuciwFF/Ej6ZakgKsDlPvBN5CbJ9gVp
-ARC-Seal: i=1; a=rsa-sha256; t=1523315519; cv=none;
+Return-Path: <kernel-hardening-return-12964-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx49mHEJaSqkULQKqdhMCFXcmLmTvumHdr9B/Imbivp1xDGKoZE1NwvR5kVB3uL085Gva0H7m
+ARC-Seal: i=1; a=rsa-sha256; t=1523408570; cv=none;
         d=google.com; s=arc-20160816;
-        b=WKuyfWDot2e8SB15+FHqSjS5VYS98ejOGb2te0pxEQ7IIzZbvhEk+dUffw943tM9OD
-         Bc20wTVpKHT/MejfmGtYUpVAXC7ekgYHW5yMR/sQ1ukbkEY5jRRY5/RQ09YS4lPIpJrt
-         2v05UI7iUTppFH9vqi2RmvITYofrLMdsgVDzWngJ8/OThiXMHQKhtUqh9ssmRnwLueha
-         fT7Q4nwCvQcDBm5xJDLIhMpI1nl3Ib8Z2bcRhZopaT2Ej1ngPM2oyuae1I0VlxSCDhay
-         LxIUbS8W1yZqYOOzLK+B6OpoOPiiw89ChKf5Oy5NpYi0aQRr4kQG4oBiswVEJnTKl5P3
-         nQtw==
+        b=KAaqyoFJ0ujUggNI/yNuCfssY4nDBdL3kuHcSngwihSnohZ1G1MynSne9K1L1BI2Zz
+         0+4KT/vLAKrLMSEisektxJms4hV3/tTFmtSyWWp60+pdflcBgx+szyT2aYiMc1W5v6U2
+         DUA/tEjDFsrephr8pLo2OvhES05eVQ7lcslDTvuxLWH9XfxMLfyoU1NlFCf2g/grzstj
+         MGANXNbi9AqoGdoYIHGuytD9VrBax+NQ9e+CJJM0cm0GGFjI/r2l83R7scxSF24kpKKb
+         E7v+og5PvW44NEYsggF7U+y068C/wxAjlQqIV+MAdB/52pPqYGO1PQjAgBsSo/oj0VGJ
+         voYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=Hm01vfXWYOn9HmZ3D7ahugpprWfhKjbCsO0bOy1GqtE=;
-        b=m06ZRlKc14qOMhbEJ3JT7rTuOSsnbTHpHpsAZU+fsPi4Z3A4zQNAlglxyH/dmBawZv
-         Zb9guS3iI9akAv9rQvnppqnOsdw8/LxpUuMZPywY3paQcuKhln/8WjeSmhWks+kgvIlZ
-         UIXcnWs3slcHC3lBgGrJVJ9tUJ2Ge5fFku7X6THAWFPRCMtAjRInS5LsbbQLdQoYsic5
-         jT9TUXDeVp6OoyJtq/MYKiqSTXEEku7bA0c+LcICs9rVBeB63WXQdNBeRDUiOxGjUve1
-         VnGqNPjOdSSiGDEI6XtXx3tKQA/HYhB2roQjT8nqRL8aLkTCWOF9yTpH5JAMjlqMdeH/
-         NS3w==
+        h=message-id:date:subject:cc:to:from:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=O8WfciiDYl7Lhr+NJARHFTMcRAkCHWWB76RpECIFM0U=;
+        b=mDyMirHQJt8jX+URDyEGOGKg1K3NHEfXETMJiiYiILRqiDXPFZHqmM3pUC28JqVAHm
+         9sanUwp18YKa2THFRY+E+BpF2GX495enu8TH3zvJz1F0tY62ayMQ1nPgXcMMB9iXOt3t
+         OpDW8oVHgtOdqQkd8bWZ76DIC7zBnhvWbB80CVdOBF54RFj3L/3VDJAfIb5ZItVzTXs+
+         CBoNtfKSzxQXLtCQagHEB+cOIU5aQcT66WzHOr0V3RUpdCKJXmodRcpYcjf2mJVahZgT
+         CXNzTDXf83QNtw+ELexIQ0JfDf3TDatbvj+cT92e+KgyUl3HeMhSfPux0iPgCsArONcF
+         9WkA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of keith.busch@intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=keith.busch@intel.com
+       spf=pass (google.com: domain of kernel-hardening-return-12964-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12964-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of keith.busch@intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=keith.busch@intel.com
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,429,1517904000";
-   d="scan'208";a="32970181"
-Date: Mon, 9 Apr 2018 17:14:48 -0600
-From: Keith Busch <keith.busch@intel.com>
-To: Oza Pawandeep <poza@codeaurora.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dongdong Liu <liudongdong3@huawei.com>, Wei Zhang <wzhang@fb.com>,
-	Sinan Kaya <okaya@codeaurora.org>,
-	Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH v13 1/6] PCI/AER: Rename error recovery to generic PCI
- naming
-Message-ID: <20180409231448.GB6283@localhost.localdomain>
-References: <1523284914-2037-1-git-send-email-poza@codeaurora.org>
- <1523284914-2037-2-git-send-email-poza@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523284914-2037-2-git-send-email-poza@codeaurora.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+       spf=pass (google.com: domain of kernel-hardening-return-12964-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12964-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Laura Abbott <labbott@redhat.com>
+To: Vinod Koul <vinod.koul@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>
+Cc: Laura Abbott <labbott@redhat.com>,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	Kees Cook <keescook@chromium.org>,
+	Sinan Kaya <okaya@codeaurora.org>
+Subject: [PATCHv2] dmaengine: dmatest: Remove use of VLAs
+Date: Tue, 10 Apr 2018 18:02:16 -0700
+Message-Id: <20180411010216.17702-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.14.3
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597280027496340053?=
-X-GMAIL-MSGID: =?utf-8?q?1597312094382861144?=
+X-GMAIL-THRID: =?utf-8?q?1597409665574809172?=
+X-GMAIL-MSGID: =?utf-8?q?1597409665574809172?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 09, 2018 at 10:41:49AM -0400, Oza Pawandeep wrote:
-> This patch renames error recovery to generic name with pcie prefix
-> 
-> Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
+There's an ongoing effort to remove VLAs from the kernel
+(https://lkml.org/lkml/2018/3/7/621) to eventually turn on -Wvla.
+The test already pre-allocates some buffers with kmalloc so turn
+the two VLAs in to pre-allocated kmalloc buffers.
 
-Looks fine.
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+v2: Switch to using kmalloc buffers instead of putting a large array on
+the stack.
+---
+ drivers/dma/dmatest.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-Reviewed-by: Keith Busch <keith.busch@intel.com>
+diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
+index 80cc2be6483c..9730956dfbe3 100644
+--- a/drivers/dma/dmatest.c
++++ b/drivers/dma/dmatest.c
+@@ -463,6 +463,8 @@ static int dmatest_func(void *data)
+ 	unsigned long long	total_len = 0;
+ 	u8			align = 0;
+ 	bool			is_memset = false;
++	dma_addr_t		*srcs;
++	dma_addr_t		*dma_pq;
+ 
+ 	set_freezable();
+ 
+@@ -546,6 +548,14 @@ static int dmatest_func(void *data)
+ 
+ 	set_user_nice(current, 10);
+ 
++	srcs = kcalloc(src_cnt, sizeof(dma_addr_t), GFP_KERNEL);
++	if (!srcs)
++		goto err_dstbuf;
++
++	dma_pq = kcalloc(dst_cnt, sizeof(dma_addr_t), GFP_KERNEL);
++	if (!dma_pq)
++		goto err_srcs_array;
++
+ 	/*
+ 	 * src and dst buffers are freed by ourselves below
+ 	 */
+@@ -556,7 +566,6 @@ static int dmatest_func(void *data)
+ 	       && !(params->iterations && total_tests >= params->iterations)) {
+ 		struct dma_async_tx_descriptor *tx = NULL;
+ 		struct dmaengine_unmap_data *um;
+-		dma_addr_t srcs[src_cnt];
+ 		dma_addr_t *dsts;
+ 		unsigned int src_off, dst_off, len;
+ 
+@@ -669,8 +678,6 @@ static int dmatest_func(void *data)
+ 						      srcs, src_cnt,
+ 						      len, flags);
+ 		else if (thread->type == DMA_PQ) {
+-			dma_addr_t dma_pq[dst_cnt];
+-
+ 			for (i = 0; i < dst_cnt; i++)
+ 				dma_pq[i] = dsts[i] + dst_off;
+ 			tx = dev->device_prep_dma_pq(chan, dma_pq, srcs,
+@@ -772,6 +779,9 @@ static int dmatest_func(void *data)
+ 	runtime = ktime_to_us(ktime);
+ 
+ 	ret = 0;
++	kfree(dma_pq);
++err_srcs_array:
++	kfree(srcs);
+ err_dstbuf:
+ 	for (i = 0; thread->udsts[i]; i++)
+ 		kfree(thread->udsts[i]);
+-- 
+2.14.3
