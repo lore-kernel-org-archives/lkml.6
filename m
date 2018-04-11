@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3303684-1523479549-2-17022655779811084130
+X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479543-2-17143269708997582543
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479548; b=iPhEmqDZZPnb8yGft3xEWd0uVswIic6bNt03/rWidY3mZ+i11s
-    TZuerb1dnyeEK5bjiF2ooYm9Xn4jqXGOBoSYdB4Brg+2hFX5iUYueE4MQC147OaF
-    T/3tTHvB4S+QWsG7j4Cs9ILyLUZ8gCi1eEgPmnl65hhiRDaB8oFQiDt720dgfGiS
-    2jvV7phuVO8AyEn5qrUdo+tWZsb6s0vGbj3xbXSZ8QX6Wgr4s/mIGQu7HDmiRbGE
-    prr12/ERIdyqOIAs81TIWH3EnX6iOo3SBJ/U5FC4aGAC9fpGozhQOuZi6NuKuWeq
-    A5GQ86u/8OApcV6a6DlpLQ7cDInrXLQiucQg==
+    1523479542; b=fMpTIk06Fes8N0E9BK+DxVtuTuMam+HAj2w/X6yr23FOtA6x1b
+    h5KtA7h1cqLF3E+3d2YMTRtMucaDvOc13z9m0lgGPCSDX0ehD67FNqd4MDqnMBl8
+    TX3asrlcGVVlGcAAqDBF9PRiABnu4VMz7sj+rfXOFhZ7cOyHoB0g6YeG5NbaCzGM
+    z99uFJuFo2gmAGhWLeKEiQ8KEdZzDInksOf4+sP8GdZL1m3NVGCvrKWl2R45//Oi
+    aKLlKkIKfayVwT4dOObXtu1c2vvahA9LsREm7jSK6oHnr7STsMqWQ7BgRxPQcZO+
+    7qxRuiF7ilAWFsXgWATdAOSthCN7kwlgvUCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479548; bh=SWQl/+KrwP7CKG4erUNHUWPEHU3H18
-    pCh9yjPNjkM9o=; b=OkyPjy0eCdFSW7jmrkEQ1I13WkEIU0i9yalJQzijsgREWo
-    tU+FnMTSU85ajTtk1NW4a6Xhp7PctJ3t6aepAy1/HETsHtCjM9LEOvcLSp5TIpj3
-    hOR9dDTT7GWriwmKO/G/8XOq5y1s9a/WJ/RW5crf/6t0QKi/xyyU8TPWldLjI5yA
-    oBsstacrMIZXo9hRMjmUgv1ek+bCFD5E23wcdxBzcn6wFDvGJzBrEhYetFkOEK2s
-    SF06i7LbTkBuNeccwIuuDI6qFNJTB3U4NIe5sQrLGjNe5gALI3U42w6Wh1gyBa5P
-    Ug++CYlRrAEDFTIcDjBZlCxG3XbvYkKKUsuc0cAg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479542; bh=CDoVQzb2diYswqU+j6tXmikOCh29yg
+    UOhFm8urEw5TI=; b=wB+KW/yrmU8VTp1h9/S1efOQ7LktZZxOfBP33zwkaKVn14
+    n6SsY3E+tv/obLQt55tjhDFelFWlu+wom98llOssbOckVXnaLc8lf/GMA7AWyyD1
+    klYVjZr6qjL1IGubXb4Zizek3pA49lEvnxlfCEwsibEdi7u/vBOFxLFN9YJXPsx5
+    fIhQ50K5NPMQ4HKRK1+6Bvwi6Y6kC6CpIpl9ySxMeD6ttdWWCdpKyLjUZH53MRP3
+    utp3EMMu3gRVVz87SR95kIUFnpuZw2VOQmqt3HXlpvvMdDtFGBR8cjOsgND4PCkl
+    /T5kUjLthV+wGVkZqgMdm8i4eUF6qXcEyJaTg6XQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,31 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfB/d3S5QF1naE+fVz/KCJIHdkQT5TR3Zm9nPt+qO24HiAhNXImvQqV+c1hyAzNL/3QOeJM0wMWUsWYGuciik1po9ejSTIonfzp+cc5aRf0LJjJTcGQkE
-    FF3+OPNTDEqXDYv4a3IRBuDeJPzmob+HCwa9SDH+QdFbxq+ur0/DsAGuwCL6vRdiHh8sM/ZZpby1I8VVdzIOMgqo2X6XpB9Jqs+sO8Wjagt2SpNc8iThWvGS
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHmtfjRhxInJjI5DP2HuviNpvgL8gcnCV8nORCf+YGy2D1wp3/zXC+UlOT1hgXmgOz5aEiy3G+vVHScGKtHHtTPwsvmydFMXibmD290I7YFiw2RJX60h
+    pb0IdRnBHk2QA0c1hv94v8pTeCrCYXc7BlHN4fqQShFeKe0xNm4OZ9Z9FlSIiZ+VPtxeUrK0pCaQ8gaHN8DixKL8OhfIzOlsNr8KDee2vfc+BVTGYAUtP7n+
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=8QyaLQAlnL_XF40ULzwA:9 a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=WBZvL9eSjnWsstDp_dIA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755812AbeDKSrA (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:47:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59110 "EHLO
+        id S1753047AbeDKUp0 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:45:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59120 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755811AbeDKSq7 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:46:59 -0400
+        with ESMTP id S1755816AbeDKSrB (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:47:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lin Zhang <xiaolou4617@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 080/190] net: llc: add lock_sock in llc_ui_bind to avoid a race condition
-Date: Wed, 11 Apr 2018 20:35:26 +0200
-Message-Id: <20180411183555.243503151@linuxfoundation.org>
+Subject: [PATCH 4.4 081/190] ARM: dts: ls1021a: add "fsl,ls1021a-esdhc" compatible string to esdhc node
+Date: Wed, 11 Apr 2018 20:35:27 +0200
+Message-Id: <20180411183555.304361791@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -93,49 +93,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: linzhang <xiaolou4617@gmail.com>
+From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
 
 
-[ Upstream commit 0908cf4dfef35fc6ac12329007052ebe93ff1081 ]
+[ Upstream commit d5c7b4d5ac2237a6da7ced3adfe6b8bf769f8cc6 ]
 
-There is a race condition in llc_ui_bind if two or more processes/threads
-try to bind a same socket.
+Commit a22950c888e3 (mmc: sdhci-of-esdhc: add quirk
+SDHCI_QUIRK_BROKEN_TIMEOUT_VAL for ls1021a) added logic to the driver to
+enable the broken timeout val quirk for ls1021a, but did not add the
+corresponding compatible string to the device tree, so it didn't really
+have any effect. Fix that.
 
-If more processes/threads bind a same socket success that will lead to
-two problems, one is this action is not what we expected, another is
-will lead to kernel in unstable status or oops(in my simple test case,
-cause llc2.ko can't unload).
-
-The current code is test SOCK_ZAPPED bit to avoid a process to
-bind a same socket twice but that is can't avoid more processes/threads
-try to bind a same socket at the same time.
-
-So, add lock_sock in llc_ui_bind like others, such as llc_ui_connect.
-
-Signed-off-by: Lin Zhang <xiaolou4617@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/llc/af_llc.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/ls1021a.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/llc/af_llc.c
-+++ b/net/llc/af_llc.c
-@@ -309,6 +309,8 @@ static int llc_ui_bind(struct socket *so
- 	int rc = -EINVAL;
+--- a/arch/arm/boot/dts/ls1021a.dtsi
++++ b/arch/arm/boot/dts/ls1021a.dtsi
+@@ -132,7 +132,7 @@
+ 		};
  
- 	dprintk("%s: binding %02X\n", __func__, addr->sllc_sap);
-+
-+	lock_sock(sk);
- 	if (unlikely(!sock_flag(sk, SOCK_ZAPPED) || addrlen != sizeof(*addr)))
- 		goto out;
- 	rc = -EAFNOSUPPORT;
-@@ -380,6 +382,7 @@ static int llc_ui_bind(struct socket *so
- out_put:
- 	llc_sap_put(sap);
- out:
-+	release_sock(sk);
- 	return rc;
- }
- 
+ 		esdhc: esdhc@1560000 {
+-			compatible = "fsl,esdhc";
++			compatible = "fsl,ls1021a-esdhc", "fsl,esdhc";
+ 			reg = <0x0 0x1560000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-frequency = <0>;
