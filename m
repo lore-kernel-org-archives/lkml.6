@@ -1,46 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753240AbeDKOKU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 10:10:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48716 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751961AbeDKOKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 10:10:18 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <62e9abc2-b639-419c-afa7-e89054f7dce9@canonical.com>
-References: <62e9abc2-b639-419c-afa7-e89054f7dce9@canonical.com> <20180411132613.18974-1-colin.king@canonical.com> <23535.1523453966@warthog.procyon.org.uk>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] afs: fix integer overflow when shifting 1 more than 32 places
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <24492.1523455816.1@warthog.procyon.org.uk>
-Date: Wed, 11 Apr 2018 15:10:16 +0100
-Message-ID: <24493.1523455816@warthog.procyon.org.uk>
+        id S1753027AbeDKOOD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 10:14:03 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:55547 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751541AbeDKOOB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 10:14:01 -0400
+X-Auth-Info: hU56ZblLKw6fdDnRlqep5K3rx8B83O6DzNQbNzPqf8w=
+From: Lukasz Majewski <lukma@denx.de>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>, Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH 1/2] input: touchscreen mc13xxx: Make platform data optional
+Date: Wed, 11 Apr 2018 16:13:39 +0200
+Message-Id: <20180411141340.30939-1-lukma@denx.de>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+From: Sascha Hauer <s.hauer@pengutronix.de>
 
-> >> -	mask = (1 << nr_slots) - 1;
-> >> +	mask = (1ULL << nr_slots) - 1;
-> > 
-> > nr_slots cannot be larger than 9, so what I wrote is actually fine and is
-> > more efficient on a 32-bit machine.
-> 
-> ok, sorry about the noise.
+The platform data once was optional, make it optional again. This
+is a first step towards device tree support for the mc13xxx touchscreen
+driver.
 
-It would be possible to cast the value to u64 before assigning it, I suppose.
-Would that help?  E.g.:
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+---
+Changes from the original patch:
+- Commit message typo fixes
+---
+ drivers/input/touchscreen/mc13783_ts.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-	mask = (u64)((1 << nr_slots) - 1);
-
-It looks a bit odd, though, since the cast is made implicitly anyway.
-
-David
+diff --git a/drivers/input/touchscreen/mc13783_ts.c b/drivers/input/touchscreen/mc13783_ts.c
+index ef64f36c5ffc..610f10e6aadf 100644
+--- a/drivers/input/touchscreen/mc13783_ts.c
++++ b/drivers/input/touchscreen/mc13783_ts.c
+@@ -38,7 +38,8 @@ struct mc13783_ts_priv {
+ 	struct mc13xxx *mc13xxx;
+ 	struct delayed_work work;
+ 	unsigned int sample[4];
+-	struct mc13xxx_ts_platform_data *touch;
++	u8 ato;
++	bool atox;
+ };
+ 
+ static irqreturn_t mc13783_ts_handler(int irq, void *data)
+@@ -128,7 +129,7 @@ static void mc13783_ts_work(struct work_struct *work)
+ 
+ 	if (mc13xxx_adc_do_conversion(priv->mc13xxx,
+ 				mode, channel,
+-				priv->touch->ato, priv->touch->atox,
++				priv->ato, priv->atox,
+ 				priv->sample) == 0)
+ 		mc13783_ts_report_sample(priv);
+ }
+@@ -172,6 +173,7 @@ static void mc13783_ts_close(struct input_dev *dev)
+ static int __init mc13783_ts_probe(struct platform_device *pdev)
+ {
+ 	struct mc13783_ts_priv *priv;
++	struct mc13xxx_ts_platform_data *pdata = dev_get_platdata(&pdev->dev);
+ 	struct input_dev *idev;
+ 	int ret = -ENOMEM;
+ 
+@@ -183,11 +185,10 @@ static int __init mc13783_ts_probe(struct platform_device *pdev)
+ 	INIT_DELAYED_WORK(&priv->work, mc13783_ts_work);
+ 	priv->mc13xxx = dev_get_drvdata(pdev->dev.parent);
+ 	priv->idev = idev;
+-	priv->touch = dev_get_platdata(&pdev->dev);
+-	if (!priv->touch) {
+-		dev_err(&pdev->dev, "missing platform data\n");
+-		ret = -ENODEV;
+-		goto err_free_mem;
++
++	if (pdata) {
++		priv->atox = pdata->atox;
++		priv->ato = pdata->ato;
+ 	}
+ 
+ 	idev->name = MC13783_TS_NAME;
+-- 
+2.11.0
