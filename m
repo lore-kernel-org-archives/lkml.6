@@ -1,98 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752588AbeDKInU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 04:43:20 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:41011 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751546AbeDKInQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 04:43:16 -0400
-X-Google-Smtp-Source: AIpwx4/MxLlCEG14Cqxf2K4T+9hpfM9x90HxPb7shUULiFXDpmVuiaKZ0lySOO6/A+1ZrAT3+7ZrTnEZVUFKm3NOPA0=
+        id S1752410AbeDKItq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 04:49:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56781 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750825AbeDKItl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 04:49:41 -0400
+Date: Wed, 11 Apr 2018 10:49:36 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        linux-doc@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>,
+        aneesh.kumar@linux.vnet.ibm.com, akpm@linux-foundation.org,
+        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Vineet Gupta <vgupta@synopsys.com>, Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <albert@sifive.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        David Rientjes <rientjes@google.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v3 2/2] mm: remove odd HAVE_PTE_SPECIAL
+Message-ID: <20180411084936.GC23400@dhcp22.suse.cz>
+References: <1523433816-14460-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1523433816-14460-3-git-send-email-ldufour@linux.vnet.ibm.com>
+ <20180411083315.GA23400@dhcp22.suse.cz>
+ <5bd1bb46-8f71-e6db-7fb7-43d023a37f58@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <1523434945.4739.1.camel@pengutronix.de>
-References: <1523375627-23746-1-git-send-email-geert+renesas@glider.be>
- <1523375627-23746-3-git-send-email-geert+renesas@glider.be> <1523434945.4739.1.camel@pengutronix.de>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Apr 2018 10:43:14 +0200
-X-Google-Sender-Auth: EXUqVbbe4b2t9WfzkyOCblbV12k
-Message-ID: <CAMuHMdXM2GHxE197BNpTjWx+zq_gAbxWzFO5Mnv9SnRA-L-utw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] vfio: platform: Add generic DT reset controller support
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        KVM list <kvm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5bd1bb46-8f71-e6db-7fb7-43d023a37f58@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
+On Wed 11-04-18 10:41:23, Laurent Dufour wrote:
+> On 11/04/2018 10:33, Michal Hocko wrote:
+> > On Wed 11-04-18 10:03:36, Laurent Dufour wrote:
+> >> @@ -881,7 +876,8 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+> >>  
+> >>  	if (is_zero_pfn(pfn))
+> >>  		return NULL;
+> >> -check_pfn:
+> >> +
+> >> +check_pfn: __maybe_unused
+> >>  	if (unlikely(pfn > highest_memmap_pfn)) {
+> >>  		print_bad_pte(vma, addr, pte, NULL);
+> >>  		return NULL;
+> >> @@ -891,7 +887,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+> >>  	 * NOTE! We still have PageReserved() pages in the page tables.
+> >>  	 * eg. VDSO mappings can cause them to exist.
+> >>  	 */
+> >> -out:
+> >> +out: __maybe_unused
+> >>  	return pfn_to_page(pfn);
+> > 
+> > Why do we need this ugliness all of the sudden?
+> Indeed the compiler doesn't complaint but in theory it should since these
+> labels are not used depending on CONFIG_ARCH_HAS_PTE_SPECIAL.
 
-On Wed, Apr 11, 2018 at 10:22 AM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
-> On Tue, 2018-04-10 at 17:53 +0200, Geert Uytterhoeven wrote:
->> Vfio-platform requires reset support, provided either by ACPI, or, on DT
->> platforms, by a device-specific reset driver matching against the
->> device's compatible value.
->>
->> On many SoCs, devices are connected to an SoC-internal reset controller.
->> If the reset hierarchy is described in DT using "resets" properties,
->> such devices can be reset in a generic way through the reset controller
->> subsystem.  Hence add support for this, avoiding the need to write
->> device-specific reset drivers for each single device on affected SoCs.
->>
->> Devices that do require a more complex reset procedure can still provide
->> a device-specific reset driver, as that takes precedence.
->>
->> Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
->> becomes a no-op (as in: "No reset function found for device") if reset
->> controller support is disabled.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-
-Thanks!
-
->> --- a/drivers/vfio/platform/vfio_platform_common.c
->> +++ b/drivers/vfio/platform/vfio_platform_common.c
-> [...]
->> @@ -127,8 +136,16 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
->>               vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
->>                                                       &vdev->reset_module);
->>       }
->> +     if (vdev->of_reset)
->> +             return 0;
->> +
->> +     rstc = of_reset_control_get_exclusive(vdev->device->of_node, NULL);
->
-> If vdev->device->of_node == NULL, this will return -EINVAL ...
->
->> +     if (!IS_ERR(rstc)) {
->> +             vdev->reset_control = rstc;
->> +             return 0;
->> +     }
->>
->> -     return vdev->of_reset ? 0 : -ENOENT;
->> +     return PTR_ERR(rstc);
->
-> ... instead of -ENOENT, if that makes any difference.
-
-Not really. The single caller (vfio_platform_probe_common()) already returns
--EINVAL if no IOMMU group is found, so this should be handled fine.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Well, such a warning would be quite pointless so I would rather not make
+the code ugly. The value of unused label is quite questionable to start
+with...
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Michal Hocko
+SUSE Labs
