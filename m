@@ -1,71 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752253AbeDKJwW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 05:52:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34853 "EHLO mx2.suse.de"
+        id S1752579AbeDKJwu convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 05:52:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751758AbeDKJwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 05:52:21 -0400
-Date: Wed, 11 Apr 2018 11:52:18 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/9] vsprintf: Consolidate handling of unknown pointer
- specifiers
-Message-ID: <20180411095218.zth5edjth2cxrrwc@pathway.suse.cz>
-References: <20180404085843.16050-1-pmladek@suse.com>
- <20180404085843.16050-5-pmladek@suse.com>
- <1523111200.21176.416.camel@linux.intel.com>
- <20180409135028.ymyvsqxup7zm5vgc@pathway.suse.cz>
- <1523360515.21176.434.camel@linux.intel.com>
+        id S1752323AbeDKJws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 05:52:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37D382183D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
+X-Google-Smtp-Source: AIpwx4/R/NUP5DjbEnnk5NAGAte5sUhn+cOm0xeM0b7p+pNl4xx3VlOCoiK7qHPAaFtfNBoZCMbu16ZfTl02YTmnNpA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523360515.21176.434.camel@linux.intel.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <CA+Ln22FAmBHrxEvQpBPV1p=Kg2g+XCHn=HQJCNSUhFv+Jtf6xA@mail.gmail.com>
+References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+ <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com>
+ <CA+Ln22Eabq0HH6YmCSFwLd68w3DU4xTX2BiNAeLe_tnG6282Xg@mail.gmail.com> <CA+Ln22FAmBHrxEvQpBPV1p=Kg2g+XCHn=HQJCNSUhFv+Jtf6xA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Wed, 11 Apr 2018 11:52:44 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcWQUHHhf2gV3u4fu=wuVf3qxOYwNdj0c_JFc+zqfJUkA@mail.gmail.com>
+Message-ID: <CAJKOXPcWQUHHhf2gV3u4fu=wuVf3qxOYwNdj0c_JFc+zqfJUkA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:SAMSUNG SOC CLOCK DRIVERS"
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-gpio@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-04-10 14:41:55, Andy Shevchenko wrote:
-> On Mon, 2018-04-09 at 15:50 +0200, Petr Mladek wrote:
-> > On Sat 2018-04-07 17:26:40, Andy Shevchenko wrote:
-> > > On Wed, 2018-04-04 at 10:58 +0200, Petr Mladek wrote:
-> 
-> > > This change collides with my patch series. Can you elaborate what
-> > > your
-> > > thoughts are about my patches? Are you going incorporate them to
-> > > your
-> > > series? Should I send them independently?
-> > 
-> > Good question. I think that the best solution will be that I go
-> > over your patchset and just add all valid ones into printk.git
-> > for-4.18.
-> 
-> I think about 1-7 and 9 that can go as is before your changes.
-> And patch 8 postpone
+On Wed, Apr 11, 2018 at 10:36 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> 2018-04-10 17:38 GMT+09:00 Tomasz Figa <tomasz.figa@gmail.com>:
+>> 2018-04-10 16:06 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
+>>> On Sun, Apr 8, 2018 at 8:07 PM, Paweł Chmiel
+>>> <pawel.mikolaj.chmiel@gmail.com> wrote:
+>>>> All banks with GPIO interrupts should be at beginning
+>>>> of bank array and without any other types of banks between them.
+>>>> This order is expected by exynos_eint_gpio_irq, when doing
+>>>> interrupt group to bank translation.
+>>>> Otherwise, kernel NULL pointer dereference would happen
+>>>> when trying to handle interrupt, due to wrong bank being looked up.
+>>>> Observed on s5pv210, when trying to handle gpj0 interrupt,
+>>>> where kernel was mapping it to gpi bank.
+>>>
+>>> Thanks for the patch. The issue looks real although one thing was
+>>> missed - there is a gap in SVC group between GPK2 and GPL0 (pointed by
+>>> Marek Szyprowski):
+>>>
+>>> 0x0 - EINT_23 - gpk0
+>>> 0x1 - EINT_24 - gpk1
+>>> 0x2 - EINT_25 - gpk2
+>>> 0x4 - EINT_27 - gpl0
+>>> 0x7 - EINT_8 - gpm0
+>>>
+>>> Maybe this should be done differently - to remove such hidden
+>>> requirement entirely in favor of another parameter of
+>>> EXYNOS_PIN_BANK_EINTG argument?
+>>
+>> Perhaps let's limit this patch to s5pv210 and Exynos5410 alone, where
+>> a simple swap of bank order in the arrays should be okay.
+>>
+>> We might also need to have some fixes on 4x12, because I noticed that
+>> in exynos4x12_pin_banks0[] there is a hole in eint_offsets between
+>> gpd1 and gpf0 and exynos4x12_pin_banks1[] starts with gpk0 that has
+>> eint_offset equal to 0x08 (not 0).
+>
+> To close the loop, after talking offline and checking the
+> documentation, Exynos4x12 is fine, because the group numbers in SVC
+> register actually match what is defined in bank arrays.
 
-Done. All the 8 patches are in printk.git, branch
-for-4.18-vsprintf-cleanup.
+Great! Thanks for checking.
 
-I am sorry that we have missed 4.17. In theory, it still might be
-possible to push them there. But there does not seem to be a real
-reason to rush them.
-
-> >  Then I will base v5 of this patchset on top of it.
-> 
-> I'm going for vacation tomorrow. Can you just take them into your series
-> or apply to your tree?
-
-Good to know.
-
-Enjoy vacation,
-Petr
+Best regards,
+Krzysztof
