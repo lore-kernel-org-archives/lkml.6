@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/9lTsro4S7u2lSqgOnRMKnXZbKZOxXdcQUpTcy1GLEH/CtM4zyqM4McGzrXckK6pLES8Hb
-ARC-Seal: i=1; a=rsa-sha256; t=1523473532; cv=none;
+X-Google-Smtp-Source: AIpwx48TddbcDPHKNtVpETY9ScfHCruX0O38bS8tElkngrgp9Ktf+KhONCc09peeqKPmWHh7paCR
+ARC-Seal: i=1; a=rsa-sha256; t=1523473530; cv=none;
         d=google.com; s=arc-20160816;
-        b=We02CV0o3JT0MiHimHVr+3mWNniVDNPlDdlIYeUDZ2fQYE2XI82D88Ms8Az90IKYZt
-         5tMHEQcZzG/dZb5wWeNrc9ujm687o2/0/7lfW1PuB7cDQXKLXB8nuWTc5SYwd/c5O1ua
-         YIgm4DCUveSr2hgkrs35s9HCVIkoJWwxvfqDrttbbzdMF8rcJpHzE2UCmXO1rNJG1EXD
-         3O99PBwpBwn64ZEPcdNdSqAYBYf9b6IY+PmIdyhq1jTM2Bg4/WLUjNK6MilJOAgtQHpk
-         d1wQ89Gp3DQkN39w//spIMeIpAorIwoUavMIYU9VpYTRl2l1eEZtVOdaBKbyzq35sLN5
-         SI9A==
+        b=lYyHB4zXUCACe+cUIMbqENSPPSg2651WQPKFDDaQGTQ25aoX7WLwIpPg0HmS/eB2FF
+         N143jAPc9wWnYAXt9V2MudnyS0TV2d6Wpob1/CdQKLA+qlzqj52qhy9yKooaNr6ujbtR
+         LGb0p74sAc4P/3aHuPI/BhVp6v0TBpQGi+61g8499ADFFwmyI3tpVZrImIdTorfGL9c2
+         QixLMZ5MoKWja+x+VotiROBsoNwN1j9nU+uOA//CiJ3rtzijneFbklgfNo6lrdwhuBRE
+         9P76jt15UAqa6jSYCyy4S00+7A2bqtfSM/9bUi2h1Vt6Sw7gkLCsUpd/L71edwKEvV8M
+         6YQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=mHz+U+D4UhXYEqV8dHLyipvUwfLf5SrmOiolN2tZRLs=;
-        b=J3W+HpxARBOd4PnWQuqId1R2kciIH3U7GNS6Pb2s91XB3l6CFVgi12OPWgfFF/7r6F
-         z7cjZMR/2x8MO9n0443cQHldQ13gLtVxrTBLII0nC/YUslBuQIwnNu1h/tqyTi7YLa4L
-         mNl74Lw/kxpcUnvIU4TMnf7QyKwJbl12K53jUwRfoO172plzHrNaHKZSGkoRH7xm2DV3
-         9oOzUhYVxqHQNiiA+OmqbJF0AbFqNPWWfBQvUidJuDkS5/qYn29PHtH60tH7wysXtiXy
-         zziHUzTT57jjplree/Rt2+OOI2ZwoF+qYgZj5gwTmcgNPXaLDo85K0YZXS6HcmBxnF7H
-         rlNQ==
+        bh=EpRVY6GVumQdKWOX6uJLfzOc0EUOJh5ttGIuP040aWE=;
+        b=CuTlTCtG94zdVbyQc/omA9MNtY6R9BClWm1ALZtniv4zKMkfve5J33JmgkvRQ0NFxB
+         puK/jdaMcYm0TSKyufuBbYa3oI4hp41hqQhB1IoW+oee322UYQDow7Uqmq5wrcFipTZD
+         aFTiF4AotY63EChnM8z5THd+yGCWk9cCqXj7nXPawzst/KKG0s2XBJZ5FU+Q/EyCsGcc
+         EIK5St4WZgrGIygZkERkmTVyVBjG9uphrj3aX0kyGq1irQfLf9rGNYS+to+oL2hX0/Iu
+         MDgDLPhdIASIWgulYxvOSFvv2wT5rHiCQoo836AszkUdODHLkxCndoM5sNqtZIZVI3DY
+         nYUQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alexander Potapenko <glider@google.com>,
-	Eric Dumazet <edumazet@google.com>,
+	Jeff Barnhill <0xeffeff@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 281/310] netlink: make sure nladdr has correct size in netlink_connect()
-Date: Wed, 11 Apr 2018 20:37:00 +0200
-Message-Id: <20180411183634.706120395@linuxfoundation.org>
+Subject: [PATCH 4.9 280/310] net/ipv6: Increment OUTxxx counters after netfilter hook
+Date: Wed, 11 Apr 2018 20:36:59 +0200
+Message-Id: <20180411183634.663528011@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476332058088557?=
-X-GMAIL-MSGID: =?utf-8?q?1597477783299748203?=
+X-GMAIL-THRID: =?utf-8?q?1597476938428823719?=
+X-GMAIL-MSGID: =?utf-8?q?1597477780247111365?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,33 +49,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alexander Potapenko <glider@google.com>
+From: Jeff Barnhill <0xeffeff@gmail.com>
 
 
-[ Upstream commit 7880287981b60a6808f39f297bb66936e8bdf57a ]
+[ Upstream commit 71a1c915238c970cd9bdd5bf158b1279d6b6d55b ]
 
-KMSAN reports use of uninitialized memory in the case when |alen| is
-smaller than sizeof(struct sockaddr_nl), and therefore |nladdr| isn't
-fully copied from the userspace.
+At the end of ip6_forward(), IPSTATS_MIB_OUTFORWDATAGRAMS and
+IPSTATS_MIB_OUTOCTETS are incremented immediately before the NF_HOOK call
+for NFPROTO_IPV6 / NF_INET_FORWARD.  As a result, these counters get
+incremented regardless of whether or not the netfilter hook allows the
+packet to continue being processed.  This change increments the counters
+in ip6_forward_finish() so that it will not happen if the netfilter hook
+chooses to terminate the packet, which is similar to how IPv4 works.
 
-Signed-off-by: Alexander Potapenko <glider@google.com>
-Fixes: 1da177e4c3f41524 ("Linux-2.6.12-rc2")
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Jeff Barnhill <0xeffeff@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netlink/af_netlink.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/ipv6/ip6_output.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -1054,6 +1054,9 @@ static int netlink_connect(struct socket
- 	if (addr->sa_family != AF_NETLINK)
- 		return -EINVAL;
- 
-+	if (alen < sizeof(struct sockaddr_nl))
-+		return -EINVAL;
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -356,6 +356,11 @@ static int ip6_forward_proxy_check(struc
+ static inline int ip6_forward_finish(struct net *net, struct sock *sk,
+ 				     struct sk_buff *skb)
+ {
++	struct dst_entry *dst = skb_dst(skb);
 +
- 	if ((nladdr->nl_groups || nladdr->nl_pid) &&
- 	    !netlink_allowed(sock, NL_CFG_F_NONROOT_SEND))
- 		return -EPERM;
++	__IP6_INC_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTFORWDATAGRAMS);
++	__IP6_ADD_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTOCTETS, skb->len);
++
+ 	return dst_output(net, sk, skb);
+ }
+ 
+@@ -549,8 +554,6 @@ int ip6_forward(struct sk_buff *skb)
+ 
+ 	hdr->hop_limit--;
+ 
+-	__IP6_INC_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTFORWDATAGRAMS);
+-	__IP6_ADD_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTOCTETS, skb->len);
+ 	return NF_HOOK(NFPROTO_IPV6, NF_INET_FORWARD,
+ 		       net, NULL, skb, skb->dev, dst->dev,
+ 		       ip6_forward_finish);
