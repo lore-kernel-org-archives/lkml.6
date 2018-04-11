@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3374234-1523481961-2-17090703106356630693
+X-Cyrus-Session-Id: sloti22d1t05-3374234-1523481938-2-2280107650941682579
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523481961; b=vJn7QKMAqXqwkbEAl6tuBYCkXIe3sUexAi4gWf+Wp7YkzBduxW
-    0+Tk2tZY7nhrh2s3bG0ZL+l1bKx7wSlTxW+kmX2NZeCLElWickpatTzr/z5X4D0B
-    lQDsGvSiHEiPQg5VSUKh9XGfewMBKE/JOFhWi80yWe+TraBYjxyi60gMtz30yVDM
-    lz6mghFC6EMlqoM7HGPaBYYJ6jsxHj8ZmJXX4yvGUpccGunfk1LblRdIHetiSgMN
-    uoMTuggo715nvDxuC3xpFrP5cpT8vT18bxsYf8YE/wLNh/DLsr7DHuxdqtmUlQnC
-    e5IeEujRGn8EQH/aQj+S4b3rT39zdreNbbzg==
+    1523481938; b=SLsSvdZ20YGrvDzIKNe12aTs+xdiKGkYB5ut3j69rw8ySG0Hkr
+    x70BbRGrjFjY2tEx5Ax/fPZMELxM3y80jLdzXOAiTqJyR66EcBADUFmcPt3nwoXq
+    GKlQFrFItPKt7yYo+cEV0vyH6ZShqSKrqO8hBVW+CsZVqPGraCkYpCBdXf65H7nN
+    1Eagkl2E7Y7cUaTz0ZfgzmA1WVh0nZDbNAN5qRZsLpISPO1Kjeva32LN/WisezJo
+    VwOjjg/rUhEEoTU77dPmzX/29gDpjgfgaCFFKylOa88PQQvP7REHA8iOzn50P14O
+    kjAYtSJBQrUvvmD1k9XzaN2b/qpjm+DIy8TA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523481961; bh=99ApMIKj2iYEmLhBrBlGxG3ptu+bfD
-    6JWwXKDT8MefI=; b=ga2Z5yxJWiRxsVoH53d0JZXOtFMBuVmu19SjYVyXLx4N+D
-    c09zjjPEdcxmih8IjPF0BP11mtti3X+CWZ2J9I7cEop1PnaEKPkpixgKhCkqjhBw
-    36wtjAbWJlZACCoUGuN564bVKMlMXIN5T7w3rUJANoFFtEuHrAEz0S8V+bbdLktS
-    QTYtEBnh7HUTXOX+sVZDDOzEdCLfsji2lSNrq1XLQVKh88nhxZkRBPzC7S8USfrK
-    Xngcan4e7tSr3CohuirIZpeA/RyAl9KvtNzdh9Q+LL8z89b+eGvzHzFe5fMs7QU+
-    ffPRJQsHnGw+Q2mxHG5PXlP7FYPbjVXy7bOM9mig==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523481938; bh=XqmZujFw7RxLGO6t6Jd8YFXCSfY2ZO
+    WiLc6b6mV8ABM=; b=TnN1NyVM9deDBfhnJqm/VG++1eiO7TkiJniW3aibMHeJKV
+    9IUPya51nke8l4Y1yrz7BotOPN0lk1+EzE4vSpo+HBaLq+NniFTCXa5BGhrNJCVN
+    xaKMjwdv5JJB92UWj7gTkjFgKxpBL1GbwuexzwexIEF26D2kFmnGbeyMFlXh96d8
+    I3nRoBjVMn3w8WZjCWtvgMN7sLEPLXJklVEkzxoAYY0SLUlVRanUC8Ml7yvXsvea
+    /pxi1FFwn2dc7cVQUmrRn7FiGLgBsrfxBhOmkeW2+K5Rf3GfoGrRlqM7Pammdw5I
+    ei2HBpFgxHqddZziSp4X8Lr98l+X8ALnfAXIptjw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,36 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG3sTtj3rVrlR4WQ2lzPYUublSaJBAToTsm3VVyM1yyQ/uQyaEvrTwVBr7SEhy8KwZLAolvBxFM4FuwehCXqX6ruRMv6SMqN3kGqG/1NkgO+Irm/avze
-    Nx5HY6neN9e5CbuLFMeammk5BcxYlfAZF2mIfufByCjOD4qPzttm73Q6ewyVyY8BfKoOIQX2RHw62M62b0krY+Th3aYfpgTaADPgyIkkwD7ZJTacZlkWT1f6
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMikUSI4wfwpjCfbQCAc/+UnbgURGAPxul7caCRTo7gPYpzDz5QeGXBu4oCsuuCHRy069wK6y8Wb4NCOF5EbravJ0o6CVr8ELLlyJkWyI1TXqvxm4ngp
+    mGxl1UXI4iWmtxI+ZuqrOOBOh5ee+1mysUGBu6VN4NX3Fp1oOMXCFic+ede2k/v6ceLs6LhyeZ/5QaiYFiGORCXsUFhmulO9N9OCt7iMnyLR4qYmLZ58mqL0
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VnNF1IyMAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=yuwuEI1SGWcJDh9a-ekA:9
-    a=6DJWWRUDfUP_A73e:21 a=6jVcS_BT3GI9St7v:21 a=QEXdDO2ut3YA:10
+    a=JfrnYn6hAAAA:8 a=Z4Rwk6OoAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=xFwlslFXJhO3HYaR-E8A:9 a=QEXdDO2ut3YA:10
+    a=1CNFftbPRP8L7MoqJWF3:22 a=HkZW87K1Qel5hWWM3VKY:22 a=AjGcO6oz07-iQ99wixmX:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754075AbeDKSiZ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:38:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55340 "EHLO
+        id S1754097AbeDKSia (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:38:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55386 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754050AbeDKSiW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:38:22 -0400
+        with ESMTP id S1754050AbeDKSi2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:38:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zvonko Kosic <zkosic@linux.vnet.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 010/121] s390: move _text symbol to address higher than zero
-Date: Wed, 11 Apr 2018 20:35:13 +0200
-Message-Id: <20180411183456.845765616@linuxfoundation.org>
+Subject: [PATCH 3.18 020/121] x86/tsc: Provide tsc=unstable boot parameter
+Date: Wed, 11 Apr 2018 20:35:23 +0200
+Message-Id: <20180411183457.367005352@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -94,56 +98,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
 
-[ Upstream commit d04a4c76f71dd5335f8e499b59617382d84e2b8d ]
+[ Upstream commit 8309f86cd41e8714526867177facf7a316d9be53 ]
 
-The perf tool assumes that kernel symbols are never present at address
-zero. In fact it assumes if functions that map symbols to addresses
-return zero, that the symbol was not found.
+Since the clocksource watchdog will only detect broken TSC after the
+fact, all TSC based clocks will likely have observed non-continuous
+values before/when switching away from TSC.
 
-Given that s390's _text symbol historically is located at address zero
-this yields at least a couple of false errors and warnings in one of
-perf's test cases about not present symbols ("perf test 1").
+Therefore only thing to fully avoid random clock movement when your
+BIOS randomly mucks with TSC values from SMI handlers is reporting the
+TSC as unstable at boot.
 
-To fix this simply move the _text symbol to address 0x200, just behind
-the initial psw and channel program located at the beginning of the
-kernel image. This is now hard coded within the linker script.
-
-I tried a nicer solution which moves the initial psw and channel
-program into an own section. However that would move the symbols
-within the "real" head.text section to different addresses, since the
-".org" statements within head.S are relative to the head.text
-section. If there is a new section in front, everything else will be
-moved. Alternatively I could have adjusted all ".org" statements. But
-this current solution seems to be the easiest one, since nobody really
-cares where the _text symbol is actually located.
-
-Reported-by: Zvonko Kosic <zkosic@linux.vnet.ibm.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/kernel/vmlinux.lds.S |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/x86/kernel/tsc.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/s390/kernel/vmlinux.lds.S
-+++ b/arch/s390/kernel/vmlinux.lds.S
-@@ -28,8 +28,14 @@ SECTIONS
- {
- 	. = 0x00000000;
- 	.text : {
--	_text = .;		/* Text and read-only data */
-+		/* Text and read-only data */
- 		HEAD_TEXT
-+		/*
-+		 * E.g. perf doesn't like symbols starting at address zero,
-+		 * therefore skip the initial PSW and channel program located
-+		 * at address zero and let _text start at 0x200.
-+		 */
-+	_text = 0x200;
- 		TEXT_TEXT
- 		SCHED_TEXT
- 		LOCK_TEXT
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -356,6 +356,8 @@ static int __init tsc_setup(char *str)
+ 		tsc_clocksource_reliable = 1;
+ 	if (!strncmp(str, "noirqtime", 9))
+ 		no_sched_irq_time = 1;
++	if (!strcmp(str, "unstable"))
++		mark_tsc_unstable("boot parameter");
+ 	return 1;
+ }
+ 
