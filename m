@@ -1,66 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752912AbeDKHSX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 03:18:23 -0400
-Received: from www.zeus03.de ([194.117.254.33]:51908 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752172AbeDKHSW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 03:18:22 -0400
-X-UD-Smtp-Session: l3s3148p1@V3yWcY1pUNQgAwDPW8XOAAId4P/+oMhl
-Date: Wed, 11 Apr 2018 09:18:20 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Peter Rosin <peda@axentia.se>, Joe Perches <joe@perches.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v2 2/2] MAINTAINERS: add maintainer for Renesas I2C
- related drivers
-Message-ID: <20180411071820.trambxjrcofufqq3@katana>
-References: <20180410194914.7268-1-wsa@the-dreams.de>
- <20180410194914.7268-2-wsa@the-dreams.de>
- <CAMuHMdUv2obJHjEZO0d+P=mM8GtGi3g4YCCjxoGBwKeHyXxNLA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qsbxz54sdqua4e6h"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUv2obJHjEZO0d+P=mM8GtGi3g4YCCjxoGBwKeHyXxNLA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1751898AbeDKHXC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 03:23:02 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:43400 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750730AbeDKHXA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 03:23:00 -0400
+X-Google-Smtp-Source: AIpwx4+dfdqNaGFsQxzoFxtqSBtVyCa+PvWgCs+k+dXKl0JZZj+YM9+Uw07Z51Qm2olqmZVa0zVcvA==
+From: Jia He <hejianet@gmail.com>
+To: Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Jia He <hejianet@gmail.com>
+Subject: [PATCH v8 0/6] optimize memblock_next_valid_pfn and early_pfn_valid on arm and arm64
+Date: Wed, 11 Apr 2018 00:21:51 -0700
+Message-Id: <1523431317-30612-1-git-send-email-hejianet@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+where possible") tried to optimize the loop in memmap_init_zone(). But
+there is still some room for improvement.
 
---qsbxz54sdqua4e6h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Patch 1 introduce new config to make codes more generic
+Patch 2 remain the memblock_next_valid_pfn on arm and arm64
+Patch 3 optimizes the memblock_next_valid_pfn()
+Patch 4~6 optimizes the early_pfn_valid()
 
+As for the performance improvement, after this set, I can see the time
+overhead of memmap_init() is reduced from 41313 us to 24389 us in my
+armv8a server(QDF2400 with 96G memory).
 
-> I guess that's why you're not adding a catch-all "RENESAS I2C DRIVERS"
-> section?
+Without this patchset:
+[  117.113677] before memmap_init
+[  117.118195] after  memmap_init
+>>> memmap_init takes 4518 us
+[  117.121446] before memmap_init
+[  117.154992] after  memmap_init
+>>> memmap_init takes 33546 us
+[  117.158241] before memmap_init
+[  117.161490] after  memmap_init
+>>> memmap_init takes 3249 us
+>>> totally takes 41313 us
 
-Yes.
+With this patchset:
+[  123.222962] before memmap_init
+[  123.226819] after  memmap_init
+>>> memmap_init takes 3857
+[  123.230070] before memmap_init
+[  123.247354] after  memmap_init
+>>> memmap_init takes 17284
+[  123.250604] before memmap_init
+[  123.253852] after  memmap_init
+>>> memmap_init takes 3248
+>>> totally takes 24389 us
 
+Attached the memblock region information in my server.
+[   86.956758] Zone ranges:
+[   86.959452]   DMA      [mem 0x0000000000200000-0x00000000ffffffff]
+[   86.966041]   Normal   [mem 0x0000000100000000-0x00000017ffffffff]
+[   86.972631] Movable zone start for each node
+[   86.977179] Early memory node ranges
+[   86.980985]   node   0: [mem 0x0000000000200000-0x000000000021ffff]
+[   86.987666]   node   0: [mem 0x0000000000820000-0x000000000307ffff]
+[   86.994348]   node   0: [mem 0x0000000003080000-0x000000000308ffff]
+[   87.001029]   node   0: [mem 0x0000000003090000-0x00000000031fffff]
+[   87.007710]   node   0: [mem 0x0000000003200000-0x00000000033fffff]
+[   87.014392]   node   0: [mem 0x0000000003410000-0x000000000563ffff]
+[   87.021073]   node   0: [mem 0x0000000005640000-0x000000000567ffff]
+[   87.027754]   node   0: [mem 0x0000000005680000-0x00000000056dffff]
+[   87.034435]   node   0: [mem 0x00000000056e0000-0x00000000086fffff]
+[   87.041117]   node   0: [mem 0x0000000008700000-0x000000000871ffff]
+[   87.047798]   node   0: [mem 0x0000000008720000-0x000000000894ffff]
+[   87.054479]   node   0: [mem 0x0000000008950000-0x0000000008baffff]
+[   87.061161]   node   0: [mem 0x0000000008bb0000-0x0000000008bcffff]
+[   87.067842]   node   0: [mem 0x0000000008bd0000-0x0000000008c4ffff]
+[   87.074524]   node   0: [mem 0x0000000008c50000-0x0000000008e2ffff]
+[   87.081205]   node   0: [mem 0x0000000008e30000-0x0000000008e4ffff]
+[   87.087886]   node   0: [mem 0x0000000008e50000-0x0000000008fcffff]
+[   87.094568]   node   0: [mem 0x0000000008fd0000-0x000000000910ffff]
+[   87.101249]   node   0: [mem 0x0000000009110000-0x00000000092effff]
+[   87.107930]   node   0: [mem 0x00000000092f0000-0x000000000930ffff]
+[   87.114612]   node   0: [mem 0x0000000009310000-0x000000000963ffff]
+[   87.121293]   node   0: [mem 0x0000000009640000-0x000000000e61ffff]
+[   87.127975]   node   0: [mem 0x000000000e620000-0x000000000e64ffff]
+[   87.134657]   node   0: [mem 0x000000000e650000-0x000000000fffffff]
+[   87.141338]   node   0: [mem 0x0000000010800000-0x0000000017feffff]
+[   87.148019]   node   0: [mem 0x000000001c000000-0x000000001c00ffff]
+[   87.154701]   node   0: [mem 0x000000001c010000-0x000000001c7fffff]
+[   87.161383]   node   0: [mem 0x000000001c810000-0x000000007efbffff]
+[   87.168064]   node   0: [mem 0x000000007efc0000-0x000000007efdffff]
+[   87.174746]   node   0: [mem 0x000000007efe0000-0x000000007efeffff]
+[   87.181427]   node   0: [mem 0x000000007eff0000-0x000000007effffff]
+[   87.188108]   node   0: [mem 0x000000007f000000-0x00000017ffffffff]
+[   87.194791] Initmem setup node 0 [mem 0x0000000000200000-0x00000017ffffffff]
 
---qsbxz54sdqua4e6h
-Content-Type: application/pgp-signature; name="signature.asc"
+Changelog:
+V8: - introduce new config and move generic code to early_pfn.h
+    - optimize memblock_next_valid_pfn as suggested by Matthew Wilcox
+V7: - fix i386 compilation error. refine the commit description
+V6: - simplify the codes, move arm/arm64 common codes to one file.
+    - refine patches as suggested by Danial Vacek and Ard Biesheuvel
+V5: - further refining as suggested by Danial Vacek. Make codes
+      arm/arm64 more arch specific
+V4: - refine patches as suggested by Danial Vacek and Wei Yang
+    - optimized on arm besides arm64
+V3: - fix 2 issues reported by kbuild test robot
+V2: - rebase to mmotm latest
+    - remain memblock_next_valid_pfn on arm64
+    - refine memblock_search_pfn_regions and pfn_valid_region
 
------BEGIN PGP SIGNATURE-----
+Jia He (6):
+  arm: arm64: introduce CONFIG_HAVE_MEMBLOCK_PFN_VALID
+  mm: page_alloc: remain memblock_next_valid_pfn() on arm/arm64
+  arm: arm64: page_alloc: reduce unnecessary binary search in
+    memblock_next_valid_pfn()
+  mm/memblock: introduce memblock_search_pfn_regions()
+  arm: arm64: introduce pfn_valid_region()
+  mm: page_alloc: reduce unnecessary binary search in early_pfn_valid()
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrNtrIACgkQFA3kzBSg
-Kbaqog/+PzGDoOtS/TkRh9kA3mgT746Xi3XyPhgBKajxKjfOFVed7U+06/w3rBeg
-zn4/K5NR//Ci15/9Vw/JGTnYmaFinNaUdWJRX20aGQiaVWDqD36wSlASdyH68pch
-e2ygMSY8tT3Rk4OssVbbQkMRweZl0ua4yTJevow2wjoK86n/jTEKb7wJaUD3J5+5
-2/mQAb8D+dT30TNv4RcnyE/37uPcAvPsn5J1Gh55GVq/JZRtNOKABoLoS8iK80Wn
-tjoFx5R0MQnCQ3hwAarKMlTNBzXLcfPmSwOmm5D3voFGo38emF1ZXkzcXpmA+eTu
-bqkTyxbaCiIBspP7rEf6Amd1PDWHL/Zl21Z1yNn+9tEhpExsR5sxLwc51esom3jH
-z/Z9LyzwP3UYtR5a1tzjlP/PRGAhyACs7IbuuLkglDhQztiAhsJa4iWSx1DQLPNB
-oTXea5OI6W9PHrBg3Hx1rr6KC2GR89PPCs4f/4NG2SzMIMOi/D89Suk0imvbB8aV
-QG3fuGlHEXp+HsgDVlDSCsp6NMvAs+OtBTzznymc4fR9o9iNFB4zvaLHgkz3TDRd
-0Ogat+z900Afrs9CV/OEUtu7UNRGRoXGwMzBFWf6Bv5+Uc7kQWkk6FZkq5Hqiecz
-nCe3FYEUFZ/5RNemoQhhasUObyf5CK418tHkGUnkB2RUSkXptfM=
-=Us4q
------END PGP SIGNATURE-----
+ arch/arm/Kconfig          |  4 +++
+ arch/arm/mm/init.c        |  1 +
+ arch/arm64/Kconfig        |  4 +++
+ arch/arm64/mm/init.c      |  1 +
+ include/linux/early_pfn.h | 79 +++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/memblock.h  |  2 ++
+ include/linux/mmzone.h    | 18 ++++++++++-
+ mm/Kconfig                |  3 ++
+ mm/memblock.c             |  9 ++++++
+ mm/page_alloc.c           |  5 ++-
+ 10 files changed, 124 insertions(+), 2 deletions(-)
+ create mode 100644 include/linux/early_pfn.h
 
---qsbxz54sdqua4e6h--
+-- 
+2.7.4
