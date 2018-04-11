@@ -1,92 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752417AbeDKAQ2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 20:16:28 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44204 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751770AbeDKAQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 20:16:27 -0400
-Date: Tue, 10 Apr 2018 19:16:24 -0500
-From: Kim Phillips <kim.phillips@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Brian Robbins <brianrob@microsoft.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-Subject: [PATCH] perf tests: run dwarf unwind test on arm32
-Message-Id: <20180410191624.a3a468670dd4548c66d3d094@arm.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752234AbeDKAbs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 20:31:48 -0400
+Received: from mail-pl0-f51.google.com ([209.85.160.51]:40582 "EHLO
+        mail-pl0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751991AbeDKAbr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 20:31:47 -0400
+X-Google-Smtp-Source: AIpwx48Vxf+xHxpXbDDQZaFRc1WuQDMk8bSBoFG6Vesf41Ifz4V1tfv9UkhxT58VPlqByIpt95JLCA==
+Date: Tue, 10 Apr 2018 17:31:39 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Lina Iyer <ilina@codeaurora.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        evgreen@chromium.org, dianders@chromium.org
+Subject: Re: [PATCH v5 05/10] drivers: qcom: rpmh-rsc: write sleep/wake
+ requests to TCS
+Message-ID: <20180411003139.GE6727@builder>
+References: <20180405161834.3850-1-ilina@codeaurora.org>
+ <20180405161834.3850-6-ilina@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180405161834.3850-6-ilina@codeaurora.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the unwind test on arm32:
+On Thu 05 Apr 09:18 PDT 2018, Lina Iyer wrote:
+> diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
+[..]
+> @@ -439,6 +445,107 @@ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg)
+>  }
+>  EXPORT_SYMBOL(rpmh_rsc_send_data);
+>  
+> +static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
+> +		      int len)
+> +{
+> +	int i, j;
+> +
+> +	/* Check for already cached commands */
+> +	for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
 
-$ ./perf test unwind
-58: DWARF unwind                                          : Ok
+Wouldn't it be good if this cared about TCS boundaries?
 
-Signed-off-by: Kim Phillips <kim.phillips@arm.com>
----
- tools/perf/arch/arm/include/arch-tests.h | 12 ++++++++++++
- tools/perf/arch/arm/tests/Build          |  2 ++
- tools/perf/arch/arm/tests/arch-tests.c   | 16 ++++++++++++++++
- 3 files changed, 30 insertions(+)
- create mode 100644 tools/perf/arch/arm/include/arch-tests.h
- create mode 100644 tools/perf/arch/arm/tests/arch-tests.c
+> +		for (j = 0; j < len; j++) {
+> +			if (tcs->cmd_cache[i] != cmd[0].addr) {
+> +				if (j == 0)
+> +					break;
+> +				WARN(tcs->cmd_cache[i + j] != cmd[j].addr,
+> +				     "Message does not match previous sequence.\n");
+> +				return -EINVAL;
+> +			} else if (j == len - 1) {
+> +				return i;
+> +			}
+> +		}
+> +	}
+> +
+> +	return -ENODATA;
+> +}
+> +
+> +static int find_slots(struct tcs_group *tcs, const struct tcs_request *msg,
+> +		      int *m, int *n)
+> +{
+> +	int slot, offset;
+> +	int i = 0;
+> +
+> +	/* Find if we already have the msg in our TCS */
 
-diff --git a/tools/perf/arch/arm/include/arch-tests.h b/tools/perf/arch/arm/include/arch-tests.h
-new file mode 100644
-index 000000000000..90ec4c8cb880
---- /dev/null
-+++ b/tools/perf/arch/arm/include/arch-tests.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef ARCH_TESTS_H
-+#define ARCH_TESTS_H
-+
-+#ifdef HAVE_DWARF_UNWIND_SUPPORT
-+struct thread;
-+struct perf_sample;
-+#endif
-+
-+extern struct test arch_tests[];
-+
-+#endif
-diff --git a/tools/perf/arch/arm/tests/Build b/tools/perf/arch/arm/tests/Build
-index b30eff9bcc83..883c57ff0c08 100644
---- a/tools/perf/arch/arm/tests/Build
-+++ b/tools/perf/arch/arm/tests/Build
-@@ -1,2 +1,4 @@
- libperf-y += regs_load.o
- libperf-y += dwarf-unwind.o
-+
-+libperf-y += arch-tests.o
-diff --git a/tools/perf/arch/arm/tests/arch-tests.c b/tools/perf/arch/arm/tests/arch-tests.c
-new file mode 100644
-index 000000000000..5b1543c98022
---- /dev/null
-+++ b/tools/perf/arch/arm/tests/arch-tests.c
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <string.h>
-+#include "tests/tests.h"
-+#include "arch-tests.h"
-+
-+struct test arch_tests[] = {
-+#ifdef HAVE_DWARF_UNWIND_SUPPORT
-+	{
-+		.desc = "DWARF unwind",
-+		.func = test__dwarf_unwind,
-+	},
-+#endif
-+	{
-+		.func = NULL,
-+	},
-+};
--- 
-2.17.0
+"Search for the sequence of addresses in our tcs group"
+
+> +	slot = find_match(tcs, msg->cmds, msg->num_cmds);
+> +	if (slot >= 0)
+> +		goto copy_data;
+> +
+> +	/* Do over, until we can fit the full payload in a TCS */
+> +	do {
+> +		slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
+> +						  i, msg->num_cmds, 0);
+> +		if (slot == MAX_TCS_SLOTS)
+> +			return -ENOMEM;
+> +		i += tcs->ncpt;
+> +	} while (slot + msg->num_cmds - 1 >= i);
+
+Does this conditional check that the sequence of free slots that we
+found doesn't extend past the boundary of a TCS?
+
+I'm sorry, but this code is hard to understand. I would find this much
+easier to read if there was one bitmap per TCS and you just looped over
+them to find free regions.
+
+> +
+> +copy_data:
+> +	bitmap_set(tcs->slots, slot, msg->num_cmds);
+> +	/* Copy the addresses of the resources over to the slots */
+> +	for (i = 0; i < msg->num_cmds; i++)
+> +		tcs->cmd_cache[slot + i] = msg->cmds[i].addr;
+> +
+> +	offset = slot / tcs->ncpt;
+> +	*m = offset + tcs->offset;
+> +	*n = slot % tcs->ncpt;
+> +
+> +	return 0;
+> +}
+> +
+> +static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
+> +{
+> +	struct tcs_group *tcs;
+> +	int m = 0, n = 0;
+> +	unsigned long flags;
+> +	int ret;
+> +
+> +	tcs = get_tcs_for_msg(drv, msg);
+> +	if (IS_ERR(tcs))
+> +		return PTR_ERR(tcs);
+> +
+> +	spin_lock_irqsave(&tcs->lock, flags);
+> +	/* find the m-th TCS and the n-th position in the TCS to write to */
+> +	ret = find_slots(tcs, msg, &m, &n);
+> +	if (!ret)
+> +		__tcs_buffer_write(drv, m, n, msg);
+> +	spin_unlock_irqrestore(&tcs->lock, flags);
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * rpmh_rsc_write_ctrl_data: Write request to the controller
+> + *
+> + * @drv: the controller
+> + * @msg: the data to be written to the controller
+> + *
+> + * There is no response returned for writing the request to the controller.
+> + */
+> +int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv, const struct tcs_request *msg)
+
+So this is exactly the same thing as rpmh_rsc_send_data() but for one of
+the non-active TCSs?
+
+Can't we have a single API for writing msg to the hardware and if it's
+active we "send" it as well?
+
+> +{
+> +	if (!msg || !msg->cmds || !msg->num_cmds ||
+> +	    msg->num_cmds > MAX_RPMH_PAYLOAD) {
+> +		pr_err("Payload error\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Data sent to this API will not be sent immediately */
+> +	if (msg->state == RPMH_ACTIVE_ONLY_STATE)
+> +		return -EINVAL;
+
+If you're concerned about this then the API isn't clear enough.
+
+> +
+> +	return tcs_ctrl_write(drv, msg);
+> +}
+> +EXPORT_SYMBOL(rpmh_rsc_write_ctrl_data);
+> +
+>  static int rpmh_probe_tcs_config(struct platform_device *pdev,
+>  				 struct rsc_drv *drv)
+>  {
+> @@ -512,6 +619,19 @@ static int rpmh_probe_tcs_config(struct platform_device *pdev,
+>  		tcs->mask = ((1 << tcs->num_tcs) - 1) << st;
+>  		tcs->offset = st;
+>  		st += tcs->num_tcs;
+> +
+> +		/*
+> +		 * Allocate memory to cache sleep and wake requests to
+> +		 * avoid reading TCS register memory.
+> +		 */
+> +		if (tcs->type == ACTIVE_TCS)
+> +			continue;
+
+Rather than "the rest of this loop shouldn't be done for the active tcs
+group" just make another loop... Or at least make the comment relate
+directly to the code it's adjacent.
+
+> +
+> +		tcs->cmd_cache = devm_kcalloc(&pdev->dev,
+> +					      tcs->num_tcs * ncpt, sizeof(u32),
+> +					      GFP_KERNEL);
+> +		if (!tcs->cmd_cache)
+> +			return -ENOMEM;
+
+Regards,
+Bjorn
