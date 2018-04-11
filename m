@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48rwVjBMQwPIjU8YtQ+QlwcrHCoeUes28Gf+OWItTZ/e0Ur9Eo5gptW9LI0LyWhyYV7n/Bz
-ARC-Seal: i=1; a=rsa-sha256; t=1523472113; cv=none;
+X-Google-Smtp-Source: AIpwx48rkvVMT4Hs8xmQ3vA5P6h7VO4kQo5lS5DBHmFdQgv/bk1cf1iKgdLRPUDbYSGohTYRSeeK
+ARC-Seal: i=1; a=rsa-sha256; t=1523472110; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ud5XqeIKZUexpJewbyFcyEviEobiki9iDI4pe3zI5y4iqjI95oC/BL5mxuXeEzL9LK
-         jfpn6P4W5xx5zR2mRlqDAwL6zzYrhX1a4DuU9XsmxHlMOO+yGbIA5lOe+bt4x9OGJZhA
-         cvoLKOQ2s5UPJYtzMuPalhMK/ox2AUV20T5pi6F12l8oGyO0HWcrLnbau8paKId9cUzx
-         1BUa6TTRT4hJq2HVcDMAoRo/8MCYvM/tVT9ZrPENfNqGB7drXxtzZXlY388RRGDIeLsy
-         S8orv/CkYcR0xdAJxTHQttC/JZMybkGy/H+T04IUwKV+eQj9wOXyys1wmytR5jnoo6Nk
-         ks/Q==
+        b=VvZZEFFMkXszUmRpaHhb6zZn619GjZe2PHtjtbll+8uMkVxYVxV7zc5bgZWSaFMLZ2
+         lCfkuyCo0hEnEg3PVo+YaC5smEztH9xuO9K6jB2r/b7Srb1h34cYFlyTTyMCOHtTfZO+
+         3mDDpctox/E2d3GcKouuNfbJcjgoEzC8HlXe1xUJ11muSq2NI17A5q11RhF30i7riJHD
+         x5ygHBpQ7b+OefjBPg1zXX8MmIS7k08ldXZiORMtoZIy0QmpjacOh8IGJoox1KtTDvHq
+         WsDjsthCcirJcPyZj83kSMHJlPBBCUxdP7BK0M0LhcFUbp9hrPJE5KLwaBIJkSszWHE4
+         NaHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+F8qG0bY256jKsj7equFPSVLbfhmPpE7hJwWiMMqHcM=;
-        b=DBae6oxDF9ncHsxGe3KOb+RU+LYDEUBLMJZAqkRUgOGxvyqZWIu7CGao5qRYyfYWhr
-         hrSlDr/RdsLv0pHxSIUvW/5/0Rh/uvBTwVWAzyA1E+yuSDypbuwkSFZEjEgLNCluXkx5
-         qq/ETdiVSBv6Wckx6JceVxYlfxeyoyPoDnNzW/haCHjT74dgL3tHXN/lmKHkhT26oAJG
-         dUu3NSll+PpDcXddh4S0fZz/TE5FpGT1o/lewBw6ltWGqrzaqbJWyi0UW639zEMFP3xf
-         s3f51HTpnYMT1afYL8eroqf/YcF4fYBWnu5lfQhYlJZbkgVPjEcNK8ZBodn2qAUavart
-         +uyA==
+        bh=FE/R+eg5yabRz7kqWhxGdKr8pbG7uWh4lWONRMHLRfs=;
+        b=comqQfQC5+f6tN6ts7Kecw77Eac3FWrDsqyU0SFupdbvR9FZuNONyXgqiPiwkVHifN
+         EF5K95XaxgQeqMKmAvhlNkqD9F0Of0rxboNufNnEz7kvjMZENpD1O3FKtNWS6LA8PBF2
+         84BCJ8ZrH8U0/AVenHfgig6fYqRCpZousmbZPA8pFPXNuNzj7uneSwFdrOefyf3hzmLd
+         fabZOtO2X3NXjlgutfmWWZ1ub7AkSq83lQmB90po7JrIOg3bYspjF8a+/m/HMPQGsa05
+         8qdrV+2RcP0mmyd98XlOYO1h9Mlo4+Rp/j4CC26w5wN6XlL0NVZkKu7waJ0FknWMfcCx
+         Lx+A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"=?UTF-8?q?Jan=20H . =20Sch=C3=B6nherr?=" <jschoenh@amazon.de>,
-	Wanpeng Li <wanpeng.li@hotmail.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 047/121] KVM: nVMX: Fix handling of lmsw instruction
-Date: Wed, 11 Apr 2018 20:35:50 +0200
-Message-Id: <20180411183459.216811916@linuxfoundation.org>
+Subject: [PATCH 3.18 056/121] arm64: futex: Fix undefined behaviour with FUTEX_OP_OPARG_SHIFT usage
+Date: Wed, 11 Apr 2018 20:35:59 +0200
+Message-Id: <20180411183459.718191036@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476294885821216?=
-X-GMAIL-MSGID: =?utf-8?q?1597476294885821216?=
+X-GMAIL-THRID: =?utf-8?q?1597476291331705240?=
+X-GMAIL-MSGID: =?utf-8?q?1597476291331705240?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,56 +50,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Jan H. Schönherr" <jschoenh@amazon.de>
+From: Will Deacon <will.deacon@arm.com>
 
 
-[ Upstream commit e1d39b17e044e8ae819827810d87d809ba5f58c0 ]
+[ Upstream commit 5f16a046f8e144c294ef98cd29d9458b5f8273e5 ]
 
-The decision whether or not to exit from L2 to L1 on an lmsw instruction is
-based on bogus values: instead of using the information encoded within the
-exit qualification, it uses the data also used for the mov-to-cr
-instruction, which boils down to using whatever is in %eax at that point.
+FUTEX_OP_OPARG_SHIFT instructs the futex code to treat the 12-bit oparg
+field as a shift value, potentially leading to a left shift value that
+is negative or with an absolute value that is significantly larger then
+the size of the type. UBSAN chokes with:
 
-Use the correct values instead.
+================================================================================
+UBSAN: Undefined behaviour in ./arch/arm64/include/asm/futex.h:60:13
+shift exponent -1 is negative
+CPU: 1 PID: 1449 Comm: syz-executor0 Not tainted 4.11.0-rc4-00005-g977eb52-dirty #11
+Hardware name: linux,dummy-virt (DT)
+Call trace:
+[<ffff200008094778>] dump_backtrace+0x0/0x538 arch/arm64/kernel/traps.c:73
+[<ffff200008094cd0>] show_stack+0x20/0x30 arch/arm64/kernel/traps.c:228
+[<ffff200008c194a8>] __dump_stack lib/dump_stack.c:16 [inline]
+[<ffff200008c194a8>] dump_stack+0x120/0x188 lib/dump_stack.c:52
+[<ffff200008cc24b8>] ubsan_epilogue+0x18/0x98 lib/ubsan.c:164
+[<ffff200008cc3098>] __ubsan_handle_shift_out_of_bounds+0x250/0x294 lib/ubsan.c:421
+[<ffff20000832002c>] futex_atomic_op_inuser arch/arm64/include/asm/futex.h:60 [inline]
+[<ffff20000832002c>] futex_wake_op kernel/futex.c:1489 [inline]
+[<ffff20000832002c>] do_futex+0x137c/0x1740 kernel/futex.c:3231
+[<ffff200008320504>] SYSC_futex kernel/futex.c:3281 [inline]
+[<ffff200008320504>] SyS_futex+0x114/0x268 kernel/futex.c:3249
+[<ffff200008084770>] el0_svc_naked+0x24/0x28
+================================================================================
+syz-executor1 uses obsolete (PF_INET,SOCK_PACKET)
+sock: process `syz-executor0' is using obsolete setsockopt SO_BSDCOMPAT
 
-Without this fix, an L1 may not get notified when a 32-bit Linux L2
-switches its secondary CPUs to protected mode; the L1 is only notified on
-the next modification of CR0. This short time window poses a problem, when
-there is some other reason to exit to L1 in between. Then, L2 will be
-resumed in real mode and chaos ensues.
+This patch attempts to fix some of this by:
 
-Signed-off-by: Jan H. SchÃ¶nherr <jschoenh@amazon.de>
-Reviewed-by: Wanpeng Li <wanpeng.li@hotmail.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+  * Making encoded_op an unsigned type, so we can shift it left even if
+    the top bit is set.
+
+  * Casting to signed prior to shifting right when extracting oparg
+    and cmparg
+
+  * Consider only the bottom 5 bits of oparg when using it as a left-shift
+    value.
+
+Whilst I think this catches all of the issues, I'd much prefer to remove
+this stuff, as I think it's unused and the bugs are copy-pasted between
+a bunch of architectures.
+
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/futex.h |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -6935,11 +6935,13 @@ static bool nested_vmx_exit_handled_cr(s
- {
- 	unsigned long exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
- 	int cr = exit_qualification & 15;
--	int reg = (exit_qualification >> 8) & 15;
--	unsigned long val = kvm_register_readl(vcpu, reg);
-+	int reg;
-+	unsigned long val;
+--- a/arch/arm64/include/asm/futex.h
++++ b/arch/arm64/include/asm/futex.h
+@@ -44,16 +44,16 @@
+ 	: "memory")
  
- 	switch ((exit_qualification >> 4) & 3) {
- 	case 0: /* mov to cr */
-+		reg = (exit_qualification >> 8) & 15;
-+		val = kvm_register_readl(vcpu, reg);
- 		switch (cr) {
- 		case 0:
- 			if (vmcs12->cr0_guest_host_mask &
-@@ -6994,6 +6996,7 @@ static bool nested_vmx_exit_handled_cr(s
- 		 * lmsw can change bits 1..3 of cr0, and only set bit 0 of
- 		 * cr0. Other attempted changes are ignored, with no exit.
- 		 */
-+		val = (exit_qualification >> LMSW_SOURCE_DATA_SHIFT) & 0x0f;
- 		if (vmcs12->cr0_guest_host_mask & 0xe &
- 		    (val ^ vmcs12->cr0_read_shadow))
- 			return 1;
+ static inline int
+-futex_atomic_op_inuser (int encoded_op, u32 __user *uaddr)
++futex_atomic_op_inuser(unsigned int encoded_op, u32 __user *uaddr)
+ {
+ 	int op = (encoded_op >> 28) & 7;
+ 	int cmp = (encoded_op >> 24) & 15;
+-	int oparg = (encoded_op << 8) >> 20;
+-	int cmparg = (encoded_op << 20) >> 20;
++	int oparg = (int)(encoded_op << 8) >> 20;
++	int cmparg = (int)(encoded_op << 20) >> 20;
+ 	int oldval = 0, ret, tmp;
+ 
+ 	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
+-		oparg = 1 << oparg;
++		oparg = 1U << (oparg & 0x1f);
+ 
+ 	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
+ 		return -EFAULT;
