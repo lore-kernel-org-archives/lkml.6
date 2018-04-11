@@ -1,36 +1,81 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48MqovIHJ8dxrpddFosT7mQmf0M9mU48nBwtt6VyocnxTey1OrBCo/Hh2W/eWz94QQHsw41
-ARC-Seal: i=1; a=rsa-sha256; t=1523471993; cv=none;
-        d=google.com; s=arc-20160816;
-        b=YWEJ5UyB7VSuEfsKggKYroy38tNv8ep1E5jFuZWiPHlFZEeQ4OBLSnIqn8PSyuzRcI
-         uYmzc8YWVca2cbNpWpnHAQ0WQDA3hB8yJU/mLEPbukoOYfkpG12U6ELu1Az9vKS173Sn
-         zkOU9m5UObyHxFvbWGqwb73VUxtchGsmouvCBpHeyuwks/L6UFbcaLUW1lKRp7OGIX0Z
-         Gzw/ZGCgU5QwZ5PegCM/MoUIC/1Aza9JOZYdhiZ5VjXvaXPAbVXG3XmB2s28zSMgVGu1
-         IZ/RCFA2dZjZMWjdotEI8D16sFGgnNDvGbtQLbBX6ohjq2bjcd56LcX+ci18aZ/ueUQ7
-         vOIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=gMUuouJ8dxV6SVvZPryKeZRdFD76yfgccPmZgFA/OXc=;
-        b=aBkJhTV41UNaIGPBLeK/rcXhle+706kMRApO2UEL7Gdl9J4n/2afj/jOmyqo2vh/Py
-         EDAd6EqccUhd3VRozd7JPZA81yuZPcZXw42n5/zc8ozYdgDWfVEnwSsr3tqV4sHkOdZ5
-         b0FQ7Y4XeHOgRzKxlGNNB/47NcGFVMXrNHRLIv3Aq7Zs4duUssabS1O7H7mFo7+tCETY
-         RH4VnkwhMXAzNMMF+TExBp4DKRSl8nGChVqDn93gWmBr00i82ErpLfk1uOMV3fSSPlQR
-         n85LKJScpk2n5jQ4nqf7pB+BHKRFSccpSQNUAga9PtocXSB3LdYXzdEOnGtA+kEsSG17
-         4idw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3039319-1523471944-2-14873075322384179821
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523471944; b=gzUpRYZKn3ETggboc1MtND7q3EZ4NwAwGqhEXYi73YVGnXALX7
+    tEIs+PBR6Q6cAhr1LeK/o3/8feODmYC/KaSRdL2cTvx6j+m4qtFqFV6FN8iHgC5w
+    3KJ44DjoVR+t1MK9CgQaVRIGyNscmvWUeiM0GiClPNvYmhBhFN9Tq+Mrgk30lFSe
+    NkFcwWdNdrOUboJawfoGxjiSg9+CGtGDjdP08eNUDSg+Ei4FAR7Q+FJPu6ZtTf+P
+    z/PDq7hl4xN4KxEyUIje1/XRyYl66/fYhmAi/O8LDWe5cISyPe4DuWnSw/ySdxz5
+    XvauGeu4s7G3d+Q3JMPwZ64WXC843FKCNKIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523471944; bh=E8CJXEHxTr5qkK0WcWhico1aBwyrCO
+    SOBoJ3liSk1Nc=; b=pIyw/jIfNF9VYvXWc2QpA/rkAaajAFlf80z8HcxNz0vTeJ
+    BZnPQ3uhMPZDs2hfBY++nUccCdyvI29/ocAMn1YKUI7ZxFGGEkb+osi+z7qixZb+
+    FPCaGwIJUMUdVXlSMw1FgTnz/FM+aI99m2xtsMAxoWWv4Q3KlhYh9fgzymv7eh7V
+    b1rnzWE5bBbdFz/rLZQJwfFXh/ykW5G11r6otyIL04o+XwbmIJgWaGMXRZmmmIf0
+    SV+3ujlbO9CowC8yV40HruJic4RO/ntTEiFFdvGlKq19De7RN+qkb0QXRLDLdJVY
+    lnt+MDALpV+cI8eOOTSM+bud8VIB+NTILDDrjhvQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfIPXjUzYsWusBNbqh1p/yuNTP5jpT1l7fhHON3UCQGITse6jtWbp23kVBCZpdP5kB9i3VLbiLVNIUvMV/mMQaPQ1Y15grA3W3Fqx8BwT2/9sb063TZEc
+    3FA8Swup/WZ3PYp8rSQ+Un/AJ1VN53B4Oae0kixjA0hqZzme4tj4QaRO6nwhFQa/s/tBJTkKAgvMP96OBbkVPECJxu9mjYnljaiKAAuYEVHF2Fl3VkoIeYZI
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=tSXHTBh79NvrA8TYtfMA:9 a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754255AbeDKSjA (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:39:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55568 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754220AbeDKSi6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:38:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Paul Mackerras <paulus@ozlabs.org>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 015/121] KVM: PPC: Book3S PR: Check copy_to/from_user return values
-Date: Wed, 11 Apr 2018 20:35:18 +0200
-Message-Id: <20180411183457.108907953@linuxfoundation.org>
+        stable@vger.kernel.org, linzhang <xiaolou4617@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 030/121] net: x25: fix one potential use-after-free issue
+Date: Wed, 11 Apr 2018 20:35:33 +0200
+Message-Id: <20180411183457.908147619@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -38,10 +83,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476168802820578?=
-X-GMAIL-MSGID: =?utf-8?q?1597476168802820578?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,136 +93,107 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paul Mackerras <paulus@ozlabs.org>
+From: linzhang <xiaolou4617@gmail.com>
 
 
-[ Upstream commit 67325e988faea735d663799b6d152b5f4254093c ]
+[ Upstream commit 64df6d525fcff1630098db9238bfd2b3e092d5c1 ]
 
-The PR KVM implementation of the PAPR HPT hypercalls (H_ENTER etc.)
-access an image of the HPT in userspace memory using copy_from_user
-and copy_to_user.  Recently, the declarations of those functions were
-annotated to indicate that the return value must be checked.  Since
-this code doesn't currently check the return value, this causes
-compile warnings like the ones shown below, and since on PPC the
-default is to compile arch/powerpc with -Werror, this causes the
-build to fail.
+The function x25_init is not properly unregister related resources
+on error handler.It is will result in kernel oops if x25_init init
+failed, so add properly unregister call on error handler.
 
-To fix this, we check the return values, and if non-zero, fail the
-hypercall being processed with a H_FUNCTION error return value.
-There is really no good error return value to use since PAPR didn't
-envisage the possibility that the hypervisor may not be able to access
-the guest's HPT, and H_FUNCTION (function not supported) seems as
-good as any.
+Also, i adjust the coding style and make x25_register_sysctl properly
+return failure.
 
-The typical compile warnings look like this:
-
-  CC      arch/powerpc/kvm/book3s_pr_papr.o
-/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s_pr_papr.c: In function ‘kvmppc_h_pr_enter’:
-/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s_pr_papr.c:53:2: error: ignoring return value of ‘copy_from_user’, declared with attribute warn_unused_result [-Werror=unused-result]
-  copy_from_user(pteg, (void __user *)pteg_addr, sizeof(pteg));
-  ^
-/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s_pr_papr.c:74:2: error: ignoring return value of ‘copy_to_user’, declared with attribute warn_unused_result [-Werror=unused-result]
-  copy_to_user((void __user *)pteg_addr, hpte, HPTE_SIZE);
-  ^
-
-... etc.
-
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: linzhang <xiaolou4617@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kvm/book3s_pr_papr.c |   34 ++++++++++++++++++++++++++--------
- 1 file changed, 26 insertions(+), 8 deletions(-)
+ include/net/x25.h        |    4 ++--
+ net/x25/af_x25.c         |   24 ++++++++++++++++--------
+ net/x25/sysctl_net_x25.c |    5 ++++-
+ 3 files changed, 22 insertions(+), 11 deletions(-)
 
---- a/arch/powerpc/kvm/book3s_pr_papr.c
-+++ b/arch/powerpc/kvm/book3s_pr_papr.c
-@@ -50,7 +50,9 @@ static int kvmppc_h_pr_enter(struct kvm_
- 	pteg_addr = get_pteg_addr(vcpu, pte_index);
+--- a/include/net/x25.h
++++ b/include/net/x25.h
+@@ -298,10 +298,10 @@ void x25_check_rbuf(struct sock *);
  
- 	mutex_lock(&vcpu->kvm->arch.hpt_mutex);
--	copy_from_user(pteg, (void __user *)pteg_addr, sizeof(pteg));
-+	ret = H_FUNCTION;
-+	if (copy_from_user(pteg, (void __user *)pteg_addr, sizeof(pteg)))
-+		goto done;
- 	hpte = pteg;
+ /* sysctl_net_x25.c */
+ #ifdef CONFIG_SYSCTL
+-void x25_register_sysctl(void);
++int x25_register_sysctl(void);
+ void x25_unregister_sysctl(void);
+ #else
+-static inline void x25_register_sysctl(void) {};
++static inline int x25_register_sysctl(void) { return 0; };
+ static inline void x25_unregister_sysctl(void) {};
+ #endif /* CONFIG_SYSCTL */
  
- 	ret = H_PTEG_FULL;
-@@ -71,7 +73,9 @@ static int kvmppc_h_pr_enter(struct kvm_
- 	hpte[0] = cpu_to_be64(kvmppc_get_gpr(vcpu, 6));
- 	hpte[1] = cpu_to_be64(kvmppc_get_gpr(vcpu, 7));
- 	pteg_addr += i * HPTE_SIZE;
--	copy_to_user((void __user *)pteg_addr, hpte, HPTE_SIZE);
-+	ret = H_FUNCTION;
-+	if (copy_to_user((void __user *)pteg_addr, hpte, HPTE_SIZE))
-+		goto done;
- 	kvmppc_set_gpr(vcpu, 4, pte_index | i);
- 	ret = H_SUCCESS;
+--- a/net/x25/af_x25.c
++++ b/net/x25/af_x25.c
+@@ -1796,32 +1796,40 @@ void x25_kill_by_neigh(struct x25_neigh
  
-@@ -93,7 +97,9 @@ static int kvmppc_h_pr_remove(struct kvm
+ static int __init x25_init(void)
+ {
+-	int rc = proto_register(&x25_proto, 0);
++	int rc;
  
- 	pteg = get_pteg_addr(vcpu, pte_index);
- 	mutex_lock(&vcpu->kvm->arch.hpt_mutex);
--	copy_from_user(pte, (void __user *)pteg, sizeof(pte));
-+	ret = H_FUNCTION;
-+	if (copy_from_user(pte, (void __user *)pteg, sizeof(pte)))
-+		goto done;
- 	pte[0] = be64_to_cpu((__force __be64)pte[0]);
- 	pte[1] = be64_to_cpu((__force __be64)pte[1]);
+-	if (rc != 0)
++	rc = proto_register(&x25_proto, 0);
++	if (rc)
+ 		goto out;
  
-@@ -103,7 +109,9 @@ static int kvmppc_h_pr_remove(struct kvm
- 	    ((flags & H_ANDCOND) && (pte[0] & avpn) != 0))
- 		goto done;
+ 	rc = sock_register(&x25_family_ops);
+-	if (rc != 0)
++	if (rc)
+ 		goto out_proto;
  
--	copy_to_user((void __user *)pteg, &v, sizeof(v));
-+	ret = H_FUNCTION;
-+	if (copy_to_user((void __user *)pteg, &v, sizeof(v)))
-+		goto done;
+ 	dev_add_pack(&x25_packet_type);
  
- 	rb = compute_tlbie_rb(pte[0], pte[1], pte_index);
- 	vcpu->arch.mmu.tlbie(vcpu, rb, rb & 1 ? true : false);
-@@ -171,7 +179,10 @@ static int kvmppc_h_pr_bulk_remove(struc
- 		}
+ 	rc = register_netdevice_notifier(&x25_dev_notifier);
+-	if (rc != 0)
++	if (rc)
+ 		goto out_sock;
  
- 		pteg = get_pteg_addr(vcpu, tsh & H_BULK_REMOVE_PTEX);
--		copy_from_user(pte, (void __user *)pteg, sizeof(pte));
-+		if (copy_from_user(pte, (void __user *)pteg, sizeof(pte))) {
-+			ret = H_FUNCTION;
-+			break;
-+		}
- 		pte[0] = be64_to_cpu((__force __be64)pte[0]);
- 		pte[1] = be64_to_cpu((__force __be64)pte[1]);
+-	pr_info("Linux Version 0.2\n");
++	rc = x25_register_sysctl();
++	if (rc)
++		goto out_dev;
  
-@@ -184,7 +195,10 @@ static int kvmppc_h_pr_bulk_remove(struc
- 			tsh |= H_BULK_REMOVE_NOT_FOUND;
- 		} else {
- 			/* Splat the pteg in (userland) hpt */
--			copy_to_user((void __user *)pteg, &v, sizeof(v));
-+			if (copy_to_user((void __user *)pteg, &v, sizeof(v))) {
-+				ret = H_FUNCTION;
-+				break;
-+			}
+-	x25_register_sysctl();
+ 	rc = x25_proc_init();
+-	if (rc != 0)
+-		goto out_dev;
++	if (rc)
++		goto out_sysctl;
++
++	pr_info("Linux Version 0.2\n");
++
+ out:
+ 	return rc;
++out_sysctl:
++	x25_unregister_sysctl();
+ out_dev:
+ 	unregister_netdevice_notifier(&x25_dev_notifier);
+ out_sock:
++	dev_remove_pack(&x25_packet_type);
+ 	sock_unregister(AF_X25);
+ out_proto:
+ 	proto_unregister(&x25_proto);
+--- a/net/x25/sysctl_net_x25.c
++++ b/net/x25/sysctl_net_x25.c
+@@ -73,9 +73,12 @@ static struct ctl_table x25_table[] = {
+ 	{ 0, },
+ };
  
- 			rb = compute_tlbie_rb(pte[0], pte[1],
- 					      tsh & H_BULK_REMOVE_PTEX);
-@@ -211,7 +225,9 @@ static int kvmppc_h_pr_protect(struct kv
+-void __init x25_register_sysctl(void)
++int __init x25_register_sysctl(void)
+ {
+ 	x25_table_header = register_net_sysctl(&init_net, "net/x25", x25_table);
++	if (!x25_table_header)
++		return -ENOMEM;
++	return 0;
+ }
  
- 	pteg = get_pteg_addr(vcpu, pte_index);
- 	mutex_lock(&vcpu->kvm->arch.hpt_mutex);
--	copy_from_user(pte, (void __user *)pteg, sizeof(pte));
-+	ret = H_FUNCTION;
-+	if (copy_from_user(pte, (void __user *)pteg, sizeof(pte)))
-+		goto done;
- 	pte[0] = be64_to_cpu((__force __be64)pte[0]);
- 	pte[1] = be64_to_cpu((__force __be64)pte[1]);
- 
-@@ -234,7 +250,9 @@ static int kvmppc_h_pr_protect(struct kv
- 	vcpu->arch.mmu.tlbie(vcpu, rb, rb & 1 ? true : false);
- 	pte[0] = (__force u64)cpu_to_be64(pte[0]);
- 	pte[1] = (__force u64)cpu_to_be64(pte[1]);
--	copy_to_user((void __user *)pteg, pte, sizeof(pte));
-+	ret = H_FUNCTION;
-+	if (copy_to_user((void __user *)pteg, pte, sizeof(pte)))
-+		goto done;
- 	ret = H_SUCCESS;
- 
-  done:
+ void x25_unregister_sysctl(void)
