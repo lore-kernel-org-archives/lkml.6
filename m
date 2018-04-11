@@ -1,56 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751894AbeDKEjw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 00:39:52 -0400
-Received: from mail-pl0-f54.google.com ([209.85.160.54]:32855 "EHLO
-        mail-pl0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751675AbeDKEju (ORCPT
+        id S1752068AbeDKEnT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 00:43:19 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37576 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750801AbeDKEnR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 00:39:50 -0400
-X-Google-Smtp-Source: AIpwx4/JKknpBvirRn0conLmrQujZ7AbiprQ/yoXFDw90OYtxTY+okVwwtyfWcckdE3A2O/lN86pcw==
-Date: Wed, 11 Apr 2018 10:09:47 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Georgi Djakov <georgi.djakov@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, robdclark@gmail.com,
-        s.hauer@pengutronix.de, shawnguo@kernel.org, fabio.estevam@nxp.com,
-        nm@ti.com, xuwei5@hisilicon.com, robh+dt@kernel.org, olof@lixom.net
-Subject: Re: [PATCH V7 00/13] drivers: Boot Constraint core
-Message-ID: <20180411043947.GK7671@vireshk-i7>
-References: <cover.1519380923.git.viresh.kumar@linaro.org>
- <20180322012606.vuaemu3pvpeojtwr@vireshk-mac-ubuntu>
- <20180323150420.GA21152@kroah.com>
- <cbcfeb15-d940-f066-739d-25adfe09f019@linaro.org>
- <1523367652.4981.9.camel@pengutronix.de>
+        Wed, 11 Apr 2018 00:43:17 -0400
+X-Google-Smtp-Source: AIpwx48GNO6e1XZx5NT1bDbB5SY0qB+NHkC0zv9kkE6mLftk3ghn7sLsUStZyo3Z7BleSctcT1RppA==
+Date: Tue, 10 Apr 2018 21:43:15 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Alasdair Kergon <agk@redhat.com>
+Cc: Mike Snitzer <snitzer@redhat.com>, linux-kernel@vger.kernel.org,
+        dm-devel@redhat.com, Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH] dm/raid1: Remove VLA usage
+Message-ID: <20180411044315.GA46144@beast>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1523367652.4981.9.camel@pengutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10-04-18, 15:40, Lucas Stach wrote:
-> Can you please describe how this bootconstraints core integration is
-> simpler than a "run things at max performance until late kernel init",
-> which could be triggered by a simple initcall similar to what is done
-> for clocks and regulators?
-> 
-> To me the bootcontraints stuff looks like a fairly complex solution and
-> your use-case doesn't even sound like you strictly want to keep a
-> bootloader configuration, but rather run things at max performance
-> until you are reasonably sure that you got all the necessary bandwidth
-> requests.
+On the quest to remove all VLAs from the kernel[1], this avoids VLAs
+in dm-raid1.c by just using the maximum size for the stack arrays.
+The nr_mirrors value was already capped at 9, so this makes it a trivial
+adjustment to the array sizes.
 
-What about this case where drivers of some of the devices used during
-boot are built as modules, like display, HDMI, etc., and would be
-available only after userspace is up. We need to take care of their
-bandwidth requirements as well, until the time their driver comes up.
+[1] https://lkml.org/lkml/2018/3/7/621
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ drivers/md/dm-raid1.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/md/dm-raid1.c b/drivers/md/dm-raid1.c
+index 580c49cc8079..5903e492bb34 100644
+--- a/drivers/md/dm-raid1.c
++++ b/drivers/md/dm-raid1.c
+@@ -23,6 +23,8 @@
+ 
+ #define MAX_RECOVERY 1	/* Maximum number of regions recovered in parallel. */
+ 
++#define MAX_NR_MIRRORS	(DM_KCOPYD_MAX_REGIONS + 1)
++
+ #define DM_RAID1_HANDLE_ERRORS	0x01
+ #define DM_RAID1_KEEP_LOG	0x02
+ #define errors_handled(p)	((p)->features & DM_RAID1_HANDLE_ERRORS)
+@@ -255,7 +257,7 @@ static int mirror_flush(struct dm_target *ti)
+ 	unsigned long error_bits;
+ 
+ 	unsigned int i;
+-	struct dm_io_region io[ms->nr_mirrors];
++	struct dm_io_region io[MAX_NR_MIRRORS];
+ 	struct mirror *m;
+ 	struct dm_io_request io_req = {
+ 		.bi_op = REQ_OP_WRITE,
+@@ -651,7 +653,7 @@ static void write_callback(unsigned long error, void *context)
+ static void do_write(struct mirror_set *ms, struct bio *bio)
+ {
+ 	unsigned int i;
+-	struct dm_io_region io[ms->nr_mirrors], *dest = io;
++	struct dm_io_region io[MAX_NR_MIRRORS], *dest = io;
+ 	struct mirror *m;
+ 	struct dm_io_request io_req = {
+ 		.bi_op = REQ_OP_WRITE,
+@@ -1083,7 +1085,7 @@ static int mirror_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 	argc -= args_used;
+ 
+ 	if (!argc || sscanf(argv[0], "%u%c", &nr_mirrors, &dummy) != 1 ||
+-	    nr_mirrors < 2 || nr_mirrors > DM_KCOPYD_MAX_REGIONS + 1) {
++	    nr_mirrors < 2 || nr_mirrors > MAX_NR_MIRRORS) {
+ 		ti->error = "Invalid number of mirrors";
+ 		dm_dirty_log_destroy(dl);
+ 		return -EINVAL;
+@@ -1404,7 +1406,7 @@ static void mirror_status(struct dm_target *ti, status_type_t type,
+ 	int num_feature_args = 0;
+ 	struct mirror_set *ms = (struct mirror_set *) ti->private;
+ 	struct dm_dirty_log *log = dm_rh_dirty_log(ms->rh);
+-	char buffer[ms->nr_mirrors + 1];
++	char buffer[MAX_NR_MIRRORS + 1];
+ 
+ 	switch (type) {
+ 	case STATUSTYPE_INFO:
+-- 
+2.7.4
+
 
 -- 
-viresh
+Kees Cook
+Pixel Security
