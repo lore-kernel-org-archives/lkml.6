@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48MJOcnhicnlMlwcWGIe9yYbCL71tOa8TD/BzfCpOUNCGBzVrAVCf0KaH8mGIw4h5GFt7Ic
-ARC-Seal: i=1; a=rsa-sha256; t=1523473044; cv=none;
+X-Google-Smtp-Source: AIpwx48vKke5NcWFZRLREnc3CEFbW5FNpUKY0YV8Kn/+Kxzdirjsx8oylDNpB2kLZtzRcmHw8iLq
+ARC-Seal: i=1; a=rsa-sha256; t=1523473041; cv=none;
         d=google.com; s=arc-20160816;
-        b=qA9mFm9AzgAbBdjDL8qKGIs4W6kP5mXhm3odCIusaRMPsrTrJRvnG3VTI+Scrb+sTp
-         /M46OZKrR2oazcYN9gmlSctbtTJsRg1Ptn5ssAd0XzM8F9NYpTMiuiK+vdiLZCJcygKI
-         +v/NaFtfC/yA923abuy9KTcrWKNuUcUn8FXc80pLas7tO2Eb2Ej0//1outerTxOSCfTX
-         b80Lht0//qBuy7ciPTfFGgd6ig+dxhSIwxMQZwJZ7SyobLOd3IJsCUx7Bjs9gFo7q5DM
-         HR4kN0bcpBPgXQbp2cnPGSDxzj0jei4z0XQyWX26XD5WmvgI7zyZ2TFcooOPPy4dU8MU
-         L8yw==
+        b=cd/NyT4EuNPKCTtrDqWvua0jfGzx+8i6W/zbGBj2KNEy9dagc+wFU+PKYwyv6MMjYm
+         Jgs4CUnnTllMK+fXet0PeEblvhRtz6uB47ScxFyasxKPKUu//7jLb5cop+0tSLj0eCb1
+         IzKynWDfdhOXffG5p0K+2Xnv8p3gpggfCEE6FwPs+Fhk37RWsc86ueI98TZ9BA6hx4T+
+         +ky4n/OaQEjNnUvnVgJ/nlWr6RkCyq4gbndZEoiVYRkPxdhjg30W/gAqHX9QjPxil4WF
+         StDHgD45ls/iBnl9Gcd/lEzUkfkO+E/8DTtsNmJrKjKGUm+2t7W50gc5voGxvlz1WzEL
+         cKHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=bH4/jIF4rRcQpImbxb81G4mgfRQS8kZP+UFRXrjQ+IQ=;
-        b=qutmBOASxZHHOv2Fpj6EYhjkEpQyRCIVXQevkPRCeey1SWLNtds02IOqJilKQixhHi
-         aMYPiBOS6jdrG90faDid0e4G+8M5kImpBxEehXMx2wJQvP+5FVpRlQb6xPmzrvdsn0Xp
-         y+jEQtcwCUeV7fItNXaRfE/C5nQVNM6OgE3mAJrUXkfDDKEc2rgFmYYwEcDODQoQ7wRA
-         34ExOZXK1f5Q/WawKyVC4C8uFuIdKLnZhP82q5HuTX4NkEB7E0JQGzEvlvzcml0nnpYG
-         +nm0V782LJzf9GsT8gGnaV0kirBZxHcOFJVYN9va8Hds7FIGYEdOpreUPn3ok9MTaHcS
-         LoAQ==
+        bh=aljzDasVIYyFm0P51pgAkPUJ7RISI5W0Cj18ksawVVk=;
+        b=UUUNthTBX4+FFXZkl+fKcpps396t/OhLaKnNdLUAaQUtK0G0roisQdljfytua8KCuh
+         Ex+JhF7aIao/Xtdrjkufs8MkudKh77bzXd+aiVaUAuPWUO5q+4zV2rXsUJtGmgsaFYkf
+         jGdV2SftSbArkhMnm6cX0IME0p2blkiWfpfUvZpgtVubC+JS+upfm81n88nFvxk8Tyr4
+         00IB0u2Yzx0oXbGKOEKU3NPgPqyR+s3RGRwqK8dDULORN14Ne2SIyV2VyzfGbvslPaIq
+         lNY2C+01qY0vZac5vimf8AiaHsGQv1sceZsLkr2koHNej/ODrCi2D30oXZxyASZJ687k
+         K8Fw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Liping Zhang <zlpnobody@gmail.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Sugar Zhang <sugar.zhang@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 102/310] netfilter: ctnetlink: fix incorrect nf_ct_put during hash resize
-Date: Wed, 11 Apr 2018 20:34:01 +0200
-Message-Id: <20180411183626.613906223@linuxfoundation.org>
+Subject: [PATCH 4.9 064/310] ARM: dts: rockchip: fix rk322x i2s1 pinctrl error
+Date: Wed, 11 Apr 2018 20:33:23 +0200
+Message-Id: <20180411183624.988684282@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476145685972182?=
-X-GMAIL-MSGID: =?utf-8?q?1597477271187526182?=
+X-GMAIL-THRID: =?utf-8?q?1597477267931564184?=
+X-GMAIL-MSGID: =?utf-8?q?1597477267931564184?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,58 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Liping Zhang <zlpnobody@gmail.com>
+From: Sugar Zhang <sugar.zhang@rock-chips.com>
 
 
-[ Upstream commit fefa92679dbe0c613e62b6c27235dcfbe9640ad1 ]
+[ Upstream commit 9d420e9b4140f8938ad6aa0d29e2428a2af6122b ]
 
-If nf_conntrack_htable_size was adjusted by the user during the ct
-dump operation, we may invoke nf_ct_put twice for the same ct, i.e.
-the "last" ct. This will cause the ct will be freed but still linked
-in hash buckets.
+Refer to Chapter 5.3.2 of rk3229 TRM, we can see that GPIO1A[2,4,5]
+using RK_FUNC_2 not RK_FUNC_1. This patch fixes it.
 
-It's very easy to reproduce the problem by the following commands:
-  # while : ; do
-  echo $RANDOM > /proc/sys/net/netfilter/nf_conntrack_buckets
-  done
-  # while : ; do
-  conntrack -L
-  done
-  # iperf -s 127.0.0.1 &
-  # iperf -c 127.0.0.1 -P 60 -t 36000
-
-After a while, the system will hang like this:
-  NMI watchdog: BUG: soft lockup - CPU#1 stuck for 22s! [bash:20184]
-  NMI watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [iperf:20382]
-  ...
-
-So at last if we find cb->args[1] is equal to "last", this means hash
-resize happened, then we can set cb->args[1] to 0 to fix the above
-issue.
-
-Fixes: d205dc40798d ("[NETFILTER]: ctnetlink: fix deadlock in table dumping")
-Signed-off-by: Liping Zhang <zlpnobody@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
+Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/nf_conntrack_netlink.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/rk322x.dtsi |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/netfilter/nf_conntrack_netlink.c
-+++ b/net/netfilter/nf_conntrack_netlink.c
-@@ -890,8 +890,13 @@ restart:
- 	}
- out:
- 	local_bh_enable();
--	if (last)
-+	if (last) {
-+		/* nf ct hash resize happened, now clear the leftover. */
-+		if ((struct nf_conn *)cb->args[1] == last)
-+			cb->args[1] = 0;
-+
- 		nf_ct_put(last);
-+	}
+--- a/arch/arm/boot/dts/rk322x.dtsi
++++ b/arch/arm/boot/dts/rk322x.dtsi
+@@ -617,9 +617,9 @@
+ 						<0 12 RK_FUNC_1 &pcfg_pull_none>,
+ 						<0 13 RK_FUNC_1 &pcfg_pull_none>,
+ 						<0 14 RK_FUNC_1 &pcfg_pull_none>,
+-						<1 2 RK_FUNC_1 &pcfg_pull_none>,
+-						<1 4 RK_FUNC_1 &pcfg_pull_none>,
+-						<1 5 RK_FUNC_1 &pcfg_pull_none>;
++						<1 2 RK_FUNC_2 &pcfg_pull_none>,
++						<1 4 RK_FUNC_2 &pcfg_pull_none>,
++						<1 5 RK_FUNC_2 &pcfg_pull_none>;
+ 			};
+ 		};
  
- 	while (i) {
- 		i--;
