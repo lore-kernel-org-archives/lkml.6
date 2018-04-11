@@ -1,36 +1,85 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49iLl1Cbzy7gUCeQeNXUWEbSj0YoRD6dQM5a0ieL7XwZpdYZbD8LV0L++nGzfF0/RCSFNNs
-ARC-Seal: i=1; a=rsa-sha256; t=1523472151; cv=none;
-        d=google.com; s=arc-20160816;
-        b=tjOBufLk6lGNDOHqjTajBCiCaPK6K9Um7bJSnJ4oWjTrjqkCCyP7wYqCmmcamtlC+8
-         iBjngRqfCno25pA1Ig8rn6srjoJ8lTO66H76cAnCmgfytRBhVfDohY9L7dZ0JIBTDIvs
-         crPjji2uV0uSYH6QPtH7L3FSMZosNG8lN21JZ2X4Gq2wRjMpWpWfQMcKIuue5MEBsFvp
-         pl4nsw1SEnMZCBpFKEm1PcVE+1GjDPsSmZ/GVqPklb/3f/W6YWRW9LFQ7amv7bcQwS/0
-         Hex6zJJzORk6S/hH3rnQ9r6J9XkVrA+35DCFbNBZy+IYUmbCzeHnDNRkMmLzXYRxttJN
-         tKBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=cj9aDsAKVpZ1lxEwMZ6VsiiQLZZDSYndbEYbXyLYu5A=;
-        b=rPTTFqaHImGD+zIq4YCP3pS8FNblsoR6bsu2biZTac2ENQ1QMtftHS4wb3PHP52TVr
-         fBnQW2HNekSTIVSh+Hp4Qmd2CQkhNepHyLl1ZHcSoM0/9C9EltJQpdCbQnIFFzBqKFQg
-         OUAUZ5IwqYXI+IoQ8poeNczAsEMXs4krWZM657Mqa9bBZq2ynCEess/gedGXnAgiJDVz
-         4+6QBqscPs4MTlQDpSANdNAZ+JLUGYTOoFPTznnREnxIDxj+ZqnEb+CB5Vncv4nSyW8L
-         r9buq8eLyhKS0n/gYuv3nC7U6pSuBZUAuEIjUUuLcW1bGNN9ZuHafaxdCCsWUFUrsgTQ
-         ws6w==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3039319-1523472149-2-12148083336314117361
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523472148; b=URvyQke0o6u7faECgbK7mUXZ1OGwuou0gsw/beYE8nnFO2YwzF
+    Qn/ykrTKo2tGH4sFatua7/56aPFppRNzfUjyHb4vsGVfddZ6oyLG7vOcFYlVRXyT
+    NXw8HXYWqnMwmNW+mVN+S+sG9X+6p5DSv+QT0OVZVRmYmcbNr936PSYlCE/f6bPs
+    JUfp0OE2teJS/i60cP1pECpHjKPKjhJ9Z0FsHuL/quFWU1xKG3X5DJQ/pq9VKNGt
+    H5n+MLpIWLvoaK8P1eOx6j+LuGsIeLn6fqoZyS/GLly2HqYadMCNDeAmB/BhZ20K
+    QhFsIsxzX/O9+eWTfpcdsJqLisYJZKBneKMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523472148; bh=aMN6TVBM2To5xIV9dkb1O/j8yzciQJ
+    vk/Je3A9IjEE8=; b=uwZrscYe8J111wSqX0vLpIEuWVafk65lGP7+OQnvxZ2sal
+    9a8QifDg4dhmcwBG6pUmHEj3gOXnV52KjWD74OWbP4AyZjPNhKfcflbcXBhnChjZ
+    gBJkoTBDlIBhCsmqHgPg9AijQ40BkqmV7hynhg1qrwym9GGFxkrZ4ZOvEZxKMd4I
+    EujaW4I7qEIQEujYKjleeebTK8CDs4U+k6qzVSMkJc/QbKkqJ+7hufzEYkXVaeW8
+    fn6yCtKBHUHSd24V7bC5zpN3Cf+zbJkr/po6Y4CWJhGr/T22F9aEwJ25kO6OQ/B9
+    DfcNZhzTw5JcXUKnsRdyiICoEgjkrdfmS7GawKkA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfPy0SI15QErpZl+JzrbG6bZJ6GAJPWoaER87nVyBb/ZtUvldr95DOsJDe8XfqvfdgYtAOaO0ByFvpDgZSKCDmcFiPM8exErZbJo+F9zmMT5JzfiX+r3n
+    G3p2WUnMDEuotyFfVgypCLl9+h5/9abGSfhdAhImiBjI45S1SRitJoy09zUl5YmKvIL2//skANAyAO2+c9OGC8JW+UrJsrWJ+T/idHtIoqAQxq/TzmNzsQWA
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=pGLkceISAAAA:8 a=UGG5zPGqAAAA:8 a=AMTvMMonAAAA:8 a=20KFwNOVAAAA:8
+    a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=tm7yTRqP0MyoP90mQagA:9 a=QEXdDO2ut3YA:10
+    a=17ibUXfGiVyGqR_YBevW:22 a=p5oU-coMHzOM5oT1KbOf:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753928AbeDKSmU (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:42:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57114 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755019AbeDKSmP (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:42:15 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 105/121] pptp: remove a buggy dst release in pptp_connect()
-Date: Wed, 11 Apr 2018 20:36:48 +0200
-Message-Id: <20180411183503.273877128@linuxfoundation.org>
+        stable@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 3.18 100/121] virtio_net: check return value of skb_to_sgvec in one more location
+Date: Wed, 11 Apr 2018 20:36:43 +0200
+Message-Id: <20180411183502.877953714@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -38,10 +87,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476334747921505?=
-X-GMAIL-MSGID: =?utf-8?q?1597476334747921505?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,113 +97,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
+Kernels that do not have f6b10209b90d ("virtio-net: switch to use
+build_skb() for small buffer") will have an extra call to skb_to_sgvec
+that is not handled by e2fcad58fd23 ("virtio_net: check return value of
+skb_to_sgvec always"). Since the former does not appear to be stable
+material, just fix the call up directly.
 
-[ Upstream commit bfacfb457b36911a10140b8cb3ce76a74883ac5a ]
-
-Once dst has been cached in socket via sk_setup_caps(),
-it is illegal to call ip_rt_put() (or dst_release()),
-since sk_setup_caps() did not change dst refcount.
-
-We can still dereference it since we hold socket lock.
-
-Caugth by syzbot :
-
-BUG: KASAN: use-after-free in atomic_dec_return include/asm-generic/atomic-instrumented.h:198 [inline]
-BUG: KASAN: use-after-free in dst_release+0x27/0xa0 net/core/dst.c:185
-Write of size 4 at addr ffff8801c54dc040 by task syz-executor4/20088
-
-CPU: 1 PID: 20088 Comm: syz-executor4 Not tainted 4.16.0+ #376
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x1a7/0x27d lib/dump_stack.c:53
- print_address_description+0x73/0x250 mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report+0x23c/0x360 mm/kasan/report.c:412
- check_memory_region_inline mm/kasan/kasan.c:260 [inline]
- check_memory_region+0x137/0x190 mm/kasan/kasan.c:267
- kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
- atomic_dec_return include/asm-generic/atomic-instrumented.h:198 [inline]
- dst_release+0x27/0xa0 net/core/dst.c:185
- sk_dst_set include/net/sock.h:1812 [inline]
- sk_dst_reset include/net/sock.h:1824 [inline]
- sock_setbindtodevice net/core/sock.c:610 [inline]
- sock_setsockopt+0x431/0x1b20 net/core/sock.c:707
- SYSC_setsockopt net/socket.c:1845 [inline]
- SyS_setsockopt+0x2ff/0x360 net/socket.c:1828
- do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x4552d9
-RSP: 002b:00007f4878126c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007f48781276d4 RCX: 00000000004552d9
-RDX: 0000000000000019 RSI: 0000000000000001 RDI: 0000000000000013
-RBP: 000000000072bea0 R08: 0000000000000010 R09: 0000000000000000
-R10: 00000000200010c0 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000526 R14: 00000000006fac30 R15: 0000000000000000
-
-Allocated by task 20088:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:447
- set_track mm/kasan/kasan.c:459 [inline]
- kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
- kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:489
- kmem_cache_alloc+0x12e/0x760 mm/slab.c:3542
- dst_alloc+0x11f/0x1a0 net/core/dst.c:104
- rt_dst_alloc+0xe9/0x540 net/ipv4/route.c:1520
- __mkroute_output net/ipv4/route.c:2265 [inline]
- ip_route_output_key_hash_rcu+0xa49/0x2c60 net/ipv4/route.c:2493
- ip_route_output_key_hash+0x20b/0x370 net/ipv4/route.c:2322
- __ip_route_output_key include/net/route.h:126 [inline]
- ip_route_output_flow+0x26/0xa0 net/ipv4/route.c:2577
- ip_route_output_ports include/net/route.h:163 [inline]
- pptp_connect+0xa84/0x1170 drivers/net/ppp/pptp.c:453
- SYSC_connect+0x213/0x4a0 net/socket.c:1639
- SyS_connect+0x24/0x30 net/socket.c:1620
- do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-Freed by task 20082:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:447
- set_track mm/kasan/kasan.c:459 [inline]
- __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
- kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
- __cache_free mm/slab.c:3486 [inline]
- kmem_cache_free+0x83/0x2a0 mm/slab.c:3744
- dst_destroy+0x266/0x380 net/core/dst.c:140
- dst_destroy_rcu+0x16/0x20 net/core/dst.c:153
- __rcu_reclaim kernel/rcu/rcu.h:178 [inline]
- rcu_do_batch kernel/rcu/tree.c:2675 [inline]
- invoke_rcu_callbacks kernel/rcu/tree.c:2930 [inline]
- __rcu_process_callbacks kernel/rcu/tree.c:2897 [inline]
- rcu_process_callbacks+0xd6c/0x17b0 kernel/rcu/tree.c:2914
- __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
-
-The buggy address belongs to the object at ffff8801c54dc000
- which belongs to the cache ip_dst_cache of size 168
-The buggy address is located 64 bytes inside of
- 168-byte region [ffff8801c54dc000, ffff8801c54dc0a8)
-The buggy address belongs to the page:
-page:ffffea0007153700 count:1 mapcount:0 mapping:ffff8801c54dc000 index:0x0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffff8801c54dc000 0000000000000000 0000000100000010
-raw: ffffea0006b34b20 ffffea0006b6c1e0 ffff8801d674a1c0 0000000000000000
-page dumped because: kasan: bad access detected
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Jason A. Donenfeld <Jason@zx2c4.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: David S. Miller <davem@davemloft.net>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ppp/pptp.c |    1 -
- 1 file changed, 1 deletion(-)
 
---- a/drivers/net/ppp/pptp.c
-+++ b/drivers/net/ppp/pptp.c
-@@ -488,7 +488,6 @@ static int pptp_connect(struct socket *s
- 	po->chan.mtu = dst_mtu(&rt->dst);
- 	if (!po->chan.mtu)
- 		po->chan.mtu = PPP_MRU;
--	ip_rt_put(rt);
- 	po->chan.mtu -= PPTP_HEADER_OVERHEAD;
+---
+ drivers/net/virtio_net.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -551,7 +551,12 @@ static int add_recvbuf_small(struct rece
+ 	hdr = skb_vnet_hdr(skb);
+ 	sg_init_table(rq->sg, MAX_SKB_FRAGS + 2);
+ 	sg_set_buf(rq->sg, &hdr->hdr, sizeof hdr->hdr);
+-	skb_to_sgvec(skb, rq->sg + 1, 0, skb->len);
++
++	err = skb_to_sgvec(skb, rq->sg + 1, 0, skb->len);
++	if (unlikely(err < 0)) {
++		dev_kfree_skb(skb);
++		return err;
++	}
  
- 	po->chan.hdrlen = 2 + sizeof(struct pptp_gre_header);
+ 	err = virtqueue_add_inbuf(rq->vq, rq->sg, 2, skb, gfp);
+ 	if (err < 0)
