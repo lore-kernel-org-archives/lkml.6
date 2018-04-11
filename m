@@ -1,147 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752849AbeDKI65 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 04:58:57 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:51819 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751972AbeDKI6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 04:58:52 -0400
-Subject: Re: [PATCH v3 2/2] mm: remove odd HAVE_PTE_SPECIAL
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-doc@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>,
-        mhocko@kernel.org, aneesh.kumar@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, mpe@ellerman.id.au,
-        benh@kernel.crashing.org, paulus@samba.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Vineet Gupta <vgupta@synopsys.com>, Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <albert@sifive.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        David Rientjes <rientjes@google.com>,
-        Robin Murphy <robin.murphy@arm.com>
-References: <1523433816-14460-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1523433816-14460-3-git-send-email-ldufour@linux.vnet.ibm.com>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <de6ee514-8b7e-24d0-a7ee-a8887e8b0ae9@c-s.fr>
-Date: Wed, 11 Apr 2018 10:58:44 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753187AbeDKI7F (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 04:59:05 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:37910 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751972AbeDKI7A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 04:59:00 -0400
+X-Google-Smtp-Source: AIpwx48l11P5gYqFHAXxi46qdmOG6LIPC4JHj6gRzjzNcgu+EbNBasEVuJ+5SdJPaWylH2Tc775O3ehqn0I1FpVA9u0=
 MIME-Version: 1.0
-In-Reply-To: <1523433816-14460-3-git-send-email-ldufour@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180302230358.25153-1-eric@anholt.net>
+References: <20180302230358.25153-1-eric@anholt.net>
+From: Stefan Schake <stschake@gmail.com>
+Date: Wed, 11 Apr 2018 10:58:37 +0200
+Message-ID: <CAOZHkRxa7Lo11tqt4bc0hTGefB8czjvrDPm1nLOcdGEmFd_L4w@mail.gmail.com>
+Subject: Re: [PATCH] drm/vc4: Add some missing HVS register definitions.
+To: Eric Anholt <eric@anholt.net>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 11/04/2018 à 10:03, Laurent Dufour a écrit :
-> Remove the additional define HAVE_PTE_SPECIAL and rely directly on
-> CONFIG_ARCH_HAS_PTE_SPECIAL.
-> 
-> There is no functional change introduced by this patch
-> 
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+On Sat, Mar 3, 2018 at 12:03 AM, Eric Anholt <eric@anholt.net> wrote:
+> At least the RGBA expand field we should have been setting, because we
+> aren't expanding correctly for 565 -> 8888.  Other registers are ones
+> that may be interesting for various projects that have been discussed.
+>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> Cc: Stefan Schake <stschake@gmail.com>
 > ---
->   mm/memory.c | 19 ++++++++-----------
->   1 file changed, 8 insertions(+), 11 deletions(-)
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 96910c625daa..7f7dc7b2a341 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -817,17 +817,12 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
->    * PFNMAP mappings in order to support COWable mappings.
->    *
->    */
-> -#ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
-> -# define HAVE_PTE_SPECIAL 1
-> -#else
-> -# define HAVE_PTE_SPECIAL 0
-> -#endif
->   struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
->   			     pte_t pte, bool with_public_device)
->   {
->   	unsigned long pfn = pte_pfn(pte);
->   
-> -	if (HAVE_PTE_SPECIAL) {
-> +	if (IS_ENABLED(CONFIG_ARCH_HAS_PTE_SPECIAL)) {
->   		if (likely(!pte_special(pte)))
->   			goto check_pfn;
->   		if (vma->vm_ops && vma->vm_ops->find_special_page)
-> @@ -862,7 +857,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
->   		return NULL;
->   	}
->   
-> -	/* !HAVE_PTE_SPECIAL case follows: */
-> +	/* !CONFIG_ARCH_HAS_PTE_SPECIAL case follows: */
->   
->   	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
->   		if (vma->vm_flags & VM_MIXEDMAP) {
-> @@ -881,7 +876,8 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
->   
->   	if (is_zero_pfn(pfn))
->   		return NULL;
-> -check_pfn:
+>  drivers/gpu/drm/vc4/vc4_regs.h | 96 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 96 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/vc4/vc4_regs.h b/drivers/gpu/drm/vc4/vc4_regs.h
+> index b9749cb24063..ce8bb7486456 100644
+> --- a/drivers/gpu/drm/vc4/vc4_regs.h
+> +++ b/drivers/gpu/drm/vc4/vc4_regs.h
+> @@ -330,6 +330,21 @@
+>  #define SCALER_DISPCTRL0                        0x00000040
+>  # define SCALER_DISPCTRLX_ENABLE               BIT(31)
+>  # define SCALER_DISPCTRLX_RESET                        BIT(30)
+> +/* Generates a single frame when VSTART is seen and stops at the last
+> + * pixel read from the FIFO.
+> + */
+> +# define SCALER_DISPCTRLX_ONESHOT              BIT(29)
+> +/* Processes a single context in the dlist and then task switch,
+> + * instead of an entire line.
+> + */
+> +# define SCALER_DISPCTRLX_ONECTX               BIT(28)
+> +/* Set to have DISPSLAVE return 2 16bpp pixels and no status data. */
+> +# define SCALER_DISPCTRLX_FIFO32               BIT(27)
+> +/* Turns on output to the DISPSLAVE register instead of the normal
+> + * FIFO.
+> + */
+> +# define SCALER_DISPCTRLX_FIFOREG              BIT(26)
 > +
-> +check_pfn: __maybe_unused
+>  # define SCALER_DISPCTRLX_WIDTH_MASK           VC4_MASK(23, 12)
+>  # define SCALER_DISPCTRLX_WIDTH_SHIFT          12
+>  # define SCALER_DISPCTRLX_HEIGHT_MASK          VC4_MASK(11, 0)
+> @@ -402,6 +417,68 @@
+>   */
+>  # define SCALER_GAMADDR_SRAMENB                        BIT(30)
+>
+> +#define SCALER_OLEDOFFS                         0x00000080
+> +/* Clamps R to [16,235] and G/B to [16,240]. */
+> +# define SCALER_OLEDOFFS_YUVCLAMP               BIT(31)
+> +
+> +/* Chooses which display FIFO the matrix applies to. */
+> +# define SCALER_OLEDOFFS_DISPFIFO_MASK          VC4_MASK(25, 24)
+> +# define SCALER_OLEDOFFS_DISPFIFO_SHIFT         24
+> +# define SCALER_OLEDOFFS_DISPFIFO_DISABLED      0
+> +# define SCALER_OLEDOFFS_DISPFIFO_0             1
+> +# define SCALER_OLEDOFFS_DISPFIFO_1             2
+> +# define SCALER_OLEDOFFS_DISPFIFO_2             3
+> +
+> +/* Offsets are 8-bit 2s-complement. */
+> +# define SCALER_OLEDOFFS_RED_MASK               VC4_MASK(23, 16)
+> +# define SCALER_OLEDOFFS_RED_SHIFT              16
+> +# define SCALER_OLEDOFFS_GREEN_MASK             VC4_MASK(15, 8)
+> +# define SCALER_OLEDOFFS_GREEN_SHIFT            8
+> +# define SCALER_OLEDOFFS_BLUE_MASK              VC4_MASK(7, 0)
+> +# define SCALER_OLEDOFFS_BLUE_SHIFT             0
+> +
+> +/* The coefficients are S0.9 fractions. */
+> +#define SCALER_OLEDCOEF0                        0x00000084
+> +# define SCALER_OLEDCOEF0_B_TO_R_MASK           VC4_MASK(29, 20)
+> +# define SCALER_OLEDCOEF0_B_TO_R_SHIFT          20
+> +# define SCALER_OLEDCOEF0_B_TO_G_MASK           VC4_MASK(19, 10)
+> +# define SCALER_OLEDCOEF0_B_TO_G_SHIFT          10
+> +# define SCALER_OLEDCOEF0_B_TO_B_MASK           VC4_MASK(9, 0)
+> +# define SCALER_OLEDCOEF0_B_TO_B_SHIFT          0
+> +
+> +#define SCALER_OLEDCOEF1                        0x00000088
+> +# define SCALER_OLEDCOEF1_G_TO_R_MASK           VC4_MASK(29, 20)
+> +# define SCALER_OLEDCOEF1_G_TO_R_SHIFT          20
+> +# define SCALER_OLEDCOEF1_G_TO_G_MASK           VC4_MASK(19, 10)
+> +# define SCALER_OLEDCOEF1_G_TO_G_SHIFT          10
+> +# define SCALER_OLEDCOEF1_G_TO_B_MASK           VC4_MASK(9, 0)
+> +# define SCALER_OLEDCOEF1_G_TO_B_SHIFT          0
+> +
+> +#define SCALER_OLEDCOEF2                        0x0000008c
+> +# define SCALER_OLEDCOEF2_R_TO_R_MASK           VC4_MASK(29, 20)
+> +# define SCALER_OLEDCOEF2_R_TO_R_SHIFT          20
+> +# define SCALER_OLEDCOEF2_R_TO_G_MASK           VC4_MASK(19, 10)
+> +# define SCALER_OLEDCOEF2_R_TO_G_SHIFT          10
+> +# define SCALER_OLEDCOEF2_R_TO_B_MASK           VC4_MASK(9, 0)
+> +# define SCALER_OLEDCOEF2_R_TO_B_SHIFT          0
+> +
+> +/* Slave addresses for DMAing from HVS composition output to other
+> + * devices.  The top bits are valid only in !FIFO32 mode.
+> + */
+> +#define SCALER_DISPSLAVE0                       0x000000c0
+> +#define SCALER_DISPSLAVE1                       0x000000c9
+> +#define SCALER_DISPSLAVE2                       0x000000d0
+> +# define SCALER_DISPSLAVE_ISSUE_VSTART          BIT(31)
+> +# define SCALER_DISPSLAVE_ISSUE_HSTART          BIT(30)
+> +/* Set when the current line has been read and an HSTART is required. */
+> +# define SCALER_DISPSLAVE_EOL                   BIT(26)
+> +/* Set when the display FIFO is empty. */
+> +# define SCALER_DISPSLAVE_EMPTY                 BIT(25)
+> +/* Set when there is RGB data ready to read. */
+> +# define SCALER_DISPSLAVE_VALID                 BIT(24)
+> +# define SCALER_DISPSLAVE_RGB_MASK              VC4_MASK(23, 0)
+> +# define SCALER_DISPSLAVE_RGB_SHIFT             0
+> +
+>  #define SCALER_GAMDATA                          0x000000e0
+>  #define SCALER_DLIST_START                      0x00002000
+>  #define SCALER_DLIST_SIZE                       0x00004000
+> @@ -767,6 +844,10 @@ enum hvs_pixel_format {
+>         HVS_PIXEL_FORMAT_YCBCR_YUV420_2PLANE = 9,
+>         HVS_PIXEL_FORMAT_YCBCR_YUV422_3PLANE = 10,
+>         HVS_PIXEL_FORMAT_YCBCR_YUV422_2PLANE = 11,
+> +       HVS_PIXEL_FORMAT_H264 = 12,
+> +       HVS_PIXEL_FORMAT_PALETTE = 13,
+> +       HVS_PIXEL_FORMAT_YUV444_RGB = 14,
+> +       HVS_PIXEL_FORMAT_AYUV444_RGB = 15,
+>  };
+>
+>  /* Note: the LSB is the rightmost character shown.  Only valid for
+> @@ -800,12 +881,27 @@ enum hvs_pixel_format {
+>  #define SCALER_CTL0_TILING_128B                        2
+>  #define SCALER_CTL0_TILING_256B_OR_T           3
+>
+> +#define SCALER_CTL0_ALPHA_MASK                  BIT(19)
+>  #define SCALER_CTL0_HFLIP                       BIT(16)
+>  #define SCALER_CTL0_VFLIP                       BIT(15)
+>
+> +#define SCALER_CTL0_KEY_MODE_MASK              VC4_MASK(18, 17)
+> +#define SCALER_CTL0_KEY_MODE_SHIFT             17
+> +#define SCALER_CTL0_KEY_DISABLED               0
+> +#define SCALER_CTL0_KEY_LUMA_OR_COMMON_RGB     1
+> +#define SCALER_CTL0_KEY_MATCH                  2 /* turn transparent */
+> +#define SCALER_CTL0_KEY_REPLACE                        3 /* replace with value from key mask word 2 */
+> +
+>  #define SCALER_CTL0_ORDER_MASK                 VC4_MASK(14, 13)
+>  #define SCALER_CTL0_ORDER_SHIFT                        13
+>
+> +#define SCALER_CTL0_RGBA_EXPAND_MASK           VC4_MASK(12, 11)
+> +#define SCALER_CTL0_RGBA_EXPAND_SHIFT          11
+> +#define SCALER_CTL0_RGBA_EXPAND_ZERO           0
+> +#define SCALER_CTL0_RGBA_EXPAND_LSB            1
+> +#define SCALER_CTL0_RGBA_EXPAND_MSB            2
+> +#define SCALER_CTL0_RGBA_EXPAND_ROUND          3
+> +
+>  #define SCALER_CTL0_SCL1_MASK                  VC4_MASK(10, 8)
+>  #define SCALER_CTL0_SCL1_SHIFT                 8
+>
+> --
+> 2.16.2
+>
 
-See below
+Acked-by: Stefan Schake <stschake@gmail.com>
 
->   	if (unlikely(pfn > highest_memmap_pfn)) {
->   		print_bad_pte(vma, addr, pte, NULL);
->   		return NULL;
-> @@ -891,7 +887,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
->   	 * NOTE! We still have PageReserved() pages in the page tables.
->   	 * eg. VDSO mappings can cause them to exist.
->   	 */
-> -out:
-> +out: __maybe_unused
-
-Why do you need that change ?
-
-There is no reason for the compiler to complain. It would complain if 
-the goto was within a #ifdef, but all the purpose of using IS_ENABLED() 
-is to allow the compiler to properly handle all possible cases. That's 
-all the force of IS_ENABLED() compared to ifdefs, and that the reason 
-why they are plebicited, ref Linux Codying style for a detailed explanation.
-
-Christophe
-
-
->   	return pfn_to_page(pfn);
->   }
->   
-> @@ -904,7 +900,7 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
->   	/*
->   	 * There is no pmd_special() but there may be special pmds, e.g.
->   	 * in a direct-access (dax) mapping, so let's just replicate the
-> -	 * !HAVE_PTE_SPECIAL case from vm_normal_page() here.
-> +	 * !CONFIG_ARCH_HAS_PTE_SPECIAL case from vm_normal_page() here.
->   	 */
->   	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
->   		if (vma->vm_flags & VM_MIXEDMAP) {
-> @@ -1933,7 +1929,8 @@ static int __vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
->   	 * than insert_pfn).  If a zero_pfn were inserted into a VM_MIXEDMAP
->   	 * without pte special, it would there be refcounted as a normal page.
->   	 */
-> -	if (!HAVE_PTE_SPECIAL && !pfn_t_devmap(pfn) && pfn_t_valid(pfn)) {
-> +	if (!IS_ENABLED(CONFIG_ARCH_HAS_PTE_SPECIAL) &&
-> +	    !pfn_t_devmap(pfn) && pfn_t_valid(pfn)) {
->   		struct page *page;
->   
->   		/*
-> 
+Since the generic plane alpha series is close to going in, we might also
+want the alpha mix bit in SCALER_POS2 (bit 28). But we can always do that
+as part of an actual series implementing plane alpha.
