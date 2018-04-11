@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+7AZ4pseM7pFgtn1h33qQMG5WaUIS+FE6WtylsW4dJulGeGKUJBRGcgx5tiSDjbC0flosE
-ARC-Seal: i=1; a=rsa-sha256; t=1523473417; cv=none;
+X-Google-Smtp-Source: AIpwx4+YtFqnuf2lXoRm9EuOBcVP5lYI21+76bAvgQVlSXDotzc/UyhDt7VBaJtXeaiwHBqOywB7
+ARC-Seal: i=1; a=rsa-sha256; t=1523473414; cv=none;
         d=google.com; s=arc-20160816;
-        b=U06eyKHqj3VZY/toA6FUYzOXpoVSHsP1dDBnMOqRFiL/URH2XMHH5mgSVOfajW7Tt5
-         SwzHMlA1qRB1JGiLjahYwr9YlmvxsZJwqmkGH7t7X+jrB3VZqOVzwK0D/k+Fqlqt5vM1
-         4KcY55OWdToSK8j+hYmmdRBB1ydwitDcgqeRNOULEZC5vddVLk7RDtPj7MD6GunmW0C2
-         ivnC1B8bZrCZbEWW8UU3K1VJS5LsgX4rUqP0wi7I0Mk2LjGnzuVr6b4k+/zuRSwewJP3
-         BjgfRbAtYVhwFMJPWu4Koy0AVyXNhNX6vurLqfWRQ6AfXQn62TbwGE3rAGo8I8PIU6nm
-         TI2g==
+        b=OPBhUPUQxR2QyKJUp1+hFNtNY4udIe8iIPWkPhjLqH/MgIxeg7XOldghS5oEF0z9vO
+         4jRX1sp+sAMB5aOop/1QZboK1ygOmlS9K+Aozh5aamHIPMVz9Rk+T5ReqdL5epNo+9fJ
+         SfQJT9FoZcwIvH6GPWRU/5wOOQnVb4lpK12UHODxGhJ6Gu0v0pKRPO31LytW7hxwApIL
+         2FEamcPiDq2xtNuUKpbs3+vQgrn4ki4anAeGLdK1W8SMqxQJSGnafHKtMpvrL0dfWwxe
+         p/E3cpEcvyvIOy+8QVo0NRCumS+EL0QAYqisS3NW7adko7y8HioZXwneC5qEl+iJkBLP
+         ihTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ztwnajaFLBAYbwbc0xWAFZJz3IPrEXDUcIWycZaAOg0=;
-        b=eOB86wukiIzRYnRELurw/foMM7Jn6eHZjhX+Bj4N8nH/APrsWR9BKWl7a81hfG3Q0x
-         mkg40iN+W9lh2W8J3bAbxlk7p3XwBw8FPzCDavBEGk5ETrv55FAp5+vcz/8UE2wTEseY
-         /w5kghQIcSEltAVmdexJ8ZOZxA+hrgzekGo6cfUxE0H1EdhMfn5D3J+6UWibsbyp8Y09
-         GV4xqvavM/D27IXgRs/myrQ1ihxFXa4pMEqkxZBtFnuQy/xEv5qPlqXPzZYCkfMfHQV6
-         jlI75YCYu6OM/xoVW3GQSk2QwFVmflyaBmekGYhrX3QBb0qy1hvcasitgF7dSJnoElaq
-         HvlQ==
+        bh=alYglEAltJa407oohQwgGsJ9owcT3QPkOxb4qoWHRQc=;
+        b=b689GV9ZA3LEXrrgvfA6Gdl5byDPr7GbNG8jti7/X/FdSHl02JjZMCgAbOLHp9hHpA
+         U1ImAJni1n3RlKjjqNzfVQ92bKVXC78iwnLyw0QspJYDlte9Sd4FfsZehA7YE/mzDU+g
+         HlHEoQOI6RfjaHRP8G6p6fLQmJZ3+sKEgkdtFok1wUTw+V9bULpfssCU5yas0lfOoryc
+         J3Q75uz9XtV1/CQoDpmomha9TkHHzJbWQ46CS5Ay4esbIHF9vHGHMQP50NzpIsB/3miH
+         1a5IgKqXPOtYQ9Tvg58iLu1fJmMkg02cKiROe4PoL0SUtygC2uWNkoyx41rEE51hbuF0
+         0u8A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Rakesh Pandit <rakesh@tuxera.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Ming Lei <ming.lei@redhat.com>,
-	Christoph Hellwig <hch@lst.de>,
+	Jagannathan Raman <jag.raman@oracle.com>,
+	Aaron Young <aaron.young@oracle.com>,
+	Alexandre Chartre <alexandre.chartre@oracle.com>,
+	Bijan Mottahedeh <bijan.mottahedeh@oracle.com>,
+	Liam Merwick <liam.merwick@oracle.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 213/310] nvme: fix hang in remove path
-Date: Wed, 11 Apr 2018 20:35:52 +0200
-Message-Id: <20180411183631.723699641@linuxfoundation.org>
+Subject: [PATCH 4.9 239/310] sparc64: ldc abort during vds iso boot
+Date: Wed, 11 Apr 2018 20:36:18 +0200
+Message-Id: <20180411183632.768848978@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477662224806346?=
-X-GMAIL-MSGID: =?utf-8?q?1597477662224806346?=
+X-GMAIL-THRID: =?utf-8?q?1597476401088199108?=
+X-GMAIL-MSGID: =?utf-8?q?1597477659560681305?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,63 +54,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Jag Raman <jag.raman@oracle.com>
 
 
-[ Upstream commit 82654b6b8ef8b93ee87a97fc562f87f081fc2f91 ]
+[ Upstream commit 6c95483b768c62f8ee933ae08a1bdbcb78b5410f ]
 
-We need to start admin queues too in nvme_kill_queues()
-for avoiding hang in remove path[1].
+Orabug: 20902628
 
-This patch is very similar with 806f026f9b901eaf(nvme: use
-blk_mq_start_hw_queues() in nvme_kill_queues()).
+When an ldc control-only packet is received during data exchange in
+read_nonraw(), a new rx head is calculated but the rx queue head is not
+actually advanced (rx_set_head() is not called) and a branch is taken to
+'no_data' at which point two things can happen depending on the value
+of the newly calculated rx head and the current rx tail:
 
-[1] hang stack trace
-[<ffffffff813c9716>] blk_execute_rq+0x56/0x80
-[<ffffffff815cb6e9>] __nvme_submit_sync_cmd+0x89/0xf0
-[<ffffffff815ce7be>] nvme_set_features+0x5e/0x90
-[<ffffffff815ce9f6>] nvme_configure_apst+0x166/0x200
-[<ffffffff815cef45>] nvme_set_latency_tolerance+0x35/0x50
-[<ffffffff8157bd11>] apply_constraint+0xb1/0xc0
-[<ffffffff8157cbb4>] dev_pm_qos_constraints_destroy+0xf4/0x1f0
-[<ffffffff8157b44a>] dpm_sysfs_remove+0x2a/0x60
-[<ffffffff8156d951>] device_del+0x101/0x320
-[<ffffffff8156db8a>] device_unregister+0x1a/0x60
-[<ffffffff8156dc4c>] device_destroy+0x3c/0x50
-[<ffffffff815cd295>] nvme_uninit_ctrl+0x45/0xa0
-[<ffffffff815d4858>] nvme_remove+0x78/0x110
-[<ffffffff81452b69>] pci_device_remove+0x39/0xb0
-[<ffffffff81572935>] device_release_driver_internal+0x155/0x210
-[<ffffffff81572a02>] device_release_driver+0x12/0x20
-[<ffffffff815d36fb>] nvme_remove_dead_ctrl_work+0x6b/0x70
-[<ffffffff810bf3bc>] process_one_work+0x18c/0x3a0
-[<ffffffff810bf61e>] worker_thread+0x4e/0x3b0
-[<ffffffff810c5ac9>] kthread+0x109/0x140
-[<ffffffff8185800c>] ret_from_fork+0x2c/0x40
-[<ffffffffffffffff>] 0xffffffffffffffff
+- If the rx queue is determined to be not empty, then the wrong packet
+  is picked up.
 
-Fixes: c5552fde102fc("nvme: Enable autonomous power state transitions")
-Reported-by: Rakesh Pandit <rakesh@tuxera.com>
-Tested-by: Rakesh Pandit <rakesh@tuxera.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+- If the rx queue is determined to be empty, then a read error (EAGAIN)
+  is eventually returned since it is falsely assumed that more data was
+  expected.
+
+The fix is to update the rx head and return in case of a control only
+packet during data exchange.
+
+Signed-off-by: Jagannathan Raman <jag.raman@oracle.com>
+Reviewed-by: Aaron Young <aaron.young@oracle.com>
+Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+Reviewed-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Reviewed-by: Liam Merwick <liam.merwick@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/host/core.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/sparc/kernel/ldc.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2040,6 +2040,10 @@ void nvme_kill_queues(struct nvme_ctrl *
- 	struct nvme_ns *ns;
+--- a/arch/sparc/kernel/ldc.c
++++ b/arch/sparc/kernel/ldc.c
+@@ -1733,9 +1733,14 @@ static int read_nonraw(struct ldc_channe
  
- 	mutex_lock(&ctrl->namespaces_mutex);
-+
-+	/* Forcibly start all queues to avoid having stuck requests */
-+	blk_mq_start_hw_queues(ctrl->admin_q);
-+
- 	list_for_each_entry(ns, &ctrl->namespaces, list) {
- 		/*
- 		 * Revalidating a dead namespace sets capacity to 0. This will
+ 		lp->rcv_nxt = p->seqid;
+ 
++		/*
++		 * If this is a control-only packet, there is nothing
++		 * else to do but advance the rx queue since the packet
++		 * was already processed above.
++		 */
+ 		if (!(p->type & LDC_DATA)) {
+ 			new = rx_advance(lp, new);
+-			goto no_data;
++			break;
+ 		}
+ 		if (p->stype & (LDC_ACK | LDC_NACK)) {
+ 			err = data_ack_nack(lp, p);
