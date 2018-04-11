@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48myn484fcNkJx070n0e59QhW6lJlv1JaE8Y231MhC7UfoqzHmk7I5TSK8uXA2UUZ4aaNd8
-ARC-Seal: i=1; a=rsa-sha256; t=1523472576; cv=none;
+X-Google-Smtp-Source: AIpwx484ag5835nEA7MuwYCBSo+ufltgWMZ7GkT64OMC1INI6UDf2rL9edIwXZogR9BN2Hd1qZOZ
+ARC-Seal: i=1; a=rsa-sha256; t=1523472572; cv=none;
         d=google.com; s=arc-20160816;
-        b=PCrxZT+zcXj0gt32mkXBN7lnlIjKnZnAeYh9E6EGgn7gdgzmFbZ0TqviTcMF9hg+I3
-         K9dAj26I36PsMlc0QSkcP0xNb/gf8VPhNViwWtVARhObd4farNAT/hCIu8iu5DrxV07x
-         x5VqFhCUpJ1Xp2hHpdmXa6jpW0KQcTplQrv4lZ74pjgdZXIOXYldFWgoEygiFbzU1Etk
-         mF1kdW/Fj+p9zGFk2h2qzlUN7HwJR7hUP9wcTT9qqjc75aM9fV7WY/jit/iTAYp+GOOJ
-         5oOFU+XSqrJ9/qWVMp+UhPQ9f9NX9d/syiCmnElR2DKNftKtTaq/kY/Y8H+5jXiBsl9u
-         YeHA==
+        b=T8JlG/74A2tbxX4IJ8XfPN/vPLaEi4xXfDRHjPaVnOfBOq5b14aC2ckrwQlANeZWUl
+         v3tJJVYWAy96leoRjXx+RUimh7W2G708QudoaAh611eXP4OXvDC9KuYQFYXUNN7j6ZdH
+         HnIC/9+AIJLrrGbZJzLeeiRjzXOery1l1Lr81VRRBosh8F3pTyA0dawAdrEdqkLfVx8m
+         8e+O4WSjznUIP7CK0TL3aKDNPd9Yyaj4kMteX89q4eCvCpiyhbf3NBsmTaattraoM4rx
+         7l6GTMgSgX9pUBv0wOtxdqm4GQfmKb1in7e70L26wPTMFGebcOs4owGEP3Rkef0mVAl4
+         fb2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=st8zv/8jdu+4yIxdFIUL8Ah9gCUn8f+KzvKp8M9TY1E=;
-        b=PiKWKeMbeW/Jt+FEmbTw8wvIcNoTiqIuxn5p9DHstb2MT7izj8xCoNGpVvuhnEWvrA
-         wQKlGGQNlZPtki0/7mqUzzpchrLEc1GkFXTeCOfQkmYcmQZLszzK9l/AgRIEJmanQViO
-         oGiZJ0KA8teR1ZetweU3XyolpPSGCIobJgHwVg4/v7B5l/8bmEKjoTx+g8ZUF9K3HGnq
-         NNKliA/lCpb8lYuPckKjEj9sTtWfPKFBA3GG31vF0r1wnaLugXN2O0V2nebYRmONeULU
-         wLRBepSiH7MhdoQSbV0z+XHjK3QKf+NH+UIXaflFzIXOVnCbtAnUNw6Ck/CS0yFEShWL
-         GuQA==
+        bh=87uKH10EsT4tIhygA9nk+iX320mgZNZb3zIMAIFGiOU=;
+        b=M33OMJQMDWCvSC/50jqtZee3/Mb6GKJW5S/EWzgupQVcwMX0xFQ5ai3MxlonEsaCGm
+         /jFFWlNK+y/Mby+/y9y2quRomUXzKaJi0zbVdHuQ2EZY9SoMu7plBmtTX4/mImYy4GD5
+         QD/iB2hGdrjxRlWt64Aa5D4h/XO9OLoXNCrC5oaewP1Nm2GKwWZo/dAS4RWWsZVXqoH2
+         pci0AHEHEr1h/kaClmnea+SKq4/KUo2t0kiFyF7lgKY7N0kJ+ZEOuZJBYezqXp0XTU7A
+         SvFOvG/pV7pBsfxQel5Wd/HRQ939JzBxyEGaoUDGwdmYBHL7pQaAenW0f58DShQNXcy+
+         2Vng==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arjun Vynipadath <arjun@chelsio.com>,
-	Casey Leedom <leedom@chelsio.com>,
-	Ganesh Goudar <ganeshgr@chelsio.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Marcin Nowakowski <marcin.nowakowski@imgtec.com>,
+	linux-mips@linux-mips.org,
+	Ralf Baechle <ralf@linux-mips.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 101/190] cxgb4: FW upgrade fixes
-Date: Wed, 11 Apr 2018 20:35:47 +0200
-Message-Id: <20180411183556.461692322@linuxfoundation.org>
+Subject: [PATCH 4.4 133/190] MIPS: kprobes: flush_insn_slot should flush only if probe initialised
+Date: Wed, 11 Apr 2018 20:36:19 +0200
+Message-Id: <20180411183600.156863716@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476779888019576?=
-X-GMAIL-MSGID: =?utf-8?q?1597476779888019576?=
+X-GMAIL-THRID: =?utf-8?q?1597476260596132380?=
+X-GMAIL-MSGID: =?utf-8?q?1597476777090097525?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,67 +51,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arjun Vynipadath <arjun@chelsio.com>
+From: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
 
 
-[ Upstream commit 26747211486c5bc7dd014c3caab206576e00c0d0 ]
+[ Upstream commit 698b851073ddf5a894910d63ca04605e0473414e ]
 
-Disable FW_OK flag while flashing Firmware. This will help to fix any
-potential mailbox timeouts during Firmware flash.
+When ftrace is used with kprobes, it is possible for a kprobe to contain
+an invalid location (ie. only initialised to 0 and not to a specific
+location in the code). Trying to perform a cache flush on such location
+leads to a crash r4k_flush_icache_range().
 
-Grab new devlog parameters after Firmware restart. When we FLASH new
-Firmware onto an adapter, the new Firmware may have the Firmware Device Log
-located at a different memory address or have a different size for it.
-
-Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
-Signed-off-by: Casey Leedom <leedom@chelsio.com>
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: c1bf207d6ee1 ("MIPS: kprobe: Add support.")
+Signed-off-by: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/16296/
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4/t4_hw.c |   21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ arch/mips/include/asm/kprobes.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-@@ -6076,13 +6076,18 @@ int t4_fw_upgrade(struct adapter *adap,
- 	if (!t4_fw_matches_chip(adap, fw_hdr))
- 		return -EINVAL;
+--- a/arch/mips/include/asm/kprobes.h
++++ b/arch/mips/include/asm/kprobes.h
+@@ -40,7 +40,8 @@ typedef union mips_instruction kprobe_op
  
-+	/* Disable FW_OK flag so that mbox commands with FW_OK flag set
-+	 * wont be sent when we are flashing FW.
-+	 */
-+	adap->flags &= ~FW_OK;
-+
- 	ret = t4_fw_halt(adap, mbox, force);
- 	if (ret < 0 && !force)
--		return ret;
-+		goto out;
- 
- 	ret = t4_load_fw(adap, fw_data, size);
- 	if (ret < 0)
--		return ret;
-+		goto out;
- 
- 	/*
- 	 * Older versions of the firmware don't understand the new
-@@ -6093,7 +6098,17 @@ int t4_fw_upgrade(struct adapter *adap,
- 	 * its header flags to see if it advertises the capability.
- 	 */
- 	reset = ((be32_to_cpu(fw_hdr->flags) & FW_HDR_FLAGS_RESET_HALT) == 0);
--	return t4_fw_restart(adap, mbox, reset);
-+	ret = t4_fw_restart(adap, mbox, reset);
-+
-+	/* Grab potentially new Firmware Device Log parameters so we can see
-+	 * how healthy the new Firmware is.  It's okay to contact the new
-+	 * Firmware for these parameters even though, as far as it's
-+	 * concerned, we've never said "HELLO" to it ...
-+	 */
-+	(void)t4_init_devlog_params(adap);
-+out:
-+	adap->flags |= FW_OK;
-+	return ret;
- }
- 
- /**
+ #define flush_insn_slot(p)						\
+ do {									\
+-	flush_icache_range((unsigned long)p->addr,			\
++	if (p->addr)							\
++		flush_icache_range((unsigned long)p->addr,		\
+ 			   (unsigned long)p->addr +			\
+ 			   (MAX_INSN_SIZE * sizeof(kprobe_opcode_t)));	\
+ } while (0)
