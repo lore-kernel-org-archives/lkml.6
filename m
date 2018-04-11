@@ -1,129 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753127AbeDKI6B (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 04:58:01 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:32951 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752140AbeDKIyP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 04:54:15 -0400
-X-UUID: 821c23e144dc4b558808f36223761c7a-20180411
-From: <sean.wang@mediatek.com>
-To: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 06/12] arm: dts: mt7623: add BTIF, HSDMA and SPI-NOR device nodes
-Date: Wed, 11 Apr 2018 16:53:59 +0800
-Message-ID: <39294f68b1f9e65341f94a989347da81a26c878d.1523434758.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1523434757.git.sean.wang@mediatek.com>
-References: <cover.1523434757.git.sean.wang@mediatek.com>
+        id S1752812AbeDKJAH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 05:00:07 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:34666 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752575AbeDKJAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 05:00:04 -0400
+Subject: Re: [PATCH v3 2/2] mm: remove odd HAVE_PTE_SPECIAL
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc: Rich Felker <dalias@libc.org>, linux-doc@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>, Will Deacon <will.deacon@arm.com>,
+        x86@kernel.org, linux-mm@kvack.org, paulus@samba.org,
+        sparclinux@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Jonathan Corbet <corbet@lwn.net>, linux-sh@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, linux-snps-arc@lists.infradead.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        David Rientjes <rientjes@google.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Vineet Gupta <vgupta@synopsys.com>, linux-kernel@vger.kernel.org,
+        aneesh.kumar@linux.vnet.ibm.com, Albert Ou <albert@sifive.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>, akpm@linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org,
+        "David S . Miller" <davem@davemloft.net>
+References: <1523433816-14460-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1523433816-14460-3-git-send-email-ldufour@linux.vnet.ibm.com>
+ <20180411083315.GA23400@dhcp22.suse.cz>
+ <5bd1bb46-8f71-e6db-7fb7-43d023a37f58@linux.vnet.ibm.com>
+From: Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <fd1be042-c957-feb3-05d5-11244a3626da@c-s.fr>
+Date: Wed, 11 Apr 2018 10:59:58 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+In-Reply-To: <5bd1bb46-8f71-e6db-7fb7-43d023a37f58@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
 
-add BTIF, HSDMA and SPI-NOR device nodes and enable it on relevant boards
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- arch/arm/boot/dts/mt7623.dtsi                 | 36 ++++++++++++++++++++++++++-
- arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts |  6 ++++-
- 2 files changed, 40 insertions(+), 2 deletions(-)
+Le 11/04/2018 à 10:41, Laurent Dufour a écrit :
+> On 11/04/2018 10:33, Michal Hocko wrote:
+>> On Wed 11-04-18 10:03:36, Laurent Dufour wrote:
+>>> @@ -881,7 +876,8 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+>>>   
+>>>   	if (is_zero_pfn(pfn))
+>>>   		return NULL;
+>>> -check_pfn:
+>>> +
+>>> +check_pfn: __maybe_unused
+>>>   	if (unlikely(pfn > highest_memmap_pfn)) {
+>>>   		print_bad_pte(vma, addr, pte, NULL);
+>>>   		return NULL;
+>>> @@ -891,7 +887,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+>>>   	 * NOTE! We still have PageReserved() pages in the page tables.
+>>>   	 * eg. VDSO mappings can cause them to exist.
+>>>   	 */
+>>> -out:
+>>> +out: __maybe_unused
+>>>   	return pfn_to_page(pfn);
+>>
+>> Why do we need this ugliness all of the sudden?
+> Indeed the compiler doesn't complaint but in theory it should since these
+> labels are not used depending on CONFIG_ARCH_HAS_PTE_SPECIAL.
 
-diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
-index b9b5619..8cf3d26 100644
---- a/arch/arm/boot/dts/mt7623.dtsi
-+++ b/arch/arm/boot/dts/mt7623.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (c) 2017 MediaTek Inc.
-+ * Copyright (c) 2017-2018 MediaTek Inc.
-  * Author: John Crispin <john@phrozen.org>
-  *	   Sean Wang <sean.wang@mediatek.com>
-  *
-@@ -486,6 +486,18 @@
- 		nvmem-cell-names = "calibration-data";
- 	};
- 
-+	btif: serial@1100c000 {
-+		compatible = "mediatek,mt7623-btif",
-+			     "mediatek,mtk-btif";
-+		reg = <0 0x1100c000 0 0x1000>;
-+		interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&pericfg CLK_PERI_BTIF>;
-+		clock-names = "main";
-+		reg-shift = <2>;
-+		reg-io-width = <4>;
-+		status = "disabled";
-+	};
-+
- 	nandc: nfi@1100d000 {
- 		compatible = "mediatek,mt7623-nfc",
- 			     "mediatek,mt2701-nfc";
-@@ -511,6 +523,18 @@
- 		status = "disabled";
- 	};
- 
-+	nor_flash: spi@11014000 {
-+		compatible = "mediatek,mt7623-nor",
-+			     "mediatek,mt8173-nor";
-+		reg = <0 0x11014000 0 0x1000>;
-+		clocks = <&pericfg CLK_PERI_FLASH>,
-+			 <&topckgen CLK_TOP_FLASH_SEL>;
-+		clock-names = "spi", "sf";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "disabled";
-+	};
-+
- 	spi1: spi@11016000 {
- 		compatible = "mediatek,mt7623-spi",
- 			     "mediatek,mt2701-spi";
-@@ -867,6 +891,16 @@
- 		#reset-cells = <1>;
- 	};
- 
-+	hsdma: dma-controller@1b007000 {
-+		compatible = "mediatek,mt7623-hsdma";
-+		reg = <0 0x1b007000 0 0x1000>;
-+		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&ethsys CLK_ETHSYS_HSDMA>;
-+		clock-names = "hsdma";
-+		power-domains = <&scpsys MT2701_POWER_DOMAIN_ETH>;
-+		#dma-cells = <1>;
-+	};
-+
- 	eth: ethernet@1b100000 {
- 		compatible = "mediatek,mt7623-eth",
- 			     "mediatek,mt2701-eth",
-diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-index 71023a6..1fd6f55 100644
---- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-+++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-@@ -1,5 +1,5 @@
- /*
-- * Copyright 2017 Sean Wang <sean.wang@mediatek.com>
-+ * Copyright 2017-2018 Sean Wang <sean.wang@mediatek.com>
-  *
-  * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-  */
-@@ -114,6 +114,10 @@
- 	};
- };
- 
-+&btif {
-+	status = "okay";
-+};
-+
- &cir {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&cir_pins_a>;
--- 
-2.7.4
+Why should it complain ?
+
+Regards
+Christophe
+
+> 
