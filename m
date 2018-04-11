@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+/4px7bXciAyWZ4LPmJnBfNHLoUlqGkRMIHuLonpcX0RmiCaVZJ06suUdrH1Z0SFDcTS/Q
-ARC-Seal: i=1; a=rsa-sha256; t=1523473226; cv=none;
+X-Google-Smtp-Source: AIpwx49yzHZmm6ObWTV8NY6nrSHFowRBdfb3fQWD46009sAuvXflmXzd4OXvbKBMcHzVN6zkc+MW
+ARC-Seal: i=1; a=rsa-sha256; t=1523473223; cv=none;
         d=google.com; s=arc-20160816;
-        b=DRD5l/fVxd3lUhj2Hh5WWhTLCGRHuSPOPsusJyZ5yQ6Sg+ecDKLi2yCIfeyed+1wC6
-         OULwh15rrvPGKLkxfcJJaJ6ZVPK8ff3uy4UWo83nsiMgjiyNz3GJ3VUSV0/AwenVezG2
-         TAzlyyT8By7V1NbnIA8Q1cpwxVoGVUhD6d4xv80dCkSNfAvK5MZmAKEj1t6DmcpG4g3V
-         NT8Hklum3lLQ5HcEuRrUNff//yDymzbpPtCovytWr7OZliQjj0TZyO8+/P1jbf5eLBvN
-         3maj6OgcnPhOq0phfjAIqU2FDW38YKeNjpDq06JaoHNpejEV1BUdLVzq8OEWtJpIVIRH
-         A2dg==
+        b=Bij04QqPgUH6+CQ1mxRflXJcVq25saWsiewRxrx4GE6kr0MFk8TVk1BXVB+gMCimOZ
+         FdIhp+UP/l/tW4A4Yla9Y39hv0I0K1JQ/zTgKmcS+HWFZnnwxjlXdEm0uBisvcwphgpr
+         ANq1iTPWZbbb720ag7trAq94Bzww4awL0FoDdBySqvNrgjVF5naYysb0QgEThx1iS7Sl
+         8OkebHPNaNzIMAtn7W+Cu8ComK3waFknfaHrWkH5f5knvOZ6rHb5sc6POgTn/IYObij4
+         /LQics6Q9+nkGC+l2HMCHWG7sFsNqytZZ+MSa9E2NncuQJ/GZcIYSHzq+GtqbHP4xMuX
+         E4Hg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QMp4atpLVoWIY/Gtno4AcdCJhcV3f7coDNIwyb/NL6c=;
-        b=qliiiwaiLJC1qiuIb7NrZOTxWkpz+xZupBQZYhteOqHNmmelalcXsIXqUolNHTuJbQ
-         gU6quzsxhWmSU8tMA4RjI7zCcBzoRKheHyRGjW7qIqcfRsHV3CANOZvCKol7oI505klV
-         0Pw1CQWev+WhgPSxSEIYkJlWUJP0h2fz9zAG1nTIYv/L69e6w5MUtj8X9DYS6JSmJHhg
-         I4a7fgIuERx149evrPCXMJKLhbstjiRKrCPgeJ91oY5U4qdBaht4zczQwQB+oCpJPPFX
-         OjvoHLW9EYiXl4oGFt9eSnOvRVZf1yR4xcVItvfQdHHZEJRRs3cjd2fDE7PwZc5ZTRVY
-         2ZLw==
+        bh=HonUURB7H/i81cv7rFQLmGpRWWvtKIB6gp9gpaocSP4=;
+        b=JDbHSSKS6OK6X427U/4x1ZORnp67LzJkAOt/M2kkbNDVTR7P035gv0X/OO8rNYxL1C
+         PcMlcGNpZRSB9RXQn3XYQ+QGr2AxfBgPmqa9JTWTWUXQhTtKdVKKFR5c9EnGjFrGNfXJ
+         E3XSsmFBlMRpykHxvyrfVEuJCNW6zGNCfJwl9aq1jvXRzB7Fbb7YTbxWFCxHcPPHCl9V
+         Exadi4mwKL+30Ki96Q3fjySTkMPdaAqSb5G36AWyIcVJAgt5Me1kiFQVOXm11hNedox/
+         CmBojtZPGvOL0y289egYO3kwPADnAahZZFMFPJS9uYlaE15ssUwUqNh6Z0P9hZnDACMx
+         sAcw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Han Xu <han.xu@nxp.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Yi Zhang <yi.zhang@redhat.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 169/310] mtd: nand: gpmi: Fix gpmi_nand_init() error path
-Date: Wed, 11 Apr 2018 20:35:08 +0200
-Message-Id: <20180411183629.881965851@linuxfoundation.org>
+Subject: [PATCH 4.9 142/310] blk-mq: fix race between updating nr_hw_queues and switching io sched
+Date: Wed, 11 Apr 2018 20:34:41 +0200
+Message-Id: <20180411183628.557715299@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477461558584954?=
-X-GMAIL-MSGID: =?utf-8?q?1597477461558584954?=
+X-GMAIL-THRID: =?utf-8?q?1597477458757996535?=
+X-GMAIL-MSGID: =?utf-8?q?1597477458757996535?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,56 +52,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
+From: Ming Lei <ming.lei@redhat.com>
 
 
-[ Upstream commit 4d02423e9afe6c46142ce98bbcaf5167316dbfbf ]
+[ Upstream commit fb350e0ad99359768e1e80b4784692031ec340e4 ]
 
-The GPMI driver is wrongly assuming that nand_release() can safely be
-called on an uninitialized/unregistered NAND device.
+In both elevator_switch_mq() and blk_mq_update_nr_hw_queues(), sched tags
+can be allocated, and q->nr_hw_queue is used, and race is inevitable, for
+example: blk_mq_init_sched() may trigger use-after-free on hctx, which is
+freed in blk_mq_realloc_hw_ctxs() when nr_hw_queues is decreased.
 
-Add a new err_nand_cleanup label in the error path and only execute if
-nand_scan_tail() succeeded.
+This patch fixes the race be holding q->sysfs_lock.
 
-Note that we now call nand_cleanup() instead of nand_release()
-(nand_release() is actually grouping the mtd_device_unregister() and
-nand_cleanup() in one call) because there's no point in trying to
-unregister a device that has never been registered.
-
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
-Acked-by: Han Xu <han.xu@nxp.com>
-Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reported-by: Yi Zhang <yi.zhang@redhat.com>
+Tested-by: Yi Zhang <yi.zhang@redhat.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mtd/nand/gpmi-nand/gpmi-nand.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ block/blk-mq.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-+++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
-@@ -2047,18 +2047,20 @@ static int gpmi_nand_init(struct gpmi_na
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1907,6 +1907,9 @@ static void blk_mq_realloc_hw_ctxs(struc
+ 	struct blk_mq_hw_ctx **hctxs = q->queue_hw_ctx;
  
- 	ret = nand_boot_init(this);
- 	if (ret)
--		goto err_out;
-+		goto err_nand_cleanup;
- 	ret = chip->scan_bbt(mtd);
- 	if (ret)
--		goto err_out;
-+		goto err_nand_cleanup;
+ 	blk_mq_sysfs_unregister(q);
++
++	/* protect against switching io scheduler  */
++	mutex_lock(&q->sysfs_lock);
+ 	for (i = 0; i < set->nr_hw_queues; i++) {
+ 		int node;
  
- 	ret = mtd_device_register(mtd, NULL, 0);
- 	if (ret)
--		goto err_out;
-+		goto err_nand_cleanup;
- 	return 0;
- 
-+err_nand_cleanup:
-+	nand_cleanup(chip);
- err_out:
--	gpmi_nand_exit(this);
-+	gpmi_free_dma_buffer(this);
- 	return ret;
+@@ -1956,6 +1959,7 @@ static void blk_mq_realloc_hw_ctxs(struc
+ 		}
+ 	}
+ 	q->nr_hw_queues = i;
++	mutex_unlock(&q->sysfs_lock);
+ 	blk_mq_sysfs_register(q);
  }
  
