@@ -1,61 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752765AbeDKK6r (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 06:58:47 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45616 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751921AbeDKK6k (ORCPT
+        id S1752820AbeDKLBr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 07:01:47 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:45588 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751921AbeDKLBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 06:58:40 -0400
-Date: Wed, 11 Apr 2018 12:58:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>
-Subject: Re: [PATCH v2] cpufreq/schedutil: Cleanup, document and fix iowait
- boost
-Message-ID: <20180411105828.GL4082@hirez.programming.kicks-ass.net>
-References: <20180410155931.31973-1-patrick.bellasi@arm.com>
- <20180410193708.GE4043@hirez.programming.kicks-ass.net>
- <20180411104445.GM14248@e110439-lin>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180411104445.GM14248@e110439-lin>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Wed, 11 Apr 2018 07:01:46 -0400
+X-Google-Smtp-Source: AIpwx4/yRX0M4EFeTxHLsuV26JYWFRZVlKUKDHyxSVlnoP2wQFCJ9wNshB3OlRa/htdiRzfwaaDNUg==
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Frederic Weisbecker <frederic@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] nohz: Align types to bool for tick_nohz_tick_stopped()
+Date: Wed, 11 Apr 2018 13:01:32 +0200
+Message-Id: <1523444493-12665-1-git-send-email-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 11:44:45AM +0100, Patrick Bellasi wrote:
-> > > - sugov_set_iowait_boost: is now in charge only to set/increase the IO
-> > >      wait boost, every time a task wakes up from an IO wait.
-> > > 
-> > > - sugov_iowait_boost: is now in charge to reset/reduce the IO wait
-> > >      boost, every time a sugov update is triggered, as well as
-> > >      to (eventually) enforce the currently required IO boost value.
-> > 
-> > I'm not sold on those function names; feels like we can do better,
-> > although I'm struggling to come up with anything sensible just now.
-> 
-> What about something like:
-> 
->  sugov_iowait_init()
->  since here we are mainly initializing the iowait boost
-> 
->  sugov_iowait_boost()
->  since here we are mainly applying the proper boost to each cpu
-> 
-> Although they are not really so different...
+The intent was likely to also make the inline version a bool, so let's
+change this.
 
-How about:
+Fixes: a364298359e7 ("nohz: Convert tick_nohz_tick_stopped() to bool")
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ include/linux/tick.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  sugov_iowait_boost() -- does the actual impulse/boost
-  sugov_iowait_apply() -- applies the boost state
-
-?
+diff --git a/include/linux/tick.h b/include/linux/tick.h
+index 7f8c9a1..f9070b9 100644
+--- a/include/linux/tick.h
++++ b/include/linux/tick.h
+@@ -125,7 +125,7 @@ extern u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time);
+ extern u64 get_cpu_iowait_time_us(int cpu, u64 *last_update_time);
+ #else /* !CONFIG_NO_HZ_COMMON */
+ #define tick_nohz_enabled (0)
+-static inline int tick_nohz_tick_stopped(void) { return 0; }
++static inline bool tick_nohz_tick_stopped(void) { return false; }
+ static inline int tick_nohz_tick_stopped_cpu(int cpu) { return 0; }
+ static inline void tick_nohz_idle_enter(void) { }
+ static inline void tick_nohz_idle_exit(void) { }
+-- 
+2.7.4
