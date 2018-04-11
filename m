@@ -1,83 +1,70 @@
-Return-Path: <viro@ftp.linux.org.uk>
-X-Google-Smtp-Source: AIpwx4+5Nfxoc2Dohz7CsQcscrMD25iywFpIOrLTMR01MhSUrn1xv0CLT5xD5xXhLWdIGfXViOXg
-ARC-Seal: i=1; a=rsa-sha256; t=1523406815; cv=none;
+Return-Path: <keescook@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523407910; cv=none;
         d=google.com; s=arc-20160816;
-        b=E+7SU9YmbvMbdKaWd3OoOVEigCI+mIAYoQGON3LN4H0DMcc9DimG4bU3H2ubkUOF5A
-         7q5X9ZCXhRm512jWzcFr3KccyqqoOiDct595p/Hj34HOTA67IUSYd0yF6GvuRYciP0YJ
-         ZCYBXV1rT+VcYarqvHTeV+1Cp5OybVrj8Dt/twGlsVfFzXjTTNWGqSARTQhuAOwMct8Q
-         3W+LVR/ooqQcHM2JhpX1ZsMuKapeoQueGBpqxhcBnEoKaYmV6muwUXPlIRSrSCXeVGcC
-         v6qhWI99QQMZTSPVM3rq6Jp3O81g7YzQ9oO62u2ea0rJWMZrcA+2Ki8gdw90aB+raF7H
-         Woyw==
+        b=d/uFqJCHX7y4Bz912u0CHXXnsPUtFTlLyCeUkeEC2Q85aRD2dyy38sacHH+V6TywGU
+         nwBUDfOGfJvZ/8cZzPEufJ/NFJSYL1xrtIDLoPhZb5+N3SmUb6LoF5uxcafXJuP0451j
+         GaxV/v+9ZQgsU2V5QGTzh5/Zs0ToetQKbPbw/dQ0fEnQX3gZAz5mRfZNlPVdIgjc1G3n
+         OGPv3giN9Ko81eQjN/R2vS5PCkNFaHEkiiu8b3kNK2votxmPYcLc/P9Tg5U+eP71BZzk
+         m4P2PKWYMTgRvfufJLW+wZgM63udw19+qZCE2UcsRF4+qx1hxirFzga8FbPTZFi//eUS
+         AnTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=sender:user-agent:in-reply-to:content-disposition:mime-version
-         :references:message-id:subject:cc:to:from:date
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=pK1qtwsR/x4ltvvb3X9EOLL6JT5Ors2laTQGS8PAHiM=;
-        b=vt6DKSD9SRcmjmjadfUnaGaaPQVHP5kwyL4rEraaMnbB3mMjJUpEWappY6xvXejqqj
-         aNdF9srClyefW1tluYUTAYoqLDyHAwZb49lWPTngL064DZ/Q+fzaHb+GAqHF6g7fPkjo
-         LwrAl2x3BwZRMJm33RMztni/7qJ9e3LgRoAquZhBaYGmbsLN8D7zSeEV/BYQvUKuBi9L
-         VN/beUkNpMrRPYqKGjVecE4fn1Ezpgqh4j4upcuhQYCXJDFk0dhfachgoj4TZPGsEExO
-         a693JMTubF2serx5XYyOXMVLWkMPV7+2+OQUdO9HLrCSPy3SdjHW8jTyOyyacNp2B4E/
-         UHgQ==
+        bh=vsmjpZvDXCQgBAfMZyuXvRWHzersY5XBB7+V/qHPPE4=;
+        b=cjA11j2g+4mkIyoYC3SGcEUBAhcgM+DIPVmzfrWxuIMLPP983Ou8w0U2GlI1TlRGgf
+         SWoV5/hnRKDEOe4n2Qbb3zXoHi4RrhNZtZ6tN7s8YUt6whVcSXDame38dCJgJpzl7GUy
+         OITtHfBY36PwWtDtGrntJ5aM9uadeVJYnUwq7APPdjsILHHn/9hM+UPfbou2H/6IBDgj
+         rYRta3y/howdFkiQc49hB70aenEg+MN2tWfje3ZmbsNgSd3+MJIVoeBTCWskG0y1YMFq
+         TQK0y5xAGJU1tqDtCEg1+uuz+82ZmffUD4JJocDt0iEb484kAvifp33EPJko3MeEMZuM
+         aOjg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of viro@ftp.linux.org.uk designates 195.92.253.2 as permitted sender) smtp.mailfrom=viro@ftp.linux.org.uk
+       dkim=pass header.i=@google.com header.s=20161025 header.b=sTc5Nga4;
+       dkim=pass header.i=@chromium.org header.s=google header.b=LwV/UMdw;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of viro@ftp.linux.org.uk designates 195.92.253.2 as permitted sender) smtp.mailfrom=viro@ftp.linux.org.uk
-Date: Wed, 11 Apr 2018 01:33:31 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Kyle Spiers <ksspiers@google.com>
-Cc: jack@suse.cz, arnd@arndb.de, dhowells@redhat.com,
-	gregkh@linuxfoundation.org, keescook@chromium.org, joe@perches.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] isofs compress: Remove VLA usage
-Message-ID: <20180411003331.GM30522@ZenIV.linux.org.uk>
-References: <20180410234532.185426-1-ksspiers@google.com>
+       dkim=pass header.i=@google.com header.s=20161025 header.b=sTc5Nga4;
+       dkim=pass header.i=@chromium.org header.s=google header.b=LwV/UMdw;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AIpwx4/g+GyR8YZXzRfH+HBjpyMWuTOurIu8PEaiYsV/mIEo1IMjKpiZOhvPAFBmCgUiYI0D8p/nYyPwou2UWtl7vjc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180410234532.185426-1-ksspiers@google.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Sender: keescook@google.com
+In-Reply-To: <20180411003331.GM30522@ZenIV.linux.org.uk>
+References: <20180410234532.185426-1-ksspiers@google.com> <20180411003331.GM30522@ZenIV.linux.org.uk>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 10 Apr 2018 17:51:48 -0700
+X-Google-Sender-Auth: HRPSWRtWsJFdAzKW2RrIIWHBxEk
+Message-ID: <CAGXu5jJBqiXZzvRaoXRVuxFckaFJq+LfM227t2uXF3vhwE7WPg@mail.gmail.com>
+Subject: Re: [PATCH v3] isofs compress: Remove VLA usage
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Kyle Spiers <ksspiers@google.com>, Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
+	David Howells <dhowells@redhat.com>, Greg KH <gregkh@linuxfoundation.org>,
+	Joe Perches <joe@perches.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597404821961766971?=
-X-GMAIL-MSGID: =?utf-8?q?1597407824760696303?=
+X-GMAIL-MSGID: =?utf-8?q?1597408972599047488?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 10, 2018 at 04:45:32PM -0700, Kyle Spiers wrote:
-> As part of the effort to remove VLAs from the kernel[1], this changes
-> the allocation of the bhs and pages arrays from being on the stack to being
-> kcalloc()ed. This also allows for the removal of the explicit zeroing
-> of bhs.
-> 
-> https://lkml.org/lkml/2018/3/7/621
+On Tue, Apr 10, 2018 at 5:33 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Tue, Apr 10, 2018 at 04:45:32PM -0700, Kyle Spiers wrote:
+>> As part of the effort to remove VLAs from the kernel[1], this changes
+>> the allocation of the bhs and pages arrays from being on the stack to being
+>> kcalloc()ed. This also allows for the removal of the explicit zeroing
+>> of bhs.
+>>
+>> https://lkml.org/lkml/2018/3/7/621
+>
+> Do you even bother reading the feedback given to such patches?  I'm just
+> curious,
 
-Do you even bother reading the feedback given to such patches?  I'm just
-curious,
+He made a tool mistake (sent v2 again) -- please see v4.
 
-> @@ -80,7 +81,9 @@ static loff_t zisofs_uncompress_block(struct inode *inode, loff_t block_start,
->  
->  	/* Because zlib is not thread-safe, do all the I/O at the top. */
->  	blocknum = block_start >> bufshift;
-> -	memset(bhs, 0, (needblocks + 1) * sizeof(struct buffer_head *));
-> +	bhs = kcalloc(needblocks + 1, sizeof(*bhs), GFP_KERNEL);
-> +	if (!bhs)
-> +		return -ENOMEM;
+-Kees
 
-... because I distinctly remember comments along the lines of "check what
-other failure exits look like in there, such as
-                *errp = -EIO;
-                return 0;
-nearby".
-
-> @@ -330,6 +334,10 @@ static int zisofs_readpage(struct file *file, struct page *page)
->  		full_page = 0;
->  		pcount = 1;
->  	}
-> +	pages = kcalloc(max_t(unsigned int, zisofs_pages_per_cblock, 1),
-> +					sizeof(*pages), GFP_KERNEL);
-> +	if (!pages)
-> +		return -ENOMEM;
->  	pages[full_page] = page;
-
-What, in your opinion, is going to unlock that page after that failure exit?
+-- 
+Kees Cook
+Pixel Security
