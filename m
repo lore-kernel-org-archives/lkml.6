@@ -1,69 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752755AbeDKMWU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 08:22:20 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:35774 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752016AbeDKMWS (ORCPT
+        id S1752972AbeDKMaJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 08:30:09 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:35969 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752401AbeDKMaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 08:22:18 -0400
-X-Google-Smtp-Source: AIpwx4/kBC9IFzFGbSyi1IpnEqoiWvSPhAshLIRnUmtD00QNK6AidKunGWkRiZOHUqKwuPLwBT1CHA==
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Jaehoon Chung <jh80.chung@samsung.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC fixes for v.4.17-rc1
-Date: Wed, 11 Apr 2018 14:22:15 +0200
-Message-Id: <1523449335-15724-1-git-send-email-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 11 Apr 2018 08:30:07 -0400
+X-Google-Smtp-Source: AIpwx49oTWx4CZYLK8aOhycflhMhP5eN2ktQVVzdy9hJ+RRZ5oFsa0Jyjv40QbtRvmPpWfVMaxirk+juRKk+pjuL0lw=
+MIME-Version: 1.0
+In-Reply-To: <2704286.80iLvC0rRL@tauon.chronox.de>
+References: <001a114467482dbc4b05692df8f9@google.com> <CACT4Y+aKnKT3AwvbEw_khsYUySLDz4mW7dZ6n7O6McbfPTjd8Q@mail.gmail.com>
+ <CACT4Y+Y+ydyBAL=j2QOWaBnpY8+Bsr_80d80RXth0SwuY0wMuQ@mail.gmail.com> <2704286.80iLvC0rRL@tauon.chronox.de>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 11 Apr 2018 14:29:45 +0200
+Message-ID: <CACT4Y+bRmYMt3WuVHE7e624KgRUTXQWa36wn-pr_gm2STq80bQ@mail.gmail.com>
+Subject: Re: [PATCH] crypto: DRBG - guard uninstantion by lock
+To: Stephan Mueller <smueller@chronox.de>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        David Miller <davem@davemloft.net>, linux-crypto@vger.kernel.org,
+        Eric Biggers <ebiggers3@gmail.com>,
+        syzbot <syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Tue, Apr 10, 2018 at 5:35 PM, Stephan Mueller <smueller@chronox.de> wrote:
+> Am Dienstag, 10. April 2018, 17:23:46 CEST schrieb Dmitry Vyukov:
+>
+> Hi Dmitry,
+>
+>> Stephan,
+>>
+>> Do you have any hypothesis as to why this is not detected by KASAN and
+>> causes silent corruptions?
+>> We generally try to understand such cases and improve KASAN so that it
+>> catches such cases more reliably and they do not cause splashes of
+>> random crashes on syzbot.
+>
+> I do not have any hypothesis at this point. I know that you induce some fault.
+> As you mentioned the drbg_kcapi_seed function, I was looking through the error
+> code paths to see whether some error handlers trip over each other. But all is
+> guesswork so far. And I am not even sure whether the bug is in the DRBG code
+> base.
+>
+> Looking into the trace you sent, I see a NULL pointer dereference. At one
+> point there is also the drbg_init_hash_kernel that is called. But nowhere I
+> see any smoking gun.
+>
+> Could you please give me a description of the fault you are inducing?
 
-Here's a PR with a couple of MMC fixes intended for v4.17-rc1. Details about
-the highlights are as usual found in the signed tag.
+Hi Stephan,
 
-Please pull this in!
+What do you mean by description of the fault?
+It's kernel standard FAULT_INJECTION facility, it injects faults
+mainly into kmalloc/slab_alloc (also in a bunch of other things, but
+in this case this seems to be kmalloc). In the repro you can see that
+it's injecting a fault into 8-th malloc in the setsockopt syscall.
 
-Kind regards
-Ulf Hansson
+I wonder why you can't reproduce it. I can trigger it reliably in a
+qemu. Let's try this:
+I have upstream kernel on b284d4d5a6785f8cd07eda2646a95782373cd01e.
+Here is my config:
+https://gist.githubusercontent.com/dvyukov/f843ea09bc5b9439a820c8e809a5501d/raw/ad330e9b6b710f57f63b61590747b48230e5cb61/gistfile1.txt
+Here is the compiler:
+https://storage.googleapis.com/syzkaller/gcc-8.0.1-20180301.tar.gz
+Build as: make -jN CC=that/gcc/bin/gcc
+Then I start qemu as:
 
+qemu-system-x86_64 -hda wheezy.img -net
+user,host=10.0.2.10,hostfwd=tcp::10022-:22 -net nic -nographic -kernel
+arch/x86/boot/bzImage -append "kvm-intel.nested=1
+kvm-intel.unrestricted_guest=1 kvm-intel.ept=1
+kvm-intel.flexpriority=1 kvm-intel.vpid=1
+kvm-intel.emulate_invalid_guest_state=1 kvm-intel.eptad=1
+kvm-intel.enable_shadow_vmcs=1 kvm-intel.pml=1
+kvm-intel.enable_apicv=1 console=ttyS0 root=/dev/sda
+earlyprintk=serial slub_debug=UZ vsyscall=native rodata=n oops=panic
+panic_on_warn=1 panic=86400" -enable-kvm -pidfile vm_pid -m 2G -smp 4
+-cpu host
 
-The following changes since commit 17dec0a949153d9ac00760ba2f5b78cb583e995f:
+You can find the wheezy.img and ssh key for it here:
+https://github.com/google/syzkaller/blob/master/docs/syzbot.md#crash-does-not-reproduce
 
-  Merge branch 'userns-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace (2018-04-03 19:15:32 -0700)
+Then I compile this program:
+https://gist.githubusercontent.com/dvyukov/1dd75d55efd238e7207af1cc38478b3a/raw/403859b56b161a6fbb158e8953fac5bb6e73b1a1/gistfile1.txt
+as: gcc prog.c -static -m32
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.17-2
-
-for you to fetch changes up to fc167daff581c01ebce8695e9618231cae3561a1:
-
-  mmc: tmio: Fix error handling when issuing CMD23 (2018-04-04 12:21:27 +0200)
-
-----------------------------------------------------------------
-MMC core:
- - Prevent bus reference leak in mmc_blk_init()
-
-MMC host:
- - tmio: Fix error handling when issuing CMD23
- - jz4740: Fix race condition in IRQ mask update
-
-----------------------------------------------------------------
-Alex Smith (1):
-      mmc: jz4740: Fix race condition in IRQ mask update
-
-Alexander Kappner (1):
-      mmc: core: Prevent bus reference leak in mmc_blk_init()
-
-Masaharu Hayakawa (1):
-      mmc: tmio: Fix error handling when issuing CMD23
-
- drivers/mmc/core/block.c         | 1 +
- drivers/mmc/host/jz4740_mmc.c    | 2 +-
- drivers/mmc/host/tmio_mmc_core.c | 2 +-
- 3 files changed, 3 insertions(+), 2 deletions(-)
+Run in the qemu and within a minute it gives me the crash.
