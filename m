@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48NimVP0BtUeNaOnjRfG3O7+k11xtwl0LRm7KEFsF+cAgzIzYK++r5b7GZaSCX+yzMRqmvq
-ARC-Seal: i=1; a=rsa-sha256; t=1523472681; cv=none;
+X-Google-Smtp-Source: AIpwx4+MiwcfMfmyf8yy+Guaxf04TKuxAvxGff3atciDyIPeWL2+yiOsoedHKLUls1K/kS9hgJnf
+ARC-Seal: i=1; a=rsa-sha256; t=1523472677; cv=none;
         d=google.com; s=arc-20160816;
-        b=LqMo8okOZ9T+fw33jgftdGqPNHeljtHZ2aL4SgXYAqieQRcQ//JKeiw7jE3cPOCF8j
-         KN8Htx0/fK+VJfFrO/umwOYSr39hlrwyUysCxoBoqDeKlq9eGg1dIcjppaIP0dy70qwA
-         QIA+8mvfMXEHK/czhp9Wyh759v17OL8W3i1QDyCySnhYw9cWKmQSlYlg/3vIUpleS7wQ
-         u6Kxl/KVSJb3Sj9icVT9zNy0+qbwz0ciycCifwjpLSaY6Kutla4SYT3NGgq7ytlJlL2M
-         ddiP+T4KeO13g7DL73qU+wZRf9GCvAntRFS5mHnYcgsA66EKf+n4pXlAtk6EW01ntK0G
-         sBLw==
+        b=pQj2QKRWi5UiSJuRUVjFnjHEIvGHYqObO0FxZgMWj0BfZedKJ99JJPfspGgr4gPGfJ
+         7j35xvsg84Si4szFRI+rjLgaC+p/uPTVGvPsgbDlxXYxHyaYcLJWRMVMQkaisOcRVBDN
+         SyAeGCbpntbP75snYlYFO2HmewfOVGBQ60JwR6d7SusjVY5XWATDmJRSNEhbVv4V/Vdp
+         efuH987vhFf74QSCN+eJeW0b+Uhh211ehDVO9eABVHeanjbIgyh/HyD1jbS0J7fweZjU
+         SZW6y00JJ5yeR5tDu91GcOh5Z5Y3fGY2rkttii5VwhhJtcgC/Uq2fg1O/GMdsG3nYM4a
+         B+Kw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=t0mwoZhSPs2+XsI6vxbqZnjsi5JkqFQNWhgmNH7i7Kg=;
-        b=Rkvmj+39M2649fResgu8HSTlzHUiDMoCYHS/YADjg+ba8yqAaBchUUd1R7Oojtqk8T
-         NweDhYkIOsXSWCeksKfwNuDqNfkzrEy8dOrn1Rfk9jjVwagXC7CMVT852vpNQ4FMHJ+M
-         UwmaqLbeCuJU/CxfiyNQt07i8IzICdwr2W0zatFTn7HufgE6x2WUkPTnWWvPnsnvnWq/
-         xvSfbu+7rlS7UDSx7Cnoy3j/CuOLmg2wioErIn9IxwanTEFxKvDO5UOomTJVmB3xcE0j
-         2YRSJuXWOcp4YWnvBeLeHnbyrwV/QCrpEfIOEEtWSct/0iyogD9S/bgVHz0VjppQ0qJx
-         RzOA==
+        bh=yxorftkZ79BmdpP10DQA0hi5VoHNZzVF5bwvBR35bms=;
+        b=P2IMM/yignOcra+fhCnQELJvuFsdbytB0ZRkEZljHPGUhF40RLYXjwx4ixjlY46aZu
+         b9S65fhheHDIuNCrv3HuRxzN/CTJuV+3VxPXSwxpJQ+c3fBKWn+iQRC8VdZGGSQBDzh8
+         7dbWKKOjq3FU9rB0Mo/I5d1lOfOw0vQQmrdlrPm8u4Z5rcg/gq8iqyraU09cIBfgdQdQ
+         06sD3G+4V02tHKdO4TAxdXQycYrSvtuhA7XEB+53kGWwgVi+BgpCEGaU+SuICQCb8i2G
+         6E6r7jT7UmcSIm5bGvxwBFDptNi/ECwG7SYyElScUHZlxMPyynoQB8PnfQMcDA/1agy2
+         GW+g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ian Abbott <abbotti@mev.co.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 138/190] xen: avoid type warning in xchg_xen_ulong
-Date: Wed, 11 Apr 2018 20:36:24 +0200
-Message-Id: <20180411183600.674705114@linuxfoundation.org>
+	Lucas Bates <lucasb@mojatatu.com>,
+	Davide Caratti <dcaratti@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 170/190] net/sched: fix NULL dereference in the error path of tcf_bpf_init()
+Date: Wed, 11 Apr 2018 20:36:56 +0200
+Message-Id: <20180411183602.441594958@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476268776982779?=
-X-GMAIL-MSGID: =?utf-8?q?1597476890387167664?=
+X-GMAIL-THRID: =?utf-8?q?1597476886809058174?=
+X-GMAIL-MSGID: =?utf-8?q?1597476886809058174?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,41 +50,98 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Davide Caratti <dcaratti@redhat.com>
 
 
-[ Upstream commit 9cc91f212111cdcbefa02dcdb7dd443f224bf52c ]
+[ Upstream commit 3239534a79ee6f20cffd974173a1e62e0730e8ac ]
 
-The improved type-checking version of container_of() triggers a warning for
-xchg_xen_ulong, pointing out that 'xen_ulong_t' is unsigned, but atomic64_t
-contains a signed value:
+when tcf_bpf_init_from_ops() fails (e.g. because of program having invalid
+number of instructions), tcf_bpf_cfg_cleanup() calls bpf_prog_put(NULL) or
+bpf_prog_destroy(NULL). Unless CONFIG_BPF_SYSCALL is unset, this causes
+the following error:
 
-drivers/xen/events/events_2l.c: In function 'evtchn_2l_handle_events':
-drivers/xen/events/events_2l.c:187:1020: error: call to '__compiletime_assert_187' declared with attribute error: pointer type mismatch in container_of()
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000020
+ PGD 800000007345a067 P4D 800000007345a067 PUD 340e1067 PMD 0
+ Oops: 0000 [#1] SMP PTI
+ Modules linked in: act_bpf(E) ip6table_filter ip6_tables iptable_filter binfmt_misc ext4 mbcache jbd2 crct10dif_pclmul crc32_pclmul ghash_clmulni_intel snd_hda_codec_generic pcbc snd_hda_intel snd_hda_codec snd_hda_core snd_hwdep snd_seq snd_seq_device snd_pcm aesni_intel crypto_simd glue_helper cryptd joydev snd_timer snd virtio_balloon pcspkr soundcore i2c_piix4 nfsd auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c ata_generic pata_acpi qxl drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm virtio_blk drm virtio_net virtio_console i2c_core crc32c_intel serio_raw virtio_pci ata_piix libata virtio_ring floppy virtio dm_mirror dm_region_hash dm_log dm_mod [last unloaded: act_bpf]
+ CPU: 3 PID: 5654 Comm: tc Tainted: G            E    4.16.0.bpf_test+ #408
+ Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+ RIP: 0010:__bpf_prog_put+0xc/0xc0
+ RSP: 0018:ffff9594003ef728 EFLAGS: 00010202
+ RAX: 0000000000000000 RBX: ffff9594003ef758 RCX: 0000000000000024
+ RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+ RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000044
+ R10: 0000000000000220 R11: ffff8a7ab9f17131 R12: 0000000000000000
+ R13: ffff8a7ab7c3c8e0 R14: 0000000000000001 R15: ffff8a7ab88f1054
+ FS:  00007fcb2f17c740(0000) GS:ffff8a7abfd80000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 0000000000000020 CR3: 000000007c888006 CR4: 00000000001606e0
+ Call Trace:
+  tcf_bpf_cfg_cleanup+0x2f/0x40 [act_bpf]
+  tcf_bpf_cleanup+0x4c/0x70 [act_bpf]
+  __tcf_idr_release+0x79/0x140
+  tcf_bpf_init+0x125/0x330 [act_bpf]
+  tcf_action_init_1+0x2cc/0x430
+  ? get_page_from_freelist+0x3f0/0x11b0
+  tcf_action_init+0xd3/0x1b0
+  tc_ctl_action+0x18b/0x240
+  rtnetlink_rcv_msg+0x29c/0x310
+  ? _cond_resched+0x15/0x30
+  ? __kmalloc_node_track_caller+0x1b9/0x270
+  ? rtnl_calcit.isra.29+0x100/0x100
+  netlink_rcv_skb+0xd2/0x110
+  netlink_unicast+0x17c/0x230
+  netlink_sendmsg+0x2cd/0x3c0
+  sock_sendmsg+0x30/0x40
+  ___sys_sendmsg+0x27a/0x290
+  ? mem_cgroup_commit_charge+0x80/0x130
+  ? page_add_new_anon_rmap+0x73/0xc0
+  ? do_anonymous_page+0x2a2/0x560
+  ? __handle_mm_fault+0xc75/0xe20
+  __sys_sendmsg+0x58/0xa0
+  do_syscall_64+0x6e/0x1a0
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+ RIP: 0033:0x7fcb2e58eba0
+ RSP: 002b:00007ffc93c496c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+ RAX: ffffffffffffffda RBX: 00007ffc93c497f0 RCX: 00007fcb2e58eba0
+ RDX: 0000000000000000 RSI: 00007ffc93c49740 RDI: 0000000000000003
+ RBP: 000000005ac6a646 R08: 0000000000000002 R09: 0000000000000000
+ R10: 00007ffc93c49120 R11: 0000000000000246 R12: 0000000000000000
+ R13: 00007ffc93c49804 R14: 0000000000000001 R15: 000000000066afa0
+ Code: 5f 00 48 8b 43 20 48 c7 c7 70 2f 7c b8 c7 40 10 00 00 00 00 5b e9 a5 8b 61 00 0f 1f 44 00 00 0f 1f 44 00 00 41 54 55 48 89 fd 53 <48> 8b 47 20 f0 ff 08 74 05 5b 5d 41 5c c3 41 89 f4 0f 1f 44 00
+ RIP: __bpf_prog_put+0xc/0xc0 RSP: ffff9594003ef728
+ CR2: 0000000000000020
 
-This adds a cast to work around the warning.
+Fix it in tcf_bpf_cfg_cleanup(), ensuring that bpf_prog_{put,destroy}(f)
+is called only when f is not NULL.
 
-Cc: Ian Abbott <abbotti@mev.co.uk>
-Fixes: 85323a991d40 ("xen: arm: mandate EABI and use generic atomic operations.")
-Fixes: daa2ac80834d ("kernel.h: handle pointers to arrays better in container_of()")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Stefano Stabellini <sstabellini@kernel.org>
-Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
-Acked-by: Ian Abbott <abbotti@mev.co.uk>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: bbc09e7842a5 ("net/sched: fix idr leak on the error path of tcf_bpf_init()")
+Reported-by: Lucas Bates <lucasb@mojatatu.com>
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/include/asm/xen/events.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sched/act_bpf.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/arch/arm/include/asm/xen/events.h
-+++ b/arch/arm/include/asm/xen/events.h
-@@ -16,7 +16,7 @@ static inline int xen_irqs_disabled(stru
- 	return raw_irqs_disabled_flags(regs->ARM_cpsr);
- }
+--- a/net/sched/act_bpf.c
++++ b/net/sched/act_bpf.c
+@@ -249,10 +249,14 @@ static int tcf_bpf_init_from_efd(struct
  
--#define xchg_xen_ulong(ptr, val) atomic64_xchg(container_of((ptr),	\
-+#define xchg_xen_ulong(ptr, val) atomic64_xchg(container_of((long long*)(ptr),\
- 							    atomic64_t,	\
- 							    counter), (val))
+ static void tcf_bpf_cfg_cleanup(const struct tcf_bpf_cfg *cfg)
+ {
+-	if (cfg->is_ebpf)
+-		bpf_prog_put(cfg->filter);
+-	else
+-		bpf_prog_destroy(cfg->filter);
++	struct bpf_prog *filter = cfg->filter;
++
++	if (filter) {
++		if (cfg->is_ebpf)
++			bpf_prog_put(filter);
++		else
++			bpf_prog_destroy(filter);
++	}
  
+ 	kfree(cfg->bpf_ops);
+ 	kfree(cfg->bpf_name);
