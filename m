@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477536-2-5912823067395867314
+X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477518-2-5282812317623602827
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477535; b=BkPZAUCV3rKr6/xjxO5BqJfJKQ+LoVeu7z6Wk3fNK5WdB8u1VG
-    zuSOdIHCIaD6mD210FqBV00M1DSPBIkAwvcRHpGimQdd4Mu9Ej81yu0tL7/YfRsu
-    Bpx5srFGWiBqQjE5nvzj0Qbjl8tpH4eIwazAFipo+laSgoKbdeyVqjXtn1g4K/+A
-    q7OoK5wmQLOhHJ9PQlWiQo2fnGsgwesdVPWO6+etdwDv606HYiixgbXtaX69G8ml
-    P/SRA97a66nk4NxFswz+u1EwU25WlypE3Khzj+6PAwZGpIOyMJSIXFmehL04rINI
-    su3r4TkYie90OiHWC8um2J4JsjWVb0kang+g==
+    1523477517; b=a8yTwlKKihtk/2PzIbt461K36BfvP00m2DrGT66CbaPArDy2Cj
+    WB1BWWXL4m9Awv4gZL2Luu5Pl/8L/qW+HNfOCTw8BlM8aJEapC4ODMYhwB5fNpll
+    vZW4+YzIFeMnmjgkyneGSSDb+iMqJ8p1e62s8kVDF1IzgLtnwhYhg2nWEObg0IcD
+    0PKMvXRR67OQruHx28FfeHVTStZG9NKTTllRF2CYYLo433J8DX/NNbyA/lsGdiqE
+    q23L9Uwscn5L4A/5/DpvjHfcIWP8eAriRzZWgCih8UiUe/JgmgTCCDQNdr2/Oh7Q
+    Q9OIGf6jRL6WRfsntrNYQgtm3MLz/WB32ecg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523477535; bh=nX1r9WX35Nh4mHRZHLUJB5DTr+SF40
-    zf0nRzHhz2FvQ=; b=mo/egaVRek73x6cpkFfWn2xpcozLNcVq/0f5wnLK5GBGVY
-    IoGinRB6cU/RbvJTXumNa14P5wiLMYvpJD48IZT6raV6TEhCnE2NB8z8DrpDTDEp
-    zj82yvHSRQNxIO3t7/UEA2gAN9bi2D5chV18+UMzsWg0XTEuuhoMsaRvkTSuEwjX
-    ScETIsYfUtfE3b09NIPuvky2irAY4FGTxiCCvwsjIC22H93Q2fIesGAHY3IxLr44
-    BvzPPD+CVtpDjquOQayVIbfZf+6fxXHRnDNeshsabcbgTUG1LpKAlbMPGkQFCA5C
-    m1s8hbo9UD4qT06HnoaeB1IjZsipkKVUTUVd6jxQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523477517; bh=gP8g68QuaQ9I0IXe/nBHnknWr1t8aU
+    /LPvH+pn+RxWM=; b=KDJr5o6aDTuDkyGsKMaAxiYbdRqDh/DKlcDLq7ZupajKq5
+    8cce6Tat4SxuXDEDf2MBIsr4e2Uyd8NIgTc8epXKwqdlGnCec1gEGK5lzmfpS4K0
+    uklTnkhnLynngDRVPLiwSiHmMhoq9d9y33pVHJ6MwhkI1CN8iMPZ3dNvZ5ggCYi/
+    4tbYO8+tDf6FELVi5/+SuZQDuEte6uwUVceGqC7uwFCRyf76kLzwYDclEJqTRyvV
+    CY4vL5N7iFYGq6ZKdkOqQNFcHi0L65aLYsOuG3UQmXdhYkxINJ24h5ZUi7DJ+CZq
+    q1GMgbpfO/3MzuGDljZA5tlQB4xCTyPUjYNkLTKA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,31 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOX1QgnPa1rbYKg7ixGdG1Gwmx6Cy+OhM4gZRevT088+GFWwC841PiKpjiLCRwCyMOg9W5nCWlcrvSs/yLFlEXodCi0f3soWu9/DbfA3rpB/GsoBRdLQ
-    7k/D7JR6biglZecoJ7/z7R1LKhqIXLagNMHKgDl21SIxdeflF0v7sTCgpTkbue03sdgxnY7zDUBgkZjpNZukecCFVjjdoL2GmgeNMeSfKVrgZib3KZ+NE3SK
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGnIjYkYe5VUv8ngsb+nfZr1+v/CtXPePLiLoY3Yc4QONS5PGo0RVaGsSx2YrSy4IF//9gzW00vt6ZqZuoHzTKHk6YNKn7eSifRbTXYJn1o/t5KTitle
+    aZvHkgMM+PvxGT7uCekJJ0n/PnphuNsjrXMnLPuBfzRhaJCnMGwTuGeTVyUVYmmMpP4/niyoktwPBj/J2XnpBZnACSYRPp6NE5QGpqs9ZAfQ44bGcmwVn6of
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=iox4zFpeAAAA:8 a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=vtgIYqmDHQ2uLMhSwQ8A:9 a=QEXdDO2ut3YA:10 a=WzC6qhA0u3u7Ye7llzcV:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=CaJNc-nyaQXWHGQ9a10A:9
+    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753151AbeDKUMK (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:12:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34120 "EHLO
+        id S933393AbeDKSyN (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:54:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34214 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933422AbeDKSyJ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:54:09 -0400
+        with ESMTP id S932610AbeDKSyM (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:54:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Steve French <smfrench@gmail.com>,
+        stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 039/310] SMB2: Fix share type handling
-Date: Wed, 11 Apr 2018 20:32:58 +0200
-Message-Id: <20180411183623.957255701@linuxfoundation.org>
+Subject: [PATCH 4.9 040/310] bus: brcmstb_gisb: Use register offsets with writes too
+Date: Wed, 11 Apr 2018 20:32:59 +0200
+Message-Id: <20180411183623.997275327@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -95,55 +93,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Doug Berger <opendmb@gmail.com>
 
 
-[ Upstream commit cd1230070ae1c12fd34cf6a557bfa81bf9311009 ]
+[ Upstream commit 856c7ccb9ce7a061f04bdf586f649cb93654e294 ]
 
-In fs/cifs/smb2pdu.h, we have:
-#define SMB2_SHARE_TYPE_DISK    0x01
-#define SMB2_SHARE_TYPE_PIPE    0x02
-#define SMB2_SHARE_TYPE_PRINT   0x03
+This commit corrects the bug introduced in commit f80835875d3d
+("bus: brcmstb_gisb: Look up register offsets in a table") such
+that gisb_write() translates the register enumeration into an
+offset from the base address for writes as well as reads.
 
-Knowing that, with the current code, the SMB2_SHARE_TYPE_PRINT case can
-never trigger and printer share would be interpreted as disk share.
-
-So, test the ShareType value for equality instead.
-
-Fixes: faaf946a7d5b ("CIFS: Add tree connect/disconnect capability for SMB2")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Acked-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Steve French <smfrench@gmail.com>
+Fixes: f80835875d3d ("bus: brcmstb_gisb: Look up register offsets in a table")
+Signed-off-by: Doug Berger <opendmb@gmail.com>
+Acked-by: Gregory Fong <gregory.0xf0@gmail.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/smb2pdu.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/bus/brcmstb_gisb.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -1151,15 +1151,19 @@ SMB2_tcon(const unsigned int xid, struct
- 		goto tcon_exit;
- 	}
+--- a/drivers/bus/brcmstb_gisb.c
++++ b/drivers/bus/brcmstb_gisb.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2014 Broadcom Corporation
++ * Copyright (C) 2014-2017 Broadcom
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+@@ -127,9 +127,9 @@ static void gisb_write(struct brcmstb_gi
+ 		return;
  
--	if (rsp->ShareType & SMB2_SHARE_TYPE_DISK)
-+	switch (rsp->ShareType) {
-+	case SMB2_SHARE_TYPE_DISK:
- 		cifs_dbg(FYI, "connection to disk share\n");
--	else if (rsp->ShareType & SMB2_SHARE_TYPE_PIPE) {
-+		break;
-+	case SMB2_SHARE_TYPE_PIPE:
- 		tcon->ipc = true;
- 		cifs_dbg(FYI, "connection to pipe share\n");
--	} else if (rsp->ShareType & SMB2_SHARE_TYPE_PRINT) {
--		tcon->print = true;
-+		break;
-+	case SMB2_SHARE_TYPE_PRINT:
-+		tcon->ipc = true;
- 		cifs_dbg(FYI, "connection to printer\n");
--	} else {
-+		break;
-+	default:
- 		cifs_dbg(VFS, "unknown share type %d\n", rsp->ShareType);
- 		rc = -EOPNOTSUPP;
- 		goto tcon_error_exit;
+ 	if (gdev->big_endian)
+-		iowrite32be(val, gdev->base + reg);
++		iowrite32be(val, gdev->base + offset);
+ 	else
+-		iowrite32(val, gdev->base + reg);
++		iowrite32(val, gdev->base + offset);
+ }
+ 
+ static ssize_t gisb_arb_get_timeout(struct device *dev,
