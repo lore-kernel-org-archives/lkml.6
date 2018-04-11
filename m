@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2791443-1523464135-2-12459864155024554660
+X-Cyrus-Session-Id: sloti22d1t05-2791443-1523464131-2-4864107279447239819
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -14,24 +14,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523464135; b=l05nTADcvR6csWlWlB8zN6yRwm0zQSz2qIqe6bDAcpouTSuHja
-    GGr/e3sgpYoE3OddZJNxuqVg1bnoya0R+stCDPJA7CiHY0SgcQZa5s4kO31c4v4R
-    yGaBiXQrGQpSQUndWV6Nqpr9Pq88BKHn76TqrhHCOCJJlpT5wGKDMCAoBlrzcOF+
-    SKiW4QpfaEJ7u3i4dGvbVnYfa6LfMljrGTlXnHFiyf7TfaVw043RUeT6EAZyzqmW
-    q39Pl2PL8qPLJdDkHSw65YZd0XH9ZGYpnQwmklKaf/afn2DbSua3GrlCUHWkl6ZJ
-    lw2u8m2cci70e/pbInsS1R5BDSOmWKviwaHw==
+    1523464130; b=FkWhHaYhJRC6RHfnLKANvdKDozzurvd/YufDdYC5cNb/kNqrlz
+    Uio0oz6/e+mCvC9EMz39NGckon+I+rDINGDBpsMtV02cUtZVRpOxv6brgNImwPqj
+    VZBFqjjZ6cEmY8/wXsuL1FYWUSnPIIqNhAb/LNrN4PwxmJ4htNZfxVeq223PC1c7
+    7IfE7QsQXJtlq+UDTt5n84EAJLTIJJ+mQsNZDgXipbqpN2JTYM2X+HdEaUVNXXEE
+    JhZ7xF17VZCTEigJMzobglVdlj62abckKlKGN+D3ZEEpImbYA/64DpqxjcZbZxp7
+    OZ0iXEBlDE3A5AJlmuNSSFSYKod+TF0ZYm+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=subject:from:to:cc:date:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1523464135;
-    bh=N8Aa5MekR1R5fI3WP08J3L+aKmOUaompxxtbhechPpw=; b=d0vMvgLrLRjd
-    2NOx/XzuWbXBLXDNbwZNyItGTUUOPigbgzkOyjTHudXLOVbfiGlg1OpNcOY+KWsR
-    naugkH61v1xpjKrZGOXqEDje7PDJJzhJxbpyfD+30yP9XoLNMT2ZZH0ys7x7Oi06
-    IdQFLO3QcMbKmRVWz4BvEFWv5aYMkjczwQGr4qVipM1SRR10rl0cbyInlvN3/1Br
-    dRxmzrR1cANBYXGMuHMQLh7OUqtEEDwSMPoSDzOhQ3sc+WL6nvwFrezT6M6xtO4w
-    +bLE+MulL7hIVv1O5hh/1BjsUwwvGu1zj73fKV4+G/fIlc9OPgDjLtzSf/yfvLF6
-    goh3nqAYCg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523464130;
+    bh=HzO8MXPl3X229/0aHIcGFltfdt70XAisq1a8d321064=; b=T1OzXAjDZZip
+    TqkROAzIPnZNp9FBh6VDcAW+ZEPNaHsWfQvRccN5vXHI5a8eONOtd7b2MVjXSTHz
+    KqDj256bsZBvwR/dsa62BYRWeT4IS60e67DJKFW9+H8pH3o8pQn981i1UBezVfja
+    IfHIiewxI7sMCqKrpOP6M4MBym2RqTPZggwpyGwI6r9nUY3RJSG6+tnxe7rW8n75
+    OUNEz10syEHuS08rTwvLkTlHkXs4FecIFqqqV4O61imq6zxp67V1I2OXE7WehK50
+    7MDikFlvFRkrp0NKpknQSLF48IgVbZhkgxVdt0anEoFaG8fAcQOX9DE/YeGhJK9a
+    QzvEVpRTCA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -53,35 +53,36 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOZ5xV0zMMma24nhRI9CC7GVBZUbWwKsodsTv8G/Mz17nF+a6eo62sQAkjlaL5TLT0hs/T/Up+QenFBS/2OaR9FrsNQyiXtnLMiFBBGQOjddCZImnak7
-    DB3NQPsMWC59D8KTzkSdx7UuwX39aMSO9xNGlsXPF4JAlsVULUoZ92lvStbDzs6o66H4H5xmMZ1OWx4kJjfBxuCjy8J9PwcD6nU1QR2/52+WyMDXWcr2g+HR
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfPoOXcxL9dQAqNAy9MHpTCoua8Ae9yamMV3DoVtVpS8Do3b7SiL+R58ur9xLX4NKklE07MoAvYt6sUYC+kfVbXDcz6BSCa87t6FFDvRMjl7eCWp/TF8Q
+    hqVoM/pB7JScG2baEGs5L/u7ZbwTFbtCFHGCWrqfMtPR3Ctt5z8SKPGIaNXSg35VqKV02nV3FsILQd839b1kP/THhZaleUS+Lxof9yVSxKuF1hGPGXTPz3ZA
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
     a=MvuuwTCpAAAA:8 a=20KFwNOVAAAA:8 a=iox4zFpeAAAA:8 a=VwQbUJbxAAAA:8
-    a=TY0TpV-m57UpV4AJIgAA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
-    a=dVHiktpip_riXrfdqayU:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=wX6tjIgA_ZxpqKf44AYA:9 a=8Ds0qXTuaD9LKBZJ:21 a=qxRUKna-qaE4gmo1:21
+    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=dVHiktpip_riXrfdqayU:22
+    a=WzC6qhA0u3u7Ye7llzcV:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754195AbeDKQ0P (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 12:26:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45208 "EHLO mx1.redhat.com"
+        id S1754212AbeDKQ0V (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 12:26:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54372 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753424AbeDKQ0M (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Wed, 11 Apr 2018 12:26:12 -0400
+        id S1753424AbeDKQ0S (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Wed, 11 Apr 2018 12:26:18 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 14/24] acpi: Disable ACPI table override if the kernel is
+Subject: [PATCH 15/24] acpi: Disable APEI error injection if the kernel is
  locked down
 From: David Howells <dhowells@redhat.com>
 To: torvalds@linux-foundation.org
 Cc: linux-man@vger.kernel.org, linux-api@vger.kernel.org,
         jmorris@namei.org, linux-kernel@vger.kernel.org,
         dhowells@redhat.com, linux-security-module@vger.kernel.org
-Date: Wed, 11 Apr 2018 17:26:10 +0100
-Message-ID: <152346397054.4030.6635609558509282651.stgit@warthog.procyon.org.uk>
+Date: Wed, 11 Apr 2018 17:26:17 +0100
+Message-ID: <152346397696.4030.2692221040490871671.stgit@warthog.procyon.org.uk>
 In-Reply-To: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
 References: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -96,15 +97,20 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Linn Crosetto <linn@hpe.com>
 
->From the kernel documentation (initrd_table_override.txt):
+ACPI provides an error injection mechanism, EINJ, for debugging and testing
+the ACPI Platform Error Interface (APEI) and other RAS features.  If
+supported by the firmware, ACPI specification 5.0 and later provide for a
+way to specify a physical memory address to which to inject the error.
 
-  If the ACPI_INITRD_TABLE_OVERRIDE compile option is true, it is possible
-  to override nearly any ACPI table provided by the BIOS with an
-  instrumented, modified one.
+Injecting errors through EINJ can produce errors which to the platform are
+indistinguishable from real hardware errors.  This can have undesirable
+side-effects, such as causing the platform to mark hardware as needing
+replacement.
 
-When securelevel is set, the kernel should disallow any unauthenticated
-changes to kernel space.  ACPI tables contain code invoked by the kernel,
-so do not allow ACPI tables to be overridden if the kernel is locked down.
+While it does not provide a method to load unauthenticated privileged code,
+the effect of these errors may persist across reboots and affect trust in
+the underlying hardware, so disable error injection through EINJ if
+the kernel is locked down.
 
 Signed-off-by: Linn Crosetto <linn@hpe.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
@@ -112,23 +118,21 @@ Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
 cc: linux-acpi@vger.kernel.org
 ---
 
- drivers/acpi/tables.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/acpi/apei/einj.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
-index 849c4fb19b03..6c5ee7e66842 100644
---- a/drivers/acpi/tables.c
-+++ b/drivers/acpi/tables.c
-@@ -527,6 +527,11 @@ void __init acpi_table_upgrade(void)
- 	if (table_nr == 0)
- 		return;
+diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
+index b38737c83a24..6d71e1e97b20 100644
+--- a/drivers/acpi/apei/einj.c
++++ b/drivers/acpi/apei/einj.c
+@@ -518,6 +518,9 @@ static int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
+ 	int rc;
+ 	u64 base_addr, size;
  
-+	if (kernel_is_locked_down("ACPI table override")) {
-+		pr_notice("kernel is locked down, ignoring table override\n");
-+		return;
-+	}
++	if (kernel_is_locked_down("ACPI error injection"))
++		return -EPERM;
 +
- 	acpi_tables_addr =
- 		memblock_find_in_range(0, ACPI_TABLE_UPGRADE_MAX_PHYS,
- 				       all_tables_size, PAGE_SIZE);
+ 	/* If user manually set "flags", make sure it is legal */
+ 	if (flags && (flags &
+ 		~(SETWA_FLAGS_APICID|SETWA_FLAGS_MEM|SETWA_FLAGS_PCIE_SBDF)))
 
