@@ -1,55 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753833AbeDKRVh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 13:21:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33694 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753813AbeDKRVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 13:21:34 -0400
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: kvm@vger.kernel.org
-Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/6] KVM: x86: hyperv: use defines when parsing hypercall parameters
-Date: Wed, 11 Apr 2018 19:21:22 +0200
-Message-Id: <20180411172126.16355-3-vkuznets@redhat.com>
-In-Reply-To: <20180411172126.16355-1-vkuznets@redhat.com>
-References: <20180411172126.16355-1-vkuznets@redhat.com>
+        id S1753294AbeDKRVa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 13:21:30 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:36351 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752735AbeDKRV2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 13:21:28 -0400
+Date: Wed, 11 Apr 2018 18:04:33 +0100
+From: "Maciej W. Rozycki" <macro@mips.com>
+To: James Hogan <jhogan@kernel.org>
+CC: Sinan Kaya <okaya@codeaurora.org>, <linux-mips@linux-mips.org>,
+        <arnd@arndb.de>, <timur@codeaurora.org>, <sulrich@codeaurora.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] MIPS: io: add a barrier after register read in
+ readX()
+In-Reply-To: <20180406212601.GA1730@saruman>
+Message-ID: <alpine.DEB.2.00.1804111756420.1545@tp.orcam.me.uk>
+References: <1522760109-16497-1-git-send-email-okaya@codeaurora.org> <1522760109-16497-2-git-send-email-okaya@codeaurora.org> <41e184ae-689e-93c9-7b15-0c68bd624130@codeaurora.org> <b748fdcb-e09f-9fe3-dc74-30b6a7d40cbe@codeaurora.org>
+ <20180406212601.GA1730@saruman>
+User-Agent: Alpine 2.00 (DEB 1167 2008-08-23)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+X-Originating-IP: [10.20.78.219]
+X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
+ mipsdag02.mipstec.com (10.20.40.47)
+X-BESS-ID: 1523467282-298554-16273-9406-1
+X-BESS-VER: 2018.4-r1804052328
+X-BESS-Apparent-Source-IP: 12.201.5.32
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.191885
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoid open-coding offsets for hypercall input parameters, we already
-have defines for them.
+Hi James,
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/kvm/hyperv.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> > Any news on the MIPS front? Is this something that Arnd can merge? or does it have
+> > to go through the MIPS tree.
+> 
+> It needs some MIPS input really. I'll try and take a look soon. Thanks
+> for the nudge.
+> 
+> > It feels like the MIPS is dead since nobody replied to me in the last few weeks on
+> > a very important topic.
+> 
+> Not dead, just both maintainers heavily distracted by real life right
+> now (which sadly, for me at least, trumps this very important topic) and
+> doing the best they can given the circumstances.
 
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index 98618e397342..3cb3bb68db7e 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -1339,9 +1339,9 @@ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
- #endif
- 
- 	code = param & 0xffff;
--	fast = (param >> 16) & 0x1;
--	rep_cnt = (param >> 32) & 0xfff;
--	rep_idx = (param >> 48) & 0xfff;
-+	fast = !!(param & HV_HYPERCALL_FAST_BIT);
-+	rep_cnt = (param >> HV_HYPERCALL_REP_COMP_OFFSET) & 0xfff;
-+	rep_idx = (param >> HV_HYPERCALL_REP_START_OFFSET) & 0xfff;
- 
- 	trace_kvm_hv_hypercall(code, fast, rep_cnt, rep_idx, ingpa, outgpa);
- 
--- 
-2.14.3
+ Can I help move this change forward anyhow?
+
+  Maciej
