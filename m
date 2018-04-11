@@ -1,72 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752794AbeDKDNI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 23:13:08 -0400
-Received: from mail-ua0-f173.google.com ([209.85.217.173]:38129 "EHLO
-        mail-ua0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752381AbeDKDNE (ORCPT
+        id S1752753AbeDKDX5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 23:23:57 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:35322 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752334AbeDKDX4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 23:13:04 -0400
-X-Google-Smtp-Source: AIpwx49pl+0/fvkib1d3oRpcSVjbaceZTMuYLNheRFaAZuIHIGaZHE789FWPc+ijJw9BH+G04yJwpz9jtnQaFTR3rhw=
-MIME-Version: 1.0
-In-Reply-To: <d53af006c314eb9d326bfb19b08e189b@natalenko.name>
-References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5jL8oLV2xvjBVYv_SNXr74LdgpXEmU7K+cLYpD7jh2chgw@mail.gmail.com>
- <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com>
- <2679696.GDoj5zcZOu@natalenko.name> <CAGXu5jLG9ia+zBNcPt+q+BpJayoUuYwXitOgeHmh=7sPp-s87A@mail.gmail.com>
- <51a7e805058ef7f35b226cbbf0ccc4ff@natalenko.name> <CAGXu5jKRrdYjuyLSvc4k4mqttkM7zw-96poQ1GYqRRgPqZFOYQ@mail.gmail.com>
- <3d7b5a707e216e19eb3defe0586bfbc8@natalenko.name> <CAGXu5j+9BJcR63bsqQpqaKrvcgOpWyDzgpD-zRrf1qq7v=Z2CA@mail.gmail.com>
- <d53af006c314eb9d326bfb19b08e189b@natalenko.name>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 10 Apr 2018 20:13:01 -0700
-X-Google-Sender-Auth: -M69JQPBOI3UBWF38FBiI4hiQVE
-Message-ID: <CAGXu5j+ZmgfqdoT_zPZ4qLCdMfjaaGxRCyz8c8ecp=39zQfw2w@mail.gmail.com>
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-To: Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc: David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
-        paolo.valente@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 10 Apr 2018 23:23:56 -0400
+X-Google-Smtp-Source: AIpwx48WfvsE+AuwCGuvxb/JCv2ImSEf1kIReOKQzcNAi1+boV6GG/i3QcL4xg0/9+0v7cIDFezK+w==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH 1/3] media: dvb-usb: Replace GFP_ATOMIC with GFP_KERNEL in usb_allocate_stream_buffers
+Date: Wed, 11 Apr 2018 11:23:49 +0800
+Message-Id: <1523417029-3069-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 10:16 AM, Oleksandr Natalenko
-<oleksandr@natalenko.name> wrote:
-> Hi, Kees, Paolo et al.
->
-> 10.04.2018 08:53, Kees Cook wrote:
->>
->> Unfortunately I only had a single hang with no dumps. I haven't been
->> able to reproduce it since. :(
->
->
-> For your convenience I've prepared a VM that contains a reproducer.
+usb_allocate_stream_buffers() is never called in atomic context.
 
-Awesome. :)
+The call chains ending up at usb_allocate_stream_buffers() are:
+[1] usb_allocate_stream_buffers() <- usb_bulk_urb_init() <- usb_urb_init()
+	<- dvb_usb_adapter_stream_init() <- dvb_usb_adapter_init 
+	<- dvb_usb_init() <- dvb_usb_device_init() <- xxx_probe()
+[2] usb_allocate_stream_buffers() <- usb_isoc_urb_init() <- usb_urb_init()
+	<- dvb_usb_adapter_stream_init() <- dvb_usb_adapter_init 
+	<- dvb_usb_init() <- dvb_usb_device_init() <- xxx_probe()
+xxx_probe including ttusb2_probe, vp7045_usb_probe, a800_probe, and so on.
+These xxx_probe() functions are set as ".probe" in struct usb_driver.
+And these functions are not called in atomic context.
 
-> Under the /root folder there is a reproducer script (reproducer.sh). It does
-> trivial things like enabling sysrq, opening LUKS device, mounting a volume,
-> running a background I/O (this is an important part, actually, since I
-> wasn't able to trigger the issue without the background I/O) and, finally,
-> running the smartctl in a loop. If you are lucky, within a minute or two
-> you'll get the first warning followed shortly by subsequent bugs and I/O
-> stall (htop is pre-installed for your convenience too).
+Despite never getting called from atomic context,
+usb_allocate_stream_buffers() calls usb_alloc_coherent() with GFP_ATOMIC,
+which does not sleep for allocation.
+GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+which can sleep and improve the possibility of sucessful allocation.
 
-Yup!
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
 
-[   27.729498] Bad or missing usercopy whitelist? Kernel memory
-exposure attempt detected from SLUB object 'scsi_sense_cache' (offset
-76, size 22)!
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/media/usb/dvb-usb/usb-urb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'll see about booting with my own kernels, etc, and try to narrow this down. :)
-
--Kees
-
+diff --git a/drivers/media/usb/dvb-usb/usb-urb.c b/drivers/media/usb/dvb-usb/usb-urb.c
+index 8917360..96be721 100644
+--- a/drivers/media/usb/dvb-usb/usb-urb.c
++++ b/drivers/media/usb/dvb-usb/usb-urb.c
+@@ -117,7 +117,7 @@ static int usb_allocate_stream_buffers(struct usb_data_stream *stream, int num,
+ 	for (stream->buf_num = 0; stream->buf_num < num; stream->buf_num++) {
+ 		deb_mem("allocating buffer %d\n",stream->buf_num);
+ 		if (( stream->buf_list[stream->buf_num] =
+-					usb_alloc_coherent(stream->udev, size, GFP_ATOMIC,
++					usb_alloc_coherent(stream->udev, size, GFP_KERNEL,
+ 					&stream->dma_addr[stream->buf_num]) ) == NULL) {
+ 			deb_mem("not enough memory for urb-buffer allocation.\n");
+ 			usb_free_stream_buffers(stream);
 -- 
-Kees Cook
-Pixel Security
+1.9.1
