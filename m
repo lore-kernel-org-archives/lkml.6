@@ -1,11 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3374234-1523481798-2-3196846160730331798
+X-Cyrus-Session-Id: sloti22d1t05-3397032-1523481791-5-1770410445457577006
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES ensvda, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523481797; b=o1ivWjVKcOfBe6/jlGKKZixSOKVWGU1I5EQHAZEj2Euu8O3+Ms
-    CrefEXtDal6M0UpaRlMCFtFn+FmD2zes5F5H5B70b+FmVn5Z2aiKOUuq4eTqqdhB
-    OXWbAKmYyuDAIK2gMV2ERNCe9JKzj/EhKAWyRPrco0xuIAwjSxxhtqAQYN/Js28m
-    5X+yePWy4mFPn4OdLviCxW8qTRN2BoixQfiHb5EQHj9yfk1dI9KHzk/w+sGQ3czM
-    reoselfrvSRs3QjjxtGhU+poApomXYGchk1Ql0jBg+hUgOihmlIYhewdylbC8I4u
-    RHtGKZSqRgKubAf6CLzOnI9f7d8lGqqO+gJA==
+    1523481790; b=vWsX0pFMyxkVuZxeKneyf2cDh9M+hDi286okJdV8quY1DEe1Af
+    JLfSEtGKLcWPj9sbHnyz+yiKyLpANjdZtz8y1qlom/LwOopTjKPv3Y2WSrvUzEc8
+    BgkwAlnD6PIy+4pKk05mYGVSGNM+YbOU8QzRwiueuH53BTKwTU8sgWysFyLKVap+
+    Cou01kSc+A/4TPvzV/xklNk6iVMgLfnCAQT8NarHn8mwRtvgwJrptRwSYMxGO9vO
+    pmUYgUP10cdDtnnw+NlQGtIrz2KH1lz9lOAmEOCMsqNV7X9oYnbo+q2dDuK9QdUa
+    14vP5KzfO08C0UdZm/bK4VrjrWrpDk9RoTxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523481797; bh=jv4aME7JhEchRlNbQWqlsgpYfiCR3D
-    MKSY9raGPBfuU=; b=aHvViSet7Q3k3winHAjDAl5LoQ3i46IcCxnAF5EerqXvgs
-    UJKhN81Ags4AoDJMmdHuIA+lLsgoUiN9j7TqlFYYckG0i8nJjVq/fBQLBBqy0SBC
-    /iSsfVHC3ap0vCyPjwzcM9nIxrSPhm5O+ytGjWPgS32kvaMZUbAcoyI4MClNwIz1
-    S7lVmakyy2/O13WuGLrXBizh+3cyHr9mSC0o297f4r91GBSchXKQGswXEhDs/ORn
-    rvxk7gjjB/uIPToMg9kMiAwhfHTBibXh7TKjMO2NVC3uu44JXROepOgcN7OL8t5C
-    HjMwnyfZuN+UNZ6S9R4EATSLx9H6aCjvtSSdgBMg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523481790; bh=M35oKFUT+Ig3m+nSt/2mGtwhly/0ge
+    PMsnW0odtSWTg=; b=XjLjvW5XNaEunbz+5GjtivjLI7WGkq5ZSJGLPerOiywyPA
+    6qVSUYDM90uv4DxrhDM3bDOOootmz5yXXNIiYVRI92HfP9iVUmjLmQXo8HffwjqP
+    FjjAdl2JXLbtriXBFIrHkyc6AURlqwzm16nKcyF8lieLWR0tcLSSXTY9CCaAb1RO
+    RP7FHc7XEnQ+p2o2eegAL2ciuadPTVa0Aa61nGUMExrotFtne8Kf1hLCbaZgIbYa
+    /zc9rqkdguIo5NepER1XnMKkJoJSBNpvnx/1pLE0gWKoQuBju25+B69+z5Y65BDt
+    np+BWbJ+1hAKQ3Xp/HvLstLZgyDkzEkHICdFQvWA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,33 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfO5y3pJyGEd6Itzd/LqPbLg7MP2XqWC9335VUqSqlg9Pk59T0TbuNwsSl9DoWErX0PeHsnHK3mv8WZefXLLvMS1kLoWxgbLNnDuJ+If8XqeJxl8FEsKX
-    kmKcKCOP2D5WwkK229YP77Cw/Wp61Lcp7/IKLeeFIAjE5EDNB6X9UqNDv/X/xQBWIN//WwE5vzJI+FzXvrvJozk4v6AF3Q2DLB/I20Q9+Ut/VX/SQHk2+/PS
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNszcnvBOGCGK0QYJ9B00HecuCrDMKY6bX8pJK3V6FBAAoB6k9y9mHGOjK4d05fLNzvLY46n0Pta8nw3sOhjFOgZ0f7Ks8YWng/wXgJ6dtu062E986Dn
+    1ckYMjXN+0aGJ4emMX5PS9jkAdwoTtK3aAQEsTIEjcu2rWiJJ2FZlKycP1iXItuICq5jAhBs99gvoSFk7lXa61p5S26VhONdH2BuhtI6JZ+zTiFkY8VB6Koa
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=M5GUcnROAAAA:8 a=8AirrxEcAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=SMg-zceUvSRekMsZMH0A:9 a=QEXdDO2ut3YA:10 a=OBjm3rFKGHvpk9ecZwUJ:22
-    a=ST-jHhOKWsTCqRlWije3:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=CbDCq_QkAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=T0oSdNId3tmA6LNMnrQA:9 a=6hYkrw0bbtUdOXsA:21 a=sv4KXNMTVxxuvHMY:21
+    a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755095AbeDKVXO (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 17:23:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55536 "EHLO
+        id S1754234AbeDKSiy (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:38:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55550 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754215AbeDKSit (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:38:49 -0400
+        with ESMTP id S1753069AbeDKSiw (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:38:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jisheng Zhang <jszhang@marvell.com>,
-        Peter Chen <peter.chen@nxp.com>,
+        stable@vger.kernel.org, Talat Batheesh <talatb@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 028/121] usb: chipidea: properly handle host or gadget initialization failure
-Date: Wed, 11 Apr 2018 20:35:31 +0200
-Message-Id: <20180411183457.814688900@linuxfoundation.org>
+Subject: [PATCH 3.18 011/121] net/mlx4_en: Avoid adding steering rules with invalid ring
+Date: Wed, 11 Apr 2018 20:35:14 +0200
+Message-Id: <20180411183456.915719619@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -93,92 +95,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jisheng Zhang <jszhang@marvell.com>
+From: Talat Batheesh <talatb@mellanox.com>
 
 
-[ Upstream commit c4a0bbbdb7f6e3c37fa6deb3ef28c5ed99da6175 ]
+[ Upstream commit 89c557687a32c294e9d25670a96e9287c09f2d5f ]
 
-If ci_hdrc_host_init() or ci_hdrc_gadget_init() returns error and the
-error != -ENXIO, as Peter pointed out, "it stands for initialization
-for host or gadget has failed", so we'd better return failure rather
-continue.
+Inserting steering rules with illegal ring is an invalid operation,
+block it.
 
-And before destroying the otg, i.e ci_hdrc_otg_destroy(ci), we should
-also check ci->roles[CI_ROLE_GADGET].
-
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
-Signed-off-by: Peter Chen <peter.chen@nxp.com>
+Fixes: 820672812f82 ('net/mlx4_en: Manage flow steering rules with ethtool')
+Signed-off-by: Talat Batheesh <talatb@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/chipidea/core.c |   29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/en_ethtool.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/usb/chipidea/core.c
-+++ b/drivers/usb/chipidea/core.c
-@@ -553,7 +553,7 @@ static inline void ci_role_destroy(struc
- {
- 	ci_hdrc_gadget_destroy(ci);
- 	ci_hdrc_host_destroy(ci);
--	if (ci->is_otg)
-+	if (ci->is_otg && ci->roles[CI_ROLE_GADGET])
- 		ci_hdrc_otg_destroy(ci);
- }
- 
-@@ -653,20 +653,28 @@ static int ci_hdrc_probe(struct platform
- 	/* initialize role(s) before the interrupt is requested */
- 	if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_HOST) {
- 		ret = ci_hdrc_host_init(ci);
--		if (ret)
--			dev_info(dev, "doesn't support host\n");
-+		if (ret) {
-+			if (ret == -ENXIO)
-+				dev_info(dev, "doesn't support host\n");
-+			else
-+				goto deinit_phy;
+--- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
+@@ -946,6 +946,11 @@ static int mlx4_en_flow_replace(struct n
+ 		qpn = priv->drop_qp.qpn;
+ 	else if (cmd->fs.ring_cookie & EN_ETHTOOL_QP_ATTACH) {
+ 		qpn = cmd->fs.ring_cookie & (EN_ETHTOOL_QP_ATTACH - 1);
++		if (qpn < priv->rss_map.base_qpn ||
++		    qpn >= priv->rss_map.base_qpn + priv->rx_ring_num) {
++			en_warn(priv, "rxnfc: QP (0x%x) doesn't exist\n", qpn);
++			return -EINVAL;
 +		}
- 	}
- 
- 	if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_PERIPHERAL) {
- 		ret = ci_hdrc_gadget_init(ci);
--		if (ret)
--			dev_info(dev, "doesn't support gadget\n");
-+		if (ret) {
-+			if (ret == -ENXIO)
-+				dev_info(dev, "doesn't support gadget\n");
-+			else
-+				goto deinit_host;
-+		}
- 	}
- 
- 	if (!ci->roles[CI_ROLE_HOST] && !ci->roles[CI_ROLE_GADGET]) {
- 		dev_err(dev, "no supported roles\n");
- 		ret = -ENODEV;
--		goto deinit_phy;
-+		goto deinit_gadget;
- 	}
- 
- 	if (ci->is_otg && ci->roles[CI_ROLE_GADGET]) {
-@@ -676,7 +684,7 @@ static int ci_hdrc_probe(struct platform
- 		ret = ci_hdrc_otg_init(ci);
- 		if (ret) {
- 			dev_err(dev, "init otg fails, ret = %d\n", ret);
--			goto stop;
-+			goto deinit_gadget;
- 		}
- 	}
- 
-@@ -727,7 +735,12 @@ static int ci_hdrc_probe(struct platform
- 
- 	free_irq(ci->irq, ci);
- stop:
--	ci_role_destroy(ci);
-+	if (ci->is_otg && ci->roles[CI_ROLE_GADGET])
-+		ci_hdrc_otg_destroy(ci);
-+deinit_gadget:
-+	ci_hdrc_gadget_destroy(ci);
-+deinit_host:
-+	ci_hdrc_host_destroy(ci);
- deinit_phy:
- 	usb_phy_shutdown(ci->transceiver);
- 
+ 	} else {
+ 		if (cmd->fs.ring_cookie >= priv->rx_ring_num) {
+ 			en_warn(priv, "rxnfc: RX ring (%llu) doesn't exist\n",
