@@ -1,82 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3124918-1523473488-2-3805530180596415056
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523473488; b=KvSwXVabSgP7GMbZgiQJbwi5m5COtuJYBzqTvetSkqRn41eTQf
-    LjEU9IF1JTu4bPQxGbYn3d5AEqsvwUE/5ere7u8Mdl9iOvpIRPm0FPOJBnUeoAOW
-    JaNJmqX3jIm4CZZ07G+5hMgN2VAcBBXwuFNCWusBZbkF3qndqbEjdP8tRWXxvN+E
-    AG5hyftEjxhRZYNRlqg1egH40uptc+mh4DOFHsAwblCL/1OBrfJROUDxe5/eTeph
-    U9zJVXVSX4OgGCvYthALCoeIT9AFvTP7F7hGJOiJfGObqv5xA7zdjsm2RZ9e6I+1
-    HB58VWtAmMzHAMYJ2KU2+6k3AaraH0HfY8Cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523473488; bh=N8lLnUqFr+GAYKw10PvGc8ZHtaEBcp
-    FLFOyfZnEeUrY=; b=XM442o1ZcCDPmLXeCEVQCJIfoU8oAUbAPTxza1W5XfnKdv
-    fqdgKV6of+PJB04MXfGgNNoLwfbsprp0epOs5ayutSqROhgkA0hin4FWeeCbJAyZ
-    +pQlxo5US0ho97hCe4Fd7MiViSFOVZi+2vxCzZI2t+SPaNaA3kWRFbfE93/f5Vu7
-    Nh3VUsIWHFXkunfXf6BQClbmivUvYeBWgdrHmEKU0r6q01cXDGPF8ivrBbQ7P+iI
-    4X1+Je/Q+ZRie8rcc067T1eNeixfS6pZ69h217bzvFIqO2Wdc586HO9N6gf9cCzU
-    m+EU4GxM9Q05J2D3rHExBQyxkiDwBBvM0TiNUU4Q==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAakaoWU9YOXwIEN28xkTyEAuq1xBxIGqo7P1nzIEP+dNjJSDkBj2BgreG+a0K8YgsrMlJs0kugRAvVvSiXVOcsxL/wUbg9rmFhtRiNEaB/Xkv8xNjoM
-    6Ndc+bzAPm9y5Xgh8a0n4cqKFOV/LJC/cIBuKZ4SKNrQWOz+RtJyPWQdpHnhlCSG46bxiNGJzsvApLSssej400FX1fHuQpW71if2xIsabKES5fBX0aKHB0Em
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=AGRr4plBAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=2LBmB76TW1u_f6CjTDoA:9 a=QEXdDO2ut3YA:10 a=bOnWt3ThIoLzEnqt84vq:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934153AbeDKTEo (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 15:04:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40016 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934145AbeDKTEn (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:04:43 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx48Nf3rpwXOZj+wpHTvMuDKXtLn6a4z04qm5Hk9dMlTiwq2bjdjRXwPlv56vJKB4VQsbMAtw
+ARC-Seal: i=1; a=rsa-sha256; t=1523473486; cv=none;
+        d=google.com; s=arc-20160816;
+        b=xzwPPx8on6zwwBNYu9gOCE9iAu+2lXL6/X3mmobg8DdUbPAQlul4emyUMw/Kldq+Qv
+         VV2xQKA4ihr0dXx47y31pyMlHjhc+770E+dCRkYisIFYA5RnUY+AUsTQt/skB3qE6JLn
+         xgy3vhXI/ZH9EdGF/EzNa/gXWAZkzYu47GyyqZXkw+WIgYepj7l6Ukp27Cr/dkIoKX9z
+         oyMnH1wK/Z1xON50/+DePjxvv8rajdMzwtzvQTMzuOn1lqlU8V393ankDJHuBG88zm0Z
+         pz8Zyga06kV1Pw83btqTaXE7zvPFDMtStcAivPz50Ry/+md+zgVwMmdaBh5dF/Al1Neh
+         vGUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=F3BUbkYsi85oixU9azxZ+L4/xJK+4/b84rSughmOeq0=;
+        b=goAS2Wu0/riZIl7N1ZZK36D91S6c2po/f8Ts88VjdR71NQPz44C6zhiS/vp1cbO1ub
+         FNcQYlq88P0Q3dmqQ5qmaiJL/8DfTiwNNEm3/JQpMZMle6px61fnqDOeOVGxc8WPNCiC
+         xxDtnLUxaBsm99KQlgXe8RaYyRCdPjjWaNgLSv/ELTtd0Dl2o4dxXZ5gtJy1VluhTTQi
+         N4lt5eDpLEI4ytxJBdX7mDguagJxzpK8MzMKYuo+4Gmz/2HNmccJwLocwh1eIVFc9479
+         BYlQcQiJsogQaTS9VH6KFf/TQnAt2Wf08LXvobMETPx3ffuCBrnkY7Cg8xcVzad8qKcq
+         vnvw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arjun Vynipadath <arjun@chelsio.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 265/310] cxgb4vf: Fix SGE FL buffer initialization logic for 64K pages
-Date: Wed, 11 Apr 2018 20:36:44 +0200
-Message-Id: <20180411183634.065795838@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 266/310] sdhci: Advertise 2.0v supply on SDIO host controller
+Date: Wed, 11 Apr 2018 20:36:45 +0200
+Message-Id: <20180411183634.103205303@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -84,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597477734363264124?=
+X-GMAIL-MSGID: =?utf-8?q?1597477734363264124?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -94,70 +51,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arjun Vynipadath <arjun@chelsio.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
 
-[ Upstream commit ea0a42109aee7b92e631c4eb3f2219fadf58acdd ]
+[ Upstream commit 2a609abe71ca59e4bd7139e161eaca2144ae6f2e ]
 
-We'd come in with SGE_FL_BUFFER_SIZE[0] and [1] both equal to 64KB and
-the extant logic would flag that as an error. This was already fixed in
-cxgb4 driver with "92ddcc7 cxgb4: Fix some small bugs in
-t4_sge_init_soft() when our Page Size is 64KB".
+On Intel Edison the Broadcom Wi-Fi card, which is connected to SDIO,
+requires 2.0v, while the host, according to Intel Merrifield TRM,
+supports 1.8v supply only.
 
-Original Work by: Casey Leedom <leedom@chelsio.com>
-Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The card announces itself as
+
+  mmc2: new ultra high speed DDR50 SDIO card at address 0001
+
+Introduce a custom OCR mask for SDIO host controller on Intel Merrifield
+and add a special case to sdhci_set_power_noreg() to override 2.0v supply
+by enforcing 1.8v power choice.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4vf/sge.c |   23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ drivers/mmc/host/sdhci-pci-core.c |    2 ++
+ drivers/mmc/host/sdhci.c          |    7 +++++++
+ 2 files changed, 9 insertions(+)
 
---- a/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
-@@ -2616,8 +2616,8 @@ void t4vf_sge_stop(struct adapter *adapt
- int t4vf_sge_init(struct adapter *adapter)
- {
- 	struct sge_params *sge_params = &adapter->params.sge;
--	u32 fl0 = sge_params->sge_fl_buffer_size[0];
--	u32 fl1 = sge_params->sge_fl_buffer_size[1];
-+	u32 fl_small_pg = sge_params->sge_fl_buffer_size[0];
-+	u32 fl_large_pg = sge_params->sge_fl_buffer_size[1];
- 	struct sge *s = &adapter->sge;
- 
- 	/*
-@@ -2625,9 +2625,20 @@ int t4vf_sge_init(struct adapter *adapte
- 	 * the Physical Function Driver.  Ideally we should be able to deal
- 	 * with _any_ configuration.  Practice is different ...
- 	 */
--	if (fl0 != PAGE_SIZE || (fl1 != 0 && fl1 <= fl0)) {
-+
-+	/* We only bother using the Large Page logic if the Large Page Buffer
-+	 * is larger than our Page Size Buffer.
-+	 */
-+	if (fl_large_pg <= fl_small_pg)
-+		fl_large_pg = 0;
-+
-+	/* The Page Size Buffer must be exactly equal to our Page Size and the
-+	 * Large Page Size Buffer should be 0 (per above) or a power of 2.
-+	 */
-+	if (fl_small_pg != PAGE_SIZE ||
-+	    (fl_large_pg & (fl_large_pg - 1)) != 0) {
- 		dev_err(adapter->pdev_dev, "bad SGE FL buffer sizes [%d, %d]\n",
--			fl0, fl1);
-+			fl_small_pg, fl_large_pg);
- 		return -EINVAL;
- 	}
- 	if ((sge_params->sge_control & RXPKTCPLMODE_F) !=
-@@ -2639,8 +2650,8 @@ int t4vf_sge_init(struct adapter *adapte
- 	/*
- 	 * Now translate the adapter parameters into our internal forms.
- 	 */
--	if (fl1)
--		s->fl_pg_order = ilog2(fl1) - PAGE_SHIFT;
-+	if (fl_large_pg)
-+		s->fl_pg_order = ilog2(fl_large_pg) - PAGE_SHIFT;
- 	s->stat_len = ((sge_params->sge_control & EGRSTATUSPAGESIZE_F)
- 			? 128 : 64);
- 	s->pktshift = PKTSHIFT_G(sge_params->sge_control);
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -492,6 +492,8 @@ static int intel_mrfld_mmc_probe_slot(st
+ 		slot->host->quirks2 |= SDHCI_QUIRK2_NO_1_8_V;
+ 		break;
+ 	case INTEL_MRFLD_SDIO:
++		/* Advertise 2.0v for compatibility with the SDIO card's OCR */
++		slot->host->ocr_mask = MMC_VDD_20_21 | MMC_VDD_165_195;
+ 		slot->host->mmc->caps |= MMC_CAP_NONREMOVABLE |
+ 					 MMC_CAP_POWER_OFF_CARD;
+ 		break;
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1404,6 +1404,13 @@ void sdhci_set_power_noreg(struct sdhci_
+ 	if (mode != MMC_POWER_OFF) {
+ 		switch (1 << vdd) {
+ 		case MMC_VDD_165_195:
++		/*
++		 * Without a regulator, SDHCI does not support 2.0v
++		 * so we only get here if the driver deliberately
++		 * added the 2.0v range to ocr_avail. Map it to 1.8v
++		 * for the purpose of turning on the power.
++		 */
++		case MMC_VDD_20_21:
+ 			pwr = SDHCI_POWER_180;
+ 			break;
+ 		case MMC_VDD_29_30:
