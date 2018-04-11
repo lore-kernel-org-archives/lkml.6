@@ -1,112 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757361AbeDKThz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 15:37:55 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:45019 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756124AbeDKThu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 15:37:50 -0400
-X-Google-Smtp-Source: AIpwx49YyZse/ylcv7P+3TqP1Du9v3TNShx4mkV0+7F8/tZrkiqSzFms2+pEMTbbFgjHKcs6r1TRSg==
-From: "Jingoo Han" <jingoohan1@gmail.com>
-To: "'Gustavo Pimentel'" <gustavo.pimentel@synopsys.com>,
-        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
-        <Joao.Pinto@synopsys.com>, <kishon@ti.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-Cc: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <cover.1523266508.git.gustavo.pimentel@synopsys.com> <5181f7ffbb9d2889974c49d84e72042251adf8b6.1523266508.git.gustavo.pimentel@synopsys.com> <003001d3d128$39f3eaa0$addbbfe0$@gmail.com> <c295bc5b-e67a-290c-3316-56a1cc001538@synopsys.com>
-In-Reply-To: <c295bc5b-e67a-290c-3316-56a1cc001538@synopsys.com>
-Subject: Re: [PATCH v2 8/9] PCI: dwc: Small computation improvement
-Date: Wed, 11 Apr 2018 15:37:46 -0400
-Message-ID: <000001d3d1cc$92706790$b75136b0$@gmail.com>
+        id S1757215AbeDKTnp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 15:43:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59277 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756213AbeDKTn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 15:43:29 -0400
+Date: Wed, 11 Apr 2018 21:43:26 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, Zi Yan <zi.yan@sent.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: shmem: enable thp migration (Re: [PATCH v1] mm:
+ consider non-anonymous thp as unmovable page)
+Message-ID: <20180411194326.GN23400@dhcp22.suse.cz>
+References: <20180405085927.GC6312@dhcp22.suse.cz>
+ <20180405122838.6a6b35psizem4tcy@node.shutemov.name>
+ <20180405124830.GJ6312@dhcp22.suse.cz>
+ <20180405134045.7axuun6d7ufobzj4@node.shutemov.name>
+ <20180405150547.GN6312@dhcp22.suse.cz>
+ <20180405155551.wchleyaf4rxooj6m@node.shutemov.name>
+ <20180405160317.GP6312@dhcp22.suse.cz>
+ <20180406030706.GA2434@hori1.linux.bs1.fc.nec.co.jp>
+ <20180411092611.GE23400@dhcp22.suse.cz>
+ <20180411122739.25d1700099222eb647b0c620@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-us
-Thread-Index: AQEaRjwvEF5/h3QMrbPVq+Y0x5xNJwIXxkZLAdaBFooA9hP2Z6VH6TYw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180411122739.25d1700099222eb647b0c620@linux-foundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, April 11, 2018 3:40 AM, Gustavo Pimentel wrote:
+On Wed 11-04-18 12:27:39, Andrew Morton wrote:
+> On Wed, 11 Apr 2018 11:26:11 +0200 Michal Hocko <mhocko@kernel.org> wrote:
 > 
-> Hi Jingoo,
+> > On Fri 06-04-18 03:07:11, Naoya Horiguchi wrote:
+> > > >From e31ec037701d1cc76b26226e4b66d8c783d40889 Mon Sep 17 00:00:00 2001
+> > > From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > > Date: Fri, 6 Apr 2018 10:58:35 +0900
+> > > Subject: [PATCH] mm: enable thp migration for shmem thp
+> > > 
+> > > My testing for the latest kernel supporting thp migration showed an
+> > > infinite loop in offlining the memory block that is filled with shmem
+> > > thps.  We can get out of the loop with a signal, but kernel should
+> > > return with failure in this case.
+> > > 
+> > > What happens in the loop is that scan_movable_pages() repeats returning
+> > > the same pfn without any progress. That's because page migration always
+> > > fails for shmem thps.
+> > > 
+> > > In memory offline code, memory blocks containing unmovable pages should
+> > > be prevented from being offline targets by has_unmovable_pages() inside
+> > > start_isolate_page_range().
+> > >
+> > > So it's possible to change migratability
+> > > for non-anonymous thps to avoid the issue, but it introduces more complex
+> > > and thp-specific handling in migration code, so it might not good.
+> > > 
+> > > So this patch is suggesting to fix the issue by enabling thp migration
+> > > for shmem thp. Both of anon/shmem thp are migratable so we don't need
+> > > precheck about the type of thps.
+> > > 
+> > > Fixes: commit 72b39cfc4d75 ("mm, memory_hotplug: do not fail offlining too early")
+> > > Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > > Cc: stable@vger.kernel.org # v4.15+
+> > 
+> > I do not really feel qualified to give my ack but this is the right
+> > approach for the fix. We simply do expect that LRU pages are migrateable
+> > as well as zone_movable pages.
+> > 
+> > Andrew, do you plan to take it (with Kirill's ack).
+> > 
 > 
-> On 11/04/2018 01:01, Jingoo Han wrote:
-> > On Monday, April 9, 2018 5:41 AM, Gustavo Pimentel wrote:
-> >>
-> >> Replaces a simple division by 2 to a right shift rotation of 1 bit.
-> >
-> > It looks good. However, would you add a simple reason to the commit
-> > message?
-> 
-> Sure.
-> 
-> Can be this one?
-> 
-> Probably any recent and decent compiler does this kind of substitution
-> in order to improve code performance. Nevertheless it's a coding good
-> practice whenever there is a division / multiplication by multiple of 2
-> to replace it by the equivalent operation in this case, the shift
-> rotation.
+> Sure.  What happened with "Michal's fix in another email"
+> (https://lkml.kernel.org/r/20180406051452.GB23467@hori1.linux.bs1.fc.nec.co.jp)?
 
-Yes, that's what I wanted. The most platforms using 'dwc' are based on
-ARM CPUs. So, the shift rotation can be better.
-Thank you.
+I guess you meant http://lkml.kernel.org/r/20180405190405.GS6312@dhcp22.suse.cz
 
-Best regards,
-Jingoo Han
+Well, that would be a workaround in case we didn't have a proper fix. It
+is much simpler but it wouldn't make backporting to older kernels any
+easier because it depends on other non-trivial changes you already have
+in your tree. So having a full THP pagecache migration support is
+preferred of course.
 
-> 
-> >
-> > Best regards,
-> > Jingoo Han
-> >
-> >>
-> >> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> >> ---
-> >> Change v1->v2:
-> >> - Nothing changed, just to follow the patch set version.
-> >>
-> >>  drivers/pci/dwc/pcie-designware-host.c | 8 ++++----
-> >>  1 file changed, 4 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/pci/dwc/pcie-designware-host.c
-> >> b/drivers/pci/dwc/pcie-designware-host.c
-> >> index 03e9b82..8e6fed4 100644
-> >> --- a/drivers/pci/dwc/pcie-designware-host.c
-> >> +++ b/drivers/pci/dwc/pcie-designware-host.c
-> >> @@ -332,8 +332,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
-> >>
-> >>  	cfg_res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-> >> "config");
-> >>  	if (cfg_res) {
-> >> -		pp->cfg0_size = resource_size(cfg_res) / 2;
-> >> -		pp->cfg1_size = resource_size(cfg_res) / 2;
-> >> +		pp->cfg0_size = resource_size(cfg_res) >> 1;
-> >> +		pp->cfg1_size = resource_size(cfg_res) >> 1;
-> >>  		pp->cfg0_base = cfg_res->start;
-> >>  		pp->cfg1_base = cfg_res->start + pp->cfg0_size;
-> >>  	} else if (!pp->va_cfg0_base) {
-> >> @@ -377,8 +377,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
-> >>  			break;
-> >>  		case 0:
-> >>  			pp->cfg = win->res;
-> >> -			pp->cfg0_size = resource_size(pp->cfg) / 2;
-> >> -			pp->cfg1_size = resource_size(pp->cfg) / 2;
-> >> +			pp->cfg0_size = resource_size(pp->cfg) >> 1;
-> >> +			pp->cfg1_size = resource_size(pp->cfg) >> 1;
-> >>  			pp->cfg0_base = pp->cfg->start;
-> >>  			pp->cfg1_base = pp->cfg->start + pp->cfg0_size;
-> >>  			break;
-> >> --
-> >> 2.7.4
-> >>
-> >
-> >
-> 
-> Regards,
-> Gustavo
+-- 
+Michal Hocko
+SUSE Labs
