@@ -1,106 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757317AbeDKUN4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 16:13:56 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:34832 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756230AbeDKUNx (ORCPT
+        id S933391AbeDKUT6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 16:19:58 -0400
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:45041 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932581AbeDKUTz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 16:13:53 -0400
-X-Google-Smtp-Source: AIpwx4/e8krCaOMsKhe5z0CudVY6ZpcZ57lwjaXetxGJZzWUUTd62CCyLt9W3Dik1ZL/E12l8lynLlgBhxVrq6MV2zw=
+        Wed, 11 Apr 2018 16:19:55 -0400
+X-Google-Smtp-Source: AIpwx4/NGmH2E/khPrMol1Re0Y3B0OCenaSu1zPPI2QvgNq68boWTRzPZNtMtkk+OwxLROU7vGUWMg==
+Date: Wed, 11 Apr 2018 23:19:50 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+Subject: [PATCH] proc: fixup =?iso-8859-1?Q?=A9_sig?= =?iso-8859-1?Q?n?=
+Message-ID: <20180411201950.GA12904@avx2>
 MIME-Version: 1.0
-In-Reply-To: <87bmepn2o8.fsf_-_@xmission.com>
-References: <87d0z6ttxe.fsf@xmission.com> <CALCETrVR1qHCndoaqXWosy8ckMTyT2RequQTgg0MZUw_sMPwwQ@mail.gmail.com>
- <87bmepn2o8.fsf_-_@xmission.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 11 Apr 2018 22:13:52 +0200
-X-Google-Sender-Auth: jGPDbiQQgPOCCW5rbZZCPl9sn2E
-Message-ID: <CAK8P3a2HaYDOnWYb5cagJeHKmeoWAz1MGzGfGwbeymEqDpvWzw@mail.gmail.com>
-Subject: Re: Q: Do si_time and si_utime need to be 64bit for y2038?
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 6:11 PM, Eric W. Biederman
-<ebiederm@xmission.com> wrote:
->
-> Arnd,
->
-> I am looking at the siginfo si_utime and si_stime fields of type clock_t
-> on 32bit architectures except for x32 these are 32bit fields.  For y2038
-> do we want to extend these fields to 64bit like x32 does?  Or is it not
-> a problem for these fields to be 32bit?
+Andrew's scripts butchered it :-(
 
-Short answer: I think we're fine without changing it, at least for y2038.
+Add copyright in two files before they get autorubberstamped.
 
-> I care right now because I am trying to figure out how
-> copy_siginfo_to_user32 and copy_siginfo_to_user need to evolve.
->
-> If we are going to extend existing architectures with 64bit variations
-> of si_utime and si_stime copy_siginfo_to_user and copy_siginfo_to_user32
-> needs an additional parameter describing which variant they should be
-> copying.
->
-> It looks like posix does not define si_stime and and si_utime so we only
-> have to be backwards compatible with ourselves for whatever that is
-> worth.
->
-> I am wondering if perhaps the general solution might be to just add
-> two extra fields si_stime64 and si_utime64 and always fill those in.
->
-> Arnd do you have any ideas?
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-There are generally four areas to be aware of with the data structure
-changes required for y2038:
+ tools/testing/selftests/proc/proc-loadavg-001.c        |    2 +-
+ tools/testing/selftests/proc/proc-self-map-files-001.c |    2 +-
+ tools/testing/selftests/proc/proc-self-map-files-002.c |    2 +-
+ tools/testing/selftests/proc/proc-self-syscall.c       |   15 +++++++++++++++
+ tools/testing/selftests/proc/proc-self-wchan.c         |   15 +++++++++++++++
+ tools/testing/selftests/proc/proc-uptime-001.c         |    2 +-
+ tools/testing/selftests/proc/proc-uptime-002.c         |    2 +-
+ tools/testing/selftests/proc/proc-uptime.h             |    2 +-
+ tools/testing/selftests/proc/read.c                    |    2 +-
+ 9 files changed, 37 insertions(+), 7 deletions(-)
 
-1. Stuff that overflows in the next few decades (either 2038 or some other
-    year). si_utime/si_stime counts relative times, so there is no overflow
-    happening at a particular date that we have to be aware of. However,
-    it does overflow when a 32-bit process runs for more than
-    (LONG_MAX / USER_HZ) seconds, which is about 248 days.
-    When you have a large SMP system with 256 CPUs and run a single
-    task across all of them, the overflow happens within one day of runtime.
-    This is a rare use case for 32-bit tasks, but it is an actual limitation
-    that we may want to fix regardless of the y2038 changes.
-
-2. Types that don't overflow in a particular interface (because they count
-    relative times) but do overflow in others. We have a problem in
-    wait4()/waidid() and getrusage() here, since those use 'struct timeval'
-    to count process times. Those can count up to 68 years of process
-    times (97 days on a 256-core machine running one task), so we
-    probably don't care about the overflow, but POSIX requires the
-    use of timeval [1] and we have to redefine that structure with an
-    incompatible layout.
-    We do have a choice between either keeping the existing structure
-    and letting the libc translate the 32-bit time_t to a 64-bit time_t,
-    or adding replacement syscalls for both getrusage() and waitid().
-    IIRC we don't need a new wait4(), since that can be implemented
-    using waitid.
-    clock_t is used in exactly two places: struct siginfo and struct tms,
-    so if we change one of the two, we also have to change the other.
-
-3. In some cases, two structures are almost identical between 32-bit
-    and 64-bit architectures. Using the exact same layout simplifies the
-    compat syscall handling. I think in x32, this was a factor as it means
-    that e.g. times() is shared between x32 and x86-64.
-
-4. If we change an interface, we may want to improve it in more than
-   one way, like we did with stat()->stat64()->statx() or time()->
-   gettimeofday()->clock_gettime()->clock_gettime64().
-   If we introduce a larger range for the 32-bit siginfo and tms
-   structures, we could also consider extending the resolution to
-   nanoseconds. I wouldn't follow rusage's timeval but use
-   timespec64 (__kernel_timespec as seen from user space).
-   64-bit nanoseconds are another option, but that again
-   overflows after 584 CPU-years or 52 days on a 4096-core
-   system.
-
-         Arnd
-
-[1] http://pubs.opengroup.org/onlinepubs/009696699/basedefs/sys/resource.h.html
+--- a/tools/testing/selftests/proc/proc-loadavg-001.c
++++ b/tools/testing/selftests/proc/proc-loadavg-001.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
++ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
+  *
+  * Permission to use, copy, modify, and distribute this software for any
+  * purpose with or without fee is hereby granted, provided that the above
+--- a/tools/testing/selftests/proc/proc-self-map-files-001.c
++++ b/tools/testing/selftests/proc/proc-self-map-files-001.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
++ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
+  *
+  * Permission to use, copy, modify, and distribute this software for any
+  * purpose with or without fee is hereby granted, provided that the above
+--- a/tools/testing/selftests/proc/proc-self-map-files-002.c
++++ b/tools/testing/selftests/proc/proc-self-map-files-002.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
++ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
+  *
+  * Permission to use, copy, modify, and distribute this software for any
+  * purpose with or without fee is hereby granted, provided that the above
+--- a/tools/testing/selftests/proc/proc-self-syscall.c
++++ b/tools/testing/selftests/proc/proc-self-syscall.c
+@@ -1,3 +1,18 @@
++/*
++ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
+ #define _GNU_SOURCE
+ #include <unistd.h>
+ #include <sys/syscall.h>
+--- a/tools/testing/selftests/proc/proc-self-wchan.c
++++ b/tools/testing/selftests/proc/proc-self-wchan.c
+@@ -1,3 +1,18 @@
++/*
++ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+--- a/tools/testing/selftests/proc/proc-uptime-001.c
++++ b/tools/testing/selftests/proc/proc-uptime-001.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
++ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
+  *
+  * Permission to use, copy, modify, and distribute this software for any
+  * purpose with or without fee is hereby granted, provided that the above
+--- a/tools/testing/selftests/proc/proc-uptime-002.c
++++ b/tools/testing/selftests/proc/proc-uptime-002.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
++ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
+  *
+  * Permission to use, copy, modify, and distribute this software for any
+  * purpose with or without fee is hereby granted, provided that the above
+--- a/tools/testing/selftests/proc/proc-uptime.h
++++ b/tools/testing/selftests/proc/proc-uptime.h
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
++ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
+  *
+  * Permission to use, copy, modify, and distribute this software for any
+  * purpose with or without fee is hereby granted, provided that the above
+--- a/tools/testing/selftests/proc/read.c
++++ b/tools/testing/selftests/proc/read.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
++ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
+  *
+  * Permission to use, copy, modify, and distribute this software for any
+  * purpose with or without fee is hereby granted, provided that the above
