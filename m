@@ -1,117 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751961AbeDKHbC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 03:31:02 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:34711 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750743AbeDKHa6 (ORCPT
+        id S1752091AbeDKHcW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 03:32:22 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:51414 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750730AbeDKHcU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 03:30:58 -0400
-X-Google-Smtp-Source: AIpwx4/584XyGRxMnpM3Qe/IgvufHyCML/GXmw5t2a6eM5Hz4z9Dje5fxYWyNxJH5JeQ8WYDJEjFOXWGkbLMr884JhI=
+        Wed, 11 Apr 2018 03:32:20 -0400
+Date: Wed, 11 Apr 2018 09:32:16 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH RESEND] backlight: pwm_bl: don't use GPIOF_* with
+ gpiod_get_direction
+Message-ID: <20180411073215.fzvh4ejj2kd7wam3@verge.net.au>
+References: <20180410123241.25745-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-In-Reply-To: <20180410224805.GA21429@saruman>
-References: <20171219114112.939391-1-arnd@arndb.de> <20180410224805.GA21429@saruman>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 11 Apr 2018 09:30:56 +0200
-X-Google-Sender-Auth: zIrBH2DwpijzqcjQg8mMkwyBu-c
-Message-ID: <CAK8P3a0-_u7_FCj-nH0izBv4ub6krm1uA32bwi2jtBzXJePcnQ@mail.gmail.com>
-Subject: Re: [PATCH] bug.h: Work around GCC PR82365 in BUG()
-To: James Hogan <jhogan@kernel.org>
-Cc: "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>, Maciej Rozycki <macro@mips.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Vineet Gupta <vgupta@synopsys.com>, Mikael Starvik <starvik@axis.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Christopher Li <sparse@chrisli.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>, Ingo Molnar <mingo@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:SYNOPSYS ARC ARCHITECTURE"
-        <linux-snps-arc@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-cris-kernel@axis.com, linux-ia64@vger.kernel.org,
-        linux-m68k@vger.kernel.org, sparclinux <sparclinux@vger.kernel.org>,
-        linux-sparse@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180410123241.25745-1-wsa+renesas@sang-engineering.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 12:48 AM, James Hogan <jhogan@kernel.org> wrote:
-> Hi Arnd,
->
-> On Tue, Dec 19, 2017 at 12:39:33PM +0100, Arnd Bergmann wrote:
->> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
->> index 5d595cfdb2c4..66cfdad68f7e 100644
->> --- a/include/linux/compiler-gcc.h
->> +++ b/include/linux/compiler-gcc.h
->> @@ -205,6 +205,15 @@
->>  #endif
->>
->>  /*
->> + * calling noreturn functions, __builtin_unreachable() and __builtin_trap()
->> + * confuse the stack allocation in gcc, leading to overly large stack
->> + * frames, see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82365
->> + *
->> + * Adding an empty inline assembly before it works around the problem
->> + */
->> +#define barrier_before_unreachable() asm volatile("")
->> +
->> +/*
->>   * Mark a position in code as unreachable.  This can be used to
->>   * suppress control flow warnings after asm blocks that transfer
->>   * control elsewhere.
->> @@ -214,7 +223,11 @@
->>   * unreleased.  Really, we need to have autoconf for the kernel.
->>   */
->>  #define unreachable() \
->> -     do { annotate_unreachable(); __builtin_unreachable(); } while (0)
->> +     do {                                    \
->> +             annotate_unreachable();         \
->> +             barrier_before_unreachable();   \
->> +             __builtin_unreachable();        \
->> +     } while (0)
->
-> Unfortunately this breaks microMIPS builds (e.g. MIPS
-> micro32r2_defconfig and micro32r2el_defconfig) on gcc 7.2, due to the
-> lack of .insn in the asm volatile. Because of the
-> __builtin_unreachable() there is no code following it. Without the empty
-> asm the compiler will apparently put the .insn there automatically, but
-> with the empty asm it doesn't. Therefore the assembler won't treat an
-> immediately preceeding label as pointing at 16-bit microMIPS
-> instructions which need the ISA bit set, i.e. bit 0 of the address.
-> This causes assembler errors since the branch target is treated as a
-> different ISA mode:
->
-> arch/mips/mm/dma-default.s:3265: Error: branch to a symbol in another ISA mode
-> arch/mips/mm/dma-default.s:5027: Error: branch to a symbol in another ISA mode
+On Tue, Apr 10, 2018 at 02:32:40PM +0200, Wolfram Sang wrote:
+> The documentation was wrong, gpiod_get_direction() returns 0/1 instead
+> of the GPIOF_* flags. The docs were fixed with commit 94fc73094abe47
+> ("gpio: correct docs about return value of gpiod_get_direction"). Now,
+> fix this user (until a better, system-wide solution is in place).
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-Ok, I see.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-> Due to a compiler bug on gcc 4.9.2 -> somewhere before 7.2, Paul
-> submitted these patches a while back:
-> https://patchwork.linux-mips.org/patch/13360/
-> https://patchwork.linux-mips.org/patch/13361/
->
-> Your patch (suitably fixed for microMIPS) would I imagine fix that issue
-> too (it certainly fixes the resulting link error on microMIPS builds
-> with an old toolchain).
->
-> Before I forward port those patches to add .insn for MIPS, is that sort
-> of approach (an arch specific asm/compiler-gcc.h to allow MIPS to
-> override barrier_before_unreachable()) an acceptable fix?
-
-That sounds fine to me. However, I would suggest making that
-asm/compiler.h instead of asm/compiler-gcc.h, so we can also
-use the same file to include workarounds for clang if needed.
-
-       Arnd
+> ---
+> 
+> Changes since V1:
+> 	* rebased to top-of-linus-tree
+> 	* added tag from Daniel, thanks!
+> 
+> Through which tree does this need to go?
+> 
+>  drivers/video/backlight/pwm_bl.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> index 1c2289ddd555..0fa7d2bd0e48 100644
+> --- a/drivers/video/backlight/pwm_bl.c
+> +++ b/drivers/video/backlight/pwm_bl.c
+> @@ -301,14 +301,14 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+>  
+>  	/*
+>  	 * If the GPIO is not known to be already configured as output, that
+> -	 * is, if gpiod_get_direction returns either GPIOF_DIR_IN or -EINVAL,
+> -	 * change the direction to output and set the GPIO as active.
+> +	 * is, if gpiod_get_direction returns either 1 or -EINVAL, change the
+> +	 * direction to output and set the GPIO as active.
+>  	 * Do not force the GPIO to active when it was already output as it
+>  	 * could cause backlight flickering or we would enable the backlight too
+>  	 * early. Leave the decision of the initial backlight state for later.
+>  	 */
+>  	if (pb->enable_gpio &&
+> -	    gpiod_get_direction(pb->enable_gpio) != GPIOF_DIR_OUT)
+> +	    gpiod_get_direction(pb->enable_gpio) != 0)
+>  		gpiod_direction_output(pb->enable_gpio, 1);
+>  
+>  	pb->power_supply = devm_regulator_get(&pdev->dev, "power");
+> -- 
+> 2.11.0
+> 
