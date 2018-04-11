@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479810-2-13831759941735028042
+X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479809-2-15164786277572952062
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479809; b=rdJsX0TDzFVUlXbNoD+NVSfrb2sgFUIQTEauUmcIwzwfZxc7IL
-    qOzJ+UidsxZjhf6TlHKlLYS00J41irIBzU7pH6jaWgu2NODIOvrrx8fC+7C/WTDe
-    SPg7VB9TSnHF9sPnZQ06498s65v2ndqj+N8NvO9BW4PpQB4Kb6Ql4xW0lfbMYt52
-    BnFo0O+cj9uMLxaZeOF62L0wq1Psy2o46YoR0Qebt2CRECtfZivcjYKxOs5LFhTa
-    vAN7L3uLgAL/n/ubhRDpJDjZOC+RdkGCp2sDOl8vpbrf00LhxsbQzlMMEFOea99f
-    wjLp2LnWwbfebOMfK9J1XEUPVxq3/nKB+shw==
+    1523479808; b=lpVcRIZAN2WVQjJlq1bK7x99+I6CgkF5liJYe9Co3A+QLSgzWV
+    ttINvOEVe9LpZ29Qj1PnmerNatgs0p73x5pQHlhke9MLDmxVO8bU/MbHn96zM0DD
+    KAEVJPPEb6iNsT7aL8PRdMloE3hsmily4HrjN1WlOolglum6DuLaNFukdtredcZq
+    TpSyP8gFcDbKbDJBuJQu9l9FygAA0X+zcZTkWzywv4sArr3l2r4i89Vh4sPU5Wqn
+    ZMz74iZXEXmvlDVLOsX3MjLMyGpmoE3iE1oElL3/pv9TKyvuhVulZ5sneFpXDeNa
+    5Do5c0Vsk5tEMnF43JEA1UVuwLbNnMY8LF+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479809; bh=icEpjjEKdOYYZ5KHGQyAxHf4sgFbS+
-    qSvOUQaTqYMH4=; b=b6qyjuvVvoMF0Y7dnPKGFsfMbJF0Iz5y94OuH3Of/54sHY
-    eEVnwc8RWkj55dfSji5H0gdSwKOGYGu2vhHaVhCHyL8kcLY08W+ItQh08Ru4T5gj
-    6upLtWhcKE3KzNTqnbBP7gK2RNte5Xy72+C7MEY1yi5jikSlv1NdkNU3K7CquYZE
-    /pap0C8sdimeOWJJyPBBA61I+Pt6kGm4tRIOAZ1mCDvFApWbDfI13RRfyacEvdiV
-    798qMQvy/BhIQXeeWJAnz/ZjbvF+FtQ8SNcGj58qafyOjCfcfEoqdfZebG79yxGP
-    iRegELjsic6YxnsJ+9jtDUfnBPLZ4d8hzBCYFO2g==
+    :list-id; s=fm2; t=1523479808; bh=oDnvPlbnXhsVMqE/85EzB3wMViXSp2
+    /2rZE2d35YbyY=; b=RWmaJiMy8QlFs6V2xfU0N9tizVfLV4pAWGCekGlaSFyIc7
+    cvTIS2IT+HeF+g9Vz+DEEWyReSe3WZjXITaknl9BhD2d+JQf1jMHaRFk0meyVAWz
+    Saudw64Rnca60I7XHqzL48U182eUwXHooP/yPnzwM4p4mIAKeKeIXgx4wHDLJUZJ
+    8izgX2pt2z2egXhMHqWzNq78CInazdCkwzcEmyrETtAJtHZJcTcuh8jeA8BFEY4G
+    efnWfmW4/2AlZZibHxl/orYIX4I1ATfOJJw5hueVaYfFba61Uml7xmy+dgG9SlgD
+    pub8CEL8QbJylMNHEri2BHPTj65aZCmO000I4Ryw==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,22 +51,22 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBVkYrXllWhAppq+GqgvE+EKelEj3U52xjAK38hwYbqxySpfj+YxqsxHUBxNPV2gI+CViKXwpHrb/S4romA55rfgCu1KAC0v9rx9xlvijONbOIixMpjm
-    pvXaVSE6w1A+4BIUWDgEFzE2RgCOIlcX7S9qD/fySWgBMnG0yVabDJDg6LQ0CkHCFgwwj6yDPPrQgJkHbLG9OroomvarzPUlxQ490HWJLGjaw/48OlUWHAhq
+X-CM-Envelope: MS4wfEQjAR5+fAQKynjVQSMQ+2LdDPbVfNMnOsxXqQIYd6O/HGVxYRb4O/4Psnu7/2nTPxKJ2yxTLpHeo292S5W9G3SKhytTPrujoJ65rMUH8UB8UKdeq5/H
+    oI3KUBp7mNXh/txyefh31oIx0PhfHy2975kKuAoNIJ1gOW+G88xNjcd220V02Wd8Tg8XjaCRd3UBoqScrv86WI5uANkzTNwyHqiQSGGUbBVAB6YqlKzuAvNL
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
     a=AMTvMMonAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=IoLR7627HhPfafYgmrEA:9 a=QEXdDO2ut3YA:10 a=p5oU-coMHzOM5oT1KbOf:22
+    a=MxJhSPhoEE-0-1SkMGIA:9 a=QEXdDO2ut3YA:10 a=p5oU-coMHzOM5oT1KbOf:22
     a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755640AbeDKSp6 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:45:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58736 "EHLO
+        id S1755637AbeDKSp5 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:45:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58754 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755631AbeDKSpx (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:53 -0400
+        with ESMTP id S1755632AbeDKSp4 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:56 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -74,9 +74,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
         Jonathan Cameron <jic23@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 055/190] iio: hi8435: avoid garbage event at first enable
-Date: Wed, 11 Apr 2018 20:35:01 +0200
-Message-Id: <20180411183553.570751720@linuxfoundation.org>
+Subject: [PATCH 4.4 056/190] iio: hi8435: cleanup reset gpio
+Date: Wed, 11 Apr 2018 20:35:02 +0200
+Message-Id: <20180411183553.625668664@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -97,51 +97,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 
 
-[ Upstream commit ee19ac340c5fdfd89c6348be4563453c61ab54a9 ]
+[ Upstream commit 61305664a542f874283f74bf0b27ddb31f5045d7 ]
 
-Currently, driver generates events for channels if new reading differs
-from previous one. This "previous value" is initialized to zero, which
-results into event if value is constant-one.
+Reset GPIO is active low.
 
-Fix that by initializing "previous value" by reading at event enable
-time.
+Currently driver uses gpiod_set_value(1) to clean reset, which depends
+on device tree to contain GPIO_ACTIVE_HIGH - that does not match reality.
 
-This provides reliable sequence for userspace:
-- enable event,
-- AFTER THAT read current value,
-- AFTER THAT each event will correspond to change.
+This fixes driver to use _raw version of gpiod_set_value() to enforce
+active-low semantics despite of what's written in device tree. Allowing
+device tree to override that only opens possibility for errors and does
+not add any value.
+
+Additionally, use _cansleep version to make things work with i2c-gpio
+and other sleeping gpio drivers.
 
 Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 Signed-off-by: Jonathan Cameron <jic23@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iio/adc/hi8435.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/iio/adc/hi8435.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
 --- a/drivers/iio/adc/hi8435.c
 +++ b/drivers/iio/adc/hi8435.c
-@@ -121,10 +121,21 @@ static int hi8435_write_event_config(str
- 				     enum iio_event_direction dir, int state)
- {
- 	struct hi8435_priv *priv = iio_priv(idev);
-+	int ret;
-+	u32 tmp;
-+
-+	if (state) {
-+		ret = hi8435_readl(priv, HI8435_SO31_0_REG, &tmp);
-+		if (ret < 0)
-+			return ret;
-+		if (tmp & BIT(chan->channel))
-+			priv->event_prev_val |= BIT(chan->channel);
-+		else
-+			priv->event_prev_val &= ~BIT(chan->channel);
+@@ -453,13 +453,15 @@ static int hi8435_probe(struct spi_devic
+ 	priv->spi = spi;
  
--	priv->event_scan_mask &= ~BIT(chan->channel);
--	if (state)
- 		priv->event_scan_mask |= BIT(chan->channel);
-+	} else
-+		priv->event_scan_mask &= ~BIT(chan->channel);
+ 	reset_gpio = devm_gpiod_get(&spi->dev, NULL, GPIOD_OUT_LOW);
+-	if (IS_ERR(reset_gpio)) {
+-		/* chip s/w reset if h/w reset failed */
++	if (!IS_ERR(reset_gpio)) {
++		/* need >=100ns low pulse to reset chip */
++		gpiod_set_raw_value_cansleep(reset_gpio, 0);
++		udelay(1);
++		gpiod_set_raw_value_cansleep(reset_gpio, 1);
++	} else {
++		/* s/w reset chip if h/w reset is not available */
+ 		hi8435_writeb(priv, HI8435_CTRL_REG, HI8435_CTRL_SRST);
+ 		hi8435_writeb(priv, HI8435_CTRL_REG, 0);
+-	} else {
+-		udelay(5);
+-		gpiod_set_value(reset_gpio, 1);
+ 	}
  
- 	return 0;
- }
+ 	spi_set_drvdata(spi, idev);
