@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477130-2-2716522820955577733
+X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477116-2-15954822157705203050
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477130; b=fkS/ZEEiXREIrevgcmOOvj34jOjb2TiPUYoACincI6sIsHL3mp
-    eflmkyjQbovFMZ0HmWN0wDF2WqXo/zwizkopXfOE+xXPa+lMebT6Ni6B5HSxTzZF
-    96wsnJV167YQsqjtUdTzqJXIrPi3BgSzdqxfTdyUwbaNOHdnr2GQcvnQUeIgcjS1
-    H0TLlFIo4LDg1nyRnq9FGYRJpJhNz+43maZBWtgyTWwNHatPvFx0rxYxeJKRtQhb
-    1+1zPLIJQgD4AIPUmWFSA3ds+LlKyqOUzxepo0llSmkGut2T6Y6yRnBA4TP5TuTT
-    f4PwkSXQNGi5OxXkeoBeq/37J08yPrBYrc5Q==
+    1523477115; b=L193sYOUO+vf1p4SJolKFAL0MzU2BTdhqUccIYIXPv00UvBE1i
+    mO4MntHbfBgs9bfzgfTjJvg+IWZ0r4mOTSAd9rrwXedo81/FBqo0pZvBBeizW2gr
+    /4lWHR0vooY+4InMOg1n8TJIHdlIFt6BFUiQ7YMwse6FPuojtXoGkgqVifl8tvzX
+    QIwkcVdDfK6mTqOVuAUlNiX8rx1pyG66tl3skm3qvKCbzAjCSYCNAqcRRxaAkBlx
+    zE30OFSb5X8CoTTzT7LBkghbu4KL3bJZFV3fiH882Lr6WbYfIt0nURKs8L6RPLzk
+    eyQMNxcM2LxwG5ayQNxa6byxxAh6CjMstHDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523477130; bh=8eZGYovNHuZ9CamBKL3IkL5KgowOus
-    33NM5cSNm+3Xg=; b=dhRUPXfMj054ylbU5V7D2dGGFEUazF/4WD7YNsTmUurfza
-    3rLBVIw8NAv2YX/iooEgrgwd79vgEhy6hlsSL2KV/snWdiekaxUS4tOUOclDNmHy
-    uvEwSSQA78426Fx7kHto5+UEDHBqTypRiztfqNwbAC/qQ62Ud+6vdu6Zvpme0OCz
-    83VUXJJlpWwnUhkw1XiyvfEETNgt7BeF+SICScydi4wR33oCmn7fTw/AWiFye6+g
-    vp1p6XrhG6MBHMGa46nDphD29oBuuOFWnDWSj6Cta5Yvs1BmmdXLlQmH14T1AEXJ
-    Q3eAU0q40Va3y5bRfYtydphzMuM6EYja4zThMhmA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523477115; bh=q55TDuEAds4m47KdwbNd0pHTsPFbRe
+    pFLi256NHsg6s=; b=WxJBi/XHYZNY+lJSDFXSRE0jWrSdttd9ykds7vmrVjPdTe
+    1UQMa2xRKtMyZ5YKqTgKCa9L9ZYv9sWDa1UbXA4mg33rzdBVmPOogihWJ4p7YSEH
+    +3yPPI5sTP6GYY8GI8dZyDBWNeuFUtREctXm+Xh8hFnJzJJLHrwDYQclqEbVJ9/B
+    IupoodtBPdS/xPG1+J9rlQjL554Kw6VRAZDS6inPkBjcjCTv+BafcJ2Usap6LtQY
+    VrGV7VnMJJr/wU3fkyD56T7zoNgVkA7YMpg9ZgTwle640xpxPMlnV4kgV7mR8bsr
+    S3Xg3yEqd1OqDM5wxvJ1m6rbFFQ2NDAGUbO5yA+A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,31 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHTjQrWt85c5SxfMVhorYV5gwT0r03Y8hwt0Ms7rHRnKkU/NId9PZ6KoZnxehlKq5LkBZ2nuJwTrXMdIKlwKkQMxbr/OSsIi0xjnO6wsqaJwSRE9uD+V
-    llJ14SzF88By6wqf2U+OwQ63XJJngQF61yu7Cd99+x8mZ47Yo5kFt88np7nejTZM5n2YHYqE6DEeqCSRWRIvp2+q7r/BH0Tgo+tLEMNrzOICpPJHfJB2GL8U
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCm89bnAoFkd7jiwtkjyqCRwrKYl4IcloxpyNVWBhFByna1N1VNqdoLPl3EIown2Kv/iNgICOM9vaOAlyRRdbTU/QUXi590zLi+Mp18HOGXW6QYLjsnt
+    o4EaAF3gVVORH+ciA8rrO76tPO2COcG03SbhuX6qU98yB8PTL9A72e9bg3NPLrDd4zfzYqRbmN8wYTfprt6ifayoJPmAC7+tJbLk46UZWRvIAy5AMg0x8+uG
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=vmLDa1wCAAAA:8 a=eh1Yez-EAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=eK2PtGytKguSqSfQ0NAA:9 a=QEXdDO2ut3YA:10
-    a=h8Bt5HTj68qkN2fS7gvA:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VnNF1IyMAAAA:8 a=FOH2dFAWAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=OX198wCGgoSroHnkHdYA:9 a=4EkXXCeaJOvQrkxp:21 a=mnnycdplF6YCDCJn:21
+    a=QEXdDO2ut3YA:10 a=i3VuKzQdj-NEYjvDI-p3:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757243AbeDKUFK (ORCPT <rfc822;greg@kroah.com>);
+        id S1756452AbeDKUFK (ORCPT <rfc822;greg@kroah.com>);
         Wed, 11 Apr 2018 16:05:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35484 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35520 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933745AbeDKSzf (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:55:35 -0400
+        with ESMTP id S933731AbeDKSzk (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:55:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neil Horman <nhorman@tuxdriver.com>,
-        Shrikrishna Khare <skhare@vmware.com>,
-        "VMware, Inc." <pv-drivers@vmware.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Wen Xiong <wenxiong@linux.vnet.ibm.com>,
+        Jens Axboe <axboe@fb.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 037/310] vmxnet3: ensure that adapter is in proper state during force_close
-Date: Wed, 11 Apr 2018 20:32:56 +0200
-Message-Id: <20180411183623.869665011@linuxfoundation.org>
+Subject: [PATCH 4.9 029/310] blk-mq: NVMe 512B/4K+T10 DIF/DIX format returns I/O error on dd with split op
+Date: Wed, 11 Apr 2018 20:32:48 +0200
+Message-Id: <20180411183623.546899882@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -95,48 +93,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Neil Horman <nhorman@tuxdriver.com>
+From: Wen Xiong <wenxiong@linux.vnet.ibm.com>
 
 
-[ Upstream commit 1c4d5f51a812a82de97beee24f48ed05c65ebda5 ]
+[ Upstream commit f36ea50ca0043e7b1204feaf1d2ba6bd68c08d36 ]
 
-There are several paths in vmxnet3, where settings changes cause the
-adapter to be brought down and back up (vmxnet3_set_ringparam among
-them).  Should part of the reset operation fail, these paths call
-vmxnet3_force_close, which enables all napi instances prior to calling
-dev_close (with the expectation that vmxnet3_close will then properly
-disable them again).  However, vmxnet3_force_close neglects to clear
-VMXNET3_STATE_BIT_QUIESCED prior to calling dev_close.  As a result
-vmxnet3_quiesce_dev (called from vmxnet3_close), returns early, and
-leaves all the napi instances in a enabled state while the device itself
-is closed.  If a device in this state is activated again, napi_enable
-will be called on already enabled napi_instances, leading to a BUG halt.
+When formatting NVMe to 512B/4K + T10 DIf/DIX, dd with split op returns
+"Input/output error". Looks block layer split the bio after calling
+bio_integrity_prep(bio). This patch fixes the issue.
 
-The fix is to simply enausre that the QUIESCED bit is cleared in
-vmxnet3_force_close to allow quesence to be completed properly on close.
+Below is how we debug this issue:
+(1)format nvme to 4K block # size with type 2 DIF
+(2)dd with block size bigger than 1024k.
+oflag=direct
+dd: error writing '/dev/nvme0n1': Input/output error
 
-Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
-CC: Shrikrishna Khare <skhare@vmware.com>
-CC: "VMware, Inc." <pv-drivers@vmware.com>
-CC: "David S. Miller" <davem@davemloft.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+We added some debug code in nvme device driver. It showed us the first
+op and the second op have the same bi and pi address. This is not
+correct.
+
+1st op: nvme0n1 Op:Wr slba 0x505 length 0x100, PI ctrl=0x1400,
+	dsmgmt=0x0, AT=0x0 & RT=0x505
+	Guard 0x00b1, AT 0x0000, RT physical 0x00000505 RT virtual 0x00002828
+
+2nd op: nvme0n1 Op:Wr slba 0x605 length 0x1, PI ctrl=0x1400, dsmgmt=0x0,
+	AT=0x0 & RT=0x605  ==> This op fails and subsequent 5 retires..
+	Guard 0x00b1, AT 0x0000, RT physical 0x00000605 RT virtual 0x00002828
+
+With the fix, It showed us both of the first op and the second op have
+correct bi and pi address.
+
+1st op: nvme2n1 Op:Wr slba 0x505 length 0x100, PI ctrl=0x1400,
+	dsmgmt=0x0, AT=0x0 & RT=0x505
+	Guard 0x5ccb, AT 0x0000, RT physical 0x00000505 RT virtual
+	0x00002828
+2nd op: nvme2n1 Op:Wr slba 0x605 length 0x1, PI ctrl=0x1400, dsmgmt=0x0,
+	AT=0x0 & RT=0x605
+	Guard 0xab4c, AT 0x0000, RT physical 0x00000605 RT virtual
+	0x00003028
+
+Signed-off-by: Wen Xiong <wenxiong@linux.vnet.ibm.com>
+Signed-off-by: Jens Axboe <axboe@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/vmxnet3/vmxnet3_drv.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ block/blk-mq.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/vmxnet3/vmxnet3_drv.c
-+++ b/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -2962,6 +2962,11 @@ vmxnet3_force_close(struct vmxnet3_adapt
- 	/* we need to enable NAPI, otherwise dev_close will deadlock */
- 	for (i = 0; i < adapter->num_rx_queues; i++)
- 		napi_enable(&adapter->rx_queue[i].napi);
-+	/*
-+	 * Need to clear the quiesce bit to ensure that vmxnet3_close
-+	 * can quiesce the device properly
-+	 */
-+	clear_bit(VMXNET3_STATE_BIT_QUIESCED, &adapter->state);
- 	dev_close(adapter->netdev);
- }
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1265,13 +1265,13 @@ static blk_qc_t blk_mq_make_request(stru
  
+ 	blk_queue_bounce(q, &bio);
+ 
++	blk_queue_split(q, &bio, q->bio_split);
++
+ 	if (bio_integrity_enabled(bio) && bio_integrity_prep(bio)) {
+ 		bio_io_error(bio);
+ 		return BLK_QC_T_NONE;
+ 	}
+ 
+-	blk_queue_split(q, &bio, q->bio_split);
+-
+ 	if (!is_flush_fua && !blk_queue_nomerges(q) &&
+ 	    blk_attempt_plug_merge(q, bio, &request_count, &same_queue_rq))
+ 		return BLK_QC_T_NONE;
