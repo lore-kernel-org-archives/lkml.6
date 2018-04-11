@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+uLuSdcaad6UmArBv1ZLHsSbDEW97ULkUS8MYu1HPhb+f1cUAq7hFBOOYqnzElFg+OO2i/
-ARC-Seal: i=1; a=rsa-sha256; t=1523473434; cv=none;
+X-Google-Smtp-Source: AIpwx499VumkGU4Bu8KAbTetd8+GOzzxyYYDcIi6mkbAslJjlakGG2U+TYzbMzD+40AmfmV92Gk+
+ARC-Seal: i=1; a=rsa-sha256; t=1523473430; cv=none;
         d=google.com; s=arc-20160816;
-        b=L4ncOlcYThJ1OhAUYWoqqB3r3a7UED+NZ72EwaCTVw8R/Hh+jR/RySA4yrRFXlq1k+
-         X3c1AiBTxLjMUZvOCY/K94bGZ9qie2ggMjSx+f0fi1v8bnAH5elFog3/WXdVJUAIlPH/
-         xa7XFQRlSZIsyY1H+fmDUzug31h8b3gFK6vOfJs9YapZiXvMJlt5wyV2p4lWjgWovY3R
-         hcG4LInii6rnhCFO7Ymgk/HLhHjutUSaIwFcJdlp50Wxy655vi2nbGY3/qppMvyAoRHg
-         FI7CoTbak7KxKO8vfguxDmX9B2EGFbzgl0eynUK6UvpdDgD5zlZ1O7OAvs9y7HedD8da
-         Yx6A==
+        b=ZbRc2077EpEHxrxbkj+cZ8ILcDjsx0Gmo2TfvYVab63bKyhGVQmrDeI7w7UwDFUWG1
+         pxwcwOqNhZi6zVcwWfwKzptaPIwhUYEyd3AGGERRrN1EJHQM4g1oQn5PMiokynot1yCH
+         wbV5+fPACophnyez1LajjqnaG2L5gM3iVbVjiEeSNqfi3xNCAidvYd0Q6tk2D1jsl7gK
+         wdaJ85X558W/rACSAmH90/aYWvN6aEbbswE8IZrr9Qh9hP8sOiH/QW3pdDbsDHqijZYP
+         oz0Cc2kFe24VkkYehQwLnESWMaWSVEw5ln1Pc13L4RtL2jLIvw1KGC2L7ONvJ9eVAuPR
+         bfug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=F8dRcSyl2iViwoji/lQ11J76r+DN3REq/Zv8xvT3Dss=;
-        b=Sfo4w8txYeHDKEp+amFI7+4EdTtpYm1XKVq46R4zrdBqvJhp7ia4uTxGhc2EiujJl8
-         2uLW56PVwm07wK1sUHd0wRAZ4jlor5R46KOvQhNlTT7Ks9Z7XehCZfUe5UVMNqSp3u2u
-         hkEbl7ZG1+1Ga+eAkktFwBbX5VkCrMb7eak+SMOzn9/YEr6OHfIUGuyYvJJYFuUvgFus
-         Ny1RVrrC+46bhOk78lV4MIkmqtASa3CJ3ujnjb9H+7iMNCiKgz2zpfpQuw9dhBLj1dWp
-         SHsEihMRCbt9wC/FQacCm5Ehy3cSLojb9QfXrKSU758q4Q2JECRBLXwAnmMjH0A7k1io
-         eIsg==
+        bh=teOty0dDcWZn/GXLML+YBu0xcC24AZ2JYKG36ue8UX8=;
+        b=hyUtiE1Li4bb0GB6HQ47+ZYJNlx+ckVKsQfOMu6MtcmUsHTWMoXJ4e7ZJTWn9RVlua
+         zG7pvxRFOWCxM55y7ryzHyVf54jdm1xIp8r/CAPUXUvZbaCOdopYe/QZcObvY5f4GmtK
+         q0nlSpvzLsLosicn3IQ2sshgeZJvAmR16IewwpiOP78as0pP9kqTCb/4zD2pi56cRc0D
+         Lw1A9yiX0APO+YJyeh9QxyN5AXGgiN56211Wg/n9woZPS7DUIyOVrGMgU0BN4qNqNJ7f
+         3DnQz/tv9O2haSAfeyBMoIhQsquPOcBq+ZxhU90HV6ibL6VoM3JWjmVDtjq/CBxRaZlR
+         zAxw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Netanel Belgazal <netanel@amazon.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 245/310] net: ena: disable admin msix while working in polling mode
-Date: Wed, 11 Apr 2018 20:36:24 +0200
-Message-Id: <20180411183633.008586271@linuxfoundation.org>
+Subject: [PATCH 4.9 244/310] net: ena: add missing unmap bars on device removal
+Date: Wed, 11 Apr 2018 20:36:23 +0200
+Message-Id: <20180411183632.970279589@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477679927159344?=
-X-GMAIL-MSGID: =?utf-8?q?1597477679927159344?=
+X-GMAIL-THRID: =?utf-8?q?1597477676198810154?=
+X-GMAIL-MSGID: =?utf-8?q?1597477676198810154?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,7 +53,9 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Netanel Belgazal <netanel@amazon.com>
 
 
-[ Upstream commit a2cc5198dac102775b21787752a2e0afe44ad311 ]
+[ Upstream commit 0857d92f71b6cb75281fde913554b2d5436c394b ]
+
+This patch also change the mapping functions to devm_ functions
 
 Fixes: 1738cd3ed342 ("Add a driver for Amazon Elastic Network Adapters (ENA)")
 Signed-off-by: Netanel Belgazal <netanel@amazon.com>
@@ -61,30 +63,44 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_com.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/ethernet/amazon/ena/ena_netdev.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/amazon/ena/ena_com.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_com.c
-@@ -61,6 +61,8 @@
- 
- #define ENA_MMIO_READ_TIMEOUT 0xFFFFFFFF
- 
-+#define ENA_REGS_ADMIN_INTR_MASK 1
-+
- /*****************************************************************************/
- /*****************************************************************************/
- /*****************************************************************************/
-@@ -1448,6 +1450,12 @@ void ena_com_admin_destroy(struct ena_co
- 
- void ena_com_set_admin_polling_mode(struct ena_com_dev *ena_dev, bool polling)
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@ -2808,6 +2808,11 @@ static void ena_release_bars(struct ena_
  {
-+	u32 mask_value = 0;
-+
-+	if (polling)
-+		mask_value = ENA_REGS_ADMIN_INTR_MASK;
-+
-+	writel(mask_value, ena_dev->reg_bar + ENA_REGS_INTR_MASK_OFF);
- 	ena_dev->admin_queue.polling = polling;
- }
+ 	int release_bars;
  
++	if (ena_dev->mem_bar)
++		devm_iounmap(&pdev->dev, ena_dev->mem_bar);
++
++	devm_iounmap(&pdev->dev, ena_dev->reg_bar);
++
+ 	release_bars = pci_select_bars(pdev, IORESOURCE_MEM) & ENA_BAR_MASK;
+ 	pci_release_selected_regions(pdev, release_bars);
+ }
+@@ -2895,8 +2900,9 @@ static int ena_probe(struct pci_dev *pde
+ 		goto err_free_ena_dev;
+ 	}
+ 
+-	ena_dev->reg_bar = ioremap(pci_resource_start(pdev, ENA_REG_BAR),
+-				   pci_resource_len(pdev, ENA_REG_BAR));
++	ena_dev->reg_bar = devm_ioremap(&pdev->dev,
++					pci_resource_start(pdev, ENA_REG_BAR),
++					pci_resource_len(pdev, ENA_REG_BAR));
+ 	if (!ena_dev->reg_bar) {
+ 		dev_err(&pdev->dev, "failed to remap regs bar\n");
+ 		rc = -EFAULT;
+@@ -2916,8 +2922,9 @@ static int ena_probe(struct pci_dev *pde
+ 	ena_set_push_mode(pdev, ena_dev, &get_feat_ctx);
+ 
+ 	if (ena_dev->tx_mem_queue_type == ENA_ADMIN_PLACEMENT_POLICY_DEV) {
+-		ena_dev->mem_bar = ioremap_wc(pci_resource_start(pdev, ENA_MEM_BAR),
+-					      pci_resource_len(pdev, ENA_MEM_BAR));
++		ena_dev->mem_bar = devm_ioremap_wc(&pdev->dev,
++						   pci_resource_start(pdev, ENA_MEM_BAR),
++						   pci_resource_len(pdev, ENA_MEM_BAR));
+ 		if (!ena_dev->mem_bar) {
+ 			rc = -EFAULT;
+ 			goto err_device_destroy;
