@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3269524-1523477230-2-11897741496455371526
+X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477230-2-1680542267883828839
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477229; b=leQvEQDqFpmCDoTu1rc28+UbEqWnFQeAqaKShLnMhNBdqzjn8I
-    rKl48Mmwmd7QppwuKIL45b+pTMfA0uU3TijsmYVD6BLpaQVf3k7TNJuM7tqjSddX
-    hHriD0BEgVwoekRRcltTF/LkMy3owsGvD1qDSbjMQyDtMJK7+yCawGl4tTZLNh3V
-    HP2hEtLR/3h6Y1rFzku85l9J18ku0QA471gz7FwQT0X+DxK2WShxHoZ+ba3PgyTt
-    EFFQLB6wM1bJVNcCeSP3/DtwIuOWj17iJGZ72gjy7SYGuo9hyXiubV5pSkouXW7R
-    2lReA+LMCqQJlFjbPAnJf+5cAy+BvGNQRIFw==
+    1523477230; b=dOvsGHoC5ue5JwwgARTLrRDTy3I20nwe/x4eK0IvRXSG8udVJj
+    5JgrDaZrqeexVXrVJon6DGSPgiEudfCu04spfphbkhVYoEDgaGgfVVIVh9C+I2U9
+    2Dnh4nT6VMrs4BIYCM3VzX/iJ2RZf2ya0QjPKJvjfQRP/NhoVC/Fj4/avEVxkxuO
+    0Zcxd3jNNlAyvjvYN6N5XC/xmx5RTTvFtmVCTxrHfQkDBD19/y8TWTIZD0ld7yML
+    KkJ3Ke7lpOEPyIjTpxOIvcbUJnT5YrdHxNNptZULRTSwSq04CxlwR+V9w+JKYCAY
+    GHoKoBRdDMw6UTozR4CcadtHM4irwXZ+ujog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523477229; bh=X/7qY3zw7RwduTFWb/+8/YoPRIcaxF
-    98IWBtBYfKj8E=; b=vhUMTgw7aZ+M6rBKu7qT0seOZc3RsO/O5WQdptU/Htwlqt
-    9t7b8neLPaN2P3pqfW9GyRNtcv54AwvJUb/mYV8aTTUTuCBNCnVPYAppu3RlX4EB
-    v7ZImmrZa+yMBDKsIkApDoaafFX4/hBXMkrMPfE+wWl1u+ovU7y7C9+MPV6Q1rnM
-    Yp3ysIfnurTDpNT2MVF7F/GvVY60hhi8PNkUSdcywGlw35jeKKcV1/d/NCYMGTT1
-    0tCjz2zBxi+N0xjOAqnm8wKCGbQ2LpKqKVVKicn8Tt64UY+KuWF3awPWb6NjNgYd
-    ALj3ZiQ2jOb3juK94pJdNIqnz9reOyBJIZ4MAP9A==
+    :list-id; s=fm2; t=1523477230; bh=2ZU2lzQ9IvDZ5gc2ckoeIejqimOxWs
+    Ab0z+urICEjLw=; b=dZl/cccSNQGUBAyh207T6utRS1LgRn71edq3P/F0o+C/yT
+    QyXRWK5moUo48bJrQXulC5QlB2HLEO+foWPWWuC0AUWOMVbN7s1Mob6WZL7NLKl6
+    vPJnaaQX4G3qvHafK+krXC1BO4xxLIfZ9+Ysn+QCr4/FwvfY7W/cz/ZLsB4i6GY2
+    VbRlm7CLHKJoQQKvTxjkLz3JWJRa94J4Vc5NI9dGoIow7TL7WFtK8cICEs6gPQ08
+    YVwU7yWVZGnsWX/A2cDwTz99tI6/KD/uZQrSGA3lte+ExtEfbVIpBXyz5/7hxazV
+    Mk8CfMIdJZe5yZ53CcuhEl02Gv29fZSr7rZiJA+A==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,36 +51,31 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfE3pSzfq2fTwxiDo9Xoc44dmlaJzTCubosHTvQePm8D0/U+HRm7J5UvXz5VMiaKUvKPqId+azysA/xImvqKGLKYM9iScRaIuURA9RDxe37hHhSFm3le/
-    sx4TJtVOlaNqoaLvMbqEtOltkjL3zUWSZ5nFdDSlJz0mGpwxUUUsTqTCw6Zr/IKkfAtpMUzY7CjUqShQRqLUvz4Vzfzm7zq04r2hk8JLnJMmltKOR1VS+AP8
+X-CM-Envelope: MS4wfLyCYGK6u3GyoEHYnGrvHdQ7Q9fBF2JXwamB4cIpCSGLFEOKPzyHYYo4xF2JIn6h+BQIDVU1PA8B8WH31inGU9sLfKfKFFgIW79ZrMXi+Mz166KX05Bz
+    gLPSXfsaehp0PXUvzZuO8CKGknZcVN1HEKqJFKLXuflplrrBN54XlsxmxZGT9TEWwj/A+tAeE/njs6nXjGp+lb6flIgYbebD7c3vCFkHgfy/5Oguv/++kll0
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=CDq0vqnqAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=UMikwde4_RvlFcDU50QA:9 a=QEXdDO2ut3YA:10
-    a=Xn7iXEen_xUG9zZOO_Hb:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=Q-fNiiVtAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=Im1EZP1btvfpb2RkRrIA:9 a=QEXdDO2ut3YA:10 a=Fp8MccfUoT0GBdDC_Lng:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932941AbeDKSzP (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:55:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34934 "EHLO
+        id S933655AbeDKSzJ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:55:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34886 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932916AbeDKSzN (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:55:13 -0400
+        with ESMTP id S933614AbeDKSzG (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:55:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Winter <Thomas.Winter@alliedtelesis.co.nz>,
-        David Ahern <dsa@cumulusnetworks.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        roopa <roopa@cumulusnetworks.com>,
-        David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org, Jon Mason <jon.mason@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 060/310] ipmr: vrf: Find VIFs using the actual device
-Date: Wed, 11 Apr 2018 20:33:19 +0200
-Message-Id: <20180411183624.814783726@linuxfoundation.org>
+Subject: [PATCH 4.9 032/310] mdio: mux: Correct mdio_mux_init error path issues
+Date: Wed, 11 Apr 2018 20:32:51 +0200
+Message-Id: <20180411183623.663974819@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -98,68 +93,84 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Winter <Thomas.Winter@alliedtelesis.co.nz>
+From: Jon Mason <jon.mason@broadcom.com>
 
 
-[ Upstream commit bcfc7d33110b0f33069d74138eeb7ca9acbb3c85 ]
+[ Upstream commit b60161668199ac62011c024adc9e66713b9554e7 ]
 
-The skb->dev that is passed into ip_mr_input is
-the loX device for VRFs. When we lookup a vif
-for this dev, none is found as we do not create
-vifs for loopbacks. Instead lookup a vif for the
-actual device that the packet was received on,
-eg the vlan.
+There is a potential unnecessary refcount decrement on error path of
+put_device(&pb->mii_bus->dev), as it is possible to avoid the
+of_mdio_find_bus() call if mux_bus is specified by the calling function.
 
-Signed-off-by: Thomas Winter <Thomas.Winter@alliedtelesis.co.nz>
-cc: David Ahern <dsa@cumulusnetworks.com>
-cc: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-cc: roopa <roopa@cumulusnetworks.com>
-Acked-by: David Ahern <dsahern@gmail.com>
+The same put_device() is not called in the error path if the
+devm_kzalloc of pb fails.  This caused the variable used in the
+put_device() to be changed, as the pb pointer was obviously not set up.
+
+There is an unnecessary of_node_get() on child_bus_node if the
+of_mdiobus_register() is successful, as the
+for_each_available_child_of_node() automatically increments this.
+Thus the refcount on this node will always be +1 more than it should be.
+
+There is no of_node_put() on child_bus_node if the of_mdiobus_register()
+call fails.
+
+Finally, it is lacking devm_kfree() of pb in the error path.  While this
+might not be technically necessary, it was present in other parts of the
+function.  So, I am adding it where necessary to make it uniform.
+
+Signed-off-by: Jon Mason <jon.mason@broadcom.com>
+Fixes: f20e6657a875 ("mdio: mux: Enhanced MDIO mux framework for integrated multiplexers")
+Fixes: 0ca2997d1452 ("netdev/of/phy: Add MDIO bus multiplexer support.")
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ipmr.c |   18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ drivers/net/phy/mdio-mux.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/net/ipv4/ipmr.c
-+++ b/net/ipv4/ipmr.c
-@@ -1929,6 +1929,20 @@ int ip_mr_input(struct sk_buff *skb)
- 	struct net *net = dev_net(skb->dev);
- 	int local = skb_rtable(skb)->rt_flags & RTCF_LOCAL;
- 	struct mr_table *mrt;
-+	struct net_device *dev;
-+
-+	/* skb->dev passed in is the loX master dev for vrfs.
-+	 * As there are no vifs associated with loopback devices,
-+	 * get the proper interface that does have a vif associated with it.
-+	 */
-+	dev = skb->dev;
-+	if (netif_is_l3_master(skb->dev)) {
-+		dev = dev_get_by_index_rcu(net, IPCB(skb)->iif);
-+		if (!dev) {
-+			kfree_skb(skb);
-+			return -ENODEV;
-+		}
-+	}
+--- a/drivers/net/phy/mdio-mux.c
++++ b/drivers/net/phy/mdio-mux.c
+@@ -122,10 +122,9 @@ int mdio_mux_init(struct device *dev,
+ 	pb = devm_kzalloc(dev, sizeof(*pb), GFP_KERNEL);
+ 	if (pb == NULL) {
+ 		ret_val = -ENOMEM;
+-		goto err_parent_bus;
++		goto err_pb_kz;
+ 	}
  
- 	/* Packet is looped back after forward, it should not be
- 	 * forwarded second time, but still can be delivered locally.
-@@ -1966,7 +1980,7 @@ int ip_mr_input(struct sk_buff *skb)
- 	/* already under rcu_read_lock() */
- 	cache = ipmr_cache_find(mrt, ip_hdr(skb)->saddr, ip_hdr(skb)->daddr);
- 	if (!cache) {
--		int vif = ipmr_find_vif(mrt, skb->dev);
-+		int vif = ipmr_find_vif(mrt, dev);
- 
- 		if (vif >= 0)
- 			cache = ipmr_cache_find_any(mrt, ip_hdr(skb)->daddr,
-@@ -1986,7 +2000,7 @@ int ip_mr_input(struct sk_buff *skb)
+-
+ 	pb->switch_data = data;
+ 	pb->switch_fn = switch_fn;
+ 	pb->current_child = -1;
+@@ -154,6 +153,7 @@ int mdio_mux_init(struct device *dev,
+ 		cb->mii_bus = mdiobus_alloc();
+ 		if (!cb->mii_bus) {
+ 			ret_val = -ENOMEM;
++			devm_kfree(dev, cb);
+ 			of_node_put(child_bus_node);
+ 			break;
  		}
+@@ -169,8 +169,8 @@ int mdio_mux_init(struct device *dev,
+ 		if (r) {
+ 			mdiobus_free(cb->mii_bus);
+ 			devm_kfree(dev, cb);
++			of_node_put(child_bus_node);
+ 		} else {
+-			of_node_get(child_bus_node);
+ 			cb->next = pb->children;
+ 			pb->children = cb;
+ 		}
+@@ -181,9 +181,11 @@ int mdio_mux_init(struct device *dev,
+ 		return 0;
+ 	}
  
- 		read_lock(&mrt_lock);
--		vif = ipmr_find_vif(mrt, skb->dev);
-+		vif = ipmr_find_vif(mrt, dev);
- 		if (vif >= 0) {
- 			int err2 = ipmr_cache_unresolved(mrt, vif, skb);
- 			read_unlock(&mrt_lock);
++	devm_kfree(dev, pb);
++err_pb_kz:
+ 	/* balance the reference of_mdio_find_bus() took */
+-	put_device(&pb->mii_bus->dev);
+-
++	if (!mux_bus)
++		put_device(&parent_bus->dev);
+ err_parent_bus:
+ 	of_node_put(parent_bus_node);
+ 	return ret_val;
