@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753165AbeDKI6F (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 04:58:05 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:51194 "EHLO
+        id S1753148AbeDKI6D (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 04:58:03 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:36151 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751972AbeDKIyP (ORCPT
+        with ESMTP id S1751983AbeDKIyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 11 Apr 2018 04:54:15 -0400
-X-UUID: e5f199463f7e468ca323d9d00534d4a7-20180411
+X-UUID: 6fe4200660d3468c9923d3007197565e-20180411
 From: <sean.wang@mediatek.com>
 To: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
         <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
 CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 04/12] arm: dts: mt7623: fix available memory size on bananapi-r2
-Date: Wed, 11 Apr 2018 16:53:57 +0800
-Message-ID: <705d03d06a7668d66689777bb90806953e0744b3.1523434758.git.sean.wang@mediatek.com>
+Subject: [PATCH v2 10/12] arm: dts: mt7623: add MT7623A SoC level DTS
+Date: Wed, 11 Apr 2018 16:54:03 +0800
+Message-ID: <ff65685a9f121faf7fc03f0af3c6a5cd71b89081.1523434758.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1523434757.git.sean.wang@mediatek.com>
 References: <cover.1523434757.git.sean.wang@mediatek.com>
@@ -28,28 +28,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-There is 2GB DDR3 available on bananapi-r2 board as [1] specified.
-
-[1] http://www.banana-pi.org/r2.html
+Add a common file for MT7623A SoC level DTS, indicating MT7623A only
+has a specific definition for power domain. That causes we need to change
+related consumers devices such as audio, ethernet, crypto, NAND, and USB
+controller to grasp its own power domain it should belong to.
 
 Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Cc: Rob Herring <robh+dt@kernel.org>
 ---
- arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/mt7623a.dtsi | 44 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 arch/arm/boot/dts/mt7623a.dtsi
 
-diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-index 5938e4c..d2a354e 100644
---- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-+++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
-@@ -110,7 +110,7 @@
- 
- 	memory@80000000 {
- 		device_type = "memory";
--		reg = <0 0x80000000 0 0x40000000>;
-+		reg = <0 0x80000000 0 0x80000000>;
- 	};
- };
- 
+diff --git a/arch/arm/boot/dts/mt7623a.dtsi b/arch/arm/boot/dts/mt7623a.dtsi
+new file mode 100644
+index 0000000..0735a1fb8
+--- /dev/null
++++ b/arch/arm/boot/dts/mt7623a.dtsi
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2017-2018 MediaTek Inc.
++ * Author: Sean Wang <sean.wang@mediatek.com>
++ *
++ */
++
++/dts-v1/;
++#include <dt-bindings/power/mt7623a-power.h>
++#include "mt7623.dtsi"
++
++&afe {
++	power-domains = <&scpsys MT7623A_POWER_DOMAIN_IFR_MSC>;
++};
++
++&crypto {
++	power-domains = <&scpsys MT7623A_POWER_DOMAIN_ETH>;
++};
++
++&eth {
++	power-domains = <&scpsys MT7623A_POWER_DOMAIN_ETH>;
++};
++
++&nandc {
++	power-domains = <&scpsys MT7623A_POWER_DOMAIN_IFR_MSC>;
++};
++
++&pcie {
++	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
++};
++
++&scpsys {
++	compatible = "mediatek,mt7623a-scpsys";
++	clocks = <&topckgen CLK_TOP_ETHIF_SEL>;
++	clock-names = "ethif";
++};
++
++&usb1 {
++	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
++};
++
++&usb2 {
++	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
++};
 -- 
 2.7.4
