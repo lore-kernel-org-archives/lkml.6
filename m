@@ -1,65 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751845AbeDKFRL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 01:17:11 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.184]:22498 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751734AbeDKFRK (ORCPT
+        id S1751921AbeDKFRQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 01:17:16 -0400
+Received: from mx57.baidu.com ([61.135.168.57]:47359 "EHLO
+        tc-sys-mailedm02.tc.baidu.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751734AbeDKFRO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 01:17:10 -0400
-From: Matheus Castello <matheus@castello.eng.br>
-To: robh+dt@kernel.org, mark.rutland@arm.com
-Cc: wens@csie.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Matheus Castello <matheus@castello.eng.br>
-Subject: [PATCH] dt-bindings: pinctrl: sunxi: Fix reference to driver
-Date: Wed, 11 Apr 2018 01:17:03 -0400
-Message-Id: <1523423823-9115-1-git-send-email-matheus@castello.eng.br>
-X-Mailer: git-send-email 2.7.4
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - castello.eng.br
-X-BWhitelist: no
-X-Source-IP: 191.189.21.134
-X-Source-L: No
-X-Exim-ID: 1f6885-002FaC-Fx
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (localhost.localdomain) [191.189.21.134]:21576
-X-Source-Auth: matheus@castello.eng.br
-X-Email-Count: 2
-X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
-X-Local-Domain: yes
+        Wed, 11 Apr 2018 01:17:14 -0400
+From: Li RongQing <lirongqing@baidu.com>
+To: linux-kernel@vger.kernel.org, mingo@redhat.com, peterz@infradead.org
+Subject: [PATCH] sched/fair: remove stale comments about tg_unthrottle_up
+Date: Wed, 11 Apr 2018 13:16:56 +0800
+Message-Id: <1523423816-18322-1-git-send-email-lirongqing@baidu.com>
+X-Mailer: git-send-email 1.7.10.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bindings describe hardware, not drivers.
-Use reference to hardware Allwinner A1X Pin Controller instead driver.
+After commit 82958366cfea ("sched: Replace update_shares weight
+distribution with per-entity computation"), tg_unthrottle_up
+did not update the weight
 
-Signed-off-by: Matheus Castello <matheus@castello.eng.br>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
 ---
- .../devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt         | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/sched/fair.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-index ed5eb54..c854cf0 100644
---- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
-@@ -56,9 +56,9 @@ pins it needs, and how they should be configured, with regard to muxer
- configuration, drive strength and pullups. If one of these options is
- not set, its actual value will be unspecified.
-
--This driver supports the generic pin multiplexing and configuration
--bindings. For details on each properties, you can refer to
--./pinctrl-bindings.txt.
-+Allwinner A1X Pin Controller supports the generic pin multiplexing and
-+configuration bindings. For details on each properties, you can refer to
-+ ./pinctrl-bindings.txt.
-
- Required sub-node properties:
-   - pins
---
-2.7.4
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 0951d1c58d2f..b885ed6fd97b 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4703,7 +4703,6 @@ static inline int throttled_lb_pair(struct task_group *tg,
+ 	       throttled_hierarchy(dest_cfs_rq);
+ }
+ 
+-/* updated child weight may affect parent so we have to do this bottom up */
+ static int tg_unthrottle_up(struct task_group *tg, void *data)
+ {
+ 	struct rq *rq = data;
+-- 
+2.11.0
