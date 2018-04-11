@@ -1,115 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756963AbeDKTdI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 15:33:08 -0400
-Received: from mout.gmx.net ([212.227.17.21]:53407 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753602AbeDKTdF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 15:33:05 -0400
-Date: Wed, 11 Apr 2018 21:32:43 +0200 (CEST)
-From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-X-X-Sender: lyakh@axis700.grange
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-cc: linux-media@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Edgar Thier <info@edgarthier.net>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: uvcvideo: Prevent setting unavailable flags
-In-Reply-To: <1521646988-803-1-git-send-email-kieran.bingham@ideasonboard.com>
-Message-ID: <alpine.DEB.2.20.1804112131160.25028@axis700.grange>
-References: <1521646988-803-1-git-send-email-kieran.bingham@ideasonboard.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S1757172AbeDKTdY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 15:33:24 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:49496 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756957AbeDKTdV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 15:33:21 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>, y2038@lists.linaro.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180411150829.3881900-1-arnd@arndb.de>
+Date: Wed, 11 Apr 2018 14:32:04 -0500
+In-Reply-To: <20180411150829.3881900-1-arnd@arndb.de> (Arnd Bergmann's message
+        of "Wed, 11 Apr 2018 17:07:58 +0200")
+Message-ID: <87fu41ilor.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Provags-ID: V03:K1:3GDsCnK5lR8nvUZudPOqSlTlC4+Ft0sMwuvu9MM+ca/D/TH9I3X
- A/3pWcla1hfvEIJx8aIeVhji7bCKuFzDqHWH17Lau38L7Z9uobn2CNIj54K58ZiT/3pWKcd
- io2LHoDvR8jZZyY+3UwQn3uWMG4u5vOAQQKPBC9X/U51n+PwhMa0VFt0hAKZCdkjliGFMiU
- 8qLFxoR1ciEWMLLR+9DsQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:MHFpAqBlpJI=:BSPT7XKdDXXxu4VN9XqqYL
- ZDBLwj5jWmWSI39eYgqmGBMuCZZNlczZKDxutMS40M0RL+/jl/yb2gudouZ/bTPRkyqaQitBc
- 8sncVY6+BvAY6r3U1uAdSJDiwsNkLmCX+HfMbAE4aoeWFqIpjX9IRb0wDB1VSCrke/2m9Lyis
- xWxEACRyUZ7jIh4KBpRqZT3SVTehO24/z1ukainoZhoC2pUWmCaQFXUzEo+JYgYKRZqIc9vAl
- /K4CzaPoKWh0NteLJlFRq4g9fPy6pJfVEbO/WVRfvRZ2Dhp+QbqHU5QLNnn/Mnl/GFnPHtXKv
- e3tUJidyu1/8u0nl6BG5uaISGIrf3dIOtTPbtmx+lc0w2kROU+vRFz7hMgAiC3aKqVDhCwew9
- ykIJJRBXo+GwZf/FCNMsps7Pr4fSRcfmFO2ryIow+Asnsr0+Wrecjtq7zlnkxb/1VhU+e8bcw
- UcgPpppbEvvr9OVUf4avCH7OOhKV+DZzbaPqEfr/wt7S7czFYxnHrrMDaJQtsn4ty9E/m77UT
- eVthfCwueX86DPa+JfAgWLFnL3MjJK+8hFd5of47qoylS+7lhxUeoH66aZ+tq0FtMkZ65dA/x
- soKRmTyBGaqno4DLNoUWabS0kbBFYah2DCQZ2yT/gCCUj5eBuLHOX/IUwKnMrStIwvfEDJ06m
- FCs4LaHsG32TfK/QFl/10Tjx7oPwZmaJqJZjNE7Lp09WsbsGFODQ12UciQ55sAg15+YhaTT+a
- 3mCgIAU9GPJfRmMKcd6DjAczewUaMo+L2P6qJiQVi9hnpbluB/WJfwxiuD5SRq7pEviqlfQ4s
- FGpH0ErEPp+mtEjrtVZvcXkp8QGxFf4/LoCUJdzx3jlYQDO1No=
+Content-Type: text/plain
+X-XM-SPF: eid=1f6LUc-0007Jj-NI;;;mid=<87fu41ilor.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.140.30;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18HeMQ2kxbndGHvzUPy9BMq2eLBRZ4XzLI=
+X-SA-Exim-Connect-IP: 97.119.140.30
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -3.0 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+        *      [score: 0.0014]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Arnd Bergmann <arnd@arndb.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 707 ms - load_scoreonly_sql: 0.31 (0.0%),
+        signal_user_changed: 25 (3.6%), b_tie_ro: 17 (2.4%), parse: 1.80 (0.3%),
+        extract_message_metadata: 52 (7.4%), get_uri_detail_list: 1.21 (0.2%),
+        tests_pri_-1000: 25 (3.5%), tests_pri_-950: 15 (2.1%), tests_pri_-900: 2.0
+        (0.3%), tests_pri_-400: 43 (6.1%), check_bayes: 41 (5.8%), b_tokenize: 8
+        (1.1%), b_tok_get_all: 10 (1.4%), b_comp_prob: 2.8 (0.4%), b_tok_touch_all: 6
+        (0.8%), b_finish: 0.91 (0.1%), tests_pri_0: 511 (72.2%),
+        check_dkim_signature: 1.18 (0.2%), check_dkim_adsp: 26 (3.7%), tests_pri_500:
+        24 (3.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] sparc: compat: allow including asm/compat.h for 32-bit
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
+Arnd Bergmann <arnd@arndb.de> writes:
 
-Thanks for the patch, it fixed a problem I was having with media master, 
-working with a Logitech UVC 1.5 camera.
+> We have several files on sparc that include linux/compat.h and expect
+> asm/compat.h not to be included, otherwise we get a build failure.
 
-On Wed, 21 Mar 2018, Kieran Bingham wrote:
+Should this say: "We have several files on sparc that include
+linux/compat.h and expect asm/compat.h not be included when
+!CONFIG_COMPAT." ?
 
-> The addition of an extra operation to use the GET_INFO command
-> overwrites all existing flags from the uvc_ctrls table. This includes
-> setting all controls as supporting  GET_MIN, GET_MAX, GET_RES, and
-> GET_DEF regardless of whether they do or not.
-> 
-> Move the initialisation of these control capabilities directly to the
-> uvc_ctrl_fill_xu_info() call where they were originally located in that
-> use case, and ensure that the new functionality in uvc_ctrl_get_flags()
-> will only set flags based on their reported capability from the GET_INFO
-> call.
-> 
-> Fixes: 859086ae3636 ("media: uvcvideo: Apply flags from device to actual
-> properties")
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+I don't have your tree and I see asm/compat.h included from
+linux/compat.h already so the description above seems wrong.
 
-Tested-by: Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
-
-Thanks
-Guennadi
-
-> ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 1daf444371be..4042cbdb721b 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -1607,14 +1607,12 @@ static int uvc_ctrl_get_flags(struct uvc_device *dev,
->  	ret = uvc_query_ctrl(dev, UVC_GET_INFO, ctrl->entity->id, dev->intfnum,
->  			     info->selector, data, 1);
->  	if (!ret)
-> -		info->flags = UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
-> -			    | UVC_CTRL_FLAG_GET_RES | UVC_CTRL_FLAG_GET_DEF
-> -			    | (data[0] & UVC_CONTROL_CAP_GET ?
-> -			       UVC_CTRL_FLAG_GET_CUR : 0)
-> -			    | (data[0] & UVC_CONTROL_CAP_SET ?
-> -			       UVC_CTRL_FLAG_SET_CUR : 0)
-> -			    | (data[0] & UVC_CONTROL_CAP_AUTOUPDATE ?
-> -			       UVC_CTRL_FLAG_AUTO_UPDATE : 0);
-> +		info->flags |= (data[0] & UVC_CONTROL_CAP_GET ?
-> +				UVC_CTRL_FLAG_GET_CUR : 0)
-> +			    |  (data[0] & UVC_CONTROL_CAP_SET ?
-> +				UVC_CTRL_FLAG_SET_CUR : 0)
-> +			    |  (data[0] & UVC_CONTROL_CAP_AUTOUPDATE ?
-> +				UVC_CTRL_FLAG_AUTO_UPDATE : 0);
->  
->  	kfree(data);
->  	return ret;
-> @@ -1689,6 +1687,9 @@ static int uvc_ctrl_fill_xu_info(struct uvc_device *dev,
->  
->  	info->size = le16_to_cpup((__le16 *)data);
->  
-> +	info->flags = UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
-> +		    | UVC_CTRL_FLAG_GET_RES | UVC_CTRL_FLAG_GET_DEF;
-> +
->  	ret = uvc_ctrl_get_flags(dev, ctrl, info);
->  	if (ret < 0) {
->  		uvc_trace(UVC_TRACE_CONTROL,
-> -- 
-> 2.7.4
-> 
+Eric
