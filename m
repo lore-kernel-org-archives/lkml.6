@@ -1,97 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752552AbeDKJYO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 05:24:14 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:36972 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751734AbeDKJYL (ORCPT
+        id S1752727AbeDKJYq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 05:24:46 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:45834 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752178AbeDKJYm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 05:24:11 -0400
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, kvm@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] vfio: platform: Fix using devices in PM Domains
-Date: Wed, 11 Apr 2018 11:24:08 +0200
-Message-Id: <1523438648-17672-1-git-send-email-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.7.4
+        Wed, 11 Apr 2018 05:24:42 -0400
+X-Google-Smtp-Source: AIpwx48anbQHVvMW/NprtcUgF3KybMrzgf32XppDCVzDgtjuJ4TpVNYOHtYcUC0TVssh+qhe7a/qozWCuP7+wyC2FIc=
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a146q8+Y0XKsPUD7ZW4qHoUetpkupfqVOWPxBi6ruwQSw@mail.gmail.com>
+References: <20180222050324.21531-1-joel@jms.id.au> <CACPK8XeD354AGXVunToR=RGQuSKWZ8vKSXH+DZey+udEE-Am_A@mail.gmail.com>
+ <CAK8P3a146q8+Y0XKsPUD7ZW4qHoUetpkupfqVOWPxBi6ruwQSw@mail.gmail.com>
+From: Joel Stanley <joel@jms.id.au>
+Date: Wed, 11 Apr 2018 18:54:20 +0930
+X-Google-Sender-Auth: 5FytKQ2_6vgbpgK-OH02zPHWTVc
+Message-ID: <CACPK8XdX8d_=YVndzJLkt6rrA7S0NEBZ-ZZ2tg-nrrg=+CrMFA@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Update ASPEED entry with details
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Olof Johansson <olof@lixom.net>, linux-aspeed@lists.ozlabs.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a device is part of a PM Domain (e.g. power and/or clock domain), its
-power state is managed using Runtime PM.  Without Runtime PM, the device
-may not be powered up, causing subtle failures, crashes, or system
-lock-ups when the device is accessed by the guest.
+On 11 April 2018 at 18:21, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wed, Apr 11, 2018 at 6:06 AM, Joel Stanley <joel@jms.id.au> wrote:
+>> Hey Arnd,
+>>
+>> On 22 February 2018 at 15:33, Joel Stanley <joel@jms.id.au> wrote:
+>>> I am interested in all ASPEED drivers, and the previous match wasn't
+>>> grabbing files in nested directories. Use N instead.
+>>>
+>>> Add the arm kernel mailing list so that patches get reviewed there, and
+>>> the linux-aspeed list which exists only so I can use patchwork to track
+>>> patches.
+>>>
+>>> Add Andrew as a reviewer, because he is involved in reviewing ASPEED
+>>> stuff.
+>>>
+>>> Signed-off-by: Joel Stanley <joel@jms.id.au>
+>>
+>> can you please pick this one up? It would be great to get it into
+>> fixes as Andrew and I have been missing being cc'd on stuff we would
+>> have like to review.
+>
+> Sure, applied to the fixes branch now.
+>
+> In general, when you want a patch to be applied, please send it to
+> arm@kernel.org so we know it's for us. As a rule, I don't pick up patches
+> otherwise but assume that you are asking for feedback and/or Acks
+> but will resend it once everyone is happy with the change.
 
-Fix this by adding Runtime PM support, powering the device when the VFIO
-device is opened by the guest.
+Okay. Do we have these rules written down anywhere?
 
-Note that while more fine-grained power management could be implemented
-on the guest side, if exported, this would be inherently unsafe, as
-abusing it may kill the whole system.
+If not, would you mind if I started a document on your behalf?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-This depends on "[PATCH v3 2/2] vfio: platform: Add generic DT reset
-support" due to a small contextual change (addition of "#include
-<linux/reset.h>").
+Cheers,
 
- drivers/vfio/platform/vfio_platform_common.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
-index ef9b9e3220ebe939..4db0a143992c3353 100644
---- a/drivers/vfio/platform/vfio_platform_common.c
-+++ b/drivers/vfio/platform/vfio_platform_common.c
-@@ -17,6 +17,7 @@
- #include <linux/iommu.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/pm_runtime.h>
- #include <linux/reset.h>
- #include <linux/slab.h>
- #include <linux/types.h>
-@@ -249,6 +250,8 @@ static void vfio_platform_release(void *device_data)
- 		const char *extra_dbg = NULL;
- 		int ret;
- 
-+		pm_runtime_put(vdev->device);
-+
- 		ret = vfio_platform_call_reset(vdev, &extra_dbg);
- 		if (ret && vdev->reset_required) {
- 			dev_warn(vdev->device, "reset driver is required and reset call failed in release (%d) %s\n",
-@@ -291,6 +294,10 @@ static int vfio_platform_open(void *device_data)
- 				 ret, extra_dbg ? extra_dbg : "");
- 			goto err_rst;
- 		}
-+
-+		ret = pm_runtime_get_sync(vdev->device);
-+		if (ret < 0)
-+			goto err_rst;
- 	}
- 
- 	vdev->refcnt++;
-@@ -706,6 +713,7 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
- 
- 	mutex_init(&vdev->igate);
- 
-+	pm_runtime_enable(vdev->device);
- 	return 0;
- 
- put_iommu:
-@@ -723,6 +731,7 @@ struct vfio_platform_device *vfio_platform_remove_common(struct device *dev)
- 	vdev = vfio_del_group_dev(dev);
- 
- 	if (vdev) {
-+		pm_runtime_disable(vdev->device);
- 		vfio_platform_put_reset(vdev);
- 		vfio_iommu_group_put(dev->iommu_group, dev);
- 	}
--- 
-2.7.4
+Joel
