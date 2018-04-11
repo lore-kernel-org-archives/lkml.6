@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479420-2-10605228504959981892
+X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479383-2-6046963826797125244
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479419; b=ZjXPFMRh9e/JbnCYS3R2uwyQldpdyMEp6xM0nmec5xkWEnGvam
-    OOT4kk7UUyEHtE2D3v5s6IQOT4wJ1o/4aeXDnvrIvgMhIpDpQnlzkCAyjSGoVj/R
-    nFeWRYAxEPLjNdqMDVDrqtL2awJJkX3mhyqUHwDGF8velEf6sNTSlfy9IP98vFbw
-    +3b/W7WxQl1szn37uaR9hCOxL0QYBcpBMZXj9tDgrD41BSdU7cfvqTkcz6uIh6JV
-    /3RkCpVlLVvq9I48JjJU+tCML4Tbp9Gd4TLjS6Vo6mk4nbUwYy2L6eid7J62CaXu
-    mDyT3vvbd3/PJaiLC+PClZLDJSoB7FzNve8g==
+    1523479382; b=GwMzw19lXvHSDbYQwg7HNatyS8+yopcCnONZ+B39GiNZ8AoAB5
+    1yKZXjlgr5p1cl1KPqPTlu0AjjhrNvr7FgshJxiAOv3+/yl8O7m1Z1VaTxUDtJpq
+    7gQcwQAz/JlS1l7iKDUJkZ8D0KlR8Z+N3SPN3PGJQvSXcDoivXTLRQ24kNRvTSah
+    TYpLjc1VyTvmiPDtYuLNsWGmYCX7SjfxPP3lV3Zf2OdMd72NlNBZ7aTiHqx3Oid8
+    QUcR9Tf0KdYmdpC0lUWp5Zt/NDTQNFiznr0tCRUWVX2G4vrtbJMoK6Padxf6+Jyk
+    ZEA52CWFRfVH8Nr3ILdZgWYr/H67v3WhTjFw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479419; bh=nbbCTwv5TiJFFGHKmIg233VLsbI1xD
-    +wJnEN1PyCjII=; b=PSOxpnABOPuTjDKbSNxk6WKj0tSfE9AsKBS+xbzyvhlbVP
-    +aZcoOIDZwIi5Qh1GP9xGfpX/LP49IlaO9toCOwKOywsFZkFcEQjv6QFHmjnbgXu
-    kG38eOxl+bBCiWYhidCGprPwAXhYA81tHaXBiPyEfYKIOfWGqSbuKffCPNVsB64i
-    5KRb19666L1dfNhjZ25uBqrAGH9ba3BG3Xxrhrm6ySCLqY1+s/ljGB21x04jWxZa
-    e8rmobugYf082kK523dOBjMbOKQF3zyAKoroUcWBuNrMj0nqz82e+JwOQYEVPjAB
-    K+6CZDznO/UXVPA31mMubWNkleJx4c3IWXa707tw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479382; bh=4ggLvnXYklRperETonEkd+ZdV+gA27
+    TbwuTqHOYveT4=; b=AJaU2G5fcvHI81qXqVJlnegoWAkfKzikRMV4fkNzgItQ7Y
+    Qs8hMGRn1LaouobJ6EvkO8DdX3lavkqaSxzhUq1j4dp4HnMuTn8gnauNpRj+G2Vv
+    BE75nqFVhEAcvjos4iiZCDG7wpBBE2E9+ui4VfSkXQI+qDlF9t0HshqHAqhzo0oq
+    w0/KGdmMH1DXF+q7Fllka2W8OFqaNZ1lPrykWAlyCx/mLLjCUhWCBmwUBDibsbIq
+    kMuQU022awsyWGFw3B+3OsXpJEvvinwjT8y+BD7PW689rXPoM2eCUeMqRYQaZNJJ
+    f4Lm4Kqru7rrATJRXEQ2TREQroXivOBnTmfsbxLg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,34 +51,32 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMip074boWQ07I4GrZAqgynpHyG3SnYkS/O7WLmeyS6BSbeAFz4e53XKhXAg1Cyb6BXQGJjsKxiSEDYJBXOKzc/mf2g8AZfKg9j58PKeXiDnG9djUiUL
-    FctnZo+s8CrClJuBr+rHPBVTnSNJlbPo9hIEqPIt3XhwsEnLqFdT/yhyg+aZ2qXbXKOZmCvIVswo1R6A14EVVOtHmB+NXSX0L7JUtBJze9MlPkRt9QPT2zFw
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOBZ1M0ubZt+vDAPRG/lz/63vxoT6kqkeoB37qpqa3fMl/mHuut34yE9v4wfBfBuuXsxp4tkzx691Df9u54v6ok9AKWwGJC6p38PPwP8jEhKcG4WRqU3
+    mG5WhVm2ZTZM32+pnQZ/u+P/WkjBoYpggvgJ60I2BdT4NTr5U7c4AnOEymhYo7si2/z9KIyLEZRskQqWGSwIhCEPs3PQpVZKpy6yhtmLUkhWn55Ld+Sfwu4O
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=tBb2bbeoAAAA:8 a=hD80L64hAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=fWKlrDiykeHFxDw9_GIA:9 a=HKZ6qAVqU7D9Uhjt:21 a=IMCvk_XUfX2MPB_8:21
-    a=QEXdDO2ut3YA:10 a=gup2V7nj8fQA:10 a=Oj-tNtZlA1e06AYgeCfH:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=KKAkSRfTAAAA:8 a=fGhLjsSNAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=8LSgxrWD8ne5ivIBiKEA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
+    a=LYKFdyShAPKLkGq8p7WX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932165AbeDKUnI (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:43:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59352 "EHLO
+        id S1755940AbeDKSrh (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:47:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59362 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755889AbeDKSrb (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:47:31 -0400
+        with ESMTP id S1755922AbeDKSre (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:47:34 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Pieter \"PoroCYon\" Sluys" <pcy@national.shitposting.agency>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "Reported-by: Jason Kridner" <jkridner@beagleboard.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 091/190] vfb: fix video mode and line_length being set when loaded
-Date: Wed, 11 Apr 2018 20:35:37 +0200
-Message-Id: <20180411183555.936507819@linuxfoundation.org>
+Subject: [PATCH 4.4 092/190] gpio: label descriptors using the device name
+Date: Wed, 11 Apr 2018 20:35:38 +0200
+Message-Id: <20180411183555.983850013@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -96,103 +94,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Pieter \\\"PoroCYon\\\" Sluys" <pcy@national.shitposting.agency>
+From: Linus Walleij <linus.walleij@linaro.org>
 
 
-[ Upstream commit 7b9faf5df0ac495a1a3d7cdb64921c179f9008ac ]
+[ Upstream commit 24e78079bf2250874e33da2e7cfbb6db72d3caf4 ]
 
-Currently, when loading the vfb module, the newly created fbdev
-has a line_length of 0, and its video mode would be PSEUDOCOLOR
-regardless of color depth. (The former could be worked around by
-calling the FBIOPUT_VSCREENINFO ioctl with having the FBACTIVIATE_FORCE
-flag set.) This patch automatically sets the line_length correctly,
-and the video mode is derived from the bit depth now as well.
+Some GPIO lines appear named "?" in the lsgpio dump due to their
+requesting drivers not passing a reasonable label.
 
-Thanks to Geert Uytterhoeven for confirming the bug and helping me with
-the patch.
+Most typically this happens if a device tree node just defines
+gpios = <...> and not foo-gpios = <...>, the former gets named
+"foo" and the latter gets named "?".
 
-Output of `fbset -i' before the patch:
-mode "1366x768-60"
-    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
-    geometry 1366 768 1366 768 32
-    timings 13806 120 10 14 3 32 5
-    rgba 8/0,8/8,8/16,8/24
-endmode
+However the struct device passed in is always valid so let's
+just label the GPIO with dev_name() on the device if no proper
+label was passed.
 
-Frame buffer device information:
-    Name        : Virtual FB
-    Address     : 0xffffaa1405d85000
-    Size        : 4196352
-    Type        : PACKED PIXELS
-    Visual      : PSEUDOCOLOR
-    XPanStep    : 1
-    YPanStep    : 1
-    YWrapStep   : 1
-    LineLength  : 0                    <-- note this
-    Accelerator : No
-
-After:
-mode "1366x768-60"
-    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
-    geometry 1366 768 1366 768 32
-    timings 13806 120 10 14 3 32 5
-    rgba 8/0,8/8,8/16,8/24
-endmode
-
-Frame buffer device information:
-    Name        : Virtual FB
-    Address     : 0xffffaa1405d85000
-    Size        : 4196352
-    Type        : PACKED PIXELS
-    Visual      : TRUECOLOR
-    XPanStep    : 1
-    YPanStep    : 1
-    YWrapStep   : 1
-    LineLength  : 5464
-    Accelerator : No
-
-Signed-off-by: "Pieter \"PoroCYon\" Sluys" <pcy@national.shitposting.agency>
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-[b.zolnierkie: minor fixups]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Reported-by: Jason Kridner <jkridner@beagleboard.org>
+Reported-by: Jason Kridner <jkridner@beagleboard.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/vfb.c |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/gpio/gpiolib.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/vfb.c
-+++ b/drivers/video/fbdev/vfb.c
-@@ -291,8 +291,23 @@ static int vfb_check_var(struct fb_var_s
-  */
- static int vfb_set_par(struct fb_info *info)
- {
-+	switch (info->var.bits_per_pixel) {
-+	case 1:
-+		info->fix.visual = FB_VISUAL_MONO01;
-+		break;
-+	case 8:
-+		info->fix.visual = FB_VISUAL_PSEUDOCOLOR;
-+		break;
-+	case 16:
-+	case 24:
-+	case 32:
-+		info->fix.visual = FB_VISUAL_TRUECOLOR;
-+		break;
-+	}
-+
- 	info->fix.line_length = get_line_length(info->var.xres_virtual,
- 						info->var.bits_per_pixel);
-+
- 	return 0;
- }
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2145,7 +2145,8 @@ struct gpio_desc *__must_check gpiod_get
+ 		return desc;
+ 	}
  
-@@ -525,6 +540,8 @@ static int vfb_probe(struct platform_dev
- 		goto err2;
- 	platform_set_drvdata(dev, info);
+-	status = gpiod_request(desc, con_id);
++	/* If a connection label was passed use that, else use the device name as label */
++	status = gpiod_request(desc, con_id ? con_id : dev_name(dev));
+ 	if (status < 0)
+ 		return ERR_PTR(status);
  
-+	vfb_set_par(info);
-+
- 	fb_info(info, "Virtual frame buffer device, using %ldK of video memory\n",
- 		videomemorysize >> 10);
- 	return 0;
