@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49qHTOjxAOlK9+XKNvdJhv9cCs75K2CADBMp6OxdPZJassAQbr40TMU5itsnO+Db49suZD6
-ARC-Seal: i=1; a=rsa-sha256; t=1523472121; cv=none;
+X-Google-Smtp-Source: AIpwx48NOUFFvPQifS3s4Q8Osq3xR/Wo6o19uQ2+nsgSzmfANRSfhph/0lthqDqirnNRrtUrA4Li
+ARC-Seal: i=1; a=rsa-sha256; t=1523472118; cv=none;
         d=google.com; s=arc-20160816;
-        b=HFuEp3zBDAUFGePnpnKDJ1fCVvQkNR1lBL47GN6zh47HpPKtNFYQ/ypjIJDKM84jWe
-         CZC88uHs40FIrDUp4hwvaorFcLwZqfaRCess91R9Pa2dvvOAcGaLVkZa7USCvdpPAPw0
-         DGLrLZ+t7ZTu0j0zNoHoVEo102CWD4CdWHpUiI3np5Kb5MYWyWZIlc7bi6alFdOY8YQx
-         qyR7w12jcP/mrPkP1HkW8mUARag+09Z9IzqQS7tEos4f/3n7cTPM2dSojsJ4OUX7Ra/U
-         KZBcYwT654rMRRu9G52Jnoj7dUlVo0WTb2y5kVyrUIogY7zi5pT7Qjhz/0fgFHeYcu99
-         ifRQ==
+        b=mOrakgy65zZBX12IwBNHNew7T77FwmzHWsSNw2Tzwm+eGgIthCuOaQlaP3re6/jz0G
+         PmtQDChukjUv104j1Fd6D+k72u5SU2XKzwGZspaZ40SkIyD6BsiMMthtmTNm1u2UMk6K
+         yXQdHdESeVoCsEN/9yavAC+kHUejb35hObwg4DTT9dT2i6Iq8B1lR/bKXvZgL2i3S/ZI
+         7FfE+jj2xsYXlxRu8mMUZuqNkM8RPLsJfCn2DQCXPhJYWZrpPJM4nsf/rBaxDj32u5qM
+         dKAzkJvfl9A2G0Ul9HGw/ReNZ3KnpYt2k0xo2M1MeXLmXJC9HvAZgsNwRCORfkAsQ8sG
+         DRxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=56NhYEcZuGU7P14KU2JFXGlZk+u2jrJOEhlUzyjL85k=;
-        b=RyeFRr72vBTwhXuJTc1/pgbyrEYc/vR2I8AYql6CWdHRXEWhXR1111a25YdU5PgLA8
-         Qcj76/kI1HrAbR9uOQOPQ9H3cF6Z1iS+BLug9CmYnKAVRVGi151VzAgQMQghm5Ns55Jk
-         j/wDsDIfilKrC4LCbOrSIsqoACFwSR1YajS1VIKq8z3g6E1QkSEGjNOaRw4lmyEgjfhu
-         ePPtgACrIzf+T5NM2HD/NPJv0vaRzLMzNcoL5em8N5jpCWn04VeeQTv/0dRkBXSBhtXs
-         55UZQ517u+BdmN0Lfetv3hHuUeq1le4I+N+L1qIHKmLSDy7OYyJ3etlisjPGo3dgE4lw
-         70Dg==
+        bh=FLYyJZw/csdcMqYMrOjn7iXHlIUwxcg0fuuqg84KS30=;
+        b=w3YIrq24HQ7OT8shZ3xnBEievB7g+WxZHcWw8w0fUPGGd6hZ9uU10zDO27cc3qy6wA
+         ZsquuyOIBGnRlWn8ZKVp46B+/O8LK4RqT0XkK5QabmysFOEfwWHWt4ENjyEzSkTPANWX
+         65qOeu7yQqQb5WljBOMo7ZTnJftxTQRI57vgqbdNU2wXHFIpD+qmTbEJuCbA4Sj9Nlp4
+         5y0Lk+DW0XFmtMjuGRqxEwUzQBxa6dmsQHcPwkYRkZsSNe47ioA4cgz+0STvLM9Z0St0
+         G9Ot+wkLtXxseFScVLFwrpkIQCjvVnyGcZ5YLgijKbCsB/zkH9cjiuEQ787+P5dlEF9b
+         l1sA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Alan Cox <alan@llwyncelyn.cymru>,
-	Jiri Prchal <jiri.prchal@aksignal.cz>,
-	Jiri Slaby <jslaby@suse.cz>,
-	Marcel Partap <mpartap@gmx.net>,
-	Michael Scott <michael.scott@linaro.org>,
-	Peter Hurley <peter@hurleysoftware.com>,
-	Russ Gorby <russ.gorby@intel.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Sebastian Reichel <sre@kernel.org>,
-	Tony Lindgren <tony@atomide.com>,
+	chenxiang <chenxiang66@hisilicon.com>,
+	John Garry <john.garry@huawei.com>,
+	Jason Yan <yanaijie@huawei.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Hannes Reinecke <hare@suse.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 095/121] tty: n_gsm: Allow ADM response in addition to UA for control dlci
-Date: Wed, 11 Apr 2018 20:36:38 +0200
-Message-Id: <20180411183502.371184308@linuxfoundation.org>
+Subject: [PATCH 3.18 094/121] scsi: libsas: initialize sas_phy status according to response of DISCOVER
+Date: Wed, 11 Apr 2018 20:36:37 +0200
+Message-Id: <20180411183502.265625848@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -50,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476303221952902?=
-X-GMAIL-MSGID: =?utf-8?q?1597476303221952902?=
+X-GMAIL-THRID: =?utf-8?q?1597476300437496411?=
+X-GMAIL-MSGID: =?utf-8?q?1597476300437496411?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,117 +54,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: chenxiang <chenxiang66@hisilicon.com>
 
 
-[ Upstream commit ea3d8465ab9b3e01be329ac5195970a84bef76c5 ]
+[ Upstream commit affc67788fe5dfffad5cda3d461db5cf2b2ff2b0 ]
 
-Some devices have the control dlci stay in ADM mode instead of the UA
-mode. This can seen at least on droid 4 when trying to open the ts
-27.010 mux port. Enabling n_gsm debug mode shows the control dlci
-always respond with DM to SABM instead of UA:
+The status of SAS PHY is in sas_phy->enabled. There is an issue that the
+status of a remote SAS PHY may be initialized incorrectly: if disable
+remote SAS PHY through sysfs interface (such as echo 0 >
+/sys/class/sas_phy/phy-1:0:0/enable), then reboot the system, and we
+will find the status of remote SAS PHY which is disabled before is
+1 (cat /sys/class/sas_phy/phy-1:0:0/enable). But actually the status of
+remote SAS PHY is disabled and the device attached is not found.
 
-# modprobe n_gsm debug=0xff
-# ldattach -d GSM0710 /dev/ttyS0 &
-gsmld_output: 00000000: f9 03 3f 01 1c f9
---> 0) C: SABM(P)
-gsmld_receive: 00000000: f9 03 1f 01 36 f9
-<-- 0) C: DM(P)
-...
-$ minicom -D /dev/gsmtty1
-minicom: cannot open /dev/gsmtty1: No error information
-$ strace minicom -D /dev/gsmtty1
-...
-open("/dev/gsmtty1", O_RDWR|O_NOCTTY|O_NONBLOCK|O_LARGEFILE) = -1 EL2HLT
+In SAS protocol, NEGOTIATED LOGICAL LINK RATE field of DISCOVER response
+is 0x1 when remote SAS PHY is disabled. So initialize sas_phy->enabled
+according to the value of NEGOTIATED LOGICAL LINK RATE field.
 
-Note that this is different issue from other n_gsm -EL2HLT issues such
-as timeouts when the control dlci does not respond at all.
-
-The ADM mode seems to be a quite common according to "RF Wireless World"
-article "GSM Issue-UE sends SABM and gets a DM response instead of
-UA response":
-
-  This issue is most commonly observed in GSM networks where in UE sends
-  SABM and expects network to send UA response but it ends up receiving
-  DM response from the network. SABM stands for Set asynchronous balanced
-  mode, UA stands for Unnumbered Acknowledge and DA stands for
-  Disconnected Mode.
-
-  An RLP entity can be in one of two modes:
-  - Asynchronous Balanced Mode (ABM)
-  - Asynchronous Disconnected Mode (ADM)
-
-Currently Linux kernel closes the control dlci after several retries
-in gsm_dlci_t1() on DM. This causes n_gsm /dev/gsmtty ports to produce
-error code -EL2HLT when trying to open them as the closing of control
-dlci has already set gsm->dead.
-
-Let's fix the issue by allowing control dlci stay in ADM mode after the
-retries so the /dev/gsmtty ports can be opened and used. It seems that
-it might take several attempts to get any response from the control
-dlci, so it's best to allow ADM mode only after the SABM retries are
-done.
-
-Note that for droid 4 additional patches are needed to mux the ttyS0
-pins and to toggle RTS gpio_149 to wake up the mdm6600 modem are also
-needed to use n_gsm. And the mdm6600 modem needs to be powered on.
-
-Cc: linux-serial@vger.kernel.org
-Cc: Alan Cox <alan@llwyncelyn.cymru>
-Cc: Jiri Prchal <jiri.prchal@aksignal.cz>
-Cc: Jiri Slaby <jslaby@suse.cz>
-Cc: Marcel Partap <mpartap@gmx.net>
-Cc: Michael Scott <michael.scott@linaro.org>
-Cc: Peter Hurley <peter@hurleysoftware.com>
-Cc: Russ Gorby <russ.gorby@intel.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Sebastian Reichel <sre@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: chenxiang <chenxiang66@hisilicon.com>
+Reviewed-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/n_gsm.c |   17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ drivers/scsi/libsas/sas_expander.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/tty/n_gsm.c
-+++ b/drivers/tty/n_gsm.c
-@@ -1467,6 +1467,10 @@ static void gsm_dlci_open(struct gsm_dlc
-  *	in which case an opening port goes back to closed and a closing port
-  *	is simply put into closed state (any further frames from the other
-  *	end will get a DM response)
-+ *
-+ *	Some control dlci can stay in ADM mode with other dlci working just
-+ *	fine. In that case we can just keep the control dlci open after the
-+ *	DLCI_OPENING retries time out.
-  */
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -282,6 +282,7 @@ static void sas_set_ex_phy(struct domain
+ 	phy->phy->minimum_linkrate = dr->pmin_linkrate;
+ 	phy->phy->maximum_linkrate = dr->pmax_linkrate;
+ 	phy->phy->negotiated_linkrate = phy->linkrate;
++	phy->phy->enabled = (phy->linkrate != SAS_PHY_DISABLED);
  
- static void gsm_dlci_t1(unsigned long data)
-@@ -1480,8 +1484,15 @@ static void gsm_dlci_t1(unsigned long da
- 		if (dlci->retries) {
- 			gsm_command(dlci->gsm, dlci->addr, SABM|PF);
- 			mod_timer(&dlci->t1, jiffies + gsm->t1 * HZ / 100);
--		} else
-+		} else if (!dlci->addr && gsm->control == (DM | PF)) {
-+			if (debug & 8)
-+				pr_info("DLCI %d opening in ADM mode.\n",
-+					dlci->addr);
-+			gsm_dlci_open(dlci);
-+		} else {
- 			gsm_dlci_close(dlci);
-+		}
-+
- 		break;
- 	case DLCI_CLOSING:
- 		dlci->retries--;
-@@ -1499,8 +1510,8 @@ static void gsm_dlci_t1(unsigned long da
-  *	@dlci: DLCI to open
-  *
-  *	Commence opening a DLCI from the Linux side. We issue SABM messages
-- *	to the modem which should then reply with a UA, at which point we
-- *	will move into open state. Opening is done asynchronously with retry
-+ *	to the modem which should then reply with a UA or ADM, at which point
-+ *	we will move into open state. Opening is done asynchronously with retry
-  *	running off timers and the responses.
-  */
- 
+  skip:
+ 	if (new_phy)
