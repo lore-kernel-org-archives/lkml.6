@@ -1,134 +1,296 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751876AbeDKEcW convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 00:32:22 -0400
-Received: from emcscan.emc.com.tw ([192.72.220.5]:31946 "EHLO
-        emcscan.emc.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751491AbeDKEcU (ORCPT
+        id S1751553AbeDKEhc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 00:37:32 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:39170 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750734AbeDKEhb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 00:32:20 -0400
-From: =?utf-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>
-To: "'Benjamin Tissoires'" <benjamin.tissoires@redhat.com>
-Cc: "'Dmitry Torokhov'" <dmitry.torokhov@gmail.com>,
-        "'Oliver Haessler'" <oliver@redhat.com>,
-        "'Benjamin Berg'" <bberg@redhat.com>,
-        "'open list:HID CORE LAYER'" <linux-input@vger.kernel.org>,
-        "'lkml'" <linux-kernel@vger.kernel.org>
-References: <20180405132537.3218-1-benjamin.tissoires@redhat.com> <20180405235126.GB57189@dtor-ws> <CAO-hwJLY=OR1bk2y9c-6MZzoAYzorH9MEKf70=dnhqz8s-dCQg@mail.gmail.com> <000301d3d08f$24b356b0$6e1a0410$@emc.com.tw> <CAO-hwJKM51-N=ffO2sfZ6-j=L+qEsUt_bFJ+YOdJboROodPmOg@mail.gmail.com>
-In-Reply-To: <CAO-hwJKM51-N=ffO2sfZ6-j=L+qEsUt_bFJ+YOdJboROodPmOg@mail.gmail.com>
-Subject: RE: [PATCH 0/8] Input: support for latest Lenovo thinkpads (series 80)
-Date: Wed, 11 Apr 2018 12:32:17 +0800
-Message-ID: <013f01d3d14e$12c570e0$385052a0$@emc.com.tw>
+        Wed, 11 Apr 2018 00:37:31 -0400
+X-Google-Smtp-Source: AIpwx4+q3UCcvm5PAwDKn5coF5MMNSBFiw0h67/8rT6UNeqJqPw7h4i+GZ1FqpSQ+eYy9qTMEf/XHw==
+Date: Wed, 11 Apr 2018 10:07:26 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>
+Subject: Re: [PATCH v2] cpufreq/schedutil: Cleanup, document and fix iowait
+ boost
+Message-ID: <20180411043726.GJ7671@vireshk-i7>
+References: <20180410155931.31973-1-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 14.0
-Thread-Index: AQGx3tF9q04NbCgqaz93Ar88cJmSXgH4DjZEAnkTkxECI3evvgLDIooFo/QIGuA=
-Content-Language: zh-tw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180410155931.31973-1-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Benjamin,
+On 10-04-18, 16:59, Patrick Bellasi wrote:
+> The iowait boosting code has been recently updated to add a progressive
+> boosting behavior which allows to be less aggressive in boosting tasks
+> doing only sporadic IO operations, thus being more energy efficient for
+> example on mobile platforms.
+> 
+> The current code is now however a bit convoluted. Some functionalities
+> (e.g. iowait boost reset) are replicated in different paths and their
+> documentation is slightly misaligned.
+> 
+> Moreover, from a functional stadpoint, the iowait boosting is also not
+> always reset in systems where cpufreq policies are not shared, each CPU
+> has his own policy. Indeed, when a CPU is idle for a long time we keep
+> doubling the boosting instead of resetting it to the minimum frequency,
+> as expected by the TICK_NSEC logic, whenever a task wakes up from IO.
+> 
+> Let's cleanup the code by consolidating all the IO wait boosting related
+> functionality inside the already existing functions and better define
+> their role:
+> 
+> - sugov_set_iowait_boost: is now in charge only to set/increase the IO
+>      wait boost, every time a task wakes up from an IO wait.
+> 
+> - sugov_iowait_boost: is now in charge to reset/reduce the IO wait
+>      boost, every time a sugov update is triggered, as well as
+>      to (eventually) enforce the currently required IO boost value.
+> 
+> This is possible since these two functions are already used one after
+> the other, both in single and shared frequency domains, following the
+> same template:
+> 
+>    /* Configure IO boost, if required */
+>    sugov_set_iowait_boost()
+> 
+>    /* Return here if freq change is in progress or throttled */
+> 
+>    /* Collect and aggregate utilization information */
+>    sugov_get_util()
+>    sugov_aggregate_util()
+> 
+>    /* Add IO boost if currently enabled */
+>    sugov_iowait_boost()
+> 
+> As a extra bonus, let's also add the documentation for these two
+> functions and better align the in-code documentation.
+> 
+> Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+> Reported-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Joel Fernandes <joelaf@google.com>
+> Cc: Steve Muckle <smuckle@google.com>
+> Cc: Juri Lelli <juri.lelli@redhat.com>
+> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> 
+> ---
+> Changes in v2:
+> - Fix return in sugov_iowait_boost()'s reset code (Viresh)
+> - Add iowait boost reset for sugov_update_single() (Viresh)
+> - Title changed to reflact the fix from previous point
+> 
+> Based on today's tip/sched/core:
+>    b720342 sched/core: Update preempt_notifier_key to modern API
+> ---
+>  kernel/sched/cpufreq_schedutil.c | 120 ++++++++++++++++++++++++++-------------
+>  1 file changed, 81 insertions(+), 39 deletions(-)
+> 
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index 2b124811947d..2a2ae3a0e41f 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -51,7 +51,7 @@ struct sugov_cpu {
+>  	bool			iowait_boost_pending;
+>  	unsigned int		iowait_boost;
+>  	unsigned int		iowait_boost_max;
+> -	u64 last_update;
+> +	u64			last_update;
+>  
+>  	/* The fields below are only needed when sharing a policy: */
+>  	unsigned long		util_cfs;
+> @@ -201,43 +201,97 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+>  	return min(util, sg_cpu->max);
+>  }
+>  
+> -static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
+> +/**
+> + * sugov_set_iowait_boost updates the IO boost at each wakeup from IO.
+> + * @sg_cpu: the sugov data for the CPU to boost
+> + * @time:   the update time from the caller
+> + * @flags:  SCHED_CPUFREQ_IOWAIT if the task is waking up after an IO wait
+> + *
+> + * Each time a task wakes up after an IO operation, the CPU utilization can be
+> + * boosted to a certain utilization which is doubled at each wakeup
+> + * from IO, starting from the utilization of the minimum OPP to that of the
+> + * maximum one.
+> + */
+> +static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
+> +				   unsigned int flags)
+>  {
+> -	if (flags & SCHED_CPUFREQ_IOWAIT) {
+> -		if (sg_cpu->iowait_boost_pending)
+> -			return;
+> -
+> -		sg_cpu->iowait_boost_pending = true;
+> +	bool iowait = flags & SCHED_CPUFREQ_IOWAIT;
+>  
+> -		if (sg_cpu->iowait_boost) {
+> -			sg_cpu->iowait_boost <<= 1;
+> -			if (sg_cpu->iowait_boost > sg_cpu->iowait_boost_max)
+> -				sg_cpu->iowait_boost = sg_cpu->iowait_boost_max;
+> -		} else {
+> -			sg_cpu->iowait_boost = sg_cpu->sg_policy->policy->min;
+> -		}
+> -	} else if (sg_cpu->iowait_boost) {
+> +	/* Reset boost if the CPU appears to have been idle enough */
+> +	if (sg_cpu->iowait_boost) {
+>  		s64 delta_ns = time - sg_cpu->last_update;
+>  
+> -		/* Clear iowait_boost if the CPU apprears to have been idle. */
+>  		if (delta_ns > TICK_NSEC) {
+> -			sg_cpu->iowait_boost = 0;
+> -			sg_cpu->iowait_boost_pending = false;
+> +			sg_cpu->iowait_boost = iowait
+> +				? sg_cpu->sg_policy->policy->min : 0;
+> +			sg_cpu->iowait_boost_pending = iowait;
+> +			return;
+>  		}
+>  	}
+> +
+> +	/* Boost only tasks waking up after IO */
+> +	if (!iowait)
+> +		return;
+> +
+> +	/* Ensure IO boost doubles only one time at each frequency increase */
+> +	if (sg_cpu->iowait_boost_pending)
+> +		return;
+> +	sg_cpu->iowait_boost_pending = true;
+> +
+> +	/* Double the IO boost at each frequency increase */
+> +	if (sg_cpu->iowait_boost) {
+> +		sg_cpu->iowait_boost <<= 1;
+> +		if (sg_cpu->iowait_boost > sg_cpu->iowait_boost_max)
+> +			sg_cpu->iowait_boost = sg_cpu->iowait_boost_max;
+> +		return;
+> +	}
+> +
+> +	/* At first wakeup after IO, start with minimum boost */
+> +	sg_cpu->iowait_boost = sg_cpu->sg_policy->policy->min;
+>  }
 
------Original Message-----
-From: Benjamin Tissoires [mailto:benjamin.tissoires@redhat.com] 
-Sent: Tuesday, April 10, 2018 3:35 PM
-To: 廖崇榮
-Cc: Dmitry Torokhov; Oliver Haessler; Benjamin Berg; open list:HID CORE LAYER; lkml
-Subject: Re: [PATCH 0/8] Input: support for latest Lenovo thinkpads (series 80)
+The above part should be a different patch with this:
 
-Hi KT,
+Fixes: a5a0809bc58e ("cpufreq: schedutil: Make iowait boost more energy efficient")
 
-On Tue, Apr 10, 2018 at 7:45 AM, 廖崇榮 <kt.liao@emc.com.tw> wrote:
-> Hi Benjamin,
->
-> Thanks so much for your patch.
->
-> I have tested them for Elan Gen5/Gen6(new) touchpad with SMbus/PS2.
-> It works fine in my thinkpad so far but I find an issue today after lid-close/open.
->
-> I am not sure if you can see it in T480S , I "guess" it may be relative to i2c_i801.
->
-> The lid-close will enter deep sleep and cut touchpad power.
-> I can see the resume flow after lid-open and SMbus-initial try to request hello package but fail.
-> Strangely, I can't see any SMbus host signal on LA scope after power-on.
+> -static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, unsigned long *util,
+> -			       unsigned long *max)
+> +/**
+> + * sugov_iowait_boost boosts a CPU after a wakeup from IO.
+> + * @sg_cpu: the sugov data for the cpu to boost
+> + * @time:   the update time from the caller
+> + * @util:   the utilization to (eventually) boost
+> + * @max:    the maximum value the utilization can be boosted to
+> + *
+> + * A CPU running a task which woken up after an IO operation can have its
+> + * utilization boosted to speed up the completion of those IO operations.
+> + * The IO boost value is increased each time a task wakes up from IO, in
+> + * sugov_set_iowait_boost(), and it's instead decreased by this function,
+> + * each time an increase has not been requested (!iowait_boost_pending).
+> + *
+> + * A CPU which also appears to have been idle for at least one tick has also
+> + * its IO boost utilization reset.
+> + *
+> + * This mechanism is designed to boost high frequently IO waiting tasks, while
+> + * being more conservative on tasks which does sporadic IO operations.
+> + */
+> +static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
+> +			       unsigned long *util, unsigned long *max)
+>  {
+>  	unsigned int boost_util, boost_max;
+> +	s64 delta_ns;
+>  
+> +	/* No IOWait boost active */
+>  	if (!sg_cpu->iowait_boost)
+>  		return;
+>  
+> +	/* Clear boost if the CPU appears to have been idle enough */
+> +	delta_ns = time - sg_cpu->last_update;
+> +	if (delta_ns > TICK_NSEC) {
+> +		sg_cpu->iowait_boost = 0;
+> +		sg_cpu->iowait_boost_pending = false;
+> +		return;
+> +	}
+> +
+> +	/* An IO waiting task has just woken up, use the boost value */
+>  	if (sg_cpu->iowait_boost_pending) {
+>  		sg_cpu->iowait_boost_pending = false;
+>  	} else {
+> +		/* Reduce the boost value otherwise */
+>  		sg_cpu->iowait_boost >>= 1;
+>  		if (sg_cpu->iowait_boost < sg_cpu->sg_policy->policy->min) {
+>  			sg_cpu->iowait_boost = 0;
+> @@ -248,6 +302,10 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, unsigned long *util,
+>  	boost_util = sg_cpu->iowait_boost;
+>  	boost_max = sg_cpu->iowait_boost_max;
+>  
+> +	/*
+> +	 * A CPU is boosted only if its current utilization is smaller then
+> +	 * the current IO boost level.
+> +	 */
+>  	if (*util * boost_max < *max * boost_util) {
+>  		*util = boost_util;
+>  		*max = boost_max;
+> @@ -299,7 +357,7 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
+>  	sugov_get_util(sg_cpu);
+>  	max = sg_cpu->max;
+>  	util = sugov_aggregate_util(sg_cpu);
+> -	sugov_iowait_boost(sg_cpu, &util, &max);
+> +	sugov_iowait_boost(sg_cpu, time, &util, &max);
+>  	next_f = get_next_freq(sg_policy, util, max);
+>  	/*
+>  	 * Do not reduce the frequency if the CPU has not been idle
+> @@ -325,28 +383,12 @@ static unsigned int sugov_next_freq_shared(struct sugov_cpu *sg_cpu, u64 time)
+>  	for_each_cpu(j, policy->cpus) {
+>  		struct sugov_cpu *j_sg_cpu = &per_cpu(sugov_cpu, j);
+>  		unsigned long j_util, j_max;
+> -		s64 delta_ns;
+>  
+>  		sugov_get_util(j_sg_cpu);
+> -
+> -		/*
+> -		 * If the CFS CPU utilization was last updated before the
+> -		 * previous frequency update and the time elapsed between the
+> -		 * last update of the CPU utilization and the last frequency
+> -		 * update is long enough, reset iowait_boost and util_cfs, as
+> -		 * they are now probably stale. However, still consider the
+> -		 * CPU contribution if it has some DEADLINE utilization
+> -		 * (util_dl).
+> -		 */
+> -		delta_ns = time - j_sg_cpu->last_update;
+> -		if (delta_ns > TICK_NSEC) {
+> -			j_sg_cpu->iowait_boost = 0;
+> -			j_sg_cpu->iowait_boost_pending = false;
+> -		}
+> -
+>  		j_max = j_sg_cpu->max;
+>  		j_util = sugov_aggregate_util(j_sg_cpu);
+> -		sugov_iowait_boost(j_sg_cpu, &j_util, &j_max);
+> +		sugov_iowait_boost(j_sg_cpu, time, &j_util, &j_max);
+> +
+>  		if (j_util * max > j_max * util) {
+>  			util = j_util;
+>  			max = j_max;
 
-That's weird. I do not see this, by either closing the lid or directly calling 'systemctl suspend'.
-On my system, i2c-i801 is also compiled as a module but psmouse is not (directly in vmlinuz).
-[KT] : It's good to know your system doesn't meet this problem. 
-     My SMbus laptop is an engineer sample in 2015, and PM tell me that NFC attaches to the same bus.
-     I guess it's a single case because it's not a stable platform.
+And the rest is just code rearrangement. And as Peter said, we better
+have a routine to clear boost values on delta > TICK_NSEC.
 
->
-> I can't switch to SMbus after rmmod/modprobe psmouse because error happen in elantech_create_smbus.
+Diff LGTM otherwise. Thanks.
 
-If the SMBus adapter is failing, it is somewhat expected. Reloading psmouse will force a re-trigger of the SMBus probe function, but if the underlying communication fails, there is no way for psmouse to know it failed, so the PS/2 node will disappear. And the SMBus device will not be there.
-[KT] : It switch to PS/2 interface after rmmod/modprobe psmouse.
-
-> It will be recovered only if I rmmod/modprobe i2c_i801 first.
-
-Just to be sure, what happens if you rmmod/modprobe elan_i2c instead of i2c_i801?
-[KT] :I tried rmmod/modprobe elan_i2c first , but can't recover touchpad. 
-    No error printed in the dmesg. I will add more message to check it later.
-
-And which kernel are you running? On a vanilla 4.16 + Dmitry's next branch I do not see such issues.
-[KT]: I use 4.15, I may try 4.16 later.
-
->
-> Do you have any idea about it?
-
-If reloading elan_i2c doesn't fix the situation, it must be in i2c_i801. But this is weird that this happens on your platform but not on my t480s going into S3.
-[KT] I think so. As I mention that I can't see bus signal on scope. That make me guess it's the bus adaptor issue.
-    It's an early-stage engineer system, power Issue will be expected.
-
-Cheers,
-Benjamin
-
->
-> Thanks
-> KT
-> -----Original Message-----
-> From: Benjamin Tissoires [mailto:benjamin.tissoires@redhat.com]
-> Sent: Friday, April 06, 2018 2:51 PM
-> To: Dmitry Torokhov
-> Cc: 廖崇榮; Oliver Haessler; Benjamin Berg; open list:HID CORE LAYER; 
-> lkml
-> Subject: Re: [PATCH 0/8] Input: support for latest Lenovo thinkpads 
-> (series 80)
->
-> Hi Dmitry,
->
-> On Fri, Apr 6, 2018 at 1:51 AM, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
->> Hi Benjamin,
->>
->> On Thu, Apr 05, 2018 at 03:25:29PM +0200, Benjamin Tissoires wrote:
->>> Hi Dmitry,
->>>
->>> well, this year, Lenovo gave us a surprise and decided to not use 
->>> the same touchpad/trackstick in all its model. And by default, the 
->>> support under Linux is less than ideal.
->>>
->>> Please find a series that should fix those issues. Compared to the 
->>> 60 series, there do not seem to e BIOS table issues this time, and 
->>> suspend/resume works fine thanks to your latest trackstick fixes.
->>>
->>> The T480s is a different beast, as it uses an Elan touchpad.
->>> I have been carrying the patches 3-6 for a while and tested previous 
->>> versions on various Elan PS/2 hardware without an issue as far as I 
->>> could tell. I was lacking tests from users with SMBus as all the 
->>> laptops I tried where puer PS/2.
->>>
->>> Anyway, it would be cool if you could have a look at the series.
->>
->> I am mostly happy with the series, but I would love to hear KT's take 
->> on it.
->
-> thanks for the quick review.
-> I worked closely with KT for this series. He helped me a lot for the tiny firmware changes that were required. However, quoting his email from Tuesday:
-> "There will be a spring vacation in Taiwan from tomorrow." I guess we won't hear from him until the end of next week as we always have a backlog of urgent things to do after holidays...
->
-> Cheers,
-> Benjamin
->
+-- 
+viresh
