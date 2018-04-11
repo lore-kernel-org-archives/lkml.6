@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3374234-1523481271-2-14183423313033916522
+X-Cyrus-Session-Id: sloti22d1t05-3339499-1523481263-2-17472490587274753364
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523481270; b=rjKpKv/AEsDJDKd5TX1kAzIPVtrRwFhr9u7FkT0fRplO0U7pYU
-    6UnpFXhml/hdCWcIcj+v/U51vAJW8MMuPCFLKs74PMkeOgOfkz+EoQv54+0+WQ4w
-    jxZSJJ0CL1Fnkl9uamNeXDwmYOC536o6aO+LiJYhLGDsx5jilB496Pwg+i9FtFEG
-    7MF7Q4oPbJm4ZdoXnUgj3cUokDjiiheEWukQBB0VBPdx1WGj6t2x65EIENEsQd30
-    GLRtl5xnaJomRX1yoVA4J3jQQ6cZIxWZfQhU2NTqRA+4/uQbERNKvKP0BrEm5asj
-    kbSI23uRN9kVDxu+w2W/6+YfRsM7CPXv6PGA==
+    1523481262; b=RuLTmND9j1Wq8jjP4JhlXZSzrzWpTQ1MZFvZHVHaWNBJcPKRsq
+    FE0Qy64uu8k7wwbQDuNoQncexyb6HUI/28yRldO6+CyGBjPqr4DnzJ1dZ5J1NV38
+    q+cET+FlhHdgS9rslKhDbIji1USTNQpS3MdXRkrZ5h6NwhwE3DdN/+qysq9zV7R3
+    67uh052FGp61PUu/etsoZporJDQAZsyypOQOUA+UxJhmXlft7lkhPyG2zwLtXpeq
+    Bt8ioWlM0xaiFIr/lZyERkEL+gFL/K+Zh0pjldQU2fHQOKbvNirj+ATxzb7Sjn/2
+    z2rCtkidClvXxF/4IyMXo/jnKQbVWul7h4Cw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523481270; bh=3t96o9Nf0V6khg5bP3hqf9cX4crei2
-    ktQ/2MoX+N3Ls=; b=J/3bPFXIpJWquz0pB9vTzCA/yoGGlZJB5kDL3nLjQbE6Ec
-    1jgFauNa6Pdbz6vkvClZKDMwm52qVrsSMitK8FoRR8D3uzYW77BcyzLb1pTCjbV7
-    jVPRoSEOFUwXpN2i9IE/jU7KVx4eJUe5MOF18hHvWBqfKydvPBIOA/r+OKolzIdd
-    a2EGj8jTr50NihyvwlQDZiDpzaw4hoZ6gOqs2QvIowr2A6A7c2v1U8NzHGd/KGDO
-    NN5jk/YJklnaHro2ob6GUTr2cHf6M7tGLSG4ee21DbI39WPKhmoxA72AL1XgCVCP
-    plwb1sBr0uH8MLAWBlmM/HgUJMRbKBIk+PmNXe7A==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523481262; bh=/wGsi19XzvdIgMejJ6J/1LR4LFaT+M
+    JTRGaE2IpZVFU=; b=Q6i7f33VJG/juJS84sFp40MWh4hkGzWATRvygdZArgIeEQ
+    teA5akBqNKK05/CpGyW7VVO45Xslay6v4kJIvYfZ67R13UkIVtd/F/vFaN6uuh35
+    oJtnen1hBxbXxx3/BEaED1bAHsYAyHxRd1z3Kq9MVIuF9PPD7awnsbWdH9ZGnY9t
+    oyF4hjth1Ungw/5wNL0ikCmoiGdt8YYJmNWMaLPbhPeeLFiwJzNpT21r/zIQOB//
+    qlflXN32Mp7JBV9K4IvjDADldnN8zsc0f+cuFJ/biFxzurviKGkk5xlT0wTv94N5
+    BWCl569BSQXBs4ITPj3BX6Qr9sRn7vv1utZwcN7A==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,33 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG7qQNgxWGpgcrGjYSh4PNyrKiIKgI9gb8RKqKGyuT8Zs/4s6ZnowIXuFw5csr3cgJ+u7JPzs6BNK3fT6IcBE80yteITto+On20wvu+FPszJjTXF6gcM
-    gu/AhqUGpMUq7fWUGEyiV6axxiZu9c/ipKn8ZnBmx5eWPq9SV0Z52BKi10UJS5ROvCKwljsz6RJHm/KMhKwNDXn5Dd0Iw8GTIbhHG43zEfRukCz/Mj8um8HQ
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=6pFBrwePJe4A:10
-    a=Kd1tUaAdevIA:10 a=QyXUC8HyAAAA:8 a=dq2cNPrMAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=K2BkGcb1y0ee7xCoLg8A:9 a=QEXdDO2ut3YA:10
-    a=UrzWRhJOTTn3oDX10iyi:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-CM-Envelope: MS4wfFu+BeCOSH9B1cJNUxYgdOZE8cexbUFdb+4lDHpZNvhCWGT7V04KWOQ2WlT/zN09tCNP7e21lgLZL0yURhDK2tPaDjpQm4/8ZQNrudRqxwUUYKQF4bdN
+    rx6U9rxNoqOu6dbJhf0esXDRF3u8o8TlT+dh4Tkb86uWuimPYzlnH4U+QtfAvIU0ZNn46TIL8qedU2CxF6+2Ui7US4uXRTiFEzJm+6h2qmSh/5Xt/jvSBr/y
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=C_IRinGWAAAA:8 a=xGAvDSoXAAAA:8 a=vQBBkBfzAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=0EdAP3AoEZbcGndTsloA:9 a=Fb6FI0IV8mqSXXlh:21
+    a=xMWXusudNDGyQNUe:21 a=QEXdDO2ut3YA:10 a=I9AbH5bZuplaqbmfSwNo:22
+    a=NGXS0kB0m_rannUenejW:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754750AbeDKSlB (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:41:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56640 "EHLO
+        id S1754766AbeDKSlG (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:41:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56670 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754698AbeDKSk7 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:40:59 -0400
+        with ESMTP id S1754698AbeDKSlE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:41:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Mirabito <davidm@metamako.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, A Sun <as1033x@comcast.net>,
+        Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 071/121] e1000e: fix race condition around skb_tstamp_tx()
-Date: Wed, 11 Apr 2018 20:36:14 +0200
-Message-Id: <20180411183500.468201655@linuxfoundation.org>
+Subject: [PATCH 3.18 073/121] [media] mceusb: sporadic RX truncation corruption fix
+Date: Wed, 11 Apr 2018 20:36:16 +0200
+Message-Id: <20180411183500.589996207@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -95,70 +95,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jacob Keller <jacob.e.keller@intel.com>
+From: A Sun <as1033x@comcast.net>
 
 
-[ Upstream commit 5012863b7347866764c4a4e58b62fb05346b0d06 ]
+[ Upstream commit 8e175b22e8640bf3a58e071af54190b909e4a944 ]
 
-The e1000e driver and related hardware has a limitation on Tx PTP
-packets which requires we limit to timestamping a single packet at once.
-We do this by verifying that we never request a new Tx timestamp while
-we still have a tx_hwtstamp_skb pointer.
+Intermittent RX truncation and loss of IR received data. This resulted
+in receive stream synchronization errors where driver attempted to
+incorrectly parse IR data (eg 0x90 below) as command response.
 
-Unfortunately the driver suffers from a race condition around this. The
-tx_hwtstamp_skb pointer is not set to NULL until after skb_tstamp_tx()
-is called. This function notifies the stack and applications of a new
-timestamp. Even a well behaved application that only sends a new request
-when the first one is finished might be woken up and possibly send
-a packet before we can free the timestamp in the driver again. The
-result is that we needlessly ignore some Tx timestamp requests in this
-corner case.
+[ 3969.139898] mceusb 1-1.2:1.0: processed IR data
+[ 3969.151315] mceusb 1-1.2:1.0: rx data: 00 90 (length=2)
+[ 3969.151321] mceusb 1-1.2:1.0: Unknown command 0x00 0x90
+[ 3969.151336] mceusb 1-1.2:1.0: rx data: 98 0a 8d 0a 8e 0a 8e 0a 8e 0a 8e 0a 9a 0a 8e 0a 0b 3a 8e 00 80 41 59 00 00 (length=25)
+[ 3969.151341] mceusb 1-1.2:1.0: Raw IR data, 24 pulse/space samples
+[ 3969.151348] mceusb 1-1.2:1.0: Storing space with duration 500000
 
-Fix this by assigning the tx_hwtstamp_skb pointer prior to calling
-skb_tstamp_tx() and use a temporary pointer to hold the timestamped skb
-until that function finishes. This ensures that the application is not
-woken up until the driver is ready to begin timestamping a new packet.
+Bug trigger appears to be normal, but heavy, IR receiver use.
 
-This ensures that well behaved applications do not accidentally race
-with condition to skip Tx timestamps. Obviously an application which
-sends multiple Tx timestamp requests at once will still only timestamp
-one packet at a time. Unfortunately there is nothing we can do about
-this.
-
-Reported-by: David Mirabito <davidm@metamako.com>
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: A Sun <as1033x@comcast.net>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/e1000e/netdev.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/media/rc/mceusb.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -1181,6 +1181,7 @@ static void e1000e_tx_hwtstamp_work(stru
- 	struct e1000_hw *hw = &adapter->hw;
+--- a/drivers/media/rc/mceusb.c
++++ b/drivers/media/rc/mceusb.c
+@@ -1370,8 +1370,13 @@ static int mceusb_dev_probe(struct usb_i
+ 		goto rc_dev_fail;
  
- 	if (er32(TSYNCTXCTL) & E1000_TSYNCTXCTL_VALID) {
-+		struct sk_buff *skb = adapter->tx_hwtstamp_skb;
- 		struct skb_shared_hwtstamps shhwtstamps;
- 		u64 txstmp;
- 
-@@ -1189,9 +1190,14 @@ static void e1000e_tx_hwtstamp_work(stru
- 
- 		e1000e_systim_to_hwtstamp(adapter, &shhwtstamps, txstmp);
- 
--		skb_tstamp_tx(adapter->tx_hwtstamp_skb, &shhwtstamps);
--		dev_kfree_skb_any(adapter->tx_hwtstamp_skb);
-+		/* Clear the global tx_hwtstamp_skb pointer and force writes
-+		 * prior to notifying the stack of a Tx timestamp.
-+		 */
- 		adapter->tx_hwtstamp_skb = NULL;
-+		wmb(); /* force write prior to skb_tstamp_tx */
+ 	/* wire up inbound data handler */
+-	usb_fill_int_urb(ir->urb_in, dev, pipe, ir->buf_in, maxp,
+-				mceusb_dev_recv, ir, ep_in->bInterval);
++	if (usb_endpoint_xfer_int(ep_in))
++		usb_fill_int_urb(ir->urb_in, dev, pipe, ir->buf_in, maxp,
++				 mceusb_dev_recv, ir, ep_in->bInterval);
++	else
++		usb_fill_bulk_urb(ir->urb_in, dev, pipe, ir->buf_in, maxp,
++				  mceusb_dev_recv, ir);
 +
-+		skb_tstamp_tx(skb, &shhwtstamps);
-+		dev_kfree_skb_any(skb);
- 	} else if (time_after(jiffies, adapter->tx_hwtstamp_start
- 			      + adapter->tx_timeout_factor * HZ)) {
- 		dev_kfree_skb_any(adapter->tx_hwtstamp_skb);
+ 	ir->urb_in->transfer_dma = ir->dma_in;
+ 	ir->urb_in->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
+ 
