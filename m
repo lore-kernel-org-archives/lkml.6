@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49GrvP8HP0hDj+soQ47Pk9c3NbkjKlKOq8w5s1Wz1VVswOPCaPYdKaiQjlsjJ+Uvy00/7BY
-ARC-Seal: i=1; a=rsa-sha256; t=1523473269; cv=none;
+X-Google-Smtp-Source: AIpwx49/eNeBLEohf9XxQ27aZKyXqGSF8h90/C3XqQaQsZiRhyVX2OhYojZm7IYpwWrafnh5lLWI
+ARC-Seal: i=1; a=rsa-sha256; t=1523473264; cv=none;
         d=google.com; s=arc-20160816;
-        b=uWvcXBCiWNPMojpD6CNdKTf4RPiadZ0lI5rgiKQjboJ55dZ7jskahCbyREA/OmkqE9
-         77IGr0ZviWmAd02Q8zEtJdulZ5R3Q9OE308NlXwANu2u0/d40sfjwaEhWVxD4zdIktqr
-         04sJ57sWDI4/TDAMmfTyEm9BgwChEmzfXPisXUd4RIK9Vk/T1IvQ8LjxPRaNMUcGHOPT
-         njE0iOdmrGj4Bbbyyxh6OxkjbL9HgryNceV68XOWPymA6TDP55EBd2iJY7D2oJCsTOYm
-         DpAyMNxqF+IpzeJqxLRZI4GwOQZmqd+oK70E9/Rn4ENv8mhLm1vGaKLhR/UNeV7RbBsQ
-         FRKQ==
+        b=OG1MOPg+MqwEyXxuJ3+qeC5ovZGHoay+baj5aanoPghhJCZZpM9dV26wNJL3u+r/bk
+         6nPmmJDUodZvsf9hNeWeJ2xD2/0NbIkDhZE2kRA2B0fnUIbcTsWgmqMnU5fNOd6vjbch
+         cDF8XU9Eod9HWZ8vG58LVPXGYJXDVsJJjFonhkpLFAkQwcfC4NDed0VopKtaj36fra1p
+         SKD485FVBNfvzaQEb1hj+KNkD3ytq9hjCHAs9RRVFt7uAy6o/dsh/ouvtVAAyVaLHkvL
+         9sujnYvqoe3daipUbJqCCwSQO85HhNCKEQPE/xcDVoywaydljibd7+oXpE6q7tF1o1Dn
+         BNlg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2zLNpTn03kmoYJWtOID09fA0BOxCFrvOohmL9ash+4M=;
-        b=GoteHgdTm/c8TghXh9so8GAtogvHPXuVTVLoJJzyM8g8wIyxQjTgVV4nxWqc8xwjvU
-         AQO99TFa+wu1Qr9LaTofoyC8oLLl/Gv7F2V7npVDa90/tAb2Kyi7d3IUWJeaD9Jx4tHA
-         RPT84IwGVyFUvxqCvl+82n0cCHCWdLvQQRQaz6yqsXyyLiBML9JCe/Y5OJJKenyMiIJP
-         +nltI5rtbq/AnYuYFiwJ6thVd6Ze90+RH3w8N/HEqOnLdgfBt80QFMcZbjCYz3D/yPpd
-         +f4Xvsjk8826Uo7SgE6xGUro6lGZCIUxoklZHBGNgeTTRBtX9O0v+t5txSxe6zKRAR5C
-         A5uQ==
+        bh=ioFQAf+E6XYzZQOvhNnS0iB0AyPmVjRsYLMoynVCbXE=;
+        b=VhSWYt1JBHoXzAcb6YJfbhyV6Ml0erQ8YM7ye7iummQ0ilpOp3gS3CnG4PKjq1o2xS
+         AkJq3OcCvnr1QR2Y6Cg8mGzIw4RQNQ2zKQSnm86I1KZzmE5v4Zl8/lYBfFn4GCKura3K
+         vSkusJtz+RHmwYafzr5Y8SiATS10Jel+EWwWsSANC+vO0mtBh5M+0w0gvQZ/4p1KwaSm
+         cjVMyzYuIwkf8/f2ZrRJzEK6d5WWGr40gDBc2Lu93pYsko77yYdxesNT81vwH9joTnFl
+         okn8BpbQ+EBqPhxY7zX3DsO2ZqFeOfhm3pT4pdup2jTCt1JG7z9f9SSIJfovVgTHuoo3
+         11gg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Russell King - ARM Linux <linux@armlinux.org.uk>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Christophe Leroy <christophe.leroy@c-s.fr>,
+	Michael Ellerman <mpe@ellerman.id.au>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 187/310] Fix serial console on SNI RM400 machines
-Date: Wed, 11 Apr 2018 20:35:26 +0200
-Message-Id: <20180411183630.655942922@linuxfoundation.org>
+Subject: [PATCH 4.9 185/310] powerpc/8xx: fix mpc8xx_get_irq() return on no irq
+Date: Wed, 11 Apr 2018 20:35:24 +0200
+Message-Id: <20180411183630.571149557@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476214276262025?=
-X-GMAIL-MSGID: =?utf-8?q?1597477507129457493?=
+X-GMAIL-THRID: =?utf-8?q?1597477501561437857?=
+X-GMAIL-MSGID: =?utf-8?q?1597477501561437857?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,49 +50,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
 
-[ Upstream commit e279e6d98e0cf2c2fe008b3c29042b92f0e17b1d ]
+[ Upstream commit 3c29b6038828c1f4c9ecbfec14d4fc5e25f1c947 ]
 
-sccnxp driver doesn't get the correct uart clock rate, if CONFIG_HAVE_CLOCK
-is disabled. Correct usage of clk API to make it work with/without it.
+IRQ 0 is a valid HW interrupt. So get_irq() shall return 0 when
+there is no irq, instead of returning irq_linear_revmap(... ,0)
 
-Fixes: 90efa75f7ab0 (serial: sccnxp: Using CLK API for getting UART clock)
-
-Suggested-by: Russell King - ARM Linux <linux@armlinux.org.uk>
-Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: f2a0bd3753dad ("[POWERPC] 8xx: powerpc port of core CPM PIC")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/sccnxp.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ arch/powerpc/sysdev/mpc8xx_pic.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/serial/sccnxp.c
-+++ b/drivers/tty/serial/sccnxp.c
-@@ -884,14 +884,19 @@ static int sccnxp_probe(struct platform_
+--- a/arch/powerpc/sysdev/mpc8xx_pic.c
++++ b/arch/powerpc/sysdev/mpc8xx_pic.c
+@@ -79,7 +79,7 @@ unsigned int mpc8xx_get_irq(void)
+ 	irq = in_be32(&siu_reg->sc_sivec) >> 26;
  
- 	clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(clk)) {
--		if (PTR_ERR(clk) == -EPROBE_DEFER) {
--			ret = -EPROBE_DEFER;
-+		ret = PTR_ERR(clk);
-+		if (ret == -EPROBE_DEFER)
- 			goto err_out;
--		}
-+		uartclk = 0;
-+	} else {
-+		clk_prepare_enable(clk);
-+		uartclk = clk_get_rate(clk);
-+	}
-+
-+	if (!uartclk) {
- 		dev_notice(&pdev->dev, "Using default clock frequency\n");
- 		uartclk = s->chip->freq_std;
--	} else
--		uartclk = clk_get_rate(clk);
-+	}
+ 	if (irq == PIC_VEC_SPURRIOUS)
+-		irq = 0;
++		return 0;
  
- 	/* Check input frequency */
- 	if ((uartclk < s->chip->freq_min) || (uartclk > s->chip->freq_max)) {
+         return irq_linear_revmap(mpc8xx_pic_host, irq);
+ 
