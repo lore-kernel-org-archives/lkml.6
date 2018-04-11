@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3374234-1523481498-2-12938274309844308935
+X-Cyrus-Session-Id: sloti22d1t05-3397032-1523481479-2-16067826846680989538
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523481497; b=Yav/vOVnjpVGASnNZo9OeO7+XFM7JEDgh9hGR9YJkIdzd/Jdiq
-    21QUYzeTRChrGZijKtAWk0nnnNoVDOpDWdB9n55INHKB17eANpHVJOPnKmhYORyF
-    7CMLdukRSwgnt3MXokV1t+ffPp132wU1N3CgOvOjCVN8YC63Djxgqy1RV/x1zkO/
-    PO3xtjo0y9fwcBoOmwZcd/7JGWeAWML4yMinn3WkWeVQXM4ezdoR1jmRzb0GWDlS
-    F5h0dPHrwqrc5IR3W0tr9g1eCx9Apz9nbB1QDDKKJBFuitq0tui4+wnQOiXoY0DJ
-    P7/t61Gq9Wie8Q1eHQLqAZIBnlc2v84awN3g==
+    1523481479; b=JN/eCOGvQ7Oz+N8ycUrEZodHDJHpH9VOYXWodAohx+tIikrg65
+    YjIQldTFC0DbyGf6xSR6fRQ5wI5HChHvCf/5ms8+OGa5IqIH4mO1mizQrdrUxm/w
+    zuMs8uJHqpaAVCw7e+OpKMycjWjSm946hQ5z2wXwspNAbaDxIvFTo8/fxW7TmsdG
+    fYZK4hLGYAAAsYI20tRAiejMxSBP8h8gA7ouvou/aUioku5ZrA9dk35/wrmIFVra
+    y7aeegOfYzvbRQB7HUtBkCS5qMECN6pHcKQAIe4Fger74BsuX1BLAZqFwJV2yLyf
+    nh6lPKRVcHGhcIEDHpAw8DHjoWsSVPA8IZoA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523481497; bh=Ijm8vVwoRgp+WObauNFy8P/zoHQn8h
-    hqA3DMr+oiyO0=; b=Utei4iHm5L3HjQJqkRqHIeBzbQmNxJqbhu4YMK4hfnYmXx
-    wlnPCaAnmZTNsTcNwIsGGj25t9hsh7uyRc1Cd1JaWZUffALuX+ut/Mx5EQRq9MIY
-    96cFMoKqO/PjmldmsN6/TmIkREiPY5N9w0TiAIVkEUozYfBlVdb9o0aYLmjB75ID
-    n2xbvQ01Gq6zGYjs7JFy1U4EPPbD3r4LjqxRmjuCP7wKb+QCNa9wBAh477s8U/mg
-    oEU4xJ18m+raTbGCPCHLMrWv49/s5si5jrEZ7i5kddxePwwrp6W8ANDvIUiGabNW
-    chzJBX3m1LKmmYLg2vIhh+8xGdLAIE/biGmtVYbg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523481479; bh=Bd1X1BpQJRprx31YB8LPX6phaXNdn+
+    PqVw+IN3rmnxo=; b=HU0A1bu3eugNKsD3I/LAwmFj2MnHt8WTZVWksJppk8y00T
+    pkGnsPHRH4vi2NrQK2GWb4eEw/HJqXPUi7RxZ22Fsl/9TasSvORt3dkvvLG81RMV
+    9fATrnTmt8h85k+0+a/siNVxEq1VJj4lgsUfWHD0NZZ24frMUY8dx+5xeXsdhlIZ
+    U1tAXkRrZ8q7HlS3/T4nzXhwIq/KUcy45eIYLXw4ytFZgkrzg8LtM0mANS79vhSP
+    oqSpKLaDf4CH7v666XJFd9Yb+RBjAdmJA29sMp41ueEg6jgVBjz/gFOr0abD6Kqu
+    cscGx7g+w1aCwh/7grsBZQVALVjftxuXNBycwTfw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,32 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMI4wPZAxXBhmIcr7vEd+hrfTBsMiXFKTscY/7Ba8Atp/GIrChWLJmojYxywz9HHFNuy1ziU8zboEP7K8kGZ5Bcc48jJT0ZOQqztfVeEby/ErQ48INMI
-    7f3+oH1atbcmnaHDd0CHW/eHjW575e8aMvDfg+N0siFTZBLjpqxrZ4ooHGoFSp8RuntAwJc0JKKxIXkVVEwWx40FjGMuhvzrz9JiycaSO2oD3NrvjkqF10lo
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfAtNJejkZ2yx+hlh4TRbv9mgJyd5BuKIROO7w3h++RB/tiFw/NAQlZNsa8uNbjOepbRs9UXPKgSLs4gqCHA/q/h+YDFDKrKa/PeAG8xWOuWNVzZbFict
+    hxWey7yGRJJp1090C4+jVOFLGhNMhDxuMgK+YvliHf/YLpYw+ANrc6+Qxtyy4e6xP32dYQaLs0jiWge2RCmGbR71Q4fZ4UddAGl5hsWfP2kaKOOp6f0chIjz
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=8QyaLQAlnL_XF40ULzwA:9 a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VnNF1IyMAAAA:8 a=20KFwNOVAAAA:8 a=uP1ucDPQAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=9e8tbnBK3g4TT4MJ-ioA:9 a=QEXdDO2ut3YA:10
+    a=9a9ggB8z3XFZH39hjkD6:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754893AbeDKVSA (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 17:18:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56338 "EHLO
+        id S1754571AbeDKSkO (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:40:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56350 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754555AbeDKSkJ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:40:09 -0400
+        with ESMTP id S1753241AbeDKSkM (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:40:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lin Zhang <xiaolou4617@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Steve Best <sbest@redhat.com>,
+        Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 048/121] net: llc: add lock_sock in llc_ui_bind to avoid a race condition
-Date: Wed, 11 Apr 2018 20:35:51 +0200
-Message-Id: <20180411183459.263283872@linuxfoundation.org>
+Subject: [PATCH 3.18 057/121] rtc: interface: Validate alarm-time before handling rollover
+Date: Wed, 11 Apr 2018 20:36:00 +0200
+Message-Id: <20180411183459.752762871@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -93,49 +94,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: linzhang <xiaolou4617@gmail.com>
+From: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
 
 
-[ Upstream commit 0908cf4dfef35fc6ac12329007052ebe93ff1081 ]
+[ Upstream commit da96aea0ed177105cb13ee83b328f6c61e061d3f ]
 
-There is a race condition in llc_ui_bind if two or more processes/threads
-try to bind a same socket.
+In function __rtc_read_alarm() its possible for an alarm time-stamp to
+be invalid even after replacing missing components with current
+time-stamp. The condition 'alarm->time.tm_year < 70' will trigger this
+case and will cause the call to 'rtc_tm_to_time64(&alarm->time)'
+return a negative value for variable t_alm.
 
-If more processes/threads bind a same socket success that will lead to
-two problems, one is this action is not what we expected, another is
-will lead to kernel in unstable status or oops(in my simple test case,
-cause llc2.ko can't unload).
+While handling alarm rollover this negative t_alm (assumed to seconds
+offset from '1970-01-01 00:00:00') is converted back to rtc_time via
+rtc_time64_to_tm() which results in this error log with seemingly
+garbage values:
 
-The current code is test SOCK_ZAPPED bit to avoid a process to
-bind a same socket twice but that is can't avoid more processes/threads
-try to bind a same socket at the same time.
+"rtc rtc0: invalid alarm value: -2-1--1041528741
+2005511117:71582844:32"
 
-So, add lock_sock in llc_ui_bind like others, such as llc_ui_connect.
+This error was generated when the rtc driver (rtc-opal in this case)
+returned an alarm time-stamp of '00-00-00 00:00:00' to indicate that
+the alarm is disabled. Though I have submitted a separate fix for the
+rtc-opal driver, this issue may potentially impact other
+existing/future rtc drivers.
 
-Signed-off-by: Lin Zhang <xiaolou4617@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+To fix this issue the patch validates the alarm time-stamp just after
+filling up the missing datetime components and if rtc_valid_tm() still
+reports it to be invalid then bails out of the function without
+handling the rollover.
+
+Reported-by: Steve Best <sbest@redhat.com>
+Signed-off-by: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/llc/af_llc.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/rtc/interface.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/net/llc/af_llc.c
-+++ b/net/llc/af_llc.c
-@@ -309,6 +309,8 @@ static int llc_ui_bind(struct socket *so
- 	int rc = -EINVAL;
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -249,6 +249,13 @@ int __rtc_read_alarm(struct rtc_device *
+ 			missing = year;
+ 	}
  
- 	dprintk("%s: binding %02X\n", __func__, addr->sllc_sap);
++	/* Can't proceed if alarm is still invalid after replacing
++	 * missing fields.
++	 */
++	err = rtc_valid_tm(&alarm->time);
++	if (err)
++		goto done;
 +
-+	lock_sock(sk);
- 	if (unlikely(!sock_flag(sk, SOCK_ZAPPED) || addrlen != sizeof(*addr)))
- 		goto out;
- 	rc = -EAFNOSUPPORT;
-@@ -380,6 +382,7 @@ static int llc_ui_bind(struct socket *so
- out_put:
- 	llc_sap_put(sap);
- out:
-+	release_sock(sk);
- 	return rc;
- }
+ 	/* with luck, no rollover is needed */
+ 	rtc_tm_to_time(&now, &t_now);
+ 	rtc_tm_to_time(&alarm->time, &t_alm);
+@@ -300,9 +307,9 @@ int __rtc_read_alarm(struct rtc_device *
+ 		dev_warn(&rtc->dev, "alarm rollover not handled\n");
+ 	}
  
+-done:
+ 	err = rtc_valid_tm(&alarm->time);
+ 
++done:
+ 	if (err) {
+ 		dev_warn(&rtc->dev, "invalid alarm value: %d-%d-%d %d:%d:%d\n",
+ 			alarm->time.tm_year + 1900, alarm->time.tm_mon + 1,
