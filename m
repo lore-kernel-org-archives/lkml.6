@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3118118-1523473771-2-15631185534918580441
+X-Cyrus-Session-Id: sloti22d1t05-3150701-1523473753-2-11533151513821407142
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523473770; b=w5rmsALxMcQnqUU9gYjdTT1P7VTX6xnVdWsRb5kWl84p10546k
-    slDxueNgcD5wFkPXlnedeUMCtFv9tcuUFI8vI9a6D5BrJFHDulu/RNwYqnrSA4QP
-    rHTSCY8XmuDSSTptgxltum57m5VCVj1sotH0+B93eaUu1y/W7ru5yysBKRebakQ6
-    x/95Yh3ACxBo/+Ikv10DpnwYHxRx3SLNHRywpGCrpgxHoX0WH5j05MgfFaeCNJ5t
-    NvOqH4GSNV6PVfm4vai3FfpAMJzid8RlqlLUAWzX0UM16qky2NSSQ/8Br8UtqDAq
-    WM1kbeJUQoTKGJBVteTCpQ+LhfoHnJJp0duQ==
+    1523473753; b=lG0UO7TSuBUdMT6Ndvki+tWt1r0Sagj6hNxVr2g/CEM06Eezvu
+    yCWXX6JYfA8sqUHX8QSIzatJt+9ZeTvn0n3QhJyVwlsYVxGqrOW80AA9MuMTNlgD
+    ou08C9ErQKp+iGXc3Tomgrm4Q1ytDre2dz1O3hdCMuJJBAXDc/weMmInMbnAKg72
+    HRHHKzI90gglK6yXeL05R+iqVYfMExBJ6JVTdJwXf6LdyTocyK/rCSvy6cHWaLEk
+    E4319RFWzal5CmQ4MIUjkEfl9nMXt81edX+FEZizl9cnt5O4mWa51o3ClsQ2nRZr
+    l04yfkiY/6nDSZPpsH2aBtKsiY1RcfEiM7Lw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523473770; bh=q6XgCdl1ULmY6+1FreyI1OvY+JD+IT
-    WuaCkPO7lfa5w=; b=tsezsnWoEREgkLIQQ5WTDWGYUtkiS5XmqWIuOVeItANX41
-    p9nbkxSIL1mw8YJMZlcjMLWbwCc3LiuiMklzeFSd8+3+hsv995cpVQ3k1wgJ9Ltl
-    bVxobKkkEw8p3f/zsMxs9WY8EixZpaJgq719MihqSJKQ6AETvP6xZdmJ//qASX9Z
-    F50yTD5WTtKxSfrlyBEdP02P6M+0Q8pPhFVQ0CpmWja6xdkLlilk9SgbzTJM/pcy
-    0oqgfx8bfNdsa4RinBbKMAywgwpiWobWL1ZRqeWVA85/fA3wNHRBSYyPigimoaew
-    26CUEcAAzIvwjbjHQalVis5R3A5g0LyncMrMVNVg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523473753; bh=kR2Yp482SQ80gcUwa3hN1aHl5PYl60
+    sA9TBPksd5KUE=; b=c6Ol5+D8NAwH0OD2s2b8WAdSy+nBcXmI//kr3x65IGASm7
+    Wqu4mezVvtSYiKxyFoC4RpcFk5X0na+nj84If2rnS/Hy3XFtqk/Mwk4zzamHhLD3
+    4tqZsdVJQiGMvC26Dzqit9M0Gb29Sx8ZXtIJTrtJNWi3lnveF37B53u9DXE47m/Q
+    CHZuw48HD1PKZhULI1kT1+sl2C8KjauLG1lEodAef1Rru6DuAij2htvGMY+om7QD
+    T4lN1KLI87So6U9k1WxghpMaLNKDXwbFu0k+JHsOxLYP2p3ILy67+bXEUmuNKeTx
+    BAq8vLu6+UhAeabyGLPFLWU6O46vEqv5iUH8u34A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,31 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK0kJyHgQ90mULl4btqRlmFSDwK/QMowPk9IK0psRxo1+leIU21nO3J/efT0XPEl/3qqGt8wS9yZ3kwqy2pB+IKWueUFQZdcRZwPnbnYN8moDa21ZLzS
-    RLYDwQSy4SUoct1nf5UTV9yraxLUmSQEb+DcD0EI3iimuc7t/tEYLFI5ZQkn2OZygfoJDmEejH0qf+AvVODRMORoSfdGPWIIOMbiP8JNoLY3m2XHITlIhGQT
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKDUjBmMaMZtpOJKK3oN7pty5EUubuPisf3Gkym2B52evr18msY1rvBJPbAELd4Q79Jr47Bz3kWDDjCeJhoEX06qs63PXCK8KenpZCP0LvLQ+2xPUU3i
+    kQ5wG9pXJm9LD1CteoyXtK9uZnk9KKsiM+ZJCCY5myqez3F5QSNaEOUtSoTLLekh1UuGgto7qf68cJAofD9gIfWYeS7V/zqjaIDFTMLbWguQzvMt1dnFQs59
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=FOH2dFAWAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=onqfME7SEjK7dH_x2_EA:9
-    a=QEXdDO2ut3YA:10 a=i3VuKzQdj-NEYjvDI-p3:22 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=A7XncKjpAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=iyCa5RAUoxkVIAlNHlcA:9
+    a=UMcLqSxQMR5hhFJh:21 a=nvICiqDoeMpn8ptq:21 a=QEXdDO2ut3YA:10
+    a=R9rPLQDAdC6-Ub70kJmZ:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755101AbeDKTJN (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 15:09:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40898 "EHLO
+        id S934492AbeDKTGs (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 15:06:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40918 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935289AbeDKTGo (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:06:44 -0400
+        with ESMTP id S935281AbeDKTGr (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:06:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Watson <davejwatson@fb.com>,
+        stable@vger.kernel.org, Craig Dillabaugh <cdillaba@mojatatu.com>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 308/310] strparser: Fix sign of err codes
-Date: Wed, 11 Apr 2018 20:37:27 +0200
-Message-Id: <20180411183635.796273558@linuxfoundation.org>
+Subject: [PATCH 4.9 309/310] net sched actions: fix dumping which requires several messages to user space
+Date: Wed, 11 Apr 2018 20:37:28 +0200
+Message-Id: <20180411183635.893702209@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -92,49 +93,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dave Watson <davejwatson@fb.com>
+From: Craig Dillabaugh <cdillaba@mojatatu.com>
 
 
-[ Upstream commit cd00edc179863848abab5cc5683de5b7b5f70954 ]
+[ Upstream commit 734549eb550c0c720bc89e50501f1b1e98cdd841 ]
 
-strp_parser_err is called with a negative code everywhere, which then
-calls abort_parser with a negative code.  strp_msg_timeout calls
-abort_parser directly with a positive code.  Negate ETIMEDOUT
-to match signed-ness of other calls.
+Fixes a bug in the tcf_dump_walker function that can cause some actions
+to not be reported when dumping a large number of actions. This issue
+became more aggrevated when cookies feature was added. In particular
+this issue is manifest when large cookie values are assigned to the
+actions and when enough actions are created that the resulting table
+must be dumped in multiple batches.
 
-The default abort_parser callback, strp_abort_strp, sets
-sk->sk_err to err.  Also negate the error here so sk_err always
-holds a positive value, as the rest of the net code expects.  Currently
-a negative sk_err can result in endless loops, or user code that
-thinks it actually sent/received err bytes.
+The number of actions returned in each batch is limited by the total
+number of actions and the memory buffer size.  With small cookies
+the numeric limit is reached before the buffer size limit, which avoids
+the code path triggering this bug. When large cookies are used buffer
+fills before the numeric limit, and the erroneous code path is hit.
 
-Found while testing net/tls_sw recv path.
+For example after creating 32 csum actions with the cookie
+aaaabbbbccccdddd
 
-Fixes: 43a0c6751a322847 ("strparser: Stream parser for messages")
-Signed-off-by: Dave Watson <davejwatson@fb.com>
+$ tc actions ls action csum
+total acts 26
+
+    action order 0: csum (tcp) action continue
+    index 1 ref 1 bind 0
+    cookie aaaabbbbccccdddd
+
+    .....
+
+    action order 25: csum (tcp) action continue
+    index 26 ref 1 bind 0
+    cookie aaaabbbbccccdddd
+total acts 6
+
+    action order 0: csum (tcp) action continue
+    index 28 ref 1 bind 0
+    cookie aaaabbbbccccdddd
+
+    ......
+
+    action order 5: csum (tcp) action continue
+    index 32 ref 1 bind 0
+    cookie aaaabbbbccccdddd
+
+Note that the action with index 27 is omitted from the report.
+
+Fixes: 4b3550ef530c ("[NET_SCHED]: Use nla_nest_start/nla_nest_end")"
+Signed-off-by: Craig Dillabaugh <cdillaba@mojatatu.com>
+Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/strparser/strparser.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/sched/act_api.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/strparser/strparser.c
-+++ b/net/strparser/strparser.c
-@@ -59,7 +59,7 @@ static void strp_abort_rx_strp(struct st
- 	strp->rx_stopped = 1;
+--- a/net/sched/act_api.c
++++ b/net/sched/act_api.c
+@@ -95,8 +95,10 @@ static int tcf_dump_walker(struct tcf_ha
+ 				continue;
  
- 	/* Report an error on the lower socket */
--	csk->sk_err = err;
-+	csk->sk_err = -err;
- 	csk->sk_error_report(csk);
- }
- 
-@@ -422,7 +422,7 @@ static void strp_rx_msg_timeout(unsigned
- 	/* Message assembly timed out */
- 	STRP_STATS_INCR(strp->stats.rx_msg_timeouts);
- 	lock_sock(strp->sk);
--	strp->cb.abort_parser(strp, ETIMEDOUT);
-+	strp->cb.abort_parser(strp, -ETIMEDOUT);
- 	release_sock(strp->sk);
- }
- 
+ 			nest = nla_nest_start(skb, n_i);
+-			if (nest == NULL)
++			if (nest == NULL) {
++				index--;
+ 				goto nla_put_failure;
++			}
+ 			err = tcf_action_dump_1(skb, p, 0, 0);
+ 			if (err < 0) {
+ 				index--;
