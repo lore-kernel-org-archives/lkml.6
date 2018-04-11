@@ -1,58 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752304AbeDKHdU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 03:33:20 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:52440 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751491AbeDKHdT (ORCPT
+        id S1751733AbeDKHgz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 03:36:55 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38990 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750727AbeDKHgx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 03:33:19 -0400
-X-Google-Smtp-Source: AIpwx49jbo6DCsoRlplIg1whekf6P4s1JCsqwkTbXsCRyg0Kby1XnQgpoTw7s2dbunXAfx2Ncq78Hg==
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: faisal.latif@intel.com, shiraz.saleem@intel.com, dledford@redhat.com,
-        sean.hefty@intel.com, hal.rosenstock@gmail.com
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 3/3] infiniband: i40iw: Replace GFP_ATOMIC with GFP_KERNEL in i40iw_l2param_change
-Date: Wed, 11 Apr 2018 15:33:06 +0800
-Message-Id: <1523431986-3596-1-git-send-email-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Wed, 11 Apr 2018 03:36:53 -0400
+From: Colin King <colin.king@canonical.com>
+To: Satish Kharat <satishkh@cisco.com>,
+        Sesidhar Baddela <sebaddel@cisco.com>,
+        Karan Tilak Kumar <kartilak@cisco.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] scsi: fnic: fix spelling mistake in fnic stats "Abord" -> "Abort"
+Date: Wed, 11 Apr 2018 08:36:49 +0100
+Message-Id: <20180411073649.21529-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.15.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i40iw_l2param_change() is never called in atomic context.
+From: Colin Ian King <colin.king@canonical.com>
 
-i40iw_make_listen_node() is only set as ".l2_param_change" 
-in struct i40e_client_ops, and this function pointer is not called 
-in atomic context.
+Trivial fix to spelling mistake in fnic stats message text
 
-Despite never getting called from atomic context,
-i40iw_l2param_change() calls kzalloc() with GFP_ATOMIC,
-which does not sleep for allocation.
-GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
-which can sleep and improve the possibility of sucessful allocation.
-
-This is found by a static analysis tool named DCNS written by myself.
-And I also manually check it.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/infiniband/hw/i40iw/i40iw_main.c | 2 +-
+ drivers/scsi/fnic/fnic_trace.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/i40iw/i40iw_main.c b/drivers/infiniband/hw/i40iw/i40iw_main.c
-index 27590ae..b86bda8 100644
---- a/drivers/infiniband/hw/i40iw/i40iw_main.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_main.c
-@@ -1737,7 +1737,7 @@ static void i40iw_l2param_change(struct i40e_info *ldev, struct i40e_client *cli
- 		return;
+diff --git a/drivers/scsi/fnic/fnic_trace.c b/drivers/scsi/fnic/fnic_trace.c
+index abddde11982b..98597b59c12a 100644
+--- a/drivers/scsi/fnic/fnic_trace.c
++++ b/drivers/scsi/fnic/fnic_trace.c
+@@ -296,7 +296,7 @@ int fnic_get_stats_data(struct stats_debug_info *debug,
+ 		  "Number of Abort FW Timeouts: %lld\n"
+ 		  "Number of Abort IO NOT Found: %lld\n"
  
- 
--	work = kzalloc(sizeof(*work), GFP_ATOMIC);
-+	work = kzalloc(sizeof(*work), GFP_KERNEL);
- 	if (!work)
- 		return;
- 
+-		  "Abord issued times: \n"
++		  "Abort issued times: \n"
+ 		  "            < 6 sec : %lld\n"
+ 		  "     6 sec - 20 sec : %lld\n"
+ 		  "    20 sec - 30 sec : %lld\n"
 -- 
-1.9.1
+2.15.1
