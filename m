@@ -1,58 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752745AbeDKBzH convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 21:55:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38480 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752121AbeDKBzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 21:55:05 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D25B21771
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Andy Gross <andy.gross@linaro.org>,
-        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180409214016.21219-1-niklas.cassel@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180409214016.21219-1-niklas.cassel@linaro.org>
-Message-ID: <152341170436.180276.10941810507471101174@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] firmware: qcom: scm: Fix crash in qcom_scm_call_atomic1()
-Date: Tue, 10 Apr 2018 18:55:04 -0700
+        id S1752498AbeDKCAO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 22:00:14 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:47069 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751991AbeDKCAN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 22:00:13 -0400
+X-Google-Smtp-Source: AIpwx4+IMtUSGpK9pbGNimGnjPHoyRHAc/cXfSD3dd4IymgJJXErZU9eDjyQK8GLwIink/hbP3Gbng==
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Andrey Smirnov <andrew.smirnov@gmail.com>,
+        linux-kernel@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Aleksander Morgado <aleksander@aleksander.es>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v2 0/2] RAVE SP EEPROM driver
+Date: Tue, 10 Apr 2018 18:59:46 -0700
+Message-Id: <20180411015948.19562-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Niklas Cassel (2018-04-09 14:40:15)
-> qcom_scm_call_atomic1() can crash with a NULL pointer dereference at
-> qcom_scm_call_atomic1+0x30/0x48.
-> 
-> disassembly of qcom_scm_call_atomic1():
-> ...
-> <0xc08d73b0 <+12>: ldr r3, [r12]
-> ... (no instruction explicitly modifies r12)
-> 0xc08d73cc <+40>: smc 0
-> ... (no instruction explicitly modifies r12)
-> 0xc08d73d4 <+48>: ldr r3, [r12] <- crashing instruction
-> ...
-> 
-> Since the first ldr is successful, and since r12 isn't explicitly
-> modified by any instruction between the first and the second ldr,
-> it must have been modified by the smc call, which is ok,
-> since r12 is caller save according to the AAPCS.
-> 
-> Add r12 to the clobber list so that the compiler knows that the
-> callee potentially overwrites the value in r12.
-> Clobber descriptions may not in any way overlap with an input or
-> output operand.
-> 
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> ---
+Srinivas:
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+This series is a second iteration of the patchset adding NVMEM support
+for EEPROMs connected to RAVE SP MFD device (support for which landed
+in 4.15).
+
+Changes since [v1]:
+
+	- Patchset rebased on latest master from Linus which contains
+          all necessary dependencies
+
+	- Added sizes.h to include in patch 1/2 to avoid build breaks
+          reported by build-bot
+
+	- Added missing #size-cells, #address-cells as well as example
+	  cell to DT bindings documentation (pointed out by Rob)
+
+Feedback is wellcome!
+
+Thanks,
+Andrey Smirnov
+
+[v1] lkml.kernel.org/r/20180321134710.29757-1-andrew.smirnov@gmail.com
+
+Andrey Smirnov (2):
+  dt-bindings: nvmem: Add binding for RAVE SP EEPROM driver
+  nvmem: Add RAVE SP EEPROM driver
+
+ .../bindings/nvmem/zii,rave-sp-eeprom.txt          |  29 ++
+ drivers/nvmem/Kconfig                              |   6 +
+ drivers/nvmem/Makefile                             |   3 +
+ drivers/nvmem/rave-sp-eeprom.c                     | 357 +++++++++++++++++++++
+ 4 files changed, 395 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
+ create mode 100644 drivers/nvmem/rave-sp-eeprom.c
+
+-- 
+2.14.3
