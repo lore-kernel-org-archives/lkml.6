@@ -1,153 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752264AbeDKGDt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 02:03:49 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47316 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751921AbeDKGDa (ORCPT
+        id S1752174AbeDKGJx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 02:09:53 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50341 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751745AbeDKGJv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 02:03:30 -0400
-From: Matthew Wilcox <willy@infradead.org>
-To: linux-mm@kvack.org
-Cc: Matthew Wilcox <mawilcox@microsoft.com>,
-        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH v2 2/2] slab: __GFP_ZERO is incompatible with a constructor
-Date: Tue, 10 Apr 2018 23:03:20 -0700
-Message-Id: <20180411060320.14458-3-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180411060320.14458-1-willy@infradead.org>
-References: <20180411060320.14458-1-willy@infradead.org>
+        Wed, 11 Apr 2018 02:09:51 -0400
+Date: Wed, 11 Apr 2018 08:09:49 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, jikos@suse.cz,
+        raven@themaw.net, akpm@linux-foundation.org, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: update-binfmts breaking suspend
+Message-ID: <20180411060949.GA4287@amd>
+References: <20180404165559.4cd0c12c@canb.auug.org.au>
+ <20180404075047.GB9342@amd>
+ <CAJZ5v0hxyXtyKacJufivL9HWbQBsxTBYVipnHK4+QquTYjpc+A@mail.gmail.com>
+ <20180404084905.GA12303@amd>
+ <20180405122503.GA28446@amd>
+ <20180405203045.GA23313@amd>
+ <SN4PR2101MB073673B12998428D48DA62E5CBBA0@SN4PR2101MB0736.namprd21.prod.outlook.com>
+ <20180406144355.GA20605@bombadil.infradead.org>
+ <20180411043052.GA15171@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
+Content-Disposition: inline
+In-Reply-To: <20180411043052.GA15171@bombadil.infradead.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
 
-__GFP_ZERO requests that the object be initialised to all-zeroes,
-while the purpose of a constructor is to initialise an object to a
-particular pattern.  We cannot do both.  Add a warning to catch any
-users who mistakenly pass a __GFP_ZERO flag when allocating a slab with
-a constructor.
+--zYM0uCDKw75PZbzx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: d07dbea46405 ("Slab allocators: support __GFP_ZERO in all allocators")
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
----
- mm/slab.c | 7 ++++---
- mm/slab.h | 7 +++++++
- mm/slob.c | 4 +++-
- mm/slub.c | 5 +++--
- 4 files changed, 17 insertions(+), 6 deletions(-)
+Hi!
 
-diff --git a/mm/slab.c b/mm/slab.c
-index 58c8cecc26ab..9ad85fd9fca8 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -2661,6 +2661,7 @@ static struct page *cache_grow_begin(struct kmem_cache *cachep,
- 				invalid_mask, &invalid_mask, flags, &flags);
- 		dump_stack();
- 	}
-+	BUG_ON(cachep->ctor && (flags & __GFP_ZERO));
- 	local_flags = flags & (GFP_CONSTRAINT_MASK|GFP_RECLAIM_MASK);
- 
- 	check_irq_off();
-@@ -3325,7 +3326,7 @@ slab_alloc_node(struct kmem_cache *cachep, gfp_t flags, int nodeid,
- 	local_irq_restore(save_flags);
- 	ptr = cache_alloc_debugcheck_after(cachep, flags, ptr, caller);
- 
--	if (unlikely(flags & __GFP_ZERO) && ptr)
-+	if (unlikely(flags & __GFP_ZERO) && ptr && slab_no_ctor(cachep))
- 		memset(ptr, 0, cachep->object_size);
- 
- 	slab_post_alloc_hook(cachep, flags, 1, &ptr);
-@@ -3382,7 +3383,7 @@ slab_alloc(struct kmem_cache *cachep, gfp_t flags, unsigned long caller)
- 	objp = cache_alloc_debugcheck_after(cachep, flags, objp, caller);
- 	prefetchw(objp);
- 
--	if (unlikely(flags & __GFP_ZERO) && objp)
-+	if (unlikely(flags & __GFP_ZERO) && objp && slab_no_ctor(cachep))
- 		memset(objp, 0, cachep->object_size);
- 
- 	slab_post_alloc_hook(cachep, flags, 1, &objp);
-@@ -3589,7 +3590,7 @@ int kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t size,
- 	cache_alloc_debugcheck_after_bulk(s, flags, size, p, _RET_IP_);
- 
- 	/* Clear memory outside IRQ disabled section */
--	if (unlikely(flags & __GFP_ZERO))
-+	if (unlikely(flags & __GFP_ZERO) && slab_no_ctor(s))
- 		for (i = 0; i < size; i++)
- 			memset(p[i], 0, s->object_size);
- 
-diff --git a/mm/slab.h b/mm/slab.h
-index 3cd4677953c6..896818c7b30a 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -515,6 +515,13 @@ static inline void dump_unreclaimable_slab(void)
- 
- void ___cache_free(struct kmem_cache *cache, void *x, unsigned long addr);
- 
-+static inline bool slab_no_ctor(struct kmem_cache *s)
-+{
-+	if (IS_ENABLED(CONFIG_DEBUG_VM))
-+		return !WARN_ON_ONCE(s->ctor);
-+	return true;
-+}
-+
- #ifdef CONFIG_SLAB_FREELIST_RANDOM
- int cache_random_seq_create(struct kmem_cache *cachep, unsigned int count,
- 			gfp_t gfp);
-diff --git a/mm/slob.c b/mm/slob.c
-index 1a46181b675c..958173fd7c24 100644
---- a/mm/slob.c
-+++ b/mm/slob.c
-@@ -556,8 +556,10 @@ static void *slob_alloc_node(struct kmem_cache *c, gfp_t flags, int node)
- 					    flags, node);
- 	}
- 
--	if (b && c->ctor)
-+	if (b && c->ctor) {
-+		WARN_ON_ONCE(flags & __GFP_ZERO);
- 		c->ctor(b);
-+	}
- 
- 	kmemleak_alloc_recursive(b, c->size, 1, c->flags, flags);
- 	return b;
-diff --git a/mm/slub.c b/mm/slub.c
-index a28488643603..9f8f38a552e5 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1576,6 +1576,7 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
- 
- 	if (gfpflags_allow_blocking(flags))
- 		local_irq_enable();
-+	BUG_ON(s->ctor && (flags & __GFP_ZERO));
- 
- 	flags |= s->allocflags;
- 
-@@ -2725,7 +2726,7 @@ static __always_inline void *slab_alloc_node(struct kmem_cache *s,
- 		stat(s, ALLOC_FASTPATH);
- 	}
- 
--	if (unlikely(gfpflags & __GFP_ZERO) && object)
-+	if (unlikely(gfpflags & __GFP_ZERO) && object && slab_no_ctor(s))
- 		memset(object, 0, s->object_size);
- 
- 	slab_post_alloc_hook(s, gfpflags, 1, &object);
-@@ -3149,7 +3150,7 @@ int kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t size,
- 	local_irq_enable();
- 
- 	/* Clear memory outside IRQ disabled fastpath loop */
--	if (unlikely(flags & __GFP_ZERO)) {
-+	if (unlikely(flags & __GFP_ZERO) && slab_no_ctor(s)) {
- 		int j;
- 
- 		for (j = 0; j < i; j++)
--- 
-2.16.3
+> Ping?
+
+See the thread... akpm pointed out fix for autofs, and the problem is
+gone with newer -next kernels, so I assume the fix fixes it :-).
+
+								Pavel
+							=09
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--zYM0uCDKw75PZbzx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrNpq0ACgkQMOfwapXb+vKZiACffewz3yafxlTeLT/tM5nh4jt3
+n/8An0qaz6d2hDQ61Vv86wlSZ76TRsc5
+=RzN+
+-----END PGP SIGNATURE-----
+
+--zYM0uCDKw75PZbzx--
