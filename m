@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3269524-1523477877-2-14429256951240266335
+X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477850-2-3544162454111293317
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477877; b=G6IpwzcqagUlpft8p7tqYaGL2vcKzzWcWbWmb/U+71mgcrBpcI
-    4WN6qtrRRVqQ141oMGZ40FzeR+4SyRo6u1rw/qEFWZOstblvlzYcMc3e/DsCNGky
-    M++h9DPpetTQt46RaKPCQmzh0MBCDbbWEj/ptxdlY3Nigxa5LbFeW2UWXUZOsTcf
-    7ghDPtLOSim5gdSpS1jKna6D8ZJxLq+14Qnuso6cwb7cT0WEB0f3JQyNAa0s96UP
-    ONpC12ZXyu+TbcQ3yI2LqzVsp/CUXXRc0iSCRykQiHsZ3NpGlqGO97D48b2NuAGD
-    1oZSK/FPQxNpK3Qb25jHRzPThSVWNbg2o8TQ==
+    1523477850; b=vs8xcCi6qmVJ1vsU744syPAxUkX7auKgu6DANLcUmAoeZqsgRd
+    W/S5W0p92ScHWdyyB04Kmpad09fXb3LTGp+GxqPzJRVbCdn2s3AcGuUpmlIBJ/BC
+    XacLVRy8dqhgV+v08fIPO3t0/JHkWVeh5chykgokEqn1/jXaYsj84wWvX0I7IHoq
+    lnZ2S7qY8kG5p/tOOIHm4hW+JQR/wZYC3aBg67rJiAjL44LKRZayBWte8rYsaY8P
+    +kLmI7uqHpGhf4eXrFLk/nllbg0D/7uFy8DDEXcmB0JKLHO4Gtq1LayxwaYCHDGU
+    zit4tQ6yrZLTy5E0XRpI4DCY+gZwAqQipDyw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523477877; bh=PwMt18PmF9cyJ4y58XpYajmCI4kLmq
-    pCM9BoaWR11HQ=; b=ZzFxU8qD91VIbKrY8w4c+Eggc+sB+geLQw2uZ/8Gq6fmpn
-    QmUAkijfjiraWNQ2/ajQyQ8bm4PyJAn1rb+nkVYJmkVjPhnLBD1VudxEgfAKQcb8
-    VXdWwhnmzOXdnbFHf3Eb41po6p40a2ORzLyz3aoKhOm+rok/ebeLZ3O15w1IwgOX
-    PsEBszGbJApzN0YNtbhnn6jVHhzEC2kcx5r64LCNWRnW6KCWCRpXwQte5I/oEhc8
-    sN5Ythdmuw4+YgzUSCHm/5s69QUJFXvDqj8wRWbzj+Dbd5FeVZvEsyC4+vUBpSOw
-    9paW5nyYFQkwwKFJvn4flKhz6aRQwuEv/UhHuDTw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523477850; bh=8MdfAWcGScj08y1BqlClp0LFtjXcyd
+    fZ1co1XWJSf2I=; b=bhRWSvVer+K/HDQXLGcID2WasNcobxLX/Wlj9LtpOIYtt4
+    EiONjfiYe5PUL1PAMdARnDA4GXenidTc+6KPkgwSatAxBmdBTM/jySg2l/sw/MiQ
+    6HF0mWS9dva3vEBlRICpMr4XYLeYu3WqE3jJ3Zrjb6/WO3EFXzRpN5FaRYahmQa/
+    KZmTMaAvWosOYQWqpqqfX5HpWr7xh4P+uUMumljE70tgB0QfssAekfNcVLxIGZN6
+    cbxEbsE5jdholiCXNc5uWesZ2IXELKRjv2kXUiVD1BGi5tEMv6sAAn6F6wZPMIjR
+    lEB3S7kIxf1ActaDEJHJs0lVD8q7sQWTVwFDSQIg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,39 +51,31 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNZYwpSewTtpNXOK3vdDNoS6tRL6wUicgb1az66PznLEEJ2p5fSBAaW0LfL96VQnQDT/WiamtnyM5FObgxYdkZ3P1ujNx8R0R69wDEt4bedxvQoLqIOD
-    gB9mLQuxaErivneeT+EsPJhNqDH0QLEl8PmtJ7LESJKoF9IQc1Y2tgmQkEHhXXEqM/U9m+3NsnqO4rSQj7RjQXE7YhfketOu/iron+ttTsb1S7DBHak+vtvt
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMrXBwXDou9lPO8Sm0pVwvLD8dRV6BXBQrqLo3lu0IBdqkxP6Q2p2Ewrv+QUIZZcSOxjsiooh8qhTe1IWIiOMic4xE0FFW0Zx+O3U6ClRK+6R+J+RPm5
+    Wa7uXIGSw89el1F0PMmGpNNA7S3KwVQST8pXkhd84v8o/pqVB2Y5WdBf1BWTbBYgLYS9oFdgn2/YemioxOQitxVa9kMcE3YXzme4EyIulGl9Htr6V4X0QWMo
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=InJrZTXqAAAA:8 a=iox4zFpeAAAA:8 a=20KFwNOVAAAA:8 a=z11f-joXAAAA:8
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=rgNOMHsgKtPNWFo9ZzsA:9
-    a=+jEqtf1s3R9VXZ0wqowq2kgwd+I=:19 a=QEXdDO2ut3YA:10 a=bo7r-k08vssA:10
-    a=WwJ7OKCui7YMbFU4sWpb:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=HW01NMXGnYhBHl5J0OKi:22
+    a=7ZN4cI0QAAAA:8 a=1XWaLZrsAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=7loVob4iMjE_SrWWOpgA:9 a=QEXdDO2ut3YA:10 a=Dl0WHwQvj8hGZljrFLtM:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756377AbeDKURi (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:17:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33500 "EHLO
+        id S1750734AbeDKURL (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:17:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33552 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933122AbeDKSwm (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:52:42 -0400
+        with ESMTP id S933142AbeDKSws (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:52:48 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bart Van Assche <bart.vanassche@sandisk.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Andy Grover <agrover@redhat.com>,
-        David Disseldorp <ddiss@suse.de>,
-        Nicholas Bellinger <nab@linux-iscsi.org>,
+        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 010/310] IB/srpt: Fix abort handling
-Date: Wed, 11 Apr 2018 20:32:29 +0200
-Message-Id: <20180411183622.749110565@linuxfoundation.org>
+Subject: [PATCH 4.9 012/310] af_key: Fix slab-out-of-bounds in pfkey_compile_policy.
+Date: Wed, 11 Apr 2018 20:32:31 +0200
+Message-Id: <20180411183622.833783366@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -101,47 +93,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@sandisk.com>
+From: Steffen Klassert <steffen.klassert@secunet.com>
 
 
-[ Upstream commit 55d694275f41a1c0eef4ef49044ff29bc3999490 ]
+[ Upstream commit d90c902449a7561f1b1d58ba5a0d11728ce8b0b2 ]
 
-Let the target core check the CMD_T_ABORTED flag instead of the SRP
-target driver. Hence remove the transport_check_aborted_status()
-call. Since state == SRPT_STATE_CMD_RSP_SENT is something that really
-should not happen, do not try to recover if srpt_queue_response() is
-called for an I/O context that is in that state. This patch is a bug
-fix because the srpt_abort_cmd() call is misplaced - if that function
-is called from srpt_queue_response() it should either be called
-before the command state is changed or after the response has been
-sent.
+The sadb_x_sec_len is stored in the unit 'byte divided by eight'.
+So we have to multiply this value by eight before we can do
+size checks. Otherwise we may get a slab-out-of-bounds when
+we memcpy the user sec_ctx.
 
-Signed-off-by: Bart Van Assche <bart.vanassche@sandisk.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Cc: Doug Ledford <dledford@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Andy Grover <agrover@redhat.com>
-Cc: David Disseldorp <ddiss@suse.de>
-Signed-off-by: Nicholas Bellinger <nab@linux-iscsi.org>
+Fixes: df71837d502 ("[LSM-IPSec]: Security association restriction.")
+Reported-by: Andrey Konovalov <andreyknvl@google.com>
+Tested-by: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/ulp/srpt/ib_srpt.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ net/key/af_key.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-+++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-@@ -2292,12 +2292,8 @@ static void srpt_queue_response(struct s
- 	}
- 	spin_unlock_irqrestore(&ioctx->spinlock, flags);
- 
--	if (unlikely(transport_check_aborted_status(&ioctx->cmd, false)
--		     || WARN_ON_ONCE(state == SRPT_STATE_CMD_RSP_SENT))) {
--		atomic_inc(&ch->req_lim_delta);
--		srpt_abort_cmd(ioctx);
-+	if (unlikely(WARN_ON_ONCE(state == SRPT_STATE_CMD_RSP_SENT)))
- 		return;
--	}
- 
- 	/* For read commands, transfer the data to the initiator. */
- 	if (ioctx->cmd.data_direction == DMA_FROM_DEVICE &&
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -3305,7 +3305,7 @@ static struct xfrm_policy *pfkey_compile
+ 		p += pol->sadb_x_policy_len*8;
+ 		sec_ctx = (struct sadb_x_sec_ctx *)p;
+ 		if (len < pol->sadb_x_policy_len*8 +
+-		    sec_ctx->sadb_x_sec_len) {
++		    sec_ctx->sadb_x_sec_len*8) {
+ 			*dir = -EINVAL;
+ 			goto out;
+ 		}
