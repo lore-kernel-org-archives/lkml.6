@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477518-2-5282812317623602827
+X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477513-2-2571184638578846226
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477517; b=a8yTwlKKihtk/2PzIbt461K36BfvP00m2DrGT66CbaPArDy2Cj
-    WB1BWWXL4m9Awv4gZL2Luu5Pl/8L/qW+HNfOCTw8BlM8aJEapC4ODMYhwB5fNpll
-    vZW4+YzIFeMnmjgkyneGSSDb+iMqJ8p1e62s8kVDF1IzgLtnwhYhg2nWEObg0IcD
-    0PKMvXRR67OQruHx28FfeHVTStZG9NKTTllRF2CYYLo433J8DX/NNbyA/lsGdiqE
-    q23L9Uwscn5L4A/5/DpvjHfcIWP8eAriRzZWgCih8UiUe/JgmgTCCDQNdr2/Oh7Q
-    Q9OIGf6jRL6WRfsntrNYQgtm3MLz/WB32ecg==
+    1523477512; b=q/DavO42c0dhaz5RO/lg9K2qbvcmMNA2tcV16qBYx1xVO0dFte
+    fV2CMH1k+9fK4X4i2LkWpHts58YvLohA1Q0sH4G0iC8zkalkzDatAmVtBnWhL5ad
+    Acs9rY2ThR4AdBp5cKLUIghqKGXkvkNliblMyxVAjpwUj4MritzQKmyXIDHf9Ssn
+    4hHWdQOAGVlCzg+TKYP95JNf8gS7FGJZy5x+h5SkrKBCrdKUr/jWxRyRu27jCzeZ
+    l5TpEb/TBqQqV0s/8tZ8nJRL2vo28JeOtS2QSdq04ZqAZ98KFoiZnBKK0F5kmIiN
+    cDlZzfV5r8D47K8qa2Bi6A7wf2jJhPFCfNSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523477517; bh=gP8g68QuaQ9I0IXe/nBHnknWr1t8aU
-    /LPvH+pn+RxWM=; b=KDJr5o6aDTuDkyGsKMaAxiYbdRqDh/DKlcDLq7ZupajKq5
-    8cce6Tat4SxuXDEDf2MBIsr4e2Uyd8NIgTc8epXKwqdlGnCec1gEGK5lzmfpS4K0
-    uklTnkhnLynngDRVPLiwSiHmMhoq9d9y33pVHJ6MwhkI1CN8iMPZ3dNvZ5ggCYi/
-    4tbYO8+tDf6FELVi5/+SuZQDuEte6uwUVceGqC7uwFCRyf76kLzwYDclEJqTRyvV
-    CY4vL5N7iFYGq6ZKdkOqQNFcHi0L65aLYsOuG3UQmXdhYkxINJ24h5ZUi7DJ+CZq
-    q1GMgbpfO/3MzuGDljZA5tlQB4xCTyPUjYNkLTKA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523477512; bh=moiVUP2sKkqEYlsvfRO/RT0UPxouIa
+    O5MRlc4Vt6H9A=; b=f8aoSzFcKV7qpIm49b8v0Rh1WLS56NPmtqRhDO0bKD2Pa7
+    N06SOsegziLJLr6/lKo3VUigg+ua9SS0/7LWNMVDGRGSDmgPAmZTzD7edy7Wqf+X
+    hs35u6Vs8i8ERLz/y6R+IwuLwnSjZ1Hih8CP0X2q1NZ67xoLIoLoiOFzXJ4aR/1J
+    AaBWGnDR4W6+g63fcHLkznKanVZqzMK3rynPWZpmB0suUGGhdb3Y5mR8h2ImEYFN
+    dY3oP+YpUFK2z9xUOR0iwtp/JWRZLaOGhtdOWuXJVg11nwm+CTyZFvtXisrGfEHl
+    HbuzBTXVVyw/I5wH6ZTwZC+ywqc6R6YcFot44HIQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,31 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGnIjYkYe5VUv8ngsb+nfZr1+v/CtXPePLiLoY3Yc4QONS5PGo0RVaGsSx2YrSy4IF//9gzW00vt6ZqZuoHzTKHk6YNKn7eSifRbTXYJn1o/t5KTitle
-    aZvHkgMM+PvxGT7uCekJJ0n/PnphuNsjrXMnLPuBfzRhaJCnMGwTuGeTVyUVYmmMpP4/niyoktwPBj/J2XnpBZnACSYRPp6NE5QGpqs9ZAfQ44bGcmwVn6of
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfPIo8VXEy0nWQ6urc0UaOjA/ETtmQxxqyXdkKPxXztNGvjQbt2svRQcpdnwBs+WfHJCAwPENjFnFMu+dzPKNVS7VrY1V1HnW0jkMjZujODQ+JB4SGexq
+    mXZ/vxkVcfhtYRIJ9h1F+9W9FzTfTb8+0RQJ79dY/eWPm0RFUwHfUf/0TOtZ76uqi3JRqxBvBiofqq7I6NqZSdat1Zfr9IExuaMzMptthzZ4nR4QTQiyAfeI
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=CaJNc-nyaQXWHGQ9a10A:9
-    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=8AirrxEcAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=LkhwIsrRiEQ4CS9YBrUA:9 a=QEXdDO2ut3YA:10 a=ST-jHhOKWsTCqRlWije3:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933393AbeDKSyN (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:54:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34214 "EHLO
+        id S1754795AbeDKULe (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:11:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34456 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932610AbeDKSyM (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:54:12 -0400
+        with ESMTP id S933460AbeDKSyW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:54:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 040/310] bus: brcmstb_gisb: Use register offsets with writes too
-Date: Wed, 11 Apr 2018 20:32:59 +0200
-Message-Id: <20180411183623.997275327@linuxfoundation.org>
+Subject: [PATCH 4.9 044/310] ARM: dts: imx53-qsrb: Pulldown PMIC IRQ pin
+Date: Wed, 11 Apr 2018 20:33:03 +0200
+Message-Id: <20180411183624.157370043@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -93,44 +93,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Doug Berger <opendmb@gmail.com>
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
 
-[ Upstream commit 856c7ccb9ce7a061f04bdf586f649cb93654e294 ]
+[ Upstream commit 2fe4bff3516924a37e083e3211364abe59db1161 ]
 
-This commit corrects the bug introduced in commit f80835875d3d
-("bus: brcmstb_gisb: Look up register offsets in a table") such
-that gisb_write() translates the register enumeration into an
-offset from the base address for writes as well as reads.
+Currently the following errors are seen:
 
-Fixes: f80835875d3d ("bus: brcmstb_gisb: Look up register offsets in a table")
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Acked-by: Gregory Fong <gregory.0xf0@gmail.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+[   14.015056] mc13xxx 0-0008: Failed to read IRQ status: -6
+[   27.321093] mc13xxx 0-0008: Failed to read IRQ status: -6
+[   27.411681] mc13xxx 0-0008: Failed to read IRQ status: -6
+[   27.456281] mc13xxx 0-0008: Failed to read IRQ status: -6
+[   30.527106] mc13xxx 0-0008: Failed to read IRQ status: -6
+[   36.596900] mc13xxx 0-0008: Failed to read IRQ status: -6
+
+Also when reading the interrupts via 'cat /proc/interrupts' the
+PMIC GPIO interrupt counter does not stop increasing.
+
+The reason for the storm of interrupts is that the PUS field of
+register IOMUXC_SW_PAD_CTL_PAD_CSI0_DAT5 is currently configured as:
+10 : 100k pullup
+
+and the PMIC interrupt is being registered as IRQ_TYPE_LEVEL_HIGH type,
+which is the correct type as per the MC34708 datasheet.
+
+Use the default power on value for the IOMUX, which sets PUS field as:
+00: 360k pull down
+
+This prevents the spurious PMIC interrupts from happening.
+
+Commit e1ffceb078c6 ("ARM: imx53: qsrb: fix PMIC interrupt level")
+correctly described the irq type as IRQ_TYPE_LEVEL_HIGH, but
+missed to update the IOMUX of the PMIC GPIO as pull down.
+
+Fixes: e1ffceb078c6 ("ARM: imx53: qsrb: fix PMIC interrupt level")
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/bus/brcmstb_gisb.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/imx53-qsrb.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/bus/brcmstb_gisb.c
-+++ b/drivers/bus/brcmstb_gisb.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (C) 2014 Broadcom Corporation
-+ * Copyright (C) 2014-2017 Broadcom
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -127,9 +127,9 @@ static void gisb_write(struct brcmstb_gi
- 		return;
- 
- 	if (gdev->big_endian)
--		iowrite32be(val, gdev->base + reg);
-+		iowrite32be(val, gdev->base + offset);
- 	else
--		iowrite32(val, gdev->base + reg);
-+		iowrite32(val, gdev->base + offset);
- }
- 
- static ssize_t gisb_arb_get_timeout(struct device *dev,
+--- a/arch/arm/boot/dts/imx53-qsrb.dts
++++ b/arch/arm/boot/dts/imx53-qsrb.dts
+@@ -23,7 +23,7 @@
+ 	imx53-qsrb {
+ 		pinctrl_pmic: pmicgrp {
+ 			fsl,pins = <
+-				MX53_PAD_CSI0_DAT5__GPIO5_23	0x1e4 /* IRQ */
++				MX53_PAD_CSI0_DAT5__GPIO5_23	0x1c4 /* IRQ */
+ 			>;
+ 		};
+ 	};
