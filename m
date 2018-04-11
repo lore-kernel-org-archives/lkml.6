@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48N+LxCGhYwG8ZMKefI1CTXdbvaYbIQhMM9DNMReiyIG1B3UVuMZQ2hmLuyObRLUZLCjdjV
-ARC-Seal: i=1; a=rsa-sha256; t=1523472643; cv=none;
+X-Google-Smtp-Source: AIpwx4/tqvWukMBUsa4k/LzNgAIUAnTmMBm6o/AH4zaj3ZHg0i/qKbd0creojWyTWuCtzbmGeEC5
+ARC-Seal: i=1; a=rsa-sha256; t=1523472640; cv=none;
         d=google.com; s=arc-20160816;
-        b=S8hz8uuS/IO+Ad8j6hRTiLSDVR7FZf5tFxKgdAgETLeBvlXKJZoMZSp4qblmovvAG7
-         xudf/B3wJS2vo6Stjjv1uRrNPwa4PE4o9+51Ch7GrK7kUAgGycs1gvl6Xonp38avyQMi
-         yZb0jH7z7qDk4qRW9Pf7JneywiyggnAokt78E6vEGD3zjrjj65iF1SqZ08gDirtbB33I
-         6lJfium3jTaZ2Jv5kxt/k/CNcKzu8f4m8YGKTh2xCcPD612f9nnD5PZv+YgtxfYwYhpC
-         SnEUU0/1gISX3G6bJk51nthfHzxBqACAUBeiTcah30BuovNIHX9FVFjF00i0UlrJYNVY
-         wRCA==
+        b=CyZjaKjz8sVvQdZAcx1kWO+JXROrat3Z+0RcknBHgScbsgWMgL0GBhGSYgOprCIGpy
+         Iba0H5iLMy+8GhDyz9EwVwIK+urVowqRBG2IF7PvkXvxBpfKmIZ+bOfcxiWO9y6niMfq
+         MxaskV3EwWT2Am+V/3CMjUGW11cZU8mVfR3/jK1i264DzgzRGLeLPFUVpmg1NYSzrW2q
+         iYNLlOoaxDakqinUEB2MrDEIq70d4fPb42Ai9aAyYKCzDoOHc+HmieD56jOdyDZy2iU7
+         PcnFZFAFQiK285ztW34Gt39TeD3KwmuJTSUe0fjq3Dmyt3VgpcQ1ymO5Z3EKG2BzetD9
+         1OgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=2scEhm1jlLFkSzPJHagmTqYzaKszeWLfe9NrIMrC6+Q=;
-        b=YrjejF3KAlLugiFpb5fAIJ1X3n5Lk4qM5WhqJ1JQbc/vX0NcpEOMkgV1exQttaH0Qy
-         sOfKZAfkzFvudGDaulXHyX+QgODrXPwksREV3NuOy4bCj3XJwqECgMCU15c8f/KQ5fHL
-         2ENUz9WjIlBk1rAD0RNXA57hNon1RFYiHnhU8lZ7opCYVX85B2UkaVHtVTa+AWEElVzp
-         YTFUPvwSa4QypuPgSTV/NWdVoLKxi3e67VPEJUt1itDrN+5MHKwPVU77ev+qzkYzrgC2
-         /oETw1J30svqFCFHqU+z4X7iQRXLXlKdNGVKmRdp3FFXQm05aKuahjWG9owim+Ypco6G
-         jJdQ==
+        bh=3KEXi3CMupL9v5/UOM+BtOT3lpLEiNOfx9TjUX+CUDw=;
+        b=cJ4COva2dS6BkLJ0GZJFIgPzxxbivbtoRa1MOkYE15Pw3IFGemHuqeBRVJslTnoPO/
+         JJOHP40ZWSJTDvGpCzcHfWYPnh0JfgcEg8w6C+tv+/e1vpU1Rj7DUoEMBv4eYr2hpvbE
+         XIyNtMtz/H/rZDDViei5OIiwCBfkuR9wKcOPJo29EN0mr/RCAbqO2n9ijOL35r7li5FO
+         2x4hgdYRAKEQo0ka8B+FB53IyPdu9cj/O1S011jqA5Y0c3wmfS/5DS2I3aO5i3LjNmx4
+         6OuimUTycPQN/9kcPHXRsin0vsmyOs+yhGJNhJJR/kJaT5wsytFE4/iyG6IHe+6hQ3xW
+         KdvQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.4 159/190] ipsec: check return value of skb_to_sgvec always
-Date: Wed, 11 Apr 2018 20:36:45 +0200
-Message-Id: <20180411183601.856116959@linuxfoundation.org>
+	Jiri Olsa <jolsa@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	David Ahern <dsahern@gmail.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 158/190] perf tools: Fix copyfile_offset update of output offset
+Date: Wed, 11 Apr 2018 20:36:44 +0200
+Message-Id: <20180411183601.795787222@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -43,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476309416013335?=
-X-GMAIL-MSGID: =?utf-8?q?1597476850211145331?=
+X-GMAIL-THRID: =?utf-8?q?1597476847657003802?=
+X-GMAIL-MSGID: =?utf-8?q?1597476847657003802?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,127 +55,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason A. Donenfeld <Jason@zx2c4.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-commit 3f29770723fe498a5c5f57c3a31a996ebdde03e1 upstream.
 
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[natechancellor: Adjusted context due to lack of fca11ebde3f0]
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+[ Upstream commit fa1195ccc0af2d121abe0fe266a1caee8c265eea ]
+
+We need to increase output offset in each iteration, not decrease it as
+we currently do.
+
+I guess we were lucky to finish in most cases in first iteration, so the
+bug never showed. However it shows a lot when working with big (~4GB)
+size data.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: 9c9f5a2f1944 ("perf tools: Introduce copyfile_offset() function")
+Link: http://lkml.kernel.org/r/20180109133923.25406-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ah4.c  |    8 ++++++--
- net/ipv4/esp4.c |   13 ++++++++-----
- net/ipv6/ah6.c  |    8 ++++++--
- net/ipv6/esp6.c |   12 ++++++++----
- 4 files changed, 28 insertions(+), 13 deletions(-)
+ tools/perf/util/util.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/ah4.c
-+++ b/net/ipv4/ah4.c
-@@ -220,7 +220,9 @@ static int ah_output(struct xfrm_state *
- 	ah->seq_no = htonl(XFRM_SKB_CB(skb)->seq.output.low);
+--- a/tools/perf/util/util.c
++++ b/tools/perf/util/util.c
+@@ -162,7 +162,7 @@ int copyfile_offset(int ifd, loff_t off_
  
- 	sg_init_table(sg, nfrags + sglists);
--	skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	err = skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	if (unlikely(err < 0))
-+		goto out_free;
- 
- 	if (x->props.flags & XFRM_STATE_ESN) {
- 		/* Attach seqhi sg right after packet payload */
-@@ -393,7 +395,9 @@ static int ah_input(struct xfrm_state *x
- 	skb_push(skb, ihl);
- 
- 	sg_init_table(sg, nfrags + sglists);
--	skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	err = skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	if (unlikely(err < 0))
-+		goto out_free;
- 
- 	if (x->props.flags & XFRM_STATE_ESN) {
- 		/* Attach seqhi sg right after packet payload */
---- a/net/ipv4/esp4.c
-+++ b/net/ipv4/esp4.c
-@@ -268,10 +268,11 @@ static int esp_output(struct xfrm_state
- 	esph->spi = x->id.spi;
- 
- 	sg_init_table(sg, nfrags);
--	skb_to_sgvec(skb, sg,
--		     (unsigned char *)esph - skb->data,
--		     assoclen + ivlen + clen + alen);
--
-+	err = skb_to_sgvec(skb, sg,
-+		           (unsigned char *)esph - skb->data,
-+		           assoclen + ivlen + clen + alen);
-+	if (unlikely(err < 0))
-+		goto error;
- 	aead_request_set_crypt(req, sg, sg, ivlen + clen, iv);
- 	aead_request_set_ad(req, assoclen);
- 
-@@ -481,7 +482,9 @@ static int esp_input(struct xfrm_state *
+ 		size -= ret;
+ 		off_in += ret;
+-		off_out -= ret;
++		off_out += ret;
  	}
+ 	munmap(ptr, off_in + size);
  
- 	sg_init_table(sg, nfrags);
--	skb_to_sgvec(skb, sg, 0, skb->len);
-+	err = skb_to_sgvec(skb, sg, 0, skb->len);
-+	if (unlikely(err < 0))
-+		goto out;
- 
- 	aead_request_set_crypt(req, sg, sg, elen + ivlen, iv);
- 	aead_request_set_ad(req, assoclen);
---- a/net/ipv6/ah6.c
-+++ b/net/ipv6/ah6.c
-@@ -423,7 +423,9 @@ static int ah6_output(struct xfrm_state
- 	ah->seq_no = htonl(XFRM_SKB_CB(skb)->seq.output.low);
- 
- 	sg_init_table(sg, nfrags + sglists);
--	skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	err = skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	if (unlikely(err < 0))
-+		goto out_free;
- 
- 	if (x->props.flags & XFRM_STATE_ESN) {
- 		/* Attach seqhi sg right after packet payload */
-@@ -603,7 +605,9 @@ static int ah6_input(struct xfrm_state *
- 	ip6h->hop_limit   = 0;
- 
- 	sg_init_table(sg, nfrags + sglists);
--	skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	err = skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	if (unlikely(err < 0))
-+		goto out_free;
- 
- 	if (x->props.flags & XFRM_STATE_ESN) {
- 		/* Attach seqhi sg right after packet payload */
---- a/net/ipv6/esp6.c
-+++ b/net/ipv6/esp6.c
-@@ -248,9 +248,11 @@ static int esp6_output(struct xfrm_state
- 	esph->spi = x->id.spi;
- 
- 	sg_init_table(sg, nfrags);
--	skb_to_sgvec(skb, sg,
--		     (unsigned char *)esph - skb->data,
--		     assoclen + ivlen + clen + alen);
-+	err = skb_to_sgvec(skb, sg,
-+		           (unsigned char *)esph - skb->data,
-+		           assoclen + ivlen + clen + alen);
-+	if (unlikely(err < 0))
-+		goto error;
- 
- 	aead_request_set_crypt(req, sg, sg, ivlen + clen, iv);
- 	aead_request_set_ad(req, assoclen);
-@@ -423,7 +425,9 @@ static int esp6_input(struct xfrm_state
- 	}
- 
- 	sg_init_table(sg, nfrags);
--	skb_to_sgvec(skb, sg, 0, skb->len);
-+	ret = skb_to_sgvec(skb, sg, 0, skb->len);
-+	if (unlikely(ret < 0))
-+		goto out;
- 
- 	aead_request_set_crypt(req, sg, sg, elen + ivlen, iv);
- 	aead_request_set_ad(req, assoclen);
