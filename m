@@ -1,62 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753442AbeDKPRi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 11:17:38 -0400
-Received: from mga05.intel.com ([192.55.52.43]:64021 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752852AbeDKPRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 11:17:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,436,1517904000";
-   d="scan'208";a="219594926"
-Reply-To: thor.thayer@linux.intel.com
-Subject: Re: [PATCH] ARM: socfpga_defconfig: Remove QSPI Sector 4K size force
-To: dinguyen@kernel.org, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-References: <1522093800-7822-1-git-send-email-thor.thayer@linux.intel.com>
-From: Thor Thayer <thor.thayer@linux.intel.com>
-Message-ID: <1e858591-aaae-72f0-de0f-40aea11e502a@linux.intel.com>
-Date: Wed, 11 Apr 2018 10:20:27 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753874AbeDKPTj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 11:19:39 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:37929 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753108AbeDKPTi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 11:19:38 -0400
+X-Google-Smtp-Source: AIpwx4+gwiBRaYK/LKBC//0lWTFOx39b8+Uye8z0tubTjb+vB2f2VyQdDgMwO1RbAy8+x9KN1CqNPNjpuhMKxNROQII=
 MIME-Version: 1.0
-In-Reply-To: <1522093800-7822-1-git-send-email-thor.thayer@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 11 Apr 2018 17:19:37 +0200
+X-Google-Sender-Auth: jHkIeR4S3Bg1fFjNhcOCgEgzZIQ
+Message-ID: <CAK8P3a0ibBNw14DfgqXJqmH8QgtEdZ5spLnFRLh2bU7uoMHoSw@mail.gmail.com>
+Subject: [GIT PULL] ARM: SoC fixes for 4.17
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: arm-soc <arm@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi. Any comments on this patch?
+The following changes since commit 38c23685b273cfb4ccf31a199feccce3bdcb5d83:
 
-On 03/26/2018 02:50 PM, thor.thayer@linux.intel.com wrote:
-> From: Thor Thayer <thor.thayer@linux.intel.com>
-> 
-> Remove QSPI Sector 4K size force which is causing QSPI boot
-> problems with the JFFS2 root filesystem.
-> 
-> Fixes the following error:
->       "Magic bitmask 0x1985 not found at ..."
-> 
-> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-> ---
->   arch/arm/configs/socfpga_defconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/configs/socfpga_defconfig b/arch/arm/configs/socfpga_defconfig
-> index 2620ce790db0..371fca4e1ab7 100644
-> --- a/arch/arm/configs/socfpga_defconfig
-> +++ b/arch/arm/configs/socfpga_defconfig
-> @@ -57,6 +57,7 @@ CONFIG_MTD_M25P80=y
->   CONFIG_MTD_NAND=y
->   CONFIG_MTD_NAND_DENALI_DT=y
->   CONFIG_MTD_SPI_NOR=y
-> +# CONFIG_MTD_SPI_NOR_USE_4K_SECTORS is not set
->   CONFIG_SPI_CADENCE_QUADSPI=y
->   CONFIG_OF_OVERLAY=y
->   CONFIG_OF_CONFIGFS=y
-> 
+  Merge tag 'armsoc-drivers' of
+git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc (2018-04-05
+21:29:35 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git
+tags/armsoc-fixes
+
+for you to fetch changes up to cb799267bb65676277fb718cfb42239fe5c6e4fb:
+
+  MAINTAINERS: Update ASPEED entry with details (2018-04-11 10:47:31 +0200)
+
+----------------------------------------------------------------
+ARM: SoC fixes for 4.17
+
+Here is a very small set of fixes for inclusion in linux-4.17-rc1:
+Two changes for the maintainer file, and one more fix for the newly
+added npcm platform, to enable the level 2 cache controller.
+
+----------------------------------------------------------------
+Joel Stanley (1):
+      MAINTAINERS: Update ASPEED entry with details
+
+Neil Armstrong (1):
+      MAINTAINERS: Migrate oxnas list to groups.io
+
+Tomer Maimon (1):
+      arm: npcm: enable L2 cache in NPCM7xx architecture
+
+ MAINTAINERS                  | 11 ++++++++---
+ arch/arm/mach-npcm/npcm7xx.c |  2 ++
+ 2 files changed, 10 insertions(+), 3 deletions(-)
