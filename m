@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48t0IBVzyHU70xs81l5hCVhrerWvT/uKq6cajJzjkAxaSEH++FiPjkja/FRYfhgs6s10Nh8
-ARC-Seal: i=1; a=rsa-sha256; t=1523473210; cv=none;
+X-Google-Smtp-Source: AIpwx4/ynZ4G60g1CzqtSDHq2AnJnxOStQw8UeESyqM3hbEj2YAgTFa6tUPrXz95xZb08cD3oe52
+ARC-Seal: i=1; a=rsa-sha256; t=1523473201; cv=none;
         d=google.com; s=arc-20160816;
-        b=ro+NvGYLTz7Kt6V0f72EKn7Bgl7qlKlqoKheDMWYL2Yvs/1xkByJRuVeIjBhKT7oW0
-         wkrtrk9b/UTpKnA4lJ5xrBnMaGvUPueXFTEC6WnKT9fbFYQ8aCzBU18knCP3TmRsKvTW
-         JvrisGtUUkyylZ9HhCHgf5TTXT6dKgvUO88ypGrf45w0qZT0OhiT8gYD0c6El6iA5+5A
-         MkYk2g8F6TQPswPriZvcvoCtjXWF78MimBLX7gRsBUjUboeqroaA/13ZrNVDTV/ppUyM
-         X9XaFrAUztTsosgMn1CDKsQ2LB/9xartuAidq/C3+ZQ8DXzEo008wLjhWgdxUXyt47a9
-         gUuQ==
+        b=sIAOZg89ALcMatSzUb8ScpCVAvTbglvkatBeN6Vf86c2kfc0uWMRgM7gKP0BA2nT6w
+         CrGPG8V8ryfPeSKQEg9Bbd9KGafENnvUOR2lHJzYkzp4xePvguUK5zR32Q+s4IXU+GfZ
+         CUnfPVLYolda0yNid2ukVnia3LfwnKg8Q35F2fuKe0TF4Ovsl2y8QXxHeebxN+qb+MWb
+         jyVqxoWpztVfZCyzWXG0hapTO/U7CV4gk3mFV2QvaSpJXYt95f9Xm9Ee0b2Bz47TqH7J
+         18cB6Ug9E0Naairygk88RWVCXcdT0V8C/c5Eyo3vkOS4fHPFmEfAHm8PjooGGrL3vCiY
+         yqMA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=iEPHOmyY+ggQczFbaFcngtyqKNsNPccZ9jqFSXFk+Lk=;
-        b=gIvfhxaY6b/aO3uoR0PDvcdErpEzG8EEPklUjDoQjnl4WOtW0Yo2mIzndpCPA9bmNv
-         XETLu1o9SR3x81ql7VCGAr2S2QiWp2HNCzzb3IaMSarJcFkOBARRHZLFhITGzLEZ9qRi
-         Iw8MlxEMve3qit55bFJZ43MOi0zMPX3KqW1FvSK9X52biRUBeDUmog4yvQ5NqHaGG/92
-         TuJvKChmg2m5RXRPGXOJ08EHNY0pWEa15MdL3d0Pyt5VF0b3DQty3xAzBfyKhGx7qE+N
-         KoMtHgwy8fZ486TMB3JVueM6qNNBcQzjdZQmT5GbfJwfx5pM4UPFK4zdAR2AvpDlRebw
-         g/lA==
+        bh=kE32gBLuuFXGBX3/kKNMDKKiiy8th5nR6oZBdiuBI6o=;
+        b=vAJOBysDKRRwP7zmGU/tkIUdeMVbddTUizLpLNAHeaUHfaT6lMYdBx3ASr4BDXanHz
+         QlV5K31ca3TMdlas2RSsNXNPKjHw4BVdtrnPTfeu460ttZmKlsTE9u1DBieonaIaxNDv
+         4gRmDKFALtOsbRPO4FQ4Nuo34ibY1G6EK0M2zuKeRdJ8lZV2QkKBOmDMyeguVRtKuSgu
+         DtlayWrZ1JmRTKMjj5bWKGuBxPu4I9FGHHbnJsYTChlRuv2AXPitsWpYgfdV5EaDqOit
+         mdoaN8SyOYQRz8OJni3pUhldqJfLYZ17FX4GAdbryxVTR90Ji/ecRQMuR7idSb+Zfr7p
+         /xYw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	NeilBrown <neilb@suse.com>,
-	Trond Myklebust <trond.myklebust@primarydata.com>,
+	Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
+	Steve Best <sbest@redhat.com>,
+	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 164/310] SUNRPC: ensure correct error is reported by xs_tcp_setup_socket()
-Date: Wed, 11 Apr 2018 20:35:03 +0200
-Message-Id: <20180411183629.437813707@linuxfoundation.org>
+Subject: [PATCH 4.9 162/310] rtc: opal: Handle disabled TPO in opal_get_tpo_time()
+Date: Wed, 11 Apr 2018 20:35:01 +0200
+Message-Id: <20180411183629.356488295@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476789904573594?=
-X-GMAIL-MSGID: =?utf-8?q?1597477445000747065?=
+X-GMAIL-THRID: =?utf-8?q?1597476783800183911?=
+X-GMAIL-MSGID: =?utf-8?q?1597477435551994196?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,53 +51,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: NeilBrown <neilb@suse.com>
+From: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
 
 
-[ Upstream commit 6ea44adce91526700535b3150f77f8639ae8c82d ]
+[ Upstream commit 6dc1cf6f932bb0ea4d8f5e913a0a401ecacd2f03 ]
 
-If you attempt a TCP mount from an host that is unreachable in a way
-that triggers an immediate error from kernel_connect(), that error
-does not propagate up, instead EAGAIN is reported.
+On PowerNV platform when Timed-Power-On(TPO) is disabled, read of
+stored TPO yields value with all date components set to '0' inside
+opal_get_tpo_time(). The function opal_to_tm() then converts it to an
+offset from year 1900 yielding alarm-time == "1900-00-01
+00:00:00". This causes problems with __rtc_read_alarm() that
+expecting an offset from "1970-00-01 00:00:00" and returned alarm-time
+results in a -ve value for time64_t. Which ultimately results in this
+error reported in kernel logs with a seemingly garbage value:
 
-This results in call_connect_status receiving the wrong error.
+"rtc rtc0: invalid alarm value: -2-1--1041528741
+2005511117:71582844:32"
 
-A case that it easy to demonstrate is to attempt to mount from an
-address that results in ENETUNREACH, but first deleting any default
-route.
-Without this patch, the mount.nfs process is persistently runnable
-and is hard to kill.  With this patch it exits as it should.
+We fix this by explicitly handling the case of all alarm date-time
+components being '0' inside opal_get_tpo_time() and returning -ENOENT
+in such a case. This signals generic rtc that no alarm is set and it
+bails out from the alarm initialization flow without reporting the
+above error.
 
-The problem is caused by the fact that xs_tcp_force_close() eventually
-calls
-      xprt_wake_pending_tasks(xprt, -EAGAIN);
-which causes an error return of -EAGAIN.  so when xs_tcp_setup_sock()
-calls
-      xprt_wake_pending_tasks(xprt, status);
-the status is ignored.
-
-Fixes: 4efdd92c9211 ("SUNRPC: Remove TCP client connection reset hack")
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+Signed-off-by: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+Reported-by: Steve Best <sbest@redhat.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sunrpc/xprtsock.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/rtc/rtc-opal.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/net/sunrpc/xprtsock.c
-+++ b/net/sunrpc/xprtsock.c
-@@ -2384,7 +2384,12 @@ static void xs_tcp_setup_socket(struct w
- 	case -EHOSTUNREACH:
- 	case -EADDRINUSE:
- 	case -ENOBUFS:
--		/* retry with existing socket, after a delay */
-+		/*
-+		 * xs_tcp_force_close() wakes tasks with -EIO.
-+		 * We need to wake them first to ensure the
-+		 * correct error code.
-+		 */
-+		xprt_wake_pending_tasks(xprt, status);
- 		xs_tcp_force_close(xprt);
- 		goto out;
- 	}
+--- a/drivers/rtc/rtc-opal.c
++++ b/drivers/rtc/rtc-opal.c
+@@ -150,6 +150,16 @@ static int opal_get_tpo_time(struct devi
+ 
+ 	y_m_d = be32_to_cpu(__y_m_d);
+ 	h_m_s_ms = ((u64)be32_to_cpu(__h_m) << 32);
++
++	/* check if no alarm is set */
++	if (y_m_d == 0 && h_m_s_ms == 0) {
++		pr_debug("No alarm is set\n");
++		rc = -ENOENT;
++		goto exit;
++	} else {
++		pr_debug("Alarm set to %x %llx\n", y_m_d, h_m_s_ms);
++	}
++
+ 	opal_to_tm(y_m_d, h_m_s_ms, &alarm->time);
+ 
+ exit:
