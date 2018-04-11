@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+PndiUHg7lgdUIRMXpI1QG9KMA4fprWVIqaLvaCOSy22a/Gnfhqgt4fZUcE6YNDKVLW/st
-ARC-Seal: i=1; a=rsa-sha256; t=1523473381; cv=none;
+X-Google-Smtp-Source: AIpwx49ogoBJa4wHDyq8ddf3dyaWRkN6QdeqZtqF+7lM+FO0UgZ28f7BcRvrrB0qK33LnYmbqGqe
+ARC-Seal: i=1; a=rsa-sha256; t=1523473378; cv=none;
         d=google.com; s=arc-20160816;
-        b=v8YRLW85q1KjU763JUde7h/89qc5+F/JV4ypypB5F3V9gnwsQYFsXwHYmixhMiEtbk
-         6WUW+BF7x3XX74vil859qK+yGYwo9Vim1JfxdFRbyezYD8plnYlMMZK53Mfe9cj0/fhp
-         LRf/sNCV14cTwTmbnpfSwXumQGhantVNX0lO7WjZs48skw9U4EfAuuW0hw63oYJR3gQW
-         ljhLzHuyVhyZYeJc55ao9aRJZ/wlEXFHP2KyrmKQGcu5dGxb9aQL/ZcqLXCXr+k1j3XR
-         jimomOZSc+Gy7eED6duG5rVsr64QI4+x1SWtQd8Tme97t/9MFkNuhGuDwPkXN+JxNZ+t
-         axqg==
+        b=v2NHezMRLGoN8NwpXlc/QP0rxXS3OHfBVTyw0wBc+61/rjkGSZeIKMWoeDMIEYm7X3
+         t8JbGGgKARD920lhy2ta6498TgFjh7Vbrb4BefT27ZRudTSAVMjy7d1Xchrfsed0ksSt
+         BY3E4kJ+H+4RR2RrQ2n5NdO7QWVZHgRjgLUlXwUrT0VymXqgKx9oc7iTzzHHggBKfZRV
+         3gTi/qHfH8K2Ez1ZW+C0cPvdvrGo0ZqckhY7vjn/O04gvIizf+79H2Pbu3sII1i190Ug
+         hdoZ7PPlh1ubDDC1IAIWL4Ol8a0qI9g8wQm8gWoDdTucSXvP7PHXCtb2LwWVfcNMO8jU
+         2umQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Wi/SYo+HPqJGnqOvtoOytbTEIuNzp9gEU/61M0c+brY=;
-        b=QL97BAKhSJ40aZMPUzbeFJiIZwYAlMH7nBN4iQ3QovkYpDgLvxDTdI+P4dUdJMF5fH
-         ly9yhCmQV1KjoJqkN3JLMXxaXBj6vQHQLrjp0ObJJ3+krVo7TS1yYb/mL6AuuNsdigpE
-         Guc4DO/IuHx6FMpeWCmzEvR8XdOnTgM5aG8Ae80iloKqa/rDqOwBCMXTNGdiFvWe/9FJ
-         aByu0WzPMm5ClSDCrCNUbIL2d2Ujvc8dER4dO0a1ZjMm+sjcreQdnrzAFsBEDHnvY/Gf
-         XpThDYfvRrCBA8PYSXcfT7fJ1WZV50Tl8bHehMpK4IOPN4QSntrd8nflQROfzvA69IYn
-         0nlA==
+        bh=9D/1MMxL+TwsH3zZbmlweLkzg3R88r98dY30cPvmVLM=;
+        b=V8dtc1BDmh/gfiX5JpuTnzfXDQAZcJ4WHOetDkhgGZ/0ua2Wqhl9JtLsMmMHZrfpiV
+         n0kwtcPZ9KDx42bvPl0tDE5BaA0G69CYeEChyNYubqN5RaAChH0sMbG3b6O56/plaimW
+         F4JIz6XDrALF6KDd5Xa50cpUSPj+s7ZNgVpRlduQXmBmEKn5Cdm6aVfyxucDh4o2ia+/
+         ScDWIpyeBGRo2hCAETg7Tn8OwUUTBsY8zICgGxkQe4S/F3C/B772oS4f6rsguK3Xjips
+         RZDjRDBYxCcRzTzc0F4NnqNbmvRrVPGmLt/6D7x+znbRAfUYbm1SsiILs48saK9aDGTP
+         A62w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	David Howells <dhowells@redhat.com>,
-	James Morris <james.l.morris@oracle.com>,
+	Ian Abbott <abbotti@mev.co.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Stefano Stabellini <sstabellini@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 228/310] X.509: Fix error code in x509_cert_parse()
-Date: Wed, 11 Apr 2018 20:36:07 +0200
-Message-Id: <20180411183632.320878729@linuxfoundation.org>
+Subject: [PATCH 4.9 227/310] xen: avoid type warning in xchg_xen_ulong
+Date: Wed, 11 Apr 2018 20:36:06 +0200
+Message-Id: <20180411183632.282910891@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477624441340215?=
-X-GMAIL-MSGID: =?utf-8?q?1597477624441340215?=
+X-GMAIL-THRID: =?utf-8?q?1597476268776982779?=
+X-GMAIL-MSGID: =?utf-8?q?1597477621569279890?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,31 +51,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
 
-[ Upstream commit 4e880168e9ffb1cdbdb72b3b48ab0324b30c2d62 ]
+[ Upstream commit 9cc91f212111cdcbefa02dcdb7dd443f224bf52c ]
 
-We forgot to set the error code on this path so it could result in
-returning NULL which leads to a NULL dereference.
+The improved type-checking version of container_of() triggers a warning for
+xchg_xen_ulong, pointing out that 'xen_ulong_t' is unsigned, but atomic64_t
+contains a signed value:
 
-Fixes: db6c43bd2132 ("crypto: KEYS: convert public key and digsig asym to the akcipher api")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: James Morris <james.l.morris@oracle.com>
+drivers/xen/events/events_2l.c: In function 'evtchn_2l_handle_events':
+drivers/xen/events/events_2l.c:187:1020: error: call to '__compiletime_assert_187' declared with attribute error: pointer type mismatch in container_of()
+
+This adds a cast to work around the warning.
+
+Cc: Ian Abbott <abbotti@mev.co.uk>
+Fixes: 85323a991d40 ("xen: arm: mandate EABI and use generic atomic operations.")
+Fixes: daa2ac80834d ("kernel.h: handle pointers to arrays better in container_of()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Stefano Stabellini <sstabellini@kernel.org>
+Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
+Acked-by: Ian Abbott <abbotti@mev.co.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- crypto/asymmetric_keys/x509_cert_parser.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/include/asm/xen/events.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/crypto/asymmetric_keys/x509_cert_parser.c
-+++ b/crypto/asymmetric_keys/x509_cert_parser.c
-@@ -102,6 +102,7 @@ struct x509_certificate *x509_cert_parse
- 		}
- 	}
+--- a/arch/arm/include/asm/xen/events.h
++++ b/arch/arm/include/asm/xen/events.h
+@@ -16,7 +16,7 @@ static inline int xen_irqs_disabled(stru
+ 	return raw_irqs_disabled_flags(regs->ARM_cpsr);
+ }
  
-+	ret = -ENOMEM;
- 	cert->pub->key = kmemdup(ctx->key, ctx->key_size, GFP_KERNEL);
- 	if (!cert->pub->key)
- 		goto error_decode;
+-#define xchg_xen_ulong(ptr, val) atomic64_xchg(container_of((ptr),	\
++#define xchg_xen_ulong(ptr, val) atomic64_xchg(container_of((long long*)(ptr),\
+ 							    atomic64_t,	\
+ 							    counter), (val))
+ 
