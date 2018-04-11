@@ -1,119 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753315AbeDKO13 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 10:27:29 -0400
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:45125 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752229AbeDKO11 (ORCPT
+        id S1753323AbeDKO1r (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 10:27:47 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46998 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751972AbeDKO1p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 10:27:27 -0400
-X-Google-Smtp-Source: AIpwx49eHoUni5YWxml23hW6YSqOziW54kjLysmGrTxM/WKiS6NBE+dZ2kYxpupAiE3K59/j5UYAMy7xYScpdLAsjDo=
+        Wed, 11 Apr 2018 10:27:45 -0400
+Date: Wed, 11 Apr 2018 07:27:37 -0700
+From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Howard McLauchlan <hmclauchlan@fb.com>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, kernel-team@fb.com,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH] uprobe: add support for overlayfs
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20180410231030.2720-1-hmclauchlan@fb.com>
+ <20180410200059.731d87fe@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <dafca4cc-c7ca-a06d-3a17-46240b1d20c3@amd.com>
-References: <c743b220-0395-eef3-4405-a21cdbe8eee1@mozilla.com>
- <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com> <a96df0b8-fc22-4438-646d-2f0096dfcc84@mozilla.com>
- <6cebabff-908f-5ebe-4252-760773c4cd6f@amd.com> <312ed341-7052-a61e-331f-d1e8fd5b477e@mozilla.com>
- <d136f940-d807-d2f7-30a7-8617f130912d@amd.com> <77866d66-2728-8295-d7ee-9975dbf64b99@mozilla.com>
- <55e1712b-6567-50c5-3789-53dd1ccddb94@gmail.com> <CAEJqkgiOR3aCGoNquVeEyC1BLMBPmXNjgrmjNeeE9UVfzcJKzg@mail.gmail.com>
- <dafca4cc-c7ca-a06d-3a17-46240b1d20c3@amd.com>
-From: Gabriel C <nix.or.die@gmail.com>
-Date: Wed, 11 Apr 2018 16:26:54 +0200
-Message-ID: <CAEJqkgje5Q=FLXLr_nR0gUwPpEuzx=Ln1nucJQRDXWW_0Byg=w@mail.gmail.com>
-Subject: Re: AMD graphics performance regression in 4.15 and later
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Jean-Marc Valin <jmvalin@mozilla.com>, Dave Airlie <airlied@linux.ie>,
-        alexander.deucher@amd.com, Felix Kuehling <Felix.Kuehling@amd.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>, michel.daenzer@amd.com,
-        dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20180410200059.731d87fe@gandalf.local.home>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18041114-0008-0000-0000-000004E953E9
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041114-0009-0000-0000-00001E7D5791
+Message-Id: <20180411142737.GA16559@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-11_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804110135
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3BESPE1024318
 
-2018-04-11 11:37 GMT+02:00 Christian König <christian.koenig@amd.com>:
-> Am 11.04.2018 um 06:00 schrieb Gabriel C:
->>
->> 2018-04-09 11:42 GMT+02:00 Christian König
->> <ckoenig.leichtzumerken@gmail.com>:
->>>
->>> Am 07.04.2018 um 00:00 schrieb Jean-Marc Valin:
->>>>
->>>> Hi Christian,
->>>>
->>>> Thanks for the info. FYI, I've also opened a Firefox bug for that at:
->>>> https://bugzilla.mozilla.org/show_bug.cgi?id=1448778
->>>> Feel free to comment since you have a better understanding of what's
->>>> going on.
->>>>
->>>> One last question: right now I'm running 4.15.0 with the "offending"
->>>> patch reverted. Is that safe to run or are there possible bad
->>>> interactions with other changes.
->>>
->>>
->>> That should work without problems.
->>>
->>> But I just had another idea as well, if you want you could still test the
->>> new code path which will be using in 4.17.
->>>
->> While Firefox may do some strange things is not about only Firefox.
->>
->> With your patches my EPYC box is unusable with  4.15++ kernels.
->> The whole Desktop is acting weird.  This one is using
->> an Cape Verde PRO [Radeon HD 7750/8740 / R7 250E] GPU.
->>
->> Box is  2 * EPYC 7281 with 128 GB ECC RAM
->>
->> Also a 14C Xeon box with a HD7700 is broken same way.
->
->
-> The hardware is irrelevant for this. We need to know what software stack you
-> use on top of it.
->
-> E.g. desktop environment/Mesa and DDX version etc...
+* Steven Rostedt <rostedt@goodmis.org> [2018-04-10 20:00:59]:
 
-Plasma 5.12.4 compiled wth frameworks 5.44.0 , Qt5 5.10.1
-mesa 18.0.0 and mesa 17.3.7 on the other box
-Xorg is 1.19.6
-xf86-video-amdgpu and xf86-video-ati both 18.0.1
+> On Tue, 10 Apr 2018 16:10:30 -0700
+> Howard McLauchlan <hmclauchlan@fb.com> wrote:
+> 
+> > uprobes cannot successfully attach to binaries located in a directory
+> > mounted with overlayfs.
+> > 
+> > To verify, create directories for mounting overlayfs
+> > (upper,lower,work,merge), move some binary into merge/ and use readelf
+> > to obtain some known instruction of the binary. I used /bin/true and the
+> > entry instruction(0x13b0):
+> > 
+> > 	$ mount -t overlay overlay -o lowerdir=lower,upperdir=upper,workdir=work merge
+> > 	$ cd /sys/kernel/debug/tracing
+> > 	$ echo 'p:true_entry PATH_TO_MERGE/merge/true:0x13b0' > uprobe_events
+> > 	$ echo 1 > events/uprobes/true_entry/enable
+> > 
+> > This returns 'bash: echo: write error: Input/output error' and dmesg
+> > tells us 'event trace: Could not enable event true_entry'
+> 
+> I tried the above and verified that it is a problem and your patch
+> solves it.
+> 
+> Thanks, I'll apply it and start my tests on it.
+> 
+> -- Steve
+> 
+> > 
+> > This change makes create_trace_uprobe() look for the real inode of a
+> > dentry. In the case of normal filesystems, this simplifies to just
+> > returning the inode. In the case of overlayfs(and similar fs) we will
+> > obtain the underlying dentry and corresponding inode, upon which uprobes
+> > can successfully register.
+> > 
+> > Running the example above with the patch applied, we can see that the
+> > uprobe is enabled and will output to trace as expected.
+> > 
 
->
->>
->> Everything breaks in X .. scrolling , moving windows , flickering etc.
->>
->>
->> reverting f4c809914a7c3e4a59cf543da6c2a15d0f75ee38 and
->> 648bc3574716400acc06f99915815f80d9563783
->> from an 4.15 kernel makes things work again.
->>
->>
->>> Backporting all the detection logic is to invasive, but you could just go
->>> into drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c and forcefull use the other
->>> code path.
->>>
->>> Just look out for "#ifdef CONFIG_SWIOTLB" checks and disable those.
->>>
->> Well you really can't be serious about these suggestions ? Are you ?
->>
->> Telling peoples to #if 0 random code is not a solution.
->
->
-> That is for testing and not a permanent solution.
->
->> You broke existsing working userland with your patches and at least
->> please fix that for 4.16.
->>
->> I can help testing code for 4.17/++ if you wish but that is *different*
->> storry.
->
->
-> Please test Alex's amd-staging-drm-next branch from
-> git://people.freedesktop.org/~agd5f/linux.
 
-I'm on it just the connection to freedesktop.org is slow as hell.
-Will take a while to get that branch with 62KiB/s :)
+Looks good to me.
 
-Regards
+Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+
+> > Reviewed-by: Josef Bacik <jbacik@fb.com>
+> > Signed-off-by: Howard McLauchlan <hmclauchlan@fb.com>
+> > ---
+> >  kernel/trace/trace_uprobe.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> > index 2014f4351ae0..17c65fa4136d 100644
+> > --- a/kernel/trace/trace_uprobe.c
+> > +++ b/kernel/trace/trace_uprobe.c
+> > @@ -446,7 +446,7 @@ static int create_trace_uprobe(int argc, char **argv)
+> >  	if (ret)
+> >  		goto fail_address_parse;
+> >  
+> > -	inode = igrab(d_inode(path.dentry));
+> > +	inode = igrab(d_real_inode(path.dentry));
+> >  	path_put(&path);
+> >  
+> >  	if (!inode || !S_ISREG(inode->i_mode)) {
+> 
