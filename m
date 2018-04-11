@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx481ndJ8wqMaqTy3ajsq7UZ1CEMiIMiKUivNqpeBqQIxvBg4g3uMnn16nve5k+PxgHdDuLf9
+X-Google-Smtp-Source: AIpwx499y0faiqtX4V7NiZ+qlnQzSkdsJ6+fayh/SG2w8noMcQeiN/WMOSuGCFym33f51WFk7iP+
 ARC-Seal: i=1; a=rsa-sha256; t=1523473448; cv=none;
         d=google.com; s=arc-20160816;
-        b=B8M0cIjxCVcLpjQW8/YwBMMWB1d4HXCy8JnxVtww+J0rZCypDfOYUXO9OUnYmeoHiE
-         3qhDWxCGmSzO+3UcOqRXqf0ga/QahnX5EQHsblwjnDEPhAPGV0EVEyAva4O7fOiX1FxR
-         jjaa23oRCEe4qUECtkPZfYsQKxfqGRHrf/cHtyKv0mxQGRmNGU99qvV5zmPPW0iWNJs5
-         NJJOAGbtFaKTnScgAimq9IPAp0QBPsRGxDpci4hUh0pmDU6iYgjq2/LUoafaMQSff82r
-         FpoYWyHm9O4KEznxmDOFkVR0hpmicfcOPCjXzwHlz8nT+bf9temsPynqahWDNCu/CSOI
-         UVXg==
+        b=CmHeJDBFewpsRjPmK+Ea3Cfs1jJf4nPh12uYxWP8fI/scdRVECiFOjYW+tYVHl63BF
+         qpJ6k7yXujxbso11MSRmPjIcPWjYWSTjIWzMzFRrkoy1tUnYlD1avIbmySZXRAOeYR7R
+         FcbFMsB6kQlZBRCk26rhoLh0VgHrp623WoTF5s7dfrqAexj6flHGndZ3B1rfp2hReTPw
+         6qayvftPSIR2NXdvxrAAHr6/YDL14LUy2nSWsPIJMYX7R4Ez2ZCYGzgpP6MqW2T/UhXQ
+         RZoCfXYJcClRk4fpEyTI1teSINPaNrC/DsgBcrfswvVhaptp+U6HvfMFBGl+BwyD2Co3
+         nC0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=aXnXMn0kkqyOny3ODprkrXNtpQMYLJHov/86oBAZIHU=;
-        b=oLhK9cC48FFNA7LJcPLvUHoAa9bYAyGdFPoAuDB1CWdETa6JqKGVlSzY/1W31MHFSV
-         g8QGEPTgZG40KH1EJUk+5p4JQOhuCwCwb2gLcghWoIUprmrz3bZQL8bT8t6GvLum///5
-         ShDY95eSryUq2tHOgQDpHpcA0ZQiranl1skCAKD7pCvg7uxqvmBop8zGZTLC71GJZSZ5
-         7HDmVDjMRqH1uSm31Q+94sFJeOjAlQCDt9R7j9AawX+Rl0UggUqnMZSgkOdKK+PFPDQq
-         SYBzSpPlFb8VXlav33KcVRMm1SWpSwQSqUIhs6xPSX3As56hl7Q9HSXh7H18pPMnS3Ns
-         domQ==
+        bh=AegdIJzFbDfmmPVWB/GNkoko54zEhj0fF+p4VThwZXw=;
+        b=P3PhJpeaTBQyNf/1Wo/Cg/lyzlk5MZcd70Qq8mDoKTd0Ugq/BFVpWI5jYL9dtMxuzx
+         AQdIKagsnPX2D4JDnt0Qwm0D7w32U5Sz9wfWfuUrG9YAa+yiqOeNXTH3mUODb4JfL5MJ
+         q+eyM6yvG/KsTQfZHSU8xTfmjJwB/Xg3hsYfFLMudUBzl0GWrG/P2U+CPDyGYTl9a64O
+         ARnmV9OeieVEBALGOeEARckHoWvlQZJ2air+fGQ4z2RjCh0VkgG1NVP1bs1rJx1MrK1D
+         jSgLW9VJ74QynYVTNj9GqeXbxzEwma2C4LxsL7d0ZPRt1JXB0LJA4j6rFy2FnGNdhj31
+         +7tA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,20 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Xunlei Pang <xpang@redhat.com>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Andi Kleen <ak@linux.intel.com>,
 	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
-	Luca Abeni <luca.abeni@santannapisa.it>,
-	Mike Galbraith <efault@gmx.de>,
-	Romulo Silva de Oliveira <romulo.deoliveira@ufsc.br>,
-	Steven Rostedt <rostedt@goodmis.org>,
+	Stephane Eranian <eranian@google.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Tommaso Cucinotta <tommaso.cucinotta@sssup.it>,
+	Vince Weaver <vince@deater.net>,
 	Ingo Molnar <mingo@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 217/310] sched/deadline: Use the revised wakeup rule for suspending constrained dl tasks
-Date: Wed, 11 Apr 2018 20:35:56 +0200
-Message-Id: <20180411183631.894681853@linuxfoundation.org>
+Subject: [PATCH 4.9 216/310] perf/core: Correct event creation with PERF_FORMAT_GROUP
+Date: Wed, 11 Apr 2018 20:35:55 +0200
+Message-Id: <20180411183631.850372990@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -51,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477694973858977?=
-X-GMAIL-MSGID: =?utf-8?q?1597477694973858977?=
+X-GMAIL-THRID: =?utf-8?q?1597476252641342543?=
+X-GMAIL-MSGID: =?utf-8?q?1597477694284061434?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -60,266 +58,83 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Daniel Bristot de Oliveira <bristot@redhat.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
 
-[ Upstream commit 3effcb4247e74a51f5d8b775a1ee4abf87cc089a ]
+[ Upstream commit ba5213ae6b88fb170c4771fef6553f759c7d8cdd ]
 
-We have been facing some problems with self-suspending constrained
-deadline tasks. The main reason is that the original CBS was not
-designed for such sort of tasks.
+Andi was asking about PERF_FORMAT_GROUP vs inherited events, which led
+to the discovery of a bug from commit:
 
-One problem reported by Xunlei Pang takes place when a task
-suspends, and then is awakened before the deadline, but so close
-to the deadline that its remaining runtime can cause the task
-to have an absolute density higher than allowed. In such situation,
-the original CBS assumes that the task is facing an early activation,
-and so it replenishes the task and set another deadline, one deadline
-in the future. This rule works fine for implicit deadline tasks.
-Moreover, it allows the system to adapt the period of a task in which
-the external event source suffered from a clock drift.
+  3dab77fb1bf8 ("perf: Rework/fix the whole read vs group stuff")
 
-However, this opens the window for bandwidth leakage for constrained
-deadline tasks. For instance, a task with the following parameters:
+ -       PERF_SAMPLE_GROUP                       = 1U << 4,
+ +       PERF_SAMPLE_READ                        = 1U << 4,
 
-  runtime   = 5 ms
-  deadline  = 7 ms
-  [density] = 5 / 7 = 0.71
-  period    = 1000 ms
+ -       if (attr->inherit && (attr->sample_type & PERF_SAMPLE_GROUP))
+ +       if (attr->inherit && (attr->read_format & PERF_FORMAT_GROUP))
 
-If the task runs for 1 ms, and then suspends for another 1ms,
-it will be awakened with the following parameters:
+is a clear fail :/
 
-  remaining runtime = 4
-  laxity = 5
+While this changes user visible behaviour; it was previously possible
+to create an inherited event with PERF_SAMPLE_READ; this is deemed
+acceptible because its results were always incorrect.
 
-presenting a absolute density of 4 / 5 = 0.80.
-
-In this case, the original CBS would assume the task had an early
-wakeup. Then, CBS will reset the runtime, and the absolute deadline will
-be postponed by one relative deadline, allowing the task to run.
-
-The problem is that, if the task runs this pattern forever, it will keep
-receiving bandwidth, being able to run 1ms every 2ms. Following this
-behavior, the task would be able to run 500 ms in 1 sec. Thus running
-more than the 5 ms / 1 sec the admission control allowed it to run.
-
-Trying to address the self-suspending case, Luca Abeni, Giuseppe
-Lipari, and Juri Lelli [1] revisited the CBS in order to deal with
-self-suspending tasks. In the new approach, rather than
-replenishing/postponing the absolute deadline, the revised wakeup rule
-adjusts the remaining runtime, reducing it to fit into the allowed
-density.
-
-A revised version of the idea is:
-
-At a given time t, the maximum absolute density of a task cannot be
-higher than its relative density, that is:
-
-  runtime / (deadline - t) <= dl_runtime / dl_deadline
-
-Knowing the laxity of a task (deadline - t), it is possible to move
-it to the other side of the equality, thus enabling to define max
-remaining runtime a task can use within the absolute deadline, without
-over-running the allowed density:
-
-  runtime = (dl_runtime / dl_deadline) * (deadline - t)
-
-For instance, in our previous example, the task could still run:
-
-  runtime = ( 5 / 7 ) * 5
-  runtime = 3.57 ms
-
-Without causing damage for other deadline tasks. It is note worthy
-that the laxity cannot be negative because that would cause a negative
-runtime. Thus, this patch depends on the patch:
-
-  df8eac8cafce ("sched/deadline: Throttle a constrained deadline task activated after the deadline")
-
-Which throttles a constrained deadline task activated after the
-deadline.
-
-Finally, it is also possible to use the revised wakeup rule for
-all other tasks, but that would require some more discussions
-about pros and cons.
-
-Reported-by: Xunlei Pang <xpang@redhat.com>
-Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-[peterz: replaced dl_is_constrained with dl_is_implicit]
+Reported-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Juri Lelli <juri.lelli@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Luca Abeni <luca.abeni@santannapisa.it>
-Cc: Mike Galbraith <efault@gmx.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Romulo Silva de Oliveira <romulo.deoliveira@ufsc.br>
-Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tommaso Cucinotta <tommaso.cucinotta@sssup.it>
-Link: http://lkml.kernel.org/r/5c800ab3a74a168a84ee5f3f84d12a02e11383be.1495803804.git.bristot@redhat.com
+Cc: Vince Weaver <vince@deater.net>
+Fixes:  3dab77fb1bf8 ("perf: Rework/fix the whole read vs group stuff")
+Link: http://lkml.kernel.org/r/20170530094512.dy2nljns2uq7qa3j@hirez.programming.kicks-ass.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/sched.h   |    1 
- kernel/sched/core.c     |    2 
- kernel/sched/deadline.c |   98 ++++++++++++++++++++++++++++++++++++++++++------
- 3 files changed, 89 insertions(+), 12 deletions(-)
+ kernel/events/core.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1412,6 +1412,7 @@ struct sched_dl_entity {
- 	u64 dl_deadline;	/* relative deadline of each instance	*/
- 	u64 dl_period;		/* separation of two instances (period) */
- 	u64 dl_bw;		/* dl_runtime / dl_deadline		*/
-+	u64 dl_density;		/* dl_runtime / dl_deadline		*/
- 
- 	/*
- 	 * Actual scheduling parameters. Initialized with the values above,
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2184,6 +2184,7 @@ void __dl_clear_params(struct task_struc
- 	dl_se->dl_period = 0;
- 	dl_se->flags = 0;
- 	dl_se->dl_bw = 0;
-+	dl_se->dl_density = 0;
- 
- 	dl_se->dl_throttled = 0;
- 	dl_se->dl_yielded = 0;
-@@ -3912,6 +3913,7 @@ __setparam_dl(struct task_struct *p, con
- 	dl_se->dl_period = attr->sched_period ?: dl_se->dl_deadline;
- 	dl_se->flags = attr->sched_flags;
- 	dl_se->dl_bw = to_ratio(dl_se->dl_period, dl_se->dl_runtime);
-+	dl_se->dl_density = to_ratio(dl_se->dl_deadline, dl_se->dl_runtime);
- 
- 	/*
- 	 * Changing the parameters of a task is 'tricky' and we're not doing
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -484,13 +484,84 @@ static bool dl_entity_overflow(struct sc
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5669,9 +5669,6 @@ static void perf_output_read_one(struct
+ 	__output_copy(handle, values, n * sizeof(u64));
  }
  
- /*
-- * When a -deadline entity is queued back on the runqueue, its runtime and
-- * deadline might need updating.
-+ * Revised wakeup rule [1]: For self-suspending tasks, rather then
-+ * re-initializing task's runtime and deadline, the revised wakeup
-+ * rule adjusts the task's runtime to avoid the task to overrun its
-+ * density.
-  *
-- * The policy here is that we update the deadline of the entity only if:
-- *  - the current deadline is in the past,
-- *  - using the remaining runtime with the current deadline would make
-- *    the entity exceed its bandwidth.
-+ * Reasoning: a task may overrun the density if:
-+ *    runtime / (deadline - t) > dl_runtime / dl_deadline
-+ *
-+ * Therefore, runtime can be adjusted to:
-+ *     runtime = (dl_runtime / dl_deadline) * (deadline - t)
-+ *
-+ * In such way that runtime will be equal to the maximum density
-+ * the task can use without breaking any rule.
-+ *
-+ * [1] Luca Abeni, Giuseppe Lipari, and Juri Lelli. 2015. Constant
-+ * bandwidth server revisited. SIGBED Rev. 11, 4 (January 2015), 19-24.
-+ */
-+static void
-+update_dl_revised_wakeup(struct sched_dl_entity *dl_se, struct rq *rq)
-+{
-+	u64 laxity = dl_se->deadline - rq_clock(rq);
-+
-+	/*
-+	 * If the task has deadline < period, and the deadline is in the past,
-+	 * it should already be throttled before this check.
-+	 *
-+	 * See update_dl_entity() comments for further details.
-+	 */
-+	WARN_ON(dl_time_before(dl_se->deadline, rq_clock(rq)));
-+
-+	dl_se->runtime = (dl_se->dl_density * laxity) >> 20;
-+}
-+
-+/*
-+ * Regarding the deadline, a task with implicit deadline has a relative
-+ * deadline == relative period. A task with constrained deadline has a
-+ * relative deadline <= relative period.
-+ *
-+ * We support constrained deadline tasks. However, there are some restrictions
-+ * applied only for tasks which do not have an implicit deadline. See
-+ * update_dl_entity() to know more about such restrictions.
-+ *
-+ * The dl_is_implicit() returns true if the task has an implicit deadline.
-+ */
-+static inline bool dl_is_implicit(struct sched_dl_entity *dl_se)
-+{
-+	return dl_se->dl_deadline == dl_se->dl_period;
-+}
-+
-+/*
-+ * When a deadline entity is placed in the runqueue, its runtime and deadline
-+ * might need to be updated. This is done by a CBS wake up rule. There are two
-+ * different rules: 1) the original CBS; and 2) the Revisited CBS.
-+ *
-+ * When the task is starting a new period, the Original CBS is used. In this
-+ * case, the runtime is replenished and a new absolute deadline is set.
-+ *
-+ * When a task is queued before the begin of the next period, using the
-+ * remaining runtime and deadline could make the entity to overflow, see
-+ * dl_entity_overflow() to find more about runtime overflow. When such case
-+ * is detected, the runtime and deadline need to be updated.
-+ *
-+ * If the task has an implicit deadline, i.e., deadline == period, the Original
-+ * CBS is applied. the runtime is replenished and a new absolute deadline is
-+ * set, as in the previous cases.
-+ *
-+ * However, the Original CBS does not work properly for tasks with
-+ * deadline < period, which are said to have a constrained deadline. By
-+ * applying the Original CBS, a constrained deadline task would be able to run
-+ * runtime/deadline in a period. With deadline < period, the task would
-+ * overrun the runtime/period allowed bandwidth, breaking the admission test.
-+ *
-+ * In order to prevent this misbehave, the Revisited CBS is used for
-+ * constrained deadline tasks when a runtime overflow is detected. In the
-+ * Revisited CBS, rather than replenishing & setting a new absolute deadline,
-+ * the remaining runtime of the task is reduced to avoid runtime overflow.
-+ * Please refer to the comments update_dl_revised_wakeup() function to find
-+ * more about the Revised CBS rule.
-  */
- static void update_dl_entity(struct sched_dl_entity *dl_se,
- 			     struct sched_dl_entity *pi_se)
-@@ -500,6 +571,14 @@ static void update_dl_entity(struct sche
+-/*
+- * XXX PERF_FORMAT_GROUP vs inherited events seems difficult.
+- */
+ static void perf_output_read_group(struct perf_output_handle *handle,
+ 			    struct perf_event *event,
+ 			    u64 enabled, u64 running)
+@@ -5716,6 +5713,13 @@ static void perf_output_read_group(struc
+ #define PERF_FORMAT_TOTAL_TIMES (PERF_FORMAT_TOTAL_TIME_ENABLED|\
+ 				 PERF_FORMAT_TOTAL_TIME_RUNNING)
  
- 	if (dl_time_before(dl_se->deadline, rq_clock(rq)) ||
- 	    dl_entity_overflow(dl_se, pi_se, rq_clock(rq))) {
-+
-+		if (unlikely(!dl_is_implicit(dl_se) &&
-+			     !dl_time_before(dl_se->deadline, rq_clock(rq)) &&
-+			     !dl_se->dl_boosted)){
-+			update_dl_revised_wakeup(dl_se, rq);
-+			return;
-+		}
-+
- 		dl_se->deadline = rq_clock(rq) + pi_se->dl_deadline;
- 		dl_se->runtime = pi_se->dl_runtime;
- 	}
-@@ -961,11 +1040,6 @@ static void dequeue_dl_entity(struct sch
- 	__dequeue_dl_entity(dl_se);
- }
- 
--static inline bool dl_is_constrained(struct sched_dl_entity *dl_se)
--{
--	return dl_se->dl_deadline < dl_se->dl_period;
--}
--
- static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags)
++/*
++ * XXX PERF_SAMPLE_READ vs inherited events seems difficult.
++ *
++ * The problem is that its both hard and excessively expensive to iterate the
++ * child list, not to mention that its impossible to IPI the children running
++ * on another CPU, from interrupt/NMI context.
++ */
+ static void perf_output_read(struct perf_output_handle *handle,
+ 			     struct perf_event *event)
  {
- 	struct task_struct *pi_task = rt_mutex_get_top_task(p);
-@@ -997,7 +1071,7 @@ static void enqueue_task_dl(struct rq *r
- 	 * If that is the case, the task will be throttled and
- 	 * the replenishment timer will be set to the next period.
- 	 */
--	if (!p->dl.dl_throttled && dl_is_constrained(&p->dl))
-+	if (!p->dl.dl_throttled && !dl_is_implicit(&p->dl))
- 		dl_check_constrained_dl(&p->dl);
+@@ -9259,9 +9263,10 @@ perf_event_alloc(struct perf_event_attr
+ 	local64_set(&hwc->period_left, hwc->sample_period);
  
  	/*
+-	 * we currently do not support PERF_FORMAT_GROUP on inherited events
++	 * We currently do not support PERF_SAMPLE_READ on inherited events.
++	 * See perf_output_read().
+ 	 */
+-	if (attr->inherit && (attr->read_format & PERF_FORMAT_GROUP))
++	if (attr->inherit && (attr->sample_type & PERF_SAMPLE_READ))
+ 		goto err_ns;
+ 
+ 	if (!has_branch_stack(event))
