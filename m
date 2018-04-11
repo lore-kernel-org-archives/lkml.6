@@ -1,65 +1,66 @@
-Return-Path: <jhovold@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523430505; cv=none;
+Return-Path: <edward.chang.mcs@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523428735; cv=none;
         d=google.com; s=arc-20160816;
-        b=hGR0Jbk7H9HKnahbjlqUThIpKKcrcEgrFn4S+V81xjF6EWxRT/4SePZGqE98LwuzAn
-         4Aa4Z+z4FacsYGsCKn/wQStQp+y5eoltAu9usPx6KZCMnwEKgrVlzcipZV39xWZVaeUX
-         +R4Xb2CyUh+E5uR+1+756SpWzNjRpUY50JtDTlHfN2xnXuC/VhQLXWk+xToZmfLkYH5O
-         y3sITFVQ3HBxiIp7oSlVIUhiI+p5G7bYT2646bVDSS8uuXdxn+fntE1mrGQPWKE5Jz+i
-         SQhLnuUSR4oYqFhgFGXsiEF7limfs+0Ck9chgc0IxpS659qgA5N/gOmC17Sc3tvaHTlh
-         IUXA==
+        b=iZT5l1FZHUs7p+AjTUPaE9lW63S+/S9ycsSpkUOlfmzzvGs9zDyOlsWsz//3mtXDjk
+         MDVrI1IMtyAeh2K3n0DgcZD/AlqaNx0TvsiW2KZsy5jP4ipa+Wgi3yvygslBoaA1IFTt
+         P+jgyy0J44WfZx+tZUH48+piChlzed+qi99R5VqzuJvJZcb0wkUBH95dQ07KSTUYg106
+         x6dB2e25fSV1S6w0bZmcqisCDxBeZ4PB6JIIQeI2PwCOQyBH72kiAEZ9xAgwgwEuH5Bv
+         CWhxbgihfQA6cIUaqS5y+/BO4ntqDxYSoeK+47Enj7CemcYIF2Iif2sE2ZOyfbIP0OoA
+         J1TA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=UH9N5Z8ldFOv8QzfCkkMM6P77iux/AEw6RAzs5K3+J4=;
-        b=T06BgHl8aE4yrVp7YshEzo4z50AFHurTTy4LqqhfwI2Mp6YOnZg/Yx1u6CKxHAROPY
-         g0iGZ4sXwhxOb5t4ulWpQEdi3/Xu/kFU3vanQzg4G4KyaEyET2TJOWj1Wuixwo/P/gTu
-         r4cM+8nmarFs6kuDU5uzg/ozApmNQd2sf6Vz8Uy0TbCGL5ncWEdSpZ1ZYktwSCDUIR4Y
-         ijHsuR5CljSLHVl1nwS9dfWOxs3f6Coq14eJPEg3CLtzMb1fagF5eVkwsFUC6tu7fXaN
-         jsHs0yqyFAEVj5Zp57DLvy0o9M2WREzrrbbSbIkCaK0cX5NUO989YWaaKB3mOYW1gGvg
-         +v1A==
+        bh=+UqLpToAxARE351WdQJa13Y4ytosOgnkpb/Y99Jr6fw=;
+        b=n6remCVqmXXoWzdZHi1nDUP/jJbMFK1ykKfSaHt2AKCyPFRvTT7SRU4Z+GCbJeQZXU
+         M8TZV5yqyPMLK+O/4pNaaOKL3IOfXrIMj4VDSapW6PaciAMJzmbImFJtMTq0NKOedo51
+         KrwnBkiuV9NdGE7lb2mQTXXoVeshCuDmkSKaN1nx4hpRWXPcQZNv/c5ahkx3TSF+34e8
+         ZlGF4/IpibeLwPSf3hbM9JHcdyNvmsKZjivlBrsbufkXFdGL09NlzK05c6koZzUA4RpL
+         h9lK/SSRoPdXZmjrqvUDz+/ZZtQ+WEoRna8Ysv4RLUJiZBDMOG8MdP8rgkr4Opr9Nfig
+         cMKw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=YpvwX64X;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jhovold@gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pSyDlUFb;
+       spf=pass (google.com: domain of edward.chang.mcs@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=edward.chang.mcs@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=YpvwX64X;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jhovold@gmail.com
-X-Google-Smtp-Source: AIpwx48k4Jm1DMMlIfrovcEUDVrDZYRxyqwibRtgPShuy0YYcNPPEMzBglnVeGdwxjYduRSCNrjnxw==
-Sender: Johan Hovold <jhovold@gmail.com>
-Date: Wed, 11 Apr 2018 09:08:20 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: samuel@sortiz.org, gregkh@linuxfoundation.org, davem@davemloft.net,
-	johan@kernel.org, arvind.yadav.cs@gmail.com, netdev@vger.kernel.org,
-	devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] staging: irda: Replace mdelay with usleep_range in
- irda_usb_probe
-Message-ID: <20180411070820.GF10795@localhost>
-References: <1523410435-1693-1-git-send-email-baijiaju1990@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523410435-1693-1-git-send-email-baijiaju1990@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=pSyDlUFb;
+       spf=pass (google.com: domain of edward.chang.mcs@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=edward.chang.mcs@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx4/t4R+s8C75AQS1ILN2QM325J/b/hj/YSEPj9SRYjhZwfC4FKB2fU4sHrIAJDTNX9I0lQiNtA==
+From: Edward Chang <edward.chang.mcs@gmail.com>
+To: johan@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Edward Chang <edward.chang.mcs@gmail.com>
+Subject: [PATCH] usb: serial: option: add HP LT4220 support
+Date: Wed, 11 Apr 2018 14:36:52 +0800
+Message-Id: <1523428612-2911-1-git-send-email-edward.chang.mcs@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597411628746023550?=
-X-GMAIL-MSGID: =?utf-8?q?1597432665593492118?=
+X-GMAIL-THRID: =?utf-8?q?1597430809989446970?=
+X-GMAIL-MSGID: =?utf-8?q?1597430809989446970?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Apr 11, 2018 at 09:33:55AM +0800, Jia-Ju Bai wrote:
-> irda_usb_probe() is never called in atomic context.
-> 
-> irda_usb_probe() is only set as ".probe" in struct usb_driver.
-> 
-> Despite never getting called from atomic context, irda_usb_probe()
-> calls mdelay() to busily wait.
-> This is not necessary and can be replaced with usleep_range() to
-> avoid busy waiting.
-> 
-> This is found by a static analysis tool named DCNS written by myself.
-> And I also manually check it.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+This patch adds support for HP LT4220
 
-Reviewed-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Edward Chang <edward.chang.mcs@gmail.com>
+---
+ drivers/usb/serial/option.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index c3f2522..d866cc0 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1927,6 +1927,8 @@ static int  option_probe(struct usb_serial *serial,
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_6802, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_WMD300, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x421d, 0xff, 0xff, 0xff) }, /* HP lt2523 (Novatel E371) */
++	{ USB_DEVICE_INTERFACE_CLASS(0x03f0, 0x0857, 0xff), /* HP lt4220 */
++	  .driver_info = (kernel_ulong_t)&telit_le920a4_blacklist_1 },
+ 	{ } /* Terminating entry */
+ };
+ MODULE_DEVICE_TABLE(usb, option_ids);
+-- 
+1.9.1
