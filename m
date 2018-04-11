@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx489DuB6oFeLXZVnYINVjLFupEh/SU0tJubqVEggqbQuxdw64z8JqHdSbeD1sfGjV9sblkKP
-ARC-Seal: i=1; a=rsa-sha256; t=1523472582; cv=none;
+X-Google-Smtp-Source: AIpwx49EBlokm0EKh2jYZE6XGKEGIwqgKgAEgG6IIfyt1WW+iQjDPyEq39l2MqAkJO3P6Jy85kAs
+ARC-Seal: i=1; a=rsa-sha256; t=1523472579; cv=none;
         d=google.com; s=arc-20160816;
-        b=UMOJDzi2A65L7JQoBytKjoHVnMbdbkBhQsAKRWK261AWbdoU0TMPKQ02atmfnlvpgY
-         RX+CeakxvNcE9Z7NKSqVFHNJzyrShRAqvenPXE9b5T5DfqmsJ4NWpuVDTDt/F4OSvopT
-         ymL4NrWT0sqfWcq+4EQUpCUjWqKKECv4W81VTsfAloQ0k0gjFY7m15DKV/i9v29wHKHM
-         LUc5sgcm56OrLadfBK6mwAoTP/4bSe88KzjZ4rgdLjZMWzhi7eQyQC6bg5X9OI/buLez
-         fZ6wajqRPrQfRfFEpuT7O+CLE+FMXFLLwzVM6jwbkzGKlu7jwDtPYp7eiKyGRH14c4wW
-         Vfhw==
+        b=qbi+c0HtWMTipZcS+xFMjS0j4XGpd3YHRrlJKciEVRv7eB4Sd+aHC6hH10t8kxLlxi
+         uSNdNxb7PHPJLDJNdMtFx0GEEyBKtgkgqC2LaOF6l8JukSRjdC/+UC9zrKnHhGaQCVMH
+         L0CvuOrzI5E0TFSmVqbUEplMal6HvkEh3qD4p6gEqzRNm9mJzPD6+4SxmKa1+aKIEW85
+         FupPVGJ1l8+dea8nALyzwA3tS+AD9nZa2vIQjy0H1fgUv482vvUTG2TY4BmS5mL+A35O
+         hQXK/3nWLeIHq6TgvN2TuxWOMu7Gk3QXy8vGlo3DmRZnZ26Pl7mr0ukplZQ6hOBvdzbg
+         wtqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=297BEQYo9ThSrVimKcgY4HPfnle9vBYe8qKVGyhB1KE=;
-        b=jJT46Bn8qgkj4Izae+RR7Y08Xb67xd7A0WYkTCIOeHImcA0s6MmPQm75v6GjiYjFjT
-         0/Nq/a/JkXCuAL6/vU3+MFptts/rqHGQaXMgLVzuHtIViPGlSmNu/9X6skaGUe+WD8Ni
-         rGHuQRD6WKSImG3xJ8fuT0c35rxti6YOOhRRO32rxgtXhif2HsuGDnhPq1juBexrocGw
-         ASt1egY3/GPU2kNa6f1ed8Ppg8VxINILDRJEGrYcs+ttfRaFgkxOsFYv1djSdZRuoznH
-         Unl16uCWaUdEm5vzbibyT1OdmwVpLp8u8+XZ0qvf2i+in8vtu8/x9CRsoYqMsEAutrMs
-         49eQ==
+        bh=y9jXHNe+IqiepnDzt5bbHgHm/as0nQ1wv4jlfFgfClM=;
+        b=ehPM26UvpglJrAow4VU2aE7sQDA69Z65Qxq4kSmrLkafCAaHpySF7xCiV2GBrxDwNa
+         JK6Yv69jjzUnEX8/BLFw1sGyBvJqD84Lw1NO2qr7/eLPT4rJhdAGNKfcv6H6GtRH2yh5
+         6/dNhAXJhUiZub9ySqVi4i8MchsZ4dC+InZz/lqNmDhFZtWiX4QR+eGEhWygVMiQQYvV
+         ld2VarxAPe/hiOyP+TG3vl9UfQPNbzmxD9muPd1xYzneut8RyIB8/qaq074o1i45cPtj
+         Cg+LCxs5fWgp50KARIUiNcirHClACUvRqpL9zko7fHqoVHudbSQn8tdUWRFwP+HuebZR
+         WXfA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Steve Best <sbest@redhat.com>,
 	Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
+	Steve Best <sbest@redhat.com>,
 	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 103/190] rtc: interface: Validate alarm-time before handling rollover
-Date: Wed, 11 Apr 2018 20:35:49 +0200
-Message-Id: <20180411183556.601176115@linuxfoundation.org>
+Subject: [PATCH 4.4 102/190] rtc: opal: Handle disabled TPO in opal_get_tpo_time()
+Date: Wed, 11 Apr 2018 20:35:48 +0200
+Message-Id: <20180411183556.536661881@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476188518717832?=
-X-GMAIL-MSGID: =?utf-8?q?1597476786792182839?=
+X-GMAIL-THRID: =?utf-8?q?1597476783800183911?=
+X-GMAIL-MSGID: =?utf-8?q?1597476783800183911?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,66 +54,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
 
 
-[ Upstream commit da96aea0ed177105cb13ee83b328f6c61e061d3f ]
+[ Upstream commit 6dc1cf6f932bb0ea4d8f5e913a0a401ecacd2f03 ]
 
-In function __rtc_read_alarm() its possible for an alarm time-stamp to
-be invalid even after replacing missing components with current
-time-stamp. The condition 'alarm->time.tm_year < 70' will trigger this
-case and will cause the call to 'rtc_tm_to_time64(&alarm->time)'
-return a negative value for variable t_alm.
-
-While handling alarm rollover this negative t_alm (assumed to seconds
-offset from '1970-01-01 00:00:00') is converted back to rtc_time via
-rtc_time64_to_tm() which results in this error log with seemingly
-garbage values:
+On PowerNV platform when Timed-Power-On(TPO) is disabled, read of
+stored TPO yields value with all date components set to '0' inside
+opal_get_tpo_time(). The function opal_to_tm() then converts it to an
+offset from year 1900 yielding alarm-time == "1900-00-01
+00:00:00". This causes problems with __rtc_read_alarm() that
+expecting an offset from "1970-00-01 00:00:00" and returned alarm-time
+results in a -ve value for time64_t. Which ultimately results in this
+error reported in kernel logs with a seemingly garbage value:
 
 "rtc rtc0: invalid alarm value: -2-1--1041528741
 2005511117:71582844:32"
 
-This error was generated when the rtc driver (rtc-opal in this case)
-returned an alarm time-stamp of '00-00-00 00:00:00' to indicate that
-the alarm is disabled. Though I have submitted a separate fix for the
-rtc-opal driver, this issue may potentially impact other
-existing/future rtc drivers.
+We fix this by explicitly handling the case of all alarm date-time
+components being '0' inside opal_get_tpo_time() and returning -ENOENT
+in such a case. This signals generic rtc that no alarm is set and it
+bails out from the alarm initialization flow without reporting the
+above error.
 
-To fix this issue the patch validates the alarm time-stamp just after
-filling up the missing datetime components and if rtc_valid_tm() still
-reports it to be invalid then bails out of the function without
-handling the rollover.
-
-Reported-by: Steve Best <sbest@redhat.com>
 Signed-off-by: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+Reported-by: Steve Best <sbest@redhat.com>
 Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/interface.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/rtc/rtc-opal.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -217,6 +217,13 @@ int __rtc_read_alarm(struct rtc_device *
- 			missing = year;
- 	}
+--- a/drivers/rtc/rtc-opal.c
++++ b/drivers/rtc/rtc-opal.c
+@@ -150,6 +150,16 @@ static int opal_get_tpo_time(struct devi
  
-+	/* Can't proceed if alarm is still invalid after replacing
-+	 * missing fields.
-+	 */
-+	err = rtc_valid_tm(&alarm->time);
-+	if (err)
-+		goto done;
+ 	y_m_d = be32_to_cpu(__y_m_d);
+ 	h_m_s_ms = ((u64)be32_to_cpu(__h_m) << 32);
 +
- 	/* with luck, no rollover is needed */
- 	t_now = rtc_tm_to_time64(&now);
- 	t_alm = rtc_tm_to_time64(&alarm->time);
-@@ -268,9 +275,9 @@ int __rtc_read_alarm(struct rtc_device *
- 		dev_warn(&rtc->dev, "alarm rollover not handled\n");
- 	}
++	/* check if no alarm is set */
++	if (y_m_d == 0 && h_m_s_ms == 0) {
++		pr_debug("No alarm is set\n");
++		rc = -ENOENT;
++		goto exit;
++	} else {
++		pr_debug("Alarm set to %x %llx\n", y_m_d, h_m_s_ms);
++	}
++
+ 	opal_to_tm(y_m_d, h_m_s_ms, &alarm->time);
  
--done:
- 	err = rtc_valid_tm(&alarm->time);
- 
-+done:
- 	if (err) {
- 		dev_warn(&rtc->dev, "invalid alarm value: %d-%d-%d %d:%d:%d\n",
- 			alarm->time.tm_year + 1900, alarm->time.tm_mon + 1,
+ exit:
