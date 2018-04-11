@@ -1,49 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753144AbeDKMwz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 08:52:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38008 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752904AbeDKMwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 08:52:54 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
-        Steve Grubb <sgrubb@redhat.com>, Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghak80 V1] audit: add syscall information to FEATURE_CHANGE records
-Date: Wed, 11 Apr 2018 08:46:52 -0400
-Message-Id: <08bd08ee9bc70f6e98b9e298ba6a2c0f4dcadb4b.1523372093.git.rgb@redhat.com>
+        id S1753308AbeDKMzi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 08:55:38 -0400
+Received: from mail-vk0-f74.google.com ([209.85.213.74]:56450 "EHLO
+        mail-vk0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753180AbeDKMze (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 08:55:34 -0400
+X-Google-Smtp-Source: AIpwx4+sk2gNuLJ6dR08othzq3qLAAdmOzkRRsbo8pwLYXe72I0Hbx5ujjgJOgHj8xkQOqPMFwaEF8874g==
+MIME-Version: 1.0
+Date: Wed, 11 Apr 2018 14:54:58 +0200
+Message-Id: <20180411125501.188477-1-tweek@google.com>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+Subject: [PATCH 0/3] Refactor TPM event log code
+From: Thiebaud Weksteen <tweek@google.com>
+To: jarkko.sakkinen@linux.intel.com, nayna@linux.vnet.ibm.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tweek@google.com
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thiebaud Weksteen <tweek@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tie syscall information to FEATURE_CHANGE calls since it is a result of
-user action.
+This patchset implements the proposal from Jarkko Sakkinen [1]. I have
+included the feedback from Nayna Jain about the function naming.
 
-See: https://github.com/linux-audit/audit-kernel/issues/80
+[1] https://lkml.kernel.org/r/20171024222148.gwnkj5vqsyj43qer@linux.intel.com
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- kernel/audit.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Thiebaud Weksteen (3):
+  tpm: Move eventlog files to a subdirectory
+  tpm: Move shared eventlog functions to common.c
+  tpm: Move eventlog declarations to its own header
 
-diff --git a/kernel/audit.c b/kernel/audit.c
-index 8da24ef..23f125b 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -1103,10 +1103,9 @@ static void audit_log_feature_change(int which, u32 old_feature, u32 new_feature
- {
- 	struct audit_buffer *ab;
- 
--	if (audit_enabled == AUDIT_OFF)
-+	if (!audit_enabled)
- 		return;
--
--	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
-+	ab = audit_log_start(current->audit_context, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
- 	if (!ab)
- 		return;
- 	audit_log_task_info(ab, current);
+ drivers/char/tpm/Makefile                     |  10 +-
+ .../{tpm_eventlog_acpi.c => eventlog/acpi.c}  |   2 +-
+ drivers/char/tpm/eventlog/common.c            | 196 +++++++++++++++++
+ drivers/char/tpm/eventlog/common.h            |  35 +++
+ .../{tpm_eventlog_efi.c => eventlog/efi.c}    |   2 +-
+ .../tpm/{tpm_eventlog_of.c => eventlog/of.c}  |   2 +-
+ .../tpm/{tpm1_eventlog.c => eventlog/tpm1.c}  | 200 ++----------------
+ .../tpm/{tpm2_eventlog.c => eventlog/tpm2.c}  |   3 +-
+ drivers/char/tpm/tpm.h                        |  27 ---
+ 9 files changed, 258 insertions(+), 219 deletions(-)
+ rename drivers/char/tpm/{tpm_eventlog_acpi.c => eventlog/acpi.c} (99%)
+ create mode 100644 drivers/char/tpm/eventlog/common.c
+ create mode 100644 drivers/char/tpm/eventlog/common.h
+ rename drivers/char/tpm/{tpm_eventlog_efi.c => eventlog/efi.c} (98%)
+ rename drivers/char/tpm/{tpm_eventlog_of.c => eventlog/of.c} (99%)
+ rename drivers/char/tpm/{tpm1_eventlog.c => eventlog/tpm1.c} (58%)
+ rename drivers/char/tpm/{tpm2_eventlog.c => eventlog/tpm2.c} (99%)
+
 -- 
-1.8.3.1
+2.17.0.484.g0c8726318c-goog
