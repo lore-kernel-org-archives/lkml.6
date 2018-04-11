@@ -1,145 +1,309 @@
-Return-Path: <jack@suse.cz>
-X-Google-Smtp-Source: AIpwx48SIIzh9UrlRw2ysfpaBDs3rmERVZ2szB2RW9eAltVjjadcfI3tdE+jfhJgB7FlCUlrR1db
-ARC-Seal: i=1; a=rsa-sha256; t=1523433426; cv=none;
+Return-Path: <Matt.Redfearn@mips.com>
+X-Google-Smtp-Source: AIpwx49D0tHTRM6YwXnpwiwOGEeASekqbM4XniBVMKkCM+vGg2eDEg4zhm44Gkjo+qv4vBTwoF3f
+ARC-Seal: i=1; a=rsa-sha256; t=1523433188; cv=none;
         d=google.com; s=arc-20160816;
-        b=QyK0TmuTwSGgYUcCottbKmhxvUSO+v27e88uMuUS9O9jAX66FvJ+z61Vw37ZR2hlq+
-         aJlplOcJQv2v/d9xU/UdqeNZ4Orhhj9givl7N54ZiojDG/TBeY3igz+Rvah/Uv3BGkv5
-         BJ0053YOamQtySVer0hXGCHC6imfJmmc7VbD54rJ+/+yEy8sCs0h7WouG8DvwPm7jCtS
-         fWnFG7vuPYc7f9ocuOiznCYH/0RVUhs5v98qErUqb1i3uN/5wwxbh2KEniIH3qUrL8dZ
-         fZa+OsaQ0+lnbK2TXAQdet3ml2V3B3aomQWds1HOemLHhgmJeoq9xwZ7IqLHvM4lanQi
-         fPrg==
+        b=YNAyj5qAJe004i1n11vCE0UiabFtMKP9NgpPevBK62KpFDy1S8Qdzhhi7xvnkrGQqR
+         7JmV6F2xXx7ETedABLCW4d/Xp4x96/8K+0KDjq1vF/b5etNPDOMDxdQ4YSeIHrvkVENp
+         bXZp1Ipgf+on5dQ7brDf46EzFOMnWL7LrOv/vb/Mms9MS0Nc6Ud5ybePEC8MkPd6/wEK
+         BMGSSCFeY1yqKc6UULEigGRRcFZIWF8csCbQ8Ebe9UoNT17QoKuaGvbAqnlhAeX7p/nj
+         Svk5hRSa54PTdf7BD4P2OkBruzo6tsrVA9bUyVTvS3XU9HaCiWX3TGyWW8PJlJT59Tmj
+         eVfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=MK915xUiq7jf3NH5jKAZHpGxLRdgxn5c1/x0YbQuRJk=;
-        b=vD0UmvFzQ41k5Gp+pSx/144gv2SP1/B8uCETtt5wFqNLQnRWmwuStL4W019Kec9T6H
-         3FQkCdxSh0/x1GyRRWPEQuQAt2+eWTB7VpBZ7fXIMHp5dWzEuZL/Y9wPm43Fd3JKXf+h
-         x6bqrPi9RPA1QFWudlm0AaE1ZX0iCuQ5l+JifkPESdbC4R1nJtlagrs9vJRlGAZwjff6
-         EWTmwHiOxOIN24IjHpV0g4qovPjic9g3T+c9EBRnzqQlxMH91geAUdFZ8JjG+5d8ZuKh
-         ObzpYJvTeS1PrVGi8OaDy1Mgh93YqFPl6qmO2C4Vf1Js8SNP9pmr4Q0eCwZbZ8tJ+SlU
-         Bcpw==
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:arc-authentication-results;
+        bh=oT7aM1+JMOXNz4dI2o6cmC5KYJqq2z/xkc+RZTHKFZ8=;
+        b=gqaiSCiOySZnQ7OHxYITsfeabgcO2CkPS1D739xlp6kZ/9U4Ub18+IC+MFxEhHtX3B
+         FkvtJ2pUcECl14nmEUYOGt882afs9tco76YM2IYpCoXqYoNxU6AwW8r5Lh4Y5Q+usRdr
+         3tsafysTbKTDkohWIEPGCOkMct41jReSsXmZg4mp2H52OpRkqO50ZJczCQr8uac8D6qw
+         tdGqX+bkija/hi9z6T/UGHcWNUCKTLJoDnt6KpHPBbynRZaMxrS90rWNvl+GQhmyOVKy
+         HlhW4q+o97840CyIG5NaXKLPa+EzJPirguRvsImDrfWGWkZrM8n9T6VOPijJxpNlecI/
+         AEWg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jack@suse.cz designates 195.135.220.15 as permitted sender) smtp.mailfrom=jack@suse.cz
+       spf=pass (google.com: domain of matt.redfearn@mips.com designates 64.235.154.211 as permitted sender) smtp.mailfrom=Matt.Redfearn@mips.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jack@suse.cz designates 195.135.220.15 as permitted sender) smtp.mailfrom=jack@suse.cz
-Date: Wed, 11 Apr 2018 09:57:03 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kyle Spiers <ksspiers@google.com>
-Cc: jack@suse.cz, arnd@arndb.de, dhowells@redhat.com,
-	viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-	keescook@chromium.org, joe@perches.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] isofs compress: Remove VLA usage
-Message-ID: <20180411075703.uimpgcxsasxsm5sh@quack2.suse.cz>
-References: <20180411000229.188137-1-ksspiers@google.com>
+       spf=pass (google.com: domain of matt.redfearn@mips.com designates 64.235.154.211 as permitted sender) smtp.mailfrom=Matt.Redfearn@mips.com
+From: Matt Redfearn <matt.redfearn@mips.com>
+To: Palmer Dabbelt <palmer@sifive.com>, Antony Pavlov
+	<antonynpavlov@gmail.com>, James Hogan <jhogan@kernel.org>, Ralf Baechle
+	<ralf@linux-mips.org>
+CC: <linux-mips@linux-mips.org>, Matt Redfearn <matt.redfearn@mips.com>,
+	<linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Philippe Ombredanne <pombredanne@nexb.com>, Paul Burton
+	<paul.burton@mips.com>, Kate Stewart <kstewart@linuxfoundation.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, Al Viro
+	<viro@zeniv.linux.org.uk>
+Subject: [PATCH v6 4/4] MIPS: use generic GCC library routines from lib/
+Date: Wed, 11 Apr 2018 08:50:19 +0100
+Message-ID: <1523433019-17419-4-git-send-email-matt.redfearn@mips.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523433019-17419-1-git-send-email-matt.redfearn@mips.com>
+References: <1523433019-17419-1-git-send-email-matt.redfearn@mips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180411000229.188137-1-ksspiers@google.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain
+X-Originating-IP: [192.168.155.41]
+X-BESS-ID: 1523433038-321457-11089-33080-9
+X-BESS-VER: 2018.4-r1804052328
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.60
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.191870
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+	0.60 MARKETING_SUBJECT      HEADER: Subject contains popular marketing words
+X-BESS-Outbound-Spam-Status: SCORE=0.60 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND, MARKETING_SUBJECT
+X-BESS-BRTS-Status: 1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597404821961766971?=
-X-GMAIL-MSGID: =?utf-8?q?1597435728158043172?=
+X-GMAIL-THRID: =?utf-8?q?1597435479357809987?=
+X-GMAIL-MSGID: =?utf-8?q?1597435479357809987?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue 10-04-18 17:02:29, Kyle Spiers wrote:
-> As part of the effort to remove VLAs from the kernel[1], this changes
-> the allocation of the bhs and pages arrays from being on the stack to being
-> kcalloc()ed. This also allows for the removal of the explicit zeroing
-> of bhs.
-> 
-> https://lkml.org/lkml/2018/3/7/621
-> 
-> Signed-off-by: Kyle Spiers <ksspiers@google.com>
-> ---
-> Fix sparc64 build
-> Fix Error recovery Mistakes
+From: Antony Pavlov <antonynpavlov@gmail.com>
 
-Thanks, the patch looks good now and I've merged it to my tree and will
-push it to Linus (likely for rc2).
+The commit b35cd9884fa5 ("lib: Add shared copies of some GCC library
+routines") makes it possible to share generic GCC library routines by
+several architectures.
 
-								Honza
+This commit removes several generic GCC library routines from
+arch/mips/lib/ in favour of similar routines from lib/.
 
-> ---
->  fs/isofs/compress.c | 19 ++++++++++++++++---
->  1 file changed, 16 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/isofs/compress.c b/fs/isofs/compress.c
-> index 9bb2fe35799d..10205ececc27 100644
-> --- a/fs/isofs/compress.c
-> +++ b/fs/isofs/compress.c
-> @@ -20,6 +20,7 @@
->  #include <linux/init.h>
->  #include <linux/bio.h>
->  
-> +#include <linux/slab.h>
->  #include <linux/vmalloc.h>
->  #include <linux/zlib.h>
->  
-> @@ -59,7 +60,7 @@ static loff_t zisofs_uncompress_block(struct inode *inode, loff_t block_start,
->  				>> bufshift;
->  	int haveblocks;
->  	blkcnt_t blocknum;
-> -	struct buffer_head *bhs[needblocks + 1];
-> +	struct buffer_head **bhs;
->  	int curbh, curpage;
->  
->  	if (block_size > deflateBound(1UL << zisofs_block_shift)) {
-> @@ -80,7 +81,11 @@ static loff_t zisofs_uncompress_block(struct inode *inode, loff_t block_start,
->  
->  	/* Because zlib is not thread-safe, do all the I/O at the top. */
->  	blocknum = block_start >> bufshift;
-> -	memset(bhs, 0, (needblocks + 1) * sizeof(struct buffer_head *));
-> +	bhs = kcalloc(needblocks + 1, sizeof(*bhs), GFP_KERNEL);
-> +	if (!bhs) {
-> +		*errp = -ENOMEM;
-> +		return 0;
-> +	}
->  	haveblocks = isofs_get_blocks(inode, blocknum, bhs, needblocks);
->  	ll_rw_block(REQ_OP_READ, 0, haveblocks, bhs);
->  
-> @@ -190,6 +195,7 @@ static loff_t zisofs_uncompress_block(struct inode *inode, loff_t block_start,
->  b_eio:
->  	for (i = 0; i < haveblocks; i++)
->  		brelse(bhs[i]);
-> +	kfree(bhs);
->  	return stream.total_out;
->  }
->  
-> @@ -305,7 +311,7 @@ static int zisofs_readpage(struct file *file, struct page *page)
->  	unsigned int zisofs_pages_per_cblock =
->  		PAGE_SHIFT <= zisofs_block_shift ?
->  		(1 << (zisofs_block_shift - PAGE_SHIFT)) : 0;
-> -	struct page *pages[max_t(unsigned, zisofs_pages_per_cblock, 1)];
-> +	struct page **pages;
->  	pgoff_t index = page->index, end_index;
->  
->  	end_index = (inode->i_size + PAGE_SIZE - 1) >> PAGE_SHIFT;
-> @@ -330,6 +336,12 @@ static int zisofs_readpage(struct file *file, struct page *page)
->  		full_page = 0;
->  		pcount = 1;
->  	}
-> +	pages = kcalloc(max_t(unsigned int, zisofs_pages_per_cblock, 1),
-> +					sizeof(*pages), GFP_KERNEL);
-> +	if (!pages) {
-> +		unlock_page(page);
-> +		return -ENOMEM;
-> +	}
->  	pages[full_page] = page;
->  
->  	for (i = 0; i < pcount; i++, index++) {
-> @@ -357,6 +369,7 @@ static int zisofs_readpage(struct file *file, struct page *page)
->  	}			
->  
->  	/* At this point, err contains 0 or -EIO depending on the "critical" page */
-> +	kfree(pages);
->  	return err;
->  }
->  
-> -- 
-> 2.17.0.484.g0c8726318c-goog
-> 
+Signed-off-by: Antony Pavlov <antonynpavlov@gmail.com>
+[Matt Redfearn] Use GENERIC_LIB_* named Kconfig entries
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>
+Cc: Matt Redfearn <matt.redfearn@mips.com>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
+
+---
+
+Changes in v6: None
+Changes in v5:
+  Actually delete the MIPS lib routines
+
+Changes in v4:
+  Rework to use the new GENERIC_LIB_ Kconfig entries
+
+Changes in v3:
+  Maintain alphabetical order of MIPS Kconfig
+
+Changes in v2: None
+
+ arch/mips/Kconfig       |  5 +++++
+ arch/mips/lib/Makefile  |  3 +--
+ arch/mips/lib/ashldi3.c | 30 ------------------------------
+ arch/mips/lib/ashrdi3.c | 32 --------------------------------
+ arch/mips/lib/cmpdi2.c  | 28 ----------------------------
+ arch/mips/lib/lshrdi3.c | 30 ------------------------------
+ arch/mips/lib/ucmpdi2.c | 22 ----------------------
+ 7 files changed, 6 insertions(+), 144 deletions(-)
+ delete mode 100644 arch/mips/lib/ashldi3.c
+ delete mode 100644 arch/mips/lib/ashrdi3.c
+ delete mode 100644 arch/mips/lib/cmpdi2.c
+ delete mode 100644 arch/mips/lib/lshrdi3.c
+ delete mode 100644 arch/mips/lib/ucmpdi2.c
+
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 8128c3b68d6b..98955a76c656 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -22,6 +22,11 @@ config MIPS
+ 	select GENERIC_CPU_AUTOPROBE
+ 	select GENERIC_IRQ_PROBE
+ 	select GENERIC_IRQ_SHOW
++	select GENERIC_LIB_ASHLDI3
++	select GENERIC_LIB_ASHRDI3
++	select GENERIC_LIB_CMPDI2
++	select GENERIC_LIB_LSHRDI3
++	select GENERIC_LIB_UCMPDI2
+ 	select GENERIC_PCI_IOMAP
+ 	select GENERIC_SCHED_CLOCK if !CAVIUM_OCTEON_SOC
+ 	select GENERIC_SMP_IDLE_THREAD
+diff --git a/arch/mips/lib/Makefile b/arch/mips/lib/Makefile
+index e84e12655fa8..6537e022ef62 100644
+--- a/arch/mips/lib/Makefile
++++ b/arch/mips/lib/Makefile
+@@ -16,5 +16,4 @@ obj-$(CONFIG_CPU_R3000)		+= r3k_dump_tlb.o
+ obj-$(CONFIG_CPU_TX39XX)	+= r3k_dump_tlb.o
+ 
+ # libgcc-style stuff needed in the kernel
+-obj-y += ashldi3.o ashrdi3.o bswapsi.o bswapdi.o cmpdi2.o lshrdi3.o multi3.o \
+-	 ucmpdi2.o
++obj-y += bswapsi.o bswapdi.o multi3.o
+diff --git a/arch/mips/lib/ashldi3.c b/arch/mips/lib/ashldi3.c
+deleted file mode 100644
+index 24cd6903e797..000000000000
+--- a/arch/mips/lib/ashldi3.c
++++ /dev/null
+@@ -1,30 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-#include <linux/export.h>
+-
+-#include "libgcc.h"
+-
+-long long notrace __ashldi3(long long u, word_type b)
+-{
+-	DWunion uu, w;
+-	word_type bm;
+-
+-	if (b == 0)
+-		return u;
+-
+-	uu.ll = u;
+-	bm = 32 - b;
+-
+-	if (bm <= 0) {
+-		w.s.low = 0;
+-		w.s.high = (unsigned int) uu.s.low << -bm;
+-	} else {
+-		const unsigned int carries = (unsigned int) uu.s.low >> bm;
+-
+-		w.s.low = (unsigned int) uu.s.low << b;
+-		w.s.high = ((unsigned int) uu.s.high << b) | carries;
+-	}
+-
+-	return w.ll;
+-}
+-
+-EXPORT_SYMBOL(__ashldi3);
+diff --git a/arch/mips/lib/ashrdi3.c b/arch/mips/lib/ashrdi3.c
+deleted file mode 100644
+index 23f5295af51e..000000000000
+--- a/arch/mips/lib/ashrdi3.c
++++ /dev/null
+@@ -1,32 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-#include <linux/export.h>
+-
+-#include "libgcc.h"
+-
+-long long notrace __ashrdi3(long long u, word_type b)
+-{
+-	DWunion uu, w;
+-	word_type bm;
+-
+-	if (b == 0)
+-		return u;
+-
+-	uu.ll = u;
+-	bm = 32 - b;
+-
+-	if (bm <= 0) {
+-		/* w.s.high = 1..1 or 0..0 */
+-		w.s.high =
+-		    uu.s.high >> 31;
+-		w.s.low = uu.s.high >> -bm;
+-	} else {
+-		const unsigned int carries = (unsigned int) uu.s.high << bm;
+-
+-		w.s.high = uu.s.high >> b;
+-		w.s.low = ((unsigned int) uu.s.low >> b) | carries;
+-	}
+-
+-	return w.ll;
+-}
+-
+-EXPORT_SYMBOL(__ashrdi3);
+diff --git a/arch/mips/lib/cmpdi2.c b/arch/mips/lib/cmpdi2.c
+deleted file mode 100644
+index 93cfc785927d..000000000000
+--- a/arch/mips/lib/cmpdi2.c
++++ /dev/null
+@@ -1,28 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-#include <linux/export.h>
+-
+-#include "libgcc.h"
+-
+-word_type notrace __cmpdi2(long long a, long long b)
+-{
+-	const DWunion au = {
+-		.ll = a
+-	};
+-	const DWunion bu = {
+-		.ll = b
+-	};
+-
+-	if (au.s.high < bu.s.high)
+-		return 0;
+-	else if (au.s.high > bu.s.high)
+-		return 2;
+-
+-	if ((unsigned int) au.s.low < (unsigned int) bu.s.low)
+-		return 0;
+-	else if ((unsigned int) au.s.low > (unsigned int) bu.s.low)
+-		return 2;
+-
+-	return 1;
+-}
+-
+-EXPORT_SYMBOL(__cmpdi2);
+diff --git a/arch/mips/lib/lshrdi3.c b/arch/mips/lib/lshrdi3.c
+deleted file mode 100644
+index 914b971aca3b..000000000000
+--- a/arch/mips/lib/lshrdi3.c
++++ /dev/null
+@@ -1,30 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-#include <linux/export.h>
+-
+-#include "libgcc.h"
+-
+-long long notrace __lshrdi3(long long u, word_type b)
+-{
+-	DWunion uu, w;
+-	word_type bm;
+-
+-	if (b == 0)
+-		return u;
+-
+-	uu.ll = u;
+-	bm = 32 - b;
+-
+-	if (bm <= 0) {
+-		w.s.high = 0;
+-		w.s.low = (unsigned int) uu.s.high >> -bm;
+-	} else {
+-		const unsigned int carries = (unsigned int) uu.s.high << bm;
+-
+-		w.s.high = (unsigned int) uu.s.high >> b;
+-		w.s.low = ((unsigned int) uu.s.low >> b) | carries;
+-	}
+-
+-	return w.ll;
+-}
+-
+-EXPORT_SYMBOL(__lshrdi3);
+diff --git a/arch/mips/lib/ucmpdi2.c b/arch/mips/lib/ucmpdi2.c
+deleted file mode 100644
+index c31c78ca4175..000000000000
+--- a/arch/mips/lib/ucmpdi2.c
++++ /dev/null
+@@ -1,22 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-#include <linux/export.h>
+-
+-#include "libgcc.h"
+-
+-word_type notrace __ucmpdi2(unsigned long long a, unsigned long long b)
+-{
+-	const DWunion au = {.ll = a};
+-	const DWunion bu = {.ll = b};
+-
+-	if ((unsigned int) au.s.high < (unsigned int) bu.s.high)
+-		return 0;
+-	else if ((unsigned int) au.s.high > (unsigned int) bu.s.high)
+-		return 2;
+-	if ((unsigned int) au.s.low < (unsigned int) bu.s.low)
+-		return 0;
+-	else if ((unsigned int) au.s.low > (unsigned int) bu.s.low)
+-		return 2;
+-	return 1;
+-}
+-
+-EXPORT_SYMBOL(__ucmpdi2);
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.7.4
