@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3303684-1523479845-2-734756134105453880
+X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479810-2-13831759941735028042
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479845; b=ezQbbFfEe5DVWuqzFQfe8PGSw6oP/GCIZs5Y7V/pQF1sun/CWk
-    m775M5E0jW8Hj9CdBoWfYwNEW9/bdIHywjAh/gr/wL3rZK4LgO1QHhMcspj1wkzg
-    0OgEIst4isZh9nM/0M2nGztaEMYzk8jh07ROFVFdRer1dUlSshUlYq06KMkuJMrK
-    m9Lo5Cyt2cYC7clyzngQShyiY4rNkKt/A9jfhtcnEZHEv4ubbXkNzrELv8hNvLrG
-    DYg0gxM0DXyY+bUU/bKEwKugrL/UJvv+jX25vnCYwz/kZlNBmh/t3tA9bp6A0kOx
-    QItP+Je7b/8mDS+suzVgyY4uGBEYiu321IqQ==
+    1523479809; b=rdJsX0TDzFVUlXbNoD+NVSfrb2sgFUIQTEauUmcIwzwfZxc7IL
+    qOzJ+UidsxZjhf6TlHKlLYS00J41irIBzU7pH6jaWgu2NODIOvrrx8fC+7C/WTDe
+    SPg7VB9TSnHF9sPnZQ06498s65v2ndqj+N8NvO9BW4PpQB4Kb6Ql4xW0lfbMYt52
+    BnFo0O+cj9uMLxaZeOF62L0wq1Psy2o46YoR0Qebt2CRECtfZivcjYKxOs5LFhTa
+    vAN7L3uLgAL/n/ubhRDpJDjZOC+RdkGCp2sDOl8vpbrf00LhxsbQzlMMEFOea99f
+    wjLp2LnWwbfebOMfK9J1XEUPVxq3/nKB+shw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479845; bh=unVioLxNi5PgbiGC6af2HPjXM8bk7H
-    ZxltYtS/D0JvI=; b=hCjr2w3tDxOIMbGgug+ewEfJmDHCVRX7I2bBxWQ9WnevJe
-    gJKN24dz1a2/GyFPrjFMUWkdsuT0NS3NNCndNPoe1nh0NSRhkPvMH5wPiwKSzwzI
-    9Jwn4YeXmEOzidbtIPCoNGVHeyiucAYzWVQGYEIvdzrSCkB76911dIGV1W6exlcU
-    sMorwpzWicsii1LHIBGDpWSI0vnEEu6CBm4UgZhCwP08E7lbj0N2WV8Somhfjf2j
-    c28WCcYzZFTVHeFlnSANtlYBL255AlWl3z00hbU9WhGNHjd0W/qHD4bwEOaspCqH
-    SvxnlNpQo4EOydrYoOKqkvNuwU8LgSrv0RT1r/lw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479809; bh=icEpjjEKdOYYZ5KHGQyAxHf4sgFbS+
+    qSvOUQaTqYMH4=; b=b6qyjuvVvoMF0Y7dnPKGFsfMbJF0Iz5y94OuH3Of/54sHY
+    eEVnwc8RWkj55dfSji5H0gdSwKOGYGu2vhHaVhCHyL8kcLY08W+ItQh08Ru4T5gj
+    6upLtWhcKE3KzNTqnbBP7gK2RNte5Xy72+C7MEY1yi5jikSlv1NdkNU3K7CquYZE
+    /pap0C8sdimeOWJJyPBBA61I+Pt6kGm4tRIOAZ1mCDvFApWbDfI13RRfyacEvdiV
+    798qMQvy/BhIQXeeWJAnz/ZjbvF+FtQ8SNcGj58qafyOjCfcfEoqdfZebG79yxGP
+    iRegELjsic6YxnsJ+9jtDUfnBPLZ4d8hzBCYFO2g==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,32 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIuKwYcV2AUV3yqNXLD17MJugBj5Ap/CLVmWsDIiY568CMwn6PUzSs1GYLTU8qnhY9u4evDMSkS4iO4R4ylwdKsJxWfPJ2rxqs9ZZ7rCMdyVUMuDCau3
-    YhxnAflhu977QMdH3ZvPYe8OZqRR5EnXfdXRBLWJtPppEx57oBCD7gngeb0u/CspEZhnzH1yI08UTXgOKeaegct/dUnZs7hGtYMgkmxrALlJ3+rrw/vDhFDV
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfBVkYrXllWhAppq+GqgvE+EKelEj3U52xjAK38hwYbqxySpfj+YxqsxHUBxNPV2gI+CViKXwpHrb/S4romA55rfgCu1KAC0v9rx9xlvijONbOIixMpjm
+    pvXaVSE6w1A+4BIUWDgEFzE2RgCOIlcX7S9qD/fySWgBMnG0yVabDJDg6LQ0CkHCFgwwj6yDPPrQgJkHbLG9OroomvarzPUlxQ490HWJLGjaw/48OlUWHAhq
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=HSIkpTvyAAAA:8 a=YjUGpS9dAAAA:8 a=7ZN4cI0QAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=hCrulFPZOlHjl7DSuTMA:9 a=8BK4byEKfsznS-7H:21
-    a=6ILXRhg44cHUNsJ1:21 a=QEXdDO2ut3YA:10 a=nEgUQDT1tczs5vzW8NB_:22
-    a=-8Mv319iI4o1NKE2ltNx:22 a=Dl0WHwQvj8hGZljrFLtM:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=AMTvMMonAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=IoLR7627HhPfafYgmrEA:9 a=QEXdDO2ut3YA:10 a=p5oU-coMHzOM5oT1KbOf:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932210AbeDKUu1 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:50:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58718 "EHLO
+        id S1755640AbeDKSp6 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:45:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58736 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755608AbeDKSpu (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:50 -0400
+        with ESMTP id S1755631AbeDKSpx (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Antony Antony <antony@phenome.org>,
-        Richard Guy Briggs <rgb@tricolour.ca>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        stable@vger.kernel.org,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Jonathan Cameron <jic23@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 054/190] xfrm: fix state migration copy replay sequence numbers
-Date: Wed, 11 Apr 2018 20:35:00 +0200
-Message-Id: <20180411183553.484169269@linuxfoundation.org>
+Subject: [PATCH 4.4 055/190] iio: hi8435: avoid garbage event at first enable
+Date: Wed, 11 Apr 2018 20:35:01 +0200
+Message-Id: <20180411183553.570751720@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -95,54 +94,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Antony Antony <antony@phenome.org>
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 
 
-[ Upstream commit a486cd23661c9387fb076c3f6ae8b2aa9d20d54a ]
+[ Upstream commit ee19ac340c5fdfd89c6348be4563453c61ab54a9 ]
 
-During xfrm migration copy replay and preplay sequence numbers
-from the previous state.
+Currently, driver generates events for channels if new reading differs
+from previous one. This "previous value" is initialized to zero, which
+results into event if value is constant-one.
 
-Here is a tcpdump output showing the problem.
-10.0.10.46 is running vanilla kernel, is the IKE/IPsec responder.
-After the migration it sent wrong sequence number, reset to 1.
-The migration is from 10.0.0.52 to 10.0.0.53.
+Fix that by initializing "previous value" by reading at event enable
+time.
 
-IP 10.0.0.52.4500 > 10.0.10.46.4500: UDP-encap: ESP(spi=0x43ef462d,seq=0x7cf), length 136
-IP 10.0.10.46.4500 > 10.0.0.52.4500: UDP-encap: ESP(spi=0xca1c282d,seq=0x7cf), length 136
-IP 10.0.0.52.4500 > 10.0.10.46.4500: UDP-encap: ESP(spi=0x43ef462d,seq=0x7d0), length 136
-IP 10.0.10.46.4500 > 10.0.0.52.4500: UDP-encap: ESP(spi=0xca1c282d,seq=0x7d0), length 136
+This provides reliable sequence for userspace:
+- enable event,
+- AFTER THAT read current value,
+- AFTER THAT each event will correspond to change.
 
-IP 10.0.0.53.4500 > 10.0.10.46.4500: NONESP-encap: isakmp: child_sa  inf2[I]
-IP 10.0.10.46.4500 > 10.0.0.53.4500: NONESP-encap: isakmp: child_sa  inf2[R]
-IP 10.0.0.53.4500 > 10.0.10.46.4500: NONESP-encap: isakmp: child_sa  inf2[I]
-IP 10.0.10.46.4500 > 10.0.0.53.4500: NONESP-encap: isakmp: child_sa  inf2[R]
-
-IP 10.0.0.53.4500 > 10.0.10.46.4500: UDP-encap: ESP(spi=0x43ef462d,seq=0x7d1), length 136
-
-NOTE: next sequence is wrong 0x1
-
-IP 10.0.10.46.4500 > 10.0.0.53.4500: UDP-encap: ESP(spi=0xca1c282d,seq=0x1), length 136
-IP 10.0.0.53.4500 > 10.0.10.46.4500: UDP-encap: ESP(spi=0x43ef462d,seq=0x7d2), length 136
-IP 10.0.10.46.4500 > 10.0.0.53.4500: UDP-encap: ESP(spi=0xca1c282d,seq=0x2), length 136
-
-Signed-off-by: Antony Antony <antony@phenome.org>
-Reviewed-by: Richard Guy Briggs <rgb@tricolour.ca>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Signed-off-by: Jonathan Cameron <jic23@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/xfrm/xfrm_state.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/iio/adc/hi8435.c |   15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -1208,6 +1208,8 @@ static struct xfrm_state *xfrm_state_clo
- 	x->curlft.add_time = orig->curlft.add_time;
- 	x->km.state = orig->km.state;
- 	x->km.seq = orig->km.seq;
-+	x->replay = orig->replay;
-+	x->preplay = orig->preplay;
+--- a/drivers/iio/adc/hi8435.c
++++ b/drivers/iio/adc/hi8435.c
+@@ -121,10 +121,21 @@ static int hi8435_write_event_config(str
+ 				     enum iio_event_direction dir, int state)
+ {
+ 	struct hi8435_priv *priv = iio_priv(idev);
++	int ret;
++	u32 tmp;
++
++	if (state) {
++		ret = hi8435_readl(priv, HI8435_SO31_0_REG, &tmp);
++		if (ret < 0)
++			return ret;
++		if (tmp & BIT(chan->channel))
++			priv->event_prev_val |= BIT(chan->channel);
++		else
++			priv->event_prev_val &= ~BIT(chan->channel);
  
- 	return x;
+-	priv->event_scan_mask &= ~BIT(chan->channel);
+-	if (state)
+ 		priv->event_scan_mask |= BIT(chan->channel);
++	} else
++		priv->event_scan_mask &= ~BIT(chan->channel);
  
+ 	return 0;
+ }
