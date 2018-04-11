@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3303684-1523479015-2-2890840502333370630
+X-Cyrus-Session-Id: sloti22d1t05-3303684-1523479002-2-8290361013633072904
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479014; b=o0r8haRFxTNqOol+cFuHGNFaIEK4j0TgsIiiDLm8gPRPB+wnZf
-    yZrYfZId9mYcguyI80LbyJv6sZeGWn9orQm85r28bdy3Z2SzTjosFAKr8Nqyd3V8
-    fZ6TbGy9ei/IC/sohnPW8NgTQC8UIsBUJIZFGPwPNiniFzzpK2FmJFks6/jajGeY
-    4P7mz9UDIrWttf7mS8+4Cv44ZUjgCwKBlO/7XzjVHsI42yN1/SPLtubXAGP97UB8
-    B1ESV4Nc0bKTTKdplJXSUxP5m6a3qfDMNLeWTFCPKmt8CqH7jyrsUfALN7zKeYXP
-    rdEWpXvoaRC00zdRRYcFk0D/X8xuIzjWy7sA==
+    1523479001; b=Glbg3ltrsexHY4Brto4FU9DGuN6bS9ka0jdhJsYFilsCe5IvX8
+    bLia84IJZ8dUAoXt8U13td0n7f5Qf9xg5C8hklFnGp9ag3g1Do6vREGVVXKRllv/
+    A3JbNFkLrgDJWXHywXR9jHJzceWTP5nKeITo867yrPbVjn6Jmql+6zLElIeWKFoM
+    eXZq0kr0VwP8RhVpI+iMjbuOcJE387roLF3J1oE243fui8FLJXQD/gg/8Ck2NtTe
+    Yi8c4RucjOuFUygIcFAr1iZ3kTO8K4JDHrnD1Y8tVD1OgpYCryP/R/ihd5YwshqV
+    WEF25jBX+uIWJ/S3yk5meQvZ8cP/sH9phfWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479014; bh=MrMRDi54JcLE3YgiXxeRI0GJ/MGAdp
-    0hT1Ohaf44NXE=; b=vz2ISh8j/bX4AT6T9e8ajrsMfDSgTTQ4yw671ZOMzMnv4K
-    OWddFhUq3CCxMLQvUM7aSYvuhow1ozjutDZp6SltZ+dXUlXzzhs7Ba4wt6QkkSum
-    uGdnZZQ2KqNqi9Vn0dNZoLOf4fVS76dhzKVvSWGPtqgbykgjesCuDAh/FkUNrDek
-    zIwIIlL8M8yotyZOAc5rQ3P6U0bChsgW5cH27eCa4ewmnrdsrfF9/WEOUgy+3KRc
-    AOgtcq8uS6UUyAHhJXRopG3xMpD3h5gYSKwojFN+OI0DzWPvhHb5MFqnOBpSc8+X
-    Isi8GtWykKTWMS3TU4rZCIUNFDjcXm1Qt1rKS6dA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479001; bh=jAINiaOxhWNJiPHTNmPrzedF3ks+X6
+    DbHRRZl/Qy15U=; b=GxJqgSUWgvNjxggkb8/eCSbY+Lp3Pfipc0g1Iig3viMDIG
+    vWR4TLm0Qen07+hVTC+/Xg3D/+niChRVPMeMySZTFhRVOSWpeUyp+RMGuDz0+UZ8
+    a4x0fq+DAwZGdsnlmVVKyuw70//MF0jv5NDs5fwsJqnojurXGu7bZiLrvod6/tLh
+    IeL+JYdBzKzECOaBFRdb+UNLdKl3HqDYv8E9gylLMWwPePPym3ZTuaBh7ddL4noy
+    lgdN5FenbQz3b207g8G/c1zFydl7CEzj/jHrnUOVnHCQLvjNvmCvWtZ9mfzLwB3W
+    Z0Avz6afaqPCcaH5IHlFVv+u1ZlsrFfilyk6gbQg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,40 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfF4/aIdjKz68vuY8X6KqROjLlrHmVv0z2HnjcCf+bJG7aLiZUoqYFy702onsKOyLLG6E2l5z94V8zsj1S0knV6pI9V1KT02p5FqhomIrJF71AZu8xWd4
-    arUAW6T81AWoOG9GpZca/nBkhRlvLZ3m6JvcCVz+p0WICyXP3pQlrS0yguSF/qOj1/aUIrSslWDR+A2BgRng8Ac/+0BklinvOggOoYpfErJw/AxhcPw1Ktvb
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfND3FZlDcoQhn3uO77rYOzY8gM/baYIms86HrxQhBezK+tpkBdA85GllbslquCPNVP9Wz++9kTpUtvF80FPkTeMIdOiYY5mXXnzm0OcJRJo85fJwNCfC
+    fbCMGnsyJt9VJxHeCDdtXgkWtv8uzdGAEJpKPAR/wQuEbm64P0/jYDw0gVM2TqP6R5CJSo7w98D0rIj3cbBqc5/2W/v8R78L+mPJFjJAxnehtU3bgA3C7nMv
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=7CQSdrXTAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=DsOz3A4AW7707SHTs3UA:9
-    a=UCYFAe-4tTnB6sJv:21 a=QEXdDO2ut3YA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
+    a=UGG5zPGqAAAA:8 a=7ZN4cI0QAAAA:8 a=FNyBlpCuAAAA:8 a=J1Y8HTJGAAAA:8
+    a=20KFwNOVAAAA:8 a=AeCkNC4mAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=W2qOomZxW66Eo3tqgE0A:9 a=QYw_ba_DHh4-JwlJ:21 a=wjn9YYyDJH2rjWWc:21
+    a=QEXdDO2ut3YA:10 a=17ibUXfGiVyGqR_YBevW:22 a=Dl0WHwQvj8hGZljrFLtM:22
+    a=RlW-AWeGUCXs_Nkyno-6:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=3H0rhiSm_XezoJcgKFaR:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755421AbeDKSsk (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:48:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59730 "EHLO
+        id S1756126AbeDKSso (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:48:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59756 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754583AbeDKSsi (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:48:38 -0400
+        with ESMTP id S1754583AbeDKSsm (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:48:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Howells <dhowells@redhat.com>,
+        Sabrina Dubroca <sd@queasysnail.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 099/190] arm64: futex: Fix undefined behaviour with FUTEX_OP_OPARG_SHIFT usage
-Date: Wed, 11 Apr 2018 20:35:45 +0200
-Message-Id: <20180411183556.339662900@linuxfoundation.org>
+Subject: [PATCH 4.4 117/190] skbuff: return -EMSGSIZE in skb_to_sgvec to prevent overflow
+Date: Wed, 11 Apr 2018 20:36:03 +0200
+Message-Id: <20180411183558.030457838@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -93,81 +102,181 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
 
 
-[ Upstream commit 5f16a046f8e144c294ef98cd29d9458b5f8273e5 ]
+[ Upstream commit 48a1df65334b74bd7531f932cca5928932abf769 ]
 
-FUTEX_OP_OPARG_SHIFT instructs the futex code to treat the 12-bit oparg
-field as a shift value, potentially leading to a left shift value that
-is negative or with an absolute value that is significantly larger then
-the size of the type. UBSAN chokes with:
+This is a defense-in-depth measure in response to bugs like
+4d6fa57b4dab ("macsec: avoid heap overflow in skb_to_sgvec"). There's
+not only a potential overflow of sglist items, but also a stack overflow
+potential, so we fix this by limiting the amount of recursion this function
+is allowed to do. Not actually providing a bounded base case is a future
+disaster that we can easily avoid here.
 
-================================================================================
-UBSAN: Undefined behaviour in ./arch/arm64/include/asm/futex.h:60:13
-shift exponent -1 is negative
-CPU: 1 PID: 1449 Comm: syz-executor0 Not tainted 4.11.0-rc4-00005-g977eb52-dirty #11
-Hardware name: linux,dummy-virt (DT)
-Call trace:
-[<ffff200008094778>] dump_backtrace+0x0/0x538 arch/arm64/kernel/traps.c:73
-[<ffff200008094cd0>] show_stack+0x20/0x30 arch/arm64/kernel/traps.c:228
-[<ffff200008c194a8>] __dump_stack lib/dump_stack.c:16 [inline]
-[<ffff200008c194a8>] dump_stack+0x120/0x188 lib/dump_stack.c:52
-[<ffff200008cc24b8>] ubsan_epilogue+0x18/0x98 lib/ubsan.c:164
-[<ffff200008cc3098>] __ubsan_handle_shift_out_of_bounds+0x250/0x294 lib/ubsan.c:421
-[<ffff20000832002c>] futex_atomic_op_inuser arch/arm64/include/asm/futex.h:60 [inline]
-[<ffff20000832002c>] futex_wake_op kernel/futex.c:1489 [inline]
-[<ffff20000832002c>] do_futex+0x137c/0x1740 kernel/futex.c:3231
-[<ffff200008320504>] SYSC_futex kernel/futex.c:3281 [inline]
-[<ffff200008320504>] SyS_futex+0x114/0x268 kernel/futex.c:3249
-[<ffff200008084770>] el0_svc_naked+0x24/0x28
-================================================================================
-syz-executor1 uses obsolete (PF_INET,SOCK_PACKET)
-sock: process `syz-executor0' is using obsolete setsockopt SO_BSDCOMPAT
+As a small matter of house keeping, we take this opportunity to move the
+documentation comment over the actual function the documentation is for.
 
-This patch attempts to fix some of this by:
+While this could be implemented by using an explicit stack of skbuffs,
+when implementing this, the function complexity increased considerably,
+and I don't think such complexity and bloat is actually worth it. So,
+instead I built this and tested it on x86, x86_64, ARM, ARM64, and MIPS,
+and measured the stack usage there. I also reverted the recent MIPS
+changes that give it a separate IRQ stack, so that I could experience
+some worst-case situations. I found that limiting it to 24 layers deep
+yielded a good stack usage with room for safety, as well as being much
+deeper than any driver actually ever creates.
 
-  * Making encoded_op an unsigned type, so we can shift it left even if
-    the top bit is set.
-
-  * Casting to signed prior to shifting right when extracting oparg
-    and cmparg
-
-  * Consider only the bottom 5 bits of oparg when using it as a left-shift
-    value.
-
-Whilst I think this catches all of the issues, I'd much prefer to remove
-this stuff, as I think it's unused and the bugs are copy-pasted between
-a bunch of architectures.
-
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Sabrina Dubroca <sd@queasysnail.net>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/futex.h |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ include/linux/skbuff.h |    8 +++---
+ net/core/skbuff.c      |   65 +++++++++++++++++++++++++++++++------------------
+ 2 files changed, 46 insertions(+), 27 deletions(-)
 
---- a/arch/arm64/include/asm/futex.h
-+++ b/arch/arm64/include/asm/futex.h
-@@ -53,16 +53,16 @@
- 	: "memory")
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -879,10 +879,10 @@ struct sk_buff *skb_realloc_headroom(str
+ 				     unsigned int headroom);
+ struct sk_buff *skb_copy_expand(const struct sk_buff *skb, int newheadroom,
+ 				int newtailroom, gfp_t priority);
+-int skb_to_sgvec_nomark(struct sk_buff *skb, struct scatterlist *sg,
+-			int offset, int len);
+-int skb_to_sgvec(struct sk_buff *skb, struct scatterlist *sg, int offset,
+-		 int len);
++int __must_check skb_to_sgvec_nomark(struct sk_buff *skb, struct scatterlist *sg,
++				     int offset, int len);
++int __must_check skb_to_sgvec(struct sk_buff *skb, struct scatterlist *sg,
++			      int offset, int len);
+ int skb_cow_data(struct sk_buff *skb, int tailbits, struct sk_buff **trailer);
+ int skb_pad(struct sk_buff *skb, int pad);
+ #define dev_kfree_skb(a)	consume_skb(a)
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -3329,24 +3329,18 @@ void __init skb_init(void)
+ 						NULL);
+ }
  
- static inline int
--futex_atomic_op_inuser (int encoded_op, u32 __user *uaddr)
-+futex_atomic_op_inuser(unsigned int encoded_op, u32 __user *uaddr)
+-/**
+- *	skb_to_sgvec - Fill a scatter-gather list from a socket buffer
+- *	@skb: Socket buffer containing the buffers to be mapped
+- *	@sg: The scatter-gather list to map into
+- *	@offset: The offset into the buffer's contents to start mapping
+- *	@len: Length of buffer space to be mapped
+- *
+- *	Fill the specified scatter-gather list with mappings/pointers into a
+- *	region of the buffer space attached to a socket buffer.
+- */
+ static int
+-__skb_to_sgvec(struct sk_buff *skb, struct scatterlist *sg, int offset, int len)
++__skb_to_sgvec(struct sk_buff *skb, struct scatterlist *sg, int offset, int len,
++	       unsigned int recursion_level)
  {
- 	int op = (encoded_op >> 28) & 7;
- 	int cmp = (encoded_op >> 24) & 15;
--	int oparg = (encoded_op << 8) >> 20;
--	int cmparg = (encoded_op << 20) >> 20;
-+	int oparg = (int)(encoded_op << 8) >> 20;
-+	int cmparg = (int)(encoded_op << 20) >> 20;
- 	int oldval = 0, ret, tmp;
+ 	int start = skb_headlen(skb);
+ 	int i, copy = start - offset;
+ 	struct sk_buff *frag_iter;
+ 	int elt = 0;
  
- 	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28))
--		oparg = 1 << oparg;
-+		oparg = 1U << (oparg & 0x1f);
++	if (unlikely(recursion_level >= 24))
++		return -EMSGSIZE;
++
+ 	if (copy > 0) {
+ 		if (copy > len)
+ 			copy = len;
+@@ -3365,6 +3359,8 @@ __skb_to_sgvec(struct sk_buff *skb, stru
+ 		end = start + skb_frag_size(&skb_shinfo(skb)->frags[i]);
+ 		if ((copy = end - offset) > 0) {
+ 			skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
++			if (unlikely(elt && sg_is_last(&sg[elt - 1])))
++				return -EMSGSIZE;
  
- 	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
- 		return -EFAULT;
+ 			if (copy > len)
+ 				copy = len;
+@@ -3379,16 +3375,22 @@ __skb_to_sgvec(struct sk_buff *skb, stru
+ 	}
+ 
+ 	skb_walk_frags(skb, frag_iter) {
+-		int end;
++		int end, ret;
+ 
+ 		WARN_ON(start > offset + len);
+ 
+ 		end = start + frag_iter->len;
+ 		if ((copy = end - offset) > 0) {
++			if (unlikely(elt && sg_is_last(&sg[elt - 1])))
++				return -EMSGSIZE;
++
+ 			if (copy > len)
+ 				copy = len;
+-			elt += __skb_to_sgvec(frag_iter, sg+elt, offset - start,
+-					      copy);
++			ret = __skb_to_sgvec(frag_iter, sg+elt, offset - start,
++					      copy, recursion_level + 1);
++			if (unlikely(ret < 0))
++				return ret;
++			elt += ret;
+ 			if ((len -= copy) == 0)
+ 				return elt;
+ 			offset += copy;
+@@ -3399,6 +3401,31 @@ __skb_to_sgvec(struct sk_buff *skb, stru
+ 	return elt;
+ }
+ 
++/**
++ *	skb_to_sgvec - Fill a scatter-gather list from a socket buffer
++ *	@skb: Socket buffer containing the buffers to be mapped
++ *	@sg: The scatter-gather list to map into
++ *	@offset: The offset into the buffer's contents to start mapping
++ *	@len: Length of buffer space to be mapped
++ *
++ *	Fill the specified scatter-gather list with mappings/pointers into a
++ *	region of the buffer space attached to a socket buffer. Returns either
++ *	the number of scatterlist items used, or -EMSGSIZE if the contents
++ *	could not fit.
++ */
++int skb_to_sgvec(struct sk_buff *skb, struct scatterlist *sg, int offset, int len)
++{
++	int nsg = __skb_to_sgvec(skb, sg, offset, len, 0);
++
++	if (nsg <= 0)
++		return nsg;
++
++	sg_mark_end(&sg[nsg - 1]);
++
++	return nsg;
++}
++EXPORT_SYMBOL_GPL(skb_to_sgvec);
++
+ /* As compared with skb_to_sgvec, skb_to_sgvec_nomark only map skb to given
+  * sglist without mark the sg which contain last skb data as the end.
+  * So the caller can mannipulate sg list as will when padding new data after
+@@ -3421,19 +3448,11 @@ __skb_to_sgvec(struct sk_buff *skb, stru
+ int skb_to_sgvec_nomark(struct sk_buff *skb, struct scatterlist *sg,
+ 			int offset, int len)
+ {
+-	return __skb_to_sgvec(skb, sg, offset, len);
++	return __skb_to_sgvec(skb, sg, offset, len, 0);
+ }
+ EXPORT_SYMBOL_GPL(skb_to_sgvec_nomark);
+ 
+-int skb_to_sgvec(struct sk_buff *skb, struct scatterlist *sg, int offset, int len)
+-{
+-	int nsg = __skb_to_sgvec(skb, sg, offset, len);
+ 
+-	sg_mark_end(&sg[nsg - 1]);
+-
+-	return nsg;
+-}
+-EXPORT_SYMBOL_GPL(skb_to_sgvec);
+ 
+ /**
+  *	skb_cow_data - Check that a socket buffer's data buffers are writable
