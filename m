@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3150701-1523473798-2-8349424266446496669
+X-Cyrus-Session-Id: sloti22d1t05-3150701-1523473777-2-8334421157140899109
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523473797; b=U0Uv7dePcSdXpLTbil1TudxcfacbkzEdSx2ilJGh++MqqdCSgO
-    h3Fcrr/jfE078LbCiQNsTcE1tB8Rpuj1se2nb7K4uvJUe97UvhqrCHfPLVi7Tlwf
-    iBSMkewmRQpcNoLjD4kK8OFmq42GpGUeYo1rKhmnGUEHDoKxHI09ArqaiNg2FDKN
-    xvN/dnT+OqTysWW/6MJ2IzIb74sjjPVKVsLTsUKEA7DlH75u9bM5EFNvV5KvuW4a
-    KafPtXQltRY7LC9bFkoW2UJL5x305R6Nz0f0ZS5elOQBop8TWoQooJKvPCN1iU3R
-    9TXv+rsVVOVkY58owTpqXGj2ASO0RAikiA2w==
+    1523473776; b=N2qX0uVBRPu8cF6eQDggx8kRYyY7+VsLl2MbiZuwj/4qjfcYS/
+    jTgodmcZ89XvQGD+XfIWMc8K+qa0JwlpTuQYk5Lc4wAwUFvOc/2CgHDMfyF/d/jy
+    gm97mRMzbfsS5cmq5e9z56AxqLaudC8tZz5ziP8y98A86Lui1cZ8D7zER0I6YqdJ
+    wON7k4QRjmBjwyMIlsnRApATmKF83CulyBDlE2AAjb20+cKH/fpqZmPo1FaUKApG
+    5occYcY80hVi8DGF21ocbgC8LaWaL/atdo71ozZKrVr6NNWDizK9eCVhr82gfRiG
+    essjhPFaBqhPLmSo1TjM6Iv94szI5z8FogwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523473797; bh=clXL8o0fnO27S19yR5Me9t4NE9ocjs
-    2qJ1oZEXD1Kdo=; b=Hxxt0/bKp6EeMWpdntkoGSZMwcDSaiQmPGxhZUfuxvh9V5
-    VQCTn32DAbHhMx1tEiVG55Aki0JC7SEG/1kx93r/i7QVBJaCgkeUiGSh9JxB7KC3
-    W1ADVxGPDDOHbPJkB/g8Lqg1Js1IJjQwmsHtK4dT4FmITdR8rSM6evse99jaeJre
-    N4c5GZHMEa5BXmzYEF9/TLk+4zgi4crgZbTnPZcL4pwqcXwjtWhXS62C9heZWRPX
-    TK8jsh595pE5y85dmas/vAjMddSDPrgeGzw+YqgSKTxxuzkMPAvBYSUYhKQ8Rz26
-    SPlZdY8oVYG6Fnt9SAH/Vzu1ariTcj1Z6O4+LiJQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523473776; bh=wxYWjG/ogr2IyQp8cw3gqEXLEOFH7d
+    ku/08UwMpK1wE=; b=n30QmFHoHyGTQi7f45u7hm2y/f9lelJQoRQaNdvBNyu/aH
+    97o8m6Su2hV3M3cLizwe03tlsMTCronwqxeoJZcpPlXuK7HiIrJiZxoZ8OpJ5rVC
+    CIBqv3nJbNJLHVx5K/lZ0gOfPlUSpWZqYKegzqbGRuAriIMqzcCntUgA0ADkmh1A
+    69UZYo/zUFNZ1zEUwbtWy2xuVViB9gVRka6QdYrbiMDeGVl8iACvZQUKhzKcTuis
+    RvKZQLHcyUFyux4AfdS0GI1lqj6AUxqBhzfrYlLL1sG6c7Up/3j7vZpUz4taT7br
+    MFc49PKa3WrZyHaPh/m9/cF+MIX8ybpHxBdSyYgQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,34 +51,31 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfD/AkKJGzpocDVi4JU2+OKdBjhz1mT2b2L9BQ1/gqMam3MOSXXNYCqQ88/NV0idHfXZjEXiTwRtrCjchKsHiyL2QzpKJdsmmMJ8Dmw/9X1sJYwdLmeE+
-    KEy5y7af00ufs5NnYndsrMjWzcexeTRqpWhbisjdFdjSXELcQO+d97+vATb8SDVFlt3RXTAVjAeHsg7lGEZuNytToEqKHD3bLOiS4hDkYd5LgICS5pXSieoW
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCnCX1prJa7aioTeGtiNV6Dp53+JLbn4T1wQ+JvEyMIl1PuGzfh7dmfwrI+GHqDvJqQddu3trnOv5qtxxCFHfDP27piogQV4H8QAIz9LxNjq33mFRHhq
+    bC8q6ePV5vo7OXK9srbhLFU7am+WGZjupANtn+qLoa2xzFL36Mwkl0nksfk6am94K+RdARXqFdZDtyRQuHYwM2AsdP/g02Rk5Nx1ihdDqBCdSghpyzsPC91z
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=hSkVLCK3AAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=1pB0iXOITbQmDCDZV7sA:9 a=7Ku7ZD0yW4bsnk2K:21 a=nwQ16E7mQNhVHWJ4:21
-    a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=CbDCq_QkAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=jKXu83aJfUeL4nnnRXAA:9
+    a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22 a=y1Q9-5lHfBjTkpIzbSAN:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935263AbeDKTGj (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 15:06:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40868 "EHLO
+        id S935285AbeDKTGn (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 15:06:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40878 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935257AbeDKTGj (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:06:39 -0400
+        with ESMTP id S935281AbeDKTGl (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:06:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+7f073540b1384a614e09@syzkaller.appspotmail.com,
-        Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
+        stable@vger.kernel.org, Moshe Shemesh <moshe@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 306/310] vhost_net: add missing lock nesting notation
-Date: Wed, 11 Apr 2018 20:37:25 +0200
-Message-Id: <20180411183635.706806905@linuxfoundation.org>
+Subject: [PATCH 4.9 307/310] net/mlx4_core: Fix memory leak while delete slaves resources
+Date: Wed, 11 Apr 2018 20:37:26 +0200
+Message-Id: <20180411183635.743472851@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -96,42 +93,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Moshe Shemesh <moshe@mellanox.com>
 
 
-[ Upstream commit aaa3149bbee9ba9b4e6f0bd6e3e7d191edeae942 ]
+[ Upstream commit 461d5f1b59490ce0096dfda45e10038c122a7892 ]
 
-We try to hold TX virtqueue mutex in vhost_net_rx_peek_head_len()
-after RX virtqueue mutex is held in handle_rx(). This requires an
-appropriate lock nesting notation to calm down deadlock detector.
+mlx4_delete_all_resources_for_slave in resource tracker should free all
+memory allocated for a slave.
+While releasing memory of fs_rule, it misses releasing memory of
+fs_rule->mirr_mbox.
 
-Fixes: 0308813724606 ("vhost_net: basic polling support")
-Reported-by: syzbot+7f073540b1384a614e09@syzkaller.appspotmail.com
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Fixes: 78efed275117 ('net/mlx4_core: Support mirroring VF DMFS rules on both ports')
+Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/net.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/resource_tracker.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -524,7 +524,7 @@ static int vhost_net_rx_peek_head_len(st
- 
- 	if (!len && vq->busyloop_timeout) {
- 		/* Both tx vq and rx socket were polled here */
--		mutex_lock(&vq->mutex);
-+		mutex_lock_nested(&vq->mutex, 1);
- 		vhost_disable_notify(&net->dev, vq);
- 
- 		preempt_disable();
-@@ -657,7 +657,7 @@ static void handle_rx(struct vhost_net *
- 	struct iov_iter fixup;
- 	__virtio16 num_buffers;
- 
--	mutex_lock(&vq->mutex);
-+	mutex_lock_nested(&vq->mutex, 0);
- 	sock = vq->private_data;
- 	if (!sock)
- 		goto out;
+--- a/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
++++ b/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
+@@ -5048,6 +5048,7 @@ static void rem_slave_fs_rule(struct mlx
+ 						 &tracker->res_tree[RES_FS_RULE]);
+ 					list_del(&fs_rule->com.list);
+ 					spin_unlock_irq(mlx4_tlock(dev));
++					kfree(fs_rule->mirr_mbox);
+ 					kfree(fs_rule);
+ 					state = 0;
+ 					break;
