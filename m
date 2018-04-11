@@ -1,56 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752796AbeDKJaD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 05:30:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33043 "EHLO mx2.suse.de"
+        id S1752426AbeDKJcK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 05:32:10 -0400
+Received: from mga03.intel.com ([134.134.136.65]:30212 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752368AbeDKJ36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 05:29:58 -0400
-Date: Wed, 11 Apr 2018 11:29:56 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Petr Mladek <pmladek@suse.com>
-cc: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Nicolai Stange <nstange@suse.de>, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] livepatch: Initialize shadow variables safely by
- a custom callback
-In-Reply-To: <20180405122315.29065-2-pmladek@suse.com>
-Message-ID: <alpine.LSU.2.21.1804111030120.28885@pobox.suse.cz>
-References: <20180405122315.29065-1-pmladek@suse.com> <20180405122315.29065-2-pmladek@suse.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1751854AbeDKJcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 05:32:08 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,435,1517904000";
+   d="scan'208";a="46011642"
+Date: Wed, 11 Apr 2018 15:06:34 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: dan.j.williams@intel.com, eric.long@spreadtrum.com, broonie@kernel.org,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] dmaengine: sprd: Add Spreadtrum DMA configuration
+Message-ID: <20180411093634.GC6014@localhost>
+References: <abdda9da96185f764d58bbf61db9010d0f72d1b3.1523346135.git.baolin.wang@linaro.org>
+ <0c2b76aba6a49e583f920ae582d6815fa9cc4361.1523346135.git.baolin.wang@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0c2b76aba6a49e583f920ae582d6815fa9cc4361.1523346135.git.baolin.wang@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Apr 2018, Petr Mladek wrote:
+On Tue, Apr 10, 2018 at 03:46:06PM +0800, Baolin Wang wrote:
 
-> The existing API allows to pass a sample data to initialize the shadow
-> data. It works well when the data are position independent. But it fails
-> miserably when we need to set a pointer to the shadow structure itself.
-> 
-> Unfortunately, we might need to initialize the pointer surprisingly
-> often because of struct list_head. It is even worse because the list
-> might be hidden in other common structures, for example, struct mutex,
-> struct wait_queue_head.
-> 
-> For example, this was needed to fix races in ALSA sequncer. It required
+> +/*
+> + * struct sprd_dma_config - DMA configuration structure
+> + * @config: dma slave channel config
+> + * @fragment_len: specify one fragment transfer length
+> + * @block_len: specify one block transfer length
+> + * @transcation_len: specify one transcation transfer length
+> + * @wrap_ptr: wrap pointer address, once the transfer address reaches the
+> + * 'wrap_ptr', the next transfer address will jump to the 'wrap_to' address.
+> + * @wrap_to: wrap jump to address
+> + * @req_mode: specify the DMA request mode
+> + * @int_mode: specify the DMA interrupt type
+> + */
+> +struct sprd_dma_config {
+> +	struct dma_slave_config config;
+> +	u32 fragment_len;
 
-s/sequncer/sequencer/
+why not use _maxburst?
 
-> to add mutex into struct snd_seq_client. See commit b3defb791b26ea06
-> ("ALSA: seq: Make ioctls race-free") and commit d15d662e89fc667b9
-> ("ALSA: seq: Fix racy pool initializations")
-> 
-> This patch makes the API more safe. A custom constructor function and data
-> are passed to klp_shadow_*alloc() functions instead of the sample data.
-> 
-> Note that ctor_data are not longer a template for shadow->data. It might
+> +	u32 block_len;
+> +	u32 transcation_len;
 
-s/not longer/no longer/
+what does block and transaction len refer to here
 
-> point to any data that might be necessary when the constructor is called.
+> +	phys_addr_t wrap_ptr;
+> +	phys_addr_t wrap_to;
 
-Miroslav
+this sound sg_list to me, why are we not using that here
+
+> +	enum sprd_dma_req_mode req_mode;
+
+Looking at definition of request mode we have frag, block, transaction list
+etc.. That should depend upon dma request. If you have been asked to
+transfer a list, you shall configure list mode. if it is a single
+transaction then it should be transaction mode!
+
+> +	enum sprd_dma_int_type int_mode;
+
+Here again I think driver needs to take a call based on dma_ctrl_flags.
+
+Okay I dont think we are proceeding in right direction on this one. This
+seems to be fairly generic dma controller and in line with other IP blocks
+and you should take reference from those one. I dont think we need this
+configuration and can do with generic api and configuration provided.
+
+Thanks
+-- 
+~Vinod
