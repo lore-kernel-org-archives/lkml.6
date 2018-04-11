@@ -1,173 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752919AbeDKS2x (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 14:28:53 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:56253 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751798AbeDKS2w (ORCPT
+        id S1753122AbeDKSfX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 14:35:23 -0400
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:33043 "EHLO
+        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753047AbeDKSfW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 14:28:52 -0400
-X-Google-Smtp-Source: AIpwx48XliTdLBKY1sxjpko14tvHHFDpLlK+QIRT+58P2MlSvYKHIP0NIBxBRIYckRKdTuW8pskZdw==
-From: Jan Glauber <jglauber@cavium.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mahipal Challa <mchalla@cavium.com>,
-        Balakrishna Bhamidipati <bbhamidipati@cavium.com>,
-        Jan Glauber <jglauber@cavium.com>
-Subject: [PATCH] crypto: testmgr: Allow different compression results
-Date: Wed, 11 Apr 2018 20:28:32 +0200
-Message-Id: <20180411182832.27761-1-jglauber@cavium.com>
-X-Mailer: git-send-email 2.16.2
+        Wed, 11 Apr 2018 14:35:22 -0400
+X-Google-Smtp-Source: AIpwx48Kyi+HSZfRR0fb3g33l2iZIjMbQh+x4cTumV58rZ40cC5if4ilCllEVr+Bk3zKQlkaExt/2w==
+Subject: Re: AMD graphics performance regression in 4.15 and later
+To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Gabriel C <nix.or.die@gmail.com>
+Cc: Dave Airlie <airlied@linux.ie>, alexander.deucher@amd.com,
+        Felix.Kuehling@amd.com, Laura Abbott <labbott@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>, michel.daenzer@amd.com,
+        dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <c743b220-0395-eef3-4405-a21cdbe8eee1@mozilla.com>
+ <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com>
+ <a96df0b8-fc22-4438-646d-2f0096dfcc84@mozilla.com>
+ <6cebabff-908f-5ebe-4252-760773c4cd6f@amd.com>
+ <312ed341-7052-a61e-331f-d1e8fd5b477e@mozilla.com>
+ <d136f940-d807-d2f7-30a7-8617f130912d@amd.com>
+ <77866d66-2728-8295-d7ee-9975dbf64b99@mozilla.com>
+ <55e1712b-6567-50c5-3789-53dd1ccddb94@gmail.com>
+ <CAEJqkgiOR3aCGoNquVeEyC1BLMBPmXNjgrmjNeeE9UVfzcJKzg@mail.gmail.com>
+ <dafca4cc-c7ca-a06d-3a17-46240b1d20c3@amd.com>
+From: Jean-Marc Valin <jmvalin@mozilla.com>
+Message-ID: <7bf2f711-bbd8-cee6-6377-0c4f22db2937@mozilla.com>
+Date: Wed, 11 Apr 2018 14:35:19 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <dafca4cc-c7ca-a06d-3a17-46240b1d20c3@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mahipal Challa <mchalla@cavium.com>
+On 04/11/2018 05:37 AM, Christian König wrote:
+>> With your patches my EPYC box is unusable with  4.15++ kernels.
+>> The whole Desktop is acting weird.  This one is using
+>> an Cape Verde PRO [Radeon HD 7750/8740 / R7 250E] GPU.
+>>
+>> Box is  2 * EPYC 7281 with 128 GB ECC RAM
+>>
+>> Also a 14C Xeon box with a HD7700 is broken same way.
+> 
+> The hardware is irrelevant for this. We need to know what software stack
+> you use on top of it.
 
-The following error is triggered by the ThunderX ZIP driver
-if the testmanager is enabled:
+Well, the hardware appears to be part of the issue too. I don't think
+it's a coincidence that Gabriel has the problem on 2xEPYC, I have it on
+2xXeon and the previous reported had it on a Core 2 Quad that internally
+has two dies.
 
-[  199.069437] ThunderX-ZIP 0000:03:00.0: Found ZIP device 0 177d:a01a on Node 0
-[  199.073573] alg: comp: Compression test 1 failed for deflate-generic: output len = 37
+I've not yet tested your disable CONFIG_SWIOTLB fix yet -- might try it
+over the weekend and report what happens.
 
-The reason for this error is the verification of the compression
-results. Verifying the compression result only works if all
-algorithm parameters are identical, in this case to the software
-implementation.
+Cheers,
 
-Different compression engines like the ThunderX ZIP coprocessor
-might yield different compression results by tuning the
-algorithm parameters. In our case the compressed result is
-shorter than the test vector.
-
-We should not forbid different compression results but only
-check that compression -> decompression yields the same
-result. This is done already in the acomp test. Do something
-similar for test_comp().
-
-Signed-off-by: Mahipal Challa <mchalla@cavium.com>
-Signed-off-by: Balakrishna Bhamidipati <bbhamidipati@cavium.com>
-[jglauber@cavium.com: removed unrelated printk changes, rewrote commit msg,
- fixed whitespace and unneeded initialization]
-Signed-off-by: Jan Glauber <jglauber@cavium.com>
----
- crypto/testmgr.c | 50 +++++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 37 insertions(+), 13 deletions(-)
-
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index af4a01c..627e82e 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -1342,19 +1342,30 @@ static int test_comp(struct crypto_comp *tfm,
- 		     int ctcount, int dtcount)
- {
- 	const char *algo = crypto_tfm_alg_driver_name(crypto_comp_tfm(tfm));
-+	char *output, *decomp_output;
- 	unsigned int i;
--	char result[COMP_BUF_SIZE];
- 	int ret;
- 
-+	output = kmalloc(COMP_BUF_SIZE, GFP_KERNEL);
-+	if (!output)
-+		return -ENOMEM;
-+
-+	decomp_output = kmalloc(COMP_BUF_SIZE, GFP_KERNEL);
-+	if (!decomp_output) {
-+		kfree(output);
-+		return -ENOMEM;
-+	}
-+
- 	for (i = 0; i < ctcount; i++) {
- 		int ilen;
- 		unsigned int dlen = COMP_BUF_SIZE;
- 
--		memset(result, 0, sizeof (result));
-+		memset(output, 0, sizeof(COMP_BUF_SIZE));
-+		memset(decomp_output, 0, sizeof(COMP_BUF_SIZE));
- 
- 		ilen = ctemplate[i].inlen;
- 		ret = crypto_comp_compress(tfm, ctemplate[i].input,
--		                           ilen, result, &dlen);
-+					   ilen, output, &dlen);
- 		if (ret) {
- 			printk(KERN_ERR "alg: comp: compression failed "
- 			       "on test %d for %s: ret=%d\n", i + 1, algo,
-@@ -1362,7 +1373,17 @@ static int test_comp(struct crypto_comp *tfm,
- 			goto out;
- 		}
- 
--		if (dlen != ctemplate[i].outlen) {
-+		ilen = dlen;
-+		dlen = COMP_BUF_SIZE;
-+		ret = crypto_comp_decompress(tfm, output,
-+					     ilen, decomp_output, &dlen);
-+		if (ret) {
-+			pr_err("alg: comp: compression failed: decompress: on test %d for %s failed: ret=%d\n",
-+			       i + 1, algo, -ret);
-+			goto out;
-+		}
-+
-+		if (dlen != ctemplate[i].inlen) {
- 			printk(KERN_ERR "alg: comp: Compression test %d "
- 			       "failed for %s: output len = %d\n", i + 1, algo,
- 			       dlen);
-@@ -1370,10 +1391,11 @@ static int test_comp(struct crypto_comp *tfm,
- 			goto out;
- 		}
- 
--		if (memcmp(result, ctemplate[i].output, dlen)) {
--			printk(KERN_ERR "alg: comp: Compression test %d "
--			       "failed for %s\n", i + 1, algo);
--			hexdump(result, dlen);
-+		if (memcmp(decomp_output, ctemplate[i].input,
-+			   ctemplate[i].inlen)) {
-+			pr_err("alg: comp: compression failed: output differs: on test %d for %s\n",
-+			       i + 1, algo);
-+			hexdump(decomp_output, dlen);
- 			ret = -EINVAL;
- 			goto out;
- 		}
-@@ -1383,11 +1405,11 @@ static int test_comp(struct crypto_comp *tfm,
- 		int ilen;
- 		unsigned int dlen = COMP_BUF_SIZE;
- 
--		memset(result, 0, sizeof (result));
-+		memset(decomp_output, 0, sizeof(COMP_BUF_SIZE));
- 
- 		ilen = dtemplate[i].inlen;
- 		ret = crypto_comp_decompress(tfm, dtemplate[i].input,
--		                             ilen, result, &dlen);
-+					     ilen, decomp_output, &dlen);
- 		if (ret) {
- 			printk(KERN_ERR "alg: comp: decompression failed "
- 			       "on test %d for %s: ret=%d\n", i + 1, algo,
-@@ -1403,10 +1425,10 @@ static int test_comp(struct crypto_comp *tfm,
- 			goto out;
- 		}
- 
--		if (memcmp(result, dtemplate[i].output, dlen)) {
-+		if (memcmp(decomp_output, dtemplate[i].output, dlen)) {
- 			printk(KERN_ERR "alg: comp: Decompression test %d "
- 			       "failed for %s\n", i + 1, algo);
--			hexdump(result, dlen);
-+			hexdump(decomp_output, dlen);
- 			ret = -EINVAL;
- 			goto out;
- 		}
-@@ -1415,11 +1437,13 @@ static int test_comp(struct crypto_comp *tfm,
- 	ret = 0;
- 
- out:
-+	kfree(decomp_output);
-+	kfree(output);
- 	return ret;
- }
- 
- static int test_acomp(struct crypto_acomp *tfm,
--		      const struct comp_testvec *ctemplate,
-+			      const struct comp_testvec *ctemplate,
- 		      const struct comp_testvec *dtemplate,
- 		      int ctcount, int dtcount)
- {
--- 
-2.7.4
+	Jean-Marc
