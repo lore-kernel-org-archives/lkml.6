@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48i5eTPNn1TgAJnCNCpRh0FZFB6lz+PpjWBR6OT9t0AQYqmWXS82khBCI6lLhNLPBMvtXfj
-ARC-Seal: i=1; a=rsa-sha256; t=1523472632; cv=none;
+X-Google-Smtp-Source: AIpwx4+335Y+7KRikt52gyJcjrjw/EUa3BA/J8BZdpKQEv/gLB/ZOVfHTXEdnubmeteuv3xT2PUL
+ARC-Seal: i=1; a=rsa-sha256; t=1523472629; cv=none;
         d=google.com; s=arc-20160816;
-        b=BP0OuN35q59unQrD8GFcvOIS2FAxN/xspJB/A05DUyHdc3H4L99EkyNuTbY4PRPIXR
-         p7apkmJZU7Gof6tWNR5IT8xgxkPwBCZWvyC02HLSPPhFK56ertG7f4PJMTthXtfX15ab
-         VR6d5hY3u/Bgkdbrc7pSt8SqGDqi4WjqQ5YP9CvgwlLuj/3+8awSEfL+NVXzoU4tf5tG
-         iUlGk4qTX90vMDobVbyF46103W2BZOI2jn7HLbbBR1Tw9ledO/1b49Aqj9n3PhElHmlE
-         cvP6RF5F/FAyJhQvfOWbMwl1+LLup8uJ5S0nktKFGNsFUwOZZ8yEF9Sdz7b70v78sjY2
-         x51g==
+        b=Hwrdylam6gkhurWXRn/Ge4/vI8o+UcPKP9acLgbjNfEohHFInN3fggUmcCDyL+28+9
+         gQdVq8JVgXpeiQVFg4Qi8wL7ENuhTJ9EkC2Bjly+NxixfNiCATGoWEDqKlNY4pMhJAyn
+         sivyF6fpocaotni4wFXInVoBc3mA330LxC7KKTvmWCsAtqZwbVjRzDI0AbwI4HAX8Lyb
+         7OoO9qkUpD1srZyxskMxpG4XeM23OQ5VytzgUKEVqdgJNNZEC/bG3vRCwX21StNRWfD5
+         TlusM6WVfxkZfqHuuMomZ91wHklLPrak42VZy+zAo3goeP71YxzFTunb66FoleQyYaXE
+         mvmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=aF30P2/2+DNm/kCC7JCfC33WVVlC60HjdL5+akLygv0=;
-        b=qXwuYdlFMIsftsYPWZey2ULYarFIJHGEOaBDcDuUzqQ5bunEC1hBNHv3EyZ9w8e7Tg
-         FNw/QN+47/KNCTxu9atfUunrX7MlbmxR1GJ1NgldS50xSOZPykMzurOPaT8KYfckSq7I
-         acXw3yxKk2w1jtfjRY7xhQEQVbLnbH7te3wX8IQA5VUzLwdO+dfUPXvwBKu2bPemZz8/
-         vRNXq8X+LeqAFqWUslggIA5KEFRRHHvwRfE0VJyKDAG1UwP7RuiFgrrzIBfyq39Ks6hP
-         yqr8FFH9EADksUU9yblaEOlVmXDZyK6XXABsfymFECTYkVshWOM51zUNgnUfpkNJd236
-         rjoQ==
+        bh=/aF5SyWMJj3DQgrK4rBKV0dkB7jHcTuhOf9EltaHki4=;
+        b=hWepMne/y10alMZg9TGLxi169RwlIkGrMHqReLRpF1rNQ4DOXWmzokRIFNSItTep7i
+         Wsho66i89/gAt72SMaawRIS2+L3A8di5Gjyp0MUtl5NAuzuyL4hf6yRbqyjUJqBN+q8z
+         n08HcrLM8SofE9Ug81VgVxgqJs/jSNSLYSgGcsITPZ00ni86Iu4tgVCh7m+2ZtOiSNL1
+         2x/mrPXz5FgSBYRURhqhy+1RU1AWL0SqCCeHLxE/KnAxve+gbfwYt2Y6ZAacv+Grdtzc
+         Fn96jY4O2/EM29xmJANKbjPtwh/rnGZZTyJfpbrWPYDJGtzi0vUWjZV2k9GH+tDmW1sw
+         0ecA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Alan Cox <alan@llwyncelyn.cymru>,
-	Jiri Prchal <jiri.prchal@aksignal.cz>,
-	Jiri Slaby <jslaby@suse.cz>,
-	Marcel Partap <mpartap@gmx.net>,
-	Michael Scott <michael.scott@linaro.org>,
-	Peter Hurley <peter@hurleysoftware.com>,
-	Russ Gorby <russ.gorby@intel.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Sebastian Reichel <sre@kernel.org>,
-	Tony Lindgren <tony@atomide.com>,
+	Zhang Yi <yizhan@redhat.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 155/190] tty: n_gsm: Allow ADM response in addition to UA for control dlci
-Date: Wed, 11 Apr 2018 20:36:41 +0200
-Message-Id: <20180411183601.649679915@linuxfoundation.org>
+Subject: [PATCH 4.4 154/190] blk-mq: fix kernel oops in blk_mq_tag_idle()
+Date: Wed, 11 Apr 2018 20:36:40 +0200
+Message-Id: <20180411183601.604910031@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -50,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476303221952902?=
-X-GMAIL-MSGID: =?utf-8?q?1597476839175392600?=
+X-GMAIL-THRID: =?utf-8?q?1597476836239327035?=
+X-GMAIL-MSGID: =?utf-8?q?1597476836239327035?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,117 +51,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Ming Lei <ming.lei@redhat.com>
 
 
-[ Upstream commit ea3d8465ab9b3e01be329ac5195970a84bef76c5 ]
+[ Upstream commit 8ab0b7dc73e1b3e2987d42554b2bff503f692772 ]
 
-Some devices have the control dlci stay in ADM mode instead of the UA
-mode. This can seen at least on droid 4 when trying to open the ts
-27.010 mux port. Enabling n_gsm debug mode shows the control dlci
-always respond with DM to SABM instead of UA:
+HW queues may be unmapped in some cases, such as blk_mq_update_nr_hw_queues(),
+then we need to check it before calling blk_mq_tag_idle(), otherwise
+the following kernel oops can be triggered, so fix it by checking if
+the hw queue is unmapped since it doesn't make sense to idle the tags
+any more after hw queues are unmapped.
 
-# modprobe n_gsm debug=0xff
-# ldattach -d GSM0710 /dev/ttyS0 &
-gsmld_output: 00000000: f9 03 3f 01 1c f9
---> 0) C: SABM(P)
-gsmld_receive: 00000000: f9 03 1f 01 36 f9
-<-- 0) C: DM(P)
-...
-$ minicom -D /dev/gsmtty1
-minicom: cannot open /dev/gsmtty1: No error information
-$ strace minicom -D /dev/gsmtty1
-...
-open("/dev/gsmtty1", O_RDWR|O_NOCTTY|O_NONBLOCK|O_LARGEFILE) = -1 EL2HLT
+[  440.771298] Workqueue: nvme-wq nvme_rdma_del_ctrl_work [nvme_rdma]
+[  440.779104] task: ffff894bae755ee0 ti: ffff893bf9bc8000 task.ti: ffff893bf9bc8000
+[  440.788359] RIP: 0010:[<ffffffffb730e2b4>]  [<ffffffffb730e2b4>] __blk_mq_tag_idle+0x24/0x40
+[  440.798697] RSP: 0018:ffff893bf9bcbd10  EFLAGS: 00010286
+[  440.805538] RAX: 0000000000000000 RBX: ffff895bb131dc00 RCX: 000000000000011f
+[  440.814426] RDX: 00000000ffffffff RSI: 0000000000000120 RDI: ffff895bb131dc00
+[  440.823301] RBP: ffff893bf9bcbd10 R08: 000000000001b860 R09: 4a51d361c00c0000
+[  440.832193] R10: b5907f32b4cc7003 R11: ffffd6cabfb57000 R12: ffff894bafd1e008
+[  440.841091] R13: 0000000000000001 R14: ffff895baf770000 R15: 0000000000000080
+[  440.849988] FS:  0000000000000000(0000) GS:ffff894bbdcc0000(0000) knlGS:0000000000000000
+[  440.859955] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  440.867274] CR2: 0000000000000008 CR3: 000000103d098000 CR4: 00000000001407e0
+[  440.876169] Call Trace:
+[  440.879818]  [<ffffffffb7309d68>] blk_mq_exit_hctx+0xd8/0xe0
+[  440.887051]  [<ffffffffb730dc40>] blk_mq_free_queue+0xf0/0x160
+[  440.894465]  [<ffffffffb72ff679>] blk_cleanup_queue+0xd9/0x150
+[  440.901881]  [<ffffffffc08a802b>] nvme_ns_remove+0x5b/0xb0 [nvme_core]
+[  440.910068]  [<ffffffffc08a811b>] nvme_remove_namespaces+0x3b/0x60 [nvme_core]
+[  440.919026]  [<ffffffffc08b817b>] __nvme_rdma_remove_ctrl+0x2b/0xb0 [nvme_rdma]
+[  440.928079]  [<ffffffffc08b8237>] nvme_rdma_del_ctrl_work+0x17/0x20 [nvme_rdma]
+[  440.937126]  [<ffffffffb70ab58a>] process_one_work+0x17a/0x440
+[  440.944517]  [<ffffffffb70ac3a8>] worker_thread+0x278/0x3c0
+[  440.951607]  [<ffffffffb70ac130>] ? manage_workers.isra.24+0x2a0/0x2a0
+[  440.959760]  [<ffffffffb70b352f>] kthread+0xcf/0xe0
+[  440.966055]  [<ffffffffb70b3460>] ? insert_kthread_work+0x40/0x40
+[  440.973715]  [<ffffffffb76d8658>] ret_from_fork+0x58/0x90
+[  440.980586]  [<ffffffffb70b3460>] ? insert_kthread_work+0x40/0x40
+[  440.988229] Code: 5b 41 5c 5d c3 66 90 0f 1f 44 00 00 48 8b 87 20 01 00 00 f0 0f ba 77 40 01 19 d2 85 d2 75 08 c3 0f 1f 80 00 00 00 00 55 48 89 e5 <f0> ff 48 08 48 8d 78 10 e8 7f 0f 05 00 5d c3 0f 1f 00 66 2e 0f
+[  441.011620] RIP  [<ffffffffb730e2b4>] __blk_mq_tag_idle+0x24/0x40
+[  441.019301]  RSP <ffff893bf9bcbd10>
+[  441.024052] CR2: 0000000000000008
 
-Note that this is different issue from other n_gsm -EL2HLT issues such
-as timeouts when the control dlci does not respond at all.
-
-The ADM mode seems to be a quite common according to "RF Wireless World"
-article "GSM Issue-UE sends SABM and gets a DM response instead of
-UA response":
-
-  This issue is most commonly observed in GSM networks where in UE sends
-  SABM and expects network to send UA response but it ends up receiving
-  DM response from the network. SABM stands for Set asynchronous balanced
-  mode, UA stands for Unnumbered Acknowledge and DA stands for
-  Disconnected Mode.
-
-  An RLP entity can be in one of two modes:
-  - Asynchronous Balanced Mode (ABM)
-  - Asynchronous Disconnected Mode (ADM)
-
-Currently Linux kernel closes the control dlci after several retries
-in gsm_dlci_t1() on DM. This causes n_gsm /dev/gsmtty ports to produce
-error code -EL2HLT when trying to open them as the closing of control
-dlci has already set gsm->dead.
-
-Let's fix the issue by allowing control dlci stay in ADM mode after the
-retries so the /dev/gsmtty ports can be opened and used. It seems that
-it might take several attempts to get any response from the control
-dlci, so it's best to allow ADM mode only after the SABM retries are
-done.
-
-Note that for droid 4 additional patches are needed to mux the ttyS0
-pins and to toggle RTS gpio_149 to wake up the mdm6600 modem are also
-needed to use n_gsm. And the mdm6600 modem needs to be powered on.
-
-Cc: linux-serial@vger.kernel.org
-Cc: Alan Cox <alan@llwyncelyn.cymru>
-Cc: Jiri Prchal <jiri.prchal@aksignal.cz>
-Cc: Jiri Slaby <jslaby@suse.cz>
-Cc: Marcel Partap <mpartap@gmx.net>
-Cc: Michael Scott <michael.scott@linaro.org>
-Cc: Peter Hurley <peter@hurleysoftware.com>
-Cc: Russ Gorby <russ.gorby@intel.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Sebastian Reichel <sre@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Zhang Yi <yizhan@redhat.com>
+Tested-by: Zhang Yi <yizhan@redhat.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/n_gsm.c |   17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ block/blk-mq.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/n_gsm.c
-+++ b/drivers/tty/n_gsm.c
-@@ -1467,6 +1467,10 @@ static void gsm_dlci_open(struct gsm_dlc
-  *	in which case an opening port goes back to closed and a closing port
-  *	is simply put into closed state (any further frames from the other
-  *	end will get a DM response)
-+ *
-+ *	Some control dlci can stay in ADM mode with other dlci working just
-+ *	fine. In that case we can just keep the control dlci open after the
-+ *	DLCI_OPENING retries time out.
-  */
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1634,7 +1634,8 @@ static void blk_mq_exit_hctx(struct requ
+ {
+ 	unsigned flush_start_tag = set->queue_depth;
  
- static void gsm_dlci_t1(unsigned long data)
-@@ -1480,8 +1484,15 @@ static void gsm_dlci_t1(unsigned long da
- 		if (dlci->retries) {
- 			gsm_command(dlci->gsm, dlci->addr, SABM|PF);
- 			mod_timer(&dlci->t1, jiffies + gsm->t1 * HZ / 100);
--		} else
-+		} else if (!dlci->addr && gsm->control == (DM | PF)) {
-+			if (debug & 8)
-+				pr_info("DLCI %d opening in ADM mode.\n",
-+					dlci->addr);
-+			gsm_dlci_open(dlci);
-+		} else {
- 			gsm_dlci_close(dlci);
-+		}
-+
- 		break;
- 	case DLCI_CLOSING:
- 		dlci->retries--;
-@@ -1499,8 +1510,8 @@ static void gsm_dlci_t1(unsigned long da
-  *	@dlci: DLCI to open
-  *
-  *	Commence opening a DLCI from the Linux side. We issue SABM messages
-- *	to the modem which should then reply with a UA, at which point we
-- *	will move into open state. Opening is done asynchronously with retry
-+ *	to the modem which should then reply with a UA or ADM, at which point
-+ *	we will move into open state. Opening is done asynchronously with retry
-  *	running off timers and the responses.
-  */
+-	blk_mq_tag_idle(hctx);
++	if (blk_mq_hw_queue_mapped(hctx))
++		blk_mq_tag_idle(hctx);
  
+ 	if (set->ops->exit_request)
+ 		set->ops->exit_request(set->driver_data,
