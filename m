@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753672AbeDKOVU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 10:21:20 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:48396 "EHLO hermes.aosc.io"
+        id S1753797AbeDKOVe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 10:21:34 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:48417 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753107AbeDKOVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 10:21:18 -0400
+        id S1753755AbeDKOVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 10:21:32 -0400
 From: Icenowy Zheng <icenowy@aosc.io>
 To: Rob Herring <robh+dt@kernel.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -15,112 +15,108 @@ To: Rob Herring <robh+dt@kernel.org>,
 Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 3/5] net: stmmac: dwmac-sun8i: Allow getting syscon regmap from device
-Date: Wed, 11 Apr 2018 22:16:39 +0800
-Message-Id: <20180411141641.14675-4-icenowy@aosc.io>
+Subject: [PATCH 4/5] drivers: soc: sunxi: export a regmap for EMAC clock reg on A64
+Date: Wed, 11 Apr 2018 22:16:40 +0800
+Message-Id: <20180411141641.14675-5-icenowy@aosc.io>
 In-Reply-To: <20180411141641.14675-1-icenowy@aosc.io>
 References: <20180411141641.14675-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+The A64 SRAM controller memory zone has a EMAC clock register, which is
+needed by the Ethernet MAC driver (dwmac-sun8i).
 
-On the Allwinner R40 SoC, the "GMAC clock" register is in the CCU
-address space; on the A64 SoC this register is in the SRAM controller
-address space, and with a different offset.
+Export a regmap for this register on A64.
 
-To access the register from another device and hide the internal
-difference between the device, let it register a regmap named
-"emac-clock". We can then get the device from the phandle, and
-retrieve the regmap with dev_get_regmap(); in this situation the
-regmap_field will be set up to access the only register in the regmap.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-[Icenowy: change to use regmaps with single register, change commit
- message]
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 48 ++++++++++++++++++++++-
+ drivers/soc/sunxi/sunxi_sram.c | 48 ++++++++++++++++++++++++++++++++++++++++--
  1 file changed, 46 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-index 1037f6c78bca..b61210c0d415 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-@@ -85,6 +85,13 @@ const struct reg_field old_syscon_reg_field = {
- 	.msb = 31,
- };
+diff --git a/drivers/soc/sunxi/sunxi_sram.c b/drivers/soc/sunxi/sunxi_sram.c
+index 882be5ed7e84..35ab5f334bb1 100644
+--- a/drivers/soc/sunxi/sunxi_sram.c
++++ b/drivers/soc/sunxi/sunxi_sram.c
+@@ -17,6 +17,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
++#include <linux/regmap.h>
  
-+/* Specially exported regmap which contains only EMAC register */
-+const struct reg_field single_reg_field = {
-+	.reg = 0,
-+	.lsb = 0,
-+	.msb = 31,
+ #include <linux/soc/sunxi/sunxi_sram.h>
+ 
+@@ -281,13 +282,41 @@ int sunxi_sram_release(struct device *dev)
+ }
+ EXPORT_SYMBOL(sunxi_sram_release);
+ 
++struct sunxi_sramc_variant {
++	bool has_emac_clock;
 +};
 +
- static const struct emac_variant emac_variant_h3 = {
- 	.default_syscon_value = 0x58000,
- 	.soc_has_internal_phy = true,
-@@ -979,6 +986,44 @@ static struct mac_device_info *sun8i_dwmac_setup(void *ppriv)
- 	return mac;
- }
++static const struct sunxi_sramc_variant sun4i_a10_sramc_variant = {
++	/* Nothing special */
++};
++
++static const struct sunxi_sramc_variant sun50i_a64_sramc_variant = {
++	.has_emac_clock = true,
++};
++
++static struct regmap_config sunxi_sram_emac_clock_regmap = {
++	.reg_bits       = 32,
++	.val_bits       = 32,
++	.reg_stride     = 4,
++	.max_register   = 0x0,	/* only single register */
++	.name		= "emac-clock",
++};
++
++#define SUNXI_SRAM_EMAC_CLOCK_REG	0x30
++
+ static int sunxi_sram_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+ 	struct dentry *d;
++	struct regmap *emac_clock;
++	const struct sunxi_sramc_variant *variant;
  
-+static struct regmap *sun8i_dwmac_get_emac_regmap(struct sunxi_priv_data *emac,
-+						  struct device_node *node)
-+{
-+	struct device_node *syscon_node;
-+	struct platform_device *syscon_pdev = NULL;
-+	struct regmap *regmap = NULL;
+ 	sram_dev = &pdev->dev;
+ 
++	variant = of_device_get_match_data(&pdev->dev);
++	if (!variant)
++		return -EINVAL;
 +
-+	syscon_node = of_parse_phandle(node, "syscon", 0);
-+	if (!syscon_node)
-+		return ERR_PTR(-ENODEV);
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(base))
+@@ -300,12 +329,27 @@ static int sunxi_sram_probe(struct platform_device *pdev)
+ 	if (!d)
+ 		return -ENOMEM;
+ 
++	if (variant->has_emac_clock) {
++		emac_clock = devm_regmap_init_mmio(&pdev->dev,
++						   base + SUNXI_SRAM_EMAC_CLOCK_REG,
++						   &sunxi_sram_emac_clock_regmap);
 +
-+	if (of_device_is_compatible(syscon_node, "syscon")) {
-+		regmap = syscon_regmap_lookup_by_phandle(node, "syscon");
-+
-+		emac->emac_reg_field = &old_syscon_reg_field;
-+	} else {
-+		syscon_pdev = of_find_device_by_node(syscon_node);
-+		if (!syscon_pdev) {
-+			/* platform device might not be probed yet */
-+			regmap = ERR_PTR(-EPROBE_DEFER);
-+			goto out_put_node;
-+		}
-+
-+		/* If no regmap is found then trap into error */
-+		regmap = dev_get_regmap(&syscon_pdev->dev, "emac-clock");
-+		if (!regmap)
-+			regmap = ERR_PTR(-EINVAL);
-+
-+		emac->emac_reg_field = &single_reg_field;
++		if (IS_ERR(emac_clock))
++			return PTR_ERR(emac_clock);
 +	}
 +
-+	if (syscon_pdev)
-+		platform_device_put(syscon_pdev);
-+out_put_node:
-+	of_node_put(syscon_node);
-+	return regmap;
-+}
-+
- static int sun8i_dwmac_probe(struct platform_device *pdev)
- {
- 	struct plat_stmmacenet_data *plat_dat;
-@@ -1023,13 +1068,12 @@ static int sun8i_dwmac_probe(struct platform_device *pdev)
- 		gmac->regulator = NULL;
- 	}
+ 	return 0;
+ }
  
--	regmap = syscon_regmap_lookup_by_phandle(pdev->dev.of_node, "syscon");
-+	regmap = sun8i_dwmac_get_emac_regmap(gmac, pdev->dev.of_node);
- 	if (IS_ERR(regmap)) {
- 		ret = PTR_ERR(regmap);
- 		dev_err(&pdev->dev, "Unable to map syscon: %d\n", ret);
- 		return ret;
- 	}
--	gmac->emac_reg_field = old_syscon_reg_field;
- 
- 	gmac->regmap_field = devm_regmap_field_alloc(dev, regmap,
- 						     *gmac->emac_reg_field);
+ static const struct of_device_id sunxi_sram_dt_match[] = {
+-	{ .compatible = "allwinner,sun4i-a10-sram-controller" },
+-	{ .compatible = "allwinner,sun50i-a64-sram-controller" },
++	{
++		.compatible = "allwinner,sun4i-a10-sram-controller",
++		.data = &sun4i_a10_sramc_variant,
++	},
++	{
++		.compatible = "allwinner,sun50i-a64-sram-controller",
++		.data = &sun50i_a64_sramc_variant,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, sunxi_sram_dt_match);
 -- 
 2.15.1
