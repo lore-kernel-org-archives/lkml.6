@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/yaZBEwIs8MwQeFThiaeT1WAptOX3vfssNn7490f27ZOqNj+wvZGiNvz+9zioAPicCVr0b
-ARC-Seal: i=1; a=rsa-sha256; t=1523472707; cv=none;
+X-Google-Smtp-Source: AIpwx4/T25sWeatl0fo9bGslghbSZnmGSPGyduNUomX9oe+9U1Q/ysVEWTwE/v15bihX7gZG8bgG
+ARC-Seal: i=1; a=rsa-sha256; t=1523472705; cv=none;
         d=google.com; s=arc-20160816;
-        b=agEcYkraLS8/BfJGafb438EPRAqurIPY48F8VwajRu7okryGF+Vv48gpsNLIDvf3ig
-         LfhnrCHiEvLA0Lv4Ve2MksjMCo84b5/6x5Iqav9N1PIjEOWCNmdBrhdRV+9M1qlRqPkP
-         WtMJQwR1Uz5vDwiln3z2kt37mtkWnVzduy07O//yDBF3YvphR0IiirJ3SJeXyE9d+x8J
-         XVU1XR2cyJpWQHFe9t0fdl8z81NsFN8bP0rvcbP36cuQj2ppcvN4OS/MAHBN9m1zXKJS
-         danhaTOngpDZIjOGuf8XhizRpxKDEjRIKsDzaHgT8LRPYDapBVwPy9W0wiLB6QSfgONe
-         kzow==
+        b=THKYbJUYE5Lh85J7zTdJlc6Vh+VGboTX3FHdVX/b69doy86iIEE81t2GZ8pCegAUJ4
+         3n+L99TZEJ+J5lo7UVsfAhflSZReapradeM5jj+YpKNOXkfXImXtOBS8bz/DvG7Kb7qY
+         tlDCLiSQ1EaKNTLQwYNfFpYH8H4lc5RI73WYiovJbfFdcdsxZgKus/CnNxbzsLZP7ljS
+         k9cMfKZYVplB6PCzZ9YXT/4SH2mbSOEq1FGM+LsMQaAo0L2KVXqNNkfGsMFLXNGULn/U
+         hww4aVlf3+/Ix0kn9ovCT2bh+8w2Git5ozsdSxGLLXnTZmvs6v6MXEbSnJq0i+n1uj70
+         0Wlw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=F9LoTN6nvcbxWmWt1g5ZfT5sL12i//rMGjzRZiLIdM0=;
-        b=a1VHwQEoVvjj9YDaL65hTsecUj1YDrLlMuymoN270X9NpbHpFyyQhGHIXfNfmW8ZxZ
-         fSkFr8+tiQKKcjz/eADvmpGDDyq5rHPIKQYcki46xH6L4y+elUlPG2GILyK/aX8fgWrZ
-         UuxoDZZvdWFwdKrB36nVErW1TzANSqlHvM3uJgcTepe8lsSJjI4g2jbcnLht0upfMp2Y
-         /1bH3Ugq15J2RHnK4lXvJ90RGJoj5t9emo+krYGp0oplrhzPWYWUliOPLxUtusQHFeVn
-         4Vm6dgQk26npLYyH+2Kcy1icK1/Lt0YQFy1SH+eP4FKqqxMojCdBaA0eCgCuUr9HeLdg
-         Df3w==
+        bh=u2XppUwlwo3WUpJ0dcfaIfE6s1e9ST6ZPmXOvzgl1iA=;
+        b=vWyQyqppuwl2PEgw6kP9A/hM1UeZ8GF8grl07/OecaKNHfQWRZTUh5XJju+4B+lojU
+         2wBxyuNJAv8LLaqx/ozAUGKuVk5P7zZFyF8DA7/Co3SWoyBiCeQFIAYmks3Q1y0nOQ15
+         h4AYYBnljWmJWqtYkrP2sOehhUd7bFLVcbaVXuCXwvK6Oo3b5eCIYzhfp24IbfLbIOsy
+         t+I6KBL+Suu8Z2+qj1UJZ2i/R4lk1DDYICNbmj0BiQha995+Ja7a+UhCu6lI2tOeNW8H
+         vVg1xIrUB5DGmooHFhzFqdBvxje/xQWU9yQQymlyxwS6AoiYWyCHBYtU5zgA2yYIunSJ
+         +mzw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,11 +27,13 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Eric Dumazet <edumazet@google.com>,
+	Vlad Yasevich <vyasevich@gmail.com>,
+	Neil Horman <nhorman@tuxdriver.com>,
 	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 181/190] ip_tunnel: better validate user provided tunnel names
-Date: Wed, 11 Apr 2018 20:37:07 +0200
-Message-Id: <20180411183604.050154585@linuxfoundation.org>
+Subject: [PATCH 4.4 172/190] sctp: do not leak kernel memory to user space
+Date: Wed, 11 Apr 2018 20:36:58 +0200
+Message-Id: <20180411183602.645674183@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476363066014877?=
-X-GMAIL-MSGID: =?utf-8?q?1597476918023312201?=
+X-GMAIL-THRID: =?utf-8?q?1597476337838554595?=
+X-GMAIL-MSGID: =?utf-8?q?1597476915553012073?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,73 +55,90 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 9cb726a212a82c88c98aa9f0037fd04777cd8fe5 ]
+[ Upstream commit 6780db244d6b1537d139dea0ec8aad10cf9e4adb ]
 
-Use dev_valid_name() to make sure user does not provide illegal
-device name.
+syzbot produced a nice report [1]
 
-syzbot caught the following bug :
+Issue here is that a recvmmsg() managed to leak 8 bytes of kernel memory
+to user space, because sin_zero (padding field) was not properly cleared.
 
-BUG: KASAN: stack-out-of-bounds in strlcpy include/linux/string.h:300 [inline]
-BUG: KASAN: stack-out-of-bounds in __ip_tunnel_create+0xca/0x6b0 net/ipv4/ip_tunnel.c:257
-Write of size 20 at addr ffff8801ac79f810 by task syzkaller268107/4482
-
-CPU: 0 PID: 4482 Comm: syzkaller268107 Not tainted 4.16.0+ #1
+[1]
+BUG: KMSAN: uninit-value in copy_to_user include/linux/uaccess.h:184 [inline]
+BUG: KMSAN: uninit-value in move_addr_to_user+0x32e/0x530 net/socket.c:227
+CPU: 1 PID: 3586 Comm: syzkaller481044 Not tainted 4.16.0+ #82
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
  __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x1b9/0x29f lib/dump_stack.c:53
- print_address_description+0x6c/0x20b mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.cold.7+0xac/0x2f5 mm/kasan/report.c:412
- check_memory_region_inline mm/kasan/kasan.c:260 [inline]
- check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
- memcpy+0x37/0x50 mm/kasan/kasan.c:303
- strlcpy include/linux/string.h:300 [inline]
- __ip_tunnel_create+0xca/0x6b0 net/ipv4/ip_tunnel.c:257
- ip_tunnel_create net/ipv4/ip_tunnel.c:352 [inline]
- ip_tunnel_ioctl+0x818/0xd40 net/ipv4/ip_tunnel.c:861
- ipip_tunnel_ioctl+0x1c5/0x420 net/ipv4/ipip.c:350
- dev_ifsioc+0x43e/0xb90 net/core/dev_ioctl.c:334
- dev_ioctl+0x69a/0xcc0 net/core/dev_ioctl.c:525
- sock_ioctl+0x47e/0x680 net/socket.c:1015
- vfs_ioctl fs/ioctl.c:46 [inline]
- file_ioctl fs/ioctl.c:500 [inline]
- do_vfs_ioctl+0x1cf/0x1650 fs/ioctl.c:684
- ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
- SYSC_ioctl fs/ioctl.c:708 [inline]
- SyS_ioctl+0x24/0x30 fs/ioctl.c:706
- do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+ kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+ kmsan_internal_check_memory+0x164/0x1d0 mm/kmsan/kmsan.c:1176
+ kmsan_copy_to_user+0x69/0x160 mm/kmsan/kmsan.c:1199
+ copy_to_user include/linux/uaccess.h:184 [inline]
+ move_addr_to_user+0x32e/0x530 net/socket.c:227
+ ___sys_recvmsg+0x4e2/0x810 net/socket.c:2211
+ __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
+ SYSC_recvmmsg+0x29b/0x3e0 net/socket.c:2394
+ SyS_recvmmsg+0x76/0xa0 net/socket.c:2378
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x4401c9
+RSP: 002b:00007ffc56f73098 EFLAGS: 00000217 ORIG_RAX: 000000000000012b
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004401c9
+RDX: 0000000000000001 RSI: 0000000020003ac0 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000020003bc0 R09: 0000000000000010
+R10: 0000000000000000 R11: 0000000000000217 R12: 0000000000401af0
+R13: 0000000000401b80 R14: 0000000000000000 R15: 0000000000000000
 
-Fixes: c54419321455 ("GRE: Refactor GRE tunneling code.")
+Local variable description: ----addr@___sys_recvmsg
+Variable was created at:
+ ___sys_recvmsg+0xd5/0x810 net/socket.c:2172
+ __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
+
+Bytes 8-15 of 16 are uninitialized
+
+==================================================================
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 3586 Comm: syzkaller481044 Tainted: G    B            4.16.0+ #82
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+ panic+0x39d/0x940 kernel/panic.c:183
+ kmsan_report+0x238/0x240 mm/kmsan/kmsan.c:1083
+ kmsan_internal_check_memory+0x164/0x1d0 mm/kmsan/kmsan.c:1176
+ kmsan_copy_to_user+0x69/0x160 mm/kmsan/kmsan.c:1199
+ copy_to_user include/linux/uaccess.h:184 [inline]
+ move_addr_to_user+0x32e/0x530 net/socket.c:227
+ ___sys_recvmsg+0x4e2/0x810 net/socket.c:2211
+ __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
+ SYSC_recvmmsg+0x29b/0x3e0 net/socket.c:2394
+ SyS_recvmmsg+0x76/0xa0 net/socket.c:2378
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc:	Vlad Yasevich <vyasevich@gmail.com>
+Cc:	Neil Horman <nhorman@tuxdriver.com>
 Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_tunnel.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ net/sctp/ipv6.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/ipv4/ip_tunnel.c
-+++ b/net/ipv4/ip_tunnel.c
-@@ -253,13 +253,14 @@ static struct net_device *__ip_tunnel_cr
- 	struct net_device *dev;
- 	char name[IFNAMSIZ];
- 
--	if (parms->name[0])
-+	err = -E2BIG;
-+	if (parms->name[0]) {
-+		if (!dev_valid_name(parms->name))
-+			goto failed;
- 		strlcpy(name, parms->name, IFNAMSIZ);
--	else {
--		if (strlen(ops->kind) > (IFNAMSIZ - 3)) {
--			err = -E2BIG;
-+	} else {
-+		if (strlen(ops->kind) > (IFNAMSIZ - 3))
- 			goto failed;
--		}
- 		strlcpy(name, ops->kind, IFNAMSIZ);
- 		strncat(name, "%d", 2);
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -723,8 +723,10 @@ static int sctp_v6_addr_to_user(struct s
+ 			sctp_v6_map_v4(addr);
  	}
+ 
+-	if (addr->sa.sa_family == AF_INET)
++	if (addr->sa.sa_family == AF_INET) {
++		memset(addr->v4.sin_zero, 0, sizeof(addr->v4.sin_zero));
+ 		return sizeof(struct sockaddr_in);
++	}
+ 	return sizeof(struct sockaddr_in6);
+ }
+ 
