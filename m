@@ -1,124 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752426AbeDKB1i (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 21:27:38 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:46698 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751624AbeDKB1h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 21:27:37 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Andy Lutomirski <luto@kernel.org>
-Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Date: Tue, 10 Apr 2018 20:26:21 -0500
-Message-ID: <87d0z6ttxe.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        id S1752598AbeDKBif convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 21:38:35 -0400
+Received: from mga04.intel.com ([192.55.52.120]:41088 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751946AbeDKBid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 21:38:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,434,1517904000";
+   d="scan'208";a="49783829"
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: "Liang, Cunming" <cunming.liang@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+CC: "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org"
+        <virtualization@lists.linux-foundation.org>,
+        "Wang, Xiao W" <xiao.w.wang@intel.com>,
+        "ddutile@redhat.com" <ddutile@redhat.com>,
+        "Tan, Jianfeng" <jianfeng.tan@intel.com>,
+        "Wang, Zhihong" <zhihong.wang@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: RE: [virtio-dev] Re: [RFC] vhost: introduce mdev based hardware
+        vhost backend
+Thread-Topic: [virtio-dev] Re: [RFC] vhost: introduce mdev based hardware
+        vhost backend
+Thread-Index: AQHT0NeTBfYf0Rz3+EK0/QyAUusgkaP6yMCg
+Date: Wed, 11 Apr 2018 01:38:29 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1910E3505@SHSMSX101.ccr.corp.intel.com>
+References: <20180402152330.4158-1-tiwei.bie@intel.com>
+        <622f4bd7-1249-5545-dc5a-5a92b64f5c26@redhat.com>
+        <20180410045723.rftsb7l4l3ip2ioi@debian>
+        <7ee31a12-a370-fc43-82a6-2235f598e970@redhat.com>
+        <D0158A423229094DA7ABF71CF2FA0DA34E9222F4@SHSMSX104.ccr.corp.intel.com>
+        <20180410163105-mutt-send-email-mst@kernel.org>
+ <D0158A423229094DA7ABF71CF2FA0DA34E9226AF@SHSMSX104.ccr.corp.intel.com>
+In-Reply-To: <D0158A423229094DA7ABF71CF2FA0DA34E9226AF@SHSMSX104.ccr.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTQ5OWYwMWUtMDUzMy00NDc2LTlhNDktMTIwZWVhYzZkMTBlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IkxIZ0JtUExaK282RG5tYmsrN3d4MDE2NVVOeVpwY3hNOXRZTFZYUVo0ZGM9In0=
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1f64Xv-0007w0-7I;;;mid=<87d0z6ttxe.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.140.30;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX185UVL1FyLwIesn2KX7xu4snBNssnS2/Uw=
-X-SA-Exim-Connect-IP: 97.119.140.30
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.5 XMGappySubj_01 Very gappy subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 BAYES_20 BODY: Bayes spam probability is 5 to 20%
-        *      [score: 0.1910]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.1 XMSolicitRefs_0 Weightloss drug
-        *  1.0 T_XMDrugObfuBody_08 obfuscated drug references
-X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Andy Lutomirski <luto@kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 175 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 2.6 (1.5%), b_tie_ro: 1.88 (1.1%), parse: 0.75 (0.4%),
-        extract_message_metadata: 2.8 (1.6%), get_uri_detail_list: 1.28 (0.7%),
-        tests_pri_-1000: 3.6 (2.0%), tests_pri_-950: 1.14 (0.7%), tests_pri_-900:
-        0.89 (0.5%), tests_pri_-400: 16 (9.1%), check_bayes: 15 (8.6%), b_tokenize: 5
-        (2.9%), b_tok_get_all: 4.9 (2.8%), b_comp_prob: 1.60 (0.9%), b_tok_touch_all:
-        1.82 (1.0%), b_finish: 0.58 (0.3%), tests_pri_0: 130 (74.6%),
-        check_dkim_signature: 0.53 (0.3%), check_dkim_adsp: 3.3 (1.9%),
-        tests_pri_500: 9 (5.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Q: Can we get rid of __copy_siginfo_to_user32?
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> From: Liang, Cunming
+> Sent: Tuesday, April 10, 2018 10:24 PM
+> 
+[...]
+> >
+> > As others said, we do not need to go overeboard. A couple of small
+> vendor-
+> > specific quirks in qemu isn't a big deal.
+> 
+> It's quite challenge to identify it's small or not, there's no uniform metric.
+> 
+> It's only dependent on QEMU itself, that's the obvious benefit. Tradeoff is
+> to build the entire device driver. We don't object to do that in QEMU, but
+> wanna make sure to understand the boundary size clearly.
+> 
 
-Andy,
+It might be helpful if you can post some sample code using proposed 
+framework - then people have a clear feeling about what size is talked 
+about here and whether it falls into the concept of 'small quirks'.
 
-I am looking at copy_siginfo_to_user32 and find it very unfortunate
-that x86 with _sigchld_x32 needs to be the odd man out.  I am looking
-at ways to simplify the special case.
-
-The core of the special case comes from:
-exit_to_usermode_loop
-  do_signal
-    handle_signal
-       setup_rt_frame
-
-
-In setup_rt_frame the code looks at ksig to see which kind of signal
-frame should be written for the signal.
-
-This leads to the one case in the kernel where copy_siginfo_to_user32
-does not use is_ia32_syscall() or is_x32_syscall() to see which kind of
-signal frame it needs to create.
-
-Andy, since you have been all over the entry point code in recent years
-do you know if we allow tasks that can do both ia32 and x86_64 system
-calls?  That seems to be what we the testing of ksig to see which kind
-of signal frame to setup is all about.
-
-If we don't allow mixed abi's on x86_64 then can I see if I have a ia32
-task in setup_rt_frame by just calling is_ia32_syscall()?
-
-If we do allow mixed abi's do you know if it would be safe to
-temporarily play with orig_ax or current_thread_info()->status?
-
-My goal is to write two wrappers: copy_siginfo_to_user32_ia32, and
-copy_siginfo_to_user32_x32 around the ordinary copy_siginfo_to_user32.
-With only a runtime test to see which ABI we need to implement.
-
-Aka change:
-> 	case SIL_CHLD:
-> 		to->si_pid    = from->si_pid;
-> 		to->si_uid    = from->si_uid;
-> 		to->si_status = from->si_status;
-> #ifdef CONFIG_X86_X32_ABI
-> 		if (x32_ABI) {
-> 			to->_sifields._sigchld_x32._utime = from->si_utime;
-> 			to->_sifields._sigchld_x32._stime = from->si_stime;
-> 		} else
-> #endif
-> 		{
-> 			to->si_utime = from->si_utime;
-> 			to->si_stime = from->si_stime;
-> 		}
-> 		break;
-to something like:                
-> 	case SIL_CHLD:
-> 		to->si_pid    = from->si_pid;
-> 		to->si_uid    = from->si_uid;
-> 		to->si_status = from->si_status;
-> #ifdef CONFIG_X86_X32_ABI
-> 		if (!is_ia32_syscall()) {
-> 			to->_sifields._sigchld_x32._utime = from->si_utime;
-> 			to->_sifields._sigchld_x32._stime = from->si_stime;
-> 		} else
-> #endif
-> 		{
-> 			to->si_utime = from->si_utime;
-> 			to->si_stime = from->si_stime;
-> 		}
-> 		break;
-
-I just don't understand the introdcacies of the ia32 and x32 emulation
-to really guess which test I need to substitute in there.  So any help
-or ideas would really be appreciated.
-
-Eric
+Thanks
+Kevin
