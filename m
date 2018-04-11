@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3303684-1523479158-2-4119675561893077950
+X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479143-2-6007480146338790373
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479158; b=RdO0tZxxSg7TAW6D472856yu/gi2JBgInzu4nv/uIoDWKyExDV
-    nBC58+90T3jY1Q2Sqn4C+07TDbmX0npbxmRPHRiJKGDME8348kzJ90KweOmr3fuV
-    zp4WgRJB+sailVxScofuqtTiidRJVqmIzDiO1Cx84Z6fseY30S8qd0M1pbDtAz1q
-    6+S3HXFxtv785O754sXSkysGjKm+gRnjiba7/2LdzS7HEpexWcIb6mtspCfB8rbJ
-    RdJtttgESqQ4SQWCOUU6PVi3BZKKxHZFC73spHLB44vP7Uw5S0ElDZF3lRuio49Y
-    EUldYbUNZAR+dYJO93Z/aACDoLVwgePlBLlw==
+    1523479143; b=aLTaKI4wyus0MaQZv4FGfa9q/YaFYSN20ejtpv6f1h4LVsdVR2
+    DS31JhoukgQKvi5vZwPCW5eU3Evb0KZMnqaoZ91COBPnU8pAsh7/q8O7V3em1jg0
+    eE3V5H+G93j6KLsPiCmc65uRxRmlOZrfHre98U+q9kzWDe0gNaF74ibuV8NyQShN
+    if9HXFxh5T4lzEgL0lQtAhGd3fqhLhYL9Ols2dBV8ezRBfsckBVmnlPcORQWcGQI
+    LxHysC3z8CGUDQr7J3ERTN4yQ5PEhkbdtM7qskrrckqARYutIb1B2AC+1sthvPZY
+    hcUHQph4O8NLLPOANQBz2dAEfcmvmjQoJCEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479158; bh=CAomIvU5PPRtewCdY8E8ieDVQ94ljr
-    YITWoXorMWJUc=; b=wsBjE94joPWM4SOD/qPqPJ+1S1AdNGhAsoRsjMjPjeBMQ2
-    os1AiAG+NIoJnk1UQVuxJv34NI4Fmh4c/GFyIN/uXWSI8YjI4Ps+rmFwq/dp09G5
-    BJ4CuhfJfhJ5mITF3mKxJVIHRkstcTBve9EYOIzDt3D9UJ+HPQLhzIVEMdSvEWHN
-    WYTOq/y311QXHCPxhYjb8oaxQ8QFTSTDWFCsOhg3zMdRO0rxFHK1jPvFA6+cra7A
-    wOB0v4pMmejN8p2Ts8htvjUr9bRXb3sBZImAQkRrEPDlZtJAbiS2ecpGmROY2EDd
-    o1otywB+ghoeac+CMk0+U/0iDnwH5gZrgTRipXOg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479143; bh=SuxCtDZbRNvcETP/OXAbQmlNMPs4Wc
+    0oZVQn/oQVP9E=; b=pYMxKbCwiF3enioqbtew1s+KCNs4WzLHkPI4UOMyzEVyrg
+    R02S/ZcbYgMcZ9UFtV0RbHrUeYseK0jD9vqmXAFuZ29o0qYLnYjnH/rsa4zEKRfG
+    SfsJWM5jiwThi6JGYYMzpHQ/G2Ko3LEBhRBWQ4wNeoaX5pFFQLcvGwpm0T6LnFH5
+    88cFh3oXJV7YenkJG4jpeZ6Ul03Juzfa8Cmt3eIqlVCjx8BcRWv60rp/ueVNwpHf
+    Enn8RePw96aSKdvmf5wFNeb/VBCLK5r6d57q4ex0xYLRGqn54FoXY/FI1yQwOw/H
+    UBLczyq5V1g0gMApXVUjrK3bkWCqfNvPsCK1Ldxw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,34 +51,31 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOJOb5BTRsJ4EkKJZ6TmYfd2D0lxUPI1gMpyceG2ab0/YiMWtMtmAfIHk1zc+BhaFG44kkDN7lkCmjpYCAC8DEKhiIT2016xWIYa9ck8g0QTd4uDf+tU
-    ZBDNBYMOS1rSttAUtOiRvpFkLLwdn3X5gI1W55P5bUYegTrY8tKaYEZfrk5Zb2aGtHZC58cYdtAVkEyp1S5DXxzZzVm+feNL1vqq+hXHbRS9VHo3C0e67IX6
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNL1W7xiESfAOIye3H4VNY9fZ3TOYgdAR1WoX4NOqKuFA098ErNdrq4LWacWNqwxF/p8fUs9ZGmU8IrD0axIvsYbBX7lzVXS4pDZh3wlbq5IVw/CXV5y
+    R4a8IPF8CzUYl86yUzsX+gvZJCwnhNP9LdLYOMCLpdD5CIMlWPmjLGUOorUMYn2kPsZyI0ZKxfJ51K0SOJmTh3T1vtWLqjFw8AE+5fJHNv01xP21SEyLcxFP
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=7CQSdrXTAAAA:8 a=IpJZQVW2AAAA:8 a=LpQP-O61AAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=xJcnGJnVB4EYvS3OOrEA:9 a=QEXdDO2ut3YA:10
-    a=a-qgeE7W1pNrGK8U0ZQC:22 a=IawgGOuG5U0WyFbmm1f5:22 a=pioyyrs4ZptJ924tMmac:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=LpQP-O61AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=jp4aXL4lJfE8QpMu4FcA:9
+    a=QEXdDO2ut3YA:10 a=pioyyrs4ZptJ924tMmac:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932382AbeDKSsL (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:48:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59578 "EHLO
+        id S932481AbeDKUip (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:38:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59588 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932379AbeDKSsJ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:48:09 -0400
+        with ESMTP id S932386AbeDKSsM (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:48:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
+        Bryan ODonoghue <pure.logic@nexus-software.ie>,
         Stephen Boyd <sboyd@codeaurora.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 107/190] clk: scpi: fix return type of __scpi_dvfs_round_rate
-Date: Wed, 11 Apr 2018 20:35:53 +0200
-Message-Id: <20180411183556.905327422@linuxfoundation.org>
+Subject: [PATCH 4.4 108/190] clk: Fix __set_clk_rates error print-string
+Date: Wed, 11 Apr 2018 20:35:54 +0200
+Message-Id: <20180411183556.983347971@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -96,46 +93,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sudeep Holla <sudeep.holla@arm.com>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
 
 
-[ Upstream commit 7374aec95636ca39409545eba4ef5ff3125c2346 ]
+[ Upstream commit ee177c5d6369f8e5d3e4793dce501cf4431313a1 ]
 
-The frequencies above the maximum value of signed integer(i.e. 2^31 -1)
-will overflow with the current code.
+When failing to set a clock the printout emitted is incorrect.
+"u32 rate" is formatted as %d and should be %u whereas "unsigned long
+clk_set_rate()" is formatted as %ld and should be %lu as per
+Documentation/printk-formats.txt.
 
-This patch fixes the return type of __scpi_dvfs_round_rate from 'int'
-to 'unsigned long'.
-
-Fixes: cd52c2a4b5c4 ("clk: add support for clocks provided by SCP(System Control Processor)")
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Fixes: 2885c3b2a3da ("clk: Show correct information when fail to set clock rate")
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
 Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/clk-scpi.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/clk-conf.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/clk-scpi.c
-+++ b/drivers/clk/clk-scpi.c
-@@ -71,15 +71,15 @@ static const struct clk_ops scpi_clk_ops
- };
+--- a/drivers/clk/clk-conf.c
++++ b/drivers/clk/clk-conf.c
+@@ -106,7 +106,7 @@ static int __set_clk_rates(struct device
  
- /* find closest match to given frequency in OPP table */
--static int __scpi_dvfs_round_rate(struct scpi_clk *clk, unsigned long rate)
-+static long __scpi_dvfs_round_rate(struct scpi_clk *clk, unsigned long rate)
- {
- 	int idx;
--	u32 fmin = 0, fmax = ~0, ftmp;
-+	unsigned long fmin = 0, fmax = ~0, ftmp;
- 	const struct scpi_opp *opp = clk->info->opps;
- 
- 	for (idx = 0; idx < clk->info->count; idx++, opp++) {
- 		ftmp = opp->freq;
--		if (ftmp >= (u32)rate) {
-+		if (ftmp >= rate) {
- 			if (ftmp <= fmax)
- 				fmax = ftmp;
- 			break;
+ 			rc = clk_set_rate(clk, rate);
+ 			if (rc < 0)
+-				pr_err("clk: couldn't set %s clk rate to %d (%d), current rate: %ld\n",
++				pr_err("clk: couldn't set %s clk rate to %u (%d), current rate: %lu\n",
+ 				       __clk_get_name(clk), rate, rc,
+ 				       clk_get_rate(clk));
+ 			clk_put(clk);
