@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3124918-1523473881-2-17015594681064001447
+X-Cyrus-Session-Id: sloti22d1t05-3124918-1523473810-2-18065499006647974162
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523473881; b=Z+iAyrpK0wmIwVfiS93IHj1ABMCKwSqUzkhVPl5kjatHRRt7Fu
-    xVXvdPgU7Uv6Rz5NVhZt9aIDHKRsX26gnS+Mk8plPPQSnhi+XLR2YU++g9fqVUjv
-    nzpSKEC6Pz4obRXZMXBx2G2w3ho6uOhDIaBZU+7hsWA+jDhzpx7XiEGhEF+SJ73T
-    Iae2tJFpubrkOLc4PemhxQdPLmkN0vCevLiq4LgXezeyD/p8BhKY7eVUTL4vXrva
-    GsZFR/1BZ2TmbQmvaA7CKAKxQ6bzd0KQiI8ZKUcOwhA4VOKjVb91tAS2ij+ogOsv
-    V8hIgAsLybf7kBel3YIgDJ6lJmjivSWz9X8A==
+    1523473809; b=jz4tCvBEEnPYL/JaI+yqfyQODj/pFTXKMxUnTzKHMa8KKYJt4k
+    vwrRAMGgh1ykEoQiwFCy3/q5MCJhw/p4WJ+6LJepUCv11ab1Gvh3dGbwYO413fCs
+    +ErrplthuryY1cfNBdGs80C83cn76xo6KzlTFdzBT4sm+vhTsoKHQo13DmyWTPWA
+    llfE3IbsW1fsrp182Fdw0TtZncSvk66A5evxP09yqvLAOL2Bv8abV5J1nYAiOpFN
+    eY0oWjXMn5h6Xdq+ztf797N3942Xt1RMJQUfLeNfqyJWfInir4BAxy8Y6d1xuLmI
+    U4RJipKy17gpXKVhGZrVH+lI0p9rgO91rfqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523473881; bh=1RXtb6ZQgju75o4EBzr+mc49op10ab
-    JFysDeWWVWLko=; b=copUJCVwdBsN9j64ItiWuRjCdzUTYMQeeh9JD64l/u/hVH
-    vbi0oJa7n9DTCqddTcUjhuGHAmWNtZCfMZIu4vqsMUEFKUbaBy+ba3H/WSAEqxks
-    q5FyfWevxefKyFBG8SZR6qix+xhhVx5oqnLTbFqmMGZbwK4g59OYKYLMhJsl8zOo
-    jm4trXAXVDf0qRSgq8UuOP+oDNAyN2+4SYjb9wiPlsu3OGRETcZbOXofRR1pW4R5
-    0iF+qnIrhxp1XMkFgutcmMNfDq/5j/VXYrEbxc+0jHEHoHzx3XimA0YzXZiCc2Fy
-    nyh4nlAuawsQthAn6q/eWtobTuW+oJq4U6NzPg/A==
+    :list-id; s=fm2; t=1523473809; bh=AYk/lyYjItmqq1d87gRMCLB2Fmmvql
+    J7/tt9wnkUu0M=; b=o6dQ0yrN9ODpazrhVOxJmg+18rKpOpI9BQzRfrfYGF90QX
+    Dag7G3DDdLTBkg04+KSCw2qUmqoagXoVxRdCm4jYeRaGPWKejpb0aryxTeKa/aUL
+    kQNJfifWUGZGh5DBKJJHnmgcanha2KJW5xdKm6T6BMtSwuK8LKhtgL/sQmwZh51g
+    EbNAb/w1zHa3T57GjjhqRZuARMxsDFStxM3VAGG9gY//czl9nMa3AN13tIfR7JzM
+    ScM4zYNhRyZz5OEFUPM0i9HSpvdaDnTENPBhQ5W7JOo0+ophjM5a0lGcr9JUVb8F
+    //OrtcgHh2666ej4YjmWp5ytzaf5fvrOnNFlqLOw==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,34 +51,32 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLtaLlta4ppPPcwva/MOqDgNK/qX9IKctZBRzYEjQzsOf+mm02Wx3TZkGxUUGPnp1s4VT+rwPUn2Fd+/K6gSi1zj5q4aQ/F/XNUc1/O0JgHw6C5ek2E/
-    leBbxA6Anh3oTZ7Ww59uUiC8HYvc81mVGV6aONuRlkTt5p1WvhOcxIsg9HCNryWk6h2Xl8dLAZ1ZADKZhIcDfaWVHZSOeDhu0b3HqTKz0myLgb0FyYo214iH
+X-CM-Envelope: MS4wfGEeVWdAG684O9FmceOajymMEVIRx7P0x/ub2MvBZx77ImfX6xg+k5mY4gSiJEQHjyzb4oimWXCt+oPjKsloXggevBRp8MV/FqhHreVTIN5oRwiLLqWH
+    hVPTLxHUVvYKGde+qcd01qlBS7iOLHDPBTGd263fmW8z3bC56U6NYCe0g1o1pFiTBFpDHsmm1VI1PiHdEEt99z+Phpjjtlsmb/K9y8MrlDsueKoLeM8WcmI2
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=hSkVLCK3AAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=BfUTh4rD5ENHjmf4174A:9 a=i1_wZxKdJhItxwgI:21 a=6VQx6ZM_NQrM1O5F:21
-    a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8 a=CDq0vqnqAAAA:8 a=J1Y8HTJGAAAA:8
+    a=ag1SF4gXAAAA:8 a=dG3OLzM3V4zPhyV1mVEA:9 a=QEXdDO2ut3YA:10
+    a=Xn7iXEen_xUG9zZOO_Hb:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752970AbeDKTKN (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 15:10:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40836 "EHLO
+        id S935250AbeDKTGi (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 15:06:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40846 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935232AbeDKTGb (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:06:31 -0400
+        with ESMTP id S935193AbeDKTGd (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:06:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com,
-        Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        David Ahern <dsa@cumulusnetworks.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 303/310] vhost: validate log when IOTLB is enabled
-Date: Wed, 11 Apr 2018 20:37:22 +0200
-Message-Id: <20180411183635.587286856@linuxfoundation.org>
+Subject: [PATCH 4.9 304/310] route: check sysctl_fib_multipath_use_neigh earlier than hash
+Date: Wed, 11 Apr 2018 20:37:23 +0200
+Message-Id: <20180411183635.624189163@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -96,46 +94,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Xin Long <lucien.xin@gmail.com>
 
 
-[ Upstream commit d65026c6c62e7d9616c8ceb5a53b68bcdc050525 ]
+[ Upstream commit 6174a30df1b902e1fedbd728f5343937e83e64e6 ]
 
-Vq log_base is the userspace address of bitmap which has nothing to do
-with IOTLB. So it needs to be validated unconditionally otherwise we
-may try use 0 as log_base which may lead to pin pages that will lead
-unexpected result (e.g trigger BUG_ON() in set_bit_to_user()).
+Prior to this patch, when one packet is hashed into path [1]
+(hash <= nh_upper_bound) and it's neigh is dead, it will try
+path [2]. However, if path [2]'s neigh is alive but it's
+hash > nh_upper_bound, it will not return this alive path.
+This packet will never be sent even if path [2] is alive.
 
-Fixes: 6b1e6cc7855b0 ("vhost: new device IOTLB API")
-Reported-by: syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+ 3.3.3.1/24:
+  nexthop via 1.1.1.254 dev eth1 weight 1 <--[1] (dead neigh)
+  nexthop via 2.2.2.254 dev eth2 weight 1 <--[2]
+
+With sysctl_fib_multipath_use_neigh set is supposed to find an
+available path respecting to the l3/l4 hash. But if there is
+no available route with this hash, it should at least return
+an alive route even with other hash.
+
+This patch is to fix it by processing fib_multipath_use_neigh
+earlier than the hash check, so that it will at least return
+an alive route if there is when fib_multipath_use_neigh is
+enabled. It's also compatible with before when there are alive
+routes with the l3/l4 hash.
+
+Fixes: a6db4494d218 ("net: ipv4: Consider failed nexthops in multipath routes")
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: David Ahern <dsa@cumulusnetworks.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/vhost.c |   14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ net/ipv4/fib_semantics.c |   20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1175,14 +1175,12 @@ static int vq_log_access_ok(struct vhost
- /* Caller should have vq mutex and device mutex */
- int vhost_vq_access_ok(struct vhost_virtqueue *vq)
- {
--	if (vq->iotlb) {
--		/* When device IOTLB was used, the access validation
--		 * will be validated during prefetching.
--		 */
--		return 1;
--	}
--	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used) &&
--		vq_log_access_ok(vq, vq->log_base);
-+	int ret = vq_log_access_ok(vq, vq->log_base);
-+
-+	if (ret || vq->iotlb)
-+		return ret;
-+
-+	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used);
- }
- EXPORT_SYMBOL_GPL(vhost_vq_access_ok);
+--- a/net/ipv4/fib_semantics.c
++++ b/net/ipv4/fib_semantics.c
+@@ -1611,18 +1611,20 @@ void fib_select_multipath(struct fib_res
+ 	bool first = false;
  
+ 	for_nexthops(fi) {
++		if (net->ipv4.sysctl_fib_multipath_use_neigh) {
++			if (!fib_good_nh(nh))
++				continue;
++			if (!first) {
++				res->nh_sel = nhsel;
++				first = true;
++			}
++		}
++
+ 		if (hash > atomic_read(&nh->nh_upper_bound))
+ 			continue;
+ 
+-		if (!net->ipv4.sysctl_fib_multipath_use_neigh ||
+-		    fib_good_nh(nh)) {
+-			res->nh_sel = nhsel;
+-			return;
+-		}
+-		if (!first) {
+-			res->nh_sel = nhsel;
+-			first = true;
+-		}
++		res->nh_sel = nhsel;
++		return;
+ 	} endfor_nexthops(fi);
+ }
+ #endif
