@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753372AbeDKMzw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 08:55:52 -0400
-Received: from mail-qt0-f202.google.com ([209.85.216.202]:46370 "EHLO
-        mail-qt0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753268AbeDKMzp (ORCPT
+        id S1753409AbeDKMz7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 08:55:59 -0400
+Received: from mail-qk0-f202.google.com ([209.85.220.202]:56010 "EHLO
+        mail-qk0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753384AbeDKMzy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 08:55:45 -0400
-X-Google-Smtp-Source: AIpwx48sFtIdNnohqRcQZSIteiPo4t1b/CUgLYr6cvw9sy8pxq5jIzudrZiQzAYohvIplhw92BXbgIunAA==
+        Wed, 11 Apr 2018 08:55:54 -0400
+X-Google-Smtp-Source: AIpwx49bKEXVSLWbFvZhOplXUrQSbPtSvdwXtjdqrX0dKuw0QPcBdv2fB1jQuH3zmfvCvjtFpT1pBEaPgQ==
 MIME-Version: 1.0
-Date: Wed, 11 Apr 2018 14:54:59 +0200
+Date: Wed, 11 Apr 2018 14:55:01 +0200
 In-Reply-To: <20180411125501.188477-1-tweek@google.com>
-Message-Id: <20180411125501.188477-2-tweek@google.com>
+Message-Id: <20180411125501.188477-4-tweek@google.com>
 References: <20180411125501.188477-1-tweek@google.com>
 X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
-Subject: [PATCH 1/3] tpm: Move eventlog files to a subdirectory
+Subject: [PATCH 3/3] tpm: Move eventlog declarations to its own header
 From: Thiebaud Weksteen <tweek@google.com>
 To: jarkko.sakkinen@linux.intel.com, nayna@linux.vnet.ibm.com,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -26,121 +26,135 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Reduce the size of tpm.h by moving eventlog declarations to a separate
+header.
 
 Signed-off-by: Thiebaud Weksteen <tweek@google.com>
 ---
- drivers/char/tpm/Makefile                                 | 8 ++++----
- drivers/char/tpm/{tpm_eventlog_acpi.c => eventlog/acpi.c} | 2 +-
- drivers/char/tpm/{tpm_eventlog_efi.c => eventlog/efi.c}   | 2 +-
- drivers/char/tpm/{tpm_eventlog_of.c => eventlog/of.c}     | 2 +-
- drivers/char/tpm/{tpm1_eventlog.c => eventlog/tpm1.c}     | 2 +-
- drivers/char/tpm/{tpm2_eventlog.c => eventlog/tpm2.c}     | 2 +-
- 6 files changed, 9 insertions(+), 9 deletions(-)
- rename drivers/char/tpm/{tpm_eventlog_acpi.c => eventlog/acpi.c} (99%)
- rename drivers/char/tpm/{tpm_eventlog_efi.c => eventlog/efi.c} (98%)
- rename drivers/char/tpm/{tpm_eventlog_of.c => eventlog/of.c} (99%)
- rename drivers/char/tpm/{tpm1_eventlog.c => eventlog/tpm1.c} (99%)
- rename drivers/char/tpm/{tpm2_eventlog.c => eventlog/tpm2.c} (99%)
+ drivers/char/tpm/eventlog/common.c |  1 +
+ drivers/char/tpm/eventlog/common.h | 35 ++++++++++++++++++++++++++++++
+ drivers/char/tpm/eventlog/tpm1.c   |  1 +
+ drivers/char/tpm/eventlog/tpm2.c   |  1 +
+ drivers/char/tpm/tpm.h             | 29 -------------------------
+ 5 files changed, 38 insertions(+), 29 deletions(-)
+ create mode 100644 drivers/char/tpm/eventlog/common.h
 
-diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-index acd758381c58..5dcf5bd35a3d 100644
---- a/drivers/char/tpm/Makefile
-+++ b/drivers/char/tpm/Makefile
-@@ -4,11 +4,11 @@
- #
- obj-$(CONFIG_TCG_TPM) += tpm.o
- tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
--	 tpm-dev-common.o tpmrm-dev.o tpm1_eventlog.o tpm2_eventlog.o \
-+	 tpm-dev-common.o tpmrm-dev.o eventlog/tpm1.o eventlog/tpm2.o \
-          tpm2-space.o
--tpm-$(CONFIG_ACPI) += tpm_ppi.o tpm_eventlog_acpi.o
--tpm-$(CONFIG_EFI) += tpm_eventlog_efi.o
--tpm-$(CONFIG_OF) += tpm_eventlog_of.o
-+tpm-$(CONFIG_ACPI) += tpm_ppi.o eventlog/acpi.o
-+tpm-$(CONFIG_EFI) += eventlog/efi.o
-+tpm-$(CONFIG_OF) += eventlog/of.o
- obj-$(CONFIG_TCG_TIS_CORE) += tpm_tis_core.o
- obj-$(CONFIG_TCG_TIS) += tpm_tis.o
- obj-$(CONFIG_TCG_TIS_SPI) += tpm_tis_spi.o
-diff --git a/drivers/char/tpm/tpm_eventlog_acpi.c b/drivers/char/tpm/eventlog/acpi.c
-similarity index 99%
-rename from drivers/char/tpm/tpm_eventlog_acpi.c
-rename to drivers/char/tpm/eventlog/acpi.c
-index 66f19e93c216..8476be2e9526 100644
---- a/drivers/char/tpm/tpm_eventlog_acpi.c
-+++ b/drivers/char/tpm/eventlog/acpi.c
-@@ -27,7 +27,7 @@
- #include <linux/acpi.h>
+diff --git a/drivers/char/tpm/eventlog/common.c b/drivers/char/tpm/eventlog/common.c
+index 54934b5a1566..9ecf8436983c 100644
+--- a/drivers/char/tpm/eventlog/common.c
++++ b/drivers/char/tpm/eventlog/common.c
+@@ -25,6 +25,7 @@
  #include <linux/tpm_eventlog.h>
  
--#include "tpm.h"
+ #include "../tpm.h"
++#include "common.h"
+ 
+ 
+ static int tpm_bios_measurements_open(struct inode *inode,
+diff --git a/drivers/char/tpm/eventlog/common.h b/drivers/char/tpm/eventlog/common.h
+new file mode 100644
+index 000000000000..47ff8136ceb5
+--- /dev/null
++++ b/drivers/char/tpm/eventlog/common.h
+@@ -0,0 +1,35 @@
++#ifndef __TPM_EVENTLOG_COMMON_H__
++#define __TPM_EVENTLOG_COMMON_H__
++
 +#include "../tpm.h"
- 
- struct acpi_tcpa {
- 	struct acpi_table_header hdr;
-diff --git a/drivers/char/tpm/tpm_eventlog_efi.c b/drivers/char/tpm/eventlog/efi.c
-similarity index 98%
-rename from drivers/char/tpm/tpm_eventlog_efi.c
-rename to drivers/char/tpm/eventlog/efi.c
-index e3f9ffd341d2..e1593c5271a4 100644
---- a/drivers/char/tpm/tpm_eventlog_efi.c
-+++ b/drivers/char/tpm/eventlog/efi.c
-@@ -14,7 +14,7 @@
- #include <linux/efi.h>
- #include <linux/tpm_eventlog.h>
- 
--#include "tpm.h"
-+#include "../tpm.h"
- 
- /* read binary bios log from EFI configuration table */
- int tpm_read_log_efi(struct tpm_chip *chip)
-diff --git a/drivers/char/tpm/tpm_eventlog_of.c b/drivers/char/tpm/eventlog/of.c
-similarity index 99%
-rename from drivers/char/tpm/tpm_eventlog_of.c
-rename to drivers/char/tpm/eventlog/of.c
-index 96fd5646f866..c38c37e41389 100644
---- a/drivers/char/tpm/tpm_eventlog_of.c
-+++ b/drivers/char/tpm/eventlog/of.c
-@@ -19,7 +19,7 @@
- #include <linux/of.h>
- #include <linux/tpm_eventlog.h>
- 
--#include "tpm.h"
-+#include "../tpm.h"
- 
- int tpm_read_log_of(struct tpm_chip *chip)
- {
-diff --git a/drivers/char/tpm/tpm1_eventlog.c b/drivers/char/tpm/eventlog/tpm1.c
-similarity index 99%
-rename from drivers/char/tpm/tpm1_eventlog.c
-rename to drivers/char/tpm/eventlog/tpm1.c
-index add798bd69d0..d6aea3ca950e 100644
---- a/drivers/char/tpm/tpm1_eventlog.c
++
++extern const struct seq_operations tpm1_ascii_b_measurements_seqops;
++extern const struct seq_operations tpm1_binary_b_measurements_seqops;
++extern const struct seq_operations tpm2_binary_b_measurements_seqops;
++
++#if defined(CONFIG_ACPI)
++int tpm_read_log_acpi(struct tpm_chip *chip);
++#else
++static inline int tpm_read_log_acpi(struct tpm_chip *chip)
++{
++	return -ENODEV;
++}
++#endif
++#if defined(CONFIG_OF)
++int tpm_read_log_of(struct tpm_chip *chip);
++#else
++static inline int tpm_read_log_of(struct tpm_chip *chip)
++{
++	return -ENODEV;
++}
++#endif
++#if defined(CONFIG_EFI)
++int tpm_read_log_efi(struct tpm_chip *chip);
++#else
++static inline int tpm_read_log_efi(struct tpm_chip *chip)
++{
++	return -ENODEV;
++}
++#endif
++
++#endif
+diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
+index 8f30316e9bb6..58c84784ba25 100644
+--- a/drivers/char/tpm/eventlog/tpm1.c
 +++ b/drivers/char/tpm/eventlog/tpm1.c
-@@ -28,7 +28,7 @@
- #include <linux/slab.h>
+@@ -29,6 +29,7 @@
  #include <linux/tpm_eventlog.h>
  
--#include "tpm.h"
-+#include "../tpm.h"
+ #include "../tpm.h"
++#include "common.h"
  
  
  static const char* tcpa_event_type_strings[] = {
-diff --git a/drivers/char/tpm/tpm2_eventlog.c b/drivers/char/tpm/eventlog/tpm2.c
-similarity index 99%
-rename from drivers/char/tpm/tpm2_eventlog.c
-rename to drivers/char/tpm/eventlog/tpm2.c
-index 1ce4411292ba..f0723fa9ae14 100644
---- a/drivers/char/tpm/tpm2_eventlog.c
+diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
+index f0723fa9ae14..1b8fa9de2cac 100644
+--- a/drivers/char/tpm/eventlog/tpm2.c
 +++ b/drivers/char/tpm/eventlog/tpm2.c
-@@ -23,7 +23,7 @@
- #include <linux/slab.h>
+@@ -24,6 +24,7 @@
  #include <linux/tpm_eventlog.h>
  
--#include "tpm.h"
-+#include "../tpm.h"
+ #include "../tpm.h"
++#include "common.h"
  
  /*
   * calc_tpm2_event_size() - calculate the event size, where event
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index a583c5001904..067f305e36f0 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -580,35 +580,6 @@ int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
+ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+ 		      u32 cc, u8 *buf, size_t *bufsiz);
+ 
+-extern const struct seq_operations tpm1_ascii_b_measurements_seqops;
+-extern const struct seq_operations tpm1_binary_b_measurements_seqops;
+-extern const struct seq_operations tpm2_binary_b_measurements_seqops;
+-
+-#if defined(CONFIG_ACPI)
+-int tpm_read_log_acpi(struct tpm_chip *chip);
+-#else
+-static inline int tpm_read_log_acpi(struct tpm_chip *chip)
+-{
+-	return -ENODEV;
+-}
+-#endif
+-#if defined(CONFIG_OF)
+-int tpm_read_log_of(struct tpm_chip *chip);
+-#else
+-static inline int tpm_read_log_of(struct tpm_chip *chip)
+-{
+-	return -ENODEV;
+-}
+-#endif
+-#if defined(CONFIG_EFI)
+-int tpm_read_log_efi(struct tpm_chip *chip);
+-#else
+-static inline int tpm_read_log_efi(struct tpm_chip *chip)
+-{
+-	return -ENODEV;
+-}
+-#endif
+-
+ int tpm_bios_log_setup(struct tpm_chip *chip);
+ void tpm_bios_log_teardown(struct tpm_chip *chip);
+ #endif
 -- 
 2.17.0.484.g0c8726318c-goog
