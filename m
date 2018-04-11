@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+yAmnhjpJeGfCqSTXo+xGpLqGDXDVsxkuY0M8Q+oNRZOYOq6SxsAMtKUfk0ze35dkcPlAA
-ARC-Seal: i=1; a=rsa-sha256; t=1523473297; cv=none;
+X-Google-Smtp-Source: AIpwx4/n9ML9nlh1Nq9nKY1CTQ5rWUnglWA/RXkdPFSyFejq0sCmkVtxnlzG7NEZLL37QQ3OzcDz
+ARC-Seal: i=1; a=rsa-sha256; t=1523473291; cv=none;
         d=google.com; s=arc-20160816;
-        b=RXaekxBtJ9R7vR0sIS50p+90v8BBjwc05iXKCe16CgH0TVcs5LhUGz6kLMfKf1KF3I
-         Dajkc6h6VEB0jWedAgMno67hpP0WnjXoRvqLHthYsMIx0rtLxu2Fi5FzKnh3WglUNK6K
-         s8G7kCPTfO01IQh+2YUmgd3ijGT838ccTKh8Vez87PzgH3NmHx+koPFG/lmBZDg+FcMC
-         CUPVnEzDNTPZ7/DAkbDnaxHonbdFEGTx2+gR6vcKqoB9Lo9PPEq/+p2Dfo58EM2UlH0/
-         U7/RmqAdNvTHwSJxQwDL77qCP9RftpF4dr38D2v55fTYrjnOngzZU1pBXsrJ/Ek1OMk5
-         Pcog==
+        b=QoNiXmM1G3x/jzoODlANOya6mjNWsAWLpaNjLcplL5VttaMWdjS4AK1wlvixWG0ryF
+         mF5wMTdLZdfynZ4DsGw9B+P0qUUPfFzB37EZIpMbgoBvu8VPVgFIeaR0/5hvqihTRvNO
+         VUtw3Vb985g8/1aQK4oV7O4SQIzZi41BH2Kw3qhkXa8YUlbi0qFVXz0+frrbJonPLrdn
+         JtvilCqcU2QbNi3p04H8LI7OfuxkTXWNMuiqcjYpoDn4VPLXgfvkfcT4Vsay00CRxUu7
+         NitPHndBa1733qn5k7ru0WiNV8OxfIh2kGBKZZ0Y25eERfOuLUVsbWRk1voeqJcdyAVX
+         D7aA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=nYBjX1fMXAk9Q/vcGMCXCR8Asu5DDYxVL6u/9yB1DSc=;
-        b=kolIinzOBkTFldb4aXUr19h862YCyZu0y4nb4lb9nN57wpbJtyeCv+zfFQfmKWlBWZ
-         qioNAeQbB/iQjxaYkSjK7ArzkN8kXQVrZgPIpj4oEUFfGpnjFFPsCGK98CjthaPXLH6k
-         BGXqYj+oYFyTjSDZjJO+q1SCLFFygw69zIzhMr9ibWeu9800xCvrs9JPBjEy86F8KXTJ
-         XLVgjhLBoLfPpJ2/gUk0V+RBaC3i0iMn8NVcZRuRNLWz/bgN1rGcK/jJyUthsj1tJNdZ
-         V/2ojouFpDNatdcqiMQQuCEJJugFtE6pJW0qS9Y2f4mDk5H+DtTPkho1b1dOep9u9J2B
-         LYWA==
+        bh=Scd9uQKFulhAs/gGBdgX78dwFuZWOfC7yqUG3fvpAg4=;
+        b=QvX1XURHfPDVzWosskNjrVAFdZhfjuC0zpCm/OIRm1uzeVodCcXX81Ccr2od110FA4
+         GuUPDZvUSgt+40fFV1gzT6Ff5sUcCJFrQY5MqooVANv/WiN/YJAzfDGAvcv27wfXFB/I
+         EH09qOl8y1jyl4ld/5aa6MKcKAbtksTp5862v3Qx73Hd5Lhg3eq6kDB8QZ7JA7n+5zax
+         6aWRx+W2StqYSuEkPv9Op0SGq8EnfwNzP1rL+MTkJ8awFc4nc0fdYzqEOmiLVk+jBgpT
+         bK6KMetCZT4dnlmTcdgpzVPIj4NV4OAFLJVlvWfeJP9QHZcCLb/aWmjOa1mdRf4j3Bs+
+         6iUw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Milian Wolff <milian.wolff@kdab.com>,
-	Jiri Olsa <jolsa@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Ido Shamay <idos@mellanox.com>,
+	Jack Morgenstein <jackm@dev.mellanox.co.il>,
+	Tariq Toukan <tariqt@mellanox.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 196/310] perf report: Ensure the perf DSO mapping matches what libdw sees
-Date: Wed, 11 Apr 2018 20:35:35 +0200
-Message-Id: <20180411183631.020338130@linuxfoundation.org>
+Subject: [PATCH 4.9 194/310] net/mlx4: Check if Granular QoS per VF has been enabled before updating QP qos_vport
+Date: Wed, 11 Apr 2018 20:35:33 +0200
+Message-Id: <20180411183630.941781064@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476232291576091?=
-X-GMAIL-MSGID: =?utf-8?q?1597477536094114154?=
+X-GMAIL-THRID: =?utf-8?q?1597476734645931468?=
+X-GMAIL-MSGID: =?utf-8?q?1597477530092492740?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,66 +52,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Milian Wolff <milian.wolff@kdab.com>
+From: Ido Shamay <idos@mellanox.com>
 
 
-[ Upstream commit 2538b9e2450ae255337c04356e9e0f8cb9ec48d9 ]
+[ Upstream commit 269f9883fe254d109afdfc657875c456d6fabb08 ]
 
-In some situations the libdw unwinder stopped working properly.  I.e.
-with libunwind we see:
+The Granular QoS per VF feature must be enabled in FW before it can be
+used.
 
-~~~~~
-heaptrack_gui  2228 135073.400112:     641314 cycles:
-	            e8ed _dl_fixup (/usr/lib/ld-2.25.so)
-	           15f06 _dl_runtime_resolve_sse_vex (/usr/lib/ld-2.25.so)
-	           ed94c KDynamicJobTracker::KDynamicJobTracker (/home/milian/projects/compiled/kf5/lib64/libKF5KIOWidgets.so.5.35.0)
-	           608f3 _GLOBAL__sub_I_kdynamicjobtracker.cpp (/home/milian/projects/compiled/kf5/lib64/libKF5KIOWidgets.so.5.35.0)
-	            f199 call_init.part.0 (/usr/lib/ld-2.25.so)
-	            f2a5 _dl_init (/usr/lib/ld-2.25.so)
-	             db9 _dl_start_user (/usr/lib/ld-2.25.so)
-~~~~~
+Thus, the driver cannot modify a QP's qos_vport value (via the UPDATE_QP FW
+command) if the feature has not been enabled -- the FW returns an error if
+this is attempted.
 
-But with libdw and without this patch this sample is not properly
-unwound:
-
-~~~~~
-heaptrack_gui  2228 135073.400112:     641314 cycles:
-	            e8ed _dl_fixup (/usr/lib/ld-2.25.so)
-	           15f06 _dl_runtime_resolve_sse_vex (/usr/lib/ld-2.25.so)
-	           ed94c KDynamicJobTracker::KDynamicJobTracker (/home/milian/projects/compiled/kf5/lib64/libKF5KIOWidgets.so.5.35.0)
-~~~~~
-
-Debug output showed me that libdw found a module for the last frame
-address, but it thinks it belongs to /usr/lib/ld-2.25.so. This patch
-double-checks what libdw sees and what perf knows. If the mappings
-mismatch, we now report the elf known to perf. This fixes the situation
-above, and the libdw unwinder produces the same stack as libunwind.
-
-Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lkml.kernel.org/r/20170602143753.16907-1-milian.wolff@kdab.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 08068cd5683f ("net/mlx4: Added qos_vport QP configuration in VST mode")
+Signed-off-by: Ido Shamay <idos@mellanox.com>
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/unwind-libdw.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/ethernet/mellanox/mlx4/qp.c               |    6 ++++++
+ drivers/net/ethernet/mellanox/mlx4/resource_tracker.c |   16 +++++++++++-----
+ 2 files changed, 17 insertions(+), 5 deletions(-)
 
---- a/tools/perf/util/unwind-libdw.c
-+++ b/tools/perf/util/unwind-libdw.c
-@@ -38,6 +38,14 @@ static int __report_module(struct addr_l
- 		return 0;
+--- a/drivers/net/ethernet/mellanox/mlx4/qp.c
++++ b/drivers/net/ethernet/mellanox/mlx4/qp.c
+@@ -487,6 +487,12 @@ int mlx4_update_qp(struct mlx4_dev *dev,
+ 	}
  
- 	mod = dwfl_addrmodule(ui->dwfl, ip);
-+	if (mod) {
-+		Dwarf_Addr s;
+ 	if (attr & MLX4_UPDATE_QP_QOS_VPORT) {
++		if (!(dev->caps.flags2 & MLX4_DEV_CAP_FLAG2_QOS_VPP)) {
++			mlx4_warn(dev, "Granular QoS per VF is not enabled\n");
++			err = -EOPNOTSUPP;
++			goto out;
++		}
 +
-+		dwfl_module_info(mod, NULL, &s, NULL, NULL, NULL, NULL, NULL);
-+		if (s != al->map->start)
-+			mod = 0;
-+	}
+ 		qp_mask |= 1ULL << MLX4_UPD_QP_MASK_QOS_VPP;
+ 		cmd->qp_context.qos_vport = params->qos_vport;
+ 	}
+--- a/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
++++ b/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
+@@ -5214,6 +5214,13 @@ void mlx4_delete_all_resources_for_slave
+ 	mutex_unlock(&priv->mfunc.master.res_tracker.slave_list[slave].mutex);
+ }
+ 
++static void update_qos_vpp(struct mlx4_update_qp_context *ctx,
++			   struct mlx4_vf_immed_vlan_work *work)
++{
++	ctx->qp_mask |= cpu_to_be64(1ULL << MLX4_UPD_QP_MASK_QOS_VPP);
++	ctx->qp_context.qos_vport = work->qos_vport;
++}
 +
- 	if (!mod)
- 		mod = dwfl_report_elf(ui->dwfl, dso->short_name,
- 				      dso->long_name, -1, al->map->start,
+ void mlx4_vf_immed_vlan_work_handler(struct work_struct *_work)
+ {
+ 	struct mlx4_vf_immed_vlan_work *work =
+@@ -5328,11 +5335,10 @@ void mlx4_vf_immed_vlan_work_handler(str
+ 					qp->sched_queue & 0xC7;
+ 				upd_context->qp_context.pri_path.sched_queue |=
+ 					((work->qos & 0x7) << 3);
+-				upd_context->qp_mask |=
+-					cpu_to_be64(1ULL <<
+-						    MLX4_UPD_QP_MASK_QOS_VPP);
+-				upd_context->qp_context.qos_vport =
+-					work->qos_vport;
++
++				if (dev->caps.flags2 &
++				    MLX4_DEV_CAP_FLAG2_QOS_VPP)
++					update_qos_vpp(upd_context, work);
+ 			}
+ 
+ 			err = mlx4_cmd(dev, mailbox->dma,
