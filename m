@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48D+iYbzKaVzEWtSdW2afKZ4sJJPQu60FZsa9F38FrOjJOVd0znVsVTVaEs1WTUXAN5prtK
-ARC-Seal: i=1; a=rsa-sha256; t=1523472154; cv=none;
+X-Google-Smtp-Source: AIpwx49iLl1Cbzy7gUCeQeNXUWEbSj0YoRD6dQM5a0ieL7XwZpdYZbD8LV0L++nGzfF0/RCSFNNs
+ARC-Seal: i=1; a=rsa-sha256; t=1523472151; cv=none;
         d=google.com; s=arc-20160816;
-        b=EiAyaMS9Wwkpj3xIpPHfygZMnp2w1mUzggfhwZxcZCZNK+XESi75w6+4pK6Moh/PoN
-         dR3Un1LJHu8si2YUjKxKsAzNwidhAdDCtpWD3K364VDWJgRNoWAG5Ydi9a42L/iNiIx+
-         MiumA4jW2LPOJpPt0RSikbnwchjv4C/hNK8dzrK8k3eK+j7jX2KVS/OJuPw26NqxLG+5
-         1L3nvIPNrYaHTN+lKhwcuJjjDK/FUjCkkgLoaEOLGRBNk29mkgLNd5gW2dsKTINqv7dR
-         JlsIUEh8ZMqPnh0zM9UN64t3hkNzmd5q0ul55NmZ0ehixrw5CTd3xwyielXgyGYOFaJZ
-         X5+g==
+        b=tjOBufLk6lGNDOHqjTajBCiCaPK6K9Um7bJSnJ4oWjTrjqkCCyP7wYqCmmcamtlC+8
+         iBjngRqfCno25pA1Ig8rn6srjoJ8lTO66H76cAnCmgfytRBhVfDohY9L7dZ0JIBTDIvs
+         crPjji2uV0uSYH6QPtH7L3FSMZosNG8lN21JZ2X4Gq2wRjMpWpWfQMcKIuue5MEBsFvp
+         pl4nsw1SEnMZCBpFKEm1PcVE+1GjDPsSmZ/GVqPklb/3f/W6YWRW9LFQ7amv7bcQwS/0
+         Hex6zJJzORk6S/hH3rnQ9r6J9XkVrA+35DCFbNBZy+IYUmbCzeHnDNRkMmLzXYRxttJN
+         tKBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7Kq2C7rC+LZpejabNVNsmgzVu/GrRWu4yCIz0UQx3yI=;
-        b=LrV73k+cOywepM7U7proHY8x96ctuSz+/+SOop+KcYhM1xcg1YgWs8OZjX11B/gbqT
-         MB1zVAyHre54zlHV2StMqdD9dv2ID2DzRMeU7r2Qk9qyUlLo1BSkcuvxfasobtfSk0yt
-         oqJq7L1IM2BxhEyisd8P3S9V9i6mCHUBqC7JPUTWgbkVpw4F2F5V8c6DZSIOgVMAKQpE
-         sWSHyoFYjKuydQFX4R+RQKsv5ZXuYE1/Tz3brPXhhTprMP7MOWQGrX9xhcLzxzKWvvdJ
-         Tgt854cL6RK1krFU0A63ldZnGht6j4rA6x28MgEm5uoukRGMIkuLW9rb+Gj3GXIvSdHg
-         6BSQ==
+        bh=cj9aDsAKVpZ1lxEwMZ6VsiiQLZZDSYndbEYbXyLYu5A=;
+        b=rPTTFqaHImGD+zIq4YCP3pS8FNblsoR6bsu2biZTac2ENQ1QMtftHS4wb3PHP52TVr
+         fBnQW2HNekSTIVSh+Hp4Qmd2CQkhNepHyLl1ZHcSoM0/9C9EltJQpdCbQnIFFzBqKFQg
+         OUAUZ5IwqYXI+IoQ8poeNczAsEMXs4krWZM657Mqa9bBZq2ynCEess/gedGXnAgiJDVz
+         4+6QBqscPs4MTlQDpSANdNAZ+JLUGYTOoFPTznnREnxIDxj+ZqnEb+CB5Vncv4nSyW8L
+         r9buq8eLyhKS0n/gYuv3nC7U6pSuBZUAuEIjUUuLcW1bGNN9ZuHafaxdCCsWUFUrsgTQ
+         ws6w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,13 +27,10 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Eric Dumazet <edumazet@google.com>,
-	Vlad Yasevich <vyasevich@gmail.com>,
-	Neil Horman <nhorman@tuxdriver.com>,
-	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 106/121] sctp: do not leak kernel memory to user space
-Date: Wed, 11 Apr 2018 20:36:49 +0200
-Message-Id: <20180411183503.346734583@linuxfoundation.org>
+Subject: [PATCH 3.18 105/121] pptp: remove a buggy dst release in pptp_connect()
+Date: Wed, 11 Apr 2018 20:36:48 +0200
+Message-Id: <20180411183503.273877128@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476337838554595?=
-X-GMAIL-MSGID: =?utf-8?q?1597476337838554595?=
+X-GMAIL-THRID: =?utf-8?q?1597476334747921505?=
+X-GMAIL-MSGID: =?utf-8?q?1597476334747921505?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,90 +52,110 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 6780db244d6b1537d139dea0ec8aad10cf9e4adb ]
+[ Upstream commit bfacfb457b36911a10140b8cb3ce76a74883ac5a ]
 
-syzbot produced a nice report [1]
+Once dst has been cached in socket via sk_setup_caps(),
+it is illegal to call ip_rt_put() (or dst_release()),
+since sk_setup_caps() did not change dst refcount.
 
-Issue here is that a recvmmsg() managed to leak 8 bytes of kernel memory
-to user space, because sin_zero (padding field) was not properly cleared.
+We can still dereference it since we hold socket lock.
 
-[1]
-BUG: KMSAN: uninit-value in copy_to_user include/linux/uaccess.h:184 [inline]
-BUG: KMSAN: uninit-value in move_addr_to_user+0x32e/0x530 net/socket.c:227
-CPU: 1 PID: 3586 Comm: syzkaller481044 Not tainted 4.16.0+ #82
+Caugth by syzbot :
+
+BUG: KASAN: use-after-free in atomic_dec_return include/asm-generic/atomic-instrumented.h:198 [inline]
+BUG: KASAN: use-after-free in dst_release+0x27/0xa0 net/core/dst.c:185
+Write of size 4 at addr ffff8801c54dc040 by task syz-executor4/20088
+
+CPU: 1 PID: 20088 Comm: syz-executor4 Not tainted 4.16.0+ #376
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
  __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:53
- kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
- kmsan_internal_check_memory+0x164/0x1d0 mm/kmsan/kmsan.c:1176
- kmsan_copy_to_user+0x69/0x160 mm/kmsan/kmsan.c:1199
- copy_to_user include/linux/uaccess.h:184 [inline]
- move_addr_to_user+0x32e/0x530 net/socket.c:227
- ___sys_recvmsg+0x4e2/0x810 net/socket.c:2211
- __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
- SYSC_recvmmsg+0x29b/0x3e0 net/socket.c:2394
- SyS_recvmmsg+0x76/0xa0 net/socket.c:2378
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x4401c9
-RSP: 002b:00007ffc56f73098 EFLAGS: 00000217 ORIG_RAX: 000000000000012b
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004401c9
-RDX: 0000000000000001 RSI: 0000000020003ac0 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000020003bc0 R09: 0000000000000010
-R10: 0000000000000000 R11: 0000000000000217 R12: 0000000000401af0
-R13: 0000000000401b80 R14: 0000000000000000 R15: 0000000000000000
+ dump_stack+0x1a7/0x27d lib/dump_stack.c:53
+ print_address_description+0x73/0x250 mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report+0x23c/0x360 mm/kasan/report.c:412
+ check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+ check_memory_region+0x137/0x190 mm/kasan/kasan.c:267
+ kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
+ atomic_dec_return include/asm-generic/atomic-instrumented.h:198 [inline]
+ dst_release+0x27/0xa0 net/core/dst.c:185
+ sk_dst_set include/net/sock.h:1812 [inline]
+ sk_dst_reset include/net/sock.h:1824 [inline]
+ sock_setbindtodevice net/core/sock.c:610 [inline]
+ sock_setsockopt+0x431/0x1b20 net/core/sock.c:707
+ SYSC_setsockopt net/socket.c:1845 [inline]
+ SyS_setsockopt+0x2ff/0x360 net/socket.c:1828
+ do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x4552d9
+RSP: 002b:00007f4878126c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007f48781276d4 RCX: 00000000004552d9
+RDX: 0000000000000019 RSI: 0000000000000001 RDI: 0000000000000013
+RBP: 000000000072bea0 R08: 0000000000000010 R09: 0000000000000000
+R10: 00000000200010c0 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000000526 R14: 00000000006fac30 R15: 0000000000000000
 
-Local variable description: ----addr@___sys_recvmsg
-Variable was created at:
- ___sys_recvmsg+0xd5/0x810 net/socket.c:2172
- __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
+Allocated by task 20088:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+ set_track mm/kasan/kasan.c:459 [inline]
+ kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
+ kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:489
+ kmem_cache_alloc+0x12e/0x760 mm/slab.c:3542
+ dst_alloc+0x11f/0x1a0 net/core/dst.c:104
+ rt_dst_alloc+0xe9/0x540 net/ipv4/route.c:1520
+ __mkroute_output net/ipv4/route.c:2265 [inline]
+ ip_route_output_key_hash_rcu+0xa49/0x2c60 net/ipv4/route.c:2493
+ ip_route_output_key_hash+0x20b/0x370 net/ipv4/route.c:2322
+ __ip_route_output_key include/net/route.h:126 [inline]
+ ip_route_output_flow+0x26/0xa0 net/ipv4/route.c:2577
+ ip_route_output_ports include/net/route.h:163 [inline]
+ pptp_connect+0xa84/0x1170 drivers/net/ppp/pptp.c:453
+ SYSC_connect+0x213/0x4a0 net/socket.c:1639
+ SyS_connect+0x24/0x30 net/socket.c:1620
+ do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x42/0xb7
 
-Bytes 8-15 of 16 are uninitialized
+Freed by task 20082:
+ save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+ set_track mm/kasan/kasan.c:459 [inline]
+ __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
+ kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
+ __cache_free mm/slab.c:3486 [inline]
+ kmem_cache_free+0x83/0x2a0 mm/slab.c:3744
+ dst_destroy+0x266/0x380 net/core/dst.c:140
+ dst_destroy_rcu+0x16/0x20 net/core/dst.c:153
+ __rcu_reclaim kernel/rcu/rcu.h:178 [inline]
+ rcu_do_batch kernel/rcu/tree.c:2675 [inline]
+ invoke_rcu_callbacks kernel/rcu/tree.c:2930 [inline]
+ __rcu_process_callbacks kernel/rcu/tree.c:2897 [inline]
+ rcu_process_callbacks+0xd6c/0x17b0 kernel/rcu/tree.c:2914
+ __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
 
-==================================================================
-Kernel panic - not syncing: panic_on_warn set ...
+The buggy address belongs to the object at ffff8801c54dc000
+ which belongs to the cache ip_dst_cache of size 168
+The buggy address is located 64 bytes inside of
+ 168-byte region [ffff8801c54dc000, ffff8801c54dc0a8)
+The buggy address belongs to the page:
+page:ffffea0007153700 count:1 mapcount:0 mapping:ffff8801c54dc000 index:0x0
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffff8801c54dc000 0000000000000000 0000000100000010
+raw: ffffea0006b34b20 ffffea0006b6c1e0 ffff8801d674a1c0 0000000000000000
+page dumped because: kasan: bad access detected
 
-CPU: 1 PID: 3586 Comm: syzkaller481044 Tainted: G    B            4.16.0+ #82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:53
- panic+0x39d/0x940 kernel/panic.c:183
- kmsan_report+0x238/0x240 mm/kmsan/kmsan.c:1083
- kmsan_internal_check_memory+0x164/0x1d0 mm/kmsan/kmsan.c:1176
- kmsan_copy_to_user+0x69/0x160 mm/kmsan/kmsan.c:1199
- copy_to_user include/linux/uaccess.h:184 [inline]
- move_addr_to_user+0x32e/0x530 net/socket.c:227
- ___sys_recvmsg+0x4e2/0x810 net/socket.c:2211
- __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
- SYSC_recvmmsg+0x29b/0x3e0 net/socket.c:2394
- SyS_recvmmsg+0x76/0xa0 net/socket.c:2378
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc:	Vlad Yasevich <vyasevich@gmail.com>
-Cc:	Neil Horman <nhorman@tuxdriver.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/ipv6.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ppp/pptp.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -722,8 +722,10 @@ static int sctp_v6_addr_to_user(struct s
- 			sctp_v6_map_v4(addr);
- 	}
+--- a/drivers/net/ppp/pptp.c
++++ b/drivers/net/ppp/pptp.c
+@@ -488,7 +488,6 @@ static int pptp_connect(struct socket *s
+ 	po->chan.mtu = dst_mtu(&rt->dst);
+ 	if (!po->chan.mtu)
+ 		po->chan.mtu = PPP_MRU;
+-	ip_rt_put(rt);
+ 	po->chan.mtu -= PPTP_HEADER_OVERHEAD;
  
--	if (addr->sa.sa_family == AF_INET)
-+	if (addr->sa.sa_family == AF_INET) {
-+		memset(addr->v4.sin_zero, 0, sizeof(addr->v4.sin_zero));
- 		return sizeof(struct sockaddr_in);
-+	}
- 	return sizeof(struct sockaddr_in6);
- }
- 
+ 	po->chan.hdrlen = 2 + sizeof(struct pptp_gre_header);
