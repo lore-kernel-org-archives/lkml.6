@@ -1,107 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753120AbeDKPjL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 11:39:11 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:41483 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751541AbeDKPjJ (ORCPT
+        id S1753765AbeDKPkC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 11:40:02 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:36685 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752852AbeDKPkA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 11:39:09 -0400
-X-Google-Smtp-Source: AIpwx49xjh/h3/uwYTY6/uIv7h9IeFrjmSPCyZmS6FDmaH2vLKdxZkO0p6TTe3WdtWOjrGW4F7uzog==
-Date: Wed, 11 Apr 2018 17:39:01 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>, peterz@infradead.org,
-        boqun.feng@gmail.com, linux-kernel@vger.kernel.org,
-        paulmck@linux.vnet.ibm.com, mingo@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 00/10] kernel/locking: qspinlock improvements
-Message-ID: <20180411153901.GA14205@andrea>
-References: <1522947547-24081-1-git-send-email-will.deacon@arm.com>
- <20180406132249.GA7071@andrea>
- <20180411102003.rjfrcmc4fjukehst@armageddon.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180411102003.rjfrcmc4fjukehst@armageddon.cambridge.arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 11 Apr 2018 11:40:00 -0400
+X-Google-Smtp-Source: AIpwx49GprQ1IBGNtbrZfn8Lrf13ATM2xClsbftM9/IEmbSl0fWDVBPvEnnU3vjQ4Cl16IwJyel0Zw==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: davem@davemloft.net, stephen@networkplumber.org,
+        johannes.berg@intel.com, arvind.yadav.cs@gmail.com,
+        dhowells@redhat.com
+Cc: netdev@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH v2] dec: tulip: de4x5: Replace mdelay with usleep_range in de4x5_hw_init
+Date: Wed, 11 Apr 2018 23:39:42 +0800
+Message-Id: <1523461182-5897-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 11:20:04AM +0100, Catalin Marinas wrote:
-> On Fri, Apr 06, 2018 at 03:22:49PM +0200, Andrea Parri wrote:
-> > On Thu, Apr 05, 2018 at 05:58:57PM +0100, Will Deacon wrote:
-> > > I've been kicking the tyres further on qspinlock and with this set of patches
-> > > I'm happy with the performance and fairness properties. In particular, the
-> > > locking algorithm now guarantees forward progress whereas the implementation
-> > > in mainline can starve threads indefinitely in cmpxchg loops.
-> > > 
-> > > Catalin has also implemented a model of this using TLA to prove that the
-> > > lock is fair, although this doesn't take the memory model into account:
-> > > 
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/cmarinas/kernel-tla.git/commit/
-> > 
-> > Nice!  I'll dig into this formalization, but my guess is that our model
-> > (and axiomatic models "a-la-herd", in general) are not well-suited when
-> > it comes to study properties such as fairness, liveness...
-> 
-> Maybe someone with a background in formal methods could give a better
-> answer. How TLA+ works is closer to rmem [1] (operational model,
-> exhaustive memoised state search) than herd. Liveness verification
-> requires checking that, under certain fairness properties, some state is
-> eventually reached. IOW, it tries to show that either all state change
-> graphs lead to (go through) such state or that there are cycles in the
-> graph and the state is never reached. I don't know whether herd could be
-> modified to check liveness. I'm not sure it can handle infinite loops
-> either (the above model checks an infinite lock/unlock loop on each
-> CPU and that's easier to implement in a tool with memoised states).
-> 
-> The TLA+ model above assumes sequential consistency, so no memory
-> ordering taken into account. One could build an operational model in
-> TLA+ that's equivalent to the axiomatic one (e.g. following the Flat
-> model equivalence as in [2]), however, liveness checking (at least with
-> TLA+) is orders of magnitude slower than safety. Any small variation has
-> an exponential impact on the state space, so likely to be impractical.
-> For specific parts of the algorithm, you may be able to use a poor man's
-> ordering by e.g. writing two accesses in two different orders so the
-> model checks both combinations.
-> 
-> There are papers (e.g. [3]) on how to convert liveness checking to
-> safety checking but I haven't dug further. I think it's easier/faster if
-> you do liveness checking with a simplified model and separately check
-> the safety with respect to memory ordering on tools like herd.
+de4x5_hw_init() is never called in atomic context.
 
-Indeed.  A fundamental problem, AFAICT, is to formalize that concept of
-'[it] will _eventually_ happen'.  Consider a simple example:
+de4x5_hw_init() is only called by de4x5_pci_probe(), which is only 
+set as ".probe" in struct pci_driver.
 
-	{ x = 0}
+Despite never getting called from atomic context, de4x5_hw_init() 
+calls mdelay() to busily wait.
+This is not necessary and can be replaced with usleep_range() to 
+avoid busy waiting.
 
-	P0	|   P1
-		|
-	x = 1	|   while (!x)
-		|  	 ;
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
 
-herd 'knows' that:
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+v2:
+* Use usleep_range() to correct usleep() in v1.
+	
+---
+ drivers/net/ethernet/dec/tulip/de4x5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	- on the 1st iteration of the 'while' loop, the load from x
-	  can return the value 0 or 1 (only);
-
-	- on the 2nd iteration of the 'while' loop, the load from x
-	  can return the value 0 or 1;
-
-	- [ ... and 'so on'! ]
-
-but this is pretty much all herd knows about this snippet by now ... ;)
-
-Thanks,
-  Andrea
-
-
-> 
-> [1] http://www.cl.cam.ac.uk/~sf502/regressions/rmem/
-> [2] http://www.cl.cam.ac.uk/~pes20/armv8-mca/armv8-mca-draft.pdf
-> [3] https://www.sciencedirect.com/science/article/pii/S1571066104804109
-> 
-> -- 
-> Catalin
+diff --git a/drivers/net/ethernet/dec/tulip/de4x5.c b/drivers/net/ethernet/dec/tulip/de4x5.c
+index 0affee9..3fb0119 100644
+--- a/drivers/net/ethernet/dec/tulip/de4x5.c
++++ b/drivers/net/ethernet/dec/tulip/de4x5.c
+@@ -1107,7 +1107,7 @@ static int (*dc_infoblock[])(struct net_device *dev, u_char, u_char *) = {
+ 	pdev = to_pci_dev (gendev);
+ 	pci_write_config_byte(pdev, PCI_CFDA_PSM, WAKEUP);
+     }
+-    mdelay(10);
++    usleep_range(10000, 11000);
+ 
+     RESET_DE4X5;
+ 
+-- 
+1.9.1
