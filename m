@@ -1,60 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756811AbeDKUtB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 16:49:01 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35288 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755996AbeDKUs5 (ORCPT
+        id S1755670AbeDKU42 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 16:56:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42626 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755287AbeDKU40 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 16:48:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B36F5600ED
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v3 2/2] MIPS: io: add a barrier after register read in
- readX()
-To: James Hogan <james.hogan@mips.com>
-Cc: linux-mips@linux-mips.org, arnd@arndb.de, timur@codeaurora.org,
-        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
-        linux-kernel@vger.kernel.org
-References: <1522760109-16497-1-git-send-email-okaya@codeaurora.org>
- <1522760109-16497-2-git-send-email-okaya@codeaurora.org>
- <41e184ae-689e-93c9-7b15-0c68bd624130@codeaurora.org>
- <b748fdcb-e09f-9fe3-dc74-30b6a7d40cbe@codeaurora.org>
- <20180406212601.GA1730@saruman>
- <0f1a4719-9a6f-0df0-7fd9-a25c10e824f5@codeaurora.org>
- <14a663f6-2ea5-230b-2cd0-e42d05d0d7ea@codeaurora.org>
- <20180411202616.GA14760@jhogan-linux.mipstec.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <abcad691-2ac8-ffc5-30a2-77ad6781664a@codeaurora.org>
-Date: Wed, 11 Apr 2018 16:48:54 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180411202616.GA14760@jhogan-linux.mipstec.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Wed, 11 Apr 2018 16:56:26 -0400
+Date: Wed, 11 Apr 2018 13:56:24 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] proc: fixup =?ISO-8859-1?Q?=A9?= sign
+Message-Id: <20180411135624.480308a8d3875307853a1b09@linux-foundation.org>
+In-Reply-To: <20180411201950.GA12904@avx2>
+References: <20180411201950.GA12904@avx2>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/11/2018 4:26 PM, James Hogan wrote:
-> On Wed, Apr 11, 2018 at 01:10:41PM -0400, Sinan Kaya wrote:
->> How is the likelihood of getting this fixed on 4.17 kernel?
-> 
-> High.
-> 
+On Wed, 11 Apr 2018 23:19:50 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
 
-Thanks for the confirmation.
+> Andrew's scripts butchered it :-(
 
-> Thanks
-> James
-> 
+It's actually heirloom-mailx doing this.  I thought I'd avoided that by
+using sylpheed by hand, but sylpheed selectively butchers it as well. More
+whacking needed.
 
+> Add copyright in two files before they get autorubberstamped.
 
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+checkpatch wants SPDX-License-Identifier in the new files, btw.
