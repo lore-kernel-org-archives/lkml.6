@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/X5r4RYI3l+AA1t8rXQJZRWm+s812I7Wx+jISct0okkALKv1jl5EBRNLBkSXvSfbbbI9eA
-ARC-Seal: i=1; a=rsa-sha256; t=1523472214; cv=none;
+X-Google-Smtp-Source: AIpwx49GWde5NlX8eYeEjyZ+GzwdPdksJjHw/hDqpl4qofubccISxzrLD3ZD9HUUiBscsBcpIzVr
+ARC-Seal: i=1; a=rsa-sha256; t=1523472212; cv=none;
         d=google.com; s=arc-20160816;
-        b=RQ5Kjw7an3E60yVxeqf1+deR/WA0Jpt7j9HLC7Ov0WCxrsW1ONYAspTqIR4KzL4Ukj
-         dUBU3XHP2UpgdZVEKlLeU3r1jW3XgVQ80l2XFtCz+CxU7YPrplTkgPiXWvoQWc/MAMMc
-         VFbXE/8jEnmQROsN1VprN9mbRYYbNaTS7PhIHntAMF4jUS0aO/oMQXfzJJhSVw0mKqCo
-         OyC8pGBtmgRkUa8PbTF5z2+bhwy+TH+wR2K2XwdjXdYIYreHN0z8UcztKWmKN5kQ0rCc
-         xyRVFrlZ5Ss123O1rODSC/Ct41tI+9bfRQ3TUPhtX+LbBIRXHnu5t/FB6BccCKhzyKDC
-         yEng==
+        b=p/sRG/cuTc/IsbPIfem8OgqgDxujYd7AwfypzPWYfq2oxHVHsygbY0Qa7B1+083rSW
+         BqgA5RtT2Ui1unl/V4/l8i07hWd3d9LLg6/VgJrEckb2VQpoL2tUf/JUBqOZfJYda0qn
+         zO4YWu9SfC+40auCsEmAS9KU3smaLNr8+knHL9sepsq3fwinwmiCDcsAAnk0/nv7OT7k
+         v86OgV/BxQVsf4PmcQEa0SwDhO2/yjrb7cyK1zsrCV+pa788bZbh+oT3z1F9ZmssiJ0R
+         3DOzu7HG7px9EwcWWRQVfHiLeucM/UJyBfgqcpFPlFJxkYSUzNSIBbWqu1LvrpyGN4hu
+         KoKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=uPxv1ceMFaR6TDcj6NUmPN6S3wtNcy2Og1IgYV7jlKY=;
-        b=wDvEQw1kpc7bymSQeuERG91jvxAwLVzqc4+ZWmWjAuV64PDti2lhysx0YyB7Yhsc+r
-         rEceTA7RxbiPJknid2QSttaZCRWv/x4X1NFXfQGVbEbBZ0bisB/s++TqCf7piKyPFEeI
-         CZMxGASfITJnKqDt3RcIyHDgs+gd7kQxJ+ArU+ohHcyUVxBdbnkPF161Q2PE+l7qynau
-         658YIZ7hojJfTCAIbWZTOQ49PMW8ujVUZmOA4zfFRembQJhsbg39zJcvROY+kBiKH2WF
-         3XlGBosMmyWCHUNmhHtDPUmrxxFtM7Cbtw6B+ql1de2C8Nunn/eBC1wcI0zzhSX/DgcI
-         voew==
+        bh=96zhi2I86ZLdaDQ9jGPw6Se2iy1VobCE2m0EbcSFQIA=;
+        b=0zox+a1fCH0qgEc/VNl2e2wV8n0/Yj4w27VuikbbLyKQSRuPenaCWdl6U525Y1d2r5
+         OZ5e1SpKccvtxuqIiPvKTPeIV+9nhdeQGFelnQu3SuVISN+I0KsDyg6Ux76EFrGetD62
+         QozFTsVQUve7/jngSd9c8KTqbdmcMSijqHjYkZhxPP5l3lOXLI7R90hYBtN8ql2j26Cu
+         RWY9fGjKMuhsltXw2m3RzabcHQzxkzAG7M/oRgoy7SPjb9FVqdpc1SkL1ibBxTrGF+in
+         X71fW9xfVDYxRPmMvPNw2lB606duZBvtrCMzV0TfliMr+fWfZFGNf1bBGiUln19OXuWO
+         jGZQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jagannathan Raman <jag.raman@oracle.com>,
-	Aaron Young <aaron.young@oracle.com>,
-	Alexandre Chartre <alexandre.chartre@oracle.com>,
-	Bijan Mottahedeh <bijan.mottahedeh@oracle.com>,
-	Liam Merwick <liam.merwick@oracle.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Jason Yan <yanaijie@huawei.com>,
+	John Garry <john.garry@huawei.com>,
+	chenqilin <chenqilin2@huawei.com>,
+	chenxiang <chenxiang66@hisilicon.com>,
+	Hannes Reinecke <hare@suse.com>,
+	Christoph Hellwig <hch@lst.de>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 084/121] sparc64: ldc abort during vds iso boot
-Date: Wed, 11 Apr 2018 20:36:27 +0200
-Message-Id: <20180411183501.332689466@linuxfoundation.org>
+Subject: [PATCH 3.18 093/121] scsi: libsas: fix error when getting phy events
+Date: Wed, 11 Apr 2018 20:36:36 +0200
+Message-Id: <20180411183502.176663929@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -45,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476401088199108?=
-X-GMAIL-MSGID: =?utf-8?q?1597476401088199108?=
+X-GMAIL-THRID: =?utf-8?q?1597476398473498538?=
+X-GMAIL-MSGID: =?utf-8?q?1597476398473498538?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,56 +55,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jag Raman <jag.raman@oracle.com>
+From: Jason Yan <yanaijie@huawei.com>
 
 
-[ Upstream commit 6c95483b768c62f8ee933ae08a1bdbcb78b5410f ]
+[ Upstream commit 2b23d9509fd7174b362482cf5f3b5f9a2265bc33 ]
 
-Orabug: 20902628
+The intend purpose here was to goto out if smp_execute_task() returned
+error. Obviously something got screwed up. We will never get these link
+error statistics below:
 
-When an ldc control-only packet is received during data exchange in
-read_nonraw(), a new rx head is calculated but the rx queue head is not
-actually advanced (rx_set_head() is not called) and a branch is taken to
-'no_data' at which point two things can happen depending on the value
-of the newly calculated rx head and the current rx tail:
+~:/sys/class/sas_phy/phy-1:0:12 # cat invalid_dword_count
+0
+~:/sys/class/sas_phy/phy-1:0:12 # cat running_disparity_error_count
+0
+~:/sys/class/sas_phy/phy-1:0:12 # cat loss_of_dword_sync_count
+0
+~:/sys/class/sas_phy/phy-1:0:12 # cat phy_reset_problem_count
+0
 
-- If the rx queue is determined to be not empty, then the wrong packet
-  is picked up.
+Obviously we should goto error handler if smp_execute_task() returns
+non-zero.
 
-- If the rx queue is determined to be empty, then a read error (EAGAIN)
-  is eventually returned since it is falsely assumed that more data was
-  expected.
-
-The fix is to update the rx head and return in case of a control only
-packet during data exchange.
-
-Signed-off-by: Jagannathan Raman <jag.raman@oracle.com>
-Reviewed-by: Aaron Young <aaron.young@oracle.com>
-Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
-Reviewed-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
-Reviewed-by: Liam Merwick <liam.merwick@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 2908d778ab3e ("[SCSI] aic94xx: new driver")
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+CC: John Garry <john.garry@huawei.com>
+CC: chenqilin <chenqilin2@huawei.com>
+CC: chenxiang <chenxiang66@hisilicon.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/sparc/kernel/ldc.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/scsi/libsas/sas_expander.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/sparc/kernel/ldc.c
-+++ b/arch/sparc/kernel/ldc.c
-@@ -1693,9 +1693,14 @@ static int read_nonraw(struct ldc_channe
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -675,7 +675,7 @@ int sas_smp_get_phy_events(struct sas_ph
+ 	res = smp_execute_task(dev, req, RPEL_REQ_SIZE,
+ 			            resp, RPEL_RESP_SIZE);
  
- 		lp->rcv_nxt = p->seqid;
+-	if (!res)
++	if (res)
+ 		goto out;
  
-+		/*
-+		 * If this is a control-only packet, there is nothing
-+		 * else to do but advance the rx queue since the packet
-+		 * was already processed above.
-+		 */
- 		if (!(p->type & LDC_DATA)) {
- 			new = rx_advance(lp, new);
--			goto no_data;
-+			break;
- 		}
- 		if (p->stype & (LDC_ACK | LDC_NACK)) {
- 			err = data_ack_nack(lp, p);
+ 	phy->invalid_dword_count = scsi_to_u32(&resp[12]);
