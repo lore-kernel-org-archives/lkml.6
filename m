@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479701-2-15454253906693167882
+X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479692-2-15990320309405692815
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479701; b=lWIy261uSdoQQ5qVllB0INgmfDpOoq+OWc4N1SVAXbyGazNunf
-    9HnerF/u24B1zqziels9F6aQIAg3If3bhcW58Yf3VmWkQsheUr7gHg10Qlqxq/yf
-    C3fTNNLciTX1GffjRviQGFh/QXyNBIgn3CVU3foOBfDOjgkgArpnWcCuvmXuIhsF
-    MiA7whbFyq5MVXyEqCYQYAnTDwkOLgBLJZsBTqH/iRDFtpDVNIS90WrVduPruGfr
-    jjyUy52lLLJa9Oy19UJsTuBFdoPOcVvLbBMsZK44NKKpew2Je1yVRQSMqWwJLunv
-    Wd+zN2eBJ/Pa2HjchByTlY6BD83+nWo0hPPg==
+    1523479691; b=qSZIqMtktsZUTLQLOmGQsuwDYM4ItqzFzFJbxburLED/GrlAIn
+    WtVLRW4eUeNFoSTUgUHcxH0FbRwdSdYHLhwQ6Lm2EUAMCYn/cLCEcedO2RHoAQoy
+    I2HuNPF9ddYZ7bZilPVAlFv6cogyGH3/xop0nCbQ29GppPO3Jg4pfDli1I0a/Qfj
+    X4jFm9FZsCziDM/QhbVR9cayi88CZZiC9s+foA+9oFfrt9ORemvf7Q3yy13nyKVZ
+    N0a6WhdmD/x0tHD6d9jjLtbWY7ulI80IJGV3K7WW5xODRVlyYhvVXm5Y1+W7B+74
+    HVqZR9SW6JnFVCyvu7YGU9b+3sceOT68AGjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479701; bh=oboxtM847a/kcVrcsJP0Fc/iGE4/Mr
-    5+8tKgeNbUOsM=; b=nLHUFtrdGHZh/bwXIvAEGsPYlIaWeSDHO+dwu8JFqVhW1g
-    RXIJRiRtFtwo0vR/P4pX6BvrXi7dKB5IE3NxpWLTPD93vPaI0jCHMvud7sNf1Hrl
-    sIjTiI7suCCY3xaYPs601otdgE8IO9AvPsAmKKYJ2c/FDoJrPyuPI14Zq/dmsidT
-    V2hjFv+mDSHksUw8K+loT3dG42OAOm741sDvYB4hqwPLX/D1/W6rPhzvi9578BT/
-    knQfdSH/Loc0bqAY6XnnzEZUvDPQOX9qVKR6iXYIUinnzNvLpidOSqNOHQGa24u+
-    +1xhZePHsrAEJQe49nuFdBnaVncu7OEN+lqBEbsQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479691; bh=R+H8zHH8mNDX/GGJy+Qu4vYIp4nk1f
+    2Smp1kw5soHwQ=; b=tJ3YYmUYBtHLpJZ/Qi6V/q9qDPYDmE7SuMLn1/Q4yT+rvZ
+    u3slosZ4zSU1XF1NkhOaQl37vmRJWzLOB2Kr2ePjXT6JUX4aDm1xZ0Bvy1Zzhx4x
+    5rWCh17pweyKgDHzPuAmiPUXbHT7BMrwcYFkP/H+E65qEv5LSZqtB9H1qknA+boB
+    WcSrjrAMIFrU1FR/AmhQuK780mfWgBJJW6asR3/Q7fb4yZJNUIy5YtNi5+jrc97K
+    LZLA1FgBNbsBFSGRNGFfhRwkUxJuDVcEvH4/EXVipnUSZXBq70usH/A1fa4++JhQ
+    GsVf7PR/1dwRj1Bt0LV0OQxEzcDtliqlLThid/5Q==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,33 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAoFw+8fmWAO2vVs8n3lYTQHelFf1SfRnrGlCXm1guBDrSr+t0tb/VOrlgraOkRlhzypBrycWjd1dXCNCW5S4++7RiXjSizxiLp7z3sazMp+7iKBaPQv
-    TnOmzSIf+DFCUU9hZLo2fkNOhDXU5eNR2iGfc7XViZhOSYV73TcubbY21WEQA+E8K7qEtVGcOxqLgQJz8fugocfiloY+v5fiHdf+52jzmDP3gWdRznN80gFW
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKHrvSvv8ydFViTZyBGFFcWdM0habau0+8czJHAOYri3Rnc384PCQoUShHSQArmQazQOTm6zyjnu2ulln0/yLaYkptvrRg+pXirF2lpOPJ+Hhtd4eSVC
+    S5SaCKX9Ztx/DJQ83Pnn5cGizUlNJ5CeW/4EDrFGTFkeCxW7bFg+UGNpDIhmqIoGEc7H5BjHz/lRgSbsA1Gja5LbTtr3HcQBJeZp1OoiyDXfdgtx8MbmrUIo
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=yPCof4ZbAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=e4JcQNwn_gKbhmeX78YA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=cm27Pg_UAAAA:8 a=pGLkceISAAAA:8 a=LpQP-O61AAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=mszs2ZNTGQiz2OjqG5AA:9 a=IMEryRM2TtodLh39:21
+    a=BFySnzN-hxhcZp44:21 a=QEXdDO2ut3YA:10 a=xmb-EsYY8bH0VWELuYED:22
+    a=pioyyrs4ZptJ924tMmac:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754294AbeDKSqT (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:46:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58874 "EHLO
+        id S1755725AbeDKSqZ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:46:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58896 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754987AbeDKSqR (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:46:17 -0400
+        with ESMTP id S1754987AbeDKSqX (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:46:23 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Daniel Micay <danielmicay@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 031/190] PowerCap: Fix an error code in powercap_register_zone()
-Date: Wed, 11 Apr 2018 20:34:37 +0200
-Message-Id: <20180411183552.017034295@linuxfoundation.org>
+Subject: [PATCH 4.4 060/190] ray_cs: Avoid reading past end of buffer
+Date: Wed, 11 Apr 2018 20:35:06 +0200
+Message-Id: <20180411183553.829823073@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -93,36 +95,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Kees Cook <keescook@chromium.org>
 
 
-[ Upstream commit 216c4e9db4c9d1d2a382b42880442dc632cd47d9 ]
+[ Upstream commit e48d661eb13f2f83861428f001c567fdb3f317e8 ]
 
-In the current code we accidentally return the successful result from
-idr_alloc() instead of a negative error pointer.  The caller is looking
-for an error pointer and so it treats the returned value as a valid
-pointer.
+Using memcpy() from a buffer that is shorter than the length copied means
+the destination buffer is being filled with arbitrary data from the kernel
+rodata segment. In this case, the source was made longer, since it did not
+match the destination structure size. Additionally removes a needless cast.
 
-This one might be a bit serious because if it lets people get around the
-kernel's protection for remapping NULL.  I'm not sure.
+This was found with the future CONFIG_FORTIFY_SOURCE feature.
 
-Fixes: 75d2364ea0ca (PowerCap: Add class driver)
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Daniel Micay <danielmicay@gmail.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/powercap/powercap_sys.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/ray_cs.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/powercap/powercap_sys.c
-+++ b/drivers/powercap/powercap_sys.c
-@@ -538,6 +538,7 @@ struct powercap_zone *powercap_register_
+--- a/drivers/net/wireless/ray_cs.c
++++ b/drivers/net/wireless/ray_cs.c
+@@ -247,7 +247,10 @@ static const UCHAR b4_default_startup_pa
+ 	0x04, 0x08,		/* Noise gain, limit offset */
+ 	0x28, 0x28,		/* det rssi, med busy offsets */
+ 	7,			/* det sync thresh */
+-	0, 2, 2			/* test mode, min, max */
++	0, 2, 2,		/* test mode, min, max */
++	0,			/* rx/tx delay */
++	0, 0, 0, 0, 0, 0,	/* current BSS id */
++	0			/* hop set */
+ };
  
- 	power_zone->id = result;
- 	idr_init(&power_zone->idr);
-+	result = -ENOMEM;
- 	power_zone->name = kstrdup(name, GFP_KERNEL);
- 	if (!power_zone->name)
- 		goto err_name_alloc;
+ /*===========================================================================*/
+@@ -598,7 +601,7 @@ static void init_startup_params(ray_dev_
+ 	 *    a_beacon_period = hops    a_beacon_period = KuS
+ 	 *//* 64ms = 010000 */
+ 	if (local->fw_ver == 0x55) {
+-		memcpy((UCHAR *) &local->sparm.b4, b4_default_startup_parms,
++		memcpy(&local->sparm.b4, b4_default_startup_parms,
+ 		       sizeof(struct b4_startup_params));
+ 		/* Translate sane kus input values to old build 4/5 format */
+ 		/* i = hop time in uS truncated to 3 bytes */
