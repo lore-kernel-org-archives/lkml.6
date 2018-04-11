@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48Vl/uzRPEdIRr82dQa3qP5m6SZ913lqwTu3m4DMAkJMefSNdXUAGaJCzkbWqge06doKKyH
-ARC-Seal: i=1; a=rsa-sha256; t=1523473028; cv=none;
+X-Google-Smtp-Source: AIpwx4/0bSrYgvonedKahewQWQZbPHNvjjW9fEtsZ631pizdLWMheE5HFFJUjpPYdQxvxQGHLmwL
+ARC-Seal: i=1; a=rsa-sha256; t=1523473025; cv=none;
         d=google.com; s=arc-20160816;
-        b=uJMUYrj9dIq5N/RsyupOdu3SDh69fqpcyPQRTMoHL62iF7SRfUKE+adaWoFvQ9crks
-         Zf9hd8YE0r2pBh0jdgOicJgMZRhQyKNpGwzMXtMQkNAkhtOBuilxHF4ZpPVJr0oNnS6q
-         tkFNyUjLokjOx/MDP++fqxF2ioUeqMgCduWd7Zy/d0Qvbj0w/ZKhgMUsWhLxdQaS7Hb3
-         tCzim5h0DxVx+44v2Is/CfTy897IwHnBjUF/p8nKLg+yEgttPjqG1hY2/E60PgedQzMN
-         3cKCxslO2PlCFmPh3rDfFau3rNWcbZpIWtC0oghEAiPs9jykE2yUYgg1d9onOhVL/WUZ
-         2HbQ==
+        b=wKDlQB7pk+rorI8WdU9WwGp4aiZDqIzqylZok+6JRFqSwhNxPqqkEcjbEvEgEKs/ZS
+         KhCHrA2lNqgMJcWq/zsLR/9K67ZTOlbnQ4HKqTNIDEK+LWTJN80LKxmwJYdyEFaIlXC4
+         v+jHNu3b/hvW2YRyw3T0xgeClaKynJaPk4hwfyBxMf4FSCZTRvdW1g6oqxJ0HBi8zcWz
+         9F3B4pPfL1s3aah92LoPtGAVPFsC35kkE6uGquR5FU+1DVgTtb/BmVn9dZniZ3mLL4SX
+         NANwWSo2CQcG3ikZLPY+jlNU8q/1W9/OqhJ+Axupbhkto6XK6808VmgEfjCfXBLqenc8
+         5r2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=166T+5sSq2G0iGjlZ0OKv0rkP7sdgTe+7n88vSB5my4=;
-        b=sazD+VCNY0/qcpFZZeGy26W0o8eo4MRySt8wOygEDvQGV4Qw6TdO/3FmnFMZK0vul0
-         ynAn/qdt7NjUxJC01/RH0nBtRS4eF1FDc2RRThLYHnnBLF9AeOaJub2sfBz6po91xM1O
-         bKQ3oM9qSXbale4OCAnsV2NqEXpuJ6q3P2ZqwJhhh9eNJmhEqffOAttlZIkn9iBOEB9j
-         lbpRoAEos3R7cUTs9ELlK4GteUkwvmHAZWxazwcikHXGfSMYoVlKr6liVtAPwZxTsrAQ
-         rRGs+dCICeh0uet1gJfBJgB645hpbx/3AjF61Ai329Ni5rkQvdK0PxRfLM3DSJT2gXvQ
-         Ksog==
+        bh=6SnY0h7LM/WGHccSlmtzOeEVSs6x0sC04NtugfRy0eE=;
+        b=bxE3vcDVn1iXBTCqaUEj4dUP2vr854dppH1jn8xD/3xaxd45ugKKRiC1uEgLlu1wKD
+         VDdM/BDgxXoN9UPvzhUVP0a+fN5hcBaGTEdMgwowDSIapEV42j9nA6z0uhkk3NusceJW
+         IXVrPanNW82psL4Lv33eIhrfi5wITU4ObqEjtlCJCkjJEa3LVkiiY5SrTjmLkXhvUhQB
+         d9BhONgEVuZf/tD57UvVBzFa8dVeE/zHF1bVxzQJb7RJvnBxOppLH/UB9iyWNthne4L3
+         v6r3pD1k1yuAThw6tlx9BJ+ZyvGf8Dtn0jUeP6APnH1+jSOu/nfxXkoFUpXM4/qK6Dg3
+         2Plg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alan Stern <stern@rowland.harvard.edu>,
+	linzhang <xiaolou4617@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 069/310] USB: ene_usb6250: fix SCSI residue overwriting
-Date: Wed, 11 Apr 2018 20:33:28 +0200
-Message-Id: <20180411183625.289339931@linuxfoundation.org>
+Subject: [PATCH 4.9 068/310] net: x25: fix one potential use-after-free issue
+Date: Wed, 11 Apr 2018 20:33:27 +0200
+Message-Id: <20180411183625.247125347@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476114116692193?=
-X-GMAIL-MSGID: =?utf-8?q?1597477254125738984?=
+X-GMAIL-THRID: =?utf-8?q?1597476110587421066?=
+X-GMAIL-MSGID: =?utf-8?q?1597477250753043656?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,38 +50,107 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: linzhang <xiaolou4617@gmail.com>
 
 
-[ Upstream commit aa18c4b6e0e39bfb00af48734ec24bc189ac9909 ]
+[ Upstream commit 64df6d525fcff1630098db9238bfd2b3e092d5c1 ]
 
-In the ene_usb6250 sub-driver for usb-storage, the SCSI residue is not
-reported correctly.  The residue is initialized to 0, but this value
-is overwritten whenever the driver sends firmware to the card reader
-before performing the current command.  As a result, a valid READ or
-WRITE operation appears to have failed, causing the SCSI core to retry
-the command multiple times and eventually fail.
+The function x25_init is not properly unregister related resources
+on error handler.It is will result in kernel oops if x25_init init
+failed, so add properly unregister call on error handler.
 
-This patch fixes the problem by resetting the SCSI residue to 0 after
-sending firmware to the device.
+Also, i adjust the coding style and make x25_register_sysctl properly
+return failure.
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-and-tested-by: Andreas Hartmann <andihartmann@01019freenet.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: linzhang <xiaolou4617@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/storage/ene_ub6250.c |    2 ++
- 1 file changed, 2 insertions(+)
+ include/net/x25.h        |    4 ++--
+ net/x25/af_x25.c         |   24 ++++++++++++++++--------
+ net/x25/sysctl_net_x25.c |    5 ++++-
+ 3 files changed, 22 insertions(+), 11 deletions(-)
 
---- a/drivers/usb/storage/ene_ub6250.c
-+++ b/drivers/usb/storage/ene_ub6250.c
-@@ -1942,6 +1942,8 @@ static int ene_load_bincode(struct us_da
- 	bcb->CDB[0] = 0xEF;
+--- a/include/net/x25.h
++++ b/include/net/x25.h
+@@ -298,10 +298,10 @@ void x25_check_rbuf(struct sock *);
  
- 	result = ene_send_scsi_cmd(us, FDIR_WRITE, buf, 0);
-+	if (us->srb != NULL)
-+		scsi_set_resid(us->srb, 0);
- 	info->BIN_FLAG = flag;
- 	kfree(buf);
+ /* sysctl_net_x25.c */
+ #ifdef CONFIG_SYSCTL
+-void x25_register_sysctl(void);
++int x25_register_sysctl(void);
+ void x25_unregister_sysctl(void);
+ #else
+-static inline void x25_register_sysctl(void) {};
++static inline int x25_register_sysctl(void) { return 0; };
+ static inline void x25_unregister_sysctl(void) {};
+ #endif /* CONFIG_SYSCTL */
  
+--- a/net/x25/af_x25.c
++++ b/net/x25/af_x25.c
+@@ -1790,32 +1790,40 @@ void x25_kill_by_neigh(struct x25_neigh
+ 
+ static int __init x25_init(void)
+ {
+-	int rc = proto_register(&x25_proto, 0);
++	int rc;
+ 
+-	if (rc != 0)
++	rc = proto_register(&x25_proto, 0);
++	if (rc)
+ 		goto out;
+ 
+ 	rc = sock_register(&x25_family_ops);
+-	if (rc != 0)
++	if (rc)
+ 		goto out_proto;
+ 
+ 	dev_add_pack(&x25_packet_type);
+ 
+ 	rc = register_netdevice_notifier(&x25_dev_notifier);
+-	if (rc != 0)
++	if (rc)
+ 		goto out_sock;
+ 
+-	pr_info("Linux Version 0.2\n");
++	rc = x25_register_sysctl();
++	if (rc)
++		goto out_dev;
+ 
+-	x25_register_sysctl();
+ 	rc = x25_proc_init();
+-	if (rc != 0)
+-		goto out_dev;
++	if (rc)
++		goto out_sysctl;
++
++	pr_info("Linux Version 0.2\n");
++
+ out:
+ 	return rc;
++out_sysctl:
++	x25_unregister_sysctl();
+ out_dev:
+ 	unregister_netdevice_notifier(&x25_dev_notifier);
+ out_sock:
++	dev_remove_pack(&x25_packet_type);
+ 	sock_unregister(AF_X25);
+ out_proto:
+ 	proto_unregister(&x25_proto);
+--- a/net/x25/sysctl_net_x25.c
++++ b/net/x25/sysctl_net_x25.c
+@@ -73,9 +73,12 @@ static struct ctl_table x25_table[] = {
+ 	{ 0, },
+ };
+ 
+-void __init x25_register_sysctl(void)
++int __init x25_register_sysctl(void)
+ {
+ 	x25_table_header = register_net_sysctl(&init_net, "net/x25", x25_table);
++	if (!x25_table_header)
++		return -ENOMEM;
++	return 0;
+ }
+ 
+ void x25_unregister_sysctl(void)
