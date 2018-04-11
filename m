@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2791443-1523464236-2-5423670108365720718
+X-Cyrus-Session-Id: sloti22d1t05-2839749-1523464234-2-11577602499866110744
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES roen, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
@@ -14,23 +14,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523464235; b=vX8VKbIIrE4XvxgBZC+v3sccwnsyLziOFnWRESD7gZGN5pCwZ0
-    RN9BwyyimxzAy+CpbKvJKAw6CCeP7e/xZfpKzydLpL8r2pVQ+CepgYtEXbpcdK+F
-    S9lVgPs3dyAhO51eGcO81ZskCvsSWqNnRTP3jgZMxb1/kOWQB26RI1wHlGchJ3GE
-    9cjq0qJ0mh0QpVs+ANDKcgmG0QVsJ+zOCkXZKO8Kth5yXeD+W5BbOP4Kb/yrtWqh
-    jhIM2FyyT+IDnmwej0AcJEZCe/e6ZKKA2rPzdO5Ndd6JURcTMak00ChfeLVyMjux
-    5d6WoVvAJTT3Rebs4MXDdm1lZJctBYc8aiDw==
+    1523464233; b=li3UvN70HlPZXuzhws0F3vrEpbcZriGWCsQiZxMqScFjA8Ll8g
+    p0tEbuf3WwlldBeij1Ooy2DeMWjRPRJEa2NsXfL4mjWKRYHHixVao/oG+eAYnniq
+    04yhOXkkrImOxHf2dtGN7DEfO7iQFS953+HWj33xWfzHwfvgcS/vxsAKjzgP28Sd
+    71R7fTeDaWy42yG2+lHHExH/54Bj/u46SMibjyExholQxO6UPhNNavYkO5gnPsCW
+    F1vFsi476phdnYmgfMD/a7rIoj0EuKBL8xUKxomXHedmQERxF2JlPeJcUF1R+R7j
+    V4EseX+HZX/S0LYW6abgfhpwudVLAVIn2+Yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=subject:from:to:cc:date:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1523464235;
-    bh=s/TPBgrtoGXqcQj4urVsT7lcWBHXIMiPsdvaSqX3eq8=; b=eopMirejC67x
-    oa7MIM6U3QFKBnuejHYNhJLJFgiddGvjY/sVbO1ZvUZ96YHLm7kiFozfePrUAINr
-    bheKEby8s2w2imoE5L8ZXuJMoqqonCYdunTlIeZLtJXk6ep10pFwPlK4MTN5S18L
-    dRPLJWyBQe9bn2ePqhBxNbJUnkK3curIl3lVwgsSRUZ9UD/vHCE6TDZTBh0Gpen4
-    cdFUHDsua6DhajOQuWtPRgsz1q7o/xH28xP4Q1LDoJVxmg5ZJwwgcoA5FFS6Spbm
-    C5OaI4htjax25ysA8fdf3MAkTY+Wb1c6wbaEVHAvLrawQUPiN0hOuTKM1f6Y30aT
-    HwVVWeKiLg==
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523464233;
+    bh=FcOnBgDFm75L7TdCjfgB7ldaWBBGb4nal3hE/va0bc0=; b=r1FzFGBo1+pq
+    7X55BX6fP6mPWRn1nvIbbhpyyEFCifviZZK+g0B3ZfMqEluZgTyORoLtEtW7qMF9
+    Ei31RnK67hLHcpTb83UxT/RB53hNJH6L9bVzcD1m7uzkM2b0tHwa4mibewzJakV9
+    3EkwErcHwSop/EyNoF6PmMtbii1UIqibMrQlQTZk3IIZRwzq+8VntF5X/O4viIFR
+    fqpJyuyXFMpFSfPvjl5qFkvGhx6Nfr4DIRmz1eZjR6JiaQ+8zAAVF6Pd3uzs5HiX
+    SC2rG+fTwmULtVIkBd+Chs3fyo/wEL6VPKeykazIOTLAJXAAxtbQTM9jBHGwo9Pd
+    6n58gzHl6g==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -53,33 +53,34 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfB+zmWC7lK+WpDK5HCocrWGSHrvkvLKcCMBbx6ZzLghh1wyx2JYL1KGRBH5LrwtpIX7RUfa+ZnQDNJVwn4z2MAfrj0QHeAtcqAXLkx7OFGSGP7yO1m1J
-    pfhmJXyahWXXANBVCSLc0qIW3Sfg9Bl1GpsiOIDfDJD47vMJR56ro2Jfd+k7fwnbjgfJZ0Kq2LEpW000E3ymcsa4+p/EbUSZpFqNgLY8tO+jDAsUiGCbYjFr
+X-CM-Envelope: MS4wfAoUCvvorDfq3vtTqUruExIe3xYSDh3702HmtKTPe+imQksNibZxConIeYa98n4YgLLqqV7IwRQerh+R6LiCyBhUG8+V6tcXlwkDA+AdcfePY8BoYXuR
+    WwSXOic8U016+4jn+YvKb2Vzz4Z4fCg31hlC2vTQuDpZQOeAIouuvXlWRyigmxfkEaXUaPjTp3/JWw2mH+rM+3TuQEZqusgEgUu1DBeRb3V7nhbTb+5MC/VZ
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VnNF1IyMAAAA:8 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=7aeUeagkxlEMnkZxZQ4A:9
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=20KFwNOVAAAA:8 a=iox4zFpeAAAA:8 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8
+    a=5b9ipl2Uh9xIKf7PROsA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=WzC6qhA0u3u7Ye7llzcV:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753935AbeDKQZF (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 12:25:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54006 "EHLO mx1.redhat.com"
+        id S1753755AbeDKQZK (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 12:25:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42750 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753755AbeDKQZB (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Wed, 11 Apr 2018 12:25:01 -0400
+        id S1752804AbeDKQZH (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Wed, 11 Apr 2018 12:25:07 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 03/24] ima: require secure_boot rules in lockdown mode
+Subject: [PATCH 04/24] Enforce module signatures if the kernel is locked down
 From: David Howells <dhowells@redhat.com>
 To: torvalds@linux-foundation.org
 Cc: linux-man@vger.kernel.org, linux-api@vger.kernel.org,
         jmorris@namei.org, linux-kernel@vger.kernel.org,
         dhowells@redhat.com, linux-security-module@vger.kernel.org
-Date: Wed, 11 Apr 2018 17:24:58 +0100
-Message-ID: <152346389895.4030.16084163640865771766.stgit@warthog.procyon.org.uk>
+Date: Wed, 11 Apr 2018 17:25:05 +0100
+Message-ID: <152346390539.4030.2913584917609215556.stgit@warthog.procyon.org.uk>
 In-Reply-To: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
 References: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -92,77 +93,151 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+If the kernel is locked down, require that all modules have valid
+signatures that we can verify or that IMA can validate the file.
 
-Require the "secure_boot" rules, whether or not it is specified
-on the boot command line, for both the builtin and custom policies
-in secure boot lockdown mode.
+I have adjusted the errors generated:
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+ (1) If there's no signature (ENODATA) or we can't check it (ENOPKG,
+     ENOKEY), then:
+
+     (a) If signatures are enforced then EKEYREJECTED is returned.
+
+     (b) If IMA will have validated the image, return 0 (okay).
+
+     (c) If there's no signature or we can't check it, but the kernel is
+	 locked down then EPERM is returned (this is then consistent with
+	 other lockdown cases).
+
+ (2) If the signature is unparseable (EBADMSG, EINVAL), the signature fails
+     the check (EKEYREJECTED) or a system error occurs (eg. ENOMEM), we
+     return the error we got.
+
+Note that the X.509 code doesn't check for key expiry as the RTC might not
+be valid or might not have been transferred to the kernel's clock yet.
+
 Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jiri Bohac <jbohac@suse.cz>
+cc: "Lee, Chun-Yi" <jlee@suse.com>
+cc: James Morris <james.l.morris@oracle.com>
 ---
 
- security/integrity/ima/ima_policy.c |   39 ++++++++++++++++++++++++++---------
- 1 file changed, 29 insertions(+), 10 deletions(-)
+ kernel/module.c |   56 ++++++++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 43 insertions(+), 13 deletions(-)
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index d89bebf85421..da6f55c96a61 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -443,14 +443,21 @@ void ima_update_policy_flag(void)
-  */
- void __init ima_init_policy(void)
+diff --git a/kernel/module.c b/kernel/module.c
+index a6e43a5806a1..9c1709a05037 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -64,6 +64,7 @@
+ #include <linux/bsearch.h>
+ #include <linux/dynamic_debug.h>
+ #include <linux/audit.h>
++#include <linux/ima.h>
+ #include <uapi/linux/module.h>
+ #include "module-internal.h"
+ 
+@@ -2761,10 +2762,12 @@ static inline void kmemleak_load_module(const struct module *mod,
+ #endif
+ 
+ #ifdef CONFIG_MODULE_SIG
+-static int module_sig_check(struct load_info *info, int flags)
++static int module_sig_check(struct load_info *info, int flags,
++			    bool can_do_ima_check)
  {
--	int i, measure_entries, appraise_entries, secure_boot_entries;
-+	int i;
-+	int measure_entries = 0;
-+	int appraise_entries = 0;
-+	int secure_boot_entries = 0;
-+	bool kernel_locked_down = __kernel_is_locked_down(NULL, false);
- 
- 	/* if !ima_policy set entries = 0 so we load NO default rules */
--	measure_entries = ima_policy ? ARRAY_SIZE(dont_measure_rules) : 0;
--	appraise_entries = ima_use_appraise_tcb ?
--			 ARRAY_SIZE(default_appraise_rules) : 0;
--	secure_boot_entries = ima_use_secure_boot ?
--			ARRAY_SIZE(secure_boot_rules) : 0;
-+	if (ima_policy)
-+		measure_entries = ARRAY_SIZE(dont_measure_rules);
-+
-+	if (ima_use_appraise_tcb)
-+		appraise_entries = ARRAY_SIZE(default_appraise_rules);
-+
-+	if (ima_use_secure_boot || kernel_locked_down)
-+		secure_boot_entries = ARRAY_SIZE(secure_boot_rules);
- 
- 	for (i = 0; i < measure_entries; i++)
- 		list_add_tail(&dont_measure_rules[i].list, &ima_default_rules);
-@@ -471,11 +478,23 @@ void __init ima_init_policy(void)
+-	int err = -ENOKEY;
++	int err = -ENODATA;
+ 	const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
++	const char *reason;
+ 	const void *mod = info->hdr;
  
  	/*
- 	 * Insert the appraise rules requiring file signatures, prior to
--	 * any other appraise rules.
-+	 * any other appraise rules.  In secure boot lock-down mode, also
-+	 * require these appraise rules for custom policies.
- 	 */
--	for (i = 0; i < secure_boot_entries; i++)
--		list_add_tail(&secure_boot_rules[i].list,
--			      &ima_default_rules);
-+	for (i = 0; i < secure_boot_entries; i++) {
-+		struct ima_rule_entry *entry;
-+
-+		/* Include for builtin policies */
-+		list_add_tail(&secure_boot_rules[i].list, &ima_default_rules);
-+
-+		/* Include for custom policies */
-+		if (kernel_locked_down) {
-+			entry = kmemdup(&secure_boot_rules[i], sizeof(*entry),
-+					GFP_KERNEL);
-+			if (entry)
-+				list_add_tail(&entry->list, &ima_policy_rules);
-+		}
-+	}
+@@ -2779,19 +2782,46 @@ static int module_sig_check(struct load_info *info, int flags)
+ 		err = mod_verify_sig(mod, &info->len);
+ 	}
  
- 	for (i = 0; i < appraise_entries; i++) {
- 		list_add_tail(&default_appraise_rules[i].list,
+-	if (!err) {
++	switch (err) {
++	case 0:
+ 		info->sig_ok = true;
+ 		return 0;
+-	}
+ 
+-	/* Not having a signature is only an error if we're strict. */
+-	if (err == -ENOKEY && !sig_enforce)
+-		err = 0;
++		/* We don't permit modules to be loaded into trusted kernels
++		 * without a valid signature on them, but if we're not
++		 * enforcing, certain errors are non-fatal.
++		 */
++	case -ENODATA:
++		reason = "Loading of unsigned module";
++		goto decide;
++	case -ENOPKG:
++		reason = "Loading of module with unsupported crypto";
++		goto decide;
++	case -ENOKEY:
++		reason = "Loading of module with unavailable key";
++	decide:
++		if (sig_enforce) {
++			pr_notice("%s is rejected\n", reason);
++			return -EKEYREJECTED;
++		}
+ 
+-	return err;
++		if (can_do_ima_check && is_ima_appraise_enabled())
++			return 0;
++		if (kernel_is_locked_down(reason))
++			return -EPERM;
++		return 0;
++
++		/* All other errors are fatal, including nomem, unparseable
++		 * signatures and signature check failures - even if signatures
++		 * aren't required.
++		 */
++	default:
++		return err;
++	}
+ }
+ #else /* !CONFIG_MODULE_SIG */
+-static int module_sig_check(struct load_info *info, int flags)
++static int module_sig_check(struct load_info *info, int flags,
++			    bool can_do_ima_check)
+ {
+ 	return 0;
+ }
+@@ -3651,13 +3681,13 @@ static int unknown_module_param_cb(char *param, char *val, const char *modname,
+ /* Allocate and load the module: note that size of section 0 is always
+    zero, and we rely on this for optional sections. */
+ static int load_module(struct load_info *info, const char __user *uargs,
+-		       int flags)
++		       int flags, bool can_do_ima_check)
+ {
+ 	struct module *mod;
+ 	long err;
+ 	char *after_dashes;
+ 
+-	err = module_sig_check(info, flags);
++	err = module_sig_check(info, flags, can_do_ima_check);
+ 	if (err)
+ 		goto free_copy;
+ 
+@@ -3846,7 +3876,7 @@ SYSCALL_DEFINE3(init_module, void __user *, umod,
+ 	if (err)
+ 		return err;
+ 
+-	return load_module(&info, uargs, 0);
++	return load_module(&info, uargs, 0, false);
+ }
+ 
+ SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
+@@ -3873,7 +3903,7 @@ SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
+ 	info.hdr = hdr;
+ 	info.len = size;
+ 
+-	return load_module(&info, uargs, flags);
++	return load_module(&info, uargs, flags, true);
+ }
+ 
+ static inline int within(unsigned long addr, void *start, unsigned long size)
 
