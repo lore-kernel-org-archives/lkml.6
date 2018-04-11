@@ -1,116 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753413AbeDKRAc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 13:00:32 -0400
-Received: from mail-it0-f42.google.com ([209.85.214.42]:54394 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752923AbeDKRA1 (ORCPT
+        id S1753784AbeDKRBB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 13:01:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55338 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753599AbeDKRA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 13:00:27 -0400
-X-Google-Smtp-Source: AIpwx4/jKKibZamnj2H+T+w1+d8zbwcX9nFwDPIPEB9srUzP9BhhsypPIhINwPKHr4DWyTCdwy3cBn85gZaLQYtDdRE=
+        Wed, 11 Apr 2018 13:00:59 -0400
+Date: Wed, 11 Apr 2018 19:00:49 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Joe Perches <joe@perches.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andy Whitcroft <apw@canonical.com>, yuankuiz@codeaurora.org,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>, paulmck@linux.vnet.ibm.com,
+        Ingo Molnar <mingo@kernel.org>, Len Brown <len.brown@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] checkpatch: Add a --strict test for structs with bool
+ member definitions
+Message-ID: <20180411170049.GR4082@hirez.programming.kicks-ass.net>
+References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
+ <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>
+ <20180410123305.GF4082@hirez.programming.kicks-ass.net>
+ <e22fb871b1b7f2fda4b22f3a24e0d7f092eb612c.camel@perches.com>
+ <95477c93db187bab6da8a8ba7c57836868446179.camel@perches.com>
+ <20180410143950.4b8526073b4e3e34689f68cb@linux-foundation.org>
+ <b3d75281c3a7b4b217b612913894b346eaa3288b.camel@perches.com>
+ <20180410150011.df9e036f57b5bcac7ac19686@linux-foundation.org>
+ <20180411081502.GJ4082@hirez.programming.kicks-ass.net>
+ <20180411092959.e666ec443e4d3bb6f43901d7@linux-foundation.org>
 MIME-Version: 1.0
-In-Reply-To: <b39b265d-6a44-6133-6a51-33b8077d2f64@gmail.com>
-References: <e1da0be1-94d8-d5d0-8329-4507c51ddd64@gmail.com>
- <20180324064627.GA10884@linaro.org> <c5daea3c-0834-1629-3e38-3db5130eb32f@gmail.com>
- <6b151c56-9ead-7bbe-d1b7-b0e6d69c0d7f@arm.com> <CAKfTPtDigSEOmtxk7daTTBb3o6kVR8AgUVhu4X6YWutK9yWNwg@mail.gmail.com>
- <CAKfTPtAisq0tQ_Kw3OptJYm=u7tSk6vyi3CFZJdhBxD=d=EN1g@mail.gmail.com>
- <796bbd7b-8512-7370-28c9-0f082dc3f287@gmail.com> <CAKfTPtD17yUrp5G7gPN6ijB+C-TKJcK1UTCmP_JhMK5DvSDN_g@mail.gmail.com>
- <95fe50be-cc8b-4345-7333-cdf656fad2a7@gmail.com> <CAKfTPtAJCck6mpXhbMkZes2D6KMYsoB9WkCRL+6owJfMiNXq5w@mail.gmail.com>
- <b39b265d-6a44-6133-6a51-33b8077d2f64@gmail.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 11 Apr 2018 19:00:06 +0200
-Message-ID: <CAKfTPtAiyisYi-3CazC+HzL5xyB+rTV9AkCW+JyzWHQ6pU8Vpg@mail.gmail.com>
-Subject: Re: Problem with commit 31e77c93e432 "sched/fair: Update blocked load
- when newly idle"
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180411092959.e666ec443e4d3bb6f43901d7@linux-foundation.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heiner,
+On Wed, Apr 11, 2018 at 09:29:59AM -0700, Andrew Morton wrote:
+> 
+> OK.  I guess.  But I'm not really seeing some snappy description which
+> helps people understand why checkpatch is warning about this. 
 
-On 9 April 2018 at 19:33, Heiner Kallweit <hkallweit1@gmail.com> wrote:
-> Am 06.04.2018 um 18:03 schrieb Vincent Guittot:
->> Hi Heiner,
->>
->> On 30 March 2018 at 10:37, Heiner Kallweit <hkallweit1@gmail.com> wrote:
->>> Am 30.03.2018 um 08:50 schrieb Vincent Guittot:
->>>> On 29 March 2018 at 19:40, Heiner Kallweit <hkallweit1@gmail.com> wrote:
->>>>> Am 29.03.2018 um 09:41 schrieb Vincent Guittot:
->>>>
->>>>>>
->>>>>> I'm finally not so sure that i have the right set up to reproduce the
->>>>>> problem as I haven't been able to reproduce it since.
->>>>>>
->>>>>> Heiner,
->>>>>>
->>>>>> How fast the problem happens on your board ?
->>>>>> Are you doing anything specific on the console that trigger the problem ?
->>>>>>
->>>>> Hi Vincent,
->>>>>
->>>>> the lag when working on the console is constantly there, the "rcu_preempt
->>>>> detected stalls" happens after several hours (so far always within 24h)
->>>>> w/o any triggering event I would be aware of. It occured also when the
->>>>> system was idle at that point in time.
->>>>
->>>> Ok, so I don't have the problem on my hikey as the console never lag
->>>> on my setup.
->>>>
->>>> Can you send me the config of  your kernel ? I'd like to check if you
->>>> have enable something that could trigger such problem
->>>>
->>> Sure, he we go. I also add a system log.
->>
->> Thanks for the config. I have used it for my setup but I can't
->> reproduce your regression. My platforms stay stable so I probably
->> missing something. Are you facing similar problem with other platforms
->> or only this celeron based platform ?
->>
->> I have reviewed the code but don't see any obvious place in the patch
->> that can generate the problem. Nevertheless, would you mind to try the
->> patch below ? It's a blind test to try to narrow the problem.
->>
->> Thanks
->>
-> Hi Vincent,
->
-> I tried again with today's linux-next and it's much better. The lag isn't
-> completely gone but it's much less annoying. Every ~30 secs the console
-> hangs for about half a second, that's much less frequent than before.
+ "Results in architecture dependent layout."
 
-That's interesting because nothing related to commit
-31e77c93e432dec79c7d90b888bbfc3652592741 has been merged recently
-AFAICT
+is the best short sentence I can come up with.
 
->
-> I saw some patches from Rafael have been merged in the last days.
-> Maybe they improved the situation.
+> We already have some 500 bools-in-structs and the owners of that code
+> will be wondering whether they should change them, and whether they
+> should apply those remove-bool-in-struct patches which someone sent
+> them.
 
-Yes, Peter mentions in another thread that lastest Rafael's patches
-avoid stopping tick when entering short idle thus reducing the time to
-enter idle. commit 31e77 is adding some background activity when
-entering idle so it can be that we take too much time
+I still have room in my /dev/null mailbox for pure checkpatch patches.
 
-You also mentioned that the CPU was relatively slow on the platform.
-Can you try to use cpufreq performance governor instead of ondemand ?
+> (ooh, https://lkml.org/lkml/2017/11/21/384 is working this morning)
 
-I'm also going to prepare a patch for adding some trace in the code to
-highlight the problem
+Yes, we really should not use lkml.org for references. Sadly google
+displays it very prominently when you search for something.
 
-Thanks,
-Vincent
+> hm, Linus suggests that instead of using
+> 
+> 	bool mybool;
+> 
+> we should use
+> 
+> 	unsigned mybool:1;
+> 
+> However that introduces the risk that alterations of mybool will use
+> nonatomic rmw operations.
+> 
+> 	unsigned myboolA:1;
+> 	unsigned myboolB:1;
+> 
+> so
+> 
+> 	foo->myboolA = 1;
+> 
+> could scribble on concurrent alterations of foo->myboolB.  I think.
 
->
-> Regards, Heiner
->
+So that is true of u8 on Alpha <EV56 too. If you want concurrent, you
+had better know what you're doing.
 
-[snip]
+> I guess that risk is also present if myboolA and myboolB were `bool',
+> too.  The compiler could do any old thing with them including, perhaps,
+> using a single-bit bitfield(?).
 
->
+The smallest addressable type in C is a byte, so while _Bool may be
+larger than a byte, it cannot be smaller. Otherwise we could not write:
+
+	_Bool var;
+	_Boll *ptr = &var;
+
+Which is something that comes apart with bitfields.
