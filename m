@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3303684-1523480206-2-2180872138655850531
+X-Cyrus-Session-Id: sloti22d1t05-3303684-1523480185-2-15125580189022896385
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523480204; b=fKPFqvNwFSeveyLW69P1EAwtqCd/Kb7XCgvT+p2duvbTKu9MoQ
-    B3uRjH9/j1wT2K0HCRiGridy42SrSigOi4iSJiAjsU92Vvt+zb/2QjzjEK70ozIx
-    dmoZn/jBAt4XdJUe18eOXJg8lXHTJFXfkCAyDfvuqvKJYu0b57GhbCUJzvMgR+hp
-    j094zV+eic5PtKL+bUmTNbo92zGUxLKIrJEkNnj//oyEHV2u3gvoLf7EWs4D4Bpm
-    F4GEEKqnepUYylgXsV/vVANO3vOVNL6g/jQXnbTtQN+UYLq//wWR5Gz5JpLQGnYP
-    ux6fXcR3eJZzZluDZe8vcg2i3I/B7U+2N6sQ==
+    1523480185; b=IuPkl2YRPksIWpMahB0/3qMHs0yj+agpJCp1jPwqIcLrAkVVD2
+    3gmCkzqQw04pSwxIq5lBF+IMRKS5r3k1RUrBmn+Yof81pnwcQC3gu2V1Gl9PTcqa
+    az402wOWq61GFfX9JTP3iTzzIW+DRZc/CFzhLSLYrsg9odTrBTnFbuTN2M8DkpDs
+    4GtsxMFlfH8JlYvKqYQrsiat6igwy0+5bF79+tYHzdInTSFSTFoDD6pOkmtCjGAf
+    c5uoAKE2L4v2kIZdnPgUIcolyqhhjPpeNPMfyhnMt71OIFvhUrjqO2Vv6iPzpsFm
+    CP2HGN5eiY1zwGYIHS4PWaLkaGGCqebd0iSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523480204; bh=h5uj8d6ZKpp4tAsT9zLqewrvSzqPfM
-    HTNViIoJDN+Dg=; b=vrPkxDTOVCqNvVd+BfGGk9wAgaXCjoPSTJGPSF9A1qroco
-    qxmgg1vqNvt2t2wFXycbVQLTGDUKwXwmr3FW8kJOOr+9lUa+M16qPDfGQaJdOflR
-    WKoT6i9MODQnBuvYal5FNpCHnkMnz9kElLvqhhpybD1hM4dO16AQd2Qd0dhEeAuZ
-    c8zUWsYtP9Zqmfq8KW6r0KZoV4v4Na2Gnbv56JDUf7xwkQo+6TDRYb6TJLS3VE5A
-    q+83IzKT0YBsycmw7EniCES2S790Q5Nb1nYrmtpferIL20bPwrIeNZfNxXK6+9wy
-    7lw5x3lXTzuE53J3/OErthp6TNlT65B8aRc0ZQUg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523480185; bh=CNYyiGZvO86ATDHpFGLPTePyS+DOlu
+    0g42wnZsLiwZ8=; b=SvbHzb0JDJXevjWNLfBPA66nw1wY4CUlmSqDqNXVdyYj59
+    ErSai+GS1dMHYpyBKIZPaFODeSnZSz8FQe3X2GQA5cHAs7sir6Un0KaM8sQFRvoz
+    RR9rx5XzX2P2K9TW817I9bMIp8MHrITfWYKDj1GZ6H15t2dBTpiIcmMAn7LGEk81
+    ijDa90rZqTgAz413U9E73+YpzeRm6p782NtK1xIscknT1Va7SBYenfPgVBPRNv9K
+    ohMdYq/xeIXm5s0HbCjUf2T2B1pzp28LhCfOVh7s3SF4s7ubbMXxPJuCYYB9XHsj
+    TUg6IKt5A8VeoW7sZEcKeJm3tkZw8OT9iJEL9b/A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,31 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMWS8WF+C67NQbNEwbZ1tnVVFa8Y4muzcoaBLQxHpwJHejStN+Kx6Rua2SrB+rXjjQM01JRYjucXDx49Ai4mUoKCwpOfHi44zYb6IKRXtSHiuy8P1Gxj
-    bD82NLTadGf+5A65r2f1hjP+L+jXL45nbJ5bQ3FO1YuNvrhByuJQaT7hTXNLoAt1oJLmn/9+JuwOzTebPgotNRkf1QLe/vbLJorCYjd4AMFoFLK+YXfjg4mp
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFGsoU2KFN21h6yCYn2jqBmRf3D18Wg9csx+Ay7ZlJRakzn9uveC78Ew63Lz0zWR0XsFXddTH7GJYomGoWMLJS3eu2y38ea4vg7VgxjvT064omPTo4ZO
+    3Ex1e3fgA0yN01TfC9s6yilSTXEmHYlIu27sPpP4pgLM5XTfuLhKDT1vg+OXLeDo6jWZ8CIUrzjn3F+GrFLN0VsqDVSaJ2gRn52p9vOtT4vfCblMKcq98YrT
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=k1kETvRik_gOXROq0yoA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=7ZN4cI0QAAAA:8 a=1XWaLZrsAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=7loVob4iMjE_SrWWOpgA:9 a=QEXdDO2ut3YA:10 a=Dl0WHwQvj8hGZljrFLtM:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755433AbeDKSoh (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:44:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58278 "EHLO
+        id S1755440AbeDKSoi (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:44:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58268 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755426AbeDKSoe (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:44:34 -0400
+        with ESMTP id S1755417AbeDKSob (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:44:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 008/190] mac80211: bail out from prep_connection() if a reconfig is ongoing
-Date: Wed, 11 Apr 2018 20:34:14 +0200
-Message-Id: <20180411183550.536813653@linuxfoundation.org>
+Subject: [PATCH 4.4 007/190] af_key: Fix slab-out-of-bounds in pfkey_compile_policy.
+Date: Wed, 11 Apr 2018 20:34:13 +0200
+Message-Id: <20180411183550.488023537@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -93,37 +93,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Steffen Klassert <steffen.klassert@secunet.com>
 
 
-[ Upstream commit f8860ce836f2d502b07ef99559707fe55d90f5bc ]
+[ Upstream commit d90c902449a7561f1b1d58ba5a0d11728ce8b0b2 ]
 
-If ieee80211_hw_restart() is called during authentication, the
-authentication process will continue, causing the driver to be called
-in a wrong state.  This ultimately causes an oops in the iwlwifi
-driver (at least).
+The sadb_x_sec_len is stored in the unit 'byte divided by eight'.
+So we have to multiply this value by eight before we can do
+size checks. Otherwise we may get a slab-out-of-bounds when
+we memcpy the user sec_ctx.
 
-This fixes bugzilla 195299 partly.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=195299
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: df71837d502 ("[LSM-IPSec]: Security association restriction.")
+Reported-by: Andrey Konovalov <andreyknvl@google.com>
+Tested-by: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/mlme.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/key/af_key.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -4326,6 +4326,10 @@ static int ieee80211_prep_connection(str
- 	if (WARN_ON(!ifmgd->auth_data && !ifmgd->assoc_data))
- 		return -EINVAL;
- 
-+	/* If a reconfig is happening, bail out */
-+	if (local->in_reconfig)
-+		return -EBUSY;
-+
- 	if (assoc) {
- 		rcu_read_lock();
- 		have_sta = sta_info_get(sdata, cbss->bssid);
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -3305,7 +3305,7 @@ static struct xfrm_policy *pfkey_compile
+ 		p += pol->sadb_x_policy_len*8;
+ 		sec_ctx = (struct sadb_x_sec_ctx *)p;
+ 		if (len < pol->sadb_x_policy_len*8 +
+-		    sec_ctx->sadb_x_sec_len) {
++		    sec_ctx->sadb_x_sec_len*8) {
+ 			*dir = -EINVAL;
+ 			goto out;
+ 		}
