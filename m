@@ -1,97 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752972AbeDKMaJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 08:30:09 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35969 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752401AbeDKMaH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 08:30:07 -0400
-X-Google-Smtp-Source: AIpwx49oTWx4CZYLK8aOhycflhMhP5eN2ktQVVzdy9hJ+RRZ5oFsa0Jyjv40QbtRvmPpWfVMaxirk+juRKk+pjuL0lw=
+        id S1753065AbeDKMcT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 08:32:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45140 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752309AbeDKMcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 08:32:17 -0400
+Date: Wed, 11 Apr 2018 07:32:14 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Miroslav Benes <mbenes@suse.cz>
+Cc: Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 05/10] livepatch: Support separate list for replaced
+ patches.
+Message-ID: <20180411123214.mfpkbrirze32phrb@treble>
+References: <20180319214324.riyp233trtfxbeto@treble>
+ <20180320122538.t75rplwhmhtap5q2@pathway.suse.cz>
+ <20180320201502.2skkk3ld4zk2dxwg@treble>
+ <20180323094507.smsqc5ft3yajnwqt@pathway.suse.cz>
+ <20180323224410.vuq5cabfprqhd6ej@treble>
+ <20180326101107.bbloeh5l276on7uz@pathway.suse.cz>
+ <20180406195049.dtfebzfdkbvv6yex@treble>
+ <20180410083455.l26dgo5kx4cy7bc7@pathway.suse.cz>
+ <20180410174206.l3uk6lchhzxvn75x@treble>
+ <alpine.LSU.2.21.1804110956430.28885@pobox.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <2704286.80iLvC0rRL@tauon.chronox.de>
-References: <001a114467482dbc4b05692df8f9@google.com> <CACT4Y+aKnKT3AwvbEw_khsYUySLDz4mW7dZ6n7O6McbfPTjd8Q@mail.gmail.com>
- <CACT4Y+Y+ydyBAL=j2QOWaBnpY8+Bsr_80d80RXth0SwuY0wMuQ@mail.gmail.com> <2704286.80iLvC0rRL@tauon.chronox.de>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 11 Apr 2018 14:29:45 +0200
-Message-ID: <CACT4Y+bRmYMt3WuVHE7e624KgRUTXQWa36wn-pr_gm2STq80bQ@mail.gmail.com>
-Subject: Re: [PATCH] crypto: DRBG - guard uninstantion by lock
-To: Stephan Mueller <smueller@chronox.de>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-        Eric Biggers <ebiggers3@gmail.com>,
-        syzbot <syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1804110956430.28885@pobox.suse.cz>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 5:35 PM, Stephan Mueller <smueller@chronox.de> wrote:
-> Am Dienstag, 10. April 2018, 17:23:46 CEST schrieb Dmitry Vyukov:
->
-> Hi Dmitry,
->
->> Stephan,
->>
->> Do you have any hypothesis as to why this is not detected by KASAN and
->> causes silent corruptions?
->> We generally try to understand such cases and improve KASAN so that it
->> catches such cases more reliably and they do not cause splashes of
->> random crashes on syzbot.
->
-> I do not have any hypothesis at this point. I know that you induce some fault.
-> As you mentioned the drbg_kcapi_seed function, I was looking through the error
-> code paths to see whether some error handlers trip over each other. But all is
-> guesswork so far. And I am not even sure whether the bug is in the DRBG code
-> base.
->
-> Looking into the trace you sent, I see a NULL pointer dereference. At one
-> point there is also the drbg_init_hash_kernel that is called. But nowhere I
-> see any smoking gun.
->
-> Could you please give me a description of the fault you are inducing?
+On Wed, Apr 11, 2018 at 10:07:31AM +0200, Miroslav Benes wrote:
+> > > I was confused by wording "in the middle". It suggested that there
+> > > might had been enabled patches on the top and the bottom of the stack
+> > > and some disabled patches in between at the same time (or vice versa).
+> > > This was not true.
+> > 
+> > That *was* what I meant.  Consider the following sequence of events:
+> > 
+> > - Register patch 1
+> > - Enable patch 1
+> > - Register patch 2
+> > - Enable patch 2
+> > - Disable patch 2
+> > - Register patch 3
+> > - Enable patch 3
+> > 
+> > Notice that patch 2 (in the middle) is disabled, whereas patch 1 (on the
+> > bottom) and patch 3 (on the top) are enabled.
+> 
+> This should not be possible at all.
+> 
+> __klp_enable_patch:
+> 
+>         if (patch->list.prev != &klp_patches &&
+>             !list_prev_entry(patch, list)->enabled)
+>                 return -EBUSY;
+> 
+> When patch 3 is enabled, list_prev_entry() returns patch 2 and its 
+> ->enabled is false.
 
-Hi Stephan,
+Hm, you're right.  I'm not sure how I got that idea...
 
-What do you mean by description of the fault?
-It's kernel standard FAULT_INJECTION facility, it injects faults
-mainly into kmalloc/slab_alloc (also in a bunch of other things, but
-in this case this seems to be kmalloc). In the repro you can see that
-it's injecting a fault into 8-th malloc in the setsockopt syscall.
+I still agree with my original conclusion that enforcing stack order no
+longer makes sense though.
 
-I wonder why you can't reproduce it. I can trigger it reliably in a
-qemu. Let's try this:
-I have upstream kernel on b284d4d5a6785f8cd07eda2646a95782373cd01e.
-Here is my config:
-https://gist.githubusercontent.com/dvyukov/f843ea09bc5b9439a820c8e809a5501d/raw/ad330e9b6b710f57f63b61590747b48230e5cb61/gistfile1.txt
-Here is the compiler:
-https://storage.googleapis.com/syzkaller/gcc-8.0.1-20180301.tar.gz
-Build as: make -jN CC=that/gcc/bin/gcc
-Then I start qemu as:
+> > > Another possibility would be to get rid of the enable/disable states.
+> > > I mean that the patch will be automatically enabled during
+> > > registration and removed during unregistration.
+> > 
+> > I don't see how disabling during unregistration would be possible, since
+> > the unregister is called from the patch module exit function, which
+> > can only be called *after* the patch is disabled.
+> > 
+> > However, we could unregister immediately after disabling (i.e., in
+> > enabled_store context).
+> 
+> I think this is what Petr meant. So there would be nothing in the patch 
+> module exit function. Well, not exactly. We'd need to remove sysfs dir and 
+> maybe something more.
 
-qemu-system-x86_64 -hda wheezy.img -net
-user,host=10.0.2.10,hostfwd=tcp::10022-:22 -net nic -nographic -kernel
-arch/x86/boot/bzImage -append "kvm-intel.nested=1
-kvm-intel.unrestricted_guest=1 kvm-intel.ept=1
-kvm-intel.flexpriority=1 kvm-intel.vpid=1
-kvm-intel.emulate_invalid_guest_state=1 kvm-intel.eptad=1
-kvm-intel.enable_shadow_vmcs=1 kvm-intel.pml=1
-kvm-intel.enable_apicv=1 console=ttyS0 root=/dev/sda
-earlyprintk=serial slub_debug=UZ vsyscall=native rodata=n oops=panic
-panic_on_warn=1 panic=86400" -enable-kvm -pidfile vm_pid -m 2G -smp 4
--cpu host
+Sounds good to me, though aren't the livepatch sysfs entries removed by
+klp during unregister?
 
-You can find the wheezy.img and ssh key for it here:
-https://github.com/google/syzkaller/blob/master/docs/syzbot.md#crash-does-not-reproduce
+> > > The question is what is acceptable to others
+> > 
+> > If there are any objections, this is their chance to speak up :-)
+> > 
+> > > and if it needs to be done as part of this patch set.
+> > 
+> > Maybe so, for at least a few reasons:
+> > 
+> > - This patch set makes the 'stack' obsolete, so it makes sense to remove
+> >   the 'stack' with it.
+> 
+> Not necessarily. I like Petr's rebase explanation here.
 
-Then I compile this program:
-https://gist.githubusercontent.com/dvyukov/1dd75d55efd238e7207af1cc38478b3a/raw/403859b56b161a6fbb158e8953fac5bb6e73b1a1/gistfile1.txt
-as: gcc prog.c -static -m32
+I'm not sure what you mean.  IIRC, his rebase explanation referred to
+how we handle 'replace' patches, for which there is no stacking (as I
+meant the term: enforcement of stack order for registration and
+enablement).
 
-Run in the qemu and within a minute it gives me the crash.
+-- 
+Josh
