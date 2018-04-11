@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3303684-1523479893-2-857427383606258287
+X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479878-2-7574871666133376338
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479893; b=ja2I4YWU7SqvJVXYy7WPkzk7L9jxRAq5ICPeMvgliqFZjDBJA4
-    8aRozwXmsKETSdsNS9S/lmHXyb5oPSr47Gp3s9SqFk6i1izBkuYLwdXSX83ZHmyS
-    xn/41kJ4PLspnsGkqUrENYiCpU/0lhtm58Yj1BwSmv6Gfhfz/TRK/xlyANn4ORC3
-    +iolWvxR3jf1JBrpVvbnHwxBmbMVMRFqwzWL3JkR2CRm5v1x/YuMQbXcSRSXe0cH
-    F3/D2Yu9nHxcyIrfvivPL/1VaE5SoNLNq9Nm40DoTcYB7+3EqloSK4LLWKf7Ye4x
-    Zj0I+6Py4Y7+rV3rLRYK5z5ovYTM8ShwYgGQ==
+    1523479877; b=Dlt6zQ3JnxEqNjJU9ouj52nLgwQBWIN1ZP3srLJ2q8Zblv4zKO
+    pno+ErPLG7kiNmctvTicU36qnHYQXTIg85dXlei6Gm8vtgnHfFRFDUFXuM6gN5DF
+    FSDtnjkyJzznzvagRjXOz9C3d+RUZNlFEC7lnaE4i8CBJD9Wy3Ol4BBitrrDMdgI
+    Dn3idxtqHHnTTqzHHAxghxonsPFZLYK3tRH84pI0LqFf80E/OzxiiUGk9dPEXAB9
+    bXpKL0NFr26sA8lR8BicN6jWMvRQR1MfJKe/xEfU5uThd6laSt8joKqlmXEzvTsM
+    W4xZl0z3bDEU+/jET+ueZUGej8E5M7tt+2uw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479893; bh=gRJQN7J0gJV5v9fDEwn8R0SY1c9TDT
-    NLq69FZEEdTYs=; b=UHVZNvBoZVP8hfPNcy24KcQtlSEu4eZIp0OmC7OxWUpKFc
-    MXrKKyLyBHHRplE/OffHFYmnOl6KeppxJAyrYYldQ3+Zulbj93FSrkWUDtNe55fm
-    iJUfSpCZlRQEmY0eRTHXbjFjiaUYplwsWGSYB6CbQtAi0cx7Kef+l4W8dI/A/O0M
-    EgPhuuScl6qFWe67vpWHSy9aRWr7N5L0aYuDW2wctNph0djIMxbPmLxBqVKSeT1G
-    3qg1c7spLnC3hD+EqozHbUlQ2n9lXi5N1EPO5FMzfLfb94b1EirBLGmxphwPp6Nk
-    JxAu3Hcoh4zLxOG+3SPtnXy3tgSnJxqbL6cCaHcQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479877; bh=h7aP7L1xvk/qvC04XbWoWLbF3RDl/g
+    DdVcpFnEPaQC0=; b=JGGAmKveQIk3I7IFVYgSlTRRWRNqaYII5XbIi0xLBa01dr
+    BZyN+hur2i4T2d1oM1DVWA3PprzONTiE6gO6qEBpcaEwX2plCDC9zb+lvBfQr1Lr
+    s++R64HpbphIlGVU+KB84MLgE5+38uqo0ThEtzScWMQwlhI9IF+DfUuusD9nLrux
+    +6DPfSyQxzucb/1226OBgerX8w2JPuka3rdxO/v8sOu6+UkpKRRT0GOian+arLxH
+    LIQd1XhbOtyTNy4E2S2Z/ovYujho1O9Gr7rXJomOWtss8pR3o47VVTycKpISnFsm
+    CU3KfKFYJU9HrA2SMTO6Cjg7aK7BMo4lLR83aHgQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,33 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfP+keYFWfzh2KxR2NJ0QtTuF4RGjfTVyo9q08covGAmewsKPIK6WJC4FMH48WUfeZMzhIufHLKRibvmdXC6Az+1mzI/IFlYtjkWGdyEu5G4yC7Dm7Tcq
-    hz0w9SDMXyPV7LmF2vwm7VMB4PUcf/SRxJVPCqJU+e8FidkcEgeJJKeDuQiW2o7EK1UIFXwk0qBLZZDlSAjXcsjAVsH1EO4+PajC5FA3vFq2LCx+gWDoqNEY
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfEHWnFKltAXteBe4COB3x0BaCP3CI25A/gG3m1z1axmvRgqpxFCucv/P+TOMrYYMuNnoK8YW7OW4zKi6RS1Ca6EuLJ7CT0z880fS9Cl2ALVvzNdwcLQV
+    Ewhhn4X/9HtI9RHvXVj5e6xH0+Jz0f2YgcX8grM0FBteeS5Gih/ukJVX5YlOfTT04hUAOjrL8XWrMBVLm5otg7kd0geAEpDn9zB5wvdH3f/Qv+2zUCR1x+06
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=vrZRev11AAAA:8 a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=1fmkquyJTycUkjhl2ZkA:9 a=QEXdDO2ut3YA:10 a=vE9JzVuArQVVuPm_qWxV:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=voM4FWlXAAAA:8 a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=usRbeA9v8uJKUopLpoQA:9 a=geZljYdC0cXtsTJ8:21 a=_S9BWLtnSfCgJfAo:21
+    a=QEXdDO2ut3YA:10 a=IC2XNlieTeVoXbcui8wp:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755966AbeDKUvP (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:51:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58670 "EHLO
+        id S1754801AbeDKSpm (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:45:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58662 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932328AbeDKSpm (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:42 -0400
+        with ESMTP id S932321AbeDKSpk (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:40 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, KT Liao <kt.liao@emc.com.tw>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Breno Leitao <breno.leitao@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 025/190] Input: elantech - force relative mode on a certain module
-Date: Wed, 11 Apr 2018 20:34:31 +0200
-Message-Id: <20180411183551.616035057@linuxfoundation.org>
+Subject: [PATCH 4.4 051/190] powerpc/mm: Fix virt_addr_valid() etc. on 64-bit hash
+Date: Wed, 11 Apr 2018 20:34:57 +0200
+Message-Id: <20180411183553.284311483@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -93,40 +95,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: KT Liao <kt.liao@emc.com.tw>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
 
-[ Upstream commit d899520b0431e70279bfb5066ecb6dc91d0b7072 ]
+[ Upstream commit e41e53cd4fe331d0d1f06f8e4ed7e2cc63ee2c34 ]
 
-One of Elan modules with sample version is 0x74 and hw_version is 0x03 has
-a bug in absolute mode implementation, so let it run in default PS/2
-relative mode.
+virt_addr_valid() is supposed to tell you if it's OK to call virt_to_page() on
+an address. What this means in practice is that it should only return true for
+addresses in the linear mapping which are backed by a valid PFN.
 
-Signed-off-by: KT Liao <kt.liao@emc.com.tw>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+We are failing to properly check that the address is in the linear mapping,
+because virt_to_pfn() will return a valid looking PFN for more or less any
+address. That bug is actually caused by __pa(), used in virt_to_pfn().
+
+eg: __pa(0xc000000000010000) = 0x10000  # Good
+    __pa(0xd000000000010000) = 0x10000  # Bad!
+    __pa(0x0000000000010000) = 0x10000  # Bad!
+
+This started happening after commit bdbc29c19b26 ("powerpc: Work around gcc
+miscompilation of __pa() on 64-bit") (Aug 2013), where we changed the definition
+of __pa() to work around a GCC bug. Prior to that we subtracted PAGE_OFFSET from
+the value passed to __pa(), meaning __pa() of a 0xd or 0x0 address would give
+you something bogus back.
+
+Until we can verify if that GCC bug is no longer an issue, or come up with
+another solution, this commit does the minimal fix to make virt_addr_valid()
+work, by explicitly checking that the address is in the linear mapping region.
+
+Fixes: bdbc29c19b26 ("powerpc: Work around gcc miscompilation of __pa() on 64-bit")
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Reviewed-by: Paul Mackerras <paulus@ozlabs.org>
+Reviewed-by: Balbir Singh <bsingharora@gmail.com>
+Tested-by: Breno Leitao <breno.leitao@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/input/mouse/elantech.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/powerpc/include/asm/page.h |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/drivers/input/mouse/elantech.c
-+++ b/drivers/input/mouse/elantech.c
-@@ -1715,6 +1715,17 @@ int elantech_init(struct psmouse *psmous
- 			     etd->samples[0], etd->samples[1], etd->samples[2]);
- 	}
- 
-+	if (etd->samples[1] == 0x74 && etd->hw_version == 0x03) {
-+		/*
-+		 * This module has a bug which makes absolute mode
-+		 * unusable, so let's abort so we'll be using standard
-+		 * PS/2 protocol.
-+		 */
-+		psmouse_info(psmouse,
-+			     "absolute mode broken, forcing standard PS/2 protocol\n");
-+		goto init_fail;
-+	}
+--- a/arch/powerpc/include/asm/page.h
++++ b/arch/powerpc/include/asm/page.h
+@@ -132,7 +132,19 @@ extern long long virt_phys_offset;
+ #define virt_to_pfn(kaddr)	(__pa(kaddr) >> PAGE_SHIFT)
+ #define virt_to_page(kaddr)	pfn_to_page(virt_to_pfn(kaddr))
+ #define pfn_to_kaddr(pfn)	__va((pfn) << PAGE_SHIFT)
 +
- 	if (elantech_set_absolute_mode(psmouse)) {
- 		psmouse_err(psmouse,
- 			    "failed to put touchpad into absolute mode.\n");
++#ifdef CONFIG_PPC_BOOK3S_64
++/*
++ * On hash the vmalloc and other regions alias to the kernel region when passed
++ * through __pa(), which virt_to_pfn() uses. That means virt_addr_valid() can
++ * return true for some vmalloc addresses, which is incorrect. So explicitly
++ * check that the address is in the kernel region.
++ */
++#define virt_addr_valid(kaddr) (REGION_ID(kaddr) == KERNEL_REGION_ID && \
++				pfn_valid(virt_to_pfn(kaddr)))
++#else
+ #define virt_addr_valid(kaddr)	pfn_valid(virt_to_pfn(kaddr))
++#endif
+ 
+ /*
+  * On Book-E parts we need __va to parse the device tree and we can't
