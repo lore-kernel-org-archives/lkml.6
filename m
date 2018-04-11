@@ -1,37 +1,82 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49Ubjb1yeKQHc9gZEJXBXvQHnjB6mqOVFLkcZVCIc2Dn+8k7fmprBJ7HQUEA8KFIRaLKrqf
-ARC-Seal: i=1; a=rsa-sha256; t=1523473127; cv=none;
-        d=google.com; s=arc-20160816;
-        b=0b/cukebjKQOS6X7vUSJrVrSC3LnAgpx06+f0lPuPIHBIPkAxBkq8Ir3MewWb/Cqwb
-         YH+vGJUN2o4htRclGPOQH+LPDp2VKIIm5uWWFWSu1y6mQQaWlNuOKQENN4W9IxzVjazT
-         BY4PKB1OPP4F6cwrDsjZ4G1LsX9KTV9Ww+txDMT/Datpze02E4m67exaluOc79b4ralh
-         XPt7dx/yp3jvZn/0slzF4b8xf6d7UWTu7V9dFQrXsVvADnxNEQNdisxhJ+q732wEwlv+
-         N+mx806s5V9om7iDghKVtVRqVE3VFDElKFCqbQWJ5KYQl4pPN8TM2+WgNXLjTkd0JblZ
-         m+xQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=eNkd5GexaBmMzow+uL5EQcFK67bUaRxWg4WZ6ftj4ik=;
-        b=dwstG1dgFD6DgcgYDZl5/4zft738JDWKk0jMwg32mWG/gSAtOQcbMMveGUFgwgMAZh
-         h/4QlDx/BfE4yAhJ5yvd3q8IhGW8dWxF6B2lnutjvVLtrTAJSLHnvW/ga6lD4oaOfjCf
-         SeNFYFP+DGC9gzb0EsmRyg3VHtU4Rw0mY7/498GzwgfhPrRRE11V2xo++QmKVf0cMSbZ
-         Cg4yys5VTHiCVMznUI9UGaHzj5bGi2i+QNyIp2vqdDiPPequYyFeYcZZ+FmSlMtR5yPc
-         tGHWEjDY9ZzH9o/lE1uxblJwCh5d01hilUbAugcp3b8rrhxem3EC5bVSap6fV3IrghZh
-         bpXA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3118118-1523473123-2-726858141629224001
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523473123; b=ie3IT7/GCUHUNYbq+pk8sMTE2s7cFAv/NOEho9rV5A4m2LIl7l
+    JYqz8EfGafUnW2e2OLB9EPJpAAVwQ9d0b1Iwp4MvuZLcgeJHndZKr+MiPB93circ
+    lSfFW36WWIApkYgfeVLZw6Dm2QXFEvoIfzsBESks3rZdseGiIeZZ04z2iyA6lyVe
+    xnvzfvno2zBiM4uTdWaQpqV5xj7pB/6THHy2QZ0tbCHYS/iRWEc18rtKvsqtswFj
+    tK6wO5h5QIPkQ6vR6+J9D//slw0IuXFjdyqfFbry/qn7cfKJMh8T77idO6x8em5l
+    yTezFHzHHzF9wa0/ldfdmzx20PlwWK1/8gtQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523473123; bh=cszONKg+HElrbqP2TYdIroKi68JsEt
+    E1MZy+CK2mlRg=; b=OBUEY7dOznPoMNwDdKYHWNeAo7HOKfJAvA7B+neIYvSv2L
+    zlTkD37UhgCqWq8n6gKZYqnICTxN9lVp7MKfwP9N09hgQfDm1Y85LZfGO9iXCybt
+    yeZRjH93GutmBNBUiCUaCVRZykGvDhI5qCo41KqUxoYR3IkANgrLyZhTCAZkOcpL
+    oJATDWua7rye5ZyS/1YdFKakTrPfZcM9qbAnWidzJoS8WSpHCkwYdHYxII6GrkRy
+    oi5h73mu4WVwJbeuOwqvrEyRunLwmjL02QLe/NPcTbLZ0SZlSs7nDl0ekzmR3Pu4
+    2HwK0Z400/KuFTW1Mx+sfC54Up7DZ80NfPfoHYnA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfJ3Ap9qmBKT5Bg+ht0+9/YeajxDpe8QVXbcrOZIC0OpZk4MvdI/bhenAcwLwzWSLHRuwBO+H+Y1hZ1wXgsHT5qs16qWUJ06MaKvTXny9Mj4BkopfRsS+
+    ZBA7cexWRd8FcjblaUEzSRxFBoVvikR5zZlVFD04+Mvluq2fRp0kUzhhIn+rXMwHjnAe03Ym1jMUaPjSovmFHDWNXp12vzWCNpssfRK2gU5O6bdw/5nFanat
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=Q-fNiiVtAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=JIHOz45QZUSSGx34f7cA:9 a=QEXdDO2ut3YA:10 a=Fp8MccfUoT0GBdDC_Lng:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933961AbeDKS6k (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:58:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36748 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756560AbeDKS6j (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:58:39 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	=?UTF-8?q?Peter=20Gro=C3=9Fe?= <pegro@friiks.de>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 138/310] mac80211: Fix setting TX power on monitor interfaces
-Date: Wed, 11 Apr 2018 20:34:37 +0200
-Message-Id: <20180411183628.387190054@linuxfoundation.org>
+        stable@vger.kernel.org, Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu S <suganath-prabu.subramani@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 135/310] scsi: mpt3sas: Proper handling of set/clear of "ATA command pending" flag.
+Date: Wed, 11 Apr 2018 20:34:34 +0200
+Message-Id: <20180411183628.264137152@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -39,10 +84,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477357570560173?=
-X-GMAIL-MSGID: =?utf-8?q?1597477357570560173?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,121 +94,97 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Peter Gro�e" <pegro@friiks.de>
+From: Chaitra P B <chaitra.basappa@broadcom.com>
 
 
-[ Upstream commit 3a3713ec360138f806c6fc368d1de570f692b347 ]
+[ Upstream commit f49d4aed1315a7b766d855f1367142e682b0cc87 ]
 
-Instead of calling ieee80211_recalc_txpower on monitor interfaces
-directly, call it using the virtual monitor interface, if one exists.
+1. In IO path, setting of "ATA command pending" flag early before device
+   removal, invalid device handle etc., checks causes any new commands
+   to be always returned with SAM_STAT_BUSY and when the driver removes
+   the drive the SML issues SYNC Cache command and that command is
+   always returned with SAM_STAT_BUSY and thus making SYNC Cache command
+   to requeued.
 
-In case of a single monitor interface given, reject setting TX power,
-if no virtual monitor interface exists.
+2. If the driver gets an ATA PT command for a SATA drive then the driver
+   set "ATA command pending" flag in device specific data structure not
+   to allow any further commands until the ATA PT command is completed.
+   However, after setting the flag if the driver decides to return the
+   command back to upper layers without actually issuing to the firmware
+   (i.e., returns from qcmd failure return paths) then the corresponding
+   flag is not cleared and this prevents the driver from sending any new
+   commands to the drive.
 
-That being checked, don't warn in ieee80211_bss_info_change_notify,
-after setting TX power on a monitor interface.
+This patch fixes above two issues by setting of "ATA command pending"
+flag after checking for whether device deleted, invalid device handle,
+device busy with task management. And by setting "ATA command pending"
+flag to false in all of the qcmd failure return paths after setting the
+flag.
 
-Fixes warning:
-------------[ cut here ]------------
- WARNING: CPU: 0 PID: 2193 at net/mac80211/driver-ops.h:167
- ieee80211_bss_info_change_notify+0x111/0x190 Modules linked in: uvcvideo
- videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_core
-rndis_host cdc_ether usbnet mii tp_smapi(O) thinkpad_ec(O) ohci_hcd vboxpci(O)
- vboxnetadp(O) vboxnetflt(O) v boxdrv(O) x86_pkg_temp_thermal kvm_intel kvm
- irqbypass iwldvm iwlwifi ehci_pci ehci_hcd tpm_tis tpm_tis_core tpm CPU: 0
- PID: 2193 Comm: iw Tainted: G           O    4.12.12-gentoo #2 task:
- ffff880186fd5cc0 task.stack: ffffc90001b54000 RIP:
- 0010:ieee80211_bss_info_change_notify+0x111/0x190 RSP: 0018:ffffc90001b57a10
- EFLAGS: 00010246 RAX: 0000000000000006 RBX: ffff8801052ce840 RCX:
- 0000000000000064 RDX: 00000000fffffffc RSI: 0000000000040000 RDI:
- ffff8801052ce840 RBP: ffffc90001b57a38 R08: 0000000000000062 R09:
- 0000000000000000 R10: ffff8802144b5000 R11: ffff880049dc4614 R12:
- 0000000000040000 R13: 0000000000000064 R14: ffff8802105f0760 R15:
- ffffc90001b57b48 FS:  00007f92644b4580(0000) GS:ffff88021e200000(0000)
- knlGS:0000000000000000 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 00007f9263c109f0 CR3: 00000001df850000 CR4: 00000000000406f0
- Call Trace:
-  ieee80211_recalc_txpower+0x33/0x40
-  ieee80211_set_tx_power+0x40/0x180
-  nl80211_set_wiphy+0x32e/0x950
-
-Reported-by: Peter Große <pegro@friiks.de>
-Signed-off-by: Peter Große <pegro@friiks.de>
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-
+Signed-off-by: Chaitra P B <chaitra.basappa@broadcom.com>
+Signed-off-by: Suganath Prabu S <suganath-prabu.subramani@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/cfg.c        |   28 +++++++++++++++++++++++++++-
- net/mac80211/driver-ops.h |    3 ++-
- 2 files changed, 29 insertions(+), 2 deletions(-)
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c |   28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -2341,10 +2341,17 @@ static int ieee80211_set_tx_power(struct
- 	struct ieee80211_sub_if_data *sdata;
- 	enum nl80211_tx_power_setting txp_type = type;
- 	bool update_txp_type = false;
-+	bool has_monitor = false;
- 
- 	if (wdev) {
- 		sdata = IEEE80211_WDEV_TO_SUB_IF(wdev);
- 
-+		if (sdata->vif.type == NL80211_IFTYPE_MONITOR) {
-+			sdata = rtnl_dereference(local->monitor_sdata);
-+			if (!sdata)
-+				return -EOPNOTSUPP;
-+		}
-+
- 		switch (type) {
- 		case NL80211_TX_POWER_AUTOMATIC:
- 			sdata->user_power_level = IEEE80211_UNSET_POWER_LEVEL;
-@@ -2383,15 +2390,34 @@ static int ieee80211_set_tx_power(struct
- 
- 	mutex_lock(&local->iflist_mtx);
- 	list_for_each_entry(sdata, &local->interfaces, list) {
-+		if (sdata->vif.type == NL80211_IFTYPE_MONITOR) {
-+			has_monitor = true;
-+			continue;
-+		}
- 		sdata->user_power_level = local->user_power_level;
- 		if (txp_type != sdata->vif.bss_conf.txpower_type)
- 			update_txp_type = true;
- 		sdata->vif.bss_conf.txpower_type = txp_type;
+--- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+@@ -4065,19 +4065,6 @@ scsih_qcmd(struct Scsi_Host *shost, stru
+ 		return 0;
  	}
--	list_for_each_entry(sdata, &local->interfaces, list)
-+	list_for_each_entry(sdata, &local->interfaces, list) {
-+		if (sdata->vif.type == NL80211_IFTYPE_MONITOR)
-+			continue;
- 		ieee80211_recalc_txpower(sdata, update_txp_type);
-+	}
- 	mutex_unlock(&local->iflist_mtx);
  
-+	if (has_monitor) {
-+		sdata = rtnl_dereference(local->monitor_sdata);
-+		if (sdata) {
-+			sdata->user_power_level = local->user_power_level;
-+			if (txp_type != sdata->vif.bss_conf.txpower_type)
-+				update_txp_type = true;
-+			sdata->vif.bss_conf.txpower_type = txp_type;
-+
-+			ieee80211_recalc_txpower(sdata, update_txp_type);
+-	/*
+-	 * Bug work around for firmware SATL handling.  The loop
+-	 * is based on atomic operations and ensures consistency
+-	 * since we're lockless at this point
+-	 */
+-	do {
+-		if (test_bit(0, &sas_device_priv_data->ata_command_pending)) {
+-			scmd->result = SAM_STAT_BUSY;
+-			scmd->scsi_done(scmd);
+-			return 0;
+-		}
+-	} while (_scsih_set_satl_pending(scmd, true));
+-
+ 	sas_target_priv_data = sas_device_priv_data->sas_target;
+ 
+ 	/* invalid device handle */
+@@ -4103,6 +4090,19 @@ scsih_qcmd(struct Scsi_Host *shost, stru
+ 	    sas_device_priv_data->block)
+ 		return SCSI_MLQUEUE_DEVICE_BUSY;
+ 
++	/*
++	 * Bug work around for firmware SATL handling.  The loop
++	 * is based on atomic operations and ensures consistency
++	 * since we're lockless at this point
++	 */
++	do {
++		if (test_bit(0, &sas_device_priv_data->ata_command_pending)) {
++			scmd->result = SAM_STAT_BUSY;
++			scmd->scsi_done(scmd);
++			return 0;
 +		}
-+	}
++	} while (_scsih_set_satl_pending(scmd, true));
 +
- 	return 0;
- }
- 
---- a/net/mac80211/driver-ops.h
-+++ b/net/mac80211/driver-ops.h
-@@ -164,7 +164,8 @@ static inline void drv_bss_info_changed(
- 	if (WARN_ON_ONCE(sdata->vif.type == NL80211_IFTYPE_P2P_DEVICE ||
- 			 sdata->vif.type == NL80211_IFTYPE_NAN ||
- 			 (sdata->vif.type == NL80211_IFTYPE_MONITOR &&
--			  !sdata->vif.mu_mimo_owner)))
-+			  !sdata->vif.mu_mimo_owner &&
-+			  !(changed & BSS_CHANGED_TXPOWER))))
- 		return;
- 
- 	if (!check_sdata_in_driver(sdata))
+ 	if (scmd->sc_data_direction == DMA_FROM_DEVICE)
+ 		mpi_control = MPI2_SCSIIO_CONTROL_READ;
+ 	else if (scmd->sc_data_direction == DMA_TO_DEVICE)
+@@ -4124,6 +4124,7 @@ scsih_qcmd(struct Scsi_Host *shost, stru
+ 	if (!smid) {
+ 		pr_err(MPT3SAS_FMT "%s: failed obtaining a smid\n",
+ 		    ioc->name, __func__);
++		_scsih_set_satl_pending(scmd, false);
+ 		goto out;
+ 	}
+ 	mpi_request = mpt3sas_base_get_msg_frame(ioc, smid);
+@@ -4154,6 +4155,7 @@ scsih_qcmd(struct Scsi_Host *shost, stru
+ 	if (mpi_request->DataLength) {
+ 		if (ioc->build_sg_scmd(ioc, scmd, smid)) {
+ 			mpt3sas_base_free_smid(ioc, smid);
++			_scsih_set_satl_pending(scmd, false);
+ 			goto out;
+ 		}
+ 	} else
