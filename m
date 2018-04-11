@@ -1,76 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751797AbeDKFaY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 01:30:24 -0400
-Received: from anchovy2.45ru.net.au ([203.30.46.146]:48358 "EHLO
-        anchovy2.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750797AbeDKFaX (ORCPT
+        id S1751828AbeDKFjr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 01:39:47 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:37411 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750763AbeDKFjq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 01:30:23 -0400
-Subject: Re: [PATCH] net: dsa: b53: Replace mdelay with msleep in
- b53_switch_reset_gpio
-To: Jia-Ju Bai <baijiaju1990@gmail.com>, f.fainelli@gmail.com,
-        andrew@lunn.ch, vivien.didelot@savoirfairelinux.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1523411485-2030-1-git-send-email-baijiaju1990@gmail.com>
-From: Phil Reid <preid@electromag.com.au>
-Message-ID: <11d079ab-3c07-a10d-c321-f873c53e9690@electromag.com.au>
-Date: Wed, 11 Apr 2018 13:30:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 11 Apr 2018 01:39:46 -0400
+X-Google-Smtp-Source: AIpwx49jPQpzz++Lba9BSXEdXbrUEDdDXIJ0Vxq9Y8yXailGRNrcp/zfWtzBOKM1BK/TaY4helyFDQ==
+Date: Tue, 10 Apr 2018 22:39:41 -0700
+From: Benson Leung <bleung@google.com>
+To: lee.jones@linaro.org
+Cc: bleung@google.com, bleung@chromium.org, linux-kernel@vger.kernel.org,
+        enric.balletbo@collabora.com, gwendal@chromium.org
+Subject: [GIT PULL] Immutable branch between MFD and Platform due for the
+ v4.17 merge window
+Message-ID: <20180411053941.GA123734@decatoncale.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <1523411485-2030-1-git-send-email-baijiaju1990@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-AU
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/04/2018 09:51, Jia-Ju Bai wrote:
-> b53_switch_reset_gpio() is never called in atomic context.
-> 
-> The call chain ending up at b53_switch_reset_gpio() is:
-> [1] b53_switch_reset_gpio() <- b53_switch_reset() <-
-> 	b53_reset_switch() <- b53_setup()
-> 
-> b53_switch_reset_gpio() is set as ".setup" in struct dsa_switch_ops.
-> This function is not called in atomic context.
-> 
-> Despite never getting called from atomic context, b53_switch_reset_gpio()
-> calls mdelay() to busily wait.
-> This is not necessary and can be replaced with msleep() to
-> avoid busy waiting.
-> 
-> This is found by a static analysis tool named DCNS written by myself.
-> And I also manually check it.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->   drivers/net/dsa/b53/b53_common.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
-> index 274f367..e070ff6 100644
-> --- a/drivers/net/dsa/b53/b53_common.c
-> +++ b/drivers/net/dsa/b53/b53_common.c
-> @@ -597,10 +597,10 @@ static void b53_switch_reset_gpio(struct b53_device *dev)
->   	/* Reset sequence: RESET low(50ms)->high(20ms)
->   	 */
->   	gpio_set_value(gpio, 0);
-> -	mdelay(50);
-> +	msleep(50);
->   
->   	gpio_set_value(gpio, 1);
-> -	mdelay(20);
-> +	msleep(20);
->   
->   	dev->current_page = 0xff;
->   }
-> 
-Would that also imply gpio_set_value could be gpio_set_value_cansleep?
+
+--KsGdsel6WgEHnImy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Lee,
+
+Please take a look at this IB that incorporates v4 of Enric's cros_ec debug=
+fs
+and sysfs series.
+
+Thanks!
+Benson
+
+The following changes since commit 3eb2ce825ea1ad89d20f7a3b5780df850e4be274:
+
+  Linux 4.16-rc7 (2018-03-25 12:44:30 -1000)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git =
+ib-chrome-platform-cros-ec-sysfs-debugfs-for-v4.17
+
+for you to fetch changes up to c1d1e91aff3d1183d6b16a282c2575e3e006cee4:
+
+  platform/chrome: mfd/cros_ec_dev: Add sysfs entry to set keyboard wake li=
+d angle (2018-04-10 22:25:07 -0700)
+
+----------------------------------------------------------------
+Enric Balletbo i Serra (3):
+      platform/chrome: cros_ec_sysfs: introduce to_cros_ec_dev define.
+      platform/chrome: cros_ec_sysfs: use permission-specific DEVICE_ATTR v=
+ariants
+      platform/chrome: cros_ec_debugfs: Use octal permissions '0444'
+
+Gwendal Grignou (2):
+      platform/chrome: cros_ec_sysfs: Modify error handling
+      platform/chrome: mfd/cros_ec_dev: Add sysfs entry to set keyboard wak=
+e lid angle
+
+Shawn Nematbakhsh (1):
+      platform/chrome: cros_ec_debugfs: Add PD port info to debugfs
+
+ drivers/mfd/cros_ec_dev.c                 |  31 +++----
+ drivers/platform/chrome/cros_ec_debugfs.c |  76 +++++++++++++++-
+ drivers/platform/chrome/cros_ec_sysfs.c   | 141 +++++++++++++++++++++-----=
+----
+ include/linux/mfd/cros_ec.h               |   2 +
+ include/linux/mfd/cros_ec_commands.h      |   3 +
+ 5 files changed, 194 insertions(+), 59 deletions(-)
 
 
--- 
-Regards
-Phil Reid
+--=20
+Benson Leung
+Staff Software Engineer
+Chrome OS Kernel
+Google Inc.
+bleung@google.com
+Chromium OS Project
+bleung@chromium.org
+
+--KsGdsel6WgEHnImy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlrNn50ACgkQHwn1ewov
+5lifBg//R8JNidEP99ljDEjap/CYgbwy9HZdmmXIP2hzwt7PQM8Oi28NTqM6QRwY
+sg7IJngnzYLlIToZ3ICXboVjzkXlNxht/0k8XxN2Vjma7ElkVfYnptBCGV7aiSR8
+D27WrfHKS9ocMuxOTwzKPBPz7bgUw8epTLBLgvkXmDCqPf5Tj2IJJjKwZNzR469W
+a/B8PtyrVT3nbmdOQOWBWAbbULjwNWDvaeYUufdTZ6N8eiNpxKFMMM5iJ/7oZpTr
+sigfp8sGnx/amaXxn7isy1uVaIL6edaRRrpOsd2hEg7sA8AZUcqolLVVqdbcJW+k
+g4zzc0sq/yQD9Z1VoCQJ7CFmFtuoVPGhef636uJcnw3BDOtyObQS8ZpjhPGRiRWl
+00Z4xp2sDiDjQ1FwwPSDsnfRxNf6ew3d4YI0BFtAlaiSxS2Dvo/1NTON+cCUdSvY
+SRxztlbODxfI05RR+ueMaON9YGv7grdvzujTnbieDsXtpMafrc6/zotQbFXLnJC5
+FgXTg5Le5vqV2HXza3BwzuoraxR9yVjq4/Teyp6fO999luqjXnSELxo/y60M1Z9r
+l0/62K5FH+Zm4+GVfDn1iBIVCtiefe7nvDGyqlttPj90yS2vHabILMqwf+mawmNB
+EmrfcFHvDQSXNzHKsryt2j30+OjRhNfYDanP3gdYig3fHfZyn9Q=
+=3iqT
+-----END PGP SIGNATURE-----
+
+--KsGdsel6WgEHnImy--
