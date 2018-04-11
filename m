@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/tqvWukMBUsa4k/LzNgAIUAnTmMBm6o/AH4zaj3ZHg0i/qKbd0creojWyTWuCtzbmGeEC5
-ARC-Seal: i=1; a=rsa-sha256; t=1523472640; cv=none;
+X-Google-Smtp-Source: AIpwx49H1Eh3t/AlZWSJ1iwjmllqSUjmh8JRlTSN/dQ95J3P+BdZEzsz560lD5uQXU/1Cc7g/d4J
+ARC-Seal: i=1; a=rsa-sha256; t=1523472637; cv=none;
         d=google.com; s=arc-20160816;
-        b=CyZjaKjz8sVvQdZAcx1kWO+JXROrat3Z+0RcknBHgScbsgWMgL0GBhGSYgOprCIGpy
-         Iba0H5iLMy+8GhDyz9EwVwIK+urVowqRBG2IF7PvkXvxBpfKmIZ+bOfcxiWO9y6niMfq
-         MxaskV3EwWT2Am+V/3CMjUGW11cZU8mVfR3/jK1i264DzgzRGLeLPFUVpmg1NYSzrW2q
-         iYNLlOoaxDakqinUEB2MrDEIq70d4fPb42Ai9aAyYKCzDoOHc+HmieD56jOdyDZy2iU7
-         PcnFZFAFQiK285ztW34Gt39TeD3KwmuJTSUe0fjq3Dmyt3VgpcQ1ymO5Z3EKG2BzetD9
-         1OgQ==
+        b=dYBjLprsIELMt62/4Y7HexXxbtCWjCHiBRYZc+X/H+L553slL2zvtE/eQdffSCIP6J
+         5hoFmhUQjnBT6PkmmJVVMX2JWoEYOU99UjQ7Bt7hZtHqRB7l8nx/QJ7DvHM301MhxY1N
+         adEhVmFGWMvocTZy9WUoAS4tbsGa5FMU2ShwYtmPaBcPrxydLXShdjBAeK+S6/RYRyby
+         NLTwGQn0N45gLWq96taIw/3mRi6k+p1cNSqF1dEHKqdGQu86kefYM39WrCTl/+UuPGuq
+         OD6Oj/T9pjphM2hLNp8e8d1I+Tx/59ylPPVYDtkjopQw9XidFnkFzGMOzx7dui90LiX6
+         npKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3KEXi3CMupL9v5/UOM+BtOT3lpLEiNOfx9TjUX+CUDw=;
-        b=cJ4COva2dS6BkLJ0GZJFIgPzxxbivbtoRa1MOkYE15Pw3IFGemHuqeBRVJslTnoPO/
-         JJOHP40ZWSJTDvGpCzcHfWYPnh0JfgcEg8w6C+tv+/e1vpU1Rj7DUoEMBv4eYr2hpvbE
-         XIyNtMtz/H/rZDDViei5OIiwCBfkuR9wKcOPJo29EN0mr/RCAbqO2n9ijOL35r7li5FO
-         2x4hgdYRAKEQo0ka8B+FB53IyPdu9cj/O1S011jqA5Y0c3wmfS/5DS2I3aO5i3LjNmx4
-         6OuimUTycPQN/9kcPHXRsin0vsmyOs+yhGJNhJJR/kJaT5wsytFE4/iyG6IHe+6hQ3xW
-         KdvQ==
+        bh=Y0gudzEuivFhJV1y2ENMsXvtUvrdNi2EB10xrYPIzHw=;
+        b=DnPBBVPGV/VjSZyw1LH2fvwNzmWiOX49q7WkJ+KA+tIoOLKD8/RdzlOMD4aqODq17b
+         mYef+jsT0GWzaVqGvSURFdMGU5jhEQ5XFWQoZUUb2CHvJp97mSmSfrKA/r3y4VmqM8IH
+         F6hlMWBpcNg3c/tFeOfZuBtU879v0tkrUnkobX97XlWLn9Z0y+p5eXNfpmwfma6DCre2
+         L9ECguwI+D97FObqLX1cGyf71nDRL1DetJPG2I/rsTDJgYrbtQsropuE0JCXx93FpDIO
+         60+WHzAK3PLeOdxTZATiIa4PQ0QxpFrjrjtD7kk4gTMtdZ0KV8R6J1yI0XJSjJTILlnL
+         clHA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jiri Olsa <jolsa@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	David Ahern <dsahern@gmail.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Arjun Vynipadath <arjun@chelsio.com>,
+	Ganesh Goudar <ganeshgr@chelsio.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 158/190] perf tools: Fix copyfile_offset update of output offset
-Date: Wed, 11 Apr 2018 20:36:44 +0200
-Message-Id: <20180411183601.795787222@linuxfoundation.org>
+Subject: [PATCH 4.4 157/190] cxgb4vf: Fix SGE FL buffer initialization logic for 64K pages
+Date: Wed, 11 Apr 2018 20:36:43 +0200
+Message-Id: <20180411183601.748756491@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -46,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476847657003802?=
-X-GMAIL-MSGID: =?utf-8?q?1597476847657003802?=
+X-GMAIL-THRID: =?utf-8?q?1597476844672021483?=
+X-GMAIL-MSGID: =?utf-8?q?1597476844672021483?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,41 +51,70 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Arjun Vynipadath <arjun@chelsio.com>
 
 
-[ Upstream commit fa1195ccc0af2d121abe0fe266a1caee8c265eea ]
+[ Upstream commit ea0a42109aee7b92e631c4eb3f2219fadf58acdd ]
 
-We need to increase output offset in each iteration, not decrease it as
-we currently do.
+We'd come in with SGE_FL_BUFFER_SIZE[0] and [1] both equal to 64KB and
+the extant logic would flag that as an error. This was already fixed in
+cxgb4 driver with "92ddcc7 cxgb4: Fix some small bugs in
+t4_sge_init_soft() when our Page Size is 64KB".
 
-I guess we were lucky to finish in most cases in first iteration, so the
-bug never showed. However it shows a lot when working with big (~4GB)
-size data.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: 9c9f5a2f1944 ("perf tools: Introduce copyfile_offset() function")
-Link: http://lkml.kernel.org/r/20180109133923.25406-1-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Original Work by: Casey Leedom <leedom@chelsio.com>
+Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
+Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/util.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/chelsio/cxgb4vf/sge.c |   23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
---- a/tools/perf/util/util.c
-+++ b/tools/perf/util/util.c
-@@ -162,7 +162,7 @@ int copyfile_offset(int ifd, loff_t off_
+--- a/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
++++ b/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
+@@ -2604,8 +2604,8 @@ void t4vf_sge_stop(struct adapter *adapt
+ int t4vf_sge_init(struct adapter *adapter)
+ {
+ 	struct sge_params *sge_params = &adapter->params.sge;
+-	u32 fl0 = sge_params->sge_fl_buffer_size[0];
+-	u32 fl1 = sge_params->sge_fl_buffer_size[1];
++	u32 fl_small_pg = sge_params->sge_fl_buffer_size[0];
++	u32 fl_large_pg = sge_params->sge_fl_buffer_size[1];
+ 	struct sge *s = &adapter->sge;
+ 	unsigned int ingpadboundary, ingpackboundary;
  
- 		size -= ret;
- 		off_in += ret;
--		off_out -= ret;
-+		off_out += ret;
+@@ -2614,9 +2614,20 @@ int t4vf_sge_init(struct adapter *adapte
+ 	 * the Physical Function Driver.  Ideally we should be able to deal
+ 	 * with _any_ configuration.  Practice is different ...
+ 	 */
+-	if (fl0 != PAGE_SIZE || (fl1 != 0 && fl1 <= fl0)) {
++
++	/* We only bother using the Large Page logic if the Large Page Buffer
++	 * is larger than our Page Size Buffer.
++	 */
++	if (fl_large_pg <= fl_small_pg)
++		fl_large_pg = 0;
++
++	/* The Page Size Buffer must be exactly equal to our Page Size and the
++	 * Large Page Size Buffer should be 0 (per above) or a power of 2.
++	 */
++	if (fl_small_pg != PAGE_SIZE ||
++	    (fl_large_pg & (fl_large_pg - 1)) != 0) {
+ 		dev_err(adapter->pdev_dev, "bad SGE FL buffer sizes [%d, %d]\n",
+-			fl0, fl1);
++			fl_small_pg, fl_large_pg);
+ 		return -EINVAL;
  	}
- 	munmap(ptr, off_in + size);
- 
+ 	if ((sge_params->sge_control & RXPKTCPLMODE_F) == 0) {
+@@ -2627,8 +2638,8 @@ int t4vf_sge_init(struct adapter *adapte
+ 	/*
+ 	 * Now translate the adapter parameters into our internal forms.
+ 	 */
+-	if (fl1)
+-		s->fl_pg_order = ilog2(fl1) - PAGE_SHIFT;
++	if (fl_large_pg)
++		s->fl_pg_order = ilog2(fl_large_pg) - PAGE_SHIFT;
+ 	s->stat_len = ((sge_params->sge_control & EGRSTATUSPAGESIZE_F)
+ 			? 128 : 64);
+ 	s->pktshift = PKTSHIFT_G(sge_params->sge_control);
