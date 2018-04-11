@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+LW4lzhI2/lHBRd+nZdIvXW+Po7s3a2wQtQduG1I1TEOQljZG85dIeQJcLFsJDdR04cHi+
-ARC-Seal: i=1; a=rsa-sha256; t=1523472102; cv=none;
+X-Google-Smtp-Source: AIpwx48FYxvS0qAzUBanYrXk0Rtzj8kN4TD/h42mxeMWbQWzHwi8hBRbDHsa+h471DSraNqHj5oE
+ARC-Seal: i=1; a=rsa-sha256; t=1523472099; cv=none;
         d=google.com; s=arc-20160816;
-        b=yl9PvbnJF7VPoqBOxuKKkkq489qxbJ3hPxPECExe+RTxbZ7p2F63ci8mjyr4VwAjQe
-         358id2YSKUyWWBLcKvzZ/6ATZmBrYiHE+7zqviKOGdHGSROh9jtQ0+91TSHmRQ7WH6Ch
-         EHkMklp3DMdYsoyU9ofI31cQTWS0uVdWwMDzyLfiYmCUm0EQB26ZZNvv09wfFXffdTc/
-         oqp5AoIeVJSKJA5PuCaTmyoqufHnajcM5cFUWJGcWpqHymUqI+s8FD4YbGAuuRQeySny
-         AyimM++9RouraOykdCqq+MYsMVh8dOgi1ZkTQEuA22sR6A8e/UOyneiP/mUqxl9+Vo5N
-         5CpQ==
+        b=z1b4mCunUsKMfNcovYMQqQXkp3Nfwa5kEbDWv6E2vjUS8BPk2K9xIoznEK8gdi9ciR
+         2WW/ePCvNRknxrGchMVFUdMGyDXnMq+U2sz47ouUQgSeW/n+/4NwJPaiWOI9h32QHIjO
+         beWke3eACMPxjvxY9JXDIiqVs2iui2UrO0OQ2Y/idd/qC+ctK11FoDai9o1S0BQAFGli
+         baXGFj4sDJyEEh6ERuK0aSFn7gqz2B1g1e/jx+FBYIN42rMIm96VMG+LVDmsym9+Lyua
+         E9cYHDfUmEain6JPoBToHZRASIJtxlm9HdlE764KfrWXi48cqLJx0Rv/HA/gO+j8IlFM
+         /wkg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=NWnVLGAMhEACUVK5aw0zyLeIik1WiAb+9rHdDrKMSv8=;
-        b=moCvRu7imY9uqIxfoV9MiW9psXMnfnmRQYnzCW0Xt6rkbanJqrm4pQIF2GBlUg6soG
-         KVG2h7dbF2MkjM7yK1zQic16RAgkas3WOANUIxyVbljAhYpGt93yXasWnr+NRrqihKIa
-         B0xWHhZmrdzPesr++1SXelS7LiovNeQFbDn0En3r/aOlt7aC4JjQSReFytdtoVKETaV0
-         YrpY3GIaEvQXymXtmOI21Hpv/ScwaZ819fDCjkm9qfh4lepyTtce0jsBCf42qE6gFct6
-         NEBYLl7hArGjyb8pn/FFpakTx0WBEM177viQFMCTrLAddE/6rBwIz8J/AUAQLwHlb007
-         ipCQ==
+        bh=pb/AWjQuDuQUgq5UVD9qMMd+5lMLaiDIhfpU6kn6qJc=;
+        b=uY0O9EI0njbhpcV0CozJ8Kn2dIKE+YQNKVYYeEmLlgTPR+WTkPNu9nb0ceC5T7rEUk
+         QfEJU8nCGMPgnRMJuUfC+d+UncFyu4S3OVM+BkPesQgBNJuqq73mtZV9BrawizD3oIV0
+         QzhtEg+YtQgkep7+vZjjEFdzpWcmY/fdtVEn/jDkI1WOWgXEcK4GwL0JA9luLX86rsO0
+         Tw/e+0bHbSXzXU7QPrAwBHILFmgTG/BmwPTCDxspwdOWChDlSYPh5je4KCyMWGvbdWRU
+         bNnoXrwXYKT35kBhNwZlvnT7+mmkZ8MqfIUe4v07H92TBTk3L2y8BkqSRFAQskiLuiZs
+         3UxA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andrey Konovalov <andreyknvl@google.com>,
-	Firo Yang <firogm@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Colin Ian King <colin.king@canonical.com>,
+	Kalle Valo <kvalo@codeaurora.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 053/121] hdlcdrv: Fix divide by zero in hdlcdrv_ioctl
-Date: Wed, 11 Apr 2018 20:35:56 +0200
-Message-Id: <20180411183459.539382641@linuxfoundation.org>
+Subject: [PATCH 3.18 052/121] wl1251: check return from call to wl1251_acx_arp_ip_filter
+Date: Wed, 11 Apr 2018 20:35:55 +0200
+Message-Id: <20180411183459.474405654@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476282817788876?=
-X-GMAIL-MSGID: =?utf-8?q?1597476282817788876?=
+X-GMAIL-THRID: =?utf-8?q?1597476280416819335?=
+X-GMAIL-MSGID: =?utf-8?q?1597476280416819335?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,33 +50,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Firo Yang <firogm@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
 
-[ Upstream commit fb3ce90b7d7761b6f7f28f0ff5c456ef6b5229a1 ]
+[ Upstream commit ac1181c60822292176ab96912208ec9f9819faf8 ]
 
-syszkaller fuzzer triggered a divide by zero, when set calibration
-through ioctl().
+Currently the less than zero error check on ret is incorrect
+as it is checking a far earlier ret assignment rather than the
+return from the call to wl1251_acx_arp_ip_filter. Fix this by
+adding in the missing assginment.
 
-To fix it, test 'bitrate' if it is negative or 0, just return -EINVAL.
+Detected by CoverityScan, CID#1164835 ("Logically dead code")
 
-Reported-by: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Firo Yang <firogm@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 204cc5c44fb6 ("wl1251: implement hardware ARP filtering")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hamradio/hdlcdrv.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/ti/wl1251/main.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/net/hamradio/hdlcdrv.c
-+++ b/drivers/net/hamradio/hdlcdrv.c
-@@ -571,6 +571,8 @@ static int hdlcdrv_ioctl(struct net_devi
- 	case HDLCDRVCTL_CALIBRATE:
- 		if(!capable(CAP_SYS_RAWIO))
- 			return -EPERM;
-+		if (s->par.bitrate <= 0)
-+			return -EINVAL;
- 		if (bi.data.calibrate > INT_MAX / s->par.bitrate)
- 			return -EINVAL;
- 		s->hdlctx.calibrate = bi.data.calibrate * s->par.bitrate / 16;
+--- a/drivers/net/wireless/ti/wl1251/main.c
++++ b/drivers/net/wireless/ti/wl1251/main.c
+@@ -1200,8 +1200,7 @@ static void wl1251_op_bss_info_changed(s
+ 		WARN_ON(wl->bss_type != BSS_TYPE_STA_BSS);
+ 
+ 		enable = bss_conf->arp_addr_cnt == 1 && bss_conf->assoc;
+-		wl1251_acx_arp_ip_filter(wl, enable, addr);
+-
++		ret = wl1251_acx_arp_ip_filter(wl, enable, addr);
+ 		if (ret < 0)
+ 			goto out_sleep;
+ 	}
