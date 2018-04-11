@@ -1,33 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752788AbeDKBoQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 21:44:16 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:41266 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752366AbeDKBoO (ORCPT
+        id S1752563AbeDKBvh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 21:51:37 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:35678 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752016AbeDKBvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 21:44:14 -0400
-X-Google-Smtp-Source: AIpwx48Y915y3So3yNnWqfAav68tgRv9TbxARm6nKs3wYM3O1vjkLqdoOumQrqv/qGF/Vqe+uFiefQ==
+        Tue, 10 Apr 2018 21:51:35 -0400
+X-Google-Smtp-Source: AIpwx4/eybQ3agahYySq6xAnbt+uKAR62C2OXkllxru5woyKAgmQiMrcZ04PsiDIGm1cdKMU0ISlgw==
 From: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: wg@grandegger.com, mkl@pengutronix.de
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 2/2] net: can: sja1000: Replace mdelay with usleep_range in pcan_add_channels
-Date: Wed, 11 Apr 2018 09:43:26 +0800
-Message-Id: <1523411006-1905-1-git-send-email-baijiaju1990@gmail.com>
+To: f.fainelli@gmail.com, andrew@lunn.ch,
+        vivien.didelot@savoirfairelinux.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] net: dsa: b53: Replace mdelay with msleep in b53_switch_reset_gpio
+Date: Wed, 11 Apr 2018 09:51:25 +0800
+Message-Id: <1523411485-2030-1-git-send-email-baijiaju1990@gmail.com>
 X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pcan_add_channels() is never called in atomic context.
+b53_switch_reset_gpio() is never called in atomic context.
 
-pcan_add_channels() is only called by pcan_probe(), which is only set as 
-".probe" in struct pcmcia_driver.
+The call chain ending up at b53_switch_reset_gpio() is:
+[1] b53_switch_reset_gpio() <- b53_switch_reset() <- 
+	b53_reset_switch() <- b53_setup()
 
-Despite never getting called from atomic context, pcan_add_channels()
+b53_switch_reset_gpio() is set as ".setup" in struct dsa_switch_ops.
+This function is not called in atomic context.
+
+Despite never getting called from atomic context, b53_switch_reset_gpio()
 calls mdelay() to busily wait.
-This is not necessary and can be replaced with usleep_range() to
+This is not necessary and can be replaced with msleep() to
 avoid busy waiting.
 
 This is found by a static analysis tool named DCNS written by myself.
@@ -35,21 +40,25 @@ And I also manually check it.
 
 Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- drivers/net/can/sja1000/peak_pcmcia.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/dsa/b53/b53_common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/can/sja1000/peak_pcmcia.c b/drivers/net/can/sja1000/peak_pcmcia.c
-index dd56133..1a1fbf3 100644
---- a/drivers/net/can/sja1000/peak_pcmcia.c
-+++ b/drivers/net/can/sja1000/peak_pcmcia.c
-@@ -530,7 +530,7 @@ static int pcan_add_channels(struct pcan_pccard *card)
- 	pcan_write_reg(card, PCC_CCR, ccr);
+diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
+index 274f367..e070ff6 100644
+--- a/drivers/net/dsa/b53/b53_common.c
++++ b/drivers/net/dsa/b53/b53_common.c
+@@ -597,10 +597,10 @@ static void b53_switch_reset_gpio(struct b53_device *dev)
+ 	/* Reset sequence: RESET low(50ms)->high(20ms)
+ 	 */
+ 	gpio_set_value(gpio, 0);
+-	mdelay(50);
++	msleep(50);
  
- 	/* wait 2ms before unresetting channels */
--	mdelay(2);
-+	usleep_range(2000, 3000);
+ 	gpio_set_value(gpio, 1);
+-	mdelay(20);
++	msleep(20);
  
- 	ccr &= ~PCC_CCR_RST_ALL;
- 	pcan_write_reg(card, PCC_CCR, ccr);
+ 	dev->current_page = 0xff;
+ }
 -- 
 1.9.1
