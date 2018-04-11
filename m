@@ -1,76 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeDKCzC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 22:55:02 -0400
-Received: from lucky1.263xmail.com ([211.157.147.135]:37583 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752172AbeDKCzA (ORCPT
+        id S1752501AbeDKC6K (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 22:58:10 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45448 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752016AbeDKC6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 22:55:00 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-IP-DOMAINF: 1
-X-RL-SENDER: shawn.lin@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: shawn.lin@rock-chips.com
-X-UNIQUE-TAG: <19ed0baeed646c446e91e3cdbd6cfc34>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Cc: shawn.lin@rock-chips.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: clk: bulk: silently error out on EPROBE_DEFER
-To: Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-References: <20180409141303.14537-1-jbrunet@baylibre.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <9addb928-cec2-fda6-699e-489aa4518c64@rock-chips.com>
-Date: Wed, 11 Apr 2018 10:54:58 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180409141303.14537-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Tue, 10 Apr 2018 22:58:08 -0400
+X-Google-Smtp-Source: AIpwx49Y6VNLGqellRabbHY/EzMcqGU19KXm2cls+0e/RaCVYf/3DMVTdHQ+opUH3vu98cKNRDq+YA==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: boris.brezillon@free-electrons.com, richard@nod.at,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, cyrille.pitchen@wedev4u.fr
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] mtd: nand: diskonchip: Replace mdelay with usleep_range in doc_probe
+Date: Wed, 11 Apr 2018 10:57:57 +0800
+Message-Id: <1523415477-2850-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome,
+doc_probe() is never called in atomic context.
 
-On 2018/4/9 22:13, Jerome Brunet wrote:
-> In clk_bulk_get(), if we fail to get the clock due to probe deferal, we
-> shouldn't print an error message. Just be silent in this case.
-> 
+doc_probe() is only called by init_nanddoc(), which is only set as 
+a parameter of module_init().
+This function is not called in atomic context.
 
-I saw a confusing clk get failure log occasionally, but didn't pay
-much attention to it as the driver finally probed fine. But probably it
-came from clk_bulk_get,
+Despite never getting called from atomic context, doc_probe()
+calls mdelay() to busily wait.
+This is not necessary and can be replaced with usleep_range() to
+avoid busy waiting.
 
-Reviewed-by: Shawn Lin <shawn.lin@rock-chips.com>
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->   drivers/clk/clk-bulk.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-> index 4c10456f8a32..6904ed6da504 100644
-> --- a/drivers/clk/clk-bulk.c
-> +++ b/drivers/clk/clk-bulk.c
-> @@ -42,8 +42,9 @@ int __must_check clk_bulk_get(struct device *dev, int num_clks,
->   		clks[i].clk = clk_get(dev, clks[i].id);
->   		if (IS_ERR(clks[i].clk)) {
->   			ret = PTR_ERR(clks[i].clk);
-> -			dev_err(dev, "Failed to get clk '%s': %d\n",
-> -				clks[i].id, ret);
-> +			if (ret != -EPROBE_DEFER)
-> +				dev_err(dev, "Failed to get clk '%s': %d\n",
-> +					clks[i].id, ret);
->   			clks[i].clk = NULL;
->   			goto err;
->   		}
-> 
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/mtd/nand/diskonchip.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mtd/nand/diskonchip.c b/drivers/mtd/nand/diskonchip.c
+index c3aa53c..2679bc4 100644
+--- a/drivers/mtd/nand/diskonchip.c
++++ b/drivers/mtd/nand/diskonchip.c
+@@ -1482,12 +1482,12 @@ static int __init doc_probe(unsigned long physadr)
+ 		WriteDOC(tmp, virtadr, Mplus_DOCControl);
+ 		WriteDOC(~tmp, virtadr, Mplus_CtrlConfirm);
+ 
+-		mdelay(1);
++		usleep_range(1000, 2000);
+ 		/* Enable the Millennium Plus ASIC */
+ 		tmp = DOC_MODE_NORMAL | DOC_MODE_MDWREN | DOC_MODE_RST_LAT | DOC_MODE_BDECT;
+ 		WriteDOC(tmp, virtadr, Mplus_DOCControl);
+ 		WriteDOC(~tmp, virtadr, Mplus_CtrlConfirm);
+-		mdelay(1);
++		usleep_range(1000, 2000);
+ 
+ 		ChipID = ReadDOC(virtadr, ChipID);
+ 
+-- 
+1.9.1
