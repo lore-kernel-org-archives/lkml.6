@@ -1,119 +1,111 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2635071-1523457893-2-12158637561324740838
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523457892; b=JICRGILRv/ks8xeJtWDQ3HML70qKH6tkb/vToXZgdbHT44QrxF
-    0GI4VoYSc9vGR3HUbiVE2yr6p1uw3z+Vs1WAeIsgMKvKh5mvyPkf6TSOx9KgX+9L
-    Ry584bpFUmVX1JOaTMUs4whq99een1O5Q/fqr3Y8U27vILmihVMlSAmXrSWYn98L
-    nPyLjt1TZvgmfIyDY4mJcmtevoOhBjmfpUyyRQx4/XWWHRKSS0DLkGERQkJvcwqn
-    uq69cnDkCSYdPuzau2/jTmHlq1qH4/Joe2CBO0UhR+HQ3e30e6kAy7F7GDBaSZPo
-    XtwquMepUAOnzuh9/F2OdQ+AcUrZzF8Glajg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:message-id:to:cc:subject:from
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1523457892;
-    bh=9SazLx4zAudYBoV8pUsQTQxFgZTsdO/yK7HOjYD/fEc=; b=ssqKX7/Kduhk
-    4crEWZCTKfJYQNpo77t+JYiyLzhzFGXemAgy5iuq2qzc3V5GL9OA2rlscAmjpxxL
-    TCC4fL0u9WGorBbQPJsN76zCQNM+DQgpTrH6dTyiLnnRJ4q2bo7WyWH3ZAjNJT0y
-    fZ/gVCUThBe0YYQBvJxxOZIjSrdOdHCro9labPY/mibsAO12LWOcllLeYXASHVdy
-    WCmri4xe3xYhrvlKstu4F6+49LIrF+8HJlVYoK71DuTwaB0rN5O8+oS2RmOL3QbH
-    AYs3St//VOjEauOnIk3NjcTWHcx6WReADnyWzG9BAiNDrbDTGlQJ36R+8wtxGWjS
-    D/H6lAXE5g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=davemloft.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=davemloft.net header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=davemloft.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=davemloft.net header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAof5fymSaOiKop4BbHt7pt5fw3w8/Do8o9qjc/joElsUV9pPnIGsRf9v5nPiUql/7sEU2+SMLDXC/fVdwywrznPHdZetXUlzMKkR0pspCNlCVbMGiRu
-    m+apQIM22LfGtmoG6q5/c2QHqCzJvU5sN/8ml/kZzK7JZkzmjy0yM6L+n7+t944RFofShsNcgph9EZ02BW+9X+z6PoTU8hjkn+6CmbWes3KCoBm2IqwIA+E8
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=gu6fZOg2AAAA:8 a=xowBwbGdq_d2mvTJMskA:9 a=CjuIK1q_8ugA:10
-    a=-FEs8UIgK8oA:10 a=NWVoK91CQyQA:10 a=2RSlZUUhi9gRBrsHwhhZ:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753267AbeDKOov (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 10:44:51 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:41458 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752943AbeDKOou (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 10:44:50 -0400
-Date: Wed, 11 Apr 2018 10:44:48 -0400 (EDT)
-Message-Id: <20180411.104448.240595797106804343.davem@davemloft.net>
-To: mst@redhat.com
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org,
-        syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com,
-        jasowang@redhat.com, stefanha@redhat.com
-Subject: Re: [PATCH 4.14 134/138] vhost: validate log when IOTLB is enabled
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180411162435-mutt-send-email-mst@kernel.org>
-References: <20180410.205553.264864966341341110.davem@davemloft.net>
-        <20180411080413.GC2137@kroah.com>
-        <20180411162435-mutt-send-email-mst@kernel.org>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <bot@kernelci.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1523418145; cv=none;
+        d=google.com; s=arc-20160816;
+        b=FHp1iAUGMwBYrk6sZJulr50isQ8HgS1Vn61Kh5kzhtKs0y9FQnnubtBSeN3F5HPgyx
+         Ck5I00S8ANWpTu2j0pGXeSlpbHJwiskHyNAh98whHBE+1PWFUz8DfJGuy2fcAWbP95Nc
+         muRPp8rQMfeh/GiwlrnZ78USf4QxdDTp9S5EXF/LhzEZu2mecUnh0LO4OlGtiG9d957i
+         DxEFHttekA0OR2aAcbo5v3uRb73u9HolmvH/sYh0zGr42Jv8jFfVGKiP8eeiZc7EgpaV
+         UrVs9f9SzLX1a+gmf+EZ1GWMLcc1rbhdZsFkfEIi4HuNJzZyBhaWdwOkroV9oP+ro0wt
+         cf9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
+         :mime-version:date:message-id:arc-authentication-results;
+        bh=rrw6QYxN+buKfDf/hFZ7VfzKWtoIbYvGmFszo2RBB8Q=;
+        b=DKTb+oIlZ5qHygPlGQn5sR9iPxt4MKaXGcqw0wRgUicq5ilORvgiPgCEGGtXcsMfA8
+         EMuZb7TUdOrPOqZ3Wh7XLinDwMNgOYMwYJZJFnm0jPBoZaAzi1y1bT0ToDHGyRK8tzT8
+         Hb0R3Ys4Vim99o4hHxt8rv7UXFrCF3CjF31hoy60lS5A/DmB6U23zyWedIrCc+zgDGrx
+         QGUPRjErqd0Va1NZ0PzFmHhbMLco/NAOl9zjSoj5zV/tMh4iS+6AMBM/rFb9NVbT/BM7
+         2x0U1wmhbO6ENBEVKd/DajLTB0/5jPGXso0nqFf2PVx5cV+ICu9f/UTccrrfn3UAGkCR
+         S7rw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
+X-Google-Smtp-Source: AIpwx4+KaRLY1Yd7CSGCydIi/SftQlRnPm9LzIJjU1cBz/1yKbgZCkdUOlnN63k9Wh2Nu9OrbjcYGw==
+Message-ID: <5acd8420.9d4a1c0a.46373.4317@mx.google.com>
+Date: Tue, 10 Apr 2018 20:42:24 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: linux-4.14.y
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v4.14.33-139-gb8a8fc70e6b2
+In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
+References: <20180410212902.121524696@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 000/138] 4.14.34-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org
+From: kernelci.org bot <bot@kernelci.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
+ shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
+ lkft-triage@lists.linaro.org, stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597400299930471454?=
+X-GMAIL-MSGID: =?utf-8?q?1597419704970798787?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: "Michael S. Tsirkin" <mst@redhat.com>
-Date: Wed, 11 Apr 2018 16:25:15 +0300
+stable-rc/linux-4.14.y boot: 82 boots: 5 failed, 74 passed with 3 untried/u=
+nknown (v4.14.33-139-gb8a8fc70e6b2)
 
-> On Wed, Apr 11, 2018 at 10:04:13AM +0200, Greg KH wrote:
->> On Tue, Apr 10, 2018 at 08:55:53PM -0400, David Miller wrote:
->> > From: "Michael S. Tsirkin" <mst@redhat.com>
->> > Date: Wed, 11 Apr 2018 02:33:16 +0300
->> > 
->> > > That's a bug, davem just queued a patch to fix this upstream.
->> > 
->> > It did not get queued up.
->> > 
->> > The patch series didn't apply so I asked the submitter to
->> > respin and resubmit:
->> > 
->> > 	https://marc.info/?l=linux-netdev&m=152337186209819&w=2
->> 
->> So should I drop this until a fix comes in?  Or keep it for now?
->> I have no objection to staying "bug compatible" with Linus's tree :)
->> 
->> thanks,
->> 
->> greg k-h
-> 
-> Fix was just posted.
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.14.y/kernel/v4.14.33-139-gb8a8fc70e6b2/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
+y/kernel/v4.14.33-139-gb8a8fc70e6b2/
 
-Yeah let me integrate this and send you a copy Greg.
+Tree: stable-rc
+Branch: linux-4.14.y
+Git Describe: v4.14.33-139-gb8a8fc70e6b2
+Git Commit: b8a8fc70e6b2de144668a066f87e4f94203c0caf
+Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Tested: 40 unique boards, 15 SoC families, 15 builds out of 185
+
+Boot Regressions Detected:
+
+arm:
+
+    multi_v5_defconfig:
+        at91sam9x25ek:
+            lab-free-electrons: new failure (last pass: v4.14.33-100-g0538e=
+3088854)
+
+    multi_v7_defconfig:
+        imx6ul-pico-hobbit_rootfs:nfs:
+            lab-pengutronix: new failure (last pass: v4.14.33-100-g0538e308=
+8854)
+        sama5d36ek:
+            lab-free-electrons: new failure (last pass: v4.14.33-100-g0538e=
+3088854)
+
+    mvebu_v7_defconfig:
+        armada-xp-linksys-mamba:
+            lab-free-electrons: new failure (last pass: v4.14.33-100-g0538e=
+3088854)
+
+    sunxi_defconfig:
+        sun8i-a83t-allwinner-h8homlet-v2:
+            lab-free-electrons: failing since 1 day (last pass: v4.14.32-68=
+-g78c25922bb37 - first fail: v4.14.33-87-g3f2310a574a9)
+
+Boot Failures Detected:
+
+arm:
+
+    sunxi_defconfig
+        sun8i-a83t-allwinner-h8homlet-v2: 1 failed lab
+
+    multi_v7_defconfig
+        imx6ul-pico-hobbit_rootfs:nfs: 1 failed lab
+        sama5d36ek: 1 failed lab
+
+    multi_v5_defconfig
+        at91sam9x25ek: 1 failed lab
+
+    mvebu_v7_defconfig
+        armada-xp-linksys-mamba: 1 failed lab
+
+---
+For more info write to <info@kernelci.org>
