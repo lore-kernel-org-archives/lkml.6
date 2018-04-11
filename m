@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49GWde5NlX8eYeEjyZ+GzwdPdksJjHw/hDqpl4qofubccISxzrLD3ZD9HUUiBscsBcpIzVr
-ARC-Seal: i=1; a=rsa-sha256; t=1523472212; cv=none;
+X-Google-Smtp-Source: AIpwx4/nPoAIPugossYWNYSSBBw7YQazNIYDrx/jM60l1ESshm1EIr9CseJ5MZ7yFfDpEuak4HgS
+ARC-Seal: i=1; a=rsa-sha256; t=1523472208; cv=none;
         d=google.com; s=arc-20160816;
-        b=p/sRG/cuTc/IsbPIfem8OgqgDxujYd7AwfypzPWYfq2oxHVHsygbY0Qa7B1+083rSW
-         BqgA5RtT2Ui1unl/V4/l8i07hWd3d9LLg6/VgJrEckb2VQpoL2tUf/JUBqOZfJYda0qn
-         zO4YWu9SfC+40auCsEmAS9KU3smaLNr8+knHL9sepsq3fwinwmiCDcsAAnk0/nv7OT7k
-         v86OgV/BxQVsf4PmcQEa0SwDhO2/yjrb7cyK1zsrCV+pa788bZbh+oT3z1F9ZmssiJ0R
-         3DOzu7HG7px9EwcWWRQVfHiLeucM/UJyBfgqcpFPlFJxkYSUzNSIBbWqu1LvrpyGN4hu
-         KoKA==
+        b=wCJ9tnx6aGJjzChOfGiTzsIKmlvL0W0NMcPSjdZNGmghI1yAy36odRYL3cVkVPt5do
+         hb3OTxoEKU14EA8Uj04AIjqcx3URFygw4B2q5nLSIYUinV0B7UxNewaoQfp/Ig8ZcihU
+         q50lZsa3oYkZ4uqrB427cnmlUekfXqjE3fZjzP+nO4cUx42ekmmxmrVdB486cDEWJbQQ
+         dONlo+rtzlopR7Qd/HF2YGsOrzICaWRAdffQo31sz58W4oxqqv9luE2fObbtJBZO5tnc
+         mmaIPact2LTMfwbgY34gInWNK8J9ohkbJZBzGLQn8QrYj8kaF4sBNhsSWbWB0sXovBvI
+         G9zA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=96zhi2I86ZLdaDQ9jGPw6Se2iy1VobCE2m0EbcSFQIA=;
-        b=0zox+a1fCH0qgEc/VNl2e2wV8n0/Yj4w27VuikbbLyKQSRuPenaCWdl6U525Y1d2r5
-         OZ5e1SpKccvtxuqIiPvKTPeIV+9nhdeQGFelnQu3SuVISN+I0KsDyg6Ux76EFrGetD62
-         QozFTsVQUve7/jngSd9c8KTqbdmcMSijqHjYkZhxPP5l3lOXLI7R90hYBtN8ql2j26Cu
-         RWY9fGjKMuhsltXw2m3RzabcHQzxkzAG7M/oRgoy7SPjb9FVqdpc1SkL1ibBxTrGF+in
-         X71fW9xfVDYxRPmMvPNw2lB606duZBvtrCMzV0TfliMr+fWfZFGNf1bBGiUln19OXuWO
-         jGZQ==
+        bh=HFRl2VGSkH0n63D7M4il3Q5OWn5ltrCR52Q+dD4+444=;
+        b=FC8OgQKhmilXZJfF8TpqH6w4nTMsBoEDLkvdK84fLIFnvEVxuspBA9YfT7qhZz7pJx
+         8ZRXC1QmEWTK+77LWRPOwZeRdoWa2s1kPeWojxvow+7CVrkaafiOlK3ggpEaA+vCOHbk
+         RLkfXXbU0UZCX3DYbuUWoqjxPx54rJvjSqjHVmK4AkBlzE0jvZ2ssoBEc0bVlQcx7AfB
+         sa32hWSPeUYegltRYrI70rVO3mQf/R1/wJeIkFPnHLBD8SNnwg1uCb+VbdAHm2H5k30W
+         qthVd1UmIz6K0aAuZMDYAA+dJONJ8CN7UXgIK6kMgKXxQka9cugeyDth2vdzMoRXwFBv
+         ZKwQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,13 +30,13 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	John Garry <john.garry@huawei.com>,
 	chenqilin <chenqilin2@huawei.com>,
 	chenxiang <chenxiang66@hisilicon.com>,
-	Hannes Reinecke <hare@suse.com>,
 	Christoph Hellwig <hch@lst.de>,
+	Hannes Reinecke <hare@suse.com>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 093/121] scsi: libsas: fix error when getting phy events
-Date: Wed, 11 Apr 2018 20:36:36 +0200
-Message-Id: <20180411183502.176663929@linuxfoundation.org>
+Subject: [PATCH 3.18 092/121] scsi: libsas: fix memory leak in sas_smp_get_phy_events()
+Date: Wed, 11 Apr 2018 20:36:35 +0200
+Message-Id: <20180411183502.101242628@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -46,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476398473498538?=
-X-GMAIL-MSGID: =?utf-8?q?1597476398473498538?=
+X-GMAIL-THRID: =?utf-8?q?1597476394956038418?=
+X-GMAIL-MSGID: =?utf-8?q?1597476394956038418?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,46 +58,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Jason Yan <yanaijie@huawei.com>
 
 
-[ Upstream commit 2b23d9509fd7174b362482cf5f3b5f9a2265bc33 ]
+[ Upstream commit 4a491b1ab11ca0556d2fda1ff1301e862a2d44c4 ]
 
-The intend purpose here was to goto out if smp_execute_task() returned
-error. Obviously something got screwed up. We will never get these link
-error statistics below:
+We've got a memory leak with the following producer:
 
-~:/sys/class/sas_phy/phy-1:0:12 # cat invalid_dword_count
-0
-~:/sys/class/sas_phy/phy-1:0:12 # cat running_disparity_error_count
-0
-~:/sys/class/sas_phy/phy-1:0:12 # cat loss_of_dword_sync_count
-0
-~:/sys/class/sas_phy/phy-1:0:12 # cat phy_reset_problem_count
-0
+while true;
+do cat /sys/class/sas_phy/phy-1:0:12/invalid_dword_count >/dev/null;
+done
 
-Obviously we should goto error handler if smp_execute_task() returns
-non-zero.
+The buffer req is allocated and not freed after we return. Fix it.
 
 Fixes: 2908d778ab3e ("[SCSI] aic94xx: new driver")
 Signed-off-by: Jason Yan <yanaijie@huawei.com>
 CC: John Garry <john.garry@huawei.com>
 CC: chenqilin <chenqilin2@huawei.com>
 CC: chenxiang <chenxiang66@hisilicon.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/libsas/sas_expander.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/libsas/sas_expander.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/drivers/scsi/libsas/sas_expander.c
 +++ b/drivers/scsi/libsas/sas_expander.c
-@@ -675,7 +675,7 @@ int sas_smp_get_phy_events(struct sas_ph
- 	res = smp_execute_task(dev, req, RPEL_REQ_SIZE,
- 			            resp, RPEL_RESP_SIZE);
+@@ -684,6 +684,7 @@ int sas_smp_get_phy_events(struct sas_ph
+ 	phy->phy_reset_problem_count = scsi_to_u32(&resp[24]);
  
--	if (!res)
-+	if (res)
- 		goto out;
+  out:
++	kfree(req);
+ 	kfree(resp);
+ 	return res;
  
- 	phy->invalid_dword_count = scsi_to_u32(&resp[12]);
