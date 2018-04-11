@@ -1,88 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752561AbeDKIe1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 04:34:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54946 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750730AbeDKIeW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 04:34:22 -0400
-Date: Wed, 11 Apr 2018 10:34:19 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-doc@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>,
-        aneesh.kumar@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Vineet Gupta <vgupta@synopsys.com>, Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <albert@sifive.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        David Rientjes <rientjes@google.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v3 1/2] mm: introduce ARCH_HAS_PTE_SPECIAL
-Message-ID: <20180411083419.GB23400@dhcp22.suse.cz>
-References: <1523433816-14460-1-git-send-email-ldufour@linux.vnet.ibm.com>
- <1523433816-14460-2-git-send-email-ldufour@linux.vnet.ibm.com>
+        id S1752602AbeDKIgY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 04:36:24 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:38749 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751661AbeDKIgW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 04:36:22 -0400
+X-Google-Smtp-Source: AIpwx484BuUkxMV7EP7ItHMa/2VwuzyGZEJRla09rlGI05qfgQP75dth74OwjvMR4/PmGWTZaV1MbA==
+Subject: Re: [PATCH 1/2] ide: pdc202xx_new: Replace mdelay with usleep_range
+ in detect_pll_input_clock
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        davem@davemloft.net, frankt@promise.com, andre@linux-ide.org
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1523433162-3910-1-git-send-email-baijiaju1990@gmail.com>
+ <7558e956-62bd-39b9-6ff1-4d5f7ee2c9a3@cogentembedded.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+Message-ID: <00b11f19-0a4b-df83-923b-001bc5393229@gmail.com>
+Date: Wed, 11 Apr 2018 16:35:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523433816-14460-2-git-send-email-ldufour@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <7558e956-62bd-39b9-6ff1-4d5f7ee2c9a3@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 11-04-18 10:03:35, Laurent Dufour wrote:
-> Currently the PTE special supports is turned on in per architecture header
-> files. Most of the time, it is defined in arch/*/include/asm/pgtable.h
-> depending or not on some other per architecture static definition.
-> 
-> This patch introduce a new configuration variable to manage this directly
-> in the Kconfig files. It would later replace __HAVE_ARCH_PTE_SPECIAL.
-> 
-> Here notes for some architecture where the definition of
-> __HAVE_ARCH_PTE_SPECIAL is not obvious:
-> 
-> arm
->  __HAVE_ARCH_PTE_SPECIAL which is currently defined in
-> arch/arm/include/asm/pgtable-3level.h which is included by
-> arch/arm/include/asm/pgtable.h when CONFIG_ARM_LPAE is set.
-> So select ARCH_HAS_PTE_SPECIAL if ARM_LPAE.
-> 
-> powerpc
-> __HAVE_ARCH_PTE_SPECIAL is defined in 2 files:
->  - arch/powerpc/include/asm/book3s/64/pgtable.h
->  - arch/powerpc/include/asm/pte-common.h
-> The first one is included if (PPC_BOOK3S & PPC64) while the second is
-> included in all the other cases.
-> So select ARCH_HAS_PTE_SPECIAL all the time.
-> 
-> sparc:
-> __HAVE_ARCH_PTE_SPECIAL is defined if defined(__sparc__) &&
-> defined(__arch64__) which are defined through the compiler in
-> sparc/Makefile if !SPARC32 which I assume to be if SPARC64.
-> So select ARCH_HAS_PTE_SPECIAL if SPARC64
-> 
-> There is no functional change introduced by this patch.
-> 
-> Suggested-by: Jerome Glisse <jglisse@redhat>
-> Reviewed-by: Jerome Glisse <jglisse@redhat>
-> Acked-by: David Rientjes <rientjes@google.com>
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 
-Looks good to me. I have checked x86 and the generic code and it looks
-good to me. Anyway arch maintainers really have to double check this.
--- 
-Michal Hocko
-SUSE Labs
+
+On 2018/4/11 16:33, Sergei Shtylyov wrote:
+> Hello!
+>
+> On 4/11/2018 10:52 AM, Jia-Ju Bai wrote:
+>
+>> detect_pll_input_clock() is never called in atomic context.
+>>
+>> detect_pll_input_clock() is only called by init_chipset_pdcnew(), which
+>> is set as ".init_chipset" in struct ide_port_info.
+>> This function is not called in atomic context.
+>>
+>> Despite never getting called from atomic context, 
+>> detect_pll_input_clock()
+>> calls mdelay() to busily wait.
+>> This is not necessary and can be replaced with usleep_range() to
+>> avoid busy waiting.
+>>
+>> This is found by a static analysis tool named DCNS written by myself.
+>> And I also manually check it.
+>>
+>> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+>> ---
+>>   drivers/ide/pdc202xx_new.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/ide/pdc202xx_new.c b/drivers/ide/pdc202xx_new.c
+>> index b33646b..6afa66d 100644
+>> --- a/drivers/ide/pdc202xx_new.c
+>> +++ b/drivers/ide/pdc202xx_new.c
+>> @@ -258,7 +258,7 @@ static long detect_pll_input_clock(unsigned long 
+>> dma_base)
+>>       outb(scr1 | 0x40, dma_base + 0x03);
+>>         /* Let the counter run for 10 ms. */
+>> -    mdelay(10);
+>> +    usleep_range(10);
+>
+>    This function takes 2 arguments.
+>
+> [...]
+>
+> MBR, Sergei
+
+Oops, sorry for my fault.
+Thanks for telling me this :)
+I will modify it and send V2.
+
+
+Best wishes,
+Jia-Ju Bai
