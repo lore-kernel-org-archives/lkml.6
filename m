@@ -1,191 +1,165 @@
-Return-Path: <nautsch2@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523444570; cv=none;
-        d=google.com; s=arc-20160816;
-        b=JuvkkKK0D3cx3yW6wMDjbrVeuZwF++DW/K8NMWhzo0emCgfc4T4dMfbSsJpFj3DUwp
-         qCESSK9/WOhzRNWq9z9E7CmJ/UNpgDmo4E4G1K0QVs+AEixrLn4+8t5SKfmZOVR3zIcw
-         bj2x74J84wEJ6n1eejj1n6DwCrfcyqUCWlxSzfT8xa1A2Nke+Jt01yqWLiGQqKqE75Iw
-         qZ49KO0jRMigQ6RVDqjEmWPkLeFGKyoTTQoXSSizUUFXqNj7mFB8vBG4qi22zhOuVpos
-         tDZJc6dJY6wwZgusIlk2H2NKR6KXsBhh1zDAr49pQF6llLC4dUNjH39Ya3DgrqYXrStz
-         c4qg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:mime-version:user-agent
-         :date:message-id:subject:from:to:dkim-signature
-         :arc-authentication-results;
-        bh=zuEyFsibXJc7YOP1A65vpobqYcepSYKKzuhg6X3jZnM=;
-        b=z1wecu/quEIxrHQ6vbGMl33r+PKi9LvY/VNc3w9/IGp8u1DEROPQaYzwBGcwBaAL7Q
-         pKZiSG3oCspwmE/4tZNhnMM/hNFkMY04oHoJ4fF/rVCG7mpUHtktT6MXCKA1JDwDzLUl
-         wsXSOBikIyZX+pAQAj9J/7tko37pV3pGh6gZMRlwnxTAeUevuxCGrZZNp+YymkMYPLHz
-         Cy7syhDy8FUytX3xO0ND7QmbgA9Ft1Y4b2KmB+30xOVKUpFMPVYL9ZGD/SPUQhZM2uZe
-         Kn7wEsVInLSkXJ4DhDNhkFklQ1/9L8oJvPNCifAif2AgLb8XJyBajLdlQ1gO2bR1IqxV
-         ei5w==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HtLc+ddt;
-       spf=pass (google.com: domain of nautsch2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=nautsch2@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HtLc+ddt;
-       spf=pass (google.com: domain of nautsch2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=nautsch2@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4+C/MyLa6FTE4RitFpuV4G5xV2iExBHkVipqU1L5Avi0TSl4ubd2Mvm0JZ9oX8P0XJ1w8YZ+A==
-To: "David S. Miller" <davem@davemloft.net>,
- Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
- Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>, David Ahern
- <dsahern@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Andre Naujoks <nautsch2@gmail.com>, =?UTF-8?Q?Maciej_=c5=bbenczykowski?=
- <maze@google.com>, Shaohua Li <shli@fb.com>, Paolo Abeni
- <pabeni@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Kate Stewart <kstewart@linuxfoundation.org>,
- Philippe Ombredanne <pombredanne@nexb.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-From: Andre Naujoks <nautsch2@gmail.com>
-Subject: [RFC/PATCH] Add a socketoption IPV6_MULTICAST_ALL analogue to the
- IPV4 version
-Message-ID: <b49554c1-f988-b80f-30eb-9472f1f595b4@gmail.com>
-Date: Wed, 11 Apr 2018 13:02:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1888220-1523436991-2-2007758766276468163
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523436990; b=WOiRtSfI+F7vF+++QWJNOFn9jgn+2QmhezZeX/JLlf75WFFlWi
+    AerNwsecp7Cdihhqotzyrg9phmSYGIcmMxvI1GEUq7jg4tjQ3Mk+3hsgKGKecMtD
+    XdGiJy0K74VyijaJK/6lI2SVUGUGD4oBTFl4MJ/g/MaYRbeogoLy1E3ASEAG+dyX
+    YV3JlZwomrMMVhZB4O1G5P1tDZ8Z2R0xmFjGxUNc/Ahw3j6BqewetTKydcVedNi6
+    1Dir/mS6AIq5AC00g1IR92aTNu6EcRSIZQgokRMoQOSTeTjHWDWnGUiwDPt5jOOA
+    RXo9cgSUSSmX9syFGbi47aZaz+aTFiqIrwdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523436990; bh=kfERyZrdtlqlr2G3RcfnBOadKlEGgy
+    7z1AhEWeZGksM=; b=kMc/ntH9l4cf+qSrY5n3atXloUZKPmjf/1jdGt78LI8aQn
+    nlsDFthcwtsGHWr/QdDKfgT3j7M0FQcRfVY86UTNtM9jrKAI7Ca9lEVcYhGuSuQq
+    awTbrf2GcYFHRvHv0zBPzYpaeR/dWNSE9Ge8llL3XSKbWWloNF3hIpk/SiWy3y1n
+    eiQSH7Ak4Z3Hry0UpArWxjdZaOgiKiosWxp6dX/zpk/hXR7NGp+tkqz5JEku3JIS
+    ZG+0uH+q2QYgvA30GY2H9cCr/Haa0RY4qk4qND5HDK1Kp1kMP2HUlqcnqKwDrua9
+    4xvkbL0a7bLxnihzCPgGZRH6hBAVEWPaypycG/DQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfMc2fkc1ZZMkRXFXUXWztK+ighzgDwqGJOPxGNZhPck5/9QMsFdiN9Olo+skSXRLVjmN6P5EGJ8HKGN6QrQ6e25F76OQhetJ1kQp7CpJ1s20xFhFnOmI
+    aahyD3XwtFnO6d5L3pHnOfrAwU9A52RBWq90uLvFKTcTIgUTjfchNM2LTRR3rM6EuUMeyY0PFl00bjAbooR7DnQOazYuiBC2bTgSpwWN3FjvD66eV/oJvctZ
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=mpaa-ttXAAAA:8
+    a=VwQbUJbxAAAA:8 a=Lb_IFRlCcSXnnaBftdoA:9 a=FnnYBucQgfmAYgWN:21
+    a=GAJlXZeZjd8Im98q:21 a=6heAxKwa5pAsJatQ0mat:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752736AbeDKIzx (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 04:55:53 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:20664 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752335AbeDKIyR (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 04:54:17 -0400
+X-UUID: 16e08e73fea744159465fa28bfae12e4-20180411
+From: <sean.wang@mediatek.com>
+To: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>,
+        <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>
+CC: <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH v2 03/12] arm: dts: mt7623: fix invalid memory node being generated
+Date: Wed, 11 Apr 2018 16:53:56 +0800
+Message-ID: <d887b72e1839c7e476179e384cfc712216096f20.1523434758.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <cover.1523434757.git.sean.wang@mediatek.com>
+References: <cover.1523434757.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597447414006786054?=
-X-GMAIL-MSGID: =?utf-8?q?1597447414006786054?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi.
+From: Sean Wang <sean.wang@mediatek.com>
 
-I was running into a problem, when trying to join multiple multicast groups
-on a single socket and thus binding to the any-address on said socket. I
-received traffic from multicast groups, I did not join on that socket and
-was at first surprised by that. After reading some old e-mails/threads,
-which came to the conclusion "It is, as it is."
-(e.g https://marc.info/?l=linux-kernel&m=115815686626791&w=2), I discovered
-the IPv4 socketoption IP_MULTICAST_ALL, which, when disabled, does exactly
-what I would expect from a socket by default.
+Below two wrong nodes in existing DTS files would cause a fail boot since
+in fact the address 0 is not the correct place the memory device locates
+at.
 
-I propose a socket option for IPv6, which does the same and has the same
-default as the IPv4 version. My first thought was, to just apply
-IP_MULTICAST_ALL to a ipv6 socket, but that would change the behavior of
-current applications and would probably be a big no-no.
+memory {
+        device_type = "memory";
+        reg = <0x0 0x0 0x0 0x0>;
+};
 
-Regards
-  Andre
+memory@80000000 {
+        reg = <0x0 0x80000000 0x0 0x40000000>;
+};
 
+In order to avoid having a memory node starting at address 0, we can't
+include file skeleton64.dtsi and instead need to explicitly manually
+define a few of properties the DTS relies on such as #address-cells
+and #size-cells in root node and device_type in the node memory@80000000.
 
->From 473653086c05a3de839c3504885053f6254c7bc5 Mon Sep 17 00:00:00 2001
-From: Andre Naujoks <nautsch2@gmail.com>
-Date: Wed, 11 Apr 2018 12:38:28 +0200
-Subject: [PATCH] Add a socketoption IPV6_MULTICAST_ALL analogue to the IPV4
- version
-
-The socket option will be enabled by default to ensure current behaviour
-is not changed. This is the same for the IPv4 version.
-
-A socket bound to in6addr_any and a specific port will receive all traffic
-on that port. Analogue to IP_MULTICAST_ALL, disable this behaviour, if
-one or more multicast groups were joined (using said socket) and only
-pass on multicast traffic from groups, which were explicitly joined via
-this socket.
-
-Without this option disabled a socket (system even) joined to multiple
-multicast groups is very hard to get right. Filtering by destination
-address has to take place in user space to avoid receiving multicast
-traffic from other multicast groups, which might have traffic on the same
-port.
-
-The extension of the IP_MULTICAST_ALL socketoption to just apply to ipv6,
-too, is not done to avoid changing the behaviour of current applications.
-
-Signed-off-by: Andre Naujoks <nautsch2@gmail.com>
+Cc: stable@vger.kernel.org
+Fixes: 31ac0d69a1d4 ("ARM: dts: mediatek: add MT7623 basic support")
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Cc: Rob Herring <robh+dt@kernel.org>
 ---
- include/linux/ipv6.h     |  3 ++-
- include/uapi/linux/in6.h |  1 +
- net/ipv6/af_inet6.c      |  1 +
- net/ipv6/ipv6_sockglue.c | 11 +++++++++++
- net/ipv6/mcast.c         |  2 +-
- 5 files changed, 16 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/mt7623.dtsi                 | 3 ++-
+ arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts | 1 +
+ arch/arm/boot/dts/mt7623n-rfb.dtsi            | 1 +
+ 3 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/ipv6.h b/include/linux/ipv6.h
-index 8415bf1a9776..495e834c1367 100644
---- a/include/linux/ipv6.h
-+++ b/include/linux/ipv6.h
-@@ -274,7 +274,8 @@ struct ipv6_pinfo {
- 						 */
- 				dontfrag:1,
- 				autoflowlabel:1,
--				autoflowlabel_set:1;
-+				autoflowlabel_set:1,
-+				mc_all:1;
- 	__u8			min_hopcount;
- 	__u8			tclass;
- 	__be32			rcv_flowinfo;
-diff --git a/include/uapi/linux/in6.h b/include/uapi/linux/in6.h
-index ed291e55f024..71d82fe15b03 100644
---- a/include/uapi/linux/in6.h
-+++ b/include/uapi/linux/in6.h
-@@ -177,6 +177,7 @@ struct in6_flowlabel_req {
- #define IPV6_V6ONLY		26
- #define IPV6_JOIN_ANYCAST	27
- #define IPV6_LEAVE_ANYCAST	28
-+#define IPV6_MULTICAST_ALL	29
+diff --git a/arch/arm/boot/dts/mt7623.dtsi b/arch/arm/boot/dts/mt7623.dtsi
+index fec4715..406a9f3 100644
+--- a/arch/arm/boot/dts/mt7623.dtsi
++++ b/arch/arm/boot/dts/mt7623.dtsi
+@@ -15,11 +15,12 @@
+ #include <dt-bindings/phy/phy.h>
+ #include <dt-bindings/reset/mt2701-resets.h>
+ #include <dt-bindings/thermal/thermal.h>
+-#include "skeleton64.dtsi"
  
- /* IPV6_MTU_DISCOVER values */
- #define IPV6_PMTUDISC_DONT		0
-diff --git a/net/ipv6/af_inet6.c b/net/ipv6/af_inet6.c
-index 8da0b513f188..7844cd9d2f10 100644
---- a/net/ipv6/af_inet6.c
-+++ b/net/ipv6/af_inet6.c
-@@ -209,6 +209,7 @@ static int inet6_create(struct net *net, struct socket *sock, int protocol,
- 	np->hop_limit	= -1;
- 	np->mcast_hops	= IPV6_DEFAULT_MCASTHOPS;
- 	np->mc_loop	= 1;
-+	np->mc_all	= 1;
- 	np->pmtudisc	= IPV6_PMTUDISC_WANT;
- 	np->repflow	= net->ipv6.sysctl.flowlabel_reflect;
- 	sk->sk_ipv6only	= net->ipv6.sysctl.bindv6only;
-diff --git a/net/ipv6/ipv6_sockglue.c b/net/ipv6/ipv6_sockglue.c
-index 4d780c7f0130..b2bc1942a2ee 100644
---- a/net/ipv6/ipv6_sockglue.c
-+++ b/net/ipv6/ipv6_sockglue.c
-@@ -664,6 +664,13 @@ static int do_ipv6_setsockopt(struct sock *sk, int level, int optname,
- 			retv = ipv6_sock_ac_drop(sk, mreq.ipv6mr_ifindex, &mreq.ipv6mr_acaddr);
- 		break;
- 	}
-+	case IPV6_MULTICAST_ALL:
-+		if (optlen < sizeof(int))
-+			goto e_inval;
-+		np->mc_all = valbool;
-+		retv = 0;
-+		break;
-+
- 	case MCAST_JOIN_GROUP:
- 	case MCAST_LEAVE_GROUP:
- 	{
-@@ -1255,6 +1262,10 @@ static int do_ipv6_getsockopt(struct sock *sk, int level, int optname,
- 		val = np->mcast_oif;
- 		break;
+ / {
+ 	compatible = "mediatek,mt7623";
+ 	interrupt-parent = <&sysirq>;
++	#address-cells = <2>;
++	#size-cells = <2>;
  
-+	case IPV6_MULTICAST_ALL:
-+		val = np->mc_all;
-+		break;
-+
- 	case IPV6_UNICAST_IF:
- 		val = (__force int)htonl((__u32) np->ucast_oif);
- 		break;
-diff --git a/net/ipv6/mcast.c b/net/ipv6/mcast.c
-index 793159d77d8a..623ad00eb3c2 100644
---- a/net/ipv6/mcast.c
-+++ b/net/ipv6/mcast.c
-@@ -622,7 +622,7 @@ bool inet6_mc_check(struct sock *sk, const struct in6_addr *mc_addr,
- 	}
- 	if (!mc) {
- 		rcu_read_unlock();
--		return true;
-+		return np->mc_all;
- 	}
- 	read_lock(&mc->sflock);
- 	psl = mc->sflist;
+ 	cpu_opp_table: opp-table {
+ 		compatible = "operating-points-v2";
+diff --git a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+index bbf56f8..5938e4c 100644
+--- a/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
++++ b/arch/arm/boot/dts/mt7623n-bananapi-bpi-r2.dts
+@@ -109,6 +109,7 @@
+ 	};
+ 
+ 	memory@80000000 {
++		device_type = "memory";
+ 		reg = <0 0x80000000 0 0x40000000>;
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/mt7623n-rfb.dtsi b/arch/arm/boot/dts/mt7623n-rfb.dtsi
+index a199ae7..343e8ef 100644
+--- a/arch/arm/boot/dts/mt7623n-rfb.dtsi
++++ b/arch/arm/boot/dts/mt7623n-rfb.dtsi
+@@ -40,6 +40,7 @@
+ 	};
+ 
+ 	memory@80000000 {
++		device_type = "memory";
+ 		reg = <0 0x80000000 0 0x40000000>;
+ 	};
+ 
 -- 
-2.17.0
+2.7.4
