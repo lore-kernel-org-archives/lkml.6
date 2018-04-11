@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3303684-1523480337-2-6555358060502681251
+X-Cyrus-Session-Id: sloti22d1t05-3303684-1523480327-2-778921244761337993
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523480337; b=p2kx7YXZ/049HAe+dtPLN+eOrec/0ji+oj5+Pb98VonPKhG7pq
-    rp5zAIKk32Z39p/Dok4EAwatMUo931dw91CaCRpHcUeYShDywDuMyHclsNL6aoGd
-    GMvZvR7t441JthCexRSPtJV1a4m1+yL4iZjUR6V5DnAOqnYvBkB4fLltqr7GPpe1
-    C/Q1bZnGJUIimERUaJkmteLFBBo/m0wQ0RApHlyK/tbiudtaO5zghNDFveotMdMx
-    aQXuoCWtfK8NIvPQY1Zr66kGfP61OKGWHez1oZdCmDjU9RajhjLlRpwmMm+ed8aO
-    8GFuVQyk77v2dANdYB11Pb7APyLCc1xdWbjg==
+    1523480327; b=OOw189BnZ/BSBgu02FgJg5+Qr8yzxqERS7zBZtU2dQpWgGjPu+
+    WkgfFUyRVrfJEEcOQopdZ3qM1d/AmhtgrEK7gjCgcOxaCXyPms05VaEUq6xlPuG4
+    pX77MnlfL7JBJSli4AK6e9THQkfqUhk0X8caCFVeKIGeN0N9gyxAwzQN4L67Jh7j
+    CADKOVeNgOOhDAIsMXwkxU91NwqzwrKCHF6+COhtrso+0wle0IDdXeOqmrEbJuvO
+    lfvMNPXMT7AjVUrzFI1VeyDnJIEUsyU6t0ewejjLjG0Ko1susfWQnv7VH5TlKjzE
+    ZiOaclP8xUvOt8F5npLZJlrsw/e2G27bwisw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523480337; bh=hdXQY8ww96WCd7Xir/6cpSAHqtGcCs
-    xRMJCN2Iq1ddQ=; b=GCZD2+Yva1bUesfsJPypU37F5bwzi/WnKi/BMLvYMHxP1g
-    Zjh7FIxQjbDkmj/0vAg9xknbGrphYv+1utTon564Jwqm2S0Q9o2zz37agM/ZJrS7
-    Ci0n4mXDHIkGhkMpyVCal5pjQOvin5vdO27JQCJ9+rQ3I9Z3R0ThmeJT7TB6Sltm
-    ss28xnLtkKv3/QW2dpQUrv62HWV62NIMzj1ijfK9BfpP47GIZhXfwVMyIIC0WNHw
-    LY5SlD5p2pBXuzsMSxy3vnDz78EO3Qw0vC5tsBHayr1lMNyXw0c+4EQLD5ryATpz
-    ygMc9xVQOu64CnDzTBByoG8EHij5oStwBNxeZVDQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523480327; bh=br1mlNl9rn7MEDBYLxZgDGK+W8jDHg
+    J23iOyD85W8q4=; b=Tu5IjQddQ0IGsFwduUw9AMChj127Jqu3Gh4JTV+gdLMVii
+    P2BGukJykJN+LqZhZ2Eu+ljN3Pwkuy4mNxMIXSikwBXWiDj8QVkCMoUeGe426Ntg
+    lrUYSZJ/Ivnees58x0ywAyP1KTTisPpBTi0VCSbfIpHh0itTiQ3MIiKz1DxRrPHv
+    xzdKztUcmCS0u0Gh+G//8fLnM1TeoApwi3ga3a/WQXvSfax+7so5Y7ECfAr5BCyg
+    9RerJPslVvo6m6eoWvHmPNqbf3NQrKXx//AFdrRiFhWoPXk5yLY4ffpg/we+Aa9R
+    Y8zrM8+lXBEh/Y4BrVyE/JGNnS+SeAMbKQCU5kDQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,31 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEq5qV/SfiQ3OYGjZeGtFGD7ST8SM9fXrsFoC4c4F9Hkg7T4l6TYS7it/z+wExRAjMG4oU6k504lxkRzyy33leGYLJXBh9BJWqTmBt7M55ELmaFOZpR1
-    FP3dCGveL6bw/nTyO21nHu9M8HT6ruRHobk4ATbxChXFEkZefdehpOIBe/Kd/GuyitN3oc3OiofPN9HWM8+Tr07HUNJ88JG8J5VDR5i5H2/umFtjompItlSM
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfD2rqIutveVvy062QVjAgw8Olx3skmgNw1wWwWZMMZFAEPVuiUfvJjKqYOE08aHXbMw3EgXXRgeBKNuIPLj884jRzF4uAEX13mVjPTAKZYBWcRKvD5HG
+    9r7262BZrLEQ2EVPZ+X5AQXB9uKmiYzQYc1vKkVARB2w7ZLUADnxrvrtYfXb8KZdiW26hUOpJjlK56QC+23UucguwD4dDpTRIK1L4JQGi9isMCQrcg7G2jHv
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VnNF1IyMAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=yuwuEI1SGWcJDh9a-ekA:9
-    a=tLPhPD5UWb6q0uGn:21 a=6jVcS_BT3GI9St7v:21 a=QEXdDO2ut3YA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VZJtwKKvAAAA:8 a=JDjsHSkAAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=RYaEpqiKWCezV3X8amEA:9 a=QEXdDO2ut3YA:10 a=vzdIw8kzLcqZOxdJCU6L:22
+    a=dseMxAR1CDlncBZeV_se:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754980AbeDKU6y (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:58:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57822 "EHLO
+        id S932179AbeDKSoL (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:44:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57840 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932154AbeDKSoE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:44:04 -0400
+        with ESMTP id S932171AbeDKSoJ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:44:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zvonko Kosic <zkosic@linux.vnet.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 017/190] s390: move _text symbol to address higher than zero
-Date: Wed, 11 Apr 2018 20:34:23 +0200
-Message-Id: <20180411183551.083889059@linuxfoundation.org>
+Subject: [PATCH 4.4 019/190] NFSv4.1: Work around a Linux server bug...
+Date: Wed, 11 Apr 2018 20:34:25 +0200
+Message-Id: <20180411183551.233575658@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -94,56 +93,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 
 
-[ Upstream commit d04a4c76f71dd5335f8e499b59617382d84e2b8d ]
+[ Upstream commit f4b23de3dda1536590787c9e5c3d16b8738ab108 ]
 
-The perf tool assumes that kernel symbols are never present at address
-zero. In fact it assumes if functions that map symbols to addresses
-return zero, that the symbol was not found.
+It turns out the Linux server has a bug in its implementation of
+supattr_exclcreat; it returns the set of all attributes, whether
+or not they are supported by minor version 1.
+In order to avoid a regression, we therefore apply the supported_attrs
+as a mask on top of whatever the server sent us.
 
-Given that s390's _text symbol historically is located at address zero
-this yields at least a couple of false errors and warnings in one of
-perf's test cases about not present symbols ("perf test 1").
-
-To fix this simply move the _text symbol to address 0x200, just behind
-the initial psw and channel program located at the beginning of the
-kernel image. This is now hard coded within the linker script.
-
-I tried a nicer solution which moves the initial psw and channel
-program into an own section. However that would move the symbols
-within the "real" head.text section to different addresses, since the
-".org" statements within head.S are relative to the head.text
-section. If there is a new section in front, everything else will be
-moved. Alternatively I could have adjusted all ".org" statements. But
-this current solution seems to be the easiest one, since nobody really
-cares where the _text symbol is actually located.
-
-Reported-by: Zvonko Kosic <zkosic@linux.vnet.ibm.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Reported-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/kernel/vmlinux.lds.S |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/nfs/nfs4proc.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/arch/s390/kernel/vmlinux.lds.S
-+++ b/arch/s390/kernel/vmlinux.lds.S
-@@ -21,8 +21,14 @@ SECTIONS
- {
- 	. = 0x00000000;
- 	.text : {
--	_text = .;		/* Text and read-only data */
-+		/* Text and read-only data */
- 		HEAD_TEXT
-+		/*
-+		 * E.g. perf doesn't like symbols starting at address zero,
-+		 * therefore skip the initial PSW and channel program located
-+		 * at address zero and let _text start at 0x200.
-+		 */
-+	_text = 0x200;
- 		TEXT_TEXT
- 		SCHED_TEXT
- 		LOCK_TEXT
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -3025,6 +3025,7 @@ static int _nfs4_server_capabilities(str
+ 		.rpc_resp = &res,
+ 	};
+ 	int status;
++	int i;
+ 
+ 	bitmask[0] = FATTR4_WORD0_SUPPORTED_ATTRS |
+ 		     FATTR4_WORD0_FH_EXPIRE_TYPE |
+@@ -3090,8 +3091,13 @@ static int _nfs4_server_capabilities(str
+ 		server->cache_consistency_bitmask[0] &= FATTR4_WORD0_CHANGE|FATTR4_WORD0_SIZE;
+ 		server->cache_consistency_bitmask[1] &= FATTR4_WORD1_TIME_METADATA|FATTR4_WORD1_TIME_MODIFY;
+ 		server->cache_consistency_bitmask[2] = 0;
++
++		/* Avoid a regression due to buggy server */
++		for (i = 0; i < ARRAY_SIZE(res.exclcreat_bitmask); i++)
++			res.exclcreat_bitmask[i] &= res.attr_bitmask[i];
+ 		memcpy(server->exclcreat_bitmask, res.exclcreat_bitmask,
+ 			sizeof(server->exclcreat_bitmask));
++
+ 		server->acl_bitmask = res.acl_bitmask;
+ 		server->fh_expire_type = res.fh_expire_type;
+ 	}
