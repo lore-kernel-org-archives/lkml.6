@@ -1,133 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752783AbeDKMCF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 08:02:05 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:45126 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751921AbeDKMCD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 08:02:03 -0400
-X-Google-Smtp-Source: AIpwx496N4irlNJybdi59VLxGLc7wM5SCHQzjFb9nQMW952/GRsGQHPYynWCoruX4M2vqHfaNAKq8LfJBDxGro9WpY30mNKNUF+D
+        id S1752833AbeDKMEH (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 08:04:07 -0400
+Received: from foss.arm.com ([217.140.101.70]:48410 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751797AbeDKMEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 08:04:05 -0400
+Subject: Re: [PATCH V2] drm/amdgpu: limit DMA size to PAGE_SIZE for
+ scatter-gather buffers
+To: Sinan Kaya <okaya@codeaurora.org>, amd-gfx@lists.freedesktop.org,
+        timur@codeaurora.org, sulrich@codeaurora.org
+Cc: Tom St Denis <tom.stdenis@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Emily Deng <Emily.Deng@amd.com>, David Airlie <airlied@linux.ie>,
+        linux-arm-msm@vger.kernel.org, Felix Kuehling <Felix.Kuehling@amd.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+        David Panariti <David.Panariti@amd.com>, Jim Qu <Jim.Qu@amd.com>,
+        Huang Rui <ray.huang@amd.com>, Roger He <Hongbo.He@amd.com>,
+        Monk Liu <Monk.Liu@amd.com>, Feifei Xu <Feifei.Xu@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org,
+        hch@lst.de
+References: <1523394001-4615-1-git-send-email-okaya@codeaurora.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <32b82296-bba5-b5f1-266b-45c1ed66da94@arm.com>
+Date: Wed, 11 Apr 2018 13:03:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Date: Wed, 11 Apr 2018 05:02:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000032a0c30569916870@google.com>
-Subject: KASAN: stack-out-of-bounds Read in __free_filter
-From: syzbot <syzbot+dadcc936587643d7f568@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, mingo@redhat.com, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <1523394001-4615-1-git-send-email-okaya@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 10/04/18 21:59, Sinan Kaya wrote:
+> Code is expecing to observe the same number of buffers returned from
+> dma_map_sg() function compared to sg_alloc_table_from_pages(). This
+> doesn't hold true universally especially for systems with IOMMU.
 
-syzbot hit the following crash on upstream commit
-b284d4d5a6785f8cd07eda2646a95782373cd01e (Tue Apr 10 19:25:30 2018 +0000)
-Merge tag 'ceph-for-4.17-rc1' of git://github.com/ceph/ceph-client
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=dadcc936587643d7f568
+So why not fix said code? It's clearly not a real hardware limitation, 
+and the map_sg() APIs have potentially returned fewer than nents since 
+forever, so there's really no excuse.
 
-So far this crash happened 6 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6547381214511104
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5485642750361600
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5352489637380096
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-1223000601505858474
-compiler: gcc (GCC) 8.0.1 20180301 (experimental)
+> IOMMU driver tries to combine buffers into a single DMA address as much
+> as it can. The right thing is to tell the DMA layer how much combining
+> IOMMU can do.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+dadcc936587643d7f568@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+Disagree; this is a dodgy hack, since you'll now end up passing 
+scatterlists into dma_map_sg() which already violate max_seg_size to 
+begin with, and I think a conscientious DMA API implementation would be 
+at rights to fail the mapping for that reason (I know arm64 happens not 
+to, but that was a deliberate design decision to make my life easier at 
+the time).
 
-RDX: 000000002099aff9 RSI: 0000000040082406 RDI: 0000000000000003
-RBP: 00000000006cb018 R08: 0000000000000001 R09: 00007ffe76420032
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
-R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-==================================================================
-BUG: KASAN: stack-out-of-bounds in __read_once_size  
-include/linux/compiler.h:188 [inline]
-BUG: KASAN: stack-out-of-bounds in free_prog  
-kernel/trace/trace_events_filter.c:988 [inline]
-BUG: KASAN: stack-out-of-bounds in __free_filter.part.6+0x1ac/0x1d0  
-kernel/trace/trace_events_filter.c:1012
-Read of size 8 at addr ffff8801b2cd7698 by task syzkaller788882/4452
+As a short-term fix, at least do something like what i915 does and 
+constrain the table allocation to the desired segment size as well, so 
+things remain self-consistent. But still never claim that faking a 
+hardware constraint as a workaround for a driver shortcoming is "the 
+right thing to do" ;)
 
-CPU: 0 PID: 4452 Comm: syzkaller788882 Not tainted 4.16.0+ #17
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0xac/0x2f5 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  __read_once_size include/linux/compiler.h:188 [inline]
-  free_prog kernel/trace/trace_events_filter.c:988 [inline]
-  __free_filter.part.6+0x1ac/0x1d0 kernel/trace/trace_events_filter.c:1012
-  __free_filter kernel/trace/trace_events_filter.c:1009 [inline]
-  ftrace_profile_set_filter+0x159/0x2b0  
-kernel/trace/trace_events_filter.c:2053
-  perf_event_set_filter+0x248/0x1230 kernel/events/core.c:9064
-  _perf_ioctl+0x84c/0x1650 kernel/events/core.c:5056
-  perf_ioctl+0x59/0x80 kernel/events/core.c:5107
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:500 [inline]
-  do_vfs_ioctl+0x1cf/0x1650 fs/ioctl.c:684
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
-  SYSC_ioctl fs/ioctl.c:708 [inline]
-  SyS_ioctl+0x24/0x30 fs/ioctl.c:706
-  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x440519
-RSP: 002b:00007ffe7642b3a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440519
-RDX: 000000002099aff9 RSI: 0000000040082406 RDI: 0000000000000003
-RBP: 00000000006cb018 R08: 0000000000000001 R09: 00007ffe76420032
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
-R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
+Robin.
 
-The buggy address belongs to the page:
-page:ffffea0006cb35c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-flags: 0x2fffc0000000000()
-raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
-raw: 0000000000000000 ffffea0006cb0101 0000000000000000 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801b2cd7580: 00 00 00 00 00 00 00 f1 f1 f1 f1 00 f2 f2 f2 f3
-  ffff8801b2cd7600: f3 f3 f3 00 00 00 00 00 00 00 00 00 00 f1 f1 f1
-> ffff8801b2cd7680: f1 00 f2 f2 f2 f3 f3 f3 f3 00 00 00 00 00 00 00
-                             ^
-  ffff8801b2cd7700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1
-  ffff8801b2cd7780: f1 f1 00 f2 f2 f2 f2 f2 f2 f2 00 f2 f2 f2 f2 f2
-==================================================================
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> ---
+>   drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c | 2 +-
+>   drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c | 1 +
+>   drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c | 1 +
+>   drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c | 1 +
+>   4 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
+> index 8e28270..1b031eb 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
+> @@ -851,7 +851,7 @@ static int gmc_v6_0_sw_init(void *handle)
+>   		pci_set_consistent_dma_mask(adev->pdev, DMA_BIT_MASK(32));
+>   		dev_warn(adev->dev, "amdgpu: No coherent DMA available.\n");
+>   	}
+> -
+> +	dma_set_max_seg_size(adev->dev, PAGE_SIZE);
+>   	r = gmc_v6_0_init_microcode(adev);
+>   	if (r) {
+>   		dev_err(adev->dev, "Failed to load mc firmware!\n");
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
+> index 86e9d682..0a4b2cc1 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
+> @@ -999,6 +999,7 @@ static int gmc_v7_0_sw_init(void *handle)
+>   		pci_set_consistent_dma_mask(adev->pdev, DMA_BIT_MASK(32));
+>   		pr_warn("amdgpu: No coherent DMA available\n");
+>   	}
+> +	dma_set_max_seg_size(adev->dev, PAGE_SIZE);
+>   
+>   	r = gmc_v7_0_init_microcode(adev);
+>   	if (r) {
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+> index 9a813d8..b171529 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
+> @@ -1096,6 +1096,7 @@ static int gmc_v8_0_sw_init(void *handle)
+>   		pci_set_consistent_dma_mask(adev->pdev, DMA_BIT_MASK(32));
+>   		pr_warn("amdgpu: No coherent DMA available\n");
+>   	}
+> +	dma_set_max_seg_size(adev->dev, PAGE_SIZE);
+>   
+>   	r = gmc_v8_0_init_microcode(adev);
+>   	if (r) {
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+> index 3b7e7af..36e658ab 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v9_0.c
+> @@ -855,6 +855,7 @@ static int gmc_v9_0_sw_init(void *handle)
+>   		pci_set_consistent_dma_mask(adev->pdev, DMA_BIT_MASK(32));
+>   		printk(KERN_WARNING "amdgpu: No coherent DMA available.\n");
+>   	}
+> +	dma_set_max_seg_size(adev->dev, PAGE_SIZE);
+>   
+>   	r = gmc_v9_0_mc_init(adev);
+>   	if (r)
+> 
