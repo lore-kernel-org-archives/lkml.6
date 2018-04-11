@@ -1,112 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757074AbeDKTaW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 15:30:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32968 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756869AbeDKTaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 15:30:20 -0400
-From: Lyude Paul <lyude@redhat.com>
-To: intel-gfx@lists.freedesktop.org
-Cc: Manasi Navare <manasi.d.navare@intel.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
-        <ville.syrjala@linux.intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 03/10] drm/dp_mst: Fix naming on drm_atomic_get_mst_topology_state()
-Date: Wed, 11 Apr 2018 15:29:30 -0400
-Message-Id: <20180411192951.21997-4-lyude@redhat.com>
-In-Reply-To: <20180411192951.21997-1-lyude@redhat.com>
-References: <20180411192951.21997-1-lyude@redhat.com>
+        id S1756963AbeDKTdI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 15:33:08 -0400
+Received: from mout.gmx.net ([212.227.17.21]:53407 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753602AbeDKTdF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 15:33:05 -0400
+Date: Wed, 11 Apr 2018 21:32:43 +0200 (CEST)
+From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+X-X-Sender: lyakh@axis700.grange
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+cc: linux-media@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Edgar Thier <info@edgarthier.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] media: uvcvideo: Prevent setting unavailable flags
+In-Reply-To: <1521646988-803-1-git-send-email-kieran.bingham@ideasonboard.com>
+Message-ID: <alpine.DEB.2.20.1804112131160.25028@axis700.grange>
+References: <1521646988-803-1-git-send-email-kieran.bingham@ideasonboard.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Provags-ID: V03:K1:3GDsCnK5lR8nvUZudPOqSlTlC4+Ft0sMwuvu9MM+ca/D/TH9I3X
+ A/3pWcla1hfvEIJx8aIeVhji7bCKuFzDqHWH17Lau38L7Z9uobn2CNIj54K58ZiT/3pWKcd
+ io2LHoDvR8jZZyY+3UwQn3uWMG4u5vOAQQKPBC9X/U51n+PwhMa0VFt0hAKZCdkjliGFMiU
+ 8qLFxoR1ciEWMLLR+9DsQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:MHFpAqBlpJI=:BSPT7XKdDXXxu4VN9XqqYL
+ ZDBLwj5jWmWSI39eYgqmGBMuCZZNlczZKDxutMS40M0RL+/jl/yb2gudouZ/bTPRkyqaQitBc
+ 8sncVY6+BvAY6r3U1uAdSJDiwsNkLmCX+HfMbAE4aoeWFqIpjX9IRb0wDB1VSCrke/2m9Lyis
+ xWxEACRyUZ7jIh4KBpRqZT3SVTehO24/z1ukainoZhoC2pUWmCaQFXUzEo+JYgYKRZqIc9vAl
+ /K4CzaPoKWh0NteLJlFRq4g9fPy6pJfVEbO/WVRfvRZ2Dhp+QbqHU5QLNnn/Mnl/GFnPHtXKv
+ e3tUJidyu1/8u0nl6BG5uaISGIrf3dIOtTPbtmx+lc0w2kROU+vRFz7hMgAiC3aKqVDhCwew9
+ ykIJJRBXo+GwZf/FCNMsps7Pr4fSRcfmFO2ryIow+Asnsr0+Wrecjtq7zlnkxb/1VhU+e8bcw
+ UcgPpppbEvvr9OVUf4avCH7OOhKV+DZzbaPqEfr/wt7S7czFYxnHrrMDaJQtsn4ty9E/m77UT
+ eVthfCwueX86DPa+JfAgWLFnL3MjJK+8hFd5of47qoylS+7lhxUeoH66aZ+tq0FtMkZ65dA/x
+ soKRmTyBGaqno4DLNoUWabS0kbBFYah2DCQZ2yT/gCCUj5eBuLHOX/IUwKnMrStIwvfEDJ06m
+ FCs4LaHsG32TfK/QFl/10Tjx7oPwZmaJqJZjNE7Lp09WsbsGFODQ12UciQ55sAg15+YhaTT+a
+ 3mCgIAU9GPJfRmMKcd6DjAczewUaMo+L2P6qJiQVi9hnpbluB/WJfwxiuD5SRq7pEviqlfQ4s
+ FGpH0ErEPp+mtEjrtVZvcXkp8QGxFf4/LoCUJdzx3jlYQDO1No=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since these functions are dealing with an atomic state that needs to be
-modified during atomic check and commit, change the naming on this
-function to drm_atomic_dp_mst_get_topology_state() since we're the only
-one using the function, and it's more consistent with the naming
-scheme used in drm_atomic.c/drm_atomic_helper.c.
+Hi Kieran,
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Manasi Navare <manasi.d.navare@intel.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
----
- drivers/gpu/drm/drm_dp_mst_topology.c | 13 +++++++------
- include/drm/drm_dp_mst_helper.h       |  5 +++--
- 2 files changed, 10 insertions(+), 8 deletions(-)
+Thanks for the patch, it fixed a problem I was having with media master, 
+working with a Logitech UVC 1.5 camera.
 
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index 6fac4129e6a2..ba67f1782a04 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -2622,7 +2622,7 @@ int drm_dp_atomic_find_vcpi_slots(struct drm_atomic_state *state,
- 	struct drm_dp_mst_topology_state *topology_state;
- 	int req_slots;
- 
--	topology_state = drm_atomic_get_mst_topology_state(state, mgr);
-+	topology_state = drm_atomic_dp_mst_get_topology_state(state, mgr);
- 	if (IS_ERR(topology_state))
- 		return PTR_ERR(topology_state);
- 
-@@ -2662,7 +2662,7 @@ int drm_dp_atomic_release_vcpi_slots(struct drm_atomic_state *state,
- {
- 	struct drm_dp_mst_topology_state *topology_state;
- 
--	topology_state = drm_atomic_get_mst_topology_state(state, mgr);
-+	topology_state = drm_atomic_dp_mst_get_topology_state(state, mgr);
- 	if (IS_ERR(topology_state))
- 		return PTR_ERR(topology_state);
- 
-@@ -3129,7 +3129,7 @@ static const struct drm_private_state_funcs mst_state_funcs = {
- };
- 
- /**
-- * drm_atomic_get_mst_topology_state: get MST topology state
-+ * drm_atomic_dp_mst_get_topology_state: get MST topology state
-  *
-  * @state: global atomic state
-  * @mgr: MST topology manager, also the private object in this case
-@@ -3143,15 +3143,16 @@ static const struct drm_private_state_funcs mst_state_funcs = {
-  *
-  * The MST topology state or error pointer.
-  */
--struct drm_dp_mst_topology_state *drm_atomic_get_mst_topology_state(struct drm_atomic_state *state,
--								    struct drm_dp_mst_topology_mgr *mgr)
-+struct drm_dp_mst_topology_state *
-+drm_atomic_dp_mst_get_topology_state(struct drm_atomic_state *state,
-+				     struct drm_dp_mst_topology_mgr *mgr)
- {
- 	struct drm_device *dev = mgr->dev;
- 
- 	WARN_ON(!drm_modeset_is_locked(&dev->mode_config.connection_mutex));
- 	return to_dp_mst_topology_state(drm_atomic_get_private_obj_state(state, &mgr->base));
- }
--EXPORT_SYMBOL(drm_atomic_get_mst_topology_state);
-+EXPORT_SYMBOL(drm_atomic_dp_mst_get_topology_state);
- 
- /**
-  * drm_dp_mst_topology_mgr_init - initialise a topology manager
-diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
-index 7f78d26a0766..41a8f08da05d 100644
---- a/include/drm/drm_dp_mst_helper.h
-+++ b/include/drm/drm_dp_mst_helper.h
-@@ -623,8 +623,9 @@ void drm_dp_mst_dump_topology(struct seq_file *m,
- 
- void drm_dp_mst_topology_mgr_suspend(struct drm_dp_mst_topology_mgr *mgr);
- int drm_dp_mst_topology_mgr_resume(struct drm_dp_mst_topology_mgr *mgr);
--struct drm_dp_mst_topology_state *drm_atomic_get_mst_topology_state(struct drm_atomic_state *state,
--								    struct drm_dp_mst_topology_mgr *mgr);
-+
-+struct drm_dp_mst_topology_state *drm_atomic_dp_mst_get_topology_state(struct drm_atomic_state *state,
-+								       struct drm_dp_mst_topology_mgr *mgr);
- int drm_dp_atomic_find_vcpi_slots(struct drm_atomic_state *state,
- 				  struct drm_dp_mst_topology_mgr *mgr,
- 				  struct drm_dp_mst_port *port, int pbn);
--- 
-2.14.3
+On Wed, 21 Mar 2018, Kieran Bingham wrote:
+
+> The addition of an extra operation to use the GET_INFO command
+> overwrites all existing flags from the uvc_ctrls table. This includes
+> setting all controls as supporting  GET_MIN, GET_MAX, GET_RES, and
+> GET_DEF regardless of whether they do or not.
+> 
+> Move the initialisation of these control capabilities directly to the
+> uvc_ctrl_fill_xu_info() call where they were originally located in that
+> use case, and ensure that the new functionality in uvc_ctrl_get_flags()
+> will only set flags based on their reported capability from the GET_INFO
+> call.
+> 
+> Fixes: 859086ae3636 ("media: uvcvideo: Apply flags from device to actual
+> properties")
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+
+Tested-by: Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+
+Thanks
+Guennadi
+
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 17 +++++++++--------
+>  1 file changed, 9 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 1daf444371be..4042cbdb721b 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -1607,14 +1607,12 @@ static int uvc_ctrl_get_flags(struct uvc_device *dev,
+>  	ret = uvc_query_ctrl(dev, UVC_GET_INFO, ctrl->entity->id, dev->intfnum,
+>  			     info->selector, data, 1);
+>  	if (!ret)
+> -		info->flags = UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
+> -			    | UVC_CTRL_FLAG_GET_RES | UVC_CTRL_FLAG_GET_DEF
+> -			    | (data[0] & UVC_CONTROL_CAP_GET ?
+> -			       UVC_CTRL_FLAG_GET_CUR : 0)
+> -			    | (data[0] & UVC_CONTROL_CAP_SET ?
+> -			       UVC_CTRL_FLAG_SET_CUR : 0)
+> -			    | (data[0] & UVC_CONTROL_CAP_AUTOUPDATE ?
+> -			       UVC_CTRL_FLAG_AUTO_UPDATE : 0);
+> +		info->flags |= (data[0] & UVC_CONTROL_CAP_GET ?
+> +				UVC_CTRL_FLAG_GET_CUR : 0)
+> +			    |  (data[0] & UVC_CONTROL_CAP_SET ?
+> +				UVC_CTRL_FLAG_SET_CUR : 0)
+> +			    |  (data[0] & UVC_CONTROL_CAP_AUTOUPDATE ?
+> +				UVC_CTRL_FLAG_AUTO_UPDATE : 0);
+>  
+>  	kfree(data);
+>  	return ret;
+> @@ -1689,6 +1687,9 @@ static int uvc_ctrl_fill_xu_info(struct uvc_device *dev,
+>  
+>  	info->size = le16_to_cpup((__le16 *)data);
+>  
+> +	info->flags = UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
+> +		    | UVC_CTRL_FLAG_GET_RES | UVC_CTRL_FLAG_GET_DEF;
+> +
+>  	ret = uvc_ctrl_get_flags(dev, ctrl, info);
+>  	if (ret < 0) {
+>  		uvc_trace(UVC_TRACE_CONTROL,
+> -- 
+> 2.7.4
+> 
