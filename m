@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3397032-1523481726-2-8741023691172052531
+X-Cyrus-Session-Id: sloti22d1t05-3374234-1523481706-2-14936828608662634277
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523481725; b=SJT6EBNbdQy5LezvAc0zezKdNbbqithPvWIUNHJSRJeAyvrdyq
-    gppRuARgsUq9Xg3d+m3R72k/ZUXGNNlkNDmXW5Q0HZSmOvxYaZI0XOc+cdL/Q1X/
-    Y589y0McC+S/eO2fF4WF9XTAcdEnXwkf8Q/WQlE1V5G7a1sjdwqY22KuCS5K/yn4
-    6EBa5AEKLEmsTIqI5TsVgbzy71gNCt9BfNoRazWktEIeSaMrbrWRsDGkz0kjKjsc
-    YyeMyKE/x7pm41zIg9TRctUVC4XvZBSwo5tAI8NHNBP5ChGhqakEgP+sdjZ9lbNW
-    d/aFV8ZoeVvy1qBnfIzyhXUu217ZK50KkEqw==
+    1523481705; b=eL/WnJjoDN9JaV/gpJsZGTcIy9oDkvLgTVJLn9KN6dIIuMtPir
+    TCz8OfooLkulniLv2z53RgY0kawgUnUGJ4l7JCyk0XZu/gQG1BT11cqjqhjQHrbM
+    q+mFGxBIfVjmGAT6B556FR44mJ4m5aYsVAVPJCgpYBKcwa2TO92XoTRyDUlMtnb5
+    4GbrDiDSJ5dbJHBAU1EuS5BpoMYeVX5TyJXCgYh0qOnJj0thZeaDfD2o8u/GfAO7
+    JWrNznT424AstwOZMz7TUYsp+EZfqbMUZqvIHv+WGN/DxbUOqn8taN/5ireESWLl
+    XNTxOgwFTbJJlXT8sFqyBT5VIMwdvIhiaIdg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523481725; bh=evThJ80OnVEYGGJ+cympjDbt3ovjXq
-    FpP23v3CKCoMA=; b=j+A8O6NPrRFxly/xwaTjYFMplGZtTTrwJ6cutGA2vAbNNE
-    /h1f8lXZ8v5Zm6uyQtZmQtiJi2aBEuahGufv7EepP6dk/xIyeghvEPImuijsAw28
-    oE51NCAcQnFEalba+BgbDTCbL4HSFZDYchU16VX/DrrD8SlCkyhA1JVUsoK9TadC
-    HYmBgEMBRfxgXaFooB/U/JXN9wCR469eArhebQbHa22akaS0UL5EOp9vzRCGFXaf
-    L1ZmxW/RLOZroOG69VkKxNP0RaS3mwzP6fWRU5Fzxk3nv0LzB0KZl7gx19qjeILP
-    gTG/mDUIh1Grg/CgEmYWGrUx/oF574C0qvzdMrNQ==
+    :list-id; s=fm2; t=1523481705; bh=b87YcO+OAkkVR2e8KVYZuAlsrsZkbH
+    59zquAqlmTvJo=; b=HbyMo7f70GYF2DDebToF1B+s/7cPCPEvsDgvOOgHzXOGze
+    VJ6JlAGa7XQAWrQlE/0Dr5ejawWF/qLZdh9wg22PpfSP2YmmrwSbdh1WYESKAmwj
+    dZcX63y6pZbNFM75kgbU3RSTAnBGkVGUZAOj7IWJOhvAIhMpeaHPrluhVHfNucCf
+    Dd4KDUQW8X06MwIRP476xffr3WvidwH3aZpO0fBICNXCNPNLRQkmhqpdmjlFc2V/
+    8eF7y/gZUALhoOaDe2G8SuJuFsqqHv4DbwtbbdLC+3G6jxF79WdXnzq3zxUBO7/7
+    pxsE6+dIbknVj1OQQb3GYYUfmtrLU3/GyzULpO2A==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,30 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG/gj1BEGeKow5sqMYd+rTo34hLiaWVJXiJMafJ3YfIlVkzPbNc+5QaKhxEYZEnlTv7//ydHR+bqsO3uGjX3R3mOsADnQxGr7XN58sjaNziTuzYArnhm
-    y7eJ72w7WlPU8ZGyZVsGoof+GWsmn/YCA/99nK+lkA2sed2ACkco9zzkRNHnnGSJ6dGDQE8KUKBUQZ5YDSaiG7B5WHN/fzT/+n3rhkCDP2h3ZC+26XtPxyAk
+X-CM-Envelope: MS4wfJsRGDZmx2sAf8MpjzaJP3JiMSnV+9RM9fKn1tWKPePg7cE+VrYAjIBBst+5HES6gLOc9FmGRaOnIGqS0auvk01ONeqXqt/ejkIRYR4cQFcfXY41raK2
+    93+KU1he9UP93bpid01O6h72VTFHm3w8xT83ZEkLZSnGf0OBde3irBmLMjVe8h7jK0jl3yMADotJFJL2hJzxtHyfC0mVEiKvmGJDHufGRIzlAug1Yu5xnXtj
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=DfNHnWVPAAAA:8 a=EUspDBNiAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=mFJlSFYP1aaS0j_PnB4A:9 a=QEXdDO2ut3YA:10 a=rjTVMONInIDnV1a_A2c_:22
-    a=rMCfJy6NHDicN4J276Yl:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=uAS_uZ3KAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=LmmgGHosWJ0mTfuy6g4A:9
+    a=QEXdDO2ut3YA:10 a=_KzJdI3Ai4rueFdl_XLO:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754894AbeDKVVu (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 17:21:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55618 "EHLO
+        id S1754308AbeDKSjJ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:39:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55626 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754285AbeDKSjG (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:39:06 -0400
+        with ESMTP id S1754277AbeDKSjI (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:39:08 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Kalle Valo <kvalo@qca.qualcomm.com>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Neuling <mikey@neuling.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 033/121] ath5k: fix memory leak on buf on failed eeprom read
-Date: Wed, 11 Apr 2018 20:35:36 +0200
-Message-Id: <20180411183458.093745995@linuxfoundation.org>
+Subject: [PATCH 3.18 034/121] selftests/powerpc: Fix TM resched DSCR test with some compilers
+Date: Wed, 11 Apr 2018 20:35:37 +0200
+Message-Id: <20180411183458.173618894@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -93,38 +92,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
 
-[ Upstream commit 8fed6823e06e43ee9cf7c0ffecec2f9111ce6201 ]
+[ Upstream commit fe06fe860250a4f01d0eaf70a2563b1997174a74 ]
 
-The AR5K_EEPROM_READ macro returns with -EIO if a read error
-occurs causing a memory leak on the allocated buffer buf. Fix
-this by explicitly calling ath5k_hw_nvram_read and exiting on
-the via the freebuf label that performs the necessary free'ing
-of buf when a read error occurs.
+The tm-resched-dscr test has started failing sometimes, depending on
+what compiler it's built with, eg:
 
-Detected by CoverityScan, CID#1248782 ("Resource Leak")
+  test: tm_resched_dscr
+  Check DSCR TM context switch: tm-resched-dscr: tm-resched-dscr.c:76: test_body: Assertion `rv' failed.
+  !! child died by signal 6
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
+When it fails we see that the compiler doesn't initialise rv to 1 before
+entering the inline asm block. Although that's counter intuitive, it
+is allowed because we tell the compiler that the inline asm will write
+to rv (using "=r"), meaning the original value is irrelevant.
+
+Marking it as a read/write parameter would presumably work, but it seems
+simpler to fix it by setting the initial value of rv in the inline asm.
+
+Fixes: 96d016108640 ("powerpc: Correct DSCR during TM context switch")
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Acked-by: Michael Neuling <mikey@neuling.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath5k/debug.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/testing/selftests/powerpc/tm/tm-resched-dscr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ath/ath5k/debug.c
-+++ b/drivers/net/wireless/ath/ath5k/debug.c
-@@ -939,7 +939,10 @@ static int open_file_eeprom(struct inode
- 	}
+--- a/tools/testing/selftests/powerpc/tm/tm-resched-dscr.c
++++ b/tools/testing/selftests/powerpc/tm/tm-resched-dscr.c
+@@ -45,12 +45,12 @@ int test_body(void)
+ 	printf("Check DSCR TM context switch: ");
+ 	fflush(stdout);
+ 	for (;;) {
+-		rv = 1;
+ 		asm __volatile__ (
+ 			/* set a known value into the DSCR */
+ 			"ld      3, %[dscr1];"
+ 			"mtspr   %[sprn_dscr], 3;"
  
- 	for (i = 0; i < eesize; ++i) {
--		AR5K_EEPROM_READ(i, val);
-+		if (!ath5k_hw_nvram_read(ah, i, &val)) {
-+			ret = -EIO;
-+			goto freebuf;
-+		}
- 		buf[i] = val;
- 	}
- 
++			"li      %[rv], 1;"
+ 			/* start and suspend a transaction */
+ 			TBEGIN
+ 			"beq     1f;"
