@@ -1,82 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3124918-1523473478-2-7717077827191078684
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, URIBL_SBL 1.623, URIBL_SBL_A 0.1,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523473473; b=TBgeZvAgORK4zFHDE2Dqsy98bmxJvL/U9lPzuGuMfP54hoC2bF
-    pUXPYxm4+t/xOEYMcx1831jERfQlhs5W5p+Y34zMKtbsdVLlFkcPvvfrM9cZNRaZ
-    KGztyNb6inbfVSViUi9sxhyq8s5RfUrwxn9dQXrVbNbxbHZT+AoJ9f52uQ7ETvP4
-    xQgYjVjvA/ArVnUXq5SZ6CPPi9Tqdy+eq0kdPFXpN22TXyYBElfm/XNVu1Zm5Riv
-    uV9Txr3N7jcFe9xiiZC9EhioW9VwVYvnFzsqeeLxT9rpb6ScNHPoCh074621DanT
-    xzpXi72Bbs0frQ3nmWCWxDdgxf21ccTNbciw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523473473; bh=cOUWhtD41oxwJX7agRD3c9lSITfM6w
-    kbSkZ4WPb/rxI=; b=iWGrUtoOEbNZgNZBNXJM9H7fB3BfLhLjsxVMFzRT4KQl1j
-    CDdZAWC7ySZBb30AbZm+PgOIxp+4SBnr7qXjAgqmpaPcSvN5MsDetxmAyVXXa2ks
-    SiG4Xz44qbUwWS0wpyLUOLFA8jty3c92MjOqsu+B2cR+kfSDi/y5bA9xsQu7xXus
-    ARkfn774jZNQXais0QQcCn+r8IaShBaklwKWFE3Sih2WjoAxoAndJO6u0PPCiDUx
-    REl8CKTIyEsLSHXbDTyED02nZPb28vFv8p5n/jUNF/p+Gl/WvHDtmSlOQOLIkSSq
-    SjHi/XKGeaT1dgV+Pa65usyL0oZve8xsrBOhNr3A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEZvkzTvc8TyRXWCPdykIUsGFqQ819aR4Fj0Zqd3OBmppCDl+Obl7h6V0a2EeJQc0JFYMlxRR+7gESqmXQBMc278pq22+Wlggz5KtMmNf2WOnPcvjhA6
-    3KX7ccsz0sTft98D3CLQAkIiX9hh3vsTeL5s7esaGo68tH+Dn9wMn2z9CsCaV9ZZdqLJQwx1nD66IZkS/iGaFO3FYFW9U50bunJPKFGpESONrWJ3+W+EJs1l
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=1RTuLK3dAAAA:8 a=uTJJjIG0AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=46AKBb0M5UFIkv5KyAQA:9 a=wtDc5oijCdDNsavP:21 a=80RSUtREoxbM1zfV:21
-    a=QEXdDO2ut3YA:10 a=kRpfLKi8w9umh8uBmg1i:22 a=Oxz5h5Y_mNNx07kSEfs-:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934837AbeDKTEZ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 15:04:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39824 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934800AbeDKTEY (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:04:24 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx49BplxF41XXOe1WLyIyVhy8G4SXtGJWkJFEtbf25vjYYANX8UONzreRI2NLHo1MMsZhXn7B
+ARC-Seal: i=1; a=rsa-sha256; t=1523473475; cv=none;
+        d=google.com; s=arc-20160816;
+        b=hKvvvtBS9YhfcnkRM9S0WiVEzWWqoexrBRMiseGd0PutJpXGobyUGPvEm6zlsIbvrh
+         f7sgkdFi512q0oZEtm7yo6WvFbMWZYLNkq/ClCCabOeP+rWR2rW/sBRh0pOufZ3aLF9P
+         nZwVSZVihhv0YCdZtSuzUrzEefBRfETBVD67j6xE2mRsEaA+6aWxwsfdhS1bmjEyCHuM
+         OjNO/DprintblB2riU9/AE2LjTYJjitFtctlpJX01EQNCn3AJgaTvOomsPFhT35PshB1
+         a2JzKhSeTkzlRKnRSepKjkFFro6b/erirPLysnf3Z1UtwolKmdd/ZjEe9KCeVPLdSubj
+         zpdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=EvmZf7pDunr0D9SpdQay3IElfVPG9ybIR1bk+pAIeaA=;
+        b=azfaaBgD2VzwR1Akb4tHcbQsVHXLkQ5CmTu/xNM16qIh+AC2VMQAUWhs0Kq1jCFLvR
+         AFMApllW86uLc6t3YGmeFReSewAszMuZ12r75V97ZEHWPqjLvhrWTARAEueh2jdWjGHh
+         rVzLKPpz215Yf2boJM19lA403T+hZdGRe8ttQ8Jqapykle4Wpf5FosWbasyaChLkW3/Q
+         IhSLmjnyYkTPCVLncBMLP880GpFfcIxO+4oILcJP4VTv7WEAj66S4GJZpenIJN2KmRoI
+         cm2aJJxzG1FNx8wDMoUkwd/T1dnVy5ER/qZz5PBFDqWW51L1zJ+gbM0fbFkBP5QrxBuc
+         H9ZA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tang Junhui <tang.junhui@zte.com.cn>,
-        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 258/310] bcache: segregate flash only volume write streams
-Date: Wed, 11 Apr 2018 20:36:37 +0200
-Message-Id: <20180411183633.621411606@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Zhang Yi <yizhan@redhat.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 262/310] blk-mq: fix kernel oops in blk_mq_tag_idle()
+Date: Wed, 11 Apr 2018 20:36:41 +0200
+Message-Id: <20180411183633.935508832@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -84,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597476836239327035?=
+X-GMAIL-MSGID: =?utf-8?q?1597477722945279927?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -94,81 +51,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tang Junhui <tang.junhui@zte.com.cn>
+From: Ming Lei <ming.lei@redhat.com>
 
 
-[ Upstream commit 4eca1cb28d8b0574ca4f1f48e9331c5f852d43b9 ]
+[ Upstream commit 8ab0b7dc73e1b3e2987d42554b2bff503f692772 ]
 
-In such scenario that there are some flash only volumes
-, and some cached devices, when many tasks request these devices in
-writeback mode, the write IOs may fall to the same bucket as bellow:
-| cached data | flash data | cached data | cached data| flash data|
-then after writeback of these cached devices, the bucket would
-be like bellow bucket:
-| free | flash data | free | free | flash data |
+HW queues may be unmapped in some cases, such as blk_mq_update_nr_hw_queues(),
+then we need to check it before calling blk_mq_tag_idle(), otherwise
+the following kernel oops can be triggered, so fix it by checking if
+the hw queue is unmapped since it doesn't make sense to idle the tags
+any more after hw queues are unmapped.
 
-So, there are many free space in this bucket, but since data of flash
-only volumes still exists, so this bucket cannot be reclaimable,
-which would cause waste of bucket space.
+[  440.771298] Workqueue: nvme-wq nvme_rdma_del_ctrl_work [nvme_rdma]
+[  440.779104] task: ffff894bae755ee0 ti: ffff893bf9bc8000 task.ti: ffff893bf9bc8000
+[  440.788359] RIP: 0010:[<ffffffffb730e2b4>]  [<ffffffffb730e2b4>] __blk_mq_tag_idle+0x24/0x40
+[  440.798697] RSP: 0018:ffff893bf9bcbd10  EFLAGS: 00010286
+[  440.805538] RAX: 0000000000000000 RBX: ffff895bb131dc00 RCX: 000000000000011f
+[  440.814426] RDX: 00000000ffffffff RSI: 0000000000000120 RDI: ffff895bb131dc00
+[  440.823301] RBP: ffff893bf9bcbd10 R08: 000000000001b860 R09: 4a51d361c00c0000
+[  440.832193] R10: b5907f32b4cc7003 R11: ffffd6cabfb57000 R12: ffff894bafd1e008
+[  440.841091] R13: 0000000000000001 R14: ffff895baf770000 R15: 0000000000000080
+[  440.849988] FS:  0000000000000000(0000) GS:ffff894bbdcc0000(0000) knlGS:0000000000000000
+[  440.859955] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  440.867274] CR2: 0000000000000008 CR3: 000000103d098000 CR4: 00000000001407e0
+[  440.876169] Call Trace:
+[  440.879818]  [<ffffffffb7309d68>] blk_mq_exit_hctx+0xd8/0xe0
+[  440.887051]  [<ffffffffb730dc40>] blk_mq_free_queue+0xf0/0x160
+[  440.894465]  [<ffffffffb72ff679>] blk_cleanup_queue+0xd9/0x150
+[  440.901881]  [<ffffffffc08a802b>] nvme_ns_remove+0x5b/0xb0 [nvme_core]
+[  440.910068]  [<ffffffffc08a811b>] nvme_remove_namespaces+0x3b/0x60 [nvme_core]
+[  440.919026]  [<ffffffffc08b817b>] __nvme_rdma_remove_ctrl+0x2b/0xb0 [nvme_rdma]
+[  440.928079]  [<ffffffffc08b8237>] nvme_rdma_del_ctrl_work+0x17/0x20 [nvme_rdma]
+[  440.937126]  [<ffffffffb70ab58a>] process_one_work+0x17a/0x440
+[  440.944517]  [<ffffffffb70ac3a8>] worker_thread+0x278/0x3c0
+[  440.951607]  [<ffffffffb70ac130>] ? manage_workers.isra.24+0x2a0/0x2a0
+[  440.959760]  [<ffffffffb70b352f>] kthread+0xcf/0xe0
+[  440.966055]  [<ffffffffb70b3460>] ? insert_kthread_work+0x40/0x40
+[  440.973715]  [<ffffffffb76d8658>] ret_from_fork+0x58/0x90
+[  440.980586]  [<ffffffffb70b3460>] ? insert_kthread_work+0x40/0x40
+[  440.988229] Code: 5b 41 5c 5d c3 66 90 0f 1f 44 00 00 48 8b 87 20 01 00 00 f0 0f ba 77 40 01 19 d2 85 d2 75 08 c3 0f 1f 80 00 00 00 00 55 48 89 e5 <f0> ff 48 08 48 8d 78 10 e8 7f 0f 05 00 5d c3 0f 1f 00 66 2e 0f
+[  441.011620] RIP  [<ffffffffb730e2b4>] __blk_mq_tag_idle+0x24/0x40
+[  441.019301]  RSP <ffff893bf9bcbd10>
+[  441.024052] CR2: 0000000000000008
 
-In this patch, we segregate flash only volume write streams from
-cached devices, so data from flash only volumes and cached devices
-can store in different buckets.
-
-Compare to v1 patch, this patch do not add a additionally open bucket
-list, and it is try best to segregate flash only volume write streams
-from cached devices, sectors of flash only volumes may still be mixed
-with dirty sectors of cached device, but the number is very small.
-
-[mlyle: fixed commit log formatting, permissions, line endings]
-
-Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
-Reviewed-by: Michael Lyle <mlyle@lyle.org>
-Signed-off-by: Michael Lyle <mlyle@lyle.org>
+Reported-by: Zhang Yi <yizhan@redhat.com>
+Tested-by: Zhang Yi <yizhan@redhat.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/bcache/alloc.c |   19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ block/blk-mq.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/md/bcache/alloc.c
-+++ b/drivers/md/bcache/alloc.c
-@@ -512,15 +512,21 @@ struct open_bucket {
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1592,7 +1592,8 @@ static void blk_mq_exit_hctx(struct requ
+ {
+ 	unsigned flush_start_tag = set->queue_depth;
  
- /*
-  * We keep multiple buckets open for writes, and try to segregate different
-- * write streams for better cache utilization: first we look for a bucket where
-- * the last write to it was sequential with the current write, and failing that
-- * we look for a bucket that was last used by the same task.
-+ * write streams for better cache utilization: first we try to segregate flash
-+ * only volume write streams from cached devices, secondly we look for a bucket
-+ * where the last write to it was sequential with the current write, and
-+ * failing that we look for a bucket that was last used by the same task.
-  *
-  * The ideas is if you've got multiple tasks pulling data into the cache at the
-  * same time, you'll get better cache utilization if you try to segregate their
-  * data and preserve locality.
-  *
-- * For example, say you've starting Firefox at the same time you're copying a
-+ * For example, dirty sectors of flash only volume is not reclaimable, if their
-+ * dirty sectors mixed with dirty sectors of cached device, such buckets will
-+ * be marked as dirty and won't be reclaimed, though the dirty data of cached
-+ * device have been written back to backend device.
-+ *
-+ * And say you've starting Firefox at the same time you're copying a
-  * bunch of files. Firefox will likely end up being fairly hot and stay in the
-  * cache awhile, but the data you copied might not be; if you wrote all that
-  * data to the same buckets it'd get invalidated at the same time.
-@@ -537,7 +543,10 @@ static struct open_bucket *pick_data_buc
- 	struct open_bucket *ret, *ret_task = NULL;
+-	blk_mq_tag_idle(hctx);
++	if (blk_mq_hw_queue_mapped(hctx))
++		blk_mq_tag_idle(hctx);
  
- 	list_for_each_entry_reverse(ret, &c->data_buckets, list)
--		if (!bkey_cmp(&ret->key, search))
-+		if (UUID_FLASH_ONLY(&c->uuids[KEY_INODE(&ret->key)]) !=
-+		    UUID_FLASH_ONLY(&c->uuids[KEY_INODE(search)]))
-+			continue;
-+		else if (!bkey_cmp(&ret->key, search))
- 			goto found;
- 		else if (ret->last_write_point == write_point)
- 			ret_task = ret;
+ 	if (set->ops->exit_request)
+ 		set->ops->exit_request(set->driver_data,
