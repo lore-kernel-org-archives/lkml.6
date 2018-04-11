@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48TddbcDPHKNtVpETY9ScfHCruX0O38bS8tElkngrgp9Ktf+KhONCc09peeqKPmWHh7paCR
-ARC-Seal: i=1; a=rsa-sha256; t=1523473530; cv=none;
+X-Google-Smtp-Source: AIpwx4/6PwqCzH77V1R/OZs2jgX6LI1uY5IuexQLx83tTijZzpr3HgWGOYwTKZZZpgNwZImHLHCz
+ARC-Seal: i=1; a=rsa-sha256; t=1523473527; cv=none;
         d=google.com; s=arc-20160816;
-        b=lYyHB4zXUCACe+cUIMbqENSPPSg2651WQPKFDDaQGTQ25aoX7WLwIpPg0HmS/eB2FF
-         N143jAPc9wWnYAXt9V2MudnyS0TV2d6Wpob1/CdQKLA+qlzqj52qhy9yKooaNr6ujbtR
-         LGb0p74sAc4P/3aHuPI/BhVp6v0TBpQGi+61g8499ADFFwmyI3tpVZrImIdTorfGL9c2
-         QixLMZ5MoKWja+x+VotiROBsoNwN1j9nU+uOA//CiJ3rtzijneFbklgfNo6lrdwhuBRE
-         9P76jt15UAqa6jSYCyy4S00+7A2bqtfSM/9bUi2h1Vt6Sw7gkLCsUpd/L71edwKEvV8M
-         6YQA==
+        b=mLtJMIN3b2caxEi/ULjaUNDz9hLT3WOZX+kK4ChFaK++umuSzzvW4Nr8JgaSUvg4Sc
+         AHWvGsvIfFMFSgC/Wi6BzB7jB8QUERRXQtORQFHF91ztqyjbaWVBV28TE372XhVKT+8C
+         X1YtCt+ylwBZKSDbu4W0sttlU+nUZoXsSB0j5P5bgRP8AQHXeisXmAoKbSeSwGnvZFyL
+         AghUGA0BH3qwYO+yef3STIiUknvTQhu7eX0ATYRMwrazAP1uJGqMtrOdS//QT3nuxb4k
+         LAFTlUUjbTO4pwpdyNXyM5w3Wc25VrWtCklStM+8J+ebwO7oRGN1A5kCp9TU0JBDSbiB
+         /g1w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=EpRVY6GVumQdKWOX6uJLfzOc0EUOJh5ttGIuP040aWE=;
-        b=CuTlTCtG94zdVbyQc/omA9MNtY6R9BClWm1ALZtniv4zKMkfve5J33JmgkvRQ0NFxB
-         puK/jdaMcYm0TSKyufuBbYa3oI4hp41hqQhB1IoW+oee322UYQDow7Uqmq5wrcFipTZD
-         aFTiF4AotY63EChnM8z5THd+yGCWk9cCqXj7nXPawzst/KKG0s2XBJZ5FU+Q/EyCsGcc
-         EIK5St4WZgrGIygZkERkmTVyVBjG9uphrj3aX0kyGq1irQfLf9rGNYS+to+oL2hX0/Iu
-         MDgDLPhdIASIWgulYxvOSFvv2wT5rHiCQoo836AszkUdODHLkxCndoM5sNqtZIZVI3DY
-         nYUQ==
+        bh=Cml79Kx2C7nDNJrWNQ1lLOhNUbmeEZ5wCrfRkkSDh5U=;
+        b=HZtJ+L+mh4TjPo9OixhWa9qdjPm6uZTK0AaEU5KcnxopwRAVs0KdmQPscJjbguAum0
+         xf/Xf8IBDfKY+ZBFfGPiumzK9p3CcLOszCQnAROaUYexTck2rpKmU66pPekzbRMvEcYb
+         KqHbNPK3L6csmecVedqlYbt1BHMdo1ZBzLsO6FJYQahZMNvVZ+7R4hPHfK/MKqw6Yojf
+         opT98oT9uh+OITAcPVJ0FqacGswtm4ZnweUyMzPHkljeKCXkjqmbKrybSafu22QOlQEW
+         MLdWYG6Hkx2veqBDqJaYTw2lrt1eLhmPCVwOUYZMQl9/Pc2qOjlsQB4cGHcMKmdit5Bz
+         8taw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jeff Barnhill <0xeffeff@gmail.com>,
+	Donald Sharp <sharpd@cumulusnetworks.com>,
+	David Ahern <dsahern@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 280/310] net/ipv6: Increment OUTxxx counters after netfilter hook
-Date: Wed, 11 Apr 2018 20:36:59 +0200
-Message-Id: <20180411183634.663528011@linuxfoundation.org>
+Subject: [PATCH 4.9 279/310] net/ipv6: Fix route leaking between VRFs
+Date: Wed, 11 Apr 2018 20:36:58 +0200
+Message-Id: <20180411183634.621797545@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -40,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476938428823719?=
-X-GMAIL-MSGID: =?utf-8?q?1597477780247111365?=
+X-GMAIL-THRID: =?utf-8?q?1597476880189975813?=
+X-GMAIL-MSGID: =?utf-8?q?1597477777368061956?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,46 +50,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jeff Barnhill <0xeffeff@gmail.com>
+From: David Ahern <dsahern@gmail.com>
 
 
-[ Upstream commit 71a1c915238c970cd9bdd5bf158b1279d6b6d55b ]
+[ Upstream commit b6cdbc85234b072340b8923e69f49ec293f905dc ]
 
-At the end of ip6_forward(), IPSTATS_MIB_OUTFORWDATAGRAMS and
-IPSTATS_MIB_OUTOCTETS are incremented immediately before the NF_HOOK call
-for NFPROTO_IPV6 / NF_INET_FORWARD.  As a result, these counters get
-incremented regardless of whether or not the netfilter hook allows the
-packet to continue being processed.  This change increments the counters
-in ip6_forward_finish() so that it will not happen if the netfilter hook
-chooses to terminate the packet, which is similar to how IPv4 works.
+Donald reported that IPv6 route leaking between VRFs is not working.
+The root cause is the strict argument in the call to rt6_lookup when
+validating the nexthop spec.
 
-Signed-off-by: Jeff Barnhill <0xeffeff@gmail.com>
+ip6_route_check_nh validates the gateway and device (if given) of a
+route spec. It in turn could call rt6_lookup (e.g., lookup in a given
+table did not succeed so it falls back to a full lookup) and if so
+sets the strict argument to 1. That means if the egress device is given,
+the route lookup needs to return a result with the same device. This
+strict requirement does not work with VRFs (IPv4 or IPv6) because the
+oif in the flow struct is overridden with the index of the VRF device
+to trigger a match on the l3mdev rule and force the lookup to its table.
+
+The right long term solution is to add an l3mdev index to the flow
+struct such that the oif is not overridden. That solution will not
+backport well, so this patch aims for a simpler solution to relax the
+strict argument if the route spec device is an l3mdev slave. As done
+in other places, use the FLOWI_FLAG_SKIP_NH_OIF to know that the
+RT6_LOOKUP_F_IFACE flag needs to be removed.
+
+Fixes: ca254490c8df ("net: Add VRF support to IPv6 stack")
+Reported-by: Donald Sharp <sharpd@cumulusnetworks.com>
+Signed-off-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_output.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ net/ipv6/route.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -356,6 +356,11 @@ static int ip6_forward_proxy_check(struc
- static inline int ip6_forward_finish(struct net *net, struct sock *sk,
- 				     struct sk_buff *skb)
- {
-+	struct dst_entry *dst = skb_dst(skb);
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -856,6 +856,9 @@ static struct rt6_info *ip6_pol_route_lo
+ 	struct fib6_node *fn;
+ 	struct rt6_info *rt;
+ 
++	if (fl6->flowi6_flags & FLOWI_FLAG_SKIP_NH_OIF)
++		flags &= ~RT6_LOOKUP_F_IFACE;
 +
-+	__IP6_INC_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTFORWDATAGRAMS);
-+	__IP6_ADD_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTOCTETS, skb->len);
-+
- 	return dst_output(net, sk, skb);
- }
- 
-@@ -549,8 +554,6 @@ int ip6_forward(struct sk_buff *skb)
- 
- 	hdr->hop_limit--;
- 
--	__IP6_INC_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTFORWDATAGRAMS);
--	__IP6_ADD_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTOCTETS, skb->len);
- 	return NF_HOOK(NFPROTO_IPV6, NF_INET_FORWARD,
- 		       net, NULL, skb, skb->dev, dst->dev,
- 		       ip6_forward_finish);
+ 	read_lock_bh(&table->tb6_lock);
+ 	fn = fib6_lookup(&table->tb6_root, &fl6->daddr, &fl6->saddr);
+ restart:
