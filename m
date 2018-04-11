@@ -1,148 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933391AbeDKUT6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 16:19:58 -0400
-Received: from mail-wr0-f172.google.com ([209.85.128.172]:45041 "EHLO
-        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932581AbeDKUTz (ORCPT
+        id S1757497AbeDKUWA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 16:22:00 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58957 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756709AbeDKUV5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 16:19:55 -0400
-X-Google-Smtp-Source: AIpwx4/NGmH2E/khPrMol1Re0Y3B0OCenaSu1zPPI2QvgNq68boWTRzPZNtMtkk+OwxLROU7vGUWMg==
-Date: Wed, 11 Apr 2018 23:19:50 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-Subject: [PATCH] proc: fixup =?iso-8859-1?Q?=A9_sig?= =?iso-8859-1?Q?n?=
-Message-ID: <20180411201950.GA12904@avx2>
+        Wed, 11 Apr 2018 16:21:57 -0400
+Date: Wed, 11 Apr 2018 22:21:37 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Dou Liyang <douly.fnst@cn.fujitsu.com>
+cc: peterz@infradead.org, lirongqing@baidu.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
+        linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/urgent] x86/apic: Fix signedness bug in APIC ID validity
+ checks
+In-Reply-To: <e66e1b1d-a8d0-ce74-f3c6-4bdc4432efb7@cn.fujitsu.com>
+Message-ID: <alpine.DEB.2.21.1804112221080.1564@nanos.tec.linutronix.de>
+References: <1523322966-10296-1-git-send-email-lirongqing@baidu.com> <tip-a774635db5c430cbf21fa5d2f2df3d23aaa8e782@git.kernel.org> <e66e1b1d-a8d0-ce74-f3c6-4bdc4432efb7@cn.fujitsu.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.7.2 (2016-11-26)
+Content-Type: multipart/mixed; boundary="8323329-1987243463-1523478097=:1564"
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew's scripts butchered it :-(
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Add copyright in two files before they get autorubberstamped.
+--8323329-1987243463-1523478097=:1564
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+On Wed, 11 Apr 2018, Dou Liyang wrote:
 
- tools/testing/selftests/proc/proc-loadavg-001.c        |    2 +-
- tools/testing/selftests/proc/proc-self-map-files-001.c |    2 +-
- tools/testing/selftests/proc/proc-self-map-files-002.c |    2 +-
- tools/testing/selftests/proc/proc-self-syscall.c       |   15 +++++++++++++++
- tools/testing/selftests/proc/proc-self-wchan.c         |   15 +++++++++++++++
- tools/testing/selftests/proc/proc-uptime-001.c         |    2 +-
- tools/testing/selftests/proc/proc-uptime-002.c         |    2 +-
- tools/testing/selftests/proc/proc-uptime.h             |    2 +-
- tools/testing/selftests/proc/read.c                    |    2 +-
- 9 files changed, 37 insertions(+), 7 deletions(-)
+> Hi Thomas,
+> 
+> At 04/10/2018 10:51 PM, tip-bot for Li RongQing wrote:
+> [...]
+> 
+> > x86/apic: Fix signedness bug in APIC ID validity checks
+> > 
+> > The APIC ID as parsed from ACPI MADT is validity checked with the
+> > apic->apic_id_valid() callback, which depends on the selected APIC type.
+> > 
+> > For non X2APIC types APIC IDs >= 0xFF are invalid, but values > 0x7FFFFFFF
+> 
+> Today when I am reading "IntelÂ® 64 Architecture x2APIC Specification", I
+> find that below in chapter 2.4.1:
+> 
+>   The APIC ID value of FFFF_FFFFH and the highest value corresponding to
+>   the imple-mented bit-width of the local APIC ID register in the system
+>   are reserved and cannot be assigned to any logical processor.
+> 
+> Seems, FFFF_FFFFH is also invalid for X2APIC types, Shall we also do the
+> validity check for X2APIC ID?
+> 
+> acpi_parse_x2apic()
+> 	...
+> 	/* Ignore invalid ID */
+> 	if (apic_id == 0xffffffff)
+> 		return 0;
 
---- a/tools/testing/selftests/proc/proc-loadavg-001.c
-+++ b/tools/testing/selftests/proc/proc-loadavg-001.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-  *
-  * Permission to use, copy, modify, and distribute this software for any
-  * purpose with or without fee is hereby granted, provided that the above
---- a/tools/testing/selftests/proc/proc-self-map-files-001.c
-+++ b/tools/testing/selftests/proc/proc-self-map-files-001.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-  *
-  * Permission to use, copy, modify, and distribute this software for any
-  * purpose with or without fee is hereby granted, provided that the above
---- a/tools/testing/selftests/proc/proc-self-map-files-002.c
-+++ b/tools/testing/selftests/proc/proc-self-map-files-002.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-  *
-  * Permission to use, copy, modify, and distribute this software for any
-  * purpose with or without fee is hereby granted, provided that the above
---- a/tools/testing/selftests/proc/proc-self-syscall.c
-+++ b/tools/testing/selftests/proc/proc-self-syscall.c
-@@ -1,3 +1,18 @@
-+/*
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ *
-+ * Permission to use, copy, modify, and distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
- #define _GNU_SOURCE
- #include <unistd.h>
- #include <sys/syscall.h>
---- a/tools/testing/selftests/proc/proc-self-wchan.c
-+++ b/tools/testing/selftests/proc/proc-self-wchan.c
-@@ -1,3 +1,18 @@
-+/*
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ *
-+ * Permission to use, copy, modify, and distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
- #include <sys/types.h>
- #include <sys/stat.h>
- #include <fcntl.h>
---- a/tools/testing/selftests/proc/proc-uptime-001.c
-+++ b/tools/testing/selftests/proc/proc-uptime-001.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-  *
-  * Permission to use, copy, modify, and distribute this software for any
-  * purpose with or without fee is hereby granted, provided that the above
---- a/tools/testing/selftests/proc/proc-uptime-002.c
-+++ b/tools/testing/selftests/proc/proc-uptime-002.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-  *
-  * Permission to use, copy, modify, and distribute this software for any
-  * purpose with or without fee is hereby granted, provided that the above
---- a/tools/testing/selftests/proc/proc-uptime.h
-+++ b/tools/testing/selftests/proc/proc-uptime.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-  *
-  * Permission to use, copy, modify, and distribute this software for any
-  * purpose with or without fee is hereby granted, provided that the above
---- a/tools/testing/selftests/proc/read.c
-+++ b/tools/testing/selftests/proc/read.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-  *
-  * Permission to use, copy, modify, and distribute this software for any
-  * purpose with or without fee is hereby granted, provided that the above
+Yes. I noticed that as well and just did not come around to write the
+patch.
+
+Thanks,
+
+	tglx
+--8323329-1987243463-1523478097=:1564--
