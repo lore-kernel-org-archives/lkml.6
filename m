@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+335Y+7KRikt52gyJcjrjw/EUa3BA/J8BZdpKQEv/gLB/ZOVfHTXEdnubmeteuv3xT2PUL
-ARC-Seal: i=1; a=rsa-sha256; t=1523472629; cv=none;
+X-Google-Smtp-Source: AIpwx4+F3FunuP5nyzm7+sVO3FeGLKfSuQbaIE76q37nlNcWMkwM7ZyWuhTcCln5l03MCvxoK4m3
+ARC-Seal: i=1; a=rsa-sha256; t=1523472627; cv=none;
         d=google.com; s=arc-20160816;
-        b=Hwrdylam6gkhurWXRn/Ge4/vI8o+UcPKP9acLgbjNfEohHFInN3fggUmcCDyL+28+9
-         gQdVq8JVgXpeiQVFg4Qi8wL7ENuhTJ9EkC2Bjly+NxixfNiCATGoWEDqKlNY4pMhJAyn
-         sivyF6fpocaotni4wFXInVoBc3mA330LxC7KKTvmWCsAtqZwbVjRzDI0AbwI4HAX8Lyb
-         7OoO9qkUpD1srZyxskMxpG4XeM23OQ5VytzgUKEVqdgJNNZEC/bG3vRCwX21StNRWfD5
-         TlusM6WVfxkZfqHuuMomZ91wHklLPrak42VZy+zAo3goeP71YxzFTunb66FoleQyYaXE
-         mvmA==
+        b=n700OlKNl77unHfwKDlkB0CB236oGs/3EX36BTTaKTmnCbqSocE5r+QgXk6yCLujpM
+         rmDqvFjhq5Sh2KBFlzSkyLbh3sBNylDSKpZrSaBHwFthTYXohPTz+mRJ7wBlZRSAjWmr
+         5KOtCem+s4814MphM0UQsz7FZqDCHiEKXZ0emjiewUgOaSdJVwtaVB7vSPIyxuHGUqFu
+         Icnje6PiStRC+Si8CgYtumTs108oG+cuk/dgo8UfJLOe/oSFlUWXpHRInXNJ5Xrt61Rz
+         vWBopSiMk8xKgj6tKaxN9y+GfkjwKdrJSoJ/dqTObx1MrzkCvqOfG/N9iyLcaHHR6R+f
+         aFUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/aF5SyWMJj3DQgrK4rBKV0dkB7jHcTuhOf9EltaHki4=;
-        b=hWepMne/y10alMZg9TGLxi169RwlIkGrMHqReLRpF1rNQ4DOXWmzokRIFNSItTep7i
-         Wsho66i89/gAt72SMaawRIS2+L3A8di5Gjyp0MUtl5NAuzuyL4hf6yRbqyjUJqBN+q8z
-         n08HcrLM8SofE9Ug81VgVxgqJs/jSNSLYSgGcsITPZ00ni86Iu4tgVCh7m+2ZtOiSNL1
-         2x/mrPXz5FgSBYRURhqhy+1RU1AWL0SqCCeHLxE/KnAxve+gbfwYt2Y6ZAacv+Grdtzc
-         Fn96jY4O2/EM29xmJANKbjPtwh/rnGZZTyJfpbrWPYDJGtzi0vUWjZV2k9GH+tDmW1sw
-         0ecA==
+        bh=2Pk5nxmAfxWnfrHLg3Bccy0H5vA/oWK7dtOw4363jSw=;
+        b=VAoY0FgATZxLRpfpGEKRPWTppfxbyhIT+D3l4+23CdoIIbPqnJKZtnRUnjF2kPcO6z
+         m6hpo+ITgO/XwFtUxAEsjKI2pbbbVB+lXE+sYbN4Y6Z5nLVy0+vW2uELBM8GFZ6NWyfg
+         yb7yFDxsIq4P25e7I5AWlwg1avIrvGuBrRk4lv/BKDRPJ925Ty4HBfviRYaiKVSQUOXM
+         pd77uE24cL7NxpRKy2zPdmECPQKF55kpf8/bQdrAtOQWuSZwK8vkFalJD9YfmuQY1E0l
+         1tZeBBP5ImTFhisuK6LS+GYSgrNDxSKeUOVsujbCOVcTDlWu0AY15A4T8GK9EE8lICoM
+         mTnQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Zhang Yi <yizhan@redhat.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	David Ahern <dsahern@gmail.com>,
+	Peter Zijlstra <a.p.zijlstra@chello.nl>,
+	Wang Nan <wangnan0@huawei.com>,
+	kernel-team@lge.com,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 154/190] blk-mq: fix kernel oops in blk_mq_tag_idle()
-Date: Wed, 11 Apr 2018 20:36:40 +0200
-Message-Id: <20180411183601.604910031@linuxfoundation.org>
+Subject: [PATCH 4.4 136/190] perf tests: Decompress kernel module before objdump
+Date: Wed, 11 Apr 2018 20:36:22 +0200
+Message-Id: <20180411183600.526029566@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -42,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476836239327035?=
-X-GMAIL-MSGID: =?utf-8?q?1597476836239327035?=
+X-GMAIL-THRID: =?utf-8?q?1597476266422257828?=
+X-GMAIL-MSGID: =?utf-8?q?1597476833983864710?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,68 +56,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Namhyung Kim <namhyung@kernel.org>
 
 
-[ Upstream commit 8ab0b7dc73e1b3e2987d42554b2bff503f692772 ]
+[ Upstream commit 94df1040b1e6aacd8dec0ba3c61d7e77cd695f26 ]
 
-HW queues may be unmapped in some cases, such as blk_mq_update_nr_hw_queues(),
-then we need to check it before calling blk_mq_tag_idle(), otherwise
-the following kernel oops can be triggered, so fix it by checking if
-the hw queue is unmapped since it doesn't make sense to idle the tags
-any more after hw queues are unmapped.
+If a kernel modules is compressed, it should be decompressed before
+running objdump to parse binary data correctly.  This fixes a failure of
+object code reading test for me.
 
-[  440.771298] Workqueue: nvme-wq nvme_rdma_del_ctrl_work [nvme_rdma]
-[  440.779104] task: ffff894bae755ee0 ti: ffff893bf9bc8000 task.ti: ffff893bf9bc8000
-[  440.788359] RIP: 0010:[<ffffffffb730e2b4>]  [<ffffffffb730e2b4>] __blk_mq_tag_idle+0x24/0x40
-[  440.798697] RSP: 0018:ffff893bf9bcbd10  EFLAGS: 00010286
-[  440.805538] RAX: 0000000000000000 RBX: ffff895bb131dc00 RCX: 000000000000011f
-[  440.814426] RDX: 00000000ffffffff RSI: 0000000000000120 RDI: ffff895bb131dc00
-[  440.823301] RBP: ffff893bf9bcbd10 R08: 000000000001b860 R09: 4a51d361c00c0000
-[  440.832193] R10: b5907f32b4cc7003 R11: ffffd6cabfb57000 R12: ffff894bafd1e008
-[  440.841091] R13: 0000000000000001 R14: ffff895baf770000 R15: 0000000000000080
-[  440.849988] FS:  0000000000000000(0000) GS:ffff894bbdcc0000(0000) knlGS:0000000000000000
-[  440.859955] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  440.867274] CR2: 0000000000000008 CR3: 000000103d098000 CR4: 00000000001407e0
-[  440.876169] Call Trace:
-[  440.879818]  [<ffffffffb7309d68>] blk_mq_exit_hctx+0xd8/0xe0
-[  440.887051]  [<ffffffffb730dc40>] blk_mq_free_queue+0xf0/0x160
-[  440.894465]  [<ffffffffb72ff679>] blk_cleanup_queue+0xd9/0x150
-[  440.901881]  [<ffffffffc08a802b>] nvme_ns_remove+0x5b/0xb0 [nvme_core]
-[  440.910068]  [<ffffffffc08a811b>] nvme_remove_namespaces+0x3b/0x60 [nvme_core]
-[  440.919026]  [<ffffffffc08b817b>] __nvme_rdma_remove_ctrl+0x2b/0xb0 [nvme_rdma]
-[  440.928079]  [<ffffffffc08b8237>] nvme_rdma_del_ctrl_work+0x17/0x20 [nvme_rdma]
-[  440.937126]  [<ffffffffb70ab58a>] process_one_work+0x17a/0x440
-[  440.944517]  [<ffffffffb70ac3a8>] worker_thread+0x278/0x3c0
-[  440.951607]  [<ffffffffb70ac130>] ? manage_workers.isra.24+0x2a0/0x2a0
-[  440.959760]  [<ffffffffb70b352f>] kthread+0xcf/0xe0
-[  440.966055]  [<ffffffffb70b3460>] ? insert_kthread_work+0x40/0x40
-[  440.973715]  [<ffffffffb76d8658>] ret_from_fork+0x58/0x90
-[  440.980586]  [<ffffffffb70b3460>] ? insert_kthread_work+0x40/0x40
-[  440.988229] Code: 5b 41 5c 5d c3 66 90 0f 1f 44 00 00 48 8b 87 20 01 00 00 f0 0f ba 77 40 01 19 d2 85 d2 75 08 c3 0f 1f 80 00 00 00 00 55 48 89 e5 <f0> ff 48 08 48 8d 78 10 e8 7f 0f 05 00 5d c3 0f 1f 00 66 2e 0f
-[  441.011620] RIP  [<ffffffffb730e2b4>] __blk_mq_tag_idle+0x24/0x40
-[  441.019301]  RSP <ffff893bf9bcbd10>
-[  441.024052] CR2: 0000000000000008
-
-Reported-by: Zhang Yi <yizhan@redhat.com>
-Tested-by: Zhang Yi <yizhan@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: kernel-team@lge.com
+Link: http://lkml.kernel.org/r/20170608073109.30699-8-namhyung@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/blk-mq.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/tests/code-reading.c |   20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -1634,7 +1634,8 @@ static void blk_mq_exit_hctx(struct requ
- {
- 	unsigned flush_start_tag = set->queue_depth;
+--- a/tools/perf/tests/code-reading.c
++++ b/tools/perf/tests/code-reading.c
+@@ -182,6 +182,8 @@ static int read_object_code(u64 addr, si
+ 	unsigned char buf2[BUFSZ];
+ 	size_t ret_len;
+ 	u64 objdump_addr;
++	const char *objdump_name;
++	char decomp_name[KMOD_DECOMP_LEN];
+ 	int ret;
  
--	blk_mq_tag_idle(hctx);
-+	if (blk_mq_hw_queue_mapped(hctx))
-+		blk_mq_tag_idle(hctx);
+ 	pr_debug("Reading object code for memory address: %#"PRIx64"\n", addr);
+@@ -242,9 +244,25 @@ static int read_object_code(u64 addr, si
+ 		state->done[state->done_cnt++] = al.map->start;
+ 	}
  
- 	if (set->ops->exit_request)
- 		set->ops->exit_request(set->driver_data,
++	objdump_name = al.map->dso->long_name;
++	if (dso__needs_decompress(al.map->dso)) {
++		if (dso__decompress_kmodule_path(al.map->dso, objdump_name,
++						 decomp_name,
++						 sizeof(decomp_name)) < 0) {
++			pr_debug("decompression failed\n");
++			return -1;
++		}
++
++		objdump_name = decomp_name;
++	}
++
+ 	/* Read the object code using objdump */
+ 	objdump_addr = map__rip_2objdump(al.map, al.addr);
+-	ret = read_via_objdump(al.map->dso->long_name, objdump_addr, buf2, len);
++	ret = read_via_objdump(objdump_name, objdump_addr, buf2, len);
++
++	if (dso__needs_decompress(al.map->dso))
++		unlink(objdump_name);
++
+ 	if (ret > 0) {
+ 		/*
+ 		 * The kernel maps are inaccurate - assume objdump is right in
