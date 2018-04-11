@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48lWa7HlA1ZD5yBRuRiLjP/KTXQ7bmITVALhpTlMZEEHO/318uhKvyyZtHxEN2NBd743miW
-ARC-Seal: i=1; a=rsa-sha256; t=1523472601; cv=none;
+X-Google-Smtp-Source: AIpwx4/tE9LUoIHa/uIdV9IeTcemFGRKz/QRAJDfXCB65R7BMFas3GgWjLg/4YdCls88oLiXVzfc
+ARC-Seal: i=1; a=rsa-sha256; t=1523472599; cv=none;
         d=google.com; s=arc-20160816;
-        b=pLF3csw/L6o2YKb12uvdgscp16lYEjJmBBBRPywS3VKC9LmxWWot4xkMPYigO2Y+bu
-         VFZdfhDFCuc1P8blj/NHyC/TkXE91LE0BGPOB7RI4ROgqzvqBsPDGQ27GhWiF4BWvLRV
-         02WvyHV3lXikO5BU7yIwzPkJePIJhxe64i3M77F8AJ4ifXhZNoau0H11NkMuVkoDjn0A
-         hjtNwWV0sibRViie0U71RS50pccAeLWPK7/cCjOegASFwafsrF5l6eOkMljGWS6q5VD0
-         t7jrfacRZVQ6BSGWHXvYi28CN5GT2TC704VoXmV2kHu2mntKFTYiTs8ptLZJtDhqooH1
-         acIg==
+        b=V88mYxRjzwZcBbT7Xtr1b2kCAj+Q4HS5YwqO7nPhlc045v7JmI3q6kItAYiHuP1xbt
+         n1V9lyWyZPYrs9jG+FufPF7zK6zkxWc5FfoMkkucRg9Bs8zat2abqn65VtlmmaFDOHtJ
+         UHwGwkx8rv9GE4SD7TpyKN1ftBZSwXHrgOF42FVOED8dEj+u/IO/fCUNtXuGHOlxDbZn
+         1PaeLvKlXJA7a7vuGkUwIaR91gY8BHFxMVToUwC3NPu2yVSHqwSKR2yIryZMatLEUpl2
+         jsieMfRlW30pvRVFVwGsiy17gD4Ckx3vULqWpKksfugEW1cECA7Fb5ioh7wtFNbcJ33q
+         Mqgg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Pc40WPiql77bDR06QaH8pfVYosrdsSLvYK7AmizN3gk=;
-        b=jz6hSZX46orMrNsqSsokLRQoaXfDvWpUCpRTopuhCqKrS3OctZk1RzL6fTDC+QLF6m
-         /wWK1cGhxQDRLhwR+RWV3IPs44NrJjL5y4lEmP/Rz6ArZAFh7VBQAH4nzZDeS7kgmkvl
-         5lxxRu0rbkEczqpDIRXdecrg77ka6MyyNgpBse6nB4b2uqP97GAfNxaDdbinO2/rpIkk
-         dIp+Rdxokl7CAgO9SkcE/iTBiJujJIe253mzcgGoF4qjBZ3oMo98keYlpFHcOS1y0JDQ
-         GriKu2N80gd+fM/p/3FkIGnwyMasxx4UCO3/YAGVqBE8RhdBBJ6xuE6vMe2SQ2FqGhdq
-         6OEw==
+        bh=iBtE2D1UbwO+jnzu5hZRIY7mpS+JpSReIOMWJKjaSWQ=;
+        b=pdLw7058nxmIyQ2UNGuBvFKKjQLbv/ueJYLgC3XrBEZAn4iahWA5sgXI6kWyWp/Xaf
+         2d5MGR3UYsu2jgjense2NJ3gSgxotwLsxI6IqZOJB7Q9YYg8pur3ZJnjr4g9R4ZLjrnh
+         K0GOuAp65OnPvpAruSvMr6k0QoOnNbkuA9YYrR9S6mac6qpz/RQJHC3y4ssSxoj8ZctM
+         nln/kO5c183hXOUL9/e5FPmaaIlTDvREBm0y5CRfQhe5Io0dZVvn6u1rdW5XYcy9HaiW
+         0DQlSndzVJMVjspMpWc5JrSOCebFTLxgz1frucd004PC9EHBvJnzoqrsxI23x4FwHCkd
+         q1pA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chandan Tagore <tagore.chandan@gmail.com>,
-	Lv Zheng <lv.zheng@intel.com>,
-	Bob Moore <robert.moore@intel.com>,
+	Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
 	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 145/190] ACPICA: Events: Add runtime stub support for event APIs
-Date: Wed, 11 Apr 2018 20:36:31 +0200
-Message-Id: <20180411183601.113500771@linuxfoundation.org>
+Subject: [PATCH 4.4 144/190] cpuidle: dt: Add missing of_node_put()
+Date: Wed, 11 Apr 2018 20:36:30 +0200
+Message-Id: <20180411183601.054367643@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476360075015907?=
-X-GMAIL-MSGID: =?utf-8?q?1597476806698047883?=
+X-GMAIL-THRID: =?utf-8?q?1597476804151066112?=
+X-GMAIL-MSGID: =?utf-8?q?1597476804151066112?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,69 +50,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lv Zheng <lv.zheng@intel.com>
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit 861ba6351c520328e94a78c923b415faa9116287 ]
+[ Upstream commit b2cdd8e1b54849477a32d820acc2e87828a38f3d ]
 
-ACPICA commit 99bc3beca92c6574ea1d69de42e54f872e6373ce
+'of_node_put()' should be called on pointer returned by
+'of_parse_phandle()' when done. In this function this is done in all path
+except this 'continue', so add it.
 
-It is reported that on Linux, RTC driver complains wrong errors on
-hardware reduced platform:
-  [    4.085420] ACPI Warning: Could not enable fixed event - real_time_clock (4) (20160422/evxface-654)
-
-This patch fixes this by correctly adding runtime reduced hardware check.
-Reported by Chandan Tagore, fixed by Lv Zheng.
-
-Link: https://github.com/acpica/acpica/commit/99bc3bec
-Tested-by: Chandan Tagore <tagore.chandan@gmail.com>
-Signed-off-by: Lv Zheng <lv.zheng@intel.com>
-Signed-off-by: Bob Moore <robert.moore@intel.com>
+Fixes: 97735da074fd (drivers: cpuidle: Add status property to ARM idle states)
+Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/acpica/evxfevnt.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/cpuidle/dt_idle_states.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/acpi/acpica/evxfevnt.c
-+++ b/drivers/acpi/acpica/evxfevnt.c
-@@ -180,6 +180,12 @@ acpi_status acpi_enable_event(u32 event,
+--- a/drivers/cpuidle/dt_idle_states.c
++++ b/drivers/cpuidle/dt_idle_states.c
+@@ -174,8 +174,10 @@ int dt_init_idle_driver(struct cpuidle_d
+ 		if (!state_node)
+ 			break;
  
- 	ACPI_FUNCTION_TRACE(acpi_enable_event);
+-		if (!of_device_is_available(state_node))
++		if (!of_device_is_available(state_node)) {
++			of_node_put(state_node);
+ 			continue;
++		}
  
-+	/* If Hardware Reduced flag is set, there are no fixed events */
-+
-+	if (acpi_gbl_reduced_hardware) {
-+		return_ACPI_STATUS(AE_OK);
-+	}
-+
- 	/* Decode the Fixed Event */
- 
- 	if (event > ACPI_EVENT_MAX) {
-@@ -237,6 +243,12 @@ acpi_status acpi_disable_event(u32 event
- 
- 	ACPI_FUNCTION_TRACE(acpi_disable_event);
- 
-+	/* If Hardware Reduced flag is set, there are no fixed events */
-+
-+	if (acpi_gbl_reduced_hardware) {
-+		return_ACPI_STATUS(AE_OK);
-+	}
-+
- 	/* Decode the Fixed Event */
- 
- 	if (event > ACPI_EVENT_MAX) {
-@@ -290,6 +302,12 @@ acpi_status acpi_clear_event(u32 event)
- 
- 	ACPI_FUNCTION_TRACE(acpi_clear_event);
- 
-+	/* If Hardware Reduced flag is set, there are no fixed events */
-+
-+	if (acpi_gbl_reduced_hardware) {
-+		return_ACPI_STATUS(AE_OK);
-+	}
-+
- 	/* Decode the Fixed Event */
- 
- 	if (event > ACPI_EVENT_MAX) {
+ 		if (!idle_state_valid(state_node, i, cpumask)) {
+ 			pr_warn("%s idle state not valid, bailing out\n",
