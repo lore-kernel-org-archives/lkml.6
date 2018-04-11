@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/3smSwvkICMkGr5MPqOTEFiQwVNUN6bPQytAJPswp6h1RZ5uITlWqwEJ+epbo2rrkRk3dG
-ARC-Seal: i=1; a=rsa-sha256; t=1523472659; cv=none;
+X-Google-Smtp-Source: AIpwx48Ap/glycg9PkS8EmJRQfKxkMFUPTNKPbmOSyzzoIb8pMvEo4AhTM/+LMbKiyWwXMSJqlwj
+ARC-Seal: i=1; a=rsa-sha256; t=1523472657; cv=none;
         d=google.com; s=arc-20160816;
-        b=JnVUSSetbi3rJMPAGefU1sFEr4sO3KsNlqa6C9BXof+u3d1fyrVjtCDKzyqg04H+q4
-         ssl6nq3MtlAve2xkFJvCkE77PN752JvlyEwM3YVPWhDUQE/SNGbCwlIbL8Xz0+cKihMf
-         yBrHUONq8ZaXWDsoq2fj8TVjx5XertRKneA3oq6iLm3GVPdsuB+XSGem6dIil3TADMDV
-         iMNiD1PnpOFMbVSWfmJBeie2SqXN94fB2HG7GcVpiy8qi5/urCR31mABpN4O1N/mpDJ9
-         0nIsl666EfRelhitCmkUP8l5G2mVj74XdgLnjJFRwMEGGxVlMUv0QZCn4lIT2DoQspv4
-         lICA==
+        b=bjdZwtf45J/I9R0i0lXP02AwHe5YtjY1Lkxpt6oL3H3o5kjtLCpMfFXSyUEJysPpr2
+         ckzc4RnnYacIofRsKmDsH5lPoKGi2HpiHYj6OwH6rCW5EDXXB2wpoBuvz39UitHBuSD9
+         iy9BroV5/5K2Nx8pFtHBLn+aa6g+5NpNr7ttGYvH8hu49fRD1xEbJbgAlOJwtVn1cMwj
+         G6yLvcWr4rHQ4OPki2dpvKHtbrEd0E8FgfkpcMkogbyEqr/NjG22Bu+ZX8Qp4k2dUgVp
+         1zsJK0raygbrLjxjW3HjNUdFVMUD9k/LY9eks9mJk1ZbecVBt6v7gudFRafEUf+yQWzr
+         v2Jg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=95oLdKL17+8lrbwHkMMHUQYeBXhPlQDCI0RNDbPZsg0=;
-        b=sny/tm+bAFwIydt4cr9B8wdXAeIHryHUO4ksErAq4X94a7+0pAG4aCXyc2bhZcfZkU
-         z0UxUeyGROm672ChG+qbIb9/1nNDZl/mdB8loYB015S2QbHdVb/qnSPw+8ut8DEgl9Ar
-         BvtH7qISbfUjXDUXtkyz7ifLHrn8CwO1+VGq0Up/h88sBKIngdO3ruaznRW+Hw4tkB6+
-         SC5pMz/7MqkMMmOVHv8zSXWZ3QX0dJLdhBc/MqTRCj9k9HV0auDpVTQX/yWEGefDpd3W
-         yPzvyaM9hHb1mX+wHy7WDk6pvnNDH2a4grnmSsuToAf9iLIQj65GPZGkSoDwfW9tisfT
-         lQbg==
+        bh=bs//SNAqSVQ6a5evR88agHOYxo6PllT6UBpCSroI+t4=;
+        b=L9Q9+Dhu4c3dxyGhomGEpslbST87ccz44ykCkc5MqSlLyRYFNODTyg81hnweyqPl/Z
+         /3lM6XRDYjX8Fx8k51Rp9kKASQnjLUQqG6Ra27JQQ9sTwXd0SdKvc/bXYfhDzoMuRyO2
+         AzNtW/Nj/cNpHalMvcBHbTdChK+cUdbZdAd51FjtjMpZ57v1Aj1FblP4aFjgJWExj2xY
+         ZSkVqob3bJgaHTxkMOoi16DNIaqQyHWd/GKW5uaONYs0pn8Uy69QgvqNP3b0/yMGhUg7
+         3TS5CV7vjwg8RwyTq8W+0t8vOoiZGgtM9lDIFl3nhWDrfQkoEkQDaXvUBVBv8WT8Q2LB
+         14iA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,22 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mel Gorman <mgorman@suse.de>,
-	Davidlohr Bueso <dbueso@suse.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Chris Mason <clm@fb.com>,
-	Darren Hart <dvhart@linux.intel.com>,
-	Hugh Dickins <hughd@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	dave@stgolabs.net,
-	Ingo Molnar <mingo@kernel.org>,
-	Chenbo Feng <fengc@google.com>
-Subject: [PATCH 4.4 164/190] futex: Remove requirement for lock_page() in get_futex_key()
-Date: Wed, 11 Apr 2018 20:36:50 +0200
-Message-Id: <20180411183602.117363832@linuxfoundation.org>
+	Willem de Bruijn <willemb@google.com>,
+	Soheil Hassas Yeganeh <soheil@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 137/190] skbuff: only inherit relevant tx_flags
+Date: Wed, 11 Apr 2018 20:36:23 +0200
+Message-Id: <20180411183600.603547227@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -51,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476323311602672?=
-X-GMAIL-MSGID: =?utf-8?q?1597476867429884859?=
+X-GMAIL-THRID: =?utf-8?q?1597476864960528556?=
+X-GMAIL-MSGID: =?utf-8?q?1597476864960528556?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -60,199 +52,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mel Gorman <mgorman@suse.de>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 65d8fc777f6dcfee12785c057a6b57f679641c90 upstream.
 
-When dealing with key handling for shared futexes, we can drastically reduce
-the usage/need of the page lock. 1) For anonymous pages, the associated futex
-object is the mm_struct which does not require the page lock. 2) For inode
-based, keys, we can check under RCU read lock if the page mapping is still
-valid and take reference to the inode. This just leaves one rare race that
-requires the page lock in the slow path when examining the swapcache.
+[ Upstream commit fff88030b3ff930ca7a3d74acfee0472f33887ea ]
 
-Additionally realtime users currently have a problem with the page lock being
-contended for unbounded periods of time during futex operations.
+When inheriting tx_flags from one skbuff to another, always apply a
+mask to avoid overwriting unrelated other bits in the field.
 
-Task A
-     get_futex_key()
-     lock_page()
-    ---> preempted
+The two SKBTX_SHARED_FRAG cases clears all other bits. In practice,
+tx_flags are zero at this point now. But this is fragile. Timestamp
+flags are set, for instance, if in tcp_gso_segment, after this clear
+in skb_segment.
 
-Now any other task trying to lock that page will have to wait until
-task A gets scheduled back in, which is an unbound time.
+The SKBTX_ANY_TSTAMP mask in __skb_tstamp_tx ensures that new
+skbs do not accidentally inherit flags such as SKBTX_SHARED_FRAG.
 
-With this patch, we pretty much have a lockless futex_get_key().
-
-Experiments show that this patch can boost/speedup the hashing of shared
-futexes with the perf futex benchmarks (which is good for measuring such
-change) by up to 45% when there are high (> 100) thread counts on a 60 core
-Westmere. Lower counts are pretty much in the noise range or less than 10%,
-but mid range can be seen at over 30% overall throughput (hash ops/sec).
-This makes anon-mem shared futexes much closer to its private counterpart.
-
-Signed-off-by: Mel Gorman <mgorman@suse.de>
-[ Ported on top of thp refcount rework, changelog, comments, fixes. ]
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Chris Mason <clm@fb.com>
-Cc: Darren Hart <dvhart@linux.intel.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: dave@stgolabs.net
-Link: http://lkml.kernel.org/r/1455045314-8305-3-git-send-email-dave@stgolabs.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Chenbo Feng <fengc@google.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Acked-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/futex.c |   98 ++++++++++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 91 insertions(+), 7 deletions(-)
+ net/core/skbuff.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -470,6 +470,7 @@ get_futex_key(u32 __user *uaddr, int fsh
- 	unsigned long address = (unsigned long)uaddr;
- 	struct mm_struct *mm = current->mm;
- 	struct page *page, *page_head;
-+	struct address_space *mapping;
- 	int err, ro = 0;
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -2551,7 +2551,8 @@ void skb_split(struct sk_buff *skb, stru
+ {
+ 	int pos = skb_headlen(skb);
  
- 	/*
-@@ -555,7 +556,19 @@ again:
- 	}
- #endif
+-	skb_shinfo(skb1)->tx_flags = skb_shinfo(skb)->tx_flags & SKBTX_SHARED_FRAG;
++	skb_shinfo(skb1)->tx_flags |= skb_shinfo(skb)->tx_flags &
++				      SKBTX_SHARED_FRAG;
+ 	if (len < pos)	/* Split line is inside header. */
+ 		skb_split_inside_header(skb, skb1, len, pos);
+ 	else		/* Second chunk has no header, nothing to copy. */
+@@ -3115,8 +3116,8 @@ struct sk_buff *skb_segment(struct sk_bu
+ 		skb_copy_from_linear_data_offset(head_skb, offset,
+ 						 skb_put(nskb, hsize), hsize);
  
--	lock_page(page_head);
-+	/*
-+	 * The treatment of mapping from this point on is critical. The page
-+	 * lock protects many things but in this context the page lock
-+	 * stabilizes mapping, prevents inode freeing in the shared
-+	 * file-backed region case and guards against movement to swap cache.
-+	 *
-+	 * Strictly speaking the page lock is not needed in all cases being
-+	 * considered here and page lock forces unnecessarily serialization
-+	 * From this point on, mapping will be re-verified if necessary and
-+	 * page lock will be acquired only if it is unavoidable
-+	 */
-+
-+	mapping = READ_ONCE(page_head->mapping);
+-		skb_shinfo(nskb)->tx_flags = skb_shinfo(head_skb)->tx_flags &
+-			SKBTX_SHARED_FRAG;
++		skb_shinfo(nskb)->tx_flags |= skb_shinfo(head_skb)->tx_flags &
++					      SKBTX_SHARED_FRAG;
  
- 	/*
- 	 * If page_head->mapping is NULL, then it cannot be a PageAnon
-@@ -572,18 +585,31 @@ again:
- 	 * shmem_writepage move it from filecache to swapcache beneath us:
- 	 * an unlikely race, but we do need to retry for page_head->mapping.
- 	 */
--	if (!page_head->mapping) {
--		int shmem_swizzled = PageSwapCache(page_head);
-+	if (unlikely(!mapping)) {
-+		int shmem_swizzled;
-+
-+		/*
-+		 * Page lock is required to identify which special case above
-+		 * applies. If this is really a shmem page then the page lock
-+		 * will prevent unexpected transitions.
-+		 */
-+		lock_page(page);
-+		shmem_swizzled = PageSwapCache(page) || page->mapping;
- 		unlock_page(page_head);
- 		put_page(page_head);
-+
- 		if (shmem_swizzled)
- 			goto again;
-+
- 		return -EFAULT;
+ 		while (pos < offset + len) {
+ 			if (i >= nfrags) {
+@@ -3734,7 +3735,8 @@ void __skb_tstamp_tx(struct sk_buff *ori
+ 		return;
+ 
+ 	if (tsonly) {
+-		skb_shinfo(skb)->tx_flags = skb_shinfo(orig_skb)->tx_flags;
++		skb_shinfo(skb)->tx_flags |= skb_shinfo(orig_skb)->tx_flags &
++					     SKBTX_ANY_TSTAMP;
+ 		skb_shinfo(skb)->tskey = skb_shinfo(orig_skb)->tskey;
  	}
  
- 	/*
- 	 * Private mappings are handled in a simple way.
- 	 *
-+	 * If the futex key is stored on an anonymous page, then the associated
-+	 * object is the mm which is implicitly pinned by the calling process.
-+	 *
- 	 * NOTE: When userspace waits on a MAP_SHARED mapping, even if
- 	 * it's a read-only handle, it's expected that futexes attach to
- 	 * the object not the particular process.
-@@ -601,16 +627,74 @@ again:
- 		key->both.offset |= FUT_OFF_MMSHARED; /* ref taken on mm */
- 		key->private.mm = mm;
- 		key->private.address = address;
-+
-+		get_futex_key_refs(key); /* implies smp_mb(); (B) */
-+
- 	} else {
-+		struct inode *inode;
-+
-+		/*
-+		 * The associated futex object in this case is the inode and
-+		 * the page->mapping must be traversed. Ordinarily this should
-+		 * be stabilised under page lock but it's not strictly
-+		 * necessary in this case as we just want to pin the inode, not
-+		 * update the radix tree or anything like that.
-+		 *
-+		 * The RCU read lock is taken as the inode is finally freed
-+		 * under RCU. If the mapping still matches expectations then the
-+		 * mapping->host can be safely accessed as being a valid inode.
-+		 */
-+		rcu_read_lock();
-+
-+		if (READ_ONCE(page_head->mapping) != mapping) {
-+			rcu_read_unlock();
-+			put_page(page_head);
-+
-+			goto again;
-+		}
-+
-+		inode = READ_ONCE(mapping->host);
-+		if (!inode) {
-+			rcu_read_unlock();
-+			put_page(page_head);
-+
-+			goto again;
-+		}
-+
-+		/*
-+		 * Take a reference unless it is about to be freed. Previously
-+		 * this reference was taken by ihold under the page lock
-+		 * pinning the inode in place so i_lock was unnecessary. The
-+		 * only way for this check to fail is if the inode was
-+		 * truncated in parallel so warn for now if this happens.
-+		 *
-+		 * We are not calling into get_futex_key_refs() in file-backed
-+		 * cases, therefore a successful atomic_inc return below will
-+		 * guarantee that get_futex_key() will still imply smp_mb(); (B).
-+		 */
-+		if (WARN_ON_ONCE(!atomic_inc_not_zero(&inode->i_count))) {
-+			rcu_read_unlock();
-+			put_page(page_head);
-+
-+			goto again;
-+		}
-+
-+		/* Should be impossible but lets be paranoid for now */
-+		if (WARN_ON_ONCE(inode->i_mapping != mapping)) {
-+			err = -EFAULT;
-+			rcu_read_unlock();
-+			iput(inode);
-+
-+			goto out;
-+		}
-+
- 		key->both.offset |= FUT_OFF_INODE; /* inode-based key */
--		key->shared.inode = page_head->mapping->host;
-+		key->shared.inode = inode;
- 		key->shared.pgoff = basepage_index(page);
-+		rcu_read_unlock();
- 	}
- 
--	get_futex_key_refs(key); /* implies MB (B) */
--
- out:
--	unlock_page(page_head);
- 	put_page(page_head);
- 	return err;
- }
