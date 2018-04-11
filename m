@@ -1,85 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752498AbeDKHO4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 03:14:56 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42227 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752095AbeDKHOx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 03:14:53 -0400
-X-Google-Smtp-Source: AIpwx4+tmaklNXqrZQAVQ8UudzjUitNkpcvEDmp75518bxhf16ufWpxn1U4VF+8Jx098xBziRzqWvA==
-Subject: Re: [PATCH] net: dsa: b53: Replace mdelay with msleep in
- b53_switch_reset_gpio
-To: Phil Reid <preid@electromag.com.au>, f.fainelli@gmail.com,
-        andrew@lunn.ch, vivien.didelot@savoirfairelinux.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1523411485-2030-1-git-send-email-baijiaju1990@gmail.com>
- <11d079ab-3c07-a10d-c321-f873c53e9690@electromag.com.au>
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <7c9dffb7-d55a-98f5-4024-7e2f0c704a56@gmail.com>
-Date: Wed, 11 Apr 2018 15:14:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1752753AbeDKHPl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 03:15:41 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41082 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752693AbeDKHPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 03:15:39 -0400
+Date: Wed, 11 Apr 2018 09:15:28 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Ladislav Michl <ladis@linux-mips.org>
+Cc: Andreas Kemnade <andreas@kemnade.info>,
+        Discussions about the Letux Kernel
+        <letux-kernel@openphoenux.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        linux-omap <linux-omap@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
+Subject: Re: [Letux-kernel] [Bug]: mtd: onenand: omap2plus: kernel panic
+ with OneNAND on OMAP3 (DM3730) device GTA04A5
+Message-ID: <20180411091528.4e954c32@bbrezillon>
+In-Reply-To: <20180411062607.GA9179@lenoch>
+References: <5D496D5C-4E3E-47B4-9981-E8F4C348DE00@goldelico.com>
+        <20180410205643.GA2228@lenoch>
+        <20180411065836.7e1bfc3f@aktux>
+        <20180411062607.GA9179@lenoch>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <11d079ab-3c07-a10d-c321-f873c53e9690@electromag.com.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Ladislav,
 
+On Wed, 11 Apr 2018 08:26:07 +0200
+Ladislav Michl <ladis@linux-mips.org> wrote:
 
-On 2018/4/11 13:30, Phil Reid wrote:
-> On 11/04/2018 09:51, Jia-Ju Bai wrote:
->> b53_switch_reset_gpio() is never called in atomic context.
->>
->> The call chain ending up at b53_switch_reset_gpio() is:
->> [1] b53_switch_reset_gpio() <- b53_switch_reset() <-
->>     b53_reset_switch() <- b53_setup()
->>
->> b53_switch_reset_gpio() is set as ".setup" in struct dsa_switch_ops.
->> This function is not called in atomic context.
->>
->> Despite never getting called from atomic context, 
->> b53_switch_reset_gpio()
->> calls mdelay() to busily wait.
->> This is not necessary and can be replaced with msleep() to
->> avoid busy waiting.
->>
->> This is found by a static analysis tool named DCNS written by myself.
->> And I also manually check it.
->>
->> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
->> ---
->>   drivers/net/dsa/b53/b53_common.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/net/dsa/b53/b53_common.c 
->> b/drivers/net/dsa/b53/b53_common.c
->> index 274f367..e070ff6 100644
->> --- a/drivers/net/dsa/b53/b53_common.c
->> +++ b/drivers/net/dsa/b53/b53_common.c
->> @@ -597,10 +597,10 @@ static void b53_switch_reset_gpio(struct 
->> b53_device *dev)
->>       /* Reset sequence: RESET low(50ms)->high(20ms)
->>        */
->>       gpio_set_value(gpio, 0);
->> -    mdelay(50);
->> +    msleep(50);
->>         gpio_set_value(gpio, 1);
->> -    mdelay(20);
->> +    msleep(20);
->>         dev->current_page = 0xff;
->>   }
->>
-> Would that also imply gpio_set_value could be gpio_set_value_cansleep?
->
+> Hi Andreas,
+> 
+> On Wed, Apr 11, 2018 at 06:59:03AM +0200, Andreas Kemnade wrote:
+> > Hi Ladis,
+> > 
+> > On Tue, 10 Apr 2018 22:56:43 +0200
+> > Ladislav Michl <ladis@linux-mips.org> wrote:
+> >   
+> > > Hi Nikolaus,
+> > > 
+> > > On Tue, Apr 10, 2018 at 06:25:17PM +0200, H. Nikolaus Schaller wrote:  
+> > > > Hi,
+> > > > we just started testing the v4.16 kernel and found the
+> > > > device no longer bootable (works with v4.15). It turned
+> > > > out that there was a harmful modification somewhere between
+> > > > v4.15.0 and v4.16-rc1.
+> > > > 
+> > > > A git bisect points to this patch:    
+> > > 
+> > > Well, that's a shame... However, this code is in production for several
+> > > months now, so could you, please put 'goto out_copy' if 'buf >= high_memory'
+> > > condition is met, ie:
+> > > --- a/drivers/mtd/nand/onenand/omap2.c
+> > > +++ b/drivers/mtd/nand/onenand/omap2.c
+> > > @@ -392,6 +392,7 @@ static int omap2_onenand_read_bufferram(struct mtd_info *mtd, int area,
+> > >  	if (buf >= high_memory) {
+> > >  		struct page *p1;
+> > >  
+> > > +		goto out_copy;
+> > >  		if (((size_t)buf & PAGE_MASK) !=
+> > >  		    ((size_t)(buf + count - 1) & PAGE_MASK))
+> > >  			goto out_copy;  
+> > 
+> > I had the same problem here, and that snippet  helps here. ubiattach
+> > -p /dev/mtdX does not cause kernel oopses here anymore  
+> 
+> It seems reviving old code always comes at a price :-) Could you try
+> following patch, so far compile tested only?
+> (we'll need to do the same for omap2_onenand_write_bufferram, but
+> it sould be enough for testing purposes now)
+> 
+> diff --git a/drivers/mtd/nand/onenand/omap2.c b/drivers/mtd/nand/onenand/omap2.c
+> index 9c159f0dd9a6..04cefd7a6487 100644
+> --- a/drivers/mtd/nand/onenand/omap2.c
+> +++ b/drivers/mtd/nand/onenand/omap2.c
+> @@ -375,11 +375,12 @@ static int omap2_onenand_read_bufferram(struct mtd_info *mtd, int area,
+>  {
+>  	struct omap2_onenand *c = container_of(mtd, struct omap2_onenand, mtd);
+>  	struct onenand_chip *this = mtd->priv;
+> +	struct device *dev = &c->pdev->dev;
+>  	dma_addr_t dma_src, dma_dst;
+>  	int bram_offset;
+>  	void *buf = (void *)buffer;
+>  	size_t xtra;
+> -	int ret;
+> +	int ret, page_dma = 0;
+>  
+>  	bram_offset = omap2_onenand_bufferram_offset(mtd, area) + area + offset;
+>  	if (bram_offset & 3 || (size_t)buf & 3 || count < 384)
+> @@ -389,38 +390,43 @@ static int omap2_onenand_read_bufferram(struct mtd_info *mtd, int area,
+>  	if (in_interrupt() || oops_in_progress)
+>  		goto out_copy;
+>  
+> +	xtra = count & 3;
+> +	if (xtra) {
+> +		count -= xtra;
+> +		memcpy(buf + count, this->base + bram_offset + count, xtra);
+> +	}
+> +
+> +	/* Handle vmalloc address */
+>  	if (buf >= high_memory) {
+> -		struct page *p1;
+> +		struct page *page;
+>  
+>  		if (((size_t)buf & PAGE_MASK) !=
+>  		    ((size_t)(buf + count - 1) & PAGE_MASK))
+>  			goto out_copy;
+> -		p1 = vmalloc_to_page(buf);
+> -		if (!p1)
+> +		page = vmalloc_to_page(buf);
 
-Yes, I think gpio_set_value_cansleep() is okay here?
-Do I need to send a V2 patch to replace gpio_set_value()?
+Not sure this approach is safe on all archs: if the cache is VIVT or
+VIPT, you may have several entries pointing to the same phys page, and
+then, when dma_map_page() does its cache maintenance operations, it's
+only taking one of these entries into account.
 
+In other parts of the MTD subsystem, we tend to not do DMA on buffers
+that have been vmalloc-ed.
 
-Best wishes,
-Jia-Ju Bai
+You can do something like
+
+		if (virt_addr_valid(buf))
+			/* Use DMA */
+		else
+			/*
+			 * Do not use DMA, or use a bounce buffer
+			 * allocated with kmalloc
+			 */
+
+Regards,
+
+Boris
+
+> +		if (!page)
+>  			goto out_copy;
+> -		buf = page_address(p1) + ((size_t)buf & ~PAGE_MASK);
+> -	}
+> -
+> -	xtra = count & 3;
+> -	if (xtra) {
+> -		count -= xtra;
+> -		memcpy(buf + count, this->base + bram_offset + count, xtra);
+> +		page_dma = 1;
+> +		dma_dst = dma_map_page(dev, page, (size_t) buf & ~PAGE_MASK,
+> +				       count, DMA_FROM_DEVICE);
+> +	} else {
+> +		dma_dst = dma_map_single(dev, buf, count, DMA_FROM_DEVICE);
+>  	}
+> -
+>  	dma_src = c->phys_base + bram_offset;
+> -	dma_dst = dma_map_single(&c->pdev->dev, buf, count, DMA_FROM_DEVICE);
+> -	if (dma_mapping_error(&c->pdev->dev, dma_dst)) {
+> -		dev_err(&c->pdev->dev,
+> -			"Couldn't DMA map a %d byte buffer\n",
+> -			count);
+> +
+> +	if (dma_mapping_error(dev, dma_dst)) {
+> +		dev_err(dev, "Couldn't DMA map a %d byte buffer\n", count);
+>  		goto out_copy;
+>  	}
+>  
+>  	ret = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
+> -	dma_unmap_single(&c->pdev->dev, dma_dst, count, DMA_FROM_DEVICE);
+> +	if (page_dma)
+> +		dma_unmap_page(dev, dma_dst, count, DMA_FROM_DEVICE);
+> +	else
+> +		dma_unmap_single(dev, dma_dst, count, DMA_FROM_DEVICE);
+>  
+>  	if (ret) {
+> -		dev_err(&c->pdev->dev, "timeout waiting for DMA\n");
+> +		dev_err(dev, "timeout waiting for DMA\n");
+>  		goto out_copy;
+>  	}
+>  
