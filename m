@@ -1,38 +1,81 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49H1Eh3t/AlZWSJ1iwjmllqSUjmh8JRlTSN/dQ95J3P+BdZEzsz560lD5uQXU/1Cc7g/d4J
-ARC-Seal: i=1; a=rsa-sha256; t=1523472637; cv=none;
-        d=google.com; s=arc-20160816;
-        b=dYBjLprsIELMt62/4Y7HexXxbtCWjCHiBRYZc+X/H+L553slL2zvtE/eQdffSCIP6J
-         5hoFmhUQjnBT6PkmmJVVMX2JWoEYOU99UjQ7Bt7hZtHqRB7l8nx/QJ7DvHM301MhxY1N
-         adEhVmFGWMvocTZy9WUoAS4tbsGa5FMU2ShwYtmPaBcPrxydLXShdjBAeK+S6/RYRyby
-         NLTwGQn0N45gLWq96taIw/3mRi6k+p1cNSqF1dEHKqdGQu86kefYM39WrCTl/+UuPGuq
-         OD6Oj/T9pjphM2hLNp8e8d1I+Tx/59ylPPVYDtkjopQw9XidFnkFzGMOzx7dui90LiX6
-         npKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=Y0gudzEuivFhJV1y2ENMsXvtUvrdNi2EB10xrYPIzHw=;
-        b=DnPBBVPGV/VjSZyw1LH2fvwNzmWiOX49q7WkJ+KA+tIoOLKD8/RdzlOMD4aqODq17b
-         mYef+jsT0GWzaVqGvSURFdMGU5jhEQ5XFWQoZUUb2CHvJp97mSmSfrKA/r3y4VmqM8IH
-         F6hlMWBpcNg3c/tFeOfZuBtU879v0tkrUnkobX97XlWLn9Z0y+p5eXNfpmwfma6DCre2
-         L9ECguwI+D97FObqLX1cGyf71nDRL1DetJPG2I/rsTDJgYrbtQsropuE0JCXx93FpDIO
-         60+WHzAK3PLeOdxTZATiIa4PQ0QxpFrjrjtD7kk4gTMtdZ0KV8R6J1yI0XJSjJTILlnL
-         clHA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3118118-1523472636-2-12853199525071752675
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, URIBL_SBL 1.623, URIBL_SBL_A 0.1,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523472636; b=o0FZyLVmFISY8qIKabTc0eUD0a0E+f78Aig1MkEOZQZ+/tpwfs
+    pDJOJj6P6VF8le25tLh3hG0MP8wM1VGaWAr1JuslVDbaXU4vJEQ0nDEXJZFof2Ka
+    bh6UzD98Rze7XjzHij72Yc4uAHbHvsoJbny/L4ImAQmYGckEDjpwacyaNl8O03cX
+    bTF1PmGVHc7N/ZD4e8Mjo+Oe8lZizg6zeqnp88Q6MqDuk4V05FlkAx82LX26wlfE
+    npPlVkR1bFymGdySx+rur432kM3sINDyz3pWkHQifcTsx0l+WHcDdoKBVQAmP+sD
+    0Inbxmld5fjtBRPmj6Ix90eGbA4/c9YploFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523472636; bh=j9jtOQtAjy3341dblWU2MyLDbC9eis
+    NiLVe5EUyzga4=; b=coc8xYjDaJLUqPW4lIv91km9FVjnHZsUggx98Jv9UEsVze
+    o010JAbAnNaZM4v5RgisQzzZNPfhoAC7H0sNVa8jGca0Buj7JziE+GojtgMfVPkH
+    47QSQQEnMjghUNfYC7l2/amJqS1Q6FrOVZh7LI0t2lhti1QtxF2/Youlok0Gxhmd
+    2i5bjRpn0JlX74T0EveyUiuBpOw9jpp83JxyQCgJQg55MDgdTqGIs8lmiyTFqT1r
+    w4p1MsgUl+JYC8FQ/JnN+OEcnEzrlPkg9LXhHCthacanBUgrPWWKT++ksT6AXNTx
+    qQklY4+eGqMATp0bt9AeiEOEMNDh+bZ7JhNZhSGQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfLGXFEpqXlpUszrAzt/gYbUA5d2AYWvmirh8NtSgRsB1YhTycDbsoM8Ig32rJqQbD3zwWr/KSi+6Pqvh8+Mm/fVC9m/hwmtJc/XIh+GXSkeUEajsC5/8
+    +luiTid0J/iUQ6npQR1FSSaVl1acnW9JY/mtDJOeSwYEwm2IyJY9iau0rrD9HG2hzH8M+K4YduILBcMjfhtd6o1fbTQ4Cn2gnkhpZssYusHnXeKnG4I/mmxu
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=1RTuLK3dAAAA:8 a=uTJJjIG0AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=Acn1Ri8CFVpV9zlsrzkA:9 a=QEXdDO2ut3YA:10 a=kRpfLKi8w9umh8uBmg1i:22
+    a=Oxz5h5Y_mNNx07kSEfs-:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932601AbeDKSuQ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:50:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60704 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932599AbeDKSuN (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:50:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Arjun Vynipadath <arjun@chelsio.com>,
-	Ganesh Goudar <ganeshgr@chelsio.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 157/190] cxgb4vf: Fix SGE FL buffer initialization logic for 64K pages
-Date: Wed, 11 Apr 2018 20:36:43 +0200
-Message-Id: <20180411183601.748756491@linuxfoundation.org>
+        stable@vger.kernel.org, Tang Junhui <tang.junhui@zte.com.cn>,
+        Michael Lyle <mlyle@lyle.org>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 149/190] bcache: stop writeback thread after detaching
+Date: Wed, 11 Apr 2018 20:36:35 +0200
+Message-Id: <20180411183601.340539326@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -40,10 +83,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476844672021483?=
-X-GMAIL-MSGID: =?utf-8?q?1597476844672021483?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,70 +93,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arjun Vynipadath <arjun@chelsio.com>
+From: Tang Junhui <tang.junhui@zte.com.cn>
 
 
-[ Upstream commit ea0a42109aee7b92e631c4eb3f2219fadf58acdd ]
+[ Upstream commit 8d29c4426b9f8afaccf28de414fde8a722b35fdf ]
 
-We'd come in with SGE_FL_BUFFER_SIZE[0] and [1] both equal to 64KB and
-the extant logic would flag that as an error. This was already fixed in
-cxgb4 driver with "92ddcc7 cxgb4: Fix some small bugs in
-t4_sge_init_soft() when our Page Size is 64KB".
+Currently, when a cached device detaching from cache, writeback thread is
+not stopped, and writeback_rate_update work is not canceled. For example,
+after the following command:
+echo 1 >/sys/block/sdb/bcache/detach
+you can still see the writeback thread. Then you attach the device to the
+cache again, bcache will create another writeback thread, for example,
+after below command:
+echo  ba0fb5cd-658a-4533-9806-6ce166d883b9 > /sys/block/sdb/bcache/attach
+then you will see 2 writeback threads.
+This patch stops writeback thread and cancels writeback_rate_update work
+when cached device detaching from cache.
 
-Original Work by: Casey Leedom <leedom@chelsio.com>
-Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Compare with patch v1, this v2 patch moves code down into the register
+lock for safety in case of any future changes as Coly and Mike suggested.
+
+[edit by mlyle: commit log spelling/formatting]
+
+Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4vf/sge.c |   23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ drivers/md/bcache/super.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4vf/sge.c
-@@ -2604,8 +2604,8 @@ void t4vf_sge_stop(struct adapter *adapt
- int t4vf_sge_init(struct adapter *adapter)
- {
- 	struct sge_params *sge_params = &adapter->params.sge;
--	u32 fl0 = sge_params->sge_fl_buffer_size[0];
--	u32 fl1 = sge_params->sge_fl_buffer_size[1];
-+	u32 fl_small_pg = sge_params->sge_fl_buffer_size[0];
-+	u32 fl_large_pg = sge_params->sge_fl_buffer_size[1];
- 	struct sge *s = &adapter->sge;
- 	unsigned int ingpadboundary, ingpackboundary;
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -890,6 +890,12 @@ static void cached_dev_detach_finish(str
  
-@@ -2614,9 +2614,20 @@ int t4vf_sge_init(struct adapter *adapte
- 	 * the Physical Function Driver.  Ideally we should be able to deal
- 	 * with _any_ configuration.  Practice is different ...
- 	 */
--	if (fl0 != PAGE_SIZE || (fl1 != 0 && fl1 <= fl0)) {
+ 	mutex_lock(&bch_register_lock);
+ 
++	cancel_delayed_work_sync(&dc->writeback_rate_update);
++	if (!IS_ERR_OR_NULL(dc->writeback_thread)) {
++		kthread_stop(dc->writeback_thread);
++		dc->writeback_thread = NULL;
++	}
 +
-+	/* We only bother using the Large Page logic if the Large Page Buffer
-+	 * is larger than our Page Size Buffer.
-+	 */
-+	if (fl_large_pg <= fl_small_pg)
-+		fl_large_pg = 0;
-+
-+	/* The Page Size Buffer must be exactly equal to our Page Size and the
-+	 * Large Page Size Buffer should be 0 (per above) or a power of 2.
-+	 */
-+	if (fl_small_pg != PAGE_SIZE ||
-+	    (fl_large_pg & (fl_large_pg - 1)) != 0) {
- 		dev_err(adapter->pdev_dev, "bad SGE FL buffer sizes [%d, %d]\n",
--			fl0, fl1);
-+			fl_small_pg, fl_large_pg);
- 		return -EINVAL;
- 	}
- 	if ((sge_params->sge_control & RXPKTCPLMODE_F) == 0) {
-@@ -2627,8 +2638,8 @@ int t4vf_sge_init(struct adapter *adapte
- 	/*
- 	 * Now translate the adapter parameters into our internal forms.
- 	 */
--	if (fl1)
--		s->fl_pg_order = ilog2(fl1) - PAGE_SHIFT;
-+	if (fl_large_pg)
-+		s->fl_pg_order = ilog2(fl_large_pg) - PAGE_SHIFT;
- 	s->stat_len = ((sge_params->sge_control & EGRSTATUSPAGESIZE_F)
- 			? 128 : 64);
- 	s->pktshift = PKTSHIFT_G(sge_params->sge_control);
+ 	memset(&dc->sb.set_uuid, 0, 16);
+ 	SET_BDEV_STATE(&dc->sb, BDEV_STATE_NONE);
+ 
