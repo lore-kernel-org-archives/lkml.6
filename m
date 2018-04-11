@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4++2/882xn2BePjMypZfXs5QX3HPw6IfjytBh/qa71ZhoPwBNLxASXaedb94vyroHlzTbjl
-ARC-Seal: i=1; a=rsa-sha256; t=1523472695; cv=none;
+X-Google-Smtp-Source: AIpwx4+rInw0DoSGGjUDGfsgbBOlzy+3vDrYEKiFb8QyBqOZ56S9BpKUKqqqmntzdgwkmnSemG3Z
+ARC-Seal: i=1; a=rsa-sha256; t=1523472691; cv=none;
         d=google.com; s=arc-20160816;
-        b=ieM7ne/UQpU2g+3fT9fCJrEu8+2JN5GSx4xmg5D1vITDiICV/S6oMESLpw0nMQhJ30
-         4IMbva32bzQqKDxV9QKy/3+nFYsfhhv7rEuZTvNYoKBG5AGyhaE96nysALLD14sE5DI9
-         NkUKtWjDMFH+00VT2i4YF0GM4qYiuHuOzvU/Q/0oIL6dVnhO4vEmejavkgHEgaoelBUN
-         SlQPi+lm1i/dUcKFnKvv1eiOcjyaFDjzBuovtKtoRbI5mbTrJxHX0cCUNzB68731NIOn
-         yoqxMPo4zPTcNSFAyeYYKvTc1+/AIqFyuOhYv5scrynjEO+rGQUYLKOK2r5kxnKadIRu
-         W05Q==
+        b=kRqhiJKgY85jqzoTv0mLpxCD6FseSOhALJOtwVQlS7WV8aSrHRLN+aHg0PkkvuaEKC
+         5GI+ZrPnf4WNFvfPCSGZNcXGeGqNQY6vX1RuCpI3EY7hiU1Wu4zYI4BJmS+muZ8mIcJm
+         bsowRYd3WtmAE6Uq8TtDZI+12MCm1mLNcentR8PiTwepJhRNMugjNAJihBT/oG09Sr3l
+         hOJDg389k7VPgBfcH8KLLE3PmonSqgapw2Whkax3mrVUCPspL6k8rYCKVDXFbHivWgsV
+         MZjM3tEbRNuqa49ODLXqUEeE6avNyBBeHfU0se7jqWkwciochJD5VSOfqbhAuGVAkcC3
+         Mp8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=DKh+pCxFAoW7Tc2DYa5EyyL8+xlVsdLZ47dE3kQW1ls=;
-        b=A33sSd09Dx6u9BQV5mFCJ95QVJlDMuMZzAkc46jTdsTHiZYNWpSK03G2t8xaYBFqb2
-         tfD7BHA7AONHc4zvbMYNYjQ8kSp++Urcuna44WGpDmOktsV9x+mDxvMWyzHWxjYiTpXm
-         WqrQ4T08xRPFnH7HIn/CuNphfnMD6nq8VD3kilOat96LPT19sbMZMWzaO9YEtR185gvC
-         P5NZljZzZ65F4/7uaTnp7H5UlVpJMiugs6vr/KIhEnlmCEuej6DTu2Jxo1pysLDudrSW
-         RH3CS6fK0bOvSkeM6IyR97qLfLFj7Pc4d0/S8JZVLc60kMtNPaqx97MjOBjA4/jgmI6r
-         41Pw==
+        bh=CQqi1xQROkROuBK2r+KjSIVCI47TFsJwOtFWnPJUb6Q=;
+        b=eJ4aH/p6KpIuP8igLQNdNx8WXCb/H0/89ZulpG4Ge3x3nbNrDr/FD9GlwJySpbpcBS
+         GkcS9ohQVGulsGRuzlLpKxrfPOMKuq3RODDRko+bCKzC3ZLgbBiFerNLTs57dcLUm/3y
+         GgOSZdEGWw33Jjxlel10SkWTZsUznInRYuIiuMQpVIH+G3NUJrVC1JCUq7+p9ywPybr/
+         vTEbH7JG5IeJE/ZT5WCjmOo5wRm3Wk5l8LSEIynZkhIiWkJP9Bs7bMlwFbMUxnQu14YC
+         gTvOopvuseTA5aJJt22UjGTXLXmpit0MuYGMozhqHuF8nmXAl2NHJx1islxLbwORRZph
+         Mlag==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lorenzo Bianconi <lorenzo.bianconi@st.com>,
-	Jonathan Cameron <jic23@kernel.org>,
+	Jagannathan Raman <jag.raman@oracle.com>,
+	Aaron Young <aaron.young@oracle.com>,
+	Alexandre Chartre <alexandre.chartre@oracle.com>,
+	Bijan Mottahedeh <bijan.mottahedeh@oracle.com>,
+	Liam Merwick <liam.merwick@oracle.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 142/190] iio: magnetometer: st_magn_spi: fix spi_device_id table
-Date: Wed, 11 Apr 2018 20:36:28 +0200
-Message-Id: <20180411183600.927391137@linuxfoundation.org>
+Subject: [PATCH 4.4 141/190] sparc64: ldc abort during vds iso boot
+Date: Wed, 11 Apr 2018 20:36:27 +0200
+Message-Id: <20180411183600.871074219@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -41,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476297255484275?=
-X-GMAIL-MSGID: =?utf-8?q?1597476905350718894?=
+X-GMAIL-THRID: =?utf-8?q?1597476401088199108?=
+X-GMAIL-MSGID: =?utf-8?q?1597476900968832386?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,31 +54,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>
+From: Jag Raman <jag.raman@oracle.com>
 
 
-[ Upstream commit c83761ff0aac954aa368c623bb0f0d1a3214e834 ]
+[ Upstream commit 6c95483b768c62f8ee933ae08a1bdbcb78b5410f ]
 
-Remove LSM303DLHC, LSM303DLM from st_magn_id_table since LSM303DL series
-does not support spi interface
+Orabug: 20902628
 
-Fixes: 872e79add756 (iio: magn: Add STMicroelectronics magn driver)
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@st.com>
-Signed-off-by: Jonathan Cameron <jic23@kernel.org>
+When an ldc control-only packet is received during data exchange in
+read_nonraw(), a new rx head is calculated but the rx queue head is not
+actually advanced (rx_set_head() is not called) and a branch is taken to
+'no_data' at which point two things can happen depending on the value
+of the newly calculated rx head and the current rx tail:
+
+- If the rx queue is determined to be not empty, then the wrong packet
+  is picked up.
+
+- If the rx queue is determined to be empty, then a read error (EAGAIN)
+  is eventually returned since it is falsely assumed that more data was
+  expected.
+
+The fix is to update the rx head and return in case of a control only
+packet during data exchange.
+
+Signed-off-by: Jagannathan Raman <jag.raman@oracle.com>
+Reviewed-by: Aaron Young <aaron.young@oracle.com>
+Reviewed-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+Reviewed-by: Bijan Mottahedeh <bijan.mottahedeh@oracle.com>
+Reviewed-by: Liam Merwick <liam.merwick@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iio/magnetometer/st_magn_spi.c |    2 --
- 1 file changed, 2 deletions(-)
+ arch/sparc/kernel/ldc.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/iio/magnetometer/st_magn_spi.c
-+++ b/drivers/iio/magnetometer/st_magn_spi.c
-@@ -48,8 +48,6 @@ static int st_magn_spi_remove(struct spi
- }
+--- a/arch/sparc/kernel/ldc.c
++++ b/arch/sparc/kernel/ldc.c
+@@ -1733,9 +1733,14 @@ static int read_nonraw(struct ldc_channe
  
- static const struct spi_device_id st_magn_id_table[] = {
--	{ LSM303DLHC_MAGN_DEV_NAME },
--	{ LSM303DLM_MAGN_DEV_NAME },
- 	{ LIS3MDL_MAGN_DEV_NAME },
- 	{ LSM303AGR_MAGN_DEV_NAME },
- 	{},
+ 		lp->rcv_nxt = p->seqid;
+ 
++		/*
++		 * If this is a control-only packet, there is nothing
++		 * else to do but advance the rx queue since the packet
++		 * was already processed above.
++		 */
+ 		if (!(p->type & LDC_DATA)) {
+ 			new = rx_advance(lp, new);
+-			goto no_data;
++			break;
+ 		}
+ 		if (p->stype & (LDC_ACK | LDC_NACK)) {
+ 			err = data_ack_nack(lp, p);
