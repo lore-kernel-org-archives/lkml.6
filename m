@@ -1,31 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752505AbeDKXKP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 19:10:15 -0400
-Received: from 220.107.128.77.rev.sfr.net ([77.128.107.220]:43144 "EHLO
+        id S1752575AbeDKXM3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 19:12:29 -0400
+Received: from 220.107.128.77.rev.sfr.net ([77.128.107.220]:43232 "EHLO
         gagarine.paulk.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750785AbeDKXKN (ORCPT
+        with ESMTP id S1751886AbeDKXM2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 19:10:13 -0400
-Message-ID: <588060914d3b6899f6812daa4969f61bf750c91b.camel@paulk.fr>
-Subject: Re: [linux-sunxi] Re: [PATCH 2/3] ARM: dts: sun7i: Add RGB666 pins
- definition
+        Wed, 11 Apr 2018 19:12:28 -0400
+Message-ID: <e2c0a2c9442f1563865aaab310e066a18d425793.camel@paulk.fr>
+Subject: Re: [PATCH 1/3] drm/panel: Add RGB666 variant of Innolux AT070TN92
 From: Paul Kocialkowski <contact@paulk.fr>
-To: giulio.benetti@micronovasrl.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>, David Airlie <airlied@linux.ie>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Date: Thu, 12 Apr 2018 01:09:59 +0200
-In-Reply-To: <e7f68882-c333-12ac-c122-20b0d7b65666@micronovasrl.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>
+Date: Thu, 12 Apr 2018 01:12:13 +0200
+In-Reply-To: <20180411062835.oqzd34e2szrnv34b@flea>
 References: <20180410213129.24049-1-contact@paulk.fr>
-         <20180410213129.24049-2-contact@paulk.fr>
-         <e7f68882-c333-12ac-c122-20b0d7b65666@micronovasrl.com>
+         <20180411062835.oqzd34e2szrnv34b@flea>
 Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-/aaeYYd/6fpGElp81Fhz"
+        protocol="application/pgp-signature"; boundary="=-Rrf1dUj1vrQz5d/Oqhue"
 X-Mailer: Evolution 3.28.1 
 Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
@@ -33,86 +31,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-/aaeYYd/6fpGElp81Fhz
+--=-Rrf1dUj1vrQz5d/Oqhue
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-Le jeudi 12 avril 2018 =C3=A0 00:22 +0200, Giulio Benetti a =C3=A9crit :
-> Hi,
->=20
-> Il 10/04/2018 23:31, Paul Kocialkowski ha scritto:
-> > This adds the pins definition for RGB666 LCD panels on the A20. It
-> > was
-> > imported from the A33 definition, that concernes the same set of
-> > pins.
+Le mercredi 11 avril 2018 =C3=A0 08:28 +0200, Maxime Ripard a =C3=A9crit :
+> On Tue, Apr 10, 2018 at 11:31:27PM +0200, Paul Kocialkowski wrote:
+> > This adds timings for the RGB666 variant of the Innolux AT070TN92
+> > panel,
+> > as found on the Ainol AW1 tablet.
 > >=20
 > > Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
 > > ---
-> >   arch/arm/boot/dts/sun7i-a20.dtsi | 8 ++++++++
-> >   1 file changed, 8 insertions(+)
+> >  drivers/gpu/drm/panel/panel-simple.c | 26
+> > ++++++++++++++++++++++++++
+> >  1 file changed, 26 insertions(+)
 > >=20
-> > diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi
-> > b/arch/arm/boot/dts/sun7i-a20.dtsi
-> > index e529e4ff2174..f46af8675cfa 100644
-> > --- a/arch/arm/boot/dts/sun7i-a20.dtsi
-> > +++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-> > @@ -781,6 +781,14 @@
-> >   				function =3D "ir1";
-> >   			};
-> >  =20
-> > +			lcd_rgb666_pins: lcd_rgb666@0 {
+> > diff --git a/drivers/gpu/drm/panel/panel-simple.c
+> > b/drivers/gpu/drm/panel/panel-simple.c
+> > index 5591984a392b..efeb2f2162bc 100644
+> > --- a/drivers/gpu/drm/panel/panel-simple.c
+> > +++ b/drivers/gpu/drm/panel/panel-simple.c
+> > @@ -1063,6 +1063,29 @@ static const struct panel_desc
+> > innolux_at070tn92 =3D {
+> >  	.bus_format =3D MEDIA_BUS_FMT_RGB888_1X24,
+> >  };
+> > =20
+> > +static const struct drm_display_mode innolux_at070tn92_rgb666_mode
+> > =3D {
+> > +	.clock =3D 40000,
+> > +	.hdisplay =3D 800,
+> > +	.hsync_start =3D 800 + 112,
+> > +	.hsync_end =3D 800 + 112 + 1,
+> > +	.htotal =3D 800 + 112 + 1 + 87,
+> > +	.vdisplay =3D 480,
+> > +	.vsync_start =3D 480 + 141,
+> > +	.vsync_end =3D 480 + 141 + 1,
+> > +	.vtotal =3D 480 + 141 + 1 + 38,
+> > +	.vrefresh =3D 60,
+> > +};
 >=20
-> I point you to this Thread and back:
-> https://lists.freedesktop.org/archives/dri-devel/2018-March/170688.htm
-> l
->=20
-> I did the same for rgb888, so good part is discussed.
->=20
-> IMHO I would:
-> - call lcd0_rgb666_pins, since this is for LCD0 interface
-> - same as above, call lcd0-rgb666, take care about using "-" instad
-> of=20
-> "_" that can cause DTC warnings.
-> - remove @0 since only this set can achieve LCD0 RGB666, and I
->    don't think there will be other combinations.
+> I'm not sure why you'd need different timings if the only difference
+> is the bus width.
 
-I even responded to that discussion but overlooked these aspects when
-crafting this patch. Thanks for the summary :)
+I'll try with the other timings, although it might be desirable to have
+a higher clock speed thanks to the reduced number of wires on the bus.
 
-> Kind regards
->=20
-> --=20
-> Giulio Benetti
-> CTO
->=20
-> MICRONOVA SRL
-> Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-> Tel. 049/8931563 - Fax 049/8931346
-> Cod.Fiscale - P.IVA 02663420285
-> Capitale Sociale =E2=82=AC 26.000 i.v.
-> Iscritta al Reg. Imprese di Padova N. 02663420285
-> Numero R.E.A. 258642
->=20
->=20
-> > +				pins =3D "PD2", "PD3", "PD4", "PD5",
-> > "PD6", "PD7",
-> > +				       "PD10", "PD11", "PD12",
-> > "PD13", "PD14", "PD15",
-> > +				       "PD18", "PD19", "PD20",
-> > "PD21", "PD22", "PD23",
-> > +				       "PD24", "PD25", "PD26",
-> > "PD27";
-> > +				function =3D "lcd0";
-> > +			};
+> > +static const struct panel_desc innolux_at070tn92_rgb666 =3D {
+> > +	.modes =3D &innolux_at070tn92_rgb666_mode,
+> > +	.num_modes =3D 1,
+> > +	.size =3D {
+> > +		.width =3D 154,
+> > +		.height =3D 86,
+> > +	},
+> > +	.bus_format =3D MEDIA_BUS_FMT_RGB666_1X18,
+> > +};
 > > +
-> >   			mmc0_pins_a: mmc0@0 {
-> >   				pins =3D "PF0", "PF1", "PF2",
-> >   				       "PF3", "PF4", "PF5";
-> >=20
+> >  static const struct display_timing innolux_g101ice_l01_timing =3D {
+> >  	.pixelclock =3D { 60400000, 71100000, 74700000 },
+> >  	.hactive =3D { 1280, 1280, 1280 },
+> > @@ -2105,6 +2128,9 @@ static const struct of_device_id
+> > platform_of_match[] =3D {
+> >  	}, {
+> >  		.compatible =3D "innolux,at070tn92",
+> >  		.data =3D &innolux_at070tn92,
+> > +	}, {
+> > +		.compatible =3D "innolux,at070tn92-rgb666",
+> > +		.data =3D &innolux_at070tn92_rgb666,
 >=20
->=20
+> And this isn't a different device, it's just the integration in the
+> board that is different, so you shouldn't have a different compatible
+> here, but rather something like the bus-width property documented in
+> the Documentation/devicetree/bindings/media/video-interfaces.txt file.
+
+I'll take a look at it and try to craft v2 in this direction then.
+
+Thanks for the review!
+
 --=20
 Paul Kocialkowski,
 
@@ -121,26 +118,26 @@ developer of free digital technology and hardware support.
 Website: https://www.paulk.fr/
 Coding blog: https://code.paulk.fr/
 Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
---=-/aaeYYd/6fpGElp81Fhz
+--=-Rrf1dUj1vrQz5d/Oqhue
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlrOlccACgkQhP3B6o/u
-lQxQtw/+L30M/sriICp40At1qyaGQdhI1oi8jnsHw0gI32lzg01N6aaB4PL8oF1S
-wxFmwSSKAQtB6Xo9vdMdBol4jnYgtufef+NElP1j2+JDIZUI6MANVr+39sRiZ0NX
-fpL+VPMc6141+CgSY6lBFKnYt0HoQGSCfaMeeTpZ0dymseFNQYvRcrAVwiOQl8aB
-VGbVgnDxt4YnK6bxrOnxf12OU9d1dyQWqieosT/LxgLor2mT7qHJV+UlznITxVpO
-mscPxhOyWHy/V7xZdygmmEZsPqFQpP8wbkQE/F1Bl05/XdIswquYAY+kMxeMXgDx
-Iv7UJUmHmx6vUH0Mw2Lqxo+rZX8kPEYHtVeLZOPjfihoMGW8n9yWD9QSCNIhYHAA
-PnLSbQ78liOcED16uLK/byErKMf90nmaLgA/XeoQqsJXpm+3enaDJMeL881BXg0G
-qNaOsVo14HMDPsVltuQygh6+AFJxSUym0KcKvgFe8xHXhpVC7AELctM6jJ0+ZW1G
-7lM7nU141JhV2elYQWaMBBVtfDFo+E2YGTgZL32c71g0ebY0GpJeRkM0ZguXk3FJ
-1qifF9QFKhiwvaXe4Bwzy36OyAMrurccsWI/IFZOGi4I4leaHIp3SxbnnA0VJIpU
-SVFs64K+tgGuMNMaTd3LneovAcQhZg8MuiZLG7pOCh1a2gdLcUs=
-=IRoy
+iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlrOlk0ACgkQhP3B6o/u
+lQyr8w//WAJaArvsaQW2UvNJA7txzcUdH79ZKSzuKuB/PDrdX2VnLBr63zRStEcL
+sp0brTzcXJb3fpiDjncHAyHinmE4LvaWgQpx0wqHEFvcLX//SsgCZ23lCV/3e/u2
+IaWw6PS5qUGVMf5B2iSDWtAAWEU49dkqnN80AUYxh4Qwg0sDV0BBVbw+cTdY+1Di
+LX/dCsYZHtebsEVf3/UQSj4lgg2ToVJBnb/u+cQQtnXTnzZ/1I4HIlbC0ioprjhS
+hPB99AmfzavwTsBU/D8ixtS8e1WorL+KHQHbqo6ZdMPqwj93KTlaQ29LobRQKl1q
+sp6emm/IFK5EI/e2n8zzVUeAs1UtCsMan/LmuuERIl9ee+GpX0hgLPWC7JPV2hwi
+I73/qJotvoIuGlRPVL8bmoyjbyGLR2BpGbk7AwLHTQdr5P/jFMQcUbiWAa/wkqh5
+dZCsB767Dg+YaRvfo+4bQX2FayklveMODaqzn7uKKpdkp8VmtatWCckhqQWUpVYC
+JHdHy7fo6WPui3d853xR/LjMBVGrwxnDO7ByPPpXevv0RC3zkWKcDzrZ4N2bJTp1
+u6G0C2hO/7ZWsiE87WGSVBqmEktb/Wmr+af4iG//DBKdEJimzdoht9Zv6omYLUah
+wrSjZqhdSh2azmzb/ZNFq8EKiTMRVqimSaXbfp/YV1V2N6UE/o8=
+=STx8
 -----END PGP SIGNATURE-----
 
---=-/aaeYYd/6fpGElp81Fhz--
+--=-Rrf1dUj1vrQz5d/Oqhue--
