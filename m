@@ -1,106 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752906AbeDKCIv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 22:08:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33696 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752763AbeDKCIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 22:08:47 -0400
-Subject: Re: [virtio-dev] Re: [RFC] vhost: introduce mdev based hardware vhost
- backend
-To: "Liang, Cunming" <cunming.liang@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "Bie, Tiwei" <tiwei.bie@intel.com>
-Cc: "mst@redhat.com" <mst@redhat.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "ddutile@redhat.com" <ddutile@redhat.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "Daly, Dan" <dan.daly@intel.com>,
-        "Wang, Zhihong" <zhihong.wang@intel.com>,
-        "Tan, Jianfeng" <jianfeng.tan@intel.com>,
-        "Wang, Xiao W" <xiao.w.wang@intel.com>
-References: <20180402152330.4158-1-tiwei.bie@intel.com>
- <622f4bd7-1249-5545-dc5a-5a92b64f5c26@redhat.com>
- <20180410045723.rftsb7l4l3ip2ioi@debian>
- <7ee31a12-a370-fc43-82a6-2235f598e970@redhat.com>
- <D0158A423229094DA7ABF71CF2FA0DA34E9222F4@SHSMSX104.ccr.corp.intel.com>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <56f8d47b-48d4-cd4c-6795-21e809efcb1b@redhat.com>
-Date: Wed, 11 Apr 2018 10:08:32 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <D0158A423229094DA7ABF71CF2FA0DA34E9222F4@SHSMSX104.ccr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S1752754AbeDKCN0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 22:13:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45422 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752295AbeDKCNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 22:13:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0126921785
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
+Date: Wed, 11 Apr 2018 11:13:22 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Howard McLauchlan <hmclauchlan@fb.com>, <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, <kernel-team@fb.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Subject: Re: [PATCH] uprobe: add support for overlayfs
+Message-Id: <20180411111322.14b5a21ea61ad968f8375427@kernel.org>
+In-Reply-To: <20180410200059.731d87fe@gandalf.local.home>
+References: <20180410231030.2720-1-hmclauchlan@fb.com>
+        <20180410200059.731d87fe@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 10 Apr 2018 20:00:59 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> On Tue, 10 Apr 2018 16:10:30 -0700
+> Howard McLauchlan <hmclauchlan@fb.com> wrote:
+> 
+> > uprobes cannot successfully attach to binaries located in a directory
+> > mounted with overlayfs.
+> > 
+> > To verify, create directories for mounting overlayfs
+> > (upper,lower,work,merge), move some binary into merge/ and use readelf
+> > to obtain some known instruction of the binary. I used /bin/true and the
+> > entry instruction(0x13b0):
+> > 
+> > 	$ mount -t overlay overlay -o lowerdir=lower,upperdir=upper,workdir=work merge
+> > 	$ cd /sys/kernel/debug/tracing
+> > 	$ echo 'p:true_entry PATH_TO_MERGE/merge/true:0x13b0' > uprobe_events
+> > 	$ echo 1 > events/uprobes/true_entry/enable
+> > 
+> > This returns 'bash: echo: write error: Input/output error' and dmesg
+> > tells us 'event trace: Could not enable event true_entry'
+> 
+> I tried the above and verified that it is a problem and your patch
+> solves it.
+> 
+> Thanks, I'll apply it and start my tests on it.
+
+This looks good to me. 
+
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thanks!
+
+> 
+> -- Steve
+> 
+> > 
+> > This change makes create_trace_uprobe() look for the real inode of a
+> > dentry. In the case of normal filesystems, this simplifies to just
+> > returning the inode. In the case of overlayfs(and similar fs) we will
+> > obtain the underlying dentry and corresponding inode, upon which uprobes
+> > can successfully register.
+> > 
+> > Running the example above with the patch applied, we can see that the
+> > uprobe is enabled and will output to trace as expected.
+> > 
+> > Reviewed-by: Josef Bacik <jbacik@fb.com>
+> > Signed-off-by: Howard McLauchlan <hmclauchlan@fb.com>
+> > ---
+> >  kernel/trace/trace_uprobe.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> > index 2014f4351ae0..17c65fa4136d 100644
+> > --- a/kernel/trace/trace_uprobe.c
+> > +++ b/kernel/trace/trace_uprobe.c
+> > @@ -446,7 +446,7 @@ static int create_trace_uprobe(int argc, char **argv)
+> >  	if (ret)
+> >  		goto fail_address_parse;
+> >  
+> > -	inode = igrab(d_inode(path.dentry));
+> > +	inode = igrab(d_real_inode(path.dentry));
+> >  	path_put(&path);
+> >  
+> >  	if (!inode || !S_ISREG(inode->i_mode)) {
+> 
 
 
-On 2018年04月10日 17:23, Liang, Cunming wrote:
->
->> -----Original Message-----
->> From: Paolo Bonzini [mailto:pbonzini@redhat.com]
->> Sent: Tuesday, April 10, 2018 3:52 PM
->> To: Bie, Tiwei <tiwei.bie@intel.com>; Jason Wang <jasowang@redhat.com>
->> Cc: mst@redhat.com; alex.williamson@redhat.com; ddutile@redhat.com;
->> Duyck, Alexander H <alexander.h.duyck@intel.com>; virtio-dev@lists.oasis-
->> open.org; linux-kernel@vger.kernel.org; kvm@vger.kernel.org;
->> virtualization@lists.linux-foundation.org; netdev@vger.kernel.org; Daly, Dan
->> <dan.daly@intel.com>; Liang, Cunming <cunming.liang@intel.com>; Wang,
->> Zhihong <zhihong.wang@intel.com>; Tan, Jianfeng <jianfeng.tan@intel.com>;
->> Wang, Xiao W <xiao.w.wang@intel.com>
->> Subject: Re: [virtio-dev] Re: [RFC] vhost: introduce mdev based hardware
->> vhost backend
->>
->> On 10/04/2018 06:57, Tiwei Bie wrote:
->>>> So you just move the abstraction layer from qemu to kernel, and you
->>>> still need different drivers in kernel for different device
->>>> interfaces of accelerators. This looks even more complex than leaving
->>>> it in qemu. As you said, another idea is to implement userspace vhost
->>>> backend for accelerators which seems easier and could co-work with
->>>> other parts of qemu without inventing new type of messages.
->>> I'm not quite sure. Do you think it's acceptable to add various vendor
->>> specific hardware drivers in QEMU?
->> I think so.  We have vendor-specific quirks, and at some point there was an
->> idea of using quirks to implement (vendor-specific) live migration support for
->> assigned devices.
-> Vendor-specific quirks of accessing VGA is a small portion. Other major portions are still handled by guest driver.
->
-> While in this case, when saying various vendor specific drivers in QEMU, it says QEMU takes over and provides the entire user space device drivers. Some parts are even not relevant to vhost, they're basic device function enabling. Moreover, it could be different kinds of devices(network/block/...) under vhost. No matter # of vendors or # of types, total LOC is not small.
->
-> The idea is to avoid introducing these extra complexity out of QEMU, keeping vhost adapter simple. As vhost protocol is de factor standard, it leverages kernel device driver to provide the diversity. Changing once in QEMU, then it supports multi-vendor devices whose drivers naturally providing kernel driver there.
-
-Let me clarify my question, it's not qemu vs kenrel but userspace vs 
-kernel. It could be a library which could be linked to qemu. Doing it in 
-userspace have the following obvious advantages:
-
-- attack surface was limited to userspace
-- easier to be maintained (compared to kernel driver)
-- easier to be extended without introducing new userspace/kernel interfaces
-- not tied to a specific operating system
-
-If we want to do it in the kernel, need to consider to unify code 
-between mdev device driver and generic driver. For net driver, maybe we 
-can even consider to do it on top of exist drivers.
-
->
-> If QEMU is going to build a user space driver framework there, we're open mind on that, even leveraging DPDK as the underlay library. Looking forward to more others' comments from community.
-
-I'm doing this now by implementing vhost inside qemu IOThreads. Hope I 
-can post RFC in few months.
-
-Thanks
-
-> Steve
->
->> Paolo
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
