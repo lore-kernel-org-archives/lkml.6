@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479383-2-6046963826797125244
+X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479378-2-11078215046964411464
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479382; b=GwMzw19lXvHSDbYQwg7HNatyS8+yopcCnONZ+B39GiNZ8AoAB5
-    1yKZXjlgr5p1cl1KPqPTlu0AjjhrNvr7FgshJxiAOv3+/yl8O7m1Z1VaTxUDtJpq
-    7gQcwQAz/JlS1l7iKDUJkZ8D0KlR8Z+N3SPN3PGJQvSXcDoivXTLRQ24kNRvTSah
-    TYpLjc1VyTvmiPDtYuLNsWGmYCX7SjfxPP3lV3Zf2OdMd72NlNBZ7aTiHqx3Oid8
-    QUcR9Tf0KdYmdpC0lUWp5Zt/NDTQNFiznr0tCRUWVX2G4vrtbJMoK6Padxf6+Jyk
-    ZEA52CWFRfVH8Nr3ILdZgWYr/H67v3WhTjFw==
+    1523479377; b=K1pm6too4FekoCeBd14I9Lx7ZSyo9rtT0rulfsGJhz5i2hNMLa
+    q0xtX63veEvY3sVqio8Kx/xBJHzQf+EGD83oq/5yg0YupHa2LGeH59A4Q7wOqwrG
+    pnd/cvmlgrCmqzUx+y3uyQjfNiNHKFNLsuMmnBuVGNR632Syi90WTgp185n9rHdy
+    acilhDzVj2ao1mlrHO9bb1OpQpkKNSSu9jK6Ct8AwlqYZRXLHfCXs1gvPlK3z49p
+    d2JKgrXVpZmimkWg9mRAB95K0zzi5AOhOEZRKiaQzv7gu1NfeOcOUzBR8zyCC7xl
+    AJd9s1MIgAxeumV+1CmwP7DfCHbE6FueaEDw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479382; bh=4ggLvnXYklRperETonEkd+ZdV+gA27
-    TbwuTqHOYveT4=; b=AJaU2G5fcvHI81qXqVJlnegoWAkfKzikRMV4fkNzgItQ7Y
-    Qs8hMGRn1LaouobJ6EvkO8DdX3lavkqaSxzhUq1j4dp4HnMuTn8gnauNpRj+G2Vv
-    BE75nqFVhEAcvjos4iiZCDG7wpBBE2E9+ui4VfSkXQI+qDlF9t0HshqHAqhzo0oq
-    w0/KGdmMH1DXF+q7Fllka2W8OFqaNZ1lPrykWAlyCx/mLLjCUhWCBmwUBDibsbIq
-    kMuQU022awsyWGFw3B+3OsXpJEvvinwjT8y+BD7PW689rXPoM2eCUeMqRYQaZNJJ
-    f4Lm4Kqru7rrATJRXEQ2TREQroXivOBnTmfsbxLg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479377; bh=s4raexbBpMlmkAdg1RotRzr9+1+G5i
+    rT2VakC9KoGLw=; b=cO0zK0D46sBgRKoJRVMxrjPxZ8K+8EAv1rMfMSDJ5ujKAD
+    uRmk/YXvzZR6wbHE7bLQc9hW0B3Z/Tu/Ca16yhD1QwBCTgEMwi6QlXaM8QiTeNIE
+    36LWWV9d4/qCoaRrjy/1n7YtpodYhdeSTbldW2IHeO5QAlUP0CgHw2rbkGOZO2ut
+    Oq419MALyg26sZxgjJq2zhC/TVm8Zk9rcQbVYevbRvAfQpls2iwKxuHGD0Ewv/LV
+    NUwYqz8KxE6Cqi7N9g/qUxHTaYqBk7jY+FJ1jh3aJBbpxc3CbHsvqUfj9YT8C31Q
+    UCIcdCThdYzMNlvsHt8GqmtLfVHwUq3BuSei+xrA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,31 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOBZ1M0ubZt+vDAPRG/lz/63vxoT6kqkeoB37qpqa3fMl/mHuut34yE9v4wfBfBuuXsxp4tkzx691Df9u54v6ok9AKWwGJC6p38PPwP8jEhKcG4WRqU3
-    mG5WhVm2ZTZM32+pnQZ/u+P/WkjBoYpggvgJ60I2BdT4NTr5U7c4AnOEymhYo7si2/z9KIyLEZRskQqWGSwIhCEPs3PQpVZKpy6yhtmLUkhWn55Ld+Sfwu4O
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfPEYVILYzZRrlgd4t4Wu6+f8/6LYqybnMzwON0NiHIgnlXatqpq74albPoKPlNQfX95dq142XbbzczQmmT3I8dbwUj8TOGe5+mDGU3l7F3Dcoa85sn0u
+    zxk/RyLsxvTGxOS3zC8uN+A9yh1ypSOhUm9/yPNZFXzoVdNqed2eh0oS5JYi2UdPwzXcrlKybIBNu0CtHizYF4UoixUoOEZ2vlBgAOxSQy8tc66FXqbZoV3o
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=KKAkSRfTAAAA:8 a=fGhLjsSNAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=8LSgxrWD8ne5ivIBiKEA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
-    a=LYKFdyShAPKLkGq8p7WX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=EUOQwXsjon1gZHHlxT4A:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755940AbeDKSrh (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:47:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59362 "EHLO
+        id S932193AbeDKUmo (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:42:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59378 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755922AbeDKSre (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:47:34 -0400
+        with ESMTP id S1755941AbeDKSrh (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:47:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Reported-by: Jason Kridner" <jkridner@beagleboard.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 092/190] gpio: label descriptors using the device name
-Date: Wed, 11 Apr 2018 20:35:38 +0200
-Message-Id: <20180411183555.983850013@linuxfoundation.org>
+Subject: [PATCH 4.4 093/190] ASoC: Intel: sst: Fix the return value of sst_send_byte_stream_mrfld()
+Date: Wed, 11 Apr 2018 20:35:39 +0200
+Message-Id: <20180411183556.036843921@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -94,40 +93,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit 24e78079bf2250874e33da2e7cfbb6db72d3caf4 ]
+[ Upstream commit eaadb1caa966a91128297b754e90b7c92b350a00 ]
 
-Some GPIO lines appear named "?" in the lsgpio dump due to their
-requesting drivers not passing a reasonable label.
+In some error handling paths, an error code is assiegned to 'ret'.
+However, the function always return 0.
 
-Most typically this happens if a device tree node just defines
-gpios = <...> and not foo-gpios = <...>, the former gets named
-"foo" and the latter gets named "?".
+Fix it and return the error code if such an error paths is taken.
 
-However the struct device passed in is always valid so let's
-just label the GPIO with dev_name() on the device if no proper
-label was passed.
-
-Cc: Reported-by: Jason Kridner <jkridner@beagleboard.org>
-Reported-by: Jason Kridner <jkridner@beagleboard.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 3d9ff34622ba ("ASoC: Intel: sst: add stream operations")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpiolib.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/intel/atom/sst/sst_stream.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2145,7 +2145,8 @@ struct gpio_desc *__must_check gpiod_get
- 		return desc;
- 	}
+--- a/sound/soc/intel/atom/sst/sst_stream.c
++++ b/sound/soc/intel/atom/sst/sst_stream.c
+@@ -221,7 +221,7 @@ int sst_send_byte_stream_mrfld(struct in
+ 		sst_free_block(sst_drv_ctx, block);
+ out:
+ 	test_and_clear_bit(pvt_id, &sst_drv_ctx->pvt_id);
+-	return 0;
++	return ret;
+ }
  
--	status = gpiod_request(desc, con_id);
-+	/* If a connection label was passed use that, else use the device name as label */
-+	status = gpiod_request(desc, con_id ? con_id : dev_name(dev));
- 	if (status < 0)
- 		return ERR_PTR(status);
- 
+ /*
