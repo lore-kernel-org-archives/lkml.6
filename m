@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479764-2-14506253646602970935
+X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479737-2-14141465815126159954
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479763; b=VFudiC1QmINmimiH/2xg/iEda/lQD4WAAW6GnoMXOEGOGwZdLN
-    Ti+tz/ojk7RgGfKCHvqAjFfEdJqR3SVSTOGtef5aYjRl9CQa6h0BR87Eu+yfCHJc
-    7P+QwjOKXSfFMHMYsWYg3oH2LsKCq9oiXGBhmhU4S8Xd1rJe/aJDwPEYrn/FuOUZ
-    LJZcw/C0u3WiuazwR/9OgHlJmnKxqNl46DsO4mnZ3LCwq7nY6isVGRpNL6HUvFXp
-    RmX93OPGrh66hQMKAC8F+qIE2Y1YX90QxaaIc14V1oTE3P5nIaU5NZBRR0DZroka
-    Jy/C9Yrc/KHG4cCT9o9Tb0LyyaqedO+hqGcA==
+    1523479737; b=j+nQ3TL+/TC1TByiA5gJDpbKQmaMy9cbWscUs0tVIZNyaS9h6e
+    cm23RQfzqEhQc2RjVyIje+dXhszKZz03UFOgCboVW0FT/qd/1tpJ7Ce2zIyRytbk
+    0yRttGqkLnnJfZvXjzqO5av7WlYzkP4+IsmbAN4wOHDin4Q3YEljqYq10h8R4mc8
+    tDYYhcnt+Ti9ulVYyqRboAzqgDtiwVdHs9rGIBB4rcxvTBzOAqhOOOI4O5A9xTRk
+    fLTOr1+S8DkXZqia/OYcxq+PVU5pGcwY/19N2Ez5YG/O5DdqrCJaqkpJyP6NJGw/
+    C6knp2q/CZql8UxVVDqWeh2CBgMrSQ4xqv1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479763; bh=KX5UZXrS+5So/h1A8CqaKtc7RmHUqx
-    uG0XO9Oa0bX1E=; b=GmzF0Rl4dxnSFBuh+4KV9/AnzZ0FiH9aDIQVRv3LC2SJYB
-    1YlZUNFCp9T/I+LXBMN4KoGPkWptA73Jw5yWBUPvJKRQti0mr3j64xNWdLK7vrgG
-    GE4oRw/sYn1xxQjGpYh0Y//Vc+VcYlZlWZrRnvqNeZHBOI0A2Gir2NsKi2LMj3oO
-    DWk3N3GVhXEKxpzWZtbaKjPw8HMffjjGWSnFRcwxoJudpx7QgvVy1yEjTlU3gPKu
-    VWKPC3x8rIR5ztAAkHnKkke2rj/hb6am/2IpKQZB8XYqVYGKU3B/Ls9r8PhQAkBs
-    gCoAKa3TZI7ASwoyhiB5v2fJJodA7zoHDuBNpePg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479737; bh=DXwgUze7+yolQBeX50bP+mfnBNFySG
+    6ug+FVeClkQgY=; b=ZWJSO8FkeFDrAivWHCUdt64MfpbBzfR/WJQ+eSitAxZl/N
+    AnuL502sw2a6yjykwQvVUCcr9TRiAPK+6T+ChlV//aoqzQjuSnOkOg6MEWdxDqQk
+    fsZCrNYq94JzV0ZMkU/u30UwiXXqk48IBEaIjf4bS5c6Hrj0aic009v+SEeZWy4J
+    v8toi+31M2mqvdO8P8r/TAAZM3TnBEyQf++/CKuGkNTJv5DNXZ2QlR9uh9D5YMk/
+    in4540py+KF7qg0FjIoROR9QyeJLt0eTUjGm38/bDg5608GVO8Ksok8+zgeaOHjt
+    +RkWpBBKgoxHbzz+PdiyELJGsomEp0EgWv5AKOMQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,33 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIm0OflTxEN4i5aPjqFKSOoSGwqGm4JqGYuNHLazq5VryFgMm6bI57bJv09vRCyhtDldzuV5NYePD66qz2ZI+AqcLa1N7ThJlC03T7YIbjIaYzfzpbt0
-    TlWeFblCqq1v5Kf8IGeN41DT04HLyFtbcmVIFY9xa1uuClzD1ZMd6lO1kPswqNM+BrlSA69UnkrNujEFNoYpj1lhVJ0GHg4qOtdEdwhHlNhyBXjgvBXzSD5y
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfBrrYx002T/nCUx8Gv9mKf14+O3sveKJGanPOIb9hmlm/WOzt6yMXTMv8HJmW/roqIecqEfdtQ0ZCEgY7rTu9m01rYTc29XN2z3zDLR7SNfy/grgjlcr
+    zRAR0eojwcwTwf6Xo+UUS+uhMZdSBbockYiO3QcDYOV5JaWx12f5JJg49oOVklX/eVrgI/CiN6+2Bv1JmOUBseO7sKhCSoDEvwMZ02T+SdcHsKg4deoVwuaj
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=vmLDa1wCAAAA:8 a=eh1Yez-EAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=eK2PtGytKguSqSfQ0NAA:9 a=QEXdDO2ut3YA:10
-    a=h8Bt5HTj68qkN2fS7gvA:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=iox4zFpeAAAA:8 a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=vtgIYqmDHQ2uLMhSwQ8A:9 a=QEXdDO2ut3YA:10 a=WzC6qhA0u3u7Ye7llzcV:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755687AbeDKSqI (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:46:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58814 "EHLO
+        id S932389AbeDKUsn (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:48:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58826 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754877AbeDKSqH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:46:07 -0400
+        with ESMTP id S1755697AbeDKSqJ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:46:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neil Horman <nhorman@tuxdriver.com>,
-        Shrikrishna Khare <skhare@vmware.com>,
-        "VMware, Inc." <pv-drivers@vmware.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Aurelien Aptel <aaptel@suse.com>,
+        Steve French <smfrench@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 027/190] vmxnet3: ensure that adapter is in proper state during force_close
-Date: Wed, 11 Apr 2018 20:34:33 +0200
-Message-Id: <20180411183551.763375258@linuxfoundation.org>
+Subject: [PATCH 4.4 028/190] SMB2: Fix share type handling
+Date: Wed, 11 Apr 2018 20:34:34 +0200
+Message-Id: <20180411183551.832738836@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -95,48 +95,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Neil Horman <nhorman@tuxdriver.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit 1c4d5f51a812a82de97beee24f48ed05c65ebda5 ]
+[ Upstream commit cd1230070ae1c12fd34cf6a557bfa81bf9311009 ]
 
-There are several paths in vmxnet3, where settings changes cause the
-adapter to be brought down and back up (vmxnet3_set_ringparam among
-them).  Should part of the reset operation fail, these paths call
-vmxnet3_force_close, which enables all napi instances prior to calling
-dev_close (with the expectation that vmxnet3_close will then properly
-disable them again).  However, vmxnet3_force_close neglects to clear
-VMXNET3_STATE_BIT_QUIESCED prior to calling dev_close.  As a result
-vmxnet3_quiesce_dev (called from vmxnet3_close), returns early, and
-leaves all the napi instances in a enabled state while the device itself
-is closed.  If a device in this state is activated again, napi_enable
-will be called on already enabled napi_instances, leading to a BUG halt.
+In fs/cifs/smb2pdu.h, we have:
+#define SMB2_SHARE_TYPE_DISK    0x01
+#define SMB2_SHARE_TYPE_PIPE    0x02
+#define SMB2_SHARE_TYPE_PRINT   0x03
 
-The fix is to simply enausre that the QUIESCED bit is cleared in
-vmxnet3_force_close to allow quesence to be completed properly on close.
+Knowing that, with the current code, the SMB2_SHARE_TYPE_PRINT case can
+never trigger and printer share would be interpreted as disk share.
 
-Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
-CC: Shrikrishna Khare <skhare@vmware.com>
-CC: "VMware, Inc." <pv-drivers@vmware.com>
-CC: "David S. Miller" <davem@davemloft.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+So, test the ShareType value for equality instead.
+
+Fixes: faaf946a7d5b ("CIFS: Add tree connect/disconnect capability for SMB2")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Aurelien Aptel <aaptel@suse.com>
+Signed-off-by: Steve French <smfrench@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/vmxnet3/vmxnet3_drv.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ fs/cifs/smb2pdu.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/drivers/net/vmxnet3/vmxnet3_drv.c
-+++ b/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -2789,6 +2789,11 @@ vmxnet3_force_close(struct vmxnet3_adapt
- 	/* we need to enable NAPI, otherwise dev_close will deadlock */
- 	for (i = 0; i < adapter->num_rx_queues; i++)
- 		napi_enable(&adapter->rx_queue[i].napi);
-+	/*
-+	 * Need to clear the quiesce bit to ensure that vmxnet3_close
-+	 * can quiesce the device properly
-+	 */
-+	clear_bit(VMXNET3_STATE_BIT_QUIESCED, &adapter->state);
- 	dev_close(adapter->netdev);
- }
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -999,15 +999,19 @@ SMB2_tcon(const unsigned int xid, struct
+ 		goto tcon_exit;
+ 	}
  
+-	if (rsp->ShareType & SMB2_SHARE_TYPE_DISK)
++	switch (rsp->ShareType) {
++	case SMB2_SHARE_TYPE_DISK:
+ 		cifs_dbg(FYI, "connection to disk share\n");
+-	else if (rsp->ShareType & SMB2_SHARE_TYPE_PIPE) {
++		break;
++	case SMB2_SHARE_TYPE_PIPE:
+ 		tcon->ipc = true;
+ 		cifs_dbg(FYI, "connection to pipe share\n");
+-	} else if (rsp->ShareType & SMB2_SHARE_TYPE_PRINT) {
+-		tcon->print = true;
++		break;
++	case SMB2_SHARE_TYPE_PRINT:
++		tcon->ipc = true;
+ 		cifs_dbg(FYI, "connection to printer\n");
+-	} else {
++		break;
++	default:
+ 		cifs_dbg(VFS, "unknown share type %d\n", rsp->ShareType);
+ 		rc = -EOPNOTSUPP;
+ 		goto tcon_error_exit;
