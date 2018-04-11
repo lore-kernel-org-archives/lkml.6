@@ -1,125 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751858AbeDKFoa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 01:44:30 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:44646 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751221AbeDKFo2 (ORCPT
+        id S1752107AbeDKFrD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 01:47:03 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:40730 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750865AbeDKFrC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 01:44:28 -0400
-X-Google-Smtp-Source: AIpwx4/vLE9AW6ireCBPs//cg5up1RaLICjtwQNpjHEv8pJFmtkhryvLN7cB9wwAuHFYFCRLYieC4w==
-Date: Tue, 10 Apr 2018 22:44:25 -0700
-From: Benson Leung <bleung@google.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, Benson Leung <bleung@chromium.org>,
-        Nick Dyer <nick@shmanahar.org>, Olof Johansson <olof@lixom.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/14] chrome_laptop: stop being a platform driver
-Message-ID: <20180411054425.GB123734@decatoncale.mtv.corp.google.com>
-References: <20180320223138.234724-1-dmitry.torokhov@gmail.com>
+        Wed, 11 Apr 2018 01:47:02 -0400
+X-Google-Smtp-Source: AIpwx4/hPcVfoasE327BinMtpxokfcgUYyX3+nGPHkI9zDYAomXCuJIEjgeeRcOw9upR8hVdEAwf3Lxl7Zea8CVTGJyFmYa+yu4e
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ftEhullJWpWg/VHq"
-Content-Disposition: inline
-In-Reply-To: <20180320223138.234724-1-dmitry.torokhov@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Date: Tue, 10 Apr 2018 22:47:01 -0700
+In-Reply-To: <001a113e8e9c15014705695813be@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000001127905698c2b00@google.com>
+Subject: Re: KMSAN: uninit-value in tipc_subscrb_rcv_cb
+From: syzbot <syzbot+75e6e042c5bbf691fc82@syzkaller.appspotmail.com>
+To: davem@davemloft.net, jon.maloy@ericsson.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tipc-discussion@lists.sourceforge.net,
+        ying.xue@windriver.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+syzbot has found reproducer for the following crash on  
+https://github.com/google/kmsan.git/master commit
+35ff515e4bda2646f6c881d33951c306ea9c282a (Tue Apr 10 08:59:43 2018 +0000)
+Merge pull request #11 from parkerduckworth/readme
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=75e6e042c5bbf691fc82
 
---ftEhullJWpWg/VHq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So far this crash happened 3 times on  
+https://github.com/google/kmsan.git/master.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6676653019234304
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=5693411524870144
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=5043527943716864
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=6627248707860932248
+compiler: clang version 7.0.0 (trunk 329391)
 
-Hi Dmitry,
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+75e6e042c5bbf691fc82@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed.
 
-On Tue, Mar 20, 2018 at 03:31:24PM -0700, Dmitry Torokhov wrote:
-> Hi,
->=20
-> This series is a combination of Atmel touchscreen driver stopping using
-> platform data and moving over to generic device properties, and
-> chromeos-laptop switching from being platform driver, which is the wrong
-> abstraction for it, and moving to using i2c bis notifier. Switching from
-> platform driver to the notifiers allows us to get rid of the ugly code th=
-at
-> manually tries to handle deferrals in case i2c bus is not ready at the ti=
-me
-> we start initializing the module.
->=20
-> Thanks!
+==================================================================
+BUG: KMSAN: uninit-value in htohl net/tipc/subscr.c:66 [inline]
+BUG: KMSAN: uninit-value in tipc_subscrb_rcv_cb+0x418/0xe80  
+net/tipc/subscr.c:339
+CPU: 0 PID: 19 Comm: kworker/u4:1 Not tainted 4.16.0+ #83
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: tipc_rcv tipc_recv_work
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
+  htohl net/tipc/subscr.c:66 [inline]
+  tipc_subscrb_rcv_cb+0x418/0xe80 net/tipc/subscr.c:339
+  tipc_receive_from_sock+0x64c/0x800 net/tipc/server.c:271
+  tipc_recv_work+0xd8/0x1f0 net/tipc/server.c:618
+  process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2113
+  worker_thread+0x113c/0x24f0 kernel/workqueue.c:2247
+  kthread+0x539/0x720 kernel/kthread.c:239
+  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:406
 
-This series is in next now. I will roll up a pull request for v4.17 soon.
-
-Thanks!
-Benson
-
->=20
-> Changes v1->v2:
->=20
-> - switched suspend mode handling to use DMI quirk. We'll clean it up prop=
-erly
->   in the Atmel driver later, for now we just want to untangle Atmel and
->   chromeos-laptop
->=20
-> - added Nick's Acks.
->=20
-> Dmitry Torokhov (14):
->   Input: atmel_mxt_ts - do not pass suspend mode in platform data
->   Input: atmel_mxt_ts - switch from OF to generic device properties
->   Input: atmel_mxt_ts - switch ChromeOS ACPI devices to generic props
->   platform/chrome: chromeos_laptop - add SPDX identifier
->   platform/chrome: chromeos_laptop - stop setting suspend mode for Atmel =
-devices
->   platform/chrome: chromeos_laptop - introduce pr_fmt()
->   platform/chrome: chromeos_laptop - factor out getting IRQ from DMI
->   platform/chrome: chromeos_laptop - rework i2c peripherals initialization
->   platform/chrome: chromeos_laptop - parse DMI IRQ data once
->   platform/chrome: chromeos_laptop - use I2C notifier to create devices
->   platform/chrome: chromeos_laptop - rely on I2C to set up interrupt trig=
-ger
->   platform/chrome: chromeos_laptop - use device properties for Pixel
->   platform/chrome: chromeos_laptop - discard data for unneeded boards
->   Input: atmel_mxt_ts - remove platform data support
->=20
->  MAINTAINERS                                |   1 -
->  drivers/input/touchscreen/atmel_mxt_ts.c   | 231 +++---
->  drivers/platform/chrome/chromeos_laptop.c  | 896 +++++++++++----------
->  include/linux/platform_data/atmel_mxt_ts.h |  31 -
->  4 files changed, 579 insertions(+), 580 deletions(-)
->  delete mode 100644 include/linux/platform_data/atmel_mxt_ts.h
->=20
-> --=20
-> Dmitry
-
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
-
---ftEhullJWpWg/VHq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlrNoLkACgkQHwn1ewov
-5liJNg//YNh3mmayr0k6DYadfO6qloDG9k5Hj/cnTvIxQNoXtnosEOEcs9hNtKIc
-7LjEznLWoWEighv8c91JATcmFp3qwvewCXMtA7M8L4vLHwoLao4HGx0WD4n5y/j6
-XPh4HQsgh4WYwCQOv0WinmcQ2cF02RxyNOr7+UeO8M0C7r3iKgF9xrRzQJjyZF1n
-T25+Yoh743H9tYyDXWlzlLZMtnZy9UJX8UnNGSarMDNuQl6P8nVJ/mg93DDRcJDJ
-eyWM1vWYMevEWt7QtpQKrdpdWUV8bOobBl+MZW1QR3vkHRU6MPugkE+p73Qlf0DZ
-C3Jr/dfBepEcc3s39LHRo7nZOmDx6F7gKgjnn72nJjRn+KxX9XptSn1bOD0oZHmA
-+AysWH10JPMizL9aZLGodP6DhFntF8nACyV/Ty75DfHfw23fPwUEoc34wa/yeKR+
-vllT1/LEdstijYkHbbwTAPbrEu/zZyivEs2HEa0chW86QEc4SaSQtryxflI2k/u0
-15YwwpiS7YWHqFoYgWwAJ/IE3BLpCuidgoHeMEZFAZ4eS0zjylizMrJ76D4lrH/I
-icJOUWa7h+79nzjiCLSYC+sOZ9di7sFNoCEDQsia49eYJ9lKKACsC0zTDIbD3+9m
-gWbHTnDibj8Z0fEiZlgN3umxLOnWUdbRYtzHFEQNuZ7xlbl/HKM=
-=nmh/
------END PGP SIGNATURE-----
-
---ftEhullJWpWg/VHq--
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+  kmem_cache_alloc+0xaab/0xb90 mm/slub.c:2756
+  tipc_receive_from_sock+0x15c/0x800 net/tipc/server.c:253
+  tipc_recv_work+0xd8/0x1f0 net/tipc/server.c:618
+  process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2113
+  worker_thread+0x113c/0x24f0 kernel/workqueue.c:2247
+  kthread+0x539/0x720 kernel/kthread.c:239
+  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:406
+==================================================================
