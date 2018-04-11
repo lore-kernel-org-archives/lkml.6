@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+xwo0YBt+Q7JseNNACGHx9JcjenWPHwQ/sIjVX7Ih9+zwxDSPBiK7zergLrrvnZtf9j9e9
-ARC-Seal: i=1; a=rsa-sha256; t=1523473300; cv=none;
+X-Google-Smtp-Source: AIpwx4+yAmnhjpJeGfCqSTXo+xGpLqGDXDVsxkuY0M8Q+oNRZOYOq6SxsAMtKUfk0ze35dkcPlAA
+ARC-Seal: i=1; a=rsa-sha256; t=1523473297; cv=none;
         d=google.com; s=arc-20160816;
-        b=E3SKLZoEoPe/B9UZ7cNiuiVKikcGaEs/ruBjP9ie201bjEqxrMo+2472LepxeGyGZe
-         rO3cYVDmK03u7YEEyFzUojKDRfj1swxhPWSV/Rh3N/L+ELV+rd6wy2TGMhguT4VhV7ZV
-         E3UqgVwoO9VsTVkXA84xsg0h+4aQkGxMW71o3RyiRzmtmKUY3T/qQpCU0TWkhgFMh/iY
-         rggXEC4YW+g90bU9xDrxJ0WmgdKY5zH2Y0MLEe4iiZUPEGY7ete15HEiGmhzL8SO8WKa
-         fbSTBtrko02dvQtd8cFBLKRE8PR8Ps2l1Bya/x8u/WEwh4fTrILX5iiPrkFHDH2MZfbk
-         DgUg==
+        b=RXaekxBtJ9R7vR0sIS50p+90v8BBjwc05iXKCe16CgH0TVcs5LhUGz6kLMfKf1KF3I
+         Dajkc6h6VEB0jWedAgMno67hpP0WnjXoRvqLHthYsMIx0rtLxu2Fi5FzKnh3WglUNK6K
+         s8G7kCPTfO01IQh+2YUmgd3ijGT838ccTKh8Vez87PzgH3NmHx+koPFG/lmBZDg+FcMC
+         CUPVnEzDNTPZ7/DAkbDnaxHonbdFEGTx2+gR6vcKqoB9Lo9PPEq/+p2Dfo58EM2UlH0/
+         U7/RmqAdNvTHwSJxQwDL77qCP9RftpF4dr38D2v55fTYrjnOngzZU1pBXsrJ/Ek1OMk5
+         Pcog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4fOjIxxyiI8bTRNI4nLnEqGLy+MpDnVBWyrvAMuMsoo=;
-        b=DpOTl415XO/mJiVPPChn8mEbLKElyy5QWL3JgB52AGP2v+NMWTzwzqT+ZM9Qar4pIf
-         seUXiPPUpqmfVDWXyQ2k37XbxiZ4V2qydbhI1xfuxm285lAe/Gew7sgVUHrZ+TLuA2rX
-         1nwrqjx+lIusFva7ZCbwVI81h8pXeGCC9sEcj4ZN78fuOWeZBuE68ljEPLI96bYpXGCA
-         sxi+plBRRVpzzHta5GJYp7l2SgELekf2F8FSviABHkQWJ8P4wwKNmHvf0d/bxCLzbZGj
-         Pe61wfW1xxCB1b/fiYmePJs6WKhYfxRpTGYGn/wU1dS2MgTzdUXmHy6tLYv6rRSUYQL5
-         l7aA==
+        bh=nYBjX1fMXAk9Q/vcGMCXCR8Asu5DDYxVL6u/9yB1DSc=;
+        b=kolIinzOBkTFldb4aXUr19h862YCyZu0y4nb4lb9nN57wpbJtyeCv+zfFQfmKWlBWZ
+         qioNAeQbB/iQjxaYkSjK7ArzkN8kXQVrZgPIpj4oEUFfGpnjFFPsCGK98CjthaPXLH6k
+         BGXqYj+oYFyTjSDZjJO+q1SCLFFygw69zIzhMr9ibWeu9800xCvrs9JPBjEy86F8KXTJ
+         XLVgjhLBoLfPpJ2/gUk0V+RBaC3i0iMn8NVcZRuRNLWz/bgN1rGcK/jJyUthsj1tJNdZ
+         V/2ojouFpDNatdcqiMQQuCEJJugFtE6pJW0qS9Y2f4mDk5H+DtTPkho1b1dOep9u9J2B
+         LYWA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-	Luca Coelho <luciano.coelho@intel.com>,
+	Milian Wolff <milian.wolff@kdab.com>,
+	Jiri Olsa <jolsa@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 197/310] iwlwifi: mvm: fix firmware debug restart recording
-Date: Wed, 11 Apr 2018 20:35:36 +0200
-Message-Id: <20180411183631.073377661@linuxfoundation.org>
+Subject: [PATCH 4.9 196/310] perf report: Ensure the perf DSO mapping matches what libdw sees
+Date: Wed, 11 Apr 2018 20:35:35 +0200
+Message-Id: <20180411183631.020338130@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477538995146827?=
-X-GMAIL-MSGID: =?utf-8?q?1597477538995146827?=
+X-GMAIL-THRID: =?utf-8?q?1597476232291576091?=
+X-GMAIL-MSGID: =?utf-8?q?1597477536094114154?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,137 +52,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Milian Wolff <milian.wolff@kdab.com>
 
 
-[ Upstream commit addce854f164a68da9cb158e2e7e447705068549 ]
+[ Upstream commit 2538b9e2450ae255337c04356e9e0f8cb9ec48d9 ]
 
-When we want to stop the recording of the firmware debug
-and restart it later without reloading the firmware we
-don't need to resend the configuration that comes with
-host commands.
-Sending those commands confused the hardware and led to
-an NMI 0x66.
+In some situations the libdw unwinder stopped working properly.  I.e.
+with libunwind we see:
 
-Change the flow as following:
-* read the relevant registers (DBGC_IN_SAMPLE, DBGC_OUT_CTRL)
-* clear those registers
-* wait for the hardware to complete its write to the buffer
-* get the data
-* restore the value of those registers (to restart the
-  recording)
+~~~~~
+heaptrack_gui  2228 135073.400112:     641314 cycles:
+	            e8ed _dl_fixup (/usr/lib/ld-2.25.so)
+	           15f06 _dl_runtime_resolve_sse_vex (/usr/lib/ld-2.25.so)
+	           ed94c KDynamicJobTracker::KDynamicJobTracker (/home/milian/projects/compiled/kf5/lib64/libKF5KIOWidgets.so.5.35.0)
+	           608f3 _GLOBAL__sub_I_kdynamicjobtracker.cpp (/home/milian/projects/compiled/kf5/lib64/libKF5KIOWidgets.so.5.35.0)
+	            f199 call_init.part.0 (/usr/lib/ld-2.25.so)
+	            f2a5 _dl_init (/usr/lib/ld-2.25.so)
+	             db9 _dl_start_user (/usr/lib/ld-2.25.so)
+~~~~~
 
-For early start (where the configuration is already
-compiled in the firmware), we don't need to set those
-registers after the firmware has been loaded, but only
-when we want to restart the recording without having
-restarted the firmware.
+But with libdw and without this patch this sample is not properly
+unwound:
 
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+~~~~~
+heaptrack_gui  2228 135073.400112:     641314 cycles:
+	            e8ed _dl_fixup (/usr/lib/ld-2.25.so)
+	           15f06 _dl_runtime_resolve_sse_vex (/usr/lib/ld-2.25.so)
+	           ed94c KDynamicJobTracker::KDynamicJobTracker (/home/milian/projects/compiled/kf5/lib64/libKF5KIOWidgets.so.5.35.0)
+~~~~~
+
+Debug output showed me that libdw found a module for the last frame
+address, but it thinks it belongs to /usr/lib/ld-2.25.so. This patch
+double-checks what libdw sees and what perf knows. If the mappings
+mismatch, we now report the elf known to perf. This fixes the situation
+above, and the libdw unwinder produces the same stack as libunwind.
+
+Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: http://lkml.kernel.org/r/20170602143753.16907-1-milian.wolff@kdab.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/iwl-prph.h   |    1 
- drivers/net/wireless/intel/iwlwifi/mvm/fw-dbg.c |   12 ---------
- drivers/net/wireless/intel/iwlwifi/mvm/mvm.h    |    1 
- drivers/net/wireless/intel/iwlwifi/mvm/ops.c    |   32 ++++++++++++++++++------
- 4 files changed, 27 insertions(+), 19 deletions(-)
+ tools/perf/util/unwind-libdw.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/net/wireless/intel/iwlwifi/iwl-prph.h
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-prph.h
-@@ -369,6 +369,7 @@
- #define MON_DMARB_RD_DATA_ADDR		(0xa03c5c)
- 
- #define DBGC_IN_SAMPLE			(0xa03c00)
-+#define DBGC_OUT_CTRL			(0xa03c0c)
- 
- /* enable the ID buf for read */
- #define WFPM_PS_CTL_CLR			0xA0300C
---- a/drivers/net/wireless/intel/iwlwifi/mvm/fw-dbg.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw-dbg.c
-@@ -914,14 +914,6 @@ int iwl_mvm_fw_dbg_collect_trig(struct i
- 	return 0;
- }
- 
--static inline void iwl_mvm_restart_early_start(struct iwl_mvm *mvm)
--{
--	if (mvm->cfg->device_family == IWL_DEVICE_FAMILY_7000)
--		iwl_clear_bits_prph(mvm->trans, MON_BUFF_SAMPLE_CTL, 0x100);
--	else
--		iwl_write_prph(mvm->trans, DBGC_IN_SAMPLE, 1);
--}
--
- int iwl_mvm_start_fw_dbg_conf(struct iwl_mvm *mvm, u8 conf_id)
- {
- 	u8 *ptr;
-@@ -935,10 +927,8 @@ int iwl_mvm_start_fw_dbg_conf(struct iwl
- 	/* EARLY START - firmware's configuration is hard coded */
- 	if ((!mvm->fw->dbg_conf_tlv[conf_id] ||
- 	     !mvm->fw->dbg_conf_tlv[conf_id]->num_of_hcmds) &&
--	    conf_id == FW_DBG_START_FROM_ALIVE) {
--		iwl_mvm_restart_early_start(mvm);
-+	    conf_id == FW_DBG_START_FROM_ALIVE)
+--- a/tools/perf/util/unwind-libdw.c
++++ b/tools/perf/util/unwind-libdw.c
+@@ -38,6 +38,14 @@ static int __report_module(struct addr_l
  		return 0;
--	}
  
- 	if (!mvm->fw->dbg_conf_tlv[conf_id])
- 		return -EINVAL;
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
-@@ -1687,6 +1687,7 @@ void iwl_mvm_enable_ac_txq(struct iwl_mv
- static inline void iwl_mvm_stop_device(struct iwl_mvm *mvm)
- {
- 	mvm->ucode_loaded = false;
-+	mvm->fw_dbg_conf = FW_DBG_INVALID;
- 	iwl_trans_stop_device(mvm->trans);
- }
- 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/ops.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/ops.c
-@@ -1118,21 +1118,37 @@ static void iwl_mvm_fw_error_dump_wk(str
- 
- 	mutex_lock(&mvm->mutex);
- 
--	/* stop recording */
- 	if (mvm->cfg->device_family == IWL_DEVICE_FAMILY_7000) {
-+		/* stop recording */
- 		iwl_set_bits_prph(mvm->trans, MON_BUFF_SAMPLE_CTL, 0x100);
+ 	mod = dwfl_addrmodule(ui->dwfl, ip);
++	if (mod) {
++		Dwarf_Addr s;
 +
-+		iwl_mvm_fw_error_dump(mvm);
-+
-+		/* start recording again if the firmware is not crashed */
-+		if (!test_bit(STATUS_FW_ERROR, &mvm->trans->status) &&
-+		    mvm->fw->dbg_dest_tlv)
-+			iwl_clear_bits_prph(mvm->trans,
-+					    MON_BUFF_SAMPLE_CTL, 0x100);
- 	} else {
-+		u32 in_sample = iwl_read_prph(mvm->trans, DBGC_IN_SAMPLE);
-+		u32 out_ctrl = iwl_read_prph(mvm->trans, DBGC_OUT_CTRL);
-+
-+		/* stop recording */
- 		iwl_write_prph(mvm->trans, DBGC_IN_SAMPLE, 0);
--		/* wait before we collect the data till the DBGC stop */
- 		udelay(100);
--	}
-+		iwl_write_prph(mvm->trans, DBGC_OUT_CTRL, 0);
-+		/* wait before we collect the data till the DBGC stop */
-+		udelay(500);
- 
--	iwl_mvm_fw_error_dump(mvm);
-+		iwl_mvm_fw_error_dump(mvm);
- 
--	/* start recording again if the firmware is not crashed */
--	WARN_ON_ONCE((!test_bit(STATUS_FW_ERROR, &mvm->trans->status)) &&
--		     mvm->fw->dbg_dest_tlv &&
--		     iwl_mvm_start_fw_dbg_conf(mvm, mvm->fw_dbg_conf));
-+		/* start recording again if the firmware is not crashed */
-+		if (!test_bit(STATUS_FW_ERROR, &mvm->trans->status) &&
-+		    mvm->fw->dbg_dest_tlv) {
-+			iwl_write_prph(mvm->trans, DBGC_IN_SAMPLE, in_sample);
-+			iwl_write_prph(mvm->trans, DBGC_OUT_CTRL, out_ctrl);
-+		}
++		dwfl_module_info(mod, NULL, &s, NULL, NULL, NULL, NULL, NULL);
++		if (s != al->map->start)
++			mod = 0;
 +	}
- 
- 	mutex_unlock(&mvm->mutex);
- 
++
+ 	if (!mod)
+ 		mod = dwfl_report_elf(ui->dwfl, dso->short_name,
+ 				      dso->long_name, -1, al->map->start,
