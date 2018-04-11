@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/Veux1+fz/HlzYGzbbh7tv34bPrFBEKkJgTlaZJ4CGJRvGOPIbP2fsLVKWG4du8poqgeBe
-ARC-Seal: i=1; a=rsa-sha256; t=1523473030; cv=none;
+X-Google-Smtp-Source: AIpwx48Vl/uzRPEdIRr82dQa3qP5m6SZ913lqwTu3m4DMAkJMefSNdXUAGaJCzkbWqge06doKKyH
+ARC-Seal: i=1; a=rsa-sha256; t=1523473028; cv=none;
         d=google.com; s=arc-20160816;
-        b=l7tUBZVH+EoCHsJVI0dH5TFTVqjrnw3G2UfzTPnrfEphg0lbOWIZ7/CdQ7i4oR4GF8
-         JmlPT5Uz8gGe6L3RyX9raAa5MQrT+APLX1dyDlIFuvQ/ck3OOdD/+CP8wg5ScKEgIa3i
-         vY7x1D6qXDiLvl20gYjN/Guiw7EadTE6t5wdjYAenzmJblxOvleX26F58BNjFP/rF0sW
-         7KELG/QScm/p6JlhS3URl4j5LGkYJj6MS2BhVLy5fRRE8lh+bltY5ZJ4LvCQPZeJ19OD
-         gJ3KLZ4UOtjNRKT5a6F0HMoJfRtjF3/iy7Lj7VeH84+CjiRCRE2Ru5BrDeQFkzKq5+GK
-         KAfQ==
+        b=uJMUYrj9dIq5N/RsyupOdu3SDh69fqpcyPQRTMoHL62iF7SRfUKE+adaWoFvQ9crks
+         Zf9hd8YE0r2pBh0jdgOicJgMZRhQyKNpGwzMXtMQkNAkhtOBuilxHF4ZpPVJr0oNnS6q
+         tkFNyUjLokjOx/MDP++fqxF2ioUeqMgCduWd7Zy/d0Qvbj0w/ZKhgMUsWhLxdQaS7Hb3
+         tCzim5h0DxVx+44v2Is/CfTy897IwHnBjUF/p8nKLg+yEgttPjqG1hY2/E60PgedQzMN
+         3cKCxslO2PlCFmPh3rDfFau3rNWcbZpIWtC0oghEAiPs9jykE2yUYgg1d9onOhVL/WUZ
+         2HbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=FPpPRgCjSq/SDeQCy8WK/rfpshgdGdW2d/xZVGnm5p0=;
-        b=lzaKB5gxTkxkHebdMDGQuflp4R6ykD4h+B5J1Howh8+EHpms9pplOXh/p6TaDrd1X4
-         yOrzKfvu/rKirmcffrIUdbdpe/NHw56Ng0IlUYduL8iQKvCDfIP7mI5x3FgeANzsEYI8
-         oeZP/1wCy2Qex95BB6FQQgOygMz5t9DxzRlS0OFjqRk4sseGCy+s9Sw5od/0LSC5arXK
-         gB/3HfqakwdiKnakDc6b/iPokELibpt5lGVPBzq6wOd5MfYO2MO9ajqpstHgj4BX6F2P
-         e8Mph/mlZ9pAUOiKbGpToZZ5gjWTAFvKNHzqFDniXxO8roLpvtjM9MMyuc8Wt/S1STgu
-         JjmA==
+        bh=166T+5sSq2G0iGjlZ0OKv0rkP7sdgTe+7n88vSB5my4=;
+        b=sazD+VCNY0/qcpFZZeGy26W0o8eo4MRySt8wOygEDvQGV4Qw6TdO/3FmnFMZK0vul0
+         ynAn/qdt7NjUxJC01/RH0nBtRS4eF1FDc2RRThLYHnnBLF9AeOaJub2sfBz6po91xM1O
+         bKQ3oM9qSXbale4OCAnsV2NqEXpuJ6q3P2ZqwJhhh9eNJmhEqffOAttlZIkn9iBOEB9j
+         lbpRoAEos3R7cUTs9ELlK4GteUkwvmHAZWxazwcikHXGfSMYoVlKr6liVtAPwZxTsrAQ
+         rRGs+dCICeh0uet1gJfBJgB645hpbx/3AjF61Ai329Ni5rkQvdK0PxRfLM3DSJT2gXvQ
+         Ksog==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Vignesh R <vigneshr@ti.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 070/310] serial: 8250: omap: Disable DMA for console UART
-Date: Wed, 11 Apr 2018 20:33:29 +0200
-Message-Id: <20180411183625.327950621@linuxfoundation.org>
+Subject: [PATCH 4.9 069/310] USB: ene_usb6250: fix SCSI residue overwriting
+Date: Wed, 11 Apr 2018 20:33:28 +0200
+Message-Id: <20180411183625.289339931@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476520967202245?=
-X-GMAIL-MSGID: =?utf-8?q?1597477256679193758?=
+X-GMAIL-THRID: =?utf-8?q?1597476114116692193?=
+X-GMAIL-MSGID: =?utf-8?q?1597477254125738984?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,44 +49,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vignesh R <vigneshr@ti.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
 
-[ Upstream commit 84b40e3b57eef1417479c00490dd4c9f6e5ffdbc ]
+[ Upstream commit aa18c4b6e0e39bfb00af48734ec24bc189ac9909 ]
 
-Kernel always writes log messages to console via
-serial8250_console_write()->serial8250_console_putchar() which directly
-accesses UART_TX register _without_ using DMA.
+In the ene_usb6250 sub-driver for usb-storage, the SCSI residue is not
+reported correctly.  The residue is initialized to 0, but this value
+is overwritten whenever the driver sends firmware to the card reader
+before performing the current command.  As a result, a valid READ or
+WRITE operation appears to have failed, causing the SCSI core to retry
+the command multiple times and eventually fail.
 
-But, if other processes like systemd using same UART port, then these
-writes are handled by a different code flow using 8250_omap driver where
-there is provision to use DMA.
+This patch fixes the problem by resetting the SCSI residue to 0 after
+sending firmware to the device.
 
-It seems that it is possible that both DMA and CPU might simultaneously
-put data to UART FIFO and lead to potential loss of data due to FIFO
-overflow and weird data corruption. This happens when both kernel
-console and userspace tries to write simultaneously to the same UART
-port. Therefore, disable DMA on kernel console port to avoid potential
-race between CPU and DMA.
-
-Signed-off-by: Vignesh R <vigneshr@ti.com>
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reported-and-tested-by: Andreas Hartmann <andihartmann@01019freenet.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/8250/8250_omap.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/storage/ene_ub6250.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -613,6 +613,10 @@ static int omap_8250_startup(struct uart
- 	up->lsr_saved_flags = 0;
- 	up->msr_saved_flags = 0;
+--- a/drivers/usb/storage/ene_ub6250.c
++++ b/drivers/usb/storage/ene_ub6250.c
+@@ -1942,6 +1942,8 @@ static int ene_load_bincode(struct us_da
+ 	bcb->CDB[0] = 0xEF;
  
-+	/* Disable DMA for console UART */
-+	if (uart_console(port))
-+		up->dma = NULL;
-+
- 	if (up->dma) {
- 		ret = serial8250_request_dma(up);
- 		if (ret) {
+ 	result = ene_send_scsi_cmd(us, FDIR_WRITE, buf, 0);
++	if (us->srb != NULL)
++		scsi_set_resid(us->srb, 0);
+ 	info->BIN_FLAG = flag;
+ 	kfree(buf);
+ 
