@@ -1,81 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3118118-1523473256-2-11464773589265487629
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523473254; b=e2p5Z7mUt28pVsngBHAf8X/qwGXad4QGvyq0UYNsRw00aq0fRG
-    oVzmt1zTssZ7MIgoULRndI8VzxRrFdWgkW7F6CaQOQnAWfQM/gIBJNh529/u2ZtR
-    wBqh795ofwONQ8qkhY1oc2hT9OVd8weJPqa/zrCOSatiD+AsGJzPDYQ4Q5cRYtH+
-    rRYqB1klDOEDrWNuZa97s5EvJ+ooPtpp9PKFkJEr+bnNennY2gzYlxLlTIaXwaS6
-    LMG0lqs4eFExHD/RQuTa6t964a4CGQOfyWqgIv3Qz+pPWzQx+3dH0JfVm9TMitB3
-    c98vCACf2alMWvg+cB9YbMvFb5P7cltPcAJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523473254; bh=GBOgHfSgXDXZ9czKe+uNFNndSygq9Z
-    N3oEYKcKkp0JM=; b=Hx5TM8oB93gkegPCHriLasLUORBWjPzCn3nB6FcM8BChL8
-    mBAxvu/YlageNCJOicM/eFBrtFXmrabp5BSi8/nnuleMclRBjp9L7Y4+BEMg8BpI
-    ohfLu2zO6dEc9jGD4KmN/diSeNyjzD180g7o/NPWiFAIDaChLIdzN/V8MZ0CuKCM
-    v9yk4ManxOhguuqVz5xsypfaSRCz1zdUGXneEf6Waax5+I1ulkKOhoaN3gu6GNLa
-    Lq8eQEpix91hkIsUYtRmOEloTtUAcKAriDP7UxzolSUsSvh9P9Cxd7wt8iB/FLaR
-    HQPk0vl+7WQV/wRyD37cOGGlYuvRyoqzBSVHL2AQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfL729e7jUcQasjQzbS34Y3fx91rzGGtn+xPP+Uozyfqxx5sl5oDdCV5Ae2VVGJ7bxrAcbhmageFUuk/XxKdawx3cx/K4Fc+QMFo/Xzhr2lceg2MZGSq5
-    zYu0UZm1TDlVCOdhj+AS03gjI4u9IpIfmpTHkLxwvO2H5lcugHJcQrjgsQPULYu2XmBoDCY7t8iXqkYHCJ/pNRnF9R+1cwm2/fVg163e/D1SMU4GkYNcgt0Z
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=nn8tuMKtRf8A:10
-    a=Kd1tUaAdevIA:10 a=DfNHnWVPAAAA:8 a=LpQP-O61AAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=u-OqrgWLNW3bRWNzbpcA:9 a=QEXdDO2ut3YA:10
-    a=rjTVMONInIDnV1a_A2c_:22 a=pioyyrs4ZptJ924tMmac:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756795AbeDKTAt (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 15:00:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37896 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756746AbeDKTAr (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:00:47 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx49sQchak1636QvehZ6/4cxKLRQOAs2dqxTNWWm4psvre3H3Mv3nYjVeBv6rCVnapPUZpASg
+ARC-Seal: i=1; a=rsa-sha256; t=1523473253; cv=none;
+        d=google.com; s=arc-20160816;
+        b=JtsWyk049FLscMVr/nkcQ4ibkhXBEt2XXeCJ7/ikRPq/1qgMlf1kL1/Rn9K+v81x6T
+         MQKRmz1l9m4JEHVExsd0iZEujKdVse6lHLaYxlK7mDHAU2j7JnV7bQOANoTzSUvZX1q6
+         rhTYWS9vPvn4w6PlsmJ4qqWdFwcIkEN9CJk/DtUcOQWYt92SFBz6C009/IHwj48QaWV2
+         RAFoGiw6hw0vIHB56i77Wb6NTGDZ+yvUSRcPrQ5JVAO9phijkDW+4UMGm1VcwhniX2n9
+         pUzW9Kn2Z9cFmnpFE5QfcQV0cJQmmKbhpM32L00tk6FpbJ0nA/ECAQjr+GOA5KLo7wcI
+         Hn0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=zM/33oko9ljXzVj28bnE0cJo/2e1wl0cn/CytvPqtAc=;
+        b=LPeehtWGn+S7gTEKvAOgUHmSFNqbBdyAPrDYcSH1VTlYin6VKmuaISQUo9ai1cF0Xe
+         ZITTncBw6KUNI1bTDOGCJrdIH4hi1Y9tJ6y2zkItRwWunwLhksAbMITEPRa+Ge9UE2cH
+         g+WtLEq+aWED3ynB7d9f3rjP8LnizvS9ILrqMFQO48NVq2SpkWJKdF8QqMenXxRDytdL
+         /m1Z97wpT81FgHvpl8dz6ZKRnRBjvMT6y1kI/V0mkib5DSroFPLDwIzv9Yg3N8xfn0Xm
+         buMWcCnrAvndQEsP3eq6adP4zBrvh+o0DPpS9KjXiZpJNutav1fCAsZBV69BeBbgMkg3
+         w3uA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 147/310] wl1251: check return from call to wl1251_acx_arp_ip_filter
-Date: Wed, 11 Apr 2018 20:34:46 +0200
-Message-Id: <20180411183628.761240766@linuxfoundation.org>
+	stable@vger.kernel.org,
+	"Pieter \"PoroCYon\" Sluys" <pcy@national.shitposting.agency>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 139/310] vfb: fix video mode and line_length being set when loaded
+Date: Wed, 11 Apr 2018 20:34:38 +0200
+Message-Id: <20180411183628.428799314@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -83,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597476277787799866?=
+X-GMAIL-MSGID: =?utf-8?q?1597477490460606632?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -93,36 +51,103 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: "Pieter \\\"PoroCYon\\\" Sluys" <pcy@national.shitposting.agency>
 
 
-[ Upstream commit ac1181c60822292176ab96912208ec9f9819faf8 ]
+[ Upstream commit 7b9faf5df0ac495a1a3d7cdb64921c179f9008ac ]
 
-Currently the less than zero error check on ret is incorrect
-as it is checking a far earlier ret assignment rather than the
-return from the call to wl1251_acx_arp_ip_filter. Fix this by
-adding in the missing assginment.
+Currently, when loading the vfb module, the newly created fbdev
+has a line_length of 0, and its video mode would be PSEUDOCOLOR
+regardless of color depth. (The former could be worked around by
+calling the FBIOPUT_VSCREENINFO ioctl with having the FBACTIVIATE_FORCE
+flag set.) This patch automatically sets the line_length correctly,
+and the video mode is derived from the bit depth now as well.
 
-Detected by CoverityScan, CID#1164835 ("Logically dead code")
+Thanks to Geert Uytterhoeven for confirming the bug and helping me with
+the patch.
 
-Fixes: 204cc5c44fb6 ("wl1251: implement hardware ARP filtering")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Output of `fbset -i' before the patch:
+mode "1366x768-60"
+    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
+    geometry 1366 768 1366 768 32
+    timings 13806 120 10 14 3 32 5
+    rgba 8/0,8/8,8/16,8/24
+endmode
+
+Frame buffer device information:
+    Name        : Virtual FB
+    Address     : 0xffffaa1405d85000
+    Size        : 4196352
+    Type        : PACKED PIXELS
+    Visual      : PSEUDOCOLOR
+    XPanStep    : 1
+    YPanStep    : 1
+    YWrapStep   : 1
+    LineLength  : 0                    <-- note this
+    Accelerator : No
+
+After:
+mode "1366x768-60"
+    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
+    geometry 1366 768 1366 768 32
+    timings 13806 120 10 14 3 32 5
+    rgba 8/0,8/8,8/16,8/24
+endmode
+
+Frame buffer device information:
+    Name        : Virtual FB
+    Address     : 0xffffaa1405d85000
+    Size        : 4196352
+    Type        : PACKED PIXELS
+    Visual      : TRUECOLOR
+    XPanStep    : 1
+    YPanStep    : 1
+    YWrapStep   : 1
+    LineLength  : 5464
+    Accelerator : No
+
+Signed-off-by: "Pieter \"PoroCYon\" Sluys" <pcy@national.shitposting.agency>
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+[b.zolnierkie: minor fixups]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ti/wl1251/main.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/video/fbdev/vfb.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
---- a/drivers/net/wireless/ti/wl1251/main.c
-+++ b/drivers/net/wireless/ti/wl1251/main.c
-@@ -1200,8 +1200,7 @@ static void wl1251_op_bss_info_changed(s
- 		WARN_ON(wl->bss_type != BSS_TYPE_STA_BSS);
+--- a/drivers/video/fbdev/vfb.c
++++ b/drivers/video/fbdev/vfb.c
+@@ -239,8 +239,23 @@ static int vfb_check_var(struct fb_var_s
+  */
+ static int vfb_set_par(struct fb_info *info)
+ {
++	switch (info->var.bits_per_pixel) {
++	case 1:
++		info->fix.visual = FB_VISUAL_MONO01;
++		break;
++	case 8:
++		info->fix.visual = FB_VISUAL_PSEUDOCOLOR;
++		break;
++	case 16:
++	case 24:
++	case 32:
++		info->fix.visual = FB_VISUAL_TRUECOLOR;
++		break;
++	}
++
+ 	info->fix.line_length = get_line_length(info->var.xres_virtual,
+ 						info->var.bits_per_pixel);
++
+ 	return 0;
+ }
  
- 		enable = bss_conf->arp_addr_cnt == 1 && bss_conf->assoc;
--		wl1251_acx_arp_ip_filter(wl, enable, addr);
--
-+		ret = wl1251_acx_arp_ip_filter(wl, enable, addr);
- 		if (ret < 0)
- 			goto out_sleep;
- 	}
+@@ -450,6 +465,8 @@ static int vfb_probe(struct platform_dev
+ 		goto err2;
+ 	platform_set_drvdata(dev, info);
+ 
++	vfb_set_par(info);
++
+ 	fb_info(info, "Virtual frame buffer device, using %ldK of video memory\n",
+ 		videomemorysize >> 10);
+ 	return 0;
