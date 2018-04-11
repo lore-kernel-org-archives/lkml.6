@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/6ImaU5ecch0fVw1A7GBj++szSb2IjDrv1+aiMqYOx3SekSCSGGusZlZacV6s0Ch/VtRai
-ARC-Seal: i=1; a=rsa-sha256; t=1523473017; cv=none;
+X-Google-Smtp-Source: AIpwx48cQ0a/j/hG7qRaVZNb8FnZ2eGXCEpuFyUadhq+raOpRRDQSPTNRZDEyPSBYrTd5LoxVtFR
+ARC-Seal: i=1; a=rsa-sha256; t=1523473014; cv=none;
         d=google.com; s=arc-20160816;
-        b=DoGB9PYYz36hrhF66RYwbhCbtGwsDPkCMZEuK0O1h+VGyS4n7X/pc3AE0eHqn4o7Ml
-         fzd+zTg3F24rfC4ncavJVKJCiToFqYs4juK1C7gkQ9U3Rv6Ru3+3BEP9R3qTLI5aFuzv
-         GMovJ7L/MTm3j0ihNSlcsaDydcR2zBAwCzdfvU6jPEqKlZIHNycSPoJanyTsMTHcwJOO
-         LPEN1C42a9oN54oCryYpiADLxeCnCuAkDq2vnpXy4V3VjhheW8CUvHmNB8FAAwSayKl8
-         j3nyuHD9QpvdQ0rLq6QIjvassHfmtDWmLav2vM3W9pDT5DtGbDd4NqPnftoLke/2IKNc
-         jI3g==
+        b=oDOE9qAkDJ9sw7Swukhug8xbIGpLtDtkeL6lounGjEaJQ+V/GugVWLZiqXPm9+fm8X
+         c2/EgqOvbtLrTdAfYMpMnGKSPLQxvBwkItjrU3VCIPNjPHbRZTWlIhzcULpX+2HvY57N
+         xBH7XTKv+YEay8loXfm8GBFnyIej/UduS5C66wHMN89/+5SEVoJ96zsW9B4oaKxYOBHu
+         dxb4F9Bg4Bp3fjP7Ii1CF5D7Q/n/4kznPZgZnIV9nZth6BHDUGV8XqFgyTOqKpAJ2rA2
+         5xSCeFbIqAqGGg1nC4mXZP2mLdokqP7alN7cE4q0wcynYeelasmAtwaus0Yq9b3lp1Zo
+         nMDw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fKzUr8M3DqIbyIiaZbd3nLqDUCvRsMxJUCox5Je25C8=;
-        b=gZCI5gQQ0bjqLveMsymPoRxZZRpT18lm2kOErBkE8XkexAeOA0lvZoooRR8lXJOKZL
-         3k5lrbjNUcAn/Ch9BmMvf3R6No+I5lT0r439xuxwEP15kwn0l9vlvEIl2cQ8wMl09xhc
-         0sZ/tG5NDXx/UIVXLv7XWl3SmBc6Y+zd12WOKs7eeU76v1B7L0jl45TQLvgB3MQvKMlS
-         0IKxbIVWdWCtUT9sDht8J2tczkQMM9ITqMTbs5UHHvQ4oaeh2K4aYHTCy8mXDHKiWsfB
-         shwSOktXD1w7aki0emblwWGqd5o+RQTB6t2NSXDQ5GT+bcdkjhx13m5W5jJqJ0yPeCt1
-         RnvA==
+        bh=uvbv5AAdTML9Xnz/eM5I4dpDasiizIxaw7imyOhtW2Y=;
+        b=LcodS694O51+gvPJPZYron8tBTH9HD3gVHyQsbTQfsFhYGmoTeukwMynsHyLH7YXn3
+         2JLPAFHZFmy5Y9iFuClePGG4E499LJBuhG4ovlifRMSB+aPPQhZVeaPs99Upp6nvztjJ
+         HphjcaXAqpr8VNbLkvVseMcJhm5GzsS7v8NQxY87ydmELB9mm9AEEe1DCS0pLXAXBMEd
+         OvmvYuMaoeu6pBeXv5IyKQ0jNYuToPVkCPeOedWwSLNL1gPG554zHntB/lVa70c5Ni75
+         u9E50Pq4tx6S95anYp8nit8hb1QQnntF5JSZ4fXa0AAg/oR59ylrKneOeiAy7FjBQnyY
+         8irA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jesper Dangaard Brouer <brouer@redhat.com>,
-	Saeed Mahameed <saeedm@mellanox.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Jens Axboe <axboe@fb.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 098/310] mlx5: fix bug reading rss_hash_type from CQE
-Date: Wed, 11 Apr 2018 20:33:57 +0200
-Message-Id: <20180411183626.439983579@linuxfoundation.org>
+Subject: [PATCH 4.9 097/310] block: fix an error code in add_partition()
+Date: Wed, 11 Apr 2018 20:33:56 +0200
+Message-Id: <20180411183626.402145388@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476675657679322?=
-X-GMAIL-MSGID: =?utf-8?q?1597477242402701511?=
+X-GMAIL-THRID: =?utf-8?q?1597476139969691984?=
+X-GMAIL-MSGID: =?utf-8?q?1597477239892686125?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,47 +50,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jesper Dangaard Brouer <brouer@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit 12e8b570e732eaa5eae3a2895ba3fbcf91bde2b4 ]
+[ Upstream commit 7bd897cfce1eb373892d35d7f73201b0f9b221c4 ]
 
-Masks for extracting part of the Completion Queue Entry (CQE)
-field rss_hash_type was swapped, namely CQE_RSS_HTYPE_IP and
-CQE_RSS_HTYPE_L4.
+We don't set an error code on this path.  It means that we return NULL
+instead of an error pointer and the caller does a NULL dereference.
 
-The bug resulted in setting skb->l4_hash, even-though the
-rss_hash_type indicated that hash was NOT computed over the
-L4 (UDP or TCP) part of the packet.
-
-Added comments from the datasheet, to make it more clear what
-these masks are selecting.
-
-Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Acked-by: Saeed Mahameed <saeedm@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 6d1d8050b4bc ("block, partition: add partition_meta_info to hd_struct")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jens Axboe <axboe@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/mlx5/device.h |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ block/partition-generic.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/include/linux/mlx5/device.h
-+++ b/include/linux/mlx5/device.h
-@@ -750,8 +750,14 @@ enum {
- };
+--- a/block/partition-generic.c
++++ b/block/partition-generic.c
+@@ -321,8 +321,10 @@ struct hd_struct *add_partition(struct g
  
- enum {
--	CQE_RSS_HTYPE_IP	= 0x3 << 6,
--	CQE_RSS_HTYPE_L4	= 0x3 << 2,
-+	CQE_RSS_HTYPE_IP	= 0x3 << 2,
-+	/* cqe->rss_hash_type[3:2] - IP destination selected for hash
-+	 * (00 = none,  01 = IPv4, 10 = IPv6, 11 = Reserved)
-+	 */
-+	CQE_RSS_HTYPE_L4	= 0x3 << 6,
-+	/* cqe->rss_hash_type[7:6] - L4 destination selected for hash
-+	 * (00 = none, 01 = TCP. 10 = UDP, 11 = IPSEC.SPI
-+	 */
- };
- 
- enum {
+ 	if (info) {
+ 		struct partition_meta_info *pinfo = alloc_part_info(disk);
+-		if (!pinfo)
++		if (!pinfo) {
++			err = -ENOMEM;
+ 			goto out_free_stats;
++		}
+ 		memcpy(pinfo, info, sizeof(*info));
+ 		p->info = pinfo;
+ 	}
