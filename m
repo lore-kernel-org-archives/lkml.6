@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/nOrhHC9Wm9OPEYl1prenNXPUa9ltwYkRIqHpCg9Dm/hdEfTtsRFOZ3PJ0HuzWbLtrs18d
-ARC-Seal: i=1; a=rsa-sha256; t=1523472195; cv=none;
+X-Google-Smtp-Source: AIpwx49efFo2OsnvAMXOrCD+5+67457aKuThk/8DTQGLGGCG4JKkDcJe+/Ik2VYXpVM+yZY3AsxS
+ARC-Seal: i=1; a=rsa-sha256; t=1523472192; cv=none;
         d=google.com; s=arc-20160816;
-        b=NGXf/sVAxDGmufelzA4lY8jdyVHmd4ZW7mqvYZwVdDWX+KOGqrv9LYN+qQUqXeWCOa
-         RQ/hHPa1FbYg31T8grpuJ9NhtCQ8DnAYmUL27A8lsuoJAv838h5porqeUBjb0hi6zgJ0
-         /TBGfN9xA/VKkqMF1hFwry9dV+Dfjksctdqb3kjLgCCoeoNnjE8jTIn7Qi7KvQBgtlAY
-         bS8ipbqZ97j+no3Za6cdCg7hvg8fvb0yupcoiGXkp2jTyx2BzG5EzdinZH8cmIQLW1uc
-         U3JSM5BXoig6wwH0Wj2pdiYM5bMSbFWq1AWZSsKzGVgghSKGFtQ/2IZMIRIYnGLpWz5Z
-         LIYg==
+        b=LKqgt4hUhoJCmK8AIoFQ8AFaY+QSGgcH11xU0taq6LOhyFD5aOHwJXn2iPceajYiI/
+         vH9UMJ1h1X4bRhZKRc+5MJng5wOG5Kl8sI2tKBf27D00yGtHR+uqktcAo+n8jVItNN50
+         a5f8iKnrIqYOjK+zlWfMSW+lmuh16idV2zJqteulRyDWv/b8TJM8Y2eUVfBWmgYyqITL
+         Z9zY24qdSXPY2aCUBRDwS212NFQBJ/GQn3ISP5IJFg98t1Zol4FVQ8CC1laj9/rYt+n2
+         XiKMPcJ//uiXvjhsJuOT9tweTz2oEB5Hu4YTcxI7fxixck1oI+S25Tb1Qtwvo+Mmzlp5
+         GB4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rDu/wKV0uK7eGNwlJz23snx9UQM2HZX8PzzU9ve7VMI=;
-        b=CAuZe3on2IJdCfcEJXKPNCkSiI+XKX66wpWT/yBBG3PLP66eZTq62TTd1jT/k+qAOR
-         DFGj4HlGib+8MOIRMmJ9Z14VH2YVhn4SA7FUd9p/6U7VwL6Kl4+k1qX8QLEfbi1UnDuF
-         /g8klCqrOY/KZm2y5EBAZ+MJbgbt0fOlKYVpX2/J67xoGS/T1j6umzZ8VTQn5nf9kKVI
-         Sc6CHxIqGQC8yJczDOf6ZxMjXIvrKr3Aln45Qp8o1FKRvIpCkcPGmFtydTfSw61sKWlE
-         6SA1BjMlJmJpGzmvTzbCGycXoYMMHSGLPoWfpm02SedW97Snr2s3XZ7kqf+T1aVt1Yz3
-         z/uw==
+        bh=pJVUQeWS/ZKIsKpTqMoEqwMm9I5DhVXUpS9BQYw6Dvg=;
+        b=Hom49TiDkwPbj5Hfl6qbtEE0aKcVdyTfJ1pxpvdpsrqnjLLa/daANQl6mmPUBFt5km
+         LmDkMNi8gMnfitTYYfI4m4YJ20PFcGLR35DLgq2okHuYuut+qfCSSNehRPhiBR7hw1qA
+         B70aXySYOOWS7IV37GZ+AZWi+RE/5U2Uto+RX2XUfpzNcMGURWF7jlUy8vffLt0dmnMx
+         x0A9cl4c0uWTNh5MSvd5AO5LCRjT6xnHzeVY6XsMehLsdhaiHP2+iq7gzHYQQ5gsBPP/
+         g1FyLU4HxHdbDiIrQ1BXNKaVmpifvFmpQHBNVkpNJ1hLv6RfSmGJS1Y3RzkKjm29Vjyw
+         Bvog==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Craig Dillabaugh <cdillaba@mojatatu.com>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 120/121] net sched actions: fix dumping which requires several messages to user space
-Date: Wed, 11 Apr 2018 20:37:03 +0200
-Message-Id: <20180411183504.291078700@linuxfoundation.org>
+	David Miller <davem@davemloft.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH 3.18 119/121] r8169: fix setting driver_data after register_netdev
+Date: Wed, 11 Apr 2018 20:37:02 +0200
+Message-Id: <20180411183504.172326748@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476380426515684?=
-X-GMAIL-MSGID: =?utf-8?q?1597476380426515684?=
+X-GMAIL-THRID: =?utf-8?q?1597476378121653786?=
+X-GMAIL-MSGID: =?utf-8?q?1597476378121653786?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,73 +49,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Craig Dillabaugh <cdillaba@mojatatu.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
 
-[ Upstream commit 734549eb550c0c720bc89e50501f1b1e98cdd841 ]
+[ Upstream commit 19c9ea363a244f85f90a424f9936e6d56449e33c ]
 
-Fixes a bug in the tcf_dump_walker function that can cause some actions
-to not be reported when dumping a large number of actions. This issue
-became more aggrevated when cookies feature was added. In particular
-this issue is manifest when large cookie values are assigned to the
-actions and when enough actions are created that the resulting table
-must be dumped in multiple batches.
+pci_set_drvdata() is called only after registering the net_device,
+therefore we could run into a NPE if one of the functions using
+driver_data is called before it's set.
 
-The number of actions returned in each batch is limited by the total
-number of actions and the memory buffer size.  With small cookies
-the numeric limit is reached before the buffer size limit, which avoids
-the code path triggering this bug. When large cookies are used buffer
-fills before the numeric limit, and the erroneous code path is hit.
+Fix this by calling pci_set_drvdata() before registering the
+net_device.
 
-For example after creating 32 csum actions with the cookie
-aaaabbbbccccdddd
+This fix is a candidate for stable. As far as I can see the
+bug has been there in kernel version 3.2 already, therefore
+I can't provide a reference which commit is fixed by it.
 
-$ tc actions ls action csum
-total acts 26
+The fix may need small adjustments per kernel version because
+due to other changes the label which is jumped to if
+register_netdev() fails has changed over time.
 
-    action order 0: csum (tcp) action continue
-    index 1 ref 1 bind 0
-    cookie aaaabbbbccccdddd
-
-    .....
-
-    action order 25: csum (tcp) action continue
-    index 26 ref 1 bind 0
-    cookie aaaabbbbccccdddd
-total acts 6
-
-    action order 0: csum (tcp) action continue
-    index 28 ref 1 bind 0
-    cookie aaaabbbbccccdddd
-
-    ......
-
-    action order 5: csum (tcp) action continue
-    index 32 ref 1 bind 0
-    cookie aaaabbbbccccdddd
-
-Note that the action with index 27 is omitted from the report.
-
-Fixes: 4b3550ef530c ("[NET_SCHED]: Use nla_nest_start/nla_nest_end")"
-Signed-off-by: Craig Dillabaugh <cdillaba@mojatatu.com>
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
+Reported-by: David Miller <davem@davemloft.net>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_api.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/realtek/r8169.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/sched/act_api.c
-+++ b/net/sched/act_api.c
-@@ -92,8 +92,10 @@ static int tcf_dump_walker(struct sk_buf
- 			a->order = n_i;
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -8278,12 +8278,12 @@ static int rtl_init_one(struct pci_dev *
  
- 			nest = nla_nest_start(skb, a->order);
--			if (nest == NULL)
-+			if (nest == NULL) {
-+				index--;
- 				goto nla_put_failure;
-+			}
- 			err = tcf_action_dump_1(skb, a, 0, 0);
- 			if (err < 0) {
- 				index--;
+ 	tp->rtl_fw = RTL_FIRMWARE_UNKNOWN;
+ 
++	pci_set_drvdata(pdev, dev);
++
+ 	rc = register_netdev(dev);
+ 	if (rc < 0)
+ 		goto err_out_msi_4;
+ 
+-	pci_set_drvdata(pdev, dev);
+-
+ 	netif_info(tp, probe, dev, "%s at 0x%p, %pM, XID %08x IRQ %d\n",
+ 		   rtl_chip_infos[chipset].name, ioaddr, dev->dev_addr,
+ 		   (u32)(RTL_R32(TxConfig) & 0x9cf0f8ff), pdev->irq);
