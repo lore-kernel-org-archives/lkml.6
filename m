@@ -1,212 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753046AbeDKBD6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 21:03:58 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:35336 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753013AbeDKBDz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 21:03:55 -0400
-X-Google-Smtp-Source: AIpwx4+IlEHy8Qccus1ZeSng2aIgS8/dcTTBFABisQ/BFkItR3hSpYvZMZV1T0Ip2MEPgUk6uMxhKd26zXyuxy/jnkc=
+        id S1752121AbeDKBNp convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 21:13:45 -0400
+Received: from mga17.intel.com ([192.55.52.151]:38277 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751775AbeDKBNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 21:13:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,434,1517904000";
+   d="scan'208";a="46857327"
+From: "Li, Philip" <philip.li@intel.com>
+To: David Howells <dhowells@redhat.com>
+CC: lkp <lkp@intel.com>, "kbuild-all@01.org" <kbuild-all@01.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wu, Fengguang" <fengguang.wu@intel.com>,
+        "Hao, Shun" <shun.hao@intel.com>
+Subject: RE: [PATCH 05/45] C++: Set compilation as C++ for .c files
+Thread-Topic: [PATCH 05/45] C++: Set compilation as C++ for .c files
+Thread-Index: AQHT0LDG5GGUjSz0lkeNrVQuIyH9kqP6wmcw
+Date: Wed, 11 Apr 2018 01:13:40 +0000
+Message-ID: <831EE4E5E37DCC428EB295A351E662494CAA4EAB@shsmsx102.ccr.corp.intel.com>
+References: <20180403132713.cffx5mpfrnwuokeh@wfg-t540p.sh.intel.com>
+ <201804021242.NgXgixG7%fengguang.wu@intel.com>
+ <152261524532.30503.16094079179209557382.stgit@warthog.procyon.org.uk>
+ <18231.1522761410@warthog.procyon.org.uk>
+ <19628.1523349854@warthog.procyon.org.uk>
+ <20180410094553.6psva5rntlizm6pz@wfg-t540p.sh.intel.com>
+In-Reply-To: <20180410094553.6psva5rntlizm6pz@wfg-t540p.sh.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjJiYTNlMTgtNGM3My00MzYyLWI1ODgtNzBkMjY3OWNmN2ZjIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiI3UEdydmtvekVcLyswOGR1WEVWWnRiamlLVVBaOUFzOVlnUDR1ZGZXMnhpeE9TZmltVWNaRURXWlVlK3NoZVR1NSJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <201804080259.VS5U0mKT%fengguang.wu@intel.com> <20180410005908.167976-1-gthelen@google.com>
- <20180410133759.8ffd3170e5aaa7eb7eddcba6@linux-foundation.org>
-In-Reply-To: <20180410133759.8ffd3170e5aaa7eb7eddcba6@linux-foundation.org>
-From: Greg Thelen <gthelen@google.com>
-Date: Wed, 11 Apr 2018 01:03:43 +0000
-Message-ID: <CAHH2K0b1q8+WgR1SmXE8F_yz+MH6Gju3+d-7RR4j_Q3E4Rk-SQ@mail.gmail.com>
-Subject: Re: [PATCH v3] writeback: safer lock nesting
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Wang Long <wanglong19@meituan.com>, Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
-        npiggin@gmail.com, LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 1:38 PM Andrew Morton <akpm@linux-foundation.org>
-wrote:
-
-> On Mon,  9 Apr 2018 17:59:08 -0700 Greg Thelen <gthelen@google.com> wrote:
-
-> > lock_page_memcg()/unlock_page_memcg() use spin_lock_irqsave/restore() if
-> > the page's memcg is undergoing move accounting, which occurs when a
-> > process leaves its memcg for a new one that has
-> > memory.move_charge_at_immigrate set.
+> 
+> Hi David,
+> 
+> On Tue, Apr 10, 2018 at 09:44:14AM +0100, David Howells wrote:
+> >Hi Fengguang,
 > >
-> > unlocked_inode_to_wb_begin,end() use spin_lock_irq/spin_unlock_irq() if
-the
-> > given inode is switching writeback domains.  Switches occur when enough
-> > writes are issued from a new domain.
-> >
-> > This existing pattern is thus suspicious:
-> >     lock_page_memcg(page);
-> >     unlocked_inode_to_wb_begin(inode, &locked);
-> >     ...
-> >     unlocked_inode_to_wb_end(inode, locked);
-> >     unlock_page_memcg(page);
-> >
-> > If both inode switch and process memcg migration are both in-flight then
-> > unlocked_inode_to_wb_end() will unconditionally enable interrupts while
-> > still holding the lock_page_memcg() irq spinlock.  This suggests the
-> > possibility of deadlock if an interrupt occurs before
-> > unlock_page_memcg().
-> >
-> >     truncate
-> >     __cancel_dirty_page
-> >     lock_page_memcg
-> >     unlocked_inode_to_wb_begin
-> >     unlocked_inode_to_wb_end
-> >     <interrupts mistakenly enabled>
-> >                                     <interrupt>
-> >                                     end_page_writeback
-> >                                     test_clear_page_writeback
-> >                                     lock_page_memcg
-> >                                     <deadlock>
-> >     unlock_page_memcg
-> >
-> > Due to configuration limitations this deadlock is not currently possible
-> > because we don't mix cgroup writeback (a cgroupv2 feature) and
-> > memory.move_charge_at_immigrate (a cgroupv1 feature).
-> >
-> > If the kernel is hacked to always claim inode switching and memcg
-> > moving_account, then this script triggers lockup in less than a minute:
-> >   cd /mnt/cgroup/memory
-> >   mkdir a b
-> >   echo 1 > a/memory.move_charge_at_immigrate
-> >   echo 1 > b/memory.move_charge_at_immigrate
-> >   (
-> >     echo $BASHPID > a/cgroup.procs
-> >     while true; do
-> >       dd if=/dev/zero of=/mnt/big bs=1M count=256
-> >     done
-> >   ) &
-> >   while true; do
-> >     sync
-> >   done &
-> >   sleep 1h &
-> >   SLEEP=$!
-> >   while true; do
-> >     echo $SLEEP > a/cgroup.procs
-> >     echo $SLEEP > b/cgroup.procs
-> >   done
-> >
-> > Given the deadlock is not currently possible, it's debatable if there's
-> > any reason to modify the kernel.  I suggest we should to prevent future
-> > surprises.
-> >
-> > ...
-> >
-> > Changelog since v2:
-> > - explicitly initialize wb_lock_cookie to silence compiler warnings.
+> >There's another kbuild test that's probably worth adding if you don't do it
+> >already: create a c++ source file that just #includes all the exported UAPI
+> >headers and then try to build it.  This should catch words like "private"
+> >cropping up in structs.
+> 
+> That's a good idea! And it looks straightforward to do.
+> CC Philip (current LKP maintainer) for possible plans.
+Thanks David, we will look into this and planned with other priorities.
+We will share estimation for possible target date next week.
 
-> But only in some places.  What's up with that?
-
-I annotated it in places where my compiler was complaining about.  But
-you're right.  It's better to init all 4.
-
-> >
-> > ...
-> >
-> > --- a/include/linux/backing-dev.h
-> > +++ b/include/linux/backing-dev.h
-> > @@ -346,7 +346,7 @@ static inline struct bdi_writeback
-*inode_to_wb(const struct inode *inode)
-> >  /**
-> >   * unlocked_inode_to_wb_begin - begin unlocked inode wb access
-transaction
-> >   * @inode: target inode
-> > - * @lockedp: temp bool output param, to be passed to the end function
-> > + * @cookie: output param, to be passed to the end function
-> >   *
-> >   * The caller wants to access the wb associated with @inode but isn't
-> >   * holding inode->i_lock, mapping->tree_lock or wb->list_lock.  This
-> > @@ -354,12 +354,11 @@ static inline struct bdi_writeback
-*inode_to_wb(const struct inode *inode)
-> >   * association doesn't change until the transaction is finished with
-> >   * unlocked_inode_to_wb_end().
-> >   *
-> > - * The caller must call unlocked_inode_to_wb_end() with *@lockdep
-> > - * afterwards and can't sleep during transaction.  IRQ may or may not
-be
-> > - * disabled on return.
-> > + * The caller must call unlocked_inode_to_wb_end() with *@cookie
-afterwards and
-> > + * can't sleep during transaction.  IRQ may or may not be disabled on
-return.
-> >   */
-
-> Grammar is a bit awkward here,
-
-> >
-> > ...
-> >
-> > --- a/mm/page-writeback.c
-> > +++ b/mm/page-writeback.c
-> > @@ -2501,13 +2501,13 @@ void account_page_redirty(struct page *page)
-> >       if (mapping && mapping_cap_account_dirty(mapping)) {
-> >               struct inode *inode = mapping->host;
-> >               struct bdi_writeback *wb;
-> > -             bool locked;
-> > +             struct wb_lock_cookie cookie = {0};
-
-> Trivia: it's better to use "= {}" here.  That has the same effect and
-> it doesn't assume that the first field is a scalar.  And indeed, the
-> first field is a bool so it should be {false}!
-
-Nod.  Thanks for the tip.
-
-> So...
-
-
-> --- a/include/linux/backing-dev.h~writeback-safer-lock-nesting-fix
-> +++ a/include/linux/backing-dev.h
-> @@ -355,7 +355,8 @@ static inline struct bdi_writeback *inod
->     * unlocked_inode_to_wb_end().
->     *
->     * The caller must call unlocked_inode_to_wb_end() with *@cookie
-afterwards and
-> - * can't sleep during transaction.  IRQ may or may not be disabled on
-return.
-> + * can't sleep during the transaction.  IRQs may or may not be disabled
-on
-> + * return.
->     */
->    static inline struct bdi_writeback *
->    unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie
-*cookie)
-> --- a/mm/page-writeback.c~writeback-safer-lock-nesting-fix
-> +++ a/mm/page-writeback.c
-> @@ -2501,7 +2501,7 @@ void account_page_redirty(struct page *p
->           if (mapping && mapping_cap_account_dirty(mapping)) {
->                   struct inode *inode = mapping->host;
->                   struct bdi_writeback *wb;
-> -               struct wb_lock_cookie cookie = {0};
-> +               struct wb_lock_cookie cookie = {};
-
->                   wb = unlocked_inode_to_wb_begin(inode, &cookie);
->                   current->nr_dirtied--;
-> @@ -2613,7 +2613,7 @@ void __cancel_dirty_page(struct page *pa
->           if (mapping_cap_account_dirty(mapping)) {
->                   struct inode *inode = mapping->host;
->                   struct bdi_writeback *wb;
-> -               struct wb_lock_cookie cookie = {0};
-> +               struct wb_lock_cookie cookie = {};
-
->                   lock_page_memcg(page);
->                   wb = unlocked_inode_to_wb_begin(inode, &cookie);
-> @@ -2653,7 +2653,7 @@ int clear_page_dirty_for_io(struct page
->           if (mapping && mapping_cap_account_dirty(mapping)) {
->                   struct inode *inode = mapping->host;
->                   struct bdi_writeback *wb;
-> -               struct wb_lock_cookie cookie = {0};
-> +               struct wb_lock_cookie cookie = {};
-
->                   /*
->                    * Yes, Virginia, this is indeed insane.
-
-> But I wonder about the remaining uninitialized wb_lock_cookies?
-
-Yeah, I'll post an v4 with everything folded in.
+> 
+> Thanks,
+> Fengguang
