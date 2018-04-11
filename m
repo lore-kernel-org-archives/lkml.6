@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+VgMkoJhT5nkrIGG+En0FMBtAE/irnS/JQTAiaIO+lwUJ4tpOTqZkXb9cDZEe2uWTzSIuA
-ARC-Seal: i=1; a=rsa-sha256; t=1523473412; cv=none;
+X-Google-Smtp-Source: AIpwx48zNFu6+1Lu8rjrd4Oziw0ZWXtUSJCZ11j6mmbm8lwJQBlXH27+TTwlTvn46mMAOqw+WYmd
+ARC-Seal: i=1; a=rsa-sha256; t=1523473409; cv=none;
         d=google.com; s=arc-20160816;
-        b=Wg3eqPOVITvE0JD9ieH4wY0gqn4dLP2M1XhkkxaftcX77iEtrZXiNrrMXiQoZ/CcJy
-         Ng0UXNaD1vEVMk409SlSPZ+Jl7icgXdG21SzgrMdkPLEDqH6maklTPWSp2fwkCiENoTd
-         ZXcx++oJ2hGPMhjuusXxtYjWQmZ6JHULIKrYPIe2Krt1I1/mGVZCL/pgFgcy5e+1V0ao
-         PywZbv3lsev97fmKJjrCDan6TCQMoZM76Xxw9Zkl7uB4cSAyQ2eSvoXkMR0cJiR5xeAZ
-         fyedr+CU77UpNoR9xfV6yY/WXmzq4hJ1RrI91P0kCMilZJiiPJ2p3U3pvPZk+VnKpcvp
-         q1kQ==
+        b=O85+MDrL2iezN9BmB9fxAvIxux1vYK2fejROML5ybSbTzlzRgNV6PwX7xtKzJXNykd
+         IQ+ZutpDg6crOCsGbayYYjZBvaWYRpsMTn4nDaCQYuUwsvqt8mDALyHVSyQNRRRw847C
+         BSSsRZSPJru9c7iCXJjADQpvTCr2oXUIs6c76kMhlUK/tJfSlEkgowFFgU5CqpbeUi8j
+         DtDJIhc6hqUo2nNKf05JB63XCuCjaIjk0Hcy8BBhLrHRAp8WaXUqlNu1ZZT+63bycAvY
+         VYTfrwLmf3k08bqSuy1Ibj2dHw/pnCAIoL0F64FqzPzdsaewMKtHyQuOQuwEG6ZMpHma
+         rQ8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=9toQtqEFrrOK3UW2PKtC3tImFA0pVO99WFKdb4tPBrU=;
-        b=XY0CZTwbVutWhcMQAX1GR/D6vyzwezI8NN9lsg5VZcJhFmRu9Oxi55kBho9SGiXzYT
-         aDO5og8TRMTfnefQJA4gJq9W+HaS0DgVGe/V506xUqrmE9xziPKXX5S/xqMGZSJtqY7P
-         Ok1KgOPoMYcaPn2A5xsxaQ9riX/g3D24F9Ra5cJMjHuiTCAxH8aA2ym3XGs47GarM4zh
-         KiITQDPd8F4OF8GtI1Ha4i4RwWGiUTOfdsdN+/tU5e1ajsituXl3tpMV6/vIcDLwOUk+
-         3lXHGfdV0NP3ebB6Sg+v+x1J4Wfg3LnE0Qbu1h9jsy1Gggs3Ts6jSS3F/+yX5n4Tm5PH
-         wrjQ==
+        bh=0hcMcK1cTiXZq/+ChpV9WgaOLNYwMh/UbqJ9Z6qhe5M=;
+        b=K8aS0X4K3TOUFjG2+KP2Me8YQkMeHA/SLboA4orM2dwwViKPlTjnBNQBKQGq++/pZT
+         Q+PEQU/tqUwg0tCIOYhcE7sKi9xB2DBQUXon+ghV7L0E549j5HPrgsFVSwmAbbqA/pyE
+         HufqnrdK3ii5pIHMsnbYc/LoBGDXfkADjh1tWaBiGWuIS0o0J+zxO1wKqxxLZWyXEgP0
+         BQCzH1hXwQ1r7vlO3EbYWZqts11G0D59o5Du6/7eJXGh3nZdPa2usewipWJclhc8SzEn
+         HxWZVbLspiEVVCsd1tremwDME3WhPH4a/ejnvW0agvz5TpRpvPKJvgoKHvZB9P8FZ2u+
+         SqMg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Paul Gortmaker <paul.gortmaker@windriver.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Xin Long <lucien.xin@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 238/310] net: fec: Add a fec_enet_clear_ethtool_stats() stub for CONFIG_M5272
-Date: Wed, 11 Apr 2018 20:36:17 +0200
-Message-Id: <20180411183632.731138010@linuxfoundation.org>
+Subject: [PATCH 4.9 237/310] sctp: fix recursive locking warning in sctp_do_peeloff
+Date: Wed, 11 Apr 2018 20:36:16 +0200
+Message-Id: <20180411183632.691959267@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477656113011538?=
-X-GMAIL-MSGID: =?utf-8?q?1597477656113011538?=
+X-GMAIL-THRID: =?utf-8?q?1597476274816601516?=
+X-GMAIL-MSGID: =?utf-8?q?1597477653673934400?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,37 +53,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
+From: Xin Long <lucien.xin@gmail.com>
 
 
-[ Upstream commit bf292f1b2c813f1d6ac49b04bd1a9863d8314266 ]
+[ Upstream commit 6dfe4b97e08ec3d1a593fdaca099f0ef0a3a19e6 ]
 
-Commit 2b30842b23b9 ("net: fec: Clear and enable MIB counters on imx51")
-introduced fec_enet_clear_ethtool_stats(), but missed to add a stub
-for the CONFIG_M5272=y case, causing build failure for the
-m5272c3_defconfig.
+Dmitry got the following recursive locking report while running syzkaller
+fuzzer, the Call Trace:
+ __dump_stack lib/dump_stack.c:16 [inline]
+ dump_stack+0x2ee/0x3ef lib/dump_stack.c:52
+ print_deadlock_bug kernel/locking/lockdep.c:1729 [inline]
+ check_deadlock kernel/locking/lockdep.c:1773 [inline]
+ validate_chain kernel/locking/lockdep.c:2251 [inline]
+ __lock_acquire+0xef2/0x3430 kernel/locking/lockdep.c:3340
+ lock_acquire+0x2a1/0x630 kernel/locking/lockdep.c:3755
+ lock_sock_nested+0xcb/0x120 net/core/sock.c:2536
+ lock_sock include/net/sock.h:1460 [inline]
+ sctp_close+0xcd/0x9d0 net/sctp/socket.c:1497
+ inet_release+0xed/0x1c0 net/ipv4/af_inet.c:425
+ inet6_release+0x50/0x70 net/ipv6/af_inet6.c:432
+ sock_release+0x8d/0x1e0 net/socket.c:597
+ __sock_create+0x38b/0x870 net/socket.c:1226
+ sock_create+0x7f/0xa0 net/socket.c:1237
+ sctp_do_peeloff+0x1a2/0x440 net/sctp/socket.c:4879
+ sctp_getsockopt_peeloff net/sctp/socket.c:4914 [inline]
+ sctp_getsockopt+0x111a/0x67e0 net/sctp/socket.c:6628
+ sock_common_getsockopt+0x95/0xd0 net/core/sock.c:2690
+ SYSC_getsockopt net/socket.c:1817 [inline]
+ SyS_getsockopt+0x240/0x380 net/socket.c:1799
+ entry_SYSCALL_64_fastpath+0x1f/0xc2
 
-Add the missing empty stub to fix the build failure.
+This warning is caused by the lock held by sctp_getsockopt() is on one
+socket, while the other lock that sctp_close() is getting later is on
+the newly created (which failed) socket during peeloff operation.
 
-Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+This patch is to avoid this warning by use lock_sock with subclass
+SINGLE_DEPTH_NESTING as Wang Cong and Marcelo's suggestion.
+
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Suggested-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Suggested-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/freescale/fec_main.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/sctp/socket.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -2371,6 +2371,10 @@ static int fec_enet_get_sset_count(struc
- static inline void fec_enet_update_ethtool_stats(struct net_device *dev)
- {
- }
-+
-+static inline void fec_enet_clear_ethtool_stats(struct net_device *dev)
-+{
-+}
- #endif /* !defined(CONFIG_M5272) */
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -1519,7 +1519,7 @@ static void sctp_close(struct sock *sk,
  
- static int fec_enet_nway_reset(struct net_device *dev)
+ 	pr_debug("%s: sk:%p, timeout:%ld\n", __func__, sk, timeout);
+ 
+-	lock_sock(sk);
++	lock_sock_nested(sk, SINGLE_DEPTH_NESTING);
+ 	sk->sk_shutdown = SHUTDOWN_MASK;
+ 	sk->sk_state = SCTP_SS_CLOSING;
+ 
+@@ -1569,7 +1569,7 @@ static void sctp_close(struct sock *sk,
+ 	 * held and that should be grabbed before socket lock.
+ 	 */
+ 	spin_lock_bh(&net->sctp.addr_wq_lock);
+-	bh_lock_sock(sk);
++	bh_lock_sock_nested(sk);
+ 
+ 	/* Hold the sock, since sk_common_release() will put sock_put()
+ 	 * and we have just a little more cleanup.
