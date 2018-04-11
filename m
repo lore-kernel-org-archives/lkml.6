@@ -1,32 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753008AbeDKLQL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 07:16:11 -0400
-Received: from mail-io0-f179.google.com ([209.85.223.179]:47036 "EHLO
-        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751819AbeDKLQJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 07:16:09 -0400
-X-Google-Smtp-Source: AIpwx48gW/j7AXJJMQmrk4LTTEZhYT2r5FkAFU87GVZckkQJTgiSdNoGbVQWZ90HtTsP2oLeDLfzxw==
-Subject: Re: [PATCH] memory-model: fix cheat sheet typo
-To: paulmck@linux.vnet.ibm.com
-Cc: linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>
-References: <1523292618-10207-1-git-send-email-pbonzini@redhat.com>
- <20180409184258.GP3948@linux.vnet.ibm.com>
- <20180410203214.GA19606@linux.vnet.ibm.com>
- <8cbda122-6aa3-365b-fd09-52dca0644cbd@redhat.com>
- <20180410213434.GC3948@linux.vnet.ibm.com>
+        id S1752140AbeDKLfE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 07:35:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44618 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751409AbeDKLfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 07:35:02 -0400
+Subject: Re: [PATCH] KVM: X86: fix incorrect reference of
+ trace_kvm_pi_irte_update
+To: hu huajun <huhuajun@linux.alibaba.com>, joro@8bytes.org,
+        rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com
+Cc: x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1523431000-44137-1-git-send-email-huhuajun@linux.alibaba.com>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; keydata=
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
  CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
  hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
@@ -61,125 +50,60 @@ Autocrypt: addr=pbonzini@redhat.com; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <156ac07b-7393-449f-518a-6b1c2cff8efb@redhat.com>
-Date: Wed, 11 Apr 2018 13:15:58 +0200
+Message-ID: <63adcbc6-95a4-48f4-e90d-34d3722b40ea@redhat.com>
+Date: Wed, 11 Apr 2018 13:34:55 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180410213434.GC3948@linux.vnet.ibm.com>
+In-Reply-To: <1523431000-44137-1-git-send-email-huhuajun@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/04/2018 23:34, Paul E. McKenney wrote:
-> Glad it helps, and I have queued it for the next merge window.  Of course,
-> if a further improvement comes to mind, please do not keep it a secret.  ;-)
+On 11/04/2018 09:16, hu huajun wrote:
+> In arch/x86/kvm/trace.h, this function is declared as host_irq the
+> first input, and vcpu_id the second, instead of otherwise.
+> 
+> Signed-off-by: hu huajun <huhuajun@linux.alibaba.com>
+> ---
+>  arch/x86/kvm/svm.c | 5 ++---
+>  arch/x86/kvm/vmx.c | 2 +-
+>  2 files changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index be9c839..f4e9fb4 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -5118,9 +5118,8 @@ static int svm_update_pi_irte(struct kvm *kvm, unsigned int host_irq,
+>  		}
+>  
+>  		if (!ret && svm) {
+> -			trace_kvm_pi_irte_update(svm->vcpu.vcpu_id,
+> -						 host_irq, e->gsi,
+> -						 vcpu_info.vector,
+> +			trace_kvm_pi_irte_update(host_irq, svm->vcpu.vcpu_id,
+> +						 e->gsi, vcpu_info.vector,
+>  						 vcpu_info.pi_desc_addr, set);
+>  		}
+>  
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index f0fd50b..86fd775 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -12204,7 +12204,7 @@ static int vmx_update_pi_irte(struct kvm *kvm, unsigned int host_irq,
+>  		vcpu_info.pi_desc_addr = __pa(vcpu_to_pi_desc(vcpu));
+>  		vcpu_info.vector = irq.vector;
+>  
+> -		trace_kvm_pi_irte_update(vcpu->vcpu_id, host_irq, e->gsi,
+> +		trace_kvm_pi_irte_update(host_irq, vcpu->vcpu_id, e->gsi,
+>  				vcpu_info.vector, vcpu_info.pi_desc_addr, set);
+>  
+>  		if (set)
+> 
 
-Yes, there are several changes that could be included:
-
-- SV could be added to the prior operation case as well?  It should be
-symmetric
-
-- The *_relaxed() case also applies to void RMW
-
-- smp_store_mb() is missing
-
-- smp_rmb() orders prior reads fully against subsequent RMW because SV
-applies between the two parts of the RMW; likewise smp_wmb() orders prior
-RMW fully against subsequent writes
-
-
-I am going submit these changes separately, but before doing that I can show
-also my rewrite of the cheat sheet.
-
-The advantage is that, at least to me, it's clearer (and gets rid of
-"Self" :)).
-
-The disadvantage is that it's much longer---almost twice the lines, even if
-you discount the splitting out of cumulative/propagating to a separate table
-(which in turn is because to me it's a different level of black magic).
-
----------------------
-Memory operations are listed in this document as follows:
-
-	R:	Read portion of RMW
-	W:	Write portion of RMW
-	DR:	Dependent read (address dependency)
-	DW:	Dependent write (address, data, or control dependency)
-	RMW:	Atomic read-modify-write operation
-	SV	Other accesses to the same variable
-
-
-Memory access operations order other memory operations against themselves as
-follows:
-
-                                   Prior Operation   Subsequent Operation
-                                   ---------------   ---------------------
-                                   R  W  RMW  SV     R  W  DR  DW  RMW  SV
-                                   -  -  ---  --     -  -  --  --  ---  --
-Store, e.g., WRITE_ONCE()                      Y                         Y
-Load, e.g., READ_ONCE()                        Y            Y   Y        Y
-Unsuccessful RMW operation                     Y            Y   Y        Y
-*_relaxed() or void RMW operation              Y            Y   Y        Y
-rcu_dereference()                              Y            Y   Y        Y
-Successful *_acquire()                         Y      r  r  r   r    r   Y
-Successful *_release()             w  w    w   Y                         Y
-smp_store_mb()                     Y  Y    Y   Y      Y  Y   Y   Y   Y   Y
-Successful full non-void RMW       Y  Y    Y   Y      Y  Y   Y   Y   Y   Y
-
-Key:	Y:	Memory operation provides ordering
-	r:	Cannot move past the read portion of the *_acquire()
-	w:	Cannot move past the write portion of the *_release()
-
-
-Memory barriers order prior memory operations against subsequent memory
-operations.  Two operations are ordered if both have non-empty cells in
-the following table:
-
-                                   Prior Operation   Subsequent Operation
-                                   ---------------   --------------------
-                                   R  W  RMW         R  W  DR  DW  RMW
-                                   -  -  ---         -  -  --  --  ---
-smp_rmb()                          Y      r          Y      Y       Y
-smp_wmb()                             Y   Y             Y       Y   w
-smp_mb() & synchronize_rcu()       Y  Y   Y          Y  Y   Y   Y   Y
-smp_mb__before_atomic()            Y  Y   Y          a  a   a   a   Y
-smp_mb__after_atomic()             a  a   Y          Y  Y   Y   Y
-
-
-Key:	Y:	Barrier provides ordering
-	r:	Barrier provides ordering against the read portion of RMW
-	w:	Barrier provides ordering against the write portion of RMW
-	a:	Barrier provides ordering given intervening RMW atomic operation
-
-
-Finally the following describes which operations provide cumulative and
-propagating fences:
-
-                                     Cumulative         Propagates
-                                     ----------         ----------
-Store, e.g., WRITE_ONCE()
-Load, e.g., READ_ONCE()
-Unsuccessful RMW operation
-*_relaxed() or void RMW operation
-rcu_dereference()
-Successful *_acquire()
-Successful *_release()                   Y
-smp_store_mb()                           Y                  Y
-Successful full non-void RMW             Y                  Y
-smp_rmb()
-smp_wmb()
-smp_mb() & synchronize_rcu()             Y                  Y
-smp_mb__before_atomic()                  Y                  Y
-smp_mb__after_atomic()                   Y                  Y
-----------
-
-Perhaps you can see some obvious improvements.  Otherwise I'll send patches
-for the above issues.
-
-Thanks,
+Applied, thanks!
 
 Paolo
