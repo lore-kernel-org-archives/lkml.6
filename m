@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+TrxiduAts8qUJbBbxcjuCRcJAxfbPlas5H7xJIwW7jwfp4XrV7BD4p6uMDsT7FxaPmjtZ
-ARC-Seal: i=1; a=rsa-sha256; t=1523473456; cv=none;
+X-Google-Smtp-Source: AIpwx4+blK9fnfJujw1i+LGmAstHGlGlE95qZqtkJaQQoy3XHANsB6aAXPC1y7LDGQry/6piX8We
+ARC-Seal: i=1; a=rsa-sha256; t=1523473453; cv=none;
         d=google.com; s=arc-20160816;
-        b=oSkGI3Q2pAxBvnZKIl/ncbtHjSjMv6K/1AM9L1KhnIwrXnY8/3JCNIxLlKfv9qX5dH
-         OcxBzJiyF/nSYVSFyzii2QqsfdhwJKKgU8eXw6Jyl0RYkqCHdbuyi35UH/NalyBIuM3F
-         yUYffUQxHhNQqnHGoNcbp6H8V62JAlqqAmDnJ24aW+u+U5P3sTw6/KFl9tHDfgVXhuUg
-         zKR0kJSHCt+7cYQaTJshAyE9sXf1ovCS5K8vTa6u3P4v1HbrzZ8r5wkEd+pjusnD1z1T
-         c64QMjaE+CS2k2bZorIfE75FeDc9yoj5hdQGqc7upxDvmFkBK8gy78VXYDJ4ERF9b3jj
-         1Wnw==
+        b=gop3E9ht1N5w7lkgE0holWf4U1pXQG/kE3+ClinR4E0F2Up0HPCAABPP0+eqRu+1Kh
+         Oi93PklkhvX5duPKIcWGS6BH7MlqA5Dmw+UfHSWuVgZ8ltX/6wUqDGxpXKFTQpzc0KQL
+         ytw98CGou8XApBpflXlHQYJS3Seq/tO9z0n9xBqWwgundtT4Pdv6oFO4a7pLMYjIA453
+         sm2HCvJ2Ym1+0QJ4rPif/9cnh58Ox7P/HC6cOluzLfzur2eTWZfoUZoWaY+r0S4LlQzk
+         uPJqhDnHkdhQ8QpBVVNlTwMmISCA6ySq3GrAF1k3VRU4tJtEL/0I/O5T/Gt/gjBc6I4C
+         rQbA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=APJeqxx1IoAwqlACIkYdLqQOQ7fJeHQkuNzGq37uMmk=;
-        b=j47TpkPfBDspLCQXvIVJltOMhboXcjNgL/rD8HyHSLJV1584CMjl6TcAvLCcbjoM2/
-         jxii5Y9L69ytz7Zn71jm3H/XbBeg8iSAsR9BlTeEZekrQBwcLB+/kTZGPKJ97rPiHo1x
-         6sBc0msFnTRi2Yk12/5UXF0dFWWv+GfbIBdl6saOyjsmJV4+U8rnZbAZxoNZrmLWfdOF
-         WoZPyQupgK/zcPo/P8ZmcKmjOBbFmS53vwOOjwddUZn27BMNXteIGUVVPxpXPub/W+wK
-         GQ8eMJKx/pC/8L2pb0CEZvyvENFk8VLj4QaHJffAuxt4OvKn/SLF873oZjyeDYO8Kjmh
-         yp4A==
+        bh=76oUaGNBpEtZGCiEBb2Kukh/b6klqUGmM4emU92mS6g=;
+        b=PxeGNi2sZ0ShTMQYbvwDN0VmWTCmtypAw54xH86pKxlQ6FrzeGYvg05hS08E8I4yww
+         pPMrXe8lJgncLP2ATg+qIWfkMKCut50MnhU6omplMYl2DWSTcNV909g7FDMHJNBLudZS
+         o9ZCG5wVUXPjGWFmqBKnqOMimGEBMNmU3rAE4rJopj7w2Q7eS9YyCIk7nm5Xj3tzdH7J
+         WHO4J/bUqoOYQicM9KsxC0AJrkH4IzmLBwwoyyA2n4bH47Bj1yTSwxb1hEPpYSud1IA+
+         +R6HWS7vN8HJmFXMjogFpkthxNmf4bNBPP2T2ywzzhWPuDzyJ8AFB55TAOh+j+4vrZqV
+         mOnA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Marcin Nowakowski <marcin.nowakowski@imgtec.com>,
+	linux-mips@linux-mips.org,
+	Ralf Baechle <ralf@linux-mips.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 210/310] net: phy: avoid genphy_aneg_done() for PHYs without clause 22 support
-Date: Wed, 11 Apr 2018 20:35:49 +0200
-Message-Id: <20180411183631.598025958@linuxfoundation.org>
+Subject: [PATCH 4.9 219/310] MIPS: mm: adjust PKMAP location
+Date: Wed, 11 Apr 2018 20:35:58 +0200
+Message-Id: <20180411183631.971996975@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476246644672781?=
-X-GMAIL-MSGID: =?utf-8?q?1597477703201562942?=
+X-GMAIL-THRID: =?utf-8?q?1597476772918023344?=
+X-GMAIL-MSGID: =?utf-8?q?1597477700218676494?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,40 +51,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
 
 
-[ Upstream commit 41408ad519f7a2a1c5229e61f2a97f4df1b61adc ]
+[ Upstream commit c56e7a4c3e77f6fbd9b55c06c14eda65aae58958 ]
 
-Avoid calling genphy_aneg_done() for PHYs that do not implement the
-Clause 22 register set.
+Space reserved for PKMap should span from PKMAP_BASE to FIXADDR_START.
+For large page sizes this is not the case as eg. for 64k pages the range
+currently defined is from 0xfe000000 to 0x102000000(!!) which obviously
+isn't right.
+Remove the hardcoded location and set the BASE address as an offset from
+FIXADDR_START.
 
-Clause 45 PHYs may implement the Clause 22 register set along with the
-Clause 22 extension MMD.  Hence, we can't simply block access to the
-Clause 22 functions based on the PHY being a Clause 45 PHY.
+Since all PKMAP ptes have to be placed in a contiguous memory, ensure
+that this is the case by placing them all in a single page. This is
+achieved by aligning the end address to pkmap pages count pages.
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/15950/
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/phy.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/mips/include/asm/pgtable-32.h |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -148,6 +148,12 @@ static inline int phy_aneg_done(struct p
- 	if (phydev->drv->aneg_done)
- 		return phydev->drv->aneg_done(phydev);
+--- a/arch/mips/include/asm/pgtable-32.h
++++ b/arch/mips/include/asm/pgtable-32.h
+@@ -18,6 +18,10 @@
  
-+	/* Avoid genphy_aneg_done() if the Clause 45 PHY does not
-+	 * implement Clause 22 registers
-+	 */
-+	if (phydev->is_c45 && !(phydev->c45_ids.devices_in_package & BIT(0)))
-+		return -EINVAL;
+ #include <asm-generic/pgtable-nopmd.h>
+ 
++#ifdef CONFIG_HIGHMEM
++#include <asm/highmem.h>
++#endif
 +
- 	return genphy_aneg_done(phydev);
- }
+ extern int temp_tlb_entry;
  
+ /*
+@@ -61,7 +65,8 @@ extern int add_temporary_entry(unsigned
+ 
+ #define VMALLOC_START	  MAP_BASE
+ 
+-#define PKMAP_BASE		(0xfe000000UL)
++#define PKMAP_END	((FIXADDR_START) & ~((LAST_PKMAP << PAGE_SHIFT)-1))
++#define PKMAP_BASE	(PKMAP_END - PAGE_SIZE * LAST_PKMAP)
+ 
+ #ifdef CONFIG_HIGHMEM
+ # define VMALLOC_END	(PKMAP_BASE-2*PAGE_SIZE)
