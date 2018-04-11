@@ -1,101 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752944AbeDKPs1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 11:48:27 -0400
-Received: from mga09.intel.com ([134.134.136.24]:46838 "EHLO mga09.intel.com"
+        id S1753172AbeDKPt5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 11:49:57 -0400
+Received: from 8bytes.org ([81.169.241.247]:50236 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751491AbeDKPs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 11:48:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,436,1517904000";
-   d="scan'208";a="33506866"
-Subject: Re: [PATCH v3 4/4] mm/sparse: Optimize memmap allocation during
- sparse_init()
-To: Baoquan He <bhe@redhat.com>
-References: <20180228032657.32385-1-bhe@redhat.com>
- <20180228032657.32385-5-bhe@redhat.com>
- <5dd3942a-cf66-f749-b1c6-217b0c3c94dc@intel.com>
- <20180408082038.GB19345@localhost.localdomain>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        pagupta@redhat.com, linux-mm@kvack.org,
-        kirill.shutemov@linux.intel.com
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <7cc53287-4570-84d6-502c-c3dfbd279b78@intel.com>
-Date: Wed, 11 Apr 2018 08:48:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752804AbeDKPt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 11:49:56 -0400
+Date: Wed, 11 Apr 2018 17:49:53 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: [git pull] IOMMU Updates for Linux v4.17
+Message-ID: <20180411154945.44ywamihmo7yb6oe@8bytes.org>
 MIME-Version: 1.0
-In-Reply-To: <20180408082038.GB19345@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/08/2018 01:20 AM, Baoquan He wrote:
-> On 04/06/18 at 07:50am, Dave Hansen wrote:
->> The code looks fine to me.  It's a bit of a shame that there's no
->> verification to ensure that idx_present never goes beyond the shiny new
->> nr_present_sections. 
-> 
-> This is a good point. Do you think it's OK to replace (section_nr <
-> NR_MEM_SECTIONS) with (section_nr < nr_present_sections) in below
-> for_each macro? This for_each_present_section_nr() is only used
-> during sparse_init() execution.
-> 
-> #define for_each_present_section_nr(start, section_nr)          \
->         for (section_nr = next_present_section_nr(start-1);     \
->              ((section_nr >= 0) &&                              \
->               (section_nr < NR_MEM_SECTIONS) &&                 \                                                                                 
->               (section_nr <= __highest_present_section_nr));    \
->              section_nr = next_present_section_nr(section_nr))
+Hi Linus,
 
-I was more concerned about the loops that "consume" the section maps.
-It seems like they might run over the end of the array.
+The following changes since commit 3eb2ce825ea1ad89d20f7a3b5780df850e4be274:
 
->>> @@ -583,6 +592,7 @@ void __init sparse_init(void)
->>>  	unsigned long *usemap;
->>>  	unsigned long **usemap_map;
->>>  	int size;
->>> +	int idx_present = 0;
->>
->> I wonder whether idx_present is a good name.  Isn't it the number of
->> consumed mem_map[]s or usemaps?
-> 
-> Yeah, in sparse_init(), it's the index of present memory sections, and
-> also the number of consumed mem_map[]s or usemaps. And I remember you
-> suggested nr_consumed_maps instead. seems nr_consumed_maps is a little
-> long to index array to make code line longer than 80 chars. How about
-> name it idx_present in sparse_init(), nr_consumed_maps in
-> alloc_usemap_and_memmap(), the maps allocation function? I am also fine
-> to use nr_consumed_maps for all of them.
+  Linux 4.16-rc7 (2018-03-25 12:44:30 -1000)
 
-Does the large array index make a bunch of lines wrap or something?  If
-not, I'd just use the long name.
+are available in the git repository at:
 
->>>  		if (!map) {
->>>  			ms->section_mem_map = 0;
->>> +			idx_present++;
->>>  			continue;
->>>  		}
->>>  
->>
->>
->> This hunk seems logically odd to me.  I would expect a non-used section
->> to *not* consume an entry from the temporary array.  Why does it?  The
->> error and success paths seem to do the same thing.
-> 
-> Yes, this place is the hardest to understand. The temorary arrays are
-> allocated beforehand with the size of 'nr_present_sections'. The error
-> paths you mentioned is caused by allocation failure of mem_map or
-> map_map, but whatever it's error or success paths, the sections must be
-> marked as present in memory_present(). Error or success paths happened
-> in alloc_usemap_and_memmap(), while checking if it's erorr or success
-> paths happened in the last for_each_present_section_nr() of
-> sparse_init(), and clear the ms->section_mem_map if it goes along error
-> paths. This is the key point of this new allocation way.
+  git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-updates-v4.17
 
-I think you owe some commenting because this is so hard to understand.
+for you to fetch changes up to d4f96fd5c249defda290299f9646287dd3df0803:
+
+  Merge branches 'x86/amd', 'x86/vt-d', 'arm/rockchip', 'arm/omap', 'arm/mediatek', 'arm/exynos', 'arm/renesas', 'arm/smmu' and 'core' into next (2018-03-29 15:24:40 +0200)
+
+----------------------------------------------------------------
+IOMMU Updates for Linux v4.17
+
+These updates come with:
+
+	- OF_IOMMU support for the Rockchip iommu driver so that it can
+	  use generic DT bindings
+
+	- Rework of locking in the AMD IOMMU interrupt remapping code to
+	  make it work better in RT kernels
+
+	- Support for improved iotlb flushing in the AMD IOMMU driver
+
+	- Support for 52-bit physical and virtual addressing in the
+	  ARM-SMMU
+
+	- Various other small fixes and cleanups
+
+----------------------------------------------------------------
+Biju Das (1):
+      dt-bindings: iommu: ipmmu-vmsa: Add device tree support for r8a774[35]
+
+Dmitry Safonov (2):
+      iommu/vt-d: Add __init for dmar_register_bus_notifier()
+      iommu/vt-d: Clean/document fault status flags
+
+Gary R Hook (1):
+      iommu/amd: Use dev_err to send events to the system log
+
+Jeffy Chen (10):
+      iommu/omap: Increase group ref in .device_group()
+      iommu/rockchip: Prohibit unbind and remove
+      iommu/rockchip: Fix error handling in probe
+      iommu/rockchip: Request irqs in rk_iommu_probe()
+      dt-bindings: iommu/rockchip: Add clock property
+      iommu/rockchip: Use IOMMU device for dma mapping operations
+      iommu/rockchip: Use OF_IOMMU to attach devices automatically
+      iommu/rockchip: Fix error handling in init
+      iommu/rockchip: Add runtime PM support
+      iommu/rockchip: Support sharing IOMMU between masters
+
+Joerg Roedel (2):
+      Merge branch 'for-joerg/arm-smmu/updates' of git://git.kernel.org/.../will/linux into arm/smmu
+      Merge branches 'x86/amd', 'x86/vt-d', 'arm/rockchip', 'arm/omap', 'arm/mediatek', 'arm/exynos', 'arm/renesas', 'arm/smmu' and 'core' into next
+
+Lu Baolu (2):
+      iommu/vt-d: Fix a potential memory leak
+      iommu/vt-d: Use real PASID for flush in caching mode
+
+Marc Zyngier (1):
+      iommu/rockchip: Perform a reset on shutdown
+
+Nate Watterson (1):
+      iommu/arm-smmu-v3: limit reporting of MSI allocation failures
+
+Robin Murphy (10):
+      iommu/exynos: Use generic group callback
+      iommu/arm-smmu-v3: Warn about missing IRQs
+      iommu/arm-smmu-v3: Clean up address masking
+      iommu/arm-smmu-v3: Clean up register definitions
+      iommu/arm-smmu-v3: Clean up table definitions
+      iommu/arm-smmu-v3: Clean up queue definitions
+      iommu/io-pgtable-arm: Support 52-bit physical address
+      iommu/arm-smmu-v3: Support 52-bit physical address
+      iommu/arm-smmu-v3: Support 52-bit virtual address
+      iommu/io-pgtable-arm: Avoid warning with 32-bit phys_addr_t
+
+Scott Wood (3):
+      iommu/amd: Use raw locks on atomic context paths
+      iommu/amd: Don't use dev_data in irte_ga_set_affinity()
+      iommu/amd: Avoid locking get_irq_table() from atomic context
+
+Sebastian Andrzej Siewior (10):
+      iommu/amd: Take into account that alloc_dev_data() may return NULL
+      iommu/amd: Turn dev_data_list into a lock less list
+      iommu/amd: Split domain id out of amd_iommu_devtable_lock
+      iommu/amd: Split irq_lookup_table out of the amd_iommu_devtable_lock
+      iommu/amd: Remove the special case from alloc_irq_table()
+      iommu/amd: Use `table' instead `irt' as variable name in amd_iommu_update_ga()
+      iommu/amd: Factor out setting the remap table for a devid
+      iommu/amd: Drop the lock while allocating new irq remap table
+      iommu/amd: Make amd_iommu_devtable_lock a spin_lock
+      iommu/amd: Return proper error code in irq_remapping_alloc()
+
+Shameer Kolothum (2):
+      ACPI/IORT: Add msi address regions reservation helper
+      iommu/dma: Add HW MSI(GICv3 ITS) address regions reservation
+
+Shaokun Zhang (1):
+      iommu/vt-d:Remove unused variable
+
+Suravee Suthikulpanit (2):
+      iommu: Do not return error code for APIs with size_t return type
+      iommu/amd: Add support for fast IOTLB flushing
+
+Tomasz Figa (4):
+      iommu/rockchip: Fix error handling in attach
+      iommu/rockchip: Use iopoll helpers to wait for hardware
+      iommu/rockchip: Fix TLB flush of secondary IOMMUs
+      iommu/rockchip: Control clocks needed to access the IOMMU
+
+Vivek Gautam (1):
+      iommu/io-pgtable: Use size_t return type for all foo_unmap
+
+Yong Wu (2):
+      iommu/mediatek: Move attach_device after iommu-group is ready for M4Uv1
+      iommu/mediatek: Fix protect memory setting
+
+ .../bindings/iommu/renesas,ipmmu-vmsa.txt          |   5 +-
+ .../devicetree/bindings/iommu/rockchip,iommu.txt   |   7 +
+ drivers/acpi/arm64/iort.c                          | 111 +++-
+ drivers/iommu/amd_iommu.c                          | 320 ++++++-----
+ drivers/iommu/amd_iommu_init.c                     |   2 +-
+ drivers/iommu/amd_iommu_types.h                    |   6 +-
+ drivers/iommu/arm-smmu-v3.c                        | 542 +++++++++----------
+ drivers/iommu/dma-iommu.c                          |   8 +-
+ drivers/iommu/dmar.c                               |   2 +-
+ drivers/iommu/exynos-iommu.c                       |  13 +-
+ drivers/iommu/intel-iommu.c                        |   6 +-
+ drivers/iommu/intel-svm.c                          |  17 +-
+ drivers/iommu/io-pgtable-arm-v7s.c                 |  21 +-
+ drivers/iommu/io-pgtable-arm.c                     |  91 ++--
+ drivers/iommu/io-pgtable.h                         |   4 +-
+ drivers/iommu/iommu.c                              |   6 +-
+ drivers/iommu/mtk_iommu.c                          |  15 +-
+ drivers/iommu/mtk_iommu.h                          |   1 +
+ drivers/iommu/mtk_iommu_v1.c                       |  54 +-
+ drivers/iommu/omap-iommu.c                         |   2 +-
+ drivers/iommu/rockchip-iommu.c                     | 592 +++++++++++----------
+ drivers/irqchip/irq-gic-v3-its.c                   |   3 +-
+ include/linux/acpi_iort.h                          |   7 +-
+ include/linux/intel-iommu.h                        |  12 +-
+ include/linux/iommu.h                              |  14 +-
+ 25 files changed, 1008 insertions(+), 853 deletions(-)
+
+Please pull.
+
+Thanks,
+
+	Joerg
