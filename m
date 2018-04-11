@@ -1,76 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753597AbeDKQAJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 12:00:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45664 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752664AbeDKQAI (ORCPT
+        id S1753738AbeDKQBG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 12:01:06 -0400
+Received: from smtprelay0042.hostedemail.com ([216.40.44.42]:49889 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752335AbeDKQBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 12:00:08 -0400
-Date: Wed, 11 Apr 2018 18:00:00 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Patrick Bellasi <patrick.bellasi@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>
-Subject: Re: [PATCH] sched/fair: schedutil: update only with all info
- available
-Message-ID: <20180411160000.GO4082@hirez.programming.kicks-ass.net>
-References: <20180406172835.20078-1-patrick.bellasi@arm.com>
- <CAKfTPtCkZ1x-LS7sfJ7K2cgsKK=hYnDo1Fi3toPcGT0331Vpog@mail.gmail.com>
- <20180410110412.GG14248@e110439-lin>
- <20180411151450.GK4043@hirez.programming.kicks-ass.net>
- <CAKfTPtC+-FR3ZD_t1vkGR2gVoUyxXpE=i4g9zqqLXu4jKKqgUA@mail.gmail.com>
- <20180411153710.GN4082@hirez.programming.kicks-ass.net>
- <CAKfTPtCNdxSmDfDO0Etf7fbYPeryrjdQChSGwMWxSRH8CcXqqg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtCNdxSmDfDO0Etf7fbYPeryrjdQChSGwMWxSRH8CcXqqg@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Wed, 11 Apr 2018 12:01:05 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:541:599:800:960:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:4321:5007:7576:10004:10400:10848:11026:11232:11473:11658:11914:12043:12438:12555:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21451:21627:30054:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:19,LUA_SUMMARY:none
+X-HE-Tag: goose81_436c11ed8d313
+X-Filterd-Recvd-Size: 1773
+Message-ID: <4690e30b3c4b97847123295f1994c6eafe4e0cbb.camel@perches.com>
+Subject: Re: [PATCH 2/2] input: touchscreen mc13xxx: Add mc34708 support
+From: Joe Perches <joe@perches.com>
+To: Lukasz Majewski <lukma@denx.de>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Date: Wed, 11 Apr 2018 09:01:01 -0700
+In-Reply-To: <20180411141340.30939-2-lukma@denx.de>
+References: <20180411141340.30939-1-lukma@denx.de>
+         <20180411141340.30939-2-lukma@denx.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.0-4 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 05:41:24PM +0200, Vincent Guittot wrote:
-> Yes. and to be honest I don't have any clues of the root cause :-(
-> Heiner mentioned that it's much better in latest linux-next but I
-> haven't seen any changes related to the code of those patches
+On Wed, 2018-04-11 at 16:13 +0200, Lukasz Majewski wrote:
+> From: Sascha Hauer <s.hauer@pengutronix.de>
+> 
+> The mc34708 has a different bit to enable pen detection. This
+> adds the driver data and devtype necessary to probe the device
+> and to distinguish between the mc13783 and the mc34708.
 
-Yeah, it's a bit of a puzzle. Now you touch nohz, and the patches in
-next that are most likely to have affected this are rjw's
-cpuidle-vs-nohz patches. The common demoninator being nohz.
+style trivia:
 
-Now I think rjw's patches will ensure we enter nohz _less_, they avoid
-stopping the tick when we expect to go idle for a short period only.
+> diff --git a/drivers/input/touchscreen/mc13783_ts.c b/drivers/input/touchscreen/mc13783_ts.c
+[]
+> @@ -96,6 +135,10 @@ static void mc13783_ts_report_sample(struct mc13783_ts_priv *priv)
+>  
+>  	cr0 = (cr0 + cr1) / 2;
+>  
+> +	if (priv->drvdata->type == MC13XXX_TYPE_MC34708)
+> +		if (cr0 > 4080)
+> +			cr0 = 0;
 
-So if your patch makes nohz go wobbly, going nohz less will make that
-better.
+For easy of reading, this multiple if block should either
+use braces around the first if like:
 
-Of course, I've no actual clue as to what that patch (it's the last one
-in the series, right?:
+	if (foo) {
+		if (bar)
+			single_statement;
+	}
 
-  31e77c93e432 ("sched/fair: Update blocked load when newly idle")
+or be written
 
-) does that is so offensive to that one machine. You never did manage to
-reproduce, right?
+	if (foo && bar)
+		single_statement;
 
-Could is be that for some reason the nohz balancer now takes a very long
-time to run?
-
-Could something like the following happen (and this is really flaky
-thinking here):
-
-last CPU goes idle, we enter idle_balance(), that kicks ilb, ilb runs,
-which somehow again triggers idle_balance and around we go?
-
-I'm not immediately seeing how that could happen, but if we do something
-daft like that we can tie up the CPU for a while, mostly with IRQs
-disabled, and that would be visible as that latency he sees.
+I generally prefer the latter style.
