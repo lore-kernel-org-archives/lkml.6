@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3190956-1523476314-2-6920362518079284467
+X-Cyrus-Session-Id: sloti22d1t05-3216147-1523476310-2-12612165404416585210
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES encada, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523476314; b=EAlM46k1cuPIH+27+8oxcoh3ZZiHl3A7r8wwulZB9jgq5GYDve
-    iyM6bcIV71X/GqtgUVW1ir/JEzFrw/yySK91RCaJFtn4M/n79D1h+NyEDW9SJpW9
-    omgdr3NnV+uOe3VF+M6InhGqO91CqNgDcOzc73/EarBDmmtVP1UCWOAqD0e+44lq
-    a+EKWr2KBFvy/ToTE6G9BuAZvWX9ld3DM9Am3xngSNL8RZSmZTcS0TkCDm8ND6Rn
-    tuyE78+aN+7y+gVcctyNP7+bek1KvrcSM2FRiKQxiU+NefThsO/NQUiamR0aRPpo
-    9dU6e3sn5/DzpgFsJhyMzjgNNKcvE8nf056w==
+    1523476309; b=rCNlkaF12lTBdLZXFstLfVgzrrSES9ctp3EpYtLZ1dvoPN8zG6
+    eNFkoD0UYuUnZqGJB4FagCX9nri+58hQD2GFs/+8FtGX18ND7J7cTIvQi7dSuTgq
+    N8iYStrA1tBhH5QWGdN+HYzKK7HxYXtmtSQ/zmrET5tHHdk4iL6FEa0+VGOQPqw5
+    mcMHwbU4xjhkrxfFZiJQH2v83H6W1OsGUfzr78x+ozjdb9hcEqUDKZxhIip3twBq
+    JN+tDxIYJ9cOAs0BUG3dueDsh/01vsML2oeBa95qPgJRmqT2PB0I16YXFTY64cUJ
+    ltuxcctmtofJQbyrv4/a05REYN2AvyCh5urQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523476314; bh=Ynn7vfZ0ooNi/al9TS4gPkHAzkHfLd
-    V7DsHH1QcefSk=; b=lXDCfWqv3K5MTmaplbhkFhmqfSx2qtgZMeLYs5j2HGwBRD
-    23KmgoKNy34cWAPvZJqgnlgjfOJHadfR8tv+PEAVwSVDgrJgg8guO1082HXOapV5
-    cMNrqsoodvZGitpZZ5F5rkV40r1hCMQJf4mmF0JnrxwRGgwgkImhg8rXzwPSjyYM
-    /UquXLss6XMwsp5CEFezk19whmTkQ7qR4vMqRGR0woVsZkZJ7Ov4z/HFPCKpiVfR
-    9PWHDg+auQf1sXmQWAL3fX/uVqGlRo3L9RqWEHoGfIZ2uWaW32Zi2eLTimVcFOEh
-    GDecKvDozyL3JE8hl8cxXPnieNvaSto5rSf1/Upw==
+    :list-id; s=fm2; t=1523476309; bh=EMiGmM6gOYJkj+M7JYzH2qHwkhe7WJ
+    Ra/XDe/Y+sk0E=; b=WZoaNZWjjdt2MPJIhsc6NibbLIifayIMU22a2gikA2Os9s
+    dxdiA7bHY86wHGuPQQFfpWuca0wwc0/oltL46MH2s0MAFmRVHqU0hVMksNY8weQR
+    IoBU/WcU1isEiWAaUuj3Mwi35JccNbiv5fcU2zjO7J22WjtfKvbHv9XiRn+/ZhVB
+    UXpAnPsnAVkJCpWH8qj8+8ME9gtnOqP7dP7UHtxtxs3IS5xp9gZ7YwFKBqWAZiN+
+    P7hm1UlZwl1qbyzTtgQVOAUHLxD5oQkTLlf7I+A5gJQ7Bt9rAT5NHVpCNSDWicru
+    MxmveOZZe4QK9QLfWaRV/tHGMpesEblJJQo2TYxg==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,32 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOU/MvIW9qf6K675g28SczF5itzrlhCGD1SHAer+5s9sN5kZQDqbP8ZHtjOJ58qWxHg9gJjhIPDEzLL/JG+MHa2QxhbFepQCEts8bBMiy4L8aHC6hdH8
-    NYyBnHmEMpFPzi7Y5EboKDHlAydu3oB9rXz090UZ7RLM094jdAOJIeF69tcOROSV2XEVSEmPTUdtdhIH42+8qrQU2BiuEbkr6OS1iAb7IhOhDo9nLrZzqiJQ
+X-CM-Envelope: MS4wfFEoWlfJdXF7CPaSRMuIMGAY8HpManOgRBtiVq9iLPS/Wzh0tKklyxx8wWSA6G0TaZmkI9oiwO3jusEfx7noTa1D3o0oCClorGGyuMtx1H/qy/mS7mhp
+    9s5yfpYjrYb8Fnmxbg/t8tcm9s3GzviIJaM0Pp0RhHxZy7Sc9Ora4VdVAW6qLyGVzliK33Y1mK3rlsfeA9zBYXwXc6RcczRj6NjpNCBTmGpAXkOUYlrJ6AdJ
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=CbDCq_QkAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=WP-OeG1ZIG9MrmokoloA:9 a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=iox4zFpeAAAA:8 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=drOt6m5kAAAA:8
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=NB6CG2mJGxnl6YEIGE4A:9 a=QEXdDO2ut3YA:10
+    a=WzC6qhA0u3u7Ye7llzcV:22 a=AjGcO6oz07-iQ99wixmX:22 a=RMMjzBEyIzXRtoq5n5K6:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754331AbeDKS6P (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:58:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36618 "EHLO
+        id S1754386AbeDKS6U (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:58:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36624 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933250AbeDKS6O (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:58:14 -0400
+        with ESMTP id S1755480AbeDKS6R (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:58:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Moni Shoua <monis@mellanox.com>,
-        Maor Gottlieb <maorg@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 127/310] net/mlx4_en: Change default QoS settings
-Date: Wed, 11 Apr 2018 20:34:26 +0200
-Message-Id: <20180411183627.926912620@linuxfoundation.org>
+Subject: [PATCH 4.9 128/310] VFS: close race between getcwd() and d_move()
+Date: Wed, 11 Apr 2018 20:34:27 +0200
+Message-Id: <20180411183627.974360341@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -95,87 +94,112 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Moni Shoua <monis@mellanox.com>
+From: NeilBrown <neilb@suse.com>
 
 
-[ Upstream commit a42b63c1ac1986f17f71bc91a6b0aaa14d4dae71 ]
+[ Upstream commit 61647823aa920e395afcce4b57c32afb51456cab ]
 
-Change the default mapping between TC and TCG as follows:
+d_move() will call __d_drop() and then __d_rehash()
+on the dentry being moved.  This creates a small window
+when the dentry appears to be unhashed.  Many tests
+of d_unhashed() are made under ->d_lock and so are safe
+from racing with this window, but some aren't.
+In particular, getcwd() calls d_unlinked() (which calls
+d_unhashed()) without d_lock protection, so it can race.
 
-Prio     |             TC/TCG
-         |      from             to
-         |    (set by FW)      (set by SW)
----------+-----------------------------------
-0        |      0/0              0/7
-1        |      1/0              0/6
-2        |      2/0              0/5
-3        |      3/0              0/4
-4        |      4/0              0/3
-5        |      5/0              0/2
-6        |      6/0              0/1
-7        |      7/0              0/0
+This races has been seen in practice with lustre, which uses d_move() as
+part of name lookup.  See:
+   https://jira.hpdd.intel.com/browse/LU-9735
+It could race with a regular rename(), and result in ENOENT instead
+of either the 'before' or 'after' name.
 
-These new settings cause that a pause frame for any prio stops
-traffic for all prios.
+The race can be demonstrated with a simple program which
+has two threads, one renaming a directory back and forth
+while another calls getcwd() within that directory: it should never
+fail, but does.  See:
+  https://patchwork.kernel.org/patch/9455345/
 
-Fixes: 564c274c3df0 ("net/mlx4_en: DCB QoS support")
-Signed-off-by: Moni Shoua <monis@mellanox.com>
-Signed-off-by: Maor Gottlieb <maorg@mellanox.com>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+We could fix this race by taking d_lock and rechecking when
+d_unhashed() reports true.  Alternately when can remove the window,
+which is the approach this patch takes.
 
+___d_drop() is introduce which does *not* clear d_hash.pprev
+so the dentry still appears to be hashed.  __d_drop() calls
+___d_drop(), then clears d_hash.pprev.
+__d_move() now uses ___d_drop() and only clears d_hash.pprev
+when not rehashing.
+
+Signed-off-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/en_dcb_nl.c |    5 +++++
- drivers/net/ethernet/mellanox/mlx4/en_netdev.c |    7 +++++++
- drivers/net/ethernet/mellanox/mlx4/mlx4_en.h   |    1 +
- 3 files changed, 13 insertions(+)
+ fs/dcache.c |   23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx4/en_dcb_nl.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_dcb_nl.c
-@@ -310,6 +310,7 @@ static int mlx4_en_ets_validate(struct m
- 		}
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -461,9 +461,11 @@ static void dentry_lru_add(struct dentry
+  * d_drop() is used mainly for stuff that wants to invalidate a dentry for some
+  * reason (NFS timeouts or autofs deletes).
+  *
+- * __d_drop requires dentry->d_lock.
++ * __d_drop requires dentry->d_lock
++ * ___d_drop doesn't mark dentry as "unhashed"
++ *   (dentry->d_hash.pprev will be LIST_POISON2, not NULL).
+  */
+-void __d_drop(struct dentry *dentry)
++static void ___d_drop(struct dentry *dentry)
+ {
+ 	if (!d_unhashed(dentry)) {
+ 		struct hlist_bl_head *b;
+@@ -479,12 +481,17 @@ void __d_drop(struct dentry *dentry)
  
- 		switch (ets->tc_tsa[i]) {
-+		case IEEE_8021QAZ_TSA_VENDOR:
- 		case IEEE_8021QAZ_TSA_STRICT:
- 			break;
- 		case IEEE_8021QAZ_TSA_ETS:
-@@ -347,6 +348,10 @@ static int mlx4_en_config_port_scheduler
- 	/* higher TC means higher priority => lower pg */
- 	for (i = IEEE_8021QAZ_MAX_TCS - 1; i >= 0; i--) {
- 		switch (ets->tc_tsa[i]) {
-+		case IEEE_8021QAZ_TSA_VENDOR:
-+			pg[i] = MLX4_EN_TC_VENDOR;
-+			tc_tx_bw[i] = MLX4_EN_BW_MAX;
-+			break;
- 		case IEEE_8021QAZ_TSA_STRICT:
- 			pg[i] = num_strict++;
- 			tc_tx_bw[i] = MLX4_EN_BW_MAX;
---- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-@@ -3125,6 +3125,13 @@ int mlx4_en_init_netdev(struct mlx4_en_d
- 	priv->msg_enable = MLX4_EN_MSG_LEVEL;
- #ifdef CONFIG_MLX4_EN_DCB
- 	if (!mlx4_is_slave(priv->mdev->dev)) {
-+		u8 prio;
+ 		hlist_bl_lock(b);
+ 		__hlist_bl_del(&dentry->d_hash);
+-		dentry->d_hash.pprev = NULL;
+ 		hlist_bl_unlock(b);
+ 		/* After this call, in-progress rcu-walk path lookup will fail. */
+ 		write_seqcount_invalidate(&dentry->d_seq);
+ 	}
+ }
 +
-+		for (prio = 0; prio < IEEE_8021QAZ_MAX_TCS; ++prio) {
-+			priv->ets.prio_tc[prio] = prio;
-+			priv->ets.tc_tsa[prio]  = IEEE_8021QAZ_TSA_VENDOR;
-+		}
++void __d_drop(struct dentry *dentry)
++{
++	___d_drop(dentry);
++	dentry->d_hash.pprev = NULL;
++}
+ EXPORT_SYMBOL(__d_drop);
+ 
+ void d_drop(struct dentry *dentry)
+@@ -2378,7 +2385,7 @@ EXPORT_SYMBOL(d_delete);
+ static void __d_rehash(struct dentry *entry)
+ {
+ 	struct hlist_bl_head *b = d_hash(entry->d_name.hash);
+-	BUG_ON(!d_unhashed(entry));
 +
- 		priv->dcbx_cap = DCB_CAP_DCBX_VER_CEE | DCB_CAP_DCBX_HOST |
- 			DCB_CAP_DCBX_VER_IEEE;
- 		priv->flags |= MLX4_EN_DCB_ENABLED;
---- a/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
-+++ b/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
-@@ -472,6 +472,7 @@ struct mlx4_en_frag_info {
- #define MLX4_EN_BW_MIN 1
- #define MLX4_EN_BW_MAX 100 /* Utilize 100% of the line */
+ 	hlist_bl_lock(b);
+ 	hlist_bl_add_head_rcu(&entry->d_hash, b);
+ 	hlist_bl_unlock(b);
+@@ -2815,9 +2822,9 @@ static void __d_move(struct dentry *dent
+ 	write_seqcount_begin_nested(&target->d_seq, DENTRY_D_LOCK_NESTED);
  
-+#define MLX4_EN_TC_VENDOR 0
- #define MLX4_EN_TC_ETS 7
+ 	/* unhash both */
+-	/* __d_drop does write_seqcount_barrier, but they're OK to nest. */
+-	__d_drop(dentry);
+-	__d_drop(target);
++	/* ___d_drop does write_seqcount_barrier, but they're OK to nest. */
++	___d_drop(dentry);
++	___d_drop(target);
  
- enum dcb_pfc_type {
+ 	/* Switch the names.. */
+ 	if (exchange)
+@@ -2829,6 +2836,8 @@ static void __d_move(struct dentry *dent
+ 	__d_rehash(dentry);
+ 	if (exchange)
+ 		__d_rehash(target);
++	else
++		target->d_hash.pprev = NULL;
+ 
+ 	/* ... and switch them in the tree */
+ 	if (IS_ROOT(dentry)) {
