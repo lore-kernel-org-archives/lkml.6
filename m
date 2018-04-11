@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479692-2-15990320309405692815
+X-Cyrus-Session-Id: sloti22d1t05-3303684-1523479687-2-8400405482369063162
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479691; b=qSZIqMtktsZUTLQLOmGQsuwDYM4ItqzFzFJbxburLED/GrlAIn
-    WtVLRW4eUeNFoSTUgUHcxH0FbRwdSdYHLhwQ6Lm2EUAMCYn/cLCEcedO2RHoAQoy
-    I2HuNPF9ddYZ7bZilPVAlFv6cogyGH3/xop0nCbQ29GppPO3Jg4pfDli1I0a/Qfj
-    X4jFm9FZsCziDM/QhbVR9cayi88CZZiC9s+foA+9oFfrt9ORemvf7Q3yy13nyKVZ
-    N0a6WhdmD/x0tHD6d9jjLtbWY7ulI80IJGV3K7WW5xODRVlyYhvVXm5Y1+W7B+74
-    HVqZR9SW6JnFVCyvu7YGU9b+3sceOT68AGjQ==
+    1523479687; b=BBkvrjr0iGUipL9aPtko9h0m8mZbNQSWM11z4U5LwS6cpttmOg
+    GG3fkEfIvF1wgurIPyA6ULSqoV/UJD2ozumI8sJCCu4RA4s/Xuo5yfsiMurLfOop
+    fp0Tcn7qbxV3PNITA0LijUxlovAdKK1R77h9pDMUni7msI/8GYcTRvLlBbYNF9Fz
+    cN0gxqeDbTUPzwolMAk1aV7XdcEe1dpY3d16Iz8V16uKE1RFezVPVZGPTZWOAjwZ
+    Ie+/sKVyDOVympoXABmDIpQsuTv1XemUQ2Hv/dWBAEZaR56BWVvgb2hi5DUMAT25
+    tXp6nhZsD/PKIQl62KqralZ7/XaZ53EY/d/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479691; bh=R+H8zHH8mNDX/GGJy+Qu4vYIp4nk1f
-    2Smp1kw5soHwQ=; b=tJ3YYmUYBtHLpJZ/Qi6V/q9qDPYDmE7SuMLn1/Q4yT+rvZ
-    u3slosZ4zSU1XF1NkhOaQl37vmRJWzLOB2Kr2ePjXT6JUX4aDm1xZ0Bvy1Zzhx4x
-    5rWCh17pweyKgDHzPuAmiPUXbHT7BMrwcYFkP/H+E65qEv5LSZqtB9H1qknA+boB
-    WcSrjrAMIFrU1FR/AmhQuK780mfWgBJJW6asR3/Q7fb4yZJNUIy5YtNi5+jrc97K
-    LZLA1FgBNbsBFSGRNGFfhRwkUxJuDVcEvH4/EXVipnUSZXBq70usH/A1fa4++JhQ
-    GsVf7PR/1dwRj1Bt0LV0OQxEzcDtliqlLThid/5Q==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479687; bh=0KdeANSGxlV2S+PsezdIPhzQdNteLF
+    q8J/nal1Tkigs=; b=qMXRxoTr1dStGsoM4uxfFYDcAdImVpnGSBdkb8Appa/5V+
+    ZKn1fpMYHpIvAWWgckgggtyiMrzkY3W+Zw9Ru/E1s11BNjhC4Qde0+xsMtZPXsD4
+    EwLyWaE0auRrzDFR1Dy8+8uuY2lCIGQzKhioeZJFOcIEanBIiOupcm2FpjbnuI2j
+    HvAZr6CIGImYu8nWb4edOcW2uJM0l0iIPhWmjepWWy9PxRZAerz0ZT3PrCDhAlQm
+    2gQa/xIX8F0vK67T1Xuyzq9DBNB/WVuQZ+0N3VmhMhRQS5rUY94bx8EK0ocQpB/w
+    WxlCPvBkA0DZynaCMU9oHRe9ZYIuGXg8Nhyph0nA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,31 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKHrvSvv8ydFViTZyBGFFcWdM0habau0+8czJHAOYri3Rnc384PCQoUShHSQArmQazQOTm6zyjnu2ulln0/yLaYkptvrRg+pXirF2lpOPJ+Hhtd4eSVC
-    S5SaCKX9Ztx/DJQ83Pnn5cGizUlNJ5CeW/4EDrFGTFkeCxW7bFg+UGNpDIhmqIoGEc7H5BjHz/lRgSbsA1Gja5LbTtr3HcQBJeZp1OoiyDXfdgtx8MbmrUIo
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJ0jt9Kblko1d6UaJcXgOt2ihdPvBE5bmXCcZAlCKvAqDxzFoXNE5PJcWlYcFm3ICVYgktNpSRPMBV4WcHFL0qs2bGFdPkOkwaynkwiBJd+GZo7+GRQC
+    jVrSoed/gLYlwM0MrVa92VpkpkkPtZI2owbqDhRCJLm8x8EcNRgK0XcJfTiY1BwLem4jHJkvDorSGaghNAEM3lzF8jZbhZBy5tHEnc4eEcTJ534sxNudlMUH
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=cm27Pg_UAAAA:8 a=pGLkceISAAAA:8 a=LpQP-O61AAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=mszs2ZNTGQiz2OjqG5AA:9 a=IMEryRM2TtodLh39:21
-    a=BFySnzN-hxhcZp44:21 a=QEXdDO2ut3YA:10 a=xmb-EsYY8bH0VWELuYED:22
-    a=pioyyrs4ZptJ924tMmac:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=3HDBlxybAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=S-gNZk8OdBwLLumHJ_4A:9 a=QEXdDO2ut3YA:10 a=laEoCiVfU_Unz3mSdgXN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755725AbeDKSqZ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:46:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58896 "EHLO
+        id S1756544AbeDKUrx (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:47:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58910 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754987AbeDKSqX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:46:23 -0400
+        with ESMTP id S1755727AbeDKSq0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:46:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Micay <danielmicay@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Liping Zhang <zlpnobody@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 060/190] ray_cs: Avoid reading past end of buffer
-Date: Wed, 11 Apr 2018 20:35:06 +0200
-Message-Id: <20180411183553.829823073@linuxfoundation.org>
+Subject: [PATCH 4.4 069/190] netfilter: ctnetlink: fix incorrect nf_ct_put during hash resize
+Date: Wed, 11 Apr 2018 20:35:15 +0200
+Message-Id: <20180411183554.349904185@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -95,47 +93,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Liping Zhang <zlpnobody@gmail.com>
 
 
-[ Upstream commit e48d661eb13f2f83861428f001c567fdb3f317e8 ]
+[ Upstream commit fefa92679dbe0c613e62b6c27235dcfbe9640ad1 ]
 
-Using memcpy() from a buffer that is shorter than the length copied means
-the destination buffer is being filled with arbitrary data from the kernel
-rodata segment. In this case, the source was made longer, since it did not
-match the destination structure size. Additionally removes a needless cast.
+If nf_conntrack_htable_size was adjusted by the user during the ct
+dump operation, we may invoke nf_ct_put twice for the same ct, i.e.
+the "last" ct. This will cause the ct will be freed but still linked
+in hash buckets.
 
-This was found with the future CONFIG_FORTIFY_SOURCE feature.
+It's very easy to reproduce the problem by the following commands:
+  # while : ; do
+  echo $RANDOM > /proc/sys/net/netfilter/nf_conntrack_buckets
+  done
+  # while : ; do
+  conntrack -L
+  done
+  # iperf -s 127.0.0.1 &
+  # iperf -c 127.0.0.1 -P 60 -t 36000
 
-Cc: Daniel Micay <danielmicay@gmail.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+After a while, the system will hang like this:
+  NMI watchdog: BUG: soft lockup - CPU#1 stuck for 22s! [bash:20184]
+  NMI watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [iperf:20382]
+  ...
+
+So at last if we find cb->args[1] is equal to "last", this means hash
+resize happened, then we can set cb->args[1] to 0 to fix the above
+issue.
+
+Fixes: d205dc40798d ("[NETFILTER]: ctnetlink: fix deadlock in table dumping")
+Signed-off-by: Liping Zhang <zlpnobody@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ray_cs.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ net/netfilter/nf_conntrack_netlink.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ray_cs.c
-+++ b/drivers/net/wireless/ray_cs.c
-@@ -247,7 +247,10 @@ static const UCHAR b4_default_startup_pa
- 	0x04, 0x08,		/* Noise gain, limit offset */
- 	0x28, 0x28,		/* det rssi, med busy offsets */
- 	7,			/* det sync thresh */
--	0, 2, 2			/* test mode, min, max */
-+	0, 2, 2,		/* test mode, min, max */
-+	0,			/* rx/tx delay */
-+	0, 0, 0, 0, 0, 0,	/* current BSS id */
-+	0			/* hop set */
- };
+--- a/net/netfilter/nf_conntrack_netlink.c
++++ b/net/netfilter/nf_conntrack_netlink.c
+@@ -887,8 +887,13 @@ restart:
+ 	}
+ out:
+ 	local_bh_enable();
+-	if (last)
++	if (last) {
++		/* nf ct hash resize happened, now clear the leftover. */
++		if ((struct nf_conn *)cb->args[1] == last)
++			cb->args[1] = 0;
++
+ 		nf_ct_put(last);
++	}
  
- /*===========================================================================*/
-@@ -598,7 +601,7 @@ static void init_startup_params(ray_dev_
- 	 *    a_beacon_period = hops    a_beacon_period = KuS
- 	 *//* 64ms = 010000 */
- 	if (local->fw_ver == 0x55) {
--		memcpy((UCHAR *) &local->sparm.b4, b4_default_startup_parms,
-+		memcpy(&local->sparm.b4, b4_default_startup_parms,
- 		       sizeof(struct b4_startup_params));
- 		/* Translate sane kus input values to old build 4/5 format */
- 		/* i = hop time in uS truncated to 3 bytes */
+ 	return skb->len;
+ }
