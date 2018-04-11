@@ -1,78 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756835AbeDKTpt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 15:45:49 -0400
-Received: from ja.ssi.bg ([178.16.129.10]:38812 "EHLO ja.ssi.bg"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754733AbeDKTpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 15:45:47 -0400
-Date: Wed, 11 Apr 2018 22:45:23 +0300 (EEST)
-From: Julian Anastasov <ja@ssi.bg>
-To: Dmitry Vyukov <dvyukov@google.com>
-cc: syzbot <syzbot+3c43eecd7745a5ce1640@syzkaller.appspotmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        David Miller <davem@davemloft.net>, David Ahern <dsahern@gmail.com>,
-        Florian Westphal <fw@strlen.de>, Jiri Benc <jbenc@redhat.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>, Xin Long <lucien.xin@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: WARNING: possible recursive locking detected
-In-Reply-To: <CACT4Y+Z3Ktnio1B0TAZpx8HOEfd2evwyQqbMeWGvEkzh0yfhKQ@mail.gmail.com>
-Message-ID: <alpine.LFD.2.20.1804112241120.3922@ja.home.ssi.bg>
-References: <94eb2c056114525fed05699315f1@google.com> <CACT4Y+Z3Ktnio1B0TAZpx8HOEfd2evwyQqbMeWGvEkzh0yfhKQ@mail.gmail.com>
-User-Agent: Alpine 2.20 (LFD 67 2015-01-07)
+        id S1756842AbeDKTre (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 15:47:34 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39994 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755829AbeDKTrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 15:47:33 -0400
+Date: Wed, 11 Apr 2018 16:47:29 -0300
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+To: Yonghong Song <yhs@fb.com>
+Cc: Alexei Starovoitov <ast@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Miller <davem@davemloft.net>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        acme@kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: bpf: handling non BPF register names in inline assembly with
+ -target bpf
+Message-ID: <20180411194729.GD12166@redhat.com>
+References: <c8b0b3c0-6687-1be2-66d0-95b20662145d@fb.com>
+ <20180411183902.GC12166@redhat.com>
+ <613f0a0d-c433-8f4d-dcc1-c9889deae39e@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <613f0a0d-c433-8f4d-dcc1-c9889deae39e@fb.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Em Wed, Apr 11, 2018 at 12:22:37PM -0700, Yonghong Song escreveu:
+> Look at test bpf-script-test-kbuild.c, I think you can drop
+> uapi/asm/ptrace.h from include file list. This way, you do not need
+> __BPF__ in x86/include/asm/asm.h. At the same time, you can
+> remove __BPF__ as well.
 
-	Hello,
+That's even better, I'll try that approach, that code was done by
+someone else, so I ended up not considering looking if removing a
+unnecessary header would fix the issue, I'll check and if that works
+I'll revert the patch that introduced that ifndef __BPF__.
 
-On Wed, 11 Apr 2018, Dmitry Vyukov wrote:
-
-> On Wed, Apr 11, 2018 at 4:02 PM, syzbot
-> <syzbot+3c43eecd7745a5ce1640@syzkaller.appspotmail.com> wrote:
-> > Hello,
-> >
-> > syzbot hit the following crash on upstream commit
-> > b284d4d5a6785f8cd07eda2646a95782373cd01e (Tue Apr 10 19:25:30 2018 +0000)
-> > Merge tag 'ceph-for-4.17-rc1' of git://github.com/ceph/ceph-client
-> > syzbot dashboard link:
-> > https://syzkaller.appspot.com/bug?extid=3c43eecd7745a5ce1640
-> >
-> > So far this crash happened 3 times on upstream.
-> > C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5103706542440448
-> > syzkaller reproducer:
-> > https://syzkaller.appspot.com/x/repro.syz?id=5641659786199040
-> > Raw console output:
-> > https://syzkaller.appspot.com/x/log.txt?id=5099510896263168
-> > Kernel config:
-> > https://syzkaller.appspot.com/x/.config?id=-1223000601505858474
-> > compiler: gcc (GCC) 8.0.1 20180301 (experimental)
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+3c43eecd7745a5ce1640@syzkaller.appspotmail.com
-> > It will help syzbot understand when the bug is fixed. See footer for
-> > details.
-> > If you forward the report, please keep this part and the footer.
-> 
-> #syz dup: possible deadlock in rtnl_lock (5)
-
-	Yes, patch is now in the "nf" tree, so all these
-lockups around start_sync_thread should be resolved soon...
-
-> > IPVS: sync thread started: state = BACKUP, mcast_ifn = lo, syncid = 0, id =
-> > 0
-> > IPVS: stopping backup sync thread 4546 ...
-> >
-> > ============================================
-> > IPVS: stopping backup sync thread 4559 ...
-> > WARNING: possible recursive locking detected
-
-Regards
-
---
-Julian Anastasov <ja@ssi.bg>
+- Arnaldo
