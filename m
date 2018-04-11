@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479878-2-7574871666133376338
+X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479869-2-13027370670784880958
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479877; b=Dlt6zQ3JnxEqNjJU9ouj52nLgwQBWIN1ZP3srLJ2q8Zblv4zKO
-    pno+ErPLG7kiNmctvTicU36qnHYQXTIg85dXlei6Gm8vtgnHfFRFDUFXuM6gN5DF
-    FSDtnjkyJzznzvagRjXOz9C3d+RUZNlFEC7lnaE4i8CBJD9Wy3Ol4BBitrrDMdgI
-    Dn3idxtqHHnTTqzHHAxghxonsPFZLYK3tRH84pI0LqFf80E/OzxiiUGk9dPEXAB9
-    bXpKL0NFr26sA8lR8BicN6jWMvRQR1MfJKe/xEfU5uThd6laSt8joKqlmXEzvTsM
-    W4xZl0z3bDEU+/jET+ueZUGej8E5M7tt+2uw==
+    1523479869; b=qqKtClTR73mWDY9vKDPnyp3pl4y3baCw1CIk6FS4dOvBdRNsjS
+    0g8NzaKJDP7/NdXHbl5tv0yUcPKnQGa1n1bKvL9/od+1G/jeMHGU3qiEL65FI3i6
+    iUVLYgCFBto66+DKZbxKZ9tLy+MYXSybSkKFswryV9lSxEgxzdnxnqnltonRE8lF
+    QRqecXsJlA938kRAJLV7rMdKApIPqKv/BC8lY+tqrRt2JW/fT18ceDuaDN6vMPfQ
+    PzKKE5DLstJnsc2h6NYYeKKy+3tFH1OnEoMGWuolaVHepkRS2mbx9Zub1GhXXUgM
+    CYmB0Xm28lX8FPckgFXgn7rBXRCk5UgdYHfw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479877; bh=h7aP7L1xvk/qvC04XbWoWLbF3RDl/g
-    DdVcpFnEPaQC0=; b=JGGAmKveQIk3I7IFVYgSlTRRWRNqaYII5XbIi0xLBa01dr
-    BZyN+hur2i4T2d1oM1DVWA3PprzONTiE6gO6qEBpcaEwX2plCDC9zb+lvBfQr1Lr
-    s++R64HpbphIlGVU+KB84MLgE5+38uqo0ThEtzScWMQwlhI9IF+DfUuusD9nLrux
-    +6DPfSyQxzucb/1226OBgerX8w2JPuka3rdxO/v8sOu6+UkpKRRT0GOian+arLxH
-    LIQd1XhbOtyTNy4E2S2Z/ovYujho1O9Gr7rXJomOWtss8pR3o47VVTycKpISnFsm
-    CU3KfKFYJU9HrA2SMTO6Cjg7aK7BMo4lLR83aHgQ==
+    :list-id; s=fm2; t=1523479869; bh=M+c3tt4+80N+BcnaW3Oqg87HWxl0iH
+    qWzHUQSOmjXVI=; b=k3gwULWG0sk74U1b9K9k8/Y0urEnZ7YQRHuOvM3FFdztjA
+    +ZfxnlKEWNyCUwOMOKNtGsifgTnWOFznkvybiVcfXdJ/MiiDy6TJB9OOSbQPaHOB
+    qHJomDJ7NO8LLnU0sqAJlIpBxOaCddLV+y1bTIgB0AeuTGIXDwU+cw0HgeoZZT5h
+    prfvZzj2PxOcrnGOOg4u67xgQG6Wlv4kvQzChTnqyBpV53TFCNqB8uwaKWLfTDYa
+    OOFuFNGTNlbsPm82qaQKHFQ42PveFItZQTihOQru8cvTckT624blq8fzQ4VLajE2
+    tkS5Wy0Hv9PC6IA/d6FcZc5REtznlVqD025K/9Qw==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,30 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEHWnFKltAXteBe4COB3x0BaCP3CI25A/gG3m1z1axmvRgqpxFCucv/P+TOMrYYMuNnoK8YW7OW4zKi6RS1Ca6EuLJ7CT0z880fS9Cl2ALVvzNdwcLQV
-    Ewhhn4X/9HtI9RHvXVj5e6xH0+Jz0f2YgcX8grM0FBteeS5Gih/ukJVX5YlOfTT04hUAOjrL8XWrMBVLm5otg7kd0geAEpDn9zB5wvdH3f/Qv+2zUCR1x+06
+X-CM-Envelope: MS4wfIHHvbkjs+vp9X3J1g2qtkFODdEc0EKKvVsIpEamp+E3ygudXOjgbKm3K+s+3DntNaSnJlwzMwR/Y6xpZI2Etre/R6W44e9dXRSoZgMH1Np+8SPolOhy
+    g2dNLcgMx6wrjKhbezdsu4KDsZy1b6CC8mqPG/5trO4fkNQ4Fz0rOR0C7VDk65Ykc8Si3c1ntx7HInZ6DDY7q+7IIgV6091vv6/6yQL41wfiqxMzOQ+fqyEC
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=voM4FWlXAAAA:8 a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=usRbeA9v8uJKUopLpoQA:9 a=geZljYdC0cXtsTJ8:21 a=_S9BWLtnSfCgJfAo:21
-    a=QEXdDO2ut3YA:10 a=IC2XNlieTeVoXbcui8wp:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=uAS_uZ3KAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=LmmgGHosWJ0mTfuy6g4A:9
+    a=QEXdDO2ut3YA:10 a=_KzJdI3Ai4rueFdl_XLO:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754801AbeDKSpm (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:45:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58662 "EHLO
+        id S1755836AbeDKUux (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:50:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58710 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932321AbeDKSpk (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:40 -0400
+        with ESMTP id S1755591AbeDKSps (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:48 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Breno Leitao <breno.leitao@gmail.com>,
+        Michael Neuling <mikey@neuling.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 051/190] powerpc/mm: Fix virt_addr_valid() etc. on 64-bit hash
-Date: Wed, 11 Apr 2018 20:34:57 +0200
-Message-Id: <20180411183553.284311483@linuxfoundation.org>
+Subject: [PATCH 4.4 053/190] selftests/powerpc: Fix TM resched DSCR test with some compilers
+Date: Wed, 11 Apr 2018 20:34:59 +0200
+Message-Id: <20180411183553.414119907@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -98,60 +95,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Michael Ellerman <mpe@ellerman.id.au>
 
 
-[ Upstream commit e41e53cd4fe331d0d1f06f8e4ed7e2cc63ee2c34 ]
+[ Upstream commit fe06fe860250a4f01d0eaf70a2563b1997174a74 ]
 
-virt_addr_valid() is supposed to tell you if it's OK to call virt_to_page() on
-an address. What this means in practice is that it should only return true for
-addresses in the linear mapping which are backed by a valid PFN.
+The tm-resched-dscr test has started failing sometimes, depending on
+what compiler it's built with, eg:
 
-We are failing to properly check that the address is in the linear mapping,
-because virt_to_pfn() will return a valid looking PFN for more or less any
-address. That bug is actually caused by __pa(), used in virt_to_pfn().
+  test: tm_resched_dscr
+  Check DSCR TM context switch: tm-resched-dscr: tm-resched-dscr.c:76: test_body: Assertion `rv' failed.
+  !! child died by signal 6
 
-eg: __pa(0xc000000000010000) = 0x10000  # Good
-    __pa(0xd000000000010000) = 0x10000  # Bad!
-    __pa(0x0000000000010000) = 0x10000  # Bad!
+When it fails we see that the compiler doesn't initialise rv to 1 before
+entering the inline asm block. Although that's counter intuitive, it
+is allowed because we tell the compiler that the inline asm will write
+to rv (using "=r"), meaning the original value is irrelevant.
 
-This started happening after commit bdbc29c19b26 ("powerpc: Work around gcc
-miscompilation of __pa() on 64-bit") (Aug 2013), where we changed the definition
-of __pa() to work around a GCC bug. Prior to that we subtracted PAGE_OFFSET from
-the value passed to __pa(), meaning __pa() of a 0xd or 0x0 address would give
-you something bogus back.
+Marking it as a read/write parameter would presumably work, but it seems
+simpler to fix it by setting the initial value of rv in the inline asm.
 
-Until we can verify if that GCC bug is no longer an issue, or come up with
-another solution, this commit does the minimal fix to make virt_addr_valid()
-work, by explicitly checking that the address is in the linear mapping region.
-
-Fixes: bdbc29c19b26 ("powerpc: Work around gcc miscompilation of __pa() on 64-bit")
+Fixes: 96d016108640 ("powerpc: Correct DSCR during TM context switch")
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Reviewed-by: Paul Mackerras <paulus@ozlabs.org>
-Reviewed-by: Balbir Singh <bsingharora@gmail.com>
-Tested-by: Breno Leitao <breno.leitao@gmail.com>
+Acked-by: Michael Neuling <mikey@neuling.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/include/asm/page.h |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ tools/testing/selftests/powerpc/tm/tm-resched-dscr.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/include/asm/page.h
-+++ b/arch/powerpc/include/asm/page.h
-@@ -132,7 +132,19 @@ extern long long virt_phys_offset;
- #define virt_to_pfn(kaddr)	(__pa(kaddr) >> PAGE_SHIFT)
- #define virt_to_page(kaddr)	pfn_to_page(virt_to_pfn(kaddr))
- #define pfn_to_kaddr(pfn)	__va((pfn) << PAGE_SHIFT)
-+
-+#ifdef CONFIG_PPC_BOOK3S_64
-+/*
-+ * On hash the vmalloc and other regions alias to the kernel region when passed
-+ * through __pa(), which virt_to_pfn() uses. That means virt_addr_valid() can
-+ * return true for some vmalloc addresses, which is incorrect. So explicitly
-+ * check that the address is in the kernel region.
-+ */
-+#define virt_addr_valid(kaddr) (REGION_ID(kaddr) == KERNEL_REGION_ID && \
-+				pfn_valid(virt_to_pfn(kaddr)))
-+#else
- #define virt_addr_valid(kaddr)	pfn_valid(virt_to_pfn(kaddr))
-+#endif
+--- a/tools/testing/selftests/powerpc/tm/tm-resched-dscr.c
++++ b/tools/testing/selftests/powerpc/tm/tm-resched-dscr.c
+@@ -45,12 +45,12 @@ int test_body(void)
+ 	printf("Check DSCR TM context switch: ");
+ 	fflush(stdout);
+ 	for (;;) {
+-		rv = 1;
+ 		asm __volatile__ (
+ 			/* set a known value into the DSCR */
+ 			"ld      3, %[dscr1];"
+ 			"mtspr   %[sprn_dscr], 3;"
  
- /*
-  * On Book-E parts we need __va to parse the device tree and we can't
++			"li      %[rv], 1;"
+ 			/* start and suspend a transaction */
+ 			TBEGIN
+ 			"beq     1f;"
