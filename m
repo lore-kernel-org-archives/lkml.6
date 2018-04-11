@@ -1,87 +1,102 @@
-Return-Path: <mhkelley58@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523468102; cv=none;
+Return-Path: <dvyukov@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523460171; cv=none;
         d=google.com; s=arc-20160816;
-        b=wPkgOtCDXUQcttq6x7aGGxSGIQVZgfL8cGUbRfY+C23h1puQW4pAaOIxKLh3oGiSjm
-         0mhL7pfpz8hN6wutwPhMKLjVcwAtIfEb+6elv15zrUX8aDZEuvlWCl/pTjIu3XBeso8U
-         b9LFKekux+r4M7T/Hn0h/xl1R7u8QiakdjvksZT4VkVzLF0nrj/zMTUBSKm6btXd+eMu
-         uf9kD+OppNJ8K1XcOKFZ4mct9zBHwneOdtYcYTgrXQ5pfe3nG2uZ6dufgU97Y7bDY4u6
-         6p6MxxbA/Xjrg3kNm6E9DcPRsGhG1+xjHImeeVmyMIHRqSAkgxoGi7Ja0Yw+6NOcnXjv
-         6MeA==
+        b=T461VlO5ENLApTqfKGMnmJwE++0jkUCibbvrRESrzTQ3PBRwe+FZkO5pFPTeB0FfAF
+         vqDY+VaqTOkAiiGniOzcjQSxRNzIY/y+isfn7wbYwz8eUIeeUfL5eEs2fEfqUOoMBoSZ
+         +py5nB7/TG01YTW7b2K9gik0zzfooCG+Evw6752HH7oPMPRYMDxrP4B0D3bteIXOsSZn
+         l2PyeVTC0PEYR2Q5frEUcUYm79xv3GfsQG7nPLwAM6QtRNawEAzSLDbqpUYI1hmXarLH
+         7BBMhkVRAk2md+XsG8lDYtDnK3kA2mhlHReJL+XxKus1ZNopFtG4QeEz8HjUBBfx44Ao
+         Getg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=reply-to:message-id:date:subject:to:from:dkim-signature
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=xpGSHAfp6YTlblkuWPcoahilYnvACzbNvWwV4hDY9Ss=;
-        b=N1Irsfs68H5ORZoIcqIVCnOlmVW1a3qHKjcYDs3ffNhBNItTfn8KYNJsuB8o0FZBfn
-         JlA6Pjj16EqMnd7q+5d3+tPqv3+TnsZqGm22xOFf8t0F/Co2oaUa8hGciiiklZgoliqb
-         l9iYofcUmZZi8wZoRDdYl2Hf+xH6W2fNpRSfhmBxxQb2n9+innOJcRJCt76D/7eeUkcS
-         BrKcAQcgZmYsnqswaNxAKxztpTWghOY0ftLQtN6J9pxNYjqNvi8y4xD9epLIwltxktxd
-         CNRQDzdAAVqedu3mTANoZ0mqv9q03npDbWc83BXQfA3zCKmBUJvB4zbcUhzq2aTGc6ye
-         u8Jg==
+        bh=0WLkwDDAmJBMsuije6Ne2n58XPT2GXnQ4A/MHNMnLDk=;
+        b=VWH7z9j5OU1gNGcfUMXcUm4orVMQC4E55cevgw85h9I0FIcEzUihf67KKgdv4eIApN
+         9feIz34Hcd4W5aCWqNeZNATqSymvTt0rFcEXodWF9xj46N2oQberNT6Jjq+7bSSjw34E
+         wgC6zLv3+PEjnm0DnN4yKy/i8bYXAebRJXvOQncTsF9FyOeyy5XzpUd57PorHLyIh6qu
+         oeebWgUTiMW/56SdWBJP2ZVvRqYYN2r9J0By+ckzAmWuMFXPLF2221jUXncu5sh4D/bo
+         HATxFrXNPvhy+or/9qTZ8NBnqQyH6D6TDGP43MZkgePbhDzpf6tNc+6TQ9Zr7z1ZKgiz
+         roKA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nh1QGkRw;
-       spf=pass (google.com: domain of mhkelley58@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mhkelley58@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=qoiLz1TW;
+       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dvyukov@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nh1QGkRw;
-       spf=pass (google.com: domain of mhkelley58@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mhkelley58@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4/mGgZvrfXxmmq8Fn8YkJ+MBeedISGbvbGOzFpuqmjVXZjfKVEYY9lP9UkIFxCJLe9MScNp5Q==
-From: mhkelley58@gmail.com
-X-Google-Original-From: mikelley@microsoft.com
-To: gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	devel@linuxdriverproject.org,
-	olaf@aepfle.de,
-	apw@canonical.com,
-	vkuznets@redhat.com,
-	jasowang@redhat.com,
-	leann.ogasawara@canonical.com,
-	marcelo.cerri@canonical.com,
-	sthemmin@microsoft.com,
-	kys@microsoft.com
-Subject: [PATCH v3 char-misc 1/1] x86/hyperv: Add interrupt handler annotations
-Date: Wed, 11 Apr 2018 10:34:35 -0700
-Message-Id: <1523468075-12713-1-git-send-email-mikelley@microsoft.com>
-X-Mailer: git-send-email 2.7.4
-Reply-To: mikelley@microsoft.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=qoiLz1TW;
+       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dvyukov@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AIpwx49OHpMQ8X67M/9TwWh4S+Wf+9kp59eLtWOsmNG7qA0hFG6uzgkK2t5C7qmzIH7xAZuXKA29gA==
+From: Dmitry Vyukov <dvyukov@google.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Dmitry Vyukov <dvyukov@google.com>
+Subject: [PATCH] kobject: don't use WARN for registration failures
+Date: Wed, 11 Apr 2018 17:22:43 +0200
+Message-Id: <20180411152243.101848-1-dvyukov@google.com>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597472089339155035?=
-X-GMAIL-MSGID: =?utf-8?q?1597472089339155035?=
+X-GMAIL-THRID: =?utf-8?q?1597463772984519976?=
+X-GMAIL-MSGID: =?utf-8?q?1597463772984519976?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Michael Kelley <mikelley@microsoft.com>
+This WARNING proved to be noisy. The function still returns an error
+and callers should handle it. That's how most of kernel code works.
+Downgrade the WARNING to pr_err() and leave WARNINGs for kernel bugs.
 
-Add standard interrupt handler annotations to
-hyperv_vector_handler(). This does not fix any observed
-bug, but avoids potential removal of the code by link
-time optimization and makes it consistent with
-hv_stimer0_vector_handler in the same source file.
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Reported-by: syzbot+209c0f67f99fec8eb14b@syzkaller.appspotmail.com
+Reported-by: syzbot+7fb6d9525a4528104e05@syzkaller.appspotmail.com
+Reported-by: syzbot+2e63711063e2d8f9ea27@syzkaller.appspotmail.com
+Reported-by: syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com
+Cc: stable <stable@vger.kernel.org>
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Michael Kelley <mikelley@microsoft.com>
 ---
-Changes in v2:
-* Fixed From: line [GregKH]
-Changes in v3:
-* Added more explanation in commit message and the
-  Suggested-by line [GregKH]
----
- arch/x86/kernel/cpu/mshyperv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-index 4488cf0..20f6849 100644
---- a/arch/x86/kernel/cpu/mshyperv.c
-+++ b/arch/x86/kernel/cpu/mshyperv.c
-@@ -41,7 +41,7 @@ static void (*hv_stimer0_handler)(void);
- static void (*hv_kexec_handler)(void);
- static void (*hv_crash_handler)(struct pt_regs *regs);
+For the record, here are only currently open syzbot bugs for this WARNING
+(not counting older bugs and various duplicates). None of them were
+acted on:
+
+WARNING: kobject bug in gfs2_sys_fs_add
+https://syzkaller.appspot.com/bug?id=057673a56dab61b3a447989b67f10b205111c8f4
+
+WARNING: kobject bug in br_add_if
+https://syzkaller.appspot.com/bug?id=3e0339080acd6a2a350a900bc6533b03f5498490
+
+WARNING: kobject bug in netdev_queue_update_kobjects
+https://syzkaller.appspot.com/bug?id=86a8e2ab50527d5a5eb4fad2fc15df609f22d86a
+
+WARNING: kobject bug in device_add
+https://syzkaller.appspot.com/bug?id=57eba87aff7669512fb68e56a932b01805342d13
+
+For context see discussion here:
+https://groups.google.com/d/msg/syzkaller-bugs/JZ9QSEaA_HA/wWvpywtBBQAJ
+---
+ lib/kobject.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/lib/kobject.c b/lib/kobject.c
+index e1d1f290bf35..18989b5b3b56 100644
+--- a/lib/kobject.c
++++ b/lib/kobject.c
+@@ -233,13 +233,12 @@ static int kobject_add_internal(struct kobject *kobj)
  
--void hyperv_vector_handler(struct pt_regs *regs)
-+__visible void __irq_entry hyperv_vector_handler(struct pt_regs *regs)
- {
- 	struct pt_regs *old_regs = set_irq_regs(regs);
+ 		/* be noisy on error issues */
+ 		if (error == -EEXIST)
+-			WARN(1,
+-			     "%s failed for %s with -EEXIST, don't try to register things with the same name in the same directory.\n",
+-			     __func__, kobject_name(kobj));
++			pr_err("%s failed for %s with -EEXIST, don't try to register things with the same name in the same directory.\n",
++			       __func__, kobject_name(kobj));
+ 		else
+-			WARN(1, "%s failed for %s (error: %d parent: %s)\n",
+-			     __func__, kobject_name(kobj), error,
+-			     parent ? kobject_name(parent) : "'none'");
++			pr_err("%s failed for %s (error: %d parent: %s)\n",
++			       __func__, kobject_name(kobj), error,
++			       parent ? kobject_name(parent) : "'none'");
+ 	} else
+ 		kobj->state_in_sysfs = 1;
  
 -- 
-2.7.4
+2.17.0.484.g0c8726318c-goog
