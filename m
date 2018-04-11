@@ -1,426 +1,87 @@
-Return-Path: <atull@kernel.org>
-X-Google-Smtp-Source: AIpwx4+y96cdR+FxS94vclt4gRCGHBKb0U44su+XzlzSBeBNQeb18OTcp+PU6QSdGG7lNszsmf4z
-ARC-Seal: i=1; a=rsa-sha256; t=1523456481; cv=none;
+Return-Path: <mhkelley58@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523468102; cv=none;
         d=google.com; s=arc-20160816;
-        b=WOeWCy2uRHHMny5Ula6WfntEgqEEOwTPeXgtFzPiDEAN9Qmh5hHafTSQLu3OvbtOgu
-         v8/LrrkBCBiLTt5taqild9HXZsnwMbfwMsPuwSrP9SqLvlIbPpB++kvNjg99Jmz0BeLP
-         VwQbUgHMJO1MI0N+F7Pv/Km3c+T2Z5IEiJ0KQ9E+jMuwHcZrLffL/Hw8xJO/A4ieOvdd
-         RXoIQr+ewwWLmWnpEfBfJ90igXKmNdasrvwgXIeJBuTwvkOcKgJ696oJjgfaDsfAnuuY
-         U1Rz/3cbHoByaoHiZXLyrbedDJrE6F+D7TUwBTvx2FNHsUMD/BsDDbEgpura53guxpXy
-         3gAA==
+        b=wPkgOtCDXUQcttq6x7aGGxSGIQVZgfL8cGUbRfY+C23h1puQW4pAaOIxKLh3oGiSjm
+         0mhL7pfpz8hN6wutwPhMKLjVcwAtIfEb+6elv15zrUX8aDZEuvlWCl/pTjIu3XBeso8U
+         b9LFKekux+r4M7T/Hn0h/xl1R7u8QiakdjvksZT4VkVzLF0nrj/zMTUBSKm6btXd+eMu
+         uf9kD+OppNJ8K1XcOKFZ4mct9zBHwneOdtYcYTgrXQ5pfe3nG2uZ6dufgU97Y7bDY4u6
+         6p6MxxbA/Xjrg3kNm6E9DcPRsGhG1+xjHImeeVmyMIHRqSAkgxoGi7Ja0Yw+6NOcnXjv
+         6MeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dmarc-filter
+        h=reply-to:message-id:date:subject:to:from:dkim-signature
          :arc-authentication-results;
-        bh=F53rXkmijofyRfjbGS1LvRdeRX4j32WTdx7Anj+Qjhs=;
-        b=fENnJWTqjYKoY2xRGoE1F49kdqK1ydtSbxEscvkgS0ajNglUZmvNFTsG5305AlimAi
-         lkECzE5f/giLzDqt0B5u9D9txa+VIMftzK6Kd7FExAOcJ/dboxr0AU/rFME3m695Pfok
-         i1JomqTIC0pirDei2WkqdoM1dT8K0f+txFCKuCj0hQcIPZvxK3ze5kgJ9s+gZh5wOcOK
-         efZ4vIq3JnDskuUxEprz4XmhU03nAMojG8pWi0vZLFK8uC+bFxJsTX4JxZu1E1dbvdmt
-         UbiGTwPtaPewfiiVLezZlDHrTJkgJuNKLq/wydL64KmFR051n4DTpFq8nrjKQdOByNsI
-         J+vg==
+        bh=xpGSHAfp6YTlblkuWPcoahilYnvACzbNvWwV4hDY9Ss=;
+        b=N1Irsfs68H5ORZoIcqIVCnOlmVW1a3qHKjcYDs3ffNhBNItTfn8KYNJsuB8o0FZBfn
+         JlA6Pjj16EqMnd7q+5d3+tPqv3+TnsZqGm22xOFf8t0F/Co2oaUa8hGciiiklZgoliqb
+         l9iYofcUmZZi8wZoRDdYl2Hf+xH6W2fNpRSfhmBxxQb2n9+innOJcRJCt76D/7eeUkcS
+         BrKcAQcgZmYsnqswaNxAKxztpTWghOY0ftLQtN6J9pxNYjqNvi8y4xD9epLIwltxktxd
+         CNRQDzdAAVqedu3mTANoZ0mqv9q03npDbWc83BXQfA3zCKmBUJvB4zbcUhzq2aTGc6ye
+         u8Jg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of atull@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=atull@kernel.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nh1QGkRw;
+       spf=pass (google.com: domain of mhkelley58@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mhkelley58@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of atull@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=atull@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22B8D20740
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-From: Alan Tull <atull@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Moritz Fischer <mdf@kernel.org>
-Cc: Alan Tull <atull@kernel.org>,
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nh1QGkRw;
+       spf=pass (google.com: domain of mhkelley58@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mhkelley58@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx4/mGgZvrfXxmmq8Fn8YkJ+MBeedISGbvbGOzFpuqmjVXZjfKVEYY9lP9UkIFxCJLe9MScNp5Q==
+From: mhkelley58@gmail.com
+X-Google-Original-From: mikelley@microsoft.com
+To: gregkh@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
-	linux-fpga@vger.kernel.org
-Subject: [PATCH] fpga: use SPDX
-Date: Wed, 11 Apr 2018 09:21:14 -0500
-Message-Id: <1523456474-4283-1-git-send-email-atull@kernel.org>
+	devel@linuxdriverproject.org,
+	olaf@aepfle.de,
+	apw@canonical.com,
+	vkuznets@redhat.com,
+	jasowang@redhat.com,
+	leann.ogasawara@canonical.com,
+	marcelo.cerri@canonical.com,
+	sthemmin@microsoft.com,
+	kys@microsoft.com
+Subject: [PATCH v3 char-misc 1/1] x86/hyperv: Add interrupt handler annotations
+Date: Wed, 11 Apr 2018 10:34:35 -0700
+Message-Id: <1523468075-12713-1-git-send-email-mikelley@microsoft.com>
 X-Mailer: git-send-email 2.7.4
+Reply-To: mikelley@microsoft.com
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597459902802709583?=
-X-GMAIL-MSGID: =?utf-8?q?1597459902802709583?=
+X-GMAIL-THRID: =?utf-8?q?1597472089339155035?=
+X-GMAIL-MSGID: =?utf-8?q?1597472089339155035?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Replace GPLv2 boilerplate with SPDX in FPGA code that came from me or
-from Altera.
+From: Michael Kelley <mikelley@microsoft.com>
 
-Signed-off-by: Alan Tull <atull@kernel.org>
+Add standard interrupt handler annotations to
+hyperv_vector_handler(). This does not fix any observed
+bug, but avoids potential removal of the code by link
+time optimization and makes it consistent with
+hv_stimer0_vector_handler in the same source file.
+
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Michael Kelley <mikelley@microsoft.com>
 ---
- drivers/fpga/altera-fpga2sdram.c       | 13 +------------
- drivers/fpga/altera-freeze-bridge.c    | 13 +------------
- drivers/fpga/altera-hps2fpga.c         | 13 +------------
- drivers/fpga/altera-pr-ip-core-plat.c  | 13 +------------
- drivers/fpga/altera-pr-ip-core.c       | 13 +------------
- drivers/fpga/fpga-bridge.c             | 13 +------------
- drivers/fpga/fpga-mgr.c                | 13 +------------
- drivers/fpga/fpga-region.c             | 14 +-------------
- drivers/fpga/of-fpga-region.c          | 14 +-------------
- drivers/fpga/socfpga-a10.c             | 14 +-------------
- drivers/fpga/socfpga.c                 | 13 +------------
- include/linux/fpga/altera-pr-ip-core.h | 13 +------------
- include/linux/fpga/fpga-mgr.h          | 13 +------------
- include/linux/fpga/fpga-region.h       |  2 ++
- 14 files changed, 15 insertions(+), 159 deletions(-)
+Changes in v2:
+* Fixed From: line [GregKH]
+Changes in v3:
+* Added more explanation in commit message and the
+  Suggested-by line [GregKH]
+---
+ arch/x86/kernel/cpu/mshyperv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/fpga/altera-fpga2sdram.c b/drivers/fpga/altera-fpga2sdram.c
-index d4eeb74..b490518 100644
---- a/drivers/fpga/altera-fpga2sdram.c
-+++ b/drivers/fpga/altera-fpga2sdram.c
-@@ -1,19 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA to SDRAM Bridge Driver for Altera SoCFPGA Devices
-  *
-  *  Copyright (C) 2013-2016 Altera Corporation, All Rights Reserved.
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
+diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+index 4488cf0..20f6849 100644
+--- a/arch/x86/kernel/cpu/mshyperv.c
++++ b/arch/x86/kernel/cpu/mshyperv.c
+@@ -41,7 +41,7 @@ static void (*hv_stimer0_handler)(void);
+ static void (*hv_kexec_handler)(void);
+ static void (*hv_crash_handler)(struct pt_regs *regs);
  
- /*
-diff --git a/drivers/fpga/altera-freeze-bridge.c b/drivers/fpga/altera-freeze-bridge.c
-index 6159cfcf..b7b1c4e 100644
---- a/drivers/fpga/altera-freeze-bridge.c
-+++ b/drivers/fpga/altera-freeze-bridge.c
-@@ -1,19 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA Freeze Bridge Controller
-  *
-  *  Copyright (C) 2016 Altera Corporation. All rights reserved.
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- #include <linux/delay.h>
- #include <linux/io.h>
-diff --git a/drivers/fpga/altera-hps2fpga.c b/drivers/fpga/altera-hps2fpga.c
-index 406d2f1..c8db9b5 100644
---- a/drivers/fpga/altera-hps2fpga.c
-+++ b/drivers/fpga/altera-hps2fpga.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA to/from HPS Bridge Driver for Altera SoCFPGA Devices
-  *
-@@ -6,18 +7,6 @@
-  * Includes this patch from the mailing list:
-  *   fpga: altera-hps2fpga: fix HPS2FPGA bridge visibility to L3 masters
-  *   Signed-off-by: Anatolij Gustschin <agust@denx.de>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- /*
-diff --git a/drivers/fpga/altera-pr-ip-core-plat.c b/drivers/fpga/altera-pr-ip-core-plat.c
-index 8fb36b8..b293d83 100644
---- a/drivers/fpga/altera-pr-ip-core-plat.c
-+++ b/drivers/fpga/altera-pr-ip-core-plat.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Driver for Altera Partial Reconfiguration IP Core
-  *
-@@ -5,18 +6,6 @@
-  *
-  * Based on socfpga-a10.c Copyright (C) 2015-2016 Altera Corporation
-  *  by Alan Tull <atull@opensource.altera.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- #include <linux/fpga/altera-pr-ip-core.h>
- #include <linux/module.h>
-diff --git a/drivers/fpga/altera-pr-ip-core.c b/drivers/fpga/altera-pr-ip-core.c
-index a7b31f9..e3b013b 100644
---- a/drivers/fpga/altera-pr-ip-core.c
-+++ b/drivers/fpga/altera-pr-ip-core.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Driver for Altera Partial Reconfiguration IP Core
-  *
-@@ -5,18 +6,6 @@
-  *
-  * Based on socfpga-a10.c Copyright (C) 2015-2016 Altera Corporation
-  *  by Alan Tull <atull@opensource.altera.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- #include <linux/delay.h>
- #include <linux/fpga/altera-pr-ip-core.h>
-diff --git a/drivers/fpga/fpga-bridge.c b/drivers/fpga/fpga-bridge.c
-index 31bd2c5..1f01f95 100644
---- a/drivers/fpga/fpga-bridge.c
-+++ b/drivers/fpga/fpga-bridge.c
-@@ -1,20 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA Bridge Framework Driver
-  *
-  *  Copyright (C) 2013-2016 Altera Corporation, All Rights Reserved.
-  *  Copyright (C) 2017 Intel Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- #include <linux/fpga/fpga-bridge.h>
- #include <linux/idr.h>
-diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
-index 9939d2c..5009d8a 100644
---- a/drivers/fpga/fpga-mgr.c
-+++ b/drivers/fpga/fpga-mgr.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA Manager Core
-  *
-@@ -6,18 +7,6 @@
-  *
-  * With code from the mailing list:
-  * Copyright (C) 2013 Xilinx, Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- #include <linux/firmware.h>
- #include <linux/fpga/fpga-mgr.h>
-diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
-index edab2a2..13e16a1 100644
---- a/drivers/fpga/fpga-region.c
-+++ b/drivers/fpga/fpga-region.c
-@@ -1,22 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA Region - Device Tree support for FPGA programming under Linux
-  *
-  *  Copyright (C) 2013-2016 Altera Corporation
-  *  Copyright (C) 2017 Intel Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
--
- #include <linux/fpga/fpga-bridge.h>
- #include <linux/fpga/fpga-mgr.h>
- #include <linux/fpga/fpga-region.h>
-diff --git a/drivers/fpga/of-fpga-region.c b/drivers/fpga/of-fpga-region.c
-index 119ff75..222ad07 100644
---- a/drivers/fpga/of-fpga-region.c
-+++ b/drivers/fpga/of-fpga-region.c
-@@ -1,22 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA Region - Device Tree support for FPGA programming under Linux
-  *
-  *  Copyright (C) 2013-2016 Altera Corporation
-  *  Copyright (C) 2017 Intel Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
--
- #include <linux/fpga/fpga-bridge.h>
- #include <linux/fpga/fpga-mgr.h>
- #include <linux/fpga/fpga-region.h>
-diff --git a/drivers/fpga/socfpga-a10.c b/drivers/fpga/socfpga-a10.c
-index a46e343..ed46d0f 100644
---- a/drivers/fpga/socfpga-a10.c
-+++ b/drivers/fpga/socfpga-a10.c
-@@ -1,21 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA Manager Driver for Altera Arria10 SoCFPGA
-  *
-  * Copyright (C) 2015-2016 Altera Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
--
- #include <linux/clk.h>
- #include <linux/device.h>
- #include <linux/delay.h>
-diff --git a/drivers/fpga/socfpga.c b/drivers/fpga/socfpga.c
-index b6672e6..78f6c8d 100644
---- a/drivers/fpga/socfpga.c
-+++ b/drivers/fpga/socfpga.c
-@@ -1,19 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * FPGA Manager Driver for Altera SOCFPGA
-  *
-  *  Copyright (C) 2013-2015 Altera Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- #include <linux/completion.h>
- #include <linux/delay.h>
-diff --git a/include/linux/fpga/altera-pr-ip-core.h b/include/linux/fpga/altera-pr-ip-core.h
-index 3810a90..7d46647 100644
---- a/include/linux/fpga/altera-pr-ip-core.h
-+++ b/include/linux/fpga/altera-pr-ip-core.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Driver for Altera Partial Reconfiguration IP Core
-  *
-@@ -5,18 +6,6 @@
-  *
-  * Based on socfpga-a10.c Copyright (C) 2015-2016 Altera Corporation
-  *  by Alan Tull <atull@opensource.altera.com>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef _ALT_PR_IP_CORE_H
-diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
-index 3c6de23..5a569e8 100644
---- a/include/linux/fpga/fpga-mgr.h
-+++ b/include/linux/fpga/fpga-mgr.h
-@@ -1,20 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * FPGA Framework
-  *
-  *  Copyright (C) 2013-2016 Altera Corporation
-  *  Copyright (C) 2017 Intel Corporation
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- #ifndef _LINUX_FPGA_MGR_H
- #define _LINUX_FPGA_MGR_H
-diff --git a/include/linux/fpga/fpga-region.h b/include/linux/fpga/fpga-region.h
-index b652031..4cdef08 100644
---- a/include/linux/fpga/fpga-region.h
-+++ b/include/linux/fpga/fpga-region.h
-@@ -1,3 +1,5 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
- #ifndef _FPGA_REGION_H
- #define _FPGA_REGION_H
+-void hyperv_vector_handler(struct pt_regs *regs)
++__visible void __irq_entry hyperv_vector_handler(struct pt_regs *regs)
+ {
+ 	struct pt_regs *old_regs = set_irq_regs(regs);
  
 -- 
 2.7.4
