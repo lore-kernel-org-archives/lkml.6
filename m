@@ -1,55 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933014AbeDKUZL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 16:25:11 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:41072 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757546AbeDKUZF (ORCPT
+        id S1756633AbeDKU23 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 16:28:29 -0400
+Received: from mail-it0-f53.google.com ([209.85.214.53]:53613 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932637AbeDKSu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 16:25:05 -0400
-X-Google-Smtp-Source: AIpwx49SWo/mnxBlx2p/byW2I1cTp9wSOjN+MO1/koIuckQKnp65I0BWaWOtC9X6069icmNPkvWop89Fzmv5/hKrR1M=
+        Wed, 11 Apr 2018 14:50:26 -0400
+X-Google-Smtp-Source: AIpwx4/XvRPTG5u3BSpBdz2PgpyOx2YaQHPyOA8t9vg2+2vsrIiX0Jj14j8yCJGhAT43shJCSsct6NK4aETtdBC7dUA=
 MIME-Version: 1.0
-In-Reply-To: <87fu41ilor.fsf@xmission.com>
-References: <20180411150829.3881900-1-arnd@arndb.de> <87fu41ilor.fsf@xmission.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 11 Apr 2018 22:25:03 +0200
-X-Google-Sender-Auth: TqcbS_oGCtvrf-TaWRaldNYQVX4
-Message-ID: <CAK8P3a3em5b2Qp_y0uHz95=JbyB7dHuPnfRNWNZ79beV6hGMyQ@mail.gmail.com>
-Subject: Re: [PATCH] sparc: compat: allow including asm/compat.h for 32-bit
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <CAHp75VcH0N2BZHaVko3EGWJGk8g_GriCCS_izyjXFSXG81q4rg@mail.gmail.com>
+References: <20180410171227.GA12596@smile.fi.intel.com> <CA+55aFxzkm0ELM4Xa_rkJpsv4hqeFa7yh2Tvkrh_xnhQqZs=Kg@mail.gmail.com>
+ <CAHp75VcH0N2BZHaVko3EGWJGk8g_GriCCS_izyjXFSXG81q4rg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 11 Apr 2018 11:50:25 -0700
+X-Google-Sender-Auth: NlGfG9TFFvNY5nt-UMcJWCrZaSs
+Message-ID: <CA+55aFxODGv7-AvnqFmxrXBcS2w0XzHuZ7UuRi3EMQz4-oeLJA@mail.gmail.com>
+Subject: Re: [GIT PULL] platform-drivers-x86 for 4.17-1
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 9:32 PM, Eric W. Biederman
-<ebiederm@xmission.com> wrote:
-> Arnd Bergmann <arnd@arndb.de> writes:
+On Tue, Apr 10, 2018 at 1:35 PM, Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
 >
->> We have several files on sparc that include linux/compat.h and expect
->> asm/compat.h not to be included, otherwise we get a build failure.
+> That's good news.
+> I'm using whatever is in Debian Unstable (old for less than month) and
+> what I tried was
 >
-> Should this say: "We have several files on sparc that include
-> linux/compat.h and expect asm/compat.h not be included when
-> !CONFIG_COMPAT." ?
+> % git checkout -b test origin/master
+> % git merge for-next # our branch for you
+>
+> It complained to me that file was renamed / deleted and it didn't
+> resolve conflicts automatically.
 
-Correct, I'll fix it up. I'll say '32-bit builds' instead, which is what
-I'm interested in. On sparc64, CONFIG_COMPAT is enabled
-unconditionally, so it's really the same thing.
+Hmm. I don't know what the difference might be. debian-unstable is
+usually not *so* ancient that I'd expect big git version differences
+(even if I personally tend to run very recent git trees, because it's
+the one thing in addition to the kernel that I build myself).
 
-> I don't have your tree and I see asm/compat.h included from
-> linux/compat.h already so the description above seems wrong.
+Sometimes things like the git rename limits hit people. Your side
+didn't have a lot of file creation/deletion (which is when the default
+git rename limits can bite you), but my side did.
 
-I removed the tree from linux-next before the merge window because
-of this build regression, if you are interested in the other changes,
-please see
+Did you perhaps also get a message like "inexact rename detection was
+skipped due to too many files"? If you have lots of memory, it can be
+a good idea to just disable the rename limits:
 
-git://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git y2038-next
+  git config diff.renameLimit 0
+  git config merge.renameLimit 0
 
-      Arnd
+but it's also possible that some tweak to the diff algorithm triggered
+this, or just the fact that we tried merging at slightly different
+points.
+
+Not a big deal.
+
+              Linus
