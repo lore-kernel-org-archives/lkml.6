@@ -1,93 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757215AbeDKTnp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 15:43:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59277 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756213AbeDKTn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 15:43:29 -0400
-Date: Wed, 11 Apr 2018 21:43:26 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>, Zi Yan <zi.yan@sent.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm: shmem: enable thp migration (Re: [PATCH v1] mm:
- consider non-anonymous thp as unmovable page)
-Message-ID: <20180411194326.GN23400@dhcp22.suse.cz>
-References: <20180405085927.GC6312@dhcp22.suse.cz>
- <20180405122838.6a6b35psizem4tcy@node.shutemov.name>
- <20180405124830.GJ6312@dhcp22.suse.cz>
- <20180405134045.7axuun6d7ufobzj4@node.shutemov.name>
- <20180405150547.GN6312@dhcp22.suse.cz>
- <20180405155551.wchleyaf4rxooj6m@node.shutemov.name>
- <20180405160317.GP6312@dhcp22.suse.cz>
- <20180406030706.GA2434@hori1.linux.bs1.fc.nec.co.jp>
- <20180411092611.GE23400@dhcp22.suse.cz>
- <20180411122739.25d1700099222eb647b0c620@linux-foundation.org>
+        id S1756835AbeDKTpt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 15:45:49 -0400
+Received: from ja.ssi.bg ([178.16.129.10]:38812 "EHLO ja.ssi.bg"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754733AbeDKTpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 15:45:47 -0400
+Date: Wed, 11 Apr 2018 22:45:23 +0300 (EEST)
+From: Julian Anastasov <ja@ssi.bg>
+To: Dmitry Vyukov <dvyukov@google.com>
+cc: syzbot <syzbot+3c43eecd7745a5ce1640@syzkaller.appspotmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        David Miller <davem@davemloft.net>, David Ahern <dsahern@gmail.com>,
+        Florian Westphal <fw@strlen.de>, Jiri Benc <jbenc@redhat.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        LKML <linux-kernel@vger.kernel.org>, Xin Long <lucien.xin@gmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: WARNING: possible recursive locking detected
+In-Reply-To: <CACT4Y+Z3Ktnio1B0TAZpx8HOEfd2evwyQqbMeWGvEkzh0yfhKQ@mail.gmail.com>
+Message-ID: <alpine.LFD.2.20.1804112241120.3922@ja.home.ssi.bg>
+References: <94eb2c056114525fed05699315f1@google.com> <CACT4Y+Z3Ktnio1B0TAZpx8HOEfd2evwyQqbMeWGvEkzh0yfhKQ@mail.gmail.com>
+User-Agent: Alpine 2.20 (LFD 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180411122739.25d1700099222eb647b0c620@linux-foundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 11-04-18 12:27:39, Andrew Morton wrote:
-> On Wed, 11 Apr 2018 11:26:11 +0200 Michal Hocko <mhocko@kernel.org> wrote:
+
+	Hello,
+
+On Wed, 11 Apr 2018, Dmitry Vyukov wrote:
+
+> On Wed, Apr 11, 2018 at 4:02 PM, syzbot
+> <syzbot+3c43eecd7745a5ce1640@syzkaller.appspotmail.com> wrote:
+> > Hello,
+> >
+> > syzbot hit the following crash on upstream commit
+> > b284d4d5a6785f8cd07eda2646a95782373cd01e (Tue Apr 10 19:25:30 2018 +0000)
+> > Merge tag 'ceph-for-4.17-rc1' of git://github.com/ceph/ceph-client
+> > syzbot dashboard link:
+> > https://syzkaller.appspot.com/bug?extid=3c43eecd7745a5ce1640
+> >
+> > So far this crash happened 3 times on upstream.
+> > C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5103706542440448
+> > syzkaller reproducer:
+> > https://syzkaller.appspot.com/x/repro.syz?id=5641659786199040
+> > Raw console output:
+> > https://syzkaller.appspot.com/x/log.txt?id=5099510896263168
+> > Kernel config:
+> > https://syzkaller.appspot.com/x/.config?id=-1223000601505858474
+> > compiler: gcc (GCC) 8.0.1 20180301 (experimental)
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+3c43eecd7745a5ce1640@syzkaller.appspotmail.com
+> > It will help syzbot understand when the bug is fixed. See footer for
+> > details.
+> > If you forward the report, please keep this part and the footer.
 > 
-> > On Fri 06-04-18 03:07:11, Naoya Horiguchi wrote:
-> > > >From e31ec037701d1cc76b26226e4b66d8c783d40889 Mon Sep 17 00:00:00 2001
-> > > From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > > Date: Fri, 6 Apr 2018 10:58:35 +0900
-> > > Subject: [PATCH] mm: enable thp migration for shmem thp
-> > > 
-> > > My testing for the latest kernel supporting thp migration showed an
-> > > infinite loop in offlining the memory block that is filled with shmem
-> > > thps.  We can get out of the loop with a signal, but kernel should
-> > > return with failure in this case.
-> > > 
-> > > What happens in the loop is that scan_movable_pages() repeats returning
-> > > the same pfn without any progress. That's because page migration always
-> > > fails for shmem thps.
-> > > 
-> > > In memory offline code, memory blocks containing unmovable pages should
-> > > be prevented from being offline targets by has_unmovable_pages() inside
-> > > start_isolate_page_range().
-> > >
-> > > So it's possible to change migratability
-> > > for non-anonymous thps to avoid the issue, but it introduces more complex
-> > > and thp-specific handling in migration code, so it might not good.
-> > > 
-> > > So this patch is suggesting to fix the issue by enabling thp migration
-> > > for shmem thp. Both of anon/shmem thp are migratable so we don't need
-> > > precheck about the type of thps.
-> > > 
-> > > Fixes: commit 72b39cfc4d75 ("mm, memory_hotplug: do not fail offlining too early")
-> > > Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > > Cc: stable@vger.kernel.org # v4.15+
-> > 
-> > I do not really feel qualified to give my ack but this is the right
-> > approach for the fix. We simply do expect that LRU pages are migrateable
-> > as well as zone_movable pages.
-> > 
-> > Andrew, do you plan to take it (with Kirill's ack).
-> > 
-> 
-> Sure.  What happened with "Michal's fix in another email"
-> (https://lkml.kernel.org/r/20180406051452.GB23467@hori1.linux.bs1.fc.nec.co.jp)?
+> #syz dup: possible deadlock in rtnl_lock (5)
 
-I guess you meant http://lkml.kernel.org/r/20180405190405.GS6312@dhcp22.suse.cz
+	Yes, patch is now in the "nf" tree, so all these
+lockups around start_sync_thread should be resolved soon...
 
-Well, that would be a workaround in case we didn't have a proper fix. It
-is much simpler but it wouldn't make backporting to older kernels any
-easier because it depends on other non-trivial changes you already have
-in your tree. So having a full THP pagecache migration support is
-preferred of course.
+> > IPVS: sync thread started: state = BACKUP, mcast_ifn = lo, syncid = 0, id =
+> > 0
+> > IPVS: stopping backup sync thread 4546 ...
+> >
+> > ============================================
+> > IPVS: stopping backup sync thread 4559 ...
+> > WARNING: possible recursive locking detected
 
--- 
-Michal Hocko
-SUSE Labs
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
