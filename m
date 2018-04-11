@@ -1,85 +1,37 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3124918-1523473302-2-14819829420105948083
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523473300; b=jrQuMFsN+2UBO6agzuBlZicsyG19nl4ZoFi31GQp1re83ak5wi
-    ufOoiXv6Kuh4eGDbgg7ywhfgDZwEcDlxdIZWNZPIKs83D1s6mzTyJWhepaheMH2S
-    Zz+0P9RqPVwaFU9WWD4SDnUOKOpbBK4kqmR4QFwf/FhtV2JEykXX/r47m/G6voDH
-    75HbzE8ygfkSwqZ5Qbppw2p0POab3Jd0GwmPWpEl7/7P5JRL+e50+d1mzJHKO8oG
-    Nl1VSxHACtfcy5I9y9WPWzbVNod2Sh2y15Zzz6cSfPQT6u+QJeLQxRT1h+u5dWil
-    1GUGqN+TG5YNnCXxtjI7Wsbwl2WQBRMkTfNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523473300; bh=klTRBfEA40dkUtRLpFcOHBaDlHuY/H
-    VWeSY5FGIu6dc=; b=ITSSSdxXPPq8XicwaTlhdJ+sRdfg0kNTvdX36ZvK8LZfMA
-    PKBbu7z9VxQofdW6aIPCZcwkyLZ3tsPTIUKblipnggoNgYYTrQg1+yq2HpdXx1iQ
-    rx+UyMNL/HeGglBXMeaf9AWg7cd4mA/6WbHEJ4xJ+CLjsSJ04wYt2PPoXFpIHrkK
-    fcHWYuTYh2PmmYDoOej90rULiOyHzyukpnRZK7Uunp4sWluy7aI7P5rg3nGlDbsy
-    E3dpnnSMB/Hje6oqaLm6EDa7u6dsBm5UYiVujtwdBe3ggk4WW96/3DBn3p7Yd2Wi
-    5UPT601WuUAFHk6nwhAK/SrN1c+ZFhHqYBlLEBdA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCZuhwzDxb7tmq3hbrrl1EClydkOjPQn+DgZWTfPB6QCZsxMISNo488te9L0zhfAz2svAEiZa5zEKCvZzUty6dm8ENV5aXYfoSfHxJBJLOBuqP9sSgN+
-    PN36QPh3YfjQLNaWPCaJxu99aPgHuXdCxm4pjVcQkHYshBLqNGXw0Lzq2XGKOn9kiwmb1SP4iT3QqfVlT1b0XxoWkLAlHG0hFI9M2Q1NXTq5vu5GvphouRkG
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=WfulkdPnAAAA:8 a=pGLkceISAAAA:8 a=57SyGIRnAAAA:8
-    a=20KFwNOVAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=HcSiQ_138I7OFoV5844A:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=56QPVbyS4OZCpcuOg7Z9:22
-    a=YzT4AsKTxtEdF6UtD8mD:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756856AbeDKTBh (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 15:01:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38234 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756849AbeDKTBe (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:01:34 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4+xwo0YBt+Q7JseNNACGHx9JcjenWPHwQ/sIjVX7Ih9+zwxDSPBiK7zergLrrvnZtf9j9e9
+ARC-Seal: i=1; a=rsa-sha256; t=1523473300; cv=none;
+        d=google.com; s=arc-20160816;
+        b=E3SKLZoEoPe/B9UZ7cNiuiVKikcGaEs/ruBjP9ie201bjEqxrMo+2472LepxeGyGZe
+         rO3cYVDmK03u7YEEyFzUojKDRfj1swxhPWSV/Rh3N/L+ELV+rd6wy2TGMhguT4VhV7ZV
+         E3UqgVwoO9VsTVkXA84xsg0h+4aQkGxMW71o3RyiRzmtmKUY3T/qQpCU0TWkhgFMh/iY
+         rggXEC4YW+g90bU9xDrxJ0WmgdKY5zH2Y0MLEe4iiZUPEGY7ete15HEiGmhzL8SO8WKa
+         fbSTBtrko02dvQtd8cFBLKRE8PR8Ps2l1Bya/x8u/WEwh4fTrILX5iiPrkFHDH2MZfbk
+         DgUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=4fOjIxxyiI8bTRNI4nLnEqGLy+MpDnVBWyrvAMuMsoo=;
+        b=DpOTl415XO/mJiVPPChn8mEbLKElyy5QWL3JgB52AGP2v+NMWTzwzqT+ZM9Qar4pIf
+         seUXiPPUpqmfVDWXyQ2k37XbxiZ4V2qydbhI1xfuxm285lAe/Gew7sgVUHrZ+TLuA2rX
+         1nwrqjx+lIusFva7ZCbwVI81h8pXeGCC9sEcj4ZN78fuOWeZBuE68ljEPLI96bYpXGCA
+         sxi+plBRRVpzzHta5GJYp7l2SgELekf2F8FSviABHkQWJ8P4wwKNmHvf0d/bxCLzbZGj
+         Pe61wfW1xxCB1b/fiYmePJs6WKhYfxRpTGYGn/wU1dS2MgTzdUXmHy6tLYv6rRSUYQL5
+         l7aA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Namhyung Kim <namhyung@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Andi Kleen <andi@firstfloor.org>,
-        David Ahern <dsahern@gmail.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>, kernel-team@lge.com,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 195/310] perf header: Set proper module name when build-id event found
-Date: Wed, 11 Apr 2018 20:35:34 +0200
-Message-Id: <20180411183630.979890454@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	Luca Coelho <luciano.coelho@intel.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 197/310] iwlwifi: mvm: fix firmware debug restart recording
+Date: Wed, 11 Apr 2018 20:35:36 +0200
+Message-Id: <20180411183631.073377661@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -87,9 +39,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597477538995146827?=
+X-GMAIL-MSGID: =?utf-8?q?1597477538995146827?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -97,71 +50,137 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Namhyung Kim <namhyung@kernel.org>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
 
-[ Upstream commit 1deec1bd96ccd8beb04d2112a6d12fe20505c3a6 ]
+[ Upstream commit addce854f164a68da9cb158e2e7e447705068549 ]
 
-When perf processes build-id event, it creates DSOs with the build-id.
-But it didn't set the module short name (like '[module-name]') so when
-processing a kernel mmap event of the module, it cannot found the DSO as
-it only checks the short names.
+When we want to stop the recording of the firmware debug
+and restart it later without reloading the firmware we
+don't need to resend the configuration that comes with
+host commands.
+Sending those commands confused the hardware and led to
+an NMI 0x66.
 
-That leads for perf to create a same DSO without the build-id info and
-it'll lookup the system path even if the DSO is already in the build-id
-cache.  After kernel was updated, perf cannot find the DSO  and cannot
-show symbols in it anymore.
+Change the flow as following:
+* read the relevant registers (DBGC_IN_SAMPLE, DBGC_OUT_CTRL)
+* clear those registers
+* wait for the hardware to complete its write to the buffer
+* get the data
+* restore the value of those registers (to restart the
+  recording)
 
-You can see this if you have an old data file (w/ old kernel version):
+For early start (where the configuration is already
+compiled in the firmware), we don't need to set those
+registers after the firmware has been loaded, but only
+when we want to restart the recording without having
+restarted the firmware.
 
-  $ perf report -i perf.data.old -v |& grep scsi_mod
-  build id event received for /lib/modules/3.19.2-1-ARCH/kernel/drivers/scsi/scsi_mod.ko.gz : cafe1ce6ca13a98a5d9ed3425cde249e57a27fc1
-  Failed to open /lib/modules/3.19.2-1-ARCH/kernel/drivers/scsi/scsi_mod.ko.gz, continuing without symbols
-  ...
-
-The second message didn't show the build-id.  With this patch:
-
-  $ perf report -i perf.data.old -v |& grep scsi_mod
-  build id event received for /lib/modules/3.19.2-1-ARCH/kernel/drivers/scsi/scsi_mod.ko.gz: cafe1ce6ca13a98a5d9ed3425cde249e57a27fc1
-  /lib/modules/3.19.2-1-ARCH/kernel/drivers/scsi/scsi_mod.ko.gz with build id cafe1ce6ca13a98a5d9ed3425cde249e57a27fc1 not found, continuing without symbols
-  ...
-
-Now it shows the build-id but still cannot load the symbol table.  This
-is a different problem which will be fixed in the next patch.
-
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: kernel-team@lge.com
-Link: http://lkml.kernel.org/r/20170531120105.21731-1-namhyung@kernel.org
-[ Fix the build on older compilers (debian <= 8, fedora <= 21, etc) wrt kmod_path var init ]
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/header.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/iwl-prph.h   |    1 
+ drivers/net/wireless/intel/iwlwifi/mvm/fw-dbg.c |   12 ---------
+ drivers/net/wireless/intel/iwlwifi/mvm/mvm.h    |    1 
+ drivers/net/wireless/intel/iwlwifi/mvm/ops.c    |   32 ++++++++++++++++++------
+ 4 files changed, 27 insertions(+), 19 deletions(-)
 
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1454,8 +1454,16 @@ static int __event_process_build_id(stru
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-prph.h
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-prph.h
+@@ -369,6 +369,7 @@
+ #define MON_DMARB_RD_DATA_ADDR		(0xa03c5c)
  
- 		dso__set_build_id(dso, &bev->build_id);
+ #define DBGC_IN_SAMPLE			(0xa03c00)
++#define DBGC_OUT_CTRL			(0xa03c0c)
  
--		if (!is_kernel_module(filename, cpumode))
--			dso->kernel = dso_type;
-+		if (dso_type != DSO_TYPE_USER) {
-+			struct kmod_path m = { .name = NULL, };
+ /* enable the ID buf for read */
+ #define WFPM_PS_CTL_CLR			0xA0300C
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/fw-dbg.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw-dbg.c
+@@ -914,14 +914,6 @@ int iwl_mvm_fw_dbg_collect_trig(struct i
+ 	return 0;
+ }
+ 
+-static inline void iwl_mvm_restart_early_start(struct iwl_mvm *mvm)
+-{
+-	if (mvm->cfg->device_family == IWL_DEVICE_FAMILY_7000)
+-		iwl_clear_bits_prph(mvm->trans, MON_BUFF_SAMPLE_CTL, 0x100);
+-	else
+-		iwl_write_prph(mvm->trans, DBGC_IN_SAMPLE, 1);
+-}
+-
+ int iwl_mvm_start_fw_dbg_conf(struct iwl_mvm *mvm, u8 conf_id)
+ {
+ 	u8 *ptr;
+@@ -935,10 +927,8 @@ int iwl_mvm_start_fw_dbg_conf(struct iwl
+ 	/* EARLY START - firmware's configuration is hard coded */
+ 	if ((!mvm->fw->dbg_conf_tlv[conf_id] ||
+ 	     !mvm->fw->dbg_conf_tlv[conf_id]->num_of_hcmds) &&
+-	    conf_id == FW_DBG_START_FROM_ALIVE) {
+-		iwl_mvm_restart_early_start(mvm);
++	    conf_id == FW_DBG_START_FROM_ALIVE)
+ 		return 0;
+-	}
+ 
+ 	if (!mvm->fw->dbg_conf_tlv[conf_id])
+ 		return -EINVAL;
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
+@@ -1687,6 +1687,7 @@ void iwl_mvm_enable_ac_txq(struct iwl_mv
+ static inline void iwl_mvm_stop_device(struct iwl_mvm *mvm)
+ {
+ 	mvm->ucode_loaded = false;
++	mvm->fw_dbg_conf = FW_DBG_INVALID;
+ 	iwl_trans_stop_device(mvm->trans);
+ }
+ 
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/ops.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/ops.c
+@@ -1118,21 +1118,37 @@ static void iwl_mvm_fw_error_dump_wk(str
+ 
+ 	mutex_lock(&mvm->mutex);
+ 
+-	/* stop recording */
+ 	if (mvm->cfg->device_family == IWL_DEVICE_FAMILY_7000) {
++		/* stop recording */
+ 		iwl_set_bits_prph(mvm->trans, MON_BUFF_SAMPLE_CTL, 0x100);
 +
-+			if (!kmod_path__parse_name(&m, filename) && m.kmod)
-+				dso__set_short_name(dso, strdup(m.name), true);
-+			else
-+				dso->kernel = dso_type;
++		iwl_mvm_fw_error_dump(mvm);
 +
-+			free(m.name);
++		/* start recording again if the firmware is not crashed */
++		if (!test_bit(STATUS_FW_ERROR, &mvm->trans->status) &&
++		    mvm->fw->dbg_dest_tlv)
++			iwl_clear_bits_prph(mvm->trans,
++					    MON_BUFF_SAMPLE_CTL, 0x100);
+ 	} else {
++		u32 in_sample = iwl_read_prph(mvm->trans, DBGC_IN_SAMPLE);
++		u32 out_ctrl = iwl_read_prph(mvm->trans, DBGC_OUT_CTRL);
++
++		/* stop recording */
+ 		iwl_write_prph(mvm->trans, DBGC_IN_SAMPLE, 0);
+-		/* wait before we collect the data till the DBGC stop */
+ 		udelay(100);
+-	}
++		iwl_write_prph(mvm->trans, DBGC_OUT_CTRL, 0);
++		/* wait before we collect the data till the DBGC stop */
++		udelay(500);
+ 
+-	iwl_mvm_fw_error_dump(mvm);
++		iwl_mvm_fw_error_dump(mvm);
+ 
+-	/* start recording again if the firmware is not crashed */
+-	WARN_ON_ONCE((!test_bit(STATUS_FW_ERROR, &mvm->trans->status)) &&
+-		     mvm->fw->dbg_dest_tlv &&
+-		     iwl_mvm_start_fw_dbg_conf(mvm, mvm->fw_dbg_conf));
++		/* start recording again if the firmware is not crashed */
++		if (!test_bit(STATUS_FW_ERROR, &mvm->trans->status) &&
++		    mvm->fw->dbg_dest_tlv) {
++			iwl_write_prph(mvm->trans, DBGC_IN_SAMPLE, in_sample);
++			iwl_write_prph(mvm->trans, DBGC_OUT_CTRL, out_ctrl);
 +		}
++	}
  
- 		build_id__sprintf(dso->build_id, sizeof(dso->build_id),
- 				  sbuild_id);
+ 	mutex_unlock(&mvm->mutex);
+ 
