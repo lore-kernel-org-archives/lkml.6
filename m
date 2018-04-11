@@ -1,32 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757538AbeDKUYZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 16:24:25 -0400
-Received: from mail-wm0-f41.google.com ([74.125.82.41]:35114 "EHLO
-        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756108AbeDKUYW (ORCPT
+        id S933014AbeDKUZL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 16:25:11 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:41072 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757546AbeDKUZF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 16:24:22 -0400
-X-Google-Smtp-Source: AIpwx4/S5VueUNygFrLi4g03FMjdXfRE+cUq5oPDl+/FBNMgt2IolvpUXBOhRA91n8Svb31qj9cO6A==
-Date: Wed, 11 Apr 2018 23:24:19 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-Subject: Re: [PATCH] proc: fixup =?iso-8859-1?Q?=A9?= =?iso-8859-1?Q?_sign?=
-Message-ID: <20180411202419.GA13294@avx2>
-References: <20180411201950.GA12904@avx2>
+        Wed, 11 Apr 2018 16:25:05 -0400
+X-Google-Smtp-Source: AIpwx49SWo/mnxBlx2p/byW2I1cTp9wSOjN+MO1/koIuckQKnp65I0BWaWOtC9X6069icmNPkvWop89Fzmv5/hKrR1M=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180411201950.GA12904@avx2>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <87fu41ilor.fsf@xmission.com>
+References: <20180411150829.3881900-1-arnd@arndb.de> <87fu41ilor.fsf@xmission.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 11 Apr 2018 22:25:03 +0200
+X-Google-Sender-Auth: TqcbS_oGCtvrf-TaWRaldNYQVX4
+Message-ID: <CAK8P3a3em5b2Qp_y0uHz95=JbyB7dHuPnfRNWNZ79beV6hGMyQ@mail.gmail.com>
+Subject: Re: [PATCH] sparc: compat: allow including asm/compat.h for 32-bit
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 11:19:50PM +0300, Alexey Dobriyan wrote:
-> Andrew's scripts butchered it :-(
+On Wed, Apr 11, 2018 at 9:32 PM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+> Arnd Bergmann <arnd@arndb.de> writes:
+>
+>> We have several files on sparc that include linux/compat.h and expect
+>> asm/compat.h not to be included, otherwise we get a build failure.
+>
+> Should this say: "We have several files on sparc that include
+> linux/compat.h and expect asm/compat.h not be included when
+> !CONFIG_COMPAT." ?
 
-OK
+Correct, I'll fix it up. I'll say '32-bit builds' instead, which is what
+I'm interested in. On sparc64, CONFIG_COMPAT is enabled
+unconditionally, so it's really the same thing.
 
-It got sent from here as iso8859-1.
+> I don't have your tree and I see asm/compat.h included from
+> linux/compat.h already so the description above seems wrong.
+
+I removed the tree from linux-next before the merge window because
+of this build regression, if you are interested in the other changes,
+please see
+
+git://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git y2038-next
+
+      Arnd
