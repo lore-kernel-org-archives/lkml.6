@@ -1,429 +1,327 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752482AbeDKAB1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 20:01:27 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:42440 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752407AbeDKABY (ORCPT
+        id S1752654AbeDKADA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 20:03:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43714 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752591AbeDKAC6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 20:01:24 -0400
-X-Google-Smtp-Source: AIpwx4+tpUX6qseY/VP4m0W1Xv8tdVwr1Ulr72oDUJGwWNNRJEWY0Zl9QVrNgjOB9ZIwySHZQ4DWSg==
-Date: Tue, 10 Apr 2018 17:01:20 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        evgreen@chromium.org, dianders@chromium.org
-Subject: Re: [PATCH v5 04/10] drivers: qcom: rpmh: add RPMH helper functions
-Message-ID: <20180411000120.GD6727@builder>
-References: <20180405161834.3850-1-ilina@codeaurora.org>
- <20180405161834.3850-5-ilina@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180405161834.3850-5-ilina@codeaurora.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        Tue, 10 Apr 2018 20:02:58 -0400
+Date: Tue, 10 Apr 2018 17:02:56 -0700
+From: akpm@linux-foundation.org
+To: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+Subject: mmotm 2018-04-10-17-02 uploaded
+Message-ID: <20180411000256.gjPZB%akpm@linux-foundation.org>
+User-Agent: s-nail v14.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 05 Apr 09:18 PDT 2018, Lina Iyer wrote:
+The mm-of-the-moment snapshot 2018-04-10-17-02 has been uploaded to
 
-> Sending RPMH requests and waiting for response from the controller
-> through a callback is common functionality across all platform drivers.
-> To simplify drivers, add a library functions to create RPMH client and
-> send resource state requests.
-> 
-> rpmh_write() is a synchronous blocking call that can be used to send
-> active state requests.
-> 
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> ---
-> 
-> Changes in v4:
-> 	- use const struct tcs_cmd in API
-> 	- remove wait count from this patch
-> 	- changed -EFAULT to -EINVAL
-> ---
->  drivers/soc/qcom/Makefile        |   4 +-
->  drivers/soc/qcom/rpmh-internal.h |   2 +
->  drivers/soc/qcom/rpmh-rsc.c      |   7 ++
->  drivers/soc/qcom/rpmh.c          | 253 +++++++++++++++++++++++++++++++++++++++
->  include/soc/qcom/rpmh.h          |  34 ++++++
->  5 files changed, 299 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/soc/qcom/rpmh.c
->  create mode 100644 include/soc/qcom/rpmh.h
-> 
-> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-> index cb6300f6a8e9..bb395c3202ca 100644
-> --- a/drivers/soc/qcom/Makefile
-> +++ b/drivers/soc/qcom/Makefile
-> @@ -7,7 +7,9 @@ obj-$(CONFIG_QCOM_PM)	+=	spm.o
->  obj-$(CONFIG_QCOM_QMI_HELPERS)	+= qmi_helpers.o
->  qmi_helpers-y	+= qmi_encdec.o qmi_interface.o
->  obj-$(CONFIG_QCOM_RMTFS_MEM)	+= rmtfs_mem.o
-> -obj-$(CONFIG_QCOM_RPMH)	+=	rpmh-rsc.o
-> +obj-$(CONFIG_QCOM_RPMH)		+= qcom_rpmh.o
-> +qcom_rpmh-y			+= rpmh-rsc.o
-> +qcom_rpmh-y			+= rpmh.o
->  obj-$(CONFIG_QCOM_SMD_RPM)	+= smd-rpm.o
->  obj-$(CONFIG_QCOM_SMEM) +=	smem.o
->  obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
-> diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
-> index aa73ec4b3e42..125f9faec536 100644
-> --- a/drivers/soc/qcom/rpmh-internal.h
-> +++ b/drivers/soc/qcom/rpmh-internal.h
-> @@ -86,4 +86,6 @@ struct rsc_drv {
->  
->  int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
->  
-> +void rpmh_tx_done(const struct tcs_request *msg, int r);
-> +
->  #endif /* __RPM_INTERNAL_H__ */
-> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-> index f604101a4fc2..c5cde917dba6 100644
-> --- a/drivers/soc/qcom/rpmh-rsc.c
-> +++ b/drivers/soc/qcom/rpmh-rsc.c
-> @@ -252,6 +252,8 @@ static void tcs_notify_tx_done(unsigned long data)
->  	struct rsc_drv *drv = (struct rsc_drv *)data;
->  	struct tcs_response *resp;
->  	unsigned long flags;
-> +	const struct tcs_request *msg;
-> +	int err;
->  
->  	for (;;) {
->  		spin_lock_irqsave(&drv->drv_lock, flags);
-> @@ -264,7 +266,10 @@ static void tcs_notify_tx_done(unsigned long data)
->  		list_del(&resp->list);
->  		spin_unlock_irqrestore(&drv->drv_lock, flags);
->  		trace_rpmh_notify_tx_done(drv, resp);
-> +		msg = resp->msg;
-> +		err = resp->err;
->  		free_response(resp);
-> +		rpmh_tx_done(msg, err);
->  	}
->  }
->  
-> @@ -554,6 +559,8 @@ static int rpmh_rsc_probe(struct platform_device *pdev)
->  	/* Enable the active TCS to send requests immediately */
->  	write_tcs_reg(drv, RSC_DRV_IRQ_ENABLE, 0, 0, drv->tcs[ACTIVE_TCS].mask);
->  
-> +	dev_set_drvdata(&pdev->dev, drv);
-> +
->  	return devm_of_platform_populate(&pdev->dev);
->  }
->  
-> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-> new file mode 100644
-> index 000000000000..e3c7491e7baf
-> --- /dev/null
-> +++ b/drivers/soc/qcom/rpmh.c
-> @@ -0,0 +1,253 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/atomic.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/jiffies.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mailbox_client.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +#include <linux/types.h>
-> +#include <linux/wait.h>
-> +
-> +#include <soc/qcom/rpmh.h>
-> +
-> +#include "rpmh-internal.h"
-> +
-> +#define RPMH_MAX_MBOXES			2
-> +#define RPMH_TIMEOUT_MS			10000
+   http://www.ozlabs.org/~akpm/mmotm/
 
-Just define this in jiffies and you don't need to do msecs_to_jiffies()
-every time you use it.
+mmotm-readme.txt says
 
-> +
-> +#define DEFINE_RPMH_MSG_ONSTACK(rc, s, q, name)		\
-> +	struct rpmh_request name = {			\
-> +		.msg = {				\
-> +			.state = s,			\
-> +			.cmds = name.cmd,		\
-> +			.num_cmds = 0,			\
-> +			.wait_for_compl = true,		\
-> +		},					\
-> +		.cmd = { { 0 } },			\
-> +		.completion = q,			\
-> +		.rc = rc,				\
-> +	}
-> +
-> +/**
-> + * struct rpmh_request: the message to be sent to rpmh-rsc
-> + *
-> + * @msg: the request
-> + * @cmd: the payload that will be part of the @msg
-> + * @completion: triggered when request is done
-> + * @err: err return from the controller
-> + */
-> +struct rpmh_request {
-> +	struct tcs_request msg;
-> +	struct tcs_cmd cmd[MAX_RPMH_PAYLOAD];
-> +	struct completion *completion;
-> +	struct rpmh_client *rc;
-> +	int err;
-> +};
-> +
-> +/**
-> + * struct rpmh_ctrlr: our representation of the controller
-> + *
-> + * @drv: the controller instance
-> + */
-> +struct rpmh_ctrlr {
-> +	struct rsc_drv *drv;
-> +};
-> +
-> +/**
-> + * struct rpmh_client: the client object
-> + *
-> + * @dev: the platform device that is the owner
-> + * @ctrlr: the controller associated with this client.
-> + */
-> +struct rpmh_client {
-> +	struct device *dev;
-> +	struct rpmh_ctrlr *ctrlr;
-> +};
-> +
-> +static struct rpmh_ctrlr rpmh_rsc[RPMH_MAX_MBOXES];
-> +static DEFINE_MUTEX(rpmh_ctrlr_mutex);
-> +
-> +void rpmh_tx_done(const struct tcs_request *msg, int r)
+README for mm-of-the-moment:
 
-Why do you abstract this? Just put "err" and "completion" in the
-rpmh_request and fire them off as soon as you know the result of the
-request.
+http://www.ozlabs.org/~akpm/mmotm/
 
-> +{
-> +	struct rpmh_request *rpm_msg = container_of(msg, struct rpmh_request,
-> +						    msg);
-> +	struct completion *compl = rpm_msg->completion;
-> +
-> +	rpm_msg->err = r;
-> +
-> +	if (r)
-> +		dev_err(rpm_msg->rc->dev,
-> +			"RPMH TX fail in msg addr=%#x, err=%d\n",
-> +			rpm_msg->msg.cmds[0].addr, r);
-> +
-> +	/* Signal the blocking thread we are done */
-> +	if (compl)
-> +		complete(compl);
-> +}
-> +EXPORT_SYMBOL(rpmh_tx_done);
-> +
-> +/**
-> + * wait_for_tx_done: Wait until the response is received.
-> + *
-> + * @rc: The RPMH client
-> + * @compl: The completion object
-> + * @addr: An addr that we sent in that request
-> + * @data: The data for the address in that request
-> + */
-> +static int wait_for_tx_done(struct rpmh_client *rc,
-> +			    struct completion *compl, u32 addr, u32 data)
-> +{
-> +	int ret;
-> +
-> +	might_sleep();
-> +
-> +	ret = wait_for_completion_timeout(compl,
-> +					  msecs_to_jiffies(RPMH_TIMEOUT_MS));
-> +	if (ret)
-> +		dev_dbg(rc->dev,
-> +			"RPMH response received addr=%#x data=%#x\n",
-> +			addr, data);
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
 
-For the single cmd use case this printout will be correct, but in that
-case there's no value printing at this level compared to higher up. For
-the batch process you will in a later patch print the parameters of
-cmd[0], regardless of which cmd failed - which is deceiving.
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
 
-I suggest that you just drop these debug prints and have some higher
-layer take care of it, if they want to.
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
 
-> +	else
-> +		dev_err(rc->dev,
-> +			"RPMH response timeout addr=%#x data=%#x\n",
-> +			addr, data);
-> +
-> +	return (ret > 0) ? 0 : -ETIMEDOUT;
-> +}
-> +
-> +/**
-> + * __rpmh_write: send the RPMH request
-> + *
-> + * @rc: The RPMH client
-> + * @state: Active/Sleep request type
-> + * @rpm_msg: The data that needs to be sent (cmds).
-> + */
-> +static int __rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
-> +			struct rpmh_request *rpm_msg)
-> +{
-> +	int ret = -EINVAL;
-> +
-> +	rpm_msg->msg.state = state;
-> +
-> +	if (state == RPMH_ACTIVE_ONLY_STATE) {
-> +		WARN_ON(irqs_disabled());
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
 
-Can you please add a comment here, describing the different expectations
-compared to using might_sleep() here.
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
 
-> +		ret = rpmh_rsc_send_data(rc->ctrlr->drv, &rpm_msg->msg);
-> +		if (!ret)
-> +			dev_dbg(rc->dev,
-> +				"RPMH request sent addr=%#x, data=%i#x\n",
-> +				rpm_msg->msg.cmds[0].addr,
-> +				rpm_msg->msg.cmds[0].data);
-> +		else
-> +			dev_warn(rc->dev,
-> +				 "Error in RPMH request addr=%#x, data=%#x\n",
-> +				 rpm_msg->msg.cmds[0].addr,
-> +				 rpm_msg->msg.cmds[0].data);
 
-As above, there's no added value in printing an error on this level.
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
 
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * rpmh_write: Write a set of RPMH commands and block until response
-> + *
-> + * @rc: The RPMh handle got from rpmh_get_client
-> + * @state: Active/sleep set
-> + * @cmd: The payload data
-> + * @n: The number of elements in @cmd
-> + *
-> + * May sleep. Do not call from atomic contexts.
-> + */
-> +int rpmh_write(struct rpmh_client *rc, enum rpmh_state state,
-> +	       const struct tcs_cmd *cmd, u32 n)
-> +{
-> +	DECLARE_COMPLETION_ONSTACK(compl);
-> +	DEFINE_RPMH_MSG_ONSTACK(rc, state, &compl, rpm_msg);
-> +	int ret;
-> +
-> +	if (IS_ERR_OR_NULL(rc) || !cmd || !n || n > MAX_RPMH_PAYLOAD)
-> +		return -EINVAL;
-> +
-> +	memcpy(rpm_msg.cmd, cmd, n * sizeof(*cmd));
-> +	rpm_msg.msg.num_cmds = n;
-> +
-> +	ret = __rpmh_write(rc, state, &rpm_msg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return wait_for_tx_done(rc, &compl, cmd[0].addr, cmd[0].data);
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
 
-As this is just a wait_for_completion_timeout(compl) it would be cleaner
-to just call that here directly.
+To develop on top of mmotm git:
 
-> +}
-> +EXPORT_SYMBOL(rpmh_write);
-> +
-> +static struct rpmh_ctrlr *get_rpmh_ctrlr(struct platform_device *pdev)
-> +{
-> +	int i;
-> +	struct rsc_drv *drv = dev_get_drvdata(pdev->dev.parent);
-> +	struct rpmh_ctrlr *ctrlr = ERR_PTR(-EINVAL);
-> +
-> +	if (!drv)
-> +		return ctrlr;
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
 
-The only time this would fail is if pdev->dev.parent happens to be
-some other device that happens to not have drvdata. It's fine to assume
-that the rsc client is actually a child of the rsc device.
+To rebase a branch with older patches to a new mmotm release:
 
-> +
-> +	mutex_lock(&rpmh_ctrlr_mutex);
-> +	for (i = 0; i < RPMH_MAX_MBOXES; i++) {
-> +		if (rpmh_rsc[i].drv == drv) {
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
 
-Why do you store these in a global variable? Just create one for each
-rsc and store that in the drvdata. Turning this function into:
 
-	return dev_get_drvdata(pdev->dev.parent);
 
-> +			ctrlr = &rpmh_rsc[i];
-> +			goto unlock;
-> +		}
-> +	}
-> +
-> +	for (i = 0; i < RPMH_MAX_MBOXES; i++) {
-> +		if (rpmh_rsc[i].drv == NULL) {
-> +			ctrlr = &rpmh_rsc[i];
-> +			ctrlr->drv = drv;
-> +			break;
-> +		}
-> +	}
-> +	WARN_ON(i == RPMH_MAX_MBOXES);
-> +unlock:
-> +	mutex_unlock(&rpmh_ctrlr_mutex);
-> +	return ctrlr;
-> +}
-> +
-> +/**
-> + * rpmh_get_client: Get the RPMh handle
-> + *
-> + * @pdev: the platform device which needs to communicate with RPM
-> + * accelerators
-> + * May sleep.
-> + */
-> +struct rpmh_client *rpmh_get_client(struct platform_device *pdev)
-> +{
-> +	struct rpmh_client *rc;
-> +
-> +	rc = kzalloc(sizeof(*rc), GFP_KERNEL);
-> +	if (!rc)
-> +		return ERR_PTR(-ENOMEM);
 
-The only thing this is used for it to keep the client's "dev" in order
-to be able to print debug messages on its behalf. The cost of it is that
-the clients needs to do custom error handling in probe and actually
-implement a remove function.
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
 
-Can you please elaborate on what kind of magic stuff will go into this
-struct that makes it worth lugging around?
+A git copy of this tree is available at
 
-> +
-> +	rc->dev = &pdev->dev;
-> +	rc->ctrlr = get_rpmh_ctrlr(pdev);
-> +	if (IS_ERR(rc->ctrlr)) {
-> +		kfree(rc);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	return rc;
-> +}
-> +EXPORT_SYMBOL(rpmh_get_client);
-> +
-> +/**
-> + * rpmh_release: Release the RPMH client
-> + *
-> + * @rc: The RPMh handle to be freed.
-> + */
-> +void rpmh_release(struct rpmh_client *rc)
-> +{
-> +	kfree(rc);
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
 
-If you really really need it, can we at least make it use devres.
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
 
-> +}
 
-Regards,
-Bjorn
+This mmotm tree contains the following patches against 4.16:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+  i-need-old-gcc.patch
+* mm-introduce-nr_indirectly_reclaimable_bytes.patch
+* mm-treat-indirectly-reclaimable-memory-as-available-in-memavailable.patch
+* dcache-account-external-names-as-indirectly-reclaimable-memory.patch
+* mm-treat-indirectly-reclaimable-memory-as-free-in-overcommit-logic.patch
+* mm-vmscan-update-stale-comments.patch
+* mm-vmscan-remove-redundant-current_may_throttle-check.patch
+* mm-vmscan-dont-change-pgdat-state-on-base-of-a-single-lru-list-state-v2.patch
+* mm-vmscan-dont-mess-with-pgdat-flags-in-memcg-reclaim-v2.patch
+* mm-vmscan-tracing-use-pointer-to-reclaim_stat-struct-in-trace-event.patch
+* mm-hmm-documentation-editorial-update-to-hmm-documentation.patch
+* mm-hmm-fix-header-file-if-else-endif-maze-v2.patch
+* mm-hmm-hmm-should-have-a-callback-before-mm-is-destroyed-v3.patch
+* mm-hmm-unregister-mmu_notifier-when-last-hmm-client-quit-v3.patch
+* mm-hmm-hmm_pfns_bad-was-accessing-wrong-struct.patch
+* mm-hmm-use-struct-for-hmm_vma_fault-hmm_vma_get_pfns-parameters-v2.patch
+* mm-hmm-remove-hmm_pfn_read-flag-and-ignore-peculiar-architecture-v2.patch
+* mm-hmm-use-uint64_t-for-hmm-pfn-instead-of-defining-hmm_pfn_t-to-ulong-v2.patch
+* mm-hmm-cleanup-special-vma-handling-vm_special.patch
+* mm-hmm-do-not-differentiate-between-empty-entry-or-missing-directory-v3.patch
+* mm-hmm-rename-hmm_pfn_device_unaddressable-to-hmm_pfn_device_private.patch
+* mm-hmm-move-hmm_pfns_clear-closer-to-where-it-is-use.patch
+* mm-hmm-factor-out-pte-and-pmd-handling-to-simplify-hmm_vma_walk_pmd-v2.patch
+* mm-hmm-change-hmm_vma_fault-to-allow-write-fault-on-page-basis.patch
+* mm-hmm-use-device-driver-encoding-for-hmm-pfn-v2.patch
+* hmm-remove-superflous-rcu-protection-around-radix-tree-lookup.patch
+* mm-hmm-fix-header-file-if-else-endif-maze-again.patch
+* documentation-vm-hmmtxt-typos-and-syntaxes-fixes.patch
+* sched-numa-avoid-trapping-faults-and-attempting-migration-of-file-backed-dirty-pages.patch
+* mm-check-__highest_present_sectioin_nr-directly-in-memory_dev_init.patch
+* mm-migrate-properly-preserve-write-attribute-in-special-migrate-entry.patch
+* memcg-thp-do-not-invoke-oom-killer-on-thp-charges.patch
+* z3fold-fix-memory-leak.patch
+* z3fold-use-gfpflags_allow_blocking.patch
+* mm-ksm-fix-inconsistent-accounting-of-zero-pages.patch
+* mm-memcg-make-sure-memoryevents-is-uptodate-when-waking-pollers.patch
+* swap-divide-by-zero-when-zero-length-swap-file-on-ssd.patch
+* memcg-fix-per_node_info-cleanup.patch
+* mm-swap-make-pointer-swap_avail_heads-static.patch
+* mm-numa-rework-do_pages_move.patch
+* mm-migrate-remove-reason-argument-from-new_page_t.patch
+* mm-unclutter-thp-migration.patch
+* mm-page_alloc-dont-reserve-zone_highmem-for-zone_movable-request.patch
+* mm-cma-manage-the-memory-of-the-cma-area-by-using-the-zone_movable.patch
+* mm-cma-remove-alloc_cma.patch
+* arm-cma-avoid-double-mapping-to-the-cma-area-if-config_highmem-=-y.patch
+* mm-thp-dont-count-zone_movable-as-the-target-for-freepage-reserving.patch
+* kasan-slub-fix-handling-of-kasan_slab_free-hook.patch
+* kasan-fix-invalid-free-test-crashing-the-kernel.patch
+* kasan-disallow-compiler-to-optimize-away-memset-in-tests.patch
+* procfs-add-seq_put_hex_ll-to-speed-up-proc-pid-maps.patch
+* procfs-optimize-seq_pad-to-speed-up-proc-pid-maps.patch
+* proc-get-rid-of-task-lock-unlock-pair-to-read-umask-for-the-status-file.patch
+* proc-do-less-stuff-under-pde_unload_lock.patch
+* proc-move-proc-sysvipc-creation-to-where-it-belongs.patch
+* proc-faster-open-close-of-files-without-release-hook.patch
+* proc-randomize-struct-pde_opener.patch
+* proc-move-struct-pde_opener-to-kmem-cache.patch
+* proc-account-struct-pde_opener.patch
+* proc-add-seq_put_decimal_ull_width-to-speed-up-proc-pid-smaps.patch
+* proc-replace-seq_printf-on-seq_putc-to-speed-up-proc-pid-smaps.patch
+* proc-optimize-single-symbol-delimiters-to-spead-up-seq_put_decimal_ull.patch
+* proc-replace-seq_printf-by-seq_put_smth-to-speed-up-proc-pid-status.patch
+* proc-check-permissions-earlier-for-proc-wchan.patch
+* proc-use-set_puts-at-proc-wchan.patch
+* fs-sysctl-fix-potential-page-fault-while-unregistering-sysctl-table.patch
+* fs-sysctl-remove-redundant-link-check-in-proc_sys_link_fill_cache.patch
+* proc-test-proc-self-wchan.patch
+* proc-test-proc-self-syscall.patch
+* proc-move-struct-proc_dir_entry-into-kmem-cache.patch
+* proc-fix-proc-map_files-lookup-some-more.patch
+* proc-register-filesystem-last.patch
+* proc-faster-proc-cmdline.patch
+* proc-do-mmput-asap-for-proc-map_files.patch
+* proc-test-last-field-of-proc-loadavg.patch
+* proc-reject-and-as-filenames.patch
+* proc-switch-struct-proc_dir_entry-count-to-refcount.patch
+* proc-shotgun-test-read-readdir-readlink-a-little-write.patch
+* proc-use-slower-rb_first.patch
+* proc-test-proc-uptime.patch
+* taint-convert-to-indexed-initialization.patch
+* taint-consolidate-documentation.patch
+* taint-add-taint-for-randstruct.patch
+* uts-create-struct-uts_namespace-from-kmem_cache.patch
+* clang-format-add-configuration-file.patch
+* task_struct-only-use-anon-struct-under-randstruct-plugin.patch
+* maintainers-update-email-address-for-alexandre-bounine.patch
+* lib-kconfigdebug-debug-lockups-and-hangs-keep-softlockup-options-together.patch
+* test_bitmap-do-not-accidentally-use-stack-vla.patch
+* lib-add-testing-module-for-ubsan.patch
+* lib-add-testing-module-for-ubsan-fix.patch
+* list_debug-print-unmangled-addresses.patch
+* checkpatch-improve-parse_email-signature-checking.patch
+* checkpatchpl-add-spdx-license-tag-check.patch
+* checkpatch-add-crypto-on_stack-to-declaration_macros.patch
+* checkpatch-add-sub-routine-get_stat_real.patch
+* checkpatch-remove-unused-variable-declarations.patch
+* checkpatch-add-sub-routine-get_stat_here.patch
+* checkpatch-warn-for-use-of-%px.patch
+* checkpatch-improve-get_quoted_string-for-trace_event-macros.patch
+* checkpatch-two-spelling-fixes.patch
+* checkpatch-test-symbolic_perms-multiple-times-per-line.patch
+* checkpatch-add-test-for-assignment-at-start-of-line.patch
+* checkpatch-allow-space-between-colon-and-bracket.patch
+* checkpatch-whinge-about-bool-bitfields.patch
+* init-ramdisk-use-pr_cont-at-the-end-of-ramdisk-loading.patch
+* autofs4-use-wait_event_killable.patch
+* fs-reiserfs-journalc-add-missing-resierfs_warning-arg.patch
+* seq_file-allocate-seq_file-from-kmem_cache.patch
+* seq_file-account-everything.patch
+* exec-pass-stack-rlimit-into-mm-layout-functions.patch
+* exec-introduce-finalize_exec-before-start_thread.patch
+* exec-pin-stack-limit-during-exec.patch
+* rapidio-fix-typo-in-comment.patch
+* rapidio-use-a-reference-count-for-struct-mport_dma_req.patch
+* sysctl-fix-sizeof-argument-to-match-variable-name.patch
+* kernel-downgrade-warning-for-unsafe-parameters.patch
+* ipc-shm-introduce-shmctlshm_stat_any.patch
+* ipc-sem-introduce-semctlsem_stat_any.patch
+* ipc-msg-introduce-msgctlmsg_stat_any.patch
+* proc-sysctl-fix-typo-in-sysctl_check_table_array.patch
+* sysctl-add-kdoc-comments-to-do_proc_douintvec_minmax_conv_param.patch
+* ipc-shmc-shm_split-remove-unneeded-test-for-null-shm_file_datavm_ops.patch
+* kfifo-fix-comment.patch
+* dcache-add-cond_resched-in-shrink_dentry_list.patch
+* maintainers-update-bouncing-aacraid-adapteccom-addresses.patch
+* mm-introduce-map_fixed_safe.patch
+* fs-elf-drop-map_fixed-usage-from-elf_map.patch
+* elf-enforce-map_fixed-on-overlaying-elf-segments.patch
+* xen-mm-allow-deferred-page-initialization-for-xen-pv-domains.patch
+* linux-consth-prefix-include-guard-of-uapi-linux-consth-with-_uapi.patch
+* linux-consth-move-ul-macro-to-include-linux-consth.patch
+* linux-consth-refactor-_bitul-and-_bitull-a-bit.patch
+* radix-tree-use-gfp_zonemask-bits-of-gfp_t-for-flags.patch
+* mac80211_hwsim-use-define_ida.patch
+* arm64-turn-flush_dcache_mmap_lock-into-a-no-op.patch
+* unicore32-turn-flush_dcache_mmap_lock-into-a-no-op.patch
+* export-__set_page_dirty.patch
+* fscache-use-appropriate-radix-tree-accessors.patch
+* xarray-add-the-xa_lock-to-the-radix_tree_root.patch
+* page-cache-use-xa_lock.patch
+* resource-fix-integer-overflow-at-reallocation-v1.patch
+* resource-fix-integer-overflow-at-reallocation.patch
+* mm-gup_benchmark-handle-gup-failures.patch
+* mm-gup_benchmark-handle-gup-failures-fix.patch
+* gup-return-efault-on-access_ok-failure.patch
+* mm-gup-document-return-value.patch
+* mm-filemap-provide-dummy-filemap_page_mkwrite-for-nommu.patch
+* mm-pagemap-fix-swap-offset-value-for-pmd-migration-entry.patch
+* mm-pagemap-fix-swap-offset-value-for-pmd-migration-entry-fix.patch
+* ipc-shm-fix-use-after-free-of-shm-file-via-remap_file_pages.patch
+* ipc-shm-fix-use-after-free-of-shm-file-via-remap_file_pages-v2.patch
+* writeback-safer-lock-nesting.patch
+* writeback-safer-lock-nesting-fix.patch
+* kexec-export-pg_swapbacked-to-vmcoreinfo.patch
+* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
+* prctl-add-pr_et_pdeathsig_proc.patch
+* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery-checkpatch-fixes.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+* dentry-fix-kmemcheck-splat-at-take_dentry_name_snapshot.patch
+  mm.patch
+* mm-sparse-add-a-static-variable-nr_present_sections.patch
+* mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
+* mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
+* mm-fix-race-between-swapoff-and-mincore.patch
+* mmvmscan-mark-register_shrinker-as-__must_check.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
+* mm-oom-refactor-the-oom_kill_process-function.patch
+* mm-implement-mem_cgroup_scan_tasks-for-the-root-memory-cgroup.patch
+* mm-oom-cgroup-aware-oom-killer.patch
+* mm-oom-cgroup-aware-oom-killer-fix.patch
+* mm-oom-introduce-memoryoom_group.patch
+* mm-oom-introduce-memoryoom_group-fix.patch
+* mm-oom-add-cgroup-v2-mount-option-for-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2-fix.patch
+* cgroup-list-groupoom-in-cgroup-features.patch
+* mm-add-strictlimit-knob-v2.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* mm-page_owner-align-with-pageblock_nr_pages.patch
+* mm-page_owner-align-with-pageblock_nr-pages.patch
+* mm-kasan-dont-vfree-nonexistent-vm_area.patch
+* proc-revalidate-misc-dentries.patch
+* rslib-remove-vlas-by-setting-upper-bound-on-nroots.patch
+* checkpatch-add-a-strict-test-for-structs-with-bool-member-definitions.patch
+* coredump-fix-spam-with-zero-vma-process.patch
+* seq_file-delete-small-value-optimization.patch
+* fork-unconditionally-clear-stack-on-fork.patch
+* exofs-avoid-vla-in-structures.patch
+  linux-next.patch
+  linux-next-rejects.patch
+  linux-next-fixup.patch
+* kexec_file-make-an-use-of-purgatory-optional.patch
+* kexec_file-make-an-use-of-purgatory-optional-fix.patch
+* kexec_filex86powerpc-factor-out-kexec_file_ops-functions.patch
+* x86-kexec_file-purge-system-ram-walking-from-prepare_elf64_headers.patch
+* x86-kexec_file-remove-x86_64-dependency-from-prepare_elf64_headers.patch
+* x86-kexec_file-lift-crash_max_ranges-limit-on-crash_mem-buffer.patch
+* x86-kexec_file-clean-up-prepare_elf64_headers.patch
+* kexec_file-x86-move-re-factored-code-to-generic-side.patch
+* kexec_file-silence-compile-warnings.patch
+* kexec_file-remove-checks-in-kexec_purgatory_load.patch
+* kexec_file-make-purgatory_info-ehdr-const.patch
+* kexec_file-search-symbols-in-read-only-kexec_purgatory.patch
+* kexec_file-use-read-only-sections-in-arch_kexec_apply_relocations.patch
+* kexec_file-split-up-__kexec_load_puragory.patch
+* kexec_file-remove-unneeded-for-loop-in-kexec_purgatory_setup_sechdrs.patch
+* kexec_file-remove-unneeded-variables-in-kexec_purgatory_setup_sechdrs.patch
+* kexec_file-remove-mis-use-of-sh_offset-field-during-purgatory-load.patch
+* kexec_file-allow-archs-to-set-purgatory-load-address.patch
+* kexec_file-move-purgatories-sha256-to-common-code.patch
+* resource-add-walk_system_ram_res_rev.patch
+* kexec_file-load-kernel-at-top-of-system-ram-if-required.patch
+* mm-memcg-remote-memcg-charging-for-kmem-allocations.patch
+* mm-memcg-remote-memcg-charging-for-kmem-allocations-fix.patch
+* fs-fsnotify-account-fsnotify-metadata-to-kmemcg.patch
+* fs-fsnotify-account-fsnotify-metadata-to-kmemcg-fix.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+* sparc64-ng4-memset-32-bits-overflow.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  slab-leaks3-default-y.patch
+  workaround-for-a-pci-restoring-bug.patch
