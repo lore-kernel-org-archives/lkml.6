@@ -1,78 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755322AbeDKVLv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 17:11:51 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44580 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754368AbeDKVLq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 17:11:46 -0400
-X-Google-Smtp-Source: AIpwx48Y2ZHhS6r3CzW7z7++K/rwzQa3oCXQmfGbPjtMd3m5vzadT/TenUV8LlL+m48mltxPgo+iU7XtkgJ9tj2sltQ=
+        id S1755330AbeDKVNo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 17:13:44 -0400
+Received: from sauhun.de ([88.99.104.3]:56778 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754904AbeDKVN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 17:13:28 -0400
+Date: Wed, 11 Apr 2018 23:13:26 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-i2c@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>, Joe Perches <joe@perches.com>
+Subject: Re: [PATCH v2 1/2] MAINTAINERS: remove me as maintainer for I2C host
+ drivers
+Message-ID: <20180411211326.hudtgm2ldd2fnptm@ninjato>
+References: <20180410194914.7268-1-wsa@the-dreams.de>
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <eb67b174e6a3d0fe174cc738d9109cd7fda96a9b.1523316291.git.rgb@redhat.com>
-References: <eb67b174e6a3d0fe174cc738d9109cd7fda96a9b.1523316291.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 11 Apr 2018 17:11:44 -0400
-Message-ID: <CAHC9VhTv_2ErGe38u+Z2CGY2BhNqbG0u_tqbMmwOYUsr4jJ3aQ@mail.gmail.com>
-Subject: Re: [PATCH ghak47 V1] audit: normalize MAC_POLICY_LOAD record
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>,
-        Eric Paris <eparis@redhat.com>, Steve Grubb <sgrubb@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rhzmdsafba5t3hyz"
+Content-Disposition: inline
+In-Reply-To: <20180410194914.7268-1-wsa@the-dreams.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 9, 2018 at 7:36 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> The audit MAC_POLICY_LOAD record had redundant dangling keywords and was
-> missing information about which LSM was responsible and its completion
-> status.  While this record is only issued on success, the parser expects
-> the res= field to be present.
->
-> Old record:
-> type=MAC_POLICY_LOAD msg=audit(1479299795.404:43): policy loaded auid=0 ses=1
->
-> Delete the redundant dangling keywords, add the lsm= field and the res=
-> field.
->
-> New record:
-> type=MAC_POLICY_LOAD msg=audit(1523293846.204:894): auid=0 ses=1 lsm=selinux res=1
->
-> See: https://github.com/linux-audit/audit-kernel/issues/47
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  security/selinux/selinuxfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-> index 00b21b2..496915a 100644
-> --- a/security/selinux/selinuxfs.c
-> +++ b/security/selinux/selinuxfs.c
-> @@ -531,7 +531,7 @@ static ssize_t sel_write_load(struct file *file, const char __user *buf,
->
->  out1:
->         audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_POLICY_LOAD,
-> -               "policy loaded auid=%u ses=%u",
-> +               "auid=%u ses=%u lsm=selinux res=1",
 
-This is another case of NACK on principle, but I think we can make an
-exception in this particular case.
+--rhzmdsafba5t3hyz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Also like the other patch, this will need to wait for the merge window
-to close before I can merge it.
+On Tue, Apr 10, 2018 at 09:49:13PM +0200, Wolfram Sang wrote:
+> The number of I2C host controller drivers keeps increasing, and although
+> I had some success acquiring specific driver maintainers, my bandwidth
+> is by far not enough to act as a fallback for the rest of the drivers.
+> To reflect this status-quo in MAINTAINERS, add a seperate entry for I2C
+> host drivers, let the I2C list (=3D community) be the contact point, and
+> mark this section as "Odd fixes".
+>=20
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 
->                 from_kuid(&init_user_ns, audit_get_loginuid(current)),
->                 audit_get_sessionid(current));
->  out:
-> --
-> 1.8.3.1
->
+Applied to for-current, thanks!
 
--- 
-paul moore
-www.paul-moore.com
+
+--rhzmdsafba5t3hyz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrOenYACgkQFA3kzBSg
+Kbb+vw//ZrPOcCY4PsuF3rUnGZ27PrMGjCGyVAf7O1Y18Jgsgc+AyUiflyqKFdDP
+w5ui5aELcgQN5XpemQnqaSKFlDduLyywm7ZwjH78YA2rjhVmA1j8tIPoFMwSnzjG
+mQSeYZGCBO1lwt79QHXvnh+v7h8DkknL4vJEI5qgkPHL03ESR5sHg6D5NFLIi6Vi
+GI7Xpr9Tx5ZFj99jee6iRycM/P8i5B66AxtsjBPnsOt/ilpS04sBldP/PNXFpQ2r
+lmqyAIoh9FuE5aip1+m1RhCwQSKin/0BnwjvPH0QWSOWES5O2yVZY15vwmz1GrpK
+hm8+AJLFe4rLx/qZDSAB6pIg5vXRPC9ugk2lrDv4dzMpn7WNc7T32GwlH9AhlSBo
+TItEFAJtnaoPeQSaypDBWX8SvTTIN0/vwacDlEJNDOcQPdPS5fTuK7jm25BmuLSn
+sjhJD9GYb0X3zr9RdXO2w2XPKKhr0+Z6iwzAWnxo/RPES1PE2JMgiR8YAj8Q4+nI
+M52g2Wg9d6tQE+qUjw3/X42XwcVK2KZTJRnYveT9Z3TvIBXZJiajbYGKunKNOybc
+bUA+aj53z7BX0eo17vEwCy2mfpl164Tp8HE3DZq/pJ7Fe1lfrwEEXqsZpMRIKMo+
+K7X5QZAu4ZWcwFPwX9Ev+2ORxyTaeeTXSIHrW13JiOsba399Z7I=
+=jIMJ
+-----END PGP SIGNATURE-----
+
+--rhzmdsafba5t3hyz--
