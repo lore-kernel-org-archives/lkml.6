@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49Z5Nz+WlLg8p1N/WCHMdVGITkEH94IpK1oJ/E4Q1ijJTDs47/FLsWqZqWFwUzm5AlZFSKW
-ARC-Seal: i=1; a=rsa-sha256; t=1523473220; cv=none;
+X-Google-Smtp-Source: AIpwx48ElN1ooLERBkwAMM/hZaZtyjFpRL0q6Nlx6NZDMloc0pA/5HskT6wDcnDSjB0jxwzNLZLr
+ARC-Seal: i=1; a=rsa-sha256; t=1523473218; cv=none;
         d=google.com; s=arc-20160816;
-        b=LxgXsMHsxePg8P1gURXOBqytb3j/KWzCaBvrKPa2ca+C/LmaXuMjMWpwpK9/D5GCHe
-         fExKjdrOq12oTe4DWEmWKNwwLMJ0KFOW3j+7wAo8faGYmUmmKiUpuMIuHhfV06h1cA3+
-         lIbybZHHsaUSmfe/+DJ+7Da7/td2hw4eabWnYrH+NA7JscpHgLPiSPzt96rMo4FaBkzc
-         jxsjHwlQnyl0LRExZnEiI1dbtLpaGmk8Tj3uwy4PN2ikjBUTZzlB/JSKT/C5EOFk4A6w
-         Hnl1Zz3Suj3Q/6dyKVJrTwXs6NRt6lIHmuv8qLOs0r6IWWL94OX8gQCrfVOwezzzKVmw
-         IBTA==
+        b=LxhqmdfzSi8FqRTxmoSi0F59UEkF+vGuQ0BQ5a3GmX+vD8OV9+J7S5DNv2adIuoSyI
+         BcxMvdFy3hD0xXdDOKPho+ocXTZDZXUssZiwoeevRm9yWgHcs2SrM3Of/3XxIxtyISom
+         ANjLVTxOSXbx0auSBctyxNVrgMuePJaVr8io0oZUlPg3/9RwpK4WPRMOJYx9Yh/9hdXc
+         c3WSl3k0tdtujiJoWo5x82C6ERx4aJJQKF3tYfMPFqK8gEOhbAfmlCjmWpZdLycCd9QY
+         wJRwTZAifOqOYB0+HWwaWj4tLknoaU0yXhW0CoXmy/WG9tTrIMcR55w+G/jWIFIt35+A
+         VuHw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=X2tY1FGnqb3UoTg9TF5cIfBMlZ3EQswMCxMEZnGNduE=;
-        b=yoj1i0HSJxiW9bxwixz0rjAZ3rdk503u4C3j+eDu+EQ9qkyv12KTedMY5jUAoP/ycw
-         uCpGuU1Faiqr+YB9tkJKOHyIX+YXU69X5umDWu5wmARvvG3p+owCG9LPhCn43PHO7rlj
-         Jsy1Fq0vaDk/y3G3HySPOERawn67LG2cTRKh0TnGxvjhVHh+5IYyGHf2pJ1mgYreXlo9
-         4FVKdDa7WBhbA2XClhnIFzZQOPlNlQVD/r996dj9AO7NDaW3MUNR7GLHKNDahVg5i8Dt
-         vOQwdhCbjh7kSnDQyuDFSmC+wSaj10nRGAWjhIuBTu/9ctp5fYiCTB4MHB7fUqccEg6N
-         4q5Q==
+        bh=pJGHhvXs9P0qLh2E3su1HAlg1A+ZXL0CbGgibL1o8wk=;
+        b=CLKLndxKd7xFx0px0RZ4blDNhAgE4uaAp+zaPR+dj5DB6N6iRDA8KueD5L6Sa7nEzE
+         c8DOh0/ClHPJU0XLHaHMmcILXJKsa1BOUVx1T7Ux4H+3poiQZK5of7WF9KEgEcrqMCfE
+         IngibouhfyskbMhbJdzxcRSGf/IsHwcK86eBtqtxf+uOjJJEUlu7Cwo5EkTtK7yODtRg
+         Qt3Sw6G22pOy30NijMp9LhKQFHu3p4kkpnLn4tBB4+BUMVi7h7OkmSqkn+dMCuFgK/e+
+         H8E9Crfh2LIhglBH/+zXB4Yn9tiwocXhp/O678ntWf3N1RMG+Ur5iEkTKELk7k4SaR35
+         EXrg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,12 +27,11 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Chen-Yu Tsai <wens@csie.org>,
-	Rob Herring <robh@kernel.org>,
 	Maxime Ripard <maxime.ripard@free-electrons.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 168/310] dt-bindings: display: sun4i: Add allwinner,tcon-channel property
-Date: Wed, 11 Apr 2018 20:35:07 +0200
-Message-Id: <20180411183629.780754443@linuxfoundation.org>
+Subject: [PATCH 4.9 167/310] drm/sun4i: Ignore the generic connectors for components
+Date: Wed, 11 Apr 2018 20:35:06 +0200
+Message-Id: <20180411183629.667084702@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477455792879466?=
-X-GMAIL-MSGID: =?utf-8?q?1597477455792879466?=
+X-GMAIL-THRID: =?utf-8?q?1597477453416558998?=
+X-GMAIL-MSGID: =?utf-8?q?1597477453416558998?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,48 +53,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
 
 
-[ Upstream commit 22662f12768f971809b478386d9cc4947d00497a ]
+[ Upstream commit 49baeb074783f5bdf770dc9fac5fbb2837190583 ]
 
-The Allwinner Timings Controller has two, mutually exclusive, channels.
-When the binding has been introduced, it was assumed that there would be
-only a single user per channel in the system.
+The generic connectors such as hdmi-connector doesn't have any driver in,
+so if they are added to the component list, we will be waiting forever for
+a non-existing driver to probe.
 
-While this is likely for the channel 0 which only connects to LCD displays,
-it turns out that the channel 1 can be connected to multiple controllers in
-the SoC (HDMI and TV encoders for example). And while the simultaneous use
-of HDMI and TV outputs cannot be achieved, switching from one to the other
-at runtime definitely sounds plausible.
+Add a list of the connectors we want to ignore when building our component
+list.
 
-Add an extra property, allwinner,tcon-channel, to specify for a given
-endpoint which TCON channel it is connected to, while falling back to the
-previous mechanism if that property is missing.
-
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt |   11 ++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_drv.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -47,10 +47,13 @@ Required properties:
-   Documentation/devicetree/bindings/media/video-interfaces.txt. The
-   first port should be the input endpoint, the second one the output
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -212,6 +212,11 @@ static const struct component_master_ops
+ 	.unbind	= sun4i_drv_unbind,
+ };
  
--  The output should have two endpoints. The first is the block
--  connected to the TCON channel 0 (usually a panel or a bridge), the
--  second the block connected to the TCON channel 1 (usually the TV
--  encoder)
-+  The output may have multiple endpoints. The TCON has two channels,
-+  usually with the first channel being used for the panels interfaces
-+  (RGB, LVDS, etc.), and the second being used for the outputs that
-+  require another controller (TV Encoder, HDMI, etc.). The endpoints
-+  will take an extra property, allwinner,tcon-channel, to specify the
-+  channel the endpoint is associated to. If that property is not
-+  present, the endpoint number will be used as the channel number.
++static bool sun4i_drv_node_is_connector(struct device_node *node)
++{
++	return of_device_is_compatible(node, "hdmi-connector");
++}
++
+ static bool sun4i_drv_node_is_frontend(struct device_node *node)
+ {
+ 	return of_device_is_compatible(node, "allwinner,sun5i-a13-display-frontend") ||
+@@ -252,6 +257,13 @@ static int sun4i_drv_add_endpoints(struc
+ 	    !of_device_is_available(node))
+ 		return 0;
  
- On SoCs other than the A33, there is one more clock required:
-    - 'tcon-ch1': The clock driving the TCON channel 1
++	/*
++	 * The connectors will be the last nodes in our pipeline, we
++	 * can just bail out.
++	 */
++	if (sun4i_drv_node_is_connector(node))
++		return 0;
++
+ 	if (!sun4i_drv_node_is_frontend(node)) {
+ 		/* Add current component */
+ 		DRM_DEBUG_DRIVER("Adding component %s\n",
