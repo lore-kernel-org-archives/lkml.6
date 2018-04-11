@@ -1,127 +1,122 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-872240-1523534500-2-6640262677016657685
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523534499; b=HUZM9CiWKoR22B61byYEbMHJT7zeIJRzuIOOQoMgJCPyep8v3n
-    wGh7WY+waUlyW09d61JP+w6X202JQApMa90BhK09wgBygilR0uqenAkMur0LDSfg
-    t2haP0rffFW+OkwZ1ZFgJJwUYPoNM+raxZ2EVD1v6m/e4JHrJuNH2YXROMhY/ql1
-    IjQfcvXTQzUiPVqmC7tnks+qAP0eMnVRY1XYw6NTkYl7t41nlMVaiDQJAzg5iWs2
-    IPe5xWZ5ASPl2/KjCEih6jhBwmdEIE0177dd2tfsd6jA9AMixVWylrukISf8wsmY
-    +IDufO++RCkQof4ZRR12+nlW3Kj5pWWt5Wjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523534499; bh=IgepB/TlkYt3nhuDFSQY4bnijV86sE
-    zDch/6yF/8cTE=; b=GEbD8O7wI6QgWgi6PzJw8rEjl0DgcIRq+ziJs+10WP6Qt6
-    NVQfca9T7FWItyHQze1zWOvGCaQ7BbTwPMSTk5w7oQmgsjzZVnlfsmIcSLQ2gqLa
-    CqitxFJqVAy18M3JcF9/OAUSS2ySGcMpdOVj2ancYyuoTJj1h6iifbKZbNAWtHx1
-    6pB8Pog3h5AnA1caFPBrgTOcWx0TGW1Mt7+npstYXnwBIiSvKCbP6P6OTlRAUjd0
-    QSg5lz8tAvM/hGL5yoyUiuNrFNCi1wrCyQEDJXRzPRLlOAAmEVGMbKItnF15WHpk
-    fM6tGQJh7BKxT3ewV+AgUU2ZxMznpuCaxap+Ukqw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOaO26rbjqoO87rbFNqyRU1OJYhdNcdIRQ2LAJO0SkrglqAWVnUpWYpYDaw1Cg7VPOANEFzMz8yz4ye9kz+J1vJ7ys7nicyX6RXmzOEk3rtJ4Uoft4x9
-    RRrdQuIoo7KlJxJrDELSstCOPgwodRhGYxaTJfw4MA7hi615NycucafB+eWfziqM3K9jLMXIWmgvz5vLjFmE76ltgItO81ojrIzKkmFGakfWQ3qNF1jBLj42
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=57SyGIRnAAAA:8 a=V-8kuOT52EEqO0DzEwcA:9 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22 a=YzT4AsKTxtEdF6UtD8mD:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751918AbeDLMBh (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 12 Apr 2018 08:01:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50520 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751589AbeDLMBg (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Thu, 12 Apr 2018 08:01:36 -0400
-Date: Thu, 12 Apr 2018 14:01:33 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Joonsoo Kim <js1304@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>, linux-api@vger.kernel.org
-Subject: Re: [PATCH] mm/page_alloc: don't reserve ZONE_HIGHMEM for
- ZONE_MOVABLE request
-Message-ID: <20180412120133.GD23400@dhcp22.suse.cz>
-References: <1504672525-17915-1-git-send-email-iamjoonsoo.kim@lge.com>
- <20170914132452.d5klyizce72rhjaa@dhcp22.suse.cz>
- <CAAmzW4NGv7RyCYyokPoj4aR3ySKub4jaBZ3k=pt_YReFbByvsw@mail.gmail.com>
+Return-Path: <dvyukov@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523458691; cv=none;
+        d=google.com; s=arc-20160816;
+        b=lb6wXidAfVw7w6nQFHmbYgLsJmUXgmtV4Ys9ivxyLp4wQAgcxFINwALl6BeGSHTW4Y
+         zbK8eS1UKIZ4XnrXkfxfXRgyHn/IIR2iYCOCDODNfL02HcRNUhGadZ4s7XoDOEZQYp6t
+         YR3qsrVEiPS41rEUUGiEfs5qmw5rMG9Xu8dfGSANbXxvQQGexq1oIL/rp9NUDnKoVTW0
+         GaS6CMkviNdniEn5zTl+0hGlshy7iXNEJsfE+p6Om+XF5Nn8L8IO6QTIfuIREf54Utx2
+         1wPBtfm0rAfea7bh7vLaFxm0z37D85Uays8Lu/xuTEzt8JXlSRoNyIBdcQ0smgIghQgq
+         dVgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=a7VDZZZXEiqpUMxR2epBNxlztcO5LubfSvEWeAapll0=;
+        b=q5ieOyZ9OCN//QNOduTEa/GPn7JhU2UePoE5UJE26WqQyLBC303WMgEI6WpwjQIvpO
+         sAKsyoyh/mdCvcx8+wFbL1IqCtdCLrfsD+S1cRwrLokFfPQ7Vhk6GYlak27yVoIqIFUA
+         pYCsWRRi0cV7sbhN3EyApHb2+Kn9HRVKVTfZbQvc5AYt7ko6iAkZvlqmiPSgq6rLGtPU
+         miFIjFVNGZMxvZ8QV1LBwDX30pZzCClAKS4hyk9MBdYvdhaRF3pJZsXpTIXdv3hWlHrt
+         t1YULARUCWsNTLED59VbOzg1DA2yAlU+GuwWfs9OC1nFm0GLsTXXH01GoE+I74PlmJPQ
+         QITw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Vz0C3WZY;
+       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=dvyukov@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Vz0C3WZY;
+       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=dvyukov@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AIpwx4+jm6eKoX6oynqq57Qzf5ZdoI4LNuVhR8C2aHe5s5l2iD+vRFJMKZ8NBkGWP3rGGLDRyzxm/RUrMY1R3of7VZs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAmzW4NGv7RyCYyokPoj4aR3ySKub4jaBZ3k=pt_YReFbByvsw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+In-Reply-To: <001a113f8036fab00405620e4d72@google.com>
+References: <001a1148d244c6f6f7055cd73fcd@google.com> <001a113f8036fab00405620e4d72@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 11 Apr 2018 16:57:50 +0200
+Message-ID: <CACT4Y+bO2HN9Tuw2iMND9tD8578DNSOwUs7_W6Rvg-8oX5Qipw@mail.gmail.com>
+Subject: Re: WARNING in kobject_add_internal
+To: syzbot <syzbot+e204ced820ef739d71ef5438f5e1976a874abc8d@syzkaller.appspotmail.com>
+Cc: bridge@lists.linux-foundation.org, David Miller <davem@davemloft.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>,
+	netdev <netdev@vger.kernel.org>, stephen hemminger <stephen@networkplumber.org>,
+	syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
+X-GMAIL-THRID: =?utf-8?q?1582779158902801058?=
+X-GMAIL-MSGID: =?utf-8?q?1597462220893606566?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed 04-04-18 09:24:06, Joonsoo Kim wrote:
-> 2017-09-14 22:24 GMT+09:00 Michal Hocko <mhocko@kernel.org>:
-> > [Sorry for a later reply]
-> >
-> > On Wed 06-09-17 13:35:25, Joonsoo Kim wrote:
-> >> From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> >>
-> >> Freepage on ZONE_HIGHMEM doesn't work for kernel memory so it's not that
-> >> important to reserve.
-> >
-> > I am still not convinced this is a good idea. I do agree that reserving
-> > memory in both HIGHMEM and MOVABLE is just wasting memory but removing
-> > the reserve from the highmem as well will result that an oom victim will
-> > allocate from lower zones and that might have unexpected side effects.
-> 
-> Looks like you are confused.
-> 
-> This patch only affects the situation that ZONE_HIGHMEM and ZONE_MOVABLE is
-> used at the same time. In that case, before this patch, ZONE_HIGHMEM has
-> reserve for GFP_HIGHMEM | GFP_MOVABLE request, but, with this patch,  no reserve
-> in ZONE_HIGHMEM for GFP_HIGHMEM | GFP_MOVABLE request. This perfectly
-> matchs with your hope. :)
+On Fri, Jan 5, 2018 at 10:41 PM, syzbot
+<syzbot+e204ced820ef739d71ef5438f5e1976a874abc8d@syzkaller.appspotmail.com>
+wrote:
+> syzkaller has found reproducer for the following crash on
+> 89876f275e8d562912d9c238cd888b52065cf25c
+> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached
+> Raw console output is attached.
+> C reproducer is attached
+> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+> for information about syzkaller reproducers
+>
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by:
+> syzbot+e204ced820ef739d71ef5438f5e1976a874abc8d@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed.
 
-I have forgot all the details but my vague recollection is that the
-concern was that GFP_HIGHUSER_MOVABLE etc. wouldn't keep any reserve in
-the highmem zone and so emergency allocations - e.g. those during OOM
-will have to fallback to kernel zones and might lead to hard to predict
-results. Am I still confused and this will not happen after the patch?
--- 
-Michal Hocko
-SUSE Labs
+#syz dup: WARNING: kobject bug in device_add
+
+> ------------[ cut here ]------------
+> kobject_add_internal failed for   (error: -12 parent: net)
+> WARNING: CPU: 1 PID: 3494 at lib/kobject.c:244
+> kobject_add_internal+0x3f6/0xbc0 lib/kobject.c:242
+> Kernel panic - not syncing: panic_on_warn set ...
+>
+> CPU: 1 PID: 3494 Comm: syzkaller425998 Not tainted 4.15.0-rc6+ #249
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>  panic+0x1e4/0x41c kernel/panic.c:183
+>  __warn+0x1dc/0x200 kernel/panic.c:547
+>  report_bug+0x211/0x2d0 lib/bug.c:184
+>  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+>  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+>  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>  invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:1079
+> RIP: 0010:kobject_add_internal+0x3f6/0xbc0 lib/kobject.c:242
+> RSP: 0018:ffff8801c53c76f0 EFLAGS: 00010286
+> RAX: dffffc0000000008 RBX: ffff8801bf5a88d8 RCX: ffffffff8159da9e
+> RDX: 0000000000000000 RSI: 1ffff10038a78e99 RDI: ffff8801c53c73f8
+> RBP: ffff8801c53c77e8 R08: 1ffff10038a78e5b R09: 0000000000000000
+> R10: ffff8801c53c74b0 R11: 0000000000000000 R12: 1ffff10038a78ee4
+> R13: 00000000fffffff4 R14: ffff8801d8359a80 R15: ffffffff86201980
+>  kobject_add_varg lib/kobject.c:366 [inline]
+>  kobject_add+0x132/0x1f0 lib/kobject.c:411
+>  device_add+0x35d/0x1650 drivers/base/core.c:1787
+>  netdev_register_kobject+0x183/0x360 net/core/net-sysfs.c:1604
+>  register_netdevice+0xb2b/0x1010 net/core/dev.c:7698
+>  tun_set_iff drivers/net/tun.c:2319 [inline]
+>  __tun_chr_ioctl+0x1d89/0x3dd0 drivers/net/tun.c:2524
+>  tun_chr_ioctl+0x2a/0x40 drivers/net/tun.c:2773
+>  vfs_ioctl fs/ioctl.c:46 [inline]
+>  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
+>  SYSC_ioctl fs/ioctl.c:701 [inline]
+>  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
+>  entry_SYSCALL_64_fastpath+0x23/0x9a
+> RIP: 0033:0x444fc9
+> RSP: 002b:00007fff53389dc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 0000000000444fc9
+> RDX: 0000000020533000 RSI: 00000000400454ca RDI: 0000000000000004
+> RBP: 0000000000000005 R08: 0000000000000002 R09: 0000006f00003131
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402500
+> R13: 0000000000402590 R14: 0000000000000000 R15: 0000000000000000
+>
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
