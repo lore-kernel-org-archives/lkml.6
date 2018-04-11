@@ -1,48 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752275AbeDKWr5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 18:47:57 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:34058 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751491AbeDKWry (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 18:47:54 -0400
-X-Google-Smtp-Source: AIpwx48nV188H8CYMXztIRuWYCWkiOtKhIKfZX4kLLlbgNFf1321HhgSToAMFNsMopKNNATF/NqIj1qgR3UwJcHfAs4=
+        id S1752654AbeDKWzY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 18:55:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39546 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751734AbeDKWzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 18:55:21 -0400
+From: Lyude Paul <lyude@redhat.com>
+To: intel-gfx@lists.freedesktop.org
+Cc: Manasi Navare <manasi.d.navare@intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
+        <ville.syrjala@linux.intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v7 04/10] drm/dp_mst: Remove all evil duplicate state pointers
+Date: Wed, 11 Apr 2018 18:54:41 -0400
+Message-Id: <20180411225501.26751-5-lyude@redhat.com>
+In-Reply-To: <20180411225501.26751-1-lyude@redhat.com>
+References: <20180411225501.26751-1-lyude@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+ZmgfqdoT_zPZ4qLCdMfjaaGxRCyz8c8ecp=39zQfw2w@mail.gmail.com>
-References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5jL8oLV2xvjBVYv_SNXr74LdgpXEmU7K+cLYpD7jh2chgw@mail.gmail.com>
- <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com>
- <2679696.GDoj5zcZOu@natalenko.name> <CAGXu5jLG9ia+zBNcPt+q+BpJayoUuYwXitOgeHmh=7sPp-s87A@mail.gmail.com>
- <51a7e805058ef7f35b226cbbf0ccc4ff@natalenko.name> <CAGXu5jKRrdYjuyLSvc4k4mqttkM7zw-96poQ1GYqRRgPqZFOYQ@mail.gmail.com>
- <3d7b5a707e216e19eb3defe0586bfbc8@natalenko.name> <CAGXu5j+9BJcR63bsqQpqaKrvcgOpWyDzgpD-zRrf1qq7v=Z2CA@mail.gmail.com>
- <d53af006c314eb9d326bfb19b08e189b@natalenko.name> <CAGXu5j+ZmgfqdoT_zPZ4qLCdMfjaaGxRCyz8c8ecp=39zQfw2w@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 11 Apr 2018 15:47:52 -0700
-X-Google-Sender-Auth: 6qbgzvX78wIF-fvWVpLGkUqqLs8
-Message-ID: <CAGXu5jL82QYuJi64EMKsczqBysUY8ZBssWWaY0LfNA1a0orY8A@mail.gmail.com>
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-To: Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc: David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
-        paolo.valente@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 8:13 PM, Kees Cook <keescook@chromium.org> wrote:
-> I'll see about booting with my own kernels, etc, and try to narrow this down. :)
+There's no reason to track the atomic state three times. Unfortunately,
+this is currently what we're doing, and even worse is that there is only
+one actually correct state pointer: the one in mst_state->base.state.
+mgr->state never seems to be used, along with the one in
+mst_state->state.
 
-If I boot kernels I've built, I no longer hit the bug in this VM
-(though I'll keep trying). What compiler are you using?
+This confused me for over 4 hours until I realized there was no magic
+behind these pointers. So, let's save everyone else from the trouble.
 
--Kees
+Signed-off-by: Lyude Paul <lyude@redhat.com>.
+Cc: Manasi Navare <manasi.d.navare@intel.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+---
+ include/drm/drm_dp_mst_helper.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
+diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
+index 2f6203407fd2..5ca77dcf4f90 100644
+--- a/include/drm/drm_dp_mst_helper.h
++++ b/include/drm/drm_dp_mst_helper.h
+@@ -409,7 +409,6 @@ struct drm_dp_payload {
+ struct drm_dp_mst_topology_state {
+ 	struct drm_private_state base;
+ 	int avail_slots;
+-	struct drm_atomic_state *state;
+ 	struct drm_dp_mst_topology_mgr *mgr;
+ };
+ 
+@@ -497,11 +496,6 @@ struct drm_dp_mst_topology_mgr {
+ 	 */
+ 	int pbn_div;
+ 
+-	/**
+-	 * @state: State information for topology manager
+-	 */
+-	struct drm_dp_mst_topology_state *state;
+-
+ 	/**
+ 	 * @funcs: Atomic helper callbacks
+ 	 */
 -- 
-Kees Cook
-Pixel Security
+2.14.3
