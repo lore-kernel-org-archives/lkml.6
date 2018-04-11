@@ -1,86 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753316AbeDKNVe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 09:21:34 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52100 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753064AbeDKNVc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 09:21:32 -0400
-X-Google-Smtp-Source: AIpwx4+FnZWoWLPc08QG3yC62n7aIrsoHJjZfN/nyVMBYIUTkCE1Lly+vlxbcTAA1ZF7w+Uahwsi6g==
-From: Jack Wang <jinpu.wang@profitbricks.com>
-X-Google-Original-From: Jack Wang <jinpu.wangl@profitbricks.com>
-To: axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jack Wang <jinpu.wang@profitbricks.com>
-Subject: [PATCH] block: ratelimite pr_err on IO path
-Date: Wed, 11 Apr 2018 15:21:29 +0200
-Message-Id: <1523452889-16331-1-git-send-email-jinpu.wangl@profitbricks.com>
-X-Mailer: git-send-email 2.7.4
+        id S1753332AbeDKNX1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 09:23:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47106 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753060AbeDKNXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 09:23:25 -0400
+Date: Wed, 11 Apr 2018 16:23:22 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>, jasowang@redhat.com,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] vhost: fix vhost_vq_access_ok() log check
+Message-ID: <20180411162317-mutt-send-email-mst@kernel.org>
+References: <20180411023541.15776-1-stefanha@redhat.com>
+ <20180411023541.15776-2-stefanha@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180411023541.15776-2-stefanha@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jack Wang <jinpu.wang@profitbricks.com>
+On Wed, Apr 11, 2018 at 10:35:40AM +0800, Stefan Hajnoczi wrote:
+> Commit d65026c6c62e7d9616c8ceb5a53b68bcdc050525 ("vhost: validate log
+> when IOTLB is enabled") introduced a regression.  The logic was
+> originally:
+> 
+>   if (vq->iotlb)
+>       return 1;
+>   return A && B;
+> 
+> After the patch the short-circuit logic for A was inverted:
+> 
+>   if (A || vq->iotlb)
+>       return A;
+>   return B;
+> 
+> This patch fixes the regression by rewriting the checks in the obvious
+> way, no longer returning A when vq->iotlb is non-NULL (which is hard to
+> understand).
+> 
+> Reported-by: syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com
+> Cc: Jason Wang <jasowang@redhat.com>
+> Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
 
-This avoid soft lockup below:
-[ 2328.328429] Call Trace:
-[ 2328.328433]  vprintk_emit+0x229/0x2e0
-[ 2328.328436]  ? t10_pi_type3_verify_ip+0x20/0x20
-[ 2328.328437]  printk+0x52/0x6e
-[ 2328.328439]  t10_pi_verify+0x9e/0xf0
-[ 2328.328441]  bio_integrity_process+0x12e/0x220
-[ 2328.328442]  ? t10_pi_type1_verify_crc+0x20/0x20
-[ 2328.328443]  bio_integrity_verify_fn+0xde/0x140
-[ 2328.328447]  process_one_work+0x13f/0x370
-[ 2328.328449]  worker_thread+0x62/0x3d0
-[ 2328.328450]  ? rescuer_thread+0x2f0/0x2f0
-[ 2328.328452]  kthread+0x116/0x150
-[ 2328.328454]  ? __kthread_parkme+0x70/0x70
-[ 2328.328457]  ret_from_fork+0x35/0x40
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 
-Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
----
- block/t10-pi.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
-
-diff --git a/block/t10-pi.c b/block/t10-pi.c
-index a98db38..35967d5 100644
---- a/block/t10-pi.c
-+++ b/block/t10-pi.c
-@@ -84,10 +84,12 @@ static blk_status_t t10_pi_verify(struct blk_integrity_iter *iter,
- 
- 			if (be32_to_cpu(pi->ref_tag) !=
- 			    lower_32_bits(iter->seed)) {
--				pr_err("%s: ref tag error at location %llu " \
--				       "(rcvd %u)\n", iter->disk_name,
--				       (unsigned long long)
--				       iter->seed, be32_to_cpu(pi->ref_tag));
-+				pr_err_ratelimited("%s: ref tag error at "
-+						   "location %llu (rcvd %u)\n",
-+						   iter->disk_name,
-+						   (unsigned long long)
-+						   iter->seed,
-+						   be32_to_cpu(pi->ref_tag));
- 				return BLK_STS_PROTECTION;
- 			}
- 			break;
-@@ -101,10 +103,12 @@ static blk_status_t t10_pi_verify(struct blk_integrity_iter *iter,
- 		csum = fn(iter->data_buf, iter->interval);
- 
- 		if (pi->guard_tag != csum) {
--			pr_err("%s: guard tag error at sector %llu " \
--			       "(rcvd %04x, want %04x)\n", iter->disk_name,
--			       (unsigned long long)iter->seed,
--			       be16_to_cpu(pi->guard_tag), be16_to_cpu(csum));
-+			pr_err_ratelimited("%s: guard tag error at sector %llu "
-+					   "(rcvd %04x, want %04x)\n",
-+					   iter->disk_name,
-+					   (unsigned long long)iter->seed,
-+					   be16_to_cpu(pi->guard_tag),
-+					   be16_to_cpu(csum));
- 			return BLK_STS_PROTECTION;
- 		}
- 
--- 
-2.7.4
+> ---
+>  drivers/vhost/vhost.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index bec722e41f58..fc805b7fad9d 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -1244,10 +1244,12 @@ static int vq_log_access_ok(struct vhost_virtqueue *vq,
+>  /* Caller should have vq mutex and device mutex */
+>  int vhost_vq_access_ok(struct vhost_virtqueue *vq)
+>  {
+> -	int ret = vq_log_access_ok(vq, vq->log_base);
+> +	if (!vq_log_access_ok(vq, vq->log_base))
+> +		return 0;
+>  
+> -	if (ret || vq->iotlb)
+> -		return ret;
+> +	/* Access validation occurs at prefetch time with IOTLB */
+> +	if (vq->iotlb)
+> +		return 1;
+>  
+>  	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used);
+>  }
+> -- 
+> 2.14.3
