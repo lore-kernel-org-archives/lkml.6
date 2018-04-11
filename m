@@ -1,115 +1,143 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2445070-1523451830-2-16067491475772470402
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1082032-1523410191-2-9303666933000473766
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523451830; b=NGfyBo14LWDs372cMP3fUg3UfjXxZswe5IUyLUeRlUxDz2/HCC
-    KmxcFw2qNGJRLXQ04WAAqn2cVVnivPQuCHY8sZDL6e8lcQhJcXkzETJw3HNDc/vl
-    EsKgG5fJq3P9KUvbT9s8G3dRIKh0pOEcy4SVhJ8oY6pjYhdBvveI6LEbWtRwGtcs
-    V+25GwRq7DyF382+Jx698yCa/MnYh4r10/jdaZQpUL4a98Ul+kCccMjzH0i0n2sL
-    qm8nDAkSmLkxfno950OB0ll8a+Y8RldMzwYPJyif6ESccBSgntVkin+Zs+3rrU4e
-    nvetY9io/yMNpAVldg6EIub04ZoRwmHWuj/A==
+    1523410190; b=BD26ReRupigymp4oWz6hljuF6nrU69EVrXyhwuhfl/dLRAz4VG
+    mNZSlAPqG1YbMEKeMU8occ5xic3P990ShrucCT5gv2/hpyfQgrtzrkUax+ljMUjW
+    v5FnRjZdviWpFMJD0+6IL7lveEzavD4lad0Z6ReGVVNd5WWxbLI3YJ4tAKHX/o5Q
+    6STmZi6DJ+6LxLm3quCQ1cYew8yQWK9cLFNKrxxMsnzt0Kcgkksm0BlOe4ysvbIR
+    TAVx6aa8yjvU5Yvp+IsUuvcfP7F7WErBaEEcgb79eXfk3o6kqTQ220/NFsfzRR8A
+    vY4JNiPKwlTJy81ncve4Ic4WlDA3LXqmH0/Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1523451830;
-    bh=pPRf+YToI94fkAhzWHQMcFG0ZHVGhmvQdZbdc+aEVno=; b=JdKYJcBH1Yms
-    C3hRkBIhY3NuOcmWY9b8IdKYPPoTeKRnXSBlMSLOrH5Y+MMSdpc5nWVW1oli0g76
-    Xt0PDQRmom4LZ0Sb/qcD58Ap3zzgKyK2xM+bVnmdT22+UtF3ynGkJiHIc+vSDYSI
-    w8DcgGQvZB9gKg13UC1dEvrAt7C7/mINOb0VG3D+ym7zBxLn9vZAjnh+529SO/bi
-    Z+onyKvBR6wL0qVU1d3JgF9xmIlhC8X+hFU+1J2WaJKJllJozdl+X2kM5Vvp/ndx
-    bPQpAS/2GT9BazqvOfbywyiegnmO8Xp0o6cxJXqSvz0pZtMSd5XA+LZ6Y4mWZCW3
-    /19DNxVy5w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=raspberrypi-org.20150623.gappssmtp.com header.i=@raspberrypi-org.20150623.gappssmtp.com header.b=mvgzkp7R x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dkim=invalid (public key: invalid data, 0-bit  key sha256) header.d=raspberrypi.org header.i=@raspberrypi.org header.b=N0BhAEii x-bits=0 x-keytype="" x-algorithm=sha256 x-selector=pp;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=raspberrypi.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1523410190; bh=AWjQQ
+    hzqdzG8RVVYdvfCXXalqgIigJm7SUDWdl5WziY=; b=tzkIUoP3tBHGNzFWKQ7fe
+    mxFN8aer28Udaru3UdmhoI0yQenKRUqB1/41HXhaqSCtJnuUUXYco3rb3Y2z3mFy
+    Mi8BQ7nJ7iuFSVPb2mMwPFQ011Niwwnx2Vonm/DngiSskS7so8cSFSiSb39uN8Ma
+    ThG+2Qta0zzO5L/hNVDfZE37GCgr8DTMd2PiX9ObidfdFFcNl9HmlBut/PtLTzwq
+    NKUPgCizLuWGsgmUvzSZmxV821HaYETZsAvmI6cvG75GCY76lwfculwDoxM9WAz5
+    ASPoLoCGOBe4ebMtpmaDfg09UZftxT8lO4TE7WCOHtsE1zeMBXhTUMC65i88TbU1
+    Q==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=bQdYFr0v x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BTeM8Q/c;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=raspberrypi.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=sTat+gKH;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=raspberrypi-org.20150623.gappssmtp.com header.i=@raspberrypi-org.20150623.gappssmtp.com header.b=mvgzkp7R x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dkim=invalid (public key: invalid data, 0-bit  key sha256) header.d=raspberrypi.org header.i=@raspberrypi.org header.b=N0BhAEii x-bits=0 x-keytype="" x-algorithm=sha256 x-selector=pp;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=raspberrypi.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=bQdYFr0v x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BTeM8Q/c;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=raspberrypi.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=sTat+gKH;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNyz5xymy9HeBbxPEMM7Cw+geM9IGnYv2592nHGkwtqnBNdgiikmRje22C+WZVg0I+pizCCTPlOFXoWeKTrbldnJKak/80W1Ol4zkbW1RcCf4QLsuVmf
-    TLWP6mwjV2SJNIZJOLcJ9YG19xFSlNXty5frBsnhpm13zA0D3u4Hu+9lA1A0x7XtxDgqBxfLC2PX2X0V69BD5CynoVRytwIas2fkKEQoWr1QYY92fFRPSPNe
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
-    a=4_-BN3WEXhEA:10 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=_PUi6ysPFxcmx_umH68A:9
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfF6Ij79jt++B8utd+BGpEOg5xkDAf3yN7vzzMhcGuTZvG/FTk2q9SIsRko0QCezYLRHLd4MV5bV4VPZGWtbsEEzmE2x/qCUJ6SDBS2/yIM2aDZLthly0
+    rsj8+lg9mMg1Oa0uEibUV24ozZG4RrlcHHZMBO0PZHOVeh011YCwwGE8Z57Ya7AM5JBIixi99ZTKgzzUiWSmeZY6wdVViy6Io+IuAcTpa3nLfr08VbymYyEI
+    uANdCxpzfKVhzed9r12haA==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=tmjX-nCzVX8A:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10
+    a=jJxKW8Ag-pUA:10 a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=BaufZ62Zk1JhIVNeUt8A:9
+    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753068AbeDKNDk (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 09:03:40 -0400
-Received: from mx08-00252a01.pphosted.com ([91.207.212.211]:59272 "EHLO
-        mx08-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753064AbeDKNDi (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 11 Apr 2018 09:03:38 -0400
-X-Google-Smtp-Source: AIpwx4+7CVBE0ZwbUJU6r7HDdUfJPzud8bmq4wr8MAtW80DPBWY/yMMv7mS6/hQcGgn+tP3sHSRb/g==
-Subject: Re: [PATCH] lan78xx: Correctly indicate invalid OTP
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Woojung Huh <woojung.huh@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1523440757-127451-1-git-send-email-phil@raspberrypi.org>
- <20180411125737.GB6119@lunn.ch>
-From: Phil Elwell <phil@raspberrypi.org>
-Message-ID: <6615a0eb-a0f4-d964-bab7-e2105b589f3d@raspberrypi.org>
-Date: Wed, 11 Apr 2018 14:03:36 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AIpwx48DVyXCSFkikuxIW40UAzOuXpYvT+IATkEsq6LLNWSWBfgMlAHN1WyNwLH6ZgO9fw5gS5JGyw==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: samuel@sortiz.org, gregkh@linuxfoundation.org, davem@davemloft.net,
+ johan@kernel.org, arvind.yadav.cs@gmail.com
+Subject: [PATCH 1/2] staging: irda: Replace mdelay with usleep_range in
+ stir421x_fw_upload
+Date: Wed, 11 Apr 2018 09:29:34 +0800
+Message-Id: <1523410174-1553-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, netdev@vger.kernel.org,
+ Jia-Ju Bai <baijiaju1990@gmail.com>, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-In-Reply-To: <20180411125737.GB6119@lunn.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-11_06:,,
- signatures=0
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Andrew.
+stir421x_fw_upload() is never called in atomic context.
 
-On 11/04/2018 13:57, Andrew Lunn wrote:
-> On Wed, Apr 11, 2018 at 10:59:17AM +0100, Phil Elwell wrote:
->> lan78xx_read_otp tries to return -EINVAL in the event of invalid OTP
->> content, but the value gets overwritten before it is returned and the
->> read goes ahead anyway. Make the read conditional as it should be
->> and preserve the error code.
-> 
-> Hi Phil
-> 
-> Do you know that the Fixes: tag should be for this? When did it break?
+The call chain ending up at stir421x_fw_upload() is:
+[1] stir421x_fw_upload() <- stir421x_patch_device() <- irda_usb_probe()
 
-It's been broken since day 1, so:
+irda_usb_probe() is set as ".probe" in struct usb_driver.
+This function is not called in atomic context.
 
-Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
+Despite never getting called from atomic context, stir421x_fw_upload()
+calls mdelay() to busily wait.
+This is not necessary and can be replaced with usleep_range() to
+avoid busy waiting.
+
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/staging/irda/drivers/irda-usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/irda/drivers/irda-usb.c b/drivers/staging/irda/drivers/irda-usb.c
+index 723e49b..c6c8c2c 100644
+--- a/drivers/staging/irda/drivers/irda-usb.c
++++ b/drivers/staging/irda/drivers/irda-usb.c
+@@ -1050,7 +1050,7 @@ static int stir421x_fw_upload(struct irda_usb_cb *self,
+ 		if (ret < 0)
+ 			break;
+ 
+-		mdelay(10);
++		usleep_range(10000, 11000);
+ 	}
+ 
+ 	kfree(patch_block);
+-- 
+1.9.1
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
