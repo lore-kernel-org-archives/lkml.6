@@ -1,84 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752279AbeDKABE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 20:01:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59594 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751960AbeDKABD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 20:01:03 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6DFE21722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 10 Apr 2018 20:00:59 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Howard McLauchlan <hmclauchlan@fb.com>
-Cc: <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        <kernel-team@fb.com>, Masami Hiramatsu <mhiramat@kernel.org>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Subject: Re: [PATCH] uprobe: add support for overlayfs
-Message-ID: <20180410200059.731d87fe@gandalf.local.home>
-In-Reply-To: <20180410231030.2720-1-hmclauchlan@fb.com>
-References: <20180410231030.2720-1-hmclauchlan@fb.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752522AbeDKAB3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 20:01:29 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:46081 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752408AbeDKABY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 20:01:24 -0400
+X-Google-Smtp-Source: AIpwx4/t25Ie8jtOWQk6sxCm9kVr3D608eEAyx0vFN39+LuWqxBEEx0JwSl3vo4vcYr6mYT3kGXFIg==
+From: "Jingoo Han" <jingoohan1@gmail.com>
+To: "'Gustavo Pimentel'" <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <kishon@ti.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+Cc: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <cover.1523266508.git.gustavo.pimentel@synopsys.com> <5181f7ffbb9d2889974c49d84e72042251adf8b6.1523266508.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <5181f7ffbb9d2889974c49d84e72042251adf8b6.1523266508.git.gustavo.pimentel@synopsys.com>
+Subject: Re: [PATCH v2 8/9] PCI: dwc: Small computation improvement
+Date: Tue, 10 Apr 2018 20:01:21 -0400
+Message-ID: <003001d3d128$39f3eaa0$addbbfe0$@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+        charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQEaRjwvEF5/h3QMrbPVq+Y0x5xNJwIXxkZLpV0FZyA=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Apr 2018 16:10:30 -0700
-Howard McLauchlan <hmclauchlan@fb.com> wrote:
-
-> uprobes cannot successfully attach to binaries located in a directory
-> mounted with overlayfs.
+On Monday, April 9, 2018 5:41 AM, Gustavo Pimentel wrote:
 > 
-> To verify, create directories for mounting overlayfs
-> (upper,lower,work,merge), move some binary into merge/ and use readelf
-> to obtain some known instruction of the binary. I used /bin/true and the
-> entry instruction(0x13b0):
-> 
-> 	$ mount -t overlay overlay -o lowerdir=lower,upperdir=upper,workdir=work merge
-> 	$ cd /sys/kernel/debug/tracing
-> 	$ echo 'p:true_entry PATH_TO_MERGE/merge/true:0x13b0' > uprobe_events
-> 	$ echo 1 > events/uprobes/true_entry/enable
-> 
-> This returns 'bash: echo: write error: Input/output error' and dmesg
-> tells us 'event trace: Could not enable event true_entry'
+> Replaces a simple division by 2 to a right shift rotation of 1 bit.
 
-I tried the above and verified that it is a problem and your patch
-solves it.
+It looks good. However, would you add a simple reason to the commit
+message?
 
-Thanks, I'll apply it and start my tests on it.
-
--- Steve
+Best regards,
+Jingoo Han
 
 > 
-> This change makes create_trace_uprobe() look for the real inode of a
-> dentry. In the case of normal filesystems, this simplifies to just
-> returning the inode. In the case of overlayfs(and similar fs) we will
-> obtain the underlying dentry and corresponding inode, upon which uprobes
-> can successfully register.
-> 
-> Running the example above with the patch applied, we can see that the
-> uprobe is enabled and will output to trace as expected.
-> 
-> Reviewed-by: Josef Bacik <jbacik@fb.com>
-> Signed-off-by: Howard McLauchlan <hmclauchlan@fb.com>
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 > ---
->  kernel/trace/trace_uprobe.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Change v1->v2:
+> - Nothing changed, just to follow the patch set version.
 > 
-> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> index 2014f4351ae0..17c65fa4136d 100644
-> --- a/kernel/trace/trace_uprobe.c
-> +++ b/kernel/trace/trace_uprobe.c
-> @@ -446,7 +446,7 @@ static int create_trace_uprobe(int argc, char **argv)
->  	if (ret)
->  		goto fail_address_parse;
->  
-> -	inode = igrab(d_inode(path.dentry));
-> +	inode = igrab(d_real_inode(path.dentry));
->  	path_put(&path);
->  
->  	if (!inode || !S_ISREG(inode->i_mode)) {
+>  drivers/pci/dwc/pcie-designware-host.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pci/dwc/pcie-designware-host.c
+> b/drivers/pci/dwc/pcie-designware-host.c
+> index 03e9b82..8e6fed4 100644
+> --- a/drivers/pci/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/dwc/pcie-designware-host.c
+> @@ -332,8 +332,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
+> 
+>  	cfg_res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> "config");
+>  	if (cfg_res) {
+> -		pp->cfg0_size = resource_size(cfg_res) / 2;
+> -		pp->cfg1_size = resource_size(cfg_res) / 2;
+> +		pp->cfg0_size = resource_size(cfg_res) >> 1;
+> +		pp->cfg1_size = resource_size(cfg_res) >> 1;
+>  		pp->cfg0_base = cfg_res->start;
+>  		pp->cfg1_base = cfg_res->start + pp->cfg0_size;
+>  	} else if (!pp->va_cfg0_base) {
+> @@ -377,8 +377,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
+>  			break;
+>  		case 0:
+>  			pp->cfg = win->res;
+> -			pp->cfg0_size = resource_size(pp->cfg) / 2;
+> -			pp->cfg1_size = resource_size(pp->cfg) / 2;
+> +			pp->cfg0_size = resource_size(pp->cfg) >> 1;
+> +			pp->cfg1_size = resource_size(pp->cfg) >> 1;
+>  			pp->cfg0_base = pp->cfg->start;
+>  			pp->cfg1_base = pp->cfg->start + pp->cfg0_size;
+>  			break;
+> --
+> 2.7.4
+> 
