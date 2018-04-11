@@ -1,11 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3216147-1523476368-2-4217309517700817278
+X-Cyrus-Session-Id: sloti22d1t05-3190956-1523476360-2-4000675374769623183
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523476368; b=MLFs0sVp8Q1i2CFfGR9Xf/f5ZwzcixwfhNTefUxdT0n23PKOn6
-    cL0I+/tvAAmmWyX2IyMIVYMrrajooSlm7M8YIfkLayunCO3+aaJhg3VVxBFE0UdZ
-    ibWHSkXNs6aYGXgZTnE5VJ2iB8BB6r4NX17uhAJxpVv9wXv3PAXiYYHIS8SofvPN
-    A0cP6iPPVzbPJ6ON38Th54e9O7xiWGWDmQyznAIlOyUS8dZ26IRCB6jJs5o70auP
-    AnkmcKnSgYOJ8LYHaBgdElC2I19aoOU7LG7S0TJiHvzABtavdogMf66/rWXT5xka
-    CK3BlP3vTxD1MZIHqlSFw0+IlivrOYCdFUJQ==
+    1523476358; b=jdZZIStSnW1Pn06idawceuqyNnXjK8hZTRJ7sTElhe7pQIlrlj
+    bHXgd1kxSaVGy6d5eAQf7eWhvLc4s5YpDz1m3lDWhQR8Xr/lNZTFAaZuQ+Q1+8IJ
+    /vxydezWFFcpRixqV4eZpwQFQ4jDNcnhtylJ19DBMCqCTRjo0HmBtGjIuzy8fAkb
+    02z2DB7cNbPmyoh7d43djh4jL1zGUbDaoiFPVwAuSRDmE7IPTEPb0fpl3FOae94P
+    eA065zPzWajB63SdCSPItrbd3LUqqr/AMHym9WBFx7Vk05xrspWtvAZa0ZmK8djI
+    jozughY0BiOF8QlMO+25PeOedggZ2/25okuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523476368; bh=4m2Z9faQJtWK40rzh+nb5sMLVLsp1a
-    VvFyKrMGtU/Aw=; b=AZpIeZ2WbML/HP/b2hol2oFCZRxGNPVZEhxxyonjHfP9EA
-    Vlm7no+kHnSCdZG3xn+AKEE6qmrZskKgBAc9LIfOs6bw9b8d0P/sErC3jh2vqx4v
-    SzLKIvbrbLgUHCmSS/ANn0qXbp0ef9ta5pJ+ia3en82v9bzs/xx16t6p7mCfE9KM
-    2jLj3+YefjoH7PQ4L1InTvpb5jjApU1jQLvbnDTVKieoWtz7pDgvXYOwcTV8qc9u
-    E9oxGfuTL8imSGsVW+2hN+adLLomF6Uy9TUXs4EnZLwmwoW/HPptS8EoP/LYEW76
-    Y/IqKDiAtvjkrlfaQ2MCGgdvIQFt8nVgCuhpCGJQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523476358; bh=SQ+gK9DpIXybjo1jFc2RZ6IXgD9FFr
+    fUDZMNslHP8N8=; b=oiIbpA5C9lE2iCtMjqbUWv5VhXWsGlzNYZwjMy/F0k0b4L
+    aRB0ywi0I6XFTuLYsdQ7+hTWJj/ny/BGS1I9QhFlWjSwM+5e8URo6tsYYGDiMij2
+    dx1KzJV9qiBpNbnsjkL/mKE2xUvywWWSc4uxtPpAuzRrrVF4AALX+R+62nHRzucF
+    qkxxTVDFHfCDwaw1tyoweDZ6zjWYOyTQcEGr9Q0+Lw6dY/fPSqkk4ui3+gVoWyhy
+    L5dPy3inAAf/Zpno41GEQtuPVGmrdLVMMxd3u/agSqy+8kuXL3sxGH/xYUSENcL/
+    Xz0gxYonBt0McpMChBCerza+RGv2pxSKp27Gi2ag==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,36 +51,33 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCc9TUOcCYOThxmHtQ6RcpuPmXpJXOpSU3gfFOOK+STv8n1gjnkg2GzugajEVnZ2cfrwrfDqSqc+B8/6vjK1COcloQNhDaq1hD+8C5iiaIJUNge0ZjAN
-    Ig2Oiap29WTfbUkgFqrjXLpznieNVnI/p8kmwvqLSThylbYgOJs6lCbey7ZhbT/HiG7qxMjYne+1r3RRBAn/hKtIdFl08eKj/ViSkmZzgmHm1BnuU0y+OGkf
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFXsvBzkoarMi47hvRHwb/DvhsUcMK6Sq8RXRFVoopVk8WQ5LR7mBaIxjNQkGKbw5VDH9uoOxsm1pTTY9JCSf3QY2ppoll9IOEFGXSEMGb3VIHPFiIfA
+    sSSL36xcTByXN1RCsgQjfAt9QIeJ95coYUPStZwdg1BTiCYhLZBIKQU3b84FvPc7g38fQ9E1WzW2oc+u1DKLe/Ke3xOfdBdrbeJUMvLDCAs2/QA/wj8SiKra
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8 a=pGLkceISAAAA:8
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=XY9_J5gOtC_FUSJH_rwA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=7CeojBlomD8Mbgo6nkQA:9 a=QEXdDO2ut3YA:10
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754276AbeDKS6F (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:58:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36522 "EHLO
+        id S932285AbeDKTwW (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 15:52:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36532 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933250AbeDKS6D (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:58:03 -0400
+        with ESMTP id S933308AbeDKS6G (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:58:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Paul Clarke <pc@us.ibm.com>,
-        bhargavb <bhargavaramudu@gmail.com>,
-        linux-rt-users@vger.kernel.org,
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 123/310] perf probe: Add warning message if there is unexpected event name
-Date: Wed, 11 Apr 2018 20:34:22 +0200
-Message-Id: <20180411183627.497322322@linuxfoundation.org>
+Subject: [PATCH 4.9 124/310] l2tp: fix missing print session offset info
+Date: Wed, 11 Apr 2018 20:34:23 +0200
+Message-Id: <20180411183627.613979628@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -98,51 +95,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
 
-[ Upstream commit 9f5c6d8777a2d962b0eeacb2a16f37da6bea545b ]
+[ Upstream commit 820da5357572715c6235ba3b3daa2d5b43a1198f ]
 
-This improve the error message so that user can know event-name error
-before writing new events to kprobe-events interface.
+Report offset parameter in L2TP_CMD_SESSION_GET command if
+it has been configured by userspace
 
-E.g.
-   ======
-   #./perf probe -x /lib64/libc-2.25.so malloc_get_state*
-   Internal error: "malloc_get_state@GLIBC_2" is an invalid event name.
-     Error: Failed to add events.
-   ======
-
-Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Acked-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Reviewed-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Paul Clarke <pc@us.ibm.com>
-Cc: bhargavb <bhargavaramudu@gmail.com>
-Cc: linux-rt-users@vger.kernel.org
-Link: http://lkml.kernel.org/r/151275040665.24652.5188568529237584489.stgit@devbox
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 309795f4bec ("l2tp: Add netlink control API for L2TP")
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/probe-event.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ net/l2tp/l2tp_netlink.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -2609,6 +2609,14 @@ static int get_new_event_name(char *buf,
+--- a/net/l2tp/l2tp_netlink.c
++++ b/net/l2tp/l2tp_netlink.c
+@@ -750,6 +750,8 @@ static int l2tp_nl_session_send(struct s
  
- out:
- 	free(nbase);
-+
-+	/* Final validation */
-+	if (ret >= 0 && !is_c_func_name(buf)) {
-+		pr_warning("Internal error: \"%s\" is an invalid event name.\n",
-+			   buf);
-+		ret = -EINVAL;
-+	}
-+
- 	return ret;
- }
- 
+ 	if ((session->ifname[0] &&
+ 	     nla_put_string(skb, L2TP_ATTR_IFNAME, session->ifname)) ||
++	    (session->offset &&
++	     nla_put_u16(skb, L2TP_ATTR_OFFSET, session->offset)) ||
+ 	    (session->cookie_len &&
+ 	     nla_put(skb, L2TP_ATTR_COOKIE, session->cookie_len,
+ 		     &session->cookie[0])) ||
