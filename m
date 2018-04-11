@@ -1,82 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756865AbeDKT1o (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 15:27:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47282 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755829AbeDKT1k (ORCPT
+        id S1757119AbeDKT2l (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 15:28:41 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:41632 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757063AbeDKT2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 15:27:40 -0400
-Date: Wed, 11 Apr 2018 12:27:39 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>, Zi Yan <zi.yan@sent.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm: shmem: enable thp migration (Re: [PATCH v1] mm:
- consider non-anonymous thp as unmovable page)
-Message-Id: <20180411122739.25d1700099222eb647b0c620@linux-foundation.org>
-In-Reply-To: <20180411092611.GE23400@dhcp22.suse.cz>
-References: <20180403083451.GG5501@dhcp22.suse.cz>
-        <20180403105411.hknofkbn6rzs26oz@node.shutemov.name>
-        <20180405085927.GC6312@dhcp22.suse.cz>
-        <20180405122838.6a6b35psizem4tcy@node.shutemov.name>
-        <20180405124830.GJ6312@dhcp22.suse.cz>
-        <20180405134045.7axuun6d7ufobzj4@node.shutemov.name>
-        <20180405150547.GN6312@dhcp22.suse.cz>
-        <20180405155551.wchleyaf4rxooj6m@node.shutemov.name>
-        <20180405160317.GP6312@dhcp22.suse.cz>
-        <20180406030706.GA2434@hori1.linux.bs1.fc.nec.co.jp>
-        <20180411092611.GE23400@dhcp22.suse.cz>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 11 Apr 2018 15:28:39 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@googlemail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@kernel.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+References: <20180411183622.305902791@linuxfoundation.org>
+        <20180411183623.247331431@linuxfoundation.org>
+Date: Wed, 11 Apr 2018 14:27:19 -0500
+In-Reply-To: <20180411183623.247331431@linuxfoundation.org> (Greg
+        Kroah-Hartman's message of "Wed, 11 Apr 2018 20:32:41 +0200")
+Message-ID: <87r2nlilwo.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1f6LQ3-0002SW-2v;;;mid=<87r2nlilwo.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.140.30;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+YMgiC8j1MioievVSSkd6JL/Y/kyxFVfw=
+X-SA-Exim-Connect-IP: 97.119.140.30
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.7 XMSubLong Long Subject
+        *  0.5 XMGappySubj_01 Very gappy subject
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+        *  1.0 T_XMDrugObfuBody_12 obfuscated drug references
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.0 T_TooManySym_04 7+ unique symbols in subject
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ***;Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 889 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 3.7 (0.4%), b_tie_ro: 2.6 (0.3%), parse: 1.35 (0.2%),
+        extract_message_metadata: 72 (8.0%), get_uri_detail_list: 6 (0.7%),
+        tests_pri_-1000: 45 (5.1%), tests_pri_-950: 2.1 (0.2%), tests_pri_-900: 1.76
+        (0.2%), tests_pri_-400: 54 (6.1%), check_bayes: 49 (5.5%), b_tokenize: 20
+        (2.3%), b_tok_get_all: 12 (1.4%), b_comp_prob: 6 (0.7%), b_tok_touch_all: 7
+        (0.8%), b_finish: 0.77 (0.1%), tests_pri_0: 695 (78.2%),
+        check_dkim_signature: 0.92 (0.1%), check_dkim_adsp: 4.3 (0.5%),
+        tests_pri_500: 9 (1.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 4.9 022/310] pidns: disable pid allocation if pid_ns_prepare_proc() is failed in alloc_pid()
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Apr 2018 11:26:11 +0200 Michal Hocko <mhocko@kernel.org> wrote:
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
 
-> On Fri 06-04-18 03:07:11, Naoya Horiguchi wrote:
-> > >From e31ec037701d1cc76b26226e4b66d8c783d40889 Mon Sep 17 00:00:00 2001
-> > From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > Date: Fri, 6 Apr 2018 10:58:35 +0900
-> > Subject: [PATCH] mm: enable thp migration for shmem thp
-> > 
-> > My testing for the latest kernel supporting thp migration showed an
-> > infinite loop in offlining the memory block that is filled with shmem
-> > thps.  We can get out of the loop with a signal, but kernel should
-> > return with failure in this case.
-> > 
-> > What happens in the loop is that scan_movable_pages() repeats returning
-> > the same pfn without any progress. That's because page migration always
-> > fails for shmem thps.
-> > 
-> > In memory offline code, memory blocks containing unmovable pages should
-> > be prevented from being offline targets by has_unmovable_pages() inside
-> > start_isolate_page_range().
-> >
-> > So it's possible to change migratability
-> > for non-anonymous thps to avoid the issue, but it introduces more complex
-> > and thp-specific handling in migration code, so it might not good.
-> > 
-> > So this patch is suggesting to fix the issue by enabling thp migration
-> > for shmem thp. Both of anon/shmem thp are migratable so we don't need
-> > precheck about the type of thps.
-> > 
-> > Fixes: commit 72b39cfc4d75 ("mm, memory_hotplug: do not fail offlining too early")
-> > Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > Cc: stable@vger.kernel.org # v4.15+
-> 
-> I do not really feel qualified to give my ack but this is the right
-> approach for the fix. We simply do expect that LRU pages are migrateable
-> as well as zone_movable pages.
-> 
-> Andrew, do you plan to take it (with Kirill's ack).
-> 
+> 4.9-stable review patch.  If anyone has any objections, please let me
+> know.
 
-Sure.  What happened with "Michal's fix in another email"
-(https://lkml.kernel.org/r/20180406051452.GB23467@hori1.linux.bs1.fc.nec.co.jp)?
+No objections but if you are grabbing that one please check if you
+have it's follow on fix.
+
+c0ee554906c3 ("pid: Handle failure to allocate the first pid in a pid namespace")
+
+There were a few cases not handled but the fix below, that made a more
+comprehensive fix desirable.
+
+Eric
+
+> ------------------
+>
+> From: Kirill Tkhai <ktkhai@virtuozzo.com>
+>
+>
+> [ Upstream commit 8896c23d2ef803f1883fea73117a435925c2b4c4 ]
+>
+> alloc_pidmap() advances pid_namespace::last_pid.  When first pid
+> allocation fails, then next created process will have pid 2 and
+> pid_ns_prepare_proc() won't be called.  So, pid_namespace::proc_mnt will
+> never be initialized (not to mention that there won't be a child
+> reaper).
+>
+> I saw crash stack of such case on kernel 3.10:
+>
+>     BUG: unable to handle kernel NULL pointer dereference at (null)
+>     IP: proc_flush_task+0x8f/0x1b0
+>     Call Trace:
+>         release_task+0x3f/0x490
+>         wait_consider_task.part.10+0x7ff/0xb00
+>         do_wait+0x11f/0x280
+>         SyS_wait4+0x7d/0x110
+>
+> We may fix this by restore of last_pid in 0 or by prohibiting of futher
+> allocations.  Since there was a similar issue in Oleg Nesterov's commit
+> 314a8ad0f18a ("pidns: fix free_pid() to handle the first fork failure").
+> and it was fixed via prohibiting allocation, let's follow this way, and
+> do the same.
+>
+> Link: http://lkml.kernel.org/r/149201021004.4863.6762095011554287922.stgit@localhost.localdomain
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> Acked-by: Cyrill Gorcunov <gorcunov@openvz.org>
+> Cc: Andrei Vagin <avagin@virtuozzo.com>
+> Cc: Andreas Gruenbacher <agruenba@redhat.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Michael Kerrisk <mtk.manpages@googlemail.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Andy Lutomirski <luto@amacapital.net>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Serge Hallyn <serge@hallyn.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  kernel/pid.c |    4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@ -322,8 +322,10 @@ struct pid *alloc_pid(struct pid_namespa
+>  	}
+>  
+>  	if (unlikely(is_child_reaper(pid))) {
+> -		if (pid_ns_prepare_proc(ns))
+> +		if (pid_ns_prepare_proc(ns)) {
+> +			disable_pid_allocation(ns);
+>  			goto out_free;
+> +		}
+>  	}
+>  
+>  	get_pid_ns(ns);
