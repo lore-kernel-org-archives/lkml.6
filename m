@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+gWRyGsbFW/mg4qidu8GE5DYL0cClZg1dY81IJWeiqk0M83CsUxxocPybKmbTAEMqmo/1G
-ARC-Seal: i=1; a=rsa-sha256; t=1523473491; cv=none;
+X-Google-Smtp-Source: AIpwx49durea8hGFixiXS3NPDT1Es/M7IAIyT11y2lckqZ3WDKSekvbcmemZC6Q7g2pyqNLWp1ee
+ARC-Seal: i=1; a=rsa-sha256; t=1523473488; cv=none;
         d=google.com; s=arc-20160816;
-        b=f1fZf6Yu5csglcOYE/CHoFlKAki6+wDH6cOWqQd7TCHMi5prK4R7z57qCBVdtyivF9
-         yOnm/NgX6E9iB7aAjgn39D8Ys3TJoPdpUilqL3/jm8MoXJH2R8B7pnX+RKGK0HtiMsz6
-         9ALzeUIn7/KvdYONWp345Yoq+Ao0mg0MefVl8nTAxEdo6j2Ez5i8hSPO7kQRQqFDJ6qk
-         QKDDyY7P2YHRSyk+xoUGWcGvqXuq/P4DctOsLCL6iNozdTXz/B06GJa/GJIRostIcSVu
-         XVbhdYjGzc+IeKxDr+zw0OHpsKJEYqTPwsmmglIPZOfabE68VwiB3c0xvsWjHwh/9j6h
-         hfRA==
+        b=F+CV4yqaIx61KxZ9FN0D6EKNvSfbFcQZsGRiEs7r5dAHvZeeOp3xRtmLOQ0M38OBh/
+         j7PbJtKfa23N/5nA/h/hPSIKpa13t7LW6sJ36Gts/KPu3I5Li8zi6gV/+tnR5M0mFDIg
+         Avn6YREGxydbvy1beTby1Y1aAVbwLBXrkfQwYZtEqhcIz3FE+OwgjUsowdxD7zwDXig3
+         U4RRFHtpvyyHkY5vRQcFLggtuyIQjvfaGgSKwvzegGtZLc0rc0ROILr3SrkMo8dnFcEI
+         9vFOhzzgkN4kigSagCOaFPJeKE42qr2fjl4B7IKji9vCxsMh58UqUhrmYaD55QIKWHRj
+         1rHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=IIGZj5kYD6h2M2KvdbDSIvKFKRmHrehdRfUUicMBA5o=;
-        b=ymJTXNG/6YdEaL9pIGqWBBYLZ2ga931qUUozGFJJ4Tie9VIQuNJDmfzsPLtdEvTNkw
-         1M4nVsI3woxIkPyEvMaNjcNwyJVcQES+cCFH3jSwX53KvISYQmrzp1BiKV9TuNZWG2xM
-         dWSN0cTevbmqk+2kpcxK1pq4P8Oh4r62CxA1QFJJb7QnsnvLkPcX/BfPJUjDqmZW8rjb
-         GEqeOvgBpolCDlwlWGq8voksIEDBCD1IC5/wK37NsM9nxuTQal32QUUhX+58KxNlz/pQ
-         6vsLj1d6uxbIoEmCX0k2yFyIrhye+FJ5uE01Jva8cD7WjiOFu8XDFUvYajQ2fNAcY5Hw
-         YonA==
+        bh=POKcc4qeYNfBSH0DwfKJaxkMjhXJfbO6CMJI0oHMoks=;
+        b=1I+f5uZ5Vuh95U8FoAkEExUsSA5cjHmSwrJpIjvyXSTWAte+LvXotdsJO3XjcNHyZI
+         QObv/s4r/+CgScv+evLCgJaVfK78uA6bxoLUL9T7FOqNqOIwB6orN4V4zk+5fdN9znJy
+         KAerkxNDG2fAdAEKLxshuLx+bxKIOQ0mVWp9qusFUyQcQZWoiwi8gI2yXVbseGOVoFn6
+         tV6IouMjEflRHjA/kieh3nigGcL3a+XndmdTTyOOl9EgZ+xOYooOBY2/7KFX/2JDSOHu
+         n1cQ1i1RAW+sZdo9tRc+F7cwBuj6koNMl6/OEtQ7IekgSOOUFuyfulwDjovyD14e3AM7
+         HAMA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hans de Goede <hdegoede@redhat.com>,
-	Bastien Nocera <hadess@hadess.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Dana Myers <dana.myers@oracle.com>,
+	Lv Zheng <lv.zheng@intel.com>,
+	Bob Moore <robert.moore@intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 267/310] Input: goodix - disable IRQs while suspended
-Date: Wed, 11 Apr 2018 20:36:46 +0200
-Message-Id: <20180411183634.142056912@linuxfoundation.org>
+Subject: [PATCH 4.9 249/310] ACPICA: OSL: Add support to exclude stdarg.h
+Date: Wed, 11 Apr 2018 20:36:28 +0200
+Message-Id: <20180411183633.163823212@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477740127183883?=
-X-GMAIL-MSGID: =?utf-8?q?1597477740127183883?=
+X-GMAIL-THRID: =?utf-8?q?1597477736655936100?=
+X-GMAIL-MSGID: =?utf-8?q?1597477736655936100?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,60 +52,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Lv Zheng <lv.zheng@intel.com>
 
 
-[ Upstream commit faec44b6838312484d63e82286087cf2d5ebb891 ]
+[ Upstream commit 84676b87b27d8aefafb9f712a5b444938f284513 ]
 
-We should not try to do any i2c transfers before the controller is
-resumed (which happens before our resume method gets called).
+ACPICA commit e2df7455a9a4301b03668e4c9c02c7a564cc841c
 
-So we need to disable our IRQ while suspended to enforce this. The
-code paths for devices with GPIOs for the int and reset pins already
-disable the IRQ the through goodix_free_irq().
+Some hosts may choose not to include stdarg.h, implementing a
+configurability in acgcc.h, allowing OSen like Solaris to exclude stdarg.h.
+This patch also fixes acintel.h accordingly without providing builtin
+support as Intel compiler is similar as GCC. Reported by Dana Myers, fixed
+by Lv Zheng.
 
-This commit also disables the IRQ while suspended for devices without
-GPIOs for the int and reset pins.
-
-This fixes the i2c bus sometimes getting stuck after a suspend/resume
-causing the touchscreen to sometimes not work after a suspend/resume.
-This has been tested on a GPD pocked device.
-
-BugLink: https://github.com/nexus511/gpd-ubuntu-packages/issues/10
-BugLink: https://www.reddit.com/r/GPDPocket/comments/7niut2/fix_for_broken_touch_after_resume_all_linux/
-Tested-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Bastien Nocera <hadess@hadess.net>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Link: https://github.com/acpica/acpica/commit/e2df7455
+Reported-by: Dana Myers <dana.myers@oracle.com>
+Signed-off-by: Lv Zheng <lv.zheng@intel.com>
+Signed-off-by: Bob Moore <robert.moore@intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/input/touchscreen/goodix.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ include/acpi/platform/acgcc.h   |   10 ++++++++++
+ include/acpi/platform/acintel.h |    2 ++
+ 2 files changed, 12 insertions(+)
 
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -778,8 +778,10 @@ static int __maybe_unused goodix_suspend
- 	int error;
+--- a/include/acpi/platform/acgcc.h
++++ b/include/acpi/platform/acgcc.h
+@@ -48,7 +48,17 @@
+  * Use compiler specific <stdarg.h> is a good practice for even when
+  * -nostdinc is specified (i.e., ACPI_USE_STANDARD_HEADERS undefined.
+  */
++#ifndef va_arg
++#ifdef ACPI_USE_BUILTIN_STDARG
++typedef __builtin_va_list va_list;
++#define va_start(v, l)          __builtin_va_start(v, l)
++#define va_end(v)               __builtin_va_end(v)
++#define va_arg(v, l)            __builtin_va_arg(v, l)
++#define va_copy(d, s)           __builtin_va_copy(d, s)
++#else
+ #include <stdarg.h>
++#endif
++#endif
  
- 	/* We need gpio pins to suspend/resume */
--	if (!ts->gpiod_int || !ts->gpiod_rst)
-+	if (!ts->gpiod_int || !ts->gpiod_rst) {
-+		disable_irq(client->irq);
- 		return 0;
-+	}
+ #define ACPI_INLINE             __inline__
  
- 	wait_for_completion(&ts->firmware_loading_complete);
+--- a/include/acpi/platform/acintel.h
++++ b/include/acpi/platform/acintel.h
+@@ -48,7 +48,9 @@
+  * Use compiler specific <stdarg.h> is a good practice for even when
+  * -nostdinc is specified (i.e., ACPI_USE_STANDARD_HEADERS undefined.
+  */
++#ifndef va_arg
+ #include <stdarg.h>
++#endif
  
-@@ -819,8 +821,10 @@ static int __maybe_unused goodix_resume(
- 	struct goodix_ts_data *ts = i2c_get_clientdata(client);
- 	int error;
+ /* Configuration specific to Intel 64-bit C compiler */
  
--	if (!ts->gpiod_int || !ts->gpiod_rst)
-+	if (!ts->gpiod_int || !ts->gpiod_rst) {
-+		enable_irq(client->irq);
- 		return 0;
-+	}
- 
- 	/*
- 	 * Exit sleep mode by outputting HIGH level to INT pin
