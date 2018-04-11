@@ -1,77 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752646AbeDKIhE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 04:37:04 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34179 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750785AbeDKIg7 (ORCPT
+        id S1752270AbeDKIjZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 04:39:25 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:36311 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751546AbeDKIjV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 04:36:59 -0400
-X-Google-Smtp-Source: AIpwx48KmQpwWRS18EDsp4ECQnP/38LA17x3yci3qVgyrqnYv6bnhaRzE6KSt/OE9W5ZHXu6T7uoLpDTK2Co9Vrxg5o=
+        Wed, 11 Apr 2018 04:39:21 -0400
+X-Google-Smtp-Source: AIpwx4/Py+cbJHaTzivYC/c9KDos3trGc37BB3uqbKRSNqujKDZQHmF04rTILONeMY4NaLDTWolSO/Jlv7ubtofw2us=
 MIME-Version: 1.0
-In-Reply-To: <CA+Ln22Eabq0HH6YmCSFwLd68w3DU4xTX2BiNAeLe_tnG6282Xg@mail.gmail.com>
-References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
- <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com> <CA+Ln22Eabq0HH6YmCSFwLd68w3DU4xTX2BiNAeLe_tnG6282Xg@mail.gmail.com>
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Date: Wed, 11 Apr 2018 17:36:57 +0900
-Message-ID: <CA+Ln22FAmBHrxEvQpBPV1p=Kg2g+XCHn=HQJCNSUhFv+Jtf6xA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:SAMSUNG SOC CLOCK DRIVERS"
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-gpio@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20180411082226.qbhf7hcvtcns7ge3@verge.net.au>
+References: <1523375627-23746-1-git-send-email-geert+renesas@glider.be>
+ <1523375627-23746-3-git-send-email-geert+renesas@glider.be> <20180411082226.qbhf7hcvtcns7ge3@verge.net.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Apr 2018 10:39:19 +0200
+X-Google-Sender-Auth: RdrfGeboVKN02AOYcXjxRsUFWOE
+Message-ID: <CAMuHMdXq5gTrYBGnP8EfL4s_c+=JA6vXgrmgs3Wa_+8cS3jYNA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] vfio: platform: Add generic DT reset controller support
+To: Simon Horman <horms@verge.net.au>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        KVM list <kvm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3B8bAUn001903
 
-2018-04-10 17:38 GMT+09:00 Tomasz Figa <tomasz.figa@gmail.com>:
-> 2018-04-10 16:06 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
->> On Sun, Apr 8, 2018 at 8:07 PM, Paweł Chmiel
->> <pawel.mikolaj.chmiel@gmail.com> wrote:
->>> All banks with GPIO interrupts should be at beginning
->>> of bank array and without any other types of banks between them.
->>> This order is expected by exynos_eint_gpio_irq, when doing
->>> interrupt group to bank translation.
->>> Otherwise, kernel NULL pointer dereference would happen
->>> when trying to handle interrupt, due to wrong bank being looked up.
->>> Observed on s5pv210, when trying to handle gpj0 interrupt,
->>> where kernel was mapping it to gpi bank.
+Hi Simon,
+
+On Wed, Apr 11, 2018 at 10:22 AM, Simon Horman <horms@verge.net.au> wrote:
+> On Tue, Apr 10, 2018 at 05:53:47PM +0200, Geert Uytterhoeven wrote:
+>> Vfio-platform requires reset support, provided either by ACPI, or, on DT
+>> platforms, by a device-specific reset driver matching against the
+>> device's compatible value.
 >>
->> Thanks for the patch. The issue looks real although one thing was
->> missed - there is a gap in SVC group between GPK2 and GPL0 (pointed by
->> Marek Szyprowski):
+>> On many SoCs, devices are connected to an SoC-internal reset controller.
+>> If the reset hierarchy is described in DT using "resets" properties,
+>> such devices can be reset in a generic way through the reset controller
+>> subsystem.  Hence add support for this, avoiding the need to write
+>> device-specific reset drivers for each single device on affected SoCs.
 >>
->> 0x0 - EINT_23 - gpk0
->> 0x1 - EINT_24 - gpk1
->> 0x2 - EINT_25 - gpk2
->> 0x4 - EINT_27 - gpl0
->> 0x7 - EINT_8 - gpm0
+>> Devices that do require a more complex reset procedure can still provide
+>> a device-specific reset driver, as that takes precedence.
 >>
->> Maybe this should be done differently - to remove such hidden
->> requirement entirely in favor of another parameter of
->> EXYNOS_PIN_BANK_EINTG argument?
+>> Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
+>> becomes a no-op (as in: "No reset function found for device") if reset
+>> controller support is disabled.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> v2:
+>>   - Don't store error values in vdev->reset_control,
+>>   - Use of_reset_control_get_exclusive() instead of
+>>     __of_reset_control_get(),
+>>   - Improve description.
+
+>> --- a/drivers/vfio/platform/vfio_platform_common.c
+>> +++ b/drivers/vfio/platform/vfio_platform_common.c
+>> @@ -17,6 +17,7 @@
+>>  #include <linux/iommu.h>
+>>  #include <linux/module.h>
+>>  #include <linux/mutex.h>
+>> +#include <linux/reset.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/types.h>
+>>  #include <linux/uaccess.h>
+>> @@ -112,11 +113,19 @@ static bool vfio_platform_has_reset(struct vfio_platform_device *vdev)
+>>       if (VFIO_PLATFORM_IS_ACPI(vdev))
+>>               return vfio_platform_acpi_has_reset(vdev);
+>>
+>> -     return vdev->of_reset ? true : false;
+>> +     if (vdev->of_reset)
+>> +             return true;
+>> +
+>> +     if (vdev->reset_control)
+>> +             return true;
+>> +
+>> +     return false;
 >
-> Perhaps let's limit this patch to s5pv210 and Exynos5410 alone, where
-> a simple swap of bank order in the arrays should be okay.
+> I wonder if the above would be better expressed as:
 >
-> We might also need to have some fixes on 4x12, because I noticed that
-> in exynos4x12_pin_banks0[] there is a hole in eint_offsets between
-> gpd1 and gpf0 and exynos4x12_pin_banks1[] starts with gpk0 that has
-> eint_offset equal to 0x08 (not 0).
+>         return vdev->of_reset || vdev->reset_control;
 
-To close the loop, after talking offline and checking the
-documentation, Exynos4x12 is fine, because the group numbers in SVC
-register actually match what is defined in bank arrays.
+Makes sense, now both checks are of the same type.
 
-Best regards,
-Tomasz
+>> @@ -217,6 +236,9 @@ static int vfio_platform_call_reset(struct vfio_platform_device *vdev,
+>>       } else if (vdev->of_reset) {
+>>               dev_info(vdev->device, "reset\n");
+>>               return vdev->of_reset(vdev);
+>> +     } else if (vdev->reset_control) {
+>> +             dev_info(vdev->device, "reset\n");
+>
+> Would it be useful to differentiate between the above two informational
+> messages?
+
+Probably not, there's also no differentiation with the message for the
+ACPI case above (out of visible context).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
