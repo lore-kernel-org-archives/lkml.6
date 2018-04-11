@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+XF3HXH2JeyLK9G2MPG/WuyIA0BbSPDzssGd+Bkqh/UfqJ4A7SAHvpopOKe/FHapFH96L0
-ARC-Seal: i=1; a=rsa-sha256; t=1523473359; cv=none;
+X-Google-Smtp-Source: AIpwx4/+IvIEE/IjVcRw3ecRhy1lMAnJXg9lr5+Ejxbce4+S8TPxCUyqFxSBPSq29amUpp0LcakU
+ARC-Seal: i=1; a=rsa-sha256; t=1523473357; cv=none;
         d=google.com; s=arc-20160816;
-        b=bFlk92K/RNxArqPF/9Jq1wEFyhP0b0PQyLGXzL2iahM2OJCB9yXP97SuTrl3T9L4Fu
-         lTwx+9YOm4iwBhctFFy8ldtx7AS8/S4k1PbB4ON+ApMPGV2tT/+hT9LbgkxJgDaL9PQj
-         dIUxUC+gBixkYbp65f5NlmzhfKeVUT/XEFM9+y3JLlF/ajzuDmcp0YUV9jZQwL8/Mvg3
-         4MkuM/U1sBl19DxY8gHLIBk5MtTk92tMjwLB87cnHGzPV/qZnuidQQivixgSa/FmrUgO
-         L0j9qqtOpB7TSZ5gMEwLM3XW69g0cqYQUZ+YUIX2AsLo3GbldcTD0bzpRMF4zpaVyP58
-         O94w==
+        b=uV/Z4fi95cA+WuY5wKXJsPV8/toSE4mCH/wuJea93J9wYzDIOX69nTwEapj7F2z6A+
+         19kJ1XjbN2/KkQRCLMmGE1VcKGGLxhiht2xL3eXrHN+EzL8GMe7/H8dEVwHX4dBH4Tgn
+         FTgbSx3dinLpffgNikZHVIP8Tdrqi8thKIc+bKMmglNgwXF+oKdpjEd6P3MNvcw+hZg8
+         pnws5zC5+nP3kHa9gV9XO2lFiQyULZI6FkZwqwLniUF2t+tEcP7iOVJ0qIiE2OqdS4ST
+         c4tFOU6b7o0sZQ/nb/c4VNOLyRLzNqz/vXUWZBOALm2asjiqc3k3hKZVyDVPAfb9v6cY
+         pZWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=SUj5NZ6HG/IyVxE46WEEC9AMDTCpznZramJeCHqfIbA=;
-        b=czukGn4O4jQESw+aCVjvRYWnFc9ennneyAmLtMyuyXi3M+qCVo1yg7NrMKQ7cnOcrp
-         rl0r17o9JYtwRxEDQ1Umeu+QUTLT3S44WWfujY17ZatYqk87fkUTpCWaojniU8r9GWMO
-         kfTq0+LntIC3yokmN44d4nYzTZ23xvCy6Sp2FG8uBTUoaPbfjrI1CUTDf69YPlYdir5u
-         Gs1w2lEQDK8vj/OHu8cYZcqknecf7fhekYV7TPZyeJlN1LALfuv75PyhR9BbWUbqNKRy
-         3QPbbfGH7n6g19PSK7fVgo44sJy3kcuH+KCoLJLuX0YnbeJPSdHptDz2nN2XRDXH2xPP
-         UpdQ==
+        bh=fIYEHa6Y5YepFxQI0cHsK4jnPzvnyUWqx+YtwX1prBk=;
+        b=WX3odlqPXfQzmOeDiNO1mhroNksUGHXFjIPDC65aXucfZZ4dj0nEpfgit3rP3PRKrj
+         JwAUtpcqWuLLxKzChfqHiNl90REfxuBsXy+0fD0niWkct73ZQgpaltbedqs1oYWMP/Nf
+         KyiY1gRsrZaMdFkUa86Z8g0icY36vB95GP2p/M8VltalfxdZ7obk//V7Mk5N1ndfwv/y
+         yuIO/sE9ES33xrkixQQcJBBWKnkW0F2QeaL1voRLcGZk7b3zCRtag05rb5TwIQO6l1/R
+         irail1R39Y1xN2y4/oj4qkJbHfnbkCGousB/EE6wR6VAXBAFaKDas5kIFBVvIq7lIU70
+         qbpw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Marcin Nowakowski <marcin.nowakowski@imgtec.com>,
-	linux-mips@linux-mips.org,
-	Ralf Baechle <ralf@linux-mips.org>,
+	Leonard Crestez <leonard.crestez@nxp.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 220/310] MIPS: kprobes: flush_insn_slot should flush only if probe initialised
-Date: Wed, 11 Apr 2018 20:35:59 +0200
-Message-Id: <20180411183632.010909466@linuxfoundation.org>
+Subject: [PATCH 4.9 211/310] ARM: imx: Add MXC_CPU_IMX6ULL and cpu_is_imx6ull
+Date: Wed, 11 Apr 2018 20:35:50 +0200
+Message-Id: <20180411183631.640062443@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476260596132380?=
-X-GMAIL-MSGID: =?utf-8?q?1597477601664878968?=
+X-GMAIL-THRID: =?utf-8?q?1597476761935649946?=
+X-GMAIL-MSGID: =?utf-8?q?1597477598632885687?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,36 +51,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
 
 
-[ Upstream commit 698b851073ddf5a894910d63ca04605e0473414e ]
+[ Upstream commit b3ea575770c7eeb259c77b6861cd14d00eb309df ]
 
-When ftrace is used with kprobes, it is possible for a kprobe to contain
-an invalid location (ie. only initialised to 0 and not to a specific
-location in the code). Trying to perform a cache flush on such location
-leads to a crash r4k_flush_icache_range().
+Support for imx6ull is already present but it's based on
+of_machine_is_compatible("fsl,imx6ull") checks. Add it to the MXC_CPU_*
+enumeration as well.
 
-Fixes: c1bf207d6ee1 ("MIPS: kprobe: Add support.")
-Signed-off-by: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/16296/
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+This also fixes /sys/devices/soc0/soc_id reading "Unknown".
+
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/include/asm/kprobes.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/mach-imx/cpu.c |    3 +++
+ arch/arm/mach-imx/mxc.h |    6 ++++++
+ 2 files changed, 9 insertions(+)
 
---- a/arch/mips/include/asm/kprobes.h
-+++ b/arch/mips/include/asm/kprobes.h
-@@ -40,7 +40,8 @@ typedef union mips_instruction kprobe_op
+--- a/arch/arm/mach-imx/cpu.c
++++ b/arch/arm/mach-imx/cpu.c
+@@ -131,6 +131,9 @@ struct device * __init imx_soc_device_in
+ 	case MXC_CPU_IMX6UL:
+ 		soc_id = "i.MX6UL";
+ 		break;
++	case MXC_CPU_IMX6ULL:
++		soc_id = "i.MX6ULL";
++		break;
+ 	case MXC_CPU_IMX7D:
+ 		soc_id = "i.MX7D";
+ 		break;
+--- a/arch/arm/mach-imx/mxc.h
++++ b/arch/arm/mach-imx/mxc.h
+@@ -39,6 +39,7 @@
+ #define MXC_CPU_IMX6SX		0x62
+ #define MXC_CPU_IMX6Q		0x63
+ #define MXC_CPU_IMX6UL		0x64
++#define MXC_CPU_IMX6ULL		0x65
+ #define MXC_CPU_IMX7D		0x72
  
- #define flush_insn_slot(p)						\
- do {									\
--	flush_icache_range((unsigned long)p->addr,			\
-+	if (p->addr)							\
-+		flush_icache_range((unsigned long)p->addr,		\
- 			   (unsigned long)p->addr +			\
- 			   (MAX_INSN_SIZE * sizeof(kprobe_opcode_t)));	\
- } while (0)
+ #define IMX_DDR_TYPE_LPDDR2		1
+@@ -73,6 +74,11 @@ static inline bool cpu_is_imx6ul(void)
+ 	return __mxc_cpu_type == MXC_CPU_IMX6UL;
+ }
+ 
++static inline bool cpu_is_imx6ull(void)
++{
++	return __mxc_cpu_type == MXC_CPU_IMX6ULL;
++}
++
+ static inline bool cpu_is_imx6q(void)
+ {
+ 	return __mxc_cpu_type == MXC_CPU_IMX6Q;
