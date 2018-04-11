@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49x2h1frPab3sZ7L4K3/xMicHWCPcPSfY31a71rdREUx7HTAEDzMYS1wxWE22OTMHDy9YfL
-ARC-Seal: i=1; a=rsa-sha256; t=1523472732; cv=none;
+X-Google-Smtp-Source: AIpwx4+d9EucDr7zaVMLsSw5zvolMrQoTt/9yXgsyshyiM/SvtQ7Xv+x4DgLMWg336hLiREjqluD
+ARC-Seal: i=1; a=rsa-sha256; t=1523472729; cv=none;
         d=google.com; s=arc-20160816;
-        b=tlLu+ePzAhEmeJuhM+YdfvqoPNaifsu5xKIFOecQTohmZk07Qmm7edeqUaWzpAK3x7
-         3vmZCyZ1Tgi/Fx1aMst04/u0lG+bv2p/O7pvderX7QZaOOp2r2ogE3zkCrwxVH/jpaxs
-         WNwe8iSokKSiZ2EAw4yjxGtEKjY4KF1FzyimtqOEexBfTIFdsfT7MD6znbng79mW5Ck4
-         hV8IUeyDW7jkSXlFaoWjjAC3cRFlBsuhlpE6GwnRPmSBV5K+BVeRk/6jd5Hg2BCM3Rm/
-         mxEuiEnm0a8cf9oyxkT5def+c6YKBA9j2H35xwFWqJTtKRGdnSnnLSHLNhAfBhkz88Oc
-         0lxg==
+        b=R4rCk5jqcIrqnB54m2/tfJe99CpYtvvQIFu6wF1WYglr/Fuo7s+NRNhznRnd2lyhGJ
+         NHqHgfrZgVD/dQtcHA/FlG8eAsJ/2Tx2uz6UtM2IpSJaOoZhVIRp7mEy8o34mTOt2CeZ
+         x6s9aHWJCnyd2QlSRTjiHtXtv6Ic8U4A1X3Z8uMPNleLk1R9laYW+kjzUK0+jW0WwvXz
+         Fe+KdrwqGx/wzs1J1sagzD0g/nDSwFCQUEp70xmssZVXNJGGfy5D80GBlpMyNGb1OUWR
+         EJTnEBa21QScenS6UHOyEEmoqxHgsHkE1+dEZQbv9ZaEoWP6xoTUZt4cBugKL8N6XPqB
+         AM1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=cPwELSDHdHHEEzTXcPzJBnzyRaM0XPKpoxtq9mYhD+4=;
-        b=BFDG2xkdgJzNKzualVar+mVtv3/jZA1f1ZfxdXI5WNjcRdUrQIDVZr9LhJqcsNHdEp
-         Mdtw74L0kR7oM9X6HMxy9Dw9A/P8efbxxloFy/ZKnOdtfk2l7PehtKCEIrDpUnyU3Twn
-         vTgy5gmyiuU+bLFJ9abMsrZ2qP5o5r+oAOgYqDiv2voubvd6hHnnFTlYNvjFY8sh5trX
-         vaeR8oHmkh3K4FD5M/SFiApTSB7ccstulBmiq91nZQ5KkKgdEs/D2a4uQQXawtKiDa08
-         RdGkiVLvLfZM9Qncwis1TDIDsi088SR2jhccAsVwfXSfdL3afLRwFEeA24kTa47i+EcH
-         AUmw==
+        bh=3ViSfS9jVEbe+1akkNZoLil3lDUiat7i0s6TCGMccAo=;
+        b=0s6xzU3JCSpAazWaH4AjGHyWbj8KpZIIc0wmT197MKcgL07kYjO/nSEDuLU6UkSyEQ
+         MpDdSNLMIob7i6ERWQ62jBcbnZP4868ZJii5rd8hRwXzid8n2yThBkuC53o233TISNbD
+         naqxST8MnaWKixnJbyJBOxdzh3LxyrJnF0gd24WhgxUfPy8GK8oXRCCD4BC7UX8EgY4j
+         A5/Y+8+bN2IBNMhf+4sNEK4SV8MtDvDBxVzwrgHcwr2zjcPg0XyZMDUQi/NyGU+lKYfI
+         g5FFy8KkEL4kgbOYrEDBBuRPOJ8Eya1tKnYbKDtqPbPI0Am5gsy0Cu85ptnN2xWELsEf
+         eLdw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Miguel Fadon Perlines <mfadon@teldat.com>,
-	David Ahern <dsahern@gmail.com>,
+	syzbot+91e6f9932ff122fa4410@syzkaller.appspotmail.com,
+	Paolo Abeni <pabeni@redhat.com>,
+	Eric Dumazet <edumazet@google.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 190/190] vrf: Fix use after free and double free in vrf_finish_output
-Date: Wed, 11 Apr 2018 20:37:16 +0200
-Message-Id: <20180411183604.662211905@linuxfoundation.org>
+Subject: [PATCH 4.4 189/190] ipv6: the entire IPv6 header chain must fit the first fragment
+Date: Wed, 11 Apr 2018 20:37:15 +0200
+Message-Id: <20180411183604.600936969@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476943629198552?=
-X-GMAIL-MSGID: =?utf-8?q?1597476943629198552?=
+X-GMAIL-THRID: =?utf-8?q?1597476403965411489?=
+X-GMAIL-MSGID: =?utf-8?q?1597476941387309220?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,47 +51,119 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit 82dd0d2a9a76fc8fa2b18d80b987d455728bf83a upstream.
 
-Miguel reported an skb use after free / double free in vrf_finish_output
-when neigh_output returns an error. The vrf driver should return after
-the call to neigh_output as it takes over the skb on error path as well.
+[ Upstream commit 10b8a3de603df7b96004179b1b33b1708c76d144 ]
 
-Patch is a simplified version of Miguel's patch which was written for 4.9,
-and updated to top of tree.
+While building ipv6 datagram we currently allow arbitrary large
+extheaders, even beyond pmtu size. The syzbot has found a way
+to exploit the above to trigger the following splat:
 
-Fixes: 8f58336d3f78a ("net: Add ethernet header for pass through VRF device")
-Signed-off-by: Miguel Fadon Perlines <mfadon@teldat.com>
-Signed-off-by: David Ahern <dsahern@gmail.com>
+kernel BUG at ./include/linux/skbuff.h:2073!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 4230 Comm: syzkaller672661 Not tainted 4.16.0-rc2+ #326
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+RIP: 0010:__skb_pull include/linux/skbuff.h:2073 [inline]
+RIP: 0010:__ip6_make_skb+0x1ac8/0x2190 net/ipv6/ip6_output.c:1636
+RSP: 0018:ffff8801bc18f0f0 EFLAGS: 00010293
+RAX: ffff8801b17400c0 RBX: 0000000000000738 RCX: ffffffff84f01828
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8801b415ac18
+RBP: ffff8801bc18f360 R08: ffff8801b4576844 R09: 0000000000000000
+R10: ffff8801bc18f380 R11: ffffed00367aee4e R12: 00000000000000d6
+R13: ffff8801b415a740 R14: dffffc0000000000 R15: ffff8801b45767c0
+FS:  0000000001535880(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000002000b000 CR3: 00000001b4123001 CR4: 00000000001606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  ip6_finish_skb include/net/ipv6.h:969 [inline]
+  udp_v6_push_pending_frames+0x269/0x3b0 net/ipv6/udp.c:1073
+  udpv6_sendmsg+0x2a96/0x3400 net/ipv6/udp.c:1343
+  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:764
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg+0xca/0x110 net/socket.c:640
+  ___sys_sendmsg+0x320/0x8b0 net/socket.c:2046
+  __sys_sendmmsg+0x1ee/0x620 net/socket.c:2136
+  SYSC_sendmmsg net/socket.c:2167 [inline]
+  SyS_sendmmsg+0x35/0x60 net/socket.c:2162
+  do_syscall_64+0x280/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x4404c9
+RSP: 002b:00007ffdce35f948 EFLAGS: 00000217 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004404c9
+RDX: 0000000000000003 RSI: 0000000020001f00 RDI: 0000000000000003
+RBP: 00000000006cb018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 0000000020000080 R11: 0000000000000217 R12: 0000000000401df0
+R13: 0000000000401e80 R14: 0000000000000000 R15: 0000000000000000
+Code: ff e8 1d 5e b9 fc e9 15 e9 ff ff e8 13 5e b9 fc e9 44 e8 ff ff e8 29
+5e b9 fc e9 c0 e6 ff ff e8 3f f3 80 fc 0f 0b e8 38 f3 80 fc <0f> 0b 49 8d
+87 80 00 00 00 4d 8d 87 84 00 00 00 48 89 85 20 fe
+RIP: __skb_pull include/linux/skbuff.h:2073 [inline] RSP: ffff8801bc18f0f0
+RIP: __ip6_make_skb+0x1ac8/0x2190 net/ipv6/ip6_output.c:1636 RSP:
+ffff8801bc18f0f0
+
+As stated by RFC 7112 section 5:
+
+   When a host fragments an IPv6 datagram, it MUST include the entire
+   IPv6 Header Chain in the First Fragment.
+
+So this patch addresses the issue dropping datagrams with excessive
+extheader length. It also updates the error path to report to the
+calling socket nonnegative pmtu values.
+
+The issue apparently predates git history.
+
+v1 -> v2: cleanup error path, as per Eric's suggestion
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: syzbot+91e6f9932ff122fa4410@syzkaller.appspotmail.com
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-[ backport to 4.4 and 4.9 dropped the sock_confirm_neigh and
-  changed neigh_output to dst_neigh_output ]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/vrf.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ net/ipv6/ip6_output.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
---- a/drivers/net/vrf.c
-+++ b/drivers/net/vrf.c
-@@ -550,13 +550,15 @@ static int vrf_finish_output(struct net
- 	neigh = __ipv4_neigh_lookup_noref(dev, nexthop);
- 	if (unlikely(!neigh))
- 		neigh = __neigh_create(&arp_tbl, &nexthop, dev, false);
--	if (!IS_ERR(neigh))
-+	if (!IS_ERR(neigh)) {
- 		ret = dst_neigh_output(dst, neigh, skb);
-+		rcu_read_unlock_bh();
-+		return ret;
-+	}
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -1278,7 +1278,7 @@ static int __ip6_append_data(struct sock
+ 			     unsigned int flags, int dontfrag)
+ {
+ 	struct sk_buff *skb, *skb_prev = NULL;
+-	unsigned int maxfraglen, fragheaderlen, mtu, orig_mtu;
++	unsigned int maxfraglen, fragheaderlen, mtu, orig_mtu, pmtu;
+ 	int exthdrlen = 0;
+ 	int dst_exthdrlen = 0;
+ 	int hh_len;
+@@ -1314,6 +1314,12 @@ static int __ip6_append_data(struct sock
+ 		      sizeof(struct frag_hdr) : 0) +
+ 		     rt->rt6i_nfheader_len;
  
- 	rcu_read_unlock_bh();
- err:
--	if (unlikely(ret < 0))
--		vrf_tx_error(skb->dev, skb);
-+	vrf_tx_error(skb->dev, skb);
- 	return ret;
- }
++	/* as per RFC 7112 section 5, the entire IPv6 Header Chain must fit
++	 * the first fragment
++	 */
++	if (headersize + transhdrlen > mtu)
++		goto emsgsize;
++
+ 	if (cork->length + length > mtu - headersize && dontfrag &&
+ 	    (sk->sk_protocol == IPPROTO_UDP ||
+ 	     sk->sk_protocol == IPPROTO_RAW)) {
+@@ -1329,9 +1335,8 @@ static int __ip6_append_data(struct sock
+ 
+ 	if (cork->length + length > maxnonfragsize - headersize) {
+ emsgsize:
+-		ipv6_local_error(sk, EMSGSIZE, fl6,
+-				 mtu - headersize +
+-				 sizeof(struct ipv6hdr));
++		pmtu = max_t(int, mtu - headersize + sizeof(struct ipv6hdr), 0);
++		ipv6_local_error(sk, EMSGSIZE, fl6, pmtu);
+ 		return -EMSGSIZE;
+ 	}
  
