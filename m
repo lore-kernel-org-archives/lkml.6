@@ -1,42 +1,80 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+m2+Vsg5+jBxBCwZtewObds1yZi9iR2Hkyw2AbuNwIK6gcOImZGJbjGne1nML4KCBCSP4V
-ARC-Seal: i=1; a=rsa-sha256; t=1523472535; cv=none;
-        d=google.com; s=arc-20160816;
-        b=bzrT2XnR4mHjJeQKL5F8jaN+9MEkiRHXU2aK4ldwiz5czJQ/TrJxbTl9r71BuIVXl2
-         Du+5QBXAWixIZIH8/DDeuBOF09FDiCKuJ0+4JTLyBsCchOz3BCe8+RvS6M/IMLUqLBBr
-         v+ZiJMHEP1Kyind5NUVw7mnxGXuGcRYm2cuuoh3wVqBYE9jExrs7Ohmx+FPn/F3XRPpl
-         bxmKISNVepOW5aE8r8VUf4msmg5qN+gg0w9yWwXdFK+N+bhGqLiZqP49/DXTMJZSVqZh
-         HTdrI0KCEVOpt7iKGH8tVW46WKL8u7AbGtUApSabg4kKP9kvuuk+grCjjKkwUEaKtht4
-         aLTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=lv1XkHzO12D1lQdNj4JwvAf8E59oodXRypNaTEYQnyk=;
-        b=kWqBrVkEpFUpstvbDEH/Q+jU1qspvDhkcdbze+oMxJQZcwMKKuzpLpXtg/s/BelsrM
-         +ub3eTen2Qlt7leVlTdBj87tl4clL5y4G8nF/9Z4Eig+m1oEY0y7GY7Uu8qpDOXTX0Dl
-         8zyermjvwbfX1lSQIE7PBv7L9Wl4L/G+iIvy0cvNfM44zos/Tz5SuRq1nGrN3UTBbfNB
-         ZGK9hoo+l0ZS3T3DpCfQxu5UgThNWBI040Nus3V85nUuiWy9ssbPFLeucazM25Zol0hK
-         dgndxzQCiUy5ZPALdiuZNvL4/HG1l5swTg81H1kVMQxzXF0YDvMuvDH6QphaG/TvIFOE
-         bRoQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3118118-1523472489-5-327424155089010788
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523472489; b=NnNEi7XsEkIPctDiXprn3XwOuLmlSA2rFdzd128MynsSMrfgSc
+    pxA7Q2XwVAv9dH47lFv8IclCsbZjRJWR0Mk2S3TvPi7dvfqK4Y+FLqFjKzfZRF7g
+    KiSpGcvlp+XCEeWvsLUhVvdNtBuoICjvxSH+1V7BGNKPxWijn3lLnpORc1jbWbEH
+    C/RmQM9ol+G520t92PWN2X+uqCsNhIaeuOLOcb7+unchbneDRK0vNhAFFhXRB+35
+    8/w5EuH9n5xzGdIFYmEnHDyBt4WoPXEc8HoJfyLqkXE4AmvvHkl+0euEzdHwwFBM
+    rCKcChKDdMcebYAT96siq+G/popvwnm5kgqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523472489; bh=4nWYR2umpi82ycD6M07cjEpYC5MDMA
+    Srh9Skq94l9/w=; b=TUSb2GK0CGXVIAtnEzzcemQJhiGKo954nah/kyeFqcz2lc
+    kW62/rXB6qMXJBGIng+ySCVCnvDf8Gkz9qbpGYoyWcBfmZ1F1JxuaxkpN6B6pvAz
+    WNuPcYMExDVXv+tf9QanydZ6yB0AKh390VaRIeU+p+97wNBCYPqpGeLwwJHjDI76
+    w2Lom3bIGTBDzShnzVVlqweIXdxpxMbNKTQ+0FRWdE+tnliyJJAYRJYVqRWtYQ6L
+    lNahlP++pb2Hz5g9IvLSfDAKALsDqI2UVpjjf5dqKDz5FwcoC1ACRKq1PkML/rmm
+    eyw8JVpoYqTGISIYgipNtA9MdUQYuDBM5Eo1XVfw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfP1G+qN7KaW7VpPlxx/WdzzJPrkIYfpYuyPl7ihTRy4aL+gdtOK01Xdx5t5bc/2h2eAluaomYT1pEFru8BYFx2cGXCsnZc8aF1u1H/VM3YZFx/ADPkVn
+    zFE7ehq3DyJnfCjItG614Z/UPl6/L0+b5hxY9omOB9icaUZGydwYh/1ZBxM3h5+GSWAuYMQ3/z4krRjV4JFZGyWIhcWEyBa41Ql7WRC9/Vp55IR8JCgL1q0z
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=sozttTNsAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=r7hTFzgnQUyMEkfOMgEA:9
+    a=QEXdDO2ut3YA:10 a=aeg5Gbbo78KNqacMgKqU:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1756049AbeDKSsF (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:48:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59548 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756016AbeDKSsE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:48:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Namhyung Kim <namhyung@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Andi Kleen <andi@firstfloor.org>,
-	David Ahern <dsahern@gmail.com>,
-	Peter Zijlstra <a.p.zijlstra@chello.nl>,
-	kernel-team@lge.com,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 121/190] perf header: Set proper module name when build-id event found
-Date: Wed, 11 Apr 2018 20:36:07 +0200
-Message-Id: <20180411183558.608495202@linuxfoundation.org>
+        stable@vger.kernel.org, Suman Anna <s-anna@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 059/190] ARM: davinci: da8xx: Create DSP device only when assigned memory
+Date: Wed, 11 Apr 2018 20:35:05 +0200
+Message-Id: <20180411183553.782592752@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -44,10 +82,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476737917927440?=
-X-GMAIL-MSGID: =?utf-8?q?1597476737917927440?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,71 +92,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Namhyung Kim <namhyung@kernel.org>
+From: Suman Anna <s-anna@ti.com>
 
 
-[ Upstream commit 1deec1bd96ccd8beb04d2112a6d12fe20505c3a6 ]
+[ Upstream commit f97f03578b997a8ec2b9bc4928f958a865137268 ]
 
-When perf processes build-id event, it creates DSOs with the build-id.
-But it didn't set the module short name (like '[module-name]') so when
-processing a kernel mmap event of the module, it cannot found the DSO as
-it only checks the short names.
+The DSP device on Davinci platforms does not have an MMU and requires
+specific DDR memory to boot. This memory is reserved using the rproc_mem
+kernel boot parameter and is assigned to the device on non-DT boots.
+The remoteproc core uses the DMA API and so will fall back to assigning
+random memory if this memory is not assigned to the device, but the DSP
+remote processor boot will not be successful in such cases. So, check
+that memory has been reserved and assigned to the device specifically
+before even creating the DSP device.
 
-That leads for perf to create a same DSO without the build-id info and
-it'll lookup the system path even if the DSO is already in the build-id
-cache.  After kernel was updated, perf cannot find the DSO  and cannot
-show symbols in it anymore.
-
-You can see this if you have an old data file (w/ old kernel version):
-
-  $ perf report -i perf.data.old -v |& grep scsi_mod
-  build id event received for /lib/modules/3.19.2-1-ARCH/kernel/drivers/scsi/scsi_mod.ko.gz : cafe1ce6ca13a98a5d9ed3425cde249e57a27fc1
-  Failed to open /lib/modules/3.19.2-1-ARCH/kernel/drivers/scsi/scsi_mod.ko.gz, continuing without symbols
-  ...
-
-The second message didn't show the build-id.  With this patch:
-
-  $ perf report -i perf.data.old -v |& grep scsi_mod
-  build id event received for /lib/modules/3.19.2-1-ARCH/kernel/drivers/scsi/scsi_mod.ko.gz: cafe1ce6ca13a98a5d9ed3425cde249e57a27fc1
-  /lib/modules/3.19.2-1-ARCH/kernel/drivers/scsi/scsi_mod.ko.gz with build id cafe1ce6ca13a98a5d9ed3425cde249e57a27fc1 not found, continuing without symbols
-  ...
-
-Now it shows the build-id but still cannot load the symbol table.  This
-is a different problem which will be fixed in the next patch.
-
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: kernel-team@lge.com
-Link: http://lkml.kernel.org/r/20170531120105.21731-1-namhyung@kernel.org
-[ Fix the build on older compilers (debian <= 8, fedora <= 21, etc) wrt kmod_path var init ]
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/header.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ arch/arm/mach-davinci/devices-da8xx.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1258,8 +1258,16 @@ static int __event_process_build_id(stru
+--- a/arch/arm/mach-davinci/devices-da8xx.c
++++ b/arch/arm/mach-davinci/devices-da8xx.c
+@@ -795,6 +795,8 @@ static struct platform_device da8xx_dsp
+ 	.resource	= da8xx_rproc_resources,
+ };
  
- 		dso__set_build_id(dso, &bev->build_id);
- 
--		if (!is_kernel_module(filename, cpumode))
--			dso->kernel = dso_type;
-+		if (dso_type != DSO_TYPE_USER) {
-+			struct kmod_path m = { .name = NULL, };
++static bool rproc_mem_inited __initdata;
 +
-+			if (!kmod_path__parse_name(&m, filename) && m.kmod)
-+				dso__set_short_name(dso, strdup(m.name), true);
-+			else
-+				dso->kernel = dso_type;
-+
-+			free(m.name);
-+		}
+ #if IS_ENABLED(CONFIG_DA8XX_REMOTEPROC)
  
- 		build_id__sprintf(dso->build_id, sizeof(dso->build_id),
- 				  sbuild_id);
+ static phys_addr_t rproc_base __initdata;
+@@ -833,6 +835,8 @@ void __init da8xx_rproc_reserve_cma(void
+ 	ret = dma_declare_contiguous(&da8xx_dsp.dev, rproc_size, rproc_base, 0);
+ 	if (ret)
+ 		pr_err("%s: dma_declare_contiguous failed %d\n", __func__, ret);
++	else
++		rproc_mem_inited = true;
+ }
+ 
+ #else
+@@ -847,6 +851,12 @@ int __init da8xx_register_rproc(void)
+ {
+ 	int ret;
+ 
++	if (!rproc_mem_inited) {
++		pr_warn("%s: memory not reserved for DSP, not registering DSP device\n",
++			__func__);
++		return -ENOMEM;
++	}
++
+ 	ret = platform_device_register(&da8xx_dsp);
+ 	if (ret)
+ 		pr_err("%s: can't register DSP device: %d\n", __func__, ret);
