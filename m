@@ -1,55 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752561AbeDKDd3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 23:33:29 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51702 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751624AbeDKDd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 23:33:27 -0400
-Subject: Re: [PATCH v3 0/2] vhost: fix vhost_vq_access_ok() log check
-To: Stefan Hajnoczi <stefanha@redhat.com>,
-        virtualization@lists.linux-foundation.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, mst@redhat.com,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180411023541.15776-1-stefanha@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <252aa961-3bc0-ab5b-28c6-7de5d579bbd2@redhat.com>
-Date: Wed, 11 Apr 2018 11:33:17 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180411023541.15776-1-stefanha@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S1752693AbeDKDdt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 23:33:49 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45497 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751546AbeDKDdo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 23:33:44 -0400
+X-Google-Smtp-Source: AIpwx48ABltSZ8xU5JbaV56YgeGP/vDhb/ofSkokgkXYd6cpUH/u8niKKCOqWLT74gDx0z5VKBJ5fA==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: isdn@linux-pingi.de, davem@davemloft.net, johannes.berg@intel.com,
+        arvind.yadav.cs@gmail.com, stephen@networkplumber.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH 1/2] isdn: hisax_fcpcipnp: Replace mdelay with usleep_range in fcpci_init
+Date: Wed, 11 Apr 2018 11:33:37 +0800
+Message-Id: <1523417617-3249-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+fcpci_init() is never called in atomic context.
 
+The call chain ending up at fcpci_init() is:
+[1] fcpci_init() <- fcpcipnp_setup() <- fcpnp_probe()
 
-On 2018年04月11日 10:35, Stefan Hajnoczi wrote:
-> v3:
->   * Rebased onto net/master and resolved conflict [DaveM]
->
-> v2:
->   * Rewrote the conditional to make the vq access check clearer [Linus]
->   * Added Patch 2 to make the return type consistent and harder to misuse [Linus]
->
-> The first patch fixes the vhost virtqueue access check which was recently
-> broken.  The second patch replaces the int return type with bool to prevent
-> future bugs.
->
-> Stefan Hajnoczi (2):
->    vhost: fix vhost_vq_access_ok() log check
->    vhost: return bool from *_access_ok() functions
->
->   drivers/vhost/vhost.h |  4 +--
->   drivers/vhost/vhost.c | 70 ++++++++++++++++++++++++++-------------------------
->   2 files changed, 38 insertions(+), 36 deletions(-)
->
+fcpnp_probe() is set as ".probe" in struct pnp_driver.
+This function is not called in atomic context.
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+Despite never getting called from atomic context, fcpci_init()
+calls mdelay() to busily wait.
+This is not necessary and can be replaced with usleep_range() to
+avoid busy waiting.
 
-Thanks
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/isdn/hisax/hisax_fcpcipnp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/isdn/hisax/hisax_fcpcipnp.c b/drivers/isdn/hisax/hisax_fcpcipnp.c
+index e4f7573..4789c9d 100644
+--- a/drivers/isdn/hisax/hisax_fcpcipnp.c
++++ b/drivers/isdn/hisax/hisax_fcpcipnp.c
+@@ -706,7 +706,7 @@ static inline void fcpci_init(struct fritz_adapter *adapter)
+ 
+ 	outb(AVM_STATUS1_ENA_IOM | adapter->irq,
+ 	     adapter->io + AVM_STATUS1);
+-	mdelay(10);
++	usleep_range(10000, 11000);
+ }
+ 
+ // ----------------------------------------------------------------------
+-- 
+1.9.1
