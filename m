@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3150701-1523473980-2-10637717798029296258
+X-Cyrus-Session-Id: sloti22d1t05-3124918-1523473974-2-4881816959241787415
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523473979; b=Sft2PsM0oIMP4Qdl0yF/yp3b3TtoF1mO8pJIaMkvDyRWQMvvMs
-    nZAnU62uhKhZlCehaDSduDgdSoBxc4QhsyxJhw8camBRX686aEfP9dsO/cup1SDS
-    cM5a29eawdgy8EgNtdKrVoIyddxvlQWrgwMxKPMWGHezFrYBjEilWlAvChN8dQkj
-    UDfKlB47gpXa0iFfdaZ3V0xUHU8rFqGwwbOUp2Jhv3iIEt2Fi5VCenvAkIBGdI98
-    CCCfFnRGMgkt6Y9N9hkH49FTxHYyTs6cerJECS0qe9P0TU4GtuHkgMY2HhxQWxsj
-    Ro32bd5GVrKDrb7uw8eSwv8WvjMbNTcF1w4A==
+    1523473973; b=X79SM67fYSbyPzmuHdcXH61fF1Z0dPnp1FtLzqHIyb7C3xFFXB
+    PH0ZJNabAUGWVzFoCW7mXdKk3iKVqjg0fmAvKumJRvmWdpbkvPX1bGOODX4NM5Fe
+    NPTbbdfr1O1OKGMWmRlci1ZBNgxdD2gno00J0j5aVCqhysKYAEr6s92lzRRbxv2J
+    e5Ee9GNVN/PfRb2CO1zOVvftB5j95TB3cfr0DQiEibok/qY48i60KO62zTmCS8ol
+    1XDXZ/h2p1eFDhHgo9l1las9hDhDNgbMXJvAo11SbCPGf/S+7I+SFaZ1Ye6IXQ9a
+    Obd4SXrxmQnvPAJ4HDUEo4JzYMUDXsFKG7jA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523473979; bh=5ZNE6B1pelN/Eh04ocHn1hhF30yQma
-    RwfYszxY1MD1I=; b=oLiw6Kr142hPYjmY8XeCK+L2VomFnoGCTjC4uCK5wBPEPx
-    er4H0P3OT58JIgkTjcheu0mcB7UDeAM736avFUOkdpXFF4La2esRQ/hMZIA2jMcT
-    +M+9aFahuxGrYP1VHJai6pXVBGNkwS6DNVNQF3dKgUwxi+/e8UJO7lzQDE74GY5o
-    IbM+g1lE97hDQJyvixQiuvkIM7IH/rduUHPzeV5gMxzTTfTlNL3KfYywuzTrvEm0
-    DbgSVvvJ3U3+481e01qNqfa8XxYthAJjNtUAuV710Za7qmQm/199DNCsClh2d/Yd
-    FQ2/9QdjdgPN7sjiCKWi1jiP4fy9SnbvOs+zL3Rg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523473973; bh=O5knnmJ4/EB28KQtd2qdwDGEf7YTHd
+    JGTO4WTix3++s=; b=WNeuXJk2T+yXZN9yDRCkodQxTxU9cRgXeAZrMTInPL/B/n
+    CmzZEKLZVYt+DWhjqzs3f4zuig8j2aOqW/sBtlFjer1TtQujBNtlcXwSwO+UyJ72
+    /PfNQBCxb7SEjqjgMLOd+tRnxooiuNzesnwOAYPdOW6xldrz1ovIdPn2G9fuXIKd
+    XMR+M3FUaGtC1mOhY3/VHP5mTnYtPpZZjiUazqBEEQu4JK8XK43tzdIlCukZQ9fy
+    IONQEUBV8sVCd8ibhRwM8P1ReKGTDx9uRLG/kppXSKI+EdS9Z2PSlIF0EqOLnJx0
+    Xi5Ij0b9qJ1akeDPch7rQmKW9thORv+jjd+9vE/A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,31 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfD2Yz/udeqyuW5aMpTJuisvrSu+nIMM1OSUknaiDFGgITc7i8xMLqX8g+tOnP4gc0oPBd93PJjzZvp5FjSrem2Qg7FXRdG19A2taCgDoRHZL4eX2lAjs
-    R+wmV5FwuX7snWYY0kzXjciLWghu670xdp2bfvH+8teexJ423LTHRNwOXbF6wWbo6keCw5PI4tHWPht4IX1sShVAQyE6VlUnBl1Xw8QxO2NYp8hx4fFOaUJr
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOfWbWdxZI+8Tu1SHOKbDa0Rh0cacPY1X1VzWQABzC2GbluezWjDDN4oQPl6K6r6nh3iO5elsQHSWEpg+mfI1pLwrfR+xZSkQLrbb2YYAUER9j86vnFI
+    yq5IZqDT4d5FLUn6jY03ZlFnWP/W5IjMsJp3xVCnc5WG8Pm4nAwXLjng+Fvx0tgjuwVPemUTUeX8dKGYaKUOPwy0MmGeGlmp28yT8rSzZGku0sr9IOVrtC2e
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
     a=1XWaLZrsAAAA:8 a=4RBUngkUAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
-    a=l5zREIWbMigowtcXp7QA:9 a=QEXdDO2ut3YA:10 a=_sbA2Q-Kp09kWB8D3iXc:22
+    a=fhxPrRCVwfts-jpH_esA:9 a=QEXdDO2ut3YA:10 a=_sbA2Q-Kp09kWB8D3iXc:22
     a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934190AbeDKTGF (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 15:06:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40680 "EHLO
+        id S1753358AbeDKTMh (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 15:12:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40690 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934041AbeDKTGD (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:06:03 -0400
+        with ESMTP id S935146AbeDKTGG (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:06:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         syzbot <syzkaller@googlegroups.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 294/310] ip_tunnel: better validate user provided tunnel names
-Date: Wed, 11 Apr 2018 20:37:13 +0200
-Message-Id: <20180411183635.233621301@linuxfoundation.org>
+Subject: [PATCH 4.9 295/310] ipv6: sit: better validate user provided tunnel names
+Date: Wed, 11 Apr 2018 20:37:14 +0200
+Message-Id: <20180411183635.276682264@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -96,7 +96,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 9cb726a212a82c88c98aa9f0037fd04777cd8fe5 ]
+[ Upstream commit b95211e066fc3494b7c115060b2297b4ba21f025 ]
 
 Use dev_valid_name() to make sure user does not provide illegal
 device name.
@@ -104,10 +104,10 @@ device name.
 syzbot caught the following bug :
 
 BUG: KASAN: stack-out-of-bounds in strlcpy include/linux/string.h:300 [inline]
-BUG: KASAN: stack-out-of-bounds in __ip_tunnel_create+0xca/0x6b0 net/ipv4/ip_tunnel.c:257
-Write of size 20 at addr ffff8801ac79f810 by task syzkaller268107/4482
+BUG: KASAN: stack-out-of-bounds in ipip6_tunnel_locate+0x63b/0xaa0 net/ipv6/sit.c:254
+Write of size 33 at addr ffff8801b64076d8 by task syzkaller932654/4453
 
-CPU: 0 PID: 4482 Comm: syzkaller268107 Not tainted 4.16.0+ #1
+CPU: 0 PID: 4453 Comm: syzkaller932654 Not tainted 4.16.0+ #1
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
  __dump_stack lib/dump_stack.c:17 [inline]
@@ -119,10 +119,8 @@ Call Trace:
  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
  memcpy+0x37/0x50 mm/kasan/kasan.c:303
  strlcpy include/linux/string.h:300 [inline]
- __ip_tunnel_create+0xca/0x6b0 net/ipv4/ip_tunnel.c:257
- ip_tunnel_create net/ipv4/ip_tunnel.c:352 [inline]
- ip_tunnel_ioctl+0x818/0xd40 net/ipv4/ip_tunnel.c:861
- ipip_tunnel_ioctl+0x1c5/0x420 net/ipv4/ipip.c:350
+ ipip6_tunnel_locate+0x63b/0xaa0 net/ipv6/sit.c:254
+ ipip6_tunnel_ioctl+0xe71/0x241b net/ipv6/sit.c:1221
  dev_ifsioc+0x43e/0xb90 net/core/dev_ioctl.c:334
  dev_ioctl+0x69a/0xcc0 net/core/dev_ioctl.c:525
  sock_ioctl+0x47e/0x680 net/socket.c:1015
@@ -135,34 +133,31 @@ Call Trace:
  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
  entry_SYSCALL_64_after_hwframe+0x42/0xb7
 
-Fixes: c54419321455 ("GRE: Refactor GRE tunneling code.")
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_tunnel.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ net/ipv6/sit.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/net/ipv4/ip_tunnel.c
-+++ b/net/ipv4/ip_tunnel.c
-@@ -253,13 +253,14 @@ static struct net_device *__ip_tunnel_cr
- 	struct net_device *dev;
- 	char name[IFNAMSIZ];
+--- a/net/ipv6/sit.c
++++ b/net/ipv6/sit.c
+@@ -244,11 +244,13 @@ static struct ip_tunnel *ipip6_tunnel_lo
+ 	if (!create)
+ 		goto failed;
  
 -	if (parms->name[0])
-+	err = -E2BIG;
 +	if (parms->name[0]) {
 +		if (!dev_valid_name(parms->name))
 +			goto failed;
  		strlcpy(name, parms->name, IFNAMSIZ);
--	else {
--		if (strlen(ops->kind) > (IFNAMSIZ - 3)) {
--			err = -E2BIG;
+-	else
 +	} else {
-+		if (strlen(ops->kind) > (IFNAMSIZ - 3))
- 			goto failed;
--		}
- 		strlcpy(name, ops->kind, IFNAMSIZ);
- 		strncat(name, "%d", 2);
- 	}
+ 		strcpy(name, "sit%d");
+-
++	}
+ 	dev = alloc_netdev(sizeof(*t), name, NET_NAME_UNKNOWN,
+ 			   ipip6_tunnel_setup);
+ 	if (!dev)
