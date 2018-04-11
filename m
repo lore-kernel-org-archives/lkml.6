@@ -1,84 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752498AbeDKKI7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 06:08:59 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:35138 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751668AbeDKKIx (ORCPT
+        id S1752626AbeDKKJM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 06:09:12 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:34312 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751898AbeDKKJL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 06:08:53 -0400
-X-Google-Smtp-Source: AIpwx4/XIE7Eu7VMfFWbZ/Jt7g4+Lk0pB9acjUYMqvnqSWnMPd40JpajmGBEh53gLkMTENHP8dRMi6lTOZ36NdsDoYA=
+        Wed, 11 Apr 2018 06:09:11 -0400
+X-Google-Smtp-Source: AIpwx4/3X7yyNOPEiE3BWCkQbtV7Ug5CPn+lYMZkQrtAp5kcZF0ObDk6FtofVe+/sMEsF8+H3vgKXSO6vDiZtjQX6QA=
 MIME-Version: 1.0
-In-Reply-To: <20180411095359.GB21429@saruman>
-References: <20171219114112.939391-1-arnd@arndb.de> <20180410224805.GA21429@saruman>
- <CAK8P3a0-_u7_FCj-nH0izBv4ub6krm1uA32bwi2jtBzXJePcnQ@mail.gmail.com> <20180411095359.GB21429@saruman>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 11 Apr 2018 12:08:51 +0200
-X-Google-Sender-Auth: t8Y5JFZ2ohjdioqhKh1Px9Qjymw
-Message-ID: <CAK8P3a2_ihWCuUvDz_SVA1TMomkO1d7pa6e2bOQkZcEVP+Ff-A@mail.gmail.com>
-Subject: Re: [PATCH] bug.h: Work around GCC PR82365 in BUG()
-To: James Hogan <jhogan@kernel.org>
-Cc: "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>, Maciej Rozycki <macro@mips.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Vineet Gupta <vgupta@synopsys.com>, Mikael Starvik <starvik@axis.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Christopher Li <sparse@chrisli.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>, Ingo Molnar <mingo@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:SYNOPSYS ARC ARCHITECTURE"
-        <linux-snps-arc@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-cris-kernel@axis.com, linux-ia64@vger.kernel.org,
-        linux-m68k@vger.kernel.org, sparclinux <sparclinux@vger.kernel.org>,
-        linux-sparse@vger.kernel.org, linux-alpha@vger.kernel.org
+In-Reply-To: <390fac56-8656-ebbb-5405-0a44f1773157@axentia.se>
+References: <20180410131206.25760-1-brgl@bgdev.pl> <20180410131206.25760-2-brgl@bgdev.pl>
+ <390fac56-8656-ebbb-5405-0a44f1773157@axentia.se>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 11 Apr 2018 12:09:10 +0200
+Message-ID: <CAMRc=Me66c+ySsmU9bePG7KFU1sTH0OHTfoxrxC_z6Txbu3tqQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] eeprom: at24: don't assign the i2c ID table to at24_driver
+To: Peter Rosin <peda@axentia.se>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 11:54 AM, James Hogan <jhogan@kernel.org> wrote:
-> On Wed, Apr 11, 2018 at 09:30:56AM +0200, Arnd Bergmann wrote:
->> On Wed, Apr 11, 2018 at 12:48 AM, James Hogan <jhogan@kernel.org> wrote:
->> > Before I forward port those patches to add .insn for MIPS, is that sort
->> > of approach (an arch specific asm/compiler-gcc.h to allow MIPS to
->> > override barrier_before_unreachable()) an acceptable fix?
->>
->> That sounds fine to me. However, I would suggest making that
->> asm/compiler.h instead of asm/compiler-gcc.h, so we can also
->> use the same file to include workarounds for clang if needed.
+2018-04-11 11:56 GMT+02:00 Peter Rosin <peda@axentia.se>:
+> On 2018-04-10 15:12, Bartosz Golaszewski wrote:
+>> We switched to using probe_new(), so this is no longer used
+>> by i2c core.
 >
-> Yes, though there are a few asm/compiler.h's already, and the alpha one
-> includes linux/compiler.h before undefining inline, so seems to have its
-> own specific purpose...
+> It seems to be used in i2c_device_match() ???
+>
+> This could easily be me not understanding something...
+>
 
-Interesting. For the other ones, including asm/compiler.h from linux/compiler.h
-seems appropriate though, so the question would be what to do with the
-alpha case. I think we can simply remove that header file and replace
-it with this patch:
+Yes, but i2c core no longer uses the id_table field in struct
+i2c_driver. We call i2c_device_match() ourselves instead of letting
+i2c core do it and pass the driver data to probe().
 
-diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
-index b2022885ced8..5502404f54cd 100644
---- a/arch/alpha/Kconfig
-+++ b/arch/alpha/Kconfig
-@@ -81,6 +81,9 @@ config PGTABLE_LEVELS
-        int
-        default 3
-
-+config OPTIMIZE_INLINING
-+       def_bool y
-+
- source "init/Kconfig"
- source "kernel/Kconfig.freezer"
-
-which should have the same effect.
+Hope that helps,
+Bartosz
