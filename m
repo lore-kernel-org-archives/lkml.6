@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479114-2-15470049379036191388
+X-Cyrus-Session-Id: sloti22d1t05-3303684-1523479091-2-383454302898616581
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES roen, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479113; b=LwYfUyqDODvnZOgKsV/By9QpoiS0p8RAX6L+JB8D4R3TNONWkd
-    6tZ9Asxkij14s+Cl5/pR3lJivYjhHxra9maqQiIpYUEfoFXtsG+nc7xWI0eBPLzz
-    c1fg3DxrS/x/gPcEq+IlGxvoImyog2kU5q+/IlJkxCLBLo2ADTy0k1+RWxgKCeEP
-    R0qCtdVQIt3+AjnCjmrfqiQp4tYBQO7kAZ/OHeS/iCyvtE3Yb2ZaKJDBXrhn6THp
-    bWH0muwsxniktXDq6Df6uOOdqTRJoNY9tk3WjgDrE4PG6Vqs2iOdwhq++6rCuQM0
-    4D2t1XE7ERsKRbMlHCYnZhRLaObL0tQ2mCJA==
+    1523479090; b=GoZw9/ahoCcslssViunW/pkDs9ojFqndlrmUSdoUJF4VKkSMMZ
+    nT+pvHTacWzy/GB5+AMNjY2gDxntH6cjKrCyirGbB5eK5nYkCuQyUk4GFpdwXO3z
+    Q15tKd18lChSZv58z/d+/EcHJdb7sVMmhUenAQ4SmGJrJZ5B9tw0mSbEQBItPBqx
+    /estsiWkk5ufERKAzNb1W9cbeX5SVJBcCCf3F6Tct0iZGVjLs6tEg98Py/NVm81J
+    BJLrCDOKS+bvfXpvWAFGT2twDeYIgPkbOPQFA8F04MR2DmBxBIRFbgMmqZwlBO5h
+    fNFY6TEl2Sv0poTR32wAiJoUCIyUq9VUkGKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479113; bh=wWh3KWwyXqz3yCRvbxwQoeIFGe/Iot
-    RgrkLgBqLyyL4=; b=gkeB+gEOweLlpy0Dm88ly6jubRnzuE3sgvCL5wp501b8YD
-    03i7l9levW9Lf2oUV6g/+VkE+UW1psTN38RE5lUtfuH7HPxZGpOy/MZOztRYQGeF
-    z6oWnKZsh1PCKoaQy+TFY4UlQg9ZsUuMBX1CJevQTdsUIsofTx574eNot9YYIjW9
-    Eanv59Iln1CerWjEu7SNm0009cinCPqFTP2zijuXd5bUT0/5vjV8hO6Eok4Es9SV
-    a7MpwuCZ/9Qy0114dupwRvVBrc/OSOZOEYe1GRDRo+fz4gleZt7W7kmsVTP1gwaY
-    Zx4+EieRT+G4FoYAnl8R/ozDe2hvjSDTaIYifitg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479090; bh=1Alawsq7jSAdcJHjHG6fJ5ZRCtY9Qr
+    pz6X25FSWPeiM=; b=bcSpTCni+H3fgsqr8RTD9TzqqKMcGOnjnGzvz9wY7OI/qd
+    L9PiRFIYCW3DwIxs+fPjOBqhRE4O5PtZcFFIOefRMkrGnnnEOczMP142z0C2CW4Q
+    3himBbN11mFCtiHjfwUC4y1aRbbIzWTYVR6zr9tzlKnwuYgkx4ls7pRlMol30G10
+    HQrv64nDP3tE/GzA3gmKUYjlIAXtzLQHMDIXu5q7tx2mgz9h9gyVWIorzGnpKZMX
+    yT3IcS25qDwql1LbKnzhnv7jxyzLJONHUb7i5+4zN5OuqsiTMU5a/OzBI2em6PbE
+    xpK+tmqV84gAScbtIMmcdYBodrrKHC8CWI0F58+w==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,34 +51,31 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfChWsg3iYVI0LPfCZUK0ViQOzsel/LeD7Vk34Ha23f951uPZuX67+T1F5j94wvObMJiOZ9UZjl3Z/OHX8EsngJ6mB0D4fPjEnSKynxCD7MvCyLgjpbwx
-    WWeLOyxCQpXlZ5Ohw5Hc2GTdFQ+XOXazJ40H+HmSnNJUvY6KSMWVhxNJ9Hb/r96iUUtGKDlAbXwhKWbl1vPAjqIZbt+uGkY527YAZ7Gvr6QHsXuy3SqUJqId
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCuk+vy/0GrLodsvhqWvyHUjvux+6qmvg9tzKJjKdM+TE7OQ5YZO9LrDphhKKrYZXQd6RpDkZC8zui5n8qj2D5opakK1b0phdIftOwAKK+PmTdNdVpTW
+    HNYWOqPaBJBMLL9Utnyq5zrZ5Y3MPUOs5FEEio3YXkgbTuEjnApXxHXDDLaIn8iRxjWfNtwD22B7rsagMs4r6y3NWE1uXW8tAJ4GzppsnkKoZv0kSYGVBpZm
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=MrQScLItsYD3kZXr6aUA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=Byx-y9mGAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=gDawn3u-IPWhMShO_m0A:9 a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756902AbeDKUiP (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:38:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59618 "EHLO
+        id S1756053AbeDKSsW (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:48:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59630 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932405AbeDKSsS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:48:18 -0400
+        with ESMTP id S1756016AbeDKSsU (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:48:20 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 110/190] perf trace: Add mmap alias for s390
-Date: Wed, 11 Apr 2018 20:35:56 +0200
-Message-Id: <20180411183557.202775890@linuxfoundation.org>
+Subject: [PATCH 4.4 111/190] qlcnic: Fix a sleep-in-atomic bug in qlcnic_82xx_hw_write_wx_2M and qlcnic_82xx_hw_read_wx_2M
+Date: Wed, 11 Apr 2018 20:35:57 +0200
+Message-Id: <20180411183557.408069945@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -96,50 +93,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Jia-Ju Bai <baijiaju1990@163.com>
 
 
-[ Upstream commit 54265664c15a68905d8d67d19205e9a767636434 ]
+[ Upstream commit 5ea6d691aac6c93b790f0905e3460d44cc4c449b ]
 
-The s390 architecture maps sys_mmap (nr 90) into sys_old_mmap.  For this
-reason perf trace can't find the proper syscall event to get args format
-from and displays it wrongly as 'continued'.
+The driver may sleep under a write spin lock, and the function
+call path is:
+qlcnic_82xx_hw_write_wx_2M (acquire the lock by write_lock_irqsave)
+  crb_win_lock
+    qlcnic_pcie_sem_lock
+      usleep_range
+qlcnic_82xx_hw_read_wx_2M (acquire the lock by write_lock_irqsave)
+  crb_win_lock
+    qlcnic_pcie_sem_lock
+      usleep_range
 
-To fix that fill the "alias" field with "old_mmap" for trace's mmap record
-to get the correct translation.
+To fix it, the usleep_range is replaced with udelay.
 
-Before:
-     0.042 ( 0.011 ms): vest/43052 fstat(statbuf: 0x3ffff89fd90                ) = 0
-     0.042 ( 0.028 ms): vest/43052  ... [continued]: mmap()) = 0x3fffd6e2000
-     0.072 ( 0.025 ms): vest/43052 read(buf: 0x3fffd6e2000, count: 4096        ) = 6
-
-After:
-     0.045 ( 0.011 ms): fstat(statbuf: 0x3ffff8a0930                           ) = 0
-     0.057 ( 0.018 ms): mmap(arg: 0x3ffff8a0858                                ) = 0x3fffd14a000
-     0.076 ( 0.025 ms): read(buf: 0x3fffd14a000, count: 4096                   ) = 6
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Link: http://lkml.kernel.org/r/20170531113557.19175-1-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/builtin-trace.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -1152,6 +1152,10 @@ static struct syscall_fmt {
- 	{ .name	    = "mlockall",   .errmsg = true,
- 	  .arg_scnprintf = { [0] = SCA_HEX, /* addr */ }, },
- 	{ .name	    = "mmap",	    .hexret = true,
-+/* The standard mmap maps to old_mmap on s390x */
-+#if defined(__s390x__)
-+	.alias = "old_mmap",
-+#endif
- 	  .arg_scnprintf = { [0] = SCA_HEX,	  /* addr */
- 			     [2] = SCA_MMAP_PROT, /* prot */
- 			     [3] = SCA_MMAP_FLAGS, /* flags */
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c
+@@ -341,7 +341,7 @@ qlcnic_pcie_sem_lock(struct qlcnic_adapt
+ 			}
+ 			return -EIO;
+ 		}
+-		usleep_range(1000, 1500);
++		udelay(1200);
+ 	}
+ 
+ 	if (id_reg)
