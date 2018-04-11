@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49EBlokm0EKh2jYZE6XGKEGIwqgKgAEgG6IIfyt1WW+iQjDPyEq39l2MqAkJO3P6Jy85kAs
-ARC-Seal: i=1; a=rsa-sha256; t=1523472579; cv=none;
+X-Google-Smtp-Source: AIpwx48myn484fcNkJx070n0e59QhW6lJlv1JaE8Y231MhC7UfoqzHmk7I5TSK8uXA2UUZ4aaNd8
+ARC-Seal: i=1; a=rsa-sha256; t=1523472576; cv=none;
         d=google.com; s=arc-20160816;
-        b=qbi+c0HtWMTipZcS+xFMjS0j4XGpd3YHRrlJKciEVRv7eB4Sd+aHC6hH10t8kxLlxi
-         uSNdNxb7PHPJLDJNdMtFx0GEEyBKtgkgqC2LaOF6l8JukSRjdC/+UC9zrKnHhGaQCVMH
-         L0CvuOrzI5E0TFSmVqbUEplMal6HvkEh3qD4p6gEqzRNm9mJzPD6+4SxmKa1+aKIEW85
-         FupPVGJ1l8+dea8nALyzwA3tS+AD9nZa2vIQjy0H1fgUv482vvUTG2TY4BmS5mL+A35O
-         hQXK/3nWLeIHq6TgvN2TuxWOMu7Gk3QXy8vGlo3DmRZnZ26Pl7mr0ukplZQ6hOBvdzbg
-         wtqA==
+        b=PCrxZT+zcXj0gt32mkXBN7lnlIjKnZnAeYh9E6EGgn7gdgzmFbZ0TqviTcMF9hg+I3
+         K9dAj26I36PsMlc0QSkcP0xNb/gf8VPhNViwWtVARhObd4farNAT/hCIu8iu5DrxV07x
+         x5VqFhCUpJ1Xp2hHpdmXa6jpW0KQcTplQrv4lZ74pjgdZXIOXYldFWgoEygiFbzU1Etk
+         mF1kdW/Fj+p9zGFk2h2qzlUN7HwJR7hUP9wcTT9qqjc75aM9fV7WY/jit/iTAYp+GOOJ
+         5oOFU+XSqrJ9/qWVMp+UhPQ9f9NX9d/syiCmnElR2DKNftKtTaq/kY/Y8H+5jXiBsl9u
+         YeHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=y9jXHNe+IqiepnDzt5bbHgHm/as0nQ1wv4jlfFgfClM=;
-        b=ehPM26UvpglJrAow4VU2aE7sQDA69Z65Qxq4kSmrLkafCAaHpySF7xCiV2GBrxDwNa
-         JK6Yv69jjzUnEX8/BLFw1sGyBvJqD84Lw1NO2qr7/eLPT4rJhdAGNKfcv6H6GtRH2yh5
-         6/dNhAXJhUiZub9ySqVi4i8MchsZ4dC+InZz/lqNmDhFZtWiX4QR+eGEhWygVMiQQYvV
-         ld2VarxAPe/hiOyP+TG3vl9UfQPNbzmxD9muPd1xYzneut8RyIB8/qaq074o1i45cPtj
-         Cg+LCxs5fWgp50KARIUiNcirHClACUvRqpL9zko7fHqoVHudbSQn8tdUWRFwP+HuebZR
-         WXfA==
+        bh=st8zv/8jdu+4yIxdFIUL8Ah9gCUn8f+KzvKp8M9TY1E=;
+        b=PiKWKeMbeW/Jt+FEmbTw8wvIcNoTiqIuxn5p9DHstb2MT7izj8xCoNGpVvuhnEWvrA
+         wQKlGGQNlZPtki0/7mqUzzpchrLEc1GkFXTeCOfQkmYcmQZLszzK9l/AgRIEJmanQViO
+         oGiZJ0KA8teR1ZetweU3XyolpPSGCIobJgHwVg4/v7B5l/8bmEKjoTx+g8ZUF9K3HGnq
+         NNKliA/lCpb8lYuPckKjEj9sTtWfPKFBA3GG31vF0r1wnaLugXN2O0V2nebYRmONeULU
+         wLRBepSiH7MhdoQSbV0z+XHjK3QKf+NH+UIXaflFzIXOVnCbtAnUNw6Ck/CS0yFEShWL
+         GuQA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
-	Steve Best <sbest@redhat.com>,
-	Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+	Arjun Vynipadath <arjun@chelsio.com>,
+	Casey Leedom <leedom@chelsio.com>,
+	Ganesh Goudar <ganeshgr@chelsio.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 102/190] rtc: opal: Handle disabled TPO in opal_get_tpo_time()
-Date: Wed, 11 Apr 2018 20:35:48 +0200
-Message-Id: <20180411183556.536661881@linuxfoundation.org>
+Subject: [PATCH 4.4 101/190] cxgb4: FW upgrade fixes
+Date: Wed, 11 Apr 2018 20:35:47 +0200
+Message-Id: <20180411183556.461692322@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476783800183911?=
-X-GMAIL-MSGID: =?utf-8?q?1597476783800183911?=
+X-GMAIL-THRID: =?utf-8?q?1597476779888019576?=
+X-GMAIL-MSGID: =?utf-8?q?1597476779888019576?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,54 +52,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
+From: Arjun Vynipadath <arjun@chelsio.com>
 
 
-[ Upstream commit 6dc1cf6f932bb0ea4d8f5e913a0a401ecacd2f03 ]
+[ Upstream commit 26747211486c5bc7dd014c3caab206576e00c0d0 ]
 
-On PowerNV platform when Timed-Power-On(TPO) is disabled, read of
-stored TPO yields value with all date components set to '0' inside
-opal_get_tpo_time(). The function opal_to_tm() then converts it to an
-offset from year 1900 yielding alarm-time == "1900-00-01
-00:00:00". This causes problems with __rtc_read_alarm() that
-expecting an offset from "1970-00-01 00:00:00" and returned alarm-time
-results in a -ve value for time64_t. Which ultimately results in this
-error reported in kernel logs with a seemingly garbage value:
+Disable FW_OK flag while flashing Firmware. This will help to fix any
+potential mailbox timeouts during Firmware flash.
 
-"rtc rtc0: invalid alarm value: -2-1--1041528741
-2005511117:71582844:32"
+Grab new devlog parameters after Firmware restart. When we FLASH new
+Firmware onto an adapter, the new Firmware may have the Firmware Device Log
+located at a different memory address or have a different size for it.
 
-We fix this by explicitly handling the case of all alarm date-time
-components being '0' inside opal_get_tpo_time() and returning -ENOENT
-in such a case. This signals generic rtc that no alarm is set and it
-bails out from the alarm initialization flow without reporting the
-above error.
-
-Signed-off-by: Vaibhav Jain <vaibhav@linux.vnet.ibm.com>
-Reported-by: Steve Best <sbest@redhat.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
+Signed-off-by: Casey Leedom <leedom@chelsio.com>
+Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/rtc-opal.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/net/ethernet/chelsio/cxgb4/t4_hw.c |   21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
---- a/drivers/rtc/rtc-opal.c
-+++ b/drivers/rtc/rtc-opal.c
-@@ -150,6 +150,16 @@ static int opal_get_tpo_time(struct devi
+--- a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
+@@ -6076,13 +6076,18 @@ int t4_fw_upgrade(struct adapter *adap,
+ 	if (!t4_fw_matches_chip(adap, fw_hdr))
+ 		return -EINVAL;
  
- 	y_m_d = be32_to_cpu(__y_m_d);
- 	h_m_s_ms = ((u64)be32_to_cpu(__h_m) << 32);
++	/* Disable FW_OK flag so that mbox commands with FW_OK flag set
++	 * wont be sent when we are flashing FW.
++	 */
++	adap->flags &= ~FW_OK;
 +
-+	/* check if no alarm is set */
-+	if (y_m_d == 0 && h_m_s_ms == 0) {
-+		pr_debug("No alarm is set\n");
-+		rc = -ENOENT;
-+		goto exit;
-+	} else {
-+		pr_debug("Alarm set to %x %llx\n", y_m_d, h_m_s_ms);
-+	}
-+
- 	opal_to_tm(y_m_d, h_m_s_ms, &alarm->time);
+ 	ret = t4_fw_halt(adap, mbox, force);
+ 	if (ret < 0 && !force)
+-		return ret;
++		goto out;
  
- exit:
+ 	ret = t4_load_fw(adap, fw_data, size);
+ 	if (ret < 0)
+-		return ret;
++		goto out;
+ 
+ 	/*
+ 	 * Older versions of the firmware don't understand the new
+@@ -6093,7 +6098,17 @@ int t4_fw_upgrade(struct adapter *adap,
+ 	 * its header flags to see if it advertises the capability.
+ 	 */
+ 	reset = ((be32_to_cpu(fw_hdr->flags) & FW_HDR_FLAGS_RESET_HALT) == 0);
+-	return t4_fw_restart(adap, mbox, reset);
++	ret = t4_fw_restart(adap, mbox, reset);
++
++	/* Grab potentially new Firmware Device Log parameters so we can see
++	 * how healthy the new Firmware is.  It's okay to contact the new
++	 * Firmware for these parameters even though, as far as it's
++	 * concerned, we've never said "HELLO" to it ...
++	 */
++	(void)t4_init_devlog_params(adap);
++out:
++	adap->flags |= FW_OK;
++	return ret;
+ }
+ 
+ /**
