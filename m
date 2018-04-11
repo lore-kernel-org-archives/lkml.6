@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AIpwx4/Jw1CiB0oIyB8ornLnAqY3cBYB+UsJSRu6pbdnQpMHVzN+byffvE78AVIe6r41psgKx4xL
-ARC-Seal: i=1; a=rsa-sha256; t=1523483775; cv=none;
+X-Google-Smtp-Source: AIpwx48onHjoGMq1j+C9d7beqB7GayVGU98gUOL/ZWQ/wpBPBY+iyCIsXp2xvHkFBQY2lOUkzSj4
+ARC-Seal: i=1; a=rsa-sha256; t=1523483768; cv=none;
         d=google.com; s=arc-20160816;
-        b=uS7deupz96r6cGyQlw0WAjG8gfb0nKUgxl9WwCcnVMjEIjn9EUcH/vZh/qmL/Pw8iw
-         HXtdxQURqDhH4+IoD60/KGeeR7YpQhpMrsQgZRdNoE1RPUZWduVRe5dM7PGEZb2zqDFF
-         o2nzDVHrcobpuRC49sp/WPZZ4NYfiQY8vkbHeFYb94PBmCRDkmzxkURt+uZyZ/5Q+Z49
-         /aUt/SexlRvWlTlGcdkrVRkzPhLvI50474f9mBAJN8oXEJ0M/7KPoCeM3rIp2DOjhn+F
-         90SXg/oLgKhXYRKU262AFSWIUivO7SYm77GWKLW2yGfEF0rlWQWOoeBaGzxWzrOq/Dd2
-         qrQw==
+        b=wxPYxP8FiWcKS5RFhr2oFKiHjuNe7u/GtE0RR5BBH1XILiNuAbOIicMnxPKP92sWG9
+         BSVUKPTWXI+7MHJukJTc5QXK6+tfNHcmYsXyp+kErDXkJI+9JR1/PYGtXrXOFhkB3UuB
+         y4qEUzB+s5HUxeS0B4oOCHq6ZmTOS16E376n+yMO+zd/wpLOhEyHyAFWy1Im2NT0ZqMD
+         /MfCfc+dl4YDkF8xYhEsA1wUzG3n0r9cxHptR2Q8ADvlO9W2SgkN+xBfxbErCOO1BJth
+         CUIT/cKU5DkiJ22GY9A9+j0uJSWBCzI/9VkskG0woxRgfQF9V54PXrKJaZoDgTJdt61A
+         A5dA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=cBqREfc/iHsN6J4K/7fZVV0t//V1964+HypZwF0XPjw=;
-        b=FaTJnsXvL0lEPDMlVeeP+0Vv4Nbsk04O5HNUHPPyJyjXgauWcIBFiKN9O7+1YtABoJ
-         N+uBsScvwwCIOAw55ebO4JlbZ9/S2L/q6pHr1xXhywQJ23NLzFfDY2ClgwdVEKijZaLd
-         269efu0XGdwsF18kBsQzBQGDerAG0fLg70cCW4d1inhDiPgYSICvFOW9qpsqgsYb8gW7
-         1y1Qw+5hc/KjdNn4DTvXyq5FdEt+PlvgUuMUDPI1B1Q1fWGfNu9zfwEYfH6HkvFrzVSN
-         MmaKqzUJmm/xQQbAbSN4ySzlhbP1C1oOQFqnurjgf7Y3jQHcNeYBkjpGNxiSwxrdc7uW
-         b0fw==
+        bh=6d9qGSk7/25kRq3H7bRkQED9XJWvUMFCJOZBO9okigM=;
+        b=HkjwV/DToaYMBmmFPe9p1M54aTABspO1V+7p12/TkUqpYU60ErZrVco1VzYGI1W4ns
+         xnLR2Qj9AOVNfXKWFbHgq1GGvs+U8k04650AKOOBwuGlZGw0VVhrIJOUtVhTkKe2zgf0
+         ssygxgaoHfrVg0RlCRRXdfdgyIt4eVZWNdcucsetrbhfU6Mlzk98ND5g3a1JR0WAiRtu
+         GRIvQWI0FACFW3wUqV79tpY41vj26Ao5pzmdNom8UjqBqdl3rBuEKeJGu/K12eU1AW0V
+         i+u+anJzPIGT5u0r17QN2JUAkXzizOynQdBWeHxtrgDC0oYON8iyZOI+yHJOJmrrO7F1
+         CuxA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -29,10 +29,11 @@ To: Oleg Drokin <oleg.drokin@intel.com>,
  James Simmons <jsimmons@infradead.org>,
  Andreas Dilger <andreas.dilger@intel.com>
 Date: Thu, 12 Apr 2018 07:54:48 +1000
-Subject: [PATCH 08/20] staging: lustre: simplify ldlm_ns_hash_defs[]
+Subject: [PATCH 07/20] staging: lustre: ldlm: store name directly in
+ namespace.
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152348368879.12394.7087606958943793717.stgit@noble>
+Message-ID: <152348368875.12394.18428069846372860341.stgit@noble>
 In-Reply-To: <152348312863.12394.11915752362061083241.stgit@noble>
 References: <152348312863.12394.11915752362061083241.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -40,143 +41,72 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597488523663485388?=
-X-GMAIL-MSGID: =?utf-8?q?1597488523663485388?=
+X-GMAIL-THRID: =?utf-8?q?1597488515669735132?=
+X-GMAIL-MSGID: =?utf-8?q?1597488515669735132?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-As the ldlm_ns_types are dense, we can use the type as
-the index to the array, rather than searching through
-the array for a match.
-We can also discard nsd_hops as all hash tables now
-use the same hops.
-This makes the table smaller and the code simpler.
+Rather than storing the name of a namespace in the
+hash table, store it directly in the namespace.
+This will allow the hashtable to be changed to use
+rhashtable.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- drivers/staging/lustre/lustre/ldlm/ldlm_resource.c |   62 ++++++--------------
- 1 file changed, 20 insertions(+), 42 deletions(-)
+ drivers/staging/lustre/lustre/include/lustre_dlm.h |    5 ++++-
+ drivers/staging/lustre/lustre/ldlm/ldlm_resource.c |    5 +++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/staging/lustre/lustre/include/lustre_dlm.h b/drivers/staging/lustre/lustre/include/lustre_dlm.h
+index ab90abe1c2d8..500dda854564 100644
+--- a/drivers/staging/lustre/lustre/include/lustre_dlm.h
++++ b/drivers/staging/lustre/lustre/include/lustre_dlm.h
+@@ -364,6 +364,9 @@ struct ldlm_namespace {
+ 	/** Flag indicating if namespace is on client instead of server */
+ 	enum ldlm_side		ns_client;
+ 
++	/** name of this namespace */
++	char			*ns_name;
++
+ 	/** Resource hash table for namespace. */
+ 	struct cfs_hash		*ns_rs_hash;
+ 	struct ldlm_ns_bucket	*ns_rs_buckets;
+@@ -882,7 +885,7 @@ static inline bool ldlm_has_layout(struct ldlm_lock *lock)
+ static inline char *
+ ldlm_ns_name(struct ldlm_namespace *ns)
+ {
+-	return ns->ns_rs_hash->hs_name;
++	return ns->ns_name;
+ }
+ 
+ static inline struct ldlm_namespace *
 diff --git a/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c b/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
-index a14cc12303ab..4288a81fd62b 100644
+index 669556420bdf..a14cc12303ab 100644
 --- a/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
 +++ b/drivers/staging/lustre/lustre/ldlm/ldlm_resource.c
-@@ -545,55 +545,35 @@ static struct cfs_hash_ops ldlm_ns_hash_ops = {
- 	.hs_put		= ldlm_res_hop_put
- };
+@@ -673,6 +673,9 @@ struct ldlm_namespace *ldlm_namespace_new(struct obd_device *obd, char *name,
+ 	ns->ns_obd      = obd;
+ 	ns->ns_appetite = apt;
+ 	ns->ns_client   = client;
++	ns->ns_name     = kstrdup(name, GFP_KERNEL);
++	if (!ns->ns_name)
++		goto out_hash;
  
--struct ldlm_ns_hash_def {
--	enum ldlm_ns_type nsd_type;
-+static struct {
- 	/** hash bucket bits */
- 	unsigned int	nsd_bkt_bits;
- 	/** hash bits */
- 	unsigned int	nsd_all_bits;
--	/** hash operations */
--	struct cfs_hash_ops *nsd_hops;
--};
--
--static struct ldlm_ns_hash_def ldlm_ns_hash_defs[] = {
--	{
--		.nsd_type       = LDLM_NS_TYPE_MDC,
-+} ldlm_ns_hash_defs[] = {
-+	[LDLM_NS_TYPE_MDC] = {
- 		.nsd_bkt_bits   = 11,
- 		.nsd_all_bits   = 16,
--		.nsd_hops       = &ldlm_ns_hash_ops,
- 	},
--	{
--		.nsd_type       = LDLM_NS_TYPE_MDT,
-+	[LDLM_NS_TYPE_MDT] = {
- 		.nsd_bkt_bits   = 14,
- 		.nsd_all_bits   = 21,
--		.nsd_hops       = &ldlm_ns_hash_ops,
- 	},
--	{
--		.nsd_type       = LDLM_NS_TYPE_OSC,
-+	[LDLM_NS_TYPE_OSC] = {
- 		.nsd_bkt_bits   = 8,
- 		.nsd_all_bits   = 12,
--		.nsd_hops       = &ldlm_ns_hash_ops,
- 	},
--	{
--		.nsd_type       = LDLM_NS_TYPE_OST,
-+	[LDLM_NS_TYPE_OST] = {
- 		.nsd_bkt_bits   = 11,
- 		.nsd_all_bits   = 17,
--		.nsd_hops       = &ldlm_ns_hash_ops,
- 	},
--	{
--		.nsd_type       = LDLM_NS_TYPE_MGC,
-+	[LDLM_NS_TYPE_MGC] = {
- 		.nsd_bkt_bits   = 3,
- 		.nsd_all_bits   = 4,
--		.nsd_hops       = &ldlm_ns_hash_ops,
- 	},
--	{
--		.nsd_type       = LDLM_NS_TYPE_MGT,
-+	[LDLM_NS_TYPE_MGT] = {
- 		.nsd_bkt_bits   = 3,
- 		.nsd_all_bits   = 4,
--		.nsd_hops       = &ldlm_ns_hash_ops,
--	},
--	{
--		.nsd_type       = LDLM_NS_TYPE_UNKNOWN,
- 	},
- };
- 
-@@ -617,7 +597,6 @@ struct ldlm_namespace *ldlm_namespace_new(struct obd_device *obd, char *name,
- 					  enum ldlm_ns_type ns_type)
- {
- 	struct ldlm_namespace *ns = NULL;
--	struct ldlm_ns_hash_def    *nsd;
- 	int		    idx;
- 	int		    rc;
- 
-@@ -629,15 +608,10 @@ struct ldlm_namespace *ldlm_namespace_new(struct obd_device *obd, char *name,
- 		return NULL;
- 	}
- 
--	for (idx = 0;; idx++) {
--		nsd = &ldlm_ns_hash_defs[idx];
--		if (nsd->nsd_type == LDLM_NS_TYPE_UNKNOWN) {
--			CERROR("Unknown type %d for ns %s\n", ns_type, name);
--			goto out_ref;
--		}
--
--		if (nsd->nsd_type == ns_type)
--			break;
-+	if (ns_type >= ARRAY_SIZE(ldlm_ns_hash_defs) ||
-+	    ldlm_ns_hash_defs[ns_type].nsd_bkt_bits == 0) {
-+		CERROR("Unknown type %d for ns %s\n", ns_type, name);
-+		goto out_ref;
- 	}
- 
- 	ns = kzalloc(sizeof(*ns), GFP_NOFS);
-@@ -645,18 +619,22 @@ struct ldlm_namespace *ldlm_namespace_new(struct obd_device *obd, char *name,
- 		goto out_ref;
- 
- 	ns->ns_rs_hash = cfs_hash_create(name,
--					 nsd->nsd_all_bits, nsd->nsd_all_bits,
--					 nsd->nsd_bkt_bits, 0,
-+					 ldlm_ns_hash_defs[ns_type].nsd_all_bits,
-+					 ldlm_ns_hash_defs[ns_type].nsd_all_bits,
-+					 ldlm_ns_hash_defs[ns_type].nsd_bkt_bits,
-+					 0,
- 					 CFS_HASH_MIN_THETA,
- 					 CFS_HASH_MAX_THETA,
--					 nsd->nsd_hops,
-+					 &ldlm_ns_hash_ops,
- 					 CFS_HASH_DEPTH |
- 					 CFS_HASH_BIGNAME |
- 					 CFS_HASH_SPIN_BKTLOCK |
- 					 CFS_HASH_NO_ITEMREF);
- 	if (!ns->ns_rs_hash)
- 		goto out_ns;
--	ns->ns_bucket_bits = nsd->nsd_all_bits - nsd->nsd_bkt_bits;
-+	ns->ns_bucket_bits = ldlm_ns_hash_defs[ns_type].nsd_all_bits -
-+			      ldlm_ns_hash_defs[ns_type].nsd_bkt_bits;
-+
- 	ns->ns_rs_buckets = kvmalloc_array(1 << ns->ns_bucket_bits,
- 					   sizeof(ns->ns_rs_buckets[0]),
- 					   GFP_KERNEL);
+ 	INIT_LIST_HEAD(&ns->ns_list_chain);
+ 	INIT_LIST_HEAD(&ns->ns_unused_list);
+@@ -715,6 +718,7 @@ struct ldlm_namespace *ldlm_namespace_new(struct obd_device *obd, char *name,
+ 	ldlm_namespace_sysfs_unregister(ns);
+ 	ldlm_namespace_cleanup(ns, 0);
+ out_hash:
++	kfree(ns->ns_name);
+ 	kvfree(ns->ns_rs_buckets);
+ 	cfs_hash_putref(ns->ns_rs_hash);
+ out_ns:
+@@ -980,6 +984,7 @@ void ldlm_namespace_free_post(struct ldlm_namespace *ns)
+ 	ldlm_namespace_sysfs_unregister(ns);
+ 	cfs_hash_putref(ns->ns_rs_hash);
+ 	kvfree(ns->ns_rs_buckets);
++	kfree(ns->ns_name);
+ 	/* Namespace \a ns should be not on list at this time, otherwise
+ 	 * this will cause issues related to using freed \a ns in poold
+ 	 * thread.
