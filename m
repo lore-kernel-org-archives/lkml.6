@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48MswoanpMvnNAAgz8krcMxx7r7R1haBhHE+IQ2kF4wWWjR6gbpQGA2ObNDn8ozniHw834O
-ARC-Seal: i=1; a=rsa-sha256; t=1523472127; cv=none;
+X-Google-Smtp-Source: AIpwx4+JoYAcNqIY9zqJpJ8GK2tO+dLXy+luiwCy09R+h3B52xM+2iJS4UzEA1+PVB2Y63H6ASIa
+ARC-Seal: i=1; a=rsa-sha256; t=1523472124; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZgYpjHubrkdjDIWuHAZP9PDxI33PP36DfNPCMbcTNcbZturF6dCCJoCqlf8eDaraQ9
-         zn1l/+fZDmFD767g5y06wGD61RKBz7CLPxHQ6CTc1EAfX4EuXOLDOvgAnfU0Y7nIiHak
-         FiQf3txLcWfvW/EIMLuRXSBRKxNL8/DoQhn/aEx6odm5bIFWpN2O2ZHOgXzbbuNjSMJI
-         Ocn6g0nQu9OAFFqKtWwMNjOI8DFFGFSvW6y+S5EImS1NYrFzAAxhjDjHBoAvtuH6nisQ
-         yYLC99RNpADtSvDtGETIhmr+44Y3kiUgGmH+KKIbUX3ERO6sTInoHp4EU2HcmMHaaHKv
-         5Mjg==
+        b=po4Fr6gl4YE1pWDyUcqib3VBNNj301tIG+ma6gpZl6tDYidXcSaaAO8Gk1iBc0FL91
+         KCqIXUGpw0HHqGsd+Cu+N2j5owvdS9gP4tkrWAdJrMYwmCisba2k0pHrbbj0WxYtiCUU
+         Qmh3wtKjUz1VyQ6oAATKeBb4a1KydZszez7KPToom+YLtKX51m7EqNVHTTPl+IITzmCb
+         +gqEJyJ6aAMQMXRb1jRXp2+GR1BurBVSl8I0icKoiwrrtIBTtKuNyQ5vVQCUwqnCsukT
+         Bu68b+OHBr0sHTJyY4tpowMVLvR4Eyg1ntY6dfo343pPnud9RcYVfwJCCigtQ46LcZ4U
+         no7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qbgp4pLzaK1f4QUL+SyEDRqU8Dp+103nDPACuVBSHFw=;
-        b=NXnNsCIR0S0EQw2bE6UM6On1QKQIt8vHnQq8jXt3AX0VjkeRTT/QxHWxaM9J7+Tcl8
-         BNKRmZDcwOXGhOEdz1bvRk03Vf8jorMQstqASKn1Xsf0o8HOcsIrtonerpcJkR4zEhDr
-         s/T74aOhec60c2qv5S2qZzZb0yKzm/PZuMwLdKFb2hTQ0wYuQk2fBAKZoVCbqcrakPLK
-         eKqJCbGBJWIYIXm/HeTgsrRQR8X6AQE1PUIYjoIVcVCgSv7kp3OqcsvQbR3jxbNwFde0
-         WcrRJsq0VlvGIXEjaaV6TX5iTx0VlKe/bgwQCx003g/Jrhbq+Lw0WxnlZOfRaI2rtUQE
-         3EJw==
+        bh=NfxN0BgOs1xBcDTyt2xIe/PsTNBaZvOIU8ohkBJEpsE=;
+        b=pRrQJSHQIUGwilZ26rSVyNuakwxih3XIL7lENXc0PYHNc7ht4yKfqkaAw5b1updFcc
+         OjKlBgF/gxdKkzcRV8FlW7IHkBF6v04gybfXRCk6zaw+vV+OrEz3I6WoHLkJ5kYz5X/j
+         o23DzLF20P91UXE6rPAhgsjAJe3Qcz8t4WeAN4SmdtFWKmwnxIqyFx3yJzjs13647ifN
+         mdmkzzSCi76iLMQjJg12mJ6cp0H8SRHmMr7XUCHzcoOvu6UIjgjH7Asf13WLR4WFyHDj
+         ln7NF626lnAgza89C4LSy7sWo2yat5SXkF790R1joRej82zv6xAvOCVYRTtxMCAe604g
+         55XQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 3.18 097/121] ipsec: check return value of skb_to_sgvec always
-Date: Wed, 11 Apr 2018 20:36:40 +0200
-Message-Id: <20180411183502.560556607@linuxfoundation.org>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-edac <linux-edac@vger.kernel.org>,
+	Borislav Petkov <bp@suse.de>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 096/121] EDAC, mv64x60: Fix an error handling path
+Date: Wed, 11 Apr 2018 20:36:39 +0200
+Message-Id: <20180411183502.467774227@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476309416013335?=
-X-GMAIL-MSGID: =?utf-8?q?1597476309416013335?=
+X-GMAIL-THRID: =?utf-8?q?1597476306178591836?=
+X-GMAIL-MSGID: =?utf-8?q?1597476306178591836?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,126 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason A. Donenfeld <Jason@zx2c4.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-commit 3f29770723fe498a5c5f57c3a31a996ebdde03e1 upstream.
 
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[nc: Adjust context due to lack of 000ae7b2690e2 and fca11ebde3f0]
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+[ Upstream commit 68fa24f9121c04ef146b5158f538c8b32f285be5 ]
+
+We should not call edac_mc_del_mc() if a corresponding call to
+edac_mc_add_mc() has not been performed yet.
+
+So here, we should go to err instead of err2 to branch at the right
+place of the error handling path.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180107205400.14068-1-christophe.jaillet@wanadoo.fr
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ah4.c  |    8 ++++++--
- net/ipv4/esp4.c |   12 ++++++++----
- net/ipv6/ah6.c  |    8 ++++++--
- net/ipv6/esp6.c |   12 ++++++++----
- 4 files changed, 28 insertions(+), 12 deletions(-)
+ drivers/edac/mv64x60_edac.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/ah4.c
-+++ b/net/ipv4/ah4.c
-@@ -220,7 +220,9 @@ static int ah_output(struct xfrm_state *
- 	ah->seq_no = htonl(XFRM_SKB_CB(skb)->seq.output.low);
+--- a/drivers/edac/mv64x60_edac.c
++++ b/drivers/edac/mv64x60_edac.c
+@@ -763,7 +763,7 @@ static int mv64x60_mc_err_probe(struct p
+ 		/* Non-ECC RAM? */
+ 		printk(KERN_WARNING "%s: No ECC DIMMs discovered\n", __func__);
+ 		res = -ENODEV;
+-		goto err2;
++		goto err;
+ 	}
  
- 	sg_init_table(sg, nfrags + sglists);
--	skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	err = skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	if (unlikely(err < 0))
-+		goto out_free;
- 
- 	if (x->props.flags & XFRM_STATE_ESN) {
- 		/* Attach seqhi sg right after packet payload */
-@@ -391,7 +393,9 @@ static int ah_input(struct xfrm_state *x
- 	skb_push(skb, ihl);
- 
- 	sg_init_table(sg, nfrags + sglists);
--	skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	err = skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	if (unlikely(err < 0))
-+		goto out_free;
- 
- 	if (x->props.flags & XFRM_STATE_ESN) {
- 		/* Attach seqhi sg right after packet payload */
---- a/net/ipv4/esp4.c
-+++ b/net/ipv4/esp4.c
-@@ -239,9 +239,11 @@ static int esp_output(struct xfrm_state
- 	esph->seq_no = htonl(XFRM_SKB_CB(skb)->seq.output.low);
- 
- 	sg_init_table(sg, nfrags);
--	skb_to_sgvec(skb, sg,
--		     esph->enc_data + crypto_aead_ivsize(aead) - skb->data,
--		     clen + alen);
-+	err = skb_to_sgvec(skb, sg,
-+			   esph->enc_data + crypto_aead_ivsize(aead) - skb->data,
-+			   clen + alen);
-+	if (unlikely(err < 0))
-+		goto error;
- 
- 	if ((x->props.flags & XFRM_STATE_ESN)) {
- 		sg_init_table(asg, 3);
-@@ -426,7 +428,9 @@ static int esp_input(struct xfrm_state *
- 	iv = esph->enc_data;
- 
- 	sg_init_table(sg, nfrags);
--	skb_to_sgvec(skb, sg, sizeof(*esph) + crypto_aead_ivsize(aead), elen);
-+	err = skb_to_sgvec(skb, sg, sizeof(*esph) + crypto_aead_ivsize(aead), elen);
-+	if (unlikely(err < 0))
-+		goto out;
- 
- 	if ((x->props.flags & XFRM_STATE_ESN)) {
- 		sg_init_table(asg, 3);
---- a/net/ipv6/ah6.c
-+++ b/net/ipv6/ah6.c
-@@ -423,7 +423,9 @@ static int ah6_output(struct xfrm_state
- 	ah->seq_no = htonl(XFRM_SKB_CB(skb)->seq.output.low);
- 
- 	sg_init_table(sg, nfrags + sglists);
--	skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	err = skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	if (unlikely(err < 0))
-+		goto out_free;
- 
- 	if (x->props.flags & XFRM_STATE_ESN) {
- 		/* Attach seqhi sg right after packet payload */
-@@ -601,7 +603,9 @@ static int ah6_input(struct xfrm_state *
- 	ip6h->hop_limit   = 0;
- 
- 	sg_init_table(sg, nfrags + sglists);
--	skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	err = skb_to_sgvec_nomark(skb, sg, 0, skb->len);
-+	if (unlikely(err < 0))
-+		goto out_free;
- 
- 	if (x->props.flags & XFRM_STATE_ESN) {
- 		/* Attach seqhi sg right after packet payload */
---- a/net/ipv6/esp6.c
-+++ b/net/ipv6/esp6.c
-@@ -231,9 +231,11 @@ static int esp6_output(struct xfrm_state
- 	esph->seq_no = htonl(XFRM_SKB_CB(skb)->seq.output.low);
- 
- 	sg_init_table(sg, nfrags);
--	skb_to_sgvec(skb, sg,
--		     esph->enc_data + crypto_aead_ivsize(aead) - skb->data,
--		     clen + alen);
-+	err = skb_to_sgvec(skb, sg,
-+			   esph->enc_data + crypto_aead_ivsize(aead) - skb->data,
-+			   clen + alen);
-+	if (unlikely(err < 0))
-+		goto error;
- 
- 	if ((x->props.flags & XFRM_STATE_ESN)) {
- 		sg_init_table(asg, 3);
-@@ -381,7 +383,9 @@ static int esp6_input(struct xfrm_state
- 	iv = esph->enc_data;
- 
- 	sg_init_table(sg, nfrags);
--	skb_to_sgvec(skb, sg, sizeof(*esph) + crypto_aead_ivsize(aead), elen);
-+	ret = skb_to_sgvec(skb, sg, sizeof(*esph) + crypto_aead_ivsize(aead), elen);
-+	if (unlikely(ret < 0))
-+		goto out;
- 
- 	if ((x->props.flags & XFRM_STATE_ESN)) {
- 		sg_init_table(asg, 3);
+ 	edac_dbg(3, "init mci\n");
