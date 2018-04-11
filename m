@@ -1,63 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753294AbeDKRVa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 13:21:30 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:36351 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752735AbeDKRV2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 13:21:28 -0400
-Date: Wed, 11 Apr 2018 18:04:33 +0100
-From: "Maciej W. Rozycki" <macro@mips.com>
-To: James Hogan <jhogan@kernel.org>
-CC: Sinan Kaya <okaya@codeaurora.org>, <linux-mips@linux-mips.org>,
-        <arnd@arndb.de>, <timur@codeaurora.org>, <sulrich@codeaurora.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] MIPS: io: add a barrier after register read in
- readX()
-In-Reply-To: <20180406212601.GA1730@saruman>
-Message-ID: <alpine.DEB.2.00.1804111756420.1545@tp.orcam.me.uk>
-References: <1522760109-16497-1-git-send-email-okaya@codeaurora.org> <1522760109-16497-2-git-send-email-okaya@codeaurora.org> <41e184ae-689e-93c9-7b15-0c68bd624130@codeaurora.org> <b748fdcb-e09f-9fe3-dc74-30b6a7d40cbe@codeaurora.org>
- <20180406212601.GA1730@saruman>
-User-Agent: Alpine 2.00 (DEB 1167 2008-08-23)
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-X-Originating-IP: [10.20.78.219]
-X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
- mipsdag02.mipstec.com (10.20.40.47)
-X-BESS-ID: 1523467282-298554-16273-9406-1
-X-BESS-VER: 2018.4-r1804052328
-X-BESS-Apparent-Source-IP: 12.201.5.32
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.191885
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+        id S1753899AbeDKRVo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 13:21:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47468 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753848AbeDKRVi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 13:21:38 -0400
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: kvm@vger.kernel.org
+Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/6] KVM: x86: hyperv: simplistic HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,SPACE} implementation
+Date: Wed, 11 Apr 2018 19:21:24 +0200
+Message-Id: <20180411172126.16355-5-vkuznets@redhat.com>
+In-Reply-To: <20180411172126.16355-1-vkuznets@redhat.com>
+References: <20180411172126.16355-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+Implement HvFlushVirtualAddress{List,Space} hypercalls in a simplistic way:
+do full TLB flush with KVM_REQ_TLB_FLUSH and kick vCPUs which are currently
+IN_GUEST_MODE.
 
-> > Any news on the MIPS front? Is this something that Arnd can merge? or does it have
-> > to go through the MIPS tree.
-> 
-> It needs some MIPS input really. I'll try and take a look soon. Thanks
-> for the nudge.
-> 
-> > It feels like the MIPS is dead since nobody replied to me in the last few weeks on
-> > a very important topic.
-> 
-> Not dead, just both maintainers heavily distracted by real life right
-> now (which sadly, for me at least, trumps this very important topic) and
-> doing the best they can given the circumstances.
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ arch/x86/include/asm/kvm_host.h |  1 +
+ arch/x86/kvm/hyperv.c           | 74 ++++++++++++++++++++++++++++++++++++++++-
+ arch/x86/kvm/trace.h            | 24 +++++++++++++
+ 3 files changed, 98 insertions(+), 1 deletion(-)
 
- Can I help move this change forward anyhow?
-
-  Maciej
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 949c977bc4c9..93ba93c00d55 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -476,6 +476,7 @@ struct kvm_vcpu_hv {
+ 	struct kvm_hyperv_exit exit;
+ 	struct kvm_vcpu_hv_stimer stimer[HV_SYNIC_STIMER_COUNT];
+ 	DECLARE_BITMAP(stimer_pending_bitmap, HV_SYNIC_STIMER_COUNT);
++	cpumask_t tlb_lush;
+ };
+ 
+ struct kvm_vcpu_arch {
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index 67788d358200..fa26af1e8b7c 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -1242,6 +1242,65 @@ int kvm_hv_get_msr_common(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata)
+ 		return kvm_hv_get_msr(vcpu, msr, pdata);
+ }
+ 
++static void ack_flush(void *_completed)
++{
++}
++
++static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
++			    u16 rep_cnt)
++{
++	struct kvm *kvm = current_vcpu->kvm;
++	struct kvm_vcpu_hv *hv_current = &current_vcpu->arch.hyperv;
++	struct hv_tlb_flush flush;
++	struct kvm_vcpu *vcpu;
++	int i, cpu, me;
++
++	if (unlikely(kvm_read_guest(kvm, ingpa, &flush, sizeof(flush))))
++		return HV_STATUS_INVALID_HYPERCALL_INPUT;
++
++	trace_kvm_hv_flush_tlb(flush.processor_mask, flush.address_space,
++			       flush.flags);
++
++	cpumask_clear(&hv_current->tlb_lush);
++
++	me = get_cpu();
++
++	kvm_for_each_vcpu(i, vcpu, kvm) {
++		struct kvm_vcpu_hv *hv = &vcpu->arch.hyperv;
++
++		if (!(flush.flags & HV_FLUSH_ALL_PROCESSORS) &&
++		    !(flush.processor_mask & BIT_ULL(hv->vp_index)))
++			continue;
++
++		/*
++		 * vcpu->arch.cr3 may not be up-to-date for running vCPUs so we
++		 * can't analyze it here, flush TLB regardless of the specified
++		 * address space.
++		 */
++		kvm_make_request(KVM_REQ_TLB_FLUSH, vcpu);
++
++		/*
++		 * It is possible that vCPU will migrate and we will kick wrong
++		 * CPU but vCPU's TLB will anyway be flushed upon migration as
++		 * we already made KVM_REQ_TLB_FLUSH request.
++		 */
++		cpu = vcpu->cpu;
++		if (cpu != -1 && cpu != me && cpu_online(cpu) &&
++		    kvm_arch_vcpu_should_kick(vcpu))
++			cpumask_set_cpu(cpu, &hv_current->tlb_lush);
++	}
++
++	if (!cpumask_empty(&hv_current->tlb_lush))
++		smp_call_function_many(&hv_current->tlb_lush, ack_flush,
++				       NULL, true);
++
++	put_cpu();
++
++	/* We always do full TLB flush, set rep_done = rep_cnt. */
++	return (u64)HV_STATUS_SUCCESS |
++		((u64)rep_cnt << HV_HYPERCALL_REP_COMP_OFFSET);
++}
++
+ bool kvm_hv_hypercall_enabled(struct kvm *kvm)
+ {
+ 	return READ_ONCE(kvm->arch.hyperv.hv_hypercall) & HV_X64_MSR_HYPERCALL_ENABLE;
+@@ -1377,12 +1436,25 @@ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
+ 		vcpu->arch.complete_userspace_io =
+ 				kvm_hv_hypercall_complete_userspace;
+ 		return 0;
++	case HVCALL_FLUSH_VIRTUAL_ADDRESS_LIST:
++		if (unlikely(fast || !rep_cnt || rep_idx)) {
++			ret = HV_STATUS_INVALID_HYPERCALL_INPUT;
++			break;
++		}
++		ret = kvm_hv_flush_tlb(vcpu, ingpa, rep_cnt);
++		break;
++	case HVCALL_FLUSH_VIRTUAL_ADDRESS_SPACE:
++		if (unlikely(fast || rep)) {
++			ret = HV_STATUS_INVALID_HYPERCALL_INPUT;
++			break;
++		}
++		ret = kvm_hv_flush_tlb(vcpu, ingpa, rep_cnt);
++		break;
+ 	default:
+ 		ret = HV_STATUS_INVALID_HYPERCALL_CODE;
+ 		break;
+ 	}
+ 
+-set_result:
+ 	kvm_hv_hypercall_set_result(vcpu, ret);
+ 	return 1;
+ }
+diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
+index 9807c314c478..47a4fd758743 100644
+--- a/arch/x86/kvm/trace.h
++++ b/arch/x86/kvm/trace.h
+@@ -1367,6 +1367,30 @@ TRACE_EVENT(kvm_hv_timer_state,
+ 			__entry->vcpu_id,
+ 			__entry->hv_timer_in_use)
+ );
++
++/*
++ * Tracepoint for kvm_hv_flush_tlb.
++ */
++TRACE_EVENT(kvm_hv_flush_tlb,
++	TP_PROTO(u64 processor_mask, u64 address_space, u64 flags),
++	TP_ARGS(processor_mask, address_space, flags),
++
++	TP_STRUCT__entry(
++		__field(u64, processor_mask)
++		__field(u64, address_space)
++		__field(u64, flags)
++	),
++
++	TP_fast_assign(
++		__entry->processor_mask = processor_mask;
++		__entry->address_space = address_space;
++		__entry->flags = flags;
++	),
++
++	TP_printk("processor_mask 0x%llx address_space 0x%llx flags 0x%llx",
++		  __entry->processor_mask, __entry->address_space,
++		  __entry->flags)
++);
+ #endif /* _TRACE_KVM_H */
+ 
+ #undef TRACE_INCLUDE_PATH
+-- 
+2.14.3
