@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49sQchak1636QvehZ6/4cxKLRQOAs2dqxTNWWm4psvre3H3Mv3nYjVeBv6rCVnapPUZpASg
-ARC-Seal: i=1; a=rsa-sha256; t=1523473253; cv=none;
+X-Google-Smtp-Source: AIpwx4+fNY9kDujFOQQ8mkq7S/OJW7Z63V60rg3M6zDOF74HFAonRyCcO4me0ZzKd2CrKNy0v0xa
+ARC-Seal: i=1; a=rsa-sha256; t=1523473245; cv=none;
         d=google.com; s=arc-20160816;
-        b=JtsWyk049FLscMVr/nkcQ4ibkhXBEt2XXeCJ7/ikRPq/1qgMlf1kL1/Rn9K+v81x6T
-         MQKRmz1l9m4JEHVExsd0iZEujKdVse6lHLaYxlK7mDHAU2j7JnV7bQOANoTzSUvZX1q6
-         rhTYWS9vPvn4w6PlsmJ4qqWdFwcIkEN9CJk/DtUcOQWYt92SFBz6C009/IHwj48QaWV2
-         RAFoGiw6hw0vIHB56i77Wb6NTGDZ+yvUSRcPrQ5JVAO9phijkDW+4UMGm1VcwhniX2n9
-         pUzW9Kn2Z9cFmnpFE5QfcQV0cJQmmKbhpM32L00tk6FpbJ0nA/ECAQjr+GOA5KLo7wcI
-         Hn0w==
+        b=iu6Lid8LD/6zru9p2CYeK97iCLkgMMa+ejsxyxbGmzVl9WJ6lPq0FihHzS0gCmHVj9
+         gJpsUv/ps5DzlL0PHMej/8/saQesfRvK7QRaeOwkdAmxW7e1DQ5zbLdNd+z3NAgqYejN
+         zOLEKgjG6KqgyWHYwToepot70d1L3X9PAuA8sQUvNalZo25HNsywZaRdImQR40PJqpTK
+         uGT3F8+wcnh+SizeGfNCSjsXsEhn8ztxksM0tdKOmT87oVRpoC0RIHcQDOfB33yAfI9Y
+         LyNbveEbatJ0f6yLXZUwhIx8r/gs+6bwk55cM5xOmlpySIQPlrmM+46fdOfOy9TTFXQl
+         jeOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zM/33oko9ljXzVj28bnE0cJo/2e1wl0cn/CytvPqtAc=;
-        b=LPeehtWGn+S7gTEKvAOgUHmSFNqbBdyAPrDYcSH1VTlYin6VKmuaISQUo9ai1cF0Xe
-         ZITTncBw6KUNI1bTDOGCJrdIH4hi1Y9tJ6y2zkItRwWunwLhksAbMITEPRa+Ge9UE2cH
-         g+WtLEq+aWED3ynB7d9f3rjP8LnizvS9ILrqMFQO48NVq2SpkWJKdF8QqMenXxRDytdL
-         /m1Z97wpT81FgHvpl8dz6ZKRnRBjvMT6y1kI/V0mkib5DSroFPLDwIzv9Yg3N8xfn0Xm
-         buMWcCnrAvndQEsP3eq6adP4zBrvh+o0DPpS9KjXiZpJNutav1fCAsZBV69BeBbgMkg3
-         w3uA==
+        bh=SA3D3kxdA8tWxqkSMBaULo9Ve89qKEEEobhCQ2cFkX8=;
+        b=Ng5DsZI3nXX7cpvjeJ/HULw+qzESKYwniELWVXNmVbAIQu6BMnep5ZklEhwo6YstPm
+         H+WJaQuWaE5tzjxnt1Y+JqMHHRVgG3Nebq3UkXTDeoEehL9hSHNhktiqSueM66yU4P1/
+         MBC57mfuqZUp1BprkbL2XPq5o/K/HCoYRAErCvLuN9ghVOx30aR3qC0jjDuxmJI2eH7P
+         Z8SBmoKLVtcbPHv2B5fS/XZa/6PCu6TOGqoxw9q3snZN/Ne9bPBW4Fwxr5mQRF0kZcbs
+         jU2SdtoMIgY6MOPoUYt0J/s/J4hTVXemyW0vnRuoU914dShUO2Cq0BkkAkriKbBlC9C8
+         cYiw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Pieter \"PoroCYon\" Sluys" <pcy@national.shitposting.agency>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	Stanislaw Gruszka <sgruszka@redhat.com>,
+	Enrico Mioso <mrkiko.rs@gmail.com>,
+	Kalle Valo <kvalo@codeaurora.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 139/310] vfb: fix video mode and line_length being set when loaded
-Date: Wed, 11 Apr 2018 20:34:38 +0200
-Message-Id: <20180411183628.428799314@linuxfoundation.org>
+Subject: [PATCH 4.9 146/310] rt2x00: do not pause queue unconditionally on error path
+Date: Wed, 11 Apr 2018 20:34:45 +0200
+Message-Id: <20180411183628.719272354@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476277787799866?=
-X-GMAIL-MSGID: =?utf-8?q?1597477490460606632?=
+X-GMAIL-THRID: =?utf-8?q?1597477481346398191?=
+X-GMAIL-MSGID: =?utf-8?q?1597477481346398191?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,103 +51,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Pieter \\\"PoroCYon\\\" Sluys" <pcy@national.shitposting.agency>
+From: Stanislaw Gruszka <sgruszka@redhat.com>
 
 
-[ Upstream commit 7b9faf5df0ac495a1a3d7cdb64921c179f9008ac ]
+[ Upstream commit 6dd80efd75ce7c2dbd9f117cf585ee2b33a42ee1 ]
 
-Currently, when loading the vfb module, the newly created fbdev
-has a line_length of 0, and its video mode would be PSEUDOCOLOR
-regardless of color depth. (The former could be worked around by
-calling the FBIOPUT_VSCREENINFO ioctl with having the FBACTIVIATE_FORCE
-flag set.) This patch automatically sets the line_length correctly,
-and the video mode is derived from the bit depth now as well.
+Pausing queue without checking threshold is racy with txdone path.
+Moreover we do not need pause queue on any error, but only if queue
+is full - in case when we send RTS frame ( other cases of almost full
+queue are already handled in rt2x00queue_write_tx_frame() ).
 
-Thanks to Geert Uytterhoeven for confirming the bug and helping me with
-the patch.
+Patch fixes of theoretically possible problem of pausing empty
+queue.
 
-Output of `fbset -i' before the patch:
-mode "1366x768-60"
-    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
-    geometry 1366 768 1366 768 32
-    timings 13806 120 10 14 3 32 5
-    rgba 8/0,8/8,8/16,8/24
-endmode
-
-Frame buffer device information:
-    Name        : Virtual FB
-    Address     : 0xffffaa1405d85000
-    Size        : 4196352
-    Type        : PACKED PIXELS
-    Visual      : PSEUDOCOLOR
-    XPanStep    : 1
-    YPanStep    : 1
-    YWrapStep   : 1
-    LineLength  : 0                    <-- note this
-    Accelerator : No
-
-After:
-mode "1366x768-60"
-    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
-    geometry 1366 768 1366 768 32
-    timings 13806 120 10 14 3 32 5
-    rgba 8/0,8/8,8/16,8/24
-endmode
-
-Frame buffer device information:
-    Name        : Virtual FB
-    Address     : 0xffffaa1405d85000
-    Size        : 4196352
-    Type        : PACKED PIXELS
-    Visual      : TRUECOLOR
-    XPanStep    : 1
-    YPanStep    : 1
-    YWrapStep   : 1
-    LineLength  : 5464
-    Accelerator : No
-
-Signed-off-by: "Pieter \"PoroCYon\" Sluys" <pcy@national.shitposting.agency>
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-[b.zolnierkie: minor fixups]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Stanislaw Gruszka <sgruszka@redhat.com>
+Tested-by: Enrico Mioso <mrkiko.rs@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/fbdev/vfb.c |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/net/wireless/ralink/rt2x00/rt2x00mac.c |   22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
---- a/drivers/video/fbdev/vfb.c
-+++ b/drivers/video/fbdev/vfb.c
-@@ -239,8 +239,23 @@ static int vfb_check_var(struct fb_var_s
-  */
- static int vfb_set_par(struct fb_info *info)
- {
-+	switch (info->var.bits_per_pixel) {
-+	case 1:
-+		info->fix.visual = FB_VISUAL_MONO01;
-+		break;
-+	case 8:
-+		info->fix.visual = FB_VISUAL_PSEUDOCOLOR;
-+		break;
-+	case 16:
-+	case 24:
-+	case 32:
-+		info->fix.visual = FB_VISUAL_TRUECOLOR;
-+		break;
-+	}
+--- a/drivers/net/wireless/ralink/rt2x00/rt2x00mac.c
++++ b/drivers/net/wireless/ralink/rt2x00/rt2x00mac.c
+@@ -142,15 +142,25 @@ void rt2x00mac_tx(struct ieee80211_hw *h
+ 	if (!rt2x00dev->ops->hw->set_rts_threshold &&
+ 	    (tx_info->control.rates[0].flags & (IEEE80211_TX_RC_USE_RTS_CTS |
+ 						IEEE80211_TX_RC_USE_CTS_PROTECT))) {
+-		if (rt2x00queue_available(queue) <= 1)
+-			goto exit_fail;
++		if (rt2x00queue_available(queue) <= 1) {
++			/*
++			 * Recheck for full queue under lock to avoid race
++			 * conditions with rt2x00lib_txdone().
++			 */
++			spin_lock(&queue->tx_lock);
++			if (rt2x00queue_threshold(queue))
++				rt2x00queue_pause_queue(queue);
++			spin_unlock(&queue->tx_lock);
 +
- 	info->fix.line_length = get_line_length(info->var.xres_virtual,
- 						info->var.bits_per_pixel);
-+
- 	return 0;
++			goto exit_free_skb;
++		}
+ 
+ 		if (rt2x00mac_tx_rts_cts(rt2x00dev, queue, skb))
+-			goto exit_fail;
++			goto exit_free_skb;
+ 	}
+ 
+ 	if (unlikely(rt2x00queue_write_tx_frame(queue, skb, control->sta, false)))
+-		goto exit_fail;
++		goto exit_free_skb;
+ 
+ 	/*
+ 	 * Pausing queue has to be serialized with rt2x00lib_txdone(). Note
+@@ -164,10 +174,6 @@ void rt2x00mac_tx(struct ieee80211_hw *h
+ 
+ 	return;
+ 
+- exit_fail:
+-	spin_lock(&queue->tx_lock);
+-	rt2x00queue_pause_queue(queue);
+-	spin_unlock(&queue->tx_lock);
+  exit_free_skb:
+ 	ieee80211_free_txskb(hw, skb);
  }
- 
-@@ -450,6 +465,8 @@ static int vfb_probe(struct platform_dev
- 		goto err2;
- 	platform_set_drvdata(dev, info);
- 
-+	vfb_set_par(info);
-+
- 	fb_info(info, "Virtual frame buffer device, using %ldK of video memory\n",
- 		videomemorysize >> 10);
- 	return 0;
