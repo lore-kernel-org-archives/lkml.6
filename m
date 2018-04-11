@@ -1,82 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752602AbeDKIgY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 04:36:24 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:38749 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751661AbeDKIgW (ORCPT
+        id S1752646AbeDKIhE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 04:37:04 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34179 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750785AbeDKIg7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 04:36:22 -0400
-X-Google-Smtp-Source: AIpwx484BuUkxMV7EP7ItHMa/2VwuzyGZEJRla09rlGI05qfgQP75dth74OwjvMR4/PmGWTZaV1MbA==
-Subject: Re: [PATCH 1/2] ide: pdc202xx_new: Replace mdelay with usleep_range
- in detect_pll_input_clock
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        davem@davemloft.net, frankt@promise.com, andre@linux-ide.org
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1523433162-3910-1-git-send-email-baijiaju1990@gmail.com>
- <7558e956-62bd-39b9-6ff1-4d5f7ee2c9a3@cogentembedded.com>
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <00b11f19-0a4b-df83-923b-001bc5393229@gmail.com>
-Date: Wed, 11 Apr 2018 16:35:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Wed, 11 Apr 2018 04:36:59 -0400
+X-Google-Smtp-Source: AIpwx48KmQpwWRS18EDsp4ECQnP/38LA17x3yci3qVgyrqnYv6bnhaRzE6KSt/OE9W5ZHXu6T7uoLpDTK2Co9Vrxg5o=
 MIME-Version: 1.0
-In-Reply-To: <7558e956-62bd-39b9-6ff1-4d5f7ee2c9a3@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <CA+Ln22Eabq0HH6YmCSFwLd68w3DU4xTX2BiNAeLe_tnG6282Xg@mail.gmail.com>
+References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+ <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com> <CA+Ln22Eabq0HH6YmCSFwLd68w3DU4xTX2BiNAeLe_tnG6282Xg@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Date: Wed, 11 Apr 2018 17:36:57 +0900
+Message-ID: <CA+Ln22FAmBHrxEvQpBPV1p=Kg2g+XCHn=HQJCNSUhFv+Jtf6xA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:SAMSUNG SOC CLOCK DRIVERS"
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-gpio@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3B8bAUn001903
 
-
-
-On 2018/4/11 16:33, Sergei Shtylyov wrote:
-> Hello!
->
-> On 4/11/2018 10:52 AM, Jia-Ju Bai wrote:
->
->> detect_pll_input_clock() is never called in atomic context.
+2018-04-10 17:38 GMT+09:00 Tomasz Figa <tomasz.figa@gmail.com>:
+> 2018-04-10 16:06 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
+>> On Sun, Apr 8, 2018 at 8:07 PM, Paweł Chmiel
+>> <pawel.mikolaj.chmiel@gmail.com> wrote:
+>>> All banks with GPIO interrupts should be at beginning
+>>> of bank array and without any other types of banks between them.
+>>> This order is expected by exynos_eint_gpio_irq, when doing
+>>> interrupt group to bank translation.
+>>> Otherwise, kernel NULL pointer dereference would happen
+>>> when trying to handle interrupt, due to wrong bank being looked up.
+>>> Observed on s5pv210, when trying to handle gpj0 interrupt,
+>>> where kernel was mapping it to gpi bank.
 >>
->> detect_pll_input_clock() is only called by init_chipset_pdcnew(), which
->> is set as ".init_chipset" in struct ide_port_info.
->> This function is not called in atomic context.
+>> Thanks for the patch. The issue looks real although one thing was
+>> missed - there is a gap in SVC group between GPK2 and GPL0 (pointed by
+>> Marek Szyprowski):
 >>
->> Despite never getting called from atomic context, 
->> detect_pll_input_clock()
->> calls mdelay() to busily wait.
->> This is not necessary and can be replaced with usleep_range() to
->> avoid busy waiting.
+>> 0x0 - EINT_23 - gpk0
+>> 0x1 - EINT_24 - gpk1
+>> 0x2 - EINT_25 - gpk2
+>> 0x4 - EINT_27 - gpl0
+>> 0x7 - EINT_8 - gpm0
 >>
->> This is found by a static analysis tool named DCNS written by myself.
->> And I also manually check it.
->>
->> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
->> ---
->>   drivers/ide/pdc202xx_new.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/ide/pdc202xx_new.c b/drivers/ide/pdc202xx_new.c
->> index b33646b..6afa66d 100644
->> --- a/drivers/ide/pdc202xx_new.c
->> +++ b/drivers/ide/pdc202xx_new.c
->> @@ -258,7 +258,7 @@ static long detect_pll_input_clock(unsigned long 
->> dma_base)
->>       outb(scr1 | 0x40, dma_base + 0x03);
->>         /* Let the counter run for 10 ms. */
->> -    mdelay(10);
->> +    usleep_range(10);
+>> Maybe this should be done differently - to remove such hidden
+>> requirement entirely in favor of another parameter of
+>> EXYNOS_PIN_BANK_EINTG argument?
 >
->    This function takes 2 arguments.
+> Perhaps let's limit this patch to s5pv210 and Exynos5410 alone, where
+> a simple swap of bank order in the arrays should be okay.
 >
-> [...]
->
-> MBR, Sergei
+> We might also need to have some fixes on 4x12, because I noticed that
+> in exynos4x12_pin_banks0[] there is a hole in eint_offsets between
+> gpd1 and gpf0 and exynos4x12_pin_banks1[] starts with gpk0 that has
+> eint_offset equal to 0x08 (not 0).
 
-Oops, sorry for my fault.
-Thanks for telling me this :)
-I will modify it and send V2.
+To close the loop, after talking offline and checking the
+documentation, Exynos4x12 is fine, because the group numbers in SVC
+register actually match what is defined in bank arrays.
 
-
-Best wishes,
-Jia-Ju Bai
+Best regards,
+Tomasz
