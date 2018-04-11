@@ -1,88 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752552AbeDKBVd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 21:21:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47860 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751624AbeDKBVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 21:21:31 -0400
-Date: Wed, 11 Apr 2018 09:21:26 +0800
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: David Miller <davem@davemloft.net>
-Cc: jasowang@redhat.com, virtualization@lists.linux-foundation.org,
-        syzkaller-bugs@googlegroups.com, mst@redhat.com,
-        torvalds@linux-foundation.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] vhost: fix vhost_vq_access_ok() log check
-Message-ID: <20180411012126.GA28698@stefanha-x1.localdomain>
-References: <20180410052630.11270-1-stefanha@redhat.com>
- <8642c057-e49d-d95d-19e5-6d304f20064e@redhat.com>
- <20180410.105043.1798364865868187298.davem@davemloft.net>
+        id S1752653AbeDKBWk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 21:22:40 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:48428 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752295AbeDKBWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 21:22:38 -0400
+Subject: Re: [PATCH v9 5/5] iommu/arm-smmu: Add support for qcom,smmu-v2
+ variant
+To: Tomasz Figa <tfiga@chromium.org>
+References: <20180313085534.11650-1-vivek.gautam@codeaurora.org>
+ <20180313085534.11650-6-vivek.gautam@codeaurora.org>
+ <61d30fff-1bf8-d2c1-bbe9-f93de836ae77@huawei.com>
+ <7d5af071-ef98-8461-3ce9-e84fc0b3956a@codeaurora.org>
+ <d97872fe-5e8e-cc27-e385-64cea8ea2458@huawei.com>
+ <CAAFQd5Cj3qaqt8ACabZwN4ZKaNbF9N9suGVaOKD8-kNxgfeeVA@mail.gmail.com>
+CC: Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>, <iommu@lists.linux-foundation.org>,
+        <gaojianbo@hisilicon.com>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <65a57964-805b-3a38-71a2-0c383af30539@huawei.com>
+Date: Wed, 11 Apr 2018 09:22:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
-Content-Disposition: inline
-In-Reply-To: <20180410.105043.1798364865868187298.davem@davemloft.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAAFQd5Cj3qaqt8ACabZwN4ZKaNbF9N9suGVaOKD8-kNxgfeeVA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Tomasz,
 
---Q68bSM7Ycu6FN28Q
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2018/4/10 21:14, Tomasz Figa wrote:
+> Hi Yisheng,
+> 
+> Sorry, I think we missed your question here.
+> 
+> On Wed, Mar 28, 2018 at 3:12 PM Yisheng Xie <xieyisheng1@huawei.com> wrote:
+> 
+>> Hi Vivek,
+> 
+>> On 2018/3/28 12:37, Vivek Gautam wrote:
+>>> Hi Yisheng
+>>>
+>>>
+>>> On 3/28/2018 6:54 AM, Yisheng Xie wrote:
+>>>> Hi Vivek,
+>>>>
+>>>> On 2018/3/13 16:55, Vivek Gautam wrote:
+>>>>> +- power-domains:  Specifiers for power domains required to be
+> powered on for
+>>>>> +                  the SMMU to operate, as per generic power domain
+> bindings.
+>>>>> +
+>>>> In this patchset, power-domains is not used right? And you just do the
+> clock gating,
+>>>> but not power gating, right?
+>>>
+>>> We are handling the power-domains too. Please see the example in this
+> binding doc.
+> 
+>> I see, but I do not find the point in code of these patchset, do you mean
+> PMIC(e.g mmcc)
+>> will gate the power domain of SMMU(e.g. MDSS_GDSC of mmcc) when PMIC
+> suspend?
+> 
+> 
+> If respective SoC power domains is registered as a standard genpd PM
+> domain, then the runtime PM subsystem will take care of power domain
+> control at runtime suspend and resume.
+> 
 
-On Tue, Apr 10, 2018 at 10:50:43AM -0400, David Miller wrote:
-> From: Jason Wang <jasowang@redhat.com>
-> Date: Tue, 10 Apr 2018 14:40:10 +0800
->=20
-> > On 2018=E5=B9=B404=E6=9C=8810=E6=97=A5 13:26, Stefan Hajnoczi wrote:
-> >> v2:
-> >>   * Rewrote the conditional to make the vq access check clearer [Linus]
-> >>   * Added Patch 2 to make the return type consistent and harder to mis=
-use
-> >>   * [Linus]
-> >>
-> >> The first patch fixes the vhost virtqueue access check which was
-> >> recently
-> >> broken.  The second patch replaces the int return type with bool to
-> >> prevent
-> >> future bugs.
-> >>
-> >> Stefan Hajnoczi (2):
-> >>    vhost: fix vhost_vq_access_ok() log check
-> >>    vhost: return bool from *_access_ok() functions
-> >>
-> >>   drivers/vhost/vhost.h |  4 +--
-> >>   drivers/vhost/vhost.c | 70
-> >>   ++++++++++++++++++++++++++-------------------------
-> >>   2 files changed, 38 insertions(+), 36 deletions(-)
-> >>
-> >=20
-> > Acked-by: Jason Wang <jasowang@redhat.com>
->=20
-> This sereis doesn't apply cleanly to the net tree, please respin
-> and add the appropriate Acks and Fixes: tags that Michael and Jason
-> have provided.
+Get it, thanks for your explain, I should have learned about this.
 
-Sorry, will fix.
+Thanks
+Yisheng
 
-Stefan
-
---Q68bSM7Ycu6FN28Q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEcBAEBAgAGBQJazWMVAAoJEJykq7OBq3PIN1IH/ikRjLXh9rfQ7bPYf9bbkcyE
-43iYyGKK5W5N5GA5urguo6yZHly24hLAhvm+MdbLFiXmjrEsNODc7Lk2+p9d1HJa
-m0Dc+pyjig489X/jFWtEUwFS2woZlAbxCS/iyEjMDkotc43GCRvm1C6OT0nBHdky
-XSdsu2rJyc/PNJtLNkDAFaRm2gvbvCfLG82SlZY39S679M1Xfm+23IvZD+6E6Mhr
-c2QrUEYjF3drmY0HjfTEqiRBH4f+/wJe67W4oiBfjM1kNJd3rOO5qkMnmF28dQjC
-S/7S/hC5FJplkvxXKKis749OHLbgPFPtgwFkW5FQfgd9miWOVp7wF9lrnq88SjY=
-=eq0T
------END PGP SIGNATURE-----
-
---Q68bSM7Ycu6FN28Q--
+> Best regards,
+> Tomasz
+> 
+> .
+> 
