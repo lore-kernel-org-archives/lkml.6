@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3303684-1523479421-2-4877358186876975337
+X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479420-2-10605228504959981892
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479420; b=uhfI9FWZ0VcayMbhEGKaneJfLRDJ2+VJDkrCglHqolHqhjvFyk
-    zJVA1LdjgG5g+5ssOL++D4zQF8sP0PWJIeF2PIxPhx63scsG0bvSEiccN8udoqWZ
-    /nRevBTmXCHbo3Njpl3lKnXHuZsUyxu4QNEFn+QldBpPFVYBqG27zl+0C89e9qQ6
-    PqFM81nKrbTmviLPGXoeFtjyXh3SWQrRVNMnQRU5x8k2ZHpgTnCFtL6e1dT5ozVy
-    p959xM4bcEBYRrIarIYD0D/GKEZb5pAR+SvrJYjhIPKb60aNQaY89Gr+qJ0lpE+r
-    woLtLpRbnmxl7v3IL9u4Zq46RlC3qc9SHfgg==
+    1523479419; b=ZjXPFMRh9e/JbnCYS3R2uwyQldpdyMEp6xM0nmec5xkWEnGvam
+    OOT4kk7UUyEHtE2D3v5s6IQOT4wJ1o/4aeXDnvrIvgMhIpDpQnlzkCAyjSGoVj/R
+    nFeWRYAxEPLjNdqMDVDrqtL2awJJkX3mhyqUHwDGF8velEf6sNTSlfy9IP98vFbw
+    +3b/W7WxQl1szn37uaR9hCOxL0QYBcpBMZXj9tDgrD41BSdU7cfvqTkcz6uIh6JV
+    /3RkCpVlLVvq9I48JjJU+tCML4Tbp9Gd4TLjS6Vo6mk4nbUwYy2L6eid7J62CaXu
+    mDyT3vvbd3/PJaiLC+PClZLDJSoB7FzNve8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479420; bh=699n0GVG9iWYZWo8UWfGwa0/MRx9/N
-    yFpczcdzdySDI=; b=LMqdvZHbCTJw+ocUrz+vLfwMg4kv0XF4Ks2U1bIA7JW0ZT
-    FeIazCEHLN37gc7CnP5Yu5kgCp6yQ+WN+hDQu+FA2MLJACpCL+CJxrMUjMt1Beev
-    nNLG/6ts9Lo/fiooHQ/Aqr7GnldyB56/nqx0h7+mCiSvGyCQf4pxl7iOIAIqZi8o
-    oisKDNupZhpDHTxBtb0kRtq2UpgJGhw6N3s85DH2Ly4X/YFSrptxrl8vQDlxBx04
-    kebNZF8CVWcZQSK187T919ezuACkD9UkHDmG7fVnXF7aboymonWnsd2HgqyvyeIM
-    VjBJHgOVOGw4hNU3NeeEcWIzQI78XXpYKGHaDyhQ==
+    :list-id; s=fm2; t=1523479419; bh=nbbCTwv5TiJFFGHKmIg233VLsbI1xD
+    +wJnEN1PyCjII=; b=PSOxpnABOPuTjDKbSNxk6WKj0tSfE9AsKBS+xbzyvhlbVP
+    +aZcoOIDZwIi5Qh1GP9xGfpX/LP49IlaO9toCOwKOywsFZkFcEQjv6QFHmjnbgXu
+    kG38eOxl+bBCiWYhidCGprPwAXhYA81tHaXBiPyEfYKIOfWGqSbuKffCPNVsB64i
+    5KRb19666L1dfNhjZ25uBqrAGH9ba3BG3Xxrhrm6ySCLqY1+s/ljGB21x04jWxZa
+    e8rmobugYf082kK523dOBjMbOKQF3zyAKoroUcWBuNrMj0nqz82e+JwOQYEVPjAB
+    K+6CZDznO/UXVPA31mMubWNkleJx4c3IWXa707tw==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,34 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLSh4tWVQFevTy/CledSYVdL9jHYZWkc6nOhS1AR1e/916I7AUZHLmQnsN6see2FHF9Xc0Jl+Ixc4A1SEhu/aRRIY4n8hVV4UQb0HAKjExetO0cMqoub
-    obXKtoyQWy1ftQ8W3StYlPkYNwVFSIhdbeHfIkVDM8BRoATQ8PmO2JfE+dsQi83/SpNevR3PkM3olPZv3byAAXcBw3FoKdEGUGMhFLCYZ7J71hyhcqnrTOtQ
+X-CM-Envelope: MS4wfMip074boWQ07I4GrZAqgynpHyG3SnYkS/O7WLmeyS6BSbeAFz4e53XKhXAg1Cyb6BXQGJjsKxiSEDYJBXOKzc/mf2g8AZfKg9j58PKeXiDnG9djUiUL
+    FctnZo+s8CrClJuBr+rHPBVTnSNJlbPo9hIEqPIt3XhwsEnLqFdT/yhyg+aZ2qXbXKOZmCvIVswo1R6A14EVVOtHmB+NXSX0L7JUtBJze9MlPkRt9QPT2zFw
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=Q-fNiiVtAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=JIHOz45QZUSSGx34f7cA:9 a=QEXdDO2ut3YA:10 a=Fp8MccfUoT0GBdDC_Lng:22
+    a=tBb2bbeoAAAA:8 a=hD80L64hAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=fWKlrDiykeHFxDw9_GIA:9 a=HKZ6qAVqU7D9Uhjt:21 a=IMCvk_XUfX2MPB_8:21
+    a=QEXdDO2ut3YA:10 a=gup2V7nj8fQA:10 a=Oj-tNtZlA1e06AYgeCfH:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755926AbeDKSrb (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:47:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59332 "EHLO
+        id S932165AbeDKUnI (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:43:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59352 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755922AbeDKSr3 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:47:29 -0400
+        with ESMTP id S1755889AbeDKSrb (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:47:31 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu S <suganath-prabu.subramani@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org,
+        "Pieter \"PoroCYon\" Sluys" <pcy@national.shitposting.agency>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 090/190] scsi: mpt3sas: Proper handling of set/clear of "ATA command pending" flag.
-Date: Wed, 11 Apr 2018 20:35:36 +0200
-Message-Id: <20180411183555.884616955@linuxfoundation.org>
+Subject: [PATCH 4.4 091/190] vfb: fix video mode and line_length being set when loaded
+Date: Wed, 11 Apr 2018 20:35:37 +0200
+Message-Id: <20180411183555.936507819@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -94,97 +96,103 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Chaitra P B <chaitra.basappa@broadcom.com>
+From: "Pieter \\\"PoroCYon\\\" Sluys" <pcy@national.shitposting.agency>
 
 
-[ Upstream commit f49d4aed1315a7b766d855f1367142e682b0cc87 ]
+[ Upstream commit 7b9faf5df0ac495a1a3d7cdb64921c179f9008ac ]
 
-1. In IO path, setting of "ATA command pending" flag early before device
-   removal, invalid device handle etc., checks causes any new commands
-   to be always returned with SAM_STAT_BUSY and when the driver removes
-   the drive the SML issues SYNC Cache command and that command is
-   always returned with SAM_STAT_BUSY and thus making SYNC Cache command
-   to requeued.
+Currently, when loading the vfb module, the newly created fbdev
+has a line_length of 0, and its video mode would be PSEUDOCOLOR
+regardless of color depth. (The former could be worked around by
+calling the FBIOPUT_VSCREENINFO ioctl with having the FBACTIVIATE_FORCE
+flag set.) This patch automatically sets the line_length correctly,
+and the video mode is derived from the bit depth now as well.
 
-2. If the driver gets an ATA PT command for a SATA drive then the driver
-   set "ATA command pending" flag in device specific data structure not
-   to allow any further commands until the ATA PT command is completed.
-   However, after setting the flag if the driver decides to return the
-   command back to upper layers without actually issuing to the firmware
-   (i.e., returns from qcmd failure return paths) then the corresponding
-   flag is not cleared and this prevents the driver from sending any new
-   commands to the drive.
+Thanks to Geert Uytterhoeven for confirming the bug and helping me with
+the patch.
 
-This patch fixes above two issues by setting of "ATA command pending"
-flag after checking for whether device deleted, invalid device handle,
-device busy with task management. And by setting "ATA command pending"
-flag to false in all of the qcmd failure return paths after setting the
-flag.
+Output of `fbset -i' before the patch:
+mode "1366x768-60"
+    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
+    geometry 1366 768 1366 768 32
+    timings 13806 120 10 14 3 32 5
+    rgba 8/0,8/8,8/16,8/24
+endmode
 
-Signed-off-by: Chaitra P B <chaitra.basappa@broadcom.com>
-Signed-off-by: Suganath Prabu S <suganath-prabu.subramani@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Frame buffer device information:
+    Name        : Virtual FB
+    Address     : 0xffffaa1405d85000
+    Size        : 4196352
+    Type        : PACKED PIXELS
+    Visual      : PSEUDOCOLOR
+    XPanStep    : 1
+    YPanStep    : 1
+    YWrapStep   : 1
+    LineLength  : 0                    <-- note this
+    Accelerator : No
+
+After:
+mode "1366x768-60"
+    # D: 72.432 MHz, H: 47.403 kHz, V: 60.004 Hz
+    geometry 1366 768 1366 768 32
+    timings 13806 120 10 14 3 32 5
+    rgba 8/0,8/8,8/16,8/24
+endmode
+
+Frame buffer device information:
+    Name        : Virtual FB
+    Address     : 0xffffaa1405d85000
+    Size        : 4196352
+    Type        : PACKED PIXELS
+    Visual      : TRUECOLOR
+    XPanStep    : 1
+    YPanStep    : 1
+    YWrapStep   : 1
+    LineLength  : 5464
+    Accelerator : No
+
+Signed-off-by: "Pieter \"PoroCYon\" Sluys" <pcy@national.shitposting.agency>
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+[b.zolnierkie: minor fixups]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/mpt3sas/mpt3sas_scsih.c |   28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ drivers/video/fbdev/vfb.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -3886,19 +3886,6 @@ scsih_qcmd(struct Scsi_Host *shost, stru
- 		return 0;
- 	}
- 
--	/*
--	 * Bug work around for firmware SATL handling.  The loop
--	 * is based on atomic operations and ensures consistency
--	 * since we're lockless at this point
--	 */
--	do {
--		if (test_bit(0, &sas_device_priv_data->ata_command_pending)) {
--			scmd->result = SAM_STAT_BUSY;
--			scmd->scsi_done(scmd);
--			return 0;
--		}
--	} while (_scsih_set_satl_pending(scmd, true));
--
- 	sas_target_priv_data = sas_device_priv_data->sas_target;
- 
- 	/* invalid device handle */
-@@ -3924,6 +3911,19 @@ scsih_qcmd(struct Scsi_Host *shost, stru
- 	    sas_device_priv_data->block)
- 		return SCSI_MLQUEUE_DEVICE_BUSY;
- 
-+	/*
-+	 * Bug work around for firmware SATL handling.  The loop
-+	 * is based on atomic operations and ensures consistency
-+	 * since we're lockless at this point
-+	 */
-+	do {
-+		if (test_bit(0, &sas_device_priv_data->ata_command_pending)) {
-+			scmd->result = SAM_STAT_BUSY;
-+			scmd->scsi_done(scmd);
-+			return 0;
-+		}
-+	} while (_scsih_set_satl_pending(scmd, true));
+--- a/drivers/video/fbdev/vfb.c
++++ b/drivers/video/fbdev/vfb.c
+@@ -291,8 +291,23 @@ static int vfb_check_var(struct fb_var_s
+  */
+ static int vfb_set_par(struct fb_info *info)
+ {
++	switch (info->var.bits_per_pixel) {
++	case 1:
++		info->fix.visual = FB_VISUAL_MONO01;
++		break;
++	case 8:
++		info->fix.visual = FB_VISUAL_PSEUDOCOLOR;
++		break;
++	case 16:
++	case 24:
++	case 32:
++		info->fix.visual = FB_VISUAL_TRUECOLOR;
++		break;
++	}
 +
- 	if (scmd->sc_data_direction == DMA_FROM_DEVICE)
- 		mpi_control = MPI2_SCSIIO_CONTROL_READ;
- 	else if (scmd->sc_data_direction == DMA_TO_DEVICE)
-@@ -3945,6 +3945,7 @@ scsih_qcmd(struct Scsi_Host *shost, stru
- 	if (!smid) {
- 		pr_err(MPT3SAS_FMT "%s: failed obtaining a smid\n",
- 		    ioc->name, __func__);
-+		_scsih_set_satl_pending(scmd, false);
- 		goto out;
- 	}
- 	mpi_request = mpt3sas_base_get_msg_frame(ioc, smid);
-@@ -3975,6 +3976,7 @@ scsih_qcmd(struct Scsi_Host *shost, stru
- 	if (mpi_request->DataLength) {
- 		if (ioc->build_sg_scmd(ioc, scmd, smid)) {
- 			mpt3sas_base_free_smid(ioc, smid);
-+			_scsih_set_satl_pending(scmd, false);
- 			goto out;
- 		}
- 	} else
+ 	info->fix.line_length = get_line_length(info->var.xres_virtual,
+ 						info->var.bits_per_pixel);
++
+ 	return 0;
+ }
+ 
+@@ -525,6 +540,8 @@ static int vfb_probe(struct platform_dev
+ 		goto err2;
+ 	platform_set_drvdata(dev, info);
+ 
++	vfb_set_par(info);
++
+ 	fb_info(info, "Virtual frame buffer device, using %ldK of video memory\n",
+ 		videomemorysize >> 10);
+ 	return 0;
