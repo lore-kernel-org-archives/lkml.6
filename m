@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48c7hv5s0sYdJRVwgRS1g9wT0gNP5Poa+NyQr3Ago/B6BRMeO07DW4vOJVEeYg6hmzfYtkr
-ARC-Seal: i=1; a=rsa-sha256; t=1523473321; cv=none;
+X-Google-Smtp-Source: AIpwx49XEgfQKm6bnRLvX9ttEywhl/Al6Wr8q4mg2HbjDGYG4+JT3IsOufBhQ3BFqs/Fl6+vwMLt
+ARC-Seal: i=1; a=rsa-sha256; t=1523473319; cv=none;
         d=google.com; s=arc-20160816;
-        b=yH7hajmP0Ay9QPyf4/J+MD49WB6zA7eln0jjnaIVukFQnYo3BwHh4QOlmNPk7hwZkx
-         QJm99M0zOEim8aVlqlMmYg7xevY1dxQKEcsI7qqCBHcJHx9aUj0BdHbQFCOQoePa9vEC
-         WemgF2xye1shBb1pGqmOiI6l+rJMKlJMuHfNq9SHwG+uLcTLvJ+sAXQUQGt5n3U21uqj
-         +GUGhRwtrql5kWDVorVAiWlxiDZXQGyg1OteBy3WQ0F+6FdKhVwuKJh2e1X+wikto8kM
-         il9TKNf+MyPQshBDNlcC0qJT3unQIjWZov2UHpEi0GrrcDv+pBA2unXbl5Kq+IG38kKN
-         /1Lg==
+        b=E+BvqsneIAwDmAP7f15SGWl+tOBsTl12HyKvbuPxS9ST6YYjIM7aR/rtlCgAAqf6FH
+         tavEmWyP7nfMi72+1E85dJbNdkb3qWmnRWWbGuNcxj8HBYmuQkjzPS5MvdgLUDTnyXjF
+         PsWcInQ4S4UNhnSpCxEtv04rtgVLX2oDIQAPEw91Yvs3znxvipYXRFZQNXYmk7kioAff
+         KtlbotugcU0/QzNO081brtFFHru0q/odrrHTto1U0L79jBnfOfUgMGUS/5vA1H6pCbAj
+         8lygQA4ogRpNDAp8vDZgOBKLjVQRZBHxJTclSrd96fsxj6hDEl7wCqSCAVIUHiitQ6hS
+         hfKg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ALxHA4HddK1ueULif65HfOj9Gle9DoKbX1HqvA+Y50Q=;
-        b=DNemuWWJYwjxqNLl7F4nUBLkCFugtCIMXEPa6mUIlro7Qvebe4jExWjjkhwSFYlG57
-         vmzPc/Zm0+q7dGyQYGS+3HJmP1ervIhO5VqMq2xHXUhXmfESWtSQxkxL9LjLFUO7Hulw
-         JQ1bjgXJHbdrHQJu+lormRiMbmtvI0LD0AnrVDgGOq4yBT5vzDqgfBK1W5JazmsXR6/g
-         kUGsjL5upWnISVubEGr2UroTKl96yvSLL+lXFaWuiX5z8vuwEwm35NraHr3ukcezD3Zv
-         ZWkq6U0f/yXPFaDdKMKukYRFceWMMEr0HuHiYCcMlOuUo3OUI+lN9K5cIdxjypjpvq0x
-         Vxjw==
+        bh=kOrEwwoQRytbDax/ftDB048dY7c9JHiI7RPdwDtqxN8=;
+        b=lYwro/QgOBhM1ak4US+GCoplOOP/iqG8bYA3vpcUA//8edYBGh5gJSLn4oAmZ4UVvL
+         Vpcf6hqEVDM39+eCz4vCltwikBvTPUrMh97IC90ydTKR8Y7TI9PrFiEPzUDOHJlySEL3
+         6ReWoJ1C5s6528wHDlCgaOHUv91IgMzklOhv2t+x6pQxtfKJ+bfFvE4AR7ziTtGVOOPQ
+         rCpGj8y3wQij5MCQdrSTbqSVWIsd7a3Z3R8Widi3z/mxGZCaRgDjXLcXtQdL7bURyUAt
+         ZN16Tnlud3E+17ecHje2ZMHxzHGzqYAxWLD/vJ3GYaDSiQo6KLmF/eeAslyjtGjoV8B9
+         XUqg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christian Lamparter <chunkeey@googlemail.com>,
-	Andy Gross <andy.gross@linaro.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 204/310] ARM: dts: qcom: ipq4019: fix i2c_0 node
-Date: Wed, 11 Apr 2018 20:35:43 +0200
-Message-Id: <20180411183631.350782387@linuxfoundation.org>
+Subject: [PATCH 4.9 203/310] tags: honor COMPILED_SOURCE with apart output directory
+Date: Wed, 11 Apr 2018 20:35:42 +0200
+Message-Id: <20180411183631.308317946@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477561693653683?=
-X-GMAIL-MSGID: =?utf-8?q?1597477561693653683?=
+X-GMAIL-THRID: =?utf-8?q?1597476235071053164?=
+X-GMAIL-MSGID: =?utf-8?q?1597477559373323497?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,37 +50,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christian Lamparter <chunkeey@googlemail.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
 
 
-[ Upstream commit 650df439cfb96c303328935559b2d06127a5a0b0 ]
+[ Upstream commit cbf52a3e6a8a92beec6e0c70abf4111cd8f8faf7 ]
 
-This patch fixes two typos in the i2c_0 node for the ipq4019.
-The reg property length is just 0x600. The core clock is
-GCC_BLSP1_QUP1_I2C_APPS_CLK. GCC_BLSP1_QUP2_I2C_APPS_CLK is
-used by the second i2c.
+When the kernel is compiled with an "O=" argument, the object files are
+not in the source tree, but in the build tree.
 
-Fixes: e76b4284b520ba3 ("qcom: ipq4019: add i2c node to ipq4019 SoC and DK01 device tree")
-Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
-Signed-off-by: Andy Gross <andy.gross@linaro.org>
+This patch fixes O= build by looking for object files in the build tree.
+
+Fixes: 923e02ecf3f8 ("scripts/tags.sh: Support compiled source")
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/qcom-ipq4019.dtsi |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ scripts/tags.sh |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-@@ -154,10 +154,10 @@
- 
- 		i2c_0: i2c@78b7000 {
- 			compatible = "qcom,i2c-qup-v2.2.1";
--			reg = <0x78b7000 0x6000>;
-+			reg = <0x78b7000 0x600>;
- 			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
--				 <&gcc GCC_BLSP1_QUP2_I2C_APPS_CLK>;
-+				 <&gcc GCC_BLSP1_QUP1_I2C_APPS_CLK>;
- 			clock-names = "iface", "core";
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+--- a/scripts/tags.sh
++++ b/scripts/tags.sh
+@@ -106,6 +106,7 @@ all_compiled_sources()
+ 		case "$i" in
+ 			*.[cS])
+ 				j=${i/\.[cS]/\.o}
++				j="${j#$tree}"
+ 				if [ -e $j ]; then
+ 					echo $i
+ 				fi
