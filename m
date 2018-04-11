@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AIpwx494Oix0jSJR6+bK9C2oxvRFsiRQwSlwm5WqNVhfLqjF+M2W165K6owAGbpsBZdvOO9pqdGB
-ARC-Seal: i=1; a=rsa-sha256; t=1523483729; cv=none;
+X-Google-Smtp-Source: AIpwx4/k0VgIpkmDh63mw22j7qHtzl09zP1cm0HGFxzhZtjOVFRBO5e9GP4WY4Tora+pOOL0xMEk
+ARC-Seal: i=1; a=rsa-sha256; t=1523483721; cv=none;
         d=google.com; s=arc-20160816;
-        b=mKCdG9Gyu3cLgGCNK5HbQkz3fiKFeQBpa0YVxQ5ClOU+JJjERtI8J4KL1y2fEjeRbI
-         FSyL+YvYbnP3dL1GPdKGpLMGPz6CBw3rchD8zOBRF/kBiUaTFMWykERygwO0NGa6kTsL
-         Rpi4WNrlIVqvYfg9VNLL+Y0OoFKfmkqu9+HVJi0s5pwUOMQNM8nKrGJxfwuDlza37FPG
-         RVhlRBZJHOQ3cUqQyKwBoTVzIoDeS6oBS+0dI4umIZoh4IwWcU4oKmQkn2aKpttzAOMr
-         /75KdaTNLGmz9zK7maOD8fQtpPR+XXCvsUag/eUAtyejT7TKQN00Kwzcd2YnUu+kg8L0
-         J+ng==
+        b=sGJgdCy2hrEDibQOmnPhVAl8i4vWYqmAjqgMJCdfY7W/X/WyH8Ef8k+nISc/QIKJ7k
+         s8hct/vjEnFmaiXm8TIG1zsm922LKjnFqH/fDc05lIz4pKdXUCARa6tB6KRdTHqexa61
+         B27FUMdzmxVbJlEQTa7wYTEz/evbe7HTD0qwz5mI4G5jY7s5SSlj4DWy1RCbp4OJ8JPZ
+         HrBPFENUUMH1pJQhnqHhv9JYbxIb9yGkuJjiIhYNIcgZT8VqY8BVCVGb8mBYjyeT0Aqq
+         AYpzHdPr+VFtqc5dYXuGeGJmIWmEcU2M+fBG8L9Snfdz3OGDk6tw9yj19/oVZoquxfFA
+         ls8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=CyPAbYt9VRAUpFpSUAU0IpeJNWMpsxarTMk8KN3vrNg=;
-        b=aANk3HS1tzVv3CFxvPyNMqj3ym0gTnIo4zloeLyOSeR22AtU3LxVAmXFnnBD64SLTq
-         AKM3prVN+BYh8hxhQ6kZsP7+uogIwBcBHdfZoe/M46xi+M6CwhsLHUq7iaGPOGrJc0db
-         VoEPV80tRytewrygZYHG6zavdQP7Wydi62xqVcIlRAkjTU9ThaKL3ANBYcxY3sPSR7yK
-         NdpN9JtRq9WsEy9LQH2Oo+9HhtTJ6cDV/yi9vlln/FDnemnZcGWg+Qcz9GGn2sDxvdNs
-         P2l0shYPsEz0hcFUOZWkatwUFF9xFjcdh78os/iOttB796Jz65bZaHBgVxKn2sBVXmne
-         bDrg==
+        bh=QR21hNhAlwt2u4U/XcfuT7Gm7KzdBKJsMEcuO21aadI=;
+        b=FyaEOZs9LE4+nwT7QOkphmtzgI5Q5oxvjvkhcOXzDZT11suRlcEg3tDINNztLrEFRT
+         ala24Ux52nrOvoR9cLxL5DS2jSVZeRZ78Jj/jRh7FTIc6n9IoXm8HPVfTdozv4BVMyOW
+         MI3eEx6u0FhjgOx28NbFwH859NcNlumxJzKLJgnOsvCM5QWpFFgnU+vpqJ75fw4EscnL
+         mzXQaLI3c3FDFCl2weP1tcXeyOgHvHoOetjNPzRFISrv25DX9rz5A+U83F2Axcd6PTgo
+         7Gyp/oAfJQS2Tp3SArvGYSHe+SVmyUU5CU2QQM9JvXwnhwAyvRLZvNAiSwgd1p5xvv5o
+         mKSw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -29,10 +29,11 @@ To: Oleg Drokin <oleg.drokin@intel.com>,
  James Simmons <jsimmons@infradead.org>,
  Andreas Dilger <andreas.dilger@intel.com>
 Date: Thu, 12 Apr 2018 07:54:48 +1000
-Subject: [PATCH 02/20] staging: lustre: convert lov_pool to use rhashtable
+Subject: [PATCH 01/20] staging: lustre: ptlrpc: convert conn_hash to
+ rhashtable
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152348368857.12394.13530263723383915776.stgit@noble>
+Message-ID: <152348368853.12394.3972511682718703007.stgit@noble>
 In-Reply-To: <152348312863.12394.11915752362061083241.stgit@noble>
 References: <152348312863.12394.11915752362061083241.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -40,366 +41,289 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597488475129562882?=
-X-GMAIL-MSGID: =?utf-8?q?1597488475129562882?=
+X-GMAIL-THRID: =?utf-8?q?1597488467219482696?=
+X-GMAIL-MSGID: =?utf-8?q?1597488467219482696?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The pools hashtable can be implemented using
-the rhashtable implementation in lib.
-This has the benefit that lookups are lock-free.
+Linux has a resizeable hashtable implementation in lib,
+so we should use that instead of having one in libcfs.
 
-We need to use kfree_rcu() to free a pool so
-that a lookup racing with a deletion will not access
-freed memory.
+This patch converts the ptlrpc conn_hash to use rhashtable.
+In the process we gain lockless lookup.
 
-rhashtable has no combined lookup-and-delete interface,
-but as the lookup is lockless and the chains are short,
-this brings little cost.  Even if a lookup finds a pool,
-we must be prepared for the delete to fail to find it,
-as we might race with another thread doing a delete.
-
-We use atomic_inc_not_zero() after finding a pool in the
-hash table and if that fails, we must have raced with a
-deletion, so we treat the lookup as a failure.
-
-Use hashlen_string() rather than a hand-crafted hash
-function.
-Note that the pool_name, and the search key, are
-guaranteed to be nul terminated.
+As connections are never deleted until the hash table is destroyed,
+there is no need to count the reference in the hash table.  There
+is also no need to enable automatic_shrinking.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- drivers/staging/lustre/lustre/include/obd.h        |    4 -
+ drivers/staging/lustre/lustre/include/lustre_net.h |    4 
  .../staging/lustre/lustre/include/obd_support.h    |    3 
- drivers/staging/lustre/lustre/lov/lov_internal.h   |   11 +
- drivers/staging/lustre/lustre/lov/lov_obd.c        |   12 +-
- drivers/staging/lustre/lustre/lov/lov_pool.c       |  159 ++++++++------------
- 5 files changed, 80 insertions(+), 109 deletions(-)
+ drivers/staging/lustre/lustre/ptlrpc/connection.c  |  164 +++++++-------------
+ 3 files changed, 64 insertions(+), 107 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/include/obd.h b/drivers/staging/lustre/lustre/include/obd.h
-index f1233ca7d337..ad265db48b76 100644
---- a/drivers/staging/lustre/lustre/include/obd.h
-+++ b/drivers/staging/lustre/lustre/include/obd.h
-@@ -46,6 +46,8 @@
- #include <lustre_intent.h>
- #include <cl_object.h>
+diff --git a/drivers/staging/lustre/lustre/include/lustre_net.h b/drivers/staging/lustre/lustre/include/lustre_net.h
+index d13db55b7242..35b43a77eb18 100644
+--- a/drivers/staging/lustre/lustre/include/lustre_net.h
++++ b/drivers/staging/lustre/lustre/include/lustre_net.h
+@@ -67,6 +67,8 @@
+ #include <obd_support.h>
+ #include <uapi/linux/lustre/lustre_ver.h>
  
 +#include <linux/rhashtable.h>
 +
- #define MAX_OBD_DEVICES 8192
+ /* MD flags we _always_ use */
+ #define PTLRPC_MD_OPTIONS  0
  
- struct osc_async_rc {
-@@ -383,7 +385,7 @@ struct lov_obd {
- 	__u32		   lov_tgt_size;   /* size of tgts array */
- 	int		     lov_connects;
- 	int		     lov_pool_count;
--	struct cfs_hash	     *lov_pools_hash_body; /* used for key access */
-+	struct rhashtable	lov_pools_hash_body; /* used for key access */
- 	struct list_head	lov_pool_list; /* used for sequential access */
- 	struct dentry		*lov_pool_debugfs_entry;
- 	enum lustre_sec_part    lov_sp_me;
+@@ -286,7 +288,7 @@ struct ptlrpc_replay_async_args {
+  */
+ struct ptlrpc_connection {
+ 	/** linkage for connections hash table */
+-	struct hlist_node	c_hash;
++	struct rhash_head	c_hash;
+ 	/** Our own lnet nid for this connection */
+ 	lnet_nid_t	      c_self;
+ 	/** Remote side nid for this connection */
 diff --git a/drivers/staging/lustre/lustre/include/obd_support.h b/drivers/staging/lustre/lustre/include/obd_support.h
-index aebcab191442..730a6ee71565 100644
+index eb2d6cb6b40b..aebcab191442 100644
 --- a/drivers/staging/lustre/lustre/include/obd_support.h
 +++ b/drivers/staging/lustre/lustre/include/obd_support.h
-@@ -61,9 +61,6 @@ extern atomic_long_t obd_dirty_transit_pages;
- extern char obd_jobid_var[];
- 
- /* Some hash init argument constants */
--#define HASH_POOLS_BKT_BITS 3
--#define HASH_POOLS_CUR_BITS 3
--#define HASH_POOLS_MAX_BITS 7
+@@ -67,9 +67,6 @@ extern char obd_jobid_var[];
  #define HASH_UUID_BKT_BITS 5
  #define HASH_UUID_CUR_BITS 7
  #define HASH_UUID_MAX_BITS 12
-diff --git a/drivers/staging/lustre/lustre/lov/lov_internal.h b/drivers/staging/lustre/lustre/lov/lov_internal.h
-index 27f60dd7ab9a..47042f27ca90 100644
---- a/drivers/staging/lustre/lustre/lov/lov_internal.h
-+++ b/drivers/staging/lustre/lustre/lov/lov_internal.h
-@@ -149,11 +149,16 @@ struct pool_desc {
- 	char			 pool_name[LOV_MAXPOOLNAME + 1];
- 	struct ost_pool		 pool_obds;
- 	atomic_t		 pool_refcount;
--	struct hlist_node	 pool_hash;		/* access by poolname */
--	struct list_head	 pool_list;		/* serial access */
-+	struct rhash_head	 pool_hash;		/* access by poolname */
-+	union {
-+		struct list_head	pool_list;	/* serial access */
-+		struct rcu_head		rcu;		/* delayed free */
-+	};
- 	struct dentry		*pool_debugfs_entry;	/* file in debugfs */
- 	struct obd_device	*pool_lobd;		/* owner */
- };
-+int lov_pool_hash_init(struct rhashtable *tbl);
-+void lov_pool_hash_destroy(struct rhashtable *tbl);
+-#define HASH_CONN_BKT_BITS 5
+-#define HASH_CONN_CUR_BITS 5
+-#define HASH_CONN_MAX_BITS 15
+ /* Timeout definitions */
+ #define OBD_TIMEOUT_DEFAULT	     100
+ /* Time to wait for all clients to reconnect during recovery (hard limit) */
+diff --git a/drivers/staging/lustre/lustre/ptlrpc/connection.c b/drivers/staging/lustre/lustre/ptlrpc/connection.c
+index dfdb4587d49d..fb35a89ca6c6 100644
+--- a/drivers/staging/lustre/lustre/ptlrpc/connection.c
++++ b/drivers/staging/lustre/lustre/ptlrpc/connection.c
+@@ -38,8 +38,41 @@
  
- struct lov_request {
- 	struct obd_info	  rq_oi;
-@@ -241,8 +246,6 @@ void lprocfs_lov_init_vars(struct lprocfs_static_vars *lvars);
- /* lov_cl.c */
- extern struct lu_device_type lov_device_type;
+ #include "ptlrpc_internal.h"
  
--/* pools */
--extern struct cfs_hash_ops pool_hash_operations;
- /* ost_pool methods */
- int lov_ost_pool_init(struct ost_pool *op, unsigned int count);
- int lov_ost_pool_extend(struct ost_pool *op, unsigned int min_count);
-diff --git a/drivers/staging/lustre/lustre/lov/lov_obd.c b/drivers/staging/lustre/lustre/lov/lov_obd.c
-index 355e87ecc62d..94da35e673f7 100644
---- a/drivers/staging/lustre/lustre/lov/lov_obd.c
-+++ b/drivers/staging/lustre/lustre/lov/lov_obd.c
-@@ -795,15 +795,11 @@ int lov_setup(struct obd_device *obd, struct lustre_cfg *lcfg)
- 
- 	init_rwsem(&lov->lov_notify_lock);
- 
--	lov->lov_pools_hash_body = cfs_hash_create("POOLS", HASH_POOLS_CUR_BITS,
--						   HASH_POOLS_MAX_BITS,
--						   HASH_POOLS_BKT_BITS, 0,
--						   CFS_HASH_MIN_THETA,
--						   CFS_HASH_MAX_THETA,
--						   &pool_hash_operations,
--						   CFS_HASH_DEFAULT);
- 	INIT_LIST_HEAD(&lov->lov_pool_list);
- 	lov->lov_pool_count = 0;
-+	rc = lov_pool_hash_init(&lov->lov_pools_hash_body);
-+	if (rc)
-+		goto out;
- 	rc = lov_ost_pool_init(&lov->lov_packed, 0);
- 	if (rc)
- 		goto out;
-@@ -839,7 +835,7 @@ static int lov_cleanup(struct obd_device *obd)
- 		/* coverity[overrun-buffer-val] */
- 		lov_pool_del(obd, pool->pool_name);
- 	}
--	cfs_hash_putref(lov->lov_pools_hash_body);
-+	lov_pool_hash_destroy(&lov->lov_pools_hash_body);
- 	lov_ost_pool_free(&lov->lov_packed);
- 
- 	lprocfs_obd_cleanup(obd);
-diff --git a/drivers/staging/lustre/lustre/lov/lov_pool.c b/drivers/staging/lustre/lustre/lov/lov_pool.c
-index ecd9329cd073..b673b4fd305b 100644
---- a/drivers/staging/lustre/lustre/lov/lov_pool.c
-+++ b/drivers/staging/lustre/lustre/lov/lov_pool.c
-@@ -49,6 +49,28 @@
- #define pool_tgt(_p, _i) \
- 		_p->pool_lobd->u.lov.lov_tgts[_p->pool_obds.op_array[_i]]
- 
-+static u32 pool_hashfh(const void *data, u32 len, u32 seed)
+-static struct cfs_hash *conn_hash;
+-static struct cfs_hash_ops conn_hash_ops;
++static struct rhashtable conn_hash;
++
++/*
++ * struct lnet_process_id may contain unassigned bytes which might not
++ * be zero, so we cannot just hash and compare bytes.
++ */
++
++static u32 lnet_process_id_hash(const void *data, u32 len, u32 seed)
 +{
-+	const char *pool_name = data;
-+	return hashlen_hash(hashlen_string((void*)(unsigned long)seed, pool_name));
++	const struct lnet_process_id *lpi = data;
++
++	seed = hash_32(seed ^ lpi->pid, 32);
++	seed ^= hash_64(lpi->nid, 32);
++	return seed;
 +}
 +
-+static int pool_cmpfn(struct rhashtable_compare_arg *arg, const void *obj)
++static int lnet_process_id_cmp(struct rhashtable_compare_arg *arg,
++			       const void *obj)
 +{
-+	const struct pool_desc *pool = obj;
-+	const char *pool_name = arg->key;
-+	return strcmp(pool_name, pool->pool_name);
++	const struct lnet_process_id *lpi = arg->key;
++	const struct ptlrpc_connection *con = obj;
++
++	if (lpi->nid == con->c_peer.nid &&
++	    lpi->pid == con->c_peer.pid)
++		return 0;
++	return -ESRCH;
 +}
 +
-+static const struct rhashtable_params pools_hash_params = {
-+	.key_len	= 1, /* actually variable */
-+	.key_offset	= offsetof(struct pool_desc, pool_name),
-+	.head_offset	= offsetof(struct pool_desc, pool_hash),
-+	.hashfn		= pool_hashfh,
-+	.obj_cmpfn	= pool_cmpfn,
-+	.automatic_shrinking = true,
++static const struct rhashtable_params conn_hash_params = {
++	.key_len	= 1, /* actually variable-length */
++	.key_offset	= offsetof(struct ptlrpc_connection, c_peer),
++	.head_offset	= offsetof(struct ptlrpc_connection, c_hash),
++	.hashfn		= lnet_process_id_hash,
++	.obj_cmpfn	= lnet_process_id_cmp,
 +};
-+
- static void lov_pool_getref(struct pool_desc *pool)
+ 
+ struct ptlrpc_connection *
+ ptlrpc_connection_get(struct lnet_process_id peer, lnet_nid_t self,
+@@ -47,9 +80,11 @@ ptlrpc_connection_get(struct lnet_process_id peer, lnet_nid_t self,
  {
- 	CDEBUG(D_INFO, "pool %p\n", pool);
-@@ -59,96 +81,13 @@ void lov_pool_putref(struct pool_desc *pool)
- {
- 	CDEBUG(D_INFO, "pool %p\n", pool);
- 	if (atomic_dec_and_test(&pool->pool_refcount)) {
--		LASSERT(hlist_unhashed(&pool->pool_hash));
- 		LASSERT(list_empty(&pool->pool_list));
- 		LASSERT(!pool->pool_debugfs_entry);
- 		lov_ost_pool_free(&pool->pool_obds);
--		kfree(pool);
--	}
+ 	struct ptlrpc_connection *conn, *conn2;
+ 
+-	conn = cfs_hash_lookup(conn_hash, &peer);
+-	if (conn)
++	conn = rhashtable_lookup_fast(&conn_hash, &peer, conn_hash_params);
++	if (conn) {
++		ptlrpc_connection_addref(conn);
+ 		goto out;
++	}
+ 
+ 	conn = kzalloc(sizeof(*conn), GFP_NOFS);
+ 	if (!conn)
+@@ -57,7 +92,6 @@ ptlrpc_connection_get(struct lnet_process_id peer, lnet_nid_t self,
+ 
+ 	conn->c_peer = peer;
+ 	conn->c_self = self;
+-	INIT_HLIST_NODE(&conn->c_hash);
+ 	atomic_set(&conn->c_refcount, 1);
+ 	if (uuid)
+ 		obd_str2uuid(&conn->c_remote_uuid, uuid->uuid);
+@@ -65,17 +99,18 @@ ptlrpc_connection_get(struct lnet_process_id peer, lnet_nid_t self,
+ 	/*
+ 	 * Add the newly created conn to the hash, on key collision we
+ 	 * lost a racing addition and must destroy our newly allocated
+-	 * connection.  The object which exists in the has will be
+-	 * returned and may be compared against out object.
+-	 */
+-	/* In the function below, .hs_keycmp resolves to
+-	 * conn_keycmp()
++	 * connection.  The object which exists in the hash will be
++	 * returned, otherwise NULL is returned on success.
+ 	 */
+-	/* coverity[overrun-buffer-val] */
+-	conn2 = cfs_hash_findadd_unique(conn_hash, &peer, &conn->c_hash);
+-	if (conn != conn2) {
++	conn2 = rhashtable_lookup_get_insert_fast(&conn_hash, &conn->c_hash,
++						  conn_hash_params);
++	if (conn2 != NULL) {
++		/* insertion failed */
+ 		kfree(conn);
++		if (IS_ERR(conn2))
++			return NULL;
+ 		conn = conn2;
++		ptlrpc_connection_addref(conn);
+ 	}
+ out:
+ 	CDEBUG(D_INFO, "conn=%p refcount %d to %s\n",
+@@ -91,7 +126,7 @@ int ptlrpc_connection_put(struct ptlrpc_connection *conn)
+ 	if (!conn)
+ 		return rc;
+ 
+-	LASSERT(atomic_read(&conn->c_refcount) > 1);
++	LASSERT(atomic_read(&conn->c_refcount) > 0);
+ 
+ 	/*
+ 	 * We do not remove connection from hashtable and
+@@ -109,7 +144,7 @@ int ptlrpc_connection_put(struct ptlrpc_connection *conn)
+ 	 * when ptlrpc_connection_fini()->lh_exit->conn_exit()
+ 	 * path is called.
+ 	 */
+-	if (atomic_dec_return(&conn->c_refcount) == 1)
++	if (atomic_dec_return(&conn->c_refcount) == 0)
+ 		rc = 1;
+ 
+ 	CDEBUG(D_INFO, "PUT conn=%p refcount %d to %s\n",
+@@ -130,88 +165,11 @@ ptlrpc_connection_addref(struct ptlrpc_connection *conn)
+ 	return conn;
+ }
+ 
+-int ptlrpc_connection_init(void)
+-{
+-	conn_hash = cfs_hash_create("CONN_HASH",
+-				    HASH_CONN_CUR_BITS,
+-				    HASH_CONN_MAX_BITS,
+-				    HASH_CONN_BKT_BITS, 0,
+-				    CFS_HASH_MIN_THETA,
+-				    CFS_HASH_MAX_THETA,
+-				    &conn_hash_ops, CFS_HASH_DEFAULT);
+-	if (!conn_hash)
+-		return -ENOMEM;
+-
+-	return 0;
 -}
 -
--static void lov_pool_putref_locked(struct pool_desc *pool)
+-void ptlrpc_connection_fini(void)
 -{
--	CDEBUG(D_INFO, "pool %p\n", pool);
--	LASSERT(atomic_read(&pool->pool_refcount) > 1);
--
--	atomic_dec(&pool->pool_refcount);
+-	cfs_hash_putref(conn_hash);
 -}
 -
 -/*
-- * hash function using a Rotating Hash algorithm
-- * Knuth, D. The Art of Computer Programming,
-- * Volume 3: Sorting and Searching,
-- * Chapter 6.4.
-- * Addison Wesley, 1973
+- * Hash operations for net_peer<->connection
 - */
--static __u32 pool_hashfn(struct cfs_hash *hash_body, const void *key,
--			 unsigned int mask)
+-static unsigned int
+-conn_hashfn(struct cfs_hash *hs, const void *key, unsigned int mask)
 -{
--	int i;
--	__u32 result;
--	char *poolname;
--
--	result = 0;
--	poolname = (char *)key;
--	for (i = 0; i < LOV_MAXPOOLNAME; i++) {
--		if (poolname[i] == '\0')
--			break;
--		result = (result << 4) ^ (result >> 28) ^  poolname[i];
-+		kfree_rcu(pool, rcu);
- 	}
--	return (result % mask);
+-	return cfs_hash_djb2_hash(key, sizeof(struct lnet_process_id), mask);
 -}
 -
--static void *pool_key(struct hlist_node *hnode)
+-static int
+-conn_keycmp(const void *key, struct hlist_node *hnode)
 -{
--	struct pool_desc *pool;
+-	struct ptlrpc_connection *conn;
+-	const struct lnet_process_id *conn_key;
 -
--	pool = hlist_entry(hnode, struct pool_desc, pool_hash);
--	return pool->pool_name;
+-	LASSERT(key);
+-	conn_key = key;
+-	conn = hlist_entry(hnode, struct ptlrpc_connection, c_hash);
+-
+-	return conn_key->nid == conn->c_peer.nid &&
+-	       conn_key->pid == conn->c_peer.pid;
 -}
 -
--static int pool_hashkey_keycmp(const void *key, struct hlist_node *compared_hnode)
+-static void *
+-conn_key(struct hlist_node *hnode)
 -{
--	char *pool_name;
--	struct pool_desc *pool;
+-	struct ptlrpc_connection *conn;
 -
--	pool_name = (char *)key;
--	pool = hlist_entry(compared_hnode, struct pool_desc, pool_hash);
--	return !strncmp(pool_name, pool->pool_name, LOV_MAXPOOLNAME);
+-	conn = hlist_entry(hnode, struct ptlrpc_connection, c_hash);
+-	return &conn->c_peer;
 -}
 -
--static void *pool_hashobject(struct hlist_node *hnode)
+-static void *
+-conn_object(struct hlist_node *hnode)
 -{
--	return hlist_entry(hnode, struct pool_desc, pool_hash);
+-	return hlist_entry(hnode, struct ptlrpc_connection, c_hash);
 -}
 -
--static void pool_hashrefcount_get(struct cfs_hash *hs, struct hlist_node *hnode)
--{
--	struct pool_desc *pool;
--
--	pool = hlist_entry(hnode, struct pool_desc, pool_hash);
--	lov_pool_getref(pool);
--}
--
--static void pool_hashrefcount_put_locked(struct cfs_hash *hs,
--					 struct hlist_node *hnode)
--{
--	struct pool_desc *pool;
--
--	pool = hlist_entry(hnode, struct pool_desc, pool_hash);
--	lov_pool_putref_locked(pool);
- }
- 
--struct cfs_hash_ops pool_hash_operations = {
--	.hs_hash	= pool_hashfn,
--	.hs_key		= pool_key,
--	.hs_keycmp      = pool_hashkey_keycmp,
--	.hs_object      = pool_hashobject,
--	.hs_get		= pool_hashrefcount_get,
--	.hs_put_locked  = pool_hashrefcount_put_locked,
--
--};
--
- /*
-  * pool debugfs seq_file methods
-  */
-@@ -396,6 +335,23 @@ int lov_ost_pool_free(struct ost_pool *op)
- 	return 0;
- }
- 
-+static void
-+pools_hash_exit(void *vpool, void *data)
-+{
-+	struct pool_desc *pool = vpool;
-+	lov_pool_putref(pool);
-+}
-+
-+int lov_pool_hash_init(struct rhashtable *tbl)
-+{
-+	return rhashtable_init(tbl, &pools_hash_params);
-+}
-+
-+void lov_pool_hash_destroy(struct rhashtable *tbl)
-+{
-+	rhashtable_free_and_destroy(tbl, pools_hash_exit, NULL);
-+}
-+
- int lov_pool_new(struct obd_device *obd, char *poolname)
+ static void
+-conn_get(struct cfs_hash *hs, struct hlist_node *hnode)
++conn_exit(void *vconn, void *data)
  {
- 	struct lov_obd *lov;
-@@ -421,8 +377,6 @@ int lov_pool_new(struct obd_device *obd, char *poolname)
- 	if (rc)
- 		goto out_err;
+-	struct ptlrpc_connection *conn;
++	struct ptlrpc_connection *conn = vconn;
  
--	INIT_HLIST_NODE(&new_pool->pool_hash);
+-	conn = hlist_entry(hnode, struct ptlrpc_connection, c_hash);
+-	atomic_inc(&conn->c_refcount);
+-}
 -
- 	/* get ref for debugfs file */
- 	lov_pool_getref(new_pool);
- 	new_pool->pool_debugfs_entry = ldebugfs_add_simple(
-@@ -443,11 +397,16 @@ int lov_pool_new(struct obd_device *obd, char *poolname)
- 	lov->lov_pool_count++;
- 	spin_unlock(&obd->obd_dev_lock);
+-static void
+-conn_put_locked(struct cfs_hash *hs, struct hlist_node *hnode)
+-{
+-	struct ptlrpc_connection *conn;
+-
+-	conn = hlist_entry(hnode, struct ptlrpc_connection, c_hash);
+-	atomic_dec(&conn->c_refcount);
+-}
+-
+-static void
+-conn_exit(struct cfs_hash *hs, struct hlist_node *hnode)
+-{
+-	struct ptlrpc_connection *conn;
+-
+-	conn = hlist_entry(hnode, struct ptlrpc_connection, c_hash);
+ 	/*
+ 	 * Nothing should be left. Connection user put it and
+ 	 * connection also was deleted from table by this time
+@@ -223,12 +181,12 @@ conn_exit(struct cfs_hash *hs, struct hlist_node *hnode)
+ 	kfree(conn);
+ }
  
--	/* add to find only when it fully ready  */
--	rc = cfs_hash_add_unique(lov->lov_pools_hash_body, poolname,
--				 &new_pool->pool_hash);
-+	/* Add to hash table only when it is fully ready.  */
-+	rc = rhashtable_lookup_insert_fast(&lov->lov_pools_hash_body,
-+					   &new_pool->pool_hash, pools_hash_params);
- 	if (rc) {
--		rc = -EEXIST;
-+		if (rc != -EEXIST)
-+			/*
-+			 * Hide -E2BIG and -EBUSY which
-+			 * are not helpful.
-+			 */
-+			rc = -ENOMEM;
- 		goto out_err;
- 	}
- 
-@@ -476,7 +435,13 @@ int lov_pool_del(struct obd_device *obd, char *poolname)
- 	lov = &obd->u.lov;
- 
- 	/* lookup and kill hash reference */
--	pool = cfs_hash_del_key(lov->lov_pools_hash_body, poolname);
-+	rcu_read_lock();
-+	pool = rhashtable_lookup(&lov->lov_pools_hash_body, poolname, pools_hash_params);
-+	if (pool)
-+		if (rhashtable_remove_fast(&lov->lov_pools_hash_body,
-+					   &pool->pool_hash, pools_hash_params) != 0)
-+			pool = NULL;
-+	rcu_read_unlock();
- 	if (!pool)
- 		return -ENOENT;
- 
-@@ -507,7 +472,11 @@ int lov_pool_add(struct obd_device *obd, char *poolname, char *ostname)
- 
- 	lov = &obd->u.lov;
- 
--	pool = cfs_hash_lookup(lov->lov_pools_hash_body, poolname);
-+	rcu_read_lock();
-+	pool = rhashtable_lookup(&lov->lov_pools_hash_body, poolname, pools_hash_params);
-+	if (pool && !atomic_inc_not_zero(&pool->pool_refcount))
-+		pool = NULL;
-+	rcu_read_unlock();
- 	if (!pool)
- 		return -ENOENT;
- 
-@@ -551,7 +520,11 @@ int lov_pool_remove(struct obd_device *obd, char *poolname, char *ostname)
- 
- 	lov = &obd->u.lov;
- 
--	pool = cfs_hash_lookup(lov->lov_pools_hash_body, poolname);
-+	rcu_read_lock();
-+	pool = rhashtable_lookup(&lov->lov_pools_hash_body, poolname, pools_hash_params);
-+	if (pool && !atomic_inc_not_zero(&pool->pool_refcount))
-+		pool = NULL;
-+	rcu_read_unlock();
- 	if (!pool)
- 		return -ENOENT;
- 
+-static struct cfs_hash_ops conn_hash_ops = {
+-	.hs_hash	= conn_hashfn,
+-	.hs_keycmp      = conn_keycmp,
+-	.hs_key		= conn_key,
+-	.hs_object      = conn_object,
+-	.hs_get		= conn_get,
+-	.hs_put_locked  = conn_put_locked,
+-	.hs_exit	= conn_exit,
+-};
++int ptlrpc_connection_init(void)
++{
++	return rhashtable_init(&conn_hash, &conn_hash_params);
++}
++
++void ptlrpc_connection_fini(void)
++{
++	rhashtable_free_and_destroy(&conn_hash, conn_exit, NULL);
++}
