@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx485cVX+dd93ltTtZLif6oi9jMEFwtYCqGvSh8fDrfbg0IvdMsp994E+xSDX33UedeJbJ5od
-ARC-Seal: i=1; a=rsa-sha256; t=1523472699; cv=none;
+X-Google-Smtp-Source: AIpwx4++2/882xn2BePjMypZfXs5QX3HPw6IfjytBh/qa71ZhoPwBNLxASXaedb94vyroHlzTbjl
+ARC-Seal: i=1; a=rsa-sha256; t=1523472695; cv=none;
         d=google.com; s=arc-20160816;
-        b=YspBGxpdK6OuctzqulfMTtkqAJ1oV4wT7im0msLDrPqsc/8U0JL8qvFZbqlbii17P6
-         tSlk1iFg4eM0FXKkAf116GqHHr4zVPRo1xhCiuWOoupEvk4zh20lZBm6lIywic2Cyvet
-         9Cz7J9CYirV/5rofY7r8g4T9zYoQCf5xnOgLJKgVLXDM5ke4Gt8QcLD2WqnbkN5f97as
-         /+gwNIMhYM5k/b3vxhOiZVo4sMgSfqVTv0etYQ0LQ+OHjQ8vHaTbMIRQ3C1jQHVYcT/g
-         z8C25V8F35C0gzWfEclHbt8X64FboIt66ILQ09S9nD6RA6jV50OtAqwAlKWlNbyGYoCX
-         zwSQ==
+        b=ieM7ne/UQpU2g+3fT9fCJrEu8+2JN5GSx4xmg5D1vITDiICV/S6oMESLpw0nMQhJ30
+         4IMbva32bzQqKDxV9QKy/3+nFYsfhhv7rEuZTvNYoKBG5AGyhaE96nysALLD14sE5DI9
+         NkUKtWjDMFH+00VT2i4YF0GM4qYiuHuOzvU/Q/0oIL6dVnhO4vEmejavkgHEgaoelBUN
+         SlQPi+lm1i/dUcKFnKvv1eiOcjyaFDjzBuovtKtoRbI5mbTrJxHX0cCUNzB68731NIOn
+         yoqxMPo4zPTcNSFAyeYYKvTc1+/AIqFyuOhYv5scrynjEO+rGQUYLKOK2r5kxnKadIRu
+         W05Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zcEWKjWdReODeTlY2m7QLLLul6xZ/RxrEpJTIgpGaDY=;
-        b=pFnvInqVuAwj4ud77G9pYcvLiyp7KGbeXZHoBzp65bxW75Di0T6FxP4OFxKP/By5JN
-         Tvgn7op9EuDu5XBbZk/28fnTbqd6pWFqnbHNEVDio3ZFDHcYjjvUKqw09wciTC7Lo0dV
-         d+OGoLrs+HJMqu7v2mqdyJ3v59Wy2U2u0fUh1cqSoJ31U34PL5xVD16F2Y5RndYCg7XF
-         YBINmP/v7Dm6ZHN8g0RqxeNYaA1sVWgtYvtnOPW4DyWg1H76OmB6ho7eiLS3+LHwW6lP
-         qxhtA8bGPPkz8Zf3RQvpDDn7qoF5zlkpUar7l7Cxpo65sPD6rJGUja6pArX5A1PPGRE7
-         HN5Q==
+        bh=DKh+pCxFAoW7Tc2DYa5EyyL8+xlVsdLZ47dE3kQW1ls=;
+        b=A33sSd09Dx6u9BQV5mFCJ95QVJlDMuMZzAkc46jTdsTHiZYNWpSK03G2t8xaYBFqb2
+         tfD7BHA7AONHc4zvbMYNYjQ8kSp++Urcuna44WGpDmOktsV9x+mDxvMWyzHWxjYiTpXm
+         WqrQ4T08xRPFnH7HIn/CuNphfnMD6nq8VD3kilOat96LPT19sbMZMWzaO9YEtR185gvC
+         P5NZljZzZ65F4/7uaTnp7H5UlVpJMiugs6vr/KIhEnlmCEuej6DTu2Jxo1pysLDudrSW
+         RH3CS6fK0bOvSkeM6IyR97qLfLFj7Pc4d0/S8JZVLc60kMtNPaqx97MjOBjA4/jgmI6r
+         41Pw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Sedat Dilek <sedat.dilek@gmail.com>,
-	Szymon Janc <szymon.janc@codecoup.pl>,
+	Lorenzo Bianconi <lorenzo.bianconi@st.com>,
+	Jonathan Cameron <jic23@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 143/190] Bluetooth: Send HCI Set Event Mask Page 2 command only when needed
-Date: Wed, 11 Apr 2018 20:36:29 +0200
-Message-Id: <20180411183600.980484922@linuxfoundation.org>
+Subject: [PATCH 4.4 142/190] iio: magnetometer: st_magn_spi: fix spi_device_id table
+Date: Wed, 11 Apr 2018 20:36:28 +0200
+Message-Id: <20180411183600.927391137@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476329385636783?=
-X-GMAIL-MSGID: =?utf-8?q?1597476908779411838?=
+X-GMAIL-THRID: =?utf-8?q?1597476297255484275?=
+X-GMAIL-MSGID: =?utf-8?q?1597476905350718894?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,120 +50,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marcel Holtmann <marcel@holtmann.org>
+From: Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>
 
 
-[ Upstream commit 313f6888c8fbb1bc8b36c9012ce4e1de848df696 ]
+[ Upstream commit c83761ff0aac954aa368c623bb0f0d1a3214e834 ]
 
-The Broadcom BCM20702 Bluetooth controller in ThinkPad-T530 devices
-report support for the Set Event Mask Page 2 command, but actually do
-return an error when trying to use it.
+Remove LSM303DLHC, LSM303DLM from st_magn_id_table since LSM303DL series
+does not support spi interface
 
-  < HCI Command: Read Local Supported Commands (0x04|0x0002) plen 0
-  > HCI Event: Command Complete (0x0e) plen 68
-       Read Local Supported Commands (0x04|0x0002) ncmd 1
-         Status: Success (0x00)
-         Commands: 162 entries
-           ...
-           Set Event Mask Page 2 (Octet 22 - Bit 2)
-           ...
-
-  < HCI Command: Set Event Mask Page 2 (0x03|0x0063) plen 8
-         Mask: 0x0000000000000000
-  > HCI Event: Command Complete (0x0e) plen 4
-       Set Event Mask Page 2 (0x03|0x0063) ncmd 1
-         Status: Unknown HCI Command (0x01)
-
-Since these controllers do not support any feature that would require
-the event mask page 2 to be modified, it is safe to not send this
-command at all. The default value is all bits set to zero.
-
-T:  Bus=01 Lev=02 Prnt=02 Port=03 Cnt=03 Dev#=  9 Spd=12   MxCh= 0
-D:  Ver= 2.00 Cls=ff(vend.) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0a5c ProdID=21e6 Rev= 1.12
-S:  Manufacturer=Broadcom Corp
-S:  Product=BCM20702A0
-S:  SerialNumber=F82FA8E8CFC0
-C:* #Ifs= 4 Cfg#= 1 Atr=e0 MxPwr=  0mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=ff(vend.) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=ff(vend.) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=ff(vend.) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=ff(vend.) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=ff(vend.) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=btusb
-E:  Ad=84(I) Atr=02(Bulk) MxPS=  32 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS=  32 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 0 Cls=fe(app. ) Sub=01 Prot=01 Driver=(none)
-
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-Signed-off-by: Szymon Janc <szymon.janc@codecoup.pl>
+Fixes: 872e79add756 (iio: magn: Add STMicroelectronics magn driver)
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@st.com>
+Signed-off-by: Jonathan Cameron <jic23@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bluetooth/hci_core.c |   17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ drivers/iio/magnetometer/st_magn_spi.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/net/bluetooth/hci_core.c
-+++ b/net/bluetooth/hci_core.c
-@@ -716,6 +716,7 @@ static void hci_set_event_mask_page_2(st
- {
- 	struct hci_dev *hdev = req->hdev;
- 	u8 events[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-+	bool changed = false;
- 
- 	/* If Connectionless Slave Broadcast master role is supported
- 	 * enable all necessary events for it.
-@@ -725,6 +726,7 @@ static void hci_set_event_mask_page_2(st
- 		events[1] |= 0x80;	/* Synchronization Train Complete */
- 		events[2] |= 0x10;	/* Slave Page Response Timeout */
- 		events[2] |= 0x20;	/* CSB Channel Map Change */
-+		changed = true;
- 	}
- 
- 	/* If Connectionless Slave Broadcast slave role is supported
-@@ -735,13 +737,24 @@ static void hci_set_event_mask_page_2(st
- 		events[2] |= 0x02;	/* CSB Receive */
- 		events[2] |= 0x04;	/* CSB Timeout */
- 		events[2] |= 0x08;	/* Truncated Page Complete */
-+		changed = true;
- 	}
- 
- 	/* Enable Authenticated Payload Timeout Expired event if supported */
--	if (lmp_ping_capable(hdev) || hdev->le_features[0] & HCI_LE_PING)
-+	if (lmp_ping_capable(hdev) || hdev->le_features[0] & HCI_LE_PING) {
- 		events[2] |= 0x80;
-+		changed = true;
-+	}
- 
--	hci_req_add(req, HCI_OP_SET_EVENT_MASK_PAGE_2, sizeof(events), events);
-+	/* Some Broadcom based controllers indicate support for Set Event
-+	 * Mask Page 2 command, but then actually do not support it. Since
-+	 * the default value is all bits set to zero, the command is only
-+	 * required if the event mask has to be changed. In case no change
-+	 * to the event mask is needed, skip this command.
-+	 */
-+	if (changed)
-+		hci_req_add(req, HCI_OP_SET_EVENT_MASK_PAGE_2,
-+			    sizeof(events), events);
+--- a/drivers/iio/magnetometer/st_magn_spi.c
++++ b/drivers/iio/magnetometer/st_magn_spi.c
+@@ -48,8 +48,6 @@ static int st_magn_spi_remove(struct spi
  }
  
- static void hci_init3_req(struct hci_request *req, unsigned long opt)
+ static const struct spi_device_id st_magn_id_table[] = {
+-	{ LSM303DLHC_MAGN_DEV_NAME },
+-	{ LSM303DLM_MAGN_DEV_NAME },
+ 	{ LIS3MDL_MAGN_DEV_NAME },
+ 	{ LSM303AGR_MAGN_DEV_NAME },
+ 	{},
