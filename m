@@ -1,61 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752870AbeDKDYc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 23:24:32 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:42277 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752103AbeDKDYa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 23:24:30 -0400
-X-Google-Smtp-Source: AIpwx48sYAF3wDQSk40452XMO9k9bqanzy5FYImKOlygqLCcQi4/Nzphd/Y0OJpK5PW8JbyPApKcMQ==
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-To: mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH 3/3] media: dvb-usb: Replace GFP_ATOMIC with GFP_KERNEL in usb_isoc_urb_init
-Date: Wed, 11 Apr 2018 11:24:18 +0800
-Message-Id: <1523417058-3161-1-git-send-email-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        id S1752561AbeDKDd3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 23:33:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51702 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751624AbeDKDd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 23:33:27 -0400
+Subject: Re: [PATCH v3 0/2] vhost: fix vhost_vq_access_ok() log check
+To: Stefan Hajnoczi <stefanha@redhat.com>,
+        virtualization@lists.linux-foundation.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, mst@redhat.com,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180411023541.15776-1-stefanha@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <252aa961-3bc0-ab5b-28c6-7de5d579bbd2@redhat.com>
+Date: Wed, 11 Apr 2018 11:33:17 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180411023541.15776-1-stefanha@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-usb_isoc_urb_init() is never called in atomic context.
 
-The call chains ending up at usb_isoc_urb_init() are:
-[1] usb_isoc_urb_init() <- usb_urb_init()
-	<- dvb_usb_adapter_stream_init() <- dvb_usb_adapter_init 
-	<- dvb_usb_init() <- dvb_usb_device_init() <- xxx_probe()
-xxx_probe including ttusb2_probe, vp7045_usb_probe, a800_probe, and so on.
-These xxx_probe() functions are set as ".probe" in struct usb_driver.
-And these functions are not called in atomic context.
 
-Despite never getting called from atomic context,
-usb_isoc_urb_init() calls usb_alloc_urb() with GFP_ATOMIC,
-which does not sleep for allocation.
-GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
-which can sleep and improve the possibility of sucessful allocation.
+On 2018年04月11日 10:35, Stefan Hajnoczi wrote:
+> v3:
+>   * Rebased onto net/master and resolved conflict [DaveM]
+>
+> v2:
+>   * Rewrote the conditional to make the vq access check clearer [Linus]
+>   * Added Patch 2 to make the return type consistent and harder to misuse [Linus]
+>
+> The first patch fixes the vhost virtqueue access check which was recently
+> broken.  The second patch replaces the int return type with bool to prevent
+> future bugs.
+>
+> Stefan Hajnoczi (2):
+>    vhost: fix vhost_vq_access_ok() log check
+>    vhost: return bool from *_access_ok() functions
+>
+>   drivers/vhost/vhost.h |  4 +--
+>   drivers/vhost/vhost.c | 70 ++++++++++++++++++++++++++-------------------------
+>   2 files changed, 38 insertions(+), 36 deletions(-)
+>
 
-This is found by a static analysis tool named DCNS written by myself.
-And I also manually check it.
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/media/usb/dvb-usb/usb-urb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/usb/dvb-usb/usb-urb.c b/drivers/media/usb/dvb-usb/usb-urb.c
-index 8917360..1efa4bd5 100644
---- a/drivers/media/usb/dvb-usb/usb-urb.c
-+++ b/drivers/media/usb/dvb-usb/usb-urb.c
-@@ -177,7 +177,7 @@ static int usb_isoc_urb_init(struct usb_data_stream *stream)
- 		struct urb *urb;
- 		int frame_offset = 0;
- 
--		stream->urb_list[i] = usb_alloc_urb(stream->props.u.isoc.framesperurb, GFP_ATOMIC);
-+		stream->urb_list[i] = usb_alloc_urb(stream->props.u.isoc.framesperurb, GFP_KERNEL);
- 		if (!stream->urb_list[i]) {
- 			deb_mem("not enough memory for urb_alloc_urb!\n");
- 			for (j = 0; j < i; j++)
--- 
-1.9.1
+Thanks
