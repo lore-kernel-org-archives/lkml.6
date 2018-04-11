@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3339499-1523480087-2-6717018396695187484
+X-Cyrus-Session-Id: sloti22d1t05-3308147-1523480070-2-3333377950456156207
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523480086; b=fnGNtVKJMRYEfIeLTxOwp4OjyzlyK2N4LSHnfcLRO/DU8UAM1E
-    jCqjLifgaJQfUiu5V+Slj0eTf4aj7SwzBQVl9017f9Sx7YeVsPUXWpmwUOFnhNAl
-    R+aYPB5kpJwrDjwMKjh5XBjfyIRFWLeGzHdLcfgLUN/TRoKIbxk7VfaPLxI9fVJ8
-    jyzcRKvY0YqjpUno2wCVnvhoX3af29t21eCCzrWSrcihKkJrmCO0s6bNMjDTFD8a
-    OpseI9RhA0NpwlbNXVUnL98VldnH9/kJ5IwmNRZcMv+ZUpTyOIRymPNfzLBY/wEo
-    fojf7xTnyJEaDIxT+7kBSDuGYY9H4HQpJ9ng==
+    1523480070; b=eI7yscNdfXFZFqGs/NfCTSsUnHTBjB4LPpN9t3BAlGThXhaWpH
+    F1tOUoKJ9Pq+JnPbviejoaoEzcqc3WDDzVZN50V3WUl/u9IARkmVn6tztvevazto
+    G+4t7+SkwM/K04kpdcgfbhIpkxlB6QecfyKTblpx5F25CaDh8Afl57sjAEn1+3cz
+    uikKC7RQ66oVxUIlc/PfdVqtMpOY5PZZY4JkuJht+ukpxitXN/eid4oVkJQHhy6G
+    ZgYo31ZIkEwFALCBKrcma38DVV0zqFGM6B8YsyadpVPo1SIEHVvpjEOfwOyBeSM1
+    5ezL/BzZVXEvOuB+Yl4ugumJDb52Nc2ynIdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523480086; bh=ExXYLhIIT+yDY50XQIqLT1A/9pxG3B
-    Ul3xlqZ2kow+8=; b=WmFVyHg7hiMwj8Wi2sqfWRx0xebW554CExbMpKhNQ6afO8
-    TL/sqiWiRXPn9+B/aRIeCnj1NCYzpNEZuDixDS666fz55POmFw1eX5+YR1P2r3Ko
-    nN8T3lba00tetRWDO80vL0oL4tqeC2fD4Ol88k1Ht1ZtgBR7gEYvFhp7fl5yQ6hI
-    LlQpEvp/lpAGCSHd7haDD/UP2XqIaxYBloz8X/DEbdf5UjfOoCR+I2LhDmn+jj9o
-    C6OITvxwwK+2RGP+z/JB693uHA+gfFG4mzW42o+Xuiw2ibRQynJR2BBTCTvfANMy
-    D/yUrXKQOvImlLtTYpsjtLWpDtMesjxX199kdGrQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523480070; bh=JCZuCRjclBTbSTntGtZTnCVdegYWhA
+    kzenoNoQyxVQk=; b=M/1t4HKJGAn7CCMigu1L+MKuVIsh9d4RqFM+Z1PGMJCt34
+    phDTD5z0tbx362LtW1T4pzTuVg+paPFMrJS7slP7fwvkRjmPLkUotxNXB3O/HHU4
+    bg5/Bqa7M7uj7wADuiTYE7++5OmcydqP1rzBnwrsc0BY37c4d1XYPeHlqO+wKr2G
+    oYNLMzvioATpmDkgxkr0Koy1JUVlcoHtLywPyZ86kcPLLMbqvQV9SFSclnrKukXC
+    OJoIXBgecx8lBAWB28Mxn6OT8NtN6BDd/imokIquoM8xZCbst7eXXRvlqKQGfw+S
+    IIpTDV/c8M0kYHZKMSspvPqk947LYBJ/YWq7vD0w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,30 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFcuYdbPMyj2gKzWG9ylLOXixTTyYQ3kdkdxXspA+GE6ts33tbwymp8NbZihM630aNJm0muGLG3IyvVu+NyfbPgVwHQxk+LidGTNkLNLZANmLTdnC11o
-    FzZKO9yszoYUlwMjXF7ZVC2zAU6WGHPRKwhzwuE3wQKBmpeS9vcWK7Z1qGGRR9V/rA7Se+Mu8jqS9LqdOQRuh1iUpbdNDZYMKb3GWNsQWOdPmdcSq7tiyR7t
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfA51gIt1nkGAGtLJKClnV3csL/wll1rsEb5XVq6Az70wfeSO+E2Z/PVY8ho2zc9hxjbWXMtsQVOovF3gubBa6efFGCW6Cso9S4xwuoJbAb6oC2peP+HK
+    r27r3P7ySSbDQJE5y1K6pvlGFIwBkUERMfGw91mkAaQ/PTmaUHS6OUzXDGFwHoPmBTf7MrdBWBWFIJGI2wKYHfUat/G00VhAInG0O0SnUD7QLB2V59IAlLQo
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=DfNHnWVPAAAA:8 a=yPCof4ZbAAAA:8 a=iox4zFpeAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=as_2-ZBmz6qe2MDftmcA:9 a=QEXdDO2ut3YA:10
-    a=rjTVMONInIDnV1a_A2c_:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=Byx-y9mGAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=MK96HyGrqPNBv2a_Q8EA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755887AbeDKUya (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:54:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58466 "EHLO
+        id S932288AbeDKSpE (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:45:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58456 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932287AbeDKSpE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:04 -0400
+        with ESMTP id S932269AbeDKSpB (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Liu Bo <bo.li.liu@oracle.com>, David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 039/190] btrfs: fix incorrect error return ret being passed to mapping_set_error
-Date: Wed, 11 Apr 2018 20:34:45 +0200
-Message-Id: <20180411183552.435466214@linuxfoundation.org>
+Subject: [PATCH 4.4 038/190] usb: dwc3: keystone: check return value
+Date: Wed, 11 Apr 2018 20:34:44 +0200
+Message-Id: <20180411183552.386387381@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -93,35 +92,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Pan Bian <bianpan2016@163.com>
 
 
-[ Upstream commit bff5baf8aa37a97293725a16c03f49872249c07e ]
+[ Upstream commit 018047a1dba7636e1f7fdae2cc290a528991d648 ]
 
-The setting of return code ret should be based on the error code
-passed into function end_extent_writepage and not on ret. Thanks
-to Liu Bo for spotting this mistake in the original fix I submitted.
+Function devm_clk_get() returns an ERR_PTR when it fails. However, in
+function kdwc3_probe(), its return value is not checked, which may
+result in a bad memory access bug. This patch fixes the bug.
 
-Detected by CoverityScan, CID#1414312 ("Logically dead code")
-
-Fixes: 5dca6eea91653e ("Btrfs: mark mapping with error flag to report errors to userspace")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/extent_io.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/dwc3/dwc3-keystone.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -2534,7 +2534,7 @@ int end_extent_writepage(struct page *pa
- 	if (!uptodate) {
- 		ClearPageUptodate(page);
- 		SetPageError(page);
--		ret = ret < 0 ? ret : -EIO;
-+		ret = err < 0 ? err : -EIO;
- 		mapping_set_error(page->mapping, ret);
- 	}
- 	return 0;
+--- a/drivers/usb/dwc3/dwc3-keystone.c
++++ b/drivers/usb/dwc3/dwc3-keystone.c
+@@ -112,6 +112,10 @@ static int kdwc3_probe(struct platform_d
+ 	dev->dma_mask = &kdwc3_dma_mask;
+ 
+ 	kdwc->clk = devm_clk_get(kdwc->dev, "usb");
++	if (IS_ERR(kdwc->clk)) {
++		dev_err(kdwc->dev, "unable to get usb clock\n");
++		return PTR_ERR(kdwc->clk);
++	}
+ 
+ 	error = clk_prepare_enable(kdwc->clk);
+ 	if (error < 0) {
