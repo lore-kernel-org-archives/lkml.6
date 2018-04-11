@@ -1,101 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752754AbeDKCN0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 22:13:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45422 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752295AbeDKCNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 22:13:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0126921785
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Wed, 11 Apr 2018 11:13:22 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Howard McLauchlan <hmclauchlan@fb.com>, <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, <kernel-team@fb.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Subject: Re: [PATCH] uprobe: add support for overlayfs
-Message-Id: <20180411111322.14b5a21ea61ad968f8375427@kernel.org>
-In-Reply-To: <20180410200059.731d87fe@gandalf.local.home>
-References: <20180410231030.2720-1-hmclauchlan@fb.com>
-        <20180410200059.731d87fe@gandalf.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752848AbeDKCOT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 22:14:19 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:36035 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752172AbeDKCOR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 22:14:17 -0400
+X-Google-Smtp-Source: AIpwx4/RO2oGsj6muOFwt+IZJD2PpWnASRl86lkkzPupXWWaEesXk42HiyGG/B8tO2qpSk7kyYNejg==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: stefan@osg.samsung.com, alex.aring@gmail.com
+Cc: linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] net: ieee802154: atusb: Replace GFP_ATOMIC with GFP_KERNEL in atusb_probe
+Date: Wed, 11 Apr 2018 10:14:10 +0800
+Message-Id: <1523412850-2260-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Apr 2018 20:00:59 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+atusb_probe() is never called in atomic context.
+This function is only set as ".probe" in struct usb_driver.
 
-> On Tue, 10 Apr 2018 16:10:30 -0700
-> Howard McLauchlan <hmclauchlan@fb.com> wrote:
-> 
-> > uprobes cannot successfully attach to binaries located in a directory
-> > mounted with overlayfs.
-> > 
-> > To verify, create directories for mounting overlayfs
-> > (upper,lower,work,merge), move some binary into merge/ and use readelf
-> > to obtain some known instruction of the binary. I used /bin/true and the
-> > entry instruction(0x13b0):
-> > 
-> > 	$ mount -t overlay overlay -o lowerdir=lower,upperdir=upper,workdir=work merge
-> > 	$ cd /sys/kernel/debug/tracing
-> > 	$ echo 'p:true_entry PATH_TO_MERGE/merge/true:0x13b0' > uprobe_events
-> > 	$ echo 1 > events/uprobes/true_entry/enable
-> > 
-> > This returns 'bash: echo: write error: Input/output error' and dmesg
-> > tells us 'event trace: Could not enable event true_entry'
-> 
-> I tried the above and verified that it is a problem and your patch
-> solves it.
-> 
-> Thanks, I'll apply it and start my tests on it.
+Despite never getting called from atomic context,
+atusb_probe() calls usb_alloc_urb() with GFP_ATOMIC,
+which does not sleep for allocation.
+GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+which can sleep and improve the possibility of sucessful allocation.
 
-This looks good to me. 
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
 
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/net/ieee802154/atusb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
-> 
-> -- Steve
-> 
-> > 
-> > This change makes create_trace_uprobe() look for the real inode of a
-> > dentry. In the case of normal filesystems, this simplifies to just
-> > returning the inode. In the case of overlayfs(and similar fs) we will
-> > obtain the underlying dentry and corresponding inode, upon which uprobes
-> > can successfully register.
-> > 
-> > Running the example above with the patch applied, we can see that the
-> > uprobe is enabled and will output to trace as expected.
-> > 
-> > Reviewed-by: Josef Bacik <jbacik@fb.com>
-> > Signed-off-by: Howard McLauchlan <hmclauchlan@fb.com>
-> > ---
-> >  kernel/trace/trace_uprobe.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> > index 2014f4351ae0..17c65fa4136d 100644
-> > --- a/kernel/trace/trace_uprobe.c
-> > +++ b/kernel/trace/trace_uprobe.c
-> > @@ -446,7 +446,7 @@ static int create_trace_uprobe(int argc, char **argv)
-> >  	if (ret)
-> >  		goto fail_address_parse;
-> >  
-> > -	inode = igrab(d_inode(path.dentry));
-> > +	inode = igrab(d_real_inode(path.dentry));
-> >  	path_put(&path);
-> >  
-> >  	if (!inode || !S_ISREG(inode->i_mode)) {
-> 
-
-
+diff --git a/drivers/net/ieee802154/atusb.c b/drivers/net/ieee802154/atusb.c
+index ef68851..ab6a505 100644
+--- a/drivers/net/ieee802154/atusb.c
++++ b/drivers/net/ieee802154/atusb.c
+@@ -789,7 +789,7 @@ static int atusb_probe(struct usb_interface *interface,
+ 	atusb->tx_dr.bRequest = ATUSB_TX;
+ 	atusb->tx_dr.wValue = cpu_to_le16(0);
+ 
+-	atusb->tx_urb = usb_alloc_urb(0, GFP_ATOMIC);
++	atusb->tx_urb = usb_alloc_urb(0, GFP_KERNEL);
+ 	if (!atusb->tx_urb)
+ 		goto fail;
+ 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+1.9.1
