@@ -1,38 +1,80 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+d9EucDr7zaVMLsSw5zvolMrQoTt/9yXgsyshyiM/SvtQ7Xv+x4DgLMWg336hLiREjqluD
-ARC-Seal: i=1; a=rsa-sha256; t=1523472729; cv=none;
-        d=google.com; s=arc-20160816;
-        b=R4rCk5jqcIrqnB54m2/tfJe99CpYtvvQIFu6wF1WYglr/Fuo7s+NRNhznRnd2lyhGJ
-         NHqHgfrZgVD/dQtcHA/FlG8eAsJ/2Tx2uz6UtM2IpSJaOoZhVIRp7mEy8o34mTOt2CeZ
-         x6s9aHWJCnyd2QlSRTjiHtXtv6Ic8U4A1X3Z8uMPNleLk1R9laYW+kjzUK0+jW0WwvXz
-         Fe+KdrwqGx/wzs1J1sagzD0g/nDSwFCQUEp70xmssZVXNJGGfy5D80GBlpMyNGb1OUWR
-         EJTnEBa21QScenS6UHOyEEmoqxHgsHkE1+dEZQbv9ZaEoWP6xoTUZt4cBugKL8N6XPqB
-         AM1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=3ViSfS9jVEbe+1akkNZoLil3lDUiat7i0s6TCGMccAo=;
-        b=0s6xzU3JCSpAazWaH4AjGHyWbj8KpZIIc0wmT197MKcgL07kYjO/nSEDuLU6UkSyEQ
-         MpDdSNLMIob7i6ERWQ62jBcbnZP4868ZJii5rd8hRwXzid8n2yThBkuC53o233TISNbD
-         naqxST8MnaWKixnJbyJBOxdzh3LxyrJnF0gd24WhgxUfPy8GK8oXRCCD4BC7UX8EgY4j
-         A5/Y+8+bN2IBNMhf+4sNEK4SV8MtDvDBxVzwrgHcwr2zjcPg0XyZMDUQi/NyGU+lKYfI
-         g5FFy8KkEL4kgbOYrEDBBuRPOJ8Eya1tKnYbKDtqPbPI0Am5gsy0Cu85ptnN2xWELsEf
-         eLdw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3118118-1523472729-2-13310857158626740996
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523472729; b=XHGWmmOTSxHX1ZcxLRbHnLExtPDL7lASB2D8PVKZoSrDxwxxRT
+    xlesmY1HPY0qYc9dEUFIUqe7HGtUeXBxmLoWcYiA5GiU3cQquA9xyv/KMKqtT53j
+    uKwmwJhVmGHmztgPBwu+xUqdWUOnkjh3TU2o9hyvMB5ZAH/UO6ZCJcczRq8cM0k1
+    R2ozFgsUaAM/cW38m465DdSV2dTPFDif+Kq0KZJ9SWF6SMVBKVUQNg8NQyuDbKsy
+    5IH/yxeaI7foztbrl+W4lAUCBlWryN+A+EDNY5YH8EC5PdAd/kAoZb5gTS67gcrS
+    fYMFH0yFE0lw0b4vaAoTGBXjPqSkFeolWOug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523472729; bh=WKdrKvdKUkvm+WPKQj4tFdVaxhYEVb
+    5ucHcrGoX8Vkc=; b=cQwPa7pL3Fw806MvUHSfXrEKxcdc1WoT/drwqGmtO8YbdI
+    ngFi9ogVE169mPVNBVbqENWViD/0kSzmCg1PRHI70C7jw02mMPYKMEiWUtwFo9b6
+    hlBT5QdDmf97rpmqhvEvECNn7on5F9OFKQd4gXQzhq5CyXDrvvQ6FmuSog6VEpOu
+    tToHftpI3rQ30c+mD5a7bx4MDrysNjz3UTjIWiQn1zJW0QBroN6ETTHubouY378B
+    7fRb0wAR0hOkK45ahbYUT/hXo8aiTTSktUWSxzVzMQtRpI5hYja4PE7eHdIhuIuR
+    YwHvcHNvMH0sFKPrpNylwObW+lCRC9SYQlAj7Prg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfLEWT5VbekkhE3QItUo4LVl/6HHd2/PmyvxbtqSVtlAKfB9copVuZRUyrFt9AP8zJsrZV8NR/fNvgKsf1coBadoV7/NOp3LGA8XUsGKNkJDF8qUy8fBZ
+    6/UAM9Wo+17LptKKRjuvZiMeU3KBPwuq2popQgCesN1M/CNQAoDPM4uBmQEyq6zqZamp341MGHUntO8FbxIbeelZ1I2vJsxrqmH+BfIuFYLTMEgRgKGM8zsG
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=DuQaTUuJoSgA:10
+    a=Kd1tUaAdevIA:10 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=P8bgakDpFLpm4VNt0N0A:9 a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932966AbeDKSwF (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:52:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33238 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932981AbeDKSwB (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:52:01 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	syzbot+91e6f9932ff122fa4410@syzkaller.appspotmail.com,
-	Paolo Abeni <pabeni@redhat.com>,
-	Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 189/190] ipv6: the entire IPv6 header chain must fit the first fragment
-Date: Wed, 11 Apr 2018 20:37:15 +0200
-Message-Id: <20180411183604.600936969@linuxfoundation.org>
+        stable@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Subject: [PATCH 4.4 186/190] r8169: fix setting driver_data after register_netdev
+Date: Wed, 11 Apr 2018 20:37:12 +0200
+Message-Id: <20180411183604.418733542@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -40,10 +82,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476403965411489?=
-X-GMAIL-MSGID: =?utf-8?q?1597476941387309220?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,119 +92,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
 
-[ Upstream commit 10b8a3de603df7b96004179b1b33b1708c76d144 ]
+[ Upstream commit 19c9ea363a244f85f90a424f9936e6d56449e33c ]
 
-While building ipv6 datagram we currently allow arbitrary large
-extheaders, even beyond pmtu size. The syzbot has found a way
-to exploit the above to trigger the following splat:
+pci_set_drvdata() is called only after registering the net_device,
+therefore we could run into a NPE if one of the functions using
+driver_data is called before it's set.
 
-kernel BUG at ./include/linux/skbuff.h:2073!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 4230 Comm: syzkaller672661 Not tainted 4.16.0-rc2+ #326
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-RIP: 0010:__skb_pull include/linux/skbuff.h:2073 [inline]
-RIP: 0010:__ip6_make_skb+0x1ac8/0x2190 net/ipv6/ip6_output.c:1636
-RSP: 0018:ffff8801bc18f0f0 EFLAGS: 00010293
-RAX: ffff8801b17400c0 RBX: 0000000000000738 RCX: ffffffff84f01828
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8801b415ac18
-RBP: ffff8801bc18f360 R08: ffff8801b4576844 R09: 0000000000000000
-R10: ffff8801bc18f380 R11: ffffed00367aee4e R12: 00000000000000d6
-R13: ffff8801b415a740 R14: dffffc0000000000 R15: ffff8801b45767c0
-FS:  0000000001535880(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000002000b000 CR3: 00000001b4123001 CR4: 00000000001606e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  ip6_finish_skb include/net/ipv6.h:969 [inline]
-  udp_v6_push_pending_frames+0x269/0x3b0 net/ipv6/udp.c:1073
-  udpv6_sendmsg+0x2a96/0x3400 net/ipv6/udp.c:1343
-  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:764
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg+0xca/0x110 net/socket.c:640
-  ___sys_sendmsg+0x320/0x8b0 net/socket.c:2046
-  __sys_sendmmsg+0x1ee/0x620 net/socket.c:2136
-  SYSC_sendmmsg net/socket.c:2167 [inline]
-  SyS_sendmmsg+0x35/0x60 net/socket.c:2162
-  do_syscall_64+0x280/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x4404c9
-RSP: 002b:00007ffdce35f948 EFLAGS: 00000217 ORIG_RAX: 0000000000000133
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004404c9
-RDX: 0000000000000003 RSI: 0000000020001f00 RDI: 0000000000000003
-RBP: 00000000006cb018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 0000000020000080 R11: 0000000000000217 R12: 0000000000401df0
-R13: 0000000000401e80 R14: 0000000000000000 R15: 0000000000000000
-Code: ff e8 1d 5e b9 fc e9 15 e9 ff ff e8 13 5e b9 fc e9 44 e8 ff ff e8 29
-5e b9 fc e9 c0 e6 ff ff e8 3f f3 80 fc 0f 0b e8 38 f3 80 fc <0f> 0b 49 8d
-87 80 00 00 00 4d 8d 87 84 00 00 00 48 89 85 20 fe
-RIP: __skb_pull include/linux/skbuff.h:2073 [inline] RSP: ffff8801bc18f0f0
-RIP: __ip6_make_skb+0x1ac8/0x2190 net/ipv6/ip6_output.c:1636 RSP:
-ffff8801bc18f0f0
+Fix this by calling pci_set_drvdata() before registering the
+net_device.
 
-As stated by RFC 7112 section 5:
+This fix is a candidate for stable. As far as I can see the
+bug has been there in kernel version 3.2 already, therefore
+I can't provide a reference which commit is fixed by it.
 
-   When a host fragments an IPv6 datagram, it MUST include the entire
-   IPv6 Header Chain in the First Fragment.
+The fix may need small adjustments per kernel version because
+due to other changes the label which is jumped to if
+register_netdev() fails has changed over time.
 
-So this patch addresses the issue dropping datagrams with excessive
-extheader length. It also updates the error path to report to the
-calling socket nonnegative pmtu values.
-
-The issue apparently predates git history.
-
-v1 -> v2: cleanup error path, as per Eric's suggestion
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: syzbot+91e6f9932ff122fa4410@syzkaller.appspotmail.com
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Reported-by: David Miller <davem@davemloft.net>
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_output.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/realtek/r8169.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -1278,7 +1278,7 @@ static int __ip6_append_data(struct sock
- 			     unsigned int flags, int dontfrag)
- {
- 	struct sk_buff *skb, *skb_prev = NULL;
--	unsigned int maxfraglen, fragheaderlen, mtu, orig_mtu;
-+	unsigned int maxfraglen, fragheaderlen, mtu, orig_mtu, pmtu;
- 	int exthdrlen = 0;
- 	int dst_exthdrlen = 0;
- 	int hh_len;
-@@ -1314,6 +1314,12 @@ static int __ip6_append_data(struct sock
- 		      sizeof(struct frag_hdr) : 0) +
- 		     rt->rt6i_nfheader_len;
- 
-+	/* as per RFC 7112 section 5, the entire IPv6 Header Chain must fit
-+	 * the first fragment
-+	 */
-+	if (headersize + transhdrlen > mtu)
-+		goto emsgsize;
-+
- 	if (cork->length + length > mtu - headersize && dontfrag &&
- 	    (sk->sk_protocol == IPPROTO_UDP ||
- 	     sk->sk_protocol == IPPROTO_RAW)) {
-@@ -1329,9 +1335,8 @@ static int __ip6_append_data(struct sock
- 
- 	if (cork->length + length > maxnonfragsize - headersize) {
- emsgsize:
--		ipv6_local_error(sk, EMSGSIZE, fl6,
--				 mtu - headersize +
--				 sizeof(struct ipv6hdr));
-+		pmtu = max_t(int, mtu - headersize + sizeof(struct ipv6hdr), 0);
-+		ipv6_local_error(sk, EMSGSIZE, fl6, pmtu);
- 		return -EMSGSIZE;
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -8411,12 +8411,12 @@ static int rtl_init_one(struct pci_dev *
+ 		goto err_out_msi_4;
  	}
  
++	pci_set_drvdata(pdev, dev);
++
+ 	rc = register_netdev(dev);
+ 	if (rc < 0)
+ 		goto err_out_cnt_5;
+ 
+-	pci_set_drvdata(pdev, dev);
+-
+ 	netif_info(tp, probe, dev, "%s at 0x%p, %pM, XID %08x IRQ %d\n",
+ 		   rtl_chip_infos[chipset].name, ioaddr, dev->dev_addr,
+ 		   (u32)(RTL_R32(TxConfig) & 0x9cf0f8ff), pdev->irq);
