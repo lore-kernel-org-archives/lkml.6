@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3269524-1523477660-2-17212114332705041916
+X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477632-2-2411110891462609648
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477659; b=Eo9WzaPmYuveXEXa3qfrIufmyJ4gnZS+xRtPPKjZZbFZcF7BQi
-    mXCnoU6VsyHs1ZXQjgoIHdbPTWwoM0FHb3tzL4N91gGP4MoFU38fjzKN7JVxmVTH
-    z3xspOvY/IwfUs0I0IogMr5t9gjkmnZQpk+f96IHQjMjAh6R7rikvO9eh6Jp+uyp
-    pok5TfB0hL2IflyDEJjOCxB9zssz85l1ySWEWhrjEH9Luq6/37yfoRM0ThI7RxmV
-    ic9L2UUhzS8MSP1ynO6hIDz6UW4BaQYe7MYwKWbERZcx11QjkxT0BqDJfduaVASg
-    J5JE+IcSmT1atiw0S30kNFuGmVYDcYjXaCWg==
+    1523477632; b=MDED316DnJSHczPqqCg2k7VazD+BUV4eVj/gWZMyIWfIs2c+hh
+    kpaidcGow70an1Yz+8yE/PLEzLbZyvTEqZ8V+wvIciKWO2owacQwF59BthbCPLig
+    eniDRB78EMFDgEi1mucUoiZ3EBH9f8bwoJ6V8YHtXgnxmGIM6fxT2Myxrw5HcjEE
+    CVsXM93TslyogV6gLaIhcNdyo+DTiOHoSZGoPzB7LspMNoVp8phLsHaDDyeKYXCW
+    nXvHe1LSDUxym5fFDmonrNaUISoxLCALUtOll6GE9jIUsp7Z3Eg+1DWFMOd7Ynhs
+    +zJccFPMFBkW71T1C/dSlQWONDDLWbMruUNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523477659; bh=4giLyN1ztE2Xhok6dk7y+26g9Jrr8j
-    7m4wNtvbHZB68=; b=NBx3iQjR4wFlcsnqXSQPGn9Z98FQ11IxqwgMOr5mxqrHQ4
-    DFrpfjkBemGPmDE9X3a/Ho1L5XDcamElu/ThDbZhHwH299gyqxPMSYuugDOBdOF2
-    jYfxvUD9KPjSzpYLn+LO47C/meVXTtwg8NMQQbX7Alg0dH+/48WkC9PmDuuA7oOi
-    tsZJHygmXWTxIMXydj1GWIvdWUf4cum8ckDwFaQDPm2NBNYKoXLs8SwY4xYP4RmH
-    0/z3l2zWSfst2kUawN3NsWgBwayy402NG99nmvbDfixGBDC2eVkZ3DfkIs2bKFgC
-    pl3qkr9fpVfI/2got3qwWpV2y0K4543N192SB/UA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523477632; bh=EZrh37yBe25putkMX9c7uKdQgs50CY
+    +jidUrKcvT420=; b=Imx5dyit5Y/pugPBtPJhEuAQDYKVexMFCqBt3OVEIFDTPM
+    Df+j9KkgaM/t5HutLoQWvJX9/ozykPEYNux+j5qzuzkLn/WtnvYic6mbx3fcoGOi
+    fmid2meXOgJnKXdOZD+PXQ79ZlHP09XsOLLBVO6pMPaHv9+0cxFLp3xU+O5e5UqH
+    2LtOWk1nmXmgHWadpyjxhqOLrE1Bafagnf02UJYnrWQf6/YOrwyyAIMGXJs6XkLj
+    tFBgGOti1u+MBFagoabtCT3eP6uB1GVC8+goBqFYozNtb6YLco3W2dLRtaDtwTI5
+    6mt2rCEtmmCdn3qnMIcIhWDnWSKWw/KY2naSpNPg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,40 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBrp19MafUt78l9ZBXOU1W79jt4gEdvZOo23mQgsclBjbl1eRSeAY4XGqr7BNl2cVtZlGg31MFxAZImsaHU8lpsTuqAbLHR+eZGVxkPoXoIAWil5D7F4
-    AbmkK2fxHgEK49T4V7fAUy8p6/0OQIHg2TrTIkeUs/b7MpZBT7FaB6KkSkomf2srx7rDn0BUWOdcpu3TLE6ZROHKIb8it3htLQepIl9In+kfAPMp9ysq36ZK
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFrHyXxicZg0s+L/cccWqhTbjxK5YzA4WP3se78no0bCvkL59a0IYDAfLp++qv/LMXC/lOYkGqULV57QOz3jvX37gxLm4yI74fRpO6KvrWN3oGP8YqgZ
+    XGe2QHgqyx8jWw5m55PwfZL9IZuaFE6t5333f3nx0QmK+4315GMxpf7RkohdhSUvGTtVU7gpPmEYcEv7Q4XlfJy8TiHO9hrC9nK2mvy7tdr9YBZCWEjT7F5Y
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=3-RhneuVAAAA:8 a=yMhMjlubAAAA:8 a=pGLkceISAAAA:8 a=ag1SF4gXAAAA:8
-    a=WoP9IM0tYB0b0HWQNkIA:9 a=QEXdDO2ut3YA:10 a=VLVLkjT_5ZicWzSuYqSo:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=7CQSdrXTAAAA:8 a=drOt6m5kAAAA:8 a=JfrnYn6hAAAA:8 a=QyXUC8HyAAAA:8
+    a=20KFwNOVAAAA:8 a=Z4Rwk6OoAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=5ZIf7ZDfmYngwTVeS3UA:9 a=QEXdDO2ut3YA:10
+    a=a-qgeE7W1pNrGK8U0ZQC:22 a=RMMjzBEyIzXRtoq5n5K6:22 a=1CNFftbPRP8L7MoqJWF3:22
+    a=HkZW87K1Qel5hWWM3VKY:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933317AbeDKSxl (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:53:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33900 "EHLO
+        id S933299AbeDKSxm (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:53:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33916 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933299AbeDKSxi (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:53:38 -0400
+        with ESMTP id S933318AbeDKSxl (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:53:41 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rabin Vincent <rabinv@axis.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <smfrench@gmail.com>,
+        stable@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 027/310] CIFS: silence lockdep splat in cifs_relock_file()
-Date: Wed, 11 Apr 2018 20:32:46 +0200
-Message-Id: <20180411183623.461438905@linuxfoundation.org>
+Subject: [PATCH 4.9 028/310] perf/callchain: Force USER_DS when invoking perf_callchain_user()
+Date: Wed, 11 Apr 2018 20:32:47 +0200
+Message-Id: <20180411183623.502566763@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -94,85 +102,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rabin Vincent <rabinv@axis.com>
+From: Will Deacon <will.deacon@arm.com>
 
 
-[ Upstream commit 560d388950ceda5e7c7cdef7f3d9a8ff297bbf9d ]
+[ Upstream commit 88b0193d9418c00340e45e0a913a0813bc6c8c96 ]
 
-cifs_relock_file() can perform a down_write() on the inode's lock_sem even
-though it was already performed in cifs_strict_readv().  Lockdep complains
-about this.  AFAICS, there is no problem here, and lockdep just needs to be
-told that this nesting is OK.
+Perf can generate and record a user callchain in response to a synchronous
+request, such as a tracepoint firing. If this happens under set_fs(KERNEL_DS),
+then we can end up walking the user stack (and dereferencing/saving whatever we
+find there) without the protections usually afforded by checks such as
+access_ok.
 
- =============================================
- [ INFO: possible recursive locking detected ]
- 4.11.0+ #20 Not tainted
- ---------------------------------------------
- cat/701 is trying to acquire lock:
-  (&cifsi->lock_sem){++++.+}, at: cifs_reopen_file+0x7a7/0xc00
+Rather than play whack-a-mole with each architecture's stack unwinding
+implementation, fix the root of the problem by ensuring that we force USER_DS
+when invoking perf_callchain_user from the perf core.
 
- but task is already holding lock:
-  (&cifsi->lock_sem){++++.+}, at: cifs_strict_readv+0x177/0x310
-
- other info that might help us debug this:
-  Possible unsafe locking scenario:
-
-        CPU0
-        ----
-   lock(&cifsi->lock_sem);
-   lock(&cifsi->lock_sem);
-
-  *** DEADLOCK ***
-
-  May be due to missing lock nesting notation
-
- 1 lock held by cat/701:
-  #0:  (&cifsi->lock_sem){++++.+}, at: cifs_strict_readv+0x177/0x310
-
- stack backtrace:
- CPU: 0 PID: 701 Comm: cat Not tainted 4.11.0+ #20
- Call Trace:
-  dump_stack+0x85/0xc2
-  __lock_acquire+0x17dd/0x2260
-  ? trace_hardirqs_on_thunk+0x1a/0x1c
-  ? preempt_schedule_irq+0x6b/0x80
-  lock_acquire+0xcc/0x260
-  ? lock_acquire+0xcc/0x260
-  ? cifs_reopen_file+0x7a7/0xc00
-  down_read+0x2d/0x70
-  ? cifs_reopen_file+0x7a7/0xc00
-  cifs_reopen_file+0x7a7/0xc00
-  ? printk+0x43/0x4b
-  cifs_readpage_worker+0x327/0x8a0
-  cifs_readpage+0x8c/0x2a0
-  generic_file_read_iter+0x692/0xd00
-  cifs_strict_readv+0x29f/0x310
-  generic_file_splice_read+0x11c/0x1c0
-  do_splice_to+0xa5/0xc0
-  splice_direct_to_actor+0xfa/0x350
-  ? generic_pipe_buf_nosteal+0x10/0x10
-  do_splice_direct+0xb5/0xe0
-  do_sendfile+0x278/0x3a0
-  SyS_sendfile64+0xc4/0xe0
-  entry_SYSCALL_64_fastpath+0x1f/0xbe
-
-Signed-off-by: Rabin Vincent <rabinv@axis.com>
-Acked-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <smfrench@gmail.com>
+Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/file.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/events/callchain.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -589,7 +589,7 @@ cifs_relock_file(struct cifsFileInfo *cf
- 	struct cifs_tcon *tcon = tlink_tcon(cfile->tlink);
- 	int rc = 0;
+--- a/kernel/events/callchain.c
++++ b/kernel/events/callchain.c
+@@ -227,12 +227,18 @@ get_perf_callchain(struct pt_regs *regs,
+ 		}
  
--	down_read(&cinode->lock_sem);
-+	down_read_nested(&cinode->lock_sem, SINGLE_DEPTH_NESTING);
- 	if (cinode->can_cache_brlcks) {
- 		/* can cache locks - no need to relock */
- 		up_read(&cinode->lock_sem);
+ 		if (regs) {
++			mm_segment_t fs;
++
+ 			if (crosstask)
+ 				goto exit_put;
+ 
+ 			if (add_mark)
+ 				perf_callchain_store_context(&ctx, PERF_CONTEXT_USER);
++
++			fs = get_fs();
++			set_fs(USER_DS);
+ 			perf_callchain_user(&ctx, regs);
++			set_fs(fs);
+ 		}
+ 	}
+ 
