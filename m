@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49ILdjiI0qWb/UJR4kyDslrWggPp4BqLpQ3T/ihK1Q9olHapsjn+A1z+xjhdEM/lgLcE27P
-ARC-Seal: i=1; a=rsa-sha256; t=1523473236; cv=none;
+X-Google-Smtp-Source: AIpwx4/gceEkE1y7MeIQBxwYggaDwRD6rMGG34+65NCOGEfuSvy4uiNJNoUnLAY3p2W+SlVziX70
+ARC-Seal: i=1; a=rsa-sha256; t=1523473234; cv=none;
         d=google.com; s=arc-20160816;
-        b=lkpR36lNNfkQkiCVoraNhjBuLLMoUWQAEnriQHcm5xFkfO1+3IJbfXxd1bzMBR0CZK
-         Ri7qjyQ3snj7zyuM7er+4EOGdPntRKH57VigMMxCdeCUmsloibO3NHPOk15YjfsR/VOs
-         RMxR4JOtkeOn+IiRIC/gOLW2FH/QsaYPSVm4sSYHiqyyfz34GvN2n0he3xsl9e+d4ME7
-         sQ/M1b/WjfFFXB1dIHPL7XFFH+XQLQwbQV6BtHkMAVCIrNlCTTlnyejsCO1mFo0WHNrJ
-         2PgclMeWz21TI7YWXTACsS7gpVv6rpBLmvhCvi/pGhGAi4ARt+uOTo1wmr6Ezbnu4LIF
-         mwcw==
+        b=gzXX30uDKySbQ1lxptugKE6dmA+aiWf03JUBbT0lgerTZPxRgOy4Y8VTVKysgNPd0j
+         mobk+O9lSbHsOBtY6TQk1bSYUBkKSEx724DqV6fEy98R96mKRt6ENGS0s9eV5u+u0hr+
+         B9O5WVGk6Qf1Swb7RbbjLE2drxNG94wPQndayP14zzYY6W73iyACSRTHIK4UsAImVoDp
+         cc+hk5Cjll4WpW0g2dgT3S2VCBIEi3f+v+eTPfOiVkAZEkqZCC18CcFm2Zf4bbe8Jh49
+         ZuF69MNo3a/BbVpyjAG6wVAHabsuy6RLKQf6bhE2B9fUeT15A57mzyztBtuCXQ8PPtVQ
+         PjXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+BStIfeyKkwzuRjGri8udTdrQT+6ansggdEHlI7KGS0=;
-        b=jheMC9t1EHLPiJ0Hxtwi+ze4yZ/jvYv32Ppw7uHuKJ5MQfvu/+zGKxa2b4qUSSZH13
-         pqk/gesh/5U8s8jFVRd7jAxOvAjiiuip58vGva34SavZIjEkPhsCZCG/1VannMS2rS05
-         WxpEolK+EBwcigYkK/MD0siqyOu3HB6JZKatdEWBu4A3K5Ru998rrrmk8fBHacNAbCgG
-         aDWH+LeFMvkrapoqcABgfFnfika1cL0UqftQmF3bFq4mqiKP6A8RJScGK5aHyp/Odir+
-         iJRWEdxt8Ar+az8Fj2IAqeaUEyNXfLyZtnKA/ERrL8pUtJUzX7xjEmW53y4t1X9qUPTs
-         zzPg==
+        bh=aXvN0yBYFfYk4R4pJbCBIMFbVZRG53monce3wZ/T6IQ=;
+        b=P825qgrQkOCpQxizTE8CAJHPPVNcIAi62Ibr0w79IpgBk1js2tdew1qaJMMvlIOByC
+         3S2EmlONRGcRHkJ/vZqxdtArJdh++Q+RXmg4Lx/anSIhZ33aLXTa8d3PS9O7vTod2Src
+         crMLffVGNhF4gqPDvE1kfzNUrAxDioDuy0EiDac0wT4pmHiBx246Xcb9Fr8CGRWME0h0
+         AVIPZbPGD2Z5TIbTKckj6KOpI3+DBG8HGd5Jv74eoxJDyqVTjsADpgN8JWe0g0M16BFG
+         iXY381Uv5rQtZfUY/C/57RMJgc7Jp9yFnokg3b7vd3NAop9dBeDlgvcmoK7MUl5Dntuh
+         4Q+g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andrea Adami <andrea.adami@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Daniel Thompson <daniel.thompson@linaro.org>,
-	Lee Jones <lee.jones@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 143/310] backlight: tdo24m: Fix the SPI CS between transfers
-Date: Wed, 11 Apr 2018 20:34:42 +0200
-Message-Id: <20180411183628.600691032@linuxfoundation.org>
+Subject: [PATCH 4.9 172/310] clk: scpi: fix return type of __scpi_dvfs_round_rate
+Date: Wed, 11 Apr 2018 20:35:11 +0200
+Message-Id: <20180411183630.035784398@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477472753460709?=
-X-GMAIL-MSGID: =?utf-8?q?1597477472753460709?=
+X-GMAIL-THRID: =?utf-8?q?1597476689574373473?=
+X-GMAIL-MSGID: =?utf-8?q?1597477470044733799?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,79 +51,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Robert Jarzmik <robert.jarzmik@free.fr>
+From: Sudeep Holla <sudeep.holla@arm.com>
 
 
-[ Upstream commit 2023b0524a6310e9ea80daf085f51c71bff9289f ]
+[ Upstream commit 7374aec95636ca39409545eba4ef5ff3125c2346 ]
 
-Currently the LCD display (TD035S) on the cm-x300 platform is broken and
-remains blank.
+The frequencies above the maximum value of signed integer(i.e. 2^31 -1)
+will overflow with the current code.
 
-The TD0245S specification requires that the chipselect is toggled
-between commands sent to the panel. This was also the purpose of the
-former patch of commit f64dcac0b124 ("backlight: tdo24m: ensure chip
-select changes between transfers").
+This patch fixes the return type of __scpi_dvfs_round_rate from 'int'
+to 'unsigned long'.
 
-Unfortunately, the "cs_change" field of a SPI transfer is
-misleading. Its true meaning is that for a SPI message holding multiple
-transfers, the chip select is toggled between each transfer, but for the
-last transfer it remains asserted.
-
-In this driver, all the SPI messages contain exactly one transfer, which
-means that each transfer is the last of its message, and as a
-consequence the chip select is never toggled.
-
-Actually, there was a second bug hidding the first one, hence the
-problem was not seen until v4.6. This problem was fixed by commit
-a52db659c79c ("spi: pxa2xx: Fix cs_change management") for PXA based
-boards.
-
-This fix makes the TD035S work again on a cm-x300 board. The same
-applies to other PXA boards, ie. corgi and tosa.
-
-Fixes: a52db659c79c ("spi: pxa2xx: Fix cs_change management")
-Reported-by: Andrea Adami <andrea.adami@gmail.com>
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Fixes: cd52c2a4b5c4 ("clk: add support for clocks provided by SCP(System Control Processor)")
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/video/backlight/corgi_lcd.c |    2 +-
- drivers/video/backlight/tdo24m.c    |    2 +-
- drivers/video/backlight/tosa_lcd.c  |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/clk-scpi.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/video/backlight/corgi_lcd.c
-+++ b/drivers/video/backlight/corgi_lcd.c
-@@ -177,7 +177,7 @@ static int corgi_ssp_lcdtg_send(struct c
- 	struct spi_message msg;
- 	struct spi_transfer xfer = {
- 		.len		= 1,
--		.cs_change	= 1,
-+		.cs_change	= 0,
- 		.tx_buf		= lcd->buf,
- 	};
+--- a/drivers/clk/clk-scpi.c
++++ b/drivers/clk/clk-scpi.c
+@@ -71,15 +71,15 @@ static const struct clk_ops scpi_clk_ops
+ };
  
---- a/drivers/video/backlight/tdo24m.c
-+++ b/drivers/video/backlight/tdo24m.c
-@@ -369,7 +369,7 @@ static int tdo24m_probe(struct spi_devic
+ /* find closest match to given frequency in OPP table */
+-static int __scpi_dvfs_round_rate(struct scpi_clk *clk, unsigned long rate)
++static long __scpi_dvfs_round_rate(struct scpi_clk *clk, unsigned long rate)
+ {
+ 	int idx;
+-	u32 fmin = 0, fmax = ~0, ftmp;
++	unsigned long fmin = 0, fmax = ~0, ftmp;
+ 	const struct scpi_opp *opp = clk->info->opps;
  
- 	spi_message_init(m);
- 
--	x->cs_change = 1;
-+	x->cs_change = 0;
- 	x->tx_buf = &lcd->buf[0];
- 	spi_message_add_tail(x, m);
- 
---- a/drivers/video/backlight/tosa_lcd.c
-+++ b/drivers/video/backlight/tosa_lcd.c
-@@ -49,7 +49,7 @@ static int tosa_tg_send(struct spi_devic
- 	struct spi_message msg;
- 	struct spi_transfer xfer = {
- 		.len		= 1,
--		.cs_change	= 1,
-+		.cs_change	= 0,
- 		.tx_buf		= buf,
- 	};
- 
+ 	for (idx = 0; idx < clk->info->count; idx++, opp++) {
+ 		ftmp = opp->freq;
+-		if (ftmp >= (u32)rate) {
++		if (ftmp >= rate) {
+ 			if (ftmp <= fmax)
+ 				fmax = ftmp;
+ 			break;
