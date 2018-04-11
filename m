@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3397032-1523481699-2-15151667518160169193
+X-Cyrus-Session-Id: sloti22d1t05-3397032-1523481689-2-8836012764414570806
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523481698; b=agmOhKRgoWUwCd86qdkRakIt3s6CZIHfDRHAahsxczwEC8Nb8t
-    d1tZx0B3trvDuKGSxMVRqhGdnzBmV2VsrULo5I4+l0jcLUjDg6FrGmlsZgUGgs31
-    dPSqeu9m2Xhf55yfe4KXi1retHpenIzebK5nm58QjL2RLuwdCb4iBDG4vauBBqQ5
-    ZUVBULAUAESDfGkAsoJHuOhF6HHwY6qoAoxMexdOVEmCiVyn7WoT9unEoj3Sqiv4
-    cog+ky0z0TjlPrCu9WickoSpKiCbl+VZ/cN1aOYIMlpemx+Qgmg2Kc3fQeHEbx2+
-    u0jhgQJ6+70kNjDI2x6LTha0PTi3y9vdH8sw==
+    1523481689; b=Mf2IWJGEwhn/wFUCSSj4zGbyvasALWXAXVBHxlY10qPSOrpN9n
+    5eCryxS1G6D+Oe67uEKP1mBmkeOQ2Y7jF0W7pms/OiQ1ZoaoqtEv2R2wTeMyszS3
+    OQlV7lwZnKV1CvTy961X7tbF1tv7iMQwXk0OQsyrRc+CkpuB/ng2QzrxInnffn2g
+    TC5flOXxFZ3udTc0zYfeuQkh069jUtIL3ZZCGHO0y7TF9DkJdTESGoxskXXTMi07
+    mtTMoGS9lBiooJWzH7M8xzuVmn5hKIzT3g21dk7+FqNpann0aioVIa2UknYGoa5H
+    jz1NYRxHZsY9K6T4vPJWvVEcX24dzZz4a3dg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523481698; bh=W3L9G6saDDDsfDIdt24nmYPD+3pCW3
-    eAin+WCYOrcsw=; b=N0slMu9DqM2/uymcKNgjQ2OowBdW018p/zUIAJzW/nCtvw
-    1xHDpxbBrpX4jNIJD87C426dVhmn5uPmOGcIQVsgRyyxiYRiI6a+KBuJ3bdOa4tf
-    PJn0fYRhTU6iILhuC1aWRIL0WvewAsTcAQwWufNhSiBaLwBviexl8lNeJOoJerjn
-    B8LydeyXaTjwMxUQWBp6+x/Cdc7cls0t76el60Ykz8wGJYMraGogZgTgrRvraxuN
-    pWxhTwpHLEHP5FV1W3807qEbPr0WZUUB7RIODNJ5//u1W5/MUe7GG89wAvz/y/MB
-    ZpOCUzkgun/MHpAu3Lv5O5m1YdL65ln8fIU14Wog==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523481689; bh=dHGe6V+ZGFWTu/z/1n0EUhbneuaxGU
+    8oCMBNcL7YWKQ=; b=LO2QlsupoE39dap/Qe2TAKRaXp2198mnpcwkyowGe2Ra2S
+    toeNz165opkC5/t1/5vFQ6FuuQRlPI2+7nO5xNOslxbujM17b0c/RRDNOfjYWZJ9
+    KURx68nZFDGncV5mG9P1fiurkgSdjOKARD3OgXqUp9Z1z0SnwZwNd9uyXCyKDBsl
+    EKriqB3AJjqdizuJLoO3gFqkCm2LAAkizwFIvn+Tglz3PPMXrva9uO+QMORHM29G
+    UsO1OwBPYUDwl6TvgHQycvWbT0wWNsF8fQiv0DkggExuWDo9YTw55p1b7GbWKpgx
+    w43sp5eqjDTdXCQtwXWmwS9Oa7cPR2GgSe5MHelA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,33 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfA72VR7HifhPzP5RieeMjAqnx3BDqWQQXuGx63d0OeHbYZ2WGJZBCUpjtTom4GD9ErUXN3K9CeD0ivZQ7xoru+Baa3dQfgHGTvzi8igKFpPy+PHsBuxH
-    nYhP4igYxvPJsPxKafnjsCLHZfwsCyT8cQ2zjpcHnzSWQLpQlTxQofzQZfo/cHITvqvaZHbfeTYyPaUnun8/JAEXJiYkC+cfoz9eqiFFO30ZqBSdv7Dl2SjB
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNPaiaRLwvcf2IoGgMHAfEYg9e3O92BgYJ2T1sGUp/PWqxV9LHL4SiRNxNkJZel2JOa9Kxr63O6hiNMVPKsc3d159sn/3+KuK7zqRVy4y8qVtX2hF3bp
+    MlfZe3rDMo7/qVhA7FqFg3nMGW9v2f1h/iCHL8RH6+exBzGrtIvKP6Mnp5Rl1RaLo7+Ll7bLbE7c68E+n7wAbFEAFzduMhMLqYahtABXBqm+ZAdrraaylSlY
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=sozttTNsAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=r7hTFzgnQUyMEkfOMgEA:9
-    a=QEXdDO2ut3YA:10 a=aeg5Gbbo78KNqacMgKqU:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=cm27Pg_UAAAA:8 a=pGLkceISAAAA:8 a=LpQP-O61AAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=mszs2ZNTGQiz2OjqG5AA:9 a=4UkKTrb-bdLhrJ1O:21
+    a=BFySnzN-hxhcZp44:21 a=QEXdDO2ut3YA:10 a=xmb-EsYY8bH0VWELuYED:22
+    a=pioyyrs4ZptJ924tMmac:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754338AbeDKSjR (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:39:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55966 "EHLO
+        id S1755195AbeDKVVK (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 17:21:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55986 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754326AbeDKSjP (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:39:15 -0400
+        with ESMTP id S1754344AbeDKSjR (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:39:17 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Suman Anna <s-anna@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
+        stable@vger.kernel.org, Daniel Micay <danielmicay@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 036/121] ARM: davinci: da8xx: Create DSP device only when assigned memory
-Date: Wed, 11 Apr 2018 20:35:39 +0200
-Message-Id: <20180411183458.286440041@linuxfoundation.org>
+Subject: [PATCH 3.18 037/121] ray_cs: Avoid reading past end of buffer
+Date: Wed, 11 Apr 2018 20:35:40 +0200
+Message-Id: <20180411183458.465703375@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -92,58 +95,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Suman Anna <s-anna@ti.com>
+From: Kees Cook <keescook@chromium.org>
 
 
-[ Upstream commit f97f03578b997a8ec2b9bc4928f958a865137268 ]
+[ Upstream commit e48d661eb13f2f83861428f001c567fdb3f317e8 ]
 
-The DSP device on Davinci platforms does not have an MMU and requires
-specific DDR memory to boot. This memory is reserved using the rproc_mem
-kernel boot parameter and is assigned to the device on non-DT boots.
-The remoteproc core uses the DMA API and so will fall back to assigning
-random memory if this memory is not assigned to the device, but the DSP
-remote processor boot will not be successful in such cases. So, check
-that memory has been reserved and assigned to the device specifically
-before even creating the DSP device.
+Using memcpy() from a buffer that is shorter than the length copied means
+the destination buffer is being filled with arbitrary data from the kernel
+rodata segment. In this case, the source was made longer, since it did not
+match the destination structure size. Additionally removes a needless cast.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+This was found with the future CONFIG_FORTIFY_SOURCE feature.
+
+Cc: Daniel Micay <danielmicay@gmail.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-davinci/devices-da8xx.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/net/wireless/ray_cs.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/arm/mach-davinci/devices-da8xx.c
-+++ b/arch/arm/mach-davinci/devices-da8xx.c
-@@ -761,6 +761,8 @@ static struct platform_device da8xx_dsp
- 	.resource	= da8xx_rproc_resources,
+--- a/drivers/net/wireless/ray_cs.c
++++ b/drivers/net/wireless/ray_cs.c
+@@ -247,7 +247,10 @@ static const UCHAR b4_default_startup_pa
+ 	0x04, 0x08,		/* Noise gain, limit offset */
+ 	0x28, 0x28,		/* det rssi, med busy offsets */
+ 	7,			/* det sync thresh */
+-	0, 2, 2			/* test mode, min, max */
++	0, 2, 2,		/* test mode, min, max */
++	0,			/* rx/tx delay */
++	0, 0, 0, 0, 0, 0,	/* current BSS id */
++	0			/* hop set */
  };
  
-+static bool rproc_mem_inited __initdata;
-+
- #if IS_ENABLED(CONFIG_DA8XX_REMOTEPROC)
- 
- static phys_addr_t rproc_base __initdata;
-@@ -799,6 +801,8 @@ void __init da8xx_rproc_reserve_cma(void
- 	ret = dma_declare_contiguous(&da8xx_dsp.dev, rproc_size, rproc_base, 0);
- 	if (ret)
- 		pr_err("%s: dma_declare_contiguous failed %d\n", __func__, ret);
-+	else
-+		rproc_mem_inited = true;
- }
- 
- #else
-@@ -813,6 +817,12 @@ int __init da8xx_register_rproc(void)
- {
- 	int ret;
- 
-+	if (!rproc_mem_inited) {
-+		pr_warn("%s: memory not reserved for DSP, not registering DSP device\n",
-+			__func__);
-+		return -ENOMEM;
-+	}
-+
- 	ret = platform_device_register(&da8xx_dsp);
- 	if (ret)
- 		pr_err("%s: can't register DSP device: %d\n", __func__, ret);
+ /*===========================================================================*/
+@@ -598,7 +601,7 @@ static void init_startup_params(ray_dev_
+ 	 *    a_beacon_period = hops    a_beacon_period = KuS
+ 	 *//* 64ms = 010000 */
+ 	if (local->fw_ver == 0x55) {
+-		memcpy((UCHAR *) &local->sparm.b4, b4_default_startup_parms,
++		memcpy(&local->sparm.b4, b4_default_startup_parms,
+ 		       sizeof(struct b4_startup_params));
+ 		/* Translate sane kus input values to old build 4/5 format */
+ 		/* i = hop time in uS truncated to 3 bytes */
