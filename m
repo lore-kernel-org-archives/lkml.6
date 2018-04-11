@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479801-2-14699066195248038327
+X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479764-2-14506253646602970935
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479800; b=bReTFGbQ3QwubFIHGI9Cr07iZosoUfhRdV/TR9mqKCbKaQUMpO
-    331rU9xHFGFB+S/0HZoa6nXob8oXZCMawkxt0IVNFkiX70asKCt2uYeZbaG8MhSp
-    60Sk+HChdz6ud17piDGZcavz4L4n2OJp0N6TP0TSXgYP9fkBKw6UraV07SmAqpfn
-    uTqUyssDRjaCSGdQnoIUmcBQf/pYDYvYMnioXa6RL3D57c/0LKZKe3NXyVlFIznj
-    LAajDMtOpJEPR6aN/FRv/JG1b+xTQuXN86JP1OUeGAWemS5e1GnzievJ/OwjPijD
-    h++hFz+oGhXDd/G3GRHct7Vx5Woqx4suhLig==
+    1523479763; b=VFudiC1QmINmimiH/2xg/iEda/lQD4WAAW6GnoMXOEGOGwZdLN
+    Ti+tz/ojk7RgGfKCHvqAjFfEdJqR3SVSTOGtef5aYjRl9CQa6h0BR87Eu+yfCHJc
+    7P+QwjOKXSfFMHMYsWYg3oH2LsKCq9oiXGBhmhU4S8Xd1rJe/aJDwPEYrn/FuOUZ
+    LJZcw/C0u3WiuazwR/9OgHlJmnKxqNl46DsO4mnZ3LCwq7nY6isVGRpNL6HUvFXp
+    RmX93OPGrh66hQMKAC8F+qIE2Y1YX90QxaaIc14V1oTE3P5nIaU5NZBRR0DZroka
+    Jy/C9Yrc/KHG4cCT9o9Tb0LyyaqedO+hqGcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479800; bh=EGXbu1ja+JsXItS7CScRIBk4XlSiS5
-    armWZPse1OTj4=; b=oPql5+JTDcLiCGKfYLk7fkLYgQIWilX5pOlpg3vYttCBH1
-    56DUuXnX7FhoYHX5K4MtrdKbbOrsh8J08x9trXWdedey9WiS+lwkz3PSUXv6cKwY
-    C4QlTGZwSDYGgSW4WSn/mXwjLXRa4HSl1Mt1gT4cikPI1rF0PhJq8OyaryZhOBzr
-    Uf62l/ps1I+I+YmpstBUvP9rTh2fKZYL0yfzHnNt7KgW6lLKdQOltb7hGq9AV1k5
-    oU1DVTbpXR3xq7rMJBepgzXPF9hcDz5ChMkdbIVmVKT2XQfP0NeDUDGIcL8uA5xs
-    wMrp0Wb4a6Oh0dUxSGThDvxY3QPvyJwevSMEHysA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479763; bh=KX5UZXrS+5So/h1A8CqaKtc7RmHUqx
+    uG0XO9Oa0bX1E=; b=GmzF0Rl4dxnSFBuh+4KV9/AnzZ0FiH9aDIQVRv3LC2SJYB
+    1YlZUNFCp9T/I+LXBMN4KoGPkWptA73Jw5yWBUPvJKRQti0mr3j64xNWdLK7vrgG
+    GE4oRw/sYn1xxQjGpYh0Y//Vc+VcYlZlWZrRnvqNeZHBOI0A2Gir2NsKi2LMj3oO
+    DWk3N3GVhXEKxpzWZtbaKjPw8HMffjjGWSnFRcwxoJudpx7QgvVy1yEjTlU3gPKu
+    VWKPC3x8rIR5ztAAkHnKkke2rj/hb6am/2IpKQZB8XYqVYGKU3B/Ls9r8PhQAkBs
+    gCoAKa3TZI7ASwoyhiB5v2fJJodA7zoHDuBNpePg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,33 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMfwRLgiTi3c+1EctVU2JpSomU5J8OGyyaircc9yuM0VkVATC/GFlaoorzNKiEfTLcDCShIAGHirM/cakVjzE3kqu5ri4Vy0YNDM7ucSqQe0ZNuXZm//
-    TSlrskrvJAeiPKRlMc2/j+UXgW5oZrEKzIrKo3A0yQak1/ItpTj3m7Q6aKEVcUFLnw7VBwWvCTSaP8VO3DyIFxgVHaBZZ14iD8Tyin6DWoMEP7YzuzPdCmcc
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIm0OflTxEN4i5aPjqFKSOoSGwqGm4JqGYuNHLazq5VryFgMm6bI57bJv09vRCyhtDldzuV5NYePD66qz2ZI+AqcLa1N7ThJlC03T7YIbjIaYzfzpbt0
+    TlWeFblCqq1v5Kf8IGeN41DT04HLyFtbcmVIFY9xa1uuClzD1ZMd6lO1kPswqNM+BrlSA69UnkrNujEFNoYpj1lhVJ0GHg4qOtdEdwhHlNhyBXjgvBXzSD5y
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=6R7veym_AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=TzSSPSBs-8d7BCXhjvwA:9
-    a=3UJq2FBqhoS4Y7oa:21 a=j5_r-uixslqC3hKP:21 a=QEXdDO2ut3YA:10
-    a=ILCOIF4F_8SzUMnO7jNM:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=vmLDa1wCAAAA:8 a=eh1Yez-EAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=eK2PtGytKguSqSfQ0NAA:9 a=QEXdDO2ut3YA:10
+    a=h8Bt5HTj68qkN2fS7gvA:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756004AbeDKUtl (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:49:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58762 "EHLO
+        id S1755687AbeDKSqI (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:46:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58814 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755644AbeDKSp6 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:58 -0400
+        with ESMTP id S1754877AbeDKSqH (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:46:07 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Theodore Tso <tytso@mit.edu>,
+        stable@vger.kernel.org, Neil Horman <nhorman@tuxdriver.com>,
+        Shrikrishna Khare <skhare@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 057/190] ext4: handle the rest of ext4_mb_load_buddy() ENOMEM errors
-Date: Wed, 11 Apr 2018 20:35:03 +0200
-Message-Id: <20180411183553.676042433@linuxfoundation.org>
+Subject: [PATCH 4.4 027/190] vmxnet3: ensure that adapter is in proper state during force_close
+Date: Wed, 11 Apr 2018 20:34:33 +0200
+Message-Id: <20180411183551.763375258@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -94,87 +95,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+From: Neil Horman <nhorman@tuxdriver.com>
 
 
-[ Upstream commit 9651e6b2e20648d04d5e1fe6479a3056047e8781 ]
+[ Upstream commit 1c4d5f51a812a82de97beee24f48ed05c65ebda5 ]
 
-I've got another report about breaking ext4 by ENOMEM error returned from
-ext4_mb_load_buddy() caused by memory shortage in memory cgroup.
-This time inside ext4_discard_preallocations().
+There are several paths in vmxnet3, where settings changes cause the
+adapter to be brought down and back up (vmxnet3_set_ringparam among
+them).  Should part of the reset operation fail, these paths call
+vmxnet3_force_close, which enables all napi instances prior to calling
+dev_close (with the expectation that vmxnet3_close will then properly
+disable them again).  However, vmxnet3_force_close neglects to clear
+VMXNET3_STATE_BIT_QUIESCED prior to calling dev_close.  As a result
+vmxnet3_quiesce_dev (called from vmxnet3_close), returns early, and
+leaves all the napi instances in a enabled state while the device itself
+is closed.  If a device in this state is activated again, napi_enable
+will be called on already enabled napi_instances, leading to a BUG halt.
 
-This patch replaces ext4_error() with ext4_warning() where errors returned
-from ext4_mb_load_buddy() are not fatal and handled by caller:
-* ext4_mb_discard_group_preallocations() - called before generating ENOSPC,
-  we'll try to discard other group or return ENOSPC into user-space.
-* ext4_trim_all_free() - just stop trimming and return ENOMEM from ioctl.
+The fix is to simply enausre that the QUIESCED bit is cleared in
+vmxnet3_force_close to allow quesence to be completed properly on close.
 
-Some callers cannot handle errors, thus __GFP_NOFAIL is used for them:
-* ext4_discard_preallocations()
-* ext4_mb_discard_lg_preallocations()
-
-Fixes: adb7ef600cc9 ("ext4: use __GFP_NOFAIL in ext4_free_blocks()")
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
+CC: Shrikrishna Khare <skhare@vmware.com>
+CC: "VMware, Inc." <pv-drivers@vmware.com>
+CC: "David S. Miller" <davem@davemloft.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ext4/mballoc.c |   23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ drivers/net/vmxnet3/vmxnet3_drv.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -3874,7 +3874,8 @@ ext4_mb_discard_group_preallocations(str
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -2789,6 +2789,11 @@ vmxnet3_force_close(struct vmxnet3_adapt
+ 	/* we need to enable NAPI, otherwise dev_close will deadlock */
+ 	for (i = 0; i < adapter->num_rx_queues; i++)
+ 		napi_enable(&adapter->rx_queue[i].napi);
++	/*
++	 * Need to clear the quiesce bit to ensure that vmxnet3_close
++	 * can quiesce the device properly
++	 */
++	clear_bit(VMXNET3_STATE_BIT_QUIESCED, &adapter->state);
+ 	dev_close(adapter->netdev);
+ }
  
- 	err = ext4_mb_load_buddy(sb, group, &e4b);
- 	if (err) {
--		ext4_error(sb, "Error loading buddy information for %u", group);
-+		ext4_warning(sb, "Error %d loading buddy information for %u",
-+			     err, group);
- 		put_bh(bitmap_bh);
- 		return 0;
- 	}
-@@ -4031,10 +4032,11 @@ repeat:
- 		BUG_ON(pa->pa_type != MB_INODE_PA);
- 		group = ext4_get_group_number(sb, pa->pa_pstart);
- 
--		err = ext4_mb_load_buddy(sb, group, &e4b);
-+		err = ext4_mb_load_buddy_gfp(sb, group, &e4b,
-+					     GFP_NOFS|__GFP_NOFAIL);
- 		if (err) {
--			ext4_error(sb, "Error loading buddy information for %u",
--					group);
-+			ext4_error(sb, "Error %d loading buddy information for %u",
-+				   err, group);
- 			continue;
- 		}
- 
-@@ -4290,11 +4292,14 @@ ext4_mb_discard_lg_preallocations(struct
- 	spin_unlock(&lg->lg_prealloc_lock);
- 
- 	list_for_each_entry_safe(pa, tmp, &discard_list, u.pa_tmp_list) {
-+		int err;
- 
- 		group = ext4_get_group_number(sb, pa->pa_pstart);
--		if (ext4_mb_load_buddy(sb, group, &e4b)) {
--			ext4_error(sb, "Error loading buddy information for %u",
--					group);
-+		err = ext4_mb_load_buddy_gfp(sb, group, &e4b,
-+					     GFP_NOFS|__GFP_NOFAIL);
-+		if (err) {
-+			ext4_error(sb, "Error %d loading buddy information for %u",
-+				   err, group);
- 			continue;
- 		}
- 		ext4_lock_group(sb, group);
-@@ -5116,8 +5121,8 @@ ext4_trim_all_free(struct super_block *s
- 
- 	ret = ext4_mb_load_buddy(sb, group, &e4b);
- 	if (ret) {
--		ext4_error(sb, "Error in loading buddy "
--				"information for %u", group);
-+		ext4_warning(sb, "Error %d loading buddy information for %u",
-+			     ret, group);
- 		return ret;
- 	}
- 	bitmap = e4b.bd_bitmap;
