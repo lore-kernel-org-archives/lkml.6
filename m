@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3397032-1523481598-2-10398020377360489841
+X-Cyrus-Session-Id: sloti22d1t05-3397032-1523481585-2-9773332248460874064
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523481598; b=GJ32MUCuQaBlFjaCGSfWdYCzOkVrYRbE5yCEKirETNuDV0CSBV
-    HSbbi2mnR3+PiHkpQNAoxoD9T0gD51o6aqOVOokCsPIxuxSKlBcL+ENom8GnG5lJ
-    v1QLNPjGIvxnI6nHv4KkFTS4LU30QyMMEByUDL2R4T2RJstgTMqvaD/iz5kj+dtK
-    zCJdJyAPlAJbOqtnRoh4AcIlBSQIqM11SgUyqchyXKLa5ra6LpvNu6NXFNeWX2w6
-    /0RP2JBXC0gziXUvaYwf+/DXMPyW/XdwdNvstsajIMlifkjju5P24oe7p1bYXIjV
-    owVbO9/iP3OWHU00s7/HJt6qCrba7kE9IuZQ==
+    1523481584; b=gBYjBkSLhm7mbgas1msUZ7MTBbvoGbixyOeWbh6Mz8Kh77hCjF
+    sGa8O2/Mmk9n5YISJzlVjd4HekFHnNyEsSBLu1Yy445suD3jAbxKrGyqbzjBmd8d
+    OaSOmy3g+nXh0CvdK8bPsHHy0cqU9JVpZcz+ioDR+geibx7W+pGMdN36/yMcDcIW
+    xNcAdoyKy2iJaaZQdBaDTG6wU/dtnTzPns5fQS1SFNZ0aiEdPBwpxt+lIYg6EpKq
+    3BubQjCiXxOcp08fvVClj8CyhaN9LkZXXYoTQ4BSdvXZ7gOECa2bWpJvYWJd11GW
+    SE6Z76k6kT7+1rc+Oy/bUvXr+wAK9nxVVusw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523481598; bh=YoxfARMQBjvAAVAFa7L76nhWqwawRn
-    e+6gccNoT3Uao=; b=sRvXSKoo1NhFtoycFoYhZ3LK4B2VnLoGA0zYatVKwNcS31
-    GYzykGtA3IVia2I7jqyxsHtzpi5Wz/VQgljmJx/wEC7L0CUTmopNbBCWa5yQcTbI
-    SeRRBLXHYoFpO9fkCdzVui/S9elK6DGMbtD96KFpgh4EwClNCShwDCGdV1dsdfgz
-    /DMdTSPS6GtEqmBCROW9QnazpvFH7MtNf/9aGjWULnNm2OUcTINPcI2Na6tFvwvi
-    CNvvsWRJFoM+XuYss7peqUUKeB0cguHYh6RRmLP6+f8X4NVJCXuBkF0T3vZAb5Ou
-    Cp1nC/OoExHAdIOkXItLxtg/BTdj4/UVy3G7LA5w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523481584; bh=/mTQ+31Gu9ER+roUsjfCQYf48ILUhS
+    ytJpioLcNPJSc=; b=FXlGkzEKWWgXiQ9swlgw+cd3STqsA+aRQtPB/tEVe7FiTw
+    H/wQCKGbalmOieuMHXxqaObKqVK+288pw3UgCjyVWvpq5YPveFN0LSJITrTxqUi4
+    i7VYOV2gMJ90E2ls+iOHZ7qI+Mr+mIcKj4LuWjF0Khp1G0gnsCZkxvG2eKnmNJ8q
+    AqdN4DdeQiMYZuSjPTDUTqpHb4EhIECPFyw8jVBg41WhPodBAq4eSvqcnMCXwmn1
+    /3Yj5IdfPiybIkDF3MFzWZc07GwiQKWhjUiB+ExzNNMLbFlPNw/vL/4FIyxRwydR
+    1VohPDN0649NvaLzZ7tzG3+u8DPA/LrqjOxqOFAQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,31 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG8k1sC13tJtpVzZs4XTXx7eaC1STzVv/zzwrOcbLFbJ5Mgy4nzsRz5yEJpH4A/hFLpNUMHflFkgY4Uv0ZED2Q7qwFCnLboBgaLtnxTlOSo1OZdre/Wr
-    3rkY46uGb25cYj0hzZ13DJbzbq5//IXfqP1+o9QShsfLbjCYLWhxmQYcammUjS+N5+FpoedwehnkMsHgLapKJljzlIZLTF/tTWjFn7U71O1nrjzHbjZ7TeIS
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJeqIPcms8lpwLZj2OKO8/5QBNGZkQHjf6TckC4KXrwUw0sdMpUcBH1CBLYwXXwtvokV+QUDw/wvEbwbws3CAp7+O0PQ11MOSuiIpOehZYYOBnp04XcW
+    bm7LPWpj8ZVDz09B1eu6zTVd/gTbty/rCZ3o87G7FfCAc5BywPqlPGvFSGr+DnfF5HGjJMA7CUPG4NWjOcTxoP+mPTikIzinrqesEDbcMAYZYGIwM1LywzGK
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=YmcqAzuuD1zigcaGsQ0A:9
-    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=Iz6zksb9AAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=zU4_mlDSkNBmhn4WFdkA:9 a=QEXdDO2ut3YA:10 a=XZ76h3Q-ufMXbfGU90Ko:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754454AbeDKSji (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:39:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56120 "EHLO
+        id S1753074AbeDKVT2 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 17:19:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56154 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754442AbeDKSjg (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:39:36 -0400
+        with ESMTP id S1754449AbeDKSjm (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:39:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
-        Theodore Tso <tytso@mit.edu>,
+        stable@vger.kernel.org, Roman Kapl <roman.kapl@sysgo.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 043/121] fix race in drivers/char/random.c:get_reg()
-Date: Wed, 11 Apr 2018 20:35:46 +0200
-Message-Id: <20180411183459.036191423@linuxfoundation.org>
+Subject: [PATCH 3.18 045/121] net: move somaxconn init from sysctl code
+Date: Wed, 11 Apr 2018 20:35:48 +0200
+Message-Id: <20180411183459.127976972@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -92,47 +93,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael Schmitz <schmitzmic@gmail.com>
+From: Roman Kapl <roman.kapl@sysgo.com>
 
 
-[ Upstream commit 9dfa7bba35ac08a63565d58c454dccb7e1bb0a08 ]
+[ Upstream commit 7c3f1875c66fbc19762760097cabc91849ea0bbb ]
 
-get_reg() can be reentered on architectures with prioritized interrupts
-(m68k in this case), causing f->reg_index to be incremented after the
-range check. Out of bounds memory access past the pt_regs struct results.
-This will go mostly undetected unless access is beyond end of memory.
+The default value for somaxconn is set in sysctl_core_net_init(), but this
+function is not called when kernel is configured without CONFIG_SYSCTL.
 
-Prevent the race by disabling interrupts in get_reg().
+This results in the kernel not being able to accept TCP connections,
+because the backlog has zero size. Usually, the user ends up with:
+"TCP: request_sock_TCP: Possible SYN flooding on port 7. Dropping request.  Check SNMP counters."
+If SYN cookies are not enabled the connection is rejected.
 
-Tested on m68k (Atari Falcon, and ARAnyM emulator).
+Before ef547f2ac16 (tcp: remove max_qlen_log), the effects were less
+severe, because the backlog was always at least eight slots long.
 
-Kudos to Geert Uytterhoeven for helping to trace this race.
-
-Signed-off-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Roman Kapl <roman.kapl@sysgo.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/char/random.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ net/core/net_namespace.c   |   19 +++++++++++++++++++
+ net/core/sysctl_net_core.c |    2 --
+ 2 files changed, 19 insertions(+), 2 deletions(-)
 
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -863,12 +863,16 @@ static void add_interrupt_bench(cycles_t
- static __u32 get_reg(struct fast_pool *f, struct pt_regs *regs)
- {
- 	__u32 *ptr = (__u32 *) regs;
-+	unsigned long flags;
- 
- 	if (regs == NULL)
- 		return 0;
-+	local_irq_save(flags);
- 	if (f->reg_idx >= sizeof(struct pt_regs) / sizeof(__u32))
- 		f->reg_idx = 0;
--	return *(ptr + f->reg_idx++);
-+	ptr += f->reg_idx++;
-+	local_irq_restore(flags);
-+	return *ptr;
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -188,6 +188,25 @@ out_undo:
+ 	goto out;
  }
  
- void add_interrupt_randomness(int irq, int irq_flags)
++static int __net_init net_defaults_init_net(struct net *net)
++{
++	net->core.sysctl_somaxconn = SOMAXCONN;
++	return 0;
++}
++
++static struct pernet_operations net_defaults_ops = {
++	.init = net_defaults_init_net,
++};
++
++static __init int net_defaults_init(void)
++{
++	if (register_pernet_subsys(&net_defaults_ops))
++		panic("Cannot initialize net default settings");
++
++	return 0;
++}
++
++core_initcall(net_defaults_init);
+ 
+ #ifdef CONFIG_NET_NS
+ static struct kmem_cache *net_cachep;
+--- a/net/core/sysctl_net_core.c
++++ b/net/core/sysctl_net_core.c
+@@ -395,8 +395,6 @@ static __net_init int sysctl_core_net_in
+ {
+ 	struct ctl_table *tbl;
+ 
+-	net->core.sysctl_somaxconn = SOMAXCONN;
+-
+ 	tbl = netns_core_table;
+ 	if (!net_eq(net, &init_net)) {
+ 		tbl = kmemdup(tbl, sizeof(netns_core_table), GFP_KERNEL);
