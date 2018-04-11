@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479445-2-12834279128968362158
+X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479431-2-4485007362373633110
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479444; b=DKo8UOZCQ28YZkLAEsimYvnas2qaO1gwTYFYbEsK5vMTWITFtl
-    BNqOEwxTnjNhqKGsH0nAkWOMaUL0S1FIN0zLakNF64xmFHvuhcw/Varyhc7Oyxve
-    2ocKt7a6zn8x/yYvvgogSrjNm2FjVs2mcD6RBV3TlBK4LkjUkn48EyAkrWW1AJEU
-    JSz7gjNjVzDYwyd/SLsS6Cd61jlFplpI8I/vOXAV03WRg/53qBdB67ZvAkra+fUu
-    KO5KWx1vjJ937Tz13UFSQraK5mzWKX+r7tDVhaXPMiAyqAiCKW3ExF+ZFbA5gyrD
-    7Etm54QVw9kto5Oj3Ux/sDpO/QaOju0mhmoQ==
+    1523479430; b=dicJY+74/qRueinIemsiK6KiaU1Qc8STI0aQNiyZUABtajKfcc
+    UGBcyF33xFqsc/GQfMe1J7Bd7VdYSYPCEWYvUFAgEbSOhxwkpjyq0mLonJPeUTIl
+    EDwRVHUR0ve/xdzP8RYWiQmYa8AAKVNm/PZzBSo0QIhNZCqA85aBahihiSEGYY+Y
+    xF10oby55qnqvwqhCjISzaoDVlCvdsK3iO1UCj9gf7SV+Sb5ivL2vrloksYME4ia
+    usE1O/rAxSacxXmvST3xcgs9eIiOjIWDYvNFKZG/S34NGaglrou5rSrboc3qj5ep
+    TV0K6nTuZKoJ32x9G7txL4dSVtMgnsD8tbGA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479444; bh=oa5ck88G2xhW2AAqDPtdg5tVT6wDUx
-    P8QJhQuB+5q10=; b=cJIP7VFvz0Lq7lb3U1sVyikAhbUmDoLEFpeJCaO3LPpmU2
-    qFVo2XaGlfr4CUELWtIKOJ0+q9NC8p388+Y0yTl+T8ZxbT+cyZnio44yQSz1B96c
-    VjO0Ytns9gP7xKedf7xERx82JeA45DUerhW2+x314uc7bds8cj9P0QN2L8/B4Zk/
-    P9kTiZm1USnjro7FRjCgV9mIWNhi7mfEabAhmSbUAdZzXOtu0HfEDkN3G5DLT+ua
-    PzUGVfNfj8ZsMw2dD3UGiRR5l/wivj1OqhJ6206/b4fWz4352R2jMGqV9rzCCS7D
-    Fd/FsqXLxKcf8va1mdrbgtl4pERv1ZW8MpUvkvzg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479430; bh=Z+s6ehnQfvG+7ApyAiwo8S8wTTXnNg
+    rTt5Vp/g2GIMA=; b=WQAtWm196a74YbatYK2g8NOgQaJUnQafqj5D/UvEHuZO7g
+    HyzmNlNpIAEMnd0xCe9/OaOyqqnOIKB68Sd+EgAUcDiCJrYe3OgdQ3r9t6Ly+cXq
+    IWuy+cnYy4IpYgo3bhPfP5KQWfgq2IG2lQe1yGeSRc0E80p/TUBZSffaNJzd20EY
+    7FN4yQAXRkqZR+O+kcQ4WoXPj6touhJH9L8Ne2GygicMMdUPPwOBq2ZlzFrSBAuf
+    q2oQwzzK398RB1ZCW/kzklxKgbtp36buXSQak9xH9evpVGVTxdXBI6ew7gxteZLC
+    wI9k9aGlY6O9KmbqQZ24hvHx94qzgCsdeObLYHhA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,37 +51,33 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDlAHdYdvBPAUNeqBiALD7kYMIX/jg2On4SkxiGYEt9mOJnJBp0JRK13kVqMagR7CdvIR/0kxK9/ff7lX/KXl+IK9hXZlbVfVPuycZ8naN3yR+RQnpR7
-    CZvTclWpti6j/ibhDd6etswY8vMGL1zLuCkz5KsM1wQbFoJnoBDmwRt9KbjMYmVNyH7mp7YpcoO4+TUypiCHiWYDRg1AaeJmHhE6sNW2YBaxnqpUuRmrPwrr
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJoBpSQxrBOLz3+FP7trMfxJaJFsU46WYgyg1LHTJwfWJZP7cc25Q5DTohwtL+UPJnOB5bFK/dabbkBRg/s+ZyHNyjcmn7wWJFn1+YZySQvAD1FAcDzz
+    6ZICI8LT5hCLSQtOCC0DrlKWKwiTW2RiwzhpL2YDfiLx/begOruC1dQhBdf424VhLNFcAgKCM2aiHauWeXBcKCgWxHPKEXIPi7hrQOyxr3T546zX7t/3yyVa
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=JfrnYn6hAAAA:8 a=20KFwNOVAAAA:8 a=R_Myd5XaAAAA:8 a=Z4Rwk6OoAAAA:8
-    a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=Q85a5QUVxAGcZ4WZ4qcA:9
-    a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=L2g4Dz8VuBQ37YGmWQah:22
-    a=HkZW87K1Qel5hWWM3VKY:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=DfNHnWVPAAAA:8 a=iox4zFpeAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=_8L-UY4ewCS_Er6kyY4A:9 a=QEXdDO2ut3YA:10
+    a=rjTVMONInIDnV1a_A2c_:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752406AbeDKUoB (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:44:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59278 "EHLO
+        id S1755910AbeDKSr1 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:47:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59306 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755860AbeDKSrX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:47:23 -0400
+        with ESMTP id S1755889AbeDKSr0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:47:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Rik van Riel <riel@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org,
+        Rafael David Tinoco <rafael.tinoco@canonical.com>,
+        Lee Duncan <lduncan@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 062/190] sched/numa: Use down_read_trylock() for the mmap_sem
-Date: Wed, 11 Apr 2018 20:35:08 +0200
-Message-Id: <20180411183553.939186174@linuxfoundation.org>
+Subject: [PATCH 4.4 089/190] scsi: libiscsi: Allow sd_shutdown on bad transport
+Date: Wed, 11 Apr 2018 20:35:35 +0200
+Message-Id: <20180411183555.829471728@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -99,61 +95,102 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vlastimil Babka <vbabka@suse.cz>
+From: Rafael David Tinoco <rafael.tinoco@canonical.com>
 
 
-[ Upstream commit 8655d5497735b288f8a9b458bd22e7d1bf95bb61 ]
+[ Upstream commit d754941225a7dbc61f6dd2173fa9498049f9a7ee ]
 
-A customer has reported a soft-lockup when running an intensive
-memory stress test, where the trace on multiple CPU's looks like this:
+If, for any reason, userland shuts down iscsi transport interfaces
+before proper logouts - like when logging in to LUNs manually, without
+logging out on server shutdown, or when automated scripts can't
+umount/logout from logged LUNs - kernel will hang forever on its
+sd_sync_cache() logic, after issuing the SYNCHRONIZE_CACHE cmd to all
+still existent paths.
 
- RIP: 0010:[<ffffffff810c53fe>]
-  [<ffffffff810c53fe>] native_queued_spin_lock_slowpath+0x10e/0x190
-...
- Call Trace:
-  [<ffffffff81182d07>] queued_spin_lock_slowpath+0x7/0xa
-  [<ffffffff811bc331>] change_protection_range+0x3b1/0x930
-  [<ffffffff811d4be8>] change_prot_numa+0x18/0x30
-  [<ffffffff810adefe>] task_numa_work+0x1fe/0x310
-  [<ffffffff81098322>] task_work_run+0x72/0x90
+PID: 1 TASK: ffff8801a69b8000 CPU: 1 COMMAND: "systemd-shutdow"
+ #0 [ffff8801a69c3a30] __schedule at ffffffff8183e9ee
+ #1 [ffff8801a69c3a80] schedule at ffffffff8183f0d5
+ #2 [ffff8801a69c3a98] schedule_timeout at ffffffff81842199
+ #3 [ffff8801a69c3b40] io_schedule_timeout at ffffffff8183e604
+ #4 [ffff8801a69c3b70] wait_for_completion_io_timeout at ffffffff8183fc6c
+ #5 [ffff8801a69c3bd0] blk_execute_rq at ffffffff813cfe10
+ #6 [ffff8801a69c3c88] scsi_execute at ffffffff815c3fc7
+ #7 [ffff8801a69c3cc8] scsi_execute_req_flags at ffffffff815c60fe
+ #8 [ffff8801a69c3d30] sd_sync_cache at ffffffff815d37d7
+ #9 [ffff8801a69c3da8] sd_shutdown at ffffffff815d3c3c
 
-Further investigation showed that the lock contention here is pmd_lock().
+This happens because iscsi_eh_cmd_timed_out(), the transport layer
+timeout helper, would tell the queue timeout function (scsi_times_out)
+to reset the request timer over and over, until the session state is
+back to logged in state. Unfortunately, during server shutdown, this
+might never happen again.
 
-The task_numa_work() function makes sure that only one thread is let to perform
-the work in a single scan period (via cmpxchg), but if there's a thread with
-mmap_sem locked for writing for several periods, multiple threads in
-task_numa_work() can build up a convoy waiting for mmap_sem for read and then
-all get unblocked at once.
+Other option would be "not to handle" the issue in the transport
+layer. That would trigger the error handler logic, which would also need
+the session state to be logged in again.
 
-This patch changes the down_read() to the trylock version, which prevents the
-build up. For a workload experiencing mmap_sem contention, it's probably better
-to postpone the NUMA balancing work anyway. This seems to have fixed the soft
-lockups involving pmd_lock(), which is in line with the convoy theory.
+Best option, for such case, is to tell upper layers that the command was
+handled during the transport layer error handler helper, marking it as
+DID_NO_CONNECT, which will allow completion and inform about the
+problem.
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Rik van Riel <riel@redhat.com>
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20170515131316.21909-1-vbabka@suse.cz
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+After the session was marked as ISCSI_STATE_FAILED, due to the first
+timeout during the server shutdown phase, all subsequent cmds will fail
+to be queued, allowing upper logic to fail faster.
+
+Signed-off-by: Rafael David Tinoco <rafael.tinoco@canonical.com>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/sched/fair.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/scsi/libiscsi.c |   24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -2223,7 +2223,8 @@ void task_numa_work(struct callback_head
- 		return;
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -1695,6 +1695,15 @@ int iscsi_queuecommand(struct Scsi_Host
+ 		 */
+ 		switch (session->state) {
+ 		case ISCSI_STATE_FAILED:
++			/*
++			 * cmds should fail during shutdown, if the session
++			 * state is bad, allowing completion to happen
++			 */
++			if (unlikely(system_state != SYSTEM_RUNNING)) {
++				reason = FAILURE_SESSION_FAILED;
++				sc->result = DID_NO_CONNECT << 16;
++				break;
++			}
+ 		case ISCSI_STATE_IN_RECOVERY:
+ 			reason = FAILURE_SESSION_IN_RECOVERY;
+ 			sc->result = DID_IMM_RETRY << 16;
+@@ -1980,6 +1989,19 @@ static enum blk_eh_timer_return iscsi_eh
  
+ 	if (session->state != ISCSI_STATE_LOGGED_IN) {
+ 		/*
++		 * During shutdown, if session is prematurely disconnected,
++		 * recovery won't happen and there will be hung cmds. Not
++		 * handling cmds would trigger EH, also bad in this case.
++		 * Instead, handle cmd, allow completion to happen and let
++		 * upper layer to deal with the result.
++		 */
++		if (unlikely(system_state != SYSTEM_RUNNING)) {
++			sc->result = DID_NO_CONNECT << 16;
++			ISCSI_DBG_EH(session, "sc on shutdown, handled\n");
++			rc = BLK_EH_HANDLED;
++			goto done;
++		}
++		/*
+ 		 * We are probably in the middle of iscsi recovery so let
+ 		 * that complete and handle the error.
+ 		 */
+@@ -2083,7 +2105,7 @@ done:
+ 		task->last_timeout = jiffies;
+ 	spin_unlock(&session->frwd_lock);
+ 	ISCSI_DBG_EH(session, "return %s\n", rc == BLK_EH_RESET_TIMER ?
+-		     "timer reset" : "nh");
++		     "timer reset" : "shutdown or nh");
+ 	return rc;
+ }
  
--	down_read(&mm->mmap_sem);
-+	if (!down_read_trylock(&mm->mmap_sem))
-+		return;
- 	vma = find_vma(mm, start);
- 	if (!vma) {
- 		reset_ptenuma_scan(p);
