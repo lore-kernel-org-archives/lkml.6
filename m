@@ -1,36 +1,37 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3269524-1523477182-2-13977219863172619514
+X-Cyrus-Session-Id: sloti22d1t05-2791443-1523464106-2-11028389281519853880
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='utf-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477181; b=YhjyETuWrTqVPW5vZMxMh54x44frooTbVVZDGu+wAVq9ivTLEx
-    eolE4jCIAnFDVZmZ5gHridu3cmHH8cY+uunjSEb/aO1/M+d5POpLYBZxjjTjxaRg
-    g92roK0MaezXAPBdR3J6XMf4PfAJa31NVr6n29VuUmjT+LIJuv0duR5xXwhqKD/V
-    PFA3nx7sVmJcw3mtWp2+olok1xd995GHvb2D1iqnrDt0Z+Gw2hDcUFpc8tDqgReR
-    uODG3xfmInlAGh1gRRJuxF/ImibFeEpMSIyHKuEZKD/ogpXi9/srojgGlMstSAAD
-    0LBaHeyQ6O1z5ZUhdsgkQ/0aOI7lWy6xgdBQ==
+    1523464105; b=JNfadFL6HMg7405wlCkm/T5ufSiPdJSXZy7DmsUPip25F5u+22
+    ZAWchoQFUfOFqpfx4YcdSdiBO7SZb/hfgaoxtauUrsxwM3kZFS8o6C+LI59mFC1s
+    bLVPVPnn8jxCea3CCBmzwoBIqPQQQpnW5hV0OdXBNXq4TNDYc3evw52xvHXJj3re
+    zxLqEikNsplmDxriSy92K1KYj7oTIv2lXdYp0+jJCxI9jbvSZXTZqGlry4N9Q1tD
+    oLiH/M7HmV+Jc4zmMEXAzzxBOXoxSyYAwZWi7s1bJktmfXyOT1jhoEYBdKndeSCl
+    WUNgjIiTtLke6A1pTed4B74JdDzb+u48T8Sw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:in-reply-to:references:to:cc:subject
-    :mime-version:content-type:content-id:date:message-id:sender
-    :list-id; s=fm2; t=1523477181; bh=R+6PjYdcH1l+gpXXxcv27L/XE7QwJb
-    MijbXkG5rjQ6k=; b=P8tZIvsa6/5/8AU8spSvYvJUvqmjXlXbcI6vq7LUXd0o4Z
-    MkgJ7M/2ry1shqDWIHxjpUulJvHDrAQRX+qVj4dFD5N0IAjX96xWhpDlLgRjzZXJ
-    s40LevdvX7wymDy96NRBaYH6YMV/eTfs5v099MBqjhNWbvr0ertlQb6J91hBI+/h
-    uRfCCV2G+DKseC7MaNTIP8khwu+c7c7nZOZXJCtRd7Gi3Nr4cRW/BHR2KVdstFWd
-    EoqAyJ3mjYgIsQQ58NzFSuKox3F7agqFq2konR0XnLyq7r8288pJmh11wOFhiNz7
-    RoJmlBJ+WiyXkQWqYMudAfcrHLaoC9Wh4DeNXIoQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:from:to:cc:date:message-id
+    :in-reply-to:references:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523464105;
+    bh=DHnbvot2LHewsLnm68xCz8bTN1a1lVcWBh253lE31fI=; b=J6zXxBImz0oD
+    WiUhWifNm6rvlNyKR6zY3kP8SOuQJjAWmqVSUCAH+SkHvXQXLrRyPUKutwCuQQpQ
+    1xVgvFYPz44LKPUeExsOXQCq8oLeXJpZQ3lJNoWX9lzoGWUsS3db1kgw1qx2Q6pn
+    o2F7mSIx9B9rbQgSJ9z+O1a/JQd86hemfE+ayWLvJWPv0p+2o+6Z7MWPt26AbpiK
+    LqAgtVly7K6NrHbJJFkysFiequFjHrxJrSafc6npsGpCyd60YZr92ffuDfqZx2SF
+    5vIc3S5gN+GmiBVGGtnmWrQu8a8gtcXRBAilmhQBsSkEHsBSWdB/KpMiyMV/sqzA
+    mPvYeoi5MQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,8 +40,8 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -50,54 +51,122 @@ Authentication-Results: mx3.messagingengine.com;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCkpha33CWkztzfNpLYH0B7IagdWx8+710hanLKrOPZKBmMYzsRr159u4TcEkPkB8aw4n1WeQyBje5tOT+Dqb0pPqq1ffXwOqQEqTbkdIOFnN0LC48oE
-    WS8kGINBVlvbhT83IpdfuG5XFsSZzWDcqVum5IDG8DklhHx4lSBQne51886BHtxxE8y3CAxvvPqEFrc80wrgAxuovxCRKjMkXidS77DQ6BHAyieh5mtN6xJC
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=PtDNVHqPAAAA:8 a=VwQbUJbxAAAA:8 a=b6GjUZRGnaNtc2M7tfYA:9 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=BpimnaHY1jUKGyF_4-AF:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfAgcZlGThHfcEHMwM4UqpdscfFO2o0SR9SW6SPQy5L3NilVOmAF7fYRJ1gI0oPu1uxZy6wOx3xu/e77nn1SoZHeWVUrAbshB08IxdLen5QgYyi5t3QbO
+    j+npj28FNg31FyCm8dTudK84YrHMOBZk1eMr8M+J5BIgZr9jrqkZOShG444GYdUgUXNQhZV+dWvNUKyuxG46viU9JHpirjk0rdVGUj6oBiiLpmpr101r/AGa
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=z1H5ADGQAAAA:8 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=BQOtGlQSKHZKi5BaR78A:9
+    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=cNhwqobjEIRUxE0uuXBi:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756854AbeDKUGC (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:06:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34264 "EHLO mx1.redhat.com"
+        id S1753464AbeDKQ0k (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 12:26:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54384 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756281AbeDKUF7 (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Wed, 11 Apr 2018 16:05:59 -0400
+        id S1754271AbeDKQ0i (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Wed, 11 Apr 2018 12:26:38 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 18/24] Lock down module params that specify hardware
+ parameters (eg. ioport)
 From: David Howells <dhowells@redhat.com>
-In-Reply-To: <87po35k1q6.fsf@xmission.com>
-References: <87po35k1q6.fsf@xmission.com> <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk> <152346391877.4030.6270466586590461223.stgit@warthog.procyon.org.uk>
-To: ebiederm@xmission.com (Eric W. Biederman)
-Cc: dhowells@redhat.com, torvalds@linux-foundation.org,
-        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
+To: torvalds@linux-foundation.org
+Cc: linux-man@vger.kernel.org, linux-api@vger.kernel.org,
         jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 06/24] kexec_load: Disable at runtime if the kernel is locked down
+        dhowells@redhat.com, linux-security-module@vger.kernel.org
+Date: Wed, 11 Apr 2018 17:26:36 +0100
+Message-ID: <152346399627.4030.8043878470312297727.stgit@warthog.procyon.org.uk>
+In-Reply-To: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
+References: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <12600.1523477156.1@warthog.procyon.org.uk>
-Date: Wed, 11 Apr 2018 21:05:56 +0100
-Message-ID: <12601.1523477156@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Eric W. Biederman <ebiederm@xmission.com> wrote:
+Provided an annotation for module parameters that specify hardware
+parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
+dma buffers and other types).
 
-> Maybing I am missing it but I am not seeing anything that would require
-> kexec_file_load be configured such that it checks the loaded kernel.
-> 
-> Without that I don't see the point of disabling kexec_load.
+Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-I meant to remove this patch too.
+ kernel/params.c |   26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
-David
+diff --git a/kernel/params.c b/kernel/params.c
+index cc9108c2a1fd..2c08c4aa376b 100644
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@ -108,13 +108,19 @@ bool parameq(const char *a, const char *b)
+ 	return parameqn(a, b, strlen(a)+1);
+ }
+ 
+-static void param_check_unsafe(const struct kernel_param *kp)
++static bool param_check_unsafe(const struct kernel_param *kp,
++			       const char *doing)
+ {
+ 	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
+ 		pr_warn("Setting dangerous option %s - tainting kernel\n",
+ 			kp->name);
+ 		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+ 	}
++
++	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
++	    kernel_is_locked_down("Command line-specified device addresses, irqs and dma channels"))
++		return false;
++	return true;
+ }
+ 
+ static int parse_one(char *param,
+@@ -144,8 +150,10 @@ static int parse_one(char *param,
+ 			pr_debug("handling %s with %p\n", param,
+ 				params[i].ops->set);
+ 			kernel_param_lock(params[i].mod);
+-			param_check_unsafe(&params[i]);
+-			err = params[i].ops->set(val, &params[i]);
++			if (param_check_unsafe(&params[i], doing))
++				err = params[i].ops->set(val, &params[i]);
++			else
++				err = -EPERM;
+ 			kernel_param_unlock(params[i].mod);
+ 			return err;
+ 		}
+@@ -553,6 +561,12 @@ static ssize_t param_attr_show(struct module_attribute *mattr,
+ 	return count;
+ }
+ 
++#ifdef CONFIG_MODULES
++#define mod_name(mod) (mod)->name
++#else
++#define mod_name(mod) "unknown"
++#endif
++
+ /* sysfs always hands a nul-terminated string in buf.  We rely on that. */
+ static ssize_t param_attr_store(struct module_attribute *mattr,
+ 				struct module_kobject *mk,
+@@ -565,8 +579,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
+ 		return -EPERM;
+ 
+ 	kernel_param_lock(mk->mod);
+-	param_check_unsafe(attribute->param);
+-	err = attribute->param->ops->set(buf, attribute->param);
++	if (param_check_unsafe(attribute->param, mod_name(mk->mod)))
++		err = attribute->param->ops->set(buf, attribute->param);
++	else
++		err = -EPERM;
+ 	kernel_param_unlock(mk->mod);
+ 	if (!err)
+ 		return len;
+
