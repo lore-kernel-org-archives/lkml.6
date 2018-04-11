@@ -1,92 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752068AbeDKEnT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 00:43:19 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37576 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750801AbeDKEnR (ORCPT
+        id S1751670AbeDKEre (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 00:47:34 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:43583 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750785AbeDKErc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 00:43:17 -0400
-X-Google-Smtp-Source: AIpwx48GNO6e1XZx5NT1bDbB5SY0qB+NHkC0zv9kkE6mLftk3ghn7sLsUStZyo3Z7BleSctcT1RppA==
-Date: Tue, 10 Apr 2018 21:43:15 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Alasdair Kergon <agk@redhat.com>
-Cc: Mike Snitzer <snitzer@redhat.com>, linux-kernel@vger.kernel.org,
-        dm-devel@redhat.com, Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH] dm/raid1: Remove VLA usage
-Message-ID: <20180411044315.GA46144@beast>
+        Wed, 11 Apr 2018 00:47:32 -0400
+X-Google-Smtp-Source: AIpwx49TUT3f98uH6CZ451pxSz6OalIXDvlOLIkI6JQ0qZqWHmyZB52j2BZZZIIIo59n5c71IyZV5w==
+Subject: Re: [PATCH v5 1/5] mm: page_alloc: remain memblock_next_valid_pfn()
+ on arm and arm64
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, Jia He <jia.he@hxt-semitech.com>
+References: <1522636236-12625-1-git-send-email-hejianet@gmail.com>
+ <1522636236-12625-2-git-send-email-hejianet@gmail.com>
+ <CAKv+Gu96_sC1Q6-w4O-AXFZzNnH1WoGwJfqvSR+Q_k_bZbrUGg@mail.gmail.com>
+ <41445229-043c-976f-3961-13770163444f@gmail.com>
+ <CAKv+Gu_CwWnW15jyTCY55akAikEjbgK4zRq_9=YuSDot3O3dQg@mail.gmail.com>
+From: Jia He <hejianet@gmail.com>
+Message-ID: <4577f3be-1183-c857-6933-ca182fb34a2f@gmail.com>
+Date: Wed, 11 Apr 2018 12:47:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <CAKv+Gu_CwWnW15jyTCY55akAikEjbgK4zRq_9=YuSDot3O3dQg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the quest to remove all VLAs from the kernel[1], this avoids VLAs
-in dm-raid1.c by just using the maximum size for the stack arrays.
-The nr_mirrors value was already capped at 9, so this makes it a trivial
-adjustment to the array sizes.
 
-[1] https://lkml.org/lkml/2018/3/7/621
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- drivers/md/dm-raid1.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+On 4/2/2018 3:53 PM, Ard Biesheuvel Wrote:
+> On 2 April 2018 at 09:49, Jia He <hejianet@gmail.com> wrote:
+>>
+>> On 4/2/2018 2:55 PM, Ard Biesheuvel Wrote:
+>>> On 2 April 2018 at 04:30, Jia He <hejianet@gmail.com> wrote:
+>>>> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+>>>> where possible") optimized the loop in memmap_init_zone(). But it causes
+>>>> possible panic bug. So Daniel Vacek reverted it later.
+>>>>
+>>>> But as suggested by Daniel Vacek, it is fine to using memblock to skip
+>>>> gaps and finding next valid frame with CONFIG_HAVE_ARCH_PFN_VALID.
+>>>>
+>>>> On arm and arm64, memblock is used by default. But generic version of
+>>>> pfn_valid() is based on mem sections and memblock_next_valid_pfn() does
+>>>> not always return the next valid one but skips more resulting in some
+>>>> valid frames to be skipped (as if they were invalid). And that's why
+>>>> kernel was eventually crashing on some !arm machines.
+>>>>
+>>>> And as verified by Eugeniu Rosca, arm can benifit from commit
+>>>> b92df1de5d28. So remain the memblock_next_valid_pfn on arm{,64} and move
+>>>> the related codes to arm64 arch directory.
+>>>>
+>>>> Suggested-by: Daniel Vacek <neelx@redhat.com>
+>>>> Signed-off-by: Jia He <jia.he@hxt-semitech.com>
+>>> Hello Jia,
+>>>
+>>> Apologies for chiming in late.
+>> no problem, thanks for your comments  ;-)
+>>>
+>>> If we are going to rearchitect this, I'd rather we change the loop in
+>>> memmap_init_zone() so that we skip to the next valid PFN directly
+>>> rather than skipping to the last invalid PFN so that the pfn++ in the
+>> hmm... Maybe this macro name makes you confused
+>>
+>> pfn = skip_to_last_invalid_pfn(pfn);
+>>
+>> how about skip_to_next_valid_pfn?
+>>
+>>> for () results in the next value. Can we replace the pfn++ there with
+>>> a function calls that defaults to 'return pfn + 1', but does the skip
+>>> for architectures that implement it?
+>> I am not sure I understand your question here.
+>> With this patch, on !arm arches, skip_to_last_invalid_pfn is equal to (pfn),
+>> and will be increased
+>> when for{} loop continue. We only *skip* to the start pfn of next valid
+>> region when
+>> CONFIG_HAVE_MEMBLOCK and CONFIG_HAVE_ARCH_PFN_VALID(arm/arm64 supports
+>> both).
+>>
+> What I am saying is that the loop in memmap_init_zone
+>
+> for (pfn = start_pfn; pfn < end_pfn; pfn++) { ... }
+>
+> should be replaced by something like
+>
+> for (pfn = start_pfn; pfn < end_pfn; pfn = next_valid_pfn(pfn))
+After further thinking, IMO, pfn = next_valid_pfn(pfn) might have impact on
 
-diff --git a/drivers/md/dm-raid1.c b/drivers/md/dm-raid1.c
-index 580c49cc8079..5903e492bb34 100644
---- a/drivers/md/dm-raid1.c
-+++ b/drivers/md/dm-raid1.c
-@@ -23,6 +23,8 @@
- 
- #define MAX_RECOVERY 1	/* Maximum number of regions recovered in parallel. */
- 
-+#define MAX_NR_MIRRORS	(DM_KCOPYD_MAX_REGIONS + 1)
-+
- #define DM_RAID1_HANDLE_ERRORS	0x01
- #define DM_RAID1_KEEP_LOG	0x02
- #define errors_handled(p)	((p)->features & DM_RAID1_HANDLE_ERRORS)
-@@ -255,7 +257,7 @@ static int mirror_flush(struct dm_target *ti)
- 	unsigned long error_bits;
- 
- 	unsigned int i;
--	struct dm_io_region io[ms->nr_mirrors];
-+	struct dm_io_region io[MAX_NR_MIRRORS];
- 	struct mirror *m;
- 	struct dm_io_request io_req = {
- 		.bi_op = REQ_OP_WRITE,
-@@ -651,7 +653,7 @@ static void write_callback(unsigned long error, void *context)
- static void do_write(struct mirror_set *ms, struct bio *bio)
- {
- 	unsigned int i;
--	struct dm_io_region io[ms->nr_mirrors], *dest = io;
-+	struct dm_io_region io[MAX_NR_MIRRORS], *dest = io;
- 	struct mirror *m;
- 	struct dm_io_request io_req = {
- 		.bi_op = REQ_OP_WRITE,
-@@ -1083,7 +1085,7 @@ static int mirror_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 	argc -= args_used;
- 
- 	if (!argc || sscanf(argv[0], "%u%c", &nr_mirrors, &dummy) != 1 ||
--	    nr_mirrors < 2 || nr_mirrors > DM_KCOPYD_MAX_REGIONS + 1) {
-+	    nr_mirrors < 2 || nr_mirrors > MAX_NR_MIRRORS) {
- 		ti->error = "Invalid number of mirrors";
- 		dm_dirty_log_destroy(dl);
- 		return -EINVAL;
-@@ -1404,7 +1406,7 @@ static void mirror_status(struct dm_target *ti, status_type_t type,
- 	int num_feature_args = 0;
- 	struct mirror_set *ms = (struct mirror_set *) ti->private;
- 	struct dm_dirty_log *log = dm_rh_dirty_log(ms->rh);
--	char buffer[ms->nr_mirrors + 1];
-+	char buffer[MAX_NR_MIRRORS + 1];
- 
- 	switch (type) {
- 	case STATUSTYPE_INFO:
+memmap_init_zone loop.
+
+e.g.context != MEMMAP_EARLY, pfn will not be checked by early_pfn_valid, thus
+It will change the memhotplug logic.
+
+So I would choose the old implementation:
+		if (!early_pfn_valid(pfn)) {
+			pfn = next_valid_pfn(pfn) - 1;
+			continue;
+		}
+Any comments? Thanks
+
 -- 
-2.7.4
-
-
--- 
-Kees Cook
-Pixel Security
+Cheers,
+Jia
