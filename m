@@ -1,36 +1,83 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48N9ARyLH2Xh3gO6vG200uTDvZQeaykdub3/pHohANiVR5Saiu8BSk+htFHeQA1zyTyaJXo
-ARC-Seal: i=1; a=rsa-sha256; t=1523472929; cv=none;
-        d=google.com; s=arc-20160816;
-        b=MaaJEzxS/SdTUX79kqgtnCJqxHKp+VaPVM5MrMiLzAolY5qU+jPzh3UVyoILB5H2ii
-         RN3egIPSZo/yuYZgZfdw7mXI7uZovifoKCzMA4J66Z99TevCTPuFwwn1OmD6Ds99eHHI
-         VgtyLZ+618N77gWj0s0OasnuJ4R1SWBRbNKKbtrt7b28S/VL7RGPi9KiyCTTmvXW/Dsx
-         lON+ww0eHVons+hTFYCUsb7xvubANtTw7s1/ujc8H3/W/DT9dzMcHut1q6dQdgXkFxRs
-         BAay2H20OAFPksXKIofVUNAh3Oif3Ab00OXFraljm8m5/UXq4EW3wAWPtg2uuuboMYsN
-         YEGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=kuXLDTiFQuKZZoLjSpzcq4fXr96fu7RHCchhT/pb9tQ=;
-        b=JBdwLGLHaPd7sbdbUripF5wuCuXKz1VSFXU3jxN2nO/KayhZoHNkCEvK+PN2sEBLfr
-         yidfwGh1tE1oUl9B+VFEdB74piaFofA+OF216fle8Fe3KC+ji/NDpn8sqjDEWh0vRr+V
-         W8XkUnvIR/YpS+0U/gIKqezgCj31zSAjOWsb5RLvHHDeI2pds9qYtwrHOIA++PJZ1dN8
-         qEUU+Y/gCA0fyrhj3KLaxbb7Hsb3Kgr4OemjD+/F/pHGb6h5RkedgGWA0swM++hgs/NG
-         1lbKdmFKW8SYFuhhIT45tP76AEZEKo60T28hnQSG+i0lBjYQ7of2ApLixbfLGFFlDcCc
-         5DfA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3118118-1523472896-2-4956977282409588710
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523472896; b=iffTpgUAEnzrTdnhn6cGtzk+vTqDlgr0OsMDJvcJ5oAr9RY/u9
+    l3QU0G2ogRzsXGU2fjAD8USFwnRQp5+5mP2ch7T7invlWrOzwqIQGCsqM+EFYrQ7
+    ibOJIkNSFqb6PLFwixZF5Fgmsp7yY4urRbR8QKrIEgWMmmD11O1s5QIdNjhIDBmc
+    kouCSLq2+GI6HNgJbNsHawyv9JTxnR187goC4tKVD9Fw3btjpqt62I+5BD2wa+aQ
+    KJVKPoojv2awvcE3XhonLvaaS11HcSht9JojfyLe3Lx8OEROGZHLbeoEvf4C8hoR
+    u2aqbFC5UsZ8m10SMEb3zIiGoOPdz2fYTxnQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523472896; bh=vHsXb2E8838s0dOSv0qzdQGPZ3NZxf
+    Vph3VxqMrc3SM=; b=WMjh/Gl3G72Mum5QT+wfXCIL3WUFq1ECF5Kc1o8WcPlhkj
+    GxXbr915/CXxaG2cg7iWclPFKTHz4dIWNA+VBwsvS2nUM0q4dtwRkzSvO8IJRDs0
+    FO9KK7Iff4d3gZu+XpJviXI7JKBT8p0snhOMNW+36mJ2RoeRurwzfWX6Iiya/J9V
+    702RbxEaVnGbS/bIF3UEfdKLUsOEGTwyKoRLcXUg1Yt3wSRO65lzoc8EgZm2hWQu
+    OBnLiY4pr+80DbfP3pGa/xmH6i0mE8ICgjlLiXSrWiDnnObA9s+5iheByPncM1Kk
+    A7AjxvUs0ccDVFCuY/l15bsbTXGCI/70bWNLkc4Q==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfAAokJhWmduW8h0jGEPLujrC2digcZTr/Z4VWbf017+NXrqvYKdKIij4pOJ3hHLBo1ENXmQk1Kr+c6S3RuvQzCqQZsndqgxhV6/mpBfCRzjY3iSU6rJR
+    m2xcQPP/OaQw1n4U5LMx/jiPvCms0/LTXRi91+1uXv6mAlpsEYzdMVBdLtZkNGPC48Y016hohmNGeROyaB8RBwwrkwLrfeOTCcGY6ABSkWrFsgbZdAP3MmE0
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=1XWaLZrsAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=XnLS8o09v7U2Rlm7CLcA:9 a=EXIo6765cj4ZwHyc:21
+    a=A1Xbmg0M1upB5TVp:21 a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933591AbeDKSyx (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:54:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34708 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933556AbeDKSyt (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:54:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Paul Mackerras <paulus@ozlabs.org>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 035/310] KVM: PPC: Book3S PR: Check copy_to/from_user return values
-Date: Wed, 11 Apr 2018 20:32:54 +0200
-Message-Id: <20180411183623.790127932@linuxfoundation.org>
+        stable@vger.kernel.org, Mahesh Bandewar <maheshb@google.com>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 053/310] ipv6: avoid dad-failures for addresses with NODAD
+Date: Wed, 11 Apr 2018 20:33:12 +0200
+Message-Id: <20180411183624.528582653@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -38,10 +85,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476168802820578?=
-X-GMAIL-MSGID: =?utf-8?q?1597477150483099672?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,136 +95,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paul Mackerras <paulus@ozlabs.org>
+From: Mahesh Bandewar <maheshb@google.com>
 
 
-[ Upstream commit 67325e988faea735d663799b6d152b5f4254093c ]
+[ Upstream commit 66eb9f86e50547ec2a8ff7a75997066a74ef584b ]
 
-The PR KVM implementation of the PAPR HPT hypercalls (H_ENTER etc.)
-access an image of the HPT in userspace memory using copy_from_user
-and copy_to_user.  Recently, the declarations of those functions were
-annotated to indicate that the return value must be checked.  Since
-this code doesn't currently check the return value, this causes
-compile warnings like the ones shown below, and since on PPC the
-default is to compile arch/powerpc with -Werror, this causes the
-build to fail.
+Every address gets added with TENTATIVE flag even for the addresses with
+IFA_F_NODAD flag and dad-work is scheduled for them. During this DAD process
+we realize it's an address with NODAD and complete the process without
+sending any probe. However the TENTATIVE flags stays on the
+address for sometime enough to cause misinterpretation when we receive a NS.
+While processing NS, if the address has TENTATIVE flag, we mark it DADFAILED
+and endup with an address that was originally configured as NODAD with
+DADFAILED.
 
-To fix this, we check the return values, and if non-zero, fail the
-hypercall being processed with a H_FUNCTION error return value.
-There is really no good error return value to use since PAPR didn't
-envisage the possibility that the hypervisor may not be able to access
-the guest's HPT, and H_FUNCTION (function not supported) seems as
-good as any.
+We can't avoid scheduling dad_work for addresses with NODAD but we can
+avoid adding TENTATIVE flag to avoid this racy situation.
 
-The typical compile warnings look like this:
-
-  CC      arch/powerpc/kvm/book3s_pr_papr.o
-/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s_pr_papr.c: In function ‘kvmppc_h_pr_enter’:
-/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s_pr_papr.c:53:2: error: ignoring return value of ‘copy_from_user’, declared with attribute warn_unused_result [-Werror=unused-result]
-  copy_from_user(pteg, (void __user *)pteg_addr, sizeof(pteg));
-  ^
-/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s_pr_papr.c:74:2: error: ignoring return value of ‘copy_to_user’, declared with attribute warn_unused_result [-Werror=unused-result]
-  copy_to_user((void __user *)pteg_addr, hpte, HPTE_SIZE);
-  ^
-
-... etc.
-
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Mahesh Bandewar <maheshb@google.com>
+Acked-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kvm/book3s_pr_papr.c |   34 ++++++++++++++++++++++++++--------
- 1 file changed, 26 insertions(+), 8 deletions(-)
+ net/ipv6/addrconf.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/kvm/book3s_pr_papr.c
-+++ b/arch/powerpc/kvm/book3s_pr_papr.c
-@@ -50,7 +50,9 @@ static int kvmppc_h_pr_enter(struct kvm_
- 	pteg_addr = get_pteg_addr(vcpu, pte_index);
- 
- 	mutex_lock(&vcpu->kvm->arch.hpt_mutex);
--	copy_from_user(pteg, (void __user *)pteg_addr, sizeof(pteg));
-+	ret = H_FUNCTION;
-+	if (copy_from_user(pteg, (void __user *)pteg_addr, sizeof(pteg)))
-+		goto done;
- 	hpte = pteg;
- 
- 	ret = H_PTEG_FULL;
-@@ -71,7 +73,9 @@ static int kvmppc_h_pr_enter(struct kvm_
- 	hpte[0] = cpu_to_be64(kvmppc_get_gpr(vcpu, 6));
- 	hpte[1] = cpu_to_be64(kvmppc_get_gpr(vcpu, 7));
- 	pteg_addr += i * HPTE_SIZE;
--	copy_to_user((void __user *)pteg_addr, hpte, HPTE_SIZE);
-+	ret = H_FUNCTION;
-+	if (copy_to_user((void __user *)pteg_addr, hpte, HPTE_SIZE))
-+		goto done;
- 	kvmppc_set_gpr(vcpu, 4, pte_index | i);
- 	ret = H_SUCCESS;
- 
-@@ -93,7 +97,9 @@ static int kvmppc_h_pr_remove(struct kvm
- 
- 	pteg = get_pteg_addr(vcpu, pte_index);
- 	mutex_lock(&vcpu->kvm->arch.hpt_mutex);
--	copy_from_user(pte, (void __user *)pteg, sizeof(pte));
-+	ret = H_FUNCTION;
-+	if (copy_from_user(pte, (void __user *)pteg, sizeof(pte)))
-+		goto done;
- 	pte[0] = be64_to_cpu((__force __be64)pte[0]);
- 	pte[1] = be64_to_cpu((__force __be64)pte[1]);
- 
-@@ -103,7 +109,9 @@ static int kvmppc_h_pr_remove(struct kvm
- 	    ((flags & H_ANDCOND) && (pte[0] & avpn) != 0))
- 		goto done;
- 
--	copy_to_user((void __user *)pteg, &v, sizeof(v));
-+	ret = H_FUNCTION;
-+	if (copy_to_user((void __user *)pteg, &v, sizeof(v)))
-+		goto done;
- 
- 	rb = compute_tlbie_rb(pte[0], pte[1], pte_index);
- 	vcpu->arch.mmu.tlbie(vcpu, rb, rb & 1 ? true : false);
-@@ -171,7 +179,10 @@ static int kvmppc_h_pr_bulk_remove(struc
- 		}
- 
- 		pteg = get_pteg_addr(vcpu, tsh & H_BULK_REMOVE_PTEX);
--		copy_from_user(pte, (void __user *)pteg, sizeof(pte));
-+		if (copy_from_user(pte, (void __user *)pteg, sizeof(pte))) {
-+			ret = H_FUNCTION;
-+			break;
-+		}
- 		pte[0] = be64_to_cpu((__force __be64)pte[0]);
- 		pte[1] = be64_to_cpu((__force __be64)pte[1]);
- 
-@@ -184,7 +195,10 @@ static int kvmppc_h_pr_bulk_remove(struc
- 			tsh |= H_BULK_REMOVE_NOT_FOUND;
- 		} else {
- 			/* Splat the pteg in (userland) hpt */
--			copy_to_user((void __user *)pteg, &v, sizeof(v));
-+			if (copy_to_user((void __user *)pteg, &v, sizeof(v))) {
-+				ret = H_FUNCTION;
-+				break;
-+			}
- 
- 			rb = compute_tlbie_rb(pte[0], pte[1],
- 					      tsh & H_BULK_REMOVE_PTEX);
-@@ -211,7 +225,9 @@ static int kvmppc_h_pr_protect(struct kv
- 
- 	pteg = get_pteg_addr(vcpu, pte_index);
- 	mutex_lock(&vcpu->kvm->arch.hpt_mutex);
--	copy_from_user(pte, (void __user *)pteg, sizeof(pte));
-+	ret = H_FUNCTION;
-+	if (copy_from_user(pte, (void __user *)pteg, sizeof(pte)))
-+		goto done;
- 	pte[0] = be64_to_cpu((__force __be64)pte[0]);
- 	pte[1] = be64_to_cpu((__force __be64)pte[1]);
- 
-@@ -234,7 +250,9 @@ static int kvmppc_h_pr_protect(struct kv
- 	vcpu->arch.mmu.tlbie(vcpu, rb, rb & 1 ? true : false);
- 	pte[0] = (__force u64)cpu_to_be64(pte[0]);
- 	pte[1] = (__force u64)cpu_to_be64(pte[1]);
--	copy_to_user((void __user *)pteg, pte, sizeof(pte));
-+	ret = H_FUNCTION;
-+	if (copy_to_user((void __user *)pteg, pte, sizeof(pte)))
-+		goto done;
- 	ret = H_SUCCESS;
- 
-  done:
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -988,7 +988,10 @@ ipv6_add_addr(struct inet6_dev *idev, co
+ 	INIT_HLIST_NODE(&ifa->addr_lst);
+ 	ifa->scope = scope;
+ 	ifa->prefix_len = pfxlen;
+-	ifa->flags = flags | IFA_F_TENTATIVE;
++	ifa->flags = flags;
++	/* No need to add the TENTATIVE flag for addresses with NODAD */
++	if (!(flags & IFA_F_NODAD))
++		ifa->flags |= IFA_F_TENTATIVE;
+ 	ifa->valid_lft = valid_lft;
+ 	ifa->prefered_lft = prefered_lft;
+ 	ifa->cstamp = ifa->tstamp = jiffies;
