@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3397032-1523481654-2-16415588929817514757
+X-Cyrus-Session-Id: sloti22d1t05-3374234-1523481630-2-1070824649504437434
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523481654; b=j643CRCGLM4iPE6hoF3TtIVkn9GvcY0RiPr9hSXh2y7vg3QxmL
-    6z2Z/kuJCZGC3AISfBgAhe5qORhr4huTDckZbeJLpfB/WzNlnAu6Z3xqKFqdkiSO
-    ryJRhrBcjUQDMZ+NWmGvSCADvybZfxn0Va/NnkHrsWZZgagWIi+W7A69dtx3YzRO
-    Qxc5lH1n8l5f2z5z6xHZroo9lnyn8u+ZjguC+icgmxanU/stDs7R1Wbse5r2gDe7
-    a4gSazWL9ByLMDQjyYhJy9OoJo0rKR8BqmkyB29VLItQjS1Ss5IghEjTsSJlslki
-    ztmY3vayNC2pazGdGXcvcYducFSOsPlyeVYQ==
+    1523481629; b=HxCFvtI8H0pLExxSOYd29MNCjtnDV1yhvnKXG8LS3r3K/YhyMa
+    JrQscB3bMqn5Bcu4f7xo0+U0cwFRGzJQuGnZkUb3GpskPpTQYO7WcMdDkDdlgwsz
+    kh9nZa7Cfitt9v8xo/qWghxL70fROEfOvZx68J4dNSIVFHRhLpy9Ih/wgCiB9FUC
+    JnMehHx2RF40NJesvk3xkLZnRJLLR6dEHcRV2YokGltSqwTpJoxsyYggPxip0Rzx
+    I09G52wlyUZRjpMS3OGRqXfDIy2TAlPUw+GjvXDn/LTByPGZI/OLQZhQmr2y778M
+    52Z8DDBcr9LPRQEk/xvsbaX3Z6JUhUi3mwZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523481654; bh=cEQMH8s9iu8AyehjPtcUxJcCQwPti+
-    wwvEhfAtbW7wk=; b=rMtrrIm14zcrQXI9M9qSgS5ozDYnRjsxAr6zLM2yhOvPTi
-    /vEf6YqAGaOFaofdIQLgKjS19BWPS2mdD+dM4xe6ufPS0GmIT6u0HfJKS3ECdCrw
-    NZgODTRnL3n6dqHVJIQP6QKMh3LwA6U2ps7+zycSHzlb4KRkFyn4Bk0JfghVZ+ds
-    HpmhLZ26NLEBzxZ4gDCj2u6p8Lzi1h7EJaNgZw6Qel+Kp/BbrbS9p86cqvgVTYBB
-    8b4eA8Rl/KAWFa/iNLhHBuDLnI3Y5dXcbwVoO3qva7UbZU4OKDah3hDvb3aicauj
-    OjcQ2o1j6B6HLlWbLANa1Gq0dhknYQi6gXfUXTCg==
+    :list-id; s=fm2; t=1523481629; bh=6IURkv3IzaWCrY6D2IQAw/hWi+f+aY
+    uUbXDt/RdCDV4=; b=BGSZ6GjSjA6gcBZASy9U131FwbceM3abn87QQjRXx33Kpe
+    PMq+hO6t1wYIkFWkG/nS/7Y/isJMW5EP+1ijcMj94l0JFiQh6BSgGDsG96/GssrW
+    qajmWbSaZvCSR6dN/mhI9L4uMtZN/Quiuw/1kw6jlJWozfbz/1Ok4pcJbVqNIPf6
+    gtSkyBV8z/UysXirz8GAs7xKmBhE97t6z8lST0iPJ4sY3YHF+zLA7FqMwqJlqceA
+    rrAOE+FmhCT/8XmJ0uXLQZuS+wZ3RLdcytY87pA4XSuzVR620sIbOXpY8VRnzxnV
+    zbUy5h/QkJ8ZtLoSk3LPsjBEcKSO2QPfoY2kg3pw==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,30 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGOA0+2Gih8csF6igwK5Km1wLLwIH57oPl5Ri11Sh9DCrtElgTTyfsK7jwx5bn3IqEN/KAFBEWkwmfWcd4JGsc/QSJnjBIzEz6sEIzVWhJTj0I0YV7eE
-    9l6vKCjfY63Ja/05ak3FnDeoPQrWRNTl6UZ+GIe1oHJrNmdno3wYT8aDe6Ejbk7NK+ZkWkAkxKIr20nlD747v2ZxGvA+hc2H7SOm8kZihniwaInzibkcCB1T
+X-CM-Envelope: MS4wfGzuIg4t1qOWb3KqEDsNxetUPSxjGxRR00l9EBPqWeSfteABq6QWYsln3p2KzrgZxLcHWOOtHrJv3C8SgV042uH2lFcn9j2DjWOR55iWI4h+YcJl2xEd
+    4AmjA6+SrMZUo9omQnlscJ/VeMIh0K2HDqQ4yA1wJopIbxNK67U2UP/2p8eHvLSX4OIpeCnDksgKnAO1UityeuJk8CNja4OlXVDIvVKklme7dSoc8KaD6k05
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=3-RhneuVAAAA:8 a=yMhMjlubAAAA:8 a=pGLkceISAAAA:8 a=ag1SF4gXAAAA:8
-    a=WoP9IM0tYB0b0HWQNkIA:9 a=QEXdDO2ut3YA:10 a=VLVLkjT_5ZicWzSuYqSo:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=yPCof4ZbAAAA:8 a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=xKBjqWDVSTWkfMpGLd4A:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754391AbeDKSjZ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:39:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56032 "EHLO
+        id S1754408AbeDKSjb (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:39:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56080 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754371AbeDKSjX (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:39:23 -0400
+        with ESMTP id S1752793AbeDKSj2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:39:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rabin Vincent <rabinv@axis.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <smfrench@gmail.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 012/121] CIFS: silence lockdep splat in cifs_relock_file()
-Date: Wed, 11 Apr 2018 20:35:15 +0200
-Message-Id: <20180411183456.956328731@linuxfoundation.org>
+Subject: [PATCH 3.18 040/121] libceph: NULL deref on crush_decode() error path
+Date: Wed, 11 Apr 2018 20:35:43 +0200
+Message-Id: <20180411183458.881604029@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -94,85 +92,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rabin Vincent <rabinv@axis.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit 560d388950ceda5e7c7cdef7f3d9a8ff297bbf9d ]
+[ Upstream commit 293dffaad8d500e1a5336eeb90d544cf40d4fbd8 ]
 
-cifs_relock_file() can perform a down_write() on the inode's lock_sem even
-though it was already performed in cifs_strict_readv().  Lockdep complains
-about this.  AFAICS, there is no problem here, and lockdep just needs to be
-told that this nesting is OK.
+If there is not enough space then ceph_decode_32_safe() does a goto bad.
+We need to return an error code in that situation.  The current code
+returns ERR_PTR(0) which is NULL.  The callers are not expecting that
+and it results in a NULL dereference.
 
- =============================================
- [ INFO: possible recursive locking detected ]
- 4.11.0+ #20 Not tainted
- ---------------------------------------------
- cat/701 is trying to acquire lock:
-  (&cifsi->lock_sem){++++.+}, at: cifs_reopen_file+0x7a7/0xc00
-
- but task is already holding lock:
-  (&cifsi->lock_sem){++++.+}, at: cifs_strict_readv+0x177/0x310
-
- other info that might help us debug this:
-  Possible unsafe locking scenario:
-
-        CPU0
-        ----
-   lock(&cifsi->lock_sem);
-   lock(&cifsi->lock_sem);
-
-  *** DEADLOCK ***
-
-  May be due to missing lock nesting notation
-
- 1 lock held by cat/701:
-  #0:  (&cifsi->lock_sem){++++.+}, at: cifs_strict_readv+0x177/0x310
-
- stack backtrace:
- CPU: 0 PID: 701 Comm: cat Not tainted 4.11.0+ #20
- Call Trace:
-  dump_stack+0x85/0xc2
-  __lock_acquire+0x17dd/0x2260
-  ? trace_hardirqs_on_thunk+0x1a/0x1c
-  ? preempt_schedule_irq+0x6b/0x80
-  lock_acquire+0xcc/0x260
-  ? lock_acquire+0xcc/0x260
-  ? cifs_reopen_file+0x7a7/0xc00
-  down_read+0x2d/0x70
-  ? cifs_reopen_file+0x7a7/0xc00
-  cifs_reopen_file+0x7a7/0xc00
-  ? printk+0x43/0x4b
-  cifs_readpage_worker+0x327/0x8a0
-  cifs_readpage+0x8c/0x2a0
-  generic_file_read_iter+0x692/0xd00
-  cifs_strict_readv+0x29f/0x310
-  generic_file_splice_read+0x11c/0x1c0
-  do_splice_to+0xa5/0xc0
-  splice_direct_to_actor+0xfa/0x350
-  ? generic_pipe_buf_nosteal+0x10/0x10
-  do_splice_direct+0xb5/0xe0
-  do_sendfile+0x278/0x3a0
-  SyS_sendfile64+0xc4/0xe0
-  entry_SYSCALL_64_fastpath+0x1f/0xbe
-
-Signed-off-by: Rabin Vincent <rabinv@axis.com>
-Acked-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <smfrench@gmail.com>
+Fixes: f24e9980eb86 ("ceph: OSD client")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/file.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ceph/osdmap.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -583,7 +583,7 @@ cifs_relock_file(struct cifsFileInfo *cf
- 	struct cifs_tcon *tcon = tlink_tcon(cfile->tlink);
- 	int rc = 0;
+--- a/net/ceph/osdmap.c
++++ b/net/ceph/osdmap.c
+@@ -270,6 +270,7 @@ static struct crush_map *crush_decode(vo
+ 		u32 yes;
+ 		struct crush_rule *r;
  
--	down_read(&cinode->lock_sem);
-+	down_read_nested(&cinode->lock_sem, SINGLE_DEPTH_NESTING);
- 	if (cinode->can_cache_brlcks) {
- 		/* can cache locks - no need to relock */
- 		up_read(&cinode->lock_sem);
++		err = -EINVAL;
+ 		ceph_decode_32_safe(p, end, yes, bad);
+ 		if (!yes) {
+ 			dout("crush_decode NO rule %d off %x %p to %p\n",
