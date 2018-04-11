@@ -1,164 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752963AbeDKW5V (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 18:57:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39516 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751972AbeDKWzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 18:55:20 -0400
-From: Lyude Paul <lyude@redhat.com>
-To: intel-gfx@lists.freedesktop.org
-Cc: Manasi Navare <manasi.d.navare@intel.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
-        <ville.syrjala@linux.intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 02/10] drm/i915: Move DP modeset retry work into intel_dp
-Date: Wed, 11 Apr 2018 18:54:39 -0400
-Message-Id: <20180411225501.26751-3-lyude@redhat.com>
-In-Reply-To: <20180411225501.26751-1-lyude@redhat.com>
-References: <20180411225501.26751-1-lyude@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1752107AbeDKXH4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 19:07:56 -0400
+Received: from foss.arm.com ([217.140.101.70]:55388 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751668AbeDKXHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 19:07:54 -0400
+Date: Wed, 11 Apr 2018 18:07:52 -0500
+From: Kim Phillips <kim.phillips@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, <kernel-team@lge.com>
+Subject: [PATCH] Revert
+ "perf machine: Fix paranoid check in machine__set_kernel_mmap()"
+Message-Id: <20180411180752.b64c4d105222fb22c159b852@arm.com>
+In-Reply-To: <20180219121817.GC14978@kernel.org>
+References: <20180215122635.24029-1-jolsa@kernel.org>
+        <20180215122635.24029-7-jolsa@kernel.org>
+        <20180219022036.GB1583@sejong>
+        <20180219100140.GA17630@krava>
+        <20180219101936.GD1583@sejong>
+        <20180219104917.GA19365@krava>
+        <20180219121817.GC14978@kernel.org>
+Organization: Arm
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While having the modeset_retry_work in intel_connector makes sense with
-SST, this paradigm doesn't make a whole ton of sense when it comes to
-MST since we have to deal with multiple connectors. In most cases, it's
-more useful to just use the intel_dp struct since it indicates whether
-or not we're dealing with an MST device, along with being able to easily
-trace the intel_dp struct back to it's respective connector (if there is
-any). So, move the modeset_retry_work function out of the
-intel_connector struct and into intel_dp.
+perf test 1 is failing on an arm64 box (that has a kernel module
+loaded fwiw).  Running bisect resulted in commit 1d12cec6ce99 "perf
+machine: Fix paranoid check in machine__set_kernel_mmap()" being the
+first bad commit.  Reverting it fixes symbol resolution:
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Manasi Navare <manasi.d.navare@intel.com>
-Cc: Manasi Navare <manasi.d.navare@intel.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+ # ./perf.bad record true; ./perf.bad --no-pager report --stdio --quiet
+ [ perf record: Woken up 1 times to write data ]
+ [ perf record: Captured and wrote 0.001 MB perf.data (10 samples) ]
+     64.34%  true     [unknown]         [k] 0xffff20000809ffb8
+     32.12%  true     [unknown]         [k] 0xffff20000869f400
+      3.24%  true     [unknown]         [k] 0xffff20000868d924
+      0.28%  perf.ba  [unknown]         [k] 0xffff200008598b34
+      0.03%  perf.ba  [unknown]         [k] 0xffff200008598a94
 
-V2:
- - Remove accidental duplicate modeset_retry_work in intel_connector
-V3:
- - Also check against eDP in intel_hpd_poll_fini() - mdnavare
-V4:
- - Don't bother looping over connectors for canceling modeset rety work,
-   just encoders.
-V7:
- - Fix CHECKPATCH errors
-Signed-off-by: Lyude Paul <lyude@redhat.com>
+ # ./perf.good record true; ./perf.good --no-pager report --stdio --quiet
+ [ perf record: Woken up 1 times to write data ]
+ [ perf record: Captured and wrote 0.001 MB perf.data (9 samples) ]
+     91.71%  true     [kernel.kallsyms]  [k] restore_nameidata
+      7.60%  true     [kernel.kallsyms]  [k] perf_iterate_ctx.constprop.38
+      0.69%  perf.go  [kernel.kallsyms]  [k] perf_event_exec
+
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: <kernel-team@lge.com>
+Fixes: 1d12cec6ce99 ("perf machine: Fix paranoid check in machine__set_kernel_mmap()")
+Signed-off-by: Kim Phillips <kim.phillips@arm.com>
 ---
- drivers/gpu/drm/i915/intel_display.c          | 14 +++++++++++---
- drivers/gpu/drm/i915/intel_dp.c               | 10 ++++------
- drivers/gpu/drm/i915/intel_dp_link_training.c |  2 +-
- drivers/gpu/drm/i915/intel_drv.h              |  6 +++---
- 4 files changed, 19 insertions(+), 13 deletions(-)
+It's not clear to me what the specific intent of the original commit
+was, thus the revert.
 
-diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-index e04050ea3e28..18edb9628a54 100644
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -15471,20 +15471,28 @@ void intel_connector_unregister(struct drm_connector *connector)
- 
- static void intel_hpd_poll_fini(struct drm_device *dev)
- {
--	struct intel_connector *connector;
- 	struct drm_connector_list_iter conn_iter;
-+	struct intel_connector *connector;
-+	struct intel_encoder *encoder;
-+	struct intel_dp *intel_dp;
- 
- 	/* Kill all the work that may have been queued by hpd. */
- 	drm_connector_list_iter_begin(dev, &conn_iter);
- 	for_each_intel_connector_iter(connector, &conn_iter) {
--		if (connector->modeset_retry_work.func)
--			cancel_work_sync(&connector->modeset_retry_work);
- 		if (connector->hdcp_shim) {
- 			cancel_delayed_work_sync(&connector->hdcp_check_work);
- 			cancel_work_sync(&connector->hdcp_prop_work);
- 		}
+ tools/perf/util/machine.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 2eca8478e24f..089399139778 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -1224,7 +1224,7 @@ static void machine__set_kernel_mmap(struct machine *machine,
+ 		 * Be a bit paranoid here, some perf.data file came with
+ 		 * a zero sized synthesized MMAP event for the kernel.
+ 		 */
+-		if (start == 0 && end == 0)
++		if (machine->vmlinux_maps[i]->end == 0)
+ 			machine->vmlinux_maps[i]->end = ~0ULL;
  	}
- 	drm_connector_list_iter_end(&conn_iter);
-+
-+	for_each_intel_encoder(dev, encoder) {
-+		if (encoder->type == INTEL_OUTPUT_DP ||
-+		    encoder->type == INTEL_OUTPUT_EDP) {
-+			intel_dp = enc_to_intel_dp(&encoder->base);
-+			cancel_work_sync(&intel_dp->modeset_retry_work);
-+		}
-+	}
  }
- 
- void intel_modeset_cleanup(struct drm_device *dev)
-diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
-index 62f82c4298ac..fbb467bc227d 100644
---- a/drivers/gpu/drm/i915/intel_dp.c
-+++ b/drivers/gpu/drm/i915/intel_dp.c
-@@ -6249,12 +6249,10 @@ static bool intel_edp_init_connector(struct intel_dp *intel_dp,
- 
- static void intel_dp_modeset_retry_work_fn(struct work_struct *work)
- {
--	struct intel_connector *intel_connector;
--	struct drm_connector *connector;
-+	struct intel_dp *intel_dp = container_of(work, typeof(*intel_dp),
-+						 modeset_retry_work);
-+	struct drm_connector *connector = &intel_dp->attached_connector->base;
- 
--	intel_connector = container_of(work, typeof(*intel_connector),
--				       modeset_retry_work);
--	connector = &intel_connector->base;
- 	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n", connector->base.id,
- 		      connector->name);
- 
-@@ -6283,7 +6281,7 @@ intel_dp_init_connector(struct intel_digital_port *intel_dig_port,
- 	int type;
- 
- 	/* Initialize the work for modeset in case of link train failure */
--	INIT_WORK(&intel_connector->modeset_retry_work,
-+	INIT_WORK(&intel_dp->modeset_retry_work,
- 		  intel_dp_modeset_retry_work_fn);
- 
- 	if (WARN(intel_dig_port->max_lanes < 1,
-diff --git a/drivers/gpu/drm/i915/intel_dp_link_training.c b/drivers/gpu/drm/i915/intel_dp_link_training.c
-index f59b59bb0a21..2cfa58ce1f95 100644
---- a/drivers/gpu/drm/i915/intel_dp_link_training.c
-+++ b/drivers/gpu/drm/i915/intel_dp_link_training.c
-@@ -340,7 +340,7 @@ intel_dp_start_link_train(struct intel_dp *intel_dp)
- 							     intel_dp->link_rate,
- 							     intel_dp->lane_count))
- 			/* Schedule a Hotplug Uevent to userspace to start modeset */
--			schedule_work(&intel_connector->modeset_retry_work);
-+			schedule_work(&intel_dp->modeset_retry_work);
- 	} else {
- 		DRM_ERROR("[CONNECTOR:%d:%s] Link Training failed at link rate = %d, lane count = %d",
- 			  intel_connector->base.base.id,
-diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-index 5bd2263407b2..742d53495974 100644
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@ -406,9 +406,6 @@ struct intel_connector {
- 
- 	struct intel_dp *mst_port;
- 
--	/* Work struct to schedule a uevent on link train failure */
--	struct work_struct modeset_retry_work;
--
- 	const struct intel_hdcp_shim *hdcp_shim;
- 	struct mutex hdcp_mutex;
- 	uint64_t hdcp_value; /* protected by hdcp_mutex */
-@@ -1143,6 +1140,9 @@ struct intel_dp {
- 
- 	/* Displayport compliance testing */
- 	struct intel_dp_compliance compliance;
-+
-+	/* Work struct to schedule a uevent on link train failure */
-+	struct work_struct modeset_retry_work;
- };
- 
- struct intel_lspcon {
 -- 
-2.14.3
+2.17.0
