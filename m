@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49AzB1FIruZiq3xWWzFXpI1DUMz/ZFQ7ZdKFOikN18E3Ll7qvQz7NdG+O5oHWnbiF2NsbdT
-ARC-Seal: i=1; a=rsa-sha256; t=1523472654; cv=none;
+X-Google-Smtp-Source: AIpwx4/GSR6hlbaEwmQpRlkqLWQ1FJiGsL5PdHPAwx7XMRpuKHF7vRwbx9OQT1qUbzhISNvBJPql
+ARC-Seal: i=1; a=rsa-sha256; t=1523472651; cv=none;
         d=google.com; s=arc-20160816;
-        b=I8R/gyTnWxyEjg+jry9KpQ4Gr0pc0m0doIu0DkqLXcRSUJV3W/Y9vY+Es+2oLrcEiR
-         fjwJEaKegCwI/XBdg0RnMCOoe1NGC+be/khl2WVpNVGIHg4/UJBwHfOjh89yKHp3R+Cp
-         1qPpTL2iMqKRoaefoee25qsTDfDmH8VwZ1eC8zWZmxyYSYRMkx2es4BgbppQKoEGMamk
-         EkwQzS7esZr1HN1CiYR/VZaQC65EJrQI8iAZQlQojtNHmRVnbwrnWNI6lqes0nid0dmU
-         RwsM8xiQ8J8zJ7eXol6pHDNsLHmAJInIUhSEZ2/DtBuOKG+tU+dyAX/LXF6tdhXRMAyf
-         84IQ==
+        b=Fp0kVSTmIkNGWS0YGEk+4xPkt2BOCvFvo3fT7mPaV50ihjBAiKnQvNCIX1WDuroAvr
+         NEYlppToq5Ee/mLHn4nTCe9PQK1+Xfqs5tXasDOQiGtj0TqFz//9R6X9u/jpfOW+sAvR
+         Ze0bCkBCmA2kXc11lSsus5WuCn0ySoXQMXy5oVVk7rDOR/qgdH8LpiJWzzxt8wWi9sss
+         6DAmiGhB+S+UR8RreCkqETGPUM8lkcrCQBvvudiqWFdk1OJ2bZnuSNFx8JlFVxFkc1c3
+         fdt0jTyII8laxYso+eiEaGpRu+SQyzYYLm1AZ76uMG8q7iryu5baKbDWZ+NFFEmFlDei
+         97ZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Is0Y+eesSpLQum9mMxHpkh3ytAOB9pY+VBP5sGmzZl8=;
-        b=Yn6bj3VSDcNWxEeLIHBFQXO0ytlE8cI+g92g3Nr89DajlWRRnimvlJoYNZaZjpBpNf
-         qMGN56+DWwukN+GLQ9os/9/Su+m+K1V/zuhKcAsN1nrEj1zygy7KRn0meGxnIl8kLrEH
-         GULO4bmKQwvfGa6iCJ43goGwPrM2324mvPGdahUUrTylo8leppZcxoPxNMO7Oh4oVl63
-         7B9BuNlCtP/ZaxmLNyWsBxGRY83hGKtJzHOXdcyBbAmx5ja+AjjAXjgGvIbGLsM0D4O6
-         NVV30ALjPEFRt9ROicx3uov6qMj17qFH0ojRS2f1saZUTskO9Hgmu5JeeA8PTs6ArX3Y
-         lCsw==
+        bh=eH9XPFBrRXJHsLXOoLBKTGRgQpWTT2Ju42KRr6NWD/w=;
+        b=HfMg4GsxTkD3hiCtqoPeizmzXBpD+pdo3X+lpzN3RZ2r+39f+mEU4Ddrv5zr0vqZNZ
+         bvjrqNxTzQtjB5fxZTb90TYqpsxL34Vuf5pPOSYNYi1kokeeheTfYpwg/LYf9D6tE380
+         bs54oMDH/VXH8MzQwFAWbta6/yymUNIoq6xm/ymdn2OQBTsLPl6lFqE9riNc16E1Xydr
+         wSNFmj4PlK0UnsYcSyqgoWl5kRKW/qz/l4kRhMSFgThGrsveD7af3RvCLykYw+IwTMVM
+         wlOuybZzjUC5k+CD2R70K9ye4oVaWuHR7EI86VUEYGYU7PtNqEe80DHkTPamqRBcoIZp
+         nqaw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Theodore Tso <tytso@mit.edu>,
-	Michael Schmitz <schmitzmic@gmail.com>
-Subject: [PATCH 4.4 163/190] random: use lockless method of accessing and updating f->reg_idx
-Date: Wed, 11 Apr 2018 20:36:49 +0200
-Message-Id: <20180411183602.061844479@linuxfoundation.org>
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.4 162/190] virtio_net: check return value of skb_to_sgvec in one more location
+Date: Wed, 11 Apr 2018 20:36:48 +0200
+Message-Id: <20180411183602.014063947@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -40,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476320315000318?=
-X-GMAIL-MSGID: =?utf-8?q?1597476861931413950?=
+X-GMAIL-THRID: =?utf-8?q?1597476317763826801?=
+X-GMAIL-MSGID: =?utf-8?q?1597476859239251128?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,43 +53,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit 92e75428ffc90e2a0321062379f883f3671cfebe upstream.
+Kernels that do not have f6b10209b90d ("virtio-net: switch to use
+build_skb() for small buffer") will have an extra call to skb_to_sgvec
+that is not handled by e2fcad58fd23 ("virtio_net: check return value of
+skb_to_sgvec always"). Since the former does not appear to be stable
+material, just fix the call up directly.
 
-Linus pointed out that there is a much more efficient way of avoiding
-the problem that we were trying to address in commit 9dfa7bba35ac0:
-"fix race in drivers/char/random.c:get_reg()".
-
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: Michael Schmitz <schmitzmic@gmail.com>
+Cc: Jason A. Donenfeld <Jason@zx2c4.com>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: David S. Miller <davem@davemloft.net>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/random.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/virtio_net.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -886,15 +886,15 @@ static void add_interrupt_bench(cycles_t
- static __u32 get_reg(struct fast_pool *f, struct pt_regs *regs)
- {
- 	__u32 *ptr = (__u32 *) regs;
--	unsigned long flags;
-+	unsigned int idx;
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -556,7 +556,12 @@ static int add_recvbuf_small(struct virt
+ 	hdr = skb_vnet_hdr(skb);
+ 	sg_init_table(rq->sg, 2);
+ 	sg_set_buf(rq->sg, hdr, vi->hdr_len);
+-	skb_to_sgvec(skb, rq->sg + 1, 0, skb->len);
++
++	err = skb_to_sgvec(skb, rq->sg + 1, 0, skb->len);
++	if (unlikely(err < 0)) {
++		dev_kfree_skb(skb);
++		return err;
++	}
  
- 	if (regs == NULL)
- 		return 0;
--	local_irq_save(flags);
--	if (f->reg_idx >= sizeof(struct pt_regs) / sizeof(__u32))
--		f->reg_idx = 0;
--	ptr += f->reg_idx++;
--	local_irq_restore(flags);
-+	idx = READ_ONCE(f->reg_idx);
-+	if (idx >= sizeof(struct pt_regs) / sizeof(__u32))
-+		idx = 0;
-+	ptr += idx++;
-+	WRITE_ONCE(f->reg_idx, idx);
- 	return *ptr;
- }
- 
+ 	err = virtqueue_add_inbuf(rq->vq, rq->sg, 2, skb, gfp);
+ 	if (err < 0)
