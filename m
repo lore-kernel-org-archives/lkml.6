@@ -1,86 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752174AbeDKFA0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 01:00:26 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.170]:15939 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750785AbeDKFAY (ORCPT
+        id S1751886AbeDKFDO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 01:03:14 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38643 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750825AbeDKFDM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 01:00:24 -0400
-X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WisNN2Ez2Y
-X-RZG-CLASS-ID: mo00
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH v3 2/4] gpio: pca953x: add register definitions for pcal6524 and fix address calculation
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <CAHp75VfYk1tSJ9PUshDvY2RaYrc+wR+hyrK8Ck1oQSUXPr-0fQ@mail.gmail.com>
-Date: Wed, 11 Apr 2018 07:00:04 +0200
-Cc: Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel
-        <letux-kernel@openphoenux.org>,
-        kernel@pyra-handheld.com
-Message-Id: <EDF7FA02-C79C-4ADF-A10C-F8C4DBFE5158@goldelico.com>
-References: <cover.1523376423.git.hns@goldelico.com> <0e9bea79eae7504e61fabdb4a0311f8fdc2f6b25.1523376423.git.hns@goldelico.com> <CAHp75VfYk1tSJ9PUshDvY2RaYrc+wR+hyrK8Ck1oQSUXPr-0fQ@mail.gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-X-Mailer: Apple Mail (2.3124)
+        Wed, 11 Apr 2018 01:03:12 -0400
+X-Google-Smtp-Source: AIpwx4+gmqYvH8qUQA3cPyIJkWy6pQ5glknxo5ZaD+1t1t90vF3OzyjzCdFpqg3pIaqbv9UXeLNaPq+n8MR8nmeisAw=
+MIME-Version: 1.0
+In-Reply-To: <CAEJqkgiOR3aCGoNquVeEyC1BLMBPmXNjgrmjNeeE9UVfzcJKzg@mail.gmail.com>
+References: <c743b220-0395-eef3-4405-a21cdbe8eee1@mozilla.com>
+ <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com> <a96df0b8-fc22-4438-646d-2f0096dfcc84@mozilla.com>
+ <6cebabff-908f-5ebe-4252-760773c4cd6f@amd.com> <312ed341-7052-a61e-331f-d1e8fd5b477e@mozilla.com>
+ <d136f940-d807-d2f7-30a7-8617f130912d@amd.com> <77866d66-2728-8295-d7ee-9975dbf64b99@mozilla.com>
+ <55e1712b-6567-50c5-3789-53dd1ccddb94@gmail.com> <CAEJqkgiOR3aCGoNquVeEyC1BLMBPmXNjgrmjNeeE9UVfzcJKzg@mail.gmail.com>
+From: Gabriel C <nix.or.die@gmail.com>
+Date: Wed, 11 Apr 2018 07:02:40 +0200
+Message-ID: <CAEJqkgjfhmjwYo74xivsfgvoPQUFh2dFeXFwtEKoN+DXG1riMg@mail.gmail.com>
+Subject: Re: AMD graphics performance regression in 4.15 and later
+To: christian.koenig@amd.com
+Cc: Jean-Marc Valin <jmvalin@mozilla.com>, Dave Airlie <airlied@linux.ie>,
+        alexander.deucher@amd.com, Felix.Kuehling@amd.com,
+        Laura Abbott <labbott@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>, michel.daenzer@amd.com,
+        dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3B50Us3010401
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3B53Jqf010965
 
-Hi Andy,
+>2018-04-11 6:00 GMT+02:00 Gabriel C <nix.or.die@gmail.com>:
+> 2018-04-09 11:42 GMT+02:00 Christian König <ckoenig.leichtzumerken@gmail.com>:
+>> Am 07.04.2018 um 00:00 schrieb Jean-Marc Valin:
+...
+> I can help testing code for 4.17/++ if you wish but that is *different* storry.
+>
 
-> Am 10.04.2018 um 20:06 schrieb Andy Shevchenko <andy.shevchenko@gmail.com>:
-> 
-> On Tue, Apr 10, 2018 at 7:07 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
->> PCAL chips ("L" seems to stand for "latched") have additional
->> registers starting at address 0x40 to control the latches,
->> interrupt mask, pull-up and pull down etc.
->> 
->> The constants are so far defined in a way that they fit for
->> the pcal9555a when shifted by the number of banks, i.e. multiplied
->> by 2.
->> 
->> Now the pcal6524 has 3 banks which means the relative offset
->> must be multiplied by 4 which gives a wrong result if not done
->> carefully, since the base offset is already included in the offset.
->> 
->> For the basic registers shared with all pca93xx/tca64xx chips
->> there is no such offset.
->> 
->> Therefore, we add code to adjust the register number for exended
->> registers to the 24 bit accessor functions.
->> 
->> And we add additional register offset constants (not yet used by
->> the driver code) which are specific to the pcal6524.
->> 
-> 
-> First of all, as I said, please split this to two patches. Don't mix the things.
+Quick tested an 4.16.0-11490-gb284d4d5a678 , amdgpu and radeon driver
+are broken now in this one.
 
-Ok. Queued for v4.
+radeon tells:
 
-> 
-> 
->> +       /* adjust register address for pcal6524 */
->> +       if (reg >= PCAL953X_OUT_STRENGTH)
->> +               reg -= PCAL953X_OUT_STRENGTH >> 1;
->> +
-> 
-> Give me some days to think about it.
+...
 
-No problem. I'll wait with v4.
+[    6.337838] [drm] PCIE GART of 2048M enabled (table at 0x00000000001D6000).
+[    6.338210] radeon 0000:21:00.0: (-12) create WB bo failed
+[    6.338214] radeon 0000:21:00.0: disabling GPU acceleration
 
-The only alternative I would see is to add new accessor function
-pointers for the extended registers and have 0x00 based offsets,
-but that is IMHO more ugly.
+...
 
-BR and thanks,
-Nikolaus
+And no way to start X .. flickering and hangs.
+
+amdgpu hits an bug:
+
+http://ftp.frugalware.org/pub/other/people/crazy/trace.txt
+
+
+Do you have some git tree I can test from ?
+
+Also if you need full , logs or any other infos just  let me know.
+
+Regards
