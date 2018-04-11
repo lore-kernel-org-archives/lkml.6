@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3308147-1523480228-2-1421363748852659123
+X-Cyrus-Session-Id: sloti22d1t05-3339499-1523480217-2-17284155388654083504
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523480227; b=vYpPd6T+L+9mC0iQyQN36epFMbHxox282x0TUziwmGypat1TLL
-    2pE5Yc/ApUI9TfARdBtEOBeX+OXPPvFvYFhXYncpEypiefksXhp/QzgMmVWq20Q2
-    rX9W3IUFNFBhnJo/4yhKfbZDd8ctgokd2iOtRU0P2TPR6hMk3kx5koL04euEY9lk
-    yyG/XgHXhY6auJOoCpYX7lM9reFikE8nsRM3nBFKmEJicqbK9pPq5SkFAqDxpEz+
-    k73yTGIeGWedk3Jg1T60xr1JDNkSr1t1Ml8t2r0rgFshvC6HgKic8pjPcVJcSqCd
-    WloGr7wv3WCFCz3roED5aK/Wo7ZGQv9qNIew==
+    1523480216; b=BUiSnIrJaQHgP3WAnNmqBB7xV9sEQ9rSvV+q5GZHcn3+Ig1EPQ
+    c+DdeRNYWFowAdQ2RzUF+jE7UyaLBYiRLK08NIkBA3GZk3j3HWvoJ5ZlDWUySCYq
+    LU/JT+VwKfVMKwTiwLvFd6uQHPoje9aSsUTn/CCyYH6oztF/NEwsmFeBmrTvqxvY
+    TvUpHvgEI+el6rbw39Q6bCKqhalu1q/zdwi4fJdyTh9ffghHaBJIamDL0VDcxMOD
+    XmqFSiflTrsA3MB4GILeiIrdNXd8whEHUCKdpCwdZi/SESQaJzy3hKaPAfG97ffu
+    3josUSxqcyGPzAfSbcKiU1n66HQexw+W3rew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523480227; bh=nZONPADIukdYeCfUP3FwMVX6YRQhjU
-    0aCVhV3aotVlc=; b=el3AC4dPJhqdQBCdCoLqlFCS/ODRKChMaruQYAMNIWSmp4
-    Ta6UktNCQ1RgiEXMK1VjaCBvodfwiaLISrv8qA8IfTAyY+EQACq0VwCdsoZCaZqn
-    Ceq3kYM5Y6PIElA1DZdqsYPaiVEXE+PqYMpa8bF0u2OJMzt7tnt38s3O3Zpea6OI
-    eeJlkT6jCLCSPD0GxFBMn9bwAgew8dVxxMOu1lTrF0iDnSKX3cnS6AEKd/C0r4JA
-    lrHh/idgOtf3rdGSD7hSvBAgcNqs9wmInADLHQ3iiACgM4bQ4cDRhN1UAGRG6W6x
-    DzjsLF812w0XpYNqQ1rnBavEkLc7GC4TdCXNCIgQ==
+    :list-id; s=fm2; t=1523480216; bh=EnuBwpKYq1PQHRppAi13xgtxxUqVzw
+    cH21Vpwp+I0O0=; b=TkFkImuD76tWlRrJLhhSdO2l5r/mFugh2TI2uwIdR9e12Z
+    iidycOo+OAoKS3TsAktybSBK/cpvJ7DH3Z18jBzKP24frcsqjOo4hHXFoH3ttv3q
+    qhQJc41/qNo5A7Hy1HFsUul3W5pFVmUrxi+3t9bUMxTzeDEg0ArqFa/+CzQXDdLC
+    7ZXoWuUXAUsj0aAS3174VhPVhUFDYBP/gpN1QkhPA6w+0xciRxbF94Z06rV5xhr1
+    6QNxmPCcIlQlzMh3zFlc4ZcUffb1Qgh7N4XM54euyf5/R5wAI+10UTOMCB3oHo38
+    rVwBRqZb6hXk/l495IWKHd7V089BRR23YOUIdgBg==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,38 +51,32 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJqa9uCQB5OL3D7VP04zQyCljO3M7sSBIvUY6IqPlVZNdBhXatUgYiTuqTUYbiLCx0eT/sNrWNoaHxQMNgPEKwOpKB39yKrPdPa6qVn0fzITKiZ70GdS
-    GebbElUeMdCY/mz3t/gaPqJcegUvE+vY5pfYnuQPn4NK3G5G9jonstJKNorTGc2eTZbC1SGiLJ7ZW7XLlrbV93ZVdRxRq87UMCPYNEyLq4Grj4GhLe+NMm6p
+X-CM-Envelope: MS4wfH7y5NpquX0sMR+UHhU12ldHgHlflihYlwDeiMV703TLlo0hl7Pl29P8wRNbTYmzYeReKISnbmPhG4jIhgzwe39HxJUo5K/ohoLgwp+216ZrjwVhmwoQ
+    71oXh2/Vwn6hO7t0s8GsB6ERNDr8RcH/VOsk/eXa18w69XTDCKoWJ/YHmcjxoUgkK/iM9mOAPMfpI/me/iq6wEKeGrXqmhXNANNUTNN+b2CY2y458UiJWC7/
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=InJrZTXqAAAA:8 a=iox4zFpeAAAA:8 a=20KFwNOVAAAA:8 a=z11f-joXAAAA:8
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=rgNOMHsgKtPNWFo9ZzsA:9 a=QEXdDO2ut3YA:10
-    a=bo7r-k08vssA:10 a=WwJ7OKCui7YMbFU4sWpb:22 a=WzC6qhA0u3u7Ye7llzcV:22
-    a=HW01NMXGnYhBHl5J0OKi:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=cm27Pg_UAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=Bz2UWhLJlFZaMJpv9z8A:9 a=QEXdDO2ut3YA:10
+    a=xmb-EsYY8bH0VWELuYED:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755408AbeDKSoa (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:44:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58260 "EHLO
+        id S1755714AbeDKU4n (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:56:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58290 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755383AbeDKSo2 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:44:28 -0400
+        with ESMTP id S1754827AbeDKSoh (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:44:37 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bart Van Assche <bart.vanassche@sandisk.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Andy Grover <agrover@redhat.com>,
-        David Disseldorp <ddiss@suse.de>,
-        Nicholas Bellinger <nab@linux-iscsi.org>,
+        stable@vger.kernel.org, Daniel Micay <danielmicay@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 006/190] IB/srpt: Fix abort handling
-Date: Wed, 11 Apr 2018 20:34:12 +0200
-Message-Id: <20180411183550.435495444@linuxfoundation.org>
+Subject: [PATCH 4.4 009/190] bna: Avoid reading past end of buffer
+Date: Wed, 11 Apr 2018 20:34:15 +0200
+Message-Id: <20180411183550.595606178@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -100,47 +94,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@sandisk.com>
+From: Kees Cook <keescook@chromium.org>
 
 
-[ Upstream commit 55d694275f41a1c0eef4ef49044ff29bc3999490 ]
+[ Upstream commit 9e4eb1ce472fbf7b007f23c88ec11c37265e401c ]
 
-Let the target core check the CMD_T_ABORTED flag instead of the SRP
-target driver. Hence remove the transport_check_aborted_status()
-call. Since state == SRPT_STATE_CMD_RSP_SENT is something that really
-should not happen, do not try to recover if srpt_queue_response() is
-called for an I/O context that is in that state. This patch is a bug
-fix because the srpt_abort_cmd() call is misplaced - if that function
-is called from srpt_queue_response() it should either be called
-before the command state is changed or after the response has been
-sent.
+Using memcpy() from a string that is shorter than the length copied means
+the destination buffer is being filled with arbitrary data from the kernel
+rodata segment. Instead, use strncpy() which will fill the trailing bytes
+with zeros.
 
-Signed-off-by: Bart Van Assche <bart.vanassche@sandisk.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Cc: Doug Ledford <dledford@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Andy Grover <agrover@redhat.com>
-Cc: David Disseldorp <ddiss@suse.de>
-Signed-off-by: Nicholas Bellinger <nab@linux-iscsi.org>
+This was found with the future CONFIG_FORTIFY_SOURCE feature.
+
+Cc: Daniel Micay <danielmicay@gmail.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/ulp/srpt/ib_srpt.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/net/ethernet/brocade/bna/bfa_ioc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-+++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-@@ -2974,12 +2974,8 @@ static void srpt_queue_response(struct s
- 	}
- 	spin_unlock_irqrestore(&ioctx->spinlock, flags);
+--- a/drivers/net/ethernet/brocade/bna/bfa_ioc.c
++++ b/drivers/net/ethernet/brocade/bna/bfa_ioc.c
+@@ -2845,7 +2845,7 @@ bfa_ioc_get_adapter_optrom_ver(struct bf
+ static void
+ bfa_ioc_get_adapter_manufacturer(struct bfa_ioc *ioc, char *manufacturer)
+ {
+-	memcpy(manufacturer, BFA_MFG_NAME, BFA_ADAPTER_MFG_NAME_LEN);
++	strncpy(manufacturer, BFA_MFG_NAME, BFA_ADAPTER_MFG_NAME_LEN);
+ }
  
--	if (unlikely(transport_check_aborted_status(&ioctx->cmd, false)
--		     || WARN_ON_ONCE(state == SRPT_STATE_CMD_RSP_SENT))) {
--		atomic_inc(&ch->req_lim_delta);
--		srpt_abort_cmd(ioctx);
-+	if (unlikely(WARN_ON_ONCE(state == SRPT_STATE_CMD_RSP_SENT)))
- 		return;
--	}
- 
- 	dir = ioctx->cmd.data_direction;
- 
+ static void
