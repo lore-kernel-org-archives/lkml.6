@@ -1,65 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752498AbeDKCog (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 22:44:36 -0400
-Received: from mx-fe5-210.meituan.com ([103.37.138.210]:38905 "EHLO
-        mx02.meituan.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752172AbeDKCof (ORCPT
+        id S1752813AbeDKCqt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 22:46:49 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:37577 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752458AbeDKCqs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 22:44:35 -0400
-DKIM-Filter: OpenDKIM Filter v2.9.2 dx-it-mx02.dx.sankuai.com 927AC2974A0D
-Subject: Re: [PATCH] writeback: safer lock nesting
-To: Sasha Levin <Alexander.Levin@microsoft.com>,
-        Greg Thelen <gthelen@google.com>
-Cc: "npiggin@gmail.com" <npiggin@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        heguanjun@meituan.com
-References: <20180406080324.160306-1-gthelen@google.com>
- <DM5PR2101MB10326066D3508A2D9892B508FBBE0@DM5PR2101MB1032.namprd21.prod.outlook.com>
-From: Wang Long <wanglong19@meituan.com>
-Message-ID: <ea1a6d50-b8bd-237b-5ccd-2726da54d8d6@meituan.com>
-Date: Wed, 11 Apr 2018 10:44:15 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <DM5PR2101MB10326066D3508A2D9892B508FBBE0@DM5PR2101MB1032.namprd21.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Tue, 10 Apr 2018 22:46:48 -0400
+X-Google-Smtp-Source: AIpwx49dYcSK0B+U5hwbSQ0izhPnroq4R6Q4MLIpJYz6FXlSh/D4UK1gXTR7GI8S/Gtiq9mjvRIuNg==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: pierre@ossman.eu, ulf.hansson@linaro.org
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH 1/3] mmc: wbsd: Replace mdelay with usleep_range in wbsd_init
+Date: Wed, 11 Apr 2018 10:46:43 +0800
+Message-Id: <1523414803-2626-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+wbsd_init() is never called in atomic context.
 
-> Hi,
->
-> [This is an automated email]
->
-> This commit has been processed by the -stable helper bot and determined
-> to be a high probability candidate for -stable trees. (score: 44.5575)
->
-> The bot has tested the following trees: v4.16.1, v4.15.16, v4.14.33, v4.9.93, v4.4.127.
->
-> v4.16.1: Build OK!
-> v4.15.16: Build OK!
-> v4.14.33: Build OK!
-> v4.9.93: Build OK!
-> v4.4.127: Failed to apply! Possible dependencies:
->      62cccb8c8e7a ("mm: simplify lock_page_memcg()")
-Hi Sasha,
+The call chains ending up at wbsd_init() are:
+[1] wbsd_init() <- wbsd_probe()
+[2] wbsd_init() <- wbsd_pnp_probe()
 
-I test the memory cgroup in lts v4.4, for this issue, 62cccb8c8e7a ("mm: 
-simplify lock_page_memcg()")
-need to adjust and there are several other places that need to be fixed.
+wbsd_probe() is set as ".probe" in struct platform_driver.
+wbsd_pnp_probe() is set as ".probe" in struct pnp_driver.
+These functions are not called in atomic context.
 
-I will make the patch for lts v4.4 if no one did.
+Despite never getting called from atomic context, wbsd_init()
+calls mdelay() to busily wait.
+This is not necessary and can be replaced with usleep_range() to
+avoid busy waiting.
 
-Thanks.
->
->
-> Please let us know if you'd like to have this patch included in a stable tree.
->
-> --
-> Thanks,
-> Sasha
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/mmc/host/wbsd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/wbsd.c b/drivers/mmc/host/wbsd.c
+index 546aaf8..6224d12 100644
+--- a/drivers/mmc/host/wbsd.c
++++ b/drivers/mmc/host/wbsd.c
+@@ -1709,7 +1709,7 @@ static int wbsd_init(struct device *dev, int base, int irq, int dma,
+ 	/*
+ 	 * Allow device to initialise itself properly.
+ 	 */
+-	mdelay(5);
++	usleep_range(5000, 6000);
+ 
+ 	/*
+ 	 * Reset the chip into a known state.
+-- 
+1.9.1
