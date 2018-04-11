@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/FgTnQSybABxyik9CwphzhSQIz+obbchUhtdQXRja75g3YOyitWdImkd5SG5xIVYRUp6KQ
-ARC-Seal: i=1; a=rsa-sha256; t=1523473367; cv=none;
+X-Google-Smtp-Source: AIpwx4+bhk9baspsj2z0VfhsByFvHYcImW8XuNQcotPJ8klB0dRO128KH3yuaRhQtSPFgYjEMBEx
+ARC-Seal: i=1; a=rsa-sha256; t=1523473365; cv=none;
         d=google.com; s=arc-20160816;
-        b=LQVyvzFCJteXLPKfF1k3zZq7wTaLTL7h/85Xi05RbPUNOnOG3xO7VL91mxSsf2JIoW
-         LRVGq/XU76v0XZjiMYKZ2cN1nKSHpc8TCI7iMmvuCN4hroSESTA0LH2pKzupNIhSlRHP
-         W14R/v1jG72fn9JTN5Wn+ZqwCyZ82dC6UWkbpNpp45MwNIUHJwO8mpxMiZMl/xTf5ks1
-         cLmpd5fsH2o7KENtBCajgpy6YwJtvFi/bwJsX6a3bmBsEmVtP5umPrXLyylDh6/g/xv8
-         lSQ+NbCtkfx0laqdL+soBUlmEhDMaoHtOSUbwWIzTOuZZlODicvhkYGq3RkTxjjyiTZH
-         EXpw==
+        b=JD9KCBjzp2GjvPj1gE1y95r53IjEPUDtvkhFXvFTV3WUPummEeWaqAmwi5YBPdehX+
+         5IDp0SnCkcG3K+JoJtVDD18FkLHdJciAw0b9YipE4tRM9M1QgWiaAzkwANz67YCy7KTM
+         VC0I8kRbh+B/E+Fx3Scs3A2qukV45sC7rs3umhupAWIst2dKizHVEHv1OkBI1/jN8ck9
+         05M609q8iZlRzLD1wNGvyGn3NKxWmAuo1JVFe6fIi7zmUWQX7vQUpIpPF/jV+ZpQUTsd
+         Ademq0Wh3gzlP+T0H6cpfkyeKxtSG8Tq5LGSRlWDdx1YTTwanrPQ1T703rhaOA9lZ2ZW
+         ZCXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=gHeSgCkm2o1vqofXaSUoo0vpvcIjit2npjtvrxdZACA=;
-        b=IDlouWOiAlKhB3NEAzoF3jTWkfGBFs2Kj35FwPj+S+6Q7dg1/qZxumnLpK66J45yMG
-         sn72goGtmadQvSnlP+bo4Mwc9BOUXe286KCLfRBDY4SFrWCjqAXq48S5AL938htq+L3d
-         zafF/Hs03qaDgtQHB+UF8QmPURhWzC5XM2hhX6J1d+KOUJZt/0xCoNhP7nHk2D+Xz9/O
-         XmIOJWna/BNMDnHUM6k9cJjSJBUAC9kyIizA/zm3KDinCjI+QAMDxs/nn8feksPOpi2U
-         N7ShkU6IPOt7uEo6BGjJuS7O8EQAjld3U3vfo7sT70K+gF2I1jWY8BwIr1Luq3+nMYc7
-         vwvg==
+        bh=52vMf5XS7twpEQu0zUawMN+AYRelibwr78N4FKOnSYc=;
+        b=PdbrqdaUORBpgR7SqA4jeA5ZrInkkkWfiw/EmOidutarB2Y41Rxb/hb43YiKY1EbQ7
+         GiGD1k5mk2yVevyo+yPVrS6GXMq9WgS8uJdKS5WMsMyYiAyj0t33FE9x29swsSxBwLQG
+         XYkxYSk/zsEAlS//1LkGbAUZVeTS9fgsZIIJWicxJmLSu0sbD4P8BiAnZABnjS1msbdn
+         t9jfLhvjzksAmOmAU1zqgNNp2cApycTDCJNjFEfEVjxfm5ep+ovdPZq2HGU+HYi06lfv
+         6mP7uNLTe3rNPTcmo/6gEr67ysjj0AIkXC211G5AgcMkx21oY22ZAsQL3mTQ4lpDqzFH
+         IAog==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chris Blake <chrisrblake93@gmail.com>,
-	Russell Senior <russell@personaltelco.net>,
-	Christian Lamparter <chunkeey@googlemail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
+	Hannes Reinecke <hare@suse.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	James Wang <jnwang@suse.com>,
+	Jens Axboe <axboe@fb.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 223/310] net: emac: fix reset timeout with AR8035 phy
-Date: Wed, 11 Apr 2018 20:36:02 +0200
-Message-Id: <20180411183632.123725656@linuxfoundation.org>
+Subject: [PATCH 4.9 222/310] Fix loop device flush before configure v3
+Date: Wed, 11 Apr 2018 20:36:01 +0200
+Message-Id: <20180411183632.085674968@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476263755286621?=
-X-GMAIL-MSGID: =?utf-8?q?1597477610276462253?=
+X-GMAIL-THRID: =?utf-8?q?1597476912619997992?=
+X-GMAIL-MSGID: =?utf-8?q?1597477607458919810?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,117 +52,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christian Lamparter <chunkeey@googlemail.com>
+From: James Wang <jnwang@suse.com>
 
 
-[ Upstream commit 19d90ece81da802207a9b91ce95a29fbdc40626e ]
+[ Upstream commit 6460495709aeb651896bc8e5c134b2e4ca7d34a8 ]
 
-This patch fixes a problem where the AR8035 PHY can't be
-detected on an Cisco Meraki MR24, if the ethernet cable is
-not connected on boot.
+While installing SLES-12 (based on v4.4), I found that the installer
+will stall for 60+ seconds during LVM disk scan.  The root cause was
+determined to be the removal of a bound device check in loop_flush()
+by commit b5dd2f6047ca ("block: loop: improve performance via blk-mq").
 
-Russell Senior provided steps to reproduce the issue:
-|Disconnect ethernet cable, apply power, wait until device has booted,
-|plug in ethernet, check for interfaces, no eth0 is listed.
-|
-|This appears to be a problem during probing of the AR8035 Phy chip.
-|When ethernet has no link, the phy detection fails, and eth0 is not
-|created. Plugging ethernet later has no effect, because there is no
-|interface as far as the kernel is concerned. The relevant part of
-|the boot log looks like this:
-|this is the failing case:
-|
-|[    0.876611] /plb/opb/emac-rgmii@ef601500: input 0 in RGMII mode
-|[    0.882532] /plb/opb/ethernet@ef600c00: reset timeout
-|[    0.888546] /plb/opb/ethernet@ef600c00: can't find PHY!
-|and the succeeding case:
-|
-|[    0.876672] /plb/opb/emac-rgmii@ef601500: input 0 in RGMII mode
-|[    0.883952] eth0: EMAC-0 /plb/opb/ethernet@ef600c00, MAC 00:01:..
-|[    0.890822] eth0: found Atheros 8035 Gigabit Ethernet PHY (0x01)
+Restoring this check, examining ->lo_state as set by loop_set_fd()
+eliminates the bad behavior.
 
-Based on the comment and the commit message of
-commit 23fbb5a87c56 ("emac: Fix EMAC soft reset on 460EX/GT").
-This is because the AR8035 PHY doesn't provide the TX Clock,
-if the ethernet cable is not attached. This causes the reset
-to timeout and the PHY detection code in emac_init_phy() is
-unable to detect the AR8035 PHY. As a result, the emac driver
-bails out early and the user left with no ethernet.
+Test method:
+modprobe loop max_loop=64
+dd if=/dev/zero of=disk bs=512 count=200K
+for((i=0;i<4;i++))do losetup -f disk; done
+mkfs.ext4 -F /dev/loop0
+for((i=0;i<4;i++))do mkdir t$i; mount /dev/loop$i t$i;done
+for f in `ls /dev/loop[0-9]*|sort`; do \
+	echo $f; dd if=$f of=/dev/null  bs=512 count=1; \
+	done
 
-In order to stay compatible with existing configurations, the driver
-tries the current reset approach at first. Only if the first attempt
-timed out, it does perform one more retry with the clock temporarily
-switched to the internal source for just the duration of the reset.
+Test output:  stock          patched
+/dev/loop0    18.1217e-05    8.3842e-05
+/dev/loop1     6.1114e-05    0.000147979
+/dev/loop10    0.414701      0.000116564
+/dev/loop11    0.7474        6.7942e-05
+/dev/loop12    0.747986      8.9082e-05
+/dev/loop13    0.746532      7.4799e-05
+/dev/loop14    0.480041      9.3926e-05
+/dev/loop15    1.26453       7.2522e-05
 
-LEDE-Bug: #687 <https://bugs.lede-project.org/index.php?do=details&task_id=687>
+Note that from loop10 onward, the device is not mounted, yet the
+stock kernel consumes several orders of magnitude more wall time
+than it does for a mounted device.
+(Thanks for Mike Galbraith <efault@gmx.de>, give a changelog review.)
 
-Cc: Chris Blake <chrisrblake93@gmail.com>
-Reported-by: Russell Senior <russell@personaltelco.net>
-Fixes: 23fbb5a87c56e98 ("emac: Fix EMAC soft reset on 460EX/GT")
-Signed-off-by: Christian Lamparter <chunkeey@googlemail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: James Wang <jnwang@suse.com>
+Fixes: b5dd2f6047ca ("block: loop: improve performance via blk-mq")
+Signed-off-by: Jens Axboe <axboe@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ibm/emac/core.c |   26 ++++++++++++++++++++++----
- 1 file changed, 22 insertions(+), 4 deletions(-)
+ drivers/block/loop.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/ibm/emac/core.c
-+++ b/drivers/net/ethernet/ibm/emac/core.c
-@@ -342,6 +342,7 @@ static int emac_reset(struct emac_instan
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -612,6 +612,9 @@ static int loop_switch(struct loop_devic
+  */
+ static int loop_flush(struct loop_device *lo)
  {
- 	struct emac_regs __iomem *p = dev->emacp;
- 	int n = 20;
-+	bool __maybe_unused try_internal_clock = false;
++	/* loop not yet configured, no running thread, nothing to flush */
++	if (lo->lo_state != Lo_bound)
++		return 0;
+ 	return loop_switch(lo, NULL);
+ }
  
- 	DBG(dev, "reset" NL);
- 
-@@ -354,6 +355,7 @@ static int emac_reset(struct emac_instan
- 	}
- 
- #ifdef CONFIG_PPC_DCR_NATIVE
-+do_retry:
- 	/*
- 	 * PPC460EX/GT Embedded Processor Advanced User's Manual
- 	 * section 28.10.1 Mode Register 0 (EMACx_MR0) states:
-@@ -361,10 +363,19 @@ static int emac_reset(struct emac_instan
- 	 * of the EMAC. If none is present, select the internal clock
- 	 * (SDR0_ETH_CFG[EMACx_PHY_CLK] = 1).
- 	 * After a soft reset, select the external clock.
-+	 *
-+	 * The AR8035-A PHY Meraki MR24 does not provide a TX Clk if the
-+	 * ethernet cable is not attached. This causes the reset to timeout
-+	 * and the PHY detection code in emac_init_phy() is unable to
-+	 * communicate and detect the AR8035-A PHY. As a result, the emac
-+	 * driver bails out early and the user has no ethernet.
-+	 * In order to stay compatible with existing configurations, the
-+	 * driver will temporarily switch to the internal clock, after
-+	 * the first reset fails.
- 	 */
- 	if (emac_has_feature(dev, EMAC_FTR_460EX_PHY_CLK_FIX)) {
--		if (dev->phy_address == 0xffffffff &&
--		    dev->phy_map == 0xffffffff) {
-+		if (try_internal_clock || (dev->phy_address == 0xffffffff &&
-+					   dev->phy_map == 0xffffffff)) {
- 			/* No PHY: select internal loop clock before reset */
- 			dcri_clrset(SDR0, SDR0_ETH_CFG,
- 				    0, SDR0_ETH_CFG_ECS << dev->cell_index);
-@@ -382,8 +393,15 @@ static int emac_reset(struct emac_instan
- 
- #ifdef CONFIG_PPC_DCR_NATIVE
- 	if (emac_has_feature(dev, EMAC_FTR_460EX_PHY_CLK_FIX)) {
--		if (dev->phy_address == 0xffffffff &&
--		    dev->phy_map == 0xffffffff) {
-+		if (!n && !try_internal_clock) {
-+			/* first attempt has timed out. */
-+			n = 20;
-+			try_internal_clock = true;
-+			goto do_retry;
-+		}
-+
-+		if (try_internal_clock || (dev->phy_address == 0xffffffff &&
-+					   dev->phy_map == 0xffffffff)) {
- 			/* No PHY: restore external clock source after reset */
- 			dcri_clrset(SDR0, SDR0_ETH_CFG,
- 				    SDR0_ETH_CFG_ECS << dev->cell_index, 0);
