@@ -1,66 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752773AbeDKIv5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 04:51:57 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:38109 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752509AbeDKIvy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 04:51:54 -0400
-X-Google-Smtp-Source: AIpwx49djjiHf2HuN4BO2hAEt4lU79akgR0EBJt+P5qy3NCZJqiTw29QgmUWtzKG7Z/j8q1hPZMTPQ==
-Date: Wed, 11 Apr 2018 14:21:51 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
-        javi.merino@kernel.org, rui.zhang@intel.com,
-        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v3 7/7] cpuidle/drivers/cpuidle-arm: Register the cooling
- device
-Message-ID: <20180411085151.GO7671@vireshk-i7>
-References: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
- <1522945005-7165-8-git-send-email-daniel.lezcano@linaro.org>
+        id S1752793AbeDKIwh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 04:52:37 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44171 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752016AbeDKIwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 04:52:34 -0400
+Date: Wed, 11 Apr 2018 10:52:01 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Ladislav Michl <ladis@linux-mips.org>
+Cc: Andreas Kemnade <andreas@kemnade.info>,
+        Discussions about the Letux Kernel
+        <letux-kernel@openphoenux.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        linux-omap <linux-omap@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
+Subject: Re: [Letux-kernel] [Bug]: mtd: onenand: omap2plus: kernel panic
+ with OneNAND on OMAP3 (DM3730) device GTA04A5
+Message-ID: <20180411105201.5f126e94@bbrezillon>
+In-Reply-To: <20180411082746.GA20164@lenoch>
+References: <5D496D5C-4E3E-47B4-9981-E8F4C348DE00@goldelico.com>
+        <20180410205643.GA2228@lenoch>
+        <20180411065836.7e1bfc3f@aktux>
+        <20180411062607.GA9179@lenoch>
+        <20180411091528.4e954c32@bbrezillon>
+        <20180411073655.GA18273@lenoch>
+        <20180411100806.3c09bafc@bbrezillon>
+        <20180411082746.GA20164@lenoch>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522945005-7165-8-git-send-email-daniel.lezcano@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05-04-18, 18:16, Daniel Lezcano wrote:
-> Register the ARM generic cpuidle driver as a cooling device.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/cpuidle/cpuidle-arm.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/cpuidle/cpuidle-arm.c b/drivers/cpuidle/cpuidle-arm.c
-> index ddee1b6..44b4fe3 100644
-> --- a/drivers/cpuidle/cpuidle-arm.c
-> +++ b/drivers/cpuidle/cpuidle-arm.c
-> @@ -11,6 +11,7 @@
->  
->  #define pr_fmt(fmt) "CPUidle arm: " fmt
->  
-> +#include <linux/cpu_cooling.h>
->  #include <linux/cpuidle.h>
->  #include <linux/cpumask.h>
->  #include <linux/cpu_pm.h>
-> @@ -172,6 +173,8 @@ static int __init arm_idle_init(void)
->  			goto out_fail;
->  	}
->  
-> +	cpuidle_cooling_register();
-> +
->  	return 0;
->  
->  out_fail:
+On Wed, 11 Apr 2018 10:27:46 +0200
+Ladislav Michl <ladis@linux-mips.org> wrote:
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> On Wed, Apr 11, 2018 at 10:08:06AM +0200, Boris Brezillon wrote:
+> > On Wed, 11 Apr 2018 09:36:56 +0200
+> > Ladislav Michl <ladis@linux-mips.org> wrote:
+> >   
+> > > Hi Boris,
+> > > 
+> > > On Wed, Apr 11, 2018 at 09:15:28AM +0200, Boris Brezillon wrote:  
+> [...]
+> > > > Not sure this approach is safe on all archs: if the cache is VIVT or
+> > > > VIPT, you may have several entries pointing to the same phys page, and
+> > > > then, when dma_map_page() does its cache maintenance operations, it's
+> > > > only taking one of these entries into account.    
+> > > 
+> > > Hmm, I used the same approach Samsung OneNAND driver does since commit
+> > > dcf08227e964a53a2cb39130b74842c7dcb6adde.
+> > > Both TI OMAP3630 and Samsung S5PC110 are using Cortex-A8 which
+> > > is VIPT. In that case samsung's driver code has the same problem.
+> > >   
+> > > > In other parts of the MTD subsystem, we tend to not do DMA on buffers
+> > > > that have been vmalloc-ed.
+> > > > 
+> > > > You can do something like
+> > > > 
+> > > > 		if (virt_addr_valid(buf))
+> > > > 			/* Use DMA */
+> > > > 		else
+> > > > 			/*
+> > > > 			 * Do not use DMA, or use a bounce buffer
+> > > > 			 * allocated with kmalloc
+> > > > 			 */    
+> > > 
+> > > Okay, I'll use this approach then, but first I'd like to be sure above is
+> > > correct. Anyone?  
+> > 
+> > See this discussion [1]. The problem came up a few times already, so
+> > might find other threads describing why it's not safe.
+> > 
+> > [1]https://lists.linuxfoundation.org/pipermail/iommu/2016-March/016240.html  
+> 
+> Question was more likely whenever there might exist more that one mapping
+> of the same page.
 
--- 
-viresh
+I'm clearly not an expert, so I might be wrong, but I think a physical
+page can be both in the identity mapping and mapped in the vmalloc
+space. Now, is there a real risk that both ends are accessed in
+parallel thus making different cache entries pointing to the same phys
+page dirty, I'm not sure. Or maybe there are other corner case, but
+you'll have to ask Russell (or any other ARM expert) to get a clearer
+answer.
+
+> But okay, I'll disable DMA for highmem. Patch will follow.
+> 
+> 	ladis
