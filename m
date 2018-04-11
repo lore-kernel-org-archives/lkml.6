@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3269524-1523477244-2-15518807284609521776
+X-Cyrus-Session-Id: sloti22d1t05-3269524-1523477230-2-11897741496455371526
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477243; b=VZPfft62dpcSS0lYQHrGdPx3iZAwjLK4OJOkZ5Dka6f9sAp4aO
-    iHxgA1s9pI3L4wLTAfllbr4QIlQILvjhOM48lw0DVEFj2Imly+AK2xcFhqLsNy2i
-    CUcI3lGpfuxRlOVCvHDgKNX/krhHT+PeKl6Xfw5uckNEDwzRmj+Nq8kKRxx3UMY2
-    03hj7yamiueFYykm0SJUPvUahit79hLqNA6LyX3QQLwlW8l2LwrttNWcvOg4stQ6
-    VygfkFsSm9EmMA2jFVrUIK81GXWPCjLUBkBcwZK711vYAkJkqbeswRqrVwTdoOQA
-    A4NdZMOBLELUpP+xCF2RBd6hQm+Y6ZPKnJVw==
+    1523477229; b=leQvEQDqFpmCDoTu1rc28+UbEqWnFQeAqaKShLnMhNBdqzjn8I
+    rKl48Mmwmd7QppwuKIL45b+pTMfA0uU3TijsmYVD6BLpaQVf3k7TNJuM7tqjSddX
+    hHriD0BEgVwoekRRcltTF/LkMy3owsGvD1qDSbjMQyDtMJK7+yCawGl4tTZLNh3V
+    HP2hEtLR/3h6Y1rFzku85l9J18ku0QA471gz7FwQT0X+DxK2WShxHoZ+ba3PgyTt
+    EFFQLB6wM1bJVNcCeSP3/DtwIuOWj17iJGZ72gjy7SYGuo9hyXiubV5pSkouXW7R
+    2lReA+LMCqQJlFjbPAnJf+5cAy+BvGNQRIFw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523477243; bh=c3XAMUenoz41o8kga/o7WTj74CYqTE
-    oV+qxxrXo9sB4=; b=BOOq3wLzEEc1ssoy9KsMJjULY/qIJrWu9UGO0bogrtevZG
-    X90hQOI+z2I73TzM3dWnBb5mrJXvrR/Slx6JHbmAPRAlWaSJzBWx0DBhb2TYYgo3
-    Bsw4JHPGWHJxagP3Rkr43WS94BMcrRnu5mXmsNDithjEz2n/xuZbpr9e5Mo22ZRF
-    8bZTGJ8tYuIM8Stmdo+T58lYghsQiM0PQ/iUdEHQpuzasRGmF+FreMQeB9POGHe7
-    u7vMubNmW0uMSpgScEjluui3YrlBiLRV74nCZNBDEwVYyNJ0iMWcV9veSCANTLfF
-    roUOsD+Qc7GfhktNbYhxi770eNnMUaKgpmCFvh4g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523477229; bh=X/7qY3zw7RwduTFWb/+8/YoPRIcaxF
+    98IWBtBYfKj8E=; b=vhUMTgw7aZ+M6rBKu7qT0seOZc3RsO/O5WQdptU/Htwlqt
+    9t7b8neLPaN2P3pqfW9GyRNtcv54AwvJUb/mYV8aTTUTuCBNCnVPYAppu3RlX4EB
+    v7ZImmrZa+yMBDKsIkApDoaafFX4/hBXMkrMPfE+wWl1u+ovU7y7C9+MPV6Q1rnM
+    Yp3ysIfnurTDpNT2MVF7F/GvVY60hhi8PNkUSdcywGlw35jeKKcV1/d/NCYMGTT1
+    0tCjz2zBxi+N0xjOAqnm8wKCGbQ2LpKqKVVKicn8Tt64UY+KuWF3awPWb6NjNgYd
+    ALj3ZiQ2jOb3juK94pJdNIqnz9reOyBJIZ4MAP9A==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,36 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJwvaNjpWdEJrc0GAYc3B4JhhI6/e0ETbdhaToTo/n84xBA+MToZpJHwDRsA7m5b1Yc06KIcl/TLo6eYtTsITZ033nY9vz8U8AJhYnYew9DRblr08zci
-    2vLZ0a+FySKshfATFl6WpaJ2qzYm8v8FgS8lZf/oHeBz9kiSrpidH2H4ch7dyEtZ6iUm97oQvLpAuVpG8oMbiuZrAXIwpVpzyI0wrSSNzyWvC/VvRstgmmxP
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfE3pSzfq2fTwxiDo9Xoc44dmlaJzTCubosHTvQePm8D0/U+HRm7J5UvXz5VMiaKUvKPqId+azysA/xImvqKGLKYM9iScRaIuURA9RDxe37hHhSFm3le/
+    sx4TJtVOlaNqoaLvMbqEtOltkjL3zUWSZ5nFdDSlJz0mGpwxUUUsTqTCw6Zr/IKkfAtpMUzY7CjUqShQRqLUvz4Vzfzm7zq04r2hk8JLnJMmltKOR1VS+AP8
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=uP1ucDPQAAAA:8 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=lgeqxb1-TE-wKjQGDkEA:9 a=QEXdDO2ut3YA:10
-    a=9a9ggB8z3XFZH39hjkD6:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=CDq0vqnqAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=UMikwde4_RvlFcDU50QA:9 a=QEXdDO2ut3YA:10
+    a=Xn7iXEen_xUG9zZOO_Hb:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757335AbeDKUHK (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:07:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34924 "EHLO
+        id S932941AbeDKSzP (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:55:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34934 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933650AbeDKSzJ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:55:09 -0400
+        with ESMTP id S932916AbeDKSzN (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:55:13 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
+        Thomas Winter <Thomas.Winter@alliedtelesis.co.nz>,
+        David Ahern <dsa@cumulusnetworks.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        roopa <roopa@cumulusnetworks.com>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 059/310] ata: libahci: properly propagate return value of platform_get_irq()
-Date: Wed, 11 Apr 2018 20:33:18 +0200
-Message-Id: <20180411183624.775452151@linuxfoundation.org>
+Subject: [PATCH 4.9 060/310] ipmr: vrf: Find VIFs using the actual device
+Date: Wed, 11 Apr 2018 20:33:19 +0200
+Message-Id: <20180411183624.814783726@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -95,43 +98,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+From: Thomas Winter <Thomas.Winter@alliedtelesis.co.nz>
 
 
-[ Upstream commit c034640a32f8456018d9c8c83799ead683046b95 ]
+[ Upstream commit bcfc7d33110b0f33069d74138eeb7ca9acbb3c85 ]
 
-When platform_get_irq() fails, it returns an error code, which
-libahci_platform and replaces it by -EINVAL. This commit fixes that by
-propagating the error code. It fixes the situation where
-platform_get_irq() returns -EPROBE_DEFER because the interrupt
-controller is not available yet, and generally looks like the right
-thing to do.
+The skb->dev that is passed into ip_mr_input is
+the loX device for VRFs. When we lookup a vif
+for this dev, none is found as we do not create
+vifs for loopbacks. Instead lookup a vif for the
+actual device that the packet was received on,
+eg the vlan.
 
-We pay attention to not show the "no irq" message when we are in an
-EPROBE_DEFER situation, because the driver probing will be retried
-later on, once the interrupt controller becomes available to provide
-the interrupt.
-
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Thomas Winter <Thomas.Winter@alliedtelesis.co.nz>
+cc: David Ahern <dsa@cumulusnetworks.com>
+cc: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+cc: roopa <roopa@cumulusnetworks.com>
+Acked-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/ata/libahci_platform.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/ipv4/ipmr.c |   18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
---- a/drivers/ata/libahci_platform.c
-+++ b/drivers/ata/libahci_platform.c
-@@ -514,8 +514,9 @@ int ahci_platform_init_host(struct platf
+--- a/net/ipv4/ipmr.c
++++ b/net/ipv4/ipmr.c
+@@ -1929,6 +1929,20 @@ int ip_mr_input(struct sk_buff *skb)
+ 	struct net *net = dev_net(skb->dev);
+ 	int local = skb_rtable(skb)->rt_flags & RTCF_LOCAL;
+ 	struct mr_table *mrt;
++	struct net_device *dev;
++
++	/* skb->dev passed in is the loX master dev for vrfs.
++	 * As there are no vifs associated with loopback devices,
++	 * get the proper interface that does have a vif associated with it.
++	 */
++	dev = skb->dev;
++	if (netif_is_l3_master(skb->dev)) {
++		dev = dev_get_by_index_rcu(net, IPCB(skb)->iif);
++		if (!dev) {
++			kfree_skb(skb);
++			return -ENODEV;
++		}
++	}
  
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq <= 0) {
--		dev_err(dev, "no irq\n");
--		return -EINVAL;
-+		if (irq != -EPROBE_DEFER)
-+			dev_err(dev, "no irq\n");
-+		return irq;
- 	}
+ 	/* Packet is looped back after forward, it should not be
+ 	 * forwarded second time, but still can be delivered locally.
+@@ -1966,7 +1980,7 @@ int ip_mr_input(struct sk_buff *skb)
+ 	/* already under rcu_read_lock() */
+ 	cache = ipmr_cache_find(mrt, ip_hdr(skb)->saddr, ip_hdr(skb)->daddr);
+ 	if (!cache) {
+-		int vif = ipmr_find_vif(mrt, skb->dev);
++		int vif = ipmr_find_vif(mrt, dev);
  
- 	hpriv->irq = irq;
+ 		if (vif >= 0)
+ 			cache = ipmr_cache_find_any(mrt, ip_hdr(skb)->daddr,
+@@ -1986,7 +2000,7 @@ int ip_mr_input(struct sk_buff *skb)
+ 		}
+ 
+ 		read_lock(&mrt_lock);
+-		vif = ipmr_find_vif(mrt, skb->dev);
++		vif = ipmr_find_vif(mrt, dev);
+ 		if (vif >= 0) {
+ 			int err2 = ipmr_cache_unresolved(mrt, vif, skb);
+ 			read_unlock(&mrt_lock);
