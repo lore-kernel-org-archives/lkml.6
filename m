@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49AFRm+iV9Z4V1vFPmSe7Diub4j7+zOdFs4EtBLfTvlEdyly5u1FHLOSXJVdQUROsHKoqdE
-ARC-Seal: i=1; a=rsa-sha256; t=1523472702; cv=none;
+X-Google-Smtp-Source: AIpwx485cVX+dd93ltTtZLif6oi9jMEFwtYCqGvSh8fDrfbg0IvdMsp994E+xSDX33UedeJbJ5od
+ARC-Seal: i=1; a=rsa-sha256; t=1523472699; cv=none;
         d=google.com; s=arc-20160816;
-        b=e0S843gO+DiEX9cm4u4qm6UNzmZmxjn6ZKvPvgOixkxIFikW8cNxUcTWVhwNM4d9/X
-         H+nfSYE2ns92hvodNzGHgHQihnd6oLXOeYRC0GDosS8hthXWdiZOHcZBPk8Lc9jfw+2f
-         ZGOCtW7j1DYfQbhfKFlkeIl01iVh9/qnin6HlxPk/S0AbqMojxLJpLukJyyWjpP5t1fx
-         tMf7ijkNRLu03EPMzWprPpCVSxc8/lx1z9arX5LVDarlAfR+3Rg8yOiJuNqoY6ELBR7z
-         4pKpHF4yttbcM2agdY5Gn4maEbXzFQxNFwCibi14lAHH2JhwRbxRexyRT2R6jZd5bGNm
-         BdJA==
+        b=YspBGxpdK6OuctzqulfMTtkqAJ1oV4wT7im0msLDrPqsc/8U0JL8qvFZbqlbii17P6
+         tSlk1iFg4eM0FXKkAf116GqHHr4zVPRo1xhCiuWOoupEvk4zh20lZBm6lIywic2Cyvet
+         9Cz7J9CYirV/5rofY7r8g4T9zYoQCf5xnOgLJKgVLXDM5ke4Gt8QcLD2WqnbkN5f97as
+         /+gwNIMhYM5k/b3vxhOiZVo4sMgSfqVTv0etYQ0LQ+OHjQ8vHaTbMIRQ3C1jQHVYcT/g
+         z8C25V8F35C0gzWfEclHbt8X64FboIt66ILQ09S9nD6RA6jV50OtAqwAlKWlNbyGYoCX
+         zwSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=l7RTYYwXiDtr1N8xG/QDCQfkiw0X8euwA4ipzIAIBwU=;
-        b=R8t1nJabol1lVUPzhuRuO+ZSkJE+cgjeAhMSFGbCfQS9+XwLv9sGHIEOdsKRGksFJZ
-         jxGNbuPBjzTnt9m9EGWMA1QZysAjpKhlGZgS7UlP0CGmVSOme906lW8j1SarByD0NLYn
-         EpBp2YK12fzx59oR4vAuH3B0XG/ygShFj58Wfv4yDI46PlQcce4REcSgqAafeOnS8l+w
-         HiY8xsl+DpQwY+qX1mZcmfEKueXWgaYaYHS3K+QJGY+JtJUQ64Oig0gx9nVbYVLpKgzJ
-         uB4TwK2Gs709pKWC/r67wa77dLipFtYy3W8ZujozVAaM5MNqPWj69r+bg2HF4d1syR3a
-         oBHQ==
+        bh=zcEWKjWdReODeTlY2m7QLLLul6xZ/RxrEpJTIgpGaDY=;
+        b=pFnvInqVuAwj4ud77G9pYcvLiyp7KGbeXZHoBzp65bxW75Di0T6FxP4OFxKP/By5JN
+         Tvgn7op9EuDu5XBbZk/28fnTbqd6pWFqnbHNEVDio3ZFDHcYjjvUKqw09wciTC7Lo0dV
+         d+OGoLrs+HJMqu7v2mqdyJ3v59Wy2U2u0fUh1cqSoJ31U34PL5xVD16F2Y5RndYCg7XF
+         YBINmP/v7Dm6ZHN8g0RqxeNYaA1sVWgtYvtnOPW4DyWg1H76OmB6ho7eiLS3+LHwW6lP
+         qxhtA8bGPPkz8Zf3RQvpDDn7qoF5zlkpUar7l7Cxpo65sPD6rJGUja6pArX5A1PPGRE7
+         HN5Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hannes Reinecke <hare@suse.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	James Wang <jnwang@suse.com>,
-	Jens Axboe <axboe@fb.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Sedat Dilek <sedat.dilek@gmail.com>,
+	Szymon Janc <szymon.janc@codecoup.pl>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 134/190] Fix loop device flush before configure v3
-Date: Wed, 11 Apr 2018 20:36:20 +0200
-Message-Id: <20180411183600.326447150@linuxfoundation.org>
+Subject: [PATCH 4.4 143/190] Bluetooth: Send HCI Set Event Mask Page 2 command only when needed
+Date: Wed, 11 Apr 2018 20:36:29 +0200
+Message-Id: <20180411183600.980484922@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476912619997992?=
-X-GMAIL-MSGID: =?utf-8?q?1597476912619997992?=
+X-GMAIL-THRID: =?utf-8?q?1597476329385636783?=
+X-GMAIL-MSGID: =?utf-8?q?1597476908779411838?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,64 +51,120 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Wang <jnwang@suse.com>
+From: Marcel Holtmann <marcel@holtmann.org>
 
 
-[ Upstream commit 6460495709aeb651896bc8e5c134b2e4ca7d34a8 ]
+[ Upstream commit 313f6888c8fbb1bc8b36c9012ce4e1de848df696 ]
 
-While installing SLES-12 (based on v4.4), I found that the installer
-will stall for 60+ seconds during LVM disk scan.  The root cause was
-determined to be the removal of a bound device check in loop_flush()
-by commit b5dd2f6047ca ("block: loop: improve performance via blk-mq").
+The Broadcom BCM20702 Bluetooth controller in ThinkPad-T530 devices
+report support for the Set Event Mask Page 2 command, but actually do
+return an error when trying to use it.
 
-Restoring this check, examining ->lo_state as set by loop_set_fd()
-eliminates the bad behavior.
+  < HCI Command: Read Local Supported Commands (0x04|0x0002) plen 0
+  > HCI Event: Command Complete (0x0e) plen 68
+       Read Local Supported Commands (0x04|0x0002) ncmd 1
+         Status: Success (0x00)
+         Commands: 162 entries
+           ...
+           Set Event Mask Page 2 (Octet 22 - Bit 2)
+           ...
 
-Test method:
-modprobe loop max_loop=64
-dd if=/dev/zero of=disk bs=512 count=200K
-for((i=0;i<4;i++))do losetup -f disk; done
-mkfs.ext4 -F /dev/loop0
-for((i=0;i<4;i++))do mkdir t$i; mount /dev/loop$i t$i;done
-for f in `ls /dev/loop[0-9]*|sort`; do \
-	echo $f; dd if=$f of=/dev/null  bs=512 count=1; \
-	done
+  < HCI Command: Set Event Mask Page 2 (0x03|0x0063) plen 8
+         Mask: 0x0000000000000000
+  > HCI Event: Command Complete (0x0e) plen 4
+       Set Event Mask Page 2 (0x03|0x0063) ncmd 1
+         Status: Unknown HCI Command (0x01)
 
-Test output:  stock          patched
-/dev/loop0    18.1217e-05    8.3842e-05
-/dev/loop1     6.1114e-05    0.000147979
-/dev/loop10    0.414701      0.000116564
-/dev/loop11    0.7474        6.7942e-05
-/dev/loop12    0.747986      8.9082e-05
-/dev/loop13    0.746532      7.4799e-05
-/dev/loop14    0.480041      9.3926e-05
-/dev/loop15    1.26453       7.2522e-05
+Since these controllers do not support any feature that would require
+the event mask page 2 to be modified, it is safe to not send this
+command at all. The default value is all bits set to zero.
 
-Note that from loop10 onward, the device is not mounted, yet the
-stock kernel consumes several orders of magnitude more wall time
-than it does for a mounted device.
-(Thanks for Mike Galbraith <efault@gmx.de>, give a changelog review.)
+T:  Bus=01 Lev=02 Prnt=02 Port=03 Cnt=03 Dev#=  9 Spd=12   MxCh= 0
+D:  Ver= 2.00 Cls=ff(vend.) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0a5c ProdID=21e6 Rev= 1.12
+S:  Manufacturer=Broadcom Corp
+S:  Product=BCM20702A0
+S:  SerialNumber=F82FA8E8CFC0
+C:* #Ifs= 4 Cfg#= 1 Atr=e0 MxPwr=  0mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=ff(vend.) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=ff(vend.) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=ff(vend.) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=ff(vend.) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=ff(vend.) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=btusb
+E:  Ad=84(I) Atr=02(Bulk) MxPS=  32 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS=  32 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 0 Cls=fe(app. ) Sub=01 Prot=01 Driver=(none)
 
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: James Wang <jnwang@suse.com>
-Fixes: b5dd2f6047ca ("block: loop: improve performance via blk-mq")
-Signed-off-by: Jens Axboe <axboe@fb.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+Signed-off-by: Szymon Janc <szymon.janc@codecoup.pl>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/loop.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/bluetooth/hci_core.c |   17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -623,6 +623,9 @@ static int loop_switch(struct loop_devic
-  */
- static int loop_flush(struct loop_device *lo)
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -716,6 +716,7 @@ static void hci_set_event_mask_page_2(st
  {
-+	/* loop not yet configured, no running thread, nothing to flush */
-+	if (lo->lo_state != Lo_bound)
-+		return 0;
- 	return loop_switch(lo, NULL);
+ 	struct hci_dev *hdev = req->hdev;
+ 	u8 events[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
++	bool changed = false;
+ 
+ 	/* If Connectionless Slave Broadcast master role is supported
+ 	 * enable all necessary events for it.
+@@ -725,6 +726,7 @@ static void hci_set_event_mask_page_2(st
+ 		events[1] |= 0x80;	/* Synchronization Train Complete */
+ 		events[2] |= 0x10;	/* Slave Page Response Timeout */
+ 		events[2] |= 0x20;	/* CSB Channel Map Change */
++		changed = true;
+ 	}
+ 
+ 	/* If Connectionless Slave Broadcast slave role is supported
+@@ -735,13 +737,24 @@ static void hci_set_event_mask_page_2(st
+ 		events[2] |= 0x02;	/* CSB Receive */
+ 		events[2] |= 0x04;	/* CSB Timeout */
+ 		events[2] |= 0x08;	/* Truncated Page Complete */
++		changed = true;
+ 	}
+ 
+ 	/* Enable Authenticated Payload Timeout Expired event if supported */
+-	if (lmp_ping_capable(hdev) || hdev->le_features[0] & HCI_LE_PING)
++	if (lmp_ping_capable(hdev) || hdev->le_features[0] & HCI_LE_PING) {
+ 		events[2] |= 0x80;
++		changed = true;
++	}
+ 
+-	hci_req_add(req, HCI_OP_SET_EVENT_MASK_PAGE_2, sizeof(events), events);
++	/* Some Broadcom based controllers indicate support for Set Event
++	 * Mask Page 2 command, but then actually do not support it. Since
++	 * the default value is all bits set to zero, the command is only
++	 * required if the event mask has to be changed. In case no change
++	 * to the event mask is needed, skip this command.
++	 */
++	if (changed)
++		hci_req_add(req, HCI_OP_SET_EVENT_MASK_PAGE_2,
++			    sizeof(events), events);
  }
  
+ static void hci_init3_req(struct hci_request *req, unsigned long opt)
