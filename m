@@ -1,169 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752291AbeDKJ0S (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 05:26:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60952 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750785AbeDKJ0Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 05:26:16 -0400
-Date: Wed, 11 Apr 2018 11:26:11 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>, Zi Yan <zi.yan@sent.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm: shmem: enable thp migration (Re: [PATCH v1] mm:
- consider non-anonymous thp as unmovable page)
-Message-ID: <20180411092611.GE23400@dhcp22.suse.cz>
-References: <20180403083451.GG5501@dhcp22.suse.cz>
- <20180403105411.hknofkbn6rzs26oz@node.shutemov.name>
- <20180405085927.GC6312@dhcp22.suse.cz>
- <20180405122838.6a6b35psizem4tcy@node.shutemov.name>
- <20180405124830.GJ6312@dhcp22.suse.cz>
- <20180405134045.7axuun6d7ufobzj4@node.shutemov.name>
- <20180405150547.GN6312@dhcp22.suse.cz>
- <20180405155551.wchleyaf4rxooj6m@node.shutemov.name>
- <20180405160317.GP6312@dhcp22.suse.cz>
- <20180406030706.GA2434@hori1.linux.bs1.fc.nec.co.jp>
+        id S1752751AbeDKJ0t (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 05:26:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39744 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751880AbeDKJ0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 05:26:46 -0400
+Subject: Re: [PATCH] X86/KVM: Do not allow DISABLE_EXITS_MWAIT when LAPIC ARAT
+ is not available
+To: KarimAllah Ahmed <karahmed@amazon.de>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+References: <1523438163-768-1-git-send-email-karahmed@amazon.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <eaf03d34-a85a-7e54-31f4-fa85fce1901e@redhat.com>
+Date: Wed, 11 Apr 2018 11:26:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180406030706.GA2434@hori1.linux.bs1.fc.nec.co.jp>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1523438163-768-1-git-send-email-karahmed@amazon.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 06-04-18 03:07:11, Naoya Horiguchi wrote:
-> >From e31ec037701d1cc76b26226e4b66d8c783d40889 Mon Sep 17 00:00:00 2001
-> From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> Date: Fri, 6 Apr 2018 10:58:35 +0900
-> Subject: [PATCH] mm: enable thp migration for shmem thp
+On 11/04/2018 11:16, KarimAllah Ahmed wrote:
+> If the processor does not have an "Always Running APIC Timer" (aka ARAT),
+> we should not give guests direct access to MWAIT. The LAPIC timer would
+> stop ticking in deep C-states, so any host deadlines would not wakeup the
+> host kernel.
 > 
-> My testing for the latest kernel supporting thp migration showed an
-> infinite loop in offlining the memory block that is filled with shmem
-> thps.  We can get out of the loop with a signal, but kernel should
-> return with failure in this case.
+> The host kernel intel_idle driver handles this by switching to broadcast
+> mode when ARAT is not available and MWAIT is issued with a deep C-state
+> that would stop the LAPIC timer. When MWAIT is passed through, we can not
+> tell when MWAIT is issued.
 > 
-> What happens in the loop is that scan_movable_pages() repeats returning
-> the same pfn without any progress. That's because page migration always
-> fails for shmem thps.
-> 
-> In memory offline code, memory blocks containing unmovable pages should
-> be prevented from being offline targets by has_unmovable_pages() inside
-> start_isolate_page_range().
->
-> So it's possible to change migratability
-> for non-anonymous thps to avoid the issue, but it introduces more complex
-> and thp-specific handling in migration code, so it might not good.
-> 
-> So this patch is suggesting to fix the issue by enabling thp migration
-> for shmem thp. Both of anon/shmem thp are migratable so we don't need
-> precheck about the type of thps.
-> 
-> Fixes: commit 72b39cfc4d75 ("mm, memory_hotplug: do not fail offlining too early")
-> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> Cc: stable@vger.kernel.org # v4.15+
+> So just disable this capability when LAPIC ARAT is not available. I am not
+> even sure if there are any CPUs with VMX support but no LAPIC ARAT or not.
 
-I do not really feel qualified to give my ack but this is the right
-approach for the fix. We simply do expect that LRU pages are migrateable
-as well as zone_movable pages.
+The alternative would be to remove ARAT from __do_cpuid_ent when the
+host lacks it and userspace has requested direct access to MWAIT.
+However, this is simpler.
 
-Andrew, do you plan to take it (with Kirill's ack).
+Queued, thanks.
 
-Thanks!
-
-> ---
->  mm/huge_memory.c |  5 ++++-
->  mm/migrate.c     | 19 ++++++++++++++++---
->  mm/rmap.c        |  3 ---
->  3 files changed, 20 insertions(+), 7 deletions(-)
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 2aff58624886..933c1bbd3464 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -2926,7 +2926,10 @@ void remove_migration_pmd(struct page_vma_mapped_walk *pvmw, struct page *new)
->  		pmde = maybe_pmd_mkwrite(pmde, vma);
->  
->  	flush_cache_range(vma, mmun_start, mmun_start + HPAGE_PMD_SIZE);
-> -	page_add_anon_rmap(new, vma, mmun_start, true);
-> +	if (PageAnon(new))
-> +		page_add_anon_rmap(new, vma, mmun_start, true);
-> +	else
-> +		page_add_file_rmap(new, true);
->  	set_pmd_at(mm, mmun_start, pvmw->pmd, pmde);
->  	if (vma->vm_flags & VM_LOCKED)
->  		mlock_vma_page(new);
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index bdef905b1737..f92dd9f50981 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -472,7 +472,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
->  	pslot = radix_tree_lookup_slot(&mapping->i_pages,
->   					page_index(page));
->  
-> -	expected_count += 1 + page_has_private(page);
-> +	expected_count += hpage_nr_pages(page) + page_has_private(page);
->  	if (page_count(page) != expected_count ||
->  		radix_tree_deref_slot_protected(pslot,
->  					&mapping->i_pages.xa_lock) != page) {
-> @@ -505,7 +505,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
->  	 */
->  	newpage->index = page->index;
->  	newpage->mapping = page->mapping;
-> -	get_page(newpage);	/* add cache reference */
-> +	page_ref_add(newpage, hpage_nr_pages(page)); /* add cache reference */
->  	if (PageSwapBacked(page)) {
->  		__SetPageSwapBacked(newpage);
->  		if (PageSwapCache(page)) {
-> @@ -524,13 +524,26 @@ int migrate_page_move_mapping(struct address_space *mapping,
->  	}
->  
->  	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
-> +	if (PageTransHuge(page)) {
-> +		int i;
-> +		int index = page_index(page);
-> +
-> +		for (i = 0; i < HPAGE_PMD_NR; i++) {
-> +			pslot = radix_tree_lookup_slot(&mapping->i_pages,
-> +						       index + i);
-> +			radix_tree_replace_slot(&mapping->i_pages, pslot,
-> +						newpage + i);
-> +		}
-> +	} else {
-> +		radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
-> +	}
->  
->  	/*
->  	 * Drop cache reference from old page by unfreezing
->  	 * to one less reference.
->  	 * We know this isn't the last reference.
->  	 */
-> -	page_ref_unfreeze(page, expected_count - 1);
-> +	page_ref_unfreeze(page, expected_count - hpage_nr_pages(page));
->  
->  	xa_unlock(&mapping->i_pages);
->  	/* Leave irq disabled to prevent preemption while updating stats */
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index f0dd4e4565bc..8d5337fed37b 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1374,9 +1374,6 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
->  		if (!pvmw.pte && (flags & TTU_MIGRATION)) {
->  			VM_BUG_ON_PAGE(PageHuge(page) || !PageTransCompound(page), page);
->  
-> -			if (!PageAnon(page))
-> -				continue;
-> -
->  			set_pmd_migration_entry(&pvmw, page);
->  			continue;
->  		}
-> -- 
-> 2.7.4
-
--- 
-Michal Hocko
-SUSE Labs
+Paolo
