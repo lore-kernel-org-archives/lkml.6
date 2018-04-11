@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49JApTVeLFaFQvbpT36RvflSMDmAmW+p585IRqU7o67ayOz8oCNQE4D71tkQzeolC15kFiC
-ARC-Seal: i=1; a=rsa-sha256; t=1523473406; cv=none;
+X-Google-Smtp-Source: AIpwx4/qI9tKWKkFSE86a6iwZ8UcaJAnD0mKXnOyFEZCzI6tSd7qeyUzQQ+u8bdIBtPiGKHhNAqM
+ARC-Seal: i=1; a=rsa-sha256; t=1523473403; cv=none;
         d=google.com; s=arc-20160816;
-        b=s0a/qmBPLj0EMtnVsfbxTcgE7n+JFIG15W8k5Itm7J2kmuxnoRLtyJdlBJW+91X6IR
-         maTF5+NUYgloM3UBuiYccsMuz9ANLsLlddMLpYC6TbelhZwG1Jpk2W1hFgYDw/No+wwQ
-         lR8kGhzvkJEb51YbCXFOym1yjyKUtaMnYu9SakxxCeH9FaeTV8qlXSqPEMENrVg6DL3y
-         gnbPelmkFSP1O4k/g1gliKzb4ePJidh5mAPMgncITwfHPWjC07L08BDSBje2LV8xc9Q4
-         1UJkhxUb62gT0rxPpS23/BPwKqD9zRxPdWj70Mk8dc/MIB+f6vsKtspddMMBXI+ApHcG
-         OTqQ==
+        b=qXaqlNOFG+Ych6OZ6Go54oKXlC8iErjLhY5NJAQh3V0ZiwCgLpKEOjJ9rC9vk3stv0
+         hsqZB7lBeKAYNxMGtm/1Gg7aEfKJw59rWCRYtug8fRTdlAkthCk7ckkhe0P3kxs64WC/
+         kPAYe8ca4ZVpDeCbdKb/cE4DpOR1wFwQiEoS06rlUiWvQiOSF4QKA4jZ5+g5q68p6Ure
+         JGzsjq1mLzglW6jW/IW0LDqGTAnbKuvejfNJW73Ce4TKsfgq7kl+R0lFnPTgOHKTiZLX
+         V00O6oG+NI29D4wNpUfHFDLlSFrxuzyqi3tVNcZvVr/CXOj0AxneU+jhf37sgH7/0dL0
+         Wcsw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WuB14CMdmm/viccYM5Kt3ToUzNTHe5wotkqFiyZ1pUE=;
-        b=huMakZsaOtEvPq05eJev46r6FWOSgT11yPOLweThoP03kE5KZMSMP0Z6OqnLIw+Y2N
-         hm1zN16gTsnDok0eNQkJSCtX9eSxtF2SdgaiMeGlgjDi3iknN89ZoMDJol4AcvpQo563
-         jlEE6hR1qj/McjfTWC0H+HGB2AwGOPMalK6snW+SdP0MeiXSGIPMovcI5VAE9KL94rsA
-         foI+ine9QOkgbsiJ60jhUgJBZcJm37SM7FDBguyikN/bj9UDELbp+jLL0iPKxYCgHzOb
-         kh1k+m/KSIc94HYe31c6xQv+409dUJ7C4Mr8phlVjY777VrscGS9UqGzTR/7ligP5b5A
-         70JA==
+        bh=QPOvpls5cnOjvzt/HdfCu9agdJ+yExXeq5LVRsnhqYE=;
+        b=CcRguWBGCwLkalycqryNzyl5TyLjfzDdxwP+WT4u4tIklxZ3ra+WY/FD9Nt/D0gYhP
+         Qpn4DEYGQTdMmNbQTCTrv+Td/GcH8EZtPcnRiVCKD4NKSL8EYXVhdJJPiLhUenoPbK84
+         mi/0+qeko0P/OBmAqqu/9DfAW8jyZCEoS4aJMUYy0nd7LYlTGQHtYkcwwUT4OLvsaVwE
+         KruYot1naJUE70dszXSty2djOEfKu9CQ7qgUbBWqmV83h100tloWxbm8HtNe29r3eKkW
+         z4Fje6/77xH49MSP6K4mf6aN6iFXp1omGx3D5ZMza3PlEszPFRDV5qQK1Zi10ArbZX/B
+         l7qg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yuval Mintz <Yuval.Mintz@cavium.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Tero Kristo <t-kristo@ti.com>,
+	Aparna Balasubramanian <aparnab@ti.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 236/310] bnx2x: Allow vfs to disable txvlan offload
-Date: Wed, 11 Apr 2018 20:36:15 +0200
-Message-Id: <20180411183632.654191027@linuxfoundation.org>
+Subject: [PATCH 4.9 235/310] crypto: omap-sham - fix closing of hash with separate finalize call
+Date: Wed, 11 Apr 2018 20:36:14 +0200
+Message-Id: <20180411183632.611968069@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476272462961684?=
-X-GMAIL-MSGID: =?utf-8?q?1597477651188344008?=
+X-GMAIL-THRID: =?utf-8?q?1597477648303283018?=
+X-GMAIL-MSGID: =?utf-8?q?1597477648303283018?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,55 +51,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Mintz, Yuval" <Yuval.Mintz@cavium.com>
+From: Tero Kristo <t-kristo@ti.com>
 
 
-[ Upstream commit 92f85f05caa51d844af6ea14ffbc7a786446a644 ]
+[ Upstream commit 898d86a565925f09de3d0b30cf3b47ec2e409680 ]
 
-VF clients are configured as enforced, meaning firmware is validating
-the correctness of their ethertype/vid during transmission.
-Once txvlan is disabled, VF would start getting SKBs for transmission
-here vlan is on the payload - but it'll pass the packet's ethertype
-instead of the vid, leading to firmware declaring it as malicious.
+Currently there is an interesting corner case failure with omap-sham
+driver, if the finalize call is done separately with no data, but
+all previous data has already been processed. In this case, it is not
+possible to close the hash with the hardware without providing any data,
+so we get incorrect results. Fix this by adjusting the size of data
+sent to the hardware crypto engine in case the non-final data size falls
+on the block size boundary, by reducing the amount of data sent by one
+full block. This makes it sure that we always have some data available
+for the finalize call and we can close the hash properly.
 
-Signed-off-by: Yuval Mintz <Yuval.Mintz@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Reported-by: Aparna Balasubramanian <aparnab@ti.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c |   19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ drivers/crypto/omap-sham.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-@@ -3887,15 +3887,26 @@ netdev_tx_t bnx2x_start_xmit(struct sk_b
- 		/* when transmitting in a vf, start bd must hold the ethertype
- 		 * for fw to enforce it
- 		 */
-+		u16 vlan_tci = 0;
- #ifndef BNX2X_STOP_ON_ERROR
--		if (IS_VF(bp))
-+		if (IS_VF(bp)) {
- #endif
--			tx_start_bd->vlan_or_ethertype =
--				cpu_to_le16(ntohs(eth->h_proto));
-+			/* Still need to consider inband vlan for enforced */
-+			if (__vlan_get_tag(skb, &vlan_tci)) {
-+				tx_start_bd->vlan_or_ethertype =
-+					cpu_to_le16(ntohs(eth->h_proto));
-+			} else {
-+				tx_start_bd->bd_flags.as_bitfield |=
-+					(X_ETH_INBAND_VLAN <<
-+					 ETH_TX_BD_FLAGS_VLAN_MODE_SHIFT);
-+				tx_start_bd->vlan_or_ethertype =
-+					cpu_to_le16(vlan_tci);
-+			}
- #ifndef BNX2X_STOP_ON_ERROR
--		else
-+		} else {
- 			/* used by FW for packet accounting */
- 			tx_start_bd->vlan_or_ethertype = cpu_to_le16(pkt_prod);
-+		}
- #endif
+--- a/drivers/crypto/omap-sham.c
++++ b/drivers/crypto/omap-sham.c
+@@ -750,7 +750,10 @@ static int omap_sham_align_sgs(struct sc
+ 	if (final)
+ 		new_len = DIV_ROUND_UP(new_len, bs) * bs;
+ 	else
+-		new_len = new_len / bs * bs;
++		new_len = (new_len - 1) / bs * bs;
++
++	if (nbytes != new_len)
++		list_ok = false;
+ 
+ 	while (nbytes > 0 && sg_tmp) {
+ 		n++;
+@@ -846,6 +849,8 @@ static int omap_sham_prepare_request(str
+ 			xmit_len = DIV_ROUND_UP(xmit_len, bs) * bs;
+ 		else
+ 			xmit_len = xmit_len / bs * bs;
++	} else if (!final) {
++		xmit_len -= bs;
  	}
  
+ 	hash_later = rctx->total - xmit_len;
+@@ -1137,7 +1142,7 @@ retry:
+ 	ctx = ahash_request_ctx(req);
+ 
+ 	err = omap_sham_prepare_request(req, ctx->op == OP_UPDATE);
+-	if (err)
++	if (err || !ctx->total)
+ 		goto err1;
+ 
+ 	dev_dbg(dd->dev, "handling new req, op: %lu, nbytes: %d\n",
