@@ -1,53 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753549AbeDKNYI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 09:24:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43208 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753091AbeDKNYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 09:24:06 -0400
-Date: Wed, 11 Apr 2018 16:24:02 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Stefan Hajnoczi <stefanha@redhat.com>
-Cc: virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>, jasowang@redhat.com,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] vhost: fix vhost_vq_access_ok() log check
-Message-ID: <20180411162345-mutt-send-email-mst@kernel.org>
-References: <20180411023541.15776-1-stefanha@redhat.com>
+        id S1753691AbeDKNZ0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 09:25:26 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:41534 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753271AbeDKNZX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 09:25:23 -0400
+From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+To: Wolfram Sang <wsa@the-dreams.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-i2c@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Subject: [PATCH v3 0/6] Add different features for I2C
+Date: Wed, 11 Apr 2018 15:24:52 +0200
+Message-ID: <1523453098-3758-1-git-send-email-pierre-yves.mordret@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180411023541.15776-1-stefanha@redhat.com>
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-11_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 10:35:39AM +0800, Stefan Hajnoczi wrote:
-> v3:
->  * Rebased onto net/master and resolved conflict [DaveM]
-> 
-> v2:
->  * Rewrote the conditional to make the vq access check clearer [Linus]
->  * Added Patch 2 to make the return type consistent and harder to misuse [Linus]
-> 
-> The first patch fixes the vhost virtqueue access check which was recently
-> broken.  The second patch replaces the int return type with bool to prevent
-> future bugs.
+Append new I2C STM32F7 feature set. This includes 10 bit support, slave
+support, SMBBus protocols support, DMA Support and eventually an I2C release
+mechanism.
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+---
+  Version history:
+    v1:
+        * Initial
+    v2:
+        * Kbuild test robot issue
+        * I2C master recovery mechanism
+    v3:
+        * Provide more details on what have already been implemented and
+          not implemented for SMBus protocols
+        * Raise DMA usage threshold
+        * s/recovery/release/ throughout the patch. Recovery is really
+          something else.
+---
+Pierre-Yves MORDRET (6):
+  i2c: i2c-stm32f7: Add 10-bit address support
+  i2c: i2c-stm32f7: Add slave support
+  i2c: i2c-stm32f7: Add initial SMBus protocols support
+  i2c: i2c-stm32: Add generic DMA API
+  i2c: i2c-stm32f7: Add DMA support
+  i2c: i2c-stm32f7: Implement I2C release mechanism
 
-We need the 1st one on stable I think.
+ drivers/i2c/busses/Kconfig       |    1 +
+ drivers/i2c/busses/Makefile      |    3 +-
+ drivers/i2c/busses/i2c-stm32.c   |  153 ++++++
+ drivers/i2c/busses/i2c-stm32.h   |   37 ++
+ drivers/i2c/busses/i2c-stm32f7.c | 1040 +++++++++++++++++++++++++++++++++++++-
+ 5 files changed, 1207 insertions(+), 27 deletions(-)
+ create mode 100644 drivers/i2c/busses/i2c-stm32.c
 
-
-> Stefan Hajnoczi (2):
->   vhost: fix vhost_vq_access_ok() log check
->   vhost: return bool from *_access_ok() functions
-> 
->  drivers/vhost/vhost.h |  4 +--
->  drivers/vhost/vhost.c | 70 ++++++++++++++++++++++++++-------------------------
->  2 files changed, 38 insertions(+), 36 deletions(-)
-> 
-> -- 
-> 2.14.3
+-- 
+2.7.4
