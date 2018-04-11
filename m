@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3308147-1523480158-2-4058743227494056427
+X-Cyrus-Session-Id: sloti22d1t05-3303684-1523480136-2-1372080365714147797
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523480157; b=RFnMGSodHDY4Uzbz3ivrkD6ZONo4bd4rth03sXRa07QIq1BUig
-    uQPE6EJRYTEGGwApNif+K1IFDnKs58n7ZdliJNSr9GQxOBYrOeiTEdIhpdoJdUIy
-    aT5po7lq6IpFUx/sc3nZ3po1QRQmbQptxMQKo9E03O8ACvnLq3u/WaoEF7W9ar7l
-    pmqF500ey/iWjY4R3qvefL+i5Q156Vqor8TYVmfW6jejEVQq44NYzYX+TueKTI1r
-    LRzm8tyJpTA/16m1Mi1hA1U8FJf0jZLwwErU0/hUlRoKp+XEPQDipDwHgp109MaZ
-    U0DsZ6UFgxt/2INebB0K94jglZe0Ihoozyzw==
+    1523480135; b=UrMVqD9Il4vZOgDM4jpC3y1uo30T+nGB0WxlS8jAZ5hBeh+jxI
+    2VLvW1GlsztNKT96axxftZkT+Oks856vEyTPAcuTaZpJrVNFAhgNaDo0oL37zZTf
+    g4X6IFptRYNkVG4qHvkHANjDZDVaxG6XQl55KNsv/HqL3nbgK3WamTc7XiRNpAk1
+    RuJxiDKQvK0VesmRaUmrHs2n0spUcy6tHp2lRES84KquSXCBTB+ZE3o20u6b5jQq
+    s3eU/Ln/a6aQF9PraPNSIXdM6MQ9GcMuGEYPLmjBYqQOPfarUsFo/kOW6H4rw26y
+    GMxHF7SnZdXquHjwpyGHZrw2jYsUx2XgLBaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523480157; bh=rBQYhQq1WOq3LSCY7PV4zXXqAApe2j
-    LMSICT+uk8g+4=; b=UaNBI/xoafAshydqrNmBtY2Y+Z7bzYt4YIGeCh0B04KUrC
-    nNMTXUo0uxsuanyTLlAlQXWpdHAy0AYlBjQY8grC0H/TpWngxjDzbdt96sNN3cCc
-    AY+46O+PmzwA72MYcMMtAKpOMed4J87nVSi21/t86qOqHs0fKw09SpsCBCjG9ydC
-    jXV/sKiYvjbT9U1UUL1N3bSdPG/L9TEDkiI61M+xF7hr7nc4cOVcfMr0RK0NWUJ4
-    Oj2WzGZTisMQWfVIuFJVo4ziuzOYy2SETTp25ogbhLKQoeCA2dokmGAvb+bGEXkp
-    oLYm6fN4p4i/kAET8syYMTH9LD2rn3R2xP2jOi1w==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523480135; bh=jMgCaUaNknfaKHQVwuvLdSbA0sJymI
+    4gJhSu5eGXPRQ=; b=KdOy/H+1WsKCepzZZhgT3ownGb451iqc7gk1ZmNXpCCw91
+    QfzPVv9wF908L5qVWhWeuHjpJUIn9Z+LVHay+UFgTYXDJn36oK5bK9QSlLPJ1m9s
+    eeJPINOpw38QdisG+eYnpkxvMIQlNReZ+sovzVN3JO1rXvGikOsF+CkvOBvJg9oC
+    X2kUTD1l8sQGo094rQmhgM2t5FJXnSEhipm1wMcAR9hSSYvKSEcV0NKjQc/yFep9
+    QoMLOezlEoQCt+aaGiCRDEap8wClqxeqhocvRglL2MiL7qfmIgwAU6LIUrg/dSOW
+    dpbLohu7LxCDhEOl3V+sawNOt6YB7YI/d5CXHANw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,29 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMJm6KGTFMo630KqVN5yHN11mOWAXgBO6nrGpFB8SoINpj50jILc2whIefmT4MkKWtLcavbVo4a4c761aDqJy7kWBaf2/d4TAW4bXd0U9DagJeQPhUYH
-    WRCW/rU/dweNNBmbcSwXMIgjqXTdyE6yeevmC5hglty7dLvlvBHhaqvejWWLn8jKAL+DDUSKnCPS+8y9A1PC200+6yNALsp2OJP/zxAGTki8Tvo74sMgrwOy
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHcLWDYVLycoMxTkEoHy2MsuLEFV4rHvf7cuu5loLlxkr8DY+BoiH1DVQfel+MS0NuhPCw4jTeWGrYTobCK4aLjVfiMrYDdV5lJNML2AIir5qvhlKt2b
+    9z+m5U81Z9rSmT1yeJfzLrz5hbBDTfDiop5GT527NgEvF5iSGmRJhZeAP/dvhz5ukZclWdnkRvpAY9A/dShM7CM0T1HJirXkFKllisMdEi0WakvJxHwTfsv2
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=8AirrxEcAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=LkhwIsrRiEQ4CS9YBrUA:9 a=QEXdDO2ut3YA:10 a=ST-jHhOKWsTCqRlWije3:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=ag1SF4gXAAAA:8 a=yMhMjlubAAAA:8 a=-RvIgU9Ao91RJkrITpgA:9
+    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755882AbeDKUzj (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:55:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58334 "EHLO
+        id S932240AbeDKSos (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:44:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58374 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932215AbeDKSop (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:44:45 -0400
+        with ESMTP id S932239AbeDKSor (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:44:47 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org, Andrea della Porta <sfaragnaus@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 032/190] ARM: dts: imx53-qsrb: Pulldown PMIC IRQ pin
-Date: Wed, 11 Apr 2018 20:34:38 +0200
-Message-Id: <20180411183552.068081942@linuxfoundation.org>
+Subject: [PATCH 4.4 033/190] staging: wlan-ng: prism2mgmt.c: fixed a double endian conversion before calling hfa384x_drvr_setconfig16, also fixes relative sparse warning
+Date: Wed, 11 Apr 2018 20:34:39 +0200
+Message-Id: <20180411183552.123594490@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -93,56 +91,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
+From: Andrea della Porta <sfaragnaus@gmail.com>
 
 
-[ Upstream commit 2fe4bff3516924a37e083e3211364abe59db1161 ]
+[ Upstream commit dea20579a69ab68cdca6adf79bb7c0c162eb9b72 ]
 
-Currently the following errors are seen:
+staging: wlan-ng: prism2mgmt.c: This patches fixes a double endian conversion.
+cpu_to_le16() was called twice first in prism2mgmt_scan and again inside
+hfa384x_drvr_setconfig16() for the same variable, hence it was swapped
+twice. Incidentally, it also fixed the following sparse warning:
 
-[   14.015056] mc13xxx 0-0008: Failed to read IRQ status: -6
-[   27.321093] mc13xxx 0-0008: Failed to read IRQ status: -6
-[   27.411681] mc13xxx 0-0008: Failed to read IRQ status: -6
-[   27.456281] mc13xxx 0-0008: Failed to read IRQ status: -6
-[   30.527106] mc13xxx 0-0008: Failed to read IRQ status: -6
-[   36.596900] mc13xxx 0-0008: Failed to read IRQ status: -6
+drivers/staging/wlan-ng/prism2mgmt.c:173:30: warning: incorrect type in assignment (different base types)
+drivers/staging/wlan-ng/prism2mgmt.c:173:30:    expected unsigned short [unsigned] [usertype] word
+drivers/staging/wlan-ng/prism2mgmt.c:173:30:    got restricted __le16 [usertype] <noident>
 
-Also when reading the interrupts via 'cat /proc/interrupts' the
-PMIC GPIO interrupt counter does not stop increasing.
+Unfortunately, only compile tested.
 
-The reason for the storm of interrupts is that the PUS field of
-register IOMUXC_SW_PAD_CTL_PAD_CSI0_DAT5 is currently configured as:
-10 : 100k pullup
-
-and the PMIC interrupt is being registered as IRQ_TYPE_LEVEL_HIGH type,
-which is the correct type as per the MC34708 datasheet.
-
-Use the default power on value for the IOMUX, which sets PUS field as:
-00: 360k pull down
-
-This prevents the spurious PMIC interrupts from happening.
-
-Commit e1ffceb078c6 ("ARM: imx53: qsrb: fix PMIC interrupt level")
-correctly described the irq type as IRQ_TYPE_LEVEL_HIGH, but
-missed to update the IOMUX of the PMIC GPIO as pull down.
-
-Fixes: e1ffceb078c6 ("ARM: imx53: qsrb: fix PMIC interrupt level")
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Andrea della Porta <sfaragnaus@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/imx53-qsrb.dts |    2 +-
+ drivers/staging/wlan-ng/prism2mgmt.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/imx53-qsrb.dts
-+++ b/arch/arm/boot/dts/imx53-qsrb.dts
-@@ -23,7 +23,7 @@
- 	imx53-qsrb {
- 		pinctrl_pmic: pmicgrp {
- 			fsl,pins = <
--				MX53_PAD_CSI0_DAT5__GPIO5_23	0x1e4 /* IRQ */
-+				MX53_PAD_CSI0_DAT5__GPIO5_23	0x1c4 /* IRQ */
- 			>;
- 		};
- 	};
+--- a/drivers/staging/wlan-ng/prism2mgmt.c
++++ b/drivers/staging/wlan-ng/prism2mgmt.c
+@@ -169,7 +169,7 @@ int prism2mgmt_scan(wlandevice_t *wlande
+ 				     hw->ident_sta_fw.variant) >
+ 	    HFA384x_FIRMWARE_VERSION(1, 5, 0)) {
+ 		if (msg->scantype.data != P80211ENUM_scantype_active)
+-			word = cpu_to_le16(msg->maxchanneltime.data);
++			word = msg->maxchanneltime.data;
+ 		else
+ 			word = 0;
+ 
