@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49qw2+gDKHVqxm7gpmXZUBttdaoK3skMVuuhQ8xzAjzRwnzkdOSO1LxnLC9tIVS5hD6IdNb
-ARC-Seal: i=1; a=rsa-sha256; t=1523473008; cv=none;
+X-Google-Smtp-Source: AIpwx48fFtQ2+dDER67OoqeIeMV4AekWk20Tfr+ivIgxkrKKFPQh2XSZJSWl7SJmIGQXAbAY9+MG
+ARC-Seal: i=1; a=rsa-sha256; t=1523473005; cv=none;
         d=google.com; s=arc-20160816;
-        b=fA2osGCcXNvMqO8wxy2xCP3Qw9yro+5v/r+AruVSZDQamAreyGqpwWBb9jius8l0mm
-         vX0aHihF4itnj+3Q4N9geeTnOxKyv1b31Qqsb+Rxrku3TnZyRnhVo6O36nUEmmVA7GxE
-         vyvFcy4d90cJNvU8d4Z3tJHUQuHGvnElWEAsgyMefg3Bgp4LXGRd/Wb2FR7+25L5eEwD
-         SmHwRK/GODqUdFvPxUqhyW0zjdcwqXpDqB3N1lzmFtHNQGTlPLsXfWfqbMaNHmADBVSz
-         US1C0aVtbPp4dohpEqi6IsvtVL+4YWtqBVtdtR+I2rqaPSUeq7W6JvfElUgocltpuOXZ
-         O7cA==
+        b=at0Wa9WCoZTx69NJeT6FjI7lh2D716LE7l5IooV30usji2ZxatiQud9xBuJbMykZnA
+         M6R/4NHJSlBRQPylgC9BIiBnUEAA2MTXLZv+Zz5OLCaqdwZIB2EzErUjDLxis/qVK+m5
+         vm1We0cSemWS6EyLCHDgybP405uBwNQOezsAcCH9b6piMWN26DS2eRvouGNGU3bzjBlo
+         OCOX9i0vBccU6RhhaIEheN2n9AiBMTxzKrDAxCHRb8DELaVnX5diqWpQ0J/1S5dLz+yj
+         jcakm23wn2vd+mbrrDYSh/CTKfNTaw2XritWuZLNUTyy/Ppzw8rJY7CSJ1ATefX2ajtm
+         BJcQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=EExqPyOi/9+8sqzx5BByI+6zqpb77EbxuvqSHO9iQFA=;
-        b=SuZo66z3flsVUv/vxQf3BQ1vmVtazQk8UpgmCzgx2H0dE25pLde53pzq3QMtWBbbLd
-         uRRRG5i/OqesvRR6dSPJu5X17FTIhtGqcm0JexLCnOh6zodBD8BDDXxi7IoRww5ZA1xZ
-         IMuDf4KUzEmEGlt7xcqkE3ErSuxq/7WL/1ZU/FXjyZl/oUuyye7Rkw/oldn5AJoMbA/e
-         S4rGwS798Olu2jfHmW1dikTa/DXwTeLR4elaxOIEG2pzHHUWtbHh2jXb8rk3kv6oG+M1
-         BYt3gApUrkHy9NiDr2tyjWl4DkbfGawl/00rXUNh6HtN6Y1AghmaNd18TqzYCE9rvpjs
-         kiyA==
+        bh=DV8klGqxTVnEZT8TTm7h1Ah3p8bNg/y/fj3FrnkjqUc=;
+        b=fHpAk+a/Sv44rvMjqPlEA1gDjbdwxC59VqdbwdqQsrScOYTrZ2ZoPC3PuUvZNDNn3f
+         eyls2GxO29464ccFXcKjlsRGinP0omuKHnag7/qIvaYF3ccdD0j37F9/ZQbKg0LIHtwW
+         mq4p48xH9YQsW8Lkz/lr6QNx/pGWKR4ctXmiAds6L8Jj78xwKeshhB9HX59dfltpVc8C
+         cqXF9IjIoGrEh2PTtOsg3pf7nNAl64oeMhba0dGnPRP+kWqPA9NdilAEdMQU+bg0HRx3
+         6rJ1WDTcyH4bv6vMM8VftiMJ+HqHJG8zMCXgbRpEl6YbpAHBBXEc95ZRIcf881MP1ZFa
+         P22g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tariq Toukan <tariqt@mellanox.com>,
-	kernel-team@fb.com,
-	Saeed Mahameed <saeedm@mellanox.com>,
+	Aaron Lu <aaron.lu@intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 095/310] net/mlx5: Tolerate irq_set_affinity_hint() failures
-Date: Wed, 11 Apr 2018 20:33:54 +0200
-Message-Id: <20180411183626.322061586@linuxfoundation.org>
+Subject: [PATCH 4.9 094/310] gpio: crystalcove: Do not write regular gpio registers for virtual GPIOs
+Date: Wed, 11 Apr 2018 20:33:53 +0200
+Message-Id: <20180411183626.280561563@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476666941351616?=
-X-GMAIL-MSGID: =?utf-8?q?1597477233829020840?=
+X-GMAIL-THRID: =?utf-8?q?1597477230316650681?=
+X-GMAIL-MSGID: =?utf-8?q?1597477230316650681?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,60 +52,174 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tariq Toukan <tariqt@mellanox.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
 
-[ Upstream commit b665d98edc9ab295169be2fc5bb4e89a46de0a1a ]
+[ Upstream commit 9a752b4c9ab924033bfdb8784c680d50b2bd5684 ]
 
-Add tolerance to failures of irq_set_affinity_hint().
-Its role is to give hints that optimizes performance,
-and should not block the driver load.
+The Crystal Cove PMIC has 16 real GPIOs but the ACPI code for devices
+with this PMIC may address up to 95 GPIOs, these extra GPIOs are
+called virtual GPIOs and are used by the ACPI code as a method of
+accessing various non GPIO bits of PMIC.
 
-In non-SMP systems, functionality is not available as
-there is a single core, and all these calls definitely
-fail.  Hence, do not call the function and avoid the
-warning prints.
+Commit dcdc3018d635 ("gpio: crystalcove: support virtual GPIO") added
+dummy support for these to avoid a bunch of ACPI errors, but instead of
+ignoring writes / reads to them by doing:
 
-Fixes: db058a186f98 ("net/mlx5_core: Set irq affinity hints")
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Cc: kernel-team@fb.com
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+if (gpio >= CRYSTALCOVE_GPIO_NUM)
+	return 0;
+
+It accidentally introduced the following wrong check:
+
+if (gpio > CRYSTALCOVE_VGPIO_NUM)
+	return 0;
+
+Which means that attempts by the ACPI code to access these gpios
+causes some arbitrary gpio to get touched through for example
+GPIO1P0CTLO + gpionr % 8.
+
+Since we do support input/output (but not interrupts) on the 0x5e
+virtual GPIO, this commit makes to_reg return -ENOTSUPP for unsupported
+virtual GPIOs so as to not have to check for (gpio >= CRYSTALCOVE_GPIO_NUM
+&& gpio != 0x5e) everywhere and to make it easier to add support for more
+virtual GPIOs in the future.
+
+It then adds a check for to_reg returning an error to all callers where
+this may happen fixing the ACPI code accessing virtual GPIOs accidentally
+causing changes to real GPIOs.
+
+Fixes: dcdc3018d635 ("gpio: crystalcove: support virtual GPIO")
+Cc: Aaron Lu <aaron.lu@intel.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/main.c |   15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ drivers/gpio/gpio-crystalcove.c |   54 ++++++++++++++++++++++++++--------------
+ 1 file changed, 36 insertions(+), 18 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-@@ -548,7 +548,6 @@ static int mlx5_irq_set_affinity_hint(st
- 	struct mlx5_priv *priv  = &mdev->priv;
- 	struct msix_entry *msix = priv->msix_arr;
- 	int irq                 = msix[i + MLX5_EQ_VEC_COMP_BASE].vector;
--	int err;
+--- a/drivers/gpio/gpio-crystalcove.c
++++ b/drivers/gpio/gpio-crystalcove.c
+@@ -90,8 +90,18 @@ static inline int to_reg(int gpio, enum
+ {
+ 	int reg;
  
- 	if (!zalloc_cpumask_var(&priv->irq_info[i].mask, GFP_KERNEL)) {
- 		mlx5_core_warn(mdev, "zalloc_cpumask_var failed");
-@@ -558,18 +557,12 @@ static int mlx5_irq_set_affinity_hint(st
- 	cpumask_set_cpu(cpumask_local_spread(i, priv->numa_node),
- 			priv->irq_info[i].mask);
+-	if (gpio == 94)
+-		return GPIOPANELCTL;
++	if (gpio >= CRYSTALCOVE_GPIO_NUM) {
++		/*
++		 * Virtual GPIO called from ACPI, for now we only support
++		 * the panel ctl.
++		 */
++		switch (gpio) {
++		case 0x5e:
++			return GPIOPANELCTL;
++		default:
++			return -EOPNOTSUPP;
++		}
++	}
  
--	err = irq_set_affinity_hint(irq, priv->irq_info[i].mask);
--	if (err) {
--		mlx5_core_warn(mdev, "irq_set_affinity_hint failed,irq 0x%.4x",
--			       irq);
--		goto err_clear_mask;
--	}
-+#ifdef CONFIG_SMP
-+	if (irq_set_affinity_hint(irq, priv->irq_info[i].mask))
-+		mlx5_core_warn(mdev, "irq_set_affinity_hint failed, irq 0x%.4x", irq);
-+#endif
+ 	if (reg_type == CTRL_IN) {
+ 		if (gpio < 8)
+@@ -130,36 +140,36 @@ static void crystalcove_update_irq_ctrl(
+ static int crystalcove_gpio_dir_in(struct gpio_chip *chip, unsigned gpio)
+ {
+ 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
++	int reg = to_reg(gpio, CTRL_OUT);
  
- 	return 0;
--
--err_clear_mask:
--	free_cpumask_var(priv->irq_info[i].mask);
--	return err;
+-	if (gpio > CRYSTALCOVE_VGPIO_NUM)
++	if (reg < 0)
+ 		return 0;
+ 
+-	return regmap_write(cg->regmap, to_reg(gpio, CTRL_OUT),
+-			    CTLO_INPUT_SET);
++	return regmap_write(cg->regmap, reg, CTLO_INPUT_SET);
  }
  
- static void mlx5_irq_clear_affinity_hint(struct mlx5_core_dev *mdev, int i)
+ static int crystalcove_gpio_dir_out(struct gpio_chip *chip, unsigned gpio,
+ 				    int value)
+ {
+ 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
++	int reg = to_reg(gpio, CTRL_OUT);
+ 
+-	if (gpio > CRYSTALCOVE_VGPIO_NUM)
++	if (reg < 0)
+ 		return 0;
+ 
+-	return regmap_write(cg->regmap, to_reg(gpio, CTRL_OUT),
+-			    CTLO_OUTPUT_SET | value);
++	return regmap_write(cg->regmap, reg, CTLO_OUTPUT_SET | value);
+ }
+ 
+ static int crystalcove_gpio_get(struct gpio_chip *chip, unsigned gpio)
+ {
+ 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
+-	int ret;
+ 	unsigned int val;
++	int ret, reg = to_reg(gpio, CTRL_IN);
+ 
+-	if (gpio > CRYSTALCOVE_VGPIO_NUM)
++	if (reg < 0)
+ 		return 0;
+ 
+-	ret = regmap_read(cg->regmap, to_reg(gpio, CTRL_IN), &val);
++	ret = regmap_read(cg->regmap, reg, &val);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -170,14 +180,15 @@ static void crystalcove_gpio_set(struct
+ 				 unsigned gpio, int value)
+ {
+ 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
++	int reg = to_reg(gpio, CTRL_OUT);
+ 
+-	if (gpio > CRYSTALCOVE_VGPIO_NUM)
++	if (reg < 0)
+ 		return;
+ 
+ 	if (value)
+-		regmap_update_bits(cg->regmap, to_reg(gpio, CTRL_OUT), 1, 1);
++		regmap_update_bits(cg->regmap, reg, 1, 1);
+ 	else
+-		regmap_update_bits(cg->regmap, to_reg(gpio, CTRL_OUT), 1, 0);
++		regmap_update_bits(cg->regmap, reg, 1, 0);
+ }
+ 
+ static int crystalcove_irq_type(struct irq_data *data, unsigned type)
+@@ -185,6 +196,9 @@ static int crystalcove_irq_type(struct i
+ 	struct crystalcove_gpio *cg =
+ 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
+ 
++	if (data->hwirq >= CRYSTALCOVE_GPIO_NUM)
++		return 0;
++
+ 	switch (type) {
+ 	case IRQ_TYPE_NONE:
+ 		cg->intcnt_value = CTLI_INTCNT_DIS;
+@@ -235,8 +249,10 @@ static void crystalcove_irq_unmask(struc
+ 	struct crystalcove_gpio *cg =
+ 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
+ 
+-	cg->set_irq_mask = false;
+-	cg->update |= UPDATE_IRQ_MASK;
++	if (data->hwirq < CRYSTALCOVE_GPIO_NUM) {
++		cg->set_irq_mask = false;
++		cg->update |= UPDATE_IRQ_MASK;
++	}
+ }
+ 
+ static void crystalcove_irq_mask(struct irq_data *data)
+@@ -244,8 +260,10 @@ static void crystalcove_irq_mask(struct
+ 	struct crystalcove_gpio *cg =
+ 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
+ 
+-	cg->set_irq_mask = true;
+-	cg->update |= UPDATE_IRQ_MASK;
++	if (data->hwirq < CRYSTALCOVE_GPIO_NUM) {
++		cg->set_irq_mask = true;
++		cg->update |= UPDATE_IRQ_MASK;
++	}
+ }
+ 
+ static struct irq_chip crystalcove_irqchip = {
