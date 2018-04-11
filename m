@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/+IvIEE/IjVcRw3ecRhy1lMAnJXg9lr5+Ejxbce4+S8TPxCUyqFxSBPSq29amUpp0LcakU
-ARC-Seal: i=1; a=rsa-sha256; t=1523473357; cv=none;
+X-Google-Smtp-Source: AIpwx4/RZXBdg0FRfd7jFMow2Al0ykZMfy0uhNskboGzmcFbz8L1Q4LARWIbz5pKqjjE5MtcXAx2
+ARC-Seal: i=1; a=rsa-sha256; t=1523473354; cv=none;
         d=google.com; s=arc-20160816;
-        b=uV/Z4fi95cA+WuY5wKXJsPV8/toSE4mCH/wuJea93J9wYzDIOX69nTwEapj7F2z6A+
-         19kJ1XjbN2/KkQRCLMmGE1VcKGGLxhiht2xL3eXrHN+EzL8GMe7/H8dEVwHX4dBH4Tgn
-         FTgbSx3dinLpffgNikZHVIP8Tdrqi8thKIc+bKMmglNgwXF+oKdpjEd6P3MNvcw+hZg8
-         pnws5zC5+nP3kHa9gV9XO2lFiQyULZI6FkZwqwLniUF2t+tEcP7iOVJ0qIiE2OqdS4ST
-         c4tFOU6b7o0sZQ/nb/c4VNOLyRLzNqz/vXUWZBOALm2asjiqc3k3hKZVyDVPAfb9v6cY
-         pZWw==
+        b=pC0DzrknlEzNsnQyaSsGBkHg72QFYdZ1Rzl93FABYvS4gwHacpuCzFfHuc6Qt+L0Dl
+         m5iD4ShvmImVtHBCciomjp7C40XVLq2/8k3GjVnJm4/Hg3/bVCjwHIc5Pk+pihll/pEj
+         CmUUO7EQOXcHf2rlfMiXExLVJg03M+rUPy7XSzjylvG6aqn6fl5wLyqTEDOZx76m2h4r
+         lHwkNJZ/yMA+iyH4aPiYSnVyjIQ6Yp9Tjq4rfkSnANU2FGMknQMnYYcDHLU2j1t22VFE
+         +YelJM2jv/stE1dhEqM+bZbt/Od7VFRWQsW3IPPe3E79+1uCwHmUXwlJTpjMCHD65ISZ
+         cNhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fIYEHa6Y5YepFxQI0cHsK4jnPzvnyUWqx+YtwX1prBk=;
-        b=WX3odlqPXfQzmOeDiNO1mhroNksUGHXFjIPDC65aXucfZZ4dj0nEpfgit3rP3PRKrj
-         JwAUtpcqWuLLxKzChfqHiNl90REfxuBsXy+0fD0niWkct73ZQgpaltbedqs1oYWMP/Nf
-         KyiY1gRsrZaMdFkUa86Z8g0icY36vB95GP2p/M8VltalfxdZ7obk//V7Mk5N1ndfwv/y
-         yuIO/sE9ES33xrkixQQcJBBWKnkW0F2QeaL1voRLcGZk7b3zCRtag05rb5TwIQO6l1/R
-         irail1R39Y1xN2y4/oj4qkJbHfnbkCGousB/EE6wR6VAXBAFaKDas5kIFBVvIq7lIU70
-         qbpw==
+        bh=AqOvUD777U90TECoOTLeA081K6o9iatqI5gcTocQHac=;
+        b=bi94pXRKkjlGcc+lqlHjadNket9Sy/gopzkjjblZ2+gZYPLbr4VGiyAOUIK7L/LC+D
+         Yy36KuWp7Vxaf+L3xdS1c2cLDr/zY2/8XvxVZmqYnJ8IHOQBD3gXf5JQQ+zuJUVx+T0y
+         Hmb7Bj2WGTg47dQW1ktGwxL25zD3ATLZxsgSBH3nZkLL1ToEgA+bYvr4ZZ3eABIIDab8
+         yZ9RWZ1MpT8luGKpm9UAbPSg4ZMf6Rf4hgtjphQ03kIwK1vvCNhbAFViTFceVnzW8XmS
+         NtfJX4zAVmVVi3EXbcjBfWobqNzVDCVEkNyqj6zDwMLCjzlb9QP/PkXaBkHBXCZQiZhK
+         dY6w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
+	Bryan ODonoghue <pure.logic@nexus-software.ie>,
+	Stephen Boyd <sboyd@codeaurora.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 211/310] ARM: imx: Add MXC_CPU_IMX6ULL and cpu_is_imx6ull
-Date: Wed, 11 Apr 2018 20:35:50 +0200
-Message-Id: <20180411183631.640062443@linuxfoundation.org>
+Subject: [PATCH 4.9 173/310] clk: Fix __set_clk_rates error print-string
+Date: Wed, 11 Apr 2018 20:35:12 +0200
+Message-Id: <20180411183630.073353150@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476761935649946?=
-X-GMAIL-MSGID: =?utf-8?q?1597477598632885687?=
+X-GMAIL-THRID: =?utf-8?q?1597476691990597069?=
+X-GMAIL-MSGID: =?utf-8?q?1597477596021818135?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,58 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
 
 
-[ Upstream commit b3ea575770c7eeb259c77b6861cd14d00eb309df ]
+[ Upstream commit ee177c5d6369f8e5d3e4793dce501cf4431313a1 ]
 
-Support for imx6ull is already present but it's based on
-of_machine_is_compatible("fsl,imx6ull") checks. Add it to the MXC_CPU_*
-enumeration as well.
+When failing to set a clock the printout emitted is incorrect.
+"u32 rate" is formatted as %d and should be %u whereas "unsigned long
+clk_set_rate()" is formatted as %ld and should be %lu as per
+Documentation/printk-formats.txt.
 
-This also fixes /sys/devices/soc0/soc_id reading "Unknown".
-
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Fixes: 2885c3b2a3da ("clk: Show correct information when fail to set clock rate")
+Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-imx/cpu.c |    3 +++
- arch/arm/mach-imx/mxc.h |    6 ++++++
- 2 files changed, 9 insertions(+)
+ drivers/clk/clk-conf.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/mach-imx/cpu.c
-+++ b/arch/arm/mach-imx/cpu.c
-@@ -131,6 +131,9 @@ struct device * __init imx_soc_device_in
- 	case MXC_CPU_IMX6UL:
- 		soc_id = "i.MX6UL";
- 		break;
-+	case MXC_CPU_IMX6ULL:
-+		soc_id = "i.MX6ULL";
-+		break;
- 	case MXC_CPU_IMX7D:
- 		soc_id = "i.MX7D";
- 		break;
---- a/arch/arm/mach-imx/mxc.h
-+++ b/arch/arm/mach-imx/mxc.h
-@@ -39,6 +39,7 @@
- #define MXC_CPU_IMX6SX		0x62
- #define MXC_CPU_IMX6Q		0x63
- #define MXC_CPU_IMX6UL		0x64
-+#define MXC_CPU_IMX6ULL		0x65
- #define MXC_CPU_IMX7D		0x72
+--- a/drivers/clk/clk-conf.c
++++ b/drivers/clk/clk-conf.c
+@@ -106,7 +106,7 @@ static int __set_clk_rates(struct device
  
- #define IMX_DDR_TYPE_LPDDR2		1
-@@ -73,6 +74,11 @@ static inline bool cpu_is_imx6ul(void)
- 	return __mxc_cpu_type == MXC_CPU_IMX6UL;
- }
- 
-+static inline bool cpu_is_imx6ull(void)
-+{
-+	return __mxc_cpu_type == MXC_CPU_IMX6ULL;
-+}
-+
- static inline bool cpu_is_imx6q(void)
- {
- 	return __mxc_cpu_type == MXC_CPU_IMX6Q;
+ 			rc = clk_set_rate(clk, rate);
+ 			if (rc < 0)
+-				pr_err("clk: couldn't set %s clk rate to %d (%d), current rate: %ld\n",
++				pr_err("clk: couldn't set %s clk rate to %u (%d), current rate: %lu\n",
+ 				       __clk_get_name(clk), rate, rc,
+ 				       clk_get_rate(clk));
+ 			clk_put(clk);
