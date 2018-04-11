@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479279-2-11979240882532419249
+X-Cyrus-Session-Id: sloti22d1t05-3303684-1523479263-2-13559024336354971288
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479278; b=YIUQ5vrmGamC5Wc/G0v4xOW+HN/o6BWL2IOZ7eR6g3uRGjn6hJ
-    qw9c+Ku3kC9WvehE9wpE/3yAgGqV3L8Lcm6vr91Dk6ZjlhZqF13UguQv8NJuOumX
-    2XwGQNBtTjn7m1nGY0WMCBDeqs1BqYObmWGJ4lzzQtHUuKXQJr3LtpSXiUYQGPRS
-    0bUjJqzP2ZkBh4rymduAal3p7OKS3QpbA5kXVrE1fKhc5T9OUjIacEU8mxe1PPl7
-    gIbh+VyxDIHk1/5l/VBvH7P+otE4VRRSnAVyeHQe2o2ZIxE/wZz1w6I1Mgbs9E9W
-    lEljorurzxwXppPB7kP9l66MRVJ3uRATM+Gg==
+    1523479263; b=NflUlh1+3/2OkUU2wmmWE4Fus+28MehcJSHjA7DAxNTBKGXKqz
+    aiVHrfS/UOxinxUBsceu12P5d8JV50Gb8q3t4GhmlfEcABVk3PGRMakwUeNo/Las
+    ILjvlUwdgPK4DDJR7wGtOfB572R1eEe+syVImXns6fsCjPCbGxIXfNZnERNoviuM
+    8DIlYqs8fG0j9Aum/MPHcQfoIf3i1p+ef4HJJdhTwnTMTLuBVbuNg+a/M/CWxEcm
+    useQ4kOfaAOakFQGsLzuGqmvIiut3YAvOHoCfZpqakcrIDH8zjnTCxZLPF7Twzq9
+    szZ9MfZwMGcKNFP4KZOgMLn//eZUwDnCQBKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479278; bh=FqhV/uwEGSSt3Yd72+3FJtc234x84I
-    2nrZYg4bLNxPk=; b=lvZgDPB/4o408lsq2R9Bmowt7o1zd721u62qtTZkLpZx3/
-    kNbE1XUyv6ilNfrzmtUXypyeUy1IrZ1BtndYiitaEXIeU6uUEUIspiSNCtpVOOfw
-    0pFve0ar3Ylyby4Ya+Z5DVxUoAPY0D376tzW05nOk4mnKnljINaiY0q7oEFCaJ+4
-    2B3BxoTWqe/m52j/LeAz4RhvfQwWqVgFqpWYx5P8Ght2aqzJUWdQn2z4oVer5XVW
-    KOevrEvVk4IvPIWiiwtfrZXpWKEfaHAwj/Pt7ce7120tJUVsGaLDIl2pL03vot6I
-    SDIB/tfmpJPghwGOq7TFUWgisnFTfq1jsZxXtE3Q==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479263; bh=DDnruhlAUg8m+h2cTQXR3WdeSAh+cO
+    v9NECn0m1hHBM=; b=jUe/qWfCRi0xAJwRjjnTSXkhgynfeZeVhn0MMzHtf8JgUK
+    X86DlDON+XUqe7QZ08KXV7sUFjdudYT78jNiXM+z5QFCpykRCPFE5fotVJY/gJQw
+    Bk7Ugk+YVGSqmw1u/t54oHbKSqz1OBc399s8HN4wZWKY73DktwJ5skHNC3Ycoubl
+    Qlt0ZUUAk3kzZNaEBsvGmLAYngZapBhxVxII5d30RykODQZSPTuPt8OT1gEu9pMW
+    dlTpdcdN7w4vTJgHimYU7geZ5gqulF+NYORevGc76mb0e19D7jDZ860cURAvJFih
+    9ftWTkcL0b3KVHt5vHiUQ6Zcq7f/CkwT0d/g3w/w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,31 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLuS84NIUPar6kgZ2egbkoRotpw9dkJ/9vvxqjJo1DLXSB6PVT5s33e9P44HdsbgpPURz70TGE55rtrjhl174MpaGfjJ65hq7TlTiBAc2KfYfpZCxJ/m
-    vR+KYDTIDMNwl2mNjtwp4fXJM2N+5gc0SGDYZmESmopY9F/OIMWPw0aXKqD6lsuTURuUl8LXA7kun8u3+6vQwyc/OmfzFhpzVU755f8eJZSkO98XYSMrmvIv
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIQVT1AmEyN9GJodr8xB/oR05kzRBDQ4h3CjtntSK2WqNebk/1XzKDGhAtRPX8oixaW6ESpUkr1JtsCCVUSkApXCFKOehKqYAQYEUScUyxmrDrkKjngx
+    m3mVclsfnoBIsE8hB1RdMJZ2pT1ayh5tiHV3gliQZ8a7BGJ9lbu7mvUX/l8fwyt2TFzZGzXXLQ92E8C46AZ0143GwqIlKlIvSNv3GgNMDxa0jZiZcOuvCe8P
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=xVhDTqbCAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=T-57GAwF3odkHjFIxIwA:9
-    a=QEXdDO2ut3YA:10 a=GrmWmAYt4dzCMttCBZOh:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=yPCof4ZbAAAA:8 a=FOH2dFAWAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=c5uIHsn1P3uz29lLov8A:9 a=QEXdDO2ut3YA:10 a=i3VuKzQdj-NEYjvDI-p3:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756453AbeDKUlE (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:41:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59460 "EHLO
+        id S1756002AbeDKSrz (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:47:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59474 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755990AbeDKSru (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:47:50 -0400
+        with ESMTP id S1755970AbeDKSrx (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:47:53 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Jens Axboe <axboe@fb.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 064/190] selinux: do not check open permission on sockets
-Date: Wed, 11 Apr 2018 20:35:10 +0200
-Message-Id: <20180411183554.036420469@linuxfoundation.org>
+Subject: [PATCH 4.4 065/190] block: fix an error code in add_partition()
+Date: Wed, 11 Apr 2018 20:35:11 +0200
+Message-Id: <20180411183554.100266835@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -92,61 +93,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stephen Smalley <sds@tycho.nsa.gov>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit ccb544781d34afdb73a9a73ae53035d824d193bf ]
+[ Upstream commit 7bd897cfce1eb373892d35d7f73201b0f9b221c4 ]
 
-open permission is currently only defined for files in the kernel
-(COMMON_FILE_PERMS rather than COMMON_FILE_SOCK_PERMS). Construction of
-an artificial test case that tries to open a socket via /proc/pid/fd will
-generate a recvfrom avc denial because recvfrom and open happen to map to
-the same permission bit in socket vs file classes.
+We don't set an error code on this path.  It means that we return NULL
+instead of an error pointer and the caller does a NULL dereference.
 
-open of a socket via /proc/pid/fd is not supported by the kernel regardless
-and will ultimately return ENXIO. But we hit the permission check first and
-can thus produce these odd/misleading denials.  Omit the open check when
-operating on a socket.
-
-Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Fixes: 6d1d8050b4bc ("block, partition: add partition_meta_info to hd_struct")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Jens Axboe <axboe@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/selinux/hooks.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ block/partition-generic.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -1942,8 +1942,9 @@ static inline u32 file_to_av(struct file
- static inline u32 open_file_to_av(struct file *file)
- {
- 	u32 av = file_to_av(file);
-+	struct inode *inode = file_inode(file);
+--- a/block/partition-generic.c
++++ b/block/partition-generic.c
+@@ -309,8 +309,10 @@ struct hd_struct *add_partition(struct g
  
--	if (selinux_policycap_openperm)
-+	if (selinux_policycap_openperm && inode->i_sb->s_magic != SOCKFS_MAGIC)
- 		av |= FILE__OPEN;
- 
- 	return av;
-@@ -2912,6 +2913,7 @@ static int selinux_inode_permission(stru
- static int selinux_inode_setattr(struct dentry *dentry, struct iattr *iattr)
- {
- 	const struct cred *cred = current_cred();
-+	struct inode *inode = d_backing_inode(dentry);
- 	unsigned int ia_valid = iattr->ia_valid;
- 	__u32 av = FILE__WRITE;
- 
-@@ -2927,8 +2929,10 @@ static int selinux_inode_setattr(struct
- 			ATTR_ATIME_SET | ATTR_MTIME_SET | ATTR_TIMES_SET))
- 		return dentry_has_perm(cred, dentry, FILE__SETATTR);
- 
--	if (selinux_policycap_openperm && (ia_valid & ATTR_SIZE)
--			&& !(ia_valid & ATTR_FILE))
-+	if (selinux_policycap_openperm &&
-+	    inode->i_sb->s_magic != SOCKFS_MAGIC &&
-+	    (ia_valid & ATTR_SIZE) &&
-+	    !(ia_valid & ATTR_FILE))
- 		av |= FILE__OPEN;
- 
- 	return dentry_has_perm(cred, dentry, av);
+ 	if (info) {
+ 		struct partition_meta_info *pinfo = alloc_part_info(disk);
+-		if (!pinfo)
++		if (!pinfo) {
++			err = -ENOMEM;
+ 			goto out_free_stats;
++		}
+ 		memcpy(pinfo, info, sizeof(*info));
+ 		p->info = pinfo;
+ 	}
