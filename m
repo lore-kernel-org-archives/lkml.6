@@ -1,48 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751823AbeDKE6F (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 00:58:05 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.165]:35297 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751409AbeDKE6C (ORCPT
+        id S1751983AbeDKE7R (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 00:59:17 -0400
+Received: from mail.andi.de1.cc ([85.214.239.24]:41483 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750865AbeDKE7P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 00:58:02 -0400
-X-RZG-AUTH: :JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WisNN2Ez2Y
-X-RZG-CLASS-ID: mo00
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH v3 1/4] gpio: pca953x: set the PCA_PCAL flag also when matching by DT
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <CAHp75VfCV4b5YWgYvkZkonz+TCn1JRD3idwLpEfcZTD99xqtxw@mail.gmail.com>
-Date: Wed, 11 Apr 2018 06:57:51 +0200
-Cc: Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Wed, 11 Apr 2018 00:59:15 -0400
+Date: Wed, 11 Apr 2018 06:59:03 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Ladislav Michl <ladis@linux-mips.org>
+Cc: Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel
-        <letux-kernel@openphoenux.org>,
-        kernel@pyra-handheld.com
-Content-Transfer-Encoding: 7bit
-Message-Id: <C3692040-E1EB-48A1-97C9-6F44DC2943BC@goldelico.com>
-References: <cover.1523376423.git.hns@goldelico.com> <a5b37e5feff8a58dc63799ec76ef906695fd7239.1523376423.git.hns@goldelico.com> <CAHp75VcXpXZ+Ue7Cz0ORupgUjLTCiEwFYb2cs9kePX6EbEs-+w@mail.gmail.com> <CAHp75VfCV4b5YWgYvkZkonz+TCn1JRD3idwLpEfcZTD99xqtxw@mail.gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-X-Mailer: Apple Mail (2.3124)
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        linux-omap <linux-omap@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
+Subject: Re: [Letux-kernel] [Bug]: mtd: onenand: omap2plus: kernel panic
+ with OneNAND on OMAP3 (DM3730) device GTA04A5
+Message-ID: <20180411065836.7e1bfc3f@aktux>
+In-Reply-To: <20180410205643.GA2228@lenoch>
+References: <5D496D5C-4E3E-47B4-9981-E8F4C348DE00@goldelico.com>
+        <20180410205643.GA2228@lenoch>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5/Hyp0xJawrtJEQyjiJt3nz"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/5/Hyp0xJawrtJEQyjiJt3nz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Am 10.04.2018 um 20:10 schrieb Andy Shevchenko <andy.shevchenko@gmail.com>:
-> 
-> #define PCA_LATCH_INT (PCA_PCAL | PCA_INT)
+Hi Ladis,
 
-Looks the best.
+On Tue, 10 Apr 2018 22:56:43 +0200
+Ladislav Michl <ladis@linux-mips.org> wrote:
 
-I have queued it for v4.
+> Hi Nikolaus,
+>=20
+> On Tue, Apr 10, 2018 at 06:25:17PM +0200, H. Nikolaus Schaller wrote:
+> > Hi,
+> > we just started testing the v4.16 kernel and found the
+> > device no longer bootable (works with v4.15). It turned
+> > out that there was a harmful modification somewhere between
+> > v4.15.0 and v4.16-rc1.
+> >=20
+> > A git bisect points to this patch: =20
+>=20
+> Well, that's a shame... However, this code is in production for several
+> months now, so could you, please put 'goto out_copy' if 'buf >=3D high_me=
+mory'
+> condition is met, ie:
+> --- a/drivers/mtd/nand/onenand/omap2.c
+> +++ b/drivers/mtd/nand/onenand/omap2.c
+> @@ -392,6 +392,7 @@ static int omap2_onenand_read_bufferram(struct mtd_in=
+fo *mtd, int area,
+>  	if (buf >=3D high_memory) {
+>  		struct page *p1;
+> =20
+> +		goto out_copy;
+>  		if (((size_t)buf & PAGE_MASK) !=3D
+>  		    ((size_t)(buf + count - 1) & PAGE_MASK))
+>  			goto out_copy;
 
-BR and thanks,
-Nikolaus
+I had the same problem here, and that snippet  helps here. ubiattach
+-p /dev/mtdX does not cause kernel oopses here anymore
+
+
+Regards,
+Andreas
+
+--Sig_/5/Hyp0xJawrtJEQyjiJt3nz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlrNlhcACgkQfb1qx03i
+kySL/w//QiGPNQLszeJGusKmtI7IAp4H+p1r/EqOfLuJU6cvfaJsax8iQSl5xozx
+4vaM+Qo0MlDOjEqZKa72nmeADXge31twaQdxiZRzet0btDCk70oTP4QkT2D2TaAi
+T/LqwkTI5sgE+e2AkXa6oVtOC70rZ6U26+MmOEDMAx+BfCshlz/4cNkJVyq60HEn
+Qx6D82B+rES49Jf5uEqyQ9M883dqj4p61Pp04wc4pMMYt3X268cv8BZVeu6hlWEu
+sQq8GR0sP/bpW3UmkUza1YdgZ8nztFFMg7YafmiFhAgJm1WDy8gKr+/dz4O7wT5c
+vmKvaGVIxSDvgqffhIuJ85pOC/JlaerfIgfSDUa70x3jEDrAB29qOKgsW49Q0aIY
+l7jM6AJ4MrzRH1LX0ran1DZCkD71OoMxeUK9gUD1kGoMJFPsYszRBJM9cDQxSsxi
+JevwtQTFYu1jFiIA7Baa4ZiOiOSEpimWc3wcFTKe0H2CPjW0yNqurX56mbkx6iOV
+7ikFLCUmbKHqqSwNHcCNFUZByRi7Hg25rsaySbj60aC7WBGvm2mPK/6KZJSCkIqO
+UDxRj2yUGx3NMelXdvAjZF4D83lOK9nOJqAbMzBgTHpLirF9s8+mjtSYzAvUPyVc
+DoM11WKKJB8/jJE0XD6H2hHAqDp011ELKTvg6oJUVpQlKUwq9YM=
+=0Dl9
+-----END PGP SIGNATURE-----
+
+--Sig_/5/Hyp0xJawrtJEQyjiJt3nz--
