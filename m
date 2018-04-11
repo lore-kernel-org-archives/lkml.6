@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477602-2-8818526590819660230
+X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477573-2-16422052276431140788
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477601; b=rKOO5EZD5JJ7eMoN+bGN0d/t8Fn5Tww1aYlnhFKbW/hkj7EJBI
-    JMTEtetkVbygLC7g4TXFrqv/QKl4m4dXTgZ9dd3mNnjgJ98L091npoZALnge4/OT
-    FNMWz7x/dy1JQMj7dvnJ2S2Gu4oM3KW9jJ3R+8OrfJqgfSBOQPM3mwS4bohbGvYl
-    q7BgDo4nDWH42lCMgsfNLRgUOL62ssa2zVG9gRC4A9MrezsS651tgaEatzcVI9tS
-    XCH8Gh79gJUpakEUhqt0AhzZ0fBuSTEFHRPdVyNhLVmHsc5ToS5woMordODuc7np
-    L6/8NqaqAbzWKbhbUSuyfN2Q8Gs3gQmTek+Q==
+    1523477572; b=MhZWRvqnhxvGVzrAFh/q4oa4+2KJWF36J1xL0EqT9i+io6nYSi
+    rQN22oKBppfhQE8N3mMfN77r3AH4W8FSxZVj4gQjs7qsk2xMBJchIfysGhQruIg0
+    u+NnASQAdsRcz8TyW07xZLIb4c3RAkESxROv0YddyBL0DwrB5Opg5tiJfBdN9wXd
+    qolFKIzVBoFsSqms6XF1nM4qPZcQkoFV6CGKsxX98XYouKfu/AsNSEXs2jCTXdNF
+    mRh9NLrLJAUzzPxLEwTXYO5MjZjlVHycJED91MiYBHj318Ybmpy9VKQqgBL8+OST
+    Biwgr5rDTRmimLSEhwSkU8UbKt6xS7cxiwbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523477601; bh=MrYAZWwUqbjVHytJIGPVtgKXd2M2+n
-    vwkQ0MtP6bbA8=; b=sKEu2QxPeZCaBn140lm8QymK1rr41yTwsn6DXudogML6ba
-    /0BnjveSFGup5j9da28ZQOQEERZ33S7PlgPzF+I8yqS+1rnowZCnit18sDzkbtoy
-    eIBxa2AspflycDbbLEKjadPO2UAiSlcqBT+ymNZTMe6UNxx7KF8hVMQBfBEvsnDU
-    XniLaLdMio3s9ilOVue58THnnd8PHPwwPRTc9oBM9pNCWYTqdokDF0CtqZ7riv80
-    7bNZB1Neg7wEvVW5UeKErNzhsR0uHE/qnWKmSeBfJf3GPU05HRKSpfkCrvNkIkdx
-    DpopIaLWuVJjJJ5NDkNjIfTd/zmzryAPu9x6N9jQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523477572; bh=0zcW6lUfIZjKH8pZjJo56s1WL3hbrp
+    ZrPhhkgh9Nv8Q=; b=Ox6x+ZaK4LaP22fPc8Nz9r9MpGorQxYAwp4UT5hAbBxz4/
+    ZXIGQNv2/GbQHALRw2zOW8EefZwTBFWMWOuNtzyGEC5y6IGlWOqtig+Lu2F1d+gR
+    KzMCqcKlODubBcnPTvhOoP6fdxi2WqqZd5VWxA+7AOV6IGfNKLbBOZNnyvNW96Le
+    32KPUsoBqWwArdspJrBUwu1PtRurc8k/wr+pPiVGN3/WFRhrUVl4JkjtuT3SHYoK
+    o8B8jMbKUWza8Em0J0IuHDZr++iOOmcpJr2cY+wohYqQC0WczEc+BZAn9oZ9oiuY
+    8qEi3RpR6RWRx8KYg8Qv+oHHZ5w/j41mjicd+4pA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,49 +51,31 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDkPvtL3vvsW0kOxUbWhNYpJUhiBXj3b0zHClqKvbEguLfU1x/RypstcAOWs6Qhd+WWj33iZaadc2VZhkkPuvlPQbG0xJqLeCwpsSLavN3MPNEmWAPyl
-    ns6hKBI/lmvB/aGaOCo5YH+s4goxmKgvBCPJ4D6EEEx2k62O7PHJ3cjEnZNe66/pOwuPWcuPxvE1yrChHGfFjiwYVjzTwBPuBuF4DnZ4fNZv9Ezv864DpDys
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJUY4g5uEdzUUm8zt+uXYVRHGeZluJkzstzlQgyhPbuExVwGc7JtNKhX+oUCDCR8MlvnI3F3yqFGiVYE9xbhCkFWYMSBKi0fNKCZiRiYEeAIGK6E8RYT
+    Nu/NSFnSAZfxfFkuK2rcxkYn660/GAAAcDH3+AXGWZJa8fPwmEn0KfJqgHn17uW1nJGEdj7kCOmGcZ9HetvLoGEo2+NtTHERS/AMo93KjOUmwREXMhHjckUG
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=1XWaLZrsAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8
-    a=Z4Rwk6OoAAAA:8 a=vmLDa1wCAAAA:8 a=JfrnYn6hAAAA:8 a=VwQbUJbxAAAA:8
-    a=4RBUngkUAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=VLsEIhHLWAUXoIV3lX8A:9
-    a=AhuzB2inKY-LuPGE:21 a=AnXVmS_SF5hm0Qph:21 a=QEXdDO2ut3YA:10
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=HkZW87K1Qel5hWWM3VKY:22 a=h8Bt5HTj68qkN2fS7gvA:22
-    a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22 a=_sbA2Q-Kp09kWB8D3iXc:22
+    a=VZJtwKKvAAAA:8 a=yPCof4ZbAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=a8e_WU4cdKVA6sx2OhgA:9 a=QEXdDO2ut3YA:10 a=vzdIw8kzLcqZOxdJCU6L:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933318AbeDKSxu (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:53:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33970 "EHLO
+        id S1756283AbeDKUMf (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:12:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34034 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933357AbeDKSxt (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:53:49 -0400
+        with ESMTP id S933372AbeDKSx5 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:53:57 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Konovalov <andreyknvl@google.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vlad Yasevich <vyasevich@gmail.com>,
-        linux-sctp@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 005/310] x86/asm: Dont use RBP as a temporary register in csum_partial_copy_generic()
-Date: Wed, 11 Apr 2018 20:32:24 +0200
-Message-Id: <20180411183622.520897177@linuxfoundation.org>
+Subject: [PATCH 4.9 008/310] NFSv4.1: RECLAIM_COMPLETE must handle NFS4ERR_CONN_NOT_BOUND_TO_SESSION
+Date: Wed, 11 Apr 2018 20:32:27 +0200
+Message-Id: <20180411183622.649253940@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -111,104 +93,82 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 
 
-[ Upstream commit 42fc6c6cb1662ba2fa727dd01c9473c63be4e3b6 ]
+[ Upstream commit 0048fdd06614a4ea088f9fcad11511956b795698 ]
 
-Andrey Konovalov reported the following warning while fuzzing the kernel
-with syzkaller:
+If the server returns NFS4ERR_CONN_NOT_BOUND_TO_SESSION because we
+are trunking, then RECLAIM_COMPLETE must handle that by calling
+nfs4_schedule_session_recovery() and then retrying.
 
-  WARNING: kernel stack regs at ffff8800686869f8 in a.out:4933 has bad 'bp' value c3fc855a10167ec0
-
-The unwinder dump revealed that RBP had a bad value when an interrupt
-occurred in csum_partial_copy_generic().
-
-That function saves RBP on the stack and then overwrites it, using it as
-a scratch register.  That's problematic because it breaks stack traces
-if an interrupt occurs in the middle of the function.
-
-Replace the usage of RBP with another callee-saved register (R15) so
-stack traces are no longer affected.
-
-Reported-by: Andrey Konovalov <andreyknvl@google.com>
-Tested-by: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: David S . Miller <davem@davemloft.net>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Kostya Serebryany <kcc@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc: Neil Horman <nhorman@tuxdriver.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vlad Yasevich <vyasevich@gmail.com>
-Cc: linux-sctp@vger.kernel.org
-Cc: netdev <netdev@vger.kernel.org>
-Cc: syzkaller <syzkaller@googlegroups.com>
-Link: http://lkml.kernel.org/r/4b03a961efda5ec9bfe46b7b9c9ad72d1efad343.1493909486.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+Tested-by: Chuck Lever <chuck.lever@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/lib/csum-copy_64.S |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/nfs/nfs4proc.c  |    7 ++++++-
+ fs/nfs/nfs4state.c |   10 +++++++---
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
---- a/arch/x86/lib/csum-copy_64.S
-+++ b/arch/x86/lib/csum-copy_64.S
-@@ -55,7 +55,7 @@ ENTRY(csum_partial_copy_generic)
- 	movq  %r12, 3*8(%rsp)
- 	movq  %r14, 4*8(%rsp)
- 	movq  %r13, 5*8(%rsp)
--	movq  %rbp, 6*8(%rsp)
-+	movq  %r15, 6*8(%rsp)
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -8173,6 +8173,12 @@ static int nfs41_reclaim_complete_handle
+ 		/* fall through */
+ 	case -NFS4ERR_RETRY_UNCACHED_REP:
+ 		return -EAGAIN;
++	case -NFS4ERR_BADSESSION:
++	case -NFS4ERR_DEADSESSION:
++	case -NFS4ERR_CONN_NOT_BOUND_TO_SESSION:
++		nfs4_schedule_session_recovery(clp->cl_session,
++				task->tk_status);
++		break;
+ 	default:
+ 		nfs4_schedule_lease_recovery(clp);
+ 	}
+@@ -8251,7 +8257,6 @@ static int nfs41_proc_reclaim_complete(s
+ 	if (status == 0)
+ 		status = task->tk_status;
+ 	rpc_put_task(task);
+-	return 0;
+ out:
+ 	dprintk("<-- %s status=%d\n", __func__, status);
+ 	return status;
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -1637,13 +1637,14 @@ static void nfs4_state_start_reclaim_reb
+ 	nfs4_state_mark_reclaim_helper(clp, nfs4_state_mark_reclaim_reboot);
+ }
  
- 	movq  %r8, (%rsp)
- 	movq  %r9, 1*8(%rsp)
-@@ -74,7 +74,7 @@ ENTRY(csum_partial_copy_generic)
- 	/* main loop. clear in 64 byte blocks */
- 	/* r9: zero, r8: temp2, rbx: temp1, rax: sum, rcx: saved length */
- 	/* r11:	temp3, rdx: temp4, r12 loopcnt */
--	/* r10:	temp5, rbp: temp6, r14 temp7, r13 temp8 */
-+	/* r10:	temp5, r15: temp6, r14 temp7, r13 temp8 */
- 	.p2align 4
- .Lloop:
- 	source
-@@ -89,7 +89,7 @@ ENTRY(csum_partial_copy_generic)
- 	source
- 	movq  32(%rdi), %r10
- 	source
--	movq  40(%rdi), %rbp
-+	movq  40(%rdi), %r15
- 	source
- 	movq  48(%rdi), %r14
- 	source
-@@ -103,7 +103,7 @@ ENTRY(csum_partial_copy_generic)
- 	adcq  %r11, %rax
- 	adcq  %rdx, %rax
- 	adcq  %r10, %rax
--	adcq  %rbp, %rax
-+	adcq  %r15, %rax
- 	adcq  %r14, %rax
- 	adcq  %r13, %rax
+-static void nfs4_reclaim_complete(struct nfs_client *clp,
++static int nfs4_reclaim_complete(struct nfs_client *clp,
+ 				 const struct nfs4_state_recovery_ops *ops,
+ 				 struct rpc_cred *cred)
+ {
+ 	/* Notify the server we're done reclaiming our state */
+ 	if (ops->reclaim_complete)
+-		(void)ops->reclaim_complete(clp, cred);
++		return ops->reclaim_complete(clp, cred);
++	return 0;
+ }
  
-@@ -121,7 +121,7 @@ ENTRY(csum_partial_copy_generic)
- 	dest
- 	movq %r10, 32(%rsi)
- 	dest
--	movq %rbp, 40(%rsi)
-+	movq %r15, 40(%rsi)
- 	dest
- 	movq %r14, 48(%rsi)
- 	dest
-@@ -203,7 +203,7 @@ ENTRY(csum_partial_copy_generic)
- 	movq 3*8(%rsp), %r12
- 	movq 4*8(%rsp), %r14
- 	movq 5*8(%rsp), %r13
--	movq 6*8(%rsp), %rbp
-+	movq 6*8(%rsp), %r15
- 	addq $7*8, %rsp
- 	ret
+ static void nfs4_clear_reclaim_server(struct nfs_server *server)
+@@ -1690,13 +1691,16 @@ static void nfs4_state_end_reclaim_reboo
+ {
+ 	const struct nfs4_state_recovery_ops *ops;
+ 	struct rpc_cred *cred;
++	int err;
  
+ 	if (!nfs4_state_clear_reclaim_reboot(clp))
+ 		return;
+ 	ops = clp->cl_mvops->reboot_recovery_ops;
+ 	cred = nfs4_get_clid_cred(clp);
+-	nfs4_reclaim_complete(clp, ops, cred);
++	err = nfs4_reclaim_complete(clp, ops, cred);
+ 	put_rpccred(cred);
++	if (err == -NFS4ERR_CONN_NOT_BOUND_TO_SESSION)
++		set_bit(NFS4CLNT_RECLAIM_REBOOT, &clp->cl_state);
+ }
+ 
+ static void nfs4_state_start_reclaim_nograce(struct nfs_client *clp)
