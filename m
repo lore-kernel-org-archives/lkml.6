@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3269524-1523477819-2-17682933926617991661
+X-Cyrus-Session-Id: sloti22d1t05-3269524-1523477795-2-10670608880748879724
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477819; b=VYRHRanvsvQweyhVIHYDMM0rXF0MvWAq5C9STqKso0BFBwdJnn
-    pth2sALSZJD6Q2Yhio+cmSn8XKT8ePxkdUaDvacBBukMBqXJaJUUEtHLJyGn6STo
-    Tg9PPyqrYotGk5PAmG7XwmwqBaWmhATH9gWEXOzfkSqevCx9DV5RxaDulHeE3Q98
-    BFh9vkW/5oPxLQ2a1nEgjgw9XULY6sTpe43IRagJZf3ojsy4xpa2zxKqQKbOsWzi
-    /CtycGMKjm4QO+imC5T5wTWV7SHJVi0fY+GZVk5faXIfofg2klnW+Ted46cq6mLq
-    CGYYPzKx7I0DlUy057fByvPyu8V4UqDDWiNw==
+    1523477794; b=KkSAXuSiMtra9OK/hFpyNOhkYKQzjo0AqwcI6b0uQReXeIpPR6
+    VWroR3Dlg4ORLv6QYTxnQ0o3U1D3UPh66Yeg5oakP+Xy+GpMHv86er64SrT3ktDc
+    5sD7K586FavlV299KUS+qJhj5SZVCjWcxN0lhzNLxY2BzOFVnnUHcrLwJfY1IRtY
+    nmZIffdERn6DVx+wrZzMDk0ZqsZ2KEPhJHjHgqDP+X/rymfhYqtgsc9/617P0QlF
+    7KGkX3u6K0Z6/UEMTIhZpYWqDp6mgbYk/UslJ6B7VgBRUVKlbrNm70bgVxGiBYk7
+    ChISWrogMr8/1JWTzMR3g/gmClkFGhIz2eFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523477819; bh=RHumeLrNZRbeFDbv4I/6CXjcR2N543
-    fFUDNmfiJ4JYc=; b=X3IAwfceKZfE8lykqsPPaC/WGHPqN3yC3sLlZ4U+k+z/pr
-    M9pI91UADLrLz0UKf/WZbSlAhhO/mc8vpzzgcCJSPDBdstRX/2/rxuGZFvcr4aRI
-    XAfDiEUFqfEzlHiZGHA3Sez5FGUFetprPLMua5PJzDquCKjxo3WmJD05a10vTpIE
-    fTMGUkQ5FrHhckxhvXcKowv0C0q/usp9p8pFDDAelOZpNwpglL7C7mcTc8O9C0NR
-    g+3nXu2I7BLAyW/dkqkCdtbDn/fJ20qSuwIfGXH/mQkz/B/tPFjWNDZgRj92roQU
-    SHv3GOQJN5FTsmRRLDb3Ce4J2tX+w1j7jApC2ttg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523477794; bh=4zIaDJXf53yepR/8rO4Q2aleMXrcYn
+    /iXISPHc/9zj0=; b=RXV9KaM+rHyx/WRDgPNu2bjsuD3rifTDKGIRQxx89ULm5b
+    EjFjkgVqAKgBA2e/57EbG2pvK/sCZy74v5GVwKKFqzWAXWPqiRFQLWIrUyfZWANh
+    G7+4uD+/7LAUWrhq4GX3xr2ks1ZRvA/tRK2+D6gZU3nCXieWHXXnBQo4TRYEh99A
+    VaVgs83ktln1ME377iD14eELqNfRGOsCF/EYVxr3Tc0fMu+oL0LeLohGfvoNIIrF
+    0sgrlk94LazVal4KcMXh5bny12iUy0LcHhd74/H6JWZDAvqfPo9g7HrZfDVlbMYH
+    qHTzHGZwfStX/oQp2YlgecIHzPVQJlS87NWRdwIw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,32 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBc9ZGjvdheG7stx/ZtbAHCT5dJNFu2WsXIstp3Zku1xjYkfogO7KtmQOdZDqUkoTSDq6+87SeHaod8xEZhfUcvkhGV5ae8uGh06BYE48L4kAauwfRK7
-    Oeunfcs7zSodatjJij3UAartgQABqXmVtzUvyUY1wo4qONl3zTCvmVSyQgrSLv1ntCMgD50s3CoAvVQqlP68sANS5PnRI7yNcsoZF/h3dstIIKK4Ot4gBaPj
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHqyQ5j8Xqm/aqMx/Zz9FmgHlFKk9iOUUjQ+hQvg7dcLUoncFacV4A9gyYKGoU4Xy59c9V7r+Su5DHSLsxPIcvBnEgCMyoB9Y/l4m6LBt4OyJADnRq1d
+    Mp7YxZpDsxXKGmtN4wMgA3rQPuB6cFwEsOg++JMWGVD3m54z9jOPJDSYXMWJQCamWPmTziYDEVByNmBKdXuaOFQNTKSyp8FvLcUZqXyspNAv2/6qjgzLANap
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=k1kETvRik_gOXROq0yoA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=cm27Pg_UAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=Bz2UWhLJlFZaMJpv9z8A:9 a=QEXdDO2ut3YA:10
+    a=xmb-EsYY8bH0VWELuYED:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933158AbeDKSwx (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:52:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33560 "EHLO
+        id S932432AbeDKSw4 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:52:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33570 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933117AbeDKSwv (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:52:51 -0400
+        with ESMTP id S933172AbeDKSwz (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:52:55 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Daniel Micay <danielmicay@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 013/310] mac80211: bail out from prep_connection() if a reconfig is ongoing
-Date: Wed, 11 Apr 2018 20:32:32 +0200
-Message-Id: <20180411183622.879087040@linuxfoundation.org>
+Subject: [PATCH 4.9 014/310] bna: Avoid reading past end of buffer
+Date: Wed, 11 Apr 2018 20:32:33 +0200
+Message-Id: <20180411183622.918917915@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -93,37 +94,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Kees Cook <keescook@chromium.org>
 
 
-[ Upstream commit f8860ce836f2d502b07ef99559707fe55d90f5bc ]
+[ Upstream commit 9e4eb1ce472fbf7b007f23c88ec11c37265e401c ]
 
-If ieee80211_hw_restart() is called during authentication, the
-authentication process will continue, causing the driver to be called
-in a wrong state.  This ultimately causes an oops in the iwlwifi
-driver (at least).
+Using memcpy() from a string that is shorter than the length copied means
+the destination buffer is being filled with arbitrary data from the kernel
+rodata segment. Instead, use strncpy() which will fill the trailing bytes
+with zeros.
 
-This fixes bugzilla 195299 partly.
+This was found with the future CONFIG_FORTIFY_SOURCE feature.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=195299
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Cc: Daniel Micay <danielmicay@gmail.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/mac80211/mlme.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/brocade/bna/bfa_ioc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -4332,6 +4332,10 @@ static int ieee80211_prep_connection(str
- 	if (WARN_ON(!ifmgd->auth_data && !ifmgd->assoc_data))
- 		return -EINVAL;
+--- a/drivers/net/ethernet/brocade/bna/bfa_ioc.c
++++ b/drivers/net/ethernet/brocade/bna/bfa_ioc.c
+@@ -2845,7 +2845,7 @@ bfa_ioc_get_adapter_optrom_ver(struct bf
+ static void
+ bfa_ioc_get_adapter_manufacturer(struct bfa_ioc *ioc, char *manufacturer)
+ {
+-	memcpy(manufacturer, BFA_MFG_NAME, BFA_ADAPTER_MFG_NAME_LEN);
++	strncpy(manufacturer, BFA_MFG_NAME, BFA_ADAPTER_MFG_NAME_LEN);
+ }
  
-+	/* If a reconfig is happening, bail out */
-+	if (local->in_reconfig)
-+		return -EBUSY;
-+
- 	if (assoc) {
- 		rcu_read_lock();
- 		have_sta = sta_info_get(sdata, cbss->bssid);
+ static void
