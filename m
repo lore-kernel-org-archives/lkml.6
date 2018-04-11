@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3374234-1523481223-2-2617168179428909592
+X-Cyrus-Session-Id: sloti22d1t05-3339499-1523481209-2-11416788669141220870
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523481223; b=asEeF675fH/aYqa2tPjjp1mmnoKwx0gYpleJp/zXV3f6zcpAoH
-    zY60X0GuTcqs4/5O4zTNt/bMas6tP5cvhlIXSzpnYgp1AwYz4M6KTwslo4CVDbPo
-    GfZhYh1mMNW/PgzbRj6jnzmRujQY4GKzdsPH1tVtSYjnfe5Fe1K9IVY44b4m51X0
-    VZ1g0SY5oPNeJQOQeNZGLaVsg63FF2msfbfaGP5mcI1nHsnudmGXWYtofdF+mWhT
-    VqifH069IPhgjLg5QcTpT16L9fzRFJgfYwEAOmxSbrJItXyM5kBwu7EUwhszPvA9
-    UswmbBzC6E4FtKOHpYJ3Z5XFCd5t3nNIjwKA==
+    1523481208; b=htLhrUQsBde1O/8ztbypDJqrX9Nml7PUwAtzXYPw9SjMvKkOlp
+    WpWAQwggSXXj1l9YWTeP+QbroOB/EhvIs6fEqO4OLsBGmwQ6TQvuzj1KSoM4tiv/
+    4g0mSshiT5Vfojh26VgQ4uKqPg5B+mAWdIZdVV0RTT/9lrnPNhoJKxPn/OLr0KRh
+    SfcB96XNRp59EV54wTP+wYdTjHpea2qViQ1a7foK74J9pBdroE50VzV4w5YRwC6k
+    o7aMRJrdqaaayDm/Y6CSyTpEAIlXzWtfOJ7HL5NceJPALf8+2/Cn/fvoGZwtech8
+    NOQzq+u8LVgEV09cxL8nsurQt6QIXjNaTm2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523481223; bh=p1ZK3sd0O7VynTTScUpFtqVeSAORX1
-    PZ3zvJeoNMuf8=; b=vq5vugpPNiVnHv2MpE5M3PcQD3lbcJY2WwR6R0c5msk0AV
-    4VkODFhsDg1lOjxmLO8YhPzOyvodhyauB9qm9fzeWoIJU2FmTKIePCSBX7Qa3hdn
-    KZRT3xGNnRkba8p1hc5BN2B64MFsENqxvljK0QvWpz0ClrDlZ2hQ9d8ZG2BQo2JW
-    rXTbTYhe+WIWA0MC6KJQD2M2YpbS401cZ85v9lVM+IWCZejoUdbYe693AaBhBxTT
-    3coE207zmbzgfFDugY8Z6egJ1PrOIURBv3KwgOG+LtbsnDg/8vrmil5/G4OhkoPp
-    RnrB7BkB6fAkI0GRWztbpFVDikaBe8agoseKgo4w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523481208; bh=LwrSDsU43rsy3zatc4loTYYoeYmvXx
+    wM+eUBRZtagkI=; b=PrJ5eYz02XJon1zBftHk20oo5rAN5KnGlvi4boonQTm0nM
+    66pX3w3vxMi4mUsm3/Qe//iBYEWq8xLLBBI/rgN6M0Yis7J7azFKrCjcMPnYkA2E
+    LB1LGLohvfxdAZ1RabtYasV5skxRaXi8Ns8/C8E6+1vGE2U6kaZeyRuN5eYE45ey
+    pb49VrV4hRGwvjDVIViGnlzu/YKiFc7mY4oLbHuIh42cOtTyMYtgtSD16nuVEnZf
+    a9EzhAeBk3PpmlvjQBeHLcwmNelChZUxZNRYQY7ILlJOceQnKcrzzVjndGh/la07
+    2+c/I9W7lbq/u5xUCoDjks49UqlIJfMKUorm1sJw==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,34 +51,34 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFS5J1jHea3yybrvSO40D08y/NdXuEmVjkabYkXSxuiRGuEr2bAwLKbYxVEsiz/WLhkhO90Uxa1xD1oAE3SLE3XL841dryWAkgqWX/iMTKH4pmh9Mh+b
-    Zak3sT84LPYwN3F6g+BBovBlzUyq8+oYU5HKCnI2jlfLNd6r0kWmLnBuMQP1MBQNEdyPWd5E58XJ2rNY+Uzt5bcAWYMP41/BVlxwsJmUYWCIsHeVDqTzxlZ1
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=PHq6YzTAAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=vIFw0XP82na-7QQtWxwA:9 a=K8vUX97VMtdewC4X:21
-    a=TvhyB4WreVeA7ieX:21 a=QEXdDO2ut3YA:10 a=ZKzU8r6zoKMcqsNulkmm:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-CM-Envelope: MS4wfFN6V/WNbnYx4QH8DOvsgtQyoIsH89zlJyYziJD+zjsnPcEl18frRYJ23eiN9HehkIkLgW6BYsL0QUjY7roIsVML7HgNp3/jnTXld9YVVsRpgcEZekQ7
+    v4HjViMUmQOu87xFHv/g6PVxGb4lGZoZrOC31B4dRyi9HwQmZcQkiZ84ELqbTT1eaU0tUE6tTAID/PVzEs0lVTw5c94Wk+5rq/lCksboYCoOr1sL59+nyvJb
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=wPr4Kl_KzdIA:10
+    a=Kd1tUaAdevIA:10 a=taGs_qngAAAA:8 a=e5mUnYsNAAAA:8 a=QyXUC8HyAAAA:8
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=fytQkneqYxwBSb-776AA:9
+    a=njjGWIRFeZRvNkZH:21 a=thEZXCt98IJKwKwc:21 a=QEXdDO2ut3YA:10
+    a=DM_PlaNYpjARcMQr2apF:22 a=Vxmtnl_E_bksehYqCbjh:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754933AbeDKVN3 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 17:13:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56686 "EHLO
+        id S1754781AbeDKSlM (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:41:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56694 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754772AbeDKSlH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:41:07 -0400
+        with ESMTP id S1754698AbeDKSlK (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:41:10 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 074/121] net: phy: avoid genphy_aneg_done() for PHYs without clause 22 support
-Date: Wed, 11 Apr 2018 20:36:17 +0200
-Message-Id: <20180411183500.640842614@linuxfoundation.org>
+Subject: [PATCH 3.18 075/121] e1000e: Undo e1000e_pm_freeze if __e1000_shutdown fails
+Date: Wed, 11 Apr 2018 20:36:18 +0200
+Message-Id: <20180411183500.703788877@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -96,40 +96,89 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
 
-[ Upstream commit 41408ad519f7a2a1c5229e61f2a97f4df1b61adc ]
+[ Upstream commit 833521ebc65b1c3092e5c0d8a97092f98eec595d ]
 
-Avoid calling genphy_aneg_done() for PHYs that do not implement the
-Clause 22 register set.
+An error during suspend (e100e_pm_suspend),
 
-Clause 45 PHYs may implement the Clause 22 register set along with the
-Clause 22 extension MMD.  Hence, we can't simply block access to the
-Clause 22 functions based on the PHY being a Clause 45 PHY.
+[  429.994338] ACPI : EC: event blocked
+[  429.994633] e1000e: EEE TX LPI TIMER: 00000011
+[  430.955451] pci_pm_suspend(): e1000e_pm_suspend+0x0/0x30 [e1000e] returns -2
+[  430.955454] dpm_run_callback(): pci_pm_suspend+0x0/0x140 returns -2
+[  430.955458] PM: Device 0000:00:19.0 failed to suspend async: error -2
+[  430.955581] PM: Some devices failed to suspend, or early wake event detected
+[  430.957709] ACPI : EC: event unblocked
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+lead to complete failure:
+
+[  432.585002] ------------[ cut here ]------------
+[  432.585013] WARNING: CPU: 3 PID: 8372 at kernel/irq/manage.c:1478 __free_irq+0x9f/0x280
+[  432.585015] Trying to free already-free IRQ 20
+[  432.585016] Modules linked in: cdc_ncm usbnet x86_pkg_temp_thermal intel_powerclamp coretemp mii crct10dif_pclmul crc32_pclmul ghash_clmulni_intel snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep lpc_ich snd_hda_core snd_pcm mei_me mei sdhci_pci sdhci i915 mmc_core e1000e ptp pps_core prime_numbers
+[  432.585042] CPU: 3 PID: 8372 Comm: kworker/u16:40 Tainted: G     U          4.10.0-rc8-CI-Patchwork_3870+ #1
+[  432.585044] Hardware name: LENOVO 2356GCG/2356GCG, BIOS G7ET31WW (1.13 ) 07/02/2012
+[  432.585050] Workqueue: events_unbound async_run_entry_fn
+[  432.585051] Call Trace:
+[  432.585058]  dump_stack+0x67/0x92
+[  432.585062]  __warn+0xc6/0xe0
+[  432.585065]  warn_slowpath_fmt+0x4a/0x50
+[  432.585070]  ? _raw_spin_lock_irqsave+0x49/0x60
+[  432.585072]  __free_irq+0x9f/0x280
+[  432.585075]  free_irq+0x34/0x80
+[  432.585089]  e1000_free_irq+0x65/0x70 [e1000e]
+[  432.585098]  e1000e_pm_freeze+0x7a/0xb0 [e1000e]
+[  432.585106]  e1000e_pm_suspend+0x21/0x30 [e1000e]
+[  432.585113]  pci_pm_suspend+0x71/0x140
+[  432.585118]  dpm_run_callback+0x6f/0x330
+[  432.585122]  ? pci_pm_freeze+0xe0/0xe0
+[  432.585125]  __device_suspend+0xea/0x330
+[  432.585128]  async_suspend+0x1a/0x90
+[  432.585132]  async_run_entry_fn+0x34/0x160
+[  432.585137]  process_one_work+0x1f4/0x6d0
+[  432.585140]  ? process_one_work+0x16e/0x6d0
+[  432.585143]  worker_thread+0x49/0x4a0
+[  432.585145]  kthread+0x107/0x140
+[  432.585148]  ? process_one_work+0x6d0/0x6d0
+[  432.585150]  ? kthread_create_on_node+0x40/0x40
+[  432.585154]  ret_from_fork+0x2e/0x40
+[  432.585156] ---[ end trace 6712df7f8c4b9124 ]---
+
+The unwind failures stems from commit 2800209994f8 ("e1000e: Refactor PM
+flows"), but it may be a later patch that introduced the non-recoverable
+behaviour.
+
+Fixes: 2800209994f8 ("e1000e: Refactor PM flows")
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=99847
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/phy.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/intel/e1000e/netdev.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@ -123,6 +123,12 @@ static inline int phy_aneg_done(struct p
- 	if (phydev->drv->aneg_done)
- 		return phydev->drv->aneg_done(phydev);
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -6363,12 +6363,17 @@ static int e1000e_pm_thaw(struct device
+ static int e1000e_pm_suspend(struct device *dev)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev);
++	int rc;
  
-+	/* Avoid genphy_aneg_done() if the Clause 45 PHY does not
-+	 * implement Clause 22 registers
-+	 */
-+	if (phydev->is_c45 && !(phydev->c45_ids.devices_in_package & BIT(0)))
-+		return -EINVAL;
+ 	e1000e_flush_lpic(pdev);
+ 
+ 	e1000e_pm_freeze(dev);
+ 
+-	return __e1000_shutdown(pdev, false);
++	rc = __e1000_shutdown(pdev, false);
++	if (rc)
++		e1000e_pm_thaw(dev);
 +
- 	return genphy_aneg_done(phydev);
++	return rc;
  }
  
+ static int e1000e_pm_resume(struct device *dev)
