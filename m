@@ -1,179 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753187AbeDKI7F (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 04:59:05 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:37910 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751972AbeDKI7A (ORCPT
+        id S1753205AbeDKI7O (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 04:59:14 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40664 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751972AbeDKI7L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 04:59:00 -0400
-X-Google-Smtp-Source: AIpwx48l11P5gYqFHAXxi46qdmOG6LIPC4JHj6gRzjzNcgu+EbNBasEVuJ+5SdJPaWylH2Tc775O3ehqn0I1FpVA9u0=
-MIME-Version: 1.0
-In-Reply-To: <20180302230358.25153-1-eric@anholt.net>
-References: <20180302230358.25153-1-eric@anholt.net>
-From: Stefan Schake <stschake@gmail.com>
-Date: Wed, 11 Apr 2018 10:58:37 +0200
-Message-ID: <CAOZHkRxa7Lo11tqt4bc0hTGefB8czjvrDPm1nLOcdGEmFd_L4w@mail.gmail.com>
-Subject: Re: [PATCH] drm/vc4: Add some missing HVS register definitions.
-To: Eric Anholt <eric@anholt.net>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 11 Apr 2018 04:59:11 -0400
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+To: dmitry.torokhov@gmail.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH] Input: i8042 - Fix KBD port cannot wake up system from suspend-to-idle
+Date: Wed, 11 Apr 2018 16:59:05 +0800
+Message-Id: <20180411085905.22272-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 3, 2018 at 12:03 AM, Eric Anholt <eric@anholt.net> wrote:
-> At least the RGBA expand field we should have been setting, because we
-> aren't expanding correctly for 565 -> 8888.  Other registers are ones
-> that may be interesting for various projects that have been discussed.
->
-> Signed-off-by: Eric Anholt <eric@anholt.net>
-> Cc: Stefan Schake <stschake@gmail.com>
-> ---
->  drivers/gpu/drm/vc4/vc4_regs.h | 96 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 96 insertions(+)
->
-> diff --git a/drivers/gpu/drm/vc4/vc4_regs.h b/drivers/gpu/drm/vc4/vc4_regs.h
-> index b9749cb24063..ce8bb7486456 100644
-> --- a/drivers/gpu/drm/vc4/vc4_regs.h
-> +++ b/drivers/gpu/drm/vc4/vc4_regs.h
-> @@ -330,6 +330,21 @@
->  #define SCALER_DISPCTRL0                        0x00000040
->  # define SCALER_DISPCTRLX_ENABLE               BIT(31)
->  # define SCALER_DISPCTRLX_RESET                        BIT(30)
-> +/* Generates a single frame when VSTART is seen and stops at the last
-> + * pixel read from the FIFO.
-> + */
-> +# define SCALER_DISPCTRLX_ONESHOT              BIT(29)
-> +/* Processes a single context in the dlist and then task switch,
-> + * instead of an entire line.
-> + */
-> +# define SCALER_DISPCTRLX_ONECTX               BIT(28)
-> +/* Set to have DISPSLAVE return 2 16bpp pixels and no status data. */
-> +# define SCALER_DISPCTRLX_FIFO32               BIT(27)
-> +/* Turns on output to the DISPSLAVE register instead of the normal
-> + * FIFO.
-> + */
-> +# define SCALER_DISPCTRLX_FIFOREG              BIT(26)
-> +
->  # define SCALER_DISPCTRLX_WIDTH_MASK           VC4_MASK(23, 12)
->  # define SCALER_DISPCTRLX_WIDTH_SHIFT          12
->  # define SCALER_DISPCTRLX_HEIGHT_MASK          VC4_MASK(11, 0)
-> @@ -402,6 +417,68 @@
->   */
->  # define SCALER_GAMADDR_SRAMENB                        BIT(30)
->
-> +#define SCALER_OLEDOFFS                         0x00000080
-> +/* Clamps R to [16,235] and G/B to [16,240]. */
-> +# define SCALER_OLEDOFFS_YUVCLAMP               BIT(31)
-> +
-> +/* Chooses which display FIFO the matrix applies to. */
-> +# define SCALER_OLEDOFFS_DISPFIFO_MASK          VC4_MASK(25, 24)
-> +# define SCALER_OLEDOFFS_DISPFIFO_SHIFT         24
-> +# define SCALER_OLEDOFFS_DISPFIFO_DISABLED      0
-> +# define SCALER_OLEDOFFS_DISPFIFO_0             1
-> +# define SCALER_OLEDOFFS_DISPFIFO_1             2
-> +# define SCALER_OLEDOFFS_DISPFIFO_2             3
-> +
-> +/* Offsets are 8-bit 2s-complement. */
-> +# define SCALER_OLEDOFFS_RED_MASK               VC4_MASK(23, 16)
-> +# define SCALER_OLEDOFFS_RED_SHIFT              16
-> +# define SCALER_OLEDOFFS_GREEN_MASK             VC4_MASK(15, 8)
-> +# define SCALER_OLEDOFFS_GREEN_SHIFT            8
-> +# define SCALER_OLEDOFFS_BLUE_MASK              VC4_MASK(7, 0)
-> +# define SCALER_OLEDOFFS_BLUE_SHIFT             0
-> +
-> +/* The coefficients are S0.9 fractions. */
-> +#define SCALER_OLEDCOEF0                        0x00000084
-> +# define SCALER_OLEDCOEF0_B_TO_R_MASK           VC4_MASK(29, 20)
-> +# define SCALER_OLEDCOEF0_B_TO_R_SHIFT          20
-> +# define SCALER_OLEDCOEF0_B_TO_G_MASK           VC4_MASK(19, 10)
-> +# define SCALER_OLEDCOEF0_B_TO_G_SHIFT          10
-> +# define SCALER_OLEDCOEF0_B_TO_B_MASK           VC4_MASK(9, 0)
-> +# define SCALER_OLEDCOEF0_B_TO_B_SHIFT          0
-> +
-> +#define SCALER_OLEDCOEF1                        0x00000088
-> +# define SCALER_OLEDCOEF1_G_TO_R_MASK           VC4_MASK(29, 20)
-> +# define SCALER_OLEDCOEF1_G_TO_R_SHIFT          20
-> +# define SCALER_OLEDCOEF1_G_TO_G_MASK           VC4_MASK(19, 10)
-> +# define SCALER_OLEDCOEF1_G_TO_G_SHIFT          10
-> +# define SCALER_OLEDCOEF1_G_TO_B_MASK           VC4_MASK(9, 0)
-> +# define SCALER_OLEDCOEF1_G_TO_B_SHIFT          0
-> +
-> +#define SCALER_OLEDCOEF2                        0x0000008c
-> +# define SCALER_OLEDCOEF2_R_TO_R_MASK           VC4_MASK(29, 20)
-> +# define SCALER_OLEDCOEF2_R_TO_R_SHIFT          20
-> +# define SCALER_OLEDCOEF2_R_TO_G_MASK           VC4_MASK(19, 10)
-> +# define SCALER_OLEDCOEF2_R_TO_G_SHIFT          10
-> +# define SCALER_OLEDCOEF2_R_TO_B_MASK           VC4_MASK(9, 0)
-> +# define SCALER_OLEDCOEF2_R_TO_B_SHIFT          0
-> +
-> +/* Slave addresses for DMAing from HVS composition output to other
-> + * devices.  The top bits are valid only in !FIFO32 mode.
-> + */
-> +#define SCALER_DISPSLAVE0                       0x000000c0
-> +#define SCALER_DISPSLAVE1                       0x000000c9
-> +#define SCALER_DISPSLAVE2                       0x000000d0
-> +# define SCALER_DISPSLAVE_ISSUE_VSTART          BIT(31)
-> +# define SCALER_DISPSLAVE_ISSUE_HSTART          BIT(30)
-> +/* Set when the current line has been read and an HSTART is required. */
-> +# define SCALER_DISPSLAVE_EOL                   BIT(26)
-> +/* Set when the display FIFO is empty. */
-> +# define SCALER_DISPSLAVE_EMPTY                 BIT(25)
-> +/* Set when there is RGB data ready to read. */
-> +# define SCALER_DISPSLAVE_VALID                 BIT(24)
-> +# define SCALER_DISPSLAVE_RGB_MASK              VC4_MASK(23, 0)
-> +# define SCALER_DISPSLAVE_RGB_SHIFT             0
-> +
->  #define SCALER_GAMDATA                          0x000000e0
->  #define SCALER_DLIST_START                      0x00002000
->  #define SCALER_DLIST_SIZE                       0x00004000
-> @@ -767,6 +844,10 @@ enum hvs_pixel_format {
->         HVS_PIXEL_FORMAT_YCBCR_YUV420_2PLANE = 9,
->         HVS_PIXEL_FORMAT_YCBCR_YUV422_3PLANE = 10,
->         HVS_PIXEL_FORMAT_YCBCR_YUV422_2PLANE = 11,
-> +       HVS_PIXEL_FORMAT_H264 = 12,
-> +       HVS_PIXEL_FORMAT_PALETTE = 13,
-> +       HVS_PIXEL_FORMAT_YUV444_RGB = 14,
-> +       HVS_PIXEL_FORMAT_AYUV444_RGB = 15,
->  };
->
->  /* Note: the LSB is the rightmost character shown.  Only valid for
-> @@ -800,12 +881,27 @@ enum hvs_pixel_format {
->  #define SCALER_CTL0_TILING_128B                        2
->  #define SCALER_CTL0_TILING_256B_OR_T           3
->
-> +#define SCALER_CTL0_ALPHA_MASK                  BIT(19)
->  #define SCALER_CTL0_HFLIP                       BIT(16)
->  #define SCALER_CTL0_VFLIP                       BIT(15)
->
-> +#define SCALER_CTL0_KEY_MODE_MASK              VC4_MASK(18, 17)
-> +#define SCALER_CTL0_KEY_MODE_SHIFT             17
-> +#define SCALER_CTL0_KEY_DISABLED               0
-> +#define SCALER_CTL0_KEY_LUMA_OR_COMMON_RGB     1
-> +#define SCALER_CTL0_KEY_MATCH                  2 /* turn transparent */
-> +#define SCALER_CTL0_KEY_REPLACE                        3 /* replace with value from key mask word 2 */
-> +
->  #define SCALER_CTL0_ORDER_MASK                 VC4_MASK(14, 13)
->  #define SCALER_CTL0_ORDER_SHIFT                        13
->
-> +#define SCALER_CTL0_RGBA_EXPAND_MASK           VC4_MASK(12, 11)
-> +#define SCALER_CTL0_RGBA_EXPAND_SHIFT          11
-> +#define SCALER_CTL0_RGBA_EXPAND_ZERO           0
-> +#define SCALER_CTL0_RGBA_EXPAND_LSB            1
-> +#define SCALER_CTL0_RGBA_EXPAND_MSB            2
-> +#define SCALER_CTL0_RGBA_EXPAND_ROUND          3
-> +
->  #define SCALER_CTL0_SCL1_MASK                  VC4_MASK(10, 8)
->  #define SCALER_CTL0_SCL1_SHIFT                 8
->
-> --
-> 2.16.2
->
+Commit f13b2065de81 ("Input: i8042 - allow KBD and AUX ports to wake up
+from suspend-to-idle") make system in s2idle can be woken up by i8042
+keyboard, but it's disabled by default.
 
-Acked-by: Stefan Schake <stschake@gmail.com>
+In commit 3e6e15a862a0 ("Input: enable remote wakeup for PNP i8042
+keyboard ports") states that "Keyboard ports are always supposed to be
+wakeup-enabled", it should be enabled by default. Keyboard wakeup from
+s2idles is also the default behavior for other OSes.
 
-Since the generic plane alpha series is close to going in, we might also
-want the alpha mix bit in SCALER_POS2 (bit 28). But we can always do that
-as part of an actual series implementing plane alpha.
+But right now we can't wake up the system by keyboard, from s2idle.
+
+In i8042_probe(), device_set_wakeup_enable(), which gets called by
+i8042_pnp_kbd_probe(), runs before device_set_wakeup_capable(), which
+gets called by i8042_register_ports(). So device_set_wakeup_enable()
+doesn't really enable wakeup for keyboard.
+
+We can enable keyboard wakeup in i8042_register_ports() directly.
+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+ drivers/input/serio/i8042-x86ia64io.h | 3 ---
+ drivers/input/serio/i8042.c           | 4 ++++
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/input/serio/i8042-x86ia64io.h b/drivers/input/serio/i8042-x86ia64io.h
+index b353d494ad40..e3def9195c2a 100644
+--- a/drivers/input/serio/i8042-x86ia64io.h
++++ b/drivers/input/serio/i8042-x86ia64io.h
+@@ -925,9 +925,6 @@ static int i8042_pnp_kbd_probe(struct pnp_dev *dev, const struct pnp_device_id *
+ 	i8042_pnp_id_to_string(dev->id, i8042_kbd_firmware_id,
+ 			       sizeof(i8042_kbd_firmware_id));
+ 
+-	/* Keyboard ports are always supposed to be wakeup-enabled */
+-	device_set_wakeup_enable(&dev->dev, true);
+-
+ 	i8042_pnp_kbd_devices++;
+ 	return 0;
+ }
+diff --git a/drivers/input/serio/i8042.c b/drivers/input/serio/i8042.c
+index 824f4c1c1f31..21a16b757931 100644
+--- a/drivers/input/serio/i8042.c
++++ b/drivers/input/serio/i8042.c
+@@ -1400,6 +1400,10 @@ static void __init i8042_register_ports(void)
+ 				i8042_ports[i].irq);
+ 			serio_register_port(serio);
+ 			device_set_wakeup_capable(&serio->dev, true);
++
++			/* Keyboard ports are always supposed to be wakeup-enabled */
++			if (i == I8042_KBD_PORT_NO)
++				device_wakeup_enable(&serio->dev);
+ 		}
+ 	}
+ }
+-- 
+2.17.0
