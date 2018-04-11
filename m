@@ -1,100 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753612AbeDKRKQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 13:10:16 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41707 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752981AbeDKRKO (ORCPT
+        id S1753920AbeDKRKr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 13:10:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48256 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751491AbeDKRKp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 13:10:14 -0400
-X-Google-Smtp-Source: AIpwx48EUqgl1t7YHgnVVs1ftZZFlTBQBMezUS/1cqm5E8ZbjrAWz/V/LOkl/1zNfBoqaUt/KS90qJpsjW3v5rBdFas=
+        Wed, 11 Apr 2018 13:10:45 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D873560AFB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v3 2/2] MIPS: io: add a barrier after register read in
+ readX()
+To: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org, arnd@arndb.de, timur@codeaurora.org,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
+        linux-kernel@vger.kernel.org
+References: <1522760109-16497-1-git-send-email-okaya@codeaurora.org>
+ <1522760109-16497-2-git-send-email-okaya@codeaurora.org>
+ <41e184ae-689e-93c9-7b15-0c68bd624130@codeaurora.org>
+ <b748fdcb-e09f-9fe3-dc74-30b6a7d40cbe@codeaurora.org>
+ <20180406212601.GA1730@saruman>
+ <0f1a4719-9a6f-0df0-7fd9-a25c10e824f5@codeaurora.org>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <14a663f6-2ea5-230b-2cd0-e42d05d0d7ea@codeaurora.org>
+Date: Wed, 11 Apr 2018 13:10:41 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <2186798.qrgUIDAn9S@positron.chronox.de>
-References: <001a114467482dbc4b05692df8f9@google.com> <2704286.80iLvC0rRL@tauon.chronox.de>
- <CACT4Y+bRmYMt3WuVHE7e624KgRUTXQWa36wn-pr_gm2STq80bQ@mail.gmail.com> <2186798.qrgUIDAn9S@positron.chronox.de>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 11 Apr 2018 19:09:53 +0200
-Message-ID: <CACT4Y+ZxumagMiZTFwzX2e_tdd4U862BzgzHVDsiOACbMXEh_A@mail.gmail.com>
-Subject: Re: [PATCH] crypto: DRBG - guard uninstantion by lock
-To: =?UTF-8?Q?Stephan_M=C3=BCller?= <smueller@chronox.de>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-        Eric Biggers <ebiggers3@gmail.com>,
-        syzbot <syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0f1a4719-9a6f-0df0-7fd9-a25c10e824f5@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3BHANaa003570
 
-On Wed, Apr 11, 2018 at 4:26 PM, Stephan Müller <smueller@chronox.de> wrote:
-> Hi Dimitry,
->
-> This fix prevents the kernel from crashing when injecting the fault.
+On 4/7/2018 5:43 PM, Sinan Kaya wrote:
+> On 4/6/2018 5:26 PM, James Hogan wrote:
+>> On Fri, Apr 06, 2018 at 02:15:57PM -0400, Sinan Kaya wrote:
+>>> On 4/5/2018 9:34 PM, Sinan Kaya wrote:
+>>>> Can we get these merged to 4.17? 
+>>>>
+>>>> There was a consensus to fix the architectures having API violation issues.
+>>>> https://www.mail-archive.com/netdev@vger.kernel.org/msg225971.html
+>>>>
+>>>>
+>>>
+>>> Any news on the MIPS front? Is this something that Arnd can merge? or does it have
+>>> to go through the MIPS tree.
+>>
+>> It needs some MIPS input really. I'll try and take a look soon. Thanks
+>> for the nudge.
+>>
+>>> It feels like the MIPS is dead since nobody replied to me in the last few weeks on
+>>> a very important topic.
+>>
+>> Not dead, just both maintainers heavily distracted by real life right
+>> now (which sadly, for me at least, trumps this very important topic) and
+>> doing the best they can given the circumstances.
+> 
+> Thanks for the reply. Glad to hear somebody cares.
 
-Good!
 
-> Stack traces are yet shown but I guess that is expected every time
-> a fault is injected.
+How is the likelihood of getting this fixed on 4.17 kernel? There was an agreement
+to fix all architectures. MIPS is the only one left.
 
-Yes, nothing to fix here.
-
-> As to why KASAN did not notice this one, I am not sure. Maybe it is
-> because I use two buffer pointers to point to (almost) the same memory
-> (one that is aligned and one pointing to the complete buffer)?
-
-After looking at the fix, I figured out what happened with KASAN.
-Filed https://bugzilla.kernel.org/show_bug.cgi?id=199359. In short,
-tricky interplay between kzfree, ksize and double-free detection.
-If KASAN worked as intended it would give a nice "double-free in this
-stack for object allocated in this stack and previously freed in this
-stack", which would probably make debugging much simpler.
+> 
+>>
+>> Cheers
+>> James
+>>
+> 
+> 
 
 
-> ---8<---
->
-> During freeing of the internal buffers used by the DRBG, set the pointer
-> to NULL. It is possible that the context with the freed buffers is
-> reused. In case of an error during initialization where the pointers
-> do not yet point to allocated memory, the NULL value prevents a double
-> free.
->
-> Signed-off-by: Stephan Mueller <smueller@chronox.de>
-> Reported-by: syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com
-> ---
->  crypto/drbg.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/crypto/drbg.c b/crypto/drbg.c
-> index 4faa2781c964..466a112a4446 100644
-> --- a/crypto/drbg.c
-> +++ b/crypto/drbg.c
-> @@ -1134,8 +1134,10 @@ static inline void drbg_dealloc_state(struct drbg_state *drbg)
->         if (!drbg)
->                 return;
->         kzfree(drbg->Vbuf);
-> +       drbg->Vbuf = NULL;
->         drbg->V = NULL;
->         kzfree(drbg->Cbuf);
-> +       drbg->Cbuf = NULL;
->         drbg->C = NULL;
->         kzfree(drbg->scratchpadbuf);
->         drbg->scratchpadbuf = NULL;
-> --
-> 2.14.3
->
->
->
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/2186798.qrgUIDAn9S%40positron.chronox.de.
-> For more options, visit https://groups.google.com/d/optout.
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
