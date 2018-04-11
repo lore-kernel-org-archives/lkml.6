@@ -1,62 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753108AbeDKQGn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 12:06:43 -0400
-Received: from mga11.intel.com ([192.55.52.93]:1483 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752211AbeDKQGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 12:06:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,436,1517904000";
-   d="scan'208";a="49964404"
-Date: Wed, 11 Apr 2018 09:01:57 -0700 (PDT)
-From: Mat Martineau <mathew.j.martineau@linux.intel.com>
-X-X-Sender: mjmartin@rkwong-mobl2.amr.corp.intel.com
-To: David Howells <dhowells@redhat.com>
-cc: Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] uapi/linux/keyctl.h: don't use C++ reserved keyword as
- a struct member name
-In-Reply-To: <19745.1523350020@warthog.procyon.org.uk>
-Message-ID: <alpine.OSX.2.21.1804110821140.8210@rkwong-mobl2.amr.corp.intel.com>
-References: <1735b3a4-2792-0ce4-3bf4-94fee5b50ff6@infradead.org> <19745.1523350020@warthog.procyon.org.uk>
-User-Agent: Alpine 2.21 (OSX 202 2017-01-01)
+        id S1753592AbeDKQGz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 12:06:55 -0400
+Received: from vegas.theobroma-systems.com ([144.76.126.164]:45332 "EHLO
+        mail.theobroma-systems.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753169AbeDKQGx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 12:06:53 -0400
+From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+To: jakob.unterwurzacher@theobroma-systems.com
+Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>,
+        Philipp Tomsich <philipp.tomsich@theobroma-systems.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/1] can: ucan: add driver for Theobroma Systems UCAN devices
+Date: Wed, 11 Apr 2018 18:06:41 +0200
+Message-Id: <20180411160642.18383-1-jakob.unterwurzacher@theobroma-systems.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is v5 of the Theobroma Systems CAN/USB "UCAN" adapter driver
+upstreaming effort.
 
-On Tue, 10 Apr 2018, David Howells wrote:
+v4 -> v5 changes:
+* describe bus-off handling in rst documentation
+* fix inverted if in tx_complete
+* try to fit overlong strings in 80 chars
+* use early returns instead of goto where possible
+* add spinlock around can_put/get/free_echo skb
+* remove BUS-OFF printk
+* fix missing true path in ucan_release_context
+* add ACK from Wolfgang Grandegger
 
-> Randy Dunlap <rdunlap@infradead.org> wrote:
->
->> Since this header is in "include/uapi/linux/", apparently people
->> want to use it in userspace programs -- even in C++ ones.
->> However, the header uses a C++ reserved keyword ("private"),
->> so change that to "dh_private" instead to allow the header file
->> to be used in C++ userspace.
->>
->> Fixes: https://bugzilla.kernel.org/show_bug.cgi?id=191051
->
-> Ugh.  Yeah.  This is a UAPI breaker, but I think we have to do it, despite it
-> being 2 years old.  Maybe wrap that element in a #ifdef so it's still allowed
-> in C?
->
-> cc'ing Mat Martineau as he's the originator of the structure.
+v3 -> v4 changes:
+* get rid of a few repeated le16_to_cpu casts by storing the value once
+* fix canid masking logic
+* drop __func__ from log messages. Use netdev_* where possible,
+  use UCAN_DRIVER_NAME where not.
+* drop device report log output (data is available via ip)
+* fix issues catched by sparse
 
-I agree with David's assessment.
+v2 -> v3 changes:
+* count error frames as data packets
+* use canid_t for all can ids
+* use BIT(x) instead of (1 << x)
+* use __le16 / __le32 for little-endian fields
+* add spinlock around context allocation (fixes a possible race)
+* fix comment style
+* use WARN_ON return value
+* fix state logic bug that did not allow return to ERROR_ACTIVE
+* drop echo_index from context_array (not needed)
+* rename "tx_contexts" -> "context_array" to prevent confusion
+* add __func__ to all errors and warnings, and to info where it made sense
 
-The keyctl() system call wrapper is implemented in libkeyutils, which may 
-reduce the need for the proposed ifdef. libkeyutils and its users don't 
-require any updates if this patch is merged because it has its own 
-keyword-free structure definition.
+Jakob Unterwurzacher (1):
+  can: ucan: add driver for Theobroma Systems UCAN devices
 
---
-Mat Martineau
-Intel OTC
+ Documentation/networking/can_ucan_protocol.rst |  332 +++++
+ Documentation/networking/index.rst             |    1 +
+ drivers/net/can/usb/Kconfig                    |   10 +
+ drivers/net/can/usb/Makefile                   |    1 +
+ drivers/net/can/usb/ucan.c                     | 1613 ++++++++++++++++++++++++
+ 5 files changed, 1957 insertions(+)
+ create mode 100644 Documentation/networking/can_ucan_protocol.rst
+ create mode 100644 drivers/net/can/usb/ucan.c
+
+-- 
+2.11.0
+
+Cc: Martin Elshuber <martin.elshuber@theobroma-systems.com>
+Cc: Philipp Tomsich <philipp.tomsich@theobroma-systems.com>
+Cc: Wolfgang Grandegger <wg@grandegger.com>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: linux-can@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
