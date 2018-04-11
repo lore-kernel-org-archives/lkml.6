@@ -1,79 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752783AbeDKAwj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 20:52:39 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39064 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752245AbeDKAwh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 20:52:37 -0400
-X-Google-Smtp-Source: AIpwx491bJXNr1r9hC2eCaXJyw93Z960zu5++7+WXSclPoUao3/um5kV14L3INpKp8tj3KF0vlYXcA==
-Date: Tue, 10 Apr 2018 17:52:34 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Dave Watson <davejwatson@fb.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        Ilya Lesokhin <ilyal@mellanox.com>,
-        Aviad Yehezkel <aviadye@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH] net/tls: Remove VLA usage
-Message-ID: <20180411005234.GA39848@beast>
+        id S1752653AbeDKA5D (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 20:57:03 -0400
+Received: from mga01.intel.com ([192.55.52.88]:6786 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751825AbeDKA5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 20:57:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,434,1517904000";
+   d="scan'208";a="46854665"
+From: "Huang\, Ying" <ying.huang@intel.com>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Daniel Colascione <dancol@google.com>, Zi Yan <zi.yan@cs.rutgers.edu>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Subject: Re: [PATCH -mm] mm, pagemap: Fix swap offset value for PMD migration entry
+References: <20180408033737.10897-1-ying.huang@intel.com>
+        <20180409174753.4b959a5b3ff732b8f96f5a14@linux-foundation.org>
+        <87in8znaj4.fsf@yhuang-dev.intel.com>
+        <20180410111222.akgtbqsmrpmm2clt@node.shutemov.name>
+Date: Wed, 11 Apr 2018 08:56:58 +0800
+In-Reply-To: <20180410111222.akgtbqsmrpmm2clt@node.shutemov.name> (Kirill
+        A. Shutemov's message of "Tue, 10 Apr 2018 14:12:22 +0300")
+Message-ID: <87r2nmftlx.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the quest to remove VLAs from the kernel[1], this replaces the VLA
-size with the only possible size used in the code, and adds a mechanism
-to double-check future IV sizes.
+"Kirill A. Shutemov" <kirill@shutemov.name> writes:
 
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> On Tue, Apr 10, 2018 at 08:57:19AM +0800, Huang, Ying wrote:
+>> >> the swap offset reported doesn't
+>> >> reflect this.  And in the loop to report information of each sub-page,
+>> >> the swap offset isn't increased accordingly as that for PFN.
+>> >> 
+>> >> BTW: migration swap entries have PFN information, do we need to
+>> >> restrict whether to show them?
+>> >
+>> > For what reason?  Address obfuscation?
+>> 
+>> This is an existing feature for PFN report of /proc/<pid>/pagemap,
+>> reason is in following commit log.  I am wondering whether that is
+>> necessary for migration swap entries too.
+>> 
+>> ab676b7d6fbf4b294bf198fb27ade5b0e865c7ce
+>> Author:     Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>> AuthorDate: Mon Mar 9 23:11:12 2015 +0200
+>> Commit:     Linus Torvalds <torvalds@linux-foundation.org>
+>> CommitDate: Tue Mar 17 09:31:30 2015 -0700
+>> 
+>> pagemap: do not leak physical addresses to non-privileged userspace
+>> 
+>> As pointed by recent post[1] on exploiting DRAM physical imperfection,
+>> /proc/PID/pagemap exposes sensitive information which can be used to do
+>> attacks.
+>> 
+>> This disallows anybody without CAP_SYS_ADMIN to read the pagemap.
+>> 
+>> [1] http://googleprojectzero.blogspot.com/2015/03/exploiting-dram-rowhammer-bug-to-gain.html
+>> 
+>> [ Eventually we might want to do anything more finegrained, but for now
+>>   this is the simple model.   - Linus ]
+>
+> Note that there's follow up to the commit: 
+>
+> 1c90308e7a77 ("pagemap: hide physical addresses from non-privileged users")
+>
+> It introduces pm->show_pfn and it should be applied to swap entries too.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- net/tls/tls_sw.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+So you think we should hide all swap entry information if
+(!pm->show_pfn) regardless they are migration swap entries or not?
 
-diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
-index 4dc766b03f00..71e79597f940 100644
---- a/net/tls/tls_sw.c
-+++ b/net/tls/tls_sw.c
-@@ -41,6 +41,8 @@
- #include <net/strparser.h>
- #include <net/tls.h>
- 
-+#define MAX_IV_SIZE	TLS_CIPHER_AES_GCM_128_IV_SIZE
-+
- static int tls_do_decryption(struct sock *sk,
- 			     struct scatterlist *sgin,
- 			     struct scatterlist *sgout,
-@@ -673,7 +675,7 @@ static int decrypt_skb(struct sock *sk, struct sk_buff *skb,
- {
- 	struct tls_context *tls_ctx = tls_get_ctx(sk);
- 	struct tls_sw_context *ctx = tls_sw_ctx(tls_ctx);
--	char iv[TLS_CIPHER_AES_GCM_128_SALT_SIZE + tls_ctx->rx.iv_size];
-+	char iv[TLS_CIPHER_AES_GCM_128_SALT_SIZE + MAX_IV_SIZE];
- 	struct scatterlist sgin_arr[MAX_SKB_FRAGS + 2];
- 	struct scatterlist *sgin = &sgin_arr[0];
- 	struct strp_msg *rxm = strp_msg(skb);
-@@ -1094,6 +1096,12 @@ int tls_set_sw_offload(struct sock *sk, struct tls_context *ctx, int tx)
- 		goto free_priv;
- 	}
- 
-+	/* Sanity-check the IV size for stack allocations. */
-+	if (iv_size > MAX_IV_SIZE) {
-+		rc = -EINVAL;
-+		goto free_priv;
-+	}
-+
- 	cctx->prepend_size = TLS_HEADER_SIZE + nonce_size;
- 	cctx->tag_size = tag_size;
- 	cctx->overhead_size = cctx->prepend_size + cctx->tag_size;
--- 
-2.7.4
-
-
--- 
-Kees Cook
-Pixel Security
+Best Regards,
+Huang, Ying
