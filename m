@@ -1,81 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755279AbeDKVLW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 17:11:22 -0400
-Received: from resqmta-ch2-11v.sys.comcast.net ([69.252.207.43]:39452 "EHLO
-        resqmta-ch2-11v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753258AbeDKVLT (ORCPT
+        id S1755322AbeDKVLv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 17:11:51 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:44580 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754368AbeDKVLq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 17:11:19 -0400
-Date: Wed, 11 Apr 2018 16:11:17 -0500 (CDT)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Matthew Wilcox <willy@infradead.org>
-cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: Re: [PATCH v2 2/2] slab: __GFP_ZERO is incompatible with a
- constructor
-In-Reply-To: <20180411192448.GD22494@bombadil.infradead.org>
-Message-ID: <alpine.DEB.2.20.1804111601090.7458@nuc-kabylake>
-References: <20180411060320.14458-1-willy@infradead.org> <20180411060320.14458-3-willy@infradead.org> <alpine.DEB.2.20.1804110842560.3788@nuc-kabylake> <20180411192448.GD22494@bombadil.infradead.org>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Wed, 11 Apr 2018 17:11:46 -0400
+X-Google-Smtp-Source: AIpwx48Y2ZHhS6r3CzW7z7++K/rwzQa3oCXQmfGbPjtMd3m5vzadT/TenUV8LlL+m48mltxPgo+iU7XtkgJ9tj2sltQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfN+nXFTaL/GCaQdMvox7DUkk+vaan1S5or1M12BuWnrlQvyrKGl69Q1kZKrGMvhBcAf6eY0TdUVciLw8dflpHdZKrQMsxLqBjjAxj/bH0NNwWx2zgpxD
- ppa3f+TVaR0lNid1q4zbxM0ImlsxqPMbd3EfeNvGlajW0v4F9kpp9PVP6/8uA9be9RJ50WYGkVVfHGgWvN+5/+hZbz0hMv5BYuYAdlJiWfkIrk0z2z9vYqG5
- NraJI0Li/bgb9BmVukRm7Z/KeZnFIpQsAbKdnQocnTRQsUyORN3YgoHzrnb2o7x1bSjtPL2GemTdijH0pCG5wNsHxjtmTAh7U2N4nSkn1PpfpgB49hAExhzK
- V9pDXpSRYhNzrGjX+z1rA1HkpQ5hfnJvEyJ4VQ0u6IQNxAuuYrOybuJOb4g42WOYBgNi5G2AUk7HwDo3Yg1vmciMcC/YjCstHeDgzL2qKRbmIUL6OQEY03HE
- +HbhEtU8T+DAq99u
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <eb67b174e6a3d0fe174cc738d9109cd7fda96a9b.1523316291.git.rgb@redhat.com>
+References: <eb67b174e6a3d0fe174cc738d9109cd7fda96a9b.1523316291.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 11 Apr 2018 17:11:44 -0400
+Message-ID: <CAHC9VhTv_2ErGe38u+Z2CGY2BhNqbG0u_tqbMmwOYUsr4jJ3aQ@mail.gmail.com>
+Subject: Re: [PATCH ghak47 V1] audit: normalize MAC_POLICY_LOAD record
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Eric Paris <eparis@redhat.com>, Steve Grubb <sgrubb@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Apr 2018, Matthew Wilcox wrote:
-
-> > >  	slab_post_alloc_hook(s, gfpflags, 1, &object);
-> >
-> > Please put this in a code path that is enabled by specifying
-> >
-> > slub_debug
-> >
-> > on the kernel command line.
+On Mon, Apr 9, 2018 at 7:36 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> The audit MAC_POLICY_LOAD record had redundant dangling keywords and was
+> missing information about which LSM was responsible and its completion
+> status.  While this record is only issued on success, the parser expects
+> the res= field to be present.
 >
-> I don't understand.  First, I had:
+> Old record:
+> type=MAC_POLICY_LOAD msg=audit(1479299795.404:43): policy loaded auid=0 ses=1
 >
-> 	if (unlikely(gfpflags & __GFP_ZERO) && object && !WARN_ON_ONCE(s->ctor))
+> Delete the redundant dangling keywords, add the lsm= field and the res=
+> field.
 >
-> and you didn't like that because it was putting checking into a (semi)fast
-> path.  Now you want me to add a check for slub_debug somewhere?  I dont
-> see an existing one I can leverage that will hit on every allocation.
-> Perhaps I'm missing something.
+> New record:
+> type=MAC_POLICY_LOAD msg=audit(1523293846.204:894): auid=0 ses=1 lsm=selinux res=1
+>
+> See: https://github.com/linux-audit/audit-kernel/issues/47
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  security/selinux/selinuxfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> index 00b21b2..496915a 100644
+> --- a/security/selinux/selinuxfs.c
+> +++ b/security/selinux/selinuxfs.c
+> @@ -531,7 +531,7 @@ static ssize_t sel_write_load(struct file *file, const char __user *buf,
+>
+>  out1:
+>         audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_POLICY_LOAD,
+> -               "policy loaded auid=%u ses=%u",
+> +               "auid=%u ses=%u lsm=selinux res=1",
 
-The WARN_ON is only enabled when you configure and build the kernel with
-debugging enabled (CONFIG_VM_DEBUG). That is a compile time debugging
-feature like supported by SLAB.
+This is another case of NACK on principle, but I think we can make an
+exception in this particular case.
 
-SLUB debugging is different because we had problems isolating memory
-corruption bugs in the production kernels for years. The debug code is
-always included in the build but kept out of the hotpaths.
+Also like the other patch, this will need to wait for the merge window
+to close before I can merge it.
 
+>                 from_kuid(&init_user_ns, audit_get_loginuid(current)),
+>                 audit_get_sessionid(current));
+>  out:
+> --
+> 1.8.3.1
+>
 
-The debug can be enabled when needed to find memory corruption errors
-without the need to rebuild a kernel for a prod environment (which may
-change race conditions etc) because we only then need to add a kernel
-parameter.
-
-"slub_debug" enables kmem_cache->flags & SLAB_DEBUG and that forces all
-fastpath processing to be disabled. Thus you can check reliably in the
-slow path only for the GFP_ZERO problem.
-
-Add the check to the other debug stuff already there. F.e. in
-alloc_debug_processing() or after
-
-if (kmem_cache_debug(s) ...
-
-in ____slab_alloc()
+-- 
+paul moore
+www.paul-moore.com
