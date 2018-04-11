@@ -1,25 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752855AbeDKXos (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 19:44:48 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37698 "EHLO mx1.redhat.com"
+        id S1752389AbeDKXnN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 19:43:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50242 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752527AbeDKXn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 19:43:27 -0400
+        id S1751777AbeDKXnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 19:43:12 -0400
 From: Lyude Paul <lyude@redhat.com>
 To: intel-gfx@lists.freedesktop.org
-Cc: Manasi Navare <manasi.d.navare@intel.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
-        <ville.syrjala@linux.intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 07/10] drm/i915: Only use one link bw config for MST topologies
-Date: Wed, 11 Apr 2018 19:42:46 -0400
-Message-Id: <20180411234302.2896-8-lyude@redhat.com>
-In-Reply-To: <20180411234302.2896-1-lyude@redhat.com>
-References: <20180411234302.2896-1-lyude@redhat.com>
+Cc: "David Airlie" <airlied@linux.ie>, "Sean Paul" <seanpaul@chromium.org>,
+        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        "Gustavo Padovan" <gustavo@padovan.org>,
+        "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
+        "Jani Nikula" <jani.nikula@linux.intel.com>,
+        "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>,
+        "Leo (Sunpeng) Li" <sunpeng.li@amd.com>,
+        "Andrey Grodzovsky" <andrey.grodzovsky@amd.com>,
+        "Alex Deucher" <alexander.deucher@amd.com>,
+        nouveau@lists.freedesktop.org,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "Roman Li" <roman.li@amd.com>, "Ben Skeggs" <bskeggs@redhat.com>,
+        "David (ChunMing) Zhou" <david1.zhou@amd.com>,
+        "Jerry (Fangzhi) Zuo" <jerry.zuo@amd.com>,
+        "Shirish S" <shirish.s@amd.com>, "Tony Cheng" <tony.cheng@amd.com>,
+        "Harry Wentland" <harry.wentland@amd.com>,
+        amd-gfx@lists.freedesktop.org, "Lyude Paul" <lyude@redhat.com>
+Subject: [PATCH v8 00/10] drm/i915: Implement proper fallback training for MST
+Date: Wed, 11 Apr 2018 19:42:39 -0400
+Message-Id: <20180411234302.2896-1-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -27,206 +36,38 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a DP MST link needs retraining, sometimes the hub will detect that
-the current link bw config is impossible and will update it's RX caps in
-the DPCD to reflect the new maximum link rate. Currently, we make the
-assumption that the RX caps in the dpcd will never change like this.
-This means if the sink changes it's RX caps after we've already set up
-an MST link and we attempt to add or remove another sink from the
-topology, we could put ourselves into an invalid state where we've tried
-to configure different sinks on the same MST topology with different
-link rates. We could also run into this situation if a sink reports a
-higher link rate after suspend, usually from us having trained it with a
-fallback bw configuration before suspending.
+Next version of https://patchwork.freedesktop.org/series/41576/
 
-So: keep the link rate consistent by subclassing
-drm_dp_mst_topology_state, and tracking it there. For the time being, we
-only allow the link rate to change when the entire topology has been
-disconnected.
+Only changes are removing duplicate SoBs that git send-email annoyingly
+added. Sorry about that :(
 
-V4:
- - Track link rate/lane count in the atomic topology state instead of in
-   intel_dp.
-V7:
- - Fix CHECKPATCH errors
+Lyude Paul (10):
+  drm/atomic: Print debug message on atomic check failure
+  drm/i915: Move DP modeset retry work into intel_dp
+  drm/dp_mst: Fix naming on drm_atomic_get_mst_topology_state()
+  drm/dp_mst: Remove all evil duplicate state pointers
+  drm/dp_mst: Make drm_dp_mst_topology_state subclassable
+  drm/dp_mst: Add reset_state callback to topology mgr
+  drm/i915: Only use one link bw config for MST topologies
+  drm/i915: Make intel_dp_mst_atomic_check() idempotent
+  drm/dp_mst: Add MST fallback retraining helpers
+  drm/i915: Implement proper fallback training for MST
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Manasi Navare <manasi.d.navare@intel.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
----
- drivers/gpu/drm/i915/intel_dp_mst.c | 79 +++++++++++++++++++++++++++++--------
- drivers/gpu/drm/i915/intel_drv.h    |  7 ++++
- 2 files changed, 70 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  14 +-
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |  46 +-
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.h    |   4 +-
+ drivers/gpu/drm/drm_atomic.c                       |   5 +-
+ drivers/gpu/drm/drm_dp_mst_topology.c              | 550 ++++++++++++++++++++-
+ drivers/gpu/drm/i915/intel_ddi.c                   |  10 +-
+ drivers/gpu/drm/i915/intel_display.c               |  14 +-
+ drivers/gpu/drm/i915/intel_dp.c                    | 376 ++++++++++----
+ drivers/gpu/drm/i915/intel_dp_link_training.c      |   6 +-
+ drivers/gpu/drm/i915/intel_dp_mst.c                | 186 +++++--
+ drivers/gpu/drm/i915/intel_drv.h                   |  20 +-
+ drivers/gpu/drm/nouveau/nv50_display.c             |  17 +-
+ drivers/gpu/drm/radeon/radeon_dp_mst.c             |  13 +-
+ include/drm/drm_dp_mst_helper.h                    |  43 +-
+ 14 files changed, 1120 insertions(+), 184 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
-index cf844cfd2bb0..19de0b5a7a40 100644
---- a/drivers/gpu/drm/i915/intel_dp_mst.c
-+++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-@@ -41,8 +41,11 @@ static bool intel_dp_mst_compute_config(struct intel_encoder *encoder,
- 	struct intel_connector *connector =
- 		to_intel_connector(conn_state->connector);
- 	struct drm_atomic_state *state = pipe_config->base.state;
-+	struct drm_dp_mst_topology_state *mst_state =
-+		drm_atomic_dp_mst_get_topology_state(state, &intel_dp->mst_mgr);
-+	struct intel_dp_mst_topology_state *intel_mst_state;
- 	int bpp;
--	int lane_count, slots;
-+	int slots;
- 	const struct drm_display_mode *adjusted_mode = &pipe_config->base.adjusted_mode;
- 	int mst_pbn;
- 	bool reduce_m_n = drm_dp_has_quirk(&intel_dp->desc,
-@@ -55,18 +58,22 @@ static bool intel_dp_mst_compute_config(struct intel_encoder *encoder,
- 		DRM_DEBUG_KMS("Setting pipe bpp to %d\n",
- 			      bpp);
- 	}
-+
-+	intel_mst_state =
-+		to_intel_dp_mst_topology_state(mst_state);
- 	/*
- 	 * for MST we always configure max link bw - the spec doesn't
- 	 * seem to suggest we should do otherwise.
- 	 */
--	lane_count = intel_dp_max_lane_count(intel_dp);
--
--	pipe_config->lane_count = lane_count;
-+	if (!intel_mst_state->link_rate || !intel_mst_state->lane_count) {
-+		intel_mst_state->link_rate = intel_dp_max_link_rate(intel_dp);
-+		intel_mst_state->lane_count = intel_dp_max_lane_count(intel_dp);
-+	}
- 
-+	pipe_config->lane_count = intel_mst_state->lane_count;
-+	pipe_config->port_clock = intel_mst_state->link_rate;
- 	pipe_config->pipe_bpp = bpp;
- 
--	pipe_config->port_clock = intel_dp_max_link_rate(intel_dp);
--
- 	if (drm_dp_mst_port_has_audio(&intel_dp->mst_mgr, connector->port))
- 		pipe_config->has_audio = true;
- 
-@@ -80,7 +87,7 @@ static bool intel_dp_mst_compute_config(struct intel_encoder *encoder,
- 		return false;
- 	}
- 
--	intel_link_compute_m_n(bpp, lane_count,
-+	intel_link_compute_m_n(bpp, intel_mst_state->lane_count,
- 			       adjusted_mode->crtc_clock,
- 			       pipe_config->port_clock,
- 			       &pipe_config->dp_m_n,
-@@ -530,11 +537,55 @@ static void intel_dp_mst_hotplug(struct drm_dp_mst_topology_mgr *mgr)
- 	drm_kms_helper_hotplug_event(dev);
- }
- 
-+static void intel_mst_reset_state(struct drm_dp_mst_topology_state *state)
-+{
-+	struct intel_dp_mst_topology_state *intel_mst_state =
-+		to_intel_dp_mst_topology_state(state);
-+
-+	intel_mst_state->link_rate = 0;
-+	intel_mst_state->lane_count = 0;
-+}
-+
- static const struct drm_dp_mst_topology_cbs mst_cbs = {
- 	.add_connector = intel_dp_add_mst_connector,
- 	.register_connector = intel_dp_register_mst_connector,
- 	.destroy_connector = intel_dp_destroy_mst_connector,
- 	.hotplug = intel_dp_mst_hotplug,
-+	.reset_state = intel_mst_reset_state,
-+};
-+
-+static struct drm_private_state *
-+intel_dp_mst_duplicate_state(struct drm_private_obj *obj)
-+{
-+	struct intel_dp_mst_topology_state *state;
-+	struct drm_dp_mst_topology_mgr *mgr = to_dp_mst_topology_mgr(obj);
-+
-+	state = kmemdup(obj->state, sizeof(*state), GFP_KERNEL);
-+	if (!state)
-+		return NULL;
-+
-+	__drm_atomic_dp_mst_duplicate_topology_state(mgr, &state->base);
-+
-+	return &state->base.base;
-+}
-+
-+static void
-+intel_dp_mst_destroy_state(struct drm_private_obj *obj,
-+			   struct drm_private_state *state)
-+{
-+	struct drm_dp_mst_topology_state *mst_state =
-+		to_dp_mst_topology_state(state);
-+	struct intel_dp_mst_topology_state *intel_mst_state =
-+		to_intel_dp_mst_topology_state(mst_state);
-+
-+	__drm_atomic_dp_mst_destroy_topology_state(mst_state);
-+
-+	kfree(intel_mst_state);
-+}
-+
-+static const struct drm_private_state_funcs mst_state_funcs = {
-+	.atomic_duplicate_state = intel_dp_mst_duplicate_state,
-+	.atomic_destroy_state = intel_dp_mst_destroy_state,
- };
- 
- static struct intel_dp_mst_encoder *
-@@ -587,21 +638,16 @@ intel_dp_create_fake_mst_encoders(struct intel_digital_port *intel_dig_port)
- 	return true;
- }
- 
--static const struct drm_private_state_funcs mst_state_funcs = {
--	.atomic_destroy_state = drm_atomic_dp_mst_destroy_topology_state,
--	.atomic_duplicate_state = drm_atomic_dp_mst_duplicate_topology_state,
--};
--
- int
- intel_dp_mst_encoder_init(struct intel_digital_port *intel_dig_port, int conn_base_id)
- {
- 	struct intel_dp *intel_dp = &intel_dig_port->dp;
--	struct drm_dp_mst_topology_state *mst_state;
-+	struct intel_dp_mst_topology_state *intel_mst_state;
- 	struct drm_device *dev = intel_dig_port->base.base.dev;
- 	int ret;
- 
--	mst_state = kzalloc(sizeof(*mst_state), GFP_KERNEL);
--	if (!mst_state)
-+	intel_mst_state = kzalloc(sizeof(*intel_mst_state), GFP_KERNEL);
-+	if (!intel_mst_state)
- 		return -ENOMEM;
- 
- 	intel_dp->can_mst = true;
-@@ -610,7 +656,8 @@ intel_dp_mst_encoder_init(struct intel_digital_port *intel_dig_port, int conn_ba
- 
- 	/* create encoders */
- 	intel_dp_create_fake_mst_encoders(intel_dig_port);
--	ret = drm_dp_mst_topology_mgr_init(&intel_dp->mst_mgr, mst_state, dev,
-+	ret = drm_dp_mst_topology_mgr_init(&intel_dp->mst_mgr,
-+					   &intel_mst_state->base, dev,
- 					   &intel_dp->aux, 16, 3, conn_base_id);
- 	if (ret) {
- 		intel_dp->can_mst = false;
-diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-index 742d53495974..eccb4bd042c3 100644
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@ -985,6 +985,12 @@ struct cxsr_latency {
- 	u16 cursor_hpll_disable;
- };
- 
-+struct intel_dp_mst_topology_state {
-+	struct drm_dp_mst_topology_state base;
-+	int link_rate;
-+	int lane_count;
-+};
-+
- #define to_intel_atomic_state(x) container_of(x, struct intel_atomic_state, base)
- #define to_intel_crtc(x) container_of(x, struct intel_crtc, base)
- #define to_intel_crtc_state(x) container_of(x, struct intel_crtc_state, base)
-@@ -993,6 +999,7 @@ struct cxsr_latency {
- #define to_intel_framebuffer(x) container_of(x, struct intel_framebuffer, base)
- #define to_intel_plane(x) container_of(x, struct intel_plane, base)
- #define to_intel_plane_state(x) container_of(x, struct intel_plane_state, base)
-+#define to_intel_dp_mst_topology_state(x) container_of(x, struct intel_dp_mst_topology_state, base)
- #define intel_fb_obj(x) (x ? to_intel_framebuffer(x)->obj : NULL)
- 
- struct intel_hdmi {
 -- 
 2.14.3
