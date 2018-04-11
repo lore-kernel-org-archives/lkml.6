@@ -1,38 +1,83 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/1Cul1DL1EEsebF+A1Di7aVDSBAV1bHD5I3XS7dp8mov++77MjQmvRSftgHe0jmTr5x8qk
-ARC-Seal: i=1; a=rsa-sha256; t=1523473335; cv=none;
-        d=google.com; s=arc-20160816;
-        b=XZwag9IJBiRULVxsta2h1vNsn0ma+VmdsS98r+BR+JfCRqkkzBSJkVcL2cah/RIxYo
-         rn0jU2mys7WNjmdDvatC5peI0svC2CJjHPhzadSQeK1W5L1c0wOhUS6yWgH+NDIQ3D2i
-         CE5Eg/CA+PCwYZktHlhdsY3oZLZRK2IkZHaX500PI+MiOFPPKClKfelKm5AEbepvEB0i
-         mUYI7K8dsVFOFK7JYOtpxt9nKbUN2pGlhiN9x/C4uFFazFCg55ACWPHOmseTru1q/7J8
-         u48IdLAFp2gVHpx7oGjSSOjs2XL6hyTTf0ye6IwTN+D8vAwoZ++yiVBdRg26QobaUvF8
-         b0Lw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=Ljnk4gec1UgNJAOMF5NSX/ehofgQAjsSLa8AJqd60P8=;
-        b=jRTNOGs+o4t1HcnBCWBiArp16DDTprjrYPmdAw98AVSG1OvAao8ZoLXFc2vZ2StsIG
-         39uWQqjkgdMWtdZyUoz9b9cKkqEze9d92SOvJyf9kymTgXkGf6FWINw5IcbFqFjBikYf
-         78Y/GPcyUr8E876jeJcHjpFIu2oy6ABUU27PLXpQlvrnsMBrkW1lpYyAgbPulQuXG6KS
-         qMGyk63RDpR30/kcUuKlFw4c9ffmgTGlgm8ec+COy9V7JNU5rjzOxmJ4VhjTfQgbbSeC
-         K9346T5POgBHFlmKy8RbO/rm9WDnQBu9+8bWwzPiDALvIQoykqw0YqJWmYUGQo+oLWV+
-         ZEAQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3124918-1523473335-2-16120578073028612218
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523473334; b=fyiLreM78LRJVMAZKfqF1t1U0ugt8fBs3S45koaKzGwX6o//ol
+    Fh06G4mBQRifmmeeDAZucip7lDGBK71e6SeD7+4C66KJVoH1lZKBy6wEGFH5tYGz
+    d7roqHCh3EJ+HJy7PycPctZoOW24PyfF05hmRxpbn+wh0PO9ddu+eZZ1iBU9amkG
+    pVN3RNDg2gdc4cBqVRfC9SHETj/kSUCWeejV408lSswMeqcz+QwZ0ETnOj0+CY7F
+    VOuM1Ts2K9hv+dKOjSITSj8xxBwn7Syz0DKn8au4Pei57Co8Jj48CMame+mkEWXN
+    oFKPyVaBdg/EWJRmXY4KQCBiXzCChn6DEhKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523473334; bh=um+L26S3aRPI1ERO5jBju3AKlBaLBK
+    UYe9XHhqRXFOk=; b=SpZX/xt6BmFvL2KFIkLgBai/P4FDXm/RaSuT5unLUeXEL1
+    T7PNOY4gl5ig+kSi7LMJF/cUOnXvF0jmO5PRRyrBnssAicLxBuvrk9Ilyt0JYo0z
+    Tt2PuzAwd1TBLILZFlFIeCw3w2kZxZKvNBIF93OMELx75Cpm3XIw2uUmXIcBxCyw
+    z/7eCNcj8ralMtPETfifAIEUGcX5wALQb+/IDWb7vDMAkzDyctj4xHQNRSDaEEKW
+    oCRjZZ8EEQywZZ9QN6vCNauorQ9yTGhepxMMdJUcz7BcKhBp1r8vQiv6HECGw7hS
+    OwSSNGHw27i85nrOXCsvgJYvgjuIxfY3EVv0Rk2w==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfNCkYk9cjOzrqPVeoA8jEw/Czk/+g9zIlBrf1GX0XQwYeFIfmNcSuf5t4GLIeYP05NUeVg/SuK73nKERXwyjL/MZ307nKh9Ha5HqeBn6G9vATrx4KpS1
+    jistDJ0GoE569nSryIAol2Zxa4hfSAKAM4HaGZrxXyfNdCj7XnxutWXeRkjGRwDyaa8J6THFpM5Dx7kTkyRAT93YY+uiFhbME0AyrRYb+k24k78ky3OLciT6
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=QyXUC8HyAAAA:8 a=dq2cNPrMAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=CzBr3tW7OWP3a5FgOU0A:9 a=QEXdDO2ut3YA:10 a=UrzWRhJOTTn3oDX10iyi:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S934378AbeDKTCJ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 15:02:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38414 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934356AbeDKTCH (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:02:07 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	A Sun <as1033x@comcast.net>,
-	Sean Young <sean@mess.org>,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 209/310] [media] mceusb: sporadic RX truncation corruption fix
-Date: Wed, 11 Apr 2018 20:35:48 +0200
-Message-Id: <20180411183631.559421963@linuxfoundation.org>
+        stable@vger.kernel.org, David Mirabito <davidm@metamako.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 206/310] igb: fix race condition with PTP_TX_IN_PROGRESS bits
+Date: Wed, 11 Apr 2018 20:35:45 +0200
+Message-Id: <20180411183631.431217258@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -40,10 +85,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476243727187233?=
-X-GMAIL-MSGID: =?utf-8?q?1597477576315138631?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,48 +95,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: A Sun <as1033x@comcast.net>
+From: Jacob Keller <jacob.e.keller@intel.com>
 
 
-[ Upstream commit 8e175b22e8640bf3a58e071af54190b909e4a944 ]
+[ Upstream commit 4ccdc013b0ae04755a8f7905e0525955d52a77d0 ]
 
-Intermittent RX truncation and loss of IR received data. This resulted
-in receive stream synchronization errors where driver attempted to
-incorrectly parse IR data (eg 0x90 below) as command response.
+Hardware related to the igb driver has a limitation of only handling one
+Tx timestamp at a time. Thus, the driver uses a state bit lock to
+enforce that only one timestamp request is honored at a time.
 
-[ 3969.139898] mceusb 1-1.2:1.0: processed IR data
-[ 3969.151315] mceusb 1-1.2:1.0: rx data: 00 90 (length=2)
-[ 3969.151321] mceusb 1-1.2:1.0: Unknown command 0x00 0x90
-[ 3969.151336] mceusb 1-1.2:1.0: rx data: 98 0a 8d 0a 8e 0a 8e 0a 8e 0a 8e 0a 9a 0a 8e 0a 0b 3a 8e 00 80 41 59 00 00 (length=25)
-[ 3969.151341] mceusb 1-1.2:1.0: Raw IR data, 24 pulse/space samples
-[ 3969.151348] mceusb 1-1.2:1.0: Storing space with duration 500000
+Unfortunately this suffers from a simple race condition. The bit lock is
+not cleared until after skb_tstamp_tx() is called notifying the stack of
+a new Tx timestamp. Even a well behaved application which sends only one
+timestamp request at once and waits for a response might wake up and
+send a new packet before the bit lock is cleared. This results in
+needlessly dropping some Tx timestamp requests.
 
-Bug trigger appears to be normal, but heavy, IR receiver use.
+We can fix this by unlocking the state bit as soon as we read the
+Timestamp register, as this is the first point at which it is safe to
+unlock.
 
-Signed-off-by: A Sun <as1033x@comcast.net>
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+To avoid issues with the skb pointer, we'll use a copy of the pointer
+and set the global variable in the driver structure to NULL first. This
+ensures that the next timestamp request does not modify our local copy
+of the skb pointer.
+
+This ensures that well behaved applications do not accidentally race
+with the unlock bit. Obviously an application which sends multiple Tx
+timestamp requests at once will still only timestamp one packet at
+a time. Unfortunately there is nothing we can do about this.
+
+Reported-by: David Mirabito <davidm@metamako.com>
+Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/rc/mceusb.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/igb/igb_ptp.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/media/rc/mceusb.c
-+++ b/drivers/media/rc/mceusb.c
-@@ -1381,8 +1381,13 @@ static int mceusb_dev_probe(struct usb_i
- 		goto rc_dev_fail;
+--- a/drivers/net/ethernet/intel/igb/igb_ptp.c
++++ b/drivers/net/ethernet/intel/igb/igb_ptp.c
+@@ -721,6 +721,7 @@ void igb_ptp_rx_hang(struct igb_adapter
+  **/
+ static void igb_ptp_tx_hwtstamp(struct igb_adapter *adapter)
+ {
++	struct sk_buff *skb = adapter->ptp_tx_skb;
+ 	struct e1000_hw *hw = &adapter->hw;
+ 	struct skb_shared_hwtstamps shhwtstamps;
+ 	u64 regval;
+@@ -748,10 +749,17 @@ static void igb_ptp_tx_hwtstamp(struct i
+ 	shhwtstamps.hwtstamp =
+ 		ktime_add_ns(shhwtstamps.hwtstamp, adjust);
  
- 	/* wire up inbound data handler */
--	usb_fill_int_urb(ir->urb_in, dev, pipe, ir->buf_in, maxp,
--				mceusb_dev_recv, ir, ep_in->bInterval);
-+	if (usb_endpoint_xfer_int(ep_in))
-+		usb_fill_int_urb(ir->urb_in, dev, pipe, ir->buf_in, maxp,
-+				 mceusb_dev_recv, ir, ep_in->bInterval);
-+	else
-+		usb_fill_bulk_urb(ir->urb_in, dev, pipe, ir->buf_in, maxp,
-+				  mceusb_dev_recv, ir);
+-	skb_tstamp_tx(adapter->ptp_tx_skb, &shhwtstamps);
+-	dev_kfree_skb_any(adapter->ptp_tx_skb);
++	/* Clear the lock early before calling skb_tstamp_tx so that
++	 * applications are not woken up before the lock bit is clear. We use
++	 * a copy of the skb pointer to ensure other threads can't change it
++	 * while we're notifying the stack.
++	 */
+ 	adapter->ptp_tx_skb = NULL;
+ 	clear_bit_unlock(__IGB_PTP_TX_IN_PROGRESS, &adapter->state);
 +
- 	ir->urb_in->transfer_dma = ir->dma_in;
- 	ir->urb_in->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
++	/* Notify the stack and free the skb after we've unlocked */
++	skb_tstamp_tx(skb, &shhwtstamps);
++	dev_kfree_skb_any(skb);
+ }
  
+ /**
