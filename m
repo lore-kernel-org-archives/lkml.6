@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+IED1LkJXHXln4pUCIZ7aUxvjXHHynArvaKcmHhCxyd1LFT/k7BDZenHEsz1b6lOQL28QM
-ARC-Seal: i=1; a=rsa-sha256; t=1523473191; cv=none;
+X-Google-Smtp-Source: AIpwx4+rLdAx7CtG1M/wIHg610Q10rpXbU0wrW+BR1bPpie9+1MTzdnTaaCZm/kdCJMK37Eebw4p
+ARC-Seal: i=1; a=rsa-sha256; t=1523473189; cv=none;
         d=google.com; s=arc-20160816;
-        b=EllFrAF9yGP0pNdSjH5dusObUoVviuxOiP4i05v+j7EJdkeguzZ8B5B0DQwkuxB5nC
-         jkjYJv1TUfz10hLaDOc0OmldpkBaiF/f33uHUPiqpAe6M1gJ58QZE18qbxF8hQd1zaXE
-         DzBqtIJOSHffNDXZjbLMx0L0cjMjZg3xjRbN9VZIvXy+tdDv3vZrHgVTSAMEIk9GWqsG
-         kGsKgOox2G/9JUvgWQS13r6UbYsX60MkUlLJw+28Iil5U0yEzwBzq33YVo65GSthpci/
-         jCEZ40glpJSntBvpiZOU0ouLSFVAjd7DJzFKyxdTy5p4cH1gtuz9TsPyeZok41IMOAo/
-         pfaA==
+        b=dKODePA4pxC71+Oc/THE2ZNeDxZMIoO59zDKh0C2WwL04428eiGtjlYmLY7lYUDeS0
+         pfTRo3yf3D7fi5E5opWtQ5+LLxSgItNm728Aos0FPQOAVLELFDhKowhIi21OUd0mcQSn
+         UoZpohf+5oNQRvA6s7Hwl5mcTmlXX4xDxkoxJAWMDw+Ki9B2L6qzUpdCciUMQ8b0R9FN
+         lHvU2Xf/HiTCZIlg4zVdEDtr3jM7Xy7+eCEkm6SrBJxr1tkLS8cVE3BnMoPPKnw6R7DE
+         RHQSs4hbumhE1ji3052m1mTwZpezeK0tAyXHhRpkQIbVrCLicQk07Jahog9/boZD/r2H
+         iA3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=0aRwkOq6G6CJO2frDX18YjC26FdqQ9zMRG+6ogftolE=;
-        b=QtNrv6XTYqyQ/ekfL51qyjK4Dfu3xBxd++dNEamWLcGVD8CFMYqLFqNRS6386WRVOT
-         0yg5zChgG+t6SDv7rerNpXELevUvcWkfqpUJ/2EGek9oqgyl74NJRTZB+vEFG3XmymQJ
-         QG3LVFWgEj/vHHYpQ4tog6KpfRsUHCL1QX813aPGWBam6QD++/+iRzhEJS/rpBG5DLYv
-         svJ/MAKVyP41DXarAzvTijeKPj+2wgvTX0MLr41cFGv4PG9Gz2nZSMCqgvikf4vIlizB
-         LbuJM4XMw3WuQfoomwuEq3LvPa62rMREa6L8L0C+E+QddbT8XLFx4gm7ljkhe/hePhNE
-         GzxA==
+        bh=aPVHiF/XwFqDdQ5zIme4HuqWm3oiM3RaYP5d67B4Kso=;
+        b=BOldq28O/49aP743g38lvNthPqLLc4sK8STOzzO4eq7WQaKbCTLg7qWxt3S8hvMWYT
+         w5tOE42UCtS2BgMRHvmYArV3G9oQJ9GTgxpXCjMGCR7kTU3OrwTEqxW4hxkZb1RtPDwo
+         LUvQ+rDesm4BmVV3pgW4+dxHGuzW7YcoIQafxkYiIZ2NgWO//k2lzV/U9+98ZY65xKCL
+         ipEO98lVSYLscnf3Bga5/rOKGthwZBbQMKOErZnBNjxvtjtgs96SG4sfmRnhRxG+kQ1T
+         v43z5KpWU8kafqCoZOT9Ryc6TEE8wKAXrKesJ4Bm/OBhuAcesVzap83Mp7tO036X52EN
+         252A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arjun Vynipadath <arjun@chelsio.com>,
-	Steve Wise <swise@opengridcomputing.com>,
-	Ganesh Goudar <ganeshgr@chelsio.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Sebastian Sanchez <sebastian.sanchez@intel.com>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Dennis Dalessandro <dennis.dalessandro@intel.com>,
+	Doug Ledford <dledford@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 159/310] cxgb4: Fix netdev_features flag
-Date: Wed, 11 Apr 2018 20:34:58 +0200
-Message-Id: <20180411183629.234879736@linuxfoundation.org>
+Subject: [PATCH 4.9 141/310] IB/rdmavt: Allocate CQ memory on the correct node
+Date: Wed, 11 Apr 2018 20:34:40 +0200
+Message-Id: <20180411183628.515763157@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477425550607885?=
-X-GMAIL-MSGID: =?utf-8?q?1597477425550607885?=
+X-GMAIL-THRID: =?utf-8?q?1597477422829604323?=
+X-GMAIL-MSGID: =?utf-8?q?1597477422829604323?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,48 +52,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arjun Vynipadath <arjun@chelsio.com>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
 
-[ Upstream commit 90592b9a35836bacd34d92a3aba7958756b6a7c0 ]
+[ Upstream commit db9a2c6f9b6196b889b98e961cb9a37617b11ccf ]
 
-GRO is not supported by Chelsio HW when rx_csum is disabled.
-Update the netdev features flag when rx_csum is modified.
+CQ allocation does not ensure that completion queue entries
+and the completion queue structure are allocated on the correct
+numa node.
 
-Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
-Signed-off-by: Steve Wise <swise@opengridcomputing.com>
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fix by allocating the rvt_cq and kernel CQ entries on the device node,
+leaving the user CQ entries on the default local node.  Also ensure
+CQ resizes use the correct allocator when extending a CQ.
+
+Reviewed-by: Sebastian Sanchez <sebastian.sanchez@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/infiniband/sw/rdmavt/cq.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
-@@ -2742,6 +2742,16 @@ static int cxgb_setup_tc(struct net_devi
- 	return -EOPNOTSUPP;
- }
+--- a/drivers/infiniband/sw/rdmavt/cq.c
++++ b/drivers/infiniband/sw/rdmavt/cq.c
+@@ -197,7 +197,7 @@ struct ib_cq *rvt_create_cq(struct ib_de
+ 		return ERR_PTR(-EINVAL);
  
-+static netdev_features_t cxgb_fix_features(struct net_device *dev,
-+					   netdev_features_t features)
-+{
-+	/* Disable GRO, if RX_CSUM is disabled */
-+	if (!(features & NETIF_F_RXCSUM))
-+		features &= ~NETIF_F_GRO;
-+
-+	return features;
-+}
-+
- static const struct net_device_ops cxgb4_netdev_ops = {
- 	.ndo_open             = cxgb_open,
- 	.ndo_stop             = cxgb_close,
-@@ -2766,6 +2776,7 @@ static const struct net_device_ops cxgb4
- #endif
- 	.ndo_set_tx_maxrate   = cxgb_set_tx_maxrate,
- 	.ndo_setup_tc         = cxgb_setup_tc,
-+	.ndo_fix_features     = cxgb_fix_features,
- };
+ 	/* Allocate the completion queue structure. */
+-	cq = kzalloc(sizeof(*cq), GFP_KERNEL);
++	cq = kzalloc_node(sizeof(*cq), GFP_KERNEL, rdi->dparms.node);
+ 	if (!cq)
+ 		return ERR_PTR(-ENOMEM);
  
- #ifdef CONFIG_PCI_IOV
+@@ -213,7 +213,9 @@ struct ib_cq *rvt_create_cq(struct ib_de
+ 		sz += sizeof(struct ib_uverbs_wc) * (entries + 1);
+ 	else
+ 		sz += sizeof(struct ib_wc) * (entries + 1);
+-	wc = vmalloc_user(sz);
++	wc = udata ?
++		vmalloc_user(sz) :
++		vzalloc_node(sz, rdi->dparms.node);
+ 	if (!wc) {
+ 		ret = ERR_PTR(-ENOMEM);
+ 		goto bail_cq;
+@@ -368,7 +370,9 @@ int rvt_resize_cq(struct ib_cq *ibcq, in
+ 		sz += sizeof(struct ib_uverbs_wc) * (cqe + 1);
+ 	else
+ 		sz += sizeof(struct ib_wc) * (cqe + 1);
+-	wc = vmalloc_user(sz);
++	wc = udata ?
++		vmalloc_user(sz) :
++		vzalloc_node(sz, rdi->dparms.node);
+ 	if (!wc)
+ 		return -ENOMEM;
+ 
