@@ -1,74 +1,32 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757497AbeDKUWA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 16:22:00 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:58957 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756709AbeDKUV5 (ORCPT
+        id S1757538AbeDKUYZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 16:24:25 -0400
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:35114 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756108AbeDKUYW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 16:21:57 -0400
-Date: Wed, 11 Apr 2018 22:21:37 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Dou Liyang <douly.fnst@cn.fujitsu.com>
-cc: peterz@infradead.org, lirongqing@baidu.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
-        linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/urgent] x86/apic: Fix signedness bug in APIC ID validity
- checks
-In-Reply-To: <e66e1b1d-a8d0-ce74-f3c6-4bdc4432efb7@cn.fujitsu.com>
-Message-ID: <alpine.DEB.2.21.1804112221080.1564@nanos.tec.linutronix.de>
-References: <1523322966-10296-1-git-send-email-lirongqing@baidu.com> <tip-a774635db5c430cbf21fa5d2f2df3d23aaa8e782@git.kernel.org> <e66e1b1d-a8d0-ce74-f3c6-4bdc4432efb7@cn.fujitsu.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 11 Apr 2018 16:24:22 -0400
+X-Google-Smtp-Source: AIpwx4/S5VueUNygFrLi4g03FMjdXfRE+cUq5oPDl+/FBNMgt2IolvpUXBOhRA91n8Svb31qj9cO6A==
+Date: Wed, 11 Apr 2018 23:24:19 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+Subject: Re: [PATCH] proc: fixup =?iso-8859-1?Q?=A9?= =?iso-8859-1?Q?_sign?=
+Message-ID: <20180411202419.GA13294@avx2>
+References: <20180411201950.GA12904@avx2>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1987243463-1523478097=:1564"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180411201950.GA12904@avx2>
+User-Agent: Mutt/1.7.2 (2016-11-26)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, Apr 11, 2018 at 11:19:50PM +0300, Alexey Dobriyan wrote:
+> Andrew's scripts butchered it :-(
 
---8323329-1987243463-1523478097=:1564
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+OK
 
-On Wed, 11 Apr 2018, Dou Liyang wrote:
-
-> Hi Thomas,
-> 
-> At 04/10/2018 10:51 PM, tip-bot for Li RongQing wrote:
-> [...]
-> 
-> > x86/apic: Fix signedness bug in APIC ID validity checks
-> > 
-> > The APIC ID as parsed from ACPI MADT is validity checked with the
-> > apic->apic_id_valid() callback, which depends on the selected APIC type.
-> > 
-> > For non X2APIC types APIC IDs >= 0xFF are invalid, but values > 0x7FFFFFFF
-> 
-> Today when I am reading "Intel® 64 Architecture x2APIC Specification", I
-> find that below in chapter 2.4.1:
-> 
->   The APIC ID value of FFFF_FFFFH and the highest value corresponding to
->   the imple-mented bit-width of the local APIC ID register in the system
->   are reserved and cannot be assigned to any logical processor.
-> 
-> Seems, FFFF_FFFFH is also invalid for X2APIC types, Shall we also do the
-> validity check for X2APIC ID?
-> 
-> acpi_parse_x2apic()
-> 	...
-> 	/* Ignore invalid ID */
-> 	if (apic_id == 0xffffffff)
-> 		return 0;
-
-Yes. I noticed that as well and just did not come around to write the
-patch.
-
-Thanks,
-
-	tglx
---8323329-1987243463-1523478097=:1564--
+It got sent from here as iso8859-1.
