@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3374234-1523481748-2-1658607552714814396
+X-Cyrus-Session-Id: sloti22d1t05-3397032-1523481726-2-8741023691172052531
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523481747; b=YMhx8fAa92aGI9kkaUodGkh9Infr0PXaY5qjx5svHRIL0vG0zp
-    5ZmYNWDPNk+Q3SFr4R2TGPlBbIXCwh37M2qyqNUHeB2L9cSn38aJmVp8Wo1qoMtO
-    NUbSpHRfoXzh98/4pIJz41FmjD9p8NV6usyxMxBEVJhHL9rN4mOofV/cV0Gw7a6c
-    0a4ZDRkGUZqkXvYfIO94t/hi+Tq4btbCZJFKTNvtSoNHExqe/1/zJ5f9sin4Okn8
-    AGRCw7jmeY0G+kLXHQH49C0mxRtfZgWHo69VUpseDRpYQbyEOrqT1P27gm8UWt6L
-    TUSDSVkT/HMSj8m9+SDqMOxivJoRSb9JwKBA==
+    1523481725; b=SJT6EBNbdQy5LezvAc0zezKdNbbqithPvWIUNHJSRJeAyvrdyq
+    gppRuARgsUq9Xg3d+m3R72k/ZUXGNNlkNDmXW5Q0HZSmOvxYaZI0XOc+cdL/Q1X/
+    Y589y0McC+S/eO2fF4WF9XTAcdEnXwkf8Q/WQlE1V5G7a1sjdwqY22KuCS5K/yn4
+    6EBa5AEKLEmsTIqI5TsVgbzy71gNCt9BfNoRazWktEIeSaMrbrWRsDGkz0kjKjsc
+    YyeMyKE/x7pm41zIg9TRctUVC4XvZBSwo5tAI8NHNBP5ChGhqakEgP+sdjZ9lbNW
+    d/aFV8ZoeVvy1qBnfIzyhXUu217ZK50KkEqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523481747; bh=RlBaWcGWKPXALgtEuogo70MnFy3ErI
-    Dg6DiRxKqbVVU=; b=PXmSecAJr/wl9Pgd59kgEIMSjiU2qefGvHqK6YRUs1aKrF
-    KgF9Czg8h34CX3MXPJNBCKayOgG4y+HXAZGIzY5Xvo515lYs4HYVq9PdR8zY2C12
-    44g66YdaEinNX4wogEJoz9kI+aerwnUjnK8yfV422AJvs6jDR29ACSQHClCR1Nek
-    iIVsMCzizGFb63CrbVLOHw5jxwHmzSdVegW/RiXdNPV3gaOBVCy5whiZTJNN8NUk
-    lEEcb/NZBBtTPaanXYpNTQNcvTIXL9UyE6U47Zzx7sOcwrqWfkgsReWLeDEja5lM
-    v/ykinwLehCeUW05glBMo4KOiyBIoBqTceMiPFyw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523481725; bh=evThJ80OnVEYGGJ+cympjDbt3ovjXq
+    FpP23v3CKCoMA=; b=j+A8O6NPrRFxly/xwaTjYFMplGZtTTrwJ6cutGA2vAbNNE
+    /h1f8lXZ8v5Zm6uyQtZmQtiJi2aBEuahGufv7EepP6dk/xIyeghvEPImuijsAw28
+    oE51NCAcQnFEalba+BgbDTCbL4HSFZDYchU16VX/DrrD8SlCkyhA1JVUsoK9TadC
+    HYmBgEMBRfxgXaFooB/U/JXN9wCR469eArhebQbHa22akaS0UL5EOp9vzRCGFXaf
+    L1ZmxW/RLOZroOG69VkKxNP0RaS3mwzP6fWRU5Fzxk3nv0LzB0KZl7gx19qjeILP
+    gTG/mDUIh1Grg/CgEmYWGrUx/oF574C0qvzdMrNQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,31 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBNmg3gGDcRZbha9bUiQuq1WKtfGTe11WEgF2ShSiRrC2nMI1WaL4bhNTdMX2ESJo/tpsdIFm0y7ES/bFgnvT2YC7sv8Em5q6qaqnOoLwWcubktmB7jq
-    T1guIuJiXzwNm8kpLaN6nybkenkKLaQsZWzXclsm1AuKyeM0xGEOpN6kb7lq9xQrO4AXIY+jj8Oxxtwa7z7jQGTn59XwbNZVhd688cn8mFodqhnwWFS7eYVo
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfG/gj1BEGeKow5sqMYd+rTo34hLiaWVJXiJMafJ3YfIlVkzPbNc+5QaKhxEYZEnlTv7//ydHR+bqsO3uGjX3R3mOsADnQxGr7XN58sjaNziTuzYArnhm
+    y7eJ72w7WlPU8ZGyZVsGoof+GWsmn/YCA/99nK+lkA2sed2ACkco9zzkRNHnnGSJ6dGDQE8KUKBUQZ5YDSaiG7B5WHN/fzT/+n3rhkCDP2h3ZC+26XtPxyAk
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=P1BnusSwAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=UsjPlrKyebQagM4GtYIA:9 a=QEXdDO2ut3YA:10 a=D0XLA9XvdZm18NrgonBM:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=DfNHnWVPAAAA:8 a=EUspDBNiAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=mFJlSFYP1aaS0j_PnB4A:9 a=QEXdDO2ut3YA:10 a=rjTVMONInIDnV1a_A2c_:22
+    a=rMCfJy6NHDicN4J276Yl:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754278AbeDKSjF (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:39:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55604 "EHLO
+        id S1754894AbeDKVVu (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 17:21:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55618 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754251AbeDKSjD (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:39:03 -0400
+        with ESMTP id S1754285AbeDKSjG (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:39:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Kalle Valo <kvalo@qca.qualcomm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 032/121] sh_eth: Use platform device for printing before register_netdev()
-Date: Wed, 11 Apr 2018 20:35:35 +0200
-Message-Id: <20180411183458.034766543@linuxfoundation.org>
+Subject: [PATCH 3.18 033/121] ath5k: fix memory leak on buf on failed eeprom read
+Date: Wed, 11 Apr 2018 20:35:36 +0200
+Message-Id: <20180411183458.093745995@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -95,38 +93,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Colin Ian King <colin.king@canonical.com>
 
 
-[ Upstream commit 5f5c5449acad0cd3322e53e1ac68c044483b0aa5 ]
+[ Upstream commit 8fed6823e06e43ee9cf7c0ffecec2f9111ce6201 ]
 
-The MDIO initialization failure message is printed using the network
-device, before it has been registered, leading to:
+The AR5K_EEPROM_READ macro returns with -EIO if a read error
+occurs causing a memory leak on the allocated buffer buf. Fix
+this by explicitly calling ath5k_hw_nvram_read and exiting on
+the via the freebuf label that performs the necessary free'ing
+of buf when a read error occurs.
 
-     (null): failed to initialise MDIO
+Detected by CoverityScan, CID#1248782 ("Resource Leak")
 
-Use the platform device instead to fix this:
-
-    sh-eth ee700000.ethernet: failed to initialise MDIO
-
-Fixes: daacf03f0bbfefee ("sh_eth: Register MDIO bus before registering the network device")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/renesas/sh_eth.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath5k/debug.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -2933,7 +2933,7 @@ static int sh_eth_drv_probe(struct platf
- 	/* MDIO bus init */
- 	ret = sh_mdio_init(mdp, pd);
- 	if (ret) {
--		dev_err(&ndev->dev, "failed to initialise MDIO\n");
-+		dev_err(&pdev->dev, "failed to initialise MDIO\n");
- 		goto out_release;
+--- a/drivers/net/wireless/ath/ath5k/debug.c
++++ b/drivers/net/wireless/ath/ath5k/debug.c
+@@ -939,7 +939,10 @@ static int open_file_eeprom(struct inode
+ 	}
+ 
+ 	for (i = 0; i < eesize; ++i) {
+-		AR5K_EEPROM_READ(i, val);
++		if (!ath5k_hw_nvram_read(ah, i, &val)) {
++			ret = -EIO;
++			goto freebuf;
++		}
+ 		buf[i] = val;
  	}
  
