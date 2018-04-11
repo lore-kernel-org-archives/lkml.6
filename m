@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx492TENvjUKnkpLztgnGvn0U8lW2WrUEKJ7RPG/XJFEJV1zDdvuqkF72TvlwSSWa4eKYFmsq
-ARC-Seal: i=1; a=rsa-sha256; t=1523473428; cv=none;
+X-Google-Smtp-Source: AIpwx48q+/3eV2B40SDloqMqdglPkZgrEhMyrPhb5Aje8DqtDTKjC5563eFR0v4i5Rb4IPHbCf42
+ARC-Seal: i=1; a=rsa-sha256; t=1523473425; cv=none;
         d=google.com; s=arc-20160816;
-        b=x6BlE/5300tLe26ysiEQDcrHTsB7SuTF4EqSGfMXoi2OuWlqQHorbdYOsc8XVeIbpC
-         nxCq9e2bUiD5IzcOiIEPTalvoxxUeXR5NHy9MmqjHBL9vAj3ktPsHX7/NTeeeCMLgkdc
-         vwNbsQab0svWDCe+/fIeHdqKoIGjAOr8hoDn6xPQkz85kUbsqicYU1yQw5AW9OMMM9PT
-         VPMMDvMWDwpStAA+hIz9ez65SijhJCIYe7Zh3z6aUfiOCwC/tMaIximL4TLtlrmKotf+
-         ux2JmBJour59YSpERb0rzu2v6MW9IAhz2yLNi9dvTJgRqPUDA+mkV8tAs+RIqH+Ufgxr
-         S+Hw==
+        b=viWADR9v60MMFlQTTLmf4mkas5voe76lBkcO32NwGPpjtU2wRjDhXXEMAdu/jXFavz
+         UbVpesJopAMEcWBL3NgrtpDeq2XoVIGfvUgzW7Gf1N4Un+0afNQs51I7fyq+a6h7k+XH
+         ie3h4xYjLyFqHLeGMFbDP6mHRwDjCh/RMUHlsp1T2crq7nDsinCngVFkaw316k4iQlBa
+         qCcvLuzx/hZVTj5uF4IaYyhuOkcCtI3yjbYA8YBcgocrARLXw0fXXw/iFNJdMnSkHTOm
+         7P8HD/nNSmhEAnBaITrndxMQ9MD+DW+INVCgAWjCA/z2ibL8aLNEieBKDEM3/J5kPdSY
+         VUqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=SLkGbyxM9uQ7K4nZeouZvSRBH4BgeVPIzxbq4e7B74M=;
-        b=o1Hkc5aDboN5/Q44oJ8kwCGxQZS/qZHXchtfLTnmbGF/xex0wtM8zan/s3Pcg8ZiJg
-         y+Z4ugLIrXerHPc0f5eTkZmIJonPrO4LmknexZjggtIVLNXSJmu2Bp7fRSflSS9ZMm4Q
-         fBU/5j7vy+9myP3XRH9hITTvTFJ9brX866W+2hTlRVVlcyH9W4ZkUxTFwc1jGsEl3zzI
-         nJuxOdXLtW3+c4Pq+qYB/8WlbFTLW0rAftz9XJdwmsUtrTG8EyF4pRJ8MozZCxFyzZdS
-         /MRS1m3LibNGNSmMQukrDWdSrmV92eFVecQ3TEJEPivlPav/VOT2URayMuJlgIORlUIr
-         COZQ==
+        bh=bCEfoGLl6jvDCKlBy24evDAuWtpceRiH/ldLkfL4F/s=;
+        b=qWyAnmyjkuzyaBWeNxO4dg510TF+V3OEq3UE7OE7D9ivuRgjf7PKG5arhTC7SZsIl9
+         TO/bPD3Fkya+phWbg4vXlPA+/J4Vd0um+u9VjccXwNy6aNuh+iDn7Iohb4yqDeKHHZYl
+         GAj5KNskGOzrOwT1J8RlTvSGNoD16wD8GCUU7/Cfn5c8QrV7jcHQq+9lA4quwMbOFCfj
+         /Fx8JLUQMnPZFoFq9FSJLe9BDfe5PrSkCv6f1kvx/6Eds2sr7ZfAyZ35/EcmcR3VglSJ
+         FXiZj5LLd6zeXSrRmw3RZX9gbue5FrlhP+FRoiOFQkJ1wBhAcmhV8RWLPh/S0CN3VDFe
+         N/Fw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Netanel Belgazal <netanel@amazon.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 243/310] net: ena: add missing return when ena_com_get_io_handlers() fails
-Date: Wed, 11 Apr 2018 20:36:22 +0200
-Message-Id: <20180411183632.928093211@linuxfoundation.org>
+Subject: [PATCH 4.9 242/310] net: ena: fix race condition between submit and completion admin command
+Date: Wed, 11 Apr 2018 20:36:21 +0200
+Message-Id: <20180411183632.888271625@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477673424025462?=
-X-GMAIL-MSGID: =?utf-8?q?1597477673424025462?=
+X-GMAIL-THRID: =?utf-8?q?1597477670921492479?=
+X-GMAIL-MSGID: =?utf-8?q?1597477670921492479?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,7 +53,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Netanel Belgazal <netanel@amazon.com>
 
 
-[ Upstream commit 2d2c600a917127f16f179d5a88fc44ba3ed263ed ]
+[ Upstream commit 661d2b0ccef6a63f48b61105cf7be17403d1db01 ]
+
+Bug:
+"Completion context is occupied" error printout will be noticed in
+dmesg.
+This error will cause the admin command to fail, which will lead to
+an ena_probe() failure or a watchdog reset (depends on which admin
+command failed).
+
+Root cause:
+__ena_com_submit_admin_cmd() is the function that submits new entries to
+the admin queue.
+The function have a check that makes sure the queue is not full and the
+function does not override any outstanding command.
+It uses head and tail indexes for this check.
+The head is increased by ena_com_handle_admin_completion() which runs
+from interrupt context, and the tail index is increased by the submit
+function (the function is running under ->q_lock, so there is no risk
+of multithread increment).
+Each command is associated with a completion context. This context
+allocated before call to __ena_com_submit_admin_cmd() and freed by
+ena_com_wait_and_process_admin_cq_interrupts(), right after the command
+was completed.
+
+This can lead to a state where the head was increased, the check passed,
+but the completion context is still in use.
+
+Solution:
+Use the atomic variable ->outstanding_cmds instead of using the head and
+the tail indexes.
+This variable is safe for use since it is bumped in get_comp_ctx() in
+__ena_com_submit_admin_cmd() and is freed by comp_ctxt_release()
 
 Fixes: 1738cd3ed342 ("Add a driver for Amazon Elastic Network Adapters (ENA)")
 Signed-off-by: Netanel Belgazal <netanel@amazon.com>
@@ -61,24 +92,22 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/amazon/ena/ena_netdev.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/amazon/ena/ena_com.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-+++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-@@ -1542,6 +1542,7 @@ static int ena_create_io_tx_queue(struct
- 			  "Failed to get TX queue handlers. TX queue num %d rc: %d\n",
- 			  qid, rc);
- 		ena_com_destroy_io_queue(ena_dev, ena_qid);
-+		return rc;
- 	}
+--- a/drivers/net/ethernet/amazon/ena/ena_com.c
++++ b/drivers/net/ethernet/amazon/ena/ena_com.c
+@@ -232,11 +232,9 @@ static struct ena_comp_ctx *__ena_com_su
+ 	tail_masked = admin_queue->sq.tail & queue_size_mask;
  
- 	ena_com_update_numa_node(tx_ring->ena_com_io_cq, ctx.numa_node);
-@@ -1606,6 +1607,7 @@ static int ena_create_io_rx_queue(struct
- 			  "Failed to get RX queue handlers. RX queue num %d rc: %d\n",
- 			  qid, rc);
- 		ena_com_destroy_io_queue(ena_dev, ena_qid);
-+		return rc;
+ 	/* In case of queue FULL */
+-	cnt = admin_queue->sq.tail - admin_queue->sq.head;
++	cnt = atomic_read(&admin_queue->outstanding_cmds);
+ 	if (cnt >= admin_queue->q_depth) {
+-		pr_debug("admin queue is FULL (tail %d head %d depth: %d)\n",
+-			 admin_queue->sq.tail, admin_queue->sq.head,
+-			 admin_queue->q_depth);
++		pr_debug("admin queue is full.\n");
+ 		admin_queue->stats.out_of_space++;
+ 		return ERR_PTR(-ENOSPC);
  	}
- 
- 	ena_com_update_numa_node(rx_ring->ena_com_io_cq, ctx.numa_node);
