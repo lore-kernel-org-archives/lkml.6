@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49IaAx2BkvRnQd8hS470V3diYJP2aeUVgZ/fG+cTV7yKehZXWlYAfXUYsv44AyKLYRm/Eew
-ARC-Seal: i=1; a=rsa-sha256; t=1523472588; cv=none;
+X-Google-Smtp-Source: AIpwx49QXKNtl6a1s9RkV84RDnDlA+ZazNj7bJyHZ5Yus0RoURPiAg415bW1gAfuaQjwgQdW+k4K
+ARC-Seal: i=1; a=rsa-sha256; t=1523472585; cv=none;
         d=google.com; s=arc-20160816;
-        b=xCWTiTKIg/E1ctSky/4sjlVKje9Vsm8KUw+RaB+cRP7yB30urX2NLG8ZpzZgo2bZgC
-         11FiC7rILkxrjEBWYHNmPL8NEDNvG4aDbszva93C2uIwTafIhS+BzKSRSXrB+CKFgXJ5
-         Zkn6Q3VHLkdEmdnPy5S74HuWwb8tnaOQKYwqS8ucKSrOQu9h+2p/NnY+VP3LjDk/11ww
-         9X1wVrxV90ZsbIzz1pY9NJcVuzrmbOTXFRtkRxR1SHuSxyrXK7w9HFFcihKhGbRABT5B
-         tLyMCZvVIWiSh/BRAse8J05dx6FLzBzN2j0Tl1TIcGYczcHoeDYk6riowZOxg7roknMU
-         bf+A==
+        b=Bs7wyObMhpADJavxu8BSa00mLyj1Yuzk/7BE6e37Zd2t0OocnYZGocdvj+0EoNt8YJ
+         bfuTBwjxbEpBtqrVI2kznQ7LM0X1V0+Hud2EtETewFnQbgFogRO6hAD2FMNat4MbjcGj
+         XLOjYAzvUk1vepDxVsIUlazucZ0QPMToHjoJ+U2e56PPDyt2SUAS7r1DciUawufpk0n1
+         q7dy1L4I8oMcACc9UkS1LTfj9zJVdz0hz0gF8THMTMAiGhmzGeInc70Nj5dkK2us31P+
+         eAq1azpZCtCl1YGxDifGXRg/ROjywLrUJhjCLMQY1ii62CTHcEvoA+iXfXJJ6JctY54S
+         aZZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=844I6eU+6AT8u0YvtIVcq+SjZ+sAKJxITQkwYsRrb14=;
-        b=pS8CuVBWSVGiGwOMMNN/PbJSBYff1Udw1FStTWs6FGvZuhGYdQpl6qInvQihA9QFeF
-         fcn8m0krLVxVYz/M+2DFgCns2XIulzrj0Ujf54OhfQHQDjlrY84m4nmqj6A9f9BS7v8b
-         gG+YlxspruzFgz/VDCSpCuVnUgZqB+6atUV+b6c7JXQMUocHhW3839DOfNDaLkyuXXG9
-         FcYZ5corjLhIY2nkSdZqi85K0sBNjQVjD2+MJX/LefjQYWbBvTiNiQVl8HpuFJMxob+D
-         kW0BzeBvb5iIi2enveEiaNgh/scnOIS1z3zGRo4/EhJHbZMCOtGs0RVLMf9YXWZ13i6r
-         OZ+g==
+        bh=9tJuar9MI15L/HIROLz1N2Mu1H7pyTcWgMueTLhhnvc=;
+        b=uSM4EY723agxM78XU1ENagp9vGP96iMPycPdMTf0AT/SwlLEYxLVes+2Vm5odZhseB
+         xsEqHYubuFmQlRRDjQwofjKfURmyCp7lyF/7Da9Zazn9dNs0pecTtS/m4pykBh1BCwyd
+         /mlLjKRgCDY+K+kw5Qa31VVHUBYTV9IBZQyFj1OyzwukJfk3n9oZhdOolSJ8Urx1VXvi
+         XSw0YOyVc0Fwd8cqWUPYDtgl3OseKs2pD7aYU5U95WFhH7HXs3vlMemx20xRPQgby8cL
+         ghi4u+gVWCrIgwSFnEZ9rGEShpSfzxcfw05t+Ecd2a8ClVQcfLFpYbZ/H+PF1aF4+rbf
+         K06g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	NeilBrown <neilb@suse.com>,
+	Trond Myklebust <trond.myklebust@primarydata.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 105/190] net: freescale: fix potential null pointer dereference
-Date: Wed, 11 Apr 2018 20:35:51 +0200
-Message-Id: <20180411183556.747142708@linuxfoundation.org>
+Subject: [PATCH 4.4 104/190] SUNRPC: ensure correct error is reported by xs_tcp_setup_socket()
+Date: Wed, 11 Apr 2018 20:35:50 +0200
+Message-Id: <20180411183556.672161741@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476191043922793?=
-X-GMAIL-MSGID: =?utf-8?q?1597476792675718021?=
+X-GMAIL-THRID: =?utf-8?q?1597476789904573594?=
+X-GMAIL-MSGID: =?utf-8?q?1597476789904573594?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,45 +50,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Gustavo A. R. Silva" <garsilva@embeddedor.com>
+From: NeilBrown <neilb@suse.com>
 
 
-[ Upstream commit 06d2d6431bc8d41ef5ffd8bd4b52cea9f72aed22 ]
+[ Upstream commit 6ea44adce91526700535b3150f77f8639ae8c82d ]
 
-Add NULL check before dereferencing pointer _id_ in order to avoid
-a potential NULL pointer dereference.
+If you attempt a TCP mount from an host that is unreachable in a way
+that triggers an immediate error from kernel_connect(), that error
+does not propagate up, instead EAGAIN is reported.
 
-Addresses-Coverity-ID: 1397995
-Signed-off-by: Gustavo A. R. Silva <garsilva@embeddedor.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This results in call_connect_status receiving the wrong error.
+
+A case that it easy to demonstrate is to attempt to mount from an
+address that results in ENETUNREACH, but first deleting any default
+route.
+Without this patch, the mount.nfs process is persistently runnable
+and is hard to kill.  With this patch it exits as it should.
+
+The problem is caused by the fact that xs_tcp_force_close() eventually
+calls
+      xprt_wake_pending_tasks(xprt, -EAGAIN);
+which causes an error return of -EAGAIN.  so when xs_tcp_setup_sock()
+calls
+      xprt_wake_pending_tasks(xprt, status);
+the status is ignored.
+
+Fixes: 4efdd92c9211 ("SUNRPC: Remove TCP client connection reset hack")
+Signed-off-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/freescale/fsl_pq_mdio.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ net/sunrpc/xprtsock.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/freescale/fsl_pq_mdio.c
-+++ b/drivers/net/ethernet/freescale/fsl_pq_mdio.c
-@@ -382,7 +382,7 @@ static int fsl_pq_mdio_probe(struct plat
- {
- 	const struct of_device_id *id =
- 		of_match_device(fsl_pq_mdio_match, &pdev->dev);
--	const struct fsl_pq_mdio_data *data = id->data;
-+	const struct fsl_pq_mdio_data *data;
- 	struct device_node *np = pdev->dev.of_node;
- 	struct resource res;
- 	struct device_node *tbi;
-@@ -390,6 +390,13 @@ static int fsl_pq_mdio_probe(struct plat
- 	struct mii_bus *new_bus;
- 	int err;
- 
-+	if (!id) {
-+		dev_err(&pdev->dev, "Failed to match device\n");
-+		return -ENODEV;
-+	}
-+
-+	data = id->data;
-+
- 	dev_dbg(&pdev->dev, "found %s compatible node\n", id->compatible);
- 
- 	new_bus = mdiobus_alloc_size(sizeof(*priv));
+--- a/net/sunrpc/xprtsock.c
++++ b/net/sunrpc/xprtsock.c
+@@ -2363,7 +2363,12 @@ static void xs_tcp_setup_socket(struct w
+ 	case -EHOSTUNREACH:
+ 	case -EADDRINUSE:
+ 	case -ENOBUFS:
+-		/* retry with existing socket, after a delay */
++		/*
++		 * xs_tcp_force_close() wakes tasks with -EIO.
++		 * We need to wake them first to ensure the
++		 * correct error code.
++		 */
++		xprt_wake_pending_tasks(xprt, status);
+ 		xs_tcp_force_close(xprt);
+ 		goto out;
+ 	}
