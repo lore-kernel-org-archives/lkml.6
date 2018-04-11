@@ -1,93 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753148AbeDKI6D (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 04:58:03 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:36151 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751983AbeDKIyP (ORCPT
+        id S1752802AbeDKI6g (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 04:58:36 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36668 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751972AbeDKI6d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 04:54:15 -0400
-X-UUID: 6fe4200660d3468c9923d3007197565e-20180411
-From: <sean.wang@mediatek.com>
-To: <robh+dt@kernel.org>, <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v2 10/12] arm: dts: mt7623: add MT7623A SoC level DTS
-Date: Wed, 11 Apr 2018 16:54:03 +0800
-Message-ID: <ff65685a9f121faf7fc03f0af3c6a5cd71b89081.1523434758.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1523434757.git.sean.wang@mediatek.com>
-References: <cover.1523434757.git.sean.wang@mediatek.com>
+        Wed, 11 Apr 2018 04:58:33 -0400
+X-Google-Smtp-Source: AIpwx4+aQj0slxY45aSAOQJKaRZX/KwcmiPYWQz6L2FkrTorJOpVbyLLyW4nRCorZEth+iN1282Puw==
+Subject: Re: [PATCH v3 4/7] thermal/drivers/Kconfig: Convert the CPU cooling
+ device to a choice
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
+        javi.merino@kernel.org, rui.zhang@intel.com,
+        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
+        Amit Daniel Kachhap <amit.kachhap@gmail.com>
+References: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
+ <1522945005-7165-5-git-send-email-daniel.lezcano@linaro.org>
+ <20180411061851.GM7671@vireshk-i7>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <8bee8335-43aa-f9ef-e0cb-a390440b2aec@linaro.org>
+Date: Wed, 11 Apr 2018 10:58:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+In-Reply-To: <20180411061851.GM7671@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+On 11/04/2018 08:18, Viresh Kumar wrote:
+> On 05-04-18, 18:16, Daniel Lezcano wrote:
+>> The next changes will add new way to cool down a CPU. In order to
+>> sanitize and make the overall cpu cooling code consistent and robust
+>> we must prevent the cpu cooling devices to co-exists with the same
+>> purpose at the same time in the kernel.
+>>
+>> Make the CPU cooling device a choice in the Kconfig, so only one CPU
+>> cooling strategy can be chosen.
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> ---
+>>  drivers/thermal/Kconfig       | 20 +++++++++++++++++---
+>>  drivers/thermal/cpu_cooling.c |  2 ++
+>>  include/linux/cpu_cooling.h   |  6 +++---
+>>  3 files changed, 22 insertions(+), 6 deletions(-)
+> 
+> I don't see my review comments from V2 being addressed for this patch.
+> Can you please check that again ?
 
-Add a common file for MT7623A SoC level DTS, indicating MT7623A only
-has a specific definition for power domain. That causes we need to change
-related consumers devices such as audio, ethernet, crypto, NAND, and USB
-controller to grasp its own power domain it should belong to.
+Right, I missed the end of the email :/
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- arch/arm/boot/dts/mt7623a.dtsi | 44 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 arch/arm/boot/dts/mt7623a.dtsi
+I will fix that.
 
-diff --git a/arch/arm/boot/dts/mt7623a.dtsi b/arch/arm/boot/dts/mt7623a.dtsi
-new file mode 100644
-index 0000000..0735a1fb8
---- /dev/null
-+++ b/arch/arm/boot/dts/mt7623a.dtsi
-@@ -0,0 +1,44 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2017-2018 MediaTek Inc.
-+ * Author: Sean Wang <sean.wang@mediatek.com>
-+ *
-+ */
-+
-+/dts-v1/;
-+#include <dt-bindings/power/mt7623a-power.h>
-+#include "mt7623.dtsi"
-+
-+&afe {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_IFR_MSC>;
-+};
-+
-+&crypto {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_ETH>;
-+};
-+
-+&eth {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_ETH>;
-+};
-+
-+&nandc {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_IFR_MSC>;
-+};
-+
-+&pcie {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
-+};
-+
-+&scpsys {
-+	compatible = "mediatek,mt7623a-scpsys";
-+	clocks = <&topckgen CLK_TOP_ETHIF_SEL>;
-+	clock-names = "ethif";
-+};
-+
-+&usb1 {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
-+};
-+
-+&usb2 {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
-+};
+
 -- 
-2.7.4
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
