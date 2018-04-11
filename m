@@ -1,50 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934845AbeDKTKU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 15:10:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38038 "EHLO mx1.redhat.com"
+        id S1756951AbeDKTNU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 15:13:20 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51622 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756888AbeDKTKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 15:10:17 -0400
-Date: Wed, 11 Apr 2018 22:10:15 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jonathan.helman@oracle.com, mst@redhat.com
-Subject: [PULL] virtio: feature pull
-Message-ID: <20180411212644-mutt-send-email-mst@kernel.org>
+        id S1756934AbeDKTNR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 15:13:17 -0400
+Subject: Re: [PATCH v2 09/13] locking/qspinlock: Merge struct __qspinlock into
+ struct qspinlock
+To: Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, peterz@infradead.org,
+        mingo@kernel.org, boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com
+References: <1523469680-17699-1-git-send-email-will.deacon@arm.com>
+ <1523469680-17699-10-git-send-email-will.deacon@arm.com>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <2e517a58-be06-5d1d-0e27-67c2c3a9d3d7@redhat.com>
+Date: Wed, 11 Apr 2018 15:13:16 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mutt-Fcc: =sent
+In-Reply-To: <1523469680-17699-10-git-send-email-will.deacon@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit dc32bb678e103afbcfa4d814489af0566307f528:
+On 04/11/2018 02:01 PM, Will Deacon wrote:
+> struct __qspinlock provides a handy union of fields so that
+> subcomponents of the lockword can be accessed by name, without having to
+> manage shifts and masks explicitly and take endianness into account.
+>
+> This is useful in qspinlock.h and also potentially in arch headers, so
+> move the struct __qspinlock into struct qspinlock and kill the extra
+> definition.
+>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Acked-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Will Deacon <will.deacon@arm.com>
 
-  vhost: add vsock compat ioctl (2018-03-20 03:17:42 +0200)
+I think you are using the new qspinlock structure in some of your
+earlier patches like patch 4. So you may want to move that earlier in
+the series to avoid bisection problem.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
-
-for you to fetch changes up to 6c64fe7f2adcee21d7c4247f1ec021fd18428fc4:
-
-  virtio_balloon: export hugetlb page allocation counts (2018-04-10 21:23:55 +0300)
-
-----------------------------------------------------------------
-virtio: feature
-
-This adds reporting hugepage stats to virtio-balloon.
-
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-
-----------------------------------------------------------------
-Jonathan Helman (1):
-      virtio_balloon: export hugetlb page allocation counts
-
- drivers/virtio/virtio_balloon.c     | 6 ++++++
- include/uapi/linux/virtio_balloon.h | 4 +++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+Cheers,
+Longman
