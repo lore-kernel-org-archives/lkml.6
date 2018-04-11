@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479809-2-15164786277572952062
+X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479801-2-14699066195248038327
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479808; b=lpVcRIZAN2WVQjJlq1bK7x99+I6CgkF5liJYe9Co3A+QLSgzWV
-    ttINvOEVe9LpZ29Qj1PnmerNatgs0p73x5pQHlhke9MLDmxVO8bU/MbHn96zM0DD
-    KAEVJPPEb6iNsT7aL8PRdMloE3hsmily4HrjN1WlOolglum6DuLaNFukdtredcZq
-    TpSyP8gFcDbKbDJBuJQu9l9FygAA0X+zcZTkWzywv4sArr3l2r4i89Vh4sPU5Wqn
-    ZMz74iZXEXmvlDVLOsX3MjLMyGpmoE3iE1oElL3/pv9TKyvuhVulZ5sneFpXDeNa
-    5Do5c0Vsk5tEMnF43JEA1UVuwLbNnMY8LF+g==
+    1523479800; b=bReTFGbQ3QwubFIHGI9Cr07iZosoUfhRdV/TR9mqKCbKaQUMpO
+    331rU9xHFGFB+S/0HZoa6nXob8oXZCMawkxt0IVNFkiX70asKCt2uYeZbaG8MhSp
+    60Sk+HChdz6ud17piDGZcavz4L4n2OJp0N6TP0TSXgYP9fkBKw6UraV07SmAqpfn
+    uTqUyssDRjaCSGdQnoIUmcBQf/pYDYvYMnioXa6RL3D57c/0LKZKe3NXyVlFIznj
+    LAajDMtOpJEPR6aN/FRv/JG1b+xTQuXN86JP1OUeGAWemS5e1GnzievJ/OwjPijD
+    h++hFz+oGhXDd/G3GRHct7Vx5Woqx4suhLig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479808; bh=oDnvPlbnXhsVMqE/85EzB3wMViXSp2
-    /2rZE2d35YbyY=; b=RWmaJiMy8QlFs6V2xfU0N9tizVfLV4pAWGCekGlaSFyIc7
-    cvTIS2IT+HeF+g9Vz+DEEWyReSe3WZjXITaknl9BhD2d+JQf1jMHaRFk0meyVAWz
-    Saudw64Rnca60I7XHqzL48U182eUwXHooP/yPnzwM4p4mIAKeKeIXgx4wHDLJUZJ
-    8izgX2pt2z2egXhMHqWzNq78CInazdCkwzcEmyrETtAJtHZJcTcuh8jeA8BFEY4G
-    efnWfmW4/2AlZZibHxl/orYIX4I1ATfOJJw5hueVaYfFba61Uml7xmy+dgG9SlgD
-    pub8CEL8QbJylMNHEri2BHPTj65aZCmO000I4Ryw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479800; bh=EGXbu1ja+JsXItS7CScRIBk4XlSiS5
+    armWZPse1OTj4=; b=oPql5+JTDcLiCGKfYLk7fkLYgQIWilX5pOlpg3vYttCBH1
+    56DUuXnX7FhoYHX5K4MtrdKbbOrsh8J08x9trXWdedey9WiS+lwkz3PSUXv6cKwY
+    C4QlTGZwSDYGgSW4WSn/mXwjLXRa4HSl1Mt1gT4cikPI1rF0PhJq8OyaryZhOBzr
+    Uf62l/ps1I+I+YmpstBUvP9rTh2fKZYL0yfzHnNt7KgW6lLKdQOltb7hGq9AV1k5
+    oU1DVTbpXR3xq7rMJBepgzXPF9hcDz5ChMkdbIVmVKT2XQfP0NeDUDGIcL8uA5xs
+    wMrp0Wb4a6Oh0dUxSGThDvxY3QPvyJwevSMEHysA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,32 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEQjAR5+fAQKynjVQSMQ+2LdDPbVfNMnOsxXqQIYd6O/HGVxYRb4O/4Psnu7/2nTPxKJ2yxTLpHeo292S5W9G3SKhytTPrujoJ65rMUH8UB8UKdeq5/H
-    oI3KUBp7mNXh/txyefh31oIx0PhfHy2975kKuAoNIJ1gOW+G88xNjcd220V02Wd8Tg8XjaCRd3UBoqScrv86WI5uANkzTNwyHqiQSGGUbBVAB6YqlKzuAvNL
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMfwRLgiTi3c+1EctVU2JpSomU5J8OGyyaircc9yuM0VkVATC/GFlaoorzNKiEfTLcDCShIAGHirM/cakVjzE3kqu5ri4Vy0YNDM7ucSqQe0ZNuXZm//
+    TSlrskrvJAeiPKRlMc2/j+UXgW5oZrEKzIrKo3A0yQak1/ItpTj3m7Q6aKEVcUFLnw7VBwWvCTSaP8VO3DyIFxgVHaBZZ14iD8Tyin6DWoMEP7YzuzPdCmcc
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=AMTvMMonAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=MxJhSPhoEE-0-1SkMGIA:9 a=QEXdDO2ut3YA:10 a=p5oU-coMHzOM5oT1KbOf:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=6R7veym_AAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=TzSSPSBs-8d7BCXhjvwA:9
+    a=3UJq2FBqhoS4Y7oa:21 a=j5_r-uixslqC3hKP:21 a=QEXdDO2ut3YA:10
+    a=ILCOIF4F_8SzUMnO7jNM:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755637AbeDKSp5 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:45:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58754 "EHLO
+        id S1756004AbeDKUtl (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:49:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58762 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755632AbeDKSp4 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:56 -0400
+        with ESMTP id S1755644AbeDKSp6 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:58 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Jonathan Cameron <jic23@kernel.org>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Theodore Tso <tytso@mit.edu>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 056/190] iio: hi8435: cleanup reset gpio
-Date: Wed, 11 Apr 2018 20:35:02 +0200
-Message-Id: <20180411183553.625668664@linuxfoundation.org>
+Subject: [PATCH 4.4 057/190] ext4: handle the rest of ext4_mb_load_buddy() ENOMEM errors
+Date: Wed, 11 Apr 2018 20:35:03 +0200
+Message-Id: <20180411183553.676042433@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -94,52 +94,87 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
 
-[ Upstream commit 61305664a542f874283f74bf0b27ddb31f5045d7 ]
+[ Upstream commit 9651e6b2e20648d04d5e1fe6479a3056047e8781 ]
 
-Reset GPIO is active low.
+I've got another report about breaking ext4 by ENOMEM error returned from
+ext4_mb_load_buddy() caused by memory shortage in memory cgroup.
+This time inside ext4_discard_preallocations().
 
-Currently driver uses gpiod_set_value(1) to clean reset, which depends
-on device tree to contain GPIO_ACTIVE_HIGH - that does not match reality.
+This patch replaces ext4_error() with ext4_warning() where errors returned
+from ext4_mb_load_buddy() are not fatal and handled by caller:
+* ext4_mb_discard_group_preallocations() - called before generating ENOSPC,
+  we'll try to discard other group or return ENOSPC into user-space.
+* ext4_trim_all_free() - just stop trimming and return ENOMEM from ioctl.
 
-This fixes driver to use _raw version of gpiod_set_value() to enforce
-active-low semantics despite of what's written in device tree. Allowing
-device tree to override that only opens possibility for errors and does
-not add any value.
+Some callers cannot handle errors, thus __GFP_NOFAIL is used for them:
+* ext4_discard_preallocations()
+* ext4_mb_discard_lg_preallocations()
 
-Additionally, use _cansleep version to make things work with i2c-gpio
-and other sleeping gpio drivers.
-
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Signed-off-by: Jonathan Cameron <jic23@kernel.org>
+Fixes: adb7ef600cc9 ("ext4: use __GFP_NOFAIL in ext4_free_blocks()")
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iio/adc/hi8435.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ fs/ext4/mballoc.c |   23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
---- a/drivers/iio/adc/hi8435.c
-+++ b/drivers/iio/adc/hi8435.c
-@@ -453,13 +453,15 @@ static int hi8435_probe(struct spi_devic
- 	priv->spi = spi;
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -3874,7 +3874,8 @@ ext4_mb_discard_group_preallocations(str
  
- 	reset_gpio = devm_gpiod_get(&spi->dev, NULL, GPIOD_OUT_LOW);
--	if (IS_ERR(reset_gpio)) {
--		/* chip s/w reset if h/w reset failed */
-+	if (!IS_ERR(reset_gpio)) {
-+		/* need >=100ns low pulse to reset chip */
-+		gpiod_set_raw_value_cansleep(reset_gpio, 0);
-+		udelay(1);
-+		gpiod_set_raw_value_cansleep(reset_gpio, 1);
-+	} else {
-+		/* s/w reset chip if h/w reset is not available */
- 		hi8435_writeb(priv, HI8435_CTRL_REG, HI8435_CTRL_SRST);
- 		hi8435_writeb(priv, HI8435_CTRL_REG, 0);
--	} else {
--		udelay(5);
--		gpiod_set_value(reset_gpio, 1);
+ 	err = ext4_mb_load_buddy(sb, group, &e4b);
+ 	if (err) {
+-		ext4_error(sb, "Error loading buddy information for %u", group);
++		ext4_warning(sb, "Error %d loading buddy information for %u",
++			     err, group);
+ 		put_bh(bitmap_bh);
+ 		return 0;
  	}
+@@ -4031,10 +4032,11 @@ repeat:
+ 		BUG_ON(pa->pa_type != MB_INODE_PA);
+ 		group = ext4_get_group_number(sb, pa->pa_pstart);
  
- 	spi_set_drvdata(spi, idev);
+-		err = ext4_mb_load_buddy(sb, group, &e4b);
++		err = ext4_mb_load_buddy_gfp(sb, group, &e4b,
++					     GFP_NOFS|__GFP_NOFAIL);
+ 		if (err) {
+-			ext4_error(sb, "Error loading buddy information for %u",
+-					group);
++			ext4_error(sb, "Error %d loading buddy information for %u",
++				   err, group);
+ 			continue;
+ 		}
+ 
+@@ -4290,11 +4292,14 @@ ext4_mb_discard_lg_preallocations(struct
+ 	spin_unlock(&lg->lg_prealloc_lock);
+ 
+ 	list_for_each_entry_safe(pa, tmp, &discard_list, u.pa_tmp_list) {
++		int err;
+ 
+ 		group = ext4_get_group_number(sb, pa->pa_pstart);
+-		if (ext4_mb_load_buddy(sb, group, &e4b)) {
+-			ext4_error(sb, "Error loading buddy information for %u",
+-					group);
++		err = ext4_mb_load_buddy_gfp(sb, group, &e4b,
++					     GFP_NOFS|__GFP_NOFAIL);
++		if (err) {
++			ext4_error(sb, "Error %d loading buddy information for %u",
++				   err, group);
+ 			continue;
+ 		}
+ 		ext4_lock_group(sb, group);
+@@ -5116,8 +5121,8 @@ ext4_trim_all_free(struct super_block *s
+ 
+ 	ret = ext4_mb_load_buddy(sb, group, &e4b);
+ 	if (ret) {
+-		ext4_error(sb, "Error in loading buddy "
+-				"information for %u", group);
++		ext4_warning(sb, "Error %d loading buddy information for %u",
++			     ret, group);
+ 		return ret;
+ 	}
+ 	bitmap = e4b.bd_bitmap;
