@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48/97JqPqLLlp8r1CjALqHnU4lvz8794VI6a/YcpfRU+TmbBi+PSBgo/L2LnIYZguqz6pYg
-ARC-Seal: i=1; a=rsa-sha256; t=1523473351; cv=none;
+X-Google-Smtp-Source: AIpwx4/Q3GxdlguuKi8z40q0ZHjOompSMq5X8nX6Cp3ZTWljmFIKEabUbULtEcXmtH9jLO+TjIr+
+ARC-Seal: i=1; a=rsa-sha256; t=1523473346; cv=none;
         d=google.com; s=arc-20160816;
-        b=v1y4KE8HDkQpDp16EIobWNnyvjGgVnUC1CgLRgKn+AaABWFThwQOVSlNN6hzkYwnCN
-         3wxh2Zd9rO8OifiOme0iOqBJKmkqRTigaBZGrygeZYuB4tX0UrvzWda3ZcRX6KubPDQC
-         K5ANUvP6GogePouBb0A2TajlJzrt7wBfRYK/2VCiIt3spMfHuVkGni1YmUdpAsf3OOqz
-         UGDuRnJzgYG8yFifxF6CctRMbO+parI1U6b+3NU/D4G+7KP5NXix5it9kRSSyIRisEx/
-         LGy9nUEemB0pLKTrSEJHNdm8iz70ywS2csCm/EXR+15a3MNrcR6+zUhX2s6Lr8ntuFh8
-         uC+g==
+        b=qVgM6Jn0tunN4hv5SBcVbVU+OSwGo9CNXxU3yEWOIxHvRUkz40goG4LZzLNSZOCX4E
+         HDSNICzvZ3W9x+epI9OGxV0Nt+nwcZg+HQ/GTUt7fosfhzM12gV4p3C1svU0eY53W93F
+         gRYjMW0anJ5HTIVrsU8rhvTA54lJow8A4eYapKB0EoWQgtPNUTLRugTb7D5BPredPd6B
+         uEpPtUKx5JAapx07Znb7zyMbfTYyT8slq4h8zBf5Ob9LKHXM54aT2RFU2seUZfnRI1ql
+         C+KBSoHVr/S+bkD+mjJFHQn3mgxOcxjPHXkkAbPMiTkZUESTw3JhD2GUe+cefr9IIOxS
+         iBlQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ES0OLoyVX01xlPQc8iT23uegxpe3O7Mu5UgGigxT9Xo=;
-        b=DeK7oKI4G2yhEdGphUKs5sK/klEOX922RY34f0b9iDpY/hp26RXNsD5q4Aoyrn625a
-         0VbfxMnpDx6zlon3X5rGw2mbgzKmlmLd5ER3uPK4tyMbnxQ6KRtoRdvRgK5t9XsoSudF
-         nsAP9a8/LCVOrxH56F181yF5Z+TK0seXMqfyVRvDyfvUNS6BZ1HyowwwsqYAyCPaTLy1
-         jY98mq8cy0ECCgaSSM4K8U53lfYd0TVmab1Jz38jcRwdkJZ46OzHab1HL5gj3w/VhQA3
-         oRRcvnblKKi95oRBmb82H4se/DJKF0cWZr4YWSvKZnup/ddNB+z15AXDmOpnZXBLZIOB
-         23Og==
+        bh=ib+XvU8BfSKcyJAxuCd8aLgdpHlCyz9FPKzfmek60PM=;
+        b=vZ7mjOZCgtSqkBC51RVcvrjaNOxZj5KXL+Fpqzo11665b6SeQ75V9DAhd7ellyZ2X6
+         lsOjo2cxXOwEi99aVZjKXS6MOndbRhBpcZ+fMti/cisumNvSGiAgkVFtBteSFC28/XqR
+         UIejPDj55H6bmTmxVLt2xnB8d3+CI4Thph70di0c3UKKoIL/bJTsAUjsy49ZLcm1ay4o
+         7DzywhsnkRantE6eZqDoUihA56wG2c+L9NfIOKgNlr1vPlby1fD0/0rnoT9/VT5CWooT
+         4xKpauRNVmlY51Ywh8x4F9kFsDYwJW2pBJANTizd2ZJzH24T20MEvS4BtHzb/NpS25S4
+         4J+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Raju Rangoju <rajur@chelsio.com>,
-	Steve Wise <swise@opengridcomputing.com>,
-	Doug Ledford <dledford@redhat.com>,
+	Jia-Ju Bai <baijiaju1990@163.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 182/310] RDMA/iw_cxgb4: Avoid touch after free error in ARP failure handlers
-Date: Wed, 11 Apr 2018 20:35:21 +0200
-Message-Id: <20180411183630.431115360@linuxfoundation.org>
+Subject: [PATCH 4.9 180/310] mISDN: Fix a sleep-in-atomic bug
+Date: Wed, 11 Apr 2018 20:35:19 +0200
+Message-Id: <20180411183630.351103149@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477593649411535?=
-X-GMAIL-MSGID: =?utf-8?q?1597477593649411535?=
+X-GMAIL-THRID: =?utf-8?q?1597476207361902573?=
+X-GMAIL-MSGID: =?utf-8?q?1597477587439961457?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,62 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Raju Rangoju <rajur@chelsio.com>
+From: Jia-Ju Bai <baijiaju1990@163.com>
 
 
-[ Upstream commit 1dad0ebeea1cd890b8892523f736916e245b0aef ]
+[ Upstream commit 93818da5eed63fbc17b64080406ea53b86b23309 ]
 
-The patch 761e19a504af (RDMA/iw_cxgb4: Handle return value of
-c4iw_ofld_send() in abort_arp_failure()) from May 6, 2016
-leads to the following static checker warning:
-	drivers/infiniband/hw/cxgb4/cm.c:575 abort_arp_failure()
-	warn: passing freed memory 'skb'
+The driver may sleep under a read spin lock, and the function call path is:
+send_socklist (acquire the lock by read_lock)
+  skb_copy(GFP_KERNEL) --> may sleep
 
-Also fixes skb leak when l2t resolution fails
+To fix it, the "GFP_KERNEL" is replaced with "GFP_ATOMIC".
 
-Fixes: 761e19a504afa55 (RDMA/iw_cxgb4: Handle return value of
-c4iw_ofld_send() in abort_arp_failure())
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Raju Rangoju <rajur@chelsio.com>
-Reviewed-by: Steve Wise <swise@opengridcomputing.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/cxgb4/cm.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/isdn/mISDN/stack.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/cxgb4/cm.c
-+++ b/drivers/infiniband/hw/cxgb4/cm.c
-@@ -488,6 +488,7 @@ static int _put_ep_safe(struct c4iw_dev
- 
- 	ep = *((struct c4iw_ep **)(skb->cb + 2 * sizeof(void *)));
- 	release_ep_resources(ep);
-+	kfree_skb(skb);
- 	return 0;
- }
- 
-@@ -498,6 +499,7 @@ static int _put_pass_ep_safe(struct c4iw
- 	ep = *((struct c4iw_ep **)(skb->cb + 2 * sizeof(void *)));
- 	c4iw_put_ep(&ep->parent_ep->com);
- 	release_ep_resources(ep);
-+	kfree_skb(skb);
- 	return 0;
- }
- 
-@@ -569,11 +571,13 @@ static void abort_arp_failure(void *hand
- 
- 	PDBG("%s rdev %p\n", __func__, rdev);
- 	req->cmd = CPL_ABORT_NO_RST;
-+	skb_get(skb);
- 	ret = c4iw_ofld_send(rdev, skb);
- 	if (ret) {
- 		__state_set(&ep->com, DEAD);
- 		queue_arp_failure_cpl(ep, skb, FAKE_CPL_PUT_EP_SAFE);
--	}
-+	} else
-+		kfree_skb(skb);
- }
- 
- static int send_flowc(struct c4iw_ep *ep)
+--- a/drivers/isdn/mISDN/stack.c
++++ b/drivers/isdn/mISDN/stack.c
+@@ -72,7 +72,7 @@ send_socklist(struct mISDN_sock_list *sl
+ 		if (sk->sk_state != MISDN_BOUND)
+ 			continue;
+ 		if (!cskb)
+-			cskb = skb_copy(skb, GFP_KERNEL);
++			cskb = skb_copy(skb, GFP_ATOMIC);
+ 		if (!cskb) {
+ 			printk(KERN_WARNING "%s no skb\n", __func__);
+ 			break;
