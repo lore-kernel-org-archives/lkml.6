@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/RZXBdg0FRfd7jFMow2Al0ykZMfy0uhNskboGzmcFbz8L1Q4LARWIbz5pKqjjE5MtcXAx2
-ARC-Seal: i=1; a=rsa-sha256; t=1523473354; cv=none;
+X-Google-Smtp-Source: AIpwx48/97JqPqLLlp8r1CjALqHnU4lvz8794VI6a/YcpfRU+TmbBi+PSBgo/L2LnIYZguqz6pYg
+ARC-Seal: i=1; a=rsa-sha256; t=1523473351; cv=none;
         d=google.com; s=arc-20160816;
-        b=pC0DzrknlEzNsnQyaSsGBkHg72QFYdZ1Rzl93FABYvS4gwHacpuCzFfHuc6Qt+L0Dl
-         m5iD4ShvmImVtHBCciomjp7C40XVLq2/8k3GjVnJm4/Hg3/bVCjwHIc5Pk+pihll/pEj
-         CmUUO7EQOXcHf2rlfMiXExLVJg03M+rUPy7XSzjylvG6aqn6fl5wLyqTEDOZx76m2h4r
-         lHwkNJZ/yMA+iyH4aPiYSnVyjIQ6Yp9Tjq4rfkSnANU2FGMknQMnYYcDHLU2j1t22VFE
-         +YelJM2jv/stE1dhEqM+bZbt/Od7VFRWQsW3IPPe3E79+1uCwHmUXwlJTpjMCHD65ISZ
-         cNhA==
+        b=v1y4KE8HDkQpDp16EIobWNnyvjGgVnUC1CgLRgKn+AaABWFThwQOVSlNN6hzkYwnCN
+         3wxh2Zd9rO8OifiOme0iOqBJKmkqRTigaBZGrygeZYuB4tX0UrvzWda3ZcRX6KubPDQC
+         K5ANUvP6GogePouBb0A2TajlJzrt7wBfRYK/2VCiIt3spMfHuVkGni1YmUdpAsf3OOqz
+         UGDuRnJzgYG8yFifxF6CctRMbO+parI1U6b+3NU/D4G+7KP5NXix5it9kRSSyIRisEx/
+         LGy9nUEemB0pLKTrSEJHNdm8iz70ywS2csCm/EXR+15a3MNrcR6+zUhX2s6Lr8ntuFh8
+         uC+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=AqOvUD777U90TECoOTLeA081K6o9iatqI5gcTocQHac=;
-        b=bi94pXRKkjlGcc+lqlHjadNket9Sy/gopzkjjblZ2+gZYPLbr4VGiyAOUIK7L/LC+D
-         Yy36KuWp7Vxaf+L3xdS1c2cLDr/zY2/8XvxVZmqYnJ8IHOQBD3gXf5JQQ+zuJUVx+T0y
-         Hmb7Bj2WGTg47dQW1ktGwxL25zD3ATLZxsgSBH3nZkLL1ToEgA+bYvr4ZZ3eABIIDab8
-         yZ9RWZ1MpT8luGKpm9UAbPSg4ZMf6Rf4hgtjphQ03kIwK1vvCNhbAFViTFceVnzW8XmS
-         NtfJX4zAVmVVi3EXbcjBfWobqNzVDCVEkNyqj6zDwMLCjzlb9QP/PkXaBkHBXCZQiZhK
-         dY6w==
+        bh=ES0OLoyVX01xlPQc8iT23uegxpe3O7Mu5UgGigxT9Xo=;
+        b=DeK7oKI4G2yhEdGphUKs5sK/klEOX922RY34f0b9iDpY/hp26RXNsD5q4Aoyrn625a
+         0VbfxMnpDx6zlon3X5rGw2mbgzKmlmLd5ER3uPK4tyMbnxQ6KRtoRdvRgK5t9XsoSudF
+         nsAP9a8/LCVOrxH56F181yF5Z+TK0seXMqfyVRvDyfvUNS6BZ1HyowwwsqYAyCPaTLy1
+         jY98mq8cy0ECCgaSSM4K8U53lfYd0TVmab1Jz38jcRwdkJZ46OzHab1HL5gj3w/VhQA3
+         oRRcvnblKKi95oRBmb82H4se/DJKF0cWZr4YWSvKZnup/ddNB+z15AXDmOpnZXBLZIOB
+         23Og==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Bryan ODonoghue <pure.logic@nexus-software.ie>,
-	Stephen Boyd <sboyd@codeaurora.org>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Raju Rangoju <rajur@chelsio.com>,
+	Steve Wise <swise@opengridcomputing.com>,
+	Doug Ledford <dledford@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 173/310] clk: Fix __set_clk_rates error print-string
-Date: Wed, 11 Apr 2018 20:35:12 +0200
-Message-Id: <20180411183630.073353150@linuxfoundation.org>
+Subject: [PATCH 4.9 182/310] RDMA/iw_cxgb4: Avoid touch after free error in ARP failure handlers
+Date: Wed, 11 Apr 2018 20:35:21 +0200
+Message-Id: <20180411183630.431115360@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476691990597069?=
-X-GMAIL-MSGID: =?utf-8?q?1597477596021818135?=
+X-GMAIL-THRID: =?utf-8?q?1597477593649411535?=
+X-GMAIL-MSGID: =?utf-8?q?1597477593649411535?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,33 +52,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
+From: Raju Rangoju <rajur@chelsio.com>
 
 
-[ Upstream commit ee177c5d6369f8e5d3e4793dce501cf4431313a1 ]
+[ Upstream commit 1dad0ebeea1cd890b8892523f736916e245b0aef ]
 
-When failing to set a clock the printout emitted is incorrect.
-"u32 rate" is formatted as %d and should be %u whereas "unsigned long
-clk_set_rate()" is formatted as %ld and should be %lu as per
-Documentation/printk-formats.txt.
+The patch 761e19a504af (RDMA/iw_cxgb4: Handle return value of
+c4iw_ofld_send() in abort_arp_failure()) from May 6, 2016
+leads to the following static checker warning:
+	drivers/infiniband/hw/cxgb4/cm.c:575 abort_arp_failure()
+	warn: passing freed memory 'skb'
 
-Fixes: 2885c3b2a3da ("clk: Show correct information when fail to set clock rate")
-Signed-off-by: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Also fixes skb leak when l2t resolution fails
+
+Fixes: 761e19a504afa55 (RDMA/iw_cxgb4: Handle return value of
+c4iw_ofld_send() in abort_arp_failure())
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Raju Rangoju <rajur@chelsio.com>
+Reviewed-by: Steve Wise <swise@opengridcomputing.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/clk-conf.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/cxgb4/cm.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/clk/clk-conf.c
-+++ b/drivers/clk/clk-conf.c
-@@ -106,7 +106,7 @@ static int __set_clk_rates(struct device
+--- a/drivers/infiniband/hw/cxgb4/cm.c
++++ b/drivers/infiniband/hw/cxgb4/cm.c
+@@ -488,6 +488,7 @@ static int _put_ep_safe(struct c4iw_dev
  
- 			rc = clk_set_rate(clk, rate);
- 			if (rc < 0)
--				pr_err("clk: couldn't set %s clk rate to %d (%d), current rate: %ld\n",
-+				pr_err("clk: couldn't set %s clk rate to %u (%d), current rate: %lu\n",
- 				       __clk_get_name(clk), rate, rc,
- 				       clk_get_rate(clk));
- 			clk_put(clk);
+ 	ep = *((struct c4iw_ep **)(skb->cb + 2 * sizeof(void *)));
+ 	release_ep_resources(ep);
++	kfree_skb(skb);
+ 	return 0;
+ }
+ 
+@@ -498,6 +499,7 @@ static int _put_pass_ep_safe(struct c4iw
+ 	ep = *((struct c4iw_ep **)(skb->cb + 2 * sizeof(void *)));
+ 	c4iw_put_ep(&ep->parent_ep->com);
+ 	release_ep_resources(ep);
++	kfree_skb(skb);
+ 	return 0;
+ }
+ 
+@@ -569,11 +571,13 @@ static void abort_arp_failure(void *hand
+ 
+ 	PDBG("%s rdev %p\n", __func__, rdev);
+ 	req->cmd = CPL_ABORT_NO_RST;
++	skb_get(skb);
+ 	ret = c4iw_ofld_send(rdev, skb);
+ 	if (ret) {
+ 		__state_set(&ep->com, DEAD);
+ 		queue_arp_failure_cpl(ep, skb, FAKE_CPL_PUT_EP_SAFE);
+-	}
++	} else
++		kfree_skb(skb);
+ }
+ 
+ static int send_flowc(struct c4iw_ep *ep)
