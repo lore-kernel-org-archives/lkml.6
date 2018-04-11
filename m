@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49H8Lm0RhHdB2sfK/fSJEansNEo9lhRyUSrPi2NjSDV1ypkfDQo5IXdkKK/ojH8WvwNhDMn
-ARC-Seal: i=1; a=rsa-sha256; t=1523473518; cv=none;
+X-Google-Smtp-Source: AIpwx48MYLvacmJEFpI/qvQ2/1l/F5eG6ExIqCP/860FNrmiy5L8C8522WU1JyLjc6j9PelnicQz
+ARC-Seal: i=1; a=rsa-sha256; t=1523473516; cv=none;
         d=google.com; s=arc-20160816;
-        b=N+QbJmcf/tQDFrAoUsk2aXNCaCyk/q6xHlCYT8in/g+A3pUSNLX4t2TiKgKQgeqnqP
-         Bz9VuSBXhRAVH7g30JMejY/bA2Ymzwwxiu1Epqhtebw8CHWdxqfKMb6QIOU2aqX5V09/
-         ZxGzLyFm5qekDdOhKpHwMjt1X2cFQ/es4F3GULUhCnpQafBg9UKC2cmHXH1e1xNovOHy
-         RbkSbF+Qm0iRxbmfMA9zZVWZVkv+Gv39WJ6LDrLjbvWZyT4cp21uiHFfmO604w8osjG9
-         5mCDbnZvL2k2OxHl8XTpvD347gNHNBxXjWnyniEp0KWxOJ2kwa/Cyyu/YR1ZDXs4PvjY
-         308w==
+        b=jP0wPyCZCRu09mWQsqmtGQVHyJmaGQq7yltLa3+F4FzgubAjUKwBFRRzyJJDNp39tj
+         57+CS/NyOK4GcYH5F2jQsxpAzt0pqYtVLAtLbGqmRadDWUmrWldhnKNXzYvr/8JjQHyb
+         Z3szw+9qbHYwE2vdr9kTROTO5SbqfHbkKxxVO54IKB0vMI8SG2wCWP1HQgoCrc0XqGgh
+         epB0PBGZQUmM/SO04z7kFnu+Oe2Emzdb2V2dkpEjiC/9k9tgC+dfpTiFxCEx8jIjQhOz
+         1UWVJ5XaV28pE1uG9VOpr0uAUVqs06loOR9YJgErod/PklomWFxl1YpROtK8aoEOZUgZ
+         4Vmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=odGAykZQLbgw4x/vNVsVvQe8BtcssWqeQwn9BrCxXhs=;
-        b=u9qQNK+TPptEizbRuf1/9rNs29Bpzk1W4X5tTMFXGzsD5iRdiZzVo1lXclEuo24Ghw
-         EIt99B2mT6j52X4h9ykEE2bLVpkkvrAQqIuIbPHta6BAMbdoLbFvLeTfUnTNWs+h7/g4
-         AJi4UOZG8ObojoD6y3LM+/unPdi03+BqNm6cdnKJxuVc+8/BXeU+96qcb8/PfCcERmZM
-         vIU89vpeivu/1ZTB/az+TQbbWIi74aykts1Tp/EZw0e56nQcCkfayFiGCL5KKsMOK63F
-         F7VaW+Sfi3ZH44HUMqWpVfw/Q5PLvzKE8oa7/Z9nnVYxHk61ygu5vxrHiRuKrg48Eiq8
-         zKQg==
+        bh=uBYldfdjNjfxP+wqgwGc5RkEmG6c5svM7vMPMTag/Lo=;
+        b=ruy8wLl7lRnzPTm2NuEgVHABbe355PXIs5QL4zm/mjiDiybhUwQsCTrEmhVdmn79Sz
+         hbOAm6yGqbgZd4Sy52Hq5DNSiFseqhwMYyGzW4Dr3WyLVFdc/0u8XEQ53Ll9qagmWWcA
+         KHLZi8tKGn8De8UTVPCtSS+h1kRVfZsJ32jY7+SWBbGvOFrGTm8ip7TBX2VOIS1X1vr+
+         FiNfuX0OWeoLQoDqdb9286rUJEnUzFTw6Xji/DBuEwc4xUhawNawd08x9zIMbzkxzcLA
+         mXRfU4+E3YhWrDNAXODVqXrhElHF/9GwUSNRVkOPefYHddKfuqhuZpDeF7SIgAmKu2jl
+         ZSFw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Chandan Tagore <tagore.chandan@gmail.com>,
-	Lv Zheng <lv.zheng@intel.com>,
-	Bob Moore <robert.moore@intel.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 250/310] ACPICA: Events: Add runtime stub support for event APIs
-Date: Wed, 11 Apr 2018 20:36:29 +0200
-Message-Id: <20180411183633.202723115@linuxfoundation.org>
+	Miguel Fadon Perlines <mfadon@teldat.com>,
+	David Ahern <dsa@cumulusnetworks.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 276/310] arp: fix arp_filter on l3slave devices
+Date: Wed, 11 Apr 2018 20:36:55 +0200
+Message-Id: <20180411183634.497130430@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476360075015907?=
-X-GMAIL-MSGID: =?utf-8?q?1597477768712823113?=
+X-GMAIL-THRID: =?utf-8?q?1597476873404359288?=
+X-GMAIL-MSGID: =?utf-8?q?1597477765994561929?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,69 +50,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lv Zheng <lv.zheng@intel.com>
+From: Miguel Fadon Perlines <mfadon@teldat.com>
 
 
-[ Upstream commit 861ba6351c520328e94a78c923b415faa9116287 ]
+[ Upstream commit 58b35f27689b5eb514fc293c332966c226b1b6e4 ]
 
-ACPICA commit 99bc3beca92c6574ea1d69de42e54f872e6373ce
+arp_filter performs an ip_route_output search for arp source address and
+checks if output device is the same where the arp request was received,
+if it is not, the arp request is not answered.
 
-It is reported that on Linux, RTC driver complains wrong errors on
-hardware reduced platform:
-  [    4.085420] ACPI Warning: Could not enable fixed event - real_time_clock (4) (20160422/evxface-654)
+This route lookup is always done on main route table so l3slave devices
+never find the proper route and arp is not answered.
 
-This patch fixes this by correctly adding runtime reduced hardware check.
-Reported by Chandan Tagore, fixed by Lv Zheng.
+Passing l3mdev_master_ifindex_rcu(dev) return value as oif fixes the
+lookup for l3slave devices while maintaining same behavior for non
+l3slave devices as this function returns 0 in that case.
 
-Link: https://github.com/acpica/acpica/commit/99bc3bec
-Tested-by: Chandan Tagore <tagore.chandan@gmail.com>
-Signed-off-by: Lv Zheng <lv.zheng@intel.com>
-Signed-off-by: Bob Moore <robert.moore@intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 613d09b30f8b ("net: Use VRF device index for lookups on TX")
+Signed-off-by: Miguel Fadon Perlines <mfadon@teldat.com>
+Acked-by: David Ahern <dsa@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/acpica/evxfevnt.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ net/ipv4/arp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/acpi/acpica/evxfevnt.c
-+++ b/drivers/acpi/acpica/evxfevnt.c
-@@ -180,6 +180,12 @@ acpi_status acpi_enable_event(u32 event,
+--- a/net/ipv4/arp.c
++++ b/net/ipv4/arp.c
+@@ -437,7 +437,7 @@ static int arp_filter(__be32 sip, __be32
+ 	/*unsigned long now; */
+ 	struct net *net = dev_net(dev);
  
- 	ACPI_FUNCTION_TRACE(acpi_enable_event);
- 
-+	/* If Hardware Reduced flag is set, there are no fixed events */
-+
-+	if (acpi_gbl_reduced_hardware) {
-+		return_ACPI_STATUS(AE_OK);
-+	}
-+
- 	/* Decode the Fixed Event */
- 
- 	if (event > ACPI_EVENT_MAX) {
-@@ -237,6 +243,12 @@ acpi_status acpi_disable_event(u32 event
- 
- 	ACPI_FUNCTION_TRACE(acpi_disable_event);
- 
-+	/* If Hardware Reduced flag is set, there are no fixed events */
-+
-+	if (acpi_gbl_reduced_hardware) {
-+		return_ACPI_STATUS(AE_OK);
-+	}
-+
- 	/* Decode the Fixed Event */
- 
- 	if (event > ACPI_EVENT_MAX) {
-@@ -290,6 +302,12 @@ acpi_status acpi_clear_event(u32 event)
- 
- 	ACPI_FUNCTION_TRACE(acpi_clear_event);
- 
-+	/* If Hardware Reduced flag is set, there are no fixed events */
-+
-+	if (acpi_gbl_reduced_hardware) {
-+		return_ACPI_STATUS(AE_OK);
-+	}
-+
- 	/* Decode the Fixed Event */
- 
- 	if (event > ACPI_EVENT_MAX) {
+-	rt = ip_route_output(net, sip, tip, 0, 0);
++	rt = ip_route_output(net, sip, tip, 0, l3mdev_master_ifindex_rcu(dev));
+ 	if (IS_ERR(rt))
+ 		return 1;
+ 	if (rt->dst.dev != dev) {
