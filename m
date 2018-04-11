@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx480qZvQ57XjOCCgX/jN+LUistfVz82uFeMWuwHj0diiCPSYp2Iv2uxcJoTvq2wnqFsvLh1u
-ARC-Seal: i=1; a=rsa-sha256; t=1523472156; cv=none;
+X-Google-Smtp-Source: AIpwx48D+iYbzKaVzEWtSdW2afKZ4sJJPQu60FZsa9F38FrOjJOVd0znVsVTVaEs1WTUXAN5prtK
+ARC-Seal: i=1; a=rsa-sha256; t=1523472154; cv=none;
         d=google.com; s=arc-20160816;
-        b=bgl8k3GxR8auZXZHfe9Fui0+JaH9QvWO0ukxiGLH4gQXoMYiSUNbPrNw0Qr1UHfEKt
-         UK1qxYcPdwT7qqbebr8jyfo1lDekOvveWlU71QO7gpmtzqP0ndOGGq6+t7bYJ42dRoQd
-         4tEoKvCR+a+guzO1GNuBi7USdiCcUrHOHj7j56RwAT/cb5FQgzPCMURy0tf3FnpIfBGe
-         qAfX/XvSVTJI5ZChrLkhrwqGt+NI2EWdPnaoN0/dDWLddQOQpxHC/YKV/MJgc/PHvTwf
-         Q/S45NeGHMm75+Dh2x0efE18z150Qq97kWCEqg8jgAMWnmmtyJrHApMejHKUBzXb5b7F
-         Te7Q==
+        b=EiAyaMS9Wwkpj3xIpPHfygZMnp2w1mUzggfhwZxcZCZNK+XESi75w6+4pK6Moh/PoN
+         dR3Un1LJHu8si2YUjKxKsAzNwidhAdDCtpWD3K364VDWJgRNoWAG5Ydi9a42L/iNiIx+
+         MiumA4jW2LPOJpPt0RSikbnwchjv4C/hNK8dzrK8k3eK+j7jX2KVS/OJuPw26NqxLG+5
+         1L3nvIPNrYaHTN+lKhwcuJjjDK/FUjCkkgLoaEOLGRBNk29mkgLNd5gW2dsKTINqv7dR
+         JlsIUEh8ZMqPnh0zM9UN64t3hkNzmd5q0ul55NmZ0ehixrw5CTd3xwyielXgyGYOFaJZ
+         X5+g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=p7b5JttayAn7y6s8ARgEUSHZPogDvOi37b9QJAVNO44=;
-        b=cpgIaCN3klyCHnsjM4cIjVhc+LUI5Jkj71J168h3JDjwIESq6Rb8iixWKUQoUFkS3U
-         zJUtZ/Cc57Avb1OR2msIFj7JVh9f0p1B1WXCf8/vWgRpdBcJ/bUgMDsbsBBnEC4HyWwj
-         JLaOc88JE4XQ+ojRfqgbtfzKbv44I8dVRar4vYmZWBVQIyfkWTc4/CW2hHsUAxqsyhoy
-         kIFM6fzIXG5yvZuUVWd1G95DD+HuICNv0y/J9xCE520BGVLwJ+Ffwn4Laln4rI1qFBU6
-         yhKXTeRREo6ZCPnEaho4FVJf2Zj3NTSSfH5oqbBkc2DbH3Es095nYXlXp4YGAQoCwi2h
-         pxyA==
+        bh=7Kq2C7rC+LZpejabNVNsmgzVu/GrRWu4yCIz0UQx3yI=;
+        b=LrV73k+cOywepM7U7proHY8x96ctuSz+/+SOop+KcYhM1xcg1YgWs8OZjX11B/gbqT
+         MB1zVAyHre54zlHV2StMqdD9dv2ID2DzRMeU7r2Qk9qyUlLo1BSkcuvxfasobtfSk0yt
+         oqJq7L1IM2BxhEyisd8P3S9V9i6mCHUBqC7JPUTWgbkVpw4F2F5V8c6DZSIOgVMAKQpE
+         sWSHyoFYjKuydQFX4R+RQKsv5ZXuYE1/Tz3brPXhhTprMP7MOWQGrX9xhcLzxzKWvvdJ
+         Tgt854cL6RK1krFU0A63ldZnGht6j4rA6x28MgEm5uoukRGMIkuLW9rb+Gj3GXIvSdHg
+         6BSQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Neil Horman <nhorman@tuxdriver.com>,
 	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 107/121] sctp: sctp_sockaddr_af must check minimal addr length for AF_INET6
-Date: Wed, 11 Apr 2018 20:36:50 +0200
-Message-Id: <20180411183503.398438535@linuxfoundation.org>
+Subject: [PATCH 3.18 106/121] sctp: do not leak kernel memory to user space
+Date: Wed, 11 Apr 2018 20:36:49 +0200
+Message-Id: <20180411183503.346734583@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476340196273876?=
-X-GMAIL-MSGID: =?utf-8?q?1597476340196273876?=
+X-GMAIL-THRID: =?utf-8?q?1597476337838554595?=
+X-GMAIL-MSGID: =?utf-8?q?1597476337838554595?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,71 +55,90 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 81e98370293afcb58340ce8bd71af7b97f925c26 ]
+[ Upstream commit 6780db244d6b1537d139dea0ec8aad10cf9e4adb ]
 
-Check must happen before call to ipv6_addr_v4mapped()
+syzbot produced a nice report [1]
 
-syzbot report was :
+Issue here is that a recvmmsg() managed to leak 8 bytes of kernel memory
+to user space, because sin_zero (padding field) was not properly cleared.
 
-BUG: KMSAN: uninit-value in sctp_sockaddr_af net/sctp/socket.c:359 [inline]
-BUG: KMSAN: uninit-value in sctp_do_bind+0x60f/0xdc0 net/sctp/socket.c:384
-CPU: 0 PID: 3576 Comm: syzkaller968804 Not tainted 4.16.0+ #82
+[1]
+BUG: KMSAN: uninit-value in copy_to_user include/linux/uaccess.h:184 [inline]
+BUG: KMSAN: uninit-value in move_addr_to_user+0x32e/0x530 net/socket.c:227
+CPU: 1 PID: 3586 Comm: syzkaller481044 Not tainted 4.16.0+ #82
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
  __dump_stack lib/dump_stack.c:17 [inline]
  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
- __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
- sctp_sockaddr_af net/sctp/socket.c:359 [inline]
- sctp_do_bind+0x60f/0xdc0 net/sctp/socket.c:384
- sctp_bind+0x149/0x190 net/sctp/socket.c:332
- inet6_bind+0x1fd/0x1820 net/ipv6/af_inet6.c:293
- SYSC_bind+0x3f2/0x4b0 net/socket.c:1474
- SyS_bind+0x54/0x80 net/socket.c:1460
+ kmsan_internal_check_memory+0x164/0x1d0 mm/kmsan/kmsan.c:1176
+ kmsan_copy_to_user+0x69/0x160 mm/kmsan/kmsan.c:1199
+ copy_to_user include/linux/uaccess.h:184 [inline]
+ move_addr_to_user+0x32e/0x530 net/socket.c:227
+ ___sys_recvmsg+0x4e2/0x810 net/socket.c:2211
+ __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
+ SYSC_recvmmsg+0x29b/0x3e0 net/socket.c:2394
+ SyS_recvmmsg+0x76/0xa0 net/socket.c:2378
  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x43fd49
-RSP: 002b:00007ffe99df3d28 EFLAGS: 00000213 ORIG_RAX: 0000000000000031
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fd49
-RDX: 0000000000000010 RSI: 0000000020000000 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401670
-R13: 0000000000401700 R14: 0000000000000000 R15: 0000000000000000
+RIP: 0033:0x4401c9
+RSP: 002b:00007ffc56f73098 EFLAGS: 00000217 ORIG_RAX: 000000000000012b
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004401c9
+RDX: 0000000000000001 RSI: 0000000020003ac0 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000020003bc0 R09: 0000000000000010
+R10: 0000000000000000 R11: 0000000000000217 R12: 0000000000401af0
+R13: 0000000000401b80 R14: 0000000000000000 R15: 0000000000000000
 
-Local variable description: ----address@SYSC_bind
+Local variable description: ----addr@___sys_recvmsg
 Variable was created at:
- SYSC_bind+0x6f/0x4b0 net/socket.c:1461
- SyS_bind+0x54/0x80 net/socket.c:1460
+ ___sys_recvmsg+0xd5/0x810 net/socket.c:2172
+ __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
 
+Bytes 8-15 of 16 are uninitialized
+
+==================================================================
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 3586 Comm: syzkaller481044 Tainted: G    B            4.16.0+ #82
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+ panic+0x39d/0x940 kernel/panic.c:183
+ kmsan_report+0x238/0x240 mm/kmsan/kmsan.c:1083
+ kmsan_internal_check_memory+0x164/0x1d0 mm/kmsan/kmsan.c:1176
+ kmsan_copy_to_user+0x69/0x160 mm/kmsan/kmsan.c:1199
+ copy_to_user include/linux/uaccess.h:184 [inline]
+ move_addr_to_user+0x32e/0x530 net/socket.c:227
+ ___sys_recvmsg+0x4e2/0x810 net/socket.c:2211
+ __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
+ SYSC_recvmmsg+0x29b/0x3e0 net/socket.c:2394
+ SyS_recvmmsg+0x76/0xa0 net/socket.c:2378
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Vlad Yasevich <vyasevich@gmail.com>
-Cc: Neil Horman <nhorman@tuxdriver.com>
+Cc:	Vlad Yasevich <vyasevich@gmail.com>
+Cc:	Neil Horman <nhorman@tuxdriver.com>
 Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/socket.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ net/sctp/ipv6.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -336,11 +336,14 @@ static struct sctp_af *sctp_sockaddr_af(
- 	if (!opt->pf->af_supported(addr->sa.sa_family, opt))
- 		return NULL;
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -722,8 +722,10 @@ static int sctp_v6_addr_to_user(struct s
+ 			sctp_v6_map_v4(addr);
+ 	}
  
--	/* V4 mapped address are really of AF_INET family */
--	if (addr->sa.sa_family == AF_INET6 &&
--	    ipv6_addr_v4mapped(&addr->v6.sin6_addr) &&
--	    !opt->pf->af_supported(AF_INET, opt))
--		return NULL;
-+	if (addr->sa.sa_family == AF_INET6) {
-+		if (len < SIN6_LEN_RFC2133)
-+			return NULL;
-+		/* V4 mapped address are really of AF_INET family */
-+		if (ipv6_addr_v4mapped(&addr->v6.sin6_addr) &&
-+		    !opt->pf->af_supported(AF_INET, opt))
-+			return NULL;
+-	if (addr->sa.sa_family == AF_INET)
++	if (addr->sa.sa_family == AF_INET) {
++		memset(addr->v4.sin_zero, 0, sizeof(addr->v4.sin_zero));
+ 		return sizeof(struct sockaddr_in);
 +	}
+ 	return sizeof(struct sockaddr_in6);
+ }
  
- 	/* If we get this far, af is valid. */
- 	af = sctp_get_af_specific(addr->sa.sa_family);
