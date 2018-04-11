@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479248-2-124299391616000022
+X-Cyrus-Session-Id: sloti22d1t05-3303684-1523479237-4-4421552752397555286
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479248; b=nWo4vEOdRHYXYmqp6hXpQe0j5KP7cXIzhR285+V0/+CfGvlpqX
-    ehiAomF8wcGdPkwjy2DlAK2jXxRV4Qv5E7fod/mDMRxkKeHbu6LDfsBipCqjiu/G
-    EES0KZhkHVVk2MfX+oTW155dUJd8TKLYPDDS6gzFfqRe/3so1zsYQOf1s8bMzj/w
-    sc1jbmM8m+U3tPCG7WAyQxJue9sO/9Oq19eyWCXaXO/Xw8RgkR8/tMYMvhz+8EK5
-    wJ8wlJAvYOS5uWxqkFyTfmFv7Kl/SMpYhIH3WD3t1DhVI5cH27i3OnUuqI/3Hzg4
-    vqL+66qlZNrNIZTSE0G4X07M3uELejab3/bw==
+    1523479237; b=Ya4jUTvZay1Nu6wMpsAn7X+Vf8iFZOpXdItfVfahZzEi2Pyjgv
+    AnOzurMdkS5nJq3+5zvulW+8ugKUMz5ErKdrs4ufOCMeYaOFnKqf2qjcGRwFEOiA
+    hQJxvUJQEQmyDI7Uc1reyLFUiVweFCqRxFgts2HvKCJL7HJV8GHVT+FePGTQzA6s
+    PQpWLdJcEAwJAmlmncFq+WVSfSr3c2hYECEV5E3jAJKTLYwkVr4xelXAN4ZfXV7i
+    ed6mG+uBRDdcHOhFQvCI/Uc2CYS5XxbzVBmwWYi4KYsXlpiFBnds3xViPb5wUUaf
+    7lI0T/SINCztY0sHgqs/1fKd7Sr3vyYDwz9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479248; bh=mJgdUyV0ePPoGOKHLwjqRxr7dH2E9s
-    rIWjWTH9IkeA8=; b=t/mlsuhMS5ta2wEBvKFPFnnzE4aUFKvPSh2ijloQNvO5Sw
-    xIr1qJbRM/nudVfPaCbPpeosbvx6f2J2O7HXkQkRwJK4gR8wClP76H0KcuUfbM1o
-    Q9UkXC0P9lf0K5TYrMNh3Uhhk7frgoGXjhI9GnWfk+tPOlHALULN5+6jfgQknI+m
-    higR6fQmTxPKfzN7MY3u1jvOMAHySyu6XTOhQddG338WGOfoOkChtC3pJdDFcaU5
-    SV0FduzV9HyIZe2jd++M77uzw6DxOygfLMgQnKrpVwUzx2A4MnFPS1cnupKtVqEa
-    CkfspmMCm2XYpcA3YyKvWbi6onV7Lsj8FG8IbzIQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479237; bh=FhZk7Hft1OrEdCOPXrC74lADmYlLrV
+    5syyYM93uQcwI=; b=hrRknfBePoVpBC6irkNz3r0RuYyZmv3EbU6XjtG1NCNB+X
+    H9T7rqcfQpgihAH/aNWgRtnllfFsuMBQeqHvyZ0/934mkND6mMGe/kpdJ4Ox6Ss1
+    G9aXoHlreMuZnh2HcwwykAgKO6+2lWeQzWQze/iB8cp/p+p+aoGB4lVxsxIncVyu
+    x7vv1ZvH0ThahaibDo0HPk+BqkJwRVKoFLfQd2PpJoA+3cLdFwukuWqNetybV9u6
+    StNLKRsXUO1Vv+j+xXUHc1xZu6hQJR7AQ9bqDjopDVoS42ciOVJ05KzDs36+UOSb
+    VRPjzTblBimKQTxv/WinBpG22QqB3oEa2p5upZ1Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,30 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDU+TbKiS8AP2SwigfVgnsxXHceFNl4VftUM4tkxIm9/CdeDaWY+maB4tHDg+PiuZZG1CuLMx/lEXSar9pDQa6npBUVdG4IJRs404G3CdO56dBsaAFzn
-    J5dwdxLfzSXp/GGMicfh/afHpjKUJHDEUQSMNTKKBt+6xrF0yOQnF+CYw4bStRLp4Qk+51eKiF2syUhbFIRUmDNWVPC6jSz4mzA0eUl0rrO7C4Nv6mOO0H9I
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJML96rgQGmlzSz8LddWtoCu3GZEss1dLKKDvkz7yAEHdBfdZekgV4CgK4ncm7K1TQJJOvXPJQj+nOgQ7BtqQscd2JjIAJVuy1eU+Do1gT17nVR/ALFK
+    nt/oqTUB3vPcRGHZNhM1I7FyFAQxIqyePq7Y88EkZ4Sxdp01kSS1lGGw4eZvOHDA9Qau7Qw/kROxd3vZ0z3dmCFpbRKYx6Au1jDnwS6X1ClTnSEeisoyrYoo
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=CbDCq_QkAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=4hgxAXUplmqpgkMKfa0A:9 a=QEXdDO2ut3YA:10
-    a=1qrBK16LubpBFNPVNq2M:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=yPCof4ZbAAAA:8 a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=xKBjqWDVSTWkfMpGLd4A:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756018AbeDKSr5 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:47:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59486 "EHLO
+        id S1756632AbeDKUkR (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:40:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59526 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756016AbeDKSr4 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:47:56 -0400
+        with ESMTP id S1756032AbeDKSsC (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:48:02 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 066/190] mlx5: fix bug reading rss_hash_type from CQE
-Date: Wed, 11 Apr 2018 20:35:12 +0200
-Message-Id: <20180411183554.157122721@linuxfoundation.org>
+Subject: [PATCH 4.4 068/190] libceph: NULL deref on crush_decode() error path
+Date: Wed, 11 Apr 2018 20:35:14 +0200
+Message-Id: <20180411183554.279688537@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -94,47 +92,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jesper Dangaard Brouer <brouer@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit 12e8b570e732eaa5eae3a2895ba3fbcf91bde2b4 ]
+[ Upstream commit 293dffaad8d500e1a5336eeb90d544cf40d4fbd8 ]
 
-Masks for extracting part of the Completion Queue Entry (CQE)
-field rss_hash_type was swapped, namely CQE_RSS_HTYPE_IP and
-CQE_RSS_HTYPE_L4.
+If there is not enough space then ceph_decode_32_safe() does a goto bad.
+We need to return an error code in that situation.  The current code
+returns ERR_PTR(0) which is NULL.  The callers are not expecting that
+and it results in a NULL dereference.
 
-The bug resulted in setting skb->l4_hash, even-though the
-rss_hash_type indicated that hash was NOT computed over the
-L4 (UDP or TCP) part of the packet.
-
-Added comments from the datasheet, to make it more clear what
-these masks are selecting.
-
-Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Acked-by: Saeed Mahameed <saeedm@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: f24e9980eb86 ("ceph: OSD client")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/mlx5/device.h |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ net/ceph/osdmap.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/linux/mlx5/device.h
-+++ b/include/linux/mlx5/device.h
-@@ -635,8 +635,14 @@ enum {
- };
+--- a/net/ceph/osdmap.c
++++ b/net/ceph/osdmap.c
+@@ -295,6 +295,7 @@ static struct crush_map *crush_decode(vo
+ 		u32 yes;
+ 		struct crush_rule *r;
  
- enum {
--	CQE_RSS_HTYPE_IP	= 0x3 << 6,
--	CQE_RSS_HTYPE_L4	= 0x3 << 2,
-+	CQE_RSS_HTYPE_IP	= 0x3 << 2,
-+	/* cqe->rss_hash_type[3:2] - IP destination selected for hash
-+	 * (00 = none,  01 = IPv4, 10 = IPv6, 11 = Reserved)
-+	 */
-+	CQE_RSS_HTYPE_L4	= 0x3 << 6,
-+	/* cqe->rss_hash_type[7:6] - L4 destination selected for hash
-+	 * (00 = none, 01 = TCP. 10 = UDP, 11 = IPSEC.SPI
-+	 */
- };
- 
- enum {
++		err = -EINVAL;
+ 		ceph_decode_32_safe(p, end, yes, bad);
+ 		if (!yes) {
+ 			dout("crush_decode NO rule %d off %x %p to %p\n",
