@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3397032-1523481506-2-12969655684116318055
+X-Cyrus-Session-Id: sloti22d1t05-3374234-1523481499-2-3003089008353371440
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523481505; b=QDOHj0+dOsCy9cExFdxTA9cwU/JDLg5iKzuSG7viRf9IQDfu9/
-    f5jhttt2BAxVdwSe6ONq2L0GvmwLyvynPn0iozEdTXPboIQpP8r1pYBP11MFZFQt
-    iua8Z9zrCgUhrSg3cHt0NK+taGFMKx7/KvKaELk4X8cuEwv/dfjWt+iXlL+dedrq
-    M5GytCxN07bbL888HSMR2nkRLk5ybwFYAFAbrRqHqLUC6tbt0tTKNAoUi1kR0Wbc
-    q9WDNlpNs2TXAX4ndmb/JAkPj013q7Pzhi6q4d8XlpEYzPcbHExc05Ag1Jo7sotK
-    I3FqTI3pPoAcCRMiAbo5UxE0NvfIq/NT2Rkg==
+    1523481498; b=HM3QGVd6wqCfQvHzQhUtLvfI+HUFvyTvqP4qMza6MmvLjin9u7
+    cwmr6WctWWNmGOQY4Kc0apB15mNDFhkqvfw2+KWKPAJUGCcQ08w29IRu17kiN+S4
+    L2C53jcAplMibPd21Yl7n2A0lD2czWh4Z6D6hJF4JsXvwTOy4muSTJVJhfV6iSlW
+    hYsFijmp2/3a/lR0h7vTaQFPBnePZUwmjsnHE9t9i6wWffWRhNFHeMMPf1UG+OPV
+    8dTuBC7j/CR+WilBlhDCLAZwSS0VCy3sGTLGE5WRGe5uNCGJKitEyOkzdg+uhKj1
+    iAB4QBHLGaUwTGFv+7cmIeFBKDEpfYUEWQaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523481505; bh=kixzw0vmsQZVwCg+oXzgDvkFFdtTWW
-    +8Kbv/zxOMkW8=; b=EEmG6L/wPYS900RtfE7LfJaBZtR15rreLIHxcTtxKrrjEU
-    5fetQUacP0a9adSyU7FToiwcRlZ9G3GBRvs6TJTJIdOduzKyOW2EYDv5Plmx1Vui
-    kRwnlsgZuhVM36DDOQAAnsBsK72Ua5I6umltAY5LQWhZPlTB1iNKyzQCq+f6mDbV
-    2U0U67qmIQc7ODiIxCZAfbLHNR4/A5d2A3GeBAUxS2ufmvc0/DZrkBziOZv0PzJi
-    0cfwU8wOov9mXw7JEtnJo0GTyI/9g6C2M4RWkPVGSZRMLnnlvxShN2E8OicLSOu0
-    4iPV87bwRjosMGxglt9ooTXIulpbqTMmSjOEYpFg==
+    :list-id; s=fm2; t=1523481498; bh=nxIKs3VBgmrId5o5W7CnJ9T0ePyfgj
+    3bS1Z0lpi6PCw=; b=WC+UKrVKB2PQHh8FQ5xywf8haVL2ArtgJ7eZGJOa3QJ6mx
+    3ylOgVIsSR93mQ9wWBMShTrGXR2ECwlIm8CqTKC2KBYalbA1qRNIH0+x9hvbk0To
+    77XjqVa8nzPqkrZ6i+8GJ/SezJ56pTg/G+DP3nbB60wxf5ayKtiFy/MmU2LbbBww
+    9cDGwu7d+qzrh7glQSm20xcMCedFlxljla628xGtDxuVqC1ZgvTrk3uEes4S1Ggs
+    p6h6QnIWPLbbBqoIWdgwzXlYuqF2gl8kA6SqnCedTUYKFxHQmITAhs4NgcPSh7IM
+    vPiEPC3h8C+n79UlG3L60NIwQWPj+inCurvJCdig==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,50 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLZv1cs6J2Mg7CSZ3BWNsOz6MESqW8uZ7wBNGupujnNjwUiu43lDqXzyEA9fksSM8EHYSeP2sDeiOwYYFUEho0cBd1XriEV86uKLXnMcLTeYE7Upl9az
-    KNclDyMpyMZeVKH4HtHH6OvcXwif1bYGBcI2VC0GbAxOvdpbZRKVQmm05HyWj+Xe6ndp0wsbcSAI6d+ph3jn+lGSyr/Rq7PX5DDi+w7FGNfkvPf+DKrNLO6I
+X-CM-Envelope: MS4wfMhosmWou8zQqInTGLpajHyhwFAOCtbTznAeg24+S58FVeEdlcW2CjOdYB1WtYY04o4f03GU4K4j8b0PBnynY1qlN6Rn/krsWX5CEJG1IpR6XvUtSxT+
+    RQOq1+aMYOd6Vw07X0Uy6s6riQivVK7ZSoaLx+JpHL0pxPdloJhlqW4DDwGMqA/+l6XzX7xEsdk9fXQby87iiALP6T3I6PnWJ8hHruEOypHLs/btN+LPzyq7
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=yPCof4ZbAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=e4JcQNwn_gKbhmeX78YA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=TYBLyS7eAAAA:8 a=VwQbUJbxAAAA:8 a=6rqHouBjAAAA:8 a=20KFwNOVAAAA:8
+    a=cm27Pg_UAAAA:8 a=mK_AVkanAAAA:8 a=drOt6m5kAAAA:8 a=xVhDTqbCAAAA:8
+    a=PtDNVHqPAAAA:8 a=SOq6UgPBAAAA:8 a=hBqU3vQJAAAA:8 a=Z4Rwk6OoAAAA:8
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=rNsULVQiV86SHlLWsYUA:9
+    a=I4lq80xf2na1cQiu:21 a=BoBft98koqt4epYC:21 a=QEXdDO2ut3YA:10
+    a=zvYvwCWiE4KgVXXeO06c:22 a=AjGcO6oz07-iQ99wixmX:22 a=Hx1yvPaMooE3kwe23bt7:22
+    a=xmb-EsYY8bH0VWELuYED:22 a=3gWm3jAn84ENXaBijsEo:22 a=RMMjzBEyIzXRtoq5n5K6:22
+    a=GrmWmAYt4dzCMttCBZOh:22 a=BpimnaHY1jUKGyF_4-AF:22 a=3hv5r9HjGAh9o5iR9qwG:22
+    a=WLjMIN4s_96MqnBbPenP:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753017AbeDKSkD (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:40:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56280 "EHLO
+        id S1754553AbeDKSkJ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:40:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56296 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753241AbeDKSkB (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:40:01 -0400
+        with ESMTP id S1753241AbeDKSkG (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:40:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@googlemail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 018/121] PowerCap: Fix an error code in powercap_register_zone()
-Date: Wed, 11 Apr 2018 20:35:21 +0200
-Message-Id: <20180411183457.250306103@linuxfoundation.org>
+Subject: [PATCH 3.18 009/121] pidns: disable pid allocation if pid_ns_prepare_proc() is failed in alloc_pid()
+Date: Wed, 11 Apr 2018 20:35:12 +0200
+Message-Id: <20180411183456.793551983@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -93,36 +112,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
 
-[ Upstream commit 216c4e9db4c9d1d2a382b42880442dc632cd47d9 ]
+[ Upstream commit 8896c23d2ef803f1883fea73117a435925c2b4c4 ]
 
-In the current code we accidentally return the successful result from
-idr_alloc() instead of a negative error pointer.  The caller is looking
-for an error pointer and so it treats the returned value as a valid
-pointer.
+alloc_pidmap() advances pid_namespace::last_pid.  When first pid
+allocation fails, then next created process will have pid 2 and
+pid_ns_prepare_proc() won't be called.  So, pid_namespace::proc_mnt will
+never be initialized (not to mention that there won't be a child
+reaper).
 
-This one might be a bit serious because if it lets people get around the
-kernel's protection for remapping NULL.  I'm not sure.
+I saw crash stack of such case on kernel 3.10:
 
-Fixes: 75d2364ea0ca (PowerCap: Add class driver)
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+    BUG: unable to handle kernel NULL pointer dereference at (null)
+    IP: proc_flush_task+0x8f/0x1b0
+    Call Trace:
+        release_task+0x3f/0x490
+        wait_consider_task.part.10+0x7ff/0xb00
+        do_wait+0x11f/0x280
+        SyS_wait4+0x7d/0x110
+
+We may fix this by restore of last_pid in 0 or by prohibiting of futher
+allocations.  Since there was a similar issue in Oleg Nesterov's commit
+314a8ad0f18a ("pidns: fix free_pid() to handle the first fork failure").
+and it was fixed via prohibiting allocation, let's follow this way, and
+do the same.
+
+Link: http://lkml.kernel.org/r/149201021004.4863.6762095011554287922.stgit@localhost.localdomain
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Acked-by: Cyrill Gorcunov <gorcunov@openvz.org>
+Cc: Andrei Vagin <avagin@virtuozzo.com>
+Cc: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Michael Kerrisk <mtk.manpages@googlemail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Serge Hallyn <serge@hallyn.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/powercap/powercap_sys.c |    1 +
- 1 file changed, 1 insertion(+)
+ kernel/pid.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/powercap/powercap_sys.c
-+++ b/drivers/powercap/powercap_sys.c
-@@ -538,6 +538,7 @@ struct powercap_zone *powercap_register_
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -316,8 +316,10 @@ struct pid *alloc_pid(struct pid_namespa
+ 	}
  
- 	power_zone->id = result;
- 	idr_init(&power_zone->idr);
-+	result = -ENOMEM;
- 	power_zone->name = kstrdup(name, GFP_KERNEL);
- 	if (!power_zone->name)
- 		goto err_name_alloc;
+ 	if (unlikely(is_child_reaper(pid))) {
+-		if (pid_ns_prepare_proc(ns))
++		if (pid_ns_prepare_proc(ns)) {
++			disable_pid_allocation(ns);
+ 			goto out_free;
++		}
+ 	}
+ 
+ 	get_pid_ns(ns);
