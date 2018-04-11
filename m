@@ -1,50 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757233AbeDKUEx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 16:04:53 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36749 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756128AbeDKUEt (ORCPT
+        id S1757317AbeDKUN4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 16:13:56 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:34832 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756230AbeDKUNx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 16:04:49 -0400
-X-Google-Smtp-Source: AIpwx492z3cFHfTDQxFnwBUVjxt38xas6AsqN5w1doFrO5+Todb8GZreYKpOwwMhDtc03D02tOpR1A==
-From: Laura Abbott <labbott@redhat.com>
-To: Josh Poimboeuf <jpoimboe@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Laura Abbott <labbott@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-kbuild@vger.kernel.org
-Subject: [PATCHv2] objtool: Support HOSTCFLAGS and HOSTLDFLAGS
-Date: Wed, 11 Apr 2018 13:04:32 -0700
-Message-Id: <20180411200432.3493-1-labbott@redhat.com>
-X-Mailer: git-send-email 2.14.3
+        Wed, 11 Apr 2018 16:13:53 -0400
+X-Google-Smtp-Source: AIpwx4/e8krCaOMsKhe5z0CudVY6ZpcZ57lwjaXetxGJZzWUUTd62CCyLt9W3Dik1ZL/E12l8lynLlgBhxVrq6MV2zw=
+MIME-Version: 1.0
+In-Reply-To: <87bmepn2o8.fsf_-_@xmission.com>
+References: <87d0z6ttxe.fsf@xmission.com> <CALCETrVR1qHCndoaqXWosy8ckMTyT2RequQTgg0MZUw_sMPwwQ@mail.gmail.com>
+ <87bmepn2o8.fsf_-_@xmission.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 11 Apr 2018 22:13:52 +0200
+X-Google-Sender-Auth: jGPDbiQQgPOCCW5rbZZCPl9sn2E
+Message-ID: <CAK8P3a2HaYDOnWYb5cagJeHKmeoWAz1MGzGfGwbeymEqDpvWzw@mail.gmail.com>
+Subject: Re: Q: Do si_time and si_utime need to be 64bit for y2038?
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It may be useful to compile host programs with different flags (e.g.
-hardening). Ensure that objtool picks up the appropriate flags.
+On Wed, Apr 11, 2018 at 6:11 PM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+>
+> Arnd,
+>
+> I am looking at the siginfo si_utime and si_stime fields of type clock_t
+> on 32bit architectures except for x32 these are 32bit fields.  For y2038
+> do we want to extend these fields to 64bit like x32 does?  Or is it not
+> a problem for these fields to be 32bit?
 
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
-v2: Drop several flags that are already defined in HOSTCFLAGS
----
- tools/objtool/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Short answer: I think we're fine without changing it, at least for y2038.
 
-diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-index e6acc281dd37..7df979ae4573 100644
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -31,8 +31,8 @@ INCLUDES := -I$(srctree)/tools/include \
- 	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
- 	    -I$(srctree)/tools/objtool/arch/$(ARCH)/include
- WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
--CFLAGS   += -Wall -Werror $(WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES)
--LDFLAGS  += -lelf $(LIBSUBCMD)
-+CFLAGS   += -Werror $(WARNINGS) $(HOSTCFLAGS) -g $(INCLUDES)
-+LDFLAGS  += -lelf $(LIBSUBCMD) $(HOSTLDFLAGS)
- 
- # Allow old libelf to be used:
- elfshdr := $(shell echo '\#include <libelf.h>' | $(CC) $(CFLAGS) -x c -E - | grep elf_getshdr)
--- 
-2.14.3
+> I care right now because I am trying to figure out how
+> copy_siginfo_to_user32 and copy_siginfo_to_user need to evolve.
+>
+> If we are going to extend existing architectures with 64bit variations
+> of si_utime and si_stime copy_siginfo_to_user and copy_siginfo_to_user32
+> needs an additional parameter describing which variant they should be
+> copying.
+>
+> It looks like posix does not define si_stime and and si_utime so we only
+> have to be backwards compatible with ourselves for whatever that is
+> worth.
+>
+> I am wondering if perhaps the general solution might be to just add
+> two extra fields si_stime64 and si_utime64 and always fill those in.
+>
+> Arnd do you have any ideas?
+
+There are generally four areas to be aware of with the data structure
+changes required for y2038:
+
+1. Stuff that overflows in the next few decades (either 2038 or some other
+    year). si_utime/si_stime counts relative times, so there is no overflow
+    happening at a particular date that we have to be aware of. However,
+    it does overflow when a 32-bit process runs for more than
+    (LONG_MAX / USER_HZ) seconds, which is about 248 days.
+    When you have a large SMP system with 256 CPUs and run a single
+    task across all of them, the overflow happens within one day of runtime.
+    This is a rare use case for 32-bit tasks, but it is an actual limitation
+    that we may want to fix regardless of the y2038 changes.
+
+2. Types that don't overflow in a particular interface (because they count
+    relative times) but do overflow in others. We have a problem in
+    wait4()/waidid() and getrusage() here, since those use 'struct timeval'
+    to count process times. Those can count up to 68 years of process
+    times (97 days on a 256-core machine running one task), so we
+    probably don't care about the overflow, but POSIX requires the
+    use of timeval [1] and we have to redefine that structure with an
+    incompatible layout.
+    We do have a choice between either keeping the existing structure
+    and letting the libc translate the 32-bit time_t to a 64-bit time_t,
+    or adding replacement syscalls for both getrusage() and waitid().
+    IIRC we don't need a new wait4(), since that can be implemented
+    using waitid.
+    clock_t is used in exactly two places: struct siginfo and struct tms,
+    so if we change one of the two, we also have to change the other.
+
+3. In some cases, two structures are almost identical between 32-bit
+    and 64-bit architectures. Using the exact same layout simplifies the
+    compat syscall handling. I think in x32, this was a factor as it means
+    that e.g. times() is shared between x32 and x86-64.
+
+4. If we change an interface, we may want to improve it in more than
+   one way, like we did with stat()->stat64()->statx() or time()->
+   gettimeofday()->clock_gettime()->clock_gettime64().
+   If we introduce a larger range for the 32-bit siginfo and tms
+   structures, we could also consider extending the resolution to
+   nanoseconds. I wouldn't follow rusage's timeval but use
+   timespec64 (__kernel_timespec as seen from user space).
+   64-bit nanoseconds are another option, but that again
+   overflows after 584 CPU-years or 52 days on a 4096-core
+   system.
+
+         Arnd
+
+[1] http://pubs.opengroup.org/onlinepubs/009696699/basedefs/sys/resource.h.html
