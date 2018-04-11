@@ -1,97 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753784AbeDKRBB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 13:01:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55338 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753599AbeDKRA7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 13:00:59 -0400
-Date: Wed, 11 Apr 2018 19:00:49 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Joe Perches <joe@perches.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andy Whitcroft <apw@canonical.com>, yuankuiz@codeaurora.org,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, paulmck@linux.vnet.ibm.com,
-        Ingo Molnar <mingo@kernel.org>, Len Brown <len.brown@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] checkpatch: Add a --strict test for structs with bool
- member definitions
-Message-ID: <20180411170049.GR4082@hirez.programming.kicks-ass.net>
-References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
- <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>
- <20180410123305.GF4082@hirez.programming.kicks-ass.net>
- <e22fb871b1b7f2fda4b22f3a24e0d7f092eb612c.camel@perches.com>
- <95477c93db187bab6da8a8ba7c57836868446179.camel@perches.com>
- <20180410143950.4b8526073b4e3e34689f68cb@linux-foundation.org>
- <b3d75281c3a7b4b217b612913894b346eaa3288b.camel@perches.com>
- <20180410150011.df9e036f57b5bcac7ac19686@linux-foundation.org>
- <20180411081502.GJ4082@hirez.programming.kicks-ass.net>
- <20180411092959.e666ec443e4d3bb6f43901d7@linux-foundation.org>
+        id S1753960AbeDKRGn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 13:06:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33024 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753751AbeDKRGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 13:06:41 -0400
+Subject: Re: [PATCH] memory-model: fix cheat sheet typo
+To: Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will.deacon@arm.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>
+References: <1523292618-10207-1-git-send-email-pbonzini@redhat.com>
+ <20180409184258.GP3948@linux.vnet.ibm.com>
+ <20180410203214.GA19606@linux.vnet.ibm.com>
+ <8cbda122-6aa3-365b-fd09-52dca0644cbd@redhat.com>
+ <20180410213434.GC3948@linux.vnet.ibm.com>
+ <156ac07b-7393-449f-518a-6b1c2cff8efb@redhat.com>
+ <20180411161956.GQ3948@linux.vnet.ibm.com>
+ <20180411163157.GQ4082@hirez.programming.kicks-ass.net>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <70348608-e695-1977-d34e-d7d66b07ad25@redhat.com>
+Date: Wed, 11 Apr 2018 19:06:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180411092959.e666ec443e4d3bb6f43901d7@linux-foundation.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180411163157.GQ4082@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 09:29:59AM -0700, Andrew Morton wrote:
+On 11/04/2018 18:31, Peter Zijlstra wrote:
+>>>                                    Prior Operation   Subsequent Operation
+>>>                                    ---------------   ---------------------
+>>>                                    R  W  RMW  SV     R  W  DR  DW  RMW  SV
+>>>                                    -  -  ---  --     -  -  --  --  ---  --
+>>> smp_store_mb()                     Y  Y    Y   Y      Y  Y   Y   Y   Y   Y
+> I'm not sure about that, the generic version of that reads:
 > 
-> OK.  I guess.  But I'm not really seeing some snappy description which
-> helps people understand why checkpatch is warning about this. 
-
- "Results in architecture dependent layout."
-
-is the best short sentence I can come up with.
-
-> We already have some 500 bools-in-structs and the owners of that code
-> will be wondering whether they should change them, and whether they
-> should apply those remove-bool-in-struct patches which someone sent
-> them.
-
-I still have room in my /dev/null mailbox for pure checkpatch patches.
-
-> (ooh, https://lkml.org/lkml/2017/11/21/384 is working this morning)
-
-Yes, we really should not use lkml.org for references. Sadly google
-displays it very prominently when you search for something.
-
-> hm, Linus suggests that instead of using
+> include/asm-generic/barrier.h:#define __smp_store_mb(var, value)
+>     do { WRITE_ONCE(var, value); __smp_mb(); } while (0)
 > 
-> 	bool mybool;
-> 
-> we should use
-> 
-> 	unsigned mybool:1;
-> 
-> However that introduces the risk that alterations of mybool will use
-> nonatomic rmw operations.
-> 
-> 	unsigned myboolA:1;
-> 	unsigned myboolB:1;
-> 
-> so
-> 
-> 	foo->myboolA = 1;
-> 
-> could scribble on concurrent alterations of foo->myboolB.  I think.
+> Which doesn't not have an smp_mb() before, so it doesn't actually order
+> prior; or I'm failing to read the table wrong.
 
-So that is true of u8 on Alpha <EV56 too. If you want concurrent, you
-had better know what you're doing.
+You're not, even better reason to document it. :)  I was going from
+memory for the x86 version.
 
-> I guess that risk is also present if myboolA and myboolB were `bool',
-> too.  The compiler could do any old thing with them including, perhaps,
-> using a single-bit bitfield(?).
+I'll start tomorrow on fixes to the current document, while we discuss
+the split format and what to do about cumulativity and propagation.
 
-The smallest addressable type in C is a byte, so while _Bool may be
-larger than a byte, it cannot be smaller. Otherwise we could not write:
-
-	_Bool var;
-	_Boll *ptr = &var;
-
-Which is something that comes apart with bitfields.
+Paolo
