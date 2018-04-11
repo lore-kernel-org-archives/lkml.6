@@ -1,108 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752586AbeDKAk0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 20:40:26 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:43227 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752539AbeDKAkZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 20:40:25 -0400
-X-Google-Smtp-Source: AIpwx4+JnIQKELKRkPy6xmC5d+3OSNncZ6dUcBlemjfGxuYEt2TPP6ckPEr7zZOlzsBn+69q55hag1bCKplTlcUxHx4=
+        id S1752653AbeDKApd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 20:45:33 -0400
+Received: from tn-76-7-174-50.sta.embarqhsd.net ([76.7.174.50]:57453 "EHLO
+        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751845AbeDKApb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 20:45:31 -0400
+Date: Tue, 10 Apr 2018 20:45:25 -0400
+From: Wakko Warner <wakko@animx.eu.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: 4.15.14 crash with iscsi target and dvd
+Message-ID: <20180411004525.GA9107@animx.eu.org>
+References: <20180401182723.GA31755@animx.eu.org>
+ <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
+ <20180406014644.GA16112@animx.eu.org>
+ <20180406020651.GB16112@animx.eu.org>
+ <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
+ <20180407165335.GA2515@animx.eu.org>
+ <1ff8d234cc565ba9701ce31899fca5faa597e050.camel@wdc.com>
+ <20180408160254.GA22869@animx.eu.org>
+ <f9467e78ce05446e7a89f06713c36fb638d1b6ad.camel@wdc.com>
+ <20180409233436.GC6450@ming.t460p>
 MIME-Version: 1.0
-References: <201804080259.VS5U0mKT%fengguang.wu@intel.com> <20180410005908.167976-1-gthelen@google.com>
- <55efb2c6-04c5-d2bb-738e-8308aa0eaf8f@meituan.com>
-In-Reply-To: <55efb2c6-04c5-d2bb-738e-8308aa0eaf8f@meituan.com>
-From: Greg Thelen <gthelen@google.com>
-Date: Wed, 11 Apr 2018 00:40:11 +0000
-Message-ID: <CAHH2K0aMhquqkpbxEWR3CoeDyHyZHViYK3y629U+=Hguo_vgKQ@mail.gmail.com>
-Subject: Re: [PATCH v3] writeback: safer lock nesting
-To: Wang Long <wanglong19@meituan.com>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
-        npiggin@gmail.com, LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409233436.GC6450@ming.t460p>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3B0eU5d011933
 
-On Tue, Apr 10, 2018 at 1:15 AM Wang Long <wanglong19@meituan.com> wrote:
+Ming Lei wrote:
+> Sure, thanks for your sharing.
+> 
+> Wakko, could you test the following patch and see if there is any
+> difference?
+> 
+> --
+> diff --git a/drivers/target/target_core_pscsi.c b/drivers/target/target_core_pscsi.c
+> index 0d99b242e82e..6147178f1f37 100644
+> --- a/drivers/target/target_core_pscsi.c
+> +++ b/drivers/target/target_core_pscsi.c
+> @@ -888,7 +888,7 @@ pscsi_map_sg(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
+>  		if (len > 0 && data_len > 0) {
+>  			bytes = min_t(unsigned int, len, PAGE_SIZE - off);
+>  			bytes = min(bytes, data_len);
+> -
+> + new_bio:
+>  			if (!bio) {
+>  				nr_vecs = min_t(int, BIO_MAX_PAGES, nr_pages);
+>  				nr_pages -= nr_vecs;
+> @@ -931,6 +931,7 @@ pscsi_map_sg(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
+>  				 * be allocated with pscsi_get_bio() above.
+>  				 */
+>  				bio = NULL;
+> +				goto new_bio;
+>  			}
+>  
+>  			data_len -= bytes;
 
-> > lock_page_memcg()/unlock_page_memcg() use spin_lock_irqsave/restore() if
-> > the page's memcg is undergoing move accounting, which occurs when a
-> > process leaves its memcg for a new one that has
-> > memory.move_charge_at_immigrate set.
-> >
-> > unlocked_inode_to_wb_begin,end() use spin_lock_irq/spin_unlock_irq() if
-the
-> > given inode is switching writeback domains.  Switches occur when enough
-> > writes are issued from a new domain.
-> >
-> > This existing pattern is thus suspicious:
-> >      lock_page_memcg(page);
-> >      unlocked_inode_to_wb_begin(inode, &locked);
-> >      ...
-> >      unlocked_inode_to_wb_end(inode, locked);
-> >      unlock_page_memcg(page);
-> >
-> > If both inode switch and process memcg migration are both in-flight then
-> > unlocked_inode_to_wb_end() will unconditionally enable interrupts while
-> > still holding the lock_page_memcg() irq spinlock.  This suggests the
-> > possibility of deadlock if an interrupt occurs before
-> > unlock_page_memcg().
-> >
-> >      truncate
-> >      __cancel_dirty_page
-> >      lock_page_memcg
-> >      unlocked_inode_to_wb_begin
-> >      unlocked_inode_to_wb_end
-> >      <interrupts mistakenly enabled>
-> >                                      <interrupt>
-> >                                      end_page_writeback
-> >                                      test_clear_page_writeback
-> >                                      lock_page_memcg
-> >                                      <deadlock>
-> >      unlock_page_memcg
-> >
-> > Due to configuration limitations this deadlock is not currently possible
-> > because we don't mix cgroup writeback (a cgroupv2 feature) and
-> > memory.move_charge_at_immigrate (a cgroupv1 feature).
-> >
-> > If the kernel is hacked to always claim inode switching and memcg
-> > moving_account, then this script triggers lockup in less than a minute:
-> >    cd /mnt/cgroup/memory
-> >    mkdir a b
-> >    echo 1 > a/memory.move_charge_at_immigrate
-> >    echo 1 > b/memory.move_charge_at_immigrate
-> >    (
-> >      echo $BASHPID > a/cgroup.procs
-> >      while true; do
-> >        dd if=/dev/zero of=/mnt/big bs=1M count=256
-> >      done
-> >    ) &
-> >    while true; do
-> >      sync
-> >    done &
-> >    sleep 1h &
-> >    SLEEP=$!
-> >    while true; do
-> >      echo $SLEEP > a/cgroup.procs
-> >      echo $SLEEP > b/cgroup.procs
-> >    done
-> >
-> > Given the deadlock is not currently possible, it's debatable if there's
-> > any reason to modify the kernel.  I suggest we should to prevent future
-> > surprises.
-> This deadlock occurs three times in our environment，
+Sorry for the delay.  I reverted my change, added this one.  I didn't
+reboot, I just unloaded and loaded this one.
+Note: /dev/sr1 as seen from the initiator is /dev/sr0 (physical disc) on the
+target.
 
-> this deadlock occurs three times in our environment. It is better to cc
-stable kernel and
-> backport it.
+Doesn't crash, however on the initiator I see this:
+[9273849.707777] ISO 9660 Extensions: RRIP_1991A
+[9273863.359718] scsi_io_completion: 13 callbacks suppressed
+[9273863.359788] sr 26:0:0:0: [sr1] tag#1 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=0x08
+[9273863.359909] sr 26:0:0:0: [sr1] tag#1 Sense Key : 0x2 [current] 
+[9273863.359974] sr 26:0:0:0: [sr1] tag#1 ASC=0x8 ASCQ=0x0 
+[9273863.360036] sr 26:0:0:0: [sr1] tag#1 CDB: opcode=0x28 28 00 00 22 f6 96 00 00 80 00
+[9273863.360116] blk_update_request: 13 callbacks suppressed
+[9273863.360177] blk_update_request: I/O error, dev sr1, sector 9165400
+[9273875.864648] sr 26:0:0:0: [sr1] tag#1 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=0x08
+[9273875.864738] sr 26:0:0:0: [sr1] tag#1 Sense Key : 0x2 [current] 
+[9273875.864801] sr 26:0:0:0: [sr1] tag#1 ASC=0x8 ASCQ=0x0 
+[9273875.864890] sr 26:0:0:0: [sr1] tag#1 CDB: opcode=0x28 28 00 00 22 f7 16 00 00 80 00
+[9273875.864971] blk_update_request: I/O error, dev sr1, sector 9165912
 
-That's interesting.  Are you using cgroup v1 or v2?  Do you enable
-memory.move_charge_at_immigrate?
-I assume you've been using 4.4 stable.  I'll look closer at it at a 4.4
-stable backport.
+To cause this, I mounted the dvd as seen in the first line and ran this
+command: find /cdrom2 -type f | xargs -tn1 cat > /dev/null
+I did some various tests.  Each test was done after umount and mount to
+clear the cache.
+cat <file> > /dev/null causes the message.
+dd if=<file> of=/dev/null bs=2048 doesn't
+	using bs=4096 doesn't
+	using bs=64k doesn't
+	using bs=128k does
+cat uses a blocksize of 128k.
+
+The following was done without being mounted.
+ddrescue -f -f /dev/sr1 /dev/null 
+	doesn't cause the message
+dd if=/dev/sr1 of=/dev/null bs=128k
+	doesn't cause the message
+using bs=256k causes the message once:
+[9275916.857409] sr 27:0:0:0: [sr1] tag#0 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=0x08
+[9275916.857482] sr 27:0:0:0: [sr1] tag#0 Sense Key : 0x2 [current] 
+[9275916.857520] sr 27:0:0:0: [sr1] tag#0 ASC=0x8 ASCQ=0x0 
+[9275916.857556] sr 27:0:0:0: [sr1] tag#0 CDB: opcode=0x28 28 00 00 00 00 00 00 00 80 00
+[9275916.857614] blk_update_request: I/O error, dev sr1, sector 0
+
+If I access the disc from the target natively either by mounting and
+accessing files or working with the device directly (ie dd) no errors are
+logged on the target.
+
+-- 
+ Microsoft has beaten Volkswagen's world record.  Volkswagen only created 22
+ million bugs.
