@@ -1,94 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752913AbeDKNmu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 09:42:50 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45828 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751541AbeDKNms (ORCPT
+        id S1752908AbeDKNo1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 09:44:27 -0400
+Received: from resqmta-ch2-11v.sys.comcast.net ([69.252.207.43]:50904 "EHLO
+        resqmta-ch2-11v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751541AbeDKNo0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 09:42:48 -0400
-Subject: Re: [PATCH][next] afs: fix integer overflow when shifting 1 more than
- 32 places
-To: David Howells <dhowells@redhat.com>
-Cc: linux-afs@lists.infradead.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180411132613.18974-1-colin.king@canonical.com>
- <23535.1523453966@warthog.procyon.org.uk>
-From: Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- xsFNBE6TJCgBEACo6nMNvy06zNKj5tiwDsXXS+LhT+LwtEsy9EnraKYXAf2xwazcICSjX06e
- fanlyhB0figzQO0n/tP7BcfMVNG7n1+DC71mSyRK1ZERcG1523ajvdZOxbBCTvTitYOy3bjs
- +LXKqeVMhK3mRvdTjjmVpWnWqJ1LL+Hn12ysDVVfkbtuIm2NoaSEC8Ae8LSSyCMecd22d9Pn
- LR4UeFgrWEkQsqROq6ZDJT9pBLGe1ZS0pVGhkRyBP9GP65oPev39SmfAx9R92SYJygCy0pPv
- BMWKvEZS/7bpetPNx6l2xu9UvwoeEbpzUvH26PHO3DDAv0ynJugPCoxlGPVf3zcfGQxy3oty
- dNTWkP6Wh3Q85m+AlifgKZudjZLrO6c+fAw/jFu1UMjNuyhgShtFU7NvEzL3RqzFf9O1qM2m
- uj83IeFQ1FZ65QAiCdTa3npz1vHc7N4uEQBUxyXgXfCI+A5yDnjHwzU0Y3RYS52TA3nfa08y
- LGPLTf5wyAREkFYou20vh5vRvPASoXx6auVf1MuxokDShVhxLpryBnlKCobs4voxN54BUO7m
- zuERXN8kadsxGFzItAyfKYzEiJrpUB1yhm78AecDyiPlMjl99xXk0zs9lcKriaByVUv/NsyJ
- FQj/kmdxox3XHi9K29kopFszm1tFiDwCFr/xumbZcMY17Yi2bQARAQABzSJDb2xpbiBLaW5n
- IDxjb2xpbi5raW5nQHVidW50dS5jb20+wsF3BBMBCAAhBQJPCrjvAhsDBQsJCAcDBRUKCQgL
- BRYCAwEAAh4BAheAAAoJEGjCh9/GqAImjVsP/iA8hDQy7LlMYepND9tKJD2haNLmsBC+yuxX
- BybYprtSjwvMbx6CtmtiJ4nGfdBzbZv3xOJPr/n6wxrdfGHEFn0W8Au97Xvk087P7alCwBXz
- y1Hk1aTlhLOGunOLv6SWRYRUAHvWEoVlxPSo2UNJ6D01d9tc7IJU08MlAl+u048S6625G5SG
- tfOJpFyGqaWGazMpkYdbJuY9acNAQAl1GzZPDCyLrxaBJypqmp3W+rb7m9arNRMlygevFU6e
- UGrR7QiVuumTGebGF9D63H9LD0E/1EhOA4QWHq1/u7CXLr9qo1YyAUtYAICs0wyRbI6wWPyi
- 5IyOTiWCVP3qSxV4JR8qq8JhGEwxS5fEB76r+XGxcL7qqiQmVx3bkjlT6FnnanPcD7RsMOAg
- NcpeftVsqignFPA3XHaDeew4t99ef+wKwiiyU7jqduvSt8amLVip5dxN1TYKqWPauIHL3E2A
- KIKuqsZ9ftUJ3NXClAfI3EHPMYbok6b04nZSWmBttKHr8YkVF5b4jrabMLlVoCg+DGYffyDS
- YDwy9FPvJWkt6nffUXciearieSlHEt3f12CPp6OOR8yFZWlISYKdD9PDzXP9kJYTEWnr7dD3
- feEZK+J9N5wpCU7HvfrA5HCOMJgf8Dcfscrj9H2Qp8vbErMP7jZ6OYapCOV5MZS6W57wlG2k
- zsFNBE6TJCgBEADF+hz+c0qF0R58DwiM8M/PopzFu5ietBpl0jUzglaKhMZKKW7lAr4pzeE4
- PgJ4ZwQd0dSkx63hRqM963Fe35iXrreglpwZxgbbGluRJpoeoGWzuUpXE6Ze0A2nICFLk79a
- YHsFRwnKyol9M0AyZHCvBXi1HAdj17iXerCYN/ZILD5SO0dDiQl570/1Rp3d1z0l16DuCnK+
- X3I7GT8Z9B3WAr6KCRiP0Grvopjxwkj4Z191mP/auf1qpWPXEAPLVAvu5oM7dlTIxX7dYa6f
- wlcm1uobZvmtXeDEuHJ3TkbFgRHrZwuh50GMLguG1QjhIPXlzE7/PBQszh5zGxPj8cR81txs
- 6K/0GGRnIrPhCIlOoTU8L+BenxZF31uutdScHw1EAgB6AsRdwdd8a9AR+XdhHGzQel8kGyBp
- 4MA7508ih0L9+MBPuCrSsccjwV9+mfsTszrbZosIhVpBaeHNrUMphwFe9HbGUwQeS6tOr+py
- bOtNUHeiJ5aU3Npo3eZkWVGePP2O4vr8rjVQ1xZMIWA18xUaLTvVSarV7/IqjLb0uMTz6Ng7
- SceqjsgxO4J35pPOCG8gy85Tmd5NKe46K1xGsNG2zzfXQ6cNkofUyQFGVbLCtdfQyWV7+dgU
- nOnPhrTKpFfJ5lnWpLpze0LfyW03CpWx9x4yMlwcvIFw2hLaOQARAQABwsFfBBgBCAAJBQJO
- kyQoAhsMAAoJEGjCh9/GqAImeJYP/jdppMeb7AZnLGVXd8rN7CLBtfMOkXCWaOUhjMRAY7dV
- IMiF1iPZc6SgiiMSsdG7JJhMjMuLTxA0kX2Z6P0+6dZlO4bDOKMIv4nNGhgSj9NuSKJPRiyi
- XKKD/wNnPXVFdBZsoHnEXGyAFGnidu4KLUJIiSm4tHJdoMk0ZaJSmwt0dtytuC1IWH8eIaVo
- /Ah6FxCaznRzvGNFx+9Ofcc7+aMZ15dkg9XagOuiDZ1/r6VuEw9ovnkDT4H5BAsysxo/qykX
- 4XQ2RQSY/P3td9WNLeXLvt1aJNRcwcIEKgZ5AO3YQbEJt1dEfCU7TAKiRpsjnC/iQiQHGt2I
- vNci8oZmM3EQEi7yZqD07A6dpGTnRq9OQ7fGhj0SS99yZvooH3fBIHA2LRuvhfDAgTrpbU0w
- LvkAIo0T2b9SoRCV8FEpHvR2b86NbTU5WN4eqZQbAbnxC7tJp6kLx2Zn2uQMvfXRfnS9R1ja
- etvpk3h7F+r/RAAh+EvgsPUNaiRJRRLvf9bxTQZhmNrw79eIFNsRIktniLyomJf2+WPOUECz
- h1lfLqe9yiuUKv+m5uAalXdayhiPbp/JHs1EDRgSq3tiirOsKrh/KMpwz/22qGMRBjFwYBhf
- 6ozgujmPlO5DVFtzfwOydzNlXTky7t4VU8yTGXZTJprIO+Gs72Q1e+XVIoKl3MIx
-Message-ID: <62e9abc2-b639-419c-afa7-e89054f7dce9@canonical.com>
-Date: Wed, 11 Apr 2018 14:42:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 11 Apr 2018 09:44:26 -0400
+Date: Wed, 11 Apr 2018 08:44:23 -0500 (CDT)
+From: Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To: Matthew Wilcox <willy@infradead.org>
+cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: Re: [PATCH v2 2/2] slab: __GFP_ZERO is incompatible with a
+ constructor
+In-Reply-To: <20180411060320.14458-3-willy@infradead.org>
+Message-ID: <alpine.DEB.2.20.1804110842560.3788@nuc-kabylake>
+References: <20180411060320.14458-1-willy@infradead.org> <20180411060320.14458-3-willy@infradead.org>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <23535.1523453966@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-CMAE-Envelope: MS4wfPNKBrFjObshxqS//aSWnjYTjapkjqXPjJHi11+j75mF500KvhT9Dh7rWI7VMzRDuSrdaN0s+qDBlzuzEPEnh1gFWag2tzuBvsUbJ4bcPx0I2PSHcK2V
+ 58RhoCNt/FJjErAAcX3AK815v6IH8Pfu5dU80elx8VtyRGjHsRBKezBSK1LjcmcPhQiGMvA3az2tERY9pTa7TR9Caxm2PC/+UKb+v3P7d7nvWcN47tCaIaKu
+ oUJB2HP80+MGD6ANccv6pThH2PwaSCYX5xJLmxgxLIZCI0NxQP5imtv+m3Sa6Y89ibP8LtuSAD4zHt5qs9kKRoHm4PQZeJ62eP0VDsGAvvkzAvqSMr4sHGyz
+ jOOFOtDYn0iaMd24PvWFMl2T7jhaayNOfNRWbmK3PB5tvxPhhqPEjajqHs7NgH0dH5NzYALHTPNAuy6BcA6uNZfKhRXX6nH0W682wUF+GZCsXLY6uD7wk2eh
+ 77Skf0aQFQVWF1s8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/04/18 14:39, David Howells wrote:
-> Colin King <colin.king@canonical.com> wrote:
-> 
->> Shifting 1 (a 32 bit signed int) more than 32 places will overflow
->> the int, so explicitly use 1ULL to avoid this overflow.
->> ...
->> -	mask = (1 << nr_slots) - 1;
->> +	mask = (1ULL << nr_slots) - 1;
-> 
-> nr_slots cannot be larger than 9, so what I wrote is actually fine and is more
-> efficient on a 32-bit machine.
+On Tue, 10 Apr 2018, Matthew Wilcox wrote:
 
-ok, sorry about the noise.
+> diff --git a/mm/slab.h b/mm/slab.h
+> index 3cd4677953c6..896818c7b30a 100644
+> --- a/mm/slab.h
+> +++ b/mm/slab.h
+> @@ -515,6 +515,13 @@ static inline void dump_unreclaimable_slab(void)
+>
+>  void ___cache_free(struct kmem_cache *cache, void *x, unsigned long addr);
+>
+> +static inline bool slab_no_ctor(struct kmem_cache *s)
+> +{
+> +	if (IS_ENABLED(CONFIG_DEBUG_VM))
+> +		return !WARN_ON_ONCE(s->ctor);
+> +	return true;
+> +}
+> +
+>  #ifdef CONFIG_SLAB_FREELIST_RANDOM
+>  int cache_random_seq_create(struct kmem_cache *cachep, unsigned int count,
+>  			gfp_t gfp);
 
-> 
-> David
-> --
-> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Move that to mm/slab.c? Debugging is runtime enabled with SLUB not compile
+time as with SLAB.
+
+> +++ b/mm/slub.c
+> @@ -2725,7 +2726,7 @@ static __always_inline void *slab_alloc_node(struct kmem_cache *s,
+>  		stat(s, ALLOC_FASTPATH);
+>  	}
+>
+> -	if (unlikely(gfpflags & __GFP_ZERO) && object)
+> +	if (unlikely(gfpflags & __GFP_ZERO) && object && slab_no_ctor(s))
+>  		memset(object, 0, s->object_size);
+>
+>  	slab_post_alloc_hook(s, gfpflags, 1, &object);
+
+Please put this in a code path that is enabled by specifying
+
+slub_debug
+
+on the kernel command line.
