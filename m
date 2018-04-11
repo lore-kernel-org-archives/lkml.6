@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3269524-1523477669-2-6280591551522116031
+X-Cyrus-Session-Id: sloti22d1t05-3269524-1523477660-2-17212114332705041916
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477667; b=Jy2rTrJ2fRPAa7/S9K752YccGTzyrQmKqtYUiGSuPha2PmukAs
-    D427W3uLbPikrUcZddz7MhfnI77l5ONU6whse0lzWFNmKegn2dExc8J5F53bEr00
-    /ug2ccFqw6+e/ELm5BjOj1N9ptnDB8O13+4Ac9srEOMFQvuqNJA9zKAPNdpSdlQn
-    IKLLnABfHN/evjLS5lieIOb5TA/33pJHisA99ucLDlsBDv62qutI1pJunsQiziGb
-    WA/84BfOlJ6NmimupPW9Jlovw/HAb2DwL1OPEEj0H6H/UmHhYqI3qMaQ8dAtR3tO
-    U5Hl/vuVBIejQokDkx57Uhim2pXKNN/bDCkA==
+    1523477659; b=Eo9WzaPmYuveXEXa3qfrIufmyJ4gnZS+xRtPPKjZZbFZcF7BQi
+    mXCnoU6VsyHs1ZXQjgoIHdbPTWwoM0FHb3tzL4N91gGP4MoFU38fjzKN7JVxmVTH
+    z3xspOvY/IwfUs0I0IogMr5t9gjkmnZQpk+f96IHQjMjAh6R7rikvO9eh6Jp+uyp
+    pok5TfB0hL2IflyDEJjOCxB9zssz85l1ySWEWhrjEH9Luq6/37yfoRM0ThI7RxmV
+    ic9L2UUhzS8MSP1ynO6hIDz6UW4BaQYe7MYwKWbERZcx11QjkxT0BqDJfduaVASg
+    J5JE+IcSmT1atiw0S30kNFuGmVYDcYjXaCWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523477667; bh=pY6guMryDh+RSCv+ur6/j9+98YcRuN
-    xdSJyLLWNR0Q8=; b=Otfv0VP2txXTv/+X9fhgEsrpPsfdkyVxswbZcv55t+51xK
-    I68XcrZ2tVS0xAA+Cw9dK2guwM8D2+4Y7XO8f+wsFicT1zmutHArUpXoDErgoOGS
-    hJBuAO/DGXIjAOyxf13RZTmESAq6w4T68iupRxJMrduWx8+5T0sIMarmNeEXSN73
-    PWv8PSQSnM09q85rjcXAZPPq0D9yP/aMtXqRBZHuis4OQFB69cAJAxZ8DvTbXUW0
-    +VVsdgZOcwVa9XbpW9XfHCBUJimvCyvb9Ktc0ntlMt/iTHwqS3KhwPoi5WhhOELb
-    yhZadIOJYWtWrgEkhSwGxpjyWLs13qLAjWP6I33g==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523477659; bh=4giLyN1ztE2Xhok6dk7y+26g9Jrr8j
+    7m4wNtvbHZB68=; b=NBx3iQjR4wFlcsnqXSQPGn9Z98FQ11IxqwgMOr5mxqrHQ4
+    DFrpfjkBemGPmDE9X3a/Ho1L5XDcamElu/ThDbZhHwH299gyqxPMSYuugDOBdOF2
+    jYfxvUD9KPjSzpYLn+LO47C/meVXTtwg8NMQQbX7Alg0dH+/48WkC9PmDuuA7oOi
+    tsZJHygmXWTxIMXydj1GWIvdWUf4cum8ckDwFaQDPm2NBNYKoXLs8SwY4xYP4RmH
+    0/z3l2zWSfst2kUawN3NsWgBwayy402NG99nmvbDfixGBDC2eVkZ3DfkIs2bKFgC
+    pl3qkr9fpVfI/2got3qwWpV2y0K4543N192SB/UA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,32 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEcf9B/Icab2+EhWY9cG0zmIC291E2Mef+IYU2drjEwqppiTps+4nTR9ONnyebnCXx9ChG3YOBMN2n1dJ3PPe1fDdufGm/5Vf32oPoUZ0XTns0Mo/uln
-    yDxsv/l6mbePgOhPxSdKAE5fuQiR3uGDSooT+jpGet5Ab5bkXhrsq49iwy6WdQiGInfX74+IVjgP3O5TJbvmbw6NCx5qoPiJFwJm8eFMqheosQ+T0niT/TtC
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfBrp19MafUt78l9ZBXOU1W79jt4gEdvZOo23mQgsclBjbl1eRSeAY4XGqr7BNl2cVtZlGg31MFxAZImsaHU8lpsTuqAbLHR+eZGVxkPoXoIAWil5D7F4
+    AbmkK2fxHgEK49T4V7fAUy8p6/0OQIHg2TrTIkeUs/b7MpZBT7FaB6KkSkomf2srx7rDn0BUWOdcpu3TLE6ZROHKIb8it3htLQepIl9In+kfAPMp9ysq36ZK
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VZJtwKKvAAAA:8 a=JDjsHSkAAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=RYaEpqiKWCezV3X8amEA:9 a=QEXdDO2ut3YA:10 a=vzdIw8kzLcqZOxdJCU6L:22
-    a=dseMxAR1CDlncBZeV_se:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=3-RhneuVAAAA:8 a=yMhMjlubAAAA:8 a=pGLkceISAAAA:8 a=ag1SF4gXAAAA:8
+    a=WoP9IM0tYB0b0HWQNkIA:9 a=QEXdDO2ut3YA:10 a=VLVLkjT_5ZicWzSuYqSo:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933303AbeDKSxg (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:53:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33878 "EHLO
+        id S933317AbeDKSxl (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:53:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33900 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933299AbeDKSxf (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:53:35 -0400
+        with ESMTP id S933299AbeDKSxi (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:53:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
+        stable@vger.kernel.org, Rabin Vincent <rabinv@axis.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <smfrench@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 026/310] NFSv4.1: Work around a Linux server bug...
-Date: Wed, 11 Apr 2018 20:32:45 +0200
-Message-Id: <20180411183623.421918196@linuxfoundation.org>
+Subject: [PATCH 4.9 027/310] CIFS: silence lockdep splat in cifs_relock_file()
+Date: Wed, 11 Apr 2018 20:32:46 +0200
+Message-Id: <20180411183623.461438905@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -93,46 +94,85 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Trond Myklebust <trond.myklebust@primarydata.com>
+From: Rabin Vincent <rabinv@axis.com>
 
 
-[ Upstream commit f4b23de3dda1536590787c9e5c3d16b8738ab108 ]
+[ Upstream commit 560d388950ceda5e7c7cdef7f3d9a8ff297bbf9d ]
 
-It turns out the Linux server has a bug in its implementation of
-supattr_exclcreat; it returns the set of all attributes, whether
-or not they are supported by minor version 1.
-In order to avoid a regression, we therefore apply the supported_attrs
-as a mask on top of whatever the server sent us.
+cifs_relock_file() can perform a down_write() on the inode's lock_sem even
+though it was already performed in cifs_strict_readv().  Lockdep complains
+about this.  AFAICS, there is no problem here, and lockdep just needs to be
+told that this nesting is OK.
 
-Reported-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+ =============================================
+ [ INFO: possible recursive locking detected ]
+ 4.11.0+ #20 Not tainted
+ ---------------------------------------------
+ cat/701 is trying to acquire lock:
+  (&cifsi->lock_sem){++++.+}, at: cifs_reopen_file+0x7a7/0xc00
+
+ but task is already holding lock:
+  (&cifsi->lock_sem){++++.+}, at: cifs_strict_readv+0x177/0x310
+
+ other info that might help us debug this:
+  Possible unsafe locking scenario:
+
+        CPU0
+        ----
+   lock(&cifsi->lock_sem);
+   lock(&cifsi->lock_sem);
+
+  *** DEADLOCK ***
+
+  May be due to missing lock nesting notation
+
+ 1 lock held by cat/701:
+  #0:  (&cifsi->lock_sem){++++.+}, at: cifs_strict_readv+0x177/0x310
+
+ stack backtrace:
+ CPU: 0 PID: 701 Comm: cat Not tainted 4.11.0+ #20
+ Call Trace:
+  dump_stack+0x85/0xc2
+  __lock_acquire+0x17dd/0x2260
+  ? trace_hardirqs_on_thunk+0x1a/0x1c
+  ? preempt_schedule_irq+0x6b/0x80
+  lock_acquire+0xcc/0x260
+  ? lock_acquire+0xcc/0x260
+  ? cifs_reopen_file+0x7a7/0xc00
+  down_read+0x2d/0x70
+  ? cifs_reopen_file+0x7a7/0xc00
+  cifs_reopen_file+0x7a7/0xc00
+  ? printk+0x43/0x4b
+  cifs_readpage_worker+0x327/0x8a0
+  cifs_readpage+0x8c/0x2a0
+  generic_file_read_iter+0x692/0xd00
+  cifs_strict_readv+0x29f/0x310
+  generic_file_splice_read+0x11c/0x1c0
+  do_splice_to+0xa5/0xc0
+  splice_direct_to_actor+0xfa/0x350
+  ? generic_pipe_buf_nosteal+0x10/0x10
+  do_splice_direct+0xb5/0xe0
+  do_sendfile+0x278/0x3a0
+  SyS_sendfile64+0xc4/0xe0
+  entry_SYSCALL_64_fastpath+0x1f/0xbe
+
+Signed-off-by: Rabin Vincent <rabinv@axis.com>
+Acked-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <smfrench@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfs/nfs4proc.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/cifs/file.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -3300,6 +3300,7 @@ static int _nfs4_server_capabilities(str
- 		.rpc_resp = &res,
- 	};
- 	int status;
-+	int i;
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -589,7 +589,7 @@ cifs_relock_file(struct cifsFileInfo *cf
+ 	struct cifs_tcon *tcon = tlink_tcon(cfile->tlink);
+ 	int rc = 0;
  
- 	bitmask[0] = FATTR4_WORD0_SUPPORTED_ATTRS |
- 		     FATTR4_WORD0_FH_EXPIRE_TYPE |
-@@ -3365,8 +3366,13 @@ static int _nfs4_server_capabilities(str
- 		server->cache_consistency_bitmask[0] &= FATTR4_WORD0_CHANGE|FATTR4_WORD0_SIZE;
- 		server->cache_consistency_bitmask[1] &= FATTR4_WORD1_TIME_METADATA|FATTR4_WORD1_TIME_MODIFY;
- 		server->cache_consistency_bitmask[2] = 0;
-+
-+		/* Avoid a regression due to buggy server */
-+		for (i = 0; i < ARRAY_SIZE(res.exclcreat_bitmask); i++)
-+			res.exclcreat_bitmask[i] &= res.attr_bitmask[i];
- 		memcpy(server->exclcreat_bitmask, res.exclcreat_bitmask,
- 			sizeof(server->exclcreat_bitmask));
-+
- 		server->acl_bitmask = res.acl_bitmask;
- 		server->fh_expire_type = res.fh_expire_type;
- 	}
+-	down_read(&cinode->lock_sem);
++	down_read_nested(&cinode->lock_sem, SINGLE_DEPTH_NESTING);
+ 	if (cinode->can_cache_brlcks) {
+ 		/* can cache locks - no need to relock */
+ 		up_read(&cinode->lock_sem);
