@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx484ag5835nEA7MuwYCBSo+ufltgWMZ7GkT64OMC1INI6UDf2rL9edIwXZogR9BN2Hd1qZOZ
-ARC-Seal: i=1; a=rsa-sha256; t=1523472572; cv=none;
+X-Google-Smtp-Source: AIpwx4+6BULpm0/6Z2qGkYCBD3YIGPf3xeRUDiES42fjGEeHQYHOhbCmqM3tE7JmcEn2h6D139og
+ARC-Seal: i=1; a=rsa-sha256; t=1523472569; cv=none;
         d=google.com; s=arc-20160816;
-        b=T8JlG/74A2tbxX4IJ8XfPN/vPLaEi4xXfDRHjPaVnOfBOq5b14aC2ckrwQlANeZWUl
-         v3tJJVYWAy96leoRjXx+RUimh7W2G708QudoaAh611eXP4OXvDC9KuYQFYXUNN7j6ZdH
-         HnIC/9+AIJLrrGbZJzLeeiRjzXOery1l1Lr81VRRBosh8F3pTyA0dawAdrEdqkLfVx8m
-         8e+O4WSjznUIP7CK0TL3aKDNPd9Yyaj4kMteX89q4eCvCpiyhbf3NBsmTaattraoM4rx
-         7l6GTMgSgX9pUBv0wOtxdqm4GQfmKb1in7e70L26wPTMFGebcOs4owGEP3Rkef0mVAl4
-         fb2w==
+        b=coHQvEb13J0ehQM+W3dvML7tBgdudtPPK5I314j/8hGl9N2z9u3RLOvg4iFwvG/LSu
+         qBT+X5rXAPm8Wp/N48b6O/mMfuGUxzq8K5DbWPrdYHemNobiCRYnXbnCI/rBtN46Mq2s
+         EXGtp+zE8kFvmANV++TuTJfpcN98Pb3FzDtrgfWymmS0wnH/0ac2XVw1R1KEr6/bhS0s
+         LdedaAT01eUXYiHgydTN+1YhdQh2WOSmcdfq7qAqfo+5xJWHu2nRfzd0CrawFPDT1HNr
+         sj9xBQ+3ZdGy4UZlT19OE01Cb18UY3up9JYC2gTDaPQi6gwODWMbJCikq4t5eEKQp0+X
+         RtRA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=87uKH10EsT4tIhygA9nk+iX320mgZNZb3zIMAIFGiOU=;
-        b=M33OMJQMDWCvSC/50jqtZee3/Mb6GKJW5S/EWzgupQVcwMX0xFQ5ai3MxlonEsaCGm
-         /jFFWlNK+y/Mby+/y9y2quRomUXzKaJi0zbVdHuQ2EZY9SoMu7plBmtTX4/mImYy4GD5
-         QD/iB2hGdrjxRlWt64Aa5D4h/XO9OLoXNCrC5oaewP1Nm2GKwWZo/dAS4RWWsZVXqoH2
-         pci0AHEHEr1h/kaClmnea+SKq4/KUo2t0kiFyF7lgKY7N0kJ+ZEOuZJBYezqXp0XTU7A
-         SvFOvG/pV7pBsfxQel5Wd/HRQ939JzBxyEGaoUDGwdmYBHL7pQaAenW0f58DShQNXcy+
-         2Vng==
+        bh=zcOo885mizTsskKZR2DH8DF5TVKNglehnmw67M9SO/k=;
+        b=phWQlHPb/W+FN8ucxgDhhlAc6OEJGLsloUS0q2pXQ2vEu/WFNhvqOhbqg6juU30T18
+         tAq5A+Zb46ph2dR2cr6riogtcFNOz80AJFpRGlJrIS51gCuXSvu9CQM6vB0ihZZSCPsY
+         aF2nPYvJE3ffiS1+Zm+yH/HorYEdzP/DEO+45TfAOmDtp8jPRXaTrRyQTUj2xWC8U2uZ
+         l5vHWzEIwOzBRGbQpM4MfGtR5+NFYMYywi/x0sGyGkbtKFURIcFiiVSrK99fz/wB4PUp
+         5bVHFTZWVV4nogPrFDHX/xa7WQY9RsHYYrkrr7sL/e+p78xEsEC17yw9jG1HB64jlCIz
+         9d1A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-mips@linux-mips.org,
 	Ralf Baechle <ralf@linux-mips.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 133/190] MIPS: kprobes: flush_insn_slot should flush only if probe initialised
-Date: Wed, 11 Apr 2018 20:36:19 +0200
-Message-Id: <20180411183600.156863716@linuxfoundation.org>
+Subject: [PATCH 4.4 132/190] MIPS: mm: adjust PKMAP location
+Date: Wed, 11 Apr 2018 20:36:18 +0200
+Message-Id: <20180411183600.007946835@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476260596132380?=
-X-GMAIL-MSGID: =?utf-8?q?1597476777090097525?=
+X-GMAIL-THRID: =?utf-8?q?1597476772918023344?=
+X-GMAIL-MSGID: =?utf-8?q?1597476772918023344?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,33 +54,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
 
 
-[ Upstream commit 698b851073ddf5a894910d63ca04605e0473414e ]
+[ Upstream commit c56e7a4c3e77f6fbd9b55c06c14eda65aae58958 ]
 
-When ftrace is used with kprobes, it is possible for a kprobe to contain
-an invalid location (ie. only initialised to 0 and not to a specific
-location in the code). Trying to perform a cache flush on such location
-leads to a crash r4k_flush_icache_range().
+Space reserved for PKMap should span from PKMAP_BASE to FIXADDR_START.
+For large page sizes this is not the case as eg. for 64k pages the range
+currently defined is from 0xfe000000 to 0x102000000(!!) which obviously
+isn't right.
+Remove the hardcoded location and set the BASE address as an offset from
+FIXADDR_START.
 
-Fixes: c1bf207d6ee1 ("MIPS: kprobe: Add support.")
+Since all PKMAP ptes have to be placed in a contiguous memory, ensure
+that this is the case by placing them all in a single page. This is
+achieved by aligning the end address to pkmap pages count pages.
+
 Signed-off-by: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
 Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/16296/
+Patchwork: https://patchwork.linux-mips.org/patch/15950/
 Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/include/asm/kprobes.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/mips/include/asm/pgtable-32.h |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/arch/mips/include/asm/kprobes.h
-+++ b/arch/mips/include/asm/kprobes.h
-@@ -40,7 +40,8 @@ typedef union mips_instruction kprobe_op
+--- a/arch/mips/include/asm/pgtable-32.h
++++ b/arch/mips/include/asm/pgtable-32.h
+@@ -18,6 +18,10 @@
  
- #define flush_insn_slot(p)						\
- do {									\
--	flush_icache_range((unsigned long)p->addr,			\
-+	if (p->addr)							\
-+		flush_icache_range((unsigned long)p->addr,		\
- 			   (unsigned long)p->addr +			\
- 			   (MAX_INSN_SIZE * sizeof(kprobe_opcode_t)));	\
- } while (0)
+ #include <asm-generic/pgtable-nopmd.h>
+ 
++#ifdef CONFIG_HIGHMEM
++#include <asm/highmem.h>
++#endif
++
+ extern int temp_tlb_entry;
+ 
+ /*
+@@ -61,7 +65,8 @@ extern int add_temporary_entry(unsigned
+ 
+ #define VMALLOC_START	  MAP_BASE
+ 
+-#define PKMAP_BASE		(0xfe000000UL)
++#define PKMAP_END	((FIXADDR_START) & ~((LAST_PKMAP << PAGE_SHIFT)-1))
++#define PKMAP_BASE	(PKMAP_END - PAGE_SIZE * LAST_PKMAP)
+ 
+ #ifdef CONFIG_HIGHMEM
+ # define VMALLOC_END	(PKMAP_BASE-2*PAGE_SIZE)
