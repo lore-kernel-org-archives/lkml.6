@@ -1,102 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752522AbeDKAh4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 20:37:56 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57720 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752489AbeDKAhy (ORCPT
+        id S1752586AbeDKAk0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 20:40:26 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:43227 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752539AbeDKAkZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 20:37:54 -0400
-Date: Tue, 10 Apr 2018 17:37:44 -0700
-From: Ram Pai <linuxram@us.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Takashi Iwai <tiwai@suse.de>, Bjorn Helgaas <bhelgaas@google.com>,
-        Michael Henders <hendersm@shaw.ca>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] resource: Fix integer overflow at reallocation
-Reply-To: Ram Pai <linuxram@us.ibm.com>
-References: <20180408072026.27365-1-tiwai@suse.de>
- <20180409172326.944143fd13db2601e4dee9b0@linux-foundation.org>
- <s5hpo37d5l8.wl-tiwai@suse.de>
- <20180410134239.483fe34525db647f2f3d1ece@linux-foundation.org>
+        Tue, 10 Apr 2018 20:40:25 -0400
+X-Google-Smtp-Source: AIpwx4+JnIQKELKRkPy6xmC5d+3OSNncZ6dUcBlemjfGxuYEt2TPP6ckPEr7zZOlzsBn+69q55hag1bCKplTlcUxHx4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180410134239.483fe34525db647f2f3d1ece@linux-foundation.org>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-TM-AS-GCONF: 00
-x-cbid: 18041100-0044-0000-0000-00000545C585
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041100-0045-0000-0000-00002885F7A3
-Message-Id: <20180411003744.GC15890@ram.oc3035372033.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-10_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804110003
+References: <201804080259.VS5U0mKT%fengguang.wu@intel.com> <20180410005908.167976-1-gthelen@google.com>
+ <55efb2c6-04c5-d2bb-738e-8308aa0eaf8f@meituan.com>
+In-Reply-To: <55efb2c6-04c5-d2bb-738e-8308aa0eaf8f@meituan.com>
+From: Greg Thelen <gthelen@google.com>
+Date: Wed, 11 Apr 2018 00:40:11 +0000
+Message-ID: <CAHH2K0aMhquqkpbxEWR3CoeDyHyZHViYK3y629U+=Hguo_vgKQ@mail.gmail.com>
+Subject: Re: [PATCH v3] writeback: safer lock nesting
+To: Wang Long <wanglong19@meituan.com>
+Cc: Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
+        npiggin@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3B0eU5d011933
 
-On Tue, Apr 10, 2018 at 01:42:39PM -0700, Andrew Morton wrote:
-> On Tue, 10 Apr 2018 06:54:11 +0200 Takashi Iwai <tiwai@suse.de> wrote:
-> 
-> > On Tue, 10 Apr 2018 02:23:26 +0200,
-> > Andrew Morton wrote:
-> > > 
-> > > On Sun,  8 Apr 2018 09:20:26 +0200 Takashi Iwai <tiwai@suse.de> wrote:
-> > > 
-> > > > We've got a bug report indicating a kernel panic at booting on an
-> > > > x86-32 system, and it turned out to be the invalid resource assigned
-> > > > after PCI resource reallocation.  __find_resource() first aligns the
-> > > > resource start address and resets the end address with start+size-1
-> > > > accordingly, then checks whether it's contained.  Here the end address
-> > > > may overflow the integer, although resource_contains() still returns
-> > > > true because the function validates only start and end address.  So
-> > > > this ends up with returning an invalid resource (start > end).
-> > > > 
-> > > > There was already an attempt to cover such a problem in the commit
-> > > > 47ea91b4052d ("Resource: fix wrong resource window calculation"), but
-> > > > this case is an overseen one.
-> > > > 
-> > > > This patch adds the validity check in resource_contains() to see
-> > > > whether the given resource has a valid range for avoiding the integer
-> > > > overflow problem.
-> > > > 
-> > > > ...
-> > > >
-> > > > --- a/include/linux/ioport.h
-> > > > +++ b/include/linux/ioport.h
-> > > > @@ -212,6 +212,9 @@ static inline bool resource_contains(struct resource *r1, struct resource *r2)
-> > > >  		return false;
-> > > >  	if (r1->flags & IORESOURCE_UNSET || r2->flags & IORESOURCE_UNSET)
-> > > >  		return false;
-> > > > +	/* sanity check whether it's a valid resource range */
-> > > > +	if (r2->end < r2->start)
-> > > > +		return false;
-> > > >  	return r1->start <= r2->start && r1->end >= r2->end;
-> > > >  }
-> > > 
-> > > This doesn't look like the correct place to handle this?  Clearly .end
-> > > < .start is an invalid state for a resource and we should never have
-> > > constructed such a thing in the first place?  So adding a check at the
-> > > place where this resource was initially created seems to be the correct
-> > > fix?
-> > 
-> > Yes, that was also my first thought and actually the v1 patch was like
-> > that.
-> 
-> Yes, I do prefer.
-> 
-> >  The v2 one was by Ram's suggestion so that we can cover
-> > potential bugs by all other callers as well.
-> 
-> That could be done as a separate thing?
+On Tue, Apr 10, 2018 at 1:15 AM Wang Long <wanglong19@meituan.com> wrote:
 
-the first approach will fix overflows in just that particular case. The
-second approach will catch and error-out overflows anywhere. There is a
-short-term down side to the second approach; it might cause a slew of
-error reports but will eventually help clean up all bad behavior.
+> > lock_page_memcg()/unlock_page_memcg() use spin_lock_irqsave/restore() if
+> > the page's memcg is undergoing move accounting, which occurs when a
+> > process leaves its memcg for a new one that has
+> > memory.move_charge_at_immigrate set.
+> >
+> > unlocked_inode_to_wb_begin,end() use spin_lock_irq/spin_unlock_irq() if
+the
+> > given inode is switching writeback domains.  Switches occur when enough
+> > writes are issued from a new domain.
+> >
+> > This existing pattern is thus suspicious:
+> >      lock_page_memcg(page);
+> >      unlocked_inode_to_wb_begin(inode, &locked);
+> >      ...
+> >      unlocked_inode_to_wb_end(inode, locked);
+> >      unlock_page_memcg(page);
+> >
+> > If both inode switch and process memcg migration are both in-flight then
+> > unlocked_inode_to_wb_end() will unconditionally enable interrupts while
+> > still holding the lock_page_memcg() irq spinlock.  This suggests the
+> > possibility of deadlock if an interrupt occurs before
+> > unlock_page_memcg().
+> >
+> >      truncate
+> >      __cancel_dirty_page
+> >      lock_page_memcg
+> >      unlocked_inode_to_wb_begin
+> >      unlocked_inode_to_wb_end
+> >      <interrupts mistakenly enabled>
+> >                                      <interrupt>
+> >                                      end_page_writeback
+> >                                      test_clear_page_writeback
+> >                                      lock_page_memcg
+> >                                      <deadlock>
+> >      unlock_page_memcg
+> >
+> > Due to configuration limitations this deadlock is not currently possible
+> > because we don't mix cgroup writeback (a cgroupv2 feature) and
+> > memory.move_charge_at_immigrate (a cgroupv1 feature).
+> >
+> > If the kernel is hacked to always claim inode switching and memcg
+> > moving_account, then this script triggers lockup in less than a minute:
+> >    cd /mnt/cgroup/memory
+> >    mkdir a b
+> >    echo 1 > a/memory.move_charge_at_immigrate
+> >    echo 1 > b/memory.move_charge_at_immigrate
+> >    (
+> >      echo $BASHPID > a/cgroup.procs
+> >      while true; do
+> >        dd if=/dev/zero of=/mnt/big bs=1M count=256
+> >      done
+> >    ) &
+> >    while true; do
+> >      sync
+> >    done &
+> >    sleep 1h &
+> >    SLEEP=$!
+> >    while true; do
+> >      echo $SLEEP > a/cgroup.procs
+> >      echo $SLEEP > b/cgroup.procs
+> >    done
+> >
+> > Given the deadlock is not currently possible, it's debatable if there's
+> > any reason to modify the kernel.  I suggest we should to prevent future
+> > surprises.
+> This deadlock occurs three times in our environment，
 
-RP
+> this deadlock occurs three times in our environment. It is better to cc
+stable kernel and
+> backport it.
+
+That's interesting.  Are you using cgroup v1 or v2?  Do you enable
+memory.move_charge_at_immigrate?
+I assume you've been using 4.4 stable.  I'll look closer at it at a 4.4
+stable backport.
