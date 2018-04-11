@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3308147-1523480070-2-3333377950456156207
+X-Cyrus-Session-Id: sloti22d1t05-3339499-1523480067-2-2366090264001619806
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523480070; b=eI7yscNdfXFZFqGs/NfCTSsUnHTBjB4LPpN9t3BAlGThXhaWpH
-    F1tOUoKJ9Pq+JnPbviejoaoEzcqc3WDDzVZN50V3WUl/u9IARkmVn6tztvevazto
-    G+4t7+SkwM/K04kpdcgfbhIpkxlB6QecfyKTblpx5F25CaDh8Afl57sjAEn1+3cz
-    uikKC7RQ66oVxUIlc/PfdVqtMpOY5PZZY4JkuJht+ukpxitXN/eid4oVkJQHhy6G
-    ZgYo31ZIkEwFALCBKrcma38DVV0zqFGM6B8YsyadpVPo1SIEHVvpjEOfwOyBeSM1
-    5ezL/BzZVXEvOuB+Yl4ugumJDb52Nc2ynIdQ==
+    1523480067; b=dwQlNSAQ7mQNz86VUIBEu33cJc8xtJ1xDDFv9voLS0bPaQkPOw
+    xbIr19GLWechySvZLtqZLlozmgb/bGiiOu54rWLVREeznsHgvCIiEMQQGTM/QccA
+    CqbQ8Jff/uWgIeGjrge8/iHNC1iHYL1xeeccS8sIykobCGu4mQVCPkR4GK+F42ND
+    NMdDb+VmP+QZHwwbZHiDUsAB9cIIkkZjtpdEOv1I/Tni4RFD6KvRKNt2QoYSq1WQ
+    YogyPr4JYmKcePwelJlf/PGDq749p1XPZVUEVDtP25o6gXARBpTp0jjpD2RKaPrD
+    tGhie8guX9DlwOeqREIm7Aj3aJirvavevnbA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523480070; bh=JCZuCRjclBTbSTntGtZTnCVdegYWhA
-    kzenoNoQyxVQk=; b=M/1t4HKJGAn7CCMigu1L+MKuVIsh9d4RqFM+Z1PGMJCt34
-    phDTD5z0tbx362LtW1T4pzTuVg+paPFMrJS7slP7fwvkRjmPLkUotxNXB3O/HHU4
-    bg5/Bqa7M7uj7wADuiTYE7++5OmcydqP1rzBnwrsc0BY37c4d1XYPeHlqO+wKr2G
-    oYNLMzvioATpmDkgxkr0Koy1JUVlcoHtLywPyZ86kcPLLMbqvQV9SFSclnrKukXC
-    OJoIXBgecx8lBAWB28Mxn6OT8NtN6BDd/imokIquoM8xZCbst7eXXRvlqKQGfw+S
-    IIpTDV/c8M0kYHZKMSspvPqk947LYBJ/YWq7vD0w==
+    :list-id; s=fm2; t=1523480067; bh=tY1wC8hKMIgWgLXppx3lYF1zbpDJHU
+    KVkVbVsB6gIDY=; b=NY3gtlyw0HDw1na72JGnIMjS0mtnG80tDFuILPJMaP9uPh
+    ZyxjGNMSrY5dGg27rtsH1Zc/TfX6/wwJh+mRUZdr4L3AE4rVFCN87O7fjbYV2Axe
+    E6c6Jp17LqgBdoTq9uk3NJ+8RaA2kq5xlaOdSinpqqR0OIPA0CBUl9anBIkAAc4C
+    oGt8kXvZMq3kJbYNq7kXoImrYjGBjg+qk39RZ/m9NYTTW6fQ02cxfEVCVcQ5QO4n
+    frBNp0lv963vyJ1+V0SjgvVtHLU6NwHsn9kV+NN1qk3T5xpG1LM5ZXOVLrzb15WG
+    e6Gk7JAieogAIYHdldDidWZ6KtcSiTa1CRPToTeA==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,34 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfA51gIt1nkGAGtLJKClnV3csL/wll1rsEb5XVq6Az70wfeSO+E2Z/PVY8ho2zc9hxjbWXMtsQVOovF3gubBa6efFGCW6Cso9S4xwuoJbAb6oC2peP+HK
-    r27r3P7ySSbDQJE5y1K6pvlGFIwBkUERMfGw91mkAaQ/PTmaUHS6OUzXDGFwHoPmBTf7MrdBWBWFIJGI2wKYHfUat/G00VhAInG0O0SnUD7QLB2V59IAlLQo
+X-CM-Envelope: MS4wfHQH2/cQfu7cZRUKXfR5rHDvBtQrjSbQpoOfBLrc9z/h2tNR5RzJYYvWDvqaDnK7wrw8400CorkspjUfqmZhP++FNBiKdgO75lZI7IXEmBpKcJcw1JnP
+    t4dfs2NvBNgPfv7tDezSZNTmz2UNFllr5yrng5QZB7ha8CJJmZq+mRm0Ezv8CzVwMCNormEIxcw2cI0o376NJn0yW7bXjN+EmESiw+VMKKAecfTBVPCbYgx+
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=Byx-y9mGAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=MK96HyGrqPNBv2a_Q8EA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=Q-fNiiVtAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=u__7uJSp3HEpzIBEySsA:9 a=QEXdDO2ut3YA:10 a=Fp8MccfUoT0GBdDC_Lng:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932288AbeDKSpE (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:45:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58456 "EHLO
+        id S932294AbeDKSpF (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:45:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58444 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932269AbeDKSpB (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:01 -0400
+        with ESMTP id S932280AbeDKSo7 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:44:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Anup Patel <anup.patel@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vinod.koul@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 038/190] usb: dwc3: keystone: check return value
-Date: Wed, 11 Apr 2018 20:34:44 +0200
-Message-Id: <20180411183552.386387381@linuxfoundation.org>
+Subject: [PATCH 4.4 037/190] async_tx: Fix DMA_PREP_FENCE usage in do_async_gen_syndrome()
+Date: Wed, 11 Apr 2018 20:34:43 +0200
+Message-Id: <20180411183552.331735937@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -92,33 +96,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: Anup Patel <anup.patel@broadcom.com>
 
 
-[ Upstream commit 018047a1dba7636e1f7fdae2cc290a528991d648 ]
+[ Upstream commit baae03a0e2497f49704628fd0aaf993cf98e1b99 ]
 
-Function devm_clk_get() returns an ERR_PTR when it fails. However, in
-function kdwc3_probe(), its return value is not checked, which may
-result in a bad memory access bug. This patch fixes the bug.
+The DMA_PREP_FENCE is to be used when preparing Tx descriptor if output
+of Tx descriptor is to be used by next/dependent Tx descriptor.
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+The DMA_PREP_FENSE will not be set correctly in do_async_gen_syndrome()
+when calling dma->device_prep_dma_pq() under following conditions:
+1. ASYNC_TX_FENCE not set in submit->flags
+2. DMA_PREP_FENCE not set in dma_flags
+3. src_cnt (= (disks - 2)) is greater than dma_maxpq(dma, dma_flags)
+
+This patch fixes DMA_PREP_FENCE usage in do_async_gen_syndrome() taking
+inspiration from do_async_xor() implementation.
+
+Signed-off-by: Anup Patel <anup.patel@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Vinod Koul <vinod.koul@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc3/dwc3-keystone.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ crypto/async_tx/async_pq.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/dwc3/dwc3-keystone.c
-+++ b/drivers/usb/dwc3/dwc3-keystone.c
-@@ -112,6 +112,10 @@ static int kdwc3_probe(struct platform_d
- 	dev->dma_mask = &kdwc3_dma_mask;
+--- a/crypto/async_tx/async_pq.c
++++ b/crypto/async_tx/async_pq.c
+@@ -62,9 +62,6 @@ do_async_gen_syndrome(struct dma_chan *c
+ 	dma_addr_t dma_dest[2];
+ 	int src_off = 0;
  
- 	kdwc->clk = devm_clk_get(kdwc->dev, "usb");
-+	if (IS_ERR(kdwc->clk)) {
-+		dev_err(kdwc->dev, "unable to get usb clock\n");
-+		return PTR_ERR(kdwc->clk);
-+	}
+-	if (submit->flags & ASYNC_TX_FENCE)
+-		dma_flags |= DMA_PREP_FENCE;
+-
+ 	while (src_cnt > 0) {
+ 		submit->flags = flags_orig;
+ 		pq_src_cnt = min(src_cnt, dma_maxpq(dma, dma_flags));
+@@ -83,6 +80,8 @@ do_async_gen_syndrome(struct dma_chan *c
+ 			if (cb_fn_orig)
+ 				dma_flags |= DMA_PREP_INTERRUPT;
+ 		}
++		if (submit->flags & ASYNC_TX_FENCE)
++			dma_flags |= DMA_PREP_FENCE;
  
- 	error = clk_prepare_enable(kdwc->clk);
- 	if (error < 0) {
+ 		/* Drivers force forward progress in case they can not provide
+ 		 * a descriptor
