@@ -1,11 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3308147-1523478955-2-8025878080905439876
+X-Cyrus-Session-Id: sloti22d1t05-3303684-1523478949-2-3887622191371258131
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523478954; b=URVSzXzkFzC+fPiMbe3EfoC+JXF6FMbp066wQieDDN3PIhP1Hn
-    pC90bsfrAmmwhZBJbJD5iJ3nQKx5nDVzQaNL2lhnoN3XfjEzUsnSQVXLYX1g4O4E
-    DKvBKPslYUu/Z2qPDgKd7KwAYv+4hnbreOfQKoOXXAWtOXwWRJHWOV0owbK1+HCN
-    6lLBZi3gU6kvQgxlm65CIQgCNqo7MldKxhHUNrXuCx6FVWRH2OxPcDxsH071dDek
-    F2LQBIDPigHEErSTToYVSWEg+xuMB2KncZvJ3uwd9craC1KLhq5xtHmFYsi7ODnR
-    2XuQvhfpDcrs8cr27ir8xTb1zrpZn61oDfXQ==
+    1523478949; b=Qubu7iK1Zb6IsVeXzxYOrq51QJtQksGfYmOWL7wbVVUdIw5ZjI
+    GWjqfMigov0FiTauv38TaCtHZqruROU4wo6zXgsVvJSYOW7VSab7Uzicp7HTCUge
+    Fdlv3Ad6SqrS6Ots8SJ28Ji1eLDvgCZCt0zmn5/x6qTmRZ/Yi7qtkoHf68jZFano
+    WaRUhflFkLZtjD/TohI7qWSF8Gz6j/mHifkmtIuNa1hHQnDVOUPkHUFH8xJoBRsP
+    TbSboJOSumXwd2U9iWk+zZUDTDWYK4ZRrMcOAnRvrAQLQEDpIZhVDyUnbiV5iSz4
+    KCWqFvpP06L7Q4/T7/z9/ugMP+gqxdjgGw+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523478954; bh=ncIHHeRo48t6FHYykLclbiIPvC+gK6
-    5ZcIeQBMQi7Yo=; b=asiD/66RRyXlQvZQsumt6eDsWPrUYAmFORhaRDR7fpKt+P
-    tApOKL65AjUzQ9iBBMa+OPKL0kAzmwEjc0VPxCVbXbhmQzkWuaYwiiSe/Yi8WBMz
-    XTiEt4Hw9UMqV7N9W1MLmoJDWptMaC91/gL7gSrrjMuhNVkM9nyp5B9hszIpOhtf
-    uZZv6UwaKGpOjQoMK5G6/WDeuX3KMNphO4yNmqHD6os+ZI0uwcEcCnbpKViCXqi0
-    pk67S3OK/zaqy4R4TxQrV3Ib1AQCaFiMymX2KwQtIGriDodP6++Qi6ssezeeeMF+
-    sq9bjvzSkDjF+RER46x9hzxsKzrbT5Q8GZyOsJtw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523478949; bh=BkQ/upErm7ltCdvk0/3Ocey/p+QBqP
+    IxChv8+DH1rv4=; b=pjvj9Q9cckR3be9tHrg5TIGT6GABFUWjveLzQYBz2DCYk4
+    VcnHYJ7vXLfuVuqzcq9FG17q7V1PtQKTxRqBp3L41JmTakK6BPwXTy6d0E3+bpsf
+    a7PNaVma7UKHCvk406SnStsdgu9W97GmErOPftjm4qaNV0beO2XxX/A7xb+nlani
+    rIgC9Hm1RTRu/l4f9/De6X4DbwNULvS3C1PhS66QiNSRNKrK2bxUJXGRu8jLyBaB
+    WRZU/B3sUZq8kW65oD95QB43PVrBaLFxMo8CGrxUv1NFheJefSfviiWutt9ePVzj
+    eEJKqtcABgIGilrIjfHCq16/rhLCCruE6dLu5XIQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,36 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEjBBqkDTnExSa4gq9BfK4fOvOegclDh3HP8aHcCIFaBc+cZ9Aqp9NARcv68J1zAni1SDxCI5DUz1IjVOdwLBhYlX4ChJJbwbfqNf74ypPC6zUlUDkDu
-    D7LHAgdy75dnduzosFLuc2rRX/i40K7Po22SUYAqFqeIFsgig+NfbjeZiNLw8awiLPbAfqGWwAQqe7buYA4Wvt8HP+8P9Od7JcmN3MKwx50Ay+Uu+GBnyqAl
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfEhaNH/bT9jyztomkczXeYuq6J89ug6K8R39jIvYL2sHs3kyNz6uT7a6FHov29nGXEhfY44TD0EYER1259nsY4xsMJN3dD/OPtj39V8qZjZ4LcwIgOif
+    BE/VNT0lrZjdRbPC2EG3p/y4DTmSvhrqwoJOalbazlImiEAaPm05b2RRndh5tsjWLliD1b50ej8pVbDzjn6obXKA+o7qB6hSUV3n4KMUP0BfWlHyYtJmlkVc
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=R5C9hjxsAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=KmEauc0Fp4htJtg8AIUA:9 a=QEXdDO2ut3YA:10 a=KpS7wOGxO9l4JKx0McS0:22
+    a=CbDCq_QkAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=zYHZDPIpNYb0iLdz6LgA:9 a=kwscjX_XpcWKyaua:21
+    a=eplw7BQ5XKDushI8:21 a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22
     a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756142AbeDKSss (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:48:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59774 "EHLO
+        id S932594AbeDKUfE (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:35:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59790 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754583AbeDKSsp (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:48:45 -0400
+        with ESMTP id S1756151AbeDKSst (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:48:49 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
+        stable@vger.kernel.org, Or Gerlitz <gerlitz.or@gmail.com>,
+        Talat Batheesh <talatb@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Or Gerlitz <ogerlitz@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 118/190] sit: reload iphdr in ipip6_rcv
-Date: Wed, 11 Apr 2018 20:36:04 +0200
-Message-Id: <20180411183558.102547820@linuxfoundation.org>
+Subject: [PATCH 4.4 119/190] net/mlx4: Fix the check in attaching steering rules
+Date: Wed, 11 Apr 2018 20:36:05 +0200
+Message-Id: <20180411183558.290207866@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -94,30 +98,121 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+From: Talat Batheesh <talatb@mellanox.com>
 
 
-[ Upstream commit b699d0035836f6712917a41e7ae58d84359b8ff9 ]
+[ Upstream commit 6dc06c08bef1c746ff8da33dab677cfbacdcad32 ]
 
-Since iptunnel_pull_header() can call pskb_may_pull(),
-we must reload any pointer that was related to skb->head.
+Our previous patch (cited below) introduced a regression
+for RAW Eth QPs.
 
-Fixes: a09a4c8dd1ec ("tunnels: Remove encapsulation offloads on decap")
-Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Fix it by checking if the QP number provided by user-space
+exists, hence allowing steering rules to be added for valid
+QPs only.
+
+Fixes: 89c557687a32 ("net/mlx4_en: Avoid adding steering rules with invalid ring")
+Reported-by: Or Gerlitz <gerlitz.or@gmail.com>
+Signed-off-by: Talat Batheesh <talatb@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Acked-by: Or Gerlitz <ogerlitz@mellanox.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/sit.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/mellanox/mlx4/en_ethtool.c |    5 -----
+ drivers/net/ethernet/mellanox/mlx4/mcg.c        |   15 +++++++++++----
+ drivers/net/ethernet/mellanox/mlx4/qp.c         |   13 +++++++++++++
+ include/linux/mlx4/qp.h                         |    1 +
+ 4 files changed, 25 insertions(+), 9 deletions(-)
 
---- a/net/ipv6/sit.c
-+++ b/net/ipv6/sit.c
-@@ -690,6 +690,7 @@ static int ipip6_rcv(struct sk_buff *skb
+--- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
+@@ -1513,11 +1513,6 @@ static int mlx4_en_flow_replace(struct n
+ 		qpn = priv->drop_qp.qpn;
+ 	else if (cmd->fs.ring_cookie & EN_ETHTOOL_QP_ATTACH) {
+ 		qpn = cmd->fs.ring_cookie & (EN_ETHTOOL_QP_ATTACH - 1);
+-		if (qpn < priv->rss_map.base_qpn ||
+-		    qpn >= priv->rss_map.base_qpn + priv->rx_ring_num) {
+-			en_warn(priv, "rxnfc: QP (0x%x) doesn't exist\n", qpn);
+-			return -EINVAL;
+-		}
+ 	} else {
+ 		if (cmd->fs.ring_cookie >= priv->rx_ring_num) {
+ 			en_warn(priv, "rxnfc: RX ring (%llu) doesn't exist\n",
+--- a/drivers/net/ethernet/mellanox/mlx4/mcg.c
++++ b/drivers/net/ethernet/mellanox/mlx4/mcg.c
+@@ -35,6 +35,7 @@
+ #include <linux/etherdevice.h>
  
- 		if (iptunnel_pull_header(skb, 0, htons(ETH_P_IPV6)))
- 			goto out;
-+		iph = ip_hdr(skb);
+ #include <linux/mlx4/cmd.h>
++#include <linux/mlx4/qp.h>
+ #include <linux/export.h>
  
- 		err = IP_ECN_decapsulate(iph, skb);
- 		if (unlikely(err)) {
+ #include "mlx4.h"
+@@ -985,16 +986,21 @@ int mlx4_flow_attach(struct mlx4_dev *de
+ 	if (IS_ERR(mailbox))
+ 		return PTR_ERR(mailbox);
+ 
++	if (!mlx4_qp_lookup(dev, rule->qpn)) {
++		mlx4_err_rule(dev, "QP doesn't exist\n", rule);
++		ret = -EINVAL;
++		goto out;
++	}
++
+ 	trans_rule_ctrl_to_hw(rule, mailbox->buf);
+ 
+ 	size += sizeof(struct mlx4_net_trans_rule_hw_ctrl);
+ 
+ 	list_for_each_entry(cur, &rule->list, list) {
+ 		ret = parse_trans_rule(dev, cur, mailbox->buf + size);
+-		if (ret < 0) {
+-			mlx4_free_cmd_mailbox(dev, mailbox);
+-			return ret;
+-		}
++		if (ret < 0)
++			goto out;
++
+ 		size += ret;
+ 	}
+ 
+@@ -1021,6 +1027,7 @@ int mlx4_flow_attach(struct mlx4_dev *de
+ 		}
+ 	}
+ 
++out:
+ 	mlx4_free_cmd_mailbox(dev, mailbox);
+ 
+ 	return ret;
+--- a/drivers/net/ethernet/mellanox/mlx4/qp.c
++++ b/drivers/net/ethernet/mellanox/mlx4/qp.c
+@@ -381,6 +381,19 @@ static void mlx4_qp_free_icm(struct mlx4
+ 		__mlx4_qp_free_icm(dev, qpn);
+ }
+ 
++struct mlx4_qp *mlx4_qp_lookup(struct mlx4_dev *dev, u32 qpn)
++{
++	struct mlx4_qp_table *qp_table = &mlx4_priv(dev)->qp_table;
++	struct mlx4_qp *qp;
++
++	spin_lock(&qp_table->lock);
++
++	qp = __mlx4_qp_lookup(dev, qpn);
++
++	spin_unlock(&qp_table->lock);
++	return qp;
++}
++
+ int mlx4_qp_alloc(struct mlx4_dev *dev, int qpn, struct mlx4_qp *qp, gfp_t gfp)
+ {
+ 	struct mlx4_priv *priv = mlx4_priv(dev);
+--- a/include/linux/mlx4/qp.h
++++ b/include/linux/mlx4/qp.h
+@@ -465,6 +465,7 @@ struct mlx4_update_qp_params {
+ 	u16	rate_val;
+ };
+ 
++struct mlx4_qp *mlx4_qp_lookup(struct mlx4_dev *dev, u32 qpn);
+ int mlx4_update_qp(struct mlx4_dev *dev, u32 qpn,
+ 		   enum mlx4_update_qp_attr attr,
+ 		   struct mlx4_update_qp_params *params);
