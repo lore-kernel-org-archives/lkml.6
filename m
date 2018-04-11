@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+bhk9baspsj2z0VfhsByFvHYcImW8XuNQcotPJ8klB0dRO128KH3yuaRhQtSPFgYjEMBEx
-ARC-Seal: i=1; a=rsa-sha256; t=1523473365; cv=none;
+X-Google-Smtp-Source: AIpwx4+KIYi8I9eH1s7HeXEEHMqN0WEVWy7di6jEAekpCrnU5HA+GAabgoQWtH4disOk/1a50+qd
+ARC-Seal: i=1; a=rsa-sha256; t=1523473362; cv=none;
         d=google.com; s=arc-20160816;
-        b=JD9KCBjzp2GjvPj1gE1y95r53IjEPUDtvkhFXvFTV3WUPummEeWaqAmwi5YBPdehX+
-         5IDp0SnCkcG3K+JoJtVDD18FkLHdJciAw0b9YipE4tRM9M1QgWiaAzkwANz67YCy7KTM
-         VC0I8kRbh+B/E+Fx3Scs3A2qukV45sC7rs3umhupAWIst2dKizHVEHv1OkBI1/jN8ck9
-         05M609q8iZlRzLD1wNGvyGn3NKxWmAuo1JVFe6fIi7zmUWQX7vQUpIpPF/jV+ZpQUTsd
-         Ademq0Wh3gzlP+T0H6cpfkyeKxtSG8Tq5LGSRlWDdx1YTTwanrPQ1T703rhaOA9lZ2ZW
-         ZCXQ==
+        b=HmRm3dRW6gs81BweEiiWuwyo1uEncKfD3e6RFFBfBbWjlQS5gvZGcmbMaGU9uRvBd+
+         yJ0RXLU2ZvKrrtivtvGPVnoYgS+q2xIGwsvrDWfSOFB9sodkf1fizR/P30mGvvNXFPJY
+         9mvMd/ojppcSbjHBHt9eP6FeCeQ3X0ZWm/P5SGy99Cuyn7LsqgsDYJOoVW4TnOBSvIPO
+         djXmkeWoYkJ6mEWONJ/nJfrmG2IGH+C6HewYPi08sNaVkgjEIwM8CTizr7K9nYk4Jury
+         fpmNH2gSZFWmMBy0qvT4eZLjFNP8cUAvDPxpqGtdAJmI9ePDrw3YuKLwHino+21Mqzf0
+         iFcQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=52vMf5XS7twpEQu0zUawMN+AYRelibwr78N4FKOnSYc=;
-        b=PdbrqdaUORBpgR7SqA4jeA5ZrInkkkWfiw/EmOidutarB2Y41Rxb/hb43YiKY1EbQ7
-         GiGD1k5mk2yVevyo+yPVrS6GXMq9WgS8uJdKS5WMsMyYiAyj0t33FE9x29swsSxBwLQG
-         XYkxYSk/zsEAlS//1LkGbAUZVeTS9fgsZIIJWicxJmLSu0sbD4P8BiAnZABnjS1msbdn
-         t9jfLhvjzksAmOmAU1zqgNNp2cApycTDCJNjFEfEVjxfm5ep+ovdPZq2HGU+HYi06lfv
-         6mP7uNLTe3rNPTcmo/6gEr67ysjj0AIkXC211G5AgcMkx21oY22ZAsQL3mTQ4lpDqzFH
-         IAog==
+        bh=xsWGK35B3Z7+AMYkm+Z1CG/+jzNd+5J+RcdHWHwfMbg=;
+        b=tD/3v+Y35xR2bu21wa13JBuVmCvraqpd2/UrgTocAiS9PprhWxFbkRGsttgrt+fqsV
+         8XRi9q0r4htfJHCD5IQ/nrf4eJV185cTHh/BUQ53mdQWbr36m4ftgPGeX0+TEth0rIWT
+         g3PA8tJaLmnAbGUjy6LwjZk3gbM0ByhSTtodshFcvR2QG1lGIWZ6rAnoCgO+K1O+OROp
+         XftObIOTktNOsWZbJhqKzR6clP7zjwIgxV1MxSFJoeIDzbnqL9lkzUQEzAhi8xoMg5nf
+         2aaqk4Uyandok9Si1oXZgyCK5ThfejhcsO2/04oBpiN9iCEKgyO9BqUSC2g5Xp5T22PP
+         rHpA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Hannes Reinecke <hare@suse.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	James Wang <jnwang@suse.com>,
-	Jens Axboe <axboe@fb.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Simon Horman <horms+renesas@verge.net.au>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 222/310] Fix loop device flush before configure v3
-Date: Wed, 11 Apr 2018 20:36:01 +0200
-Message-Id: <20180411183632.085674968@linuxfoundation.org>
+Subject: [PATCH 4.9 221/310] ARM: dts: armadillo800eva: Split LCD mux and gpio
+Date: Wed, 11 Apr 2018 20:36:00 +0200
+Message-Id: <20180411183632.047615699@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476912619997992?=
-X-GMAIL-MSGID: =?utf-8?q?1597477607458919810?=
+X-GMAIL-THRID: =?utf-8?q?1597477604898223974?=
+X-GMAIL-MSGID: =?utf-8?q?1597477604898223974?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,64 +51,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Wang <jnwang@suse.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
 
-[ Upstream commit 6460495709aeb651896bc8e5c134b2e4ca7d34a8 ]
+[ Upstream commit 13132b3f44d3600983aceb7e9920b8ebb55a7cf8 ]
 
-While installing SLES-12 (based on v4.4), I found that the installer
-will stall for 60+ seconds during LVM disk scan.  The root cause was
-determined to be the removal of a bound device check in loop_flush()
-by commit b5dd2f6047ca ("block: loop: improve performance via blk-mq").
+Configuration of the lcd0 pinmux group and GPIO hog for the external
+GPIO mux are done using a single device node, causing the "output-high"
+property to be applied to both.  This will fail for the pinmux group,
+but doesn't cause any harm, as the failure is ignored silently.
 
-Restoring this check, examining ->lo_state as set by loop_set_fd()
-eliminates the bad behavior.
+However, after "pinctrl: sh-pfc: propagate errors on group config", the
+failure will become fatal, leading to a broken display:
 
-Test method:
-modprobe loop max_loop=64
-dd if=/dev/zero of=disk bs=512 count=200K
-for((i=0;i<4;i++))do losetup -f disk; done
-mkfs.ext4 -F /dev/loop0
-for((i=0;i<4;i++))do mkdir t$i; mount /dev/loop$i t$i;done
-for f in `ls /dev/loop[0-9]*|sort`; do \
-	echo $f; dd if=$f of=/dev/null  bs=512 count=1; \
-	done
+    sh-pfc e6050000.pin-controller: pin_config_group_set op failed for group 102
+    sh-pfc e6050000.pin-controller: Error applying setting, reverse things back
+    sh-pfc e6050000.pin-controller: failed to select default state
 
-Test output:  stock          patched
-/dev/loop0    18.1217e-05    8.3842e-05
-/dev/loop1     6.1114e-05    0.000147979
-/dev/loop10    0.414701      0.000116564
-/dev/loop11    0.7474        6.7942e-05
-/dev/loop12    0.747986      8.9082e-05
-/dev/loop13    0.746532      7.4799e-05
-/dev/loop14    0.480041      9.3926e-05
-/dev/loop15    1.26453       7.2522e-05
+Move the GPIO hog to its own node to fix this.
 
-Note that from loop10 onward, the device is not mounted, yet the
-stock kernel consumes several orders of magnitude more wall time
-than it does for a mounted device.
-(Thanks for Mike Galbraith <efault@gmx.de>, give a changelog review.)
-
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: James Wang <jnwang@suse.com>
-Fixes: b5dd2f6047ca ("block: loop: improve performance via blk-mq")
-Signed-off-by: Jens Axboe <axboe@fb.com>
+Fixes: ffd2f9a5afb730b9 ("ARM: shmobile: armadillo800eva dts: Add pinctrl and gpio-hog for lcdc0")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/loop.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/r8a7740-armadillo800eva.dts |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -612,6 +612,9 @@ static int loop_switch(struct loop_devic
-  */
- static int loop_flush(struct loop_device *lo)
- {
-+	/* loop not yet configured, no running thread, nothing to flush */
-+	if (lo->lo_state != Lo_bound)
-+		return 0;
- 	return loop_switch(lo, NULL);
- }
+--- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
++++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
+@@ -266,7 +266,9 @@
+ 	lcd0_pins: lcd0 {
+ 		groups = "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
+ 		function = "lcd0";
++	};
  
++	lcd0_mux {
+ 		/* DBGMD/LCDC0/FSIA MUX */
+ 		gpio-hog;
+ 		gpios = <176 0>;
