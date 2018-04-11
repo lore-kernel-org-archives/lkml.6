@@ -1,281 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754916AbeDKVRC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 17:17:02 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:19677 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753241AbeDKVQ7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 17:16:59 -0400
-From: Dave Gerlach <d-gerlach@ti.com>
-To: <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-omap@vger.kernel.org>,
-        <linux-kbuild@vger.kernel.org>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Dave Gerlach <d-gerlach@ti.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: [PATCH] ARM: omap2: Fix build when using split object directories
-Date: Wed, 11 Apr 2018 16:15:43 -0500
-Message-ID: <20180411211543.7923-1-d-gerlach@ti.com>
-X-Mailer: git-send-email 2.16.1
+        id S1755248AbeDKVWI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 17:22:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47496 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754281AbeDKSjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 14:39:06 -0400
+Date: Wed, 11 Apr 2018 15:39:02 -0300
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+To: Yonghong Song <yhs@fb.com>
+Cc: Alexei Starovoitov <ast@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Miller <davem@davemloft.net>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        acme@kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: bpf: handling non BPF register names in inline assembly with
+ -target bpf
+Message-ID: <20180411183902.GC12166@redhat.com>
+References: <c8b0b3c0-6687-1be2-66d0-95b20662145d@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c8b0b3c0-6687-1be2-66d0-95b20662145d@fb.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sleep33xx and sleep43xx files should not depend on a header file
-generated in drivers/memory. Remove this dependency and instead allow
-both drivers/memory and arch/arm/mach-omap2 to generate all macros
-needed in headers local to their own paths.
+Em Wed, Apr 11, 2018 at 09:37:46AM -0700, Yonghong Song escreveu:
+> Hi, Arnaldo,
+ 
+> When I studied the bpf compilation issue with latest linus/net-next
+> kernel (https://patchwork.kernel.org/patch/10333829/), an alternative
+> approach I tried is to use __BPF__ macro.
 
-This fixes an issue where the build fail will when using O= to set a
-split object directory and arch/arm/mach-omap2 is built before
-drivers/memory with the following error:
+You mean you used an alternative approach that does _not_ use the
+__BPF__ macro, right? I looked at the patch and yeah, looks sane as
+well, since the kernel build process already defines that
+CC_HAVE_ASM_GOTO, checking if gcc has that feature, etc.
 
-.../drivers/memory/emif-asm-offsets.c:1:0: fatal error: can't open drivers/memory/emif-asm-offsets.s for writing: No such file or directory
-compilation terminated.
+> The following patch introduced "#ifndef __BPF__" in
+> arch/x86/include/asm/asm.h for some inline assembly related to x86
+> "esp" register name.
+ 
 
-Fixes: 41d9d44d7258 ("ARM: OMAP2+: pm33xx-core: Add platform code needed for PM")
-Acked-by: Tony Lindgren <tony@atomide.com>
-Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
----
- arch/arm/mach-omap2/Makefile         |  6 +--
- arch/arm/mach-omap2/pm-asm-offsets.c |  3 ++
- arch/arm/mach-omap2/sleep33xx.S      |  1 -
- arch/arm/mach-omap2/sleep43xx.S      |  1 -
- drivers/memory/emif-asm-offsets.c    | 72 +---------------------------------
- include/linux/ti-emif-sram.h         | 75 ++++++++++++++++++++++++++++++++++++
- 6 files changed, 80 insertions(+), 78 deletions(-)
+> ==========
+>  commit ca26cffa4e4aaeb09bb9e308f95c7835cb149248
+> Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Date:   Mon Dec 4 13:08:47 2017 -0300
+> 
+>     x86/asm: Allow again using asm.h when building for the 'bpf'
+> clang target
+> 
+>     Up to f5caf621ee35 ("x86/asm: Fix inline asm call constraints
+> for Clang")
+>     we were able to use x86 headers to build to the 'bpf' clang target, as
+>     done by the BPF code in tools/perf/.
+>  ...
+> diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+> index 219faae..386a690 100644
+> --- a/arch/x86/include/asm/asm.h
+> +++ b/arch/x86/include/asm/asm.h
+> @@ -136,6 +136,7 @@
+>  #endif
+> 
+>  #ifndef __ASSEMBLY__
+> +#ifndef __BPF__
+>  /*
+>   * This output constraint should be used for any inline asm which
+> has a "call"
+>   * instruction.  Otherwise the asm may be inserted before the frame
+> pointer
+> @@ -145,5 +146,6 @@
+>  register unsigned long current_stack_pointer asm(_ASM_SP);
+>  #define ASM_CALL_CONSTRAINT "+r" (current_stack_pointer)
+>  #endif
+> +#endif
+> ...
+> ==========
+> 
+> I just landed a clang patch (clang 7.0.0 trunk)
+> https://reviews.llvm.org/rL329823
+> which will permit bpf clang target to accept ANY register
+> names. In this case, the inline assembly will be accepted by clang
+> and will be thrown away since variable current_stack_pointer is
+> not used in bpf programs.
 
-diff --git a/arch/arm/mach-omap2/Makefile b/arch/arm/mach-omap2/Makefile
-index 4603c30fef73..0d9ce58bc464 100644
---- a/arch/arm/mach-omap2/Makefile
-+++ b/arch/arm/mach-omap2/Makefile
-@@ -243,8 +243,4 @@ arch/arm/mach-omap2/pm-asm-offsets.s: arch/arm/mach-omap2/pm-asm-offsets.c
- include/generated/ti-pm-asm-offsets.h: arch/arm/mach-omap2/pm-asm-offsets.s FORCE
- 	$(call filechk,offsets,__TI_PM_ASM_OFFSETS_H__)
+Ok, then that ifndef __BPF__ above will not be needed anymore, but only
+people with clang > that version will be able to build tools/perf/
  
--# For rule to generate ti-emif-asm-offsets.h dependency
--include drivers/memory/Makefile.asm-offsets
--
--arch/arm/mach-omap2/sleep33xx.o: include/generated/ti-pm-asm-offsets.h include/generated/ti-emif-asm-offsets.h
--arch/arm/mach-omap2/sleep43xx.o: include/generated/ti-pm-asm-offsets.h include/generated/ti-emif-asm-offsets.h
-+$(obj)/sleep33xx.o $(obj)/sleep43xx.o: include/generated/ti-pm-asm-offsets.h
-diff --git a/arch/arm/mach-omap2/pm-asm-offsets.c b/arch/arm/mach-omap2/pm-asm-offsets.c
-index 6d4392da7c11..b9846b19e5e2 100644
---- a/arch/arm/mach-omap2/pm-asm-offsets.c
-+++ b/arch/arm/mach-omap2/pm-asm-offsets.c
-@@ -7,9 +7,12 @@
- 
- #include <linux/kbuild.h>
- #include <linux/platform_data/pm33xx.h>
-+#include <linux/ti-emif-sram.h>
- 
- int main(void)
- {
-+	ti_emif_asm_offsets();
-+
- 	DEFINE(AMX3_PM_WFI_FLAGS_OFFSET,
- 	       offsetof(struct am33xx_pm_sram_data, wfi_flags));
- 	DEFINE(AMX3_PM_L2_AUX_CTRL_VAL_OFFSET,
-diff --git a/arch/arm/mach-omap2/sleep33xx.S b/arch/arm/mach-omap2/sleep33xx.S
-index 218d79930b04..322b3bb868b4 100644
---- a/arch/arm/mach-omap2/sleep33xx.S
-+++ b/arch/arm/mach-omap2/sleep33xx.S
-@@ -6,7 +6,6 @@
-  *	Dave Gerlach, Vaibhav Bedia
-  */
- 
--#include <generated/ti-emif-asm-offsets.h>
- #include <generated/ti-pm-asm-offsets.h>
- #include <linux/linkage.h>
- #include <linux/ti-emif-sram.h>
-diff --git a/arch/arm/mach-omap2/sleep43xx.S b/arch/arm/mach-omap2/sleep43xx.S
-index b24be624e8b9..8903814a6677 100644
---- a/arch/arm/mach-omap2/sleep43xx.S
-+++ b/arch/arm/mach-omap2/sleep43xx.S
-@@ -6,7 +6,6 @@
-  *	Dave Gerlach, Vaibhav Bedia
-  */
- 
--#include <generated/ti-emif-asm-offsets.h>
- #include <generated/ti-pm-asm-offsets.h>
- #include <linux/linkage.h>
- #include <linux/ti-emif-sram.h>
-diff --git a/drivers/memory/emif-asm-offsets.c b/drivers/memory/emif-asm-offsets.c
-index 71a89d5d3efd..db8043019ec6 100644
---- a/drivers/memory/emif-asm-offsets.c
-+++ b/drivers/memory/emif-asm-offsets.c
-@@ -16,77 +16,7 @@
- 
- int main(void)
- {
--	DEFINE(EMIF_SDCFG_VAL_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_sdcfg_val));
--	DEFINE(EMIF_TIMING1_VAL_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_timing1_val));
--	DEFINE(EMIF_TIMING2_VAL_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_timing2_val));
--	DEFINE(EMIF_TIMING3_VAL_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_timing3_val));
--	DEFINE(EMIF_REF_CTRL_VAL_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_ref_ctrl_val));
--	DEFINE(EMIF_ZQCFG_VAL_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_zqcfg_val));
--	DEFINE(EMIF_PMCR_VAL_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_pmcr_val));
--	DEFINE(EMIF_PMCR_SHDW_VAL_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_pmcr_shdw_val));
--	DEFINE(EMIF_RD_WR_LEVEL_RAMP_CTRL_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_rd_wr_level_ramp_ctrl));
--	DEFINE(EMIF_RD_WR_EXEC_THRESH_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_rd_wr_exec_thresh));
--	DEFINE(EMIF_COS_CONFIG_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_cos_config));
--	DEFINE(EMIF_PRIORITY_TO_COS_MAPPING_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_priority_to_cos_mapping));
--	DEFINE(EMIF_CONNECT_ID_SERV_1_MAP_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_connect_id_serv_1_map));
--	DEFINE(EMIF_CONNECT_ID_SERV_2_MAP_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_connect_id_serv_2_map));
--	DEFINE(EMIF_OCP_CONFIG_VAL_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_ocp_config_val));
--	DEFINE(EMIF_LPDDR2_NVM_TIM_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_lpddr2_nvm_tim));
--	DEFINE(EMIF_LPDDR2_NVM_TIM_SHDW_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_lpddr2_nvm_tim_shdw));
--	DEFINE(EMIF_DLL_CALIB_CTRL_VAL_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_dll_calib_ctrl_val));
--	DEFINE(EMIF_DLL_CALIB_CTRL_VAL_SHDW_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_dll_calib_ctrl_val_shdw));
--	DEFINE(EMIF_DDR_PHY_CTLR_1_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_ddr_phy_ctlr_1));
--	DEFINE(EMIF_EXT_PHY_CTRL_VALS_OFFSET,
--	       offsetof(struct emif_regs_amx3, emif_ext_phy_ctrl_vals));
--	DEFINE(EMIF_REGS_AMX3_SIZE, sizeof(struct emif_regs_amx3));
--
--	BLANK();
--
--	DEFINE(EMIF_PM_BASE_ADDR_VIRT_OFFSET,
--	       offsetof(struct ti_emif_pm_data, ti_emif_base_addr_virt));
--	DEFINE(EMIF_PM_BASE_ADDR_PHYS_OFFSET,
--	       offsetof(struct ti_emif_pm_data, ti_emif_base_addr_phys));
--	DEFINE(EMIF_PM_CONFIG_OFFSET,
--	       offsetof(struct ti_emif_pm_data, ti_emif_sram_config));
--	DEFINE(EMIF_PM_REGS_VIRT_OFFSET,
--	       offsetof(struct ti_emif_pm_data, regs_virt));
--	DEFINE(EMIF_PM_REGS_PHYS_OFFSET,
--	       offsetof(struct ti_emif_pm_data, regs_phys));
--	DEFINE(EMIF_PM_DATA_SIZE, sizeof(struct ti_emif_pm_data));
--
--	BLANK();
--
--	DEFINE(EMIF_PM_SAVE_CONTEXT_OFFSET,
--	       offsetof(struct ti_emif_pm_functions, save_context));
--	DEFINE(EMIF_PM_RESTORE_CONTEXT_OFFSET,
--	       offsetof(struct ti_emif_pm_functions, restore_context));
--	DEFINE(EMIF_PM_ENTER_SR_OFFSET,
--	       offsetof(struct ti_emif_pm_functions, enter_sr));
--	DEFINE(EMIF_PM_EXIT_SR_OFFSET,
--	       offsetof(struct ti_emif_pm_functions, exit_sr));
--	DEFINE(EMIF_PM_ABORT_SR_OFFSET,
--	       offsetof(struct ti_emif_pm_functions, abort_sr));
--	DEFINE(EMIF_PM_FUNCTIONS_SIZE, sizeof(struct ti_emif_pm_functions));
-+	ti_emif_asm_offsets();
- 
- 	return 0;
- }
-diff --git a/include/linux/ti-emif-sram.h b/include/linux/ti-emif-sram.h
-index 45bc6b376492..53604b087f2c 100644
---- a/include/linux/ti-emif-sram.h
-+++ b/include/linux/ti-emif-sram.h
-@@ -60,6 +60,81 @@ struct ti_emif_pm_functions {
- 	u32 abort_sr;
- } __packed __aligned(8);
- 
-+static inline void ti_emif_asm_offsets(void)
-+{
-+	DEFINE(EMIF_SDCFG_VAL_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_sdcfg_val));
-+	DEFINE(EMIF_TIMING1_VAL_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_timing1_val));
-+	DEFINE(EMIF_TIMING2_VAL_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_timing2_val));
-+	DEFINE(EMIF_TIMING3_VAL_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_timing3_val));
-+	DEFINE(EMIF_REF_CTRL_VAL_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_ref_ctrl_val));
-+	DEFINE(EMIF_ZQCFG_VAL_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_zqcfg_val));
-+	DEFINE(EMIF_PMCR_VAL_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_pmcr_val));
-+	DEFINE(EMIF_PMCR_SHDW_VAL_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_pmcr_shdw_val));
-+	DEFINE(EMIF_RD_WR_LEVEL_RAMP_CTRL_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_rd_wr_level_ramp_ctrl));
-+	DEFINE(EMIF_RD_WR_EXEC_THRESH_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_rd_wr_exec_thresh));
-+	DEFINE(EMIF_COS_CONFIG_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_cos_config));
-+	DEFINE(EMIF_PRIORITY_TO_COS_MAPPING_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_priority_to_cos_mapping));
-+	DEFINE(EMIF_CONNECT_ID_SERV_1_MAP_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_connect_id_serv_1_map));
-+	DEFINE(EMIF_CONNECT_ID_SERV_2_MAP_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_connect_id_serv_2_map));
-+	DEFINE(EMIF_OCP_CONFIG_VAL_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_ocp_config_val));
-+	DEFINE(EMIF_LPDDR2_NVM_TIM_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_lpddr2_nvm_tim));
-+	DEFINE(EMIF_LPDDR2_NVM_TIM_SHDW_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_lpddr2_nvm_tim_shdw));
-+	DEFINE(EMIF_DLL_CALIB_CTRL_VAL_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_dll_calib_ctrl_val));
-+	DEFINE(EMIF_DLL_CALIB_CTRL_VAL_SHDW_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_dll_calib_ctrl_val_shdw));
-+	DEFINE(EMIF_DDR_PHY_CTLR_1_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_ddr_phy_ctlr_1));
-+	DEFINE(EMIF_EXT_PHY_CTRL_VALS_OFFSET,
-+	       offsetof(struct emif_regs_amx3, emif_ext_phy_ctrl_vals));
-+	DEFINE(EMIF_REGS_AMX3_SIZE, sizeof(struct emif_regs_amx3));
-+
-+	BLANK();
-+
-+	DEFINE(EMIF_PM_BASE_ADDR_VIRT_OFFSET,
-+	       offsetof(struct ti_emif_pm_data, ti_emif_base_addr_virt));
-+	DEFINE(EMIF_PM_BASE_ADDR_PHYS_OFFSET,
-+	       offsetof(struct ti_emif_pm_data, ti_emif_base_addr_phys));
-+	DEFINE(EMIF_PM_CONFIG_OFFSET,
-+	       offsetof(struct ti_emif_pm_data, ti_emif_sram_config));
-+	DEFINE(EMIF_PM_REGS_VIRT_OFFSET,
-+	       offsetof(struct ti_emif_pm_data, regs_virt));
-+	DEFINE(EMIF_PM_REGS_PHYS_OFFSET,
-+	       offsetof(struct ti_emif_pm_data, regs_phys));
-+	DEFINE(EMIF_PM_DATA_SIZE, sizeof(struct ti_emif_pm_data));
-+
-+	BLANK();
-+
-+	DEFINE(EMIF_PM_SAVE_CONTEXT_OFFSET,
-+	       offsetof(struct ti_emif_pm_functions, save_context));
-+	DEFINE(EMIF_PM_RESTORE_CONTEXT_OFFSET,
-+	       offsetof(struct ti_emif_pm_functions, restore_context));
-+	DEFINE(EMIF_PM_ENTER_SR_OFFSET,
-+	       offsetof(struct ti_emif_pm_functions, enter_sr));
-+	DEFINE(EMIF_PM_EXIT_SR_OFFSET,
-+	       offsetof(struct ti_emif_pm_functions, exit_sr));
-+	DEFINE(EMIF_PM_ABORT_SR_OFFSET,
-+	       offsetof(struct ti_emif_pm_functions, abort_sr));
-+	DEFINE(EMIF_PM_FUNCTIONS_SIZE, sizeof(struct ti_emif_pm_functions));
-+}
-+
- struct gen_pool;
- 
- int ti_emif_copy_pm_function_table(struct gen_pool *sram_pool, void *dst);
--- 
-2.16.1
+> If the inline assembly is indeed for BPF program, later llc
+> AsmParser will do syntax and semantics checking again.
+> 
+> With the above clang patch, the above "#ifndef __BPF__" can be removed.
+> You can decide when is the appropriate time to use latest clang compiler
+> and remove the above "#ifndef __BPF__".
+
+So are you proposing that we have something similar to that
+CC_HAVE_ASM_GOTO check in the kernel main Makefile, to define something
+like CC_HAVE_ASM_REGS (or some better name), i.e. something like:
+
+# check for 'asm(_ASM_SP)'
+ifeq ($(call shell-cached,$(CONFIG_SHELL) $(srctree)/scripts/cc-asm-regs.sh
+$(CC) $(KBUILD_CFLAGS)), y)
+  CC_HAVE_ASM_REGS := 1
+  KBUILD_CFLAGS += -DCC_HAVE_ASM_REGS
+  KBUILD_AFLAGS += -DCC_HAVE_ASM_REGS
+endif
+
+?
+
+- Arnaldo
