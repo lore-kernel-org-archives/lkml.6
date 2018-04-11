@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49eVSDy2e/xh8LozxhpPk3GP77G65a1CB4qvcZQG6k/PCbGRwfJLe3wWtpi2stSrqXYW8xx
-ARC-Seal: i=1; a=rsa-sha256; t=1523472091; cv=none;
+X-Google-Smtp-Source: AIpwx4/UcA7VklYwAa3viSoDLmM3NemZAHYzJ6LllGWr4CiknIa1b4illo4hgqGzU/pKCx2T1Y8e
+ARC-Seal: i=1; a=rsa-sha256; t=1523472088; cv=none;
         d=google.com; s=arc-20160816;
-        b=kckfR5qIRozIKtmcGAqY9ZmwS7M6v6n0Y61HiSUVWgsw1k9N5u7NORIQ7SYcPI7ICO
-         2zyg5HLVM4WtU3RKE8dBU45Bh6QJVtVJ3Z6VyWtLbTOmU8fYrwewSmYm+C7Ja3gZy0J/
-         aXl2TDGg1jJ/YDOmFEkppYBmj4E7XkVOIunTBWFEVJPTzngW/rwefG3k/IUGU5qMkld8
-         E2ECRGHTvBbwTM7RWlx0QupHOSUoPt5E9Bq0eJjRLrCBpm53pNzJdX0oRWh5nRxPFa3q
-         +U+vVIuDSBcAw0xbYyYbbRCfrP+8tK5vu3iITw7AbsC0ESCKSVakwE3tV4H09y6vAkRr
-         yGJQ==
+        b=Fhe+AyFJsfHU9dGVoiK9UdvUnalhFlPwA1Jsf39UyMNk0lrUxNPthGgV/FVSZGqh2d
+         uZNfFLTAodqcipc7qiJsiJqa15Pgk+rUyRsSRaTCs1IRwvBIJlNmcx+0nvGuh/4nbzyg
+         NQOoo9tK5Gd5Cvxc3IpVKhf5dRbi2RE11JRp3vXCO08INWmkd9bu5VB9ySAPGZPLBsmw
+         aLcHRUt6NnIUzqiqE7laeyQa0vtUYl2dA3/4dOgl+mghkZJL2Bz25bHZmUwQHznyBbo8
+         4xuxYmyabXmaQKoNS64fefQ0me3iy7uZy2j7vOZgw/zoyvw9XfN7Er2rF5b9rgPMRDfS
+         ac5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=zMAnRFXsau00kYSgVo5vNVa8G9PWHofA1lsQTVLrWLg=;
-        b=NTREZ9ae870xkQAhwLOtFuU6uzMQKauwuZwAOf8fJwJl7YAY84d/+TA/QtUe49Eqfx
-         jlmJ3LDaZ7vNGVFZTer+54K5Tn8szi6M7mb1tqxpAX1KnUBTaTj5YvGcAG1Qkdn7MC93
-         od/W4yZK9uQJY/lz/CkZ7RUWHtC8O2jyfR94hdyDFxeRuZzQNyonT/kOBZL1Xubx1Sln
-         muQTszBHkmSQecdCkvz7YpglOsuMnMHTmmgs5SV7UOp/Apr09RQaEZFo1RlZgtSX2IUd
-         kD5u+1J23dBnNSQLPlMFUKlmUpRGssearYJYuGbVvnS0zi1bTvgt5dFArHt3riz+lQWu
-         zN1Q==
+        bh=TdRJP6nXxiHVeqWJuFL2ICObw7dDWWJWsu6P0YMSuFE=;
+        b=zK89S0KmsE0N5Awdusxk3yG0BJVsQLymSbG5DBS6ZVLpmqx8DYXpskCSQwFwMKnIgm
+         Pv75M1gdoKirz1XapkY7VflIhMaPNDmNdytIUjbgge+fBgqHCUkcwBeqpEBvzP+umlBo
+         S6CQLv7eXCK2tPUDM52WY6dijuv/qbRp79oXXfYKRTSxOKLhwcCPHGtsn6omSZQSWQ6b
+         fyfgzp/++z/GTDr6VOA4HIutea2co0Hw/PNQYEXHXNoTR3NFXpwC5iAv9aSJ1K/lElBZ
+         bZlQ9Oycza5Q2qMzvyn7fwaARF63e6VX6QUpP4p94i98Z0DgKTlwVjxPFk+hVCwjJn24
+         lnAA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yuval Mintz <Yuval.Mintz@cavium.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Ian Abbott <abbotti@mev.co.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Stefano Stabellini <sstabellini@kernel.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 082/121] bnx2x: Allow vfs to disable txvlan offload
-Date: Wed, 11 Apr 2018 20:36:25 +0200
-Message-Id: <20180411183501.203418408@linuxfoundation.org>
+Subject: [PATCH 3.18 081/121] xen: avoid type warning in xchg_xen_ulong
+Date: Wed, 11 Apr 2018 20:36:24 +0200
+Message-Id: <20180411183501.133395425@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476272462961684?=
-X-GMAIL-MSGID: =?utf-8?q?1597476272462961684?=
+X-GMAIL-THRID: =?utf-8?q?1597476268776982779?=
+X-GMAIL-MSGID: =?utf-8?q?1597476268776982779?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,55 +51,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: "Mintz, Yuval" <Yuval.Mintz@cavium.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
 
-[ Upstream commit 92f85f05caa51d844af6ea14ffbc7a786446a644 ]
+[ Upstream commit 9cc91f212111cdcbefa02dcdb7dd443f224bf52c ]
 
-VF clients are configured as enforced, meaning firmware is validating
-the correctness of their ethertype/vid during transmission.
-Once txvlan is disabled, VF would start getting SKBs for transmission
-here vlan is on the payload - but it'll pass the packet's ethertype
-instead of the vid, leading to firmware declaring it as malicious.
+The improved type-checking version of container_of() triggers a warning for
+xchg_xen_ulong, pointing out that 'xen_ulong_t' is unsigned, but atomic64_t
+contains a signed value:
 
-Signed-off-by: Yuval Mintz <Yuval.Mintz@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+drivers/xen/events/events_2l.c: In function 'evtchn_2l_handle_events':
+drivers/xen/events/events_2l.c:187:1020: error: call to '__compiletime_assert_187' declared with attribute error: pointer type mismatch in container_of()
+
+This adds a cast to work around the warning.
+
+Cc: Ian Abbott <abbotti@mev.co.uk>
+Fixes: 85323a991d40 ("xen: arm: mandate EABI and use generic atomic operations.")
+Fixes: daa2ac80834d ("kernel.h: handle pointers to arrays better in container_of()")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Stefano Stabellini <sstabellini@kernel.org>
+Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
+Acked-by: Ian Abbott <abbotti@mev.co.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c |   19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ arch/arm/include/asm/xen/events.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-@@ -3876,15 +3876,26 @@ netdev_tx_t bnx2x_start_xmit(struct sk_b
- 		/* when transmitting in a vf, start bd must hold the ethertype
- 		 * for fw to enforce it
- 		 */
-+		u16 vlan_tci = 0;
- #ifndef BNX2X_STOP_ON_ERROR
--		if (IS_VF(bp))
-+		if (IS_VF(bp)) {
- #endif
--			tx_start_bd->vlan_or_ethertype =
--				cpu_to_le16(ntohs(eth->h_proto));
-+			/* Still need to consider inband vlan for enforced */
-+			if (__vlan_get_tag(skb, &vlan_tci)) {
-+				tx_start_bd->vlan_or_ethertype =
-+					cpu_to_le16(ntohs(eth->h_proto));
-+			} else {
-+				tx_start_bd->bd_flags.as_bitfield |=
-+					(X_ETH_INBAND_VLAN <<
-+					 ETH_TX_BD_FLAGS_VLAN_MODE_SHIFT);
-+				tx_start_bd->vlan_or_ethertype =
-+					cpu_to_le16(vlan_tci);
-+			}
- #ifndef BNX2X_STOP_ON_ERROR
--		else
-+		} else {
- 			/* used by FW for packet accounting */
- 			tx_start_bd->vlan_or_ethertype = cpu_to_le16(pkt_prod);
-+		}
- #endif
- 	}
+--- a/arch/arm/include/asm/xen/events.h
++++ b/arch/arm/include/asm/xen/events.h
+@@ -16,7 +16,7 @@ static inline int xen_irqs_disabled(stru
+ 	return raw_irqs_disabled_flags(regs->ARM_cpsr);
+ }
+ 
+-#define xchg_xen_ulong(ptr, val) atomic64_xchg(container_of((ptr),	\
++#define xchg_xen_ulong(ptr, val) atomic64_xchg(container_of((long long*)(ptr),\
+ 							    atomic64_t,	\
+ 							    counter), (val))
  
