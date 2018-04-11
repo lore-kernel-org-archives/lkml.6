@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/LYjyVipod5LWJ12nin5rBm7A/iMktqo48h1Ni8riwlLvTL47WjBXt05uAMGnwcdir8968
-ARC-Seal: i=1; a=rsa-sha256; t=1523472618; cv=none;
+X-Google-Smtp-Source: AIpwx48+iXBKw1Q2ZUBU5vIO/TVNLzkDUx1ClM/45pViVuXHsTgyMeWTjTyW5FMVg0zTDQ7q0mUc
+ARC-Seal: i=1; a=rsa-sha256; t=1523472616; cv=none;
         d=google.com; s=arc-20160816;
-        b=HyKESow7jM9V+fi+sakA/M8bdXFAbUNhbbwH3MZO84tLyKwDycOLUjbiij82VbpwfA
-         jZ1cq9ea7PfUIHWG+/hnN9wqUZOf3NfbgFwXgPL6yGZH13Lb24Nm+k804rkNWGdRgxwY
-         nhLYzuwM+BcBkjym2W8vCUPLcWhzRiHpLi7sO2v/xPnB+dUTHwOK20OwvdUzaqfd528+
-         C0jnCuyQGXX6bLKdPSdzCVeVsdDGx7hHe5vDWRs6hX0KRk1ki3M2wy6wxznwX8OxKH4V
-         fNLgUeS4H+bXdj/DAacClge+FcN8iSSzCM/0OoS87dz4s56ESCPozjNHl2+A5TmygZwX
-         eS+Q==
+        b=Ugh6mVesq7raWlBMchn7xnuVZl4umw98OG+7vgs/VZZP/IA/dyD1lbbWcRJFwD9Nqa
+         u/JyFBLpsVg+7NObCCFyQGDhYiIueW77IljpD8NW/JVaBeRIPGztOvlum/RSqOAilxmt
+         MceCbtC0jwi40hkeQ1cL+FAuTK0d0SflQRTSN3kllA/iouecb6W58PmcWu03AX3L+fqT
+         AB3BDykGxZ881p7k8U+VACsSAq3jaFroP8d3Iz/bym122WWBP8iUv2oZ6+LNXRTkYlHj
+         F7gSV496n/shxvIZX6WLZ2G3JAC4R2gBtqJru0iYVV5gCbjEgwNQvIYNqKluaYR34zst
+         mIcg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=pxmP/gD5EXH4LfMBDfWUq8fGU/mxcVirWQUlF7Sfwb4=;
-        b=BG62MZmdPVc64e3+YpLk1ZBFIET0TPv8kM6FD64wN2PLcr7Sje94BeXj86ntJR2lr+
-         Ib8sTIw4WdSMBOKpJM5eZAnHiB+tCBbvOlKXeT9w/1I+l4fc54dy5z6gq9rVzXtC3w9+
-         NgWZxPHlOJJUTMRZV6KlVS/bGZp4X7fnOdBI9XnxCtxg1NnLAjlJ+9bK1cFyBl/8i+s0
-         vsj64tHC7cELSKFj8IyH9BRhQCs/uy6cXAr5CxBT4FrGyI9FMMZR2CVK3sHda8ttqAnD
-         DhfPO4I36fG0mRlqr/5MOmzhkv7ltSRfCRE1AOhKtd7hqRXaKLL3PcVIKakWNt3VssMk
-         u9Ig==
+        bh=BNmzV1ZLmIrkM29CwXV7OFjsgNBNpcVSLxI6cyBzX7k=;
+        b=yArz/nu5VRcSAtGc0MJj+w3KYOymABLsGGavI+z7+WkC8KYi6uFDQ3M2i6TXcCfBvM
+         1A6V7EOQlt95RX8AaQlYkhRf5g+innguA7hLMK/quIWLJydk6PcZlm0ZQMs2I7c9Km/J
+         16yH0MzlTMuWb7X6BKNwD8yUm9FvyeUvJKpGuvG8DVsSJpecpSNkOZ5z6wIdV1CVVk5k
+         qVgQjPO6afDK8WtWF2VsRA3MQWHHKSlmSKzyZJwPvuTb9sLtb5TxDuu7+9PEyL5DfH6k
+         rEsbAoScsfrdIX8FkmbxBWvC3oANqYgUVNvBdiorC81jEgsWbnAOkwL9PbXaEN3CWrF1
+         oRqg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jason Yan <yanaijie@huawei.com>,
-	John Garry <john.garry@huawei.com>,
-	chenqilin <chenqilin2@huawei.com>,
-	chenxiang <chenxiang66@hisilicon.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Hannes Reinecke <hare@suse.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Tang Junhui <tang.junhui@zte.com.cn>,
+	Michael Lyle <mlyle@lyle.org>,
+	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 151/190] scsi: libsas: fix memory leak in sas_smp_get_phy_events()
-Date: Wed, 11 Apr 2018 20:36:37 +0200
-Message-Id: <20180411183601.450144801@linuxfoundation.org>
+Subject: [PATCH 4.4 150/190] bcache: segregate flash only volume write streams
+Date: Wed, 11 Apr 2018 20:36:36 +0200
+Message-Id: <20180411183601.397843035@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -46,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476394956038418?=
-X-GMAIL-MSGID: =?utf-8?q?1597476824773372402?=
+X-GMAIL-THRID: =?utf-8?q?1597476392008535759?=
+X-GMAIL-MSGID: =?utf-8?q?1597476821948486504?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,40 +51,81 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Yan <yanaijie@huawei.com>
+From: Tang Junhui <tang.junhui@zte.com.cn>
 
 
-[ Upstream commit 4a491b1ab11ca0556d2fda1ff1301e862a2d44c4 ]
+[ Upstream commit 4eca1cb28d8b0574ca4f1f48e9331c5f852d43b9 ]
 
-We've got a memory leak with the following producer:
+In such scenario that there are some flash only volumes
+, and some cached devices, when many tasks request these devices in
+writeback mode, the write IOs may fall to the same bucket as bellow:
+| cached data | flash data | cached data | cached data| flash data|
+then after writeback of these cached devices, the bucket would
+be like bellow bucket:
+| free | flash data | free | free | flash data |
 
-while true;
-do cat /sys/class/sas_phy/phy-1:0:12/invalid_dword_count >/dev/null;
-done
+So, there are many free space in this bucket, but since data of flash
+only volumes still exists, so this bucket cannot be reclaimable,
+which would cause waste of bucket space.
 
-The buffer req is allocated and not freed after we return. Fix it.
+In this patch, we segregate flash only volume write streams from
+cached devices, so data from flash only volumes and cached devices
+can store in different buckets.
 
-Fixes: 2908d778ab3e ("[SCSI] aic94xx: new driver")
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-CC: John Garry <john.garry@huawei.com>
-CC: chenqilin <chenqilin2@huawei.com>
-CC: chenxiang <chenxiang66@hisilicon.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Compare to v1 patch, this patch do not add a additionally open bucket
+list, and it is try best to segregate flash only volume write streams
+from cached devices, sectors of flash only volumes may still be mixed
+with dirty sectors of cached device, but the number is very small.
+
+[mlyle: fixed commit log formatting, permissions, line endings]
+
+Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/libsas/sas_expander.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/bcache/alloc.c |   19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
---- a/drivers/scsi/libsas/sas_expander.c
-+++ b/drivers/scsi/libsas/sas_expander.c
-@@ -684,6 +684,7 @@ int sas_smp_get_phy_events(struct sas_ph
- 	phy->phy_reset_problem_count = scsi_to_u32(&resp[24]);
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -514,15 +514,21 @@ struct open_bucket {
  
-  out:
-+	kfree(req);
- 	kfree(resp);
- 	return res;
+ /*
+  * We keep multiple buckets open for writes, and try to segregate different
+- * write streams for better cache utilization: first we look for a bucket where
+- * the last write to it was sequential with the current write, and failing that
+- * we look for a bucket that was last used by the same task.
++ * write streams for better cache utilization: first we try to segregate flash
++ * only volume write streams from cached devices, secondly we look for a bucket
++ * where the last write to it was sequential with the current write, and
++ * failing that we look for a bucket that was last used by the same task.
+  *
+  * The ideas is if you've got multiple tasks pulling data into the cache at the
+  * same time, you'll get better cache utilization if you try to segregate their
+  * data and preserve locality.
+  *
+- * For example, say you've starting Firefox at the same time you're copying a
++ * For example, dirty sectors of flash only volume is not reclaimable, if their
++ * dirty sectors mixed with dirty sectors of cached device, such buckets will
++ * be marked as dirty and won't be reclaimed, though the dirty data of cached
++ * device have been written back to backend device.
++ *
++ * And say you've starting Firefox at the same time you're copying a
+  * bunch of files. Firefox will likely end up being fairly hot and stay in the
+  * cache awhile, but the data you copied might not be; if you wrote all that
+  * data to the same buckets it'd get invalidated at the same time.
+@@ -539,7 +545,10 @@ static struct open_bucket *pick_data_buc
+ 	struct open_bucket *ret, *ret_task = NULL;
  
+ 	list_for_each_entry_reverse(ret, &c->data_buckets, list)
+-		if (!bkey_cmp(&ret->key, search))
++		if (UUID_FLASH_ONLY(&c->uuids[KEY_INODE(&ret->key)]) !=
++		    UUID_FLASH_ONLY(&c->uuids[KEY_INODE(search)]))
++			continue;
++		else if (!bkey_cmp(&ret->key, search))
+ 			goto found;
+ 		else if (ret->last_write_point == write_point)
+ 			ret_task = ret;
