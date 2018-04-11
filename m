@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3269524-1523477148-3-10691485680579033227
+X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477130-2-2716522820955577733
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477148; b=nXgmeoIb8V9pX6OjqJj+tlR0Y5+/P+HWOui9ZZwKJds/oPwaix
-    rKgiDi9rmCZQ2/9Rej2LoDzgbBS646jd6FBQwqu+9PehThHGB2EP7SrNlL1lE3g3
-    7o/uICWD3Y++7ZFypDKoDDv1yWgvF6QnYSZhiC1NIOOC+wXqvQ9AMKp5C3SZKKcM
-    VRo/1XYaZhagpvGcQtYwdCrBp8/75PT3m5Si8QjgVxvu5K9x8v5z/14FI0xNodsO
-    QZhnoTZ/qNQDXont0MKe8Wbr/8C812OtB8oVKLcX1RfbVasP9N3Cvq9kIUXqp7cD
-    f05p21FGPoqufieTQxVjdjiIZIQN7YL+I17w==
+    1523477130; b=fkS/ZEEiXREIrevgcmOOvj34jOjb2TiPUYoACincI6sIsHL3mp
+    eflmkyjQbovFMZ0HmWN0wDF2WqXo/zwizkopXfOE+xXPa+lMebT6Ni6B5HSxTzZF
+    96wsnJV167YQsqjtUdTzqJXIrPi3BgSzdqxfTdyUwbaNOHdnr2GQcvnQUeIgcjS1
+    H0TLlFIo4LDg1nyRnq9FGYRJpJhNz+43maZBWtgyTWwNHatPvFx0rxYxeJKRtQhb
+    1+1zPLIJQgD4AIPUmWFSA3ds+LlKyqOUzxepo0llSmkGut2T6Y6yRnBA4TP5TuTT
+    f4PwkSXQNGi5OxXkeoBeq/37J08yPrBYrc5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523477148; bh=svchRXMm1gmi50J7g648eRD6f2w6bl
-    bOi5aYPvH1uB0=; b=QooylTtZqlFL/O/EkBFfyGNZ1PUmdCwWrsgfZD+vaSxlhW
-    IWQm58lhF5TaS507+WcSnqaKpRGsXsQpJ6eDkALngPKZzkMHNxfoQbLIbx/2Wxiu
-    aUPCYTvpEa5pMEnLwKsVJI1kjJpyiUji+rYm1wtwiVmeeMosPxnyguYJLUeZxqkZ
-    6YSvIYEmlyah/CWmDPNDjnekOeIu1yQ4j85xB32vCJ42tKQEpfDk4eOkFyFgLb1t
-    Ed5sNzcBzHiXVwOvz0tfeK1MENa013OEEPaKM0if36YwI9O7eUPWAP2z4//NQDMC
-    XE5/LZxCZmBvLdfh4ejqy07jkreO7dxC1COv+DwQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523477130; bh=8eZGYovNHuZ9CamBKL3IkL5KgowOus
+    33NM5cSNm+3Xg=; b=dhRUPXfMj054ylbU5V7D2dGGFEUazF/4WD7YNsTmUurfza
+    3rLBVIw8NAv2YX/iooEgrgwd79vgEhy6hlsSL2KV/snWdiekaxUS4tOUOclDNmHy
+    uvEwSSQA78426Fx7kHto5+UEDHBqTypRiztfqNwbAC/qQ62Ud+6vdu6Zvpme0OCz
+    83VUXJJlpWwnUhkw1XiyvfEETNgt7BeF+SICScydi4wR33oCmn7fTw/AWiFye6+g
+    vp1p6XrhG6MBHMGa46nDphD29oBuuOFWnDWSj6Cta5Yvs1BmmdXLlQmH14T1AEXJ
+    Q3eAU0q40Va3y5bRfYtydphzMuM6EYja4zThMhmA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,37 +51,33 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNkZGwMRL4fMKyb/xmDuhnNudOucLY+9XsAxQ3gnDzAbK4D82nqvfbdEOhotRB6QLjNuxOJsft5+F+YfYnZWWl6PMOHijCmlzdeko6qZqO6qUdfJ71id
-    IA7xu4/ft03N1TrXqoZ39b38cYa4ldVXOlHqAok/unVlVrW2crQLcI/LDO6vHHvzuD0pv7Vy/BtnoatIqOMnDDa+7+AkBb0F9gJHjAlYa2MThlKtn3sQA43C
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHTjQrWt85c5SxfMVhorYV5gwT0r03Y8hwt0Ms7rHRnKkU/NId9PZ6KoZnxehlKq5LkBZ2nuJwTrXMdIKlwKkQMxbr/OSsIi0xjnO6wsqaJwSRE9uD+V
+    llJ14SzF88By6wqf2U+OwQ63XJJngQF61yu7Cd99+x8mZ47Yo5kFt88np7nejTZM5n2YHYqE6DEeqCSRWRIvp2+q7r/BH0Tgo+tLEMNrzOICpPJHfJB2GL8U
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=i0EeH86SAAAA:8 a=KKAkSRfTAAAA:8 a=7CQSdrXTAAAA:8 a=VwQbUJbxAAAA:8
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=y2BmO4VDSVHQWuCiJ2sA:9
-    a=hMakGYo-eCAK3RdJ:21 a=S9mhtIvQuhSIVXTS:21 a=QEXdDO2ut3YA:10
-    a=cvBusfyB2V15izCimMoJ:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=vmLDa1wCAAAA:8 a=eh1Yez-EAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=eK2PtGytKguSqSfQ0NAA:9 a=QEXdDO2ut3YA:10
+    a=h8Bt5HTj68qkN2fS7gvA:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932962AbeDKSze (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:55:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35470 "EHLO
+        id S1757243AbeDKUFK (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:05:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35484 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933731AbeDKSzc (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:55:32 -0400
+        with ESMTP id S933745AbeDKSzf (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:55:35 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, MaJun <majun258@huawei.com>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>, linuxarm@huawei.com,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Neil Horman <nhorman@tuxdriver.com>,
+        Shrikrishna Khare <skhare@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 036/310] irqchip/mbigen: Fix the clear register offset calculation
-Date: Wed, 11 Apr 2018 20:32:55 +0200
-Message-Id: <20180411183623.829713131@linuxfoundation.org>
+Subject: [PATCH 4.9 037/310] vmxnet3: ensure that adapter is in proper state during force_close
+Date: Wed, 11 Apr 2018 20:32:56 +0200
+Message-Id: <20180411183623.869665011@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -99,57 +95,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: MaJun <majun258@huawei.com>
+From: Neil Horman <nhorman@tuxdriver.com>
 
 
-[ Upstream commit 9459a04b6a5a09967eec94a1b66f0a74312819d9 ]
+[ Upstream commit 1c4d5f51a812a82de97beee24f48ed05c65ebda5 ]
 
-The register array offset for clearing an interrupt is calculated by:
+There are several paths in vmxnet3, where settings changes cause the
+adapter to be brought down and back up (vmxnet3_set_ringparam among
+them).  Should part of the reset operation fail, these paths call
+vmxnet3_force_close, which enables all napi instances prior to calling
+dev_close (with the expectation that vmxnet3_close will then properly
+disable them again).  However, vmxnet3_force_close neglects to clear
+VMXNET3_STATE_BIT_QUIESCED prior to calling dev_close.  As a result
+vmxnet3_quiesce_dev (called from vmxnet3_close), returns early, and
+leaves all the napi instances in a enabled state while the device itself
+is closed.  If a device in this state is activated again, napi_enable
+will be called on already enabled napi_instances, leading to a BUG halt.
 
-    offset = (hwirq - RESERVED_IRQ_PER_MBIGEN_CHIP) / 32;
+The fix is to simply enausre that the QUIESCED bit is cleared in
+vmxnet3_force_close to allow quesence to be completed properly on close.
 
-This is wrong because the clear register array includes the reserved
-interrupts. So the clear operation ends up in the wrong register.
-
-This went unnoticed so far, because the hardware clears the real bit
-through a timeout mechanism when the hardware is configured in debug
-mode. That debug mode was enabled on early generations of the hardware, so
-the problem was papered over.
-
-On newer hardware with updated firmware the debug mode was disabled, so the
-bits did not get cleared which causes the system to malfunction.
-
-Remove the subtraction of RESERVED_IRQ_PER_MBIGEN_CHIP, so the correct
-register is accessed.
-
-[ tglx: Rewrote changelog ]
-
-Fixes: a6c2f87b8820 ("irqchip/mbigen: Implement the mbigen irq chip operation functions")
-Signed-off-by: MaJun <majun258@huawei.com>
-Signed-off-by: Hanjun Guo <hanjun.guo@linaro.org>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc: linuxarm@huawei.com
-Cc: Wei Yongjun <weiyongjun1@huawei.com>
-Link: http://lkml.kernel.org/r/1494561328-39514-4-git-send-email-guohanjun@huawei.com
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
+CC: Shrikrishna Khare <skhare@vmware.com>
+CC: "VMware, Inc." <pv-drivers@vmware.com>
+CC: "David S. Miller" <davem@davemloft.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/irqchip/irq-mbigen.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/net/vmxnet3/vmxnet3_drv.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/irqchip/irq-mbigen.c
-+++ b/drivers/irqchip/irq-mbigen.c
-@@ -105,10 +105,7 @@ static inline void get_mbigen_type_reg(i
- static inline void get_mbigen_clear_reg(irq_hw_number_t hwirq,
- 					u32 *mask, u32 *addr)
- {
--	unsigned int ofst;
--
--	hwirq -= RESERVED_IRQ_PER_MBIGEN_CHIP;
--	ofst = hwirq / 32 * 4;
-+	unsigned int ofst = (hwirq / 32) * 4;
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -2962,6 +2962,11 @@ vmxnet3_force_close(struct vmxnet3_adapt
+ 	/* we need to enable NAPI, otherwise dev_close will deadlock */
+ 	for (i = 0; i < adapter->num_rx_queues; i++)
+ 		napi_enable(&adapter->rx_queue[i].napi);
++	/*
++	 * Need to clear the quiesce bit to ensure that vmxnet3_close
++	 * can quiesce the device properly
++	 */
++	clear_bit(VMXNET3_STATE_BIT_QUIESCED, &adapter->state);
+ 	dev_close(adapter->netdev);
+ }
  
- 	*mask = 1 << (hwirq % 32);
- 	*addr = ofst + REG_MBIGEN_CLEAR_OFFSET;
