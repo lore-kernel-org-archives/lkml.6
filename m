@@ -1,56 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753080AbeDKI5F (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 04:57:05 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:53164 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753057AbeDKI5A (ORCPT
+        id S1753054AbeDKI4z (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 04:56:55 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:44564 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753032AbeDKI4t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 04:57:00 -0400
-X-Google-Smtp-Source: AIpwx48FCs2vgFIGciB5XD3X72wmjtR/AOfgax4qUdDjmo7pF710Hc9aqm+IKx+kfg5dY9RPvGdSZA==
-Subject: Re: [PATCH v3 1/7] thermal/drivers/cpu_cooling: Fixup the header and
- copyright
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
-        javi.merino@kernel.org, rui.zhang@intel.com,
-        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@gmail.com>
-References: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
- <1522945005-7165-2-git-send-email-daniel.lezcano@linaro.org>
- <20180411061514.GL7671@vireshk-i7>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <4d367d3f-c6c9-1e05-13d7-2b131a0fa5b8@linaro.org>
-Date: Wed, 11 Apr 2018 10:56:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 11 Apr 2018 04:56:49 -0400
+Date: Wed, 11 Apr 2018 10:56:20 +0200
+From: Daniel Kiper <daniel.kiper@oracle.com>
+To: james.bottomley@hansenpartnership.com, ard.biesheuvel@linaro.org
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, xen-devel@lists.xenproject.org,
+        boris.ostrovsky@oracle.com, eric.snowberg@oracle.com, hpa@zytor.com,
+        jgross@suse.com, konrad.wilk@oracle.com, mingo@redhat.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH v2] x86/xen/efi: Initialize UEFI secure boot state during
+ dom0 boot
+Message-ID: <20180411085620.GI26100@olila.local.net-space.pl>
+References: <1522766345-4169-1-git-send-email-daniel.kiper@oracle.com>
+ <1522770281.4522.14.camel@HansenPartnership.com>
+ <20180403160712.GL26100@olila.local.net-space.pl>
+ <1522774852.4522.25.camel@HansenPartnership.com>
+ <20180404103824.GM26100@olila.local.net-space.pl>
 MIME-Version: 1.0
-In-Reply-To: <20180411061514.GL7671@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180404103824.GM26100@olila.local.net-space.pl>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8859 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804110087
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/04/2018 08:15, Viresh Kumar wrote:
-> On 05-04-18, 18:16, Daniel Lezcano wrote:
->> The copyright format does not conform to the format requested by
->> Linaro: https://wiki.linaro.org/Copyright
->>
->> Fix it.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> 
-> You forgot to include my Ack ?
+On Wed, Apr 04, 2018 at 12:38:24PM +0200, Daniel Kiper wrote:
+> On Tue, Apr 03, 2018 at 10:00:52AM -0700, James Bottomley wrote:
+> > On Tue, 2018-04-03 at 18:07 +0200, Daniel Kiper wrote:
+> > > On Tue, Apr 03, 2018 at 08:44:41AM -0700, James Bottomley wrote:
+>
+> [...]
+>
+> > > > This looks like a bad idea: you're duplicating the secure boot
+> > > > check in
+> > > >
+> > > > drivers/firmware/efi/libstub/secureboot.c
+> > > >
+> > > > Which is an implementation of policy.  If we have to have policy in
+> > > > the kernel, it should really only be in one place to prevent drift;
+> > > > why can't you simply use the libstub efi_get_secureboot() so we're
+> > > > not duplicating the implementation of policy?
+> > >
+> > > Well, here is the first version of this patch:
+> > > https://lkml.org/lkml/2018/1/9/496 Ard did not like it. I was not
+> > > happy too. In general both approaches are not perfect. More you can
+> > > find in the discussion around this patchset. If you have better idea
+> > > how to do that I am happy to implement it.
+> >
+> > One way might be simply to have the pre exit-boot-services code lay
+> > down a variable containing the state which you pick up, rather than you
+>
+> Do you mean variable in kernel proper or something like that? If yes this
+> is not possible. EFI Linux stub is not executed in Xen dom0. All UEFI
+> infrastructure is owned and operated by Xen. Dom0 kernel can access some
+> stuff in UEFI, including variables, via hypercall. However, when dom0
+> runs only UEFI runtime services are available.
+>
+> > calling efi code separately and trying to use the insecure RT
+>
+> I am not sure why they are insecure.
+>
+> > variables.  That way there's a uniform view of the internal kernel
+> > secure boot state that everyone can use.
+>
+> That would be perfect but I have a feeling that in form proposed above
+> it is not possible.
 
-Yes :)
+Ping?
 
-
-
--- 
- <http://www.linaro.org/> Linaro.org â”‚ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Daniel
