@@ -1,61 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752638AbeDKHHt convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 03:07:49 -0400
-Received: from mga09.intel.com ([134.134.136.24]:22571 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752212AbeDKHHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 03:07:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,435,1517904000";
-   d="scan'208";a="45251335"
-Message-ID: <1523430464.123441.5.camel@intel.com>
-Subject: [GIT PULL] arch/nios2 update for v4.17-rc1
-From: Ley Foon Tan <ley.foon.tan@intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "lftan.linux@gmail.com" <lftan.linux@gmail.com>
-Date: Wed, 11 Apr 2018 15:07:44 +0800
+        id S1752833AbeDKHJy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 03:09:54 -0400
+Received: from mail-qt0-f175.google.com ([209.85.216.175]:37766 "EHLO
+        mail-qt0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752167AbeDKHJw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 03:09:52 -0400
+X-Google-Smtp-Source: AIpwx4+1UGT1qjQOCmVEC9OC5OSc0jbkObV7orFdM0I3/BOe/S4AYqc8W+7o7tvZz+EkEh+tZb8ex6S9Ssq5N6YavzU=
+MIME-Version: 1.0
+In-Reply-To: <20180410194914.7268-2-wsa@the-dreams.de>
+References: <20180410194914.7268-1-wsa@the-dreams.de> <20180410194914.7268-2-wsa@the-dreams.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 11 Apr 2018 09:09:50 +0200
+X-Google-Sender-Auth: MRhhqEfpel3b1qVg9XI-H5atNqM
+Message-ID: <CAMuHMdUv2obJHjEZO0d+P=mM8GtGi3g4YCCjxoGBwKeHyXxNLA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] MAINTAINERS: add maintainer for Renesas I2C
+ related drivers
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Peter Rosin <peda@axentia.se>, Joe Perches <joe@perches.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.1 
-Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus
+Hi Wolfram,
 
-Here is nios2 update for v4.17-rc1.
+On Tue, Apr 10, 2018 at 9:49 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> Intentionally missing i2c-riic here, Chris Brandt will add himself for
+> that one later.
 
-Please consider pulling.
+I guess that's why you're not adding a catch-all "RENESAS I2C DRIVERS"
+section?
 
-Regards
-Ley Foon
+Gr{oetje,eeting}s,
 
+                        Geert
 
-The following changes since commit 0adb32858b0bddf4ada5f364a84ed60b196dbcda:
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-  Linux 4.16 (2018-04-01 14:20:27 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lftan/nios2.git tags/nios2-v4.17-rc1
-
-for you to fetch changes up to 3d9644ef9a0f6c3ca0c1bd2aea1d82e7ea0a7f24:
-
-  nios2: Use read_persistent_clock64() instead of read_persistent_clock() (2018-04-03 00:36:55 +0800)
-
-----------------------------------------------------------------
-nios2 update for v4.17-rc1
-
-nios2: Use read_persistent_clock64() instead of read_persistent_clock()
-
-----------------------------------------------------------------
-Baolin Wang (1):
-      nios2: Use read_persistent_clock64() instead of read_persistent_clock()
-
- arch/nios2/kernel/time.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
