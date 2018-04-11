@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3374234-1523481499-2-3003089008353371440
+X-Cyrus-Session-Id: sloti22d1t05-3374234-1523481498-2-12938274309844308935
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523481498; b=HM3QGVd6wqCfQvHzQhUtLvfI+HUFvyTvqP4qMza6MmvLjin9u7
-    cwmr6WctWWNmGOQY4Kc0apB15mNDFhkqvfw2+KWKPAJUGCcQ08w29IRu17kiN+S4
-    L2C53jcAplMibPd21Yl7n2A0lD2czWh4Z6D6hJF4JsXvwTOy4muSTJVJhfV6iSlW
-    hYsFijmp2/3a/lR0h7vTaQFPBnePZUwmjsnHE9t9i6wWffWRhNFHeMMPf1UG+OPV
-    8dTuBC7j/CR+WilBlhDCLAZwSS0VCy3sGTLGE5WRGe5uNCGJKitEyOkzdg+uhKj1
-    iAB4QBHLGaUwTGFv+7cmIeFBKDEpfYUEWQaQ==
+    1523481497; b=Yav/vOVnjpVGASnNZo9OeO7+XFM7JEDgh9hGR9YJkIdzd/Jdiq
+    21QUYzeTRChrGZijKtAWk0nnnNoVDOpDWdB9n55INHKB17eANpHVJOPnKmhYORyF
+    7CMLdukRSwgnt3MXokV1t+ffPp132wU1N3CgOvOjCVN8YC63Djxgqy1RV/x1zkO/
+    PO3xtjo0y9fwcBoOmwZcd/7JGWeAWML4yMinn3WkWeVQXM4ezdoR1jmRzb0GWDlS
+    F5h0dPHrwqrc5IR3W0tr9g1eCx9Apz9nbB1QDDKKJBFuitq0tui4+wnQOiXoY0DJ
+    P7/t61Gq9Wie8Q1eHQLqAZIBnlc2v84awN3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523481498; bh=nxIKs3VBgmrId5o5W7CnJ9T0ePyfgj
-    3bS1Z0lpi6PCw=; b=WC+UKrVKB2PQHh8FQ5xywf8haVL2ArtgJ7eZGJOa3QJ6mx
-    3ylOgVIsSR93mQ9wWBMShTrGXR2ECwlIm8CqTKC2KBYalbA1qRNIH0+x9hvbk0To
-    77XjqVa8nzPqkrZ6i+8GJ/SezJ56pTg/G+DP3nbB60wxf5ayKtiFy/MmU2LbbBww
-    9cDGwu7d+qzrh7glQSm20xcMCedFlxljla628xGtDxuVqC1ZgvTrk3uEes4S1Ggs
-    p6h6QnIWPLbbBqoIWdgwzXlYuqF2gl8kA6SqnCedTUYKFxHQmITAhs4NgcPSh7IM
-    vPiEPC3h8C+n79UlG3L60NIwQWPj+inCurvJCdig==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523481497; bh=Ijm8vVwoRgp+WObauNFy8P/zoHQn8h
+    hqA3DMr+oiyO0=; b=Utei4iHm5L3HjQJqkRqHIeBzbQmNxJqbhu4YMK4hfnYmXx
+    wlnPCaAnmZTNsTcNwIsGGj25t9hsh7uyRc1Cd1JaWZUffALuX+ut/Mx5EQRq9MIY
+    96cFMoKqO/PjmldmsN6/TmIkREiPY5N9w0TiAIVkEUozYfBlVdb9o0aYLmjB75ID
+    n2xbvQ01Gq6zGYjs7JFy1U4EPPbD3r4LjqxRmjuCP7wKb+QCNa9wBAh477s8U/mg
+    oEU4xJ18m+raTbGCPCHLMrWv49/s5si5jrEZ7i5kddxePwwrp6W8ANDvIUiGabNW
+    chzJBX3m1LKmmYLg2vIhh+8xGdLAIE/biGmtVYbg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,50 +51,31 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMhosmWou8zQqInTGLpajHyhwFAOCtbTznAeg24+S58FVeEdlcW2CjOdYB1WtYY04o4f03GU4K4j8b0PBnynY1qlN6Rn/krsWX5CEJG1IpR6XvUtSxT+
-    RQOq1+aMYOd6Vw07X0Uy6s6riQivVK7ZSoaLx+JpHL0pxPdloJhlqW4DDwGMqA/+l6XzX7xEsdk9fXQby87iiALP6T3I6PnWJ8hHruEOypHLs/btN+LPzyq7
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMI4wPZAxXBhmIcr7vEd+hrfTBsMiXFKTscY/7Ba8Atp/GIrChWLJmojYxywz9HHFNuy1ziU8zboEP7K8kGZ5Bcc48jJT0ZOQqztfVeEby/ErQ48INMI
+    7f3+oH1atbcmnaHDd0CHW/eHjW575e8aMvDfg+N0siFTZBLjpqxrZ4ooHGoFSp8RuntAwJc0JKKxIXkVVEwWx40FjGMuhvzrz9JiycaSO2oD3NrvjkqF10lo
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=TYBLyS7eAAAA:8 a=VwQbUJbxAAAA:8 a=6rqHouBjAAAA:8 a=20KFwNOVAAAA:8
-    a=cm27Pg_UAAAA:8 a=mK_AVkanAAAA:8 a=drOt6m5kAAAA:8 a=xVhDTqbCAAAA:8
-    a=PtDNVHqPAAAA:8 a=SOq6UgPBAAAA:8 a=hBqU3vQJAAAA:8 a=Z4Rwk6OoAAAA:8
-    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=rNsULVQiV86SHlLWsYUA:9
-    a=I4lq80xf2na1cQiu:21 a=BoBft98koqt4epYC:21 a=QEXdDO2ut3YA:10
-    a=zvYvwCWiE4KgVXXeO06c:22 a=AjGcO6oz07-iQ99wixmX:22 a=Hx1yvPaMooE3kwe23bt7:22
-    a=xmb-EsYY8bH0VWELuYED:22 a=3gWm3jAn84ENXaBijsEo:22 a=RMMjzBEyIzXRtoq5n5K6:22
-    a=GrmWmAYt4dzCMttCBZOh:22 a=BpimnaHY1jUKGyF_4-AF:22 a=3hv5r9HjGAh9o5iR9qwG:22
-    a=WLjMIN4s_96MqnBbPenP:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=8QyaLQAlnL_XF40ULzwA:9 a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754553AbeDKSkJ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:40:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56296 "EHLO
+        id S1754893AbeDKVSA (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 17:18:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56338 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753241AbeDKSkG (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:40:06 -0400
+        with ESMTP id S1754555AbeDKSkJ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:40:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Andrei Vagin <avagin@virtuozzo.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@googlemail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Lin Zhang <xiaolou4617@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 009/121] pidns: disable pid allocation if pid_ns_prepare_proc() is failed in alloc_pid()
-Date: Wed, 11 Apr 2018 20:35:12 +0200
-Message-Id: <20180411183456.793551983@linuxfoundation.org>
+Subject: [PATCH 3.18 048/121] net: llc: add lock_sock in llc_ui_bind to avoid a race condition
+Date: Wed, 11 Apr 2018 20:35:51 +0200
+Message-Id: <20180411183459.263283872@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -112,66 +93,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kirill Tkhai <ktkhai@virtuozzo.com>
+From: linzhang <xiaolou4617@gmail.com>
 
 
-[ Upstream commit 8896c23d2ef803f1883fea73117a435925c2b4c4 ]
+[ Upstream commit 0908cf4dfef35fc6ac12329007052ebe93ff1081 ]
 
-alloc_pidmap() advances pid_namespace::last_pid.  When first pid
-allocation fails, then next created process will have pid 2 and
-pid_ns_prepare_proc() won't be called.  So, pid_namespace::proc_mnt will
-never be initialized (not to mention that there won't be a child
-reaper).
+There is a race condition in llc_ui_bind if two or more processes/threads
+try to bind a same socket.
 
-I saw crash stack of such case on kernel 3.10:
+If more processes/threads bind a same socket success that will lead to
+two problems, one is this action is not what we expected, another is
+will lead to kernel in unstable status or oops(in my simple test case,
+cause llc2.ko can't unload).
 
-    BUG: unable to handle kernel NULL pointer dereference at (null)
-    IP: proc_flush_task+0x8f/0x1b0
-    Call Trace:
-        release_task+0x3f/0x490
-        wait_consider_task.part.10+0x7ff/0xb00
-        do_wait+0x11f/0x280
-        SyS_wait4+0x7d/0x110
+The current code is test SOCK_ZAPPED bit to avoid a process to
+bind a same socket twice but that is can't avoid more processes/threads
+try to bind a same socket at the same time.
 
-We may fix this by restore of last_pid in 0 or by prohibiting of futher
-allocations.  Since there was a similar issue in Oleg Nesterov's commit
-314a8ad0f18a ("pidns: fix free_pid() to handle the first fork failure").
-and it was fixed via prohibiting allocation, let's follow this way, and
-do the same.
+So, add lock_sock in llc_ui_bind like others, such as llc_ui_connect.
 
-Link: http://lkml.kernel.org/r/149201021004.4863.6762095011554287922.stgit@localhost.localdomain
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Acked-by: Cyrill Gorcunov <gorcunov@openvz.org>
-Cc: Andrei Vagin <avagin@virtuozzo.com>
-Cc: Andreas Gruenbacher <agruenba@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Michael Kerrisk <mtk.manpages@googlemail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Serge Hallyn <serge@hallyn.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Lin Zhang <xiaolou4617@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/pid.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/llc/af_llc.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -316,8 +316,10 @@ struct pid *alloc_pid(struct pid_namespa
- 	}
+--- a/net/llc/af_llc.c
++++ b/net/llc/af_llc.c
+@@ -309,6 +309,8 @@ static int llc_ui_bind(struct socket *so
+ 	int rc = -EINVAL;
  
- 	if (unlikely(is_child_reaper(pid))) {
--		if (pid_ns_prepare_proc(ns))
-+		if (pid_ns_prepare_proc(ns)) {
-+			disable_pid_allocation(ns);
- 			goto out_free;
-+		}
- 	}
+ 	dprintk("%s: binding %02X\n", __func__, addr->sllc_sap);
++
++	lock_sock(sk);
+ 	if (unlikely(!sock_flag(sk, SOCK_ZAPPED) || addrlen != sizeof(*addr)))
+ 		goto out;
+ 	rc = -EAFNOSUPPORT;
+@@ -380,6 +382,7 @@ static int llc_ui_bind(struct socket *so
+ out_put:
+ 	llc_sap_put(sap);
+ out:
++	release_sock(sk);
+ 	return rc;
+ }
  
- 	get_pid_ns(ns);
