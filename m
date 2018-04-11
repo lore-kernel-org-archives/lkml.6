@@ -1,95 +1,141 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2881586-1523467606-2-6160339738531178388
+X-Cyrus-Session-Id: sloti22d1t05-2881586-1523466894-2-9447667205782779623
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523467606; b=ienJTAnoNumAxz61XLGjvfJzOAemWeCXw6KKvRGUfP7m79EjOE
-    oaLCE0c1qdmMgMxotCw7mXVyfFbvFQkKLds3w4lBa0BH2yfDHpKNcaRR+YkN2QmW
-    qMi3CfQpmlY8iam9SlendkAM0+qYwXlZWDm2zQm8UYXG/I+nDPUqVp9j4wmidCi0
-    +p+v0CC1R1JVaZGzsIzGQKqCx2CSJ620gexMaq7iIs2Lu5oiviQdwLqqYJE8RVQW
-    OUMTLEvxgIeHD4At8MSpC5V35bImELJgeljSR0CUj8kZM4lYFwFlfdviti43c905
-    S56Yk5LVgNb7VpfUKKhvSEoeGjxaCBhQTV2w==
+    1523466894; b=J7UbQEHjQXXeqH7dameVhK+3gNDJnLyChNneEEsQQ9+2BTgSKw
+    en1xIlZYhJ4N5Pl3D8b6/jd/jwoJwy8UJATEu2xwGLOprr6d0C7lKfCcn9ctAt6P
+    AK70OM6ODb9dj+BRSTvn+FkxmdIOg4GQ4jULpUnASHa2tM9DTKmQtiZk4eTeZ/9s
+    Q4Hdimwqc9JjPxXn9LZSSimoBKjM8w9A6Jj15vMVwavpYj9Ils3fwRcYONrfqc2l
+    2efRb/H0ZgS7m6NAfABZEGZqWzdzUlpavQAsrPqpji+38BYhVh7fXbmAceCs1LvQ
+    cy0PGFZ3oVjoZohVwIVv4tvyHu/W53v9uCUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523467606; bh=+kG32+9+Y8fEwyAnfi01gYl6YQqAlg
-    leDMGQyX95SKE=; b=AW2M4KkrWeaKsOOW3P/eUAZag73kOJNx0/tYTQ40ckjbkR
-    nVMhh3iQUYTiLFBnqRWufJMR3wY+5lb9IqdiCty7LcmYaI+Z6x2EGxDQE1550eUN
-    HgEPYyqSVYXdB0Pp5cHILrG5ygJ8uuHVod+90PBTB7dpQ3uRHVgW+QO4kMYaRB17
-    ghoDo5fVGf0XeBNBrUiO1+ogK3L2b+l+D60k27XZHE18lCyictmwjPfU0gUfQ2rf
-    ueUDLl0rcZlyWXgCb+EZ2dvkXMb7VhquBYKZW+xkL8ulLdlbJshS5th8JuB9t7se
-    KpSveLuRK/BriqISmnzx2WvbE6okAnPl/hjEZ6Vw==
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523466894;
+    bh=fSLvaRjE2p/jUrkDL5E038iOkcUPxENN+TaK53izEP0=; b=tBKGZbjlemId
+    Tdfr3UOppGlVFq5LdXpzPpQz2VOETWERB2yl75yOZCKtQJs5vFhVdaGRMC6nYdl5
+    0pdKeGymzCByaR3kQvdKQthk3s9fnmvKuVMp8YKF0YbqBbwfiD1ofE4OnOOx7Mne
+    vWBinsL0hj/9MZc2NisYKmmrKFR9mBcm7DcCNKJcKRDpijtPGk3jPPR9/GmR04MF
+    JIrN0bMaCQA9PkM6//+aSrBmZUchi5UVX3/TzXbuejxZGmZZ4zZcpJOlf798v/bj
+    z1soALVLGGGdQmRuZ78nfF+0OrHNKjGiTo5BTXjGyCq9mVqpkbqWBbGsi+WxO4ur
+    YtOJfaN+kg==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=buaEq46v x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IEzT6Hsb;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=buaEq46v x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IEzT6Hsb;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHn5na1SkwVN1iMfxh5/yAVe53jAfWrzwJuVhlKxFCwkWLLwzRrJWoYgxAW0Wh6GsWRzBk/u+Bzj6H0LIpmbnqnVDwTQjMQv96i7+1y2fUx/15MffUWK
-    rveuk1Eisgw7b/0HwdCQklrscJHYOdr2isna4Sguu45PdJH8csJhKKLcOoxQEUqLporbnHWiEIjePWWIOuqakFgZHHqUQfSzbgMWjCGnbtTRJrY50dXgJgGb
+X-CM-Envelope: MS4wfJCyMHp8bIDXU7mIA/uN999EWxBNOXrunEl+yWagQHGCUw3aCm/rjh61IVp4ok8pCAJn5QwP3aER00V0pXUiWyIF8ymWGPffd4K6VvpgRB01ZCtoYZ6N
+    BskdCl09X8PztQ2zt0ZiAaeoDNF41AZ+z4L5Woqr5+oVIZUqz7XQjvyLcErEusKmp8fxCSQMqcj1EEkZElyDEU7q9HtbmPnNQlJGEEmCWB9PzJbYilk7lUgJ
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=DFuB5R5a5QQA:10
-    a=Kd1tUaAdevIA:10 a=YWtRXzOXAAAA:8 a=a82mNqcrrigP4_w5aFwA:9 a=CjuIK1q_8ugA:10
-    a=eX-Bu5Fvq_kA:10 a=XosyFl2cby_8ldcV-F0Q:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=DFuB5R5a5QQA:10
+    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=8-vRK6DNSD7UNujOA5sA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753040AbeDKR0m (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 13:26:42 -0400
-Received: from mail-ot0-f173.google.com ([74.125.82.173]:35316 "EHLO
-        mail-ot0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751599AbeDKR0O (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 13:26:14 -0400
-X-Google-Smtp-Source: AIpwx4+HFyWNkITufgCztV3iziSUYHoGiOal056y8VygZuSxJ1tGfrLT6mHB/H4OXPK/mmOH1ALGyA==
-Date: Wed, 11 Apr 2018 10:26:11 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuahkh@osg.samsung.com,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+        id S1753707AbeDKROk (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 13:14:40 -0400
+Received: from osg.samsung.com ([64.30.133.232]:57063 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753681AbeDKROj (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 11 Apr 2018 13:14:39 -0400
 Subject: Re: [PATCH 4.14 000/138] 4.14.34-stable review
-Message-ID: <20180411172611.GA27459@roeck-us.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
 References: <20180410212902.121524696@linuxfoundation.org>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=shuahkh@osg.samsung.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <0da41acf-1228-4e09-9a07-237e2cda8004@osg.samsung.com>
+Date: Wed, 11 Apr 2018 11:14:37 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20180410212902.121524696@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Apr 11, 2018 at 12:23:10AM +0200, Greg Kroah-Hartman wrote:
+On 04/10/2018 04:23 PM, Greg Kroah-Hartman wrote:
 > This is the start of the stable review cycle for the 4.14.34 release.
 > There are 138 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
@@ -98,12 +144,18 @@ On Wed, Apr 11, 2018 at 12:23:10AM +0200, Greg Kroah-Hartman wrote:
 > Responses should be made by Thu Apr 12 21:28:20 UTC 2018.
 > Anything received after that time might be too late.
 > 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.34-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Build results:
-	total: 145 pass: 145 fail: 0
-Qemu test results:
-	total: 141 pass: 141 fail: 0
+Compiled and booted on my test system. No dmesg regressions.
 
-Details are available at http://kerneltests.org/builders.
-
-Guenter
+thanks,
+-- Shuah
