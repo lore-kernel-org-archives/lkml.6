@@ -1,82 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752598AbeDKBif convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 21:38:35 -0400
-Received: from mga04.intel.com ([192.55.52.120]:41088 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751946AbeDKBid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 21:38:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,434,1517904000";
-   d="scan'208";a="49783829"
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: "Liang, Cunming" <cunming.liang@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-CC: "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        "Wang, Xiao W" <xiao.w.wang@intel.com>,
-        "ddutile@redhat.com" <ddutile@redhat.com>,
-        "Tan, Jianfeng" <jianfeng.tan@intel.com>,
-        "Wang, Zhihong" <zhihong.wang@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: RE: [virtio-dev] Re: [RFC] vhost: introduce mdev based hardware
-        vhost backend
-Thread-Topic: [virtio-dev] Re: [RFC] vhost: introduce mdev based hardware
-        vhost backend
-Thread-Index: AQHT0NeTBfYf0Rz3+EK0/QyAUusgkaP6yMCg
-Date: Wed, 11 Apr 2018 01:38:29 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D1910E3505@SHSMSX101.ccr.corp.intel.com>
-References: <20180402152330.4158-1-tiwei.bie@intel.com>
-        <622f4bd7-1249-5545-dc5a-5a92b64f5c26@redhat.com>
-        <20180410045723.rftsb7l4l3ip2ioi@debian>
-        <7ee31a12-a370-fc43-82a6-2235f598e970@redhat.com>
-        <D0158A423229094DA7ABF71CF2FA0DA34E9222F4@SHSMSX104.ccr.corp.intel.com>
-        <20180410163105-mutt-send-email-mst@kernel.org>
- <D0158A423229094DA7ABF71CF2FA0DA34E9226AF@SHSMSX104.ccr.corp.intel.com>
-In-Reply-To: <D0158A423229094DA7ABF71CF2FA0DA34E9226AF@SHSMSX104.ccr.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTQ5OWYwMWUtMDUzMy00NDc2LTlhNDktMTIwZWVhYzZkMTBlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6IkxIZ0JtUExaK282RG5tYmsrN3d4MDE2NVVOeVpwY3hNOXRZTFZYUVo0ZGM9In0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1752740AbeDKBio (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 21:38:44 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:45472 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752412AbeDKBim (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 21:38:42 -0400
+Date: Wed, 11 Apr 2018 02:38:37 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Michal Hocko <mhocko@suse.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        linux-mm <linux-mm@kvack.org>, Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+5a170e19c963a2e0df79@syzkaller.appspotmail.com>
+Subject: Re: Re: WARNING in kill_block_super
+Message-ID: <20180411013836.GO30522@ZenIV.linux.org.uk>
+References: <6c95e826-4b9f-fb21-b311-830411e58480@I-love.SAKURA.ne.jp>
+ <20180411005938.GN30522@ZenIV.linux.org.uk>
+ <201804110128.w3B1S6M6092645@www262.sakura.ne.jp>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201804110128.w3B1S6M6092645@www262.sakura.ne.jp>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Liang, Cunming
-> Sent: Tuesday, April 10, 2018 10:24 PM
+On Wed, Apr 11, 2018 at 10:28:06AM +0900, Tetsuo Handa wrote:
+> Al Viro wrote:
+> > On Wed, Apr 04, 2018 at 07:53:07PM +0900, Tetsuo Handa wrote:
+> > > Al and Michal, are you OK with this patch?
+> > 
+> > First of all, it does *NOT* fix the problems with careless ->kill_sb().
+> > The fuse-blk case is the only real rationale so far.  Said that,
+> > 
 > 
-[...]
-> >
-> > As others said, we do not need to go overeboard. A couple of small
-> vendor-
-> > specific quirks in qemu isn't a big deal.
-> 
-> It's quite challenge to identify it's small or not, there's no uniform metric.
-> 
-> It's only dependent on QEMU itself, that's the obvious benefit. Tradeoff is
-> to build the entire device driver. We don't object to do that in QEMU, but
-> wanna make sure to understand the boundary size clearly.
-> 
+> Please notice below one as well. Fixing all careless ->kill_sb() will be too
+> difficult to backport. For now, avoid calling deactivate_locked_super() is
+> safer.
 
-It might be helpful if you can post some sample code using proposed 
-framework - then people have a clear feeling about what size is talked 
-about here and whether it falls into the concept of 'small quirks'.
+How will that fix e.g. jffs2?
 
-Thanks
-Kevin
+> [upstream] WARNING: refcount bug in put_pid_ns
+> https://syzkaller.appspot.com/bug?id=17e202b4794da213570ba33ac2f70277ef1ce015
+
+Should be fixed by 8e666cb33597 in that series, AFAICS.
