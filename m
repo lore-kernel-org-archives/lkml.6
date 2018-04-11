@@ -1,143 +1,158 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-461662-1523520532-2-6163784483517688978
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FSL_HELO_FAKE 2.361, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='iso-8859-1'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523520531; b=WGMLStW/2VGvQ+GI114Po0k/skYK35OZMvz27X4wV396grCwx9
-    3FTn9d+InnchP3XDdyiP3mM+0FzyHvEmRdCSu6Y5ld27FTG7T2HUqD+IFYf2Rt+M
-    cjYYsZgXiq8/eTa8W9TDrxi0Yy5iQye/dCPQUpDeKkyE9C0f6HGuM/mpTLn5MkyH
-    Rt8QXZu62nl5ta9BEFaeu5qFp+T/5xBxu1zao4WWICrs+q0jeTVF6Cgq+0rmfN4V
-    ZoPZC4Gp8r9fSwNc23iHoAKVy33bjiMeIveKCLvAIWwrJiMilpdiwaYt4ggo62j1
-    HAWDl9FBlMDXinAHuiiUN8XLLaj1zbXIMn9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=fm2; t=1523520531; bh=EAy4s2/PiGT
-    wUAEqBJlTC+F59YeuEJ4L89vmuzLRzrU=; b=CrH6zajeJKgZFAjv4GtqZ2U/foo
-    4ydLcsd2xA1Y3XSEYWSDKPnEFmhYAmXQjZIRon3T0V18i6p9qM51h4kDKKQ3PZcV
-    FXmd3iulrRqQQQ1TtYPNR5iPWRxn5vriDc4MoDyx1RsKP+DIr69H9+u43H5xf7AD
-    JXl9CezzBCVCNEZL9oSrUXr0FFnD1CKMALgYE+QtuFiuZ95G6+vd4i54M/tr/3KW
-    1M+hHwExh/0IikbpxzpjUxVT+5Dzb0yn/VyDMBquSNZq8ri7eIO8cc11PxB2eage
-    lqhx5wxC/eppaHNsxLcjbhLKXTM73dPNbI2HllGtLzmM+c3G/OKZIMuFmNg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=fCUbHYHL x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DQiI1s9b;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=fCUbHYHL x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DQiI1s9b;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBxgymrjVB2Q12x06CIPDT0d1CxdFUUuXO9kTN2oKTV4DB/ozxnyoJ0AkWkqfNEE0sjzaVCEPHvVH74FAcZrcMJzncDWRwvt6eNJlOvYgfx4zE/6hohf
-    hh7N3+8+4iWVPWNEQoToulxYKf3je1J8Nb/v3VsTE7smRK+l246Au69JVVopEgAjE9WIE38QNH6Mw82IcYr5tDwdyMYm7/0u9X8dMeYx9nNwNCEBZN1WLFvx
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=8nJEP1OIZ-IA:10 a=Kd1tUaAdevIA:10
-    a=iox4zFpeAAAA:8 a=VwQbUJbxAAAA:8 a=1lqJhr1z2IOy2p4h_PUA:9 a=wPNLvfGTeEIA:10
-    a=WzC6qhA0u3u7Ye7llzcV:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752759AbeDLIIt (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 12 Apr 2018 04:08:49 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36662 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752754AbeDLIIs (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 12 Apr 2018 04:08:48 -0400
-X-Google-Smtp-Source: AIpwx4/flK3CCwJbdqluNlkeMH1oG0/Yiftr7fpDzmRZCM2zixMvj21cTeQrZeBq2SNeaJhFatS6tQ==
-Date: Thu, 12 Apr 2018 10:08:44 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Jan Beulich <JBeulich@suse.com>
-Cc: x86@kernel.org, tglx@linutronix.de, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@oracle.com, mingo@redhat.com,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, hpa@zytor.com
-Subject: Re: [Xen-devel] [PATCH] x86/xen: zero MSR_IA32_SPEC_CTRL before
- suspend
-Message-ID: <20180412080844.mof7ukyeuhd3dsoq@gmail.com>
-References: <20180226140818.4849-1-jgross@suse.com>
- <5AA8F00302000078001B15EE@suse.com>
- <6b59ac31-7e90-1c18-2467-d7d294da6e5b@suse.com>
- <5ACDEE5B02000078001BA2DE@prv1-mh.provo.novell.com>
- <20180411115350.lvx5yaevoq6arwg3@gmail.com>
- <5ACE149E02000078001BA424@prv1-mh.provo.novell.com>
- <20180412073219.2h5fqc7megvepoa6@gmail.com>
- <5ACF2CB002000078001BA984@prv1-mh.provo.novell.com>
+Return-Path: <joro@8bytes.org>
+X-Google-Smtp-Source: AIpwx48TsJr/XMvhWpT91DE+U4sAF70nisxx104cajVvStvrNvwvosgLr6qiuJWUbWH/Jz5bDjS1
+ARC-Seal: i=1; a=rsa-sha256; t=1523460282; cv=none;
+        d=google.com; s=arc-20160816;
+        b=fGaUtfpydFnaXMjWtomRVrTLNePpwfSN1JKlbsHbcn5S6tn4jQG87DBMO8gB3yiO0z
+         Sra9Oh+XyEP5HYQBcfDNtPIExOpQm5yp5POJssCvSE/mgJypOTV7SNp7MJXJEzXSzznl
+         9kcACmLPY9yb1bH0APUlHZZq+Xh/vZI2r9UnV6iTj0cWWsV/Zkj0sDVtmAScF/HRc8Vj
+         oW3wJ7pUXUZMsTAD4rC7iOOZ+tO72VEXrMxyYDcHOqLbxowsqtefYblgpChpxgZcdhjp
+         YDgAPgyuClUf6aL8Ci/8zSWvPAJG7wMuTnIFjCbexbqgzp7ZtJ5T6yRrEyxVz5qG+16C
+         eszg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=D/DYAdcDIGj75chQFZ3E+Z9V4m3Skqel1QbyfQ1R6d4=;
+        b=RWQeVvW5jbVo5fIALthvBtK7qykytjoiFNSd5nC6dAIEPV/nJrzb5Z/al4LUhVEtY4
+         InfR6WkvzeWa5qwJ2yRNT7wxTdU7jaSSHwEGoDwGcqxTjj5RGuqyH5ev7hf8J24Sbjn3
+         EKdrDodmZcUw/lJOIOTtvCdwAJ4AJz40/3bpFYKAwvLmEWUEFkdu+FSvRdmiWC4wb3FL
+         kebzJAaNTTdS9GcuQDV7BSlYWuxCE8fEFKL2RD4eMawS70mVvQXWx12RwyYorVoXIN7S
+         mmyOQ9kDIN8LGc2cviGieZq0/3mQR5BXcdY5IL0/NOHruGO0e+611LatWrOS/JMgqtqq
+         8FKA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=MUZgK1Fk;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+Authentication-Results: mx.google.com;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=MUZgK1Fk;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+Date: Wed, 11 Apr 2018 17:24:38 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	David Laight <David.Laight@aculab.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	Eduardo Valentin <eduval@amazon.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+	daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+	jroedel@suse.de, "David H. Gutteridge" <dhgutteridge@sympatico.ca>
+Subject: [PATCH] x86/pgtable: Don't set huge pud/pmd on non-leaf entries
+Message-ID: <20180411152437.GC15462@8bytes.org>
+References: <1521228593-3820-1-git-send-email-joro@8bytes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5ACF2CB002000078001BA984@prv1-mh.provo.novell.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+In-Reply-To: <1521228593-3820-1-git-send-email-joro@8bytes.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597463888498671722?=
+X-GMAIL-MSGID: =?utf-8?q?1597463888498671722?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hi Ingo, Thomas,
 
-* Jan Beulich <JBeulich@suse.com> wrote:
+below patch is an update to this series and I plan to include it in the
+next post. David H. Gutteridge (CC'ed) was so kind to do additional
+testing of these patches and found that a BUG_ON was triggered in
+vmalloc_sync_one() when PTI is enabled.
 
-> >>> On 12.04.18 at 09:32, <mingo@kernel.org> wrote:
-> 
-> > * Jan Beulich <JBeulich@suse.com> wrote:
-> > 
-> >> >>> On 11.04.18 at 13:53, <mingo@kernel.org> wrote:
-> >> > * Jan Beulich <JBeulich@suse.com> wrote:
-> >> > 
-> >> >> Additionally, x86 maintainers: is there a particular reason this (or
-> >> >> any functionally equivalent patch) isn't upstream yet? As indicated
-> >> >> before, I had not been able to find any discussion, and hence I
-> >> >> see no reason why this is a patch we effectively carry privately in
-> >> >> our distro branches (and likely other distros do so too).
-> >> > 
-> >> > The patch was merged 6 weeks ago and is now upstream:
-> >> > 
-> >> >   71c208dd54ab: x86/xen: Zero MSR_IA32_SPEC_CTRL before suspend
-> >> 
-> >> I'm sorry, but no, this isn't the patch I was inquiring about.
-> >> Instead I'm wondering of the disposition of the patch disabling
-> >> IBRS around a CPU going idle.
-> > 
-> > Got any specific link or subject line for that submission?
-> 
-> Sure, as written in the original response to Jürgen's patch:
-> https://patchwork.kernel.org/patch/10153843/
+My debugging showed that the bug was present before my patches but that
+they uncovered this bug by setting SHARED_KERNEL_PMD to 0 when PTI is
+enabled.
 
-Argh, indeed you did!
+So please have a look at the issue description below and the patch and
+let me know what you think. I know there are other and better variants
+to fix that, but I felt a rework to make the generic ioremap code more
+safe against this is out-of-scope at least for this patch-set.
 
-In any case, this submission from Tim Chen:
-
-   [PATCH v3 0/5] IBRS patch series
-
-Contained a glaring bug in patch #2 which Thomas pointed out, and AFAICS the 
-series was never resubmitted to lkml so it got lost.
-
-In any case thanks for the reminder!
 
 Thanks,
 
-	Ingo
+	Joerg
+
+>From 48cb37800794be8f0611e87f9ef23774c3b36ecc Mon Sep 17 00:00:00 2001
+From: Joerg Roedel <joro@localhost.localdomain>
+Date: Wed, 11 Apr 2018 15:55:14 +0200
+Subject: [PATCH] x86/pgtable: Don't set huge pud/pmd on non-leaf entries
+
+The pmd_set_huge() and pud_set_huge() functions are used from
+generic ioremap code to establish large mappings where this
+is possible.
+
+But the generic ioremap code does not check whether the
+pmd/pud entries are already populated with a non-leaf entry,
+so that any page-table pages these entries point to will be
+lost.
+
+Further, on x86-32 with SHARED_KERNEL_PMD=0, this causes a
+BUG_ON() in vmalloc_sync_one() when pmd entries are synced
+from swapper_pg_dir to the current page-table. This happens
+because the pmd entry from swapper_pg_dir was promoted to a
+huge-page entry while the current pgd still contains the
+non-leaf entry. Because both entries are present and point
+to a different page, the BUG_ON triggers.
+
+This was actually triggered with pti-x32 enabled in a KVM
+virtual machine by the graphics driver.
+
+A real and better fix for that would be to improve the
+page-table handling in the generic ioremap code. But that is
+out-of-scope for this patch-set and left for later work.
+
+Reported-by: David H. Gutteridge <dhgutteridge@sympatico.ca>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ arch/x86/mm/pgtable.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index d95bc7b1ffb4..6b72d2805058 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/mm.h>
+ #include <linux/gfp.h>
++#include <linux/hugetlb.h>
+ #include <asm/pgalloc.h>
+ #include <asm/pgtable.h>
+ #include <asm/tlb.h>
+@@ -699,6 +700,10 @@ int pud_set_huge(pud_t *pud, phys_addr_t addr, pgprot_t prot)
+ 	    (mtrr != MTRR_TYPE_WRBACK))
+ 		return 0;
+ 
++	/* Bail out if we are we on a populated non-leaf entry */
++	if (pud_present(*pud) && !pud_huge(*pud))
++		return 0;
++
+ 	prot = pgprot_4k_2_large(prot);
+ 
+ 	set_pte((pte_t *)pud, pfn_pte(
+@@ -727,6 +732,10 @@ int pmd_set_huge(pmd_t *pmd, phys_addr_t addr, pgprot_t prot)
+ 		return 0;
+ 	}
+ 
++	/* Bail out if we are we on a populated non-leaf entry */
++	if (pmd_present(*pmd) && !pmd_huge(*pmd))
++		return 0;
++
+ 	prot = pgprot_4k_2_large(prot);
+ 
+ 	set_pte((pte_t *)pmd, pfn_pte(
+-- 
+2.13.6
