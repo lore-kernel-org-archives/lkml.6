@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+d2Hsjfg8iMxoqUBGcNFMdA7Bk/l4oqWVBfNd/GGMikKMKmdOM/8eyS1xgajZDNJS4Rb5O
-ARC-Seal: i=1; a=rsa-sha256; t=1523473164; cv=none;
+X-Google-Smtp-Source: AIpwx4/iZhb4MgIQr5NfvQvoT6TdfNs/977+PKzf9R2WKC8Zdntu3b1E8IRXFL9xySeLURhEcDWo
+ARC-Seal: i=1; a=rsa-sha256; t=1523473161; cv=none;
         d=google.com; s=arc-20160816;
-        b=s/f4KPj/Qso/kP5LyOxEM0jOY/iroZyDxkRD7lOHeeY3tj2u3TVX+5UFphnEW4CfcN
-         ni4fYLEUIZUUgJxG0sEWEO3Sp6OVwS/qHSpZZZgo3HU+nG8BjlJAuHPvx4IkiT53QIiA
-         DkTtU1OSBT7FMW8BwmAIyaoNHhNPxWRuf4flKf1+7zLA4AFB3L4JiWbt3nwrWeAH/aWv
-         QstVVYb8PMRFCgjBVnTmiFX7O9koAHXs147T/E/iqw2PikSXsR+PPpQ47eGuiL3lu/n3
-         7xAeYUxkFzndIuNYhxPc1sl65vGX77D+j0gGImmyqZzufW8K8BnNtn9j4CqUEHiECBOg
-         dKyg==
+        b=zolv/owlME0E2mYlgKbqNbfCNE5+Nw7r3Zv+ZcgXRL7wW8LIu4h/M0tHrOebCCs3fX
+         5/n1hCj4YcTl5cGjyFAVtLRJp1xng7P4+n/PCZO9JFD9cIOKBMRXVUaOxXwiZFYXpUIa
+         bzENiAbLgAr0ypoRAvt31ROSHv7b3sESDqKO69LXf9PNvR9bHhir9/1AddXYOEUwvIRu
+         scaYH2vS3/LmIOCrWmg3Iu7d8xBXJwFAaYHSzSL3yo5vJoIue+JzEQLlJH260+GIdZVp
+         8iU/gbXoOFpMs8teP/nViAqF8lP20WZkj3dfpWRgNn0Q7EEfFXtgZeC5sX1UAJ6O4Eq4
+         I1aQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=pw0L0D0Zt7XYPgtEzdnK0QmWVLxPwtIvQnksFIoL2/g=;
-        b=JCCVXFnLYdNC33MrzPOWrmuozJMPAWuIFc8mWwmlGM32imoIdS9CQvKS08TIwjvf1M
-         9BQGqp/SJstaUszsH6bN1XBlaqmi54BMdbpTsdZu3d3xplPjO76J0Ew3oVpC73AtWque
-         6LytDN01WaKOCpZC0Sw+LNA+nlZDmDNzLBGJud0/i3IbeWNdkxRir8W70qk8YfmfKBZG
-         6tWOrFcgHJfotAM2OTD45Evez/gaazokbu64X8scDNgxZ8/lsR/MxdDtv7XzooloAwPi
-         QYyLlbh5PVlCSboWVcYaMQAcD79ofdT/abX+qeIChTuae1Vo6xoCkhn6BE+0g57fR6/v
-         ZgkA==
+        bh=Qo3cu2rfCELd7oi76+9W+UJao3nnHCNvBF/n8xBynis=;
+        b=MQc2+6KwgkJU/iZ2r/j9Odi8fXIiJHP8ST5vEtlfAXnVwIqLzSLPPDzxIUbylH9YRK
+         Lf7916P9ogh/aNxaUR065SbVB9MzNSvurNUoOOWreg6bvZlHZE3PxyPSayDdE0dLYVnp
+         Thsp8/QHQ75BNGsBs53W561Efi0OOBH0eZcAb/mRUyHro/9qFEamNYids0EvvnrR9zt9
+         +DaXLUpYSTh9GkZdMrXhOW7rFyeNF72FnipEo0L5FiJTS4+9n/WbuiHe45yUYQjDpOw5
+         eQRoWaQ0Ksxhs0+WTrdDrNT5816dA9W073tgn6XNza/+hDtUqD/VZ+jifyXEwzEA0VNs
+         e3sw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Jiri Kosina <jkosina@suse.cz>,
+	Florian Westphal <fw@strlen.de>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 151/310] HID: i2c: Call acpi_device_fix_up_power for ACPI-enumerated devices
-Date: Wed, 11 Apr 2018 20:34:50 +0200
-Message-Id: <20180411183628.929142612@linuxfoundation.org>
+Subject: [PATCH 4.9 150/310] netfilter: conntrack: dont call iter for non-confirmed conntracks
+Date: Wed, 11 Apr 2018 20:34:49 +0200
+Message-Id: <20180411183628.890879702@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477397213855661?=
-X-GMAIL-MSGID: =?utf-8?q?1597477397213855661?=
+X-GMAIL-THRID: =?utf-8?q?1597477393665205876?=
+X-GMAIL-MSGID: =?utf-8?q?1597477393665205876?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,66 +50,105 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Florian Westphal <fw@strlen.de>
 
 
-[ Upstream commit f3d3eab667de62572376abb1aa26316191c39929 ]
+[ Upstream commit b0feacaad13a0aa9657c37ed80991575981e2e3b ]
 
-For ACPI devices which do not have a _PSC method, the ACPI subsys cannot
-query their initial state at boot, so these devices are assumed to have
-been put in D0 by the BIOS, but for touchscreens that is not always true.
+nf_ct_iterate_cleanup_net currently calls iter() callback also for
+conntracks on the unconfirmed list, but this is unsafe.
 
-This commit adds a call to acpi_device_fix_up_power to explicitly put
-devices without a _PSC method into D0 state (for devices with a _PSC
-method it is a nop). Note we only need to do this on probe, after a
-resume the ACPI subsys knows the device is in D3 and will properly
-put it in D0.
+Acesses to nf_conn are fine, but some users access the extension area
+in the iter() callback, but that does only work reliably for confirmed
+conntracks (ct->ext can be reallocated at any time for unconfirmed
+conntrack).
 
-This fixes the SIS0817 i2c-hid touchscreen on a Peaq C1010 2-in-1
-device failing to probe with a "hid_descr_cmd failed" error.
+The seond issue is that there is a short window where a conntrack entry
+is neither on the list nor in the table: To confirm an entry, it is first
+removed from the unconfirmed list, then insert into the table.
 
-Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Fix this by iterating the unconfirmed list first and marking all entries
+as dying, then wait for rcu grace period.
+
+This makes sure all entries that were about to be confirmed either are
+in the main table, or will be dropped soon.
+
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/i2c-hid/i2c-hid.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ net/netfilter/nf_conntrack_core.c |   39 ++++++++++++++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 10 deletions(-)
 
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -968,6 +968,15 @@ static int i2c_hid_acpi_pdata(struct i2c
- 	return ret < 0 && ret != -ENXIO ? ret : 0;
- }
+--- a/net/netfilter/nf_conntrack_core.c
++++ b/net/netfilter/nf_conntrack_core.c
+@@ -1542,7 +1542,6 @@ get_next_corpse(struct net *net, int (*i
+ 	struct nf_conntrack_tuple_hash *h;
+ 	struct nf_conn *ct;
+ 	struct hlist_nulls_node *n;
+-	int cpu;
+ 	spinlock_t *lockp;
  
-+static void i2c_hid_acpi_fix_up_power(struct device *dev)
-+{
-+	acpi_handle handle = ACPI_HANDLE(dev);
-+	struct acpi_device *adev;
-+
-+	if (handle && acpi_bus_get_device(handle, &adev) == 0)
-+		acpi_device_fix_up_power(adev);
+ 	for (; *bucket < nf_conntrack_htable_size; (*bucket)++) {
+@@ -1564,24 +1563,40 @@ get_next_corpse(struct net *net, int (*i
+ 		cond_resched();
+ 	}
+ 
++	return NULL;
++found:
++	atomic_inc(&ct->ct_general.use);
++	spin_unlock(lockp);
++	local_bh_enable();
++	return ct;
 +}
 +
- static const struct acpi_device_id i2c_hid_acpi_match[] = {
- 	{"ACPI0C50", 0 },
- 	{"PNP0C50", 0 },
-@@ -980,6 +989,8 @@ static inline int i2c_hid_acpi_pdata(str
- {
- 	return -ENODEV;
++static void
++__nf_ct_unconfirmed_destroy(struct net *net)
++{
++	int cpu;
++
+ 	for_each_possible_cpu(cpu) {
+-		struct ct_pcpu *pcpu = per_cpu_ptr(net->ct.pcpu_lists, cpu);
++		struct nf_conntrack_tuple_hash *h;
++		struct hlist_nulls_node *n;
++		struct ct_pcpu *pcpu;
++
++		pcpu = per_cpu_ptr(net->ct.pcpu_lists, cpu);
+ 
+ 		spin_lock_bh(&pcpu->lock);
+ 		hlist_nulls_for_each_entry(h, n, &pcpu->unconfirmed, hnnode) {
++			struct nf_conn *ct;
++
+ 			ct = nf_ct_tuplehash_to_ctrack(h);
+-			if (iter(ct, data))
+-				set_bit(IPS_DYING_BIT, &ct->status);
++
++			/* we cannot call iter() on unconfirmed list, the
++			 * owning cpu can reallocate ct->ext at any time.
++			 */
++			set_bit(IPS_DYING_BIT, &ct->status);
+ 		}
+ 		spin_unlock_bh(&pcpu->lock);
+ 		cond_resched();
+ 	}
+-	return NULL;
+-found:
+-	atomic_inc(&ct->ct_general.use);
+-	spin_unlock(lockp);
+-	local_bh_enable();
+-	return ct;
  }
-+
-+static inline void i2c_hid_acpi_fix_up_power(struct device *dev) {}
- #endif
  
- #ifdef CONFIG_OF
-@@ -1082,6 +1093,8 @@ static int i2c_hid_probe(struct i2c_clie
- 	if (ret < 0)
- 		goto err;
+ void nf_ct_iterate_cleanup(struct net *net,
+@@ -1596,6 +1611,10 @@ void nf_ct_iterate_cleanup(struct net *n
+ 	if (atomic_read(&net->ct.count) == 0)
+ 		return;
  
-+	i2c_hid_acpi_fix_up_power(&client->dev);
++	__nf_ct_unconfirmed_destroy(net);
 +
- 	pm_runtime_get_noresume(&client->dev);
- 	pm_runtime_set_active(&client->dev);
- 	pm_runtime_enable(&client->dev);
++	synchronize_net();
++
+ 	while ((ct = get_next_corpse(net, iter, data, &bucket)) != NULL) {
+ 		/* Time to push up daises... */
+ 
