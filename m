@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+LFP0xwQaJxPA1XI4AGrhXyoyaRXwC9TkSKv4dP8E2I/njarVFhqwgktIYZ1syK7xa36RV
-ARC-Seal: i=1; a=rsa-sha256; t=1523473440; cv=none;
+X-Google-Smtp-Source: AIpwx4+o3eoPLAX1xrT4EPa8gID0Z/6bBKtfc74KVfPO1E7dUO6NRhuMIopu/GXa0XRqaheC/Te9
+ARC-Seal: i=1; a=rsa-sha256; t=1523473437; cv=none;
         d=google.com; s=arc-20160816;
-        b=dX+RmYqmmL7MfFwhB/a3L54momiuRl7agmOflv8x/dJQEcC3vbPGxfm8fNnPIMZTD4
-         bUcyXoLS5Lh3JD7LiYEUK19yJLNocqXQsyxCrz4juboaqMjXC7wHzJLonMUkiMS+KBsI
-         VMmorSFnF8+Ep07i7GOMl3dq79b2Tyc09G8aeaz92KeDkNV4F3CvIyenwEhNgQHm+ncw
-         /75oKR1tFo7LPWj4j4tuJTBGCpJsCHNXRVquCsAUXS+zC9fSIbGwQrc1EtijKJ8CgQ61
-         FN8XOfOTdmG2PRFXfvmmPCKep431LhWnSpLeU71460DihrWZ9srg7y4nP2Q/7FsTyS2i
-         22zQ==
+        b=vVOTTsO4OMt+/Ha2XxiiTksyxM053m9+hSZ/rnYcTmwJfcbr9PaLu0rIBVdSSydVHV
+         zsGSIfeB5tvV2M32cw3Kis4X2LBBLW7n/5vhNMslahYghIiQ68SHs0m6nzLYVc6C/4jF
+         JimT+OgGQg36dg7qY1xcFteKFo2fR8ZUNqB6a/6kwRqNGmc5djxQl0Q6OK5PDklekp8M
+         EqWoqBETSXBkUlFjx5868tE27Q0Qs5vT4kJkpw7Cj3um/iOHnfyfPLgvm44SdXx5mC1w
+         +bZHWg9k4ur3w1vBsff+2O8tdYn6GpffdHaJgKUH4AjepqHzVVu6w2gCh+HYmsnTG6Xv
+         /Lzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GdICHsbQhyegdCVxEBTSVbtp/HaUe2nApfh3KMER8Iw=;
-        b=L+7iNsafavqGNJLIXdY9WsgOVZrXK6V/HrhsHvQDp5LKERl+HzuvuF0Yb5VQzeGXXS
-         g2y6QzLotssPK9iPUXOE1rXgHOyyZ266qbPIYH682oP1cWP/GSlLwmufTpx2mdpf6Cn5
-         ryxCES40mlvAYiI04z7Z9pQ7DPEke6FdXkOpJ7fSGDsOMnW3yayFIJGujVATTVOGCoI1
-         LXO+V6lEl+bheky6zWPzB5xFjBY7gRxf7sRf3ed6rsaaZMxcvib/UCGZVtrfPyjqaaC2
-         nDFV79QQjDBNQFF7R5vkNDpP3EmfJ6zjWnfwqVqGkSDDgZ+1eSKi7uV3IwVE2FcKZM6j
-         7HHA==
+        bh=WWUqzUoHfdFREeN0Ufepz8LK1f94szoQu+wLBvu4BHc=;
+        b=FlG5oRViItO7eFGulPfX6CR3Urh7J+9Uy5FFZO6cdiYwhtiVn5dhqKY/aMzfUdeoD4
+         z3Iy1S4xEjoxwv7JDyenSEnFaOR95r9V1RGQWNUaYCLCdA7iZPjgaWZBkJugAMYgT/SH
+         lWCA9+8UASuBqYdhz9tOiCfP1opERMzV5449GlyendR80jaK1lG4ab7D/eophVCwlupA
+         VHktSeq5riUi/9oylGPRfiRO3Cs7zqsTv6Dfb1Sc8Ee3npeHEOu8jr0AOAuZcQoe8p83
+         OkCigeB6aiAl85lmL+/SMMKEFtkB47n2bCAao5oSy8J90fhCH378kWdJDyxAnWAui4OD
+         K77g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jim Mattson <jmattson@google.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Rob Herring <robh@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 214/310] KVM: nVMX: Update vmcs12->guest_linear_address on nested VM-exit
-Date: Wed, 11 Apr 2018 20:35:53 +0200
-Message-Id: <20180411183631.767922376@linuxfoundation.org>
+Subject: [PATCH 4.9 246/310] clk: meson: meson8b: add compatibles for Meson8 and Meson8m2
+Date: Wed, 11 Apr 2018 20:36:25 +0200
+Message-Id: <20180411183633.046008168@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477686281625331?=
-X-GMAIL-MSGID: =?utf-8?q?1597477686281625331?=
+X-GMAIL-THRID: =?utf-8?q?1597477682849045743?=
+X-GMAIL-MSGID: =?utf-8?q?1597477682849045743?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,34 +52,110 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jim Mattson <jmattson@google.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
 
-[ Upstream commit d281e13b0bfe745a21061a194e386a949784393f ]
+[ Upstream commit 855f06a1009faabb0c6a3e9b49d115496d325856 ]
 
-The guest-linear address field is set for VM exits due to attempts to
-execute LMSW with a memory operand and VM exits due to attempts to
-execute INS or OUTS for which the relevant segment is usable,
-regardless of whether or not EPT is in use.
+The clock controller on Meson8, Meson8b and Meson8m2 is very similar
+based on the code from the Amlogic GPL kernel sources. Add separate
+compatibles for each SoC to make sure that we can easily implement
+all the small differences for each SoC later on.
 
-Fixes: 119a9c01a5922 ("KVM: nVMX: pass valid guest linear-address to the L1")
-Signed-off-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+In general the Meson8 and Meson8m2 seem to be almost identical as they
+even share the same mach-meson8 directory in Amlogic's GPL kernel
+sources.
+The main clocks on Meson8, Meson8b and Meson8m2 are very similar,
+because they are all using the same PLL values, 90% of the clock gates
+are the same (the actual diffstat of the mach-meson8/clock.c and
+mach-meson8b/clock.c files is around 30 to 40 lines, when excluding
+all commented out code).
+The difference between the Meson8 and Meson8b clock gates seem to be:
+- Meson8 has AIU_PCLK, HDMI_RX, VCLK2_ENCT, VCLK2_ENCL, UART3,
+  CSI_DIG_CLKIN gates which don't seem to be available on Meson8b
+- the gate on Meson8 for bit 7 seems to be named "_1200XXX" instead
+  of "PERIPHS_TOP" (on Meson8b)
+- Meson8b has a SANA gate which doesn't seem to exist on Meson8 (or
+  on Meson8 the same bit is used by the UART3 gate in Amlogic's GPL
+  kernel sources)
+None of these gates is added for now, since it's unclear whether these
+definitions are actually correct (the VCLK2_ENCT gate for example is
+defined, but only used in some commented block).
+
+The main difference between all three SoCs seem to be the video (VPU)
+clocks. Apart from different supported clock rates (according to vpu.c
+in mach-meson8 and mach-meson8b from Amlogic's GPL kernel sources) the
+most notable difference is that Meson8m2 has a GP_PLL clock and a mux
+(probably the same as on the Meson GX SoCs) to support glitch-free
+(clock rate) switching.
+None of these VPU clocks are not supported by our mainline meson8b
+clock driver yet though.
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Kevin Hilman <khilman@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt |   11 ++++++----
+ drivers/clk/meson/Kconfig                                        |    6 ++---
+ drivers/clk/meson/meson8b.c                                      |    5 +++-
+ 3 files changed, 14 insertions(+), 8 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -10664,8 +10664,7 @@ static void prepare_vmcs12(struct kvm_vc
- 		vmcs12->guest_pdptr3 = vmcs_read64(GUEST_PDPTR3);
- 	}
+--- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
+@@ -1,11 +1,14 @@
+-* Amlogic Meson8b Clock and Reset Unit
++* Amlogic Meson8, Meson8b and Meson8m2 Clock and Reset Unit
  
--	if (nested_cpu_has_ept(vmcs12))
--		vmcs12->guest_linear_address = vmcs_readl(GUEST_LINEAR_ADDRESS);
-+	vmcs12->guest_linear_address = vmcs_readl(GUEST_LINEAR_ADDRESS);
+-The Amlogic Meson8b clock controller generates and supplies clock to various
+-controllers within the SoC.
++The Amlogic Meson8 / Meson8b / Meson8m2 clock controller generates and
++supplies clock to various controllers within the SoC.
  
- 	if (nested_cpu_has_vid(vmcs12))
- 		vmcs12->guest_intr_status = vmcs_read16(GUEST_INTR_STATUS);
+ Required Properties:
+ 
+-- compatible: should be "amlogic,meson8b-clkc"
++- compatible: must be one of:
++	- "amlogic,meson8-clkc" for Meson8 (S802) SoCs
++	- "amlogic,meson8b-clkc" for Meson8 (S805) SoCs
++	- "amlogic,meson8m2-clkc" for Meson8m2 (S812) SoCs
+ - reg: it must be composed by two tuples:
+ 	0) physical base address of the xtal register and length of memory
+ 	   mapped region.
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -7,9 +7,9 @@ config COMMON_CLK_MESON8B
+ 	bool
+ 	depends on COMMON_CLK_AMLOGIC
+ 	help
+-	  Support for the clock controller on AmLogic S805 devices, aka
+-	  meson8b. Say Y if you want peripherals and CPU frequency scaling to
+-	  work.
++	  Support for the clock controller on AmLogic S802 (Meson8),
++	  S805 (Meson8b) and S812 (Meson8m2) devices. Say Y if you
++	  want peripherals and CPU frequency scaling to work.
+ 
+ config COMMON_CLK_GXBB
+ 	bool
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -1,5 +1,6 @@
+ /*
+- * AmLogic S805 / Meson8b Clock Controller Driver
++ * AmLogic S802 (Meson8) / S805 (Meson8b) / S812 (Meson8m2) Clock Controller
++ * Driver
+  *
+  * Copyright (c) 2015 Endless Mobile, Inc.
+  * Author: Carlo Caione <carlo@endlessm.com>
+@@ -661,7 +662,9 @@ iounmap:
+ }
+ 
+ static const struct of_device_id meson8b_clkc_match_table[] = {
++	{ .compatible = "amlogic,meson8-clkc" },
+ 	{ .compatible = "amlogic,meson8b-clkc" },
++	{ .compatible = "amlogic,meson8m2-clkc" },
+ 	{ }
+ };
+ 
