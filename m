@@ -1,83 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752579AbeDKJwu convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 05:52:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33592 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752323AbeDKJws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 05:52:48 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37D382183D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=krzk@kernel.org
-X-Google-Smtp-Source: AIpwx4/R/NUP5DjbEnnk5NAGAte5sUhn+cOm0xeM0b7p+pNl4xx3VlOCoiK7qHPAaFtfNBoZCMbu16ZfTl02YTmnNpA=
+        id S1752754AbeDKJxg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 05:53:36 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:40939 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751889AbeDKJxe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 05:53:34 -0400
+X-Originating-IP: 2.224.242.101
+Date: Wed, 11 Apr 2018 11:53:28 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        niklas soderlund <niklas.soderlund@ragnatech.se>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, horms@verge.net.au,
+        magnus.damm@gmail.com, geert@linux-m68k.org,
+        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH v2 3/4] arm64: dts: renesas: r8a77970: add LVDS support
+Message-ID: <20180411095328.GE20945@w540>
+References: <1523357646-3946-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1523357646-3946-4-git-send-email-jacopo+renesas@jmondi.org>
+ <0baa0f6e-f275-4a27-c76b-e4f8aec0b5f6@cogentembedded.com>
+ <20180410121352.GD6436@w540>
+ <9f54ba77-368f-3d0c-cb58-4849672af449@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+Ln22FAmBHrxEvQpBPV1p=Kg2g+XCHn=HQJCNSUhFv+Jtf6xA@mail.gmail.com>
-References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
- <CAJKOXPdckxVfwU60=e7e6trbiB78ETE=G2vuY1kCrcKHaU2CzA@mail.gmail.com>
- <CA+Ln22Eabq0HH6YmCSFwLd68w3DU4xTX2BiNAeLe_tnG6282Xg@mail.gmail.com> <CA+Ln22FAmBHrxEvQpBPV1p=Kg2g+XCHn=HQJCNSUhFv+Jtf6xA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 11 Apr 2018 11:52:44 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPcWQUHHhf2gV3u4fu=wuVf3qxOYwNdj0c_JFc+zqfJUkA@mail.gmail.com>
-Message-ID: <CAJKOXPcWQUHHhf2gV3u4fu=wuVf3qxOYwNdj0c_JFc+zqfJUkA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:SAMSUNG SOC CLOCK DRIVERS"
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-gpio@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="BPjCafsbA2ap7OrL"
+Content-Disposition: inline
+In-Reply-To: <9f54ba77-368f-3d0c-cb58-4849672af449@cogentembedded.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 10:36 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> 2018-04-10 17:38 GMT+09:00 Tomasz Figa <tomasz.figa@gmail.com>:
->> 2018-04-10 16:06 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
->>> On Sun, Apr 8, 2018 at 8:07 PM, Paweł Chmiel
->>> <pawel.mikolaj.chmiel@gmail.com> wrote:
->>>> All banks with GPIO interrupts should be at beginning
->>>> of bank array and without any other types of banks between them.
->>>> This order is expected by exynos_eint_gpio_irq, when doing
->>>> interrupt group to bank translation.
->>>> Otherwise, kernel NULL pointer dereference would happen
->>>> when trying to handle interrupt, due to wrong bank being looked up.
->>>> Observed on s5pv210, when trying to handle gpj0 interrupt,
->>>> where kernel was mapping it to gpi bank.
->>>
->>> Thanks for the patch. The issue looks real although one thing was
->>> missed - there is a gap in SVC group between GPK2 and GPL0 (pointed by
->>> Marek Szyprowski):
->>>
->>> 0x0 - EINT_23 - gpk0
->>> 0x1 - EINT_24 - gpk1
->>> 0x2 - EINT_25 - gpk2
->>> 0x4 - EINT_27 - gpl0
->>> 0x7 - EINT_8 - gpm0
->>>
->>> Maybe this should be done differently - to remove such hidden
->>> requirement entirely in favor of another parameter of
->>> EXYNOS_PIN_BANK_EINTG argument?
->>
->> Perhaps let's limit this patch to s5pv210 and Exynos5410 alone, where
->> a simple swap of bank order in the arrays should be okay.
->>
->> We might also need to have some fixes on 4x12, because I noticed that
->> in exynos4x12_pin_banks0[] there is a hole in eint_offsets between
->> gpd1 and gpf0 and exynos4x12_pin_banks1[] starts with gpk0 that has
->> eint_offset equal to 0x08 (not 0).
+
+--BPjCafsbA2ap7OrL
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Sergei, Niklas
+
+On Tue, Apr 10, 2018 at 08:12:36PM +0300, Sergei Shtylyov wrote:
+> On 04/10/2018 03:13 PM, jacopo mondi wrote:
 >
-> To close the loop, after talking offline and checking the
-> documentation, Exynos4x12 is fine, because the group numbers in SVC
-> register actually match what is defined in bank arrays.
+> >>> From: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+> >>>
+> >>> Add the LVDS device to r8a77970.dtsi in a disabled state. Also connect
+> >>> the it to the LVDS output of the DU.
+> >>>
+> >>> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnat=
+ech.se>
+> >>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >>>
+> >>> ---
+> >>> v1 -> v2:
+> >>> - Rebased on the modified endpoint name and changed patch subject to
+> >>>   comply with other patches in the series from Sergei.
+> >>
+> >>    Stop, what was wrong with my R8A77970 LVDS patch, reposted on the p=
+opular
+> >> demand? :-)
+> >>
+> >
+> > Nothing wrong, I found out about your right now.
+> > I see a very small difference as
+> >          lvds@feb90000 vs lvds-encoder@feb90000
+>
+>    Yes, I thought the latter was closer to a "generic" name that DT spec =
+requires...
+>
+> > You can add your signed-off-by ofc if you think that's the case.
+>
+>    Didn't understand what you mean here...
 
-Great! Thanks for checking.
+Don't worry, I will resend this and use (part of) your series
+[PATCH v2 0/5] Add R8A77970/V3MSK LVDS/HDMI support
 
-Best regards,
-Krzysztof
+But please note that:
+[1/5] from your series has already been collected by Simon
+I have to reapply Laurent's comment on this series to your one (so I
+have to resend it anyhow)
+[5/5] from your series shall be resent to take into account the newly
+developed LVDS decoder driver (once it has been accepted)
+
+I have anyway to repost your patches then, and as I did in this series
+you are ofc listed as author already, so I have missed what's the
+difference actually except from LVDS patch I collected from Niklas and not
+=66rom your series.
+
+Niklas I picked up patches 1-3 of this series from your tree.
+1 and 2 are patches from Sergei's series
+3 is from you but was also in Sergei's series and I picked yours as it
+was there already. Can I rebase on top of Sergei's one instead?
+
+Thanks
+   j
+
+--BPjCafsbA2ap7OrL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJazdsYAAoJEHI0Bo8WoVY8xygP/1o3/NInRo/dR0Q8+CXBqSUy
+YEw8pzlz5SFEVw0nmbqlRkBwgRme91bN+jel6KvIn3pfphPK9dM9zlbsBOpxk+wX
+ioD1Z+KxaF7hVcSUpdTMOHrSGFVr1PTCKhsCKJ3qEXTghHJuUCMybJSrCEMFHxMJ
+XpdA21OxeE8N0ILN4qt3TinlhI90q77qbVxFaAXphF+RYF92GJIzbJVDp2Q9mR2y
+ockisijWc55Pn12xk2zUWZ/pfQ5k5remjLCchRpbMoyTPo+17mev7QpGEOCjOxwy
+cmsRdWk4d74QD2MpV9kCGvoIEzeQwp2TzothFS71L3gnE3aNQkLF40IB+c6PboFa
+hXwp1bP0Fe6gSktNQVhv9Un01OfIipo70llTF9RrczpEmXIF3IB/+XZcB6k1RE2m
+eLwULfmBccV1X1+oxiWaUYrpBq6fu3DvQamKxf3iuP+cm3IS7I1ZnG6HE0ZQGhPe
+Yr1z7isBincTBIQGGAYEfe0m/qfeDXjAHMALxwhje8WKND2MuxvC7lD286kM09ST
+s2IR1XT61c4eh1FH5D/AQtEeIaoJKZI3EFn2zB8Pv9wf1w0DX/b77m0EkJBv/RJi
+eYxGLpsZX82rcg8NX2aka6WCDXfIenjxj1msSp4tA+WVJANlkdKGQLQQIIsuKFfA
+AB3Z4r2TwvEPjlXc6ro8
+=sBVT
+-----END PGP SIGNATURE-----
+
+--BPjCafsbA2ap7OrL--
