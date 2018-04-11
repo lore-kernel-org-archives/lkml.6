@@ -1,54 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752400AbeDKISb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 04:18:31 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:34622 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752194AbeDKIS3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 04:18:29 -0400
-Date: Wed, 11 Apr 2018 11:18:00 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ramesh Thomas <ramesh.thomas@intel.com>,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] cpuidle: menu: tidy up some indenting
-Message-ID: <20180411081800.GA4625@mwanda>
+        id S1752487AbeDKITk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 04:19:40 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:43217 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751797AbeDKITh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 04:19:37 -0400
+Date: Wed, 11 Apr 2018 10:19:25 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Tuomas Tynkkynen <tuomas@tuxera.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: sunxi: Change sun7i-a20-olimex-som204-evb to
+ not use cd-inverted
+Message-ID: <20180411081925.hjhobvessykaiqoq@flea>
+References: <20180410145119.27362-1-tuomas@tuxera.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ejriaccedkaw7yec"
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8859 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=848
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804110080
+In-Reply-To: <20180410145119.27362-1-tuomas@tuxera.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These lines were indented 4 spaces less than they should have been.  It
-was a little confusing.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+--ejriaccedkaw7yec
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-index 1bfe03ceb236..b733dc6aa42b 100644
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -426,8 +426,8 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 			 * tick, so try to correct that.
- 			 */
- 			for (i = idx - 1; i >= 0; i--) {
--			    if (drv->states[i].disabled ||
--			        dev->states_usage[i].disable)
-+				if (drv->states[i].disabled ||
-+				    dev->states_usage[i].disable)
- 					continue;
- 
- 				idx = i;
+On Tue, Apr 10, 2018 at 05:51:19PM +0300, Tuomas Tynkkynen wrote:
+> Commit 45e01f401a2a16 ("ARM: dts: sunxi: Switch MMC nodes away from
+> cd-inverted property") changed most of the sunxi boards away from using
+> the cd-inverted property in MMC nodes. However, the
+> sun7i-a20-olimex-som204-evb board which got merged concurrently with
+> that commit is now using cd-inverted. Switch it away from using
+> cd-inverted to be consistent with rest of the sunxi boards.
+>=20
+> Signed-off-by: Tuomas Tynkkynen <tuomas@tuxera.com>
+
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ejriaccedkaw7yec
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrNxQwACgkQ0rTAlCFN
+r3QSaA//YBgKR8GjceuTd2+KP7HCuu058FpFl1+HbX6am2RBi4/wMzQUP2fWktfG
+uv87VGTqU9odcSA+Q9uzZJ4fIuS/a9stYLJmOuKK5U/MecufkLdn0c/wFiXM/nkf
+3EX7VUj6FzF9647+rFUE1A1M9a4cckBjiWQD+U5L+A2P5cDU9SicII91DTx6tiyD
+DfhvHx0Z5fkSbPRxYRw+nKmlU7M/9I51sTjSR6GHDyBo01v32hl0tvRN/rjEudwP
+YM6G16h4ecIUrUG46twNXioxzzFG2/9O7NKaq3alcKRTi4suZjgHYH8bsK2XeepN
+4pmNK4hetxBcd+tzAcdrFoS2aynGS9Jz6rP0E9vXrOmG2mM6DfIULvOPKFcyGMKm
+3XRWIdlXuxLmkpnTvFRMW0CmHWK9YUTwzX5Tg8DsKNhLbdE7gPmoTrDE6eZenCwo
+zuUDwrGnJVdjWUg8cU57n/sFFKWhXDBYP2sxHgdp6+86od4BcgwYeI28lJ/cSsSB
+eZ8xCUfw/OFcRkuCljnKUIFwaEWt6TJDqNRwGqHHexoq+4rHjQoEjFRPkgNk4A1v
+P1eiZKhc+JXjbEMS98D9kV6DEU71avbdnajFOhVlt13O4fNua+R4WhRaunUncTXj
+FJLTBJPSzM3wzJytdiEyowWRvUmKt19SOe0fR/WNnm+k+nGEtG8=
+=yET0
+-----END PGP SIGNATURE-----
+
+--ejriaccedkaw7yec--
