@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3339499-1523480403-2-13302788842469018314
+X-Cyrus-Session-Id: sloti22d1t05-3339499-1523480359-2-18402992005522728086
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523480403; b=ABR6nT541GwpsxOlxqM8XYcL8YabGeTN8qKvUtO3+3xpc2iYMR
-    Fx55tz23ectPGy0/zeLNAn2fZhIj+8wMMSa+CkwGZFHnojukumCt+jvci5qOf3s5
-    Hetx0+g0ubTH/CIjq/1dqNBFhmi8WfLMmlEbS5rEkRnIFAnX4TIJl8hthGeBJ/5s
-    XKGzQxL4gZahwNp5+ABXsSvE7Wz2DhpgopbpDqnrKJdalLxNFYtIcKB5mZa3jeem
-    Iph8aa1H3YeHhnAMSt82GnAggkzoGeb3D8By7uv1SaQx/oHMD4tXCoEIYAsSLXtj
-    GVs9gF2fCKNzlmcxTX9GBJJvSyctOZdeinkg==
+    1523480358; b=QYptsfgxIg8d9fRKUrx93QwhTih8ZdvAYR3M9nrUFaER0k7rcE
+    okSlGMzYaTQuz+9+j+vp2PU5AnWdAjHKPzBxLhoTxxXqchFsQWoNbvuhclzMoj6X
+    xjspo7r2vp4SF4ba+evvRGXGR587Qi63RS4DqKToov2ex5DK490ga1LWDG3+MDyL
+    wBTj7g80ubfeNNBNfVVCmQniS5wGWYmRjvyByrpWXwV+N3yys7j5NB8fzWnhiA9G
+    hGDz60of0OBI6elVEcj77bOjFFvOjyLCfib+CfylvlgKlHaPpf+iOsoG4YKpGIjv
+    lQvAz5ijWk0Cx6Feu8PPhXZb9+4vrbD5DyRQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523480403; bh=ySo4E7MSGUKSdymr+X43e2GPB+H1IH
-    LV34Rb8JLbtFM=; b=seZ75AWOcmXq0SYx7gTTsY5QYAZ94LZTlzCHoovun/Ka5T
-    3JSd5yiB+fT1Pev7o/8Yw02Lww7LkkkvjgB5DE5/zM00kS01lzzf1VVQNDjLtFNP
-    fvY8MG8LAo0y/BKMh1aLzproCi3lZ7qZfcNwDduvgZ1AiZzsRJvF/su7qVyw6ZTi
-    FVTiBygGA5aFtcM48J6mKHXfn1fwj3/mvV54O44idrcuk4JU8bc9MwnjgOIphXF8
-    Wb0rHihrtZwBlHgsiLLp13XwPoCjVONOUV4UD7WArb9MD1j64UKRx5d7aSAUF/Hm
-    dcXZbQ7MOa8D8TNemCdFp2Ueg5nFEAlfXCZe7oMw==
+    :list-id; s=fm2; t=1523480358; bh=ywZasimFFLN8SviRYZ09nLiNfigzu0
+    Y5ZqV2Su7bwvE=; b=W75anySTzbykkF3rXVc9Es+rN7amNoUqvAgAbnq8v40qpB
+    B8RRMks5jhve2XFwIivat4UP4NM1XuXsRnY34d+t31J5XepFGNNpbhLgPAuDLjyS
+    9KKwmSBCV8xwzL7bL/ikHVAPHiDX0Ahog9/EL+sPtRcUqZCOECAFEWkI0xmaUjLg
+    LXwKepktvFfcwWGvTuFC1u+bl33EzxI5H3baIdNu72nJsRRypXwXqZBFsEEPPBFU
+    eWdCQTZGJUmj6PsikXolewpiJnfT9GWOFIw2U4I5qsvWG7IzJEqODAPRosCytf4v
+    a/3Y2th3txY3W+XpwwhxecZ7OsF/19QJxbIzl8kw==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,50 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFRiucjJP3/tRiQ6EQ3h/RmByw0e8pbv497dVyNx0DThhmMZk7Dmw09FjnkdsZxvsDXG92A05mFVZh820CeOvtmeNG4JjYwgagvOWxACDs//dTzzR1Sd
-    Z3B+QN0p7QMG3QMZ/mXFnCz9CSgFU7w6vPzrusNK2yQAYX1ARclQvYELkpVqy0XYKsFFXRZDi3T+BIpzjC8BIUW6FeEkDZmbKVrlzmm7CE8XjnPv36M87XWw
+X-CM-Envelope: MS4wfJlIvzTJVx2ZvglZJHUim0I/t8to/voIG3YFKhb7GrHiCBZFFoHtkmq4ODtVx3PZ3lncvNugdAcepEDrbyG1Fhh44sqacjZqMGngCcmypL0IuRwCpc7f
+    WiUlCS+T9L50UgjsH6q2SnXT+wCza45531MSvvOszXQWCmGAldequkZ0f3F8zNNEK6xDzuWXfOXIeqsim0QIPCnqawfNZvEiUYEnLhYQzaM7Da8dBNaoHhR0
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=yPCof4ZbAAAA:8 a=fk1lIlRQAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=8EMWpIwaYYN3MEKlIKMA:9 a=QEXdDO2ut3YA:10 a=U75ogvRika4pmaD_UPO0:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=TYBLyS7eAAAA:8 a=VwQbUJbxAAAA:8 a=6rqHouBjAAAA:8 a=20KFwNOVAAAA:8
+    a=cm27Pg_UAAAA:8 a=mK_AVkanAAAA:8 a=drOt6m5kAAAA:8 a=xVhDTqbCAAAA:8
+    a=PtDNVHqPAAAA:8 a=SOq6UgPBAAAA:8 a=hBqU3vQJAAAA:8 a=Z4Rwk6OoAAAA:8
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=rNsULVQiV86SHlLWsYUA:9
+    a=WPLYdLtPl2FloU5F:21 a=BoBft98koqt4epYC:21 a=QEXdDO2ut3YA:10
+    a=zvYvwCWiE4KgVXXeO06c:22 a=AjGcO6oz07-iQ99wixmX:22 a=Hx1yvPaMooE3kwe23bt7:22
+    a=xmb-EsYY8bH0VWELuYED:22 a=3gWm3jAn84ENXaBijsEo:22 a=RMMjzBEyIzXRtoq5n5K6:22
+    a=GrmWmAYt4dzCMttCBZOh:22 a=BpimnaHY1jUKGyF_4-AF:22 a=3hv5r9HjGAh9o5iR9qwG:22
+    a=WLjMIN4s_96MqnBbPenP:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932118AbeDKSny (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:43:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57684 "EHLO
+        id S932149AbeDKSoD (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:44:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57790 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932069AbeDKSnq (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:43:46 -0400
+        with ESMTP id S932141AbeDKSn7 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:43:59 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Corey Minyard <cminyard@mvista.com>,
+        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@googlemail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 011/190] ipmi_ssif: unlock on allocation failure
-Date: Wed, 11 Apr 2018 20:34:17 +0200
-Message-Id: <20180411183550.692353146@linuxfoundation.org>
+Subject: [PATCH 4.4 016/190] pidns: disable pid allocation if pid_ns_prepare_proc() is failed in alloc_pid()
+Date: Wed, 11 Apr 2018 20:34:22 +0200
+Message-Id: <20180411183551.023975758@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -93,37 +112,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
 
-[ Upstream commit cf9806f32ef63b745f2486e0dbb2ac21f4ca44f0 ]
+[ Upstream commit 8896c23d2ef803f1883fea73117a435925c2b4c4 ]
 
-We should unlock and re-enable IRQs if this allocation fails.
+alloc_pidmap() advances pid_namespace::last_pid.  When first pid
+allocation fails, then next created process will have pid 2 and
+pid_ns_prepare_proc() won't be called.  So, pid_namespace::proc_mnt will
+never be initialized (not to mention that there won't be a child
+reaper).
 
-Fixes: 259307074bfc ("ipmi: Add SMBus interface driver (SSIF) ")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
+I saw crash stack of such case on kernel 3.10:
+
+    BUG: unable to handle kernel NULL pointer dereference at (null)
+    IP: proc_flush_task+0x8f/0x1b0
+    Call Trace:
+        release_task+0x3f/0x490
+        wait_consider_task.part.10+0x7ff/0xb00
+        do_wait+0x11f/0x280
+        SyS_wait4+0x7d/0x110
+
+We may fix this by restore of last_pid in 0 or by prohibiting of futher
+allocations.  Since there was a similar issue in Oleg Nesterov's commit
+314a8ad0f18a ("pidns: fix free_pid() to handle the first fork failure").
+and it was fixed via prohibiting allocation, let's follow this way, and
+do the same.
+
+Link: http://lkml.kernel.org/r/149201021004.4863.6762095011554287922.stgit@localhost.localdomain
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Acked-by: Cyrill Gorcunov <gorcunov@openvz.org>
+Cc: Andrei Vagin <avagin@virtuozzo.com>
+Cc: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Michael Kerrisk <mtk.manpages@googlemail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Serge Hallyn <serge@hallyn.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/char/ipmi/ipmi_ssif.c |    2 ++
- 1 file changed, 2 insertions(+)
+ kernel/pid.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -409,6 +409,7 @@ static void start_event_fetch(struct ssi
- 	msg = ipmi_alloc_smi_msg();
- 	if (!msg) {
- 		ssif_info->ssif_state = SSIF_NORMAL;
-+		ipmi_ssif_unlock_cond(ssif_info, flags);
- 		return;
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -322,8 +322,10 @@ struct pid *alloc_pid(struct pid_namespa
  	}
  
-@@ -431,6 +432,7 @@ static void start_recv_msg_fetch(struct
- 	msg = ipmi_alloc_smi_msg();
- 	if (!msg) {
- 		ssif_info->ssif_state = SSIF_NORMAL;
-+		ipmi_ssif_unlock_cond(ssif_info, flags);
- 		return;
+ 	if (unlikely(is_child_reaper(pid))) {
+-		if (pid_ns_prepare_proc(ns))
++		if (pid_ns_prepare_proc(ns)) {
++			disable_pid_allocation(ns);
+ 			goto out_free;
++		}
  	}
  
+ 	get_pid_ns(ns);
