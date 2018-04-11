@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3150701-1523473777-2-8334421157140899109
+X-Cyrus-Session-Id: sloti22d1t05-3118118-1523473771-2-15631185534918580441
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523473776; b=N2qX0uVBRPu8cF6eQDggx8kRYyY7+VsLl2MbiZuwj/4qjfcYS/
-    jTgodmcZ89XvQGD+XfIWMc8K+qa0JwlpTuQYk5Lc4wAwUFvOc/2CgHDMfyF/d/jy
-    gm97mRMzbfsS5cmq5e9z56AxqLaudC8tZz5ziP8y98A86Lui1cZ8D7zER0I6YqdJ
-    wON7k4QRjmBjwyMIlsnRApATmKF83CulyBDlE2AAjb20+cKH/fpqZmPo1FaUKApG
-    5occYcY80hVi8DGF21ocbgC8LaWaL/atdo71ozZKrVr6NNWDizK9eCVhr82gfRiG
-    essjhPFaBqhPLmSo1TjM6Iv94szI5z8FogwA==
+    1523473770; b=w5rmsALxMcQnqUU9gYjdTT1P7VTX6xnVdWsRb5kWl84p10546k
+    slDxueNgcD5wFkPXlnedeUMCtFv9tcuUFI8vI9a6D5BrJFHDulu/RNwYqnrSA4QP
+    rHTSCY8XmuDSSTptgxltum57m5VCVj1sotH0+B93eaUu1y/W7ru5yysBKRebakQ6
+    x/95Yh3ACxBo/+Ikv10DpnwYHxRx3SLNHRywpGCrpgxHoX0WH5j05MgfFaeCNJ5t
+    NvOqH4GSNV6PVfm4vai3FfpAMJzid8RlqlLUAWzX0UM16qky2NSSQ/8Br8UtqDAq
+    WM1kbeJUQoTKGJBVteTCpQ+LhfoHnJJp0duQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523473776; bh=wxYWjG/ogr2IyQp8cw3gqEXLEOFH7d
-    ku/08UwMpK1wE=; b=n30QmFHoHyGTQi7f45u7hm2y/f9lelJQoRQaNdvBNyu/aH
-    97o8m6Su2hV3M3cLizwe03tlsMTCronwqxeoJZcpPlXuK7HiIrJiZxoZ8OpJ5rVC
-    CIBqv3nJbNJLHVx5K/lZ0gOfPlUSpWZqYKegzqbGRuAriIMqzcCntUgA0ADkmh1A
-    69UZYo/zUFNZ1zEUwbtWy2xuVViB9gVRka6QdYrbiMDeGVl8iACvZQUKhzKcTuis
-    RvKZQLHcyUFyux4AfdS0GI1lqj6AUxqBhzfrYlLL1sG6c7Up/3j7vZpUz4taT7br
-    MFc49PKa3WrZyHaPh/m9/cF+MIX8ybpHxBdSyYgQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523473770; bh=q6XgCdl1ULmY6+1FreyI1OvY+JD+IT
+    WuaCkPO7lfa5w=; b=tsezsnWoEREgkLIQQ5WTDWGYUtkiS5XmqWIuOVeItANX41
+    p9nbkxSIL1mw8YJMZlcjMLWbwCc3LiuiMklzeFSd8+3+hsv995cpVQ3k1wgJ9Ltl
+    bVxobKkkEw8p3f/zsMxs9WY8EixZpaJgq719MihqSJKQ6AETvP6xZdmJ//qASX9Z
+    F50yTD5WTtKxSfrlyBEdP02P6M+0Q8pPhFVQ0CpmWja6xdkLlilk9SgbzTJM/pcy
+    0oqgfx8bfNdsa4RinBbKMAywgwpiWobWL1ZRqeWVA85/fA3wNHRBSYyPigimoaew
+    26CUEcAAzIvwjbjHQalVis5R3A5g0LyncMrMVNVg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,30 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCnCX1prJa7aioTeGtiNV6Dp53+JLbn4T1wQ+JvEyMIl1PuGzfh7dmfwrI+GHqDvJqQddu3trnOv5qtxxCFHfDP27piogQV4H8QAIz9LxNjq33mFRHhq
-    bC8q6ePV5vo7OXK9srbhLFU7am+WGZjupANtn+qLoa2xzFL36Mwkl0nksfk6am94K+RdARXqFdZDtyRQuHYwM2AsdP/g02Rk5Nx1ihdDqBCdSghpyzsPC91z
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfK0kJyHgQ90mULl4btqRlmFSDwK/QMowPk9IK0psRxo1+leIU21nO3J/efT0XPEl/3qqGt8wS9yZ3kwqy2pB+IKWueUFQZdcRZwPnbnYN8moDa21ZLzS
+    RLYDwQSy4SUoct1nf5UTV9yraxLUmSQEb+DcD0EI3iimuc7t/tEYLFI5ZQkn2OZygfoJDmEejH0qf+AvVODRMORoSfdGPWIIOMbiP8JNoLY3m2XHITlIhGQT
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=CbDCq_QkAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=jKXu83aJfUeL4nnnRXAA:9
-    a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=FOH2dFAWAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=onqfME7SEjK7dH_x2_EA:9
+    a=QEXdDO2ut3YA:10 a=i3VuKzQdj-NEYjvDI-p3:22 a=y1Q9-5lHfBjTkpIzbSAN:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935285AbeDKTGn (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 15:06:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40878 "EHLO
+        id S1755101AbeDKTJN (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 15:09:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40898 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935281AbeDKTGl (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:06:41 -0400
+        with ESMTP id S935289AbeDKTGo (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:06:44 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Moshe Shemesh <moshe@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
+        stable@vger.kernel.org, Dave Watson <davejwatson@fb.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 307/310] net/mlx4_core: Fix memory leak while delete slaves resources
-Date: Wed, 11 Apr 2018 20:37:26 +0200
-Message-Id: <20180411183635.743472851@linuxfoundation.org>
+Subject: [PATCH 4.9 308/310] strparser: Fix sign of err codes
+Date: Wed, 11 Apr 2018 20:37:27 +0200
+Message-Id: <20180411183635.796273558@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -93,32 +92,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Moshe Shemesh <moshe@mellanox.com>
+From: Dave Watson <davejwatson@fb.com>
 
 
-[ Upstream commit 461d5f1b59490ce0096dfda45e10038c122a7892 ]
+[ Upstream commit cd00edc179863848abab5cc5683de5b7b5f70954 ]
 
-mlx4_delete_all_resources_for_slave in resource tracker should free all
-memory allocated for a slave.
-While releasing memory of fs_rule, it misses releasing memory of
-fs_rule->mirr_mbox.
+strp_parser_err is called with a negative code everywhere, which then
+calls abort_parser with a negative code.  strp_msg_timeout calls
+abort_parser directly with a positive code.  Negate ETIMEDOUT
+to match signed-ness of other calls.
 
-Fixes: 78efed275117 ('net/mlx4_core: Support mirroring VF DMFS rules on both ports')
-Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+The default abort_parser callback, strp_abort_strp, sets
+sk->sk_err to err.  Also negate the error here so sk_err always
+holds a positive value, as the rest of the net code expects.  Currently
+a negative sk_err can result in endless loops, or user code that
+thinks it actually sent/received err bytes.
+
+Found while testing net/tls_sw recv path.
+
+Fixes: 43a0c6751a322847 ("strparser: Stream parser for messages")
+Signed-off-by: Dave Watson <davejwatson@fb.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/resource_tracker.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/strparser/strparser.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
-@@ -5048,6 +5048,7 @@ static void rem_slave_fs_rule(struct mlx
- 						 &tracker->res_tree[RES_FS_RULE]);
- 					list_del(&fs_rule->com.list);
- 					spin_unlock_irq(mlx4_tlock(dev));
-+					kfree(fs_rule->mirr_mbox);
- 					kfree(fs_rule);
- 					state = 0;
- 					break;
+--- a/net/strparser/strparser.c
++++ b/net/strparser/strparser.c
+@@ -59,7 +59,7 @@ static void strp_abort_rx_strp(struct st
+ 	strp->rx_stopped = 1;
+ 
+ 	/* Report an error on the lower socket */
+-	csk->sk_err = err;
++	csk->sk_err = -err;
+ 	csk->sk_error_report(csk);
+ }
+ 
+@@ -422,7 +422,7 @@ static void strp_rx_msg_timeout(unsigned
+ 	/* Message assembly timed out */
+ 	STRP_STATS_INCR(strp->stats.rx_msg_timeouts);
+ 	lock_sock(strp->sk);
+-	strp->cb.abort_parser(strp, ETIMEDOUT);
++	strp->cb.abort_parser(strp, -ETIMEDOUT);
+ 	release_sock(strp->sk);
+ }
+ 
