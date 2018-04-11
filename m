@@ -1,82 +1,36 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3118118-1523472369-2-15539702982887558554
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES endasv, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523472368; b=giJfN4Q1EN8AYB/FC5/kqGWP+TgWtJfGHKpMmH8sz1OZyfRNLs
-    a8xvYOyKOQ3km99a1V1xP9nE9/Y04zjeCIoO+Cc5IGugKXlWvAqlk3cNqO6pThkG
-    eYqLpXb0byeAsf9Ze7mLXVeUK+wKbE2AoWQ+PfwuR9z53E5bBeNdnJFTiTC1LM68
-    WOOJRI3Uw7zIRK+Ic5w7tpdeEHDoJXwyCgmNw1oXPcmjjvpNuuwCJ3hGGfS45wuE
-    wqgYcwi2uXaj3TCTmEfhgrSKFiTz/EKRz4uGZNJ+1Ei7D2AOenRPA40xm0YfKycV
-    0zr0jv+zZ6LnFjm8hnB4rjUGQ5GSUYqe40HA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523472368; bh=1iW4TLwsyiyt6qIvi99w46wirLJsmn
-    rfGTwpqya7xfo=; b=rQ18VGI8k8mqzrdjMr7+TM50fMS2/Ly1WUzRxrGLGOZIe0
-    6Oeq0BD2mH1FLKJ3nZu56O11ahqwLVCUL52FAMt3MPBrKahY16sXORUR69/uV3Up
-    DBxWbBvXBB7MplCwUDj23lfPMZXW0vR/8FPI420s3X6znHRzG4S/ntXup7xg2YUh
-    wzK4u2EVbxtQz8hPo0rulRXlx80/CAs4o9x5wtVOVs3DBNTZkxao+jKjBJJZaXky
-    MKW076utOtHsP5xd8RqppdFUqX4hxl/Q+AkpfoAuOS8azXim3PEdTnk0OtO4QePs
-    jWTqVqjz0gYBdzuAdREQZImZZ+aHVeE5bIPmutPQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKAJS9GQHi9QgCXPPQW7SnHnJ0G7sguBv8ZPt2h+3uzDA1Z/hUBE8SXPAuG7zOsi4UT8bhQW/JUNLImqfHtgjcg0VgJW/wHYbRx78vJb0FKSUtES/Knl
-    hHCmSWXTIzuEUGsJyFkIGT44SsJAvE3il3+g2ihS4+glFFVnn7deRupcFWMxPxK3czUNSW5ZAvHXVm8TgLvHUHVJs0sSCFfpxMs6TXns3Qg6+sbe/l5dix1S
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=iox4zFpeAAAA:8 a=yPCof4ZbAAAA:8 a=FOH2dFAWAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=8aWv2MnVS5gAdNGTbZkA:9 a=QEXdDO2ut3YA:10
-    a=WzC6qhA0u3u7Ye7llzcV:22 a=i3VuKzQdj-NEYjvDI-p3:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755673AbeDKSqE (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:46:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58772 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755667AbeDKSqB (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:46:01 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx49+OI/IJHBvIV8Ix8zuIvS4ra/FUlnyFxzHvuXlOj01qlLitw6NxSKk9jCRANN1cT7O+5/6
+ARC-Seal: i=1; a=rsa-sha256; t=1523472364; cv=none;
+        d=google.com; s=arc-20160816;
+        b=gNk8X8d0V37Gs/Cv3jBOzMr/Hu6GdhkwS5VWjWtJ+Q1Pwbj3+s5hxir4g+abyJkWpw
+         t2lztc4ADMp3RWeikSHzjvDnXWW/bxU7yYZqlrq2ah9roIZNaPullQe1C8E9LywHvXJE
+         nRcQqp8XSfAt1ELeM2wbyVP1fd5YWTaT206/Mle9Qy0rJ2eLJt3itZLOAIe9b9XKQ0TO
+         cinjLjX9W0YUiVzAxEWxx1qvj11HUn8IBUaoBY7JTxVky3RfscmQTrtgusTqqzpAYx/F
+         CBEEaImU2ESy3cwTWgNcIcYqSdg02vVG9xhdaHh5Yy5BIz1ou9SQ+zk0uVBcF1ZT1fD4
+         M+SQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=MVJjuiAJm/ZmgM7VqT48xiD10bY9/m4W7gs8PLc7SEw=;
+        b=Wpop11IoQioPCDS1xEAEIFoppKK+r6H+B02CQpVlBxpcycrBRZ8+6n0xxwMWQWL3+6
+         dggHYqElm6HaZ/Od/iCiJ8SI9z0Gqfdni122hRdwm+ztOneqcmiH4TxfCb4p9o1KMGB8
+         RXlep43zf2poTO9QfpiUceGfoV2InIk6x+VuSZXdb8xU9SSU39v2RxJdGxcLRwO200p1
+         MUUPAARBEAECtq5C1KSb/NfK3hkHijUq+lj11saV16dZWs3SrQGWVuq0tsOV05oEIi3y
+         Xcd2IIKEJdLmWoXhG8YNDKzdu+Ozs5k47F/1K8lHKK2Pb8wsjKFhtFc87o3n4zGQZxyo
+         Ahhw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <shli@fb.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 058/190] md-cluster: fix potential lock issue in add_new_disk
-Date: Wed, 11 Apr 2018 20:35:04 +0200
-Message-Id: <20180411183553.730918372@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Paul Mackerras <paulus@ozlabs.org>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 026/190] KVM: PPC: Book3S PR: Check copy_to/from_user return values
+Date: Wed, 11 Apr 2018 20:34:32 +0200
+Message-Id: <20180411183551.686720893@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -84,9 +38,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597476168802820578?=
+X-GMAIL-MSGID: =?utf-8?q?1597476557618634696?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -94,36 +49,136 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Guoqing Jiang <gqjiang@suse.com>
+From: Paul Mackerras <paulus@ozlabs.org>
 
 
-[ Upstream commit 2dffdc0724004f38f5e39907747b53e4b0d80e59 ]
+[ Upstream commit 67325e988faea735d663799b6d152b5f4254093c ]
 
-The add_new_disk returns with communication locked if
-__sendmsg returns failure, fix it with call unlock_comm
-before return.
+The PR KVM implementation of the PAPR HPT hypercalls (H_ENTER etc.)
+access an image of the HPT in userspace memory using copy_from_user
+and copy_to_user.  Recently, the declarations of those functions were
+annotated to indicate that the return value must be checked.  Since
+this code doesn't currently check the return value, this causes
+compile warnings like the ones shown below, and since on PPC the
+default is to compile arch/powerpc with -Werror, this causes the
+build to fail.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-CC: Goldwyn Rodrigues <rgoldwyn@suse.com>
-Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+To fix this, we check the return values, and if non-zero, fail the
+hypercall being processed with a H_FUNCTION error return value.
+There is really no good error return value to use since PAPR didn't
+envisage the possibility that the hypervisor may not be able to access
+the guest's HPT, and H_FUNCTION (function not supported) seems as
+good as any.
+
+The typical compile warnings look like this:
+
+  CC      arch/powerpc/kvm/book3s_pr_papr.o
+/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s_pr_papr.c: In function ‘kvmppc_h_pr_enter’:
+/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s_pr_papr.c:53:2: error: ignoring return value of ‘copy_from_user’, declared with attribute warn_unused_result [-Werror=unused-result]
+  copy_from_user(pteg, (void __user *)pteg_addr, sizeof(pteg));
+  ^
+/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s_pr_papr.c:74:2: error: ignoring return value of ‘copy_to_user’, declared with attribute warn_unused_result [-Werror=unused-result]
+  copy_to_user((void __user *)pteg_addr, hpte, HPTE_SIZE);
+  ^
+
+... etc.
+
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/md-cluster.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/powerpc/kvm/book3s_pr_papr.c |   34 ++++++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 8 deletions(-)
 
---- a/drivers/md/md-cluster.c
-+++ b/drivers/md/md-cluster.c
-@@ -945,8 +945,10 @@ static int add_new_disk(struct mddev *md
- 	cmsg.raid_slot = cpu_to_le32(rdev->desc_nr);
- 	lock_comm(cinfo);
- 	ret = __sendmsg(cinfo, &cmsg);
--	if (ret)
-+	if (ret) {
-+		unlock_comm(cinfo);
- 		return ret;
-+	}
- 	cinfo->no_new_dev_lockres->flags |= DLM_LKF_NOQUEUE;
- 	ret = dlm_lock_sync(cinfo->no_new_dev_lockres, DLM_LOCK_EX);
- 	cinfo->no_new_dev_lockres->flags &= ~DLM_LKF_NOQUEUE;
+--- a/arch/powerpc/kvm/book3s_pr_papr.c
++++ b/arch/powerpc/kvm/book3s_pr_papr.c
+@@ -50,7 +50,9 @@ static int kvmppc_h_pr_enter(struct kvm_
+ 	pteg_addr = get_pteg_addr(vcpu, pte_index);
+ 
+ 	mutex_lock(&vcpu->kvm->arch.hpt_mutex);
+-	copy_from_user(pteg, (void __user *)pteg_addr, sizeof(pteg));
++	ret = H_FUNCTION;
++	if (copy_from_user(pteg, (void __user *)pteg_addr, sizeof(pteg)))
++		goto done;
+ 	hpte = pteg;
+ 
+ 	ret = H_PTEG_FULL;
+@@ -71,7 +73,9 @@ static int kvmppc_h_pr_enter(struct kvm_
+ 	hpte[0] = cpu_to_be64(kvmppc_get_gpr(vcpu, 6));
+ 	hpte[1] = cpu_to_be64(kvmppc_get_gpr(vcpu, 7));
+ 	pteg_addr += i * HPTE_SIZE;
+-	copy_to_user((void __user *)pteg_addr, hpte, HPTE_SIZE);
++	ret = H_FUNCTION;
++	if (copy_to_user((void __user *)pteg_addr, hpte, HPTE_SIZE))
++		goto done;
+ 	kvmppc_set_gpr(vcpu, 4, pte_index | i);
+ 	ret = H_SUCCESS;
+ 
+@@ -93,7 +97,9 @@ static int kvmppc_h_pr_remove(struct kvm
+ 
+ 	pteg = get_pteg_addr(vcpu, pte_index);
+ 	mutex_lock(&vcpu->kvm->arch.hpt_mutex);
+-	copy_from_user(pte, (void __user *)pteg, sizeof(pte));
++	ret = H_FUNCTION;
++	if (copy_from_user(pte, (void __user *)pteg, sizeof(pte)))
++		goto done;
+ 	pte[0] = be64_to_cpu((__force __be64)pte[0]);
+ 	pte[1] = be64_to_cpu((__force __be64)pte[1]);
+ 
+@@ -103,7 +109,9 @@ static int kvmppc_h_pr_remove(struct kvm
+ 	    ((flags & H_ANDCOND) && (pte[0] & avpn) != 0))
+ 		goto done;
+ 
+-	copy_to_user((void __user *)pteg, &v, sizeof(v));
++	ret = H_FUNCTION;
++	if (copy_to_user((void __user *)pteg, &v, sizeof(v)))
++		goto done;
+ 
+ 	rb = compute_tlbie_rb(pte[0], pte[1], pte_index);
+ 	vcpu->arch.mmu.tlbie(vcpu, rb, rb & 1 ? true : false);
+@@ -171,7 +179,10 @@ static int kvmppc_h_pr_bulk_remove(struc
+ 		}
+ 
+ 		pteg = get_pteg_addr(vcpu, tsh & H_BULK_REMOVE_PTEX);
+-		copy_from_user(pte, (void __user *)pteg, sizeof(pte));
++		if (copy_from_user(pte, (void __user *)pteg, sizeof(pte))) {
++			ret = H_FUNCTION;
++			break;
++		}
+ 		pte[0] = be64_to_cpu((__force __be64)pte[0]);
+ 		pte[1] = be64_to_cpu((__force __be64)pte[1]);
+ 
+@@ -184,7 +195,10 @@ static int kvmppc_h_pr_bulk_remove(struc
+ 			tsh |= H_BULK_REMOVE_NOT_FOUND;
+ 		} else {
+ 			/* Splat the pteg in (userland) hpt */
+-			copy_to_user((void __user *)pteg, &v, sizeof(v));
++			if (copy_to_user((void __user *)pteg, &v, sizeof(v))) {
++				ret = H_FUNCTION;
++				break;
++			}
+ 
+ 			rb = compute_tlbie_rb(pte[0], pte[1],
+ 					      tsh & H_BULK_REMOVE_PTEX);
+@@ -211,7 +225,9 @@ static int kvmppc_h_pr_protect(struct kv
+ 
+ 	pteg = get_pteg_addr(vcpu, pte_index);
+ 	mutex_lock(&vcpu->kvm->arch.hpt_mutex);
+-	copy_from_user(pte, (void __user *)pteg, sizeof(pte));
++	ret = H_FUNCTION;
++	if (copy_from_user(pte, (void __user *)pteg, sizeof(pte)))
++		goto done;
+ 	pte[0] = be64_to_cpu((__force __be64)pte[0]);
+ 	pte[1] = be64_to_cpu((__force __be64)pte[1]);
+ 
+@@ -234,7 +250,9 @@ static int kvmppc_h_pr_protect(struct kv
+ 	vcpu->arch.mmu.tlbie(vcpu, rb, rb & 1 ? true : false);
+ 	pte[0] = (__force u64)cpu_to_be64(pte[0]);
+ 	pte[1] = (__force u64)cpu_to_be64(pte[1]);
+-	copy_to_user((void __user *)pteg, pte, sizeof(pte));
++	ret = H_FUNCTION;
++	if (copy_to_user((void __user *)pteg, pte, sizeof(pte)))
++		goto done;
+ 	ret = H_SUCCESS;
+ 
+  done:
