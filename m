@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3190956-1523476442-2-18352186947079881473
+X-Cyrus-Session-Id: sloti22d1t05-3216147-1523476441-2-14581655008422974501
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523476441; b=NgAXyW6f2tJmyMNK9WseIyAjElTQy34UhJn6R1pH1l/Dip6i//
-    2/2X83wKKbsK53juLVGu7InAW+pMNZcrYJm4xhsKWeRLxIWNJZgOLSpzoNsU8D5O
-    5OtFIQMbfctlWgDdCo92xf3pFM4foW54bm29Bz4oVINftiE7fSDEzi0vM3dNCmL/
-    GgQExtP/y2l/Qjw+ec2/WIuR1ieOKep5k+5EsjmaBAjlMN1/QnMwrKWHR76RYfKT
-    1r3/n5iUsvtZ+C29A9pmPgdSXfAP+MIptFSiYx7ngLVXGUNbPQ45JSuT2ztoIp45
-    cvp/vQQCbgQuLpenrx2YkSq6dcfEvvofFByw==
+    1523476441; b=aHvQQyqEAB0kUAk9yfTQW8o9jOjXUIw9bdqKf5fQkTET+c0iX/
+    XZMvCsCojh7VIRWyLgqNf3axoXvzvjdarILQtlb7HKzreakTyD6xDHI93ieLGMaJ
+    hO0E7EkPaeuW8EJL0VwzSRP60QQya/c3YLpbEkyTmYsS2Zwa8rAnyBmlZ/QVF5Jl
+    h4spMnw7LKwG6bEmsEV4o0yh4AVuhNhU+JaPzeAWI6Bx5yCaphWq3i3ZiSXBe0Xc
+    QMfX4jAIGNz3mYL26p1iFGLkcwRzIQSzxEfK6FIHZaD5zoGwf4/GnNasnsnPemsM
+    unkUjc//YqKaMunMUgAkDo0puuJGsyIQHkXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523476441; bh=wxSrdRoB3ROOPZDiHy6ZlqSCF3oi/q
-    gRJgxAUFYpmDQ=; b=rEXF7O21fizhKcubYT8RNIQRCgDc5oHCX6k4SfcpnHL3dt
-    2k1Mo0/3keBloybDWaYp8RctaDlgKtWeBVTTnYRYOHrFelMmxB5ip8oho0XMsPOh
-    wzgCalCXh0Veinuj9VSNIZ3vLflgp4ZX5dDMP+2mtW0dicH3z4nI26psKud9fssy
-    RsuFlM9/EXTdR1CMusTRyI/dxzM6KSqlI7vyL3HLBtEPJ83UKNoiNlYZwVbkX0+6
-    K3wGiFX82aSFtSYrEHutBpagmAQcHdOWeWPoZGSFXE2qCtszHi2SzTMnJsHg/jZd
-    n5QGRyRQDsp7bJ1zqPBaemO/2eT8l3GWM9/GOAqw==
+    :list-id; s=fm2; t=1523476441; bh=WnjSSUyh3HmBJlBVxJFq95aW/j6RO9
+    fSgXqYSwla2JQ=; b=h1hJ8zJ4TKpys/J0tjmxKgrxuXY+Z97lGk8BKip8mEun9T
+    WyV0h/e1djSJ0r0JFEjBCjKvXuZduiVqkH4p+LIwHbD0WeicAMx2VOJpTgiSKhMk
+    GJY+layP+vpTQa1OUkm7g14fX1vKuuMfXCTN631IDYf8HLYTIZl4kct5NhLkkKkb
+    417RbATTfzOI5vy5k3mzSla8mFNxNCY9+QgEL2w+DeNXLaCnc38WQSKuFE3G3GB6
+    1LQ9zKZp+P8RnnUzWH8YRuhAeXIuqWF18yIA2Tneoh8WYTAkyqTQmk8NJufRgUPl
+    wO+WpCxpEA2r1S3jvXhxkJCx3XOIkFZ/jZfp5E7A==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,31 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOWsZx88ujonEDiX48ZSKiSL8Q0KWKVLlGZuJlzUJPP8039AG/E0eRoXJRdDfXcPOZj0LQ2tnOuHtaW+axao8TjkT55PisinA1OmFtxUMXX2JW3n5GAf
-    iJMFApvpLlyfs/WF5Ev7qGWwAi20h1QiV3JxWQibbCgOF2g/WQE+zsqNfSgJPHfpifAJfpcvkY8OgPwmuDKI8/wOCvxIdTUEAw9tAqba9VeFmCuNFqHkjVQt
+X-CM-Envelope: MS4wfInzP+qRSoSi9aIBlGeUpKFEs+k/59FyKeyCJbqFMNo+AQcGA0TL9rBDfj1GpxON3Dm+xk4HyzVwBYZXpL77T7oLKccU4pv+YaTYj5deV2ezn1H8AA7+
+    MIHN7qrUjGbBjGbrChvFBhic9dCVgqJtwaU4w3j0/6gHQu+6+Yb3ecu5QHOqSHoLhUm+5naI3uWLI3DbaXE5Om9MAbpm6NKqR3xw5B1trV+vAj5IspVXFL+h
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=QyXUC8HyAAAA:8 a=CbDCq_QkAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=w2PZPm-n07mnuKwehRkA:9 a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22
+    a=LpQP-O61AAAA:8 a=pGLkceISAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=c3k9iIRU9D_56J-XrdMA:9 a=QEXdDO2ut3YA:10 a=pioyyrs4ZptJ924tMmac:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756484AbeDKS5v (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:57:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36444 "EHLO
+        id S1756490AbeDKS5w (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:57:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36430 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756478AbeDKS5t (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:57:49 -0400
+        with ESMTP id S1756465AbeDKS5q (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:57:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shiraz Saleem <shiraz.saleem@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Jordan Crouse <jcrouse@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 119/310] i40iw: Fix sequence number for the first partial FPDU
-Date: Wed, 11 Apr 2018 20:34:18 +0200
-Message-Id: <20180411183627.281074731@linuxfoundation.org>
+Subject: [PATCH 4.9 118/310] drm/msm: Take the mutex before calling msm_gem_new_impl
+Date: Wed, 11 Apr 2018 20:34:17 +0200
+Message-Id: <20180411183627.242365299@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -93,43 +93,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Shiraz Saleem <shiraz.saleem@intel.com>
+From: Jordan Crouse <jcrouse@codeaurora.org>
 
 
-[ Upstream commit df8b13a1b23356d01dfc4647a5629cdb0f4ce566 ]
+[ Upstream commit 90dd57de4a043f642179b1323a31ca3ced826611 ]
 
-Partial FPDU processing is broken as the sequence number
-for the first partial FPDU is wrong due to incorrect
-Q2 buffer offset. The offset should be 64 rather than 16.
+Amongst its other duties, msm_gem_new_impl adds the newly created
+GEM object to the shared inactive list which may also be actively
+modifiying the list during submission.  All the paths to modify
+the list are protected by the mutex except for the one through
+msm_gem_import which can end up causing list corruption.
 
-Fixes: 786c6adb3a94 ("i40iw: add puda code")
-Signed-off-by: Shiraz Saleem <shiraz.saleem@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+[add extra WARN_ON(!mutex_is_locked(&dev->struct_mutex))]
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/i40iw/i40iw_d.h    |    1 +
- drivers/infiniband/hw/i40iw/i40iw_puda.c |    2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/msm/msm_gem.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/infiniband/hw/i40iw/i40iw_d.h
-+++ b/drivers/infiniband/hw/i40iw/i40iw_d.h
-@@ -86,6 +86,7 @@
- #define RDMA_OPCODE_MASK        0x0f
- #define RDMA_READ_REQ_OPCODE    1
- #define Q2_BAD_FRAME_OFFSET     72
-+#define Q2_FPSN_OFFSET          64
- #define CQE_MAJOR_DRV           0x8000
+--- a/drivers/gpu/drm/msm/msm_gem.c
++++ b/drivers/gpu/drm/msm/msm_gem.c
+@@ -770,6 +770,8 @@ static int msm_gem_new_impl(struct drm_d
+ 	unsigned sz;
+ 	bool use_vram = false;
  
- #define I40IW_TERM_SENT 0x01
---- a/drivers/infiniband/hw/i40iw/i40iw_puda.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_puda.c
-@@ -1320,7 +1320,7 @@ static void i40iw_ieq_handle_exception(s
- 	u32 *hw_host_ctx = (u32 *)qp->hw_host_ctx;
- 	u32 rcv_wnd = hw_host_ctx[23];
- 	/* first partial seq # in q2 */
--	u32 fps = qp->q2_buf[16];
-+	u32 fps = *(u32 *)(qp->q2_buf + Q2_FPSN_OFFSET);
- 	struct list_head *rxlist = &pfpdu->rxlist;
- 	struct list_head *plist;
++	WARN_ON(!mutex_is_locked(&dev->struct_mutex));
++
+ 	switch (flags & MSM_BO_CACHE_MASK) {
+ 	case MSM_BO_UNCACHED:
+ 	case MSM_BO_CACHED:
+@@ -863,7 +865,11 @@ struct drm_gem_object *msm_gem_import(st
+ 
+ 	size = PAGE_ALIGN(dmabuf->size);
+ 
++	/* Take mutex so we can modify the inactive list in msm_gem_new_impl */
++	mutex_lock(&dev->struct_mutex);
+ 	ret = msm_gem_new_impl(dev, size, MSM_BO_WC, dmabuf->resv, &obj);
++	mutex_unlock(&dev->struct_mutex);
++
+ 	if (ret)
+ 		goto fail;
  
