@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753212AbeDKNrY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 09:47:24 -0400
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:54940 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751699AbeDKNrT (ORCPT
+        id S1753251AbeDKNrb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 09:47:31 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38446 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751699AbeDKNr0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 09:47:19 -0400
-X-Google-Smtp-Source: AIpwx49kB7uzXc8RODbgmN9ui/Ruvtciz06cBDdX1Bejave2ZSoHmExzl5rW+7U8o86n+9e6KclxrQ==
-X-ME-Sender: <xms:4xHOWtd-AO_3sSjHI6jBcCLrmNhlzMlpMoNn-n_vUgr7uL7Vx-tqhg>
+        Wed, 11 Apr 2018 09:47:26 -0400
+X-Google-Smtp-Source: AIpwx49dvF2aU7l7MeiPDsDaKQpXNi1JWWvtrnTUv9D5VXmZGIVV6VmJ6dTYU9g+QSDSVSoq8hMfNg==
+X-ME-Sender: <xms:6hHOWl2dWO8vl12xTzXUlbmKBTnKp9NyEZFxdQiwux9OoUWAlHCi5w>
 From: Boqun Feng <boqun.feng@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
         Andrea Parri <parri.andrea@gmail.com>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org (open list:DOCUMENTATION)
-Subject: [RFC tip/locking/lockdep v6 01/20] lockdep/Documention: Recursive read lock detection reasoning
-Date: Wed, 11 Apr 2018 21:50:51 +0800
-Message-Id: <20180411135110.9217-2-boqun.feng@gmail.com>
+        Boqun Feng <boqun.feng@gmail.com>
+Subject: [RFC tip/locking/lockdep v6 03/20] lockdep: Make __bfs() visit every dependency until a match
+Date: Wed, 11 Apr 2018 21:50:53 +0800
+Message-Id: <20180411135110.9217-4-boqun.feng@gmail.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180411135110.9217-1-boqun.feng@gmail.com>
 References: <20180411135110.9217-1-boqun.feng@gmail.com>
@@ -26,210 +25,141 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add the documentation piece for the reasoning of deadlock
-detection related to recursive read lock. The following sections are
-added:
+Currently, __bfs() will do a breadth-first search in the dependency
+graph and visit each lock class in the graph exactly once, so for
+example, in the following graph:
 
-*	Explain what is a recursive read lock, and what deadlock cases
-	they could introduce.
+	A ---------> B
+	|            ^
+	|            |
+	+----------> C
 
-*	Introduce the notations for different types of dependencies, and
-	the definition of strong paths.
+a __bfs() call starts at A, will visit B through dependency A -> B and
+visit C through dependency A -> C and that's it, IOW, __bfs() will not
+visit dependency C -> B.
 
-*	Proof for a closed strong path is both sufficient and necessary
-	for deadlock detections with recursive read locks involved. The
-	proof could also explain why we call the path "strong"
+This is OK for now, as we only have strong dependencies in the
+dependency graph, so whenever there is a traverse path from A to B in
+__bfs(), it means A has strong dependency to B (IOW, B depends on A
+strongly). So no need to visit all dependencies in the graph.
+
+However, as we are going to add recursive-read lock into the dependency
+graph, afterwards, not all the paths mean strong dependencies, in the
+same example above, dependency A -> B may be a weak dependency and
+traverse A -> C -> B may be a strong dependency path. And with the old
+way of __bfs() (i.e. visiting every lock class exactly once), we will
+miss the strong dependency path, which will result into failing to find
+a deadlock. To cure this for the future, we need to find a way for
+__bfs() to visit each dependency, rather than each class, exactly once
+in the search until we find a match.
+
+The solution is simple:
+
+We used to mark lock_class::lockdep_dependency_gen_id to indicate a
+class has been visited in __bfs(), now we change the semantics a little
+bit: we now mark lock_class::lockdep_dependency_gen_id to indicate _all
+the dependencies_ in its lock_{after,before} have been visited in the
+__bfs() (note we only take one direction in a __bfs() search). In this
+way, every dependency is guaranteed to be visited until we find a match.
 
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 ---
- Documentation/locking/lockdep-design.txt | 178 +++++++++++++++++++++++++++++++
- 1 file changed, 178 insertions(+)
+ kernel/locking/lockdep.c | 61 +++++++++++++++++++++++++++---------------------
+ 1 file changed, 34 insertions(+), 27 deletions(-)
 
-diff --git a/Documentation/locking/lockdep-design.txt b/Documentation/locking/lockdep-design.txt
-index 9de1c158d44c..6bb9e90e2c4f 100644
---- a/Documentation/locking/lockdep-design.txt
-+++ b/Documentation/locking/lockdep-design.txt
-@@ -284,3 +284,181 @@ Run the command and save the output, then compare against the output from
- a later run of this command to identify the leakers.  This same output
- can also help you find situations where runtime lock initialization has
- been omitted.
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 2dbaff381778..f39a071ef0a8 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -948,24 +948,20 @@ static inline unsigned int  __cq_get_elem_count(struct circular_queue *cq)
+ 	return (cq->rear - cq->front) & CQ_MASK;
+ }
+ 
+-static inline void mark_lock_accessed(struct lock_list *lock,
+-					struct lock_list *parent)
++static inline void mark_lock_list_accessed(struct lock_class *class)
+ {
+-	unsigned long nr;
++	class->dep_gen_id = lockdep_dependency_gen_id;
++}
+ 
+-	nr = lock - list_entries;
+-	WARN_ON(nr >= nr_list_entries); /* Out-of-bounds, input fail */
++static inline void visit_lock_entry(struct lock_list *lock,
++				    struct lock_list *parent)
++{
+ 	lock->parent = parent;
+-	lock->class->dep_gen_id = lockdep_dependency_gen_id;
+ }
+ 
+-static inline unsigned long lock_accessed(struct lock_list *lock)
++static inline unsigned long lock_list_accessed(struct lock_class *class)
+ {
+-	unsigned long nr;
+-
+-	nr = lock - list_entries;
+-	WARN_ON(nr >= nr_list_entries); /* Out-of-bounds, input fail */
+-	return lock->class->dep_gen_id == lockdep_dependency_gen_id;
++	return class->dep_gen_id == lockdep_dependency_gen_id;
+ }
+ 
+ static inline struct lock_list *get_lock_parent(struct lock_list *child)
+@@ -1054,6 +1050,18 @@ static enum bfs_result __bfs(struct lock_list *source_entry,
+ 			goto exit;
+ 		}
+ 
++		/*
++		 * If we have visited all the dependencies from this @lock to
++		 * others (iow, if we have visited all lock_list entries in
++		 * @lock->class->locks_{after,before}) we skip, otherwise go
++		 * and visit all the dependencies in the list and mark this
++		 * list accessed.
++		 */
++		if (lock_list_accessed(lock->class))
++			continue;
++		else
++			mark_lock_list_accessed(lock->class);
 +
-+Recursive read locks:
-+---------------------
+ 		if (forward)
+ 			head = &lock->class->locks_after;
+ 		else
+@@ -1062,23 +1070,22 @@ static enum bfs_result __bfs(struct lock_list *source_entry,
+ 		DEBUG_LOCKS_WARN_ON(!irqs_disabled());
+ 
+ 		list_for_each_entry_rcu(entry, head, entry) {
+-			if (!lock_accessed(entry)) {
+-				unsigned int cq_depth;
+-				mark_lock_accessed(entry, lock);
+-				if (match(entry, data)) {
+-					*target_entry = entry;
+-					ret = BFS_RMATCH;
+-					goto exit;
+-				}
++			unsigned int cq_depth;
+ 
+-				if (__cq_enqueue(cq, (unsigned long)entry)) {
+-					ret = BFS_EQUEUEFULL;
+-					goto exit;
+-				}
+-				cq_depth = __cq_get_elem_count(cq);
+-				if (max_bfs_queue_depth < cq_depth)
+-					max_bfs_queue_depth = cq_depth;
++			visit_lock_entry(entry, lock);
++			if (match(entry, data)) {
++				*target_entry = entry;
++				ret = BFS_RMATCH;
++				goto exit;
++			}
 +
-+Lockdep now is equipped with deadlock detection for recursive read locks.
-+
-+Recursive read locks, as their name indicates, are the locks able to be
-+acquired recursively. Unlike non-recursive read locks, recursive read locks
-+only get blocked by current write lock *holders* other than write lock
-+*waiters*, for example:
-+
-+	TASK A:			TASK B:
-+
-+	read_lock(X);
-+
-+				write_lock(X);
-+
-+	read_lock(X);
-+
-+is not a deadlock for recursive read locks, as while the task B is waiting for
-+the lock X, the second read_lock() doesn't need to wait because it's a recursive
-+read lock. However if the read_lock() is non-recursive read lock, then the above
-+case is a deadlock, because even if the write_lock() in TASK B can not get the
-+lock, but it can block the second read_lock() in TASK A.
-+
-+Note that a lock can be a write lock (exclusive lock), a non-recursive read
-+lock (non-recursive shared lock) or a recursive read lock (recursive shared
-+lock), depending on the lock operations used to acquire it (more specifically,
-+the value of the 'read' parameter for lock_acquire()). In other words, a single
-+lock instance has three types of acquisition depending on the acquisition
-+functions: exclusive, non-recursive read, and recursive read.
-+
-+To be concise, we call that write locks and non-recursive read locks as
-+"non-recursive" locks and recursive read locks as "recursive" locks.
-+
-+Recursive locks don't block each other, while non-recursive locks do (this is
-+even true for two non-recursive read locks). A non-recursive lock can block the
-+corresponding recursive lock, and vice versa.
-+
-+A deadlock case with recursive locks involved is as follow:
-+
-+	TASK A:			TASK B:
-+
-+	read_lock(X);
-+				read_lock(Y);
-+	write_lock(Y);
-+				write_lock(X);
-+
-+Task A is waiting for task B to read_unlock() Y and task B is waiting for task
-+A to read_unlock() X.
-+
-+Dependency types and strong dependency paths:
-+---------------------------------------------
-+In order to detect deadlocks as above, lockdep needs to track different dependencies.
-+There are 4 categories for dependency edges in the lockdep graph:
-+
-+1) -(NN)->: non-recursive to non-recursive dependency. "X -(NN)-> Y" means
-+            X -> Y and both X and Y are non-recursive locks.
-+
-+2) -(RN)->: recursive to non-recursive dependency. "X -(RN)-> Y" means
-+            X -> Y and X is recursive read lock and Y is non-recursive lock.
-+
-+3) -(NR)->: non-recursive to recursive dependency, "X -(NR)-> Y" means
-+            X -> Y and X is non-recursive lock and Y is recursive lock.
-+
-+4) -(RR)->: recursive to recursive dependency, "X -(RR)-> Y" means
-+            X -> Y and both X and Y are recursive locks.
-+
-+Note that given two locks, they may have multiple dependencies between them, for example:
-+
-+	TASK A:
-+
-+	read_lock(X);
-+	write_lock(Y);
-+	...
-+
-+	TASK B:
-+
-+	write_lock(X);
-+	write_lock(Y);
-+
-+, we have both X -(RN)-> Y and X -(NN)-> Y in the dependency graph.
-+
-+We use -(*N)-> for edges that is either -(RN)-> or -(NN)->, the similar for -(N*)->,
-+-(*R)-> and -(R*)->
-+
-+A "path" is a series of conjunct dependency edges in the graph. And we define a
-+"strong" path, which indicates the strong dependency throughout each dependency
-+in the path, as the path that doesn't have two conjunct edges (dependencies) as
-+-(*R)-> and -(R*)->. In other words, a "strong" path is a path from a lock
-+walking to another through the lock dependencies, and if X -> Y -> Z in the
-+path (where X, Y, Z are locks), if the walk from X to Y is through a -(NR)-> or
-+-(RR)-> dependency, the walk from Y to Z must not be through a -(RN)-> or
-+-(RR)-> dependency, otherwise it's not a strong path.
-+
-+We will see why the path is called "strong" in next section.
-+
-+Recursive Read Deadlock Detection:
-+----------------------------------
-+
-+We now prove two things:
-+
-+Lemma 1:
-+
-+If there is a closed strong path (i.e. a strong cirle), then there is a
-+combination of locking sequences that causes deadlock. I.e. a strong circle is
-+sufficient for deadlock detection.
-+
-+Lemma 2:
-+
-+If there is no closed strong path (i.e. strong cirle), then there is no
-+combination of locking sequences that could cause deadlock. I.e.  strong
-+circles are necessary for deadlock detection.
-+
-+With these two Lemmas, we can easily say a closed strong path is both sufficient
-+and necessary for deadlocks, therefore a closed strong path is equivalent to
-+deadlock possibility. As a closed strong path stands for a dependency chain that
-+could cause deadlocks, so we call it "strong", considering there are dependency
-+circles that won't cause deadlocks.
-+
-+Proof for sufficiency (Lemma 1):
-+
-+Let's say we have a strong cirlce:
-+
-+	L1 -> L2 ... -> Ln -> L1
-+
-+, which means we have dependencies:
-+
-+	L1 -> L2
-+	L2 -> L3
-+	...
-+	Ln-1 -> Ln
-+	Ln -> L1
-+
-+We now can construct a combination of locking sequences that cause deadlock:
-+
-+Firstly let's make one CPU/task get the L1 in L1 -> L2, and then another get
-+the L2 in L2 -> L3, and so on. After this, all of the Lx in Lx -> Lx+1 are
-+held by different CPU/tasks.
-+
-+And then because we have L1 -> L2, so the holder of L1 is going to acquire L2
-+in L1 -> L2, however since L2 is already held by another CPU/task, plus L1 ->
-+L2 and L2 -> L3 are not *R and R* (the definition of strong), therefore the
-+holder of L1 can not get L2, it has to wait L2's holder to release.
-+
-+Moreover, we can have a similar conclusion for L2's holder: it has to wait L3's
-+holder to release, and so on. We now can proof that Lx's holder has to wait for
-+Lx+1's holder to release, and note that Ln+1 is L1, so we have a circular
-+waiting scenario and nobody can get progress, therefore a deadlock.
-+
-+Proof for necessary (Lemma 2):
-+
-+Lemma 2 is equivalent to: If there is a deadlock scenario, then there must be a
-+strong circle in the dependency graph.
-+
-+According to Wikipedia[1], if there is a deadlock, then there must be a circular
-+waiting scenario, means there are N CPU/tasks, where CPU/task P1 is waiting for
-+a lock held by P2, and P2 is waiting for a lock held by P3, ... and Pn is waiting
-+for a lock held by P1. Let's name the lock Px is waiting as Lx, so since P1 is waiting
-+for L1 and holding Ln, so we will have Ln -> L1 in the dependency graph. Similarly,
-+we have L1 -> L2, L2 -> L3, ..., Ln-1 -> Ln in the dependency graph, which means we
-+have a circle:
-+
-+	Ln -> L1 -> L2 -> ... -> Ln
-+
-+, and now let's prove the circle is strong:
-+
-+For a lock Lx, Px contributes the dependency Lx-1 -> Lx and Px+1 contributes
-+the dependency Lx -> Lx+1, and since Px is waiting for Px+1 to release Lx,
-+so Lx can not be both recursive in Lx -> Lx+1 and Lx-1 -> Lx, because recursive
-+locks don't block each other, therefore Lx-1 -> Lx and Lx -> Lx+1 can not be a
-+-(*R)-> -(R*)-> pair, and this is true for any lock in the circle, therefore,
-+the circle is strong.
-+
-+References:
-+-----------
-+[1]: https://en.wikipedia.org/wiki/Deadlock
-+[2]: Shibu, K. (2009). Intro To Embedded Systems (1st ed.). Tata McGraw-Hill
++			if (__cq_enqueue(cq, (unsigned long)entry)) {
++				ret = BFS_EQUEUEFULL;
++				goto exit;
+ 			}
++			cq_depth = __cq_get_elem_count(cq);
++			if (max_bfs_queue_depth < cq_depth)
++				max_bfs_queue_depth = cq_depth;
+ 		}
+ 	}
+ exit:
 -- 
 2.16.2
