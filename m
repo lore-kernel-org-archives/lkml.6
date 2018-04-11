@@ -1,78 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753861AbeDKOyN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 10:54:13 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37741 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753282AbeDKOyK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 10:54:10 -0400
-X-Google-Smtp-Source: AIpwx49WWqXyDC1rk14hl4nYV3A5fyWLK+Y/XnutrdhMTYc8wY3qGgnWyrCBAlu97fBgIpJ23CsGQg==
-Date: Wed, 11 Apr 2018 20:24:07 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Joel Fernandes <joelaf@google.com>, Steve Muckle <smuckle@google.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>
-Subject: Re: [PATCH v2] cpufreq/schedutil: Cleanup, document and fix iowait
- boost
-Message-ID: <20180411145407.GQ7671@vireshk-i7>
-References: <20180410155931.31973-1-patrick.bellasi@arm.com>
- <20180410193708.GE4043@hirez.programming.kicks-ass.net>
- <20180411104445.GM14248@e110439-lin>
- <20180411105828.GL4082@hirez.programming.kicks-ass.net>
- <20180411143921.GP14248@e110439-lin>
+        id S1753580AbeDKOxQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 10:53:16 -0400
+Received: from mga04.intel.com ([192.55.52.120]:26021 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752735AbeDKOxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 10:53:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,436,1517904000";
+   d="scan'208";a="219587946"
+Subject: Re: [PATCH 1/3] infiniband: i40iw: Replace GFP_ATOMIC with GFP_KERNEL
+ in i40iw_add_mqh_4
+To: Jia-Ju Bai <baijiaju1990@gmail.com>, faisal.latif@intel.com,
+        shiraz.saleem@intel.com, dledford@redhat.com, sean.hefty@intel.com,
+        hal.rosenstock@gmail.com
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1523431945-3508-1-git-send-email-baijiaju1990@gmail.com>
+From: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Message-ID: <a2af56ae-075f-bd13-3308-6c6ebbca7694@intel.com>
+Date: Wed, 11 Apr 2018 10:53:13 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180411143921.GP14248@e110439-lin>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1523431945-3508-1-git-send-email-baijiaju1990@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11-04-18, 15:39, Patrick Bellasi wrote:
-> On 11-Apr 12:58, Peter Zijlstra wrote:
-> > On Wed, Apr 11, 2018 at 11:44:45AM +0100, Patrick Bellasi wrote:
-> > > > > - sugov_set_iowait_boost: is now in charge only to set/increase the IO
-> > > > >      wait boost, every time a task wakes up from an IO wait.
-> > > > > 
-> > > > > - sugov_iowait_boost: is now in charge to reset/reduce the IO wait
-> > > > >      boost, every time a sugov update is triggered, as well as
-> > > > >      to (eventually) enforce the currently required IO boost value.
-> > > > 
-> > > > I'm not sold on those function names; feels like we can do better,
-> > > > although I'm struggling to come up with anything sensible just now.
-> > > 
-> > > What about something like:
-> > > 
-> > >  sugov_iowait_init()
-> > >  since here we are mainly initializing the iowait boost
-> > > 
-> > >  sugov_iowait_boost()
-> > >  since here we are mainly applying the proper boost to each cpu
-> > > 
-> > > Although they are not really so different...
-> > 
-> > How about:
-> > 
-> >   sugov_iowait_boost() -- does the actual impulse/boost
-> >   sugov_iowait_apply() -- applies the boost state
-> > 
-> > ?
+On 4/11/2018 3:32 AM, Jia-Ju Bai wrote:
+> i40iw_add_mqh_4() is never called in atomic context, because it
+> calls rtnl_lock() that can sleep.
 > 
-> Whould say it can work too, and it also allows to add a:
-> 
->     sugov_iowait_reset() -- resets boots state after
->                             TICK_NSEC CPU idle time
-> 
-> Viresh, Rafael, Joel: any preferences or other suggestions?
+> Despite never getting called from atomic context,
+> i40iw_add_mqh_4() calls kzalloc() with GFP_ATOMIC,
+> which does not sleep for allocation.
+> GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+> which can sleep and improve the possibility of sucessful allocation.
 
-Looks like no matter how we rename it, someone will find it confusing
-:)
+Just a general comment. I don't know that this is the greatest idea. I 
+can imagine instances where sleeping is OK as far as how the code is 
+written, but for performance reasons you would rather fail than sleep.
 
--- 
-viresh
+As to whether that is the case here I'll let the i40iw folks comment.
+
+> This is found by a static analysis tool named DCNS written by myself.
+> And I also manually check it.
+You should probably post a pointer to your tool.
+
+-Denny
