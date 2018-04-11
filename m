@@ -1,61 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752381AbeDKWU5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 18:20:57 -0400
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:43547 "EHLO
-        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752302AbeDKWUz (ORCPT
+        id S1752530AbeDKWWF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 18:22:05 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:42136 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752167AbeDKWWD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 18:20:55 -0400
-X-Google-Smtp-Source: AIpwx482D3l/BsHOP4E3o91KkNm3ZzgUdC6wFQ/kbxOGCXXXoFjsTrGVwMVnURhJQA8I0j/BPrdrM57YMfoKX+kAzAQ=
+        Wed, 11 Apr 2018 18:22:03 -0400
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+Subject: Re: [PATCH 2/3] ARM: dts: sun7i: Add RGB666 pins definition
+To: Paul Kocialkowski <contact@paulk.fr>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>, David Airlie <airlied@linux.ie>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+References: <20180410213129.24049-1-contact@paulk.fr>
+ <20180410213129.24049-2-contact@paulk.fr>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <e7f68882-c333-12ac-c122-20b0d7b65666@micronovasrl.com>
+Date: Thu, 12 Apr 2018 00:22:09 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <7bf2f711-bbd8-cee6-6377-0c4f22db2937@mozilla.com>
-References: <c743b220-0395-eef3-4405-a21cdbe8eee1@mozilla.com>
- <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com> <a96df0b8-fc22-4438-646d-2f0096dfcc84@mozilla.com>
- <6cebabff-908f-5ebe-4252-760773c4cd6f@amd.com> <312ed341-7052-a61e-331f-d1e8fd5b477e@mozilla.com>
- <d136f940-d807-d2f7-30a7-8617f130912d@amd.com> <77866d66-2728-8295-d7ee-9975dbf64b99@mozilla.com>
- <55e1712b-6567-50c5-3789-53dd1ccddb94@gmail.com> <CAEJqkgiOR3aCGoNquVeEyC1BLMBPmXNjgrmjNeeE9UVfzcJKzg@mail.gmail.com>
- <dafca4cc-c7ca-a06d-3a17-46240b1d20c3@amd.com> <7bf2f711-bbd8-cee6-6377-0c4f22db2937@mozilla.com>
-From: Gabriel C <nix.or.die@gmail.com>
-Date: Thu, 12 Apr 2018 00:20:24 +0200
-Message-ID: <CAEJqkgj7uCoaScKwjPVBvWuC+=5OfAuQaO3PfM5J=qbA0v4_EQ@mail.gmail.com>
-Subject: Re: AMD graphics performance regression in 4.15 and later
-To: Jean-Marc Valin <jmvalin@mozilla.com>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Dave Airlie <airlied@linux.ie>, alexander.deucher@amd.com,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>, michel.daenzer@amd.com,
-        dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180410213129.24049-2-contact@paulk.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: it
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3BML0Iv030405
 
-2018-04-11 20:35 GMT+02:00 Jean-Marc Valin <jmvalin@mozilla.com>:
-> On 04/11/2018 05:37 AM, Christian König wrote:
->>> With your patches my EPYC box is unusable with  4.15++ kernels.
->>> The whole Desktop is acting weird.  This one is using
->>> an Cape Verde PRO [Radeon HD 7750/8740 / R7 250E] GPU.
->>>
->>> Box is  2 * EPYC 7281 with 128 GB ECC RAM
->>>
->>> Also a 14C Xeon box with a HD7700 is broken same way.
->>
->> The hardware is irrelevant for this. We need to know what software stack
->> you use on top of it.
->
-> Well, the hardware appears to be part of the issue too. I don't think
-> it's a coincidence that Gabriel has the problem on 2xEPYC, I have it on
-> 2xXeon and the previous reported had it on a Core 2 Quad that internally
-> has two dies.
->
-> I've not yet tested your disable CONFIG_SWIOTLB fix yet -- might try it
-> over the weekend and report what happens.
->
+Hi,
 
-To get that right .. is only a matter of disabling SWIOTLB *code*
-while CONFIG_SWIOTLB is still set ?
+Il 10/04/2018 23:31, Paul Kocialkowski ha scritto:
+> This adds the pins definition for RGB666 LCD panels on the A20. It was
+> imported from the A33 definition, that concernes the same set of pins.
+> 
+> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+> ---
+>   arch/arm/boot/dts/sun7i-a20.dtsi | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+> index e529e4ff2174..f46af8675cfa 100644
+> --- a/arch/arm/boot/dts/sun7i-a20.dtsi
+> +++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+> @@ -781,6 +781,14 @@
+>   				function = "ir1";
+>   			};
+>   
+> +			lcd_rgb666_pins: lcd_rgb666@0 {
+
+I point you to this Thread and back:
+https://lists.freedesktop.org/archives/dri-devel/2018-March/170688.html
+
+I did the same for rgb888, so good part is discussed.
+
+IMHO I would:
+- call lcd0_rgb666_pins, since this is for LCD0 interface
+- same as above, call lcd0-rgb666, take care about using "-" instad of 
+"_" that can cause DTC warnings.
+- remove @0 since only this set can achieve LCD0 RGB666, and I
+   don't think there will be other combinations.
+
+Kind regards
+
+-- 
+Giulio Benetti
+CTO
+
+MICRONOVA SRL
+Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
+Tel. 049/8931563 - Fax 049/8931346
+Cod.Fiscale - P.IVA 02663420285
+Capitale Sociale € 26.000 i.v.
+Iscritta al Reg. Imprese di Padova N. 02663420285
+Numero R.E.A. 258642
+
+
+> +				pins = "PD2", "PD3", "PD4", "PD5", "PD6", "PD7",
+> +				       "PD10", "PD11", "PD12", "PD13", "PD14", "PD15",
+> +				       "PD18", "PD19", "PD20", "PD21", "PD22", "PD23",
+> +				       "PD24", "PD25", "PD26", "PD27";
+> +				function = "lcd0";
+> +			};
+> +
+>   			mmc0_pins_a: mmc0@0 {
+>   				pins = "PF0", "PF1", "PF2",
+>   				       "PF3", "PF4", "PF5";
+> 
