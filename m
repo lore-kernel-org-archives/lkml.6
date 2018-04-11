@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/dXeBS9IL/ehvlQBEFq5A7yU9oItWRIvkn00Lu3njizI41NEnNhwB4aVLFa+C7z/CbnPJ2
-ARC-Seal: i=1; a=rsa-sha256; t=1523473305; cv=none;
+X-Google-Smtp-Source: AIpwx49llOttl/O2ofmAMyyktKBhSBsX0PwwXcmRCrWHaoB6OeU1+PQqLFs+YjA1iXC5Cy0lMvTn
+ARC-Seal: i=1; a=rsa-sha256; t=1523473302; cv=none;
         d=google.com; s=arc-20160816;
-        b=n4KXW3AQLrfTJ3itHdoD2BYZqmEkZf4o/kgAQlGWRyQBKxnu1v5u/k4vjdx8jLdesO
-         cE9fgkvU4jMkWM0SoEFPo5R/yG7MhFCQRbJyBqwOdomQxYEYZNjXnC9tUThC88S7Ne/s
-         yi4aXfO0+VWUAH5X6KvUl/E73Z3Do5NjA3eEH7LsHlaw4b/Fc1+QGygMEKHn4LuRh9XY
-         0YvmbKr51aGUkDBj2ypN/jz4vR67ZAz/mOL6ME3lHBCfaBYo2jLWEqnePRhHECB0uZME
-         ofm2jdV2ZIO/8/KNsuUi4DSRx5shV/an9APZN816rKsaVQsSEGZJm5bFSdCZHBbDoZsk
-         y1/w==
+        b=DzpcdxrfYJnpppyxW/2RshzWMeP19B+R0zCUydwvLLYYpz5GXAugFgWs8lzexRdLwX
+         2bqyl2Gi2cZ8+qffIqbmZd/GbjImIuiS8ub/4dW1wh4Ys51ueQGuZODYYHPV9+1JE5mI
+         xGFsu7zf2J8XJUNE475xiBUh+msqKmU7hxVqvi8HU+C7jGZoYt9z8y0LpV0MF0fY0nhT
+         eh3PFbJaIqUmiqrnmXZI6luc1pSTjUpcn6kLzqmytXfhzjvkwlAcGa4qPrMMo8HR0rK2
+         uYwxuEzy7vxnygLTbSuaGr2lyicgNS8Eg3UcZ4icHu9/aFP4ZVCB20HLT4Wu//hzJsnL
+         PphA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=jEG23qcvPPgoiNKFrERcnHjUhuqot4s40UjOwtfh1eY=;
-        b=cWRJ23FDJPkuyhTJFyYhJev15Rd/CYLtXjhIbmVrpB7zlCqU9tZ8Ci1Q7pncIvlNlT
-         BuF5p2QE16KGgd5iF5q060AQSsLCgQTqUc/m7sQtk8xgZCOMl5kk8HR9l1y2tp4OHkT9
-         2F2HKMJ5m6SYmGj0XnxHa5kUKaA118Dsj6Si2jegJanLXzi6MmFVvRcQI740gCsbhbPD
-         LI+R9s72VbvjGqP8e+EhSjjL6PqYejqNHkffgnj3rLWx6dBISEB0SgPNS5yYu4UHM7/T
-         Wjf6tsbpM0yH9Pbaz48My6HmkaQKuto5vEaMB9M6QsSdGjxnCIKcZqGY6w4ZwFF8ACeD
-         R5bw==
+        bh=zaV7DlynXxIP7Uu9rqPuOb8M+RNV+tQHophbotRg6u8=;
+        b=JaZe5PQBfLAYbM+LgXxNfLDZV38g37PjMMm5NxrU1y8+gNOyGQJYhTLWwBIWiRdvmq
+         eNaCuqQmaxYwivuc1/EJWowy+8KrceJgZfvUB5DuF9A0hZEfJzFFY7BU4vkoIzOjBKkL
+         wquNjg8V/dDP3cH02ALb+igP27oqKQ8u5X17U7Aem+mmbSskQT2WCs21kCGHLUEIr+xq
+         H6bCgg0ylww0voAf3n28/GD39/4vYoccbqIvgHZd2pyRWkMa9JO6LoTxcKBRzhm4o0Pf
+         kYF03Kf8tegBjUtma1+ClyqhTCyt5GQTjCcfcaVoA85Atr5N+byNIn5bxNjVAoyFMFiu
+         G4sg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Haim Dreyfuss <haim.dreyfuss@intel.com>,
-	Luca Coelho <luciano.coelho@intel.com>,
+	"Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Wim Van Sebroeck <wim@iguana.be>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 199/310] iwlwifi: mvm: Fix command queue number on d0i3 flow
-Date: Wed, 11 Apr 2018 20:35:38 +0200
-Message-Id: <20180411183631.150473043@linuxfoundation.org>
+Subject: [PATCH 4.9 198/310] watchdog: f71808e_wdt: Add F71868 support
+Date: Wed, 11 Apr 2018 20:35:37 +0200
+Message-Id: <20180411183631.113094178@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477544789219223?=
-X-GMAIL-MSGID: =?utf-8?q?1597477544789219223?=
+X-GMAIL-THRID: =?utf-8?q?1597477541911767052?=
+X-GMAIL-MSGID: =?utf-8?q?1597477541911767052?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,39 +51,127 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Haim Dreyfuss <haim.dreyfuss@intel.com>
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
 
 
-[ Upstream commit c72c37b7f392ad7edc10b6092fa48c632ba6f4ed ]
+[ Upstream commit 166fbcf88fdafa02f784ec25ac64745c716b2de0 ]
 
-During d0i3 flow we flush all the queue except from the command queue.
-Currently, in this flow the command queue is hard coded to 9.
-In DQA the command queue number has changed from 9 to 0.
-Fix that.
+This adds support for watchdog part of Fintek F71868 Super I/O chip to
+f71808e_wdt driver.
 
-This fixes a problem in runtime PM resume flow.
+The F71868 chip is, in general, very similar to a F71869, however it has
+slightly different set of available reset pulse widths.
 
-Fixes: 097129c9e625 ("iwlwifi: mvm: move cmd queue to be #0 in dqa mode")
-Signed-off-by: Haim Dreyfuss <haim.dreyfuss@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Tested on MSI A55M-P33 motherboard.
+
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@iguana.be>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/mvm.h |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/watchdog/Kconfig       |    7 ++++---
+ drivers/watchdog/f71808e_wdt.c |   27 ++++++++++++++++++++-------
+ 2 files changed, 24 insertions(+), 10 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
-@@ -1666,8 +1666,11 @@ int iwl_mvm_find_free_queue(struct iwl_m
-  */
- static inline u32 iwl_mvm_flushable_queues(struct iwl_mvm *mvm)
- {
-+	u32 cmd_queue = iwl_mvm_is_dqa_supported(mvm) ? IWL_MVM_DQA_CMD_QUEUE :
-+		IWL_MVM_CMD_QUEUE;
-+
- 	return ((BIT(mvm->cfg->base_params->num_of_queues) - 1) &
--		~BIT(IWL_MVM_CMD_QUEUE));
-+		~BIT(cmd_queue));
- }
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -799,11 +799,12 @@ config EBC_C384_WDT
+ 	  the timeout module parameter.
  
- static inline
+ config F71808E_WDT
+-	tristate "Fintek F71808E, F71862FG, F71869, F71882FG and F71889FG Watchdog"
++	tristate "Fintek F718xx, F818xx Super I/O Watchdog"
+ 	depends on X86
+ 	help
+-	  This is the driver for the hardware watchdog on the Fintek
+-	  F71808E, F71862FG, F71869, F71882FG and F71889FG Super I/O controllers.
++	  This is the driver for the hardware watchdog on the Fintek F71808E,
++	  F71862FG, F71868, F71869, F71882FG, F71889FG, F81865 and F81866
++	  Super I/O controllers.
+ 
+ 	  You can compile this driver directly into the kernel, or use
+ 	  it as a module.  The module will be called f71808e_wdt.
+--- a/drivers/watchdog/f71808e_wdt.c
++++ b/drivers/watchdog/f71808e_wdt.c
+@@ -57,6 +57,7 @@
+ #define SIO_F71808_ID		0x0901	/* Chipset ID */
+ #define SIO_F71858_ID		0x0507	/* Chipset ID */
+ #define SIO_F71862_ID		0x0601	/* Chipset ID */
++#define SIO_F71868_ID		0x1106	/* Chipset ID */
+ #define SIO_F71869_ID		0x0814	/* Chipset ID */
+ #define SIO_F71869A_ID		0x1007	/* Chipset ID */
+ #define SIO_F71882_ID		0x0541	/* Chipset ID */
+@@ -101,7 +102,7 @@ MODULE_PARM_DESC(timeout,
+ static unsigned int pulse_width = WATCHDOG_PULSE_WIDTH;
+ module_param(pulse_width, uint, 0);
+ MODULE_PARM_DESC(pulse_width,
+-	"Watchdog signal pulse width. 0(=level), 1 ms, 25 ms, 125 ms or 5000 ms"
++	"Watchdog signal pulse width. 0(=level), 1, 25, 30, 125, 150, 5000 or 6000 ms"
+ 			" (default=" __MODULE_STRING(WATCHDOG_PULSE_WIDTH) ")");
+ 
+ static unsigned int f71862fg_pin = WATCHDOG_F71862FG_PIN;
+@@ -119,13 +120,14 @@ module_param(start_withtimeout, uint, 0)
+ MODULE_PARM_DESC(start_withtimeout, "Start watchdog timer on module load with"
+ 	" given initial timeout. Zero (default) disables this feature.");
+ 
+-enum chips { f71808fg, f71858fg, f71862fg, f71869, f71882fg, f71889fg, f81865,
+-	     f81866};
++enum chips { f71808fg, f71858fg, f71862fg, f71868, f71869, f71882fg, f71889fg,
++	     f81865, f81866};
+ 
+ static const char *f71808e_names[] = {
+ 	"f71808fg",
+ 	"f71858fg",
+ 	"f71862fg",
++	"f71868",
+ 	"f71869",
+ 	"f71882fg",
+ 	"f71889fg",
+@@ -252,16 +254,23 @@ static int watchdog_set_timeout(int time
+ static int watchdog_set_pulse_width(unsigned int pw)
+ {
+ 	int err = 0;
++	unsigned int t1 = 25, t2 = 125, t3 = 5000;
++
++	if (watchdog.type == f71868) {
++		t1 = 30;
++		t2 = 150;
++		t3 = 6000;
++	}
+ 
+ 	mutex_lock(&watchdog.lock);
+ 
+-	if        (pw <=    1) {
++	if        (pw <=  1) {
+ 		watchdog.pulse_val = 0;
+-	} else if (pw <=   25) {
++	} else if (pw <= t1) {
+ 		watchdog.pulse_val = 1;
+-	} else if (pw <=  125) {
++	} else if (pw <= t2) {
+ 		watchdog.pulse_val = 2;
+-	} else if (pw <= 5000) {
++	} else if (pw <= t3) {
+ 		watchdog.pulse_val = 3;
+ 	} else {
+ 		pr_err("pulse width out of range\n");
+@@ -354,6 +363,7 @@ static int watchdog_start(void)
+ 			goto exit_superio;
+ 		break;
+ 
++	case f71868:
+ 	case f71869:
+ 		/* GPIO14 --> WDTRST# */
+ 		superio_clear_bit(watchdog.sioaddr, SIO_REG_MFUNCT1, 4);
+@@ -792,6 +802,9 @@ static int __init f71808e_find(int sioad
+ 		watchdog.type = f71862fg;
+ 		err = f71862fg_pin_configure(0); /* validate module parameter */
+ 		break;
++	case SIO_F71868_ID:
++		watchdog.type = f71868;
++		break;
+ 	case SIO_F71869_ID:
+ 	case SIO_F71869A_ID:
+ 		watchdog.type = f71869;
