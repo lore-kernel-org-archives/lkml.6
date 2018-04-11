@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3397032-1523481411-2-4283387679810802298
+X-Cyrus-Session-Id: sloti22d1t05-3397032-1523481401-2-13347712260437825668
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523481411; b=pvH95tW+I+PpSwZea0Qkhub2MlY2/t8it9tb++SD9420sbwLb2
-    oGfdwJ5r0c+RyPndiHRQ2x4CBxxCz1Y1Cs2RYP7HMWqRITmr/LhyEzm+a/+wyBY8
-    D9rN9L2YZvDALwDkEP2no3746Zc8p5ZQlgdxJwW5D4jEWSxc4rS4C3hYiVmpBE14
-    gVqs/TkIEsypY7uItgzVA8nWMUtf3nPz9Lx7v8NGe5CjlyKs8PlHLNk14C0Uif4E
-    eBR/12dn4viKbRlUCXUWFnOewoc6ZCKdZtslrzfbktcdIkTpwc7zyn3bXnRgGIPw
-    ag8t6p3WVwqtbPgFz1qsNjckYChS5QVA8HqQ==
+    1523481401; b=G5Ga7orVLJdXh1B7I3spH/NUHYm7Xhj/ue85NkcgCOruXyR/hd
+    aO1evVxLWPy5EjaeoMbL7P3yzAACFpMygn8yLx/7fge0f7xOMwKopmNm+M0mU7d6
+    qkxHteJpJaS1CXSdy/hqc7bD9EhX1/UudeEP5B0fq3ol0aMMGi5hfYjHCBMNXR+9
+    8NCcQeV2pF3r6LBLrESjfWhErLye4Wr5GCpTL5PB7doPkwY8Z1AnaLFUDQum/JCO
+    GB599D9GJskb8HUaLUoDsGJoWeiFyjxV43iWPCgwllkPqzaz9VX8eQ63jxxjRECp
+    jDJuzT0MXPBVJMhYP0HVjh4I9E9kzr6i6dCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523481411; bh=2m/rV+94nFnwdXOyIvaE/YUkMuix0g
-    tUQSq0byVFApM=; b=NOHY0mZA9exNjrZD+MEqlcbuWo+YvfW468PP/zkgVc7FMI
-    eVvQ1ji+FfFKcq0VSbGjlgaH/0nUFYF4nZ1aQ9SWOaJvXhFzTdM5gXx7gCmwI9da
-    F5K6vp+z7otONpiS9q3Jc7ZjuC9LnbFRH3B/aSex/KcxrTYiGz0d+XZEHNTV4K6g
-    g86KLrgLCL3n8BqOAu4suAIE8GS2ePTKwYoIPj77QyGvbtk53OrdUss4ObgXrqzZ
-    /ShCkJ6wlFyVffcq1NHK2FZY+gaTBtnleH6YiZPC97kATtbgtABjlKgdPGBp++lX
-    WckVMFyYMQ/UmNgFf/VoWVJ1vT92m0+/d2IOHQbw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523481401; bh=nNmJjE+wgFcOrdvZO/pgJDsJXPtXqA
+    MdOb+OVgYiDmY=; b=jYKtwFqS5ZQfYcV/m1gDZLzs3fnxbnlCqdzg43pcZs+704
+    2WZwP7APoDbL3/IbVamVNP+btS0y/vjpHt/ahkQjcAVfYqWk8UwPq0FDG2foFq1h
+    SXVI3/il4qr5R5+9CH6zxOh6nypMIaBkwWS//xARQINVqzkBglk97YrZ8y52dqfT
+    9dFbXsiDCZ95TMIHTxfg0pxY9GGLJ5u/5NEGQ54Ilqs/JTN74/cuYE4i97S9Az8N
+    zt2sfb/0zK0Ysl2fkxrqLp+isHh1quCB4FcRYmGYxRJyq0KABbjGVKgwouoURF+x
+    MqN9/H1OavXIF8CozxK7tTgZ+ZcVsfa99eQuNvUQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,31 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJ/GmOrloWm3dM62SvEuo6UlKem27dE4S7agShcjOFwt6UPCR/sloS2AQIC9NWeYcUX91/gcYdH/FYwCE9toAJkkkeztNaauKeVaG9hNaRYi6RCMiz6E
-    0sYRZ8vEzKTOXBvX7qK3DV9JurM57RQYCF3ntunntb+vP975LqrpdJNKfcN9oKcWEcl5M2NGr36iwlSKxjRP/5IWCLcux8YNWwB9RL5oT7S+d9DOVadW2Vdw
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHVK0nNPd72Hh2SyPwmkukgH/nClVuDAHu+Ct5jBXotwIQp38FpHEHanaGL80n2RTQN54wMiCfL9RI6we8dBYA4RUSM6duj8HbsNew/ryJnlmGh8EBVJ
+    L/UYnzhwRHUacF4QhXkbFpENsUgsk3hpCFJvOCzFrPov2R5UbBoSGLEj3JEFZGNQYfzDg5oMh2yXxHTY0X3pO7OZ5w+GY5H+5GIY8Nr+Ds9PqPo/Pe8jtwlj
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=Byx-y9mGAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=gDawn3u-IPWhMShO_m0A:9 a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=sozttTNsAAAA:8 a=P1BnusSwAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=_tSFY5Edfl19zN2ddYsA:9 a=QEXdDO2ut3YA:10 a=aeg5Gbbo78KNqacMgKqU:22
+    a=D0XLA9XvdZm18NrgonBM:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754633AbeDKSka (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:40:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56454 "EHLO
+        id S1754657AbeDKSke (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:40:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56482 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754623AbeDKSk0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:40:26 -0400
+        with ESMTP id S1754623AbeDKSkd (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:40:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 062/121] qlcnic: Fix a sleep-in-atomic bug in qlcnic_82xx_hw_write_wx_2M and qlcnic_82xx_hw_read_wx_2M
-Date: Wed, 11 Apr 2018 20:36:05 +0200
-Message-Id: <20180411183500.024221483@linuxfoundation.org>
+Subject: [PATCH 3.18 064/121] drm/omap: fix tiled buffer stride calculations
+Date: Wed, 11 Apr 2018 20:36:07 +0200
+Message-Id: <20180411183500.119870435@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -93,40 +93,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jia-Ju Bai <baijiaju1990@163.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
 
-[ Upstream commit 5ea6d691aac6c93b790f0905e3460d44cc4c449b ]
+[ Upstream commit cc8dd7661ccc2d8dc88921da8e6cc7c2fcdb0341 ]
 
-The driver may sleep under a write spin lock, and the function
-call path is:
-qlcnic_82xx_hw_write_wx_2M (acquire the lock by write_lock_irqsave)
-  crb_win_lock
-    qlcnic_pcie_sem_lock
-      usleep_range
-qlcnic_82xx_hw_read_wx_2M (acquire the lock by write_lock_irqsave)
-  crb_win_lock
-    qlcnic_pcie_sem_lock
-      usleep_range
+omap_gem uses page alignment for buffer stride. The related calculations
+are a bit off, though, as byte stride of 4096 gets aligned to 8192,
+instead of 4096.
 
-To fix it, the usleep_range is replaced with udelay.
+This patch changes the code to use DIV_ROUND_UP(), which fixes those
+calculations and makes them more readable.
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/omapdrm/omap_gem.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_hw.c
-@@ -341,7 +341,7 @@ qlcnic_pcie_sem_lock(struct qlcnic_adapt
- 			}
- 			return -EIO;
- 		}
--		usleep_range(1000, 1500);
-+		udelay(1200);
- 	}
+--- a/drivers/gpu/drm/omapdrm/omap_gem.c
++++ b/drivers/gpu/drm/omapdrm/omap_gem.c
+@@ -158,7 +158,7 @@ static void evict_entry(struct drm_gem_o
+ 	size_t size = PAGE_SIZE * n;
+ 	loff_t off = mmap_offset(obj) +
+ 			(entry->obj_pgoff << PAGE_SHIFT);
+-	const int m = 1 + ((omap_obj->width << fmt) / PAGE_SIZE);
++	const int m = DIV_ROUND_UP(omap_obj->width << fmt, PAGE_SIZE);
  
- 	if (id_reg)
+ 	if (m > 1) {
+ 		int i;
+@@ -415,7 +415,7 @@ static int fault_2d(struct drm_gem_objec
+ 	 * into account in some of the math, so figure out virtual stride
+ 	 * in pages
+ 	 */
+-	const int m = 1 + ((omap_obj->width << fmt) / PAGE_SIZE);
++	const int m = DIV_ROUND_UP(omap_obj->width << fmt, PAGE_SIZE);
+ 
+ 	/* We don't use vmf->pgoff since that has the fake offset: */
+ 	pgoff = ((unsigned long)vmf->virtual_address -
