@@ -1,87 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753309AbeDKPWS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 11:22:18 -0400
-Received: from foss.arm.com ([217.140.101.70]:50616 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752664AbeDKPWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 11:22:17 -0400
-Date: Wed, 11 Apr 2018 16:22:12 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        boqun.feng@gmail.com, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH 2/2] locking/qspinlock: Limit # of spins in
- _Q_PENDING_VAL wait loop
-Message-ID: <20180411152211.6ggp4c3l64jij67x@armageddon.cambridge.arm.com>
-References: <1523297332-22720-1-git-send-email-longman@redhat.com>
- <1523297332-22720-2-git-send-email-longman@redhat.com>
+        id S1753077AbeDKPYC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 11:24:02 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:42480 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752211AbeDKPYA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 11:24:00 -0400
+X-Google-Smtp-Source: AIpwx49qyciH3DHvvGdjpCaVPz5aRs0QNliF7KTd98mOX43ZC5OqDAdWkqG9udp9cfU2s+v1ga/VHA==
+Subject: Re: [PATCHv2] mtd: spi-nor: Fix Cadence QSPI page fault kernel panic
+To: thor.thayer@linux.intel.com, cyrille.pitchen@wedev4u.fr,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        boris.brezillon@bootlin.com, richard@nod.at
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1522073537-27386-1-git-send-email-thor.thayer@linux.intel.com>
+ <0b460613-4ac2-c4d8-429e-248a4742a408@linux.intel.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <c009725f-dbbc-d4b1-4f67-6cae7cdf6f05@gmail.com>
+Date: Wed, 11 Apr 2018 17:23:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523297332-22720-2-git-send-email-longman@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <0b460613-4ac2-c4d8-429e-248a4742a408@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Waiman,
+On 04/11/2018 05:17 PM, Thor Thayer wrote:
+> Hi. Any comments on this patch?
 
-On Mon, Apr 09, 2018 at 02:08:52PM -0400, Waiman Long wrote:
-> @@ -311,13 +320,19 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
->  		return;
->  
->  	/*
-> -	 * wait for in-progress pending->locked hand-overs
-> +	 * wait for in-progress pending->locked hand-overs with a
-> +	 * limited number of spins.
->  	 *
->  	 * 0,1,0 -> 0,0,1
->  	 */
->  	if (val == _Q_PENDING_VAL) {
-> -		while ((val = atomic_read(&lock->val)) == _Q_PENDING_VAL)
-> +		int cnt = _Q_PENDING_LOOP;
-> +
-> +		while ((val = atomic_read(&lock->val)) == _Q_PENDING_VAL) {
-> +			if (!--cnt)
-> +				goto queue;
->  			cpu_relax();
-> +		}
->  	}
+None other than
 
-In my model, the pathological case is not this loop but the following
-one (trylock || pending):
+Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
 
-P0:					P1:
-queued_spin_lock() fails		queued_spin_lock() succeeds
-queued_spin_lock_slowpath()
-	val == _Q_LOCKED_VAL
-	new = _Q_LOCKED_VAL |
-		_Q_PENDING_VAL
-					queued_spin_unlock()
-						lock->val == 0
-	cmpxchg(&lock->val, val, new)
-		fails
-	val = old (0)
-	repeat for (;;) loop:
-	new = _Q_LOCKED_VAL
-					queued_spin_lock() succeeds
-						lock->val == _Q_LOCKED_VAL
-	cmpxchg(&lock->val, val, new)
-		fails
-	val = old (_Q_LOCKED_VAL)
-	repeat for (;;) loop:
+sorry for the delay.
 
-	... and we are back to the P0 state above when it first entered
-	the loop, hence no progress. P1 never enters slowpath.
+btw stop top-posting please.
 
-I think the pending bounded loop in your patch is needed for a three CPU
-scenario where two of them can hand over _Q_PENDING_VAL while the third
-doesn't make progress. I tried modeling 3 CPUs to see but the tool still
-hits the for (;;) loop case rather than pending wait loop. Maybe a
-combination of Will's changes to the (trylock || pending) loop with your
-bounded pending hand-over?
+> On 03/26/2018 09:12 AM, thor.thayer@linux.intel.com wrote:
+>> From: Thor Thayer <thor.thayer@linux.intel.com>
+>>
+>> The current Cadence QSPI driver caused a kernel panic when loading
+>> a Root Filesystem from QSPI. The problem was caused by reading more
+>> bytes than needed because the QSPI operated on 4 bytes at a time.
+>> <snip>
+>> [    7.947754] spi_nor_read[1048]:from 0x037cad74, len 1 [bfe07fff]
+>> [    7.956247] cqspi_read[910]:offset 0x58502516, buffer=bfe07fff
+>> [    7.956247]
+>> [    7.966046] Unable to handle kernel paging request at virtual
+>> address bfe08002
+>> [    7.973239] pgd = eebfc000
+>> [    7.975931] [bfe08002] *pgd=2fffb811, *pte=00000000, *ppte=00000000
+>> </snip>
+>> Notice above how only 1 byte needed to be read but by reading 4 bytes
+>> into the end of a mapped page, an unrecoverable page fault occurred.
+>>
+>> This patch uses a temporary buffer to hold the 4 bytes read and then
+>> copies only the bytes required into the buffer. A min() function is
+>> used to limit the length to prevent buffer overflows.
+>>
+>> Request testing of this patch on other platforms. This was tested
+>> on the Intel Arria10 SoCFPGA DevKit.
+>>
+>> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+
+[...]
+
 
 -- 
-Catalin
+Best regards,
+Marek Vasut
