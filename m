@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3269524-1523477432-2-132024114137467707
+X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477417-2-495044910116704021
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477431; b=MHCzlUCI703+Otl5N7U0pnpN2Ag/6Ax+jjiMAJHz5IsJZQGVfD
-    VSUM1mlytjvpkq/FZHu5T8hNZkwWUIi0ZfmFpiXWZxej1sODfQ7qxJKsunxeCBCK
-    3i+Q8e142x4b4u9rEN9Mgh26TIPtQEwNPs2BTpoDWWziuaIgzOdjl4mzF3PqM/h9
-    qssbjkqKqRFKXCAT+PNJRbaGUo6Z+KuiVgrRTotR6DM9bjHrBUtfkRnSgotng3mN
-    Nue6k8+DIjE8ae9ZF9MxkZGt8jakY9+rfhgCDY88nDAl9R+eYevmr7zJBWJnvqMZ
-    3rt93SL9U437KHdostJua21Gy/8LLe4T2SBw==
+    1523477417; b=vNbSHwHbKMEqTDKxF3kx+WeHHIkprhr9KVewV6ZiQEX9rej7P1
+    gxJ7rrhvFfEQN+kRCNB1mXx/L9AduGYph6AaYlR337SrUJycFyz5ee+VkErWPWsf
+    sJqvskKiEFU9x18yg3g0fMBOzynVYrDPAERVTtz+oNGjo0vE5tUO5E8LrzO3B/JI
+    ZBol8KiiDVqi1/XXPAZI/tBH2ywZrvwLHtHWsm9lrS/74NLkV4R29OLUGLpoQiHe
+    V3VNWusX5ogOGf/x12HmHEsfvaHiI26gwyf+ePSdS/gp+dq7ZSrxZigbg8EhjYn7
+    wArpSyDcZ8MX2gsYX0j94XejvZXBlmz2QaIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523477431; bh=10VSAdycEqcegQcYrNhkw2VhnIOSHU
-    Da85cPEJSRivI=; b=DIS9e061+f2awEFn17ToJTLNRfT1otpsVbCftbMWDMYZ4s
-    FjOj816XsIHD6US8LZ7y6hcKxv9PKbzsyXF9cQkR1JApXaThoeJRmRLbwmDFlJL/
-    82lKLVFyis3CcRt7BV1TOgvOH5rNovR+L21BHCD4rS8ShQ+UAxQv46SXIIAiFWd7
-    ni2XtQ1UGF31gFWyxD5Y5WejoqEAlPrOS8Iy1HxR3wgVVPaAl7Ft/uNcfFHI4eAX
-    YINLHbmgaHDuf32TB4VkHwy0fvF5bAvwJfHe42zOl/5yJtU18E9kswb6E/zcs54u
-    dhoxvtjxNBGpaOA5GQWqzRS+D5vziSz59Y3zba8A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523477417; bh=iPEUEbsMX0Gpj1Pl0Hu5NAkYMssaZy
+    +xYdk9ZGC0b9U=; b=Z/tfQo3OsLPFumIiar0Kh76luSfKUg/0WUFyZp6Lhnmg7E
+    0G8Ejdl2lgShYX8+zhRy7EiG/SIr01eKvdJ4llrsHZDE/fyFcG2l/+ofZbjS46VT
+    O/YXJz4xRlcA1RiTsK6+66jBBVentXQc/brS0HY8cPiMkF4IbOB54QbQ3Le+cFV5
+    iG+lTqw20SnQqjigLOKSSE8eWrq5tITNMYHb517zEDY8fKVRL5oWR+pdn87EBr5E
+    +g2KEuGlELrTe91Tx+F2/EgEVag3vquBtmW+35qToae0j59yXnKB94/iQlprNHHr
+    S6sXl0CLMa5nQjxjoufq4XBPZqYBdvlXI+PksgcQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,31 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIXd47Dlfb86Vmr1gZn05pACG8s1cZ2HK1bL+zxrjxqB08qA73rAiBGgNo0SuxlN6AWhrmImx/6YKmZYjhWJLTfBqL0dLvdcS4O0vxf/ocJPbKyT9x2J
-    /7jbmb2N7GiMXXM0zrC+axefLR9KBp1mgM+np3G84RxN4P8jY+vHKmXuwCjcVAp6gW8hKpQxCeb3kndLLqguWFOCQIZn8BuSqQ1VBTb+M8E60XR4OoXE3xI9
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfH6I/so5tneuyCdeCchVnpBbfL5nECGFcJDPWxCoNCka4W/hDNraYrHB8ysOSLpGKlbIOr4BVaZAdJYG1Cw64MCYOjcJUbnrAkABYqy7R4n9bbsRUeSU
+    +4+N5/0vdLP+BTsOjs9JLV5GTWjqLlPAnCXgwesFhiHsgge6QXcGlRW/diNqCC8L9/IJPdPxqnb6AxD4f23m7iiMCf9fT5QBue7OZkiX99pwjucHjsQUhVWW
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=8AirrxEcAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=wBxbjNxAvzM0_IQ4nDkA:9 a=QEXdDO2ut3YA:10 a=ST-jHhOKWsTCqRlWije3:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=BGDGbZgwFsv30h0h_0oA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756128AbeDKUKQ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:10:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34604 "EHLO
+        id S933533AbeDKSyj (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:54:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34542 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932694AbeDKSyj (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:54:39 -0400
+        with ESMTP id S933520AbeDKSyd (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:54:33 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Jessica Yu <jeyu@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 049/310] ARM: dts: imx6qdl-wandboard: Fix audio channel swap
-Date: Wed, 11 Apr 2018 20:33:08 +0200
-Message-Id: <20180411183624.358058567@linuxfoundation.org>
+Subject: [PATCH 4.9 048/310] powerpc/modules: If mprofile-kernel is enabled add it to vermagic
+Date: Wed, 11 Apr 2018 20:33:07 +0200
+Message-Id: <20180411183624.315717395@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -93,33 +93,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
 
-[ Upstream commit 79935915300c5eb88a0e94fa9148a7505c14a02a ]
+[ Upstream commit 43e24e82f35291d4c1ca78877ce1b20d3aeb78f1 ]
 
-When running a stress playback/stop loop test on a mx6wandboard channel
-swaps can be noticed randomly.
+On powerpc we can build the kernel with two different ABIs for mcount(), which
+is used by ftrace. Kernels built with one ABI do not know how to load modules
+built with the other ABI. The new style ABI is called "mprofile-kernel", for
+want of a better name.
 
-Increasing the SGTL5000 LRCLK pad strength to its maximum value fixes
-the issue, so add the 'lrclk-strength' property to avoid the audio
-channel swaps.
+Currently if we build a module using the old style ABI, and the kernel with
+mprofile-kernel, when we load the module we'll oops something like:
 
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+  # insmod autofs4-no-mprofile-kernel.ko
+  ftrace-powerpc: Unexpected instruction f8810028 around bl _mcount
+  ------------[ cut here ]------------
+  WARNING: CPU: 6 PID: 3759 at ../kernel/trace/ftrace.c:2024 ftrace_bug+0x2b8/0x3c0
+  CPU: 6 PID: 3759 Comm: insmod Not tainted 4.11.0-rc3-gcc-5.4.1-00017-g5a61ef74f269 #11
+  ...
+  NIP [c0000000001eaa48] ftrace_bug+0x2b8/0x3c0
+  LR [c0000000001eaff8] ftrace_process_locs+0x4a8/0x590
+  Call Trace:
+    alloc_pages_current+0xc4/0x1d0 (unreliable)
+    ftrace_process_locs+0x4a8/0x590
+    load_module+0x1c8c/0x28f0
+    SyS_finit_module+0x110/0x140
+    system_call+0x38/0xfc
+  ...
+  ftrace failed to modify
+  [<d000000002a31024>] 0xd000000002a31024
+   actual:   35:65:00:48
+
+We can avoid this by including in the vermagic whether the kernel/module was
+built with mprofile-kernel. Which results in:
+
+  # insmod autofs4-pg.ko
+  autofs4: version magic
+  '4.11.0-rc3-gcc-5.4.1-00017-g5a61ef74f269 SMP mod_unload modversions '
+  should be
+  '4.11.0-rc3-gcc-5.4.1-00017-g5a61ef74f269-dirty SMP mod_unload modversions mprofile-kernel'
+  insmod: ERROR: could not insert module autofs4-pg.ko: Invalid module format
+
+Fixes: 8c50b72a3b4f ("powerpc/ftrace: Add Kconfig & Make glue for mprofile-kernel")
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Acked-by: Balbir Singh <bsingharora@gmail.com>
+Acked-by: Jessica Yu <jeyu@redhat.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/imx6qdl-wandboard.dtsi |    1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/include/asm/module.h |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-wandboard.dtsi
-@@ -88,6 +88,7 @@
- 		clocks = <&clks IMX6QDL_CLK_CKO>;
- 		VDDA-supply = <&reg_2p5v>;
- 		VDDIO-supply = <&reg_3p3v>;
-+		lrclk-strength = <3>;
- 	};
- };
+--- a/arch/powerpc/include/asm/module.h
++++ b/arch/powerpc/include/asm/module.h
+@@ -14,6 +14,10 @@
+ #include <asm-generic/module.h>
  
+ 
++#ifdef CC_USING_MPROFILE_KERNEL
++#define MODULE_ARCH_VERMAGIC	"mprofile-kernel"
++#endif
++
+ #ifndef __powerpc64__
+ /*
+  * Thanks to Paul M for explaining this.
