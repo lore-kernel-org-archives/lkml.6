@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48UQhZjUOLLy6DsmqN/aJ8jzaiAyOGLkRsiAkw2ImUg06Kl+0SwlTHSDrSYH6jqrDV9k6vQ
-ARC-Seal: i=1; a=rsa-sha256; t=1523472094; cv=none;
+X-Google-Smtp-Source: AIpwx49eVSDy2e/xh8LozxhpPk3GP77G65a1CB4qvcZQG6k/PCbGRwfJLe3wWtpi2stSrqXYW8xx
+ARC-Seal: i=1; a=rsa-sha256; t=1523472091; cv=none;
         d=google.com; s=arc-20160816;
-        b=jN9r8yMe/hxJLTq75+4suWi/rwKgjMn3aWMoAXO6K8t3GNbE4YM4f8r6WAhZWkypRP
-         60yGrMF8OQdyRxRiNE+lwnhZGU/ChQuPvckQoNfGc3Pf0QRQwQJHZ80RD//Zc0UxgiFb
-         1WJclzXZQgrRNQ2uFe+k1ecXXhbJBQ9jsrjmfE6iwi/WHKvGuivtH5cugJoz5ZCIEbfD
-         KnXPa/fdZSRUZZUiLp6w7UkRtdbS0DtSQALOyqvjd0vu2l+CD7PsVbvUuJclOB93PrL2
-         5n8Y+KSwrlPdbOdQcOGKpBjDvj7LaohV+TZik8Mns9Xk0LHdAuBgbFVXE9MfgzxH4tfQ
-         7zVw==
+        b=kckfR5qIRozIKtmcGAqY9ZmwS7M6v6n0Y61HiSUVWgsw1k9N5u7NORIQ7SYcPI7ICO
+         2zyg5HLVM4WtU3RKE8dBU45Bh6QJVtVJ3Z6VyWtLbTOmU8fYrwewSmYm+C7Ja3gZy0J/
+         aXl2TDGg1jJ/YDOmFEkppYBmj4E7XkVOIunTBWFEVJPTzngW/rwefG3k/IUGU5qMkld8
+         E2ECRGHTvBbwTM7RWlx0QupHOSUoPt5E9Bq0eJjRLrCBpm53pNzJdX0oRWh5nRxPFa3q
+         +U+vVIuDSBcAw0xbYyYbbRCfrP+8tK5vu3iITw7AbsC0ESCKSVakwE3tV4H09y6vAkRr
+         yGJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=SGTD7+9mtD1+nZQAaZClSfCBHJWc4Cg5bWIKJpwygEI=;
-        b=C8cqlY77xkCBkbDkIkPnn4hFBELQ72HRBy2Nw1IOT/yIFu1+rMkYWjGWqqVByLEZGl
-         WHB0YUKsjGfmZIq9EeR0g2/pCHSkcSNqw/Xzi81KelZBdVsVscBuWUvFWFTUDMC05W28
-         BN+k1+z3S05iUKueujm0bebfQdf0gSp2FNoAqCsIOgJVjc59d9RxqwoiEOFh1cEXYEHd
-         h1nxGv1Va1cVZgco9gaQYKJYpULOxTvsBXMO7i3dBLKBGbr+xdd2hLBDP1clOWvpsxEF
-         63/69+ZnGLyxrjooIBPYPBUEh2+bLrh04uo5wqEFKoPU01n4aY8tdf5kvyy2zM4LaZRL
-         y36A==
+        bh=zMAnRFXsau00kYSgVo5vNVa8G9PWHofA1lsQTVLrWLg=;
+        b=NTREZ9ae870xkQAhwLOtFuU6uzMQKauwuZwAOf8fJwJl7YAY84d/+TA/QtUe49Eqfx
+         jlmJ3LDaZ7vNGVFZTer+54K5Tn8szi6M7mb1tqxpAX1KnUBTaTj5YvGcAG1Qkdn7MC93
+         od/W4yZK9uQJY/lz/CkZ7RUWHtC8O2jyfR94hdyDFxeRuZzQNyonT/kOBZL1Xubx1Sln
+         muQTszBHkmSQecdCkvz7YpglOsuMnMHTmmgs5SV7UOp/Apr09RQaEZFo1RlZgtSX2IUd
+         kD5u+1J23dBnNSQLPlMFUKlmUpRGssearYJYuGbVvnS0zi1bTvgt5dFArHt3riz+lQWu
+         zN1Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
-	Xin Long <lucien.xin@gmail.com>,
+	Yuval Mintz <Yuval.Mintz@cavium.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 083/121] sctp: fix recursive locking warning in sctp_do_peeloff
-Date: Wed, 11 Apr 2018 20:36:26 +0200
-Message-Id: <20180411183501.265341602@linuxfoundation.org>
+Subject: [PATCH 3.18 082/121] bnx2x: Allow vfs to disable txvlan offload
+Date: Wed, 11 Apr 2018 20:36:25 +0200
+Message-Id: <20180411183501.203418408@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -44,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476274816601516?=
-X-GMAIL-MSGID: =?utf-8?q?1597476274816601516?=
+X-GMAIL-THRID: =?utf-8?q?1597476272462961684?=
+X-GMAIL-MSGID: =?utf-8?q?1597476272462961684?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,72 +50,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: "Mintz, Yuval" <Yuval.Mintz@cavium.com>
 
 
-[ Upstream commit 6dfe4b97e08ec3d1a593fdaca099f0ef0a3a19e6 ]
+[ Upstream commit 92f85f05caa51d844af6ea14ffbc7a786446a644 ]
 
-Dmitry got the following recursive locking report while running syzkaller
-fuzzer, the Call Trace:
- __dump_stack lib/dump_stack.c:16 [inline]
- dump_stack+0x2ee/0x3ef lib/dump_stack.c:52
- print_deadlock_bug kernel/locking/lockdep.c:1729 [inline]
- check_deadlock kernel/locking/lockdep.c:1773 [inline]
- validate_chain kernel/locking/lockdep.c:2251 [inline]
- __lock_acquire+0xef2/0x3430 kernel/locking/lockdep.c:3340
- lock_acquire+0x2a1/0x630 kernel/locking/lockdep.c:3755
- lock_sock_nested+0xcb/0x120 net/core/sock.c:2536
- lock_sock include/net/sock.h:1460 [inline]
- sctp_close+0xcd/0x9d0 net/sctp/socket.c:1497
- inet_release+0xed/0x1c0 net/ipv4/af_inet.c:425
- inet6_release+0x50/0x70 net/ipv6/af_inet6.c:432
- sock_release+0x8d/0x1e0 net/socket.c:597
- __sock_create+0x38b/0x870 net/socket.c:1226
- sock_create+0x7f/0xa0 net/socket.c:1237
- sctp_do_peeloff+0x1a2/0x440 net/sctp/socket.c:4879
- sctp_getsockopt_peeloff net/sctp/socket.c:4914 [inline]
- sctp_getsockopt+0x111a/0x67e0 net/sctp/socket.c:6628
- sock_common_getsockopt+0x95/0xd0 net/core/sock.c:2690
- SYSC_getsockopt net/socket.c:1817 [inline]
- SyS_getsockopt+0x240/0x380 net/socket.c:1799
- entry_SYSCALL_64_fastpath+0x1f/0xc2
+VF clients are configured as enforced, meaning firmware is validating
+the correctness of their ethertype/vid during transmission.
+Once txvlan is disabled, VF would start getting SKBs for transmission
+here vlan is on the payload - but it'll pass the packet's ethertype
+instead of the vid, leading to firmware declaring it as malicious.
 
-This warning is caused by the lock held by sctp_getsockopt() is on one
-socket, while the other lock that sctp_close() is getting later is on
-the newly created (which failed) socket during peeloff operation.
-
-This patch is to avoid this warning by use lock_sock with subclass
-SINGLE_DEPTH_NESTING as Wang Cong and Marcelo's suggestion.
-
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Suggested-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Suggested-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: Yuval Mintz <Yuval.Mintz@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/socket.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c |   19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -1513,7 +1513,7 @@ static void sctp_close(struct sock *sk,
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+@@ -3876,15 +3876,26 @@ netdev_tx_t bnx2x_start_xmit(struct sk_b
+ 		/* when transmitting in a vf, start bd must hold the ethertype
+ 		 * for fw to enforce it
+ 		 */
++		u16 vlan_tci = 0;
+ #ifndef BNX2X_STOP_ON_ERROR
+-		if (IS_VF(bp))
++		if (IS_VF(bp)) {
+ #endif
+-			tx_start_bd->vlan_or_ethertype =
+-				cpu_to_le16(ntohs(eth->h_proto));
++			/* Still need to consider inband vlan for enforced */
++			if (__vlan_get_tag(skb, &vlan_tci)) {
++				tx_start_bd->vlan_or_ethertype =
++					cpu_to_le16(ntohs(eth->h_proto));
++			} else {
++				tx_start_bd->bd_flags.as_bitfield |=
++					(X_ETH_INBAND_VLAN <<
++					 ETH_TX_BD_FLAGS_VLAN_MODE_SHIFT);
++				tx_start_bd->vlan_or_ethertype =
++					cpu_to_le16(vlan_tci);
++			}
+ #ifndef BNX2X_STOP_ON_ERROR
+-		else
++		} else {
+ 			/* used by FW for packet accounting */
+ 			tx_start_bd->vlan_or_ethertype = cpu_to_le16(pkt_prod);
++		}
+ #endif
+ 	}
  
- 	pr_debug("%s: sk:%p, timeout:%ld\n", __func__, sk, timeout);
- 
--	lock_sock(sk);
-+	lock_sock_nested(sk, SINGLE_DEPTH_NESTING);
- 	sk->sk_shutdown = SHUTDOWN_MASK;
- 	sk->sk_state = SCTP_SS_CLOSING;
- 
-@@ -1564,7 +1564,7 @@ static void sctp_close(struct sock *sk,
- 	 * held and that should be grabbed before socket lock.
- 	 */
- 	spin_lock_bh(&net->sctp.addr_wq_lock);
--	bh_lock_sock(sk);
-+	bh_lock_sock_nested(sk);
- 
- 	/* Hold the sock, since sk_common_release() will put sock_put()
- 	 * and we have just a little more cleanup.
