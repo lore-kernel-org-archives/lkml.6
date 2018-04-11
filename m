@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+KIYi8I9eH1s7HeXEEHMqN0WEVWy7di6jEAekpCrnU5HA+GAabgoQWtH4disOk/1a50+qd
-ARC-Seal: i=1; a=rsa-sha256; t=1523473362; cv=none;
+X-Google-Smtp-Source: AIpwx4+XF3HXH2JeyLK9G2MPG/WuyIA0BbSPDzssGd+Bkqh/UfqJ4A7SAHvpopOKe/FHapFH96L0
+ARC-Seal: i=1; a=rsa-sha256; t=1523473359; cv=none;
         d=google.com; s=arc-20160816;
-        b=HmRm3dRW6gs81BweEiiWuwyo1uEncKfD3e6RFFBfBbWjlQS5gvZGcmbMaGU9uRvBd+
-         yJ0RXLU2ZvKrrtivtvGPVnoYgS+q2xIGwsvrDWfSOFB9sodkf1fizR/P30mGvvNXFPJY
-         9mvMd/ojppcSbjHBHt9eP6FeCeQ3X0ZWm/P5SGy99Cuyn7LsqgsDYJOoVW4TnOBSvIPO
-         djXmkeWoYkJ6mEWONJ/nJfrmG2IGH+C6HewYPi08sNaVkgjEIwM8CTizr7K9nYk4Jury
-         fpmNH2gSZFWmMBy0qvT4eZLjFNP8cUAvDPxpqGtdAJmI9ePDrw3YuKLwHino+21Mqzf0
-         iFcQ==
+        b=bFlk92K/RNxArqPF/9Jq1wEFyhP0b0PQyLGXzL2iahM2OJCB9yXP97SuTrl3T9L4Fu
+         lTwx+9YOm4iwBhctFFy8ldtx7AS8/S4k1PbB4ON+ApMPGV2tT/+hT9LbgkxJgDaL9PQj
+         dIUxUC+gBixkYbp65f5NlmzhfKeVUT/XEFM9+y3JLlF/ajzuDmcp0YUV9jZQwL8/Mvg3
+         4MkuM/U1sBl19DxY8gHLIBk5MtTk92tMjwLB87cnHGzPV/qZnuidQQivixgSa/FmrUgO
+         L0j9qqtOpB7TSZ5gMEwLM3XW69g0cqYQUZ+YUIX2AsLo3GbldcTD0bzpRMF4zpaVyP58
+         O94w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=xsWGK35B3Z7+AMYkm+Z1CG/+jzNd+5J+RcdHWHwfMbg=;
-        b=tD/3v+Y35xR2bu21wa13JBuVmCvraqpd2/UrgTocAiS9PprhWxFbkRGsttgrt+fqsV
-         8XRi9q0r4htfJHCD5IQ/nrf4eJV185cTHh/BUQ53mdQWbr36m4ftgPGeX0+TEth0rIWT
-         g3PA8tJaLmnAbGUjy6LwjZk3gbM0ByhSTtodshFcvR2QG1lGIWZ6rAnoCgO+K1O+OROp
-         XftObIOTktNOsWZbJhqKzR6clP7zjwIgxV1MxSFJoeIDzbnqL9lkzUQEzAhi8xoMg5nf
-         2aaqk4Uyandok9Si1oXZgyCK5ThfejhcsO2/04oBpiN9iCEKgyO9BqUSC2g5Xp5T22PP
-         rHpA==
+        bh=SUj5NZ6HG/IyVxE46WEEC9AMDTCpznZramJeCHqfIbA=;
+        b=czukGn4O4jQESw+aCVjvRYWnFc9ennneyAmLtMyuyXi3M+qCVo1yg7NrMKQ7cnOcrp
+         rl0r17o9JYtwRxEDQ1Umeu+QUTLT3S44WWfujY17ZatYqk87fkUTpCWaojniU8r9GWMO
+         kfTq0+LntIC3yokmN44d4nYzTZ23xvCy6Sp2FG8uBTUoaPbfjrI1CUTDf69YPlYdir5u
+         Gs1w2lEQDK8vj/OHu8cYZcqknecf7fhekYV7TPZyeJlN1LALfuv75PyhR9BbWUbqNKRy
+         3QPbbfGH7n6g19PSK7fVgo44sJy3kcuH+KCoLJLuX0YnbeJPSdHptDz2nN2XRDXH2xPP
+         UpdQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Simon Horman <horms+renesas@verge.net.au>,
+	Marcin Nowakowski <marcin.nowakowski@imgtec.com>,
+	linux-mips@linux-mips.org,
+	Ralf Baechle <ralf@linux-mips.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 221/310] ARM: dts: armadillo800eva: Split LCD mux and gpio
-Date: Wed, 11 Apr 2018 20:36:00 +0200
-Message-Id: <20180411183632.047615699@linuxfoundation.org>
+Subject: [PATCH 4.9 220/310] MIPS: kprobes: flush_insn_slot should flush only if probe initialised
+Date: Wed, 11 Apr 2018 20:35:59 +0200
+Message-Id: <20180411183632.010909466@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477604898223974?=
-X-GMAIL-MSGID: =?utf-8?q?1597477604898223974?=
+X-GMAIL-THRID: =?utf-8?q?1597476260596132380?=
+X-GMAIL-MSGID: =?utf-8?q?1597477601664878968?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,44 +51,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
 
 
-[ Upstream commit 13132b3f44d3600983aceb7e9920b8ebb55a7cf8 ]
+[ Upstream commit 698b851073ddf5a894910d63ca04605e0473414e ]
 
-Configuration of the lcd0 pinmux group and GPIO hog for the external
-GPIO mux are done using a single device node, causing the "output-high"
-property to be applied to both.  This will fail for the pinmux group,
-but doesn't cause any harm, as the failure is ignored silently.
+When ftrace is used with kprobes, it is possible for a kprobe to contain
+an invalid location (ie. only initialised to 0 and not to a specific
+location in the code). Trying to perform a cache flush on such location
+leads to a crash r4k_flush_icache_range().
 
-However, after "pinctrl: sh-pfc: propagate errors on group config", the
-failure will become fatal, leading to a broken display:
-
-    sh-pfc e6050000.pin-controller: pin_config_group_set op failed for group 102
-    sh-pfc e6050000.pin-controller: Error applying setting, reverse things back
-    sh-pfc e6050000.pin-controller: failed to select default state
-
-Move the GPIO hog to its own node to fix this.
-
-Fixes: ffd2f9a5afb730b9 ("ARM: shmobile: armadillo800eva dts: Add pinctrl and gpio-hog for lcdc0")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: c1bf207d6ee1 ("MIPS: kprobe: Add support.")
+Signed-off-by: Marcin Nowakowski <marcin.nowakowski@imgtec.com>
+Cc: linux-mips@linux-mips.org
+Patchwork: https://patchwork.linux-mips.org/patch/16296/
+Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/mips/include/asm/kprobes.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-+++ b/arch/arm/boot/dts/r8a7740-armadillo800eva.dts
-@@ -266,7 +266,9 @@
- 	lcd0_pins: lcd0 {
- 		groups = "lcd0_data24_0", "lcd0_lclk_1", "lcd0_sync";
- 		function = "lcd0";
-+	};
+--- a/arch/mips/include/asm/kprobes.h
++++ b/arch/mips/include/asm/kprobes.h
+@@ -40,7 +40,8 @@ typedef union mips_instruction kprobe_op
  
-+	lcd0_mux {
- 		/* DBGMD/LCDC0/FSIA MUX */
- 		gpio-hog;
- 		gpios = <176 0>;
+ #define flush_insn_slot(p)						\
+ do {									\
+-	flush_icache_range((unsigned long)p->addr,			\
++	if (p->addr)							\
++		flush_icache_range((unsigned long)p->addr,		\
+ 			   (unsigned long)p->addr +			\
+ 			   (MAX_INSN_SIZE * sizeof(kprobe_opcode_t)));	\
+ } while (0)
