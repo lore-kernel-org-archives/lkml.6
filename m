@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3124918-1523473654-2-7897030899652314137
+X-Cyrus-Session-Id: sloti22d1t05-3124918-1523473600-2-17378644751784799171
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523473653; b=Cy6tcJ5cZ43KXjSKXsmOrkvnCfS8qIWey1LJOOHRhjF7WO002L
-    YrP6IttvgJ69UAo/EPYlkWPHCp6wU28kwm0ncoh9cWW4bk7t8HdcZMuonoaKiJye
-    eSJOM2//WSjnA2GJebg2B6uLBtlAmfZGU4T3kAMN1VDUN+Kfn72vcjW8/uobbVRo
-    yczZx98ffEZz7tmnOaDRUDVsokxyH73O+r+27CzbQf5y8ZXv+Tr/feKHRgL3o+2h
-    EvSuSS8GXVt51kKGG3QewILVp/GjcIl9YOfolaYmsGAXPaydbACOzjl7DKkAADkU
-    UttIdojQhHhy7nFBSH1YoC6AlMcJjrALyymQ==
+    1523473599; b=hdEZonKhtjZj5F07bY17qRfEclmPGnHcwIM2CKQmga5373j+hc
+    JKN74ABLoloNW/Xwu+Th+KxBXjsB+vRzzoToJ/hbsqV4QLVeQZGi6hqv/Wa5gdJW
+    0AHBlehNiUcE/51SkJViWT6LnRhHXDdE/dKuh/AaaHFBAvIs6Ml4ApQsNJ1tIiLM
+    rfjFb6xo9fdPwRIUT9XADnUxLjPdyyKeTJwYVpdQMJjiH+AxOFypWwqXKZTXWv/a
+    XtDefxrVx3acZW+yRBUR/4OWni6Hb4mIFdPW9Iz2z3kMYwZnjzCPp/0RXMVbBAui
+    iYC9DgLJiwQrGmNmYXyUr1q8q6SHsAjDi2pg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523473653; bh=DlrsckEqosNbB1Dt40SjNITZiHVNl1
-    UmXY5SDzAhWYE=; b=aLvRmOsENXXEiHiBARExXpwUCfE7uq79osSWdSwUXXtGfc
-    cQWlZnBSppgMf/S2fZigor2yiaSM05a94UisTuO6eUJGqHYAjepc94bTshR8glC9
-    zJxrpO7nTdXDYORlMHsXi3jen7AQmWv+q6yZOnpSAliddhIwOMxHxu+DB7OYZJSl
-    FZSY8vqBracjrP2lL2kRiuHVeHwY60ureqIywumnl52iyFNsUCF5Dk4kJ3h9N35h
-    b3COUovWbvEUR8FVVUOyJyrwFOYxmlkb5UouaNtM0siPH6Jn/SUvjHELCs0rBPAU
-    BbTNAQCLjRgY9JW7Dt8xCf1SXQeeIh665jHopsKw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523473599; bh=iDwWHAy3IjBc/2Uo1TKY+D/Mf9Qi0b
+    WoJjuNneOZt4A=; b=mhx9aq/slelJI5szCqpgIA0CCVc6Z5AlthPBiHwQf6PRC+
+    YeqWORaHtXIvz1/DUm8cVYtRXjvBM+DVfpoTy++EKpPDnb4QKE8w3xA8ob7gsDET
+    NiLDYEUlhDlyY79B4KLlZEg90F09N80sOC5Mo7v0m7BuVh+4GwIqfiDR9GAU8ixz
+    /5Ol+/aT6OOsq5HQNI4Vofs2Rnv5/Lo+2M1PSd+dBqqrbbgYA60tOwmMDGfKzb/8
+    FnkN9vCUSjADIVcwLlnoTJ/e9nwXsRg0CHFVzk3Z5QoK6iwvTtPt7/OBmGXwJ8a4
+    17hCl481wjZiCi6y46uSPLoLiUwRewHhGvaedMVw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,31 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOI66ze380ftOY7asYRFbTAr2Ix0O7sUg5AsJR4Bt8/92mShbzsg0YNeMZ43VfH+1uBJx+oCuDy9abLSYvoJMUCxGNJ6PO/Sa7BohmvD4h1F56PjYwAD
-    3ESpUJe56BYXMHlHCdAJ88l/cEsNeW3m3TPah+s2BVM7Y9/5Ks8y4PIQNqaZTHAaWZnV6KKZ+yD1tnut6LOVVpubaiUWDq6LpWgSQMpewMORbQNSouQceq1B
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfChknSaDWoy+niP9P91HZqfosy8pTdsIbYAtxAW3IsnX3GGgCWk2gbqyKnwyGbxtdMADv4vyi5qgEQAMe+r4vpkwwfgW15Tx+1aTCeWdIdj4neRYQshQ
+    CiVF39y82SvduB0S0IKNeXF+ZLfWx9BE8y02CdgloK1mkiInnDvscr6K0Kcz4VSPT66Bnu9oUcZ/Gc686ugr8z40SBxq+NxIKeguC0u8bJAuPOh01vGbrty4
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=1XWaLZrsAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=sngVIByJOSkcrifXhUIA:9
-    a=BGHSMl4N66ST3xqH:21 a=eqOfKsFLac_xMFF5:21 a=QEXdDO2ut3YA:10
+    a=pGLkceISAAAA:8 a=CbDCq_QkAAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8
+    a=z1OcxMHCoMN4Ka_fV58A:9 a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22
     a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934659AbeDKTHO (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 15:07:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41054 "EHLO
+        id S934548AbeDKTGh (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 15:06:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40858 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935324AbeDKTHM (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:07:12 -0400
+        with ESMTP id S935242AbeDKTGg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:06:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        Jiri Pirko <jiri@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 283/310] pptp: remove a buggy dst release in pptp_connect()
-Date: Wed, 11 Apr 2018 20:37:02 +0200
-Message-Id: <20180411183634.779941562@linuxfoundation.org>
+Subject: [PATCH 4.9 305/310] team: move dev_mc_sync after master_upper_dev_link in team_port_add
+Date: Wed, 11 Apr 2018 20:37:24 +0200
+Message-Id: <20180411183635.669723522@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -92,113 +93,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Xin Long <lucien.xin@gmail.com>
 
 
-[ Upstream commit bfacfb457b36911a10140b8cb3ce76a74883ac5a ]
+[ Upstream commit 982cf3b3999d39a2eaca0a65542df33c19b5d814 ]
 
-Once dst has been cached in socket via sk_setup_caps(),
-it is illegal to call ip_rt_put() (or dst_release()),
-since sk_setup_caps() did not change dst refcount.
+The same fix as in 'bonding: move dev_mc_sync after master_upper_dev_link
+in bond_enslave' is needed for team driver.
 
-We can still dereference it since we hold socket lock.
+The panic can be reproduced easily:
 
-Caugth by syzbot :
+  ip link add team1 type team
+  ip link set team1 up
+  ip link add link team1 vlan1 type vlan id 80
+  ip link set vlan1 master team1
 
-BUG: KASAN: use-after-free in atomic_dec_return include/asm-generic/atomic-instrumented.h:198 [inline]
-BUG: KASAN: use-after-free in dst_release+0x27/0xa0 net/core/dst.c:185
-Write of size 4 at addr ffff8801c54dc040 by task syz-executor4/20088
-
-CPU: 1 PID: 20088 Comm: syz-executor4 Not tainted 4.16.0+ #376
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x1a7/0x27d lib/dump_stack.c:53
- print_address_description+0x73/0x250 mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report+0x23c/0x360 mm/kasan/report.c:412
- check_memory_region_inline mm/kasan/kasan.c:260 [inline]
- check_memory_region+0x137/0x190 mm/kasan/kasan.c:267
- kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
- atomic_dec_return include/asm-generic/atomic-instrumented.h:198 [inline]
- dst_release+0x27/0xa0 net/core/dst.c:185
- sk_dst_set include/net/sock.h:1812 [inline]
- sk_dst_reset include/net/sock.h:1824 [inline]
- sock_setbindtodevice net/core/sock.c:610 [inline]
- sock_setsockopt+0x431/0x1b20 net/core/sock.c:707
- SYSC_setsockopt net/socket.c:1845 [inline]
- SyS_setsockopt+0x2ff/0x360 net/socket.c:1828
- do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x4552d9
-RSP: 002b:00007f4878126c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007f48781276d4 RCX: 00000000004552d9
-RDX: 0000000000000019 RSI: 0000000000000001 RDI: 0000000000000013
-RBP: 000000000072bea0 R08: 0000000000000010 R09: 0000000000000000
-R10: 00000000200010c0 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000526 R14: 00000000006fac30 R15: 0000000000000000
-
-Allocated by task 20088:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:447
- set_track mm/kasan/kasan.c:459 [inline]
- kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:552
- kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:489
- kmem_cache_alloc+0x12e/0x760 mm/slab.c:3542
- dst_alloc+0x11f/0x1a0 net/core/dst.c:104
- rt_dst_alloc+0xe9/0x540 net/ipv4/route.c:1520
- __mkroute_output net/ipv4/route.c:2265 [inline]
- ip_route_output_key_hash_rcu+0xa49/0x2c60 net/ipv4/route.c:2493
- ip_route_output_key_hash+0x20b/0x370 net/ipv4/route.c:2322
- __ip_route_output_key include/net/route.h:126 [inline]
- ip_route_output_flow+0x26/0xa0 net/ipv4/route.c:2577
- ip_route_output_ports include/net/route.h:163 [inline]
- pptp_connect+0xa84/0x1170 drivers/net/ppp/pptp.c:453
- SYSC_connect+0x213/0x4a0 net/socket.c:1639
- SyS_connect+0x24/0x30 net/socket.c:1620
- do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-Freed by task 20082:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:447
- set_track mm/kasan/kasan.c:459 [inline]
- __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
- kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
- __cache_free mm/slab.c:3486 [inline]
- kmem_cache_free+0x83/0x2a0 mm/slab.c:3744
- dst_destroy+0x266/0x380 net/core/dst.c:140
- dst_destroy_rcu+0x16/0x20 net/core/dst.c:153
- __rcu_reclaim kernel/rcu/rcu.h:178 [inline]
- rcu_do_batch kernel/rcu/tree.c:2675 [inline]
- invoke_rcu_callbacks kernel/rcu/tree.c:2930 [inline]
- __rcu_process_callbacks kernel/rcu/tree.c:2897 [inline]
- rcu_process_callbacks+0xd6c/0x17b0 kernel/rcu/tree.c:2914
- __do_softirq+0x2d7/0xb85 kernel/softirq.c:285
-
-The buggy address belongs to the object at ffff8801c54dc000
- which belongs to the cache ip_dst_cache of size 168
-The buggy address is located 64 bytes inside of
- 168-byte region [ffff8801c54dc000, ffff8801c54dc0a8)
-The buggy address belongs to the page:
-page:ffffea0007153700 count:1 mapcount:0 mapping:ffff8801c54dc000 index:0x0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffff8801c54dc000 0000000000000000 0000000100000010
-raw: ffffea0006b34b20 ffffea0006b6c1e0 ffff8801d674a1c0 0000000000000000
-page dumped because: kasan: bad access detected
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
+Fixes: cb41c997d444 ("team: team should sync the port's uc/mc addrs when add a port")
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ppp/pptp.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/team/team.c |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
---- a/drivers/net/ppp/pptp.c
-+++ b/drivers/net/ppp/pptp.c
-@@ -465,7 +465,6 @@ static int pptp_connect(struct socket *s
- 	po->chan.mtu = dst_mtu(&rt->dst);
- 	if (!po->chan.mtu)
- 		po->chan.mtu = PPP_MRU;
--	ip_rt_put(rt);
- 	po->chan.mtu -= PPTP_HEADER_OVERHEAD;
+--- a/drivers/net/team/team.c
++++ b/drivers/net/team/team.c
+@@ -1203,11 +1203,6 @@ static int team_port_add(struct team *te
+ 		goto err_dev_open;
+ 	}
  
- 	po->chan.hdrlen = 2 + sizeof(struct pptp_gre_header);
+-	netif_addr_lock_bh(dev);
+-	dev_uc_sync_multiple(port_dev, dev);
+-	dev_mc_sync_multiple(port_dev, dev);
+-	netif_addr_unlock_bh(dev);
+-
+ 	err = vlan_vids_add_by_dev(port_dev, dev);
+ 	if (err) {
+ 		netdev_err(dev, "Failed to add vlan ids to device %s\n",
+@@ -1247,6 +1242,11 @@ static int team_port_add(struct team *te
+ 		goto err_option_port_add;
+ 	}
+ 
++	netif_addr_lock_bh(dev);
++	dev_uc_sync_multiple(port_dev, dev);
++	dev_mc_sync_multiple(port_dev, dev);
++	netif_addr_unlock_bh(dev);
++
+ 	port->index = -1;
+ 	list_add_tail_rcu(&port->list, &team->port_list);
+ 	team_port_enable(team, port);
+@@ -1271,8 +1271,6 @@ err_enable_netpoll:
+ 	vlan_vids_del_by_dev(port_dev, dev);
+ 
+ err_vids_add:
+-	dev_uc_unsync(port_dev, dev);
+-	dev_mc_unsync(port_dev, dev);
+ 	dev_close(port_dev);
+ 
+ err_dev_open:
