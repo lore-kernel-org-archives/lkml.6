@@ -1,11 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479199-2-4946608394573140682
+X-Cyrus-Session-Id: sloti22d1t05-3303684-1523479158-2-4119675561893077950
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479199; b=l3tsv2xxe513ZhvfVEL0I53w66reYogYWerdUIRvjhfLZdOuqX
-    M29unXUH3Cxd6AnQMOjncDF5SdNmPGblbq+1DRiMV0rlJfC9HLeDWsS6G+0AGLNj
-    9KSeePJdAj7FSp5GsoTIJYaakmKuWNIQwoIX8ECZSIDMrpeDPS0u0Yc9ghjXMoA6
-    fOAIHaSxFMOfC/7NVX51hozomd4k4SRJMInioSx6Km4j/653D8owhQScAcVGmh4Q
-    xzKcCOm1y4+V0OZrm9WTYD1T6Y5CkOA9E2d1eYvok57vwO+/k9ep9s5L8ErFl0Es
-    OJHnMZsIv0uhsqlNj2jLKedgptax/vb7UHtQ==
+    1523479158; b=RdO0tZxxSg7TAW6D472856yu/gi2JBgInzu4nv/uIoDWKyExDV
+    nBC58+90T3jY1Q2Sqn4C+07TDbmX0npbxmRPHRiJKGDME8348kzJ90KweOmr3fuV
+    zp4WgRJB+sailVxScofuqtTiidRJVqmIzDiO1Cx84Z6fseY30S8qd0M1pbDtAz1q
+    6+S3HXFxtv785O754sXSkysGjKm+gRnjiba7/2LdzS7HEpexWcIb6mtspCfB8rbJ
+    RdJtttgESqQ4SQWCOUU6PVi3BZKKxHZFC73spHLB44vP7Uw5S0ElDZF3lRuio49Y
+    EUldYbUNZAR+dYJO93Z/aACDoLVwgePlBLlw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479199; bh=UZ1ie9wu3xFp1WiWOUxtR3iEKExAKE
-    hiodiyopmdqKY=; b=EVj0n4agH5m4o7qXd6/mxDjOl1jaj1BxuQp5Hr4hkx26Nh
-    S8eOPxVnP+r/mJ/EKCls/bHSQstoKxyQ37kquI12bUAlOW4SvpxyjCxbGR7+Gva7
-    yH5bgqQp6R+wnlJ7xNsl4aloOvq5YxMU0LAeYiRc9f5nYfA1GWteGeYhmxB2wO0p
-    FAISUSEde1N0ESrd8hBIuZgnTbsdh4/A08Y5ipfgilKFfrNPxgZZa4Ie7f4UYbsG
-    K1V8S56SdWcVl3nzzSdREowvb+tMIiMeLWTxlWo74F6d4UKegkuHDiBxpyMK6H7a
-    SRERFy3UKLphjYGiIyj93/tQogekrh8XMlmL9YKw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479158; bh=CAomIvU5PPRtewCdY8E8ieDVQ94ljr
+    YITWoXorMWJUc=; b=wsBjE94joPWM4SOD/qPqPJ+1S1AdNGhAsoRsjMjPjeBMQ2
+    os1AiAG+NIoJnk1UQVuxJv34NI4Fmh4c/GFyIN/uXWSI8YjI4Ps+rmFwq/dp09G5
+    BJ4CuhfJfhJ5mITF3mKxJVIHRkstcTBve9EYOIzDt3D9UJ+HPQLhzIVEMdSvEWHN
+    WYTOq/y311QXHCPxhYjb8oaxQ8QFTSTDWFCsOhg3zMdRO0rxFHK1jPvFA6+cra7A
+    wOB0v4pMmejN8p2Ts8htvjUr9bRXb3sBZImAQkRrEPDlZtJAbiS2ecpGmROY2EDd
+    o1otywB+ghoeac+CMk0+U/0iDnwH5gZrgTRipXOg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,34 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKggWxZ4P9nWEewvfhf9cK0TgWFvpZ+i2go8XoEgKA8E+V4tv8ynGMLj4LW8f8bSaMCLtglr+2EZK6E+612usQ5+4qsaBO+W9QI4ISowgEGlsekEg3Hm
-    kw2HeTZCNC1oA8yMH13aVmUIUIRezyecKCLnkuJ3bAwvsK17Mv4oLHzNtR0aJ26KY4Z/Pn76k7jW9vcpQLYyVsYUlArehR0Kqs1qzarAfk8x9OqcBm8weTm+
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOJOb5BTRsJ4EkKJZ6TmYfd2D0lxUPI1gMpyceG2ab0/YiMWtMtmAfIHk1zc+BhaFG44kkDN7lkCmjpYCAC8DEKhiIT2016xWIYa9ck8g0QTd4uDf+tU
+    ZBDNBYMOS1rSttAUtOiRvpFkLLwdn3X5gI1W55P5bUYegTrY8tKaYEZfrk5Zb2aGtHZC58cYdtAVkEyp1S5DXxzZzVm+feNL1vqq+hXHbRS9VHo3C0e67IX6
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=pGLkceISAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=tSOLQX0gvpRnjT4dyzwA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=7CQSdrXTAAAA:8 a=IpJZQVW2AAAA:8 a=LpQP-O61AAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=xJcnGJnVB4EYvS3OOrEA:9 a=QEXdDO2ut3YA:10
+    a=a-qgeE7W1pNrGK8U0ZQC:22 a=IawgGOuG5U0WyFbmm1f5:22 a=pioyyrs4ZptJ924tMmac:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756191AbeDKUjV (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:39:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59566 "EHLO
+        id S932382AbeDKSsL (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:48:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59578 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932111AbeDKSsH (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:48:07 -0400
+        with ESMTP id S932379AbeDKSsJ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:48:09 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Vinod Koul <vinod.koul@intel.com>,
+        stable@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 098/190] dmaengine: imx-sdma: Handle return value of clk_prepare_enable
-Date: Wed, 11 Apr 2018 20:35:44 +0200
-Message-Id: <20180411183556.285656357@linuxfoundation.org>
+Subject: [PATCH 4.4 107/190] clk: scpi: fix return type of __scpi_dvfs_round_rate
+Date: Wed, 11 Apr 2018 20:35:53 +0200
+Message-Id: <20180411183556.905327422@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -92,70 +96,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
 
 
-[ Upstream commit fb9caf370f4d0457789d13a1a1b110a8db846e5e ]
+[ Upstream commit 7374aec95636ca39409545eba4ef5ff3125c2346 ]
 
-clk_prepare_enable() can fail here and we must check its return value.
+The frequencies above the maximum value of signed integer(i.e. 2^31 -1)
+will overflow with the current code.
 
-Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+This patch fixes the return type of __scpi_dvfs_round_rate from 'int'
+to 'unsigned long'.
+
+Fixes: cd52c2a4b5c4 ("clk: add support for clocks provided by SCP(System Control Processor)")
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/imx-sdma.c |   23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+ drivers/clk/clk-scpi.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -1722,17 +1722,24 @@ static int sdma_probe(struct platform_de
- 	if (IS_ERR(sdma->clk_ahb))
- 		return PTR_ERR(sdma->clk_ahb);
+--- a/drivers/clk/clk-scpi.c
++++ b/drivers/clk/clk-scpi.c
+@@ -71,15 +71,15 @@ static const struct clk_ops scpi_clk_ops
+ };
  
--	clk_prepare(sdma->clk_ipg);
--	clk_prepare(sdma->clk_ahb);
-+	ret = clk_prepare(sdma->clk_ipg);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_prepare(sdma->clk_ahb);
-+	if (ret)
-+		goto err_clk;
+ /* find closest match to given frequency in OPP table */
+-static int __scpi_dvfs_round_rate(struct scpi_clk *clk, unsigned long rate)
++static long __scpi_dvfs_round_rate(struct scpi_clk *clk, unsigned long rate)
+ {
+ 	int idx;
+-	u32 fmin = 0, fmax = ~0, ftmp;
++	unsigned long fmin = 0, fmax = ~0, ftmp;
+ 	const struct scpi_opp *opp = clk->info->opps;
  
- 	ret = devm_request_irq(&pdev->dev, irq, sdma_int_handler, 0, "sdma",
- 			       sdma);
- 	if (ret)
--		return ret;
-+		goto err_irq;
- 
- 	sdma->script_addrs = kzalloc(sizeof(*sdma->script_addrs), GFP_KERNEL);
--	if (!sdma->script_addrs)
--		return -ENOMEM;
-+	if (!sdma->script_addrs) {
-+		ret = -ENOMEM;
-+		goto err_irq;
-+	}
- 
- 	/* initially no scripts available */
- 	saddr_arr = (s32 *)sdma->script_addrs;
-@@ -1847,6 +1854,10 @@ err_register:
- 	dma_async_device_unregister(&sdma->dma_device);
- err_init:
- 	kfree(sdma->script_addrs);
-+err_irq:
-+	clk_unprepare(sdma->clk_ahb);
-+err_clk:
-+	clk_unprepare(sdma->clk_ipg);
- 	return ret;
- }
- 
-@@ -1857,6 +1868,8 @@ static int sdma_remove(struct platform_d
- 
- 	dma_async_device_unregister(&sdma->dma_device);
- 	kfree(sdma->script_addrs);
-+	clk_unprepare(sdma->clk_ahb);
-+	clk_unprepare(sdma->clk_ipg);
- 	/* Kill the tasklet */
- 	for (i = 0; i < MAX_DMA_CHANNELS; i++) {
- 		struct sdma_channel *sdmac = &sdma->channel[i];
+ 	for (idx = 0; idx < clk->info->count; idx++, opp++) {
+ 		ftmp = opp->freq;
+-		if (ftmp >= (u32)rate) {
++		if (ftmp >= rate) {
+ 			if (ftmp <= fmax)
+ 				fmax = ftmp;
+ 			break;
