@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49/ZdRmi7kX3QOBz5nBEdJfHaMwqGJYPhBi9v1m7I0vduStPhFZ3Ndls62m9gEyQkvbD5mm
-ARC-Seal: i=1; a=rsa-sha256; t=1523473467; cv=none;
+X-Google-Smtp-Source: AIpwx48vjkytwmrz4jCjiIbQ3HASoVuKYDdcDpfqS3xIAQvJW2XBA2RpckBVCAgYHNYF/URQIiP/
+ARC-Seal: i=1; a=rsa-sha256; t=1523473461; cv=none;
         d=google.com; s=arc-20160816;
-        b=q6dlz9rYXTCnqig4+m09c+jvI+2AGFd+6+8vgfzu+TB8TmH99/BDS0xqfNnv+kDBsq
-         uKLyaLyVBIr8wS0wkMc9vYqRTqbp56Gzq36K75msSZyezQIuhHOFUp44Ft/KReqxHT3h
-         GAwmjSpboqM+YQZ1H50TABYJjXFEy7x5WyCkJOj/FhKt9p0ox9nRR+ZrWtF5jO5sFWMp
-         pXEP4lbdxqz8/QF6mqHRJJThpsNPX0Wz754+75foaQQyiqp86/U2gb9hgrKErTjdbHLj
-         oBuF6mT0P12sQaYeqb+oned5duuzYilRaX5yuCUD1Uv24fcVqwSvdvyixscIEqup3R5Z
-         3LUg==
+        b=PnUncOUc3dIsDeOPqZHPQ7eT0mYDtSDE/DhNUibtCBi7J7kkurIfvAY1pHQdJyCf3b
+         atet265TtipkS/CI80Q1CkDU3158Ym2B/HmpVMP1quRJjMJqoK0EacO1s0Y4Cw/XNyF1
+         OOxXkAAydFxQE9pOBavZBlEo16XXDGoxLAi1XiKeobLZTzt1opiDjdgEg8mNDs7AxDuJ
+         JoOaTlms9XyvxPiew4uCCx4fdwZV+O0dGFWSHLmMe5C95RVXeq5O3iB89gxlsIxrdF2K
+         n82q11SkT7D6eQl9Zv+e0nlJl5iEqZ+xvMJW9HZzxvbFLSBTJYip9E1UcMBPlQQ0IM3S
+         yTQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=FML9TpZp2uYDYw5OZenRNqdcYHaeJekBxnxTuU+8kVg=;
-        b=s/oRasr98sUsfE1sAd77L3lQCEfb/PrCh+r43l5s5hiEae+BgUGX7JB4Tas5W/5aT4
-         e7NWjpKXFGNCfiWzS4lGkY+rqubXROmTIOnIW/bhqHGpWA5WLxBYsRLXvu8j6mBqszig
-         DG8W2T9adKQQbyoZeJVyaWwYD0BCndVbzqxgBx3rlF/gMLt3apUjCB+yKsryx62bOJiI
-         8PJaZo00unHOLL4MWOtwj7RedLQXIxn6jzxVXPDifBxdX2nYRfdegqixd2TnNlohtngl
-         bJsYGfJo+avQqBkt+sU2LAj8OalLhLtmLaXdED3r3jSFP1v6uIsxRsvleOatMC/A1WeM
-         qvqA==
+        bh=jJNST+8XA8NqKPPxC2vqUJeQ6JlC9cTAfyWxAYpo91Q=;
+        b=UgUQG8CHktAliMSdscbnBkXpEA+0eFwlr6iqaQifV6sMKGaN9xHYvEhlszvf4L9LAF
+         UgRhcIG9/Q/VHycvphX6hYveb+fV6WKSfwNO0Vq9AW/XZ4N9gIpfsxEst1P5MRtNvCwM
+         MOSjWchOEPLgjCM/4vduua6qofBkATfTNAuAhmszQvhSsJB73fAUyboCCHCy7T3gVy56
+         dmALwHuI6Ro4y+hXeKNmOvfhgdXfxYkffrqyifOiHzOr21A8G8efFBuwYMMJv7KQeJL2
+         I5yyFnDe3/5LbGzw5Pcc5CYMHe1jLsT5QapJIRUf2Ya9Erjy8N04dAo/y706vQHQ067o
+         JG6w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,17 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jason Yan <yanaijie@huawei.com>,
-	John Garry <john.garry@huawei.com>,
-	chenqilin <chenqilin2@huawei.com>,
-	chenxiang <chenxiang66@hisilicon.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Hannes Reinecke <hare@suse.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Tang Junhui <tang.junhui@zte.com.cn>,
+	Michael Lyle <mlyle@lyle.org>,
+	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 259/310] scsi: libsas: fix memory leak in sas_smp_get_phy_events()
-Date: Wed, 11 Apr 2018 20:36:38 +0200
-Message-Id: <20180411183633.751243928@linuxfoundation.org>
+Subject: [PATCH 4.9 257/310] bcache: stop writeback thread after detaching
+Date: Wed, 11 Apr 2018 20:36:36 +0200
+Message-Id: <20180411183633.503892713@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -46,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476394956038418?=
-X-GMAIL-MSGID: =?utf-8?q?1597477714190865200?=
+X-GMAIL-THRID: =?utf-8?q?1597476389519799220?=
+X-GMAIL-MSGID: =?utf-8?q?1597477708311323214?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,40 +51,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jason Yan <yanaijie@huawei.com>
+From: Tang Junhui <tang.junhui@zte.com.cn>
 
 
-[ Upstream commit 4a491b1ab11ca0556d2fda1ff1301e862a2d44c4 ]
+[ Upstream commit 8d29c4426b9f8afaccf28de414fde8a722b35fdf ]
 
-We've got a memory leak with the following producer:
+Currently, when a cached device detaching from cache, writeback thread is
+not stopped, and writeback_rate_update work is not canceled. For example,
+after the following command:
+echo 1 >/sys/block/sdb/bcache/detach
+you can still see the writeback thread. Then you attach the device to the
+cache again, bcache will create another writeback thread, for example,
+after below command:
+echo  ba0fb5cd-658a-4533-9806-6ce166d883b9 > /sys/block/sdb/bcache/attach
+then you will see 2 writeback threads.
+This patch stops writeback thread and cancels writeback_rate_update work
+when cached device detaching from cache.
 
-while true;
-do cat /sys/class/sas_phy/phy-1:0:12/invalid_dword_count >/dev/null;
-done
+Compare with patch v1, this v2 patch moves code down into the register
+lock for safety in case of any future changes as Coly and Mike suggested.
 
-The buffer req is allocated and not freed after we return. Fix it.
+[edit by mlyle: commit log spelling/formatting]
 
-Fixes: 2908d778ab3e ("[SCSI] aic94xx: new driver")
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-CC: John Garry <john.garry@huawei.com>
-CC: chenqilin <chenqilin2@huawei.com>
-CC: chenxiang <chenxiang66@hisilicon.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
+Reviewed-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Michael Lyle <mlyle@lyle.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/libsas/sas_expander.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/bcache/super.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/scsi/libsas/sas_expander.c
-+++ b/drivers/scsi/libsas/sas_expander.c
-@@ -684,6 +684,7 @@ int sas_smp_get_phy_events(struct sas_ph
- 	phy->phy_reset_problem_count = scsi_to_u32(&resp[24]);
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -892,6 +892,12 @@ static void cached_dev_detach_finish(str
  
-  out:
-+	kfree(req);
- 	kfree(resp);
- 	return res;
+ 	mutex_lock(&bch_register_lock);
+ 
++	cancel_delayed_work_sync(&dc->writeback_rate_update);
++	if (!IS_ERR_OR_NULL(dc->writeback_thread)) {
++		kthread_stop(dc->writeback_thread);
++		dc->writeback_thread = NULL;
++	}
++
+ 	memset(&dc->sb.set_uuid, 0, 16);
+ 	SET_BDEV_STATE(&dc->sb, BDEV_STATE_NONE);
  
