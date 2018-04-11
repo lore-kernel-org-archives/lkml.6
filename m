@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AIpwx4+geJkV/ej8i29dzp2aHm+kbSh9FVvn22XXog8shH41bkwAFETNYIAVGuUwCl+lKvmqfEm5
-ARC-Seal: i=1; a=rsa-sha256; t=1523483737; cv=none;
+X-Google-Smtp-Source: AIpwx494Oix0jSJR6+bK9C2oxvRFsiRQwSlwm5WqNVhfLqjF+M2W165K6owAGbpsBZdvOO9pqdGB
+ARC-Seal: i=1; a=rsa-sha256; t=1523483729; cv=none;
         d=google.com; s=arc-20160816;
-        b=rQKi5nW/ciUZSD3fgIqmzk+zqmwWY1+cY8t4vQ26STvcK0MO/dA1OHEgT938y3HlRD
-         v7zN1/mCtRo0TuzYVvt+7PCfLTz0U2QlYgcYDn6u4w1m04rdJbWVPSaPtsg5dO4XLFSY
-         h4hWsrB9FdV6bZz8gRtuAYBI+HCGDrDFYfcMmj0gRFh1LbWYhI1vYNoqlmv8GX0ncPPz
-         Kdz92IaszD6I/WkHJibghutk6P1wAY80VeEyCM9iKeEKPJ0w7x++23lSK5mPEHmAjdYv
-         PcgSGcq9dQhaIAZnuHDCsGiRkucAokvXbtEFG8hBx6blFY+a5jQ9MUm0LiUFnnqYmu0L
-         c77g==
+        b=mKCdG9Gyu3cLgGCNK5HbQkz3fiKFeQBpa0YVxQ5ClOU+JJjERtI8J4KL1y2fEjeRbI
+         FSyL+YvYbnP3dL1GPdKGpLMGPz6CBw3rchD8zOBRF/kBiUaTFMWykERygwO0NGa6kTsL
+         Rpi4WNrlIVqvYfg9VNLL+Y0OoFKfmkqu9+HVJi0s5pwUOMQNM8nKrGJxfwuDlza37FPG
+         RVhlRBZJHOQ3cUqQyKwBoTVzIoDeS6oBS+0dI4umIZoh4IwWcU4oKmQkn2aKpttzAOMr
+         /75KdaTNLGmz9zK7maOD8fQtpPR+XXCvsUag/eUAtyejT7TKQN00Kwzcd2YnUu+kg8L0
+         J+ng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=TnAGKENqD1E2clLTGFXknfe8HN/05uXGRlli7KeTaVU=;
-        b=S9/u5VEMkd37gz8AppVMjk5Jidk76F/rgwfNsZvWNbWiAkadF3SchyJbN8fNPoB2Bg
-         9e9OqXj/pkaUUa+hua5nOv0ufeVrDggDyMZE69Ct0/pihvmTIoUDIr+fDuHk7pG/FDnf
-         2qFtcrR0lZesIH3l07tgog29TouE9J4skzOgt+W7vSQmz0kxfimys02O3xMYUIZgei09
-         DUCACs8HF+VK9PchaGJyzPp5H8zOauPUpneI6hbS841l5nQ/x2pb0zi/7TrU0QdCtizv
-         O3uufL7p8UTuOkoisbG7MyYNN8OdRXslUClU94bCI4ztjjliJB4gepQ/S+cVxTqKjxAs
-         oHKw==
+        bh=CyPAbYt9VRAUpFpSUAU0IpeJNWMpsxarTMk8KN3vrNg=;
+        b=aANk3HS1tzVv3CFxvPyNMqj3ym0gTnIo4zloeLyOSeR22AtU3LxVAmXFnnBD64SLTq
+         AKM3prVN+BYh8hxhQ6kZsP7+uogIwBcBHdfZoe/M46xi+M6CwhsLHUq7iaGPOGrJc0db
+         VoEPV80tRytewrygZYHG6zavdQP7Wydi62xqVcIlRAkjTU9ThaKL3ANBYcxY3sPSR7yK
+         NdpN9JtRq9WsEy9LQH2Oo+9HhtTJ6cDV/yi9vlln/FDnemnZcGWg+Qcz9GGn2sDxvdNs
+         P2l0shYPsEz0hcFUOZWkatwUFF9xFjcdh78os/iOttB796Jz65bZaHBgVxKn2sBVXmne
+         bDrg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -29,10 +29,10 @@ To: Oleg Drokin <oleg.drokin@intel.com>,
  James Simmons <jsimmons@infradead.org>,
  Andreas Dilger <andreas.dilger@intel.com>
 Date: Thu, 12 Apr 2018 07:54:48 +1000
-Subject: [PATCH 03/20] staging: lustre: convert obd uuid hash to rhashtable
+Subject: [PATCH 02/20] staging: lustre: convert lov_pool to use rhashtable
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152348368861.12394.17231763587470085829.stgit@noble>
+Message-ID: <152348368857.12394.13530263723383915776.stgit@noble>
 In-Reply-To: <152348312863.12394.11915752362061083241.stgit@noble>
 References: <152348312863.12394.11915752362061083241.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -40,366 +40,366 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597488483273312212?=
-X-GMAIL-MSGID: =?utf-8?q?1597488483273312212?=
+X-GMAIL-THRID: =?utf-8?q?1597488475129562882?=
+X-GMAIL-MSGID: =?utf-8?q?1597488475129562882?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The rhashtable data type is a perfect fit for the
-export uuid hash table, so use that instead of
-cfs_hash (which will eventually be removed).
+The pools hashtable can be implemented using
+the rhashtable implementation in lib.
+This has the benefit that lookups are lock-free.
 
-As rhashtable supports lookups and insertions in atomic
-context, there is no need to drop a spinlock while
-inserting a new entry, which simplifies code quite a bit.
+We need to use kfree_rcu() to free a pool so
+that a lookup racing with a deletion will not access
+freed memory.
 
-As there are no simple lookups on this hash table (only
-insertions which might fail and take a spinlock), there is
-no need to use rcu to free the exports.
+rhashtable has no combined lookup-and-delete interface,
+but as the lookup is lockless and the chains are short,
+this brings little cost.  Even if a lookup finds a pool,
+we must be prepared for the delete to fail to find it,
+as we might race with another thread doing a delete.
+
+We use atomic_inc_not_zero() after finding a pool in the
+hash table and if that fails, we must have raced with a
+deletion, so we treat the lookup as a failure.
+
+Use hashlen_string() rather than a hand-crafted hash
+function.
+Note that the pool_name, and the search key, are
+guaranteed to be nul terminated.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- .../staging/lustre/lustre/include/lustre_export.h  |    2 
- drivers/staging/lustre/lustre/include/obd.h        |    5 -
+ drivers/staging/lustre/lustre/include/obd.h        |    4 -
  .../staging/lustre/lustre/include/obd_support.h    |    3 
- drivers/staging/lustre/lustre/obdclass/genops.c    |   34 +---
- .../staging/lustre/lustre/obdclass/obd_config.c    |  161 +++++++++-----------
- 5 files changed, 80 insertions(+), 125 deletions(-)
+ drivers/staging/lustre/lustre/lov/lov_internal.h   |   11 +
+ drivers/staging/lustre/lustre/lov/lov_obd.c        |   12 +-
+ drivers/staging/lustre/lustre/lov/lov_pool.c       |  159 ++++++++------------
+ 5 files changed, 80 insertions(+), 109 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/include/lustre_export.h b/drivers/staging/lustre/lustre/include/lustre_export.h
-index 19ce13bc8ee6..79ad5aae86b9 100644
---- a/drivers/staging/lustre/lustre/include/lustre_export.h
-+++ b/drivers/staging/lustre/lustre/include/lustre_export.h
-@@ -89,7 +89,7 @@ struct obd_export {
- 	struct list_head		exp_obd_chain;
- 	/** work_struct for destruction of export */
- 	struct work_struct	exp_zombie_work;
--	struct hlist_node	  exp_uuid_hash; /** uuid-export hash*/
-+	struct rhash_head	exp_uuid_hash; /** uuid-export hash*/
- 	/** Obd device of this export */
- 	struct obd_device	*exp_obd;
- 	/**
 diff --git a/drivers/staging/lustre/lustre/include/obd.h b/drivers/staging/lustre/lustre/include/obd.h
-index ad265db48b76..1818fe6a7a2f 100644
+index f1233ca7d337..ad265db48b76 100644
 --- a/drivers/staging/lustre/lustre/include/obd.h
 +++ b/drivers/staging/lustre/lustre/include/obd.h
-@@ -558,7 +558,7 @@ struct obd_device {
- 	 */
- 	unsigned long obd_recovery_expired:1;
- 	/* uuid-export hash body */
--	struct cfs_hash	     *obd_uuid_hash;
-+	struct rhashtable	obd_uuid_hash;
- 	wait_queue_head_t	     obd_refcount_waitq;
- 	struct list_head	      obd_exports;
- 	struct list_head	      obd_unlinked_exports;
-@@ -622,6 +622,9 @@ struct obd_device {
- 	struct completion	obd_kobj_unregister;
- };
+@@ -46,6 +46,8 @@
+ #include <lustre_intent.h>
+ #include <cl_object.h>
  
-+int obd_uuid_add(struct obd_device *obd, struct obd_export *export);
-+void obd_uuid_del(struct obd_device *obd, struct obd_export *export);
++#include <linux/rhashtable.h>
 +
- /* get/set_info keys */
- #define KEY_ASYNC	       "async"
- #define KEY_CHANGELOG_CLEAR     "changelog_clear"
+ #define MAX_OBD_DEVICES 8192
+ 
+ struct osc_async_rc {
+@@ -383,7 +385,7 @@ struct lov_obd {
+ 	__u32		   lov_tgt_size;   /* size of tgts array */
+ 	int		     lov_connects;
+ 	int		     lov_pool_count;
+-	struct cfs_hash	     *lov_pools_hash_body; /* used for key access */
++	struct rhashtable	lov_pools_hash_body; /* used for key access */
+ 	struct list_head	lov_pool_list; /* used for sequential access */
+ 	struct dentry		*lov_pool_debugfs_entry;
+ 	enum lustre_sec_part    lov_sp_me;
 diff --git a/drivers/staging/lustre/lustre/include/obd_support.h b/drivers/staging/lustre/lustre/include/obd_support.h
-index 730a6ee71565..a4c7a2ee9738 100644
+index aebcab191442..730a6ee71565 100644
 --- a/drivers/staging/lustre/lustre/include/obd_support.h
 +++ b/drivers/staging/lustre/lustre/include/obd_support.h
 @@ -61,9 +61,6 @@ extern atomic_long_t obd_dirty_transit_pages;
  extern char obd_jobid_var[];
  
  /* Some hash init argument constants */
--#define HASH_UUID_BKT_BITS 5
--#define HASH_UUID_CUR_BITS 7
--#define HASH_UUID_MAX_BITS 12
- /* Timeout definitions */
- #define OBD_TIMEOUT_DEFAULT	     100
- /* Time to wait for all clients to reconnect during recovery (hard limit) */
-diff --git a/drivers/staging/lustre/lustre/obdclass/genops.c b/drivers/staging/lustre/lustre/obdclass/genops.c
-index 86e22472719a..af233b868742 100644
---- a/drivers/staging/lustre/lustre/obdclass/genops.c
-+++ b/drivers/staging/lustre/lustre/obdclass/genops.c
-@@ -713,7 +713,6 @@ struct obd_export *class_new_export(struct obd_device *obd,
- 				    struct obd_uuid *cluuid)
- {
- 	struct obd_export *export;
--	struct cfs_hash *hash = NULL;
- 	int rc = 0;
+-#define HASH_POOLS_BKT_BITS 3
+-#define HASH_POOLS_CUR_BITS 3
+-#define HASH_POOLS_MAX_BITS 7
+ #define HASH_UUID_BKT_BITS 5
+ #define HASH_UUID_CUR_BITS 7
+ #define HASH_UUID_MAX_BITS 12
+diff --git a/drivers/staging/lustre/lustre/lov/lov_internal.h b/drivers/staging/lustre/lustre/lov/lov_internal.h
+index 27f60dd7ab9a..47042f27ca90 100644
+--- a/drivers/staging/lustre/lustre/lov/lov_internal.h
++++ b/drivers/staging/lustre/lustre/lov/lov_internal.h
+@@ -149,11 +149,16 @@ struct pool_desc {
+ 	char			 pool_name[LOV_MAXPOOLNAME + 1];
+ 	struct ost_pool		 pool_obds;
+ 	atomic_t		 pool_refcount;
+-	struct hlist_node	 pool_hash;		/* access by poolname */
+-	struct list_head	 pool_list;		/* serial access */
++	struct rhash_head	 pool_hash;		/* access by poolname */
++	union {
++		struct list_head	pool_list;	/* serial access */
++		struct rcu_head		rcu;		/* delayed free */
++	};
+ 	struct dentry		*pool_debugfs_entry;	/* file in debugfs */
+ 	struct obd_device	*pool_lobd;		/* owner */
+ };
++int lov_pool_hash_init(struct rhashtable *tbl);
++void lov_pool_hash_destroy(struct rhashtable *tbl);
  
- 	export = kzalloc(sizeof(*export), GFP_NOFS);
-@@ -740,7 +739,6 @@ struct obd_export *class_new_export(struct obd_device *obd,
- 	class_handle_hash(&export->exp_handle, &export_handle_ops);
- 	spin_lock_init(&export->exp_lock);
- 	spin_lock_init(&export->exp_rpc_lock);
--	INIT_HLIST_NODE(&export->exp_uuid_hash);
- 	spin_lock_init(&export->exp_bl_list_lock);
- 	INIT_LIST_HEAD(&export->exp_bl_list);
- 	INIT_WORK(&export->exp_zombie_work, obd_zombie_exp_cull);
-@@ -757,44 +755,24 @@ struct obd_export *class_new_export(struct obd_device *obd,
- 		goto exit_unlock;
+ struct lov_request {
+ 	struct obd_info	  rq_oi;
+@@ -241,8 +246,6 @@ void lprocfs_lov_init_vars(struct lprocfs_static_vars *lvars);
+ /* lov_cl.c */
+ extern struct lu_device_type lov_device_type;
+ 
+-/* pools */
+-extern struct cfs_hash_ops pool_hash_operations;
+ /* ost_pool methods */
+ int lov_ost_pool_init(struct ost_pool *op, unsigned int count);
+ int lov_ost_pool_extend(struct ost_pool *op, unsigned int min_count);
+diff --git a/drivers/staging/lustre/lustre/lov/lov_obd.c b/drivers/staging/lustre/lustre/lov/lov_obd.c
+index 355e87ecc62d..94da35e673f7 100644
+--- a/drivers/staging/lustre/lustre/lov/lov_obd.c
++++ b/drivers/staging/lustre/lustre/lov/lov_obd.c
+@@ -795,15 +795,11 @@ int lov_setup(struct obd_device *obd, struct lustre_cfg *lcfg)
+ 
+ 	init_rwsem(&lov->lov_notify_lock);
+ 
+-	lov->lov_pools_hash_body = cfs_hash_create("POOLS", HASH_POOLS_CUR_BITS,
+-						   HASH_POOLS_MAX_BITS,
+-						   HASH_POOLS_BKT_BITS, 0,
+-						   CFS_HASH_MIN_THETA,
+-						   CFS_HASH_MAX_THETA,
+-						   &pool_hash_operations,
+-						   CFS_HASH_DEFAULT);
+ 	INIT_LIST_HEAD(&lov->lov_pool_list);
+ 	lov->lov_pool_count = 0;
++	rc = lov_pool_hash_init(&lov->lov_pools_hash_body);
++	if (rc)
++		goto out;
+ 	rc = lov_ost_pool_init(&lov->lov_packed, 0);
+ 	if (rc)
+ 		goto out;
+@@ -839,7 +835,7 @@ static int lov_cleanup(struct obd_device *obd)
+ 		/* coverity[overrun-buffer-val] */
+ 		lov_pool_del(obd, pool->pool_name);
  	}
+-	cfs_hash_putref(lov->lov_pools_hash_body);
++	lov_pool_hash_destroy(&lov->lov_pools_hash_body);
+ 	lov_ost_pool_free(&lov->lov_packed);
  
--	hash = cfs_hash_getref(obd->obd_uuid_hash);
--	if (!hash) {
--		rc = -ENODEV;
--		goto exit_unlock;
--	}
--	spin_unlock(&obd->obd_dev_lock);
--
- 	if (!obd_uuid_equals(cluuid, &obd->obd_uuid)) {
--		rc = cfs_hash_add_unique(hash, cluuid, &export->exp_uuid_hash);
--		if (rc != 0) {
-+		rc = obd_uuid_add(obd, export);
-+		if (rc) {
- 			LCONSOLE_WARN("%s: denying duplicate export for %s, %d\n",
- 				      obd->obd_name, cluuid->uuid, rc);
--			rc = -EALREADY;
--			goto exit_err;
-+			goto exit_unlock;
- 		}
- 	}
+ 	lprocfs_obd_cleanup(obd);
+diff --git a/drivers/staging/lustre/lustre/lov/lov_pool.c b/drivers/staging/lustre/lustre/lov/lov_pool.c
+index ecd9329cd073..b673b4fd305b 100644
+--- a/drivers/staging/lustre/lustre/lov/lov_pool.c
++++ b/drivers/staging/lustre/lustre/lov/lov_pool.c
+@@ -49,6 +49,28 @@
+ #define pool_tgt(_p, _i) \
+ 		_p->pool_lobd->u.lov.lov_tgts[_p->pool_obds.op_array[_i]]
  
--	spin_lock(&obd->obd_dev_lock);
--	if (obd->obd_stopping) {
--		cfs_hash_del(hash, cluuid, &export->exp_uuid_hash);
--		rc = -ENODEV;
--		goto exit_unlock;
--	}
--
- 	class_incref(obd, "export", export);
- 	list_add(&export->exp_obd_chain, &export->exp_obd->obd_exports);
- 	export->exp_obd->obd_num_exports++;
- 	spin_unlock(&obd->obd_dev_lock);
--	cfs_hash_putref(hash);
- 	return export;
- 
- exit_unlock:
- 	spin_unlock(&obd->obd_dev_lock);
--exit_err:
--	if (hash)
--		cfs_hash_putref(hash);
- 	class_handle_unhash(&export->exp_handle);
--	LASSERT(hlist_unhashed(&export->exp_uuid_hash));
- 	obd_destroy_export(export);
- 	kfree(export);
- 	return ERR_PTR(rc);
-@@ -807,10 +785,8 @@ void class_unlink_export(struct obd_export *exp)
- 
- 	spin_lock(&exp->exp_obd->obd_dev_lock);
- 	/* delete an uuid-export hashitem from hashtables */
--	if (!hlist_unhashed(&exp->exp_uuid_hash))
--		cfs_hash_del(exp->exp_obd->obd_uuid_hash,
--			     &exp->exp_client_uuid,
--			     &exp->exp_uuid_hash);
-+	if (exp != exp->exp_obd->obd_self_export)
-+		obd_uuid_del(exp->exp_obd, exp);
- 
- 	list_move(&exp->exp_obd_chain, &exp->exp_obd->obd_unlinked_exports);
- 	exp->exp_obd->obd_num_exports--;
-diff --git a/drivers/staging/lustre/lustre/obdclass/obd_config.c b/drivers/staging/lustre/lustre/obdclass/obd_config.c
-index eab03766236f..ffc1814398a5 100644
---- a/drivers/staging/lustre/lustre/obdclass/obd_config.c
-+++ b/drivers/staging/lustre/lustre/obdclass/obd_config.c
-@@ -48,7 +48,69 @@
- 
- #include "llog_internal.h"
- 
--static struct cfs_hash_ops uuid_hash_ops;
-+/*
-+ * uuid<->export lustre hash operations
-+ */
-+/*
-+ * NOTE: It is impossible to find an export that is in failed
-+ *       state with this function
-+ */
-+static int
-+uuid_keycmp(struct rhashtable_compare_arg *arg, const void *obj)
++static u32 pool_hashfh(const void *data, u32 len, u32 seed)
 +{
-+	const struct obd_uuid *uuid = arg->key;
-+	const struct obd_export *exp = obj;
-+
-+	if (obd_uuid_equals(uuid, &exp->exp_client_uuid) &&
-+	    !exp->exp_failed)
-+		return 0;
-+	return -ESRCH;
++	const char *pool_name = data;
++	return hashlen_hash(hashlen_string((void*)(unsigned long)seed, pool_name));
 +}
 +
-+static void
-+uuid_export_exit(void *vexport, void *data)
++static int pool_cmpfn(struct rhashtable_compare_arg *arg, const void *obj)
 +{
-+	struct obd_export *exp = vexport;
-+
-+	class_export_put(exp);
++	const struct pool_desc *pool = obj;
++	const char *pool_name = arg->key;
++	return strcmp(pool_name, pool->pool_name);
 +}
 +
-+static const struct rhashtable_params uuid_hash_params = {
-+	.key_len	= sizeof(struct obd_uuid),
-+	.key_offset	= offsetof(struct obd_export, exp_client_uuid),
-+	.head_offset	= offsetof(struct obd_export, exp_uuid_hash),
-+	.obj_cmpfn	= uuid_keycmp,
++static const struct rhashtable_params pools_hash_params = {
++	.key_len	= 1, /* actually variable */
++	.key_offset	= offsetof(struct pool_desc, pool_name),
++	.head_offset	= offsetof(struct pool_desc, pool_hash),
++	.hashfn		= pool_hashfh,
++	.obj_cmpfn	= pool_cmpfn,
 +	.automatic_shrinking = true,
 +};
 +
-+int obd_uuid_add(struct obd_device *obd, struct obd_export *export)
+ static void lov_pool_getref(struct pool_desc *pool)
+ {
+ 	CDEBUG(D_INFO, "pool %p\n", pool);
+@@ -59,96 +81,13 @@ void lov_pool_putref(struct pool_desc *pool)
+ {
+ 	CDEBUG(D_INFO, "pool %p\n", pool);
+ 	if (atomic_dec_and_test(&pool->pool_refcount)) {
+-		LASSERT(hlist_unhashed(&pool->pool_hash));
+ 		LASSERT(list_empty(&pool->pool_list));
+ 		LASSERT(!pool->pool_debugfs_entry);
+ 		lov_ost_pool_free(&pool->pool_obds);
+-		kfree(pool);
+-	}
+-}
+-
+-static void lov_pool_putref_locked(struct pool_desc *pool)
+-{
+-	CDEBUG(D_INFO, "pool %p\n", pool);
+-	LASSERT(atomic_read(&pool->pool_refcount) > 1);
+-
+-	atomic_dec(&pool->pool_refcount);
+-}
+-
+-/*
+- * hash function using a Rotating Hash algorithm
+- * Knuth, D. The Art of Computer Programming,
+- * Volume 3: Sorting and Searching,
+- * Chapter 6.4.
+- * Addison Wesley, 1973
+- */
+-static __u32 pool_hashfn(struct cfs_hash *hash_body, const void *key,
+-			 unsigned int mask)
+-{
+-	int i;
+-	__u32 result;
+-	char *poolname;
+-
+-	result = 0;
+-	poolname = (char *)key;
+-	for (i = 0; i < LOV_MAXPOOLNAME; i++) {
+-		if (poolname[i] == '\0')
+-			break;
+-		result = (result << 4) ^ (result >> 28) ^  poolname[i];
++		kfree_rcu(pool, rcu);
+ 	}
+-	return (result % mask);
+-}
+-
+-static void *pool_key(struct hlist_node *hnode)
+-{
+-	struct pool_desc *pool;
+-
+-	pool = hlist_entry(hnode, struct pool_desc, pool_hash);
+-	return pool->pool_name;
+-}
+-
+-static int pool_hashkey_keycmp(const void *key, struct hlist_node *compared_hnode)
+-{
+-	char *pool_name;
+-	struct pool_desc *pool;
+-
+-	pool_name = (char *)key;
+-	pool = hlist_entry(compared_hnode, struct pool_desc, pool_hash);
+-	return !strncmp(pool_name, pool->pool_name, LOV_MAXPOOLNAME);
+-}
+-
+-static void *pool_hashobject(struct hlist_node *hnode)
+-{
+-	return hlist_entry(hnode, struct pool_desc, pool_hash);
+-}
+-
+-static void pool_hashrefcount_get(struct cfs_hash *hs, struct hlist_node *hnode)
+-{
+-	struct pool_desc *pool;
+-
+-	pool = hlist_entry(hnode, struct pool_desc, pool_hash);
+-	lov_pool_getref(pool);
+-}
+-
+-static void pool_hashrefcount_put_locked(struct cfs_hash *hs,
+-					 struct hlist_node *hnode)
+-{
+-	struct pool_desc *pool;
+-
+-	pool = hlist_entry(hnode, struct pool_desc, pool_hash);
+-	lov_pool_putref_locked(pool);
+ }
+ 
+-struct cfs_hash_ops pool_hash_operations = {
+-	.hs_hash	= pool_hashfn,
+-	.hs_key		= pool_key,
+-	.hs_keycmp      = pool_hashkey_keycmp,
+-	.hs_object      = pool_hashobject,
+-	.hs_get		= pool_hashrefcount_get,
+-	.hs_put_locked  = pool_hashrefcount_put_locked,
+-
+-};
+-
+ /*
+  * pool debugfs seq_file methods
+  */
+@@ -396,6 +335,23 @@ int lov_ost_pool_free(struct ost_pool *op)
+ 	return 0;
+ }
+ 
++static void
++pools_hash_exit(void *vpool, void *data)
 +{
-+	int rc;
-+
-+	rc = rhashtable_lookup_insert_fast(&obd->obd_uuid_hash,
-+					   &export->exp_uuid_hash,
-+					   uuid_hash_params);
-+	if (rc == 0)
-+		class_export_get(export);
-+	else if (rc == -EEXIST)
-+		rc = -EALREADY;
-+	else
-+		/* map obscure error codes to -ENOMEM */
-+		rc = -ENOMEM;
-+	return rc;
++	struct pool_desc *pool = vpool;
++	lov_pool_putref(pool);
 +}
 +
-+void obd_uuid_del(struct obd_device *obd, struct obd_export *export)
++int lov_pool_hash_init(struct rhashtable *tbl)
 +{
-+	int rc;
-+
-+	rc = rhashtable_remove_fast(&obd->obd_uuid_hash,
-+				    &export->exp_uuid_hash,
-+				    uuid_hash_params);
-+
-+	if (rc == 0)
-+		class_export_put(export);
++	return rhashtable_init(tbl, &pools_hash_params);
 +}
++
++void lov_pool_hash_destroy(struct rhashtable *tbl)
++{
++	rhashtable_free_and_destroy(tbl, pools_hash_exit, NULL);
++}
++
+ int lov_pool_new(struct obd_device *obd, char *poolname)
+ {
+ 	struct lov_obd *lov;
+@@ -421,8 +377,6 @@ int lov_pool_new(struct obd_device *obd, char *poolname)
+ 	if (rc)
+ 		goto out_err;
  
- /*********** string parsing utils *********/
- 
-@@ -347,26 +409,18 @@ static int class_setup(struct obd_device *obd, struct lustre_cfg *lcfg)
- 	 * other fns check that status, and we're not actually set up yet.
- 	 */
- 	obd->obd_starting = 1;
--	obd->obd_uuid_hash = NULL;
+-	INIT_HLIST_NODE(&new_pool->pool_hash);
+-
+ 	/* get ref for debugfs file */
+ 	lov_pool_getref(new_pool);
+ 	new_pool->pool_debugfs_entry = ldebugfs_add_simple(
+@@ -443,11 +397,16 @@ int lov_pool_new(struct obd_device *obd, char *poolname)
+ 	lov->lov_pool_count++;
  	spin_unlock(&obd->obd_dev_lock);
  
- 	/* create an uuid-export lustre hash */
--	obd->obd_uuid_hash = cfs_hash_create("UUID_HASH",
--					     HASH_UUID_CUR_BITS,
--					     HASH_UUID_MAX_BITS,
--					     HASH_UUID_BKT_BITS, 0,
--					     CFS_HASH_MIN_THETA,
--					     CFS_HASH_MAX_THETA,
--					     &uuid_hash_ops, CFS_HASH_DEFAULT);
--	if (!obd->obd_uuid_hash) {
--		err = -ENOMEM;
-+	err = rhashtable_init(&obd->obd_uuid_hash, &uuid_hash_params);
-+
-+	if (err)
- 		goto err_hash;
--	}
- 
- 	exp = class_new_export(obd, &obd->obd_uuid);
- 	if (IS_ERR(exp)) {
- 		err = PTR_ERR(exp);
--		goto err_hash;
-+		goto err_new;
+-	/* add to find only when it fully ready  */
+-	rc = cfs_hash_add_unique(lov->lov_pools_hash_body, poolname,
+-				 &new_pool->pool_hash);
++	/* Add to hash table only when it is fully ready.  */
++	rc = rhashtable_lookup_insert_fast(&lov->lov_pools_hash_body,
++					   &new_pool->pool_hash, pools_hash_params);
+ 	if (rc) {
+-		rc = -EEXIST;
++		if (rc != -EEXIST)
++			/*
++			 * Hide -E2BIG and -EBUSY which
++			 * are not helpful.
++			 */
++			rc = -ENOMEM;
+ 		goto out_err;
  	}
  
- 	obd->obd_self_export = exp;
-@@ -392,11 +446,9 @@ static int class_setup(struct obd_device *obd, struct lustre_cfg *lcfg)
- 		class_unlink_export(obd->obd_self_export);
- 		obd->obd_self_export = NULL;
- 	}
-+err_new:
-+	rhashtable_destroy(&obd->obd_uuid_hash);
- err_hash:
--	if (obd->obd_uuid_hash) {
--		cfs_hash_putref(obd->obd_uuid_hash);
--		obd->obd_uuid_hash = NULL;
--	}
- 	obd->obd_starting = 0;
- 	CERROR("setup %s failed (%d)\n", obd->obd_name, err);
- 	return err;
-@@ -490,10 +542,7 @@ static int class_cleanup(struct obd_device *obd, struct lustre_cfg *lcfg)
- 		       obd->obd_name, err);
+@@ -476,7 +435,13 @@ int lov_pool_del(struct obd_device *obd, char *poolname)
+ 	lov = &obd->u.lov;
  
- 	/* destroy an uuid-export hash body */
--	if (obd->obd_uuid_hash) {
--		cfs_hash_putref(obd->obd_uuid_hash);
--		obd->obd_uuid_hash = NULL;
--	}
-+	rhashtable_free_and_destroy(&obd->obd_uuid_hash, uuid_export_exit, NULL);
+ 	/* lookup and kill hash reference */
+-	pool = cfs_hash_del_key(lov->lov_pools_hash_body, poolname);
++	rcu_read_lock();
++	pool = rhashtable_lookup(&lov->lov_pools_hash_body, poolname, pools_hash_params);
++	if (pool)
++		if (rhashtable_remove_fast(&lov->lov_pools_hash_body,
++					   &pool->pool_hash, pools_hash_params) != 0)
++			pool = NULL;
++	rcu_read_unlock();
+ 	if (!pool)
+ 		return -ENOENT;
  
- 	class_decref(obd, "setup", obd);
- 	obd->obd_set_up = 0;
-@@ -1487,73 +1536,3 @@ int class_manual_cleanup(struct obd_device *obd)
- 	return rc;
- }
- EXPORT_SYMBOL(class_manual_cleanup);
--
--/*
-- * uuid<->export lustre hash operations
-- */
--
--static unsigned int
--uuid_hash(struct cfs_hash *hs, const void *key, unsigned int mask)
--{
--	return cfs_hash_djb2_hash(((struct obd_uuid *)key)->uuid,
--				  sizeof(((struct obd_uuid *)key)->uuid), mask);
--}
--
--static void *
--uuid_key(struct hlist_node *hnode)
--{
--	struct obd_export *exp;
--
--	exp = hlist_entry(hnode, struct obd_export, exp_uuid_hash);
--
--	return &exp->exp_client_uuid;
--}
--
--/*
-- * NOTE: It is impossible to find an export that is in failed
-- *       state with this function
-- */
--static int
--uuid_keycmp(const void *key, struct hlist_node *hnode)
--{
--	struct obd_export *exp;
--
--	LASSERT(key);
--	exp = hlist_entry(hnode, struct obd_export, exp_uuid_hash);
--
--	return obd_uuid_equals(key, &exp->exp_client_uuid) &&
--	       !exp->exp_failed;
--}
--
--static void *
--uuid_export_object(struct hlist_node *hnode)
--{
--	return hlist_entry(hnode, struct obd_export, exp_uuid_hash);
--}
--
--static void
--uuid_export_get(struct cfs_hash *hs, struct hlist_node *hnode)
--{
--	struct obd_export *exp;
--
--	exp = hlist_entry(hnode, struct obd_export, exp_uuid_hash);
--	class_export_get(exp);
--}
--
--static void
--uuid_export_put_locked(struct cfs_hash *hs, struct hlist_node *hnode)
--{
--	struct obd_export *exp;
--
--	exp = hlist_entry(hnode, struct obd_export, exp_uuid_hash);
--	class_export_put(exp);
--}
--
--static struct cfs_hash_ops uuid_hash_ops = {
--	.hs_hash	= uuid_hash,
--	.hs_key		= uuid_key,
--	.hs_keycmp      = uuid_keycmp,
--	.hs_object      = uuid_export_object,
--	.hs_get		= uuid_export_get,
--	.hs_put_locked  = uuid_export_put_locked,
--};
+@@ -507,7 +472,11 @@ int lov_pool_add(struct obd_device *obd, char *poolname, char *ostname)
+ 
+ 	lov = &obd->u.lov;
+ 
+-	pool = cfs_hash_lookup(lov->lov_pools_hash_body, poolname);
++	rcu_read_lock();
++	pool = rhashtable_lookup(&lov->lov_pools_hash_body, poolname, pools_hash_params);
++	if (pool && !atomic_inc_not_zero(&pool->pool_refcount))
++		pool = NULL;
++	rcu_read_unlock();
+ 	if (!pool)
+ 		return -ENOENT;
+ 
+@@ -551,7 +520,11 @@ int lov_pool_remove(struct obd_device *obd, char *poolname, char *ostname)
+ 
+ 	lov = &obd->u.lov;
+ 
+-	pool = cfs_hash_lookup(lov->lov_pools_hash_body, poolname);
++	rcu_read_lock();
++	pool = rhashtable_lookup(&lov->lov_pools_hash_body, poolname, pools_hash_params);
++	if (pool && !atomic_inc_not_zero(&pool->pool_refcount))
++		pool = NULL;
++	rcu_read_unlock();
+ 	if (!pool)
+ 		return -ENOENT;
+ 
