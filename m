@@ -1,92 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752653AbeDKBWk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 21:22:40 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48428 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752295AbeDKBWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 21:22:38 -0400
-Subject: Re: [PATCH v9 5/5] iommu/arm-smmu: Add support for qcom,smmu-v2
- variant
-To: Tomasz Figa <tfiga@chromium.org>
-References: <20180313085534.11650-1-vivek.gautam@codeaurora.org>
- <20180313085534.11650-6-vivek.gautam@codeaurora.org>
- <61d30fff-1bf8-d2c1-bbe9-f93de836ae77@huawei.com>
- <7d5af071-ef98-8461-3ce9-e84fc0b3956a@codeaurora.org>
- <d97872fe-5e8e-cc27-e385-64cea8ea2458@huawei.com>
- <CAAFQd5Cj3qaqt8ACabZwN4ZKaNbF9N9suGVaOKD8-kNxgfeeVA@mail.gmail.com>
-CC: Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>, <iommu@lists.linux-foundation.org>,
-        <gaojianbo@hisilicon.com>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-Message-ID: <65a57964-805b-3a38-71a2-0c383af30539@huawei.com>
-Date: Wed, 11 Apr 2018 09:22:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.0
+        id S1752486AbeDKBYX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 21:24:23 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:33576 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751946AbeDKBYV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 21:24:21 -0400
+X-Google-Smtp-Source: AIpwx4/xrKpQsDIG7t6jZck5ERLmfVJC118HOYYC5sbHSoT2QIIVz/lM0mNrHQyaGZ0ftmPVXMSxr5Ipq8TBs+v22W0=
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5Cj3qaqt8ACabZwN4ZKaNbF9N9suGVaOKD8-kNxgfeeVA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.40]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1523362546-20909-1-git-send-email-karahmed@amazon.de>
+References: <1523362546-20909-1-git-send-email-karahmed@amazon.de>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Wed, 11 Apr 2018 09:24:20 +0800
+Message-ID: <CANRm+Cx_j3n7O=KnuW9t3XW9RaUhhdboCE6TFdSwmPomi6asVw@mail.gmail.com>
+Subject: Re: [PATCH v3] X86/VMX: Disable VMX preemption timer if MWAIT is not intercepted
+To: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: kvm <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3B1OTEk015435
 
-Hi Tomasz,
+2018-04-10 20:15 GMT+08:00 KarimAllah Ahmed <karahmed@amazon.de>:
+> The VMX-preemption timer is used by KVM as a way to set deadlines for the
+> guest (i.e. timer emulation). That was safe till very recently when
+> capability KVM_X86_DISABLE_EXITS_MWAIT to disable intercepting MWAIT was
+> introduced. According to Intel SDM 25.5.1:
+>
+> """
+> The VMX-preemption timer operates in the C-states C0, C1, and C2; it also
+> operates in the shutdown and wait-for-SIPI states. If the timer counts down
+> to zero in any state other than the wait-for SIPI state, the logical
+> processor transitions to the C0 C-state and causes a VM exit; the timer
+> does not cause a VM exit if it counts down to zero in the wait-for-SIPI
+> state. The timer is not decremented in C-states deeper than C2.
+> """
 
-On 2018/4/10 21:14, Tomasz Figa wrote:
-> Hi Yisheng,
-> 
-> Sorry, I think we missed your question here.
-> 
-> On Wed, Mar 28, 2018 at 3:12 PM Yisheng Xie <xieyisheng1@huawei.com> wrote:
-> 
->> Hi Vivek,
-> 
->> On 2018/3/28 12:37, Vivek Gautam wrote:
->>> Hi Yisheng
->>>
->>>
->>> On 3/28/2018 6:54 AM, Yisheng Xie wrote:
->>>> Hi Vivek,
->>>>
->>>> On 2018/3/13 16:55, Vivek Gautam wrote:
->>>>> +- power-domains:  Specifiers for power domains required to be
-> powered on for
->>>>> +                  the SMMU to operate, as per generic power domain
-> bindings.
->>>>> +
->>>> In this patchset, power-domains is not used right? And you just do the
-> clock gating,
->>>> but not power gating, right?
->>>
->>> We are handling the power-domains too. Please see the example in this
-> binding doc.
-> 
->> I see, but I do not find the point in code of these patchset, do you mean
-> PMIC(e.g mmcc)
->> will gate the power domain of SMMU(e.g. MDSS_GDSC of mmcc) when PMIC
-> suspend?
-> 
-> 
-> If respective SoC power domains is registered as a standard genpd PM
-> domain, then the runtime PM subsystem will take care of power domain
-> control at runtime suspend and resume.
-> 
+Thanks for the patch. In addition, does it also mean we should prevent
+host from entering deeper C-states than C2 even if w/o disable
+intercept stuffs?
 
-Get it, thanks for your explain, I should have learned about this.
+Regards,
+Wanpeng Li
 
-Thanks
-Yisheng
-
-> Best regards,
-> Tomasz
-> 
-> .
-> 
+>
+> Now once the guest issues the MWAIT with a c-state deeper than
+> C2 the preemption timer will never wake it up again since it stopped
+> ticking! Usually this is compensated by other activities in the system that
+> would wake the core from the deep C-state (and cause a VMExit). For
+> example, if the host itself is ticking or it received interrupts, etc!
+>
+> So disable the VMX-preemption timer if MWAIT is exposed to the guest!
+>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: x86@kernel.org
+> Cc: kvm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+> ---
+> v2 -> v3:
+> - return -EOPNOTSUPP before any other operation in vmx_set_hv_timer
+>
+> v1 -> v2:
+> - Drop everything .. just return -EOPNOTSUPP (pbonzini@) :D
+> ---
+>  arch/x86/kvm/vmx.c | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index d2e54e7..31a4204 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -11903,10 +11903,16 @@ static inline int u64_shl_div_u64(u64 a, unsigned int shift,
+>
+>  static int vmx_set_hv_timer(struct kvm_vcpu *vcpu, u64 guest_deadline_tsc)
+>  {
+> -       struct vcpu_vmx *vmx = to_vmx(vcpu);
+> -       u64 tscl = rdtsc();
+> -       u64 guest_tscl = kvm_read_l1_tsc(vcpu, tscl);
+> -       u64 delta_tsc = max(guest_deadline_tsc, guest_tscl) - guest_tscl;
+> +       struct vcpu_vmx *vmx;
+> +       u64 tscl, guest_tscl, delta_tsc;
+> +
+> +       if (kvm_pause_in_guest(vcpu->kvm))
+> +               return -EOPNOTSUPP;
+> +
+> +       vmx = to_vmx(vcpu);
+> +       tscl = rdtsc();
+> +       guest_tscl = kvm_read_l1_tsc(vcpu, tscl);
+> +       delta_tsc = max(guest_deadline_tsc, guest_tscl) - guest_tscl;
+>
+>         /* Convert to host delta tsc if tsc scaling is enabled */
+>         if (vcpu->arch.tsc_scaling_ratio != kvm_default_tsc_scaling_ratio &&
+> --
+> 2.7.4
+>
