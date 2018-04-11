@@ -1,115 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755248AbeDKVWI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 17:22:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47496 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754281AbeDKSjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 14:39:06 -0400
-Date: Wed, 11 Apr 2018 15:39:02 -0300
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-To: Yonghong Song <yhs@fb.com>
-Cc: Alexei Starovoitov <ast@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Miller <davem@davemloft.net>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        acme@kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: bpf: handling non BPF register names in inline assembly with
- -target bpf
-Message-ID: <20180411183902.GC12166@redhat.com>
-References: <c8b0b3c0-6687-1be2-66d0-95b20662145d@fb.com>
+        id S1754798AbeDKVYi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 17:24:38 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59534 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754182AbeDKVYe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 17:24:34 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B43C36079B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Wed, 11 Apr 2018 15:24:31 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 02/10] dt-bindings: introduce RPMH RSC bindings for
+ Qualcomm SoCs
+Message-ID: <20180411212431.GG19682@codeaurora.org>
+References: <20180405161834.3850-1-ilina@codeaurora.org>
+ <20180405161834.3850-3-ilina@codeaurora.org>
+ <152306368031.94378.14957212064809086345@swboyd.mtv.corp.google.com>
+ <20180409160800.GC19682@codeaurora.org>
+ <152346054406.180276.4468371342222361883@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <c8b0b3c0-6687-1be2-66d0-95b20662145d@fb.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
+In-Reply-To: <152346054406.180276.4468371342222361883@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Apr 11, 2018 at 09:37:46AM -0700, Yonghong Song escreveu:
-> Hi, Arnaldo,
- 
-> When I studied the bpf compilation issue with latest linus/net-next
-> kernel (https://patchwork.kernel.org/patch/10333829/), an alternative
-> approach I tried is to use __BPF__ macro.
+On Wed, Apr 11 2018 at 09:29 -0600, Stephen Boyd wrote:
+>Quoting Lina Iyer (2018-04-09 09:08:00)
+>> On Fri, Apr 06 2018 at 19:14 -0600, Stephen Boyd wrote:
+>> >Quoting Lina Iyer (2018-04-05 09:18:26)
+>> >> diff --git a/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+>> >> new file mode 100644
+>> >> index 000000000000..dcf71a5b302f
+>> >> --- /dev/null
+>> >> +++ b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+>> >> @@ -0,0 +1,127 @@
+>> >> +
+>> >> +Example 1:
+>> >> +
+>> >> +For a TCS whose RSC base address is is 0x179C0000 and is at a DRV id of 2, the
+>> >> +register offsets for DRV2 start at 0D00, the register calculations are like
+>> >> +this -
+>> >> +First tuple: 0x179C0000 + 0x10000 * 2 = 0x179E0000
+>> >> +Second tuple: 0x179E0000 + 0xD00 = 0x179E0D00
+>> >> +
+>> >> +       apps_rsc: rsc@179e000 {
+>> >> +               label = "apps_rsc";
+>> >> +               compatible = "qcom,rpmh-rsc";
+>> >> +               reg = <0x179e0000 0x10000>, <0x179e0d00 0x3000>;
+>> >
+>> >The first reg property overlaps the second one. Does this second one
+>> >ever move around? I would hardcode it in the driver to be 0xd00 away
+>> >from the drv base instead of specifying it in DT if it's the same all
+>> >the time.
+>> >
+>> >Also, the example shows 0x179c0000 which I guess is the actual beginning
+>> >of the RSC block. So the binding seems to be for one DRV inside of an
+>> >RSC. Can we get the full description of the RSC in the binding instead?
+>> >I imagine that means there's a DRV0,1,2 and those probably have an
+>> >interrupt per each DRV and then a different TCS config per each one too?
+>> >If the binding can describe all of the RSC then we can use different
+>> >DRVs by changing the qcom,drv-id property.
+>> >
+>> >       rsc@179c0000 {
+>> >               compatible = "qcom,rpmh-rsc";
+>> >               reg = <0x179c0000 0x10000>,
+>> >                     <0x179d0000 0x10000>,
+>> >                     <0x179e0000 0x10000>;
+>> >               qcom,tcs-offset = <0xd00>;
+>> >               qcom,drv-id = <0/1/2>;
+>> >               interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+>> >                            <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+>> >                            <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+>> >       }
+>> >
+>> >This is sort of what I imagine it would look like. I have no idea how
+>> >the tcs config would work unless each DRV has the same TCS config
+>> >though. Otherwise, if each node is for a drv, then I would expect the
+>> >node would be called 'drv' and we wouldn't need the drv-id property and
+>> >the compatible string would say drv instead of rsc?
+>> >
+>> >BTW, what are the other DRVs used for in the apps RSC?
+>> >
+>> The DRV is the voter for an execution environment (Linux, Hypervisor,
+>> ATF) in the RSC. The RSC has a lot of other registers that Linux is not
+>> privy to. They are access restricted.
+>
+>Alright. Well sometimes access restrictions aren't there, so this isn't
+>a good assumption to make.
+>
+>> The memory organization of the RSC
+>> mandates that we know the DRV id to access registers specific to the
+>> DRV.
+>
+>I think qcom,drv-id covers that, no?
+>
+>> Unfortunately, not all RSC have identical DRV configuration and the
+>> register space is also variable depending on the capability of the RSC.
+>> There are functionalities supported by other RSCs in the SoC that are
+>> not supported by the RSC associated with the application processor,
+>> while not many RSCs' support multiple DRVs. Therefore it doesn't benefit
+>> describing the whole RSC as it is not usable from Linux (because of
+>> access restrictions).
+>
+>If we're not describing the whole RSC in the RSC binding then we're not
+>going to get very far. From what I can tell, this binding describes one
+>DRV inside of an RSC instead of the whole RSC. Yes we'll probably never
+>use the ATF part of the RSC in Linux, but we may use the hypervisor part
+>if we use KVM/Xen so the binding should be describing as much as it can
+>about this device in case some software needs to use it.
+>
+The RSC is pretty much this. A set of registers that are RSC specific at
+the address pointed to by the "rsc" reg and the TCS regsiters pointed to
+by the "tcs" reg. You do not want to clobber multiple DRVs into the same
+device node. It will be a lot confusing for the drivers to determine
+which DRV to vote.
+>Put another way, even if the "apps" RSC is complicated, we should be
+>describing it to the best of our abilities in the binding so that when
+>it is used by non-linux OSes things still work by simply tweaking the
+>drv-id that we use to pick the right things out of the node.
+>
+>Or we're describing the RSC but it's really a container node that
+>doesn't do much besides hold DRVs? So this is described at the wrong
+>level?
+What we are describing is a DRV, but a standalone DRV alone is useless
+without the necessary RSC registers. So its a unique RSC+DRV combination
+that is represented here.
 
-You mean you used an alternative approach that does _not_ use the
-__BPF__ macro, right? I looked at the patch and yeah, looks sane as
-well, since the kernel build process already defines that
-CC_HAVE_ASM_GOTO, checking if gcc has that feature, etc.
+Hope that helps.
 
-> The following patch introduced "#ifndef __BPF__" in
-> arch/x86/include/asm/asm.h for some inline assembly related to x86
-> "esp" register name.
- 
-
-> ==========
->  commit ca26cffa4e4aaeb09bb9e308f95c7835cb149248
-> Author: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Date:   Mon Dec 4 13:08:47 2017 -0300
-> 
->     x86/asm: Allow again using asm.h when building for the 'bpf'
-> clang target
-> 
->     Up to f5caf621ee35 ("x86/asm: Fix inline asm call constraints
-> for Clang")
->     we were able to use x86 headers to build to the 'bpf' clang target, as
->     done by the BPF code in tools/perf/.
->  ...
-> diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-> index 219faae..386a690 100644
-> --- a/arch/x86/include/asm/asm.h
-> +++ b/arch/x86/include/asm/asm.h
-> @@ -136,6 +136,7 @@
->  #endif
-> 
->  #ifndef __ASSEMBLY__
-> +#ifndef __BPF__
->  /*
->   * This output constraint should be used for any inline asm which
-> has a "call"
->   * instruction.  Otherwise the asm may be inserted before the frame
-> pointer
-> @@ -145,5 +146,6 @@
->  register unsigned long current_stack_pointer asm(_ASM_SP);
->  #define ASM_CALL_CONSTRAINT "+r" (current_stack_pointer)
->  #endif
-> +#endif
-> ...
-> ==========
-> 
-> I just landed a clang patch (clang 7.0.0 trunk)
-> https://reviews.llvm.org/rL329823
-> which will permit bpf clang target to accept ANY register
-> names. In this case, the inline assembly will be accepted by clang
-> and will be thrown away since variable current_stack_pointer is
-> not used in bpf programs.
-
-Ok, then that ifndef __BPF__ above will not be needed anymore, but only
-people with clang > that version will be able to build tools/perf/
- 
-> If the inline assembly is indeed for BPF program, later llc
-> AsmParser will do syntax and semantics checking again.
-> 
-> With the above clang patch, the above "#ifndef __BPF__" can be removed.
-> You can decide when is the appropriate time to use latest clang compiler
-> and remove the above "#ifndef __BPF__".
-
-So are you proposing that we have something similar to that
-CC_HAVE_ASM_GOTO check in the kernel main Makefile, to define something
-like CC_HAVE_ASM_REGS (or some better name), i.e. something like:
-
-# check for 'asm(_ASM_SP)'
-ifeq ($(call shell-cached,$(CONFIG_SHELL) $(srctree)/scripts/cc-asm-regs.sh
-$(CC) $(KBUILD_CFLAGS)), y)
-  CC_HAVE_ASM_REGS := 1
-  KBUILD_CFLAGS += -DCC_HAVE_ASM_REGS
-  KBUILD_AFLAGS += -DCC_HAVE_ASM_REGS
-endif
-
-?
-
-- Arnaldo
+-- Lina
