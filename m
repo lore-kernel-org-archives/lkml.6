@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753299AbeDKNrg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 09:47:36 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:38699 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753236AbeDKNrc (ORCPT
+        id S1753340AbeDKNrj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 09:47:39 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36719 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753302AbeDKNrg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 09:47:32 -0400
-X-Google-Smtp-Source: AIpwx4+GJD+u0nodSJddDF8/Emfigy7DBR1QJFLK8lPU1CP/FdgmDKe1Fq4KpKPSp3B3MngvnodO0g==
-X-ME-Sender: <xms:7hHOWlvkQre2YFh13ckCZQGQ8pQ1s7k3erNB58paXsb5Fx4fvHzlaA>
+        Wed, 11 Apr 2018 09:47:36 -0400
+X-Google-Smtp-Source: AIpwx491SN2LmJ4gElXlkYLG4y/XcUytX/AM4SqLYgxiOEezU2HA3E8t8ndjxkqlCM/UYy3PzM80HA==
+X-ME-Sender: <xms:9BHOWguYacgEVfDDqR3LoSfBln2gUAOuRpuZ0dBd7f6HJYvSWEGMeg>
 From: Boqun Feng <boqun.feng@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
         Andrea Parri <parri.andrea@gmail.com>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org (open list:DOCUMENTATION)
-Subject: [RFC tip/locking/lockdep v6 04/20] lockdep: Redefine LOCK_*_STATE* bits
-Date: Wed, 11 Apr 2018 21:50:54 +0800
-Message-Id: <20180411135110.9217-5-boqun.feng@gmail.com>
+        Boqun Feng <boqun.feng@gmail.com>
+Subject: [RFC tip/locking/lockdep v6 06/20] lockdep: Introduce lock_list::dep
+Date: Wed, 11 Apr 2018 21:50:56 +0800
+Message-Id: <20180411135110.9217-7-boqun.feng@gmail.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180411135110.9217-1-boqun.feng@gmail.com>
 References: <20180411135110.9217-1-boqun.feng@gmail.com>
@@ -26,218 +25,170 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are three types of lock acquisitions: write, non-recursive read
-and recursive read, among which write locks and non-recursive read locks
-have no difference from a viewpoint for deadlock detections, because a
-write acquisition of the corresponding lock on an independent CPU or
-task makes a non-recursive read lock act as a write lock in the sense of
-deadlock. So we could treat them as the same type (named as
-"non-recursive lock") in lockdep.
+To add recursive read locks into the dependency graph, we need to store
+the types of dependencies for the BFS later. There are four types of
+dependencies:
 
-As in the irq lock inversion detection (safe->unsafe deadlock
-detection), we used to differ write lock with read lock (non-recursive
-and recursive ones), such a classification could be improved as
-non-recursive read lock behaves the same as write lock, so this patch
-redefines the meanings of LOCK_{USED_IN, ENABLED}_STATE*.
+*	Non-recursive -> Non-recursive dependencies: NN
+	e.g. write_lock(prev) held and try to acquire write_lock(next),
+	which can be represented as "prev -(NN)-> next".
 
-old:
-	LOCK_* : stands for write lock
-	LOCK_*_READ: stands for read lock(non-recursive and recursive)
-new:
-	LOCK_* : stands for non-recursive(write lock and non-recursive
-	read lock)
-	LOCK_*_RR: stands for recursive read lock
+*	Recursive -> Non-recursive dependencies: RN
+	e.g. read_lock(prev) held and try to acquire write_lock(next),
+	which can be represented as "prev -(RN)-> next".
 
-Such a change is needed for a future improvement on recursive read
-related irq inversion deadlock detection.
+*	Non-recursive -> recursive dependencies: NR
+	e.g. write_lock(prev) held and try to acquire read_lock(next),
+	which can be represented as "prev -(NR)-> next".
+
+*	Recursive -> recursive dependencies: RR
+	e.g. read_lock(prev) held and try to acquire read_lock(next),
+	which can be represented as "prev -(RR)-> next".
+
+So we use 4 bits for the presence of each type in lock_list::dep. Helper
+functions and marcos are also introduced to convert a pair of locks into
+lock_list::dep bit and maintain the addition of different types of
+dependencies.
 
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 ---
- Documentation/locking/lockdep-design.txt |  6 +++---
- kernel/locking/lockdep.c                 | 28 ++++++++++++++--------------
- kernel/locking/lockdep_internals.h       | 16 ++++++++--------
- kernel/locking/lockdep_proc.c            | 12 ++++++------
- 4 files changed, 31 insertions(+), 31 deletions(-)
+ include/linux/lockdep.h  |  2 ++
+ kernel/locking/lockdep.c | 76 +++++++++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 74 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/locking/lockdep-design.txt b/Documentation/locking/lockdep-design.txt
-index 6bb9e90e2c4f..53ede30ce16d 100644
---- a/Documentation/locking/lockdep-design.txt
-+++ b/Documentation/locking/lockdep-design.txt
-@@ -30,9 +30,9 @@ State
- The validator tracks lock-class usage history into 4n + 1 separate state bits:
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index d2af32387aaa..cbd257f62877 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -187,6 +187,8 @@ struct lock_list {
+ 	struct lock_class		*class;
+ 	struct stack_trace		trace;
+ 	u16				distance;
++	/* bitmap of different dependencies from head to this */
++	u8				dep;
  
- - 'ever held in STATE context'
--- 'ever held as readlock in STATE context'
-+- 'ever held as recursive readlock in STATE context'
- - 'ever held with STATE enabled'
--- 'ever held as readlock with STATE enabled'
-+- 'ever held as recurisve readlock with STATE enabled'
- 
- Where STATE can be either one of (kernel/locking/lockdep_states.h)
-  - hardirq
-@@ -51,7 +51,7 @@ locking error messages, inside curlies. A contrived example:
-     (&sio_locks[i].lock){-.-...}, at: [<c02867fd>] mutex_lock+0x21/0x24
- 
- 
--The bit position indicates STATE, STATE-read, for each of the states listed
-+The bit position indicates STATE, STATE-RR, for each of the states listed
- above, and the character displayed in each indicates:
- 
-    '.'  acquired while irqs disabled and not in irq context
+ 	/*
+ 	 * The parent field is used to implement breadth-first search, and the
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index f39a071ef0a8..14af2327b52a 100644
+index 1806060c88ce..0892855b6c57 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -448,10 +448,10 @@ DEFINE_PER_CPU(struct lockdep_stats, lockdep_stats);
+@@ -859,7 +859,7 @@ static struct lock_list *alloc_list_entry(void)
+  * Add a new dependency to the head of the list:
   */
- 
- #define __USAGE(__STATE)						\
--	[LOCK_USED_IN_##__STATE] = "IN-"__stringify(__STATE)"-W",	\
--	[LOCK_ENABLED_##__STATE] = __stringify(__STATE)"-ON-W",		\
--	[LOCK_USED_IN_##__STATE##_READ] = "IN-"__stringify(__STATE)"-R",\
--	[LOCK_ENABLED_##__STATE##_READ] = __stringify(__STATE)"-ON-R",
-+	[LOCK_USED_IN_##__STATE] = "IN-"__stringify(__STATE),		\
-+	[LOCK_ENABLED_##__STATE] = __stringify(__STATE)"-ON",		\
-+	[LOCK_USED_IN_##__STATE##_RR] = "IN-"__stringify(__STATE)"-RR",	\
-+	[LOCK_ENABLED_##__STATE##_RR] = __stringify(__STATE)"-ON-RR",
- 
- static const char *usage_str[] =
+ static int add_lock_to_list(struct lock_class *this, struct list_head *head,
+-			    unsigned long ip, u16 distance,
++			    unsigned long ip, u16 distance, u8 dep,
+ 			    struct stack_trace *trace)
  {
-@@ -492,7 +492,7 @@ void get_usage_chars(struct lock_class *class, char usage[LOCK_USAGE_CHARS])
+ 	struct lock_list *entry;
+@@ -872,6 +872,7 @@ static int add_lock_to_list(struct lock_class *this, struct list_head *head,
+ 		return 0;
  
- #define LOCKDEP_STATE(__STATE) 						\
- 	usage[i++] = get_usage_char(class, LOCK_USED_IN_##__STATE);	\
--	usage[i++] = get_usage_char(class, LOCK_USED_IN_##__STATE##_READ);
-+	usage[i++] = get_usage_char(class, LOCK_USED_IN_##__STATE##_RR);
- #include "lockdep_states.h"
- #undef LOCKDEP_STATE
+ 	entry->class = this;
++	entry->dep = dep;
+ 	entry->distance = distance;
+ 	entry->trace = *trace;
+ 	/*
+@@ -1012,6 +1013,41 @@ static inline bool bfs_error(enum bfs_result res)
+ 	return res < 0;
+ }
  
-@@ -1645,7 +1645,7 @@ static const char *state_names[] = {
- 
- static const char *state_rnames[] = {
- #define LOCKDEP_STATE(__STATE) \
--	__stringify(__STATE)"-READ",
-+	__stringify(__STATE)"-RR",
- #include "lockdep_states.h"
- #undef LOCKDEP_STATE
- };
-@@ -3039,14 +3039,14 @@ static int mark_irqflags(struct task_struct *curr, struct held_lock *hlock)
- 	 * mark the lock as used in these contexts:
- 	 */
- 	if (!hlock->trylock) {
--		if (hlock->read) {
-+		if (hlock->read == 2) {
- 			if (curr->hardirq_context)
- 				if (!mark_lock(curr, hlock,
--						LOCK_USED_IN_HARDIRQ_READ))
-+						LOCK_USED_IN_HARDIRQ_RR))
- 					return 0;
- 			if (curr->softirq_context)
- 				if (!mark_lock(curr, hlock,
--						LOCK_USED_IN_SOFTIRQ_READ))
-+						LOCK_USED_IN_SOFTIRQ_RR))
- 					return 0;
- 		} else {
- 			if (curr->hardirq_context)
-@@ -3058,13 +3058,13 @@ static int mark_irqflags(struct task_struct *curr, struct held_lock *hlock)
++/*
++ * DEP_*_BIT in lock_list::dep
++ *
++ * For dependency @prev -> @next:
++ *
++ *   RR: both @prev and @next are recursive read locks, i.e. ->read == 2.
++ *   NR: @prev is a non-recursive and @next is recursive.
++ *   RN: @prev is recursive and @next is non-recursive.
++ *   NN: both @prev and @next are non-recursive.
++ *
++ * Note that we define the value of DEP_*_BITs so that:
++ *   bit0 is prev->read != 2
++ *   bit1 is next->read != 2
++ */
++#define DEP_RR_BIT (0 + (0 << 1)) /* 0 */
++#define DEP_NR_BIT (1 + (0 << 1)) /* 1 */
++#define DEP_RN_BIT (0 + (1 << 1)) /* 2 */
++#define DEP_NN_BIT (1 + (1 << 1)) /* 3 */
++
++#define DEP_RR_MASK (1U << (DEP_RR_BIT))
++#define DEP_NR_MASK (1U << (DEP_NR_BIT))
++#define DEP_RN_MASK (1U << (DEP_RN_BIT))
++#define DEP_NN_MASK (1U << (DEP_NN_BIT))
++
++static inline unsigned int
++__calc_dep_bit(struct held_lock *prev, struct held_lock *next)
++{
++	return (prev->read != 2) + ((next->read != 2) << 1);
++}
++
++static inline u8 calc_dep(struct held_lock *prev, struct held_lock *next)
++{
++	return 1U << __calc_dep_bit(prev, next);
++}
++
+ static enum bfs_result __bfs(struct lock_list *source_entry,
+ 			     void *data,
+ 			     int (*match)(struct lock_list *entry, void *data),
+@@ -1921,7 +1957,35 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
+ 		if (entry->class == hlock_class(next)) {
+ 			if (distance == 1)
+ 				entry->distance = 1;
+-			return 1;
++			entry->dep |= calc_dep(prev, next);
++
++			/*
++			 * Also, update the reverse dependency in @next's
++			 * ->locks_before list.
++			 *
++			 *  Here we reuse @entry as the cursor, which is fine
++			 *  because we won't go to the next iteration of the
++			 *  outer loop:
++			 *
++			 *  For normal cases, we return in the inner loop.
++			 *
++			 *  If we fail to return, we have inconsistency, i.e.
++			 *  <prev>::locks_after contains <next> while
++			 *  <next>::locks_before doesn't contain <prev>. In
++			 *  that case, we return after the inner and indicate
++			 *  something is wrong.
++			 */
++			list_for_each_entry(entry, &hlock_class(next)->locks_before, entry) {
++				if (entry->class == hlock_class(prev)) {
++					if (distance == 1)
++						entry->distance = 1;
++					entry->dep |= calc_dep(next, prev);
++					return 1;
++				}
++			}
++
++			/* <prev> is not found in <next>::locks_before */
++			return 0;
  		}
  	}
- 	if (!hlock->hardirqs_off) {
--		if (hlock->read) {
-+		if (hlock->read == 2) {
- 			if (!mark_lock(curr, hlock,
--					LOCK_ENABLED_HARDIRQ_READ))
-+					LOCK_ENABLED_HARDIRQ_RR))
- 				return 0;
- 			if (curr->softirqs_enabled)
- 				if (!mark_lock(curr, hlock,
--						LOCK_ENABLED_SOFTIRQ_READ))
-+						LOCK_ENABLED_SOFTIRQ_RR))
- 					return 0;
- 		} else {
- 			if (!mark_lock(curr, hlock,
-@@ -3170,9 +3170,9 @@ static int mark_lock(struct task_struct *curr, struct held_lock *this,
- 	switch (new_bit) {
- #define LOCKDEP_STATE(__STATE)			\
- 	case LOCK_USED_IN_##__STATE:		\
--	case LOCK_USED_IN_##__STATE##_READ:	\
-+	case LOCK_USED_IN_##__STATE##_RR:	\
- 	case LOCK_ENABLED_##__STATE:		\
--	case LOCK_ENABLED_##__STATE##_READ:
-+	case LOCK_ENABLED_##__STATE##_RR:
- #include "lockdep_states.h"
- #undef LOCKDEP_STATE
- 		ret = mark_lock_irq(curr, this, new_bit);
-diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
-index d459d624ba2a..93002d337936 100644
---- a/kernel/locking/lockdep_internals.h
-+++ b/kernel/locking/lockdep_internals.h
-@@ -13,9 +13,9 @@
- enum lock_usage_bit {
- #define LOCKDEP_STATE(__STATE)		\
- 	LOCK_USED_IN_##__STATE,		\
--	LOCK_USED_IN_##__STATE##_READ,	\
-+	LOCK_USED_IN_##__STATE##_RR,	\
- 	LOCK_ENABLED_##__STATE,		\
--	LOCK_ENABLED_##__STATE##_READ,
-+	LOCK_ENABLED_##__STATE##_RR,
- #include "lockdep_states.h"
- #undef LOCKDEP_STATE
- 	LOCK_USED,
-@@ -30,9 +30,9 @@ enum lock_usage_bit {
- enum {
- #define LOCKDEP_STATE(__STATE)						\
- 	__LOCKF(USED_IN_##__STATE)					\
--	__LOCKF(USED_IN_##__STATE##_READ)				\
-+	__LOCKF(USED_IN_##__STATE##_RR)				\
- 	__LOCKF(ENABLED_##__STATE)					\
--	__LOCKF(ENABLED_##__STATE##_READ)
-+	__LOCKF(ENABLED_##__STATE##_RR)
- #include "lockdep_states.h"
- #undef LOCKDEP_STATE
- 	__LOCKF(USED)
-@@ -41,10 +41,10 @@ enum {
- #define LOCKF_ENABLED_IRQ (LOCKF_ENABLED_HARDIRQ | LOCKF_ENABLED_SOFTIRQ)
- #define LOCKF_USED_IN_IRQ (LOCKF_USED_IN_HARDIRQ | LOCKF_USED_IN_SOFTIRQ)
  
--#define LOCKF_ENABLED_IRQ_READ \
--		(LOCKF_ENABLED_HARDIRQ_READ | LOCKF_ENABLED_SOFTIRQ_READ)
--#define LOCKF_USED_IN_IRQ_READ \
--		(LOCKF_USED_IN_HARDIRQ_READ | LOCKF_USED_IN_SOFTIRQ_READ)
-+#define LOCKF_ENABLED_IRQ_RR \
-+		(LOCKF_ENABLED_HARDIRQ_RR | LOCKF_ENABLED_SOFTIRQ_RR)
-+#define LOCKF_USED_IN_IRQ_RR \
-+		(LOCKF_USED_IN_HARDIRQ_RR | LOCKF_USED_IN_SOFTIRQ_RR)
+@@ -1948,14 +2012,18 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
+ 	 */
+ 	ret = add_lock_to_list(hlock_class(next),
+ 			       &hlock_class(prev)->locks_after,
+-			       next->acquire_ip, distance, trace);
++			       next->acquire_ip, distance,
++			       calc_dep(prev, next),
++			       trace);
  
- /*
-  * CONFIG_LOCKDEP_SMALL is defined for sparc. Sparc requires .text,
-diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-index ad69bbc9bd28..630a6bc6e24c 100644
---- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -252,17 +252,17 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
- 			nr_hardirq_safe++;
- 		if (class->usage_mask & LOCKF_ENABLED_HARDIRQ)
- 			nr_hardirq_unsafe++;
--		if (class->usage_mask & LOCKF_USED_IN_IRQ_READ)
-+		if (class->usage_mask & LOCKF_USED_IN_IRQ_RR)
- 			nr_irq_read_safe++;
--		if (class->usage_mask & LOCKF_ENABLED_IRQ_READ)
-+		if (class->usage_mask & LOCKF_ENABLED_IRQ_RR)
- 			nr_irq_read_unsafe++;
--		if (class->usage_mask & LOCKF_USED_IN_SOFTIRQ_READ)
-+		if (class->usage_mask & LOCKF_USED_IN_SOFTIRQ_RR)
- 			nr_softirq_read_safe++;
--		if (class->usage_mask & LOCKF_ENABLED_SOFTIRQ_READ)
-+		if (class->usage_mask & LOCKF_ENABLED_SOFTIRQ_RR)
- 			nr_softirq_read_unsafe++;
--		if (class->usage_mask & LOCKF_USED_IN_HARDIRQ_READ)
-+		if (class->usage_mask & LOCKF_USED_IN_HARDIRQ_RR)
- 			nr_hardirq_read_safe++;
--		if (class->usage_mask & LOCKF_ENABLED_HARDIRQ_READ)
-+		if (class->usage_mask & LOCKF_ENABLED_HARDIRQ_RR)
- 			nr_hardirq_read_unsafe++;
+ 	if (!ret)
+ 		return 0;
  
- #ifdef CONFIG_PROVE_LOCKING
+ 	ret = add_lock_to_list(hlock_class(prev),
+ 			       &hlock_class(next)->locks_before,
+-			       next->acquire_ip, distance, trace);
++			       next->acquire_ip, distance,
++			       calc_dep(next, prev),
++			       trace);
+ 	if (!ret)
+ 		return 0;
+ 
 -- 
 2.16.2
