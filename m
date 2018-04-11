@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48UMl290XVQGHFwoRwYAaCYRYXPa7xhtvF8z4O/dZytytG9bgsxr6ks3ABw7pUlMDkM3HE9
-ARC-Seal: i=1; a=rsa-sha256; t=1523473270; cv=none;
+X-Google-Smtp-Source: AIpwx49GrvP8HP0hDj+soQ47Pk9c3NbkjKlKOq8w5s1Wz1VVswOPCaPYdKaiQjlsjJ+Uvy00/7BY
+ARC-Seal: i=1; a=rsa-sha256; t=1523473269; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ks1Jg/Pq4rPYvySvkjyL1TMioYt/8oTo5TgtbCSLFix2kkZ2ZxZwyIhshwTIhdVSnl
-         iMMOvFXfj7HKiR/YqKUrQg40H2r0I+Ewo0YCYnz0u4SWR2mxYrkjb2WgbU2wC1BrdqJB
-         gAeaAJyVLZff50aYVo6/lytD+ALwRFQHI8nutPvUG8EZ3msneck0vkTWY4k86DtXN5YO
-         hUOZRaJfjHpESay0pdRDPI3lecvAjUe5en0Y1H+eawA4J5TXMygbb9w3Ss8MwIKHsVIU
-         GnJbghf7qtbnKIqyl0ZDm9B0RBrQ04Rju0OEy37D6/3Xb0s8nrGSGwLVT/BB+UteVlgZ
-         V29w==
+        b=uWvcXBCiWNPMojpD6CNdKTf4RPiadZ0lI5rgiKQjboJ55dZ7jskahCbyREA/OmkqE9
+         77IGr0ZviWmAd02Q8zEtJdulZ5R3Q9OE308NlXwANu2u0/d40sfjwaEhWVxD4zdIktqr
+         04sJ57sWDI4/TDAMmfTyEm9BgwChEmzfXPisXUd4RIK9Vk/T1IvQ8LjxPRaNMUcGHOPT
+         njE0iOdmrGj4Bbbyyxh6OxkjbL9HgryNceV68XOWPymA6TDP55EBd2iJY7D2oJCsTOYm
+         DpAyMNxqF+IpzeJqxLRZI4GwOQZmqd+oK70E9/Rn4ENv8mhLm1vGaKLhR/UNeV7RbBsQ
+         FRKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=A9RbUiCN3RkZefTP4Gyi1AEazelAzFRQTE/O8zS1Pvg=;
-        b=ldnbYiT8983yMwrm3z1ZVjWogEDbOcJJ9lrutDTjjmVNDiBQ1ba3opfUPUjoKoXoSb
-         pXED6v3O67nWbl0d/5+dbWRTtLpTRifikSPS8l5gwnGSZpV6sBRMi/kqYHk73u3f8jei
-         mOoLr/tCOc+mo+YGn3AnLuUuCLPTb73+X5EeEyA4dWJfQzxHKUnZwq7V0wbFlezVF/52
-         ZRz0b2DLgzRCpaJK5Cyw5dowC2M6i45IUsod9gALobNdAYsyJ6bzkinXCM15aUQu43xs
-         Tt5QSC5BGWWxe3KGYUC3BUlYJG1wgqNe7nDyWMH0F319NJWf8JfOj9jaXPKMWtiJfiOT
-         Q2zQ==
+        bh=2zLNpTn03kmoYJWtOID09fA0BOxCFrvOohmL9ash+4M=;
+        b=GoteHgdTm/c8TghXh9so8GAtogvHPXuVTVLoJJzyM8g8wIyxQjTgVV4nxWqc8xwjvU
+         AQO99TFa+wu1Qr9LaTofoyC8oLLl/Gv7F2V7npVDa90/tAb2Kyi7d3IUWJeaD9Jx4tHA
+         RPT84IwGVyFUvxqCvl+82n0cCHCWdLvQQRQaz6yqsXyyLiBML9JCe/Y5OJJKenyMiIJP
+         +nltI5rtbq/AnYuYFiwJ6thVd6Ze90+RH3w8N/HEqOnLdgfBt80QFMcZbjCYz3D/yPpd
+         +f4Xvsjk8826Uo7SgE6xGUro6lGZCIUxoklZHBGNgeTTRBtX9O0v+t5txSxe6zKRAR5C
+         A5uQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ganesh Goudar <ganeshgr@chelsio.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Russell King - ARM Linux <linux@armlinux.org.uk>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 186/310] cxgb4: fix incorrect cim_la output for T6
-Date: Wed, 11 Apr 2018 20:35:25 +0200
-Message-Id: <20180411183630.613480391@linuxfoundation.org>
+Subject: [PATCH 4.9 187/310] Fix serial console on SNI RM400 machines
+Date: Wed, 11 Apr 2018 20:35:26 +0200
+Message-Id: <20180411183630.655942922@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476709278443171?=
-X-GMAIL-MSGID: =?utf-8?q?1597477508715566853?=
+X-GMAIL-THRID: =?utf-8?q?1597476214276262025?=
+X-GMAIL-MSGID: =?utf-8?q?1597477507129457493?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +50,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ganesh Goudar <ganeshgr@chelsio.com>
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 
 
-[ Upstream commit a97051f4553551d13e586ab3cb6ae13093a44a81 ]
+[ Upstream commit e279e6d98e0cf2c2fe008b3c29042b92f0e17b1d ]
 
-take care of UpDbgLaRdPtr[0-3] restriction for T6.
+sccnxp driver doesn't get the correct uart clock rate, if CONFIG_HAVE_CLOCK
+is disabled. Correct usage of clk API to make it work with/without it.
 
-Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 90efa75f7ab0 (serial: sccnxp: Using CLK API for getting UART clock)
+
+Suggested-by: Russell King - ARM Linux <linux@armlinux.org.uk>
+Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4/t4_hw.c |   11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/tty/serial/sccnxp.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/t4_hw.c
-@@ -8088,7 +8088,16 @@ int t4_cim_read_la(struct adapter *adap,
- 		ret = t4_cim_read(adap, UP_UP_DBG_LA_DATA_A, 1, &la_buf[i]);
- 		if (ret)
- 			break;
--		idx = (idx + 1) & UPDBGLARDPTR_M;
+--- a/drivers/tty/serial/sccnxp.c
++++ b/drivers/tty/serial/sccnxp.c
+@@ -884,14 +884,19 @@ static int sccnxp_probe(struct platform_
+ 
+ 	clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(clk)) {
+-		if (PTR_ERR(clk) == -EPROBE_DEFER) {
+-			ret = -EPROBE_DEFER;
++		ret = PTR_ERR(clk);
++		if (ret == -EPROBE_DEFER)
+ 			goto err_out;
+-		}
++		uartclk = 0;
++	} else {
++		clk_prepare_enable(clk);
++		uartclk = clk_get_rate(clk);
++	}
 +
-+		/* Bits 0-3 of UpDbgLaRdPtr can be between 0000 to 1001 to
-+		 * identify the 32-bit portion of the full 312-bit data
-+		 */
-+		if (is_t6(adap->params.chip) && (idx & 0xf) >= 9)
-+			idx = (idx & 0xff0) + 0x10;
-+		else
-+			idx++;
-+		/* address can't exceed 0xfff */
-+		idx &= UPDBGLARDPTR_M;
- 	}
- restart:
- 	if (cfg & UPDBGLAEN_F) {
++	if (!uartclk) {
+ 		dev_notice(&pdev->dev, "Using default clock frequency\n");
+ 		uartclk = s->chip->freq_std;
+-	} else
+-		uartclk = clk_get_rate(clk);
++	}
+ 
+ 	/* Check input frequency */
+ 	if ((uartclk < s->chip->freq_min) || (uartclk > s->chip->freq_max)) {
