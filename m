@@ -1,54 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753693AbeDKQvo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 12:51:44 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:39574 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753413AbeDKQvm (ORCPT
+        id S1753413AbeDKRAc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 13:00:32 -0400
+Received: from mail-it0-f42.google.com ([209.85.214.42]:54394 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752923AbeDKRA1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 12:51:42 -0400
-X-Google-Smtp-Source: AIpwx4/P4br5L1/9S/PvxwnC0qmoooPx02l+nT5WIOva1r2magmOpy8CkWGKjs2cz0ZFIsXoW85/MYrTIp6NExA5VcQ=
+        Wed, 11 Apr 2018 13:00:27 -0400
+X-Google-Smtp-Source: AIpwx4/jKKibZamnj2H+T+w1+d8zbwcX9nFwDPIPEB9srUzP9BhhsypPIhINwPKHr4DWyTCdwy3cBn85gZaLQYtDdRE=
 MIME-Version: 1.0
-In-Reply-To: <20180411161548.GP4082@hirez.programming.kicks-ass.net>
-References: <20180406172835.20078-1-patrick.bellasi@arm.com>
- <CAKfTPtCkZ1x-LS7sfJ7K2cgsKK=hYnDo1Fi3toPcGT0331Vpog@mail.gmail.com>
- <20180410110412.GG14248@e110439-lin> <20180411151450.GK4043@hirez.programming.kicks-ass.net>
- <CAKfTPtC+-FR3ZD_t1vkGR2gVoUyxXpE=i4g9zqqLXu4jKKqgUA@mail.gmail.com>
- <20180411153710.GN4082@hirez.programming.kicks-ass.net> <CAKfTPtCNdxSmDfDO0Etf7fbYPeryrjdQChSGwMWxSRH8CcXqqg@mail.gmail.com>
- <20180411160000.GO4082@hirez.programming.kicks-ass.net> <CAKfTPtDjyjC5R7bhjGxhV8BN5J+LdzJmMgwaaVuE9ypvcSKapA@mail.gmail.com>
- <20180411161548.GP4082@hirez.programming.kicks-ass.net>
+In-Reply-To: <b39b265d-6a44-6133-6a51-33b8077d2f64@gmail.com>
+References: <e1da0be1-94d8-d5d0-8329-4507c51ddd64@gmail.com>
+ <20180324064627.GA10884@linaro.org> <c5daea3c-0834-1629-3e38-3db5130eb32f@gmail.com>
+ <6b151c56-9ead-7bbe-d1b7-b0e6d69c0d7f@arm.com> <CAKfTPtDigSEOmtxk7daTTBb3o6kVR8AgUVhu4X6YWutK9yWNwg@mail.gmail.com>
+ <CAKfTPtAisq0tQ_Kw3OptJYm=u7tSk6vyi3CFZJdhBxD=d=EN1g@mail.gmail.com>
+ <796bbd7b-8512-7370-28c9-0f082dc3f287@gmail.com> <CAKfTPtD17yUrp5G7gPN6ijB+C-TKJcK1UTCmP_JhMK5DvSDN_g@mail.gmail.com>
+ <95fe50be-cc8b-4345-7333-cdf656fad2a7@gmail.com> <CAKfTPtAJCck6mpXhbMkZes2D6KMYsoB9WkCRL+6owJfMiNXq5w@mail.gmail.com>
+ <b39b265d-6a44-6133-6a51-33b8077d2f64@gmail.com>
 From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 11 Apr 2018 18:51:21 +0200
-Message-ID: <CAKfTPtA+79WitkoBHeaGxjxJzr=8A4aH7iimz54Doj2ok8JXcA@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: schedutil: update only with all info available
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Patrick Bellasi <patrick.bellasi@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>
+Date: Wed, 11 Apr 2018 19:00:06 +0200
+Message-ID: <CAKfTPtAiyisYi-3CazC+HzL5xyB+rTV9AkCW+JyzWHQ6pU8Vpg@mail.gmail.com>
+Subject: Re: Problem with commit 31e77c93e432 "sched/fair: Update blocked load
+ when newly idle"
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11 April 2018 at 18:15, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Wed, Apr 11, 2018 at 06:10:47PM +0200, Vincent Guittot wrote:
->> > Could is be that for some reason the nohz balancer now takes a very long
->> > time to run?
->>
->> Heiner mentions that is was a relatively slow celeron and he uses
->> ondemand governor. So I was about to ask him to use performance
->> governor to see if it can be because cpu runs slow and takes too muche
->> time to enter idle
->
-> Maybe also hand him a patch with some trace_printk()s in and ask him to
-> send /debug/tracing/trace after it happens or somesuch. Maybe we can
-> find a clue that way.
+Hi Heiner,
 
-yes
+On 9 April 2018 at 19:33, Heiner Kallweit <hkallweit1@gmail.com> wrote:
+> Am 06.04.2018 um 18:03 schrieb Vincent Guittot:
+>> Hi Heiner,
+>>
+>> On 30 March 2018 at 10:37, Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>>> Am 30.03.2018 um 08:50 schrieb Vincent Guittot:
+>>>> On 29 March 2018 at 19:40, Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>>>>> Am 29.03.2018 um 09:41 schrieb Vincent Guittot:
+>>>>
+>>>>>>
+>>>>>> I'm finally not so sure that i have the right set up to reproduce the
+>>>>>> problem as I haven't been able to reproduce it since.
+>>>>>>
+>>>>>> Heiner,
+>>>>>>
+>>>>>> How fast the problem happens on your board ?
+>>>>>> Are you doing anything specific on the console that trigger the problem ?
+>>>>>>
+>>>>> Hi Vincent,
+>>>>>
+>>>>> the lag when working on the console is constantly there, the "rcu_preempt
+>>>>> detected stalls" happens after several hours (so far always within 24h)
+>>>>> w/o any triggering event I would be aware of. It occured also when the
+>>>>> system was idle at that point in time.
+>>>>
+>>>> Ok, so I don't have the problem on my hikey as the console never lag
+>>>> on my setup.
+>>>>
+>>>> Can you send me the config of  your kernel ? I'd like to check if you
+>>>> have enable something that could trigger such problem
+>>>>
+>>> Sure, he we go. I also add a system log.
+>>
+>> Thanks for the config. I have used it for my setup but I can't
+>> reproduce your regression. My platforms stay stable so I probably
+>> missing something. Are you facing similar problem with other platforms
+>> or only this celeron based platform ?
+>>
+>> I have reviewed the code but don't see any obvious place in the patch
+>> that can generate the problem. Nevertheless, would you mind to try the
+>> patch below ? It's a blind test to try to narrow the problem.
+>>
+>> Thanks
+>>
+> Hi Vincent,
+>
+> I tried again with today's linux-next and it's much better. The lag isn't
+> completely gone but it's much less annoying. Every ~30 secs the console
+> hangs for about half a second, that's much less frequent than before.
+
+That's interesting because nothing related to commit
+31e77c93e432dec79c7d90b888bbfc3652592741 has been merged recently
+AFAICT
+
+>
+> I saw some patches from Rafael have been merged in the last days.
+> Maybe they improved the situation.
+
+Yes, Peter mentions in another thread that lastest Rafael's patches
+avoid stopping tick when entering short idle thus reducing the time to
+enter idle. commit 31e77 is adding some background activity when
+entering idle so it can be that we take too much time
+
+You also mentioned that the CPU was relatively slow on the platform.
+Can you try to use cpufreq performance governor instead of ondemand ?
+
+I'm also going to prepare a patch for adding some trace in the code to
+highlight the problem
+
+Thanks,
+Vincent
+
+>
+> Regards, Heiner
+>
+
+[snip]
+
+>
