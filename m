@@ -1,72 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752303AbeDKJYK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 05:24:10 -0400
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:33378 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751734AbeDKJYI (ORCPT
+        id S1752552AbeDKJYO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 05:24:14 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:36972 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751734AbeDKJYL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 05:24:08 -0400
-X-IronPort-AV: E=Sophos;i="5.48,435,1517875200";
-   d="scan'208";a="339348924"
-From: KarimAllah Ahmed <karahmed@amazon.de>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: KarimAllah Ahmed <karahmed@amazon.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [PATCH] X86/KVM: Do not allow DISABLE_EXITS_MWAIT when LAPIC ARAT is not available
-Date: Wed, 11 Apr 2018 11:16:03 +0200
-Message-Id: <1523438163-768-1-git-send-email-karahmed@amazon.de>
+        Wed, 11 Apr 2018 05:24:11 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, kvm@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] vfio: platform: Fix using devices in PM Domains
+Date: Wed, 11 Apr 2018 11:24:08 +0200
+Message-Id: <1523438648-17672-1-git-send-email-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the processor does not have an "Always Running APIC Timer" (aka ARAT),
-we should not give guests direct access to MWAIT. The LAPIC timer would
-stop ticking in deep C-states, so any host deadlines would not wakeup the
-host kernel.
+If a device is part of a PM Domain (e.g. power and/or clock domain), its
+power state is managed using Runtime PM.  Without Runtime PM, the device
+may not be powered up, causing subtle failures, crashes, or system
+lock-ups when the device is accessed by the guest.
 
-The host kernel intel_idle driver handles this by switching to broadcast
-mode when ARAT is not available and MWAIT is issued with a deep C-state
-that would stop the LAPIC timer. When MWAIT is passed through, we can not
-tell when MWAIT is issued.
+Fix this by adding Runtime PM support, powering the device when the VFIO
+device is opened by the guest.
 
-So just disable this capability when LAPIC ARAT is not available. I am not
-even sure if there are any CPUs with VMX support but no LAPIC ARAT or not.
+Note that while more fine-grained power management could be implemented
+on the guest side, if exported, this would be inherently unsafe, as
+abusing it may kill the whole system.
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Reported-by: Wanpeng Li <kernellwp@gmail.com>
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/x86/kvm/x86.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This depends on "[PATCH v3 2/2] vfio: platform: Add generic DT reset
+support" due to a small contextual change (addition of "#include
+<linux/reset.h>").
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index b2ff74b..0334b25 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2819,7 +2819,8 @@ static int msr_io(struct kvm_vcpu *vcpu, struct kvm_msrs __user *user_msrs,
- static inline bool kvm_can_mwait_in_guest(void)
- {
- 	return boot_cpu_has(X86_FEATURE_MWAIT) &&
--		!boot_cpu_has_bug(X86_BUG_MONITOR);
-+		!boot_cpu_has_bug(X86_BUG_MONITOR) &&
-+		boot_cpu_has(X86_FEATURE_ARAT);
- }
+ drivers/vfio/platform/vfio_platform_common.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
+index ef9b9e3220ebe939..4db0a143992c3353 100644
+--- a/drivers/vfio/platform/vfio_platform_common.c
++++ b/drivers/vfio/platform/vfio_platform_common.c
+@@ -17,6 +17,7 @@
+ #include <linux/iommu.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
+@@ -249,6 +250,8 @@ static void vfio_platform_release(void *device_data)
+ 		const char *extra_dbg = NULL;
+ 		int ret;
  
- int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
++		pm_runtime_put(vdev->device);
++
+ 		ret = vfio_platform_call_reset(vdev, &extra_dbg);
+ 		if (ret && vdev->reset_required) {
+ 			dev_warn(vdev->device, "reset driver is required and reset call failed in release (%d) %s\n",
+@@ -291,6 +294,10 @@ static int vfio_platform_open(void *device_data)
+ 				 ret, extra_dbg ? extra_dbg : "");
+ 			goto err_rst;
+ 		}
++
++		ret = pm_runtime_get_sync(vdev->device);
++		if (ret < 0)
++			goto err_rst;
+ 	}
+ 
+ 	vdev->refcnt++;
+@@ -706,6 +713,7 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
+ 
+ 	mutex_init(&vdev->igate);
+ 
++	pm_runtime_enable(vdev->device);
+ 	return 0;
+ 
+ put_iommu:
+@@ -723,6 +731,7 @@ struct vfio_platform_device *vfio_platform_remove_common(struct device *dev)
+ 	vdev = vfio_del_group_dev(dev);
+ 
+ 	if (vdev) {
++		pm_runtime_disable(vdev->device);
+ 		vfio_platform_put_reset(vdev);
+ 		vfio_iommu_group_put(dev->iommu_group, dev);
+ 	}
 -- 
 2.7.4
