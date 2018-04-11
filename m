@@ -1,79 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753118AbeDKSBL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 14:01:11 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52032 "EHLO
+        id S1753043AbeDKSBK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 14:01:10 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52054 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752551AbeDKSBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752584AbeDKSBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 11 Apr 2018 14:01:06 -0400
 From: Will Deacon <will.deacon@arm.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, peterz@infradead.org,
         mingo@kernel.org, boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
         longman@redhat.com, Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2 00/13] kernel/locking: qspinlock improvements
-Date: Wed, 11 Apr 2018 19:01:07 +0100
-Message-Id: <1523469680-17699-1-git-send-email-will.deacon@arm.com>
+Subject: [PATCH v2 03/13] locking/qspinlock/x86: Increase _Q_PENDING_LOOPS upper bound
+Date: Wed, 11 Apr 2018 19:01:10 +0100
+Message-Id: <1523469680-17699-4-git-send-email-will.deacon@arm.com>
 X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1523469680-17699-1-git-send-email-will.deacon@arm.com>
+References: <1523469680-17699-1-git-send-email-will.deacon@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On x86, atomic_cond_read_relaxed will busy-wait with a cpu_relax() loop,
+so it is desirable to increase the number of times we spin on the qspinlock
+lockword when it is found to be transitioning from pending to locked.
 
-Here's v2 of the qspinlock patches I posted last week:
+According to Waiman Long:
 
-  https://lkml.org/lkml/2018/4/5/496
+| Ideally, the spinning times should be at least a few times the typical
+| cacheline load time from memory which I think can be down to 100ns or
+| so for each cacheline load with the newest systems or up to several
+| hundreds ns for older systems.
 
-Changes since v1 include:
-  * Use WRITE_ONCE to clear the pending bit if we set it erroneously
-  * Report pending and slowpath acquisitions via the qspinlock stat
-    mechanism [Waiman Long]
-  * Spin for a bounded duration while lock is observed in the
-    pending->locked transition
-  * Use try_cmpxchg to get better codegen on x86
-  * Reword comments
+which in his benchmarking corresponded to 512 iterations.
 
-All comments welcome,
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Suggested-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+---
+ arch/x86/include/asm/qspinlock.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Will
-
---->8
-
-Jason Low (1):
-  locking/mcs: Use smp_cond_load_acquire() in mcs spin loop
-
-Waiman Long (1):
-  locking/qspinlock: Add stat tracking for pending vs slowpath
-
-Will Deacon (11):
-  barriers: Introduce smp_cond_load_relaxed and atomic_cond_read_relaxed
-  locking/qspinlock: Bound spinning on pending->locked transition in
-    slowpath
-  locking/qspinlock/x86: Increase _Q_PENDING_LOOPS upper bound
-  locking/qspinlock: Remove unbounded cmpxchg loop from locking slowpath
-  locking/qspinlock: Kill cmpxchg loop when claiming lock from head of
-    queue
-  locking/qspinlock: Use atomic_cond_read_acquire
-  locking/qspinlock: Use smp_cond_load_relaxed to wait for next node
-  locking/qspinlock: Merge struct __qspinlock into struct qspinlock
-  locking/qspinlock: Make queued_spin_unlock use smp_store_release
-  locking/qspinlock: Elide back-to-back RELEASE operations with
-    smp_wmb()
-  locking/qspinlock: Use try_cmpxchg instead of cmpxchg when locking
-
- arch/x86/include/asm/qspinlock.h          |  21 ++-
- arch/x86/include/asm/qspinlock_paravirt.h |   3 +-
- include/asm-generic/atomic-long.h         |   2 +
- include/asm-generic/barrier.h             |  27 +++-
- include/asm-generic/qspinlock.h           |   2 +-
- include/asm-generic/qspinlock_types.h     |  32 +++-
- include/linux/atomic.h                    |   2 +
- kernel/locking/mcs_spinlock.h             |  10 +-
- kernel/locking/qspinlock.c                | 247 ++++++++++++++----------------
- kernel/locking/qspinlock_paravirt.h       |  41 ++---
- kernel/locking/qspinlock_stat.h           |   9 +-
- 11 files changed, 209 insertions(+), 187 deletions(-)
-
+diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
+index 5e16b5d40d32..2f09915f4aa4 100644
+--- a/arch/x86/include/asm/qspinlock.h
++++ b/arch/x86/include/asm/qspinlock.h
+@@ -7,6 +7,8 @@
+ #include <asm-generic/qspinlock_types.h>
+ #include <asm/paravirt.h>
+ 
++#define _Q_PENDING_LOOPS	(1 << 9)
++
+ #define	queued_spin_unlock queued_spin_unlock
+ /**
+  * queued_spin_unlock - release a queued spinlock
 -- 
 2.1.4
