@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3339499-1523479961-2-9951911071356260499
+X-Cyrus-Session-Id: sloti22d1t05-3303684-1523479950-2-2214614817039452980
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479960; b=bolDYnCOEjX8CRWskx+BiOy4vdGqqUsuuKODUH3oPsmqfy2ecl
-    /DMYUqbygt1WA35n/5ZJIfKxiEae0Wcd4zs8CwueMH8SF4hzwmXZvutmicLTFwaw
-    yoTlkNm+ZeUtNamqs3LJRpriXHW2ZBG3558C9RInuUASCJ5mbnr/J95NNXbLJLo6
-    FD25OL3156BoiKRHMVLKCpaEym8W37s0HBD/47Vf4aDTmNvZ65wp9KPmXsl5zwS6
-    P1AkHb54LNqf5miwRcHSCc+jTBAIgLLNfKIC3nt7UDD3AUx0MUc+OGQl3FaiQvWE
-    X8/MiAsZ/7CoPEXKC67SIRsTvyDgpQVzbfig==
+    1523479949; b=cZWvipqYbhIxjbYMztneBI4zCTt4j8gHq9rxGhd27dbEBs9smZ
+    9KVkL+sqvg9HZ1lIvFo9AzlAIDgGotOWEF1GqyzsHp9Z1H+eB0J+/Rp9897YIHvJ
+    zSpWdxDxzYA0K+8l0fv5RfLWiPWcP5NosR3i6KxvSIXKh2bDbgX5Q4qZy5hm2q7P
+    nCGGEwK4r8K1BNIxw82ABNggPTJ57H5KK60SnjOCc5ivso2urAJyzLADc0xO8utG
+    3vB4MufoxTR4EkjcEI11VK44+riXH2Ci4FEgvXNrqCKBtPxD4PuEFIC+wFWc8DDs
+    Amjdyf6hq6rNnaI8Ig4L6npLCZF4YUOKuLYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479960; bh=PL1jhu4Jylh6sNc7avSJlO9H3zNvnC
-    zTI8TIbLIAzIs=; b=sZ1Gp1sk6OEcAdVupRF6x+EqVcXwR5HX6UM26vKrFaDsjT
-    U7g39LOKqB67gz4lMR7TKWyvDJEBFynW1bh/lAfFFYWqw/KQW3aB3ktYUVCB85u3
-    gOeiCLza0u+czE3PyRAPiafxDQ41v4WDbWNHmvZhB9uYfN8rofS82c/vtERZLBwg
-    Esivh74J7WMsE+BJbiwo/IgN8lHNl8EIGDwRl2h8LDBai1bU7MlOF+v5mIgR5zzg
-    NHOoSW43gwWdlkptA01Uss3eJUSoe1QlX7VnQ+iWck32ai3Q+R2xyjHWXZXR9eEA
-    uwlGgPzjZS5zsabJC9Cy9nnfaXZdLIFTJsxU67rQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479949; bh=ATL+wgK2OPVaDRbJAY5fiXWgjpSrm5
+    5qOE6yVU54ooU=; b=lTNI4c+mLWdgcsB0GLu34nrbcrvIJUP0KbcSqkk+AmA80r
+    PzSDjyQJN7eZ6bDTEuJ8vTp6Ddl58QwdRx1nYsbfQSqXJYttBslsy0N9cjs/O304
+    UVZ/6VR+6KMhJXsI5PIa+J3ReDlUoA34tRuzObWf+yuTvUCPCPqkOiYYOe5mkL8E
+    6abftJm3UD+G6oKn3RxiZJ680TWQ0OgGZhgL+ej2SMILMhGyqXiYfZy3LnqhmsKY
+    DuWDAJckNr+aXAaWXdXFjzFQxqzeKso9+LOuvEh94SIRWjWZy6vSguwOJMcTTcVd
+    /qqIckIzm6if66AxIz07Rud69F+57Q2aDVbFBStw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,29 +51,29 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGTf0IxR0SMjxfeCKiIR2atzVA4dLPgaSptJnEBNICW40OARTiaeLoT7pDA2beAmBohdoFbaUZ752GW0I37P0uzdphXtv9cFAMm/Ds0F7Jfipl0+DnyF
-    K01URYLt9szc2tALTA/uqBdljlbwS3pKz0qC0jrMtneb+aPA1uLI2cBjUaBRr7n2HXXMZrvOvShPnfUehRyKorD/gkWtRo06yv4TdRbAaci9yUTw4/mRo4Kg
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOn5kOH7nRDsLMGhzCj7rxGjKuMibEsV3XHFIdITQ54u5ao+GStIjmYFhKIifDKgi39EnKxhLsP+54T5JT7ZJz6R3hYyz/BGny5DzFHbf7U0xoOZfqLz
+    s+x+4zmfLoz1B+mRP2iOqYlnSq3Ffwkk+CP7mvkUFa1EpokRLht6N/t1CQhNCA5dyEs7nxknm1i8rUjFGJlR9QY/YNezl56cxYxZnX5ULmChC+uchAVsWaLv
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=ag1SF4gXAAAA:8 a=yMhMjlubAAAA:8 a=r7Wo1piAP4B2Vpw2BncA:9 a=QEXdDO2ut3YA:10
+    a=ag1SF4gXAAAA:8 a=yMhMjlubAAAA:8 a=Y-UeaLEg1Km7jvj322IA:9 a=QEXdDO2ut3YA:10
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755509AbeDKSpY (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:45:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58560 "EHLO
+        id S1754102AbeDKSp1 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:45:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58594 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755500AbeDKSpV (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:21 -0400
+        with ESMTP id S1755500AbeDKSp0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 044/190] USB: ene_usb6250: fix first command execution
-Date: Wed, 11 Apr 2018 20:34:50 +0200
-Message-Id: <20180411183552.695455701@linuxfoundation.org>
+Subject: [PATCH 4.4 046/190] USB: ene_usb6250: fix SCSI residue overwriting
+Date: Wed, 11 Apr 2018 20:34:52 +0200
+Message-Id: <20180411183552.878367495@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -94,24 +94,17 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Alan Stern <stern@rowland.harvard.edu>
 
 
-[ Upstream commit 4b309f1c4972c8f09e03ac64fc63510dbf5591a4 ]
+[ Upstream commit aa18c4b6e0e39bfb00af48734ec24bc189ac9909 ]
 
-In the ene_usb6250 sub-driver for usb-storage, the ene_transport()
-routine is supposed to initialize the driver before executing the
-current command, if the initialization has not already been performed.
-However, a bug in the routine causes it to skip the command after
-doing the initialization.  Also, the routine does not return an
-appropriate error code if either the initialization or the command
-fails.
+In the ene_usb6250 sub-driver for usb-storage, the SCSI residue is not
+reported correctly.  The residue is initialized to 0, but this value
+is overwritten whenever the driver sends firmware to the card reader
+before performing the current command.  As a result, a valid READ or
+WRITE operation appears to have failed, causing the SCSI core to retry
+the command multiple times and eventually fail.
 
-As a result of the first bug, the first command (a SCSI INQUIRY) is
-not carried out.  The results can be seen in the system log, in the
-form of a warning message and empty or garbage INQUIRY data:
-
-Apr 18 22:40:08 notebook2 kernel: scsi host6: scsi scan: INQUIRY result too short (5), using 36
-Apr 18 22:40:08 notebook2 kernel: scsi 6:0:0:0: Direct-Access                                    PQ: 0 ANSI: 0
-
-This patch fixes both errors.
+This patch fixes the problem by resetting the SCSI residue to 0 after
+sending firmware to the device.
 
 Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
 Reported-and-tested-by: Andreas Hartmann <andihartmann@01019freenet.de>
@@ -119,35 +112,17 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/storage/ene_ub6250.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/usb/storage/ene_ub6250.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
 --- a/drivers/usb/storage/ene_ub6250.c
 +++ b/drivers/usb/storage/ene_ub6250.c
-@@ -2306,21 +2306,22 @@ static int ms_scsi_irp(struct us_data *u
+@@ -1953,6 +1953,8 @@ static int ene_load_bincode(struct us_da
+ 	bcb->CDB[0] = 0xEF;
  
- static int ene_transport(struct scsi_cmnd *srb, struct us_data *us)
- {
--	int result = 0;
-+	int result = USB_STOR_XFER_GOOD;
- 	struct ene_ub6250_info *info = (struct ene_ub6250_info *)(us->extra);
+ 	result = ene_send_scsi_cmd(us, FDIR_WRITE, buf, 0);
++	if (us->srb != NULL)
++		scsi_set_resid(us->srb, 0);
+ 	info->BIN_FLAG = flag;
+ 	kfree(buf);
  
- 	/*US_DEBUG(usb_stor_show_command(us, srb)); */
- 	scsi_set_resid(srb, 0);
--	if (unlikely(!(info->SD_Status.Ready || info->MS_Status.Ready))) {
-+	if (unlikely(!(info->SD_Status.Ready || info->MS_Status.Ready)))
- 		result = ene_init(us);
--	} else {
-+	if (result == USB_STOR_XFER_GOOD) {
-+		result = USB_STOR_TRANSPORT_ERROR;
- 		if (info->SD_Status.Ready)
- 			result = sd_scsi_irp(us, srb);
- 
- 		if (info->MS_Status.Ready)
- 			result = ms_scsi_irp(us, srb);
- 	}
--	return 0;
-+	return result;
- }
- 
- static struct scsi_host_template ene_ub6250_host_template;
