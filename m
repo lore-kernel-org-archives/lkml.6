@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3397032-1523481901-2-16433175288237244131
+X-Cyrus-Session-Id: sloti22d1t05-3397032-1523481873-2-18298491756101955028
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES endasv, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523481901; b=i7bHhH2SVlJAHCaqCC9h9dmZhnQ/7+ZWz1rR6vFigB5lxZZsts
-    Xy0lXp3Ns/UTJ/GTEPX2iXee7sm1uBLEgDwyr6KhuLC+WuNObQQHrBrvC7XUhN4S
-    B06xOADFgW1rZGLuX1OOtINSAuoFQ9hYuE1LC+jUYVsq1Rz7gZw3mNZyhExTC0cr
-    iYADgUHkW2FdEN430jXX0bgF03touUJtZZ599cM64hrR1EzQhn0uHV6lNFdkt9+t
-    CaxL5bto4ANKF5XPjG0it/Ic/o0soCcxgXrISw+2ECBEP/Og8wq0uQ9t0+VY6/Qa
-    D1x9WjRWZkc1NvPYU7vYx6j4Rf/W5Fk4gOMw==
+    1523481872; b=tMt0CHVsYuhA/MQhQP5YT2XZd5JVV2p3ov8TshPichjvhvWCWC
+    nbpMusGHhD4Ll+ZUOOe0zemlyp8H1xjw5eidjZFp1ElTkY2AmsBWTge06Zu6dS7V
+    NWsR5HfZGHxyjqbnG9KOxeXW6R/SuA9mkVNl8RhHQEuGpyyKksMmtDmoDth04W/H
+    ahvo+grdqWji6jFs0+Aow3kH8MsqIjkGgp/dUDKKVm5qYtJ5FfgaRV3luAxdrfUG
+    AI5MfsTXVrPbXoi08Rs2J34QZVlZeg7dsU5ktPcOg/0MsLnjYRdgjwCY5s/wuHqf
+    DMgsKh76F2RfXwBYE3ONNMTUUZwSEDnzZoDg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523481901; bh=ClhH69JOz3HMrnNLzNv7Pu5iC51PWK
-    O7/2vZVusEBJo=; b=edy5UmBGDYRog70GOQ0GmK3/p8gu7yFAdHptteoQv+XTk8
-    81Z+/hD5/KGZFdBccKndVkufAVbWby6UV9t0kxi2XLgAysthuLEdJHVK4yY380nm
-    M00uMm7uukAsjgyZ8nAF0FLzliWJ2arq20ZWgYKBC4fq77C+0YfwUO/Wx/AWwJXq
-    1+RgJXV0avVXieGkjSS8/cdd3F2p4GO2NxiQm7vMfiYydnEOe8fDhA7WnYohphad
-    SDTZ3fai4cKyKJ9hthmfXcaejtH6rK7GrI2p9sHSEo3YTLwf62lSlsxToCBOAOLy
-    yrBz4XN8oIfWYqV+QegGsBfeQjXLone2EyOqU2pQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523481872; bh=iNa3zdYIRiFzmaY1d6ldTaGFv6AZOd
+    mqJx5DatEmutE=; b=Wli1tlom9q5Bj24Vd98MeQyB9Inl1aJHJzLbXtTSQ7stv9
+    lh7TpmHevDoxHwdN4HV4f4J5vYFmpb2SaMQHCHCxeiTaU/2xH2Q1PWDYrHLLP/Rn
+    Kb/FqNKV3pPNTJwP3UPvxDF11MRk5nsP8sKdBhuab6gIWsi5+jpMBP/jtimlBMrX
+    VNxDDvI1QXmDGKZHR41OfdMEnw9H7wkE2pOqLwhD8FF4HXKK6SrodgDUyIJQ+txA
+    c0XQxXQxgy5ALJX1zXuQr/C0TuTOIbqVX+eYwJkihfS2kE6AkLWOjn/YM84G7d/e
+    yPX8xiAsZmTtqwn4r/1HXrs0Jq/kkKYWW4NtCH/w==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,34 +51,30 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEDZknhmf+sjvT0vQfVJg6SDcf32/3+jByIUqezc6xzSvmPryVjJIp9ADWywN3r6ajQLbEDNoXzY0bW8nbxLUowTlQCeUQb801aca+pb0ovTnfCZR9ml
-    NPPTj2sv0fN3/IhPOCKvcixqk1guyvGYhSGvUMa2HXaczr/ZKw+MTzM1puJekUhvtQMqWm0A3V+12TJrNs/omKDJyj7IjNTyz0dg99J6I9w5SVzCWbq52pLC
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCgXbs7V0nBhOraoLYV2a7AWTe5yHnqTcusSYC2qBgcFawGzg2+xbMLnS8nybGE8gl8uI13EJYd9rZeM7jwmpEq3o1t6fPEWZGFgiBWg/ub15vfjKcJG
+    beijKkwXwQ34d1mAvbVDl9sUw4+ZayPEK0zrSeeP4O8FDhmpiQqG4uAEu1nc41P59siCSTLzI3sbM9SyLg3sOOH4K2y18KCa5HkuQ6GRknm2VAxtPAdob++2
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=Q-fNiiVtAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=u__7uJSp3HEpzIBEySsA:9 a=QEXdDO2ut3YA:10 a=Fp8MccfUoT0GBdDC_Lng:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=Byx-y9mGAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=MK96HyGrqPNBv2a_Q8EA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754138AbeDKSih (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:38:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55434 "EHLO
+        id S1754157AbeDKSik (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:38:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55450 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754050AbeDKSif (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:38:35 -0400
+        with ESMTP id S1754050AbeDKSii (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:38:38 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anup Patel <anup.patel@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vinod.koul@intel.com>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 023/121] async_tx: Fix DMA_PREP_FENCE usage in do_async_gen_syndrome()
-Date: Wed, 11 Apr 2018 20:35:26 +0200
-Message-Id: <20180411183457.549745035@linuxfoundation.org>
+Subject: [PATCH 3.18 024/121] usb: dwc3: keystone: check return value
+Date: Wed, 11 Apr 2018 20:35:27 +0200
+Message-Id: <20180411183457.598105588@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -96,52 +92,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anup Patel <anup.patel@broadcom.com>
+From: Pan Bian <bianpan2016@163.com>
 
 
-[ Upstream commit baae03a0e2497f49704628fd0aaf993cf98e1b99 ]
+[ Upstream commit 018047a1dba7636e1f7fdae2cc290a528991d648 ]
 
-The DMA_PREP_FENCE is to be used when preparing Tx descriptor if output
-of Tx descriptor is to be used by next/dependent Tx descriptor.
+Function devm_clk_get() returns an ERR_PTR when it fails. However, in
+function kdwc3_probe(), its return value is not checked, which may
+result in a bad memory access bug. This patch fixes the bug.
 
-The DMA_PREP_FENSE will not be set correctly in do_async_gen_syndrome()
-when calling dma->device_prep_dma_pq() under following conditions:
-1. ASYNC_TX_FENCE not set in submit->flags
-2. DMA_PREP_FENCE not set in dma_flags
-3. src_cnt (= (disks - 2)) is greater than dma_maxpq(dma, dma_flags)
-
-This patch fixes DMA_PREP_FENCE usage in do_async_gen_syndrome() taking
-inspiration from do_async_xor() implementation.
-
-Signed-off-by: Anup Patel <anup.patel@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
-Acked-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- crypto/async_tx/async_pq.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/usb/dwc3/dwc3-keystone.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/crypto/async_tx/async_pq.c
-+++ b/crypto/async_tx/async_pq.c
-@@ -62,9 +62,6 @@ do_async_gen_syndrome(struct dma_chan *c
- 	dma_addr_t dma_dest[2];
- 	int src_off = 0;
+--- a/drivers/usb/dwc3/dwc3-keystone.c
++++ b/drivers/usb/dwc3/dwc3-keystone.c
+@@ -117,6 +117,10 @@ static int kdwc3_probe(struct platform_d
+ 	dev->dma_mask = &kdwc3_dma_mask;
  
--	if (submit->flags & ASYNC_TX_FENCE)
--		dma_flags |= DMA_PREP_FENCE;
--
- 	while (src_cnt > 0) {
- 		submit->flags = flags_orig;
- 		pq_src_cnt = min(src_cnt, dma_maxpq(dma, dma_flags));
-@@ -83,6 +80,8 @@ do_async_gen_syndrome(struct dma_chan *c
- 			if (cb_fn_orig)
- 				dma_flags |= DMA_PREP_INTERRUPT;
- 		}
-+		if (submit->flags & ASYNC_TX_FENCE)
-+			dma_flags |= DMA_PREP_FENCE;
+ 	kdwc->clk = devm_clk_get(kdwc->dev, "usb");
++	if (IS_ERR(kdwc->clk)) {
++		dev_err(kdwc->dev, "unable to get usb clock\n");
++		return PTR_ERR(kdwc->clk);
++	}
  
- 		/* Drivers force forward progress in case they can not provide
- 		 * a descriptor
+ 	error = clk_prepare_enable(kdwc->clk);
+ 	if (error < 0) {
