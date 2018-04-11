@@ -1,184 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753702AbeDKPCE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 11:02:04 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:40519 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752335AbeDKPCC (ORCPT
+        id S1753182AbeDKPER (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 11:04:17 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33066 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752211AbeDKPEP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 11:02:02 -0400
-X-Google-Smtp-Source: AIpwx496IfsZI3JsfUBKZTmUD7npvovEqqZGBMhyvS8FtdB/ChSejoGCQUeKtm2b7e8c/uFfycVv+V/oXiuEcId2pO94ctCoryVN
+        Wed, 11 Apr 2018 11:04:15 -0400
+X-Google-Smtp-Source: AIpwx48GrXicLtxjKYilq5B9YugB1LSk74slBNUfaUftSKMY54S2KEtVUUyZfHniYGIZbps5MKUg+oQPNhh7R6rK/WY=
 MIME-Version: 1.0
-Date: Wed, 11 Apr 2018 08:02:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <94eb2c049236e1e93b056993eb5e@google.com>
-Subject: KASAN: use-after-free Read in tipc_sub_unsubscribe (2)
-From: syzbot <syzbot+aa245f26d42b8305d157@syzkaller.appspotmail.com>
-To: davem@davemloft.net, jon.maloy@ericsson.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tipc-discussion@lists.sourceforge.net,
-        ying.xue@windriver.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <1523414803-2626-1-git-send-email-baijiaju1990@gmail.com>
+References: <1523414803-2626-1-git-send-email-baijiaju1990@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 11 Apr 2018 17:04:14 +0200
+Message-ID: <CAPDyKFq4hL6TRaovv9O1NLXBmd7QJQcuVGmc5kSO3Na-2gcT1g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mmc: wbsd: Replace mdelay with usleep_range in wbsd_init
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: Pierre Ossman <pierre@ossman.eu>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 11 April 2018 at 04:46, Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
+> wbsd_init() is never called in atomic context.
+>
+> The call chains ending up at wbsd_init() are:
+> [1] wbsd_init() <- wbsd_probe()
+> [2] wbsd_init() <- wbsd_pnp_probe()
+>
+> wbsd_probe() is set as ".probe" in struct platform_driver.
+> wbsd_pnp_probe() is set as ".probe" in struct pnp_driver.
+> These functions are not called in atomic context.
+>
+> Despite never getting called from atomic context, wbsd_init()
+> calls mdelay() to busily wait.
+> This is not necessary and can be replaced with usleep_range() to
+> avoid busy waiting.
+>
+> This is found by a static analysis tool named DCNS written by myself.
+> And I also manually check it.
+>
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-syzbot hit the following crash on upstream commit
-b284d4d5a6785f8cd07eda2646a95782373cd01e (Tue Apr 10 19:25:30 2018 +0000)
-Merge tag 'ceph-for-4.17-rc1' of git://github.com/ceph/ceph-client
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=aa245f26d42b8305d157
+The patch is good, however I think you should squash all three in this
+series into one. For obvious reasons.
 
-So far this crash happened 2 times on upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5881855630901248
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5979790213382144
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5808961445953536
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-1223000601505858474
-compiler: gcc (GCC) 8.0.1 20180301 (experimental)
+Kind regards
+Uffe
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+aa245f26d42b8305d157@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-R10: 0000000020b89fe4 R11: 0000000000000246 R12: 0000000000000005
-R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-Service creation failed, no memory
-Failed to subscribe for {1906,0,4294967295}
-==================================================================
-BUG: KASAN: use-after-free in tipc_sub_unsubscribe+0x22d/0x305  
-net/tipc/subscr.c:167
-Read of size 4 at addr ffff8801b78718d8 by task syzkaller446011/4466
-
-CPU: 1 PID: 4466 Comm: syzkaller446011 Not tainted 4.16.0+ #19
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0xac/0x2f5 mm/kasan/report.c:412
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-  tipc_sub_unsubscribe+0x22d/0x305 net/tipc/subscr.c:167
-  tipc_conn_delete_sub+0x32d/0x530 net/tipc/topsrv.c:245
-  tipc_topsrv_kern_unsubscr+0x280/0x3f0 net/tipc/topsrv.c:598
-  tipc_group_delete+0x2dd/0x3f0 net/tipc/group.c:231
-  tipc_sk_leave+0x10e/0x210 net/tipc/socket.c:2800
-  tipc_release+0x146/0x1290 net/tipc/socket.c:576
-  sock_release+0x96/0x1b0 net/socket.c:594
-  sock_close+0x16/0x20 net/socket.c:1149
-  __fput+0x34d/0x890 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x1aee/0x2730 kernel/exit.c:865
-  do_group_exit+0x16f/0x430 kernel/exit.c:968
-  SYSC_exit_group kernel/exit.c:979 [inline]
-  SyS_exit_group+0x1d/0x20 kernel/exit.c:977
-  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x43f1f8
-RSP: 002b:00007fff7867bac8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043f1f8
-RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00000000004bf2e8 R08: 00000000000000e7 R09: ffffffffffffffd0
-R10: 0000000020b89fe4 R11: 0000000000000246 R12: 0000000000000001
-R13: 00000000006d1180 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 4466:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x780 mm/slab.c:3620
-  kmalloc include/linux/slab.h:512 [inline]
-  tipc_sub_subscribe+0x25a/0x6b0 net/tipc/subscr.c:143
-  tipc_conn_rcv_sub.isra.5+0x42c/0x7e0 net/tipc/topsrv.c:381
-  tipc_topsrv_kern_subscr+0x72b/0xad0 net/tipc/topsrv.c:582
-  tipc_group_create+0x72e/0xa50 net/tipc/group.c:194
-  tipc_sk_join net/tipc/socket.c:2766 [inline]
-  tipc_setsockopt+0x2c9/0xd70 net/tipc/socket.c:2881
-  __sys_setsockopt+0x1bd/0x390 net/socket.c:1903
-  SYSC_setsockopt net/socket.c:1914 [inline]
-  SyS_setsockopt+0x34/0x50 net/socket.c:1911
-  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-Freed by task 4466:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  tipc_sub_kref_release net/tipc/subscr.c:117 [inline]
-  kref_put include/linux/kref.h:70 [inline]
-  tipc_sub_put+0x33/0x40 net/tipc/subscr.c:122
-  tipc_nametbl_unsubscribe+0x52c/0xaf0 net/tipc/name_table.c:709
-  tipc_sub_unsubscribe+0x6d/0x305 net/tipc/subscr.c:166
-  tipc_conn_delete_sub+0x32d/0x530 net/tipc/topsrv.c:245
-  tipc_topsrv_kern_unsubscr+0x280/0x3f0 net/tipc/topsrv.c:598
-  tipc_group_delete+0x2dd/0x3f0 net/tipc/group.c:231
-  tipc_sk_leave+0x10e/0x210 net/tipc/socket.c:2800
-  tipc_release+0x146/0x1290 net/tipc/socket.c:576
-  sock_release+0x96/0x1b0 net/socket.c:594
-  sock_close+0x16/0x20 net/socket.c:1149
-  __fput+0x34d/0x890 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x1aee/0x2730 kernel/exit.c:865
-  do_group_exit+0x16f/0x430 kernel/exit.c:968
-  SYSC_exit_group kernel/exit.c:979 [inline]
-  SyS_exit_group+0x1d/0x20 kernel/exit.c:977
-  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-The buggy address belongs to the object at ffff8801b7871840
-  which belongs to the cache kmalloc-256 of size 256
-The buggy address is located 152 bytes inside of
-  256-byte region [ffff8801b7871840, ffff8801b7871940)
-The buggy address belongs to the page:
-page:ffffea0006de1c40 count:1 mapcount:0 mapping:ffff8801b78710c0 index:0x0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffff8801b78710c0 0000000000000000 000000010000000c
-raw: ffffea00071ce1a0 ffffea0006db8fa0 ffff8801dac007c0 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801b7871780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801b7871800: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-> ffff8801b7871880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                     ^
-  ffff8801b7871900: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-  ffff8801b7871980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+> ---
+>  drivers/mmc/host/wbsd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/wbsd.c b/drivers/mmc/host/wbsd.c
+> index 546aaf8..6224d12 100644
+> --- a/drivers/mmc/host/wbsd.c
+> +++ b/drivers/mmc/host/wbsd.c
+> @@ -1709,7 +1709,7 @@ static int wbsd_init(struct device *dev, int base, int irq, int dma,
+>         /*
+>          * Allow device to initialise itself properly.
+>          */
+> -       mdelay(5);
+> +       usleep_range(5000, 6000);
+>
+>         /*
+>          * Reset the chip into a known state.
+> --
+> 1.9.1
+>
