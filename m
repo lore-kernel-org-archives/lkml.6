@@ -1,66 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752802AbeDKI6g (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 04:58:36 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36668 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751972AbeDKI6d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 04:58:33 -0400
-X-Google-Smtp-Source: AIpwx4+aQj0slxY45aSAOQJKaRZX/KwcmiPYWQz6L2FkrTorJOpVbyLLyW4nRCorZEth+iN1282Puw==
-Subject: Re: [PATCH v3 4/7] thermal/drivers/Kconfig: Convert the CPU cooling
- device to a choice
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
-        javi.merino@kernel.org, rui.zhang@intel.com,
-        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@gmail.com>
-References: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
- <1522945005-7165-5-git-send-email-daniel.lezcano@linaro.org>
- <20180411061851.GM7671@vireshk-i7>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <8bee8335-43aa-f9ef-e0cb-a390440b2aec@linaro.org>
-Date: Wed, 11 Apr 2018 10:58:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        id S1752849AbeDKI65 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 04:58:57 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:51819 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751972AbeDKI6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 04:58:52 -0400
+Subject: Re: [PATCH v3 2/2] mm: remove odd HAVE_PTE_SPECIAL
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        linux-doc@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>,
+        mhocko@kernel.org, aneesh.kumar@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, mpe@ellerman.id.au,
+        benh@kernel.crashing.org, paulus@samba.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Vineet Gupta <vgupta@synopsys.com>, Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <albert@sifive.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        David Rientjes <rientjes@google.com>,
+        Robin Murphy <robin.murphy@arm.com>
+References: <1523433816-14460-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1523433816-14460-3-git-send-email-ldufour@linux.vnet.ibm.com>
+From: Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <de6ee514-8b7e-24d0-a7ee-a8887e8b0ae9@c-s.fr>
+Date: Wed, 11 Apr 2018 10:58:44 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180411061851.GM7671@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <1523433816-14460-3-git-send-email-ldufour@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/04/2018 08:18, Viresh Kumar wrote:
-> On 05-04-18, 18:16, Daniel Lezcano wrote:
->> The next changes will add new way to cool down a CPU. In order to
->> sanitize and make the overall cpu cooling code consistent and robust
->> we must prevent the cpu cooling devices to co-exists with the same
->> purpose at the same time in the kernel.
->>
->> Make the CPU cooling device a choice in the Kconfig, so only one CPU
->> cooling strategy can be chosen.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> ---
->>  drivers/thermal/Kconfig       | 20 +++++++++++++++++---
->>  drivers/thermal/cpu_cooling.c |  2 ++
->>  include/linux/cpu_cooling.h   |  6 +++---
->>  3 files changed, 22 insertions(+), 6 deletions(-)
+
+
+Le 11/04/2018 à 10:03, Laurent Dufour a écrit :
+> Remove the additional define HAVE_PTE_SPECIAL and rely directly on
+> CONFIG_ARCH_HAS_PTE_SPECIAL.
 > 
-> I don't see my review comments from V2 being addressed for this patch.
-> Can you please check that again ?
+> There is no functional change introduced by this patch
+> 
+> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> ---
+>   mm/memory.c | 19 ++++++++-----------
+>   1 file changed, 8 insertions(+), 11 deletions(-)
+> 
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 96910c625daa..7f7dc7b2a341 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -817,17 +817,12 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
+>    * PFNMAP mappings in order to support COWable mappings.
+>    *
+>    */
+> -#ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
+> -# define HAVE_PTE_SPECIAL 1
+> -#else
+> -# define HAVE_PTE_SPECIAL 0
+> -#endif
+>   struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+>   			     pte_t pte, bool with_public_device)
+>   {
+>   	unsigned long pfn = pte_pfn(pte);
+>   
+> -	if (HAVE_PTE_SPECIAL) {
+> +	if (IS_ENABLED(CONFIG_ARCH_HAS_PTE_SPECIAL)) {
+>   		if (likely(!pte_special(pte)))
+>   			goto check_pfn;
+>   		if (vma->vm_ops && vma->vm_ops->find_special_page)
+> @@ -862,7 +857,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+>   		return NULL;
+>   	}
+>   
+> -	/* !HAVE_PTE_SPECIAL case follows: */
+> +	/* !CONFIG_ARCH_HAS_PTE_SPECIAL case follows: */
+>   
+>   	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
+>   		if (vma->vm_flags & VM_MIXEDMAP) {
+> @@ -881,7 +876,8 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+>   
+>   	if (is_zero_pfn(pfn))
+>   		return NULL;
+> -check_pfn:
+> +
+> +check_pfn: __maybe_unused
 
-Right, I missed the end of the email :/
+See below
 
-I will fix that.
+>   	if (unlikely(pfn > highest_memmap_pfn)) {
+>   		print_bad_pte(vma, addr, pte, NULL);
+>   		return NULL;
+> @@ -891,7 +887,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+>   	 * NOTE! We still have PageReserved() pages in the page tables.
+>   	 * eg. VDSO mappings can cause them to exist.
+>   	 */
+> -out:
+> +out: __maybe_unused
+
+Why do you need that change ?
+
+There is no reason for the compiler to complain. It would complain if 
+the goto was within a #ifdef, but all the purpose of using IS_ENABLED() 
+is to allow the compiler to properly handle all possible cases. That's 
+all the force of IS_ENABLED() compared to ifdefs, and that the reason 
+why they are plebicited, ref Linux Codying style for a detailed explanation.
+
+Christophe
 
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+>   	return pfn_to_page(pfn);
+>   }
+>   
+> @@ -904,7 +900,7 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+>   	/*
+>   	 * There is no pmd_special() but there may be special pmds, e.g.
+>   	 * in a direct-access (dax) mapping, so let's just replicate the
+> -	 * !HAVE_PTE_SPECIAL case from vm_normal_page() here.
+> +	 * !CONFIG_ARCH_HAS_PTE_SPECIAL case from vm_normal_page() here.
+>   	 */
+>   	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
+>   		if (vma->vm_flags & VM_MIXEDMAP) {
+> @@ -1933,7 +1929,8 @@ static int __vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
+>   	 * than insert_pfn).  If a zero_pfn were inserted into a VM_MIXEDMAP
+>   	 * without pte special, it would there be refcounted as a normal page.
+>   	 */
+> -	if (!HAVE_PTE_SPECIAL && !pfn_t_devmap(pfn) && pfn_t_valid(pfn)) {
+> +	if (!IS_ENABLED(CONFIG_ARCH_HAS_PTE_SPECIAL) &&
+> +	    !pfn_t_devmap(pfn) && pfn_t_valid(pfn)) {
+>   		struct page *page;
+>   
+>   		/*
+> 
