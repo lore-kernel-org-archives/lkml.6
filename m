@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx494rT9M0J04m9zlz/bxyDI5ik9Ck4b9/56hGo1koSd1eLEGCWX7yOxX4vVAgLgTBl+8lgR9
-ARC-Seal: i=1; a=rsa-sha256; t=1523473458; cv=none;
+X-Google-Smtp-Source: AIpwx4+TrxiduAts8qUJbBbxcjuCRcJAxfbPlas5H7xJIwW7jwfp4XrV7BD4p6uMDsT7FxaPmjtZ
+ARC-Seal: i=1; a=rsa-sha256; t=1523473456; cv=none;
         d=google.com; s=arc-20160816;
-        b=LiSgcsvjUGJL3e8qLlYseqAEJZBE7QH7XWQo1pq0rmq6Cf9LMdc6poSel8VQd7PV2X
-         FERcrUnBA4gFWq9Ga42yxQagNYiQxBSCmv0beBi0DfrlObNzeV7Cf1V0jiN+31pwoJOk
-         6QAOw0/X4nplDNozEnP1ZKlfjH2oJDPElNwub8GXvMSRAFEGZKI1Xcjc34UgQV5a5ami
-         RHlHJc2HlBllnRw1gm/8MEWRxGzqQAlwGHAw7VNicNFAiOm5Ce3MTWxVByrb2zJFFsHc
-         U+eBIm0XGDkvOUbAtNpPEyFQCRI8lrZT96asvjRweAjSS9ml3Npcoye6SjGiXri3dBad
-         erLQ==
+        b=oSkGI3Q2pAxBvnZKIl/ncbtHjSjMv6K/1AM9L1KhnIwrXnY8/3JCNIxLlKfv9qX5dH
+         OcxBzJiyF/nSYVSFyzii2QqsfdhwJKKgU8eXw6Jyl0RYkqCHdbuyi35UH/NalyBIuM3F
+         yUYffUQxHhNQqnHGoNcbp6H8V62JAlqqAmDnJ24aW+u+U5P3sTw6/KFl9tHDfgVXhuUg
+         zKR0kJSHCt+7cYQaTJshAyE9sXf1ovCS5K8vTa6u3P4v1HbrzZ8r5wkEd+pjusnD1z1T
+         c64QMjaE+CS2k2bZorIfE75FeDc9yoj5hdQGqc7upxDvmFkBK8gy78VXYDJ4ERF9b3jj
+         1Wnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=YuupGo5JzcZMPgtwTjWAx1zHkTHZqGSnnkyBqVLtUqA=;
-        b=wKwuhX2Xm8ERAyli+V3tNTHuCXD/e1RUzWqrYRf2fZ66N0wU9knT6p71yFwHEFxNbf
-         dUuZIeg3c0L4lIU4Qxl4GskF05Adn/X/W3YPIXwBS1k1OgDThNq+IEtUFCjfybST0XIY
-         scGU3tkLRE2/4mXnlJ5CvbVZ2b2cFODFHCRoZsKxfSP6P/36k8yjiYkL0U4BbfMGUy1n
-         zi7m39ONaXN5feCc296BIxFgC8+ziSfZHxiO4fY1j/7Vc07wiHq5U+MXFtjHiCeQNf7l
-         +EQ8kE9Oj75BJC5CsIx7wjVMJtW1Ofc/kG1SrCAef/xVwFTRNndbYBqWiCXbdKoDchCL
-         n+vQ==
+        bh=APJeqxx1IoAwqlACIkYdLqQOQ7fJeHQkuNzGq37uMmk=;
+        b=j47TpkPfBDspLCQXvIVJltOMhboXcjNgL/rD8HyHSLJV1584CMjl6TcAvLCcbjoM2/
+         jxii5Y9L69ytz7Zn71jm3H/XbBeg8iSAsR9BlTeEZekrQBwcLB+/kTZGPKJ97rPiHo1x
+         6sBc0msFnTRi2Yk12/5UXF0dFWWv+GfbIBdl6saOyjsmJV4+U8rnZbAZxoNZrmLWfdOF
+         WoZPyQupgK/zcPo/P8ZmcKmjOBbFmS53vwOOjwddUZn27BMNXteIGUVVPxpXPub/W+wK
+         GQ8eMJKx/pC/8L2pb0CEZvyvENFk8VLj4QaHJffAuxt4OvKn/SLF873oZjyeDYO8Kjmh
+         yp4A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 248/310] cpuidle: dt: Add missing of_node_put()
-Date: Wed, 11 Apr 2018 20:36:27 +0200
-Message-Id: <20180411183633.120778550@linuxfoundation.org>
+Subject: [PATCH 4.9 210/310] net: phy: avoid genphy_aneg_done() for PHYs without clause 22 support
+Date: Wed, 11 Apr 2018 20:35:49 +0200
+Message-Id: <20180411183631.598025958@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476804151066112?=
-X-GMAIL-MSGID: =?utf-8?q?1597477705495549463?=
+X-GMAIL-THRID: =?utf-8?q?1597476246644672781?=
+X-GMAIL-MSGID: =?utf-8?q?1597477703201562942?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,35 +52,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
 
-[ Upstream commit b2cdd8e1b54849477a32d820acc2e87828a38f3d ]
+[ Upstream commit 41408ad519f7a2a1c5229e61f2a97f4df1b61adc ]
 
-'of_node_put()' should be called on pointer returned by
-'of_parse_phandle()' when done. In this function this is done in all path
-except this 'continue', so add it.
+Avoid calling genphy_aneg_done() for PHYs that do not implement the
+Clause 22 register set.
 
-Fixes: 97735da074fd (drivers: cpuidle: Add status property to ARM idle states)
-Signed-off-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Clause 45 PHYs may implement the Clause 22 register set along with the
+Clause 22 extension MMD.  Hence, we can't simply block access to the
+Clause 22 functions based on the PHY being a Clause 45 PHY.
+
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/cpuidle/dt_idle_states.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/phy/phy.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/cpuidle/dt_idle_states.c
-+++ b/drivers/cpuidle/dt_idle_states.c
-@@ -174,8 +174,10 @@ int dt_init_idle_driver(struct cpuidle_d
- 		if (!state_node)
- 			break;
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -148,6 +148,12 @@ static inline int phy_aneg_done(struct p
+ 	if (phydev->drv->aneg_done)
+ 		return phydev->drv->aneg_done(phydev);
  
--		if (!of_device_is_available(state_node))
-+		if (!of_device_is_available(state_node)) {
-+			of_node_put(state_node);
- 			continue;
-+		}
++	/* Avoid genphy_aneg_done() if the Clause 45 PHY does not
++	 * implement Clause 22 registers
++	 */
++	if (phydev->is_c45 && !(phydev->c45_ids.devices_in_package & BIT(0)))
++		return -EINVAL;
++
+ 	return genphy_aneg_done(phydev);
+ }
  
- 		if (!idle_state_valid(state_node, i, cpumask)) {
- 			pr_warn("%s idle state not valid, bailing out\n",
