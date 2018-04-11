@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AIpwx4/Zdwd2xxownhzK7JTUaDaXzNtpfY3gZRm6NAKoadMeQEOIcjgCVpUQNOkDSIQp5LET9sT/
-ARC-Seal: i=1; a=rsa-sha256; t=1523483853; cv=none;
+X-Google-Smtp-Source: AIpwx48FFfTLDiRpbW2SUjnZ2chz8Rh2QLbvtthlWKAhcuCoRr/G9xtklrcbx+TpuZ3mtTSnix5s
+ARC-Seal: i=1; a=rsa-sha256; t=1523483846; cv=none;
         d=google.com; s=arc-20160816;
-        b=xhfEGSBb4l25AXwf+uA3eWujWwSiNQKRIbG0KBDzBE7DT4Bl4QepHCb/ATtV7KYaFS
-         EBDAMfuiWxtJ4fo93JvWM3E4bPslO/0ljxsfVaX3s6pRpOiOaj4N9yjnc0eMidTuQjRD
-         YsjcK9UzqeJLCBGRSlX5uJgy9660SlO+cviCLFKXQHbu5D6qV/6PsQefd4Br8gEx3p6y
-         Ef9MrBI+euxHQHgnCsNWLuBz1wn68heO+FYRbQR7wVwk15z2Xc9Z1RHbWodKhScGCqcp
-         SHiIESS40u3vO4TNbuWN68C2A6+smgrbxH60rqn99WSgA9bn7M4AppZnvzBrQPIFNOAq
-         GQ7A==
+        b=t5TsSwHhzkIFJV/EN+j6XDWicnKe6TLtQDPenW1Z7xm0GpqEbmrr+ja+9V5Jr47lqd
+         uWnjzmiqsgWJQIZAajlEF3JvQsprs8cDiKq5QdcGmPLJL/LASRSqyDEbeEkpANLgtO5u
+         SJSj5kWeUz1leeQQOpIrI9fd0WpS75tJtjLxQ9/gi/Fl+Cv8BsX9vOi4GoHGem4zlmk9
+         TfIJQcSScrdABBYWf8aeBqOfshO5VnC+cvjtuWzQcHtCWsEeBkpxowvg7sj93RhSwIbZ
+         Dgh6lUQEqduPyotatHH+KuqIsyHLf2sZOcPEKRhaQQg9/Qp+ud2eCehItnFXGJ9J9I0p
+         2dfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=ucxE72GY2QoE29VY4vI8EEOYUyqNFKELt+QfNlDGyuQ=;
-        b=lwphhFaLx92T+crNdfuq/zVnfDSPIF9UNd7nFsE6fOJM9uh6y6O2XKnHszeaAppTj/
-         awZmgeQl1LMMOyKaHhHXo9w/4F82E4x2CtLE+wr7DRG5bYnwLtGplLq6O2M0/ODMn/9H
-         8z6JnBQc8etuqroACW7WH4tlLHTitYQYY8LLg7bPFtyOIgKlyRBpa/bA+unelH+usJHF
-         w7JISk6Vl68G1aoorjyU3crtVGjMse3tjirukVaTNn7n9S5zNITUwPIOwha/x0s7cehR
-         K7iuKXfsTUx/8EWWLab6c78BXh78cV6GKuOHtLQ/hdOaw/Sezoo0DrFv/UpMO3rh1gXn
-         qISQ==
+        bh=9OySyEUnCnwqkzD1UKzw1UjKx0dRpYMs1dolz2RG4M4=;
+        b=G0rhnHnoEVOuSpPbtZ67DGQ/dKG+Q63ss1lzHXiOFhx9ZBV8yfFR+6oJACcsyrQe4d
+         7avRDC+tpTstcL1THLkToJruCujvtnQMcS9+jWQ4RaicHbWhBvE3tn8A/Diha2aPo2t3
+         BLhBaqv4TAomr7HjG0zqwtOuBW6i1v3vABlQSlR4FIXg5az9JdLxWmh0KMlTqym+jnhf
+         6x3ua2yRXj0IFv5P0ZDWUFSOaI4O0amY9QBSfBZLQ+Ym1wuXvz81GYFKjkE+D9d3x9S+
+         zWKoNGXQcQBkiWgOwu+YGH9Hk3yY+/ZdopFQ/0SeEr1whs98MYYWPRjICGV67BpEZqE2
+         /RVg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -29,11 +29,11 @@ To: Oleg Drokin <oleg.drokin@intel.com>,
  James Simmons <jsimmons@infradead.org>,
  Andreas Dilger <andreas.dilger@intel.com>
 Date: Thu, 12 Apr 2018 07:54:49 +1000
-Subject: [PATCH 18/20] staging: lustre: change how "dump_page_cache" walks a
- hash table
+Subject: [PATCH 17/20] staging: lustre: use call_rcu() to free
+ lu_object_headers
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152348368915.12394.10633296946135270444.stgit@noble>
+Message-ID: <152348368912.12394.12204341677623060724.stgit@noble>
 In-Reply-To: <152348312863.12394.11915752362061083241.stgit@noble>
 References: <152348312863.12394.11915752362061083241.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -41,308 +41,116 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597488604622429339?=
-X-GMAIL-MSGID: =?utf-8?q?1597488604622429339?=
+X-GMAIL-THRID: =?utf-8?q?1597488597449608198?=
+X-GMAIL-MSGID: =?utf-8?q?1597488597449608198?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The "dump_page_cache" seq_file currently tries to encode
-a location in the hash table into a 64bit file index so that
-the seq_file can seek to any location.
-
-This is not necessary with the current implementation of seq_file.
-seq_file performs any seeks needed itself by rewinding and calling
-->next and ->show until the required index is reached.
-
-The required behaviour of ->next is that it always return the next
-object after the last one returned by either ->start or ->next.
-It can ignore the ppos, but should increment it.
-
-The required behaviour of ->start is one of:
-1/ if *ppos is 0, then return the first object
-2/ if *ppos is the same value that was passed to the most recent call
-   to either ->start or ->next, then return the same object again
-3/ if *ppos is anything else, return the next object after the most
-   recently returned one.
-
-To implement this we store a vvp_pgcache_id (index into hash table)
-in the seq_private data structure, and also store 'prev_pos' as the
-last value passed to either ->start or ->next.
-
-We remove all converstion of an id to a pos, and any limits on the
-size of the vpi_depth.
-
-vvp_pgcache_obj_get() is changed to ignore dying objects so that
-vvp_pgcache_obj only returns NULL when it reaches the end of a hash
-chain, and so vpi_bucket needs to be incremented.
-
-A reference to the current ->clob pointer is now kept as long as we
-are iterating over the pages in a given object, so we don't have to
-try to find it again (and possibly fail) for each page.
-
-And the ->start and ->next functions are changed as described above.
+Using call_rcu to free lu_object_headers will allow us to use
+rhashtable and get lockless lookup.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- drivers/staging/lustre/lustre/llite/vvp_dev.c |  173 +++++++++++--------------
- 1 file changed, 79 insertions(+), 94 deletions(-)
+ drivers/staging/lustre/lustre/include/lu_object.h  |    6 +++++-
+ drivers/staging/lustre/lustre/llite/vvp_object.c   |    9 ++++++++-
+ drivers/staging/lustre/lustre/lov/lovsub_object.c  |    9 ++++++++-
+ .../staging/lustre/lustre/obdecho/echo_client.c    |    8 +++++++-
+ 4 files changed, 28 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/llite/vvp_dev.c b/drivers/staging/lustre/lustre/llite/vvp_dev.c
-index 39a85e967368..64c3fdbbf0eb 100644
---- a/drivers/staging/lustre/lustre/llite/vvp_dev.c
-+++ b/drivers/staging/lustre/lustre/llite/vvp_dev.c
-@@ -365,22 +365,6 @@ int cl_sb_fini(struct super_block *sb)
-  *
-  ****************************************************************************/
- 
--/*
-- * To represent contents of a page cache as a byte stream, following
-- * information if encoded in 64bit offset:
-- *
-- *       - file hash bucket in lu_site::ls_hash[]       28bits
-- *
-- *       - how far file is from bucket head	      4bits
-- *
-- *       - page index				   32bits
-- *
-- * First two data identify a file in the cache uniquely.
-- */
--
--#define PGC_OBJ_SHIFT (32 + 4)
--#define PGC_DEPTH_SHIFT (32)
--
- struct vvp_pgcache_id {
- 	unsigned int		 vpi_bucket;
- 	unsigned int		 vpi_depth;
-@@ -395,37 +379,26 @@ struct seq_private {
- 	struct lu_env		*env;
- 	u16			refcheck;
- 	struct cl_object	*clob;
-+	struct vvp_pgcache_id	id;
-+	/*
-+	 * prev_pos is the 'pos' of the last object returned
-+	 * by ->start of ->next.
-+	 */
-+	loff_t			prev_pos;
- };
- 
--static void vvp_pgcache_id_unpack(loff_t pos, struct vvp_pgcache_id *id)
--{
--	BUILD_BUG_ON(sizeof(pos) != sizeof(__u64));
--
--	id->vpi_index  = pos & 0xffffffff;
--	id->vpi_depth  = (pos >> PGC_DEPTH_SHIFT) & 0xf;
--	id->vpi_bucket = (unsigned long long)pos >> PGC_OBJ_SHIFT;
--}
--
--static loff_t vvp_pgcache_id_pack(struct vvp_pgcache_id *id)
--{
--	return
--		((__u64)id->vpi_index) |
--		((__u64)id->vpi_depth  << PGC_DEPTH_SHIFT) |
--		((__u64)id->vpi_bucket << PGC_OBJ_SHIFT);
--}
--
- static int vvp_pgcache_obj_get(struct cfs_hash *hs, struct cfs_hash_bd *bd,
- 			       struct hlist_node *hnode, void *data)
- {
- 	struct vvp_pgcache_id   *id  = data;
- 	struct lu_object_header *hdr = cfs_hash_object(hs, hnode);
- 
-+	if (lu_object_is_dying(hdr))
-+		return 0;
-+
- 	if (id->vpi_curdep-- > 0)
- 		return 0; /* continue */
- 
--	if (lu_object_is_dying(hdr))
--		return 1;
--
- 	cfs_hash_get(hs, hnode);
- 	id->vpi_obj = hdr;
- 	return 1;
-@@ -437,7 +410,6 @@ static struct cl_object *vvp_pgcache_obj(const struct lu_env *env,
- {
- 	LASSERT(lu_device_is_cl(dev));
- 
--	id->vpi_depth &= 0xf;
- 	id->vpi_obj    = NULL;
- 	id->vpi_curdep = id->vpi_depth;
- 
-@@ -452,55 +424,42 @@ static struct cl_object *vvp_pgcache_obj(const struct lu_env *env,
- 			return lu2cl(lu_obj);
- 		}
- 		lu_object_put(env, lu_object_top(id->vpi_obj));
--
--	} else if (id->vpi_curdep > 0) {
--		id->vpi_depth = 0xf;
- 	}
- 	return NULL;
+diff --git a/drivers/staging/lustre/lustre/include/lu_object.h b/drivers/staging/lustre/lustre/include/lu_object.h
+index d23a78577fb5..85066ece44d6 100644
+--- a/drivers/staging/lustre/lustre/include/lu_object.h
++++ b/drivers/staging/lustre/lustre/include/lu_object.h
+@@ -535,8 +535,12 @@ struct lu_object_header {
+ 	struct hlist_node       loh_hash;
+ 	/**
+ 	 * Linkage into per-site LRU list. Protected by lu_site::ls_guard.
++	 * memory shared with lru_head for delayed freeing;
+ 	 */
+-	struct list_head	     loh_lru;
++	union {
++		struct list_head	loh_lru;
++		struct rcu_head		loh_rcu;
++	};
+ 	/**
+ 	 * Linkage into list of layers. Never modified once set (except lately
+ 	 * during object destruction). No locking is necessary.
+diff --git a/drivers/staging/lustre/lustre/llite/vvp_object.c b/drivers/staging/lustre/lustre/llite/vvp_object.c
+index 05ad3b322a29..48a999f8406b 100644
+--- a/drivers/staging/lustre/lustre/llite/vvp_object.c
++++ b/drivers/staging/lustre/lustre/llite/vvp_object.c
+@@ -251,13 +251,20 @@ static int vvp_object_init(const struct lu_env *env, struct lu_object *obj,
+ 	return result;
  }
  
--static struct page *vvp_pgcache_find(const struct lu_env *env,
--				     struct lu_device *dev,
--				     struct cl_object **clobp, loff_t *pos)
-+static struct page *vvp_pgcache_current(struct seq_private *priv)
++static void __vvp_object_free(struct rcu_head *rcu)
++{
++	struct vvp_object *vob = container_of(rcu, struct vvp_object, vob_header.coh_lu.loh_rcu);
++
++	kmem_cache_free(vvp_object_kmem, vob);
++}
++
+ static void vvp_object_free(const struct lu_env *env, struct lu_object *obj)
  {
--	struct cl_object     *clob;
--	struct lu_site       *site;
--	struct vvp_pgcache_id id;
--
--	site = dev->ld_site;
--	vvp_pgcache_id_unpack(*pos, &id);
--
--	while (1) {
--		if (id.vpi_bucket >= CFS_HASH_NHLIST(site->ls_obj_hash))
--			return NULL;
--		clob = vvp_pgcache_obj(env, dev, &id);
--		if (clob) {
--			struct inode *inode = vvp_object_inode(clob);
--			struct page *vmpage;
--			int nr;
--
--			nr = find_get_pages_contig(inode->i_mapping,
--						   id.vpi_index, 1, &vmpage);
--			if (nr > 0) {
--				id.vpi_index = vmpage->index;
--				/* Cant support over 16T file */
--				if (vmpage->index <= 0xffffffff) {
--					*clobp = clob;
--					*pos = vvp_pgcache_id_pack(&id);
--					return vmpage;
--				}
--				put_page(vmpage);
--			}
--
--			lu_object_ref_del(&clob->co_lu, "dump", current);
--			cl_object_put(env, clob);
-+	struct lu_device *dev = &priv->sbi->ll_cl->cd_lu_dev;
-+
-+	while(1) {
-+		struct inode *inode;
-+		int nr;
-+		struct page *vmpage;
-+
-+		if (!priv->clob) {
-+			struct cl_object *clob;
-+
-+			while ((clob = vvp_pgcache_obj(priv->env, dev, &priv->id)) == NULL &&
-+			       ++(priv->id.vpi_bucket) < CFS_HASH_NHLIST(dev->ld_site->ls_obj_hash))
-+				priv->id.vpi_depth = 0;
-+			if (!clob)
-+				return NULL;
-+			priv->clob = clob;
-+			priv->id.vpi_index = 0;
-+		}
-+
-+		inode = vvp_object_inode(priv->clob);
-+		nr = find_get_pages_contig(inode->i_mapping, priv->id.vpi_index, 1, &vmpage);
-+		if (nr > 0) {
-+			priv->id.vpi_index = vmpage->index;
-+			return vmpage;
- 		}
--		/* to the next object. */
--		++id.vpi_depth;
--		id.vpi_depth &= 0xf;
--		if (id.vpi_depth == 0 && ++id.vpi_bucket == 0)
--			return NULL;
--		id.vpi_index = 0;
-+		lu_object_ref_del(&priv->clob->co_lu, "dump", current);
-+		cl_object_put(priv->env, priv->clob);
-+		priv->clob = NULL;
-+		priv->id.vpi_index = 0;
-+		priv->id.vpi_depth++;
- 	}
+ 	struct vvp_object *vob = lu2vvp(obj);
+ 
+ 	lu_object_fini(obj);
+ 	lu_object_header_fini(obj->lo_header);
+-	kmem_cache_free(vvp_object_kmem, vob);
++	call_rcu(&vob->vob_header.coh_lu.loh_rcu, __vvp_object_free);
  }
  
-@@ -558,36 +517,54 @@ static int vvp_pgcache_show(struct seq_file *f, void *v)
- 	} else {
- 		seq_puts(f, "missing\n");
- 	}
--	lu_object_ref_del(&priv->clob->co_lu, "dump", current);
--	cl_object_put(priv->env, priv->clob);
+ static const struct lu_object_operations vvp_lu_obj_ops = {
+diff --git a/drivers/staging/lustre/lustre/lov/lovsub_object.c b/drivers/staging/lustre/lustre/lov/lovsub_object.c
+index 13d452086b61..3626c2500149 100644
+--- a/drivers/staging/lustre/lustre/lov/lovsub_object.c
++++ b/drivers/staging/lustre/lustre/lov/lovsub_object.c
+@@ -70,6 +70,13 @@ int lovsub_object_init(const struct lu_env *env, struct lu_object *obj,
+ 	return result;
+ }
  
++static void __lovsub_object_free(struct rcu_head *rcu)
++{
++	struct lovsub_object *los = container_of(rcu, struct lovsub_object,
++						 lso_header.coh_lu.loh_rcu);
++	kmem_cache_free(lovsub_object_kmem, los);
++}
++
+ static void lovsub_object_free(const struct lu_env *env, struct lu_object *obj)
+ {
+ 	struct lovsub_object *los = lu2lovsub(obj);
+@@ -88,7 +95,7 @@ static void lovsub_object_free(const struct lu_env *env, struct lu_object *obj)
+ 
+ 	lu_object_fini(obj);
+ 	lu_object_header_fini(&los->lso_header.coh_lu);
+-	kmem_cache_free(lovsub_object_kmem, los);
++	call_rcu(&los->lso_header.coh_lu.loh_rcu, __lovsub_object_free);
+ }
+ 
+ static int lovsub_object_print(const struct lu_env *env, void *cookie,
+diff --git a/drivers/staging/lustre/lustre/obdecho/echo_client.c b/drivers/staging/lustre/lustre/obdecho/echo_client.c
+index 767067b61109..16bf3b5a74e4 100644
+--- a/drivers/staging/lustre/lustre/obdecho/echo_client.c
++++ b/drivers/staging/lustre/lustre/obdecho/echo_client.c
+@@ -431,6 +431,12 @@ static int echo_object_init(const struct lu_env *env, struct lu_object *obj,
  	return 0;
  }
  
-+static void vvp_pgcache_rewind(struct seq_private *priv)
++static void __echo_object_free(struct rcu_head *rcu)
 +{
-+	if (priv->prev_pos) {
-+		memset(&priv->id, 0, sizeof(priv->id));
-+		priv->prev_pos = 0;
-+		if (priv->clob) {
-+			lu_object_ref_del(&priv->clob->co_lu, "dump", current);
-+			cl_object_put(priv->env, priv->clob);
-+		}
-+		priv->clob = NULL;
-+	}
++	struct echo_object *eco = container_of(rcu, struct echo_object, eo_hdr.coh_lu.loh_rcu);
++	kmem_cache_free(echo_object_kmem, eco);
 +}
 +
-+static struct page *vvp_pgcache_next_page(struct seq_private *priv)
-+{
-+	priv->id.vpi_index += 1;
-+	return vvp_pgcache_current(priv);
-+}
-+
- static void *vvp_pgcache_start(struct seq_file *f, loff_t *pos)
+ static void echo_object_free(const struct lu_env *env, struct lu_object *obj)
  {
- 	struct seq_private	*priv = f->private;
--	struct page *ret;
+ 	struct echo_object *eco    = cl2echo_obj(lu2cl(obj));
+@@ -446,7 +452,7 @@ static void echo_object_free(const struct lu_env *env, struct lu_object *obj)
+ 	lu_object_header_fini(obj->lo_header);
  
--	if (priv->sbi->ll_site->ls_obj_hash->hs_cur_bits >
--	    64 - PGC_OBJ_SHIFT)
--		ret = ERR_PTR(-EFBIG);
--	else
--		ret = vvp_pgcache_find(priv->env, &priv->sbi->ll_cl->cd_lu_dev,
--				       &priv->clob, pos);
-+	if (*pos == 0)
-+		vvp_pgcache_rewind(priv);
-+	else if (*pos == priv->prev_pos)
-+		/* Return the current item */;
-+	else {
-+		WARN_ON(*pos != priv->prev_pos + 1);
-+		priv->id.vpi_index += 1;
-+	}
- 
--	return ret;
-+	priv->prev_pos = *pos;
-+	return vvp_pgcache_current(priv);
+ 	kfree(eco->eo_oinfo);
+-	kmem_cache_free(echo_object_kmem, eco);
++	call_rcu(&eco->eo_hdr.coh_lu.loh_rcu, __echo_object_free);
  }
  
- static void *vvp_pgcache_next(struct seq_file *f, void *v, loff_t *pos)
- {
- 	struct seq_private *priv = f->private;
--	struct page *ret;
- 
-+	WARN_ON(*pos != priv->prev_pos);
- 	*pos += 1;
--	ret = vvp_pgcache_find(priv->env, &priv->sbi->ll_cl->cd_lu_dev,
--			       &priv->clob, pos);
--	return ret;
-+	priv->prev_pos = *pos;
-+	return vvp_pgcache_next_page(priv);
- }
- 
- static void vvp_pgcache_stop(struct seq_file *f, void *v)
-@@ -612,6 +589,9 @@ static int vvp_dump_pgcache_seq_open(struct inode *inode, struct file *filp)
- 
- 	priv->sbi = inode->i_private;
- 	priv->env = cl_env_get(&priv->refcheck);
-+	priv->clob = NULL;
-+	memset(&priv->id, 0, sizeof(priv->id));
-+
- 	if (IS_ERR(priv->env)) {
- 		int err = PTR_ERR(priv->env);
- 		seq_release_private(inode, filp);
-@@ -625,6 +605,11 @@ static int vvp_dump_pgcache_seq_release(struct inode *inode, struct file *file)
- 	struct seq_file *seq = file->private_data;
- 	struct seq_private *priv = seq->private;
- 
-+	if (priv->clob) {
-+		lu_object_ref_del(&priv->clob->co_lu, "dump", current);
-+		cl_object_put(priv->env, priv->clob);
-+	}
-+
- 	cl_env_put(priv->env, &priv->refcheck);
- 	return seq_release_private(inode, file);
- }
+ static int echo_object_print(const struct lu_env *env, void *cookie,
