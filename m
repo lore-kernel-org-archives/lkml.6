@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48fFtQ2+dDER67OoqeIeMV4AekWk20Tfr+ivIgxkrKKFPQh2XSZJSWl7SJmIGQXAbAY9+MG
-ARC-Seal: i=1; a=rsa-sha256; t=1523473005; cv=none;
+X-Google-Smtp-Source: AIpwx4/JuHa+IafMNH5/XFkdDwh4ddN8Idq+7p49cDGml8h0eZmYZyRn/BIFVOjx0ITzFjJ5GarN
+ARC-Seal: i=1; a=rsa-sha256; t=1523473003; cv=none;
         d=google.com; s=arc-20160816;
-        b=at0Wa9WCoZTx69NJeT6FjI7lh2D716LE7l5IooV30usji2ZxatiQud9xBuJbMykZnA
-         M6R/4NHJSlBRQPylgC9BIiBnUEAA2MTXLZv+Zz5OLCaqdwZIB2EzErUjDLxis/qVK+m5
-         vm1We0cSemWS6EyLCHDgybP405uBwNQOezsAcCH9b6piMWN26DS2eRvouGNGU3bzjBlo
-         OCOX9i0vBccU6RhhaIEheN2n9AiBMTxzKrDAxCHRb8DELaVnX5diqWpQ0J/1S5dLz+yj
-         jcakm23wn2vd+mbrrDYSh/CTKfNTaw2XritWuZLNUTyy/Ppzw8rJY7CSJ1ATefX2ajtm
-         BJcQ==
+        b=pkUi0Q9xjBBRmGzJv8KbiJP9APuY76y9awMXXl2+BldUqgPx1xGQ3hGkRY6Zwsnnpe
+         nrmkJ6hRKkG79xjhOipy26gtMi+b3HSplg5CC5XhEXpZ5jeQHx4S/C2TsJJqKYGYEphS
+         zBbk9teDOIUs8hh8n5zcr0irBBr7m0a+H3rdCDma8IAAtLiwS8vuazYK/wyxRxjkMXTR
+         DZ621pcg60FgQrKtjMHQmQrM8nA4x2p312AGf89NU9nwnSbB35QFdHJ+luRgIkmzMc1u
+         L4BFvUupPybJ4jM0QLsrCuBGUpdaJsqG7qZ+1FJEhjm7pUzH676Scbl+uCq8pc5Ty00C
+         hjbw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=DV8klGqxTVnEZT8TTm7h1Ah3p8bNg/y/fj3FrnkjqUc=;
-        b=fHpAk+a/Sv44rvMjqPlEA1gDjbdwxC59VqdbwdqQsrScOYTrZ2ZoPC3PuUvZNDNn3f
-         eyls2GxO29464ccFXcKjlsRGinP0omuKHnag7/qIvaYF3ccdD0j37F9/ZQbKg0LIHtwW
-         mq4p48xH9YQsW8Lkz/lr6QNx/pGWKR4ctXmiAds6L8Jj78xwKeshhB9HX59dfltpVc8C
-         cqXF9IjIoGrEh2PTtOsg3pf7nNAl64oeMhba0dGnPRP+kWqPA9NdilAEdMQU+bg0HRx3
-         6rJ1WDTcyH4bv6vMM8VftiMJ+HqHJG8zMCXgbRpEl6YbpAHBBXEc95ZRIcf881MP1ZFa
-         P22g==
+        bh=w+zSpbJSwnB9t2rnmZIQV9+ngilIikBFT2QZVu9xPnI=;
+        b=D5d6NPDyTKUfmxO//g8wcwfWd7xR02G/ahlrsBzAAYqqa7CrlLRRSS/2i9lIkG8awP
+         K2qB/JPQMXqPNnitYy8/e5Jwv0sOu3ONYyPJnOllvEYhlcVz5q44YNQVSd9dli3xgO3O
+         ylBSLxU9rD1/pOcnRuPAIBGtP/nGY8un4qbESbiNCxWDUZS3p9O8n14tvACLJmd8qQjC
+         cfccghZyjSS8gZzRN98/WuGmDugtJJ2lIF7TLMDi/3ZU+vuYj1IJUFL4StLvbkK86Vu3
+         syH4rVDeJZoJW+A4oon73TYBz7oROGnBKRg/CYvXTac4SvSToUIJJpecf4FvkBO7N/0l
+         l20w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Aaron Lu <aaron.lu@intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 094/310] gpio: crystalcove: Do not write regular gpio registers for virtual GPIOs
-Date: Wed, 11 Apr 2018 20:33:53 +0200
-Message-Id: <20180411183626.280561563@linuxfoundation.org>
+Subject: [PATCH 4.9 067/310] USB: ene_usb6250: fix first command execution
+Date: Wed, 11 Apr 2018 20:33:26 +0200
+Message-Id: <20180411183625.209846376@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477230316650681?=
-X-GMAIL-MSGID: =?utf-8?q?1597477230316650681?=
+X-GMAIL-THRID: =?utf-8?q?1597476107842808585?=
+X-GMAIL-MSGID: =?utf-8?q?1597477227678958483?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,174 +49,63 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
 
-[ Upstream commit 9a752b4c9ab924033bfdb8784c680d50b2bd5684 ]
+[ Upstream commit 4b309f1c4972c8f09e03ac64fc63510dbf5591a4 ]
 
-The Crystal Cove PMIC has 16 real GPIOs but the ACPI code for devices
-with this PMIC may address up to 95 GPIOs, these extra GPIOs are
-called virtual GPIOs and are used by the ACPI code as a method of
-accessing various non GPIO bits of PMIC.
+In the ene_usb6250 sub-driver for usb-storage, the ene_transport()
+routine is supposed to initialize the driver before executing the
+current command, if the initialization has not already been performed.
+However, a bug in the routine causes it to skip the command after
+doing the initialization.  Also, the routine does not return an
+appropriate error code if either the initialization or the command
+fails.
 
-Commit dcdc3018d635 ("gpio: crystalcove: support virtual GPIO") added
-dummy support for these to avoid a bunch of ACPI errors, but instead of
-ignoring writes / reads to them by doing:
+As a result of the first bug, the first command (a SCSI INQUIRY) is
+not carried out.  The results can be seen in the system log, in the
+form of a warning message and empty or garbage INQUIRY data:
 
-if (gpio >= CRYSTALCOVE_GPIO_NUM)
-	return 0;
+Apr 18 22:40:08 notebook2 kernel: scsi host6: scsi scan: INQUIRY result too short (5), using 36
+Apr 18 22:40:08 notebook2 kernel: scsi 6:0:0:0: Direct-Access                                    PQ: 0 ANSI: 0
 
-It accidentally introduced the following wrong check:
+This patch fixes both errors.
 
-if (gpio > CRYSTALCOVE_VGPIO_NUM)
-	return 0;
-
-Which means that attempts by the ACPI code to access these gpios
-causes some arbitrary gpio to get touched through for example
-GPIO1P0CTLO + gpionr % 8.
-
-Since we do support input/output (but not interrupts) on the 0x5e
-virtual GPIO, this commit makes to_reg return -ENOTSUPP for unsupported
-virtual GPIOs so as to not have to check for (gpio >= CRYSTALCOVE_GPIO_NUM
-&& gpio != 0x5e) everywhere and to make it easier to add support for more
-virtual GPIOs in the future.
-
-It then adds a check for to_reg returning an error to all callers where
-this may happen fixing the ACPI code accessing virtual GPIOs accidentally
-causing changes to real GPIOs.
-
-Fixes: dcdc3018d635 ("gpio: crystalcove: support virtual GPIO")
-Cc: Aaron Lu <aaron.lu@intel.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reported-and-tested-by: Andreas Hartmann <andihartmann@01019freenet.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-crystalcove.c |   54 ++++++++++++++++++++++++++--------------
- 1 file changed, 36 insertions(+), 18 deletions(-)
+ drivers/usb/storage/ene_ub6250.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/gpio/gpio-crystalcove.c
-+++ b/drivers/gpio/gpio-crystalcove.c
-@@ -90,8 +90,18 @@ static inline int to_reg(int gpio, enum
+--- a/drivers/usb/storage/ene_ub6250.c
++++ b/drivers/usb/storage/ene_ub6250.c
+@@ -2295,21 +2295,22 @@ static int ms_scsi_irp(struct us_data *u
+ 
+ static int ene_transport(struct scsi_cmnd *srb, struct us_data *us)
  {
- 	int reg;
+-	int result = 0;
++	int result = USB_STOR_XFER_GOOD;
+ 	struct ene_ub6250_info *info = (struct ene_ub6250_info *)(us->extra);
  
--	if (gpio == 94)
--		return GPIOPANELCTL;
-+	if (gpio >= CRYSTALCOVE_GPIO_NUM) {
-+		/*
-+		 * Virtual GPIO called from ACPI, for now we only support
-+		 * the panel ctl.
-+		 */
-+		switch (gpio) {
-+		case 0x5e:
-+			return GPIOPANELCTL;
-+		default:
-+			return -EOPNOTSUPP;
-+		}
-+	}
+ 	/*US_DEBUG(usb_stor_show_command(us, srb)); */
+ 	scsi_set_resid(srb, 0);
+-	if (unlikely(!(info->SD_Status.Ready || info->MS_Status.Ready))) {
++	if (unlikely(!(info->SD_Status.Ready || info->MS_Status.Ready)))
+ 		result = ene_init(us);
+-	} else {
++	if (result == USB_STOR_XFER_GOOD) {
++		result = USB_STOR_TRANSPORT_ERROR;
+ 		if (info->SD_Status.Ready)
+ 			result = sd_scsi_irp(us, srb);
  
- 	if (reg_type == CTRL_IN) {
- 		if (gpio < 8)
-@@ -130,36 +140,36 @@ static void crystalcove_update_irq_ctrl(
- static int crystalcove_gpio_dir_in(struct gpio_chip *chip, unsigned gpio)
- {
- 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
-+	int reg = to_reg(gpio, CTRL_OUT);
- 
--	if (gpio > CRYSTALCOVE_VGPIO_NUM)
-+	if (reg < 0)
- 		return 0;
- 
--	return regmap_write(cg->regmap, to_reg(gpio, CTRL_OUT),
--			    CTLO_INPUT_SET);
-+	return regmap_write(cg->regmap, reg, CTLO_INPUT_SET);
+ 		if (info->MS_Status.Ready)
+ 			result = ms_scsi_irp(us, srb);
+ 	}
+-	return 0;
++	return result;
  }
  
- static int crystalcove_gpio_dir_out(struct gpio_chip *chip, unsigned gpio,
- 				    int value)
- {
- 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
-+	int reg = to_reg(gpio, CTRL_OUT);
- 
--	if (gpio > CRYSTALCOVE_VGPIO_NUM)
-+	if (reg < 0)
- 		return 0;
- 
--	return regmap_write(cg->regmap, to_reg(gpio, CTRL_OUT),
--			    CTLO_OUTPUT_SET | value);
-+	return regmap_write(cg->regmap, reg, CTLO_OUTPUT_SET | value);
- }
- 
- static int crystalcove_gpio_get(struct gpio_chip *chip, unsigned gpio)
- {
- 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
--	int ret;
- 	unsigned int val;
-+	int ret, reg = to_reg(gpio, CTRL_IN);
- 
--	if (gpio > CRYSTALCOVE_VGPIO_NUM)
-+	if (reg < 0)
- 		return 0;
- 
--	ret = regmap_read(cg->regmap, to_reg(gpio, CTRL_IN), &val);
-+	ret = regmap_read(cg->regmap, reg, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -170,14 +180,15 @@ static void crystalcove_gpio_set(struct
- 				 unsigned gpio, int value)
- {
- 	struct crystalcove_gpio *cg = gpiochip_get_data(chip);
-+	int reg = to_reg(gpio, CTRL_OUT);
- 
--	if (gpio > CRYSTALCOVE_VGPIO_NUM)
-+	if (reg < 0)
- 		return;
- 
- 	if (value)
--		regmap_update_bits(cg->regmap, to_reg(gpio, CTRL_OUT), 1, 1);
-+		regmap_update_bits(cg->regmap, reg, 1, 1);
- 	else
--		regmap_update_bits(cg->regmap, to_reg(gpio, CTRL_OUT), 1, 0);
-+		regmap_update_bits(cg->regmap, reg, 1, 0);
- }
- 
- static int crystalcove_irq_type(struct irq_data *data, unsigned type)
-@@ -185,6 +196,9 @@ static int crystalcove_irq_type(struct i
- 	struct crystalcove_gpio *cg =
- 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
- 
-+	if (data->hwirq >= CRYSTALCOVE_GPIO_NUM)
-+		return 0;
-+
- 	switch (type) {
- 	case IRQ_TYPE_NONE:
- 		cg->intcnt_value = CTLI_INTCNT_DIS;
-@@ -235,8 +249,10 @@ static void crystalcove_irq_unmask(struc
- 	struct crystalcove_gpio *cg =
- 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
- 
--	cg->set_irq_mask = false;
--	cg->update |= UPDATE_IRQ_MASK;
-+	if (data->hwirq < CRYSTALCOVE_GPIO_NUM) {
-+		cg->set_irq_mask = false;
-+		cg->update |= UPDATE_IRQ_MASK;
-+	}
- }
- 
- static void crystalcove_irq_mask(struct irq_data *data)
-@@ -244,8 +260,10 @@ static void crystalcove_irq_mask(struct
- 	struct crystalcove_gpio *cg =
- 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
- 
--	cg->set_irq_mask = true;
--	cg->update |= UPDATE_IRQ_MASK;
-+	if (data->hwirq < CRYSTALCOVE_GPIO_NUM) {
-+		cg->set_irq_mask = true;
-+		cg->update |= UPDATE_IRQ_MASK;
-+	}
- }
- 
- static struct irq_chip crystalcove_irqchip = {
+ static struct scsi_host_template ene_ub6250_host_template;
