@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49OGfpf9ebdzt0I6eoqcjweILbD3XwkH09nYjCWfDSF56mxb7OG+Zv5x78/HLr2gBw6Dfbb
-ARC-Seal: i=1; a=rsa-sha256; t=1523473242; cv=none;
+X-Google-Smtp-Source: AIpwx4/uF3LIhfvswE8gl7sZmqsfX7RrRAjl7BtWWDJPiLVzLc61Vq1bf9PoTODoep55zTUaRApq
+ARC-Seal: i=1; a=rsa-sha256; t=1523473239; cv=none;
         d=google.com; s=arc-20160816;
-        b=GlxHsdajBYVlRc2zW8OL+tPyHZXkouEJkGyNL1A4o3ieQjqdihEkHhhz0iBqL5mpx+
-         9RN7c5Sf8DIXDuuY6/mdu1zO8ka8mCR+CMkUWhLXnl7LimB/2RB+Bh2pMwUkb+J5mpwV
-         WKIrDX1SeSC6LjhAL6Gv2S8t10M+AT6PGEmYb16yNbmKQlcy33IH7YQtd2xnIpvSjpLe
-         sxLXULZ+YV0UqRxSzSUEpfmMBz8ZKe5fADMR8rq+ebYotWAA8gojfTb/Wo9bu3PC95r1
-         9Nt2g1qwOzg9ALpeQwrCJfzAEblUPnNLsNDn3pGDRG9uDJJo7Bz0qvrMRyNj9KSLQKgC
-         eg8g==
+        b=X4M9HJrH+LsS4jaR6qwHo3pfsjvaj39YE5SAH90DAkOkYs4wm7+fQ6vELhFzPSupjo
+         BQ+5/G8Zm4SPEPDzu+St1IOOS7elDfHS4pJQIb5z/laFUiPPb5tqR4cxl056XnXn5ptU
+         Mxa5x3dJn/BOfNwbM4ScYeJDCRmWx0H75jWiu74lkCoPk3vFfVAOSrFv4m0ZC7WjZgZ1
+         8fsH/412k3+Ing5ltOGuLYp+hZ5UL2C20ITJLNq4mfjnhtjANIk3QlCYvLhIe8x9bN67
+         +toxEZgzigx5Pb2uP9jpWh8NQ7ITPMETsYvF2cfGX726BDn4sIvj3JTOpcdUhDlXp844
+         20bw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QkQ47S6ft/mWvzquTjhW4Hf/US4PAK3v28pxcCGIHXs=;
-        b=t/dZqfYMnNivVl/vTabr1/PNQuUGiV5JXrjplpKpE6WDTh3c4WIlVf3kMkFvlCQDu9
-         O3Gy5GBf1rhozsjZ6ovLV1hMvblVDivxcXFmPJlJGOJ2cjhymYdIIsWSVPrfQ0FnU3a0
-         vJPiIGPQH4qdy8ZfDkbHMvGff10t/0xGAM7YMFaxyP6Vy01lmlj8GUx+VQpJOuEPegVP
-         VVrW1TTrRe55PZ8D0kr5bnZ7yXvBQAtwiY6TfD7UqbtFrsyWhyVlS/lLctg1IUx4Zbal
-         tVVXXs/CQsVY2FL14oj78i3cI/znHHaxLfHJmW+MdCP5t4qLKxaCzZI06i8vjOnEaQEA
-         dX9A==
+        bh=+rXPQiRxA7nHQ3z2NBN629+bz7lqm2gp8RM1jM4YkTk=;
+        b=hbTyuP5D4liBN0k5kj94nO0lVTMjkka5nnTTZpXJmEQyzEIAOaV3vhumDDi8WZZjCW
+         ixg4mQPUnvXRi4e/edeapFyKEtJ7Lhzq4J8SQoy5UmBpZkO7QjyDcBVTn1yCm5GxgKlG
+         4BkP1O8cKXl8o1G/12dlq3dbLTYcyEQtH3zU2VVHSNKoYBBfCV+T8na7qsVYZXpZ5QKB
+         GKtwblvvrJpV0hpJXiDC2kbD4flK9xl1r5SPkc/4yM0z0Al6wT9ICyMJMr27lgistcH+
+         k66BLGdJaldRma8YWege++Tc75Aqs4JkxNeqIXRYnk4iqdqawq0IbZc/BE/i/wDh3v6c
+         112w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Mark Brown <broonie@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 145/310] ASoC: Intel: sst: Fix the return value of sst_send_byte_stream_mrfld()
-Date: Wed, 11 Apr 2018 20:34:44 +0200
-Message-Id: <20180411183628.683371924@linuxfoundation.org>
+Subject: [PATCH 4.9 144/310] pinctrl: baytrail: Enable glitch filter for GPIOs used as interrupts
+Date: Wed, 11 Apr 2018 20:34:43 +0200
+Message-Id: <20180411183628.637960764@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476655454748171?=
-X-GMAIL-MSGID: =?utf-8?q?1597477478473096104?=
+X-GMAIL-THRID: =?utf-8?q?1597477475657950152?=
+X-GMAIL-MSGID: =?utf-8?q?1597477475657950152?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,33 +51,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Hans de Goede <hdegoede@redhat.com>
 
 
-[ Upstream commit eaadb1caa966a91128297b754e90b7c92b350a00 ]
+[ Upstream commit 9291c65b01d1c67ebd56644cb19317ad665c44b3 ]
 
-In some error handling paths, an error code is assiegned to 'ret'.
-However, the function always return 0.
+On some systems, some PCB traces attached to GpioInts are routed in such
+a way that they pick up enough interference to constantly (many times per
+second) trigger.
 
-Fix it and return the error code if such an error paths is taken.
+Enabling glitch-filtering fixes this.
 
-Fixes: 3d9ff34622ba ("ASoC: Intel: sst: add stream operations")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- sound/soc/intel/atom/sst/sst_stream.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/intel/pinctrl-baytrail.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/sound/soc/intel/atom/sst/sst_stream.c
-+++ b/sound/soc/intel/atom/sst/sst_stream.c
-@@ -221,7 +221,7 @@ int sst_send_byte_stream_mrfld(struct in
- 		sst_free_block(sst_drv_ctx, block);
- out:
- 	test_and_clear_bit(pvt_id, &sst_drv_ctx->pvt_id);
--	return 0;
-+	return ret;
- }
+--- a/drivers/pinctrl/intel/pinctrl-baytrail.c
++++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
+@@ -46,6 +46,9 @@
+ #define BYT_TRIG_POS		BIT(25)
+ #define BYT_TRIG_LVL		BIT(24)
+ #define BYT_DEBOUNCE_EN		BIT(20)
++#define BYT_GLITCH_FILTER_EN	BIT(19)
++#define BYT_GLITCH_F_SLOW_CLK	BIT(17)
++#define BYT_GLITCH_F_FAST_CLK	BIT(16)
+ #define BYT_PULL_STR_SHIFT	9
+ #define BYT_PULL_STR_MASK	(3 << BYT_PULL_STR_SHIFT)
+ #define BYT_PULL_STR_2K		(0 << BYT_PULL_STR_SHIFT)
+@@ -1579,6 +1582,9 @@ static int byt_irq_type(struct irq_data
+ 	 */
+ 	value &= ~(BYT_DIRECT_IRQ_EN | BYT_TRIG_POS | BYT_TRIG_NEG |
+ 		   BYT_TRIG_LVL);
++	/* Enable glitch filtering */
++	value |= BYT_GLITCH_FILTER_EN | BYT_GLITCH_F_SLOW_CLK |
++		 BYT_GLITCH_F_FAST_CLK;
  
- /*
+ 	writel(value, reg);
+ 
