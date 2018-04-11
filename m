@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3269524-1523477325-2-17243244300252681911
+X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477288-2-8987487410414113090
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477325; b=L1l0fpQ8Zf3i1M3vCH9z9NoD/n4yo78WxDoj/AlrAr4/5fH9x6
-    sFgbebQkqWDQPq/WW26trb6EdtvNOmmS/wLIBy8J2l2s8XscTbhf3Y/0UeDl0gEk
-    odXI0YD5EhqHzPJ0/r+Y7k/ytDw6t4lolAJlw4tJe9r7FgcUsHocagwe9a6JQJ9w
-    YnSl5AZC97Wejq3JMwhJmc1RZpvPAVciKSldIHqyTg1D9qXHgeD+DiotABfsQdJO
-    42p2DmehYkTTvMZUf6eml1YUPrXOZmA65ccsH7uGXeWk6/y7YgDfGXPBaWqTLNgf
-    p/inE+HxLIoKBc5XA52V7sy81s3pQ9M21auQ==
+    1523477288; b=p5hTrWetvn1gBdE1VU6Tzk0x7qlTJPSQ09NdBDbNvgKmf563ig
+    8YY4/mlZ4tChBXpoGmau/AeDyRlh8K1OCpnC9CjVdc9/ncey3vpZNruSOcc+k3Tj
+    qqZbHb3Bc8QyVT8EVuN4YguC/2tE6sxnode02THak6csqLGE4+Tzrl133lUZttn5
+    MBWK+TqgG56+1kBeIZCsPrlsczS4V4CrBqTwM0LrqKqgDCqyyq5CswiEGCPjHfsO
+    9vnxkVaYvytRT7ICHYkDuqQVUD8oIFUZ83f0wxzYG1HZD1zgup62BT1uxLzce17h
+    pkB6wclXfYCnntEpXtaNWwjyvEFbA34x0hsw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523477325; bh=bGwbwNfKw5fS2lR18G1Wto3bVQZJUg
-    FU9d3+k7sQsSs=; b=boX9hme5m+OkJfnUwxWdN8TL95MERBE9Mq6ABnVBvJ+45f
-    yuGd7RKUkDI0fECjrJ+v/1DhGJMU0suqHhalxyDNlw5vtg5OI4QHFDjQGyz65V3Y
-    9t0tMH8kiQwlIruwjqaRJ4ZmRFTQ1+JjBW+u3+9dWhl4Aid4Pv3UO8/uIY3KRkKK
-    uKSpahXFEJcmwJRZhu/2LyKd7smNgJraMWEvkbypE1qIAQQocPkqosKsbyBSGuH7
-    Nlj8P2ycNIbMgZ8UO7S4YPcQHkHGq5XoFMd+APe12pCw2wrx03zX9XQnApB/STEk
-    bRmRXHqyiO6RiV/kDu2VNswOE9+YeZHgwaMbXVXg==
+    :list-id; s=fm2; t=1523477288; bh=H3hav84K5rZggnLpYuDHS7WgZjvrSE
+    q0VHEceV7ikwg=; b=IGCennSUK9eWSm25mJHBFESQxqUQcw/6gdHjuIxA6qcGhh
+    WuL8nIr5o82cG7dwL3xlCK7J6RYxCUz9qZmtPb1MM5sPLyKvjJNYKGWCjjVNieXA
+    RmbUtlgSomUj6LG6Q9gS6tkdO/8+/Pufy7QLJChJ7xlRvwEL/lX6qAi+WmMWKV3+
+    bC+M2XA3LypBTwdEYZo6PwPJQU6VMUJmNmI4VVHxINDZWjwvooL4SUzSOlC6IJ5n
+    7W2f1HJgC21txFLRZ39d73jdrXmVwIBpbqgDjKrQhCmqfuMJ4pmqc9mHPC+6N2Dv
+    Xx707a2mv4/kkG1eyi+e6Jf3FYfyv0+KKYNPau3Q==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,34 +51,32 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGN+LvRX8eM1bF6DNFJgjSF7FrP7edb236J3Lew7rdToJz7AICdwRZ0gsh8KQ+K5gDzg2S0SRyCWG4eD/KJbJa/mgbZ4RkGlOYun7bETHyDZkfgMMV9S
-    fNm2FQNv6PvZCuE10gz9QEoIkT4Z4BIyFGI10QwiFzJNsweyRZbN/vkDJNlsTINsbqfAl8h2ps6v5r/1a3ZIMtPJMI1uKMgL/Vf3qFkoIG+M8ApSxUJUioZN
+X-CM-Envelope: MS4wfMcWWclk7HmBfEUYijZSJxQP4xwg91F6XPiJkHmRJkIKJS1E5P9cZaIrIIfcrBy/R1aUZa3vAzn04apfjyWi9gnkbS4r0ZqvIddhuozIml3M6qed6gT+
+    D1atl+N4hg1oTreNzHiRmgi6w3Nnjj0GsPJRKXczpIvJL685CElwL3LqTQlxj2IgzuwoCIdnjymOXEHb91Tz7NFU5Xo/jWg0a4itiesksSTsgbCBstipwar3
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=Q-fNiiVtAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=u__7uJSp3HEpzIBEySsA:9 a=QEXdDO2ut3YA:10 a=Fp8MccfUoT0GBdDC_Lng:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=7CQSdrXTAAAA:8 a=KKAkSRfTAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=r5d3RvBpJZ8c8hwF9-MA:9 a=QEXdDO2ut3YA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
+    a=cvBusfyB2V15izCimMoJ:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757383AbeDKUIP (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:08:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34730 "EHLO
+        id S933607AbeDKSy5 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:54:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34776 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933590AbeDKSyw (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:54:52 -0400
+        with ESMTP id S933556AbeDKSyz (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:54:55 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anup Patel <anup.patel@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vinod.koul@intel.com>,
+        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <cdall@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 054/310] async_tx: Fix DMA_PREP_FENCE usage in do_async_gen_syndrome()
-Date: Wed, 11 Apr 2018 20:33:13 +0200
-Message-Id: <20180411183624.571301091@linuxfoundation.org>
+Subject: [PATCH 4.9 055/310] KVM: arm: Restore banked registers and physical timer access on hyp_panic()
+Date: Wed, 11 Apr 2018 20:33:14 +0200
+Message-Id: <20180411183624.614135856@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -96,52 +94,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anup Patel <anup.patel@broadcom.com>
+From: James Morse <james.morse@arm.com>
 
 
-[ Upstream commit baae03a0e2497f49704628fd0aaf993cf98e1b99 ]
+[ Upstream commit d2e19368848ce6065daa785efca26faed54732b6 ]
 
-The DMA_PREP_FENCE is to be used when preparing Tx descriptor if output
-of Tx descriptor is to be used by next/dependent Tx descriptor.
+When KVM panics, it hurridly restores the host context and parachutes
+into the host's panic() code. This looks like it was copied from arm64,
+the 32bit KVM panic code needs to restore the host's banked registers
+too.
 
-The DMA_PREP_FENSE will not be set correctly in do_async_gen_syndrome()
-when calling dma->device_prep_dma_pq() under following conditions:
-1. ASYNC_TX_FENCE not set in submit->flags
-2. DMA_PREP_FENCE not set in dma_flags
-3. src_cnt (= (disks - 2)) is greater than dma_maxpq(dma, dma_flags)
+At some point panic() touches the physical timer/counter, this will
+trap back to HYP. If we're lucky, we panic again.
 
-This patch fixes DMA_PREP_FENCE usage in do_async_gen_syndrome() taking
-inspiration from do_async_xor() implementation.
+Add a __timer_save_state() call to KVMs hyp_panic() path, this saves the
+guest registers and disables the traps for the host.
 
-Signed-off-by: Anup Patel <anup.patel@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
-Acked-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
+Fixes: c36b6db5f3e4 ("ARM: KVM: Add panic handling code")
+Signed-off-by: James Morse <james.morse@arm.com>
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+Reviewed-by: Christoffer Dall <cdall@linaro.org>
+Signed-off-by: Christoffer Dall <cdall@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- crypto/async_tx/async_pq.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/arm/kvm/hyp/switch.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/crypto/async_tx/async_pq.c
-+++ b/crypto/async_tx/async_pq.c
-@@ -62,9 +62,6 @@ do_async_gen_syndrome(struct dma_chan *c
- 	dma_addr_t dma_dest[2];
- 	int src_off = 0;
+--- a/arch/arm/kvm/hyp/switch.c
++++ b/arch/arm/kvm/hyp/switch.c
+@@ -237,8 +237,10 @@ void __hyp_text __noreturn __hyp_panic(i
  
--	if (submit->flags & ASYNC_TX_FENCE)
--		dma_flags |= DMA_PREP_FENCE;
--
- 	while (src_cnt > 0) {
- 		submit->flags = flags_orig;
- 		pq_src_cnt = min(src_cnt, dma_maxpq(dma, dma_flags));
-@@ -83,6 +80,8 @@ do_async_gen_syndrome(struct dma_chan *c
- 			if (cb_fn_orig)
- 				dma_flags |= DMA_PREP_INTERRUPT;
- 		}
-+		if (submit->flags & ASYNC_TX_FENCE)
-+			dma_flags |= DMA_PREP_FENCE;
+ 		vcpu = (struct kvm_vcpu *)read_sysreg(HTPIDR);
+ 		host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
++		__timer_save_state(vcpu);
+ 		__deactivate_traps(vcpu);
+ 		__deactivate_vm(vcpu);
++		__banked_restore_state(host_ctxt);
+ 		__sysreg_restore_state(host_ctxt);
+ 	}
  
- 		/* Drivers force forward progress in case they can not provide
- 		 * a descriptor
