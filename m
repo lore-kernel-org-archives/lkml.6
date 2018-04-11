@@ -1,75 +1,135 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx49PAbmsRqrmLJAjrZH4C0hyb43IEyO2WfYqR3gztCWw1CQqWvWG3B0OzPSXK9Ehq5pSXzpC
-ARC-Seal: i=1; a=rsa-sha256; t=1523584399; cv=none;
+Return-Path: <kernel-hardening-return-12969-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx49Mhtmwn5us7SZtprbS7Mg+v8rLXPIYpM5AASt7bisuSkyz1yIp49xPrNnF5NZdkk4K4tjp
+ARC-Seal: i=1; a=rsa-sha256; t=1523408698; cv=none;
         d=google.com; s=arc-20160816;
-        b=0O4d0QY8Vtgca379cmHUYl607ikxIzOyFaaDc/ZLNAO2a7k0rJzhD7+zmlTaCwPxxw
-         7Ax1AyqWz/NM1cvuBDacNZgDzLRTJ6onM6xm3d2HNBCaxk0Pt3l+KHB07iPxrg/3qCQ8
-         +iDJ/9KqmVTp2vAd1cR58fBzEMDZx9AoMeB8/Wv5blKIDy7vn2VVxfRE08RODedEpkG0
-         /kYjvBlXODXsyVziWSP+sxkqCX+fDxogtGONb9KQTCaNTDOzommc8hPAItLtaOjFE/sl
-         mjg/pogan2DpFk4AVMBetsyHIEm6jicmQK90zBNM3utvSbeUzS9RdjmvUWHFbvRdIRb1
-         J0Dg==
+        b=h8xo3fX0hILugMbGBbpe1oBMOZwVZkDgTk2bhmEHuZrZ1s0Gi2GVawsesNcIMqGf8M
+         BT+g6lkY+Ummf5eGd90ZGVq2H2bd/yCAaKY/NyM2eoIs1tlU1rvbvWpTrqtqPYeTTIRj
+         /qYN73mZ4k2m5lgxJGYcWqyvr6OgypBl4PhahCcEgermMJ5MDOc7cboigZthawR8Orax
+         bfk0v5IV3WUYn0AjFfcLPymlt3TvAlQYL1mQUJKF6YNeTQg9297UmFwMYh8/Yw33mHgb
+         zJRRWddzpAUQnNRGDR10WpUGA0pzBqwVOElWhzR2p3rLN6xMvo9hQLN6Zzm2+wZVD3PL
+         S1lg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding:mime-version
-         :references:in-reply-to:from:subject:cc:to:message-id:date
-         :arc-authentication-results;
-        bh=wGcUUsoyAnpVRPQPFDh7dbeMK+jsGdrOSUIkgfEDTiM=;
-        b=HIDxKQ02m/yJLtYQ9K5FZjEkPbur93ImVyn02uTSfRi1QkmcRRd/adgc4+P5eaEmm2
-         aHq8EZQxSLOvXK1V1d7Y3BTKc1C3jzIadV10wilbVIpIj4oPX4hqcurgKa6nqyzpUKXk
-         SMQAnN1aqkXI/7ulSaSPQfM/R9u0GoZCzXlFjja/oheDM85wTwxuYGGAcLWRoH+vocOD
-         mZJfRnLC4N1yT+wfMBsiydOQjxfaYpSKMbowMTy3EINAy+syROi4qsIyzAXzFD2ogn9b
-         /WwvtU8uijA9dBGjGaPujMiWC7+Vmev/+YRykLYmZMMR/cmGOoAPSUhHZZMQ3hQu14RR
-         Hf9A==
+        h=message-id:date:subject:cc:to:from:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=UVltaXvPEpAzzp4frEzWsci/0CLoGCfuso2MDjy8rzk=;
+        b=VGSswAKcaiDopIpwr6FcXoO2Cqq0p3aYXQpg6lYNy2gTy2DBFruNXnMYYFzEpUqxwy
+         UHnJd8Gu0gUtqg7vojbf4hObBDl5dRpYmY+1PtiB7K8m0J84OBhXg6Afdy85hiC18RZu
+         5m3L9S///8PH18VE+NBAFYWPZpgrHgz5hUqNoEbDMyA7jmohpTo7mkIYKsSorwJcs0pK
+         /WlBjDB7UFrjt8UtK0juRR2qKeHFSTfHtBqI4ZL6mrRtdNEe3fIwruy5PEpknNLbmYtS
+         s4JtTSGVu8Hrxf4nmgGiomJpFVcdLqBkKWcpmZyDGbrdn4cSgQ2ngya8cvRfnv167xDt
+         +ZVg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: domain of kernel-hardening-return-12969-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12969-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753783AbeDMBxC (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Thu, 12 Apr 2018 21:53:02 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:60506 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753356AbeDMBxC (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Thu, 12 Apr 2018 21:53:02 -0400
-Date: Thu, 12 Apr 2018 21:53:00 -0400 (EDT)
-Message-Id: <20180412.215300.1371548831144372410.davem@davemloft.net>
-To: anders.roxell@linaro.org
-Cc: shuah@kernel.org, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: net: add in_netns.sh to TEST_PROGS
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180411151734.15507-1-anders.roxell@linaro.org>
-References: <20180411151734.15507-1-anders.roxell@linaro.org>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+       spf=pass (google.com: domain of kernel-hardening-return-12969-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12969-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Laura Abbott <labbott@redhat.com>
+To: Karsten Keil <isdn@linux-pingi.de>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: Laura Abbott <labbott@redhat.com>,
+	Kees Cook <keescook@chromium.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com
+Subject: [PATCHv2] mISDN: Remove VLAs
+Date: Tue, 10 Apr 2018 18:04:29 -0700
+Message-Id: <20180411010429.18074-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.14.3
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597463499107881201?=
-X-GMAIL-MSGID: =?utf-8?q?1597594035580432109?=
+X-GMAIL-THRID: =?utf-8?q?1597409800222276851?=
+X-GMAIL-MSGID: =?utf-8?q?1597409800222276851?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Wed, 11 Apr 2018 17:17:34 +0200
 
-> Script in_netns.sh isn't installed.
-> --------------------
-> running psock_fanout test
-> --------------------
-> ./run_afpackettests: line 12: ./in_netns.sh: No such file or directory
-> [FAIL]
-> --------------------
-> running psock_tpacket test
-> --------------------
-> ./run_afpackettests: line 22: ./in_netns.sh: No such file or directory
-> [FAIL]
-> 
-> In current code added in_netns.sh to be installed.
-> 
-> Fixes: cc30c93fa020 ("selftests/net: ignore background traffic in psock_fanout")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+There's an ongoing effort to remove VLAs[1] from the kernel to eventually
+turn on -Wvla. Remove the VLAs from the mISDN code by switching to using
+kstrdup in one place and using an upper bound in another.
 
-Applied, thanks.
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+v2: Switch to a tighter upper bound so we are allocating a more
+reasonable amount on the stack (300). This is based on previous checks
+against this value.
+---
+ drivers/isdn/mISDN/dsp_hwec.c   |  8 +++++---
+ drivers/isdn/mISDN/l1oip_core.c | 14 +++++++++++---
+ 2 files changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/isdn/mISDN/dsp_hwec.c b/drivers/isdn/mISDN/dsp_hwec.c
+index a6e87076acc2..5336bbdbfdc5 100644
+--- a/drivers/isdn/mISDN/dsp_hwec.c
++++ b/drivers/isdn/mISDN/dsp_hwec.c
+@@ -68,12 +68,12 @@ void dsp_hwec_enable(struct dsp *dsp, const char *arg)
+ 		goto _do;
+ 
+ 	{
+-		char _dup[len + 1];
+ 		char *dup, *tok, *name, *val;
+ 		int tmp;
+ 
+-		strcpy(_dup, arg);
+-		dup = _dup;
++		dup = kstrdup(arg, GFP_ATOMIC);
++		if (!dup)
++			return;
+ 
+ 		while ((tok = strsep(&dup, ","))) {
+ 			if (!strlen(tok))
+@@ -89,6 +89,8 @@ void dsp_hwec_enable(struct dsp *dsp, const char *arg)
+ 					deftaps = tmp;
+ 			}
+ 		}
++
++		kfree(dup);
+ 	}
+ 
+ _do:
+diff --git a/drivers/isdn/mISDN/l1oip_core.c b/drivers/isdn/mISDN/l1oip_core.c
+index 21d50e4cc5e1..b05022f94f18 100644
+--- a/drivers/isdn/mISDN/l1oip_core.c
++++ b/drivers/isdn/mISDN/l1oip_core.c
+@@ -279,7 +279,7 @@ l1oip_socket_send(struct l1oip *hc, u8 localcodec, u8 channel, u32 chanmask,
+ 		  u16 timebase, u8 *buf, int len)
+ {
+ 	u8 *p;
+-	u8 frame[len + 32];
++	u8 frame[MAX_DFRAME_LEN_L1 + 32];
+ 	struct socket *socket = NULL;
+ 
+ 	if (debug & DEBUG_L1OIP_MSG)
+@@ -902,7 +902,11 @@ handle_dmsg(struct mISDNchannel *ch, struct sk_buff *skb)
+ 		p = skb->data;
+ 		l = skb->len;
+ 		while (l) {
+-			ll = (l < L1OIP_MAX_PERFRAME) ? l : L1OIP_MAX_PERFRAME;
++			/*
++			 * This is technically bounded by L1OIP_MAX_PERFRAME but
++			 * MAX_DFRAME_LEN_L1 < L1OIP_MAX_PERFRAME
++			 */
++			ll = (l < MAX_DFRAME_LEN_L1) ? l : MAX_DFRAME_LEN_L1;
+ 			l1oip_socket_send(hc, 0, dch->slot, 0,
+ 					  hc->chan[dch->slot].tx_counter++, p, ll);
+ 			p += ll;
+@@ -1140,7 +1144,11 @@ handle_bmsg(struct mISDNchannel *ch, struct sk_buff *skb)
+ 		p = skb->data;
+ 		l = skb->len;
+ 		while (l) {
+-			ll = (l < L1OIP_MAX_PERFRAME) ? l : L1OIP_MAX_PERFRAME;
++			/*
++			 * This is technically bounded by L1OIP_MAX_PERFRAME but
++			 * MAX_DFRAME_LEN_L1 < L1OIP_MAX_PERFRAME
++			 */
++			ll = (l < MAX_DFRAME_LEN_L1) ? l : MAX_DFRAME_LEN_L1;
+ 			l1oip_socket_send(hc, hc->codec, bch->slot, 0,
+ 					  hc->chan[bch->slot].tx_counter, p, ll);
+ 			hc->chan[bch->slot].tx_counter += ll;
+-- 
+2.14.3
