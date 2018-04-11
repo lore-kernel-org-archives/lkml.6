@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48+iXBKw1Q2ZUBU5vIO/TVNLzkDUx1ClM/45pViVuXHsTgyMeWTjTyW5FMVg0zTDQ7q0mUc
-ARC-Seal: i=1; a=rsa-sha256; t=1523472616; cv=none;
+X-Google-Smtp-Source: AIpwx48c9AUEUdJck0Pb1ONlPvYW2VWhdz+8Z7vFxl5qyuXCpZ1AMjrmZuL9XOcO98eDrBfOjALX
+ARC-Seal: i=1; a=rsa-sha256; t=1523472610; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ugh6mVesq7raWlBMchn7xnuVZl4umw98OG+7vgs/VZZP/IA/dyD1lbbWcRJFwD9Nqa
-         u/JyFBLpsVg+7NObCCFyQGDhYiIueW77IljpD8NW/JVaBeRIPGztOvlum/RSqOAilxmt
-         MceCbtC0jwi40hkeQ1cL+FAuTK0d0SflQRTSN3kllA/iouecb6W58PmcWu03AX3L+fqT
-         AB3BDykGxZ881p7k8U+VACsSAq3jaFroP8d3Iz/bym122WWBP8iUv2oZ6+LNXRTkYlHj
-         F7gSV496n/shxvIZX6WLZ2G3JAC4R2gBtqJru0iYVV5gCbjEgwNQvIYNqKluaYR34zst
-         mIcg==
+        b=RhzIhk6JIz9hZ7Zycgj0gdBVS3fmTeRfHEhoFV+ru63IPpNCMIME+Zg3laKD4d5Q7g
+         eToW1MZE5ogCFBiXqBVHVsMZuEhDI7aVdKjZIUWTPBEftHN5LwRhigGHwcgN1sWf/MxJ
+         +LInVHaZ1RguOXNKCcFjlqQNvK7NiHHD0+5X9MgHDBEyWPu2csEg4+wQ8Al+cDJ5J3eE
+         rRVDMi+3n2tkQpnNrA9cXrRCAn8zAvcM+aXKOcK01IDS814VO1nF+qHMSiq1cj0VA1r8
+         4JxalFaCQhS9OZymP98OTYFnFQW9W/NLR2GHbL1RRMge7D+UVKWk9K+gjmmsHgOdVTC8
+         5gGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=BNmzV1ZLmIrkM29CwXV7OFjsgNBNpcVSLxI6cyBzX7k=;
-        b=yArz/nu5VRcSAtGc0MJj+w3KYOymABLsGGavI+z7+WkC8KYi6uFDQ3M2i6TXcCfBvM
-         1A6V7EOQlt95RX8AaQlYkhRf5g+innguA7hLMK/quIWLJydk6PcZlm0ZQMs2I7c9Km/J
-         16yH0MzlTMuWb7X6BKNwD8yUm9FvyeUvJKpGuvG8DVsSJpecpSNkOZ5z6wIdV1CVVk5k
-         qVgQjPO6afDK8WtWF2VsRA3MQWHHKSlmSKzyZJwPvuTb9sLtb5TxDuu7+9PEyL5DfH6k
-         rEsbAoScsfrdIX8FkmbxBWvC3oANqYgUVNvBdiorC81jEgsWbnAOkwL9PbXaEN3CWrF1
-         oRqg==
+        bh=Vsvph3q9iQWnpN0yj2Z+Fz9i8oLlbPsnzjP6UxS7BM8=;
+        b=mrwGNOzAsvl/5GnMC92GhHFOyCecZ1H3R56L0Vjpsb8Fft7tHuaMMqgS0LKxZ4b7iD
+         bJId3qmDdmgv20e+hs99jswZWSbepd6kv1yuXrcwP6kTslzkbICwHBZ8WkokPPq3uWCk
+         36dJSoPUjs0eLcIlHiAPrwbLiiFzHhLutLElF+4IQbXrJp83Vf0+iQJ21YlrTsdH7D7p
+         RG6BXg3BdxCfrOdFCnGtJT7GeRGGclnbuAqvtDMcL7dif1aRJn3x4+EHv3kb3j7MvGS/
+         OPRzwWhVCDhqe5PiMBhcYLhRVu+GfwQzmLko3g0OFz0liRmx7iAw+bBB5ggUUr9UTbl3
+         vdxQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tang Junhui <tang.junhui@zte.com.cn>,
-	Michael Lyle <mlyle@lyle.org>,
-	Jens Axboe <axboe@kernel.dk>,
+	Roopa Prabhu <roopa@cumulusnetworks.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 150/190] bcache: segregate flash only volume write streams
-Date: Wed, 11 Apr 2018 20:36:36 +0200
-Message-Id: <20180411183601.397843035@linuxfoundation.org>
+Subject: [PATCH 4.4 148/190] vxlan: dont migrate permanent fdb entries during learn
+Date: Wed, 11 Apr 2018 20:36:34 +0200
+Message-Id: <20180411183601.286565742@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476392008535759?=
-X-GMAIL-MSGID: =?utf-8?q?1597476821948486504?=
+X-GMAIL-THRID: =?utf-8?q?1597476386416293891?=
+X-GMAIL-MSGID: =?utf-8?q?1597476816202537662?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,81 +50,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tang Junhui <tang.junhui@zte.com.cn>
+From: Roopa Prabhu <roopa@cumulusnetworks.com>
 
 
-[ Upstream commit 4eca1cb28d8b0574ca4f1f48e9331c5f852d43b9 ]
+[ Upstream commit e0090a9e979de5202c7d16c635dea2f005221073 ]
 
-In such scenario that there are some flash only volumes
-, and some cached devices, when many tasks request these devices in
-writeback mode, the write IOs may fall to the same bucket as bellow:
-| cached data | flash data | cached data | cached data| flash data|
-then after writeback of these cached devices, the bucket would
-be like bellow bucket:
-| free | flash data | free | free | flash data |
+This patch fixes vxlan_snoop to not move permanent fdb entries
+on learn events. This is consistent with the bridge fdb
+handling of permanent entries.
 
-So, there are many free space in this bucket, but since data of flash
-only volumes still exists, so this bucket cannot be reclaimable,
-which would cause waste of bucket space.
-
-In this patch, we segregate flash only volume write streams from
-cached devices, so data from flash only volumes and cached devices
-can store in different buckets.
-
-Compare to v1 patch, this patch do not add a additionally open bucket
-list, and it is try best to segregate flash only volume write streams
-from cached devices, sectors of flash only volumes may still be mixed
-with dirty sectors of cached device, but the number is very small.
-
-[mlyle: fixed commit log formatting, permissions, line endings]
-
-Signed-off-by: Tang Junhui <tang.junhui@zte.com.cn>
-Reviewed-by: Michael Lyle <mlyle@lyle.org>
-Signed-off-by: Michael Lyle <mlyle@lyle.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 26a41ae60438 ("vxlan: only migrate dynamic FDB entries")
+Signed-off-by: Roopa Prabhu <roopa@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/bcache/alloc.c |   19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/net/vxlan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/bcache/alloc.c
-+++ b/drivers/md/bcache/alloc.c
-@@ -514,15 +514,21 @@ struct open_bucket {
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@ -962,7 +962,7 @@ static bool vxlan_snoop(struct net_devic
+ 			return false;
  
- /*
-  * We keep multiple buckets open for writes, and try to segregate different
-- * write streams for better cache utilization: first we look for a bucket where
-- * the last write to it was sequential with the current write, and failing that
-- * we look for a bucket that was last used by the same task.
-+ * write streams for better cache utilization: first we try to segregate flash
-+ * only volume write streams from cached devices, secondly we look for a bucket
-+ * where the last write to it was sequential with the current write, and
-+ * failing that we look for a bucket that was last used by the same task.
-  *
-  * The ideas is if you've got multiple tasks pulling data into the cache at the
-  * same time, you'll get better cache utilization if you try to segregate their
-  * data and preserve locality.
-  *
-- * For example, say you've starting Firefox at the same time you're copying a
-+ * For example, dirty sectors of flash only volume is not reclaimable, if their
-+ * dirty sectors mixed with dirty sectors of cached device, such buckets will
-+ * be marked as dirty and won't be reclaimed, though the dirty data of cached
-+ * device have been written back to backend device.
-+ *
-+ * And say you've starting Firefox at the same time you're copying a
-  * bunch of files. Firefox will likely end up being fairly hot and stay in the
-  * cache awhile, but the data you copied might not be; if you wrote all that
-  * data to the same buckets it'd get invalidated at the same time.
-@@ -539,7 +545,10 @@ static struct open_bucket *pick_data_buc
- 	struct open_bucket *ret, *ret_task = NULL;
+ 		/* Don't migrate static entries, drop packets */
+-		if (f->state & NUD_NOARP)
++		if (f->state & (NUD_PERMANENT | NUD_NOARP))
+ 			return true;
  
- 	list_for_each_entry_reverse(ret, &c->data_buckets, list)
--		if (!bkey_cmp(&ret->key, search))
-+		if (UUID_FLASH_ONLY(&c->uuids[KEY_INODE(&ret->key)]) !=
-+		    UUID_FLASH_ONLY(&c->uuids[KEY_INODE(search)]))
-+			continue;
-+		else if (!bkey_cmp(&ret->key, search))
- 			goto found;
- 		else if (ret->last_write_point == write_point)
- 			ret_task = ret;
+ 		if (net_ratelimit())
