@@ -1,73 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752972AbeDKCB6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 10 Apr 2018 22:01:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53782 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752610AbeDKCB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Apr 2018 22:01:56 -0400
-Date: Wed, 11 Apr 2018 10:01:50 +0800
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: "Liang, Cunming" <cunming.liang@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        "Bie, Tiwei" <tiwei.bie@intel.com>, Jason Wang <jasowang@redhat.com>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "ddutile@redhat.com" <ddutile@redhat.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org"
-        <virtualization@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "Daly, Dan" <dan.daly@intel.com>,
-        "Wang, Zhihong" <zhihong.wang@intel.com>,
-        "Tan, Jianfeng" <jianfeng.tan@intel.com>,
-        "Wang, Xiao W" <xiao.w.wang@intel.com>
-Subject: Re: [virtio-dev] Re: [RFC] vhost: introduce mdev based hardware
- vhost backend
-Message-ID: <20180411020150.GE28698@stefanha-x1.localdomain>
-References: <20180402152330.4158-1-tiwei.bie@intel.com>
- <622f4bd7-1249-5545-dc5a-5a92b64f5c26@redhat.com>
- <20180410045723.rftsb7l4l3ip2ioi@debian>
- <7ee31a12-a370-fc43-82a6-2235f598e970@redhat.com>
- <D0158A423229094DA7ABF71CF2FA0DA34E9222F4@SHSMSX104.ccr.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="so9zsI5B81VjUb/o"
-Content-Disposition: inline
-In-Reply-To: <D0158A423229094DA7ABF71CF2FA0DA34E9222F4@SHSMSX104.ccr.corp.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1752754AbeDKCIc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 10 Apr 2018 22:08:32 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:45661 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752076AbeDKCIa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Apr 2018 22:08:30 -0400
+X-Google-Smtp-Source: AIpwx4/UtcO9lPWvpPiQtaKEs99SdYTQQp56XgDyGgGlP5F/bRtjqB8m3DJI6Na0K8TuZ6LQu+8o9g==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: jeffrey.t.kirsher@intel.com
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] intel: i40evf: Replace GFP_ATOMIC with GFP_KERNEL in i40evf_add_vlan
+Date: Wed, 11 Apr 2018 10:08:18 +0800
+Message-Id: <1523412498-2177-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+i40evf_add_vlan() is never called in atomic context.
 
---so9zsI5B81VjUb/o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+i40evf_add_vlan() is only called by i40evf_vlan_rx_add_vid(), 
+which is only set as ".ndo_vlan_rx_add_vid" in struct net_device_ops.
+".ndo_vlan_rx_add_vid" is not called in atomic context.
 
-On Tue, Apr 10, 2018 at 09:23:53AM +0000, Liang, Cunming wrote:
-> If QEMU is going to build a user space driver framework there, we're open mind on that, even leveraging DPDK as the underlay library. Looking forward to more others' comments from community.
+Despite never getting called from atomic context, 
+i40evf_add_vlan() calls kzalloc() with GFP_ATOMIC, 
+which does not sleep for allocation.
+GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL, 
+which can sleep and improve the possibility of sucessful allocation.
 
-There is already an NVMe VFIO driver in QEMU (see block/nvme.c).  So in
-principle there's no reason against userspace drivers in QEMU.
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
 
-Stefan
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/net/ethernet/intel/i40evf/i40evf_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---so9zsI5B81VjUb/o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEcBAEBAgAGBQJazWyOAAoJEJykq7OBq3PIDxYH/3SjcypJKNjR0hMj21VW4REg
-7F6RjwFFlXz5fjIdUTi3sW80T3eWF26MbWBttl1A6XwrWQPrx50iG9xhblCNwLtu
-KY8vkQVK89LYwpM1vQn3LH7liEWexUIvq+dksxDts+7XE52qXxJ3hhzhb29ajTFf
-aWh4HdJXZyh3243o8tyvUELsSQ/P5mxy6HHt2pggoPViO3ttfjYC/fnkd2Q11tZn
-JxPIkqC4OkJW3EBva5V2/dCu0hWC8Gcj69Hda6eMrev4FzkHpFDROrb3CqtWKDEw
-ngHk+06CpZF77C73b8OKf8/+yWUXwXc38OVjoX6B3FS/x7a+mW2DZNb/m8NRDXg=
-=ueJP
------END PGP SIGNATURE-----
-
---so9zsI5B81VjUb/o--
+diff --git a/drivers/net/ethernet/intel/i40evf/i40evf_main.c b/drivers/net/ethernet/intel/i40evf/i40evf_main.c
+index 1825d95..04b2b9c 100644
+--- a/drivers/net/ethernet/intel/i40evf/i40evf_main.c
++++ b/drivers/net/ethernet/intel/i40evf/i40evf_main.c
+@@ -770,7 +770,7 @@ i40evf_vlan_filter *i40evf_add_vlan(struct i40evf_adapter *adapter, u16 vlan)
+ 
+ 	f = i40evf_find_vlan(adapter, vlan);
+ 	if (!f) {
+-		f = kzalloc(sizeof(*f), GFP_ATOMIC);
++		f = kzalloc(sizeof(*f), GFP_KERNEL);
+ 		if (!f)
+ 			goto clearout;
+ 
+-- 
+1.9.1
