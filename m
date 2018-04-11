@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+r9bxR7+ggrG9EYeNADbORs+A7ztMl7AX4s+MxOfp4W6rbjW91MPGRTkQTFDwcS71+ZI6a
-ARC-Seal: i=1; a=rsa-sha256; t=1523473228; cv=none;
+X-Google-Smtp-Source: AIpwx4+/4px7bXciAyWZ4LPmJnBfNHLoUlqGkRMIHuLonpcX0RmiCaVZJ06suUdrH1Z0SFDcTS/Q
+ARC-Seal: i=1; a=rsa-sha256; t=1523473226; cv=none;
         d=google.com; s=arc-20160816;
-        b=K3Wf6gbz6Ri0jkh7BEuyH6idfA36VG+n0yHbJg4fyrQcGBKa5l4Gf+WYkOz8hz/FYN
-         kmBVQ7Vuzl90pPfSr4t0fAEIeCRZr8e6DuDC0tb6/OOMOYWtrcIkheJYPMOmeQkFRshs
-         jyylAjwOEVEFHMkiTanprGurU+5eVSO6G17fZrFYPvuoGA8ibpAKEX5GRvGmLpUXN5ez
-         qoW5odk88psJysiOGViZ25h61Dy3kw4++99+73Y44mcMb4aZ3z/Ufxx/0QnkTmKXf/q/
-         yiyQGPhXPKMA2WmXihFMju2g49NCyT2iw6TZWwvxVLCgujes9AUbLIrdhKY2lob3f95V
-         OA/g==
+        b=DRD5l/fVxd3lUhj2Hh5WWhTLCGRHuSPOPsusJyZ5yQ6Sg+ecDKLi2yCIfeyed+1wC6
+         OULwh15rrvPGKLkxfcJJaJ6ZVPK8ff3uy4UWo83nsiMgjiyNz3GJ3VUSV0/AwenVezG2
+         TAzlyyT8By7V1NbnIA8Q1cpwxVoGVUhD6d4xv80dCkSNfAvK5MZmAKEj1t6DmcpG4g3V
+         NT8Hklum3lLQ5HcEuRrUNff//yDymzbpPtCovytWr7OZliQjj0TZyO8+/P1jbf5eLBvN
+         3maj6OgcnPhOq0phfjAIqU2FDW38YKeNjpDq06JaoHNpejEV1BUdLVzq8OEWtJpIVIRH
+         A2dg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=G5vhFIo8gl4thYffGEJx68KdFjQcbeaOLMI9SqxbZOQ=;
-        b=XAuBDeDrRYvQmtQz/i/ooMH1/4HoIR4+ZIpwaeKVkrPQsw7GG3aDACyRFA7puZbbuq
-         Puvlh74LM0i28ddWDpHUTjJ8LKmTlark569EkWaSeiXvHmbXK5EmoBLhTmxqzWLB+ici
-         nALY2wsoikzvuiCXQp6K2oD86cu56Zk55T9Co+AHYuq0xbgxGOFpD2F5hF0o+SNcgTtb
-         BlRVSSSY63sv4eUFD1fHAwhdIF90HtWhjqofnxM/Dq0Lgi+OjkLLunz4E4SZ8hiitL6R
-         w1JUUFrmRwNkustHKY9ViOVhtiDb3b9j/hxFV5801478E52nfshWI3XKUHFiDeM4dKP4
-         PTEg==
+        bh=QMp4atpLVoWIY/Gtno4AcdCJhcV3f7coDNIwyb/NL6c=;
+        b=qliiiwaiLJC1qiuIb7NrZOTxWkpz+xZupBQZYhteOqHNmmelalcXsIXqUolNHTuJbQ
+         gU6quzsxhWmSU8tMA4RjI7zCcBzoRKheHyRGjW7qIqcfRsHV3CANOZvCKol7oI505klV
+         0Pw1CQWev+WhgPSxSEIYkJlWUJP0h2fz9zAG1nTIYv/L69e6w5MUtj8X9DYS6JSmJHhg
+         I4a7fgIuERx149evrPCXMJKLhbstjiRKrCPgeJ91oY5U4qdBaht4zczQwQB+oCpJPPFX
+         OjvoHLW9EYiXl4oGFt9eSnOvRVZf1yR4xcVItvfQdHHZEJRRs3cjd2fDE7PwZc5ZTRVY
+         2ZLw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
 	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Marek Vasut <marek.vasut@gmail.com>,
+	Han Xu <han.xu@nxp.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 170/310] mtd: nand: check ecc->total sanity in nand_scan_tail
-Date: Wed, 11 Apr 2018 20:35:09 +0200
-Message-Id: <20180411183629.954638344@linuxfoundation.org>
+Subject: [PATCH 4.9 169/310] mtd: nand: gpmi: Fix gpmi_nand_init() error path
+Date: Wed, 11 Apr 2018 20:35:08 +0200
+Message-Id: <20180411183629.881965851@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477464231055587?=
-X-GMAIL-MSGID: =?utf-8?q?1597477464231055587?=
+X-GMAIL-THRID: =?utf-8?q?1597477461558584954?=
+X-GMAIL-MSGID: =?utf-8?q?1597477461558584954?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,38 +51,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
 
 
-[ Upstream commit 79e0348c4e24fd1affdcf055e0269755580e0fcc ]
+[ Upstream commit 4d02423e9afe6c46142ce98bbcaf5167316dbfbf ]
 
-Drivers are supposed to set correct ecc->{size,strength,bytes} before
-calling nand_scan_tail(), but it does not complain about ecc->total
-bigger than oobsize.
+The GPMI driver is wrongly assuming that nand_release() can safely be
+called on an uninitialized/unregistered NAND device.
 
-In this case, chip->scan_bbt() crashes due to memory corruption, but
-it is hard to debug.  It would be kind to fail it earlier with a clear
-message.
+Add a new err_nand_cleanup label in the error path and only execute if
+nand_scan_tail() succeeded.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Note that we now call nand_cleanup() instead of nand_release()
+(nand_release() is actually grouping the mtd_device_unregister() and
+nand_cleanup() in one call) because there's no point in trying to
+unregister a device that has never been registered.
+
 Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
+Acked-by: Han Xu <han.xu@nxp.com>
+Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mtd/nand/nand_base.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/mtd/nand/gpmi-nand/gpmi-nand.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/mtd/nand/nand_base.c
-+++ b/drivers/mtd/nand/nand_base.c
-@@ -4785,6 +4785,11 @@ int nand_scan_tail(struct mtd_info *mtd)
- 		goto err_free;
- 	}
- 	ecc->total = ecc->steps * ecc->bytes;
-+	if (ecc->total > mtd->oobsize) {
-+		WARN(1, "Total number of ECC bytes exceeded oobsize\n");
-+		ret = -EINVAL;
-+		goto err_free;
-+	}
+--- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
++++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+@@ -2047,18 +2047,20 @@ static int gpmi_nand_init(struct gpmi_na
  
- 	/*
- 	 * The number of bytes available for a client to place data into
+ 	ret = nand_boot_init(this);
+ 	if (ret)
+-		goto err_out;
++		goto err_nand_cleanup;
+ 	ret = chip->scan_bbt(mtd);
+ 	if (ret)
+-		goto err_out;
++		goto err_nand_cleanup;
+ 
+ 	ret = mtd_device_register(mtd, NULL, 0);
+ 	if (ret)
+-		goto err_out;
++		goto err_nand_cleanup;
+ 	return 0;
+ 
++err_nand_cleanup:
++	nand_cleanup(chip);
+ err_out:
+-	gpmi_nand_exit(this);
++	gpmi_free_dma_buffer(this);
+ 	return ret;
+ }
+ 
