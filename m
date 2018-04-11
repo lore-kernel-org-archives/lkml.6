@@ -1,161 +1,146 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3573638-1523487072-2-6101689026453332783
+X-Cyrus-Session-Id: sloti22d1t05-3374234-1523482069-2-14322172809121850856
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523487071; b=OXuI4xYcA3DvHJRFJGUwXGSDSiXCR7xqVUX4ZaEQf46Xf0QLwo
-    JslcAlj89F5il9JMLBTBt2kMHbDxNM2pJbn7LFTlsLDeM6mzt88maAKmdTTHRC6T
-    qasZxdWaB4l7VlzUTyD0BF51sGUlNVa6tDRtZwOROPzSn8PxXH1uO3U0dra8kJ7I
-    d9O/CWBp0/fNPRlKRD3FDUnTlI5dPDZOZqJJt3cbMoMj5MmYSl+6V5KHydqzvKnV
-    mggEDKrWPaw4gpOoSGae4gpyRfxJe0XqSX2MCJ8ptwCRxCIwX1OHiKupPuDKTx7Y
-    GbeqCHqcCsE3phJzJVMVjGttbXxVBz7FnJeQ==
+    1523482068; b=Lo6rVBc+YuRjA8R3FGWn2KNqD0p2L8XQ39eccoXcSIEvrVeKSY
+    yt9n/yP9LN5K2shv9tyi21KgPXlvb+Sc6S3Rcf4et0YCaHXGKjAVBPL9MRuFjbhC
+    Vx/bGpAwdC7qYrAfKJioKziN0rTJvMQWwvPE2pCgky+3V/dn47b2yB5r2B0YMqLo
+    das2rRtq0eREbRU5z8Erf9YrNQQySfL7o/75r/5DGT1au7cSPa5z90aRQuG3Ck7K
+    lJkQSTSpBGjOi+6fGodpcQxjlQBzQCFf9U//7AfP/kvgDSS7MR2bk1Jm9wAHE7jd
+    ddnO8P2eVNNYlp7qGBWuoJq2Vi5aLT+nRY0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1523487071;
-    bh=vg3PEL4COTqQSwvwZcHnXpHkruraP8gg4b5ebny7ij0=; b=kTuMuE/u272K
-    IYNiCJzT05BSPs/k4ISuOXg51TCezbgePijEDducOMUOXjffTOXkB9aVptrt7qi0
-    tWro6gxxnyfa5Hsdm+UXdhdmV6Vd1sP5ak8MRkLkQLlKINGPdaVZOt7aESK+iFmq
-    JxGaMg5QZeJM+p/fb7hOl6pQw9iO8maDOUrkEyz3rZ50LxnWRCRngNAMeWYrvAgZ
-    iukumMzbLjafLjRAZiPy+nOysuDath0HjSbTskCmzgY7zlp0gftgU6nNFU/Tk3KM
-    Wm+8NVgLJ8ZCWtT9sJrKHMiROYphCKWTtDBL8tYro4w+edkvLOx9O7eYT6vJotjs
-    SfY9fGUdnA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523482068; bh=EF1p3+YCOsVJD/KwMdQAu89Pe8ChZZ
+    g6HkM/fRpkY7Y=; b=FFDEeNUa3E2Hi/bYM4eUnPwHM925rv6mgquSqszJPjRtln
+    gxVwUfrdFsyPXXNDXAIOSTFNFSKlv/cY0MVcO3JsJbzAf9CGZ+KN3iebtBgR8VbF
+    xgud2tAWY0SHwDF2mQt2oNmU5H5kB3LrF98GH4xrRqoeSacl3nFffyX9majZ2B12
+    N6CdAUTaCQTBZiQ7Z5CSYLWA96kb42RIAnN7cCABrO8x142AMl2olu/OHNaWTaY0
+    gFCL5aqgQoqalcTC6mMzb/eGqZc2E0esEO08r0D8O5aEPUrkKzzyCRlPlVKp0qNI
+    8jSUCJUVT/HIfo4L/v73w5gn4sd9IMVPHHILknjg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfM54p2r5Ljwf18Cjr2UVYPFdp9sn9GdpGDoElEsCNFPSuJIq4OMTKaQeAn4/IT5lBO/7NHA+QKEHBgM8Te8F5wfN4OtuiLdoxpCwiAmT8sBgUTrkMUbq
-    G7KiOtB/scMlfwBMgAvbpYS9Kn/lV6oZqRibXhS/P0ySftcChUUMJ+5aJ+LkAfAcaiTu19myOMtDjQ4iqxm06nXdJPZzqY0dwZq6pb0X0ANQ0qzRgSK/JcFU
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=USzuPbOPRRIA:10
-    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=8-vRK6DNSD7UNujOA5sA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfGb8aNHgUNV/VQZdjiBtcOspHRHKPxmCzY7TCn6NhJZOiQ85XuGttmiuBtoUh9ZadUx3H9M1BkzfH3wfq6uXtLAv+F/n58TCEw/19/cVnT5QaYf1tI+E
+    y0Ocz/gH8hGaLUoi4zdPCfZ6MYG/Mmc8Zpf4Bt6TpAD8X09w1v7hVUo64DYeB9NodqmN2PdL/vNeLWi/UQZYFivlSevu2/PBqirxkKnWp3y8RUtqBEZOMncd
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=InJrZTXqAAAA:8 a=iox4zFpeAAAA:8 a=20KFwNOVAAAA:8 a=z11f-joXAAAA:8
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=rgNOMHsgKtPNWFo9ZzsA:9 a=QEXdDO2ut3YA:10
+    a=bo7r-k08vssA:10 a=WwJ7OKCui7YMbFU4sWpb:22 a=WzC6qhA0u3u7Ye7llzcV:22
+    a=HW01NMXGnYhBHl5J0OKi:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752363AbeDKWvK (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 18:51:10 -0400
-Received: from osg.samsung.com ([64.30.133.232]:36193 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751841AbeDKWvJ (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 11 Apr 2018 18:51:09 -0400
-Subject: Re: [PATCH 3.18 000/121] 3.18.105-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
-References: <20180411183456.195010921@linuxfoundation.org>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=shuahkh@osg.samsung.com; prefer-encrypt=mutual; keydata=
- xsFNBFIzbI0BEADtNDUjCT2vg2pVl9+XAwjq43AnDpggRIWjq8c82lcGgt9WYeQ2ezoGHADx
- 9XS5dP8OUdf2e1j2GtxOA9DpuAE6KNp9q4n2WHl9Q6Y06JwaXcMKlqH1WzAu8QWDou8KC8UL
- k+Ma/80uqlwQDmy+SDuLSLSPXP03P3NfKII8vAdREVTDfDzle+IKXDgYB8E5On1533QNVXdH
- rWQOU/SggOF8pGklv/a8VMR6KUYbkkkFy9wGLSLeBUx6ZfRkZSYBcAinwHLqWyDGB1993l1K
- y/FArlfEYLjKZ9od9ZGmnA3Ww9EMqpUUTP9b7a/sNuBhmsk5WVwMhMEtCxtIxHj0PVX8+m2R
- mj7mvdBukwsBOfu4ef0tK8CJHUNOXpWwNEl8LY1S+yJS/AZuwvzjpmfNQCzdixGG48oAeb11
- 9YKDCAUP0gjI44jZOiWb38jUn1SGqphW4i2jSiDi9R82mCtrcEXFHUuom2aRGyXEVdL9cEor
- 9/e4uaLDDZPGI4QqlbH6VoJkLzNFTAZnCKW9UsPXonQ7lP9hzH4+3sekYDkpmm2FcIXfVBRC
- XQPri2YuJtk/tgjuTC/5Y+b1itiI/xuKj7YmTYwFICUjYF9ehNe/6giG7zYZPIp2cr+oKwW5
- OTo49wqTdUVm84gULn90p2YQlXnbcw81l+K09AvGj5BntvmjDQARAQABzSFTaHVhaCBLaGFu
- IDxzaHVhaEBnb25laGlraW5nLm9yZz7CwXoEEwECACQCGwMCHgECF4AFCwkIBwMFFQoJCAsF
- FgIDAQAFAlIzc34CGQEACgkQCwJExA0NQxyAmhAAiIg5u11jeZtK2T1cGqITPyrzMg+Mu5WB
- /8xKvbc8wYuStJ6mn84zedBzAjjpCUpdZBfGKGV4Piyj6RyVtPOUe1aze7xNl6jq2XodyHpz
- yCBpVozvQGlWdSO34vTA+iwmbQat4DDHoIjvuGf2gqMzSNXiP6KG0erKOP0l5wBGOgjRtJAn
- 6LSrxC/q7M0OKdSxOQpLd9JHc9MPhjRiEHJGxRTYwb93kzJVZTYVIi5ns709/VvR9dA2kcJx
- mE7AxFduFYEkndF1eS15YRHzPUgH6qlcmpd+BqFDd9Xr4qlEygcOKbUktAbi0iqGJZQiAm7k
- Bc1C/WLVmf6w1Hmd5kc+9JU4nYN3LzsvUHVkzY+XqaTkYYIlziRec40XvIDE6J55ByJYTO94
- iBswwY7IwcxL1qUWrBDvJC8jJFtZw+hcuCZr8cwH9UpFRPejZ2iuXycLagtYAe6ppor8uepj
- FB3yJjrFwwe5XSxjAQyBRvGpzLjZTvSGfsJ6WUwE+7/my9Ab+wnDhebxEbyCuGoIQsNaA5qh
- JHL5xXEw0yVrYSiuBTuOVyTwZvyisvOWAnehIlVok+Oq372vjXitfAr43doeyKoQJkpKdcgD
- wMfU2Sxbiqvfqid/9g+GaySvA9jnkO11INvUqQAnFwQ8QjmzRCMRVK3/ZP4lQ8d4rkks+Rsy
- 7HvOwU0EUjNzxQEQALrsbTCFLIY0/JmCNZ4Wdy6iWdAYjLBqKVxLQ9hBD+y8cQ/tF183XfP/
- oVQrRHiJXJHFN94KjL05g9ww4HHoqSq66f8nYFBtZ58kvhY1qgZDbnXaraz5dTN+um5jUTNp
- jmnqmVRiEs+UredmKUIQkQOnbY+sZNUPb25BX6ebdQ0p+aiJysJtO6fi/Au2K2PIj26RmwAK
- L2+DGSqFR183N8/XTBtb2qtFsvm1hO+jUtt7MB6+jf35AR+CDZd6c+ypqO+RpoS3G+5Cbiv0
- D8jMQxWgZ8MTxAKlI5aUT2J2ep+cQxnm8J1NXM996MkUZE8+6CFeH8y/JftlsZ1dvaBs4eHC
- UqeE2xc6dFxrftDuDlFTtEDGCPmd/z5KWUAM0yX+pJXUiu4ljxtu0drdo/QfcNf4RTSw4JoI
- WE8WjHTnONfyMW860qJknddYB2/m+tpF4C/5ocNms3SaFYnMPOu1orn3imBMEeYmiX778FU+
- CgZBIlftMwcY2+3EeWBTjbJdZnhJ0jD+akLRnjJWUXY9RtxYLS2D7nFZCiUiwjGrh+ctEs7U
- we4in7KOb1lZKykrH/DM70HgKRkSHnFqNSinbRA2ty8QoE04RIy56JNNgqDSthlgW/aY7Q4g
- d70eu5/GMuqvMAa8ONceuJZ6vEZ9vvPL0Boolac+I0hiS71KqqpvABEBAAHCwV8EGAECAAkF
- AlIzc8UCGwwACgkQCwJExA0NQxyxXxAAqaLaK7pYT+z89HDsIrgWIbOv1Fr+LuEWYLk9UFEm
- Y0S/Hl7WIII1XHnspeWauaA6XDQ14Lyw7ywmhwhbwfUPC+W2UXRZ/6azE+pxJYcde41pLXgY
- vBHrvs2thzsZNUHslwHoN/tNwRZLpg2tbRVCbjV7/xAWXl0WCmvOd0C5yMVKx4oQ6/Eg1EaW
- TiPpZ5DM0TKBQ99nzwx8yQs2AZSzgl/mx0e9jWFzsn0XiH8DJKiGK5biKiHN3gsorEULkAje
- /GqbYDQuHbT7khmKiLtLcXktV8OVTGAg+cJaHtmpRSUQ16Gji4IkZCt0ZTZclAs2EstECa5a
- zuehlSFo7wmVteR4/ox+qJvQjwI+CU2l4Rcz9l9QgAo5bhW74oQ4mcN3o9OzRo85e8DVaR8K
- jKe2BHpSRV7mpiRXQ/t7sNKZN3w8mMIXzq5xa+TFWaVHJfOLwKvtFpL/7gRBZV2+yqV/J35b
- CjTFOY1/+fA5hwODGBz/SiHv21t11Nnk6yg9Solpc4HG47V24h2lTwlEfIUTpuwhYG+LBY48
- uPJXU+CdBcyHUwWSA/O1/vXMuJ6byXTbcwtrwBnIO3hoBfxIfGVIgzjwI+/PkDEyn3m0+IAX
- 7ipOURNtfmY71UIeV+kk2j9tHWlcx8yOmStvZ3JFpAuqgZhrDa9aAlaq9GyT/t3HsKs=
-Message-ID: <d8f46a32-55ce-0293-d850-b28261b9f732@osg.samsung.com>
-Date: Wed, 11 Apr 2018 16:51:07 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
+        id S1754514AbeDKV1d (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 17:27:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55194 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753623AbeDKSh4 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:37:56 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Bart Van Assche <bart.vanassche@sandisk.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Andy Grover <agrover@redhat.com>,
+        David Disseldorp <ddiss@suse.de>,
+        Nicholas Bellinger <nab@linux-iscsi.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 002/121] IB/srpt: Fix abort handling
+Date: Wed, 11 Apr 2018 20:35:05 +0200
+Message-Id: <20180411183456.330805666@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180411183456.195010921@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/11/2018 12:35 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 3.18.105 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri Apr 13 18:34:28 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.105-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Compiled and booted on my test system. No dmesg regressions.
+------------------
 
-thanks,
--- Shuah
+From: Bart Van Assche <bart.vanassche@sandisk.com>
+
+
+[ Upstream commit 55d694275f41a1c0eef4ef49044ff29bc3999490 ]
+
+Let the target core check the CMD_T_ABORTED flag instead of the SRP
+target driver. Hence remove the transport_check_aborted_status()
+call. Since state == SRPT_STATE_CMD_RSP_SENT is something that really
+should not happen, do not try to recover if srpt_queue_response() is
+called for an I/O context that is in that state. This patch is a bug
+fix because the srpt_abort_cmd() call is misplaced - if that function
+is called from srpt_queue_response() it should either be called
+before the command state is changed or after the response has been
+sent.
+
+Signed-off-by: Bart Van Assche <bart.vanassche@sandisk.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Andy Grover <agrover@redhat.com>
+Cc: David Disseldorp <ddiss@suse.de>
+Signed-off-by: Nicholas Bellinger <nab@linux-iscsi.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/infiniband/ulp/srpt/ib_srpt.c |    6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -2986,12 +2986,8 @@ static void srpt_queue_response(struct s
+ 	}
+ 	spin_unlock_irqrestore(&ioctx->spinlock, flags);
+ 
+-	if (unlikely(transport_check_aborted_status(&ioctx->cmd, false)
+-		     || WARN_ON_ONCE(state == SRPT_STATE_CMD_RSP_SENT))) {
+-		atomic_inc(&ch->req_lim_delta);
+-		srpt_abort_cmd(ioctx);
++	if (unlikely(WARN_ON_ONCE(state == SRPT_STATE_CMD_RSP_SENT)))
+ 		return;
+-	}
+ 
+ 	dir = ioctx->cmd.data_direction;
+ 
