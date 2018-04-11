@@ -1,96 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753644AbeDKOdW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 10:33:22 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38646 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753347AbeDKOdS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 10:33:18 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 49914603AF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH V2] drm/amdgpu: limit DMA size to PAGE_SIZE for
- scatter-gather buffers
-To: Robin Murphy <robin.murphy@arm.com>, amd-gfx@lists.freedesktop.org,
-        timur@codeaurora.org, sulrich@codeaurora.org
-Cc: Tom St Denis <tom.stdenis@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Emily Deng <Emily.Deng@amd.com>, David Airlie <airlied@linux.ie>,
-        linux-arm-msm@vger.kernel.org, Felix Kuehling <Felix.Kuehling@amd.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
-        David Panariti <David.Panariti@amd.com>, Jim Qu <Jim.Qu@amd.com>,
-        Huang Rui <ray.huang@amd.com>, Roger He <Hongbo.He@amd.com>,
-        Monk Liu <Monk.Liu@amd.com>, Feifei Xu <Feifei.Xu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org,
-        hch@lst.de
-References: <1523394001-4615-1-git-send-email-okaya@codeaurora.org>
- <32b82296-bba5-b5f1-266b-45c1ed66da94@arm.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <1a1d0069-c8d3-cc0d-cf1c-8e90e4a2b0d7@codeaurora.org>
-Date: Wed, 11 Apr 2018 10:33:14 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753696AbeDKOeF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 10:34:05 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50022 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752804AbeDKOeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 10:34:04 -0400
+Date: Wed, 11 Apr 2018 15:33:58 +0100
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>
+Subject: Re: [PATCH] sched/fair: schedutil: update only with all info
+ available
+Message-ID: <20180411143358.GO14248@e110439-lin>
+References: <20180406172835.20078-1-patrick.bellasi@arm.com>
+ <CAKfTPtCkZ1x-LS7sfJ7K2cgsKK=hYnDo1Fi3toPcGT0331Vpog@mail.gmail.com>
+ <20180410110412.GG14248@e110439-lin>
+ <CAKfTPtAJQgA7w+2PRwhrY1xzsVH9CUt-wZurc+9qdmMLopYfUQ@mail.gmail.com>
+ <20180411101517.GL14248@e110439-lin>
+ <CAKfTPtBKPx0o7AfEMsJv998aCggYQzsOnxmy-qu6B8UULCZabA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <32b82296-bba5-b5f1-266b-45c1ed66da94@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtBKPx0o7AfEMsJv998aCggYQzsOnxmy-qu6B8UULCZabA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/11/2018 8:03 AM, Robin Murphy wrote:
-> On 10/04/18 21:59, Sinan Kaya wrote:
->> Code is expecing to observe the same number of buffers returned from
->> dma_map_sg() function compared to sg_alloc_table_from_pages(). This
->> doesn't hold true universally especially for systems with IOMMU.
+On 11-Apr 13:56, Vincent Guittot wrote:
+> On 11 April 2018 at 12:15, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> > On 11-Apr 08:57, Vincent Guittot wrote:
+> >> On 10 April 2018 at 13:04, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> >> > On 09-Apr 10:51, Vincent Guittot wrote:
+> >> >> On 6 April 2018 at 19:28, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> >> >> Peter,
+> >> >> what was your goal with adding the condition "if
+> >> >> (rq->cfs.h_nr_running)" for the aggragation of CFS utilization
+> >> >
+> >> > The original intent was to get rid of sched class flags, used to track
+> >> > which class has tasks runnable from within schedutil. The reason was
+> >> > to solve some misalignment between scheduler class status and
+> >> > schedutil status.
+> >>
+> >> This was mainly for RT tasks but it was not the case for cfs task
+> >> before commit 8f111bc357aa
+> >
+> > True, but with his solution Peter has actually come up with a unified
+> > interface which is now (and can be IMO) based just on RUNNABLE
+> > counters for each class.
 > 
-> So why not fix said code? It's clearly not a real hardware limitation, and the map_sg() APIs have potentially returned fewer than nents since forever, so there's really no excuse.
+> But do we really want to only take care of runnable counter for all class ?
 
-Sure, I'll take a better fix if there is one.
+Perhaps, once we have PELT RT support with your patches we can
+consider blocked utilization also for those tasks...
 
+However, we can also argue that a policy where we trigger updates
+based on RUNNABLE counters and then it's up to the schedutil policy to
+decide for how long to ignore a frequency drop, using a step down
+holding timer similar to what we already have, can also be a possible
+solution.
+
+I also kind-of see a possible interesting per-task tuning of such a
+policy. Meaning that, for example, for certain tasks we wanna use a
+longer throttling down scale time which can be instead shorter if only
+"background" tasks are currently active.
+
+> >> > The solution, initially suggested by Viresh, and finally proposed by
+> >> > Peter was to exploit RQ knowledges directly from within schedutil.
+> >> >
+> >> > The problem is that now schedutil updated depends on two information:
+> >> > utilization changes and number of RT and CFS runnable tasks.
+> >> >
+> >> > Thus, using cfs_rq::h_nr_running is not the problem... it's actually
+> >> > part of a much more clean solution of the code we used to have.
+> >>
+> >> So there are 2 problems there:
+> >> - using cfs_rq::h_nr_running when aggregating cfs utilization which
+> >> generates a lot of frequency drop
+> >
+> > You mean because we now completely disregard the blocked utilization
+> > where a CPU is idle, right?
 > 
->> IOMMU driver tries to combine buffers into a single DMA address as much
->> as it can. The right thing is to tell the DMA layer how much combining
->> IOMMU can do.
+> yes
 > 
-> Disagree; this is a dodgy hack, since you'll now end up passing scatterlists into dma_map_sg() which already violate max_seg_size to begin with, and I think a conscientious DMA API implementation would be at rights to fail the mapping for that reason (I know arm64 happens not to, but that was a deliberate design decision to make my life easier at the time).
+> >
+> > Given how PELT works and the recent support for IDLE CPUs updated, we
+> > should probably always add contributions for the CFS class.
+> >
+> >> - making sure that the nr-running are up-to-date when used in sched_util
+> >
+> > Right... but, if we always add the cfs_rq (to always account for
+> > blocked utilization), we don't have anymore this last dependency,
+> > isn't it?
 > 
-> As a short-term fix, at least do something like what i915 does and constrain the table allocation to the desired segment size as well, so things remain self-consistent. But still never claim that faking a hardware constraint as a workaround for a driver shortcoming is "the right thing to do" ;)
-
-You are asking for something like this from here, right?
-
-https://elixir.bootlin.com/linux/v4.16.1/source/drivers/gpu/drm/i915/i915_gem_dmabuf.c#L58
-
-
-	ret = sg_alloc_table(st, obj->mm.pages->nents, GFP_KERNEL);
-	if (ret)
-		goto err_free;
-
-	src = obj->mm.pages->sgl;
-	dst = st->sgl;
-	for (i = 0; i < obj->mm.pages->nents; i++) {
-		sg_set_page(dst, sg_page(src), src->length, 0);
-		dst = sg_next(dst);
-		src = sg_next(src);
-	}
-
-This seems to allocate the scatter gather list and fill it in manually before passing it
-to dma_map_sg(). I'll give it a try. 
-
-Just double checking.
-
+> yes
 > 
-> Robin.
+> >
+> > We still have to account for the util_est dependency.
+> >
+> > Should I add a patch to this series to disregard cfs_rq::h_nr_running
+> > from schedutil as you suggested?
 > 
->> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> It's probably better to have a separate patch as these are 2 different topics
+> - when updating cfs_rq::h_nr_running and when calling cpufreq_update_util
+> - should we use runnable or running utilization for CFS
 
+Yes, well... since OSPM is just next week, we can also have a better
+discussion there and decide by then.
+
+What is true so far is that using RUNNABLE is a change with respect to
+the previous behaviors which unfortunately went unnoticed so far.
 
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+#include <best/regards.h>
+
+Patrick Bellasi
