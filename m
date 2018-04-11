@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3303684-1523480093-2-10870305874282826999
+X-Cyrus-Session-Id: sloti22d1t05-3339499-1523480087-2-6717018396695187484
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523480093; b=aS86TJMfsk2U0AV4ui3sFaf1lIV7PsvF6YN4ZXN0aJmtON9K82
-    7ZCZO5Aof2QgO+InqNL0tv4AkBSmm/mtGriKR4c8h7Lxp8x6dO7UFFyEpyL63ZFk
-    LjAUmR/F0cwIcCvPru2jUJ7AQ5VfdZeQ98j9sf9cWlLQ31FsM8q2F9unpyegGG6p
-    WHvSWXkVKXQJB1DqC5aXINvM4LXf3PPZbXgOaEe4s1+Z1HeMFf1H3Kk5W3FPe/T6
-    RCPxnDElBoFi7NuBSieiIqgfrvg9yppna+hkuKoNNcQidTuLyUUY3OsDpgOmcLDV
-    mIdlP1qWn+V1Va6/lybE/jeH+CrrAMJm47/g==
+    1523480086; b=fnGNtVKJMRYEfIeLTxOwp4OjyzlyK2N4LSHnfcLRO/DU8UAM1E
+    jCqjLifgaJQfUiu5V+Slj0eTf4aj7SwzBQVl9017f9Sx7YeVsPUXWpmwUOFnhNAl
+    R+aYPB5kpJwrDjwMKjh5XBjfyIRFWLeGzHdLcfgLUN/TRoKIbxk7VfaPLxI9fVJ8
+    jyzcRKvY0YqjpUno2wCVnvhoX3af29t21eCCzrWSrcihKkJrmCO0s6bNMjDTFD8a
+    OpseI9RhA0NpwlbNXVUnL98VldnH9/kJ5IwmNRZcMv+ZUpTyOIRymPNfzLBY/wEo
+    fojf7xTnyJEaDIxT+7kBSDuGYY9H4HQpJ9ng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523480093; bh=OTw8g0f7f8NleD8/nglhc6QAXVpkp7
-    yLJWzA1FQ7mA0=; b=rf0eQBECoQLoVk+43TO43Sf29IM/ccoZ9ArcUhspkTX2MB
-    d/+TtatHVnHOXrOzZs6nnTFYiLgOiGDo/t+ufnd5/xxi+1uLgJRp1A6QQ3BjIuM7
-    CnxwcnAbSTuE3bwKTQpKkx6XAGgBCG+Vy4K3+8eHtzKefQWDmXJeF6gTy905oBLP
-    59GZZmLMYzi+FPvWfVwdQ3c6RywHm6d/aXWpU81sfInCTP4nr+O2nRr+22699TH7
-    NW2mI8HVp5X4sHiy6n+Z5M9Eslf7+V1FZov3ae0yMCgaHExrtOODhYvh5cDNtwwG
-    iE7jXRVfe6JzSa9DUZZ35jthiyeNdoysi1qpDKAw==
+    :list-id; s=fm2; t=1523480086; bh=ExXYLhIIT+yDY50XQIqLT1A/9pxG3B
+    Ul3xlqZ2kow+8=; b=WmFVyHg7hiMwj8Wi2sqfWRx0xebW554CExbMpKhNQ6afO8
+    TL/sqiWiRXPn9+B/aRIeCnj1NCYzpNEZuDixDS666fz55POmFw1eX5+YR1P2r3Ko
+    nN8T3lba00tetRWDO80vL0oL4tqeC2fD4Ol88k1Ht1ZtgBR7gEYvFhp7fl5yQ6hI
+    LlQpEvp/lpAGCSHd7haDD/UP2XqIaxYBloz8X/DEbdf5UjfOoCR+I2LhDmn+jj9o
+    C6OITvxwwK+2RGP+z/JB693uHA+gfFG4mzW42o+Xuiw2ibRQynJR2BBTCTvfANMy
+    D/yUrXKQOvImlLtTYpsjtLWpDtMesjxX199kdGrQ==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,31 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKiE3xUfpELSTDYQFh4OW4oT95kKDxqgQZrYgjgoQbTdbtfsg6Z/Z6cjYJ+AU02BQ03w5YvYw6yxPXf5Sp32vfAKKXTu2MtAzP4p72hYaXnA7RcgwdFo
-    bmtq2gsHn6XTlPNyubqVFHQimQnUANPj5He4VQ26jVt2TgpP9Pzg1Q9wGFpm+Xm+ope1dR7alj95+mzVclR9Q9SOrECt+Q3cPIKds90Dt6fADBW1KiKnLcVx
+X-CM-Envelope: MS4wfFcuYdbPMyj2gKzWG9ylLOXixTTyYQ3kdkdxXspA+GE6ts33tbwymp8NbZihM630aNJm0muGLG3IyvVu+NyfbPgVwHQxk+LidGTNkLNLZANmLTdnC11o
+    FzZKO9yszoYUlwMjXF7ZVC2zAU6WGHPRKwhzwuE3wQKBmpeS9vcWK7Z1qGGRR9V/rA7Se+Mu8jqS9LqdOQRuh1iUpbdNDZYMKb3GWNsQWOdPmdcSq7tiyR7t
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=1XWaLZrsAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=XnLS8o09v7U2Rlm7CLcA:9 a=G-6vgdAR1nUUrvkI:21
-    a=A1Xbmg0M1upB5TVp:21 a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=DfNHnWVPAAAA:8 a=yPCof4ZbAAAA:8 a=iox4zFpeAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=as_2-ZBmz6qe2MDftmcA:9 a=QEXdDO2ut3YA:10
+    a=rjTVMONInIDnV1a_A2c_:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932270AbeDKSo5 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:44:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58426 "EHLO
+        id S1755887AbeDKUya (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 16:54:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58466 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932269AbeDKSo4 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:44:56 -0400
+        with ESMTP id S932287AbeDKSpE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:45:04 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mahesh Bandewar <maheshb@google.com>,
-        David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Liu Bo <bo.li.liu@oracle.com>, David Sterba <dsterba@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 036/190] ipv6: avoid dad-failures for addresses with NODAD
-Date: Wed, 11 Apr 2018 20:34:42 +0200
-Message-Id: <20180411183552.283081443@linuxfoundation.org>
+Subject: [PATCH 4.4 039/190] btrfs: fix incorrect error return ret being passed to mapping_set_error
+Date: Wed, 11 Apr 2018 20:34:45 +0200
+Message-Id: <20180411183552.435466214@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -95,43 +93,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mahesh Bandewar <maheshb@google.com>
+From: Colin Ian King <colin.king@canonical.com>
 
 
-[ Upstream commit 66eb9f86e50547ec2a8ff7a75997066a74ef584b ]
+[ Upstream commit bff5baf8aa37a97293725a16c03f49872249c07e ]
 
-Every address gets added with TENTATIVE flag even for the addresses with
-IFA_F_NODAD flag and dad-work is scheduled for them. During this DAD process
-we realize it's an address with NODAD and complete the process without
-sending any probe. However the TENTATIVE flags stays on the
-address for sometime enough to cause misinterpretation when we receive a NS.
-While processing NS, if the address has TENTATIVE flag, we mark it DADFAILED
-and endup with an address that was originally configured as NODAD with
-DADFAILED.
+The setting of return code ret should be based on the error code
+passed into function end_extent_writepage and not on ret. Thanks
+to Liu Bo for spotting this mistake in the original fix I submitted.
 
-We can't avoid scheduling dad_work for addresses with NODAD but we can
-avoid adding TENTATIVE flag to avoid this racy situation.
+Detected by CoverityScan, CID#1414312 ("Logically dead code")
 
-Signed-off-by: Mahesh Bandewar <maheshb@google.com>
-Acked-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 5dca6eea91653e ("Btrfs: mark mapping with error flag to report errors to userspace")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/addrconf.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/btrfs/extent_io.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv6/addrconf.c
-+++ b/net/ipv6/addrconf.c
-@@ -957,7 +957,10 @@ ipv6_add_addr(struct inet6_dev *idev, co
- 	INIT_HLIST_NODE(&ifa->addr_lst);
- 	ifa->scope = scope;
- 	ifa->prefix_len = pfxlen;
--	ifa->flags = flags | IFA_F_TENTATIVE;
-+	ifa->flags = flags;
-+	/* No need to add the TENTATIVE flag for addresses with NODAD */
-+	if (!(flags & IFA_F_NODAD))
-+		ifa->flags |= IFA_F_TENTATIVE;
- 	ifa->valid_lft = valid_lft;
- 	ifa->prefered_lft = prefered_lft;
- 	ifa->cstamp = ifa->tstamp = jiffies;
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -2534,7 +2534,7 @@ int end_extent_writepage(struct page *pa
+ 	if (!uptodate) {
+ 		ClearPageUptodate(page);
+ 		SetPageError(page);
+-		ret = ret < 0 ? ret : -EIO;
++		ret = err < 0 ? err : -EIO;
+ 		mapping_set_error(page->mapping, ret);
+ 	}
+ 	return 0;
