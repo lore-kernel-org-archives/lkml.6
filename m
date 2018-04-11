@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3150701-1523474057-2-6241227410780742645
+X-Cyrus-Session-Id: sloti22d1t05-3124918-1523474034-2-14040082071266842408
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523474056; b=RjveBdvGjEgeb1ouHGoFJymHoP+/06Zc2TJuZtQ+cAg+f48Zyr
-    W38ZnUKlPtmpkpErPoCgSFCMs+c7pEdp7bL+miyCtiUlKb+MF82Erjkd2pwni+cF
-    eTzRblBS48yMz+Erzv2EfZn/o+XsuM5YLJdIcwKtvQXGzNrRAP0LP2A+hq4Aws6T
-    8pyFUXdxOQlrpUHdI5ZAf65uXxQ1EpJeiyedr5eOUOiItaZf6/E50d54GNpNXPvk
-    FhuEej+gJg0XzM8KpWHaNZT5cKg0l9AeygvV1Ck6ivNhwbiUDePBpINfn434zOKB
-    nd1RTpEU8XwhTAVd7G11enZJrXXEIm+LIaZg==
+    1523474033; b=kYZ+/jHwNsvT+/Z3Tw7NoFbZo2EufVOyb+SUQqx7AdwJVd8SzH
+    /WwScVPhBL0mCBf4oAqpSOgUIzV+aDtyy+GyKFFoKhD7/EKWP+fkRYquTuHVzcuZ
+    ynC2/i1HfCSbWVh54QgsXENrE8QH6lAH3PgD94VpTU8tB/HLF6JNIj1Cfrt76oAD
+    C+nctlI2NyyFiGKZ5nkvb8uWmno2MNHkmwhYvslXaPE4f51tqIirOQGUBknr+PRV
+    Q6LCRL4jVdai3D1MAuHwMFmT0Uu8TRBl3cQ2u/ZYntcHwaO9L6TILt6j5oeQUkTq
+    zTs4v4ONedBmIeORYe3DmlLRm7Rop2PU1MQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523474056; bh=yWNXxUtR2CTglYd00gh5NHXJ0Xwbsq
-    wprOklhWpZ0GI=; b=Qw0n/ctoHrPURoUGoV3ZXrRXiuh+ljEvswga52BhfzvUnW
-    tf2hoL7YlMZVrfst3Fr58kanKGmfsrHH9f0/I5ELHEXvaAbd1HN1r2JS6Ws/mGjl
-    qSzOi2so//cQa6Wso+WiFcYT5DIZNN3M1CNo/qP3YzBY7E6FW7qZLqJKSbHOnHOJ
-    eHiN/TzsdSP3k/RZmoIGsi9O4a2OI4YNGkCNShMLFDEZAX1eCNdXMq6uierTTuGu
-    z4kraXbVRzXCuvU2gmK2Vrjf54vPQ6eS/IqSRT8Yseqjv+bCCqhcoJHdshgqnMec
-    Rlq6ubn7ZKqoZJcp3oD/MtFTOkbM0dfVidNFWhBg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523474033; bh=bgenm0Tgfb+QXSXAbG7Mm6D4yKg1sa
+    bTYE40VoB0sFE=; b=PNqhiUbp1Af61+jG7b9sJbuD+bSxcHKt7sBwn9WczUZw7B
+    XIdarCWduWJbgHib5kwmfp0Q4O6Zg8k7VVkh1txarnBkx2XjlySGVqbojlAd+l95
+    vA/z4voHqOo6pLFYeKZAqwkjuP+M4g5zZQv+a+tvHYGNDkulTQwD6oOaqS6gGnka
+    cHLFikmkI6TZQNLXbvl7LbfBEsOEVvcXkJzU8lm+RXbPFR2jDsdVQjmdy8kbqnAk
+    R4teYC+aN+oVy9YEnelXImN54GyVgAgVW039b+eYtJZoRUKAxtOWKvI89P1BveuZ
+    BHSVlO0GeUfoSIc/jv0gFeF/Znc60CEW/f2uy8VA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,30 +51,32 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfN9RPCGlXEPPQmRPfcFFDnY9P9OwTCUtW4mQm7xZ3JodS6DyGp+nJhlfpZQGhBRmldVRFH+VKA3AnaUcMhcb+4PdFW/mVN26toLTyXplJc8AmsAnysCp
-    i3S4b/Dz0ag4J7KXsEg2gFRIb6wDWMvW6hRGSI5S0+JTIYP0Y7HCXmRk72LOeZaYhzlAYR7ANs/WRFT+z99sou09I04NGh9NNZxvTbAAGHmmfYrFAmG0BvRj
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFhNzMN3AWCl3txV5FrrTVcJt18izzAVo6XnsX8mpSYxqoefCqXd1uMH2WSTTGHOGu7tWLUBr1FRn6qrZLOiQAKsn8yZIAKlYh4ucdzutPHPcWppysRX
+    HKCbaHPyMY+43reBD+K8GXf6dSLXlz3b1AnADPlS/ZpnktNWb+EOOKxtnLjTuXdCOglVlh7/W8WtbRgRBHhobhdWXxQWKw6GRiGseKugeS5So9PWNW1QaR4M
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VnNF1IyMAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=D3-RsOQh37YrPmCKYXoA:9
-    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=-VAfIpHNAAAA:8 a=e5mUnYsNAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=doU7KjFTIhEns1rJz4IA:9 a=QEXdDO2ut3YA:10 a=srlwD-8ojaedGGhPAyx8:22
+    a=Vxmtnl_E_bksehYqCbjh:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935083AbeDKTFo (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 15:05:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40554 "EHLO
+        id S934197AbeDKTFx (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 15:05:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40600 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934041AbeDKTFl (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:05:41 -0400
+        with ESMTP id S934041AbeDKTFw (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 15:05:52 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Haberland <sth@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Eric Anholt <eric@anholt.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 252/310] s390/dasd: fix hanging safe offline
-Date: Wed, 11 Apr 2018 20:36:31 +0200
-Message-Id: <20180411183633.278275747@linuxfoundation.org>
+Subject: [PATCH 4.9 256/310] drm/vc4: Fix resource leak in vc4_get_hang_state_ioctl() in error handling path
+Date: Wed, 11 Apr 2018 20:36:35 +0200
+Message-Id: <20180411183633.443352303@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -92,41 +94,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Stefan Haberland <sth@linux.vnet.ibm.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit e8ac01555d9e464249e8bb122337d6d6e5589ccc ]
+[ Upstream commit d0b1d259a4b58b21a21ea82d7174bf7ea825e9cc ]
 
-The safe offline processing may hang forever because it waits for I/O
-which can not be started because of the offline flag that prevents new
-I/O from being started.
+If one 'drm_gem_handle_create()' fails, we leak somes handles and some
+memory.
 
-Allow I/O to be started during safe offline processing because in this
-special case we take care that the queues are empty before throwing away
-the device.
+In order to fix it:
+  - move the 'free(bo_state)' at the end of the function so that it is also
+    called in the eror handling path. This has the side effect to also try
+    to free it if the first 'kcalloc' fails. This is harmless.
+  - add a new label, err_delete_handle, in order to delete already
+    allocated handles in error handling path
+  - remove the now useless 'err' label
 
-Signed-off-by: Stefan Haberland <sth@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+The way the code is now written will also delete the handles if the
+'copy_to_user()' call fails.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+Link: http://patchwork.freedesktop.org/patch/msgid/20170512123803.1886-1-christophe.jaillet@wanadoo.fr
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/block/dasd.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/vc4/vc4_gem.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/drivers/s390/block/dasd.c
-+++ b/drivers/s390/block/dasd.c
-@@ -1950,8 +1950,12 @@ static int __dasd_device_is_unusable(str
- {
- 	int mask = ~(DASD_STOPPED_DC_WAIT | DASD_UNRESUMED_PM);
+--- a/drivers/gpu/drm/vc4/vc4_gem.c
++++ b/drivers/gpu/drm/vc4/vc4_gem.c
+@@ -110,8 +110,8 @@ vc4_get_hang_state_ioctl(struct drm_devi
+ 					    &handle);
  
--	if (test_bit(DASD_FLAG_OFFLINE, &device->flags)) {
--		/* dasd is being set offline. */
-+	if (test_bit(DASD_FLAG_OFFLINE, &device->flags) &&
-+	    !test_bit(DASD_FLAG_SAFE_OFFLINE_RUNNING, &device->flags)) {
-+		/*
-+		 * dasd is being set offline
-+		 * but it is no safe offline where we have to allow I/O
-+		 */
- 		return 1;
- 	}
- 	if (device->stopped) {
+ 		if (ret) {
+-			state->bo_count = i - 1;
+-			goto err;
++			state->bo_count = i;
++			goto err_delete_handle;
+ 		}
+ 		bo_state[i].handle = handle;
+ 		bo_state[i].paddr = vc4_bo->base.paddr;
+@@ -123,13 +123,16 @@ vc4_get_hang_state_ioctl(struct drm_devi
+ 			 state->bo_count * sizeof(*bo_state)))
+ 		ret = -EFAULT;
+ 
+-	kfree(bo_state);
++err_delete_handle:
++	if (ret) {
++		for (i = 0; i < state->bo_count; i++)
++			drm_gem_handle_delete(file_priv, bo_state[i].handle);
++	}
+ 
+ err_free:
+-
+ 	vc4_free_hang_state(dev, kernel_state);
++	kfree(bo_state);
+ 
+-err:
+ 	return ret;
+ }
+ 
