@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752666AbeDKG5e (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 02:57:34 -0400
-Received: from mail-by2nam03on0135.outbound.protection.outlook.com ([104.47.42.135]:46240
+        id S1752796AbeDKG6D (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 02:58:03 -0400
+Received: from mail-by2nam03on0097.outbound.protection.outlook.com ([104.47.42.97]:20417
         "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752588AbeDKG5Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 02:57:16 -0400
+        id S1752676AbeDKG55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 02:57:57 -0400
 Authentication-Results: spf=fail (sender IP is 192.88.158.2)
  smtp.mailfrom=nxp.com; nxp.com; dkim=none (message not signed)
  header.d=none;nxp.com; dmarc=fail action=none header.from=nxp.com;
@@ -21,61 +21,62 @@ CC: Zhao Chenhui <chenhui.zhao@freescale.com>,
         <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         Ran Wang <ran.wang_1@nxp.com>
-Subject: [PATCH v2 3/6] powerpc/cache: add cache flush operation for various e500
-Date: Wed, 11 Apr 2018 14:35:48 +0800
-Message-ID: <20180411063551.30368-3-ran.wang_1@nxp.com>
+Subject: [PATCH v2 5/6] powerpc:dts:pm: add power management node
+Date: Wed, 11 Apr 2018 14:35:50 +0800
+Message-ID: <20180411063551.30368-5-ran.wang_1@nxp.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180411063551.30368-1-ran.wang_1@nxp.com>
 References: <20180411063551.30368-1-ran.wang_1@nxp.com>
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:192.88.158.2;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(346002)(376002)(396003)(39860400002)(39380400002)(2980300002)(1109001)(1110001)(339900001)(189003)(199004)(110136005)(6666003)(68736007)(69596002)(48376002)(498600001)(105606002)(104016004)(6636002)(76176011)(16586007)(53936002)(77096007)(336012)(36756003)(59450400001)(26005)(54906003)(51416003)(446003)(11346002)(2616005)(97736004)(476003)(86362001)(8656006)(8936002)(126002)(81166006)(81156014)(316002)(8676002)(486006)(1076002)(106466001)(356003)(2906002)(85426001)(7416002)(47776003)(50226002)(305945005)(4326008)(50466002)(5660300001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN2PR03MB2189;H:az84smr01.freescale.net;FPR:;SPF:Fail;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD017;1:0TzOV6VkNnpZgUk77pIDon7YC1Qlj599/AMnaowkZYYtQMG9JCas0Gxy5lRQgUPz35oD5ao0PMgkmgzyB/7IbbtK9nQc2AWzqcO+z9N1pF4rfE9ox6FITiCzuY0A+vw5
+X-Forefront-Antispam-Report: CIP:192.88.158.2;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(1496009)(346002)(376002)(396003)(39860400002)(39380400002)(2980300002)(1109001)(1110001)(339900001)(189003)(199004)(110136005)(68736007)(69596002)(48376002)(498600001)(105606002)(104016004)(6636002)(76176011)(16586007)(53936002)(77096007)(336012)(36756003)(59450400001)(26005)(54906003)(51416003)(446003)(11346002)(2616005)(97736004)(476003)(86362001)(8656006)(8936002)(126002)(81166006)(81156014)(316002)(8676002)(486006)(1076002)(106466001)(356003)(2906002)(85426001)(7416002)(47776003)(50226002)(305945005)(4326008)(50466002)(5660300001)(2004002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN2PR03MB2189;H:az84smr01.freescale.net;FPR:;SPF:Fail;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11OLC014;1:cFPIRPpoNpsJJ9seAo+qs2pesyKuHZH8SrElXNih+wrm2Msqjaf73ncy6RPZjP0f3poVUsYtyIDoz2fkO8/FaxzBUDLYTKDgpMnfP6BLfHVa2rgc2sfLpJx0Aom7gDTW
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(5600026)(2017052603328)(7153060);SRVR:SN2PR03MB2189;
-X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2189;3:HulU/JBbbzbE9R7IembJbJLlvCIVnmrHXn4VOsOgzIvkBXeNsUMw1k5WPja2yBpOJuZ32b0hfM6rVYcpFiv5+dH5d7oVoLJiPWvuQlipW7OCUc974JZemeVnri8vrTjr//PvaYoN6ZqyRc8VzRDhOY3UlncfVzS+WhVazf0WJU97RN3FX6GGl3IRsHeNzbm8k862CAY1kOiFoxBtIsx8ei14ZAwnsQS1nwoE/bDLbWbM62aQXxJQ/f01+WmStdA1xuIqwaGmAc8IxH06PmLiscn2sOtQG7vKsF1dwndRWo3EM4maMgEO8WHw7jrF3z7Lndhm1CiQcLpf4HbS5uVRp9dWKAaS7GgXd4ecQkEkrVg=;25:qw8i2UPXrL/KHclyZ/g5T710QWrnhUSYw/e6wkthHaO1yte5trC9zV6yeEhcsWAgD8ELCXr0oB04io10b1tGuHggJxZqr/1UHq0am4LZ3Bcrs8RxUzqlqW0HHgNUaHwN8y0NQZf7MfjfoZFvXtvOvCnIuA1rp9m+lDAmOFH1or9Fi3BdkzXbv4CqJedl9jJ9tRPRqjnB9wm5T/xQ6rj9aeDV6zdcgYlVUKpNA8DAhfZOIyYMjCrOEkqHIWGuHsW0NhcLoxMgGjYE+uaonRt343VDfjscDfYzmnwTjGzersacnyBXWMMWAob3+2GycYZlCyF2YsXbVbkyKKbHftTX6Q==
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2189;3:TocgHl7syTixHwu/kjMFx3cadvd2xTgBbRvAfSG+kozRUes9DVFR3nMpU/dLzX1y65C/t04DA2MmNq9bfyvxTJqJzrTzwFUwIUJpoJQoGRxeFdmWWBxegGh1DjLV8oWPY/C3RGye1XbW0FFuF0NA0MwtJHmzi8tJBFwGIbJBlSNOZ21oxABOeQ5Hxf3GL3wRKtL1yK2llkfGlZJ4pLvT1KpSykC3TR5APC3ufRDUeSEWH/2Aqcj8t7g6CpPxxJ93qUxIJdy+FTSxFYCMd0BBhuquo2WbrcWj1nICG0w+N+iw72w74KEUoh9kbIgWB5BnPocm1RxFZVh0JwLJmhVBC4tGaI63w2QFq++nmMeAvME=;25:o/QOpHlivcmAZa+limCo+jBpcxWHg1m6IBZgybu6X54lKLqrdnIFzc4vuKwVvQwGGWDzqWUT65wctkmgIUV0AUJsyP8CAG1araocdyH4Ay+pAaYZi6fnPe55hPq/4MzsJk1lu5cm3akxfpwaQpAxoylnRqJB9m7eXEoebwY/dXnwEcANpr8w3ZJipZuBupj4Qhr7rnUL4y3rfGrpgT4pBYrKjKpaAu0mS8vdkeYwj2I64k23vymbkTyjQKbKabkdexA0/noBS66WvAw0js3JgHfG9xevIWCIOU5e4au2+eqr2cylt2yqdMzm/Don7b7O96m8Dbvka9O/OZIqHTnq2w==
 X-MS-TrafficTypeDiagnostic: SN2PR03MB2189:
 X-LD-Processed: 710a03f5-10f6-4d38-9ff4-a80b81da590d,ExtAddr
-X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2189;31:DjKm3UM42mQBEHnRMJwW9+SZxYmAiiMXNaTMAgBB1uDSRJKYx/gb22VDNHGojuGbk5sDG0AlshMT3SIPzEVJTK8222CArE7ACh2x9xTLqLZLO6tMf/wD6GWDqSyqxpChSSaaaPoFd6hLL7NwGM2yTsE0IMiVkzpoWT6y6gxfMZZjL0jmtKmuB13yUaaw+z0tOXGh8vz5lK4ZUwcPAzt38STPJ66sKz8z+hoUp3O2jik=;20:WQ00t3FM8uC3uOpZoxldPABr6GCJeeIqfIP/WxuPhMUISezUwdp6w3t2EN0UE6kfeadSu/b/Vj7ShMoSbyCbhRzDvw+vcIjLqiHylNL+ES4W5jvKCqLncPi7SXULKlj6u8hd3FL8OhF4ac2NVx7RpdP5jYzP8U/yx8yWcCCj2bWYblXfqDSkzgqq5e6YGwlxUBQoz2JbBamkajAmMHsVlo3VomhaCRpP7KzM/M8lTinBLD3O+EsOGzix8LtmirIXUocnlh+YxUiKpY+dNNLQNjEjsQTUaVVt3nnksiOYl700lKtgx82uvCD6cPmk3ijnozJqkbZJ/3Z9gpovGrW3s/yZqcqcRIFzYgVgANqfZk/makcXah/dQmQMxUG6zHfaL36IJWxhGhZ2dSf74zaol6N8OQRvQKGgzNTn0inELWF1wXdI58+o/23RqwG4JYh5U+29q2YMvbC8o7ZI3LkiFsvDKglg2r9vYZiEo65IRM13/BKsJGGw8ksoguWHGIw2eXPAmaUz6IXbsbMIJ1CqC9HSVZXyJBrHwen/efTV0WheaLnfN9ywt95N7IdcWTHxXK8NdQKijVe2ZPbN9WrKoBM9mQ4r8shjp3GwTuOvMWg=
-X-Microsoft-Antispam-PRVS: <SN2PR03MB2189D4FEB87B95607F18231FF1BD0@SN2PR03MB2189.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197)(101931422205132)(17755550239193);
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2189;31:5t5Z9OHvtEgulzVotKkrExsLlzH1to3nS/sHd5OmscSIICXe4B35fWHaBdP3kO+tO90xBrvfKYmirGkqM4duw7VsdpA0mKqi0CXhfZYdLmlVSlGKx8/515akF2cv8+dXXbkWkctjuI2+gQpQCzk8iE5VqyV2QsG//SKgOFxc/Wa0DXWFODq/sTldX3bLRNjSaYpwHY1KzDYJBbOrWcPCjnXVB/JoVoAlbkI4KUpstHU=;20:W/Q+rEvEw+iBglJDX54bMV5MY/Srsr/bUcvGWEUe7mYzsi8sm7fyaRBC0GuahtSybTuAOvwydCM0/pSlr/2bkCk7r6ed6/S3lctEK78Ry8RVRgDL0ikJHowLi4/qt3w4PIftsJ3Qr10wbboDS2X8SCtWgxGGLnIVCHoWWsDPRIgaYzHkxfk8UVNx16juwDpUhODoaLmCWVeasUJaMzoLvfnckWyKSD2Fxnl+tV9frHz5Z13otKUL+oAafkoQby1h2KN29LoVrR9iSxx3pzoHDpwcSvS6wDq/5ggoBLIRsedu8KstotI7MMra5CUI1jnDkTN4jfzYK4LTYrdP6Me0x8MscD9EJwasBZBUNFpDY/06cf/jsGntNm7wifVvADWXe45ms/x1s7tzYBNEkExTwx8lB4QmOzC4cOTfS8lnXMLjlJmyNZ+OldEaUqytvUziEAGAmqUB/T0PwPjrl+EqahemKMbvRnH9dvmwdGGTGDF8fGMAQA9ZsgJaB6BHhg3NuwPfjP7F/Nx9Cx+ooL1oMXQvet3SEeKrPOk7HfdIPT34o/wv0Q4rmg9OalvkO+0ot9NR6wtWKCa4sZLB4pEQH5MGZYxwZ32S5GAa59GUQYs=
+X-Microsoft-Antispam-PRVS: <SN2PR03MB21896D85D33AB84B772A1310F1BD0@SN2PR03MB2189.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197)(101931422205132);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93003095)(3231221)(944501327)(52105095)(6055026)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061750153)(20161123564045)(6072148)(201708071742011);SRVR:SN2PR03MB2189;BCL:0;PCL:0;RULEID:;SRVR:SN2PR03MB2189;
-X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2189;4:LB0CfBTk6LxO9U9PFOQujMqnd3D16uFwFz7ZKxh5YJPKO2+/SSbcij6CZNOaEBHob9KBj9/IA71BDjBE1xCXm2HVtHwvTOIBay+t5IhmAr93NplY8JMiN03g2O2xcHfcItNADzCZdqI8dHlGFtzjyzPEvEf6J5v5HHmcSGc/7zuqU7f8DgIga8yggeVYyivNQCTSBXV78TY8sio4H3uTmi1kim3fTTu2Kn9tAEjzbxx6GedkBYLFgshqD2W4Gxgwh/70PHBQuul++E8gO1KSCNkCkltV77rtvulDwBckOL98yVgx5mBWgF2u/1U722DwaizSXi9bgIh9zmCSgj6ze8Mb4GuYUiINzRBUHalF9j/T59HhJyDRKRa+VWBZU1zV
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2189;4:/rnKBan8MbmQCxAqdGARG+CzRol+vEjyZImoRerhBwqXF1U/zMDifdhKkXxDYjPB28qmu7D0fM1ioXFgB6ZmS0VclJ/mcnVx+nAw2jafwwVcjYhkmVW9534OO4a1Wio16kC+/I5D8DpXJ7+fvO3U84h5gL/aCzAskRUX+rdjLjYftlarrgYoAVBwb1H5/Wk5vdj+zF1ZWNRib4RaZfwEHeAwSnQFBy65EDOBa874kig8mmmFh+FUm7Ll7ae+osvjI++m6OQwMlp7OTp/GPLldLB+qYQ+EZmXGYAI3m+fRcy9/OlWheEt/waeagIlSDPwZoLKS3KRcpZ67OjxzFS3d5NmuApMntwAK0bMUmObPDU=
 X-Forefront-PRVS: 0639027A9E
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN2PR03MB2189;23:TlZW/YcpGYrKYOmsoHeImUEOvrl2lQfu4STFHR3P8?=
- =?us-ascii?Q?Ko0SmbUbIJ6Q9nsiTy+ItPIpaMCGEwz3jKY1nkgN/63zTHrhIsimwybcW1vo?=
- =?us-ascii?Q?bF/vPDMkkwWXnBVgEZY5f8pE2HIy/KxLiUkeR8463dlcvVtsO+bdy/bjTLNH?=
- =?us-ascii?Q?rWuP40wcMqnr2PNiuEW3HpoGDAmiAbrssPmP+wEHqiC2tqd6o7gzp+hddzvG?=
- =?us-ascii?Q?7wcviaCP2kelm+zowLIbUgj+DGZHpvIyyAFiqpELmQcu+BAtoaW9soOMwOpJ?=
- =?us-ascii?Q?KtuCZ/88t4jFXX9aerxvgH5hxo/yVNwaVj/6pSeavHAsq02mnwo2T7JDGglF?=
- =?us-ascii?Q?3PWHpOe5EnErTmJaqodDsKTn7bUV2JsF3qvlkeRhWJokiTIzO4TyV6g4d959?=
- =?us-ascii?Q?d4WvOfM+gJFB4f9IpoPQQAPgWGsIUJ4SjHZrXEuJDUracoIWlBvw0KZWg69K?=
- =?us-ascii?Q?2BuphhZ+HQtx2nsF5KLJyTfXu6MpIA1Tyf3M2qDfE664Bq9RDvRpiZt0YzrU?=
- =?us-ascii?Q?CJcu9eFZDxSen1tVK8WOtjKOT7nwqNXMXVepyhym8oRg+ZZ0rCz5FuQvHitz?=
- =?us-ascii?Q?qoXzBT0nwA/lZW9eoUofSVUs0CBd7b1U1R/JNvzj7Q/TgPcaf8uLL4CAlNuq?=
- =?us-ascii?Q?i70Ct6hik3DAfpBJQDvauP3cjHRfNpxEHh0/RNOFnPq5YfEVl3jrQ48d426q?=
- =?us-ascii?Q?vmdhKtZULJ31SVXxypguL6VC7pyumT474iAvSzegvAY0C6fN/oMd53D5VFNI?=
- =?us-ascii?Q?QY0U+nODESCL3NTMocj1bwG6XMDkQL0dH1ghhkxvIQmegVoQZAMjGHKpyEKI?=
- =?us-ascii?Q?00mpAN1XAMoNt3gBxRW3j9Koyss7hMVmYT/CHC5KQvchi5mBmpxgURNVHaM2?=
- =?us-ascii?Q?wkgIkimTzntaDU+bKt+GZ+Jpe4HgI0e4ihR4BmQLiNjdsLzp8bt83SN0lTHG?=
- =?us-ascii?Q?1oi9vWlPtyKDTnmOy8EwOX7XesMo/TGRLx9KT4oebNjuS6azUuFC66u7VHWp?=
- =?us-ascii?Q?VBZXEvqTNZzMF9ZhbyyJOmZ4YHp72Wr7UlGvABHsgmHuz0XwOUeTnF2iOJzS?=
- =?us-ascii?Q?e+CiXHhP0ktAoGxxw8j+yJextnPi8rIlpasEfYQiGqIMklqSK2lJj2y4BS5S?=
- =?us-ascii?Q?SfWJ0wdXcCS3hH7PXffadz++IhTQFSTMlQXoQRfzorS4DRmXATw4T8AEhOnz?=
- =?us-ascii?Q?CvZZDR83YlYmMCYCeHDQ/VyqEsOSUhIRJuMeH108h3kw3QAbnd+Sl9IK13Hg?=
- =?us-ascii?Q?dzlvz/73QMoioon4l6o29RVk4MzXYiArHc1/RzI?=
-X-Microsoft-Antispam-Message-Info: t9gq1ftMTcbC2cDR41XYHpHyzTISZAolR+o2b6b8G5JIhl6+bal8QYj6YwJwA4OzV7oCmeJinl/pfjMnVJN3411LoPbb/KSu1jqEABdQYDS05PJ6iHLeTdDKDfA9Bhs2thagnujUqPNL/+6fplASA7+Ojzc5nVFL1AdO7LzW/adlK2zIWgiUEtio0Z6RxnbT
-X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2189;6:R2G8nZ8qWhexZkWSmIOTRR9ozw/dRFyOJWoTnDOkIRdGXApW6ssJ/44e9dBgbICDpxwnf/mi/2KsdMkpQWIUNqSYg57j91ztR4mneB/GddPa/OpK1ys58tqcMMZh2nDj/zA9xt9nh+w1wzpZrywH/EaN7GSk1QOVdXplaJc3r8tf/NdWaYBqL2OTEexk5ohl5qY85sz1BNwNf01qSUjdb57DPUvKSCcbqVcvHt3dhbXwlJ4pHzR+XkGtQrneIpaObIMxUjI5PrZwd2C+p+A2NWITX3IefwmWcVWKNAdP8FI0Yx/c3+CUnLoaKPjP6qL+k92F1z/DG/oVytiv2y07Pf97XoujEqBN4+K+o+EzN5VuF0/LJQyWfEKPX/KRQTZOeMpzgzVkTV30aLPSaQRKBYJEQxsseKDVVyvrW5i/r9XTeLF7zzooOsgQOt2MHYrcSGRFepfL+UcgUYbgoeaAzw==;5:2VLvd4/5XiOuMP6SEUfkBsNNp08GgsuViHztXD4F+Lo/rivpZIYAANOyJ9DZbopznfRYn0KOfcVQmc+ccOh4xYbbwfLsmcnx2Gqvu0VmBSeCq8yNk6KydwLfn7aip2H/yf6lk1m0xmctQJdUEBrGV/C2LWjrglk8F32PLoRL+K8=;24:igfysTReTPD374sLw1sOBD0EFKYFcQ07d2785fCAc3w1o6bU1qi+omXhN3v4c3TikOFDXNiM6vLoi0wm37FczEwg3uyMQCoOsWcCnpxx11M=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN2PR03MB2189;23:etDx47CC4tIKdQTgwfAjw6kERqhGayCkapYUWVkK5?=
+ =?us-ascii?Q?tOZ/BDqkE3cprAP6l5Hsc90RLJs/i0zvkvQTbTZ43LQPB+TNBeLUjbOkA7hL?=
+ =?us-ascii?Q?zXmOrIF6VB4ZUEHOsgCFs9Rv2SuDJsM189oQETMZcWcJQmpisszPkJTHUW2G?=
+ =?us-ascii?Q?BCns8ubyiinJe/jVVXOBNjC8UlxFdsq0Im4SvKxaSVpCr9nSHwdPRWk7N7vy?=
+ =?us-ascii?Q?Rbr+PSjcGRW4hLa/m/XAhAf9OfvSBKIlrVciGQBr9sSY0JnHRbmBT5NVhyUT?=
+ =?us-ascii?Q?RF4PqjW195C3HON9Aye3fs/xFMKZrhvMn8ERlFr738mCD5tt4kUR8uQkFkvj?=
+ =?us-ascii?Q?7m+DLcoIJhyBjykaY0f9SdWfGZMjf5SFRQ+M8NOLWgm9+4rLI+Hj75AuPvhd?=
+ =?us-ascii?Q?i75cTlrD7Y/H+fnWXFQszeIPS9ssNSd8K+hJFTcutLNYaj9kxcL0SilvucS5?=
+ =?us-ascii?Q?lFag0Jxb8mUocF0UTwMTEoYDI/zKP8wEz9PS24K1YlCNTVyMq+IBEhngdFyB?=
+ =?us-ascii?Q?vMPqPzVilJJioQwLS8FfpaHzQ21nA7c9PDvKksp92u1TgVhqfP1jbuG+JhIh?=
+ =?us-ascii?Q?s6pPBNvoOeS5Qd6xvGwyJpaiwuI4vQ8CshoLlNL07v2PWaFxcNy/A62wiATn?=
+ =?us-ascii?Q?fboKocSFngLRQFLHL+sxG1+oOU1pmJ3fNzaJQ8oBbf3bAztTxMQ13Lilp7rU?=
+ =?us-ascii?Q?GqvrQXwKq/Piza4Mp5gYSFO6aI6/I1KeMne3WG1GiczX4hFb8Z8HMsyyCvNR?=
+ =?us-ascii?Q?FCDw5EVDkq07V2bWMzcijyRxJkvLsX0KhPgapnoCCTKU2qYviU7XCQcYT8dj?=
+ =?us-ascii?Q?zlUZo5fPirIOrzi7pUljuETPWaMFS5mHdI8NdZYzSf63303tWMYAOpujYRBT?=
+ =?us-ascii?Q?AeMPXO4+bR+tYGtM2qK2nUND4jE824o0KNd34+f+87CMJYMsopjg9lEXqysr?=
+ =?us-ascii?Q?JXRr1GgIByE06R7N6FtJGP//x4DTVplhofvXyJIxFuK0JYadlKMBPVc5GMqM?=
+ =?us-ascii?Q?+hWXIkwWJJ6r6CLKX0NXSiFc0piNzTaoc+A4GReckWsFrAT08NJQwf70nJXS?=
+ =?us-ascii?Q?IUSt4skzWoM9vl2ZSoq/XliPuaWOJ6SluIrWqWMZ0OqKGMkQTY29m2uZxH6X?=
+ =?us-ascii?Q?L2D5CN0lf0IRzOoG28M0VQMv3PdsadGzpnNtndRHZV1OXkFl7cX72NBm0SV9?=
+ =?us-ascii?Q?iVi+lLRFdlrW26+TUDvxAXWw/BS5r7HOciBcRlvM62skmeoNNcJQzV2K4QVQ?=
+ =?us-ascii?Q?YfesLqIyOlPLDbajOiCm0qINGeTKn7ArYEHF/MACia0H0qrtZr0mIvgaYAvI?=
+ =?us-ascii?B?UT09?=
+X-Microsoft-Antispam-Message-Info: y2Rr78OT5U8RY9e0JAwcFpm5J7CrKGoCVVANWj8aS/CN67X+iv/AdCKXlZBO8GAUpwBgQHddSBYr27Hd7Oxy9edeCRqhmxUef0qJBB0QC0hc/hz/C4L8o46JdWulyav3DoMoHa7NDUChBDbbiQUdEnCRq744/kcKV82BoqxHPd2+/JjlI+WqJkuYOVrK+ZwX
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2189;6:IV7Rz4a/ob2hZ99Nqutpl+HVtlC2tF7ZrNrPgau/0726v5UgCDGRtDZ2CG7tf41u44W5z1gigUOLj7JSyhKwe26bBFe+90w1JgayBSsVKf2c4PhLn9X2mU3PabrE5hxkOhKqNzFLmg26NUWvsJCqL8YHzKQRKN3qFVEKStqqygdbJihyPc1v1GSJQCJJKa+mpBtt7Zo0Y3jB5ZZ5Jv1Kt0dN49m2bSdI3R4Ngab4NM/jlIoqtcj+2dzZM3SssnphDs+IO/X09eSFUEvNtQJJ8uuzaocGlR/+ksjYYw0AkZhL1bc1QGlcdbtcwnTgAsTrFbWO64nlZQp0kVnfiSgm376Z84I0LiMzbnMwVtaNLQzkWt6nKzrPWa4VH/ur8/QxjGUsRrPiLYqM+0rV19IojCekC93vIRa1H/bDWDBVYsz8ipEhhBIN4BHs0Wmzk4f9lQfm8rf+9dTtOTnq+vRV2g==;5:/9LZ7rPqvx5SYe5wZTv9lOkZkOTL+XhJJtLkNXv1mGO94oLS5kZDxEOi/+61LD8StZ/uoee61lYye0+jYKt7W6x7WY5s6Joa+YDIphc/EDaqVHxF4tjt1Bj9Oaa/KcMt0hYnkYCSIfz88zBCfS9ArFFBOyTpR7UQAt7rOfi+JZo=;24:9gO/YzWAbqz9pOZqQxIehRe9vjAdv6jY+V/mJ8YIABpwIBPJIOnT2xrU9f80f/Y6+4SbGaUekZwRxPP2CDbLwQ6gbEEllD/Ikm/IMn99Qyg=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2189;7:o4fz5qzJh5UezeYAjFEzyxdEh4/bnaRkpUsnUsSYmBJxT1Tet3I9Zh+ekqGW51lPRQJtkesUSCNh58TVhQ4Sv+tbmLQev4PTapAxq0q//RPNH5argHV+HSSQXznQZh7YOyzXXSZKpdH0CpMihjkG/wXykDd1mWhwltnQvwZzpwZIQNlT01uwRleGox/O15kbzL+eX2FcoeWZ6xDKfHC5WsV5+QHSB0Wv2zsO/qaOsiQ1jv8lm6ykHqpxvgqeZuSJ
-X-MS-Office365-Filtering-Correlation-Id: 5659e648-5312-4aa2-bd7f-08d59f79740e
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2189;7:zzAYbNFlhWV+Er1dcPT+T/F6i1DTwo9vr7FEQTvcH9qvmsG/ZFF7mLvnrNVNBzDEHaS5TFpjDtxe+jz/3cWjgwGiIJBi4gKPu6B/fxQG6Xnn7J5Evrxm7r34DsRo2C64XTiV1BdHRSqaeaXSyroc13Imnr0Rdf5KLUZSVd4N9TTnewyxI0W0RL3KkG4M23T6tZ7orNt0mgzly9dQ1p4RtbiUsHeMoZCIFi0PvfRqeklJN1hqGlRtcU6c0MjvSdJT
+X-MS-Office365-Filtering-Correlation-Id: a4dd826e-dc99-40d3-1fea-08d59f798ce2
 X-OriginatorOrg: freescale.onmicrosoft.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2018 06:57:12.8527
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2018 06:57:54.2693
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5659e648-5312-4aa2-bd7f-08d59f79740e
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4dd826e-dc99-40d3-1fea-08d59f798ce2
 X-MS-Exchange-CrossTenant-Id: 710a03f5-10f6-4d38-9ff4-a80b81da590d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=710a03f5-10f6-4d38-9ff4-a80b81da590d;Ip=[192.88.158.2];Helo=[az84smr01.freescale.net]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
@@ -84,194 +85,379 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Various e500 core have different cache architecture, so they
-need different cache flush operations. Therefore, add a callback
-function cpu_flush_caches to the struct cpu_spec. The cache flush
-operation for the specific kind of e500 is selected at init time.
-The callback function will flush all caches in the current cpu.
+Enable Power Management feature on device tree, including MPC8536,
+MPC8544, MPC8548, MPC8572, P1010, P1020, P1021, P1022, P2020, P2041,
+P3041, T104X, T1024.
 
-Signed-off-by: Chenhui Zhao <chenhui.zhao@freescale.com>
-Reviewed-by: Yang Li <LeoLi@freescale.com>
-Reviewed-by: Jose Rivera <German.Rivera@freescale.com>
+Signed-off-by: Zhao Chenhui <chenhui.zhao@freescale.com>
 Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
 ---
 Changes in v2:
   - no change
 
- arch/powerpc/include/asm/cputable.h       |   12 ++++
- arch/powerpc/kernel/asm-offsets.c         |    3 +
- arch/powerpc/kernel/cpu_setup_fsl_booke.S |   81 +++++++++++++++++++++++++++++
- arch/powerpc/kernel/cputable.c            |    4 ++
- 4 files changed, 100 insertions(+), 0 deletions(-)
+ arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi |   14 ++++++-
+ arch/powerpc/boot/dts/fsl/mpc8544si-post.dtsi |    2 +
+ arch/powerpc/boot/dts/fsl/mpc8548si-post.dtsi |    2 +
+ arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi |    2 +
+ arch/powerpc/boot/dts/fsl/p1010si-post.dtsi   |    8 ++++
+ arch/powerpc/boot/dts/fsl/p1020si-post.dtsi   |    5 +++
+ arch/powerpc/boot/dts/fsl/p1021si-post.dtsi   |    5 +++
+ arch/powerpc/boot/dts/fsl/p1022si-post.dtsi   |    9 +++--
+ arch/powerpc/boot/dts/fsl/p2020si-post.dtsi   |   14 +++++++
+ arch/powerpc/boot/dts/fsl/pq3-power.dtsi      |   48 +++++++++++++++++++++++++
+ arch/powerpc/boot/dts/fsl/t1024rdb.dts        |    2 +-
+ arch/powerpc/boot/dts/fsl/t1040rdb.dts        |    2 +-
+ arch/powerpc/boot/dts/fsl/t1042rdb.dts        |    2 +-
+ arch/powerpc/boot/dts/fsl/t1042rdb_pi.dts     |    2 +-
+ 14 files changed, 108 insertions(+), 9 deletions(-)
+ create mode 100644 arch/powerpc/boot/dts/fsl/pq3-power.dtsi
 
-diff --git a/arch/powerpc/include/asm/cputable.h b/arch/powerpc/include/asm/cputable.h
-index 2e2bacb..d04c46d 100644
---- a/arch/powerpc/include/asm/cputable.h
-+++ b/arch/powerpc/include/asm/cputable.h
-@@ -44,6 +44,14 @@ enum powerpc_pmc_type {
- extern int machine_check_e500(struct pt_regs *regs);
- extern int machine_check_e200(struct pt_regs *regs);
- extern int machine_check_47x(struct pt_regs *regs);
-+
-+#if defined(CONFIG_E500) || defined(CONFIG_PPC_E500MC)
-+extern void __flush_caches_e500v2(void);
-+extern void __flush_caches_e500mc(void);
-+extern void __flush_caches_e5500(void);
-+extern void __flush_caches_e6500(void);
-+#endif
-+
- int machine_check_8xx(struct pt_regs *regs);
+diff --git a/arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi b/arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi
+index 4193570..fba40a1 100644
+--- a/arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/mpc8536si-post.dtsi
+@@ -199,6 +199,10 @@
  
- extern void cpu_down_flush_e500v2(void);
-@@ -70,6 +78,10 @@ struct cpu_spec {
- 	/* flush caches inside the current cpu */
- 	void (*cpu_down_flush)(void);
+ /include/ "pq3-dma-0.dtsi"
+ /include/ "pq3-etsec1-0.dtsi"
++	enet0: ethernet@24000 {
++		fsl,wake-on-filer;
++		fsl,pmc-handle = <&etsec1_clk>;
++	};
+ /include/ "pq3-etsec1-timer-0.dtsi"
  
-+#if defined(CONFIG_E500) || defined(CONFIG_PPC_E500MC)
-+	/* flush caches of the cpu which is running the function */
-+	void (*cpu_flush_caches)(void);
-+#endif
- 	/* number of performance monitor counters */
- 	unsigned int	num_pmcs;
- 	enum powerpc_pmc_type pmc_type;
-diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
-index ea5eb91..cb4b869 100644
---- a/arch/powerpc/kernel/asm-offsets.c
-+++ b/arch/powerpc/kernel/asm-offsets.c
-@@ -351,6 +351,9 @@ int main(void)
- 	OFFSET(CPU_SPEC_FEATURES, cpu_spec, cpu_features);
- 	OFFSET(CPU_SPEC_SETUP, cpu_spec, cpu_setup);
- 	OFFSET(CPU_SPEC_RESTORE, cpu_spec, cpu_restore);
-+#if defined(CONFIG_E500) || defined(CONFIG_PPC_E500MC)
-+	OFFSET(CPU_FLUSH_CACHES, cpu_spec, cpu_flush_caches);
-+#endif
+ 	usb@22000 {
+@@ -222,9 +226,10 @@
+ 	};
  
- 	OFFSET(pbe_address, pbe, address);
- 	OFFSET(pbe_orig_address, pbe, orig_address);
-diff --git a/arch/powerpc/kernel/cpu_setup_fsl_booke.S b/arch/powerpc/kernel/cpu_setup_fsl_booke.S
-index 462aed9..e94eb41 100644
---- a/arch/powerpc/kernel/cpu_setup_fsl_booke.S
-+++ b/arch/powerpc/kernel/cpu_setup_fsl_booke.S
-@@ -345,3 +345,84 @@ _GLOBAL(cpu_down_flush_e5500)
- /* L1 Data Cache of e6500 contains no modified data, no flush is required */
- _GLOBAL(cpu_down_flush_e6500)
- 	blr
+ /include/ "pq3-etsec1-2.dtsi"
+-
+-	ethernet@26000 {
++	enet2: ethernet@26000 {
+ 		cell-index = <1>;
++		fsl,wake-on-filer;
++		fsl,pmc-handle = <&etsec3_clk>;
+ 	};
+ 
+ 	usb@2b000 {
+@@ -249,4 +254,9 @@
+ 		reg = <0xe0000 0x1000>;
+ 		fsl,has-rstcr;
+ 	};
 +
-+_GLOBAL(__flush_caches_e500v2)
-+	mflr r0
-+	bl	flush_dcache_L1
-+	mtlr r0
-+	blr
++/include/ "pq3-power.dtsi"
++	power@e0070 {
++		compatible = "fsl,mpc8536-pmc", "fsl,mpc8548-pmc";
++	};
+ };
+diff --git a/arch/powerpc/boot/dts/fsl/mpc8544si-post.dtsi b/arch/powerpc/boot/dts/fsl/mpc8544si-post.dtsi
+index b68eb11..ea7416a 100644
+--- a/arch/powerpc/boot/dts/fsl/mpc8544si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/mpc8544si-post.dtsi
+@@ -188,4 +188,6 @@
+ 		reg = <0xe0000 0x1000>;
+ 		fsl,has-rstcr;
+ 	};
 +
-+_GLOBAL(__flush_caches_e500mc)
-+_GLOBAL(__flush_caches_e5500)
-+	mflr r0
-+	bl	flush_dcache_L1
-+	bl	flush_backside_L2_cache
-+	mtlr r0
-+	blr
++/include/ "pq3-power.dtsi"
+ };
+diff --git a/arch/powerpc/boot/dts/fsl/mpc8548si-post.dtsi b/arch/powerpc/boot/dts/fsl/mpc8548si-post.dtsi
+index 579d76c..dddb737 100644
+--- a/arch/powerpc/boot/dts/fsl/mpc8548si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/mpc8548si-post.dtsi
+@@ -156,4 +156,6 @@
+ 		reg = <0xe0000 0x1000>;
+ 		fsl,has-rstcr;
+ 	};
 +
-+/* L1 Data Cache of e6500 contains no modified data, no flush is required */
-+_GLOBAL(__flush_caches_e6500)
-+	blr
++/include/ "pq3-power.dtsi"
+ };
+diff --git a/arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi b/arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi
+index 49294cf..40a6cff 100644
+--- a/arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/mpc8572si-post.dtsi
+@@ -193,4 +193,6 @@
+ 		reg = <0xe0000 0x1000>;
+ 		fsl,has-rstcr;
+ 	};
 +
-+	/* r3 = virtual address of L2 controller, WIMG = 01xx */
-+_GLOBAL(flush_disable_L2)
-+	/* It's a write-through cache, so only invalidation is needed. */
-+	mbar
-+	isync
-+	lwz	r4, 0(r3)
-+	li	r5, 1
-+	rlwimi	r4, r5, 30, 0xc0000000
-+	stw	r4, 0(r3)
++/include/ "pq3-power.dtsi"
+ };
+diff --git a/arch/powerpc/boot/dts/fsl/p1010si-post.dtsi b/arch/powerpc/boot/dts/fsl/p1010si-post.dtsi
+index 1b4aafc..47b62a8 100644
+--- a/arch/powerpc/boot/dts/fsl/p1010si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/p1010si-post.dtsi
+@@ -173,6 +173,8 @@
+ 
+ /include/ "pq3-etsec2-0.dtsi"
+ 	enet0: ethernet@b0000 {
++		fsl,pmc-handle = <&etsec1_clk>;
 +
-+	/* Wait for the invalidate to finish */
-+1:	lwz	r4, 0(r3)
-+	andis.	r4, r4, 0x4000
-+	bne	1b
-+	mbar
+ 		queue-group@b0000 {
+ 			fsl,rx-bit-map = <0xff>;
+ 			fsl,tx-bit-map = <0xff>;
+@@ -181,6 +183,8 @@
+ 
+ /include/ "pq3-etsec2-1.dtsi"
+ 	enet1: ethernet@b1000 {
++		fsl,pmc-handle = <&etsec2_clk>;
 +
-+	blr
+ 		queue-group@b1000 {
+ 			fsl,rx-bit-map = <0xff>;
+ 			fsl,tx-bit-map = <0xff>;
+@@ -189,6 +193,8 @@
+ 
+ /include/ "pq3-etsec2-2.dtsi"
+ 	enet2: ethernet@b2000 {
++		fsl,pmc-handle = <&etsec3_clk>;
 +
-+	/* r3 = virtual address of L2 controller, WIMG = 01xx */
-+_GLOBAL(invalidate_enable_L2)
-+	mbar
-+	isync
-+	lwz	r4, 0(r3)
-+	li	r5, 3
-+	rlwimi	r4, r5, 30, 0xc0000000
-+	stw	r4, 0(r3)
+ 		queue-group@b2000 {
+ 			fsl,rx-bit-map = <0xff>;
+ 			fsl,tx-bit-map = <0xff>;
+@@ -201,4 +207,6 @@
+ 		reg = <0xe0000 0x1000>;
+ 		fsl,has-rstcr;
+ 	};
 +
-+	/* Wait for the invalidate to finish */
-+1:	lwz	r4, 0(r3)
-+	andis.	r4, r4, 0x4000
-+	bne	1b
-+	mbar
++/include/ "pq3-power.dtsi"
+ };
+diff --git a/arch/powerpc/boot/dts/fsl/p1020si-post.dtsi b/arch/powerpc/boot/dts/fsl/p1020si-post.dtsi
+index 642dc3a..cc4c746 100644
+--- a/arch/powerpc/boot/dts/fsl/p1020si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/p1020si-post.dtsi
+@@ -163,14 +163,17 @@
+ 
+ /include/ "pq3-etsec2-0.dtsi"
+ 	enet0: enet0_grp2: ethernet@b0000 {
++		fsl,pmc-handle = <&etsec1_clk>;
+ 	};
+ 
+ /include/ "pq3-etsec2-1.dtsi"
+ 	enet1: enet1_grp2: ethernet@b1000 {
++		fsl,pmc-handle = <&etsec2_clk>;
+ 	};
+ 
+ /include/ "pq3-etsec2-2.dtsi"
+ 	enet2: enet2_grp2: ethernet@b2000 {
++		fsl,pmc-handle = <&etsec3_clk>;
+ 	};
+ 
+ 	global-utilities@e0000 {
+@@ -178,6 +181,8 @@
+ 		reg = <0xe0000 0x1000>;
+ 		fsl,has-rstcr;
+ 	};
 +
-+	blr
++/include/ "pq3-power.dtsi"
+ };
+ 
+ /include/ "pq3-etsec2-grp2-0.dtsi"
+diff --git a/arch/powerpc/boot/dts/fsl/p1021si-post.dtsi b/arch/powerpc/boot/dts/fsl/p1021si-post.dtsi
+index 407cb5f..378195d 100644
+--- a/arch/powerpc/boot/dts/fsl/p1021si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/p1021si-post.dtsi
+@@ -159,14 +159,17 @@
+ 
+ /include/ "pq3-etsec2-0.dtsi"
+ 	enet0: enet0_grp2: ethernet@b0000 {
++		fsl,pmc-handle = <&etsec1_clk>;
+ 	};
+ 
+ /include/ "pq3-etsec2-1.dtsi"
+ 	enet1: enet1_grp2: ethernet@b1000 {
++		fsl,pmc-handle = <&etsec2_clk>;
+ 	};
+ 
+ /include/ "pq3-etsec2-2.dtsi"
+ 	enet2: enet2_grp2: ethernet@b2000 {
++		fsl,pmc-handle = <&etsec3_clk>;
+ 	};
+ 
+ 	global-utilities@e0000 {
+@@ -174,6 +177,8 @@
+ 		reg = <0xe0000 0x1000>;
+ 		fsl,has-rstcr;
+ 	};
 +
-+/* Flush L1 d-cache, invalidate and disable d-cache and i-cache */
-+_GLOBAL(__flush_disable_L1)
-+	mflr	r10
-+	bl	flush_dcache_L1	/* Flush L1 d-cache */
-+	mtlr	r10
++/include/ "pq3-power.dtsi"
+ };
+ 
+ &qe {
+diff --git a/arch/powerpc/boot/dts/fsl/p1022si-post.dtsi b/arch/powerpc/boot/dts/fsl/p1022si-post.dtsi
+index 5f51b7b..6ac21e8 100644
+--- a/arch/powerpc/boot/dts/fsl/p1022si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/p1022si-post.dtsi
+@@ -225,11 +225,13 @@
+ /include/ "pq3-etsec2-0.dtsi"
+ 	enet0: enet0_grp2: ethernet@b0000 {
+ 		fsl,wake-on-filer;
++		fsl,pmc-handle = <&etsec1_clk>;
+ 	};
+ 
+ /include/ "pq3-etsec2-1.dtsi"
+ 	enet1: enet1_grp2: ethernet@b1000 {
+ 		fsl,wake-on-filer;
++		fsl,pmc-handle = <&etsec2_clk>;
+ 	};
+ 
+ 	global-utilities@e0000 {
+@@ -238,9 +240,10 @@
+ 		fsl,has-rstcr;
+ 	};
+ 
+-	power@e0070{
+-		compatible = "fsl,mpc8536-pmc", "fsl,mpc8548-pmc";
+-		reg = <0xe0070 0x20>;
++/include/ "pq3-power.dtsi"
++	power@e0070 {
++		compatible = "fsl,p1022-pmc", "fsl,mpc8536-pmc",
++				"fsl,mpc8548-pmc";
+ 	};
+ 
+ };
+diff --git a/arch/powerpc/boot/dts/fsl/p2020si-post.dtsi b/arch/powerpc/boot/dts/fsl/p2020si-post.dtsi
+index 884e01b..2c4787c 100644
+--- a/arch/powerpc/boot/dts/fsl/p2020si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/p2020si-post.dtsi
+@@ -175,6 +175,10 @@
+ 		compatible = "fsl-usb2-dr-v1.6", "fsl-usb2-dr";
+ 	};
+ /include/ "pq3-etsec1-0.dtsi"
++	enet0: ethernet@24000 {
++		fsl,pmc-handle = <&etsec1_clk>;
 +
-+	mfspr	r4, SPRN_L1CSR0	/* Invalidate and disable d-cache */
-+	li	r5, 2
-+	rlwimi	r4, r5, 0, 3
++	};
+ /include/ "pq3-etsec1-timer-0.dtsi"
+ 
+ 	ptp_clock@24e00 {
+@@ -183,7 +187,15 @@
+ 
+ 
+ /include/ "pq3-etsec1-1.dtsi"
++	enet1: ethernet@25000 {
++		fsl,pmc-handle = <&etsec2_clk>;
++	};
 +
-+	msync
-+	isync
-+	mtspr	SPRN_L1CSR0, r4
-+	isync
+ /include/ "pq3-etsec1-2.dtsi"
++	enet2: ethernet@26000 {
++		fsl,pmc-handle = <&etsec3_clk>;
++	};
 +
-+1:	mfspr	r4, SPRN_L1CSR0	/* Wait for the invalidate to finish */
-+	andi.	r4, r4, 2
-+	bne	1b
+ /include/ "pq3-esdhc-0.dtsi"
+ 	sdhc@2e000 {
+ 		compatible = "fsl,p2020-esdhc", "fsl,esdhc";
+@@ -198,4 +210,6 @@
+ 		reg = <0xe0000 0x1000>;
+ 		fsl,has-rstcr;
+ 	};
 +
-+	mfspr	r4, SPRN_L1CSR1	/* Invalidate and disable i-cache */
-+	li	r5, 2
-+	rlwimi	r4, r5, 0, 3
++/include/ "pq3-power.dtsi"
+ };
+diff --git a/arch/powerpc/boot/dts/fsl/pq3-power.dtsi b/arch/powerpc/boot/dts/fsl/pq3-power.dtsi
+new file mode 100644
+index 0000000..5a760b3
+--- /dev/null
++++ b/arch/powerpc/boot/dts/fsl/pq3-power.dtsi
+@@ -0,0 +1,48 @@
++/*
++ * PQ3 Power Management device tree stub
++ *
++ * Copyright 2012-2013 Freescale Semiconductor Inc.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions are met:
++ *     * Redistributions of source code must retain the above copyright
++ *       notice, this list of conditions and the following disclaimer.
++ *     * Redistributions in binary form must reproduce the above copyright
++ *       notice, this list of conditions and the following disclaimer in the
++ *       documentation and/or other materials provided with the distribution.
++ *     * Neither the name of Freescale Semiconductor nor the
++ *       names of its contributors may be used to endorse or promote products
++ *       derived from this software without specific prior written permission.
++ *
++ *
++ * ALTERNATIVELY, this software may be distributed under the terms of the
++ * GNU General Public License ("GPL") as published by the Free Software
++ * Foundation, either version 2 of that License or (at your option) any
++ * later version.
++ *
++ * THIS SOFTWARE IS PROVIDED BY Freescale Semiconductor ``AS IS'' AND ANY
++ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
++ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
++ * DISCLAIMED. IN NO EVENT SHALL Freescale Semiconductor BE LIABLE FOR ANY
++ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
++ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
++ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
++ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
 +
-+	mtspr	SPRN_L1CSR1, r4
-+	isync
++power@e0070 {
++	compatible = "fsl,mpc8548-pmc";
++	reg = <0xe0070 0x20>;
 +
-+	blr
-diff --git a/arch/powerpc/kernel/cputable.c b/arch/powerpc/kernel/cputable.c
-index c40a9fc..eec3ca7 100644
---- a/arch/powerpc/kernel/cputable.c
-+++ b/arch/powerpc/kernel/cputable.c
-@@ -2100,6 +2100,7 @@
- 		.machine_check		= machine_check_e500,
- 		.platform		= "ppc8548",
- 		.cpu_down_flush		= cpu_down_flush_e500v2,
-+		.cpu_flush_caches	= __flush_caches_e500v2,
- 	},
- #else
- 	{	/* e500mc */
-@@ -2120,6 +2121,7 @@
- 		.machine_check		= machine_check_e500mc,
- 		.platform		= "ppce500mc",
- 		.cpu_down_flush		= cpu_down_flush_e500mc,
-+		.cpu_flush_caches	= __flush_caches_e500mc,
- 	},
- #endif /* CONFIG_PPC_E500MC */
- #endif /* CONFIG_PPC32 */
-@@ -2145,6 +2147,7 @@
- 		.machine_check		= machine_check_e500mc,
- 		.platform		= "ppce5500",
- 		.cpu_down_flush		= cpu_down_flush_e5500,
-+		.cpu_flush_caches	= __flush_caches_e5500,
- 	},
- 	{	/* e6500 */
- 		.pvr_mask		= 0xffff0000,
-@@ -2168,6 +2171,7 @@
- 		.machine_check		= machine_check_e500mc,
- 		.platform		= "ppce6500",
- 		.cpu_down_flush		= cpu_down_flush_e6500,
-+		.cpu_flush_caches	= __flush_caches_e6500,
- 	},
- #endif /* CONFIG_PPC_E500MC */
- #ifdef CONFIG_PPC32
++	etsec1_clk: soc-clk@24 {
++		fsl,pmcdr-mask = <0x00000080>;
++	};
++	etsec2_clk: soc-clk@25 {
++		fsl,pmcdr-mask = <0x00000040>;
++	};
++	etsec3_clk: soc-clk@26 {
++		fsl,pmcdr-mask = <0x00000020>;
++	};
++};
+diff --git a/arch/powerpc/boot/dts/fsl/t1024rdb.dts b/arch/powerpc/boot/dts/fsl/t1024rdb.dts
+index 73a6453..95fc694 100644
+--- a/arch/powerpc/boot/dts/fsl/t1024rdb.dts
++++ b/arch/powerpc/boot/dts/fsl/t1024rdb.dts
+@@ -91,7 +91,7 @@
+ 		board-control@2,0 {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+-			compatible = "fsl,t1024-cpld";
++			compatible = "fsl,t1024-cpld", "fsl,deepsleep-cpld";
+ 			reg = <3 0 0x300>;
+ 			ranges = <0 3 0 0x300>;
+ 			bank-width = <1>;
+diff --git a/arch/powerpc/boot/dts/fsl/t1040rdb.dts b/arch/powerpc/boot/dts/fsl/t1040rdb.dts
+index 65ff34c..825665c 100644
+--- a/arch/powerpc/boot/dts/fsl/t1040rdb.dts
++++ b/arch/powerpc/boot/dts/fsl/t1040rdb.dts
+@@ -70,7 +70,7 @@
+ 
+ 	ifc: localbus@ffe124000 {
+ 		cpld@3,0 {
+-			compatible = "fsl,t1040rdb-cpld";
++			compatible = "fsl,t104xrdb-cpld", "fsl,deepsleep-cpld";
+ 		};
+ 	};
+ };
+diff --git a/arch/powerpc/boot/dts/fsl/t1042rdb.dts b/arch/powerpc/boot/dts/fsl/t1042rdb.dts
+index 3ebb712..0997643 100644
+--- a/arch/powerpc/boot/dts/fsl/t1042rdb.dts
++++ b/arch/powerpc/boot/dts/fsl/t1042rdb.dts
+@@ -68,7 +68,7 @@
+ 
+ 	ifc: localbus@ffe124000 {
+ 		cpld@3,0 {
+-			compatible = "fsl,t1042rdb-cpld";
++			compatible = "fsl,t104xrdb-cpld", "fsl,deepsleep-cpld";
+ 		};
+ 	};
+ };
+diff --git a/arch/powerpc/boot/dts/fsl/t1042rdb_pi.dts b/arch/powerpc/boot/dts/fsl/t1042rdb_pi.dts
+index 8ec3ff4..b10cab1 100644
+--- a/arch/powerpc/boot/dts/fsl/t1042rdb_pi.dts
++++ b/arch/powerpc/boot/dts/fsl/t1042rdb_pi.dts
+@@ -41,7 +41,7 @@
+ 
+ 	ifc: localbus@ffe124000 {
+ 		cpld@3,0 {
+-			compatible = "fsl,t1042rdb_pi-cpld";
++			compatible = "fsl,t104xrdb-cpld", "fsl,deepsleep-cpld";
+ 		};
+ 	};
+ 
 -- 
 1.7.1
