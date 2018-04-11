@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48Nf3rpwXOZj+wpHTvMuDKXtLn6a4z04qm5Hk9dMlTiwq2bjdjRXwPlv56vJKB4VQsbMAtw
-ARC-Seal: i=1; a=rsa-sha256; t=1523473486; cv=none;
+X-Google-Smtp-Source: AIpwx48zXBLREILxbzxucPUudw33pzXUPcMseArMijDRv1nhj+eqYQbo2wrJBRsPzn7lK9QiJNoQ
+ARC-Seal: i=1; a=rsa-sha256; t=1523473480; cv=none;
         d=google.com; s=arc-20160816;
-        b=xzwPPx8on6zwwBNYu9gOCE9iAu+2lXL6/X3mmobg8DdUbPAQlul4emyUMw/Kldq+Qv
-         VV2xQKA4ihr0dXx47y31pyMlHjhc+770E+dCRkYisIFYA5RnUY+AUsTQt/skB3qE6JLn
-         xgy3vhXI/ZH9EdGF/EzNa/gXWAZkzYu47GyyqZXkw+WIgYepj7l6Ukp27Cr/dkIoKX9z
-         oyMnH1wK/Z1xON50/+DePjxvv8rajdMzwtzvQTMzuOn1lqlU8V393ankDJHuBG88zm0Z
-         pz8Zyga06kV1Pw83btqTaXE7zvPFDMtStcAivPz50Ry/+md+zgVwMmdaBh5dF/Al1Neh
-         vGUA==
+        b=gGDx92kIaY0GZOehP7jWYl4LmCCUaHSAzCrffIuln9PHJFf6AE+liWoJkfuMbd9APr
+         kKxGDimuepOzhc1xSS1CiAJ9w8Xsln4NCXMO5v86f+dk3vBFs32GtRpW/NPJ/eKCBmfg
+         OjYuPh7+R0DFg3RUIxkDBjt2uOR1c2xk7K/CP03UQb3F/kkUILPGQsyDEuk6HTtoWb8w
+         Lb5fbl2vyKd2WEyDslYmYOTCJQ8NpO+jazvdfPD5273NvNlzVpjsHvBW829f7Zbl7nOY
+         yyV1OTpkWlVZX5gTyFQn99y467uHoKB981M1POtd6fdBGdiqqli6z6MwMYpTotn9IpZQ
+         F9KQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=F3BUbkYsi85oixU9azxZ+L4/xJK+4/b84rSughmOeq0=;
-        b=goAS2Wu0/riZIl7N1ZZK36D91S6c2po/f8Ts88VjdR71NQPz44C6zhiS/vp1cbO1ub
-         FNcQYlq88P0Q3dmqQ5qmaiJL/8DfTiwNNEm3/JQpMZMle6px61fnqDOeOVGxc8WPNCiC
-         xxDtnLUxaBsm99KQlgXe8RaYyRCdPjjWaNgLSv/ELTtd0Dl2o4dxXZ5gtJy1VluhTTQi
-         N4lt5eDpLEI4ytxJBdX7mDguagJxzpK8MzMKYuo+4Gmz/2HNmccJwLocwh1eIVFc9479
-         BYlQcQiJsogQaTS9VH6KFf/TQnAt2Wf08LXvobMETPx3ffuCBrnkY7Cg8xcVzad8qKcq
-         vnvw==
+        bh=c5mrnJ94P3NLeSTi4ZxayKKmkPFUvioEbhWSVFRkvj0=;
+        b=Re5EXM626zN5U1iC05xXaUD1/BY1UtP9fw1tfatylLNkmtyrizevB+nicLprpKAJcE
+         jk9acv/b8YvQn3zH0VANY9ZxS4Izgjo4xAlis85tMXRaMyNzzSXByKZszKfMrzrOVYjY
+         GjKahwrEdd8uDsGdcrFcgu5CKXBkB8YrUoOp7hwW0/IG+cEXdCkpBW/FcxFg/pHk8ECw
+         /nLygINo4uz5Xx99f7NoH5+wc9tk2sMfZEF+SCOpC2lijNn2uvTpv5ylzL9I6qYvJqZN
+         FWg664zHf7V2NABT7SzNGL6OL8bhEeGyWLHFZRmGWRtWw5r4BbddndohXnq5IQl1/0SK
+         ae+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-edac <linux-edac@vger.kernel.org>,
+	Borislav Petkov <bp@suse.de>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 266/310] sdhci: Advertise 2.0v supply on SDIO host controller
-Date: Wed, 11 Apr 2018 20:36:45 +0200
-Message-Id: <20180411183634.103205303@linuxfoundation.org>
+Subject: [PATCH 4.9 264/310] EDAC, mv64x60: Fix an error handling path
+Date: Wed, 11 Apr 2018 20:36:43 +0200
+Message-Id: <20180411183634.020982805@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477734363264124?=
-X-GMAIL-MSGID: =?utf-8?q?1597477734363264124?=
+X-GMAIL-THRID: =?utf-8?q?1597476306178591836?=
+X-GMAIL-MSGID: =?utf-8?q?1597477728209581670?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,57 +51,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 
-[ Upstream commit 2a609abe71ca59e4bd7139e161eaca2144ae6f2e ]
+[ Upstream commit 68fa24f9121c04ef146b5158f538c8b32f285be5 ]
 
-On Intel Edison the Broadcom Wi-Fi card, which is connected to SDIO,
-requires 2.0v, while the host, according to Intel Merrifield TRM,
-supports 1.8v supply only.
+We should not call edac_mc_del_mc() if a corresponding call to
+edac_mc_add_mc() has not been performed yet.
 
-The card announces itself as
+So here, we should go to err instead of err2 to branch at the right
+place of the error handling path.
 
-  mmc2: new ultra high speed DDR50 SDIO card at address 0001
-
-Introduce a custom OCR mask for SDIO host controller on Intel Merrifield
-and add a special case to sdhci_set_power_noreg() to override 2.0v supply
-by enforcing 1.8v power choice.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180107205400.14068-1-christophe.jaillet@wanadoo.fr
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/sdhci-pci-core.c |    2 ++
- drivers/mmc/host/sdhci.c          |    7 +++++++
- 2 files changed, 9 insertions(+)
+ drivers/edac/mv64x60_edac.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -492,6 +492,8 @@ static int intel_mrfld_mmc_probe_slot(st
- 		slot->host->quirks2 |= SDHCI_QUIRK2_NO_1_8_V;
- 		break;
- 	case INTEL_MRFLD_SDIO:
-+		/* Advertise 2.0v for compatibility with the SDIO card's OCR */
-+		slot->host->ocr_mask = MMC_VDD_20_21 | MMC_VDD_165_195;
- 		slot->host->mmc->caps |= MMC_CAP_NONREMOVABLE |
- 					 MMC_CAP_POWER_OFF_CARD;
- 		break;
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1404,6 +1404,13 @@ void sdhci_set_power_noreg(struct sdhci_
- 	if (mode != MMC_POWER_OFF) {
- 		switch (1 << vdd) {
- 		case MMC_VDD_165_195:
-+		/*
-+		 * Without a regulator, SDHCI does not support 2.0v
-+		 * so we only get here if the driver deliberately
-+		 * added the 2.0v range to ocr_avail. Map it to 1.8v
-+		 * for the purpose of turning on the power.
-+		 */
-+		case MMC_VDD_20_21:
- 			pwr = SDHCI_POWER_180;
- 			break;
- 		case MMC_VDD_29_30:
+--- a/drivers/edac/mv64x60_edac.c
++++ b/drivers/edac/mv64x60_edac.c
+@@ -759,7 +759,7 @@ static int mv64x60_mc_err_probe(struct p
+ 		/* Non-ECC RAM? */
+ 		printk(KERN_WARNING "%s: No ECC DIMMs discovered\n", __func__);
+ 		res = -ENODEV;
+-		goto err2;
++		goto err;
+ 	}
+ 
+ 	edac_dbg(3, "init mci\n");
