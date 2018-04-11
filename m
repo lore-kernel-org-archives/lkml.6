@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3339499-1523481263-2-17472490587274753364
+X-Cyrus-Session-Id: sloti22d1t05-3374234-1523481223-2-2617168179428909592
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523481262; b=RuLTmND9j1Wq8jjP4JhlXZSzrzWpTQ1MZFvZHVHaWNBJcPKRsq
-    FE0Qy64uu8k7wwbQDuNoQncexyb6HUI/28yRldO6+CyGBjPqr4DnzJ1dZ5J1NV38
-    q+cET+FlhHdgS9rslKhDbIji1USTNQpS3MdXRkrZ5h6NwhwE3DdN/+qysq9zV7R3
-    67uh052FGp61PUu/etsoZporJDQAZsyypOQOUA+UxJhmXlft7lkhPyG2zwLtXpeq
-    Bt8ioWlM0xaiFIr/lZyERkEL+gFL/K+Zh0pjldQU2fHQOKbvNirj+ATxzb7Sjn/2
-    z2rCtkidClvXxF/4IyMXo/jnKQbVWul7h4Cw==
+    1523481223; b=asEeF675fH/aYqa2tPjjp1mmnoKwx0gYpleJp/zXV3f6zcpAoH
+    zY60X0GuTcqs4/5O4zTNt/bMas6tP5cvhlIXSzpnYgp1AwYz4M6KTwslo4CVDbPo
+    GfZhYh1mMNW/PgzbRj6jnzmRujQY4GKzdsPH1tVtSYjnfe5Fe1K9IVY44b4m51X0
+    VZ1g0SY5oPNeJQOQeNZGLaVsg63FF2msfbfaGP5mcI1nHsnudmGXWYtofdF+mWhT
+    VqifH069IPhgjLg5QcTpT16L9fzRFJgfYwEAOmxSbrJItXyM5kBwu7EUwhszPvA9
+    UswmbBzC6E4FtKOHpYJ3Z5XFCd5t3nNIjwKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523481262; bh=/wGsi19XzvdIgMejJ6J/1LR4LFaT+M
-    JTRGaE2IpZVFU=; b=Q6i7f33VJG/juJS84sFp40MWh4hkGzWATRvygdZArgIeEQ
-    teA5akBqNKK05/CpGyW7VVO45Xslay6v4kJIvYfZ67R13UkIVtd/F/vFaN6uuh35
-    oJtnen1hBxbXxx3/BEaED1bAHsYAyHxRd1z3Kq9MVIuF9PPD7awnsbWdH9ZGnY9t
-    oyF4hjth1Ungw/5wNL0ikCmoiGdt8YYJmNWMaLPbhPeeLFiwJzNpT21r/zIQOB//
-    qlflXN32Mp7JBV9K4IvjDADldnN8zsc0f+cuFJ/biFxzurviKGkk5xlT0wTv94N5
-    BWCl569BSQXBs4ITPj3BX6Qr9sRn7vv1utZwcN7A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523481223; bh=p1ZK3sd0O7VynTTScUpFtqVeSAORX1
+    PZ3zvJeoNMuf8=; b=vq5vugpPNiVnHv2MpE5M3PcQD3lbcJY2WwR6R0c5msk0AV
+    4VkODFhsDg1lOjxmLO8YhPzOyvodhyauB9qm9fzeWoIJU2FmTKIePCSBX7Qa3hdn
+    KZRT3xGNnRkba8p1hc5BN2B64MFsENqxvljK0QvWpz0ClrDlZ2hQ9d8ZG2BQo2JW
+    rXTbTYhe+WIWA0MC6KJQD2M2YpbS401cZ85v9lVM+IWCZejoUdbYe693AaBhBxTT
+    3coE207zmbzgfFDugY8Z6egJ1PrOIURBv3KwgOG+LtbsnDg/8vrmil5/G4OhkoPp
+    RnrB7BkB6fAkI0GRWztbpFVDikaBe8agoseKgo4w==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,34 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFu+BeCOSH9B1cJNUxYgdOZE8cexbUFdb+4lDHpZNvhCWGT7V04KWOQ2WlT/zN09tCNP7e21lgLZL0yURhDK2tPaDjpQm4/8ZQNrudRqxwUUYKQF4bdN
-    rx6U9rxNoqOu6dbJhf0esXDRF3u8o8TlT+dh4Tkb86uWuimPYzlnH4U+QtfAvIU0ZNn46TIL8qedU2CxF6+2Ui7US4uXRTiFEzJm+6h2qmSh/5Xt/jvSBr/y
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFS5J1jHea3yybrvSO40D08y/NdXuEmVjkabYkXSxuiRGuEr2bAwLKbYxVEsiz/WLhkhO90Uxa1xD1oAE3SLE3XL841dryWAkgqWX/iMTKH4pmh9Mh+b
+    Zak3sT84LPYwN3F6g+BBovBlzUyq8+oYU5HKCnI2jlfLNd6r0kWmLnBuMQP1MBQNEdyPWd5E58XJ2rNY+Uzt5bcAWYMP41/BVlxwsJmUYWCIsHeVDqTzxlZ1
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=C_IRinGWAAAA:8 a=xGAvDSoXAAAA:8 a=vQBBkBfzAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=0EdAP3AoEZbcGndTsloA:9 a=Fb6FI0IV8mqSXXlh:21
-    a=xMWXusudNDGyQNUe:21 a=QEXdDO2ut3YA:10 a=I9AbH5bZuplaqbmfSwNo:22
-    a=NGXS0kB0m_rannUenejW:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=PHq6YzTAAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=vIFw0XP82na-7QQtWxwA:9 a=K8vUX97VMtdewC4X:21
+    a=TvhyB4WreVeA7ieX:21 a=QEXdDO2ut3YA:10 a=ZKzU8r6zoKMcqsNulkmm:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754766AbeDKSlG (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:41:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56670 "EHLO
+        id S1754933AbeDKVN3 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 17:13:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56686 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754698AbeDKSlE (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:41:04 -0400
+        with ESMTP id S1754772AbeDKSlH (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:41:07 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, A Sun <as1033x@comcast.net>,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 073/121] [media] mceusb: sporadic RX truncation corruption fix
-Date: Wed, 11 Apr 2018 20:36:16 +0200
-Message-Id: <20180411183500.589996207@linuxfoundation.org>
+Subject: [PATCH 3.18 074/121] net: phy: avoid genphy_aneg_done() for PHYs without clause 22 support
+Date: Wed, 11 Apr 2018 20:36:17 +0200
+Message-Id: <20180411183500.640842614@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -95,48 +96,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: A Sun <as1033x@comcast.net>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
 
-[ Upstream commit 8e175b22e8640bf3a58e071af54190b909e4a944 ]
+[ Upstream commit 41408ad519f7a2a1c5229e61f2a97f4df1b61adc ]
 
-Intermittent RX truncation and loss of IR received data. This resulted
-in receive stream synchronization errors where driver attempted to
-incorrectly parse IR data (eg 0x90 below) as command response.
+Avoid calling genphy_aneg_done() for PHYs that do not implement the
+Clause 22 register set.
 
-[ 3969.139898] mceusb 1-1.2:1.0: processed IR data
-[ 3969.151315] mceusb 1-1.2:1.0: rx data: 00 90 (length=2)
-[ 3969.151321] mceusb 1-1.2:1.0: Unknown command 0x00 0x90
-[ 3969.151336] mceusb 1-1.2:1.0: rx data: 98 0a 8d 0a 8e 0a 8e 0a 8e 0a 8e 0a 9a 0a 8e 0a 0b 3a 8e 00 80 41 59 00 00 (length=25)
-[ 3969.151341] mceusb 1-1.2:1.0: Raw IR data, 24 pulse/space samples
-[ 3969.151348] mceusb 1-1.2:1.0: Storing space with duration 500000
+Clause 45 PHYs may implement the Clause 22 register set along with the
+Clause 22 extension MMD.  Hence, we can't simply block access to the
+Clause 22 functions based on the PHY being a Clause 45 PHY.
 
-Bug trigger appears to be normal, but heavy, IR receiver use.
-
-Signed-off-by: A Sun <as1033x@comcast.net>
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/rc/mceusb.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/net/phy/phy.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/media/rc/mceusb.c
-+++ b/drivers/media/rc/mceusb.c
-@@ -1370,8 +1370,13 @@ static int mceusb_dev_probe(struct usb_i
- 		goto rc_dev_fail;
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -123,6 +123,12 @@ static inline int phy_aneg_done(struct p
+ 	if (phydev->drv->aneg_done)
+ 		return phydev->drv->aneg_done(phydev);
  
- 	/* wire up inbound data handler */
--	usb_fill_int_urb(ir->urb_in, dev, pipe, ir->buf_in, maxp,
--				mceusb_dev_recv, ir, ep_in->bInterval);
-+	if (usb_endpoint_xfer_int(ep_in))
-+		usb_fill_int_urb(ir->urb_in, dev, pipe, ir->buf_in, maxp,
-+				 mceusb_dev_recv, ir, ep_in->bInterval);
-+	else
-+		usb_fill_bulk_urb(ir->urb_in, dev, pipe, ir->buf_in, maxp,
-+				  mceusb_dev_recv, ir);
++	/* Avoid genphy_aneg_done() if the Clause 45 PHY does not
++	 * implement Clause 22 registers
++	 */
++	if (phydev->is_c45 && !(phydev->c45_ids.devices_in_package & BIT(0)))
++		return -EINVAL;
 +
- 	ir->urb_in->transfer_dma = ir->dma_in;
- 	ir->urb_in->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
+ 	return genphy_aneg_done(phydev);
+ }
  
