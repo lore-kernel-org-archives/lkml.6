@@ -1,114 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752931AbeDKJua (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 05:50:30 -0400
-Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:49739 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752630AbeDKJu3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 05:50:29 -0400
-X-IronPort-AV: E=Sophos;i="5.48,435,1517875200";
-   d="scan'208";a="71367282"
-From: Paul Durrant <Paul.Durrant@citrix.com>
-To: "'Julien Grall'" <julien.grall@arm.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Juergen Gross <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: RE: [PATCH v4] xen/privcmd: add IOCTL_PRIVCMD_MMAP_RESOURCE
-Thread-Topic: [PATCH v4] xen/privcmd: add IOCTL_PRIVCMD_MMAP_RESOURCE
-Thread-Index: AQHT0KGz2/bKikUusU6D77v3t5YqI6P7MPiAgAAiKpA=
-Date: Wed, 11 Apr 2018 09:50:25 +0000
-Message-ID: <68f3d9b993d644e8ab137ccecceb575c@AMSPEX02CL03.citrite.net>
-References: <20180410075820.11081-1-paul.durrant@citrix.com>
- <8fff31d5-7eb4-33e8-0fc8-c5bb1ab47eba@arm.com>
-In-Reply-To: <8fff31d5-7eb4-33e8-0fc8-c5bb1ab47eba@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="utf-8"
+        id S1752253AbeDKJwW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 05:52:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34853 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751758AbeDKJwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 05:52:21 -0400
+Date: Wed, 11 Apr 2018 11:52:18 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>, Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.cz>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/9] vsprintf: Consolidate handling of unknown pointer
+ specifiers
+Message-ID: <20180411095218.zth5edjth2cxrrwc@pathway.suse.cz>
+References: <20180404085843.16050-1-pmladek@suse.com>
+ <20180404085843.16050-5-pmladek@suse.com>
+ <1523111200.21176.416.camel@linux.intel.com>
+ <20180409135028.ymyvsqxup7zm5vgc@pathway.suse.cz>
+ <1523360515.21176.434.camel@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523360515.21176.434.camel@linux.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3B9oZDI009400
 
-> -----Original Message-----
-> From: Julien Grall [mailto:julien.grall@arm.com]
-> Sent: 11 April 2018 10:46
-> To: Paul Durrant <Paul.Durrant@citrix.com>; xen-devel@lists.xenproject.org;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> Cc: Juergen Gross <jgross@suse.com>; Thomas Gleixner
-> <tglx@linutronix.de>; Stefano Stabellini <sstabellini@kernel.org>; Ingo
-> Molnar <mingo@redhat.com>
-> Subject: Re: [PATCH v4] xen/privcmd: add
-> IOCTL_PRIVCMD_MMAP_RESOURCE
+On Tue 2018-04-10 14:41:55, Andy Shevchenko wrote:
+> On Mon, 2018-04-09 at 15:50 +0200, Petr Mladek wrote:
+> > On Sat 2018-04-07 17:26:40, Andy Shevchenko wrote:
+> > > On Wed, 2018-04-04 at 10:58 +0200, Petr Mladek wrote:
 > 
-> Hi,
+> > > This change collides with my patch series. Can you elaborate what
+> > > your
+> > > thoughts are about my patches? Are you going incorporate them to
+> > > your
+> > > series? Should I send them independently?
+> > 
+> > Good question. I think that the best solution will be that I go
+> > over your patchset and just add all valid ones into printk.git
+> > for-4.18.
 > 
-> On 10/04/18 08:58, Paul Durrant wrote:
-> > +static long privcmd_ioctl_mmap_resource(struct file *file, void __user
-> *udata)
-> > +{
-> > +	struct privcmd_data *data = file->private_data;
-> > +	struct mm_struct *mm = current->mm;
-> > +	struct vm_area_struct *vma;
-> > +	struct privcmd_mmap_resource kdata;
-> > +	xen_pfn_t *pfns = NULL;
-> > +	struct xen_mem_acquire_resource xdata;
-> > +	int rc;
-> > +
-> > +	if (copy_from_user(&kdata, udata, sizeof(kdata)))
-> > +		return -EFAULT;
-> > +
-> > +	/* If restriction is in place, check the domid matches */
-> > +	if (data->domid != DOMID_INVALID && data->domid != kdata.dom)
-> > +		return -EPERM;
-> > +
-> > +	down_write(&mm->mmap_sem);
-> > +
-> > +	vma = find_vma(mm, kdata.addr);
-> > +	if (!vma || vma->vm_ops != &privcmd_vm_ops) {
-> > +		rc = -EINVAL;
-> > +		goto out;
-> > +	}
-> > +
-> > +	pfns = kcalloc(kdata.num, sizeof(*pfns), GFP_KERNEL);
-> > +	if (!pfns) {
-> > +		rc = -ENOMEM;
-> > +		goto out;
-> > +	}
-> > +
-> > +	if (xen_feature(XENFEAT_auto_translated_physmap)) {
-> > +		struct page **pages;
-> > +		unsigned int i;
-> > +
-> > +		rc = alloc_empty_pages(vma, kdata.num);
-> > +		if (rc < 0)
-> > +			goto out;
-> > +
-> > +		pages = vma->vm_private_data;
-> > +		for (i = 0; i < kdata.num; i++)
-> > +			pfns[i] = page_to_pfn(pages[i]);
-> 
-> I don't think this is going to work well if the hypervisor is using a
-> different granularity for the page.
-> 
-> Imagine Xen is using 4K but the kernel 64K. You would end up to have the
-> resource not mapped contiguously in the memory.
+> I think about 1-7 and 9 that can go as is before your changes.
+> And patch 8 postpone
 
-Good point. I do need to take account of the kernel page size in this case.
+Done. All the 8 patches are in printk.git, branch
+for-4.18-vsprintf-cleanup.
 
-  Paul
+I am sorry that we have missed 4.17. In theory, it still might be
+possible to push them there. But there does not seem to be a real
+reason to rush them.
 
+> >  Then I will base v5 of this patchset on top of it.
 > 
-> Cheers,
-> 
-> --
-> Julien Grall
+> I'm going for vacation tomorrow. Can you just take them into your series
+> or apply to your tree?
+
+Good to know.
+
+Enjoy vacation,
+Petr
