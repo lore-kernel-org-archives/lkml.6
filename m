@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/uK8uUs38Hk9jEKeRMF5oxErD+5eySgveBr8RpVZbifGOHhl/yffCJFGZI6tshMTB8tOj/
-ARC-Seal: i=1; a=rsa-sha256; t=1523472943; cv=none;
+X-Google-Smtp-Source: AIpwx48N9ARyLH2Xh3gO6vG200uTDvZQeaykdub3/pHohANiVR5Saiu8BSk+htFHeQA1zyTyaJXo
+ARC-Seal: i=1; a=rsa-sha256; t=1523472929; cv=none;
         d=google.com; s=arc-20160816;
-        b=RXPuofKBh2NOedSCKy5y5Suezpl3Bu4HJqTRLI2cRk34ReKAsVoyQFFcA0BI/7jwWV
-         Wxh1UboIbvjYmBij9Debfjp9fgepeZNyZNDw1CBnl0aVLE8rCn7iJH4pqaVUBgAVUnty
-         ntpeODnPaGyPePSinkosQN5cGeQJ5OpF48jQkJcokYUeXUUpqxy2BP7AJm9+U9BMBkdq
-         FwUzdRiemyqofOTQ2NWe8AB20Fds4oHsrWYRLv3kadXYoEybde9PB7gP9K6ZZHxUteJj
-         pWZWEIgGFEV6fgTVyV8OgRA+E2xI8x0/jQ1gMs8+k4hqgl/GVYMAUGsNO3qVYS+XgLFN
-         TmnA==
+        b=MaaJEzxS/SdTUX79kqgtnCJqxHKp+VaPVM5MrMiLzAolY5qU+jPzh3UVyoILB5H2ii
+         RN3egIPSZo/yuYZgZfdw7mXI7uZovifoKCzMA4J66Z99TevCTPuFwwn1OmD6Ds99eHHI
+         VgtyLZ+618N77gWj0s0OasnuJ4R1SWBRbNKKbtrt7b28S/VL7RGPi9KiyCTTmvXW/Dsx
+         lON+ww0eHVons+hTFYCUsb7xvubANtTw7s1/ujc8H3/W/DT9dzMcHut1q6dQdgXkFxRs
+         BAay2H20OAFPksXKIofVUNAh3Oif3Ab00OXFraljm8m5/UXq4EW3wAWPtg2uuuboMYsN
+         YEGw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4fOiSEcEhM1568ybFDuE7GEoRWmYFTbEtD4SCVa4E7Q=;
-        b=AojRaSe6kbVDg4amyVcNA6ifXDeDu4yWbihOhN4svLgMWf3eUCs0sGJ5sKgC+0oQe3
-         hepFwPYe6ULFvwb3LBwsF6uXUAnh2T9hK/XubqAxIQd9zl1f6OdQNGk55HXXHf4J6v//
-         cLneJU+gp1SLUzL0L5Q1WeTBXmp8nCWWkYrHzBIMBYPhfMoBHYLQE4RTC72RMXxeFx53
-         I44J8it5892iKvaaBVOPIqFz/n+dqvD6+W3WzP50zhMlh+lOOzD5wuIobsKK1th5UaMp
-         RazYRkvO2ViBSkYV4ohg/xu833iPG+1CEAvb7I5XbivlF0ONxyExtQ0ny4Zjap2hmPwA
-         VRVg==
+        bh=kuXLDTiFQuKZZoLjSpzcq4fXr96fu7RHCchhT/pb9tQ=;
+        b=JBdwLGLHaPd7sbdbUripF5wuCuXKz1VSFXU3jxN2nO/KayhZoHNkCEvK+PN2sEBLfr
+         yidfwGh1tE1oUl9B+VFEdB74piaFofA+OF216fle8Fe3KC+ji/NDpn8sqjDEWh0vRr+V
+         W8XkUnvIR/YpS+0U/gIKqezgCj31zSAjOWsb5RLvHHDeI2pds9qYtwrHOIA++PJZ1dN8
+         qEUU+Y/gCA0fyrhj3KLaxbb7Hsb3Kgr4OemjD+/F/pHGb6h5RkedgGWA0swM++hgs/NG
+         1lbKdmFKW8SYFuhhIT45tP76AEZEKo60T28hnQSG+i0lBjYQ7of2ApLixbfLGFFlDcCc
+         5DfA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jisheng Zhang <jszhang@marvell.com>,
-	Peter Chen <peter.chen@nxp.com>,
+	Paul Mackerras <paulus@ozlabs.org>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 065/310] usb: chipidea: properly handle host or gadget initialization failure
-Date: Wed, 11 Apr 2018 20:33:24 +0200
-Message-Id: <20180411183625.058549477@linuxfoundation.org>
+Subject: [PATCH 4.9 035/310] KVM: PPC: Book3S PR: Check copy_to/from_user return values
+Date: Wed, 11 Apr 2018 20:32:54 +0200
+Message-Id: <20180411183623.790127932@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476102299478040?=
-X-GMAIL-MSGID: =?utf-8?q?1597477164810600656?=
+X-GMAIL-THRID: =?utf-8?q?1597476168802820578?=
+X-GMAIL-MSGID: =?utf-8?q?1597477150483099672?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,91 +49,136 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jisheng Zhang <jszhang@marvell.com>
+From: Paul Mackerras <paulus@ozlabs.org>
 
 
-[ Upstream commit c4a0bbbdb7f6e3c37fa6deb3ef28c5ed99da6175 ]
+[ Upstream commit 67325e988faea735d663799b6d152b5f4254093c ]
 
-If ci_hdrc_host_init() or ci_hdrc_gadget_init() returns error and the
-error != -ENXIO, as Peter pointed out, "it stands for initialization
-for host or gadget has failed", so we'd better return failure rather
-continue.
+The PR KVM implementation of the PAPR HPT hypercalls (H_ENTER etc.)
+access an image of the HPT in userspace memory using copy_from_user
+and copy_to_user.  Recently, the declarations of those functions were
+annotated to indicate that the return value must be checked.  Since
+this code doesn't currently check the return value, this causes
+compile warnings like the ones shown below, and since on PPC the
+default is to compile arch/powerpc with -Werror, this causes the
+build to fail.
 
-And before destroying the otg, i.e ci_hdrc_otg_destroy(ci), we should
-also check ci->roles[CI_ROLE_GADGET].
+To fix this, we check the return values, and if non-zero, fail the
+hypercall being processed with a H_FUNCTION error return value.
+There is really no good error return value to use since PAPR didn't
+envisage the possibility that the hypervisor may not be able to access
+the guest's HPT, and H_FUNCTION (function not supported) seems as
+good as any.
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
-Signed-off-by: Peter Chen <peter.chen@nxp.com>
+The typical compile warnings look like this:
+
+  CC      arch/powerpc/kvm/book3s_pr_papr.o
+/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s_pr_papr.c: In function ‘kvmppc_h_pr_enter’:
+/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s_pr_papr.c:53:2: error: ignoring return value of ‘copy_from_user’, declared with attribute warn_unused_result [-Werror=unused-result]
+  copy_from_user(pteg, (void __user *)pteg_addr, sizeof(pteg));
+  ^
+/home/paulus/kernel/kvm/arch/powerpc/kvm/book3s_pr_papr.c:74:2: error: ignoring return value of ‘copy_to_user’, declared with attribute warn_unused_result [-Werror=unused-result]
+  copy_to_user((void __user *)pteg_addr, hpte, HPTE_SIZE);
+  ^
+
+... etc.
+
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/chipidea/core.c |   29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+ arch/powerpc/kvm/book3s_pr_papr.c |   34 ++++++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 8 deletions(-)
 
---- a/drivers/usb/chipidea/core.c
-+++ b/drivers/usb/chipidea/core.c
-@@ -839,7 +839,7 @@ static inline void ci_role_destroy(struc
- {
- 	ci_hdrc_gadget_destroy(ci);
- 	ci_hdrc_host_destroy(ci);
--	if (ci->is_otg)
-+	if (ci->is_otg && ci->roles[CI_ROLE_GADGET])
- 		ci_hdrc_otg_destroy(ci);
- }
+--- a/arch/powerpc/kvm/book3s_pr_papr.c
++++ b/arch/powerpc/kvm/book3s_pr_papr.c
+@@ -50,7 +50,9 @@ static int kvmppc_h_pr_enter(struct kvm_
+ 	pteg_addr = get_pteg_addr(vcpu, pte_index);
  
-@@ -939,27 +939,35 @@ static int ci_hdrc_probe(struct platform
- 	/* initialize role(s) before the interrupt is requested */
- 	if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_HOST) {
- 		ret = ci_hdrc_host_init(ci);
--		if (ret)
--			dev_info(dev, "doesn't support host\n");
-+		if (ret) {
-+			if (ret == -ENXIO)
-+				dev_info(dev, "doesn't support host\n");
-+			else
-+				goto deinit_phy;
-+		}
- 	}
+ 	mutex_lock(&vcpu->kvm->arch.hpt_mutex);
+-	copy_from_user(pteg, (void __user *)pteg_addr, sizeof(pteg));
++	ret = H_FUNCTION;
++	if (copy_from_user(pteg, (void __user *)pteg_addr, sizeof(pteg)))
++		goto done;
+ 	hpte = pteg;
  
- 	if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_PERIPHERAL) {
- 		ret = ci_hdrc_gadget_init(ci);
--		if (ret)
--			dev_info(dev, "doesn't support gadget\n");
-+		if (ret) {
-+			if (ret == -ENXIO)
-+				dev_info(dev, "doesn't support gadget\n");
-+			else
-+				goto deinit_host;
-+		}
- 	}
+ 	ret = H_PTEG_FULL;
+@@ -71,7 +73,9 @@ static int kvmppc_h_pr_enter(struct kvm_
+ 	hpte[0] = cpu_to_be64(kvmppc_get_gpr(vcpu, 6));
+ 	hpte[1] = cpu_to_be64(kvmppc_get_gpr(vcpu, 7));
+ 	pteg_addr += i * HPTE_SIZE;
+-	copy_to_user((void __user *)pteg_addr, hpte, HPTE_SIZE);
++	ret = H_FUNCTION;
++	if (copy_to_user((void __user *)pteg_addr, hpte, HPTE_SIZE))
++		goto done;
+ 	kvmppc_set_gpr(vcpu, 4, pte_index | i);
+ 	ret = H_SUCCESS;
  
- 	if (!ci->roles[CI_ROLE_HOST] && !ci->roles[CI_ROLE_GADGET]) {
- 		dev_err(dev, "no supported roles\n");
- 		ret = -ENODEV;
--		goto deinit_phy;
-+		goto deinit_gadget;
- 	}
+@@ -93,7 +97,9 @@ static int kvmppc_h_pr_remove(struct kvm
  
- 	if (ci->is_otg && ci->roles[CI_ROLE_GADGET]) {
- 		ret = ci_hdrc_otg_init(ci);
- 		if (ret) {
- 			dev_err(dev, "init otg fails, ret = %d\n", ret);
--			goto stop;
-+			goto deinit_gadget;
+ 	pteg = get_pteg_addr(vcpu, pte_index);
+ 	mutex_lock(&vcpu->kvm->arch.hpt_mutex);
+-	copy_from_user(pte, (void __user *)pteg, sizeof(pte));
++	ret = H_FUNCTION;
++	if (copy_from_user(pte, (void __user *)pteg, sizeof(pte)))
++		goto done;
+ 	pte[0] = be64_to_cpu((__force __be64)pte[0]);
+ 	pte[1] = be64_to_cpu((__force __be64)pte[1]);
+ 
+@@ -103,7 +109,9 @@ static int kvmppc_h_pr_remove(struct kvm
+ 	    ((flags & H_ANDCOND) && (pte[0] & avpn) != 0))
+ 		goto done;
+ 
+-	copy_to_user((void __user *)pteg, &v, sizeof(v));
++	ret = H_FUNCTION;
++	if (copy_to_user((void __user *)pteg, &v, sizeof(v)))
++		goto done;
+ 
+ 	rb = compute_tlbie_rb(pte[0], pte[1], pte_index);
+ 	vcpu->arch.mmu.tlbie(vcpu, rb, rb & 1 ? true : false);
+@@ -171,7 +179,10 @@ static int kvmppc_h_pr_bulk_remove(struc
  		}
- 	}
  
-@@ -1024,7 +1032,12 @@ static int ci_hdrc_probe(struct platform
+ 		pteg = get_pteg_addr(vcpu, tsh & H_BULK_REMOVE_PTEX);
+-		copy_from_user(pte, (void __user *)pteg, sizeof(pte));
++		if (copy_from_user(pte, (void __user *)pteg, sizeof(pte))) {
++			ret = H_FUNCTION;
++			break;
++		}
+ 		pte[0] = be64_to_cpu((__force __be64)pte[0]);
+ 		pte[1] = be64_to_cpu((__force __be64)pte[1]);
  
- 	ci_extcon_unregister(ci);
- stop:
--	ci_role_destroy(ci);
-+	if (ci->is_otg && ci->roles[CI_ROLE_GADGET])
-+		ci_hdrc_otg_destroy(ci);
-+deinit_gadget:
-+	ci_hdrc_gadget_destroy(ci);
-+deinit_host:
-+	ci_hdrc_host_destroy(ci);
- deinit_phy:
- 	ci_usb_phy_exit(ci);
+@@ -184,7 +195,10 @@ static int kvmppc_h_pr_bulk_remove(struc
+ 			tsh |= H_BULK_REMOVE_NOT_FOUND;
+ 		} else {
+ 			/* Splat the pteg in (userland) hpt */
+-			copy_to_user((void __user *)pteg, &v, sizeof(v));
++			if (copy_to_user((void __user *)pteg, &v, sizeof(v))) {
++				ret = H_FUNCTION;
++				break;
++			}
  
+ 			rb = compute_tlbie_rb(pte[0], pte[1],
+ 					      tsh & H_BULK_REMOVE_PTEX);
+@@ -211,7 +225,9 @@ static int kvmppc_h_pr_protect(struct kv
+ 
+ 	pteg = get_pteg_addr(vcpu, pte_index);
+ 	mutex_lock(&vcpu->kvm->arch.hpt_mutex);
+-	copy_from_user(pte, (void __user *)pteg, sizeof(pte));
++	ret = H_FUNCTION;
++	if (copy_from_user(pte, (void __user *)pteg, sizeof(pte)))
++		goto done;
+ 	pte[0] = be64_to_cpu((__force __be64)pte[0]);
+ 	pte[1] = be64_to_cpu((__force __be64)pte[1]);
+ 
+@@ -234,7 +250,9 @@ static int kvmppc_h_pr_protect(struct kv
+ 	vcpu->arch.mmu.tlbie(vcpu, rb, rb & 1 ? true : false);
+ 	pte[0] = (__force u64)cpu_to_be64(pte[0]);
+ 	pte[1] = (__force u64)cpu_to_be64(pte[1]);
+-	copy_to_user((void __user *)pteg, pte, sizeof(pte));
++	ret = H_FUNCTION;
++	if (copy_to_user((void __user *)pteg, pte, sizeof(pte)))
++		goto done;
+ 	ret = H_SUCCESS;
+ 
+  done:
