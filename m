@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3308147-1523479596-2-16724922998755222974
+X-Cyrus-Session-Id: sloti22d1t05-3303684-1523479585-2-1434667662144018260
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523479596; b=km8208tdlnF+Se+x6pfthBXv1R5dQUwAhprC2YE6Q/HhsaihYW
-    WYkQLoiAAr/TDE96C0NYGytM1AjvU+JpMuSijs435bLIG7bS/87waHGvFx2fnbnG
-    U2dqIh3QSZ1Py9kltY43asj8az5XjFO0bTnS5ZcztEc+8TfZbjGaf1bThQOCi3pV
-    DY+AKixPZW+fEuqMNmwlIcIrr19jRJV8jthOdSERXNt4gUijPpwKdqhWO99ROzXU
-    BR83iBmzCOuk06irEytGOVkJ0JN8d75+mAY1mDlMlCl0pXPU01X+RvUgB+F/FYOd
-    xqs+s14WxgBtWHKiGTQ4QyBKOBYSX1ZLS9Qw==
+    1523479584; b=FSrqLRLRVlLBs47gBolR9gOHLn3YOAfGZ7FkBEtKhnHOfnNSR1
+    eNPALc/xogqu3z5pdGOWUmlxtWOUeHHDgzSy9xDKQx9pLXAn0P2P0TRnBJd7ki3b
+    wfayHhc7b5PkgwFqrRIqd6l9yz4Wx+Uph1TaUZf3WyXGGwuc+Fa3Fks3y3nU4a5X
+    di5yrIfdCe/ZfWOl2IX5ai/xy4Yhm+NrxCv5l0vKU2IZBtVUIDs/RE0/YtlSRKMD
+    AmqvroQeBLbL9DsY1Bz+D156aoPgehqZB/A2yWJk+K2ttwbHw0EUGdrt6/INiqBe
+    sRl9BdCFzB8VX0U0h0J6lLUn51aeU/OnnZrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523479596; bh=C5YTH3QDuKJN5ejYIGLUQkZWKM/x4V
-    f+0spy8Q38eVs=; b=elys0zJvFzpzTrBwpyDQOsYcxrUDuG08ba9cERrw1DQVso
-    IaT99RvYJJppB3ly5MDiCYdzpI6R1tQNt1f6ctv+rFFO1TD55Htrzjoouotcfz0w
-    TKsbSkCB4cxjmvbjDfcHkr6Dq5dOWiqkz6gd6lJhPW/9dz1qKIo7MAWB+Sv6Vs0o
-    PDdaaS/oVkxUGMLR1YU22Z4CLvS+5CJfNWK0q/n+vtefLW9EJcXlRZASBYNxS6uj
-    S4aTgKmC3769sP/MINTzTfmQLQAZ+6d51uOFxG9mCtv2WiKYeZXWRSdE9kNLrxB8
-    MTLlqjO8wgmzJAITv6HyczbH0iTlzTXnpkoZ0FnA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523479584; bh=DMjpnfKsSB6hJVu2Bu+7Rdmn36YzCr
+    cPPWsXGA2XNE4=; b=TRDmS/xq4ZFGXj+C+BTxjcURUe0vGR6n5MrMn6hN50Bc91
+    N9DTuKip54v4wE/Kon2AgRsRHkRbMa+8sfT1F1mA/MBepZd7O71weiTd1nudRi6b
+    ywobifPuCp5hCioJtt4NQEitw6a4i30jQXlt4GBI3yOqAaIIJW1xxIUo3L06sX/g
+    dpituQAC6wwY+Epgmd816sFzqGXnl4cMGzhOiovy3QLW8gspIniom9CpgbgChLlw
+    O7stCyiYL6QO5TCKJhaOiX2MqrmYJuRQVxOBH6oQlTibhrgBYsw4qhmxD1o+/LL5
+    RD4+ILpIkxbTpbM4ONbI+Qz99JezC0GapIaM2JKA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,31 +51,36 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCKjrqXfGm+T64x0hgL7CbdX3VqMp0Ufq8+HmEbvl/y3/G4FcGbvRsG5ZEidG7QZ4rPflzkXzufZBD5g6BV1q1AwWQ7FAW2ue1mXNd4yQzYUo+8D7E3g
-    xjvsET1A4NlAe1VLT3vJwwY/VdalSPaYqhRev1ID0776lfnGks3qWxTePTwVCukrrlU5Kbnmi3OcIiePy+c0tzIw2sGygydQbN9eewGPwiNFhgvgJQxnlkd3
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfNZ9eSiOCHa2xwsJ8NJWUiJA0x2+Kof/agM/ZmunlT+pNlAGMB2W9DO+zjN82DcqASHyblTnWSPWmFpNcH9gQ/1xHpvyUrS8Cx3HM+ZhmjUPiCtZwPPH
+    SrN1C8veMnmobNdMdHeQy2qN/vCWAljY3DeJITfmyoMuyyvNe7F0ejkYQoEJeOljhaN3JXwWthTKc4/EXnOBzbBNN8vfj5iWrEN2UOleMJT6nfIiVAeq4e5G
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=Iz6zksb9AAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=zU4_mlDSkNBmhn4WFdkA:9 a=QEXdDO2ut3YA:10 a=XZ76h3Q-ufMXbfGU90Ko:22
+    a=1XWaLZrsAAAA:8 a=buCa4L3iAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
+    a=ag1SF4gXAAAA:8 a=_5g8oyc6Hk8A3yuXiVAA:9 a=XQ05QUOBKMVDWQT4:21
+    a=5y6qJeGN1XDxJ6y5:21 a=QEXdDO2ut3YA:10 a=IMuoOq4hwIHYq4UcDgsZ:22
     a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756099AbeDKUqV (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 16:46:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59048 "EHLO
+        id S1755759AbeDKSqo (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:46:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59020 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755758AbeDKSqo (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:46:44 -0400
+        with ESMTP id S1755740AbeDKSqm (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:46:42 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Kapl <roman.kapl@sysgo.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Paul Fiterau Brostean <p.fiterau-brostean@science.ru.nl>,
+        Neal Cardwell <ncardwell@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 076/190] net: move somaxconn init from sysctl code
-Date: Wed, 11 Apr 2018 20:35:22 +0200
-Message-Id: <20180411183554.904984841@linuxfoundation.org>
+Subject: [PATCH 4.4 075/190] tcp: better validation of received ack sequences
+Date: Wed, 11 Apr 2018 20:35:21 +0200
+Message-Id: <20180411183554.811361884@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -93,67 +98,138 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Roman Kapl <roman.kapl@sysgo.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 7c3f1875c66fbc19762760097cabc91849ea0bbb ]
+[ Upstream commit d0e1a1b5a833b625c93d3d49847609350ebd79db ]
 
-The default value for somaxconn is set in sysctl_core_net_init(), but this
-function is not called when kernel is configured without CONFIG_SYSCTL.
+Paul Fiterau Brostean reported :
 
-This results in the kernel not being able to accept TCP connections,
-because the backlog has zero size. Usually, the user ends up with:
-"TCP: request_sock_TCP: Possible SYN flooding on port 7. Dropping request.  Check SNMP counters."
-If SYN cookies are not enabled the connection is rejected.
+<quote>
+Linux TCP stack we analyze exhibits behavior that seems odd to me.
+The scenario is as follows (all packets have empty payloads, no window
+scaling, rcv/snd window size should not be a factor):
 
-Before ef547f2ac16 (tcp: remove max_qlen_log), the effects were less
-severe, because the backlog was always at least eight slots long.
+       TEST HARNESS (CLIENT)                        LINUX SERVER
 
-Signed-off-by: Roman Kapl <roman.kapl@sysgo.com>
+   1.  -                                          LISTEN (server listen,
+then accepts)
+
+   2.  - --> <SEQ=100><CTL=SYN>               --> SYN-RECEIVED
+
+   3.  - <-- <SEQ=300><ACK=101><CTL=SYN,ACK>  <-- SYN-RECEIVED
+
+   4.  - --> <SEQ=101><ACK=301><CTL=ACK>      --> ESTABLISHED
+
+   5.  - <-- <SEQ=301><ACK=101><CTL=FIN,ACK>  <-- FIN WAIT-1 (server
+opts to close the data connection calling "close" on the connection
+socket)
+
+   6.  - --> <SEQ=101><ACK=99999><CTL=FIN,ACK> --> CLOSING (client sends
+FIN,ACK with not yet sent acknowledgement number)
+
+   7.  - <-- <SEQ=302><ACK=102><CTL=ACK>      <-- CLOSING (ACK is 102
+instead of 101, why?)
+
+... (silence from CLIENT)
+
+   8.  - <-- <SEQ=301><ACK=102><CTL=FIN,ACK>  <-- CLOSING
+(retransmission, again ACK is 102)
+
+Now, note that packet 6 while having the expected sequence number,
+acknowledges something that wasn't sent by the server. So I would
+expect
+the packet to maybe prompt an ACK response from the server, and then be
+ignored. Yet it is not ignored and actually leads to an increase of the
+acknowledgement number in the server's retransmission of the FIN,ACK
+packet. The explanation I found is that the FIN  in packet 6 was
+processed, despite the acknowledgement number being unacceptable.
+Further experiments indeed show that the server processes this FIN,
+transitioning to CLOSING, then on receiving an ACK for the FIN it had
+send in packet 5, the server (or better said connection) transitions
+from CLOSING to TIME_WAIT (as signaled by netstat).
+
+</quote>
+
+Indeed, tcp_rcv_state_process() calls tcp_ack() but
+does not exploit the @acceptable status but for TCP_SYN_RECV
+state.
+
+What we want here is to send a challenge ACK, if not in TCP_SYN_RECV
+state. TCP_FIN_WAIT1 state is not the only state we should fix.
+
+Add a FLAG_NO_CHALLENGE_ACK so that tcp_rcv_state_process()
+can choose to send a challenge ACK and discard the packet instead
+of wrongly change socket state.
+
+With help from Neal Cardwell.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Paul Fiterau Brostean <p.fiterau-brostean@science.ru.nl>
+Cc: Neal Cardwell <ncardwell@google.com>
+Cc: Yuchung Cheng <ycheng@google.com>
+Cc: Soheil Hassas Yeganeh <soheil@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/net_namespace.c   |   19 +++++++++++++++++++
- net/core/sysctl_net_core.c |    2 --
- 2 files changed, 19 insertions(+), 2 deletions(-)
+ net/ipv4/tcp_input.c |   24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
---- a/net/core/net_namespace.c
-+++ b/net/core/net_namespace.c
-@@ -310,6 +310,25 @@ out_undo:
- 	goto out;
- }
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -117,6 +117,7 @@ int sysctl_tcp_invalid_ratelimit __read_
+ #define FLAG_DSACKING_ACK	0x800 /* SACK blocks contained D-SACK info */
+ #define FLAG_SACK_RENEGING	0x2000 /* snd_una advanced to a sacked seq */
+ #define FLAG_UPDATE_TS_RECENT	0x4000 /* tcp_replace_ts_recent() */
++#define FLAG_NO_CHALLENGE_ACK	0x8000 /* do not call tcp_send_challenge_ack()	*/
  
-+static int __net_init net_defaults_init_net(struct net *net)
-+{
-+	net->core.sysctl_somaxconn = SOMAXCONN;
-+	return 0;
-+}
-+
-+static struct pernet_operations net_defaults_ops = {
-+	.init = net_defaults_init_net,
-+};
-+
-+static __init int net_defaults_init(void)
-+{
-+	if (register_pernet_subsys(&net_defaults_ops))
-+		panic("Cannot initialize net default settings");
-+
-+	return 0;
-+}
-+
-+core_initcall(net_defaults_init);
+ #define FLAG_ACKED		(FLAG_DATA_ACKED|FLAG_SYN_ACKED)
+ #define FLAG_NOT_DUP		(FLAG_DATA|FLAG_WIN_UPDATE|FLAG_ACKED)
+@@ -3543,7 +3544,8 @@ static int tcp_ack(struct sock *sk, cons
+ 	if (before(ack, prior_snd_una)) {
+ 		/* RFC 5961 5.2 [Blind Data Injection Attack].[Mitigation] */
+ 		if (before(ack, prior_snd_una - tp->max_window)) {
+-			tcp_send_challenge_ack(sk, skb);
++			if (!(flag & FLAG_NO_CHALLENGE_ACK))
++				tcp_send_challenge_ack(sk, skb);
+ 			return -1;
+ 		}
+ 		goto old_ack;
+@@ -5832,13 +5834,17 @@ int tcp_rcv_state_process(struct sock *s
  
- #ifdef CONFIG_NET_NS
- static struct kmem_cache *net_cachep;
---- a/net/core/sysctl_net_core.c
-+++ b/net/core/sysctl_net_core.c
-@@ -429,8 +429,6 @@ static __net_init int sysctl_core_net_in
- {
- 	struct ctl_table *tbl;
+ 	/* step 5: check the ACK field */
+ 	acceptable = tcp_ack(sk, skb, FLAG_SLOWPATH |
+-				      FLAG_UPDATE_TS_RECENT) > 0;
++				      FLAG_UPDATE_TS_RECENT |
++				      FLAG_NO_CHALLENGE_ACK) > 0;
  
--	net->core.sysctl_somaxconn = SOMAXCONN;
++	if (!acceptable) {
++		if (sk->sk_state == TCP_SYN_RECV)
++			return 1;	/* send one RST */
++		tcp_send_challenge_ack(sk, skb);
++		goto discard;
++	}
+ 	switch (sk->sk_state) {
+ 	case TCP_SYN_RECV:
+-		if (!acceptable)
+-			return 1;
 -
- 	tbl = netns_core_table;
- 	if (!net_eq(net, &init_net)) {
- 		tbl = kmemdup(tbl, sizeof(netns_core_table), GFP_KERNEL);
+ 		if (!tp->srtt_us)
+ 			tcp_synack_rtt_meas(sk, req);
+ 
+@@ -5907,14 +5913,6 @@ int tcp_rcv_state_process(struct sock *s
+ 		 * our SYNACK so stop the SYNACK timer.
+ 		 */
+ 		if (req) {
+-			/* Return RST if ack_seq is invalid.
+-			 * Note that RFC793 only says to generate a
+-			 * DUPACK for it but for TCP Fast Open it seems
+-			 * better to treat this case like TCP_SYN_RECV
+-			 * above.
+-			 */
+-			if (!acceptable)
+-				return 1;
+ 			/* We no longer need the request sock. */
+ 			reqsk_fastopen_remove(sk, req, false);
+ 			tcp_rearm_rto(sk);
