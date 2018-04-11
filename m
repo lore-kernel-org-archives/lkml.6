@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/6f51EdCgQbPz1tm/ZT+ktNYSwMSQSEV6nDHq/tvy1pMOOKEtAJMWx6g/yJxzs3cgWl6FH
-ARC-Seal: i=1; a=rsa-sha256; t=1523472167; cv=none;
+X-Google-Smtp-Source: AIpwx49jBWjvny3/iO68dWWIjvQRcH/ZRXYdQ/mnRDQrPjM+p+nHQkcHSvemjozKPaTI4It/PlD4
+ARC-Seal: i=1; a=rsa-sha256; t=1523472164; cv=none;
         d=google.com; s=arc-20160816;
-        b=E+xR3L8he3Tdd5FIJjzO1TrdVD5CMdt0HjM4p8IOYQZbz+eP81FkPDY18hjVGuNdHY
-         Me8SIOtaiJXsDSSOabl+5uvX5Pg9Cq5nsNhzBYGOfSz5bLxK1hfN5sq1qbsgTP6WLZlO
-         6DgMxsVYTiMkR84Ysk5wcH5fEMaB4S84ooB+9bYLmjw61zg3Lnp60ALbX65BuEKWCDRF
-         tRt+PLIsjNqnecgxctiyA2ELjZ4OFNQOffZZVkDFL7m3vQ52L6wFcrtYufYXanN2ZSy+
-         pbyxvOJlPJAAKO7Ede1EI039iWB81EOzY3OPKXUYDrsabs4z1c36wHGnjFogN3K7QxjK
-         IE4g==
+        b=MojevHrVEKdffwanoOUc98Fsj8uCbDsb9GU7n1wjDN4cYlXOUICs+jt2EBWMeT16HT
+         Q4YtiB6HlCY+STXd5NYtKs2Hqs+scAN3CJZm0PVyW43yrIn+4KODDY7dICRk83Lin7/c
+         8efe2Pr8LZPUnlKcS7m+CSPmNeIRk/3QvqMJ6FvywC2ubftI+a0dXj9tYxF1hwtM13uS
+         fIYpOzyKSk7VKJcrHZTrWvAGsFBB8rkOr+6k2bKYLAuDkBTtcjaCa1wtoOlzesC1gIG+
+         DMT8rJ9WgOki9Wk9T6T10tMkH7M7jldg3Ud49n4uYxGZmzAaA2Y9yX6frQhC4DArTckg
+         vJgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=D55hYu0WemIZqybuoB0Uhwv9Js4lUueKy/MGRyX5YiM=;
-        b=ofSo1jKjyAKKfuV029nLHkfA+xwuRtv507H8Ycl7e0OJQAjBoRGbK6Fwd6d3MOtgZp
-         ut5hbHqxJpKHigj4E2ljUtfQNkWmasSPKaWaVbJyb/AZk4vckQDCClV1tQ9SJXyZKzz1
-         9iqhYeTDM2kS9+s9WcWLFrA6fzL1Q3WqxJdy7hk5ArY4kp1tnXLBOMbViGxrw2+k30GZ
-         OmV+iq3IrjYKGLOStXiMDcPZh7R2Hl+qpFGAThMjox7/2Bf31CbtVCpQLpTvkGSl0JkV
-         pFc5pMikarXQwb02IkM8P8aOOxix90SzwmOwTpUbL+P2kUk+33hVqwNsPrHNTUXkX15W
-         vo0A==
+        bh=nCe/ffSXOTqgi5M/0VLMpfkH6x3klbbLedCsrGhV1R0=;
+        b=fSfcgXpqC2Jt+r3DldQsW2AewBltAxTubVslU+XlVQrUTdDKfuK40/h2w5dgtx7l7F
+         vTPvPqc+8wjXbqFio0RkjonQgFf3aAAI/hwfcfgX2pzsI9Ye80skIKJ4EapAA22JZ/nC
+         roYriZq+fYYl5VqqobtlUpiGWSFpSyzuEDcwLKjoDKq7E5izmJoappG1vzCUTtZpl+VM
+         +pz3pN7QfKl5U06bz4WbaqWr11c/VdNRbHWePXbyi7SP91oFNC76Z01A0QN5GEfbuYz+
+         0oGD6xj+pKFFizrMDPWlQLaw4B1YN6TCSjYAB/tTEuOLNkXEzKSJYV++uXXYcjlwUeDP
+         KQiw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Beniamino Galvani <bgalvani@redhat.com>,
 	Xin Long <lucien.xin@gmail.com>,
+	Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
 	Andy Gospodarek <andy@greyhouse.net>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 111/121] bonding: move dev_mc_sync after master_upper_dev_link in bond_enslave
-Date: Wed, 11 Apr 2018 20:36:54 +0200
-Message-Id: <20180411183503.664646918@linuxfoundation.org>
+Subject: [PATCH 3.18 110/121] bonding: fix the err path for dev hwaddr sync in bond_enslave
+Date: Wed, 11 Apr 2018 20:36:53 +0200
+Message-Id: <20180411183503.603121371@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476351920176083?=
-X-GMAIL-MSGID: =?utf-8?q?1597476351920176083?=
+X-GMAIL-THRID: =?utf-8?q?1597476349058540941?=
+X-GMAIL-MSGID: =?utf-8?q?1597476349058540941?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,160 +54,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Xin Long <lucien.xin@gmail.com>
 
 
-[ Upstream commit ae42cc62a9f07f1f6979054ed92606b9c30f4a2e ]
+[ Upstream commit 5c78f6bfae2b10ff70e21d343e64584ea6280c26 ]
 
-Beniamino found a crash when adding vlan as slave of bond which is also
-the parent link:
+vlan_vids_add_by_dev is called right after dev hwaddr sync, so on
+the err path it should unsync dev hwaddr. Otherwise, the slave
+dev's hwaddr will never be unsync when this err happens.
 
-  ip link add bond1 type bond
-  ip link set bond1 up
-  ip link add link bond1 vlan1 type vlan id 80
-  ip link set vlan1 master bond1
-
-The call trace is as below:
-
-  [<ffffffffa850842a>] queued_spin_lock_slowpath+0xb/0xf
-  [<ffffffffa8515680>] _raw_spin_lock+0x20/0x30
-  [<ffffffffa83f6f07>] dev_mc_sync+0x37/0x80
-  [<ffffffffc08687dc>] vlan_dev_set_rx_mode+0x1c/0x30 [8021q]
-  [<ffffffffa83efd2a>] __dev_set_rx_mode+0x5a/0xa0
-  [<ffffffffa83f7138>] dev_mc_sync_multiple+0x78/0x80
-  [<ffffffffc084127c>] bond_enslave+0x67c/0x1190 [bonding]
-  [<ffffffffa8401909>] do_setlink+0x9c9/0xe50
-  [<ffffffffa8403bf2>] rtnl_newlink+0x522/0x880
-  [<ffffffffa8403ff7>] rtnetlink_rcv_msg+0xa7/0x260
-  [<ffffffffa8424ecb>] netlink_rcv_skb+0xab/0xc0
-  [<ffffffffa83fe498>] rtnetlink_rcv+0x28/0x30
-  [<ffffffffa8424850>] netlink_unicast+0x170/0x210
-  [<ffffffffa8424bf8>] netlink_sendmsg+0x308/0x420
-  [<ffffffffa83cc396>] sock_sendmsg+0xb6/0xf0
-
-This is actually a dead lock caused by sync slave hwaddr from master when
-the master is the slave's 'slave'. This dead loop check is actually done
-by netdev_master_upper_dev_link. However, Commit 1f718f0f4f97 ("bonding:
-populate neighbour's private on enslave") moved it after dev_mc_sync.
-
-This patch is to fix it by moving dev_mc_sync after master_upper_dev_link,
-so that this loop check would be earlier than dev_mc_sync. It also moves
-if (mode == BOND_MODE_8023AD) into if (!bond_uses_primary) clause as an
-improvement.
-
-Note team driver also has this issue, I will fix it in another patch.
-
-Fixes: 1f718f0f4f97 ("bonding: populate neighbour's private on enslave")
-Reported-by: Beniamino Galvani <bgalvani@redhat.com>
+Fixes: 1ff412ad7714 ("bonding: change the bond's vlan syncing functions with the standard ones")
 Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Reviewed-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 Acked-by: Andy Gospodarek <andy@greyhouse.net>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_main.c |   73 +++++++++++++++++++---------------------
- 1 file changed, 35 insertions(+), 38 deletions(-)
+ drivers/net/bonding/bond_main.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 --- a/drivers/net/bonding/bond_main.c
 +++ b/drivers/net/bonding/bond_main.c
-@@ -1384,44 +1384,11 @@ int bond_enslave(struct net_device *bond
- 			goto err_close;
- 	}
- 
--	/* If the mode uses primary, then the following is handled by
--	 * bond_change_active_slave().
--	 */
--	if (!bond_uses_primary(bond)) {
--		/* set promiscuity level to new slave */
--		if (bond_dev->flags & IFF_PROMISC) {
--			res = dev_set_promiscuity(slave_dev, 1);
--			if (res)
--				goto err_close;
--		}
--
--		/* set allmulti level to new slave */
--		if (bond_dev->flags & IFF_ALLMULTI) {
--			res = dev_set_allmulti(slave_dev, 1);
--			if (res)
--				goto err_close;
--		}
--
--		netif_addr_lock_bh(bond_dev);
--
--		dev_mc_sync_multiple(slave_dev, bond_dev);
--		dev_uc_sync_multiple(slave_dev, bond_dev);
--
--		netif_addr_unlock_bh(bond_dev);
--	}
--
--	if (BOND_MODE(bond) == BOND_MODE_8023AD) {
--		/* add lacpdu mc addr to mc list */
--		u8 lacpdu_multicast[ETH_ALEN] = MULTICAST_LACPDU_ADDR;
--
--		dev_mc_add(slave_dev, lacpdu_multicast);
--	}
--
- 	res = vlan_vids_add_by_dev(slave_dev, bond_dev);
+@@ -1421,7 +1421,7 @@ int bond_enslave(struct net_device *bond
  	if (res) {
  		netdev_err(bond_dev, "Couldn't add bond vlan ids to %s\n",
  			   slave_dev->name);
--		goto err_hwaddr_unsync;
-+		goto err_close;
+-		goto err_close;
++		goto err_hwaddr_unsync;
  	}
  
  	prev_slave = bond_last_slave(bond);
-@@ -1567,6 +1534,37 @@ int bond_enslave(struct net_device *bond
- 		goto err_upper_unlink;
- 	}
+@@ -1596,9 +1596,6 @@ err_unregister:
+ 	netdev_rx_handler_unregister(slave_dev);
  
-+	/* If the mode uses primary, then the following is handled by
-+	 * bond_change_active_slave().
-+	 */
-+	if (!bond_uses_primary(bond)) {
-+		/* set promiscuity level to new slave */
-+		if (bond_dev->flags & IFF_PROMISC) {
-+			res = dev_set_promiscuity(slave_dev, 1);
-+			if (res)
-+				goto err_sysfs_del;
-+		}
-+
-+		/* set allmulti level to new slave */
-+		if (bond_dev->flags & IFF_ALLMULTI) {
-+			res = dev_set_allmulti(slave_dev, 1);
-+			if (res)
-+				goto err_sysfs_del;
-+		}
-+
-+		netif_addr_lock_bh(bond_dev);
-+		dev_mc_sync_multiple(slave_dev, bond_dev);
-+		dev_uc_sync_multiple(slave_dev, bond_dev);
-+		netif_addr_unlock_bh(bond_dev);
-+
-+		if (BOND_MODE(bond) == BOND_MODE_8023AD) {
-+			/* add lacpdu mc addr to mc list */
-+			u8 lacpdu_multicast[ETH_ALEN] = MULTICAST_LACPDU_ADDR;
-+
-+			dev_mc_add(slave_dev, lacpdu_multicast);
-+		}
-+	}
-+
- 	bond->slave_cnt++;
- 	bond_compute_features(bond);
- 	bond_set_carrier(bond);
-@@ -1589,6 +1587,9 @@ int bond_enslave(struct net_device *bond
- 	return 0;
- 
- /* Undo stages on error */
-+err_sysfs_del:
-+	bond_sysfs_slave_del(new_slave);
-+
- err_upper_unlink:
- 	bond_upper_dev_unlink(bond_dev, slave_dev);
- 
-@@ -1609,10 +1610,6 @@ err_detach:
- 	synchronize_rcu();
- 	slave_disable_netpoll(new_slave);
- 
--err_hwaddr_unsync:
+ err_detach:
 -	if (!bond_uses_primary(bond))
 -		bond_hw_addr_flush(bond_dev, slave_dev);
 -
+ 	vlan_vids_del_by_dev(slave_dev, bond_dev);
+ 	if (rcu_access_pointer(bond->primary_slave) == new_slave)
+ 		RCU_INIT_POINTER(bond->primary_slave, NULL);
+@@ -1612,6 +1609,10 @@ err_detach:
+ 	synchronize_rcu();
+ 	slave_disable_netpoll(new_slave);
+ 
++err_hwaddr_unsync:
++	if (!bond_uses_primary(bond))
++		bond_hw_addr_flush(bond_dev, slave_dev);
++
  err_close:
  	slave_dev->priv_flags &= ~IFF_BONDING;
  	dev_close(slave_dev);
