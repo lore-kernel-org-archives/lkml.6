@@ -1,80 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3124918-1523472669-2-10030016774144926304
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523472668; b=hUlLTrL7Wt2karkKeU9eh71Y4wyCfllG7CXyi9uC2Qavpb/3sm
-    CRVj2GhJszeXmfGc3MvrHbguSw0tYRZarKEaji+DKBLOucC4Kxf1tYnELw/nImDq
-    /lws7AS6GsLtmjK70qApN/+bthjLhmHncxUHKJ0TX/to1j0Ymak0MQ0T5PS6Xg4m
-    t3NYwa53iTh1VxoS5urKZTrPQHnwMlDfP7r/bHyMjECIf8dbWkbEPZgyEpg51E78
-    /yCL2vhYxbip2lh3Tvgji6VTbHOV/QNVq8PwisqyzRMiuED6SuNA63+SR9pPsJ+K
-    Ad1D+vCLgwmXqoQkXz530doezAp1VYimNOdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523472668; bh=rDBO24/xLQH8SkQCnQzIuPYgm7IMAB
-    d07V5of9GokJI=; b=YbuMGOewLVoYdU4m4JJ8k7cv/mjQyYUZmkR8maGHHNqUNa
-    nYHcpCwBl4zdQEukYGDo3nukHZSJqeZHHVlalAIWVX9xzp4FTVTXOFCsqjPjLBxz
-    d5qFOAvQjEs0va7ky0Oz9XlUCacAXjUM9caYRlXxgx7vYpKXvYNQKAOctazOWl7o
-    XNyqyKbjtSY9W+XgFSr3Fd+EDgKQREEMTnDRwQeZ5H5mg0BQ5mJ5yzz3zLjELfg3
-    JdeyQpFD/40I55wBnR6ekEtw9bgDjYtQG4JYXSj0F+1QRD/8cEk0W93ixIig8iqq
-    NwBNIjX5XkLzhQzQOsXWpeKoDhW6BNj8fUQptwBQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMKUsTUg+nBw1n11G0O6BTusMjzsjskDQdwCrPKoq22viHDuAqfzxzDodnea49imb8gdCjNPjaiD201976acWjS/H8J1sh2vMRCWt9EAocpo7/0REQJV
-    cX2kItX5N4wuoggLpT/DqfWKm7ip0CQlf4RzLsfhZ9jXZpY0yvpZjEbXCsjADQl+4U9Z8jMl+FvN4Vw05upO90+KWYLRQUVi4YRcw+tbLMLKKfQv+dVvG1+9
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=iox4zFpeAAAA:8 a=1XWaLZrsAAAA:8 a=ag1SF4gXAAAA:8 a=hyPygXLTy0dZ2T04cMcA:9
-    a=QEXdDO2ut3YA:10 a=WzC6qhA0u3u7Ye7llzcV:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932363AbeDKSvE (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:51:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32904 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932776AbeDKSvC (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:51:02 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx480dwcYJBLU7DuYOlr5SE+cRZzt8D297fNgq6KPRDE0ulXftk3A7az0r2ExNX1t1lPHLswe
+ARC-Seal: i=1; a=rsa-sha256; t=1523472668; cv=none;
+        d=google.com; s=arc-20160816;
+        b=mT5gr3dAmfsOo5uTXIYlF16czVMaWnAeIF7XaxCHU0mrs7sePVljHCDPHEyuRiSArP
+         kPwOb694OYWStd9FGcDNdEUCxR+QRXySMIYA9O7lwXW0SYmlcwUSk71iUT/7XgZVmcu6
+         qvscVcxmIABtNAIPLFwFtAxPoA/whKJAYSIv7uVdRh1Yl7emCWL1ypFdeEg7JMfcHjPM
+         ajKIj5BZN3wHWUk+qHUZxgH818ss7WJWOdC0yZNuZm8zx9boZd6HtJ7KF/2+Vrnhj6HW
+         FEGgh8MadHj0KWyJ9AiQaNbv5wz8Ba/4BoVCxVqqUitB/v1mw5H2G47nSUAAQ9+Ed96k
+         nLYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=xGvUeP7aY/QF1gZyvZndSZg1Q7PbkwDE7BoNWYRbYcE=;
+        b=FGFP1ljONyAZYU3KkBkt7hAWyEEj0laHGZgtqYIINwpuVzvLq8D3IDg6uxjrAnXfWL
+         F6LHrYO2sKe9RIVbqVl+3U97sVRzf5CcbjP5GmJVOjQ83jRDrGQo1Rqa5ztUe6q/eMte
+         Ms1w3ifb7jxu27QVhrUZf0Ezry8sUR7enJE8FVgbfAwxJDlfZb4FFgyEJywsbTSZL8kG
+         3XHTfFbQ/6mz83NI31eWxnyTQBSclP7GSTLLEbEURibWuLrG78fIID+4JEYQRtWFgYbY
+         C/fkmQPZJfYNCVzbADgWUMnaStLkdmnCxCdN8qqc6+CumLVAhfoJNoM19BXYDnWUv6xH
+         XFdQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Michal Marek <mmarek@suse.com>,
-        Matthias Kaehlcke <mka@google.com>
-Subject: [PATCH 4.4 165/190] Kbuild: provide a __UNIQUE_ID for clang
-Date: Wed, 11 Apr 2018 20:36:51 +0200
-Message-Id: <20180411183602.163940151@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Pravin B Shelar <pshelar@ovn.org>,
+	"Reported-by: syzbot" <syzkaller@googlegroups.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 167/190] net: fix possible out-of-bound read in skb_network_protocol()
+Date: Wed, 11 Apr 2018 20:36:53 +0200
+Message-Id: <20180411183602.270099117@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -82,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1597476325859430783?=
+X-GMAIL-MSGID: =?utf-8?q?1597476876831290466?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -92,36 +51,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Eric Dumazet <edumazet@google.com>
 
-commit b41c29b0527c7fd6a95d0f71274abb79933bf960 upstream.
 
-The default __UNIQUE_ID macro in compiler.h fails to work for some drivers:
+[ Upstream commit 1dfe82ebd7d8fd43dba9948fdfb31f145014baa0 ]
 
-drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c:615:1: error: redefinition of
-      '__UNIQUE_ID_firmware615'
-BRCMF_FW_NVRAM_DEF(4354, "brcmfmac4354-sdio.bin", "brcmfmac4354-sdio.txt");
+skb mac header is not necessarily set at the time skb_network_protocol()
+is called. Use skb->data instead.
 
-This adds a copy of the version we use for gcc-4.3 and higher, as the same
-one works with all versions of clang that I could find in svn (2.6 and higher).
+BUG: KASAN: slab-out-of-bounds in skb_network_protocol+0x46b/0x4b0 net/core/dev.c:2739
+Read of size 2 at addr ffff8801b3097a0b by task syz-executor5/14242
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Michal Marek <mmarek@suse.com>
-Cc: Matthias Kaehlcke <mka@google.com>
+CPU: 1 PID: 14242 Comm: syz-executor5 Not tainted 4.16.0-rc6+ #280
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x194/0x24d lib/dump_stack.c:53
+ print_address_description+0x73/0x250 mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report+0x23c/0x360 mm/kasan/report.c:412
+ __asan_report_load_n_noabort+0xf/0x20 mm/kasan/report.c:443
+ skb_network_protocol+0x46b/0x4b0 net/core/dev.c:2739
+ harmonize_features net/core/dev.c:2924 [inline]
+ netif_skb_features+0x509/0x9b0 net/core/dev.c:3011
+ validate_xmit_skb+0x81/0xb00 net/core/dev.c:3084
+ validate_xmit_skb_list+0xbf/0x120 net/core/dev.c:3142
+ packet_direct_xmit+0x117/0x790 net/packet/af_packet.c:256
+ packet_snd net/packet/af_packet.c:2944 [inline]
+ packet_sendmsg+0x3aed/0x60b0 net/packet/af_packet.c:2969
+ sock_sendmsg_nosec net/socket.c:629 [inline]
+ sock_sendmsg+0xca/0x110 net/socket.c:639
+ ___sys_sendmsg+0x767/0x8b0 net/socket.c:2047
+ __sys_sendmsg+0xe5/0x210 net/socket.c:2081
+
+Fixes: 19acc327258a ("gso: Handle Trans-Ether-Bridging protocol in skb_network_protocol()")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Pravin B Shelar <pshelar@ovn.org>
+Reported-by: Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/linux/compiler-clang.h |    5 +++++
- 1 file changed, 5 insertions(+)
+ net/core/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -10,3 +10,8 @@
- #undef uninitialized_var
- #define uninitialized_var(x) x = *(&(x))
- #endif
-+
-+/* same as gcc, this was present in clang-2.6 so we can assume it works
-+ * with any version that can compile the kernel
-+ */
-+#define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -2515,7 +2515,7 @@ __be16 skb_network_protocol(struct sk_bu
+ 		if (unlikely(!pskb_may_pull(skb, sizeof(struct ethhdr))))
+ 			return 0;
+ 
+-		eth = (struct ethhdr *)skb_mac_header(skb);
++		eth = (struct ethhdr *)skb->data;
+ 		type = eth->h_proto;
+ 	}
+ 
