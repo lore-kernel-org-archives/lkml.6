@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/T25sWeatl0fo9bGslghbSZnmGSPGyduNUomX9oe+9U1Q/ysVEWTwE/v15bihX7gZG8bgG
-ARC-Seal: i=1; a=rsa-sha256; t=1523472705; cv=none;
+X-Google-Smtp-Source: AIpwx49AFRm+iV9Z4V1vFPmSe7Diub4j7+zOdFs4EtBLfTvlEdyly5u1FHLOSXJVdQUROsHKoqdE
+ARC-Seal: i=1; a=rsa-sha256; t=1523472702; cv=none;
         d=google.com; s=arc-20160816;
-        b=THKYbJUYE5Lh85J7zTdJlc6Vh+VGboTX3FHdVX/b69doy86iIEE81t2GZ8pCegAUJ4
-         3n+L99TZEJ+J5lo7UVsfAhflSZReapradeM5jj+YpKNOXkfXImXtOBS8bz/DvG7Kb7qY
-         tlDCLiSQ1EaKNTLQwYNfFpYH8H4lc5RI73WYiovJbfFdcdsxZgKus/CnNxbzsLZP7ljS
-         k9cMfKZYVplB6PCzZ9YXT/4SH2mbSOEq1FGM+LsMQaAo0L2KVXqNNkfGsMFLXNGULn/U
-         hww4aVlf3+/Ix0kn9ovCT2bh+8w2Git5ozsdSxGLLXnTZmvs6v6MXEbSnJq0i+n1uj70
-         0Wlw==
+        b=e0S843gO+DiEX9cm4u4qm6UNzmZmxjn6ZKvPvgOixkxIFikW8cNxUcTWVhwNM4d9/X
+         H+nfSYE2ns92hvodNzGHgHQihnd6oLXOeYRC0GDosS8hthXWdiZOHcZBPk8Lc9jfw+2f
+         ZGOCtW7j1DYfQbhfKFlkeIl01iVh9/qnin6HlxPk/S0AbqMojxLJpLukJyyWjpP5t1fx
+         tMf7ijkNRLu03EPMzWprPpCVSxc8/lx1z9arX5LVDarlAfR+3Rg8yOiJuNqoY6ELBR7z
+         4pKpHF4yttbcM2agdY5Gn4maEbXzFQxNFwCibi14lAHH2JhwRbxRexyRT2R6jZd5bGNm
+         BdJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=u2XppUwlwo3WUpJ0dcfaIfE6s1e9ST6ZPmXOvzgl1iA=;
-        b=vWyQyqppuwl2PEgw6kP9A/hM1UeZ8GF8grl07/OecaKNHfQWRZTUh5XJju+4B+lojU
-         2wBxyuNJAv8LLaqx/ozAUGKuVk5P7zZFyF8DA7/Co3SWoyBiCeQFIAYmks3Q1y0nOQ15
-         h4AYYBnljWmJWqtYkrP2sOehhUd7bFLVcbaVXuCXwvK6Oo3b5eCIYzhfp24IbfLbIOsy
-         t+I6KBL+Suu8Z2+qj1UJZ2i/R4lk1DDYICNbmj0BiQha995+Ja7a+UhCu6lI2tOeNW8H
-         vVg1xIrUB5DGmooHFhzFqdBvxje/xQWU9yQQymlyxwS6AoiYWyCHBYtU5zgA2yYIunSJ
-         +mzw==
+        bh=l7RTYYwXiDtr1N8xG/QDCQfkiw0X8euwA4ipzIAIBwU=;
+        b=R8t1nJabol1lVUPzhuRuO+ZSkJE+cgjeAhMSFGbCfQS9+XwLv9sGHIEOdsKRGksFJZ
+         jxGNbuPBjzTnt9m9EGWMA1QZysAjpKhlGZgS7UlP0CGmVSOme906lW8j1SarByD0NLYn
+         EpBp2YK12fzx59oR4vAuH3B0XG/ygShFj58Wfv4yDI46PlQcce4REcSgqAafeOnS8l+w
+         HiY8xsl+DpQwY+qX1mZcmfEKueXWgaYaYHS3K+QJGY+JtJUQ64Oig0gx9nVbYVLpKgzJ
+         uB4TwK2Gs709pKWC/r67wa77dLipFtYy3W8ZujozVAaM5MNqPWj69r+bg2HF4d1syR3a
+         oBHQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Vlad Yasevich <vyasevich@gmail.com>,
-	Neil Horman <nhorman@tuxdriver.com>,
-	syzbot <syzkaller@googlegroups.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 172/190] sctp: do not leak kernel memory to user space
-Date: Wed, 11 Apr 2018 20:36:58 +0200
-Message-Id: <20180411183602.645674183@linuxfoundation.org>
+	Hannes Reinecke <hare@suse.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	James Wang <jnwang@suse.com>,
+	Jens Axboe <axboe@fb.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 134/190] Fix loop device flush before configure v3
+Date: Wed, 11 Apr 2018 20:36:20 +0200
+Message-Id: <20180411183600.326447150@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476337838554595?=
-X-GMAIL-MSGID: =?utf-8?q?1597476915553012073?=
+X-GMAIL-THRID: =?utf-8?q?1597476912619997992?=
+X-GMAIL-MSGID: =?utf-8?q?1597476912619997992?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,93 +52,64 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: James Wang <jnwang@suse.com>
 
 
-[ Upstream commit 6780db244d6b1537d139dea0ec8aad10cf9e4adb ]
+[ Upstream commit 6460495709aeb651896bc8e5c134b2e4ca7d34a8 ]
 
-syzbot produced a nice report [1]
+While installing SLES-12 (based on v4.4), I found that the installer
+will stall for 60+ seconds during LVM disk scan.  The root cause was
+determined to be the removal of a bound device check in loop_flush()
+by commit b5dd2f6047ca ("block: loop: improve performance via blk-mq").
 
-Issue here is that a recvmmsg() managed to leak 8 bytes of kernel memory
-to user space, because sin_zero (padding field) was not properly cleared.
+Restoring this check, examining ->lo_state as set by loop_set_fd()
+eliminates the bad behavior.
 
-[1]
-BUG: KMSAN: uninit-value in copy_to_user include/linux/uaccess.h:184 [inline]
-BUG: KMSAN: uninit-value in move_addr_to_user+0x32e/0x530 net/socket.c:227
-CPU: 1 PID: 3586 Comm: syzkaller481044 Not tainted 4.16.0+ #82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:53
- kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
- kmsan_internal_check_memory+0x164/0x1d0 mm/kmsan/kmsan.c:1176
- kmsan_copy_to_user+0x69/0x160 mm/kmsan/kmsan.c:1199
- copy_to_user include/linux/uaccess.h:184 [inline]
- move_addr_to_user+0x32e/0x530 net/socket.c:227
- ___sys_recvmsg+0x4e2/0x810 net/socket.c:2211
- __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
- SYSC_recvmmsg+0x29b/0x3e0 net/socket.c:2394
- SyS_recvmmsg+0x76/0xa0 net/socket.c:2378
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x4401c9
-RSP: 002b:00007ffc56f73098 EFLAGS: 00000217 ORIG_RAX: 000000000000012b
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004401c9
-RDX: 0000000000000001 RSI: 0000000020003ac0 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000020003bc0 R09: 0000000000000010
-R10: 0000000000000000 R11: 0000000000000217 R12: 0000000000401af0
-R13: 0000000000401b80 R14: 0000000000000000 R15: 0000000000000000
+Test method:
+modprobe loop max_loop=64
+dd if=/dev/zero of=disk bs=512 count=200K
+for((i=0;i<4;i++))do losetup -f disk; done
+mkfs.ext4 -F /dev/loop0
+for((i=0;i<4;i++))do mkdir t$i; mount /dev/loop$i t$i;done
+for f in `ls /dev/loop[0-9]*|sort`; do \
+	echo $f; dd if=$f of=/dev/null  bs=512 count=1; \
+	done
 
-Local variable description: ----addr@___sys_recvmsg
-Variable was created at:
- ___sys_recvmsg+0xd5/0x810 net/socket.c:2172
- __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
+Test output:  stock          patched
+/dev/loop0    18.1217e-05    8.3842e-05
+/dev/loop1     6.1114e-05    0.000147979
+/dev/loop10    0.414701      0.000116564
+/dev/loop11    0.7474        6.7942e-05
+/dev/loop12    0.747986      8.9082e-05
+/dev/loop13    0.746532      7.4799e-05
+/dev/loop14    0.480041      9.3926e-05
+/dev/loop15    1.26453       7.2522e-05
 
-Bytes 8-15 of 16 are uninitialized
+Note that from loop10 onward, the device is not mounted, yet the
+stock kernel consumes several orders of magnitude more wall time
+than it does for a mounted device.
+(Thanks for Mike Galbraith <efault@gmx.de>, give a changelog review.)
 
-==================================================================
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 1 PID: 3586 Comm: syzkaller481044 Tainted: G    B            4.16.0+ #82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:53
- panic+0x39d/0x940 kernel/panic.c:183
- kmsan_report+0x238/0x240 mm/kmsan/kmsan.c:1083
- kmsan_internal_check_memory+0x164/0x1d0 mm/kmsan/kmsan.c:1176
- kmsan_copy_to_user+0x69/0x160 mm/kmsan/kmsan.c:1199
- copy_to_user include/linux/uaccess.h:184 [inline]
- move_addr_to_user+0x32e/0x530 net/socket.c:227
- ___sys_recvmsg+0x4e2/0x810 net/socket.c:2211
- __sys_recvmmsg+0x54e/0xdb0 net/socket.c:2313
- SYSC_recvmmsg+0x29b/0x3e0 net/socket.c:2394
- SyS_recvmmsg+0x76/0xa0 net/socket.c:2378
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc:	Vlad Yasevich <vyasevich@gmail.com>
-Cc:	Neil Horman <nhorman@tuxdriver.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: James Wang <jnwang@suse.com>
+Fixes: b5dd2f6047ca ("block: loop: improve performance via blk-mq")
+Signed-off-by: Jens Axboe <axboe@fb.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/ipv6.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/block/loop.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -723,8 +723,10 @@ static int sctp_v6_addr_to_user(struct s
- 			sctp_v6_map_v4(addr);
- 	}
- 
--	if (addr->sa.sa_family == AF_INET)
-+	if (addr->sa.sa_family == AF_INET) {
-+		memset(addr->v4.sin_zero, 0, sizeof(addr->v4.sin_zero));
- 		return sizeof(struct sockaddr_in);
-+	}
- 	return sizeof(struct sockaddr_in6);
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -623,6 +623,9 @@ static int loop_switch(struct loop_devic
+  */
+ static int loop_flush(struct loop_device *lo)
+ {
++	/* loop not yet configured, no running thread, nothing to flush */
++	if (lo->lo_state != Lo_bound)
++		return 0;
+ 	return loop_switch(lo, NULL);
  }
  
