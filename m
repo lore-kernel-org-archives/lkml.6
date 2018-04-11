@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48vKke5NcWFZRLREnc3CEFbW5FNpUKY0YV8Kn/+Kxzdirjsx8oylDNpB2kLZtzRcmHw8iLq
-ARC-Seal: i=1; a=rsa-sha256; t=1523473041; cv=none;
+X-Google-Smtp-Source: AIpwx48EmAql1j7yA1NVDTuD8eN1EZXDy0VVqHlyaol7pJa9mPlCKlwat/h656AECDv7xnqkE4It
+ARC-Seal: i=1; a=rsa-sha256; t=1523473038; cv=none;
         d=google.com; s=arc-20160816;
-        b=cd/NyT4EuNPKCTtrDqWvua0jfGzx+8i6W/zbGBj2KNEy9dagc+wFU+PKYwyv6MMjYm
-         Jgs4CUnnTllMK+fXet0PeEblvhRtz6uB47ScxFyasxKPKUu//7jLb5cop+0tSLj0eCb1
-         IzKynWDfdhOXffG5p0K+2Xnv8p3gpggfCEE6FwPs+Fhk37RWsc86ueI98TZ9BA6hx4T+
-         +ky4n/OaQEjNnUvnVgJ/nlWr6RkCyq4gbndZEoiVYRkPxdhjg30W/gAqHX9QjPxil4WF
-         StDHgD45ls/iBnl9Gcd/lEzUkfkO+E/8DTtsNmJrKjKGUm+2t7W50gc5voGxvlz1WzEL
-         cKHA==
+        b=QrAVwfbf6MUytpAjD2Swv2nRXesuQr1m6zanrW39Ry71ijf7gZg1wQmRc5IlMbDHZV
+         P5uCjwbgBqAg9/cVSO9jBvNU++LDSxUJE8owaOqNhiTnsWBDvDcIfxKgSST370H0kAKs
+         8unN2zUaMI2aLSgzk2Z4yqTTbH/xKabylZdkxqeee3gZs8ye35+6zFPv7UDh5EDUZO5n
+         1E9KGoxkNhE3gajeqCAAXJ9FjRAGRDHK54HlcLjYQ/wswrXaaryIdMjZ9Rhgn9F3uk3r
+         YV0vpWZQs5T0ZJByEQJCBYZr/LZqru1pN4h1A+JXda4SpnCMSv2eySk+BkYtRJJXBn58
+         zuew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=aljzDasVIYyFm0P51pgAkPUJ7RISI5W0Cj18ksawVVk=;
-        b=UUUNthTBX4+FFXZkl+fKcpps396t/OhLaKnNdLUAaQUtK0G0roisQdljfytua8KCuh
-         Ex+JhF7aIao/Xtdrjkufs8MkudKh77bzXd+aiVaUAuPWUO5q+4zV2rXsUJtGmgsaFYkf
-         jGdV2SftSbArkhMnm6cX0IME0p2blkiWfpfUvZpgtVubC+JS+upfm81n88nFvxk8Tyr4
-         00IB0u2Yzx0oXbGKOEKU3NPgPqyR+s3RGRwqK8dDULORN14Ne2SIyV2VyzfGbvslPaIq
-         lNY2C+01qY0vZac5vimf8AiaHsGQv1sceZsLkr2koHNej/ODrCi2D30oXZxyASZJ687k
-         K8Fw==
+        bh=n+3ciDKFxAnh1ZZpKT7DpDdVFJtrDGxHWe4kpnZOHDc=;
+        b=giof2NMM146LiFqy/W5nEUcpNQELPyOI/jpU3JKqd0o54k3/0HzxUVd6goswfuGVwJ
+         unbs/ZTuAQxwrDQPVz+8YThTICrIxnnYO9H8r23Tkk+fRt6uMho9NCYvXiZV6bEy/pkI
+         PMew5m2/Ko8U/kT515tnP2dvkojqpGXJbxTlBsUicimRX5j3/3WCx8hKu20TxSob+hz9
+         1N9v7nGdRLNSiJr1eIu4UFuuWZhuSLwq7XWDHWBVV9Lni/5oF54NJ/K72CJ5O12dMbuk
+         g0tHVS+cLt1alSatJbMsLHET7wOFJ4EX3ENttvAWK3OdNKhxq4CixT+uBelyKvT95sOM
+         pq9A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sugar Zhang <sugar.zhang@rock-chips.com>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>,
+	Holger Brunck <holger.brunck@keymile.com>,
+	Zhao Qiang <qiang.zhao@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 064/310] ARM: dts: rockchip: fix rk322x i2s1 pinctrl error
-Date: Wed, 11 Apr 2018 20:33:23 +0200
-Message-Id: <20180411183624.988684282@linuxfoundation.org>
+Subject: [PATCH 4.9 073/310] net/wan/fsl_ucc_hdlc: fix incorrect memory allocation
+Date: Wed, 11 Apr 2018 20:33:32 +0200
+Message-Id: <20180411183625.446925578@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477267931564184?=
-X-GMAIL-MSGID: =?utf-8?q?1597477267931564184?=
+X-GMAIL-THRID: =?utf-8?q?1597477265624350920?=
+X-GMAIL-MSGID: =?utf-8?q?1597477265624350920?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,35 +51,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sugar Zhang <sugar.zhang@rock-chips.com>
+From: Holger Brunck <holger.brunck@keymile.com>
 
 
-[ Upstream commit 9d420e9b4140f8938ad6aa0d29e2428a2af6122b ]
+[ Upstream commit 5b8aad93c52bdda6a731cab8497998cfa0f2df07 ]
 
-Refer to Chapter 5.3.2 of rk3229 TRM, we can see that GPIO1A[2,4,5]
-using RK_FUNC_2 not RK_FUNC_1. This patch fixes it.
+We need space for the struct qe_bd and not for a pointer to this struct.
 
-Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
-Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Holger Brunck <holger.brunck@keymile.com>
+Cc: Zhao Qiang <qiang.zhao@nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/rk322x.dtsi |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/wan/fsl_ucc_hdlc.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/arch/arm/boot/dts/rk322x.dtsi
-+++ b/arch/arm/boot/dts/rk322x.dtsi
-@@ -617,9 +617,9 @@
- 						<0 12 RK_FUNC_1 &pcfg_pull_none>,
- 						<0 13 RK_FUNC_1 &pcfg_pull_none>,
- 						<0 14 RK_FUNC_1 &pcfg_pull_none>,
--						<1 2 RK_FUNC_1 &pcfg_pull_none>,
--						<1 4 RK_FUNC_1 &pcfg_pull_none>,
--						<1 5 RK_FUNC_1 &pcfg_pull_none>;
-+						<1 2 RK_FUNC_2 &pcfg_pull_none>,
-+						<1 4 RK_FUNC_2 &pcfg_pull_none>,
-+						<1 5 RK_FUNC_2 &pcfg_pull_none>;
- 			};
- 		};
+--- a/drivers/net/wan/fsl_ucc_hdlc.c
++++ b/drivers/net/wan/fsl_ucc_hdlc.c
+@@ -137,7 +137,7 @@ static int uhdlc_init(struct ucc_hdlc_pr
+ 	priv->tx_ring_size = TX_BD_RING_LEN;
+ 	/* Alloc Rx BD */
+ 	priv->rx_bd_base = dma_alloc_coherent(priv->dev,
+-			RX_BD_RING_LEN * sizeof(struct qe_bd *),
++			RX_BD_RING_LEN * sizeof(struct qe_bd),
+ 			&priv->dma_rx_bd, GFP_KERNEL);
  
+ 	if (!priv->rx_bd_base) {
+@@ -148,7 +148,7 @@ static int uhdlc_init(struct ucc_hdlc_pr
+ 
+ 	/* Alloc Tx BD */
+ 	priv->tx_bd_base = dma_alloc_coherent(priv->dev,
+-			TX_BD_RING_LEN * sizeof(struct qe_bd *),
++			TX_BD_RING_LEN * sizeof(struct qe_bd),
+ 			&priv->dma_tx_bd, GFP_KERNEL);
+ 
+ 	if (!priv->tx_bd_base) {
+@@ -295,11 +295,11 @@ free_ucc_pram:
+ 	qe_muram_free(priv->ucc_pram_offset);
+ free_tx_bd:
+ 	dma_free_coherent(priv->dev,
+-			  TX_BD_RING_LEN * sizeof(struct qe_bd *),
++			  TX_BD_RING_LEN * sizeof(struct qe_bd),
+ 			  priv->tx_bd_base, priv->dma_tx_bd);
+ free_rx_bd:
+ 	dma_free_coherent(priv->dev,
+-			  RX_BD_RING_LEN * sizeof(struct qe_bd *),
++			  RX_BD_RING_LEN * sizeof(struct qe_bd),
+ 			  priv->rx_bd_base, priv->dma_rx_bd);
+ free_uccf:
+ 	ucc_fast_free(priv->uccf);
+@@ -688,7 +688,7 @@ static void uhdlc_memclean(struct ucc_hd
+ 
+ 	if (priv->rx_bd_base) {
+ 		dma_free_coherent(priv->dev,
+-				  RX_BD_RING_LEN * sizeof(struct qe_bd *),
++				  RX_BD_RING_LEN * sizeof(struct qe_bd),
+ 				  priv->rx_bd_base, priv->dma_rx_bd);
+ 
+ 		priv->rx_bd_base = NULL;
+@@ -697,7 +697,7 @@ static void uhdlc_memclean(struct ucc_hd
+ 
+ 	if (priv->tx_bd_base) {
+ 		dma_free_coherent(priv->dev,
+-				  TX_BD_RING_LEN * sizeof(struct qe_bd *),
++				  TX_BD_RING_LEN * sizeof(struct qe_bd),
+ 				  priv->tx_bd_base, priv->dma_tx_bd);
+ 
+ 		priv->tx_bd_base = NULL;
