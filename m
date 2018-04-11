@@ -1,59 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752372AbeDKXQm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 19:16:42 -0400
-Received: from mail-it0-f54.google.com ([209.85.214.54]:53763 "EHLO
-        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751841AbeDKXQk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 19:16:40 -0400
-X-Google-Smtp-Source: AIpwx49Ltu72YrHP2XIUohmicC1JXflJXIHtw3ocM+DTO12JOa8+J+lrJWZlK1F7Z1SWFMPPoeO1K2V9HZbzQoZhxwc=
+        id S1752569AbeDKXRh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 19:17:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33590 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751734AbeDKXRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 19:17:36 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07F4121722
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Wed, 11 Apr 2018 20:17:33 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Yonghong Song <yhs@fb.com>, Alexei Starovoitov <ast@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Miller <davem@davemloft.net>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: bpf: handling non BPF register names in inline assembly with
+ -target bpf
+Message-ID: <20180411231733.GB24386@kernel.org>
+References: <c8b0b3c0-6687-1be2-66d0-95b20662145d@fb.com>
+ <20180411183902.GC12166@redhat.com>
+ <613f0a0d-c433-8f4d-dcc1-c9889deae39e@fb.com>
+ <20180411194729.GD12166@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a081_hkr5d0FRWpTaT-AsJoqznsS1=_WF4JVLTUOupUgg@mail.gmail.com>
-References: <CAK8P3a081_hkr5d0FRWpTaT-AsJoqznsS1=_WF4JVLTUOupUgg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 11 Apr 2018 16:16:38 -0700
-X-Google-Sender-Auth: dcj30s3AibDnaD8XWGROvDEhbbs
-Message-ID: <CA+55aFx4_gaBeffy9roFRnkB30fnRa=nhh5qR=o=CgrWmgphiw@mail.gmail.com>
-Subject: Re: [GIT PULL] asm-generic fixes for v4.17-rc1
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sinan Kaya <okaya@codeaurora.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Ley Foon Tan <lftan@altera.com>,
-        "moderated list:NIOS2 ARCHITECTURE"
-        <nios2-dev@lists.rocketboards.org>,
-        Michal Simek <monstr@monstr.eu>,
-        "moderated list:H8/300 ARCHITECTURE"
-        <uclinux-h8-devel@lists.sourceforge.jp>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guan Xuetao <gxt@mprc.pku.edu.cn>, linux-xtensa@linux-xtensa.org,
-        openrisc@lists.librecores.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180411194729.GD12166@redhat.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 8:40 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> are available in the git repository at:
->
->   git+ssh://gitolite@ra.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git
-> tags/asm-generic
+Em Wed, Apr 11, 2018 at 04:47:29PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Wed, Apr 11, 2018 at 12:22:37PM -0700, Yonghong Song escreveu:
+> > Look at test bpf-script-test-kbuild.c, I think you can drop
+> > uapi/asm/ptrace.h from include file list. This way, you do not need
+> > __BPF__ in x86/include/asm/asm.h. At the same time, you can
+> > remove __BPF__ as well.
+> 
+> That's even better, I'll try that approach, that code was done by
+> someone else, so I ended up not considering looking if removing a
+> unnecessary header would fix the issue, I'll check and if that works
+> I'll revert the patch that introduced that ifndef __BPF__.
 
-Yeah, no they aren't available there at all.
+So this is what I've pushed to my perf/core branch:
 
-That tag is some old tag from two years ago that just contains your
-ancient "asm-generic: use compat version for preadv2 and pwritev2".
+https://git.kernel.org/acme/c/707ba03243d2 (HEAD -> perf/core) Revert "x86/asm: Allow again using asm.h when building for the 'bpf' clang target"
+https://git.kernel.org/acme/c/4364203f5563 pref tests bpf: Remove unused ptrace.h include from LLVM test
 
-Forgot to push out? Or forgot to use "-f" to overwrite the old tag?
+Thanks,
 
-                 Linus
+- Arnaldo
