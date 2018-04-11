@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3374234-1523482011-2-15267742520450051018
+X-Cyrus-Session-Id: sloti22d1t05-3374234-1523481962-2-14234715490464484788
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523482010; b=UZkQKG4avRkWzgRSFnNVEVK4BTsmP9jzgsxA+kzBeDdq0mrAgY
-    im46EDA/lhNfyLUGtavAVQ6fgivhj5C0K0bNPUSVn+VHExY6JDFyzqzSOopWsww5
-    diX2wcpceP2iiIGfe78+e/bp1vo7YOXXOtcl15JFss+9aOYiMu0TqBDqjfmlGlhb
-    k7JIK/y1ztENIbGJeG4TACvYqkRFTnmceRHUZ60w73M+ifrf0RyToQi6XKnKpszT
-    X8+eVsxbWi9CAvLmzy6CejgBGXT94iR8gQhS2r0iwnBChEL8g7HTPXiPV+W8TH6j
-    xSUBE2IFn6B8iU9lxh0pc059Sq9zjPTgbXHw==
+    1523481962; b=flJdcpMBxLYFVesYWH7CWhCkPJ4IlOXQoSdWTw0QJHxjdK+9/u
+    yHtMiSQj2uZOfRqgKV8Um/seIkBfbRjKAwle3qdLEtUv1UvMpttUtBGSX4Pmnln7
+    1IvzfJZ9AZZXkIXZSgpXiZHIlNiWR09E+75NuWgJJQ6G7mQo/t5BNQOqAEDKyLpA
+    AtojgXKcazcVli87mqahrdHtGeOxbb/ickYEinPqHQkEpjbkidVaCU5m1gEqJGnn
+    Ospan6RmoZh/g2IWZroDqUErn4IVhFekIen8irQ0ExIdxehnZY4wnVdEVwSGIDmo
+    zH5uoKnNML01OXZb8xuVvtFTl4aGeqYlxk1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523482010; bh=SBv6cPUfPSesPUq8Il8lz3iX0s+3FU
-    mjVVcHVPHonjg=; b=QnXrs9PCw+k66qe8PamqmCLfjaI/zGgg6RtJpTaFiMaUmI
-    WaKZTOFyHx+ekufCheOwbxdWQ9Zv7btOT6/9KGVj+ro+SOHULxC43mPZW9pKBrDw
-    K0/XJxfP/328RyWq9ANs3I6Dk8rAeVvrygxch6w1yXafDzg5CimdoLLHqh5yyMBC
-    xCSqTDHNPjVvfVVwQf6w1oeX+1+CgODkEj6278irpTnJ2USjRyOb6NGn7sMqDbLt
-    TH+g2yx6ET4MxJ+LRC2I2t4b3Acbkpe2A+OVPO7XUG1MdIb30bNm8t6KnW889aig
-    rfYse/aLNl6jhx+hhuOQRF1dpmac62A4ssgF7bxw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523481962; bh=4FUPlYno+K08fCGXepzCji3rABMu6K
+    Jp4Rga1J6myB0=; b=iCo5Q8EdPdOCxU/ld43UqfOCz8FVbz73mJD8mm9fkzjPkT
+    fiBJqdlkywByQuxYqDa1tByNFaVnvgo0IJEq+klv6D95BTxON499nFzGwpqL0QGM
+    l2Tlj5eOmqW+peeamJdsL3ZbovIMnOJmKX50Lxl5boOICSSWHIOvFAuhyDPIpiCT
+    X26rERkH25NVjeTuOWICygd+18JpKSYyXMt2alCi5CdUkzeljU2zKHQ6zeYEsuBZ
+    gjU34+25fp8MhnYS/7hgegdg5TN8TGK9KtcnioZeYCtXWMBOCvG9T/ZGS2kNPp0p
+    A7s52FPlz6dUO+qfDSdgGC92FagWYjFMces/fpOg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,29 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMvCppVq91f8+grENHajzKxW/pzD7iqUW5AH2PKkfprVReevIHZU1rBVdQmOdxPf0QKPrVANb6Ke9MuCPd8g95zTHXdvHKTPR51tl7wTa92jPKFXA3pz
-    oLWnqaLvRch0pFu50BlGc6Sqcnyi+iaLXWfFtMYKrjwDG2BV55OTdMEQEozYIxFqZgFyTSKnhKS9BI4zaKt/O6N4VQzUd2Ebr1QmR+C1SPyGWy6wcbHCXWL+
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfE7DplwpEL0+ED6iT2Kx00gdW1H8WYVsiLPktnHzHwXe2G+Tk5wBVTIKqmsRWiSL5qVXH6nS/9L+OY1bLzkQAuorKOkkTW5UdRzAu2mLDfElLW4hmvyP
+    ARSWvrXx7Rc46z7vGcYIRXuuhzlVSfTqH3YHhrwiCx1gWMFdsazG3SRsw58h326u4DbuaN2VLmPBz9aUIpWG/0ECnupzlrcrUmeaQyLfYfSP+XlLRax1X5GW
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=sozttTNsAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=d1UQarb68PLNqGhgFE4A:9 a=QEXdDO2ut3YA:10 a=aeg5Gbbo78KNqacMgKqU:22
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=ag1SF4gXAAAA:8 a=yMhMjlubAAAA:8 a=-RvIgU9Ao91RJkrITpgA:9
+    a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754008AbeDKSiQ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:38:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55290 "EHLO
+        id S1752551AbeDKVZk (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 17:25:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55358 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753958AbeDKSiO (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:38:14 -0400
+        with ESMTP id S1754061AbeDKSiZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:38:25 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Schuyler Patton <spatton@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Andrea della Porta <sfaragnaus@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 007/121] net: ethernet: ti: cpsw: adjust cpsw fifos depth for fullduplex flow control
-Date: Wed, 11 Apr 2018 20:35:10 +0200
-Message-Id: <20180411183456.677529170@linuxfoundation.org>
+Subject: [PATCH 3.18 019/121] staging: wlan-ng: prism2mgmt.c: fixed a double endian conversion before calling hfa384x_drvr_setconfig16, also fixes relative sparse warning
+Date: Wed, 11 Apr 2018 20:35:22 +0200
+Message-Id: <20180411183457.317285809@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -94,66 +91,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
+From: Andrea della Porta <sfaragnaus@gmail.com>
 
 
-[ Upstream commit 48f5bccc60675f8426a6159935e8636a1fd89f56 ]
+[ Upstream commit dea20579a69ab68cdca6adf79bb7c0c162eb9b72 ]
 
-When users set flow control using ethtool the bits are set properly in the
-CPGMAC_SL MACCONTROL register, but the FIFO depth in the respective Port n
-Maximum FIFO Blocks (Pn_MAX_BLKS) registers remains set to the minimum size
-reset value. When receive flow control is enabled on a port, the port's
-associated FIFO block allocation must be adjusted. The port RX allocation
-must increase to accommodate the flow control runout. The TRM recommends
-numbers of 5 or 6.
+staging: wlan-ng: prism2mgmt.c: This patches fixes a double endian conversion.
+cpu_to_le16() was called twice first in prism2mgmt_scan and again inside
+hfa384x_drvr_setconfig16() for the same variable, hence it was swapped
+twice. Incidentally, it also fixed the following sparse warning:
 
-Hence, apply required Port FIFO configuration to
-Pn_MAX_BLKS.Pn_TX_MAX_BLKS=0xF and Pn_MAX_BLKS.Pn_RX_MAX_BLKS=0x5 during
-interface initialization.
+drivers/staging/wlan-ng/prism2mgmt.c:173:30: warning: incorrect type in assignment (different base types)
+drivers/staging/wlan-ng/prism2mgmt.c:173:30:    expected unsigned short [unsigned] [usertype] word
+drivers/staging/wlan-ng/prism2mgmt.c:173:30:    got restricted __le16 [usertype] <noident>
 
-Cc: Schuyler Patton <spatton@ti.com>
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Unfortunately, only compile tested.
+
+Signed-off-by: Andrea della Porta <sfaragnaus@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ti/cpsw.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/staging/wlan-ng/prism2mgmt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -293,6 +293,10 @@ struct cpsw_ss_regs {
- /* Bit definitions for the CPSW1_TS_SEQ_LTYPE register */
- #define CPSW_V1_SEQ_ID_OFS_SHIFT	16
- 
-+#define CPSW_MAX_BLKS_TX		15
-+#define CPSW_MAX_BLKS_TX_SHIFT		4
-+#define CPSW_MAX_BLKS_RX		5
-+
- struct cpsw_host_regs {
- 	u32	max_blks;
- 	u32	blk_cnt;
-@@ -1120,11 +1124,23 @@ static void cpsw_slave_open(struct cpsw_
- 	switch (priv->version) {
- 	case CPSW_VERSION_1:
- 		slave_write(slave, TX_PRIORITY_MAPPING, CPSW1_TX_PRI_MAP);
-+		/* Increase RX FIFO size to 5 for supporting fullduplex
-+		 * flow control mode
-+		 */
-+		slave_write(slave,
-+			    (CPSW_MAX_BLKS_TX << CPSW_MAX_BLKS_TX_SHIFT) |
-+			    CPSW_MAX_BLKS_RX, CPSW1_MAX_BLKS);
- 		break;
- 	case CPSW_VERSION_2:
- 	case CPSW_VERSION_3:
- 	case CPSW_VERSION_4:
- 		slave_write(slave, TX_PRIORITY_MAPPING, CPSW2_TX_PRI_MAP);
-+		/* Increase RX FIFO size to 5 for supporting fullduplex
-+		 * flow control mode
-+		 */
-+		slave_write(slave,
-+			    (CPSW_MAX_BLKS_TX << CPSW_MAX_BLKS_TX_SHIFT) |
-+			    CPSW_MAX_BLKS_RX, CPSW2_MAX_BLKS);
- 		break;
- 	}
+--- a/drivers/staging/wlan-ng/prism2mgmt.c
++++ b/drivers/staging/wlan-ng/prism2mgmt.c
+@@ -169,7 +169,7 @@ int prism2mgmt_scan(wlandevice_t *wlande
+ 				     hw->ident_sta_fw.variant) >
+ 	    HFA384x_FIRMWARE_VERSION(1, 5, 0)) {
+ 		if (msg->scantype.data != P80211ENUM_scantype_active)
+-			word = cpu_to_le16(msg->maxchanneltime.data);
++			word = msg->maxchanneltime.data;
+ 		else
+ 			word = 0;
  
