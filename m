@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/CufQwpMbYfUMSe2onnGNb5VH1wWfr41C0XCgIVIzodk5mrVl5KtUMiVE/KQyvmnCavZB9
-ARC-Seal: i=1; a=rsa-sha256; t=1523472976; cv=none;
+X-Google-Smtp-Source: AIpwx4/2iX2egXu4hUwo/gH/RjFZ68p90l4RR7f9ij0NDeFEcqITZ1GNpjEkSZpYB+VXB7OLIjjD
+ARC-Seal: i=1; a=rsa-sha256; t=1523472973; cv=none;
         d=google.com; s=arc-20160816;
-        b=mBGqGVjNwPoOVTsCAUl5JLW6Ixb/fSpkjf/STbtWr2bio5ADQjQDQDLEpQQKUU8p+b
-         2J8ysmNK18dvveSf0PWUwUgOAsn5WIoLM/qML4EcYJq1JOotjq4KQdJyq3sm/0aVVVtk
-         d0+cWIYsMgS4MAIwySl/PArHJRK7hJFfuQp8v3i0H5CJDxjKfx4BkVuPM/gwoKXAiP25
-         JnkATGlzLw5nXjoGLyusLwoTZ79f1xnxv227YyXM3eHmEDIYXPOKcU26MEh5rj+CHmdv
-         e9xg1Feoj/LwX5g90EHPj2YU8rMX+8JGy9SbqQ0qrl23GYNO+Tyxc1CzbAM/m1RwJhyj
-         xtbg==
+        b=iqOv8fwcwr2hFA+btxQEM6TnWCoFU+5yPnFAJ+CM64oZELa/4bG9kClHUAr/oN34pK
+         +44qMesTNQdJfDI6nZqho1tYcE59S1SLx2IjckA+jeLx4XDPPLXcVwlfqfGfUG9oNC6o
+         RpCqo389tKQw4Njx2wc/Qu2UixBNMCHzrdjZxnz+DN1+cC86HBzIAfDey8zwscipVNfu
+         LgmOhuEwN8rVOmjFIk2FXfAfdF1PpcROKnQJ0x39cvDmtwPsSjzBPXbhrR8p2t4FNP31
+         MQ9tLmXaDu7kYeOL6TYB+iWlDek3LB1nuBRZ+HNuscz7UwlYPTVDcd1UEMAk+IH/vg0I
+         SVTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=oF30Mnckzo7Zyu/xVg2rPRHNPUGXxn9GA9b2a7DQrNk=;
-        b=NaDvwlcn/is+tCkH6L+FoSzGP3Pw3w0LqrXu67AHI8gzT12QS/Z4l5xDuQSlUxyrFK
-         Ch9fewDMhxteK1tCPpVD87j70RZ97CbCekx9NhBt1qz8dv1fW/Isd9xb1/dOvaXwRGaP
-         F50DRaUZpKGsOsEdYbgp3RNmY6uSEXrVQPA3Ecz/JNI6Gl6f1rxXiQwN7Cku+fnRjjz7
-         tcYAK0OHiyWS7xFxTLi6bsae6u3EBhhZ4vGJcB6r0dNYvo1zIRPOdBDOU/27bMoiTHnh
-         mi9W1kogh+YMXh9Lah0PVd77nJI2vV+KlO0ippjKsC6z8fcLXnDLyBjZ3uMjk4w8mt1l
-         OhaA==
+        bh=R8I6tSqN3iKRDLx/EBJFGp6hauBJBOGxPV8MiNLddJg=;
+        b=oyrP/9jtBFz+Y2av1JTiecweAFmvkAiEiMO922fC3/9QLhUA6PLttztNEc8XPYi4+b
+         8MDmeKsYXVSs7HcG5L74m+9d6hn1trE2XZcW2MpnhlyuaYa7+yPUdx4RFj6lrRMzG6bV
+         aeACTYnCFAA+7Pz+/RACs5vslKUdRJbl81h1bnAaDJ62YepHbaf5BUq5TkWpIad4gJGW
+         WEM4YRH4M62S7pFBss6mqj7cXZprBNvTMrbv8p1wPcPL66jIk0hPaEx3LZ4VPkD8PEoe
+         LN3kX/SIFaeTcQw7xVTEbtifw4kKJQoxV7MS/MMz8nxmm7vVJfvPmIWYPYbTYI9c1R95
+         sxqg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-	Jonathan Cameron <jic23@kernel.org>,
+	Petr Cvek <petr.cvek@tul.cz>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 084/310] iio: hi8435: cleanup reset gpio
-Date: Wed, 11 Apr 2018 20:33:43 +0200
-Message-Id: <20180411183625.894021382@linuxfoundation.org>
+Subject: [PATCH 4.9 066/310] [media] pxa_camera: fix module remove codepath for v4l2 clock
+Date: Wed, 11 Apr 2018 20:33:25 +0200
+Message-Id: <20180411183625.155746152@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476549159999487?=
-X-GMAIL-MSGID: =?utf-8?q?1597477199350242041?=
+X-GMAIL-THRID: =?utf-8?q?1597477196464009666?=
+X-GMAIL-MSGID: =?utf-8?q?1597477196464009666?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,52 +52,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+From: Petr Cvek <petr.cvek@tul.cz>
 
 
-[ Upstream commit 61305664a542f874283f74bf0b27ddb31f5045d7 ]
+[ Upstream commit e3b4d10cc057522353c4a02f2f90dca6a52e006f ]
 
-Reset GPIO is active low.
+The conversion from soc_camera omitted a correct handling of the clock
+gating for a sensor. When the pxa_camera driver module was removed it
+tried to unregister clk, but this caused a similar warning:
 
-Currently driver uses gpiod_set_value(1) to clean reset, which depends
-on device tree to contain GPIO_ACTIVE_HIGH - that does not match reality.
+  WARNING: CPU: 0 PID: 6740 at drivers/media/v4l2-core/v4l2-clk.c:278
+  v4l2_clk_unregister(): Refusing to unregister ref-counted 0-0030 clock!
 
-This fixes driver to use _raw version of gpiod_set_value() to enforce
-active-low semantics despite of what's written in device tree. Allowing
-device tree to override that only opens possibility for errors and does
-not add any value.
+The clock was at time still refcounted by the sensor driver. Before
+the removing of the pxa_camera the clock must be dropped by the sensor
+driver. This should be triggered by v4l2_async_notifier_unregister() call
+which removes sensor driver module too, calls unbind() function and then
+tries to probe sensor driver again. Inside unbind() we can safely
+unregister the v4l2 clock as the sensor driver got removed. The original
+v4l2_clk_unregister() should be put inside test as the clock can be
+already unregistered from unbind(). If there was not any bound sensor
+the clock is still present.
 
-Additionally, use _cansleep version to make things work with i2c-gpio
-and other sleeping gpio drivers.
+The codepath is practically a copy from the old soc_camera. The bug was
+tested with a pxa_camera+ov9640 combination during the conversion
+of the ov9640 from the soc_camera.
 
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Signed-off-by: Jonathan Cameron <jic23@kernel.org>
+Signed-off-by: Petr Cvek <petr.cvek@tul.cz>
+Tested-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iio/adc/hi8435.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/media/platform/pxa_camera.c |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
---- a/drivers/iio/adc/hi8435.c
-+++ b/drivers/iio/adc/hi8435.c
-@@ -453,13 +453,15 @@ static int hi8435_probe(struct spi_devic
- 	priv->spi = spi;
+--- a/drivers/media/platform/pxa_camera.c
++++ b/drivers/media/platform/pxa_camera.c
+@@ -2169,6 +2169,12 @@ static void pxa_camera_sensor_unbind(str
+ 	pxa_dma_stop_channels(pcdev);
  
- 	reset_gpio = devm_gpiod_get(&spi->dev, NULL, GPIOD_OUT_LOW);
--	if (IS_ERR(reset_gpio)) {
--		/* chip s/w reset if h/w reset failed */
-+	if (!IS_ERR(reset_gpio)) {
-+		/* need >=100ns low pulse to reset chip */
-+		gpiod_set_raw_value_cansleep(reset_gpio, 0);
-+		udelay(1);
-+		gpiod_set_raw_value_cansleep(reset_gpio, 1);
-+	} else {
-+		/* s/w reset chip if h/w reset is not available */
- 		hi8435_writeb(priv, HI8435_CTRL_REG, HI8435_CTRL_SRST);
- 		hi8435_writeb(priv, HI8435_CTRL_REG, 0);
--	} else {
--		udelay(5);
--		gpiod_set_value(reset_gpio, 1);
- 	}
+ 	pxa_camera_destroy_formats(pcdev);
++
++	if (pcdev->mclk_clk) {
++		v4l2_clk_unregister(pcdev->mclk_clk);
++		pcdev->mclk_clk = NULL;
++	}
++
+ 	video_unregister_device(&pcdev->vdev);
+ 	pcdev->sensor = NULL;
  
- 	spi_set_drvdata(spi, idev);
+@@ -2495,7 +2501,13 @@ static int pxa_camera_remove(struct plat
+ 	dma_release_channel(pcdev->dma_chans[1]);
+ 	dma_release_channel(pcdev->dma_chans[2]);
+ 
+-	v4l2_clk_unregister(pcdev->mclk_clk);
++	v4l2_async_notifier_unregister(&pcdev->notifier);
++
++	if (pcdev->mclk_clk) {
++		v4l2_clk_unregister(pcdev->mclk_clk);
++		pcdev->mclk_clk = NULL;
++	}
++
+ 	v4l2_device_unregister(&pcdev->v4l2_dev);
+ 
+ 	dev_info(&pdev->dev, "PXA Camera driver unloaded\n");
