@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477288-2-8987487410414113090
+X-Cyrus-Session-Id: sloti22d1t05-3253174-1523477280-2-15440561890572797199
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523477288; b=p5hTrWetvn1gBdE1VU6Tzk0x7qlTJPSQ09NdBDbNvgKmf563ig
-    8YY4/mlZ4tChBXpoGmau/AeDyRlh8K1OCpnC9CjVdc9/ncey3vpZNruSOcc+k3Tj
-    qqZbHb3Bc8QyVT8EVuN4YguC/2tE6sxnode02THak6csqLGE4+Tzrl133lUZttn5
-    MBWK+TqgG56+1kBeIZCsPrlsczS4V4CrBqTwM0LrqKqgDCqyyq5CswiEGCPjHfsO
-    9vnxkVaYvytRT7ICHYkDuqQVUD8oIFUZ83f0wxzYG1HZD1zgup62BT1uxLzce17h
-    pkB6wclXfYCnntEpXtaNWwjyvEFbA34x0hsw==
+    1523477280; b=fBJa37AfgGaBQmSPz5Ua9/uy0MpwjDUn8FVb46etn18b+cVKI7
+    qXbjnoyqumL8dv+Jw2rzhG/oZ/3Yaz7xfuPu7J1icDPHap6ZQJZHjZIdhbKwLdQK
+    5mnMzTNy9hdOpqT9v30ElGyw4Vhd3lLZfdJPFa0o9mnXnHQazd6antaDu9HpSfE6
+    B2YLX1PXbQIOEO6b+eMVxoICrnqwMbT03Lou0W0lJFLJjfIIa0MVntQTvd6bwWAc
+    sUpec1wniZU2CzQRF+VtLy+Uw51ICEYYtO9IrVJBQnLFdtWrIpCajni0j5GIn7t4
+    iMGGfMu51CW0zLVDEncJdqo35zTsaAG0riPA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523477288; bh=H3hav84K5rZggnLpYuDHS7WgZjvrSE
-    q0VHEceV7ikwg=; b=IGCennSUK9eWSm25mJHBFESQxqUQcw/6gdHjuIxA6qcGhh
-    WuL8nIr5o82cG7dwL3xlCK7J6RYxCUz9qZmtPb1MM5sPLyKvjJNYKGWCjjVNieXA
-    RmbUtlgSomUj6LG6Q9gS6tkdO/8+/Pufy7QLJChJ7xlRvwEL/lX6qAi+WmMWKV3+
-    bC+M2XA3LypBTwdEYZo6PwPJQU6VMUJmNmI4VVHxINDZWjwvooL4SUzSOlC6IJ5n
-    7W2f1HJgC21txFLRZ39d73jdrXmVwIBpbqgDjKrQhCmqfuMJ4pmqc9mHPC+6N2Dv
-    Xx707a2mv4/kkG1eyi+e6Jf3FYfyv0+KKYNPau3Q==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523477280; bh=x1gaIFrFEzXPnk4ZPWzNBMBA2eUTEd
+    VFhLRepBPssYo=; b=Z/Pkg00dGCYorSJICflIANkd4VT1E91RFVd36a7hfaejiM
+    o+LSewUeioGoyNr8epJWQY1Q5J6hDmZmFJXIt3BgCjbClw3QfVk5FMXqVxH//+S2
+    DnJGtVWkvbaNMaGXS9yAnHD30wSkijRW3b5l9B1ATTSnR7hTjyhQx9EBfxUnabbU
+    R3c6fEY5dzm/+IEt3ErsWRyd1hiaST861pkxlHNJposiQKUPTJyEVwLZKQYX+lml
+    MdVkSHWlm+MUmlO2glFZ4O8xBcQc4P+ck+OP1mVnH3BL5lzTP9ZJHSYAGcRw9fz8
+    LUM4z6zmyXovxe9vJpgZLR6aFnF3xHgdGFM87NEw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,30 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMcWWclk7HmBfEUYijZSJxQP4xwg91F6XPiJkHmRJkIKJS1E5P9cZaIrIIfcrBy/R1aUZa3vAzn04apfjyWi9gnkbS4r0ZqvIddhuozIml3M6qed6gT+
-    D1atl+N4hg1oTreNzHiRmgi6w3Nnjj0GsPJRKXczpIvJL685CElwL3LqTQlxj2IgzuwoCIdnjymOXEHb91Tz7NFU5Xo/jWg0a4itiesksSTsgbCBstipwar3
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOm8X4+UP3y+CCmK5hA4cfJWYI10ybjVmXq3Pf5T4jGn+AZCtUytUZhX/eZJBkxGYNYXk5sYj1KUsV+CElBSlrLQmyco9An00Lu08+R9b4dO/H3zqRuQ
+    TNAkFBBhnDi3tVBgHJ9T/BnfbECoc1ZGV0/BZbUXVvaRsL29aycpr4X3ZS3QbzUiFkLl0u6NjS+WynwrkeCnJyKdYpoURKkiA1YYbrapXHkOSLUMHb5MAkQs
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=7CQSdrXTAAAA:8 a=KKAkSRfTAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
-    a=r5d3RvBpJZ8c8hwF9-MA:9 a=QEXdDO2ut3YA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
-    a=cvBusfyB2V15izCimMoJ:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=Byx-y9mGAAAA:8 a=QyXUC8HyAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=MK96HyGrqPNBv2a_Q8EA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933607AbeDKSy5 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:54:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34776 "EHLO
+        id S933556AbeDKSzC (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:55:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34836 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933556AbeDKSyz (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:54:55 -0400
+        with ESMTP id S932347AbeDKSzA (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:55:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <cdall@linaro.org>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 055/310] KVM: arm: Restore banked registers and physical timer access on hyp_panic()
-Date: Wed, 11 Apr 2018 20:33:14 +0200
-Message-Id: <20180411183624.614135856@linuxfoundation.org>
+Subject: [PATCH 4.9 057/310] usb: dwc3: keystone: check return value
+Date: Wed, 11 Apr 2018 20:33:16 +0200
+Message-Id: <20180411183624.693740242@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -94,43 +92,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: James Morse <james.morse@arm.com>
+From: Pan Bian <bianpan2016@163.com>
 
 
-[ Upstream commit d2e19368848ce6065daa785efca26faed54732b6 ]
+[ Upstream commit 018047a1dba7636e1f7fdae2cc290a528991d648 ]
 
-When KVM panics, it hurridly restores the host context and parachutes
-into the host's panic() code. This looks like it was copied from arm64,
-the 32bit KVM panic code needs to restore the host's banked registers
-too.
+Function devm_clk_get() returns an ERR_PTR when it fails. However, in
+function kdwc3_probe(), its return value is not checked, which may
+result in a bad memory access bug. This patch fixes the bug.
 
-At some point panic() touches the physical timer/counter, this will
-trap back to HYP. If we're lucky, we panic again.
-
-Add a __timer_save_state() call to KVMs hyp_panic() path, this saves the
-guest registers and disables the traps for the host.
-
-Fixes: c36b6db5f3e4 ("ARM: KVM: Add panic handling code")
-Signed-off-by: James Morse <james.morse@arm.com>
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
-Reviewed-by: Christoffer Dall <cdall@linaro.org>
-Signed-off-by: Christoffer Dall <cdall@linaro.org>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/kvm/hyp/switch.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/dwc3/dwc3-keystone.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm/kvm/hyp/switch.c
-+++ b/arch/arm/kvm/hyp/switch.c
-@@ -237,8 +237,10 @@ void __hyp_text __noreturn __hyp_panic(i
+--- a/drivers/usb/dwc3/dwc3-keystone.c
++++ b/drivers/usb/dwc3/dwc3-keystone.c
+@@ -107,6 +107,10 @@ static int kdwc3_probe(struct platform_d
+ 		return PTR_ERR(kdwc->usbss);
  
- 		vcpu = (struct kvm_vcpu *)read_sysreg(HTPIDR);
- 		host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
-+		__timer_save_state(vcpu);
- 		__deactivate_traps(vcpu);
- 		__deactivate_vm(vcpu);
-+		__banked_restore_state(host_ctxt);
- 		__sysreg_restore_state(host_ctxt);
- 	}
+ 	kdwc->clk = devm_clk_get(kdwc->dev, "usb");
++	if (IS_ERR(kdwc->clk)) {
++		dev_err(kdwc->dev, "unable to get usb clock\n");
++		return PTR_ERR(kdwc->clk);
++	}
  
+ 	error = clk_prepare_enable(kdwc->clk);
+ 	if (error < 0) {
