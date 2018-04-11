@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/0bSrYgvonedKahewQWQZbPHNvjjW9fEtsZ631pizdLWMheE5HFFJUjpPYdQxvxQGHLmwL
-ARC-Seal: i=1; a=rsa-sha256; t=1523473025; cv=none;
+X-Google-Smtp-Source: AIpwx49xRC3/xPKvxREpI/oVMG4HklLjB2vuMLrEUIL+81zDKk94u8XJ18x84niuSfU1DcZXWMBJ
+ARC-Seal: i=1; a=rsa-sha256; t=1523473023; cv=none;
         d=google.com; s=arc-20160816;
-        b=wKDlQB7pk+rorI8WdU9WwGp4aiZDqIzqylZok+6JRFqSwhNxPqqkEcjbEvEgEKs/ZS
-         KhCHrA2lNqgMJcWq/zsLR/9K67ZTOlbnQ4HKqTNIDEK+LWTJN80LKxmwJYdyEFaIlXC4
-         v+jHNu3b/hvW2YRyw3T0xgeClaKynJaPk4hwfyBxMf4FSCZTRvdW1g6oqxJ0HBi8zcWz
-         9F3B4pPfL1s3aah92LoPtGAVPFsC35kkE6uGquR5FU+1DVgTtb/BmVn9dZniZ3mLL4SX
-         NANwWSo2CQcG3ikZLPY+jlNU8q/1W9/OqhJ+Axupbhkto6XK6808VmgEfjCfXBLqenc8
-         5r2Q==
+        b=GBcOYNw1g6pozH9y1+UzwKY8IighfLhLy/BMHaPPBZM6bFGxqZrsZWP8bXCR4KpwPH
+         onvN/iXuEVfenVRMhMThHy/t1sfJXk1xcaR5bdF7yleRdz9enoIJXXPyeh2nPi7Apdq3
+         aizJYWyU8sFnLVyfP36GAz+8/Hw9gVu52+sHeVKtu27UkKOgYIuz+o4/pPw6b6zU/dx9
+         KGGxrSTEEpbpJ8NiLUCAI7OZiQM8HSxxPFOnmjkTTaKqxhOw3eEwVdyekmcQ+HzKwaYg
+         rSRdvfaz4WKtjKsnBy1m93JKhrZMGXDA8JOGdRF77q7HBV/QDAwDN/5xoaH7bsmaKiEN
+         x7jw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6SnY0h7LM/WGHccSlmtzOeEVSs6x0sC04NtugfRy0eE=;
-        b=bxE3vcDVn1iXBTCqaUEj4dUP2vr854dppH1jn8xD/3xaxd45ugKKRiC1uEgLlu1wKD
-         VDdM/BDgxXoN9UPvzhUVP0a+fN5hcBaGTEdMgwowDSIapEV42j9nA6z0uhkk3NusceJW
-         IXVrPanNW82psL4Lv33eIhrfi5wITU4ObqEjtlCJCkjJEa3LVkiiY5SrTjmLkXhvUhQB
-         d9BhONgEVuZf/tD57UvVBzFa8dVeE/zHF1bVxzQJb7RJvnBxOppLH/UB9iyWNthne4L3
-         v6r3pD1k1yuAThw6tlx9BJ+ZyvGf8Dtn0jUeP6APnH1+jSOu/nfxXkoFUpXM4/qK6Dg3
-         2Plg==
+        bh=IFxB9ahQ/QDYIMv4uQGXixJKag93oduDCiyGWDRWt+A=;
+        b=WqddWhecgJ6zZULLZenp+U39bwgM5MFgwLhMHcJqRcBn6phY2I8JO834TdqOn2pWyB
+         qmUIvMLSFQ+LxMmNpmMm2+3vRxeJc8qVUfoBx0DAJdxGsmcTc0jmGCOSHnPXLIms6udP
+         41rYWTL9kHff/Ap7K7tO2ETmVJKjfkGS+7DarpAyWP1d1umH4XmsjDHdXVH0onz/veAo
+         96qguc0rNwXu9AtiyqkafcKUsWsezyZQJl7lO8dRBfqwdGFjWd8kQ2wmz5sFuW5KiLsx
+         e0sSBmpvuGBRZGJjuC8fl10G1gFAR1t3nlKd+hTBv9LLYwkk7be/oZqJFAPXLP1W3kMK
+         0+PQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	linzhang <xiaolou4617@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 068/310] net: x25: fix one potential use-after-free issue
-Date: Wed, 11 Apr 2018 20:33:27 +0200
-Message-Id: <20180411183625.247125347@linuxfoundation.org>
+Subject: [PATCH 4.9 100/310] libceph: NULL deref on crush_decode() error path
+Date: Wed, 11 Apr 2018 20:33:59 +0200
+Message-Id: <20180411183626.522892681@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476110587421066?=
-X-GMAIL-MSGID: =?utf-8?q?1597477250753043656?=
+X-GMAIL-THRID: =?utf-8?q?1597476142925384376?=
+X-GMAIL-MSGID: =?utf-8?q?1597477249283268954?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,107 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: linzhang <xiaolou4617@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
 
-[ Upstream commit 64df6d525fcff1630098db9238bfd2b3e092d5c1 ]
+[ Upstream commit 293dffaad8d500e1a5336eeb90d544cf40d4fbd8 ]
 
-The function x25_init is not properly unregister related resources
-on error handler.It is will result in kernel oops if x25_init init
-failed, so add properly unregister call on error handler.
+If there is not enough space then ceph_decode_32_safe() does a goto bad.
+We need to return an error code in that situation.  The current code
+returns ERR_PTR(0) which is NULL.  The callers are not expecting that
+and it results in a NULL dereference.
 
-Also, i adjust the coding style and make x25_register_sysctl properly
-return failure.
-
-Signed-off-by: linzhang <xiaolou4617@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: f24e9980eb86 ("ceph: OSD client")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/x25.h        |    4 ++--
- net/x25/af_x25.c         |   24 ++++++++++++++++--------
- net/x25/sysctl_net_x25.c |    5 ++++-
- 3 files changed, 22 insertions(+), 11 deletions(-)
+ net/ceph/osdmap.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/net/x25.h
-+++ b/include/net/x25.h
-@@ -298,10 +298,10 @@ void x25_check_rbuf(struct sock *);
+--- a/net/ceph/osdmap.c
++++ b/net/ceph/osdmap.c
+@@ -295,6 +295,7 @@ static struct crush_map *crush_decode(vo
+ 		u32 yes;
+ 		struct crush_rule *r;
  
- /* sysctl_net_x25.c */
- #ifdef CONFIG_SYSCTL
--void x25_register_sysctl(void);
-+int x25_register_sysctl(void);
- void x25_unregister_sysctl(void);
- #else
--static inline void x25_register_sysctl(void) {};
-+static inline int x25_register_sysctl(void) { return 0; };
- static inline void x25_unregister_sysctl(void) {};
- #endif /* CONFIG_SYSCTL */
- 
---- a/net/x25/af_x25.c
-+++ b/net/x25/af_x25.c
-@@ -1790,32 +1790,40 @@ void x25_kill_by_neigh(struct x25_neigh
- 
- static int __init x25_init(void)
- {
--	int rc = proto_register(&x25_proto, 0);
-+	int rc;
- 
--	if (rc != 0)
-+	rc = proto_register(&x25_proto, 0);
-+	if (rc)
- 		goto out;
- 
- 	rc = sock_register(&x25_family_ops);
--	if (rc != 0)
-+	if (rc)
- 		goto out_proto;
- 
- 	dev_add_pack(&x25_packet_type);
- 
- 	rc = register_netdevice_notifier(&x25_dev_notifier);
--	if (rc != 0)
-+	if (rc)
- 		goto out_sock;
- 
--	pr_info("Linux Version 0.2\n");
-+	rc = x25_register_sysctl();
-+	if (rc)
-+		goto out_dev;
- 
--	x25_register_sysctl();
- 	rc = x25_proc_init();
--	if (rc != 0)
--		goto out_dev;
-+	if (rc)
-+		goto out_sysctl;
-+
-+	pr_info("Linux Version 0.2\n");
-+
- out:
- 	return rc;
-+out_sysctl:
-+	x25_unregister_sysctl();
- out_dev:
- 	unregister_netdevice_notifier(&x25_dev_notifier);
- out_sock:
-+	dev_remove_pack(&x25_packet_type);
- 	sock_unregister(AF_X25);
- out_proto:
- 	proto_unregister(&x25_proto);
---- a/net/x25/sysctl_net_x25.c
-+++ b/net/x25/sysctl_net_x25.c
-@@ -73,9 +73,12 @@ static struct ctl_table x25_table[] = {
- 	{ 0, },
- };
- 
--void __init x25_register_sysctl(void)
-+int __init x25_register_sysctl(void)
- {
- 	x25_table_header = register_net_sysctl(&init_net, "net/x25", x25_table);
-+	if (!x25_table_header)
-+		return -ENOMEM;
-+	return 0;
- }
- 
- void x25_unregister_sysctl(void)
++		err = -EINVAL;
+ 		ceph_decode_32_safe(p, end, yes, bad);
+ 		if (!yes) {
+ 			dout("crush_decode NO rule %d off %x %p to %p\n",
