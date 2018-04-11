@@ -1,60 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752866AbeDKKUO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 06:20:14 -0400
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:50520 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752411AbeDKKUK (ORCPT
+        id S1752212AbeDKKYh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 06:24:37 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:34159 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751729AbeDKKYf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 06:20:10 -0400
-X-Google-Smtp-Source: AIpwx495/zkYWTc5z1KxVDT4TdSo6CPqh9ZSHN5adkIdiYwHZADV6j3X0um9TfI8LVO36HHlArsO5w==
-Date: Wed, 11 Apr 2018 12:20:08 +0200
-From: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To: Joey Pabalinas <joeypabalinas@gmail.com>
-Cc: linux-sparse@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Martin Uecker <Martin.Uecker@med.uni-goettingen.de>,
-        Al Viro <viro@ZenIV.linux.org.uk>, Christopher Li <sparse@chrisli.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] sparse: add -Wpointer-arith flag to toggle
- sizeof(void) warnings
-Message-ID: <20180411102007.i6nkdh6pff5ycmu6@ltop.local>
-References: <20180410224624.psyo7vsy4qjplh3j@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180410224624.psyo7vsy4qjplh3j@gmail.com>
-User-Agent: NeoMutt/20171215
+        Wed, 11 Apr 2018 06:24:35 -0400
+X-Google-Smtp-Source: AIpwx4/qBRnGdDkPYDam4SZNRmCTRpbQAxNuNFkwh1KAMzJvXf60VUxJhkknxzq1WwLgi1M4BEegJQ==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: jon.maloy@ericsson.com, ying.xue@windriver.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH v3] net: tipc: Replace GFP_ATOMIC with GFP_KERNEL in tipc_mon_create
+Date: Wed, 11 Apr 2018 18:24:22 +0800
+Message-Id: <1523442262-4823-1-git-send-email-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 12:46:24PM -1000, Joey Pabalinas wrote:
-> Recent changes to the min()/max() macros in include/linux/kernel.h
-> have added a lot of noise when compiling the kernel with Sparse checking
-> enabled. This mostly is due to the *huge* increase in the number of
-> sizeof(void) warnings, a larger number of which can safely be ignored.
-> 
-> Add the -Wpointer-arith flag to enable/disable these warnings (along
-> with the warning when applying sizeof to function types as well as
-> warning about pointer arithmetic on these types exactly like the
-> GCC -Wpointer-arith flag) on demand; the warning itself has been disabled
-> by default to reduce the large influx of noise which was inadvertently
-> added by commit 3c8ba0d61d04ced9f8 (kernel.h: Retain constant expression
-> output for max()/min()).
-> 
-> Update the manpage to document the new flag and add a validation case
-> for sizeof(void).
-> 
-> CC: Kees Cook <keescook@chromium.org>
-> CC: Linus Torvalds <torvalds@linux-foundation.org>
-> CC: Martin Uecker <Martin.Uecker@med.uni-goettingen.de>
-> CC: Al Viro <viro@ZenIV.linux.org.uk>
-> CC: Christopher Li <sparse@chrisli.org>
-> CC: Joey Pabalinas <joeypabalinas@gmail.com>
-> CC: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-> Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
-> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+tipc_mon_create() is never called in atomic context.
 
-Thanks,
-Acked-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+The call chain ending up at tipc_mon_create() is:
+[1] tipc_mon_create() <- tipc_enable_bearer() <- tipc_nl_bearer_enable()
+tipc_nl_bearer_enable() calls rtnl_lock(), which indicates this function
+is not called in atomic context.
+
+Despite never getting called from atomic context,
+tipc_mon_create() calls kzalloc() with GFP_ATOMIC,
+which does not sleep for allocation.
+GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+which can sleep and improve the possibility of successful allocation.
+
+This is found by a static analysis tool named DCNS written by myself.
+And I also manually check it.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+v2:
+* Modify the description of GFP_ATOMIC in v1.
+  Thank Eric for good advice.
+v3:
+* Modify wrong text in description in v2.
+  Thank Ying for good advice.
+---
+ net/tipc/monitor.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/net/tipc/monitor.c b/net/tipc/monitor.c
+index 9e109bb..9714d80 100644
+--- a/net/tipc/monitor.c
++++ b/net/tipc/monitor.c
+@@ -604,9 +604,9 @@ int tipc_mon_create(struct net *net, int bearer_id)
+ 	if (tn->monitors[bearer_id])
+ 		return 0;
+ 
+-	mon = kzalloc(sizeof(*mon), GFP_ATOMIC);
+-	self = kzalloc(sizeof(*self), GFP_ATOMIC);
+-	dom = kzalloc(sizeof(*dom), GFP_ATOMIC);
++	mon = kzalloc(sizeof(*mon), GFP_KERNEL);
++	self = kzalloc(sizeof(*self), GFP_KERNEL);
++	dom = kzalloc(sizeof(*dom), GFP_KERNEL);
+ 	if (!mon || !self || !dom) {
+ 		kfree(mon);
+ 		kfree(self);
+-- 
+1.9.1
