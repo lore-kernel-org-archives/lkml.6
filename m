@@ -1,79 +1,89 @@
-Return-Path: <dja@axtens.net>
-ARC-Seal: i=1; a=rsa-sha256; t=1523462954; cv=none;
+Return-Path: <kernel-hardening-return-12965-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx48Yp+UPraB0sNIM0qfa9dmUVxeLC3wjAPzmLnzbIHjXKlOywv7aj16LXby+w2QFdEvwvR9V
+ARC-Seal: i=1; a=rsa-sha256; t=1523408592; cv=none;
         d=google.com; s=arc-20160816;
-        b=UPcXuULZhkOxmo/+YfRLN5p+adUPnnXbUqgO0gczNeQSKa3mQ9Eq8XemNx7DGpM1XD
-         nG5FZQd+fwurXQ6dLy4mGVaCaIToa+GVogjnTc5OnznQeSVj0h0LpKYkErfR1LnBV6WE
-         s0JASF/689wQBZWGNlujq/gotai8GyV5gVZ0bJ36cMns3+CQv7If9Y+HVPM4YfTVq/OP
-         pXZYVpyy9RMYaZf/QuMKcq6b9gTDEh3gya2zzFF9Od1hLRwqifsGglcM74XabwBJmdw2
-         rai1zgR/JhEfR6PBLA4v2Amt2fVQKf71ND0qF86+FDMNfYifHIGZZFc0jw9HQNg13Fbs
-         XQmw==
+        b=xRjiSAFcCZus+7bGkrEz5HjiGfctdNF0pHbY2QjysvWj/D0LK7YTHkuRf8HtwFaAbm
+         ExE7pjaDi2HFYWHUmKKlwABBcii5oaFl+KEIeK5CdxSRis2O43rgnDRbW8gkS75MX/bS
+         OQjHmGU8BT+KzF5lMNbxU7fXZG4TqVqYyKIeGE0Fla84ARTWdLEq4No5Hh5R8jyP7yvz
+         0l7SLpumGoQq/QaYCj0iKtPLwKQFwlQf1wXzE3/Dd5FV4yO/VS674wK0+T8sk3FgJ3Kg
+         mLKAGoOEcg7g/NIqxYSUKYbI3Omo2368hvGn8fKdHyvDQCBlEmbcRSpQYeZ8lVUgh4jd
+         m9/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:dkim-signature:arc-authentication-results;
-        bh=zmMnCcObljAred+zFJzfE3rKCa5hkUM3so7uwFVjCUg=;
-        b=s9rGWY7/w/emmU5X4iy7hM2FLq4X5IfyW4uqQw2vGzswKuK3ejTEzDQt42sGQXVI09
-         WPYOH6q0hWMAOHCF9FVmsxs7c7hHvqGYvuYbGVKnh/klXNpePlsjYIG9ZA931xQrox9B
-         NiBP3cAO8RLVY6y1bmHsFbxfJW0vMN8SfViQ/7ERmmYWl1FahDGl+g+DrPJJuepY3nt4
-         SU0RgnHLjn19JG1+Ng7OGng34ffOmsFV/0Un7lrTEpp6DtOF7E7MlCpJlhwJs32zzClN
-         pG7OQM858DMWKq0sUemJ2dvs2nP2QjjTdcSDlm17Qh1Vp5N+Z5rtafaaqg2SJjBSQCAm
-         jvHg==
+        h=message-id:date:subject:cc:to:from:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=vjfMdQW2qqANENkY55bBcrTsKlYRfZRl/r97fU0VU4w=;
+        b=HD4YB+2GeEI6lxK3JReLRACH9GkVyTOgbYeI4vHLtGU9MaZ2DdKfvgliN6APZpIErR
+         tCgas7HdqPR7c1yc1CFqG8lkfj01CCAL4YbQUt6mIeDO4fS2IKX4/MiLPU7WHn00BeQ3
+         zzLana4cmWRT1EnbTJUTLwnnWV9IFqrHe2iG/S+S8gy70t13OFb7Ie5smansI85gd9sk
+         MZ3wixvYwEXe94FIhE3czUgEqz4zh/WVdPQP+mTUJJZ9aJ9LbLPYbEgG68pUEPzteA2X
+         D7L8U+5q0fm8jpxPZ/YBUrcpcYVfr635/tzgPntBKVg8wS68mN3w6MjfIMTkYf1Y85vg
+         8CQg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@axtens.net header.s=google header.b=lZn+5Rs4;
-       spf=pass (google.com: domain of dja@axtens.net designates 209.85.220.65 as permitted sender) smtp.mailfrom=dja@axtens.net
+       spf=pass (google.com: domain of kernel-hardening-return-12965-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12965-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@axtens.net header.s=google header.b=lZn+5Rs4;
-       spf=pass (google.com: domain of dja@axtens.net designates 209.85.220.65 as permitted sender) smtp.mailfrom=dja@axtens.net
-X-Google-Smtp-Source: AIpwx48Wck6jCJik9skp5s8XGubYrCHu78VImOsj/4zRJV/ougDgUvBKrPImuIkPlvd9CnSVHgsqwQ==
-From: Daniel Axtens <dja@axtens.net>
-To: Mikulas Patocka <mpatocka@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Michael Neuling <mikey@neuling.org>, Peter Hurley <peter@hurleysoftware.com>, Jiri Slaby <jslaby@suse.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: tty crash in Linux 4.6
-In-Reply-To: <alpine.LRH.2.02.1803270818150.30055@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1605161555430.8188@file01.intranet.prod.int.rdu2.redhat.com> <573A5996.3080305@hurleysoftware.com> <573B3F84.5050201@hurleysoftware.com> <573B5E4C.8030808@hurleysoftware.com> <alpine.LRH.2.02.1607071855150.19053@file01.intranet.prod.int.rdu2.redhat.com> <CAEjGV6zRghiCCMC1+-n+YPeA0Lrq=-vcvdoYpbwE4G=TXWzY3Q@mail.gmail.com> <87po3wusq1.fsf@linkitivity.dja.id.au> <20180322140554.GA3273@kroah.com> <alpine.LRH.2.02.1803270818150.30055@file01.intranet.prod.int.rdu2.redhat.com>
-Date: Thu, 12 Apr 2018 02:09:09 +1000
-Message-ID: <87k1td913u.fsf@linkitivity.dja.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+       spf=pass (google.com: domain of kernel-hardening-return-12965-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12965-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Laura Abbott <labbott@redhat.com>
+To: Oded Gabbay <oded.gabbay@gmail.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	"David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+	Felix Kuehling <felix.kuehling@amd.com>
+Cc: Laura Abbott <labbott@redhat.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCHv2] drm/amdkfd: Remove vla
+Date: Tue, 10 Apr 2018 18:02:43 -0700
+Message-Id: <20180411010243.17771-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.14.3
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1534517131154419915?=
-X-GMAIL-MSGID: =?utf-8?q?1597466690649860350?=
+X-GMAIL-THRID: =?utf-8?q?1597304222291643357?=
+X-GMAIL-MSGID: =?utf-8?q?1597409688663986140?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Mikulas Patocka <mpatocka@redhat.com> writes:
+There's an ongoing effort to remove VLAs[1] from the kernel to eventually
+turn on -Wvla. Switch to a constant value that covers all hardware.
 
-> On Thu, 22 Mar 2018, Greg Kroah-Hartman wrote:
->
->> On Fri, Mar 23, 2018 at 12:48:06AM +1100, Daniel Axtens wrote:
->> > Hi,
->> > 
->> > >> This patch works, I've had no tty crashes since applying it.
->> > >>
->> > >> I've seen that you haven't sent this patch yet to Linux-4.7-rc and
->> > >> Linux-4.6-stable. Will you? Or did you create a different patch?
->> > >
->> > > We are hitting this now on powerpc.  This patch never seemed to make
->> > > it upstream (drivers/tty/tty_ldisc.c hasn't been touched in 1 year).
->> > 
->> > I seem to be hitting this too on a kernel that has the 4.6 changes
->> > backported to 4.4.
->> > 
->> > Has there been any further progress on getting this accepted?
->> 
->> Can you try applying 28b0f8a6962a ("tty: make n_tty_read() always abort
->> if hangup is in progress") to see if that helps out or not?
+[1] https://lkml.org/lkml/2018/3/7/621
 
-Sorry for the delay in getting the test results; as with Mikulas,
-28b0f8a6962a does not help.
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+v2: Switch to a larger size to account for other hardware
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Regards,
-Daniel
-
->> 
->> thanks,
->> 
->> greg k-h
->
-> It doesn't help. I get the same crash as before.
->
-> Mikulas
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c b/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c
+index 035c351f47c5..c3a5a80e31ae 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c
+@@ -139,10 +139,12 @@ static void interrupt_wq(struct work_struct *work)
+ {
+ 	struct kfd_dev *dev = container_of(work, struct kfd_dev,
+ 						interrupt_work);
++	uint32_t ih_ring_entry[8];
+ 
+-	uint32_t ih_ring_entry[DIV_ROUND_UP(
+-				dev->device_info->ih_ring_entry_size,
+-				sizeof(uint32_t))];
++	if (dev->device_info->ih_ring_entry_size > (8 * sizeof(uint32_t))) {
++		dev_err(kfd_chardev(), "Ring entry too small\n");
++		return;
++	}
+ 
+ 	while (dequeue_ih_ring_entry(dev, ih_ring_entry))
+ 		dev->device_info->event_interrupt_class->interrupt_wq(dev,
+-- 
+2.14.3
