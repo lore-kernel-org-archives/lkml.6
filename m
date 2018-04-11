@@ -1,154 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752220AbeDKG0M (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 02:26:12 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:38096 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751841AbeDKG0K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 02:26:10 -0400
-Date: Wed, 11 Apr 2018 08:26:07 +0200
-From: Ladislav Michl <ladis@linux-mips.org>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        linux-omap <linux-omap@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
-Subject: Re: [Letux-kernel] [Bug]: mtd: onenand: omap2plus: kernel panic with
- OneNAND on OMAP3 (DM3730) device GTA04A5
-Message-ID: <20180411062607.GA9179@lenoch>
-References: <5D496D5C-4E3E-47B4-9981-E8F4C348DE00@goldelico.com>
- <20180410205643.GA2228@lenoch>
- <20180411065836.7e1bfc3f@aktux>
+        id S1752426AbeDKG2j (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 02:28:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40178 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751872AbeDKG2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 02:28:37 -0400
+Date: Wed, 11 Apr 2018 08:28:35 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Paul Kocialkowski <contact@paulk.fr>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>
+Subject: Re: [PATCH 1/3] drm/panel: Add RGB666 variant of Innolux AT070TN92
+Message-ID: <20180411062835.oqzd34e2szrnv34b@flea>
+References: <20180410213129.24049-1-contact@paulk.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7tqqpg34pqzskzur"
 Content-Disposition: inline
-In-Reply-To: <20180411065836.7e1bfc3f@aktux>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180410213129.24049-1-contact@paulk.fr>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
 
-On Wed, Apr 11, 2018 at 06:59:03AM +0200, Andreas Kemnade wrote:
-> Hi Ladis,
-> 
-> On Tue, 10 Apr 2018 22:56:43 +0200
-> Ladislav Michl <ladis@linux-mips.org> wrote:
-> 
-> > Hi Nikolaus,
-> > 
-> > On Tue, Apr 10, 2018 at 06:25:17PM +0200, H. Nikolaus Schaller wrote:
-> > > Hi,
-> > > we just started testing the v4.16 kernel and found the
-> > > device no longer bootable (works with v4.15). It turned
-> > > out that there was a harmful modification somewhere between
-> > > v4.15.0 and v4.16-rc1.
-> > > 
-> > > A git bisect points to this patch:  
-> > 
-> > Well, that's a shame... However, this code is in production for several
-> > months now, so could you, please put 'goto out_copy' if 'buf >= high_memory'
-> > condition is met, ie:
-> > --- a/drivers/mtd/nand/onenand/omap2.c
-> > +++ b/drivers/mtd/nand/onenand/omap2.c
-> > @@ -392,6 +392,7 @@ static int omap2_onenand_read_bufferram(struct mtd_info *mtd, int area,
-> >  	if (buf >= high_memory) {
-> >  		struct page *p1;
-> >  
-> > +		goto out_copy;
-> >  		if (((size_t)buf & PAGE_MASK) !=
-> >  		    ((size_t)(buf + count - 1) & PAGE_MASK))
-> >  			goto out_copy;
-> 
-> I had the same problem here, and that snippet  helps here. ubiattach
-> -p /dev/mtdX does not cause kernel oopses here anymore
+--7tqqpg34pqzskzur
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It seems reviving old code always comes at a price :-) Could you try
-following patch, so far compile tested only?
-(we'll need to do the same for omap2_onenand_write_bufferram, but
-it sould be enough for testing purposes now)
+On Tue, Apr 10, 2018 at 11:31:27PM +0200, Paul Kocialkowski wrote:
+> This adds timings for the RGB666 variant of the Innolux AT070TN92 panel,
+> as found on the Ainol AW1 tablet.
+>=20
+> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+> ---
+>  drivers/gpu/drm/panel/panel-simple.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel=
+/panel-simple.c
+> index 5591984a392b..efeb2f2162bc 100644
+> --- a/drivers/gpu/drm/panel/panel-simple.c
+> +++ b/drivers/gpu/drm/panel/panel-simple.c
+> @@ -1063,6 +1063,29 @@ static const struct panel_desc innolux_at070tn92 =
+=3D {
+>  	.bus_format =3D MEDIA_BUS_FMT_RGB888_1X24,
+>  };
+> =20
+> +static const struct drm_display_mode innolux_at070tn92_rgb666_mode =3D {
+> +	.clock =3D 40000,
+> +	.hdisplay =3D 800,
+> +	.hsync_start =3D 800 + 112,
+> +	.hsync_end =3D 800 + 112 + 1,
+> +	.htotal =3D 800 + 112 + 1 + 87,
+> +	.vdisplay =3D 480,
+> +	.vsync_start =3D 480 + 141,
+> +	.vsync_end =3D 480 + 141 + 1,
+> +	.vtotal =3D 480 + 141 + 1 + 38,
+> +	.vrefresh =3D 60,
+> +};
 
-diff --git a/drivers/mtd/nand/onenand/omap2.c b/drivers/mtd/nand/onenand/omap2.c
-index 9c159f0dd9a6..04cefd7a6487 100644
---- a/drivers/mtd/nand/onenand/omap2.c
-+++ b/drivers/mtd/nand/onenand/omap2.c
-@@ -375,11 +375,12 @@ static int omap2_onenand_read_bufferram(struct mtd_info *mtd, int area,
- {
- 	struct omap2_onenand *c = container_of(mtd, struct omap2_onenand, mtd);
- 	struct onenand_chip *this = mtd->priv;
-+	struct device *dev = &c->pdev->dev;
- 	dma_addr_t dma_src, dma_dst;
- 	int bram_offset;
- 	void *buf = (void *)buffer;
- 	size_t xtra;
--	int ret;
-+	int ret, page_dma = 0;
- 
- 	bram_offset = omap2_onenand_bufferram_offset(mtd, area) + area + offset;
- 	if (bram_offset & 3 || (size_t)buf & 3 || count < 384)
-@@ -389,38 +390,43 @@ static int omap2_onenand_read_bufferram(struct mtd_info *mtd, int area,
- 	if (in_interrupt() || oops_in_progress)
- 		goto out_copy;
- 
-+	xtra = count & 3;
-+	if (xtra) {
-+		count -= xtra;
-+		memcpy(buf + count, this->base + bram_offset + count, xtra);
-+	}
-+
-+	/* Handle vmalloc address */
- 	if (buf >= high_memory) {
--		struct page *p1;
-+		struct page *page;
- 
- 		if (((size_t)buf & PAGE_MASK) !=
- 		    ((size_t)(buf + count - 1) & PAGE_MASK))
- 			goto out_copy;
--		p1 = vmalloc_to_page(buf);
--		if (!p1)
-+		page = vmalloc_to_page(buf);
-+		if (!page)
- 			goto out_copy;
--		buf = page_address(p1) + ((size_t)buf & ~PAGE_MASK);
--	}
--
--	xtra = count & 3;
--	if (xtra) {
--		count -= xtra;
--		memcpy(buf + count, this->base + bram_offset + count, xtra);
-+		page_dma = 1;
-+		dma_dst = dma_map_page(dev, page, (size_t) buf & ~PAGE_MASK,
-+				       count, DMA_FROM_DEVICE);
-+	} else {
-+		dma_dst = dma_map_single(dev, buf, count, DMA_FROM_DEVICE);
- 	}
--
- 	dma_src = c->phys_base + bram_offset;
--	dma_dst = dma_map_single(&c->pdev->dev, buf, count, DMA_FROM_DEVICE);
--	if (dma_mapping_error(&c->pdev->dev, dma_dst)) {
--		dev_err(&c->pdev->dev,
--			"Couldn't DMA map a %d byte buffer\n",
--			count);
-+
-+	if (dma_mapping_error(dev, dma_dst)) {
-+		dev_err(dev, "Couldn't DMA map a %d byte buffer\n", count);
- 		goto out_copy;
- 	}
- 
- 	ret = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
--	dma_unmap_single(&c->pdev->dev, dma_dst, count, DMA_FROM_DEVICE);
-+	if (page_dma)
-+		dma_unmap_page(dev, dma_dst, count, DMA_FROM_DEVICE);
-+	else
-+		dma_unmap_single(dev, dma_dst, count, DMA_FROM_DEVICE);
- 
- 	if (ret) {
--		dev_err(&c->pdev->dev, "timeout waiting for DMA\n");
-+		dev_err(dev, "timeout waiting for DMA\n");
- 		goto out_copy;
- 	}
- 
+I'm not sure why you'd need different timings if the only difference
+is the bus width.
+
+> +static const struct panel_desc innolux_at070tn92_rgb666 =3D {
+> +	.modes =3D &innolux_at070tn92_rgb666_mode,
+> +	.num_modes =3D 1,
+> +	.size =3D {
+> +		.width =3D 154,
+> +		.height =3D 86,
+> +	},
+> +	.bus_format =3D MEDIA_BUS_FMT_RGB666_1X18,
+> +};
+> +
+>  static const struct display_timing innolux_g101ice_l01_timing =3D {
+>  	.pixelclock =3D { 60400000, 71100000, 74700000 },
+>  	.hactive =3D { 1280, 1280, 1280 },
+> @@ -2105,6 +2128,9 @@ static const struct of_device_id platform_of_match[=
+] =3D {
+>  	}, {
+>  		.compatible =3D "innolux,at070tn92",
+>  		.data =3D &innolux_at070tn92,
+> +	}, {
+> +		.compatible =3D "innolux,at070tn92-rgb666",
+> +		.data =3D &innolux_at070tn92_rgb666,
+
+And this isn't a different device, it's just the integration in the
+board that is different, so you shouldn't have a different compatible
+here, but rather something like the bus-width property documented in
+the Documentation/devicetree/bindings/media/video-interfaces.txt file.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--7tqqpg34pqzskzur
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrNqwUACgkQ0rTAlCFN
+r3QQWQ/+NWa87cWJjJ2jsBdu8HcxgKwidvfuf9dQIu9bLYU0Jd3y7BTcqbbR4XHP
+axE+EeI6M3V6q5VoTEJ2hlDKK8m2mLzFY7wIiDmYKICN1LQOI3S5xZGU8r5bDdUx
+2byxBqtxVV0droDsi8ZEmWCmiKFLUh+fXpjAqQIQN75hosuFv2DpfFysoLw+9hD+
+YUIhI7MQA2OfLg1fcfmXvsfU3Y/KXlw1gR/xRyQv7rBp/PEs0DqmPd+g6UMBHcgP
+FOgm4B3qPL32tBWraYNW2VASz8j55ZpVCqNHtfxeqkjC3Rcg9B6LlUeqmhonJ9jx
+QGKcojZrLkzhbQgb8NfuPEFuZD58twQr6aXfE1L06k1rbMxB1rrK6zU+Vozao2iX
+3yotoFmL0fOu0mo97nXtfj4x4STVUplex9kuWAd8v3qTwtlnFyXxbaUharE6iC53
+OS12+LYk5BQa7e+XU4Fhagqd6KDYnVomDMVE1VSB/rtBGZDWMOYv4F2x6v1u55Yu
+uX2JcYD5LlH0pOLldc8hKpVeAA6FsZ9aS7jFywCbDf30QQk5kTQpY5qqb7fRP3OB
+ZgUaQ6f6tYRdpGnUKKVMImEuYjIJ6U+I5LUsKJBrsuxl69wkeisxxOztIlfayZKv
+cKKzq5DaIDjtpsa7pG3YbQanq1wH4JWTlTznm+ukGPFoDXhP9bY=
+=3vBz
+-----END PGP SIGNATURE-----
+
+--7tqqpg34pqzskzur--
