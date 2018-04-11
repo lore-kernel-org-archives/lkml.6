@@ -1,133 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752280AbeDKIlX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 04:41:23 -0400
-Received: from mga17.intel.com ([192.55.52.151]:56707 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751734AbeDKIlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 04:41:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,435,1517904000";
-   d="scan'208";a="190595680"
-Message-ID: <1523436077.16235.5.camel@intel.com>
-Subject: [GIT PULL] Thermal management updates for v4.17-rc1
-From: Zhang Rui <rui.zhang@intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "Zhang, Rui" <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
-Date: Wed, 11 Apr 2018 16:41:17 +0800
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1752468AbeDKIlm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 04:41:42 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35808 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752363AbeDKIli (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 04:41:38 -0400
+Subject: Re: [PATCH v3 2/2] mm: remove odd HAVE_PTE_SPECIAL
+To: Michal Hocko <mhocko@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        linux-doc@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>,
+        aneesh.kumar@linux.vnet.ibm.com, akpm@linux-foundation.org,
+        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Vineet Gupta <vgupta@synopsys.com>, Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <albert@sifive.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        David Rientjes <rientjes@google.com>,
+        Robin Murphy <robin.murphy@arm.com>
+References: <1523433816-14460-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1523433816-14460-3-git-send-email-ldufour@linux.vnet.ibm.com>
+ <20180411083315.GA23400@dhcp22.suse.cz>
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Date: Wed, 11 Apr 2018 10:41:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180411083315.GA23400@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18041108-0008-0000-0000-000004E9308B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041108-0009-0000-0000-00001E7D3251
+Message-Id: <5bd1bb46-8f71-e6db-7fb7-43d023a37f58@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-11_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804110084
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Linus,
-
-Please pull from
-  git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next
-
-to receive the latest Thermal Management updates for v4.17-rc1 with
-top-most commit f8837aac36cdc7430422cd65f4466071b42654bb:
-
-  Merge branches 'thermal-core' and 'thermal-soc' into next (2018-04-02 
-21:49:31 +0800)
-
-on top of commit 0c8efd610b58cb23cefdfa12015799079aef94ae:
-
-  Linux 4.16-rc5 (2018-03-11 17:25:09 -0700)
-
-Specifics:
-
-- Fix race condition in imx_thermal_probe(). (Mikhail Lappo)
-
-- Add cooling device's statistics in sysfs. (Viresh Kumar)
-
-- add support for i.MX7 thermal sensor in imx_thermal driver. (Anson
-Huang)
-
-- add support for MT7622 SoC in mtk_thermal driver. (Sean Wang)
-
-- Remove unused min/max cpu cooling DT property. (Viresh Kumar).
-
-- A series of fixes on exynos driver. (Bartlomiej Zolnierkiewicz,
-Maciej Purski, Marek Szyprowski)
-
-thanks,
-rui
-
-
-
-----------------------------------------------------------------
-Anson Huang (1):
-      thermal: imx: add i.MX7 thermal sensor support
-
-Bartlomiej Zolnierkiewicz (10):
-      thermal: exynos: remove unused "type" field from struct
-exynos_tmu_platform_data
-      thermal: exynos: remove parsing of samsung,
-tmu_default_temp_offset property
-      thermal: exynos: remove parsing of samsung, tmu_[first,
-second]_point_trim properties
-      thermal: exynos: remove parsing of samsung, tmu_noise_cancel_mode
-property
-      thermal: exynos: remove parsing of samsung, tmu[_min,
-_max]_efuse_value properties
-      thermal: exynos: remove parsing of samsung, tmu_reference_voltage
-property
-      thermal: exynos: remove parsing of samsung,tmu_gain property
-      thermal: exynos: remove parsing of samsung, tmu_cal_type property
-      thermal: exynos: remove separate exynos_tmu.h header file
-      dt-bindings: thermal: remove no longer needed samsung thermal
-properties
-
-Maciej Purski (1):
-      thermal: exynos: Read soc_type from match data
-
-Marek Szyprowski (2):
-      thermal: exynos: Reading temperature makes sense only when TMU is
-turned on
-      thermal: exynos: Propagate error value from tmu_read()
-
-Mikhail Lappo (1):
-      thermal: imx: Fix race condition in imx_thermal_probe()
-
-Sean Wang (2):
-      dt-bindings: thermal: add binding for MT7622 SoC
-      thermal: mediatek: add support for MT7622 SoC
-
-Viresh Kumar (2):
-      dt-bindings: thermal: Remove "cooling-{min|max}-level" properties
-      thermal: Add cooling device's statistics in sysfs
-
-Zhang Rui (2):
-      Merge branch 'linus' of git://git.kernel.org/.../evalenti/linux-
-soc-thermal into thermal-soc
-      Merge branches 'thermal-core' and 'thermal-soc' into next
-
- .../devicetree/bindings/thermal/exynos-thermal.txt |  23 +-
- .../devicetree/bindings/thermal/imx-thermal.txt    |   9 +-
- .../bindings/thermal/mediatek-thermal.txt          |   1 +
- .../devicetree/bindings/thermal/thermal.txt        |  16 +-
- Documentation/thermal/sysfs-api.txt                |  31 +++
- drivers/thermal/Kconfig                            |   7 +
- drivers/thermal/imx_thermal.c                      | 301
-++++++++++++++++-----
- drivers/thermal/mtk_thermal.c                      |  35 +++
- drivers/thermal/samsung/exynos_tmu.c               | 268 +++++++++--
--------
- drivers/thermal/samsung/exynos_tmu.h               |  75 -----
- drivers/thermal/thermal_core.c                     |   3 +-
- drivers/thermal/thermal_core.h                     |  10 +
- drivers/thermal/thermal_helpers.c                  |   5 +-
- drivers/thermal/thermal_sysfs.c                    | 225
-+++++++++++++++
- include/linux/thermal.h                            |   1 +
- 15 files changed, 706 insertions(+), 304 deletions(-)
- delete mode 100644 drivers/thermal/samsung/exynos_tmu.h
+On 11/04/2018 10:33, Michal Hocko wrote:
+> On Wed 11-04-18 10:03:36, Laurent Dufour wrote:
+>> @@ -881,7 +876,8 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+>>  
+>>  	if (is_zero_pfn(pfn))
+>>  		return NULL;
+>> -check_pfn:
+>> +
+>> +check_pfn: __maybe_unused
+>>  	if (unlikely(pfn > highest_memmap_pfn)) {
+>>  		print_bad_pte(vma, addr, pte, NULL);
+>>  		return NULL;
+>> @@ -891,7 +887,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+>>  	 * NOTE! We still have PageReserved() pages in the page tables.
+>>  	 * eg. VDSO mappings can cause them to exist.
+>>  	 */
+>> -out:
+>> +out: __maybe_unused
+>>  	return pfn_to_page(pfn);
+> 
+> Why do we need this ugliness all of the sudden?
+Indeed the compiler doesn't complaint but in theory it should since these
+labels are not used depending on CONFIG_ARCH_HAS_PTE_SPECIAL.
