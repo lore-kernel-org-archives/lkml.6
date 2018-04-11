@@ -1,35 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934476AbeDKTaj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 15:30:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57158 "EHLO mx1.redhat.com"
+        id S934608AbeDKTaw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 15:30:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52276 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756548AbeDKTac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 15:30:32 -0400
+        id S934007AbeDKTah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 15:30:37 -0400
 From: Lyude Paul <lyude@redhat.com>
 To: intel-gfx@lists.freedesktop.org
 Cc: Manasi Navare <manasi.d.navare@intel.com>,
         =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
         <ville.syrjala@linux.intel.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>, Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
         Jani Nikula <jani.nikula@linux.intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, Ben Skeggs <bskeggs@redhat.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
-        Tony Cheng <Tony.Cheng@amd.com>,
-        "Leo (Sunpeng) Li" <sunpeng.li@amd.com>, Shirish S <shirish.s@amd.com>,
-        "Jerry (Fangzhi) Zuo" <Jerry.Zuo@amd.com>, Roman Li <Roman.Li@amd.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
-Subject: [PATCH v6 05/10] drm/dp_mst: Make drm_dp_mst_topology_state subclassable
-Date: Wed, 11 Apr 2018 15:29:32 -0400
-Message-Id: <20180411192951.21997-6-lyude@redhat.com>
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 10/10] drm/i915: Implement proper fallback training for MST
+Date: Wed, 11 Apr 2018 15:29:37 -0400
+Message-Id: <20180411192951.21997-11-lyude@redhat.com>
 In-Reply-To: <20180411192951.21997-1-lyude@redhat.com>
 References: <20180411192951.21997-1-lyude@redhat.com>
 MIME-Version: 1.0
@@ -39,418 +27,677 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is useful for drivers (which will probably be all of them soon)
-which need to track state that is exclusive to the topology, and not a
-specific connector on said topology. This includes things such as the
-link rate and lane count that are shared by all of the connectors on the
-topology.
+For a while we actually haven't had any way of retraining MST links with
+fallback link parameters like we do with SST. While uncommon, certain
+setups such as my Caldigit TS3 + EVGA MST hub require this since
+otherwise, they end up getting stuck in an infinite MST retraining loop.
+
+MST retraining is somewhat different then SST retraining. While it's
+possible during the normal link retraining sequence for a hub to indicate
+bad link status, it's also possible for a hub to only indicate this
+status through ESI messages and it's possible for this to happen after
+the initial link training succeeds. This can lead to a pattern that
+looks like this:
+
+- Train MST link
+- Training completes successfully
+- MST hub sets Channel EQ failed bit in ESI
+- Retraining starts
+- Retraining completes successfully
+- MST hub sets Channel EQ failed bit in ESI again
+- Rinse and repeat
+
+In these situations, we need to be able to actually trigger fallback
+link training from the ESI handler as well, along with using the ESI
+handler during retraining to figure out whether or not our retraining
+actually succeeded.
+
+This gets a bit more complicated since we have to ensure that we don't
+block the ESI handler at all while doing retraining. If we do, due to
+DisplayPort's general issues with being sensitive to IRQ latency most
+MST hubs will just stop responding to us if their interrupts aren't
+handled in a timely manner.
+
+So: move retraining into it's own seperate handler. Running in a
+seperate handler allows us to avoid stalling the ESI during link
+retraining, and we can have the ESI signal that the channel EQ bit was
+cleared through a simple completion struct. Additionally, we take care
+to stick as much of this into the SST retraining path as possible since
+sharing is caring.
+
+V4:
+ - Move all MST retraining work into hotplug_work
+ - Grab the correct power wells when retraining.
+ - Loop through MST encoders in intel_dp_get_crtc_mask(), quicker/easier
+   than connectors
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 Cc: Manasi Navare <manasi.d.navare@intel.com>
 Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 14 +++-
- .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    | 35 +++++++-
- .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.h    |  4 +-
- drivers/gpu/drm/drm_dp_mst_topology.c              | 94 +++++++++++++++++-----
- drivers/gpu/drm/i915/intel_dp_mst.c                | 13 ++-
- drivers/gpu/drm/nouveau/nv50_display.c             | 15 +++-
- drivers/gpu/drm/radeon/radeon_dp_mst.c             | 13 ++-
- include/drm/drm_dp_mst_helper.h                    |  8 ++
- 8 files changed, 165 insertions(+), 31 deletions(-)
+ drivers/gpu/drm/i915/intel_ddi.c              |  10 +-
+ drivers/gpu/drm/i915/intel_dp.c               | 355 ++++++++++++++++++++------
+ drivers/gpu/drm/i915/intel_dp_link_training.c |   6 +-
+ drivers/gpu/drm/i915/intel_dp_mst.c           |  27 +-
+ drivers/gpu/drm/i915/intel_drv.h              |   7 +
+ 5 files changed, 313 insertions(+), 92 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index e42a28e3adc5..2c3660c36732 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -3626,9 +3626,17 @@ static int amdgpu_dm_connector_init(struct amdgpu_display_manager *dm,
+diff --git a/drivers/gpu/drm/i915/intel_ddi.c b/drivers/gpu/drm/i915/intel_ddi.c
+index 92cb26b18a9b..effc61db41d2 100644
+--- a/drivers/gpu/drm/i915/intel_ddi.c
++++ b/drivers/gpu/drm/i915/intel_ddi.c
+@@ -3063,9 +3063,17 @@ static bool intel_ddi_hotplug(struct intel_encoder *encoder,
+ 		break;
+ 	}
  
- 	drm_connector_register(&aconnector->base);
- 
--	if (connector_type == DRM_MODE_CONNECTOR_DisplayPort
--		|| connector_type == DRM_MODE_CONNECTOR_eDP)
--		amdgpu_dm_initialize_dp_connector(dm, aconnector);
-+	if (connector_type == DRM_MODE_CONNECTOR_DisplayPort ||
-+	    connector_type == DRM_MODE_CONNECTOR_eDP) {
-+		res = amdgpu_dm_initialize_dp_connector(dm, aconnector);
-+		if (res) {
-+			drm_connector_unregister(&aconnector->base);
-+			drm_connector_cleanup(&aconnector->base);
-+			aconnector->connector_id = -1;
++	if (ret == -EINVAL)
++		ret = intel_dp_handle_train_failure(
++		    enc_to_intel_dp(&encoder->base));
 +
-+			goto out_free;
+ 	drm_modeset_drop_locks(&ctx);
+ 	drm_modeset_acquire_fini(&ctx);
+-	WARN(ret, "Acquiring modeset locks failed with %i\n", ret);
++
++	if (ret == -EIO)
++		changed = true;
++	else
++		WARN(ret, "Acquiring modeset locks failed with %i\n", ret);
+ 
+ 	return changed;
+ }
+diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+index fbb467bc227d..a7fd28929402 100644
+--- a/drivers/gpu/drm/i915/intel_dp.c
++++ b/drivers/gpu/drm/i915/intel_dp.c
+@@ -45,6 +45,8 @@
+ 
+ #define DP_DPRX_ESI_LEN 14
+ 
++#define DP_MST_RETRAIN_TIMEOUT (msecs_to_jiffies(100))
++
+ /* Compliance test status bits  */
+ #define INTEL_DP_RESOLUTION_SHIFT_MASK	0
+ #define INTEL_DP_RESOLUTION_PREFERRED	(1 << INTEL_DP_RESOLUTION_SHIFT_MASK)
+@@ -2760,6 +2762,7 @@ static void intel_disable_dp(struct intel_encoder *encoder,
+ 	struct intel_dp *intel_dp = enc_to_intel_dp(&encoder->base);
+ 
+ 	intel_dp->link_trained = false;
++	intel_dp->link_is_bad = false;
+ 
+ 	if (old_crtc_state->has_audio)
+ 		intel_audio_codec_disable(encoder,
+@@ -4205,8 +4208,133 @@ static void intel_dp_handle_test_request(struct intel_dp *intel_dp)
+ 		DRM_DEBUG_KMS("Could not write test response to sink\n");
+ }
+ 
++/* Get a mask of the CRTCs that are running on the given intel_dp struct. For
++ * MST, this returns a crtc mask containing all of the CRTCs driving
++ * downstream sinks, for SST it just returns a mask of the attached
++ * connector's CRTC.
++ */
++int
++intel_dp_get_crtc_mask(struct intel_dp *intel_dp)
++{
++	struct drm_device *dev = dp_to_dig_port(intel_dp)->base.base.dev;
++	struct drm_connector *connector;
++	struct drm_crtc *crtc;
++	int crtc_mask = 0;
++
++	WARN_ON(!drm_modeset_is_locked(&dev->mode_config.connection_mutex));
++
++	if (intel_dp->is_mst) {
++		struct intel_dp_mst_encoder *mst_enc;
++		struct intel_connector *intel_connector;
++		struct drm_connector_state *conn_state;
++		int i;
++
++		for (i = 0; i < ARRAY_SIZE(intel_dp->mst_encoders); i++) {
++			mst_enc = intel_dp->mst_encoders[i];
++
++			intel_connector = mst_enc->connector;
++			if (!intel_connector)
++				continue;
++
++			conn_state = intel_connector->base.state;
++			if (conn_state->crtc)
++				crtc_mask |= drm_crtc_mask(conn_state->crtc);
++		}
++	} else if (intel_dp->attached_connector) {
++		connector = &intel_dp->attached_connector->base;
++		crtc = connector->state->crtc;
++
++		if (crtc)
++			crtc_mask |= drm_crtc_mask(crtc);
++	}
++
++	return crtc_mask;
++}
++
++static bool
++intel_dp_needs_link_retrain(struct intel_dp *intel_dp,
++			    const u8 esi[DP_DPRX_ESI_LEN])
++{
++	u8 buf[DP_LINK_STATUS_SIZE];
++	const u8 *link_status = NULL;
++
++	if (intel_dp->link_is_bad)
++		return false;
++
++	if (intel_dp->is_mst) {
++		if (!intel_dp->active_mst_links)
++			return false;
++
++		if (esi) {
++			link_status = &esi[10];
++		} else {
++			/* We're not running from the ESI handler, so wait a
++			 * little bit to see if the ESI handler lets us know
++			 * that the link status is OK
++			 */
++			if (wait_for_completion_timeout(
++				&intel_dp->mst_retrain_completion,
++				DP_MST_RETRAIN_TIMEOUT))
++				return false;
++		}
++	} else {
++		if (intel_dp->link_trained)
++			return false;
++		if (!intel_dp_get_link_status(intel_dp, buf))
++			return false;
++
++		link_status = buf;
++	}
++
++	/*
++	 * Validate the cached values of intel_dp->link_rate and
++	 * intel_dp->lane_count before attempting to retrain.
++	 */
++	if (!intel_dp_link_params_valid(intel_dp, intel_dp->link_rate,
++					intel_dp->lane_count))
++		return false;
++
++	if (link_status) {
++		return !drm_dp_channel_eq_ok(link_status,
++					     intel_dp->lane_count);
++	} else {
++		return true;
++	}
++}
++
++static inline bool
++intel_dp_mst_needs_retrain(struct intel_dp *intel_dp,
++			   const u8 esi[DP_DPRX_ESI_LEN])
++{
++	struct drm_device *dev = dp_to_dig_port(intel_dp)->base.base.dev;
++	struct drm_i915_private *dev_priv = to_i915(dev);
++
++	if (intel_dp_needs_link_retrain(intel_dp, esi)) {
++		DRM_DEBUG_KMS("Channel EQ failing\n");
++
++		if (completion_done(&intel_dp->mst_retrain_completion)) {
++			reinit_completion(&intel_dp->mst_retrain_completion);
++			DRM_DEBUG_KMS("Starting retrain\n");
++
++			return true;
++		} else if (!work_busy(&dev_priv->hotplug.hotplug_work)) {
++			/* Retraining was probably interrupted (usually from
++			 * one of the CRTCs being in a modeset during a
++			 * previous retrain attempt)
++			 */
++			return true;
++		}
++
++	} else if (!completion_done(&intel_dp->mst_retrain_completion)) {
++		DRM_DEBUG_KMS("Channel EQ stable\n");
++		complete_all(&intel_dp->mst_retrain_completion);
++	}
++
++	return false;
++}
++
+ static int
+-intel_dp_check_mst_status(struct intel_dp *intel_dp)
++intel_dp_check_mst_status(struct intel_dp *intel_dp, bool *need_retrain)
+ {
+ 	bool bret;
+ 
+@@ -4215,16 +4343,13 @@ intel_dp_check_mst_status(struct intel_dp *intel_dp)
+ 		int ret = 0;
+ 		int retry;
+ 		bool handled;
++		*need_retrain = false;
+ 		bret = intel_dp_get_sink_irq_esi(intel_dp, esi);
+ go_again:
+ 		if (bret == true) {
+-
+-			/* check link status - esi[10] = 0x200c */
+-			if (intel_dp->active_mst_links &&
+-			    !drm_dp_channel_eq_ok(&esi[10], intel_dp->lane_count)) {
+-				DRM_DEBUG_KMS("channel EQ not ok, retraining\n");
+-				intel_dp_start_link_train(intel_dp);
+-				intel_dp_stop_link_train(intel_dp);
++			if (!*need_retrain) {
++			    *need_retrain = intel_dp_mst_needs_retrain(
++				intel_dp, esi);
+ 			}
+ 
+ 			DRM_DEBUG_KMS("got esi %3ph\n", esi);
+@@ -4262,29 +4387,6 @@ intel_dp_check_mst_status(struct intel_dp *intel_dp)
+ 	return -EINVAL;
+ }
+ 
+-static bool
+-intel_dp_needs_link_retrain(struct intel_dp *intel_dp)
+-{
+-	u8 link_status[DP_LINK_STATUS_SIZE];
+-
+-	if (!intel_dp->link_trained)
+-		return false;
+-
+-	if (!intel_dp_get_link_status(intel_dp, link_status))
+-		return false;
+-
+-	/*
+-	 * Validate the cached values of intel_dp->link_rate and
+-	 * intel_dp->lane_count before attempting to retrain.
+-	 */
+-	if (!intel_dp_link_params_valid(intel_dp, intel_dp->link_rate,
+-					intel_dp->lane_count))
+-		return false;
+-
+-	/* Retrain if Channel EQ or CR not ok */
+-	return !drm_dp_channel_eq_ok(link_status, intel_dp->lane_count);
+-}
+-
+ /*
+  * If display is now connected check links status,
+  * there has been known issues of link loss triggering
+@@ -4300,65 +4402,117 @@ intel_dp_needs_link_retrain(struct intel_dp *intel_dp)
+ int intel_dp_retrain_link(struct intel_encoder *encoder,
+ 			  struct drm_modeset_acquire_ctx *ctx)
+ {
+-	struct drm_i915_private *dev_priv = to_i915(encoder->base.dev);
++	struct drm_device *dev = encoder->base.dev;
++	struct drm_i915_private *dev_priv = to_i915(dev);
+ 	struct intel_dp *intel_dp = enc_to_intel_dp(&encoder->base);
+-	struct intel_connector *connector = intel_dp->attached_connector;
+-	struct drm_connector_state *conn_state;
+-	struct intel_crtc_state *crtc_state;
+-	struct intel_crtc *crtc;
++	struct drm_crtc *crtc;
++	struct intel_crtc *intel_crtc;
++	int crtc_mask, retry_count = 0;
+ 	int ret;
+ 
+-	/* FIXME handle the MST connectors as well */
+-
+-	if (!connector || connector->base.status != connector_status_connected)
+-		return 0;
+-
+ 	ret = drm_modeset_lock(&dev_priv->drm.mode_config.connection_mutex,
+ 			       ctx);
+ 	if (ret)
+ 		return ret;
+ 
+-	conn_state = connector->base.state;
+-
+-	crtc = to_intel_crtc(conn_state->crtc);
+-	if (!crtc)
+-		return 0;
++	crtc_mask = intel_dp_get_crtc_mask(intel_dp);
++	for_each_intel_crtc_mask(dev, intel_crtc, crtc_mask) {
++		struct drm_crtc_state *crtc_state;
++		struct intel_crtc_state *intel_crtc_state;
+ 
+-	ret = drm_modeset_lock(&crtc->base.mutex, ctx);
+-	if (ret)
+-		return ret;
++		crtc = &intel_crtc->base;
++		ret = drm_modeset_lock(&crtc->mutex, ctx);
++		if (ret)
++			return ret;
+ 
+-	crtc_state = to_intel_crtc_state(crtc->base.state);
++		crtc_state = crtc->state;
++		intel_crtc_state = to_intel_crtc_state(crtc_state);
++		WARN_ON(!intel_crtc_has_dp_encoder(intel_crtc_state));
+ 
+-	WARN_ON(!intel_crtc_has_dp_encoder(crtc_state));
++		if (crtc_state->commit &&
++		    !try_wait_for_completion(&crtc_state->commit->hw_done)) {
++			DRM_DEBUG_KMS("Not all CRTCs ready yet\n");
++			return 0;
++		}
+ 
+-	if (!crtc_state->base.active)
++		if (!crtc_state->active)
++			crtc_mask &= ~drm_crtc_mask(crtc);
++	}
++	if (!crtc_mask)
+ 		return 0;
+ 
+-	if (conn_state->commit &&
+-	    !try_wait_for_completion(&conn_state->commit->hw_done))
++	if (!intel_dp_needs_link_retrain(intel_dp, NULL))
+ 		return 0;
+ 
+-	if (!intel_dp_needs_link_retrain(intel_dp))
+-		return 0;
++	for_each_intel_crtc_mask(dev, intel_crtc, crtc_mask) {
++		intel_set_cpu_fifo_underrun_reporting(
++		    dev_priv, intel_crtc->pipe, false);
+ 
+-	/* Suppress underruns caused by re-training */
+-	intel_set_cpu_fifo_underrun_reporting(dev_priv, crtc->pipe, false);
+-	if (crtc->config->has_pch_encoder)
+-		intel_set_pch_fifo_underrun_reporting(dev_priv,
+-						      intel_crtc_pch_transcoder(crtc), false);
++		if (intel_crtc->config->has_pch_encoder) {
++			intel_set_pch_fifo_underrun_reporting(
++			    dev_priv, intel_crtc_pch_transcoder(intel_crtc),
++			    false);
 +		}
 +	}
  
- #if defined(CONFIG_BACKLIGHT_CLASS_DEVICE) ||\
- 	defined(CONFIG_BACKLIGHT_CLASS_DEVICE_MODULE)
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-index 8291d74f26bc..a3a43b1b30df 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-@@ -475,22 +475,49 @@ static const struct drm_dp_mst_topology_cbs dm_mst_cbs = {
- 	.register_connector = dm_dp_mst_register_connector
- };
- 
--void amdgpu_dm_initialize_dp_connector(struct amdgpu_display_manager *dm,
--				       struct amdgpu_dm_connector *aconnector)
-+static const struct drm_private_state_funcs dm_mst_state_funcs = {
-+	.atomic_duplicate_state = drm_atomic_dp_mst_duplicate_topology_state,
-+	.atomic_destroy_state = drm_atomic_dp_mst_destroy_topology_state,
-+};
+-	intel_dp_start_link_train(intel_dp);
+-	intel_dp_stop_link_train(intel_dp);
++	do {
++		if (++retry_count > 5) {
++			DRM_DEBUG_KMS("Too many retries, can't retrain\n");
++			return -EINVAL;
++		}
 +
-+int amdgpu_dm_initialize_dp_connector(struct amdgpu_display_manager *dm,
-+				      struct amdgpu_dm_connector *aconnector)
- {
-+	struct drm_dp_mst_topology_state *state =
-+		kzalloc(sizeof(*state), GFP_KERNEL);
-+	int ret = 0;
++		intel_dp_start_link_train(intel_dp);
++		intel_dp_stop_link_train(intel_dp);
++	} while (intel_dp_needs_link_retrain(intel_dp, NULL));
 +
-+	if (!state)
-+		return -ENOMEM;
++	/* Wait for things to become stable */
++	for_each_intel_crtc_mask(dev, intel_crtc, crtc_mask)
++		intel_wait_for_vblank(dev_priv, intel_crtc->pipe);
 +
- 	aconnector->dm_dp_aux.aux.name = "dmdc";
- 	aconnector->dm_dp_aux.aux.dev = dm->adev->dev;
- 	aconnector->dm_dp_aux.aux.transfer = dm_dp_aux_transfer;
- 	aconnector->dm_dp_aux.ddc_service = aconnector->dc_link->ddc;
- 
--	drm_dp_aux_register(&aconnector->dm_dp_aux.aux);
-+	ret = drm_dp_aux_register(&aconnector->dm_dp_aux.aux);
-+	if (ret)
-+		goto err_aux;
++	/* Now that we know everything is OK, finally re-enable underrun
++	 * reporting */
++	for_each_intel_crtc_mask(dev, intel_crtc, crtc_mask) {
++		intel_set_cpu_fifo_underrun_reporting(
++		    dev_priv, intel_crtc->pipe, true);
 +
- 	aconnector->mst_mgr.cbs = &dm_mst_cbs;
--	drm_dp_mst_topology_mgr_init(
-+	aconnector->mst_mgr.funcs = &dm_mst_state_funcs;
-+	ret = drm_dp_mst_topology_mgr_init(
- 		&aconnector->mst_mgr,
-+		state,
- 		dm->adev->ddev,
- 		&aconnector->dm_dp_aux.aux,
- 		16,
- 		4,
- 		aconnector->connector_id);
-+	if (ret)
-+		goto err_mst;
-+
-+	return 0;
-+
-+err_mst:
-+	drm_dp_aux_unregister(&aconnector->dm_dp_aux.aux);
-+err_aux:
-+	kfree(state);
-+	return ret;
- }
- 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.h
-index 8cf51da26657..d28fb456d2d5 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.h
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.h
-@@ -29,8 +29,8 @@
- struct amdgpu_display_manager;
- struct amdgpu_dm_connector;
- 
--void amdgpu_dm_initialize_dp_connector(struct amdgpu_display_manager *dm,
--				       struct amdgpu_dm_connector *aconnector);
-+int amdgpu_dm_initialize_dp_connector(struct amdgpu_display_manager *dm,
-+				      struct amdgpu_dm_connector *aconnector);
- void dm_dp_mst_dc_sink_create(struct drm_connector *connector);
- 
- #endif
-diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index ba67f1782a04..8a72eed0ae05 100644
---- a/drivers/gpu/drm/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -3100,33 +3100,89 @@ static void drm_dp_destroy_connector_work(struct work_struct *work)
- 		(*mgr->cbs->hotplug)(mgr);
- }
- 
--static struct drm_private_state *
--drm_dp_mst_duplicate_state(struct drm_private_obj *obj)
-+/**
-+ * drm_atomic_dp_mst_duplicate_topology_state - default
-+ * drm_dp_mst_topology_state duplicate handler
-+ *
-+ * For drivers which don't yet subclass drm_dp_mst_topology_state
-+ *
-+ * RETURNS: the duplicated state on success, or an error code embedded into a
-+ * pointer value otherwise.
-+ */
-+struct drm_private_state *
-+drm_atomic_dp_mst_duplicate_topology_state(struct drm_private_obj *obj)
- {
-+	struct drm_dp_mst_topology_mgr *mgr = to_dp_mst_topology_mgr(obj);
- 	struct drm_dp_mst_topology_state *state;
-+	int ret;
- 
- 	state = kmemdup(obj->state, sizeof(*state), GFP_KERNEL);
- 	if (!state)
- 		return NULL;
- 
--	__drm_atomic_helper_private_obj_duplicate_state(obj, &state->base);
-+	ret = __drm_atomic_dp_mst_duplicate_topology_state(mgr, state);
-+	if (ret) {
-+		kfree(state);
-+		return NULL;
++		if (intel_crtc->config->has_pch_encoder) {
++			intel_set_pch_fifo_underrun_reporting(
++			    dev_priv, intel_crtc_pch_transcoder(intel_crtc),
++			    true);
++		}
 +	}
  
- 	return &state->base;
- }
-+EXPORT_SYMBOL(drm_atomic_dp_mst_duplicate_topology_state);
- 
--static void drm_dp_mst_destroy_state(struct drm_private_obj *obj,
--				     struct drm_private_state *state)
-+/**
-+ * __drm_atomic_dp_mst_duplicate_topology_state - default
-+ * drm_dp_mst_topology_state duplicate hook
-+ *
-+ * Copies atomic state from an MST topology's current state. This is useful
-+ * for drivers that subclass the MST topology state.
-+ *
-+ * RETURNS: 0 on success, negative error code on failure.
-+ */
-+int
-+__drm_atomic_dp_mst_duplicate_topology_state(struct drm_dp_mst_topology_mgr *mgr,
-+					     struct drm_dp_mst_topology_state *state)
-+{
-+	struct drm_private_obj *obj = &mgr->base;
-+
-+	memcpy(state, obj->state, sizeof(*state));
-+
-+	__drm_atomic_helper_private_obj_duplicate_state(&mgr->base,
-+							&state->base);
+-	/* Keep underrun reporting disabled until things are stable */
+-	intel_wait_for_vblank(dev_priv, crtc->pipe);
 +	return 0;
 +}
-+EXPORT_SYMBOL(__drm_atomic_dp_mst_duplicate_topology_state);
 +
-+/**
-+ * drm_atomic_dp_mst_destroy_topology_state - default
-+ * drm_dp_mst_topology_state destroy handler
-+ *
-+ * For drivers which don't yet subclass drm_dp_mst_topology_state.
-+ */
-+void
-+drm_atomic_dp_mst_destroy_topology_state(struct drm_private_obj *obj,
-+					 struct drm_private_state *state)
- {
- 	struct drm_dp_mst_topology_state *mst_state =
- 		to_dp_mst_topology_state(state);
- 
-+	__drm_atomic_dp_mst_destroy_topology_state(mst_state);
++int intel_dp_handle_train_failure(struct intel_dp *intel_dp)
++{
++	int ret;
 +
- 	kfree(mst_state);
- }
-+EXPORT_SYMBOL(drm_atomic_dp_mst_destroy_topology_state);
++	if (intel_dp->link_is_bad)
++		return 0;
++	intel_dp->link_is_bad = true;
++
++	/* Sometimes sinks will change their RX caps in response to a link
++	 * retraining failure, so only fallback the link rate if we need to
++	 */
++	ret = intel_dp_get_dpcd(intel_dp);
++	if (!ret) {
++		DRM_ERROR("IO error while reading dpcd from sink\n");
++		return -EIO;
++	}
  
--static const struct drm_private_state_funcs mst_state_funcs = {
--	.atomic_duplicate_state = drm_dp_mst_duplicate_state,
--	.atomic_destroy_state = drm_dp_mst_destroy_state,
--};
-+/**
-+ * __drm_atomic_dp_mst_destroy_topology_state - default
-+ * drm_dp_mst_topology_state destroy hook
-+ *
-+ * Frees the resources associated with the given drm_dp_mst_topology_state.
-+ * This is useful for drivers that subclass the MST topology state.
-+ */
-+void
-+__drm_atomic_dp_mst_destroy_topology_state(struct drm_dp_mst_topology_state *state) {
-+}
-+EXPORT_SYMBOL(__drm_atomic_dp_mst_destroy_topology_state);
+-	intel_set_cpu_fifo_underrun_reporting(dev_priv, crtc->pipe, true);
+-	if (crtc->config->has_pch_encoder)
+-		intel_set_pch_fifo_underrun_reporting(dev_priv,
+-						      intel_crtc_pch_transcoder(crtc), true);
++	if (intel_dp->link_rate == intel_dp_max_link_rate(intel_dp) &&
++	    intel_dp->lane_count == intel_dp_max_lane_count(intel_dp)) {
++		if (intel_dp_get_link_train_fallback_values(
++			intel_dp, intel_dp_max_link_rate(intel_dp),
++			intel_dp_max_lane_count(intel_dp))) {
++			DRM_ERROR("No possible fallback values for link retraining\n");
++			return -EINVAL;
++		}
++	}
  
- /**
-  * drm_atomic_dp_mst_get_topology_state: get MST topology state
-@@ -3157,21 +3213,25 @@ EXPORT_SYMBOL(drm_atomic_dp_mst_get_topology_state);
- /**
-  * drm_dp_mst_topology_mgr_init - initialise a topology manager
-  * @mgr: manager struct to initialise
-+ * @state: atomic topology state to init, allocated by the driver
-  * @dev: device providing this structure - for i2c addition.
-  * @aux: DP helper aux channel to talk to this device
-  * @max_dpcd_transaction_bytes: hw specific DPCD transaction limit
-  * @max_payloads: maximum number of payloads this GPU can source
-  * @conn_base_id: the connector object ID the MST device is connected to.
-  *
-+ * Note that this function doesn't take care of allocating the atomic MST
-+ * state, this must be handled by the caller before calling
-+ * drm_dp_mst_topology_mgr_init().
-+ *
-  * Return 0 for success, or negative error code on failure
-  */
- int drm_dp_mst_topology_mgr_init(struct drm_dp_mst_topology_mgr *mgr,
-+				 struct drm_dp_mst_topology_state *state,
- 				 struct drm_device *dev, struct drm_dp_aux *aux,
- 				 int max_dpcd_transaction_bytes,
- 				 int max_payloads, int conn_base_id)
- {
--	struct drm_dp_mst_topology_state *mst_state;
--
- 	mutex_init(&mgr->lock);
- 	mutex_init(&mgr->qlock);
- 	mutex_init(&mgr->payload_lock);
-@@ -3200,18 +3260,14 @@ int drm_dp_mst_topology_mgr_init(struct drm_dp_mst_topology_mgr *mgr,
- 	if (test_calc_pbn_mode() < 0)
- 		DRM_ERROR("MST PBN self-test failed\n");
- 
--	mst_state = kzalloc(sizeof(*mst_state), GFP_KERNEL);
--	if (mst_state == NULL)
--		return -ENOMEM;
--
--	mst_state->mgr = mgr;
-+	state->mgr = mgr;
- 
- 	/* max. time slots - one slot for MTP header */
--	mst_state->avail_slots = 63;
-+	state->avail_slots = 63;
- 
- 	drm_atomic_private_obj_init(&mgr->base,
--				    &mst_state->base,
--				    &mst_state_funcs);
-+				    &state->base,
-+				    mgr->funcs);
- 
++	schedule_work(&intel_dp->modeset_retry_work);
  	return 0;
  }
+ 
+@@ -4396,9 +4550,17 @@ static bool intel_dp_hotplug(struct intel_encoder *encoder,
+ 		break;
+ 	}
+ 
++	if (ret == -EINVAL)
++		ret = intel_dp_handle_train_failure(
++		    enc_to_intel_dp(&encoder->base));
++
+ 	drm_modeset_drop_locks(&ctx);
+ 	drm_modeset_acquire_fini(&ctx);
+-	WARN(ret, "Acquiring modeset locks failed with %i\n", ret);
++
++	if (ret == -EIO)
++		changed = true;
++	else
++		WARN(ret, "Acquiring modeset locks failed with %i\n", ret);
+ 
+ 	return changed;
+ }
+@@ -4459,7 +4621,7 @@ intel_dp_short_pulse(struct intel_dp *intel_dp)
+ 	}
+ 
+ 	/* defer to the hotplug work for link retraining if needed */
+-	if (intel_dp_needs_link_retrain(intel_dp))
++	if (intel_dp_needs_link_retrain(intel_dp, NULL))
+ 		return false;
+ 
+ 	if (intel_dp->compliance.test_type == DP_TEST_LINK_TRAINING) {
+@@ -5379,6 +5541,7 @@ intel_dp_hpd_pulse(struct intel_digital_port *intel_dig_port, bool long_hpd)
+ 	struct intel_dp *intel_dp = &intel_dig_port->dp;
+ 	struct drm_i915_private *dev_priv = to_i915(intel_dp_to_dev(intel_dp));
+ 	enum irqreturn ret = IRQ_NONE;
++	bool need_retrain = false;
+ 
+ 	if (long_hpd && intel_dig_port->base.type == INTEL_OUTPUT_EDP) {
+ 		/*
+@@ -5405,7 +5568,8 @@ intel_dp_hpd_pulse(struct intel_digital_port *intel_dig_port, bool long_hpd)
+ 	intel_display_power_get(dev_priv, intel_dp->aux_power_domain);
+ 
+ 	if (intel_dp->is_mst) {
+-		if (intel_dp_check_mst_status(intel_dp) == -EINVAL) {
++		if (intel_dp_check_mst_status(intel_dp,
++					      &need_retrain) == -EINVAL) {
+ 			/*
+ 			 * If we were in MST mode, and device is not
+ 			 * there, get out of MST mode
+@@ -5417,6 +5581,8 @@ intel_dp_hpd_pulse(struct intel_digital_port *intel_dig_port, bool long_hpd)
+ 							intel_dp->is_mst);
+ 			intel_dp->detect_done = false;
+ 			goto put_power;
++		} else if (need_retrain) {
++			goto put_power;
+ 		}
+ 	}
+ 
+@@ -6251,21 +6417,33 @@ static void intel_dp_modeset_retry_work_fn(struct work_struct *work)
+ {
+ 	struct intel_dp *intel_dp = container_of(work, typeof(*intel_dp),
+ 						 modeset_retry_work);
+-	struct drm_connector *connector = &intel_dp->attached_connector->base;
++	struct intel_digital_port *intel_dig_port = dp_to_dig_port(intel_dp);
++	struct drm_device *dev = intel_dig_port->base.base.dev;
++	struct drm_connector *connector;
+ 
+-	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n", connector->base.id,
+-		      connector->name);
++	mutex_lock(&dev->mode_config.mutex);
+ 
+-	/* Grab the locks before changing connector property*/
+-	mutex_lock(&connector->dev->mode_config.mutex);
+-	/* Set connector link status to BAD and send a Uevent to notify
+-	 * userspace to do a modeset.
++	/* Set the connector link status of all (possibly downstream) ports to
++	 * BAD and send a Uevent to notify userspace to do a modeset.
+ 	 */
+-	drm_mode_connector_set_link_status_property(connector,
+-						    DRM_MODE_LINK_STATUS_BAD);
+-	mutex_unlock(&connector->dev->mode_config.mutex);
++	if (intel_dp->is_mst) {
++		drm_dp_mst_topology_mgr_lower_link_rate(
++		    &intel_dp->mst_mgr,
++		    intel_dp_max_link_rate(intel_dp),
++		    intel_dp_max_lane_count(intel_dp));
++	} else {
++		connector = &intel_dp->attached_connector->base;
++
++		DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
++			      connector->base.id, connector->name);
++		drm_mode_connector_set_link_status_property(
++		    connector, DRM_MODE_LINK_STATUS_BAD);
++	}
++
++	mutex_unlock(&dev->mode_config.mutex);
++
+ 	/* Send Hotplug uevent so userspace can reprobe */
+-	drm_kms_helper_hotplug_event(connector->dev);
++	drm_kms_helper_hotplug_event(dev);
+ }
+ 
+ bool
+@@ -6283,6 +6461,8 @@ intel_dp_init_connector(struct intel_digital_port *intel_dig_port,
+ 	/* Initialize the work for modeset in case of link train failure */
+ 	INIT_WORK(&intel_dp->modeset_retry_work,
+ 		  intel_dp_modeset_retry_work_fn);
++	init_completion(&intel_dp->mst_retrain_completion);
++	complete_all(&intel_dp->mst_retrain_completion);
+ 
+ 	if (WARN(intel_dig_port->max_lanes < 1,
+ 		 "Not enough lanes (%d) for DP on port %c\n",
+@@ -6499,6 +6679,7 @@ void intel_dp_mst_resume(struct drm_device *dev)
+ {
+ 	struct drm_i915_private *dev_priv = to_i915(dev);
+ 	int i;
++	bool need_retrain = false;
+ 
+ 	for (i = 0; i < I915_MAX_PORTS; i++) {
+ 		struct intel_digital_port *intel_dig_port = dev_priv->hotplug.irq_port[i];
+@@ -6508,7 +6689,11 @@ void intel_dp_mst_resume(struct drm_device *dev)
+ 			continue;
+ 
+ 		ret = drm_dp_mst_topology_mgr_resume(&intel_dig_port->dp.mst_mgr);
+-		if (ret)
+-			intel_dp_check_mst_status(&intel_dig_port->dp);
++		if (ret) {
++			intel_dp_check_mst_status(&intel_dig_port->dp,
++						  &need_retrain);
++			if (need_retrain)
++				drm_kms_helper_hotplug_event(dev);
++		}
+ 	}
+ }
+diff --git a/drivers/gpu/drm/i915/intel_dp_link_training.c b/drivers/gpu/drm/i915/intel_dp_link_training.c
+index 2cfa58ce1f95..aa6cfccdab0f 100644
+--- a/drivers/gpu/drm/i915/intel_dp_link_training.c
++++ b/drivers/gpu/drm/i915/intel_dp_link_training.c
+@@ -336,11 +336,7 @@ intel_dp_start_link_train(struct intel_dp *intel_dp)
+ 			      intel_connector->base.base.id,
+ 			      intel_connector->base.name,
+ 			      intel_dp->link_rate, intel_dp->lane_count);
+-		if (!intel_dp_get_link_train_fallback_values(intel_dp,
+-							     intel_dp->link_rate,
+-							     intel_dp->lane_count))
+-			/* Schedule a Hotplug Uevent to userspace to start modeset */
+-			schedule_work(&intel_dp->modeset_retry_work);
++		intel_dp_handle_train_failure(intel_dp);
+ 	} else {
+ 		DRM_ERROR("[CONNECTOR:%d:%s] Link Training failed at link rate = %d, lane count = %d",
+ 			  intel_connector->base.base.id,
 diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
-index 9e6956c08688..cf844cfd2bb0 100644
+index 74b9ebd7b996..5e1ac2ce2421 100644
 --- a/drivers/gpu/drm/i915/intel_dp_mst.c
 +++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-@@ -587,19 +587,30 @@ intel_dp_create_fake_mst_encoders(struct intel_digital_port *intel_dig_port)
- 	return true;
+@@ -150,12 +150,35 @@ static bool intel_dp_mst_compute_config(struct intel_encoder *encoder,
  }
  
-+static const struct drm_private_state_funcs mst_state_funcs = {
-+	.atomic_destroy_state = drm_atomic_dp_mst_destroy_topology_state,
-+	.atomic_duplicate_state = drm_atomic_dp_mst_duplicate_topology_state,
-+};
-+
- int
- intel_dp_mst_encoder_init(struct intel_digital_port *intel_dig_port, int conn_base_id)
+ static int intel_dp_mst_atomic_check(struct drm_connector *connector,
+-		struct drm_connector_state *new_conn_state)
++				     struct drm_connector_state *new_conn_state)
  {
- 	struct intel_dp *intel_dp = &intel_dig_port->dp;
+ 	struct drm_atomic_state *state = new_conn_state->state;
+ 	struct drm_connector_state *old_conn_state;
++	struct intel_dp *intel_dp = to_intel_connector(connector)->mst_port;
 +	struct drm_dp_mst_topology_state *mst_state;
- 	struct drm_device *dev = intel_dig_port->base.base.dev;
- 	int ret;
++	struct intel_dp_mst_topology_state *intel_mst_state;
+ 	int ret = 0;
  
-+	mst_state = kzalloc(sizeof(*mst_state), GFP_KERNEL);
-+	if (!mst_state)
-+		return -ENOMEM;
++	/* We can't retrain anything if the hub isn't there anymore */
++	if (intel_dp) {
++		ret = drm_dp_atomic_mst_check_retrain(
++		    new_conn_state, &intel_dp->mst_mgr);
 +
- 	intel_dp->can_mst = true;
- 	intel_dp->mst_mgr.cbs = &mst_cbs;
-+	intel_dp->mst_mgr.funcs = &mst_state_funcs;
- 
- 	/* create encoders */
- 	intel_dp_create_fake_mst_encoders(intel_dig_port);
--	ret = drm_dp_mst_topology_mgr_init(&intel_dp->mst_mgr, dev,
-+	ret = drm_dp_mst_topology_mgr_init(&intel_dp->mst_mgr, mst_state, dev,
- 					   &intel_dp->aux, 16, 3, conn_base_id);
- 	if (ret) {
- 		intel_dp->can_mst = false;
-diff --git a/drivers/gpu/drm/nouveau/nv50_display.c b/drivers/gpu/drm/nouveau/nv50_display.c
-index 8bd739cfd00d..1cacd806eb8d 100644
---- a/drivers/gpu/drm/nouveau/nv50_display.c
-+++ b/drivers/gpu/drm/nouveau/nv50_display.c
-@@ -3310,6 +3310,12 @@ nv50_mstm = {
- 	.hotplug = nv50_mstm_hotplug,
- };
- 
-+static const struct drm_private_state_funcs
-+nv50_mst_state_funcs = {
-+	.atomic_duplicate_state = drm_atomic_dp_mst_duplicate_topology_state,
-+	.atomic_destroy_state = drm_atomic_dp_mst_destroy_topology_state,
-+};
++		/* This commit invokes a retrain, reset the link rate */
++		if (ret == 1) {
++			mst_state = drm_atomic_dp_mst_get_topology_state(
++			    state, &intel_dp->mst_mgr);
++			intel_mst_state = to_intel_dp_mst_topology_state(
++			    mst_state);
 +
- void
- nv50_mstm_service(struct nv50_mstm *mstm)
- {
-@@ -3438,6 +3444,7 @@ nv50_mstm_new(struct nouveau_encoder *outp, struct drm_dp_aux *aux, int aux_max,
- {
- 	const int max_payloads = hweight8(outp->dcb->heads);
- 	struct drm_device *dev = outp->base.base.dev;
-+	struct drm_dp_mst_topology_state *state;
- 	struct nv50_mstm *mstm;
- 	int ret, i;
- 	u8 dpcd;
-@@ -3454,10 +3461,16 @@ nv50_mstm_new(struct nouveau_encoder *outp, struct drm_dp_aux *aux, int aux_max,
- 
- 	if (!(mstm = *pmstm = kzalloc(sizeof(*mstm), GFP_KERNEL)))
- 		return -ENOMEM;
-+	if (!(state = kzalloc(sizeof(*state), GFP_KERNEL))) {
-+		kfree(mstm);
-+		return -ENOMEM;
++			intel_mst_state->link_rate = 0;
++			intel_mst_state->lane_count = 0;
++			ret = 0;
++		} else if (ret < 0) {
++			return ret;
++		}
 +	}
- 	mstm->outp = outp;
- 	mstm->mgr.cbs = &nv50_mstm;
-+	mstm->mgr.funcs = &nv50_mst_state_funcs;
- 
--	ret = drm_dp_mst_topology_mgr_init(&mstm->mgr, dev, aux, aux_max,
-+	ret = drm_dp_mst_topology_mgr_init(&mstm->mgr, state, dev,
-+					   aux, aux_max,
- 					   max_payloads, conn_base_id);
- 	if (ret)
- 		return ret;
-diff --git a/drivers/gpu/drm/radeon/radeon_dp_mst.c b/drivers/gpu/drm/radeon/radeon_dp_mst.c
-index cd8a3ee16649..6edf52404256 100644
---- a/drivers/gpu/drm/radeon/radeon_dp_mst.c
-+++ b/drivers/gpu/drm/radeon/radeon_dp_mst.c
-@@ -335,6 +335,11 @@ static const struct drm_dp_mst_topology_cbs mst_cbs = {
- 	.hotplug = radeon_dp_mst_hotplug,
- };
- 
-+static const struct drm_private_state_funcs mst_state_funcs = {
-+	.atomic_duplicate_state = drm_atomic_dp_mst_duplicate_topology_state,
-+	.atomic_destroy_state = drm_atomic_dp_mst_destroy_topology_state,
-+};
 +
- static struct
- radeon_connector *radeon_mst_find_connector(struct drm_encoder *encoder)
- {
-@@ -657,12 +662,18 @@ int
- radeon_dp_mst_init(struct radeon_connector *radeon_connector)
- {
- 	struct drm_device *dev = radeon_connector->base.dev;
-+	struct drm_dp_mst_topology_state *state =
-+		kzalloc(sizeof(*state), GFP_KERNEL);
+ 	old_conn_state = drm_atomic_get_old_connector_state(state, connector);
  
-+	if (!state)
-+		return -ENOMEM;
- 	if (!radeon_connector->ddc_bus->has_aux)
- 		return 0;
+ 	/* Only free VCPI here if we're not going to be detaching the
+@@ -222,7 +245,9 @@ static void intel_mst_post_disable_dp(struct intel_encoder *encoder,
  
- 	radeon_connector->mst_mgr.cbs = &mst_cbs;
--	return drm_dp_mst_topology_mgr_init(&radeon_connector->mst_mgr, dev,
-+	radeon_connector->mst_mgr.funcs = &mst_state_funcs;
-+	return drm_dp_mst_topology_mgr_init(&radeon_connector->mst_mgr,
-+					    state, dev,
- 					    &radeon_connector->ddc_bus->aux, 16, 6,
- 					    radeon_connector->base.base.id);
- }
-diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
-index 035963fbcd9d..b42922987470 100644
---- a/include/drm/drm_dp_mst_helper.h
-+++ b/include/drm/drm_dp_mst_helper.h
-@@ -565,6 +565,7 @@ struct drm_dp_mst_topology_mgr {
- };
- 
- int drm_dp_mst_topology_mgr_init(struct drm_dp_mst_topology_mgr *mgr,
-+				 struct drm_dp_mst_topology_state *state,
- 				 struct drm_device *dev, struct drm_dp_aux *aux,
- 				 int max_dpcd_transaction_bytes,
- 				 int max_payloads, int conn_base_id);
-@@ -620,6 +621,13 @@ int drm_dp_mst_topology_mgr_resume(struct drm_dp_mst_topology_mgr *mgr);
- 
- struct drm_dp_mst_topology_state *drm_atomic_dp_mst_get_topology_state(struct drm_atomic_state *state,
- 								       struct drm_dp_mst_topology_mgr *mgr);
-+struct drm_private_state *drm_atomic_dp_mst_duplicate_topology_state(struct drm_private_obj *obj);
-+int __drm_atomic_dp_mst_duplicate_topology_state(struct drm_dp_mst_topology_mgr *mgr,
-+						 struct drm_dp_mst_topology_state *state);
-+void drm_atomic_dp_mst_destroy_topology_state(struct drm_private_obj *obj,
-+					      struct drm_private_state *state);
-+void __drm_atomic_dp_mst_destroy_topology_state(struct drm_dp_mst_topology_state *state);
+ 	intel_mst->connector = NULL;
+ 	if (intel_dp->active_mst_links == 0) {
++		intel_dp->link_is_bad = false;
+ 		intel_dp_sink_dpms(intel_dp, DRM_MODE_DPMS_OFF);
 +
- int drm_dp_atomic_find_vcpi_slots(struct drm_atomic_state *state,
- 				  struct drm_dp_mst_topology_mgr *mgr,
- 				  struct drm_dp_mst_port *port, int pbn);
+ 		intel_dig_port->base.post_disable(&intel_dig_port->base,
+ 						  old_crtc_state, NULL);
+ 	}
+diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
+index 34bbf70d4c54..cc3023b4face 100644
+--- a/drivers/gpu/drm/i915/intel_drv.h
++++ b/drivers/gpu/drm/i915/intel_drv.h
+@@ -1128,6 +1128,11 @@ struct intel_dp {
+ 	/* mst connector list */
+ 	struct intel_dp_mst_encoder *mst_encoders[I915_MAX_PIPES];
+ 	struct drm_dp_mst_topology_mgr mst_mgr;
++	struct completion mst_retrain_completion;
++	/* Set when retraining the link at the current parameters is
++	 * impossible
++	 */
++	bool link_is_bad;
+ 
+ 	uint32_t (*get_aux_clock_divider)(struct intel_dp *dp, int index);
+ 	/*
+@@ -1649,6 +1654,7 @@ void intel_dp_start_link_train(struct intel_dp *intel_dp);
+ void intel_dp_stop_link_train(struct intel_dp *intel_dp);
+ int intel_dp_retrain_link(struct intel_encoder *encoder,
+ 			  struct drm_modeset_acquire_ctx *ctx);
++int intel_dp_handle_train_failure(struct intel_dp *intel_dp);
+ void intel_dp_sink_dpms(struct intel_dp *intel_dp, int mode);
+ void intel_dp_encoder_reset(struct drm_encoder *encoder);
+ void intel_dp_encoder_suspend(struct intel_encoder *intel_encoder);
+@@ -1701,6 +1707,7 @@ void intel_dp_compute_rate(struct intel_dp *intel_dp, int port_clock,
+ bool intel_dp_source_supports_hbr2(struct intel_dp *intel_dp);
+ bool
+ intel_dp_get_link_status(struct intel_dp *intel_dp, uint8_t link_status[DP_LINK_STATUS_SIZE]);
++int intel_dp_get_crtc_mask(struct intel_dp *intel_dp);
+ 
+ static inline unsigned int intel_dp_unused_lane_mask(int lane_count)
+ {
 -- 
 2.14.3
