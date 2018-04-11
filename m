@@ -1,102 +1,79 @@
-Return-Path: <dvyukov@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523460171; cv=none;
+Return-Path: <dja@axtens.net>
+ARC-Seal: i=1; a=rsa-sha256; t=1523462954; cv=none;
         d=google.com; s=arc-20160816;
-        b=T461VlO5ENLApTqfKGMnmJwE++0jkUCibbvrRESrzTQ3PBRwe+FZkO5pFPTeB0FfAF
-         vqDY+VaqTOkAiiGniOzcjQSxRNzIY/y+isfn7wbYwz8eUIeeUfL5eEs2fEfqUOoMBoSZ
-         +py5nB7/TG01YTW7b2K9gik0zzfooCG+Evw6752HH7oPMPRYMDxrP4B0D3bteIXOsSZn
-         l2PyeVTC0PEYR2Q5frEUcUYm79xv3GfsQG7nPLwAM6QtRNawEAzSLDbqpUYI1hmXarLH
-         7BBMhkVRAk2md+XsG8lDYtDnK3kA2mhlHReJL+XxKus1ZNopFtG4QeEz8HjUBBfx44Ao
-         Getg==
+        b=UPcXuULZhkOxmo/+YfRLN5p+adUPnnXbUqgO0gczNeQSKa3mQ9Eq8XemNx7DGpM1XD
+         nG5FZQd+fwurXQ6dLy4mGVaCaIToa+GVogjnTc5OnznQeSVj0h0LpKYkErfR1LnBV6WE
+         s0JASF/689wQBZWGNlujq/gotai8GyV5gVZ0bJ36cMns3+CQv7If9Y+HVPM4YfTVq/OP
+         pXZYVpyy9RMYaZf/QuMKcq6b9gTDEh3gya2zzFF9Od1hLRwqifsGglcM74XabwBJmdw2
+         rai1zgR/JhEfR6PBLA4v2Amt2fVQKf71ND0qF86+FDMNfYifHIGZZFc0jw9HQNg13Fbs
+         XQmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=0WLkwDDAmJBMsuije6Ne2n58XPT2GXnQ4A/MHNMnLDk=;
-        b=VWH7z9j5OU1gNGcfUMXcUm4orVMQC4E55cevgw85h9I0FIcEzUihf67KKgdv4eIApN
-         9feIz34Hcd4W5aCWqNeZNATqSymvTt0rFcEXodWF9xj46N2oQberNT6Jjq+7bSSjw34E
-         wgC6zLv3+PEjnm0DnN4yKy/i8bYXAebRJXvOQncTsF9FyOeyy5XzpUd57PorHLyIh6qu
-         oeebWgUTiMW/56SdWBJP2ZVvRqYYN2r9J0By+ckzAmWuMFXPLF2221jUXncu5sh4D/bo
-         HATxFrXNPvhy+or/9qTZ8NBnqQyH6D6TDGP43MZkgePbhDzpf6tNc+6TQ9Zr7z1ZKgiz
-         roKA==
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:dkim-signature:arc-authentication-results;
+        bh=zmMnCcObljAred+zFJzfE3rKCa5hkUM3so7uwFVjCUg=;
+        b=s9rGWY7/w/emmU5X4iy7hM2FLq4X5IfyW4uqQw2vGzswKuK3ejTEzDQt42sGQXVI09
+         WPYOH6q0hWMAOHCF9FVmsxs7c7hHvqGYvuYbGVKnh/klXNpePlsjYIG9ZA931xQrox9B
+         NiBP3cAO8RLVY6y1bmHsFbxfJW0vMN8SfViQ/7ERmmYWl1FahDGl+g+DrPJJuepY3nt4
+         SU0RgnHLjn19JG1+Ng7OGng34ffOmsFV/0Un7lrTEpp6DtOF7E7MlCpJlhwJs32zzClN
+         pG7OQM858DMWKq0sUemJ2dvs2nP2QjjTdcSDlm17Qh1Vp5N+Z5rtafaaqg2SJjBSQCAm
+         jvHg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=qoiLz1TW;
-       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dvyukov@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+       dkim=pass header.i=@axtens.net header.s=google header.b=lZn+5Rs4;
+       spf=pass (google.com: domain of dja@axtens.net designates 209.85.220.65 as permitted sender) smtp.mailfrom=dja@axtens.net
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=qoiLz1TW;
-       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dvyukov@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AIpwx49OHpMQ8X67M/9TwWh4S+Wf+9kp59eLtWOsmNG7qA0hFG6uzgkK2t5C7qmzIH7xAZuXKA29gA==
-From: Dmitry Vyukov <dvyukov@google.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>
-Subject: [PATCH] kobject: don't use WARN for registration failures
-Date: Wed, 11 Apr 2018 17:22:43 +0200
-Message-Id: <20180411152243.101848-1-dvyukov@google.com>
-X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+       dkim=pass header.i=@axtens.net header.s=google header.b=lZn+5Rs4;
+       spf=pass (google.com: domain of dja@axtens.net designates 209.85.220.65 as permitted sender) smtp.mailfrom=dja@axtens.net
+X-Google-Smtp-Source: AIpwx48Wck6jCJik9skp5s8XGubYrCHu78VImOsj/4zRJV/ougDgUvBKrPImuIkPlvd9CnSVHgsqwQ==
+From: Daniel Axtens <dja@axtens.net>
+To: Mikulas Patocka <mpatocka@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Michael Neuling <mikey@neuling.org>, Peter Hurley <peter@hurleysoftware.com>, Jiri Slaby <jslaby@suse.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: tty crash in Linux 4.6
+In-Reply-To: <alpine.LRH.2.02.1803270818150.30055@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1605161555430.8188@file01.intranet.prod.int.rdu2.redhat.com> <573A5996.3080305@hurleysoftware.com> <573B3F84.5050201@hurleysoftware.com> <573B5E4C.8030808@hurleysoftware.com> <alpine.LRH.2.02.1607071855150.19053@file01.intranet.prod.int.rdu2.redhat.com> <CAEjGV6zRghiCCMC1+-n+YPeA0Lrq=-vcvdoYpbwE4G=TXWzY3Q@mail.gmail.com> <87po3wusq1.fsf@linkitivity.dja.id.au> <20180322140554.GA3273@kroah.com> <alpine.LRH.2.02.1803270818150.30055@file01.intranet.prod.int.rdu2.redhat.com>
+Date: Thu, 12 Apr 2018 02:09:09 +1000
+Message-ID: <87k1td913u.fsf@linkitivity.dja.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597463772984519976?=
-X-GMAIL-MSGID: =?utf-8?q?1597463772984519976?=
+X-GMAIL-THRID: =?utf-8?q?1534517131154419915?=
+X-GMAIL-MSGID: =?utf-8?q?1597466690649860350?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This WARNING proved to be noisy. The function still returns an error
-and callers should handle it. That's how most of kernel code works.
-Downgrade the WARNING to pr_err() and leave WARNINGs for kernel bugs.
+Mikulas Patocka <mpatocka@redhat.com> writes:
 
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: syzbot+209c0f67f99fec8eb14b@syzkaller.appspotmail.com
-Reported-by: syzbot+7fb6d9525a4528104e05@syzkaller.appspotmail.com
-Reported-by: syzbot+2e63711063e2d8f9ea27@syzkaller.appspotmail.com
-Reported-by: syzbot+de73361ee4971b6e6f75@syzkaller.appspotmail.com
-Cc: stable <stable@vger.kernel.org>
+> On Thu, 22 Mar 2018, Greg Kroah-Hartman wrote:
+>
+>> On Fri, Mar 23, 2018 at 12:48:06AM +1100, Daniel Axtens wrote:
+>> > Hi,
+>> > 
+>> > >> This patch works, I've had no tty crashes since applying it.
+>> > >>
+>> > >> I've seen that you haven't sent this patch yet to Linux-4.7-rc and
+>> > >> Linux-4.6-stable. Will you? Or did you create a different patch?
+>> > >
+>> > > We are hitting this now on powerpc.  This patch never seemed to make
+>> > > it upstream (drivers/tty/tty_ldisc.c hasn't been touched in 1 year).
+>> > 
+>> > I seem to be hitting this too on a kernel that has the 4.6 changes
+>> > backported to 4.4.
+>> > 
+>> > Has there been any further progress on getting this accepted?
+>> 
+>> Can you try applying 28b0f8a6962a ("tty: make n_tty_read() always abort
+>> if hangup is in progress") to see if that helps out or not?
 
----
+Sorry for the delay in getting the test results; as with Mikulas,
+28b0f8a6962a does not help.
 
-For the record, here are only currently open syzbot bugs for this WARNING
-(not counting older bugs and various duplicates). None of them were
-acted on:
+Regards,
+Daniel
 
-WARNING: kobject bug in gfs2_sys_fs_add
-https://syzkaller.appspot.com/bug?id=057673a56dab61b3a447989b67f10b205111c8f4
-
-WARNING: kobject bug in br_add_if
-https://syzkaller.appspot.com/bug?id=3e0339080acd6a2a350a900bc6533b03f5498490
-
-WARNING: kobject bug in netdev_queue_update_kobjects
-https://syzkaller.appspot.com/bug?id=86a8e2ab50527d5a5eb4fad2fc15df609f22d86a
-
-WARNING: kobject bug in device_add
-https://syzkaller.appspot.com/bug?id=57eba87aff7669512fb68e56a932b01805342d13
-
-For context see discussion here:
-https://groups.google.com/d/msg/syzkaller-bugs/JZ9QSEaA_HA/wWvpywtBBQAJ
----
- lib/kobject.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/lib/kobject.c b/lib/kobject.c
-index e1d1f290bf35..18989b5b3b56 100644
---- a/lib/kobject.c
-+++ b/lib/kobject.c
-@@ -233,13 +233,12 @@ static int kobject_add_internal(struct kobject *kobj)
- 
- 		/* be noisy on error issues */
- 		if (error == -EEXIST)
--			WARN(1,
--			     "%s failed for %s with -EEXIST, don't try to register things with the same name in the same directory.\n",
--			     __func__, kobject_name(kobj));
-+			pr_err("%s failed for %s with -EEXIST, don't try to register things with the same name in the same directory.\n",
-+			       __func__, kobject_name(kobj));
- 		else
--			WARN(1, "%s failed for %s (error: %d parent: %s)\n",
--			     __func__, kobject_name(kobj), error,
--			     parent ? kobject_name(parent) : "'none'");
-+			pr_err("%s failed for %s (error: %d parent: %s)\n",
-+			       __func__, kobject_name(kobj), error,
-+			       parent ? kobject_name(parent) : "'none'");
- 	} else
- 		kobj->state_in_sysfs = 1;
- 
--- 
-2.17.0.484.g0c8726318c-goog
+>> 
+>> thanks,
+>> 
+>> greg k-h
+>
+> It doesn't help. I get the same crash as before.
+>
+> Mikulas
