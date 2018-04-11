@@ -1,204 +1,77 @@
-Return-Path: <jae.hyun.yoo@linux.intel.com>
-X-Google-Smtp-Source: AIpwx4/dnuPa2I18hMeUUm3Dz5AGCh792Zs8vjbtGBeVFoKv1TDuKD+oliBLOq9Kkh54ZGy7o/x6
-ARC-Seal: i=1; a=rsa-sha256; t=1523385177; cv=none;
+Return-Path: <joel.stan@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523447571; cv=none;
         d=google.com; s=arc-20160816;
-        b=lOJZh7TtxtyCBX/QLIALsOX7nxcVdq+GN0Hh76KPgxdg6JnlGPYMP9sWVUuu2GYp2e
-         wpKkCV5zWWBVcr2M/ZO+BaEIOTnAuOmlvctwfZo1dt2ULzOaLgxHsblK0PjTUH2MAu+w
-         teWkkuNs0irtq0qfGWbWeknYCDScv3+gS1mEMWecP3+vmO56mxUbcZJOHSmkm+qj7xRj
-         EUmujxZsDfzRbIsVlkbyIZFIwAc3UJlYY3n7aY+//ZtOVWCdFdQqGJ/mFxVcRpkBriQ4
-         nJovVzCzPto08Q02t5ENJ99frAyhzhKE5d0nN8019GVGxfwILHBZmj6Wf6huJ/zCT1F+
-         fmBw==
+        b=RxJ8zo+NxSGfCPWSpVgQTMFwEdv+7OlpwXJ03MGLKm5Vq+Bb7X/x8Mei95W8AClYa1
+         jeU37UmSPJm38RxWt8yEvNmz+8U+kCL/t59IcBYXiZr4IwJZ1tdyXwrJIHaNfhchQtMg
+         mk/NedzBu0nsYTbAy9cu1uXb61KgVr3eMza0DjxNUVsYqzXDFYBdrQky7LwFOSa1M3xy
+         9uF7I8xcw3kFjJpJzCrCJDHP1JdUZKtQEZ3qP/VUB4xRLDCkYXX5YZH53zW/18zBkhuP
+         dRrXX1HGzwQ4kDtLNbIpqwwXcKsXHxAZVI/xEcSV/5GDLAcTSXwqVMAsb2h53b6jj4lx
+         sOuA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=0J7eNm2aWqL1Jw5CHZ6rBNJIp0TQ+l1LBqpZIM33OiQ=;
-        b=iXH1i8eGM8gKvkpnJOW3oeALEj/iV8vxc7De9m9XIP1Iq692aNYAqhSfNyHU+nhQfE
-         kpkuAuNJdIBllYMvH7JGhg2WylhoQcvE3nc5c+XRwNaIEZ8GpYZoNJIKzl+bkFcriRkW
-         oKlIhQ392Lp0D0oalXTkLGvG8EDMB3w7QjiFk6CDgGl34qOsDuYq9oj6veoUqSkZSZJ9
-         OLmLt/8WlfsD7Q7ZocQ1CknpT2ptUEiMmARSDgfj6PafX4eB20t7CUJe2nXFU2bAhXww
-         Wjgj0NrB7pxlUVoydNst4wbi8TqlN9GlSGbLBcuU3fWFyF1Du5djzJiS33vP/uuA8Ol5
-         uHFQ==
+        bh=S0BSRykHaPpL7ZImptP9LRwCTl6+uoOzn7Kd14K2rq4=;
+        b=zLs/XpjySl0sKfC1pv4ZxyoumbQXap86Cr5RroKF3RQw81JtgwJWF9VeYbrkk6d264
+         SqqgpevcSDwsXdD2MdeZPJoMF0d+eUaTIGA6qaQmlC7rEb+kpVFQ72F8UMi2FwHVcAsX
+         PJatZ12U+0AU9Cx8ZQaaGK0x98mFh249FJGXptLfxo7FSwFJuRfmjBTS4b15EHh4F99n
+         lJgAoOp10USCv129dbBbTmxfLb6qmw4zm7MrEtoDULpIBzpAqDD68WAyMknuFCzmrsXd
+         OkLJmvbfiS3Wkf5Kkx4wT2p4oRB57vWsYbr10EqLfKleUkBMeOo1jjnvl+rBeI2ob3+q
+         dg6g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=UijEdOll;
+       dkim=pass header.i=@jms.id.au header.s=google header.b=Y6a/mC6G;
+       spf=pass (google.com: domain of joel.stan@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=joel.stan@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jae.hyun.yoo@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=jae.hyun.yoo@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,433,1517904000";
-   d="scan'208";a="219323761"
-From: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-To: Alan Cox <alan@linux.intel.com>,
-	Andrew Jeffery <andrew@aj.id.au>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Fengguang Wu <fengguang.wu@intel.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Haiyue Wang <haiyue.wang@linux.intel.com>,
-	James Feist <james.feist@linux.intel.com>,
-	Jason M Biils <jason.m.bills@linux.intel.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Joel Stanley <joel@jms.id.au>,
-	Julia Cartwright <juliac@eso.teric.us>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Milton Miller II <miltonm@us.ibm.com>,
-	Pavel Machek <pavel@ucw.cz>,
-	Randy Dunlap <rdunlap@infradead.org>,
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=UijEdOll;
+       dkim=pass header.i=@jms.id.au header.s=google header.b=Y6a/mC6G;
+       spf=pass (google.com: domain of joel.stan@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=joel.stan@gmail.com
+X-Google-Smtp-Source: AIpwx4+CEbXT5ARkZBDIWS1I9TrjyR5qyCB2d2eNgUsfOJ56oHM/RNIs0DHoLoR5nMFhcdIpdKaZiPCldcc6Dsr0rpg=
+MIME-Version: 1.0
+Sender: joel.stan@gmail.com
+In-Reply-To: <20180410183212.16787-6-jae.hyun.yoo@linux.intel.com>
+References: <20180410183212.16787-1-jae.hyun.yoo@linux.intel.com> <20180410183212.16787-6-jae.hyun.yoo@linux.intel.com>
+From: Joel Stanley <joel@jms.id.au>
+Date: Wed, 11 Apr 2018 21:22:30 +0930
+X-Google-Sender-Auth: 9w3a5uKeB_4X891o5gliPk2JfvU
+Message-ID: <CACPK8Xf7ta43K=POx8J6bAdjvX=wCzy-+HWqHsm+RstQxeetCQ@mail.gmail.com>
+Subject: Re: [PATCH v3 05/10] ARM: dts: aspeed: peci: Add PECI node
+To: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Cc: Alan Cox <alan@linux.intel.com>, Andrew Jeffery <andrew@aj.id.au>, Andrew Lunn <andrew@lunn.ch>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Fengguang Wu <fengguang.wu@intel.com>,
+	Greg KH <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>,
+	Haiyue Wang <haiyue.wang@linux.intel.com>, James Feist <james.feist@linux.intel.com>,
+	Jason M Biils <jason.m.bills@linux.intel.com>, Jean Delvare <jdelvare@suse.com>,
+	Julia Cartwright <juliac@eso.teric.us>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Milton Miller II <miltonm@us.ibm.com>, Pavel Machek <pavel@ucw.cz>, Randy Dunlap <rdunlap@infradead.org>,
 	Stef van Os <stef.van.os@prodrive-technologies.com>,
-	Sumeet R Pawnikar <sumeet.r.pawnikar@intel.com>,
-	Vernon Mauery <vernon.mauery@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	openbmc@lists.ozlabs.org,
-	Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: [PATCH v3 05/10] ARM: dts: aspeed: peci: Add PECI node
-Date: Tue, 10 Apr 2018 11:32:07 -0700
-Message-Id: <20180410183212.16787-6-jae.hyun.yoo@linux.intel.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180410183212.16787-1-jae.hyun.yoo@linux.intel.com>
-References: <20180410183212.16787-1-jae.hyun.yoo@linux.intel.com>
+	Sumeet R Pawnikar <sumeet.r.pawnikar@intel.com>, Vernon Mauery <vernon.mauery@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+	devicetree <devicetree@vger.kernel.org>, linux-hwmon@vger.kernel.org,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597385135685935687?=
-X-GMAIL-MSGID: =?utf-8?q?1597385135685935687?=
+X-GMAIL-MSGID: =?utf-8?q?1597450560253577797?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This commit adds PECI bus/adapter node of AST24xx/AST25xx into
-aspeed-g4 and aspeed-g5.
+On 11 April 2018 at 04:02, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
+> This commit adds PECI bus/adapter node of AST24xx/AST25xx into
+> aspeed-g4 and aspeed-g5.
+>
 
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
-Reviewed-by: James Feist <james.feist@linux.intel.com>
-Reviewed-by: Vernon Mauery <vernon.mauery@linux.intel.com>
-Cc: Alan Cox <alan@linux.intel.com>
-Cc: Andrew Jeffery <andrew@aj.id.au>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Jason M Biils <jason.m.bills@linux.intel.com>
-Cc: Jean Delvare <jdelvare@suse.com>
-Cc: Joel Stanley <joel@jms.id.au>
-Cc: Julia Cartwright <juliac@eso.teric.us>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Milton Miller II <miltonm@us.ibm.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stef van Os <stef.van.os@prodrive-technologies.com>
-Cc: Sumeet R Pawnikar <sumeet.r.pawnikar@intel.com>
----
- arch/arm/boot/dts/aspeed-g4.dtsi | 25 +++++++++++++++++++++++++
- arch/arm/boot/dts/aspeed-g5.dtsi | 25 +++++++++++++++++++++++++
- 2 files changed, 50 insertions(+)
+The patches to the device trees get merged by the ASPEED maintainer
+(me). Once you have the bindings reviewed you can send the patches to
+me and the linux-aspeed list (I've got a pending patch to maintainers
+that will ensure get_maintainers.pl does the right thing as far as
+email addresses go).
 
-diff --git a/arch/arm/boot/dts/aspeed-g4.dtsi b/arch/arm/boot/dts/aspeed-g4.dtsi
-index 518d2bc7c7fc..f7992eee4d1f 100644
---- a/arch/arm/boot/dts/aspeed-g4.dtsi
-+++ b/arch/arm/boot/dts/aspeed-g4.dtsi
-@@ -29,6 +29,7 @@
- 		serial3 = &uart4;
- 		serial4 = &uart5;
- 		serial5 = &vuart;
-+		peci0 = &peci0;
- 	};
- 
- 	cpus {
-@@ -270,6 +271,13 @@
- 				};
- 			};
- 
-+			peci: peci@1e78b000 {
-+				compatible = "simple-bus";
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0x0 0x1e78b000 0x60>;
-+			};
-+
- 			uart2: serial@1e78d000 {
- 				compatible = "ns16550a";
- 				reg = <0x1e78d000 0x20>;
-@@ -313,6 +321,23 @@
- 	};
- };
- 
-+&peci {
-+	peci0: peci-bus@0 {
-+		compatible = "aspeed,ast2400-peci";
-+		reg = <0x0 0x60>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		interrupts = <15>;
-+		clocks = <&syscon ASPEED_CLK_GATE_REFCLK>;
-+		clock-frequency = <24000000>;
-+		msg-timing-nego = <1>;
-+		addr-timing-nego = <1>;
-+		rd-sampling-point = <8>;
-+		cmd-timeout-ms = <1000>;
-+		status = "disabled";
-+	};
-+};
-+
- &i2c {
- 	i2c_ic: interrupt-controller@0 {
- 		#interrupt-cells = <1>;
-diff --git a/arch/arm/boot/dts/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed-g5.dtsi
-index f9917717dd08..278791dba8a0 100644
---- a/arch/arm/boot/dts/aspeed-g5.dtsi
-+++ b/arch/arm/boot/dts/aspeed-g5.dtsi
-@@ -29,6 +29,7 @@
- 		serial3 = &uart4;
- 		serial4 = &uart5;
- 		serial5 = &vuart;
-+		peci0 = &peci0;
- 	};
- 
- 	cpus {
-@@ -320,6 +321,13 @@
- 				};
- 			};
- 
-+			peci: peci@1e78b000 {
-+				compatible = "simple-bus";
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0x0 0x1e78b000 0x60>;
-+			};
-+
- 			uart2: serial@1e78d000 {
- 				compatible = "ns16550a";
- 				reg = <0x1e78d000 0x20>;
-@@ -363,6 +371,23 @@
- 	};
- };
- 
-+&peci {
-+	peci0: peci-bus@0 {
-+		compatible = "aspeed,ast2500-peci";
-+		reg = <0x0 0x60>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		interrupts = <15>;
-+		clocks = <&syscon ASPEED_CLK_GATE_REFCLK>;
-+		clock-frequency = <24000000>;
-+		msg-timing-nego = <1>;
-+		addr-timing-nego = <1>;
-+		rd-sampling-point = <8>;
-+		cmd-timeout-ms = <1000>;
-+		status = "disabled";
-+	};
-+};
-+
- &i2c {
- 	i2c_ic: interrupt-controller@0 {
- 		#interrupt-cells = <1>;
--- 
-2.16.2
+I'd suggest dropping it from your series and re-sending once the
+bindings and driver are reviewed.
+
+Cheers,
+
+Joel
