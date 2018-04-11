@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48SYmVnCsal+rBuaNVeCVHOy6rCsQ9Z1eOJekNVHsA268IeWn7elLC7trvbetl2x/H6TYY2
-ARC-Seal: i=1; a=rsa-sha256; t=1523472539; cv=none;
+X-Google-Smtp-Source: AIpwx4+m2+Vsg5+jBxBCwZtewObds1yZi9iR2Hkyw2AbuNwIK6gcOImZGJbjGne1nML4KCBCSP4V
+ARC-Seal: i=1; a=rsa-sha256; t=1523472535; cv=none;
         d=google.com; s=arc-20160816;
-        b=znF1LYkGV/2jUql3/C8BG4lro0CqC4X7mdlSyor8lhPiatVTIEe+eKETCpfXLxHucf
-         e7BRaBqWrTHL3nSMFJKCFBWZKLdBRd1ZMCqolIF2jIslKkrOPaytFfyBQFP7vYAk38lE
-         TR6dqsA6QmGr5IBiVR1k/e1U2xU1EWsFBcgF/BMw3tzUXVZ3Rdvk3t8rgpTVsN5jQnuI
-         w5fgfRCB38ICak4P1rerlWvFkei1cgPXCIqln249BSq3Sa5LEgOV+jCvnhLiGgD1S/nf
-         XPguPpf7tmiSzTZnLwP/lkm9O73qE2SLMKGzrMm5ABWdb5UX7R5NCB/zH1mNeIf0K036
-         Tv2Q==
+        b=bzrT2XnR4mHjJeQKL5F8jaN+9MEkiRHXU2aK4ldwiz5czJQ/TrJxbTl9r71BuIVXl2
+         Du+5QBXAWixIZIH8/DDeuBOF09FDiCKuJ0+4JTLyBsCchOz3BCe8+RvS6M/IMLUqLBBr
+         v+ZiJMHEP1Kyind5NUVw7mnxGXuGcRYm2cuuoh3wVqBYE9jExrs7Ohmx+FPn/F3XRPpl
+         bxmKISNVepOW5aE8r8VUf4msmg5qN+gg0w9yWwXdFK+N+bhGqLiZqP49/DXTMJZSVqZh
+         HTdrI0KCEVOpt7iKGH8tVW46WKL8u7AbGtUApSabg4kKP9kvuuk+grCjjKkwUEaKtht4
+         aLTA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=3ouLQU64tQRIEVRRuJ1ZKYBzmlGk9mip6HhBWKnrsYc=;
-        b=JZeJcLUuKQlVXiW7pOnAl4nBgM/pm9Oq1D+VXC1lXkhZG/x1UPOjKsvEMAIVzPlhfR
-         /H5v130VYNf2bvBLGfDU7YrppspJDhmK3y+Bfyy5pow/VejOB/egsJ/iyJyK+DIy4psS
-         r1LV0qH7FwYCDSQ6vK8Pp1GfREr8QM11brzD2bxWOWUjj/HSKZb0mwGeL9gayRzwfAGJ
-         3L/f6o31OvKKhz+IP+iwIbJNQC9wHnvY4PmQGQAXvsdeERGrcSZEosQyxLzjitnmK80k
-         C0pj5Q2IsPWCHPYotok2TmvoTO6hUbUYffL+b2pyBw8ODHArVGx3pUPphan1lu5uYpFU
-         rTdQ==
+        bh=lv1XkHzO12D1lQdNj4JwvAf8E59oodXRypNaTEYQnyk=;
+        b=kWqBrVkEpFUpstvbDEH/Q+jU1qspvDhkcdbze+oMxJQZcwMKKuzpLpXtg/s/BelsrM
+         +ub3eTen2Qlt7leVlTdBj87tl4clL5y4G8nF/9Z4Eig+m1oEY0y7GY7Uu8qpDOXTX0Dl
+         8zyermjvwbfX1lSQIE7PBv7L9Wl4L/G+iIvy0cvNfM44zos/Tz5SuRq1nGrN3UTBbfNB
+         ZGK9hoo+l0ZS3T3DpCfQxu5UgThNWBI040Nus3V85nUuiWy9ssbPFLeucazM25Zol0hK
+         dgndxzQCiUy5ZPALdiuZNvL4/HG1l5swTg81H1kVMQxzXF0YDvMuvDH6QphaG/TvIFOE
+         bRoQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,17 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Milian Wolff <milian.wolff@kdab.com>,
-	Jiri Olsa <jolsa@redhat.com>,
 	Namhyung Kim <namhyung@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Andi Kleen <andi@firstfloor.org>,
+	David Ahern <dsahern@gmail.com>,
+	Peter Zijlstra <a.p.zijlstra@chello.nl>,
+	kernel-team@lge.com,
 	Arnaldo Carvalho de Melo <acme@redhat.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 122/190] perf report: Ensure the perf DSO mapping matches what libdw sees
-Date: Wed, 11 Apr 2018 20:36:08 +0200
-Message-Id: <20180411183558.749211313@linuxfoundation.org>
+Subject: [PATCH 4.4 121/190] perf header: Set proper module name when build-id event found
+Date: Wed, 11 Apr 2018 20:36:07 +0200
+Message-Id: <20180411183558.608495202@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183550.114495991@linuxfoundation.org>
 References: <20180411183550.114495991@linuxfoundation.org>
@@ -43,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476232291576091?=
-X-GMAIL-MSGID: =?utf-8?q?1597476741259866434?=
+X-GMAIL-THRID: =?utf-8?q?1597476737917927440?=
+X-GMAIL-MSGID: =?utf-8?q?1597476737917927440?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,66 +55,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Milian Wolff <milian.wolff@kdab.com>
+From: Namhyung Kim <namhyung@kernel.org>
 
 
-[ Upstream commit 2538b9e2450ae255337c04356e9e0f8cb9ec48d9 ]
+[ Upstream commit 1deec1bd96ccd8beb04d2112a6d12fe20505c3a6 ]
 
-In some situations the libdw unwinder stopped working properly.  I.e.
-with libunwind we see:
+When perf processes build-id event, it creates DSOs with the build-id.
+But it didn't set the module short name (like '[module-name]') so when
+processing a kernel mmap event of the module, it cannot found the DSO as
+it only checks the short names.
 
-~~~~~
-heaptrack_gui  2228 135073.400112:     641314 cycles:
-	            e8ed _dl_fixup (/usr/lib/ld-2.25.so)
-	           15f06 _dl_runtime_resolve_sse_vex (/usr/lib/ld-2.25.so)
-	           ed94c KDynamicJobTracker::KDynamicJobTracker (/home/milian/projects/compiled/kf5/lib64/libKF5KIOWidgets.so.5.35.0)
-	           608f3 _GLOBAL__sub_I_kdynamicjobtracker.cpp (/home/milian/projects/compiled/kf5/lib64/libKF5KIOWidgets.so.5.35.0)
-	            f199 call_init.part.0 (/usr/lib/ld-2.25.so)
-	            f2a5 _dl_init (/usr/lib/ld-2.25.so)
-	             db9 _dl_start_user (/usr/lib/ld-2.25.so)
-~~~~~
+That leads for perf to create a same DSO without the build-id info and
+it'll lookup the system path even if the DSO is already in the build-id
+cache.  After kernel was updated, perf cannot find the DSO  and cannot
+show symbols in it anymore.
 
-But with libdw and without this patch this sample is not properly
-unwound:
+You can see this if you have an old data file (w/ old kernel version):
 
-~~~~~
-heaptrack_gui  2228 135073.400112:     641314 cycles:
-	            e8ed _dl_fixup (/usr/lib/ld-2.25.so)
-	           15f06 _dl_runtime_resolve_sse_vex (/usr/lib/ld-2.25.so)
-	           ed94c KDynamicJobTracker::KDynamicJobTracker (/home/milian/projects/compiled/kf5/lib64/libKF5KIOWidgets.so.5.35.0)
-~~~~~
+  $ perf report -i perf.data.old -v |& grep scsi_mod
+  build id event received for /lib/modules/3.19.2-1-ARCH/kernel/drivers/scsi/scsi_mod.ko.gz : cafe1ce6ca13a98a5d9ed3425cde249e57a27fc1
+  Failed to open /lib/modules/3.19.2-1-ARCH/kernel/drivers/scsi/scsi_mod.ko.gz, continuing without symbols
+  ...
 
-Debug output showed me that libdw found a module for the last frame
-address, but it thinks it belongs to /usr/lib/ld-2.25.so. This patch
-double-checks what libdw sees and what perf knows. If the mappings
-mismatch, we now report the elf known to perf. This fixes the situation
-above, and the libdw unwinder produces the same stack as libunwind.
+The second message didn't show the build-id.  With this patch:
 
-Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lkml.kernel.org/r/20170602143753.16907-1-milian.wolff@kdab.com
+  $ perf report -i perf.data.old -v |& grep scsi_mod
+  build id event received for /lib/modules/3.19.2-1-ARCH/kernel/drivers/scsi/scsi_mod.ko.gz: cafe1ce6ca13a98a5d9ed3425cde249e57a27fc1
+  /lib/modules/3.19.2-1-ARCH/kernel/drivers/scsi/scsi_mod.ko.gz with build id cafe1ce6ca13a98a5d9ed3425cde249e57a27fc1 not found, continuing without symbols
+  ...
+
+Now it shows the build-id but still cannot load the symbol table.  This
+is a different problem which will be fixed in the next patch.
+
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: kernel-team@lge.com
+Link: http://lkml.kernel.org/r/20170531120105.21731-1-namhyung@kernel.org
+[ Fix the build on older compilers (debian <= 8, fedora <= 21, etc) wrt kmod_path var init ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/unwind-libdw.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ tools/perf/util/header.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/tools/perf/util/unwind-libdw.c
-+++ b/tools/perf/util/unwind-libdw.c
-@@ -37,6 +37,14 @@ static int __report_module(struct addr_l
- 		return 0;
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -1258,8 +1258,16 @@ static int __event_process_build_id(stru
  
- 	mod = dwfl_addrmodule(ui->dwfl, ip);
-+	if (mod) {
-+		Dwarf_Addr s;
+ 		dso__set_build_id(dso, &bev->build_id);
+ 
+-		if (!is_kernel_module(filename, cpumode))
+-			dso->kernel = dso_type;
++		if (dso_type != DSO_TYPE_USER) {
++			struct kmod_path m = { .name = NULL, };
 +
-+		dwfl_module_info(mod, NULL, &s, NULL, NULL, NULL, NULL, NULL);
-+		if (s != al->map->start)
-+			mod = 0;
-+	}
++			if (!kmod_path__parse_name(&m, filename) && m.kmod)
++				dso__set_short_name(dso, strdup(m.name), true);
++			else
++				dso->kernel = dso_type;
 +
- 	if (!mod)
- 		mod = dwfl_report_elf(ui->dwfl, dso->short_name,
- 				      dso->long_name, -1, al->map->start,
++			free(m.name);
++		}
+ 
+ 		build_id__sprintf(dso->build_id, sizeof(dso->build_id),
+ 				  sbuild_id);
