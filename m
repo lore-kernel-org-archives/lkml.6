@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3118118-1523472896-2-4956977282409588710
+X-Cyrus-Session-Id: sloti22d1t05-3124918-1523472881-2-7656021965088987774
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523472896; b=iffTpgUAEnzrTdnhn6cGtzk+vTqDlgr0OsMDJvcJ5oAr9RY/u9
-    l3QU0G2ogRzsXGU2fjAD8USFwnRQp5+5mP2ch7T7invlWrOzwqIQGCsqM+EFYrQ7
-    ibOJIkNSFqb6PLFwixZF5Fgmsp7yY4urRbR8QKrIEgWMmmD11O1s5QIdNjhIDBmc
-    kouCSLq2+GI6HNgJbNsHawyv9JTxnR187goC4tKVD9Fw3btjpqt62I+5BD2wa+aQ
-    KJVKPoojv2awvcE3XhonLvaaS11HcSht9JojfyLe3Lx8OEROGZHLbeoEvf4C8hoR
-    u2aqbFC5UsZ8m10SMEb3zIiGoOPdz2fYTxnQ==
+    1523472881; b=Ej8pNt9+slQLKU3UK0QqVUpUqDxxzvPsLOOsMIFiPWuba7frs3
+    srHWl+8o5lv8jCVXathL/a60poDnFT4jRDt+0+SgtZO6QmhQyZ91n+VWzfaeiB7C
+    Bld6hAQ4NrhDHnxzILeGBh3/R44dyM1QrD0mphGwgNy+N22iEI3kUbiO91B2KajF
+    hnTz9SK8CupZE+lu2ykFO/lUeoqVK/17wL5bXZnKZTf2JZ7ds4Mt0YIV3LKRtmJW
+    Dx6BqWpoNtMXmq/tMGNX5GaoH5umdLR/mqZSXcQ+XSHqsSkdSSl2xaSRxUuVVUZS
+    gYGuJaH5QEYqCTMo93C8EEUn3gps3dOC2CKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523472896; bh=vHsXb2E8838s0dOSv0qzdQGPZ3NZxf
-    Vph3VxqMrc3SM=; b=WMjh/Gl3G72Mum5QT+wfXCIL3WUFq1ECF5Kc1o8WcPlhkj
-    GxXbr915/CXxaG2cg7iWclPFKTHz4dIWNA+VBwsvS2nUM0q4dtwRkzSvO8IJRDs0
-    FO9KK7Iff4d3gZu+XpJviXI7JKBT8p0snhOMNW+36mJ2RoeRurwzfWX6Iiya/J9V
-    702RbxEaVnGbS/bIF3UEfdKLUsOEGTwyKoRLcXUg1Yt3wSRO65lzoc8EgZm2hWQu
-    OBnLiY4pr+80DbfP3pGa/xmH6i0mE8ICgjlLiXSrWiDnnObA9s+5iheByPncM1Kk
-    A7AjxvUs0ccDVFCuY/l15bsbTXGCI/70bWNLkc4Q==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523472881; bh=OkXQhEa4BAIbk6JIFI7luQGptEcicc
+    RP1gXEAFYjfSo=; b=kwauxcJOOWzMhr7eBmxfQ5j6MIuq0mepEU03GbEyJUXU/D
+    sziajQM/1MplILv243MGgv7SD+v9JdXdoIcBecqE84FrSr+VMZUeZdAb5KIV2MNM
+    +2i9R5JXB7qDQN1fMAQThq5aJoXS1RijddwUTOAJY+UwBLLw4WX24bLSW8MTr3Rp
+    VdZydIQjwbxnCs8wwWfwo5kybkN0geNMXFnTIP7jQHEjf+LTADcV7levMdKZMCj5
+    dwaNAYmeuCn2QZ4DbY0eusshZEbotXiWEmQB50HBgDNUr5JrUnttRaO0FYlEQ938
+    HvWOPVSDF7wYxhX8D+5xjAkZPHO0IK0nFVoKYmVQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,33 +51,31 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAAokJhWmduW8h0jGEPLujrC2digcZTr/Z4VWbf017+NXrqvYKdKIij4pOJ3hHLBo1ENXmQk1Kr+c6S3RuvQzCqQZsndqgxhV6/mpBfCRzjY3iSU6rJR
-    m2xcQPP/OaQw1n4U5LMx/jiPvCms0/LTXRi91+1uXv6mAlpsEYzdMVBdLtZkNGPC48Y016hohmNGeROyaB8RBwwrkwLrfeOTCcGY6ABSkWrFsgbZdAP3MmE0
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOQcT9Mhs4F6M2ELn3mDPauVRiW3FFQqFREIdDbzl7VpTh6VbkqveGHMk+UPe4ulN+CImQyOeD1lsD57icr3Thf4axPAaLkHaxothq+E8yoIHGSZjAxA
+    OsqcPZPs2uZQ1ZCqSDRzkvlWd+S9KUZtJ2Ns7TjvlwaLx4lkfAaFR3veleAw7MfMTYi+0suqexmuaiRTzlbGc4WguRpMBQyB8yibVLjcjUURXVt9yohCnxRp
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=1XWaLZrsAAAA:8 a=pGLkceISAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8
-    a=ag1SF4gXAAAA:8 a=XnLS8o09v7U2Rlm7CLcA:9 a=EXIo6765cj4ZwHyc:21
-    a=A1Xbmg0M1upB5TVp:21 a=QEXdDO2ut3YA:10 a=y1Q9-5lHfBjTkpIzbSAN:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=DfNHnWVPAAAA:8 a=J1Y8HTJGAAAA:8 a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8
+    a=XsmskROauiS9Y1dqrRkA:9 a=QEXdDO2ut3YA:10 a=rjTVMONInIDnV1a_A2c_:22
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933591AbeDKSyx (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 14:54:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34708 "EHLO
+        id S932686AbeDKSyi (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 14:54:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34562 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933556AbeDKSyt (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:54:49 -0400
+        with ESMTP id S932610AbeDKSyg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 14:54:36 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mahesh Bandewar <maheshb@google.com>,
-        David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 053/310] ipv6: avoid dad-failures for addresses with NODAD
-Date: Wed, 11 Apr 2018 20:33:12 +0200
-Message-Id: <20180411183624.528582653@linuxfoundation.org>
+Subject: [PATCH 4.9 031/310] netxen_nic: set rcode to the return status from the call to netxen_issue_cmd
+Date: Wed, 11 Apr 2018 20:32:50 +0200
+Message-Id: <20180411183623.624403347@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -95,43 +93,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mahesh Bandewar <maheshb@google.com>
+From: Colin Ian King <colin.king@canonical.com>
 
 
-[ Upstream commit 66eb9f86e50547ec2a8ff7a75997066a74ef584b ]
+[ Upstream commit 0fe20fafd1791f993806d417048213ec57b81045 ]
 
-Every address gets added with TENTATIVE flag even for the addresses with
-IFA_F_NODAD flag and dad-work is scheduled for them. During this DAD process
-we realize it's an address with NODAD and complete the process without
-sending any probe. However the TENTATIVE flags stays on the
-address for sometime enough to cause misinterpretation when we receive a NS.
-While processing NS, if the address has TENTATIVE flag, we mark it DADFAILED
-and endup with an address that was originally configured as NODAD with
-DADFAILED.
+Currently rcode is being initialized to NX_RCODE_SUCCESS and later it
+is checked to see if it is not NX_RCODE_SUCCESS which is never true. It
+appears that there is an unintentional missing assignment of rcode from
+the return of the call to netxen_issue_cmd() that was dropped in
+an earlier fix, so add it in.
 
-We can't avoid scheduling dad_work for addresses with NODAD but we can
-avoid adding TENTATIVE flag to avoid this racy situation.
+Detected by CoverityScan, CID#401900 ("Logically dead code")
 
-Signed-off-by: Mahesh Bandewar <maheshb@google.com>
-Acked-by: David Ahern <dsahern@gmail.com>
+Fixes: 2dcd5d95ad6b2 ("netxen_nic: fix cdrp race condition")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/addrconf.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/netxen/netxen_nic_ctx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv6/addrconf.c
-+++ b/net/ipv6/addrconf.c
-@@ -988,7 +988,10 @@ ipv6_add_addr(struct inet6_dev *idev, co
- 	INIT_HLIST_NODE(&ifa->addr_lst);
- 	ifa->scope = scope;
- 	ifa->prefix_len = pfxlen;
--	ifa->flags = flags | IFA_F_TENTATIVE;
-+	ifa->flags = flags;
-+	/* No need to add the TENTATIVE flag for addresses with NODAD */
-+	if (!(flags & IFA_F_NODAD))
-+		ifa->flags |= IFA_F_TENTATIVE;
- 	ifa->valid_lft = valid_lft;
- 	ifa->prefered_lft = prefered_lft;
- 	ifa->cstamp = ifa->tstamp = jiffies;
+--- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_ctx.c
++++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_ctx.c
+@@ -247,7 +247,7 @@ nx_fw_cmd_set_mtu(struct netxen_adapter
+ 	cmd.req.arg3 = 0;
+ 
+ 	if (recv_ctx->state == NX_HOST_CTX_STATE_ACTIVE)
+-		netxen_issue_cmd(adapter, &cmd);
++		rcode = netxen_issue_cmd(adapter, &cmd);
+ 
+ 	if (rcode != NX_RCODE_SUCCESS)
+ 		return -EIO;
