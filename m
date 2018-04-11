@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49efFo2OsnvAMXOrCD+5+67457aKuThk/8DTQGLGGCG4JKkDcJe+/Ik2VYXpVM+yZY3AsxS
-ARC-Seal: i=1; a=rsa-sha256; t=1523472192; cv=none;
+X-Google-Smtp-Source: AIpwx4+iOqYxa15auq+bq7qN5SFCSUcqUDnmEUoNOughegtxarJVfK7Zc3lfdYSzNK+dQCQN4tHs
+ARC-Seal: i=1; a=rsa-sha256; t=1523472189; cv=none;
         d=google.com; s=arc-20160816;
-        b=LKqgt4hUhoJCmK8AIoFQ8AFaY+QSGgcH11xU0taq6LOhyFD5aOHwJXn2iPceajYiI/
-         vH9UMJ1h1X4bRhZKRc+5MJng5wOG5Kl8sI2tKBf27D00yGtHR+uqktcAo+n8jVItNN50
-         a5f8iKnrIqYOjK+zlWfMSW+lmuh16idV2zJqteulRyDWv/b8TJM8Y2eUVfBWmgYyqITL
-         Z9zY24qdSXPY2aCUBRDwS212NFQBJ/GQn3ISP5IJFg98t1Zol4FVQ8CC1laj9/rYt+n2
-         XiKMPcJ//uiXvjhsJuOT9tweTz2oEB5Hu4YTcxI7fxixck1oI+S25Tb1Qtwvo+Mmzlp5
-         GB4A==
+        b=vbDy2WygHPzw9FR/QWtZIA0kSz6lIRK6tXsqyd5uOCIvwHKH8U2CLz9eFKeYwMjiyP
+         jNpSFxJhw8ctJMEVKOLJ5l26KCbAHv0UHPBmSE/kiWhLXcitgb1asCRVPwsSq/p1fhZX
+         92+cWnplB4gVfvGYucquyCb9faubkyP3PeKHPuVBBWPuRwssSK7sMHghcMprLGOob3mH
+         cul5/YkRVIEicZ5AF4T3VveF6ymre0lStGGRFddwORQI34yY/GW+q2f5RtfyvI867jS+
+         KAyFQRnW9hfveL9hIu1rNMOllr26yNlJp94o0u4lSjbY6aaCIlT3ULIR0g0zkWliU1wV
+         VnGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=pJVUQeWS/ZKIsKpTqMoEqwMm9I5DhVXUpS9BQYw6Dvg=;
-        b=Hom49TiDkwPbj5Hfl6qbtEE0aKcVdyTfJ1pxpvdpsrqnjLLa/daANQl6mmPUBFt5km
-         LmDkMNi8gMnfitTYYfI4m4YJ20PFcGLR35DLgq2okHuYuut+qfCSSNehRPhiBR7hw1qA
-         B70aXySYOOWS7IV37GZ+AZWi+RE/5U2Uto+RX2XUfpzNcMGURWF7jlUy8vffLt0dmnMx
-         x0A9cl4c0uWTNh5MSvd5AO5LCRjT6xnHzeVY6XsMehLsdhaiHP2+iq7gzHYQQ5gsBPP/
-         g1FyLU4HxHdbDiIrQ1BXNKaVmpifvFmpQHBNVkpNJ1hLv6RfSmGJS1Y3RzkKjm29Vjyw
-         Bvog==
+        bh=nBqKwYXL5apwNwnvvTNlbYfcRxx3vyeyuKENcChM1Ok=;
+        b=GK8rCJQaJDf0aj/VsYmdcNDZAWofNJ7GQw+pBjANGDPenO1Szabu7fS1iIbGRcI0dz
+         JhTRRRAvFF0nZLe22+4/2Q7zfR/sm1UxxVxNhyWbJ6A7xXH2hlUPigpH7fMP14cyt3IU
+         qV+RXVQElLHyqlLyRNAA1unbO5d6i136aZ/8SrzFXGuxy//ksxm/ontqLOFyEPAlbUvi
+         jP45A8fgsDqfvuAXoe8Ch9H9fzdryB+EJeq3Y+vSNeppoFaCc8e0ePt3lY9PqdocgsHO
+         V1l04b8HX5oSfvB5/nCZoWwx9C5bkYLRZsxiIbOcK2RK+j/nA8Z7AKAvmec6IzbpNSBN
+         Vs7A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	David Miller <davem@davemloft.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH 3.18 119/121] r8169: fix setting driver_data after register_netdev
-Date: Wed, 11 Apr 2018 20:37:02 +0200
-Message-Id: <20180411183504.172326748@linuxfoundation.org>
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 118/121] ip6_tunnel: better validate user provided tunnel names
+Date: Wed, 11 Apr 2018 20:37:01 +0200
+Message-Id: <20180411183504.105080908@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
 References: <20180411183456.195010921@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476378121653786?=
-X-GMAIL-MSGID: =?utf-8?q?1597476378121653786?=
+X-GMAIL-THRID: =?utf-8?q?1597476374644156023?=
+X-GMAIL-MSGID: =?utf-8?q?1597476374644156023?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,48 +49,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Heiner Kallweit <hkallweit1@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
 
-[ Upstream commit 19c9ea363a244f85f90a424f9936e6d56449e33c ]
+[ Upstream commit db7a65e3ab78e5b1c4b17c0870ebee35a4ee3257 ]
 
-pci_set_drvdata() is called only after registering the net_device,
-therefore we could run into a NPE if one of the functions using
-driver_data is called before it's set.
+Use valid_name() to make sure user does not provide illegal
+device name.
 
-Fix this by calling pci_set_drvdata() before registering the
-net_device.
-
-This fix is a candidate for stable. As far as I can see the
-bug has been there in kernel version 3.2 already, therefore
-I can't provide a reference which commit is fixed by it.
-
-The fix may need small adjustments per kernel version because
-due to other changes the label which is jumped to if
-register_netdev() fails has changed over time.
-
-Reported-by: David Miller <davem@davemloft.net>
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/realtek/r8169.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ipv6/ip6_tunnel.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -8278,12 +8278,12 @@ static int rtl_init_one(struct pci_dev *
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -307,10 +307,13 @@ static struct ip6_tnl *ip6_tnl_create(st
+ 	char name[IFNAMSIZ];
+ 	int err;
  
- 	tp->rtl_fw = RTL_FIRMWARE_UNKNOWN;
+-	if (p->name[0])
++	if (p->name[0]) {
++		if (!dev_valid_name(p->name))
++			goto failed;
+ 		strlcpy(name, p->name, IFNAMSIZ);
+-	else
++	} else {
+ 		sprintf(name, "ip6tnl%%d");
++	}
  
-+	pci_set_drvdata(pdev, dev);
-+
- 	rc = register_netdev(dev);
- 	if (rc < 0)
- 		goto err_out_msi_4;
- 
--	pci_set_drvdata(pdev, dev);
--
- 	netif_info(tp, probe, dev, "%s at 0x%p, %pM, XID %08x IRQ %d\n",
- 		   rtl_chip_infos[chipset].name, ioaddr, dev->dev_addr,
- 		   (u32)(RTL_R32(TxConfig) & 0x9cf0f8ff), pdev->irq);
+ 	dev = alloc_netdev(sizeof(*t), name, NET_NAME_UNKNOWN,
+ 			   ip6_tnl_dev_setup);
