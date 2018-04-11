@@ -1,116 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752270AbeDKIjZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 04:39:25 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:36311 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751546AbeDKIjV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 04:39:21 -0400
-X-Google-Smtp-Source: AIpwx4/Py+cbJHaTzivYC/c9KDos3trGc37BB3uqbKRSNqujKDZQHmF04rTILONeMY4NaLDTWolSO/Jlv7ubtofw2us=
-MIME-Version: 1.0
-In-Reply-To: <20180411082226.qbhf7hcvtcns7ge3@verge.net.au>
-References: <1523375627-23746-1-git-send-email-geert+renesas@glider.be>
- <1523375627-23746-3-git-send-email-geert+renesas@glider.be> <20180411082226.qbhf7hcvtcns7ge3@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 11 Apr 2018 10:39:19 +0200
-X-Google-Sender-Auth: RdrfGeboVKN02AOYcXjxRsUFWOE
-Message-ID: <CAMuHMdXq5gTrYBGnP8EfL4s_c+=JA6vXgrmgs3Wa_+8cS3jYNA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] vfio: platform: Add generic DT reset controller support
-To: Simon Horman <horms@verge.net.au>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        KVM list <kvm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        id S1752280AbeDKIlX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 04:41:23 -0400
+Received: from mga17.intel.com ([192.55.52.151]:56707 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751734AbeDKIlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 04:41:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,435,1517904000";
+   d="scan'208";a="190595680"
+Message-ID: <1523436077.16235.5.camel@intel.com>
+Subject: [GIT PULL] Thermal management updates for v4.17-rc1
+From: Zhang Rui <rui.zhang@intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "Zhang, Rui" <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Date: Wed, 11 Apr 2018 16:41:17 +0800
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Simon,
+Hi, Linus,
 
-On Wed, Apr 11, 2018 at 10:22 AM, Simon Horman <horms@verge.net.au> wrote:
-> On Tue, Apr 10, 2018 at 05:53:47PM +0200, Geert Uytterhoeven wrote:
->> Vfio-platform requires reset support, provided either by ACPI, or, on DT
->> platforms, by a device-specific reset driver matching against the
->> device's compatible value.
->>
->> On many SoCs, devices are connected to an SoC-internal reset controller.
->> If the reset hierarchy is described in DT using "resets" properties,
->> such devices can be reset in a generic way through the reset controller
->> subsystem.  Hence add support for this, avoiding the need to write
->> device-specific reset drivers for each single device on affected SoCs.
->>
->> Devices that do require a more complex reset procedure can still provide
->> a device-specific reset driver, as that takes precedence.
->>
->> Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
->> becomes a no-op (as in: "No reset function found for device") if reset
->> controller support is disabled.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> v2:
->>   - Don't store error values in vdev->reset_control,
->>   - Use of_reset_control_get_exclusive() instead of
->>     __of_reset_control_get(),
->>   - Improve description.
+Please pull from
+  git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next
 
->> --- a/drivers/vfio/platform/vfio_platform_common.c
->> +++ b/drivers/vfio/platform/vfio_platform_common.c
->> @@ -17,6 +17,7 @@
->>  #include <linux/iommu.h>
->>  #include <linux/module.h>
->>  #include <linux/mutex.h>
->> +#include <linux/reset.h>
->>  #include <linux/slab.h>
->>  #include <linux/types.h>
->>  #include <linux/uaccess.h>
->> @@ -112,11 +113,19 @@ static bool vfio_platform_has_reset(struct vfio_platform_device *vdev)
->>       if (VFIO_PLATFORM_IS_ACPI(vdev))
->>               return vfio_platform_acpi_has_reset(vdev);
->>
->> -     return vdev->of_reset ? true : false;
->> +     if (vdev->of_reset)
->> +             return true;
->> +
->> +     if (vdev->reset_control)
->> +             return true;
->> +
->> +     return false;
->
-> I wonder if the above would be better expressed as:
->
->         return vdev->of_reset || vdev->reset_control;
+to receive the latest Thermal Management updates for v4.17-rc1 with
+top-most commit f8837aac36cdc7430422cd65f4466071b42654bb:
 
-Makes sense, now both checks are of the same type.
+  Merge branches 'thermal-core' and 'thermal-soc' into next (2018-04-02 
+21:49:31 +0800)
 
->> @@ -217,6 +236,9 @@ static int vfio_platform_call_reset(struct vfio_platform_device *vdev,
->>       } else if (vdev->of_reset) {
->>               dev_info(vdev->device, "reset\n");
->>               return vdev->of_reset(vdev);
->> +     } else if (vdev->reset_control) {
->> +             dev_info(vdev->device, "reset\n");
->
-> Would it be useful to differentiate between the above two informational
-> messages?
+on top of commit 0c8efd610b58cb23cefdfa12015799079aef94ae:
 
-Probably not, there's also no differentiation with the message for the
-ACPI case above (out of visible context).
+  Linux 4.16-rc5 (2018-03-11 17:25:09 -0700)
 
-Gr{oetje,eeting}s,
+Specifics:
 
-                        Geert
+- Fix race condition in imx_thermal_probe(). (Mikhail Lappo)
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+- Add cooling device's statistics in sysfs. (Viresh Kumar)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+- add support for i.MX7 thermal sensor in imx_thermal driver. (Anson
+Huang)
+
+- add support for MT7622 SoC in mtk_thermal driver. (Sean Wang)
+
+- Remove unused min/max cpu cooling DT property. (Viresh Kumar).
+
+- A series of fixes on exynos driver. (Bartlomiej Zolnierkiewicz,
+Maciej Purski, Marek Szyprowski)
+
+thanks,
+rui
+
+
+
+----------------------------------------------------------------
+Anson Huang (1):
+      thermal: imx: add i.MX7 thermal sensor support
+
+Bartlomiej Zolnierkiewicz (10):
+      thermal: exynos: remove unused "type" field from struct
+exynos_tmu_platform_data
+      thermal: exynos: remove parsing of samsung,
+tmu_default_temp_offset property
+      thermal: exynos: remove parsing of samsung, tmu_[first,
+second]_point_trim properties
+      thermal: exynos: remove parsing of samsung, tmu_noise_cancel_mode
+property
+      thermal: exynos: remove parsing of samsung, tmu[_min,
+_max]_efuse_value properties
+      thermal: exynos: remove parsing of samsung, tmu_reference_voltage
+property
+      thermal: exynos: remove parsing of samsung,tmu_gain property
+      thermal: exynos: remove parsing of samsung, tmu_cal_type property
+      thermal: exynos: remove separate exynos_tmu.h header file
+      dt-bindings: thermal: remove no longer needed samsung thermal
+properties
+
+Maciej Purski (1):
+      thermal: exynos: Read soc_type from match data
+
+Marek Szyprowski (2):
+      thermal: exynos: Reading temperature makes sense only when TMU is
+turned on
+      thermal: exynos: Propagate error value from tmu_read()
+
+Mikhail Lappo (1):
+      thermal: imx: Fix race condition in imx_thermal_probe()
+
+Sean Wang (2):
+      dt-bindings: thermal: add binding for MT7622 SoC
+      thermal: mediatek: add support for MT7622 SoC
+
+Viresh Kumar (2):
+      dt-bindings: thermal: Remove "cooling-{min|max}-level" properties
+      thermal: Add cooling device's statistics in sysfs
+
+Zhang Rui (2):
+      Merge branch 'linus' of git://git.kernel.org/.../evalenti/linux-
+soc-thermal into thermal-soc
+      Merge branches 'thermal-core' and 'thermal-soc' into next
+
+ .../devicetree/bindings/thermal/exynos-thermal.txt |  23 +-
+ .../devicetree/bindings/thermal/imx-thermal.txt    |   9 +-
+ .../bindings/thermal/mediatek-thermal.txt          |   1 +
+ .../devicetree/bindings/thermal/thermal.txt        |  16 +-
+ Documentation/thermal/sysfs-api.txt                |  31 +++
+ drivers/thermal/Kconfig                            |   7 +
+ drivers/thermal/imx_thermal.c                      | 301
+++++++++++++++++-----
+ drivers/thermal/mtk_thermal.c                      |  35 +++
+ drivers/thermal/samsung/exynos_tmu.c               | 268 +++++++++--
+-------
+ drivers/thermal/samsung/exynos_tmu.h               |  75 -----
+ drivers/thermal/thermal_core.c                     |   3 +-
+ drivers/thermal/thermal_core.h                     |  10 +
+ drivers/thermal/thermal_helpers.c                  |   5 +-
+ drivers/thermal/thermal_sysfs.c                    | 225
++++++++++++++++
+ include/linux/thermal.h                            |   1 +
+ 15 files changed, 706 insertions(+), 304 deletions(-)
+ delete mode 100644 drivers/thermal/samsung/exynos_tmu.h
