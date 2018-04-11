@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx490oJOtoEYRJqqJ5JzamYVHc2A1tEsRv2TxWLDmCfIYgU0vWK4ZtIexA/9o7fSv8/y3UDbH
-ARC-Seal: i=1; a=rsa-sha256; t=1523472997; cv=none;
+X-Google-Smtp-Source: AIpwx4+fdrx1vvtvctkCmnzz/GjvGe2QA7WJIh9jBFepmGpp6MBBqSpW1+5dNrcuPYJaN8l6oHqA
+ARC-Seal: i=1; a=rsa-sha256; t=1523472995; cv=none;
         d=google.com; s=arc-20160816;
-        b=NYbFOTmttVQkRyVC3CgfBBJe7Y2MyM16zqlPwJdgwN7UsZnd0yqIwZeTFsirA71hf0
-         BkQT9/ncxZAHnaoBfN8pv2qJDcjeDw23NFu9LvzxxIZa7YsCtDVAa/IJgK+EdFiL+E+q
-         TdZAT8hyw0XXdiaQ+XqLZ8fIupnKR55RU1CrpvDHuz53Hy4kaU8L0fZuIw5hgLCo+wzq
-         e6wcjO/OukE/KfKT3KLXyWgnin8fWcx75O5QSagZV138YuEPmZ4qYonKQS8hYJuvyoB/
-         XNQWCWfw0ULAbmpQP5RHtF941JEyt+ukhnTcPxkh1OUZuZYwHAyO61sQ3OzO3TJcFiiF
-         dvOA==
+        b=Ea4+q2zbHWmiyjzYlxXiDPfpbzSc3LIiuRXjqPADJlNLPIbn6Q4oBKbcaNLbF7rcKJ
+         bLjV97ZsCI5ff57uTYuniYewogUg3hAXyo+bnxE/DGWPb59fBFIMtL8r9RS+Y+478NGv
+         VAePcLNCx0mAAwnIBZn2xF4IymxP0MIHXtzrXz9jKSxFRJao6yi+nJBwWMv104T6zO9H
+         3OahSLtM0ijEyrXUuSOGENh9vCH9yjgWoFTjRgB3T/152yPKq3ZborhxGAh50dT8hrDQ
+         4nJkI8QoMMoA7mz1Kd3r3yribYyILcASp+oZ6hbkvT8iU7tchqC7H9mcXG5PqnoYVmk6
+         /0ww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6aZZWtnZY4iXqDTl5imZE0yEJjew+t0jpOCf7zIVEVc=;
-        b=qcJ0X/gIfHnrUd+td8tpzJAWzKQiu2scijM1svZMWyq407u8+ERlLkTb3uaXi1S56d
-         GxJIebxcWZcThcNoxf8JZE+GkBc71DcUufUmmZy1yBbd0xrnlvP3fIJDsEfh7KDEfsLw
-         fIT+oEJRBLnjykAc3tDxwQIdmOsTFuxwWoDqkceyKnKlkmu454wF1/X5+bUf/FMRNAkF
-         kUTlFgukcm7QHY2cXoqLLbC8drQxMJHKMji2SEBg7yVdKq6XUFpGtQpSw6x/0K/pN8u4
-         Fhchm9whC/lSaxn510X/CXAPgRLAqZNhFGSegHdQI+3kJS0q7MIjjaPbOZWgBKkBpFu2
-         bp5A==
+        bh=CSsqSKSB7K4GzPEihdOSeT2Ls4h8RYxGgluPMvcsTKQ=;
+        b=QtrwNMtJhSsmZRrkgJuNdx1xPw88ndKh33fyjhYNWivbuy74hwCJTssMchnQbwbW56
+         lyXieIWBsvaUPzXE3MQ33R+WhLqd+q7g1HIDTZAmKZI0BTBzt0bQiggL6fOOe2cEThBt
+         x85gWmzdMCCeIa2+doYCDxE3xZtg7saEmrpy/jFzzWsEKzpY4O4QfCyHdOMMXl7JzCCp
+         SvrkWUSz+nwchJkvA1syFAL/6egGlTqArxiOA+8m0RRcefL5Xnip3dVXOFWfRgbQLw+b
+         ZebYXvwU98SDbD55qvMPrY8n05QX7XCEpElWG+/hPr9h0+0mb3ZciYwmGQF5XhsvlJ6V
+         Xn6A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Jiri Olsa <jolsa@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Stephane Eranian <eranian@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vince Weaver <vincent.weaver@maine.edu>,
-	Ingo Molnar <mingo@kernel.org>,
+	Tin Huynh <tnhuynh@apm.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 092/310] perf/core: Fix error handling in perf_event_alloc()
-Date: Wed, 11 Apr 2018 20:33:51 +0200
-Message-Id: <20180411183626.202918527@linuxfoundation.org>
+Subject: [PATCH 4.9 091/310] leds: pca955x: Correct I2C Functionality
+Date: Wed, 11 Apr 2018 20:33:50 +0200
+Message-Id: <20180411183626.163219534@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -50,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477222029432094?=
-X-GMAIL-MSGID: =?utf-8?q?1597477222029432094?=
+X-GMAIL-THRID: =?utf-8?q?1597476134288988698?=
+X-GMAIL-MSGID: =?utf-8?q?1597477219267080603?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,46 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Tin Huynh <tnhuynh@apm.com>
 
 
-[ Upstream commit 36cc2b9222b5106de34085c4dd8635ac67ef5cba ]
+[ Upstream commit aace34c0bb8ea3c8bdcec865b6a4be4db0a68e33 ]
 
-We don't set an error code here which means that perf_event_alloc()
-returns ERR_PTR(0) (in other words NULL).  The callers are not expecting
-that and would Oops.
+The driver checks an incorrect flag of functionality of adapter.
+When a driver requires i2c_smbus_read_byte_data and
+i2c_smbus_write_byte_data, it should check I2C_FUNC_SMBUS_BYTE_DATA
+instead I2C_FUNC_I2C.
+This patch fixes the problem.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: 375637bc5249 ("perf/core: Introduce address range filtering")
-Link: http://lkml.kernel.org/r/20170522090418.hvs6icgpdo53wkn5@mwanda
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Tin Huynh <tnhuynh@apm.com>
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/events/core.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/leds/leds-pca955x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -9289,8 +9289,10 @@ perf_event_alloc(struct perf_event_attr
- 		event->addr_filters_offs = kcalloc(pmu->nr_addr_filters,
- 						   sizeof(unsigned long),
- 						   GFP_KERNEL);
--		if (!event->addr_filters_offs)
-+		if (!event->addr_filters_offs) {
-+			err = -ENOMEM;
- 			goto err_per_task;
-+		}
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -266,7 +266,7 @@ static int pca955x_probe(struct i2c_clie
+ 			"slave address 0x%02x\n",
+ 			id->name, chip->bits, client->addr);
  
- 		/* force hw sync on the address filters */
- 		event->addr_filters_gen = 1;
+-	if (!i2c_check_functionality(adapter, I2C_FUNC_I2C))
++	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_BYTE_DATA))
+ 		return -EIO;
+ 
+ 	if (pdata) {
