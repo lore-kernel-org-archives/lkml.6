@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48icNIkJo3p5OGNm3PESHhTrLmAnXmaKbA/YgjUhqmZ5m1cMEJQ+RRlbLIFzBli6vMDaVZe
-ARC-Seal: i=1; a=rsa-sha256; t=1523472954; cv=none;
+X-Google-Smtp-Source: AIpwx49XGYN2/siJBEwyEoXLcOLJRjgQJSyyYBg3jQ85lh7mjgyL05QQnwf/CoybCVwA9J7O0Jwh
+ARC-Seal: i=1; a=rsa-sha256; t=1523472948; cv=none;
         d=google.com; s=arc-20160816;
-        b=IbikOU65Tp3sIppUKiKLTst8FETQgE+d1ERQfbIICG8sjV4J2qeKenmlFBHbOkXH+I
-         Bar+kVIE63MmATwYAlgYXvkszWKqNAL100pc8YCMbfHi+YekvilNPCGe5hOtFshV0BIq
-         LhdSLqUPBqX2f9r9VTAd8ThiZPz713Q+c+hFpAV9zCFjk30abM34dwUUSjutahYYBKLD
-         1CcqmAnlNzwe9Jg1H6UxTDPr6XzsjAQ0T6GeOifc3jlOK8ULxIXW/UVw9VByBZ5A5PkF
-         jYCj2PhXkAwelIvsnmvHs1Jjs9TSjdsaGIaX4Zy+w4XqwNp0k0eDOK3nL/kupxUWvsTK
-         NoJw==
+        b=r66B9T2ETH85h8by0xRGjNJ4oiXEKkW2uyDnmO+wYN7oVt/poy8AzXmjdyeZOxaKt3
+         bgqufTCqM9yQrEVJY49tJKOy5co8kKGP9luDYuMUWXzkfOHfbr8H7Ce8hLHJPvLZkvsd
+         rDoC4tocFPisuURvNALWHHE/5GyhQVX8uxiN6HxIuNzr+cnGwymePw03SA3U+UIbgW+Y
+         mLCeWETYIGO4GVCg8eACRNQc/Xw2BbR/iWp/rNvE00TfYjogK3AOQS2yZJsgBAwR5Gnm
+         EmsVmKdQfueNgWcey+qcrMYg7bYNIriB+VdGgtWt1bofujOFFUGRStkZbgIJv827z0wj
+         0z1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=aWuYfEAw26cBsckVkSEoJwOTaP52fuC025Krp1xXyVY=;
-        b=nCdqXwHu/47ky5KqNrZJNGQLBnr6gi7FoOVpkYhRBj03DR6zgS2eDSnXuMTlvqsgoB
-         25U/GO2jRDD09Dfo6e0g89+TR8LIIZQKc1IghyaUrp9qdG8uc+kcEjHKvzQ+hWY8WDp8
-         oVc+XxpcGvuY9gnQMo89MAPwRQtYk3CPkrJrqHG/iPtCea13UM4ox+/Na4LQxQ0gL+IE
-         BYURfAFCLUX+iHK2WFLNZK2oewgUU19etQEhojKcXW2Kwlk4N2DFBJqhgE6neiObp0YH
-         Rhd7Zns3EC7RL3Fzno9A9RMyIEsnmKtfwWd+zOxFK8j3RPO43M22Pp6KU/FoNeAODwrs
-         gYQA==
+        bh=cyNJnJkCiwTF04MQC6ywAfcy9BlQmhPTDJfR0UIGdLc=;
+        b=x851VVFB1qb1HADyoroF5YVOAcKC/vUw1+WRm98Hm4JkvTQoSvCXWTnrRSoPLPCtFq
+         F11va531piFnOXM/kOgoNO8XOaPAMH5EVdj2u9Fih9GEm1iNKrLiyy8M94PBORMsUs87
+         iS9dT/e/XlJBGLOj5hPTLft5tY54xiJr84/HXoskABz/0W0lB1rd5tNJ++SmYXA9ecoJ
+         LRdti/+aurMqGNVH+GZnFpQ7L1Ouyn8Quu1bjgSQqAch8TtAjFHE1K9D0qTSL5LJtQAX
+         0SEqgBFuJXvG4hgFalNnAGcQkfs9uZE/CYiCmsC9pCScZERuJYP5Ec/+6CQFfAJdZVK8
+         buvA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Varun Prakash <varun@chelsio.com>,
-	Johannes Thumshirn <jthumshirn@suse.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 077/310] scsi: csiostor: fix use after free in csio_hw_use_fwconfig()
-Date: Wed, 11 Apr 2018 20:33:36 +0200
-Message-Id: <20180411183625.620404828@linuxfoundation.org>
+Subject: [PATCH 4.9 075/310] sh_eth: Use platform device for printing before register_netdev()
+Date: Wed, 11 Apr 2018 20:33:34 +0200
+Message-Id: <20180411183625.541619486@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597476529659078106?=
-X-GMAIL-MSGID: =?utf-8?q?1597477176170801969?=
+X-GMAIL-THRID: =?utf-8?q?1597476116406131279?=
+X-GMAIL-MSGID: =?utf-8?q?1597477170927100272?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,42 +51,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Varun Prakash <varun@chelsio.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
 
-[ Upstream commit a351e40b6de550049423a26f7ded7b639e363d89 ]
+[ Upstream commit 5f5c5449acad0cd3322e53e1ac68c044483b0aa5 ]
 
-mbp pointer is passed to csio_hw_validate_caps() so call mempool_free()
-after calling csio_hw_validate_caps().
+The MDIO initialization failure message is printed using the network
+device, before it has been registered, leading to:
 
-Signed-off-by: Varun Prakash <varun@chelsio.com>
-Fixes: 541c571fa2fd ("csiostor:Use firmware version from cxgb4/t4fw_version.h")
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+     (null): failed to initialise MDIO
+
+Use the platform device instead to fix this:
+
+    sh-eth ee700000.ethernet: failed to initialise MDIO
+
+Fixes: daacf03f0bbfefee ("sh_eth: Register MDIO bus before registering the network device")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/csiostor/csio_hw.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/renesas/sh_eth.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/csiostor/csio_hw.c
-+++ b/drivers/scsi/csiostor/csio_hw.c
-@@ -1769,7 +1769,6 @@ csio_hw_use_fwconfig(struct csio_hw *hw,
- 		goto bye;
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -3133,7 +3133,7 @@ static int sh_eth_drv_probe(struct platf
+ 	/* MDIO bus init */
+ 	ret = sh_mdio_init(mdp, pd);
+ 	if (ret) {
+-		dev_err(&ndev->dev, "failed to initialise MDIO\n");
++		dev_err(&pdev->dev, "failed to initialise MDIO\n");
+ 		goto out_release;
  	}
  
--	mempool_free(mbp, hw->mb_mempool);
- 	if (finicsum != cfcsum) {
- 		csio_warn(hw,
- 		      "Config File checksum mismatch: csum=%#x, computed=%#x\n",
-@@ -1780,6 +1779,10 @@ csio_hw_use_fwconfig(struct csio_hw *hw,
- 	rv = csio_hw_validate_caps(hw, mbp);
- 	if (rv != 0)
- 		goto bye;
-+
-+	mempool_free(mbp, hw->mb_mempool);
-+	mbp = NULL;
-+
- 	/*
- 	 * Note that we're operating with parameters
- 	 * not supplied by the driver, rather than from hard-wired
