@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49ixUzwbdKrF7neAOt+DwavTgqk5QOWexuDasCr/5nMkNQBskbkXut8Q2mmyYwlrfGf8J9M
-ARC-Seal: i=1; a=rsa-sha256; t=1523473286; cv=none;
+X-Google-Smtp-Source: AIpwx49j5YQY0B1gN0j85RKeUrrF2u/H/EgWQylKdtcalC61xVxwWX8+PYz4pg4MjbE9totmY0m3
+ARC-Seal: i=1; a=rsa-sha256; t=1523473283; cv=none;
         d=google.com; s=arc-20160816;
-        b=akOeInYdXzZZMbegtZK6mgTkouG9ne2mkjrnKTCreDCtEEyLE/t3ekNy+hcMEYV73M
-         6gttR8V693TstmMvJ2UllR9e4iR7NX1iPXB+qHoBLBD9G/vvN55DYnPZ8zXmC3F+sTM1
-         8uAG8GeW4IPOgVvsfmbPfdt4y5UxPXf7eoFhhm9UWf+zQB/uhMP1xQGGuhZBIKPG5b+a
-         rXAuowJCyiNjifF5w0MnqNqBJi5GsVjdYvjrsm5LBcuplJ73k6zpXdI47PyUC86xdxy0
-         nmKnF55QREgeJ48jg0mZyHtKiFUwtFFJC+mYRja5wMqpcOhFa/jNUg6GeL3HpPBtenaR
-         Pkdw==
+        b=BD25uAtX4qATU5ZvvPJiaD4aMPfSdTigFOnxKQwRI7jqrzTbYm927OWJlr16cZNZV+
+         fdflFxIb5EfFWnSrwx5Xz9WooKf2FKGIj0D2BjSKAa98+4dNlTFE/wlBQFKGrqL3FKIR
+         sAqSV+lB77U2kQCaAPH5z78/IPw2ux6i/abElRd4GPQKuGJw3MkibV8VZsszTitun46p
+         XzYlkC7G1Iv/dDTzuihBEG7yiDMsK4pzxOeazbbEWAkqyGqdgi+e+8NG8TOWS/xUZLqm
+         hMqDurhs6TexPVxwkMR1hDMiwkixx/3jBGG0lnG3u1ekOnWFJXkMu46AwKsty1L/3Ctc
+         UIQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=rTIHUsjwnt4UjgQYegva1cAkVVmg5ZQhnbZ2qg4jTF8=;
-        b=zOF3XO9If4q7qB0lOZyKW67HrVsW2y7WG00Ma+Bl/5CsUEcsvOklVMKjT4bo9rPfRJ
-         ueKvARwfk/LQfMVrNIR5PYbigqpDKH9IRC7sNdoLOEoUzTC0UUXPjheh3KZB6KcayGOp
-         hUJSuiCXuFuCE4QY5IZxzWD6PnF6ClPWk25UpIB0DOS/xX5kFjhwvIwajoo3nuzu5Wyd
-         c7td2ulVI4uKMyZ2gddpUQL73ycP6ecwXRffcKApYd4GvXmdzrqoylYUGo2q9cHh4Vqm
-         1VxQTx8GOqIxx+gsjdpQzwJ7K/ddkPMd3sKip6CNlLWvM/VXLUZ43Nh8hcbFRO0GEcis
-         qk2Q==
+        bh=wWe8T3lad2L3BIuGKRzdJ4TBHns40ItRUAZLCmNy4wM=;
+        b=ja+c/gfZymLUbFeB5B5W01Wq6WAcc+VLwgRF+yrSYsfDts79MEO9JDWTkO37N6dJa+
+         JUikzljMIvBrf0fJj14IgdAjtspKsND0uI7yc1cuFpKspzCavi/EApumAxdkr/SyEpSA
+         xulqv4OjMEYEjmw+TTAkGdqJbVd/apCMWmHBrIXQkyq/UEs1SMP/FYaEYQV1UTq65KGm
+         PJ0MAR3/BXnhqVnxtSm36EViRv37zAoUCMz5sGgro29AApXI97yoEZdGVcZpDn5f1Mce
+         F8PjLWlF2+8iOPZY5TTBNrXMxBteP38k9ktpQwy8F+GV4hqVtdcOg3ip/8tu0TiHMVCE
+         r7Pg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>,
-	Felix Kuehling <felix.kuehling@amd.com>,
-	Oded Gabbay <oded.gabbay@gmail.com>,
+	Haishuang Yan <yanhaishuang@cmss.chinamobile.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 175/310] drm/amdkfd: NULL dereference involving create_process()
-Date: Wed, 11 Apr 2018 20:35:14 +0200
-Message-Id: <20180411183630.157793909@linuxfoundation.org>
+Subject: [PATCH 4.9 192/310] sit: reload iphdr in ipip6_rcv
+Date: Wed, 11 Apr 2018 20:35:31 +0200
+Message-Id: <20180411183630.851459644@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477524428790753?=
-X-GMAIL-MSGID: =?utf-8?q?1597477524428790753?=
+X-GMAIL-THRID: =?utf-8?q?1597476727218419788?=
+X-GMAIL-MSGID: =?utf-8?q?1597477521777459943?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,33 +50,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 
 
-[ Upstream commit b312b2b25b6ac9e2eb03f4ca651b33108752de3a ]
+[ Upstream commit b699d0035836f6712917a41e7ae58d84359b8ff9 ]
 
-We accidentally return ERR_PTR(0) which is NULL.  The caller is not
-expecting that and it leads to an Oops.
+Since iptunnel_pull_header() can call pskb_may_pull(),
+we must reload any pointer that was related to skb->head.
 
-Fixes: dd59239a9862 ("amdkfd: init aperture once per process")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Felix Kuehling <felix.kuehling@amd.com>
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+Fixes: a09a4c8dd1ec ("tunnels: Remove encapsulation offloads on decap")
+Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_process.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/ipv6/sit.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_process.c
-@@ -317,7 +317,8 @@ static struct kfd_process *create_proces
+--- a/net/ipv6/sit.c
++++ b/net/ipv6/sit.c
+@@ -657,6 +657,7 @@ static int ipip6_rcv(struct sk_buff *skb
+ 		if (iptunnel_pull_header(skb, 0, htons(ETH_P_IPV6),
+ 		    !net_eq(tunnel->net, dev_net(tunnel->dev))))
+ 			goto out;
++		iph = ip_hdr(skb);
  
- 	/* init process apertures*/
- 	process->is_32bit_user_mode = in_compat_syscall();
--	if (kfd_init_apertures(process) != 0)
-+	err = kfd_init_apertures(process);
-+	if (err != 0)
- 		goto err_init_apretures;
- 
- 	return process;
+ 		err = IP_ECN_decapsulate(iph, skb);
+ 		if (unlikely(err)) {
