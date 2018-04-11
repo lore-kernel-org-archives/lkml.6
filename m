@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+o3eoPLAX1xrT4EPa8gID0Z/6bBKtfc74KVfPO1E7dUO6NRhuMIopu/GXa0XRqaheC/Te9
-ARC-Seal: i=1; a=rsa-sha256; t=1523473437; cv=none;
+X-Google-Smtp-Source: AIpwx4+uLuSdcaad6UmArBv1ZLHsSbDEW97ULkUS8MYu1HPhb+f1cUAq7hFBOOYqnzElFg+OO2i/
+ARC-Seal: i=1; a=rsa-sha256; t=1523473434; cv=none;
         d=google.com; s=arc-20160816;
-        b=vVOTTsO4OMt+/Ha2XxiiTksyxM053m9+hSZ/rnYcTmwJfcbr9PaLu0rIBVdSSydVHV
-         zsGSIfeB5tvV2M32cw3Kis4X2LBBLW7n/5vhNMslahYghIiQ68SHs0m6nzLYVc6C/4jF
-         JimT+OgGQg36dg7qY1xcFteKFo2fR8ZUNqB6a/6kwRqNGmc5djxQl0Q6OK5PDklekp8M
-         EqWoqBETSXBkUlFjx5868tE27Q0Qs5vT4kJkpw7Cj3um/iOHnfyfPLgvm44SdXx5mC1w
-         +bZHWg9k4ur3w1vBsff+2O8tdYn6GpffdHaJgKUH4AjepqHzVVu6w2gCh+HYmsnTG6Xv
-         /Lzw==
+        b=L4ncOlcYThJ1OhAUYWoqqB3r3a7UED+NZ72EwaCTVw8R/Hh+jR/RySA4yrRFXlq1k+
+         X3c1AiBTxLjMUZvOCY/K94bGZ9qie2ggMjSx+f0fi1v8bnAH5elFog3/WXdVJUAIlPH/
+         xa7XFQRlSZIsyY1H+fmDUzug31h8b3gFK6vOfJs9YapZiXvMJlt5wyV2p4lWjgWovY3R
+         hcG4LInii6rnhCFO7Ymgk/HLhHjutUSaIwFcJdlp50Wxy655vi2nbGY3/qppMvyAoRHg
+         FI7CoTbak7KxKO8vfguxDmX9B2EGFbzgl0eynUK6UvpdDgD5zlZ1O7OAvs9y7HedD8da
+         Yx6A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WWUqzUoHfdFREeN0Ufepz8LK1f94szoQu+wLBvu4BHc=;
-        b=FlG5oRViItO7eFGulPfX6CR3Urh7J+9Uy5FFZO6cdiYwhtiVn5dhqKY/aMzfUdeoD4
-         z3Iy1S4xEjoxwv7JDyenSEnFaOR95r9V1RGQWNUaYCLCdA7iZPjgaWZBkJugAMYgT/SH
-         lWCA9+8UASuBqYdhz9tOiCfP1opERMzV5449GlyendR80jaK1lG4ab7D/eophVCwlupA
-         VHktSeq5riUi/9oylGPRfiRO3Cs7zqsTv6Dfb1Sc8Ee3npeHEOu8jr0AOAuZcQoe8p83
-         OkCigeB6aiAl85lmL+/SMMKEFtkB47n2bCAao5oSy8J90fhCH378kWdJDyxAnWAui4OD
-         K77g==
+        bh=F8dRcSyl2iViwoji/lQ11J76r+DN3REq/Zv8xvT3Dss=;
+        b=Sfo4w8txYeHDKEp+amFI7+4EdTtpYm1XKVq46R4zrdBqvJhp7ia4uTxGhc2EiujJl8
+         2uLW56PVwm07wK1sUHd0wRAZ4jlor5R46KOvQhNlTT7Ks9Z7XehCZfUe5UVMNqSp3u2u
+         hkEbl7ZG1+1Ga+eAkktFwBbX5VkCrMb7eak+SMOzn9/YEr6OHfIUGuyYvJJYFuUvgFus
+         Ny1RVrrC+46bhOk78lV4MIkmqtASa3CJ3ujnjb9H+7iMNCiKgz2zpfpQuw9dhBLj1dWp
+         SHsEihMRCbt9wC/FQacCm5Ehy3cSLojb9QfXrKSU758q4Q2JECRBLXwAnmMjH0A7k1io
+         eIsg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 90.92.61.202 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Rob Herring <robh@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
+	Netanel Belgazal <netanel@amazon.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 246/310] clk: meson: meson8b: add compatibles for Meson8 and Meson8m2
-Date: Wed, 11 Apr 2018 20:36:25 +0200
-Message-Id: <20180411183633.046008168@linuxfoundation.org>
+Subject: [PATCH 4.9 245/310] net: ena: disable admin msix while working in polling mode
+Date: Wed, 11 Apr 2018 20:36:24 +0200
+Message-Id: <20180411183633.008586271@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180411183622.305902791@linuxfoundation.org>
 References: <20180411183622.305902791@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1597477682849045743?=
-X-GMAIL-MSGID: =?utf-8?q?1597477682849045743?=
+X-GMAIL-THRID: =?utf-8?q?1597477679927159344?=
+X-GMAIL-MSGID: =?utf-8?q?1597477679927159344?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,110 +50,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Netanel Belgazal <netanel@amazon.com>
 
 
-[ Upstream commit 855f06a1009faabb0c6a3e9b49d115496d325856 ]
+[ Upstream commit a2cc5198dac102775b21787752a2e0afe44ad311 ]
 
-The clock controller on Meson8, Meson8b and Meson8m2 is very similar
-based on the code from the Amlogic GPL kernel sources. Add separate
-compatibles for each SoC to make sure that we can easily implement
-all the small differences for each SoC later on.
-
-In general the Meson8 and Meson8m2 seem to be almost identical as they
-even share the same mach-meson8 directory in Amlogic's GPL kernel
-sources.
-The main clocks on Meson8, Meson8b and Meson8m2 are very similar,
-because they are all using the same PLL values, 90% of the clock gates
-are the same (the actual diffstat of the mach-meson8/clock.c and
-mach-meson8b/clock.c files is around 30 to 40 lines, when excluding
-all commented out code).
-The difference between the Meson8 and Meson8b clock gates seem to be:
-- Meson8 has AIU_PCLK, HDMI_RX, VCLK2_ENCT, VCLK2_ENCL, UART3,
-  CSI_DIG_CLKIN gates which don't seem to be available on Meson8b
-- the gate on Meson8 for bit 7 seems to be named "_1200XXX" instead
-  of "PERIPHS_TOP" (on Meson8b)
-- Meson8b has a SANA gate which doesn't seem to exist on Meson8 (or
-  on Meson8 the same bit is used by the UART3 gate in Amlogic's GPL
-  kernel sources)
-None of these gates is added for now, since it's unclear whether these
-definitions are actually correct (the VCLK2_ENCT gate for example is
-defined, but only used in some commented block).
-
-The main difference between all three SoCs seem to be the video (VPU)
-clocks. Apart from different supported clock rates (according to vpu.c
-in mach-meson8 and mach-meson8b from Amlogic's GPL kernel sources) the
-most notable difference is that Meson8m2 has a GP_PLL clock and a mux
-(probably the same as on the Meson GX SoCs) to support glitch-free
-(clock rate) switching.
-None of these VPU clocks are not supported by our mainline meson8b
-clock driver yet though.
-
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Fixes: 1738cd3ed342 ("Add a driver for Amazon Elastic Network Adapters (ENA)")
+Signed-off-by: Netanel Belgazal <netanel@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt |   11 ++++++----
- drivers/clk/meson/Kconfig                                        |    6 ++---
- drivers/clk/meson/meson8b.c                                      |    5 +++-
- 3 files changed, 14 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/amazon/ena/ena_com.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,meson8b-clkc.txt
-@@ -1,11 +1,14 @@
--* Amlogic Meson8b Clock and Reset Unit
-+* Amlogic Meson8, Meson8b and Meson8m2 Clock and Reset Unit
+--- a/drivers/net/ethernet/amazon/ena/ena_com.c
++++ b/drivers/net/ethernet/amazon/ena/ena_com.c
+@@ -61,6 +61,8 @@
  
--The Amlogic Meson8b clock controller generates and supplies clock to various
--controllers within the SoC.
-+The Amlogic Meson8 / Meson8b / Meson8m2 clock controller generates and
-+supplies clock to various controllers within the SoC.
+ #define ENA_MMIO_READ_TIMEOUT 0xFFFFFFFF
  
- Required Properties:
++#define ENA_REGS_ADMIN_INTR_MASK 1
++
+ /*****************************************************************************/
+ /*****************************************************************************/
+ /*****************************************************************************/
+@@ -1448,6 +1450,12 @@ void ena_com_admin_destroy(struct ena_co
  
--- compatible: should be "amlogic,meson8b-clkc"
-+- compatible: must be one of:
-+	- "amlogic,meson8-clkc" for Meson8 (S802) SoCs
-+	- "amlogic,meson8b-clkc" for Meson8 (S805) SoCs
-+	- "amlogic,meson8m2-clkc" for Meson8m2 (S812) SoCs
- - reg: it must be composed by two tuples:
- 	0) physical base address of the xtal register and length of memory
- 	   mapped region.
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -7,9 +7,9 @@ config COMMON_CLK_MESON8B
- 	bool
- 	depends on COMMON_CLK_AMLOGIC
- 	help
--	  Support for the clock controller on AmLogic S805 devices, aka
--	  meson8b. Say Y if you want peripherals and CPU frequency scaling to
--	  work.
-+	  Support for the clock controller on AmLogic S802 (Meson8),
-+	  S805 (Meson8b) and S812 (Meson8m2) devices. Say Y if you
-+	  want peripherals and CPU frequency scaling to work.
- 
- config COMMON_CLK_GXBB
- 	bool
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -1,5 +1,6 @@
- /*
-- * AmLogic S805 / Meson8b Clock Controller Driver
-+ * AmLogic S802 (Meson8) / S805 (Meson8b) / S812 (Meson8m2) Clock Controller
-+ * Driver
-  *
-  * Copyright (c) 2015 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
-@@ -661,7 +662,9 @@ iounmap:
+ void ena_com_set_admin_polling_mode(struct ena_com_dev *ena_dev, bool polling)
+ {
++	u32 mask_value = 0;
++
++	if (polling)
++		mask_value = ENA_REGS_ADMIN_INTR_MASK;
++
++	writel(mask_value, ena_dev->reg_bar + ENA_REGS_INTR_MASK_OFF);
+ 	ena_dev->admin_queue.polling = polling;
  }
- 
- static const struct of_device_id meson8b_clkc_match_table[] = {
-+	{ .compatible = "amlogic,meson8-clkc" },
- 	{ .compatible = "amlogic,meson8b-clkc" },
-+	{ .compatible = "amlogic,meson8m2-clkc" },
- 	{ }
- };
  
