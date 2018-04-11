@@ -1,110 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751828AbeDKFjr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 01:39:47 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:37411 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750763AbeDKFjq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 01:39:46 -0400
-X-Google-Smtp-Source: AIpwx49jPQpzz++Lba9BSXEdXbrUEDdDXIJ0Vxq9Y8yXailGRNrcp/zfWtzBOKM1BK/TaY4helyFDQ==
-Date: Tue, 10 Apr 2018 22:39:41 -0700
-From: Benson Leung <bleung@google.com>
-To: lee.jones@linaro.org
-Cc: bleung@google.com, bleung@chromium.org, linux-kernel@vger.kernel.org,
-        enric.balletbo@collabora.com, gwendal@chromium.org
-Subject: [GIT PULL] Immutable branch between MFD and Platform due for the
- v4.17 merge window
-Message-ID: <20180411053941.GA123734@decatoncale.mtv.corp.google.com>
+        id S1751960AbeDKFma (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 01:42:30 -0400
+Received: from mout.web.de ([212.227.15.4]:48941 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751661AbeDKFm1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 01:42:27 -0400
+Subject: Re: [PATCH v7 2/5] of: change overlay apply input data from
+ unflattened to FDT
+To: Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc: Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Pantelis Antoniou <panto@antoniou-consulting.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jailhouse <jailhouse-dev@googlegroups.com>
+References: <1520122673-11003-1-git-send-email-frowand.list@gmail.com>
+ <1520122673-11003-3-git-send-email-frowand.list@gmail.com>
+ <09e3db63-cbf9-52a2-ee77-520979f17fea@web.de>
+ <7bbf615b-3cdd-6bb4-6918-33e48de4225d@gmail.com>
+ <a21dbee8-6e4e-9ceb-c798-dda43c2eae2d@web.de>
+ <d7e94a45-5d46-0491-e5dc-2b098a11c5b1@gmail.com>
+ <CAL_Jsq+MmUTMrd+jNqUB2=A-q3cCy7+QWOKG0iF6zM0hjCy3PQ@mail.gmail.com>
+From: Jan Kiszka <jan.kiszka@web.de>
+Openpgp: preference=signencrypt
+Message-ID: <e508f3de-f21b-2510-2c6a-b810073ba1a7@web.de>
+Date: Wed, 11 Apr 2018 07:42:13 +0200
+User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
+ Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAL_Jsq+MmUTMrd+jNqUB2=A-q3cCy7+QWOKG0iF6zM0hjCy3PQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:1pU0CxBj+3190oZE/kz6+rQN/otjf10IN8z5XyB34eEw+TgFb5w
+ mg3WAOK8nqfEhIX9TeY2eHAe+8bCEx6bypR1j1Z/xJYACI+n6JfV6+Uy9D66SoeiLZKzgEg
+ /qUgLOCHC+qJrOCqVS2BUOPpJSKTIZPrWcaG1ncSGlJg+QMMq805fh+JkV58ZwVj6vQqbSc
+ vxz/Yoj+LDXIVtQUvcxww==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:AXzh/XGHGlI=:DV1BpMtc/X9G89ZisleC8I
+ dSNTM0lWvy2gzYPFK+UTSaLAAHVomcUPxrnIt9AKIZsAv5SQVyqrW6WBLC604VIs3Ww7Ws1R4
+ SoQ2/AmWoAE5Adzt61IoNrU/xcrkKdYDxRosRI655/Z3JOJk0+pVgiTyZ1Bwnd/S6NzISV4dG
+ bneupV61CCslEpW3jD43/acSewI4CTrD0H6eFI2j48CF51vOuURA5QrlijZyQd0s9YqM8u0qP
+ h4M+Jg4FaFrKUJ8wFIuwKRBXlnYNwGFKARYAWbkeDFeaXn/ItcqIlAPjKC+ONspvaiChlTWb4
+ IJ9zRZMlIptHRN6tXPx0gGGcvmuTX2TKjQJ9WLoll9pwGCEyw7xFIOdoGV/wEP8NYxfKikSHy
+ h123C2bnlosnBRXMDnsnU4PCNj6hZSjkmBeOEqDSrdnGsn7nfDdkNorDQiqnFeeEfb2EceUCr
+ vkSGBdYR705at1zZgMSSpNL3DHoAF4dkdyKv+rpItYU89wTFE3a4bim/E2gx8Lr/3Bb4UN4OJ
+ oAA1RLSeZBXCC29iP0WSZScZ/No+oLuT8uoLOQoMeOBH67JsW1VtbzkDgLiG+YT3zdeJUvh+u
+ /s/XdUBiLGXbSQ9hUpF36aub6PAE4xHKwcv+wwg4dirWZnquWSC9/IUdf1BDnjUslix0nPyhp
+ O9c7zSIdQWQXq/V2QVwC3rpy5Uj7Nf31vVna/h3/pqsp5BbwiqgHS3+qDJ8Fkn5AVhs+6H0pW
+ 0OqepNS6ILeROM7xHwIP5MXeuPMUmtnY9IwnSUAcx2RLl6seCe5RLpfnjBXyroyGNem2syza8
+ s4l0wzqEcDWtAiqwKNJx64VOrq2Cl/HuWSdl449pJ+qaAz5m8M=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-04-05 23:12, Rob Herring wrote:
+> On Thu, Apr 5, 2018 at 2:28 PM, Frank Rowand <frowand.list@gmail.com> wrote:
+>> On 04/05/18 12:13, Jan Kiszka wrote:
+>>> On 2018-04-05 20:59, Frank Rowand wrote:
+>>>> Hi Jan,
+>>>>
+>>>> On 04/04/18 15:35, Jan Kiszka wrote:
+>>>>> Hi Frank,
+>>>>>
+>>>>> On 2018-03-04 01:17, frowand.list@gmail.com wrote:
+>>>>>> From: Frank Rowand <frank.rowand@sony.com>
+>>>>>>
+>>>>>> Move duplicating and unflattening of an overlay flattened devicetree
+>>>>>> (FDT) into the overlay application code.  To accomplish this,
+>>>>>> of_overlay_apply() is replaced by of_overlay_fdt_apply().
+>>>>>>
+>>>>>> The copy of the FDT (aka "duplicate FDT") now belongs to devicetree
+>>>>>> code, which is thus responsible for freeing the duplicate FDT.  The
+>>>>>> caller of of_overlay_fdt_apply() remains responsible for freeing the
+>>>>>> original FDT.
+>>>>>>
+>>>>>> The unflattened devicetree now belongs to devicetree code, which is
+>>>>>> thus responsible for freeing the unflattened devicetree.
+>>>>>>
+>>>>>> These ownership changes prevent early freeing of the duplicated FDT
+>>>>>> or the unflattened devicetree, which could result in use after free
+>>>>>> errors.
+>>>>>>
+>>>>>> of_overlay_fdt_apply() is a private function for the anticipated
+>>>>>> overlay loader.
+>>>>>
+>>>>> We are using of_fdt_unflatten_tree + of_overlay_apply in the
+>>>>> (out-of-tree) Jailhouse loader driver in order to register a virtual
+>>>>> device during hypervisor activation with Linux. The DT overlay is
+>>>>> created from a a template but modified prior to application to account
+>>>>> for runtime-specific parameters. See [1] for the current implementation.
+>>>>>
+>>>>> I'm now wondering how to model that scenario best with the new API.
+>>>>> Given that the loader lost ownership of the unflattened tree but the
+>>>>> modification API exist only for the that DT state, I'm not yet seeing a
+>>>>> clear solution. Should we apply the template in disabled form (status =
+>>>>> "disabled"), modify it, and then activate it while it is already applied?
+>>>>
+>>>> Thank you for the pointer to the driver - that makes it much easier to
+>>>> understand the use case and consider solutions.
+>>>>
+>>>> If you can make the changes directly on the FDT instead of on the
+>>>> expanded devicetree, then you could move to the new API.
+>>>
+>>> Are there some examples/references on how to edit FDTs in-place in the
+>>> kernel? I'd like to avoid writing the n-th FDT parser/generator.
+>>
+>> I don't know of any existing in-kernel edits of the FDT (but they might
+>> exist).  The functions to access an FDT are in libfdt, which is in
+>> scripts/dtc/libfdt/.
+> 
+> Let's please not go down that route of doing FDT modifications. There
+> is little reason to other than for early boot changes. And it is much
+> easier to work on unflattened trees.
 
---KsGdsel6WgEHnImy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I just briefly looked into libfdt, and it would have meant building it
+into the module as there are no library functions exported by the kernel
+either. Another reason to drop that.
 
-Hi Lee,
+What's apparently working now is the pattern I initially suggested:
+Register template with status = "disabled" as overlay, then prepare and
+apply changeset that contains all needed modifications and sets the
+status to "ok". I might be leaking additional resources, but to find
+that out, I will now finally have to resolve clean unbinding of the
+generic PCI host controller [1] first.
 
-Please take a look at this IB that incorporates v4 of Enric's cros_ec debug=
-fs
-and sysfs series.
+Thanks,
+Jan
 
-Thanks!
-Benson
-
-The following changes since commit 3eb2ce825ea1ad89d20f7a3b5780df850e4be274:
-
-  Linux 4.16-rc7 (2018-03-25 12:44:30 -1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git =
-ib-chrome-platform-cros-ec-sysfs-debugfs-for-v4.17
-
-for you to fetch changes up to c1d1e91aff3d1183d6b16a282c2575e3e006cee4:
-
-  platform/chrome: mfd/cros_ec_dev: Add sysfs entry to set keyboard wake li=
-d angle (2018-04-10 22:25:07 -0700)
-
-----------------------------------------------------------------
-Enric Balletbo i Serra (3):
-      platform/chrome: cros_ec_sysfs: introduce to_cros_ec_dev define.
-      platform/chrome: cros_ec_sysfs: use permission-specific DEVICE_ATTR v=
-ariants
-      platform/chrome: cros_ec_debugfs: Use octal permissions '0444'
-
-Gwendal Grignou (2):
-      platform/chrome: cros_ec_sysfs: Modify error handling
-      platform/chrome: mfd/cros_ec_dev: Add sysfs entry to set keyboard wak=
-e lid angle
-
-Shawn Nematbakhsh (1):
-      platform/chrome: cros_ec_debugfs: Add PD port info to debugfs
-
- drivers/mfd/cros_ec_dev.c                 |  31 +++----
- drivers/platform/chrome/cros_ec_debugfs.c |  76 +++++++++++++++-
- drivers/platform/chrome/cros_ec_sysfs.c   | 141 +++++++++++++++++++++-----=
-----
- include/linux/mfd/cros_ec.h               |   2 +
- include/linux/mfd/cros_ec_commands.h      |   3 +
- 5 files changed, 194 insertions(+), 59 deletions(-)
-
-
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
-
---KsGdsel6WgEHnImy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6gYDF28Li+nEiKLaHwn1ewov5lgFAlrNn50ACgkQHwn1ewov
-5lifBg//R8JNidEP99ljDEjap/CYgbwy9HZdmmXIP2hzwt7PQM8Oi28NTqM6QRwY
-sg7IJngnzYLlIToZ3ICXboVjzkXlNxht/0k8XxN2Vjma7ElkVfYnptBCGV7aiSR8
-D27WrfHKS9ocMuxOTwzKPBPz7bgUw8epTLBLgvkXmDCqPf5Tj2IJJjKwZNzR469W
-a/B8PtyrVT3nbmdOQOWBWAbbULjwNWDvaeYUufdTZ6N8eiNpxKFMMM5iJ/7oZpTr
-sigfp8sGnx/amaXxn7isy1uVaIL6edaRRrpOsd2hEg7sA8AZUcqolLVVqdbcJW+k
-g4zzc0sq/yQD9Z1VoCQJ7CFmFtuoVPGhef636uJcnw3BDOtyObQS8ZpjhPGRiRWl
-00Z4xp2sDiDjQ1FwwPSDsnfRxNf6ew3d4YI0BFtAlaiSxS2Dvo/1NTON+cCUdSvY
-SRxztlbODxfI05RR+ueMaON9YGv7grdvzujTnbieDsXtpMafrc6/zotQbFXLnJC5
-FgXTg5Le5vqV2HXza3BwzuoraxR9yVjq4/Teyp6fO999luqjXnSELxo/y60M1Z9r
-l0/62K5FH+Zm4+GVfDn1iBIVCtiefe7nvDGyqlttPj90yS2vHabILMqwf+mawmNB
-EmrfcFHvDQSXNzHKsryt2j30+OjRhNfYDanP3gdYig3fHfZyn9Q=
-=3iqT
------END PGP SIGNATURE-----
-
---KsGdsel6WgEHnImy--
+[1] http://lkml.iu.edu/hypermail/linux/kernel/1606.3/00072.html
