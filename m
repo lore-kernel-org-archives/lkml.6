@@ -1,95 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753242AbeDLVF1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 17:05:27 -0400
-Received: from mga12.intel.com ([192.55.52.136]:30653 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751670AbeDLVF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 17:05:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,443,1517904000";
-   d="scan'208";a="32254464"
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org
-Subject: [PATCH] radix tree test suite: fix mapshift build target
-Date: Thu, 12 Apr 2018 15:05:18 -0600
-Message-Id: <20180412210518.27557-1-ross.zwisler@linux.intel.com>
-X-Mailer: git-send-email 2.14.3
+        id S1753301AbeDLVFe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 17:05:34 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59576 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751946AbeDLVFa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 17:05:30 -0400
+Date: Thu, 12 Apr 2018 14:06:27 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH 0/2] tools/memory-model: Model 'smp_store_mb()'
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1523535770-10781-1-git-send-email-andrea.parri@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523535770-10781-1-git-send-email-andrea.parri@amarulasolutions.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18041221-0044-0000-0000-0000040300A4
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008844; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000256; SDB=6.01016983; UDB=6.00518660; IPR=6.00796220;
+ MB=3.00020544; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-12 21:05:26
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041221-0045-0000-0000-00000835009A
+Message-Id: <20180412210627.GF3948@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-12_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804120200
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit
+On Thu, Apr 12, 2018 at 02:22:48PM +0200, Andrea Parri wrote:
+> Hi,
+> 
+> This (tiny) series adds 'smp_store_mb()' to the model (patch 1/2), and
+> it fixes a stylistic discrepancy in 'linux-kernel.def (patch 2/2).
 
-  commit c6ce3e2fe3da ("radix tree test suite: Add config option for map
-  shift")
+I applied them both, thank you!
 
-Introduced a phony makefile target called 'mapshift' that ends up
-generating the file generated/map-shift.h.  This phony target was then
-added as a dependency of the top level 'targets' build target, which is
-what is run when you go to tools/testing/radix-tree and just type 'make'.
+I had to apply 2/2 by hand for reasons that are not at all clear to
+me.  Please check to make sure I got it right.
 
-Unfortunately, this phony target doesn't actually work as a dependency, so
-you end up getting:
+							Thanx, Paul
 
-$ make
-make: *** No rule to make target 'generated/map-shift.h', needed by 'main.o'.  Stop.
-make: *** Waiting for unfinished jobs....
-
-Fix this by making the file generated/map-shift.h our real makefile target,
-and add this a dependency of the top level build target.
-
-Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
----
-
-This allows the radix tree test suite that shipped with v4.16 build and
-run successfully.
-
-The radix tree test suite in the current linux/master during the v4.17
-merge window is broken, as I've reported here:
-
-https://marc.info/?l=linux-fsdevel&m=152356678901014&w=2
-
-But this patch is necessary to even get to that breakage.
-
-I've sent this to Matthew twice with no response, so Andrew, I'm trying
-you next.
-
----
- tools/testing/radix-tree/Makefile | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/tools/testing/radix-tree/Makefile b/tools/testing/radix-tree/Makefile
-index fa7ee369b3c9..db66f8a0d4be 100644
---- a/tools/testing/radix-tree/Makefile
-+++ b/tools/testing/radix-tree/Makefile
-@@ -17,7 +17,7 @@ ifeq ($(BUILD), 32)
- 	LDFLAGS += -m32
- endif
- 
--targets: mapshift $(TARGETS)
-+targets: generated/map-shift.h $(TARGETS)
- 
- main:	$(OFILES)
- 
-@@ -42,9 +42,7 @@ radix-tree.c: ../../../lib/radix-tree.c
- idr.c: ../../../lib/idr.c
- 	sed -e 's/^static //' -e 's/__always_inline //' -e 's/inline //' < $< > $@
- 
--.PHONY: mapshift
--
--mapshift:
-+generated/map-shift.h:
- 	@if ! grep -qws $(SHIFT) generated/map-shift.h; then		\
- 		echo "#define RADIX_TREE_MAP_SHIFT $(SHIFT)" >		\
- 				generated/map-shift.h;			\
--- 
-2.14.3
+> Cheers,
+>   Andrea
+> 
+> Andrea Parri (2):
+>   tools/memory-model: Model 'smp_store_mb()'
+>   tools/memory-model: Fix coding style in 'linux-kernel.def'
+> 
+>  tools/memory-model/linux-kernel.def | 29 +++++++++++++++--------------
+>  1 file changed, 15 insertions(+), 14 deletions(-)
+> 
+> -- 
+> 2.7.4
+> 
