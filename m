@@ -1,53 +1,53 @@
 Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AIpwx49qvhnVrhItzGGBrdiip9PZA/vdGJvTfMMJ59spz+2GEa5vDxvMqOiaN/7BfHa5dpb9xr8y
-ARC-Seal: i=1; a=rsa-sha256; t=1523294125; cv=none;
+X-Google-Smtp-Source: AIpwx4+oyHHxaI/s6DF9O84fgc1NmMxJnENZCZstYAmNVWNrpE0cH0H+TBAiqS4zmmEARP/vmfZC
+ARC-Seal: i=1; a=rsa-sha256; t=1523517387; cv=none;
         d=google.com; s=arc-20160816;
-        b=vp9VaKeLMjjHLVimUKUZsr2pj/6WxBvNFwSxnXJCb/2JTe17RsVEmUSKZsWbN9KgWe
-         Pn85PB/IANZyvEdrfscKTqgnNH/zQTgpjgITOgKoabhyk60smi7Z85m/bZj/VWf2PAKl
-         AKsHJKd+38uqBStZDoZDIznxL+MsbKYY47vjcQlnSnSj5RZ5K97NYQzFseQXUWp+K46i
-         6StoOYPpL3mKsgO/eG+WRt7xYG0LxNKM0/EQdaoE99geZIIn3qk08wW/tvO8ucvW6PIJ
-         EjL3kMTRZqUD86XA49zPegbXAicrB6eorlx2vVX9vZkeHtLP1tQCHLnmkiy8oJZpS2cv
-         bopw==
+        b=E65/I3qn45ZvBoWgVVjdfOrUwBBhz6SdSAOByovmUUbVFkj3zbWGCMic3d2eB+ScXq
+         sfj4IEv+k9FLWajdIwTkP7pFCGiz2nY7t4hyfujRpxOYc2jTRct/tAkidqhMG141c9uF
+         LFRbA7vssdcriSEhippb3J35EzhBR7TTCstICgY9XOiKMYYxIZd2QCmAw6l8GBaPrMhu
+         n96Vhq3E5S2UJNZIp55q2K0hxwVWKWlkLygc3guSVYiABo2Kb5OzRVw5TEkhffNFt5bo
+         y0bX8qUAWmTwHtprQcxrsaS7E+9VkPRiFJ4J7Bd23ZwEhVDXBDFbpywdTWXGgco/Tc49
+         JlWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=precedence:content-disposition:content-transfer-encoding
          :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
          :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=+u84+BPGm5nChFbdXZvLFLvWBQbCA5A9pkrVEz/U670=;
-        b=TlIpw6+rlrjx0zMz/Sj44LWbZaLFCfZ/xFOYxtY4Hm1D8XAcp9RQYU5XNhKzK+KyeI
-         aI1EkJXruTj/USzxQBPasa8ss1AyZzgmzhXV5oqdHBJ2Kjea8M1TpI7TMA+Kh0Ir7r6J
-         WlWDy+FLaJEZs+dFt8nkT2y58WWfE0l0T1E0thLjINoK2IqGw6XMyYEPtHAhnzGF6U94
-         R3wcJrzibXCAIsuDrcwm+fqCzv1YYvpvaLXjd2Vi8qfxUugo6ZdLcoogTCeDLJ0bSkJw
-         OzmTezSol9Zt/HOenL55N8GhhGegugFoqz8s4vxLwd4OpWVUIoJER6p4OYPOkn+pqjom
-         ljJA==
+        bh=TWKnpOgYTh1HgnPbnlS9gN4/w6+oBcYVUe6EO0OLiFM=;
+        b=rnyPu0X4+FWuMaEijU6P6jdbq4M0hhN2PCNK4/Y/rbFk8opY+XxMzaToVUmRPKRLlB
+         Hyg+a+9UnkfdnK9t3+i6xTYGktILjThxB7GdX7P6U/2t8HyN1C3LmknDrLVIArhkhcEf
+         MzzbId/iCLj43EzrdVkzDEjoIFruw7ePjaqWkrF3rpQyEQhFhXrUOOVAKSNdEQo8By0Q
+         kgj7R4FJQsCY4m+d2xPioS1aqjafGBGIwC3LliSN0Eqfpx2szQ/w8YU/ATLULDFc4RDI
+         ceaROnQpRvF0xZcKXimzfdffqPif4ZS3hx7LchIyOBGuD7pqZA2bovgl8ozQ0hbXzhVW
+         K3jA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Mon, 9 Apr 2018 10:14:41 -0700
+Date: Thu, 12 Apr 2018 00:15:28 -0700
 Sender: tip tree robot <tipbot@zytor.com>
 From: tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-4ddee6efdcd0259fdd5014312bd536325e6d3429@git.kernel.org>
-Cc: bp@alien8.de, peterz@infradead.org, arjan@linux.intel.com,
-        gregkh@linuxfoundation.org, hughd@google.com, tglx@linutronix.de,
-        aarcange@redhat.com, hpa@zytor.com, mingo@kernel.org,
-        jpoimboe@redhat.com, linux-kernel@vger.kernel.org, namit@vmware.com,
-        dave.hansen@linux.intel.com, torvalds@linux-foundation.org,
-        luto@kernel.org, dan.j.williams@intel.com, keescook@google.com,
-        jgross@suse.com, dwmw2@infradead.org
-Reply-To: jgross@suse.com, dwmw2@infradead.org, keescook@google.com,
-        luto@kernel.org, dan.j.williams@intel.com,
-        torvalds@linux-foundation.org, namit@vmware.com,
-        dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
-        jpoimboe@redhat.com, mingo@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, hughd@google.com, aarcange@redhat.com,
-        gregkh@linuxfoundation.org, peterz@infradead.org,
-        arjan@linux.intel.com, bp@alien8.de
-In-Reply-To: <20180406205513.079BB265@viggo.jf.intel.com>
-References: <20180406205513.079BB265@viggo.jf.intel.com>
+Message-ID: <tip-639d6aafe437a7464399d2a77d006049053df06f@git.kernel.org>
+Cc: jpoimboe@redhat.com, tglx@linutronix.de, mingo@kernel.org, bp@alien8.de,
+        jgross@suse.com, hpa@zytor.com, dave.hansen@linux.intel.com,
+        keescook@chromium.org, dwmw2@infradead.org,
+        torvalds@linux-foundation.org, peterz@infradead.org, namit@vmware.com,
+        luto@kernel.org, dan.j.williams@intel.com, hughd@google.com,
+        arjan@linux.intel.com, gregkh@linuxfoundation.org, aarcange@redhat.com,
+        linux-kernel@vger.kernel.org
+Reply-To: jpoimboe@redhat.com, mingo@kernel.org, tglx@linutronix.de,
+        hpa@zytor.com, bp@alien8.de, jgross@suse.com, namit@vmware.com,
+        dave.hansen@linux.intel.com, dwmw2@infradead.org,
+        keescook@chromium.org, torvalds@linux-foundation.org,
+        peterz@infradead.org, hughd@google.com, arjan@linux.intel.com,
+        gregkh@linuxfoundation.org, luto@kernel.org, dan.j.williams@intel.com,
+        aarcange@redhat.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20180406205514.8D898241@viggo.jf.intel.com>
+References: <20180406205514.8D898241@viggo.jf.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/mm: Comment _PAGE_GLOBAL mystery
-Git-Commit-ID: 4ddee6efdcd0259fdd5014312bd536325e6d3429
+Subject: [tip:x86/pti] x86/mm: Do not forbid _PAGE_RW before init for
+ __ro_after_init
+Git-Commit-ID: 639d6aafe437a7464399d2a77d006049053df06f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,34 +57,36 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597289661093401125?=
-X-GMAIL-MSGID: =?utf-8?q?1597289661093401125?=
+X-GMAIL-THRID: =?utf-8?q?1597289689293448520?=
+X-GMAIL-MSGID: =?utf-8?q?1597523768762578922?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  4ddee6efdcd0259fdd5014312bd536325e6d3429
-Gitweb:     https://git.kernel.org/tip/4ddee6efdcd0259fdd5014312bd536325e6d3429
+Commit-ID:  639d6aafe437a7464399d2a77d006049053df06f
+Gitweb:     https://git.kernel.org/tip/639d6aafe437a7464399d2a77d006049053df06f
 Author:     Dave Hansen <dave.hansen@linux.intel.com>
-AuthorDate: Fri, 6 Apr 2018 13:55:13 -0700
+AuthorDate: Fri, 6 Apr 2018 13:55:14 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 9 Apr 2018 18:27:33 +0200
+CommitDate: Thu, 12 Apr 2018 09:05:59 +0200
 
-x86/mm: Comment _PAGE_GLOBAL mystery
+x86/mm: Do not forbid _PAGE_RW before init for __ro_after_init
 
-I was mystified as to where the _PAGE_GLOBAL in the kernel page tables
-for kernel text came from.  I audited all the places I could find, but
-I missed one: head_64.S.
+__ro_after_init data gets stuck in the .rodata section.  That's normally
+fine because the kernel itself manages the R/W properties.
 
-The page tables that we create in here live for a long time, and they
-also have _PAGE_GLOBAL set, despite whether the processor supports it
-or not.  It's harmless, and we got *lucky* that the pageattr code
-accidentally clears it when we wipe it out of __supported_pte_mask and
-then later try to mark kernel text read-only.
+But, if we run __change_page_attr() on an area which is __ro_after_init,
+the .rodata checks will trigger and force the area to be immediately
+read-only, even if it is early-ish in boot.  This caused problems when
+trying to clear the _PAGE_GLOBAL bit for these area in the PTI code:
+it cleared _PAGE_GLOBAL like I asked, but also took it up on itself
+to clear _PAGE_RW.  The kernel then oopses the next time it wrote to
+a __ro_after_init data structure.
 
-Comment some of these properties to make it easier to find and
-understand in the future.
+To fix this, add the kernel_set_to_readonly check, just like we have
+for kernel text, just a few lines below in this function.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Acked-by: Kees Cook <keescook@chromium.org>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Arjan van de Ven <arjan@linux.intel.com>
@@ -95,45 +97,32 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Hugh Dickins <hughd@google.com>
 Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Juergen Gross <jgross@suse.com>
-Cc: Kees Cook <keescook@google.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Nadav Amit <namit@vmware.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180406205513.079BB265@viggo.jf.intel.com
+Link: http://lkml.kernel.org/r/20180406205514.8D898241@viggo.jf.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/head_64.S | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ arch/x86/mm/pageattr.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index 48385c1074a5..8344dd2f310a 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -399,8 +399,13 @@ NEXT_PAGE(level3_ident_pgt)
- 	.quad	level2_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
- 	.fill	511, 8, 0
- NEXT_PAGE(level2_ident_pgt)
--	/* Since I easily can, map the first 1G.
-+	/*
-+	 * Since I easily can, map the first 1G.
- 	 * Don't set NX because code runs from these pages.
-+	 *
-+	 * Note: This sets _PAGE_GLOBAL despite whether
-+	 * the CPU supports it or it is enabled.  But,
-+	 * the CPU should ignore the bit.
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 968f51a2e39b..a7324045d87d 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -298,9 +298,11 @@ static inline pgprot_t static_protections(pgprot_t prot, unsigned long address,
+ 
+ 	/*
+ 	 * The .rodata section needs to be read-only. Using the pfn
+-	 * catches all aliases.
++	 * catches all aliases.  This also includes __ro_after_init,
++	 * so do not enforce until kernel_set_to_readonly is true.
  	 */
- 	PMDS(0, __PAGE_KERNEL_IDENT_LARGE_EXEC, PTRS_PER_PMD)
- #else
-@@ -431,6 +436,10 @@ NEXT_PAGE(level2_kernel_pgt)
- 	 * (NOTE: at +512MB starts the module area, see MODULES_VADDR.
- 	 *  If you want to increase this then increase MODULES_VADDR
- 	 *  too.)
-+	 *
-+	 *  This table is eventually used by the kernel during normal
-+	 *  runtime.  Care must be taken to clear out undesired bits
-+	 *  later, like _PAGE_RW or _PAGE_GLOBAL in some cases.
- 	 */
- 	PMDS(0, __PAGE_KERNEL_LARGE_EXEC,
- 		KERNEL_IMAGE_SIZE/PMD_SIZE)
+-	if (within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
++	if (kernel_set_to_readonly &&
++	    within(pfn, __pa_symbol(__start_rodata) >> PAGE_SHIFT,
+ 		   __pa_symbol(__end_rodata) >> PAGE_SHIFT))
+ 		pgprot_val(forbidden) |= _PAGE_RW;
+ 
