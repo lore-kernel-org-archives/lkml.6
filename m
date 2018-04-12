@@ -1,79 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752943AbeDLQua (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 12:50:30 -0400
-Received: from mail-io0-f176.google.com ([209.85.223.176]:39434 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752558AbeDLQu2 (ORCPT
+        id S1753139AbeDLQvp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 12:51:45 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:60395 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752761AbeDLQvd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 12:50:28 -0400
-X-Google-Smtp-Source: AIpwx4+Iod0hwv2/+7pCR1i6M36IlIE23fs83NIcWNe9Nl8O/V4jnBNyrgA5ha1tl3CUpWJtGjVycGqolHXYNmtqXa4=
-MIME-Version: 1.0
-In-Reply-To: <20180412131404.GE16141@n2100.armlinux.org.uk>
-References: <20180409152253.GD10489@altlinux.org> <20180412013435.GA21219@altlinux.org>
- <20180412095811.GC16141@n2100.armlinux.org.uk> <20180412110314.GA28070@altlinux.org>
- <20180412121949.GD16141@n2100.armlinux.org.uk> <20180412124928.GA29458@altlinux.org>
- <20180412131404.GE16141@n2100.armlinux.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 12 Apr 2018 09:50:26 -0700
-X-Google-Sender-Auth: wFyfWXyp-VN6ptEMKyRrxEiTY1k
-Message-ID: <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
-Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
- kill() returns wrong values in si_pid and si_uid
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: "Dmitry V. Levin" <ldv@altlinux.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: multipart/mixed; boundary="001a114a4cf279af070569a98d65"
+        Thu, 12 Apr 2018 12:51:33 -0400
+From: Luca Ceresoli <luca@lucaceresoli.net>
+To: linux-media@vger.kernel.org
+Cc: Luca Ceresoli <luca@lucaceresoli.net>,
+        Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 04/13] imx274: remove unused data from struct imx274_frmfmt
+Date: Thu, 12 Apr 2018 18:51:09 +0200
+Message-Id: <1523551878-15754-5-git-send-email-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523551878-15754-1-git-send-email-luca@lucaceresoli.net>
+References: <1523551878-15754-1-git-send-email-luca@lucaceresoli.net>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---001a114a4cf279af070569a98d65
-Content-Type: text/plain; charset="UTF-8"
+struct imx274_frmfmt is instantiated only in the imx274_formats[]
+array, where imx274_formats[N].mode always equals N (via enum
+imx274_mode).  So .mode carries no information, and unsurprisingly it
+is never used.
 
-Does this attached patch perhaps fix the ARM case?
+mbus_code is never used because the 12 bit modes are not implemented.
 
-It just uses FPE_FLTUNK as the default si_code for SIGFPE, which seems
-sane enough. And then gets rid of FPE_FIXME, which should resolve the
-nasty case.
+The colorspace member is also never used, which is normal since the
+imx274 sensor can output only one colorspace.
 
-Hmm? Entirely untested, and I didn't really look at the test-case in
-question since I can't really run it anyway.
+Let's get rid of all of them.
 
-Well, I could run it all on x86-64, but it doesn't have that FPE_FIXME
-case at all.
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+---
+ drivers/media/i2c/imx274.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-                 Linus
-
---001a114a4cf279af070569a98d65
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_jfwr8nhj0
-
-IGFyY2gvYXJtL2luY2x1ZGUvdWFwaS9hc20vc2lnaW5mby5oIHwgNyAtLS0tLS0tCiBhcmNoL2Fy
-bS92ZnAvdmZwbW9kdWxlLmMgICAgICAgICAgICB8IDQgKystLQogMiBmaWxlcyBjaGFuZ2VkLCAy
-IGluc2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vaW5j
-bHVkZS91YXBpL2FzbS9zaWdpbmZvLmggYi9hcmNoL2FybS9pbmNsdWRlL3VhcGkvYXNtL3NpZ2lu
-Zm8uaAppbmRleCBkMDUxMzg4MGJlMjEuLmQ4N2JlZWVkYjRjNCAxMDA2NDQKLS0tIGEvYXJjaC9h
-cm0vaW5jbHVkZS91YXBpL2FzbS9zaWdpbmZvLmgKKysrIGIvYXJjaC9hcm0vaW5jbHVkZS91YXBp
-L2FzbS9zaWdpbmZvLmgKQEAgLTMsMTEgKzMsNCBAQAogCiAjaW5jbHVkZSA8YXNtLWdlbmVyaWMv
-c2lnaW5mby5oPgogCi0vKgotICogU0lHRlBFIHNpX2NvZGVzCi0gKi8KLSNpZmRlZiBfX0tFUk5F
-TF9fCi0jZGVmaW5lIEZQRV9GSVhNRQkwCS8qIEJyb2tlbiBkdXAgb2YgU0lfVVNFUiAqLwotI2Vu
-ZGlmIC8qIF9fS0VSTkVMX18gKi8KLQogI2VuZGlmCmRpZmYgLS1naXQgYS9hcmNoL2FybS92ZnAv
-dmZwbW9kdWxlLmMgYi9hcmNoL2FybS92ZnAvdmZwbW9kdWxlLmMKaW5kZXggNGMzNzVlMTFhZTk1
-Li4wMTJjNmU2OTAzMDMgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL3ZmcC92ZnBtb2R1bGUuYworKysg
-Yi9hcmNoL2FybS92ZnAvdmZwbW9kdWxlLmMKQEAgLTI1MSwxMyArMjUxLDEzIEBAIHN0YXRpYyB2
-b2lkIHZmcF9wYW5pYyhjaGFyICpyZWFzb24sIHUzMiBpbnN0KQogICovCiBzdGF0aWMgdm9pZCB2
-ZnBfcmFpc2VfZXhjZXB0aW9ucyh1MzIgZXhjZXB0aW9ucywgdTMyIGluc3QsIHUzMiBmcHNjciwg
-c3RydWN0IHB0X3JlZ3MgKnJlZ3MpCiB7Ci0JaW50IHNpX2NvZGUgPSAwOworCWludCBzaV9jb2Rl
-ID0gRlBFX0ZMVFVOSzsKIAogCXByX2RlYnVnKCJWRlA6IHJhaXNpbmcgZXhjZXB0aW9ucyAlMDh4
-XG4iLCBleGNlcHRpb25zKTsKIAogCWlmIChleGNlcHRpb25zID09IFZGUF9FWENFUFRJT05fRVJS
-T1IpIHsKIAkJdmZwX3BhbmljKCJ1bmhhbmRsZWQgYm91bmNlIiwgaW5zdCk7Ci0JCXZmcF9yYWlz
-ZV9zaWdmcGUoRlBFX0ZJWE1FLCByZWdzKTsKKwkJdmZwX3JhaXNlX3NpZ2ZwZShzaV9jb2RlLCBy
-ZWdzKTsKIAkJcmV0dXJuOwogCX0KIAo=
---001a114a4cf279af070569a98d65--
+diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
+index c5d00ade4d64..9203d377cfe2 100644
+--- a/drivers/media/i2c/imx274.c
++++ b/drivers/media/i2c/imx274.c
+@@ -156,10 +156,7 @@ enum imx274_mode {
+  * imx274 format related structure
+  */
+ struct imx274_frmfmt {
+-	u32 mbus_code;
+-	enum v4l2_colorspace colorspace;
+ 	struct v4l2_frmsize_discrete size;
+-	enum imx274_mode mode;
+ };
+ 
+ /*
+@@ -501,12 +498,9 @@ static const struct reg_8 *mode_table[] = {
+  * imx274 format related structure
+  */
+ static const struct imx274_frmfmt imx274_formats[] = {
+-	{MEDIA_BUS_FMT_SRGGB10_1X10, V4L2_COLORSPACE_SRGB, {3840, 2160},
+-		IMX274_MODE_3840X2160},
+-	{MEDIA_BUS_FMT_SRGGB10_1X10, V4L2_COLORSPACE_SRGB, {1920, 1080},
+-		IMX274_MODE_1920X1080},
+-	{MEDIA_BUS_FMT_SRGGB10_1X10, V4L2_COLORSPACE_SRGB, {1280, 720},
+-		IMX274_MODE_1280X720},
++	{ {3840, 2160} },
++	{ {1920, 1080} },
++	{ {1280,  720} },
+ };
+ 
+ /*
+@@ -890,9 +884,8 @@ static int imx274_set_fmt(struct v4l2_subdev *sd,
+ 	int index;
+ 
+ 	dev_dbg(&client->dev,
+-		"%s: width = %d height = %d code = %d mbus_code = %d\n",
+-		__func__, fmt->width, fmt->height, fmt->code,
+-		imx274_formats[imx274->mode_index].mbus_code);
++		"%s: width = %d height = %d code = %d\n",
++		__func__, fmt->width, fmt->height, fmt->code);
+ 
+ 	mutex_lock(&imx274->lock);
+ 
+-- 
+2.7.4
