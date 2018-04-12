@@ -1,39 +1,39 @@
 Return-Path: <broonie@sirena.org.uk>
-X-Google-Smtp-Source: AIpwx4/eQIZUSONTSVPO6oiVeRK3MWswHYvma1rpegd7vnqnaWPYQeX2pnhcgewyqa9Ku2vQTbIi
-ARC-Seal: i=1; a=rsa-sha256; t=1523617033; cv=none;
+X-Google-Smtp-Source: AIpwx49nASE7cjZMYiQy0tG38j3ktU8WjUKsVHMmANe2JwbluULrq14V00X36ch48Z9Emzep0gxp
+ARC-Seal: i=1; a=rsa-sha256; t=1523549838; cv=none;
         d=google.com; s=arc-20160816;
-        b=zvEkktpZt3K311TKqZmI8KKmG0w3+btm94MaikXn0J6sEb2SwoKyaNGdx2BnsiN4ut
-         m0CvbQzuFT4OAn4WqkO6966wh1EG1CigSZ1h+21rpnUGMx0OHraBkq2E6XxRg0me6X50
-         ovf2Bk/h35FQ89hq2KcTN9LtzXieXIrlZoTlL4bJ57Dtyytoir4t4ZOQkrje4G4MirCa
-         +YTqtd8AOv9ozMSWd6E8HajX8xkmUxJ35mVZ4GrapqxQl9OqPCQBB8CjjkedpfS6DQgS
-         NJC52eikmq6qJWvBkwW3IkS0qdDo4RFwgNSyYaodILPZULPhY0t53+FcLRqLS8uRSd4l
-         N/ZQ==
+        b=0KIn5J18NOA5RXmOy35BhxY0QkDJ4i+oKJjsaOueVVBd1shc6lL2TEPmAYBe8I5e2w
+         inBUyTR4GbyDbfAmC7iWOdyaXvvT1IUEeUJ+6wFbVshdbc89g7U1LoiO95fnPO99uj0Z
+         kUvwgSkKkB9wJcNN8d3B8y+iGNrKAGKE+0g3iUlgx2XULUQ6UPHmknOwzG7KQBhh5ytM
+         l+11s+bcZhTMNlQj3ocVBwNo786RvXw1EUtT/AqCZULkS0s7Myw8zOaRsn+eHoI4ZkAA
+         16rUcP/C7sZe6mwpJzuLdqRpozjVDooaJ3Gk420VGruN3t8jhDzrHui6T5elCyIB4pJa
+         e3Vg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
         bh=SuMqc3dMzj6/7MWbNR2gWFH8hnKMXIPE/5MUEnYYGiY=;
-        b=0HETEpq58eue+mRVurZwhjR64B1nAPN9ouzOHwU9vn6vng5MDdaTVRVZMRE5MgR7O5
-         Qsjul9zRQbXEic0ZYI85NMKYhfQxiPio9IlKreK+RB0wbwnZyK2TBbg0fX1oe6sN0jJd
-         xSW/AO20x8U1u1EzCz+JGuAVghDf21MSKxb1y20PoPEq4Dgg2DZ83fPGAOHpArU9q4JS
-         UIJrQ+1ipUttyce+C4qw6dH7LNTb8bT/J5IbiTP0JwC0BTsUu7FC327Ub4M8CIh0kAxV
-         axakA4t1GjHKbAMG4IwLGqKlDsoxNYsQFlWC7cpmUczRHf9J2C6s+iEAB6T7sHbYpNiw
-         4spg==
+        b=dG3i2wBBhdH17a21ie/14ZQkHkiw4EYcAfWNk48dMlAp+WLfLm+RYc39bZxo6V1Gpk
+         nFcoIhOg46+jNoOBBvfURtjj/a3cIEAacajUAkqPSXd+R2UikEvkt4unsrJYgIxzxJNz
+         rBWNjlbGtVhhTVWxkmz1LtzPWmxA5l2XNpVY0KlqKmFJ2Cj7jDb78qyekc5HhMauwq4i
+         tk4rARXtkCHEc5bWQEvCSrIbWvObmm7Z/85DqnBnq3j9zOzTyY7C66eWhJUIMnh+RZul
+         r0CqFz0gNWbowlTAvJlb9p+d+pPTyN7+YUgApPVtncAXyvvm898ZbqywYIZ8uucZq7pU
+         depg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=R7rbPL7/;
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=HsCPs+pj;
        spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=R7rbPL7/;
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=HsCPs+pj;
        spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
 From: Mark Brown <broonie@kernel.org>
 To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>, Philippe Ombredanne <pombredanne@nexb.com>, Kate Stewart <kstewart@linuxfoundation.org>, Linux-ALSA <alsa-devel@alsa-project.org>, open list <linux-kernel@vger.kernel.org>, alsa-devel@alsa-project.org
 Subject: Applied "ASoC: trace: remove snd_soc_codec" to the asoc tree
 In-Reply-To: <87vadh3pz1.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <E1f6wO8-0007KV-Lm@debutante>
-Date: Fri, 13 Apr 2018 11:57:04 +0100
+Message-Id: <E1f6euL-0008KO-Vb@debutante>
+Date: Thu, 12 Apr 2018 17:17:09 +0100
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1596147306520976293?=
-X-GMAIL-MSGID: =?utf-8?q?1597628253994028925?=
+X-GMAIL-MSGID: =?utf-8?q?1597557795724163426?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
