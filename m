@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752956AbeDLO4n (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 10:56:43 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57125 "EHLO mail.bootlin.com"
+        id S1753254AbeDLO6V (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 10:58:21 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57243 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752432AbeDLO4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 10:56:42 -0400
-Date: Thu, 12 Apr 2018 16:56:28 +0200
+        id S1752918AbeDLO6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 10:58:18 -0400
+Date: Thu, 12 Apr 2018 16:58:06 +0200
 From: Maxime Ripard <maxime.ripard@bootlin.com>
 To: Icenowy Zheng <icenowy@aosc.io>
 Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
@@ -14,73 +14,77 @@ Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Corentin Labbe <clabbe.montjoie@gmail.com>, netdev@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 3/5] net: stmmac: dwmac-sun8i: Allow getting syscon
- regmap from device
-Message-ID: <20180412145628.iaaeue2imiijwx5d@flea>
+Subject: Re: [PATCH 5/5] arm64: allwinner: a64: add SRAM controller device
+ tree node
+Message-ID: <20180412145806.hsvxomh6vousrhq5@flea>
 References: <20180411141641.14675-1-icenowy@aosc.io>
- <20180411141641.14675-4-icenowy@aosc.io>
+ <20180411141641.14675-6-icenowy@aosc.io>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rlwjjthzx46dcgln"
+        protocol="application/pgp-signature"; boundary="evvv32nlsy5xv6f6"
 Content-Disposition: inline
-In-Reply-To: <20180411141641.14675-4-icenowy@aosc.io>
+In-Reply-To: <20180411141641.14675-6-icenowy@aosc.io>
 User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---rlwjjthzx46dcgln
+--evvv32nlsy5xv6f6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 11, 2018 at 10:16:39PM +0800, Icenowy Zheng wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
+Hi,
+
+On Wed, Apr 11, 2018 at 10:16:41PM +0800, Icenowy Zheng wrote:
+> Allwinner A64 has a SRAM controller, and in the device tree currently
+> we have a syscon node to enable EMAC driver to access the EMAC clock
+> register. As SRAM controller driver can now export regmap for this
+> register, replace the syscon node to the SRAM controller device node,
+> and let EMAC driver to acquire its EMAC clock regmap.
 >=20
-> On the Allwinner R40 SoC, the "GMAC clock" register is in the CCU
-> address space; on the A64 SoC this register is in the SRAM controller
-> address space, and with a different offset.
->=20
-> To access the register from another device and hide the internal
-> difference between the device, let it register a regmap named
-> "emac-clock". We can then get the device from the phandle, and
-> retrieve the regmap with dev_get_regmap(); in this situation the
-> regmap_field will be set up to access the only register in the regmap.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> [Icenowy: change to use regmaps with single register, change commit
->  message]
 > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > ---
->  drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 48 +++++++++++++++++=
-+++++-
->  1 file changed, 46 insertions(+), 2 deletions(-)
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 23 +++++++++++++++++++--=
+--
+>  1 file changed, 19 insertions(+), 4 deletions(-)
 >=20
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/=
-net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-> index 1037f6c78bca..b61210c0d415 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-> @@ -85,6 +85,13 @@ const struct reg_field old_syscon_reg_field =3D {
->  	.msb =3D 31,
->  };
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/b=
+oot/dts/allwinner/sun50i-a64.dtsi
+> index 1b2ef28c42bd..1c37659d9d41 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -168,10 +168,25 @@
+>  		#size-cells =3D <1>;
+>  		ranges;
 > =20
-> +/* Specially exported regmap which contains only EMAC register */
-> +const struct reg_field single_reg_field =3D {
-> +	.reg =3D 0,
-> +	.lsb =3D 0,
-> +	.msb =3D 31,
-> +};
+> -		syscon: syscon@1c00000 {
+> -			compatible =3D "allwinner,sun50i-a64-system-controller",
+> -				"syscon";
+> +		sram_controller: sram-controller@1c00000 {
+> +			compatible =3D "allwinner,sun50i-a64-sram-controller";
+>  			reg =3D <0x01c00000 0x1000>;
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <1>;
+> +			ranges;
 > +
+> +			sram_c: sram@18000 {
+> +				compatible =3D "mmio-sram";
+> +				reg =3D <0x00018000 0x28000>;
+> +				#address-cells =3D <1>;
+> +				#size-cells =3D <1>;
+> +				ranges =3D <0 0x00018000 0x28000>;
+> +
+> +				de2_sram: sram-section@0 {
+> +					compatible =3D "allwinner,sun50i-a64-sram-c";
+> +					reg =3D <0x0000 0x28000>;
+> +				};
+> +			};
 
-I'm not sure this would be wise. If we ever need some other register
-exported through the regmap, will have to change all the calling sites
-everywhere in the kernel, which will be a pain and will break
-bisectability.
-
-Chen-Yu's (or was it yours?) initial solution with a custom writeable
-hook only allowing a single register seemed like a better one.
+That doesn't look related at all to what's being discussed here, so
+you'd rather add it as part of your DE2-enablement serie (or amend
+your commit log to say why this is important to do it in this patch).
 
 Maxime
 
@@ -89,24 +93,24 @@ Maxime Ripard, Bootlin (formerly Free Electrons)
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---rlwjjthzx46dcgln
+--evvv32nlsy5xv6f6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrPc5sACgkQ0rTAlCFN
-r3Sfbg//cOLG/DT3g2+ze/UD63phm0FdBQpF9binOv9/geLQNTBfvMHYuxnrDv2p
-j1o3+rssM01VnQmA3D3xPfT+Q53j23l78X4E+5EZF2ow1nLrJ2Yw/VbnLquKclLn
-waQySC66t5eYqvgowgzfLJ0KOmv6W31olmMHimRu0axD55zbfL+6t33DVM4SBE8L
-U2aRL6NX3QF4K0bk+0fN8bWaeNbCtc0wlMh1gxqzDBxQO0XO4aTFkLdbQojwU9Xn
-NFAncEZYdUBjUVPtny+QTBp2NaGGEtKsysIItownueB8O8RvVnn0pCKsTToKgQZx
-7zUy6QjP7yl5B1fSyGclDOi1O6+dUF3F/YgMhZNhhjpkRu3DcuHhy+3nDu/4ZH6l
-D1qi0Hnlc/asYl3rwyOwc1LYAzz5SVdLdjzJNaJeCxZrS7yTPsBUO82K9wy1+S0M
-/CeGQIAn9xHkgIilZLtzAexQGlSlo5n52OKK5xgeocoJd60GzGuJFLLSXYFX4y2G
-C9cI7C9Gbmh0bWPBbVHUJbRp26udKiBtpyvhCHE5Eo+C0y0BqFGtwyncmyglhwEv
-insJihyCqPF88XluhLUMdm8SEHLqpqhHsiDBcpPEItwCsGLu8mUF7whqecyfGESb
-FxcO4qaPpVLG165EDC0aZLgz/CBCa7cD0qIXWLXvpQfn5lwQGzk=
-=XQMc
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrPc/0ACgkQ0rTAlCFN
+r3TrHBAAlGqDDoMf+8nx0kwLHtmuEz29Bgkhid/dvZw0aOu7CTa4ySizpdy2Bx+N
+9eE5A8ygGyvAlR+pJE6r66IpSGh6xc4ApE3FUR/saRLctQMgCGAo/3msTGlKgbIJ
+FZDoFkliZZDS1pKY5Fz3Airkd28x8jaTZBpHLwiAjayjDKX1tseiG0DtifB9/MJN
+mC/4/YT9VQQbdOVwAHoyKASkE6YGgyu4TVVAKdlHIT/r9RGcRhxVOQcrPMpvv0RZ
+sWObQUjpyINwTEPkRWsI0kDGMCCKCjDStYp7AkIBqP5/HY3SYEl1AGbvw3alwsKj
+fHqEp45mWRFYEWM+oZjg4qSVO1YYEUonRw4aasRRw9EUrwxx5Im7KkiywFVYjQbW
+DS/oFSNhP8tzuh7F6ufbDy0sTpHmzfVLHv/xkGY8Vrifaydjng3SoLzaiORViIh0
+zTh1l2SD/5GMs4dYbfN30phXl4+GafhiVgVN8W3eM888k+m2L3PyzwOW3iw9bRar
+oMPywN5B+kPB7Z0u5aFn5WRsCUCA5mr19GAshScPo9RePdiFV3NCAr1W6KJP46lQ
+jGwDrDp0yVk/kCipUI2e0j3IseUiQttzRdYqxw8mZxk8vUiLe8ZrDeuao9Sa7pLJ
+QffezQtUr+OYXurE4Rl6SNw8zsKP0VsPrJ1XANeHN3XCdaCxR+I=
+=Qml+
 -----END PGP SIGNATURE-----
 
---rlwjjthzx46dcgln--
+--evvv32nlsy5xv6f6--
