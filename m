@@ -1,90 +1,205 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753831AbeDLPNf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 11:13:35 -0400
-Received: from mga07.intel.com ([134.134.136.100]:8698 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753279AbeDLPNc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 11:13:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,442,1517904000";
-   d="scan'208";a="219909058"
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
-To: rostedt@goodmis.org
-Cc: tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de, joel.opensrc@gmail.com,
-        joelaf@google.com, mathieu.desnoyers@efficios.com,
-        baohong.liu@intel.com, rajvi.jingar@intel.com, julia@ni.com,
-        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH 1/6] tracing: Restore proper field flag printing when displaying triggers
-Date: Thu, 12 Apr 2018 10:13:16 -0500
-Message-Id: <dc44e7dcacb91b4378c5326a9a20e09263868444.1523545519.git.tom.zanussi@linux.intel.com>
-X-Mailer: git-send-email 1.9.3
-In-Reply-To: <cover.1523545519.git.tom.zanussi@linux.intel.com>
-References: <cover.1523545519.git.tom.zanussi@linux.intel.com>
-In-Reply-To: <cover.1523545519.git.tom.zanussi@linux.intel.com>
-References: <cover.1523545519.git.tom.zanussi@linux.intel.com>
+        id S1754048AbeDLPMp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 11:12:45 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:44673 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753654AbeDLPJE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 11:09:04 -0400
+X-Google-Smtp-Source: AIpwx49Ko5shtgmqj+694Z1UeRXZ36QSSCr/OmNAWzLEyJtZLecSTX/OyhUVFuK3NUetKeLGtt44QA==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 27/35] Revert "ovl: don't allow writing ioctl on lower layer"
+Date: Thu, 12 Apr 2018 17:08:18 +0200
+Message-Id: <20180412150826.20988-28-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180412150826.20988-1-mszeredi@redhat.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The flag-printing code used when displaying hist triggers somehow got
-dropped during refactoring of the inter-event patchset.  This restores
-it.
+This reverts commit 7c6893e3c9abf6a9676e060a1e35e5caca673d57.
 
-Below are a couple examples - in the first case, .usecs wasn't being
-displayed properly for common_timestamps and the second illustrates
-the same for other flags such as .execname.
+Overlayfs no longer relies on the vfs for checking writability of files.
 
-Before:
-
-  # echo 'hist:key=common_pid.execname:val=count:sort=count' > /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
-  # cat /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
-  hist:keys=common_pid:vals=hitcount,count:sort=count:size=2048 [active]
-
-  # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-  # cat /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-  hist:keys=pid:vals=hitcount:ts0=common_timestamp:sort=hitcount:size=2048:clock=global if comm=="cyclictest" [active]
-
-After:
-
-  # echo 'hist:key=common_pid.execname:val=count:sort=count' > /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
-  # cat /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
-  hist:keys=common_pid.execname:vals=hitcount,count:sort=count:size=2048 [active]
-
-  # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-  # cat /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
-  hist:keys=pid:vals=hitcount:ts0=common_timestamp.usecs:sort=hitcount:size=2048:clock=global if comm=="cyclictest" [active]
-
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- kernel/trace/trace_events_hist.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/internal.h  |  2 --
+ fs/namespace.c | 64 +++-------------------------------------------------------
+ fs/open.c      |  4 ++--
+ fs/xattr.c     |  9 ++++-----
+ 4 files changed, 9 insertions(+), 70 deletions(-)
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 0d7b3ff..66c87be 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -4913,6 +4913,16 @@ static void hist_field_print(struct seq_file *m, struct hist_field *hist_field)
- 		seq_printf(m, "%s", field_name);
- 	} else if (hist_field->flags & HIST_FIELD_FL_TIMESTAMP)
- 		seq_puts(m, "common_timestamp");
-+
-+	if (hist_field->flags) {
-+		if (!(hist_field->flags & HIST_FIELD_FL_VAR_REF) &&
-+		    !(hist_field->flags & HIST_FIELD_FL_EXPR)) {
-+			const char *flags = get_hist_field_flags(hist_field);
-+
-+			if (flags)
-+				seq_printf(m, ".%s", flags);
-+		}
-+	}
+diff --git a/fs/internal.h b/fs/internal.h
+index f0eaa33890d9..d7fdd56bafd3 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -72,10 +72,8 @@ extern void __init mnt_init(void);
+ 
+ extern int __mnt_want_write(struct vfsmount *);
+ extern int __mnt_want_write_file(struct file *);
+-extern int mnt_want_write_file_path(struct file *);
+ extern void __mnt_drop_write(struct vfsmount *);
+ extern void __mnt_drop_write_file(struct file *);
+-extern void mnt_drop_write_file_path(struct file *);
+ 
+ /*
+  * fs_struct.c
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 9ec9bf74116b..e2645ef331f2 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -431,18 +431,13 @@ int __mnt_want_write_file(struct file *file)
  }
  
- static int event_hist_trigger_print(struct seq_file *m,
+ /**
+- * mnt_want_write_file_path - get write access to a file's mount
++ * mnt_want_write_file - get write access to a file's mount
+  * @file: the file who's mount on which to take a write
+  *
+  * This is like mnt_want_write, but it takes a file and can
+  * do some optimisations if the file is open for write already
+- *
+- * Called by the vfs for cases when we have an open file at hand, but will do an
+- * inode operation on it (important distinction for files opened on overlayfs,
+- * since the file operations will come from the real underlying file, while
+- * inode operations come from the overlay).
+  */
+-int mnt_want_write_file_path(struct file *file)
++int mnt_want_write_file(struct file *file)
+ {
+ 	int ret;
+ 
+@@ -452,53 +447,6 @@ int mnt_want_write_file_path(struct file *file)
+ 		sb_end_write(file->f_path.mnt->mnt_sb);
+ 	return ret;
+ }
+-
+-static inline int may_write_real(struct file *file)
+-{
+-	struct dentry *dentry = file->f_path.dentry;
+-	struct dentry *upperdentry;
+-
+-	/* Writable file? */
+-	if (file->f_mode & FMODE_WRITER)
+-		return 0;
+-
+-	/* Not overlayfs? */
+-	if (likely(!(dentry->d_flags & DCACHE_OP_REAL)))
+-		return 0;
+-
+-	/* File refers to upper, writable layer? */
+-	upperdentry = d_real(dentry, NULL, 0, D_REAL_UPPER);
+-	if (upperdentry && file_inode(file) == d_inode(upperdentry))
+-		return 0;
+-
+-	/* Lower layer: can't write to real file, sorry... */
+-	return -EPERM;
+-}
+-
+-/**
+- * mnt_want_write_file - get write access to a file's mount
+- * @file: the file who's mount on which to take a write
+- *
+- * This is like mnt_want_write, but it takes a file and can
+- * do some optimisations if the file is open for write already
+- *
+- * Mostly called by filesystems from their ioctl operation before performing
+- * modification.  On overlayfs this needs to check if the file is on a read-only
+- * lower layer and deny access in that case.
+- */
+-int mnt_want_write_file(struct file *file)
+-{
+-	int ret;
+-
+-	ret = may_write_real(file);
+-	if (!ret) {
+-		sb_start_write(file_inode(file)->i_sb);
+-		ret = __mnt_want_write_file(file);
+-		if (ret)
+-			sb_end_write(file_inode(file)->i_sb);
+-	}
+-	return ret;
+-}
+ EXPORT_SYMBOL_GPL(mnt_want_write_file);
+ 
+ /**
+@@ -536,15 +484,9 @@ void __mnt_drop_write_file(struct file *file)
+ 	__mnt_drop_write(file->f_path.mnt);
+ }
+ 
+-void mnt_drop_write_file_path(struct file *file)
+-{
+-	mnt_drop_write(file->f_path.mnt);
+-}
+-
+ void mnt_drop_write_file(struct file *file)
+ {
+-	__mnt_drop_write(file->f_path.mnt);
+-	sb_end_write(file_inode(file)->i_sb);
++	mnt_drop_write(file->f_path.mnt);
+ }
+ EXPORT_SYMBOL(mnt_drop_write_file);
+ 
+diff --git a/fs/open.c b/fs/open.c
+index 442088ca30f9..00b1f18475ba 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -670,12 +670,12 @@ SYSCALL_DEFINE3(fchown, unsigned int, fd, uid_t, user, gid_t, group)
+ 	if (!f.file)
+ 		goto out;
+ 
+-	error = mnt_want_write_file_path(f.file);
++	error = mnt_want_write_file(f.file);
+ 	if (error)
+ 		goto out_fput;
+ 	audit_file(f.file);
+ 	error = chown_common(&f.file->f_path, user, group);
+-	mnt_drop_write_file_path(f.file);
++	mnt_drop_write_file(f.file);
+ out_fput:
+ 	fdput(f);
+ out:
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 61cd28ba25f3..78eaffbdbee0 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -23,7 +23,6 @@
+ #include <linux/posix_acl_xattr.h>
+ 
+ #include <linux/uaccess.h>
+-#include "internal.h"
+ 
+ static const char *
+ strcmp_prefix(const char *a, const char *a_prefix)
+@@ -503,10 +502,10 @@ SYSCALL_DEFINE5(fsetxattr, int, fd, const char __user *, name,
+ 	if (!f.file)
+ 		return error;
+ 	audit_file(f.file);
+-	error = mnt_want_write_file_path(f.file);
++	error = mnt_want_write_file(f.file);
+ 	if (!error) {
+ 		error = setxattr(f.file->f_path.dentry, name, value, size, flags);
+-		mnt_drop_write_file_path(f.file);
++		mnt_drop_write_file(f.file);
+ 	}
+ 	fdput(f);
+ 	return error;
+@@ -735,10 +734,10 @@ SYSCALL_DEFINE2(fremovexattr, int, fd, const char __user *, name)
+ 	if (!f.file)
+ 		return error;
+ 	audit_file(f.file);
+-	error = mnt_want_write_file_path(f.file);
++	error = mnt_want_write_file(f.file);
+ 	if (!error) {
+ 		error = removexattr(f.file->f_path.dentry, name);
+-		mnt_drop_write_file_path(f.file);
++		mnt_drop_write_file(f.file);
+ 	}
+ 	fdput(f);
+ 	return error;
 -- 
-1.9.3
+2.14.3
