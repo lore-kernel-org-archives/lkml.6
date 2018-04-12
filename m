@@ -1,81 +1,123 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx48nCTA1LBwfmxX6zPVRqeV5bf3JeLiQcaKClfXna+TX4j7+JJRnRTVeleK4SsaUpmIlxE+b
-ARC-Seal: i=1; a=rsa-sha256; t=1523549961; cv=none;
+X-Google-Smtp-Source: AIpwx48adONWOPLANv9jVCjYCIvePTLpnUWXOHMdbfcu24hJbCb5dblJKlvudE9BsSqNquUOcE9E
+ARC-Seal: i=1; a=rsa-sha256; t=1523550971; cv=none;
         d=google.com; s=arc-20160816;
-        b=riPQt0/bXtBL0sRvezJlOoOyYT80F53+m/HP4k4Rh58TpeWmFogsgbrd31DyTLMI3W
-         zsacRXbk9bar6qu9pNDmX88FnVEmNY1s86ZhJjxTUkKEeE87bffr1rWMALp6PjW9V2aY
-         34PvcpJsXIPUBHqT3wgiqpsUfX7ep3fQFQ8/lZ0h5bTXVIfSKG7GL33Z0uqjBSNz/0qd
-         Mp+BopEVSpVWAbtM5wSNZ0Xchq/bLnimJcD6QRjv8HhruVRPaE3kXF2lokxkwU/Ypcmi
-         cU1Rvh8tPizFbdDLwHKGy7qoHTtihTVxQNUvbxO10k6xm0q53KMMBqw6zCEKLy8POCHz
-         qf9Q==
+        b=ZTD7IGd2nUjWy6iuqpiOuPluEiGlJRb2b2J1W1PjWa9C32WRy3ISjjwNXJy7CiwplJ
+         O9pYkOCnFSfp81kzhBIYT/fd1ypgGogWmF25eHqZqPHPATrUy83iRshzT+bc4clPE4Wx
+         c2+6muQVZgAE3k8axBTx8+BXzCVqy1Mo7OT+t9TbUPoFjyNqefUrhrz4QWi6LBor86Zp
+         fCDpG+xDiaANokKpquSyiu1VCpl+BjMGRXNAh803WECTSGM4e5FTSkyCBooP/HaYXBqR
+         0mtzZVkDR2epCbhOIlgBzRzPkWCwUjH28WZxvCEvXQbQGbOxd9ve55XRg6hCHqHLiN7H
+         5syA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding:mime-version
-         :message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=fF3DppEkUSXC00JRrwsI363IKsfIGbG/2m35s2eTat4=;
-        b=w+YaVw6uc2ecjtUW82yr+iPFPJEx9CrUeiPqTIi6pOurvXt1ovRekekBrTSQnhobVl
-         7Hs6n8d9166CwIIWCXIdguoqxjgT1oR9fP0a0inpeL/05DVyIB75RxOnIStKxfWNv192
-         EaTz8+fWhEzy3Mp4OZaPvZQxBcsv7Fs/NSZsrMZqBnC3bs4iTCmlP6gl4ses7Xu+sa8w
-         A62+pbkhVhrgSCyEEXnl4K3FTLuw4IOQUxho0/KjuFiQxss/OoDxq9hx9rSnE/ra4Vyz
-         lQiCGAsrsFlguZlb5UkrQ+pS2Tbn1cnT0OgtgeSE40T9N9ToUGJ+R+x5L30O5+I4JbDn
-         fznw==
+        h=list-id:precedence:sender:content-transfer-encoding
+         :content-language:in-reply-to:mime-version:user-agent:date
+         :message-id:autocrypt:openpgp:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=jQeanDZMeqfmMYr951ME8lbdjrJ0einZqupmGWH30lE=;
+        b=jUsaOmjOj4STaZKR45nJGEhyPhza9jykvcGF1R3QV5Vd/odNRQHpG4dDphJxtZ2P5m
+         V6VsjkXTRgDfKjTMiePvn8SQqF6GtkF67znXIdGnkPSnRwhYyiMtosg+Zb820DqCgho1
+         n1r0RbFTswvwcUb3MaLfvGtfwjoJRZqqLU18gnhRhZmTV2xvTqHkfA2qE3F6EyX2rHwT
+         /0WeRsHBbeGiZVYfBXpiKDQbR8jiH5euofkwq9usvnY0ULP/BM4kQxMHV1iH0GjWHmVp
+         kBWwDAvioNGFhTlaK9dw1Tq5vetBuU3V/I8bO7BOCD8kwSgQ/EwRDolR8GjWOxpaZ4qn
+         GoMQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752470AbeDLQTU convert rfc822-to-8bit (ORCPT
-        <rfc822;gregkh@linuxfoundation.org>); Thu, 12 Apr 2018 12:19:20 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:39682 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752437AbeDLQTU (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Thu, 12 Apr 2018 12:19:20 -0400
-From: Peng Hao <peng.hao2@zte.com.cn>
-To: shuah@kernel.org, pbonzini@redhat.com, hofsass@google.com
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH] kvm: selftests: add -std=gnu99 cflags
-Date: Fri, 13 Apr 2018 08:36:30 +0800
-Message-Id: <1523579790-30773-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
+        id S1752437AbeDLQgK (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Thu, 12 Apr 2018 12:36:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45456 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752406AbeDLQgJ (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Thu, 12 Apr 2018 12:36:09 -0400
+Subject: Re: [PATCH] kvm: selftests: add -std=gnu99 cflags
+To: Peng Hao <peng.hao2@zte.com.cn>, shuah@kernel.org,
+        hofsass@google.com
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1523579790-30773-1-git-send-email-peng.hao2@zte.com.cn>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <814c5c74-237a-ec69-c385-feec2d0a38f5@redhat.com>
+Date: Thu, 12 Apr 2018 18:36:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-04-13 00:19:20,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-04-13 00:19:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-MAIL: mse01.zte.com.cn w3CGJBF4011139
+In-Reply-To: <1523579790-30773-1-git-send-email-peng.hao2@zte.com.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597557924560402421?=
-X-GMAIL-MSGID: =?utf-8?q?1597557924560402421?=
+X-GMAIL-MSGID: =?utf-8?q?1597558983491746746?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-lib/kvm_util.c: In function ‘kvm_memcmp_hva_gva’:
-lib/kvm_util.c:332:2: error: ‘for’ loop initial declarations are only allowed in C99 mode
+On 13/04/2018 02:36, Peng Hao wrote:
+> lib/kvm_util.c: In function ‘kvm_memcmp_hva_gva’:
+> lib/kvm_util.c:332:2: error: ‘for’ loop initial declarations are only allowed in C99 mode
+> 
+> So add -std=gnu99 to CFLAGS
+> 
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> ---
+>  tools/testing/selftests/kvm/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+> index dc44de9..1da541e 100644
+> --- a/tools/testing/selftests/kvm/Makefile
+> +++ b/tools/testing/selftests/kvm/Makefile
+> @@ -14,7 +14,7 @@ LIBKVM += $(LIBKVM_$(UNAME_M))
+>  
+>  INSTALL_HDR_PATH = $(top_srcdir)/usr
+>  LINUX_HDR_PATH = $(INSTALL_HDR_PATH)/include/
+> -CFLAGS += -O2 -g -I$(LINUX_HDR_PATH) -Iinclude -I$(<D)
+> +CFLAGS += -O2 -g -std=gnu99 -I$(LINUX_HDR_PATH) -Iinclude -I$(<D)
+>  
+>  # After inclusion, $(OUTPUT) is defined and
+>  # $(TEST_GEN_PROGS) starts with $(OUTPUT)/
+> 
 
-So add -std=gnu99 to CFLAGS
+Queued, thanks.
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- tools/testing/selftests/kvm/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index dc44de9..1da541e 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -14,7 +14,7 @@ LIBKVM += $(LIBKVM_$(UNAME_M))
- 
- INSTALL_HDR_PATH = $(top_srcdir)/usr
- LINUX_HDR_PATH = $(INSTALL_HDR_PATH)/include/
--CFLAGS += -O2 -g -I$(LINUX_HDR_PATH) -Iinclude -I$(<D)
-+CFLAGS += -O2 -g -std=gnu99 -I$(LINUX_HDR_PATH) -Iinclude -I$(<D)
- 
- # After inclusion, $(OUTPUT) is defined and
- # $(TEST_GEN_PROGS) starts with $(OUTPUT)/
--- 
-1.8.3.1
-
+Paolo
