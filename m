@@ -1,47 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752901AbeDLROi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 13:14:38 -0400
-Received: from mail-it0-f45.google.com ([209.85.214.45]:52697 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752746AbeDLROh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 13:14:37 -0400
-X-Google-Smtp-Source: AIpwx4/aC0fxgOY56+DlYNwwYxifBtRZZ+44DKAHIng+gAVXQcQCM3sCMiF6UxCnHyvx/rTjAi30fvw7SFtr0LjpW+E=
+        id S1752775AbeDLRUv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 13:20:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53452 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752389AbeDLRUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 13:20:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8955121785
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Thu, 12 Apr 2018 14:20:47 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Cc: jolsa@redhat.com, linux-kernel@vger.kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, ravi.bangoria@linux.vnet.ibm.com
+Subject: Re: [PATCH] perf tests: Disable breakpoint accounting test for
+ powerpc
+Message-ID: <20180412172047.GE9818@kernel.org>
+References: <20180412162140.2992-1-sandipan@linux.vnet.ibm.com>
 MIME-Version: 1.0
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 12 Apr 2018 10:14:35 -0700
-X-Google-Sender-Auth: _Vd5XsIpN3EEKsZzyZN2J0hiTq4
-Message-ID: <CA+55aFxj+NjW3M0Sv_-DRAD6vJ=HsPCQMtHn88me9uEEnJmAPw@mail.gmail.com>
-Subject: Re: [PATCH] proc: fixup (c) sign
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180412162140.2992-1-sandipan@linux.vnet.ibm.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 1:19 PM, Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> Andrew's scripts butchered it :-(
+Em Thu, Apr 12, 2018 at 09:51:40PM +0530, Sandipan Das escreveu:
+> We disable this test as instruction breakpoints (HW_BREAKPOINT_X)
+> are not available for powerpc.
 
-Oh, it's not just Andrew.
+Thanks, applied.
 
-Git will fix up commit messages etc, but the actual *patch* will be
-considered just "data". So if you send me Latin1 (like you did), I get
-a patch with Latin1.
-
-Please just fix your broken mail environment, and move to the current
-century. Use a real utf-8 locale.
-
-You seem to be using Mutt. Afaik, that should automatically honor your
-locale, and use utf-8,
-
-But maybe you have it trying to send in Latin1 by default if that
-works. Just do something like
-
-    set file_charset="utf-8:iso-8859-1"
-
-to make utf-8 the preferred format.
-
-              Linus
+- Arnaldo
