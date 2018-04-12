@@ -1,157 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752794AbeDLMnX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 08:43:23 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:43228 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752062AbeDLMnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 08:43:07 -0400
-From: Li Bin <huawei.libin@huawei.com>
-To: <peterz@infradead.org>, <rostedt@goodmis.org>, <mingo@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, <guohanjun@huawei.com>,
-        <huawei.libin@huawei.com>
-Subject: [PATCH v2 2/2] sched/deadline.c: pick and check task if double_lock_balance() unlock the rq
-Date: Thu, 12 Apr 2018 20:33:04 +0800
-Message-ID: <1523536384-26781-3-git-send-email-huawei.libin@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1523536384-26781-1-git-send-email-huawei.libin@huawei.com>
-References: <1523536384-26781-1-git-send-email-huawei.libin@huawei.com>
+        id S1752406AbeDLMsp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 08:48:45 -0400
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:54055 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751589AbeDLMso (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 08:48:44 -0400
+X-Google-Smtp-Source: AIpwx4/vJpWuYTBlSfjxgICYFnlGhZ7mDNzo7bzf01VfVz1QehxWi/Z6PJA+uaiovRFgHvIVBZUocQ==
+X-ME-Sender: <xms:qFXPWjyK2Yb8WjLPPMCG6aHQRSWN5FIzg4wzCLs5BEELlrvNAd6Cpg>
+Date: Thu, 12 Apr 2018 20:52:50 +0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will.deacon@arm.com>, Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH] memory-model: fix cheat sheet typo
+Message-ID: <20180412125250.to46vdgztwa2jsbq@tardis>
+References: <1523292618-10207-1-git-send-email-pbonzini@redhat.com>
+ <20180409184258.GP3948@linux.vnet.ibm.com>
+ <20180410203214.GA19606@linux.vnet.ibm.com>
+ <8cbda122-6aa3-365b-fd09-52dca0644cbd@redhat.com>
+ <20180410213434.GC3948@linux.vnet.ibm.com>
+ <156ac07b-7393-449f-518a-6b1c2cff8efb@redhat.com>
+ <20180411161956.GQ3948@linux.vnet.ibm.com>
+ <20180411163157.GQ4082@hirez.programming.kicks-ass.net>
+ <70348608-e695-1977-d34e-d7d66b07ad25@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ywkyqeufzin4r2cq"
+Content-Disposition: inline
+In-Reply-To: <70348608-e695-1977-d34e-d7d66b07ad25@redhat.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-push_dl_task() pick the first pushable task and find an eligible
-lowest_rq, then double_lock_balance(rq, lowest_rq). So if
-double_lock_balance() unlock the rq (when double_lock_balance() return
-1), we have to check if this task is still on the rq.
 
-The problem is that the check conditions are not sufficient:
+--ywkyqeufzin4r2cq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-if (unlikely(task_rq(task) != rq ||
-             !cpumask_test_cpu(later_rq->cpu, &task->cpus_allowed) ||
-             task_running(rq, task) ||
-             !dl_task(task) ||
-             !task_on_rq_queued(task))) {
+On Wed, Apr 11, 2018 at 07:06:36PM +0200, Paolo Bonzini wrote:
+> On 11/04/2018 18:31, Peter Zijlstra wrote:
+> >>>                                    Prior Operation   Subsequent Opera=
+tion
+> >>>                                    ---------------   ----------------=
+-----
+> >>>                                    R  W  RMW  SV     R  W  DR  DW  RM=
+W  SV
+> >>>                                    -  -  ---  --     -  -  --  --  --=
+-  --
+> >>> smp_store_mb()                     Y  Y    Y   Y      Y  Y   Y   Y   =
+Y   Y
+> > I'm not sure about that, the generic version of that reads:
+> >=20
+> > include/asm-generic/barrier.h:#define __smp_store_mb(var, value)
+> >     do { WRITE_ONCE(var, value); __smp_mb(); } while (0)
+> >=20
+> > Which doesn't not have an smp_mb() before, so it doesn't actually order
+> > prior; or I'm failing to read the table wrong.
+>=20
+> You're not, even better reason to document it. :)  I was going from
+> memory for the x86 version.
+>=20
+> I'll start tomorrow on fixes to the current document, while we discuss
+> the split format and what to do about cumulativity and propagation.
+>=20
 
-cpu2                                cpu1                    cpu0
-push_dl_task(rq1)
-  pick task_A on rq1
-  find rq0
-    double_lock_balance(rq1, rq0)
-      unlock(rq1)
-                            rq1 __schedule
-                              pick task_A run
-                            task_A sleep (dequeued)
-      lock(rq0)
-      lock(rq1)
-    do_above_check(task_A)
-      task_rq(task_A) == rq1
-      cpus_allowed unchanged
-      task_running == false
-      dl_task(task_A) == true
-                                                    try_to_wake_up(task_A)
-                                                      select_cpu = cpu3
-                                                      enqueue(rq3, task_A)
-                                                      task_A->on_rq = 1
-      task_on_rq_queued(task_A)
-    above_check passed, return rq0
-    ...
-    migrate task_A from rq1 to rq0
+Besides, since smp_store_mb() is a store, so there is no DR or DW for
+the subsequent operations I think, because dependencies come from a read
+rather than a write.
 
-So we can't rely on these checks of task_A to make sure the task_A is
-still on the rq1, even though we hold the rq1->lock. This patch will
-repick the first pushable task to be sure the task is still on the rq.
+Regards,
+Boqun
 
-Signed-off-by: Li Bin <huawei.libin@huawei.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/sched/deadline.c | 55 +++++++++++++++++++++++++++----------------------
- 1 file changed, 30 insertions(+), 25 deletions(-)
+> Paolo
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 9df0978..8e0f6a4 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1936,6 +1936,26 @@ static int find_later_rq(struct task_struct *task)
- 	return -1;
- }
- 
-+static struct task_struct *pick_next_pushable_dl_task(struct rq *rq)
-+{
-+	struct task_struct *p;
-+
-+	if (!has_pushable_dl_tasks(rq))
-+		return NULL;
-+
-+	p = rb_entry(rq->dl.pushable_dl_tasks_root.rb_leftmost,
-+		     struct task_struct, pushable_dl_tasks);
-+
-+	BUG_ON(rq->cpu != task_cpu(p));
-+	BUG_ON(task_current(rq, p));
-+	BUG_ON(p->nr_cpus_allowed <= 1);
-+
-+	BUG_ON(!task_on_rq_queued(p));
-+	BUG_ON(!dl_task(p));
-+
-+	return p;
-+}
-+
- /* Locks the rq it finds */
- static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq)
- {
-@@ -1965,11 +1985,16 @@ static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq)
- 
- 		/* Retry if something changed. */
- 		if (double_lock_balance(rq, later_rq)) {
--			if (unlikely(task_rq(task) != rq ||
--				     !cpumask_test_cpu(later_rq->cpu, &task->cpus_allowed) ||
--				     task_running(rq, task) ||
--				     !dl_task(task) ||
--				     !task_on_rq_queued(task))) {
-+			struct task_struct *next_task;
-+			/*
-+			 * We had to unlock the run queue. In
-+			 * the mean time, task could have
-+			 * migrated already or had its affinity changed.
-+			 * Also make sure that it wasn't scheduled on its rq.
-+			 */
-+			next_task = pick_next_pushable_dl_task(rq);
-+			if (unlikely(next_task != task ||
-+						!cpumask_test_cpu(later_rq->cpu, &task->cpus_allowed))) {
- 				double_unlock_balance(rq, later_rq);
- 				later_rq = NULL;
- 				break;
-@@ -1994,26 +2019,6 @@ static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq)
- 	return later_rq;
- }
- 
--static struct task_struct *pick_next_pushable_dl_task(struct rq *rq)
--{
--	struct task_struct *p;
--
--	if (!has_pushable_dl_tasks(rq))
--		return NULL;
--
--	p = rb_entry(rq->dl.pushable_dl_tasks_root.rb_leftmost,
--		     struct task_struct, pushable_dl_tasks);
--
--	BUG_ON(rq->cpu != task_cpu(p));
--	BUG_ON(task_current(rq, p));
--	BUG_ON(p->nr_cpus_allowed <= 1);
--
--	BUG_ON(!task_on_rq_queued(p));
--	BUG_ON(!dl_task(p));
--
--	return p;
--}
--
- /*
-  * See if the non running -deadline tasks on this rq
-  * can be sent to some other CPU where they can preempt
--- 
-1.7.12.4
+--ywkyqeufzin4r2cq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlrPVp8ACgkQSXnow7UH
++rjYGQf+Lvi6SFWCKieeCBR3ik5XNzFmsa9xrBbuUFyGdSWf0AkcmePu7wlMqk+x
+Y6w64jqe4sof5/A41KRW35ZDddXFhtpz5lMSzPoDOT7aIiA+MIAlEA6bL6iC0Ecd
+a2qlEFrrjPEgtjJ9yFHoYO6YC9dKijgAqqEa0MKQMznKlY6hfJcxIZL9+LDvncfk
+UovWxIPWuxnn57eDkcwJkaEGv09rxe9ZJsudzyLRF32oT0KyBMtkG4e7L19ER1pF
+dQ9eLlY7ElXTfV1OYhGe+SotJ9+GF4FLkoWKDhtxNQXtwkKeMh0bTd+Bq9TJ8rgn
+P2inAQtWlBW0yqzYJ3mZ8fr4AhOxVw==
+=dhHW
+-----END PGP SIGNATURE-----
+
+--ywkyqeufzin4r2cq--
