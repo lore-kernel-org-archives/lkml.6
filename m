@@ -1,63 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752660AbeDLHxn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 03:53:43 -0400
-Received: from mail-wr0-f182.google.com ([209.85.128.182]:36632 "EHLO
-        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752291AbeDLHxl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 03:53:41 -0400
-X-Google-Smtp-Source: AIpwx491g6tKj6duAWA3Yk5PHnTo6/FpwArkVreQy5va8kx18pwSfrdfubFbcsQqXSpJzLQVQHu7Zw==
-Date: Thu, 12 Apr 2018 09:53:38 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Song Liu <songliubraving@fb.com>
-Cc: Vince Weaver <vincent.weaver@maine.edu>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: perf: fuzzer leads to trace_kprobe: Could not insert message
- flood
-Message-ID: <20180412075338.tsu36qh2wcrcp36k@gmail.com>
-References: <alpine.DEB.2.21.1804101043490.6068@macbook-air>
- <A3B3905F-3364-462A-BE02-B01D52482791@fb.com>
- <20180411120447.2gzrwijrtayjv3eg@gmail.com>
- <C0B2EFB5-C403-4BDB-9046-C14B3EE66999@fb.com>
+        id S1752330AbeDLH5l (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 03:57:41 -0400
+Received: from mga09.intel.com ([134.134.136.24]:29451 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751759AbeDLH5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 03:57:40 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,440,1517904000";
+   d="scan'208";a="50163537"
+Date: Thu, 12 Apr 2018 15:57:01 +0800
+From: "Liu, Changcheng" <changcheng.liu@intel.com>
+To: tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+Subject: [PATCH] timers: remove tvec_base struct declaration
+Message-ID: <20180412075701.GA38952@sofia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <C0B2EFB5-C403-4BDB-9046-C14B3EE66999@fb.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+timer wheel is implemented by timer_base. tvec_base is obsoleted,
+so remove the type declaration.
 
-* Song Liu <songliubraving@fb.com> wrote:
+Signed-off-by: Liu Changcheng <changcheng.liu@intel.com>
 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index d7af828..2d5fe26 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -8400,6 +8400,10 @@ static int perf_kprobe_event_init(struct perf_event *event)
-> 
->         if (event->attr.type != perf_kprobe.type)
->                 return -ENOENT;
-> +
-> +       if (!capable(CAP_SYS_ADMIN))
-> +               return -EACCES;
-> +
->         /*
->          * no branch sampling for probe events
->          */
-> @@ -8437,6 +8441,10 @@ static int perf_uprobe_event_init(struct perf_event *event)
-> 
->         if (event->attr.type != perf_uprobe.type)
->                 return -ENOENT;
-> +
-> +       if (!capable(CAP_SYS_ADMIN))
-> +               return -EACCES;
-
-This is seriously whitespace damaged: all tabs are spaces ...
-
-Thanks,
-
-	Ingo
+diff --git a/include/linux/timer.h b/include/linux/timer.h
+index 2448f9c..7b066fd 100644
+--- a/include/linux/timer.h
++++ b/include/linux/timer.h
+@@ -8,8 +8,6 @@
+ #include <linux/debugobjects.h>
+ #include <linux/stringify.h>
+ 
+-struct tvec_base;
+-
+ struct timer_list {
+ 	/*
+ 	 * All fields that change during normal runtime grouped to the
+-- 
+2.7.4
