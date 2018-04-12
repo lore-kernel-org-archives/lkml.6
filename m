@@ -1,154 +1,337 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752956AbeDLPGK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 11:06:10 -0400
-Received: from mail-ve1eur01on0120.outbound.protection.outlook.com ([104.47.1.120]:62967
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752793AbeDLPGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 11:06:08 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ioan.nicu.ext@nokia.com;
-Date: Thu, 12 Apr 2018 17:06:05 +0200
-From: Ioan Nicu <ioan.nicu.ext@nokia.com>
-To: Alexandre Bounine <alex.bou9@gmail.com>,
-        Barry Wood <barry.wood@idt.com>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Frank Kunz <frank.kunz@nokia.com>,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] rapidio: fix rio_dma_transfer error handling
-Message-ID: <20180412150605.GA31409@nokia.com>
+        id S1753016AbeDLPGW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 11:06:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45066 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753001AbeDLPGT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 11:06:19 -0400
+Date: Thu, 12 Apr 2018 08:07:16 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        syzbot <syzbot+2dbc55da20fa246378fd@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        syzkaller <syzkaller@googlegroups.com>
+Subject: Re: INFO: task hung in perf_trace_event_unreg
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180402172325.GZ3948@linux.vnet.ibm.com>
+ <CACT4Y+Zx4R9EEUkRA_sFb0d5gEtWicFArBisy9bWK6Lnfqdovw@mail.gmail.com>
+ <20180409162050.GH3948@linux.vnet.ibm.com>
+ <CACT4Y+bbaih8hym_n4D5dzDF3ig53+a5XLN0+btATPfmXZAZ7A@mail.gmail.com>
+ <20180409181104.GM3948@linux.vnet.ibm.com>
+ <CACT4Y+b95OxNFNBMcgHw-LAid2nNBPSYcG=4tyg7z5DinE7bRw@mail.gmail.com>
+ <20180410170205.GW3948@linux.vnet.ibm.com>
+ <CACT4Y+aR4cVS8+096MmkxPAUiFZPhhQDa5OUiXH+OS57-3Ucqw@mail.gmail.com>
+ <20180411193619.GW3948@linux.vnet.ibm.com>
+ <CACT4Y+a-6ONFDNdwG4UPdyWdbnyAk=PmLnBHNR0rMUa1ksB--w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [131.228.32.164]
-X-ClientProxiedBy: AM5P190CA0016.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:206:14::29) To DB6PR07MB3288.eurprd07.prod.outlook.com
- (2603:10a6:6:22::11)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7193020);SRVR:DB6PR07MB3288;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR07MB3288;3:OogW6EdaHZN+i9aef7Occ9IQug4d0B8v9rmypqEr6x0BGrizxw6uvtbB/gvyat2ZC0k5iBcxAyLDf+ONE06LUFUXD0pgpK3SV9z8eZOn93OJyzZEs3PMyqdOn+SkAwO+o6AniBG8FwLXVFCyT2V/mwarpSA8kCohn72M9Qp3u586iCKvns6apEfJEP2t8OIWPD6NydMMN6AtTpi4gcJ01KDCc95H16Rs1NLoSdPd8NADzMSgQlwjtiiIbQm6AC6e;25:tKK8USJoWncqZ4pFLKWwWFbYTHqpwk9ScB6YIpQ81wc9pQsZRNu9l9+V+iIxedzl11pgBBbxmafaWFeGsgCOyhF0qVis4KEWoZJurEpkWcdLahB3X1v3upO//JLH8QH2YB37+9Gu3ZYSWbYOgY2msazBP+jgiRzmvEZYFc2D+r6qV/dlzz5rIRhLQnXzhUGCFbf8Cb/jXNKyd/QaYY7yBvDXOPKEr2EDmvZ9gKQ50G/0f6HUmY6huC13Pw/moqdRBxMSbiS3rG2Qt4BtTB/rIhILmyyahwXNQU7ItUV5AwADeQ5t73wMjPzrdcMI+SEYvNWbUbVDXStjjKIYatAEFQ==;31:mQQufj9OEPJWg6nqF8XgTG+FT8ISEBbqiu/FsogjzIyqbdIQjSnNS2Gx9MNotm5xKaBjkqouhgt8+A6hs5bFU3XaJnGFLoZgkqjz0ayfJEwmjCAsA1ayRCgaPtBJ36JfAiSOuAugAlqhYo+GbDP93bHOfpeEyKGbe5Ej7xVlZzyezC8HzuPbQ2klF2t2l+tJLD7RwBoMQYIo4OPqzuiOuuB5H7ZWz3d/V5KTMMMemTc=
-X-MS-TrafficTypeDiagnostic: DB6PR07MB3288:
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR07MB3288;20:7jRRM5E8ozXPEGamO+SIpGWWa0UYv01c9I6hsP5NgFOnK7apYK3K+b9+5GnHG/6mgfjD+yyvOt+Jc97e4bVZs2xXSNI3QTORvWyig0C8thMDxkiTdE8RJ3SUydXk2kRNt1NofKVAqZAuEEb6R7D+1gn/E25cpNulLQ7W52nZGz1+LDZ0JNLw0emm0jI6f+OM9G6qTnyoMUYhZdxXYiG16ZptPWof7fUWJzhwpCjAfy9N1qOFbBfavZtmRZLx60LAZgbK9KiCcW+iyh076GSJZ6WrxqwcJXs3Y84pExL7a5KHrd7Asrd5pKMXynM9aW0tdqyp4R0uhw2qt0sQvlDv7JelyytUxMR03HMMAnPBFL/AVTBD8th160aE9vSaduOeACE2svIks0E0L32lDBUyrFOo9cWBlz4BS9jbmEBl/+Yuu8ZXGRqirtN3dkJtpNioRU3WbGbyU8m9NeIOTG0MzDd+P62j+S/SeWB3AVJ4KjgXCkACIaXb9naVZTGmq3s0;4:ACvL82vwQeuWYMD4mHIWIeF+Dp2d+IbkQ8CoIyStkjRoIw0YCaUV0+WOYsa0bX4PHV79BGDpZYG6QsPlXIv7d4EH1w1PNbDp1q2xuPkdcz/6iPKFNewxzguXnXU9b8fsnUBRMRoNl9GF+0OKy0idNHX3qfQQVjVu0njNfsrKL7r8sDa45LcWcezQ8sBYp6OeLxApHUc44jAR2rv7BWMBfOsmp14/PbHpo4BiF/YW9gHPTWGSSPK3nyjZYL4L74PVTNT6MCpuG/YjkPTLkgpTeRy85JpOMy/aJc1ODoqYdbQlsf0I8apUIgLIcK/DczPW9h8Liz43Z4TMXSoj7HEzhQYe7HJHEAl1BEkkaSW81Bo=
-X-Microsoft-Antispam-PRVS: <DB6PR07MB3288A40AF8BDF1FA717F44A7A6BC0@DB6PR07MB3288.eurprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(82608151540597)(17755550239193);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231221)(11241501184)(806099)(944501327)(52105095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:DB6PR07MB3288;BCL:0;PCL:0;RULEID:;SRVR:DB6PR07MB3288;
-X-Forefront-PRVS: 06400060E1
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(346002)(39860400002)(396003)(366004)(189003)(199004)(97736004)(81166006)(25786009)(8936002)(68736007)(7736002)(7416002)(5660300001)(8676002)(69596002)(55016002)(305945005)(86362001)(81156014)(39060400002)(53936002)(58126008)(66066001)(2906002)(47776003)(3846002)(1076002)(23726003)(6116002)(16586007)(21086003)(316002)(110136005)(52116002)(7696005)(16526019)(186003)(26005)(50466002)(36756003)(59450400001)(33656002)(106356001)(476003)(105586002)(478600001)(956004)(486006)(2616005)(386003)(1857600001)(18370500001)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR07MB3288;H:nokia.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR07MB3288;23:+l/rQQAXh6GU92vvJix5rUYOKVnxSQIqrTXBVD7P2?=
- =?us-ascii?Q?I8LQ5ZHo7D2yKcSn20PJFJQkKlK4B4Sgbl4DSM+yBMSOn6e9a1h1eHiHw0i9?=
- =?us-ascii?Q?Bs0ceLZscT1AP5X1t+yl/JUDHNdiv8+dgQup5oRwwn0kqi4XWoryFwl/LXUQ?=
- =?us-ascii?Q?1DTyaNFgmyudp6eE3y8SZqJ/CHZ5DvOymO/9+fmg1VW45udeeICsaQDEWedA?=
- =?us-ascii?Q?u+bAFu4MD69VTUYABVCl4wr3kts+iAPH0IXlbeIZSiDCMrF5+478NJQmzXPT?=
- =?us-ascii?Q?/IWj4bdGmSpUM7zKlbUUppF/BhA36b3wukWv3MRVCCMU5TSB1OqfebZwqRMb?=
- =?us-ascii?Q?VYY3zgniH4cYwGTrljqFJP4hD8b/Z4zZaoZMNteFttMWS/QbV/EettZPE9Aa?=
- =?us-ascii?Q?YZT9zSQbnea54WMAE5sLL0v0CPDN1jEwqFBIQ7DwSfzvixFhwDoq0aIlNuNe?=
- =?us-ascii?Q?NzOJ1y97Od16MtvcJXgS156v4FETwC0dRo9Y7oB51qxFB5M3/4ddDnMrKoyl?=
- =?us-ascii?Q?MmcZM603XWBkg78jnIHZNSLFdkA1oeIWlqhcRN72vKyttjuI4dtajEIk/AfI?=
- =?us-ascii?Q?Sjibj0ET7VfpAbdtHo8qIZfwvUi1m9JsUuVHMW864jK2lH9BysvbembxqprK?=
- =?us-ascii?Q?JJWEe2exEKd/f3tJ0K2bA4ZMkOLtZi64FM3kvWEeJnWQtWw6fQvobUyxT1Dz?=
- =?us-ascii?Q?nsn2chskCIOZYCk9NP4K0P1nCbTKjGdSIXL0QdNL7KpjlDduQMOS7I9DG2sM?=
- =?us-ascii?Q?w6DeIaYbwF/xS2VnAaZGXq/ruT9g6fXAZxs/LzrHZ6woqtJTRJrmqTsreqGI?=
- =?us-ascii?Q?8ympyyJPl8/sR+nBCHMUn9pfYt8LsQSwILztc1pxBxd3uLglgVrWG51i03tM?=
- =?us-ascii?Q?CcvrhtrRhNq5oTMbU3BzfafuHVkVd2RZfixrkUyT1KgBjm6sMVIJogn2iqhF?=
- =?us-ascii?Q?Ti9l2hzbwlogiKHV766PeR2jkeiXk2KsOdNjr6hBJ8G2L4C1Fy7rocS/JTI2?=
- =?us-ascii?Q?qOxpo8FcpDSWYOb4U580a55PajSAL/zuNxap45D2NrRFlNBiorrqXElZdtqF?=
- =?us-ascii?Q?LLagHXPbssFIDfPexeV+8gFHDCYB0PlftAYtC1Oq5AWVxIioAb9xgXuBfFBk?=
- =?us-ascii?Q?TmMPxzG8zef5Ryv3vohk/r5A5zf+5DNEVjhMiW5wJvBcsZNoTXnoONbDcYEE?=
- =?us-ascii?Q?d0mD9KeTmjKdQHCubGSO/wPcnqjypgm6NhPvWtihMeqpY8xaYnsmLaSTxmLf?=
- =?us-ascii?Q?byYwCYiwGceCjTMLHeK7HRoHE9kiQj4zXmTK6yNvQcTnmTM6HMSN2ZQptfKK?=
- =?us-ascii?B?Zz09?=
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR07MB3288;6:8G+3cuM0HBuKKYm71KG4Wz8hNIinDPx7HF3VDiMMgpU6Pkybrh6TldgUF7zZnk4u6ok+s381BUIkaiTRbBWcYseBQwNWn7rvrz/SMb5zziD42btpF31FeLFb3+3fKZpdlZpLOgKaNK9JLePfcXUFjbkMSljTmiwueen1tuXuRla7vFXLxchg5bCfKbQXXIKr1pODlj8auCvb1qundHRKXkoiQuRMQVjgj3Lo0+Rjv4LfjKfhueAOWtgMO+HIjaUPf+LdBnvVtw/oLr45uCCkk4tyvYTJvhao+hL1whKF3jQkSgx3WMEwuA8GyNok7AOZ+WF0Ib6VBta7zv2f3+lIACVQEyrF09/eopSUmhFl8ijb/tDVtiN5u9ETnmPdgXHMIyGDRu4xEMuWi6n4tOEwDsTLN4k/zvmGfXariZghJ2CUTLvj7lafZ0IiRWL+kNr37QpPnoh8w+8RJ3iRDBVVQg==;5:/hRaRl2MvLP5qn/T1qI3A3mFI7xJ6MdjQ5aUbObFnuI4hqchNGF7fMh2vvgypcRiwvlCVOWFX3wYpsv+ct9xuVQMDhU4STxDzYBJgalB5ZSzo0GJzfyDu796j8Y+YSrxeDxjL4I43eFaeEdDfJlKr9ONlngfknHtfAWiJGkdqVY=;24:NEB901zFJJw24Nf+km5I1BMQj2DUeXmlIYElCeYS4He4H2HLk8Gii2S6UijuFhi+y7FBIB8h0qCrfBRGLfexml8zvwYcWC4zrjFZNx6bElw=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR07MB3288;7:BB9fFnwqTTzA11FWZR9/7z9M8CTXIGvyutkaDg7L+d12K7V62mZ6u6hgq26jaWY7Bvdxhb2l81DnMgauUEeagcGHDeopsQ65b4rSc/DZgFRuqRF1YGOy5RROZSe9nFLHMFe/KRN9k/sicEqTfNV9NcZgadRETVqFCERla6sPBqPIImHVmPYvsHzXyYRkU5vSp6eKk4BSb8DEDp7rrjZYjgGdcQbKzgsx1fZy880v9Uht2X1F9XwIUqA0pBsawJyR
-X-MS-Office365-Filtering-Correlation-Id: 4db72de6-2340-407a-f673-08d5a086ea4f
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2018 15:06:05.0147 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4db72de6-2340-407a-f673-08d5a086ea4f
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR07MB3288
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACT4Y+a-6ONFDNdwG4UPdyWdbnyAk=PmLnBHNR0rMUa1ksB--w@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18041215-0056-0000-0000-0000043B97D9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008843; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000256; SDB=6.01016863; UDB=6.00518602; IPR=6.00796101;
+ MB=3.00020540; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-12 15:06:15
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041215-0057-0000-0000-0000087DB463
+Message-Id: <20180412150716.GD3948@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-12_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804120149
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the mport_dma_req structure members were initialized late
-inside the do_dma_request() function, just before submitting the
-request to the dma engine. But we have some error branches before
-that. In case of such an error, the code would return on the error
-path and trigger the calling of dma_req_free() with a req structure
-which is not completely initialized. This causes a NULL pointer
-dereference in dma_req_free().
+On Thu, Apr 12, 2018 at 11:39:42AM +0200, Dmitry Vyukov wrote:
+> On Wed, Apr 11, 2018 at 9:36 PM, Paul E. McKenney
+> <paulmck@linux.vnet.ibm.com> wrote:
+> >> >> >> >> <paulmck@linux.vnet.ibm.com> wrote:
+> >> >> >> >> >> >> >> >>
+> >> >> >> >> >> >> >> >> > Hello,
+> >> >> >> >> >> >> >> >> >
+> >> >> >> >> >> >> >> >> > syzbot hit the following crash on upstream commit
+> >> >> >> >> >> >> >> >> > 0adb32858b0bddf4ada5f364a84ed60b196dbcda (Sun Apr 1 21:20:27 2018 +0000)
+> >> >> >> >> >> >> >> >> > Linux 4.16
+> >> >> >> >> >> >> >> >> > syzbot dashboard link:
+> >> >> >> >> >> >> >> >> > https://syzkaller.appspot.com/bug?extid=2dbc55da20fa246378fd
+> >> >> >> >> >> >> >> >> >
+> >> >> >> >> >> >> >> >> > Unfortunately, I don't have any reproducer for this crash yet.
+> >> >> >> >> >> >> >> >> > Raw console output:
+> >> >> >> >> >> >> >> >> > https://syzkaller.appspot.com/x/log.txt?id=5487937873510400
+> >> >> >> >> >> >> >> >> > Kernel config:
+> >> >> >> >> >> >> >> >> > https://syzkaller.appspot.com/x/.config?id=-2374466361298166459
+> >> >> >> >> >> >> >> >> > compiler: gcc (GCC) 7.1.1 20170620
+> >> >> >> >> >> >> >> >> >
+> >> >> >> >> >> >> >> >> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> >> >> >> >> >> >> >> >> > Reported-by: syzbot+2dbc55da20fa246378fd@syzkaller.appspotmail.com
+> >> >> >> >> >> >> >> >> > It will help syzbot understand when the bug is fixed. See footer for
+> >> >> >> >> >> >> >> >> > details.
+> >> >> >> >> >> >> >> >> > If you forward the report, please keep this part and the footer.
+> >> >> >> >> >> >> >> >> >
+> >> >> >> >> >> >> >> >> > REISERFS warning (device loop4): super-6502 reiserfs_getopt: unknown mount
+> >> >> >> >> >> >> >> >> > option "g �;e�K�׫>pquota"
+> >> >> >> >> >> >> >> >
+> >> >> >> >> >> >> >> > Might not hurt to look into the above, though perhaps this is just syzkaller
+> >> >> >> >> >> >> >> > playing around with mount options.
+> >> >> >> >> >> >> >> >
+> >> >> >> >> >> >> >> >> > INFO: task syz-executor3:10803 blocked for more than 120 seconds.
+> >> >> >> >> >> >> >> >> >        Not tainted 4.16.0+ #10
+> >> >> >> >> >> >> >> >> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> >> >> >> >> >> >> >> >> > syz-executor3   D20944 10803   4492 0x80000002
+> >> >> >> >> >> >> >> >> > Call Trace:
+> >> >> >> >> >> >> >> >> >   context_switch kernel/sched/core.c:2862 [inline]
+> >> >> >> >> >> >> >> >> >   __schedule+0x8fb/0x1ec0 kernel/sched/core.c:3440
+> >> >> >> >> >> >> >> >> >   schedule+0xf5/0x430 kernel/sched/core.c:3499
+> >> >> >> >> >> >> >> >> >   schedule_timeout+0x1a3/0x230 kernel/time/timer.c:1777
+> >> >> >> >> >> >> >> >> >   do_wait_for_common kernel/sched/completion.c:86 [inline]
+> >> >> >> >> >> >> >> >> >   __wait_for_common kernel/sched/completion.c:107 [inline]
+> >> >> >> >> >> >> >> >> >   wait_for_common kernel/sched/completion.c:118 [inline]
+> >> >> >> >> >> >> >> >> >   wait_for_completion+0x415/0x770 kernel/sched/completion.c:139
+> >> >> >> >> >> >> >> >> >   __wait_rcu_gp+0x221/0x340 kernel/rcu/update.c:414
+> >> >> >> >> >> >> >> >> >   synchronize_sched.part.64+0xac/0x100 kernel/rcu/tree.c:3212
+> >> >> >> >> >> >> >> >> >   synchronize_sched+0x76/0xf0 kernel/rcu/tree.c:3213
+> >> >> >> >> >> >> >> >>
+> >> >> >> >> >> >> >> >> I don't think this is a perf issue. Looks like something is preventing
+> >> >> >> >> >> >> >> >> rcu_sched from completing. If there's a CPU that is running in kernel
+> >> >> >> >> >> >> >> >> space and never scheduling, that can cause this issue. Or if RCU
+> >> >> >> >> >> >> >> >> somehow missed a transition into idle or user space.
+> >> >> >> >> >> >> >> >
+> >> >> >> >> >> >> >> > The RCU CPU stall warning below strongly supports this position ...
+> >> >> >> >> >> >> >>
+> >> >> >> >> >> >> >> I think this is this guy then:
+> >> >> >> >> >> >> >>
+> >> >> >> >> >> >> >> https://syzkaller.appspot.com/bug?id=17f23b094cd80df750e5b0f8982c521ee6bcbf40
+> >> >> >> >> >> >> >>
+> >> >> >> >> >> >> >> #syz dup: INFO: rcu detected stall in __process_echoes
+> >> >> >> >> >> >> >
+> >> >> >> >> >> >> > Seems likely to me!
+> >> >> >> >> >> >> >
+> >> >> >> >> >> >> >> Looking retrospectively at the various hang/stall bugs that we have, I
+> >> >> >> >> >> >> >> think we need some kind of priority between them. I.e. we have rcu
+> >> >> >> >> >> >> >> stalls, spinlock stalls, workqueue hangs, task hangs, silent machine
+> >> >> >> >> >> >> >> hang and maybe something else. It would be useful if they fire
+> >> >> >> >> >> >> >> deterministically according to priorities. If there is an rcu stall,
+> >> >> >> >> >> >> >> that's always detected as CPU stall. Then if there is no RCU stall,
+> >> >> >> >> >> >> >> but a workqueue stall, then that's always detected as workqueue stall,
+> >> >> >> >> >> >> >> etc.
+> >> >> >> >> >> >> >> Currently if we have an RCU stall (effectively CPU stall), that can be
+> >> >> >> >> >> >> >> detected either RCU stall or a task hung, producing 2 different bug
+> >> >> >> >> >> >> >> reports (which is bad).
+> >> >> >> >> >> >> >> One can say that it's only a matter of tuning timeouts, but at least
+> >> >> >> >> >> >> >> task hung detector has a problem that if you set timeout to X, it can
+> >> >> >> >> >> >> >> detect hung anywhere between X and 2*X. And on one hand we need quite
+> >> >> >> >> >> >> >> large timeout (a minute may not be enough), and on the other hand we
+> >> >> >> >> >> >> >> can't wait for an hour just to make sure that the machine is indeed
+> >> >> >> >> >> >> >> dead (these things happen every few minutes).
+> >> >> >> >> >> >> >
+> >> >> >> >> >> >> > I suppose that we could have a global variable that was set to the
+> >> >> >> >> >> >> > priority of the complaint in question, which would suppress all
+> >> >> >> >> >> >> > lower-priority complaints.  Might need to be opt-in, though -- I would
+> >> >> >> >> >> >> > guess that not everyone is going to be happy with one complaint suppressing
+> >> >> >> >> >> >> > others, especially given the possibility that the two complaints might
+> >> >> >> >> >> >> > be about different things.
+> >> >> >> >> >> >> >
+> >> >> >> >> >> >> > Or did you have something more deft in mind?
+> >> >> >> >> >> >>
+> >> >> >> >> >> >>
+> >> >> >> >> >> >> syzkaller generally looks only at the first report. One does not know
+> >> >> >> >> >> >> if/when there will be a second one, or the second one can be induced
+> >> >> >> >> >> >> by the first one, and we generally want clean reports on a non-tainted
+> >> >> >> >> >> >> kernel. So we don't just need to suppress lower priority ones, we need
+> >> >> >> >> >> >> to produce the right report first.
+> >> >> >> >> >> >> I am thinking maybe setting:
+> >> >> >> >> >> >>  - rcu stalls at 1.5 minutes
+> >> >> >> >> >> >>  - workqueue stalls at 2 minutes
+> >> >> >> >> >> >>  - task hungs at 2.5 minutes
+> >> >> >> >> >> >>  - and no output whatsoever at 3 minutes
+> >> >> >> >> >> >> Do I miss anything? I think at least spinlocks. Should they go before
+> >> >> >> >> >> >> or after rcu?
+> >> >> >> >> >> >
+> >> >> >> >> >> > That is what I know of, but the Linux kernel being what it is, there is
+> >> >> >> >> >> > probably something more out there.  If not now, in a few months.  The
+> >> >> >> >> >> > RCU CPU stall timeout can be set on the kernel-boot command line, but
+> >> >> >> >> >> > you probably already knew that.
+> >> >> >> >> >>
+> >> >> >> >> >> Well, it's all based solely on a large number of patches and stopgaps.
+> >> >> >> >> >> If we fix main problems for today, it's already good.
+> >> >> >> >> >
+> >> >> >> >> > Fair enough!
+> >> >> >> >> >
+> >> >> >> >> >> > Just for comparison, back in DYNIX/ptx days the RCU CPU stall timeout
+> >> >> >> >> >> > was 1.5 -seconds-.  ;-)
+> >> >> >> >> >>
+> >> >> >> >> >> Have you tried to instrument every basic block with a function call to
+> >> >> >> >> >> collect coverage, check every damn memory access for validity, enable
+> >> >> >> >> >> all thinkable and unthinkable debug configs and put the insanest load
+> >> >> >> >> >> one can imagine from a swarm of parallel threads? It makes things a
+> >> >> >> >> >> bit slower ;)
+> >> >> >> >> >
+> >> >> >> >> > Given that we wouldn't have had enough CPU or memory to accommodate
+> >> >> >> >> > all of that back in DYNIX/ptx days, I am forced to answer "no".  ;-)
+> >> >> >> >> >
+> >> >> >> >> >> >> This will require fixing task hung. Have not yet looked at workqueue detector.
+> >> >> >> >> >> >> Does at least RCU respect the given timeout more or less precisely?
+> >> >> >> >> >> >
+> >> >> >> >> >> > Assuming that there is at least one CPU capable of taking scheduling-clock
+> >> >> >> >> >> > interrupts, it should respect the timeout to within a few jiffies.
+> >> >> >> >>
+> >> >> >> >>
+> >> >> >> >> Hi Paul,
+> >> >> >> >>
+> >> >> >> >> Speaking of stalls and rcu, we are seeing lots of crashes that go like this:
+> >> >> >> >>
+> >> >> >> >> INFO: rcu_sched self-detected stall on CPU[  404.992530] INFO:
+> >> >> >> >> rcu_sched detected stalls on CPUs/tasks:
+> >> >> >> >> INFO: rcu_sched self-detected stall on CPU[  454.347448] INFO:
+> >> >> >> >> rcu_sched detected stalls on CPUs/tasks:
+> >> >> >> >> INFO: rcu_sched self-detected stall on CPU[  396.073634] INFO:
+> >> >> >> >> rcu_sched detected stalls on CPUs/tasks:
+> >> >> >> >>
+> >> >> >> >> or like this:
+> >> >> >> >>
+> >> >> >> >> INFO: rcu_sched self-detected stall on CPU
+> >> >> >> >> INFO: rcu_sched detected stalls on CPUs/tasks:
+> >> >> >> >> 0-....: (125000 ticks this GP) idle=0ba/1/4611686018427387906
+> >> >> >> >> softirq=57641/57641 fqs=31151
+> >> >> >> >> 0-....: (125000 ticks this GP) idle=0ba/1/4611686018427387906
+> >> >> >> >> softirq=57641/57641 fqs=31151
+> >> >> >> >>  (t=125002 jiffies g=31656 c=31655 q=910)
+> >> >> >> >>
+> >> >> >> >>  INFO: rcu_sched self-detected stall on CPU
+> >> >> >> >> INFO: rcu_sched detected stalls on CPUs/tasks:
+> >> >> >> >> 0-....: (125000 ticks this GP) idle=49a/1/4611686018427387906
+> >> >> >> >> softirq=65194/65194 fqs=31231
+> >> >> >> >> 0-....: (125000 ticks this GP) idle=49a/1/4611686018427387906
+> >> >> >> >> softirq=65194/65194 fqs=31231
+> >> >> >> >>  (t=125002 jiffies g=34421 c=34420 q=1119)
+> >> >> >> >> (detected by 1, t=125002 jiffies, g=34421, c=34420, q=1119)
+> >> >> >> >>
+> >> >> >> >>
+> >> >> >> >> and then there is an unintelligible mess of 2 reports. Such crashes go
+> >> >> >> >> to trash bin, because we can't even say which function hanged. It
+> >> >> >> >> seems that in all cases 2 different rcu stall detection facilities
+> >> >> >> >> race with each other. Is it possible to make them not race?
+> >> >> >> >
+> >> >> >> > How about the following (untested, not for mainline) patch?  It suppresses
+> >> >> >> > all but the "main" RCU flavor, which is rcu_sched for !PREEMPT builds and
+> >> >> >> > rcu_preempt otherwise.  Either way, this is the RCU flavor corresponding
+> >> >> >> > to synchronize_rcu().  This works well in the common case where there
+> >> >> >> > is almost always an RCU grace period in flight.
+> >> >> >> >
+> >> >> >> > One reason that this patch is not for mainline is that I am working on
+> >> >> >> > merging the RCU-bh, RCU-preempt, and RCU-sched flavors into one thing,
+> >> >> >> > at which point there won't be any races.  But that might be a couple
+> >> >> >> > merge windows away from now.
+> >> >> >> >
+> >> >> >> >                                                         Thanx, Paul
+> >> >> >> >
+> >> >> >> > ------------------------------------------------------------------------
+> >> >> >> >
+> >> >> >> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> >> >> >> > index 381b47a68ac6..31f7818f2d63 100644
+> >> >> >> > --- a/kernel/rcu/tree.c
+> >> >> >> > +++ b/kernel/rcu/tree.c
+> >> >> >> > @@ -1552,7 +1552,7 @@ static void check_cpu_stall(struct rcu_state *rsp, struct rcu_data *rdp)
+> >> >> >> >         struct rcu_node *rnp;
+> >> >> >> >
+> >> >> >> >         if ((rcu_cpu_stall_suppress && !rcu_kick_kthreads) ||
+> >> >> >> > -           !rcu_gp_in_progress(rsp))
+> >> >> >> > +           !rcu_gp_in_progress(rsp) || rsp != rcu_state_p)
+> >> >> >> >                 return;
+> >> >> >> >         rcu_stall_kick_kthreads(rsp);
+> >> >> >> >         j = jiffies;
+> >> >> >>
+> >> >> >> But doesn't they both relate to the same rcu flavor? They both say
+> >> >> >> rcu_sched. I assumed that the difference is "self-detected" vs "on
+> >> >> >> CPUs/tasks", i.e. on the current CPU vs on other CPUs.
+> >> >> >
+> >> >> > Right you are!
+> >> >> >
+> >> >> > One approach would be to increase the value of RCU_STALL_RAT_DELAY,
+> >> >> > which is currently two jiffies to (say) 20 jiffies.  This is in
+> >> >> > kernel/rcu/tree.h.  But this would fail on a sufficiently overloaded
+> >> >> > system -- and the failure of the two-jiffy delay is a bit of a surprise,
+> >> >> > given interrupts disabled and all that.  Are you by any chance loaded
+> >> >> > heavily enough to see vCPU preemption?
+> >> >> >
+> >> >> > I could avoid at least some of these timing issues instead using cmpxchg()
+> >> >> > on ->jiffies_stall to allow only one CPU in, but leave the non-atomic
+> >> >> > update to discourage overly long stall prints from running into the
+> >> >> > next one.  This is not perfect, either, and is roughly equivalent to
+> >> >> > setting RCU_STALL_RAT_DELAY to many second's worth of jiffies, but
+> >> >> > avoiding that minute's delay.  But it should get rid of the duplication
+> >> >> > in almost all cases, though it could allow a stall warning to overlap
+> >> >> > with a later stall warning for that same grace period.  Which can
+> >> >> > already happen anyway.  Also, a tens-of-seconds vCPU preemption can
+> >> >> > still cause concurrent stall warnings, but if that is happening to you,
+> >> >> > the concurrent stall warnings are probably the least of your problems.
+> >> >> > Besides, we do need at least one CPU to actually report the stall, which
+> >> >> > won't happen if that CPU's vCPU is indefinitely preempted.  So there is
+> >> >> > only so much I can do about that particular corner case.
+> >> >> >
+> >> >> > So how does the following (untested) patch work for you?
+> >> >>
+> >> >> Looks good to me.
+> >> >>
+> >> >> We run on VMs, so we can well have vCPU preemption.
+> >> >
+> >> > Very good!  Please do get me a Tested-by when you get to that point.
+> >>
+> >> Unfortunately I don't have a good way to test it until it's submitted
+> >> upstream. While we are seeing thousands of such instances, they happen
+> >> episodically on a farm of test machines. But they are still harmful,
+> >> especially when the system tries to reproduce a bug, because it's
+> >> mid-way through and thinks it got a hook, but then suddenly boom! it
+> >> gets some mess that it can't parse and now it does not know if it's
+> >> still the same bug, or maybe a different bug triggered by the same
+> >> program, so it does not know how to properly attribute the reproducer.
+> >> You can see these cases as they happen here (under report/log links in
+> >> the table):
+> >> https://syzkaller.appspot.com/bug?id=d5bc3e0c66d200d72216ab343a67c4327e4a3452
+> >> When the patch is submitted, the rate should go down.
+> >
+> > OK, I will bite...  How do you test fixes to problems that syzkaller finds?
+> 
+> I don't. I can't. No one can test that many fixes.
+> 
+> Normally syzbot provides reproducers for bugs. Then you have 2
+> choices: (1) test it yourself (if you debugged it, you probably
+> already have everything setup for this), or (2) ask syzbot to test the
+> patch on this particular reproducer.
+> Some bugs don't have reproducers. Then you either localize the bug and
+> write a test, or go with the old good "it must be correct, right?".
+> Even for the second case, syzbot will notify if the bug happens again
+> after the fix is landed, or it's silent, then presumably the fix
+> indeed fixed the bug.
+> 
+> Now, this is not a syzbot bug (syzbot reports bugs itself from own
+> email address). This is more like you looked at somebody else dmsg and
+> like "oh, this looks bad, let me copy-paste and report it".
+> So can also go with the old good "it must be correct, right?" and
+> assess how well it goes after few weeks when it reaches syzbot, or
+> someone needs to write a test for rcu.
+> 
+> This could have been handled with some kind of "cluster-wide" test,
+> but I don't see how it is feasible. See this for details:
+> https://groups.google.com/d/msg/syzkaller-bugs/7ucgCkAJKSk/skZjgavRAQAJ
+> Especially the part that someone will need to go through and triage
+> hundreds of crashes and assess that they are not related to the new
+> patch, and do something with then afterwards.
 
-This patch fixes these error branches by making sure that all
-necessary mport_dma_req structure members are initialized in
-rio_dma_transfer() immediately after the request structure gets
-allocated.
+Fair enough, and apologies for the hassle.  I don't expect that the
+patch will be controversial, so it should go into the next merge
+window.
 
-Signed-off-by: Ioan Nicu <ioan.nicu.ext@nokia.com>
----
- drivers/rapidio/devices/rio_mport_cdev.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
-index 9d27016c899e..0434ab7b6497 100644
---- a/drivers/rapidio/devices/rio_mport_cdev.c
-+++ b/drivers/rapidio/devices/rio_mport_cdev.c
-@@ -740,10 +740,7 @@ static int do_dma_request(struct mport_dma_req *req,
- 	tx->callback = dma_xfer_callback;
- 	tx->callback_param = req;
- 
--	req->dmach = chan;
--	req->sync = sync;
- 	req->status = DMA_IN_PROGRESS;
--	init_completion(&req->req_comp);
- 	kref_get(&req->refcount);
- 
- 	cookie = dmaengine_submit(tx);
-@@ -831,13 +828,20 @@ rio_dma_transfer(struct file *filp, u32 transfer_mode,
- 	if (!req)
- 		return -ENOMEM;
- 
--	kref_init(&req->refcount);
--
- 	ret = get_dma_channel(priv);
- 	if (ret) {
- 		kfree(req);
- 		return ret;
- 	}
-+	chan = priv->dmach;
-+
-+	kref_init(&req->refcount);
-+	init_completion(&req->req_comp);
-+	req->dir = dir;
-+	req->filp = filp;
-+	req->priv = priv;
-+	req->dmach = chan;
-+	req->sync = sync;
- 
- 	/*
- 	 * If parameter loc_addr != NULL, we are transferring data from/to
-@@ -925,11 +929,6 @@ rio_dma_transfer(struct file *filp, u32 transfer_mode,
- 				xfer->offset, xfer->length);
- 	}
- 
--	req->dir = dir;
--	req->filp = filp;
--	req->priv = priv;
--	chan = priv->dmach;
--
- 	nents = dma_map_sg(chan->device->dev,
- 			   req->sgt.sgl, req->sgt.nents, dir);
- 	if (nents == 0) {
--- 
-2.16.3
+							Thanx, Paul
