@@ -1,158 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753015AbeDLRgC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 13:36:02 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:59876 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752962AbeDLRgA (ORCPT
+        id S1752860AbeDLRmO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 13:42:14 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:54403 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752490AbeDLRmN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 13:36:00 -0400
-Date: Thu, 12 Apr 2018 20:35:58 +0300
-From: "Dmitry V. Levin" <ldv@altlinux.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
- kill() returns wrong values in si_pid and si_uid
-Message-ID: <20180412173558.GB31781@altlinux.org>
-Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <20180409152253.GD10489@altlinux.org>
- <20180412013435.GA21219@altlinux.org>
- <20180412095811.GC16141@n2100.armlinux.org.uk>
- <20180412110314.GA28070@altlinux.org>
- <20180412121949.GD16141@n2100.armlinux.org.uk>
- <20180412124928.GA29458@altlinux.org>
- <20180412131404.GE16141@n2100.armlinux.org.uk>
- <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
+        Thu, 12 Apr 2018 13:42:13 -0400
+X-Google-Smtp-Source: AIpwx4+jXDg/Y9b4cR9vx6VDiYYhaiRggml1CQ+Ff6wKU9YMF0rFGXjSqFXDFlbOSjmo8SETFZWgnQ==
+Subject: Re: [GIT PULL] Thermal management updates for v4.17-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        "Li, Philip" <philip.li@intel.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+References: <1523436077.16235.5.camel@intel.com>
+ <CA+55aFzqJ2PfUnkVJ6A-8WRQTciWb8j+25r41JLCvz7h0QEJiA@mail.gmail.com>
+ <1523509711.16235.25.camel@intel.com>
+ <CA+55aFw0C-S0L-cnk0oROG=Khqy9s36O+g3_BxqPfewKGQ9_EQ@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <1bbc5ab1-3532-95f5-1246-0bb89c566508@linaro.org>
+Date: Thu, 12 Apr 2018 19:42:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
-Content-Disposition: inline
-In-Reply-To: <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
+In-Reply-To: <CA+55aFw0C-S0L-cnk0oROG=Khqy9s36O+g3_BxqPfewKGQ9_EQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/04/2018 18:55, Linus Torvalds wrote:
+> On Wed, Apr 11, 2018 at 10:08 PM, Zhang Rui <rui.zhang@intel.com> wrote:
+>>
+>> could you please illustrate me what the kconfig & warning is?
+> 
+> Just "make allmodconfig" and the warning is about a uninitialized variable.
+> 
+> Line 304 in drivers/thermal/samsung/exynos_tmu.c if my shell history
+> is to be believed.
+> 
+>                 Linus
 
---RnlQjJ0d97Da+TV1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+These couple of warnings were introduced by:
 
-On Thu, Apr 12, 2018 at 09:50:26AM -0700, Linus Torvalds wrote:
-> Does this attached patch perhaps fix the ARM case?
->=20
-> It just uses FPE_FLTUNK as the default si_code for SIGFPE, which seems
-> sane enough. And then gets rid of FPE_FIXME, which should resolve the
-> nasty case.
->=20
-> Hmm? Entirely untested, and I didn't really look at the test-case in
-> question since I can't really run it anyway.
->=20
-> Well, I could run it all on x86-64, but it doesn't have that FPE_FIXME
-> case at all.
->=20
->                  Linus
+commit 480b5bfc16e17ef51ca1c55bfcebf55db8673ebf
+Author: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Date:   Tue Mar 6 15:43:45 2018 +0100
 
->  arch/arm/include/uapi/asm/siginfo.h | 7 -------
->  arch/arm/vfp/vfpmodule.c            | 4 ++--
->  2 files changed, 2 insertions(+), 9 deletions(-)
->=20
-> diff --git a/arch/arm/include/uapi/asm/siginfo.h b/arch/arm/include/uapi/=
-asm/siginfo.h
-> index d0513880be21..d87beeedb4c4 100644
-> --- a/arch/arm/include/uapi/asm/siginfo.h
-> +++ b/arch/arm/include/uapi/asm/siginfo.h
-> @@ -3,11 +3,4 @@
-> =20
->  #include <asm-generic/siginfo.h>
-> =20
-> -/*
-> - * SIGFPE si_codes
-> - */
-> -#ifdef __KERNEL__
-> -#define FPE_FIXME	0	/* Broken dup of SI_USER */
-> -#endif /* __KERNEL__ */
-> -
->  #endif
+    thermal: exynos: remove parsing of samsung, tmu_default_temp_offset
+property
 
-Looks like the whole file should go away.
+    Trimming (one point based or two points based) is always used for
+    the temperature calibration and the default non-trimming code should
+    never be reached.
 
-> diff --git a/arch/arm/vfp/vfpmodule.c b/arch/arm/vfp/vfpmodule.c
-> index 4c375e11ae95..012c6e690303 100644
-> --- a/arch/arm/vfp/vfpmodule.c
-> +++ b/arch/arm/vfp/vfpmodule.c
-> @@ -251,13 +251,13 @@ static void vfp_panic(char *reason, u32 inst)
->   */
->  static void vfp_raise_exceptions(u32 exceptions, u32 inst, u32 fpscr, st=
-ruct pt_regs *regs)
->  {
-> -	int si_code =3D 0;
-> +	int si_code =3D FPE_FLTUNK;
+    Modify temp_to_code() and code_to_temp() accordingly (WARN_ON(1)
+    in the default cases) and then remove no longer needed parsing of
+    samsung,tmu_default_temp_offset property.
 
-Note that this change would affect the following code
-at the end of vfp_raise_exceptions:
+    There should be no functional changes caused by this patch.
 
-	if (si_code)
-		vfp_raise_sigfpe(si_code, regs);
+    Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+    Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 
->  	pr_debug("VFP: raising exceptions %08x\n", exceptions);
-> =20
->  	if (exceptions =3D=3D VFP_EXCEPTION_ERROR) {
->  		vfp_panic("unhandled bounce", inst);
-> -		vfp_raise_sigfpe(FPE_FIXME, regs);
-> +		vfp_raise_sigfpe(si_code, regs);
->  		return;
->  	}
-> =20
 
-To be on the safe side, I'd just change it this way:
+After digging into, there is no obvious fix. It returns effectively an
+uninitialized value and the callers are assuming the value is always
+correct, so it is also not possible to simply return an error.
 
-diff --git a/arch/arm/vfp/vfpmodule.c b/arch/arm/vfp/vfpmodule.c
-index 4c375e1..66a73ba 100644
---- a/arch/arm/vfp/vfpmodule.c
-+++ b/arch/arm/vfp/vfpmodule.c
-@@ -257,7 +257,7 @@ static void vfp_raise_exceptions(u32 exceptions, u32 in=
-st, u32 fpscr, struct pt_
-=20
- 	if (exceptions =3D=3D VFP_EXCEPTION_ERROR) {
- 		vfp_panic("unhandled bounce", inst);
--		vfp_raise_sigfpe(FPE_FIXME, regs);
-+		vfp_raise_sigfpe(FPE_FLTUNK, regs);
- 		return;
- 	}
 
---=20
-ldv
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
---RnlQjJ0d97Da+TV1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJaz5j+AAoJEAVFT+BVnCUIm/wP/2eq8/68d1NVNF01NjMWDD+u
-616rI6HzlbQdNUQP3kS6nytxeySvC+q8e04VUwiuWLXgB9/guf2677kv5CDYeThz
-qsma77P4eDxc/DkPHyNbD2/aC658IJIpZiBI/8CMHmPEJ9jaBCs6jndDEHJW2eXp
-ExEQVp6XO77VVsekcthmB/ZbpwUzeUdvdWuoYzk0TccYSXlEZjUZCmvv8cfvX8fV
-Jb1urXaDWe8Y+9ivBAxCituHY9EBrKuf6Me9ZxY8KA/Vm+bEdlI1JGLpyqrs1CEn
-a1kb9ORsffTQ0hDpAr1vGd9ld4PLF2HUQEsYaJeUWSKWjqVyDA0ntTDfizplPMge
-nYH6QRC6mhCpD9hJpXf6opNn8cLebycKRkw5nU8LOn70eAKVufkXqz3gfjwLFNxy
-M8T41NEPTi61Qa95cWZzogCqclcrlerlF5tSZTDXdjFoUShr99KzZg4zvj2SrcV2
-pW12Q7nwRY8tAXBSqezNZHgP+XDfVQyJAQ53+NCevnZ+cttcmAcg8gDNWexX0UCL
-k1dkxfBFRnYSpKQQTk+FzcWpUNSbEI5jQo56jcoFEZc5fX7kponVPTQnNyDRbYXf
-7CDiYnNNM1ezh0qHQ/gPsEX1bFDyVO2ztRDwGvp4juD8gqpLdRfZa/16QULaTMYT
-xlYtF7yblFtBqcwGvlq6
-=nbH6
------END PGP SIGNATURE-----
-
---RnlQjJ0d97Da+TV1--
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
