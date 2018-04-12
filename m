@@ -1,140 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753244AbeDLXE7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 19:04:59 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:36477 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752379AbeDLXE5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 19:04:57 -0400
-Date: Thu, 12 Apr 2018 15:01:28 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: linux-kernel@vger.kernel.org
-Cc: Vitaly Wool <vitalywool@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>, asavery@chromium.org,
-        gwendal@chromium.org
-Subject: Crashes/hung tasks with z3pool under memory pressure
-Message-ID: <20180412215501.GA16406@roeck-us.net>
+        id S1753298AbeDLXJf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 19:09:35 -0400
+Received: from anholt.net ([50.246.234.109]:58684 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753031AbeDLXJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 19:09:34 -0400
+From: Eric Anholt <eric@anholt.net>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/vc4: Fix leak of the file_priv that stored the perfmon.
+In-Reply-To: <20180412111446.742450f0@bbrezillon>
+References: <20180409205813.7077-1-eric@anholt.net> <20180412111446.742450f0@bbrezillon>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date: Thu, 12 Apr 2018 16:09:32 -0700
+Message-ID: <87po34dntf.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+--=-=-=
+Content-Type: text/plain
 
-we are observing crashes with z3pool under memory pressure. The kernel version
-used to reproduce the problem is v4.16-11827-g5d1365940a68, but the problem was
-also seen with v4.14 based kernels.
+Boris Brezillon <boris.brezillon@bootlin.com> writes:
 
-For simplicity, here is a set of shortened logs. A more complete log is
-available at [1].
+> On Mon,  9 Apr 2018 13:58:13 -0700
+> Eric Anholt <eric@anholt.net> wrote:
+>
+>> Signed-off-by: Eric Anholt <eric@anholt.net>
+>> Fixes: 65101d8c9108 ("drm/vc4: Expose performance counters to userspace")
+>
+> Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON((preempt_count() & PREEMPT_MASK) >= PREEMPT_MASK - 10)
-WARNING: CPU: 2 PID: 594 at kernel/sched/core.c:3212 preempt_count_add+0x90/0xa0
-Modules linked in:
-CPU: 2 PID: 594 Comm: memory-eater Not tainted 4.16.0-yocto-standard+ #8
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.10.2-1 04/01/2014
-RIP: 0010:preempt_count_add+0x90/0xa0
-RSP: 0000:ffffb12740db7750 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000001 RCX: 00000000000000f6
-RDX: 00000000000000f6 RSI: 0000000000000082 RDI: 00000000ffffffff
-RBP: fffff00480f357a0 R08: 000000000000004a R09: 00000000000001ad
-R10: ffffb12740db77e0 R11: 0000000000000000 R12: ffff9cbc7e265d10
-R13: ffff9cbc7cd5e000 R14: ffff9cbc7a7000d8 R15: fffff00480f35780
-FS:  00007f5140791700(0000) GS:ffff9cbc7fd00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f513260f000 CR3: 0000000032086000 CR4: 00000000000006e0
-Call Trace:
- _raw_spin_trylock+0x13/0x30
- z3fold_zpool_shrink+0xab/0x3a0
- zswap_frontswap_store+0x10b/0x610
-...
-WARNING: CPU: 1 PID: 92 at mm/z3fold.c:278 release_z3fold_page_locked+0x25/0x40
-Modules linked in:
-...
-INFO: rcu_preempt self-detected stall on CPU
-	2-...!: (20958 ticks this GP) idle=5da/1/4611686018427387906
-	softirq=4104/4113 fqs=11 
-...
-RIP: 0010:queued_spin_lock_slowpath+0x132/0x190
-RSP: 0000:ffffb12740db7750 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000100101 RBX: ffff9cbc7a7000c8 RCX: 0000000000000001
-RDX: 0000000000000101 RSI: 0000000000000001 RDI: 0000000000000101
-RBP: 0000000000000000 R08: ffff9cbc7fc21240 R09: ffffffffaf19c900
-R10: ffffb12740db75a0 R11: 0000000000000010 R12: fffff00480522d20
-R13: ffff9cbc548b4000 R14: ffff9cbc7a7000d8 R15: fffff00480522d00
- ? __zswap_pool_current+0x80/0x90
- z3fold_zpool_shrink+0x1d3/0x3a0
- zswap_frontswap_store+0x10b/0x610
-...
+Applied to drm-misc-next-fixes.  Thanks!
 
-With lock debugging enabled, the log is a bit different, but similar.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-BUG: MAX_LOCK_DEPTH too low!
-turning off the locking correctness validator.
-depth: 48  max: 48!
-48 locks held by memory-eater/619:
- #0: 000000002da807ce (&mm->mmap_sem){++++}, at: __do_page_fault+0x122/0x5a0
- #1: 0000000012fa6629 (&(&pool->lock)->rlock#3){+.+.}, at: z3fold_zpool_shrink+0x47/0x3e0
- #2: 00000000c85f45dd (&(&zhdr->page_lock)->rlock){+.+.}, at: z3fold_zpool_shrink+0xb7/0x3e0
- #3: 00000000876f5fdc (&(&zhdr->page_lock)->rlock){+.+.}, at: z3fold_zpool_shrink+0xb7/0x3e0
-...
-watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [memory-eater:613]
-Modules linked in:
-irq event stamp: 1435394
-hardirqs last  enabled at (1435393): [<ffffffff9b90ed81>]
-_raw_spin_unlock_irqrestore+0x51/0x60
-hardirqs last disabled at (1435394): [<ffffffff9b907baa>] __schedule+0xba/0xbb0
-softirqs last  enabled at (1434508): [<ffffffff9bc0027c>] __do_softirq+0x27c/0x516
-softirqs last disabled at (1434323): [<ffffffff9b069a29>] irq_exit+0xa9/0xc0
-CPU: 0 PID: 613 Comm: memory-eater Tainted: G        W
-4.16.0-yocto-standard+ #9
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.10.2-1 04/01/2014
-RIP: 0010:queued_spin_lock_slowpath+0x177/0x1a0
-RSP: 0000:ffffa61f80e074e0 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000000 RBX: ffff9704379cba08 RCX: ffff97043fc22080
-RDX: 0000000000000001 RSI: ffffffff9c05f6a0 RDI: 0000000000040000
-RBP: 0000000000000000 R08: ffffffff9b1f2215 R09: 0000000000000000
-R10: ffffa61f80e07490 R11: ffff9704379cba20 R12: ffff97043fc22080
-R13: ffffde77404e0920 R14: ffff970413824000 R15: ffff9704379cba00
-FS:  00007f8c6317f700(0000) GS:ffff97043fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8c43f3d010 CR3: 000000003aba0000 CR4: 00000000000006f0
-Call Trace:
- do_raw_spin_lock+0xad/0xb0
- z3fold_zpool_malloc+0x595/0x790
-...
+-----BEGIN PGP SIGNATURE-----
 
-The problem is easy to reproduce. Please see [2] and the other files
-at [3] for details. Various additional crash logs, observed with
-chromeos-4.14, are available at [4].
-
-Please let me know if there is anything else I can do to help solving
-or debugging the problem. I had a look into the code, but I must admit
-that its locking is a mystery to me.
-
-Thanks,
-Guenter
-
----
-[1] http://server.roeck-us.net/qemu/z3pool/crashdump
-[2] http://server.roeck-us.net/qemu/z3pool/README
-[3] http://server.roeck-us.net/qemu/z3pool/
-[4] https://bugs.chromium.org/p/chromium/issues/detail?id=822360
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlrP5ywACgkQtdYpNtH8
+nuhgiw//e+nmZjTrewwe2Kq3rWchoVYIf+72xJN3aAQz5xxeGl9cvoBEwZL9HT1K
+pnE43YLHTFKo9uof0pKjdN5RRG+uY1gGdbz/Vw/8wXQN8YBbNlUKIO+CMcMiSIFx
+ki06YYhdCZQlC1PU5RAhmBz1Ffkn/5EO8NmS9wHeJm6Bl2wHzNW8XSR0djssqSJM
+sg5XaCnEOqZff7B0IpOSMk1ZNYLw3o/FSV+Z7VYE5CaTjA2pzuw9WkWJXIHhtGLb
+zt+gScvL6m6cX6MLlUhbCR0a9QAzYSa+rIlf8PcfcjvER/gbdfkLQMIbbijuRNg1
+PA81aSD25VC6xaYwFOf/jsBpRzcKnJJnakxY+fKb5QPvZAiKuwalS3c3am2WcNH7
+tTjWsRiP9trjVoVGqtphv69JR6W/WZDJFZGLsnlK01GdxucvKs4IxgJiq+CRuJVz
+ndl6673S+fcS7452As73yjZb2m6rOp6Um5BfvC6mm58hsj0G8N2vvZG57bmiCLkM
+omfyKeWbWzXIXZWHsopBWJkch+oQpguZHgm79b+Xd9dzxpMS3dzZdBEEoWkT5j9c
+R8Og7z0aSEjA1EA+1Xuy/EIQeb/15Tqmcn/lkFNwAKnQSKFT2DEr5/dLVBq20wwe
+jtJ5MXxDZgCR6mrqEsIjf3muvi3EWZ1KnnAmjChQioQC0ThbJSM=
+=cG4F
+-----END PGP SIGNATURE-----
+--=-=-=--
