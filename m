@@ -1,39 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753019AbeDLRW4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 13:22:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53972 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752561AbeDLRWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 13:22:55 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 770EF21785
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Thu, 12 Apr 2018 14:22:52 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Thomas Richter <tmricht@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCH] perf record: Change warning for missing sysfs entry to
- debug
-Message-ID: <20180412172252.GF9818@kernel.org>
-References: <20180412133246.92801-1-tmricht@linux.ibm.com>
+        id S1752962AbeDLRYD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 13:24:03 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:46663 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752700AbeDLRYB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 13:24:01 -0400
+X-Google-Smtp-Source: AIpwx4/nxSScdbjl62DKlc8UWuYIWLimjGlh+DcPFcUMpLaPCJ2m32ayyocyzG+DDdbw3UxFVlDqGGTuQYw+6LV1trU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180412133246.92801-1-tmricht@linux.ibm.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Originating-IP: [176.63.54.97]
+In-Reply-To: <20180412162500.GA24728@bombadil.infradead.org>
+References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-2-mszeredi@redhat.com>
+ <20180412162500.GA24728@bombadil.infradead.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 12 Apr 2018 19:24:00 +0200
+Message-ID: <CAJfpegt18KcursBrY23vz8xKst=rbX-g2pU27-9yvfvqf39_Dg@mail.gmail.com>
+Subject: Re: [RFC PATCH 01/35] vfs: clean up dedup
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Miklos Szeredi <mszeredi@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Apr 12, 2018 at 03:32:46PM +0200, Thomas Richter escreveu:
-> Using perf on 4.16.0 kernel on s390 shows warning
->    failed: can't open node sysfs data
-> each time I run command perf record ... for example:
+On Thu, Apr 12, 2018 at 6:25 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Thu, Apr 12, 2018 at 05:07:52PM +0200, Miklos Szeredi wrote:
+>> +ssize_t vfs_dedupe_file_range_one(struct file *src_file, u64 src_pos, u64 len,
+>> +                           struct file *dst_file, u64 dst_pos)
+>
+> Why u64 instead of loff_t?
 
-Thanks, applied.
+Peculiarity of f_op->dedupe_file_range().
 
-- Arnaldo
+I think a cleanup of copyfile/clone/dedupe interfaces would be good.
+Perhaps merge them into one?  Or just merge copyfile/clone?  Even if
+not merging it should make sense to make argument types and argument
+order the same.
+
+Thanks,
+Miklos
