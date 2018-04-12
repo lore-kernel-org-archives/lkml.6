@@ -1,23 +1,23 @@
 Return-Path: <liuwenliang@huawei.com>
-X-Google-Smtp-Source: AIpwx48ZtvnsUL0a5HCnC6j/WKGALKLhEVsSWXwtxpxdjCFLW8FayX/9eNGeTZaaHhnWI7Wg41oF
+X-Google-Smtp-Source: AIpwx4/LonDp+vzW6VVO/zlyc7T19wl/MENFnJrTuWELL4enh2/TP0IDB5m7emnoC0znhXoW7HPf
 ARC-Seal: i=1; a=rsa-sha256; t=1523538881; cv=none;
         d=google.com; s=arc-20160816;
-        b=P1tmIbZKXFv3e5IUr3tS/GnFPNWBuAr7uFAZ6QuLX4aqJMpojO5m3lS/llIPJuOn30
-         LK+WFelnD68ZXrfxkxcC5tg3sSXg2maHrX0sHP3HL3yHQJcc5hIq0sZmo8MTIJHh1fF1
-         Ya5/ClAd0x2LLIOwvaQi8f0Dbe7QQ4Jl9bTwb9EnvIFAesEVF9VNZxk1LgkXf56HQfoZ
-         RBHFiJY29D+AO06w44qWY5FWwtU5S4hjKAFI0Q2gn/4ks+PYd4LP7n4Ud6RDU33pJBp6
-         0uPapWP6D4CYr2Ev8mePI7mBLO/v2poV5Cm+jGJ4p3fOzq7RDVLLe8Ax2CqSM1sZJMKi
-         z4PQ==
+        b=D5JwloY3IevevGXAWa7BBa+3r8eDG+tnyaASVygwOLs+B0TJ6XDIGUbA5ljy5GKQYz
+         HHlTb/7xEhGxS0okAzWciN4mfdOOxeeFreh9MxcCgSPu8b5Axg74eHc+Sy+9pF8tOhCc
+         G5NinlF3WM8jrQ2k9uBRIgpGFXEDGwRJED81RHOcK9PvXmNNZzCZbSGFyV+htzw32ey2
+         TaFTKMlB9NnolmS64swcRiIfITEF5HmkGi5d/T7OOyDT7NGLi8ckmUi5VZAYxB8gMFv5
+         gjf1Adbd9EZgrGfQkEM+iVDJ6z+QKDjPxMDjU4vQC8G1B1bcwMQ0IhiLFXycJCFJ5YoO
+         vNtg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:references:in-reply-to:message-id:date:subject:to:from
          :arc-authentication-results;
-        bh=k91oUu22ye6SlrzBqdUCMY05uqDMu96qFBBkaYmIve0=;
-        b=JsILcT65B8nHsFNqZ0B9ENzR+tIYPSl8gAuSVLN4CpvfJmP3ZUz8I3lEE9OgXb1RFG
-         Zh2qM0/6BVmy43r7Y0n9x6VQE8Qr++d0Wc4VEctfgEftasQOdP9dKsPOfwRGHl22Ut/D
-         SjY408CMGwWBXO5OOSErpYz6u4n6uvJL23oo3QyK2vsXsp6PIRZK5+tQJfxMcAtK8mb6
-         rdBpDfjBodXdz6PrSJzTTCsQl7H3qBOwnPfZ4KeJtZZhK4dFu7McrWhuxbh8XCS/Okb0
-         4j3I9OWeiAp2hqTNDYS9qL5n2k4WP5o/Y9y370NmknGtNicnK+b68/zP15SdTA8wrvDQ
-         KorA==
+        bh=JHMRP0AEs2eC5QvoB/SOJ2fOyOn0afsgC7H1o500Fo8=;
+        b=Gpeal/d9yzAOukEz1rKj+UqxqcRq8z8kF/RgxaW7/7hD/+ENPRY4du6hBGfiTL1KcE
+         zaWv9SrY/CwG2XkBQHTA7Y25EhTN8Oy3ncDCTqY79yS45wmMbMLghvgyxBTVa3WhsGkY
+         qBAKKbaR4Z94u5HEDkH9KWm14JHMDcs3P4GpHWB+xBh26kd2EpVGDN/8ErWgfhyt7nXo
+         5Zh6M3IgIkJbjSJHjcPNl6IcbPk8eVksScAEagAbI7B+Kx52EUqfv5IW0vOKHQpjOiK8
+         y7hTQaxpLMA4Cf/gZ0bHyqQdRRX53hdzmoGlfIkN3GHUVS2eJjoGGL33xqOHcDtQiUgj
+         cL3Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of liuwenliang@huawei.com designates 45.249.212.32 as permitted sender) smtp.mailfrom=liuwenliang@huawei.com
 Authentication-Results: mx.google.com;
@@ -42,9 +42,9 @@ To: <aryabinin@virtuozzo.com>, <glider@google.com>, <dvyukov@google.com>,
 	<kasan-dev@googlegroups.com>, <linux-doc@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<kvmarm@lists.cs.columbia.edu>
-Subject: [PATCH 3/6] Replace memory function for kasan
-Date: Thu, 12 Apr 2018 20:54:08 +0800
-Message-ID: <20180412125411.326-4-liuwenliang@huawei.com>
+Subject: [PATCH 2/6] Disable instrumentation for some code
+Date: Thu, 12 Apr 2018 20:54:07 +0800
+Message-ID: <20180412125411.326-3-liuwenliang@huawei.com>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180412125411.326-1-liuwenliang@huawei.com>
 References: <20180412125411.326-1-liuwenliang@huawei.com>
@@ -53,197 +53,105 @@ Content-Type: text/plain
 X-Originating-IP: [10.67.187.223]
 X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597546306349659128?=
-X-GMAIL-MSGID: =?utf-8?q?1597546306349659128?=
+X-GMAIL-THRID: =?utf-8?q?1597546306442823003?=
+X-GMAIL-MSGID: =?utf-8?q?1597546306442823003?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Andrey Ryabinin <a.ryabinin@samsung.com>
 
-Functions like memset/memmove/memcpy do a lot of memory accesses.
-If bad pointer passed to one of these function it is important
-to catch this. Compiler's instrumentation cannot do this since
-these functions are written in assembly.
+Disable instrumentation for arch/arm/boot/compressed/*
+and arch/arm/vdso/* because those code won't linkd with
+kernel image.
 
-KASan replaces memory functions with manually instrumented variants.
-Original functions declared as weak symbols so strong definitions
-in mm/kasan/kasan.c could replace them. Original functions have aliases
-with '__' prefix in name, so we could call non-instrumented variant
-if needed.
+Disable instrumentation for arch/arm/kvm/hyp/*. See commit a6cdf1c08cbf
+("kvm: arm64: Disable compiler instrumentation for hypervisor code")
+for more details.
 
-We must use __memcpy/__memset to replace memcpy/memset when we copy
-.data to RAM and when we clear .bss, because kasan_early_init can't
-be called before the initialization of .data and .bss.
+Disable instrumentation for arch/arm/mm/physaddr.c. See
+commit ec6d06efb0ba ("arm64: Add support for CONFIG_DEBUG_VIRTUAL")
+for more details.
 
-Reported-by: Russell King - ARM Linux <linux@armlinux.org.uk>
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-Tested-by: Florian Fainelli <f.fainelli@gmail.com>
+Disable kasan check in the function unwind_pop_register
+because it doesn't matter that kasan checks failed when
+unwind_pop_register read stack memory of task.
+
+Reported-by: Florian Fainelli <f.fainelli@gmail.com>
+Reported-by: Marc Zyngier <marc.zyngier@arm.com>
 Tested-by: Joel Stanley <joel@jms.id.au>
+Tested-by: Florian Fainelli <f.fainelli@gmail.com>
 Tested-by: Abbott Liu <liuwenliang@huawei.com>
 Signed-off-by: Abbott Liu <liuwenliang@huawei.com>
 ---
- arch/arm/boot/compressed/decompress.c |  2 ++
- arch/arm/boot/compressed/libfdt_env.h |  2 ++
- arch/arm/include/asm/string.h         | 17 +++++++++++++++++
- arch/arm/kernel/head-common.S         |  4 ++--
- arch/arm/lib/memcpy.S                 |  3 +++
- arch/arm/lib/memmove.S                |  5 ++++-
- arch/arm/lib/memset.S                 |  3 +++
- 7 files changed, 33 insertions(+), 3 deletions(-)
+ arch/arm/boot/compressed/Makefile | 1 +
+ arch/arm/kernel/unwind.c          | 3 ++-
+ arch/arm/kvm/hyp/Makefile         | 4 ++++
+ arch/arm/mm/Makefile              | 1 +
+ arch/arm/vdso/Makefile            | 2 ++
+ 5 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/compressed/decompress.c b/arch/arm/boot/compressed/decompress.c
-index a2ac3fe..0596077 100644
---- a/arch/arm/boot/compressed/decompress.c
-+++ b/arch/arm/boot/compressed/decompress.c
-@@ -49,8 +49,10 @@ extern int memcmp(const void *cs, const void *ct, size_t count);
- #endif
+diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
+index 45a6b9b..966103e 100644
+--- a/arch/arm/boot/compressed/Makefile
++++ b/arch/arm/boot/compressed/Makefile
+@@ -24,6 +24,7 @@ OBJS		+= hyp-stub.o
+ endif
  
- #ifdef CONFIG_KERNEL_XZ
-+#ifndef CONFIG_KASAN
- #define memmove memmove
- #define memcpy memcpy
-+#endif
- #include "../../../../lib/decompress_unxz.c"
- #endif
+ GCOV_PROFILE		:= n
++KASAN_SANITIZE		:= n
  
-diff --git a/arch/arm/boot/compressed/libfdt_env.h b/arch/arm/boot/compressed/libfdt_env.h
-index 0743781..736ed36 100644
---- a/arch/arm/boot/compressed/libfdt_env.h
-+++ b/arch/arm/boot/compressed/libfdt_env.h
-@@ -17,4 +17,6 @@ typedef __be64 fdt64_t;
- #define fdt64_to_cpu(x)		be64_to_cpu(x)
- #define cpu_to_fdt64(x)		cpu_to_be64(x)
+ #
+ # Architecture dependencies
+diff --git a/arch/arm/kernel/unwind.c b/arch/arm/kernel/unwind.c
+index 0bee233..2e55c7d 100644
+--- a/arch/arm/kernel/unwind.c
++++ b/arch/arm/kernel/unwind.c
+@@ -249,7 +249,8 @@ static int unwind_pop_register(struct unwind_ctrl_block *ctrl,
+ 		if (*vsp >= (unsigned long *)ctrl->sp_high)
+ 			return -URC_FAILURE;
  
-+#undef memset
-+
- #endif
-diff --git a/arch/arm/include/asm/string.h b/arch/arm/include/asm/string.h
-index 111a1d8..1f9016b 100644
---- a/arch/arm/include/asm/string.h
-+++ b/arch/arm/include/asm/string.h
-@@ -15,15 +15,18 @@ extern char * strchr(const char * s, int c);
- 
- #define __HAVE_ARCH_MEMCPY
- extern void * memcpy(void *, const void *, __kernel_size_t);
-+extern void *__memcpy(void *dest, const void *src, __kernel_size_t n);
- 
- #define __HAVE_ARCH_MEMMOVE
- extern void * memmove(void *, const void *, __kernel_size_t);
-+extern void *__memmove(void *dest, const void *src, __kernel_size_t n);
- 
- #define __HAVE_ARCH_MEMCHR
- extern void * memchr(const void *, int, __kernel_size_t);
- 
- #define __HAVE_ARCH_MEMSET
- extern void * memset(void *, int, __kernel_size_t);
-+extern void *__memset(void *s, int c, __kernel_size_t n);
- 
- #define __HAVE_ARCH_MEMSET32
- extern void *__memset32(uint32_t *, uint32_t v, __kernel_size_t);
-@@ -39,4 +42,18 @@ static inline void *memset64(uint64_t *p, uint64_t v, __kernel_size_t n)
- 	return __memset64(p, v, n * 8, v >> 32);
+-	ctrl->vrs[reg] = *(*vsp)++;
++	ctrl->vrs[reg] = READ_ONCE_NOCHECK(*(*vsp));
++	(*vsp)++;
+ 	return URC_OK;
  }
  
+diff --git a/arch/arm/kvm/hyp/Makefile b/arch/arm/kvm/hyp/Makefile
+index 63d6b40..0a8b500 100644
+--- a/arch/arm/kvm/hyp/Makefile
++++ b/arch/arm/kvm/hyp/Makefile
+@@ -24,3 +24,7 @@ obj-$(CONFIG_KVM_ARM_HOST) += hyp-entry.o
+ obj-$(CONFIG_KVM_ARM_HOST) += switch.o
+ CFLAGS_switch.o		   += $(CFLAGS_ARMV7VE)
+ obj-$(CONFIG_KVM_ARM_HOST) += s2-setup.o
 +
++GCOV_PROFILE	:= n
++KASAN_SANITIZE	:= n
++UBSAN_SANITIZE	:= n
+diff --git a/arch/arm/mm/Makefile b/arch/arm/mm/Makefile
+index 9dbb849..c056e17 100644
+--- a/arch/arm/mm/Makefile
++++ b/arch/arm/mm/Makefile
+@@ -16,6 +16,7 @@ endif
+ obj-$(CONFIG_ARM_PTDUMP_CORE)	+= dump.o
+ obj-$(CONFIG_ARM_PTDUMP_DEBUGFS)	+= ptdump_debugfs.o
+ obj-$(CONFIG_MODULES)		+= proc-syms.o
++KASAN_SANITIZE_physaddr.o	:= n
+ obj-$(CONFIG_DEBUG_VIRTUAL)	+= physaddr.o
+ 
+ obj-$(CONFIG_ALIGNMENT_TRAP)	+= alignment.o
+diff --git a/arch/arm/vdso/Makefile b/arch/arm/vdso/Makefile
+index bb411821..87abbb7 100644
+--- a/arch/arm/vdso/Makefile
++++ b/arch/arm/vdso/Makefile
+@@ -30,6 +30,8 @@ CFLAGS_vgettimeofday.o = -O2
+ # Disable gcov profiling for VDSO code
+ GCOV_PROFILE := n
+ 
++KASAN_SANITIZE := n
 +
-+#if defined(CONFIG_KASAN) && !defined(__SANITIZE_ADDRESS__)
-+
-+/*
-+ * For files that not instrumented (e.g. mm/slub.c) we
-+ * should use not instrumented version of mem* functions.
-+ */
-+
-+#define memcpy(dst, src, len) __memcpy(dst, src, len)
-+#define memmove(dst, src, len) __memmove(dst, src, len)
-+#define memset(s, c, n) __memset(s, c, n)
-+#endif
-+
- #endif
-diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
-index 6e0375e..c79b829 100644
---- a/arch/arm/kernel/head-common.S
-+++ b/arch/arm/kernel/head-common.S
-@@ -99,7 +99,7 @@ __mmap_switched:
-  THUMB(	ldmia	r4!, {r0, r1, r2, r3} )
-  THUMB(	mov	sp, r3 )
- 	sub	r2, r2, r1
--	bl	memcpy				@ copy .data to RAM
-+	bl	__memcpy			@ copy .data to RAM
- #endif
+ # Force dependency
+ $(obj)/vdso.o : $(obj)/vdso.so
  
-    ARM(	ldmia	r4!, {r0, r1, sp} )
-@@ -107,7 +107,7 @@ __mmap_switched:
-  THUMB(	mov	sp, r3 )
- 	sub	r2, r1, r0
- 	mov	r1, #0
--	bl	memset				@ clear .bss
-+	bl	__memset			@ clear .bss
- 
- 	ldmia	r4, {r0, r1, r2, r3}
- 	str	r9, [r0]			@ Save processor ID
-diff --git a/arch/arm/lib/memcpy.S b/arch/arm/lib/memcpy.S
-index 64111bd..79a83f8 100644
---- a/arch/arm/lib/memcpy.S
-+++ b/arch/arm/lib/memcpy.S
-@@ -61,6 +61,8 @@
- 
- /* Prototype: void *memcpy(void *dest, const void *src, size_t n); */
- 
-+.weak memcpy
-+ENTRY(__memcpy)
- ENTRY(mmiocpy)
- ENTRY(memcpy)
- 
-@@ -68,3 +70,4 @@ ENTRY(memcpy)
- 
- ENDPROC(memcpy)
- ENDPROC(mmiocpy)
-+ENDPROC(__memcpy)
-diff --git a/arch/arm/lib/memmove.S b/arch/arm/lib/memmove.S
-index 69a9d47..313db6c 100644
---- a/arch/arm/lib/memmove.S
-+++ b/arch/arm/lib/memmove.S
-@@ -27,12 +27,14 @@
-  * occurring in the opposite direction.
-  */
- 
-+.weak memmove
-+ENTRY(__memmove)
- ENTRY(memmove)
- 	UNWIND(	.fnstart			)
- 
- 		subs	ip, r0, r1
- 		cmphi	r2, ip
--		bls	memcpy
-+		bls	__memcpy
- 
- 		stmfd	sp!, {r0, r4, lr}
- 	UNWIND(	.fnend				)
-@@ -225,3 +227,4 @@ ENTRY(memmove)
- 18:		backward_copy_shift	push=24	pull=8
- 
- ENDPROC(memmove)
-+ENDPROC(__memmove)
-diff --git a/arch/arm/lib/memset.S b/arch/arm/lib/memset.S
-index ed6d35d..64aa06a 100644
---- a/arch/arm/lib/memset.S
-+++ b/arch/arm/lib/memset.S
-@@ -16,6 +16,8 @@
- 	.text
- 	.align	5
- 
-+.weak memset
-+ENTRY(__memset)
- ENTRY(mmioset)
- ENTRY(memset)
- UNWIND( .fnstart         )
-@@ -135,6 +137,7 @@ UNWIND( .fnstart            )
- UNWIND( .fnend   )
- ENDPROC(memset)
- ENDPROC(mmioset)
-+ENDPROC(__memset)
- 
- ENTRY(__memset32)
- UNWIND( .fnstart         )
 -- 
 2.9.0
