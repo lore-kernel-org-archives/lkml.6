@@ -1,88 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753069AbeDLQQx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 12:16:53 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33736 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752860AbeDLQQw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 12:16:52 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Peter Rosin <peda@axentia.se>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: max9860: switch to using .probe_new" to the asoc tree
-In-Reply-To: <20180411124238.9385-1-peda@axentia.se>
-Message-Id: <E1f6eu1-0008FY-Ce@debutante>
-Date: Thu, 12 Apr 2018 17:16:49 +0100
+        id S1753117AbeDLQRE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 12:17:04 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35054 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753085AbeDLQRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 12:17:02 -0400
+From: James Morse <james.morse@arm.com>
+Subject: Re: [PATCH v9 3/7] acpi: apei: Add SEI notification type support for
+ ARMv8
+To: gengdongjiu <gengdj.1984@gmail.com>
+Cc: lishuo1@hisilicon.com, merry.libing@hisilicon.com,
+        gengdongjiu <gengdongjiu@huawei.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "Liujun (Jun Liu)" <liujun88@hisilicon.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "robert.moore@intel.com" <robert.moore@intel.com>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "lv.zheng@intel.com" <lv.zheng@intel.com>,
+        Huangshaoyu <huangshaoyu@huawei.com>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "devel@acpica.org" <devel@acpica.org>
+References: <0184EA26B2509940AA629AE1405DD7F201AC71DE@DGGEMA503-MBS.china.huawei.com>
+ <5A85C97C.5080605@arm.com>
+ <CAMj-D2CEcNjdi8VkSMw0aTqeb678nFnBKiq5ggix3gJhzkgSEA@mail.gmail.com>
+Message-ID: <649fa2f6-1823-116e-fe69-aeaaa6a508af@arm.com>
+Date: Thu, 12 Apr 2018 17:14:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAMj-D2CEcNjdi8VkSMw0aTqeb678nFnBKiq5ggix3gJhzkgSEA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hi gengdongjiu,
 
-   ASoC: max9860: switch to using .probe_new
+On 12/04/18 06:00, gengdongjiu wrote:
+> 2018-02-16 1:55 GMT+08:00 James Morse <james.morse@arm.com>:
+>> On 05/02/18 11:24, gengdongjiu wrote:
+>>>> Is the emulated SError routed following the routing rules for HCR_EL2.{AMO,
+>>>> TGE}?
+>>>
+>>> Yes, it is.
+>>
+>> ... and yet ...
+>>
+>>
+>>>> What does your firmware do when it wants to emulate SError but its masked?
+>>>> (e.g.1: The physical-SError interrupted EL2 and the SPSR shows EL2 had
+>>>> PSTATE.A  set.
+>>>>  e.g.2: The physical-SError interrupted EL2 but HCR_EL2 indicates the
+>>>> emulated  SError should go to EL1. This effectively masks SError.)
+>>>
+>>> Currently we does not consider much about the mask status(SPSR).
+>>
+>> .. this is a problem.
+>>
+>> If you ignore SPSR_EL3 you may deliver an SError to EL1 when the exception
+>> interrupted EL2. Even if you setup the EL1 register correctly, EL1 can't eret to
+>> EL2. This should never happen, SError is effectively masked if you are running
+>> at an EL higher than the one its routed to.
+>>
+>> More obviously: if the exception came from the EL that SError should be routed
+>> to, but PSTATE.A was set, you can't deliver SError. Masking SError is the only
 
-has been applied to the asoc tree at
+> James, I  summarized the masking and routing rules for SError to
+> confirm with you for the firmware first solution,
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+You also said "Currently we does not consider much about the mask status(SPSR)."
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> 1. If the HCR_EL2.{AMO,TGE} is set,
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+If one or the other of these bits is set: (AMO==1 || TGE==1)
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> which means the SError should route to EL2,
+> When system happens SError and trap to EL3,   If EL3 find
+> HCR_EL2.{AMO,TGE} and SPSR_EL3.A are both set,
+> and find this SError come from EL2, it will not deliver an SError:
+> store the RAS error in the BERT and 'reboot'; but if
+> it find that this SError come from EL1 or EL0, it also need to deliver
+> an SError, right?
+
+Yes.
+
+
+> 2. If the HCR_EL2.{AMO,TGE} is not set,
+
+If neither of these bits is set: (AMO==0 && TGE == 0)
+
+> which means the SError should route to EL1,
+> When system happens SError and trap to EL3, If EL3 find
+> HCR_EL2.{AMO,TGE} and SPSR_EL3.A are both not set,
+
+(I'm reading this as all three of these bits are clear)
+
+> and find this SError come from EL1, it will not deliver an SError:
+> store the RAS error in the BERT and 'reboot'; 
+
+No, (AMO==0 && TGE == 0) means SError is routed to EL1, this exception
+interrupted EL1 and the A bit was clear, so EL1 can take an SError.
+
+The two cases here are:
+AMO==0,TGE==0 means SError should be routed to EL1. If SPSR_EL3 says the
+exception interrupted EL1 and the A bit was set, you need to do the BERT trick.
+
+If SPSR_EL3 says the exception interrupted EL2, you need to do the BERT trick
+regardless of the A bit, as SError is implicitly masked by running at a higher
+exception level than it was routed to.
+
+
+>From your v11 reply:
+> 2. The exception came from the EL that SError should not be routed
+> to(according to hcr_EL2.{AMO, TGE}),even though the PSTATE.A was set,EL3
+> firmware still deliver SError
+
+(this is re-iterating the two-cases above:)
+'not be routed to' is one of two things: Route-to-EL2+interruted-EL1, or
+Route-to-EL1+interrupted-EL2.
+
+Route-to-EL2+interrupted-EL1 is fine, regardless of SPSR_EL3.A the emulated
+SError can be delivered to EL2, as EL2 can't mask SError when executing at a
+lower EL.
+
+Route-to-EL1+interrupted-EL2 is the problem. SError is implicitly masked by
+running at a higher EL. Regardless of SPSR_EL3.A, the emulated SError can not be
+delivered.
+KVM does this on the way out of a guest, if an SError occurs during this time
+the CPU will wait until execution returns to EL1 before delivering the SError.
+Your firmware has to do the same.
+
+Table D1-15 in "D1.14.2 Asynchronous exception masking" has a table with all the
+combinations. The ARM-ARM is what we need to match with this behaviour.
+
+
+> but if it find that this SError come from EL0, it also need to deliver an
+> SError, right?
+
+I thought interrupted-EL0 could always be delivered: but re-reading the
+ARM-ARM's "D1.14.2 Asynchronous exception masking", if asynchronous exceptions
+are routed to EL1 then EL0&EL1 are treated the same.
+So if SError is routed to EL1, the exception interrupted EL0, and SPSR_EL3.A was
+set, you still can't deliver the emulated-SError you have to do the BERT-trick.
+Linux doesn't do this today, but another OS might (e.g. UEFI), and we might do
+this in the future.
+
+This is really tricky for firmware to get right. Another alternative would be to
+put the CPER records in a Polled buffer, unless something needs doing right now,
+in which case a BERT-reboot is probably best.
+
 
 Thanks,
-Mark
 
->From ba4e62f653656a0077322eb29c7b8dde3c84399e Mon Sep 17 00:00:00 2001
-From: Peter Rosin <peda@axentia.se>
-Date: Wed, 11 Apr 2018 14:42:37 +0200
-Subject: [PATCH] ASoC: max9860: switch to using .probe_new
-
-Use the new probe style for i2c drivers.
-
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/max9860.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/codecs/max9860.c b/sound/soc/codecs/max9860.c
-index 5bbf889ad98e..96b2db3f2ddd 100644
---- a/sound/soc/codecs/max9860.c
-+++ b/sound/soc/codecs/max9860.c
-@@ -598,8 +598,7 @@ static const struct dev_pm_ops max9860_pm_ops = {
- 	SET_RUNTIME_PM_OPS(max9860_suspend, max9860_resume, NULL)
- };
- 
--static int max9860_probe(struct i2c_client *i2c,
--			 const struct i2c_device_id *id)
-+static int max9860_probe(struct i2c_client *i2c)
- {
- 	struct device *dev = &i2c->dev;
- 	struct max9860_priv *max9860;
-@@ -736,7 +735,7 @@ static const struct of_device_id max9860_of_match[] = {
- MODULE_DEVICE_TABLE(of, max9860_of_match);
- 
- static struct i2c_driver max9860_i2c_driver = {
--	.probe	        = max9860_probe,
-+	.probe_new      = max9860_probe,
- 	.remove         = max9860_remove,
- 	.id_table       = max9860_i2c_id,
- 	.driver         = {
--- 
-2.17.0
+James
