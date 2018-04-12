@@ -1,65 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752436AbeDLBef (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 21:34:35 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:39113 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751858AbeDLBed (ORCPT
+        id S1752530AbeDLBem (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 21:34:42 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:59824 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751858AbeDLBei (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 21:34:33 -0400
-X-Google-Smtp-Source: AIpwx4/Te17K10OzP5YUZNRyh7e7X0NiGXhJ9PUNoP6bD362/qxMZd2O5Ruhlbe5QHUIVLszvdmVBA==
-Subject: Re: [PATCH 1/3] mmc: wbsd: Replace mdelay with usleep_range in
- wbsd_init
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Pierre Ossman <pierre@ossman.eu>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1523414803-2626-1-git-send-email-baijiaju1990@gmail.com>
- <CAPDyKFq4hL6TRaovv9O1NLXBmd7QJQcuVGmc5kSO3Na-2gcT1g@mail.gmail.com>
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <13f0f859-0331-c770-80ba-bc332b32582f@gmail.com>
-Date: Thu, 12 Apr 2018 09:34:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Wed, 11 Apr 2018 21:34:38 -0400
+Date: Thu, 12 Apr 2018 04:34:35 +0300
+From: "Dmitry V. Levin" <ldv@altlinux.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-sparc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
+ kill() returns wrong values in si_pid and si_uid
+Message-ID: <20180412013435.GA21219@altlinux.org>
+Mail-Followup-To: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-sparc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180409152253.GD10489@altlinux.org>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFq4hL6TRaovv9O1NLXBmd7QJQcuVGmc5kSO3Na-2gcT1g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
+Content-Disposition: inline
+In-Reply-To: <20180409152253.GD10489@altlinux.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--J2SCkAp4GZ/dPZZf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2018/4/11 23:04, Ulf Hansson wrote:
-> On 11 April 2018 at 04:46, Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
->> wbsd_init() is never called in atomic context.
->>
->> The call chains ending up at wbsd_init() are:
->> [1] wbsd_init() <- wbsd_probe()
->> [2] wbsd_init() <- wbsd_pnp_probe()
->>
->> wbsd_probe() is set as ".probe" in struct platform_driver.
->> wbsd_pnp_probe() is set as ".probe" in struct pnp_driver.
->> These functions are not called in atomic context.
->>
->> Despite never getting called from atomic context, wbsd_init()
->> calls mdelay() to busily wait.
->> This is not necessary and can be replaced with usleep_range() to
->> avoid busy waiting.
->>
->> This is found by a static analysis tool named DCNS written by myself.
->> And I also manually check it.
->>
->> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> The patch is good, however I think you should squash all three in this
-> series into one. For obvious reasons.
+Hi,
 
-Hello, Ulf.
-Thanks for your reply and advice :)
-I will follow it in my future patches.
+On Mon, Apr 09, 2018 at 06:22:53PM +0300, Dmitry V. Levin wrote:
+> There seems to be a regression in v4.16 on ppc compat very similar
+> to sparc compat regression reported earlier at
+> https://marc.info/?l=3Dlinux-sparc&m=3D151501500704383 .
+>=20
+> The symptoms are exactly the same: the same signal_receive test from
+> the strace test suite fails with the same diagnostics:
+> https://build.opensuse.org/public/build/home:ldv_alt/openSUSE_Factory_Pow=
+erPC/ppc/strace/_log
+
+The log is big, just look for "KERNEL BUG".
+
+> Unfortunately, I do not have any means to investigate further,
+> so just passing this information on to those who care.
+
+OK, the faulty commit is v4.16-rc1~159^2~39
+("signal/powerpc: Document conflicts with SI_USER and SIGFPE and SIGTRAP").
+
+One might think that a commit called "Document conflicts" shouldn't
+introduce an ABI regression, but this one definitely does by defining
+FPE_FIXME and TRAP_FIXME in arch/powerpc/include/uapi/asm/siginfo.h
+that affect siginfo_layout().
+
+A similar commit v4.16-rc1~159^2~37
+("signal/arm: Document conflicts with SI_USER and SIGFPE") must have
+introduced a similar ABI regression to compat arm.
+
+An earlier commit v4.14-rc1~60^2^2~5
+("signal/sparc: Document a conflict with SI_USER with SIGFPE") introduced
+a similar ABI regression to compat sparc.
+
+There is a clear pattern of sneaking in ABI changes using innocently
+looking commit messages.
 
 
-Best wishes,
-Jia-Ju Bai
+--=20
+ldv
+
+--J2SCkAp4GZ/dPZZf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJazrerAAoJEAVFT+BVnCUIChMQAJxouuxIeyN9pi7FZQztb3Fr
+hU39sGuyIpVMJ50K4dJq/3Yo+t+q+8AUWSg8sHQEqe4JzRR26dhVr8cYr6XsBftY
+x6+qiWhvBGoTZbpJbBmZFrkaCWEjgTws8W9YBUzoYxLLNLCWAXrcf6UGL9kQmZqY
+I7GdvUlsO6B9xFFaQOkgpqNizI7N5mI0dV+SoMdgMs0psoq0C+1vDmG6lknDzdi1
+mqLffdhMisnO+mdL+ixp3keV0daIjN7liDclCX0pxBzedNm4ilc3FwSPvxpjhwsB
+di6WJ9CiBjHRpl65jz9E8DVz6+FFdPf1pKCD650vPTmA7XnFOTeALaYTPUUsPovW
+vXTY/3SLDgmD++vWd5PwJrkxo1I3rk0CifGcoQn4UTHXOzGHZunkETpS/PSoXFc4
+AhSQVEjlMARxedt0wmTE3m13tUwttiRz4kT9vJrnd9nchYg6Bc/SwhrSxjJYyWUJ
+DwsBFowrdKR9Bt67QZKaAU17hq9zPBZ3IxpnZ1ZbvTk62T8pmZQheve1YO69w0dg
+gB5gLlmwKOMJ/ZS8H/fD4ro257j/gMEhfVRroCwPzKSQ+fm7h+XEHSFK7yl6DQ28
+tGIOuyqGADAX7A/CS8BkuAe0WezklG5JphMiEaU4ClLxLb0Nz5avGYvY19UgtE7U
+7E7ani2qtbR2nf97TPi3
+=Xlro
+-----END PGP SIGNATURE-----
+
+--J2SCkAp4GZ/dPZZf--
