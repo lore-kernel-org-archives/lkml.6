@@ -1,544 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752428AbeDLJpQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 05:45:16 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:51407 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751747AbeDLJpC (ORCPT
+        id S1751969AbeDLJyL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 05:54:11 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44031 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750763AbeDLJyI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 05:45:02 -0400
-X-Google-Smtp-Source: AIpwx4/yeQuVlvAzwA14Lkju1WvDZSg/JtalCk6JbhMUEj5+ePhD75ikdTybD5X4Zy1745OI+v/2rOqirwPS0VplUnXbZmQCv4xG
+        Thu, 12 Apr 2018 05:54:08 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180412095405euoutp019a6f8ffb98dc24bafa0dd3cb3aede870~kp5gTLEe40980009800euoutp01F
+X-AuditID: cbfec7f4-6f9ff700000043e4-15-5acf2cbbaaed
+Subject: Re: [PATCH v6 23/30] drm/rockchip: analogix_dp: Do not call
+ Analogix code before bind
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
+        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
+        tfiga@chromium.org, heiko@sntech.de
+Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
+        ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com,
+        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
+        rydberg@bitmath.org, krzk@kernel.org,
+        linux-rockchip@lists.infradead.org, kgene@kernel.org,
+        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
+        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
+        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
+        jingoohan1@gmail.com, sw0312.kim@samsung.com,
+        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
+        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
+        hshi@chromium.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <2fde5d53-0e8d-6a15-7962-0e76532d0926@samsung.com>
+Date: Thu, 12 Apr 2018 11:54:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.7.0
 MIME-Version: 1.0
-Date: Thu, 12 Apr 2018 02:45:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <001a113ac54e00bf840569a39cb5@google.com>
-Subject: KASAN: use-after-scope Read in vmx_vcpu_run
-From: syzbot <syzbot+0553a14d42423600fe7f@syzkaller.appspotmail.com>
-To: hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, pbonzini@redhat.com, rkrcmar@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180405095000.9756-24-enric.balletbo@collabora.com>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUxTZxjde78hK7tUXJ85s42aRSAON1nmuwzd5kZ2F/3hD020PzYq3hQj
+        FNMrOvdJIAN0gI5uU8oGJlDFrkTkQ7EQFdAVJW1tmHxIahGZA7oGQwElo3S0FzL+nfM858k5
+        J3k4UjnGrOEO6A+LBr02S81EU5f/mHO+0bbBpXkzUPcOLnXeJnB+sZ/GjnMdDP5zZpLB1qFO
+        hEMjPhr/Vv4NftZwh8RFzSMELveeovDTAQeD66YrWDz2wE3hJmcJjU8+8pHY5Wpg8d3rPQR2
+        5P/D4uM/1rK48VEfjQenZmnca/uVwVPDIRKfcV0jcP1ND4tbf7pB4GtNXRTunv2FwJ4GB8Jn
+        jOMMDny/wOA5WxWFiwrOEbiw/0XszDOyH6wTrFVWJAQsE7RQmeemhN6yUkJo9dQi4arJwwqV
+        xRW00Gg5zghXZodpwfuDnRCaar8TgqbrlFDWbEHClb4qUgg0vrLzBU106n4x68AR0bBxa3p0
+        5mPrPHPofuwXpZa/6DxkjzmBojjg34b22RHqBIrmlHwdgpvOSUYm0wjcjzuWSABByPiEWD75
+        2bS8OI/A9rR/ifgRBHvbqbBqFZ8OV29diCzi+HEEDbd8RJiQfA0NI/fK6LCK4RMh2DTIhLGC
+        3wou62QEU/zrEHxijmhW83sg/+85VtbEwu2K0YhDFL8N3A8LURiT/KtQ0FJJylgF90erI2bA
+        t0XB0D0fIwf/GGqelSyVWAUT9mZWxmuhx1hCyfgrGBzLp+TjYgTef4uWjt+DLrt7MRG36JAI
+        F20b5fEWqK++ExkDHwMD/lg5QwyUXz5NymMFFBcqZXU8eB0tpIxVYL47w5xC60wrmplWtDGt
+        aGP63/csoixIJeZK2TpR2qQXjyZL2mwpV69LzsjJbkSL/9+zYJ9uRbb5fZ2I55D6ecWeFKdG
+        SWuPSMeyOxFwpDpOoVrv0igV+7XHvhQNOZ8bcrNEqRO9zFFqleKzhG81Sl6nPSweFMVDomF5
+        S3BRa/LQvqn3u2oqUo76fp8JpazN3KygLN05Sc/5Y3a9Nl9CbjfWxX4qFO5IG58wfz2aWlu9
+        gW07aW4/u/NGxpb+xOTUbbvPX5yRlBlDMHhpIWlyem9aeQIkYG9WSK9L9w+8dHr75u6gJz6n
+        jzbEt3R99MBc8KFWZ6rfm/au0TncofokjlBTUqb2rSTSIGn/AyOTVej7AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xTZxjHfc+1GOsOFe0rH4bWGCKBYsvtQREvifHsw9ToPphuCzZ4Amwt
+        JT2FDBOVSBRlogjeaLdCVkDTlIQUNjpIcDBih1rOGJNNWKFex0XUgIJugFLAhG+/J///L0+e
+        5JGRiv/pcFlWtkUwZ+sNKmY5dWfW649pjpZ0m722eCjp6iTg5JkxGny1bQz8+foFA67+dgTv
+        Ho7S8H3ZMXhTf5uEosaHBJQNllIw9bePgRuvKlgYGuimoKHrHA0XHo2SIEn1LPx+8w4BvpPP
+        WDh7sZoF96NeGu6PT9LQ0/wdA+OBdyRck1oJqOvws+C59AsBrQ2/UvDb5BUC/PU+BNfKhxmY
+        ODXLwNtmOwVFhbUEnP5rDXQVlLM7NvAuuwvxE84RmrcVdFN8z/kSgvf4qxH/s9XP8rYzFTTv
+        dp5l+KbJAM0Pfusl+IbqE/yM9SbFn290Ir6p107yE+6P93+kU6eYTbkWYV2mSbRsU32uAa1a
+        kwxqbXyyWhOX9OUWbYIqNjXliGDIyhPMsamH1ZlPXdNMTl/oNyXOJ3QB8q4sRiEyzMXjy9Y2
+        phgtlym4GoR7AsPsQqDELZVj5AKvwtO9xYulUYT9/g4UDFZxh/E9h50NBmHcMMKdJSPzA8k5
+        aNzXf3lRuYtw261LdFBhuE14puE+E2Q5l4ol14t5priNeOZlzXxnNXcID0jji51Q3FnxmApy
+        CLcLdz84Pb+a5CLxtP0PcoEjcOGPtkVW4r7HlUQpUliX6NYlinWJYl2iVCHKicKEXNGYYRS1
+        alFvFHOzM9TpJqMbzT3eT7feNnpQ8fOD7YiTIdUK+aG4Lp2C1ueJ+cZ2hGWkKkyujJR0CvkR
+        ff5RwWxKM+caBLEdJcwdd5EMX51umnvjbEuaJkGTBMmapLikuERQKeXS5nydgsvQW4SvBSFH
+        MH/wCFlIeAHylOUNRlsTNrmnat07t/5XWSFC/miE94ByS+IX/VFZuxVE8t5Pto+Vb9j3T1ZT
+        xlShPfPqE8MPManHY9Zr963tVHZUcssMHf2e3ffqQv/1ValR7LOZNYbGscCFvT1HlyksrXWO
+        gaHEU19V5UhRn8a8dDjCIaL03Ge2oj3r01uuRwdUlJip10SRZlH/Hldln7aOAwAA
+X-CMS-MailID: 20180412095403eucas1p13590fbd8850951e84f44908785cb7284
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-MTR: 20180412095403eucas1p13590fbd8850951e84f44908785cb7284
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180405095337epcas3p1a8750649c8032d844991db91595da8e5
+X-RootMTR: 20180405095337epcas3p1a8750649c8032d844991db91595da8e5
+References: <20180405095000.9756-1-enric.balletbo@collabora.com>
+        <CGME20180405095337epcas3p1a8750649c8032d844991db91595da8e5@epcas3p1.samsung.com>
+        <20180405095000.9756-24-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 05.04.2018 11:49, Enric Balletbo i Serra wrote:
+> From: Tomasz Figa <tfiga@chromium.org>
+>
+> Driver callbacks, such as system suspend or resume can be called any
+> time, specifically they can be called before the component bind
+> callback. Let's use dp->adp pointer as a safeguard and skip calling
+> Analogix entry points if it is an ERR_PTR().
 
-syzbot hit the following crash on upstream commit
-c18bb396d3d261ebbb4efbc05129c5d354c541e4 (Tue Apr 10 00:04:10 2018 +0000)
-Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=0553a14d42423600fe7f
+>From purity PoV I would store either 0 either valid pointer in dp->adp,
+but functionally it should be the same.
 
-Unfortunately, I don't have any reproducer for this crash yet.
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=4626416826056704
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-1223000601505858474
-compiler: gcc (GCC) 8.0.1 20180301 (experimental)
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+0553a14d42423600fe7f@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-==================================================================
-BUG: KASAN: use-after-scope in msr_write_intercepted  
-arch/x86/kvm/vmx.c:2126 [inline]
-BUG: KASAN: use-after-scope in vmx_vcpu_run+0x2379/0x25f0  
-arch/x86/kvm/vmx.c:9884
-Read of size 8 at addr ffff8801b8dbf7b8 by task syz-executor6/18891
-
-CPU: 1 PID: 18891 Comm: syz-executor6 Not tainted 4.16.0+ #18
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0xac/0x2f5 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  msr_write_intercepted arch/x86/kvm/vmx.c:2126 [inline]
-  vmx_vcpu_run+0x2379/0x25f0 arch/x86/kvm/vmx.c:9884
-WARNING: kernel stack frame pointer at 0000000057b50f01 in  
-syz-executor6:18891 has bad value 000000006efd0fe3
-unwind stack type:0 next_sp:          (null) mask:0x2 graph_idx:0
-0000000090a6e9a9: ffff8801b8dbf228 (0xffff8801b8dbf228)
-000000006f844740: ffffffff8129bc91 (show_trace_log_lvl+0x1dd/0x25c)
-000000009733cfd3: ffffffff811f5629 (vmx_vcpu_run+0x2379/0x25f0)
-000000009e9e0400: ffff8801b8dbf378 (0xffff8801b8dbf378)
-00000000bbbea85e: 0000000000000002 (0x2)
-000000007d1df841: 0000000000000001 (0x1)
-0000000036b4ef96: ffff8801b8db8000 (0xffff8801b8db8000)
-000000003e91f4e0: ffff8801b8dc0000 (0xffff8801b8dc0000)
-0000000013d7ce4d: 0000000000000000 ...
-0000000023d6e04e: ffff8801b8db8000 (0xffff8801b8db8000)
-0000000014ae6dad: ffff8801b8dc0000 (0xffff8801b8dc0000)
-00000000390c0e9d: 0000000000000000 ...
-00000000e329f6c7: 0000000000000002 (0x2)
-000000002a2e8d4f: ffff8801bc0d04c0 (0xffff8801bc0d04c0)
-0000000062d372eb: 0000000100000000 (0x100000000)
-00000000d13af120: ffff8801b8dbf370 (0xffff8801b8dbf370)
-000000008ac8c92c: ffff8801b8dbf160 (0xffff8801b8dbf160)
-00000000b23de389: ffffffff811f5629 (vmx_vcpu_run+0x2379/0x25f0)
-00000000821c24e6: 0000000000000000 ...
-00000000778f1efb: 0000000000000093 (0x93)
-000000006ff9ef9d: 0000000000000000 ...
-00000000eb26cdd0: ffffffff88b17be0 (pv_cpu_ops+0x120/0x120)
-0000000084a54737: 00000000ffffffff (0xffffffff)
-0000000012a1a954: ffff8801b8dbf238 (0xffff8801b8dbf238)
-00000000122c0636: ffffffff8129bd48 (show_stack+0x38/0x3a)
-00000000469fedf3: ffff8801b8dbf2e8 (0xffff8801b8dbf2e8)
-00000000a17c6065: ffffffff874779a5 (dump_stack+0x1b9/0x294)
-0000000013e2598b: fffffbfff1162f7c (0xfffffbfff1162f7c)
-000000009504cc11: dffffc0000000000 (0xdffffc0000000000)
-0000000048dabde0: 1ffff100371b7e4c (0x1ffff100371b7e4c)
-0000000048912c73: 0000000041b58ab3 (0x41b58ab3)
-0000000014fd490f: ffffffff8877792c (regoff.33532+0x34e16c/0x3608f0)
-000000003003ebab: ffffffff874777ec (dump_stack_print_info.cold.2+0x52/0x52)
-00000000d7d782ed: ffffffff815f7c32 (printk+0x9e/0xba)
-0000000049723edb: 0000000041b58ab3 (0x41b58ab3)
-00000000143dfdb8: ffffffff8878d15c (K512_4+0x125c/0x114d54)
-00000000250d0cf7: ffffffff815f7b94 (kmsg_dump_rewind_nolock+0xe4/0xe4)
-0000000001715438: ffffffff88c21520 (kmem_cache_boot+0x320/0x320)
-0000000098b98a8b: ffffffff00000008 (0xffffffff00000008)
-00000000f6e79fe0: ffff8801b8dbf330 (0xffff8801b8dbf330)
-0000000048d95dec: ffff8801b8dbf2e0 (0xffff8801b8dbf2e0)
-0000000010b4b305: ffffffff81b2a914 (kasan_check_write+0x14/0x20)
-00000000e40012f6: ffffea0006e36fc0 (0xffffea0006e36fc0)
-00000000b1d1ad8b: 0000000000000000 ...
-000000008d493298: ffff8801b8dbf7b8 (0xffff8801b8dbf7b8)
-0000000087815ac3: 0000000000000008 (0x8)
-00000000b5a76838: ffff8801b8dbf7b8 (0xffff8801b8dbf7b8)
-00000000bc2d3b57: ffff8801b8dbf320 (0xffff8801b8dbf320)
-00000000f17eef50: ffffffff81b2bbf1 (print_address_description+0x6c/0x20b)
-000000004fc9569a: ffff8801b8dbf7b8 (0xffff8801b8dbf7b8)
-0000000087e3bd14: 0000000000000000 ...
-00000000bd149c14: ffffffff811f5629 (vmx_vcpu_run+0x2379/0x25f0)
-00000000b5aec812: 0000000000000008 (0x8)
-00000000ec15333d: ffff8801b8dbf7b8 (0xffff8801b8dbf7b8)
-00000000aaf96716: ffff8801b8dbf360 (0xffff8801b8dbf360)
-00000000a809e01a: ffffffff81b2be3c (kasan_report.cold.7+0xac/0x2f5)
-00000000c8747791: 0000000000000082 (0x82)
-00000000528ad0e9: 0000000010000000 (0x10000000)
-000000006365fcca: 0000000000000000 ...
-00000000391b47ca: ffff8801b8dbf370 (0xffff8801b8dbf370)
-00000000a52709df: ffffffff81b2b8d4 (__asan_report_load8_noabort+0x14/0x20)
-0000000057b50f01: ffff8801bc0d09f0 (0xffff8801bc0d09f0)
-0000000016d55dfe: ffffffff811f5629 (vmx_vcpu_run+0x2379/0x25f0)
-0000000017809533: ffff8801b8dbf878 (0xffff8801b8dbf878)
-00000000d6529ae9: ffff8801b8dbf7b8 (0xffff8801b8dbf7b8)
-000000004ed657b7: ffffed00371b7ed7 (0xffffed00371b7ed7)
-00000000194c23ae: 0000000041b58ab3 (0x41b58ab3)
-000000004d1ef307: ffffffff8878d808 (K512_4+0x1908/0x114d54)
-00000000379bd5df: ffffffff81466100 (mm_update_next_owner+0x980/0x980)
-0000000080797c58: ffffffff88779790 (regoff.33532+0x34ffd0/0x3608f0)
-000000005a6e24d7: ffffffff815b0a90 (print_usage_bug+0xc0/0xc0)
-000000005f2b77f3: 0000000000000282 (0x282)
-000000003c39e5aa: 0000000041b58ab3 (0x41b58ab3)
-0000000083e17661: ffffffff887773a1 (regoff.33532+0x34dbe1/0x3608f0)
-00000000291d51a6: ffffffff815aa680 (graph_lock+0x170/0x170)
-00000000502283d5: ffffffff815ca2de (do_raw_spin_unlock+0x9e/0x2e0)
-0000000076cb0676: 0000000041b58ab3 (0x41b58ab3)
-0000000080212064: ffffffff8877792c (regoff.33532+0x34e16c/0x3608f0)
-000000001d0c313c: 0000000041b58ab3 (0x41b58ab3)
-00000000a58f80d2: ffffffff88783be0 (regoff.33532+0x35a420/0x3608f0)
-00000000222160f6: ffffffff81638650 (rcu_note_context_switch+0x710/0x710)
-000000005494e8f0: ffffffff815ba7ec (lock_acquire+0x1dc/0x520)
-000000006cf1466a: 0000000000000000 ...
-000000000305ee23: ffff8801b8dbf7d0 (0xffff8801b8dbf7d0)
-0000000038fa1476: ffff8801bc0d04c0 (0xffff8801bc0d04c0)
-00000000391a72bb: ffffffff87ac7100 (tk_debug_sleep_time_fops+0x2c0/0x940)
-00000000ba133343: 0000000000000039 (0x39)
-0000000040e60c97: 0000000000000000 ...
-000000004cae5251: ffff8801b8dbf488 (0xffff8801b8dbf488)
-0000000084ce227e: ffffffff8150f375 (__might_sleep+0x95/0x190)
-0000000086d484b9: 0000000000000000 ...
-0000000013237a33: ffff8801b8dbf7b8 (0xffff8801b8dbf7b8)
-000000002b982304: 1ffff100371b7ea2 (0x1ffff100371b7ea2)
-000000009d707a33: ffff8801bc0d0d38 (0xffff8801bc0d0d38)
-000000004fef6272: ffffc90000c80920 (0xffffc90000c80920)
-000000002d759e5e: ffffc90000c80920 (0xffffc90000c80920)
-000000001e0cc113: 000000000000008f (0x8f)
-00000000d3d2847a: ffff8801bc0d0d5a (0xffff8801bc0d0d5a)
-00000000f2aeaf9d: 0000000000000000 ...
-000000008fa83be4: 000000000000000c (0xc)
-0000000088170f0f: ffff8801bc0d0d24 (0xffff8801bc0d0d24)
-00000000099ce9bc: ffff8801b8dbf850 (0xffff8801b8dbf850)
-00000000da0d2676: ffffffff815b3e05 (__lock_acquire+0x7f5/0x5130)
-000000001d1c612b: ffffc90000c80920 (0xffffc90000c80920)
-000000008ba24a24: ffff8801bc0d04c0 (0xffff8801bc0d04c0)
-0000000005277673: ffff8801b8dbf530 (0xffff8801b8dbf530)
-000000009c173089: ffff8801b8dbf618 (0xffff8801b8dbf618)
-00000000c6630756: 0000000000000282 (0x282)
-0000000066fc4a73: 0000000000000000 ...
-0000000023380c60: ffff880100000001 (0xffff880100000001)
-00000000866161f7: ffff8801bc0d0d30 (0xffff8801bc0d0d30)
-000000001d8f896b: 0000000000000282 (0x282)
-000000004245f086: ffffffff00000001 (0xffffffff00000001)
-00000000fd837cb6: 0000000041b58ab3 (0x41b58ab3)
-00000000cd1f24cd: ffffffff88792688 (K512_4+0x6788/0x114d54)
-00000000d69ecc8e: ffff8801bc0d0d50 (0xffff8801bc0d0d50)
-000000009cec4693: ffffc90000000000 (0xffffc90000000000)
-00000000409d1f5f: ffffffff89fa4cc8 (chainhash_table+0x7608/0x40020)
-000000008e48c014: ffff8801bc0d0d28 (0xffff8801bc0d0d28)
-000000004eb9c4d4: ffff8801bc0d0d58 (0xffff8801bc0d0d58)
-0000000070aad16f: ffff8801bc0d0d30 (0xffff8801bc0d0d30)
-000000003c6906ce: ffff8801bc0d0d38 (0xffff8801bc0d0d38)
-0000000047ec4d31: 1ffff100371b7eac (0x1ffff100371b7eac)
-00000000022e5e0e: 0000000041b58ab3 (0x41b58ab3)
-00000000af2f1ff8: ffffffff887925f8 (K512_4+0x66f8/0x114d54)
-00000000420a30bd: ffffffff815b3610 (debug_check_no_locks_freed+0x310/0x310)
-000000000fb22202: ffffffff81b2a8f1 (kasan_check_read+0x11/0x20)
-00000000ed19b566: ffff8801b8dbf618 (0xffff8801b8dbf618)
-00000000544a2c28: ffffffff815ca2de (do_raw_spin_unlock+0x9e/0x2e0)
-00000000724b6d3f: 0000000041b58ab3 (0x41b58ab3)
-0000000011fd1ce4: ffffffff8877792c (regoff.33532+0x34e16c/0x3608f0)
-000000006d1140b9: ffffffff815ca240 (do_raw_spin_trylock+0x1b0/0x1b0)
-00000000cf2266b7: ffff8801cb31fc90 (0xffff8801cb31fc90)
-00000000b724fa90: 0000000000000001 (0x1)
-00000000269dd053: ffffc90000c80910 (0xffffc90000c80910)
-00000000eab72f77: ffffc90000c80918 (0xffffc90000c80918)
-00000000c27045ab: ffffc90000c80940 (0xffffc90000c80940)
-00000000aa25a0e1: ffffffff81b2a914 (kasan_check_write+0x14/0x20)
-0000000074d56a52: ffff8801b8dbf610 (0xffff8801b8dbf610)
-00000000b203f66e: ffffffff81770ef3 (__sanitizer_cov_trace_switch+0x53/0x90)
-000000003d3ee2e6: 0000000000000002 (0x2)
-00000000f4288350: ffff8801d71fe680 (0xffff8801d71fe680)
-000000001116e3b5: ffff8801b8dbf858 (0xffff8801b8dbf858)
-0000000046be82f7: ffffffff89997e08 (lock_chains+0x29c8/0x200020)
-000000008b56da0c: ffffffff81770e3a  
-(__sanitizer_cov_trace_const_cmp1+0x1a/0x20)
-00000000b85db8b5: ffff8801b8dbf630 (0xffff8801b8dbf630)
-000000009176c7fe: ffffffff816a1b5d (drop_futex_key_refs.isra.13+0x6d/0xe0)
-000000004008729d: ffff8801b8dbf630 (0xffff8801b8dbf630)
-000000001dfaa85f: ffffffff81770e98  
-(__sanitizer_cov_trace_const_cmp8+0x18/0x20)
-00000000659f533f: ffff8801b8dbf880 (0xffff8801b8dbf880)
-00000000ec827d58: ffffffff816a8301 (futex_wait+0x5c1/0x9f0)
-000000009e3c3e30: ffff8801b8dbf6f8 (0xffff8801b8dbf6f8)
-00000000d82ee3ee: 1ffff100371b7ed3 (0x1ffff100371b7ed3)
-0000000005be5a19: 0000000000000000 ...
-00000000876f1413: ffff8801b8dbf7e8 (0xffff8801b8dbf7e8)
-00000000d39e5ae1: 00000000ffffffff (0xffffffff)
-000000002fb167cd: 1ffff100371b7edb (0x1ffff100371b7edb)
-0000000059b57145: ffff8801b8dbf838 (0xffff8801b8dbf838)
-00000000493e19a3: 0000000000000000 ...
-0000000074b7f83b: ffffffff815a8ec3 (perf_trace_lock_acquire+0xe3/0x980)
-00000000cbb09f3e: fffffe0000000001 (0xfffffe0000000001)
-000000000541fbf9: 0000000000000000 ...
-00000000a904a83d: 0000000041b58ab3 (0x41b58ab3)
-0000000061adcc85: ffffffff88796de8 (K512_4+0xaee8/0x114d54)
-00000000a0efbdc0: ffffffff816a7d40 (futex_wait_setup+0x400/0x400)
-0000000094295b2a: 0000000041b58ab3 (0x41b58ab3)
-0000000006b1722a: ffff8801bc0d09e8 (0xffff8801bc0d09e8)
-00000000a402516b: ffffffff00000000 (0xffffffff00000000)
-000000000ac4c1e8: ffff880100000000 (0xffff880100000000)
-00000000e1acd078: ffff8801913f32b8 (0xffff8801913f32b8)
-00000000c65522e1: 0000000041b58ab3 (0x41b58ab3)
-0000000057d5b669: ffffffff8878d998 (K512_4+0x1a98/0x114d54)
-0000000059ab1e35: ffffffff815a8de0 (perf_trace_lock+0x900/0x900)
-00000000bf8a4c03: ffffffff815aa680 (graph_lock+0x170/0x170)
-00000000d2c49231: ffffc900001c0018 (0xffffc900001c0018)
-000000003ee74809: dffffc0000000000 (0xdffffc0000000000)
-00000000e93ff0ce: ffff8801b8dbf928 (0xffff8801b8dbf928)
-000000001dba9a71: 0000000000000002 (0x2)
-00000000177c2bd0: ffff8801b8dbf728 (0xffff8801b8dbf728)
-0000000067778b74: ffffffff81770e76  
-(__sanitizer_cov_trace_const_cmp4+0x16/0x20)
-00000000677d7f14: 0000000041b58ab3 (0x41b58ab3)
-000000005a73a63d: ffffffff887773a1 (regoff.33532+0x34dbe1/0x3608f0)
-00000000ea6b5985: ffffffff815aa680 (graph_lock+0x170/0x170)
-000000009d69394e: 0000000041b58ab3 (0x41b58ab3)
-000000000664cf5e: ffffffff8879e388 (K512_4+0x12488/0x114d54)
-00000000858ed99e: ffffffff818ea820 (perf_event_sync_stat+0x5f0/0x5f0)
-0000000047f3896a: ffff8801b8dbf7d8 (0xffff8801b8dbf7d8)
-000000006e9280f4: ffff8801b8dbf8a8 (0xffff8801b8dbf8a8)
-00000000d6a71908: ffffed00371b7f15 (0xffffed00371b7f15)
-000000001eecec72: 1ffff100371b7ef1 (0x1ffff100371b7ef1)
-00000000a7654b74: ffff8801bc0d09e8 (0xffff8801bc0d09e8)
-00000000fc4fc98c: 1ffff100371b7f05 (0x1ffff100371b7f05)
-000000008043f743: ffff8801b8dbfc7c (0xffff8801b8dbfc7c)
-000000000e9b94b5: 0000000000000074 (0x74)
-000000008e2ad657: 0000000000000000 ...
-00000000590fc29e: ffff8801b8dbf7c8 (0xffff8801b8dbf7c8)
-000000008ee1d34a: ffffffff81b2af71 (memset+0x31/0x40)
-0000000028fe5209: 1ffff100371b7f01 (0x1ffff100371b7f01)
-000000003817bebc: ffff8801b8dbf878 (0xffff8801b8dbf878)
-00000000831eba87: 0000000000000000 ...
-000000003cc7a740: 1ffff100371b7f0e (0x1ffff100371b7f0e)
-00000000a6570b5c: ffff8801bc0d0d38 (0xffff8801bc0d0d38)
-00000000574675d5: ffff8801913f32a0 (0xffff8801913f32a0)
-00000000be9dc757: ffff8801913f32a0 (0xffff8801913f32a0)
-0000000099c881d7: 0000000000000000 ...
-000000003badd55a: ffff8801b8dbf838 (0xffff8801b8dbf838)
-00000000bc1e9047: ffffffff815aaf66 (find_held_lock+0x36/0x1c0)
-000000003a42483d: 00000001b8dbf810 (0x1b8dbf810)
-00000000c58d7ba9: ffff8801b8dbf890 (0xffff8801b8dbf890)
-0000000076fcc5e2: 1ffff100371b7f0e (0x1ffff100371b7f0e)
-000000000f10515a: ffff8801b8dbf950 (0xffff8801b8dbf950)
-0000000040c0166d: ffff8801913f32a0 (0xffff8801913f32a0)
-00000000261e7be2: ffff8801bc0d04c0 (0xffff8801bc0d04c0)
-00000000d8941285: ffff8801b8dbf890 (0xffff8801b8dbf890)
-0000000034534e9d: ffff8801b8dbf978 (0xffff8801b8dbf978)
-0000000072293943: 0000000000000082 (0x82)
-000000005507b95a: 0000000041b58ab3 (0x41b58ab3)
-0000000042bf438d: ffffffff00000001 (0xffffffff00000001)
-00000000151795d3: ffff8801bc0d0d30 (0xffff8801bc0d0d30)
-000000005cf95053: 0000000000000082 (0x82)
-00000000b4ad79c5: ffffffff00000001 (0xffffffff00000001)
-00000000597a5ef5: 0000000041b58ab3 (0x41b58ab3)
-0000000098676075: ffff8801b8dbf878 (0xffff8801b8dbf878)
-00000000463f7835: ffff8801b8dbf878 (0xffff8801b8dbf878)
-000000005e6ed1db: 1ffff100371b7f15 (0x1ffff100371b7f15)
-000000003634d112: 0000000000000000 ...
-000000001498b69e: 0000000000000282 (0x282)
-00000000e7dc8634: ffff8801913f32a0 (0xffff8801913f32a0)
-0000000075a5b3fa: 1ffff100371b7f21 (0x1ffff100371b7f21)
-000000007fc7c8c5: 1ffff100371b7f1e (0x1ffff100371b7f1e)
-0000000025be8683: 0000000000000000 ...
-00000000fa53ef6a: ffff8801b8dbf968 (0xffff8801b8dbf968)
-00000000486775ae: ffff8801b040ee00 (0xffff8801b040ee00)
-000000009a1a322a: 0000000000000004 (0x4)
-000000006408b0f4: ffff8801b040ee9c (0xffff8801b040ee9c)
-00000000678dcfac: ffff8801b8dbf990 (0xffff8801b8dbf990)
-00000000d4d48f22: ffffffff81468a0f (do_group_exit+0x16f/0x430)
-0000000001d18577: 0000000041b58ab3 (0x41b58ab3)
-00000000121fe73c: ffffffff8877792c (regoff.33532+0x34e16c/0x3608f0)
-000000008fbce53c: ffffffff815ca240 (do_raw_spin_trylock+0x1b0/0x1b0)
-000000009a6bbb59: 0000000041b58ab3 (0x41b58ab3)
-000000004135a524: ffffffff88777671 (regoff.33532+0x34deb1/0x3608f0)
-00000000789c328e: ffffffff814688a0 (SyS_exit+0x30/0x30)
-00000000463ebcbc: ffff8801bc0d04c0 (0xffff8801bc0d04c0)
-00000000635f2556: ffffffff874ec857 (_raw_spin_unlock_irq+0x27/0x70)
-0000000014ac1f04: 0000000000000000 ...
-000000007c728ccf: 0000000000000009 (0x9)
-00000000f152b8b4: 0000000000000000 ...
-00000000408695b4: ffff8801b8dbf968 (0xffff8801b8dbf968)
-000000008d644073: ffffffff815b29f1 (trace_hardirqs_on_caller+0x421/0x5c0)
-00000000eaf47a6c: ffff8801913f3288 (0xffff8801913f3288)
-0000000046f3f9c0: ffff8801bc0d04c0 (0xffff8801bc0d04c0)
-000000008eb64b0a: dffffc0000000000 (0xdffffc0000000000)
-000000002f63e649: 0000000000000000 ...
-000000005c9302aa: 0000000000000009 (0x9)
-00000000764cb19b: 0000000000000000 ...
-00000000eba8ee72: ffff8801b8dbfb40 (0xffff8801b8dbfb40)
-000000008b299261: ffffffff8149c796 (get_signal+0x886/0x1960)
-00000000e958139c: 1ffff100371b7f3f (0x1ffff100371b7f3f)
-00000000dc9cb10f: ffffed00371b7f5b (0xffffed00371b7f5b)
-000000006ca0106d: ffff8801b8dbfc50 (0xffff8801b8dbfc50)
-0000000045d1af96: 0000000000000108 (0x108)
-00000000f2cfe34a: ffff8801b040ee9c (0xffff8801b040ee9c)
-0000000092d402f4: ffff8801913f3288 (0xffff8801913f3288)
-000000005eb90f46: ffff8801b040ee00 (0xffff8801b040ee00)
-0000000031fd2c76: ffffffff00000004 (0xffffffff00000004)
-00000000dfb3684a: 0000000800000000 (0x800000000)
-00000000509f0e6e: ffff8801913f2a80 (0xffff8801913f2a80)
-00000000f81de09f: ffff8801b8dbfc70 (0xffff8801b8dbfc70)
-000000006929e014: 0000000041b58ab3 (0x41b58ab3)
-0000000009224612: ffffffff8877c780 (regoff.33532+0x352fc0/0x3608f0)
-000000003c1e0566: ffffffff8149bf10 (ptrace_notify+0x130/0x130)
-000000002615c720: ffff88018beda5c0 (0xffff88018beda5c0)
-000000004540ea27: ffff880100000000 (0xffff880100000000)
-0000000070d8aecd: ffff8801db12c500 (0xffff8801db12c500)
-0000000061c0d0db: ffff88018beda5c0 (0xffff88018beda5c0)
-000000000d0b0877: ffff8801d71fe680 (0xffff8801d71fe680)
-00000000f3544f3b: ffff8801db12c518 (0xffff8801db12c518)
-000000006966aaf5: ffff8801bc0d04c0 (0xffff8801bc0d04c0)
-0000000019085cbf: ffff8801b8dbfc28 (0xffff8801b8dbfc28)
-00000000dd831e0b: ffffffff874d53cf (__schedule+0x80f/0x1e40)
-000000009295649d: ffffffff8162d2b5 (rcu_is_watching+0x85/0x140)
-0000000020ce73ca: ffff8801b8dbfab0 (0xffff8801b8dbfab0)
-00000000f0f9ceb4: 0000000041b58ab3 (0x41b58ab3)
-00000000e00c8aea: ffff8801db12c518 (0xffff8801db12c518)
-00000000731f8a08: ffff8801db12cf48 (0xffff8801db12cf48)
-0000000000cc489d: ffff8801db12cf20 (0xffff8801db12cf20)
-00000000f18b6018: 1ffff100371b7f54 (0x1ffff100371b7f54)
-00000000b4a50af6: ffff8801b8dbfbc0 (0xffff8801b8dbfbc0)
-00000000147d4980: ffff8801db12c500 (0xffff8801db12c500)
-00000000536e84e2: 0000000041b58ab3 (0x41b58ab3)
-000000009e981efd: ffffffff887909b0 (K512_4+0x4ab0/0x114d54)
-000000000c1c5bbd: ffffffff874d4bc0 (__sched_text_start+0x8/0x8)
-000000002a27f0d1: 0000000000000282 (0x282)
-0000000029959b12: dffffc0000000000 (0xdffffc0000000000)
-00000000c5ddcdc5: 0000000000000001 (0x1)
-00000000788b736c: ffff88018aa72830 (0xffff88018aa72830)
-00000000ae78983c: 0000000000000000 ...
-000000009cc90ba3: 0000000000000001 (0x1)
-000000001010771a: ffff8801b8dbfc50 (0xffff8801b8dbfc50)
-0000000022854738: ffffffff81c4116c (__fget+0x40c/0x650)
-0000000078c39455: ffff8801b8dbfba8 (0xffff8801b8dbfba8)
-0000000085ab7af6: 1ffff100371b7f69 (0x1ffff100371b7f69)
-0000000063ae366d: 0000001500004000 (0x1500004000)
-00000000027c65bc: 1ffff100371b7f76 (0x1ffff100371b7f76)
-00000000b1e6adc3: ffff8801b8dbff58 (0xffff8801b8dbff58)
-00000000b2e0b5e1: ffff8801b8dbfc50 (0xffff8801b8dbfc50)
-00000000f9e7b216: fffffbfff1162f7e (0xfffffbfff1162f7e)
-00000000da921a9f: dffffc0000000000 (0xdffffc0000000000)
-0000000038e10bb7: ffff8801b8dbfd58 (0xffff8801b8dbfd58)
-000000000936da5b: ffffffff8128bd38 (do_signal+0x98/0x2040)
-000000005b8922a2: ffffffff88777560 (regoff.33532+0x34dda0/0x3608f0)
-00000000da9d9c36: ffffffff81c40d60 (expand_files.part.8+0x9a0/0x9a0)
-00000000626de6e5: ffff880100000001 (0xffff880100000001)
-000000005d0e9eab: 0000000000000001 (0x1)
-000000003e005e37: 0000000000000082 (0x82)
-000000004add1333: ffffffff00000001 (0xffffffff00000001)
-00000000c1c1d984: 0000000000000000 ...
-0000000020db399f: ffffffff88792688 (K512_4+0x6788/0x114d54)
-00000000e6fffdad: ffffffff815b9c00 (lock_downgrade+0x8e0/0x8e0)
-000000006268b130: 1ffff100371b7f77 (0x1ffff100371b7f77)
-00000000dcd3527e: 0000000000000000 ...
-00000000e8459f26: ffff8801b7dd2700 (0xffff8801b7dd2700)
-00000000967dda6f: 0000000041b58ab3 (0x41b58ab3)
-00000000b1ae9497: ffffffff88783d38 (regoff.33532+0x35a578/0x3608f0)
-00000000eb4ea2c1: ffffffff8128bca0 (setup_sigcontext+0x7d0/0x7d0)
-000000001ef9cf79: ffff880100009ffb (0xffff880100009ffb)
-000000005028acba: ffff8801b8dbfc08 (0xffff8801b8dbfc08)
-00000000984cd29d: ffffffff81770ef3 (__sanitizer_cov_trace_switch+0x53/0x90)
-000000005a5ab374: ffff88018aa727c0 (0xffff88018aa727c0)
-0000000063be94cd: 1ffff100371b7f8a (0x1ffff100371b7f8a)
-0000000011a8c867: ffffffff8106dc90  
-(kvm_uevent_notify_change.part.29+0x440/0x440)
-000000008a23f703: ffff8801b8dbfc08 (0xffff8801b8dbfc08)
-000000006d2eae93: ffff8801bc0d04c0 (0xffff8801bc0d04c0)
-00000000525ea8cc: dffffc0000000000 (0xdffffc0000000000)
-00000000d32f6733: 1ffff100371b7f8a (0x1ffff100371b7f8a)
-0000000044219dde: fffffbfff1162f7e (0xfffffbfff1162f7e)
-000000002ff3bf80: 0000000000000008 (0x8)
-00000000785a9e74: ffff8801b8dbfd58 (0xffff8801b8dbfd58)
-0000000082ff71a5: ffffffff874d6aef (schedule+0xef/0x430)
-000000003389b1e8: 0000000000000015 (0x15)
-000000003d25dd95: dffffc0000000000 (0xdffffc0000000000)
-000000000784c0d5: 0000000000000000 ...
-000000002d505cb7: 0000000041b58ab3 (0x41b58ab3)
-0000000055415574: ffffffff88777560 (regoff.33532+0x34dda0/0x3608f0)
-00000000df53f5af: ffffffff874d6a00 (__schedule+0x1e40/0x1e40)
-000000003e0b607e: 00004000bc0d0c78 (0x4000bc0d0c78)
-000000002c704835: 0000000000000009 (0x9)
-000000000acf5646: 0000000000000000 ...
-00000000587bc2d7: ffff8801b8dbfe00 (0xffff8801b8dbfe00)
-00000000b70926b3: ffff8801b8dbfe00 (0xffff8801b8dbfe00)
-00000000a6faf9f5: ffff8801bc0d04c0 (0xffff8801bc0d04c0)
-000000002d53e40a: ffffffff81008247 (exit_to_usermode_loop+0x87/0x310)
-00000000eada6287: ffff8801b8dbfdd8 (0xffff8801b8dbfdd8)
-00000000b4853a58: fffffbfff1162f7e (0xfffffbfff1162f7e)
-00000000a7a1d1f7: 1ffff100371b7fdc (0x1ffff100371b7fdc)
-00000000609cda9f: 6f15f4b581622100 (0x6f15f4b581622100)
-00000000a7aa04f0: 0000000000000004 (0x4)
-00000000b381f8dc: dffffc0000000000 (0xdffffc0000000000)
-000000009949bdbe: ffff8801b8dbfdd8 (0xffff8801b8dbfdd8)
-0000000076e2c1cd: fffffbfff1162f7e (0xfffffbfff1162f7e)
-00000000d728b5ff: 0000000000000004 (0x4)
-00000000b0697cfa: ffff8801b8dbfe00 (0xffff8801b8dbfe00)
-00000000dbd8bc16: ffffffff8100844a (exit_to_usermode_loop+0x28a/0x310)
-00000000d4223343: 1ffff100371b7faf (0x1ffff100371b7faf)
-00000000d7d5b747: ffff8801b8dbff58 (0xffff8801b8dbff58)
-000000001797bd34: 0000000041b58ab3 (0x41b58ab3)
-0000000026cee3de: ffffffff88777671 (regoff.33532+0x34deb1/0x3608f0)
-0000000016679854: ffffffff810081c0 (syscall_slow_exit_work+0x4f0/0x4f0)
-000000007529677e: ffff8801bc0d0d30 (0xffff8801bc0d0d30)
-0000000048a0c37c: 0000000000000000 ...
-00000000fa1f6323: ffffffff81c11fa1 (ksys_ioctl+0x81/0xd0)
-00000000166576fa: ffff8801bc0d04c0 (0xffff8801bc0d04c0)
-00000000d4f18d59: ffffffff810099c7 (do_syscall_64+0xb7/0x9d0)
-00000000e0ae2922: 1ffff100371b7fc8 (0x1ffff100371b7fc8)
-0000000083076cc6: ffff8801b8dbff20 (0xffff8801b8dbff20)
-00000000b609124b: ffff8801bc0d04c0 (0xffff8801bc0d04c0)
-00000000e1e2e78d: 0000000000000082 (0x82)
-0000000061468c23: ffff8801b8dbff58 (0xffff8801b8dbff58)
-00000000fcde0261: ffff8801bc0d04c0 (0xffff8801bc0d04c0)
-0000000047086be0: 1ffff100371b7fc8 (0x1ffff100371b7fc8)
-000000008bca6662: 0000000000000004 (0x4)
-0000000059d72448: 1ffff100371b7fdc (0x1ffff100371b7fdc)
-00000000fe3f9113: ffff8801b8dbff48 (0xffff8801b8dbff48)
-00000000fed7acff: ffffffff8100a0a2 (do_syscall_64+0x792/0x9d0)
-0000000010461e87: ffffffff81351120 (vmalloc_sync_all+0x30/0x30)
-00000000b82a65cc: ffffffff874ec857 (_raw_spin_unlock_irq+0x27/0x70)
-0000000034e73089: ffff8801db12c500 (0xffff8801db12c500)
-0000000021c4e4de: ffff8801b8dbff28 (0xffff8801b8dbff28)
-00000000bc0ba361: ffffffff815079aa (finish_task_switch+0x1ca/0x820)
-000000008eaa95f4: 0000000000000004 (0x4)
-00000000397af006: 0000000041b58ab3 (0x41b58ab3)
-00000000e02f8576: ffffffff88777560 (regoff.33532+0x34dda0/0x3608f0)
-00000000a6497759: ffffffff81009910 (syscall_return_slowpath+0x5c0/0x5c0)
-0000000051ca64cc: ffff8801b8dbfe68 (0xffff8801b8dbfe68)
-00000000b60485a1: 0000000000000000 ...
-00000000d4b625f1: ffff8801b8dbff48 (0xffff8801b8dbff48)
-000000001fa1fa15: ffffffff8100965f (syscall_return_slowpath+0x30f/0x5c0)
-000000006aa0577a: ffff8801b8dbff58 (0xffff8801b8dbff58)
-00000000270cda2e: 0000000041b58ab3 (0x41b58ab3)
-000000007c6b8c58: ffffffff887773a1 (regoff.33532+0x34dbe1/0x3608f0)
-000000000b6c7c3f: ffff8801bc0d0d30 (0xffff8801bc0d0d30)
-00000000eac83096: ffff8801b8dbfea8 (0xffff8801b8dbfea8)
-0000000070bd8b29: 0000000000000004 (0x4)
-0000000086619d10: ffff8801bc0d04c0 (0xffff8801bc0d04c0)
-00000000e215a50c: ffffffff87600096  
-(entry_SYSCALL_64_after_hwframe+0x52/0xb7)
-00000000e60b84ac: 0000000000000000 ...
-0000000079af1d7e: 0000000000000082 (0x82)
-000000005e3c835f: 0000000000000000 ...
-000000000adf29d9: 0000000000000004 (0x4)
-00000000a9916fe4: 0000000000000000 ...
-000000004fb1d8ba: ffff8801b8dbff48 (0xffff8801b8dbff48)
-00000000fc1e97e3: ffffffff81005485 (trace_hardirqs_off_thunk+0x1a/0x1c)
-00000000232c0960: 0000000000000000 ...
-000000003c413a08: ffffffff87600086  
-(entry_SYSCALL_64_after_hwframe+0x42/0xb7)
-0000000091471806: 0000000000000001 (0x1)
-00000000016377ec: 00007f48e48a29c0 (0x7f48e48a29c0)
-000000004115c334: 0000000000a3e81f (0xa3e81f)
-0000000070dcff90: 0000000000000000 ...
-00000000eae9c81b: 000000000072bf80 (0x72bf80)
-00000000ca2f63d9: 000000000072bf80 (0x72bf80)
-0000000085bf4fe4: 0000000000000246 (0x246)
-00000000b76a0151: 0000000000000000 ...
-00000000183aa1ad: 000000000072bf58 (0x72bf58)
-000000000c023d36: 0000000000000000 ...
-00000000936c0186: fffffffffffffe00 (0xfffffffffffffe00)
-00000000bc1e97c1: 0000000000455259 (0x455259)
-00000000f65fe9ef: 0000000000000000 ...
-00000000a5d48b0b: 000000000072bf80 (0x72bf80)
-0000000088052e2e: 00000000000000ca (0xca)
-0000000074a1671d: 0000000000455259 (0x455259)
-000000004a4bcb5d: 0000000000000033 (0x33)
-00000000dba58251: 0000000000000246 (0x246)
-00000000c8b1c50f: 00007f48e48a1ce8 (0x7f48e48a1ce8)
-00000000ea687243: 000000000000002b (0x2b)
-
-The buggy address belongs to the page:
-page:ffffea0006e36fc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-flags: 0x2fffc0000000000()
-raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
-raw: 0000000000000000 ffffea0006e30101 0000000000000000 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801b8dbf680: f2 f2 f2 f2 f2 f2 f2 f8 f2 f2 f2 f2 f2 f2 f2 00
-  ffff8801b8dbf700: f2 f2 f2 f2 f2 f2 f2 00 f2 f2 f2 f2 f2 f2 f2 f8
-> ffff8801b8dbf780: f2 f2 f2 f2 f2 f2 f2 f8 f2 f2 f2 f2 f2 f2 f2 00
-                                         ^
-  ffff8801b8dbf800: f2 f2 f2 f2 f2 f2 f2 00 00 f2 f2 f2 f2 f2 f2 f8
-  ffff8801b8dbf880: f8 f2 f2 f3 f3 f3 f3 00 00 00 00 00 00 00 00 00
-==================================================================
+ --
+Regards
+Andrzej
 
 
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+>
+> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>
+>  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> index 23317a2269e1..6d45d62466b3 100644
+> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
+> @@ -368,6 +368,8 @@ static void rockchip_dp_unbind(struct device *dev, struct device *master,
+>  	analogix_dp_unbind(dp->adp);
+>  	rockchip_drm_psr_unregister(&dp->encoder);
+>  	dp->encoder.funcs->destroy(&dp->encoder);
+> +
+> +	dp->adp = ERR_PTR(-ENODEV);
+>  }
+>  
+>  static const struct component_ops rockchip_dp_component_ops = {
+> @@ -391,6 +393,7 @@ static int rockchip_dp_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  
+>  	dp->dev = dev;
+> +	dp->adp = ERR_PTR(-ENODEV);
+>  	dp->plat_data.panel = panel;
+>  
+>  	ret = rockchip_dp_of_probe(dp);
+> @@ -414,6 +417,9 @@ static int rockchip_dp_suspend(struct device *dev)
+>  {
+>  	struct rockchip_dp_device *dp = dev_get_drvdata(dev);
+>  
+> +	if (IS_ERR(dp->adp))
+> +		return 0;
+> +
+>  	return analogix_dp_suspend(dp->adp);
+>  }
+>  
+> @@ -421,6 +427,9 @@ static int rockchip_dp_resume(struct device *dev)
+>  {
+>  	struct rockchip_dp_device *dp = dev_get_drvdata(dev);
+>  
+> +	if (IS_ERR(dp->adp))
+> +		return 0;
+> +
+>  	return analogix_dp_resume(dp->adp);
+>  }
+>  #endif
