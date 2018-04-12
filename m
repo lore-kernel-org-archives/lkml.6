@@ -1,65 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753136AbeDLQ5E (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 12:57:04 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52737 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752802AbeDLQ5B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 12:57:01 -0400
-X-Google-Smtp-Source: AIpwx49CwEGE+2Us77Z94zRYn5KXynfxx6MT8HTt4rv3wZcHd7yUJOyOhXFLZGZPqCG+8AOg2cLMjg==
-From: Andrey Konovalov <andreyknvl@google.com>
-To: Samuel Ortiz <sameo@linux.intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Dmitry Vyukov <dvyukov@google.com>, Kostya Serebryany <kcc@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH] NFC: fix attrs checks in netlink interface
-Date: Thu, 12 Apr 2018 18:56:56 +0200
-Message-Id: <75ce3040b4086ffa2d2e088ad7f24f5e4a87be56.1523552145.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+        id S1752894AbeDLRAl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 13:00:41 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50672 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752446AbeDLRAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 13:00:39 -0400
+Date: Thu, 12 Apr 2018 13:00:38 -0400 (EDT)
+From: Bob Peterson <rpeterso@redhat.com>
+To: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: cluster-devel@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        NeilBrown <neilb@suse.com>, Thomas Graf <tgraf@suug.ch>,
+        Tom Herbert <tom@quantonium.net>
+Message-ID: <2059591212.18898416.1523552438431.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20180329120612.6104-1-agruenba@redhat.com>
+References: <20180329120612.6104-1-agruenba@redhat.com>
+Subject: Re: [Cluster-devel] [PATCH v2 0/2] gfs2: Stop using
+ rhashtable_walk_peek
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.3.116.80, 10.4.195.6]
+Thread-Topic: gfs2: Stop using rhashtable_walk_peek
+Thread-Index: s6Q4xPpE6clD196Go+Y/DeDzy/M1pg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-nfc_genl_deactivate_target() relies on the NFC_ATTR_TARGET_INDEX
-attribute being present, but doesn't check whether it is actually
-provided by the user. Same goes for nfc_genl_fw_download() and
-NFC_ATTR_FIRMWARE_NAME.
+----- Original Message -----
+> Here's a second version of the patch (now a patch set) to eliminate
+> rhashtable_walk_peek in gfs2.
+> 
+> The first patch introduces lockref_put_not_zero, the inverse of
+> lockref_get_not_zero.
+> 
+> The second patch eliminates rhashtable_walk_peek in gfs2.  In
+> gfs2_glock_iter_next, the new lockref function from patch one is used to
+> drop a lockref count as long as the count doesn't drop to zero.  This is
+> almost always the case; if there is a risk of dropping the last
+> reference, we must defer that to a work queue because dropping the last
+> reference may sleep.
+> 
+> Thanks,
+> Andreas
+> 
+> Andreas Gruenbacher (2):
+>   lockref: Add lockref_put_not_zero
+>   gfs2: Stop using rhashtable_walk_peek
+> 
+>  fs/gfs2/glock.c         | 47 ++++++++++++++++++++++++++++-------------------
+>  include/linux/lockref.h |  1 +
+>  lib/lockref.c           | 28 ++++++++++++++++++++++++++++
+>  3 files changed, 57 insertions(+), 19 deletions(-)
+> 
+> --
+> 2.14.3
 
-This patch adds appropriate checks.
+Hi,
 
-Found with syzkaller.
+Thanks. These two patches are now pushed to the for-next branch of the linux-gfs2 tree:
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- net/nfc/netlink.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+https://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git/commit/?h=for-next&id=450b1f6f56350c630e795f240dc5a77aa8aa2419
+https://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git/commit/?h=for-next&id=3fd5d3ad35dc44aaf0f28d60cc0eb75887bff54d
 
-diff --git a/net/nfc/netlink.c b/net/nfc/netlink.c
-index f018eafc2a0d..58adfb0c90f6 100644
---- a/net/nfc/netlink.c
-+++ b/net/nfc/netlink.c
-@@ -936,7 +936,8 @@ static int nfc_genl_deactivate_target(struct sk_buff *skb,
- 	u32 device_idx, target_idx;
- 	int rc;
- 
--	if (!info->attrs[NFC_ATTR_DEVICE_INDEX])
-+	if (!info->attrs[NFC_ATTR_DEVICE_INDEX] ||
-+	    !info->attrs[NFC_ATTR_TARGET_INDEX])
- 		return -EINVAL;
- 
- 	device_idx = nla_get_u32(info->attrs[NFC_ATTR_DEVICE_INDEX]);
-@@ -1245,7 +1246,8 @@ static int nfc_genl_fw_download(struct sk_buff *skb, struct genl_info *info)
- 	u32 idx;
- 	char firmware_name[NFC_FIRMWARE_NAME_MAXSIZE + 1];
- 
--	if (!info->attrs[NFC_ATTR_DEVICE_INDEX])
-+	if (!info->attrs[NFC_ATTR_DEVICE_INDEX] ||
-+	    !info->attrs[NFC_ATTR_FIRMWARE_NAME])
- 		return -EINVAL;
- 
- 	idx = nla_get_u32(info->attrs[NFC_ATTR_DEVICE_INDEX]);
--- 
-2.17.0.484.g0c8726318c-goog
+Regards,
+
+Bob Peterson
+Red Hat File Systems
