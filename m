@@ -1,74 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753301AbeDLVFe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 17:05:34 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59576 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751946AbeDLVFa (ORCPT
+        id S1753331AbeDLVJn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 17:09:43 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55098 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751803AbeDLVJl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 17:05:30 -0400
-Date: Thu, 12 Apr 2018 14:06:27 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH 0/2] tools/memory-model: Model 'smp_store_mb()'
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1523535770-10781-1-git-send-email-andrea.parri@amarulasolutions.com>
+        Thu, 12 Apr 2018 17:09:41 -0400
+Date: Thu, 12 Apr 2018 23:09:39 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Dan Williams <dcbw@redhat.com>
+Cc: Woody Suwalski <terraluna977@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        Netdev list <netdev@vger.kernel.org>
+Subject: Re: linux-next on x60: network manager often complains "network is
+ disabled" after resume
+Message-ID: <20180412210939.GA28527@amd>
+References: <20180318104023.GA10392@amd>
+ <70721f83-344a-0f23-223b-9c81f6e9e32a@gmail.com>
+ <20180319092106.GA5683@amd>
+ <1521474008.20208.2.camel@redhat.com>
+ <20180319173356.GA28462@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
 Content-Disposition: inline
-In-Reply-To: <1523535770-10781-1-git-send-email-andrea.parri@amarulasolutions.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18041221-0044-0000-0000-0000040300A4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008844; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000256; SDB=6.01016983; UDB=6.00518660; IPR=6.00796220;
- MB=3.00020544; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-12 21:05:26
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041221-0045-0000-0000-00000835009A
-Message-Id: <20180412210627.GF3948@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-12_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804120200
+In-Reply-To: <20180319173356.GA28462@amd>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 02:22:48PM +0200, Andrea Parri wrote:
-> Hi,
-> 
-> This (tiny) series adds 'smp_store_mb()' to the model (patch 1/2), and
-> it fixes a stylistic discrepancy in 'linux-kernel.def (patch 2/2).
 
-I applied them both, thank you!
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I had to apply 2/2 by hand for reasons that are not at all clear to
-me.  Please check to make sure I got it right.
+On Mon 2018-03-19 18:33:56, Pavel Machek wrote:
+> On Mon 2018-03-19 10:40:08, Dan Williams wrote:
+> > On Mon, 2018-03-19 at 10:21 +0100, Pavel Machek wrote:
+> > > On Mon 2018-03-19 05:17:45, Woody Suwalski wrote:
+> > > > Pavel Machek wrote:
+> > > > > Hi!
+> > > > >=20
+> > > > > With recent linux-next, after resume networkmanager often claims
+> > > > > that
+> > > > > "network is disabled". Sometimes suspend/resume clears that.
+> > > > >=20
+> > > > > Any ideas? Does it work for you?
+> > > > > 								=09
+> > > > > Pavel
+> > > >=20
+> > > > Tried the 4.16-rc6 with nm 1.4.4 - I do not see the issue.
+> > >=20
+> > > Thanks for testing... but yes, 4.16 should be ok. If not fixed,
+> > > problem will appear in 4.17-rc1.
+> >=20
+> > Where does the complaint occur?  In the GUI, or with nmcli, or
+> > somewhere else?  Also, what's the output of "nmcli dev" after resume?
+>=20
+> In the GUI. I click in place where I'd select access point, and menu
+> does not show up, telling me that "network is disabled".
 
-							Thanx, Paul
+Ouch and the bug now crept to mainline.. and it happens on X220,
+too. With ethernet, bug is harder to see, because "network is
+disabled" and "no network" icon is there, but ethernet still works.
 
-> Cheers,
->   Andrea
-> 
-> Andrea Parri (2):
->   tools/memory-model: Model 'smp_store_mb()'
->   tools/memory-model: Fix coding style in 'linux-kernel.def'
-> 
->  tools/memory-model/linux-kernel.def | 29 +++++++++++++++--------------
->  1 file changed, 15 insertions(+), 14 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--vkogqOf2sHV7VnPd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrPyxMACgkQMOfwapXb+vIIzwCbBgJld8U7RPMs/ag034iGh1OK
+N8YAoLryE+/ujTW2usV0GwuRl76bbHIb
+=NbZH
+-----END PGP SIGNATURE-----
+
+--vkogqOf2sHV7VnPd--
