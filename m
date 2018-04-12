@@ -1,55 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752401AbeDLFiL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 01:38:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51138 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751737AbeDLFiJ (ORCPT
+        id S1752368AbeDLFsV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 01:48:21 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56094 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751771AbeDLFsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 01:38:09 -0400
-Date: Wed, 11 Apr 2018 22:38:07 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: David Howells <dhowells@redhat.com>
-Cc: torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 02/20] afs: Fix checker warnings
-Message-ID: <20180412053807.GA32532@infradead.org>
-References: <152296016916.31027.8912809030401942390.stgit@warthog.procyon.org.uk>
- <152296018223.31027.12652988859947053572.stgit@warthog.procyon.org.uk>
+        Thu, 12 Apr 2018 01:48:19 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152296018223.31027.12652988859947053572.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Thu, 12 Apr 2018 13:48:18 +0800
+From: cang@codeaurora.org
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: subhashj@codeaurora.org, asutoshd@codeaurora.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] scsi: ufs: add 2 lane support
+In-Reply-To: <2af3023d-caaf-4b62-e2ba-fc3cb56b331c@codeaurora.org>
+References: <20180302082346.8188-1-cang@codeaurora.org>
+ <2af3023d-caaf-4b62-e2ba-fc3cb56b331c@codeaurora.org>
+Message-ID: <37eafb7dad5926029b5d9993c6749c2d@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 09:29:42PM +0100, David Howells wrote:
-> Fix warnings raised by checker, including:
+On 2018-04-02 18:00, Vivek Gautam wrote:
+> Hi Can,
 > 
->  (*) Warnings raised by unequal comparison for the purposes of sorting,
->      where the endianness doesn't matter:
 > 
-> fs/afs/addr_list.c:246:21: warning: restricted __be16 degrades to integer
-> fs/afs/addr_list.c:246:30: warning: restricted __be16 degrades to integer
-> fs/afs/addr_list.c:248:21: warning: restricted __be32 degrades to integer
-> fs/afs/addr_list.c:248:49: warning: restricted __be32 degrades to integer
-> fs/afs/addr_list.c:283:21: warning: restricted __be16 degrades to integer
-> fs/afs/addr_list.c:283:30: warning: restricted __be16 degrades to integer
+> On 3/2/2018 1:48 PM, Can Guo wrote:
+>> From: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+>> 
+>> Qcom ufs controller v3.1.0 supports 2 lanes, add support
+>> to configure 2 lanes during phy initialization.
+>> 
+>> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
+>> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>> ---
+>>   drivers/scsi/ufs/ufs-qcom.c | 20 +++++++++-----------
+>>   1 file changed, 9 insertions(+), 11 deletions(-)
+>> 
+>> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+>> index 2b38db2..51889ad 100644
+>> --- a/drivers/scsi/ufs/ufs-qcom.c
+>> +++ b/drivers/scsi/ufs/ufs-qcom.c
+>> @@ -113,10 +113,10 @@ static void ufs_qcom_disable_lane_clks(struct 
+>> ufs_qcom_host *host)
+>>   	if (!host->is_lane_clks_enabled)
+>>   		return;
+>>   -	if (host->hba->lanes_per_direction > 1)
+>> +	if (host->tx_l1_sync_clk)
+>>   		clk_disable_unprepare(host->tx_l1_sync_clk);
+>>   	clk_disable_unprepare(host->tx_l0_sync_clk);
+>> -	if (host->hba->lanes_per_direction > 1)
+>> +	if (host->rx_l1_sync_clk)
+>>   		clk_disable_unprepare(host->rx_l1_sync_clk);
+>>   	clk_disable_unprepare(host->rx_l0_sync_clk);
+>>   @@ -147,18 +147,15 @@ static int ufs_qcom_enable_lane_clks(struct 
+>> ufs_qcom_host *host)
+>>   		if (err)
+>>   			goto disable_tx_l0;
+>>   -		err = ufs_qcom_host_clk_enable(dev, "tx_lane1_sync_clk",
+>> -			host->tx_l1_sync_clk);
+>> -		if (err)
+>> -			goto disable_rx_l1;
+>> +		/* The tx lane1 clk could be muxed, hence keep this optional */
+> 
+> You need a similar change for "rx_l1_sync_clk" also.
+> And also get rid of 'lanes_per_direction' flag as well for
+> ufs_qcom_enable_lane_clks()
+> and ufs_qcom_init_lane_clks() too, as you are doing in
+> ufs_qcom_disable_lane_clks().
+> 
 
-Seriously - just do the endian swap.  In most case it it free anyway
-becaue you have load instructions that can byte swap.  Bonus points
-for doing the swap on the element iterated over.
+Sure, got it.
 
-__force hacks without a very good reason (and an explanation for the
-reason in the code!) are an instance reason to NAK.
+Thanks
+Can
 
->  (*) afs_find_server() casts __be16/__be32 values to int in order to
->      directly compare them for the purpose of finding a match in a list,
->      but is should also annotate the cast with __force to avoid checker
->      warnings.
+>> +		if (host->tx_l1_sync_clk)
+>> +			ufs_qcom_host_clk_enable(dev, "tx_lane1_sync_clk",
+>> +						 host->tx_l1_sync_clk);
+>>   	}
+>>     	host->is_lane_clks_enabled = true;
+>>   	goto out;
+>>   -disable_rx_l1:
+>> -	if (host->hba->lanes_per_direction > 1)
+>> -		clk_disable_unprepare(host->rx_l1_sync_clk);
+>>   disable_tx_l0:
+>>   	clk_disable_unprepare(host->tx_l0_sync_clk);
+>>   disable_rx_l0:
+>> @@ -189,8 +186,9 @@ static int ufs_qcom_init_lane_clks(struct 
+>> ufs_qcom_host *host)
+>>   		if (err)
+>>   			goto out;
+>>   -		err = ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
+>> -			&host->tx_l1_sync_clk);
+>> +		/* The tx lane1 clk could be muxed, hence keep this optional */
+>> +		ufs_qcom_host_clk_get(dev, "tx_lane1_sync_clk",
+>> +					&host->tx_l1_sync_clk);
+> 
+> same here.
+> 
+> Best regards
+> Vivek
+> 
 
-Same as above.
+Shall do as well.
+
+Thanks
+Can
+
+>>   	}
+>>   out:
+>>   	return err;
