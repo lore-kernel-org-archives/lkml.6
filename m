@@ -1,135 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752700AbeDLLgh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 07:36:37 -0400
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:43123 "EHLO
-        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751918AbeDLLgf (ORCPT
+        id S1752386AbeDLLrn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 07:47:43 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53708 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751889AbeDLLrl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 07:36:35 -0400
-X-Google-Smtp-Source: AIpwx4/m9/H+Ynly609hDSAoUEBVPE37oHVRpltSgPY3MAjM+d9fJaNhrYndNOswInAdg3zGdoXrxs3BDMI+iXVCMSs=
-MIME-Version: 1.0
-In-Reply-To: <CAMz4ku+i+zA0_5U65vc3h3tO-hzWvtCOFDeFU94h3Rm6sJUuKQ@mail.gmail.com>
-References: <abdda9da96185f764d58bbf61db9010d0f72d1b3.1523346135.git.baolin.wang@linaro.org>
- <0c2b76aba6a49e583f920ae582d6815fa9cc4361.1523346135.git.baolin.wang@linaro.org>
- <20180411093634.GC6014@localhost> <CAMz4kuJyKNNuR9WGP8F1NKAET6ZTtN4LtXTTtdnR3Zyxa+OjNw@mail.gmail.com>
- <20180412093735.GF6014@localhost> <CAMz4ku+i+zA0_5U65vc3h3tO-hzWvtCOFDeFU94h3Rm6sJUuKQ@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Thu, 12 Apr 2018 19:36:34 +0800
-Message-ID: <CAMz4ku+EUtk2phRGkxkW6YwUvBLb-O7tmMoucvVEQZbL9EY8Zg@mail.gmail.com>
-Subject: Re: [PATCH 4/5] dmaengine: sprd: Add Spreadtrum DMA configuration
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        Eric Long <eric.long@spreadtrum.com>, Mark Brown <broonie@kernel.org>,
-        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 12 Apr 2018 07:47:41 -0400
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] perf record: Remove unnecessary warning for missing sysfs entry
+Date: Thu, 12 Apr 2018 13:47:23 +0200
+X-Mailer: git-send-email 2.13.5
+X-TM-AS-GCONF: 00
+x-cbid: 18041211-0012-0000-0000-000005CA0686
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041211-0013-0000-0000-000019463C62
+Message-Id: <20180412114723.48550-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-12_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804120120
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 April 2018 at 19:30, Baolin Wang <baolin.wang@linaro.org> wrote:
-> Hi Vinod,
->
-> On 12 April 2018 at 17:37, Vinod Koul <vinod.koul@intel.com> wrote:
->> On Wed, Apr 11, 2018 at 08:13:28PM +0800, Baolin Wang wrote:
->>> Hi Vinod,
->>>
->>> On 11 April 2018 at 17:36, Vinod Koul <vinod.koul@intel.com> wrote:
->>> > On Tue, Apr 10, 2018 at 03:46:06PM +0800, Baolin Wang wrote:
->>> >
->>> >> +/*
->>> >> + * struct sprd_dma_config - DMA configuration structure
->>> >> + * @config: dma slave channel config
->>> >> + * @fragment_len: specify one fragment transfer length
->>> >> + * @block_len: specify one block transfer length
->>> >> + * @transcation_len: specify one transcation transfer length
->>> >> + * @wrap_ptr: wrap pointer address, once the transfer address reaches the
->>> >> + * 'wrap_ptr', the next transfer address will jump to the 'wrap_to' address.
->>> >> + * @wrap_to: wrap jump to address
->>> >> + * @req_mode: specify the DMA request mode
->>> >> + * @int_mode: specify the DMA interrupt type
->>> >> + */
->>> >> +struct sprd_dma_config {
->>> >> +     struct dma_slave_config config;
->>> >> +     u32 fragment_len;
->>> >
->>> > why not use _maxburst?
->>>
->>> Yes, I can use maxburst.
->>>
->>> >
->>> >> +     u32 block_len;
->>> >> +     u32 transcation_len;
->>> >
->>> > what does block and transaction len refer to here
->>>
->>>  Our DMA has 3 transfer mode: transaction transfer, block transfer and
->>> fragment transfer. One transaction transfer can contain several blocks
->>> transfer, and each block can be set proper block step. One block can
->>> contain several fragments transfer with proper fragment step. It can
->>> generate interrupts when one transaction transfer or block transfer or
->>> fragment transfer is completed if user set the interrupt type. So here
->>> we should set the length for transaction transfer, block transfer and
->>> fragment transfer.
->>
->> what are the max size these types support?
->
-> These types max size definition:
->
-> #define SPRD_DMA_FRG_LEN_MASK GENMASK(16, 0)
->
-> #define SPRD_DMA_BLK_LEN_MASK GENMASK(16, 0)
->
-> #define SPRD_DMA_TRSC_LEN_MASK GENMASK(27, 0)
->
->>>
->>> >
->>> >> +     phys_addr_t wrap_ptr;
->>> >> +     phys_addr_t wrap_to;
->>> >
->>> > this sound sg_list to me, why are we not using that here
->>>
->>> It is similar to sg list, but it is not one software action, we have
->>> hardware registers to help to jump one specified address.
->>>
->>> >
->>> >> +     enum sprd_dma_req_mode req_mode;
->>> >
->>> > Looking at definition of request mode we have frag, block, transaction list
->>> > etc.. That should depend upon dma request. If you have been asked to
->>> > transfer a list, you shall configure list mode. if it is a single
->>> > transaction then it should be transaction mode!
->>>
->>> If I understand your points correctly, you mean we can specify the
->>> request mode when requesting one slave channel by
->>> 'dma_request_slave_channel()'. But we need change the request mode
->>> dynamically following different transfer task for this channel, so I
->>> am afraid we can not specify the request mode of this channel at
->>> requesting time.
->>
->> Nope a channel has nothing to do with request type. You request and grab a
->> channel. Then you prepare a descriptor for a dma transaction. Based on
->> transaction requested you should intelligently break it down and create a
->> descriptor which uses transaction/block/fragment so that DMA throughput is
->> efficient. If prepare has sg list then you should use link list mode.
->> Further if you support max length, say 16KB and request is for 20KB you may
->> break it down for link list with two segments.
->
-> OK. So I can add one more cell to specify the request mode for this channel.
->
-> dmas = <&apdma 11 SPRD_DMA_BLK_REQ>
->
->>
->> Each prep call has flags associated, that can help you configure interrupt
->> behaviour.
+Using perf on 4.16.0 kernel on s390 shows warning
+   failed: can't open node sysfs data
+each time I run command perf record ... for example:
 
-After more thinking, I think this will be not useful for users, since
-users need configure one DMA channel through different 3 places,
-specify the request mode in dts, specify the interrupt type through
-prep call flags, and other configuration need to be configured through
-'struct sprd_dma_config'. That is not one good design for users. What
-do you think? Thanks.
+[root@s35lp76 perf]# ./perf record -e rB0000 -- sleep 1
+[ perf record: Woken up 1 times to write data ]
+failed: can't open node sysfs data
+[ perf record: Captured and wrote 0.001 MB perf.data (4 samples) ]
+[root@s35lp76 perf]#
 
+BTW: I find this error message not very informative.
+
+It turns out commit e2091cedd51bf ("perf tools: Add MEM_TOPOLOGY
+feature to perf data file") tries to open directory named
+/sys/devices/system/node/ which does not exist on s390.
+
+This is the call stack:
+ __cmd_record
+ +---> perf_session__write_header
+       +---> perf_header__adds_write
+             +---> do_write_feat
+	           +---> write_mem_topology
+		         +---> build_mem_topology
+			       prints warning
+The issue starts in do_write_feat() which unconditionally
+loops over all features and now includes HEADER_MEM_TOPOLOGY and calls
+write_mem_topology().
+Function record__init_features() at the beginning of __cmd_record()
+sets all features and then turns off some.
+
+Fix this by removed the warning, if the directory is not present
+memory node information is not available and won't be displayed.
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+---
+ tools/perf/util/header.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 121df1683c36..4a3bfc900a68 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -1320,7 +1320,6 @@ static int build_mem_topology(struct memory_node *nodes, u64 size, u64 *cntp)
+ 
+ 	dir = opendir(path);
+ 	if (!dir) {
+-		pr_warning("failed: can't open node sysfs data\n");
+ 		return -1;
+ 	}
+ 
 -- 
-Baolin.wang
-Best Regards
+2.14.3
