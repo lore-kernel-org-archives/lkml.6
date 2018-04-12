@@ -1,22 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752652AbeDLDy5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 23:54:57 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:16689 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752468AbeDLDyx (ORCPT
+        id S1752824AbeDLDzS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 23:55:18 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:32700 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752745AbeDLDzP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 23:54:53 -0400
+        Wed, 11 Apr 2018 23:55:15 -0400
 From: Keerthy <j-keerthy@ti.com>
 To: <linus.walleij@linaro.org>, <grygorii.strashko@ti.com>,
         <tony@atomide.com>
 CC: <j-keerthy@ti.com>, <t-kristo@ti.com>, <Russ.Dill@ti.com>,
         <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <ssantosh@kernel.org>, <haojian.zhuang@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <d-gerlach@ti.com>
-Subject: [PATCH 02/14] ARM: OMAP2: Add functions to save and restore clockdomain context en-masse.
-Date: Thu, 12 Apr 2018 09:23:47 +0530
-Message-ID: <1523505239-16229-3-git-send-email-j-keerthy@ti.com>
+        <linux-arm-kernel@lists.infradead.org>, <d-gerlach@ti.com>,
+        Russ Dill <russ.dill@ti.com>
+Subject: [PATCH 06/14] ARM: AM33XX: Add functions to save/restore am33xx control registers.
+Date: Thu, 12 Apr 2018 09:23:51 +0530
+Message-ID: <1523505239-16229-7-git-send-email-j-keerthy@ti.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1523505239-16229-1-git-send-email-j-keerthy@ti.com>
 References: <1523505239-16229-1-git-send-email-j-keerthy@ti.com>
@@ -27,253 +28,185 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russ Dill <Russ.Dill@ti.com>
+From: Russ Dill <russ.dill@ti.com>
 
-This is used to support suspend modes like RTC-only and hibernate where
-the state of the registers controlling clockdomains is lost.
+These registers are part of the wkup domain and are lost during RTC only
+suspend and also hibernation, so storing/restoring their state is
+necessary.
 
-Signed-off-by: Russ Dill <Russ.Dill@ti.com>
-Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+Signed-off-by: Russ Dill <russ.dill@ti.com>
 Signed-off-by: Keerthy <j-keerthy@ti.com>
 ---
- arch/arm/mach-omap2/clockdomain.c | 46 +++++++++++++++++++++++++++++++++
- arch/arm/mach-omap2/clockdomain.h |  8 ++++++
- arch/arm/mach-omap2/cm33xx.c      | 53 +++++++++++++++++++++++++++++++++++++++
- arch/arm/mach-omap2/cminst44xx.c  | 43 +++++++++++++++++++++++++++++++
- 4 files changed, 150 insertions(+)
+ arch/arm/mach-omap2/control.c | 84 +++++++++++++++++++++++++++++++++++++++++++
+ arch/arm/mach-omap2/control.h | 52 +++++++++++++++++++++++++++
+ 2 files changed, 136 insertions(+)
 
-diff --git a/arch/arm/mach-omap2/clockdomain.c b/arch/arm/mach-omap2/clockdomain.c
-index b79b1ca..0906380 100644
---- a/arch/arm/mach-omap2/clockdomain.c
-+++ b/arch/arm/mach-omap2/clockdomain.c
-@@ -1307,3 +1307,49 @@ int clkdm_hwmod_disable(struct clockdomain *clkdm, struct omap_hwmod *oh)
- 	return 0;
+diff --git a/arch/arm/mach-omap2/control.c b/arch/arm/mach-omap2/control.c
+index 180da403..d92aa9a 100644
+--- a/arch/arm/mach-omap2/control.c
++++ b/arch/arm/mach-omap2/control.c
+@@ -619,8 +619,92 @@ void __init omap3_ctrl_init(void)
+ 
+ 	omap3_ctrl_setup_d2d_padconf();
  }
++
+ #endif /* CONFIG_ARCH_OMAP3 && CONFIG_PM */
  
++#if defined(CONFIG_SOC_AM33XX) && defined(CONFIG_PM)
++static unsigned long am33xx_control_reg_offsets[] = {
++	AM33XX_CONTROL_SYSCONFIG_OFFSET,
++	AM33XX_CONTROL_STATUS_OFFSET,
++	AM33XX_CONTROL_CORTEX_VBBLDO_CTRL_OFFSET,
++	AM33XX_CONTROL_CORE_SLDO_CTRL_OFFSET,
++	AM33XX_CONTROL_MPU_SLDO_CTRL_OFFSET,
++	AM33XX_CONTROL_CLK32KDIVRATIO_CTRL_OFFSET,
++	AM33XX_CONTROL_BANDGAP_CTRL_OFFSET,
++	AM33XX_CONTROL_BANDGAP_TRIM_OFFSET,
++	AM33XX_CONTROL_PLL_CLKINPULOW_CTRL_OFFSET,
++	AM33XX_CONTROL_MOSC_CTRL_OFFSET,
++	AM33XX_CONTROL_RCOSC_CTRL_OFFSET,
++	AM33XX_CONTROL_DEEPSLEEP_CTRL_OFFSET,
++	AM33XX_CONTROL_INIT_PRIORITY_0_OFFSET,
++	AM33XX_CONTROL_INIT_PRIORITY_1_OFFSET,
++	AM33XX_CONTROL_MMU_CFG_OFFSET,
++	AM33XX_CONTROL_TPTC_CFG_OFFSET,
++	AM33XX_CONTROL_USB_CTRL0_OFFSET,
++	AM33XX_CONTROL_USB_CTRL1_OFFSET,
++	AM33XX_CONTROL_USB_WKUP_CTRL_OFFSET,
++	AM33XX_CONTROL_MREQPRIO_0_OFFSET,
++	AM33XX_CONTROL_MREQPRIO_1_OFFSET,
++	AM33XX_CONTROL_HW_EVENT_SEL_GRP1_OFFSET,
++	AM33XX_CONTROL_HW_EVENT_SEL_GRP2_OFFSET,
++	AM33XX_CONTROL_HW_EVENT_SEL_GRP3_OFFSET,
++	AM33XX_CONTROL_HW_EVENT_SEL_GRP4_OFFSET,
++	AM33XX_CONTROL_SMRT_CTRL_OFFSET,
++	AM33XX_CONTROL_MPUSS_HW_DEBUG_SEL_OFFSET,
++	AM33XX_CONTROL_VREF_CTRL_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_0_3_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_4_7_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_8_11_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_12_15_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_16_19_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_20_23_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_24_27_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_28_31_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_32_35_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_36_39_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_40_43_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_44_47_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_48_51_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_52_55_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_56_59_OFFSET,
++	AM33XX_CONTROL_TPCC_EVT_MUX_60_63_OFFSET,
++	AM33XX_CONTROL_TIMER_EVT_CAPT_OFFSET,
++	AM33XX_CONTROL_ECAP_EVT_CAPT_OFFSET,
++	AM33XX_CONTROL_ADC_EVT_CAPT_OFFSET,
++	AM33XX_CONTROL_RESET_ISO_OFFSET,
++};
++
++static u32 am33xx_control_vals[ARRAY_SIZE(am33xx_control_reg_offsets)];
++
 +/**
-+ * _clkdm_save_context - save the context for the control of this clkdm
++ * am33xx_control_save_context - Save the wakeup domain registers
 + *
-+ * Due to a suspend or hibernation operation, the state of the registers
-+ * controlling this clkdm will be lost, save their context.
++ * Save the wkup domain registers
 + */
-+static int _clkdm_save_context(struct clockdomain *clkdm, void *ununsed)
++void am33xx_control_save_context(void)
 +{
-+	if (!arch_clkdm || !arch_clkdm->clkdm_save_context)
-+		return -EINVAL;
++	int i;
 +
-+	return arch_clkdm->clkdm_save_context(clkdm);
-+}
-+
-+/**
-+ * _clkdm_restore_context - restore context for control of this clkdm
-+ *
-+ * Restore the register values for this clockdomain.
-+ */
-+static int _clkdm_restore_context(struct clockdomain *clkdm, void *ununsed)
-+{
-+	if (!arch_clkdm || !arch_clkdm->clkdm_restore_context)
-+		return -EINVAL;
-+
-+	return arch_clkdm->clkdm_restore_context(clkdm);
-+}
-+
-+/**
-+ * clkdm_save_context - Saves the context for each registered clkdm
-+ *
-+ * Save the context for each registered clockdomain.
-+ */
-+void clkdm_save_context(void)
-+{
-+	clkdm_for_each(_clkdm_save_context, NULL);
-+}
-+
-+/**
-+ * clkdm_restore_context - Restores the context for each registered clkdm
-+ *
-+ * Restore the context for each registered clockdomain.
-+ */
-+void clkdm_restore_context(void)
-+{
-+	clkdm_for_each(_clkdm_restore_context, NULL);
-+}
-diff --git a/arch/arm/mach-omap2/clockdomain.h b/arch/arm/mach-omap2/clockdomain.h
-index 24667a5..c7d0953 100644
---- a/arch/arm/mach-omap2/clockdomain.h
-+++ b/arch/arm/mach-omap2/clockdomain.h
-@@ -141,6 +141,7 @@ struct clockdomain {
- 	int usecount;
- 	int forcewake_count;
- 	struct list_head node;
-+	u32 context;
- };
- 
- /**
-@@ -159,6 +160,8 @@ struct clockdomain {
-  * @clkdm_deny_idle: Disable hw supervised idle transitions for clock domain
-  * @clkdm_clk_enable: Put the clkdm in right state for a clock enable
-  * @clkdm_clk_disable: Put the clkdm in right state for a clock disable
-+ * @clkdm_save_context: Save the current clkdm context
-+ * @clkdm_restore_context: Restore the clkdm context
-  */
- struct clkdm_ops {
- 	int	(*clkdm_add_wkdep)(struct clockdomain *clkdm1, struct clockdomain *clkdm2);
-@@ -175,6 +178,8 @@ struct clkdm_ops {
- 	void	(*clkdm_deny_idle)(struct clockdomain *clkdm);
- 	int	(*clkdm_clk_enable)(struct clockdomain *clkdm);
- 	int	(*clkdm_clk_disable)(struct clockdomain *clkdm);
-+	int	(*clkdm_save_context)(struct clockdomain *clkdm);
-+	int	(*clkdm_restore_context)(struct clockdomain *clkdm);
- };
- 
- int clkdm_register_platform_funcs(struct clkdm_ops *co);
-@@ -214,6 +219,9 @@ int clkdm_for_each(int (*fn)(struct clockdomain *clkdm, void *user),
- int clkdm_hwmod_enable(struct clockdomain *clkdm, struct omap_hwmod *oh);
- int clkdm_hwmod_disable(struct clockdomain *clkdm, struct omap_hwmod *oh);
- 
-+void clkdm_save_context(void);
-+void clkdm_restore_context(void);
-+
- extern void __init omap242x_clockdomains_init(void);
- extern void __init omap243x_clockdomains_init(void);
- extern void __init omap3xxx_clockdomains_init(void);
-diff --git a/arch/arm/mach-omap2/cm33xx.c b/arch/arm/mach-omap2/cm33xx.c
-index 1cc0247..084d454 100644
---- a/arch/arm/mach-omap2/cm33xx.c
-+++ b/arch/arm/mach-omap2/cm33xx.c
-@@ -72,6 +72,17 @@ static inline u32 am33xx_cm_rmw_reg_bits(u32 mask, u32 bits, s16 inst, s16 idx)
- 	return v;
- }
- 
-+static inline u32 am33xx_cm_read_reg_bits(u16 inst, s16 idx, u32 mask)
-+{
-+	u32 v;
-+
-+	v = am33xx_cm_read_reg(inst, idx);
-+	v &= mask;
-+	v >>= __ffs(mask);
-+
-+	return v;
-+}
-+
- /**
-  * _clkctrl_idlest - read a CM_*_CLKCTRL register; mask & shift IDLEST bitfield
-  * @inst: CM instance register offset (*_INST macro)
-@@ -338,6 +349,46 @@ static u32 am33xx_cm_xlate_clkctrl(u8 part, u16 inst, u16 offset)
- 	return cm_base.pa + inst + offset;
- }
- 
-+/**
-+ * am33xx_clkdm_save_context - Save the clockdomain transition context
-+ * @clkdm: The clockdomain pointer whose context needs to be saved
-+ *
-+ * Save the clockdomain transition context.
-+ */
-+static int am33xx_clkdm_save_context(struct clockdomain *clkdm)
-+{
-+	clkdm->context = am33xx_cm_read_reg_bits(clkdm->cm_inst,
-+						 clkdm->clkdm_offs,
-+						 AM33XX_CLKTRCTRL_MASK);
-+
-+	return 0;
++	for (i = 0; i < ARRAY_SIZE(am33xx_control_reg_offsets); i++)
++		am33xx_control_vals[i] =
++			omap_ctrl_readl(am33xx_control_reg_offsets[i]);
 +}
 +
 +/**
-+ * am33xx_restore_save_context - Restore the clockdomain transition context
-+ * @clkdm: The clockdomain pointer whose context needs to be restored
++ * am33xx_control_restore_context - Restore the wakeup domain registers
 + *
-+ * Restore the clockdomain transition context.
++ * Restore the wkup domain registers
 + */
-+static int am33xx_clkdm_restore_context(struct clockdomain *clkdm)
++void am33xx_control_restore_context(void)
 +{
-+	switch (clkdm->context) {
-+	case OMAP34XX_CLKSTCTRL_DISABLE_AUTO:
-+		am33xx_clkdm_deny_idle(clkdm);
-+		break;
-+	case OMAP34XX_CLKSTCTRL_FORCE_SLEEP:
-+		am33xx_clkdm_sleep(clkdm);
-+		break;
-+	case OMAP34XX_CLKSTCTRL_FORCE_WAKEUP:
-+		am33xx_clkdm_wakeup(clkdm);
-+		break;
-+	case OMAP34XX_CLKSTCTRL_ENABLE_AUTO:
-+		am33xx_clkdm_allow_idle(clkdm);
-+		break;
-+	}
-+	return 0;
-+}
++	int i;
 +
- struct clkdm_ops am33xx_clkdm_operations = {
- 	.clkdm_sleep		= am33xx_clkdm_sleep,
- 	.clkdm_wakeup		= am33xx_clkdm_wakeup,
-@@ -345,6 +396,8 @@ struct clkdm_ops am33xx_clkdm_operations = {
- 	.clkdm_deny_idle	= am33xx_clkdm_deny_idle,
- 	.clkdm_clk_enable	= am33xx_clkdm_clk_enable,
- 	.clkdm_clk_disable	= am33xx_clkdm_clk_disable,
-+	.clkdm_save_context	= am33xx_clkdm_save_context,
-+	.clkdm_restore_context	= am33xx_clkdm_restore_context,
- };
- 
- static const struct cm_ll_data am33xx_cm_ll_data = {
-diff --git a/arch/arm/mach-omap2/cminst44xx.c b/arch/arm/mach-omap2/cminst44xx.c
-index 7deefee..c11ac49 100644
---- a/arch/arm/mach-omap2/cminst44xx.c
-+++ b/arch/arm/mach-omap2/cminst44xx.c
-@@ -481,6 +481,47 @@ static u32 omap4_cminst_xlate_clkctrl(u8 part, u16 inst, u16 offset)
- 	return _cm_bases[part].pa + inst + offset;
- }
- 
-+/**
-+ * omap4_clkdm_save_context - Save the clockdomain modulemode context
-+ * @clkdm: The clockdomain pointer whose context needs to be saved
-+ *
-+ * Save the clockdomain modulemode context.
-+ */
-+static int omap4_clkdm_save_context(struct clockdomain *clkdm)
-+{
-+	clkdm->context = omap4_cminst_read_inst_reg(clkdm->prcm_partition,
-+						    clkdm->cm_inst,
-+						    clkdm->clkdm_offs +
-+						    OMAP4_CM_CLKSTCTRL);
-+	clkdm->context &= OMAP4430_MODULEMODE_MASK;
-+	return 0;
++	for (i = 0; i < ARRAY_SIZE(am33xx_control_reg_offsets); i++)
++		omap_ctrl_writel(am33xx_control_vals[i],
++				 am33xx_control_reg_offsets[i]);
 +}
++#endif /* CONFIG_SOC_AM33XX && CONFIG_PM */
 +
-+/**
-+ * omap4_clkdm_restore_context - Restore the clockdomain modulemode context
-+ * @clkdm: The clockdomain pointer whose context needs to be restored
-+ *
-+ * Restore the clockdomain modulemode context.
-+ */
-+static int omap4_clkdm_restore_context(struct clockdomain *clkdm)
-+{
-+	switch (clkdm->context) {
-+	case OMAP34XX_CLKSTCTRL_DISABLE_AUTO:
-+		omap4_clkdm_deny_idle(clkdm);
-+		break;
-+	case OMAP34XX_CLKSTCTRL_FORCE_SLEEP:
-+		omap4_clkdm_sleep(clkdm);
-+		break;
-+	case OMAP34XX_CLKSTCTRL_FORCE_WAKEUP:
-+		omap4_clkdm_wakeup(clkdm);
-+		break;
-+	case OMAP34XX_CLKSTCTRL_ENABLE_AUTO:
-+		omap4_clkdm_allow_idle(clkdm);
-+		break;
-+	}
-+	return 0;
-+}
-+
- struct clkdm_ops omap4_clkdm_operations = {
- 	.clkdm_add_wkdep	= omap4_clkdm_add_wkup_sleep_dep,
- 	.clkdm_del_wkdep	= omap4_clkdm_del_wkup_sleep_dep,
-@@ -496,6 +537,8 @@ struct clkdm_ops omap4_clkdm_operations = {
- 	.clkdm_deny_idle	= omap4_clkdm_deny_idle,
- 	.clkdm_clk_enable	= omap4_clkdm_clk_enable,
- 	.clkdm_clk_disable	= omap4_clkdm_clk_disable,
-+	.clkdm_save_context	= omap4_clkdm_save_context,
-+	.clkdm_restore_context	= omap4_clkdm_restore_context,
- };
+ struct control_init_data {
+ 	int index;
+ 	void __iomem *mem;
+diff --git a/arch/arm/mach-omap2/control.h b/arch/arm/mach-omap2/control.h
+index ec406bc..4c50199 100644
+--- a/arch/arm/mach-omap2/control.h
++++ b/arch/arm/mach-omap2/control.h
+@@ -409,6 +409,56 @@
+ #define AM33XX_DEV_FEATURE		0x604
+ #define AM33XX_SGX_MASK			BIT(29)
  
- struct clkdm_ops am43xx_clkdm_operations = {
++/* Additional AM33XX CONTROL registers */
++#define AM33XX_CONTROL_SYSCONFIG_OFFSET			0x0010
++#define AM33XX_CONTROL_STATUS_OFFSET			0x0040
++#define AM33XX_CONTROL_CORTEX_VBBLDO_CTRL_OFFSET	0x041c
++#define AM33XX_CONTROL_CORE_SLDO_CTRL_OFFSET		0x0428
++#define AM33XX_CONTROL_MPU_SLDO_CTRL_OFFSET		0x042c
++#define AM33XX_CONTROL_CLK32KDIVRATIO_CTRL_OFFSET	0x0444
++#define AM33XX_CONTROL_BANDGAP_CTRL_OFFSET		0x0448
++#define AM33XX_CONTROL_BANDGAP_TRIM_OFFSET		0x044c
++#define AM33XX_CONTROL_PLL_CLKINPULOW_CTRL_OFFSET	0x0458
++#define AM33XX_CONTROL_MOSC_CTRL_OFFSET			0x0468
++#define AM33XX_CONTROL_RCOSC_CTRL_OFFSET		0x046c
++#define AM33XX_CONTROL_DEEPSLEEP_CTRL_OFFSET		0x0470
++#define AM33XX_CONTROL_INIT_PRIORITY_0_OFFSET		0x0608
++#define AM33XX_CONTROL_INIT_PRIORITY_1_OFFSET		0x060c
++#define AM33XX_CONTROL_MMU_CFG_OFFSET			0x0610
++#define AM33XX_CONTROL_TPTC_CFG_OFFSET			0x0614
++#define AM33XX_CONTROL_USB_CTRL0_OFFSET			0x0620
++#define AM33XX_CONTROL_USB_CTRL1_OFFSET			0x0628
++#define AM33XX_CONTROL_USB_WKUP_CTRL_OFFSET		0x0648
++#define AM33XX_CONTROL_MREQPRIO_0_OFFSET		0x0670
++#define AM33XX_CONTROL_MREQPRIO_1_OFFSET		0x0674
++#define AM33XX_CONTROL_HW_EVENT_SEL_GRP1_OFFSET		0x0690
++#define AM33XX_CONTROL_HW_EVENT_SEL_GRP2_OFFSET		0x0694
++#define AM33XX_CONTROL_HW_EVENT_SEL_GRP3_OFFSET		0x0698
++#define AM33XX_CONTROL_HW_EVENT_SEL_GRP4_OFFSET		0x069c
++#define AM33XX_CONTROL_SMRT_CTRL_OFFSET			0x06a0
++#define AM33XX_CONTROL_MPUSS_HW_DEBUG_SEL_OFFSET	0x06a4
++#define AM33XX_CONTROL_VREF_CTRL_OFFSET			0x0e14
++#define AM33XX_CONTROL_TPCC_EVT_MUX_0_3_OFFSET		0x0f90
++#define AM33XX_CONTROL_TPCC_EVT_MUX_4_7_OFFSET		0x0f94
++#define AM33XX_CONTROL_TPCC_EVT_MUX_8_11_OFFSET		0x0f98
++#define AM33XX_CONTROL_TPCC_EVT_MUX_12_15_OFFSET	0x0f9c
++#define AM33XX_CONTROL_TPCC_EVT_MUX_16_19_OFFSET	0x0fa0
++#define AM33XX_CONTROL_TPCC_EVT_MUX_20_23_OFFSET	0x0fa4
++#define AM33XX_CONTROL_TPCC_EVT_MUX_24_27_OFFSET	0x0fa8
++#define AM33XX_CONTROL_TPCC_EVT_MUX_28_31_OFFSET	0x0fac
++#define AM33XX_CONTROL_TPCC_EVT_MUX_32_35_OFFSET	0x0fb0
++#define AM33XX_CONTROL_TPCC_EVT_MUX_36_39_OFFSET	0x0fb4
++#define AM33XX_CONTROL_TPCC_EVT_MUX_40_43_OFFSET	0x0fb8
++#define AM33XX_CONTROL_TPCC_EVT_MUX_44_47_OFFSET	0x0fbc
++#define AM33XX_CONTROL_TPCC_EVT_MUX_48_51_OFFSET	0x0fc0
++#define AM33XX_CONTROL_TPCC_EVT_MUX_52_55_OFFSET	0x0fc4
++#define AM33XX_CONTROL_TPCC_EVT_MUX_56_59_OFFSET	0x0fc8
++#define AM33XX_CONTROL_TPCC_EVT_MUX_60_63_OFFSET	0x0fcc
++#define AM33XX_CONTROL_TIMER_EVT_CAPT_OFFSET		0x0fd0
++#define AM33XX_CONTROL_ECAP_EVT_CAPT_OFFSET		0x0fd4
++#define AM33XX_CONTROL_ADC_EVT_CAPT_OFFSET		0x0fd8
++#define AM33XX_CONTROL_RESET_ISO_OFFSET			0x1000
++
+ /* CONTROL OMAP STATUS register to identify OMAP3 features */
+ #define OMAP3_CONTROL_OMAP_STATUS	0x044c
+ 
+@@ -467,6 +517,8 @@
+ int omap2_control_base_init(void);
+ int omap_control_init(void);
+ void omap2_set_globals_control(void __iomem *ctrl);
++extern void am33xx_control_save_context(void);
++extern void am33xx_control_restore_context(void);
+ void __init omap3_control_legacy_iomap_init(void);
+ #else
+ #define omap_ctrl_readb(x)		0
 -- 
 1.9.1
