@@ -1,96 +1,197 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752878AbeDLOT7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 10:19:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34478 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752383AbeDLOT5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 10:19:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9934B2183D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-X-Google-Smtp-Source: AIpwx4+h9wujbVXeXltg9Um/PSfEquDBoIdk+1HI2/8UbIc3L8GqV6oSayAQf3HE0Swjb8p3fgQaTlWywVgWKp2uRtg=
-MIME-Version: 1.0
-In-Reply-To: <20180412082313.GA6054@kroah.com>
-References: <20180411195436.GA7126@kroah.com> <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
- <152346403637.4030.15247096217928429102.stgit@warthog.procyon.org.uk>
- <12769.1523477356@warthog.procyon.org.uk> <20180411203308.GA10167@kroah.com>
- <CALCETrWynogzZcaKMLWKce1rMvAC_sViReBDyiEWL-rm21HvAg@mail.gmail.com> <20180412082313.GA6054@kroah.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Thu, 12 Apr 2018 07:19:35 -0700
-X-Gmail-Original-Message-ID: <CALCETrVm8c0dN=kymg=5-TQEWbL_zk9yCr4Bv4PKJXNC=6j=Fw@mail.gmail.com>
-Message-ID: <CALCETrVm8c0dN=kymg=5-TQEWbL_zk9yCr4Bv4PKJXNC=6j=Fw@mail.gmail.com>
-Subject: Re: [PATCH 24/24] debugfs: Restrict debugfs when the kernel is locked down
-To: Greg KH <greg@kroah.com>
-Cc: Andy Lutomirski <luto@kernel.org>, David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        James Morris <jmorris@namei.org>, LKML <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1753124AbeDLOUj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 10:20:39 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:47377 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752798AbeDLOUe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 10:20:34 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2 02/13] y2038: alpha: remove unneeded ipc uapi header files
+Date: Thu, 12 Apr 2018 16:20:13 +0200
+Message-Id: <20180412142024.853892-3-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180412142024.853892-1-arnd@arndb.de>
+References: <20180412142024.853892-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:Hl7tuAx/AzVq9PLhiEaxrZmCy8o74FaTUlnckfhHF7ebjhJEojd
+ EFgaqdt2vXYuNlRlG/BVEnDo1q6BWY7MEvs/HRsnUd6Bgg/cyq9UVQqhlqc56mL4rE5zyed
+ JlLcDS7n0mRswcI3OIZusr1dRy/SlTS2tt48GlAWt96+jF1ss1dRIkMziZlwgTTsqonsyyc
+ WA7QvpHNfpQbUH6jDbSYA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ZtFPCYH0eMQ=:qKG4BA6SmHU3iNXUfr8e6s
+ bIOeMS+bo4WmqiJ/M/W+denl9Dj6yAMvmAkJusGUVqeQaujWU5yTN1UrZdaqW6MRzONey9NL7
+ kGmpYzXD+u2mfHzq8UldDWfPnuAabnQvK8aJvSt5erX2Yjf/SNk8nP0/ltp0dvaEI2SreMTr5
+ jK1xCq+oGa5gdWCMsXJxyJ6/HAHALT+XY4J9D1nazhy3vhIUj+N5nPaNcr5fEG/id2+xR6jFM
+ CcEFhy/DPHfnfzwIjbmi8CZoM3fd+dqEwEn6OUYtixQBNfMJ+M5R4vxUQVm+ygXZRuBL1t+Nh
+ DdEBjyz+4BkuMsAYKVcz1p/2lJYXN+7SWtLnL5RxkOqZUTq87bKREJ7TxxuVHIOf6cIk1H97U
+ sdzb+MAdp2lStJHBVoZcp1krlJPeQ9onHCck0yNj7iFY3TpFma5bOEdMLYQgLp/j24S1H8x+R
+ TT2SSoZNGTP9rrSX9G1bHxzPsQ+O0s5rWe0h10UBVr1/IeAFbIrRd+eMRX8P2/xjZLf3FA4F/
+ qtsB98eX+MWoM/6jPJpYZ+uuDKWh0iBVThXd8Y1MqWvgxenYBeKHZpSplpTgFgosqmL3mQy8J
+ GYtWsJuPD7lRIJ6e8F6H8mOx+01fTUVOJl2V6ZWb08lXDhlLHmhiCuyutrr9ae9guAS3N2Ii5
+ hSIeDWU/cnNlWE548vPiw0YX1abqIIZ5+TOAzV3DcGUK2r6NoVdKXzx6T8djv6Y0sxEq8xfX7
+ 0dP65U6GnU5dLk9eqOtzY5S1sTdH+5EUJ1E1/g==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 1:23 AM, Greg KH <greg@kroah.com> wrote:
-> On Wed, Apr 11, 2018 at 07:54:12PM -0700, Andy Lutomirski wrote:
->> On Wed, Apr 11, 2018 at 1:33 PM, Greg KH <greg@kroah.com> wrote:
->> > On Wed, Apr 11, 2018 at 09:09:16PM +0100, David Howells wrote:
->> >> Greg KH <greg@kroah.com> wrote:
->> >>
->> >> > Why not just disable debugfs entirely?  This half-hearted way to sorta
->> >> > lock it down is odd, it is meant to not be there at all, nothing in your
->> >> > normal system should ever depend on it.
->> >> >
->> >> > So again just don't allow it to be mounted at all, much simpler and more
->> >> > obvious as to what is going on.
->> >>
->> >> Yeah, I agree - and then I got complaints because it seems that it's been
->> >> abused to allow drivers and userspace components to communicate.
->> >
->> > With in-kernel code?  Please let me know and I'll go fix it up to not
->> > allow that, as that is not ok.
->> >
->> > I do know of some bad examples of out-of-tree code abusing debugfs to do
->> > crazy things (battery level monitoring?), but that's their own fault...
->> >
->> > debugfs is for DEBUGGING!  For anything you all feel should be "secure",
->> > then just disable it entirely.
->> >
->>
->> Debugfs is very, very useful for, ahem, debugging.  I really think
->> this is an example of why we should split lockdown into the read and
->> write varieties and allow mounting and reading debugfs when only write
->> is locked down.
->
-> Ok, but be sure that there are no "secrets" in those debugging files if
-> you really buy into the whole "lock down" mess...
->
-> Really, it's easier to just disable the whole thing.
->
+The alpha ipcbuf/msgbuf/sembuf/shmbuf header files are all identical
+to the version from asm-generic.
 
-I mostly agree with your sentiment.  I'm saying that, for most uses, I
-*don't* buy into the idea that a normal secure-boot-supporting distro
-should block debugfs.  I sometimes like to ask people who report
-problems to send me the contents of such-and-such file in debugfs, and
-I think it should keep working.  Blocking write access to debugfs is
-mostly sensible for a lockdown system, but blocking read only makes
-sense if you're worried about straight-up bugs or if you think that
-debugfs contains protection-worthy secrets.
+This patch removes the files and replaces them with 'generic-y'
+statements as part of the y2038 series. Since there is no 32-bit
+syscall support for alpha, we don't need the other changes, but
+it's good to have clean this up anyway.
 
-What I want to see is:
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/alpha/include/asm/Kbuild        |  4 ++++
+ arch/alpha/include/uapi/asm/ipcbuf.h |  2 --
+ arch/alpha/include/uapi/asm/msgbuf.h | 28 --------------------------
+ arch/alpha/include/uapi/asm/sembuf.h | 23 ---------------------
+ arch/alpha/include/uapi/asm/shmbuf.h | 39 ------------------------------------
+ 5 files changed, 4 insertions(+), 92 deletions(-)
+ delete mode 100644 arch/alpha/include/uapi/asm/ipcbuf.h
+ delete mode 100644 arch/alpha/include/uapi/asm/msgbuf.h
+ delete mode 100644 arch/alpha/include/uapi/asm/sembuf.h
+ delete mode 100644 arch/alpha/include/uapi/asm/shmbuf.h
 
-lockdown=protect_integrity: debugfs is read-only, bpf and perf are
-unrestricted, iopl and ioperm are disabled, etc.
-
-lockdown=protect_integrity_and_secrecy: debugfs is gone, bpf and perf
-are restricted, plus all the restrictions from
-lockdown=protect_integrity
-
-Distros should strongly prefer lockdown=protect_integrity (or
-lockdown=off) by default.  lockdown=protect_integrity_and_secrecy is
-for custom setups, embedded applications, etc.
-
-
---Andy
+diff --git a/arch/alpha/include/asm/Kbuild b/arch/alpha/include/asm/Kbuild
+index 0580cb8c84b2..b011d981cac4 100644
+--- a/arch/alpha/include/asm/Kbuild
++++ b/arch/alpha/include/asm/Kbuild
+@@ -5,11 +5,15 @@ generic-y += compat.h
+ generic-y += exec.h
+ generic-y += export.h
+ generic-y += fb.h
++generic-y += ipcbuf.h
+ generic-y += irq_work.h
+ generic-y += mcs_spinlock.h
+ generic-y += mm-arch-hooks.h
++generic-y += msgbuf.h
+ generic-y += preempt.h
+ generic-y += sections.h
++generic-y += sembuf.h
++generic-y += shmbuf.h
+ generic-y += trace_clock.h
+ generic-y += current.h
+ generic-y += kprobes.h
+diff --git a/arch/alpha/include/uapi/asm/ipcbuf.h b/arch/alpha/include/uapi/asm/ipcbuf.h
+deleted file mode 100644
+index 90d6445a14df..000000000000
+--- a/arch/alpha/include/uapi/asm/ipcbuf.h
++++ /dev/null
+@@ -1,2 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-#include <asm-generic/ipcbuf.h>
+diff --git a/arch/alpha/include/uapi/asm/msgbuf.h b/arch/alpha/include/uapi/asm/msgbuf.h
+deleted file mode 100644
+index 8c5d4d8c1b16..000000000000
+--- a/arch/alpha/include/uapi/asm/msgbuf.h
++++ /dev/null
+@@ -1,28 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-#ifndef _ALPHA_MSGBUF_H
+-#define _ALPHA_MSGBUF_H
+-
+-/* 
+- * The msqid64_ds structure for alpha architecture.
+- * Note extra padding because this structure is passed back and forth
+- * between kernel and user space.
+- *
+- * Pad space is left for:
+- * - 2 miscellaneous 64-bit values
+- */
+-
+-struct msqid64_ds {
+-	struct ipc64_perm msg_perm;
+-	__kernel_time_t msg_stime;	/* last msgsnd time */
+-	__kernel_time_t msg_rtime;	/* last msgrcv time */
+-	__kernel_time_t msg_ctime;	/* last change time */
+-	unsigned long  msg_cbytes;	/* current number of bytes on queue */
+-	unsigned long  msg_qnum;	/* number of messages in queue */
+-	unsigned long  msg_qbytes;	/* max number of bytes on queue */
+-	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
+-	__kernel_pid_t msg_lrpid;	/* last receive pid */
+-	unsigned long  __unused1;
+-	unsigned long  __unused2;
+-};
+-
+-#endif /* _ALPHA_MSGBUF_H */
+diff --git a/arch/alpha/include/uapi/asm/sembuf.h b/arch/alpha/include/uapi/asm/sembuf.h
+deleted file mode 100644
+index f28ffa668b2f..000000000000
+--- a/arch/alpha/include/uapi/asm/sembuf.h
++++ /dev/null
+@@ -1,23 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-#ifndef _ALPHA_SEMBUF_H
+-#define _ALPHA_SEMBUF_H
+-
+-/* 
+- * The semid64_ds structure for alpha architecture.
+- * Note extra padding because this structure is passed back and forth
+- * between kernel and user space.
+- *
+- * Pad space is left for:
+- * - 2 miscellaneous 64-bit values
+- */
+-
+-struct semid64_ds {
+-	struct ipc64_perm sem_perm;		/* permissions .. see ipc.h */
+-	__kernel_time_t	sem_otime;		/* last semop time */
+-	__kernel_time_t	sem_ctime;		/* last change time */
+-	unsigned long	sem_nsems;		/* no. of semaphores in array */
+-	unsigned long	__unused1;
+-	unsigned long	__unused2;
+-};
+-
+-#endif /* _ALPHA_SEMBUF_H */
+diff --git a/arch/alpha/include/uapi/asm/shmbuf.h b/arch/alpha/include/uapi/asm/shmbuf.h
+deleted file mode 100644
+index 7e041ca2eb40..000000000000
+--- a/arch/alpha/include/uapi/asm/shmbuf.h
++++ /dev/null
+@@ -1,39 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-#ifndef _ALPHA_SHMBUF_H
+-#define _ALPHA_SHMBUF_H
+-
+-/* 
+- * The shmid64_ds structure for alpha architecture.
+- * Note extra padding because this structure is passed back and forth
+- * between kernel and user space.
+- *
+- * Pad space is left for:
+- * - 2 miscellaneous 64-bit values
+- */
+-
+-struct shmid64_ds {
+-	struct ipc64_perm	shm_perm;	/* operation perms */
+-	size_t			shm_segsz;	/* size of segment (bytes) */
+-	__kernel_time_t		shm_atime;	/* last attach time */
+-	__kernel_time_t		shm_dtime;	/* last detach time */
+-	__kernel_time_t		shm_ctime;	/* last change time */
+-	__kernel_pid_t		shm_cpid;	/* pid of creator */
+-	__kernel_pid_t		shm_lpid;	/* pid of last operator */
+-	unsigned long		shm_nattch;	/* no. of current attaches */
+-	unsigned long		__unused1;
+-	unsigned long		__unused2;
+-};
+-
+-struct shminfo64 {
+-	unsigned long	shmmax;
+-	unsigned long	shmmin;
+-	unsigned long	shmmni;
+-	unsigned long	shmseg;
+-	unsigned long	shmall;
+-	unsigned long	__unused1;
+-	unsigned long	__unused2;
+-	unsigned long	__unused3;
+-	unsigned long	__unused4;
+-};
+-
+-#endif /* _ALPHA_SHMBUF_H */
+-- 
+2.9.0
