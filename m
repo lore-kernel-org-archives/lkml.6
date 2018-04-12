@@ -1,68 +1,83 @@
-Return-Path: <kernel-hardening-return-13012-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx49qhS/AZzrHrHZEQ6cUVOrK5In7rIgu1Zd1YWkIbNuS2kNdOUFhimC7EkSbbm8cAtoXMrE+
-ARC-Seal: i=1; a=rsa-sha256; t=1523893897; cv=none;
+Return-Path: <kernel-hardening-return-12980-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4/UNBbnrNT6uwuoZ/qeDd4fLMjFHOw7Dl4NEb4XDhnMaTDtiS5n43pqXYsx89yS4Q9B3SG1
+ARC-Seal: i=1; a=rsa-sha256; t=1523500030; cv=none;
         d=google.com; s=arc-20160816;
-        b=OWUGjvZ3XGYn9synKKcBCt3o3Y36PpEi5I+pam2+k//kRa2FL6HQiJArSNxb0s+nCS
-         aksoVL2DeBzO1BwSfDiBkuexwsglvFvUxknoF18zZJNx6lEHuvrF1Hycrj94mn3dwTtO
-         edAy3mNWOSzBNvoYqC0UUyKdxOZMNU/fU6aSmir9KHzoEglvTF/w+FLCrCG0NQ4enZ7w
-         ZCEe2eFfSd/UpMjeL5lmUy5aont8nmXyBy0YwIUJ/LSVZ0qEMe9GfLGLEQuIzDyxRhJq
-         vmdNcIgApTj/8MUilKXz0kedBttkmbvYdqa4RRc89e9ADWgoqTIBBtgq/cUpBFQ4lH9H
-         C9vw==
+        b=mUHBieH9DZKCiIN4jcyxfzcaWQukvHWnz7eIVt4eA6LAD2jbgWAmAW71FO5fwPA1Ww
+         /bgNUtD63dw4qFNrdY7QnWdMw5zVfgfWuggzYjkCVXhtrsLz6z1SWjEC3X7rfm435hCS
+         FYI/lqQJTGHxe5iyNpqc84MEN5/DiEsQ3wIy8J90OXy63tW2ONJLHcJg2N9RcHQRhvKc
+         PM5Kd50fhFcFJQhV8a7vSFrio5gzEUKPz00wLVg2TgPJ/wrJIgSX2fq3pAlBsTtpv3pK
+         /8heghpqGP7Ms3QITOcPpSj/ef8RVFuw7irQLs5wpSKVWXReGRbvVkPUwTlp/OzQ/+Ht
+         BU4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:delivered-to:delivered-to
-         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
-         :precedence:mailing-list:arc-authentication-results;
-        bh=PWzZkj/oNBm1c9UJVXV8BFp2gDjRhaYW6znQZzfoGkM=;
-        b=NKLakDEKrb5VGUqNOpz0s0nxqIQxDv1lsmV8NfMbwVpd+2OT2gi83kiFsazMppAkjC
-         6cIizam7tSp1HQ/7Db4nRuhu6cOT0Q7Zwy0RNPKv57XDIRngTYubNo4+U+q+imzAHIVe
-         UEoDMEcifyOQE9Y6m4EU7DIQ1zeEnIGi+B6OkCCZUenoNFvOCWfPniA3rwOsNdJZRxoB
-         OwxhNmBXtiEPMO2sR++QyaiuKwuDSxtpF/zbLP+zOxs3WQd/1UxjAVfI71sbIo+aWI7I
-         hSoIRi12ly35jjWNGU4uovtn1scy6yAB25q83tWbGJl+4Jg4qdzYpHtckepzKJSPWljg
-         ItoA==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dmarc-filter:dkim-signature:dkim-signature:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=7HS/b2AuMk/Ghh5gPoPBWgVs16UxmWBdOYEzCnLSxIw=;
+        b=nlp7/+ko9the21afYALhOznWJBVd0USikiOozyChQLUg22fMtcVlSejsQPahow+7qG
+         ztNoyLhIpIJ6wRQhReCMvw7L8uiDFWD9SajyjPRhVOJ6a/JrWAaDMTgUISD1Adg4gy+S
+         AluXMDjwQBfjhHNY0cbu+hZgD0IgM3WQn8MEc9G39nETEzqGW8KzQ6uhCSixnOx3XU57
+         QVBEyrh11G3Elzh+aDSwzdOMUy0bzjK3nQpqqHd8qKH70pjSg8nv4iDfFcj95w5hP4hg
+         JO3TTtbTbs2qjTyZntmqZ09SXezr2s1ORSB54+EF30BlgY8yYMw08tWuIT6oMVDqjwMx
+         ZZ5Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13012-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13012-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=YLpCQ3Lz;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=cbn655Dh;
+       spf=pass (google.com: domain of kernel-hardening-return-12980-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12980-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13012-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13012-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=YLpCQ3Lz;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=cbn655Dh;
+       spf=pass (google.com: domain of kernel-hardening-return-12980-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12980-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,459,1517904000";
-   d="scan'208";a="46573816"
-Date: Mon, 16 Apr 2018 21:06:34 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Laura Abbott <labbott@redhat.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-	Kees Cook <keescook@chromium.org>,
-	Sinan Kaya <okaya@codeaurora.org>
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F275F60274
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 Subject: Re: [PATCHv2] dmaengine: dmatest: Remove use of VLAs
-Message-ID: <20180416153634.GR6014@localhost>
+To: Laura Abbott <labbott@redhat.com>, Vinod Koul <vinod.koul@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-hardening@lists.openwall.com, Kees Cook <keescook@chromium.org>
 References: <20180411010216.17702-1-labbott@redhat.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <70092ca4-1b42-d438-83d5-068a22618baf@codeaurora.org>
+Date: Wed, 11 Apr 2018 22:26:45 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20180411010216.17702-1-labbott@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597409665574809172?=
-X-GMAIL-MSGID: =?utf-8?q?1597918567468638337?=
+X-GMAIL-MSGID: =?utf-8?q?1597505567761120061?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 10, 2018 at 06:02:16PM -0700, Laura Abbott wrote:
+On 4/10/2018 9:02 PM, Laura Abbott wrote:
 > There's an ongoing effort to remove VLAs from the kernel
 > (https://lkml.org/lkml/2018/3/7/621) to eventually turn on -Wvla.
 > The test already pre-allocates some buffers with kmalloc so turn
 > the two VLAs in to pre-allocated kmalloc buffers.
+> 
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+> v2: Switch to using kmalloc buffers instead of putting a large array on
+> the stack.
+> ---
+>  drivers/dma/dmatest.c | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
+> 
 
-Applied, thanks
+Reviewed-by: Sinan Kaya <okaya@codeaurora.org>
+
 
 -- 
-~Vinod
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
