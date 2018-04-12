@@ -1,67 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753242AbeDLSXr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 14:23:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39810 "EHLO mail.kernel.org"
+        id S1753081AbeDLS2t (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 14:28:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752763AbeDLSXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 14:23:45 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 963D0217A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v1 2/2] kexec: Remove "weak" from arch_kexec_walk_mem()
- declaration
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Eric Biederman <ebiederm@xmission.com>
-Cc: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Dave Young <dyoung@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Thu, 12 Apr 2018 13:23:43 -0500
-Message-ID: <152355742351.36693.10357998251441779301.stgit@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <152355706051.36693.9856090891621551967.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152355706051.36693.9856090891621551967.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: StGit/0.18
+        id S1752763AbeDLS2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 14:28:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 321CD21771
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 12 Apr 2018 14:28:45 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Konstantin Ryabitsev <mricon@kernel.org>
+Subject: Re: [PATCH 0/5] [GIT PULL] tracing: A few last minute clean up and
+ fixes
+Message-ID: <20180412142845.6b97b223@gandalf.local.home>
+In-Reply-To: <CA+55aFzPhRdZSX2wMiiact8RpnYMHy48RK+Ng7n_Ek_vpYy3fg@mail.gmail.com>
+References: <20180412015359.244491749@goodmis.org>
+        <CA+55aFxHPAzO-U+Q2RVjpAd4T6oM_Puor5qRC8pPYOdohO2L_w@mail.gmail.com>
+        <CA+55aFzPhRdZSX2wMiiact8RpnYMHy48RK+Ng7n_Ek_vpYy3fg@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Thu, 12 Apr 2018 10:58:21 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Weak header file declarations are error-prone because they make every
-definition weak, and the linker chooses one based on link order (see
-10629d711ed7 ("PCI: Remove __weak annotation from pcibios_get_phb_of_node
-decl")).
+> On Thu, Apr 12, 2018 at 10:53 AM, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > That doesn't exist, and makes no sense. Did you mean tracing, not ktest?  
+> 
+> Oh, it's more f'ed up than that. That "ktest-v4.17-2" tag does exist -
+> in the tracing tree.
+> 
+> So the tag is mis-named, but in the right tree, and then your pull
+> request points at the wrong tree.
+> 
+> Do you want to fix that all up, or should I just pull from that messed-up thing?
+> 
 
-kernel/kexec_file.c contains a weak definition of arch_kexec_walk_mem() and
-arch/powerpc/kernel/machine_kexec_file_64.c contains a definition intended
-to be non-weak.  But the annotation in the header file makes *both*
-definitions weak, so it's unclear which one will be used.
+Grumble, no don't pull it. Let me fix it.
 
-Remove the "weak" attribute from the declaration so we always prefer a
-non-weak definition over the weak one.
+That's what I get when I up-arrow commands. I'll retag it and make sure
+it's fine, and send you another pull request.
 
-Fixes: 60fe3910bb02 ("kexec_file: Allow arch-specific memory walking for kexec_add_buffer")
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-CC: stable@vger.kernel.org      # v4.10+
----
- include/linux/kexec.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Oh, and I just received my nitrokey and I'm playing with it. One thing
+I found is that it doesn't like keys sized 3072 (gives me a bad key
+error), which is my current subkey. So I created a new subkey:
 
-diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-index 8bf0ff90885c..e7db550c5fb6 100644
---- a/include/linux/kexec.h
-+++ b/include/linux/kexec.h
-@@ -159,8 +159,8 @@ struct kexec_buf {
- 	bool top_down;
- };
- 
--int __weak arch_kexec_walk_mem(struct kexec_buf *kbuf,
--			       int (*func)(struct resource *, void *));
-+int arch_kexec_walk_mem(struct kexec_buf *kbuf,
-+			int (*func)(struct resource *, void *));
- extern int kexec_add_buffer(struct kexec_buf *kbuf);
- int kexec_locate_mem_hole(struct kexec_buf *kbuf);
- #endif /* CONFIG_KEXEC_FILE */
+Primary key fingerprint: 5ED9 A48F C54C 0A22 D1D0  804C EBC2 6CDB 5A56 DE73
+     Subkey fingerprint: B5D7 BDD5 67E0 67A3 EE0C  9FBE 3F0B D661 FC59 E3D3
+
+That is 4096. I pushed it to the key servers about a half hour ago,
+hopefully, it has made its way around, as I'm going to start using it.
+
+-- Steve
