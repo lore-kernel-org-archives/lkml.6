@@ -1,74 +1,159 @@
-Date: Wed, 11 Apr 2018 12:04:15 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: "Zhang, Ning A" <ning.a.zhang@intel.com>
-Cc: "pombredanne@nexb.com" <pombredanne@nexb.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-Path: <ning.a.zhang@intel.com>
+X-Google-Smtp-Source: AIpwx4/zW7vXRumQ+jDxBaSxo2QKB9HqxFdgtH3VligtsXANDSKjtUoHo++JwNvu7sDrCCLYFb5e
+ARC-Seal: i=1; a=rsa-sha256; t=1523497570; cv=none;
+        d=google.com; s=arc-20160816;
+        b=U8LgtWhglmG8KBsYM7ONpdFNlS7ezLinsW3xw78icZr5akSmqKU5GRTFGYqv8kJwVS
+         Wuo+73QamwQca25xTtfB2r5sHqg1wqee+raWMAPPNcgzNiyRO2sEadLVtAucIP7d/vQL
+         kDQXLrU7yupSfz7FgREbfHcopAfgnrWaq3Yit1eCHYEWTqeborqRnL6rnqsfHwXOCcXI
+         YQSv3LKpHn/k0iznh9YS7WLkfXXkcdZZ3xw34M2sqoJ7eaxv81uuauKXze3wS+MTWPrd
+         qpRoyfh9Sd2YfYV7GY0qEkUz0jxMRA99yh3oZg8de24QjxFl9JTxXHXCazyO1W6h19ki
+         57Og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:arc-authentication-results;
+        bh=1nnnno3oUu/xx8t4PbZnv+3am7y1IEPWwD6UngiPNOk=;
+        b=BmQRJq4kQV8QoeSKmV4rdxQARj/Ok3drWt0D9AFpmNv2zYTo58yg3mUzp4/4ScnhpI
+         vKPvz10AomGZHFDR8xTXPrlyykzt6Puq2xPtAB+3bD7ECoIHDZar/bn4musKAypvm7u2
+         aksQau5DE6oacKYkfHugMLnw65HuqEWjxECoE8vx/gEF4ZCFB+fgqJCaI3I9UyfUFPk0
+         xAJBaWBW61FeGfx99uN79MG9fFsTNkILWyXGuRiCdJG8HPM8UHE1twPK0XVh7ZFIBCiu
+         oM44cmKkkYz2MRh/kO6kArDyDKjByzcSUnyPusYBk7rl6QQtjGokwPjG0wslWr3G4Mve
+         0wuA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of ning.a.zhang@intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=ning.a.zhang@intel.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of ning.a.zhang@intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=ning.a.zhang@intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,439,1517904000";
+   d="scan'208,217";a="32034032"
+From: "Zhang, Ning A" <ning.a.zhang@intel.com>
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC: "pombredanne@nexb.com" <pombredanne@nexb.com>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kstewart@linuxfoundation.org"
+	<kstewart@linuxfoundation.org>
 Subject: Re: 3 version of MKDEV: kernel, uapi, libc, why?
-Message-ID: <20180411100415.GA26356@kroah.com>
+Thread-Topic: 3 version of MKDEV: kernel, uapi, libc, why?
+Thread-Index: AQHT0XI4sEeugig6tUuuIe0XAMHC36P6z+SAgAEHGgA=
+Date: Thu, 12 Apr 2018 01:45:57 +0000
+Message-ID: <1523497556.1414.14.camel@intel.com>
 References: <1523436662.1414.12.camel@intel.com>
+	 <20180411100415.GA26356@kroah.com>
+In-Reply-To: <20180411100415.GA26356@kroah.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.239.16.113]
+Content-Type: multipart/alternative;
+	boundary="_000_1523497556141414camelintelcom_"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1523436662.1414.12.camel@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597439126464031035?=
+X-GMAIL-MSGID: =?utf-8?q?1597502987778220401?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Apr 11, 2018 at 08:51:03AM +0000, Zhang, Ning A wrote:
-> Hi, Greg, Thomas
-> 
-> I find 3 version of MKDEV (actually 2 + makedev)
-> 
-> in include/linux/kdev_t.h
-> 
->     #define MINORBITS    	    20
->     #define MKDEV(ma,mi)    	    (((ma) << MINORBITS) | (mi))
-> 
-> in inlcude/uapi/linux/kdev_t.h
-> 
->     #define MKDEV(ma,mi)    	    ((ma)<<8 | (mi))
+--_000_1523497556141414camelintelcom_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-Isn't history grand :)
-Those are different because we increased the size way back in the 2.5
-kernel (I think), so we had to do so in a way that did not break
-userspace.
+VGhhbmsgeW91IGZvciB0aGUgYW5zd2Vycy4NCg0K5ZyoIDIwMTgtMDQtMTHkuInnmoQgMTI6MDQg
+KzAyMDDvvIxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZ+WGmemBk++8mg0KDQpPbiBXZWQsIEFw
+ciAxMSwgMjAxOCBhdCAwODo1MTowM0FNICswMDAwLCBaaGFuZywgTmluZyBBIHdyb3RlOg0KDQoN
+CkhpLCBHcmVnLCBUaG9tYXMNCg0KSSBmaW5kIDMgdmVyc2lvbiBvZiBNS0RFViAoYWN0dWFsbHkg
+MiArIG1ha2VkZXYpDQoNCmluIGluY2x1ZGUvbGludXgva2Rldl90LmgNCg0KICAgICNkZWZpbmUg
+TUlOT1JCSVRTICAgICAgICAgICAgICAgMjANCiAgICAjZGVmaW5lIE1LREVWKG1hLG1pKSAgICAg
+ICAgICAgICgoKG1hKSA8PCBNSU5PUkJJVFMpIHwgKG1pKSkNCg0KaW4gaW5sY3VkZS91YXBpL2xp
+bnV4L2tkZXZfdC5oDQoNCiAgICAjZGVmaW5lIE1LREVWKG1hLG1pKSAgICAgICAgICAgICgobWEp
+PDw4IHwgKG1pKSkNCg0KDQoNCklzbid0IGhpc3RvcnkgZ3JhbmQgOikNClRob3NlIGFyZSBkaWZm
+ZXJlbnQgYmVjYXVzZSB3ZSBpbmNyZWFzZWQgdGhlIHNpemUgd2F5IGJhY2sgaW4gdGhlIDIuNQ0K
+a2VybmVsIChJIHRoaW5rKSwgc28gd2UgaGFkIHRvIGRvIHNvIGluIGEgd2F5IHRoYXQgZGlkIG5v
+dCBicmVhaw0KdXNlcnNwYWNlLg0KDQoNCnNvIHR3byB2ZXJzaW9ucyBvZiBNS0RFViB3aWxsIGJl
+IGtlcHQgaW4gc291cmNlIGNvZGU/DQoNCg0KDQoNCg0KaW4gQW5kcm9pZCBiaW9uaWMNCg0KICAg
+ICNkZWZpbmUgbWFrZWRldihfX21ham9yLCBfX21pbm9yKSBcDQogICAgICAoIFwNCiAgICAgICAg
+KCgoX19tYWpvcikgJiAweGZmZmZmMDAwVUxMKSA8PCAzMikgfCAoKChfX21ham9yKSAmIDB4ZmZm
+VUxMKSA8PA0KICAgIDgpIHwgXA0KICAgICAgICAoKChfX21pbm9yKSAmIDB4ZmZmZmZmMDBVTEwp
+IDw8IDEyKSB8ICgoKF9fbWlub3IpICYgMHhmZlVMTCkpIFwNCiAgICAgICkNCg0KDQoNCkZ1biBz
+dHVmZiA6KQ0KDQoNCg0KaWYgSSB1c2UgbWtub2QoInJlbmRlckQxMjgiLCBTX0lGQ0hSfDA2NjYs
+IE1LREVWKDIyNiwgMTI4KSk7DQpJIGdldCB3cm9uZyBkZXZpY2U6DQpjcnctcnctcnctIDEgcm9v
+dCBncmFwaGljcyAwLCA1Nzk4NCAyMDExLTExLTExIDExOjIwIHJlbmRlckQxMjgNCg0KDQppZiBJ
+IHVzZSAoInJlbmRlckQxMjgiLFNfSUZDSFJ8MDY2NiwgbWFrZWRldigyMjYsIDEyOCkpOw0KSSBn
+ZXQgcmlnaHQgZGV2aWNlLg0KDQpidXQsIHdoZW4gSSB1c2U6IG1rbm9kKCJjYXJkMCIsIFNfSUZD
+SFJ8MDY2NiwgTUtERVYoMjI2LCAwKSk7DQpJIGNhbiBnZXQgcmlnaHQgZGV2aWNlLg0KDQoNCg0K
+V2h5IGFyZSB5b3UgY2FsbGluZyAnbWtub2QnIGF0IGFsbD8gIFRoZSBrZXJuZWwgZG9lcyB0aGlz
+IGF1dG9tYWdpY2FsbHkNCmZvciB5b3UgYWxyZWFkeSwgaW4gZGV2dG1wZnMuICBZb3Ugc2hvdWxk
+IG5vdCBoYXZlIHRvIGRvIHRoaXMgb24geW91cg0Kb3duIGV2ZXIuDQoNClVubGVzcyB5b3UgYXJl
+IHVzaW5nIGEgY3JhenkgQW5kcm9pZCBzeXN0ZW0gdGhhdCBkb2Vzbid0IHVzZSB0aGF0DQpmaWxl
+c3lzdGVtLiAgQW5kIGlmIHlvdSBhcmUsIGdvIGNvbXBsYWluIHRvIHRob3NlIGRldmVsb3BlcnMg
+YWJvdXQgaXQsDQpub3QgbXVjaCB3ZSBjYW4gZG8gZnJvbSB3aXRoaW4gdGhlIGtlcm5lbC4NCg0K
+QW5kIHRoZSBhbnN3ZXIgaXMgeWVzLCB1c2UgdGhlIHJpZ2h0IG1hY3JvLCBmb3Igd2hlbiB5b3Ug
+d2FudCB0byByZWFsbHkNCmRvIHRoaXMuICBZb3VyIGxpYmMgc2hvdWxkIHByb3ZpZGUgdGhlIGNv
+cnJlY3Qgb25lLCB0cnVzdCBpdC4NCg0KDQpBbmRyb2lkIGRvZXNuJ3QgdXNlIGtkZXZ0bXBmcy4N
+CkkgdGhpbmsgdGhpcyBtYWlubHkgYmVjYXVzZSBTRUxpbnV4LCBkZXZpY2UgVUlEL0dJRCBhbmQg
+bW9kZS4NCkFuZHJvaWQgdWV2ZW50ZCB3aWxsIGNyZWF0ZSBkZXZpY2VzIG5vZGVzIHdpdGggU0VM
+aW51eCBsYWJlbCwgYW5kIHNldCByaWdodCBVSUQvR0lELCBtb2RlIGFjY29yZGluZyB0byB1ZXZl
+bnQucmMNCg0Ka2RldnRtcGZzIGRvZXNuJ3Qgc3VwcG9ydCB0aGVzZSAzIGZlYXR1cmVzLg0KDQp1
+c2VzIGtkZXZ0bXBmcyBpcyBhbiBpZGVhIGluIG15IG1pbmQgdG8gb3B0aW1pemUgQW5kcm9pZCBj
+b2xkIGJvb3QuDQoNCkJSLg0KTmluZy4NCg0KDQpnb29kIGx1Y2shDQoNCmdyZWcgay1oDQoNCg==
 
-> in Android bionic
-> 
->     #define makedev(__major, __minor) \
->       ( \
->         (((__major) & 0xfffff000ULL) << 32) | (((__major) & 0xfffULL) <<
->     8) | \
->         (((__minor) & 0xffffff00ULL) << 12) | (((__minor) & 0xffULL)) \
->       )
+--_000_1523497556141414camelintelcom_
+Content-Type: text/html; charset="utf-8"
+Content-ID: <7FD5A5750EE0FC469CB0278E0FE83C27@intel.com>
+Content-Transfer-Encoding: base64
 
-Fun stuff :)
+PGh0bWw+DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIgY29udGVudD0i
+dGV4dC9odG1sOyBjaGFyc2V0PXV0Zi04Ij4NCjwvaGVhZD4NCjxib2R5Pg0KPGRpdj5UaGFuayB5
+b3UgZm9yIHRoZSBhbnN3ZXJzLjwvZGl2Pg0KPGRpdj48YnI+DQo8L2Rpdj4NCjxkaXY+5ZyoIDIw
+MTgtMDQtMTHkuInnmoQgMTI6MDQgJiM0MzswMjAw77yMZ3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5v
+cmflhpnpgZPvvJo8L2Rpdj4NCjxibG9ja3F1b3RlIHR5cGU9ImNpdGUiPg0KPHByZT5PbiBXZWQs
+IEFwciAxMSwgMjAxOCBhdCAwODo1MTowM0FNICYjNDM7MDAwMCwgWmhhbmcsIE5pbmcgQSB3cm90
+ZToNCjxibG9ja3F1b3RlIHR5cGU9ImNpdGUiPg0KSGksIEdyZWcsIFRob21hcw0KDQpJIGZpbmQg
+MyB2ZXJzaW9uIG9mIE1LREVWIChhY3R1YWxseSAyICYjNDM7IG1ha2VkZXYpDQoNCmluIGluY2x1
+ZGUvbGludXgva2Rldl90LmgNCg0KICAgICNkZWZpbmUgTUlOT1JCSVRTICAgIAkgICAgMjANCiAg
+ICAjZGVmaW5lIE1LREVWKG1hLG1pKSAgICAJICAgICgoKG1hKSAmbHQ7Jmx0OyBNSU5PUkJJVFMp
+IHwgKG1pKSkNCg0KaW4gaW5sY3VkZS91YXBpL2xpbnV4L2tkZXZfdC5oDQoNCiAgICAjZGVmaW5l
+IE1LREVWKG1hLG1pKSAgICAJICAgICgobWEpJmx0OyZsdDs4IHwgKG1pKSkNCjwvYmxvY2txdW90
+ZT4NCg0KSXNuJ3QgaGlzdG9yeSBncmFuZCA6KQ0KVGhvc2UgYXJlIGRpZmZlcmVudCBiZWNhdXNl
+IHdlIGluY3JlYXNlZCB0aGUgc2l6ZSB3YXkgYmFjayBpbiB0aGUgMi41DQprZXJuZWwgKEkgdGhp
+bmspLCBzbyB3ZSBoYWQgdG8gZG8gc28gaW4gYSB3YXkgdGhhdCBkaWQgbm90IGJyZWFrDQp1c2Vy
+c3BhY2UuDQo8L3ByZT4NCjwvYmxvY2txdW90ZT4NCjxkaXY+PGJyPg0KPC9kaXY+DQo8ZGl2PnNv
+IHR3byB2ZXJzaW9ucyBvZiBNS0RFViB3aWxsIGJlIGtlcHQgaW4gc291cmNlIGNvZGU/PC9kaXY+
+DQo8ZGl2Pjxicj4NCjwvZGl2Pg0KPGJsb2NrcXVvdGUgdHlwZT0iY2l0ZSI+DQo8cHJlPg0KPGJs
+b2NrcXVvdGUgdHlwZT0iY2l0ZSI+DQppbiBBbmRyb2lkIGJpb25pYw0KDQogICAgI2RlZmluZSBt
+YWtlZGV2KF9fbWFqb3IsIF9fbWlub3IpIFwNCiAgICAmbmJzcDsgKCBcDQogICAgJm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7KCgoX19tYWpvcikgJmFtcDsgMHhmZmZmZjAwMFVMTCkgJmx0OyZsdDsg
+MzIpIHwgKCgoX19tYWpvcikgJmFtcDsgMHhmZmZVTEwpICZsdDsmbHQ7DQogICAgOCkgfCBcDQog
+ICAgJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7KCgoX19taW5vcikgJmFtcDsgMHhmZmZmZmYwMFVM
+TCkgJmx0OyZsdDsgMTIpIHwgKCgoX19taW5vcikgJmFtcDsgMHhmZlVMTCkpIFwNCiAgICAmbmJz
+cDsgKQ0KPC9ibG9ja3F1b3RlPg0KDQpGdW4gc3R1ZmYgOikNCg0KPGJsb2NrcXVvdGUgdHlwZT0i
+Y2l0ZSI+DQppZiBJIHVzZSBta25vZCgmcXVvdDtyZW5kZXJEMTI4JnF1b3Q7LCBTX0lGQ0hSfDA2
+NjYsIE1LREVWKDIyNiwgMTI4KSk7DQpJIGdldCB3cm9uZyBkZXZpY2U6DQpjcnctcnctcnctIDEg
+cm9vdCBncmFwaGljcyZuYnNwOzAsIDU3OTg0IDIwMTEtMTEtMTEgMTE6MjAgcmVuZGVyRDEyOA0K
+DQoNCmlmIEkgdXNlICgmcXVvdDtyZW5kZXJEMTI4JnF1b3Q7LFNfSUZDSFJ8MDY2NiwgbWFrZWRl
+digyMjYsIDEyOCkpOw0KSSBnZXQgcmlnaHQgZGV2aWNlLg0KDQpidXQsIHdoZW4gSSB1c2U6IG1r
+bm9kKCZxdW90O2NhcmQwJnF1b3Q7LCBTX0lGQ0hSfDA2NjYsIE1LREVWKDIyNiwgMCkpOw0KSSBj
+YW4gZ2V0IHJpZ2h0IGRldmljZS4NCjwvYmxvY2txdW90ZT4NCg0KV2h5IGFyZSB5b3UgY2FsbGlu
+ZyAnbWtub2QnIGF0IGFsbD8gIFRoZSBrZXJuZWwgZG9lcyB0aGlzIGF1dG9tYWdpY2FsbHkNCmZv
+ciB5b3UgYWxyZWFkeSwgaW4gZGV2dG1wZnMuICBZb3Ugc2hvdWxkIG5vdCBoYXZlIHRvIGRvIHRo
+aXMgb24geW91cg0Kb3duIGV2ZXIuDQoNClVubGVzcyB5b3UgYXJlIHVzaW5nIGEgY3JhenkgQW5k
+cm9pZCBzeXN0ZW0gdGhhdCBkb2Vzbid0IHVzZSB0aGF0DQpmaWxlc3lzdGVtLiAgQW5kIGlmIHlv
+dSBhcmUsIGdvIGNvbXBsYWluIHRvIHRob3NlIGRldmVsb3BlcnMgYWJvdXQgaXQsDQpub3QgbXVj
+aCB3ZSBjYW4gZG8gZnJvbSB3aXRoaW4gdGhlIGtlcm5lbC4NCg0KQW5kIHRoZSBhbnN3ZXIgaXMg
+eWVzLCB1c2UgdGhlIHJpZ2h0IG1hY3JvLCBmb3Igd2hlbiB5b3Ugd2FudCB0byByZWFsbHkNCmRv
+IHRoaXMuICBZb3VyIGxpYmMgc2hvdWxkIHByb3ZpZGUgdGhlIGNvcnJlY3Qgb25lLCB0cnVzdCBp
+dC4NCjwvcHJlPg0KPC9ibG9ja3F1b3RlPg0KPGRpdj48YnI+DQo8L2Rpdj4NCjxkaXY+QW5kcm9p
+ZCBkb2Vzbid0IHVzZSBrZGV2dG1wZnMuPC9kaXY+DQo8ZGl2PkkgdGhpbmsgdGhpcyBtYWlubHkg
+YmVjYXVzZSBTRUxpbnV4LCBkZXZpY2UgVUlEL0dJRCBhbmQgbW9kZS48L2Rpdj4NCjxkaXY+QW5k
+cm9pZCB1ZXZlbnRkIHdpbGwgY3JlYXRlIGRldmljZXMgbm9kZXMgd2l0aCBTRUxpbnV4IGxhYmVs
+LCBhbmQgc2V0IHJpZ2h0IFVJRC9HSUQsIG1vZGUgYWNjb3JkaW5nIHRvIHVldmVudC5yYzwvZGl2
+Pg0KPGRpdj48YnI+DQo8L2Rpdj4NCjxkaXY+a2RldnRtcGZzIGRvZXNuJ3Qgc3VwcG9ydCB0aGVz
+ZSAzIGZlYXR1cmVzLjwvZGl2Pg0KPGRpdj48YnI+DQo8L2Rpdj4NCjxkaXY+dXNlcyBrZGV2dG1w
+ZnMgaXMgYW4gaWRlYSBpbiBteSBtaW5kIHRvIG9wdGltaXplIEFuZHJvaWQgY29sZCBib290Ljwv
+ZGl2Pg0KPGRpdj48YnI+DQo8L2Rpdj4NCjxkaXY+QlIuPC9kaXY+DQo8ZGl2Pk5pbmcuPC9kaXY+
+DQo8YmxvY2txdW90ZSB0eXBlPSJjaXRlIj4NCjxwcmU+DQpnb29kIGx1Y2shDQoNCmdyZWcgay1o
+DQo8L3ByZT4NCjwvYmxvY2txdW90ZT4NCjwvYm9keT4NCjwvaHRtbD4NCg==
 
-> if I use mknod("renderD128", S_IFCHR|0666, MKDEV(226, 128));
-> I get wrong device:
-> crw-rw-rw- 1 root graphics 0, 57984 2011-11-11 11:20 renderD128
-> 
-> 
-> if I use ("renderD128",S_IFCHR|0666, makedev(226, 128));
-> I get right device.
-> 
-> but, when I use: mknod("card0", S_IFCHR|0666, MKDEV(226, 0));
-> I can get right device.
-
-Why are you calling 'mknod' at all?  The kernel does this automagically
-for you already, in devtmpfs.  You should not have to do this on your
-own ever.
-
-Unless you are using a crazy Android system that doesn't use that
-filesystem.  And if you are, go complain to those developers about it,
-not much we can do from within the kernel.
-
-And the answer is yes, use the right macro, for when you want to really
-do this.  Your libc should provide the correct one, trust it.
-
-good luck!
-
-greg k-h
+--_000_1523497556141414camelintelcom_--
