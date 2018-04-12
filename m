@@ -1,108 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752793AbeDLJLZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 05:11:25 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50396 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751832AbeDLJLX (ORCPT
+        id S1752652AbeDLJMc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 05:12:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34644 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751611AbeDLJMb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 05:11:23 -0400
-X-Google-Smtp-Source: AIpwx49TNFHJolWF6kuduksUaSbarGn5wOOP3B8IPuGoe3qAPBaoAqEcvq1OG0K+IF6H1y5HeG9hOQ==
-Cc: mtk.manpages@gmail.com, linux-man@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] readv.2, io_submit.2: Document RWF_APPEND added in
- Linux 4.16
-To: =?UTF-8?Q?J=c3=bcrg_Billeter?= <j@bitron.ch>
-References: <1f559be3-93df-ccdd-02dc-39c83c83a8c9@gmail.com>
- <20180406135106.30342-1-j@bitron.ch>
-From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <e81fe2fe-1fa0-f348-7811-e5bc6235e903@gmail.com>
-Date: Thu, 12 Apr 2018 11:11:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 12 Apr 2018 05:12:31 -0400
+Date: Thu, 12 Apr 2018 11:12:17 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [RFC tip/locking/lockdep v6 19/20] rcu: Equip sleepable RCU with
+ lockdep dependency graph checks
+Message-ID: <20180412091217.GY4082@hirez.programming.kicks-ass.net>
+References: <20180411135110.9217-1-boqun.feng@gmail.com>
+ <20180411135647.21496-1-boqun.feng@gmail.com>
+ <20180411185730.GU3948@linux.vnet.ibm.com>
+ <20180412021233.ewncg5jjuzjw3x62@tardis>
 MIME-Version: 1.0
-In-Reply-To: <20180406135106.30342-1-j@bitron.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180412021233.ewncg5jjuzjw3x62@tardis>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/06/2018 03:51 PM, Jürg Billeter wrote:
-> Signed-off-by: Jürg Billeter <j@bitron.ch>
-
-Thanks, Jürg. Patch applied.
-
-Cheers,
-
-Michael
-
-
-> ---
-> Changes since version 1:
-> - Explain offset handling
+On Thu, Apr 12, 2018 at 10:12:33AM +0800, Boqun Feng wrote:
+> A trivial fix/hack would be adding local_irq_disable() and
+> local_irq_enable() around srcu_lock_sync() like:
 > 
->  man2/io_submit.2 | 13 +++++++++++++
->  man2/readv.2     | 17 +++++++++++++++++
->  2 files changed, 30 insertions(+)
+> 	static inline void srcu_lock_sync(struct lockdep_map *map)
+> 	{
+> 		local_irq_disable();
+> 		lock_map_acquire(map);
+> 		lock_map_release(map);
+> 		local_irq_enable();
+> 	}
 > 
-> diff --git a/man2/io_submit.2 b/man2/io_submit.2
-> index 397fd0b75..25961138a 100644
-> --- a/man2/io_submit.2
-> +++ b/man2/io_submit.2
-> @@ -111,6 +111,19 @@ field of the
->  .I io_event
->  structure (see
->  .BR io_getevents (2)).
-> +.TP
-> +.BR RWF_APPEND " (since Linux 4.16)"
-> +.\" commit e1fc742e14e01d84d9693c4aca4ab23da65811fb
-> +Append data to the end of the file.
-> +See the description of the flag of the same name in
-> +.BR pwritev2 (2)
-> +as well as the description of
-> +.B O_APPEND
-> +in
-> +.BR open (2).
-> +The
-> +.I aio_offset
-> +field is ignored. The file offset is not changed.
->  .RE
->  .TP
->  .I aio_lio_opcode
-> diff --git a/man2/readv.2 b/man2/readv.2
-> index b3b7b9658..9ef250e11 100644
-> --- a/man2/readv.2
-> +++ b/man2/readv.2
-> @@ -248,6 +248,23 @@ to
->  .BR EAGAIN .
->  Currently, this flag is meaningful only for
->  .BR preadv2 ().
-> +.TP
-> +.BR RWF_APPEND " (since Linux 4.16)"
-> +.\" commit e1fc742e14e01d84d9693c4aca4ab23da65811fb
-> +Provide a per-write equivalent of the
-> +.B O_APPEND
-> +.BR open (2)
-> +flag.
-> +This flag is meaningful only for
-> +.BR pwritev2 (),
-> +and its effect applies only to the data range written by the system call.
-> +The
-> +.I offset
-> +argument does not affect the write operation, the data is always appended
-> +to the end of the file. However, if the
-> +.I offset
-> +argument is \-1, the current file offset is updated.
-> +This matches the behavior when the file is opened in append mode.
->  .SH RETURN VALUE
->  On success,
->  .BR readv (),
+> However, it might be better, if lockdep could provide some annotation
+> API for such an empty critical section to say the grap-and-drop is
+> atomic. Something like:
 > 
+> 	/*
+> 	 * Annotate a wait point for all previous critical section to
+> 	 * go out.
+> 	 * 
+> 	 * This won't make @map a irq unsafe lock, no matter it's called
+> 	 * w/ or w/o irq disabled.
+> 	 */
+> 	lock_wait_unlock(struct lockdep_map *map, ..)
+> 
+> And in this primitive, we do something similar like
+> lock_acquire()+lock_release(). This primitive could be used elsewhere,
+> as I bebieve we have several empty grab-and-drop critical section for
+> lockdep annotations, e.g. in start_flush_work().
+> 
+> Thoughts?
+> 
+> This cerntainly requires a bit more work, in the meanwhile, I will add
+> another self testcase which has a srcu_read_lock() called in irq.
 
+Yeah, I've never really bothered to clean those things up, but I don't
+see any reason to stop you from doing it ;-)
 
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+As to the initial pattern with disabling IRQs, I think I've seen code
+like that before, and in general performance isn't a top priority
+(within reason) when you're running lockdep kernels, so I've usually let
+it be.
