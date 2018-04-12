@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1684311-1523561586-2-2423238537708612371
+X-Cyrus-Session-Id: sloti22d1t05-1684311-1523561580-2-2821288173157785884
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523561585; b=pQav1fwn/rO75wEIrCR4IB9YkUB46IzpQO3gMvxOGh9DGeuWwW
-    /mSC0bMsm/SWfH3K2nwFDC9ZwQAEYdNrC1EXHKqstchJGw1VZ+B/6+MPgiYbykVk
-    om3/ZsxJXbHrx7pu+GLSvG5t7W2YpzHARulffMV73839lcBg/bucWZCYZahw+lOA
-    E2PCoe02EcNeyqSyedsvHtzgLOU0+EYxm6IbWvaR/Y+Ns8Lz2aoUXSLpadjC186N
-    PYkuUBLnaVPMkFtnBInannLz6LOvZ6fJ7kHfCxlYoSvjMdaX+BArsCSs3GxQhklQ
-    dk2UKz9XIPt7PWhp7LDTmtKTwCFqA3BokreQ==
+    1523561579; b=Kbi09eeaakxDjujzVVKKQBptLS9aJQmk7C4apwRIFHklmdBQE+
+    E0jUXW9anRibhLn6+L9+214A7ZIuEw7W83j8atwSHtvdHazc+ceAXtgaNPYR0lFh
+    dZ7auysa6OCBhyHa/BMEt78mjEiGPZ/fnvzaVOQrl/SdwJ5hLr1Izb6u8PV3NYl5
+    yGPh7HGIBK0Ws743pB1kVFaENnetfGxBdFJIoPZKwvTsUJlV3f1FiFk/sfHQhBq8
+    gi9hWLFkxL7CN3MBja7q+jdpDR2IpUqJdMQHsEcZWCup2BAMIGVTgVtQU3p4mUG4
+    eTLqYZOtsTiFji2V4Twr/7zQ9B1opavhEEBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1523561585; bh=
-    k9cog7jnkJZ42hQv4bReVhNxtPiZ4b3/mEdi9beWqQk=; b=XZRd3U2+WRsps1yb
-    a3qbzL0nb+3n7v8+5Jp7mSur42qFKx5GGkSX4rM+hn+J5jkTtLSdPqV+aTRi+0Fj
-    XpacAdzJVum7saWGOhN5McBaoJZRtzCSrJfeEHSBOkBQwEu9coyLV1AEhrDXJLsb
-    cpjXiz2AogLnVuOuDf0rMrWKeet6inNjHLRuzCn1YEXVKsFhZa3X+pTxAbl57G/+
-    UQRvi3HjrXozeU6oOUS1+mazjvw1XAlDygewv8sk+NYd3CDFdj5e1PnI0Gyj9obh
-    c1kHU195/r8YlZ0DkN5ZBdBiBL5H+tggj1MxznGXYOC3ERITGkbMCk9TU3eJtZY1
-    /LdqKg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1523561579; bh=
+    UhPlrO3lskkIqViBErIyY/T0vWlZBC2aFkGaO5oSwSQ=; b=JxyKpKhmfAWreKjX
+    8FF48r2vAjEdTyzbSfbr6YmqQqO4fVFhhQs9uK2Cdj9tLj/o9o1ocpjEUayjN1Df
+    URFSovjRg2bMjXdak2P5IYJ9hHvFk+1oc/u81KymjY3blq1Tazn6AMIzNxEtvwZn
+    P2pwbJY7LrCRurry9p2OI/wnCU63oTm/7vav29jJsEFyLNk0qo8Ee4Ht7Yo3iI3j
+    2HWt2/gcCHtyjsgpVj2G5NxC5rE1FWJib6I94/7qqGHStVx08//z9QfU7ImFMhUT
+    mM5+q5d5Ict94UH0FZfZyxt7VMhFJ+cRsMNaBsZBEy4SikRuLANcN8zB284Az79u
+    DLtWxg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
@@ -51,29 +51,30 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFGcib+tOq6iX2yJntpZ3CxDMVFgNcTeeJ54tk16ks5Ff67u3qfyfaQ9tCg24v7EaO1nugJ+DU04ReiR0L7In3Dc3nCUus+WDStyHQKU3zzTyCSNgSX2
-    5zgu/ReTzoE9tFFuGQBsw8J4vynpzT7cu05rHDC7R5bnSn1ackbHh4uMWh4NKjN2xVbMxl5C9fbIoayK6XKW9cJvcA9zXCf9MqTAzmgaWV5HdERfp3ug4HCA
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOqp81FdrQKuJ6H8AKxWRGEwuvji7GkDr2fQnNUWju6/bINVk8ksXmUsn99+AA1dcLC8Gz34jLSWe+jxqRbawNVU58TOnKoayAp87KNG5ZSCAFdgmioW
+    qZ4BF5vJKEXXQsBu6/RDjxEs69stMc12lsR8OUnYySMYzQNR1/Lf/Sz5RItnP3Pzi4yqKQ9hnWgT5dL5lRfaRj2TbfhYeLbUZkS1RhciFoYrikQIYiJoNc05
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=7d_E57ReAAAA:8
-    a=drOt6m5kAAAA:8 a=7CQSdrXTAAAA:8 a=1XWaLZrsAAAA:8 a=JfrnYn6hAAAA:8
-    a=SOq6UgPBAAAA:8 a=WfulkdPnAAAA:8 a=FOH2dFAWAAAA:8 a=NufY4J3AAAAA:8
-    a=20KFwNOVAAAA:8 a=oGMlB6cnAAAA:8 a=meVymXHHAAAA:8 a=VnNF1IyMAAAA:8
-    a=UPm3pfgAAAAA:8 a=Z4Rwk6OoAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
-    a=d79AQB8eE-0OSRNI08kA:9 a=ETx1mNwkyILpblSV:21 a=v2IWsg-P_ydaLAOV:21
-    a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22 a=RMMjzBEyIzXRtoq5n5K6:22
-    a=a-qgeE7W1pNrGK8U0ZQC:22 a=1CNFftbPRP8L7MoqJWF3:22 a=3hv5r9HjGAh9o5iR9qwG:22
-    a=56QPVbyS4OZCpcuOg7Z9:22 a=i3VuKzQdj-NEYjvDI-p3:22 a=TPcZfFuj8SYsoCJAFAiX:22
-    a=NdAtdrkLVvyUPsUoGJp4:22 a=2JgSa4NbpEOStq-L5dxp:22 a=uD9XBtlS4o1URY3aiGdj:22
-    a=HkZW87K1Qel5hWWM3VKY:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=VnNF1IyMAAAA:8 a=JfrnYn6hAAAA:8 a=1XWaLZrsAAAA:8 a=SOq6UgPBAAAA:8
+    a=WfulkdPnAAAA:8 a=FOH2dFAWAAAA:8 a=NufY4J3AAAAA:8 a=20KFwNOVAAAA:8
+    a=oGMlB6cnAAAA:8 a=meVymXHHAAAA:8 a=UPm3pfgAAAAA:8 a=Z4Rwk6OoAAAA:8
+    a=drOt6m5kAAAA:8 a=7CQSdrXTAAAA:8 a=pGLkceISAAAA:8 a=37rDS-QxAAAA:8
+    a=VwQbUJbxAAAA:8 a=PcGdOUl1GkNCjaGyiRMA:9 a=GnsHPoFplh_JSEo5:21
+    a=VzndIavU7QtvWCZz:21 a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22
+    a=1CNFftbPRP8L7MoqJWF3:22 a=3hv5r9HjGAh9o5iR9qwG:22 a=56QPVbyS4OZCpcuOg7Z9:22
+    a=i3VuKzQdj-NEYjvDI-p3:22 a=TPcZfFuj8SYsoCJAFAiX:22 a=NdAtdrkLVvyUPsUoGJp4:22
+    a=2JgSa4NbpEOStq-L5dxp:22 a=uD9XBtlS4o1URY3aiGdj:22 a=HkZW87K1Qel5hWWM3VKY:22
+    a=RMMjzBEyIzXRtoq5n5K6:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=k1Nq6YrhK2t884LQW06G:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753149AbeDLTdC (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 12 Apr 2018 15:33:02 -0400
-Received: from mail.efficios.com ([167.114.142.138]:45580 "EHLO
+        id S1753812AbeDLTbl (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 12 Apr 2018 15:31:41 -0400
+Received: from mail.efficios.com ([167.114.142.138]:45804 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753058AbeDLT2W (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 12 Apr 2018 15:28:22 -0400
+        with ESMTP id S1753352AbeDLT2Y (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 12 Apr 2018 15:28:24 -0400
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -95,10 +96,11 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.18 05/23] x86: Add support for restartable sequences (v2)
-Date: Thu, 12 Apr 2018 15:27:42 -0400
-Message-Id: <20180412192800.15708-6-mathieu.desnoyers@efficios.com>
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-mm@kvack.org
+Subject: [RFC PATCH for 4.18 11/23] mm: Provide is_vma_noncached
+Date: Thu, 12 Apr 2018 15:27:48 -0400
+Message-Id: <20180412192800.15708-12-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
 References: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
@@ -108,25 +110,15 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Call the rseq_handle_notify_resume() function on return to userspace if
-TIF_NOTIFY_RESUME thread flag is set.
-
-Perform fixup on the pre-signal frame when a signal is delivered on top
-of a restartable sequence critical section.
-
-Check that system calls are not invoked from within rseq critical
-sections by invoking rseq_signal() from syscall_return_slowpath().
-With CONFIG_DEBUG_RSEQ, such behavior results in termination of the
-process with SIGSEGV.
+Provide is_vma_noncached() static inline to allow generic code to
+check whether the given vma consists of noncached memory.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-CC: Russell King <linux@arm.linux.org.uk>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Paul Turner <pjt@google.com>
-CC: Andrew Hunter <ahh@google.com>
+CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 CC: Peter Zijlstra <peterz@infradead.org>
+CC: Paul Turner <pjt@google.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Andrew Hunter <ahh@google.com>
 CC: Andy Lutomirski <luto@amacapital.net>
 CC: Andi Kleen <andi@firstfloor.org>
 CC: Dave Watson <davejwatson@fb.com>
@@ -135,73 +127,54 @@ CC: Ingo Molnar <mingo@redhat.com>
 CC: "H. Peter Anvin" <hpa@zytor.com>
 CC: Ben Maurer <bmaurer@fb.com>
 CC: Steven Rostedt <rostedt@goodmis.org>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 CC: Josh Triplett <josh@joshtriplett.org>
 CC: Linus Torvalds <torvalds@linux-foundation.org>
 CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Russell King <linux@arm.linux.org.uk>
+CC: Catalin Marinas <catalin.marinas@arm.com>
+CC: Will Deacon <will.deacon@arm.com>
+CC: Michael Kerrisk <mtk.manpages@gmail.com>
 CC: Boqun Feng <boqun.feng@gmail.com>
-CC: linux-api@vger.kernel.org
-
+CC: linux-mm@kvack.org
 ---
+ include/linux/mm.h | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-Changes since v1:
-- Call rseq_signal() when returning from a system call.
----
- arch/x86/Kconfig         | 1 +
- arch/x86/entry/common.c  | 3 +++
- arch/x86/kernel/signal.c | 6 ++++++
- 3 files changed, 10 insertions(+)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 0fa71a78ec99..47a2b14fcc7d 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -178,6 +178,7 @@ config X86
- 	select HAVE_REGS_AND_STACK_ACCESS_API
- 	select HAVE_RELIABLE_STACKTRACE		if X86_64 && UNWINDER_FRAME_POINTER && STACK_VALIDATION
- 	select HAVE_STACK_VALIDATION		if X86_64
-+	select HAVE_RSEQ
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_UNSTABLE_SCHED_CLOCK
- 	select HAVE_USER_RETURN_NOTIFIER
-diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index 74f6eee15179..5bc9c9fe49c4 100644
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -164,6 +164,7 @@ static void exit_to_usermode_loop(struct pt_regs *regs, u32 cached_flags)
- 		if (cached_flags & _TIF_NOTIFY_RESUME) {
- 			clear_thread_flag(TIF_NOTIFY_RESUME);
- 			tracehook_notify_resume(regs);
-+			rseq_handle_notify_resume(regs);
- 		}
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ad06d42adb1a..1f93a061a43b 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2425,6 +2425,30 @@ static inline struct page *follow_page(struct vm_area_struct *vma,
+ 	return follow_page_mask(vma, address, foll_flags, &unused_page_mask);
+ }
  
- 		if (cached_flags & _TIF_USER_RETURN_NOTIFY)
-@@ -254,6 +255,8 @@ __visible inline void syscall_return_slowpath(struct pt_regs *regs)
- 	    WARN(irqs_disabled(), "syscall %ld left IRQs disabled", regs->orig_ax))
- 		local_irq_enable();
- 
-+	rseq_syscall(regs);
++static inline bool pgprot_same(pgprot_t a, pgprot_t b)
++{
++	return pgprot_val(a) == pgprot_val(b);
++}
 +
- 	/*
- 	 * First do one-time work.  If these work items are enabled, we
- 	 * want to run them exactly once per syscall exit with IRQs on.
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 4cdc0b27ec82..0f549cbd8b46 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -687,6 +687,12 @@ setup_rt_frame(struct ksignal *ksig, struct pt_regs *regs)
- 	sigset_t *set = sigmask_to_save();
- 	compat_sigset_t *cset = (compat_sigset_t *) set;
- 
-+	/*
-+	 * Increment event counter and perform fixup for the pre-signal
-+	 * frame.
-+	 */
-+	rseq_signal_deliver(regs);
++#ifdef pgprot_noncached
++static inline bool is_vma_noncached(struct vm_area_struct *vma)
++{
++	pgprot_t pgprot = vma->vm_page_prot;
 +
- 	/* Set up the stack frame */
- 	if (is_ia32_frame(ksig)) {
- 		if (ksig->ka.sa.sa_flags & SA_SIGINFO)
++	/* Check whether architecture implements noncached pages. */
++	if (pgprot_same(pgprot_noncached(PAGE_KERNEL), PAGE_KERNEL))
++		return false;
++	if (!pgprot_same(pgprot, pgprot_noncached(pgprot)))
++		return false;
++	return true;
++}
++#else
++static inline bool is_vma_noncached(struct vm_area_struct *vma)
++{
++	return false;
++}
++#endif
++
+ #define FOLL_WRITE	0x01	/* check pte is writable */
+ #define FOLL_TOUCH	0x02	/* mark page accessed */
+ #define FOLL_GET	0x04	/* do get_page on page */
 -- 
 2.11.0
 
