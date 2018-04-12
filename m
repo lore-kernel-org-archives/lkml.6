@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3729524-1523494275-2-7286924867765911099
+X-Cyrus-Session-Id: sloti22d1t05-3778089-1523494272-2-11430820876456118821
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523494275; b=BvTLFkI2YZZLTh+CDFgK5P4nSc67UMPjd6B3kQpMe8TfICKBUX
-    fVGuR6wIMw6YHrD2tfknWKtkdZ4++xP94jfv+vncnQ62kNDJ4OBQSrLxlFIjl12R
-    7fHV1gjcjmZ9lYMNzJikaLDRGZYPKVVeNp/R1OeLKR3E1lMNlJ/mY4lvYzaTP3Gi
-    vxnOcUglgl1fxyfPcUFSyApKa8rCjnVY/iNijCubSWmByXwE/5hdCOyKgNIg0hgS
-    sHS/0r0jTwjzwZbv4cmQ3kfNE04BixFqR5EAPORWoXSD6U6vky8UIWNjJuYrZ7KR
-    OLzzD9H+r6XTc0ovM83g+LoTzx6Xe7834WnQ==
+    1523494271; b=IiMqvLNvKfG9V04iTcKlOdJzssyLHMYTmzu6IRe4gTUrogfOxe
+    XP87Yo3To1e1jwGYoXLN8uSze6cU9SC+0PFMFY5M79MpEBpYw29kejSpKEnmdzxe
+    q7hjaMQdLI6dU+tm7SnHkeqfMBoA4mpOnVv7IZxEXpMiY9UyDjmd4CofXCVI73CK
+    XrBXsGnJAbcFFuKNw5At6gRoRiviV7LNFVlr0U6nb2YihuFxr7r7/sxRzgFohv6T
+    1sU2rvUCNi2cTMddgl+j7p237UKKF6k3mXHX3B7kOfJqEXienU4twWAJcxmdMqPq
+    SFh9fsZk3kxM/SFpcZz5Ezm4ujPA/1OHLlLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=to:cc:message-id:in-reply-to:references
-    :from:subject:date:sender:list-id; s=fm2; t=1523494275; bh=uFGAK
-    KEGS+8pZaD20G572VZEZDlvzxl4Jm87PzZ+BvM=; b=c/uzqpQv1kgCgsoJq8Dwg
-    nNVUbIAGEIEK9sqzUrQoc7b6QFVlohwjbk8yzUcnI5kpsMq0CfVZtR3Ub9QzrCsA
-    7paAhFHNeB4ECSALmg9vsBuA/kTjn6PngK9QufX5muwnDREPftNcuOW+CG713faD
-    P+ztRybuj6aIydgUNnFt3xe7JR/sTtcgKpMkPONLrCRX/rK6bEbKhXdtkHdSqq9g
-    facO2v9kguPfi4WKWoKk5m7sUycGYA9+wJkPz2iEj/W4LxxAJ8ChfpDRT+OY4Oul
-    mjSU/6WnEBUAuow6vDjyWNttMdkk++dbd6aaeuSM3HxkD8HDb9SmFT7/YH7vCiIZ
-    w==
+    :from:subject:date:sender:list-id; s=fm2; t=1523494271; bh=Veetp
+    WNqclzoqmhMrQ1kpydRJ6ZN5r8QLPVYLoJyiRc=; b=KAiKAiflOSZMlrp4lgSQd
+    wQGaoV0fuVzHz7GRFZwhkDla0gcV5dU0WbA1NaCgklQsgklZQ/XI1IavFtcz2Uyr
+    ay7aGBxBBwa6svCVh6te76uxifQaeQlZKNPC92hTc/AsEIr1IOwaKIMF4KMJYDJB
+    w0/BQg8ZooKMYKl21P05X0HGwsSrHhwPkTOasVjQlLMNoMOMTO9D1WIFqJoatsq9
+    qu5VfiITk6+W/wzCKDognsCn7uDPC1zGFIXciwWpjMxJCtkLhoWoU7CMNCKn0trX
+    9yo052E0kpN0p3YfuLK35yl6QEkG294cJaoqb93bMYUfkwxWEW1R1sgt9FXOYHXB
+    g==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=telegraphics.com.au;
@@ -51,34 +51,30 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=telegraphics.com.au header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNerbZsGdWF7jUYeYinpmWIB7quS6D35AKhU112HnHqHsb04N0kf942J3KMpv0U+rJII9gakuCXoTmWJvA5DubHuNIj/P7qYjkvOo4kdVr+RIL0aSvQx
-    eClVPnV9Tp/BsJWy83cCKFNlDMr7IJXNysoygcpyTp9zpxWCNIC/e52nJvRwVsL9Ni2no4ZhVrui7StiGuHN8/uMSv6HdxBY0mDPc+xIkmbrf8+MhFo2frsF
+X-CM-Envelope: MS4wfCsgGf4Smh9nn3sCFbPWeYwGjEygs2s2J17BQcEZjWIdoac+vdVXCw1FZ0nt9P7s9ON23mU0qdHW52IA6EmnC3HQTxs81RbTSqlozIm5lgZaR2ubBl38
+    mxzYS+TgQp99LpeWZWFQ9TdDeS3U8ZNJsKD/13Ki2zGXVHaqv6HeIQztU007zZJ2A6mR+dVBCgmN+05MFsSjdYW2Zt+2UPYBJhiQE+bsbSMTmHn6HBsJz4xk
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=20KFwNOVAAAA:8
-    a=wMNdZWldAAAA:8 a=voM4FWlXAAAA:8 a=VwQbUJbxAAAA:8 a=CjxXgO3LAAAA:8
-    a=8981fWPbAAAA:8 a=jC3aBCMyrth2RviaqswA:9 a=FUarYpL4UH3yWsho8X8J:22
-    a=IC2XNlieTeVoXbcui8wp:22 a=AjGcO6oz07-iQ99wixmX:22 a=o72u2rHnfW5qNJ_4I8LD:22
+    a=VwQbUJbxAAAA:8 a=CjxXgO3LAAAA:8 a=8981fWPbAAAA:8 a=Swts24iuYcdqNhvro5IA:9
+    a=AjGcO6oz07-iQ99wixmX:22 a=o72u2rHnfW5qNJ_4I8LD:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752734AbeDLAuY (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 20:50:24 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:39856 "EHLO
+        id S1752755AbeDLAuZ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 11 Apr 2018 20:50:25 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:39854 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752627AbeDLAuT (ORCPT
+        with ESMTP id S1751841AbeDLAuT (ORCPT
         <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 20:50:19 -0400
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Jens Axboe <axboe@kernel.dk>, Laurent Vivier <lvivier@redhat.com>,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linuxppc-dev@lists.ozlabs.org
-Message-Id: <8087d933d49bbf280ae3d39dc7c46905956ae204.1523493475.git.fthain@telegraphics.com.au>
+        linux-block@vger.kernel.org, stable@vger.kernel.org
+Message-Id: <bd4e42a4e661ced92849d33bdc3ebf8d4f283dc8.1523493475.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1523493475.git.fthain@telegraphics.com.au>
 References: <cover.1523493475.git.fthain@telegraphics.com.au>
 From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v2 07/10] block/swim: Rename macros to avoid inconsistent
- inverted logic
+Subject: [PATCH v2 08/10] block/swim: Check drive type
 Date: Wed, 11 Apr 2018 20:50:14 -0400 (EDT)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
@@ -86,92 +82,38 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The Sony drive status bits use active-low logic. The swim_readbit()
-function converts that to 'C' logic for readability. Hence, the
-sense of the names of the status bit macros should not be inverted.
-
-Mostly they are correct. However, the TWOMEG_DRIVE, MFM_MODE and
-TWOMEG_MEDIA macros have inverted sense (like MkLinux). Fix this
-inconsistency and make the following patches less confusing.
-
-The same problem affects swim3.c so fix that too.
-
-No functional change.
-
-The FDHD drive status bits are documented in sonydriv.cpp from MAME
-and in swimiii.h from MkLinux.
+The SWIM chip is compatible with GCR-mode Sony 400K/800K drives but
+this driver only supports MFM mode. Therefore only Sony FDHD drives
+are supported. Skip incompatible drives.
 
 Cc: Laurent Vivier <lvivier@redhat.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: linuxppc-dev@lists.ozlabs.org
 Cc: Jens Axboe <axboe@kernel.dk>
 Cc: stable@vger.kernel.org # v4.14+
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 Acked-by: Laurent Vivier <lvivier@redhat.com>
 ---
- drivers/block/swim.c  | 8 ++++----
- drivers/block/swim3.c | 6 +++---
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/block/swim.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/block/swim.c b/drivers/block/swim.c
-index 7b847170cf71..d1ee4670666a 100644
+index d1ee4670666a..c8c8b9da3edd 100644
 --- a/drivers/block/swim.c
 +++ b/drivers/block/swim.c
-@@ -110,7 +110,7 @@ struct iwm {
- /* Select values for swim_select and swim_readbit */
+@@ -829,10 +829,12 @@ static int swim_floppy_init(struct swim_priv *swd)
+ 	/* scan floppy drives */
  
- #define READ_DATA_0	0x074
--#define TWOMEG_DRIVE	0x075
-+#define ONEMEG_DRIVE	0x075
- #define SINGLE_SIDED	0x076
- #define DRIVE_PRESENT	0x077
- #define DISK_IN		0x170
-@@ -118,9 +118,9 @@ struct iwm {
- #define TRACK_ZERO	0x172
- #define TACHO		0x173
- #define READ_DATA_1	0x174
--#define MFM_MODE	0x175
-+#define GCR_MODE	0x175
- #define SEEK_COMPLETE	0x176
--#define ONEMEG_MEDIA	0x177
-+#define TWOMEG_MEDIA	0x177
+ 	swim_drive(base, INTERNAL_DRIVE);
+-	if (swim_readbit(base, DRIVE_PRESENT))
++	if (swim_readbit(base, DRIVE_PRESENT) &&
++	    !swim_readbit(base, ONEMEG_DRIVE))
+ 		swim_add_floppy(swd, INTERNAL_DRIVE);
+ 	swim_drive(base, EXTERNAL_DRIVE);
+-	if (swim_readbit(base, DRIVE_PRESENT))
++	if (swim_readbit(base, DRIVE_PRESENT) &&
++	    !swim_readbit(base, ONEMEG_DRIVE))
+ 		swim_add_floppy(swd, EXTERNAL_DRIVE);
  
- /* Bits in handshake register */
- 
-@@ -612,7 +612,7 @@ static void setup_medium(struct floppy_state *fs)
- 		struct floppy_struct *g;
- 		fs->disk_in = 1;
- 		fs->write_protected = swim_readbit(base, WRITE_PROT);
--		fs->type = swim_readbit(base, ONEMEG_MEDIA);
-+		fs->type = swim_readbit(base, TWOMEG_MEDIA);
- 
- 		if (swim_track00(base))
- 			printk(KERN_ERR
-diff --git a/drivers/block/swim3.c b/drivers/block/swim3.c
-index af51015d056e..469541c1e51e 100644
---- a/drivers/block/swim3.c
-+++ b/drivers/block/swim3.c
-@@ -148,7 +148,7 @@ struct swim3 {
- #define MOTOR_ON	2
- #define RELAX		3	/* also eject in progress */
- #define READ_DATA_0	4
--#define TWOMEG_DRIVE	5
-+#define ONEMEG_DRIVE	5
- #define SINGLE_SIDED	6	/* drive or diskette is 4MB type? */
- #define DRIVE_PRESENT	7
- #define DISK_IN		8
-@@ -156,9 +156,9 @@ struct swim3 {
- #define TRACK_ZERO	10
- #define TACHO		11
- #define READ_DATA_1	12
--#define MFM_MODE	13
-+#define GCR_MODE	13
- #define SEEK_COMPLETE	14
--#define ONEMEG_MEDIA	15
-+#define TWOMEG_MEDIA	15
- 
- /* Definitions of values used in writing and formatting */
- #define DATA_ESCAPE	0x99
+ 	/* register floppy drives */
 -- 
 2.16.1
