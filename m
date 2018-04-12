@@ -1,172 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753346AbeDLOjX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 10:39:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40990 "EHLO mx1.redhat.com"
+        id S1752821AbeDLOmq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 10:42:46 -0400
+Received: from mail-db5eur01on0083.outbound.protection.outlook.com ([104.47.2.83]:44690
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752668AbeDLOjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 10:39:21 -0400
-Subject: Re: [PATCH 07/10] KVM/nVMX: Use kvm_vcpu_map when mapping the posted
- interrupt descriptor table
-To: KarimAllah Ahmed <karahmed@amazon.de>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: hpa@zytor.com, jmattson@google.com, mingo@redhat.com,
-        rkrcmar@redhat.com, tglx@linutronix.de
-References: <1519235241-6500-1-git-send-email-karahmed@amazon.de>
- <1519235241-6500-8-git-send-email-karahmed@amazon.de>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
- CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
- hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
- DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
- P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
- Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
- UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
- tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
- wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
- UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
- AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
- sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
- FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
- VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
- Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
- znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
- IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
- du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
- dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
- utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
- Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
- wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
- fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
- 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
- zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
- oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
- uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
- plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
- HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
- 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
- iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
- 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
- /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
- 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <5b3e7e52-6353-3fe9-f5e4-ecb1d8e2ac6f@redhat.com>
-Date: Thu, 12 Apr 2018 16:39:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752355AbeDLOmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 10:42:45 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Ayan.Halder@arm.com;
+From: Ayan Kumar Halder <ayan.halder@arm.com>
+To: ayan.halder@arm.com, liviu.dudau@arm.com, brian.starkey@arm.com,
+        linux@armlinux.org.uk, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        alexandru-cosmin.gheorghe@arm.com
+Cc: nd@arm.com
+Subject: [PATCH] tda998x: Check ref count before invoking drm_connector_cleanup in unbind
+Date: Thu, 12 Apr 2018 15:42:32 +0100
+Message-Id: <1523544152-15241-1-git-send-email-ayan.halder@arm.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <1519235241-6500-8-git-send-email-karahmed@amazon.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [217.140.96.140]
+X-ClientProxiedBy: AM6PR0502CA0013.eurprd05.prod.outlook.com
+ (2603:10a6:209:1::26) To AM0PR08MB3026.eurprd08.prod.outlook.com
+ (2603:10a6:208:5c::11)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3026;
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR08MB3026;3:U7Rh/zInovWu0Dk1rrqzhfMH2wgX51MCOGsED654t3xz7zjyqR0bUDURdISan2aFrWE7MfRjfmFbu0w0DD/CRUJwjreeTpU4OUztgrvTB2CxcQ/5NSlm74PSmewJBs27+1v63wVviw1b2MR8cdFzcaJJNw4c6Ugnv0fyrtIRJno7wUTZ4hc2/nnVFcVMUTQxPUY5N16DvvnHuncf7w8l9Va3e3bPB1PkCzlbtlr8aADU2DnRvBFbSJ6xFQ3Ztb78;25:49pJ0CcRvaGFkuCmbk6YkXT6zRrc3/b4aFRkAKGkO71uHZzrpb018lMtmFQfbCV60aj76hl0ZcxK57v1NJVsGk6G07JeUeNwI5TEA8wu6thryMC8LnCKgkFRAKT0oJ0X3mRK5t3KVnJeJ2wUQwquiBZaOhQvaBvG1RUxT1AAe6hoyEb/VgCQoq4uFnO2Pdf8SSEMojANQscpAYcDdNA8ZivsV2yJIt5zfGuRDJsozo6HvA8xuC/S75Usu/G/SjOv16uP0CP0WAoYeLPSZ1e5HWEHgiFBcfksomFUrdris48dCkOIgwTwM2HNeyN7oX7uEc8KxYM+wRJ+BerZIlr9yw==;31:1y8w0Fz+uFIM3cgcqZib6QBq1SoJNKnRtVWgHctQdR+672iY/r5F4jpTUYxbX0Gn4xh+rbTWFJst5xTr9DHTHvLNzrf8KQiA3ZnWWUrk4WTZYlklYq92BQv4KArD0WeFJGC+znfaVYmvgmvZwE9PvT3Jay3AJS2VXKxhy6ew/TlDoLLXPdQ1TsPE8+l3vhEFs9OfVca7rQjiWZ0CznIZIQ2v1V51ILkRI87Yo7i5XaQ=
+X-MS-TrafficTypeDiagnostic: AM0PR08MB3026:
+NoDisclaimer: True
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR08MB3026;20:d4MUO8kRGV30mk3tWIB5fTcFjFAfQEJ4cw7FqLHU6S+FdUN9PZxGXtiiJfTLCCrsfDY/tPcjPIfZi2voKCSbovOyUC6iyxR+VmNdMhyq58y/WJet8XwDVY8/v7x9hyWERJNtTrqhBjrqnLDSjQWj9ZA9nvKQSSfQPkjvkLvttnU=;4:PZmAoj1bB5YYxWwjMbJr7cf3quJx8dAHjTTTsENXFWEtVTNEhZsrAoV3kbcBp3YyNKsunWXavrKEvmo1OkaK1IW5USpUNukYXhBnFuLXUIxwKU5vnPmlskRMOOT0iOfc+TXNkFH095p9+qllbqa+7wQaa/l4U7r1xvteT/Oy1k+DZrBjPM5MHO3euFqRxsnyex4ujXfVK3DQmSRY9KMUtxbiMU3ZdyNWYLQA8tZoLdTAiP2rMHGR4b95rdhFky6/GXIbzWPmZ8QqvnwoaNLEmfbsLAyvPFx1Wueajo/6VvVSRfxmSlhYPBENBtOCtKhn
+X-Microsoft-Antispam-PRVS: <AM0PR08MB30268F3A1B064E8485615E79E4BC0@AM0PR08MB3026.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(180628864354917);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231221)(944501327)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(6041310)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:AM0PR08MB3026;BCL:0;PCL:0;RULEID:;SRVR:AM0PR08MB3026;
+X-Forefront-PRVS: 06400060E1
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39380400002)(376002)(39840400004)(396003)(189003)(199004)(72206003)(8676002)(52116002)(2906002)(26005)(4326008)(51416003)(25786009)(316002)(7696005)(16586007)(386003)(53936002)(106356001)(478600001)(8936002)(81156014)(6636002)(6666003)(50226002)(81166006)(6486002)(68736007)(3846002)(486006)(36756003)(86362001)(97736004)(5660300001)(1857600001)(47776003)(7736002)(956004)(50466002)(105586002)(48376002)(6116002)(16526019)(476003)(66066001)(2616005)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3026;H:e113505-lin.cambridge.arm.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR08MB3026;23:qh9569PzRqDkl/AHqfHNJG2DVcLUubCcyheJ/85s0?=
+ =?us-ascii?Q?xmxJPoIgWY1hBVqyyCTU/hxRo82AEPjGpEPlBTU6Y9EIUwDu2BqmQAYrb8ev?=
+ =?us-ascii?Q?/8/eYlQY1jF9VTZ7eYmnDvCzG/ksuxwc0+0NBWy6oSbUnA5F4gOifcuquMsW?=
+ =?us-ascii?Q?mrec6jhFiMLdXuRv0uoyjKG7jyFuTS/JlycJRRi4wJOKB2GXxUJjTtdkEYUu?=
+ =?us-ascii?Q?C8/T6eRQoC362sMY12XF+lQA2RbvwdlRhvLR6RWwsmz3kfRLfyCZq8/wkS8J?=
+ =?us-ascii?Q?jvUUvBUYr6U2kUxwevxQrX8vVsLOEQbbkVJdqMpgvIppkDfQ1jvPJwV9Np8Q?=
+ =?us-ascii?Q?ro9kovuu+5HCsEIWIgVac7oD9xQ3h0Yv/3aLbV0xihWh1sEHb0kPmC4YuDuZ?=
+ =?us-ascii?Q?cy0yY3nJizHQTcTYliin4/K3+i9p/8VsA+S50VfAyT+xBXdom5ABuMWPGxBb?=
+ =?us-ascii?Q?SwfI8/Mf07DUotnvAaYHqgdMQtXv4ulRQl3JAwF6CC68Yd6wY0vJcBo7+8JM?=
+ =?us-ascii?Q?94CrEtuh4ckknGtw+XIHAC2fVhoCx89kOUNcRp0+k9zMsSeqeX+xZJWgzQpS?=
+ =?us-ascii?Q?EBJ+Cf8VEiGADP+3au80FlK/Jk8/diz7ZfhQKQVmEm/mBTWWurdNZPHtfx9j?=
+ =?us-ascii?Q?znr5WslhoIjH6I6l1fxAMXXHKcCHV48BGEuzqGXIH1DJb+tBfCb4bBDIgoND?=
+ =?us-ascii?Q?JBLzOjdR1xSfvy03J3D3m637VRhSsTxusvBhSvqPZ88GNT3N5duEowXN7tUE?=
+ =?us-ascii?Q?jOh7RfBnHQEv0jvatzvAtXBBdoSd+caJsNFZPI04feLpxgInOQFeAaATw2+x?=
+ =?us-ascii?Q?IL00UV5y5GvETmoZ4QzZmazPgcA11y1iZzOhoVBrNLC8NkAZ3xlYPKCFs1z6?=
+ =?us-ascii?Q?eFaC2TjBoIJosB+GM5p4X7wZPTNdO/TAuOL32+VF1rOt2Bn34dgUwZ+RCWaH?=
+ =?us-ascii?Q?HBwk5liG9b6+PFTil3gaC+7PL4OScCMUgor8l5XqUwzK2jyW5zTgFgJbKuJo?=
+ =?us-ascii?Q?1LWe9JlF5mkAAm0RtIIvKt7i39rwlcwyHAvntGcRpKlu4ngLznPvyXep/nHr?=
+ =?us-ascii?Q?1WU2VlmbeXeVQktFl2dH4o/OJB2TZOZhRnDbkkB2g2GkUIaSOQQY5IW3L9uw?=
+ =?us-ascii?Q?RZkQTl5D2q5baDEv3ewMB9JdvRgYNZF?=
+X-Microsoft-Antispam-Message-Info: jm9cXDI52dxAF+Di0Arp4POIlTXV8BE6JSHZvU2hRlWyNF19+Z4CS31YQa8nivscck+kU8ynI/xPOe2x7UUxnZozZDt1BnwKGM3UmijXZfqPzUWXCbMZ3CxJnabNcPY7Pcnf0Htxy6crS/z16UOU1+GDm/YocDBcXYnQ+D1ouKzP19/AZp0ZUA7VrTRGNw7B
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR08MB3026;6:LFio5e4rGuSeG8pY1OKeihEVOnHnXbptKfIUtXRDgVVS5edVjN3nq9hx/XqWtq/dvjwkKlvmn1iahWyK1FR7O3w/y0dEovBWLZlg0yEggpQC1r/cpsTQXZsfGQQR5wrPK+8GvHGElxdprJ3gp361QeU7L2rtJdUqdabFbkm/eRKb0fZtugwoIU6zQa+Gc3IzKCIqYXvRCOoZubaWChpSClyKZACvrkFNsvUrXtzJMMZvyQr94bTgkMM+bqeXcnskq2yk6asMqZT+E3jzmLEwYvuH3DWF2Us/WqaGwXdc/20lScsLROSjibTildL41Q6U6TnJ+/as2jWW5rwLFf3IadjL13xNp2PpQjehTqcsctEh/WLReNEA0B93wqZBqjTY//gWvTkWXrQMV50SKPVKCmyQ0nJhDvfcXNBJK5dRmuOzAi4OapSvx1waEGhxeY8YlBVKk9j/8W7Av0daFpqJvw==;5:bsLT0Cy/McuJrtmGpZndedAd0ttuxavULWvOZEcsXlW0d/Hbv9tdPozrzYiyJFuduM46bypfLnXoJmIvxMa/t7rih5KDhciY1RcH4kbwcWB7Zj4aGRWVa3zJXuSkQ8LzVamT2eV57Feb0/2p8mEXB7vXKwI44wA0Fvqjxkpw3Ys=;24:gycik3sflrVLMLfouwg5VKboCMp6TlofL2hiRNZM9WBRgjBYXM005HpKMfT3pwRVMB2hpUysK4tGIkly9kP6Lijfzji2A3G139N9qcaivWs=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR08MB3026;7:1zGf2eMlkELDk8JTAgLenaZVvOoxAB0q3sl8m0MiOfJxByIF/XGgXJxdg0c7PPNRiulx27TYbSWrO6YJTV+4wN0/vPWh66DSb14XdTrqp5khUTy5M5wJN/V8A+osaXumApgB1NiTbByf1jLb2YApuEnte5RB9SYHP569w4BReOXcZ/XPiqMWkKGAhIK/GtkuBDlAz+I9O4Ipaat3QfcelsmEpPgbBe0td2AB4SfgssVdntuxmOQ6biSzkpW5Fni5
+X-MS-Office365-Filtering-Correlation-Id: 130f9a7b-9fbb-4c4b-bcbe-08d5a083a5b0
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Apr 2018 14:42:42.1276 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 130f9a7b-9fbb-4c4b-bcbe-08d5a083a5b0
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3026
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/02/2018 18:47, KarimAllah Ahmed wrote:
-> ... since using kvm_vcpu_gpa_to_page() and kmap() will only work for guest
-> memory that has a "struct page".
-> 
-> The life-cycle of the mapping also changes to avoid doing map and unmap on
-> every single exit (which becomes very expesive once we use memremap).  Now
-> the memory is mapped and only unmapped when a new VMCS12 is loaded into the
-> vCPU (or when the vCPU is freed!).
-> 
-> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+In a situation when the reference count of the drm connector is greater than 1,
+the unbind function should not invoke drm_connector_cleanup as this will lead
+to an inconsistent state where the drm_crtc_state->connector_mask still has
+a bitmask referring to the stale connector. Later, when drm driver invokes
+drm_atomic_helper_shutdown() which invokes ---> drm_atomic_helper_disable_all()
+ ---> drm_atomic_commit() --> drm_atomic_check_only() -->
+drm_atomic_helper_check() --> drm_atomic_helper_check_modeset(). This returns
+an error due to enabled/connectors mismatch.
 
-Same here, let's change the lifecycle separately.
+In such a scenario, one should just return from _unbind() and let the drm driver
+subsequently invoke drm_atomic_helper_shutdown. This will reset the
+drm_crtc_state->connector_mask and will shutdown the crtcs. It will also decrement
+the reference count of the connectors to 1. Subsequently, drm_mode_config_cleanup
+will get invoked which will do the following :-
 
-Paolo
+1. Decrement the reference count for each of the connectors. Thus the ref count
+will reach 0 and drm_connector_funcs->destroy() gets called. Thus,
+tda998x_connector_destroy() gets invoked which calls drm_connector_cleanup
 
-> ---
->  arch/x86/kvm/vmx.c | 45 +++++++++++++--------------------------------
->  1 file changed, 13 insertions(+), 32 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index a700338..7b29419 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -461,7 +461,7 @@ struct nested_vmx {
->  	 */
->  	struct page *apic_access_page;
->  	struct kvm_host_map virtual_apic_map;
-> -	struct page *pi_desc_page;
-> +	struct kvm_host_map pi_desc_map;
->  	struct kvm_host_map msr_bitmap_map;
->  
->  	struct pi_desc *pi_desc;
-> @@ -7666,6 +7666,7 @@ static inline void nested_release_vmcs12(struct vcpu_vmx *vmx)
->  				  vmx->nested.cached_vmcs12, 0, VMCS12_SIZE);
->  
->  	kvm_vcpu_unmap(&vmx->nested.virtual_apic_map);
-> +	kvm_vcpu_unmap(&vmx->nested.pi_desc_map);
->  	kvm_vcpu_unmap(&vmx->nested.msr_bitmap_map);
->  
->  	vmx->nested.current_vmptr = -1ull;
-> @@ -7698,14 +7699,9 @@ static void free_nested(struct vcpu_vmx *vmx)
->  		vmx->nested.apic_access_page = NULL;
->  	}
->  	kvm_vcpu_unmap(&vmx->nested.virtual_apic_map);
-> -	if (vmx->nested.pi_desc_page) {
-> -		kunmap(vmx->nested.pi_desc_page);
-> -		kvm_release_page_dirty(vmx->nested.pi_desc_page);
-> -		vmx->nested.pi_desc_page = NULL;
-> -		vmx->nested.pi_desc = NULL;
-> -	}
-> -
-> +	kvm_vcpu_unmap(&vmx->nested.pi_desc_map);
->  	kvm_vcpu_unmap(&vmx->nested.msr_bitmap_map);
-> +	vmx->nested.pi_desc = NULL;
->  
->  	free_loaded_vmcs(&vmx->nested.vmcs02);
->  }
-> @@ -10278,24 +10274,16 @@ static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu,
->  	}
->  
->  	if (nested_cpu_has_posted_intr(vmcs12)) {
-> -		if (vmx->nested.pi_desc_page) { /* shouldn't happen */
-> -			kunmap(vmx->nested.pi_desc_page);
-> -			kvm_release_page_dirty(vmx->nested.pi_desc_page);
-> -			vmx->nested.pi_desc_page = NULL;
-> +		map = &vmx->nested.pi_desc_map;
-> +
-> +		if (kvm_vcpu_map(vcpu, gpa_to_gfn(vmcs12->posted_intr_desc_addr), map)) {
-> +			vmx->nested.pi_desc =
-> +				(struct pi_desc *)(((void *)map->kaddr) +
-> +				offset_in_page(vmcs12->posted_intr_desc_addr));
-> +			vmcs_write64(POSTED_INTR_DESC_ADDR, pfn_to_hpa(map->pfn) +
-> +							    offset_in_page(vmcs12->posted_intr_desc_addr));
->  		}
-> -		page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->posted_intr_desc_addr);
-> -		if (is_error_page(page))
-> -			return;
-> -		vmx->nested.pi_desc_page = page;
-> -		vmx->nested.pi_desc = kmap(vmx->nested.pi_desc_page);
-> -		vmx->nested.pi_desc =
-> -			(struct pi_desc *)((void *)vmx->nested.pi_desc +
-> -			(unsigned long)(vmcs12->posted_intr_desc_addr &
-> -			(PAGE_SIZE - 1)));
-> -		vmcs_write64(POSTED_INTR_DESC_ADDR,
-> -			page_to_phys(vmx->nested.pi_desc_page) +
-> -			(unsigned long)(vmcs12->posted_intr_desc_addr &
-> -			(PAGE_SIZE - 1)));
-> +
->  	}
->  	if (nested_vmx_prepare_msr_bitmap(vcpu, vmcs12))
->  		vmcs_set_bits(CPU_BASED_VM_EXEC_CONTROL,
-> @@ -11893,13 +11881,6 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
->  		kvm_release_page_dirty(vmx->nested.apic_access_page);
->  		vmx->nested.apic_access_page = NULL;
->  	}
-> -	if (vmx->nested.pi_desc_page) {
-> -		kunmap(vmx->nested.pi_desc_page);
-> -		kvm_release_page_dirty(vmx->nested.pi_desc_page);
-> -		vmx->nested.pi_desc_page = NULL;
-> -		vmx->nested.pi_desc = NULL;
-> -	}
-> -
->  	/*
->  	 * We are now running in L2, mmu_notifier will force to reload the
->  	 * page's hpa for L2 vmcs. Need to reload it for L1 before entering L1.
-> 
+2. Invokes the destroy callback for each encoder. Thus tda998x_encoder_destroy()
+gets invoked.
+
+Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
+---
+ drivers/gpu/drm/i2c/tda998x_drv.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998x_drv.c
+index 9e67a7b..8ad1cc7 100644
+--- a/drivers/gpu/drm/i2c/tda998x_drv.c
++++ b/drivers/gpu/drm/i2c/tda998x_drv.c
+@@ -1709,6 +1709,9 @@ static void tda998x_unbind(struct device *dev, struct device *master,
+ {
+ 	struct tda998x_priv *priv = dev_get_drvdata(dev);
+ 
++	if (kref_read(&priv->connector.base.refcount) > 1)
++		return;
++
+ 	drm_connector_cleanup(&priv->connector);
+ 	drm_encoder_cleanup(&priv->encoder);
+ 	tda998x_destroy(priv);
+-- 
+2.7.4
