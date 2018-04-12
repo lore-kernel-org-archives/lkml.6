@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753633AbeDLPJA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 11:09:00 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:46456 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753411AbeDLPIw (ORCPT
+        id S1753828AbeDLPJP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 11:09:15 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54187 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753723AbeDLPJL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 11:08:52 -0400
-X-Google-Smtp-Source: AIpwx49WrQlIm9T/q3Hvayo0XJza8cGApbLHujWLvc0tnHfIUWYMvD8wBFnqHPL172ZlOB4wbHPH5g==
+        Thu, 12 Apr 2018 11:09:11 -0400
+X-Google-Smtp-Source: AIpwx4+5WodSzynblk33okvW0DOCsE0lKeg5GiF6lGc63kvJ+x2J780yMzeEMmZ9X9G61NQBRtN2eg==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 17/35] ovl: readd fiemap
-Date: Thu, 12 Apr 2018 17:08:08 +0200
-Message-Id: <20180412150826.20988-18-mszeredi@redhat.com>
+Subject: [RFC PATCH 33/35] Revert "fsnotify: support overlayfs"
+Date: Thu, 12 Apr 2018 17:08:24 +0200
+Message-Id: <20180412150826.20988-34-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180412150826.20988-1-mszeredi@redhat.com>
 References: <20180412150826.20988-1-mszeredi@redhat.com>
@@ -21,76 +21,67 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement stacked fiemap().
+This reverts commit f3fbbb079263bd29ae592478de6808db7e708267.
 
-Need to split inode operations for regular file (which has fiemap) and
-special file (which doesn't have fiemap).
+Overlayfs now works correctly without adding hacks to fsnotify.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/overlayfs/inode.c | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+ include/linux/fsnotify.h | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index 3b996639e1ad..b723327501f7 100644
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -455,6 +455,23 @@ int ovl_update_time(struct inode *inode, struct timespec *ts, int flags)
- 	return 0;
- }
+diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+index bdaf22582f6e..fd1ce10553bf 100644
+--- a/include/linux/fsnotify.h
++++ b/include/linux/fsnotify.h
+@@ -30,11 +30,7 @@ static inline int fsnotify_parent(const struct path *path, struct dentry *dentry
+ static inline int fsnotify_perm(struct file *file, int mask)
+ {
+ 	const struct path *path = &file->f_path;
+-	/*
+-	 * Do not use file_inode() here or anywhere in this file to get the
+-	 * inode.  That would break *notity on overlayfs.
+-	 */
+-	struct inode *inode = path->dentry->d_inode;
++	struct inode *inode = file_inode(file);
+ 	__u32 fsnotify_mask = 0;
+ 	int ret;
  
-+static int ovl_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
-+		      u64 start, u64 len)
-+{
-+	int err;
-+	struct inode *realinode = ovl_inode_real(inode);
-+	const struct cred *old_cred;
-+
-+	if (!realinode->i_op->fiemap)
-+		return -EOPNOTSUPP;
-+
-+	old_cred = ovl_override_creds(inode->i_sb);
-+	err = realinode->i_op->fiemap(realinode, fieinfo, start, len);
-+	revert_creds(old_cred);
-+
-+	return err;
-+}
-+
- static const struct inode_operations ovl_file_inode_operations = {
- 	.setattr	= ovl_setattr,
- 	.permission	= ovl_permission,
-@@ -462,6 +479,7 @@ static const struct inode_operations ovl_file_inode_operations = {
- 	.listxattr	= ovl_listxattr,
- 	.get_acl	= ovl_get_acl,
- 	.update_time	= ovl_update_time,
-+	.fiemap		= ovl_fiemap,
- };
+@@ -178,7 +174,7 @@ static inline void fsnotify_mkdir(struct inode *inode, struct dentry *dentry)
+ static inline void fsnotify_access(struct file *file)
+ {
+ 	const struct path *path = &file->f_path;
+-	struct inode *inode = path->dentry->d_inode;
++	struct inode *inode = file_inode(file);
+ 	__u32 mask = FS_ACCESS;
  
- static const struct inode_operations ovl_symlink_inode_operations = {
-@@ -472,6 +490,15 @@ static const struct inode_operations ovl_symlink_inode_operations = {
- 	.update_time	= ovl_update_time,
- };
+ 	if (S_ISDIR(inode->i_mode))
+@@ -196,7 +192,7 @@ static inline void fsnotify_access(struct file *file)
+ static inline void fsnotify_modify(struct file *file)
+ {
+ 	const struct path *path = &file->f_path;
+-	struct inode *inode = path->dentry->d_inode;
++	struct inode *inode = file_inode(file);
+ 	__u32 mask = FS_MODIFY;
  
-+static const struct inode_operations ovl_special_inode_operations = {
-+	.setattr	= ovl_setattr,
-+	.permission	= ovl_permission,
-+	.getattr	= ovl_getattr,
-+	.listxattr	= ovl_listxattr,
-+	.get_acl	= ovl_get_acl,
-+	.update_time	= ovl_update_time,
-+};
-+
- /*
-  * It is possible to stack overlayfs instance on top of another
-  * overlayfs instance as lower layer. We need to annonate the
-@@ -555,7 +582,7 @@ static void ovl_fill_inode(struct inode *inode, umode_t mode, dev_t rdev,
- 		break;
+ 	if (S_ISDIR(inode->i_mode))
+@@ -214,7 +210,7 @@ static inline void fsnotify_modify(struct file *file)
+ static inline void fsnotify_open(struct file *file)
+ {
+ 	const struct path *path = &file->f_path;
+-	struct inode *inode = path->dentry->d_inode;
++	struct inode *inode = file_inode(file);
+ 	__u32 mask = FS_OPEN;
  
- 	default:
--		inode->i_op = &ovl_file_inode_operations;
-+		inode->i_op = &ovl_special_inode_operations;
- 		init_special_inode(inode, mode, rdev);
- 		break;
- 	}
+ 	if (S_ISDIR(inode->i_mode))
+@@ -230,7 +226,7 @@ static inline void fsnotify_open(struct file *file)
+ static inline void fsnotify_close(struct file *file)
+ {
+ 	const struct path *path = &file->f_path;
+-	struct inode *inode = path->dentry->d_inode;
++	struct inode *inode = file_inode(file);
+ 	fmode_t mode = file->f_mode;
+ 	__u32 mask = (mode & FMODE_WRITE) ? FS_CLOSE_WRITE : FS_CLOSE_NOWRITE;
+ 
 -- 
 2.14.3
