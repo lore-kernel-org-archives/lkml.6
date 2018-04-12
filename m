@@ -1,149 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753446AbeDLTxj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 15:53:39 -0400
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:54072 "EHLO
-        mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753316AbeDLTxi (ORCPT
+        id S1753668AbeDLTzZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 15:55:25 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48904 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752831AbeDLTzY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 15:53:38 -0400
-X-Google-Smtp-Source: AIpwx483IHyeNpA2IOUh4XhPNnm2aU7UiKOfIrwKFO8vmljz4GPj9NE6frLH6x86e7xbmaIHUOZcLQ==
-Date: Thu, 12 Apr 2018 22:53:34 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v3] proc: fixup copyright sign
-Message-ID: <20180412195334.GB17810@avx2>
-References: <CA+55aFxj+NjW3M0Sv_-DRAD6vJ=HsPCQMtHn88me9uEEnJmAPw@mail.gmail.com>
+        Thu, 12 Apr 2018 15:55:24 -0400
+Subject: Re: [PATCH 1/2] perf tools powerpc: Fix callchain ip filtering
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: jolsa@redhat.com, linux-kernel@vger.kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, ravi.bangoria@linux.vnet.ibm.com,
+        Maynard Johnson <maynard@us.ibm.com>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+References: <20180412171129.4422-1-sandipan@linux.vnet.ibm.com>
+ <20180412171129.4422-2-sandipan@linux.vnet.ibm.com>
+ <20180412184316.GA10387@kernel.org>
+From: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Date: Fri, 13 Apr 2018 01:25:13 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+55aFxj+NjW3M0Sv_-DRAD6vJ=HsPCQMtHn88me9uEEnJmAPw@mail.gmail.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180412184316.GA10387@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18041219-0008-0000-0000-000004E9E6B0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041219-0009-0000-0000-00001E7DF156
+Message-Id: <e541e895-524d-aff1-136e-fab08a23c137@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-12_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804120190
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add copyright in two files before they get autorubberstamped.
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
 
- tools/testing/selftests/proc/proc-loadavg-001.c        |    2 +-
- tools/testing/selftests/proc/proc-self-map-files-001.c |    2 +-
- tools/testing/selftests/proc/proc-self-map-files-002.c |    2 +-
- tools/testing/selftests/proc/proc-self-syscall.c       |   15 +++++++++++++++
- tools/testing/selftests/proc/proc-self-wchan.c         |   15 +++++++++++++++
- tools/testing/selftests/proc/proc-uptime-001.c         |    2 +-
- tools/testing/selftests/proc/proc-uptime-002.c         |    2 +-
- tools/testing/selftests/proc/proc-uptime.h             |    2 +-
- tools/testing/selftests/proc/read.c                    |    2 +-
- 9 files changed, 37 insertions(+), 7 deletions(-)
+On 04/13/2018 12:13 AM, Arnaldo Carvalho de Melo wrote:
+> 
+> So, the author for the fixed-by patch here is Sukadev Bhattiprolu
+> <sukadev@linux.vnet.ibm.com>, and the reporter for the problem that
+> patch fixed is Maynard Johnson <maynard@us.ibm.com>, who also tested
+> that patch, I think it'd be better if they get CCed to have the
+> opportunity to ack/comment, but since everybody is at IBM, perhaps
+> those guys are not anymore involved with ppc at IBM?
+> 
+> I'm CCing anyway :-)
+> 
+> - Arnaldo
+> 
 
---- a/tools/testing/selftests/proc/proc-loadavg-001.c
-+++ b/tools/testing/selftests/proc/proc-loadavg-001.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-  *
-  * Permission to use, copy, modify, and distribute this software for any
-  * purpose with or without fee is hereby granted, provided that the above
---- a/tools/testing/selftests/proc/proc-self-map-files-001.c
-+++ b/tools/testing/selftests/proc/proc-self-map-files-001.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-  *
-  * Permission to use, copy, modify, and distribute this software for any
-  * purpose with or without fee is hereby granted, provided that the above
---- a/tools/testing/selftests/proc/proc-self-map-files-002.c
-+++ b/tools/testing/selftests/proc/proc-self-map-files-002.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-  *
-  * Permission to use, copy, modify, and distribute this software for any
-  * purpose with or without fee is hereby granted, provided that the above
---- a/tools/testing/selftests/proc/proc-self-syscall.c
-+++ b/tools/testing/selftests/proc/proc-self-syscall.c
-@@ -1,3 +1,18 @@
-+/*
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ *
-+ * Permission to use, copy, modify, and distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
- #define _GNU_SOURCE
- #include <unistd.h>
- #include <sys/syscall.h>
---- a/tools/testing/selftests/proc/proc-self-wchan.c
-+++ b/tools/testing/selftests/proc/proc-self-wchan.c
-@@ -1,3 +1,18 @@
-+/*
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ *
-+ * Permission to use, copy, modify, and distribute this software for any
-+ * purpose with or without fee is hereby granted, provided that the above
-+ * copyright notice and this permission notice appear in all copies.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-+ */
- #include <sys/types.h>
- #include <sys/stat.h>
- #include <fcntl.h>
---- a/tools/testing/selftests/proc/proc-uptime-001.c
-+++ b/tools/testing/selftests/proc/proc-uptime-001.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-  *
-  * Permission to use, copy, modify, and distribute this software for any
-  * purpose with or without fee is hereby granted, provided that the above
---- a/tools/testing/selftests/proc/proc-uptime-002.c
-+++ b/tools/testing/selftests/proc/proc-uptime-002.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-  *
-  * Permission to use, copy, modify, and distribute this software for any
-  * purpose with or without fee is hereby granted, provided that the above
---- a/tools/testing/selftests/proc/proc-uptime.h
-+++ b/tools/testing/selftests/proc/proc-uptime.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-  *
-  * Permission to use, copy, modify, and distribute this software for any
-  * purpose with or without fee is hereby granted, provided that the above
---- a/tools/testing/selftests/proc/read.c
-+++ b/tools/testing/selftests/proc/read.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright _ 2018 Alexey Dobriyan <adobriyan@gmail.com>
-+ * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-  *
-  * Permission to use, copy, modify, and distribute this software for any
-  * purpose with or without fee is hereby granted, provided that the above
+Sorry I missed that. Thanks for adding them :-)
+
+- Sandipan
