@@ -1,155 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752656AbeDLKbQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 06:31:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49630 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751870AbeDLKbO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 06:31:14 -0400
-Subject: Re: [PATCH v3 2/2] vfio: platform: Add generic DT reset support
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <1523438149-16433-1-git-send-email-geert+renesas@glider.be>
- <1523438149-16433-4-git-send-email-geert+renesas@glider.be>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        kvm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <e6a70247-14f2-63b6-852b-3d43e45f8fa2@redhat.com>
-Date: Thu, 12 Apr 2018 12:31:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S1752793AbeDLKc7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 06:32:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59028 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751848AbeDLKc6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 06:32:58 -0400
+Subject: Re: [PATCH] swiotlb: Fix unexpected swiotlb_alloc_coherent() failures
+To: Takashi Iwai <tiwai@suse.de>, Christoph Hellwig <hch@lst.de>
+Cc: iommu@lists.linux-foundation.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20180410170513.22834-1-tiwai@suse.de>
+ <20180410170615.GA27589@lst.de> <s5hzi2bat25.wl-tiwai@suse.de>
+ <40618b9c-786d-7f5f-3f5b-fc1dd8375846@arm.com>
+ <20180410181020.GA28565@lst.de> <s5h4lkib3rd.wl-tiwai@suse.de>
+ <20180412060227.GA30248@lst.de> <s5h3700am1f.wl-tiwai@suse.de>
+ <s5hy3hs96rq.wl-tiwai@suse.de> <s5hwoxc96d5.wl-tiwai@suse.de>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <81b9eae2-11d4-162d-9d3a-12e06eff9fea@arm.com>
+Date: Thu, 12 Apr 2018 11:32:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1523438149-16433-4-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <s5hwoxc96d5.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert, Philipp,
+On 12/04/18 09:27, Takashi Iwai wrote:
+> On Thu, 12 Apr 2018 10:19:05 +0200,
+> Takashi Iwai wrote:
+>>
+>> On Thu, 12 Apr 2018 10:03:56 +0200,
+>> Takashi Iwai wrote:
+>>>
+>>> On Thu, 12 Apr 2018 08:02:27 +0200,
+>>> Christoph Hellwig wrote:
+>>>>
+>>>> On Wed, Apr 11, 2018 at 09:28:54AM +0200, Takashi Iwai wrote:
+>>>>>> But we should try a GFP_DMA32 allocation first, so this is a bit
+>>>>>> surprising.
+>>>>>
+>>>>> Hm, do we really try that?
+>>>>> Through a quick glance, dma_alloc_coherent_gfp_flags() gives GFP_DMA32
+>>>>> only when coherent mask <= DMA_BIT_MASK(32); in the case of iwlwifi,
+>>>>> it's 36bit, so GFP_DMA isn't set.
+>>>>
+>>>> Oh, yes - it is using an odd dma mask, and amdgpu seems to use an
+>>>> just as odd 40-bit dma mask.
+>>>>
+>>>>> We had a fallback allocation with GFP_DMA32 in the past, but this
+>>>>> seems gone long time ago along with cleanups (commit c647c3bb2d16).
+>>>>>
+>>>>> But I haven't followed about this topic for long time, so I might have
+>>>>> missed obviously...
+>>>>
+>>>> I think a fallback would be much better here rather than relying on the
+>>>> limited swiotlb buffer bool.  dma_direct_alloc (which in 4.17 is also
+>>>> used for x86) already has a GFP_DMA fallback, so extending this for
+>>>> GFP_DMA32 as well would seem reasonable.
+>>>>
+>>>> Any volunteers?
+>>>
+>>> Below is a quick attempt, totally untested.  Actually the retry with
+>>> GFP_DMA is superfluous for archs without it, so the first patch
+>>> corrects it.
+>>
+>> Gah, scratch this, it doesn't work.  A different check is needed...
+> 
+> The v2 patches are below, replaced with IS_ENABLED(CONFIG_ZONE_DMA).
 
-On 11/04/18 11:15, Geert Uytterhoeven wrote:
-> Vfio-platform requires reset support, provided either by ACPI, or, on DT
-> platforms, by a device-specific reset driver matching against the
-> device's compatible value.
-> 
-> On many SoCs, devices are connected to an SoC-internal reset controller.
-> If the reset hierarchy is described in DT using "resets" properties,
-> such devices can be reset in a generic way through the reset controller
-> subsystem.  Hence add support for this, avoiding the need to write
-> device-specific reset drivers for each single device on affected SoCs.
-> 
-> Devices that do require a more complex reset procedure can still provide
-> a device-specific reset driver, as that takes precedence.
-> 
-> Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
-> becomes a no-op (as in: "No reset function found for device") if reset
-> controller support is disabled.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> ---
-> v3:
->   - Add Reviewed-by,
->   - Merge similar checks in vfio_platform_has_reset(),
-> 
-> v2:
->   - Don't store error values in vdev->reset_control,
->   - Use of_reset_control_get_exclusive() instead of
->     __of_reset_control_get(),
->   - Improve description.
-> ---
->  drivers/vfio/platform/vfio_platform_common.c  | 20 ++++++++++++++++++--
->  drivers/vfio/platform/vfio_platform_private.h |  1 +
->  2 files changed, 19 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
-> index b60bb5326668498c..ef9b9e3220ebe939 100644
-> --- a/drivers/vfio/platform/vfio_platform_common.c
-> +++ b/drivers/vfio/platform/vfio_platform_common.c
-> @@ -17,6 +17,7 @@
->  #include <linux/iommu.h>
->  #include <linux/module.h>
->  #include <linux/mutex.h>
-> +#include <linux/reset.h>
->  #include <linux/slab.h>
->  #include <linux/types.h>
->  #include <linux/uaccess.h>
-> @@ -112,11 +113,13 @@ static bool vfio_platform_has_reset(struct vfio_platform_device *vdev)
->  	if (VFIO_PLATFORM_IS_ACPI(vdev))
->  		return vfio_platform_acpi_has_reset(vdev);
->  
-> -	return vdev->of_reset ? true : false;
-> +	return vdev->of_reset || vdev->reset_control;
->  }
->  
->  static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
->  {
-> +	struct reset_control *rstc;
-> +
->  	if (VFIO_PLATFORM_IS_ACPI(vdev))
->  		return vfio_platform_acpi_has_reset(vdev) ? 0 : -ENOENT;
->  
-> @@ -127,8 +130,16 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
->  		vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
->  							&vdev->reset_module);
->  	}
-> +	if (vdev->of_reset)
-> +		return 0;
-> +
-> +	rstc = of_reset_control_get_exclusive(vdev->device->of_node, NULL);
+That looks pretty reasonable to me - I'd be tempted to try a factoring 
+out a helper function to avoid the "goto again" logic, but that's hardly 
+crucial.
 
-Shouldn't we prefer the top level reset_control_get_exclusive()?
+What I'd really love to see is something like the alloc_pages_mask() 
+proposal from years ago to come back such that GFP_DMA32 could die 
+entirely, but I don't know anywhere near enough about the mm layer to 
+consider taking that on myself :(
 
-To make sure about the exclusive/shared terminology, does
-get_reset_control_get_exclusive() check we have an exclusive wire
-between this device and the reset controller?
-
-Thanks
-
-Eric
-> +	if (!IS_ERR(rstc)) {
-> +		vdev->reset_control = rstc;
-> +		return 0;
-> +	}
->  
-> -	return vdev->of_reset ? 0 : -ENOENT;
-> +	return PTR_ERR(rstc);
->  }
->  
->  static void vfio_platform_put_reset(struct vfio_platform_device *vdev)
-> @@ -138,6 +149,8 @@ static void vfio_platform_put_reset(struct vfio_platform_device *vdev)
->  
->  	if (vdev->of_reset)
->  		module_put(vdev->reset_module);
-> +
-> +	reset_control_put(vdev->reset_control);
->  }
->  
->  static int vfio_platform_regions_init(struct vfio_platform_device *vdev)
-> @@ -217,6 +230,9 @@ static int vfio_platform_call_reset(struct vfio_platform_device *vdev,
->  	} else if (vdev->of_reset) {
->  		dev_info(vdev->device, "reset\n");
->  		return vdev->of_reset(vdev);
-> +	} else if (vdev->reset_control) {
-> +		dev_info(vdev->device, "reset\n");
-> +		return reset_control_reset(vdev->reset_control);
->  	}
->  
->  	dev_warn(vdev->device, "no reset function found!\n");
-> diff --git a/drivers/vfio/platform/vfio_platform_private.h b/drivers/vfio/platform/vfio_platform_private.h
-> index 85ffe5d9d1abd94e..a56e80ae5986540b 100644
-> --- a/drivers/vfio/platform/vfio_platform_private.h
-> +++ b/drivers/vfio/platform/vfio_platform_private.h
-> @@ -60,6 +60,7 @@ struct vfio_platform_device {
->  	const char			*compat;
->  	const char			*acpihid;
->  	struct module			*reset_module;
-> +	struct reset_control		*reset_control;
->  	struct device			*device;
->  
->  	/*
-> 
+Robin.
