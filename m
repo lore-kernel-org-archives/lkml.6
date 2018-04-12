@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752935AbeDLIBJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 04:01:09 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:36634 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751112AbeDLIBC (ORCPT
+        id S1752908AbeDLIBH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 04:01:07 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:54587 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752853AbeDLIBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 04:01:02 -0400
-X-Google-Smtp-Source: AIpwx496nxjW+RWiLA9xVp132Z8S3I5XaJ1xq3EV/ayK16HaKbG2kKnyVfK2uYPqNMLwpSN//NGxasa4aVz74zBnke7UOpkjhGW1
+        Thu, 12 Apr 2018 04:01:03 -0400
+X-Google-Smtp-Source: AIpwx4/UkkPwyN/XQ+zhPWpIIur3XXjiffiI9Ezbp85whUrgnfeepjHh+rAlgb6zSLv2JnCq3sz/N0B51910uV3dX3/bngW0JaGt
 MIME-Version: 1.0
 Date: Thu, 12 Apr 2018 01:01:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <089e082d0cb81b67d10569a2283f@google.com>
-Subject: KMSAN: uninit-value in netif_skb_features
-From: syzbot <syzbot+0bbe42c764feafa82c5a@syzkaller.appspotmail.com>
+Message-ID: <94eb2c059ce01f643c0569a228ee@google.com>
+Subject: KMSAN: uninit-value in __netif_receive_skb_core
+From: syzbot <syzbot+b202b7208664142954fa@syzkaller.appspotmail.com>
 To: bpoirier@suse.com, davem@davemloft.net, edumazet@google.com,
-        elena.reshetova@intel.com, keescook@chromium.org,
+        elena.reshetova@intel.com, ishkamiel@gmail.com, keescook@chromium.org,
         linux-kernel@vger.kernel.org, maloney@google.com,
         netdev@vger.kernel.org, rami.rosen@intel.com,
         syzkaller-bugs@googlegroups.com, willemb@google.com
@@ -32,50 +32,52 @@ https://github.com/google/kmsan.git/master commit
 e2ab7e8abba47a2f2698216258e5d8727ae58717 (Fri Apr 6 16:24:31 2018 +0000)
 kmsan: temporarily disable visitAsmInstruction() to help syzbot
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=0bbe42c764feafa82c5a
+https://syzkaller.appspot.com/bug?extid=b202b7208664142954fa
 
-So far this crash happened 30 times on  
-https://github.com/google/kmsan.git/master.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4850744041668608
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=6289386287136768
+Unfortunately, I don't have any reproducer for this crash yet.
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=4577411249209344
+https://syzkaller.appspot.com/x/log.txt?id=5356516437655552
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=6627248707860932248
 compiler: clang version 7.0.0 (trunk 329391)
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+0bbe42c764feafa82c5a@syzkaller.appspotmail.com
+Reported-by: syzbot+b202b7208664142954fa@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
 ==================================================================
-BUG: KMSAN: uninit-value in eth_type_vlan include/linux/if_vlan.h:283  
+BUG: KMSAN: uninit-value in __read_once_size include/linux/compiler.h:197  
 [inline]
-BUG: KMSAN: uninit-value in skb_vlan_tagged_multi  
-include/linux/if_vlan.h:656 [inline]
-BUG: KMSAN: uninit-value in vlan_features_check include/linux/if_vlan.h:672  
+BUG: KMSAN: uninit-value in deliver_ptype_list_skb net/core/dev.c:1908  
 [inline]
-BUG: KMSAN: uninit-value in dflt_features_check net/core/dev.c:2949 [inline]
-BUG: KMSAN: uninit-value in netif_skb_features+0xd1b/0xdc0  
-net/core/dev.c:3009
-CPU: 1 PID: 3582 Comm: syzkaller435149 Not tainted 4.16.0+ #82
+BUG: KMSAN: uninit-value in __netif_receive_skb_core+0x4630/0x4a80  
+net/core/dev.c:4545
+CPU: 0 PID: 5999 Comm: syz-executor3 Not tainted 4.16.0+ #82
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
+  <IRQ>
   __dump_stack lib/dump_stack.c:17 [inline]
   dump_stack+0x185/0x1d0 lib/dump_stack.c:53
   kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
   __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
-  eth_type_vlan include/linux/if_vlan.h:283 [inline]
-  skb_vlan_tagged_multi include/linux/if_vlan.h:656 [inline]
-  vlan_features_check include/linux/if_vlan.h:672 [inline]
-  dflt_features_check net/core/dev.c:2949 [inline]
-  netif_skb_features+0xd1b/0xdc0 net/core/dev.c:3009
-  validate_xmit_skb+0x89/0x1320 net/core/dev.c:3084
-  __dev_queue_xmit+0x1cb2/0x2b60 net/core/dev.c:3549
+  __read_once_size include/linux/compiler.h:197 [inline]
+  deliver_ptype_list_skb net/core/dev.c:1908 [inline]
+  __netif_receive_skb_core+0x4630/0x4a80 net/core/dev.c:4545
+  __netif_receive_skb net/core/dev.c:4627 [inline]
+  process_backlog+0x62d/0xe20 net/core/dev.c:5307
+  napi_poll net/core/dev.c:5705 [inline]
+  net_rx_action+0x7c1/0x1a70 net/core/dev.c:5771
+  __do_softirq+0x56d/0x93d kernel/softirq.c:285
+  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1040
+  </IRQ>
+  do_softirq kernel/softirq.c:329 [inline]
+  __local_bh_enable_ip+0x114/0x140 kernel/softirq.c:182
+  local_bh_enable+0x36/0x40 include/linux/bottom_half.h:32
+  rcu_read_unlock_bh include/linux/rcupdate.h:726 [inline]
+  __dev_queue_xmit+0x2a31/0x2b60 net/core/dev.c:3584
   dev_queue_xmit+0x4b/0x60 net/core/dev.c:3590
   packet_snd net/packet/af_packet.c:2944 [inline]
   packet_sendmsg+0x7c57/0x8a10 net/packet/af_packet.c:2969
@@ -90,14 +92,26 @@ Call Trace:
   SyS_writev+0x56/0x80 fs/read_write.c:1082
   do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x43ffa9
-RSP: 002b:00007fff2cff3948 EFLAGS: 00000217 ORIG_RAX: 0000000000000014
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043ffa9
-RDX: 0000000000000001 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 00000000006cb018 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000217 R12: 00000000004018d0
-R13: 0000000000401960 R14: 0000000000000000 R15: 0000000000000000
+RIP: 0033:0x455259
+RSP: 002b:00007fb53ede8c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 00007fb53ede96d4 RCX: 0000000000455259
+RDX: 0000000000000001 RSI: 00000000200010c0 RDI: 0000000000000013
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000000006cd R14: 00000000006fd3d8 R15: 0000000000000000
 
+Uninit was stored to memory at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+  kmsan_save_stack mm/kmsan/kmsan.c:293 [inline]
+  kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:684
+  __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:521
+  skb_vlan_untag+0x950/0xee0 include/linux/if_vlan.h:597
+  __netif_receive_skb_core+0x70a/0x4a80 net/core/dev.c:4460
+  __netif_receive_skb net/core/dev.c:4627 [inline]
+  process_backlog+0x62d/0xe20 net/core/dev.c:5307
+  napi_poll net/core/dev.c:5705 [inline]
+  net_rx_action+0x7c1/0x1a70 net/core/dev.c:5771
+  __do_softirq+0x56d/0x93d kernel/softirq.c:285
 Uninit was created at:
   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
   kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
@@ -138,9 +152,6 @@ If you forgot to add the Reported-by tag, once the fix for this bug is
 merged
 into any tree, please reply to this email with:
 #syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
 To mark this as a duplicate of another syzbot report, please reply with:
 #syz dup: exact-subject-of-another-report
 If it's a one-off invalid bug report, please reply with:
