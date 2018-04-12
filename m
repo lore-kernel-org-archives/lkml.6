@@ -1,23 +1,23 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx4+XrIGHUbYsxFoa7b9ucG8myeQfYRTPUfGF8FGELEULp0bTAZz/RBHrfN6pi0lgwCUfTdzS
-ARC-Seal: i=1; a=rsa-sha256; t=1523544876; cv=none;
+X-Google-Smtp-Source: AIpwx49z2oqnpbPL6m8jcLj+bAaRMqcgfvO0Z7KXuc/DZKh3+VUEpzcF+7cmxjcMZ72qdI5Gp24D
+ARC-Seal: i=1; a=rsa-sha256; t=1523544895; cv=none;
         d=google.com; s=arc-20160816;
-        b=P812sgj6lNMmjX4IV/ZCm2gILe4CY7fiAALN0vk+oqZ5K8qqM6S8Uu5O5X5oB7SpUI
-         uwW0fvHdb81FN7miCAX4OIN4/nb/Zistdx1F8fqnRYrld2e1hbUMCLAffRVWR9uCVqeb
-         lxv3IVuHUhzScsIEQuhaPuHBNXNhXwWY38VnI7e2phBisWKksh+R9WKUSHHrzHeAC3Rc
-         0tiGedl0krLJU+rKAarnAiqCHHFPoGHtpMRuF/QJEs8NOIkBWwCUEleMrLheRZ/iyN6v
-         DM1p0sgK35Sd6ZMdJGlVBqN8tj71hdCqMU0wVSqoUvJpu4qRGVevGQDiN/r7YRhGOmpA
-         RpdA==
+        b=soNOPLQ1CS1G9R6URhdn0OSM/T2RlrcCDWpidjeNsUJDvIHCJwmnxngl1OIKWl5pAI
+         zRvUTOFMly5b6uivpi5m2+W1Eui6KIEUash1Qo3Oxm5LvD3TF0hlCHUH5G+o++itq7Hp
+         TpcutLFHuIdvblWbPTmqFNAR5Q5pzhLmDhfLWhjxBt3JOho9bHLqks2tHtJpUjUc56o2
+         V6lg8gw/EfAJ5iLo89BUFP6v/SsWocF9H4fESqwD9OBMcgvF83Yetga7WmtIQGqvBWuN
+         /gSmefsW2VfaQSl70mnJlmxMjU2LSVNyl4/7kXnJ1hAdF8uVTIvvIO951cUgF16gHYjZ
+         xrIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=6VZzGz1UVs3rnUILjpsnKeQrs3uBtTk66OyDxHd1wXU=;
-        b=yFulnnbJlHeImAOqrmMIBUEd304JVqu23AdshhVCiXHI8XhklyJUzyEw09Je4jkw39
-         OLwWISXy5WrxYgDP2rfeFEyPrphFNFllo8W1jYwJMGmPxx7lRV8dknaHjFQ2oM7Vl1HJ
-         kzrAilnh7HGyBaU9c+vAJNrtfUtsdqko1RJjbRJPrhidBBx8yxnsDEqpbZ7BpsTpgb7l
-         c/xHRFS3LGJ3/lASSlCeh7ctCkH4swfFWXMnpio8W/WQlvdhzqy2dxcNui5kMrMfR53E
-         2TGm3Ax7Sco9FgJTEEvuv4BR5PcPHDckL84oZxKgERXoZtLI6KkVZZO5Ow3cmMk6471T
-         MZfA==
+        h=list-id:precedence:sender:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=ArDeRTf1Gk9WDM1p0gZOV9+/bnjm3OVZ4t1Ju9PINZo=;
+        b=CtDkN/7qeHmSDkk3S8irqnk7b91epcYWb2oZaDxQblH0Nw+mj4/YhFP7kRdJln+k0m
+         ppu8/SzvP/QhcDPbNoJ3SpyEe12YCxnWavotCsOUi68edUk8qxg50tpciSw6vWJQeMeM
+         Q/6PJYGPRD4QANVg6axyxz96XR2dZSTiAvwXXBA8H5A7gNrd7PokL6YWlu7BhnR7c94b
+         9/L2iA9sDoIvMdsdiMAbv0pNlX24OUwR8HMHB+HxVSHGqMTHHP36bCZ51kW4dB0IY7+A
+         DiggRKXIceT1rj5XXDqPi1VZso6frewieEpWe38ALzRqTn+rzr2oWt+wEF/16ySKeOuF
+         ZLUg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
@@ -25,12 +25,12 @@ Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753070AbeDLOyf (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Thu, 12 Apr 2018 10:54:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40888 "EHLO mx1.redhat.com"
+        id S1753118AbeDLOyi (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Thu, 12 Apr 2018 10:54:38 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41496 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753060AbeDLOye (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Thu, 12 Apr 2018 10:54:34 -0400
+        id S1753068AbeDLOyg (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Thu, 12 Apr 2018 10:54:36 -0400
 From: Joe Lawrence <joe.lawrence@redhat.com>
 To: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -41,85 +41,24 @@ Cc: Jiri Kosina <jikos@kernel.org>,
         =?UTF-8?q?Libor=20Pech=C3=A1=C4=8Dek?= <lpechacek@suse.com>,
         Nicolai Stange <nstange@suse.de>,
         Artem Savkov <asavkov@redhat.com>
-Subject: [PATCH v3] Add livepatch kselftests
-Date: Thu, 12 Apr 2018 10:54:30 -0400
-Message-Id: <1523544871-29444-1-git-send-email-joe.lawrence@redhat.com>
+Subject: [PATCH v3] selftests/livepatch: introduce tests
+Date: Thu, 12 Apr 2018 10:54:31 -0400
+Message-Id: <1523544871-29444-2-git-send-email-joe.lawrence@redhat.com>
+In-Reply-To: <1523544871-29444-1-git-send-email-joe.lawrence@redhat.com>
+References: <1523544871-29444-1-git-send-email-joe.lawrence@redhat.com>
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597552592827178262?=
-X-GMAIL-MSGID: =?utf-8?q?1597552592827178262?=
+X-GMAIL-THRID: =?utf-8?q?1597552611970926096?=
+X-GMAIL-MSGID: =?utf-8?q?1597552611970926096?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Tests run on top of Petr's v11 atomic replace feature and v2 of the shadow
-variable enhancement patchsets:
+Add a few livepatch modules and simple target modules that the included
+regression suite can run tests against.
 
-  [PATCH 0/8] livepatch: Atomic replace feature
-  https://lkml.kernel.org/r/20180323120028.31451-1-pmladek@suse.com
-
-  [PATCH v2 0/2] livepatch: Allocate and free shadow variables more safely
-  https://lkml.kernel.org/r/20180405122315.29065-1-pmladek@suse.com
-
-which have been combined into a git tree, then branched:
-
-  https://github.com/joe-lawrence/linux/tree/klp_kselftest_base
-  https://github.com/joe-lawrence/linux/tree/klp_kselftest_v3
-
-so that the kbuild test robot could verify:
-
-  Subject: [joe-lawrence:klp_kselftest_v3] BUILD SUCCESS 73f12d67f681e3517a8cdc12ceec07b05543d269
-  From: kbuild test robot <lkp@intel.com>
-  To: Joe Lawrence <joe.lawrence@redhat.com>
-
-  tree/branch: https://github.com/joe-lawrence/linux  klp_kselftest_v3
-  branch HEAD: 73f12d67f681e3517a8cdc12ceec07b05543d269  selftests/livepatch: introduce tests
-
-  elapsed time: 95m
-
-  configs tested: 202
-
-  [ ... snip ... ]
-
-If anyone knows how to indicate an external git tree base to the bot in
-the commit message or header letter, let me know.  Otherwise I'll have
-to keep pushing up to github and ignoring its misfires as reported to
-the list :(
-
-
-changes from v2:
-
-- fix module_exit(test_klp_shadow_vars_exit) in test_klp_shadow_vars.c
-- silence kbuild test robot's "XXX can be static" and "Using plain
-  integer as NULL pointer" complaints
-- re-run tests with CONFIG_LOCKDEP=y and CONFIG_PROVE_LOCKING=y
-- use GFP_ATOMIC in test_klp_shadow_vars.c constructor code
-
-changes from v1:
-- Only add $(CC_FLAGS_FTRACE) for target modules
-- Remove between test delay
-- Reduce RETRY_INTERVAL to .1 sec
-- Reduce test_callback_mod's busymod_work_func delay from 60 to 10 sec
-- s/PASS/ok and s/FAIL/not ok for test output
-- Move test descriptions from Documentation/livepatch/callbacks.txt
-  into tools/testing/selftests/livepatch/test-callbacks.sh
-- Add a shadow variable test script and module
-- Add a short tools/testing/selftests/livepatch/README
-- to += linux-kselftest@vger.kernel.org
-- cc += Libor, Nicolai, Artem
-
-change from rfc:
-- SPDX-License-Identifiers
-- Moved livepatch test modules into lib/livepatch
-- Renamed livepatch.sh (filename suffix)
-- Reduced between-test delay time
-- Split off common functions.sh file
-- Split into separate livepatch, callbacks, and shadow-vars scrips
-- Gave the tests short descriptions instead of TEST1, TEST2, etc.
-
-Joe Lawrence (1):
-  selftests/livepatch: introduce tests
-
+Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
+---
  Documentation/livepatch/callbacks.txt              | 487 -----------------
  lib/Kconfig.debug                                  |  12 +
  lib/Makefile                                       |   2 +
@@ -156,6 +95,2412 @@ Joe Lawrence (1):
  create mode 100755 tools/testing/selftests/livepatch/test-livepatch.sh
  create mode 100755 tools/testing/selftests/livepatch/test-shadow-vars.sh
 
---
+diff --git a/Documentation/livepatch/callbacks.txt b/Documentation/livepatch/callbacks.txt
+index c9776f48e458..6ca2801a6bb9 100644
+--- a/Documentation/livepatch/callbacks.txt
++++ b/Documentation/livepatch/callbacks.txt
+@@ -116,490 +116,3 @@ virtnet_probe() initialized its driver's net_device features.  A
+ pre/post-patch callback could iterate over all such devices, making a
+ similar change to their hw_features value.  (Client functions of the
+ value may need to be updated accordingly.)
+-
+-
+-Test cases
+-==========
+-
+-What follows is not an exhaustive test suite of every possible livepatch
+-pre/post-(un)patch combination, but a selection that demonstrates a few
+-important concepts.  Each test case uses the kernel modules located in
+-the samples/livepatch/ and assumes that no livepatches are loaded at the
+-beginning of the test.
+-
+-
+-Test 1
+-------
+-
+-Test a combination of loading a kernel module and a livepatch that
+-patches a function in the first module.  (Un)load the target module
+-before the livepatch module:
+-
+-- load target module
+-- load livepatch
+-- disable livepatch
+-- unload target module
+-- unload livepatch
+-
+-First load a target module:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-mod.ko
+-  [   34.475708] livepatch_callbacks_mod: livepatch_callbacks_mod_init
+-
+-On livepatch enable, before the livepatch transition starts, pre-patch
+-callbacks are executed for vmlinux and livepatch_callbacks_mod (those
+-klp_objects currently loaded).  After klp_objects are patched according
+-to the klp_patch, their post-patch callbacks run and the transition
+-completes:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-demo.ko
+-  [   36.503719] livepatch: enabling patch 'livepatch_callbacks_demo'
+-  [   36.504213] livepatch: 'livepatch_callbacks_demo': initializing patching transition
+-  [   36.504238] livepatch_callbacks_demo: pre_patch_callback: vmlinux
+-  [   36.504721] livepatch_callbacks_demo: pre_patch_callback: livepatch_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
+-  [   36.505849] livepatch: 'livepatch_callbacks_demo': starting patching transition
+-  [   37.727133] livepatch: 'livepatch_callbacks_demo': completing patching transition
+-  [   37.727232] livepatch_callbacks_demo: post_patch_callback: vmlinux
+-  [   37.727860] livepatch_callbacks_demo: post_patch_callback: livepatch_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
+-  [   37.728792] livepatch: 'livepatch_callbacks_demo': patching complete
+-
+-Similarly, on livepatch disable, pre-patch callbacks run before the
+-unpatching transition starts.  klp_objects are reverted, post-patch
+-callbacks execute and the transition completes:
+-
+-  % echo 0 > /sys/kernel/livepatch/livepatch_callbacks_demo/enabled
+-  [   38.510209] livepatch: 'livepatch_callbacks_demo': initializing unpatching transition
+-  [   38.510234] livepatch_callbacks_demo: pre_unpatch_callback: vmlinux
+-  [   38.510982] livepatch_callbacks_demo: pre_unpatch_callback: livepatch_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
+-  [   38.512209] livepatch: 'livepatch_callbacks_demo': starting unpatching transition
+-  [   39.711132] livepatch: 'livepatch_callbacks_demo': completing unpatching transition
+-  [   39.711210] livepatch_callbacks_demo: post_unpatch_callback: vmlinux
+-  [   39.711779] livepatch_callbacks_demo: post_unpatch_callback: livepatch_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
+-  [   39.712735] livepatch: 'livepatch_callbacks_demo': unpatching complete
+-
+-  % rmmod samples/livepatch/livepatch-callbacks-demo.ko
+-  % rmmod samples/livepatch/livepatch-callbacks-mod.ko
+-  [   42.534183] livepatch_callbacks_mod: livepatch_callbacks_mod_exit
+-
+-
+-Test 2
+-------
+-
+-This test is similar to the previous test, but (un)load the livepatch
+-module before the target kernel module.  This tests the livepatch core's
+-module_coming handler:
+-
+-- load livepatch
+-- load target module
+-- disable livepatch
+-- unload livepatch
+-- unload target module
+-
+-
+-On livepatch enable, only pre/post-patch callbacks are executed for
+-currently loaded klp_objects, in this case, vmlinux:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-demo.ko
+-  [   44.553328] livepatch: enabling patch 'livepatch_callbacks_demo'
+-  [   44.553997] livepatch: 'livepatch_callbacks_demo': initializing patching transition
+-  [   44.554049] livepatch_callbacks_demo: pre_patch_callback: vmlinux
+-  [   44.554845] livepatch: 'livepatch_callbacks_demo': starting patching transition
+-  [   45.727128] livepatch: 'livepatch_callbacks_demo': completing patching transition
+-  [   45.727212] livepatch_callbacks_demo: post_patch_callback: vmlinux
+-  [   45.727961] livepatch: 'livepatch_callbacks_demo': patching complete
+-
+-When a targeted module is subsequently loaded, only its pre/post-patch
+-callbacks are executed:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-mod.ko
+-  [   46.560845] livepatch: applying patch 'livepatch_callbacks_demo' to loading module 'livepatch_callbacks_mod'
+-  [   46.561988] livepatch_callbacks_demo: pre_patch_callback: livepatch_callbacks_mod -> [MODULE_STATE_COMING] Full formed, running module_init
+-  [   46.563452] livepatch_callbacks_demo: post_patch_callback: livepatch_callbacks_mod -> [MODULE_STATE_COMING] Full formed, running module_init
+-  [   46.565495] livepatch_callbacks_mod: livepatch_callbacks_mod_init
+-
+-On livepatch disable, all currently loaded klp_objects' (vmlinux and
+-livepatch_callbacks_mod) pre/post-unpatch callbacks are executed:
+-
+-  % echo 0 > /sys/kernel/livepatch/livepatch_callbacks_demo/enabled
+-  [   48.568885] livepatch: 'livepatch_callbacks_demo': initializing unpatching transition
+-  [   48.568910] livepatch_callbacks_demo: pre_unpatch_callback: vmlinux
+-  [   48.569441] livepatch_callbacks_demo: pre_unpatch_callback: livepatch_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
+-  [   48.570502] livepatch: 'livepatch_callbacks_demo': starting unpatching transition
+-  [   49.759091] livepatch: 'livepatch_callbacks_demo': completing unpatching transition
+-  [   49.759171] livepatch_callbacks_demo: post_unpatch_callback: vmlinux
+-  [   49.759742] livepatch_callbacks_demo: post_unpatch_callback: livepatch_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
+-  [   49.760690] livepatch: 'livepatch_callbacks_demo': unpatching complete
+-
+-  % rmmod samples/livepatch/livepatch-callbacks-demo.ko
+-  % rmmod samples/livepatch/livepatch-callbacks-mod.ko
+-  [   52.592283] livepatch_callbacks_mod: livepatch_callbacks_mod_exit
+-
+-
+-Test 3
+-------
+-
+-Test loading the livepatch after a targeted kernel module, then unload
+-the kernel module before disabling the livepatch.  This tests the
+-livepatch core's module_going handler:
+-
+-- load target module
+-- load livepatch
+-- unload target module
+-- disable livepatch
+-- unload livepatch
+-
+-First load a target module, then the livepatch:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-mod.ko
+-  [   54.607948] livepatch_callbacks_mod: livepatch_callbacks_mod_init
+-
+-  % insmod samples/livepatch/livepatch-callbacks-demo.ko
+-  [   56.613919] livepatch: enabling patch 'livepatch_callbacks_demo'
+-  [   56.614411] livepatch: 'livepatch_callbacks_demo': initializing patching transition
+-  [   56.614436] livepatch_callbacks_demo: pre_patch_callback: vmlinux
+-  [   56.614818] livepatch_callbacks_demo: pre_patch_callback: livepatch_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
+-  [   56.615656] livepatch: 'livepatch_callbacks_demo': starting patching transition
+-  [   57.759070] livepatch: 'livepatch_callbacks_demo': completing patching transition
+-  [   57.759147] livepatch_callbacks_demo: post_patch_callback: vmlinux
+-  [   57.759621] livepatch_callbacks_demo: post_patch_callback: livepatch_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
+-  [   57.760307] livepatch: 'livepatch_callbacks_demo': patching complete
+-
+-When a target module is unloaded, the livepatch is only reverted from
+-that klp_object (livepatch_callbacks_mod).  As such, only its pre and
+-post-unpatch callbacks are executed when this occurs:
+-
+-  % rmmod samples/livepatch/livepatch-callbacks-mod.ko
+-  [   58.623409] livepatch_callbacks_mod: livepatch_callbacks_mod_exit
+-  [   58.623903] livepatch_callbacks_demo: pre_unpatch_callback: livepatch_callbacks_mod -> [MODULE_STATE_GOING] Going away
+-  [   58.624658] livepatch: reverting patch 'livepatch_callbacks_demo' on unloading module 'livepatch_callbacks_mod'
+-  [   58.625305] livepatch_callbacks_demo: post_unpatch_callback: livepatch_callbacks_mod -> [MODULE_STATE_GOING] Going away
+-
+-When the livepatch is disabled, pre and post-unpatch callbacks are run
+-for the remaining klp_object, vmlinux:
+-
+-  % echo 0 > /sys/kernel/livepatch/livepatch_callbacks_demo/enabled
+-  [   60.638420] livepatch: 'livepatch_callbacks_demo': initializing unpatching transition
+-  [   60.638444] livepatch_callbacks_demo: pre_unpatch_callback: vmlinux
+-  [   60.638996] livepatch: 'livepatch_callbacks_demo': starting unpatching transition
+-  [   61.727088] livepatch: 'livepatch_callbacks_demo': completing unpatching transition
+-  [   61.727165] livepatch_callbacks_demo: post_unpatch_callback: vmlinux
+-  [   61.727985] livepatch: 'livepatch_callbacks_demo': unpatching complete
+-
+-  % rmmod samples/livepatch/livepatch-callbacks-demo.ko
+-
+-
+-Test 4
+-------
+-
+-This test is similar to the previous test, however the livepatch is
+-loaded first.  This tests the livepatch core's module_coming and
+-module_going handlers:
+-
+-- load livepatch
+-- load target module
+-- unload target module
+-- disable livepatch
+-- unload livepatch
+-
+-First load the livepatch:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-demo.ko
+-  [   64.661552] livepatch: enabling patch 'livepatch_callbacks_demo'
+-  [   64.662147] livepatch: 'livepatch_callbacks_demo': initializing patching transition
+-  [   64.662175] livepatch_callbacks_demo: pre_patch_callback: vmlinux
+-  [   64.662850] livepatch: 'livepatch_callbacks_demo': starting patching transition
+-  [   65.695056] livepatch: 'livepatch_callbacks_demo': completing patching transition
+-  [   65.695147] livepatch_callbacks_demo: post_patch_callback: vmlinux
+-  [   65.695561] livepatch: 'livepatch_callbacks_demo': patching complete
+-
+-When a targeted kernel module is subsequently loaded, only its
+-pre/post-patch callbacks are executed:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-mod.ko
+-  [   66.669196] livepatch: applying patch 'livepatch_callbacks_demo' to loading module 'livepatch_callbacks_mod'
+-  [   66.669882] livepatch_callbacks_demo: pre_patch_callback: livepatch_callbacks_mod -> [MODULE_STATE_COMING] Full formed, running module_init
+-  [   66.670744] livepatch_callbacks_demo: post_patch_callback: livepatch_callbacks_mod -> [MODULE_STATE_COMING] Full formed, running module_init
+-  [   66.672873] livepatch_callbacks_mod: livepatch_callbacks_mod_init
+-
+-When the target module is unloaded, the livepatch is only reverted from
+-the livepatch_callbacks_mod klp_object.  As such, only pre and
+-post-unpatch callbacks are executed when this occurs:
+-
+-  % rmmod samples/livepatch/livepatch-callbacks-mod.ko
+-  [   68.680065] livepatch_callbacks_mod: livepatch_callbacks_mod_exit
+-  [   68.680688] livepatch_callbacks_demo: pre_unpatch_callback: livepatch_callbacks_mod -> [MODULE_STATE_GOING] Going away
+-  [   68.681452] livepatch: reverting patch 'livepatch_callbacks_demo' on unloading module 'livepatch_callbacks_mod'
+-  [   68.682094] livepatch_callbacks_demo: post_unpatch_callback: livepatch_callbacks_mod -> [MODULE_STATE_GOING] Going away
+-
+-  % echo 0 > /sys/kernel/livepatch/livepatch_callbacks_demo/enabled
+-  [   70.689225] livepatch: 'livepatch_callbacks_demo': initializing unpatching transition
+-  [   70.689256] livepatch_callbacks_demo: pre_unpatch_callback: vmlinux
+-  [   70.689882] livepatch: 'livepatch_callbacks_demo': starting unpatching transition
+-  [   71.711080] livepatch: 'livepatch_callbacks_demo': completing unpatching transition
+-  [   71.711481] livepatch_callbacks_demo: post_unpatch_callback: vmlinux
+-  [   71.711988] livepatch: 'livepatch_callbacks_demo': unpatching complete
+-
+-  % rmmod samples/livepatch/livepatch-callbacks-demo.ko
+-
+-
+-Test 5
+-------
+-
+-A simple test of loading a livepatch without one of its patch target
+-klp_objects ever loaded (livepatch_callbacks_mod):
+-
+-- load livepatch
+-- disable livepatch
+-- unload livepatch
+-
+-Load the livepatch:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-demo.ko
+-  [   74.711081] livepatch: enabling patch 'livepatch_callbacks_demo'
+-  [   74.711595] livepatch: 'livepatch_callbacks_demo': initializing patching transition
+-  [   74.711639] livepatch_callbacks_demo: pre_patch_callback: vmlinux
+-  [   74.712272] livepatch: 'livepatch_callbacks_demo': starting patching transition
+-  [   75.743137] livepatch: 'livepatch_callbacks_demo': completing patching transition
+-  [   75.743219] livepatch_callbacks_demo: post_patch_callback: vmlinux
+-  [   75.743867] livepatch: 'livepatch_callbacks_demo': patching complete
+-
+-As expected, only pre/post-(un)patch handlers are executed for vmlinux:
+-
+-  % echo 0 > /sys/kernel/livepatch/livepatch_callbacks_demo/enabled
+-  [   76.716254] livepatch: 'livepatch_callbacks_demo': initializing unpatching transition
+-  [   76.716278] livepatch_callbacks_demo: pre_unpatch_callback: vmlinux
+-  [   76.716666] livepatch: 'livepatch_callbacks_demo': starting unpatching transition
+-  [   77.727089] livepatch: 'livepatch_callbacks_demo': completing unpatching transition
+-  [   77.727194] livepatch_callbacks_demo: post_unpatch_callback: vmlinux
+-  [   77.727907] livepatch: 'livepatch_callbacks_demo': unpatching complete
+-
+-  % rmmod samples/livepatch/livepatch-callbacks-demo.ko
+-
+-
+-Test 6
+-------
+-
+-Test a scenario where a vmlinux pre-patch callback returns a non-zero
+-status (ie, failure):
+-
+-- load target module
+-- load livepatch -ENODEV
+-- unload target module
+-
+-First load a target module:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-mod.ko
+-  [   80.740520] livepatch_callbacks_mod: livepatch_callbacks_mod_init
+-
+-Load the livepatch module, setting its 'pre_patch_ret' value to -19
+-(-ENODEV).  When its vmlinux pre-patch callback executed, this status
+-code will propagate back to the module-loading subsystem.  The result is
+-that the insmod command refuses to load the livepatch module:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-demo.ko pre_patch_ret=-19
+-  [   82.747326] livepatch: enabling patch 'livepatch_callbacks_demo'
+-  [   82.747743] livepatch: 'livepatch_callbacks_demo': initializing patching transition
+-  [   82.747767] livepatch_callbacks_demo: pre_patch_callback: vmlinux
+-  [   82.748237] livepatch: pre-patch callback failed for object 'vmlinux'
+-  [   82.748637] livepatch: failed to enable patch 'livepatch_callbacks_demo'
+-  [   82.749059] livepatch: 'livepatch_callbacks_demo': canceling transition, going to unpatch
+-  [   82.749060] livepatch: 'livepatch_callbacks_demo': completing unpatching transition
+-  [   82.749868] livepatch: 'livepatch_callbacks_demo': unpatching complete
+-  [   82.765809] insmod: ERROR: could not insert module samples/livepatch/livepatch-callbacks-demo.ko: No such device
+-
+-  % rmmod samples/livepatch/livepatch-callbacks-mod.ko
+-  [   84.774238] livepatch_callbacks_mod: livepatch_callbacks_mod_exit
+-
+-
+-Test 7
+-------
+-
+-Similar to the previous test, setup a livepatch such that its vmlinux
+-pre-patch callback returns success.  However, when a targeted kernel
+-module is later loaded, have the livepatch return a failing status code:
+-
+-- load livepatch
+-- setup -ENODEV
+-- load target module
+-- disable livepatch
+-- unload livepatch
+-
+-Load the livepatch, notice vmlinux pre-patch callback succeeds:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-demo.ko
+-  [   86.787845] livepatch: enabling patch 'livepatch_callbacks_demo'
+-  [   86.788325] livepatch: 'livepatch_callbacks_demo': initializing patching transition
+-  [   86.788427] livepatch_callbacks_demo: pre_patch_callback: vmlinux
+-  [   86.788821] livepatch: 'livepatch_callbacks_demo': starting patching transition
+-  [   87.711069] livepatch: 'livepatch_callbacks_demo': completing patching transition
+-  [   87.711143] livepatch_callbacks_demo: post_patch_callback: vmlinux
+-  [   87.711886] livepatch: 'livepatch_callbacks_demo': patching complete
+-
+-Set a trap so subsequent pre-patch callbacks to this livepatch will
+-return -ENODEV:
+-
+-  % echo -19 > /sys/module/livepatch_callbacks_demo/parameters/pre_patch_ret
+-
+-The livepatch pre-patch callback for subsequently loaded target modules
+-will return failure, so the module loader refuses to load the kernel
+-module.  Notice that no post-patch or pre/post-unpatch callbacks are
+-executed for this klp_object:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-mod.ko
+-  [   90.796976] livepatch: applying patch 'livepatch_callbacks_demo' to loading module 'livepatch_callbacks_mod'
+-  [   90.797834] livepatch_callbacks_demo: pre_patch_callback: livepatch_callbacks_mod -> [MODULE_STATE_COMING] Full formed, running module_init
+-  [   90.798900] livepatch: pre-patch callback failed for object 'livepatch_callbacks_mod'
+-  [   90.799652] livepatch: patch 'livepatch_callbacks_demo' failed for module 'livepatch_callbacks_mod', refusing to load module 'livepatch_callbacks_mod'
+-  [   90.819737] insmod: ERROR: could not insert module samples/livepatch/livepatch-callbacks-mod.ko: No such device
+-
+-However, pre/post-unpatch callbacks run for the vmlinux klp_object:
+-
+-  % echo 0 > /sys/kernel/livepatch/livepatch_callbacks_demo/enabled
+-  [   92.823547] livepatch: 'livepatch_callbacks_demo': initializing unpatching transition
+-  [   92.823573] livepatch_callbacks_demo: pre_unpatch_callback: vmlinux
+-  [   92.824331] livepatch: 'livepatch_callbacks_demo': starting unpatching transition
+-  [   93.727128] livepatch: 'livepatch_callbacks_demo': completing unpatching transition
+-  [   93.727327] livepatch_callbacks_demo: post_unpatch_callback: vmlinux
+-  [   93.727861] livepatch: 'livepatch_callbacks_demo': unpatching complete
+-
+-  % rmmod samples/livepatch/livepatch-callbacks-demo.ko
+-
+-
+-Test 8
+-------
+-
+-Test loading multiple targeted kernel modules.  This test-case is
+-mainly for comparing with the next test-case.
+-
+-- load busy target module (0s sleep),
+-- load livepatch
+-- load target module
+-- unload target module
+-- disable livepatch
+-- unload livepatch
+-- unload busy target module
+-
+-
+-Load a target "busy" kernel module which kicks off a worker function
+-that immediately exits:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-busymod.ko sleep_secs=0
+-  [   96.910107] livepatch_callbacks_busymod: livepatch_callbacks_mod_init
+-  [   96.910600] livepatch_callbacks_busymod: busymod_work_func, sleeping 0 seconds ...
+-  [   96.913024] livepatch_callbacks_busymod: busymod_work_func exit
+-
+-Proceed with loading the livepatch and another ordinary target module,
+-notice that the post-patch callbacks are executed and the transition
+-completes quickly:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-demo.ko
+-  [   98.917892] livepatch: enabling patch 'livepatch_callbacks_demo'
+-  [   98.918426] livepatch: 'livepatch_callbacks_demo': initializing patching transition
+-  [   98.918453] livepatch_callbacks_demo: pre_patch_callback: vmlinux
+-  [   98.918955] livepatch_callbacks_demo: pre_patch_callback: livepatch_callbacks_busymod -> [MODULE_STATE_LIVE] Normal state
+-  [   98.923835] livepatch: 'livepatch_callbacks_demo': starting patching transition
+-  [   99.743104] livepatch: 'livepatch_callbacks_demo': completing patching transition
+-  [   99.743156] livepatch_callbacks_demo: post_patch_callback: vmlinux
+-  [   99.743679] livepatch_callbacks_demo: post_patch_callback: livepatch_callbacks_busymod -> [MODULE_STATE_LIVE] Normal state
+-  [   99.744616] livepatch: 'livepatch_callbacks_demo': patching complete
+-
+-  % insmod samples/livepatch/livepatch-callbacks-mod.ko
+-  [  100.930955] livepatch: applying patch 'livepatch_callbacks_demo' to loading module 'livepatch_callbacks_mod'
+-  [  100.931668] livepatch_callbacks_demo: pre_patch_callback: livepatch_callbacks_mod -> [MODULE_STATE_COMING] Full formed, running module_init
+-  [  100.932645] livepatch_callbacks_demo: post_patch_callback: livepatch_callbacks_mod -> [MODULE_STATE_COMING] Full formed, running module_init
+-  [  100.934125] livepatch_callbacks_mod: livepatch_callbacks_mod_init
+-
+-  % rmmod samples/livepatch/livepatch-callbacks-mod.ko
+-  [  102.942805] livepatch_callbacks_mod: livepatch_callbacks_mod_exit
+-  [  102.943640] livepatch_callbacks_demo: pre_unpatch_callback: livepatch_callbacks_mod -> [MODULE_STATE_GOING] Going away
+-  [  102.944585] livepatch: reverting patch 'livepatch_callbacks_demo' on unloading module 'livepatch_callbacks_mod'
+-  [  102.945455] livepatch_callbacks_demo: post_unpatch_callback: livepatch_callbacks_mod -> [MODULE_STATE_GOING] Going away
+-
+-  % echo 0 > /sys/kernel/livepatch/livepatch_callbacks_demo/enabled
+-  [  104.953815] livepatch: 'livepatch_callbacks_demo': initializing unpatching transition
+-  [  104.953838] livepatch_callbacks_demo: pre_unpatch_callback: vmlinux
+-  [  104.954431] livepatch_callbacks_demo: pre_unpatch_callback: livepatch_callbacks_busymod -> [MODULE_STATE_LIVE] Normal state
+-  [  104.955426] livepatch: 'livepatch_callbacks_demo': starting unpatching transition
+-  [  106.719073] livepatch: 'livepatch_callbacks_demo': completing unpatching transition
+-  [  106.722633] livepatch_callbacks_demo: post_unpatch_callback: vmlinux
+-  [  106.723282] livepatch_callbacks_demo: post_unpatch_callback: livepatch_callbacks_busymod -> [MODULE_STATE_LIVE] Normal state
+-  [  106.724279] livepatch: 'livepatch_callbacks_demo': unpatching complete
+-
+-  % rmmod samples/livepatch/livepatch-callbacks-demo.ko
+-  % rmmod samples/livepatch/livepatch-callbacks-busymod.ko
+-  [  108.975660] livepatch_callbacks_busymod: livepatch_callbacks_mod_exit
+-
+-
+-Test 9
+-------
+-
+-A similar test as the previous one, but force the "busy" kernel module
+-to do longer work.
+-
+-The livepatching core will refuse to patch a task that is currently
+-executing a to-be-patched function -- the consistency model stalls the
+-current patch transition until this safety-check is met.  Test a
+-scenario where one of a livepatch's target klp_objects sits on such a
+-function for a long time.  Meanwhile, load and unload other target
+-kernel modules while the livepatch transition is in progress.
+-
+-- load busy target module (30s sleep)
+-- load livepatch
+-- load target module
+-- unload target module
+-- disable livepatch
+-- unload livepatch
+-- unload busy target module
+-
+-
+-Load the "busy" kernel module, this time make it do 30 seconds worth of
+-work:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-busymod.ko sleep_secs=30
+-  [  110.993362] livepatch_callbacks_busymod: livepatch_callbacks_mod_init
+-  [  110.994059] livepatch_callbacks_busymod: busymod_work_func, sleeping 30 seconds ...
+-
+-Meanwhile, the livepatch is loaded.  Notice that the patch transition
+-does not complete as the targeted "busy" module is sitting on a
+-to-be-patched function:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-demo.ko
+-  [  113.000309] livepatch: enabling patch 'livepatch_callbacks_demo'
+-  [  113.000764] livepatch: 'livepatch_callbacks_demo': initializing patching transition
+-  [  113.000791] livepatch_callbacks_demo: pre_patch_callback: vmlinux
+-  [  113.001289] livepatch_callbacks_demo: pre_patch_callback: livepatch_callbacks_busymod -> [MODULE_STATE_LIVE] Normal state
+-  [  113.005208] livepatch: 'livepatch_callbacks_demo': starting patching transition
+-
+-Load a second target module (this one is an ordinary idle kernel
+-module).  Note that *no* post-patch callbacks will be executed while the
+-livepatch is still in transition:
+-
+-  % insmod samples/livepatch/livepatch-callbacks-mod.ko
+-  [  115.012740] livepatch: applying patch 'livepatch_callbacks_demo' to loading module 'livepatch_callbacks_mod'
+-  [  115.013406] livepatch_callbacks_demo: pre_patch_callback: livepatch_callbacks_mod -> [MODULE_STATE_COMING] Full formed, running module_init
+-  [  115.015315] livepatch_callbacks_mod: livepatch_callbacks_mod_init
+-
+-Request an unload of the simple kernel module.  The patch is still
+-transitioning, so its pre-unpatch callbacks are skipped:
+-
+-  % rmmod samples/livepatch/livepatch-callbacks-mod.ko
+-  [  117.022626] livepatch_callbacks_mod: livepatch_callbacks_mod_exit
+-  [  117.023376] livepatch: reverting patch 'livepatch_callbacks_demo' on unloading module 'livepatch_callbacks_mod'
+-  [  117.024533] livepatch_callbacks_demo: post_unpatch_callback: livepatch_callbacks_mod -> [MODULE_STATE_GOING] Going away
+-
+-Finally the livepatch is disabled.  Since none of the patch's
+-klp_object's post-patch callbacks executed, the remaining klp_object's
+-pre-unpatch callbacks are skipped:
+-
+-  % echo 0 > /sys/kernel/livepatch/livepatch_callbacks_demo/enabled
+-  [  119.035408] livepatch: 'livepatch_callbacks_demo': reversing transition from patching to unpatching
+-  [  119.035485] livepatch: 'livepatch_callbacks_demo': starting unpatching transition
+-  [  119.711166] livepatch: 'livepatch_callbacks_demo': completing unpatching transition
+-  [  119.714179] livepatch_callbacks_demo: post_unpatch_callback: vmlinux
+-  [  119.714653] livepatch_callbacks_demo: post_unpatch_callback: livepatch_callbacks_busymod -> [MODULE_STATE_LIVE] Normal state
+-  [  119.715437] livepatch: 'livepatch_callbacks_demo': unpatching complete
+-
+-  % rmmod samples/livepatch/livepatch-callbacks-demo.ko
+-  % rmmod samples/livepatch/livepatch-callbacks-busymod.ko
+-  [  141.279111] livepatch_callbacks_busymod: busymod_work_func exit
+-  [  141.279760] livepatch_callbacks_busymod: livepatch_callbacks_mod_exit
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 64155e310a9f..e4a0e81542ff 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1932,6 +1932,18 @@ config TEST_DEBUG_VIRTUAL
+ 
+ 	  If unsure, say N.
+ 
++config TEST_LIVEPATCH
++	tristate "Test livepatching"
++	default n
++	depends on LIVEPATCH
++	depends on m
++	help
++	  Test various kernel livepatching features for correctness.
++	  The tests will load test modules that will be livepatched
++	  in various scenarios.
++
++	  If unsure, say N.
++
+ endif # RUNTIME_TESTING_MENU
+ 
+ config MEMTEST
+diff --git a/lib/Makefile b/lib/Makefile
+index a90d4fcd748f..98a38441afb0 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -67,6 +67,8 @@ obj-$(CONFIG_TEST_PARMAN) += test_parman.o
+ obj-$(CONFIG_TEST_KMOD) += test_kmod.o
+ obj-$(CONFIG_TEST_DEBUG_VIRTUAL) += test_debug_virtual.o
+ 
++obj-$(CONFIG_TEST_LIVEPATCH) += livepatch/
++
+ ifeq ($(CONFIG_DEBUG_KOBJECT),y)
+ CFLAGS_kobject.o += -DDEBUG
+ CFLAGS_kobject_uevent.o += -DDEBUG
+diff --git a/lib/livepatch/Makefile b/lib/livepatch/Makefile
+new file mode 100644
+index 000000000000..26900ddaef82
+--- /dev/null
++++ b/lib/livepatch/Makefile
+@@ -0,0 +1,15 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Makefile for livepatch test code.
++
++obj-$(CONFIG_TEST_LIVEPATCH) += test_klp_atomic_replace.o \
++				test_klp_callbacks_demo.o \
++				test_klp_callbacks_demo2.o \
++				test_klp_callbacks_busy.o \
++				test_klp_callbacks_mod.o \
++				test_klp_livepatch.o \
++				test_klp_shadow_vars.o
++
++# Target modules to be livepatched require CC_FLAGS_FTRACE
++CFLAGS_test_klp_callbacks_busy.o	+= $(CC_FLAGS_FTRACE)
++CFLAGS_test_klp_callbacks_mod.o		+= $(CC_FLAGS_FTRACE)
+diff --git a/lib/livepatch/test_klp_atomic_replace.c b/lib/livepatch/test_klp_atomic_replace.c
+new file mode 100644
+index 000000000000..d1bcf6b0cfb3
+--- /dev/null
++++ b/lib/livepatch/test_klp_atomic_replace.c
+@@ -0,0 +1,69 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Joe Lawrence <joe.lawrence@redhat.com>
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/livepatch.h>
++
++static int replace;
++module_param(replace, int, 0644);
++MODULE_PARM_DESC(replace, "replace (default=0)");
++
++#include <linux/seq_file.h>
++static int livepatch_meminfo_proc_show(struct seq_file *m, void *v)
++{
++	seq_printf(m, "%s: %s\n", THIS_MODULE->name,
++		   "this has been live patched");
++	return 0;
++}
++
++static struct klp_func funcs[] = {
++	{
++		.old_name = "meminfo_proc_show",
++		.new_func = livepatch_meminfo_proc_show,
++	}, { }
++};
++
++static struct klp_object objs[] = {
++	{
++		/* name being NULL means vmlinux */
++		.funcs = funcs,
++	}, { }
++};
++
++static struct klp_patch patch = {
++	.mod = THIS_MODULE,
++	.objs = objs,
++	/* set .replace in the init function below for demo purposes */
++};
++
++static int test_klp_atomic_replace_init(void)
++{
++	int ret;
++
++	patch.replace = replace;
++
++	ret = klp_register_patch(&patch);
++	if (ret)
++		return ret;
++	ret = klp_enable_patch(&patch);
++	if (ret) {
++		WARN_ON(klp_unregister_patch(&patch));
++		return ret;
++	}
++	return 0;
++}
++
++static void test_klp_atomic_replace_exit(void)
++{
++	WARN_ON(klp_unregister_patch(&patch));
++}
++
++module_init(test_klp_atomic_replace_init);
++module_exit(test_klp_atomic_replace_exit);
++MODULE_LICENSE("GPL");
++MODULE_INFO(livepatch, "Y");
++MODULE_AUTHOR("Joe Lawrence <joe.lawrence@redhat.com>");
++MODULE_DESCRIPTION("Livepatch test: atomic replace");
+diff --git a/lib/livepatch/test_klp_callbacks_busy.c b/lib/livepatch/test_klp_callbacks_busy.c
+new file mode 100644
+index 000000000000..40beddf8a0e2
+--- /dev/null
++++ b/lib/livepatch/test_klp_callbacks_busy.c
+@@ -0,0 +1,43 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Joe Lawrence <joe.lawrence@redhat.com>
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/workqueue.h>
++#include <linux/delay.h>
++
++static int sleep_secs;
++module_param(sleep_secs, int, 0644);
++MODULE_PARM_DESC(sleep_secs, "sleep_secs (default=0)");
++
++static void busymod_work_func(struct work_struct *work);
++static DECLARE_DELAYED_WORK(work, busymod_work_func);
++
++static void busymod_work_func(struct work_struct *work)
++{
++	pr_info("%s, sleeping %d seconds ...\n", __func__, sleep_secs);
++	msleep(sleep_secs * 1000);
++	pr_info("%s exit\n", __func__);
++}
++
++static int test_klp_callbacks_busy_init(void)
++{
++	pr_info("%s\n", __func__);
++	schedule_delayed_work(&work,
++		msecs_to_jiffies(1000 * 0));
++	return 0;
++}
++
++static void test_klp_callbacks_busy_exit(void)
++{
++	cancel_delayed_work_sync(&work);
++	pr_info("%s\n", __func__);
++}
++
++module_init(test_klp_callbacks_busy_init);
++module_exit(test_klp_callbacks_busy_exit);
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Joe Lawrence <joe.lawrence@redhat.com>");
++MODULE_DESCRIPTION("Livepatch test: busy target module");
+diff --git a/lib/livepatch/test_klp_callbacks_demo.c b/lib/livepatch/test_klp_callbacks_demo.c
+new file mode 100644
+index 000000000000..87fc61445c5f
+--- /dev/null
++++ b/lib/livepatch/test_klp_callbacks_demo.c
+@@ -0,0 +1,132 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Joe Lawrence <joe.lawrence@redhat.com>
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/livepatch.h>
++
++static int pre_patch_ret;
++module_param(pre_patch_ret, int, 0644);
++MODULE_PARM_DESC(pre_patch_ret, "pre_patch_ret (default=0)");
++
++static const char *const module_state[] = {
++	[MODULE_STATE_LIVE]	= "[MODULE_STATE_LIVE] Normal state",
++	[MODULE_STATE_COMING]	= "[MODULE_STATE_COMING] Full formed, running module_init",
++	[MODULE_STATE_GOING]	= "[MODULE_STATE_GOING] Going away",
++	[MODULE_STATE_UNFORMED]	= "[MODULE_STATE_UNFORMED] Still setting it up",
++};
++
++static void callback_info(const char *callback, struct klp_object *obj)
++{
++	if (obj->mod)
++		pr_info("%s: %s -> %s\n", callback, obj->mod->name,
++			module_state[obj->mod->state]);
++	else
++		pr_info("%s: vmlinux\n", callback);
++}
++
++/* Executed on object patching (ie, patch enablement) */
++static int pre_patch_callback(struct klp_object *obj)
++{
++	callback_info(__func__, obj);
++	return pre_patch_ret;
++}
++
++/* Executed on object unpatching (ie, patch disablement) */
++static void post_patch_callback(struct klp_object *obj)
++{
++	callback_info(__func__, obj);
++}
++
++/* Executed on object unpatching (ie, patch disablement) */
++static void pre_unpatch_callback(struct klp_object *obj)
++{
++	callback_info(__func__, obj);
++}
++
++/* Executed on object unpatching (ie, patch disablement) */
++static void post_unpatch_callback(struct klp_object *obj)
++{
++	callback_info(__func__, obj);
++}
++
++static void patched_work_func(struct work_struct *work)
++{
++	pr_info("%s\n", __func__);
++}
++
++static struct klp_func no_funcs[] = {
++	{ }
++};
++
++static struct klp_func busymod_funcs[] = {
++	{
++		.old_name = "busymod_work_func",
++		.new_func = patched_work_func,
++	}, { }
++};
++
++static struct klp_object objs[] = {
++	{
++		.name = NULL,	/* vmlinux */
++		.funcs = no_funcs,
++		.callbacks = {
++			.pre_patch = pre_patch_callback,
++			.post_patch = post_patch_callback,
++			.pre_unpatch = pre_unpatch_callback,
++			.post_unpatch = post_unpatch_callback,
++		},
++	},	{
++		.name = "test_klp_callbacks_mod",
++		.funcs = no_funcs,
++		.callbacks = {
++			.pre_patch = pre_patch_callback,
++			.post_patch = post_patch_callback,
++			.pre_unpatch = pre_unpatch_callback,
++			.post_unpatch = post_unpatch_callback,
++		},
++	},	{
++		.name = "test_klp_callbacks_busy",
++		.funcs = busymod_funcs,
++		.callbacks = {
++			.pre_patch = pre_patch_callback,
++			.post_patch = post_patch_callback,
++			.pre_unpatch = pre_unpatch_callback,
++			.post_unpatch = post_unpatch_callback,
++		},
++	}, { }
++};
++
++static struct klp_patch patch = {
++	.mod = THIS_MODULE,
++	.objs = objs,
++};
++
++static int test_klp_callbacks_demo_init(void)
++{
++	int ret;
++
++	ret = klp_register_patch(&patch);
++	if (ret)
++		return ret;
++	ret = klp_enable_patch(&patch);
++	if (ret) {
++		WARN_ON(klp_unregister_patch(&patch));
++		return ret;
++	}
++	return 0;
++}
++
++static void test_klp_callbacks_demo_exit(void)
++{
++	WARN_ON(klp_unregister_patch(&patch));
++}
++
++module_init(test_klp_callbacks_demo_init);
++module_exit(test_klp_callbacks_demo_exit);
++MODULE_LICENSE("GPL");
++MODULE_INFO(livepatch, "Y");
++MODULE_AUTHOR("Joe Lawrence <joe.lawrence@redhat.com>");
++MODULE_DESCRIPTION("Livepatch test: livepatch demo");
+diff --git a/lib/livepatch/test_klp_callbacks_demo2.c b/lib/livepatch/test_klp_callbacks_demo2.c
+new file mode 100644
+index 000000000000..c2a6c7b40424
+--- /dev/null
++++ b/lib/livepatch/test_klp_callbacks_demo2.c
+@@ -0,0 +1,104 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Joe Lawrence <joe.lawrence@redhat.com>
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/livepatch.h>
++
++static int replace;
++module_param(replace, int, 0644);
++MODULE_PARM_DESC(replace, "replace (default=0)");
++
++static const char *const module_state[] = {
++	[MODULE_STATE_LIVE]	= "[MODULE_STATE_LIVE] Normal state",
++	[MODULE_STATE_COMING]	= "[MODULE_STATE_COMING] Full formed, running module_init",
++	[MODULE_STATE_GOING]	= "[MODULE_STATE_GOING] Going away",
++	[MODULE_STATE_UNFORMED]	= "[MODULE_STATE_UNFORMED] Still setting it up",
++};
++
++static void callback_info(const char *callback, struct klp_object *obj)
++{
++	if (obj->mod)
++		pr_info("%s: %s -> %s\n", callback, obj->mod->name,
++			module_state[obj->mod->state]);
++	else
++		pr_info("%s: vmlinux\n", callback);
++}
++
++/* Executed on object patching (ie, patch enablement) */
++static int pre_patch_callback(struct klp_object *obj)
++{
++	callback_info(__func__, obj);
++	return 0;
++}
++
++/* Executed on object unpatching (ie, patch disablement) */
++static void post_patch_callback(struct klp_object *obj)
++{
++	callback_info(__func__, obj);
++}
++
++/* Executed on object unpatching (ie, patch disablement) */
++static void pre_unpatch_callback(struct klp_object *obj)
++{
++	callback_info(__func__, obj);
++}
++
++/* Executed on object unpatching (ie, patch disablement) */
++static void post_unpatch_callback(struct klp_object *obj)
++{
++	callback_info(__func__, obj);
++}
++
++static struct klp_func no_funcs[] = {
++	{ }
++};
++
++static struct klp_object objs[] = {
++	{
++		.name = NULL,	/* vmlinux */
++		.funcs = no_funcs,
++		.callbacks = {
++			.pre_patch = pre_patch_callback,
++			.post_patch = post_patch_callback,
++			.pre_unpatch = pre_unpatch_callback,
++			.post_unpatch = post_unpatch_callback,
++		},
++	}, { }
++};
++
++static struct klp_patch patch = {
++	.mod = THIS_MODULE,
++	.objs = objs,
++};
++
++static int test_klp_callbacks_demo2_init(void)
++{
++	int ret;
++
++	patch.replace = replace;
++
++	ret = klp_register_patch(&patch);
++	if (ret)
++		return ret;
++	ret = klp_enable_patch(&patch);
++	if (ret) {
++		WARN_ON(klp_unregister_patch(&patch));
++		return ret;
++	}
++	return 0;
++}
++
++static void test_klp_callbacks_demo2_exit(void)
++{
++	WARN_ON(klp_unregister_patch(&patch));
++}
++
++module_init(test_klp_callbacks_demo2_init);
++module_exit(test_klp_callbacks_demo2_exit);
++MODULE_LICENSE("GPL");
++MODULE_INFO(livepatch, "Y");
++MODULE_AUTHOR("Joe Lawrence <joe.lawrence@redhat.com>");
++MODULE_DESCRIPTION("Livepatch test: livepatch demo2");
+diff --git a/lib/livepatch/test_klp_callbacks_mod.c b/lib/livepatch/test_klp_callbacks_mod.c
+new file mode 100644
+index 000000000000..8fbe645b1c2c
+--- /dev/null
++++ b/lib/livepatch/test_klp_callbacks_mod.c
+@@ -0,0 +1,24 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Joe Lawrence <joe.lawrence@redhat.com>
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++
++static int test_klp_callbacks_mod_init(void)
++{
++	pr_info("%s\n", __func__);
++	return 0;
++}
++
++static void test_klp_callbacks_mod_exit(void)
++{
++	pr_info("%s\n", __func__);
++}
++
++module_init(test_klp_callbacks_mod_init);
++module_exit(test_klp_callbacks_mod_exit);
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Joe Lawrence <joe.lawrence@redhat.com>");
++MODULE_DESCRIPTION("Livepatch test: target module");
+diff --git a/lib/livepatch/test_klp_livepatch.c b/lib/livepatch/test_klp_livepatch.c
+new file mode 100644
+index 000000000000..4014754c8da8
+--- /dev/null
++++ b/lib/livepatch/test_klp_livepatch.c
+@@ -0,0 +1,62 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2014 Seth Jennings <sjenning@redhat.com>
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/livepatch.h>
++
++#include <linux/seq_file.h>
++static int livepatch_cmdline_proc_show(struct seq_file *m, void *v)
++{
++	seq_printf(m, "%s: %s\n", THIS_MODULE->name,
++		   "this has been live patched");
++	return 0;
++}
++
++static struct klp_func funcs[] = {
++	{
++		.old_name = "cmdline_proc_show",
++		.new_func = livepatch_cmdline_proc_show,
++	}, { }
++};
++
++static struct klp_object objs[] = {
++	{
++		/* name being NULL means vmlinux */
++		.funcs = funcs,
++	}, { }
++};
++
++static struct klp_patch patch = {
++	.mod = THIS_MODULE,
++	.objs = objs,
++};
++
++static int test_klp_livepatch_init(void)
++{
++	int ret;
++
++	ret = klp_register_patch(&patch);
++	if (ret)
++		return ret;
++	ret = klp_enable_patch(&patch);
++	if (ret) {
++		WARN_ON(klp_unregister_patch(&patch));
++		return ret;
++	}
++	return 0;
++}
++
++static void test_klp_livepatch_exit(void)
++{
++	WARN_ON(klp_unregister_patch(&patch));
++}
++
++module_init(test_klp_livepatch_init);
++module_exit(test_klp_livepatch_exit);
++MODULE_LICENSE("GPL");
++MODULE_INFO(livepatch, "Y");
++MODULE_AUTHOR("Seth Jennings <sjenning@redhat.com>");
++MODULE_DESCRIPTION("Livepatch test: livepatch module");
+diff --git a/lib/livepatch/test_klp_shadow_vars.c b/lib/livepatch/test_klp_shadow_vars.c
+new file mode 100644
+index 000000000000..18c75b21cb9e
+--- /dev/null
++++ b/lib/livepatch/test_klp_shadow_vars.c
+@@ -0,0 +1,236 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (C) 2018 Joe Lawrence <joe.lawrence@redhat.com>
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/list.h>
++#include <linux/livepatch.h>
++#include <linux/slab.h>
++
++/*
++ * Keep a small list of pointers so that we can print address-agnostic
++ * pointer values.  Use a rolling integer count to differentiate the values.
++ * Ironically we could have used the shadow variable API to do this, but
++ * let's not lean too heavily on the very code we're testing.
++ */
++static LIST_HEAD(ptr_list);
++struct shadow_ptr {
++	void *ptr;
++	int id;
++	struct list_head list;
++};
++
++static void free_ptr_list(void)
++{
++	struct shadow_ptr *sp, *tmp_sp;
++
++	list_for_each_entry_safe(sp, tmp_sp, &ptr_list, list) {
++		list_del(&sp->list);
++		kfree(sp);
++	}
++}
++
++static int ptr_id(void *ptr)
++{
++	struct shadow_ptr *sp;
++	static int count;
++
++	list_for_each_entry(sp, &ptr_list, list) {
++		if (sp->ptr == ptr)
++			return sp->id;
++	}
++
++	sp = kmalloc(sizeof(*sp), GFP_ATOMIC);
++	if (!sp)
++		return -1;
++	sp->ptr = ptr;
++	sp->id = count++;
++
++	list_add(&sp->list, &ptr_list);
++
++	return sp->id;
++}
++
++/*
++ * Shadow variable wrapper functions that echo the function and arguments
++ * to the kernel log for testing verification.  Don't display raw pointers,
++ * but use the ptr_id() value instead.
++ */
++void *shadow_get(void *obj, unsigned long id)
++{
++	void *ret = klp_shadow_get(obj, id);
++
++	pr_info("klp_%s(obj=PTR%d, id=0x%lx) = PTR%d\n",
++		__func__, ptr_id(obj), id, ptr_id(ret));
++
++	return ret;
++}
++
++static void *shadow_alloc(void *obj, unsigned long id, size_t size,
++			  gfp_t gfp_flags, klp_shadow_ctor_t ctor,
++			  void *ctor_data)
++{
++	void *ret = klp_shadow_alloc(obj, id, size, gfp_flags, ctor,
++				     ctor_data);
++	pr_info("klp_%s(obj=PTR%d, id=0x%lx, size=%zx, gfp_flags=%pGg), ctor=PTR%d, ctor_data=PTR%d = PTR%d\n",
++		__func__, ptr_id(obj), id, size, &gfp_flags, ptr_id(ctor),
++		ptr_id(ctor_data), ptr_id(ret));
++	return ret;
++}
++
++static void *shadow_get_or_alloc(void *obj, unsigned long id, size_t size,
++				 gfp_t gfp_flags, klp_shadow_ctor_t ctor,
++				 void *ctor_data)
++{
++	void *ret = klp_shadow_get_or_alloc(obj, id, size, gfp_flags, ctor,
++					    ctor_data);
++	pr_info("klp_%s(obj=PTR%d, id=0x%lx, size=%zx, gfp_flags=%pGg), ctor=PTR%d, ctor_data=PTR%d = PTR%d\n",
++		__func__, ptr_id(obj), id, size, &gfp_flags, ptr_id(ctor),
++		ptr_id(ctor_data), ptr_id(ret));
++	return ret;
++}
++
++void shadow_free(void *obj, unsigned long id, klp_shadow_dtor_t dtor)
++{
++	klp_shadow_free(obj, id, dtor);
++	pr_info("klp_%s(obj=PTR%d, id=0x%lx, dtor=PTR%d)\n",
++		__func__, ptr_id(obj), id, ptr_id(dtor));
++}
++
++static void shadow_free_all(unsigned long id, klp_shadow_dtor_t dtor)
++{
++	klp_shadow_free_all(id, dtor);
++	pr_info("klp_%s(id=0x%lx, dtor=PTR%d)\n",
++		__func__, id, ptr_id(dtor));
++}
++
++
++/* Shadow variable constructor - remember simple pointer data */
++static int shadow_ctor(void *obj, void *shadow_data, void *ctor_data)
++{
++	int **shadow_int = shadow_data;
++	*shadow_int = ctor_data;
++	pr_info("%s: PTR%d -> PTR%d\n",
++		__func__, ptr_id(shadow_int), ptr_id(ctor_data));
++
++	return 0;
++}
++
++static void shadow_dtor(void *obj, void *shadow_data)
++{
++	pr_info("%s(obj=PTR%d, shadow_data=PTR%d)\n",
++		__func__, ptr_id(obj), ptr_id(shadow_data));
++}
++
++static int test_klp_shadow_vars_init(void)
++{
++	void *obj			= THIS_MODULE;
++	int id			= 0x1234;
++	size_t size		= sizeof(int *);
++	gfp_t gfp_flags		= GFP_KERNEL;
++
++	int var1, var2, var3, var4;
++	int **sv1, **sv2, **sv3, **sv4;
++
++	void *ret;
++
++	ptr_id(NULL);
++	ptr_id(&var1);
++	ptr_id(&var2);
++	ptr_id(&var3);
++	ptr_id(&var4);
++
++	/*
++	 * With an empty shadow variable hash table, expect not to find
++	 * any matches.
++	 */
++	ret = shadow_get(obj, id);
++	if (!ret)
++		pr_info("  got expected NULL result\n");
++
++	/*
++	 * Allocate a few shadow variables with different <obj> and <id>.
++	 */
++	sv1 = shadow_alloc(obj, id, size, gfp_flags, shadow_ctor, &var1);
++	sv2 = shadow_alloc(obj + 1, id, size, gfp_flags, shadow_ctor, &var2);
++	sv3 = shadow_alloc(obj, id + 1, size, gfp_flags, shadow_ctor, &var3);
++
++	/*
++	 * Verify we can find our new shadow variables and that they point
++	 * to expected data.
++	 */
++	ret = shadow_get(obj, id);
++	if (ret == sv1 && *sv1 == &var1)
++		pr_info("  got expected PTR%d -> PTR%d result\n",
++			ptr_id(sv1), ptr_id(*sv1));
++	ret = shadow_get(obj + 1, id);
++	if (ret == sv2 && *sv2 == &var2)
++		pr_info("  got expected PTR%d -> PTR%d result\n",
++			ptr_id(sv2), ptr_id(*sv2));
++	ret = shadow_get(obj, id + 1);
++	if (ret == sv3 && *sv3 == &var3)
++		pr_info("  got expected PTR%d -> PTR%d result\n",
++			ptr_id(sv3), ptr_id(*sv3));
++
++	/*
++	 * Allocate or get a few more, this time with the same <obj>, <id>.
++	 * The second invocation should return the same shadow var.
++	 */
++	sv4 = shadow_get_or_alloc(obj + 2, id, size, gfp_flags, shadow_ctor, &var4);
++	ret = shadow_get_or_alloc(obj + 2, id, size, gfp_flags, shadow_ctor, &var4);
++	if (ret == sv4 && *sv4 == &var4)
++		pr_info("  got expected PTR%d -> PTR%d result\n",
++			ptr_id(sv4), ptr_id(*sv4));
++
++	/*
++	 * Free the <obj=*, id> shadow variables and check that we can no
++	 * longer find them.
++	 */
++	shadow_free(obj, id, shadow_dtor);			/* sv1 */
++	ret = shadow_get(obj, id);
++	if (!ret)
++		pr_info("  got expected NULL result\n");
++
++	shadow_free(obj + 1, id, shadow_dtor);			/* sv2 */
++	ret = shadow_get(obj + 1, id);
++	if (!ret)
++		pr_info("  got expected NULL result\n");
++
++	shadow_free(obj + 2, id, shadow_dtor);			/* sv4 */
++	ret = shadow_get(obj + 2, id);
++	if (!ret)
++		pr_info("  got expected NULL result\n");
++
++	/*
++	 * We should still find an <id+1> variable.
++	 */
++	ret = shadow_get(obj, id + 1);
++	if (ret == sv3 && *sv3 == &var3)
++		pr_info("  got expected PTR%d -> PTR%d result\n",
++			ptr_id(sv3), ptr_id(*sv3));
++
++	/*
++	 * Free all the <id+1> variables, too.
++	 */
++	shadow_free_all(id + 1, shadow_dtor);			/* sv3 */
++	ret = shadow_get(obj, id);
++	if (!ret)
++		pr_info("  shadow_get() got expected NULL result\n");
++
++
++	free_ptr_list();
++
++	return 0;
++}
++
++static void test_klp_shadow_vars_exit(void)
++{
++}
++
++module_init(test_klp_shadow_vars_init);
++module_exit(test_klp_shadow_vars_exit);
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Joe Lawrence <joe.lawrence@redhat.com>");
++MODULE_DESCRIPTION("Livepatch test: shadow variables");
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 7442dfb73b7f..d92c63bde9b6 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -15,6 +15,7 @@ TARGETS += intel_pstate
+ TARGETS += ipc
+ TARGETS += kcmp
+ TARGETS += lib
++TARGETS += livepatch
+ TARGETS += membarrier
+ TARGETS += memfd
+ TARGETS += memory-hotplug
+diff --git a/tools/testing/selftests/livepatch/Makefile b/tools/testing/selftests/livepatch/Makefile
+new file mode 100644
+index 000000000000..af4aee79bebb
+--- /dev/null
++++ b/tools/testing/selftests/livepatch/Makefile
+@@ -0,0 +1,8 @@
++# SPDX-License-Identifier: GPL-2.0
++
++TEST_GEN_PROGS := \
++	test-livepatch.sh \
++	test-callbacks.sh \
++	test-shadow-vars.sh
++
++include ../lib.mk
+diff --git a/tools/testing/selftests/livepatch/README b/tools/testing/selftests/livepatch/README
+new file mode 100644
+index 000000000000..b73cd0e2dd51
+--- /dev/null
++++ b/tools/testing/selftests/livepatch/README
+@@ -0,0 +1,43 @@
++====================
++Livepatch Self Tests
++====================
++
++This is a small set of sanity tests for the kernel livepatching.
++
++The test suite loads and unloads several test kernel modules to verify
++livepatch behavior.  Debug information is logged to the kernel's message
++buffer and parsed for expected messages.  (Note: the tests will clear
++the message buffer between individual tests.)
++
++
++Config
++------
++
++Set these config options and their prerequisites:
++
++CONFIG_LIVEPATCH=y
++CONFIG_TEST_LIVEPATCH=m
++
++
++Running the tests
++-----------------
++
++Test kernel modules are built as part of lib/ (make modules) and need to
++be installed (make modules_install) as the test scripts will modprobe
++them.
++
++To run the livepatch selftests, from the top of the kernel source tree:
++
++  % make -C tools/testing/selftests TARGETS=livepatch run_tests
++
++
++Adding tests
++------------
++
++See the common functions.sh file for the existing collection of utility
++functions, most importantly set_dynamic_debug() and check_result().  The
++latter function greps the kernel's ring buffer for "livepatch:" and
++"test_klp" strings, so tests be sure to include one of those strings for
++result comparison.  Other utility functions include general module
++loading and livepatch loading helpers (waiting for patch transitions,
++sysfs entries, etc.)
+diff --git a/tools/testing/selftests/livepatch/config b/tools/testing/selftests/livepatch/config
+new file mode 100644
+index 000000000000..0dd7700464a8
+--- /dev/null
++++ b/tools/testing/selftests/livepatch/config
+@@ -0,0 +1 @@
++CONFIG_TEST_LIVEPATCH=m
+diff --git a/tools/testing/selftests/livepatch/functions.sh b/tools/testing/selftests/livepatch/functions.sh
+new file mode 100644
+index 000000000000..7aaef80e9edb
+--- /dev/null
++++ b/tools/testing/selftests/livepatch/functions.sh
+@@ -0,0 +1,196 @@
++#!/bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (C) 2018 Joe Lawrence <joe.lawrence@redhat.com>
++
++# Shell functions for the rest of the scripts.
++
++MAX_RETRIES=600
++RETRY_INTERVAL=".1"	# seconds
++
++# die(msg) - game over, man
++#	msg - dying words
++function die() {
++	echo "ERROR: $1" >&2
++	exit 1
++}
++
++# set_dynamic_debug() - setup kernel dynamic debug
++#	TODO - push and pop this config?
++function set_dynamic_debug() {
++	cat << EOF > /sys/kernel/debug/dynamic_debug/control
++file kernel/livepatch/* +p
++func klp_try_switch_task -p
++EOF
++}
++
++# wait_for_transition(modname)
++#	modname - livepatch module name
++wait_for_transition() {
++	local mod="$1"; shift
++
++	# Wait for livepatch transition  ...
++	local i=0
++	while [[ $(cat /sys/kernel/livepatch/"$mod"/transition) != "0" ]]; do
++		i=$((i+1))
++		if [[ $i -eq $MAX_RETRIES ]]; then
++			die "failed to complete transition for module $mod"
++		fi
++		sleep $RETRY_INTERVAL
++	done
++}
++
++# load_mod(modname, params) - load a kernel module
++#	modname - module name to load
++#       params  - module parameters to pass to modprobe
++function load_mod() {
++	local mod="$1"; shift
++	local args="$*"
++
++	local msg="% modprobe $mod $args"
++	echo "${msg%% }" > /dev/kmsg
++	ret=$(modprobe "$mod" "$args" 2>&1)
++	if [[ "$ret" != "" ]]; then
++		echo "$ret" > /dev/kmsg
++		die "$ret"
++	fi
++
++	# Wait for module in sysfs ...
++	local i=0
++	while [ ! -e /sys/module/"$mod" ]; do
++		i=$((i+1))
++		if [[ $i -eq $MAX_RETRIES ]]; then
++			die "failed to load module $mod"
++		fi
++		sleep $RETRY_INTERVAL
++	done
++
++	# Wait for livepatch ...
++	if [[ $(modinfo "$mod" | awk '/^livepatch:/{print $NF}') == "Y" ]]; then
++
++		# Wait for livepatch in sysfs ...
++		local i=0
++		while [ ! -e /sys/kernel/livepatch/"$mod" ]; do
++			i=$((i+1))
++			if [[ $i -eq $MAX_RETRIES ]]; then
++				die "failed to load module $mod (sysfs)"
++			fi
++			sleep $RETRY_INTERVAL
++		done
++	fi
++}
++
++# load_failing_mod(modname, params) - load a kernel module, expect to fail
++#	modname - module name to load
++#       params  - module parameters to pass to modprobe
++function load_failing_mod() {
++	local mod="$1"; shift
++	local args="$*"
++
++	local msg="% modprobe $mod $args"
++	echo "${msg%% }" > /dev/kmsg
++	ret=$(modprobe "$mod" "$args" 2>&1)
++	if [[ "$ret" == "" ]]; then
++		echo "$mod unexpectedly loaded" > /dev/kmsg
++		die "$mod unexpectedly loaded"
++	fi
++	echo "$ret" > /dev/kmsg
++}
++
++# unload_mod(modname) - unload a kernel module
++#	modname - module name to unload
++function unload_mod() {
++	local mod="$1"
++
++	# Wait for module reference count to clear ...
++	local i=0
++	while [[ $(cat /sys/module/"$mod"/refcnt) != "0" ]]; do
++		i=$((i+1))
++		if [[ $i -eq $MAX_RETRIES ]]; then
++			die "failed to unload module $mod (refcnt)"
++		fi
++		sleep $RETRY_INTERVAL
++	done
++
++	echo "% rmmod $mod" > /dev/kmsg
++	ret=$(rmmod "$mod" 2>&1)
++	if [[ "$ret" != "" ]]; then
++		echo "$ret" > /dev/kmsg
++		die "$ret"
++	fi
++
++	# Wait for module in sysfs ...
++	local i=0
++	while [ -e /sys/module/"$mod" ]; do
++		i=$((i+1))
++		if [[ $i -eq $MAX_RETRIES ]]; then
++			die "failed to unload module $mod (/sys/module)"
++		fi
++		sleep $RETRY_INTERVAL
++	done
++
++	# Wait for livepatch sysfs if applicable ...
++	if [[ $(modinfo "$mod" | awk '/^livepatch:/{print $NF}') == "Y" ]]; then
++
++		local i=0
++		while [ -e /sys/kernel/livepatch/"$mod" ]; do
++			i=$((i+1))
++			if [[ $i -eq $MAX_RETRIES ]]; then
++				die "failed to unload module $mod (/sys/livepatch)"
++			fi
++			sleep $RETRY_INTERVAL
++		done
++	fi
++}
++
++# display_lp(modname) - disable a livepatch
++#	modname - module name to unload
++function disable_lp() {
++	local mod="$1"
++
++        echo "% echo 0 > /sys/kernel/livepatch/$mod/enabled" > /dev/kmsg
++        echo 0 > /sys/kernel/livepatch/"$mod"/enabled
++
++	# Wait for livepatch enable to clear ...
++	local i=0
++	while [[ $(cat /sys/kernel/livepatch/"$mod"/enabled) != "0" ]]; do
++		i=$((i+1))
++		if [[ $i -eq $MAX_RETRIES ]]; then
++			die "failed to disable livepatch $mod"
++		fi
++		sleep $RETRY_INTERVAL
++	done
++}
++
++# set_pre_patch_ret(modname, pre_patch_ret)
++#	modname - module name to set
++#	pre_patch_ret - new pre_patch_ret value
++function set_pre_patch_ret {
++	local mod="$1"; shift
++        local ret="$1"
++
++        echo "% echo $1 > /sys/module/$mod/parameters/pre_patch_ret" > /dev/kmsg
++        echo "$1" > /sys/module/"$mod"/parameters/pre_patch_ret
++
++	local i=0
++	while [[ $(cat /sys/module/"$mod"/parameters/pre_patch_ret) != "$1" ]]; do
++		i=$((i+1))
++		if [[ $i -eq $MAX_RETRIES ]]; then
++			die "failed to set pre_patch_ret parameter for $mod module"
++		fi
++		sleep $RETRY_INTERVAL
++	done
++}
++
++# filter_dmesg() - print a filtered dmesg
++#	TODO - better filter, out of order msgs, etc?
++function check_result {
++	local expect="$*"
++	local result=$(dmesg | grep -v 'tainting' | grep -e 'livepatch:' -e 'test_klp' | sed 's/^\[[ 0-9.]*\] //')
++
++	if [[ "$expect" == "$result" ]] ; then
++		echo "ok"
++	else
++		echo -e "not ok\n\n$(diff -upr --label expected --label result <(echo "$expect") <(echo "$result"))\n"
++		die "livepatch kselftest(s) failed"
++	fi
++}
+diff --git a/tools/testing/selftests/livepatch/test-callbacks.sh b/tools/testing/selftests/livepatch/test-callbacks.sh
+new file mode 100755
+index 000000000000..739d09bb3cff
+--- /dev/null
++++ b/tools/testing/selftests/livepatch/test-callbacks.sh
+@@ -0,0 +1,607 @@
++#!/bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (C) 2018 Joe Lawrence <joe.lawrence@redhat.com>
++
++. functions.sh
++
++MOD_LIVEPATCH=test_klp_callbacks_demo
++MOD_LIVEPATCH2=test_klp_callbacks_demo2
++MOD_TARGET=test_klp_callbacks_mod
++MOD_TARGET_BUSY=test_klp_callbacks_busy
++
++set_dynamic_debug
++
++
++# TEST: target module before livepatch
++#
++# Test a combination of loading a kernel module and a livepatch that
++# patches a function in the first module.  Load the target module
++# before the livepatch module.  Unload them in the same order.
++#
++# - On livepatch enable, before the livepatch transition starts,
++#   pre-patch callbacks are executed for vmlinux and $MOD_TARGET (those
++#   klp_objects currently loaded).  After klp_objects are patched
++#   according to the klp_patch, their post-patch callbacks run and the
++#   transition completes.
++#
++# - Similarly, on livepatch disable, pre-patch callbacks run before the
++#   unpatching transition starts.  klp_objects are reverted, post-patch
++#   callbacks execute and the transition completes.
++
++echo -n "TEST: target module before livepatch ... "
++dmesg -C
++
++load_mod $MOD_TARGET
++load_mod $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++disable_lp $MOD_LIVEPATCH
++unload_mod $MOD_LIVEPATCH
++unload_mod $MOD_TARGET
++
++check_result "% modprobe $MOD_TARGET
++$MOD_TARGET: ${MOD_TARGET}_init
++% modprobe $MOD_LIVEPATCH
++livepatch: enabling patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': initializing patching transition
++$MOD_LIVEPATCH: pre_patch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
++$MOD_LIVEPATCH: pre_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting patching transition
++livepatch: '$MOD_LIVEPATCH': completing patching transition
++$MOD_LIVEPATCH: post_patch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
++$MOD_LIVEPATCH: post_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': patching complete
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
++livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
++$MOD_LIVEPATCH: pre_unpatch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
++$MOD_LIVEPATCH: pre_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH': completing unpatching transition
++$MOD_LIVEPATCH: post_unpatch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
++$MOD_LIVEPATCH: post_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': unpatching complete
++% rmmod $MOD_LIVEPATCH
++% rmmod $MOD_TARGET
++$MOD_TARGET: ${MOD_TARGET}_exit"
++
++
++# TEST: module_coming notifier
++#
++# This test is similar to the previous test, but (un)load the livepatch
++# module before the target kernel module.  This tests the livepatch
++# core's module_coming handler.
++#
++# - On livepatch enable, only pre/post-patch callbacks are executed for
++#   currently loaded klp_objects, in this case, vmlinux.
++#
++# - When a targeted module is subsequently loaded, only its
++#   pre/post-patch callbacks are executed.
++#
++# - On livepatch disable, all currently loaded klp_objects' (vmlinux and
++#   $MOD_TARGET) pre/post-unpatch callbacks are executed.
++
++echo -n "TEST: module_coming notifier ... "
++dmesg -C
++
++load_mod $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++load_mod $MOD_TARGET
++disable_lp $MOD_LIVEPATCH
++unload_mod $MOD_LIVEPATCH
++unload_mod $MOD_TARGET
++
++check_result "% modprobe $MOD_LIVEPATCH
++livepatch: enabling patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': initializing patching transition
++$MOD_LIVEPATCH: pre_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting patching transition
++livepatch: '$MOD_LIVEPATCH': completing patching transition
++$MOD_LIVEPATCH: post_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': patching complete
++% modprobe $MOD_TARGET
++livepatch: applying patch '$MOD_LIVEPATCH' to loading module '$MOD_TARGET'
++$MOD_LIVEPATCH: pre_patch_callback: $MOD_TARGET -> [MODULE_STATE_COMING] Full formed, running module_init
++$MOD_LIVEPATCH: post_patch_callback: $MOD_TARGET -> [MODULE_STATE_COMING] Full formed, running module_init
++$MOD_TARGET: ${MOD_TARGET}_init
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
++livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
++$MOD_LIVEPATCH: pre_unpatch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
++$MOD_LIVEPATCH: pre_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH': completing unpatching transition
++$MOD_LIVEPATCH: post_unpatch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
++$MOD_LIVEPATCH: post_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': unpatching complete
++% rmmod $MOD_LIVEPATCH
++% rmmod $MOD_TARGET
++$MOD_TARGET: ${MOD_TARGET}_exit"
++
++
++# TEST: module_going notifier
++#
++# Test loading the livepatch after a targeted kernel module, then unload
++# the kernel module before disabling the livepatch.  This tests the
++# livepatch core's module_going handler.
++#
++# - First load a target module, then the livepatch.
++#
++# - When a target module is unloaded, the livepatch is only reverted
++#   from that klp_object ($MOD_TARGET).  As such, only its pre and
++#   post-unpatch callbacks are executed when this occurs.
++#
++# - When the livepatch is disabled, pre and post-unpatch callbacks are
++#   run for the remaining klp_object, vmlinux.
++
++echo -n "TEST: module_going notifier ... "
++dmesg -C
++
++load_mod $MOD_TARGET
++load_mod $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++unload_mod $MOD_TARGET
++disable_lp $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++unload_mod $MOD_LIVEPATCH
++
++check_result "% modprobe $MOD_TARGET
++$MOD_TARGET: ${MOD_TARGET}_init
++% modprobe $MOD_LIVEPATCH
++livepatch: enabling patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': initializing patching transition
++$MOD_LIVEPATCH: pre_patch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
++$MOD_LIVEPATCH: pre_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting patching transition
++livepatch: '$MOD_LIVEPATCH': completing patching transition
++$MOD_LIVEPATCH: post_patch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
++$MOD_LIVEPATCH: post_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': patching complete
++% rmmod $MOD_TARGET
++$MOD_TARGET: ${MOD_TARGET}_exit
++$MOD_LIVEPATCH: pre_unpatch_callback: $MOD_TARGET -> [MODULE_STATE_GOING] Going away
++livepatch: reverting patch '$MOD_LIVEPATCH' on unloading module '$MOD_TARGET'
++$MOD_LIVEPATCH: post_unpatch_callback: $MOD_TARGET -> [MODULE_STATE_GOING] Going away
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
++livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
++$MOD_LIVEPATCH: pre_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH': completing unpatching transition
++$MOD_LIVEPATCH: post_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': unpatching complete
++% rmmod $MOD_LIVEPATCH"
++
++
++# TEST: module_coming and module_going notifiers
++#
++# This test is similar to the previous test, however the livepatch is
++# loaded first.  This tests the livepatch core's module_coming and
++# module_going handlers.
++#
++# - First load the livepatch.
++#
++# - When a targeted kernel module is subsequently loaded, only its
++#   pre/post-patch callbacks are executed.
++#
++# - When the target module is unloaded, the livepatch is only reverted
++#   from the $MOD_TARGET klp_object.  As such, only pre and
++#   post-unpatch callbacks are executed when this occurs.
++
++echo -n "TEST: module_coming and module_going notifiers ... "
++dmesg -C
++
++load_mod $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++load_mod $MOD_TARGET
++unload_mod $MOD_TARGET
++disable_lp $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++unload_mod $MOD_LIVEPATCH
++
++check_result "% modprobe $MOD_LIVEPATCH
++livepatch: enabling patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': initializing patching transition
++$MOD_LIVEPATCH: pre_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting patching transition
++livepatch: '$MOD_LIVEPATCH': completing patching transition
++$MOD_LIVEPATCH: post_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': patching complete
++% modprobe $MOD_TARGET
++livepatch: applying patch '$MOD_LIVEPATCH' to loading module '$MOD_TARGET'
++$MOD_LIVEPATCH: pre_patch_callback: $MOD_TARGET -> [MODULE_STATE_COMING] Full formed, running module_init
++$MOD_LIVEPATCH: post_patch_callback: $MOD_TARGET -> [MODULE_STATE_COMING] Full formed, running module_init
++$MOD_TARGET: ${MOD_TARGET}_init
++% rmmod $MOD_TARGET
++$MOD_TARGET: ${MOD_TARGET}_exit
++$MOD_LIVEPATCH: pre_unpatch_callback: $MOD_TARGET -> [MODULE_STATE_GOING] Going away
++livepatch: reverting patch '$MOD_LIVEPATCH' on unloading module '$MOD_TARGET'
++$MOD_LIVEPATCH: post_unpatch_callback: $MOD_TARGET -> [MODULE_STATE_GOING] Going away
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
++livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
++$MOD_LIVEPATCH: pre_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH': completing unpatching transition
++$MOD_LIVEPATCH: post_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': unpatching complete
++% rmmod $MOD_LIVEPATCH"
++
++
++# TEST: target module not present
++#
++# A simple test of loading a livepatch without one of its patch target
++# klp_objects ever loaded ($MOD_TARGET).
++#
++# - Load the livepatch.
++#
++# - As expected, only pre/post-(un)patch handlers are executed for
++#   vmlinux.
++
++echo -n "TEST: target module not present ... "
++dmesg -C
++
++load_mod $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++disable_lp $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++unload_mod $MOD_LIVEPATCH
++
++check_result "% modprobe $MOD_LIVEPATCH
++livepatch: enabling patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': initializing patching transition
++$MOD_LIVEPATCH: pre_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting patching transition
++livepatch: '$MOD_LIVEPATCH': completing patching transition
++$MOD_LIVEPATCH: post_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': patching complete
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
++livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
++$MOD_LIVEPATCH: pre_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH': completing unpatching transition
++$MOD_LIVEPATCH: post_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': unpatching complete
++% rmmod $MOD_LIVEPATCH"
++
++
++# TEST: pre-patch callback -ENODEV
++#
++# Test a scenario where a vmlinux pre-patch callback returns a non-zero
++# status (ie, failure).
++#
++# - First load a target module.
++#
++# - Load the livepatch module, setting its 'pre_patch_ret' value to -19
++#   (-ENODEV).  When its vmlinux pre-patch callback executes, this
++#   status code will propagate back to the module-loading subsystem.
++#   The result is that the insmod command refuses to load the livepatch
++#   module.
++
++echo -n "TEST: pre-patch callback -ENODEV ... "
++dmesg -C
++
++load_mod $MOD_TARGET
++load_failing_mod $MOD_LIVEPATCH pre_patch_ret=-19
++unload_mod $MOD_TARGET
++
++check_result "% modprobe $MOD_TARGET
++$MOD_TARGET: ${MOD_TARGET}_init
++% modprobe $MOD_LIVEPATCH pre_patch_ret=-19
++livepatch: enabling patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': initializing patching transition
++$MOD_LIVEPATCH: pre_patch_callback: $MOD_TARGET -> [MODULE_STATE_LIVE] Normal state
++livepatch: pre-patch callback failed for object '$MOD_TARGET'
++livepatch: failed to enable patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': canceling patching transition, going to unpatch
++livepatch: '$MOD_LIVEPATCH': completing unpatching transition
++livepatch: '$MOD_LIVEPATCH': unpatching complete
++modprobe: ERROR: could not insert '$MOD_LIVEPATCH': No such device
++% rmmod $MOD_TARGET
++$MOD_TARGET: ${MOD_TARGET}_exit"
++
++
++# TEST: module_coming + pre-patch callback -ENODEV
++#
++# Similar to the previous test, setup a livepatch such that its vmlinux
++# pre-patch callback returns success.  However, when a targeted kernel
++# module is later loaded, have the livepatch return a failing status
++# code.
++#
++# - Load the livepatch, vmlinux pre-patch callback succeeds.
++#
++# - Set a trap so subsequent pre-patch callbacks to this livepatch will
++#   return -ENODEV.
++#
++# - The livepatch pre-patch callback for subsequently loaded target
++#   modules will return failure, so the module loader refuses to load
++#   the kernel module.  No post-patch or pre/post-unpatch callbacks are
++#   executed for this klp_object.
++#
++# - Pre/post-unpatch callbacks are run for the vmlinux klp_object.
++
++echo -n "TEST: module_coming + pre-patch callback -ENODEV ... "
++dmesg -C
++
++load_mod $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++set_pre_patch_ret $MOD_LIVEPATCH -19
++load_failing_mod $MOD_TARGET
++disable_lp $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++unload_mod $MOD_LIVEPATCH
++
++check_result "% modprobe $MOD_LIVEPATCH
++livepatch: enabling patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': initializing patching transition
++$MOD_LIVEPATCH: pre_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting patching transition
++livepatch: '$MOD_LIVEPATCH': completing patching transition
++$MOD_LIVEPATCH: post_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': patching complete
++% echo -19 > /sys/module/$MOD_LIVEPATCH/parameters/pre_patch_ret
++% modprobe $MOD_TARGET
++livepatch: applying patch '$MOD_LIVEPATCH' to loading module '$MOD_TARGET'
++$MOD_LIVEPATCH: pre_patch_callback: $MOD_TARGET -> [MODULE_STATE_COMING] Full formed, running module_init
++livepatch: pre-patch callback failed for object '$MOD_TARGET'
++livepatch: patch '$MOD_LIVEPATCH' failed for module '$MOD_TARGET', refusing to load module '$MOD_TARGET'
++modprobe: ERROR: could not insert '$MOD_TARGET': No such device
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
++livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
++$MOD_LIVEPATCH: pre_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH': completing unpatching transition
++$MOD_LIVEPATCH: post_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': unpatching complete
++% rmmod $MOD_LIVEPATCH"
++
++
++# TEST: multiple target modules
++#
++# Test loading multiple targeted kernel modules.  This test-case is
++# mainly for comparing with the next test-case.
++#
++# - Load a target "busy" kernel module which kicks off a worker function
++#   that immediately exits.
++#
++# - Proceed with loading the livepatch and another ordinary target
++#   module.  Post-patch callbacks are executed and the transition
++#   completes quickly.
++
++echo -n "TEST: multiple target modules ... "
++dmesg -C
++
++load_mod $MOD_TARGET_BUSY sleep_secs=0
++# give $MOD_TARGET_BUSY::busymod_work_func() a chance to run
++sleep 5
++load_mod $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++load_mod $MOD_TARGET
++unload_mod $MOD_TARGET
++disable_lp $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++unload_mod $MOD_LIVEPATCH
++unload_mod $MOD_TARGET_BUSY
++
++check_result "% modprobe $MOD_TARGET_BUSY sleep_secs=0
++$MOD_TARGET_BUSY: ${MOD_TARGET_BUSY}_init
++$MOD_TARGET_BUSY: busymod_work_func, sleeping 0 seconds ...
++$MOD_TARGET_BUSY: busymod_work_func exit
++% modprobe $MOD_LIVEPATCH
++livepatch: enabling patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': initializing patching transition
++$MOD_LIVEPATCH: pre_patch_callback: $MOD_TARGET_BUSY -> [MODULE_STATE_LIVE] Normal state
++$MOD_LIVEPATCH: pre_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting patching transition
++livepatch: '$MOD_LIVEPATCH': completing patching transition
++$MOD_LIVEPATCH: post_patch_callback: $MOD_TARGET_BUSY -> [MODULE_STATE_LIVE] Normal state
++$MOD_LIVEPATCH: post_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': patching complete
++% modprobe $MOD_TARGET
++livepatch: applying patch '$MOD_LIVEPATCH' to loading module '$MOD_TARGET'
++$MOD_LIVEPATCH: pre_patch_callback: $MOD_TARGET -> [MODULE_STATE_COMING] Full formed, running module_init
++$MOD_LIVEPATCH: post_patch_callback: $MOD_TARGET -> [MODULE_STATE_COMING] Full formed, running module_init
++$MOD_TARGET: ${MOD_TARGET}_init
++% rmmod $MOD_TARGET
++$MOD_TARGET: ${MOD_TARGET}_exit
++$MOD_LIVEPATCH: pre_unpatch_callback: $MOD_TARGET -> [MODULE_STATE_GOING] Going away
++livepatch: reverting patch '$MOD_LIVEPATCH' on unloading module '$MOD_TARGET'
++$MOD_LIVEPATCH: post_unpatch_callback: $MOD_TARGET -> [MODULE_STATE_GOING] Going away
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
++livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
++$MOD_LIVEPATCH: pre_unpatch_callback: $MOD_TARGET_BUSY -> [MODULE_STATE_LIVE] Normal state
++$MOD_LIVEPATCH: pre_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH': completing unpatching transition
++$MOD_LIVEPATCH: post_unpatch_callback: $MOD_TARGET_BUSY -> [MODULE_STATE_LIVE] Normal state
++$MOD_LIVEPATCH: post_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': unpatching complete
++% rmmod $MOD_LIVEPATCH
++% rmmod $MOD_TARGET_BUSY
++$MOD_TARGET_BUSY: ${MOD_TARGET_BUSY}_exit"
++
++
++
++# TEST: busy target module
++#
++# A similar test as the previous one, but force the "busy" kernel module
++# to do longer work.
++#
++# The livepatching core will refuse to patch a task that is currently
++# executing a to-be-patched function -- the consistency model stalls the
++# current patch transition until this safety-check is met.  Test a
++# scenario where one of a livepatch's target klp_objects sits on such a
++# function for a long time.  Meanwhile, load and unload other target
++# kernel modules while the livepatch transition is in progress.
++#
++# - Load the "busy" kernel module, this time make it do 10 seconds worth
++#   of work.
++#
++# - Meanwhile, the livepatch is loaded.  Notice that the patch
++#   transition does not complete as the targeted "busy" module is
++#   sitting on a to-be-patched function.
++#
++# - Load a second target module (this one is an ordinary idle kernel
++#   module).  Note that *no* post-patch callbacks will be executed while
++#   the livepatch is still in transition.
++#
++# - Request an unload of the simple kernel module.  The patch is still
++#   transitioning, so its pre-unpatch callbacks are skipped.
++#
++# - Finally the livepatch is disabled.  Since none of the patch's
++#   klp_object's post-patch callbacks executed, the remaining
++#   klp_object's pre-unpatch callbacks are skipped.
++
++echo -n "TEST: busy target module ... "
++dmesg -C
++
++load_mod $MOD_TARGET_BUSY sleep_secs=10
++load_mod $MOD_LIVEPATCH
++# Don't wait for transition, load $MOD_TARGET while the transition
++# is still stalled in $MOD_TARGET_BUSY::busymod_work_func()
++sleep 5
++load_mod $MOD_TARGET
++unload_mod $MOD_TARGET
++disable_lp $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++unload_mod $MOD_LIVEPATCH
++unload_mod $MOD_TARGET_BUSY
++
++check_result "% modprobe $MOD_TARGET_BUSY sleep_secs=10
++$MOD_TARGET_BUSY: ${MOD_TARGET_BUSY}_init
++$MOD_TARGET_BUSY: busymod_work_func, sleeping 10 seconds ...
++% modprobe $MOD_LIVEPATCH
++livepatch: enabling patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': initializing patching transition
++$MOD_LIVEPATCH: pre_patch_callback: $MOD_TARGET_BUSY -> [MODULE_STATE_LIVE] Normal state
++$MOD_LIVEPATCH: pre_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting patching transition
++% modprobe $MOD_TARGET
++livepatch: applying patch '$MOD_LIVEPATCH' to loading module '$MOD_TARGET'
++$MOD_LIVEPATCH: pre_patch_callback: $MOD_TARGET -> [MODULE_STATE_COMING] Full formed, running module_init
++$MOD_TARGET: ${MOD_TARGET}_init
++% rmmod $MOD_TARGET
++$MOD_TARGET: ${MOD_TARGET}_exit
++livepatch: reverting patch '$MOD_LIVEPATCH' on unloading module '$MOD_TARGET'
++$MOD_LIVEPATCH: post_unpatch_callback: $MOD_TARGET -> [MODULE_STATE_GOING] Going away
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
++livepatch: '$MOD_LIVEPATCH': reversing transition from patching to unpatching
++livepatch: '$MOD_LIVEPATCH': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH': completing unpatching transition
++$MOD_LIVEPATCH: post_unpatch_callback: $MOD_TARGET_BUSY -> [MODULE_STATE_LIVE] Normal state
++$MOD_LIVEPATCH: post_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': unpatching complete
++% rmmod $MOD_LIVEPATCH
++% rmmod $MOD_TARGET_BUSY
++$MOD_TARGET_BUSY: busymod_work_func exit
++$MOD_TARGET_BUSY: ${MOD_TARGET_BUSY}_exit"
++
++
++# TEST: multiple livepatches
++#
++# Test loading multiple livepatches.  This test-case is mainly for comparing
++# with the next test-case.
++#
++# - Load and unload two livepatches, pre and post (un)patch callbacks
++#   execute as each patch progresses through its (un)patching
++#   transition.
++
++echo -n "TEST: multiple livepatches ... "
++dmesg -C
++
++load_mod $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++load_mod $MOD_LIVEPATCH2
++wait_for_transition $MOD_LIVEPATCH2
++disable_lp $MOD_LIVEPATCH2
++wait_for_transition $MOD_LIVEPATCH2
++disable_lp $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++unload_mod $MOD_LIVEPATCH2
++unload_mod $MOD_LIVEPATCH
++
++check_result "% modprobe $MOD_LIVEPATCH
++livepatch: enabling patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': initializing patching transition
++$MOD_LIVEPATCH: pre_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting patching transition
++livepatch: '$MOD_LIVEPATCH': completing patching transition
++$MOD_LIVEPATCH: post_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': patching complete
++% modprobe $MOD_LIVEPATCH2
++livepatch: enabling patch '$MOD_LIVEPATCH2'
++livepatch: '$MOD_LIVEPATCH2': initializing patching transition
++$MOD_LIVEPATCH2: pre_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH2': starting patching transition
++livepatch: '$MOD_LIVEPATCH2': completing patching transition
++$MOD_LIVEPATCH2: post_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH2': patching complete
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH2/enabled
++livepatch: '$MOD_LIVEPATCH2': initializing unpatching transition
++$MOD_LIVEPATCH2: pre_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH2': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH2': completing unpatching transition
++$MOD_LIVEPATCH2: post_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH2': unpatching complete
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
++livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
++$MOD_LIVEPATCH: pre_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH': completing unpatching transition
++$MOD_LIVEPATCH: post_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': unpatching complete
++% rmmod $MOD_LIVEPATCH2
++% rmmod $MOD_LIVEPATCH"
++
++
++# TEST: atomic replace
++#
++# Load multiple livepatches, but the second as an 'atomic-replace'
++# patch.  When the latter laods, the original livepatch should be
++# disabled and *none* of its pre/post-unpatch callbacks executed.  On
++# the other hand, when the atomic-replace livepatch is disabled, its
++# pre/post-unpatch callbacks *should* be executed.
++#
++# - Load and unload two livepatches, the second of which has its
++#   .replace flag set true.
++#
++# - Pre and post patch callbacks are executed for both livepatches.
++#
++# - Once the atomic replace module is loaded, only its pre and post
++#   unpatch callbacks are executed.
++
++echo -n "TEST: atomic replace ... "
++dmesg -C
++
++load_mod $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++load_mod $MOD_LIVEPATCH2 replace=1
++wait_for_transition $MOD_LIVEPATCH2
++disable_lp $MOD_LIVEPATCH2
++wait_for_transition $MOD_LIVEPATCH2
++unload_mod $MOD_LIVEPATCH2
++unload_mod $MOD_LIVEPATCH
++
++check_result "% modprobe $MOD_LIVEPATCH
++livepatch: enabling patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': initializing patching transition
++$MOD_LIVEPATCH: pre_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': starting patching transition
++livepatch: '$MOD_LIVEPATCH': completing patching transition
++$MOD_LIVEPATCH: post_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH': patching complete
++% modprobe $MOD_LIVEPATCH2 replace=1
++livepatch: enabling patch '$MOD_LIVEPATCH2'
++livepatch: '$MOD_LIVEPATCH2': initializing patching transition
++$MOD_LIVEPATCH2: pre_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH2': starting patching transition
++livepatch: '$MOD_LIVEPATCH2': completing patching transition
++$MOD_LIVEPATCH2: post_patch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH2': patching complete
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH2/enabled
++livepatch: '$MOD_LIVEPATCH2': initializing unpatching transition
++$MOD_LIVEPATCH2: pre_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH2': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH2': completing unpatching transition
++$MOD_LIVEPATCH2: post_unpatch_callback: vmlinux
++livepatch: '$MOD_LIVEPATCH2': unpatching complete
++% rmmod $MOD_LIVEPATCH2
++% rmmod $MOD_LIVEPATCH"
++
++
++exit 0
+diff --git a/tools/testing/selftests/livepatch/test-livepatch.sh b/tools/testing/selftests/livepatch/test-livepatch.sh
+new file mode 100755
+index 000000000000..3e4b8072da84
+--- /dev/null
++++ b/tools/testing/selftests/livepatch/test-livepatch.sh
+@@ -0,0 +1,173 @@
++#!/bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (C) 2018 Joe Lawrence <joe.lawrence@redhat.com>
++
++. functions.sh
++
++MOD_LIVEPATCH=test_klp_livepatch
++MOD_REPLACE=test_klp_atomic_replace
++
++set_dynamic_debug
++
++
++# TEST: basic function patching
++# - load a livepatch that modifies the output from /proc/cmdline and
++#   verify correct behavior
++# - unload the livepatch and make sure the patch was removed
++
++echo -n "TEST: basic function patching ... "
++dmesg -C
++
++load_mod $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++
++if [[ "$(cat /proc/cmdline)" != "$MOD_LIVEPATCH: this has been live patched" ]] ; then
++	echo -e "FAIL\n\n"
++	die "livepatch kselftest(s) failed"
++fi
++
++disable_lp $MOD_LIVEPATCH
++unload_mod $MOD_LIVEPATCH
++
++if [[ "$(cat /proc/cmdline)" == "$MOD_LIVEPATCH: this has been live patched" ]] ; then
++	echo -e "FAIL\n\n"
++	die "livepatch kselftest(s) failed"
++fi
++
++check_result "% modprobe $MOD_LIVEPATCH
++livepatch: enabling patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': initializing patching transition
++livepatch: '$MOD_LIVEPATCH': starting patching transition
++livepatch: '$MOD_LIVEPATCH': completing patching transition
++livepatch: '$MOD_LIVEPATCH': patching complete
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
++livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
++livepatch: '$MOD_LIVEPATCH': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH': completing unpatching transition
++livepatch: '$MOD_LIVEPATCH': unpatching complete
++% rmmod $MOD_LIVEPATCH"
++
++
++# TEST: multiple livepatches
++# - load a livepatch that modifies the output from /proc/cmdline and
++#   verify correct behavior
++# - load another livepatch and verify that both livepatches are active
++# - unload the second livepatch and verify that the first is still active
++# - unload the first livepatch and verify none are active
++
++echo -n "TEST: multiple livepatches ... "
++dmesg -C
++
++load_mod $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++
++grep 'live patched' /proc/cmdline > /dev/kmsg
++grep 'live patched' /proc/meminfo > /dev/kmsg
++
++load_mod $MOD_REPLACE replace=0
++wait_for_transition $MOD_REPLACE
++
++grep 'live patched' /proc/cmdline > /dev/kmsg
++grep 'live patched' /proc/meminfo > /dev/kmsg
++
++disable_lp $MOD_REPLACE
++unload_mod $MOD_REPLACE
++
++grep 'live patched' /proc/cmdline > /dev/kmsg
++grep 'live patched' /proc/meminfo > /dev/kmsg
++
++disable_lp $MOD_LIVEPATCH
++unload_mod $MOD_LIVEPATCH
++
++grep 'live patched' /proc/cmdline > /dev/kmsg
++grep 'live patched' /proc/meminfo > /dev/kmsg
++
++check_result "% modprobe $MOD_LIVEPATCH
++livepatch: enabling patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': initializing patching transition
++livepatch: '$MOD_LIVEPATCH': starting patching transition
++livepatch: '$MOD_LIVEPATCH': completing patching transition
++livepatch: '$MOD_LIVEPATCH': patching complete
++$MOD_LIVEPATCH: this has been live patched
++% modprobe $MOD_REPLACE replace=0
++livepatch: enabling patch '$MOD_REPLACE'
++livepatch: '$MOD_REPLACE': initializing patching transition
++livepatch: '$MOD_REPLACE': starting patching transition
++livepatch: '$MOD_REPLACE': completing patching transition
++livepatch: '$MOD_REPLACE': patching complete
++$MOD_LIVEPATCH: this has been live patched
++$MOD_REPLACE: this has been live patched
++% echo 0 > /sys/kernel/livepatch/$MOD_REPLACE/enabled
++livepatch: '$MOD_REPLACE': initializing unpatching transition
++livepatch: '$MOD_REPLACE': starting unpatching transition
++livepatch: '$MOD_REPLACE': completing unpatching transition
++livepatch: '$MOD_REPLACE': unpatching complete
++% rmmod $MOD_REPLACE
++$MOD_LIVEPATCH: this has been live patched
++% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
++livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
++livepatch: '$MOD_LIVEPATCH': starting unpatching transition
++livepatch: '$MOD_LIVEPATCH': completing unpatching transition
++livepatch: '$MOD_LIVEPATCH': unpatching complete
++% rmmod $MOD_LIVEPATCH"
++
++
++# TEST: atomic replace livepatch
++# - load a livepatch that modifies the output from /proc/cmdline and
++#   verify correct behavior
++# - load an atomic replace livepatch and verify that only the second is active
++# - remove the first livepatch and verify that the atomic replace livepatch
++#   is still active
++# - remove the atomic replace livepatch and verify that none are active
++
++echo -n "TEST: atomic replace livepatch ... "
++dmesg -C
++
++load_mod $MOD_LIVEPATCH
++wait_for_transition $MOD_LIVEPATCH
++
++grep 'live patched' /proc/cmdline > /dev/kmsg
++grep 'live patched' /proc/meminfo > /dev/kmsg
++
++load_mod $MOD_REPLACE replace=1
++wait_for_transition $MOD_REPLACE
++
++grep 'live patched' /proc/cmdline > /dev/kmsg
++grep 'live patched' /proc/meminfo > /dev/kmsg
++
++unload_mod $MOD_LIVEPATCH
++
++grep 'live patched' /proc/cmdline > /dev/kmsg
++grep 'live patched' /proc/meminfo > /dev/kmsg
++
++disable_lp $MOD_REPLACE
++unload_mod $MOD_REPLACE
++
++grep 'live patched' /proc/cmdline > /dev/kmsg
++grep 'live patched' /proc/meminfo > /dev/kmsg
++
++check_result "% modprobe $MOD_LIVEPATCH
++livepatch: enabling patch '$MOD_LIVEPATCH'
++livepatch: '$MOD_LIVEPATCH': initializing patching transition
++livepatch: '$MOD_LIVEPATCH': starting patching transition
++livepatch: '$MOD_LIVEPATCH': completing patching transition
++livepatch: '$MOD_LIVEPATCH': patching complete
++$MOD_LIVEPATCH: this has been live patched
++% modprobe $MOD_REPLACE replace=1
++livepatch: enabling patch '$MOD_REPLACE'
++livepatch: '$MOD_REPLACE': initializing patching transition
++livepatch: '$MOD_REPLACE': starting patching transition
++livepatch: '$MOD_REPLACE': completing patching transition
++livepatch: '$MOD_REPLACE': patching complete
++$MOD_REPLACE: this has been live patched
++% rmmod $MOD_LIVEPATCH
++$MOD_REPLACE: this has been live patched
++% echo 0 > /sys/kernel/livepatch/$MOD_REPLACE/enabled
++livepatch: '$MOD_REPLACE': initializing unpatching transition
++livepatch: '$MOD_REPLACE': starting unpatching transition
++livepatch: '$MOD_REPLACE': completing unpatching transition
++livepatch: '$MOD_REPLACE': unpatching complete
++% rmmod $MOD_REPLACE"
++
++
++exit 0
+diff --git a/tools/testing/selftests/livepatch/test-shadow-vars.sh b/tools/testing/selftests/livepatch/test-shadow-vars.sh
+new file mode 100755
+index 000000000000..96390a21b15d
+--- /dev/null
++++ b/tools/testing/selftests/livepatch/test-shadow-vars.sh
+@@ -0,0 +1,60 @@
++#!/bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (C) 2018 Joe Lawrence <joe.lawrence@redhat.com>
++
++. functions.sh
++
++MOD_TEST=test_klp_shadow_vars
++
++set_dynamic_debug
++
++
++# TEST: basic shadow variable API
++# - load a module that exercises the shadow variable API
++
++echo -n "TEST: basic shadow variable API ... "
++dmesg -C
++
++load_mod $MOD_TEST
++unload_mod $MOD_TEST
++
++check_result "% modprobe $MOD_TEST
++$MOD_TEST: klp_shadow_get(obj=PTR5, id=0x1234) = PTR0
++$MOD_TEST:   got expected NULL result
++$MOD_TEST: shadow_ctor: PTR6 -> PTR1
++$MOD_TEST: klp_shadow_alloc(obj=PTR5, id=0x1234, size=8, gfp_flags=GFP_KERNEL), ctor=PTR7, ctor_data=PTR1 = PTR6
++$MOD_TEST: shadow_ctor: PTR8 -> PTR2
++$MOD_TEST: klp_shadow_alloc(obj=PTR9, id=0x1234, size=8, gfp_flags=GFP_KERNEL), ctor=PTR7, ctor_data=PTR2 = PTR8
++$MOD_TEST: shadow_ctor: PTR10 -> PTR3
++$MOD_TEST: klp_shadow_alloc(obj=PTR5, id=0x1235, size=8, gfp_flags=GFP_KERNEL), ctor=PTR7, ctor_data=PTR3 = PTR10
++$MOD_TEST: klp_shadow_get(obj=PTR5, id=0x1234) = PTR6
++$MOD_TEST:   got expected PTR6 -> PTR1 result
++$MOD_TEST: klp_shadow_get(obj=PTR9, id=0x1234) = PTR8
++$MOD_TEST:   got expected PTR8 -> PTR2 result
++$MOD_TEST: klp_shadow_get(obj=PTR5, id=0x1235) = PTR10
++$MOD_TEST:   got expected PTR10 -> PTR3 result
++$MOD_TEST: shadow_ctor: PTR11 -> PTR4
++$MOD_TEST: klp_shadow_get_or_alloc(obj=PTR12, id=0x1234, size=8, gfp_flags=GFP_KERNEL), ctor=PTR7, ctor_data=PTR4 = PTR11
++$MOD_TEST: klp_shadow_get_or_alloc(obj=PTR12, id=0x1234, size=8, gfp_flags=GFP_KERNEL), ctor=PTR7, ctor_data=PTR4 = PTR11
++$MOD_TEST:   got expected PTR11 -> PTR4 result
++$MOD_TEST: shadow_dtor(obj=PTR5, shadow_data=PTR6)
++$MOD_TEST: klp_shadow_free(obj=PTR5, id=0x1234, dtor=PTR13)
++$MOD_TEST: klp_shadow_get(obj=PTR5, id=0x1234) = PTR0
++$MOD_TEST:   got expected NULL result
++$MOD_TEST: shadow_dtor(obj=PTR9, shadow_data=PTR8)
++$MOD_TEST: klp_shadow_free(obj=PTR9, id=0x1234, dtor=PTR13)
++$MOD_TEST: klp_shadow_get(obj=PTR9, id=0x1234) = PTR0
++$MOD_TEST:   got expected NULL result
++$MOD_TEST: shadow_dtor(obj=PTR12, shadow_data=PTR11)
++$MOD_TEST: klp_shadow_free(obj=PTR12, id=0x1234, dtor=PTR13)
++$MOD_TEST: klp_shadow_get(obj=PTR12, id=0x1234) = PTR0
++$MOD_TEST:   got expected NULL result
++$MOD_TEST: klp_shadow_get(obj=PTR5, id=0x1235) = PTR10
++$MOD_TEST:   got expected PTR10 -> PTR3 result
++$MOD_TEST: shadow_dtor(obj=PTR5, shadow_data=PTR10)
++$MOD_TEST: klp_shadow_free_all(id=0x1235, dtor=PTR13)
++$MOD_TEST: klp_shadow_get(obj=PTR5, id=0x1234) = PTR0
++$MOD_TEST:   shadow_get() got expected NULL result
++% rmmod test_klp_shadow_vars"
++
++exit 0
+-- 
 1.8.3.1
 
