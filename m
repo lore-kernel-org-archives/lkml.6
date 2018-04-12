@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753074AbeDLQvl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 12:51:41 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:46625 "EHLO
+        id S1753057AbeDLQvj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 12:51:39 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:47765 "EHLO
         srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752775AbeDLQvd (ORCPT
+        with ESMTP id S1752783AbeDLQvd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 12 Apr 2018 12:51:33 -0400
 From: Luca Ceresoli <luca@lucaceresoli.net>
@@ -13,10 +13,12 @@ Cc: Luca Ceresoli <luca@lucaceresoli.net>,
         Leon Luo <leonl@leopardimaging.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 00/13] imx274: add cropping and misc improvements
-Date: Thu, 12 Apr 2018 18:51:05 +0200
-Message-Id: <1523551878-15754-1-git-send-email-luca@lucaceresoli.net>
+Subject: [PATCH 03/13] imx274: slightly simplify code
+Date: Thu, 12 Apr 2018 18:51:08 +0200
+Message-Id: <1523551878-15754-4-git-send-email-luca@lucaceresoli.net>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523551878-15754-1-git-send-email-luca@lucaceresoli.net>
+References: <1523551878-15754-1-git-send-email-luca@lucaceresoli.net>
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -31,48 +33,26 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+imx274_s_frame_interval() already has a direct pointer to the v4l2
+exposure control, so reuse it to simplify code.
 
-this patchset introduces cropping support for the Sony IMX274 sensor
-using the SELECTION API, after several cleanups and general code
-improvements.
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+---
+ drivers/media/i2c/imx274.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patches 1-6 clean up and restructure code in various places and are
-pretty much independent from the cropping feature.
-
-Patches 7-11 are further restructuring which are mostly useful to
-implement cropping API in a cleaner way.
-
-Patch 12 introduces a helper to allow setting many registers computed
-at runtime in a straightforward way. This would not have been very
-useful before because all long register write sequences came from
-const tables, but it's definitely a must for the cropping code.
-
-Patch 13 implements cropping in the set_selection pad operation. On
-the v4l2 side there is nothing special, it fit nicely in the existing
-infrastructure. The most tricky part was respecting all the device
-constraints on the horizontal crop.
-
-Regards,
-Luca
-
-Luca Ceresoli (13):
-  imx274: document reset delays more clearly
-  imx274: fix typo in comment
-  imx274: slightly simplify code
-  imx274: remove unused data from struct imx274_frmfmt
-  imx274: rename and reorder register address definitions
-  imx274: remove non-indexed pointers from mode_table
-  imx274: initialize format before v4l2 controls
-  imx274: consolidate per-mode data in imx274_frmfmt
-  imx274: get rid of mode_index
-  imx274: actually use IMX274_DEFAULT_MODE
-  imx274: simplify imx274_write_table()
-  imx274: add helper function to fill a reg_8 table chunk
-  imx274: add SELECTION support for cropping
-
- drivers/media/i2c/imx274.c | 600 ++++++++++++++++++++++++++-------------------
- 1 file changed, 349 insertions(+), 251 deletions(-)
-
+diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
+index dfd04edcdd48..c5d00ade4d64 100644
+--- a/drivers/media/i2c/imx274.c
++++ b/drivers/media/i2c/imx274.c
+@@ -984,7 +984,7 @@ static int imx274_s_frame_interval(struct v4l2_subdev *sd,
+ 		}
+ 
+ 		/* update exposure time accordingly */
+-		imx274_set_exposure(imx274, imx274->ctrls.exposure->val);
++		imx274_set_exposure(imx274, ctrl->val);
+ 
+ 		dev_dbg(&imx274->client->dev, "set frame interval to %uus\n",
+ 			fi->interval.numerator * 1000000
 -- 
 2.7.4
