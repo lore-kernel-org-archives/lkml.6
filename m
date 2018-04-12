@@ -1,14 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752852AbeDLGuO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 02:50:14 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43777 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752401AbeDLGuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 02:50:12 -0400
-Date: Thu, 12 Apr 2018 08:49:19 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Abhishek Sahu <absahu@codeaurora.org>
+        id S1752878AbeDLGyU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 02:54:20 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37292 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752350AbeDLGyS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 02:54:18 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date: Thu, 12 Apr 2018 12:24:16 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
 Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
         Archit Taneja <architt@codeaurora.org>,
         Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
@@ -18,146 +23,92 @@ Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
         Andy Gross <andy.gross@linaro.org>,
         Brian Norris <computersforpeace@gmail.com>,
         David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 3/9] mtd: nand: qcom: erased page detection for
- uncorrectable errors only
-Message-ID: <20180412084919.1ca7991d@xps13>
-In-Reply-To: <2c93157a2982365ceaa8af17d5e3b97a@codeaurora.org>
+Subject: Re: [PATCH 4/9] mtd: nand: qcom: fix null pointer access for erased
+ buffer detection
+In-Reply-To: <20180410111220.3873a24c@xps13>
 References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
-        <1522845745-6624-4-git-send-email-absahu@codeaurora.org>
-        <20180410105945.65f2cade@xps13>
-        <2c93157a2982365ceaa8af17d5e3b97a@codeaurora.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+ <1522845745-6624-5-git-send-email-absahu@codeaurora.org>
+ <20180410111220.3873a24c@xps13>
+Message-ID: <d201308d57317ff7d37d7169d7985d76@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
+On 2018-04-10 14:42, Miquel Raynal wrote:
+> Hi Abhishek,
+> 
+> On Wed,  4 Apr 2018 18:12:20 +0530, Abhishek Sahu
+> <absahu@codeaurora.org> wrote:
+> 
+>> parse_read_errors can be called with only oob buf also in which
+>> case data_buf will be NULL.  If data_buf is NULL, then don’t
+>> treat this page as completely erased in case of ECC uncorrectable
+>> error.
+>> 
+>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+>> ---
+>>  drivers/mtd/nand/qcom_nandc.c | 7 +++++--
+>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/drivers/mtd/nand/qcom_nandc.c 
+>> b/drivers/mtd/nand/qcom_nandc.c
+>> index 57c16a6..0ebcc55 100644
+>> --- a/drivers/mtd/nand/qcom_nandc.c
+>> +++ b/drivers/mtd/nand/qcom_nandc.c
+>> @@ -1607,9 +1607,11 @@ static int parse_read_errors(struct 
+>> qcom_nand_host *host, u8 *data_buf,
+>>  			if (host->bch_enabled) {
+>>  				erased = (erased_cw & ERASED_CW) == ERASED_CW ?
+>>  					 true : false;
+> 
+> Why the parse_read_errors() function could not be called without
+> data_buf when using BCH? Are you sure the situation can only happen
+> without it?
+> 
 
-On Thu, 12 Apr 2018 12:03:58 +0530, Abhishek Sahu
-<absahu@codeaurora.org> wrote:
+   host->bch_enabled case is different where controller itself tells
+   regarding erased page in status register.
 
-> On 2018-04-10 14:29, Miquel Raynal wrote:
-> > Hi Abhishek,  
-> > > On Wed,  4 Apr 2018 18:12:19 +0530, Abhishek Sahu  
-> > <absahu@codeaurora.org> wrote:  
-> > >> The NAND flash controller generates ECC uncorrectable error  
-> >> first in case of completely erased page. Currently driver
-> >> applies the erased page detection logic for other operation
-> >> errors also so fix this and return EIO for other operational
-> >> errors.
-> > > I am sorry I don't understand very well what is the purpose of this  
-> > patch, could you please explain it again?  
-> > > Do you mean that you want to avoid having rising ECC errors when you  
-> > read erased pages?
-> >   Thanks Miquel for your review.  
+> Would the following apply here too, with a:
 > 
->   QCOM NAND flash controller has in built erased page
->   detection HW.
->   Following is the flow in the HW if controller tries
->   to read erased page
-> 
->   1. First ECC uncorrectable error will be generated from
->      ECC engine since ECC engine first calculates the ECC with
->      all 0xff and match the calculated ECC with ECC code in OOB
->      (which is again all 0xff).
->   2. After getting ECC error, erased CW detection HW checks if
->      all the bytes in page are 0xff and then it updates the
->      status in separate register NAND_ERASED_CW_DETECT_STATUS
-> 
->   So the erased CW detect status should be checked only if
->   ECC engine generated the uncorrectable error.
-> 
->   Currently for all other operational errors also (like TIMEOUT,
->   MPU errors etc), the erased CW detect register was being
->   checked.
 
-This is very clear, thanks. I don't know very much this controller so I
-think you can add this information in the commit message for future
-reference.
+  erased_chunk_check_and_fixup will be used only for 4 bit RS ECC
+  code in which there is no support from HW for erased page detection
+  and we need to check few data bytes value.
 
-> 
-> >> >> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>  
-> >> ---
-> >>  drivers/mtd/nand/qcom_nandc.c | 8 +++++++-
-> >>  1 file changed, 7 insertions(+), 1 deletion(-)  
-> >> >> diff --git a/drivers/mtd/nand/qcom_nandc.c >> b/drivers/mtd/nand/qcom_nandc.c  
-> >> index 17321fc..57c16a6 100644
-> >> --- a/drivers/mtd/nand/qcom_nandc.c
-> >> +++ b/drivers/mtd/nand/qcom_nandc.c
-> >> @@ -1578,6 +1578,7 @@ static int parse_read_errors(struct >> qcom_nand_host *host, u8 *data_buf,
-> >>  	struct nand_ecc_ctrl *ecc = &chip->ecc;
-> >>  	unsigned int max_bitflips = 0;
-> >>  	struct read_stats *buf;
-> >> +	bool flash_op_err = false;
-> >>  	int i;  
-> >> >>  	buf = (struct read_stats *)nandc->reg_read_buf;  
-> >> @@ -1599,7 +1600,7 @@ static int parse_read_errors(struct >> qcom_nand_host *host, u8 *data_buf,
-> >>  		buffer = le32_to_cpu(buf->buffer);
-> >>  		erased_cw = le32_to_cpu(buf->erased_cw);  
-> >> >> -		if (flash & (FS_OP_ERR | FS_MPU_ERR)) {  
-> >> +		if ((flash & FS_OP_ERR) && (buffer & BS_UNCORRECTABLE_BIT)) {
-> > > And later you have another "if (buffer & BS_UNCORRECTABLE_BIT)" which  
-> > is then redundant, unless that is not what you actually want to do?  
-> 
->   Yes. That check seems to be redundant. I will fix that.
-> 
-> > > Maybe you can add comments before the if ()/ else if () to explain in  
-> > which case you enter each branch.  
-> 
->   Sure. That would be better. Will add the same in next patch set.
-> 
-> > >>  			bool erased;  
-> >> >>  			/* ignore erased codeword errors */  
-> >> @@ -1641,6 +1642,8 @@ static int parse_read_errors(struct >> qcom_nand_host *host, u8 *data_buf,
-> >>  						max_t(unsigned int, max_bitflips, ret);
-> >>  				}
-> >>  			}
-> >> +		} else if (flash & (FS_OP_ERR | FS_MPU_ERR)) {
-> >> +			flash_op_err = true;
-> >>  		} else {
-> >>  			unsigned int stat;  
-> >> >> @@ -1654,6 +1657,9 @@ static int parse_read_errors(struct >> qcom_nand_host *host, u8 *data_buf,  
-> >>  			oob_buf += oob_len + ecc->bytes;
-> >>  	}  
-> >> >> +	if (flash_op_err)  
-> >> +		return -EIO;
-> >> +
-> > > In you are propagating an error related to the controller, this is  
-> > fine, but I think you just want to raise the fact that a NAND
-> > uncorrectable error occurred, in this case you should just increment
-> > mtd->ecc_stats.failed and return 0 (returning max_bitflips here would > be
-> > fine too has it would be 0 too).  
-> 
->    The flash_op_err will be for other operational errors only (like timeout,
->    MPU error, device failure etc). For correctable errors,
-> 
->    ret = nand_check_erased_ecc_chunk(data_buf,
->                            data_len, eccbuf, ecclen, oob_buf,
->                            extraooblen, ecc->strength);
+  Thanks,
+  Abhishek
 
-Why do you need nand_check_erased_ecc_chunk() if the blank page check
-is done in hw?
-
-Thanks,
-Miquèl
-
->                    if (ret < 0) {
->                            mtd->ecc_stats.failed++;
->                    } else {
->                            mtd->ecc_stats.corrected += ret;
+> if (!data_buf) {
+>         erased = false;
+> } else {
+>         if (host->bch_enabled)
+>                 ...
+>         else
+>                 ...
+> }
 > 
->   Already, it is incrementing mtd->ecc_stats.failed
+>> -			} else {
+>> +			} else if (data_buf) {
+>>  				erased = erased_chunk_check_and_fixup(data_buf,
+>>  								      data_len);
+>> +			} else {
+>> +				erased = false;
+>>  			}
+>> 
+>>  			if (erased) {
+>> @@ -1652,7 +1654,8 @@ static int parse_read_errors(struct 
+>> qcom_nand_host *host, u8 *data_buf,
+>>  			max_bitflips = max(max_bitflips, stat);
+>>  		}
+>> 
+>> -		data_buf += data_len;
+>> +		if (data_buf)
+>> +			data_buf += data_len;
+>>  		if (oob_buf)
+>>  			oob_buf += oob_len + ecc->bytes;
+>>  	}
 > 
->   Thanks,
->   Abhishek
-
-
-
--- 
-Miquel Raynal, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> Thanks,
+> Miquèl
