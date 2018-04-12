@@ -1,92 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752961AbeDLOpN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 10:45:13 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:51478 "EHLO
+        id S1753070AbeDLOpm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 10:45:42 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:47323 "EHLO
         mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752908AbeDLOpL (ORCPT
+        with ESMTP id S1752870AbeDLOpk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 10:45:11 -0400
-X-Auth-Info: WQSodfbMSr+KfVe5APJB6gNL6NlLNGGy/AnwnqlQNcI=
-Date: Thu, 12 Apr 2018 16:45:01 +0200
+        Thu, 12 Apr 2018 10:45:40 -0400
+X-Auth-Info: qzn3QHLZHQ39jrfkrIuTl37N0o5USIzBUbn1rP8XHmg=
+Date: Thu, 12 Apr 2018 16:45:35 +0200
 From: Lukasz Majewski <lukma@denx.de>
 To: Joe Perches <joe@perches.com>
-Cc: Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
         Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH] mfd: mc13xxx: Add mc34708 adc support
-Message-ID: <20180412164501.66b50f81@jawa>
-In-Reply-To: <2f5a6878bf17e9cfa78de3c5b2ae52c1e8995bb1.camel@perches.com>
-References: <20180411140929.30357-1-lukma@denx.de>
-        <2f5a6878bf17e9cfa78de3c5b2ae52c1e8995bb1.camel@perches.com>
+Subject: Re: [PATCH 2/2] input: touchscreen mc13xxx: Add mc34708 support
+Message-ID: <20180412164535.324a218a@jawa>
+In-Reply-To: <4690e30b3c4b97847123295f1994c6eafe4e0cbb.camel@perches.com>
+References: <20180411141340.30939-1-lukma@denx.de>
+        <20180411141340.30939-2-lukma@denx.de>
+        <4690e30b3c4b97847123295f1994c6eafe4e0cbb.camel@perches.com>
 Organization: denx.de
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/AeRPRXKhF9dReqGEQvnuF_q"; protocol="application/pgp-signature"
+ boundary="Sig_/ahDu70l8WIhCE2XFKRzQbVD"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/AeRPRXKhF9dReqGEQvnuF_q
+--Sig_/ahDu70l8WIhCE2XFKRzQbVD
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Joe,
+On Wed, 11 Apr 2018 09:01:01 -0700
+Joe Perches <joe@perches.com> wrote:
 
-> On Wed, 2018-04-11 at 16:09 +0200, Lukasz Majewski wrote:
+> On Wed, 2018-04-11 at 16:13 +0200, Lukasz Majewski wrote:
 > > From: Sascha Hauer <s.hauer@pengutronix.de>
 > >=20
-> > The mc34708 has an improved adc. The older variants will always
-> > convert a fixed order of channels. The mc34708 can do up to eight
-> > conversions in arbitrary channel order. Currently this extended
-> > feature is not supported. We only support touchscreen conversions
-> > now, which will be sampled in a data format compatible to the older
-> > chips in order to keep the API between the mfd and the touchscreen
-> > driver. =20
-> []
-> > diff --git a/drivers/mfd/mc13xxx-core.c
-> > b/drivers/mfd/mc13xxx-core.c =20
-> []
-> > +static int mc34708_adc_conversion(struct mc13xxx *mc13xxx,
-> > unsigned int mode,
-> > +		unsigned int channel, u8 ato, bool atox,
-> > +		unsigned int *sample)
-> > +{
-> > +	int ret, i; =20
-> []
-> > +	if (mc13xxx->adcflags & MC13XXX_ADC_WORKING) {
-> > +		ret =3D -EBUSY;
-> > +		goto out;
-> > +	} =20
+> > The mc34708 has a different bit to enable pen detection. This
+> > adds the driver data and devtype necessary to probe the device
+> > and to distinguish between the mc13783 and the mc34708. =20
 >=20
-> This doesn't work.
+> style trivia:
 >=20
-> > []
-> > +	mc13xxx_irq_free(mc13xxx, MC34708_IRQ_TSDONE,
-> > &adcdone_data); +
-> > +	if (!ret) {
-> > +		ret =3D -ETIMEDOUT;
-> > +		goto out;
-> > +	} =20
+> > diff --git a/drivers/input/touchscreen/mc13783_ts.c
+> > b/drivers/input/touchscreen/mc13783_ts.c =20
 > []
-> > +out:
-> > +	ret =3D mc13xxx_reg_write(mc13xxx, MC13XXX_ADC0, old_adc0); =20
+> > @@ -96,6 +135,10 @@ static void mc13783_ts_report_sample(struct
+> > mc13783_ts_priv *priv)=20
+> >  	cr0 =3D (cr0 + cr1) / 2;
+> > =20
+> > +	if (priv->drvdata->type =3D=3D MC13XXX_TYPE_MC34708)
+> > +		if (cr0 > 4080)
+> > +			cr0 =3D 0; =20
 >=20
-> ret is reassigned here, so the ret =3D -<FOO>
-> uses above don't do what is expected.
-
-Right. Thanks for spotting this. I will fix it in v2.
-
+> For easy of reading, this multiple if block should either
+> use braces around the first if like:
 >=20
-> > +
-> > +	mc13xxx->adcflags &=3D ~MC13XXX_ADC_WORKING;
-> > +	mc13xxx_unlock(mc13xxx);
-> > +
-> > +	return ret;
-> > +} =20
+> 	if (foo) {
+> 		if (bar)
+> 			single_statement;
+> 	}
+>=20
+> or be written
+>=20
+> 	if (foo && bar)
+> 		single_statement;
+>=20
+> I generally prefer the latter style.
 >=20
 
++1.
 
+I will fix it in v2.
 
 
 Best regards,
@@ -99,20 +87,20 @@ DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
 
---Sig_/AeRPRXKhF9dReqGEQvnuF_q
+--Sig_/ahDu70l8WIhCE2XFKRzQbVD
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlrPcO0ACgkQAR8vZIA0
-zr0sjQf+KlaH2c6P+Z5CPbxHMOVbFzsN31RewwIEYWwoBbhktbrYT+ghR47Eq411
-foX4R0Zc6aJnoQc1L5cYeLg1upyaTBM4hRl0aXXCuT9J6iYlOH7fMvH+AgdzoH4a
-dkRAOE2exrnjeV/5HQiZwsJAeMGWZAP9seWRFAmv2YeChuii3rhLAF1EFPgyvexr
-okfWXxqZ99lbfGQkSPaQDiowwWOMYW/wVdm9Jxpxn72i6bGFR8O4p+J1Y1vRFD8y
-OiqVMhUh0wSnZbGR6okb5GhfSboi8CCb7QZMWQbqh/lzEQNQTQcwDAqCbL4C5w7S
-ei15ycCo747iHicC9BbETpbIKVeWnw==
-=MHVE
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlrPcQ8ACgkQAR8vZIA0
+zr0w3wf+LFFcRxd7PeY+xB7Eya/OhCLtq/DwUCVi688nQObrhsUn0yvpfoR93LOo
+xyE2WP+08T3dj2Jl/3yhxVATuE92kcf1cXaBbgDnxf7ceiRV1OOPwHRUAHnowKfd
+EiO6FsRsEGDyd4dm6/ZF8upyJIj2l6+HsPabJAzpEYpS8NZAjnsilDW9ohH55FNb
+Cx6f5VD8Wk8JWfkroyKgBTZZWJVDDGzsaLzLysnRHZWJDHg35xRLV46E5q4vV3hI
+2a4TWtltRzz03cf2taTvlBS1S8H7bmx84pNw0PTBIjTHkBT6xOIO8eenMiGkyn4S
+Yf/7IlFPi6zvesEKdMmF4v/3bSZEfw==
+=xOTR
 -----END PGP SIGNATURE-----
 
---Sig_/AeRPRXKhF9dReqGEQvnuF_q--
+--Sig_/ahDu70l8WIhCE2XFKRzQbVD--
