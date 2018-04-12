@@ -1,60 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753036AbeDLQCV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 12:02:21 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:44453 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752727AbeDLQB3 (ORCPT
+        id S1753105AbeDLQC7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 12:02:59 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:44131 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753068AbeDLQC4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 12:01:29 -0400
-X-Google-Smtp-Source: AIpwx4/LxbsFesNRjBP93GUho51UbhvfuOpofhH3533mzCQn59TDAEMPlaewOfqQ97335Oo3g/EoBQ==
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-X-Google-Original-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Cc: boris.ostrovsky@oracle.com, jgross@suse.com,
-        iurii.konovalenko@globallogic.com,
-        oleksandr.dmytryshyn@globallogic.com, konrad.wilk@oracle.com,
-        tiwai@suse.de, andr2000@gmail.com
-Subject: [PATCH 2/5] xen/sndif: Fix missed "reserved" fields in comments
-Date: Thu, 12 Apr 2018 19:00:59 +0300
-Message-Id: <20180412160102.15833-3-oleksandr_andrushchenko@epam.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180412160102.15833-1-oleksandr_andrushchenko@epam.com>
-References: <20180412160102.15833-1-oleksandr_andrushchenko@epam.com>
+        Thu, 12 Apr 2018 12:02:56 -0400
+X-Google-Smtp-Source: AIpwx48MdqsYK3qs5W2t6OEsP64KiH2o08tTck2QyEk9BPLXht9vAXXI9joI8zouox4eFCE+dXrgXkl1pHyzCYFPZnw=
+MIME-Version: 1.0
+In-Reply-To: <1523542206.3689.10.camel@pengutronix.de>
+References: <1523438149-16433-1-git-send-email-geert+renesas@glider.be>
+ <1523438149-16433-4-git-send-email-geert+renesas@glider.be>
+ <e6a70247-14f2-63b6-852b-3d43e45f8fa2@redhat.com> <CAMuHMdU5m=vV9nuVoRkX6tX-A=az3aK6HT7yFqgDam_rCNEfSg@mail.gmail.com>
+ <2e09425d-0f27-3069-3421-e454ee70e3b2@redhat.com> <e06c459f-51bd-74d1-7a43-bf54231d08ba@codeaurora.org>
+ <CAMuHMdXhFwhhZqa79F7_90VKhiegumizmswSsgDc9K+HP12wFA@mail.gmail.com> <1523542206.3689.10.camel@pengutronix.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 12 Apr 2018 18:02:53 +0200
+X-Google-Sender-Auth: 97JrXy6jeo4hUdubP_7I4-fEJLQ
+Message-ID: <CAMuHMdV+x9B1YVDiGkaeeG6tXV_nyzmJ3U=GkBAyhVuWPfdzFw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] vfio: platform: Add generic DT reset support
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Sinan Kaya <okaya@codeaurora.org>, Auger Eric <eric.auger@redhat.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        KVM list <kvm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the request descriptions have "reserved" fields
-missed: fix this by adding corresponidng entries.
+Hi Philipp,
 
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
----
- include/xen/interface/io/sndif.h | 4 ++++
- 1 file changed, 4 insertions(+)
+On Thu, Apr 12, 2018 at 4:10 PM, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> On Thu, 2018-04-12 at 15:12 +0200, Geert Uytterhoeven wrote:
+>> On Thu, Apr 12, 2018 at 2:36 PM, Sinan Kaya <okaya@codeaurora.org> wrote:
+>> > On 4/12/2018 7:49 AM, Auger Eric wrote:
+>> > > On 12/04/18 13:32, Geert Uytterhoeven wrote:
+>> > > > On Thu, Apr 12, 2018 at 12:31 PM, Auger Eric <eric.auger@redhat.com> wrote:
+>> > > > > On 11/04/18 11:15, Geert Uytterhoeven wrote:
+>> > > > > > Vfio-platform requires reset support, provided either by ACPI, or, on DT
+>> > > > > > platforms, by a device-specific reset driver matching against the
+>> > > > > > device's compatible value.
+>> > > > > >
+>> > > > > > On many SoCs, devices are connected to an SoC-internal reset controller.
+>> > > > > > If the reset hierarchy is described in DT using "resets" properties,
+>> > > > > > such devices can be reset in a generic way through the reset controller
+>> > > > > > subsystem.  Hence add support for this, avoiding the need to write
+>> > > > > > device-specific reset drivers for each single device on affected SoCs.
+>> > > > > >
+>> > > > > > Devices that do require a more complex reset procedure can still provide
+>> > > > > > a device-specific reset driver, as that takes precedence.
+>> > > > > >
+>> > > > > > Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
+>> > > > > > becomes a no-op (as in: "No reset function found for device") if reset
+>> > > > > > controller support is disabled.
+>> > > > > >
+>> > > > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> > > > > > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+>> > > > > > --- a/drivers/vfio/platform/vfio_platform_common.c
+>> > > > > > +++ b/drivers/vfio/platform/vfio_platform_common.c
+>> > > > > > @@ -127,8 +130,16 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
+>> > > > > >               vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
+>> > > > > >                                                       &vdev->reset_module);
+>> > > > > >       }
+>> > > > > > +     if (vdev->of_reset)
+>> > > > > > +             return 0;
+>> > > > > > +
+>> > > > > > +     rstc = of_reset_control_get_exclusive(vdev->device->of_node, NULL);
+>> > > > >
+>> > > > > Shouldn't we prefer the top level reset_control_get_exclusive()?
+>> > > >
+>> > > > I guess that should work, too.
+>> > > >
+>> > > > > To make sure about the exclusive/shared terminology, does
+>> > > > > get_reset_control_get_exclusive() check we have an exclusive wire
+>> > > > > between this device and the reset controller?
+>> > > >
+>> > > > AFAIU, the "exclusive" means that only a single user can obtain access to
+>> > > > the reset, and it does not guarantee that we have an exclusive wire between
+>> > > > the device and the reset controller.
+>> > > >
+>> > > > The latter depends on the SoC's reset topology. If a reset wire is shared
+>> > > > by multiple devices (e.g. resets shared by PWM or Display Unit devices on
+>> > > > R-Car SoCs), exporting a subset of these devices to a guest is a bad idea,
+>> > > > indeed.
+>> > >
+>> > > So who's going to check this assigned device will not trigger a reset of
+>> > > other non assigned devices sharing the same reset controller?
+>
+> If the reset control is requested as exclusive, any other driver
+> requesting the same reset control will fail (or this reset_control_get
+> will fail, whichever comes last).
+>
+>> > I like the direction in general. I was hoping that you'd call it of_reset_control
+>> > rather than reset_control.
+>>
+>> You mean vfio_platform_device.of_reset_control?
+>> If we switch to reset_control_get_exclusive(), that doesn't make much sense...
+>>
+>> > Is there anything in the OF spec about what to expect from DT's reset?
+>>
+>> Documentation/devicetree/bindings/reset/reset.txt says:
+>>
+>> "A word on where to place reset signal consumers in device tree: It is possible
+>>  in hardware for a reset signal to affect multiple logically separate HW blocks
+>>  at once. In this case, it would be unwise to represent this reset signal in
+>>  the DT node of each affected HW block, since if activated, an unrelated block
+>>  may be reset. Instead, reset signals should be represented in the DT node
+>>  where it makes most sense to control it; this may be a bus node if all
+>>  children of the bus are affected by the reset signal, or an individual HW
+>>  block node for dedicated reset signals. The intent of this binding is to give
+>>  appropriate software access to the reset signals in order to manage the HW,
+>>  rather than to slavishly enumerate the reset signal that affects each HW
+>>  block."
+>
+> This was written in 2012, and unfortunately the DT binding documentation
+> does not inform hardware development, and has not been updated since.
+>
+> There's generally two kinds of reset uses:
+> - either to bring a device into a known state at a given point in time,
+>   which is often done using a timed assert/deassert sequence,
+> - or just to park a device while not in active use (must deassert any
+>   time before use, may or may not assert any time after use)
+>
+> For the former case, the above paragraph makes a lot of sense, because
+> when it is necessary to reset a device that shares the reset line with
+> another, either choice between disturbing the other device, or not
+> being able to reset when necessary, is a bad one. The reset controller
+> framework supports those use cases via the reset_control_get_exclusive
+> function variants.
+>
+> But for the latter case, there is absolutely no need to forbid sharing
+> reset lines among multiple devices, as deassertion/assertion can just be
+> handled reference counted, like clocks or power management. The reset
+> controller framework supports those use cases via the
+> reset_control_get_shared function variants.
+>
+> The case we are talking about here is the first one.
 
-diff --git a/include/xen/interface/io/sndif.h b/include/xen/interface/io/sndif.h
-index fc1752cf5a16..b775df96f021 100644
---- a/include/xen/interface/io/sndif.h
-+++ b/include/xen/interface/io/sndif.h
-@@ -680,6 +680,8 @@ struct xensnd_rw_req {
-  * +----------------+----------------+----------------+----------------+
-  * |                              length                               | 16
-  * +----------------+----------------+----------------+----------------+
-+ * |                             reserved                              | 20
-+ * +----------------+----------------+----------------+----------------+
-  * |/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/|
-  * +----------------+----------------+----------------+----------------+
-  * |                             reserved                              | 32
-@@ -720,6 +722,8 @@ struct xensnd_rw_req {
-  * +----------------+----------------+----------------+----------------+
-  * |                              length                               | 16
-  * +----------------+----------------+----------------+----------------+
-+ * |                             reserved                              | 20
-+ * +----------------+----------------+----------------+----------------+
-  * |/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/|
-  * +----------------+----------------+----------------+----------------+
-  * |                             reserved                              | 32
+Except that vfio-platform wants to reset the device before and after its
+use by the guest, for isolation reasons, which does cause a major
+disturbance in case of a shared reset.
+
+>> So according to the bindings, a specific reset should apply to a single
+>> device only.
+>
+> Indeed sharing reset lines between peripherals has become unexpectedly
+> common, making it impractical to forbid shared resets in the device
+> tree.
+>
+>> A quick check shows there are several violators:
+
+[...]
+
+>> Perhaps we should start grouping devices sharing a reset signal in a
+>> "simple-bus" node?
+>>
+>> Phillip: any comments?
+>
+> For some of those it may be possible, but that is basically just a work-
+> around for reality not matching expectations. There may be other cases
+> where devices sharing a reset line are not even in the same parent node
+> because they are controlled via a different bus. In general, I don't
+> think it is feasible or desirable to force grouping of devices that
+> share the same reset line into a common parent node.
+
+At least for Renesas R-Car SoCs, I think this is feasible, as all affected
+devices are currently grouped under the same /soc node.
+I added subnodes for all devices sharing resets (one for pwm, 4 for USB2,
+and one for USB3; display doesn't have resets yet), and it still boots ;-)
+
+However, ehci_platform_probe() cannot get its (optional) resets anymore.
+Probably the reset controller framework needs to be taught to look for
+shared resets in the parent node, too?
+
+> My suggestion would be to relax the language in the reset.txt DT
+> bindings doc.
+
+Which is fine to keep the status quo with the hardware designers, but makes
+it less likely for non-whitelisted generic reset controller support to
+become acceptable for the vfio people...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
