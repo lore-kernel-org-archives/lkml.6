@@ -1,63 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753469AbeDLTJ4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 15:09:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50862 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753072AbeDLTJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 15:09:55 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C82205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Thu, 12 Apr 2018 14:09:51 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Desnes A. Nunes do Rosario" <desnesn@linux.vnet.ibm.com>,
-        Sinan Kaya <okaya@codeaurora.org>
-Subject: [GIT PULL] PCI changes for v4.17, part 2
-Message-ID: <20180412190705.GA46420@bhelgaas-glaptop.roam.corp.google.com>
+        id S1753524AbeDLTNH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 15:13:07 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:32768 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753063AbeDLTNF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 15:13:05 -0400
+Date: Thu, 12 Apr 2018 21:13:18 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>, Paul Turner <pjt@google.com>,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH] sched/fair: add support to tune PELT ramp/decay timings
+Message-ID: <20180412191318.GA7129@worktop.programming.kicks-ass.net>
+References: <20180409165134.707-1-patrick.bellasi@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180409165134.707-1-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI changes:
+On Mon, Apr 09, 2018 at 05:51:34PM +0100, Patrick Bellasi wrote:
+> The PELT half-life is the time [ms] required by the PELT signal to build
+> up a 50% load/utilization, starting from zero. This time is currently
+> hardcoded to be 32ms, a value which seems to make sense for most of the
+> workloads.
+> 
+> However, 32ms has been verified to be too long for certain classes of
+> workloads. For example, in the mobile space many tasks affecting the
+> user-experience run with a 16ms or 8ms cadence, since they need to match
+> the common 60Hz or 120Hz refresh rate of the graphics pipeline.
+> This contributed so fare to the idea that "PELT is too slow" to properly
+> track the utilization of interactive mobile workloads, especially
+> compared to alternative load tracking solutions which provides a
+> better representation of tasks demand in the range of 10-20ms.
 
-  - mark Extended Tags as broken on Broadcom HT1100 and HT2000 Root Ports
-    to fix drm/Xorg hangs and unresponsive keyboards (Sinan Kaya)
+Initially the 32 was chosen to more or less correspond to the effective
+scheduling period (sysctl_sched_latency based). The thinking was that if
+you pick a PELT window shorter than the period, the result becomes
+unstable due to not all tasks getting an equal go at things.
 
-  - remove useless messages during resource reassignment (Desnes A. Nunes
-    do Rosario)
+(of course, stuffing enough tasks on a rq will break this, but at that
+point you have worse problems to deal with)
+
+Should we retain this? Esp. with the lower end (8ms) I worry we'll see
+more of those effects.
 
 
-The following changes since commit c18bb396d3d261ebbb4efbc05129c5d354c541e4:
+> Fortunately, since the integration of the utilization estimation
+> support in mainline kernel:
+> 
+>    commit 7f65ea42eb00 ("sched/fair: Add util_est on top of PELT")
+> 
+> a fast decay time is no longer an issue for tasks utilization estimation.
+> Although estimated utilization does not slow down the decay of blocked
+> utilization on idle CPUs, for mobile workloads this seems not to be a
+> major concern compared to the benefits in interactivity responsiveness.
 
-  Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net (2018-04-09 17:04:10 -0700)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v4.17-changes-2
-
-for you to fetch changes up to adf58458bcb2890efe94e5a58506c27bfecf518d:
-
-  PCI: Remove messages about reassigning resources (2018-04-11 08:46:50 -0500)
-
-----------------------------------------------------------------
-pci-v4.17-changes-2
-
-----------------------------------------------------------------
-Desnes A. Nunes do Rosario (1):
-      PCI: Remove messages about reassigning resources
-
-Sinan Kaya (1):
-      PCI: Mark Broadcom HT1100 and HT2000 Root Port Extended Tags as broken
-
- drivers/pci/pci.c       | 1 -
- drivers/pci/quirks.c    | 4 ++++
- drivers/pci/setup-res.c | 2 --
- 3 files changed, 4 insertions(+), 3 deletions(-)
+By picking a smaller PELT window, the util_est window shrinks
+correspondingly; is that intentional or do we want to modify
+UTIL_EST_WEIGHT_SHIFT to negate the PELT window changes?
