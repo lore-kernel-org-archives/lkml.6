@@ -1,37 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752775AbeDLRUv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 13:20:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53452 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752389AbeDLRUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 13:20:50 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8955121785
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Thu, 12 Apr 2018 14:20:47 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Cc: jolsa@redhat.com, linux-kernel@vger.kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, ravi.bangoria@linux.vnet.ibm.com
-Subject: Re: [PATCH] perf tests: Disable breakpoint accounting test for
- powerpc
-Message-ID: <20180412172047.GE9818@kernel.org>
-References: <20180412162140.2992-1-sandipan@linux.vnet.ibm.com>
+        id S1752846AbeDLRVD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 13:21:03 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:35194 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752389AbeDLRVC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 13:21:02 -0400
+Date: Thu, 12 Apr 2018 18:20:52 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
+ kill() returns wrong values in si_pid and si_uid
+Message-ID: <20180412172051.GK16141@n2100.armlinux.org.uk>
+References: <20180409152253.GD10489@altlinux.org>
+ <20180412013435.GA21219@altlinux.org>
+ <20180412095811.GC16141@n2100.armlinux.org.uk>
+ <20180412110314.GA28070@altlinux.org>
+ <20180412121949.GD16141@n2100.armlinux.org.uk>
+ <20180412124928.GA29458@altlinux.org>
+ <20180412131404.GE16141@n2100.armlinux.org.uk>
+ <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180412162140.2992-1-sandipan@linux.vnet.ibm.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Apr 12, 2018 at 09:51:40PM +0530, Sandipan Das escreveu:
-> We disable this test as instruction breakpoints (HW_BREAKPOINT_X)
-> are not available for powerpc.
+On Thu, Apr 12, 2018 at 09:50:26AM -0700, Linus Torvalds wrote:
+> Does this attached patch perhaps fix the ARM case?
+> 
+> It just uses FPE_FLTUNK as the default si_code for SIGFPE, which seems
+> sane enough. And then gets rid of FPE_FIXME, which should resolve the
+> nasty case.
+> 
+> Hmm? Entirely untested, and I didn't really look at the test-case in
+> question since I can't really run it anyway.
 
-Thanks, applied.
+I'll test tomorrow and let you know.
 
-- Arnaldo
+>  arch/arm/include/uapi/asm/siginfo.h | 7 -------
+>  arch/arm/vfp/vfpmodule.c            | 4 ++--
+>  2 files changed, 2 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm/include/uapi/asm/siginfo.h b/arch/arm/include/uapi/asm/siginfo.h
+> index d0513880be21..d87beeedb4c4 100644
+> --- a/arch/arm/include/uapi/asm/siginfo.h
+> +++ b/arch/arm/include/uapi/asm/siginfo.h
+> @@ -3,11 +3,4 @@
+>  
+>  #include <asm-generic/siginfo.h>
+>  
+> -/*
+> - * SIGFPE si_codes
+> - */
+> -#ifdef __KERNEL__
+> -#define FPE_FIXME	0	/* Broken dup of SI_USER */
+> -#endif /* __KERNEL__ */
+> -
+>  #endif
+
+This file was created to contain FPE_FIXME, by the "signal/arm: Document
+conflicts with SI_USER and SIGFPE" commit so if we're removing it, it
+would be better to remove the whole file.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
