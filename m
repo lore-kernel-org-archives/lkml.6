@@ -1,98 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753083AbeDLAw3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 20:52:29 -0400
-Received: from tn-76-7-174-50.sta.embarqhsd.net ([76.7.174.50]:57649 "EHLO
-        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753060AbeDLAw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 20:52:27 -0400
-Date: Wed, 11 Apr 2018 20:52:18 -0400
-From: Wakko Warner <wakko@animx.eu.org>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: 4.15.14 crash with iscsi target and dvd
-Message-ID: <20180412005218.GA12237@animx.eu.org>
-References: <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
- <20180406014644.GA16112@animx.eu.org>
- <20180406020651.GB16112@animx.eu.org>
- <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
- <20180407165335.GA2515@animx.eu.org>
- <1ff8d234cc565ba9701ce31899fca5faa597e050.camel@wdc.com>
- <20180408160254.GA22869@animx.eu.org>
- <f9467e78ce05446e7a89f06713c36fb638d1b6ad.camel@wdc.com>
- <20180409233436.GC6450@ming.t460p>
- <20180411004525.GA9107@animx.eu.org>
+        id S1752509AbeDLAzA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 20:55:00 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:44714 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751841AbeDLAy6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 20:54:58 -0400
+X-Google-Smtp-Source: AIpwx496WIkNm/a+zRrAhJKze3FWuRsQNM3zelgHkhMOVAzX1oJhUv7wvEg2EBry3D7bpGnwI4PmtQ==
+Date: Thu, 12 Apr 2018 09:54:51 +0900
+From: Minchan Kim <minchan@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
+        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Chris Fries <cfries@google.com>, jaegeuk@kernel.org
+Subject: Re: [PATCH v2 0/2] Fix __GFP_ZERO vs constructor
+Message-ID: <20180412005451.GB253442@rodete-desktop-imager.corp.google.com>
+References: <20180411060320.14458-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180411004525.GA9107@animx.eu.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180411060320.14458-1-willy@infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wakko Warner wrote:
-> Ming Lei wrote:
-> > Sure, thanks for your sharing.
-> > 
-> > Wakko, could you test the following patch and see if there is any
-> > difference?
-> > 
-> > --
-> > diff --git a/drivers/target/target_core_pscsi.c b/drivers/target/target_core_pscsi.c
-> > index 0d99b242e82e..6147178f1f37 100644
-> > --- a/drivers/target/target_core_pscsi.c
-> > +++ b/drivers/target/target_core_pscsi.c
-> > @@ -888,7 +888,7 @@ pscsi_map_sg(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
-> >  		if (len > 0 && data_len > 0) {
-> >  			bytes = min_t(unsigned int, len, PAGE_SIZE - off);
-> >  			bytes = min(bytes, data_len);
-> > -
-> > + new_bio:
-> >  			if (!bio) {
-> >  				nr_vecs = min_t(int, BIO_MAX_PAGES, nr_pages);
-> >  				nr_pages -= nr_vecs;
-> > @@ -931,6 +931,7 @@ pscsi_map_sg(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
-> >  				 * be allocated with pscsi_get_bio() above.
-> >  				 */
-> >  				bio = NULL;
-> > +				goto new_bio;
-> >  			}
-> >  
-> >  			data_len -= bytes;
+Matthew,
+
+Please Cced relevant people so they know what's going on the problem
+they spent on much time. Everyone doesn't keep an eye on mailing list.
+
+On Tue, Apr 10, 2018 at 11:03:18PM -0700, Matthew Wilcox wrote:
+> From: Matthew Wilcox <mawilcox@microsoft.com>
 > 
-> Sorry for the delay.  I reverted my change, added this one.  I didn't
-> reboot, I just unloaded and loaded this one.
-> Note: /dev/sr1 as seen from the initiator is /dev/sr0 (physical disc) on the
-> target.
+> v1->v2:
+>  - Added review/ack tags (thanks!)
+>  - Switched the order of the patches
+>  - Reworded commit message of the patch which actually fixes the bug
+>  - Moved slab debug patches under CONFIG_DEBUG_VM to check _every_
+>    allocation and added checks in the slowpath for the allocations which
+>    end up allocating a page.
 > 
-> Doesn't crash, however on the initiator I see this:
-> [9273849.707777] ISO 9660 Extensions: RRIP_1991A
-> [9273863.359718] scsi_io_completion: 13 callbacks suppressed
-> [9273863.359788] sr 26:0:0:0: [sr1] tag#1 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=0x08
-> [9273863.359909] sr 26:0:0:0: [sr1] tag#1 Sense Key : 0x2 [current] 
-> [9273863.359974] sr 26:0:0:0: [sr1] tag#1 ASC=0x8 ASCQ=0x0 
-> [9273863.360036] sr 26:0:0:0: [sr1] tag#1 CDB: opcode=0x28 28 00 00 22 f6 96 00 00 80 00
-> [9273863.360116] blk_update_request: 13 callbacks suppressed
-> [9273863.360177] blk_update_request: I/O error, dev sr1, sector 9165400
-> [9273875.864648] sr 26:0:0:0: [sr1] tag#1 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=0x08
-> [9273875.864738] sr 26:0:0:0: [sr1] tag#1 Sense Key : 0x2 [current] 
-> [9273875.864801] sr 26:0:0:0: [sr1] tag#1 ASC=0x8 ASCQ=0x0 
-> [9273875.864890] sr 26:0:0:0: [sr1] tag#1 CDB: opcode=0x28 28 00 00 22 f7 16 00 00 80 00
-> [9273875.864971] blk_update_request: I/O error, dev sr1, sector 9165912
-
-Just FYI: The jobs that I do that uses the disc over iscsi didn't cause any
-kernel messages on either system (except for the informational when the disc
-was mounted)
-
-I have a dumb question though.  Could the label be placed just after the
-'if' statement instead of before it?  bio is set to null and the 'if'
-statement checks if it's null, which it always would be after the goto.
-
--- 
- Microsoft has beaten Volkswagen's world record.  Volkswagen only created 22
- million bugs.
+> Matthew Wilcox (2):
+>   Fix NULL pointer in page_cache_tree_insert
+>   slab: __GFP_ZERO is incompatible with a constructor
+> 
+>  mm/filemap.c | 9 ++++-----
+>  mm/slab.c    | 7 ++++---
+>  mm/slab.h    | 7 +++++++
+>  mm/slob.c    | 4 +++-
+>  mm/slub.c    | 5 +++--
+>  5 files changed, 21 insertions(+), 11 deletions(-)
+> 
+> -- 
+> 2.16.3
+> 
