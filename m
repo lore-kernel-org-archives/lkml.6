@@ -1,11 +1,11 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1684311-1523561440-2-7606434507288154524
+X-Cyrus-Session-Id: sloti22d1t05-1684311-1523561417-2-843365915918075104
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES endasv, BAYES_USED global,
-  SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: 
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523561440; b=Eest13q9BQciykks2LNTdew/b/6oOCax3agQAwl3nc2cLrB5ts
-    p7dUvXpYpNfPbAA8lLqZTeVkadQEwPp6TwldkVUh0d8TXEtbD0AagxfLct1IGppP
-    QbmojNnVVoaGi4z0rcnwHkL6Y70Q+WibWcPtNsGtNPCByZ+BvVI6bfT2WKv+DSfz
-    c6MnRfUx9iy7WZQB0ip3odEaDQyIHv7gPpU6uiz8nx333vhXmGAtY3AZkqRuBP7c
-    WmDFTAz6ANPCgx+Fe2y8g+89Bie4oA9AErJXt3WwgGN2z1uKQ35WIBoYyq3Lapag
-    kNpSzMuLZgeZ1vT5S3FOLV9UhIK45ysGLaEQ==
+    1523561416; b=v6GUySSSsCrQE2RV9xQ2n0+K25g6fPzYOHtMqUgxzafbl593di
+    q48lHX+TgJ8UX6zcCGKCsi/WIyy2NxnpOOdEOw2a/VCXLq0QQFYe/4YDJW26ULs6
+    2HgFvYCt0ZerH0xtpdEmnrBH3HJ8j4RS5JgPGdTVpWGWul5dQpE9jGoaPVxSGGXy
+    Vn0KBVwNHvtoRLlpaQdgjxMJFK8WJY7X+3VCM/LoierkcPIO4woLQ9nx0H+qT11s
+    c2rVZOzHxr4twWMrab4VZ3ovfG+ffDL0O4U+ThOkKDVgQ4qBcynlCy2n0kjPZRdM
+    ytsajOqHNvgiyqf1WA4Mef24aH2Q6Pz+phvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1523561440; bh=
-    TVbeDSjsVLuQVKKPaR05VUQ1npqCGEmvJGuIQT1IFX0=; b=epBqtxn3U5U3uiCq
-    FBai7C2MGe4hqt13KblmsX73qRG8zUJ2EhMYi+mGvgP73gHtDTmn+K59K9Yc+9rh
-    8QkAIRQWxt3E6a2B9sL2A8AbjRfNk0ceHfDdypTsB+KFz3uW4bTFi3e/x7CGbCdS
-    pxicC7tsG9g8zUH4O4EozI6HK3sJqnj8ywLHkfaQSmYcsj+/gkj6BshAEEsKyy/O
-    JQzG67gtUDAORV+Evr9nPYLXipv8E3aGWw6qp5fU7p1gtAvCHf0aLClKv0zZ10r0
-    f8YlFTz21jahzfUFD048Np6CmPfpdWLDhSNQcA7t/isuMV7gppM8vKghCu5Tktl4
-    gKV4yg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1523561416; bh=
+    cewiYcq7iL/+q5CSJ2vbH0rhF33HJ3HylrGHhgFzeWc=; b=g46GRiewNZtOArQL
+    QzxTRkDzSgronBmMy9gJ7aF+zPOSGLoqH7DLWTmOZBfyge9GyILQXdBgmES/z4R/
+    ZvrHuulDT2OU0CqmFPHb+7VXAJAucatCzj8V/krQFaHOGT1OKs3fRHa14D+AxaVy
+    KMjFz4ITEVeHKgTHuFgjXLpLuWqm3ZpPq6EofmXqMI86EgWrQ4RqHOsNmeZw6iHq
+    K52jfsnt+erVD5/fCc4wkgav8QFqePsiArfa7AaN9BYQc6XwuqK3VE/Q3WzF9+Y1
+    A2mudXYf7IeUjToJM5tXNAUHvbftU/KlkmrR4G6qe/31xR0UDdXxkFt8JMRZy7WM
+    L9pJyw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
@@ -51,29 +51,29 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNYOoQi9mD6Pw1M00DGWg3baG01w4Z8sAJllE//4ewBthzhr45gY6OuXJHyS/iclDTwacFcFpfxA0Y2NXOXXRXIe0Hssvux2FjHNRp+2N3rxw2yy2vpa
-    9O6ZNc6Ov2ujpeR8SL4BzTh81zDwWqlstR4/44x7tOUuSUK52L1Wf7jpK38clcmEYt8gDhUhRUsN4x+yOJzyyC2V8Hxi5E1Swl8xv5B5Z65aQfP3+mujS1E2
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHtaATRhaZIJpk7Vaz7W2Q+8i42WunauvCHmY4yXfcV+qeYFCJ5G1blxpsyJ0k7c3ko9MFXAdmXlDkNFGtt0LR8ShvDHcNAXjm2PmDp8fOei7p+Y0FD/
+    hO31V1xGKmigbCw9zm9UCoTquZXxPP096aBB99HXav7r6esjN99aMgeD5a6oEACLG8puYExT/GOlSeb/2wquGV+JJDgbxiNWqV1wPrXKbbB8u4ZrmRYEk8Ci
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=7d_E57ReAAAA:8
     a=hD80L64hAAAA:8 a=drOt6m5kAAAA:8 a=7CQSdrXTAAAA:8 a=1XWaLZrsAAAA:8
     a=JfrnYn6hAAAA:8 a=SOq6UgPBAAAA:8 a=WfulkdPnAAAA:8 a=FOH2dFAWAAAA:8
     a=NufY4J3AAAAA:8 a=20KFwNOVAAAA:8 a=oGMlB6cnAAAA:8 a=meVymXHHAAAA:8
     a=VnNF1IyMAAAA:8 a=UPm3pfgAAAAA:8 a=Z4Rwk6OoAAAA:8 a=pGLkceISAAAA:8
-    a=VwQbUJbxAAAA:8 a=kOOJBc3L5qgiogZeYCgA:9 a=x8gzFH9gYPwA:10
+    a=VwQbUJbxAAAA:8 a=stkexhm8AAAA:8 a=EzueLxxA_rB8l3gAoBMA:9 a=x8gzFH9gYPwA:10
     a=jhqOcbufqs7Y1TYCrUUU:22 a=RMMjzBEyIzXRtoq5n5K6:22 a=a-qgeE7W1pNrGK8U0ZQC:22
     a=1CNFftbPRP8L7MoqJWF3:22 a=3hv5r9HjGAh9o5iR9qwG:22 a=56QPVbyS4OZCpcuOg7Z9:22
     a=i3VuKzQdj-NEYjvDI-p3:22 a=TPcZfFuj8SYsoCJAFAiX:22 a=NdAtdrkLVvyUPsUoGJp4:22
     a=2JgSa4NbpEOStq-L5dxp:22 a=uD9XBtlS4o1URY3aiGdj:22 a=HkZW87K1Qel5hWWM3VKY:22
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=pIW3pCRaVxJDc-hWtpF8:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753909AbeDLTaY (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 12 Apr 2018 15:30:24 -0400
-Received: from mail.efficios.com ([167.114.142.138]:45604 "EHLO
+        id S1753063AbeDLT32 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 12 Apr 2018 15:29:28 -0400
+Received: from mail.efficios.com ([167.114.142.138]:45804 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753411AbeDLT20 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 12 Apr 2018 15:28:26 -0400
+        with ESMTP id S1753525AbeDLT23 (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 12 Apr 2018 15:28:29 -0400
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -96,10 +96,11 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>,
         linux-kselftest@vger.kernel.org
-Subject: [RFC PATCH for 4.18 16/23] selftests: lib.mk: Introduce OVERRIDE_TARGETS
-Date: Thu, 12 Apr 2018 15:27:53 -0400
-Message-Id: <20180412192800.15708-17-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 23/23] rseq: selftests: Provide Makefile, scripts, gitignore
+Date: Thu, 12 Apr 2018 15:28:00 -0400
+Message-Id: <20180412192800.15708-24-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
 References: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
@@ -109,12 +110,13 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Introduce OVERRIDE_TARGETS to allow tests to express dependencies on
-header files and .so, which require to override the selftests lib.mk
-targets.
+A run_param_test.sh script runs many variants of the parametrizable
+tests.
+
+Wire up the rseq Makefile, add directory entry into MAINTAINERS file.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Acked-by: Shuah Khan <shuahkh@osg.samsung.com>
+CC: Shuah Khan <shuahkh@osg.samsung.com>
 CC: Russell King <linux@arm.linux.org.uk>
 CC: Catalin Marinas <catalin.marinas@arm.com>
 CC: Will Deacon <will.deacon@arm.com>
@@ -138,30 +140,233 @@ CC: Boqun Feng <boqun.feng@gmail.com>
 CC: linux-kselftest@vger.kernel.org
 CC: linux-api@vger.kernel.org
 ---
- tools/testing/selftests/lib.mk | 4 ++++
- 1 file changed, 4 insertions(+)
+ MAINTAINERS                                    |   1 +
+ tools/testing/selftests/Makefile               |   1 +
+ tools/testing/selftests/rseq/.gitignore        |   7 ++
+ tools/testing/selftests/rseq/Makefile          |  37 +++++++
+ tools/testing/selftests/rseq/run_param_test.sh | 131 +++++++++++++++++++++++++
+ 5 files changed, 177 insertions(+)
+ create mode 100644 tools/testing/selftests/rseq/.gitignore
+ create mode 100644 tools/testing/selftests/rseq/Makefile
+ create mode 100755 tools/testing/selftests/rseq/run_param_test.sh
 
-diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-index 7de482a0519d..3d4bdeb072b2 100644
---- a/tools/testing/selftests/lib.mk
-+++ b/tools/testing/selftests/lib.mk
-@@ -105,6 +105,9 @@ COMPILE.S = $(CC) $(ASFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
- LINK.S = $(CC) $(ASFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
- endif
+diff --git a/MAINTAINERS b/MAINTAINERS
+index adbe93ed27b9..7cf7e43db81f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11831,6 +11831,7 @@ S:	Supported
+ F:	kernel/rseq.c
+ F:	include/uapi/linux/rseq.h
+ F:	include/trace/events/rseq.h
++F:	tools/testing/selftests/rseq/
  
-+# Selftest makefiles can override those targets by setting
-+# OVERRIDE_TARGETS = 1.
-+ifeq ($(OVERRIDE_TARGETS),)
- $(OUTPUT)/%:%.c
- 	$(LINK.c) $^ $(LDLIBS) -o $@
- 
-@@ -113,5 +116,6 @@ $(OUTPUT)/%.o:%.S
- 
- $(OUTPUT)/%:%.S
- 	$(LINK.S) $^ $(LDLIBS) -o $@
-+endif
- 
- .PHONY: run_tests all clean install emit_tests
+ RFKILL
+ M:	Johannes Berg <johannes@sipsolutions.net>
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 1322e63f5963..c1c9323d4e50 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -26,6 +26,7 @@ TARGETS += nsfs
+ TARGETS += powerpc
+ TARGETS += pstore
+ TARGETS += ptrace
++TARGETS += rseq
+ TARGETS += seccomp
+ TARGETS += sigaltstack
+ TARGETS += size
+diff --git a/tools/testing/selftests/rseq/.gitignore b/tools/testing/selftests/rseq/.gitignore
+new file mode 100644
+index 000000000000..73dcf05b69fd
+--- /dev/null
++++ b/tools/testing/selftests/rseq/.gitignore
+@@ -0,0 +1,7 @@
++basic_percpu_ops_test
++basic_test
++basic_rseq_op_test
++param_test
++param_test_benchmark
++param_test_compare_twice
++param_test_skip_fastpath
+diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
+new file mode 100644
+index 000000000000..69f90d718774
+--- /dev/null
++++ b/tools/testing/selftests/rseq/Makefile
+@@ -0,0 +1,37 @@
++CFLAGS += -O2 -Wall -g -I./ -I../cpu-opv/ -I../../../../usr/include/ -L./ -Wl,-rpath=./
++LDLIBS += -lpthread
++
++# Own dependencies because we only want to build against 1st prerequisite, but
++# still track changes to header files and depend on shared object.
++OVERRIDE_TARGETS = 1
++
++TEST_GEN_PROGS = basic_test basic_percpu_ops_test \
++		param_test param_test_skip_fastpath \
++		param_test_benchmark param_test_compare_twice
++
++TEST_GEN_PROGS_EXTENDED = librseq.so libcpu-op.so
++
++TEST_PROGS = run_param_test.sh
++
++include ../lib.mk
++
++$(OUTPUT)/librseq.so: rseq.c rseq.h rseq-*.h
++	$(CC) $(CFLAGS) -shared -fPIC $< $(LDLIBS) -o $@
++
++$(OUTPUT)/libcpu-op.so: ../cpu-opv/cpu-op.c ../cpu-opv/cpu-op.h
++	$(CC) $(CFLAGS) -shared -fPIC $< $(LDLIBS) -o $@
++
++$(OUTPUT)/%: %.c $(TEST_GEN_PROGS_EXTENDED) rseq.h rseq-*.h ../cpu-opv/cpu-op.h percpu-op.h
++	$(CC) $(CFLAGS) $< $(LDLIBS) -lrseq -lcpu-op -o $@
++
++$(OUTPUT)/param_test_skip_fastpath: param_test.c $(TEST_GEN_PROGS_EXTENDED) \
++					rseq.h rseq-*.h ../cpu-opv/cpu-op.h percpu-op.h
++	$(CC) $(CFLAGS) -DRSEQ_SKIP_FASTPATH $< $(LDLIBS) -lrseq -lcpu-op -o $@
++
++$(OUTPUT)/param_test_benchmark: param_test.c $(TEST_GEN_PROGS_EXTENDED) \
++					rseq.h rseq-*.h ../cpu-opv/cpu-op.h percpu-op.h
++	$(CC) $(CFLAGS) -DBENCHMARK $< $(LDLIBS) -lrseq -lcpu-op -o $@
++
++$(OUTPUT)/param_test_compare_twice: param_test.c $(TEST_GEN_PROGS_EXTENDED) \
++					rseq.h rseq-*.h ../cpu-opv/cpu-op.h percpu-op.h
++	$(CC) $(CFLAGS) -DRSEQ_COMPARE_TWICE $< $(LDLIBS) -lrseq -lcpu-op -o $@
+diff --git a/tools/testing/selftests/rseq/run_param_test.sh b/tools/testing/selftests/rseq/run_param_test.sh
+new file mode 100755
+index 000000000000..15c64ecc5eb4
+--- /dev/null
++++ b/tools/testing/selftests/rseq/run_param_test.sh
+@@ -0,0 +1,131 @@
++#!/bin/bash
++
++EXTRA_ARGS=${@}
++
++OLDIFS="$IFS"
++IFS=$'\n'
++TEST_LIST=(
++	"-T s"
++	"-T l"
++	"-T b"
++	"-T b -M"
++	"-T m"
++	"-T m -M"
++	"-T i"
++)
++
++TEST_NAME=(
++	"spinlock"
++	"list"
++	"buffer"
++	"buffer with barrier"
++	"memcpy"
++	"memcpy with barrier"
++	"increment"
++)
++IFS="$OLDIFS"
++
++REPS=1000
++SLOW_REPS=100
++
++function do_tests()
++{
++	local i=0
++	while [ "$i" -lt "${#TEST_LIST[@]}" ]; do
++		echo "Running test ${TEST_NAME[$i]}"
++		./param_test ${TEST_LIST[$i]} -r ${REPS} ${@} ${EXTRA_ARGS} || exit 1
++		echo "Running skip fast-path test ${TEST_NAME[$i]}"
++		./param_test_skip_fastpath ${TEST_LIST[$i]} -r ${SLOW_REPS} ${@} ${EXTRA_ARGS} || exit 1
++		echo "Running compare-twice test ${TEST_NAME[$i]}"
++		./param_test_compare_twice ${TEST_LIST[$i]} -r ${REPS} ${@} ${EXTRA_ARGS} || exit 1
++		let "i++"
++	done
++}
++
++echo "Default parameters"
++do_tests
++
++echo "Loop injection: 10000 loops"
++
++OLDIFS="$IFS"
++IFS=$'\n'
++INJECT_LIST=(
++	"1"
++	"2"
++	"3"
++	"4"
++	"5"
++	"6"
++	"7"
++	"8"
++	"9"
++)
++IFS="$OLDIFS"
++
++NR_LOOPS=10000
++
++i=0
++while [ "$i" -lt "${#INJECT_LIST[@]}" ]; do
++	echo "Injecting at <${INJECT_LIST[$i]}>"
++	do_tests -${INJECT_LIST[i]} ${NR_LOOPS}
++	let "i++"
++done
++NR_LOOPS=
++
++function inject_blocking()
++{
++	OLDIFS="$IFS"
++	IFS=$'\n'
++	INJECT_LIST=(
++		"7"
++		"8"
++		"9"
++	)
++	IFS="$OLDIFS"
++
++	NR_LOOPS=-1
++
++	i=0
++	while [ "$i" -lt "${#INJECT_LIST[@]}" ]; do
++		echo "Injecting at <${INJECT_LIST[$i]}>"
++		do_tests -${INJECT_LIST[i]} -1 ${@}
++		let "i++"
++	done
++	NR_LOOPS=
++}
++
++echo "Yield injection (25%)"
++inject_blocking -m 4 -y
++
++echo "Yield injection (50%)"
++inject_blocking -m 2 -y
++
++echo "Yield injection (100%)"
++inject_blocking -m 1 -y
++
++echo "Kill injection (25%)"
++inject_blocking -m 4 -k
++
++echo "Kill injection (50%)"
++inject_blocking -m 2 -k
++
++echo "Kill injection (100%)"
++inject_blocking -m 1 -k
++
++echo "Sleep injection (1ms, 25%)"
++inject_blocking -m 4 -s 1
++
++echo "Sleep injection (1ms, 50%)"
++inject_blocking -m 2 -s 1
++
++echo "Sleep injection (1ms, 100%)"
++inject_blocking -m 1 -s 1
++
++echo "Disable rseq for 25% threads"
++do_tests -D 4
++
++echo "Disable rseq for 50% threads"
++do_tests -D 2
++
++echo "Disable rseq"
++do_tests -d
 -- 
 2.11.0
 
