@@ -1,112 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeDLGWR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 02:22:17 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:52876
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752501AbeDLGWP (ORCPT
+        id S1752653AbeDLGXC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 02:23:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45884 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752041AbeDLGXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 02:22:15 -0400
-X-IronPort-AV: E=Sophos;i="5.48,440,1517871600";
-   d="scan'208";a="261752893"
-Date: Thu, 12 Apr 2018 08:22:12 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To: Joe Perches <joe@perches.com>
-cc: Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andy Whitcroft <apw@canonical.com>, yuankuiz@codeaurora.org,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, paulmck@linux.vnet.ibm.com,
-        Ingo Molnar <mingo@kernel.org>, Len Brown <len.brown@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] checkpatch: Add a --strict test for structs with bool
- member definitions
-In-Reply-To: <1c9f185f6086e9d89659f93720a27b660ee17c13.camel@perches.com>
-Message-ID: <alpine.DEB.2.20.1804120816130.3559@hadrien>
-References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>  <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>  <20180410123305.GF4082@hirez.programming.kicks-ass.net>  <e22fb871b1b7f2fda4b22f3a24e0d7f092eb612c.camel@perches.com>
- <95477c93db187bab6da8a8ba7c57836868446179.camel@perches.com>  <20180410143950.4b8526073b4e3e34689f68cb@linux-foundation.org>  <b3d75281c3a7b4b217b612913894b346eaa3288b.camel@perches.com>  <20180410150011.df9e036f57b5bcac7ac19686@linux-foundation.org>
- <20180411081502.GJ4082@hirez.programming.kicks-ass.net>  <20180411092959.e666ec443e4d3bb6f43901d7@linux-foundation.org> <1c9f185f6086e9d89659f93720a27b660ee17c13.camel@perches.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Thu, 12 Apr 2018 02:23:01 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date: Thu, 12 Apr 2018 14:22:59 +0800
+From: cang@codeaurora.org
+To: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: subhashj@codeaurora.org, asutoshd@codeaurora.org,
+        mgautam@codeaurora.org, kishon@ti.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] phy: Add QMP phy based UFS phy support for sdm845
+In-Reply-To: <ee4fefdd-0714-fcb4-ee58-59c0cde2386a@codeaurora.org>
+References: <20180327071838.11168-1-cang@codeaurora.org>
+ <20180327071838.11168-2-cang@codeaurora.org>
+ <b05ea9ac-302e-9381-94dd-00abd2099b60@codeaurora.org>
+ <a92068db7eb4ec090490a16b75a164aa@codeaurora.org>
+ <ee4fefdd-0714-fcb4-ee58-59c0cde2386a@codeaurora.org>
+Message-ID: <e4f4f5ac650e770a77dfb1788520b0c9@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-04-12 13:13, Vivek Gautam wrote:
+> On 4/12/2018 6:27 AM, cang@codeaurora.org wrote:
+>> On 2018-04-09 19:28, Vivek Gautam wrote:
+>>> Hi Can,
+>>> 
+>>> 
+>>> On 3/27/2018 12:48 PM, Can Guo wrote:
+>>>> Add UFS PHY support to make SDM845 UFS work with common PHY 
+>>>> framework.
+>>>> 
+>>>> Signed-off-by: Can Guo <cang@codeaurora.org>
+>>>> ---
+>>>>   drivers/phy/qualcomm/phy-qcom-qmp.c | 130 
+>>>> +++++++++++++++++++++++++++++++++---
+>>>>   drivers/phy/qualcomm/phy-qcom-qmp.h |   8 +++
+>>>>   2 files changed, 127 insertions(+), 11 deletions(-)
+>>>> 
+>>>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c 
+>>>> b/drivers/phy/qualcomm/phy-qcom-qmp.c
+>>>> index 5cf2c3c..0b58030 100644
+>>>> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
+>>>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+>>>> @@ -156,6 +156,11 @@ enum qphy_reg_layout {
+>>>>       [QPHY_PCS_LFPS_RXTERM_IRQ_STATUS] = 0x170,
+>>>>   };
+>>>>   +static const unsigned int sdm845_ufsphy_regs_layout[] = {
+>>>> +    [QPHY_START_CTRL]        = 0x00,
+>>>> +    [QPHY_PCS_READY_STATUS]        = 0x168,
+>>>> +};
+>>>> +
+>>>>   static const struct qmp_phy_init_tbl msm8996_pcie_serdes_tbl[] = {
+>>>>       QMP_PHY_INIT_CFG(QSERDES_COM_BIAS_EN_CLKBUFLR_EN, 0x1c),
+>>>>       QMP_PHY_INIT_CFG(QSERDES_COM_CLK_ENABLE1, 0x10),
+>>>> @@ -601,6 +606,73 @@ enum qphy_reg_layout {
+>>>>       QMP_PHY_INIT_CFG(QPHY_V3_PCS_REFGEN_REQ_CONFIG2, 0x60),
+>>>>   };
+>>>>   +static const struct qmp_phy_init_tbl sdm845_ufsphy_serdes_tbl[] = 
+>>>> {
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_SYS_CLK_CTRL, 0x02),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_BG_TIMER, 0x0a),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_IVCO, 0x0f),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_CMN_CONFIG, 0x06),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_SYSCLK_EN_SEL, 0xd5),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_RESETSM_CNTRL, 0x20),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_CLK_SELECT, 0x30),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_HSCLK_SEL, 0x00),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP_EN, 0x01),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_CTRL, 0x00),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_CORE_CLK_EN, 0x00),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_MAP, 0x04),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_SVS_MODE_CLK_SEL, 0x05),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_INITVAL1, 0xff),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_INITVAL2, 0x00),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_DEC_START_MODE0, 0x82),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_CP_CTRL_MODE0, 0x06),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_RCTRL_MODE0, 0x16),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_CCTRL_MODE0, 0x36),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN0_MODE0, 0x3f),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN1_MODE0, 0x00),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE1_MODE0, 0xda),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE2_MODE0, 0x01),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP1_MODE0, 0xff),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP2_MODE0, 0x0c),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_DEC_START_MODE1, 0x98),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_CP_CTRL_MODE1, 0x06),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_RCTRL_MODE1, 0x16),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_CCTRL_MODE1, 0x36),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN0_MODE1, 0x3f),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN1_MODE1, 0x00),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE1_MODE1, 0xc1),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE2_MODE1, 0x00),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP1_MODE1, 0x32),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP2_MODE1, 0x0f),
+>>>> +
+>>>> +    /* Rate B */
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_MAP, 0x44),
+>>>> +};
+>>>> +
+>>>> +static const struct qmp_phy_init_tbl sdm845_ufsphy_tx_tbl[] = {
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_TX_LANE_MODE_1, 0x06),
+>>>> +};
+>>>> +
+>>>> +static const struct qmp_phy_init_tbl sdm845_ufsphy_rx_tbl[] = {
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_LVL, 0x24),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_CNTRL, 0x0f),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_DEGLITCH_CNTRL, 0x1e),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_INTERFACE_MODE, 0x40),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_FO_GAIN, 0x0b),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_TERM_BW, 0x5b),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL2, 0x06),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL3, 0x04),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL4, 0x1d),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SVS_SO_GAIN_HALF, 0x04),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SVS_SO_GAIN_QUARTER, 0x04),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SVS_SO_GAIN, 0x04),
+>>>> + QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SO_SATURATION_AND_ENABLE, 
+>>>> 0x4b),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_PI_CONTROLS, 0x81),
+>>>> +    QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_COUNT_LOW, 0x80),
+>>>> +};
+>>>> +
+>>>> +static const struct qmp_phy_init_tbl sdm845_ufsphy_pcs_tbl[] = {
+>>>> +    QMP_PHY_INIT_CFG(QPHY_V3_PCS_POWER_DOWN_CONTROL, 0x01),
+>>>> +    QMP_PHY_INIT_CFG(QPHY_V3_PCS_MULTI_LANE_CTRL1, 0x02),
+>>>> +};
+>>>>     /* struct qmp_phy_cfg - per-PHY initialization config */
+>>>>   struct qmp_phy_cfg {
+>>>> @@ -652,6 +724,9 @@ struct qmp_phy_cfg {
+>>>>       /* Register offset of secondary tx/rx lanes for USB DP combo 
+>>>> PHY */
+>>>>       unsigned int tx_b_lane_offset;
+>>>>       unsigned int rx_b_lane_offset;
+>>>> +
+>>>> +    /* true, if PCS block has no separate SW_RESET register */
+>>>> +    bool skip_sw_rst;
+>>>>   };
+>>>>     /**
+>>>> @@ -748,6 +823,10 @@ static inline void qphy_clrbits(void __iomem 
+>>>> *base, u32 offset, u32 val)
+>>>>       "aux", "cfg_ahb", "ref", "com_aux",
+>>>>   };
+>>>>   +static const char * const sdm845_ufs_phy_clk_l[] = {
+>>>> +    "ref",
+>>> 
+>>> did you miss adding 'ref_aux' clock here as in the v2 version?
+>>> Rest looks good. After this change, you can add my reviewed-by
+>>> Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>>> 
+>>> Thanks
+>>> Vivek
+>> 
+>> Thank you Vivek. I removed 'ref_aux' as it was from the old UFS PHY 
+>> driver.
+>> And I have tested the new patch on MTP845 V2, it worked fine. Do you 
+>> have
+>> any concerns about it?
+>> 
+> 
+> I see in the downstream there's a ref_aux clock, so can you check from 
+> the phy's
+> hardware docs if this is required for phy's functionality. Working on 
+> the MTP is
+> one thing as some of the clocks may be kept enabled by the bootloader
+> too sometimes.
+> 
+> Thanks
+> Vivek
 
+You are right Vivek, I checked the HPG,'ref_aux' is needed for 845 
+indeed. I will add it back.
+BTW, is it OK that I use 'aux' instead? As clk name 'aux' in the 
+documentation seems to serve the same
+purpose for UFS PHY.
 
-On Wed, 11 Apr 2018, Joe Perches wrote:
+Thanks
+Can
 
-> (Adding Julia Lawall)
->
-> On Wed, 2018-04-11 at 09:29 -0700, Andrew Morton wrote:
-> > We already have some 500 bools-in-structs
->
-> I got at least triple that only in include/
-> so I expect there are at probably an order
-> of magnitude more than 500 in the kernel.
->
-> I suppose some cocci script could count the
-> actual number of instances.  A regex can not.
-
-I got 12667.
-
-I'm not sure to understand the issue.  Will using a bitfield help if there
-are no other bitfields in the structure?
-
-julia
-
->
-> > and the owners of that code will
-> > be wondering whether they should change them, and whether they should
-> > apply those remove-bool-in-struct patches which someone sent them.
->
-> Which is why the warning is --strict only
->
-> > So... can we please get some clarity here?
->
->
-> > ...
-> >
-> > (ooh, https://lkml.org/lkml/2017/11/21/384 is working this morning)
-> >
-> > hm, Linus suggests that instead of using
-> >
-> > 	bool mybool;
-> >
-> > we should use
-> >
-> > 	unsigned mybool:1;
-> >
-> > However that introduces the risk that alterations of mybool will use
-> > nonatomic rmw operations.
-> >
-> > 	unsigned myboolA:1;
-> > 	unsigned myboolB:1;
-> >
-> > so
-> >
-> > 	foo->myboolA = 1;
-> >
-> > could scribble on concurrent alterations of foo->myboolB.  I think.
->
-> Without barriers, that could happen anyway.
->
-> To me, the biggest problem with conversions
-> from bool to bitfield is logical.  ie:
->
-> 	unsigned int.singlebitfield = 4;
->
-> is not the same result as
->
-> 	bool = 4;
->
-> because of implicit truncation vs boolean conversion
-> so a direct change of bool use in structs to unsigned
-> would also require logic analysis.
->
->
+>> Thanks
+>> Can
+> [snip]
