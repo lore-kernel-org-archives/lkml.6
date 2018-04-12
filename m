@@ -1,104 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752752AbeDLLDR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 07:03:17 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:40884 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751112AbeDLLDQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 07:03:16 -0400
-Date: Thu, 12 Apr 2018 14:03:14 +0300
-From: "Dmitry V. Levin" <ldv@altlinux.org>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
- kill() returns wrong values in si_pid and si_uid
-Message-ID: <20180412110314.GA28070@altlinux.org>
-Mail-Followup-To: Russell King - ARM Linux <linux@armlinux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180409152253.GD10489@altlinux.org>
- <20180412013435.GA21219@altlinux.org>
- <20180412095811.GC16141@n2100.armlinux.org.uk>
+        id S1752763AbeDLLI6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 07:08:58 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:44617 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751889AbeDLLI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 07:08:57 -0400
+From: Li Bin <huawei.libin@huawei.com>
+To: <peterz@infradead.org>, <rostedt@goodmis.org>, <mingo@redhat.com>
+CC: <linux-kernel@vger.kernel.org>, <guohanjun@huawei.com>,
+        <huawei.libin@huawei.com>
+Subject: [PATCH 0/2] sched: pick and check task if double_lock_balance() unlock the rq
+Date: Thu, 12 Apr 2018 18:58:53 +0800
+Message-ID: <1523530735-20011-1-git-send-email-huawei.libin@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="LQksG6bCIzRHxTLp"
-Content-Disposition: inline
-In-Reply-To: <20180412095811.GC16141@n2100.armlinux.org.uk>
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Li Bin (1):
+  sched/deadline.c: pick and check task if double_lock_balance() unlock
+    the rq
 
---LQksG6bCIzRHxTLp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Zhou Chengming (1):
+  sched/rt.c: pick and check task if double_lock_balance() unlock the
+    rq
 
-On Thu, Apr 12, 2018 at 10:58:11AM +0100, Russell King - ARM Linux wrote:
-> On Thu, Apr 12, 2018 at 04:34:35AM +0300, Dmitry V. Levin wrote:
-> > A similar commit v4.16-rc1~159^2~37
-> > ("signal/arm: Document conflicts with SI_USER and SIGFPE") must have
-> > introduced a similar ABI regression to compat arm.
->=20
-> So, could you explain how can this change cause a regression?
->=20
-> +#define FPE_FIXME      0
-> -               vfp_raise_sigfpe(0, regs);
-> +               vfp_raise_sigfpe(FPE_FIXME, regs);
+ kernel/sched/deadline.c | 48 +++++++++++++++++++++++-------------------------
+ kernel/sched/rt.c       | 49 +++++++++++++++++++++++--------------------------
+ 2 files changed, 46 insertions(+), 51 deletions(-)
 
-No, this hunk hasn't caused the regression, but another one did:
-
-diff --git a/arch/arm/include/uapi/asm/siginfo.h b/arch/arm/include/uapi/as=
-m/siginfo.h
-new file mode 100644
-index 0000000..d051388
---- /dev/null
-+++ b/arch/arm/include/uapi/asm/siginfo.h
-@@ -0,0 +1,13 @@
-+#ifndef __ASM_SIGINFO_H
-+#define __ASM_SIGINFO_H
-+
-+#include <asm-generic/siginfo.h>
-+
-+/*
-+ * SIGFPE si_codes
-+ */
-+#ifdef __KERNEL__
-+#define FPE_FIXME      0       /* Broken dup of SI_USER */
-+#endif /* __KERNEL__ */
-+
-+#endif
-
-This is due to FPE_FIXME handling in kernel/signal.c
-
-
---=20
-ldv
-
---LQksG6bCIzRHxTLp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJazzzyAAoJEAVFT+BVnCUIw1YP/0I5ff8Z4fOIPctdlF7NS3Jh
-c2TAv7D40LUzHOnfXWx2Fy8hzScahtMi1FGOhwFCHvQawI1XYYKG1QAKOtOBV/ut
-bpPe/p/4Ib0Qjep1MNB+nhfmXHUS/GVGoFDp5cueyKqw9axCjkJGU1zZ1s4Frpme
-KMufr8I5JOh7mKh11lHiktGkP4oQFfVhHAnpn3GgsDDr0Lm3ASA759nEHQYSQ0yc
-uDNQrSYjdFoWsXoijWOq5zmABNcYi0c3L+6HJQVXH/FEXLDHyxv3uLSLWQ6KZt1G
-28vT61+SEko2RWM7ethcXc9J0VEgl20cQ5BLsYhExrje872YillIwAVHrbxE8SZh
-u6lHx+VYlHpYP+H3p67/pb1RbMGUNLK8fUv+oOif5FaPwShhRVtJGKhGsg4yyKAz
-3Kh6PkeE5LhRo4OUhq8SjeMHSPlgidmcAXZJSsNlW2A1+5IEnd640JfKyP7jcgOg
-AZEos39gLXAp0iMIff9IdrLmNtqc/LCKP5bE1PKXdpsyhMI/B3tN6h4DkTcU5X5I
-2V4SofWNC084zpxE8fHAQZ+Iwj9AEwCAatCnnoFxFm2AxyiCQmChXoS5RN+hPAOB
-6S70Qob9vxMPPPdHPyDvor6DwKUwHiPYAvfxGRq08nkDkkRLy09NCjofMBwvnGZF
-5FZOXAQ3wERpSpjaklJH
-=kR/I
------END PGP SIGNATURE-----
-
---LQksG6bCIzRHxTLp--
+-- 
+1.7.12.4
