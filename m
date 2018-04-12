@@ -1,131 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753146AbeDLPIf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 11:08:35 -0400
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:54920 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752746AbeDLPId (ORCPT
+        id S1753711AbeDLPZ7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 11:25:59 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34530 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753167AbeDLPIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 11:08:33 -0400
-X-Google-Smtp-Source: AIpwx48Gb/d6Cn9O0yg7JzU99UfUPu0raYG6c8rBmplQSl6XgwRsMm2TWoXbHpM17fDDYC5rgw/D8A==
+        Thu, 12 Apr 2018 11:08:36 -0400
+X-Google-Smtp-Source: AIpwx498YvaILPXOgksmdQyqpvErxrRwx7jtzK295aD7D/1P4AIh6tjsr55ULhF8xPEejE3N2WmAvg==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 00/35] overlayfs: stack file operations
-Date: Thu, 12 Apr 2018 17:07:51 +0200
-Message-Id: <20180412150826.20988-1-mszeredi@redhat.com>
+Subject: [RFC PATCH 03/35] vfs: optionally don't account file in nr_files
+Date: Thu, 12 Apr 2018 17:07:54 +0200
+Message-Id: <20180412150826.20988-4-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180412150826.20988-1-mszeredi@redhat.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Up till now overlayfs didn't stack regular file operations.  Instead, when
-a file was opened on an overlay, the file from one of the underlying layers
-would be opened and any file operations performed would directly go to the
-underlying file on a real filesystem.
+Stacking file operations in overlay will store an extra open file for each
+overlay file opened.
 
-This works well mostly, but various hacks were added to the VFS to work
-around issues with this:
+The overhead is just that of "struct file" which is about 256bytes, because
+overlay already pins an extra dentry and inode when the file is open, which
+add up to a much larger overhead.
 
- - d_path() and friends
- - relatime handling
- - file locking
- - fsnotify
- - writecount handling
+For fear of breaking working setups, don't start accounting the extra file.
 
-There are also issues that are unresolved before this patchset:
+The implementation adds a bool argument to path_open() to control whether
+the returned file is to be accounted or not.  If the file is not accounted,
+f_mode will contain FMODE_NOACCOUNT, so that when freeing the file the
+count is not decremented.
 
- - ioctl's that need write access but can be performed on a O_RDONLY fd
- - ro/rw inconsistency: file on lower layer opened for read-only will
-   return stale data on read after copy-up and modification
- - ro/rw inconsistency for mmap: file on lower layer mapped shared will
-   contain stale data after copy-up and modification
-
-This patch series reverts the VFS hacks (with the exception of d_path) and
-fixes the unresoved issues.  We need to keep d_path related hacks, because
-memory maps are still not stacked, yet d_path() should keep working on
-vma->vm_file->f_path.
-
-No regressions were observed after running various test suites (xfstests,
-ltp, unionmount-testsuite, pjd-fstest).
-
-Performance impact of stacking was found to be minimal.  Memory use for
-open overlay files increases by about 256bytes or 12%.
-
-Git tree is here:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git overlayfs-rorw
-
-Thanks,
-Miklos
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
+ fs/file_table.c    | 13 +++++++++----
+ fs/internal.h      |  7 ++++++-
+ fs/open.c          | 10 +++++-----
+ include/linux/fs.h |  5 ++++-
+ 4 files changed, 24 insertions(+), 11 deletions(-)
 
-Miklos Szeredi (35):
-  vfs: clean up dedup
-  vfs: add path_open()
-  vfs: optionally don't account file in nr_files
-  ovl: copy up times
-  ovl: copy up inode flags
-  Revert "Revert "ovl: get_write_access() in truncate""
-  ovl: copy up file size as well
-  ovl: deal with overlay files in ovl_d_real()
-  ovl: stack file ops
-  ovl: add helper to return real file
-  ovl: readd read_iter
-  ovl: readd write_iter
-  ovl: readd fsync
-  ovl: readd mmap
-  ovl: readd fallocate
-  ovl: readd lsattr/chattr support
-  ovl: readd fiemap
-  ovl: readd O_DIRECT support
-  ovl: readd reflink/copyfile/dedup support
-  vfs: don't open real
-  vfs: add f_op->pre_mmap()
-  ovl: copy-up on MAP_SHARED
-  vfs: simplify dentry_open()
-  Revert "ovl: fix relatime for directories"
-  Revert "vfs: update ovl inode before relatime check"
-  Revert "ovl: fix may_write_real() for overlayfs directories"
-  Revert "ovl: don't allow writing ioctl on lower layer"
-  Revert "vfs: add flags to d_real()"
-  Revert "vfs: do get_write_access() on upper layer of overlayfs"
-  Revert "vfs: make argument of d_real_inode() const"
-  Revert "vfs: add d_real_inode() helper"
-  Partially revert "locks: fix file locking on overlayfs"
-  Revert "fsnotify: support overlayfs"
-  vfs: simplify d_op->d_real()
-  ovl: fix documentation of non-standard behavior
-
- Documentation/filesystems/Locking       |   4 +-
- Documentation/filesystems/overlayfs.txt |  64 +++--
- Documentation/filesystems/vfs.txt       |  25 +-
- fs/file_table.c                         |  13 +-
- fs/inode.c                              |  46 +---
- fs/internal.h                           |  17 +-
- fs/ioctl.c                              |   1 +
- fs/locks.c                              |  20 +-
- fs/namei.c                              |   2 +-
- fs/namespace.c                          |  66 +----
- fs/open.c                               |  79 +++---
- fs/overlayfs/Kconfig                    |  21 ++
- fs/overlayfs/Makefile                   |   4 +-
- fs/overlayfs/dir.c                      |   5 +
- fs/overlayfs/file.c                     | 466 ++++++++++++++++++++++++++++++++
- fs/overlayfs/inode.c                    |  52 +++-
- fs/overlayfs/overlayfs.h                |  26 ++
- fs/overlayfs/ovl_entry.h                |   1 +
- fs/overlayfs/super.c                    |  82 +++---
- fs/overlayfs/util.c                     |  20 ++
- fs/read_write.c                         |  90 +++---
- fs/xattr.c                              |   9 +-
- include/linux/dcache.h                  |  41 +--
- include/linux/fs.h                      |  32 ++-
- include/linux/fsnotify.h                |  14 +-
- include/uapi/linux/fs.h                 |   1 -
- mm/util.c                               |   5 +
- 27 files changed, 831 insertions(+), 375 deletions(-)
- create mode 100644 fs/overlayfs/file.c
-
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 7ec0b3e5f05d..60376bfa04cf 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -51,7 +51,8 @@ static void file_free_rcu(struct rcu_head *head)
+ 
+ static inline void file_free(struct file *f)
+ {
+-	percpu_counter_dec(&nr_files);
++	if (!(f->f_mode & FMODE_NOACCOUNT))
++		percpu_counter_dec(&nr_files);
+ 	call_rcu(&f->f_u.fu_rcuhead, file_free_rcu);
+ }
+ 
+@@ -100,7 +101,7 @@ int proc_nr_files(struct ctl_table *table, int write,
+  * done, you will imbalance int the mount's writer count
+  * and a warning at __fput() time.
+  */
+-struct file *get_empty_filp(void)
++struct file *__get_empty_filp(bool account)
+ {
+ 	const struct cred *cred = current_cred();
+ 	static long old_max;
+@@ -110,7 +111,8 @@ struct file *get_empty_filp(void)
+ 	/*
+ 	 * Privileged users can go above max_files
+ 	 */
+-	if (get_nr_files() >= files_stat.max_files && !capable(CAP_SYS_ADMIN)) {
++	if (account &&
++	    get_nr_files() >= files_stat.max_files && !capable(CAP_SYS_ADMIN)) {
+ 		/*
+ 		 * percpu_counters are inaccurate.  Do an expensive check before
+ 		 * we go and fail.
+@@ -123,7 +125,10 @@ struct file *get_empty_filp(void)
+ 	if (unlikely(!f))
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	percpu_counter_inc(&nr_files);
++	if (account)
++		percpu_counter_inc(&nr_files);
++	else
++		f->f_mode = FMODE_NOACCOUNT;
+ 	f->f_cred = get_cred(cred);
+ 	error = security_file_alloc(f);
+ 	if (unlikely(error)) {
+diff --git a/fs/internal.h b/fs/internal.h
+index df262f41a0ef..3319bf39e339 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -85,7 +85,12 @@ extern void chroot_fs_refs(const struct path *, const struct path *);
+ /*
+  * file_table.c
+  */
+-extern struct file *get_empty_filp(void);
++extern struct file *__get_empty_filp(bool account);
++
++static inline struct file *get_empty_filp(void)
++{
++	return __get_empty_filp(true);
++}
+ 
+ /*
+  * super.c
+diff --git a/fs/open.c b/fs/open.c
+index 8c315f9ec2f6..d509705d5740 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -700,8 +700,8 @@ static int do_dentry_open(struct file *f,
+ 	static const struct file_operations empty_fops = {};
+ 	int error;
+ 
+-	f->f_mode = OPEN_FMODE(f->f_flags) | FMODE_LSEEK |
+-				FMODE_PREAD | FMODE_PWRITE;
++	f->f_mode = (f->f_mode & FMODE_NOACCOUNT) | OPEN_FMODE(f->f_flags) |
++		FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
+ 
+ 	path_get(&f->f_path);
+ 	f->f_inode = inode;
+@@ -711,7 +711,7 @@ static int do_dentry_open(struct file *f,
+ 	f->f_wb_err = filemap_sample_wb_err(f->f_mapping);
+ 
+ 	if (unlikely(f->f_flags & O_PATH)) {
+-		f->f_mode = FMODE_PATH;
++		f->f_mode = (f->f_mode & FMODE_NOACCOUNT) | FMODE_PATH;
+ 		f->f_op = &empty_fops;
+ 		return 0;
+ 	}
+@@ -867,12 +867,12 @@ int vfs_open(const struct path *path, struct file *file,
+ }
+ 
+ struct file *path_open(const struct path *path, int flags, struct inode *inode,
+-		       const struct cred *cred)
++		       const struct cred *cred, bool account)
+ {
+ 	struct file *file;
+ 	int retval;
+ 
+-	file = get_empty_filp();
++	file = __get_empty_filp(account);
+ 	if (!IS_ERR(file)) {
+ 		file->f_flags = flags;
+ 		file->f_path = *path;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c6d7e3b00163..0b215faa30ae 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -152,6 +152,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ /* File is capable of returning -EAGAIN if I/O will block */
+ #define FMODE_NOWAIT	((__force fmode_t)0x8000000)
+ 
++/* File does not contribute to nr_files count */
++#define FMODE_NOACCOUNT	((__force fmode_t)0x10000000)
++
+ /*
+  * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
+  * that indicates that they should check the contents of the iovec are
+@@ -2402,7 +2405,7 @@ extern struct file *file_open_root(struct dentry *, struct vfsmount *,
+ 				   const char *, int, umode_t);
+ extern struct file * dentry_open(const struct path *, int, const struct cred *);
+ extern struct file *path_open(const struct path *, int, struct inode *,
+-			      const struct cred *);
++			      const struct cred *, bool);
+ extern int filp_close(struct file *, fl_owner_t id);
+ 
+ extern struct filename *getname_flags(const char __user *, int, int *);
 -- 
 2.14.3
