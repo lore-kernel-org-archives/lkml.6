@@ -1,82 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752258AbeDLUz5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 16:55:57 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:39583 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751670AbeDLUzz (ORCPT
+        id S1752573AbeDLU7X (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 16:59:23 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:51900 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751600AbeDLU7V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 16:55:55 -0400
-X-Google-Smtp-Source: AIpwx49y3NA1wHnwKX0nwtteoVy25odLCzi8rixZt8bdDk0yHQQkDhHuhyrKOVxam9dZkrb5PrzIYg==
-Content-Type: text/plain; charset="utf-8"
+        Thu, 12 Apr 2018 16:59:21 -0400
+Subject: Re: [RFC PATCH 0/3] Interface for higher order contiguous allocations
+To: Reinette Chatre <reinette.chatre@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc: Michal Hocko <mhocko@kernel.org>, Christopher Lameter <cl@linux.com>,
+        Guy Shattah <sguy@mellanox.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        Vlastimil Babka <vbabka@suse.cz>, David Nellans <dnellans@nvidia.com>,
+        Laura Abbott <labbott@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Dave Hansen <dave.hansen@intel.com>
+References: <20180212222056.9735-1-mike.kravetz@oracle.com>
+ <770445b3-6caa-a87a-5de7-3157fc5280c2@intel.com>
+ <74b7c6e5-bce6-a70a-287a-af44765836c7@intel.com>
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <8f67cb20-3d70-274b-871b-11bedc687bd9@oracle.com>
+Date: Thu, 12 Apr 2018 13:58:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-To: Lina Iyer <ilina@codeaurora.org>
-From: Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20180410174629.GD19682@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, evgreen@chromium.org,
-        dianders@chromium.org,
-        Mahesh Sivasubramanian <msivasub@codeaurora.org>
-References: <20180406151356.7818-1-ilina@codeaurora.org>
- <20180406151356.7818-2-ilina@codeaurora.org>
- <152305699547.94378.15462587304123828477@swboyd.mtv.corp.google.com>
- <20180410174629.GD19682@codeaurora.org>
-Message-ID: <152356655313.37499.5720064569896132604@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v7 [RESEND] 1/2] drivers: qcom: add command DB driver
-Date: Thu, 12 Apr 2018 13:55:53 -0700
+In-Reply-To: <74b7c6e5-bce6-a70a-287a-af44765836c7@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8861 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804120199
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3CKu1LV015929
 
-Quoting Lina Iyer (2018-04-10 10:46:29)
-> On Fri, Apr 06 2018 at 17:23 -0600, Stephen Boyd wrote:
-> >Quoting Lina Iyer (2018-04-06 08:13:55)
-> >> From: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-> >>
-> >> Command DB is a simple database in the shared memory of QCOM SoCs, that
-> >> provides information regarding shared resources. Some shared resources
-> >> in the SoC have properties that are probed dynamically at boot by the
-> >> remote processor. The information pertaining to the SoC and the platform
-> >> are made available in the shared memory. Drivers can query this
-> >> information using predefined strings.
-> >>
-> >> Signed-off-by: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-> >> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> >> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> >> ---
-> >
-> >I have this patch on top to fix the endian stuff. Care to test it out
-> >and see if it still works?
-> >
-> >From: Stephen Boyd <swboyd@chromium.org>
-> >Subject: soc: qcom: cmd-db: Make endian-agnostic
-> >
-> >This driver deals with memory that is stored in little-endian format.
-> >Update the structures with the proper little-endian types and then
-> >do the proper conversions when reading the fields. Note that we compare
-> >the ids with a memcmp() because we already pad out the string 'id' field
-> >to exactly 8 bytes with the strncpy() onto the stack.
-> >
-> >Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> >
-> >diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-> >index b5172049f608..a56dc9edab82 100644
-> >--- a/drivers/soc/qcom/cmd-db.c
-> >+++ b/drivers/soc/qcom/cmd-db.c
-> >@@ -13,18 +13,10 @@
-> >
-> > #define NUM_PRIORITY          2
-> > #define MAX_SLV_ID            8
-> >-#define CMD_DB_MAGIC          0x0C0330DBUL
-> >+static const char CMD_DB_MAGIC[] = { 0xdb, 0x33, 0x03, 0x0c };
-> This has to be { 0xdb, 0x30, 0x03, 0x0c }
+On 04/12/2018 01:40 PM, Reinette Chatre wrote:
+> Hi Mike,
 > 
-> Otherwise it works.
+> On 2/15/2018 12:22 PM, Reinette Chatre wrote:
+>> On 2/12/2018 2:20 PM, Mike Kravetz wrote:
+>>> These patches came out of the "[RFC] mmap(MAP_CONTIG)" discussions at:
+>>> http://lkml.kernel.org/r/21f1ec96-2822-1189-1c95-79a2bb491571@oracle.com
+>>>
+>>> One suggestion in that thread was to create a friendlier interface that
+>>> could be used by drivers and others outside core mm code to allocate a
+>>> contiguous set of pages.  The alloc_contig_range() interface is used for
+>>> this purpose today by CMA and gigantic page allocation.  However, this is
+>>> not a general purpose interface.  So, wrap alloc_contig_range() in the
+>>> more general interface:
+>>>
+>>> struct page *find_alloc_contig_pages(unsigned int order, gfp_t gfp, int nid,
+>>> 					nodemask_t *nodemask)
+>>>
+>>> No underlying changes are made to increase the likelihood that a contiguous
+>>> set of pages can be found and allocated.  Therefore, any user of this
+>>> interface must deal with failure.  The hope is that this interface will be
+>>> able to satisfy some use cases today.
+>>
+>> As discussed in another thread a new feature, Cache Pseudo-Locking,
+>> requires large contiguous regions. Until now I just exposed
+>> alloc_gigantic_page() to handle these allocations in my testing. I now
+>> moved to using find_alloc_contig_pages() as introduced here and all my
+>> tests passed. I do hope that an API supporting large contiguous regions
+>> become available.
+>>
+>> Thank you very much for creating this.
+>>
+>> Tested-by: Reinette Chatre <reinette.chatre@intel.com>
 > 
+> Do you still intend on submitting these changes for inclusion?
+> 
+> I would really like to use this work but unfortunately the original
+> patches submitted here do not apply anymore. I am encountering conflicts
+> with, for example:
+> 
+> commit d9cc948f6fa1c3384037f500e0acd35f03850d15
+> Author: Michal Hocko <mhocko@suse.com>
+> Date:   Wed Jan 31 16:20:44 2018 -0800
+> 
+>     mm, hugetlb: integrate giga hugetlb more naturally to the allocation
+> path
+> 
+> Thank you very much
 
-Perfect! Thanks for catching that. I will resend with the typo fix.
+Thanks for the reminder Reinette.
+
+You were the only one to comment on the original proposal.  In addition,
+my original use case may have gone away.  So, this effort went to the
+bottom of my priority list.
+
+I am happy rebase the patches, but would really like to get additional
+comments.  Allocation of hugetlbfs gigantic pages is the only existing
+user.  Perhaps this is a natural progression of Michal's patch above
+as it moves all that special pfn range scanning out of hugetlb code.
+-- 
+Mike Kravetz
