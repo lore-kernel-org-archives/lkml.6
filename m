@@ -1,100 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752701AbeDLLcw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 07:32:52 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:39961 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751747AbeDLLct (ORCPT
+        id S1752700AbeDLLgh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 07:36:37 -0400
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:43123 "EHLO
+        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751918AbeDLLgf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 07:32:49 -0400
-X-Google-Smtp-Source: AIpwx4/w6H+m9KogyE+O6X+6gH0bR7/SWUpQyK/KwGSEpmAbKQi+BgrIAPpWijlYpIesWCW09jBSgpdNLxrouSJdrTM=
+        Thu, 12 Apr 2018 07:36:35 -0400
+X-Google-Smtp-Source: AIpwx4/m9/H+Ynly609hDSAoUEBVPE37oHVRpltSgPY3MAjM+d9fJaNhrYndNOswInAdg3zGdoXrxs3BDMI+iXVCMSs=
 MIME-Version: 1.0
-In-Reply-To: <e6a70247-14f2-63b6-852b-3d43e45f8fa2@redhat.com>
-References: <1523438149-16433-1-git-send-email-geert+renesas@glider.be>
- <1523438149-16433-4-git-send-email-geert+renesas@glider.be> <e6a70247-14f2-63b6-852b-3d43e45f8fa2@redhat.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 12 Apr 2018 13:32:48 +0200
-X-Google-Sender-Auth: 4-OnAPfGfXosih6mLZ3Pjo8MD_M
-Message-ID: <CAMuHMdU5m=vV9nuVoRkX6tX-A=az3aK6HT7yFqgDam_rCNEfSg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] vfio: platform: Add generic DT reset support
-To: Auger Eric <eric.auger@redhat.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        KVM list <kvm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <CAMz4ku+i+zA0_5U65vc3h3tO-hzWvtCOFDeFU94h3Rm6sJUuKQ@mail.gmail.com>
+References: <abdda9da96185f764d58bbf61db9010d0f72d1b3.1523346135.git.baolin.wang@linaro.org>
+ <0c2b76aba6a49e583f920ae582d6815fa9cc4361.1523346135.git.baolin.wang@linaro.org>
+ <20180411093634.GC6014@localhost> <CAMz4kuJyKNNuR9WGP8F1NKAET6ZTtN4LtXTTtdnR3Zyxa+OjNw@mail.gmail.com>
+ <20180412093735.GF6014@localhost> <CAMz4ku+i+zA0_5U65vc3h3tO-hzWvtCOFDeFU94h3Rm6sJUuKQ@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Thu, 12 Apr 2018 19:36:34 +0800
+Message-ID: <CAMz4ku+EUtk2phRGkxkW6YwUvBLb-O7tmMoucvVEQZbL9EY8Zg@mail.gmail.com>
+Subject: Re: [PATCH 4/5] dmaengine: sprd: Add Spreadtrum DMA configuration
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Eric Long <eric.long@spreadtrum.com>, Mark Brown <broonie@kernel.org>,
+        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
-
-On Thu, Apr 12, 2018 at 12:31 PM, Auger Eric <eric.auger@redhat.com> wrote:
-> On 11/04/18 11:15, Geert Uytterhoeven wrote:
->> Vfio-platform requires reset support, provided either by ACPI, or, on DT
->> platforms, by a device-specific reset driver matching against the
->> device's compatible value.
->>
->> On many SoCs, devices are connected to an SoC-internal reset controller.
->> If the reset hierarchy is described in DT using "resets" properties,
->> such devices can be reset in a generic way through the reset controller
->> subsystem.  Hence add support for this, avoiding the need to write
->> device-specific reset drivers for each single device on affected SoCs.
->>
->> Devices that do require a more complex reset procedure can still provide
->> a device-specific reset driver, as that takes precedence.
->>
->> Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
->> becomes a no-op (as in: "No reset function found for device") if reset
->> controller support is disabled.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-
->> --- a/drivers/vfio/platform/vfio_platform_common.c
->> +++ b/drivers/vfio/platform/vfio_platform_common.c
-
->> @@ -127,8 +130,16 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
->>               vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
->>                                                       &vdev->reset_module);
->>       }
->> +     if (vdev->of_reset)
->> +             return 0;
->> +
->> +     rstc = of_reset_control_get_exclusive(vdev->device->of_node, NULL);
+On 12 April 2018 at 19:30, Baolin Wang <baolin.wang@linaro.org> wrote:
+> Hi Vinod,
 >
-> Shouldn't we prefer the top level reset_control_get_exclusive()?
+> On 12 April 2018 at 17:37, Vinod Koul <vinod.koul@intel.com> wrote:
+>> On Wed, Apr 11, 2018 at 08:13:28PM +0800, Baolin Wang wrote:
+>>> Hi Vinod,
+>>>
+>>> On 11 April 2018 at 17:36, Vinod Koul <vinod.koul@intel.com> wrote:
+>>> > On Tue, Apr 10, 2018 at 03:46:06PM +0800, Baolin Wang wrote:
+>>> >
+>>> >> +/*
+>>> >> + * struct sprd_dma_config - DMA configuration structure
+>>> >> + * @config: dma slave channel config
+>>> >> + * @fragment_len: specify one fragment transfer length
+>>> >> + * @block_len: specify one block transfer length
+>>> >> + * @transcation_len: specify one transcation transfer length
+>>> >> + * @wrap_ptr: wrap pointer address, once the transfer address reaches the
+>>> >> + * 'wrap_ptr', the next transfer address will jump to the 'wrap_to' address.
+>>> >> + * @wrap_to: wrap jump to address
+>>> >> + * @req_mode: specify the DMA request mode
+>>> >> + * @int_mode: specify the DMA interrupt type
+>>> >> + */
+>>> >> +struct sprd_dma_config {
+>>> >> +     struct dma_slave_config config;
+>>> >> +     u32 fragment_len;
+>>> >
+>>> > why not use _maxburst?
+>>>
+>>> Yes, I can use maxburst.
+>>>
+>>> >
+>>> >> +     u32 block_len;
+>>> >> +     u32 transcation_len;
+>>> >
+>>> > what does block and transaction len refer to here
+>>>
+>>>  Our DMA has 3 transfer mode: transaction transfer, block transfer and
+>>> fragment transfer. One transaction transfer can contain several blocks
+>>> transfer, and each block can be set proper block step. One block can
+>>> contain several fragments transfer with proper fragment step. It can
+>>> generate interrupts when one transaction transfer or block transfer or
+>>> fragment transfer is completed if user set the interrupt type. So here
+>>> we should set the length for transaction transfer, block transfer and
+>>> fragment transfer.
+>>
+>> what are the max size these types support?
+>
+> These types max size definition:
+>
+> #define SPRD_DMA_FRG_LEN_MASK GENMASK(16, 0)
+>
+> #define SPRD_DMA_BLK_LEN_MASK GENMASK(16, 0)
+>
+> #define SPRD_DMA_TRSC_LEN_MASK GENMASK(27, 0)
+>
+>>>
+>>> >
+>>> >> +     phys_addr_t wrap_ptr;
+>>> >> +     phys_addr_t wrap_to;
+>>> >
+>>> > this sound sg_list to me, why are we not using that here
+>>>
+>>> It is similar to sg list, but it is not one software action, we have
+>>> hardware registers to help to jump one specified address.
+>>>
+>>> >
+>>> >> +     enum sprd_dma_req_mode req_mode;
+>>> >
+>>> > Looking at definition of request mode we have frag, block, transaction list
+>>> > etc.. That should depend upon dma request. If you have been asked to
+>>> > transfer a list, you shall configure list mode. if it is a single
+>>> > transaction then it should be transaction mode!
+>>>
+>>> If I understand your points correctly, you mean we can specify the
+>>> request mode when requesting one slave channel by
+>>> 'dma_request_slave_channel()'. But we need change the request mode
+>>> dynamically following different transfer task for this channel, so I
+>>> am afraid we can not specify the request mode of this channel at
+>>> requesting time.
+>>
+>> Nope a channel has nothing to do with request type. You request and grab a
+>> channel. Then you prepare a descriptor for a dma transaction. Based on
+>> transaction requested you should intelligently break it down and create a
+>> descriptor which uses transaction/block/fragment so that DMA throughput is
+>> efficient. If prepare has sg list then you should use link list mode.
+>> Further if you support max length, say 16KB and request is for 20KB you may
+>> break it down for link list with two segments.
+>
+> OK. So I can add one more cell to specify the request mode for this channel.
+>
+> dmas = <&apdma 11 SPRD_DMA_BLK_REQ>
+>
+>>
+>> Each prep call has flags associated, that can help you configure interrupt
+>> behaviour.
 
-I guess that should work, too.
-
-> To make sure about the exclusive/shared terminology, does
-> get_reset_control_get_exclusive() check we have an exclusive wire
-> between this device and the reset controller?
-
-AFAIU, the "exclusive" means that only a single user can obtain access to
-the reset, and it does not guarantee that we have an exclusive wire between
-the device and the reset controller.
-
-The latter depends on the SoC's reset topology. If a reset wire is shared
-by multiple devices (e.g. resets shared by PWM or Display Unit devices on
-R-Car SoCs), exporting a subset of these devices to a guest is a bad idea,
-indeed.
-
-I guess the same thing can happen with the ACPI "_RST" method?
-
-Gr{oetje,eeting}s,
-
-                        Geert
+After more thinking, I think this will be not useful for users, since
+users need configure one DMA channel through different 3 places,
+specify the request mode in dts, specify the interrupt type through
+prep call flags, and other configuration need to be configured through
+'struct sprd_dma_config'. That is not one good design for users. What
+do you think? Thanks.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Baolin.wang
+Best Regards
