@@ -1,83 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753610AbeDLWmO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 18:42:14 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53900 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753478AbeDLWmL (ORCPT
+        id S1753153AbeDLWrz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 18:47:55 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:42518 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752467AbeDLWrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 18:42:11 -0400
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: David Howells <dhowells@redhat.com>
-Cc: Matthew Garrett <mjg59@google.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Eric Biederman <ebiederm@xmission.com>, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] kexec: call LSM hook for kexec_load syscall
-Date: Thu, 12 Apr 2018 18:41:50 -0400
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18041222-0008-0000-0000-000004E9F1DF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041222-0009-0000-0000-00001E7DFCF3
-Message-Id: <1523572911-16363-3-git-send-email-zohar@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-12_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804120213
+        Thu, 12 Apr 2018 18:47:51 -0400
+X-Google-Smtp-Source: AIpwx49wKbwXAK24iNEio3PCvlSWEWtCqFSuG1iDMizWVHY2w54M6P1A2j1g0g88/qdoQDjX3TOFnN/o5KRYJP27A2g=
+MIME-Version: 1.0
+In-Reply-To: <CAGXu5jLSmJv9AstzsgSscrv-wA7FwfrxAKRxj-FVBmihQvnj1g@mail.gmail.com>
+References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5j+-PNYxSc3v+QtQLK0S3wdtFthFSxNM_69kFDnPQX0Gaw@mail.gmail.com>
+ <CAGXu5j+_UH0h9qeYCKKjhC7jw-mi_=fg4ASHi2=pCF9xGTpA4Q@mail.gmail.com>
+ <2864697.7uzmEJovl2@natalenko.name> <CAGXu5jLSmJv9AstzsgSscrv-wA7FwfrxAKRxj-FVBmihQvnj1g@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Thu, 12 Apr 2018 15:47:49 -0700
+X-Google-Sender-Auth: n1Wutivvna8mmMe5ldjVshOWaDI
+Message-ID: <CAGXu5j+dh1zm32iBjRVh0s+3gLJYgjwt+z1aBJmrK2Cr8XPWnA@mail.gmail.com>
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+To: Oleksandr Natalenko <oleksandr@natalenko.name>
+Cc: David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3CMm032023129
 
-Allow LSMs and IMA to differentiate between the kexec_load and
-kexec_file_load syscalls by adding an "unnecessary" call to
-security_kernel_read_file() in kexec_load.  This would be similar to the
-existing init_module syscall calling security_kernel_read_file().
+On Thu, Apr 12, 2018 at 3:01 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Thu, Apr 12, 2018 at 12:04 PM, Oleksandr Natalenko
+> <oleksandr@natalenko.name> wrote:
+>> Hi.
+>>
+>> On čtvrtek 12. dubna 2018 20:44:37 CEST Kees Cook wrote:
+>>> My first bisect attempt gave me commit 5448aca41cd5 ("null_blk: wire
+>>> up timeouts"), which seems insane given that null_blk isn't even built
+>>> in the .config. I managed to get the testing automated now for a "git
+>>> bisect run ...", so I'm restarting again to hopefully get a better
+>>> answer. Normally the Oops happens in the first minute of running. I've
+>>> set the timeout to 10 minutes for a "good" run...
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
----
- kernel/kexec.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+After fixing up some build issues in the middle of the 4.16 cycle, I
+get an unhelpful bisect result of commit 0a4b6e2f80aa ("Merge branch
+'for-4.16/block'". Instead of letting the test run longer, I'm going
+to switch to doing several shorter test boots per kernel and see if
+that helps. One more bisect coming...
 
-diff --git a/kernel/kexec.c b/kernel/kexec.c
-index aed8fb2564b3..d1386cfc6796 100644
---- a/kernel/kexec.c
-+++ b/kernel/kexec.c
-@@ -11,6 +11,7 @@
- #include <linux/capability.h>
- #include <linux/mm.h>
- #include <linux/file.h>
-+#include <linux/security.h>
- #include <linux/kexec.h>
- #include <linux/mutex.h>
- #include <linux/list.h>
-@@ -195,11 +196,21 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
- static inline int kexec_load_check(unsigned long nr_segments,
- 				   unsigned long flags)
- {
-+	int result;
-+
- 	/* We only trust the superuser with rebooting the system. */
- 	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
- 		return -EPERM;
- 
- 	/*
-+	 * Allow LSMs and IMA to differentiate between kexec_load and
-+	 * kexec_file_load syscalls.
-+	 */
-+	result = security_kernel_read_file(NULL, READING_KEXEC_IMAGE);
-+	if (result < 0)
-+		return result;
-+
-+	/*
- 	 * Verify we have a legal set of flags
- 	 * This leaves us room for future extensions.
- 	 */
+>> Apparently, you do this on Linus' tree, right? If so, I won't compile it here
+>> then.
+>
+> Actually, I didn't test Linus's tree, but I can do that after the most
+> recent bisect finishes... I'm just trying to find where it went wrong
+> in 4.16.
+
+FWIW, I see an Oops under Linus's latest tree.
+
+-Kees
+
 -- 
-2.7.5
+Kees Cook
+Pixel Security
