@@ -1,109 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752238AbeDLAUL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 20:20:11 -0400
-Received: from mga04.intel.com ([192.55.52.120]:55587 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751633AbeDLAUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 20:20:10 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,438,1517904000";
-   d="scan'208";a="46212042"
-Date: Thu, 12 Apr 2018 08:19:12 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: kbuild-all@01.org, jarkko.sakkinen@linux.intel.com,
-        nayna@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tweek@google.com
-Subject: Re: [PATCH 1/3] tpm: Move eventlog files to a subdirectory
-Message-ID: <201804120854.QaJLImB4%fengguang.wu@intel.com>
-References: <20180411125501.188477-2-tweek@google.com>
+        id S1752411AbeDLAYj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 20:24:39 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:49524 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751858AbeDLAYh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 20:24:37 -0400
+Subject: Re: [virtio-dev] Re: [PATCH v2] virtio_balloon: export hugetlb page
+ allocation counts
+To: Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc: virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        Mihai Carabas <mihai.carabas@oracle.com>
+References: <1521497654-24807-1-git-send-email-jonathan.helman@oracle.com>
+ <db6371af-f93d-4409-c910-2ff712196c5b@redhat.com>
+ <6ED6CAC9-FAD9-4A27-A9B1-C6EFC7627D68@oracle.com>
+ <c09d3570-a8f9-7a84-5dd6-46d385da2e15@redhat.com>
+ <20180322050842-mutt-send-email-mst@kernel.org>
+ <3f8a1b91-c5ba-8a24-72b8-02d884a67826@redhat.com>
+ <b1414be4-84bc-5d02-afff-9e42c1fd7210@oracle.com>
+ <e773c5bb-52a5-4b7d-4ce6-0fc3b189475f@redhat.com>
+From: Jonathan Helman <jonathan.helman@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <1d2bcb00-b210-b992-318e-c65607d31dff@oracle.com>
+Date: Wed, 11 Apr 2018 17:24:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180411125501.188477-2-tweek@google.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <e773c5bb-52a5-4b7d-4ce6-0fc3b189475f@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8860 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804120002
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thiebaud,
-
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on char-misc/char-misc-testing]
-[also build test WARNING on v4.16 next-20180411]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Thiebaud-Weksteen/tpm-Move-eventlog-files-to-a-subdirectory/20180412-045224
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
 
 
-sparse warnings: (new ones prefixed by >>)
+On 04/10/2018 08:12 PM, Jason Wang wrote:
+> 
+> 
+> On 2018年04月10日 05:11, Jonathan Helman wrote:
+>>
+>>
+>> On 03/22/2018 07:38 PM, Jason Wang wrote:
+>>>
+>>>
+>>> On 2018年03月22日 11:10, Michael S. Tsirkin wrote:
+>>>> On Thu, Mar 22, 2018 at 09:52:18AM +0800, Jason Wang wrote:
+>>>>> On 2018年03月20日 12:26, Jonathan Helman wrote:
+>>>>>>> On Mar 19, 2018, at 7:31 PM, Jason Wang<jasowang@redhat.com>  wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> On 2018年03月20日 06:14, Jonathan Helman wrote:
+>>>>>>>> Export the number of successful and failed hugetlb page
+>>>>>>>> allocations via the virtio balloon driver. These 2 counts
+>>>>>>>> come directly from the vm_events HTLB_BUDDY_PGALLOC and
+>>>>>>>> HTLB_BUDDY_PGALLOC_FAIL.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Jonathan Helman<jonathan.helman@oracle.com>
+>>>>>>> Reviewed-by: Jason Wang<jasowang@redhat.com>
+>>>>>> Thanks.
+>>>>>>
+>>>>>>>> ---
+>>>>>>>>    drivers/virtio/virtio_balloon.c     | 6 ++++++
+>>>>>>>>    include/uapi/linux/virtio_balloon.h | 4 +++-
+>>>>>>>>    2 files changed, 9 insertions(+), 1 deletion(-)
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/virtio/virtio_balloon.c 
+>>>>>>>> b/drivers/virtio/virtio_balloon.c
+>>>>>>>> index dfe5684..6b237e3 100644
+>>>>>>>> --- a/drivers/virtio/virtio_balloon.c
+>>>>>>>> +++ b/drivers/virtio/virtio_balloon.c
+>>>>>>>> @@ -272,6 +272,12 @@ static unsigned int 
+>>>>>>>> update_balloon_stats(struct virtio_balloon *vb)
+>>>>>>>>                    pages_to_bytes(events[PSWPOUT]));
+>>>>>>>>        update_stat(vb, idx++, VIRTIO_BALLOON_S_MAJFLT, 
+>>>>>>>> events[PGMAJFAULT]);
+>>>>>>>>        update_stat(vb, idx++, VIRTIO_BALLOON_S_MINFLT, 
+>>>>>>>> events[PGFAULT]);
+>>>>>>>> +#ifdef CONFIG_HUGETLB_PAGE
+>>>>>>>> +    update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGALLOC,
+>>>>>>>> +            events[HTLB_BUDDY_PGALLOC]);
+>>>>>>>> +    update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGFAIL,
+>>>>>>>> +            events[HTLB_BUDDY_PGALLOC_FAIL]);
+>>>>>>>> +#endif
+>>>>>>>>    #endif
+>>>>>>>>        update_stat(vb, idx++, VIRTIO_BALLOON_S_MEMFREE,
+>>>>>>>>                    pages_to_bytes(i.freeram));
+>>>>>>>> diff --git a/include/uapi/linux/virtio_balloon.h 
+>>>>>>>> b/include/uapi/linux/virtio_balloon.h
+>>>>>>>> index 4e8b830..40297a3 100644
+>>>>>>>> --- a/include/uapi/linux/virtio_balloon.h
+>>>>>>>> +++ b/include/uapi/linux/virtio_balloon.h
+>>>>>>>> @@ -53,7 +53,9 @@ struct virtio_balloon_config {
+>>>>>>>>    #define VIRTIO_BALLOON_S_MEMTOT   5   /* Total amount of 
+>>>>>>>> memory */
+>>>>>>>>    #define VIRTIO_BALLOON_S_AVAIL    6   /* Available memory as 
+>>>>>>>> in /proc */
+>>>>>>>>    #define VIRTIO_BALLOON_S_CACHES   7   /* Disk caches */
+>>>>>>>> -#define VIRTIO_BALLOON_S_NR       8
+>>>>>>>> +#define VIRTIO_BALLOON_S_HTLB_PGALLOC  8  /* Hugetlb page 
+>>>>>>>> allocations */
+>>>>>>>> +#define VIRTIO_BALLOON_S_HTLB_PGFAIL   9  /* Hugetlb page 
+>>>>>>>> allocation failures */
+>>>>>>>> +#define VIRTIO_BALLOON_S_NR       10
+>>>>>>>>      /*
+>>>>>>>>     * Memory statistics structure.
+>>>>>>> Not for this patch, but it looks to me that exporting such nr 
+>>>>>>> through uapi is fragile.
+>>>>>> Sorry, can you explain what you mean here?
+>>>>>>
+>>>>>> Jon
+>>>>> Spec said "Within an output buffer submitted to the statsq, the 
+>>>>> device MUST
+>>>>> ignore entries with tag values that it does not recognize". So 
+>>>>> exporting
+>>>>> VIRTIO_BALLOON_S_NR seems useless and device implementation can not 
+>>>>> depend
+>>>>> on such number in uapi.
+>>>>>
+>>>>> Thanks
+>>>> Suggestions? I don't like to break build for people ...
+>>>>
+>>>
+>>> Didn't have a good idea. But maybe we should keep VIRTIO_BALLOON_S_NR 
+>>> unchanged, and add a comment here.
+>>>
+>>> Thanks
+>>
+>> I think Jason's comment is for a future patch. Didn't see this patch 
+>> get applied, so wondering if it could be.
+>>
+>> Thanks,
+>> Jon
+> 
+> Hi Jon:
+> 
+> Have you tested new driver with old qemu?
 
->> drivers/char/tpm/eventlog/of.c:59:37: sparse: incorrect type in argument 1 (different base types) @@    expected restricted __be32 const [usertype] *p @@    got unsignrestricted __be32 const [usertype] *p @@
-   drivers/char/tpm/eventlog/of.c:59:37:    expected restricted __be32 const [usertype] *p
-   drivers/char/tpm/eventlog/of.c:59:37:    got unsigned int const [usertype] *[assigned] sizep
->> drivers/char/tpm/eventlog/of.c:60:37: sparse: incorrect type in argument 1 (different base types) @@    expected restricted __be64 const [usertype] *p @@    got unsigned lonrestricted __be64 const [usertype] *p @@
-   drivers/char/tpm/eventlog/of.c:60:37:    expected restricted __be64 const [usertype] *p
-   drivers/char/tpm/eventlog/of.c:60:37:    got unsigned long long const [usertype] *[assigned] basep
+Yes, this testing scenario looks good. Thanks.
 
-vim +59 drivers/char/tpm/eventlog/of.c
+Jon
 
-c5df39262 drivers/char/tpm/tpm_of.c Ashley Lai             2012-08-14  23  
-02ae13828 drivers/char/tpm/tpm_of.c Nayna Jain             2016-11-14  24  int tpm_read_log_of(struct tpm_chip *chip)
-c5df39262 drivers/char/tpm/tpm_of.c Ashley Lai             2012-08-14  25  {
-c5df39262 drivers/char/tpm/tpm_of.c Ashley Lai             2012-08-14  26  	struct device_node *np;
-c5df39262 drivers/char/tpm/tpm_of.c Ashley Lai             2012-08-14  27  	const u32 *sizep;
-d72c39114 drivers/char/tpm/tpm_of.c Hon Ching \(Vicky\  Lo 2015-06-17  28) 	const u64 *basep;
-748935eeb drivers/char/tpm/tpm_of.c Nayna Jain             2016-11-14  29  	struct tpm_bios_log *log;
-e46e22f12 drivers/char/tpm/tpm_of.c Nayna Jain             2017-01-23  30  	u32 size;
-e46e22f12 drivers/char/tpm/tpm_of.c Nayna Jain             2017-01-23  31  	u64 base;
-c5df39262 drivers/char/tpm/tpm_of.c Ashley Lai             2012-08-14  32  
-748935eeb drivers/char/tpm/tpm_of.c Nayna Jain             2016-11-14  33  	log = &chip->log;
-0cf577a03 drivers/char/tpm/tpm_of.c Jason Gunthorpe        2016-11-19  34  	if (chip->dev.parent && chip->dev.parent->of_node)
-ed4fdb4f5 drivers/char/tpm/tpm_of.c Nayna Jain             2016-11-14  35  		np = chip->dev.parent->of_node;
-79eec5b94 drivers/char/tpm/tpm_of.c Colin Ian King         2016-11-15  36  	else
-c5df39262 drivers/char/tpm/tpm_of.c Ashley Lai             2012-08-14  37  		return -ENODEV;
-c5df39262 drivers/char/tpm/tpm_of.c Ashley Lai             2012-08-14  38  
-b5d0ebc99 drivers/char/tpm/tpm_of.c Enric Balletbo i Serra 2017-06-27  39  	if (of_property_read_bool(np, "powered-while-suspended"))
-b5d0ebc99 drivers/char/tpm/tpm_of.c Enric Balletbo i Serra 2017-06-27  40  		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
-b5d0ebc99 drivers/char/tpm/tpm_of.c Enric Balletbo i Serra 2017-06-27  41  
-c5df39262 drivers/char/tpm/tpm_of.c Ashley Lai             2012-08-14  42  	sizep = of_get_property(np, "linux,sml-size", NULL);
-0cf577a03 drivers/char/tpm/tpm_of.c Jason Gunthorpe        2016-11-19  43  	basep = of_get_property(np, "linux,sml-base", NULL);
-0cf577a03 drivers/char/tpm/tpm_of.c Jason Gunthorpe        2016-11-19  44  	if (sizep == NULL && basep == NULL)
-0cf577a03 drivers/char/tpm/tpm_of.c Jason Gunthorpe        2016-11-19  45  		return -ENODEV;
-0cf577a03 drivers/char/tpm/tpm_of.c Jason Gunthorpe        2016-11-19  46  	if (sizep == NULL || basep == NULL)
-5efae7d6b drivers/char/tpm/tpm_of.c Nayna Jain             2016-11-14  47  		return -EIO;
-5efae7d6b drivers/char/tpm/tpm_of.c Nayna Jain             2016-11-14  48  
-e46e22f12 drivers/char/tpm/tpm_of.c Nayna Jain             2017-01-23  49  	/*
-e46e22f12 drivers/char/tpm/tpm_of.c Nayna Jain             2017-01-23  50  	 * For both vtpm/tpm, firmware has log addr and log size in big
-e46e22f12 drivers/char/tpm/tpm_of.c Nayna Jain             2017-01-23  51  	 * endian format. But in case of vtpm, there is a method called
-e46e22f12 drivers/char/tpm/tpm_of.c Nayna Jain             2017-01-23  52  	 * sml-handover which is run during kernel init even before
-e46e22f12 drivers/char/tpm/tpm_of.c Nayna Jain             2017-01-23  53  	 * device tree is setup. This sml-handover function takes care
-e46e22f12 drivers/char/tpm/tpm_of.c Nayna Jain             2017-01-23  54  	 * of endianness and writes to sml-base and sml-size in little
-e46e22f12 drivers/char/tpm/tpm_of.c Nayna Jain             2017-01-23  55  	 * endian format. For this reason, vtpm doesn't need conversion
-e46e22f12 drivers/char/tpm/tpm_of.c Nayna Jain             2017-01-23  56  	 * but physical tpm needs the conversion.
-e46e22f12 drivers/char/tpm/tpm_of.c Nayna Jain             2017-01-23  57  	 */
-e46e22f12 drivers/char/tpm/tpm_of.c Nayna Jain             2017-01-23  58  	if (of_property_match_string(np, "compatible", "IBM,vtpm") < 0) {
-e46e22f12 drivers/char/tpm/tpm_of.c Nayna Jain             2017-01-23 @59  		size = be32_to_cpup(sizep);
-e46e22f12 drivers/char/tpm/tpm_of.c Nayna Jain             2017-01-23 @60  		base = be64_to_cpup(basep);
-
-:::::: The code at line 59 was first introduced by commit
-:::::: e46e22f12b19f0068b02afcf6edb716b4f49934f tpm: enhance read_log_of() to support Physical TPM event log
-
-:::::: TO: Nayna Jain <nayna@linux.vnet.ibm.com>
-:::::: CC: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 
+> Thanks
+> 
+> 
