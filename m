@@ -1,100 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752821AbeDLNVQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 09:21:16 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41046 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751832AbeDLNVO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 09:21:14 -0400
-Subject: Re: [PATCH] perf record: Remove unnecessary warning for missing sysfs
- entry
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Thomas Richter <tmricht@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-References: <20180412114723.48550-1-tmricht@linux.ibm.com>
- <20180412130513.GB9818@kernel.org>
-From: Thomas-Mich Richter <tmricht@linux.vnet.ibm.com>
-Organization: IBM LTC
-Date: Thu, 12 Apr 2018 15:19:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752701AbeDLNX2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 09:23:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33533 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751448AbeDLNX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 09:23:27 -0400
+Date: Thu, 12 Apr 2018 15:23:24 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Buddy Lumpkin <buddy.lumpkin@oracle.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, hannes@cmpxchg.org,
+        riel@surriel.com, mgorman@suse.de,
+        Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org
+Subject: Re: [RFC PATCH 1/1] vmscan: Support multiple kswapd threads per node
+Message-ID: <20180412132324.GG23400@dhcp22.suse.cz>
+References: <1522661062-39745-1-git-send-email-buddy.lumpkin@oracle.com>
+ <1522661062-39745-2-git-send-email-buddy.lumpkin@oracle.com>
+ <20180403133115.GA5501@dhcp22.suse.cz>
+ <502E8C16-DEA1-40A5-85CB-923E3ABE0B45@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20180412130513.GB9818@kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18041213-0040-0000-0000-0000042D87E9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041213-0041-0000-0000-00002631A0EC
-Message-Id: <53a2face-d26c-8851-d594-5f78da5814c3@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-12_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804120132
+In-Reply-To: <502E8C16-DEA1-40A5-85CB-923E3ABE0B45@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/12/2018 03:05 PM, Arnaldo Carvalho de Melo wrote:
-> Em Thu, Apr 12, 2018 at 01:47:23PM +0200, Thomas Richter escreveu:
->> Using perf on 4.16.0 kernel on s390 shows warning
->>    failed: can't open node sysfs data
->> each time I run command perf record ... for example:
->>
->> [root@s35lp76 perf]# ./perf record -e rB0000 -- sleep 1
->> [ perf record: Woken up 1 times to write data ]
->> failed: can't open node sysfs data
->> [ perf record: Captured and wrote 0.001 MB perf.data (4 samples) ]
->> [root@s35lp76 perf]#
->>
->> BTW: I find this error message not very informative.
+On Tue 10-04-18 20:10:24, Buddy Lumpkin wrote:
+[...]
+> > Also please note that the direct reclaim is a way to throttle overly
+> > aggressive memory consumers. The more we do in the background context
+> > the easier for them it will be to allocate faster. So I am not really
+> > sure that more background threads will solve the underlying problem.
 > 
-> What an understatement :-)
->  
->> It turns out commit e2091cedd51bf ("perf tools: Add MEM_TOPOLOGY
->> feature to perf data file") tries to open directory named
->> /sys/devices/system/node/ which does not exist on s390.
->>
->> This is the call stack:
->>  __cmd_record
->>  +---> perf_session__write_header
->>        +---> perf_header__adds_write
->>              +---> do_write_feat
->> 	           +---> write_mem_topology
->> 		         +---> build_mem_topology
->> 			       prints warning
->> The issue starts in do_write_feat() which unconditionally
->> loops over all features and now includes HEADER_MEM_TOPOLOGY and calls
->> write_mem_topology().
->> Function record__init_features() at the beginning of __cmd_record()
->> sets all features and then turns off some.
->>
->> Fix this by removed the warning, if the directory is not present
->> memory node information is not available and won't be displayed.
-> 
-> Can't we instead improve the error message and turn this into a
-> pr_debug2? Isn't it a reasonable scenario that the user expects this
-> topology information to be present and then ends up without it?
-> 
-> Perhaps something like:
-> 
-> 	pr_debug2("%s: could't read %s, does this arch have topology information?\n", __func__, path);
-> 
-> - Arnaldo
->  
+> A single kswapd thread used to keep up with all of the demand you could
+> create on a Linux system quite easily provided it didn’t have to scan a lot
+> of pages that were ineligible for eviction.
 
-Fine with me, I will provide a version 2....
+Well, what do you mean by ineligible for eviction? Could you be more
+specific? Are we talking about pages on LRU list or metadata and
+shrinker based reclaim.
 
+> 10 years ago, Fibre Channel was
+> the popular high performance interconnect and if you were lucky enough
+> to have the latest hardware rated at 10GFC, you could get 1.2GB/s per host
+> bus adapter. Also, most high end storage solutions were still using spinning
+> rust so it took an insane number of spindles behind each host bus adapter
+> to saturate the channel if the access patterns were random. There really
+> wasn’t a reason to try to thread kswapd, and I am pretty sure there hasn’t
+> been any attempts to do this in the last 10 years.
+
+I do not really see your point. Yeah you can get a faster storage today.
+So what? Pagecache has always been bound by the RAM speed.
+
+> > It is just a matter of memory hogs tunning to end in the very same
+> > situtation AFAICS. Moreover the more they are going to allocate the more
+> > less CPU time will _other_ (non-allocating) task get.
+> 
+> Please describe the scenario a bit more clearly. Once you start constructing
+> the workload that can create this scenario, I think you will find that you end
+> up with a mix that is rarely seen in practice.
+
+What I meant is that the more you reclaim in the background to more you
+allow memory hogs to allocate because they will not get throttled. All
+that on behalf of other workload which is not memory bound and cannot
+use CPU cycles additional kswapd would consume. Think of any computation
+intensive workload spreading over most CPUs and a memory hungry data
+processing.
 -- 
-Thomas Richter, Dept 3303, IBM LTC Boeblingen Germany
---
-Vorsitzende des Aufsichtsrats: Martina Koederitz 
-Geschäftsführung: Dirk Wittkopp
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
+Michal Hocko
+SUSE Labs
