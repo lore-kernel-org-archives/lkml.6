@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752860AbeDLQBf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 12:01:35 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:38060 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751870AbeDLQBc (ORCPT
+        id S1752948AbeDLQBm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 12:01:42 -0400
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:42084 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752806AbeDLQBe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 12:01:32 -0400
-X-Google-Smtp-Source: AIpwx49jHl9b9JT1a4EKZ3M7ZAPwe5KUvH5gYzG5SPqZ/QizdUPQHUWR8jqyvn9BpkckInlh/KUdoA==
+        Thu, 12 Apr 2018 12:01:34 -0400
+X-Google-Smtp-Source: AIpwx4+MoMxWzkaIQOWr+4CEgcFnyEf0OJecq8VQn7eaS/N2fQ93VoRv/qLgLO5fw0P0gx/hZh4MLA==
 From: Oleksandr Andrushchenko <andr2000@gmail.com>
 X-Google-Original-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
@@ -15,10 +15,11 @@ To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
 Cc: boris.ostrovsky@oracle.com, jgross@suse.com,
         iurii.konovalenko@globallogic.com,
         oleksandr.dmytryshyn@globallogic.com, konrad.wilk@oracle.com,
-        tiwai@suse.de, andr2000@gmail.com
-Subject: [PATCH 3/5] xen/sndif: Make requests and responses 64 octets long
-Date: Thu, 12 Apr 2018 19:01:00 +0300
-Message-Id: <20180412160102.15833-4-oleksandr_andrushchenko@epam.com>
+        tiwai@suse.de, andr2000@gmail.com,
+        Oleksandr Grytsov <oleksandr_grytsov@epam.com>
+Subject: [PATCH 4/5] xen/sndif: Add explicit back and front synchronization
+Date: Thu, 12 Apr 2018 19:01:01 +0300
+Message-Id: <20180412160102.15833-5-oleksandr_andrushchenko@epam.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180412160102.15833-1-oleksandr_andrushchenko@epam.com>
 References: <20180412160102.15833-1-oleksandr_andrushchenko@epam.com>
@@ -26,116 +27,290 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Extend the size of the requests and responses to 64 octets.
-Bump protocol version to 2.
+In order to provide explicit synchronization between backend and
+frontend the following changes are introduced in the protocol:
+ - add new ring buffer for sending asynchronous events from
+   backend to frontend to report number of bytes played by the
+   frontend (XENSND_EVT_CUR_POS)
+ - introduce trigger events for playback control: start/stop/pause/resume
+ - add "req-" prefix to event-channel and ring-ref to unify naming
+   of the Xen event channels for requests and events
 
 Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Signed-off-by: Oleksandr Grytsov <oleksandr_grytsov@epam.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Takashi Iwai <tiwai@suse.de>
 ---
- include/xen/interface/io/sndif.h | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ include/xen/interface/io/sndif.h | 162 ++++++++++++++++++++++++++++++-
+ 1 file changed, 161 insertions(+), 1 deletion(-)
 
 diff --git a/include/xen/interface/io/sndif.h b/include/xen/interface/io/sndif.h
-index b775df96f021..d48175f1a3d2 100644
+index d48175f1a3d2..131c3b469d4a 100644
 --- a/include/xen/interface/io/sndif.h
 +++ b/include/xen/interface/io/sndif.h
-@@ -41,7 +41,7 @@
-  *                           Protocol version
+@@ -113,6 +113,8 @@
+  *
+  * /local/domain/1/device/vsnd/0/0/0/ring-ref = "386"
+  * /local/domain/1/device/vsnd/0/0/0/event-channel = "15"
++ * /local/domain/1/device/vsnd/0/0/0/evt-ring-ref = "1386"
++ * /local/domain/1/device/vsnd/0/0/0/evt-event-channel = "215"
+  *
+  *------------------------------ Stream 1, capture ----------------------------
+  *
+@@ -122,6 +124,8 @@
+  *
+  * /local/domain/1/device/vsnd/0/0/1/ring-ref = "384"
+  * /local/domain/1/device/vsnd/0/0/1/event-channel = "13"
++ * /local/domain/1/device/vsnd/0/0/1/evt-ring-ref = "1384"
++ * /local/domain/1/device/vsnd/0/0/1/evt-event-channel = "213"
+  *
+  *------------------------------- PCM device 1 --------------------------------
+  *
+@@ -135,6 +139,8 @@
+  *
+  * /local/domain/1/device/vsnd/0/1/0/ring-ref = "387"
+  * /local/domain/1/device/vsnd/0/1/0/event-channel = "151"
++ * /local/domain/1/device/vsnd/0/1/0/evt-ring-ref = "1387"
++ * /local/domain/1/device/vsnd/0/1/0/evt-event-channel = "351"
+  *
+  *------------------------------- PCM device 2 --------------------------------
+  *
+@@ -147,6 +153,8 @@
+  *
+  * /local/domain/1/device/vsnd/0/2/0/ring-ref = "389"
+  * /local/domain/1/device/vsnd/0/2/0/event-channel = "152"
++ * /local/domain/1/device/vsnd/0/2/0/evt-ring-ref = "1389"
++ * /local/domain/1/device/vsnd/0/2/0/evt-event-channel = "452"
+  *
   ******************************************************************************
-  */
--#define XENSND_PROTOCOL_VERSION	1
-+#define XENSND_PROTOCOL_VERSION	2
+  *                            Backend XenBus Nodes
+@@ -292,6 +300,23 @@
+  *      The Xen grant reference granting permission for the backend to map
+  *      a sole page in a single page sized ring buffer.
+  *
++ *--------------------- Stream Event Transport Parameters ---------------------
++ *
++ * This communication path is used to deliver asynchronous events from backend
++ * to frontend, set up per stream.
++ *
++ * evt-event-channel
++ *      Values:         <uint32_t>
++ *
++ *      The identifier of the Xen event channel used to signal activity
++ *      in the ring buffer.
++ *
++ * evt-ring-ref
++ *      Values:         <uint32_t>
++ *
++ *      The Xen grant reference granting permission for the backend to map
++ *      a sole page in a single page sized ring buffer.
++ *
+  ******************************************************************************
+  *                               STATE DIAGRAMS
+  ******************************************************************************
+@@ -439,6 +464,19 @@
+ #define XENSND_OP_GET_VOLUME		5
+ #define XENSND_OP_MUTE			6
+ #define XENSND_OP_UNMUTE		7
++#define XENSND_OP_TRIGGER		8
++
++#define XENSND_OP_TRIGGER_START		0
++#define XENSND_OP_TRIGGER_PAUSE		1
++#define XENSND_OP_TRIGGER_STOP		2
++#define XENSND_OP_TRIGGER_RESUME	3
++
++/*
++ ******************************************************************************
++ *                                 EVENT CODES
++ ******************************************************************************
++ */
++#define XENSND_EVT_CUR_POS		0
  
  /*
   ******************************************************************************
-@@ -533,7 +533,7 @@
-  *
-  *---------------------------------- Requests ---------------------------------
-  *
-- * All request packets have the same length (32 octets)
-+ * All request packets have the same length (64 octets)
-  * All request packets have common header:
-  *         0                1                 2               3        octet
+@@ -455,6 +493,8 @@
+ #define XENSND_FIELD_VCARD_LONG_NAME	"long-name"
+ #define XENSND_FIELD_RING_REF		"ring-ref"
+ #define XENSND_FIELD_EVT_CHNL		"event-channel"
++#define XENSND_FIELD_EVT_RING_REF	"evt-ring-ref"
++#define XENSND_FIELD_EVT_EVT_CHNL	"evt-event-channel"
+ #define XENSND_FIELD_DEVICE_NAME	"name"
+ #define XENSND_FIELD_TYPE		"type"
+ #define XENSND_FIELD_STREAM_UNIQUE_ID	"unique-id"
+@@ -566,7 +606,9 @@
   * +----------------+----------------+----------------+----------------+
-@@ -570,7 +570,7 @@
+  * |                           gref_directory                          | 24
   * +----------------+----------------+----------------+----------------+
-  * |/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/|
-  * +----------------+----------------+----------------+----------------+
-- * |                             reserved                              | 32
-+ * |                             reserved                              | 64
-  * +----------------+----------------+----------------+----------------+
-  *
-  * pcm_rate - uint32_t, stream data rate, Hz
-@@ -639,7 +639,7 @@ struct xensnd_page_directory {
+- * |                             reserved                              | 28
++ * |                             period_sz                             | 28
++ * +----------------+----------------+----------------+----------------+
++ * |                             reserved                              | 32
   * +----------------+----------------+----------------+----------------+
   * |/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/|
   * +----------------+----------------+----------------+----------------+
-- * |                             reserved                              | 32
-+ * |                             reserved                              | 64
-  * +----------------+----------------+----------------+----------------+
+@@ -578,6 +620,14 @@
+  * pcm_channels - uint8_t, number of channels of this stream,
+  *   [channels-min; channels-max]
+  * buffer_sz - uint32_t, buffer size to be allocated, octets
++ * period_sz - uint32_t, event period size, octets
++ *   This is the requested value of the period at which frontend would
++ *   like to receive XENSND_EVT_CUR_POS notifications from the backend when
++ *   stream position advances during playback/capture.
++ *   It shows how many octets are expected to be played/captured before
++ *   sending such an event.
++ *   If set to 0 no XENSND_EVT_CUR_POS events are sent by the backend.
++ *
+  * gref_directory - grant_ref_t, a reference to the first shared page
+  *   describing shared buffer references. At least one page exists. If shared
+  *   buffer size  (buffer_sz) exceeds what can be addressed by this single page,
+@@ -592,6 +642,7 @@ struct xensnd_open_req {
+ 	uint16_t reserved;
+ 	uint32_t buffer_sz;
+ 	grant_ref_t gref_directory;
++	uint32_t period_sz;
+ };
+ 
+ /*
+@@ -754,8 +805,32 @@ struct xensnd_rw_req {
   *
-  * Request read/write - used for read (for capture) or write (for playback):
-@@ -657,7 +657,7 @@ struct xensnd_page_directory {
-  * +----------------+----------------+----------------+----------------+
-  * |/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/|
-  * +----------------+----------------+----------------+----------------+
-- * |                             reserved                              | 32
+  * The 'struct xensnd_rw_req' is also used for XENSND_OP_SET_VOLUME,
+  * XENSND_OP_GET_VOLUME, XENSND_OP_MUTE, XENSND_OP_UNMUTE.
++ *
++ * Request stream running state change - trigger PCM stream running state
++ * to start, stop, pause or resume:
++ *
++ *         0                1                 2               3        octet
++ * +----------------+----------------+----------------+----------------+
++ * |               id                |   _OP_TRIGGER  |    reserved    | 4
++ * +----------------+----------------+----------------+----------------+
++ * |                             reserved                              | 8
++ * +----------------+----------------+----------------+----------------+
++ * |      type      |                     reserved                     | 12
++ * +----------------+----------------+----------------+----------------+
++ * |                             reserved                              | 16
++ * +----------------+----------------+----------------+----------------+
++ * |/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/|
++ * +----------------+----------------+----------------+----------------+
 + * |                             reserved                              | 64
-  * +----------------+----------------+----------------+----------------+
-  *
-  * operation - XENSND_OP_READ for read or XENSND_OP_WRITE for write
-@@ -684,7 +684,7 @@ struct xensnd_rw_req {
-  * +----------------+----------------+----------------+----------------+
-  * |/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/|
-  * +----------------+----------------+----------------+----------------+
-- * |                             reserved                              | 32
-+ * |                             reserved                              | 64
-  * +----------------+----------------+----------------+----------------+
-  *
-  * operation - XENSND_OP_SET_VOLUME for volume set
-@@ -726,7 +726,7 @@ struct xensnd_rw_req {
-  * +----------------+----------------+----------------+----------------+
-  * |/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/|
-  * +----------------+----------------+----------------+----------------+
-- * |                             reserved                              | 32
-+ * |                             reserved                              | 64
-  * +----------------+----------------+----------------+----------------+
-  *
-  * operation - XENSND_OP_MUTE for mute or XENSND_OP_UNMUTE for unmute
-@@ -759,7 +759,7 @@ struct xensnd_rw_req {
++ * +----------------+----------------+----------------+----------------+
++ *
++ * type - uint8_t, XENSND_OP_TRIGGER_XXX value
+  */
+ 
++struct xensnd_trigger_req {
++	uint8_t type;
++};
++
  /*
   *---------------------------------- Responses --------------------------------
   *
-- * All response packets have the same length (32 octets)
-+ * All response packets have the same length (64 octets)
-  *
-  * Response for all requests:
-  *         0                1                 2               3        octet
-@@ -772,7 +772,7 @@ struct xensnd_rw_req {
-  * +----------------+----------------+----------------+----------------+
-  * |/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/|
-  * +----------------+----------------+----------------+----------------+
-- * |                             reserved                              | 32
-+ * |                             reserved                              | 64
-  * +----------------+----------------+----------------+----------------+
-  *
+@@ -778,8 +853,51 @@ struct xensnd_rw_req {
   * id - uint16_t, copied from the request
-@@ -787,7 +787,7 @@ struct xensnd_req {
+  * operation - uint8_t, XENSND_OP_* - copied from request
+  * status - int32_t, response status, zero on success and -XEN_EXX on failure
++ *
++ *----------------------------------- Events ----------------------------------
++ *
++ * Events are sent via shared page allocated by the front and propagated by
++ *   evt-event-channel/evt-ring-ref XenStore entries
++ * All event packets have the same length (64 octets)
++ * All event packets have common header:
++ *         0                1                 2               3        octet
++ * +----------------+----------------+----------------+----------------+
++ * |               id                |      type      |   reserved     | 4
++ * +----------------+----------------+----------------+----------------+
++ * |                             reserved                              | 8
++ * +----------------+----------------+----------------+----------------+
++ *
++ * id - uint16_t, event id, may be used by front
++ * type - uint8_t, type of the event
++ *
++ *
++ * Current stream position - event from back to front when stream's
++ *   playback/capture position has advanced:
++ *         0                1                 2               3        octet
++ * +----------------+----------------+----------------+----------------+
++ * |               id                |   _EVT_CUR_POS |   reserved     | 4
++ * +----------------+----------------+----------------+----------------+
++ * |                             reserved                              | 8
++ * +----------------+----------------+----------------+----------------+
++ * |                         position low 32-bit                       | 12
++ * +----------------+----------------+----------------+----------------+
++ * |                         position high 32-bit                      | 16
++ * +----------------+----------------+----------------+----------------+
++ * |                             reserved                              | 20
++ * +----------------+----------------+----------------+----------------+
++ * |/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/|
++ * +----------------+----------------+----------------+----------------+
++ * |                             reserved                              | 64
++ * +----------------+----------------+----------------+----------------+
++ *
++ * position - current value of stream's playback/capture position, octets
++ *
+  */
+ 
++struct xensnd_cur_pos_evt {
++	uint64_t position;
++};
++
+ struct xensnd_req {
+ 	uint16_t id;
+ 	uint8_t operation;
+@@ -787,6 +905,7 @@ struct xensnd_req {
  	union {
  		struct xensnd_open_req open;
  		struct xensnd_rw_req rw;
--		uint8_t reserved[24];
-+		uint8_t reserved[56];
++		struct xensnd_trigger_req trigger;
+ 		uint8_t reserved[56];
  	} op;
  };
- 
-@@ -796,7 +796,7 @@ struct xensnd_resp {
- 	uint8_t operation;
- 	uint8_t reserved;
- 	int32_t status;
--	uint8_t reserved1[24];
-+	uint8_t reserved1[56];
+@@ -799,6 +918,47 @@ struct xensnd_resp {
+ 	uint8_t reserved1[56];
  };
  
++struct xensnd_evt {
++	uint16_t id;
++	uint8_t type;
++	uint8_t reserved[5];
++	union {
++		struct xensnd_cur_pos_evt cur_pos;
++		uint8_t reserved[56];
++	} op;
++};
++
  DEFINE_RING_TYPES(xen_sndif, struct xensnd_req, struct xensnd_resp);
+ 
++/*
++ ******************************************************************************
++ *                        Back to front events delivery
++ ******************************************************************************
++ * In order to deliver asynchronous events from back to front a shared page is
++ * allocated by front and its granted reference propagated to back via
++ * XenStore entries (evt-ring-ref/evt-event-channel).
++ * This page has a common header used by both front and back to synchronize
++ * access and control event's ring buffer, while back being a producer of the
++ * events and front being a consumer. The rest of the page after the header
++ * is used for event packets.
++ *
++ * Upon reception of an event(s) front may confirm its reception
++ * for either each event, group of events or none.
++ */
++
++struct xensnd_event_page {
++	uint32_t in_cons;
++	uint32_t in_prod;
++	uint8_t reserved[56];
++};
++
++#define XENSND_EVENT_PAGE_SIZE XEN_PAGE_SIZE
++#define XENSND_IN_RING_OFFS (sizeof(struct xensnd_event_page))
++#define XENSND_IN_RING_SIZE (XENSND_EVENT_PAGE_SIZE - XENSND_IN_RING_OFFS)
++#define XENSND_IN_RING_LEN (XENSND_IN_RING_SIZE / sizeof(struct xensnd_evt))
++#define XENSND_IN_RING(page) \
++	((struct xensnd_evt *)((char *)(page) + XENSND_IN_RING_OFFS))
++#define XENSND_IN_RING_REF(page, idx) \
++	(XENSND_IN_RING((page))[(idx) % XENSND_IN_RING_LEN])
++
+ #endif /* __XEN_PUBLIC_IO_SNDIF_H__ */
 -- 
 2.17.0
