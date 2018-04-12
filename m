@@ -1,119 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752904AbeDLB4M (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 21:56:12 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41550 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751858AbeDLB4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 21:56:10 -0400
-Subject: Re: [PATCH v9 5/5] iommu/arm-smmu: Add support for qcom,smmu-v2
- variant
-To: Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>
-References: <20180313085534.11650-1-vivek.gautam@codeaurora.org>
- <20180313085534.11650-6-vivek.gautam@codeaurora.org>
- <61d30fff-1bf8-d2c1-bbe9-f93de836ae77@huawei.com>
- <7d5af071-ef98-8461-3ce9-e84fc0b3956a@codeaurora.org>
- <d97872fe-5e8e-cc27-e385-64cea8ea2458@huawei.com>
- <CAAFQd5Cj3qaqt8ACabZwN4ZKaNbF9N9suGVaOKD8-kNxgfeeVA@mail.gmail.com>
- <65a57964-805b-3a38-71a2-0c383af30539@huawei.com>
- <ff1c730f-0009-58e5-cf4a-45fe9ab93d1e@codeaurora.org>
-CC: Mark Rutland <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>, <gaojianbo@hisilicon.com>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-Message-ID: <76065271-c6e6-2ce7-8608-c18b621055ce@huawei.com>
-Date: Thu, 12 Apr 2018 09:55:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.0
+        id S1752638AbeDLB6A (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 21:58:00 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:40743 "EHLO
+        lgeamrelo13.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751633AbeDLB57 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 21:57:59 -0400
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: namhyung@kernel.org
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date: Thu, 12 Apr 2018 10:57:56 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Kim Phillips <kim.phillips@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, kernel-team@lge.com
+Subject: Re: [PATCH] Revert "perf machine: Fix paranoid check in
+ machine__set_kernel_mmap()"
+Message-ID: <20180412015756.GA6962@sejong>
+References: <20180215122635.24029-1-jolsa@kernel.org>
+ <20180215122635.24029-7-jolsa@kernel.org>
+ <20180219022036.GB1583@sejong>
+ <20180219100140.GA17630@krava>
+ <20180219101936.GD1583@sejong>
+ <20180219104917.GA19365@krava>
+ <20180219121817.GC14978@kernel.org>
+ <20180411180752.b64c4d105222fb22c159b852@arm.com>
+ <20180411233109.GA6320@sejong>
+ <20180411192940.de8143a80bd9e5d98d87f6ec@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <ff1c730f-0009-58e5-cf4a-45fe9ab93d1e@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.40]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180411192940.de8143a80bd9e5d98d87f6ec@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vivek,
+On Wed, Apr 11, 2018 at 07:29:40PM -0500, Kim Phillips wrote:
+> On Thu, 12 Apr 2018 08:31:09 +0900
+> Namhyung Kim <namhyung@kernel.org> wrote:
+> 
+> > Hello,
+> 
+> Hi,
+> 
+> > On Wed, Apr 11, 2018 at 06:07:52PM -0500, Kim Phillips wrote:
+> > > ---
+> > > It's not clear to me what the specific intent of the original commit
+> > > was, thus the revert.
+> > 
+> > Hmm.. maybe your kernel map has non-zero start and zero end.  I
+> 
+> On x86, the first line in /proc/kallsyms is:
+> 
+> 0000000000000000 A irq_stack_union
+> 
+> On arm64, it's:
+> 
+> ffff200008080000 t _head
+> 
+> Another arm64 box has:
+> 
+> ffff000008080000 t _head
+> 
+> (neither have RANDOMIZE_BASE set FWIW)
+> 
+> > thought it was just from an old or invalid data.  But now I think that
+> 
+> It would be good to know what that was, yes.
+> 
+> > overflow can create it..  could you please show me the mmap event?
+> > 
+> >   $ perf script --show-mmap-events
+> 
+> Here you go:
+> 
+>          swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffff200008080000(0xdffff7f7ffff) @ 0xffff200008080000]: x [kernel.kallsyms]_text
 
-On 2018/4/11 13:15, Vivek Gautam wrote:
-> Hi Yisheng,
-> 
-> 
-> On 4/11/2018 6:52 AM, Yisheng Xie wrote:
->> Hi Tomasz,
->>
->> On 2018/4/10 21:14, Tomasz Figa wrote:
->>> Hi Yisheng,
->>>
->>> Sorry, I think we missed your question here.
->>>
->>> On Wed, Mar 28, 2018 at 3:12 PM Yisheng Xie <xieyisheng1@huawei.com> wrote:
->>>
->>>> Hi Vivek,
->>>> On 2018/3/28 12:37, Vivek Gautam wrote:
->>>>> Hi Yisheng
->>>>>
->>>>>
->>>>> On 3/28/2018 6:54 AM, Yisheng Xie wrote:
->>>>>> Hi Vivek,
->>>>>>
->>>>>> On 2018/3/13 16:55, Vivek Gautam wrote:
->>>>>>> +- power-domains:  Specifiers for power domains required to be
->>> powered on for
->>>>>>> +                  the SMMU to operate, as per generic power domain
->>> bindings.
->>>>>>> +
->>>>>> In this patchset, power-domains is not used right? And you just do the
->>> clock gating,
->>>>>> but not power gating, right?
->>>>> We are handling the power-domains too. Please see the example in this
->>> binding doc.
->>>
->>>> I see, but I do not find the point in code of these patchset, do you mean
->>> PMIC(e.g mmcc)
->>>> will gate the power domain of SMMU(e.g. MDSS_GDSC of mmcc) when PMIC
->>> suspend?
->>>
->>>
->>> If respective SoC power domains is registered as a standard genpd PM
->>> domain, then the runtime PM subsystem will take care of power domain
->>> control at runtime suspend and resume.
->>>
->> Get it, thanks for your explain, I should have learned about this.
-> 
-> Sorry, i missed your subsequent question, and Tomasz has explained it now.
+   0xffff200008080000
+ +     0xdffff7f7ffff
+ --------------------
+   0xffffffffffffffff
 
-Never mind about that.
+So it should have ~0ULL of the 'end' already.  I don't know why it
+caused the problem..  Was it from the `perf.good`?
 
-> Let me know if you have further questions.
 
-Presently, no other questions. Thanks for your kind help.
+>          swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffff2000021e0000(0x18000) @ 0]: x /lib/modules/4.16.0+/kernel/drivers/bus/arm-ccn.ko
 
-Thanks
-Yisheng
-> 
-> regards
-> Vivek
->>
->> Thanks
->> Yisheng
->>
->>> Best regards,
->>> Tomasz
->>>
->>> .
->>>
->> -- 
->> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> .
-> 
+Hmm.. also it seems arm64 loads modules under the kernel.  Then the
+fixup logic in machine__create_kernel_maps() won't work.  Also as we
+don't use the map_groups__fixup_end() anymore I think it's ok just
+checking the end address.
+
+Thanks,
+Namhyung
