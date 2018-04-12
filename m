@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753229AbeDLUV4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 16:21:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43290 "EHLO mx1.redhat.com"
+        id S1753331AbeDLUXP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 16:23:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49066 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752283AbeDLUVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 16:21:54 -0400
-Subject: Re: [PATCH 1/2] X86/KVM: Properly restore 'tsc_offset' when running
- an L2 guest
-To: "Raslan, KarimAllah" <karahmed@amazon.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Cc: "jmattson@google.com" <jmattson@google.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>
-References: <1523545958-28059-1-git-send-email-karahmed@amazon.de>
- <d03d253a-d184-4c95-91b2-45e94659b9bd@redhat.com>
- <1523552643.32594.18.camel@amazon.de> <1523553662.32594.29.camel@amazon.de>
+        id S1752077AbeDLUXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 16:23:12 -0400
+Subject: Re: [PATCH 06/10] KVM/nVMX: Use kvm_vcpu_map when mapping the virtual
+ APIC page
+To: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: KarimAllah Ahmed <karahmed@amazon.de>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, hpa@zytor.com,
+        jmattson@google.com, mingo@redhat.com, rkrcmar@redhat.com,
+        tglx@linutronix.de
+References: <1519235241-6500-1-git-send-email-karahmed@amazon.de>
+ <1519235241-6500-7-git-send-email-karahmed@amazon.de>
+ <bdb99bea-9e5e-951e-3016-4acd162c619e@redhat.com>
+ <20180412175742.GA14534@linux.intel.com>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -53,48 +54,33 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <ca0e9ac3-1f7b-cefb-a0fe-cc8e6f938c6c@redhat.com>
-Date: Thu, 12 Apr 2018 22:21:51 +0200
+Message-ID: <fdc94c1f-fb39-edc2-b7eb-cea87a69023d@redhat.com>
+Date: Thu, 12 Apr 2018 22:23:05 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1523553662.32594.29.camel@amazon.de>
+In-Reply-To: <20180412175742.GA14534@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/04/2018 19:21, Raslan, KarimAllah wrote:
-> Now looking further at the code, it seems that everywhere in the code
-> tsc_offset is treated as the L01 TSC_OFFSET.
+On 12/04/2018 19:57, Sean Christopherson wrote:
+> On Thu, Apr 12, 2018 at 04:38:39PM +0200, Paolo Bonzini wrote:
+>> On 21/02/2018 18:47, KarimAllah Ahmed wrote:
+>>> +
+>>> +		if (kvm_vcpu_map(vcpu, gpa_to_gfn(vmcs12->virtual_apic_page_addr), map))
+>>> +			vmcs_write64(VIRTUAL_APIC_PAGE_ADDR, gfn_to_gpa(map->pfn));
+>>
+>> This should in principle be pfn_to_hpa.  However, pfn_to_hpa is unused;
+>> let's just remove it and do "<< PAGE_SHIFT".  Unlike gfn_to_gpa, where
+>> in principle the shift could be different, pfn_to_hpa is *by definition*
+>> a shift left by PAGE_SHIFT.
 > 
-> Like here:
-> 
->         if (vmcs12->cpu_based_vm_exec_control &
-> CPU_BASED_USE_TSC_OFFSETING)
->                 vmcs_write64(TSC_OFFSET,
->                         vcpu->arch.tsc_offset + vmcs12->tsc_offset);
-> 
-> and here:
-> 
->         vmcs_write64(TSC_OFFSET, vcpu->arch.tsc_offset);
-> 
-> and here:
-> 
-> u64 kvm_read_l1_tsc(struct kvm_vcpu *vcpu, u64 host_tsc)
-> {
->         return vcpu->arch.tsc_offset + kvm_scale_tsc(vcpu, host_tsc);
-> }
-> EXPORT_SYMBOL_GPL(kvm_read_l1_tsc);
-> 
-> ... would not it be simpler and more inline with the current code to
-> just do what I did above + remove the "+ l1_tsc_offset" + probably
-> document tsc_offset ?
+> Any reason not to use PFN_PHYS instead of the handcoded shift?
 
-Problem is, I don't think it's correct. :)  A good start would be to try
-disabling MSR_IA32_TSC interception in KVM, prepare a kvm-unit-tests
-test that reads the MSR, and see if you get the host or guest TSC...
+That works too of course.  It's just not used much (or at all?) in KVM.
 
 Paolo
