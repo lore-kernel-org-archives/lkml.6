@@ -1,35 +1,79 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx4+nk8o4rIxZBTnVsJEjcZIVPnAFpD+vd80RzOBeQVpHSn7IyVnfPyL8cylF0p1FJq59qvUz
-ARC-Seal: i=1; a=rsa-sha256; t=1523561393; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ssl0BhReKUsJ3K89dNFwDlfOSoz44mU1eRbCkeDo4+TpKbAyE/uk8f3IQehvfWmPis
-         dp04pc9Ux6lapqFPY78HKoeVecAU1Mvn0fu5ej7eDjK5IfqAw8zc4v5srKrHeCoPjTEq
-         q2rs7/42E9Y5+m+TMaQYGf/fR5hJrjYHb7KmFoKIVnI/oj1s47JY5CE1fz1kMsq6LG4D
-         9Ha16mUze52OQXrL8jG9uRcpyUlWt3mGCvHwhEx+N8x0t9vv8E5bVciRSVXXpjBx2741
-         btOWWmBZ4IWvUMVopWkbOOBM9PYdaUcRdMySm64FNrDHBi2eFmSZb9U8B8MyEoxndvN/
-         E9PQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=SzqMRF9Nik2yJhG+kNbLUhHNcLdq+Xms96O6j1UUNVk=;
-        b=ecyklSBJFcuP+qF55aNzEZVmr8gSW3s/+fkpr649MVcSj4t2YOaAiSNcGjfxKeKKUS
-         50CvqTPByg7KvCIB9MB3hA+rJPKyUvcJVmcAAOWeMG0DCRK4x8jLrZkVSO62FYYfMsv5
-         lRX0MzO+VMMLuIg+zpddnj8M+1LiqkyyvXZbgXdkvcGX1nN01z6TgrCz08pGjBo75ZyE
-         8GEt9jgcBjB2hpnJvOSL+fUIWqH3wjcLfbQsSfc27sC9b8K1SRBG5KEY5/fodSlTujKZ
-         9vln5tG+C+whgYfhGhIXXymhFdIMe2MmADL61j1c/7b8S/MZU5NvJot/KjZVHW4KDVRs
-         E1RA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1658150-1523561368-2-6557391316998779684
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523561367; b=utCE5Bkp7IkgBBY0z6oKR9tN1VmMUFVCi72YFTFfQNNjxx9IvH
+    xQb2Ws0gKpLxZqzYA59rO/mzFkOvHKByfrejqmA2d6M+uRPPlphYWnJjrTEb6m36
+    Hh6iJiNqlABK0RCg3509ih+ESEuxRcudhoAbIWi5LR9NMHg2BoaJQgHj+ooYxkbM
+    FnI+KyBidJnC7ObtIMjZmEvhLaMKxMIgwQHAEdeefIqaE8RngWuj/6gPbuMNTLmo
+    MilYmsL8spPFrdC7Ep1iumgWtkZtl1Mh1u/P0wg/Ws/MnCTQJ72kx+hpztTtdpo+
+    D39eBx8IoU6nyqQ9qvnpGNW4I0lJjyrdBonw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1523561367; bh=
+    cC+ou/Jb1GHL2s40ngd4q4wf+uZqSAkTawePb8loads=; b=sFK62aSJAyJBSWN+
+    FMbHOfBB7WdvlIWaH0nSMOsZ8HmLQ2FKZN3BWXWcgFxhNqCI05wjZyJL9kX6t3wC
+    QagI+rZyswmHSoT+4QY307/LJJ948nXDOiaFtuLl/dAd6s7aQVYSNpA/qBp+tbkB
+    /54DibDiRfv4Dc3rVBHvgo/8LxYiQkuQWAPAzKfCpyZ6SphZop/dIZtZ9axj5lL9
+    CozKQPxCqAvI3329SJafUXYYVd5zQC1kscy2Q16s4/S018XN6T2yGoHzmaSazHLv
+    KXyXllbYNqZ2rbyi48xTTT1q5IjTgJ90dDZDYh5p65cctZTuWhENaJUIxjYN5wZF
+    OYO0OA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfB320sJCwbYUoC2jb/H3zYniEDwEvTHz/C53OKbgZ7pIDfYzwkYgYiGyyhaNo53h7dk8nXtj3FSv9IsLu8zWNRr0usOEv6d0kJPvvfQATJ9Ktr4FH92t
+    AUChXZTDiWGM9ej4AfzbUveTv8igzZvCC3j8214XeK87OHpEJENIK80azj/iSaAK5HPWIsur/3nP/u6Noc5A0doqVvmMQk9WWs7NRFy7vg0uae8K0SiTWnOV
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=7d_E57ReAAAA:8
+    a=hD80L64hAAAA:8 a=drOt6m5kAAAA:8 a=7CQSdrXTAAAA:8 a=1XWaLZrsAAAA:8
+    a=JfrnYn6hAAAA:8 a=SOq6UgPBAAAA:8 a=WfulkdPnAAAA:8 a=FOH2dFAWAAAA:8
+    a=NufY4J3AAAAA:8 a=20KFwNOVAAAA:8 a=oGMlB6cnAAAA:8 a=meVymXHHAAAA:8
+    a=VnNF1IyMAAAA:8 a=UPm3pfgAAAAA:8 a=Z4Rwk6OoAAAA:8 a=pGLkceISAAAA:8
+    a=VwQbUJbxAAAA:8 a=xoWXsIQFf4P5xJNg6BwA:9 a=x8gzFH9gYPwA:10
+    a=jhqOcbufqs7Y1TYCrUUU:22 a=RMMjzBEyIzXRtoq5n5K6:22 a=a-qgeE7W1pNrGK8U0ZQC:22
+    a=1CNFftbPRP8L7MoqJWF3:22 a=3hv5r9HjGAh9o5iR9qwG:22 a=56QPVbyS4OZCpcuOg7Z9:22
+    a=i3VuKzQdj-NEYjvDI-p3:22 a=TPcZfFuj8SYsoCJAFAiX:22 a=NdAtdrkLVvyUPsUoGJp4:22
+    a=2JgSa4NbpEOStq-L5dxp:22 a=uD9XBtlS4o1URY3aiGdj:22 a=HkZW87K1Qel5hWWM3VKY:22
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753864AbeDLT3b (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Thu, 12 Apr 2018 15:29:31 -0400
-Received: from mail.efficios.com ([167.114.142.138]:45756 "EHLO
+        id S1753592AbeDLT2a (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 12 Apr 2018 15:28:30 -0400
+Received: from mail.efficios.com ([167.114.142.138]:45804 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753443AbeDLT21 (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Thu, 12 Apr 2018 15:28:27 -0400
+        with ESMTP id S1753510AbeDLT22 (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 12 Apr 2018 15:28:28 -0400
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -54,41 +98,20 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Shuah Khan <shuahkh@osg.samsung.com>,
         linux-kselftest@vger.kernel.org
-Subject: [RFC PATCH for 4.18 19/23] rseq: selftests: Provide percpu_op API
-Date: Thu, 12 Apr 2018 15:27:56 -0400
-Message-Id: <20180412192800.15708-20-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 20/23] rseq: selftests: Provide basic test
+Date: Thu, 12 Apr 2018 15:27:57 -0400
+Message-Id: <20180412192800.15708-21-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
 References: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597569911605150174?=
-X-GMAIL-MSGID: =?utf-8?q?1597569911605150174?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Introduce percpu-op.h API. It uses rseq internally as fast-path if
-invoked from the right CPU, else cpu_opv as slow-path if called
-from the wrong CPU or if rseq fails.
-
-This allows acting on per-cpu data from various CPUs transparently from
-user-space: cpu_opv will take care of migrating the thread to the
-requested CPU. Use-cases such as rebalancing memory across per-cpu
-memory pools, or migrating tasks for a user-space scheduler, are thus
-facilitated. This also handles debugger single-stepping.
-
-The use from userspace is, e.g. for a counter increment:
-
-    int cpu, ret;
-
-    cpu = rseq_cpu_start();
-    ret = percpu_addv(&data->c[cpu].count, 1, cpu);
-    if (unlikely(ret)) {
-         perror("percpu_addv");
-         return -1;
-    }
-    return 0;
+"basic_test" only asserts that RSEQ works moderately correctly. E.g.
+that the CPUID pointer works.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 CC: Shuah Khan <shuahkh@osg.samsung.com>
@@ -115,179 +138,71 @@ CC: Boqun Feng <boqun.feng@gmail.com>
 CC: linux-kselftest@vger.kernel.org
 CC: linux-api@vger.kernel.org
 ---
- tools/testing/selftests/rseq/percpu-op.h | 163 +++++++++++++++++++++++++++++++
- 1 file changed, 163 insertions(+)
- create mode 100644 tools/testing/selftests/rseq/percpu-op.h
+ tools/testing/selftests/rseq/basic_test.c | 55 +++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100644 tools/testing/selftests/rseq/basic_test.c
 
-diff --git a/tools/testing/selftests/rseq/percpu-op.h b/tools/testing/selftests/rseq/percpu-op.h
+diff --git a/tools/testing/selftests/rseq/basic_test.c b/tools/testing/selftests/rseq/basic_test.c
 new file mode 100644
-index 000000000000..c17d165438a6
+index 000000000000..e2086b3885d7
 --- /dev/null
-+++ b/tools/testing/selftests/rseq/percpu-op.h
-@@ -0,0 +1,163 @@
++++ b/tools/testing/selftests/rseq/basic_test.c
+@@ -0,0 +1,55 @@
 +/*
-+ * percpu-op.h
-+ *
-+ * (C) Copyright 2017 - Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-+ *
-+ * Permission is hereby granted, free of charge, to any person obtaining a copy
-+ * of this software and associated documentation files (the "Software"), to deal
-+ * in the Software without restriction, including without limitation the rights
-+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-+ * copies of the Software, and to permit persons to whom the Software is
-+ * furnished to do so, subject to the following conditions:
-+ *
-+ * The above copyright notice and this permission notice shall be included in
-+ * all copies or substantial portions of the Software.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-+ * SOFTWARE.
++ * Basic test coverage for critical regions and rseq_current_cpu().
 + */
 +
-+#ifndef PERCPU_OP_H
-+#define PERCPU_OP_H
++#define _GNU_SOURCE
++#include <assert.h>
++#include <sched.h>
++#include <signal.h>
++#include <stdio.h>
++#include <string.h>
++#include <sys/time.h>
 +
-+#include <stdint.h>
-+#include <stdbool.h>
-+#include <errno.h>
-+#include <stdlib.h>
 +#include "rseq.h"
-+#include "cpu-op.h"
 +
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_storev(intptr_t *v, intptr_t expect, intptr_t newv,
-+			 int cpu)
++void test_cpu_pointer(void)
 +{
-+	int ret;
++	cpu_set_t affinity, test_affinity;
++	int i;
 +
-+	ret = rseq_cmpeqv_storev(v, expect, newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_storev(v, expect, newv, cpu);
++	sched_getaffinity(0, sizeof(affinity), &affinity);
++	CPU_ZERO(&test_affinity);
++	for (i = 0; i < CPU_SETSIZE; i++) {
++		if (CPU_ISSET(i, &affinity)) {
++			CPU_SET(i, &test_affinity);
++			sched_setaffinity(0, sizeof(test_affinity),
++					&test_affinity);
++			assert(sched_getcpu() == i);
++			assert(rseq_current_cpu() == i);
++			assert(rseq_current_cpu_raw() == i);
++			assert(rseq_cpu_start() == i);
++			CPU_CLR(i, &test_affinity);
++		}
++	}
++	sched_setaffinity(0, sizeof(affinity), &affinity);
++}
++
++int main(int argc, char **argv)
++{
++	if (rseq_register_current_thread()) {
++		fprintf(stderr, "Error: rseq_register_current_thread(...) failed(%d): %s\n",
++			errno, strerror(errno));
++		goto init_thread_error;
++	}
++	printf("testing current cpu\n");
++	test_cpu_pointer();
++	if (rseq_unregister_current_thread()) {
++		fprintf(stderr, "Error: rseq_unregister_current_thread(...) failed(%d): %s\n",
++			errno, strerror(errno));
++		goto init_thread_error;
 +	}
 +	return 0;
++
++init_thread_error:
++	return -1;
 +}
-+
-+static inline __attribute__((always_inline))
-+int percpu_cmpnev_storeoffp_load(intptr_t *v, intptr_t expectnot,
-+			       off_t voffp, intptr_t *load, int cpu)
-+{
-+	int ret;
-+
-+	ret = rseq_cmpnev_storeoffp_load(v, expectnot, voffp, load, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpnev_storeoffp_load(v, expectnot, voffp,
-+						    load, cpu);
-+	}
-+	return 0;
-+}
-+
-+static inline __attribute__((always_inline))
-+int percpu_addv(intptr_t *v, intptr_t count, int cpu)
-+{
-+	if (rseq_unlikely(rseq_addv(v, count, cpu)))
-+		return cpu_op_addv(v, count, cpu);
-+	return 0;
-+}
-+
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_storev_storev(intptr_t *v, intptr_t expect,
-+				intptr_t *v2, intptr_t newv2,
-+				intptr_t newv, int cpu)
-+{
-+	int ret;
-+
-+	ret = rseq_cmpeqv_trystorev_storev(v, expect, v2, newv2,
-+					   newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_storev_storev(v, expect, v2, newv2,
-+						   newv, cpu);
-+	}
-+	return 0;
-+}
-+
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_storev_storev_release(intptr_t *v, intptr_t expect,
-+					intptr_t *v2, intptr_t newv2,
-+					intptr_t newv, int cpu)
-+{
-+	int ret;
-+
-+	ret = rseq_cmpeqv_trystorev_storev_release(v, expect, v2, newv2,
-+						   newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_storev_mb_storev(v, expect, v2, newv2,
-+						      newv, cpu);
-+	}
-+	return 0;
-+}
-+
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_cmpeqv_storev(intptr_t *v, intptr_t expect,
-+				intptr_t *v2, intptr_t expect2,
-+				intptr_t newv, int cpu)
-+{
-+	int ret;
-+
-+	ret = rseq_cmpeqv_cmpeqv_storev(v, expect, v2, expect2, newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_cmpeqv_storev(v, expect, v2, expect2,
-+						   newv, cpu);
-+	}
-+	return 0;
-+}
-+
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_memcpy_storev(intptr_t *v, intptr_t expect,
-+				void *dst, void *src, size_t len,
-+				intptr_t newv, int cpu)
-+{
-+	int ret;
-+
-+	ret = rseq_cmpeqv_trymemcpy_storev(v, expect, dst, src, len,
-+					   newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_memcpy_storev(v, expect, dst, src, len,
-+						   newv, cpu);
-+	}
-+	return 0;
-+}
-+
-+static inline __attribute__((always_inline))
-+int percpu_cmpeqv_memcpy_storev_release(intptr_t *v, intptr_t expect,
-+					void *dst, void *src, size_t len,
-+					intptr_t newv, int cpu)
-+{
-+	int ret;
-+
-+	ret = rseq_cmpeqv_trymemcpy_storev_release(v, expect, dst, src, len,
-+						   newv, cpu);
-+	if (rseq_unlikely(ret)) {
-+		if (ret > 0)
-+			return ret;
-+		return cpu_op_cmpeqv_memcpy_mb_storev(v, expect, dst, src, len,
-+						      newv, cpu);
-+	}
-+	return 0;
-+}
-+
-+#endif  /* PERCPU_OP_H_ */
 -- 
 2.11.0
 
