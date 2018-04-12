@@ -1,143 +1,149 @@
-Return-Path: <linyu.yuan@nokia-sbell.com>
-X-Google-Smtp-Source: AIpwx4+RrOrLXJ6de/7q0ey+wZ5Qadzkba7SjQAQP3hbbWI/AxTP+BE7roDxLBOCRvlrFKpeUZUy
-ARC-Seal: i=1; a=rsa-sha256; t=1523492984; cv=none;
+Return-Path: <dvyukov@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523527479; cv=none;
         d=google.com; s=arc-20160816;
-        b=pYK972f4YjJNGfz1blNbNL29ID6Q9gOgyZaYgjMISHe6o4KWZEqgiidgavbUorFXHr
-         xn4E49sxohPfmymluqSrSZJjeo2n5dZxZLtEazKUPBNVfoZprRwIVDuA9lRgXAXl8pcX
-         vRqlu5ssi7V7WdV8POEOhwYvxa6b6VG1Grt2t4HwVm9heD5aDK3xSmu3rUwvYOPXRuPr
-         eBWlK5eAbnE8GXv7Syr/oGGF1eMg4+PwaTvcKHh8vfi9tHPGw3YRaJDD005MXTHqAM29
-         vTWmN0tXHGgs5dN1NkJo5KrL73yx12xHru3JzD+lXM9qGwFS/eDeowYt984ECPCle49N
-         XgGQ==
+        b=pVXRPbA+5a90KI125Dq7QJTIXkXrc3GFAqU8t8gRHZhZOxYMDTo0Q2Vq2jW6rVw4e8
+         yCXvex/B9/HkeD4IxzL2boIXKY5aNm0EivCLB/GLxRSXYarDwybU9knB9NVSkRtrb31O
+         qlm3B57LpWNhmAWeeTfJsMWOw1UX7BwycVW7Mgg+J0kHeFUPEygmeNNvS30sSCb37U1K
+         5nt4pQ4kuNG2q13RCU0kHY7aH8iQEEZCXWOmqbaTE3yIWCtLczpCCaQTHwdsTqTHW80a
+         A28aAf4dewKZXF4y9gYEr1Mq4gHlP/JCRIGDkQcl4KuLMLuPXiqb2Xro+OdPsUBuCoJ6
+         pCOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-language
-         :accept-language:in-reply-to:references:message-id:date:thread-index
-         :thread-topic:subject:cc:to:from:arc-authentication-results;
-        bh=TerkD/BmV3bmNgiGX9JyECaRAr5w8BRj3Nie0IC6itY=;
-        b=E7QlOVSQhMJMrh3zzvleGY6erB1N6NgAPbr1FaiD8btb9ZFCor6k8oG0difwhjCb8T
-         hsEKvI2lst0NE/2Gb8OaEKxqv6+4UMxKy2NiIFGOQncJnWdxd7ehgXIjYh7KbbSvGuff
-         4FGOU66ozmatWl7Eg90DwK+yJxzyq+bgXtDpknaUm1juFFuvM1EjE0gJSZMd7vpqN0/N
-         L3FJDNJ97DB2w0JU9UNN1ll9pj2Fo3C45RH4BwO7E1lXfIjBdBdsxKJ0OVzH1Qozh/qk
-         BM4RNP/VjlukFlqDQTQ5BYIc9iEm9aCOFWTaSZrNtF+E7PItpXOwO5gDREE0t6yYF1vl
-         cEIg==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=cXw2h+LhN9rSarHdY+R3lvp6jkFhUYSA6D2KH5KSrfU=;
+        b=XCsdms1bqI0I1lc2bkIbvj6zMp77Omnh1O5NPBYk/i4uEDIBg4UHVAiLHGsicvJrYB
+         3FSmYz2dViXgvCfR52Km9lxc0ffRUXpTbN0Qs91Huas0nn21DR48QCvT/x/fesEwOfh+
+         A1wmw9E3IGtznVxiHYtpFQl8nNESDfneClkxryVlQSQwTXfFd7Y5FHFE2ojBLSbtxLbA
+         W67ciSprXT40w9UOJVH03t1Sr2NSJdHZLQS0w7zQuFMHk7W1o5svSTxsQgR7vg2B3/PG
+         hKlSUoVHHZQs4lzL+CXYKBnNWdN5QKEXFo1/l0J+3GumpLwCDFro3BLnPQkqwgAbllJG
+         qxyw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of linyu.yuan@nokia-sbell.com designates 116.246.26.71 as permitted sender) smtp.mailfrom=linyu.yuan@nokia-sbell.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nokia-sbell.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=d0n1Vzm8;
+       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dvyukov@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of linyu.yuan@nokia-sbell.com designates 116.246.26.71 as permitted sender) smtp.mailfrom=linyu.yuan@nokia-sbell.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nokia-sbell.com
-X-AuditID: ac189297-f79de6d000001a79-01-5acea874cd93
-From: "Yuan, Linyu (NSB - CN/Shanghai)" <linyu.yuan@nokia-sbell.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-CC: "bridge@lists.linux-foundation.org" <bridge@lists.linux-foundation.org>,
-	David Miller <davem@davemloft.net>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>, netdev
-	<netdev@vger.kernel.org>, stephen hemminger <stephen@networkplumber.org>,
-	syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: RE: WARNING in kobject_add_internal
-Thread-Topic: WARNING in kobject_add_internal
-Thread-Index: AQHT0aWGNUfNaJfVfUyHdQsSj4DTeqP8RqGA
-Date: Thu, 12 Apr 2018 00:29:40 +0000
-Message-ID: <aba0ade61a234e8cac26b137963c7cc3@nokia-sbell.com>
-References: <001a1148d244c6f6f7055cd73fcd@google.com>
- <001a113f8036fab00405620e4d72@google.com>
- <CACT4Y+bO2HN9Tuw2iMND9tD8578DNSOwUs7_W6Rvg-8oX5Qipw@mail.gmail.com>
-In-Reply-To: <CACT4Y+bO2HN9Tuw2iMND9tD8578DNSOwUs7_W6Rvg-8oX5Qipw@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [135.251.51.69]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+       dkim=pass header.i=@google.com header.s=20161025 header.b=d0n1Vzm8;
+       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dvyukov@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AIpwx49sYs2Bl+uP/YaCD88zLlbDD5AZypOQBfNhDHkrUPyeBJ3KLAixcUVBRYkYnapY3CkDL6avbfhCKJH76Ujqj/8=
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsXS/ts4Qrdkxbkog2+/JC1OrLnNbjHnfAuL
-	xYSHbewWzYvXs1lc3jWHzeLYAjGLxXfkLG5smcvswOGxZeVNJo8Fm0o99kw8yeaxf+4ado/J
-	N5YzevScnMfk8XmTXAB7FJdNSmpOZllqkb5dAlfG4Wv3mQr6tCvWTD7G0sDYoNXFyMkhIWAi
-	8W7mDyYIW0ziwr31bF2MXBxCAueYJB5NmsQO4XQzSdyb0c0I4exilGg7tIoVpIVNwEWibf5P
-	NhBbREBNovF1D1g7s8AFJome5jeMIAlhAR2JlSv7WCCKdCW2NE9mhrCNJO5MuwgWZxFQlZhw
-	fhs7iM0rYCfRsvsN1B0rGCWWTJ0IVsQpECix4/ItsG2MArIS0x7dBzucWUBc4taT+VBPCEgs
-	2XOeGcIWlXj5+B8rhK0o0f/qNtACDqB6TYn1u/QhWhUlpnQ/hNorKHFy5hOWCYzis5BMnYXQ
-	MQtJxywkHQsYWVYxKiTnFWdkFedm5hkY6yXmJCeWpOboFiel5uToJefn6iXnbWIExvUaiUnT
-	dzAeO+B9iFGAg1GJh5fB8FyUEGtiWXFl7iFGCQ5mJRHe9lqgEG9KYmVValF+fFFpTmrxIUZp
-	DhYlcV7Z+TuihATSgWZnp6YWpBbBZJk4OKUaGK3/vDWQXZm849aZze7zdrTcf2jRM+Ok4X6t
-	w3we+rKVrIbtjtdPJXPf2eXEGnKrq+P+Qt+phrpft5rkNGov+acp92iC5hq5pCPlnwJCmho0
-	tpUfq9/40NCEXfFDXcXzuXcC7lUfWTGVMWiTlm3FhAk6X/cnSjK6XO5wE3saOvGJyVNv6YBV
-	3UosxRmJhlrMRcWJAJE7HnLnAgAA
+In-Reply-To: <aba0ade61a234e8cac26b137963c7cc3@nokia-sbell.com>
+References: <001a1148d244c6f6f7055cd73fcd@google.com> <001a113f8036fab00405620e4d72@google.com>
+ <CACT4Y+bO2HN9Tuw2iMND9tD8578DNSOwUs7_W6Rvg-8oX5Qipw@mail.gmail.com> <aba0ade61a234e8cac26b137963c7cc3@nokia-sbell.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 12 Apr 2018 12:04:18 +0200
+Message-ID: <CACT4Y+bc0hsCdmakcOFpztkocimLgTtWwzGsgCrtf9RnSgkp5A@mail.gmail.com>
+Subject: Re: WARNING in kobject_add_internal
+To: "Yuan, Linyu (NSB - CN/Shanghai)" <linyu.yuan@nokia-sbell.com>
+Cc: "bridge@lists.linux-foundation.org" <bridge@lists.linux-foundation.org>, David Miller <davem@davemloft.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, LKML <linux-kernel@vger.kernel.org>,
+	netdev <netdev@vger.kernel.org>, stephen hemminger <stephen@networkplumber.org>,
+	syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
 X-GMAIL-THRID: =?utf-8?q?1582779158902801058?=
-X-GMAIL-MSGID: =?utf-8?q?1597498179307527073?=
+X-GMAIL-MSGID: =?utf-8?q?1597534351096646396?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-SGksDQoNCkkgaGF2ZSBhIHF1ZXN0aW9uLA0KImNhbiBzeXpib3QgYXV0byB0ZXN0IGVhY2ggdHJl
-ZSB3aXRoIG5ld2VzdCBjaGFuZ2VzZXQiID8NCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0t
-LQ0KPiBGcm9tOiBuZXRkZXYtb3duZXJAdmdlci5rZXJuZWwub3JnIFttYWlsdG86bmV0ZGV2LW93
-bmVyQHZnZXIua2VybmVsLm9yZ10NCj4gT24gQmVoYWxmIE9mIERtaXRyeSBWeXVrb3YNCj4gU2Vu
-dDogV2VkbmVzZGF5LCBBcHJpbCAxMSwgMjAxOCAxMDo1OCBQTQ0KPiBUbzogc3l6Ym90DQo+IENj
-OiBicmlkZ2VAbGlzdHMubGludXgtZm91bmRhdGlvbi5vcmc7IERhdmlkIE1pbGxlcjsgR3JlZyBL
-cm9haC1IYXJ0bWFuOw0KPiBMS01MOyBuZXRkZXY7IHN0ZXBoZW4gaGVtbWluZ2VyOyBzeXprYWxs
-ZXItYnVncw0KPiBTdWJqZWN0OiBSZTogV0FSTklORyBpbiBrb2JqZWN0X2FkZF9pbnRlcm5hbA0K
-PiANCj4gT24gRnJpLCBKYW4gNSwgMjAxOCBhdCAxMDo0MSBQTSwgc3l6Ym90DQo+IDxzeXpib3Qr
-ZTIwNGNlZDgyMGVmNzM5ZDcxZWY1NDM4ZjVlMTk3NmE4NzRhYmM4ZEBzeXprYWxsZXIuYXBwc3Bv
-dG1hDQo+IGlsLmNvbT4NCj4gd3JvdGU6DQo+ID4gc3l6a2FsbGVyIGhhcyBmb3VuZCByZXByb2R1
-Y2VyIGZvciB0aGUgZm9sbG93aW5nIGNyYXNoIG9uDQo+ID4gODk4NzZmMjc1ZThkNTYyOTEyZDlj
-MjM4Y2Q4ODhiNTIwNjVjZjI1Yw0KPiA+IGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGlu
-dXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvbWFzdGVyDQo+ID4gY29tcGlsZXI6IGdj
-YyAoR0NDKSA3LjEuMSAyMDE3MDYyMA0KPiA+IC5jb25maWcgaXMgYXR0YWNoZWQNCj4gPiBSYXcg
-Y29uc29sZSBvdXRwdXQgaXMgYXR0YWNoZWQuDQo+ID4gQyByZXByb2R1Y2VyIGlzIGF0dGFjaGVk
-DQo+ID4gc3l6a2FsbGVyIHJlcHJvZHVjZXIgaXMgYXR0YWNoZWQuIFNlZSBodHRwczovL2dvby5n
-bC9rZ0d6dEoNCj4gPiBmb3IgaW5mb3JtYXRpb24gYWJvdXQgc3l6a2FsbGVyIHJlcHJvZHVjZXJz
-DQo+ID4NCj4gPg0KPiA+IElNUE9SVEFOVDogaWYgeW91IGZpeCB0aGUgYnVnLCBwbGVhc2UgYWRk
-IHRoZSBmb2xsb3dpbmcgdGFnIHRvIHRoZSBjb21taXQ6DQo+ID4gUmVwb3J0ZWQtYnk6DQo+ID4N
-Cj4gc3l6Ym90K2UyMDRjZWQ4MjBlZjczOWQ3MWVmNTQzOGY1ZTE5NzZhODc0YWJjOGRAc3l6a2Fs
-bGVyLmFwcHNwb3RtYWlsDQo+IC5jb20NCj4gPiBJdCB3aWxsIGhlbHAgc3l6Ym90IHVuZGVyc3Rh
-bmQgd2hlbiB0aGUgYnVnIGlzIGZpeGVkLg0KPiANCj4gI3N5eiBkdXA6IFdBUk5JTkc6IGtvYmpl
-Y3QgYnVnIGluIGRldmljZV9hZGQNCj4gDQo+ID4gLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0t
-LS0tLS0tLS0tDQo+ID4ga29iamVjdF9hZGRfaW50ZXJuYWwgZmFpbGVkIGZvciAgIChlcnJvcjog
-LTEyIHBhcmVudDogbmV0KQ0KPiA+IFdBUk5JTkc6IENQVTogMSBQSUQ6IDM0OTQgYXQgbGliL2tv
-YmplY3QuYzoyNDQNCj4gPiBrb2JqZWN0X2FkZF9pbnRlcm5hbCsweDNmNi8weGJjMCBsaWIva29i
-amVjdC5jOjI0Mg0KPiA+IEtlcm5lbCBwYW5pYyAtIG5vdCBzeW5jaW5nOiBwYW5pY19vbl93YXJu
-IHNldCAuLi4NCj4gPg0KPiA+IENQVTogMSBQSUQ6IDM0OTQgQ29tbTogc3l6a2FsbGVyNDI1OTk4
-IE5vdCB0YWludGVkIDQuMTUuMC1yYzYrICMyNDkNCj4gPiBIYXJkd2FyZSBuYW1lOiBHb29nbGUg
-R29vZ2xlIENvbXB1dGUgRW5naW5lL0dvb2dsZSBDb21wdXRlIEVuZ2luZSwNCj4gQklPUw0KPiA+
-IEdvb2dsZSAwMS8wMS8yMDExDQo+ID4gQ2FsbCBUcmFjZToNCj4gPiAgX19kdW1wX3N0YWNrIGxp
-Yi9kdW1wX3N0YWNrLmM6MTcgW2lubGluZV0NCj4gPiAgZHVtcF9zdGFjaysweDE5NC8weDI1NyBs
-aWIvZHVtcF9zdGFjay5jOjUzDQo+ID4gIHBhbmljKzB4MWU0LzB4NDFjIGtlcm5lbC9wYW5pYy5j
-OjE4Mw0KPiA+ICBfX3dhcm4rMHgxZGMvMHgyMDAga2VybmVsL3BhbmljLmM6NTQ3DQo+ID4gIHJl
-cG9ydF9idWcrMHgyMTEvMHgyZDAgbGliL2J1Zy5jOjE4NA0KPiA+ICBmaXh1cF9idWcucGFydC4x
-MSsweDM3LzB4ODAgYXJjaC94ODYva2VybmVsL3RyYXBzLmM6MTc4DQo+ID4gIGZpeHVwX2J1ZyBh
-cmNoL3g4Ni9rZXJuZWwvdHJhcHMuYzoyNDcgW2lubGluZV0NCj4gPiAgZG9fZXJyb3JfdHJhcCsw
-eDJkNy8weDNlMCBhcmNoL3g4Ni9rZXJuZWwvdHJhcHMuYzoyOTYNCj4gPiAgZG9faW52YWxpZF9v
-cCsweDFiLzB4MjAgYXJjaC94ODYva2VybmVsL3RyYXBzLmM6MzE1DQo+ID4gIGludmFsaWRfb3Ar
-MHgyMi8weDQwIGFyY2gveDg2L2VudHJ5L2VudHJ5XzY0LlM6MTA3OQ0KPiA+IFJJUDogMDAxMDpr
-b2JqZWN0X2FkZF9pbnRlcm5hbCsweDNmNi8weGJjMCBsaWIva29iamVjdC5jOjI0Mg0KPiA+IFJT
-UDogMDAxODpmZmZmODgwMWM1M2M3NmYwIEVGTEFHUzogMDAwMTAyODYNCj4gPiBSQVg6IGRmZmZm
-YzAwMDAwMDAwMDggUkJYOiBmZmZmODgwMWJmNWE4OGQ4IFJDWDogZmZmZmZmZmY4MTU5ZGE5ZQ0K
-PiA+IFJEWDogMDAwMDAwMDAwMDAwMDAwMCBSU0k6IDFmZmZmMTAwMzhhNzhlOTkgUkRJOiBmZmZm
-ODgwMWM1M2M3M2Y4DQo+ID4gUkJQOiBmZmZmODgwMWM1M2M3N2U4IFIwODogMWZmZmYxMDAzOGE3
-OGU1YiBSMDk6IDAwMDAwMDAwMDAwMDAwMDANCj4gPiBSMTA6IGZmZmY4ODAxYzUzYzc0YjAgUjEx
-OiAwMDAwMDAwMDAwMDAwMDAwIFIxMjogMWZmZmYxMDAzOGE3OGVlNA0KPiA+IFIxMzogMDAwMDAw
-MDBmZmZmZmZmNCBSMTQ6IGZmZmY4ODAxZDgzNTlhODAgUjE1OiBmZmZmZmZmZjg2MjAxOTgwDQo+
-ID4gIGtvYmplY3RfYWRkX3ZhcmcgbGliL2tvYmplY3QuYzozNjYgW2lubGluZV0NCj4gPiAga29i
-amVjdF9hZGQrMHgxMzIvMHgxZjAgbGliL2tvYmplY3QuYzo0MTENCj4gPiAgZGV2aWNlX2FkZCsw
-eDM1ZC8weDE2NTAgZHJpdmVycy9iYXNlL2NvcmUuYzoxNzg3DQo+ID4gIG5ldGRldl9yZWdpc3Rl
-cl9rb2JqZWN0KzB4MTgzLzB4MzYwIG5ldC9jb3JlL25ldC1zeXNmcy5jOjE2MDQNCj4gPiAgcmVn
-aXN0ZXJfbmV0ZGV2aWNlKzB4YjJiLzB4MTAxMCBuZXQvY29yZS9kZXYuYzo3Njk4DQo+ID4gIHR1
-bl9zZXRfaWZmIGRyaXZlcnMvbmV0L3R1bi5jOjIzMTkgW2lubGluZV0NCj4gPiAgX190dW5fY2hy
-X2lvY3RsKzB4MWQ4OS8weDNkZDAgZHJpdmVycy9uZXQvdHVuLmM6MjUyNA0KPiA+ICB0dW5fY2hy
-X2lvY3RsKzB4MmEvMHg0MCBkcml2ZXJzL25ldC90dW4uYzoyNzczDQo+ID4gIHZmc19pb2N0bCBm
-cy9pb2N0bC5jOjQ2IFtpbmxpbmVdDQo+ID4gIGRvX3Zmc19pb2N0bCsweDFiMS8weDE1MjAgZnMv
-aW9jdGwuYzo2ODYNCj4gPiAgU1lTQ19pb2N0bCBmcy9pb2N0bC5jOjcwMSBbaW5saW5lXQ0KPiA+
-ICBTeVNfaW9jdGwrMHg4Zi8weGMwIGZzL2lvY3RsLmM6NjkyDQo+ID4gIGVudHJ5X1NZU0NBTExf
-NjRfZmFzdHBhdGgrMHgyMy8weDlhDQo+ID4gUklQOiAwMDMzOjB4NDQ0ZmM5DQo+ID4gUlNQOiAw
-MDJiOjAwMDA3ZmZmNTMzODlkYzggRUZMQUdTOiAwMDAwMDI0NiBPUklHX1JBWDoNCj4gMDAwMDAw
-MDAwMDAwMDAxMA0KPiA+IFJBWDogZmZmZmZmZmZmZmZmZmZkYSBSQlg6IDAwMDAwMDAwMDAwMDAw
-MDEgUkNYOiAwMDAwMDAwMDAwNDQ0ZmM5DQo+ID4gUkRYOiAwMDAwMDAwMDIwNTMzMDAwIFJTSTog
-MDAwMDAwMDA0MDA0NTRjYSBSREk6IDAwMDAwMDAwMDAwMDAwMDQNCj4gPiBSQlA6IDAwMDAwMDAw
-MDAwMDAwMDUgUjA4OiAwMDAwMDAwMDAwMDAwMDAyIFIwOTogMDAwMDAwNmYwMDAwMzEzMQ0KPiA+
-IFIxMDogMDAwMDAwMDAwMDAwMDAwMCBSMTE6IDAwMDAwMDAwMDAwMDAyNDYgUjEyOiAwMDAwMDAw
-MDAwNDAyNTAwDQo+ID4gUjEzOiAwMDAwMDAwMDAwNDAyNTkwIFIxNDogMDAwMDAwMDAwMDAwMDAw
-MCBSMTU6IDAwMDAwMDAwMDAwMDAwMDANCj4gPg0KPiA+IER1bXBpbmcgZnRyYWNlIGJ1ZmZlcjoN
-Cj4gPiAgICAoZnRyYWNlIGJ1ZmZlciBlbXB0eSkNCj4gPiBLZXJuZWwgT2Zmc2V0OiBkaXNhYmxl
-ZA0KPiA+IFJlYm9vdGluZyBpbiA4NjQwMCBzZWNvbmRzLi4NCj4gPg0K
+On Thu, Apr 12, 2018 at 2:29 AM, Yuan, Linyu (NSB - CN/Shanghai)
+<linyu.yuan@nokia-sbell.com> wrote:
+> Hi,
+>
+> I have a question,
+> "can syzbot auto test each tree with newest changeset" ?
+
+Hi Yuan,
+
+Please elaborate.
+What trees? What newest changeset? Test against what criteria?
+
+>> -----Original Message-----
+>> From: netdev-owner@vger.kernel.org [mailto:netdev-owner@vger.kernel.org]
+>> On Behalf Of Dmitry Vyukov
+>> Sent: Wednesday, April 11, 2018 10:58 PM
+>> To: syzbot
+>> Cc: bridge@lists.linux-foundation.org; David Miller; Greg Kroah-Hartman;
+>> LKML; netdev; stephen hemminger; syzkaller-bugs
+>> Subject: Re: WARNING in kobject_add_internal
+>>
+>> On Fri, Jan 5, 2018 at 10:41 PM, syzbot
+>> <syzbot+e204ced820ef739d71ef5438f5e1976a874abc8d@syzkaller.appspotma
+>> il.com>
+>> wrote:
+>> > syzkaller has found reproducer for the following crash on
+>> > 89876f275e8d562912d9c238cd888b52065cf25c
+>> > git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
+>> > compiler: gcc (GCC) 7.1.1 20170620
+>> > .config is attached
+>> > Raw console output is attached.
+>> > C reproducer is attached
+>> > syzkaller reproducer is attached. See https://goo.gl/kgGztJ
+>> > for information about syzkaller reproducers
+>> >
+>> >
+>> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> > Reported-by:
+>> >
+>> syzbot+e204ced820ef739d71ef5438f5e1976a874abc8d@syzkaller.appspotmail
+>> .com
+>> > It will help syzbot understand when the bug is fixed.
+>>
+>> #syz dup: WARNING: kobject bug in device_add
+>>
+>> > ------------[ cut here ]------------
+>> > kobject_add_internal failed for   (error: -12 parent: net)
+>> > WARNING: CPU: 1 PID: 3494 at lib/kobject.c:244
+>> > kobject_add_internal+0x3f6/0xbc0 lib/kobject.c:242
+>> > Kernel panic - not syncing: panic_on_warn set ...
+>> >
+>> > CPU: 1 PID: 3494 Comm: syzkaller425998 Not tainted 4.15.0-rc6+ #249
+>> > Hardware name: Google Google Compute Engine/Google Compute Engine,
+>> BIOS
+>> > Google 01/01/2011
+>> > Call Trace:
+>> >  __dump_stack lib/dump_stack.c:17 [inline]
+>> >  dump_stack+0x194/0x257 lib/dump_stack.c:53
+>> >  panic+0x1e4/0x41c kernel/panic.c:183
+>> >  __warn+0x1dc/0x200 kernel/panic.c:547
+>> >  report_bug+0x211/0x2d0 lib/bug.c:184
+>> >  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
+>> >  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+>> >  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+>> >  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>> >  invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:1079
+>> > RIP: 0010:kobject_add_internal+0x3f6/0xbc0 lib/kobject.c:242
+>> > RSP: 0018:ffff8801c53c76f0 EFLAGS: 00010286
+>> > RAX: dffffc0000000008 RBX: ffff8801bf5a88d8 RCX: ffffffff8159da9e
+>> > RDX: 0000000000000000 RSI: 1ffff10038a78e99 RDI: ffff8801c53c73f8
+>> > RBP: ffff8801c53c77e8 R08: 1ffff10038a78e5b R09: 0000000000000000
+>> > R10: ffff8801c53c74b0 R11: 0000000000000000 R12: 1ffff10038a78ee4
+>> > R13: 00000000fffffff4 R14: ffff8801d8359a80 R15: ffffffff86201980
+>> >  kobject_add_varg lib/kobject.c:366 [inline]
+>> >  kobject_add+0x132/0x1f0 lib/kobject.c:411
+>> >  device_add+0x35d/0x1650 drivers/base/core.c:1787
+>> >  netdev_register_kobject+0x183/0x360 net/core/net-sysfs.c:1604
+>> >  register_netdevice+0xb2b/0x1010 net/core/dev.c:7698
+>> >  tun_set_iff drivers/net/tun.c:2319 [inline]
+>> >  __tun_chr_ioctl+0x1d89/0x3dd0 drivers/net/tun.c:2524
+>> >  tun_chr_ioctl+0x2a/0x40 drivers/net/tun.c:2773
+>> >  vfs_ioctl fs/ioctl.c:46 [inline]
+>> >  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
+>> >  SYSC_ioctl fs/ioctl.c:701 [inline]
+>> >  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
+>> >  entry_SYSCALL_64_fastpath+0x23/0x9a
+>> > RIP: 0033:0x444fc9
+>> > RSP: 002b:00007fff53389dc8 EFLAGS: 00000246 ORIG_RAX:
+>> 0000000000000010
+>> > RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 0000000000444fc9
+>> > RDX: 0000000020533000 RSI: 00000000400454ca RDI: 0000000000000004
+>> > RBP: 0000000000000005 R08: 0000000000000002 R09: 0000006f00003131
+>> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402500
+>> > R13: 0000000000402590 R14: 0000000000000000 R15: 0000000000000000
+>> >
+>> > Dumping ftrace buffer:
+>> >    (ftrace buffer empty)
+>> > Kernel Offset: disabled
+>> > Rebooting in 86400 seconds..
+>> >
