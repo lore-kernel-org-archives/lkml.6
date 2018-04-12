@@ -1,411 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753469AbeDLUax (ORCPT <rfc822;w@1wt.eu>);
+        id S1753664AbeDLUbL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 16:31:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49278 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753361AbeDLUax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 12 Apr 2018 16:30:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45400 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752847AbeDLUav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 16:30:51 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3527217A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-From: Alan Tull <atull@kernel.org>
-To: Moritz Fischer <mdf@kernel.org>
-Cc: Alan Tull <atull@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-fpga@vger.kernel.org
-Subject: [PATCH v4 3/4] fpga: bridge: change api, don't use drvdata
-Date: Thu, 12 Apr 2018 15:30:42 -0500
-Message-Id: <20180412203043.3001-4-atull@kernel.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180412203043.3001-1-atull@kernel.org>
-References: <20180412203043.3001-1-atull@kernel.org>
+Subject: Re: [PATCH v4 1/2] X86/KVM: Properly update 'tsc_offset' to represent
+ the running guest
+To: KarimAllah Ahmed <karahmed@amazon.de>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: Jim Mattson <jmattson@google.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <1523564347-8896-1-git-send-email-karahmed@amazon.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <e8f9a996-37dc-f623-2687-92d32175baf0@redhat.com>
+Date: Thu, 12 Apr 2018 22:30:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <1523564347-8896-1-git-send-email-karahmed@amazon.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change fpga_bridge_register to not set drvdata.  This is to support
-the case where a PCIe device can have more than one bridge.
+On 12/04/2018 22:19, KarimAllah Ahmed wrote:
+> Update 'tsc_offset' on vmenty/vmexit of L2 guests to ensure that it always
+> captures the TSC_OFFSET of the running guest whether it is the L1 or L2
+> guest.
+> 
+> Cc: Jim Mattson <jmattson@google.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: kvm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+> ---
+> v1 -> v2:
+> 
+> - Rewrote the patch to always update tsc_offset to represent the current
+>   guest (pbonzini@)
 
-Add API functions to create/free the fpga bridge struct. Change
-fpga_bridge_register/unregister to take FPGA bridge struct as
-the only parameter.
+Yes, this is it, thanks.  I'll test it tomorrow and if I have time look
+at AMD.
 
-  struct fpga_bridge
-  *fpga_bridge_create(struct device *dev, const char *name,
-                      const struct fpga_bridge_ops *br_ops,
-                      void *priv);
-  void fpga_bridge_free(struct fpga_bridge *br);
-  int fpga_bridge_register(struct fpga_bridge *br);
-  void fpga_bridge_unregister(struct fpga_bridge *br);
+Paolo
 
-Update the drivers that call fpga_bridge_register with the new API.
-
-Signed-off-by: Alan Tull <atull@kernel.org>
-Reported-by: Jiuyue Ma <majiuyue@huawei.com>
----
-v2: change fpga_bridge_register to not need parent device param
-    fix undeclared - s/dev/&pdev->dev/
-v3: minor changes to make diffs smaller and more obviously correct
-v4: rework API, add fpga_bridge_create/free
----
- drivers/fpga/altera-fpga2sdram.c    | 21 ++++++++---
- drivers/fpga/altera-freeze-bridge.c | 22 ++++++++++--
- drivers/fpga/altera-hps2fpga.c      | 24 ++++++++++---
- drivers/fpga/fpga-bridge.c          | 70 ++++++++++++++++++++++++-------------
- drivers/fpga/xilinx-pr-decoupler.c  | 22 +++++++++---
- include/linux/fpga/fpga-bridge.h    |  9 +++--
- 6 files changed, 123 insertions(+), 45 deletions(-)
-
-diff --git a/drivers/fpga/altera-fpga2sdram.c b/drivers/fpga/altera-fpga2sdram.c
-index d4eeb74..5a29ab6 100644
---- a/drivers/fpga/altera-fpga2sdram.c
-+++ b/drivers/fpga/altera-fpga2sdram.c
-@@ -106,6 +106,7 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct alt_fpga2sdram_data *priv;
-+	struct fpga_bridge *br;
- 	u32 enable;
- 	struct regmap *sysmgr;
- 	int ret = 0;
-@@ -131,10 +132,18 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
- 	/* Get f2s bridge configuration saved in handoff register */
- 	regmap_read(sysmgr, SYSMGR_ISWGRP_HANDOFF3, &priv->mask);
- 
--	ret = fpga_bridge_register(dev, F2S_BRIDGE_NAME,
--				   &altera_fpga2sdram_br_ops, priv);
--	if (ret)
-+	br = fpga_bridge_create(dev, F2S_BRIDGE_NAME,
-+				&altera_fpga2sdram_br_ops, priv);
-+	if (!br)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, br);
-+
-+	ret = fpga_bridge_register(br);
-+	if (ret) {
-+		fpga_bridge_free(br);
- 		return ret;
-+	}
- 
- 	dev_info(dev, "driver initialized with handoff %08x\n", priv->mask);
- 
-@@ -146,7 +155,7 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
- 				 (enable ? "enabling" : "disabling"));
- 			ret = _alt_fpga2sdram_enable_set(priv, enable);
- 			if (ret) {
--				fpga_bridge_unregister(&pdev->dev);
-+				fpga_bridge_unregister(br);
- 				return ret;
- 			}
- 		}
-@@ -157,7 +166,9 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
- 
- static int alt_fpga_bridge_remove(struct platform_device *pdev)
- {
--	fpga_bridge_unregister(&pdev->dev);
-+	struct fpga_bridge *br = platform_get_drvdata(pdev);
-+
-+	fpga_bridge_unregister(br);
- 
- 	return 0;
- }
-diff --git a/drivers/fpga/altera-freeze-bridge.c b/drivers/fpga/altera-freeze-bridge.c
-index 6159cfcf..fa4b693 100644
---- a/drivers/fpga/altera-freeze-bridge.c
-+++ b/drivers/fpga/altera-freeze-bridge.c
-@@ -221,8 +221,10 @@ static int altera_freeze_br_probe(struct platform_device *pdev)
- 	struct device_node *np = pdev->dev.of_node;
- 	void __iomem *base_addr;
- 	struct altera_freeze_br_data *priv;
-+	struct fpga_bridge *br;
- 	struct resource *res;
- 	u32 status, revision;
-+	int ret;
- 
- 	if (!np)
- 		return -ENODEV;
-@@ -254,13 +256,27 @@ static int altera_freeze_br_probe(struct platform_device *pdev)
- 
- 	priv->base_addr = base_addr;
- 
--	return fpga_bridge_register(dev, FREEZE_BRIDGE_NAME,
--				    &altera_freeze_br_br_ops, priv);
-+	br = fpga_bridge_create(dev, FREEZE_BRIDGE_NAME,
-+				&altera_freeze_br_br_ops, priv);
-+	if (!br)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, br);
-+
-+	ret = fpga_bridge_register(br);
-+	if (ret) {
-+		fpga_bridge_free(br);
-+		return ret;
-+	}
-+
-+	return 0;
- }
- 
- static int altera_freeze_br_remove(struct platform_device *pdev)
- {
--	fpga_bridge_unregister(&pdev->dev);
-+	struct fpga_bridge *br = platform_get_drvdata(pdev);
-+
-+	fpga_bridge_unregister(br);
- 
- 	return 0;
- }
-diff --git a/drivers/fpga/altera-hps2fpga.c b/drivers/fpga/altera-hps2fpga.c
-index 406d2f1..e4d39f0 100644
---- a/drivers/fpga/altera-hps2fpga.c
-+++ b/drivers/fpga/altera-hps2fpga.c
-@@ -139,6 +139,7 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct altera_hps2fpga_data *priv;
- 	const struct of_device_id *of_id;
-+	struct fpga_bridge *br;
- 	u32 enable;
- 	int ret;
- 
-@@ -190,11 +191,24 @@ static int alt_fpga_bridge_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	ret = fpga_bridge_register(dev, priv->name, &altera_hps2fpga_br_ops,
--				   priv);
--err:
-+	br = fpga_bridge_create(dev, priv->name, &altera_hps2fpga_br_ops, priv);
-+	if (!br) {
-+		ret = -ENOMEM;
-+		goto err;
-+	}
-+
-+	platform_set_drvdata(pdev, br);
-+
-+	ret = fpga_bridge_register(br);
- 	if (ret)
--		clk_disable_unprepare(priv->clk);
-+		goto err_free;
-+
-+	return 0;
-+
-+err_free:
-+	fpga_bridge_free(br);
-+err:
-+	clk_disable_unprepare(priv->clk);
- 
- 	return ret;
- }
-@@ -204,7 +218,7 @@ static int alt_fpga_bridge_remove(struct platform_device *pdev)
- 	struct fpga_bridge *bridge = platform_get_drvdata(pdev);
- 	struct altera_hps2fpga_data *priv = bridge->priv;
- 
--	fpga_bridge_unregister(&pdev->dev);
-+	fpga_bridge_unregister(bridge);
- 
- 	clk_disable_unprepare(priv->clk);
- 
-diff --git a/drivers/fpga/fpga-bridge.c b/drivers/fpga/fpga-bridge.c
-index 31bd2c5..2db1573 100644
---- a/drivers/fpga/fpga-bridge.c
-+++ b/drivers/fpga/fpga-bridge.c
-@@ -328,28 +328,29 @@ static struct attribute *fpga_bridge_attrs[] = {
- ATTRIBUTE_GROUPS(fpga_bridge);
- 
- /**
-- * fpga_bridge_register - register a fpga bridge driver
-+ * fpga_bridge_create - create and initialize a struct fpga_bridge
-  * @dev:	FPGA bridge device from pdev
-  * @name:	FPGA bridge name
-  * @br_ops:	pointer to structure of fpga bridge ops
-  * @priv:	FPGA bridge private data
-  *
-- * Return: 0 for success, error code otherwise.
-+ * Return: struct fpga_bridge or NULL
-  */
--int fpga_bridge_register(struct device *dev, const char *name,
--			 const struct fpga_bridge_ops *br_ops, void *priv)
-+struct fpga_bridge *fpga_bridge_create(struct device *dev, const char *name,
-+				       const struct fpga_bridge_ops *br_ops,
-+				       void *priv)
- {
- 	struct fpga_bridge *bridge;
- 	int id, ret = 0;
- 
- 	if (!name || !strlen(name)) {
- 		dev_err(dev, "Attempt to register with no name!\n");
--		return -EINVAL;
-+		return NULL;
- 	}
- 
- 	bridge = kzalloc(sizeof(*bridge), GFP_KERNEL);
- 	if (!bridge)
--		return -ENOMEM;
-+		return NULL;
- 
- 	id = ida_simple_get(&fpga_bridge_ida, 0, 0, GFP_KERNEL);
- 	if (id < 0) {
-@@ -370,40 +371,62 @@ int fpga_bridge_register(struct device *dev, const char *name,
- 	bridge->dev.parent = dev;
- 	bridge->dev.of_node = dev->of_node;
- 	bridge->dev.id = id;
--	dev_set_drvdata(dev, bridge);
- 
- 	ret = dev_set_name(&bridge->dev, "br%d", id);
- 	if (ret)
- 		goto error_device;
- 
--	ret = device_add(&bridge->dev);
--	if (ret)
--		goto error_device;
--
--	of_platform_populate(dev->of_node, NULL, NULL, dev);
--
--	dev_info(bridge->dev.parent, "fpga bridge [%s] registered\n",
--		 bridge->name);
--
--	return 0;
-+	return bridge;
- 
- error_device:
- 	ida_simple_remove(&fpga_bridge_ida, id);
- error_kfree:
- 	kfree(bridge);
- 
--	return ret;
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(fpga_bridge_create);
-+
-+/**
-+ * fpga_bridge_free - free a fpga bridge and its id
-+ * @bridge:	FPGA bridge struct created by fpga_bridge_create
-+ */
-+void fpga_bridge_free(struct fpga_bridge *bridge)
-+{
-+	ida_simple_remove(&fpga_bridge_ida, bridge->dev.id);
-+	kfree(bridge);
-+}
-+EXPORT_SYMBOL_GPL(fpga_bridge_free);
-+
-+/**
-+ * fpga_bridge_register - register a fpga bridge
-+ * @bridge:	FPGA bridge struct created by fpga_bridge_create
-+ *
-+ * Return: 0 for success, error code otherwise.
-+ */
-+int fpga_bridge_register(struct fpga_bridge *bridge)
-+{
-+	struct device *dev = &bridge->dev;
-+	int ret;
-+
-+	ret = device_add(dev);
-+	if (ret)
-+		return ret;
-+
-+	of_platform_populate(dev->of_node, NULL, NULL, dev);
-+
-+	dev_info(dev->parent, "fpga bridge [%s] registered\n", bridge->name);
-+
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(fpga_bridge_register);
- 
- /**
-  * fpga_bridge_unregister - unregister a fpga bridge driver
-- * @dev: FPGA bridge device from pdev
-+ * @bridge:	FPGA bridge struct created by fpga_bridge_create
-  */
--void fpga_bridge_unregister(struct device *dev)
-+void fpga_bridge_unregister(struct fpga_bridge *bridge)
- {
--	struct fpga_bridge *bridge = dev_get_drvdata(dev);
--
- 	/*
- 	 * If the low level driver provides a method for putting bridge into
- 	 * a desired state upon unregister, do it.
-@@ -419,8 +442,7 @@ static void fpga_bridge_dev_release(struct device *dev)
- {
- 	struct fpga_bridge *bridge = to_fpga_bridge(dev);
- 
--	ida_simple_remove(&fpga_bridge_ida, bridge->dev.id);
--	kfree(bridge);
-+	fpga_bridge_free(bridge);
- }
- 
- static int __init fpga_bridge_dev_init(void)
-diff --git a/drivers/fpga/xilinx-pr-decoupler.c b/drivers/fpga/xilinx-pr-decoupler.c
-index 0d77430..07ba153 100644
---- a/drivers/fpga/xilinx-pr-decoupler.c
-+++ b/drivers/fpga/xilinx-pr-decoupler.c
-@@ -94,6 +94,7 @@ MODULE_DEVICE_TABLE(of, xlnx_pr_decoupler_of_match);
- static int xlnx_pr_decoupler_probe(struct platform_device *pdev)
- {
- 	struct xlnx_pr_decoupler_data *priv;
-+	struct fpga_bridge *br;
- 	int err;
- 	struct resource *res;
- 
-@@ -120,16 +121,27 @@ static int xlnx_pr_decoupler_probe(struct platform_device *pdev)
- 
- 	clk_disable(priv->clk);
- 
--	err = fpga_bridge_register(&pdev->dev, "Xilinx PR Decoupler",
--				   &xlnx_pr_decoupler_br_ops, priv);
-+	br = fpga_bridge_create(&pdev->dev, "Xilinx PR Decoupler",
-+				&xlnx_pr_decoupler_br_ops, priv);
-+	if (!br) {
-+		err = -ENOMEM;
-+		goto err_clk;
-+	}
-+
-+	platform_set_drvdata(pdev, br);
- 
-+	err = fpga_bridge_register(br);
- 	if (err) {
- 		dev_err(&pdev->dev, "unable to register Xilinx PR Decoupler");
--		clk_unprepare(priv->clk);
--		return err;
-+		goto err_clk;
- 	}
- 
- 	return 0;
-+
-+err_clk:
-+	clk_unprepare(priv->clk);
-+
-+	return err;
- }
- 
- static int xlnx_pr_decoupler_remove(struct platform_device *pdev)
-@@ -137,7 +149,7 @@ static int xlnx_pr_decoupler_remove(struct platform_device *pdev)
- 	struct fpga_bridge *bridge = platform_get_drvdata(pdev);
- 	struct xlnx_pr_decoupler_data *p = bridge->priv;
- 
--	fpga_bridge_unregister(&pdev->dev);
-+	fpga_bridge_unregister(bridge);
- 
- 	clk_unprepare(p->clk);
- 
-diff --git a/include/linux/fpga/fpga-bridge.h b/include/linux/fpga/fpga-bridge.h
-index 3694821..ce550fc 100644
---- a/include/linux/fpga/fpga-bridge.h
-+++ b/include/linux/fpga/fpga-bridge.h
-@@ -62,8 +62,11 @@ int of_fpga_bridge_get_to_list(struct device_node *np,
- 			       struct fpga_image_info *info,
- 			       struct list_head *bridge_list);
- 
--int fpga_bridge_register(struct device *dev, const char *name,
--			 const struct fpga_bridge_ops *br_ops, void *priv);
--void fpga_bridge_unregister(struct device *dev);
-+struct fpga_bridge *fpga_bridge_create(struct device *dev, const char *name,
-+				       const struct fpga_bridge_ops *br_ops,
-+				       void *priv);
-+void fpga_bridge_free(struct fpga_bridge *br);
-+int fpga_bridge_register(struct fpga_bridge *br);
-+void fpga_bridge_unregister(struct fpga_bridge *br);
- 
- #endif /* _LINUX_FPGA_BRIDGE_H */
--- 
-2.7.4
+> ---
+>  arch/x86/include/asm/kvm_host.h |  1 +
+>  arch/x86/kvm/vmx.c              | 25 ++++++++++++++++++++-----
+>  arch/x86/kvm/x86.c              |  9 ++++++++-
+>  3 files changed, 29 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 9fa4f57..3bedfef 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1015,6 +1015,7 @@ struct kvm_x86_ops {
+>  
+>  	bool (*has_wbinvd_exit)(void);
+>  
+> +	u64 (*read_l1_tsc_offset)(struct kvm_vcpu *vcpu);
+>  	void (*write_tsc_offset)(struct kvm_vcpu *vcpu, u64 offset);
+>  
+>  	void (*get_exit_info)(struct kvm_vcpu *vcpu, u64 *info1, u64 *info2);
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index cff2f50..9e7dd39 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -2895,6 +2895,17 @@ static u64 guest_read_tsc(struct kvm_vcpu *vcpu)
+>  	return kvm_scale_tsc(vcpu, host_tsc) + tsc_offset;
+>  }
+>  
+> +static u64 vmx_read_l1_tsc_offset(struct kvm_vcpu *vcpu)
+> +{
+> +	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
+> +
+> +	if (is_guest_mode(vcpu) &&
+> +	    (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING))
+> +		return vcpu->arch.tsc_offset - vmcs12->tsc_offset;
+> +
+> +	return vcpu->arch.tsc_offset;
+> +}
+> +
+>  /*
+>   * writes 'offset' into guest's timestamp counter offset register
+>   */
+> @@ -11163,11 +11174,8 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
+>  		vmcs_write64(GUEST_IA32_PAT, vmx->vcpu.arch.pat);
+>  	}
+>  
+> -	if (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING)
+> -		vmcs_write64(TSC_OFFSET,
+> -			vcpu->arch.tsc_offset + vmcs12->tsc_offset);
+> -	else
+> -		vmcs_write64(TSC_OFFSET, vcpu->arch.tsc_offset);
+> +	vmcs_write64(TSC_OFFSET, vcpu->arch.tsc_offset);
+> +
+>  	if (kvm_has_tsc_control)
+>  		decache_tsc_multiplier(vmx);
+>  
+> @@ -11469,6 +11477,9 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+>  	if (enable_shadow_vmcs)
+>  		copy_shadow_to_vmcs12(vmx);
+>  
+> +	if (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING)
+> +		vcpu->arch.tsc_offset += vmcs12->tsc_offset;
+> +
+>  	/*
+>  	 * The nested entry process starts with enforcing various prerequisites
+>  	 * on vmcs12 as required by the Intel SDM, and act appropriately when
+> @@ -12015,6 +12026,9 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
+>  
+>  	leave_guest_mode(vcpu);
+>  
+> +	if (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING)
+> +		vcpu->arch.tsc_offset -= vmcs12->tsc_offset;
+> +
+>  	if (likely(!vmx->fail)) {
+>  		if (exit_reason == -1)
+>  			sync_vmcs12(vcpu, vmcs12);
+> @@ -12688,6 +12702,7 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
+>  
+>  	.has_wbinvd_exit = cpu_has_vmx_wbinvd_exit,
+>  
+> +	.read_l1_tsc_offset = vmx_read_l1_tsc_offset,
+>  	.write_tsc_offset = vmx_write_tsc_offset,
+>  
+>  	.set_tdp_cr3 = vmx_set_cr3,
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index ac42c85..3fb1353 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -1532,7 +1532,14 @@ static u64 kvm_compute_tsc_offset(struct kvm_vcpu *vcpu, u64 target_tsc)
+>  
+>  u64 kvm_read_l1_tsc(struct kvm_vcpu *vcpu, u64 host_tsc)
+>  {
+> -	return vcpu->arch.tsc_offset + kvm_scale_tsc(vcpu, host_tsc);
+> +	u64 tsc_offset;
+> +
+> +	if (kvm_x86_ops->read_l1_tsc_offset)
+> +		tsc_offset = kvm_x86_ops->read_l1_tsc_offset(vcpu);
+> +	else
+> +		tsc_offset = vcpu->arch.tsc_offset;
+> +
+> +	return tsc_offset + kvm_scale_tsc(vcpu, host_tsc);
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_read_l1_tsc);
+>  
+> 
