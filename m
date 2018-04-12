@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1684311-1523561505-2-2016378318601393756
+X-Cyrus-Session-Id: sloti22d1t05-1684311-1523561503-2-12562549750711489158
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523561505; b=AjX0LIYCgX/FrwDP0QxiYBZHCsvqeY92Kw/TY4JFxikBARldgP
-    gMvkdFDaUdtAzCeIWHEItX3SFKGekNjeFn4+xj3ag/DcSiXsSp3xBKlv7wXrOySP
-    FPqLBi5RHB8xQH6Cs/SlUZJzTF3SdIb0Rg3chvnDqoOu3A/y7JE/gsiSdFTo4LK7
-    fi8HsXXBtpv2DGbjivSSghyf74M4k70mvnGv85aNqaB9Q4lu9q5LHdQGw0d9fzTP
-    pxn7hy6V0F2kwf2AlTKVSXgIFtUE8/k6OKB+xxcnOmpF4nUdogbD4J2jNp7GKg3x
-    1O8n5vdWg1aUZOl/nK9GjVXZ3tuX2438JLdQ==
+    1523561502; b=YbRDFckra93rYYaQw2KUNsJaPjLy55j681Galb3k10BcyzqX4k
+    hDf694jNVXaoSC9mWqTJA7xvLu73H0EefU0HG2VY9x6eImMyulpVq4cNIhYeNWQ8
+    7rmal0RQpwj/UGuoXdSVLt/UFLhYRMiKPcVX3nmpunJFH1h00VnxdIYWFFIWuTWq
+    Mlrrjtd2BLswGSIC+xyK5j/yEVJZ6j4KplGipNenH53vdmYbvBKLzEJ8Hekn7Fe2
+    +2hC4VZpylLFJbzANYI1Teet5HmMXPXXTqb2DoCZGohBCviD4u/AGT2W43bYG1vm
+    kDw6B2N5WYPEQRiJI97C34MXFYcV4JDNDS4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1523561505; bh=
-    dcur22JDHDIuz6Ptm13/Jm1gRSQ+xRQyzuKJKWYgchk=; b=ZUICA4XsZgkokA3A
-    6TwStuBp+bWwWFljobFMe+bXw6e3HYLTX0JV2nf5hxA0YAb6bY7D9rLSQjZdM1nf
-    NEfHh6D17z0KAs1SchiXKJc4VdOFVL4IGdWDEvvLFdgodDGHAUaNN0ZYjuKY/vfH
-    53flTdl5OIcWuTQ+XA/McLBV6Iw3q3/gmge1uQh++ysf/u69mn2ytbhvGyoi+DF1
-    ihk+1slHLqCrs2KpMr01uxNgD14UHg/Hvh6K8YL/qM7QFARWU+QgrRrKB3IBWYkK
-    PRTVcfuAMy5vRJ+EUx7uJIesFZWrgUctaC7CquvDuvwjYjrqsMDzcoDlgkZTjCnl
-    ZHjPAg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1523561502; bh=
+    ajPNLnnfQGQkoeUajBqe9C8w8/lDSw6qdeKAWNqHij8=; b=tKVHj1gKDHFZrO/Z
+    zPvP4LhMNgFYjcB7/LnyBD74MdnbrTsoLi5AGDh/ZoJtuQGDFhxkjt/eeAodeHyH
+    Etc1iFdBb2JTyI30+oJoJrpbC0v/4mgxROQbaBukZeqa2ce+yNDvssNrHGu7U4PU
+    yZQnzpFv7O9tMM4RU+A5C0Q1hGfRm/KCKZsgCfTC3G4A+hDQwhQVHAmY8SXKMu2U
+    ITCiZUD0edZKAuO8qx5ScGqLta+kXhT38bE7D3zHb/bVDqDQdDioeOe1FTPEFyzz
+    rUvSlQ2y1pmsWfhKGw+ZrRUIQWW5W2SYwGH022yifc+8/i3Z4bHJ9zA2mo67QRzf
+    C/HFiQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
@@ -51,29 +51,28 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfM7vtvrmIuPsjZ1K/4wdHCCOagWnXkhUjM3QsHSHzdeDaiht4vRyQSqLQxBkKSLIhSWM6qMtVUzWs0DkzeRDc/ILMcAZRtzhyAJBCIYzAgA8WL8Rp/d/
-    ETWzxeSc+cdN3k5SPZ+tL+Xzwe2pU821OI3olBJwZHZ533iR19AmgjJ21n2eX9ysGwbhGq7GET3cYWb1Kwr4SVkVOd+5PMJy/o/EjIwYQwNKYBhPSmjPZntA
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKiUAGkQ3kdPw2pt8WnD0XyyCrffoyXv7GCJ/kXxthpSuWyiEPQNJ76rE2QOwKqUpi7gpZtp3IAYwZ9DN7tLBJJET2zzmNdJr61GCcE+R+vc3+fZIZva
+    YgjvFvxThSXyspNfomqSwLr01Ik6UcRtDml6u2ZGrBNCyTdZE7Z7+wPwfI+rAaGPfCDbw9CkcfDUDrHTwjOICO01Iez/jr78qk0dySXxPryEfsyvXSeus8w7
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=7d_E57ReAAAA:8
-    a=yMhMjlubAAAA:8 a=VnNF1IyMAAAA:8 a=JfrnYn6hAAAA:8 a=1XWaLZrsAAAA:8
+    a=drOt6m5kAAAA:8 a=7CQSdrXTAAAA:8 a=1XWaLZrsAAAA:8 a=JfrnYn6hAAAA:8
     a=SOq6UgPBAAAA:8 a=WfulkdPnAAAA:8 a=FOH2dFAWAAAA:8 a=NufY4J3AAAAA:8
-    a=20KFwNOVAAAA:8 a=oGMlB6cnAAAA:8 a=meVymXHHAAAA:8 a=UPm3pfgAAAAA:8
-    a=Z4Rwk6OoAAAA:8 a=drOt6m5kAAAA:8 a=7CQSdrXTAAAA:8 a=pGLkceISAAAA:8
-    a=VwQbUJbxAAAA:8 a=7Yi-VXTq316iJd_TQ4oA:9 a=uIU9Ku8kCUt5WLs9:21
-    a=GUVaFKeskDDNQk5u:21 a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22
-    a=1CNFftbPRP8L7MoqJWF3:22 a=3hv5r9HjGAh9o5iR9qwG:22 a=56QPVbyS4OZCpcuOg7Z9:22
-    a=i3VuKzQdj-NEYjvDI-p3:22 a=TPcZfFuj8SYsoCJAFAiX:22 a=NdAtdrkLVvyUPsUoGJp4:22
-    a=2JgSa4NbpEOStq-L5dxp:22 a=uD9XBtlS4o1URY3aiGdj:22 a=HkZW87K1Qel5hWWM3VKY:22
-    a=RMMjzBEyIzXRtoq5n5K6:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=20KFwNOVAAAA:8 a=oGMlB6cnAAAA:8 a=meVymXHHAAAA:8 a=VnNF1IyMAAAA:8
+    a=UPm3pfgAAAAA:8 a=Z4Rwk6OoAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
+    a=UyVg9twnpGBeDI6iwygA:9 a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22
+    a=RMMjzBEyIzXRtoq5n5K6:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=1CNFftbPRP8L7MoqJWF3:22
+    a=3hv5r9HjGAh9o5iR9qwG:22 a=56QPVbyS4OZCpcuOg7Z9:22 a=i3VuKzQdj-NEYjvDI-p3:22
+    a=TPcZfFuj8SYsoCJAFAiX:22 a=NdAtdrkLVvyUPsUoGJp4:22 a=2JgSa4NbpEOStq-L5dxp:22
+    a=uD9XBtlS4o1URY3aiGdj:22 a=HkZW87K1Qel5hWWM3VKY:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753997AbeDLTbm (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 12 Apr 2018 15:31:42 -0400
-Received: from mail.efficios.com ([167.114.142.138]:45784 "EHLO
+        id S1753342AbeDLT2X (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 12 Apr 2018 15:28:23 -0400
+Received: from mail.efficios.com ([167.114.142.138]:45604 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753340AbeDLT2Y (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 12 Apr 2018 15:28:24 -0400
+        with ESMTP id S1753116AbeDLT2W (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 12 Apr 2018 15:28:22 -0400
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -96,9 +95,9 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.18 10/23] mm: Introduce vm_map_user_ram, vm_unmap_user_ram
-Date: Thu, 12 Apr 2018 15:27:47 -0400
-Message-Id: <20180412192800.15708-11-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 06/23] x86: Wire up restartable sequence system call
+Date: Thu, 12 Apr 2018 15:27:43 -0400
+Message-Id: <20180412192800.15708-7-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
 References: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
@@ -108,19 +107,21 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Create and destroy mappings aliased to a user-space mapping with the same
-cache coloring as the userspace mapping. Allow the kernel to load from
-and store to pages shared with user-space through its own mapping in
-kernel virtual addresses while ensuring cache conherency between kernel
-and userspace mappings for virtually aliased architectures.
+Wire up the rseq system call on x86 32/64.
+
+This provides an ABI improving the speed of a user-space getcpu
+operation on x86 by removing the need to perform a function call, "lsl"
+instruction, or system call on the fast path, as well as improving the
+speed of user-space operations on per-cpu data.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Peter Zijlstra <peterz@infradead.org>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+CC: Russell King <linux@arm.linux.org.uk>
+CC: Catalin Marinas <catalin.marinas@arm.com>
+CC: Will Deacon <will.deacon@arm.com>
 CC: Paul Turner <pjt@google.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
 CC: Andrew Hunter <ahh@google.com>
+CC: Peter Zijlstra <peterz@infradead.org>
 CC: Andy Lutomirski <luto@amacapital.net>
 CC: Andi Kleen <andi@firstfloor.org>
 CC: Dave Watson <davejwatson@fb.com>
@@ -129,111 +130,38 @@ CC: Ingo Molnar <mingo@redhat.com>
 CC: "H. Peter Anvin" <hpa@zytor.com>
 CC: Ben Maurer <bmaurer@fb.com>
 CC: Steven Rostedt <rostedt@goodmis.org>
+CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 CC: Josh Triplett <josh@joshtriplett.org>
 CC: Linus Torvalds <torvalds@linux-foundation.org>
 CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Russell King <linux@arm.linux.org.uk>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Michael Kerrisk <mtk.manpages@gmail.com>
 CC: Boqun Feng <boqun.feng@gmail.com>
+CC: linux-api@vger.kernel.org
 ---
- include/linux/vmalloc.h |  4 +++
- mm/vmalloc.c            | 66 +++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 70 insertions(+)
+ arch/x86/entry/syscalls/syscall_32.tbl | 1 +
+ arch/x86/entry/syscalls/syscall_64.tbl | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index 1e5d8c392f15..d5e5c11ba947 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -58,6 +58,10 @@ struct vmap_area {
- extern void vm_unmap_ram(const void *mem, unsigned int count);
- extern void *vm_map_ram(struct page **pages, unsigned int count,
- 				int node, pgprot_t prot);
-+extern void vm_unmap_user_ram(const void *mem, unsigned int count);
-+extern void *vm_map_user_ram(struct page **pages, unsigned int count,
-+				unsigned long uaddr, int node, pgprot_t prot);
-+
- extern void vm_unmap_aliases(void);
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 2a5e99cff859..b76cbd25854f 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -391,3 +391,4 @@
+ 382	i386	pkey_free		sys_pkey_free
+ 383	i386	statx			sys_statx
+ 384	i386	arch_prctl		sys_arch_prctl			compat_sys_arch_prctl
++385	i386	rseq			sys_rseq
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 5aef183e2f85..3ad03495bbb9 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -339,6 +339,7 @@
+ 330	common	pkey_alloc		sys_pkey_alloc
+ 331	common	pkey_free		sys_pkey_free
+ 332	common	statx			sys_statx
++333	common	rseq			sys_rseq
  
- #ifdef CONFIG_MMU
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index ebff729cc956..ae033b825e45 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -1199,6 +1199,72 @@ void *vm_map_ram(struct page **pages, unsigned int count, int node, pgprot_t pro
- }
- EXPORT_SYMBOL(vm_map_ram);
- 
-+/**
-+ * vm_unmap_user_ram - unmap linear kernel address space set up by vm_map_user_ram
-+ * @mem: the pointer returned by vm_map_user_ram
-+ * @count: the count passed to that vm_map_user_ram call (cannot unmap partial)
-+ */
-+void vm_unmap_user_ram(const void *mem, unsigned int count)
-+{
-+	unsigned long size = (unsigned long)count << PAGE_SHIFT;
-+	unsigned long addr = (unsigned long)mem;
-+	struct vmap_area *va;
-+
-+	might_sleep();
-+	BUG_ON(!addr);
-+	BUG_ON(addr < VMALLOC_START);
-+	BUG_ON(addr > VMALLOC_END);
-+	BUG_ON(!PAGE_ALIGNED(addr));
-+
-+	debug_check_no_locks_freed(mem, size);
-+	vmap_debug_free_range(addr, addr+size);
-+
-+	va = find_vmap_area(addr);
-+	BUG_ON(!va);
-+	free_unmap_vmap_area(va);
-+}
-+EXPORT_SYMBOL(vm_unmap_user_ram);
-+
-+/**
-+ * vm_map_user_ram - map user space pages linearly into kernel virtual address
-+ * @pages: an array of pointers to the virtually contiguous pages to be mapped
-+ * @count: number of pages
-+ * @uaddr: address within the first page in the userspace mapping
-+ * @node: prefer to allocate data structures on this node
-+ * @prot: memory protection to use. PAGE_KERNEL for regular RAM
-+ *
-+ * Create a mapping aliased to a user-space mapping with the same cache
-+ * coloring as the userspace mapping. Allow the kernel to load from and
-+ * store to pages shared with user-space through its own mapping in kernel
-+ * virtual addresses while ensuring cache conherency between kernel and
-+ * userspace mappings for virtually aliased architectures.
-+ *
-+ * Returns: a pointer to the address that has been mapped, or %NULL on failure
-+ */
-+void *vm_map_user_ram(struct page **pages, unsigned int count,
-+		unsigned long uaddr, int node, pgprot_t prot)
-+{
-+	unsigned long size = (unsigned long)count << PAGE_SHIFT;
-+	unsigned long va_offset = ALIGN_DOWN(uaddr, PAGE_SIZE) & (SHMLBA - 1);
-+	unsigned long alloc_size = ALIGN(va_offset + size, SHMLBA);
-+	struct vmap_area *va;
-+	unsigned long addr;
-+	void *mem;
-+
-+	va = alloc_vmap_area(alloc_size, SHMLBA, VMALLOC_START, VMALLOC_END,
-+			node, GFP_KERNEL);
-+	if (IS_ERR(va))
-+		return NULL;
-+	addr = va->va_start + va_offset;
-+	mem = (void *)addr;
-+	if (vmap_page_range(addr, addr + size, prot, pages) < 0) {
-+		vm_unmap_user_ram(mem, count);
-+		return NULL;
-+	}
-+	return mem;
-+}
-+EXPORT_SYMBOL(vm_map_user_ram);
-+
- static struct vm_struct *vmlist __initdata;
- /**
-  * vm_area_add_early - add vmap area early during boot
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
 -- 
 2.11.0
 
