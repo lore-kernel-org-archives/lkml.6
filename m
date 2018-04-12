@@ -1,86 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752953AbeDLOPv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 10:15:51 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40406 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752303AbeDLOPt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 10:15:49 -0400
-X-Google-Smtp-Source: AIpwx49LcDzqhcBgESFgLaExcmRs0KVoIb4NVTa7oGz3UeDQp1P8LgnyWwdZx6mzTWqh7T3n6/lcDg==
-Content-Type: text/plain;
-        charset=utf-8;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH v3 3/3] ALSA: hda: Disabled unused audio controller for
- Dell platforms with Switchable Graphics
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <20180412105909.tbyfcjm55sb47hiq@pali>
-Date: Thu, 12 Apr 2018 22:15:41 +0800
-Cc: Takashi Iwai <tiwai@suse.de>, Lukas Wunner <lukas@wunner.de>,
-        mario.limonciello@dell.com, andy@infradead.org, dvhart@infradead.org,
-        mjg59@srcf.ucam.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-Message-Id: <93DC0F40-81A5-49C6-A470-0D1B6AA85725@canonical.com>
-References: <20180412104239.25584-1-kai.heng.feng@canonical.com>
- <20180412104239.25584-3-kai.heng.feng@canonical.com>
- <s5hr2nk8zs5.wl-tiwai@suse.de> <20180412105909.tbyfcjm55sb47hiq@pali>
-To: =?utf-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>
-X-Mailer: Apple Mail (2.3445.6.18)
+        id S1753129AbeDLOQx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 10:16:53 -0400
+Received: from muru.com ([72.249.23.125]:36396 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753095AbeDLOQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 10:16:44 -0400
+Date: Thu, 12 Apr 2018 07:16:39 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Keerthy <j-keerthy@ti.com>
+Cc: linus.walleij@linaro.org, grygorii.strashko@ti.com, t-kristo@ti.com,
+        Russ.Dill@ti.com, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ssantosh@kernel.org,
+        haojian.zhuang@linaro.org, linux-arm-kernel@lists.infradead.org,
+        d-gerlach@ti.com, Russ Dill <Russ.Dill@gmail.com>
+Subject: Re: [PATCH 08/14] ARM: OMAP2: Add functions to save and restore
+ pinctrl context.
+Message-ID: <20180412141639.GV5700@atomide.com>
+References: <1523505239-16229-1-git-send-email-j-keerthy@ti.com>
+ <1523505239-16229-9-git-send-email-j-keerthy@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523505239-16229-9-git-send-email-j-keerthy@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 6:59 PM, Pali Rohár <pali.rohar@gmail.com> wrote:
+Hi,
 
-> On Thursday 12 April 2018 12:50:02 Takashi Iwai wrote:
->>> +#if IS_ENABLED(CONFIG_DELL_LAPTOP)
->>> +static bool check_dell_switchable_gfx(struct pci_dev *pdev)
->>> +{
->>> +	bool (*dell_switchable_gfx_is_enabled_func)(void);
->>> +	bool enabled;
->>> +
->>> +	/* Only need to check for Dell laptops and AIOs */
->>> +	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL) ||
->>> +	    !(dmi_match(DMI_CHASSIS_TYPE, "10") ||
->>> +	      dmi_match(DMI_CHASSIS_TYPE, "13")) ||
->>> +	    !(pdev->vendor == PCI_VENDOR_ID_ATI ||
->>> +	      pdev->vendor == PCI_VENDOR_ID_NVIDIA))
->>> +		return false;
-> ...
->>> @@ -1711,6 +1745,11 @@ static int azx_create(struct snd_card *card,  
->>> struct pci_dev *pci,
->>>  	if (err < 0)
->>>  		return err;
->>>
->>> +	if (check_dell_switchable_gfx(pci)) {
->>> +		pci_disable_device(pci);
->
-> Hi!
->
-> Now looking at it again... This code disables all ATI and NVIDIA sound
-> cards available in any Dell System (laptop or AIO) if system says that
-> SG is enabled, right?
+* Keerthy <j-keerthy@ti.com> [180412 03:56]:
+> From: Russ Dill <Russ.Dill@gmail.com>
+> 
+> This adds a pair of context save/restore functions to save/restore the
+> state of a set of pinctrl registers. This simplifies some of the AM33XX
+> PM code as some of the pinctrl registers are lost when the per power
+> domain loses power. The pincrtl code can perform the necessary
+> save/restore.
 
-Yes.
+So where's the patch adding callers to this code?
 
->
-> It means that also any external ATI or NVIDIA PCI card with audio device
-> connected to Thunderbolt (e.g. via PCI <--> TB bridge) is always
-> unconditionally disabled too?
+If this cannot be done from regular driver suspend/resume calls,
+this probably should be done from cpu_pm notifiers CPU_PM_ENTER and
+CPU_PM_EXIT. We should also do the same for GPIO BTW.
 
-I never thought of this case, thanks for bringing this up.
-Do you have any suggestion to check if it connects to the system via  
-Thunderbolt?
+BTW, the subject line is wrong here, it should be "pinctrl" :)
 
-Kai-Heng
+Regards,
 
->
->>> +		return -ENODEV;
->>> +	}
->
-> -- 
-> Pali Rohár
-> pali.rohar@gmail.com
+Tony
