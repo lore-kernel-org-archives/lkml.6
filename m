@@ -1,37 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752906AbeDLRxn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 13:53:43 -0400
-Received: from mail-io0-f176.google.com ([209.85.223.176]:40770 "EHLO
-        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752389AbeDLRxm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 13:53:42 -0400
-X-Google-Smtp-Source: AIpwx4966fMv8P5gaWD4uNWI1scrSNEFMBM9Zg2VVjKovyyC6lI9/VRVPY+C6pR7xV+1bM5D1+/v7/UQZCvBhAroQjE=
+        id S1752896AbeDLR5p (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 13:57:45 -0400
+Received: from mga06.intel.com ([134.134.136.31]:17629 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752752AbeDLR5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 13:57:44 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,442,1517904000";
+   d="scan'208";a="36795347"
+Date: Thu, 12 Apr 2018 10:57:42 -0700
+From: Sean Christopherson <sean.j.christopherson@intel.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: KarimAllah Ahmed <karahmed@amazon.de>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, hpa@zytor.com,
+        jmattson@google.com, mingo@redhat.com, rkrcmar@redhat.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH 06/10] KVM/nVMX: Use kvm_vcpu_map when mapping the
+ virtual APIC page
+Message-ID: <20180412175742.GA14534@linux.intel.com>
+References: <1519235241-6500-1-git-send-email-karahmed@amazon.de>
+ <1519235241-6500-7-git-send-email-karahmed@amazon.de>
+ <bdb99bea-9e5e-951e-3016-4acd162c619e@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180412015359.244491749@goodmis.org>
-References: <20180412015359.244491749@goodmis.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 12 Apr 2018 10:53:41 -0700
-X-Google-Sender-Auth: HIMuNRjicrGRbLLIKy3C3gKqPZg
-Message-ID: <CA+55aFxHPAzO-U+Q2RVjpAd4T6oM_Puor5qRC8pPYOdohO2L_w@mail.gmail.com>
-Subject: Re: [PATCH 0/5] [GIT PULL] tracing: A few last minute clean up and fixes
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bdb99bea-9e5e-951e-3016-4acd162c619e@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 6:53 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> Please pull the latest ktest-v4.17-2 tree, which can be found at:
+On Thu, Apr 12, 2018 at 04:38:39PM +0200, Paolo Bonzini wrote:
+> On 21/02/2018 18:47, KarimAllah Ahmed wrote:
+> > +
+> > +		if (kvm_vcpu_map(vcpu, gpa_to_gfn(vmcs12->virtual_apic_page_addr), map))
+> > +			vmcs_write64(VIRTUAL_APIC_PAGE_ADDR, gfn_to_gpa(map->pfn));
+> 
+> This should in principle be pfn_to_hpa.  However, pfn_to_hpa is unused;
+> let's just remove it and do "<< PAGE_SHIFT".  Unlike gfn_to_gpa, where
+> in principle the shift could be different, pfn_to_hpa is *by definition*
+> a shift left by PAGE_SHIFT.
 
-That doesn't exist, and makes no sense. Did you mean tracing, not ktest?
-
-And even if you did, why did your scripts not notice that the branch
-you point to doesn't actually exist?
-
-               Linus
+Any reason not to use PFN_PHYS instead of the handcoded shift?
+ 
+> Paolo
