@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752942AbeDLLRJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 07:17:09 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36300 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752736AbeDLLPO (ORCPT
+        id S1753194AbeDLLRn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 07:17:43 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:44296 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753196AbeDLLPJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 07:15:14 -0400
-X-Google-Smtp-Source: AIpwx4929jwOgOcZ9uB9kCN5AUTbzC9jMcjlBRjqKXfP5bbtB6BTeE9gFg9uAdDhCxZT0LHETDHqAg==
+        Thu, 12 Apr 2018 07:15:09 -0400
+X-Google-Smtp-Source: AIpwx4+jqCTSrlYsj/+p7GfLrjP0akYXKPREuOGasYM4FsAiageLrYjJgIpS8DVsOXZrYoTNezMwow==
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -23,9 +23,9 @@ Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 20/26] drivers: firmware: psci: Share a few internal PSCI functions
-Date: Thu, 12 Apr 2018 13:14:25 +0200
-Message-Id: <1523531671-27491-21-git-send-email-ulf.hansson@linaro.org>
+Subject: [PATCH v7 17/26] drivers: firmware: psci: Simplify error path of psci_dt_init()
+Date: Thu, 12 Apr 2018 13:14:22 +0200
+Message-Id: <1523531671-27491-18-git-send-email-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
 References: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
@@ -33,86 +33,88 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Following changes needs to be able to call psci_get|set_domain_state() and
-psci_dt_parse_state_node(), but from a separate file. Let's make that
-possible by sharing them via a new internal PSCI header file.
+Instead of having each psci init function taking care of the of_node_put(),
+let's deal with that from psci_dt_init(), as this enables a bit simpler
+error path for each psci init function.
 
 Cc: Lina Iyer <ilina@codeaurora.org>
+Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 ---
- drivers/firmware/psci/psci.c | 14 ++++++++------
- drivers/firmware/psci/psci.h | 13 +++++++++++++
- 2 files changed, 21 insertions(+), 6 deletions(-)
- create mode 100644 drivers/firmware/psci/psci.h
+ drivers/firmware/psci/psci.c | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-index 40b2b89..463f78c 100644
+index 256b4ed..3888100 100644
 --- a/drivers/firmware/psci/psci.c
 +++ b/drivers/firmware/psci/psci.c
-@@ -34,6 +34,8 @@
- #include <asm/smp_plat.h>
- #include <asm/suspend.h>
+@@ -608,9 +608,9 @@ static int __init psci_0_2_init(struct device_node *np)
+ 	int err;
  
-+#include "psci.h"
-+
- /*
-  * While a 64-bit OS can make calls with SMC32 calling conventions, for some
-  * calls it is necessary to use SMC64 to pass or return 64-bit values.
-@@ -90,12 +92,12 @@ static u32 psci_function_id[PSCI_FN_MAX];
- static DEFINE_PER_CPU(u32, domain_state);
- static u32 psci_cpu_suspend_feature;
- 
--static inline u32 psci_get_domain_state(void)
-+u32 psci_get_domain_state(void)
- {
- 	return this_cpu_read(domain_state);
- }
- 
--static inline void psci_set_domain_state(u32 state)
-+void psci_set_domain_state(u32 state)
- {
- 	this_cpu_write(domain_state, state);
- }
-@@ -285,10 +287,7 @@ static int __init psci_features(u32 psci_func_id)
- 			      psci_func_id, 0, 0);
- }
- 
--#ifdef CONFIG_CPU_IDLE
--static DEFINE_PER_CPU_READ_MOSTLY(u32 *, psci_power_state);
+ 	err = get_set_conduit_method(np);
 -
--static int psci_dt_parse_state_node(struct device_node *np, u32 *state)
-+int psci_dt_parse_state_node(struct device_node *np, u32 *state)
- {
- 	int err = of_property_read_u32(np, "arm,psci-suspend-param", state);
- 
-@@ -305,6 +304,9 @@ static int psci_dt_parse_state_node(struct device_node *np, u32 *state)
- 	return 0;
+ 	if (err)
+-		goto out_put_node;
++		return err;
++
+ 	/*
+ 	 * Starting with v0.2, the PSCI specification introduced a call
+ 	 * (PSCI_VERSION) that allows probing the firmware version, so
+@@ -618,11 +618,7 @@ static int __init psci_0_2_init(struct device_node *np)
+ 	 * can be carried out according to the specific version reported
+ 	 * by firmware
+ 	 */
+-	err = psci_probe();
+-
+-out_put_node:
+-	of_node_put(np);
+-	return err;
++	return psci_probe();
  }
  
-+#ifdef CONFIG_CPU_IDLE
-+static DEFINE_PER_CPU_READ_MOSTLY(u32 *, psci_power_state);
+ /*
+@@ -634,9 +630,8 @@ static int __init psci_0_1_init(struct device_node *np)
+ 	int err;
+ 
+ 	err = get_set_conduit_method(np);
+-
+ 	if (err)
+-		goto out_put_node;
++		return err;
+ 
+ 	pr_info("Using PSCI v0.1 Function IDs from DT\n");
+ 
+@@ -660,9 +655,7 @@ static int __init psci_0_1_init(struct device_node *np)
+ 		psci_ops.migrate = psci_migrate;
+ 	}
+ 
+-out_put_node:
+-	of_node_put(np);
+-	return err;
++	return 0;
+ }
+ 
+ static const struct of_device_id psci_of_match[] __initconst = {
+@@ -677,6 +670,7 @@ int __init psci_dt_init(void)
+ 	struct device_node *np;
+ 	const struct of_device_id *matched_np;
+ 	psci_initcall_t init_fn;
++	int ret;
+ 
+ 	np = of_find_matching_node_and_match(NULL, psci_of_match, &matched_np);
+ 
+@@ -684,7 +678,10 @@ int __init psci_dt_init(void)
+ 		return -ENODEV;
+ 
+ 	init_fn = (psci_initcall_t)matched_np->data;
+-	return init_fn(np);
++	ret = init_fn(np);
 +
- static int psci_dt_cpu_init_idle(struct device_node *cpu_node, int cpu)
- {
- 	int i, ret = 0, count = 0;
-diff --git a/drivers/firmware/psci/psci.h b/drivers/firmware/psci/psci.h
-new file mode 100644
-index 0000000..a2b4be5
---- /dev/null
-+++ b/drivers/firmware/psci/psci.h
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#ifndef __PSCI_H
-+#define __PSCI_H
-+
-+struct device_node;
-+
-+u32 psci_get_domain_state(void);
-+void psci_set_domain_state(u32 state);
-+
-+int psci_dt_parse_state_node(struct device_node *np, u32 *state);
-+
-+#endif /* __PSCI_H */
++	of_node_put(np);
++	return ret;
+ }
+ 
+ #ifdef CONFIG_ACPI
 -- 
 2.7.4
