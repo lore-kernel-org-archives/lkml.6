@@ -1,193 +1,385 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-872240-1523536688-2-2328060182637741028
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES daen, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Attached: signature.asc
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523536688; b=dEQOVpvveeIoZDq9uDqTy89jvVx6xr31d/LrpzX0RgWsXIHgPK
-    jKpnZqZUHJCVMY6aq5VBso2DJQx31C/SK1o72dBBsCJH6ga/oZ3nA5L3qNTcOVnh
-    L/6k7S0Cbt88A6rzDMBImu1iZbtOtg0btgjNEzEjzc924Dsx6k0mcS43GuQute1h
-    RKUA75CVTMT5XezGlAjBB5TAr7D27Vvf7nrzgD3xDH/rzE8aNYkIsOYZ61SdeOOx
-    qFsJUemZFJTui1YfUrkihalvfPd6Rd/tkb00QoqRPSCjGqcF/1xI5udsjHwCQCvt
-    84eCepSIhoLt6Pq8VBxwTvn4H8sQHR5sNVGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :mime-version:content-type:sender:list-id; s=fm2; t=1523536688;
-    bh=X7740dSahcpI6O3fkD7TqB18K/sKRPdnaZxE28dVc7g=; b=H3ABKlO39Jqx
-    6m19JWN4JpLUnPmNyBXc0X6/169gkA1U4uzIRBKbIQaNW1Lute8lK28MXJ5XKgWG
-    J7igcyJEKAxHFWOyyX+Dac08WOS5GMssFQ4axppDurumWxkzPGb86eRTxUmNK3d4
-    wTUg/HUP8F03oXb6oXe+XVg+YmzUHlmg9Jl3LWvVY0ehSgC5pM/KI6+V/JlqLB2M
-    uNqCLRj5ciHgHAl7cl4nxkR+4pq3FN0qp67OnXdrBgFATc72sq5iduYz0kKy2Cj7
-    mel7ZX42Hj7yyhqrs+zTWo3TBZJPE07IYI9S4K3uc8btlaPdfQIPPfjwAz8yFxnC
-    IBW9hJCB9A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNTEa7AWsB0t3sfY9YNZ8XLt6xQ7Zy9Fu+tcNpoE+nHLBixVUercq7HB+9qIl6ICiBpocTWu7Y8mK3LbeZag4DbnPiEPSk5obnIhvN/kFXpqWwnLl9EZ
-    NWuaTa9xCVoD00juVgiCFD3WyLPAx1KIePYvrX2yjiVAiaUNpG1d0oihsI3wQJWUaeTWbcD+jJ4QfM82YxY/kw46YNgInM1gFMiFIpSqv0ZHiyezpFoCsce5
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
-    a=Mu3ZoM23mIDqnO9hSPcA:9 a=5dCYHp1yfUflJ9iw:21 a=0Fiywij4kcKRKX-n:21
-    a=CjuIK1q_8ugA:10 a=b3OgmXbZjgwrhHgOhnIA:9 a=ONNS8QRKHyMA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752727AbeDLMg0 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 12 Apr 2018 08:36:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50660 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751870AbeDLMgZ (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 12 Apr 2018 08:36:25 -0400
-Date: Thu, 12 Apr 2018 14:36:16 +0200
+Date: Thu, 12 Apr 2018 14:36:22 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 4.16.2
-Message-ID: <20180412123616.GA21030@kroah.com>
+Subject: Re: Linux 4.16.2
+Message-ID: <20180412123622.GB21030@kroah.com>
+References: <20180412123616.GA21030@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YZ5djTAD1cGYuMQK"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20180412123616.GA21030@kroah.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
-X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
---YZ5djTAD1cGYuMQK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-I'm announcing the release of the 4.16.2 kernel.
-
-All users of the 4.16 kernel series must upgrade.
-
-The updated 4.16.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-4.16.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
-
-thanks,
-
-greg k-h
-
-------------
-
- Makefile                                             |    2 +-
- drivers/net/ethernet/marvell/sky2.c                  |    2 +-
- drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c |    9 +++++----
- drivers/net/ppp/pptp.c                               |    1 -
- drivers/sbus/char/Kconfig                            |    3 ++-
- net/8021q/vlan_dev.c                                 |    6 +++++-
- net/core/dev.c                                       |    2 +-
- net/dsa/dsa_priv.h                                   |    8 +++++++-
- net/ipv4/arp.c                                       |    2 +-
- net/ipv4/ip_tunnel.c                                 |   11 ++++++-----
- net/ipv6/ip6_gre.c                                   |    8 +++++---
- net/ipv6/ip6_output.c                                |    7 +++++--
- net/ipv6/ip6_tunnel.c                                |   11 +++++++----
- net/ipv6/ip6_vti.c                                   |    7 +++++--
- net/ipv6/sit.c                                       |    8 +++++---
- net/sched/act_bpf.c                                  |   12 ++++++++----
- net/sched/cls_u32.c                                  |    1 +
- net/sctp/ipv6.c                                      |    4 +++-
- net/sctp/socket.c                                    |   13 ++++++++-----
- 19 files changed, 76 insertions(+), 41 deletions(-)
-
-Andrew Lunn (1):
-      net: dsa: Discard frames from unused ports
-
-Cong Wang (1):
-      net_sched: fix a missing idr_remove() in u32_delete_key()
-
-Davide Caratti (1):
-      net/sched: fix NULL dereference in the error path of tcf_bpf_init()
-
-Dirk van der Merwe (1):
-      nfp: use full 40 bits of the NSP buffer address
-
-Eric Dumazet (9):
-      pptp: remove a buggy dst release in pptp_connect()
-      sctp: do not leak kernel memory to user space
-      sctp: sctp_sockaddr_af must check minimal addr length for AF_INET6
-      net: fool proof dev_valid_name()
-      ip_tunnel: better validate user provided tunnel names
-      ipv6: sit: better validate user provided tunnel names
-      ip6_gre: better validate user provided tunnel names
-      ip6_tunnel: better validate user provided tunnel names
-      vti6: better validate user provided tunnel names
-
-Greg Kroah-Hartman (1):
-      Linux 4.16.2
-
-Guenter Roeck (1):
-      sparc64: Oracle DAX driver depends on SPARC64
-
-Hangbin Liu (1):
-      vlan: also check phy_driver ts_info for vlan's real device
-
-Jeff Barnhill (1):
-      net/ipv6: Increment OUTxxx counters after netfilter hook
-
-Kai-Heng Feng (1):
-      sky2: Increase D3 delay to sky2 stops working after suspend
-
-Miguel Fadon Perlines (1):
-      arp: fix arp_filter on l3slave devices
-
-
---YZ5djTAD1cGYuMQK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlrPUr0ACgkQONu9yGCS
-aT7x6RAAttclu4634oNy/RRWHv1n9C3OPRYjS3Y0fVv+Kqv+u70dBYH6SfBvkONL
-MZ/8O8wlBzX1falj7vTKLpZdt+OjS4HHEVTTe+0TD8jfcfivW4ECF64zriohJ6f/
-e9B5qaa6Pv4kDZ5eTo258K90Ns4XYqUmAONJRklwHCmhc9SL/BMeP72yAdlQUq+2
-UyNLWV+2dgKYckkhOPkdTcVs6YWHBSyQgKOvuxdDXyM8yXuB7Awjuryea06TcxIT
-3xevS3Wg47EYPrFF/YJ+K6ia+zJM6D96FDSvXi1XEWb6QSzFeTebQOMTuPONnd/i
-A6gHlOQQNw/q7xA/20iaa5tAdCyQlIEbqp/IpChpEUmsESTYkziB0uDLlhjjShO4
-fsv8gXwPHMGoAXwMkCD45JG3cQauaGiOse+bEns0b/pBQZuqTKGygFE+fg7COGtU
-Fc6OoAU9QP9rvnCWben+ckFXf2h4PUbhz3QIHI7RXSdsUtQoClj9kjuR35haGUun
-YOUF6hkn9WFpr2mY0lVKq3h8Wc3lqmLlAbTNb1hvuilTewWVvd0gAGavig+QgZHT
-sMNl8mRfCMKs2ZEEqIkjB9iza/iLgxHsxf+Rl4Q24CyaG9BvmtcHKY0eRnh143xb
-Ci6LTKsVp7ZKYH5tzqjzCb65qqVnOpGatSPc4ogqDx2rr3UW34M=
-=tlcD
------END PGP SIGNATURE-----
-
---YZ5djTAD1cGYuMQK--
+diff --git a/Makefile b/Makefile
+index 1773c718074e..f0040b05df30 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 16
+-SUBLEVEL = 1
++SUBLEVEL = 2
+ EXTRAVERSION =
+ NAME = Fearless Coyote
+ 
+diff --git a/drivers/net/ethernet/marvell/sky2.c b/drivers/net/ethernet/marvell/sky2.c
+index 9fe85300e7b6..5754116a6a4d 100644
+--- a/drivers/net/ethernet/marvell/sky2.c
++++ b/drivers/net/ethernet/marvell/sky2.c
+@@ -5087,7 +5087,7 @@ static int sky2_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	INIT_WORK(&hw->restart_work, sky2_restart);
+ 
+ 	pci_set_drvdata(pdev, hw);
+-	pdev->d3_delay = 150;
++	pdev->d3_delay = 200;
+ 
+ 	return 0;
+ 
+diff --git a/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c b/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c
+index 39abac678b71..99bb679a9801 100644
+--- a/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c
++++ b/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp.c
+@@ -71,10 +71,11 @@
+ /* CPP address to retrieve the data from */
+ #define NSP_BUFFER		0x10
+ #define   NSP_BUFFER_CPP	GENMASK_ULL(63, 40)
+-#define   NSP_BUFFER_PCIE	GENMASK_ULL(39, 38)
+-#define   NSP_BUFFER_ADDRESS	GENMASK_ULL(37, 0)
++#define   NSP_BUFFER_ADDRESS	GENMASK_ULL(39, 0)
+ 
+ #define NSP_DFLT_BUFFER		0x18
++#define   NSP_DFLT_BUFFER_CPP	GENMASK_ULL(63, 40)
++#define   NSP_DFLT_BUFFER_ADDRESS	GENMASK_ULL(39, 0)
+ 
+ #define NSP_DFLT_BUFFER_CONFIG	0x20
+ #define   NSP_DFLT_BUFFER_SIZE_MB	GENMASK_ULL(7, 0)
+@@ -427,8 +428,8 @@ __nfp_nsp_command_buf(struct nfp_nsp *nsp, u16 code, u32 option,
+ 	if (err < 0)
+ 		return err;
+ 
+-	cpp_id = FIELD_GET(NSP_BUFFER_CPP, reg) << 8;
+-	cpp_buf = FIELD_GET(NSP_BUFFER_ADDRESS, reg);
++	cpp_id = FIELD_GET(NSP_DFLT_BUFFER_CPP, reg) << 8;
++	cpp_buf = FIELD_GET(NSP_DFLT_BUFFER_ADDRESS, reg);
+ 
+ 	if (in_buf && in_size) {
+ 		err = nfp_cpp_write(cpp, cpp_id, cpp_buf, in_buf, in_size);
+diff --git a/drivers/net/ppp/pptp.c b/drivers/net/ppp/pptp.c
+index 6dde9a0cfe76..9b70a3af678e 100644
+--- a/drivers/net/ppp/pptp.c
++++ b/drivers/net/ppp/pptp.c
+@@ -464,7 +464,6 @@ static int pptp_connect(struct socket *sock, struct sockaddr *uservaddr,
+ 	po->chan.mtu = dst_mtu(&rt->dst);
+ 	if (!po->chan.mtu)
+ 		po->chan.mtu = PPP_MRU;
+-	ip_rt_put(rt);
+ 	po->chan.mtu -= PPTP_HEADER_OVERHEAD;
+ 
+ 	po->chan.hdrlen = 2 + sizeof(struct pptp_gre_header);
+diff --git a/drivers/sbus/char/Kconfig b/drivers/sbus/char/Kconfig
+index a785aa7660c3..bf3c5f735614 100644
+--- a/drivers/sbus/char/Kconfig
++++ b/drivers/sbus/char/Kconfig
+@@ -72,7 +72,8 @@ config DISPLAY7SEG
+ 
+ config ORACLE_DAX
+ 	tristate "Oracle Data Analytics Accelerator"
+-	default m if SPARC64
++	depends on SPARC64
++	default m
+ 	help
+ 	 Driver for Oracle Data Analytics Accelerator, which is
+ 	 a coprocessor that performs database operations in hardware.
+diff --git a/net/8021q/vlan_dev.c b/net/8021q/vlan_dev.c
+index f7e83f6d2e64..236452ebbd9e 100644
+--- a/net/8021q/vlan_dev.c
++++ b/net/8021q/vlan_dev.c
+@@ -29,6 +29,7 @@
+ #include <linux/net_tstamp.h>
+ #include <linux/etherdevice.h>
+ #include <linux/ethtool.h>
++#include <linux/phy.h>
+ #include <net/arp.h>
+ #include <net/switchdev.h>
+ 
+@@ -665,8 +666,11 @@ static int vlan_ethtool_get_ts_info(struct net_device *dev,
+ {
+ 	const struct vlan_dev_priv *vlan = vlan_dev_priv(dev);
+ 	const struct ethtool_ops *ops = vlan->real_dev->ethtool_ops;
++	struct phy_device *phydev = vlan->real_dev->phydev;
+ 
+-	if (ops->get_ts_info) {
++	if (phydev && phydev->drv && phydev->drv->ts_info) {
++		 return phydev->drv->ts_info(phydev, info);
++	} else if (ops->get_ts_info) {
+ 		return ops->get_ts_info(vlan->real_dev, info);
+ 	} else {
+ 		info->so_timestamping = SOF_TIMESTAMPING_RX_SOFTWARE |
+diff --git a/net/core/dev.c b/net/core/dev.c
+index ef0cc6ea5f8d..c4aa2941dbfd 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -1027,7 +1027,7 @@ bool dev_valid_name(const char *name)
+ {
+ 	if (*name == '\0')
+ 		return false;
+-	if (strlen(name) >= IFNAMSIZ)
++	if (strnlen(name, IFNAMSIZ) == IFNAMSIZ)
+ 		return false;
+ 	if (!strcmp(name, ".") || !strcmp(name, ".."))
+ 		return false;
+diff --git a/net/dsa/dsa_priv.h b/net/dsa/dsa_priv.h
+index 70de7895e5b8..053731473c99 100644
+--- a/net/dsa/dsa_priv.h
++++ b/net/dsa/dsa_priv.h
+@@ -126,6 +126,7 @@ static inline struct net_device *dsa_master_find_slave(struct net_device *dev,
+ 	struct dsa_port *cpu_dp = dev->dsa_ptr;
+ 	struct dsa_switch_tree *dst = cpu_dp->dst;
+ 	struct dsa_switch *ds;
++	struct dsa_port *slave_port;
+ 
+ 	if (device < 0 || device >= DSA_MAX_SWITCHES)
+ 		return NULL;
+@@ -137,7 +138,12 @@ static inline struct net_device *dsa_master_find_slave(struct net_device *dev,
+ 	if (port < 0 || port >= ds->num_ports)
+ 		return NULL;
+ 
+-	return ds->ports[port].slave;
++	slave_port = &ds->ports[port];
++
++	if (unlikely(slave_port->type != DSA_PORT_TYPE_USER))
++		return NULL;
++
++	return slave_port->slave;
+ }
+ 
+ /* port.c */
+diff --git a/net/ipv4/arp.c b/net/ipv4/arp.c
+index f28f06c91ead..7333db17c581 100644
+--- a/net/ipv4/arp.c
++++ b/net/ipv4/arp.c
+@@ -437,7 +437,7 @@ static int arp_filter(__be32 sip, __be32 tip, struct net_device *dev)
+ 	/*unsigned long now; */
+ 	struct net *net = dev_net(dev);
+ 
+-	rt = ip_route_output(net, sip, tip, 0, 0);
++	rt = ip_route_output(net, sip, tip, 0, l3mdev_master_ifindex_rcu(dev));
+ 	if (IS_ERR(rt))
+ 		return 1;
+ 	if (rt->dst.dev != dev) {
+diff --git a/net/ipv4/ip_tunnel.c b/net/ipv4/ip_tunnel.c
+index a7fd1c5a2a14..57478d68248d 100644
+--- a/net/ipv4/ip_tunnel.c
++++ b/net/ipv4/ip_tunnel.c
+@@ -253,13 +253,14 @@ static struct net_device *__ip_tunnel_create(struct net *net,
+ 	struct net_device *dev;
+ 	char name[IFNAMSIZ];
+ 
+-	if (parms->name[0])
++	err = -E2BIG;
++	if (parms->name[0]) {
++		if (!dev_valid_name(parms->name))
++			goto failed;
+ 		strlcpy(name, parms->name, IFNAMSIZ);
+-	else {
+-		if (strlen(ops->kind) > (IFNAMSIZ - 3)) {
+-			err = -E2BIG;
++	} else {
++		if (strlen(ops->kind) > (IFNAMSIZ - 3))
+ 			goto failed;
+-		}
+ 		strlcpy(name, ops->kind, IFNAMSIZ);
+ 		strncat(name, "%d", 2);
+ 	}
+diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
+index 1bbd0930063e..197fcae855ca 100644
+--- a/net/ipv6/ip6_gre.c
++++ b/net/ipv6/ip6_gre.c
+@@ -335,11 +335,13 @@ static struct ip6_tnl *ip6gre_tunnel_locate(struct net *net,
+ 	if (t || !create)
+ 		return t;
+ 
+-	if (parms->name[0])
++	if (parms->name[0]) {
++		if (!dev_valid_name(parms->name))
++			return NULL;
+ 		strlcpy(name, parms->name, IFNAMSIZ);
+-	else
++	} else {
+ 		strcpy(name, "ip6gre%d");
+-
++	}
+ 	dev = alloc_netdev(sizeof(*t), name, NET_NAME_UNKNOWN,
+ 			   ip6gre_tunnel_setup);
+ 	if (!dev)
+diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
+index 5cb18c8ba9b2..4065ae0c32a0 100644
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -375,6 +375,11 @@ static int ip6_forward_proxy_check(struct sk_buff *skb)
+ static inline int ip6_forward_finish(struct net *net, struct sock *sk,
+ 				     struct sk_buff *skb)
+ {
++	struct dst_entry *dst = skb_dst(skb);
++
++	__IP6_INC_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTFORWDATAGRAMS);
++	__IP6_ADD_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTOCTETS, skb->len);
++
+ 	return dst_output(net, sk, skb);
+ }
+ 
+@@ -569,8 +574,6 @@ int ip6_forward(struct sk_buff *skb)
+ 
+ 	hdr->hop_limit--;
+ 
+-	__IP6_INC_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTFORWDATAGRAMS);
+-	__IP6_ADD_STATS(net, ip6_dst_idev(dst), IPSTATS_MIB_OUTOCTETS, skb->len);
+ 	return NF_HOOK(NFPROTO_IPV6, NF_INET_FORWARD,
+ 		       net, NULL, skb, skb->dev, dst->dev,
+ 		       ip6_forward_finish);
+diff --git a/net/ipv6/ip6_tunnel.c b/net/ipv6/ip6_tunnel.c
+index 6e0f21eed88a..179313b0926c 100644
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -297,13 +297,16 @@ static struct ip6_tnl *ip6_tnl_create(struct net *net, struct __ip6_tnl_parm *p)
+ 	struct net_device *dev;
+ 	struct ip6_tnl *t;
+ 	char name[IFNAMSIZ];
+-	int err = -ENOMEM;
++	int err = -E2BIG;
+ 
+-	if (p->name[0])
++	if (p->name[0]) {
++		if (!dev_valid_name(p->name))
++			goto failed;
+ 		strlcpy(name, p->name, IFNAMSIZ);
+-	else
++	} else {
+ 		sprintf(name, "ip6tnl%%d");
+-
++	}
++	err = -ENOMEM;
+ 	dev = alloc_netdev(sizeof(*t), name, NET_NAME_UNKNOWN,
+ 			   ip6_tnl_dev_setup);
+ 	if (!dev)
+diff --git a/net/ipv6/ip6_vti.c b/net/ipv6/ip6_vti.c
+index ce18cd20389d..3726dc797847 100644
+--- a/net/ipv6/ip6_vti.c
++++ b/net/ipv6/ip6_vti.c
+@@ -212,10 +212,13 @@ static struct ip6_tnl *vti6_tnl_create(struct net *net, struct __ip6_tnl_parm *p
+ 	char name[IFNAMSIZ];
+ 	int err;
+ 
+-	if (p->name[0])
++	if (p->name[0]) {
++		if (!dev_valid_name(p->name))
++			goto failed;
+ 		strlcpy(name, p->name, IFNAMSIZ);
+-	else
++	} else {
+ 		sprintf(name, "ip6_vti%%d");
++	}
+ 
+ 	dev = alloc_netdev(sizeof(*t), name, NET_NAME_UNKNOWN, vti6_dev_setup);
+ 	if (!dev)
+diff --git a/net/ipv6/sit.c b/net/ipv6/sit.c
+index 0195598f7bb5..e85791854c87 100644
+--- a/net/ipv6/sit.c
++++ b/net/ipv6/sit.c
+@@ -250,11 +250,13 @@ static struct ip_tunnel *ipip6_tunnel_locate(struct net *net,
+ 	if (!create)
+ 		goto failed;
+ 
+-	if (parms->name[0])
++	if (parms->name[0]) {
++		if (!dev_valid_name(parms->name))
++			goto failed;
+ 		strlcpy(name, parms->name, IFNAMSIZ);
+-	else
++	} else {
+ 		strcpy(name, "sit%d");
+-
++	}
+ 	dev = alloc_netdev(sizeof(*t), name, NET_NAME_UNKNOWN,
+ 			   ipip6_tunnel_setup);
+ 	if (!dev)
+diff --git a/net/sched/act_bpf.c b/net/sched/act_bpf.c
+index 9d2cabf1dc7e..f3eee5326307 100644
+--- a/net/sched/act_bpf.c
++++ b/net/sched/act_bpf.c
+@@ -248,10 +248,14 @@ static int tcf_bpf_init_from_efd(struct nlattr **tb, struct tcf_bpf_cfg *cfg)
+ 
+ static void tcf_bpf_cfg_cleanup(const struct tcf_bpf_cfg *cfg)
+ {
+-	if (cfg->is_ebpf)
+-		bpf_prog_put(cfg->filter);
+-	else
+-		bpf_prog_destroy(cfg->filter);
++	struct bpf_prog *filter = cfg->filter;
++
++	if (filter) {
++		if (cfg->is_ebpf)
++			bpf_prog_put(filter);
++		else
++			bpf_prog_destroy(filter);
++	}
+ 
+ 	kfree(cfg->bpf_ops);
+ 	kfree(cfg->bpf_name);
+diff --git a/net/sched/cls_u32.c b/net/sched/cls_u32.c
+index ed8b6a24b9e9..bac47b5d18fd 100644
+--- a/net/sched/cls_u32.c
++++ b/net/sched/cls_u32.c
+@@ -489,6 +489,7 @@ static int u32_delete_key(struct tcf_proto *tp, struct tc_u_knode *key)
+ 				RCU_INIT_POINTER(*kp, key->next);
+ 
+ 				tcf_unbind_filter(tp, &key->res);
++				idr_remove(&ht->handle_idr, key->handle);
+ 				tcf_exts_get_net(&key->exts);
+ 				call_rcu(&key->rcu, u32_delete_key_freepf_rcu);
+ 				return 0;
+diff --git a/net/sctp/ipv6.c b/net/sctp/ipv6.c
+index e35d4f73d2df..f6d3d0c1e133 100644
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -728,8 +728,10 @@ static int sctp_v6_addr_to_user(struct sctp_sock *sp, union sctp_addr *addr)
+ 			sctp_v6_map_v4(addr);
+ 	}
+ 
+-	if (addr->sa.sa_family == AF_INET)
++	if (addr->sa.sa_family == AF_INET) {
++		memset(addr->v4.sin_zero, 0, sizeof(addr->v4.sin_zero));
+ 		return sizeof(struct sockaddr_in);
++	}
+ 	return sizeof(struct sockaddr_in6);
+ }
+ 
+diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+index bf271f8c2dc9..7160c2e9b768 100644
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -354,11 +354,14 @@ static struct sctp_af *sctp_sockaddr_af(struct sctp_sock *opt,
+ 	if (!opt->pf->af_supported(addr->sa.sa_family, opt))
+ 		return NULL;
+ 
+-	/* V4 mapped address are really of AF_INET family */
+-	if (addr->sa.sa_family == AF_INET6 &&
+-	    ipv6_addr_v4mapped(&addr->v6.sin6_addr) &&
+-	    !opt->pf->af_supported(AF_INET, opt))
+-		return NULL;
++	if (addr->sa.sa_family == AF_INET6) {
++		if (len < SIN6_LEN_RFC2133)
++			return NULL;
++		/* V4 mapped address are really of AF_INET family */
++		if (ipv6_addr_v4mapped(&addr->v6.sin6_addr) &&
++		    !opt->pf->af_supported(AF_INET, opt))
++			return NULL;
++	}
+ 
+ 	/* If we get this far, af is valid. */
+ 	af = sctp_get_af_specific(addr->sa.sa_family);
