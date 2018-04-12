@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752866AbeDLJij (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 05:38:39 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.210]:40822 "EHLO
+        id S1752883AbeDLJjv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 05:39:51 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.154.210]:43093 "EHLO
         9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751920AbeDLJii (ORCPT
+        with ESMTP id S1751272AbeDLJjt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 05:38:38 -0400
+        Thu, 12 Apr 2018 05:39:49 -0400
 From: Matt Redfearn <matt.redfearn@mips.com>
 To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
         Florian Fainelli <f.fainelli@gmail.com>
@@ -16,209 +16,352 @@ CC: <linux-mips@linux-mips.org>, Matt Redfearn <matt.redfearn@mips.com>,
         Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: [PATCH v2 3/6] MIPS: perf: Fix perf with MT counting other threads
-Date: Thu, 12 Apr 2018 10:36:23 +0100
-Message-ID: <1523525786-29153-4-git-send-email-matt.redfearn@mips.com>
+Subject: [PATCH v2 4/6] MIPS: perf: Allocate per-core counters on demand
+Date: Thu, 12 Apr 2018 10:36:24 +0100
+Message-ID: <1523525786-29153-5-git-send-email-matt.redfearn@mips.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523525786-29153-1-git-send-email-matt.redfearn@mips.com>
 References: <1523525786-29153-1-git-send-email-matt.redfearn@mips.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [192.168.155.41]
-X-BESS-ID: 1523525812-452060-21719-24429-6
+X-BESS-ID: 1523525812-452060-21719-24429-7
 X-BESS-VER: 2018.4.1-r1804052329
 X-BESS-Apparent-Source-IP: 12.201.5.28
-X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Score: 1.50
 X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.191914
         Rule breakdown below
          pts rule name              description
         ---- ---------------------- --------------------------------
+        1.00 BSF_SC0_MV0713_2       META:  
         0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+        0.50 BSF_SC0_MV0713         META: Custom rule MV0713
+X-BESS-Outbound-Spam-Status: SCORE=1.50 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_SC0_MV0713_2, BSF_BESS_OUTBOUND, BSF_SC0_MV0713
 X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When perf is used in non-system mode, i.e. without specifying CPUs to
-count on, check_and_calc_range falls into the case when it sets
-M_TC_EN_ALL in the counter config_base. This has the impact of always
-counting for all of the threads in a core, even when the user has not
-requested it. For example this can be seen with a test program which
-executes 30002 instructions and 10000 branches running on one VPE and a
-busy load on the other VPE in the core. Without this commit, the
-expected count is not returned:
+Previously when performance counters are per-core, rather than
+per-thread, the number available were divided by 2 on detection, and the
+counters used by each thread in a core were "swizzled" to ensure
+separation. However, this solution is suboptimal since it relies on a
+couple of assumptions:
+a) Always having 2 VPEs / core (number of counters was divided by 2)
+b) Always having a number of counters implemented in the core that is
+   divisible by 2. For instance if an SoC implementation had a single
+   counter and 2 VPEs per core, then this logic would fail and no
+   performance counters would be available.
+The mechanism also does not allow for one VPE in a core using more than
+it's allocation of the per-core counters to count multiple events even
+though other VPEs may not be using them.
 
-taskset 4 dd if=/dev/zero of=/dev/null count=100000 & taskset 8 perf
-stat -e instructions:u,branches:u ./test_prog
+Fix this situation by instead allocating (and releasing) per-core
+performance counters when they are requested. This approach removes the
+above assumptions and fixes the shortcomings.
 
- Performance counter stats for './test_prog':
+In order to do this:
+Add additional logic to mipsxx_pmu_alloc_counter() to detect if a
+sibling is using a per-core counter, and to allocate a per-core counter
+in all sibling CPUs.
+Similarly, add a mipsxx_pmu_free_counter() function to release a
+per-core counter in all sibling CPUs when it is finished with.
+A new spinlock, core_counters_lock, is introduced to ensure exclusivity
+when allocating and releasing per-core counters.
+Since counters are now allocated per-core on demand, rather than being
+reserved per-thread at boot, all of the "swizzling" of counters is
+removed.
 
-            103235      instructions:u
-             17015      branches:u
+The upshot is that in an SoC with 2 counters / thread, counters are
+reported as:
+Performance counters: mips/interAptiv PMU enabled, 2 32-bit counters
+available to each CPU, irq 18
 
-In order to fix this, remove check_and_calc_range entirely and perform
-all of the logic in mipsxx_pmu_enable_event. Since
-mipsxx_pmu_enable_event now requires the range of the event, ensure that
-it is set by mipspmu_perf_event_encode in the same circumstances as
-before (i.e. #ifdef CONFIG_MIPS_MT_SMP && num_possible_cpus() > 1).
+Running an instance of a test program on each of 2 threads in a
+core, both threads can use their 2 counters to count 2 events:
 
-The logic of mipsxx_pmu_enable_event now becomes:
-If the CPU is a BMIPS5000, then use the special vpe_id() implementation
-to select which VPE to count.
-If the counter has a range greater than a single VPE, i.e. it is a
-core-wide counter, then ensure that the counter is set up to count
-events from all TCs (though, since this is true by definition, is this
-necessary? Just enabling a core-wide counter in the per-VPE case appears
-experimentally to return the same counts. This is left in for now as the
-logic was present before).
-If the event is set up to count a particular CPU (i.e. system mode),
-then the VPE ID of that CPU is used for the counter.
-Otherwise, the event should be counted on the CPU scheduling this thread
-(this was the critical bit missing from the previous implementation) so
-the VPE ID of this CPU is used for the counter.
-
-With this commit, the same test as before returns the counts expected:
-
-taskset 4 dd if=/dev/zero of=/dev/null count=100000 & taskset 8 perf
-stat -e instructions:u,branches:u ./test_prog
+taskset 4 perf stat -e instructions:u,branches:u ./test_prog & taskset 8
+perf stat -e instructions:u,branches:u ./test_prog
 
  Performance counter stats for './test_prog':
 
              30002      instructions:u
              10000      branches:u
 
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+       0.005164264 seconds time elapsed
+ Performance counter stats for './test_prog':
 
+             30002      instructions:u
+             10000      branches:u
+
+       0.006139975 seconds time elapsed
+
+In an SoC with 2 counters / core (which can be forced by setting
+cpu_has_mipsmt_pertccounters = 0), counters are reported as:
+Performance counters: mips/interAptiv PMU enabled, 2 32-bit counters
+available to each core, irq 18
+
+Running an instance of a test program on each of 2 threads in a
+core, now only one thread manages to secure the performance counters to
+count 2 events. The other thread does not get any counters.
+
+taskset 4 perf stat -e instructions:u,branches:u ./test_prog & taskset 8
+perf stat -e instructions:u,branches:u ./test_prog
+
+ Performance counter stats for './test_prog':
+
+     <not counted>       instructions:u
+     <not counted>       branches:u
+
+       0.005179533 seconds time elapsed
+
+ Performance counter stats for './test_prog':
+
+             30002      instructions:u
+             10000      branches:u
+
+       0.005179467 seconds time elapsed
+
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
 ---
 
 Changes in v2:
-Fix mipsxx_pmu_enable_event for !#ifdef CONFIG_MIPS_MT_SMP
+- Fix !#ifdef CONFIG_MIPS_PERF_SHARED_TC_COUNTERS build
+- re-use cpuc variable in mipsxx_pmu_alloc_counter,
+  mipsxx_pmu_free_counter rather than having sibling_ version.
 
- arch/mips/kernel/perf_event_mipsxx.c | 78 ++++++++++++++++++------------------
- 1 file changed, 39 insertions(+), 39 deletions(-)
+ arch/mips/kernel/perf_event_mipsxx.c | 127 +++++++++++++++++++++++------------
+ 1 file changed, 85 insertions(+), 42 deletions(-)
 
 diff --git a/arch/mips/kernel/perf_event_mipsxx.c b/arch/mips/kernel/perf_event_mipsxx.c
-index 239c4ca89fb0..0373087abee8 100644
+index 0373087abee8..6c9b5d64a9ef 100644
 --- a/arch/mips/kernel/perf_event_mipsxx.c
 +++ b/arch/mips/kernel/perf_event_mipsxx.c
-@@ -325,7 +325,11 @@ static int mipsxx_pmu_alloc_counter(struct cpu_hw_events *cpuc,
+@@ -131,6 +131,8 @@ static struct mips_pmu mipspmu;
+ #ifdef CONFIG_MIPS_PERF_SHARED_TC_COUNTERS
+ static int cpu_has_mipsmt_pertccounters;
  
- static void mipsxx_pmu_enable_event(struct hw_perf_event *evt, int idx)
++static DEFINE_SPINLOCK(core_counters_lock);
++
+ static DEFINE_RWLOCK(pmuint_rwlock);
+ 
+ #if defined(CONFIG_CPU_BMIPS5000)
+@@ -141,20 +143,6 @@ static DEFINE_RWLOCK(pmuint_rwlock);
+ 			 0 : cpu_vpe_id(&current_cpu_data))
+ #endif
+ 
+-/* Copied from op_model_mipsxx.c */
+-static unsigned int vpe_shift(void)
+-{
+-	if (num_possible_cpus() > 1)
+-		return 1;
+-
+-	return 0;
+-}
+-
+-static unsigned int counters_total_to_per_cpu(unsigned int counters)
+-{
+-	return counters >> vpe_shift();
+-}
+-
+ #else /* !CONFIG_MIPS_PERF_SHARED_TC_COUNTERS */
+ #define vpe_id()	0
+ 
+@@ -165,17 +153,8 @@ static void pause_local_counters(void);
+ static irqreturn_t mipsxx_pmu_handle_irq(int, void *);
+ static int mipsxx_pmu_handle_shared_irq(void);
+ 
+-static unsigned int mipsxx_pmu_swizzle_perf_idx(unsigned int idx)
+-{
+-	if (vpe_id() == 1)
+-		idx = (idx + 2) & 3;
+-	return idx;
+-}
+-
+ static u64 mipsxx_pmu_read_counter(unsigned int idx)
  {
-+	struct perf_event *event = container_of(evt, struct perf_event, hw);
- 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-+#ifdef CONFIG_MIPS_MT_SMP
-+	unsigned int range = evt->event_base >> 24;
-+#endif /* CONFIG_MIPS_MT_SMP */
+-	idx = mipsxx_pmu_swizzle_perf_idx(idx);
+-
+ 	switch (idx) {
+ 	case 0:
+ 		/*
+@@ -197,8 +176,6 @@ static u64 mipsxx_pmu_read_counter(unsigned int idx)
  
- 	WARN_ON(idx < 0 || idx >= mipspmu.num_counters);
+ static u64 mipsxx_pmu_read_counter_64(unsigned int idx)
+ {
+-	idx = mipsxx_pmu_swizzle_perf_idx(idx);
+-
+ 	switch (idx) {
+ 	case 0:
+ 		return read_c0_perfcntr0_64();
+@@ -216,8 +193,6 @@ static u64 mipsxx_pmu_read_counter_64(unsigned int idx)
  
-@@ -333,11 +337,37 @@ static void mipsxx_pmu_enable_event(struct hw_perf_event *evt, int idx)
- 		(evt->config_base & M_PERFCTL_CONFIG_MASK) |
- 		/* Make sure interrupt enabled. */
- 		MIPS_PERFCTRL_IE;
--	if (IS_ENABLED(CONFIG_CPU_BMIPS5000))
-+
-+#ifdef CONFIG_CPU_BMIPS5000
-+	{
- 		/* enable the counter for the calling thread */
- 		cpuc->saved_ctrl[idx] |=
- 			(1 << (12 + vpe_id())) | BRCM_PERFCTRL_TC;
-+	}
-+#else
-+#ifdef CONFIG_MIPS_MT_SMP
-+	if (range > V) {
-+		/* The counter is processor wide. Set it up to count all TCs. */
-+		pr_debug("Enabling perf counter for all TCs\n");
-+		cpuc->saved_ctrl[idx] |= M_TC_EN_ALL;
-+	} else
-+#endif /* CONFIG_MIPS_MT_SMP */
-+	{
-+		unsigned int cpu, ctrl;
+ static void mipsxx_pmu_write_counter(unsigned int idx, u64 val)
+ {
+-	idx = mipsxx_pmu_swizzle_perf_idx(idx);
+-
+ 	switch (idx) {
+ 	case 0:
+ 		write_c0_perfcntr0(val);
+@@ -236,8 +211,6 @@ static void mipsxx_pmu_write_counter(unsigned int idx, u64 val)
  
-+		/*
-+		 * Set up the counter for a particular CPU when event->cpu is
-+		 * a valid CPU number. Otherwise set up the counter for the CPU
-+		 * scheduling this thread.
-+		 */
-+		cpu = (event->cpu >= 0) ? event->cpu : smp_processor_id();
-+
-+		ctrl = M_PERFCTL_VPEID(cpu_vpe_id(&cpu_data[cpu]));
-+		ctrl |= M_TC_EN_VPE;
-+		cpuc->saved_ctrl[idx] |= ctrl;
-+		pr_debug("Enabling perf counter for CPU%d\n", cpu);
-+	}
-+#endif /* CONFIG_CPU_BMIPS5000 */
+ static void mipsxx_pmu_write_counter_64(unsigned int idx, u64 val)
+ {
+-	idx = mipsxx_pmu_swizzle_perf_idx(idx);
+-
+ 	switch (idx) {
+ 	case 0:
+ 		write_c0_perfcntr0_64(val);
+@@ -256,8 +229,6 @@ static void mipsxx_pmu_write_counter_64(unsigned int idx, u64 val)
+ 
+ static unsigned int mipsxx_pmu_read_control(unsigned int idx)
+ {
+-	idx = mipsxx_pmu_swizzle_perf_idx(idx);
+-
+ 	switch (idx) {
+ 	case 0:
+ 		return read_c0_perfctrl0();
+@@ -275,8 +246,6 @@ static unsigned int mipsxx_pmu_read_control(unsigned int idx)
+ 
+ static void mipsxx_pmu_write_control(unsigned int idx, unsigned int val)
+ {
+-	idx = mipsxx_pmu_swizzle_perf_idx(idx);
+-
+ 	switch (idx) {
+ 	case 0:
+ 		write_c0_perfctrl0(val);
+@@ -296,7 +265,7 @@ static void mipsxx_pmu_write_control(unsigned int idx, unsigned int val)
+ static int mipsxx_pmu_alloc_counter(struct cpu_hw_events *cpuc,
+ 				    struct hw_perf_event *hwc)
+ {
+-	int i;
++	int i, cpu = smp_processor_id();
+ 
  	/*
- 	 * We do not actually let the counter run. Leave it until start().
- 	 */
-@@ -651,13 +681,14 @@ static unsigned int mipspmu_perf_event_encode(const struct mips_perf_event *pev)
-  * event_id.
-  */
- #ifdef CONFIG_MIPS_MT_SMP
--	return ((unsigned int)pev->range << 24) |
--		(pev->cntr_mask & 0xffff00) |
--		(pev->event_id & 0xff);
--#else
--	return (pev->cntr_mask & 0xffff00) |
--		(pev->event_id & 0xff);
--#endif
-+	if (num_possible_cpus() > 1)
-+		return ((unsigned int)pev->range << 24) |
-+			(pev->cntr_mask & 0xffff00) |
-+			(pev->event_id & 0xff);
-+	else
-+#endif /* CONFIG_MIPS_MT_SMP */
-+		return ((pev->cntr_mask & 0xffff00) |
-+			(pev->event_id & 0xff));
+ 	 * We only need to care the counter mask. The range has been
+@@ -315,14 +284,85 @@ static int mipsxx_pmu_alloc_counter(struct cpu_hw_events *cpuc,
+ 		 * they can be dynamically swapped, they both feel happy.
+ 		 * But here we leave this issue alone for now.
+ 		 */
+-		if (test_bit(i, &cntr_mask) &&
+-			!test_and_set_bit(i, cpuc->used_mask))
++		if (!test_bit(i, &cntr_mask))
++			continue;
++
++#ifdef CONFIG_MIPS_PERF_SHARED_TC_COUNTERS
++		/*
++		 * When counters are per-core, check for use and allocate
++		 * them in all sibling CPUs.
++		 */
++		if (!cpu_has_mipsmt_pertccounters) {
++			int sibling_cpu, allocated = 0;
++			unsigned long flags;
++
++			spin_lock_irqsave(&core_counters_lock, flags);
++
++			for_each_cpu(sibling_cpu, &cpu_sibling_map[cpu]) {
++				cpuc = per_cpu_ptr(&cpu_hw_events, sibling_cpu);
++
++				if (test_bit(i, cpuc->used_mask)) {
++					pr_debug("CPU%d already using core counter %d\n",
++						 sibling_cpu, i);
++					goto next_counter;
++				}
++			}
++
++			/* Counter i is not used by any siblings - use it */
++			allocated = 1;
++			for_each_cpu(sibling_cpu, &cpu_sibling_map[cpu]) {
++				cpuc = per_cpu_ptr(&cpu_hw_events, sibling_cpu);
++
++				set_bit(i, cpuc->used_mask);
++				/* sibling is using the counter */
++				pr_debug("CPU%d now using core counter %d\n",
++					 sibling_cpu, i);
++			}
++next_counter:
++			spin_unlock_irqrestore(&core_counters_lock, flags);
++			if (allocated)
++				return i;
++		}
++		else
++#endif
++		if (!test_and_set_bit(i, cpuc->used_mask)) {
++			pr_debug("CPU%d now using counter %d\n", cpu, i);
+ 			return i;
++		}
+ 	}
+ 
+ 	return -EAGAIN;
  }
  
- static const struct mips_perf_event *mipspmu_map_general_event(int idx)
-@@ -1261,33 +1292,6 @@ static const struct mips_perf_event xlp_cache_map
- },
- };
- 
--#ifdef CONFIG_MIPS_MT_SMP
--static void check_and_calc_range(struct perf_event *event,
--				 const struct mips_perf_event *pev)
--{
--	struct hw_perf_event *hwc = &event->hw;
--
--	if (event->cpu >= 0) {
--		if (pev->range > V) {
--			/*
--			 * The user selected an event that is processor
--			 * wide, while expecting it to be VPE wide.
--			 */
--			hwc->config_base |= M_TC_EN_ALL;
--		} else {
--			hwc->config_base |= M_PERFCTL_VPEID(vpe_id());
--			hwc->config_base |= M_TC_EN_VPE;
--		}
--	} else
--		hwc->config_base |= M_TC_EN_ALL;
--}
--#else
--static void check_and_calc_range(struct perf_event *event,
--				 const struct mips_perf_event *pev)
--{
--}
--#endif
--
- static int __hw_perf_event_init(struct perf_event *event)
++static void mipsxx_pmu_free_counter(struct cpu_hw_events *cpuc,
++				    struct hw_perf_event *hwc)
++{
++	int cpu = smp_processor_id();
++
++#ifdef CONFIG_MIPS_PERF_SHARED_TC_COUNTERS
++	/* When counters are per-core, free them in all sibling CPUs */
++	if (!cpu_has_mipsmt_pertccounters) {
++		unsigned long flags;
++		int sibling_cpu;
++
++		spin_lock_irqsave(&core_counters_lock, flags);
++
++		for_each_cpu(sibling_cpu, &cpu_sibling_map[cpu]) {
++			cpuc = per_cpu_ptr(&cpu_hw_events, sibling_cpu);
++
++			clear_bit(hwc->idx, cpuc->used_mask);
++			pr_debug("CPU%d released core counter %d\n",
++				 sibling_cpu, hwc->idx);
++		}
++
++		spin_unlock_irqrestore(&core_counters_lock, flags);
++		return;
++	}
++#endif
++	pr_debug("CPU%d released counter %d\n", cpu, hwc->idx);
++	clear_bit(hwc->idx, cpuc->used_mask);
++}
++
+ static void mipsxx_pmu_enable_event(struct hw_perf_event *evt, int idx)
  {
- 	struct perf_event_attr *attr = &event->attr;
-@@ -1323,10 +1327,6 @@ static int __hw_perf_event_init(struct perf_event *event)
- 	 */
- 	hwc->config_base = MIPS_PERFCTRL_IE;
+ 	struct perf_event *event = container_of(evt, struct perf_event, hw);
+@@ -519,7 +559,7 @@ static void mipspmu_del(struct perf_event *event, int flags)
  
--	/* Calculate range bits and validate it. */
--	if (num_possible_cpus() > 1)
--		check_and_calc_range(event, pev);
--
- 	hwc->event_base = mipspmu_perf_event_encode(pev);
- 	if (PERF_TYPE_RAW == event->attr.type)
- 		mutex_unlock(&raw_event_mutex);
+ 	mipspmu_stop(event, PERF_EF_UPDATE);
+ 	cpuc->events[idx] = NULL;
+-	clear_bit(idx, cpuc->used_mask);
++	mipsxx_pmu_free_counter(cpuc, hwc);
+ 
+ 	perf_event_update_userpage(event);
+ }
+@@ -1743,8 +1783,6 @@ init_hw_perf_events(void)
+ 
+ #ifdef CONFIG_MIPS_PERF_SHARED_TC_COUNTERS
+ 	cpu_has_mipsmt_pertccounters = probe_mipsmt_pertccounters();
+-	if (!cpu_has_mipsmt_pertccounters)
+-		counters = counters_total_to_per_cpu(counters);
+ #endif
+ 
+ 	if (get_c0_perfcount_int)
+@@ -1868,9 +1906,14 @@ init_hw_perf_events(void)
+ 
+ 	on_each_cpu(reset_counters, (void *)(long)counters, 1);
+ 
+-	pr_cont("%s PMU enabled, %d %d-bit counters available to each "
+-		"CPU, irq %d%s\n", mipspmu.name, counters, counter_bits, irq,
+-		irq < 0 ? " (share with timer interrupt)" : "");
++	pr_cont("%s PMU enabled, %d %d-bit counters available to each %s, irq %d%s\n",
++		mipspmu.name, counters, counter_bits,
++#ifdef CONFIG_MIPS_PERF_SHARED_TC_COUNTERS
++		cpu_has_mipsmt_pertccounters ? "CPU" : "core",
++#else
++		"CPU",
++#endif
++		irq, irq < 0 ? " (share with timer interrupt)" : "");
+ 
+ 	perf_pmu_register(&pmu, "cpu", PERF_TYPE_RAW);
+ 
 -- 
 2.7.4
