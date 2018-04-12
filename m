@@ -1,11 +1,11 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1684311-1523561499-2-6282352169821428178
+X-Cyrus-Session-Id: sloti22d1t05-1684311-1523561493-2-12085651419383454462
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global,
-  SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: 
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523561499; b=DW8Jj7K6/SGM9C5HppPdn+yZY66DgQ8Dxbg43AyFjrwlbo5JlR
-    GOQtwRwvEz7LCoyS+M0akjIlP+4Jti+MF9JhLwKJVF1exBHH+t5WQGCRlm0wDtqi
-    SIhCj69UvzP2b/L+ioktXKCNKmDgDubnuca6h4NEklJ/ydbh7O9U7/F0RYeJLjCj
-    0gMDoWs6dpAzOWTg+CVNmZ3GMO0TodVLWZoynPiAsAFlEIe8BIt1N1gplI7tQKix
-    1uvdnHjngBsu8MwkQo631KPkNvBCFMetXjMpSPmQkSVaPXZbEnWzv+9lLRvSlMf+
-    m0W1ziFAQgs0OdA7mnUjl2VEi3XozkZNK0zg==
+    1523561492; b=mrq4xtL2B/IHjSCBTQZxfZknb5Fr1zts6oRjuAabMvyoLpX/0C
+    YcKdgbpE5cohyqpGw2Wst0cBKHWC2I9ccos+pPf454QxK+C48TZCN5HAhr5CfmxQ
+    LCt5GqOfhtYgzVKVU05xKcyjpTvDs5iOZUQu0skkJUXdfK1H0u+DS7xkQkxU00Gq
+    0k2MYwi7HfAJuOEMm/C5Pp+wD3qxyhG0g4Gwrf3Z56YmZg7saTBpuwFCMmPgmRje
+    1AA7LdC2Qr2OyYaim6AIstBOpRpgB8kC+v/jYqHmiOhj2CjCgFuWBJ8EeEmvFaSa
+    AnZ5QIPWqzwDGOe9SbNn0KxM9DV7OQup0KfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1523561499; bh=
-    vJy9RQ/MQXM37Y5Ww65wAWxK1LtE8QZZfSctiH4ko4Q=; b=crZFUmjF395u6mtI
-    0uKlwSrXSZfVAYjykG/ulyLpY67kC5yM+ayTIE43JySN+Df4Z34KRyb2v+nCii7O
-    gabPEIdPd85V2cpsuOgW+P+dFUayzE6JVZFd1GtwKvXsAtoF7AklkBpsSCEFOTxi
-    oF/+NWMnimYhN+xfUG1h4wGw2HuLzu3JahXftFUURNxHUGZNUJXhJa/vXuifP7ig
-    Fl2kUlyPvyxbMyhxHDy1F9gMcZGPRcUdgmd731SNRpT6tsYFrmSpEQqXaYbhLUWH
-    2Fc5ymFOa3c0aPKOWlJqx17A0XOiCCWZcZeepPYH7OBJVTxMKKdO9JpzuRQK6LPW
-    DUqjkg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1523561492; bh=
+    b70pFQUVKc/bhX1EIJFGDknKBWm1fqIePoK6Ry5JHYc=; b=HZmrxL30AD6+WaAJ
+    Jx3XbI/BNHcCEwnPBIrerxd3fC09UeGjvx61FkfVMzaxneR0omZx1kItLa6Y5v8t
+    RlE364twQDLD+paRghbx1/5a5vICh16PVVybacitxLWmLaGbixUY/TsipkIuccwZ
+    eMLvrcaoHk+zMwHPQ+Ql6LRZMb/A8cuVhRb4zXqQBnM02TRVhLtck3bHgM5zoUrX
+    Fb6BHt6TndLW+Vn1nDil0KX8znzmH4+GOPowPBdTSAqZS4sttbx84d5OBQAj6VA3
+    /PESPHxmPRwNTxu7lo4sikWdsMxLGRxvSBcPAhghay+nFlDICOwg1dvD5jiwY3js
+    ypE3ZQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
@@ -51,27 +51,27 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGfHBmUQRkdC68YesiI9Wsk6nQ3vUM0WY7/ENa0iVQFI0w+Q8wuGhiblj1ol+MIstDLfXHp/Bfge5J8ZvaAoV44LlVwLnUfbx6w0j/cSSL3bxnymYoFX
-    bL2xgOqOenJilRglYucXx/mnEYv2btcXxetk3eDcggJA3fgASB1fvPr/jAWx9UEbBhPquZh0URce+W5rgN/64wzTpu1nhQBZFEIA0h14/pBspa/M+6fd1Sqy
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGIYeHAEEsRRGMTo7COt6Q9H1gr6M5NTNPSdk85AfakcjeH4rYPRuIfBMGrSzOmsgsJtaAiSlCkAfjBAE6ecscmEC195VSGmg2B2GEjBmJ3t95/hdXZb
+    0CQZf1ybRpax7uYDsmIvXRxjimskRZxMQlM68GT751iNQ5f+FxTbTp1NiTeczDE/bY0TM8SDaY7mwM7H5DE4zEDk3lWnAXywA4MnhkfcFHlkivQfmvWFZxqa
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=7d_E57ReAAAA:8
-    a=drOt6m5kAAAA:8 a=7CQSdrXTAAAA:8 a=1XWaLZrsAAAA:8 a=JfrnYn6hAAAA:8
-    a=SOq6UgPBAAAA:8 a=WfulkdPnAAAA:8 a=FOH2dFAWAAAA:8 a=NufY4J3AAAAA:8
-    a=20KFwNOVAAAA:8 a=meVymXHHAAAA:8 a=VnNF1IyMAAAA:8 a=UPm3pfgAAAAA:8
-    a=Z4Rwk6OoAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=nK1Qfd4pxio8lxmWJb4A:9
-    a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22 a=RMMjzBEyIzXRtoq5n5K6:22
-    a=a-qgeE7W1pNrGK8U0ZQC:22 a=1CNFftbPRP8L7MoqJWF3:22 a=3hv5r9HjGAh9o5iR9qwG:22
-    a=56QPVbyS4OZCpcuOg7Z9:22 a=i3VuKzQdj-NEYjvDI-p3:22 a=TPcZfFuj8SYsoCJAFAiX:22
+    a=VnNF1IyMAAAA:8 a=JfrnYn6hAAAA:8 a=1XWaLZrsAAAA:8 a=SOq6UgPBAAAA:8
+    a=WfulkdPnAAAA:8 a=FOH2dFAWAAAA:8 a=NufY4J3AAAAA:8 a=20KFwNOVAAAA:8
+    a=oGMlB6cnAAAA:8 a=meVymXHHAAAA:8 a=UPm3pfgAAAAA:8 a=Z4Rwk6OoAAAA:8
+    a=drOt6m5kAAAA:8 a=7CQSdrXTAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
+    a=PcGdOUl1GkNCjaGyiRMA:9 a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22
+    a=1CNFftbPRP8L7MoqJWF3:22 a=3hv5r9HjGAh9o5iR9qwG:22 a=56QPVbyS4OZCpcuOg7Z9:22
+    a=i3VuKzQdj-NEYjvDI-p3:22 a=TPcZfFuj8SYsoCJAFAiX:22 a=NdAtdrkLVvyUPsUoGJp4:22
     a=2JgSa4NbpEOStq-L5dxp:22 a=uD9XBtlS4o1URY3aiGdj:22 a=HkZW87K1Qel5hWWM3VKY:22
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=RMMjzBEyIzXRtoq5n5K6:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753155AbeDLTaz (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 12 Apr 2018 15:30:55 -0400
-Received: from mail.efficios.com ([167.114.142.138]:45538 "EHLO
+        id S1753833AbeDLTa5 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 12 Apr 2018 15:30:57 -0400
+Received: from mail.efficios.com ([167.114.142.138]:45854 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753392AbeDLT2Z (ORCPT
+        with ESMTP id S1753362AbeDLT2Z (ORCPT
         <rfc822;linux-api@vger.kernel.org>); Thu, 12 Apr 2018 15:28:25 -0400
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
@@ -95,9 +95,9 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.18 15/23] arm: Wire up cpu_opv system call
-Date: Thu, 12 Apr 2018 15:27:52 -0400
-Message-Id: <20180412192800.15708-16-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 13/23] x86: Wire up cpu_opv system call
+Date: Thu, 12 Apr 2018 15:27:50 -0400
+Message-Id: <20180412192800.15708-14-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
 References: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
@@ -108,39 +108,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Russell King <linux@arm.linux.org.uk>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Paul Turner <pjt@google.com>
-CC: Andrew Hunter <ahh@google.com>
+CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 CC: Peter Zijlstra <peterz@infradead.org>
+CC: Paul Turner <pjt@google.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Andrew Hunter <ahh@google.com>
 CC: Andy Lutomirski <luto@amacapital.net>
 CC: Andi Kleen <andi@firstfloor.org>
 CC: Dave Watson <davejwatson@fb.com>
 CC: Chris Lameter <cl@linux.com>
 CC: Ingo Molnar <mingo@redhat.com>
+CC: "H. Peter Anvin" <hpa@zytor.com>
 CC: Ben Maurer <bmaurer@fb.com>
 CC: Steven Rostedt <rostedt@goodmis.org>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 CC: Josh Triplett <josh@joshtriplett.org>
 CC: Linus Torvalds <torvalds@linux-foundation.org>
 CC: Andrew Morton <akpm@linux-foundation.org>
+CC: Russell King <linux@arm.linux.org.uk>
+CC: Catalin Marinas <catalin.marinas@arm.com>
+CC: Will Deacon <will.deacon@arm.com>
+CC: Michael Kerrisk <mtk.manpages@gmail.com>
 CC: Boqun Feng <boqun.feng@gmail.com>
 CC: linux-api@vger.kernel.org
 ---
- arch/arm/tools/syscall.tbl | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/entry/syscalls/syscall_32.tbl | 1 +
+ arch/x86/entry/syscalls/syscall_64.tbl | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index fbc74b5fa3ed..213ccfc2c437 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -413,3 +413,4 @@
- 396	common	pkey_free		sys_pkey_free
- 397	common	statx			sys_statx
- 398	common	rseq			sys_rseq
-+399	common	cpu_opv			sys_cpu_opv
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index b76cbd25854f..5772b343f7d5 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -392,3 +392,4 @@
+ 383	i386	statx			sys_statx
+ 384	i386	arch_prctl		sys_arch_prctl			compat_sys_arch_prctl
+ 385	i386	rseq			sys_rseq
++386	i386	cpu_opv			sys_cpu_opv
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 3ad03495bbb9..ab5d1f9f9396 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -340,6 +340,7 @@
+ 331	common	pkey_free		sys_pkey_free
+ 332	common	statx			sys_statx
+ 333	common	rseq			sys_rseq
++334	common	cpu_opv			sys_cpu_opv
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
 -- 
 2.11.0
 
