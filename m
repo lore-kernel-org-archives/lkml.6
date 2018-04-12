@@ -1,88 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752379AbeDLUk0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 16:40:26 -0400
-Received: from mga18.intel.com ([134.134.136.126]:56517 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751625AbeDLUkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 16:40:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,443,1517904000";
-   d="scan'208";a="50340404"
-Subject: Re: [RFC PATCH 0/3] Interface for higher order contiguous allocations
-From: Reinette Chatre <reinette.chatre@intel.com>
-To: Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc: Michal Hocko <mhocko@kernel.org>, Christopher Lameter <cl@linux.com>,
-        Guy Shattah <sguy@mellanox.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Michal Nazarewicz <mina86@mina86.com>,
-        Vlastimil Babka <vbabka@suse.cz>, David Nellans <dnellans@nvidia.com>,
-        Laura Abbott <labbott@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Dave Hansen <dave.hansen@intel.com>
-References: <20180212222056.9735-1-mike.kravetz@oracle.com>
- <770445b3-6caa-a87a-5de7-3157fc5280c2@intel.com>
-Message-ID: <74b7c6e5-bce6-a70a-287a-af44765836c7@intel.com>
-Date: Thu, 12 Apr 2018 13:40:24 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752488AbeDLUoP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 16:44:15 -0400
+Received: from mail-yb0-f180.google.com ([209.85.213.180]:33263 "EHLO
+        mail-yb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751600AbeDLUoO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 16:44:14 -0400
+X-Google-Smtp-Source: AIpwx4+EIIRoRIFWH5ErayLhHgadtC2yFXJAUKyuI9CrcpUuyDcCUNJSEnhvrJtIV34CtsRPvE0MZA==
+Date: Thu, 12 Apr 2018 16:44:10 -0400
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: corbet@lwn.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] Documentation/process: updates to the PGP guide
+Message-ID: <20180412204410.GA6909@work>
+Mail-Followup-To: corbet@lwn.net, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-In-Reply-To: <770445b3-6caa-a87a-5de7-3157fc5280c2@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mike,
+Small tweaks to the Maintainer PGP guide:
 
-On 2/15/2018 12:22 PM, Reinette Chatre wrote:
-> On 2/12/2018 2:20 PM, Mike Kravetz wrote:
->> These patches came out of the "[RFC] mmap(MAP_CONTIG)" discussions at:
->> http://lkml.kernel.org/r/21f1ec96-2822-1189-1c95-79a2bb491571@oracle.com
->>
->> One suggestion in that thread was to create a friendlier interface that
->> could be used by drivers and others outside core mm code to allocate a
->> contiguous set of pages.  The alloc_contig_range() interface is used for
->> this purpose today by CMA and gigantic page allocation.  However, this is
->> not a general purpose interface.  So, wrap alloc_contig_range() in the
->> more general interface:
->>
->> struct page *find_alloc_contig_pages(unsigned int order, gfp_t gfp, int nid,
->> 					nodemask_t *nodemask)
->>
->> No underlying changes are made to increase the likelihood that a contiguous
->> set of pages can be found and allocated.  Therefore, any user of this
->> interface must deal with failure.  The hope is that this interface will be
->> able to satisfy some use cases today.
-> 
-> As discussed in another thread a new feature, Cache Pseudo-Locking,
-> requires large contiguous regions. Until now I just exposed
-> alloc_gigantic_page() to handle these allocations in my testing. I now
-> moved to using find_alloc_contig_pages() as introduced here and all my
-> tests passed. I do hope that an API supporting large contiguous regions
-> become available.
-> 
-> Thank you very much for creating this.
-> 
-> Tested-by: Reinette Chatre <reinette.chatre@intel.com>
+ - Use --quick-addkey command that is compatible between GnuPG-2.2 and
+   GnuPG-2.1 (which many people still have)
+ - Add a note about the Nitrokey program
+ - Warn that some devices can't change the passphrase before there are
+   keys on the card (specifically, Nitrokeys)
+ - Link to the GnuPG wiki page about gpg-agent forwarding over ssh
+ - Tell git to use gpgv2 instead of legacy gpgv when verifying signed
+   tags or commits
 
-Do you still intend on submitting these changes for inclusion?
+Signed-off-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+---
+ Documentation/process/maintainer-pgp-guide.rst | 39 ++++++++++++++++++++++++--
+ 1 file changed, 37 insertions(+), 2 deletions(-)
 
-I would really like to use this work but unfortunately the original
-patches submitted here do not apply anymore. I am encountering conflicts
-with, for example:
-
-commit d9cc948f6fa1c3384037f500e0acd35f03850d15
-Author: Michal Hocko <mhocko@suse.com>
-Date:   Wed Jan 31 16:20:44 2018 -0800
-
-    mm, hugetlb: integrate giga hugetlb more naturally to the allocation
-path
-
-Thank you very much
-
-Reinette
+diff --git a/Documentation/process/maintainer-pgp-guide.rst b/Documentation/process/maintainer-pgp-guide.rst
+index b453561a7148..aff9b1a4d77b 100644
+--- a/Documentation/process/maintainer-pgp-guide.rst
++++ b/Documentation/process/maintainer-pgp-guide.rst
+@@ -219,7 +219,7 @@ Our goal is to protect your master key by moving it to offline media, so
+ if you only have a combined **[SC]** key, then you should create a separate
+ signing subkey::
+ 
+-    $ gpg --quick-add-key [fpr] ed25519 sign
++    $ gpg --quick-addkey [fpr] ed25519 sign
+ 
+ Remember to tell the keyservers about this change, so others can pull down
+ your new subkey::
+@@ -450,11 +450,18 @@ functionality.  There are several options available:
+ others. If you want to use ECC keys, your best bet among commercially
+ available devices is the Nitrokey Start.
+ 
++.. note::
++
++    If you are listed in MAINTAINERS or have an account at kernel.org,
++    you `qualify for a free Nitrokey Start`_ courtesy of The Linux
++    Foundation.
++
+ .. _`Nitrokey Start`: https://shop.nitrokey.com/shop/product/nitrokey-start-6
+ .. _`Nitrokey Pro`: https://shop.nitrokey.com/shop/product/nitrokey-pro-3
+ .. _`Yubikey 4`: https://www.yubico.com/product/yubikey-4-series/
+ .. _Gnuk: http://www.fsij.org/doc-gnuk/
+ .. _`LWN has a good review`: https://lwn.net/Articles/736231/
++.. _`qualify for a free Nitrokey Start`: https://www.kernel.org/nitrokey-digital-tokens-for-kernel-developers.html
+ 
+ Configure your smartcard device
+ -------------------------------
+@@ -482,7 +489,7 @@ there are no convenient command-line switches::
+ You should set the user PIN (1), Admin PIN (3), and the Reset Code (4).
+ Please make sure to record and store these in a safe place -- especially
+ the Admin PIN and the Reset Code (which allows you to completely wipe
+-the smartcard).  You so rarely need to use the Admin PIN, that you will
++the smartcard). You so rarely need to use the Admin PIN, that you will
+ inevitably forget what it is if you do not record it.
+ 
+ Getting back to the main card menu, you can also set other values (such
+@@ -494,6 +501,12 @@ additionally leak information about your smartcard should you lose it.
+     Despite having the name "PIN", neither the user PIN nor the admin
+     PIN on the card need to be numbers.
+ 
++.. warning::
++
++    Some devices may require that you move the subkeys onto the device
++    before you can change the passphrase. Please check the documentation
++    provided by the device manufacturer.
++
+ Move the subkeys to your smartcard
+ ----------------------------------
+ 
+@@ -655,6 +668,20 @@ want to import these changes back into your regular working directory::
+     $ gpg --export | gpg --homedir ~/.gnupg --import
+     $ unset GNUPGHOME
+ 
++Using gpg-agent over ssh
++~~~~~~~~~~~~~~~~~~~~~~~~
++
++You can forward your gpg-agent over ssh if you need to sign tags or
++commits on a remote system. Please refer to the instructions provided
++on the GnuPG wiki:
++
++- `Agent Forwarding over SSH`_
++
++It works more smoothly if you can modify the sshd server settings on the
++remote end.
++
++.. _`Agent Forwarding over SSH`: https://wiki.gnupg.org/AgentForwarding
++
+ 
+ Using PGP with Git
+ ==================
+@@ -692,6 +719,7 @@ should be used (``[fpr]`` is the fingerprint of your key)::
+ tell git to always use it instead of the legacy ``gpg`` from version 1::
+ 
+     $ git config --global gpg.program gpg2
++    $ git config --global gpgv.program gpgv2
+ 
+ How to work with signed tags
+ ----------------------------
+@@ -731,6 +759,13 @@ If you are verifying someone else's git tag, then you will need to
+ import their PGP key. Please refer to the
+ ":ref:`verify_identities`" section below.
+ 
++.. note::
++
++    If you get "``gpg: Can't check signature: unknown pubkey
++    algorithm``" error, you need to tell git to use gpgv2 for
++    verification, so it properly processes signatures made by ECC keys.
++    See instructions at the start of this section.
++
+ Configure git to always sign annotated tags
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-- 
+2.13.6
