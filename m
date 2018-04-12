@@ -1,95 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753324AbeDLQxr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 12:53:47 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:41876 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753108AbeDLQxl (ORCPT
+        id S1753332AbeDLQyE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 12:54:04 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:52693 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752849AbeDLQvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 12:53:41 -0400
-Subject: Re: [PATCH 0/5] for-linux/sndif: add explicit back and front
- synchronization
-To: Oleksandr Andrushchenko <andr2000@gmail.com>, konrad.wilk@oracle.com,
-        tiwai@suse.de
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, jgross@suse.com,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>
-References: <20180412160102.15833-1-oleksandr_andrushchenko@epam.com>
- <d5ede3f5-200e-f1c7-71f4-4ebfb938ca48@gmail.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <43348cf5-d2f8-9d7d-0390-2273eef8f67d@oracle.com>
-Date: Thu, 12 Apr 2018 12:55:16 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <d5ede3f5-200e-f1c7-71f4-4ebfb938ca48@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8861 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=586
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804120166
+        Thu, 12 Apr 2018 12:51:35 -0400
+From: Luca Ceresoli <luca@lucaceresoli.net>
+To: linux-media@vger.kernel.org
+Cc: Luca Ceresoli <luca@lucaceresoli.net>,
+        Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 11/13] imx274: simplify imx274_write_table()
+Date: Thu, 12 Apr 2018 18:51:16 +0200
+Message-Id: <1523551878-15754-12-git-send-email-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523551878-15754-1-git-send-email-luca@lucaceresoli.net>
+References: <1523551878-15754-1-git-send-email-luca@lucaceresoli.net>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/12/2018 12:11 PM, Oleksandr Andrushchenko wrote:
-> Hello, Konrad, Takashi!
->
-> Could you please review the *Linux Kernel* version of the changes?
-> As I said in the cover letter below there is no functional changes
-> comparing to the corresponding Xen version, but spaces to tabs.
-> Still, formally, I have to drop the R-b tags and request for the new
-> review.
+imx274_write_table() is a mere wrapper (and the only user) to
+imx274_regmap_util_write_table_8(). Remove this useless indirection by
+merging the two functions into one.
 
-Is there any reason why this all can't be done in a single patch?
+Also get rid of the wait_ms_addr and end_addr parameters since it does
+not make any sense to give them any values other than
+IMX274_TABLE_WAIT_MS and IMX274_TABLE_END.
 
-This is just syncing up with the canonical definition in Xen.
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+---
+ drivers/media/i2c/imx274.c | 28 ++++++++++------------------
+ 1 file changed, 10 insertions(+), 18 deletions(-)
 
--boris
+diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
+index 39d548ce30c4..ebe37a087a02 100644
+--- a/drivers/media/i2c/imx274.c
++++ b/drivers/media/i2c/imx274.c
+@@ -597,20 +597,18 @@ static inline struct stimx274 *to_imx274(struct v4l2_subdev *sd)
+ }
+ 
+ /*
+- * imx274_regmap_util_write_table_8 - Function for writing register table
+- * @regmap: Pointer to device reg map structure
+- * @table: Table containing register values
+- * @wait_ms_addr: Flag for performing delay
+- * @end_addr: Flag for incating end of table
++ * Writing a register table
++ *
++ * @priv: Pointer to device
++ * @table: Table containing register values (with optional delays)
+  *
+  * This is used to write register table into sensor's reg map.
+  *
+  * Return: 0 on success, errors otherwise
+  */
+-static int imx274_regmap_util_write_table_8(struct regmap *regmap,
+-					    const struct reg_8 table[],
+-					    u16 wait_ms_addr, u16 end_addr)
++static int imx274_write_table(struct stimx274 *priv, const struct reg_8 table[])
+ {
++	struct regmap *regmap = priv->regmap;
+ 	int err = 0;
+ 	const struct reg_8 *next;
+ 	u8 val;
+@@ -622,8 +620,8 @@ static int imx274_regmap_util_write_table_8(struct regmap *regmap,
+ 
+ 	for (next = table;; next++) {
+ 		if ((next->addr != range_start + range_count) ||
+-		    (next->addr == end_addr) ||
+-		    (next->addr == wait_ms_addr) ||
++		    (next->addr == IMX274_TABLE_END) ||
++		    (next->addr == IMX274_TABLE_WAIT_MS) ||
+ 		    (range_count == max_range_vals)) {
+ 			if (range_count == 1)
+ 				err = regmap_write(regmap,
+@@ -642,10 +640,10 @@ static int imx274_regmap_util_write_table_8(struct regmap *regmap,
+ 			range_count = 0;
+ 
+ 			/* Handle special address values */
+-			if (next->addr == end_addr)
++			if (next->addr == IMX274_TABLE_END)
+ 				break;
+ 
+-			if (next->addr == wait_ms_addr) {
++			if (next->addr == IMX274_TABLE_WAIT_MS) {
+ 				msleep_range(next->val);
+ 				continue;
+ 			}
+@@ -692,12 +690,6 @@ static inline int imx274_write_reg(struct stimx274 *priv, u16 addr, u8 val)
+ 	return err;
+ }
+ 
+-static int imx274_write_table(struct stimx274 *priv, const struct reg_8 table[])
+-{
+-	return imx274_regmap_util_write_table_8(priv->regmap,
+-		table, IMX274_TABLE_WAIT_MS, IMX274_TABLE_END);
+-}
+-
+ /*
+  * Set mode registers to start stream.
+  * @priv: Pointer to device structure
+-- 
+2.7.4
