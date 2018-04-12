@@ -1,46 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752975AbeDLRWS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 13:22:18 -0400
-Received: from mail-it0-f43.google.com ([209.85.214.43]:37017 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752664AbeDLRWR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 13:22:17 -0400
-X-Google-Smtp-Source: AIpwx48XgixJuR9AOCca7rQGJH2i3dXhuDWckxRu+XuUMDSOA6ue9RlTIQ43ZKZveyNGoo1Flso3DTkBJjGxd8cSfDI=
+        id S1753019AbeDLRW4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 13:22:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53972 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752561AbeDLRWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 13:22:55 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 770EF21785
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Thu, 12 Apr 2018 14:22:52 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Thomas Richter <tmricht@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+Subject: Re: [PATCH] perf record: Change warning for missing sysfs entry to
+ debug
+Message-ID: <20180412172252.GF9818@kernel.org>
+References: <20180412133246.92801-1-tmricht@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180412172051.GK16141@n2100.armlinux.org.uk>
-References: <20180409152253.GD10489@altlinux.org> <20180412013435.GA21219@altlinux.org>
- <20180412095811.GC16141@n2100.armlinux.org.uk> <20180412110314.GA28070@altlinux.org>
- <20180412121949.GD16141@n2100.armlinux.org.uk> <20180412124928.GA29458@altlinux.org>
- <20180412131404.GE16141@n2100.armlinux.org.uk> <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
- <20180412172051.GK16141@n2100.armlinux.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 12 Apr 2018 10:22:15 -0700
-X-Google-Sender-Auth: g0ZnwwlkSh28tk2o7cW8-JIPXt8
-Message-ID: <CA+55aFwjZqd8J0=veki1g+quQg8amEG4NnMe-h7HFksn=F=x_Q@mail.gmail.com>
-Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
- kill() returns wrong values in si_pid and si_uid
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180412133246.92801-1-tmricht@linux.ibm.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 10:20 AM, Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
->
-> This file was created to contain FPE_FIXME, by the "signal/arm: Document
-> conflicts with SI_USER and SIGFPE" commit so if we're removing it, it
-> would be better to remove the whole file.
+Em Thu, Apr 12, 2018 at 03:32:46PM +0200, Thomas Richter escreveu:
+> Using perf on 4.16.0 kernel on s390 shows warning
+>    failed: can't open node sysfs data
+> each time I run command perf record ... for example:
 
-Fair enough. I'm not going to commit that anyway since I can't test
-it, but yes, if it tests ok that sounds like the right thing to do.
+Thanks, applied.
 
-                   Linus
+- Arnaldo
