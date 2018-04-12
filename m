@@ -1,107 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752677AbeDLWZB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 18:25:01 -0400
-Received: from www.zeus03.de ([194.117.254.33]:40150 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752264AbeDLWY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 18:24:59 -0400
-X-UD-Smtp-Session: l3s3148p1@sPHBOa5pLOcgAwDPW8pXAAId4P/+oMhl
-Date: Fri, 13 Apr 2018 00:24:57 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Sam Hansen <hansens@google.com>
-Cc: linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.de>
-Subject: Re: [PATCH] Documentation/i2c: sync docs with current state of
- i2c-tools.
-Message-ID: <20180412222457.x4jdwt27ylgi74o3@katana>
-References: <20180412213342.138010-1-hansens@google.com>
+        id S1753180AbeDLWio (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 18:38:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52492 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753008AbeDLWin (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 18:38:43 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A795B60264
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH v3 2/2] MIPS: io: add a barrier after register read in
+ readX()
+To: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org, arnd@arndb.de, timur@codeaurora.org,
+        sulrich@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
+        linux-kernel@vger.kernel.org
+References: <1522760109-16497-1-git-send-email-okaya@codeaurora.org>
+ <1522760109-16497-2-git-send-email-okaya@codeaurora.org>
+ <20180412215149.GA27802@saruman> <20180412215855.GB27802@saruman>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <33c9c074-e0a5-7552-9993-269cd85101aa@codeaurora.org>
+Date: Thu, 12 Apr 2018 18:38:39 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xyhj5lz7qyzg2fau"
-Content-Disposition: inline
-In-Reply-To: <20180412213342.138010-1-hansens@google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180412215855.GB27802@saruman>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 4/12/2018 5:58 PM, James Hogan wrote:
+> On Thu, Apr 12, 2018 at 10:51:49PM +0100, James Hogan wrote:
+>> On Tue, Apr 03, 2018 at 08:55:04AM -0400, Sinan Kaya wrote:
+>>> While a barrier is present in writeX() function before the register write,
+>>> a similar barrier is missing in the readX() function after the register
+>>> read. This could allow memory accesses following readX() to observe
+>>> stale data.
+>>>
+>>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+>>> Reported-by: Arnd Bergmann <arnd@arndb.de>
+>>
+>> Both patches look like obvious improvements to me, so I'm happy to apply
+>> to my fixes branch.
+> 
+> Though having said that, a comment to go with the rmb() (as suggested by
+> checkpatch) to detail the situation we're concerned about would be nice
+> to have.
 
---xyhj5lz7qyzg2fau
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I can send a new version. No worries. 
 
-Hi,
+Functional correctness is more important at this moment. I can accommodate
+any nice to haves.
 
-On Thu, Apr 12, 2018 at 02:33:42PM -0700, Sam Hansen wrote:
-> Currently, Documentation/i2c/dev-interface describes the use of i2c_smbus=
-_*
-> helper routines as static inlined functions provided by linux/i2c-dev.h. =
- Work
-> has been done to refactor the linux/i2c-dev.h file in the i2c-tools proje=
-ct
-> out into its own library.  As a result, these docs have become stale.
-
-Thanks for fixing this!
-
-> This patch corrects the discrepancy and directs the reader to the i2c-too=
-ls
-> project for more information.  Additionally, some trailing-whitespace cle=
-anups
-> were made.
-
-Minor nit: Having the whitespace changes in a seperate patch is a tad
-easier to review.
-
-> -  /* Using I2C Write, equivalent of=20
-> +  /* Using I2C Write, equivalent of
->       i2c_smbus_write_word_data(file, reg, 0x6543) */
-
-Maybe change to Kernel coding style comments while here?
-
-> -  Not meant to be called  directly; instead, use the access functions
-> -  below.
-> +  If possible, use the provided i2c_smbus_* methods described below in f=
-avor
-> +  of issuing direct ioctls.
-
-Why this change?
-
-> -The above functions are all inline functions, that resolve to calls to
-> -the i2c_smbus_access function, that on its turn calls a specific ioctl
-> -with the data in a specific format. Read the source code if you
-> -want to know what happens behind the screens.
-> +The above functions are made available by linking against the libi2c lib=
-rary,
-> +which is provided by the i2c-tools project.  See:
-> +https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/.
-
-This is fine with me. Maybe Jean has a comment on this?
-
-Kind regards,
-
-   Wolfram
+> 
+> Cheers
+> James
+> 
 
 
---xyhj5lz7qyzg2fau
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrP3LQACgkQFA3kzBSg
-KbafSA//bfGWw4Tu3sUBmg3CjkvJpwQVshlWs8U79QwAhOndThWZjDLA0dnd21lS
-dYOy3CSmpIjkG3c0UWAsrtMgljQ3AoAa69HVug1c579Y6bCEFiD03MxbJ5Vvg9jo
-215joz1Srm6gDpHQ0gPZQLkDaYXJIjjG/BRxAqthK57MPDBwg0tRJWIHlrPgRcKg
-uFIwXteMS+7XMzAfqDpU8D2Ul+5CyFU5eFEw3H+WPoUbNMTecxyJKBSLD/e/rDxJ
-JbXGnH9KSSCyWY9MTMSJvc0Wa4dyb4Vjf5+a0WBynXV7h9vxD9xFbSJyxvmtH1Bx
-Vv33YYkxl1P/hdRRY3d4Rsc/jqbWHF7IEQoecObA0eU+S92cfjxUe5mDw9mEmael
-/jtoP5soSANy/Wd3sFqoo44t7OAk/1PKMNmNunnnQfjbvRbWU2FTIPCE4L5Nezf5
-ODd7EgXsn7SO3NrLDo3m/cQHwgnAby0/6ST3c5ywyw5LmY1jH/ypY+lejIeCrU1p
-PsoeIOlQD9dZpez7QmC5CV1fwqT9GKSA7dimSDRrd9Dati7E9u/EIDxHOEdeAUBy
-jYe0i/1aL8CRrIMW4/7PhJ9cAYSa9d7BovOtqQ9qWEmlFE5a6oSiDzsjdUElr5p4
-iRVzdJuQNW1wfND6HlhyjXtnT64D4LKq30JU0zy9Oi4iz5CgbUw=
-=Rhxr
------END PGP SIGNATURE-----
-
---xyhj5lz7qyzg2fau--
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
