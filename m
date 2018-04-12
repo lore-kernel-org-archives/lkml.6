@@ -1,48 +1,297 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753080AbeDLHDi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 03:03:38 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:37947 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753040AbeDLHDg (ORCPT
+        id S1752807AbeDLHGq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 03:06:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44076 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751948AbeDLHGo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 03:03:36 -0400
-Date: Thu, 12 Apr 2018 09:03:31 +0200
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, kvm@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfio: platform: Fix using devices in PM Domains
-Message-ID: <20180412070330.gzpmbgad4cmeqrn4@verge.net.au>
-References: <1523438648-17672-1-git-send-email-geert+renesas@glider.be>
+        Thu, 12 Apr 2018 03:06:44 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523438648-17672-1-git-send-email-geert+renesas@glider.be>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Thu, 12 Apr 2018 12:36:42 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 8/9] mtd: nand: qcom: helper function for raw read
+In-Reply-To: <20180410114428.68d59c8d@xps13>
+References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+ <1522845745-6624-9-git-send-email-absahu@codeaurora.org>
+ <20180410114428.68d59c8d@xps13>
+Message-ID: <c3e32eb24408a973d0c89984a466d9da@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 11:24:08AM +0200, Geert Uytterhoeven wrote:
-> If a device is part of a PM Domain (e.g. power and/or clock domain), its
-> power state is managed using Runtime PM.  Without Runtime PM, the device
-> may not be powered up, causing subtle failures, crashes, or system
-> lock-ups when the device is accessed by the guest.
+On 2018-04-10 15:14, Miquel Raynal wrote:
+> Hi Abhishek,
 > 
-> Fix this by adding Runtime PM support, powering the device when the VFIO
-> device is opened by the guest.
+> On Wed,  4 Apr 2018 18:12:24 +0530, Abhishek Sahu
+> <absahu@codeaurora.org> wrote:
 > 
-> Note that while more fine-grained power management could be implemented
-> on the guest side, if exported, this would be inherently unsafe, as
-> abusing it may kill the whole system.
+>> This patch does minor code reorganization for raw reads.
+>> Currently the raw read is required for complete page but for
+>> subsequent patches related with erased codeword bit flips
+>> detection, only few CW should be read. So, this patch adds
+>> helper function and introduces the read CW bitmask which
+>> specifies which CW reads are required in complete page.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> I am not sure this is the right approach for subpage reads. If the
+> controller supports it, you should just enable it in chip->options.
+> 
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+  Thanks Miquel.
+
+  It is internal to this file only. This patch makes one static helper
+  function which provides the support to read subpages.
+
+>> 
+>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+>> ---
+>>  drivers/mtd/nand/qcom_nandc.c | 186 
+>> +++++++++++++++++++++++++-----------------
+>>  1 file changed, 110 insertions(+), 76 deletions(-)
+>> 
+>> diff --git a/drivers/mtd/nand/qcom_nandc.c 
+>> b/drivers/mtd/nand/qcom_nandc.c
+>> index 40c790e..f5d1fa4 100644
+>> --- a/drivers/mtd/nand/qcom_nandc.c
+>> +++ b/drivers/mtd/nand/qcom_nandc.c
+>> @@ -1590,6 +1590,114 @@ static int check_flash_errors(struct 
+>> qcom_nand_host *host, int cw_cnt)
+>>  }
+>> 
+>>  /*
+>> + * Helper to perform the page raw read operation. The read_cw_mask 
+>> will be
+>> + * used to specify the codewords for which the data should be read. 
+>> The
+>> + * single page contains multiple CW. Sometime, only few CW data is 
+>> required
+>> + * in complete page. Also, start address will be determined with
+>> + * this CW mask to skip unnecessary data copy from NAND flash device. 
+>> Then,
+>> + * actual data copy from NAND controller to data buffer will be done 
+>> only
+>> + * for the CWs which have the mask set.
+>> + */
+>> +static int
+>> +nandc_read_page_raw(struct mtd_info *mtd, struct nand_chip *chip,
+>> +		    u8 *data_buf, u8 *oob_buf,
+>> +		    int page, unsigned long read_cw_mask)
+>> +{
+>> +	struct qcom_nand_host *host = to_qcom_nand_host(chip);
+>> +	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+>> +	struct nand_ecc_ctrl *ecc = &chip->ecc;
+>> +	int i, ret;
+>> +	int read_loc, start_step, last_step;
+>> +
+>> +	nand_read_page_op(chip, page, 0, NULL, 0);
+>> +
+>> +	host->use_ecc = false;
+>> +	start_step = ffs(read_cw_mask) - 1;
+>> +	last_step = fls(read_cw_mask);
+>> +
+>> +	clear_bam_transaction(nandc);
+>> +	set_address(host, host->cw_size * start_step, page);
+>> +	update_rw_regs(host, last_step - start_step, true);
+>> +	config_nand_page_read(nandc);
+>> +
+>> +	for (i = start_step; i < last_step; i++) {
+>> +		int data_size1, data_size2, oob_size1, oob_size2;
+>> +		int reg_off = FLASH_BUF_ACC;
+>> +
+>> +		data_size1 = mtd->writesize - host->cw_size * (ecc->steps - 1);
+>> +		oob_size1 = host->bbm_size;
+>> +
+>> +		if (i == (ecc->steps - 1)) {
+>> +			data_size2 = ecc->size - data_size1 -
+>> +				     ((ecc->steps - 1) << 2);
+>> +			oob_size2 = (ecc->steps << 2) + host->ecc_bytes_hw +
+>> +				    host->spare_bytes;
+>> +		} else {
+>> +			data_size2 = host->cw_data - data_size1;
+>> +			oob_size2 = host->ecc_bytes_hw + host->spare_bytes;
+>> +		}
+>> +
+>> +		/*
+>> +		 * Don't perform actual data copy from NAND controller to data
+>> +		 * buffer through DMA for this codeword
+>> +		 */
+>> +		if (!(read_cw_mask & BIT(i))) {
+>> +			if (nandc->props->is_bam)
+>> +				nandc_set_read_loc(nandc, 0, 0, 0, 1);
+>> +
+>> +			config_nand_cw_read(nandc, false);
+>> +
+>> +			data_buf += data_size1 + data_size2;
+>> +			oob_buf += oob_size1 + oob_size2;
+>> +
+>> +			continue;
+>> +		}
+>> +
+>> +		if (nandc->props->is_bam) {
+>> +			read_loc = 0;
+>> +			nandc_set_read_loc(nandc, 0, read_loc, data_size1, 0);
+>> +			read_loc += data_size1;
+>> +
+>> +			nandc_set_read_loc(nandc, 1, read_loc, oob_size1, 0);
+>> +			read_loc += oob_size1;
+>> +
+>> +			nandc_set_read_loc(nandc, 2, read_loc, data_size2, 0);
+>> +			read_loc += data_size2;
+>> +
+>> +			nandc_set_read_loc(nandc, 3, read_loc, oob_size2, 1);
+>> +		}
+>> +
+>> +		config_nand_cw_read(nandc, false);
+>> +
+>> +		read_data_dma(nandc, reg_off, data_buf, data_size1, 0);
+>> +		reg_off += data_size1;
+>> +		data_buf += data_size1;
+>> +
+>> +		read_data_dma(nandc, reg_off, oob_buf, oob_size1, 0);
+>> +		reg_off += oob_size1;
+>> +		oob_buf += oob_size1;
+>> +
+>> +		read_data_dma(nandc, reg_off, data_buf, data_size2, 0);
+>> +		reg_off += data_size2;
+>> +		data_buf += data_size2;
+>> +
+>> +		read_data_dma(nandc, reg_off, oob_buf, oob_size2, 0);
+>> +		oob_buf += oob_size2;
+>> +	}
+>> +
+>> +	ret = submit_descs(nandc);
+>> +	if (ret)
+>> +		dev_err(nandc->dev, "failure to read raw page\n");
+>> +
+>> +	free_descs(nandc);
+>> +
+>> +	if (!ret)
+>> +		ret = check_flash_errors(host, last_step - start_step);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/*
+>>   * reads back status registers set by the controller to notify page 
+>> read
+>>   * errors. this is equivalent to what 'ecc->correct()' would do.
+>>   */
+>> @@ -1839,82 +1947,8 @@ static int qcom_nandc_read_page_raw(struct 
+>> mtd_info *mtd,
+>>  				    struct nand_chip *chip, uint8_t *buf,
+>>  				    int oob_required, int page)
+>>  {
+>> -	struct qcom_nand_host *host = to_qcom_nand_host(chip);
+>> -	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
+>> -	u8 *data_buf, *oob_buf;
+>> -	struct nand_ecc_ctrl *ecc = &chip->ecc;
+>> -	int i, ret;
+>> -	int read_loc;
+>> -
+>> -	nand_read_page_op(chip, page, 0, NULL, 0);
+>> -	data_buf = buf;
+>> -	oob_buf = chip->oob_poi;
+>> -
+>> -	host->use_ecc = false;
+>> -
+>> -	clear_bam_transaction(nandc);
+>> -	update_rw_regs(host, ecc->steps, true);
+>> -	config_nand_page_read(nandc);
+>> -
+>> -	for (i = 0; i < ecc->steps; i++) {
+>> -		int data_size1, data_size2, oob_size1, oob_size2;
+>> -		int reg_off = FLASH_BUF_ACC;
+>> -
+>> -		data_size1 = mtd->writesize - host->cw_size * (ecc->steps - 1);
+>> -		oob_size1 = host->bbm_size;
+>> -
+>> -		if (i == (ecc->steps - 1)) {
+>> -			data_size2 = ecc->size - data_size1 -
+>> -				     ((ecc->steps - 1) << 2);
+>> -			oob_size2 = (ecc->steps << 2) + host->ecc_bytes_hw +
+>> -				    host->spare_bytes;
+>> -		} else {
+>> -			data_size2 = host->cw_data - data_size1;
+>> -			oob_size2 = host->ecc_bytes_hw + host->spare_bytes;
+>> -		}
+>> -
+>> -		if (nandc->props->is_bam) {
+>> -			read_loc = 0;
+>> -			nandc_set_read_loc(nandc, 0, read_loc, data_size1, 0);
+>> -			read_loc += data_size1;
+>> -
+>> -			nandc_set_read_loc(nandc, 1, read_loc, oob_size1, 0);
+>> -			read_loc += oob_size1;
+>> -
+>> -			nandc_set_read_loc(nandc, 2, read_loc, data_size2, 0);
+>> -			read_loc += data_size2;
+>> -
+>> -			nandc_set_read_loc(nandc, 3, read_loc, oob_size2, 1);
+>> -		}
+>> -
+>> -		config_nand_cw_read(nandc, false);
+>> -
+>> -		read_data_dma(nandc, reg_off, data_buf, data_size1, 0);
+>> -		reg_off += data_size1;
+>> -		data_buf += data_size1;
+>> -
+>> -		read_data_dma(nandc, reg_off, oob_buf, oob_size1, 0);
+>> -		reg_off += oob_size1;
+>> -		oob_buf += oob_size1;
+>> -
+>> -		read_data_dma(nandc, reg_off, data_buf, data_size2, 0);
+>> -		reg_off += data_size2;
+>> -		data_buf += data_size2;
+>> -
+>> -		read_data_dma(nandc, reg_off, oob_buf, oob_size2, 0);
+>> -		oob_buf += oob_size2;
+>> -	}
+>> -
+>> -	ret = submit_descs(nandc);
+>> -	if (ret)
+>> -		dev_err(nandc->dev, "failure to read raw page\n");
+>> -
+>> -	free_descs(nandc);
+>> -
+>> -	if (!ret)
+>> -		ret = check_flash_errors(host, ecc->steps);
+>> -
+>> -	return 0;
+>> +	return nandc_read_page_raw(mtd, chip, buf, chip->oob_poi, page,
+>> +				   BIT(chip->ecc.steps) - 1);
+> 
+> I don't understand this. chip->ecc.steps is constant, right? So you
+> always ask for the same subpage?
+
+  We need to do raw read for subpages in which we got uncorrectable
+  error in next patch for erased page bitflip detection. This patch does
+  reorganization of raw read and moves common code in helper function
+  nandc_read_page_raw.
+
+  For nomral raw read, all the subpages will be read so
+  BIT(chip->ecc.steps) - 1 is used for qcom_nandc_read_page_raw.
+
+  While for erased page raw read, only those sub pages will be
+  read for which the controller gives the uncorrectable error.
+
+  Thanks,
+  Abhishek
+
+> 
+>>  }
+>> 
+>>  /* implements ecc->read_oob() */
