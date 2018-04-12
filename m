@@ -1,83 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753464AbeDLLVK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 07:21:10 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:43317 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752652AbeDLLOl (ORCPT
+        id S1752840AbeDLLWG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 07:22:06 -0400
+Received: from mail-wr0-f174.google.com ([209.85.128.174]:46233 "EHLO
+        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751589AbeDLLWE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 07:14:41 -0400
-X-Google-Smtp-Source: AIpwx4+yvJ6j8ntmMX+75QrNZFlmH+qcQJuhMtQko+JV/cz0dhHPv7NLifnykMzBkUg4kXpwCOE28Q==
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org
-Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
-        Lina Iyer <lina.iyer@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7 01/26] PM / Domains: Don't treat zero found compatible idle states as an error
-Date: Thu, 12 Apr 2018 13:14:06 +0200
-Message-Id: <1523531671-27491-2-git-send-email-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
-References: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
+        Thu, 12 Apr 2018 07:22:04 -0400
+X-Google-Smtp-Source: AIpwx4+gaGk/ae427f6/WqHs+l/ZWckGbQG25Iv7Tf+FBHKYgbY3y2ZGLOoNHFsv71ILrrpDL8vE7w==
+Date: Thu, 12 Apr 2018 13:21:55 +0200
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: paulmck@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH] memory-model: fix cheat sheet typo
+Message-ID: <20180412112155.GA9154@andrea>
+References: <1523292618-10207-1-git-send-email-pbonzini@redhat.com>
+ <20180409184258.GP3948@linux.vnet.ibm.com>
+ <20180410203214.GA19606@linux.vnet.ibm.com>
+ <8cbda122-6aa3-365b-fd09-52dca0644cbd@redhat.com>
+ <20180410213434.GC3948@linux.vnet.ibm.com>
+ <156ac07b-7393-449f-518a-6b1c2cff8efb@redhat.com>
+ <20180412092303.GA6044@andrea>
+ <eda463d8-aa4e-2e6b-9d1d-41a5a4eaa3a7@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eda463d8-aa4e-2e6b-9d1d-41a5a4eaa3a7@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of returning -EINVAL from of_genpd_parse_idle_states() in case none
-compatible states was found, let's return 0 to indicate success. Assign
-also the out-parameter *states to NULL and *n to 0, to indicate to the
-caller that zero states have been found/allocated.
+On Thu, Apr 12, 2018 at 12:18:13PM +0200, Paolo Bonzini wrote:
+> On 12/04/2018 11:23, Andrea Parri wrote:
+> >>
+> >> - smp_store_mb() is missing
+> > 
+> > Good point. In fact, we could add this to the model as well:
+> > following Peter's remark/the generic implementation,
+> 
+> Good idea.  smp_store_mb() can save some clock cycles in the relatively
+> common idiom
+> 
+> 	write a				write b
+> 	read b				read a
+> 	if (b)				if (a)
+> 	  wake 'em			  we've been woken
+> 
+> > Yeah, those 'Ordering is cumulative', 'Ordering propagates' could
+> > mean different things to different readers... IMO, we may even omit
+> > such information; this doc. does not certainly aim for completeness,
+> > after all. OTOH, we ought to refrain from making this doc. an excuse
+> > to transform (what it is really) high-school maths into some black
+> > magic.
+> FWIW, what I miss in explanation.txt (and to some extent in the paper)
+> is a clear pointer to litmus tests that rely on cumulativity and
+> propagation.  In the meanwhile I'll send some patches.  Thanks for the
+> feedback, as it also helps validating my understanding of the model.
 
-This enables the caller of of_genpd_parse_idle_states() to easier act on
-the returned error code.
+The litmus test that first comes to my mind when I think of cumulativity
+(at least, 'cumulativity' as intended in LKMM) is:
 
-Cc: Lina Iyer <ilina@codeaurora.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/base/power/domain.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+   WRC+pooncerelease+rmbonceonce+Once.litmus
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 1ea0e25..c2ef944 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2331,8 +2331,8 @@ static int genpd_iterate_idle_states(struct device_node *dn,
-  *
-  * Returns the device states parsed from the OF node. The memory for the states
-  * is allocated by this function and is the responsibility of the caller to
-- * free the memory after use. If no domain idle states is found it returns
-- * -EINVAL and in case of errors, a negative error code.
-+ * free the memory after use. If any or zero compatible domain idle states is
-+ * found it returns 0 and in case of errors, a negative error code is returned.
-  */
- int of_genpd_parse_idle_states(struct device_node *dn,
- 			struct genpd_power_state **states, int *n)
-@@ -2341,8 +2341,14 @@ int of_genpd_parse_idle_states(struct device_node *dn,
- 	int ret;
- 
- 	ret = genpd_iterate_idle_states(dn, NULL);
--	if (ret <= 0)
--		return ret < 0 ? ret : -EINVAL;
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!ret) {
-+		*states = NULL;
-+		*n = 0;
-+		return 0;
-+	}
- 
- 	st = kcalloc(ret, sizeof(*st), GFP_KERNEL);
- 	if (!st)
--- 
-2.7.4
+for 'propagation', I could mention:
+
+   IRIW+mbonceonces+OnceOnce.litmus
+
+(both tests are availabe in tools/memory-model/litmus-tests/). It would
+be a nice to mention these properties in the test descriptions, indeed.
+
+You might find it useful to also visualize the 'valid' executions (with
+the main events/relations) associated to each of these tests; for this,
+
+   $ herd7 -conf linux-kernel.cfg litmus-tests/your-test.litmus \
+	-show all -gv
+
+(assuming you have 'gv' installed).
+
+  Andrea
+
+
+> 
+> Thanks,
+> 
+> Paolo
