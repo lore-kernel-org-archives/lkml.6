@@ -1,124 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752777AbeDLLtP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 07:49:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32854 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751832AbeDLLtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 07:49:10 -0400
-Subject: Re: [PATCH v3 2/2] vfio: platform: Add generic DT reset support
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1523438149-16433-1-git-send-email-geert+renesas@glider.be>
- <1523438149-16433-4-git-send-email-geert+renesas@glider.be>
- <e6a70247-14f2-63b6-852b-3d43e45f8fa2@redhat.com>
- <CAMuHMdU5m=vV9nuVoRkX6tX-A=az3aK6HT7yFqgDam_rCNEfSg@mail.gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        KVM list <kvm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kaya Sinan <okaya@codeaurora.org>
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <2e09425d-0f27-3069-3421-e454ee70e3b2@redhat.com>
-Date: Thu, 12 Apr 2018 13:49:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S1752813AbeDLLue (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 07:50:34 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52058 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751881AbeDLLuc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 07:50:32 -0400
+Date: Thu, 12 Apr 2018 13:50:22 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andy Whitcroft <apw@canonical.com>, yuankuiz@codeaurora.org,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>, paulmck@linux.vnet.ibm.com,
+        Len Brown <len.brown@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] checkpatch: Add a --strict test for structs with bool
+ member definitions
+Message-ID: <20180412115022.GL4043@hirez.programming.kicks-ass.net>
+References: <e22fb871b1b7f2fda4b22f3a24e0d7f092eb612c.camel@perches.com>
+ <95477c93db187bab6da8a8ba7c57836868446179.camel@perches.com>
+ <20180410143950.4b8526073b4e3e34689f68cb@linux-foundation.org>
+ <b3d75281c3a7b4b217b612913894b346eaa3288b.camel@perches.com>
+ <20180410150011.df9e036f57b5bcac7ac19686@linux-foundation.org>
+ <20180411081502.GJ4082@hirez.programming.kicks-ass.net>
+ <20180411092959.e666ec443e4d3bb6f43901d7@linux-foundation.org>
+ <20180411170049.GR4082@hirez.programming.kicks-ass.net>
+ <20180412074719.pmcddramzyikppco@gmail.com>
+ <20180412093521.GA6427@andrea>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdU5m=vV9nuVoRkX6tX-A=az3aK6HT7yFqgDam_rCNEfSg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180412093521.GA6427@andrea>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
-On 12/04/18 13:32, Geert Uytterhoeven wrote:
-> Hi Eric,
-> 
-> On Thu, Apr 12, 2018 at 12:31 PM, Auger Eric <eric.auger@redhat.com> wrote:
->> On 11/04/18 11:15, Geert Uytterhoeven wrote:
->>> Vfio-platform requires reset support, provided either by ACPI, or, on DT
->>> platforms, by a device-specific reset driver matching against the
->>> device's compatible value.
->>>
->>> On many SoCs, devices are connected to an SoC-internal reset controller.
->>> If the reset hierarchy is described in DT using "resets" properties,
->>> such devices can be reset in a generic way through the reset controller
->>> subsystem.  Hence add support for this, avoiding the need to write
->>> device-specific reset drivers for each single device on affected SoCs.
->>>
->>> Devices that do require a more complex reset procedure can still provide
->>> a device-specific reset driver, as that takes precedence.
->>>
->>> Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
->>> becomes a no-op (as in: "No reset function found for device") if reset
->>> controller support is disabled.
->>>
->>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> 
->>> --- a/drivers/vfio/platform/vfio_platform_common.c
->>> +++ b/drivers/vfio/platform/vfio_platform_common.c
-> 
->>> @@ -127,8 +130,16 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
->>>               vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
->>>                                                       &vdev->reset_module);
->>>       }
->>> +     if (vdev->of_reset)
->>> +             return 0;
->>> +
->>> +     rstc = of_reset_control_get_exclusive(vdev->device->of_node, NULL);
->>
->> Shouldn't we prefer the top level reset_control_get_exclusive()?
-> 
-> I guess that should work, too.
-> 
->> To make sure about the exclusive/shared terminology, does
->> get_reset_control_get_exclusive() check we have an exclusive wire
->> between this device and the reset controller?
-> 
-> AFAIU, the "exclusive" means that only a single user can obtain access to
-> the reset, and it does not guarantee that we have an exclusive wire between
-> the device and the reset controller.
-> 
-> The latter depends on the SoC's reset topology. If a reset wire is shared
-> by multiple devices (e.g. resets shared by PWM or Display Unit devices on
-> R-Car SoCs), exporting a subset of these devices to a guest is a bad idea,
-> indeed.
+On Thu, Apr 12, 2018 at 11:35:21AM +0200, Andrea Parri wrote:
+> Is there a better or recommended way to reference posts on LKML in commit
+> messages? (I do like the idea of linking to previous discussions, results,
+> ...)
 
-So who's going to check this assigned device will not trigger a reset of
-other non assigned devices sharing the same reset controller?
+Yes:
 
-> 
-> I guess the same thing can happen with the ACPI "_RST" method?
+  https://lkml.kernel.org/r/$MSGID
 
-ACPI spec _RST chapter says about _RST object:
+that has the added benefit that it immediately includes the msg-id, so
+even if you don't have tubes, you can search for it in your local
+mailboxes.
 
-"This object executes a reset on the associated device
- or devices. If included in a device context, the
-reset must not affect any other ACPI-described de
-vices; if included in a power resource for reset
-(_PRR, Section 7.3.26) the reset must affect all ACPI-described devices
-that reference it. When this object is described in
-a device context, it executes a function level reset that only affects
-the device it is associated with; neither parent nor children should be
-affected by the execution of this reset. Executing this must only result
-in this device resetting without the device appearing as if it
-has been removed from the bus altogether, to prevent OSPM re-enumeration
-of devices on hot-pluggable buses (e.g. USB)."
-
-Adding Sinan in copy for clarification.
-
-Thanks
-
-Eric
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Also, since we (kernel.org) control the redirection (currently
+marc.info) we can always point it to a life archive.
