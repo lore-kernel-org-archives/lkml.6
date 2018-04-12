@@ -1,202 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752783AbeDLJXP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 05:23:15 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:45702 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751959AbeDLJXN (ORCPT
+        id S1752483AbeDLJ2F (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 05:28:05 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39425 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750763AbeDLJ2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 05:23:13 -0400
-X-Google-Smtp-Source: AIpwx4+KUJ3R+BlPm4l+TfOzS5Z15OxiK5gkN3QZM6l6mg+DKwjjM4MgCTLdifqpxO5c8lJ8PHBb+w==
-Date: Thu, 12 Apr 2018 11:23:03 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: paulmck@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH] memory-model: fix cheat sheet typo
-Message-ID: <20180412092303.GA6044@andrea>
-References: <1523292618-10207-1-git-send-email-pbonzini@redhat.com>
- <20180409184258.GP3948@linux.vnet.ibm.com>
- <20180410203214.GA19606@linux.vnet.ibm.com>
- <8cbda122-6aa3-365b-fd09-52dca0644cbd@redhat.com>
- <20180410213434.GC3948@linux.vnet.ibm.com>
- <156ac07b-7393-449f-518a-6b1c2cff8efb@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <156ac07b-7393-449f-518a-6b1c2cff8efb@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Thu, 12 Apr 2018 05:28:03 -0400
+X-Google-Smtp-Source: AIpwx4/m2I7/Tl8OEkt6dx9e/u63XEl6RbKY9nRBNWQFub2YNWSMUG/KoPK3FoqtQ84XrONXX5J7Bw==
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] pwm: Changes for v4.17-rc1
+Date: Thu, 12 Apr 2018 11:27:59 +0200
+Message-Id: <20180412092759.9984-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 01:15:58PM +0200, Paolo Bonzini wrote:
-> On 10/04/2018 23:34, Paul E. McKenney wrote:
-> > Glad it helps, and I have queued it for the next merge window.  Of course,
-> > if a further improvement comes to mind, please do not keep it a secret.  ;-)
-> 
-> Yes, there are several changes that could be included:
+Hi Linus,
 
-Thank you for looking into this and for the suggestions.
+The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
 
+  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
 
-> 
-> - SV could be added to the prior operation case as well?  It should be
-> symmetric
+are available in the Git repository at:
 
-Seems reasonable to me.
+  git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git tags/pwm/for-4.17-rc1
 
+for you to fetch changes up to 6873842235d678a245a378669f35e145df2441b9:
 
-> 
-> - The *_relaxed() case also applies to void RMW
+  pwm: rcar: Add suspend/resume support (2018-03-28 01:27:10 +0200)
 
-Indeed. *_relaxed() and void RMW do present some semantics differences
-(c.f., e.g., 'Noreturn' in the definition of 'rmb' from the .cat file),
-but the cheat sheet seems to be already 'cheating' here. ;-)
+Thanks,
+Thierry
 
+----------------------------------------------------------------
+pwm: Changes for v4.17-rc1
 
-> 
-> - smp_store_mb() is missing
+This set of changes adds support for more generations of the RCar
+controller as well as runtime PM support. The JZ4740 driver gains
+support for device tree and can now be used on all Ingenic SoCs.
 
-Good point. In fact, we could add this to the model as well: following
-Peter's remark/the generic implementation,
+Rounding things off is a random assortment of fixes and cleanups
+all across the board.
 
-diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
-index 397e4e67e8c84..acf86f6f360a7 100644
---- a/tools/memory-model/linux-kernel.def
-+++ b/tools/memory-model/linux-kernel.def
-@@ -14,6 +14,7 @@ smp_store_release(X,V) { __store{release}(*X,V); }
- smp_load_acquire(X) __load{acquire}(*X)
- rcu_assign_pointer(X,V) { __store{release}(X,V); }
- rcu_dereference(X) __load{once}(X)
-+smp_store_mb(X,V) { __store{once}(X,V); __fence{mb}; }
- 
- // Fences
- smp_mb() { __fence{mb} ; }
+----------------------------------------------------------------
+Alexandre Belloni (1):
+      pwm: sun4i: Properly check current state
 
-... unless I'm missing something here: I'll send a patch with this.
+Andre Przywara (3):
+      pwm: sun4i: Drop unused .has_rdy member
+      pwm: sun4i: Simplify controller mapping
+      dt-bindings: pwm: sunxi: Add new compatible strings
 
+Arvind Yadav (1):
+      pwm: sysfs: Use put_device() instead of kfree()
 
-> 
-> - smp_rmb() orders prior reads fully against subsequent RMW because SV
-> applies between the two parts of the RMW; likewise smp_wmb() orders prior
-> RMW fully against subsequent writes
+Benjamin Gaignard (1):
+      pwm: stm32: Adopt SPDX identifier
 
-It could be argued that this ordering is the result of the combination
-of two 'mechanisms' (barrier+SV/atomicity), and that it makes sense to
-distinguish them... But either way would be fine for me.
+Corentin Labbe (1):
+      pwm: Remove depends on AVR32
 
+Fabio Estevam (1):
+      pwm: imx: Let PWM be active during suspend
 
-> 
-> 
-> I am going submit these changes separately, but before doing that I can show
-> also my rewrite of the cheat sheet.
-> 
-> The advantage is that, at least to me, it's clearer (and gets rid of
-> "Self" :)).
-> 
-> The disadvantage is that it's much longer---almost twice the lines, even if
-> you discount the splitting out of cumulative/propagating to a separate table
-> (which in turn is because to me it's a different level of black magic).
+Fabrice Gasnier (2):
+      pwm: stm32: Remove unused struct device
+      pwm: stm32: Protect common prescaler for all channels
 
-Yeah, those 'Ordering is cumulative', 'Ordering propagates' could mean
-different things to different readers... (and I'm not going to attempt
-some snappy descriptions now). IMO, we may even omit such information;
-this doc. does not certainly aim for completeness, after all. OTOH, we
-ought to refrain from making this doc. an excuse to transform (what it
-is really) high-school maths into some black magic. ;-) So once again,
-thank you for your feedback!
+Fabrizio Castro (2):
+      dt-bindings: pwm: renesas-tpu: Document r8a774[35] support
+      dt-bindings: pwm: rcar: Document r8a774[35] PWM bindings
 
-  Andrea
+Geert Uytterhoeven (2):
+      dt-bindings: pwm: renesas-tpu: Correct example TPU register block size
+      dt-bindings: pwm: renesas-tpu: Correct SoC part numbers and family names
 
+Gerald Baeza (2):
+      dt-bindings: pwm-stm32-lp: Add #pwm-cells
+      pwm: stm32: LPTimer: Use 3 cells ->of_xlate()
 
-> 
-> ---------------------
-> Memory operations are listed in this document as follows:
-> 
-> 	R:	Read portion of RMW
-> 	W:	Write portion of RMW
-> 	DR:	Dependent read (address dependency)
-> 	DW:	Dependent write (address, data, or control dependency)
-> 	RMW:	Atomic read-modify-write operation
-> 	SV	Other accesses to the same variable
-> 
-> 
-> Memory access operations order other memory operations against themselves as
-> follows:
-> 
->                                    Prior Operation   Subsequent Operation
->                                    ---------------   ---------------------
->                                    R  W  RMW  SV     R  W  DR  DW  RMW  SV
->                                    -  -  ---  --     -  -  --  --  ---  --
-> Store, e.g., WRITE_ONCE()                      Y                         Y
-> Load, e.g., READ_ONCE()                        Y            Y   Y        Y
-> Unsuccessful RMW operation                     Y            Y   Y        Y
-> *_relaxed() or void RMW operation              Y            Y   Y        Y
-> rcu_dereference()                              Y            Y   Y        Y
-> Successful *_acquire()                         Y      r  r  r   r    r   Y
-> Successful *_release()             w  w    w   Y                         Y
-> smp_store_mb()                     Y  Y    Y   Y      Y  Y   Y   Y   Y   Y
-> Successful full non-void RMW       Y  Y    Y   Y      Y  Y   Y   Y   Y   Y
-> 
-> Key:	Y:	Memory operation provides ordering
-> 	r:	Cannot move past the read portion of the *_acquire()
-> 	w:	Cannot move past the write portion of the *_release()
-> 
-> 
-> Memory barriers order prior memory operations against subsequent memory
-> operations.  Two operations are ordered if both have non-empty cells in
-> the following table:
-> 
->                                    Prior Operation   Subsequent Operation
->                                    ---------------   --------------------
->                                    R  W  RMW         R  W  DR  DW  RMW
->                                    -  -  ---         -  -  --  --  ---
-> smp_rmb()                          Y      r          Y      Y       Y
-> smp_wmb()                             Y   Y             Y       Y   w
-> smp_mb() & synchronize_rcu()       Y  Y   Y          Y  Y   Y   Y   Y
-> smp_mb__before_atomic()            Y  Y   Y          a  a   a   a   Y
-> smp_mb__after_atomic()             a  a   Y          Y  Y   Y   Y
-> 
-> 
-> Key:	Y:	Barrier provides ordering
-> 	r:	Barrier provides ordering against the read portion of RMW
-> 	w:	Barrier provides ordering against the write portion of RMW
-> 	a:	Barrier provides ordering given intervening RMW atomic operation
-> 
-> 
-> Finally the following describes which operations provide cumulative and
-> propagating fences:
-> 
->                                      Cumulative         Propagates
->                                      ----------         ----------
-> Store, e.g., WRITE_ONCE()
-> Load, e.g., READ_ONCE()
-> Unsuccessful RMW operation
-> *_relaxed() or void RMW operation
-> rcu_dereference()
-> Successful *_acquire()
-> Successful *_release()                   Y
-> smp_store_mb()                           Y                  Y
-> Successful full non-void RMW             Y                  Y
-> smp_rmb()
-> smp_wmb()
-> smp_mb() & synchronize_rcu()             Y                  Y
-> smp_mb__before_atomic()                  Y                  Y
-> smp_mb__after_atomic()                   Y                  Y
-> ----------
-> 
-> Perhaps you can see some obvious improvements.  Otherwise I'll send patches
-> for the above issues.
-> 
-> Thanks,
-> 
-> Paolo
+Hien Dang (1):
+      pwm: rcar: Use PM Runtime to control module clock
+
+Maarten ter Huurne (1):
+      pwm: jz4740: Make disable operation compatible with TCU2 mode
+
+Markus Elfring (2):
+      pwm: puv3: Delete an error message for a failed memory allocation
+      pwm: atmel-tcb: Delete an error message for a failed memory allocation
+
+Paul Cercueil (3):
+      pwm: jz4740: Implement ->set_polarity()
+      pwm: jz4740: Add support for devicetree
+      pwm: jz4740: Enable for all Ingenic SoCs
+
+Ryo Kodama (1):
+      pwm: rcar: Fix a condition to prevent mismatch value setting to duty
+
+Sean Wang (3):
+      pwm: mediatek: Fix up PWM4 and PWM5 malfunction on MT7623
+      pwm: mediatek: Remove redundant MODULE_ALIAS entries
+      pwm: mediatek: Improve precision in rate calculation
+
+Yoshihiro Shimoda (2):
+      dt-bindings: pwm: rcar: Add bindings for R-Car M3N support
+      pwm: rcar: Add suspend/resume support
+
+ .../devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt | 25 ++++++++++
+ .../devicetree/bindings/pwm/pwm-stm32-lp.txt       |  3 ++
+ .../devicetree/bindings/pwm/pwm-sun4i.txt          |  2 +
+ .../devicetree/bindings/pwm/renesas,pwm-rcar.txt   | 11 ++--
+ .../devicetree/bindings/pwm/renesas,tpu-pwm.txt    | 10 ++--
+ drivers/pwm/Kconfig                                |  8 +--
+ drivers/pwm/pwm-atmel-tcb.c                        |  1 -
+ drivers/pwm/pwm-imx.c                              |  3 +-
+ drivers/pwm/pwm-jz4740.c                           | 41 ++++++++++++++-
+ drivers/pwm/pwm-mediatek.c                         | 36 +++++++++++---
+ drivers/pwm/pwm-puv3.c                             |  4 +-
+ drivers/pwm/pwm-rcar.c                             | 58 +++++++++++++++++++---
+ drivers/pwm/pwm-stm32-lp.c                         |  5 +-
+ drivers/pwm/pwm-stm32.c                            | 22 ++++++--
+ drivers/pwm/pwm-sun4i.c                            | 38 +++++---------
+ drivers/pwm/sysfs.c                                |  3 +-
+ 16 files changed, 206 insertions(+), 64 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
