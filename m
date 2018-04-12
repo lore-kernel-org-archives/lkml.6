@@ -1,59 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753227AbeDLPrl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 11:47:41 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:34146 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752870AbeDLPrj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 11:47:39 -0400
-Date: Thu, 12 Apr 2018 16:47:27 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Ayan Kumar Halder <ayan.halder@arm.com>
-Cc: liviu.dudau@arm.com, brian.starkey@arm.com, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        alexandru-cosmin.gheorghe@arm.com, nd@arm.com
-Subject: Re: [PATCH] tda998x: Check ref count before invoking
- drm_connector_cleanup in unbind
-Message-ID: <20180412154727.GJ16141@n2100.armlinux.org.uk>
-References: <1523544152-15241-1-git-send-email-ayan.halder@arm.com>
+        id S1752985AbeDLPvY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 11:51:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43234 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752761AbeDLPvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 11:51:23 -0400
+Subject: Re: [RFC v2 02/12] KVM: arm/arm64: Document
+ KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+To: Christoffer Dall <cdall@kernel.org>
+References: <1522159456-10419-1-git-send-email-eric.auger@redhat.com>
+ <1522159456-10419-3-git-send-email-eric.auger@redhat.com>
+ <20180409213852.GJ10904@cbox>
+Cc: eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        marc.zyngier@arm.com, peter.maydell@linaro.org, andre.przywara@arm.com,
+        drjones@redhat.com, wei@redhat.com
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <ad884b2d-7809-70e6-c968-8411f43b915e@redhat.com>
+Date: Thu, 12 Apr 2018 17:51:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523544152-15241-1-git-send-email-ayan.halder@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180409213852.GJ10904@cbox>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 03:42:32PM +0100, Ayan Kumar Halder wrote:
-> In a situation when the reference count of the drm connector is greater than 1,
-> the unbind function should not invoke drm_connector_cleanup as this will lead
-> to an inconsistent state where the drm_crtc_state->connector_mask still has
-> a bitmask referring to the stale connector. Later, when drm driver invokes
-> drm_atomic_helper_shutdown() which invokes ---> drm_atomic_helper_disable_all()
->  ---> drm_atomic_commit() --> drm_atomic_check_only() -->
-> drm_atomic_helper_check() --> drm_atomic_helper_check_modeset(). This returns
-> an error due to enabled/connectors mismatch.
+Hi Christoffer,
+
+> Hi Eric,
 > 
-> In such a scenario, one should just return from _unbind() and let the drm driver
-> subsequently invoke drm_atomic_helper_shutdown. This will reset the
-> drm_crtc_state->connector_mask and will shutdown the crtcs. It will also decrement
-> the reference count of the connectors to 1. Subsequently, drm_mode_config_cleanup
-> will get invoked which will do the following :-
+> On Tue, Mar 27, 2018 at 04:04:06PM +0200, Eric Auger wrote:
+>> We introduce a new KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attribute in
+>> KVM_DEV_ARM_VGIC_GRP_ADDR group. It allows userspace to provide the
+>> base address and size of a redistributor region
+>>
+>> Compared to KVM_VGIC_V3_ADDR_TYPE_REDIST, this new attribute allows
+>> to declare several separate redistributor regions.
+>>
+>> So the whole redist space does not need to be contiguous anymore.
+>>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>> ---
+>>  Documentation/virtual/kvm/devices/arm-vgic-v3.txt | 18 ++++++++++++++++++
+>>  1 file changed, 18 insertions(+)
+>>
+>> diff --git a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+>> index 9293b45..0ded904 100644
+>> --- a/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+>> +++ b/Documentation/virtual/kvm/devices/arm-vgic-v3.txt
+>> @@ -27,6 +27,24 @@ Groups:
+>>        VCPU and all of the redistributor pages are contiguous.
+>>        Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
+>>        This address needs to be 64K aligned.
+>> +
+>> +    KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION (rw, 64-bit)
+>> +      The attr field of kvm_device_attr encodes 3 values:
+>> +      bits:     | 63   ....  52  |  51   ....   16 | 15 - 12  |11 - 0
+>> +      values:   |     count      |       base      |  flags   | index
+>> +      - index encodes the unique redistributor region index
+>> +      - flags: reserved for future use, currently 0
+>> +      - base field encodes bits [51:16] of the guest physical base address
+>> +        of the first redistributor in the region. There are two 64K pages
+>> +        for each VCPU and all of the redistributor pages are contiguous
+> 
+> should this be two 64K pages for the number of redistributors in this
+> region as specified by count ?
+yes it is, I will reword.
+> 
+>> +        within the redistributor region.
+>> +      - count encodes the number of redistributors in the region.
+> 
+> I assume it's implied that the user must register a total number of
+> redistributors across all the regions that matches the number of vcpus,
+> and that otherwise something bad happens?
 
-If the device is still in-use after unbind() has been called, that is
-_very_ bad news, and probably means that the "host" driver is not
-calling component_unbind() at the right point.
+Yes the regions registered by the userspace must be large enough to
+assign all the vcpu redistributors. Otherwise an error is produced on
+first vcpu run (on map_resources). At that time the number of vcpu is
+frozen and we can perform the check.
 
-Any resources claimed in the bind() callback using devm functions
-will be freed, which will include (eg) the drm_encoder structure and
-in fact the drm_connector.  So what you have here is a use-after-free
-bug, and your change does nothing for that.
+Thanks
 
-Please fix the "host" driver instead.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Eric
+> 
+>> +      Only valid for KVM_DEV_TYPE_ARM_VGIC_V3.
+>> +
+>> +  It is invalid to mix calls with KVM_VGIC_V3_ADDR_TYPE_REDIST and
+>> +  KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION attributes. When attempted an
+>> +  -EINVAL error is returned.
+>> +
+>>    Errors:
+>>      -E2BIG:  Address outside of addressable IPA range
+>>      -EINVAL: Incorrectly aligned address
+>> -- 
+>> 2.5.5
+>>
+> 
+> Thanks,
+> -Christoffer
+> 
