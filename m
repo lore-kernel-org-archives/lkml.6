@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753139AbeDLQvp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 12:51:45 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:60395 "EHLO
+        id S1753115AbeDLQvo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 12:51:44 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:44031 "EHLO
         srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752761AbeDLQvd (ORCPT
+        with ESMTP id S1752700AbeDLQvd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 12 Apr 2018 12:51:33 -0400
 From: Luca Ceresoli <luca@lucaceresoli.net>
@@ -13,9 +13,9 @@ Cc: Luca Ceresoli <luca@lucaceresoli.net>,
         Leon Luo <leonl@leopardimaging.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 04/13] imx274: remove unused data from struct imx274_frmfmt
-Date: Thu, 12 Apr 2018 18:51:09 +0200
-Message-Id: <1523551878-15754-5-git-send-email-luca@lucaceresoli.net>
+Subject: [PATCH 02/13] imx274: fix typo in comment
+Date: Thu, 12 Apr 2018 18:51:07 +0200
+Message-Id: <1523551878-15754-3-git-send-email-luca@lucaceresoli.net>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523551878-15754-1-git-send-email-luca@lucaceresoli.net>
 References: <1523551878-15754-1-git-send-email-luca@lucaceresoli.net>
@@ -33,65 +33,23 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-struct imx274_frmfmt is instantiated only in the imx274_formats[]
-array, where imx274_formats[N].mode always equals N (via enum
-imx274_mode).  So .mode carries no information, and unsurprisingly it
-is never used.
-
-mbus_code is never used because the 12 bit modes are not implemented.
-
-The colorspace member is also never used, which is normal since the
-imx274 sensor can output only one colorspace.
-
-Let's get rid of all of them.
-
 Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
 ---
- drivers/media/i2c/imx274.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+ drivers/media/i2c/imx274.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-index c5d00ade4d64..9203d377cfe2 100644
+index 5e425db9204d..dfd04edcdd48 100644
 --- a/drivers/media/i2c/imx274.c
 +++ b/drivers/media/i2c/imx274.c
-@@ -156,10 +156,7 @@ enum imx274_mode {
-  * imx274 format related structure
-  */
- struct imx274_frmfmt {
--	u32 mbus_code;
--	enum v4l2_colorspace colorspace;
- 	struct v4l2_frmsize_discrete size;
--	enum imx274_mode mode;
- };
- 
- /*
-@@ -501,12 +498,9 @@ static const struct reg_8 *mode_table[] = {
-  * imx274 format related structure
-  */
- static const struct imx274_frmfmt imx274_formats[] = {
--	{MEDIA_BUS_FMT_SRGGB10_1X10, V4L2_COLORSPACE_SRGB, {3840, 2160},
--		IMX274_MODE_3840X2160},
--	{MEDIA_BUS_FMT_SRGGB10_1X10, V4L2_COLORSPACE_SRGB, {1920, 1080},
--		IMX274_MODE_1920X1080},
--	{MEDIA_BUS_FMT_SRGGB10_1X10, V4L2_COLORSPACE_SRGB, {1280, 720},
--		IMX274_MODE_1280X720},
-+	{ {3840, 2160} },
-+	{ {1920, 1080} },
-+	{ {1280,  720} },
- };
- 
- /*
-@@ -890,9 +884,8 @@ static int imx274_set_fmt(struct v4l2_subdev *sd,
- 	int index;
- 
- 	dev_dbg(&client->dev,
--		"%s: width = %d height = %d code = %d mbus_code = %d\n",
--		__func__, fmt->width, fmt->height, fmt->code,
--		imx274_formats[imx274->mode_index].mbus_code);
-+		"%s: width = %d height = %d code = %d\n",
-+		__func__, fmt->width, fmt->height, fmt->code);
- 
- 	mutex_lock(&imx274->lock);
- 
+@@ -971,7 +971,7 @@ static int imx274_s_frame_interval(struct v4l2_subdev *sd,
+ 	if (!ret) {
+ 		/*
+ 		 * exposure time range is decided by frame interval
+-		 * need to update it after frame interal changes
++		 * need to update it after frame interval changes
+ 		 */
+ 		min = IMX274_MIN_EXPOSURE_TIME;
+ 		max = fi->interval.numerator * 1000000
 -- 
 2.7.4
