@@ -1,53 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752450AbeDLMMk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 08:12:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59270 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751863AbeDLMMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 08:12:39 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C769921785
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Thu, 12 Apr 2018 08:12:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Li Bin <huawei.libin@huawei.com>
-Cc: <peterz@infradead.org>, <mingo@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <guohanjun@huawei.com>
-Subject: Re: [PATCH 2/2] sched/deadline.c: pick and check task if
- double_lock_balance() unlock the rq
-Message-ID: <20180412081237.2a212c95@gandalf.local.home>
-In-Reply-To: <1523530735-20011-3-git-send-email-huawei.libin@huawei.com>
-References: <1523530735-20011-1-git-send-email-huawei.libin@huawei.com>
-        <1523530735-20011-3-git-send-email-huawei.libin@huawei.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752245AbeDLMPy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 08:15:54 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:44056 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752327AbeDLMPv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 08:15:51 -0400
+X-Google-Smtp-Source: AIpwx48JA/ibIkr3I6mKvw8onf8GpBSUFle281VYssnCLyq4liL9SuRXJZwPcexePO7BejjVaQzWCxbGYcpie90rgTY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <7d98027d-e810-a079-49c5-0bf8beef390e@nokia.com>
+References: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
+ <CAM_iQpVo0iSXKSR=Qc+7syn77BnhE2R72M2u5YfJF=fBkJHjsw@mail.gmail.com>
+ <7fd7e3b3-77b1-0936-b169-d08b946bedc7@iogearbox.net> <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
+ <efa5811c-0a01-a4af-ade2-71ef5dbc4eaf@gmail.com> <CADvbK_dgEa5g0ynY4F8pX6LuuBwW4e42rK_TFuRhY1=2G5zinw@mail.gmail.com>
+ <CADvbK_fKDbUnAkdLrgm6rgj895Gb06AK7HaT0s9VD=zdF+vf6Q@mail.gmail.com>
+ <CACT4Y+aV_v6zNS6Ac1u1cB2GZ7QhjNxBeg0FNabUhrndt5CqZw@mail.gmail.com>
+ <5973966e-fcd9-7ee5-a9c4-b79d22c1b9dd@nokia.com> <CACT4Y+beZ2+O=XdjKCpAkXOTBDgHYfn1JW8kn-TGRrph_RmV7Q@mail.gmail.com>
+ <20180220162622.GA32068@hmswarspite.think-freely.org> <7d98027d-e810-a079-49c5-0bf8beef390e@nokia.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 12 Apr 2018 14:15:30 +0200
+Message-ID: <CACT4Y+Z2kdjsYUs-H9aSTcNW-FSKqm1__fg3eOq16H-E=X8oZg@mail.gmail.com>
+Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
+To: Tommi Rantala <tommi.t.rantala@nokia.com>
+Cc: Neil Horman <nhorman@tuxdriver.com>, Xin Long <lucien.xin@gmail.com>,
+        David Ahern <dsahern@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Dan Streetman <ddstreet@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexey Kodanev <alexey.kodanev@oracle.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        linux-sctp@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Apr 2018 18:58:55 +0800
-Li Bin <huawei.libin@huawei.com> wrote:
+On Wed, Feb 21, 2018 at 3:53 PM, Tommi Rantala
+<tommi.t.rantala@nokia.com> wrote:
+> On 20.02.2018 18:26, Neil Horman wrote:
+>>
+>> On Tue, Feb 20, 2018 at 09:14:41AM +0100, Dmitry Vyukov wrote:
+>>>
+>>> On Tue, Feb 20, 2018 at 8:56 AM, Tommi Rantala
+>>> <tommi.t.rantala@nokia.com> wrote:
+>>>>
+>>>> On 19.02.2018 20:59, Dmitry Vyukov wrote:
+>>>>>
+>>>>> Is this meant to be fixed already? I am still seeing this on the
+>>>>> latest upstream tree.
+>>>>>
+>>>>
+>>>> These two commits are in v4.16-rc1:
+>>>>
+>>>> commit 4a31a6b19f9ddf498c81f5c9b089742b7472a6f8
+>>>> Author: Tommi Rantala <tommi.t.rantala@nokia.com>
+>>>> Date:   Mon Feb 5 21:48:14 2018 +0200
+>>>>
+>>>>      sctp: fix dst refcnt leak in sctp_v4_get_dst
+>>>> ...
+>>>>      Fixes: 410f03831 ("sctp: add routing output fallback")
+>>>>      Fixes: 0ca50d12f ("sctp: fix src address selection if using
+>>>> secondary
+>>>> addresses")
+>>>>
+>>>>
+>>>> commit 957d761cf91cdbb175ad7d8f5472336a4d54dbf2
+>>>> Author: Alexey Kodanev <alexey.kodanev@oracle.com>
+>>>> Date:   Mon Feb 5 15:10:35 2018 +0300
+>>>>
+>>>>      sctp: fix dst refcnt leak in sctp_v6_get_dst()
+>>>> ...
+>>>>      Fixes: dbc2b5e9a09e ("sctp: fix src address selection if using
+>>>> secondary
+>>>> addresses for ipv6")
+>>>>
+>>>>
+>>>> I guess we missed something if it's still reproducible.
+>>>>
+>>>> I can check it later this week, unless someone else beat me to it.
+>>>
+>>>
+>>> Hi Tommi,
+>>>
+>>> Hmmm, I can't claim that it's exactly the same bug. Perhaps it's
+>>> another one then. But I am still seeing these:
+>>>
+>>> [   58.799130] unregister_netdevice: waiting for lo to become free.
+>>> Usage count = 4
+>>> [   60.847138] unregister_netdevice: waiting for lo to become free.
+>>> Usage count = 4
+>>> [   62.895093] unregister_netdevice: waiting for lo to become free.
+>>> Usage count = 4
+>>> [   64.943103] unregister_netdevice: waiting for lo to become free.
+>>> Usage count = 4
+>>>
+>>> on upstream tree pulled ~12 hours ago.
+>>>
+>> Can you write a systemtap script to probe dev_hold, and dev_put, printing
+>> out a
+>> backtrace if the device name matches "lo".  That should tell us
+>> definitively if
+>> the problem is in the same location or not
+>
+>
+> Hi Dmitry, I tested with the reproducer and the kernel .config file that you
+> sent in the first email in this thread:
+>
+> With 4.16-rc2 unable to reproduce.
+>
+> With 4.15-rc9 bug reproducible, and I get "unregister_netdevice: waiting for
+> lo to become free. Usage count = 3"
+>
+> With 4.15-rc9 and Alexey's "sctp: fix dst refcnt leak in sctp_v6_get_dst()"
+> cherry-picked on top, unable to reproduce.
+>
+>
+> Is syzkaller doing something else now to trigger the bug...?
+> Can you still trigger the bug with the same reproducer?
 
-> @@ -1965,11 +1985,9 @@ static struct rq *find_lock_later_rq(struct task_struct *task, struct rq *rq)
->  
->  		/* Retry if something changed. */
->  		if (double_lock_balance(rq, later_rq)) {
-> -			if (unlikely(task_rq(task) != rq ||
-> -				     !cpumask_test_cpu(later_rq->cpu, &task->cpus_allowed) ||
-> -				     task_running(rq, task) ||
-> -				     !dl_task(task) ||
-> -				     !task_on_rq_queued(task))) {
-> +			struct task_struct *next_task = pick_next_pushable_dl_task(rq);
+Hi Neil, Tommi,
 
-I would do the same thing here, and add the comment from rt.c as it
-is the same reason.
+Reviving this old thread about "unregister_netdevice: waiting for lo
+to become free. Usage count = 3" hangs.
+I still did not have time to deep dive into what happens there (too
+many bugs coming from syzbot). But this still actively happens and I
+suspect accounts to a significant portion of various hang reports,
+which are quite unpleasant.
 
--- Steve
+One idea that could make it all simpler:
 
-> +			if (unlikely(next_task != task ||
-> +						!cpumask_test_cpu(later_rq->cpu, &task->cpus_allowed))) {
->  				double_unlock_balance(rq, later_rq);
->  				later_rq = NULL;
+Is this wait loop in netdev_wait_allrefs() supposed to wait for any
+prolonged periods of time under any non-buggy conditions? E.g. more
+than 1-2 minutes?
+If it only supposed to wait briefly for things that already supposed
+to be shutting down, and we add a WARNING there after some timeout,
+then syzbot will report all info how/when it happens, hopefully
+extracting reproducers, and all the nice things.
+But this WARNING should not have any false positives under any
+realistic conditions (e.g. waiting for arrival of remote packets with
+large timeouts).
+
+Looking at some task hung reports, it seems that this code holds some
+mutexes, takes workqueue thread and prevents any progress with
+destruction of other devices (and net namespace creation/destruction),
+so I guess it should not wait for any indefinite periods of time?
