@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753383AbeDLLS5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 07:18:57 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:46740 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753122AbeDLLPB (ORCPT
+        id S1753393AbeDLLTQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 07:19:16 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34002 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751719AbeDLLO7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 07:15:01 -0400
-X-Google-Smtp-Source: AIpwx48GaNnT5e3GV0a9rQWEJscn1nPnaNBvVRYAnMX3FRt/15zQ2JdYvvA27MWv1/axsn2WI6n0Ew==
+        Thu, 12 Apr 2018 07:14:59 -0400
+X-Google-Smtp-Source: AIpwx48Z+Ekp57qDUNM9ouFDrsP6foIHTjb1W5Fbj5jEEg730hrWSccVqo1qNC3tBjioqU4J83wgxw==
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -22,10 +22,10 @@ Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
         Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7 12/26] cpuidle: dt: Support hierarchical CPU idle states
-Date: Thu, 12 Apr 2018 13:14:17 +0200
-Message-Id: <1523531671-27491-13-git-send-email-ulf.hansson@linaro.org>
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH v7 11/26] of: base: Add of_get_cpu_state_node() to get idle states for a CPU node
+Date: Thu, 12 Apr 2018 13:14:16 +0200
+Message-Id: <1523531671-27491-12-git-send-email-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
 References: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
@@ -33,46 +33,109 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lina Iyer <lina.iyer@linaro.org>
+The CPU's idle state nodes are currently parsed at the common cpuidle DT
+library, but also when initializing back-end data for the arch specific CPU
+operations, as in the PSCI driver case.
 
-Currently CPU's idle states are represented in a flattened model, via the
-"cpu-idle-states" binding from within the CPU's device nodes.
+To avoid open-coding, let's introduce of_get_cpu_state_node(), which takes
+the device node for the CPU and the index to the requested idle state node,
+as in-parameters. In case a corresponding idle state node is found, it
+returns the node with the refcount incremented for it, else it returns
+NULL.
 
-Support the hierarchical layout during parsing and validating of the CPU's
-idle states. This is simply done by calling the new OF helper,
-of_get_cpu_state_node().
+Moreover, for ARM, there are two generic methods, to describe the CPU's
+idle states, either via the flattened description through the
+"cpu-idle-states" binding [1] or via the hierarchical layout, using the
+"power-domains" and the "domain-idle-states" bindings [2]. Hence, let's
+take both options into account.
 
+[1]
+Documentation/devicetree/bindings/arm/idle-states.txt
+[2]
+Documentation/devicetree/bindings/arm/psci.txt
+
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
 Cc: Lina Iyer <ilina@codeaurora.org>
 Suggested-by: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
-Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/cpuidle/dt_idle_states.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/of/base.c  | 35 +++++++++++++++++++++++++++++++++++
+ include/linux/of.h |  8 ++++++++
+ 2 files changed, 43 insertions(+)
 
-diff --git a/drivers/cpuidle/dt_idle_states.c b/drivers/cpuidle/dt_idle_states.c
-index 53342b7..13f9b7c 100644
---- a/drivers/cpuidle/dt_idle_states.c
-+++ b/drivers/cpuidle/dt_idle_states.c
-@@ -118,8 +118,7 @@ static bool idle_state_valid(struct device_node *state_node, unsigned int idx,
- 	for (cpu = cpumask_next(cpumask_first(cpumask), cpumask);
- 	     cpu < nr_cpu_ids; cpu = cpumask_next(cpu, cpumask)) {
- 		cpu_node = of_cpu_device_node_get(cpu);
--		curr_state_node = of_parse_phandle(cpu_node, "cpu-idle-states",
--						   idx);
-+		curr_state_node = of_get_cpu_state_node(cpu_node, idx);
- 		if (state_node != curr_state_node)
- 			valid = false;
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 848f549..97350cc 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -400,6 +400,41 @@ int of_cpu_node_to_id(struct device_node *cpu_node)
+ EXPORT_SYMBOL(of_cpu_node_to_id);
  
-@@ -176,7 +175,7 @@ int dt_init_idle_driver(struct cpuidle_driver *drv,
- 	cpu_node = of_cpu_device_node_get(cpumask_first(cpumask));
+ /**
++ * of_get_cpu_state_node - Get CPU's idle state node at the given index
++ *
++ * @cpu_node: The device node for the CPU
++ * @index: The index in the list of the idle states
++ *
++ * Two generic methods can be used to describe a CPU's idle states, either via
++ * a flattened description through the "cpu-idle-states" binding or via the
++ * hierarchical layout, using the "power-domains" and the "domain-idle-states"
++ * bindings. This function check for both and returns the idle state node for
++ * the requested index.
++ *
++ * In case and idle state node is found at index, the refcount incremented for
++ * it, so call of_node_put() on it when done. Returns NULL if not found.
++ */
++struct device_node *of_get_cpu_state_node(struct device_node *cpu_node,
++					  int index)
++{
++	struct of_phandle_args args;
++	int err;
++
++	err = of_parse_phandle_with_args(cpu_node, "power-domains",
++					"#power-domain-cells", 0, &args);
++	if (!err) {
++		struct device_node *state_node =
++			of_parse_phandle(args.np, "domain-idle-states", index);
++
++		of_node_put(args.np);
++		return state_node;
++	}
++
++	return of_parse_phandle(cpu_node, "cpu-idle-states", index);
++}
++EXPORT_SYMBOL(of_get_cpu_state_node);
++
++/**
+  * __of_device_is_compatible() - Check if the node matches given constraints
+  * @device: pointer to node
+  * @compat: required compatible string, NULL or "" for any match
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 4d25e4f..15072b1 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -348,6 +348,8 @@ extern const void *of_get_property(const struct device_node *node,
+ 				const char *name,
+ 				int *lenp);
+ extern struct device_node *of_get_cpu_node(int cpu, unsigned int *thread);
++extern struct device_node *of_get_cpu_state_node(struct device_node *cpu_node,
++						 int index);
+ #define for_each_property_of_node(dn, pp) \
+ 	for (pp = dn->properties; pp != NULL; pp = pp->next)
  
- 	for (i = 0; ; i++) {
--		state_node = of_parse_phandle(cpu_node, "cpu-idle-states", i);
-+		state_node = of_get_cpu_state_node(cpu_node, i);
- 		if (!state_node)
- 			break;
+@@ -733,6 +735,12 @@ static inline struct device_node *of_get_cpu_node(int cpu,
+ 	return NULL;
+ }
  
++static inline struct device_node *of_get_cpu_state_node(struct device_node *cpu_node,
++					int index)
++{
++	return NULL;
++}
++
+ static inline int of_n_addr_cells(struct device_node *np)
+ {
+ 	return 0;
 -- 
 2.7.4
