@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1684311-1523561559-5-8222116039940980445
+X-Cyrus-Session-Id: sloti22d1t05-1684311-1523561534-2-7737165277093065622
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523561558; b=Q28Uy0WaC8EAWSjgHnLie6tD3u+kpImigpOLQyNRWtx9+W0YmU
-    LiwZiPjJtkqIFZApoDxtFJfvO36sxdBQw7xS/yAUEUZaw1+ipYZdHsR66xxLTr+s
-    Y4/AGwwxNmxOctUhtkXhxbyw+G5HQcsZcQFmF1k6M1ze9+6LnpSV8ABUzXUMcYDW
-    mJvctytkE5E0Y3FPcvqEuckOt+nAvUatvseJxWFdR91D5RlfjBvpyjxWP5toCkfS
-    WshLRYLTZgH2QJaTeyEFErn8sX+jgYA2qbkugP0JLCU57Km+67wcqiFb0vrE7RIh
-    6EIgQpi1MVcK4B9oMWxBiIhuc3YCurbV3CgQ==
+    1523561533; b=uSBWtEMkZ91cEtqIW9+aB48kg4j5OrCu3bOP9A2H+CrAUHs77W
+    RArGPC1wi6prHNQD+oxLTRGJWfla5Haekn8gIJ2JkCk3bzGDBXbE+Hpjq+R/CyM8
+    M1+BC/BFHx8p3CynxdydvGb0Q24O2q5aRQzSKb6NFfyg5xqHph74wTcUm1Qly4pM
+    xK0p3UM7zpDh7wQbYg5m7Oe0xNPz7FFAia9cUi80qAOA08+LOmoUUMFMZV4Dx4FE
+    UwHGRRXF6Aha1Bu1MNywXU89CoGCVXOSduqULRWrDwpfLHfjQxcGnLUIuRFaHZCx
+    pJ+gxBUeV6Pk0317lhfS5jsf8khU7LbBSrFw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1523561558; bh=
-    zYHzw04z6M2S3CSGAWPqc1k3MjSiMGTojCIHSMvy2EI=; b=opdTlIv1emQVPoQG
-    pKuxMDvve8YS0F/zNsfikhroEDDyaVMPVyIVzNGg14aWnK2y5vfpfs2ryYn8Jzfl
-    fUDWnoMhapI2R7MKgPNFBbub+GrIf+IpfxvNqcdi2VR9m4J/vPyPr+RQ4vTY4Ly6
-    UX3BbCQnAqNPBMRtOMmf0Jvq1xD96JixmhW011AvUeJHrUxTMg/dSJyncvKrHzna
-    rPUNOKl1Ewj7cpxAYDGC3RkqckvAGx+Df+/AfhUwSk0JOsbxgu8W8/7o4ntSAXGd
-    +a0KKSGmKJRu2mC2DIdQBBXQnNthcAE8M3ICzxl9w+Ok51XL0ZehrFKBM6uU6jLH
-    ifyCnA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1523561533; bh=
+    bga5DNakBZSPUbIfyGgNn7QcfPujp4b378DSydjEGJQ=; b=cf6N8hVp9YyB1GwX
+    a+C/6GIJcnvlQrTgS/KUWIDKYU6GxR6wThOE+237coYihTWS1i7cVOykjwW+NK2V
+    4C2qVjwlp3b/SHrHkXAlkXPhrqrpf8n1G1NS/k9biL+xvoGeF1T93pNdR57zNSNM
+    o90hZw2VwWL0kjvby+rI+O1xdx66t7q/2YHbqtM7OKxpbWvxar26Zb+etCfOGvSE
+    GyVcU8OKLnFjouPdu2tgKC54YmmeFO/tANHGhzPtGi8JyOLWz4d/V6FAQSTeR7go
+    WsOyBx+teHFSuwbtuYNvhcOw2Ye4tJvJ91FDiKccezQBucLXX2k8UbvP6xzVVrAu
+    CrfZTQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
@@ -51,23 +51,23 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBglavdVWWbVpkncQ02vykB9J45j8d3EUGNUkF3ViCnl51t5cVgh/8NzdPFripyfYcpDQQB+0eA8TKjRMsFUs9ya8atDW/OnURychqDAxgHNXsDX51De
-    PP0thAtEyw5/rVklNe7+sw6coCT5TD92gVfC8a40sHrMyPQFHo5BOuKdG8ECV/CgezGGpcYtfrZFDDGBZZ/XDfScWfQXcdXyN8RXn1Q7NkVJspmR5TpGMGKD
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfBI+oOMysQe02QGFamgiOhil6Z1tIlH3IEhfWLUfRvHZ1vLdDu2nVhgtzjetwkQX0snA40ICsW/MrUSKtU9IDsHOL8Kh6sbqrf/R7CRFj4ryH2PGiYb2
+    E8Dj7EzL4KtDisUJtBKbzOGRJT06NGmO4/vAmwc8dt8aCDnbKpmH53TxO2htxSzThGLJRpUV20uiKdfTkeExZDOis1FESJgMcsUvr6pIaDAPp9G+fxev+/Gv
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=pGLkceISAAAA:8
     a=7d_E57ReAAAA:8 a=wMNdZWldAAAA:8 a=hGzw-44bAAAA:8 a=JfrnYn6hAAAA:8
-    a=VnNF1IyMAAAA:8 a=voM4FWlXAAAA:8 a=VwQbUJbxAAAA:8 a=jbeimLwzA9XXGubRsbcA:9
-    a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22 a=FUarYpL4UH3yWsho8X8J:22
-    a=HvKuF1_PTVFglORKqfwH:22 a=1CNFftbPRP8L7MoqJWF3:22 a=IC2XNlieTeVoXbcui8wp:22
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=VnNF1IyMAAAA:8 a=voM4FWlXAAAA:8 a=VwQbUJbxAAAA:8 a=G5HWyBugIy8sD1MnFzYA:9
+    a=U-Kt6-Ji7Vr91if6:21 a=FLGmjylF8EaF4hMs:21 a=x8gzFH9gYPwA:10
+    a=jhqOcbufqs7Y1TYCrUUU:22 a=FUarYpL4UH3yWsho8X8J:22 a=HvKuF1_PTVFglORKqfwH:22
+    a=1CNFftbPRP8L7MoqJWF3:22 a=IC2XNlieTeVoXbcui8wp:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753340AbeDLTbo (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 12 Apr 2018 15:31:44 -0400
-Received: from mail.efficios.com ([167.114.142.138]:45604 "EHLO
+        id S1753258AbeDLTbp (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 12 Apr 2018 15:31:45 -0400
+Received: from mail.efficios.com ([167.114.142.138]:45580 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753211AbeDLT2X (ORCPT
+        with ESMTP id S1753184AbeDLT2X (ORCPT
         <rfc822;linux-api@vger.kernel.org>); Thu, 12 Apr 2018 15:28:23 -0400
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
@@ -95,9 +95,9 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
         linuxppc-dev@lists.ozlabs.org
-Subject: [RFC PATCH for 4.18 08/23] powerpc: Wire up restartable sequences system call
-Date: Thu, 12 Apr 2018 15:27:45 -0400
-Message-Id: <20180412192800.15708-9-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 07/23] powerpc: Add support for restartable sequences
+Date: Thu, 12 Apr 2018 15:27:44 -0400
+Message-Id: <20180412192800.15708-8-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
 References: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
@@ -109,16 +109,11 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Boqun Feng <boqun.feng@gmail.com>
 
-Wire up the rseq system call on powerpc.
+Call the rseq_handle_notify_resume() function on return to userspace if
+TIF_NOTIFY_RESUME thread flag is set.
 
-This provides an ABI improving the speed of a user-space getcpu
-operation on powerpc by skipping the getcpu system call on the fast
-path, as well as improving the speed of user-space operations on per-cpu
-data compared to using load-reservation/store-conditional atomics.
-
-TODO: wire up rseq_syscall() on return from system call. It is used with
-CONFIG_DEBUG_RSEQ=y to ensure system calls are not issued within rseq critical
-section
+Perform fixup on the pre-signal when a signal is delivered on top of a
+restartable sequence critical section.
 
 Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
@@ -129,44 +124,43 @@ CC: Peter Zijlstra <peterz@infradead.org>
 CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 CC: linuxppc-dev@lists.ozlabs.org
 ---
- arch/powerpc/include/asm/systbl.h      | 1 +
- arch/powerpc/include/asm/unistd.h      | 2 +-
- arch/powerpc/include/uapi/asm/unistd.h | 1 +
- 3 files changed, 3 insertions(+), 1 deletion(-)
+ arch/powerpc/Kconfig         | 1 +
+ arch/powerpc/kernel/signal.c | 3 +++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/arch/powerpc/include/asm/systbl.h b/arch/powerpc/include/asm/systbl.h
-index d61f9c96d916..45d4d37495fd 100644
---- a/arch/powerpc/include/asm/systbl.h
-+++ b/arch/powerpc/include/asm/systbl.h
-@@ -392,3 +392,4 @@ SYSCALL(statx)
- SYSCALL(pkey_alloc)
- SYSCALL(pkey_free)
- SYSCALL(pkey_mprotect)
-+SYSCALL(rseq)
-diff --git a/arch/powerpc/include/asm/unistd.h b/arch/powerpc/include/asm/unistd.h
-index daf1ba97a00c..1e9708632dce 100644
---- a/arch/powerpc/include/asm/unistd.h
-+++ b/arch/powerpc/include/asm/unistd.h
-@@ -12,7 +12,7 @@
- #include <uapi/asm/unistd.h>
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 73ce5dd07642..90700b6918ef 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -223,6 +223,7 @@ config PPC
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_VIRT_CPU_ACCOUNTING
+ 	select HAVE_IRQ_TIME_ACCOUNTING
++	select HAVE_RSEQ
+ 	select IRQ_DOMAIN
+ 	select IRQ_FORCED_THREADING
+ 	select MODULES_USE_ELF_RELA
+diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
+index 61db86ecd318..d3bb3aaaf5ac 100644
+--- a/arch/powerpc/kernel/signal.c
++++ b/arch/powerpc/kernel/signal.c
+@@ -133,6 +133,8 @@ static void do_signal(struct task_struct *tsk)
+ 	/* Re-enable the breakpoints for the signal stack */
+ 	thread_change_pc(tsk, tsk->thread.regs);
  
++	rseq_signal_deliver(tsk->thread.regs);
++
+ 	if (is32) {
+         	if (ksig.ka.sa.sa_flags & SA_SIGINFO)
+ 			ret = handle_rt_signal32(&ksig, oldset, tsk);
+@@ -164,6 +166,7 @@ void do_notify_resume(struct pt_regs *regs, unsigned long thread_info_flags)
+ 	if (thread_info_flags & _TIF_NOTIFY_RESUME) {
+ 		clear_thread_flag(TIF_NOTIFY_RESUME);
+ 		tracehook_notify_resume(regs);
++		rseq_handle_notify_resume(regs);
+ 	}
  
--#define NR_syscalls		387
-+#define NR_syscalls		388
- 
- #define __NR__exit __NR_exit
- 
-diff --git a/arch/powerpc/include/uapi/asm/unistd.h b/arch/powerpc/include/uapi/asm/unistd.h
-index 389c36fd8299..ac5ba55066dd 100644
---- a/arch/powerpc/include/uapi/asm/unistd.h
-+++ b/arch/powerpc/include/uapi/asm/unistd.h
-@@ -398,5 +398,6 @@
- #define __NR_pkey_alloc		384
- #define __NR_pkey_free		385
- #define __NR_pkey_mprotect	386
-+#define __NR_rseq		387
- 
- #endif /* _UAPI_ASM_POWERPC_UNISTD_H_ */
+ 	user_enter();
 -- 
 2.11.0
 
