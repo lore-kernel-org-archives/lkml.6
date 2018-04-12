@@ -1,71 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752178AbeDLUP2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 16:15:28 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:44142 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751946AbeDLUP0 (ORCPT
+        id S1752258AbeDLUQI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 16:16:08 -0400
+Received: from mail-it0-f53.google.com ([209.85.214.53]:39862 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751946AbeDLUQH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 16:15:26 -0400
-Subject: Re: [PATCH] net: ethernet: ti: cpsw: fix tx vlan priority mapping
-To: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-CC: <davem@davemloft.net>, <linux-omap@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1523543140-20747-1-git-send-email-ivan.khoronzhuk@linaro.org>
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <d4456c5c-6746-dd57-303f-cc2174e5a2e7@ti.com>
-Date: Thu, 12 Apr 2018 15:15:23 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 12 Apr 2018 16:16:07 -0400
+X-Google-Smtp-Source: AIpwx4+KzeTDOQX2fpMgcaMm8jfUriVJAlwTsyLFPilZSo3a/7IgURckL2dn/DMLEVLzCtY+qvUqZuUlTwPtM8OAin4=
 MIME-Version: 1.0
-In-Reply-To: <1523543140-20747-1-git-send-email-ivan.khoronzhuk@linaro.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180412195024.GA17810@avx2>
+References: <CA+55aFxj+NjW3M0Sv_-DRAD6vJ=HsPCQMtHn88me9uEEnJmAPw@mail.gmail.com>
+ <20180412195024.GA17810@avx2>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 12 Apr 2018 13:16:06 -0700
+X-Google-Sender-Auth: svt_h1NJB99rlV3mJiXBslkFmUo
+Message-ID: <CA+55aFwJSQehU1tuSKJAXnro4vc_hU5W1-qL6XUO8BBpkK06rg@mail.gmail.com>
+Subject: Re: [PATCH] proc: fixup (c) sign
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Apr 12, 2018 at 12:50 PM, Alexey Dobriyan <adobriyan@gmail.com> wrote:
+>
+> I've checked earlier mails, mutt has been "guessing" outgoing encoding
+> by default. Let's try again.
 
+I think it still does. This email came with
 
-On 04/12/2018 09:25 AM, Ivan Khoronzhuk wrote:
-> The CPDMA_TX_PRIORITY_MAP in real is vlan pcp field priority mapping
-> register and basically replaces vlan pcp field for tagged packets.
-> So, set it to be 1:1 mapping.
+    Content-Type: text/plain; charset=us-ascii
 
-"Otherwise, it will cause unexpected change of egress vlan tagged packets,
- like prio 2 -> prio 5"
+which is what I'd expect if Mutt has a "use the least complex charset
+that can fit the message".
 
+If you look at my emails, you should see
 
-> 
-> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-> ---
-> Based on net/master
+    Content-Type: text/plain; charset="UTF-8"
 
-Fixes: e05 107 e6b 747 ("net: ethernet: ti: cpsw: add multi queue support")
+even for an email like this, that only has 7-bit ascii.
 
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com> 
+I'm not a Mutt user, so I don't know what the magic is for "just force
+utf-8 when sending".
 
-> 
->   drivers/net/ethernet/ti/cpsw.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-> index 3037127..74f8284 100644
-> --- a/drivers/net/ethernet/ti/cpsw.c
-> +++ b/drivers/net/ethernet/ti/cpsw.c
-> @@ -129,7 +129,7 @@ do {								\
->   
->   #define RX_PRIORITY_MAPPING	0x76543210
->   #define TX_PRIORITY_MAPPING	0x33221100
-> -#define CPDMA_TX_PRIORITY_MAP	0x01234567
-> +#define CPDMA_TX_PRIORITY_MAP	0x76543210
->   
->   #define CPSW_VLAN_AWARE		BIT(1)
->   #define CPSW_RX_VLAN_ENCAP	BIT(2)
-> 
+For alpine, it's
 
--- 
-regards,
--grygorii
+    posting-character-set=UTF-8
+
+in the .pinerc file.
+
+For gmail there used to be an "outgoing message encoding" setting, but
+it seems to have been removed (and now utf-8 is always on).
+
+             Linus
