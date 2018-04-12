@@ -1,153 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752796AbeDLG4t (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 02:56:49 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:59863 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751837AbeDLG4r (ORCPT
+        id S1752840AbeDLG6J (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 02:58:09 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39248 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752396AbeDLG6H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 02:56:47 -0400
+        Thu, 12 Apr 2018 02:58:07 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-Date: Thu, 12 Apr 2018 08:56:45 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Boris Brezillon <boris.brezillon@bootlin.com>, han.xu@nxp.com
-Cc: boris.brezillon@free-electrons.com, max.oss.09@gmail.com,
-        richard@nod.at, linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
-        linux-mtd@lists.infradead.org, cyrille.pitchen@wedev4u.fr,
-        dwmw2@infradead.org
-Subject: Re: [PATCH v2 1/2] mtd: rawnand: gpmi: add support for specific ECC
- strength
-In-Reply-To: <C8FA1701-52CE-46B6-9A3E-3249D1BDA4AC@agner.ch>
-References: <20180304200602.11475-1-stefan@agner.ch>
- <20180315163620.6122d752@bbrezillon>
- <C8FA1701-52CE-46B6-9A3E-3249D1BDA4AC@agner.ch>
-Message-ID: <cc054c7e3c924e87864bdfec33d83dbd@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
+Date: Thu, 12 Apr 2018 12:28:05 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [PATCH 3/9] mtd: nand: qcom: erased page detection for
+ uncorrectable errors only
+In-Reply-To: <20180412084919.1ca7991d@xps13>
+References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+ <1522845745-6624-4-git-send-email-absahu@codeaurora.org>
+ <20180410105945.65f2cade@xps13>
+ <2c93157a2982365ceaa8af17d5e3b97a@codeaurora.org>
+ <20180412084919.1ca7991d@xps13>
+Message-ID: <67cfecb5ca845fac636fb5129150950a@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Han,
-
-On 15.03.2018 16:39, Stefan Agner wrote:
-> On March 15, 2018 4:36:20 PM GMT+01:00, Boris Brezillon
-> <boris.brezillon@bootlin.com> wrote:
->>Hi,
->>
->>On Sun,  4 Mar 2018 21:06:01 +0100
->>Stefan Agner <stefan@agner.ch> wrote:
->>
->>> Add support for specified ECC strength/size using device tree
->>> properties nand-ecc-strength/nand-ecc-step-size.
->>
->>Han, we didn't hear back from you on that. Are you okay with adding
->>these new properties? IIRC, you feared there would be a delta between
->>u-boot and linux support.
-
-Any comment on this?
-
-U-Boot support for device tree support and the same properties is
-underway.
-
---
-Stefan
-
-
->>
->>Stephan, there's no changelog. Has anything changed in this version or
->>is this just a RESEND?
+On 2018-04-12 12:19, Miquel Raynal wrote:
+> Hi Abhishek,
 > 
-> Sorry forgot that. I just split documentation and driver changes.
+> On Thu, 12 Apr 2018 12:03:58 +0530, Abhishek Sahu
+> <absahu@codeaurora.org> wrote:
 > 
-> --
-> Stefan
+>> On 2018-04-10 14:29, Miquel Raynal wrote:
+>> > Hi Abhishek,
+>> > > On Wed,  4 Apr 2018 18:12:19 +0530, Abhishek Sahu
+>> > <absahu@codeaurora.org> wrote:
+>> > >> The NAND flash controller generates ECC uncorrectable error
+>> >> first in case of completely erased page. Currently driver
+>> >> applies the erased page detection logic for other operation
+>> >> errors also so fix this and return EIO for other operational
+>> >> errors.
+>> > > I am sorry I don't understand very well what is the purpose of this
+>> > patch, could you please explain it again?
+>> > > Do you mean that you want to avoid having rising ECC errors when you
+>> > read erased pages?
+>> >   Thanks Miquel for your review.
+>> 
+>>   QCOM NAND flash controller has in built erased page
+>>   detection HW.
+>>   Following is the flow in the HW if controller tries
+>>   to read erased page
+>> 
+>>   1. First ECC uncorrectable error will be generated from
+>>      ECC engine since ECC engine first calculates the ECC with
+>>      all 0xff and match the calculated ECC with ECC code in OOB
+>>      (which is again all 0xff).
+>>   2. After getting ECC error, erased CW detection HW checks if
+>>      all the bytes in page are 0xff and then it updates the
+>>      status in separate register NAND_ERASED_CW_DETECT_STATUS
+>> 
+>>   So the erased CW detect status should be checked only if
+>>   ECC engine generated the uncorrectable error.
+>> 
+>>   Currently for all other operational errors also (like TIMEOUT,
+>>   MPU errors etc), the erased CW detect register was being
+>>   checked.
 > 
->>
->>Regards,
->>
->>Boris
->>
->>>
->>> Signed-off-by: Stefan Agner <stefan@agner.ch>
->>> ---
->>>  drivers/mtd/nand/gpmi-nand/gpmi-nand.c | 30
->>++++++++++++++++++++----------
->>>  1 file changed, 20 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
->>b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
->>> index 61fdd733492f..d04754289c03 100644
->>> --- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
->>> +++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
->>> @@ -198,17 +198,16 @@ static inline bool gpmi_check_ecc(struct
->>gpmi_nand_data *this)
->>>   *
->>>   * We may have available oob space in this case.
->>>   */
->>> -static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
->>> +static int set_geometry_by_ecc_info(struct gpmi_nand_data *this,
->>> +				    unsigned int ecc_strength,
->>> +				    unsigned int ecc_step)
->>>  {
->>>  	struct bch_geometry *geo = &this->bch_geometry;
->>>  	struct nand_chip *chip = &this->nand;
->>>  	struct mtd_info *mtd = nand_to_mtd(chip);
->>>  	unsigned int block_mark_bit_offset;
->>>
->>> -	if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
->>> -		return -EINVAL;
->>> -
->>> -	switch (chip->ecc_step_ds) {
->>> +	switch (ecc_step) {
->>>  	case SZ_512:
->>>  		geo->gf_len = 13;
->>>  		break;
->>> @@ -221,8 +220,8 @@ static int set_geometry_by_ecc_info(struct
->>gpmi_nand_data *this)
->>>  			chip->ecc_strength_ds, chip->ecc_step_ds);
->>>  		return -EINVAL;
->>>  	}
->>> -	geo->ecc_chunk_size = chip->ecc_step_ds;
->>> -	geo->ecc_strength = round_up(chip->ecc_strength_ds, 2);
->>> +	geo->ecc_chunk_size = ecc_step;
->>> +	geo->ecc_strength = round_up(ecc_strength, 2);
->>>  	if (!gpmi_check_ecc(this))
->>>  		return -EINVAL;
->>>
->>> @@ -230,7 +229,7 @@ static int set_geometry_by_ecc_info(struct
->>gpmi_nand_data *this)
->>>  	if (geo->ecc_chunk_size < mtd->oobsize) {
->>>  		dev_err(this->dev,
->>>  			"unsupported nand chip. ecc size: %d, oob size : %d\n",
->>> -			chip->ecc_step_ds, mtd->oobsize);
->>> +			ecc_step, mtd->oobsize);
->>>  		return -EINVAL;
->>>  	}
->>>
->>> @@ -423,9 +422,20 @@ static int legacy_set_geometry(struct
->>gpmi_nand_data *this)
->>>
->>>  int common_nfc_set_geometry(struct gpmi_nand_data *this)
->>>  {
->>> +	struct nand_chip *chip = &this->nand;
->>> +
->>> +	if (chip->ecc.strength > 0 && chip->ecc.size > 0)
->>> +		return set_geometry_by_ecc_info(this, chip->ecc.strength,
->>> +						chip->ecc.size);
->>> +
->>>  	if ((of_property_read_bool(this->dev->of_node,
->>"fsl,use-minimum-ecc"))
->>> -				|| legacy_set_geometry(this))
->>> -		return set_geometry_by_ecc_info(this);
->>> +				|| legacy_set_geometry(this)) {
->>> +		if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
->>> +			return -EINVAL;
->>> +
->>> +		return set_geometry_by_ecc_info(this, chip->ecc_strength_ds,
->>> +						chip->ecc_step_ds);
->>> +	}
->>>
->>>  	return 0;
->>>  }
+> This is very clear, thanks. I don't know very much this controller so I
+> think you can add this information in the commit message for future
+> reference.
+> 
+
+  Sure Miquel.
+  I  Will update the commit message to include more detail.
+
+>> 
+>> >> >> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+>> >> ---
+>> >>  drivers/mtd/nand/qcom_nandc.c | 8 +++++++-
+>> >>  1 file changed, 7 insertions(+), 1 deletion(-)
+>> >> >> diff --git a/drivers/mtd/nand/qcom_nandc.c >> b/drivers/mtd/nand/qcom_nandc.c
+>> >> index 17321fc..57c16a6 100644
+>> >> --- a/drivers/mtd/nand/qcom_nandc.c
+>> >> +++ b/drivers/mtd/nand/qcom_nandc.c
+>> >> @@ -1578,6 +1578,7 @@ static int parse_read_errors(struct >> qcom_nand_host *host, u8 *data_buf,
+>> >>  	struct nand_ecc_ctrl *ecc = &chip->ecc;
+>> >>  	unsigned int max_bitflips = 0;
+>> >>  	struct read_stats *buf;
+>> >> +	bool flash_op_err = false;
+>> >>  	int i;
+>> >> >>  	buf = (struct read_stats *)nandc->reg_read_buf;
+>> >> @@ -1599,7 +1600,7 @@ static int parse_read_errors(struct >> qcom_nand_host *host, u8 *data_buf,
+>> >>  		buffer = le32_to_cpu(buf->buffer);
+>> >>  		erased_cw = le32_to_cpu(buf->erased_cw);
+>> >> >> -		if (flash & (FS_OP_ERR | FS_MPU_ERR)) {
+>> >> +		if ((flash & FS_OP_ERR) && (buffer & BS_UNCORRECTABLE_BIT)) {
+>> > > And later you have another "if (buffer & BS_UNCORRECTABLE_BIT)" which
+>> > is then redundant, unless that is not what you actually want to do?
+>> 
+>>   Yes. That check seems to be redundant. I will fix that.
+>> 
+>> > > Maybe you can add comments before the if ()/ else if () to explain in
+>> > which case you enter each branch.
+>> 
+>>   Sure. That would be better. Will add the same in next patch set.
+>> 
+>> > >>  			bool erased;
+>> >> >>  			/* ignore erased codeword errors */
+>> >> @@ -1641,6 +1642,8 @@ static int parse_read_errors(struct >> qcom_nand_host *host, u8 *data_buf,
+>> >>  						max_t(unsigned int, max_bitflips, ret);
+>> >>  				}
+>> >>  			}
+>> >> +		} else if (flash & (FS_OP_ERR | FS_MPU_ERR)) {
+>> >> +			flash_op_err = true;
+>> >>  		} else {
+>> >>  			unsigned int stat;
+>> >> >> @@ -1654,6 +1657,9 @@ static int parse_read_errors(struct >> qcom_nand_host *host, u8 *data_buf,
+>> >>  			oob_buf += oob_len + ecc->bytes;
+>> >>  	}
+>> >> >> +	if (flash_op_err)
+>> >> +		return -EIO;
+>> >> +
+>> > > In you are propagating an error related to the controller, this is
+>> > fine, but I think you just want to raise the fact that a NAND
+>> > uncorrectable error occurred, in this case you should just increment
+>> > mtd->ecc_stats.failed and return 0 (returning max_bitflips here would > be
+>> > fine too has it would be 0 too).
+>> 
+>>    The flash_op_err will be for other operational errors only (like 
+>> timeout,
+>>    MPU error, device failure etc). For correctable errors,
+>> 
+>>    ret = nand_check_erased_ecc_chunk(data_buf,
+>>                            data_len, eccbuf, ecclen, oob_buf,
+>>                            extraooblen, ecc->strength);
+> 
+> Why do you need nand_check_erased_ecc_chunk() if the blank page check
+> is done in hw?
+> 
+
+  This is only applicable for BCH algorithm.
+  IPQ806x uses RS code for 4 bit ECC which does not have HW blank page
+  detection.
+
+  You can get more detail in function comment of
+  erased_chunk_check_and_fixup
+
+   /*
+   * when using BCH ECC, the HW flags an error in NAND_FLASH_STATUS if it 
+read
+   * an erased CW, and reports an erased CW in 
+NAND_ERASED_CW_DETECT_STATUS.
+   *
+   * when using RS ECC, the HW reports the same erros when reading an 
+erased CW,
+   * but it notifies that it is an erased CW by placing special 
+characters at
+   * certain offsets in the buffer.
+   *
+   * verify if the page is erased or not, and fix up the page for RS ECC 
+by
+   * replacing the special characters with 0xff.
+   */
+  static bool erased_chunk_check_and_fixup(u8 *data_buf, int data_len)
+  {
+
+  Thanks,
+  Abhishek
