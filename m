@@ -1,158 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753666AbeDLPMK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 11:12:10 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:35833 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753662AbeDLPJF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 11:09:05 -0400
-X-Google-Smtp-Source: AIpwx490My0v1aokR4MHfG8krTUjhgKCBvrDAygZnnkV0Ykaex6lOBT2c/NpdgSEuEn1iwsl8B+4aQ==
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 28/35] Revert "vfs: add flags to d_real()"
-Date: Thu, 12 Apr 2018 17:08:19 +0200
-Message-Id: <20180412150826.20988-29-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180412150826.20988-1-mszeredi@redhat.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com>
+        id S1754037AbeDLPMS convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 11:12:18 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:55809 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752963AbeDLPMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 11:12:15 -0400
+Date: Thu, 12 Apr 2018 23:11:08 +0800
+In-Reply-To: <20180412145628.iaaeue2imiijwx5d@flea>
+References: <20180411141641.14675-1-icenowy@aosc.io> <20180411141641.14675-4-icenowy@aosc.io> <20180412145628.iaaeue2imiijwx5d@flea>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH 3/5] net: stmmac: dwmac-sun8i: Allow getting syscon regmap from device
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+CC: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <A027702A-F3F7-4896-B2B8-E024DA521661@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 495e642939114478a5237a7d91661ba93b76f15a.
 
-No user of "flags" argument of d_real() remain.
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- Documentation/filesystems/Locking |  2 +-
- Documentation/filesystems/vfs.txt |  2 +-
- fs/open.c                         |  2 +-
- fs/overlayfs/super.c              |  4 ++--
- include/linux/dcache.h            | 11 +++++------
- include/linux/fs.h                |  2 +-
- 6 files changed, 11 insertions(+), 12 deletions(-)
+于 2018年4月12日 GMT+08:00 下午10:56:28, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
+>On Wed, Apr 11, 2018 at 10:16:39PM +0800, Icenowy Zheng wrote:
+>> From: Chen-Yu Tsai <wens@csie.org>
+>> 
+>> On the Allwinner R40 SoC, the "GMAC clock" register is in the CCU
+>> address space; on the A64 SoC this register is in the SRAM controller
+>> address space, and with a different offset.
+>> 
+>> To access the register from another device and hide the internal
+>> difference between the device, let it register a regmap named
+>> "emac-clock". We can then get the device from the phandle, and
+>> retrieve the regmap with dev_get_regmap(); in this situation the
+>> regmap_field will be set up to access the only register in the
+>regmap.
+>> 
+>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> [Icenowy: change to use regmaps with single register, change commit
+>>  message]
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> ---
+>>  drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 48
+>++++++++++++++++++++++-
+>>  1 file changed, 46 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+>b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+>> index 1037f6c78bca..b61210c0d415 100644
+>> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+>> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+>> @@ -85,6 +85,13 @@ const struct reg_field old_syscon_reg_field = {
+>>  	.msb = 31,
+>>  };
+>>  
+>> +/* Specially exported regmap which contains only EMAC register */
+>> +const struct reg_field single_reg_field = {
+>> +	.reg = 0,
+>> +	.lsb = 0,
+>> +	.msb = 31,
+>> +};
+>> +
+>
+>I'm not sure this would be wise. If we ever need some other register
+>exported through the regmap, will have to change all the calling sites
+>everywhere in the kernel, which will be a pain and will break
+>bisectability.
 
-diff --git a/Documentation/filesystems/Locking b/Documentation/filesystems/Locking
-index 60e76060baff..a4afe96f0112 100644
---- a/Documentation/filesystems/Locking
-+++ b/Documentation/filesystems/Locking
-@@ -22,7 +22,7 @@ prototypes:
- 	struct vfsmount *(*d_automount)(struct path *path);
- 	int (*d_manage)(const struct path *, bool);
- 	struct dentry *(*d_real)(struct dentry *, const struct inode *,
--				 unsigned int, unsigned int);
-+				 unsigned int);
- 
- locking rules:
- 		rename_lock	->d_lock	may block	rcu-walk
-diff --git a/Documentation/filesystems/vfs.txt b/Documentation/filesystems/vfs.txt
-index 2bc77ea8aef4..af54d3651ff8 100644
---- a/Documentation/filesystems/vfs.txt
-+++ b/Documentation/filesystems/vfs.txt
-@@ -991,7 +991,7 @@ struct dentry_operations {
- 	struct vfsmount *(*d_automount)(struct path *);
- 	int (*d_manage)(const struct path *, bool);
- 	struct dentry *(*d_real)(struct dentry *, const struct inode *,
--				 unsigned int, unsigned int);
-+				 unsigned int);
- };
- 
-   d_revalidate: called when the VFS needs to revalidate a dentry. This
-diff --git a/fs/open.c b/fs/open.c
-index 00b1f18475ba..73f3d0f35742 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -96,7 +96,7 @@ long vfs_truncate(const struct path *path, loff_t length)
- 	 * write access on the upper inode, not on the overlay inode.  For
- 	 * non-overlay filesystems d_real() is an identity function.
- 	 */
--	upperdentry = d_real(path->dentry, NULL, O_WRONLY, 0);
-+	upperdentry = d_real(path->dentry, NULL, O_WRONLY);
- 	error = PTR_ERR(upperdentry);
- 	if (IS_ERR(upperdentry))
- 		goto mnt_drop_write_and_out;
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 006dc70d7425..7779fc610767 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -98,7 +98,7 @@ static int ovl_check_append_only(struct inode *inode, int flag)
- 
- static struct dentry *ovl_d_real(struct dentry *dentry,
- 				 const struct inode *inode,
--				 unsigned int open_flags, unsigned int flags)
-+				 unsigned int open_flags)
- {
- 	struct dentry *real;
- 	int err;
-@@ -134,7 +134,7 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
- 		goto bug;
- 
- 	/* Handle recursion */
--	real = d_real(real, inode, open_flags, 0);
-+	real = d_real(real, inode, open_flags);
- 
- 	if (!inode || inode == d_inode(real))
- 		return real;
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 4c7ab11c627a..8ca25ea3b9db 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -148,7 +148,7 @@ struct dentry_operations {
- 	struct vfsmount *(*d_automount)(struct path *);
- 	int (*d_manage)(const struct path *, bool);
- 	struct dentry *(*d_real)(struct dentry *, const struct inode *,
--				 unsigned int, unsigned int);
-+				 unsigned int);
- } ____cacheline_aligned;
- 
- /*
-@@ -569,8 +569,7 @@ static inline struct dentry *d_backing_dentry(struct dentry *upper)
-  * d_real - Return the real dentry
-  * @dentry: the dentry to query
-  * @inode: inode to select the dentry from multiple layers (can be NULL)
-- * @open_flags: open flags to control copy-up behavior
-- * @flags: flags to control what is returned by this function
-+ * @flags: open flags to control copy-up behavior
-  *
-  * If dentry is on a union/overlay, then return the underlying, real dentry.
-  * Otherwise return the dentry itself.
-@@ -579,10 +578,10 @@ static inline struct dentry *d_backing_dentry(struct dentry *upper)
-  */
- static inline struct dentry *d_real(struct dentry *dentry,
- 				    const struct inode *inode,
--				    unsigned int open_flags, unsigned int flags)
-+				    unsigned int flags)
- {
- 	if (unlikely(dentry->d_flags & DCACHE_OP_REAL))
--		return dentry->d_op->d_real(dentry, inode, open_flags, flags);
-+		return dentry->d_op->d_real(dentry, inode, flags);
- 	else
- 		return dentry;
- }
-@@ -597,7 +596,7 @@ static inline struct dentry *d_real(struct dentry *dentry,
- static inline struct inode *d_real_inode(const struct dentry *dentry)
- {
- 	/* This usage of d_real() results in const dentry */
--	return d_backing_inode(d_real((struct dentry *) dentry, NULL, 0, 0));
-+	return d_backing_inode(d_real((struct dentry *) dentry, NULL, 0));
- }
- 
- struct name_snapshot {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 5e5dd484937f..5294697217b7 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1244,7 +1244,7 @@ static inline struct inode *file_inode(const struct file *f)
- 
- static inline struct dentry *file_dentry(const struct file *file)
- {
--	return d_real(file->f_path.dentry, file_inode(file), 0, 0);
-+	return d_real(file->f_path.dentry, file_inode(file), 0);
- }
- 
- static inline int locks_lock_file_wait(struct file *filp, struct file_lock *fl)
--- 
-2.14.3
+In this situation the register can be exported as another
+ regmap. Currently the code will access a regmap with name
+"emac-clock" for this register.
+
+>
+>Chen-Yu's (or was it yours?) initial solution with a custom writeable
+>hook only allowing a single register seemed like a better one.
+
+But I remember you mentioned that you want it to hide the
+difference inside the device.
+
+>
+>Maxime
