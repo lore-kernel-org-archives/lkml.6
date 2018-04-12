@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753270AbeDLPIi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 11:08:38 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54393 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752985AbeDLPIf (ORCPT
+        id S1753633AbeDLPJA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 11:09:00 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:46456 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753411AbeDLPIw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 11:08:35 -0400
-X-Google-Smtp-Source: AIpwx4+N24LLC9t0YeGUDBU1x3nqargzbkCQnfWZXzaX/JiKys6sgJtvRJ4ajNPASpVAtltYaBRuYQ==
+        Thu, 12 Apr 2018 11:08:52 -0400
+X-Google-Smtp-Source: AIpwx49WrQlIm9T/q3Hvayo0XJza8cGApbLHujWLvc0tnHfIUWYMvD8wBFnqHPL172ZlOB4wbHPH5g==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 02/35] vfs: add path_open()
-Date: Thu, 12 Apr 2018 17:07:53 +0200
-Message-Id: <20180412150826.20988-3-mszeredi@redhat.com>
+Subject: [RFC PATCH 17/35] ovl: readd fiemap
+Date: Thu, 12 Apr 2018 17:08:08 +0200
+Message-Id: <20180412150826.20988-18-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180412150826.20988-1-mszeredi@redhat.com>
 References: <20180412150826.20988-1-mszeredi@redhat.com>
@@ -21,76 +21,76 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently opening an overlay file results in:
+Implement stacked fiemap().
 
- - the real file on the underlying layer being opened
- - f_path being set to the overlay {mount, dentry} pair
-
-This patch adds a new helper that allows the above to be explicitly
-performed.  I.e. it's the same as dentry_open(), except the underlying
-inode to open is given as a separate argument.
-
-This is in preparation for stacking I/O operations on overlay files.
-
-Later, when implicit opening is removed, dentry_open() can be implemented
-by just calling path_open().
+Need to split inode operations for regular file (which has fiemap) and
+special file (which doesn't have fiemap).
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/open.c          | 27 +++++++++++++++++++++++++++
- include/linux/fs.h |  2 ++
- 2 files changed, 29 insertions(+)
+ fs/overlayfs/inode.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/fs/open.c b/fs/open.c
-index 7ea118471dce..8c315f9ec2f6 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -866,6 +866,33 @@ int vfs_open(const struct path *path, struct file *file,
- 	return do_dentry_open(file, d_backing_inode(dentry), NULL, cred);
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index 3b996639e1ad..b723327501f7 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -455,6 +455,23 @@ int ovl_update_time(struct inode *inode, struct timespec *ts, int flags)
+ 	return 0;
  }
  
-+struct file *path_open(const struct path *path, int flags, struct inode *inode,
-+		       const struct cred *cred)
++static int ovl_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
++		      u64 start, u64 len)
 +{
-+	struct file *file;
-+	int retval;
++	int err;
++	struct inode *realinode = ovl_inode_real(inode);
++	const struct cred *old_cred;
 +
-+	file = get_empty_filp();
-+	if (!IS_ERR(file)) {
-+		file->f_flags = flags;
-+		file->f_path = *path;
-+		retval = do_dentry_open(file, inode, NULL, cred);
-+		if (retval) {
-+			put_filp(file);
-+			file = ERR_PTR(retval);
-+		} else {
-+			retval = open_check_o_direct(file);
-+			if (retval) {
-+				fput(file);
-+				file = ERR_PTR(retval);
-+			}
-+		}
-+	}
++	if (!realinode->i_op->fiemap)
++		return -EOPNOTSUPP;
 +
-+	return file;
++	old_cred = ovl_override_creds(inode->i_sb);
++	err = realinode->i_op->fiemap(realinode, fieinfo, start, len);
++	revert_creds(old_cred);
++
++	return err;
 +}
-+EXPORT_SYMBOL(path_open);
 +
- struct file *dentry_open(const struct path *path, int flags,
- 			 const struct cred *cred)
- {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f0f87f2beb79..c6d7e3b00163 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2401,6 +2401,8 @@ extern struct file *filp_open(const char *, int, umode_t);
- extern struct file *file_open_root(struct dentry *, struct vfsmount *,
- 				   const char *, int, umode_t);
- extern struct file * dentry_open(const struct path *, int, const struct cred *);
-+extern struct file *path_open(const struct path *, int, struct inode *,
-+			      const struct cred *);
- extern int filp_close(struct file *, fl_owner_t id);
+ static const struct inode_operations ovl_file_inode_operations = {
+ 	.setattr	= ovl_setattr,
+ 	.permission	= ovl_permission,
+@@ -462,6 +479,7 @@ static const struct inode_operations ovl_file_inode_operations = {
+ 	.listxattr	= ovl_listxattr,
+ 	.get_acl	= ovl_get_acl,
+ 	.update_time	= ovl_update_time,
++	.fiemap		= ovl_fiemap,
+ };
  
- extern struct filename *getname_flags(const char __user *, int, int *);
+ static const struct inode_operations ovl_symlink_inode_operations = {
+@@ -472,6 +490,15 @@ static const struct inode_operations ovl_symlink_inode_operations = {
+ 	.update_time	= ovl_update_time,
+ };
+ 
++static const struct inode_operations ovl_special_inode_operations = {
++	.setattr	= ovl_setattr,
++	.permission	= ovl_permission,
++	.getattr	= ovl_getattr,
++	.listxattr	= ovl_listxattr,
++	.get_acl	= ovl_get_acl,
++	.update_time	= ovl_update_time,
++};
++
+ /*
+  * It is possible to stack overlayfs instance on top of another
+  * overlayfs instance as lower layer. We need to annonate the
+@@ -555,7 +582,7 @@ static void ovl_fill_inode(struct inode *inode, umode_t mode, dev_t rdev,
+ 		break;
+ 
+ 	default:
+-		inode->i_op = &ovl_file_inode_operations;
++		inode->i_op = &ovl_special_inode_operations;
+ 		init_special_inode(inode, mode, rdev);
+ 		break;
+ 	}
 -- 
 2.14.3
