@@ -1,85 +1,159 @@
-Return-Path: <andrew@lunn.ch>
-X-Google-Smtp-Source: AIpwx4/CDO1gTq1oAiGl97Ph+FLzwdS5IyVmFGkTDfP6EkMoElQgU4e4czgs2+8JZK3hbYxSYu5b
-ARC-Seal: i=1; a=rsa-sha256; t=1523542651; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Whf/LsYpgufLGJY/mlsEWwxqN/j/dTW14W6yFQ+neimTs9b44ZH9yU97YDNgNFGdvD
-         dHcoaGyOn9CD8pTFsYpbLBJTh/GM7ry+713M3ig45FzN6Dts2E2CkGa9SURhcpRaHU4e
-         y3+rTvPeaReAcrDxQfcEJEcqbh/nQHiTyRHDIJegcYE8uX0Xx0QrEMlbbCNQx4e/gk+H
-         95vV2gB4wgPqf4B9nrNZtMPjnegGuaabd8tkKRaPM5ELcGBjViRrV9K6Lq0Foc4Ry3DP
-         iJWTSdSUlKUC4hn+hSaMIaEHMAN8sexiY2JTNmASls+KwclLDyl3F4vAKq3hhPiUj+OX
-         e2ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=Zp5biTv5wRK8Oo1me/58tmo1fA9SF/awNX5OwupD5mQ=;
-        b=u88TstwOJW/cRhenRB+2lSy/+fn2tnqWO2AKHEECXM+JyzavzT0dMNCqYDVReVYf39
-         1j68LX1pf9DtZJVXnDikApu/WMEql8uGtH9i95d9bHzxhHqbWZhnVOuz+QAXV3Eh5Fn8
-         zmSitsoYIRp/XeK/2AtbPB3oZJhnoV5tX7JW1wwgqxbkLtxGgK71YhqlLS5kpv6dm/L5
-         isVy8IbDtrWIToE2UB67vi0sw2lYif1CUc+0PJnWhItYdfnKmd1hX3kyhLiPzcAMBie7
-         LeFs7uAfeokV8uyjABKA5e2IizXrNB85tpHysY6S+oVvDgmpfcspgIiWuqCohyAil92s
-         MM9g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@lunn.ch header.s=20171124 header.b=N1YaeeOy;
-       spf=pass (google.com: domain of andrew@lunn.ch designates 185.16.172.187 as permitted sender) smtp.mailfrom=andrew@lunn.ch
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@lunn.ch header.s=20171124 header.b=N1YaeeOy;
-       spf=pass (google.com: domain of andrew@lunn.ch designates 185.16.172.187 as permitted sender) smtp.mailfrom=andrew@lunn.ch
-Date: Thu, 12 Apr 2018 16:17:25 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Phil Elwell <phil@raspberrypi.org>
-Cc: Woojung Huh <woojung.huh@microchip.com>,
-	Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH 4/4] dt-bindings: Document the DT bindings for lan78xx
-Message-ID: <20180412141725.GN28963@lunn.ch>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1055825-1523541401-2-17748237911573538540
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523541400; b=Zs8viJ76veyrig6I7wocKJj2ShSn2z4fnSSNDw8vB9AiDRZszD
+    vZkW7i8Ikdq5Y1va/FegFsDHViU/ynsA7xrWj3bqBNcwhH6B4uMVBuMs1bM/1N/k
+    DF3EpEGcrn8yaiHJtVpkOsVgkO/Tf62jqemOuSQY6pBD1XJyVwrXUjyJOtkFMUC8
+    iG7EqU/I/gnBaIWDFq8SThlVboU5veG3AR8b+0bQnhPgieAG26fDAtaevfWPtjd8
+    jc4zs0Di9kU8QpqF8Ij87LCRPtnmnB38ZIMBBynr7t3JSHMs9GrIYMsZa/cXYxPz
+    590axCIzlMwqum4wVhjy+j9S3ls5zTbHbyEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1523541400; bh=
+    r+uT/Fu4OIlLT3K/6VmwBSZyPcNuKPYyHbW5AzteV84=; b=YzuGMOFuUnzTDuml
+    TzXc/7TVlvHPfgHpcijQBVWgXUo5SNhUlRW/4xLxYX9K+E4HDhSQ+ceWA58w7E9O
+    rL3GkAQLH8VCr/9PeL19Gu2qHmA0dRr9YtB5cit+kMsHKM/l1rseqvoPy2GZOIzV
+    EbMx7PAns5S4IN4Buy/tWpES12u7L7zxNfiXKZIIF62aZyc47HXT3HhbCr5cdP7W
+    E6c4B5H3/2Jx1C30UmHHV2eIrFJiJvZ6yd1aqQfNasrrd65tl99qrhfNtOEHfrvH
+    ken41tEge60yfoRATmJQ0zkjJ8/Pko4BTf3tl7CXM3emMfMtZz8477dteAEAdKpi
+    srXxZA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=raspberrypi-org.20150623.gappssmtp.com header.i=@raspberrypi-org.20150623.gappssmtp.com header.b=DEQPuLVL x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dkim=invalid (public key: invalid data, 0-bit  key sha256) header.d=raspberrypi.org header.i=@raspberrypi.org header.b=Upghw51M x-bits=0 x-keytype="" x-algorithm=sha256 x-selector=pp;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=raspberrypi.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=loCThmuc;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=raspberrypi.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=raspberrypi-org.20150623.gappssmtp.com header.i=@raspberrypi-org.20150623.gappssmtp.com header.b=DEQPuLVL x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dkim=invalid (public key: invalid data, 0-bit  key sha256) header.d=raspberrypi.org header.i=@raspberrypi.org header.b=Upghw51M x-bits=0 x-keytype="" x-algorithm=sha256 x-selector=pp;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=raspberrypi.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=loCThmuc;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=raspberrypi.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfN7ex3SATrcbOMvVWdp/YBu82pB8K8JCGfGN0BJ1KvH+eDJoXI1aMv/MGco4wzFuYldeWPkYxq2WZN573uiCwi0TWOvwpL59Oa/lGT6ADFUAJ6wyF46A
+    Fil1WqHl6rC/uN1xEsqOQmqsKOcCskzQp1ttkim8MSK/KE8WbSp/dqVow/Bp8GHz0UaMOgT1jhUkf2zGDuRR+QimFPAAWyoe6+kgJEYvpP9dF9A5Hi7iEsxH
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=WFZIRff2AAAA:8 a=VwQbUJbxAAAA:8 a=Rv0l-qJOiZx3OMaltcMA:9 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752826AbeDLNz4 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 12 Apr 2018 09:55:56 -0400
+Received: from mx08-00252a01.pphosted.com ([91.207.212.211]:40376 "EHLO
+        mx08-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752469AbeDLNzx (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 12 Apr 2018 09:55:53 -0400
+X-Google-Smtp-Source: AIpwx4/I13SRLBBXPdxRhv1YW8FnZT7+Fhb71U4UYlbjKF1BkerMW/L0h0GOs3+H6I6z6iSoynMkUg==
+From: Phil Elwell <phil@raspberrypi.org>
+To: Woojung Huh <woojung.huh@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Cc: Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH 3/4] lan78xx: Read LED modes from Device Tree
+Date: Thu, 12 Apr 2018 14:55:35 +0100
+Message-Id: <1523541336-145953-4-git-send-email-phil@raspberrypi.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523541336-145953-1-git-send-email-phil@raspberrypi.org>
 References: <1523541336-145953-1-git-send-email-phil@raspberrypi.org>
- <1523541336-145953-5-git-send-email-phil@raspberrypi.org>
- <20180412140409.GK28963@lunn.ch>
- <0bcc10cd-2a25-311f-d006-ddefe47567dc@raspberrypi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0bcc10cd-2a25-311f-d006-ddefe47567dc@raspberrypi.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-12_07:,,
+ signatures=0
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597548898658681732?=
-X-GMAIL-MSGID: =?utf-8?q?1597550259038709435?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 12, 2018 at 03:10:57PM +0100, Phil Elwell wrote:
-> Hi Andrew,
-> 
-> On 12/04/2018 15:04, Andrew Lunn wrote:
-> > On Thu, Apr 12, 2018 at 02:55:36PM +0100, Phil Elwell wrote:
-> >> The Microchip LAN78XX family of devices are Ethernet controllers with
-> >> a USB interface. Despite being discoverable devices it can be useful to
-> >> be able to configure them from Device Tree, particularly in low-cost
-> >> applications without an EEPROM or programmed OTP.
-> >>
-> >> Document the supported properties in a bindings file, adding it to
-> >> MAINTAINERS at the same time.
-> > 
-> > Hi Phil
-> > 
-> > How you link an OF node to a USB device is not obvious. Could you
-> > please include either a pointer to some binding documentation, or make
-> > your example show it.
-> 
-> Thanks for the feedback. Would you consider this (lifted from the Pi 3B+ Device Tree)
-> a sufficient example?
+Add support for DT property "microchip,led-modes", a vector of two
+cells (u32s) in the range 0-15, each of which sets the mode for one
+of the two LEDs. Some possible values are:
 
-Yes, this is good.
+    0=link/activity          1=link1000/activity
+    2=link100/activity       3=link10/activity
+    4=link100/1000/activity  5=link10/1000/activity
+    6=link10/100/activity    14=off    15=on
 
-Thanks
-     Andrew
+Also use the presence of the DT property to indicate that the
+LEDs should be enabled - necessary in the event that no valid OTP
+or EEPROM is available.
+
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+---
+ drivers/net/usb/lan78xx.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index d98397b..ffb483d 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -2008,6 +2008,7 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+ {
+ 	int ret;
+ 	u32 mii_adv;
++	u32 led_modes[2];
+ 	struct phy_device *phydev;
+ 
+ 	phydev = phy_find_first(dev->mdiobus);
+@@ -2097,6 +2098,25 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+ 		(void)lan78xx_set_eee(dev->net, &edata);
+ 	}
+ 
++	if (!of_property_read_u32_array(dev->udev->dev.of_node,
++					"microchip,led-modes",
++					led_modes, ARRAY_SIZE(led_modes))) {
++		u32 reg;
++		int i;
++
++		reg = phy_read(phydev, 0x1d);
++		for (i = 0; i < ARRAY_SIZE(led_modes); i++) {
++			reg &= ~(0xf << (i * 4));
++			reg |= (led_modes[i] & 0xf) << (i * 4);
++		}
++		(void)phy_write(phydev, 0x1d, reg);
++
++		/* Ensure the LEDs are enabled */
++		lan78xx_read_reg(dev, HW_CFG, &reg);
++		reg |= HW_CFG_LED0_EN_ | HW_CFG_LED1_EN_;
++		lan78xx_write_reg(dev, HW_CFG, reg);
++	}
++
+ 	genphy_config_aneg(phydev);
+ 
+ 	dev->fc_autoneg = phydev->autoneg;
+-- 
+2.7.4
+
