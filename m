@@ -1,235 +1,228 @@
-Return-Path: <georgi.djakov@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1523538370; cv=none;
+Return-Path: <liuwenliang@huawei.com>
+X-Google-Smtp-Source: AIpwx48RmeK4XuX74Qtw6frSMFmf2AsTVoppFPipxMb5tGBq5BggyMsRAh2zh1Tei27uihdZIXSk
+ARC-Seal: i=1; a=rsa-sha256; t=1523538883; cv=none;
         d=google.com; s=arc-20160816;
-        b=FAfLGNA6MeVMol6qa5hXgmZaz+0j5p/LXS6kt+Jsh9PLPJApr/E/fh9wmFOVagidRs
-         z4y0J9TDK2X0AeB0F2v0l12O8gz/LsGD3d4wmtVNe7lMDHulZO9Sr+r0w1onmbVCc12U
-         W5sRll5vhpP3AqLdZhpsk4FvE/H1Vn1YAGg32AKiC3GbxWuzwhNdbfj3gK2baCtg3qbh
-         WYNt+jMvFbesotOqbi/2nHiMVzkw1+vO5WeEzhGvCNUOrtBE8v9nLvDjObRcGuwFAvk8
-         82dLMxFuOggWMIrvi0tn9rtEZ3BF+/hsaNehkntOpLpu9rCWitXXfn5PGJsDL5LyV8rh
-         iHyg==
+        b=c3FXa9OHQPJqjIRRQu1l0I9EIfgLkZumLUYkQzcbXmLxRxSaMNoHPP7jMbC9h0EdX5
+         qJdduViEs6BEQYCoRagvofhRvUnehc4tZE/OiZZ1E+Ga24QXhiVZlPwyY+bDsQAiMGJP
+         kdUSnxnFyLe5CfhNA3H0FuIkbLZsNJVAwVkS9z9uxaGBBk4hD97DKoQEO+7ySM5Ug/uN
+         mdUIusaxx/UBzC0OQ80gtcwIICCtAUm9WyqKyGuHZtDfRKORbtYlaGGRLzvc+s+okaw3
+         UY42Y4Kv2pWkozgeYdTMwelcUl9LNcxsemtpF/gQPpLjzJEEr5xiX1K83pYknNPCnVsr
+         /qaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :date:message-id:openpgp:references:cc:to:subject:from
-         :dkim-signature:arc-authentication-results;
-        bh=0g5Iiuh8d8ZtNev8BzyxGJs6HGiQNXyhNtMyCuRoI3U=;
-        b=YbQuPh1QaNailSG5KnldpuBkm8sZS8frPabe3dT3PGWWWv+KSn1SaBQQXFmKYQYNlY
-         2IwIYSLFVxdx24bCLkej8/jHutQOCMLnTnZ+RIegJOtYZn7Yw2qdczsQBJ/UyapSSoVA
-         U8qlpKCkAaW27jgso01Rcl2Gp0yF6WcCAGLpJncnEksXnJJp+4dO9/bBwa0h5AbU+l4S
-         FT+z/UTPT1GczsnZsL9EO0XKDXKhDh/IF54Qz49T18zOCr57J/jlrGJa+pqbnb9Zoxey
-         9oFgTQwkKccazTaG9jtAlmkhQurWMvRMM8IvvH2g16Q3bxvHO25cdTlMtOTsEEGy5HRN
-         vgcQ==
+        h=mime-version:message-id:date:subject:to:from
+         :arc-authentication-results;
+        bh=3vnx6Tyb5wvY864h2WL0+nfNcZmFAIU33gxK2DcHZhM=;
+        b=keKfwvXAhZO/oQdz9GUbmuudm54TJ+mejv2kvnBFAei9h3O5WnWtTKJ5SkdAOn4YNH
+         mBsN1fxnf8+u2E53DWYAqpKo3YoaXyrUzfQTtu9z0eNpHiDvcpiJ7O6r71RpHfkwuqhg
+         EfUtI+Ir/XbcpEBsDI9QMAYoMuXJQK7yybSwSwSynG8PenNNKHr6+jiiwmq+tELV7XXA
+         5Tt2QRSfnIzxneZwFPgTPUeoW5ipIX732NzQKaMzHk2ewrZMzdPjO/eTbH5wd7GmSREI
+         fgT3nlZYeGaSgRA3ke8frhXNOKyKuN0hCny2DZYXQ4pdiQW9hWkQuRw0Kih4FUOIs7nC
+         As0w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=bISJJDSq;
-       spf=pass (google.com: domain of georgi.djakov@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=georgi.djakov@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: domain of liuwenliang@huawei.com designates 45.249.212.32 as permitted sender) smtp.mailfrom=liuwenliang@huawei.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=bISJJDSq;
-       spf=pass (google.com: domain of georgi.djakov@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=georgi.djakov@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AIpwx4/lFYyRtPcI+HuLvHd0z89R99PQ/IognQTLfUwjYVPQMJW722MTX1Nx0UN0W03IQy1T0qkWJA==
-From: Georgi Djakov <georgi.djakov@linaro.org>
-Subject: [PATCH v4 1/7] interconnect: Add generic on-chip interconnect API
-To: Matthias Kaehlcke <mka@chromium.org>
-Cc: linux-pm@vger.kernel.org, gregkh@linuxfoundation.org, rjw@rjwysocki.net,
- robh+dt@kernel.org, mturquette@baylibre.com, khilman@baylibre.com,
- vincent.guittot@linaro.org, skannan@codeaurora.org,
- bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
- seansw@qti.qualcomm.com, davidai@quicinc.com, mark.rutland@arm.com,
- lorenzo.pieralisi@arm.com, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-References: <20180309210958.16672-1-georgi.djakov@linaro.org>
- <20180309210958.16672-2-georgi.djakov@linaro.org>
- <20180406173846.GC130399@google.com>
-Openpgp: preference=signencrypt
-Message-ID: <2e1f70b5-e62e-33c2-4bcc-c1414c1083c4@linaro.org>
-Date: Thu, 12 Apr 2018 16:06:06 +0300
+       spf=pass (google.com: domain of liuwenliang@huawei.com designates 45.249.212.32 as permitted sender) smtp.mailfrom=liuwenliang@huawei.com
+From: Abbott Liu <liuwenliang@huawei.com>
+To: <aryabinin@virtuozzo.com>, <glider@google.com>, <dvyukov@google.com>,
+	<corbet@lwn.net>, <linux@armlinux.org.uk>, <cdall@kernel.org>,
+	<marc.zyngier@arm.com>, <arnd@arndb.de>, <nicolas.pitre@linaro.org>,
+	<vladimir.murzin@arm.com>, <mingo@kernel.org>, <viro@zeniv.linux.org.uk>,
+	<alexandre.belloni@bootlin.com>, <ard.biesheuvel@linaro.org>,
+	<daniel.lezcano@linaro.org>, <pombredanne@nexb.com>,
+	<kstewart@linuxfoundation.org>, <liuwenliang@huawei.com>,
+	<gregkh@linuxfoundation.org>, <f.fainelli@gmail.com>,
+	<mawilcox@microsoft.com>, <akpm@linux-foundation.org>,
+	<mark.rutland@arm.com>, <afzal.mohd.ma@gmail.com>,
+	<alexander.levin@verizon.com>, <tglx@linutronix.de>, <thgarnie@google.com>,
+	<dhowells@redhat.com>, <keescook@chromium.org>, <geert@linux-m68k.org>,
+	<tixy@linaro.org>, <julien.thierry@arm.com>, <james.morse@arm.com>,
+	<zhichao.huang@linaro.org>, <jinb.park7@gmail.com>, <labbott@redhat.com>,
+	<philip@cog.systems>, <grygorii.strashko@linaro.org>, <opendmb@gmail.com>,
+	<mhocko@suse.com>, <kirill.shutemov@linux.intel.com>,
+	<kasan-dev@googlegroups.com>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<kvmarm@lists.cs.columbia.edu>
+Subject: [PATCH 0/6] KASan for arm
+Date: Thu, 12 Apr 2018 20:54:05 +0800
+Message-ID: <20180412125411.326-1-liuwenliang@huawei.com>
+X-Mailer: git-send-email 2.9.0
 MIME-Version: 1.0
-In-Reply-To: <20180406173846.GC130399@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.187.223]
+X-CFilter-Loop: Reflected
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594495917367006479?=
-X-GMAIL-MSGID: =?utf-8?q?1597545770208025959?=
+X-GMAIL-THRID: =?utf-8?q?1597546308387361224?=
+X-GMAIL-MSGID: =?utf-8?q?1597546308387361224?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Matthias,
+From: Andrey Ryabinin <a.ryabinin@samsung.com>
 
-On 04/06/2018 08:38 PM, Matthias Kaehlcke wrote:
-> On Fri, Mar 09, 2018 at 11:09:52PM +0200, Georgi Djakov wrote:
->> This patch introduce a new API to get requirements and configure the
->> interconnect buses across the entire chipset to fit with the current
->> demand.
->>
->> The API is using a consumer/provider-based model, where the providers are
->> the interconnect buses and the consumers could be various drivers.
->> The consumers request interconnect resources (path) between endpoints and
->> set the desired constraints on this data flow path. The providers receive
->> requests from consumers and aggregate these requests for all master-slave
->> pairs on that path. Then the providers configure each participating in the
->> topology node according to the requested data flow path, physical links and
->> constraints. The topology could be complicated and multi-tiered and is SoC
->> specific.
->>
->> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
->> ---
->>  Documentation/interconnect/interconnect.rst |  96 ++++++
->>  drivers/Kconfig                             |   2 +
->>  drivers/Makefile                            |   1 +
->>  drivers/interconnect/Kconfig                |  10 +
->>  drivers/interconnect/Makefile               |   1 +
->>  drivers/interconnect/core.c                 | 489 ++++++++++++++++++++++++++++
->>  include/linux/interconnect-provider.h       | 109 +++++++
->>  include/linux/interconnect.h                |  40 +++
->>  8 files changed, 748 insertions(+)
->>  create mode 100644 Documentation/interconnect/interconnect.rst
->>  create mode 100644 drivers/interconnect/Kconfig
->>  create mode 100644 drivers/interconnect/Makefile
->>  create mode 100644 drivers/interconnect/core.c
->>  create mode 100644 include/linux/interconnect-provider.h
->>  create mode 100644 include/linux/interconnect.h
->>
->> diff --git a/Documentation/interconnect/interconnect.rst b/Documentation/interconnect/interconnect.rst
->> new file mode 100644
->> index 000000000000..23eba68e8424
->> --- /dev/null
->> +++ b/Documentation/interconnect/interconnect.rst
+Changelog:
+v4 - v3
+- Remove the fix of type conversion in kasan_cache_create because it has
+  been fix in the latest version in:
+  git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+- Change some Reviewed-by tag into Reported-by tag to avoid misleading.
+  ---Reported by: Marc Zyngier <marc.zyngier@arm.com>
+                  Russell King - ARM Linux <linux@armlinux.org.uk>
+- Disable instrumentation for arch/arm/mm/physaddr.c
 
-[..]
+v3 - v2
+- Remove this patch: 2 1-byte checks more safer for memory_is_poisoned_16
+  because a unaligned load/store of 16 bytes is rare on arm, and this
+  patch is very likely to affect the performance of modern CPUs.
+  ---Acked by: Russell King - ARM Linux <linux@armlinux.org.uk>
+- Fixed some link error which kasan_pmd_populate,kasan_pte_populate and
+  kasan_pud_populate are in section .meminit.text but the function
+  kasan_alloc_block which is called by kasan_pmd_populate,
+  kasan_pte_populate and kasan_pud_populate is in section .init.text. So
+  we need change kasan_pmd_populate,kasan_pte_populate and
+  kasan_pud_populate into the section .init.text.
+  ---Reported by: Florian Fainelli <f.fainelli@gmail.com>
+- Fixed some compile error which caused by the wrong access instruction in
+  arch/arm/kernel/entry-common.S.
+  ---Reported by: kbuild test robot <lkp@intel.com>
+- Disable instrumentation for arch/arm/kvm/hyp/*.
+  ---Acked by: Marc Zyngier <marc.zyngier@arm.com>
+- Update the set of supported architectures in
+  Documentation/dev-tools/kasan.rst.
+  ---Acked by:Dmitry Vyukov <dvyukov@google.com>
+- The version 2 is tested by:
+  Florian Fainelli <f.fainelli@gmail.com> (compile test)
+  kbuild test robot <lkp@intel.com>       (compile test)
+  Joel Stanley <joel@jms.id.au>           (on ASPEED ast2500(ARMv5))
 
->> +Terminology
->> +-----------
->> +
->> +Interconnect provider is the software definition of the interconnect hardware.
->> +The interconnect providers on the above diagram are M NoC, S NoC, C NoC and Mem
->> +NoC.
-> 
-> Should P NoC be part of that list?
-> 
+v2 - v1
+- Fixed some compiling error which happens on changing kernel compression
+  mode to lzma/xz/lzo/lz4.
+  ---Reported by: Florian Fainelli <f.fainelli@gmail.com>,
+             Russell King - ARM Linux <linux@armlinux.org.uk>
+- Fixed a compiling error cause by some older arm instruction set(armv4t)
+  don't suppory movw/movt which is reported by kbuild.
+- Changed the pte flag from _L_PTE_DEFAULT | L_PTE_DIRTY | L_PTE_XN to
+  pgprot_val(PAGE_KERNEL).
+  ---Reported by: Russell King - ARM Linux <linux@armlinux.org.uk>
+- Moved Enable KASan patch as the last one.
+  ---Reported by: Florian Fainelli <f.fainelli@gmail.com>,
+     Russell King - ARM Linux <linux@armlinux.org.uk>
+- Moved the definitions of cp15 registers from
+  arch/arm/include/asm/kvm_hyp.h to arch/arm/include/asm/cp15.h.
+  ---Asked by: Mark Rutland <mark.rutland@arm.com>
+- Merge the following commits into the commit
+  Define the virtual space of KASan's shadow region:
+  1) Define the virtual space of KASan's shadow region;
+  2) Avoid cleaning the KASan shadow area's mapping table;
+  3) Add KASan layout;
+- Merge the following commits into the commit
+  Initialize the mapping of KASan shadow memory:
+  1) Initialize the mapping of KASan shadow memory;
+  2) Add support arm LPAE;
+  3) Don't need to map the shadow of KASan's shadow memory;
+     ---Reported by: Russell King - ARM Linux <linux@armlinux.org.uk>
+  4) Change mapping of kasan_zero_page int readonly.
+- The version 1 is tested by Florian Fainelli <f.fainelli@gmail.com>
+  on a Cortex-A5 (no LPAE).
 
-Yes, it should be!
+Hi,all:
+   These patches add arch specific code for kernel address sanitizer
+(see Documentation/kasan.txt).
 
->> +
->> +Interconnect node is the software definition of the interconnect hardware
->> +port. Each interconnect provider consists of multiple interconnect nodes,
->> +which are connected to other SoC components including other interconnect
->> +providers. The point on the diagram where the CPUs connects to the memory is
->> +called an interconnect node, which belongs to the Mem NoC interconnect provider.
->> +
->> +Interconnect endpoints are the first or the last element of the path. Every
->> +endpoint is a node, but not every node is an endpoint.
->> +
->> +Interconnect path is everything between two endpoints including all the nodes
->> +that have to be traversed to reach from a source to destination node. It may
->> +include multiple master-slave pairs across several interconnect providers.
->> +
->> +Interconnect consumers are the entities which make use of the data paths exposed
->> +by the providers. The consumers send requests to providers requesting various
->> +throughput, latency and priority. Usually the consumers are device drivers, that
->> +send request based on their needs. An example for a consumer is a video decoder
->> +that supports various formats and image sizes.
->> +
->> +Interconnect providers
->> +----------------------
+   1/8 of kernel addresses reserved for shadow memory. There was no
+big enough hole for this, so virtual addresses for shadow were
+stolen from user space.
 
-[..]
+   At early boot stage the whole shadow region populated with just
+one physical page (kasan_zero_page). Later, this page reused
+as readonly zero shadow for some memory that KASan currently
+don't track (vmalloc).
 
->> +static void node_aggregate(struct icc_node *node)
->> +{
->> +	struct icc_req *r;
->> +	u32 agg_avg = 0;
-> 
-> Should this be u64 to avoid overflow in case of a large number of
-> constraints and high bandwidths?
+  After mapping the physical memory, pages for shadow memory are
+allocated and mapped.
 
-These values are proposed to be in kbps and u32 seems to be enough for
-now, but in the future we can switch to u64 if needed.
+  KASan's stack instrumentation significantly increases stack's
+consumption, so CONFIG_KASAN doubles THREAD_SIZE.
 
-> 
->> +	u32 agg_peak = 0;
->> +
->> +	hlist_for_each_entry(r, &node->req_list, req_node) {
->> +		/* sum(averages) and max(peaks) */
->> +		agg_avg += r->avg_bw;
->> +		agg_peak = max(agg_peak, r->peak_bw);
->> +	}
->> +
->> +	node->avg_bw = agg_avg;
-> 
-> Is it really intended to store the sum of averages here rather than
-> the overall average?
+  Functions like memset/memmove/memcpy do a lot of memory accesses.
+If bad pointer passed to one of these function it is important
+to catch this. Compiler's instrumentation cannot do this since
+these functions are written in assembly.
 
-Yes, the intention is to sum all the averages in total, so that the
-hardware is set in a state that would be able to handle the total
-bandwidth passing through a node.
+  KASan replaces memory functions with manually instrumented variants.
+Original functions declared as weak symbols so strong definitions
+in mm/kasan/kasan.c could replace them. Original functions have aliases
+with '__' prefix in name, so we could call non-instrumented variant
+if needed.
 
-Also in the next version of this patch i have changed this part a bit,
-so that the aggregation could be customized and made platform specific,
-as different platforms could use their own aggregation algorithms other
-than the default sum/max.
+  Some files built without kasan instrumentation (e.g. mm/slub.c).
+Original mem* function replaced (via #define) with prefixed variants
+to disable memory access checks for such files.
 
-> 
->> +	node->peak_bw = agg_peak;
->> +}
->> +
->> +static void provider_aggregate(struct icc_provider *provider, u32 *avg_bw,
->> +			       u32 *peak_bw)
->> +{
->> +	struct icc_node *n;
->> +	u32 agg_avg = 0;
-> 
-> See above.
-> 
->> +	u32 agg_peak = 0;
->> +
->> +	/* aggregate for the interconnect provider */
->> +	list_for_each_entry(n, &provider->nodes, node_list) {
->> +		/* sum the average and max the peak */
->> +		agg_avg += n->avg_bw;
->> +		agg_peak = max(agg_peak, n->peak_bw);
->> +	}
->> +
->> +	*avg_bw = agg_avg;
-> 
-> See above.
-> 
->> +	*peak_bw = agg_peak;
->> +}
->> +
+  On arm LPAE architecture,  the mapping table of KASan shadow memory(if
+PAGE_OFFSET is 0xc0000000, the KASan shadow memory's virtual space is
+0xb6e000000~0xbf000000) can't be filled in do_translation_fault function,
+because kasan instrumentation maybe cause do_translation_fault function
+accessing KASan shadow memory. The accessing of KASan shadow memory in
+do_translation_fault function maybe cause dead circle. So the mapping table
+of KASan shadow memory need be copyed in pgd_alloc function.
 
-[..]
 
->> +/**
->> + * struct icc_node - entity that is part of the interconnect topology
->> + *
->> + * @id: platform specific node id
->> + * @name: node name used in debugfs
->> + * @links: a list of targets where we can go next when traversing
->> + * @num_links: number of links to other interconnect nodes
->> + * @provider: points to the interconnect provider of this node
->> + * @node_list: list of interconnect nodes associated with @provider
->> + * @search_list: list used when walking the nodes graph
->> + * @reverse: pointer to previous node when walking the nodes graph
->> + * @is_traversed: flag that is used when walking the nodes graph
->> + * @req_list: a list of QoS constraint requests associated with this node
->> + * @avg_bw: aggregated value of average bandwidth
->> + * @peak_bw: aggregated value of peak bandwidth
->> + * @data: pointer to private data
->> + */
->> +struct icc_node {
->> +	int			id;
->> +	const char              *name;
->> +	struct icc_node		**links;
->> +	size_t			num_links;
->> +
->> +	struct icc_provider	*provider;
->> +	struct list_head	node_list;
->> +	struct list_head	orphan_list;
-> 
-> orphan_list is not used (nor documented)
+Most of the code comes from:
+https://github.com/aryabinin/linux/commit/0b54f17e70ff50a902c4af05bb92716eb95acefe
 
-It's not used anymore. Will remove!
+These patches are tested on vexpress-ca15, vexpress-ca9
 
-Thanks,
-Georgi
+
+Cc: Andrey Ryabinin <a.ryabinin@samsung.com>
+Tested-by: Florian Fainelli <f.fainelli@gmail.com>
+Tested-by: Joel Stanley <joel@jms.id.au>
+Tested-by: Abbott Liu <liuwenliang@huawei.com>
+Signed-off-by: Abbott Liu <liuwenliang@huawei.com>
+
+Abbott Liu (2):
+  Add TTBR operator for kasan_init
+  Define the virtual space of KASan's shadow region
+
+Andrey Ryabinin (4):
+  Disable instrumentation for some code
+  Replace memory function for kasan
+  Initialize the mapping of KASan shadow memory
+  Enable KASan for arm
+
+ Documentation/dev-tools/kasan.rst     |   2 +-
+ arch/arm/Kconfig                      |   1 +
+ arch/arm/boot/compressed/Makefile     |   1 +
+ arch/arm/boot/compressed/decompress.c |   2 +
+ arch/arm/boot/compressed/libfdt_env.h |   2 +
+ arch/arm/include/asm/cp15.h           | 104 ++++++++++++
+ arch/arm/include/asm/kasan.h          |  35 ++++
+ arch/arm/include/asm/kasan_def.h      |  64 +++++++
+ arch/arm/include/asm/kvm_hyp.h        |  52 ------
+ arch/arm/include/asm/memory.h         |   5 +
+ arch/arm/include/asm/pgalloc.h        |   7 +-
+ arch/arm/include/asm/string.h         |  17 ++
+ arch/arm/include/asm/thread_info.h    |   4 +
+ arch/arm/kernel/entry-armv.S          |   5 +-
+ arch/arm/kernel/entry-common.S        |   9 +-
+ arch/arm/kernel/head-common.S         |   7 +-
+ arch/arm/kernel/setup.c               |   2 +
+ arch/arm/kernel/unwind.c              |   3 +-
+ arch/arm/kvm/hyp/Makefile             |   4 +
+ arch/arm/kvm/hyp/cp15-sr.c            |  12 +-
+ arch/arm/kvm/hyp/switch.c             |   6 +-
+ arch/arm/lib/memcpy.S                 |   3 +
+ arch/arm/lib/memmove.S                |   5 +-
+ arch/arm/lib/memset.S                 |   3 +
+ arch/arm/mm/Makefile                  |   4 +
+ arch/arm/mm/init.c                    |   6 +
+ arch/arm/mm/kasan_init.c              | 302 ++++++++++++++++++++++++++++++++++
+ arch/arm/mm/mmu.c                     |   7 +-
+ arch/arm/mm/pgd.c                     |  14 ++
+ arch/arm/vdso/Makefile                |   2 +
+ 30 files changed, 616 insertions(+), 74 deletions(-)
+ create mode 100644 arch/arm/include/asm/kasan.h
+ create mode 100644 arch/arm/include/asm/kasan_def.h
+ create mode 100644 arch/arm/mm/kasan_init.c
+
+-- 
+2.9.0
