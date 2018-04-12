@@ -1,67 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752320AbeDLJ6Z (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 05:58:25 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:58030 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751719AbeDLJ6Y (ORCPT
+        id S1752441AbeDLJ7w (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 05:59:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55322 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751848AbeDLJ7u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 05:58:24 -0400
-Date: Thu, 12 Apr 2018 10:58:11 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: "Dmitry V. Levin" <ldv@altlinux.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-sparc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
- kill() returns wrong values in si_pid and si_uid
-Message-ID: <20180412095811.GC16141@n2100.armlinux.org.uk>
-References: <20180409152253.GD10489@altlinux.org>
- <20180412013435.GA21219@altlinux.org>
+        Thu, 12 Apr 2018 05:59:50 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180412013435.GA21219@altlinux.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date: Thu, 12 Apr 2018 15:29:48 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 1/9] mtd: nand: qcom: use the ecc strength from device
+ parameter
+In-Reply-To: <20180410100745.625d66f8@bbrezillon>
+References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
+ <1522845745-6624-2-git-send-email-absahu@codeaurora.org>
+ <20180406143133.67f33d33@xps13>
+ <23c8330d00d4d9b62c4c1ab597cbb22b@codeaurora.org>
+ <20180410094657.63ac7ec9@xps13> <20180410095558.34c4d91f@xps13>
+ <20180410100745.625d66f8@bbrezillon>
+Message-ID: <c1cb40d0d24e50657308a40bb8398d35@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 04:34:35AM +0300, Dmitry V. Levin wrote:
-> A similar commit v4.16-rc1~159^2~37
-> ("signal/arm: Document conflicts with SI_USER and SIGFPE") must have
-> introduced a similar ABI regression to compat arm.
+On 2018-04-10 13:37, Boris Brezillon wrote:
+> On Tue, 10 Apr 2018 09:55:58 +0200
+> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> 
+>> > Hi Abhishek,
+>> >
+>> > On Tue, 10 Apr 2018 11:39:35 +0530, Abhishek Sahu
+>> > <absahu@codeaurora.org> wrote:
+>> >
+>> > > On 2018-04-06 18:01, Miquel Raynal wrote:
+>> > > > Hi Abhishek,
+>> > > >
+>> > > > On Wed,  4 Apr 2018 18:12:17 +0530, Abhishek Sahu
+>> > > > <absahu@codeaurora.org> wrote:
+>> > > >
+>> > > >> Currently the driver uses the ECC strength specified in
+>> > > >> device tree. The ONFI or JEDEC device parameter page
+>> > > >> contains the ‘ECC correctability’ field which indicates the
+>> > > >> number of bits that the host should be able to correct per
+>> > > >> 512 bytes of data.
+>> > > >
+>> > > > This is misleading. This field is not about the controller but rather
+>> > > > the chip requirements in terms of minimal strength for nominal use.
+>> > > >
+>> > >
+>> > >   Thanks Miquel.
+>> > >
+>> > >   Yes. Its NAND chip requirement. I have used the description for
+>> > >   NAND ONFI param page
+>> > >
+>> > >   5.6.1.24. Byte 112: Number of bits ECC correctability
+>> > >   This field indicates the number of bits that the host should be
+>> > >   able to correct per 512 bytes of data.
+>> > >
+>> > > >> The ecc correctability is assigned in
+>> > > >> chip parameter during device probe time. QPIC/EBI2 NAND
+>> > > >> supports 4/8-bit ecc correction. The Same kind of board
+>> > > >> can have different NAND parts so use the ecc strength
+>> > > >> from device parameter (if its non zero) instead of
+>> > > >> device tree.
+>> > > >
+>> > > > That is not what you do.
+>> > > >
+>> > > > What you do is forcing the strength to be 8-bit per ECC chunk if the
+>> > > > NAND chip requires at least 8-bit/chunk strength.
+>> > > >
+>> > > > The DT property is here to force a strength. Otherwise, Linux will
+>> > > > propose to the NAND controller to use the minimum strength required by
+>> > > > the chip (from either the ONFI/JEDEC parameter page or from a static
+>> > > > table).
+>> > > >
+>> > >
+>> > >   The main problem is that the same kind of boards can have different
+>> > >   NAND parts.
+>> > >
+>> > >   Lets assume, we have following 2 cases.
+>> > >
+>> > >   1. Non ONFI/JEDEC device for which chip->ecc_strength_ds
+>> > >      will be zero. In this case, the ecc->strength from DT
+>> > >      will be used
+>> >
+>> > No, the strength from DT will always be used if the property is
+>> > present, no matter the type of chip.
+>> >
+>> > >   2. ONFI/JEDEC device for which chip->ecc_strength_ds > 8.
+>> > >      Since QCOM nand controller can not support
+>> > >      ECC correction greater than 8 bits so we can use 8 bit ECC
+>> > >      itself instead of failing NAND boot completely.
+>> >
+>> > I understand that. But this is still not what you do.
+>> >
+>> > >
+>> > > > IMHO, you have two solutions:
+>> > > > 1/ Remove these properties from the board DT (breaks DT backward
+>> > > > compatibility though);
+>> > >
+>> > >   - nand-ecc-strength: This is optional property in nand.txt and
+>> > >     Required property in qcom_nandc.txt.
+>> >
+>> > Well, this property is not controller specific but chip specific. The
+>> > controller driver does not rely on it, so this property should not be
+>> > required.
+>> >
+>> > > We can't remove since
+>> > >     if the device is Non ONFI/JEDEC, then ecc strength will come
+>> > >     from DT only.
+>> >
+>> > We can remove it and let the core handle this (as this is generic to
+>> > all raw NANDs and not specific to this controller driver). Try it out!
 
-So, could you explain how can this change cause a regression?
+  Thanks Boris and Miquel for your inputs.
 
-+#define FPE_FIXME      0
--               vfp_raise_sigfpe(0, regs);
-+               vfp_raise_sigfpe(FPE_FIXME, regs);
+  Just want to confirm if already its implemented in core layer
+  or shall I explore regrading this option.
 
-I think you're talking garbage here - look at the damned change.
-It subsitutes a definition for a constant, and vfp_raise_sigfpe()
-ends up receiving exactly the same value bother before and after
-the change.
+  I checked by removing this property alone from dtsi and it was
+  failing with
 
-The change is rather incomplete though because it should have
-also changed:
+  "Driver must set ecc.strength when using hardware ECC"
 
-        int si_code = 0;
+  I checked the code in nand_base.c also but couldn't get
+  anything related with this.
 
-as well.
+  Thanks,
+  Abhishek
 
-So, the commit log is accurate in this case: it _is_ about
-documenting the conflicting cases between SI_USER and SIGFPE and
-that bit of the change has no ABI effect.
-
-What does slightly annoy me is the creation of uapi/asm/siginfo.h
-to contain a definition that _isn't_ to be exposed as part of the
-UAPI.  If it's not part of the UAPI, it doesn't belong in a UAPI
-header, period.  In any case, I don't think that is exposed to
-userspace.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+>> >
+>> > However if the defaults value do not match your expectations, I think
+>> > you can add your non-ONFI/JEDEC chip in 'nand_ids.c', this should fill
+>> > your strength_ds field and let you avoid using these properties.
+>> 
+>> Actually nand_ids.c should not be filled anymore, instead you can
+>> implement this detection thanks to the part full name in the vendor
+>> code nand_samsung.c, nand_micron.c, nand_macronix.c, nand_hynix.c, 
+>> etc.
+> 
+> Usually you don't have to go that far, and the ECC requirements are
+> encoded somewhere in the ID (after byte 2). When that's not the
+> case, you may have to check the full ID.
+> 
+>> Depending on what part you are using, it might already work.
+> 
+> Yep.
