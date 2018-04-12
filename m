@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752879AbeDLLPx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 07:15:53 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:35648 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752821AbeDLLPZ (ORCPT
+        id S1753316AbeDLLPX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 07:15:23 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:41084 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753217AbeDLLPT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 07:15:25 -0400
-X-Google-Smtp-Source: AIpwx48n2Bo1GT2Uhv/dWp+TpReoUUIrsjVRGJeZw6qAx/G6Cj/OS0dFxxp4OLGlDYGnNWOwQsCEhQ==
+        Thu, 12 Apr 2018 07:15:19 -0400
+X-Google-Smtp-Source: AIpwx4+C7PjClXuqUwftpnZzR/2DE/kVp24K5WNvnaedGYhtjGzgPg/0lnI2ea4EpLYSZwN/+7h93w==
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -22,11 +22,10 @@ Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
         Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Subject: [PATCH v7 26/26] arm64: dts: Convert to the hierarchical CPU topology layout for MSM8916
-Date: Thu, 12 Apr 2018 13:14:31 +0200
-Message-Id: <1523531671-27491-27-git-send-email-ulf.hansson@linaro.org>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v7 22/26] drivers: firmware: psci: Introduce psci_dt_topology_init()
+Date: Thu, 12 Apr 2018 13:14:27 +0200
+Message-Id: <1523531671-27491-23-git-send-email-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
 References: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
@@ -34,141 +33,109 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lina Iyer <lina.iyer@linaro.org>
+In case the hierarchical layout is used in DT, we want to initialize the
+corresponding PM domain topology for the CPUs, by using the generic PM
+domain (aka genpd) infrastructure.
 
-In the hierarchical layout, we are creating power domains around each CPU
-and describes the idle states for them inside the power domain provider
-node.  Note that, the CPU's idle states still needs to be compatible with
-"arm,idle-state".
+At first glance, it may seem feasible to hook into the existing
+psci_dt_init() function, although because it's called quite early in the
+boot sequence, allocating the dynamic data structure for a genpd doesn't
+work.
 
-Furthermore, represent the CPU cluster as a separate master power domain,
-powering the CPU's power domains. The cluster node, contains the idle
-states for the cluster and each idle state needs to be compatible with the
-"domain-idle-state".
+Therefore, let's export a new init function for PSCI,
+psci_dt_topology_init(), which the ARM machine code should call from a
+suitable initcall.
 
-If the running platform is using a PSCI FW that supports the OS initiated
-CPU suspend mode, which likely should be the case unless the PSCI FW is
-very old, this change makes the PSCI driver to enable it.
+Succeeding to initialize the PM domain topology, which means at least one
+instance of a genpd becomes created, allows us to continue to enable the
+PSCI OS initiated mode for the platform. If everything turns out fine,
+let's print a message in log to inform the user about the changed mode.
 
-Cc: Andy Gross <andy.gross@linaro.org>
-Cc: David Brown <david.brown@linaro.org>
+In case of any failures, we stick to the default PSCI Platform Coordinated
+mode. Moreover, in case the kernel started from a kexec call, let's make
+sure to explicitly default to this mode during boot, in case the previous
+kernel changed the mode.
+
 Cc: Lina Iyer <ilina@codeaurora.org>
-Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
-Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 53 ++++++++++++++++++++++++++++++++---
- 1 file changed, 49 insertions(+), 4 deletions(-)
+ drivers/firmware/psci/psci.c | 38 +++++++++++++++++++++++++++++++++++++-
+ include/linux/psci.h         |  2 ++
+ 2 files changed, 39 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index 66b318e..aff4b91 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -113,10 +113,10 @@
- 			reg = <0x0>;
- 			next-level-cache = <&L2_0>;
- 			enable-method = "psci";
--			cpu-idle-states = <&CPU_SPC>;
- 			clocks = <&apcs 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
- 			#cooling-cells = <2>;
-+			power-domains = <&CPU_PD0>;
- 		};
+diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+index 463f78c..80c286d 100644
+--- a/drivers/firmware/psci/psci.c
++++ b/drivers/firmware/psci/psci.c
+@@ -691,9 +691,14 @@ static int __init psci_1_0_init(struct device_node *np)
+ 	if (err)
+ 		return err;
  
- 		CPU1: cpu@1 {
-@@ -125,10 +125,10 @@
- 			reg = <0x1>;
- 			next-level-cache = <&L2_0>;
- 			enable-method = "psci";
--			cpu-idle-states = <&CPU_SPC>;
- 			clocks = <&apcs 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
- 			#cooling-cells = <2>;
-+			power-domains = <&CPU_PD1>;
- 		};
+-	if (psci_has_osi_support())
++	if (psci_has_osi_support()) {
+ 		pr_info("OSI mode supported.\n");
  
- 		CPU2: cpu@2 {
-@@ -137,10 +137,10 @@
- 			reg = <0x2>;
- 			next-level-cache = <&L2_0>;
- 			enable-method = "psci";
--			cpu-idle-states = <&CPU_SPC>;
- 			clocks = <&apcs 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
- 			#cooling-cells = <2>;
-+			power-domains = <&CPU_PD2>;
- 		};
++		/* Make sure we default to PC mode. */
++		invoke_psci_fn(PSCI_1_0_FN_SET_SUSPEND_MODE,
++			       PSCI_1_0_SUSPEND_MODE_PC, 0, 0);
++	}
++
+ 	return 0;
+ }
  
- 		CPU3: cpu@3 {
-@@ -149,10 +149,10 @@
- 			reg = <0x3>;
- 			next-level-cache = <&L2_0>;
- 			enable-method = "psci";
--			cpu-idle-states = <&CPU_SPC>;
- 			clocks = <&apcs 0>;
- 			operating-points-v2 = <&cpu_opp_table>;
- 			#cooling-cells = <2>;
-+			power-domains = <&CPU_PD3>;
- 		};
+@@ -723,6 +728,37 @@ int __init psci_dt_init(void)
+ 	return ret;
+ }
  
- 		L2_0: l2-cache {
-@@ -169,12 +169,57 @@
- 				min-residency-us = <2000>;
- 				local-timer-stop;
- 			};
++int __init psci_dt_topology_init(void)
++{
++	struct device_node *np;
++	int ret;
 +
-+			CLUSTER_RET: cluster-retention {
-+				compatible = "domain-idle-state";
-+				arm,psci-suspend-param = <0x1000010>;
-+				entry-latency-us = <500>;
-+				exit-latency-us = <500>;
-+				min-residency-us = <2000>;
-+			};
++	if (!psci_has_osi_support())
++		return 0;
 +
-+			CLUSTER_PWRDN: cluster-gdhs {
-+				compatible = "domain-idle-state";
-+				arm,psci-suspend-param = <0x1000030>;
-+				entry-latency-us = <2000>;
-+				exit-latency-us = <2000>;
-+				min-residency-us = <6000>;
-+			};
- 		};
- 	};
++	np = of_find_matching_node_and_match(NULL, psci_of_match, NULL);
++	if (!np)
++		return -ENODEV;
++
++	/* Initialize the CPU PM domains based on topology described in DT. */
++	ret = psci_dt_init_pm_domains(np);
++	if (ret <= 0)
++		goto out;
++
++	/* Enable OSI mode. */
++	ret = invoke_psci_fn(PSCI_1_0_FN_SET_SUSPEND_MODE,
++			     PSCI_1_0_SUSPEND_MODE_OSI, 0, 0);
++	if (ret) {
++		pr_info("failed to enable OSI mode: %d\n", ret);
++		goto out;
++	}
++
++	pr_info("OSI mode enabled.\n");
++out:
++	of_node_put(np);
++	return ret;
++}
++
+ #ifdef CONFIG_ACPI
+ /*
+  * We use PSCI 0.2+ when ACPI is deployed on ARM64 and it's
+diff --git a/include/linux/psci.h b/include/linux/psci.h
+index 8b1b3b5..298a044 100644
+--- a/include/linux/psci.h
++++ b/include/linux/psci.h
+@@ -53,8 +53,10 @@ extern struct psci_operations psci_ops;
  
- 	psci {
- 		compatible = "arm,psci-1.0";
- 		method = "smc";
-+
-+		CPU_PD0: cpu-pd0 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_PD>;
-+			domain-idle-states = <&CPU_SPC>;
-+		};
-+
-+		CPU_PD1: cpu-pd1 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_PD>;
-+			domain-idle-states = <&CPU_SPC>;
-+		};
-+
-+		CPU_PD2: cpu-pd2 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_PD>;
-+			domain-idle-states = <&CPU_SPC>;
-+		};
-+
-+		CPU_PD3: cpu-pd3 {
-+			#power-domain-cells = <0>;
-+			power-domains = <&CLUSTER_PD>;
-+			domain-idle-states = <&CPU_SPC>;
-+		};
-+
-+		CLUSTER_PD: cluster-pd {
-+			#power-domain-cells = <0>;
-+			domain-idle-states = <&CLUSTER_RET>, <&CLUSTER_PWRDN>;
-+		};
- 	};
+ #if defined(CONFIG_ARM_PSCI_FW)
+ int __init psci_dt_init(void);
++int __init psci_dt_topology_init(void);
+ #else
+ static inline int psci_dt_init(void) { return 0; }
++static inline int psci_dt_topology_init(void) { return 0; }
+ #endif
  
- 	pmu {
+ #if defined(CONFIG_ARM_PSCI_FW) && defined(CONFIG_ACPI)
 -- 
 2.7.4
