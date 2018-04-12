@@ -1,90 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752692AbeDLUYj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 16:24:39 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:60995 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751972AbeDLUYh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 16:24:37 -0400
-X-IronPort-AV: E=Sophos;i="5.48,443,1517875200";
-   d="scan'208";a="674598540"
-From: "Raslan, KarimAllah" <karahmed@amazon.de>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>
-CC: "jmattson@google.com" <jmattson@google.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>
-Subject: Re: [PATCH 1/2] X86/KVM: Properly restore 'tsc_offset' when running
- an L2 guest
-Thread-Topic: [PATCH 1/2] X86/KVM: Properly restore 'tsc_offset' when running
- an L2 guest
-Thread-Index: AQHT0nC4lLvkNnIRDkiE27bl+IOiw6P9U6KAgAAIAICAAAS/AIAAMoWAgAAAwAA=
-Date: Thu, 12 Apr 2018 20:24:32 +0000
-Message-ID: <1523564672.32594.35.camel@amazon.de>
-References: <1523545958-28059-1-git-send-email-karahmed@amazon.de>
-         <d03d253a-d184-4c95-91b2-45e94659b9bd@redhat.com>
-         <1523552643.32594.18.camel@amazon.de> <1523553662.32594.29.camel@amazon.de>
-         <ca0e9ac3-1f7b-cefb-a0fe-cc8e6f938c6c@redhat.com>
-In-Reply-To: <ca0e9ac3-1f7b-cefb-a0fe-cc8e6f938c6c@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.166.193]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8E58071E0F9DF5459DBCAFB737A547D3@amazon.com>
-MIME-Version: 1.0
+        id S1752676AbeDLUat (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 16:30:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45366 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752235AbeDLUas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 16:30:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F61721737
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
+From: Alan Tull <atull@kernel.org>
+To: Moritz Fischer <mdf@kernel.org>
+Cc: Alan Tull <atull@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-fpga@vger.kernel.org
+Subject: [PATCH v4 0/4] fpga: change api, don't use drive data
+Date: Thu, 12 Apr 2018 15:30:39 -0500
+Message-Id: <20180412203043.3001-1-atull@kernel.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3CKOhR0011417
 
-On Thu, 2018-04-12 at 22:21 +0200, Paolo Bonzini wrote:
-> On 12/04/2018 19:21, Raslan, KarimAllah wrote:
-> > 
-> > Now looking further at the code, it seems that everywhere in the code
-> > tsc_offset is treated as the L01 TSC_OFFSET.
-> > 
-> > Like here:
-> > 
-> >         if (vmcs12->cpu_based_vm_exec_control &
-> > CPU_BASED_USE_TSC_OFFSETING)
-> >                 vmcs_write64(TSC_OFFSET,
-> >                         vcpu->arch.tsc_offset + vmcs12->tsc_offset);
-> > 
-> > and here:
-> > 
-> >         vmcs_write64(TSC_OFFSET, vcpu->arch.tsc_offset);
-> > 
-> > and here:
-> > 
-> > u64 kvm_read_l1_tsc(struct kvm_vcpu *vcpu, u64 host_tsc)
-> > {
-> >         return vcpu->arch.tsc_offset + kvm_scale_tsc(vcpu, host_tsc);
-> > }
-> > EXPORT_SYMBOL_GPL(kvm_read_l1_tsc);
-> > 
-> > ... would not it be simpler and more inline with the current code to
-> > just do what I did above + remove the "+ l1_tsc_offset" + probably
-> > document tsc_offset ?
-> 
-> Problem is, I don't think it's correct. :)  A good start would be to try
-> disabling MSR_IA32_TSC interception in KVM, prepare a kvm-unit-tests
-> test that reads the MSR, and see if you get the host or guest TSC...
+This patchset must go on top of Paolo Pisoli's
+ "fpga: lattice machxo2: Add Lattice MachXO2 support"
 
-I actually just submitted a patch with your original suggestion
-(I hope)  because I realized that adjust tsc was still using the wrong
-tsc_offset anyway :)
+Don't set or use drvdata in the FPGA common manager/bridge/region
+code.
 
-> 
-> Paolo
-> 
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+Change API for manager, bridge, and region to each include functions
+for create, free, register, and unregister.  This involved adding new
+create/free functions and changing the existing register/unregister
+functions to take the corresponding manager/bridge/region struct as
+the only parameter.
+
+Setting drvdata is fine for DT based devices which have one manager,
+bridge, or region device per platform device.  However, PCIe based
+devices may have multiple FPGA mgr/bridge/regions under one PCIe
+device.  Without these changes, PCIe-based solutions have to create an
+extra device for each child mgr/bridge/region to hold drvdata.
+
+Alan Tull (4):
+  fpga: region: don't use drvdata in common fpga code
+  fpga: manager: change api, don't use drvdata
+  fpga: bridge: change api, don't use drvdata
+  fpga: region: change api, add fpga_region_create/free
+
+ Documentation/fpga/fpga-mgr.txt     | 35 +++++++++++++----
+ Documentation/fpga/fpga-region.txt  |  3 +-
+ drivers/fpga/altera-cvp.c           | 19 ++++++---
+ drivers/fpga/altera-fpga2sdram.c    | 21 +++++++---
+ drivers/fpga/altera-freeze-bridge.c | 22 +++++++++--
+ drivers/fpga/altera-hps2fpga.c      | 24 +++++++++---
+ drivers/fpga/altera-pr-ip-core.c    | 18 ++++++++-
+ drivers/fpga/altera-ps-spi.c        | 20 ++++++++--
+ drivers/fpga/fpga-bridge.c          | 70 +++++++++++++++++++++------------
+ drivers/fpga/fpga-mgr.c             | 78 ++++++++++++++++++++++++-------------
+ drivers/fpga/fpga-region.c          | 69 +++++++++++++++++++++++++-------
+ drivers/fpga/ice40-spi.c            | 21 ++++++++--
+ drivers/fpga/machxo2-spi.c          | 20 ++++++++--
+ drivers/fpga/of-fpga-region.c       | 14 +++----
+ drivers/fpga/socfpga-a10.c          | 14 +++++--
+ drivers/fpga/socfpga.c              | 19 +++++++--
+ drivers/fpga/ts73xx-fpga.c          | 20 ++++++++--
+ drivers/fpga/xilinx-pr-decoupler.c  | 22 ++++++++---
+ drivers/fpga/xilinx-spi.c           | 20 ++++++++--
+ drivers/fpga/zynq-fpga.c            | 14 +++++--
+ include/linux/fpga/fpga-bridge.h    |  9 +++--
+ include/linux/fpga/fpga-mgr.h       | 10 +++--
+ include/linux/fpga/fpga-region.h    | 11 ++++--
+ 23 files changed, 429 insertions(+), 144 deletions(-)
+
+-- 
+2.7.4
