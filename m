@@ -1,87 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753148AbeDLQRL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 12:17:11 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34234 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753089AbeDLQRI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 12:17:08 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: atmel_ssc_dai: fix spelling mistake: "Stoping" -> "Stopping"" to the asoc tree
-In-Reply-To: <20180330154420.6903-1-colin.king@canonical.com>
-Message-Id: <E1f6euB-0008IF-Vw@debutante>
-Date: Thu, 12 Apr 2018 17:16:59 +0100
+        id S1753231AbeDLQRm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 12:17:42 -0400
+Received: from foss.arm.com ([217.140.101.70]:35114 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753182AbeDLQRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 12:17:40 -0400
+From: James Morse <james.morse@arm.com>
+Subject: Re: [PATCH v11 0/4] set VSESR_EL2 by user space and support
+ NOTIFY_SEI notification
+To: gengdongjiu <gengdongjiu@huawei.com>
+Cc: rkrcmar@redhat.com, corbet@lwn.net, christoffer.dall@linaro.org,
+        marc.zyngier@arm.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
+        rjw@rjwysocki.net, bp@alien8.de, lenb@kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-acpi@vger.kernel.org, devel@acpica.org, huangshaoyu@huawei.com,
+        zhengxiang9@huawei.com
+References: <1523309796-36423-1-git-send-email-gengdongjiu@huawei.com>
+ <d94439b6-9b9a-9bd0-ddec-3bb63ede9461@arm.com>
+ <5161fb31-e5bb-872c-3e12-d7d38326aaca@huawei.com>
+Message-ID: <eb65baf4-abb0-570f-f3af-61f505c9de10@arm.com>
+Date: Thu, 12 Apr 2018 17:14:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <5161fb31-e5bb-872c-3e12-d7d38326aaca@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hi gengdongjiu,
 
-   ASoC: atmel_ssc_dai: fix spelling mistake: "Stoping" -> "Stopping"
+On 12/04/18 07:09, gengdongjiu wrote:
+> On 2018/4/10 22:15, James Morse wrote:
+>> On 09/04/18 22:36, Dongjiu Geng wrote:
+>>> 1. Detect whether KVM can set set guest SError syndrome
+>>> 2. Support to Set VSESR_EL2 and inject SError by user space.
+>>> 3. Support live migration to keep SError pending state and VSESR_EL2 value.
+>>> 4. ACPI 6.1 adds support for NOTIFY_SEI as a GHES notification mechanism, so support this
+>>>    notification in software, KVM or kernel ARCH code call handle_guest_sei() to let ACP driver
+>>>    to handle this notification.
+>>
+>> Please don't post code during the merge-window, will this apply to v4.17-rc1? We
+>> can't know until its tagged.
 
-has been applied to the asoc tree at
+Posting code during the merge-window isn't helpful as the kernel is a moving
+target, its better to wait for an 'rc' to base it on.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+> I do not know when it is merge-window. About the apply version, it does not have limited.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+'git fetch' Linus' tree and look at the tags. 'v4.16' lost its '-rc' suffixes,
+and there isn't a 'v4.17-rc1' yet, so we are still in the merge window.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Linus sends a message to LKML. eg:
+https://lkml.org/lkml/2018/4/1/175
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+net-next closes shortly before the merge window, and re-opens afterwards. There
+is a handy web page:
+http://vger.kernel.org/~davem/net-next.html
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+
+>> This series is doing two separate things, please split it into two series.
+> OK, thanks!
+> 
+>>
+>> But on the ACPI front: I don't see how any OS can support your NOTIFY_SEI when
+>> firmware is ignoring the normal world's PSTATE.A.
+>>
+>> The latest lobe of that discussion was on the list here:
+>> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1611496.html
+> I have replied the mail.
+> I still have some questions that need to clarify with you.
+> After clarification, we will follow that.
+> The question is in the reply of this mail "https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1611496.html"
+
+Lets keep that discussion on v9 then.
+
+
+>> As it is, we would need to spot SError being delivered while SError is masked,
+>> spray nasty messages about firmware being horrifically buggy, then panic(). For
+>> a corrected error, this looks bad, but its preferable to letting firmware
+>> silently overwrite the exception registers, causing linux to spin through the
+>> vectors 'eret' with all exceptions masked.
+>> I still think its best to wait for firmware that does the right thing.
+
+> Let us  discuss that in another mail.
+> In a summary, I think firmware follow below rule can be OK, right?
+> 1. The exception came from the EL that SError should be routed to(according to hcr_EL2.{AMO, TGE}),but PSTATE.A was set, EL3 firmware can't deliver SError;
+
+> 2. The exception came from the EL that SError should not be routed to(according to hcr_EL2.{AMO, TGE}),even though the PSTATE.A was set,EL3 firmware still deliver SError
+
+Problem here, more on v9.
+
 
 Thanks,
-Mark
 
->From 78a7d414d5a8e3ea7bc5a636311cfb7ce593ce37 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 30 Mar 2018 16:44:20 +0100
-Subject: [PATCH] ASoC: atmel_ssc_dai: fix spelling mistake: "Stoping" ->
- "Stopping"
-
-Trivial fix to spelling mistake in pr_debug message text
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/atmel/atmel_ssc_dai.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-index a1e2c5682dcd..1c7af0ca98ec 100644
---- a/sound/soc/atmel/atmel_ssc_dai.c
-+++ b/sound/soc/atmel/atmel_ssc_dai.c
-@@ -820,7 +820,7 @@ static int atmel_ssc_hw_params(struct snd_pcm_substream *substream,
- 		if (ret < 0) {
- 			printk(KERN_WARNING
- 					"atmel_ssc_dai: request_irq failure\n");
--			pr_debug("Atmel_ssc_dai: Stoping clock\n");
-+			pr_debug("Atmel_ssc_dai: Stopping clock\n");
- 			clk_disable(ssc_p->ssc->clk);
- 			return ret;
- 		}
--- 
-2.17.0
+James
