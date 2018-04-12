@@ -1,80 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752813AbeDLRfT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 13:35:19 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:39627 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751819AbeDLRfS (ORCPT
+        id S1752930AbeDLRfq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 13:35:46 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38591 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752763AbeDLRfo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 13:35:18 -0400
-X-Google-Smtp-Source: AIpwx4+otGWVPT3kIgNM/PrhO8GtjCEdxVMlj523tQLwNra6/IgsNinjsmIKXWrKbAEJS0TeN/HWqgl5ArSiVrzSHIo=
+        Thu, 12 Apr 2018 13:35:44 -0400
+X-Google-Smtp-Source: AIpwx491ZX3iWcjEve4TTwWYTkOkK/Km9/JmIEAja0d6YONZ1hz+mnstJnGemHdaIJwaXaJJnIJR4Q==
+Date: Thu, 12 Apr 2018 10:35:40 -0700
+From: Richard Cochran <richardcochran@gmail.com>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        David Miller <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+Subject: Re: [PATCH net] net: dsa: mv88e6xxx: Fix receive time stamp race
+ condition.
+Message-ID: <20180412173540.rrjx5n62guchety2@localhost>
+References: <20180409070314.12409-1-richardcochran@gmail.com>
+ <20180409141931.kmltk4hridkj5fsk@localhost>
 MIME-Version: 1.0
-In-Reply-To: <20180316143119.cdjw4dhm6crcjyrd@lakrids.cambridge.arm.com>
-References: <CAAeHK+xjnXnrG0p06r-QRcUucYi5vcTJOn3mSS-JVxX9_TYg4w@mail.gmail.com>
- <20180316141313.q5vjmj627rv7r7kf@lakrids.cambridge.arm.com> <20180316143119.cdjw4dhm6crcjyrd@lakrids.cambridge.arm.com>
-From: Andrey Konovalov <andreyknvl@google.com>
-Date: Thu, 12 Apr 2018 19:35:16 +0200
-Message-ID: <CAAeHK+wqogT5-iZiWzBMyNEtxxTE2JrgcdVK1+6WFgRm77+cRA@mail.gmail.com>
-Subject: Re: arm64 kvm built with clang doesn't boot
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>,
-        Stephen Hines <srhines@google.com>,
-        Greg Hackmann <ghackmann@google.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu, LKML <linux-kernel@vger.kernel.org>,
-        kernel-dynamic-tools <kernel-dynamic-tools@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409141931.kmltk4hridkj5fsk@localhost>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 16, 2018 at 3:31 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> On Fri, Mar 16, 2018 at 02:13:14PM +0000, Mark Rutland wrote:
->> On Fri, Mar 16, 2018 at 02:49:00PM +0100, Andrey Konovalov wrote:
->> > Hi!
->>
->> Hi,
->>
->> > I've recently tried to boot clang built kernel on real hardware
->> > (Odroid C2 board) instead of using a VM. The issue that I stumbled
->> > upon is that arm64 kvm built with clang doesn't boot.
->> >
->> > Adding -fno-jump-tables compiler flag to arch/arm64/kvm/* helps. There
->> > was a patch some time ago that did exactly that
->> > (https://patchwork.kernel.org/patch/10060381/), but it wasn't accepted
->> > AFAICT (see the discussion on that thread).
->> >
->> > What would be the best way to get this fixed?
->>
->> I think that patch is our best bet currently, but to save ourselves pain
->> in future it would be *really* nice if GCC and clang could provide an
->> option line -fno-absolute-addressing that would implicitly disable any
->> feature that would generate an absolute address as jump tables do.
->>
->> > I've also had to disable CONFIG_JUMP_LABEL to get the kernel boot
->> > (even without kvm enabled), but that might be a different (though
->> > related) issue.
->>
->> With v4.15 (and clang 5.0.0), I did not have to disable jump labels to
->> get a kernel booting on a Juno platform, though I did have to pass
->> -fno-jump-tables to the hyp code.
->
-> FWIW, with that same compiler and patch applied atop of v4.16-rc4, and
-> some bodges around clang not liking the rX register naming in the SMCCC
-> code, I get a kernel that boots on my Juno, though I immediately hit a
-> KASAN splat:
->
-> [    8.476766] ==================================================================
-> [    8.483990] BUG: KASAN: slab-out-of-bounds in __d_lookup_rcu+0x350/0x400
-> [    8.490664] Read of size 8 at addr ffff8009336e2a30 by task init/1
+On Mon, Apr 09, 2018 at 07:19:31AM -0700, Richard Cochran wrote:
+> Dave, please hold off on this patch.  I am seeing new problems in my
+> testing with this applied.  I still need to get to the bottom of
+> this.
 
-Hi Mark!
+Looks like the new problems are a HW/board glitch.
 
-Just FYI, this should be fixed with https://reviews.llvm.org/D44981 +
-https://patchwork.kernel.org/patch/10339103/
-
-Thanks!
+The patch is good to go.
+ 
+Thanks,
+Richard
