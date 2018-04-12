@@ -1,70 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752274AbeDLVTp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 17:19:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35118 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751770AbeDLVTn (ORCPT
+        id S1752692AbeDLVVH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 17:21:07 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:41270 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751630AbeDLVVF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 17:19:43 -0400
-Date: Thu, 12 Apr 2018 14:19:41 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>,
-        linux-nilfs@vger.kernel.org
-Subject: Re: [PATCH] radix tree test suite: fix mapshift build target
-Message-ID: <20180412211941.GC18364@bombadil.infradead.org>
-References: <20180412210518.27557-1-ross.zwisler@linux.intel.com>
- <20180412141543.a9d587c3836338e78de33d30@linux-foundation.org>
+        Thu, 12 Apr 2018 17:21:05 -0400
+To: Jack Wang <jinpu.wang@profitbricks.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, elliott@hpe.com
+Subject: Re: [PATCH v2] block: ratelimite pr_err on IO path
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1523524915-25170-1-git-send-email-jinpu.wangl@profitbricks.com>
+Date: Thu, 12 Apr 2018 17:20:54 -0400
+In-Reply-To: <1523524915-25170-1-git-send-email-jinpu.wangl@profitbricks.com>
+        (Jack Wang's message of "Thu, 12 Apr 2018 11:21:55 +0200")
+Message-ID: <yq1y3hsunnt.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180412141543.a9d587c3836338e78de33d30@linux-foundation.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8861 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=624
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804120202
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 02:15:43PM -0700, Andrew Morton wrote:
-> On Thu, 12 Apr 2018 15:05:18 -0600 Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
-> 
-> > The following commit
-> > 
-> >   commit c6ce3e2fe3da ("radix tree test suite: Add config option for map
-> >   shift")
-> > 
-> > Introduced a phony makefile target called 'mapshift' that ends up
-> > generating the file generated/map-shift.h.  This phony target was then
-> > added as a dependency of the top level 'targets' build target, which is
-> > what is run when you go to tools/testing/radix-tree and just type 'make'.
-> > 
-> > Unfortunately, this phony target doesn't actually work as a dependency, so
-> > you end up getting:
-> > 
-> > $ make
-> > make: *** No rule to make target 'generated/map-shift.h', needed by 'main.o'.  Stop.
-> > make: *** Waiting for unfinished jobs....
-> > 
-> > Fix this by making the file generated/map-shift.h our real makefile target,
-> > and add this a dependency of the top level build target.
-> 
-> I still get
-> 
-> akpm3:/usr/src/25/tools/testing/radix-tree> make
-> cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o main.o main.c
-> In file included from ./linux/../../../../include/linux/radix-tree.h:28:0,
->                  from ./linux/radix-tree.h:6,
->                  from main.c:10:
-> ./linux/rcupdate.h:5:10: fatal error: urcu.h: No such file or directory
 
-apt-get install liburcu-dev
+Jack,
 
->  #include <urcu.h>
-> 
-> 
-> lots of breakage here :(
-> 
+> +				pr_err_ratelimited("%s: ref tag error at location %llu (rcvd %u)\n",
+
+I'm a bit concerned about dropping records of potential data loss.
+
+Also, what are you doing that compels all these to be logged? This
+should be a very rare occurrence.
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
