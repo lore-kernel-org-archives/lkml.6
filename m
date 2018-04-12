@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752829AbeDLJiI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 05:38:08 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.210]:53027 "EHLO
+        id S1752866AbeDLJij (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 05:38:39 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.154.210]:40822 "EHLO
         9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751920AbeDLJiH (ORCPT
+        with ESMTP id S1751920AbeDLJii (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 05:38:07 -0400
+        Thu, 12 Apr 2018 05:38:38 -0400
 From: Matt Redfearn <matt.redfearn@mips.com>
 To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
         Florian Fainelli <f.fainelli@gmail.com>
@@ -16,16 +16,16 @@ CC: <linux-mips@linux-mips.org>, Matt Redfearn <matt.redfearn@mips.com>,
         Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: [PATCH v2 2/6] MIPS: perf: Use correct VPE ID when setting up VPE tracing
-Date: Thu, 12 Apr 2018 10:36:22 +0100
-Message-ID: <1523525786-29153-3-git-send-email-matt.redfearn@mips.com>
+Subject: [PATCH v2 3/6] MIPS: perf: Fix perf with MT counting other threads
+Date: Thu, 12 Apr 2018 10:36:23 +0100
+Message-ID: <1523525786-29153-4-git-send-email-matt.redfearn@mips.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523525786-29153-1-git-send-email-matt.redfearn@mips.com>
 References: <1523525786-29153-1-git-send-email-matt.redfearn@mips.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [192.168.155.41]
-X-BESS-ID: 1523525812-452060-21719-24429-4
+X-BESS-ID: 1523525812-452060-21719-24429-6
 X-BESS-VER: 2018.4.1-r1804052329
 X-BESS-Apparent-Source-IP: 12.201.5.28
 X-BESS-Outbound-Spam-Score: 0.00
@@ -40,62 +40,185 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a couple of FIXME's in the perf code which state that
-cpu_data[event->cpu].vpe_id reports 0 for both CPUs. This is no longer
-the case, since the vpe_id is used extensively by SMP CPS.
+When perf is used in non-system mode, i.e. without specifying CPUs to
+count on, check_and_calc_range falls into the case when it sets
+M_TC_EN_ALL in the counter config_base. This has the impact of always
+counting for all of the threads in a core, even when the user has not
+requested it. For example this can be seen with a test program which
+executes 30002 instructions and 10000 branches running on one VPE and a
+busy load on the other VPE in the core. Without this commit, the
+expected count is not returned:
 
-VPE local counting gets around this by using smp_processor_id() instead.
-As it happens this does work correctly to count events on the right VPE,
-but relies on 2 assumptions:
-a) Always having 2 VPEs / core.
-b) The hardware only paying attention to the least significant bit of
-the PERFCTL.VPEID field.
-If either of these assumptions change then the incorrect VPEs events
-will be counted.
+taskset 4 dd if=/dev/zero of=/dev/null count=100000 & taskset 8 perf
+stat -e instructions:u,branches:u ./test_prog
 
-Fix this by replacing smp_processor_id() with
-cpu_vpe_id(&current_cpu_data), in the vpe_id() macro, and pass vpe_id()
-to M_PERFCTL_VPEID() when setting up PERFCTL.VPEID. The FIXME's can also
-be removed since they no longer apply.
+ Performance counter stats for './test_prog':
+
+            103235      instructions:u
+             17015      branches:u
+
+In order to fix this, remove check_and_calc_range entirely and perform
+all of the logic in mipsxx_pmu_enable_event. Since
+mipsxx_pmu_enable_event now requires the range of the event, ensure that
+it is set by mipspmu_perf_event_encode in the same circumstances as
+before (i.e. #ifdef CONFIG_MIPS_MT_SMP && num_possible_cpus() > 1).
+
+The logic of mipsxx_pmu_enable_event now becomes:
+If the CPU is a BMIPS5000, then use the special vpe_id() implementation
+to select which VPE to count.
+If the counter has a range greater than a single VPE, i.e. it is a
+core-wide counter, then ensure that the counter is set up to count
+events from all TCs (though, since this is true by definition, is this
+necessary? Just enabling a core-wide counter in the per-VPE case appears
+experimentally to return the same counts. This is left in for now as the
+logic was present before).
+If the event is set up to count a particular CPU (i.e. system mode),
+then the VPE ID of that CPU is used for the counter.
+Otherwise, the event should be counted on the CPU scheduling this thread
+(this was the critical bit missing from the previous implementation) so
+the VPE ID of this CPU is used for the counter.
+
+With this commit, the same test as before returns the counts expected:
+
+taskset 4 dd if=/dev/zero of=/dev/null count=100000 & taskset 8 perf
+stat -e instructions:u,branches:u ./test_prog
+
+ Performance counter stats for './test_prog':
+
+             30002      instructions:u
+             10000      branches:u
 
 Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+
 ---
 
-Changes in v2: None
+Changes in v2:
+Fix mipsxx_pmu_enable_event for !#ifdef CONFIG_MIPS_MT_SMP
 
- arch/mips/kernel/perf_event_mipsxx.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+ arch/mips/kernel/perf_event_mipsxx.c | 78 ++++++++++++++++++------------------
+ 1 file changed, 39 insertions(+), 39 deletions(-)
 
 diff --git a/arch/mips/kernel/perf_event_mipsxx.c b/arch/mips/kernel/perf_event_mipsxx.c
-index f3ec4a36921d..239c4ca89fb0 100644
+index 239c4ca89fb0..0373087abee8 100644
 --- a/arch/mips/kernel/perf_event_mipsxx.c
 +++ b/arch/mips/kernel/perf_event_mipsxx.c
-@@ -137,12 +137,8 @@ static DEFINE_RWLOCK(pmuint_rwlock);
- #define vpe_id()	(cpu_has_mipsmt_pertccounters ? \
- 			 0 : (smp_processor_id() & MIPS_CPUID_TO_COUNTER_MASK))
- #else
--/*
-- * FIXME: For VSMP, vpe_id() is redefined for Perf-events, because
-- * cpu_data[cpuid].vpe_id reports 0 for _both_ CPUs.
-- */
- #define vpe_id()	(cpu_has_mipsmt_pertccounters ? \
--			 0 : smp_processor_id())
-+			 0 : cpu_vpe_id(&current_cpu_data))
- #endif
+@@ -325,7 +325,11 @@ static int mipsxx_pmu_alloc_counter(struct cpu_hw_events *cpuc,
  
- /* Copied from op_model_mipsxx.c */
-@@ -1279,11 +1275,7 @@ static void check_and_calc_range(struct perf_event *event,
- 			 */
- 			hwc->config_base |= M_TC_EN_ALL;
- 		} else {
+ static void mipsxx_pmu_enable_event(struct hw_perf_event *evt, int idx)
+ {
++	struct perf_event *event = container_of(evt, struct perf_event, hw);
+ 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
++#ifdef CONFIG_MIPS_MT_SMP
++	unsigned int range = evt->event_base >> 24;
++#endif /* CONFIG_MIPS_MT_SMP */
+ 
+ 	WARN_ON(idx < 0 || idx >= mipspmu.num_counters);
+ 
+@@ -333,11 +337,37 @@ static void mipsxx_pmu_enable_event(struct hw_perf_event *evt, int idx)
+ 		(evt->config_base & M_PERFCTL_CONFIG_MASK) |
+ 		/* Make sure interrupt enabled. */
+ 		MIPS_PERFCTRL_IE;
+-	if (IS_ENABLED(CONFIG_CPU_BMIPS5000))
++
++#ifdef CONFIG_CPU_BMIPS5000
++	{
+ 		/* enable the counter for the calling thread */
+ 		cpuc->saved_ctrl[idx] |=
+ 			(1 << (12 + vpe_id())) | BRCM_PERFCTRL_TC;
++	}
++#else
++#ifdef CONFIG_MIPS_MT_SMP
++	if (range > V) {
++		/* The counter is processor wide. Set it up to count all TCs. */
++		pr_debug("Enabling perf counter for all TCs\n");
++		cpuc->saved_ctrl[idx] |= M_TC_EN_ALL;
++	} else
++#endif /* CONFIG_MIPS_MT_SMP */
++	{
++		unsigned int cpu, ctrl;
+ 
++		/*
++		 * Set up the counter for a particular CPU when event->cpu is
++		 * a valid CPU number. Otherwise set up the counter for the CPU
++		 * scheduling this thread.
++		 */
++		cpu = (event->cpu >= 0) ? event->cpu : smp_processor_id();
++
++		ctrl = M_PERFCTL_VPEID(cpu_vpe_id(&cpu_data[cpu]));
++		ctrl |= M_TC_EN_VPE;
++		cpuc->saved_ctrl[idx] |= ctrl;
++		pr_debug("Enabling perf counter for CPU%d\n", cpu);
++	}
++#endif /* CONFIG_CPU_BMIPS5000 */
+ 	/*
+ 	 * We do not actually let the counter run. Leave it until start().
+ 	 */
+@@ -651,13 +681,14 @@ static unsigned int mipspmu_perf_event_encode(const struct mips_perf_event *pev)
+  * event_id.
+  */
+ #ifdef CONFIG_MIPS_MT_SMP
+-	return ((unsigned int)pev->range << 24) |
+-		(pev->cntr_mask & 0xffff00) |
+-		(pev->event_id & 0xff);
+-#else
+-	return (pev->cntr_mask & 0xffff00) |
+-		(pev->event_id & 0xff);
+-#endif
++	if (num_possible_cpus() > 1)
++		return ((unsigned int)pev->range << 24) |
++			(pev->cntr_mask & 0xffff00) |
++			(pev->event_id & 0xff);
++	else
++#endif /* CONFIG_MIPS_MT_SMP */
++		return ((pev->cntr_mask & 0xffff00) |
++			(pev->event_id & 0xff));
+ }
+ 
+ static const struct mips_perf_event *mipspmu_map_general_event(int idx)
+@@ -1261,33 +1292,6 @@ static const struct mips_perf_event xlp_cache_map
+ },
+ };
+ 
+-#ifdef CONFIG_MIPS_MT_SMP
+-static void check_and_calc_range(struct perf_event *event,
+-				 const struct mips_perf_event *pev)
+-{
+-	struct hw_perf_event *hwc = &event->hw;
+-
+-	if (event->cpu >= 0) {
+-		if (pev->range > V) {
 -			/*
--			 * FIXME: cpu_data[event->cpu].vpe_id reports 0
--			 * for both CPUs.
+-			 * The user selected an event that is processor
+-			 * wide, while expecting it to be VPE wide.
 -			 */
--			hwc->config_base |= M_PERFCTL_VPEID(event->cpu);
-+			hwc->config_base |= M_PERFCTL_VPEID(vpe_id());
- 			hwc->config_base |= M_TC_EN_VPE;
- 		}
- 	} else
+-			hwc->config_base |= M_TC_EN_ALL;
+-		} else {
+-			hwc->config_base |= M_PERFCTL_VPEID(vpe_id());
+-			hwc->config_base |= M_TC_EN_VPE;
+-		}
+-	} else
+-		hwc->config_base |= M_TC_EN_ALL;
+-}
+-#else
+-static void check_and_calc_range(struct perf_event *event,
+-				 const struct mips_perf_event *pev)
+-{
+-}
+-#endif
+-
+ static int __hw_perf_event_init(struct perf_event *event)
+ {
+ 	struct perf_event_attr *attr = &event->attr;
+@@ -1323,10 +1327,6 @@ static int __hw_perf_event_init(struct perf_event *event)
+ 	 */
+ 	hwc->config_base = MIPS_PERFCTRL_IE;
+ 
+-	/* Calculate range bits and validate it. */
+-	if (num_possible_cpus() > 1)
+-		check_and_calc_range(event, pev);
+-
+ 	hwc->event_base = mipspmu_perf_event_encode(pev);
+ 	if (PERF_TYPE_RAW == event->attr.type)
+ 		mutex_unlock(&raw_event_mutex);
 -- 
 2.7.4
