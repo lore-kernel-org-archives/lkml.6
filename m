@@ -1,71 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753783AbeDLUcI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 16:32:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45372 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752336AbeDLUas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 16:30:48 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D68A217A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-From: Alan Tull <atull@kernel.org>
-To: Moritz Fischer <mdf@kernel.org>
-Cc: Alan Tull <atull@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-fpga@vger.kernel.org
-Subject: [PATCH v4 1/4] fpga: region: don't use drvdata in common fpga code
-Date: Thu, 12 Apr 2018 15:30:40 -0500
-Message-Id: <20180412203043.3001-2-atull@kernel.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180412203043.3001-1-atull@kernel.org>
-References: <20180412203043.3001-1-atull@kernel.org>
+        id S1753021AbeDLUeZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 16:34:25 -0400
+Received: from mail-it0-f54.google.com ([209.85.214.54]:53957 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751009AbeDLUeY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 16:34:24 -0400
+X-Google-Smtp-Source: AIpwx49cUcTFodWz63s++eI86AfVZnMoH/+Ul78zKZSbQ2nbBRBckFjDZwVwvCjs5fgLvzX6DVsW+0JqmMKEaS428JQ=
+MIME-Version: 1.0
+In-Reply-To: <20180412203117.GA20557@avx2>
+References: <CA+55aFxj+NjW3M0Sv_-DRAD6vJ=HsPCQMtHn88me9uEEnJmAPw@mail.gmail.com>
+ <20180412195334.GB17810@avx2> <20180412203117.GA20557@avx2>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 12 Apr 2018 13:34:23 -0700
+X-Google-Sender-Auth: _zckT-Dwiy1TZsRwI5XjCymlk_Y
+Message-ID: <CA+55aFwvNpdY19G4HC4HCa29H44u09q_xOVBxP9XhmUmkntJ9g@mail.gmail.com>
+Subject: Re: [PATCH v4] proc: fixup copyright sign
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes to fpga_region_register function to not set drvdata.
+Yup, this came through correctly:
 
-Setting drvdata is fine for DT based devices that will have one region
-per platform device.  However PCIe based devices may have multiple
-FPGA regions under one PCIe device.  Without these changes, the PCIe
-solution has to create an extra device for each child region to hold
-drvdata.
+  Content-Type: text/plain; charset=utf-8
 
-Signed-off-by: Alan Tull <atull@kernel.org>
-Reported-by: Jiuyue Ma <majiuyue@huawei.com>
-Acked-by: Moritz Fischer <mdf@kernel.org>
----
-v2: No change to this patch in v2 of patchset
-v3: Add Moritz' ack
-v4: Reword header
----
- drivers/fpga/fpga-region.c    | 1 -
- drivers/fpga/of-fpga-region.c | 1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+and the patch looks fine too.
 
-diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
-index edab2a2..ebe1f87 100644
---- a/drivers/fpga/fpga-region.c
-+++ b/drivers/fpga/fpga-region.c
-@@ -178,7 +178,6 @@ int fpga_region_register(struct device *dev, struct fpga_region *region)
- 	region->dev.parent = dev;
- 	region->dev.of_node = dev->of_node;
- 	region->dev.id = id;
--	dev_set_drvdata(dev, region);
- 
- 	ret = dev_set_name(&region->dev, "region%d", id);
- 	if (ret)
-diff --git a/drivers/fpga/of-fpga-region.c b/drivers/fpga/of-fpga-region.c
-index 119ff75..35e7e8c 100644
---- a/drivers/fpga/of-fpga-region.c
-+++ b/drivers/fpga/of-fpga-region.c
-@@ -438,6 +438,7 @@ static int of_fpga_region_probe(struct platform_device *pdev)
- 		goto eprobe_mgr_put;
- 
- 	of_platform_populate(np, fpga_region_of_match, NULL, &region->dev);
-+	dev_set_drvdata(dev, region);
- 
- 	dev_info(dev, "FPGA Region probed\n");
- 
--- 
-2.7.4
+             Linus
