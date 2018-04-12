@@ -1,109 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753562AbeDLTN3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 15:13:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39806 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753058AbeDLTN2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 15:13:28 -0400
-Date: Thu, 12 Apr 2018 12:13:22 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Christopher Lameter <cl@linux.com>
-Cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH v3 2/2] slab: __GFP_ZERO is incompatible with a constructor
-Message-ID: <20180412191322.GA21205@bombadil.infradead.org>
-References: <20180411060320.14458-1-willy@infradead.org>
- <20180411060320.14458-3-willy@infradead.org>
- <alpine.DEB.2.20.1804110842560.3788@nuc-kabylake>
- <20180411192448.GD22494@bombadil.infradead.org>
- <alpine.DEB.2.20.1804111601090.7458@nuc-kabylake>
- <20180411235652.GA28279@bombadil.infradead.org>
- <alpine.DEB.2.20.1804120907100.11220@nuc-kabylake>
- <20180412142718.GA20398@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180412142718.GA20398@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1753111AbeDLTWL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 15:22:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50522 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752821AbeDLTWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 15:22:10 -0400
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org
+Subject: [PATCH] objtool: Support HOSTCFLAGS and HOSTLDFLAGS
+Date: Thu, 12 Apr 2018 14:21:54 -0500
+Message-Id: <05a360681176f1423cb2fde8faae3a0a0261afc5.1523560825.git.jpoimboe@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Wilcox <mawilcox@microsoft.com>
+From: Laura Abbott <labbott@redhat.com>
 
-__GFP_ZERO requests that the object be initialised to all-zeroes,
-while the purpose of a constructor is to initialise an object to a
-particular pattern.  We cannot do both.  Add a warning to catch any
-users who mistakenly pass a __GFP_ZERO flag when allocating a slab with
-a constructor.
+It may be useful to compile host programs with different flags (e.g.
+hardening). Ensure that objtool picks up the appropriate flags.
 
-Fixes: d07dbea46405 ("Slab allocators: support __GFP_ZERO in all allocators")
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 ---
- mm/slab.c | 2 ++
- mm/slob.c | 4 +++-
- mm/slub.c | 2 ++
- 3 files changed, 7 insertions(+), 1 deletion(-)
+ tools/objtool/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/mm/slab.c b/mm/slab.c
-index 58c8cecc26ab..aca63d49b270 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -2661,6 +2661,7 @@ static struct page *cache_grow_begin(struct kmem_cache *cachep,
- 				invalid_mask, &invalid_mask, flags, &flags);
- 		dump_stack();
- 	}
-+	WARN_ON_ONCE(cachep->ctor && (flags & __GFP_ZERO));
- 	local_flags = flags & (GFP_CONSTRAINT_MASK|GFP_RECLAIM_MASK);
+diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
+index e6acc281dd37..7df979ae4573 100644
+--- a/tools/objtool/Makefile
++++ b/tools/objtool/Makefile
+@@ -31,8 +31,8 @@ INCLUDES := -I$(srctree)/tools/include \
+ 	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
+ 	    -I$(srctree)/tools/objtool/arch/$(ARCH)/include
+ WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
+-CFLAGS   += -Wall -Werror $(WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES)
+-LDFLAGS  += -lelf $(LIBSUBCMD)
++CFLAGS   += -Werror $(WARNINGS) $(HOSTCFLAGS) -g $(INCLUDES)
++LDFLAGS  += -lelf $(LIBSUBCMD) $(HOSTLDFLAGS)
  
- 	check_irq_off();
-@@ -3067,6 +3068,7 @@ static inline void cache_alloc_debugcheck_before(struct kmem_cache *cachep,
- static void *cache_alloc_debugcheck_after(struct kmem_cache *cachep,
- 				gfp_t flags, void *objp, unsigned long caller)
- {
-+	WARN_ON_ONCE(cachep->ctor && (flags & __GFP_ZERO));
- 	if (!objp)
- 		return objp;
- 	if (cachep->flags & SLAB_POISON) {
-diff --git a/mm/slob.c b/mm/slob.c
-index 1a46181b675c..958173fd7c24 100644
---- a/mm/slob.c
-+++ b/mm/slob.c
-@@ -556,8 +556,10 @@ static void *slob_alloc_node(struct kmem_cache *c, gfp_t flags, int node)
- 					    flags, node);
- 	}
- 
--	if (b && c->ctor)
-+	if (b && c->ctor) {
-+		WARN_ON_ONCE(flags & __GFP_ZERO);
- 		c->ctor(b);
-+	}
- 
- 	kmemleak_alloc_recursive(b, c->size, 1, c->flags, flags);
- 	return b;
-diff --git a/mm/slub.c b/mm/slub.c
-index a28488643603..0487d316a665 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2434,6 +2434,8 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
- 	struct kmem_cache_cpu *c = *pc;
- 	struct page *page;
- 
-+	WARN_ON_ONCE(s->ctor && (flags & __GFP_ZERO));
-+
- 	freelist = get_partial(s, flags, node, c);
- 
- 	if (freelist)
+ # Allow old libelf to be used:
+ elfshdr := $(shell echo '\#include <libelf.h>' | $(CC) $(CFLAGS) -x c -E - | grep elf_getshdr)
 -- 
-2.16.3
+2.14.3
