@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1684311-1523561493-2-12085651419383454462
+X-Cyrus-Session-Id: sloti22d1t05-1684311-1523561484-2-8189451300402811004
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523561492; b=mrq4xtL2B/IHjSCBTQZxfZknb5Fr1zts6oRjuAabMvyoLpX/0C
-    YcKdgbpE5cohyqpGw2Wst0cBKHWC2I9ccos+pPf454QxK+C48TZCN5HAhr5CfmxQ
-    LCt5GqOfhtYgzVKVU05xKcyjpTvDs5iOZUQu0skkJUXdfK1H0u+DS7xkQkxU00Gq
-    0k2MYwi7HfAJuOEMm/C5Pp+wD3qxyhG0g4Gwrf3Z56YmZg7saTBpuwFCMmPgmRje
-    1AA7LdC2Qr2OyYaim6AIstBOpRpgB8kC+v/jYqHmiOhj2CjCgFuWBJ8EeEmvFaSa
-    AnZ5QIPWqzwDGOe9SbNn0KxM9DV7OQup0KfA==
+    1523561483; b=baXFV+CiCLga4tRqTfH2uz4JQyWllTS3OsRT42Aq8k0hg1rSPl
+    nNQorSf+CH4hlLJgHgLCs/tj9eJ9lhRQxeF6xsye5I1TiqE3K9wD0u1gEzcIGzc/
+    QrtQ4kIX6jA/zdoreIg2Wlegf3uJcC0rliBjKzRV6UMZ7InHwYlOzI2K4hywVINu
+    SHwWV4stGG6OPiROE5Y6wa+orXqf33WVXdFLn4oPTm4jAhnNTUY6uMqhnQ84v+7g
+    Uxt9WflZfSbvEV8A383qAbcHGo8B6BTVXNf78wZ/hDwAAzkjSiDG53S6QOlJcufW
+    PKqFlgQxlKtvzwPP+D57UL8zG2oogNl8asAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1523561492; bh=
-    b70pFQUVKc/bhX1EIJFGDknKBWm1fqIePoK6Ry5JHYc=; b=HZmrxL30AD6+WaAJ
-    Jx3XbI/BNHcCEwnPBIrerxd3fC09UeGjvx61FkfVMzaxneR0omZx1kItLa6Y5v8t
-    RlE364twQDLD+paRghbx1/5a5vICh16PVVybacitxLWmLaGbixUY/TsipkIuccwZ
-    eMLvrcaoHk+zMwHPQ+Ql6LRZMb/A8cuVhRb4zXqQBnM02TRVhLtck3bHgM5zoUrX
-    Fb6BHt6TndLW+Vn1nDil0KX8znzmH4+GOPowPBdTSAqZS4sttbx84d5OBQAj6VA3
-    /PESPHxmPRwNTxu7lo4sikWdsMxLGRxvSBcPAhghay+nFlDICOwg1dvD5jiwY3js
-    ypE3ZQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1523561483; bh=
+    CnLgISNtKLORhO6CDUCTk3YDYRw7HMvHKYN9JsMI/Y0=; b=I99+uVNFuBH4qvve
+    Tmhn5+/bShC/6b4Ng0hfHvg2zB7n99fBGSbaMdmLMWXm8VuDp8j+3tWEU11QQ6nd
+    +Xh6NBC7ld4/MPd297zqfIkJ2B6Qlxp2PScqHXcW/uJMzjfGYdTF9dTsEigDjcKX
+    9oLaaeuZIVoQFFp6ak5YaGOG2VewjSfps5yU5PiA+Sj/TWFKChcb/3kGvf+mvLvC
+    NMkKN6nbFzY+ySh4c5WAh46B2imN3nTfOyLhIwX7RXj97vdfNNu3S6ELgyoUpZhw
+    U0gtZYSe8Lz6i9a/1RORuhiUU8VG+aUKX+qmslfqWHERphxZ/Mb2GDCrZoFhJ3Xn
+    /LEowQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
@@ -51,27 +51,23 @@ Authentication-Results: mx5.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGIYeHAEEsRRGMTo7COt6Q9H1gr6M5NTNPSdk85AfakcjeH4rYPRuIfBMGrSzOmsgsJtaAiSlCkAfjBAE6ecscmEC195VSGmg2B2GEjBmJ3t95/hdXZb
-    0CQZf1ybRpax7uYDsmIvXRxjimskRZxMQlM68GT751iNQ5f+FxTbTp1NiTeczDE/bY0TM8SDaY7mwM7H5DE4zEDk3lWnAXywA4MnhkfcFHlkivQfmvWFZxqa
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHXrRJHTeuFn45JP0aJFr7CRoUyJf9P9OfKG0qIbH3458nOXmwfayxHyJqi9x51TLil4YtIZ9nUaTXTSmqSmcLPjTNhWk3sktkWeub8oxepf1bhBJoz3
+    JnXObG8o4phs7nr/dKiIRzwqB3pBIysM6vhPgrgKDp3syBFtyvpcyd2dHlxLTvAjHtopJoV5DhKwRXFOC2K4E7Z4kuGQxKl+8wAEY3U+yw2ejumbef9E9G40
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=7d_E57ReAAAA:8
-    a=VnNF1IyMAAAA:8 a=JfrnYn6hAAAA:8 a=1XWaLZrsAAAA:8 a=SOq6UgPBAAAA:8
-    a=WfulkdPnAAAA:8 a=FOH2dFAWAAAA:8 a=NufY4J3AAAAA:8 a=20KFwNOVAAAA:8
-    a=oGMlB6cnAAAA:8 a=meVymXHHAAAA:8 a=UPm3pfgAAAAA:8 a=Z4Rwk6OoAAAA:8
-    a=drOt6m5kAAAA:8 a=7CQSdrXTAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
-    a=PcGdOUl1GkNCjaGyiRMA:9 a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22
-    a=1CNFftbPRP8L7MoqJWF3:22 a=3hv5r9HjGAh9o5iR9qwG:22 a=56QPVbyS4OZCpcuOg7Z9:22
-    a=i3VuKzQdj-NEYjvDI-p3:22 a=TPcZfFuj8SYsoCJAFAiX:22 a=NdAtdrkLVvyUPsUoGJp4:22
-    a=2JgSa4NbpEOStq-L5dxp:22 a=uD9XBtlS4o1URY3aiGdj:22 a=HkZW87K1Qel5hWWM3VKY:22
-    a=RMMjzBEyIzXRtoq5n5K6:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=wMNdZWldAAAA:8 a=hGzw-44bAAAA:8 a=pGLkceISAAAA:8 a=JfrnYn6hAAAA:8
+    a=VnNF1IyMAAAA:8 a=voM4FWlXAAAA:8 a=VwQbUJbxAAAA:8 a=HmvUrT-d3P1Or3OYpdIA:9
+    a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22 a=FUarYpL4UH3yWsho8X8J:22
+    a=HvKuF1_PTVFglORKqfwH:22 a=1CNFftbPRP8L7MoqJWF3:22 a=IC2XNlieTeVoXbcui8wp:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753833AbeDLTa5 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 12 Apr 2018 15:30:57 -0400
-Received: from mail.efficios.com ([167.114.142.138]:45854 "EHLO
+        id S1753328AbeDLTa6 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 12 Apr 2018 15:30:58 -0400
+Received: from mail.efficios.com ([167.114.142.138]:45876 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753362AbeDLT2Z (ORCPT
+        with ESMTP id S1753378AbeDLT2Z (ORCPT
         <rfc822;linux-api@vger.kernel.org>); Thu, 12 Apr 2018 15:28:25 -0400
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
@@ -94,10 +90,14 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.18 13/23] x86: Wire up cpu_opv system call
-Date: Thu, 12 Apr 2018 15:27:50 -0400
-Message-Id: <20180412192800.15708-14-mathieu.desnoyers@efficios.com>
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [RFC PATCH for 4.18 14/23] powerpc: Wire up cpu_opv system call
+Date: Thu, 12 Apr 2018 15:27:51 -0400
+Message-Id: <20180412192800.15708-15-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
 References: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
@@ -108,54 +108,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Paul Turner <pjt@google.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Andrew Hunter <ahh@google.com>
-CC: Andy Lutomirski <luto@amacapital.net>
-CC: Andi Kleen <andi@firstfloor.org>
-CC: Dave Watson <davejwatson@fb.com>
-CC: Chris Lameter <cl@linux.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ben Maurer <bmaurer@fb.com>
-CC: Steven Rostedt <rostedt@goodmis.org>
-CC: Josh Triplett <josh@joshtriplett.org>
-CC: Linus Torvalds <torvalds@linux-foundation.org>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Russell King <linux@arm.linux.org.uk>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Michael Kerrisk <mtk.manpages@gmail.com>
+CC: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+CC: Paul Mackerras <paulus@samba.org>
+CC: Michael Ellerman <mpe@ellerman.id.au>
 CC: Boqun Feng <boqun.feng@gmail.com>
-CC: linux-api@vger.kernel.org
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+CC: linuxppc-dev@lists.ozlabs.org
 ---
- arch/x86/entry/syscalls/syscall_32.tbl | 1 +
- arch/x86/entry/syscalls/syscall_64.tbl | 1 +
- 2 files changed, 2 insertions(+)
+ arch/powerpc/include/asm/systbl.h      | 1 +
+ arch/powerpc/include/asm/unistd.h      | 2 +-
+ arch/powerpc/include/uapi/asm/unistd.h | 1 +
+ 3 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index b76cbd25854f..5772b343f7d5 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -392,3 +392,4 @@
- 383	i386	statx			sys_statx
- 384	i386	arch_prctl		sys_arch_prctl			compat_sys_arch_prctl
- 385	i386	rseq			sys_rseq
-+386	i386	cpu_opv			sys_cpu_opv
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 3ad03495bbb9..ab5d1f9f9396 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -340,6 +340,7 @@
- 331	common	pkey_free		sys_pkey_free
- 332	common	statx			sys_statx
- 333	common	rseq			sys_rseq
-+334	common	cpu_opv			sys_cpu_opv
+diff --git a/arch/powerpc/include/asm/systbl.h b/arch/powerpc/include/asm/systbl.h
+index 45d4d37495fd..4131825b5a05 100644
+--- a/arch/powerpc/include/asm/systbl.h
++++ b/arch/powerpc/include/asm/systbl.h
+@@ -393,3 +393,4 @@ SYSCALL(pkey_alloc)
+ SYSCALL(pkey_free)
+ SYSCALL(pkey_mprotect)
+ SYSCALL(rseq)
++SYSCALL(cpu_opv)
+diff --git a/arch/powerpc/include/asm/unistd.h b/arch/powerpc/include/asm/unistd.h
+index 1e9708632dce..c19379f0a32e 100644
+--- a/arch/powerpc/include/asm/unistd.h
++++ b/arch/powerpc/include/asm/unistd.h
+@@ -12,7 +12,7 @@
+ #include <uapi/asm/unistd.h>
  
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
+ 
+-#define NR_syscalls		388
++#define NR_syscalls		389
+ 
+ #define __NR__exit __NR_exit
+ 
+diff --git a/arch/powerpc/include/uapi/asm/unistd.h b/arch/powerpc/include/uapi/asm/unistd.h
+index ac5ba55066dd..f7a221bdb5df 100644
+--- a/arch/powerpc/include/uapi/asm/unistd.h
++++ b/arch/powerpc/include/uapi/asm/unistd.h
+@@ -399,5 +399,6 @@
+ #define __NR_pkey_free		385
+ #define __NR_pkey_mprotect	386
+ #define __NR_rseq		387
++#define __NR_cpu_opv		388
+ 
+ #endif /* _UAPI_ASM_POWERPC_UNISTD_H_ */
 -- 
 2.11.0
 
