@@ -1,45 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754217AbeDLPPD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 11:15:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49260 "EHLO mail.kernel.org"
+        id S1754219AbeDLPPW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 11:15:22 -0400
+Received: from mga09.intel.com ([134.134.136.24]:48714 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752896AbeDLPNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 11:13:53 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EF96217CE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=atull@kernel.org
-From: Alan Tull <atull@kernel.org>
-To: Moritz Fischer <mdf@kernel.org>
-Cc: Alan Tull <atull@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-fpga@vger.kernel.org
-Subject: [PATCH v11 0/2] fpga: Lattice MachXO2 Slave SPI FPGA Manager support
-Date: Thu, 12 Apr 2018 10:13:46 -0500
-Message-Id: <20180412151348.4584-1-atull@kernel.org>
-X-Mailer: git-send-email 2.16.2
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1753051AbeDLPNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 11:13:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,442,1517904000";
+   d="scan'208";a="41494310"
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
+To: rostedt@goodmis.org
+Cc: tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de, joel.opensrc@gmail.com,
+        joelaf@google.com, mathieu.desnoyers@efficios.com,
+        baohong.liu@intel.com, rajvi.jingar@intel.com, julia@ni.com,
+        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: [PATCH 5/6] tracing: Add field parsing trace event errors for hist triggers
+Date: Thu, 12 Apr 2018 10:13:20 -0500
+Message-Id: <6182020d231aa51485e7fc12441527d3709cad06.1523545519.git.tom.zanussi@linux.intel.com>
+X-Mailer: git-send-email 1.9.3
+In-Reply-To: <cover.1523545519.git.tom.zanussi@linux.intel.com>
+References: <cover.1523545519.git.tom.zanussi@linux.intel.com>
+In-Reply-To: <cover.1523545519.git.tom.zanussi@linux.intel.com>
+References: <cover.1523545519.git.tom.zanussi@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is Paolo's v10 with a minor fixup.  I had asked him to rebase his
-patch on a branch with a new FPGA manager API.  That API change ended
-up not going upstream, so I've fixed it for the current API.  This patch
-applies cleanly on the current linux-next.
+Log errors to the tracing/events/error_log for nonexistent fields and
+modifiers specified in hist triggers.
 
-Paolo Pisati (2):
-  dt: bindings: fpga: add lattice machxo2 slave spi binding description
-  fpga: lattice machxo2: Add Lattice MachXO2 support
+Also screen out variable references, which shouldn't be looked up as
+fields.
 
- .../bindings/fpga/lattice-machxo2-spi.txt          |  29 ++
- drivers/fpga/Kconfig                               |   7 +
- drivers/fpga/Makefile                              |   1 +
- drivers/fpga/machxo2-spi.c                         | 403 +++++++++++++++++++++
- 4 files changed, 440 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/fpga/lattice-machxo2-spi.txt
- create mode 100644 drivers/fpga/machxo2-spi.c
+Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Reported-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ kernel/trace/trace_events_hist.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 08424ff..d223fd6 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -2461,6 +2461,7 @@ static struct hist_field *parse_var_ref(struct hist_trigger_data *hist_data,
+ 		else if (strcmp(modifier, "usecs") == 0)
+ 			*flags |= HIST_FIELD_FL_TIMESTAMP_USECS;
+ 		else {
++			log_err("Invalid field modifier: %s", modifier);
+ 			field = ERR_PTR(-EINVAL);
+ 			goto out;
+ 		}
+@@ -2476,6 +2477,7 @@ static struct hist_field *parse_var_ref(struct hist_trigger_data *hist_data,
+ 	else {
+ 		field = trace_find_event_field(file->event_call, field_name);
+ 		if (!field || !field->size) {
++			log_err("Couldn't find field: %s", field_name);
+ 			field = ERR_PTR(-EINVAL);
+ 			goto out;
+ 		}
+@@ -2553,6 +2555,11 @@ static struct hist_field *parse_atom(struct hist_trigger_data *hist_data,
+ 	} else
+ 		str = s;
+ 
++	if (is_var_ref(str)) {
++		ret = -EINVAL;
++		goto out;
++	}
++
+ 	field = parse_field(hist_data, file, str, flags);
+ 	if (IS_ERR(field)) {
+ 		ret = PTR_ERR(field);
 -- 
-2.16.2
+1.9.3
