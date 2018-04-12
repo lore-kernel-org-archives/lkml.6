@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754219AbeDLPPW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 11:15:22 -0400
-Received: from mga09.intel.com ([134.134.136.24]:48714 "EHLO mga09.intel.com"
+        id S1754232AbeDLPPk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 11:15:40 -0400
+Received: from mga03.intel.com ([134.134.136.65]:19745 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753051AbeDLPNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 11:13:46 -0400
+        id S1754133AbeDLPNj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 11:13:39 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,442,1517904000";
-   d="scan'208";a="41494310"
+   d="scan'208";a="36745796"
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 To: rostedt@goodmis.org
 Cc: tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -20,9 +20,9 @@ Cc: tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org,
         Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH 5/6] tracing: Add field parsing trace event errors for hist triggers
-Date: Thu, 12 Apr 2018 10:13:20 -0500
-Message-Id: <6182020d231aa51485e7fc12441527d3709cad06.1523545519.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH 3/6] tracing: Save the last hist command's associated event name
+Date: Thu, 12 Apr 2018 10:13:18 -0500
+Message-Id: <1b0ae2e2fb4275fa2ea47df816888c573a87526c.1523545519.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 1.9.3
 In-Reply-To: <cover.1523545519.git.tom.zanussi@linux.intel.com>
 References: <cover.1523545519.git.tom.zanussi@linux.intel.com>
@@ -32,49 +32,71 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Log errors to the tracing/events/error_log for nonexistent fields and
-modifiers specified in hist triggers.
-
-Also screen out variable references, which shouldn't be looked up as
-fields.
+In preparation for making use of the new trace event error log, save
+the subsystem and event name associated with the last hist command -
+it will be passed as the location param in the event_log_err() calls.
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-Reported-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- kernel/trace/trace_events_hist.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ kernel/trace/trace_events_hist.c | 24 ++++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 08424ff..d223fd6 100644
+index 66c87be..4a42df4 100644
 --- a/kernel/trace/trace_events_hist.c
 +++ b/kernel/trace/trace_events_hist.c
-@@ -2461,6 +2461,7 @@ static struct hist_field *parse_var_ref(struct hist_trigger_data *hist_data,
- 		else if (strcmp(modifier, "usecs") == 0)
- 			*flags |= HIST_FIELD_FL_TIMESTAMP_USECS;
- 		else {
-+			log_err("Invalid field modifier: %s", modifier);
- 			field = ERR_PTR(-EINVAL);
- 			goto out;
- 		}
-@@ -2476,6 +2477,7 @@ static struct hist_field *parse_var_ref(struct hist_trigger_data *hist_data,
- 	else {
- 		field = trace_find_event_field(file->event_call, field_name);
- 		if (!field || !field->size) {
-+			log_err("Couldn't find field: %s", field_name);
- 			field = ERR_PTR(-EINVAL);
- 			goto out;
- 		}
-@@ -2553,6 +2555,11 @@ static struct hist_field *parse_atom(struct hist_trigger_data *hist_data,
- 	} else
- 		str = s;
+@@ -354,14 +354,32 @@ struct action_data {
  
-+	if (is_var_ref(str)) {
-+		ret = -EINVAL;
-+		goto out;
+ 
+ static char last_hist_cmd[MAX_FILTER_STR_VAL];
++static char last_hist_cmd_event[MAX_FILTER_STR_VAL];
+ static char hist_err_str[MAX_FILTER_STR_VAL];
+ 
+-static void last_cmd_set(char *str)
++static void last_cmd_set(struct trace_event_file *file, char *str)
+ {
++	const char *system = NULL, *name = NULL;
++	struct trace_event_call *call;
++
+ 	if (!str)
+ 		return;
+ 
+ 	strncpy(last_hist_cmd, str, MAX_FILTER_STR_VAL - 1);
++
++	if (file) {
++		call = file->event_call;
++
++		system = call->class->system;
++		if (system) {
++			name = trace_event_name(call);
++			if (!name)
++				system = NULL;
++		}
 +	}
 +
- 	field = parse_field(hist_data, file, str, flags);
- 	if (IS_ERR(field)) {
- 		ret = PTR_ERR(field);
++	if (system)
++		snprintf(last_hist_cmd_event, MAX_FILTER_STR_VAL, "%s:%s", system, name);
+ }
+ 
+ static void hist_err(char *str, char *var)
+@@ -401,6 +419,8 @@ static void hist_err_event(char *str, char *system, char *event, char *var)
+ static void hist_err_clear(void)
+ {
+ 	hist_err_str[0] = '\0';
++	last_hist_cmd[0] = '\0';
++	last_hist_cmd_event[0] = '\0';
+ }
+ 
+ static bool have_hist_err(void)
+@@ -5478,8 +5498,8 @@ static int event_hist_trigger_func(struct event_command *cmd_ops,
+ 	int ret = 0;
+ 
+ 	if (glob && strlen(glob)) {
+-		last_cmd_set(param);
+ 		hist_err_clear();
++		last_cmd_set(file, param);
+ 	}
+ 
+ 	if (!param)
 -- 
 1.9.3
