@@ -1,345 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754015AbeDLPLs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 11:11:48 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:42540 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753113AbeDLPLo (ORCPT
+        id S1753666AbeDLPMK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 11:12:10 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:35833 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753662AbeDLPJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 11:11:44 -0400
-X-Google-Smtp-Source: AIpwx48MNkQUZ+a0zE8FgLyUMywxaHWBwogG4OSbozKYhx9jy2Wo1JueQI9a5hQIuVt/lhkKgzIoP2Q5Aw21iBj7Vrk=
-MIME-Version: 1.0
-In-Reply-To: <d1d1c262-41ae-1725-7ae0-16d63ac3d372@arm.com>
-References: <1523309796-36423-1-git-send-email-gengdongjiu@huawei.com>
- <1523309796-36423-3-git-send-email-gengdongjiu@huawei.com> <d1d1c262-41ae-1725-7ae0-16d63ac3d372@arm.com>
-From: gengdongjiu <gengdj.1984@gmail.com>
-Date: Thu, 12 Apr 2018 23:11:42 +0800
-Message-ID: <CAMj-D2DR2H+6CW5QtZmT0HRptD1hxruNtq=cRpxD7ytqzQij9w@mail.gmail.com>
-Subject: Re: [PATCH v11 2/4] arm/arm64: KVM: Add KVM_GET/SET_VCPU_EVENTS
-To: James Morse <james.morse@arm.com>, cdall@kernel.org
-Cc: Dongjiu Geng <gengdongjiu@huawei.com>, devel@acpica.org,
-        linux-doc@vger.kernel.org, kvm@vger.kernel.org, corbet@lwn.net,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, rjw@rjwysocki.net,
-        linux@armlinux.org.uk, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, zhengxiang9@huawei.com, bp@alien8.de,
-        linux-arm-kernel@lists.infradead.org, huangshaoyu@huawei.com,
-        kvmarm@lists.cs.columbia.edu, christoffer.dall@linaro.org,
-        lenb@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 12 Apr 2018 11:09:05 -0400
+X-Google-Smtp-Source: AIpwx490My0v1aokR4MHfG8krTUjhgKCBvrDAygZnnkV0Ykaex6lOBT2c/NpdgSEuEn1iwsl8B+4aQ==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 28/35] Revert "vfs: add flags to d_real()"
+Date: Thu, 12 Apr 2018 17:08:19 +0200
+Message-Id: <20180412150826.20988-29-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180412150826.20988-1-mszeredi@redhat.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
-  Thanks for the comments.
+This reverts commit 495e642939114478a5237a7d91661ba93b76f15a.
 
-2018-04-10 22:15 GMT+08:00, James Morse <james.morse@arm.com>:
-> Hi Dongjiu Geng,
->
-> On 09/04/18 22:36, Dongjiu Geng wrote:
->> This new IOCTL exports user-invisible states related to SError.
->> Together with appropriate user space changes, it can inject
->> SError with specified syndrome to guest by setup kvm_vcpu_events
->> value.
->
->> Also it can support live migration.
->
-> Could you explain what user-space is expected to do for this?
-> (this is also relevant for snapshot-ing/suspending VMs)
-Ok.
+No user of "flags" argument of d_real() remain.
 
->
-> It's probably worth noting that this solves an existing problem: KVM may
-> make an
-> SError pending, but user-space has no way to discover/migrate this.
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ Documentation/filesystems/Locking |  2 +-
+ Documentation/filesystems/vfs.txt |  2 +-
+ fs/open.c                         |  2 +-
+ fs/overlayfs/super.c              |  4 ++--
+ include/linux/dcache.h            | 11 +++++------
+ include/linux/fs.h                |  2 +-
+ 6 files changed, 11 insertions(+), 12 deletions(-)
 
-if KVM make an SError pending, when user-space do migration, it get the
-kvm_vcpu_events through KVM_GET_VCPU_EVENTS, then can find that pending status.
-What are the things you're worried about?
-
->
->
->> diff --git a/Documentation/virtual/kvm/api.txt
->> b/Documentation/virtual/kvm/api.txt
->> index 8a3d708..45719b4 100644
->> --- a/Documentation/virtual/kvm/api.txt
->> +++ b/Documentation/virtual/kvm/api.txt
->> @@ -819,11 +819,13 @@ struct kvm_clock_data {
->>
->>  Capability: KVM_CAP_VCPU_EVENTS
->>  Extended by: KVM_CAP_INTR_SHADOW
->> -Architectures: x86
->> +Architectures: x86, arm, arm64
->>  Type: vm ioctl
->>  Parameters: struct kvm_vcpu_event (out)
->>  Returns: 0 on success, -1 on error
->>
->> +X86:
->> +
->>  Gets currently pending exceptions, interrupts, and NMIs as well as
->> related
->>  states of the vcpu.
->>
->> @@ -865,15 +867,31 @@ Only two fields are defined in the flags field:
->>  - KVM_VCPUEVENT_VALID_SMM may be set in the flags field to signal that
->>    smi contains a valid state.
->>
->> +ARM, ARM64:
->> +
->> +Gets currently pending SError exceptions as well as related states of the
->> vcpu.
->> +
->> +struct kvm_vcpu_events {
->> +	struct {
->> +		__u8 serror_pending;
->> +		__u8 serror_has_esr;
->> +		/* Align it to 4 bytes */
->> +		__u8 pad[2];
->> +		__u64 serror_esr;
->> +	} exception;
->> +};
->> +
->
-> I'm not convinced we should change this struct from the layout/size x86 has.
-> Its
-> confusing for the documentation, is this API call really the same on all
-> architectures?
->
-> What if we want to add some future interrupt, NMI or related state? We've
-> found
-> ourselves needing to add this API, it seems odd to remove its other uses on
-> x86.
-> We can't put them back in the future.
->
-> Having a different layout would force user-space to ifdef/duplicate any
-> code
-> that accesses this between architectures.
- In x86 and arm64 user space code, the handling logic of
-KVM_GET/SET_VCPU_EVENTS is in different ARCH folder,  maybe it is not
-necessary to share the handling code in the user space.
-
->
->
->
-> The compiler will want that __u64 to be naturally aligned to 8-bytes, so
-> your
-> 4-byte padding still causes some secret compiler-padding to be inserted.
-> Different versions of the compiler may put it in different places.
->
->
->>  4.32 KVM_SET_VCPU_EVENTS
->>
->>  Capability: KVM_CAP_VCPU_EVENTS
->>  Extended by: KVM_CAP_INTR_SHADOW
->> -Architectures: x86
->> +Architectures: x86, arm, arm64
->>  Type: vm ioctl
->>  Parameters: struct kvm_vcpu_event (in)
->>  Returns: 0 on success, -1 on error
->>
->> +X86:
->> +
->>  Set pending exceptions, interrupts, and NMIs as well as related states of
->> the
->>  vcpu.
->>
->> @@ -894,6 +912,12 @@ shall be written into the VCPU.
->>
->>  KVM_VCPUEVENT_VALID_SMM can only be set if KVM_CAP_X86_SMM is available.
->>
->> +ARM, ARM64:
->> +
->> +Set pending SError exceptions as well as related states of the vcpu.
->> +
->> +See KVM_GET_VCPU_EVENTS for the data structure.
->> +
->>
->>  4.33 KVM_GET_DEBUGREGS
->>
->
->
->> diff --git a/arch/arm64/include/uapi/asm/kvm.h
->> b/arch/arm64/include/uapi/asm/kvm.h
->> index 9abbf30..855cc9a 100644
->> --- a/arch/arm64/include/uapi/asm/kvm.h
->> +++ b/arch/arm64/include/uapi/asm/kvm.h
->> @@ -39,6 +39,7 @@
->>  #define __KVM_HAVE_GUEST_DEBUG
->>  #define __KVM_HAVE_IRQ_LINE
->>  #define __KVM_HAVE_READONLY_MEM
->> +#define __KVM_HAVE_VCPU_EVENTS
->>
->>  #define KVM_COALESCED_MMIO_PAGE_OFFSET 1
->>
->> @@ -153,6 +154,17 @@ struct kvm_sync_regs {
->>  struct kvm_arch_memory_slot {
->>  };
->>
->> +/* for KVM_GET/SET_VCPU_EVENTS */
->> +struct kvm_vcpu_events {
->> +	struct {
->> +		__u8 serror_pending;
->> +		__u8 serror_has_esr;
->
->> +		/* Align it to 4 bytes */
->> +		__u8 pad[2];
->
-> (padding noted above)
->
->
->> +		__u64 serror_esr;
->> +	} exception;
->> +};
->> +
->>  /* If you need to interpret the index values, here is the key: */
->>  #define KVM_REG_ARM_COPROC_MASK		0x000000000FFF0000
->>  #define KVM_REG_ARM_COPROC_SHIFT	16
->
->
->> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
->> index 5c7f657..42e1222 100644
->> --- a/arch/arm64/kvm/guest.c
->> +++ b/arch/arm64/kvm/guest.c
->> @@ -277,6 +277,37 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu
->> *vcpu,
->>  	return -EINVAL;
->>  }
->>
->> +int kvm_arm_vcpu_get_events(struct kvm_vcpu *vcpu,
->> +			struct kvm_vcpu_events *events)
->> +{
->> +	events->exception.serror_pending = (vcpu_get_hcr(vcpu) & HCR_VSE);
->> +	events->exception.serror_has_esr =
->> +			cpus_have_const_cap(ARM64_HAS_RAS_EXTN) &&
->> +					(!!vcpu_get_vsesr(vcpu));
->
->> +	events->exception.serror_esr = vcpu_get_vsesr(vcpu);
->
-> This will return a stale ESR even if nothing is pending. On systems without
-> the
-> RAS extensions it will return 'ESR_ELx_ISV' if kvm_inject_vabt() has ever
-> been
-> called for this CPU.
->
-> Could we hide this behind (pending && has_esr), setting it to 0 otherwise.
-> This
-> is just to avoid exposing the stale value.
-Exactly, it is indeed.
-
->
->
->> +
->> +	return 0;
->> +}
->
->> +int kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
->> +			struct kvm_vcpu_events *events)
->> +{
->> +	bool injected = events->exception.serror_pending;
->> +	bool has_esr = events->exception.serror_has_esr;
->> +
->> +	if (injected && has_esr) {
->> +		if (!cpus_have_const_cap(ARM64_HAS_RAS_EXTN))
->> +			return -EINVAL;
->> +
->> +		kvm_set_sei_esr(vcpu, events->exception.serror_esr);
->> +
->> +	} else if (injected) {
->> +		kvm_inject_vabt(vcpu);
->
-> Nit: looks like 'injected' is misnamed.
-
-"injected" change to "pending"?
-
->
->
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>  int __attribute_const__ kvm_target_cpu(void)
->>  {
->>  	unsigned long implementor = read_cpuid_implementor();
->
->
->> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
->> index 38c8a64..20e919a 100644
->> --- a/arch/arm64/kvm/reset.c
->> +++ b/arch/arm64/kvm/reset.c
->> @@ -82,6 +82,7 @@ int kvm_arch_dev_ioctl_check_extension(struct kvm *kvm,
->> long ext)
->>  		break;
->>  	case KVM_CAP_SET_GUEST_DEBUG:
->>  	case KVM_CAP_VCPU_ATTRIBUTES:
->> +	case KVM_CAP_VCPU_EVENTS:
->>  		r = 1;
->>  		break;
->>  	default:
->
->> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
->> index 7e3941f..945655d 100644
->> --- a/virt/kvm/arm/arm.c
->> +++ b/virt/kvm/arm/arm.c
->> @@ -1051,6 +1051,27 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
->>  			return -EFAULT;
->>  		return kvm_arm_vcpu_has_attr(vcpu, &attr);
->>  	}
->> +	case KVM_GET_VCPU_EVENTS: {
->> +		struct kvm_vcpu_events events;
->> +
->> +		memset(&events, 0, sizeof(struct kvm_vcpu_events));
->
-> sizeof(events) is the normal style here, it means if someone changes
-> event's
-> type we don't get any surprises...
-
-Ok, thanks
-
->
->
->> +		if (kvm_arm_vcpu_get_events(vcpu, &events))
->> +			return -EINVAL;
->> +
->> +		if (copy_to_user(argp, &events, sizeof(struct kvm_vcpu_events)))
->
-> sizeof(events)
-thanks
-
->
->
->> +			return -EFAULT;
->> +
->> +		return 0;
->> +	}
->> +	case KVM_SET_VCPU_EVENTS: {
->> +		struct kvm_vcpu_events events;
->> +
->> +		if (copy_from_user(&events, argp,
->> +				sizeof(struct kvm_vcpu_events)))
->> +			return -EFAULT;
->> +
->> +		return kvm_arm_vcpu_set_events(vcpu, &events);
->> +	}
->>  	default:
->>  		return -EINVAL;
->>  	}
->>
->
-> Despite KVM_CAP_VCPU_EVENTS not being advertised on 32bit, any attempt to
-> call
-> it will still end up in here, but will always fail as the {g,s}et_events()
-> calls
-> always return -EINVAL. I don't think this will cause us any problems.
-What are the things you're worried about?
-
->
->
-> Thanks,
->
-> James
-> _______________________________________________
-> kvmarm mailing list
-> kvmarm@lists.cs.columbia.edu
-> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
->
+diff --git a/Documentation/filesystems/Locking b/Documentation/filesystems/Locking
+index 60e76060baff..a4afe96f0112 100644
+--- a/Documentation/filesystems/Locking
++++ b/Documentation/filesystems/Locking
+@@ -22,7 +22,7 @@ prototypes:
+ 	struct vfsmount *(*d_automount)(struct path *path);
+ 	int (*d_manage)(const struct path *, bool);
+ 	struct dentry *(*d_real)(struct dentry *, const struct inode *,
+-				 unsigned int, unsigned int);
++				 unsigned int);
+ 
+ locking rules:
+ 		rename_lock	->d_lock	may block	rcu-walk
+diff --git a/Documentation/filesystems/vfs.txt b/Documentation/filesystems/vfs.txt
+index 2bc77ea8aef4..af54d3651ff8 100644
+--- a/Documentation/filesystems/vfs.txt
++++ b/Documentation/filesystems/vfs.txt
+@@ -991,7 +991,7 @@ struct dentry_operations {
+ 	struct vfsmount *(*d_automount)(struct path *);
+ 	int (*d_manage)(const struct path *, bool);
+ 	struct dentry *(*d_real)(struct dentry *, const struct inode *,
+-				 unsigned int, unsigned int);
++				 unsigned int);
+ };
+ 
+   d_revalidate: called when the VFS needs to revalidate a dentry. This
+diff --git a/fs/open.c b/fs/open.c
+index 00b1f18475ba..73f3d0f35742 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -96,7 +96,7 @@ long vfs_truncate(const struct path *path, loff_t length)
+ 	 * write access on the upper inode, not on the overlay inode.  For
+ 	 * non-overlay filesystems d_real() is an identity function.
+ 	 */
+-	upperdentry = d_real(path->dentry, NULL, O_WRONLY, 0);
++	upperdentry = d_real(path->dentry, NULL, O_WRONLY);
+ 	error = PTR_ERR(upperdentry);
+ 	if (IS_ERR(upperdentry))
+ 		goto mnt_drop_write_and_out;
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 006dc70d7425..7779fc610767 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -98,7 +98,7 @@ static int ovl_check_append_only(struct inode *inode, int flag)
+ 
+ static struct dentry *ovl_d_real(struct dentry *dentry,
+ 				 const struct inode *inode,
+-				 unsigned int open_flags, unsigned int flags)
++				 unsigned int open_flags)
+ {
+ 	struct dentry *real;
+ 	int err;
+@@ -134,7 +134,7 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
+ 		goto bug;
+ 
+ 	/* Handle recursion */
+-	real = d_real(real, inode, open_flags, 0);
++	real = d_real(real, inode, open_flags);
+ 
+ 	if (!inode || inode == d_inode(real))
+ 		return real;
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index 4c7ab11c627a..8ca25ea3b9db 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -148,7 +148,7 @@ struct dentry_operations {
+ 	struct vfsmount *(*d_automount)(struct path *);
+ 	int (*d_manage)(const struct path *, bool);
+ 	struct dentry *(*d_real)(struct dentry *, const struct inode *,
+-				 unsigned int, unsigned int);
++				 unsigned int);
+ } ____cacheline_aligned;
+ 
+ /*
+@@ -569,8 +569,7 @@ static inline struct dentry *d_backing_dentry(struct dentry *upper)
+  * d_real - Return the real dentry
+  * @dentry: the dentry to query
+  * @inode: inode to select the dentry from multiple layers (can be NULL)
+- * @open_flags: open flags to control copy-up behavior
+- * @flags: flags to control what is returned by this function
++ * @flags: open flags to control copy-up behavior
+  *
+  * If dentry is on a union/overlay, then return the underlying, real dentry.
+  * Otherwise return the dentry itself.
+@@ -579,10 +578,10 @@ static inline struct dentry *d_backing_dentry(struct dentry *upper)
+  */
+ static inline struct dentry *d_real(struct dentry *dentry,
+ 				    const struct inode *inode,
+-				    unsigned int open_flags, unsigned int flags)
++				    unsigned int flags)
+ {
+ 	if (unlikely(dentry->d_flags & DCACHE_OP_REAL))
+-		return dentry->d_op->d_real(dentry, inode, open_flags, flags);
++		return dentry->d_op->d_real(dentry, inode, flags);
+ 	else
+ 		return dentry;
+ }
+@@ -597,7 +596,7 @@ static inline struct dentry *d_real(struct dentry *dentry,
+ static inline struct inode *d_real_inode(const struct dentry *dentry)
+ {
+ 	/* This usage of d_real() results in const dentry */
+-	return d_backing_inode(d_real((struct dentry *) dentry, NULL, 0, 0));
++	return d_backing_inode(d_real((struct dentry *) dentry, NULL, 0));
+ }
+ 
+ struct name_snapshot {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 5e5dd484937f..5294697217b7 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1244,7 +1244,7 @@ static inline struct inode *file_inode(const struct file *f)
+ 
+ static inline struct dentry *file_dentry(const struct file *file)
+ {
+-	return d_real(file->f_path.dentry, file_inode(file), 0, 0);
++	return d_real(file->f_path.dentry, file_inode(file), 0);
+ }
+ 
+ static inline int locks_lock_file_wait(struct file *filp, struct file_lock *fl)
+-- 
+2.14.3
