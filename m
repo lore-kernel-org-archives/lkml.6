@@ -1,119 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752198AbeDLJdJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 05:33:09 -0400
-Received: from mga01.intel.com ([192.55.52.88]:34730 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750763AbeDLJdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 05:33:08 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,441,1517904000";
-   d="scan'208";a="31502075"
-Date: Thu, 12 Apr 2018 15:07:36 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        Eric Long <eric.long@spreadtrum.com>, Mark Brown <broonie@kernel.org>,
-        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/5] dmaengine: sprd: Add Spreadtrum DMA configuration
-Message-ID: <20180412093735.GF6014@localhost>
-References: <abdda9da96185f764d58bbf61db9010d0f72d1b3.1523346135.git.baolin.wang@linaro.org>
- <0c2b76aba6a49e583f920ae582d6815fa9cc4361.1523346135.git.baolin.wang@linaro.org>
- <20180411093634.GC6014@localhost>
- <CAMz4kuJyKNNuR9WGP8F1NKAET6ZTtN4LtXTTtdnR3Zyxa+OjNw@mail.gmail.com>
+        id S1752483AbeDLJfb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 05:35:31 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36352 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751272AbeDLJfa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 05:35:30 -0400
+X-Google-Smtp-Source: AIpwx4/nCrG3YYibifUKyMwJl3Qp3feYCc78uzDeH9chGPByUkweD0gvL9CZk2xFQAUJjytdf8duNQ==
+Date: Thu, 12 Apr 2018 11:35:21 +0200
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andy Whitcroft <apw@canonical.com>, yuankuiz@codeaurora.org,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>, paulmck@linux.vnet.ibm.com,
+        Len Brown <len.brown@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] checkpatch: Add a --strict test for structs with bool
+ member definitions
+Message-ID: <20180412093521.GA6427@andrea>
+References: <20180410123305.GF4082@hirez.programming.kicks-ass.net>
+ <e22fb871b1b7f2fda4b22f3a24e0d7f092eb612c.camel@perches.com>
+ <95477c93db187bab6da8a8ba7c57836868446179.camel@perches.com>
+ <20180410143950.4b8526073b4e3e34689f68cb@linux-foundation.org>
+ <b3d75281c3a7b4b217b612913894b346eaa3288b.camel@perches.com>
+ <20180410150011.df9e036f57b5bcac7ac19686@linux-foundation.org>
+ <20180411081502.GJ4082@hirez.programming.kicks-ass.net>
+ <20180411092959.e666ec443e4d3bb6f43901d7@linux-foundation.org>
+ <20180411170049.GR4082@hirez.programming.kicks-ass.net>
+ <20180412074719.pmcddramzyikppco@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMz4kuJyKNNuR9WGP8F1NKAET6ZTtN4LtXTTtdnR3Zyxa+OjNw@mail.gmail.com>
+In-Reply-To: <20180412074719.pmcddramzyikppco@gmail.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 08:13:28PM +0800, Baolin Wang wrote:
-> Hi Vinod,
-> 
-> On 11 April 2018 at 17:36, Vinod Koul <vinod.koul@intel.com> wrote:
-> > On Tue, Apr 10, 2018 at 03:46:06PM +0800, Baolin Wang wrote:
-> >
-> >> +/*
-> >> + * struct sprd_dma_config - DMA configuration structure
-> >> + * @config: dma slave channel config
-> >> + * @fragment_len: specify one fragment transfer length
-> >> + * @block_len: specify one block transfer length
-> >> + * @transcation_len: specify one transcation transfer length
-> >> + * @wrap_ptr: wrap pointer address, once the transfer address reaches the
-> >> + * 'wrap_ptr', the next transfer address will jump to the 'wrap_to' address.
-> >> + * @wrap_to: wrap jump to address
-> >> + * @req_mode: specify the DMA request mode
-> >> + * @int_mode: specify the DMA interrupt type
-> >> + */
-> >> +struct sprd_dma_config {
-> >> +     struct dma_slave_config config;
-> >> +     u32 fragment_len;
-> >
-> > why not use _maxburst?
-> 
-> Yes, I can use maxburst.
-> 
-> >
-> >> +     u32 block_len;
-> >> +     u32 transcation_len;
-> >
-> > what does block and transaction len refer to here
-> 
->  Our DMA has 3 transfer mode: transaction transfer, block transfer and
-> fragment transfer. One transaction transfer can contain several blocks
-> transfer, and each block can be set proper block step. One block can
-> contain several fragments transfer with proper fragment step. It can
-> generate interrupts when one transaction transfer or block transfer or
-> fragment transfer is completed if user set the interrupt type. So here
-> we should set the length for transaction transfer, block transfer and
-> fragment transfer.
+Hi,
 
-what are the max size these types support?
+On Thu, Apr 12, 2018 at 09:47:19AM +0200, Ingo Molnar wrote:
+> 
+> * Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > I still have room in my /dev/null mailbox for pure checkpatch patches.
+> > 
+> > > (ooh, https://lkml.org/lkml/2017/11/21/384 is working this morning)
+> > 
+> > Yes, we really should not use lkml.org for references. Sadly google
+> > displays it very prominently when you search for something.
+> 
+> lkml.org is nice in emails that have a short expected life time and relevance - 
+> but it probably shouldn't be used for permanent references such as kernel 
+> messages, code comments and Git log entries.
+
+Is there a better or recommended way to reference posts on LKML in commit
+messages? (I do like the idea of linking to previous discussions, results,
+...)
+
+  Andrea
+
 
 > 
-> >
-> >> +     phys_addr_t wrap_ptr;
-> >> +     phys_addr_t wrap_to;
-> >
-> > this sound sg_list to me, why are we not using that here
+> Thanks,
 > 
-> It is similar to sg list, but it is not one software action, we have
-> hardware registers to help to jump one specified address.
-> 
-> >
-> >> +     enum sprd_dma_req_mode req_mode;
-> >
-> > Looking at definition of request mode we have frag, block, transaction list
-> > etc.. That should depend upon dma request. If you have been asked to
-> > transfer a list, you shall configure list mode. if it is a single
-> > transaction then it should be transaction mode!
-> 
-> If I understand your points correctly, you mean we can specify the
-> request mode when requesting one slave channel by
-> 'dma_request_slave_channel()'. But we need change the request mode
-> dynamically following different transfer task for this channel, so I
-> am afraid we can not specify the request mode of this channel at
-> requesting time.
-
-Nope a channel has nothing to do with request type. You request and grab a
-channel. Then you prepare a descriptor for a dma transaction. Based on
-transaction requested you should intelligently break it down and create a
-descriptor which uses transaction/block/fragment so that DMA throughput is
-efficient. If prepare has sg list then you should use link list mode.
-Further if you support max length, say 16KB and request is for 20KB you may
-break it down for link list with two segments.
-
-Each prep call has flags associated, that can help you configure interrupt
-behaviour.
-
-Btw other dma controllers have similar capabilities and driver manages these
-:)
-
--- 
-~Vinod
+> 	Ingo
