@@ -1,125 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752573AbeDLURQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 16:17:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41250 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752488AbeDLURM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 16:17:12 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F1FD21777
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=djwong@kernel.org
-Date: Thu, 12 Apr 2018 13:17:11 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>
-Subject: [GIT PULL] xfs: cleanups & fixes for 4.17
-Message-ID: <20180412201711.GA32099@magnolia>
+        id S1752706AbeDLUTY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 16:19:24 -0400
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:43546 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752098AbeDLUTX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 16:19:23 -0400
+X-IronPort-AV: E=Sophos;i="5.48,443,1517875200";
+   d="scan'208";a="715754147"
+From: KarimAllah Ahmed <karahmed@amazon.de>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: KarimAllah Ahmed <karahmed@amazon.de>,
+        Jim Mattson <jmattson@google.com>, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH v4 1/2] X86/KVM: Properly update 'tsc_offset' to represent the running guest
+Date: Thu, 12 Apr 2018 22:19:06 +0200
+Message-Id: <1523564347-8896-1-git-send-email-karahmed@amazon.de>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Update 'tsc_offset' on vmenty/vmexit of L2 guests to ensure that it always
+captures the TSC_OFFSET of the running guest whether it is the L1 or L2
+guest.
 
-Here's the second round of patches for XFS for 4.17.  Most of these are
-code cleanups, but there are a couple of notable use-after-free bug
-fixes.
+Cc: Jim Mattson <jmattson@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+---
+v1 -> v2:
 
-This series has been run through a full xfstests run over the week
-and through a quick xfstests run against this morning's master, with no
-major failures reported.  Let me know if there are any merge problems.
+- Rewrote the patch to always update tsc_offset to represent the current
+  guest (pbonzini@)
+---
+ arch/x86/include/asm/kvm_host.h |  1 +
+ arch/x86/kvm/vmx.c              | 25 ++++++++++++++++++++-----
+ arch/x86/kvm/x86.c              |  9 ++++++++-
+ 3 files changed, 29 insertions(+), 6 deletions(-)
 
---D
-
-The following changes since commit dc1baa715bbfbb1902da942d06497e79b40e7bc7:
-
-  xfs: do not log/recover swapext extent owner changes for deleted inodes (2018-03-29 10:19:15 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-4.17-merge-4
-
-for you to fetch changes up to 8c81dd46ef3c416b3b95e3020fb90dbd44e6140b:
-
-  Force log to disk before reading the AGF during a fstrim (2018-04-10 22:39:04 -0700)
-
-----------------------------------------------------------------
-Changes since last update:
-- Cleanup unnecessary function call parameters
-- Fix a use-after-free bug when aborting logging intents
-- Refactor filestreams state data to avoid use-after-free bug
-- Fix incorrect removal of cow extents when truncating extended
-  attributes.
-- Refactor open-coded __set_page_dirty in favor of using vfs function.
-- Fix a deadlock when fstrim and fs shutdown race.
-
-----------------------------------------------------------------
-Carlos Maiolino (1):
-      Force log to disk before reading the AGF during a fstrim
-
-Chandan Rajendra (1):
-      xfs: Remove "committed" argument of xfs_dir_ialloc
-
-Christoph Hellwig (1):
-      xfs: remove filestream item xfs_inode reference
-
-Darrick J. Wong (1):
-      xfs: only cancel cow blocks when truncating the data fork
-
-Dave Chinner (1):
-      xfs: fix intent use-after-free on abort
-
-Eric Sandeen (1):
-      xfs: non-scrub - remove unused function parameters
-
-Matthew Wilcox (1):
-      Export __set_page_dirty
-
- fs/buffer.c                        |  3 ++-
- fs/xfs/libxfs/xfs_alloc.c          |  6 ++----
- fs/xfs/libxfs/xfs_alloc.h          |  5 ++---
- fs/xfs/libxfs/xfs_bmap.c           |  3 +--
- fs/xfs/libxfs/xfs_bmap.h           |  2 +-
- fs/xfs/libxfs/xfs_btree.c          |  2 --
- fs/xfs/libxfs/xfs_btree.h          |  6 ++----
- fs/xfs/libxfs/xfs_ialloc.c         |  2 +-
- fs/xfs/libxfs/xfs_ialloc_btree.c   |  2 +-
- fs/xfs/libxfs/xfs_refcount.c       | 22 ++++++++-------------
- fs/xfs/libxfs/xfs_refcount_btree.c |  5 ++---
- fs/xfs/libxfs/xfs_refcount_btree.h |  3 +--
- fs/xfs/libxfs/xfs_rmap.c           |  3 +--
- fs/xfs/libxfs/xfs_rmap_btree.c     |  5 ++---
- fs/xfs/libxfs/xfs_rmap_btree.h     |  2 +-
- fs/xfs/libxfs/xfs_sb.c             | 10 ++++------
- fs/xfs/libxfs/xfs_trans_resv.c     | 10 ++++------
- fs/xfs/xfs_aops.c                  | 15 ++-------------
- fs/xfs/xfs_bmap_item.c             | 39 +++++++++++++++++++-------------------
- fs/xfs/xfs_bmap_util.c             |  3 +--
- fs/xfs/xfs_buf.c                   |  1 -
- fs/xfs/xfs_buf.h                   |  2 +-
- fs/xfs/xfs_discard.c               | 14 +++++++-------
- fs/xfs/xfs_extfree_item.c          | 38 ++++++++++++++++++-------------------
- fs/xfs/xfs_filestream.c            | 21 ++++++++++----------
- fs/xfs/xfs_inode.c                 | 31 ++++++++++++------------------
- fs/xfs/xfs_inode.h                 |  6 +++---
- fs/xfs/xfs_iops.c                  |  2 +-
- fs/xfs/xfs_log.c                   |  1 -
- fs/xfs/xfs_log.h                   |  3 +--
- fs/xfs/xfs_log_cil.c               |  2 +-
- fs/xfs/xfs_mru_cache.c             |  8 +++++---
- fs/xfs/xfs_mru_cache.h             |  8 ++++----
- fs/xfs/xfs_qm.c                    |  4 +---
- fs/xfs/xfs_refcount_item.c         | 39 +++++++++++++++++++-------------------
- fs/xfs/xfs_rmap_item.c             | 38 ++++++++++++++++++-------------------
- fs/xfs/xfs_super.c                 | 13 ++++++-------
- fs/xfs/xfs_symlink.c               |  2 +-
- fs/xfs/xfs_trace.h                 | 14 +++++++-------
- include/linux/mm.h                 |  1 +
- 40 files changed, 177 insertions(+), 219 deletions(-)
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 9fa4f57..3bedfef 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1015,6 +1015,7 @@ struct kvm_x86_ops {
+ 
+ 	bool (*has_wbinvd_exit)(void);
+ 
++	u64 (*read_l1_tsc_offset)(struct kvm_vcpu *vcpu);
+ 	void (*write_tsc_offset)(struct kvm_vcpu *vcpu, u64 offset);
+ 
+ 	void (*get_exit_info)(struct kvm_vcpu *vcpu, u64 *info1, u64 *info2);
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index cff2f50..9e7dd39 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -2895,6 +2895,17 @@ static u64 guest_read_tsc(struct kvm_vcpu *vcpu)
+ 	return kvm_scale_tsc(vcpu, host_tsc) + tsc_offset;
+ }
+ 
++static u64 vmx_read_l1_tsc_offset(struct kvm_vcpu *vcpu)
++{
++	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
++
++	if (is_guest_mode(vcpu) &&
++	    (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING))
++		return vcpu->arch.tsc_offset - vmcs12->tsc_offset;
++
++	return vcpu->arch.tsc_offset;
++}
++
+ /*
+  * writes 'offset' into guest's timestamp counter offset register
+  */
+@@ -11163,11 +11174,8 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
+ 		vmcs_write64(GUEST_IA32_PAT, vmx->vcpu.arch.pat);
+ 	}
+ 
+-	if (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING)
+-		vmcs_write64(TSC_OFFSET,
+-			vcpu->arch.tsc_offset + vmcs12->tsc_offset);
+-	else
+-		vmcs_write64(TSC_OFFSET, vcpu->arch.tsc_offset);
++	vmcs_write64(TSC_OFFSET, vcpu->arch.tsc_offset);
++
+ 	if (kvm_has_tsc_control)
+ 		decache_tsc_multiplier(vmx);
+ 
+@@ -11469,6 +11477,9 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+ 	if (enable_shadow_vmcs)
+ 		copy_shadow_to_vmcs12(vmx);
+ 
++	if (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING)
++		vcpu->arch.tsc_offset += vmcs12->tsc_offset;
++
+ 	/*
+ 	 * The nested entry process starts with enforcing various prerequisites
+ 	 * on vmcs12 as required by the Intel SDM, and act appropriately when
+@@ -12015,6 +12026,9 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
+ 
+ 	leave_guest_mode(vcpu);
+ 
++	if (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING)
++		vcpu->arch.tsc_offset -= vmcs12->tsc_offset;
++
+ 	if (likely(!vmx->fail)) {
+ 		if (exit_reason == -1)
+ 			sync_vmcs12(vcpu, vmcs12);
+@@ -12688,6 +12702,7 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
+ 
+ 	.has_wbinvd_exit = cpu_has_vmx_wbinvd_exit,
+ 
++	.read_l1_tsc_offset = vmx_read_l1_tsc_offset,
+ 	.write_tsc_offset = vmx_write_tsc_offset,
+ 
+ 	.set_tdp_cr3 = vmx_set_cr3,
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index ac42c85..3fb1353 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1532,7 +1532,14 @@ static u64 kvm_compute_tsc_offset(struct kvm_vcpu *vcpu, u64 target_tsc)
+ 
+ u64 kvm_read_l1_tsc(struct kvm_vcpu *vcpu, u64 host_tsc)
+ {
+-	return vcpu->arch.tsc_offset + kvm_scale_tsc(vcpu, host_tsc);
++	u64 tsc_offset;
++
++	if (kvm_x86_ops->read_l1_tsc_offset)
++		tsc_offset = kvm_x86_ops->read_l1_tsc_offset(vcpu);
++	else
++		tsc_offset = vcpu->arch.tsc_offset;
++
++	return tsc_offset + kvm_scale_tsc(vcpu, host_tsc);
+ }
+ EXPORT_SYMBOL_GPL(kvm_read_l1_tsc);
+ 
+-- 
+2.7.4
