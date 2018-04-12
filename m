@@ -1,102 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753231AbeDLQRm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 12:17:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:35114 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753182AbeDLQRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 12:17:40 -0400
-From: James Morse <james.morse@arm.com>
-Subject: Re: [PATCH v11 0/4] set VSESR_EL2 by user space and support
- NOTIFY_SEI notification
-To: gengdongjiu <gengdongjiu@huawei.com>
-Cc: rkrcmar@redhat.com, corbet@lwn.net, christoffer.dall@linaro.org,
-        marc.zyngier@arm.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
-        rjw@rjwysocki.net, bp@alien8.de, lenb@kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-acpi@vger.kernel.org, devel@acpica.org, huangshaoyu@huawei.com,
-        zhengxiang9@huawei.com
-References: <1523309796-36423-1-git-send-email-gengdongjiu@huawei.com>
- <d94439b6-9b9a-9bd0-ddec-3bb63ede9461@arm.com>
- <5161fb31-e5bb-872c-3e12-d7d38326aaca@huawei.com>
-Message-ID: <eb65baf4-abb0-570f-f3af-61f505c9de10@arm.com>
-Date: Thu, 12 Apr 2018 17:14:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752940AbeDLQUt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 12:20:49 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:58667 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752652AbeDLQUs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 12:20:48 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T.40rwP_1523550025;
+Subject: Re: [v3 PATCH] mm: introduce arg_lock to protect arg_start|end and
+ env_start|end in mm_struct
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Cyrill Gorcunov <gorcunov@gmail.com>, adobriyan@gmail.com,
+        willy@infradead.org, mguzik@redhat.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1523310774-40300-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180410090917.GZ21835@dhcp22.suse.cz> <20180410094047.GB2041@uranus.lan>
+ <20180410104215.GB21835@dhcp22.suse.cz> <20180410110242.GC2041@uranus.lan>
+ <20180410111001.GD21835@dhcp22.suse.cz> <20180410122804.GD2041@uranus.lan>
+ <097488c7-ab18-367b-c435-7c26d149c619@linux.alibaba.com>
+ <8c19f1fb-7baf-fef3-032d-4e93cfc63932@linux.alibaba.com>
+ <20180412121801.GE23400@dhcp22.suse.cz>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <49c17035-1b8c-5fa3-9944-33467589d1f1@linux.alibaba.com>
+Date: Thu, 12 Apr 2018 09:20:24 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <5161fb31-e5bb-872c-3e12-d7d38326aaca@huawei.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180412121801.GE23400@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi gengdongjiu,
 
-On 12/04/18 07:09, gengdongjiu wrote:
-> On 2018/4/10 22:15, James Morse wrote:
->> On 09/04/18 22:36, Dongjiu Geng wrote:
->>> 1. Detect whether KVM can set set guest SError syndrome
->>> 2. Support to Set VSESR_EL2 and inject SError by user space.
->>> 3. Support live migration to keep SError pending state and VSESR_EL2 value.
->>> 4. ACPI 6.1 adds support for NOTIFY_SEI as a GHES notification mechanism, so support this
->>>    notification in software, KVM or kernel ARCH code call handle_guest_sei() to let ACP driver
->>>    to handle this notification.
+
+On 4/12/18 5:18 AM, Michal Hocko wrote:
+> On Tue 10-04-18 11:28:13, Yang Shi wrote:
 >>
->> Please don't post code during the merge-window, will this apply to v4.17-rc1? We
->> can't know until its tagged.
-
-Posting code during the merge-window isn't helpful as the kernel is a moving
-target, its better to wait for an 'rc' to base it on.
-
-> I do not know when it is merge-window. About the apply version, it does not have limited.
-
-'git fetch' Linus' tree and look at the tags. 'v4.16' lost its '-rc' suffixes,
-and there isn't a 'v4.17-rc1' yet, so we are still in the merge window.
-
-Linus sends a message to LKML. eg:
-https://lkml.org/lkml/2018/4/1/175
-
-net-next closes shortly before the merge window, and re-opens afterwards. There
-is a handy web page:
-http://vger.kernel.org/~davem/net-next.html
-
-
->> This series is doing two separate things, please split it into two series.
-> OK, thanks!
-> 
+>> On 4/10/18 9:21 AM, Yang Shi wrote:
+>>>
+>>> On 4/10/18 5:28 AM, Cyrill Gorcunov wrote:
+>>>> On Tue, Apr 10, 2018 at 01:10:01PM +0200, Michal Hocko wrote:
+>>>>>> Because do_brk does vma manipulations, for this reason it's
+>>>>>> running under down_write_killable(&mm->mmap_sem). Or you
+>>>>>> mean something else?
+>>>>> Yes, all we need the new lock for is to get a consistent view on brk
+>>>>> values. I am simply asking whether there is something fundamentally
+>>>>> wrong by doing the update inside the new lock while keeping the
+>>>>> original
+>>>>> mmap_sem locking in the brk path. That would allow us to drop the
+>>>>> mmap_sem lock in the proc path when looking at brk values.
+>>>> Michal gimme some time. I guess  we might do so, but I need some
+>>>> spare time to take more precise look into the code, hopefully today
+>>>> evening. Also I've a suspicion that we've wracked check_data_rlimit
+>>>> with this new lock in prctl. Need to verify it again.
+>>> I see you guys points. We might be able to move the drop of mmap_sem
+>>> before setting mm->brk in sys_brk since mmap_sem should be used to
+>>> protect vma manipulation only, then protect the value modify with the
+>>> new arg_lock. Then we can eliminate mmap_sem stuff in prctl path, and it
+>>> also prevents from wrecking check_data_rlimit.
+>>>
+>>> At the first glance, it looks feasible to me. Will look into deeper
+>>> later.
+>> A further look told me this might be *not* feasible.
 >>
->> But on the ACPI front: I don't see how any OS can support your NOTIFY_SEI when
->> firmware is ignoring the normal world's PSTATE.A.
+>> It looks the new lock will not break check_data_rlimit since in my patch
+>> both start_brk and brk is protected by mmap_sem. The code flow might look
+>> like below:
 >>
->> The latest lobe of that discussion was on the list here:
->> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1611496.html
-> I have replied the mail.
-> I still have some questions that need to clarify with you.
-> After clarification, we will follow that.
-> The question is in the reply of this mail "https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1611496.html"
+>> CPU A                             CPU B
+>> --------                       --------
+>> prctl                               sys_brk
+>>                                        down_write
+>> check_data_rlimit           check_data_rlimit (need mm->start_brk)
+>>                                        set brk
+>> down_write                    up_write
+>> set start_brk
+>> set brk
+>> up_write
+>>
+>>
+>> If CPU A gets the mmap_sem first, it will set start_brk and brk, then CPU B
+>> will check with the new start_brk. And, prctl doesn't care if sys_brk is run
+>> before it since it gets the new start_brk and brk from parameter.
+>>
+>> If we protect start_brk and brk with the new lock, sys_brk might get old
+>> start_brk, then sys_brk might break rlimit check silently, is that right?
+>>
+>> So, it looks using new lock in prctl and keeping mmap_sem in brk path has
+>> race condition.
+> OK, I've admittedly didn't give it too much time to think about. Maybe
+> we do something clever to remove the race but can we start at least by
+> reducing the write lock to read on prctl side and use the dedicated
+> spinlock for updating values? That should close the above race AFAICS
+> and the read lock would be much more friendly to other VM operations.
 
-Lets keep that discussion on v9 then.
+Yes, is sounds feasible. We just need care about prctl is run before 
+sys_brk. So, you mean:
+
+down_read
+spin_lock
+update all the values
+spin_unlock
+up_read
 
 
->> As it is, we would need to spot SError being delivered while SError is masked,
->> spray nasty messages about firmware being horrifically buggy, then panic(). For
->> a corrected error, this looks bad, but its preferable to letting firmware
->> silently overwrite the exception registers, causing linux to spin through the
->> vectors 'eret' with all exceptions masked.
->> I still think its best to wait for firmware that does the right thing.
-
-> Let us  discuss that in another mail.
-> In a summary, I think firmware follow below rule can be OK, right?
-> 1. The exception came from the EL that SError should be routed to(according to hcr_EL2.{AMO, TGE}),but PSTATE.A was set, EL3 firmware can't deliver SError;
-
-> 2. The exception came from the EL that SError should not be routed to(according to hcr_EL2.{AMO, TGE}),even though the PSTATE.A was set,EL3 firmware still deliver SError
-
-Problem here, more on v9.
-
-
-Thanks,
-
-James
+>
