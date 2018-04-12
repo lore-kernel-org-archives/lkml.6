@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752017AbeDLJFA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 05:05:00 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:56025 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751611AbeDLJE6 (ORCPT
+        id S1752383AbeDLJGm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 05:06:42 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:45962 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751855AbeDLJGk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 05:04:58 -0400
-X-Google-Smtp-Source: AIpwx4+9wFlb3KTU8R73bLG4NwZUZnU9kLFWiWqgJIlGs5zsZGvjFhCz8Cl/gacRAgqdXXcn8IsHZg2e3A8BerRoGPM=
+        Thu, 12 Apr 2018 05:06:40 -0400
+X-Google-Smtp-Source: AIpwx4/MK45Rr9X5a6dSINUVz07GHK6K3EJcChoZ0qS12X2ZG/47NFZ9+TDAOjxWM0shGplrph7Wjg6RulWsn6D+aSU=
 MIME-Version: 1.0
-In-Reply-To: <20180404172258.7678-4-manivannan.sadhasivam@linaro.org>
-References: <20180404172258.7678-1-manivannan.sadhasivam@linaro.org> <20180404172258.7678-4-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180404172258.7678-8-manivannan.sadhasivam@linaro.org>
+References: <20180404172258.7678-1-manivannan.sadhasivam@linaro.org> <20180404172258.7678-8-manivannan.sadhasivam@linaro.org>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 12 Apr 2018 11:04:57 +0200
-Message-ID: <CACRpkdZPOSDenSORGVLPuJKPP_iE97mZLXHJLcF2kH5wKPw=tg@mail.gmail.com>
-Subject: Re: [PATCH v7 3/9] pinctrl: actions: Add Actions S900 pinctrl driver
+Date: Thu, 12 Apr 2018 11:06:39 +0200
+Message-ID: <CACRpkdaP68mn6GP5fg8eJMDswAiKRrBF5aLj+coGQraPsS-RMA@mail.gmail.com>
+Subject: Re: [PATCH v7 7/9] gpio: Add gpio driver for Actions OWL S900 SoC
 To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Cc: Rob Herring <robh+dt@kernel.org>,
         =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
@@ -38,25 +38,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Wed, Apr 4, 2018 at 7:22 PM, Manivannan Sadhasivam
 <manivannan.sadhasivam@linaro.org> wrote:
 
-> Add pinctrl driver for Actions Semi S900 SoC. The driver supports
-> pinctrl, pinmux and pinconf functionalities through a range of registers
-> common to both gpio driver and pinctrl driver.
+> Add gpio driver for Actions Semi OWL family S900 SoC. Set of registers
+> controlling the gpio shares the same register range with pinctrl block.
 >
-> Pinmux functionality is available only for the pin groups while the
-> pinconf functionality is available for both pin groups and individual
-> pins.
+> GPIO registers are organized as 6 banks and each bank controls the
+> maximum of 32 gpios.
 >
 > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Patch applied for v4.18
+Patch applied for v4.18.
 
-GOOD WORK!
-
-We really need to get this in so that Andreas can work on S500
-patches with this as a base.
-
-If any review comments still remain they can surely be addressed
-with incremental improvement patches.
+Again: excellent work.
 
 Yours,
 Linus Walleij
