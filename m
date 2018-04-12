@@ -1,99 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752530AbeDLBem (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 21:34:42 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:59824 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751858AbeDLBei (ORCPT
+        id S1752627AbeDLBlI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 21:41:08 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:14445 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751870AbeDLBlH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 21:34:38 -0400
-Date: Thu, 12 Apr 2018 04:34:35 +0300
-From: "Dmitry V. Levin" <ldv@altlinux.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-sparc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
- kill() returns wrong values in si_pid and si_uid
-Message-ID: <20180412013435.GA21219@altlinux.org>
-Mail-Followup-To: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-sparc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180409152253.GD10489@altlinux.org>
+        Wed, 11 Apr 2018 21:41:07 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="38797416"
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+To: <x86@kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <rjw@rjwysocki.net>, <len.brown@intel.com>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>
+Subject: [PATCH] x86/acpi: Prevent X2APIC id 0xffffffff from being accounted
+Date: Thu, 12 Apr 2018 09:40:52 +0800
+Message-ID: <20180412014052.25186-1-douly.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.14.3
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
-Content-Disposition: inline
-In-Reply-To: <20180409152253.GD10489@altlinux.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: 864464724003.A6C74
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+RongQing reported that there are some X2APIC id 0xffffffff in his machine's
+ACPI MADT table, which made the number of possible CPU inaccuracy.
 
---J2SCkAp4GZ/dPZZf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The reason is that the ACPI X2APIC parser has no sanity check for
+apicid 0xffffffff, which is an invalid id in all APIC types. See
+"Intel® 64 Architecture x2APIC Specification", Chapter 2.4.1.
 
-Hi,
+Add a sanity check to acpi_parse_x2apic() which ignores the invalid id.
 
-On Mon, Apr 09, 2018 at 06:22:53PM +0300, Dmitry V. Levin wrote:
-> There seems to be a regression in v4.16 on ppc compat very similar
-> to sparc compat regression reported earlier at
-> https://marc.info/?l=3Dlinux-sparc&m=3D151501500704383 .
->=20
-> The symptoms are exactly the same: the same signal_receive test from
-> the strace test suite fails with the same diagnostics:
-> https://build.opensuse.org/public/build/home:ldv_alt/openSUSE_Factory_Pow=
-erPC/ppc/strace/_log
+Reported-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+---
+ arch/x86/kernel/acpi/boot.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-The log is big, just look for "KERNEL BUG".
-
-> Unfortunately, I do not have any means to investigate further,
-> so just passing this information on to those who care.
-
-OK, the faulty commit is v4.16-rc1~159^2~39
-("signal/powerpc: Document conflicts with SI_USER and SIGFPE and SIGTRAP").
-
-One might think that a commit called "Document conflicts" shouldn't
-introduce an ABI regression, but this one definitely does by defining
-FPE_FIXME and TRAP_FIXME in arch/powerpc/include/uapi/asm/siginfo.h
-that affect siginfo_layout().
-
-A similar commit v4.16-rc1~159^2~37
-("signal/arm: Document conflicts with SI_USER and SIGFPE") must have
-introduced a similar ABI regression to compat arm.
-
-An earlier commit v4.14-rc1~60^2^2~5
-("signal/sparc: Document a conflict with SI_USER with SIGFPE") introduced
-a similar ABI regression to compat sparc.
-
-There is a clear pattern of sneaking in ABI changes using innocently
-looking commit messages.
-
-
---=20
-ldv
-
---J2SCkAp4GZ/dPZZf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJazrerAAoJEAVFT+BVnCUIChMQAJxouuxIeyN9pi7FZQztb3Fr
-hU39sGuyIpVMJ50K4dJq/3Yo+t+q+8AUWSg8sHQEqe4JzRR26dhVr8cYr6XsBftY
-x6+qiWhvBGoTZbpJbBmZFrkaCWEjgTws8W9YBUzoYxLLNLCWAXrcf6UGL9kQmZqY
-I7GdvUlsO6B9xFFaQOkgpqNizI7N5mI0dV+SoMdgMs0psoq0C+1vDmG6lknDzdi1
-mqLffdhMisnO+mdL+ixp3keV0daIjN7liDclCX0pxBzedNm4ilc3FwSPvxpjhwsB
-di6WJ9CiBjHRpl65jz9E8DVz6+FFdPf1pKCD650vPTmA7XnFOTeALaYTPUUsPovW
-vXTY/3SLDgmD++vWd5PwJrkxo1I3rk0CifGcoQn4UTHXOzGHZunkETpS/PSoXFc4
-AhSQVEjlMARxedt0wmTE3m13tUwttiRz4kT9vJrnd9nchYg6Bc/SwhrSxjJYyWUJ
-DwsBFowrdKR9Bt67QZKaAU17hq9zPBZ3IxpnZ1ZbvTk62T8pmZQheve1YO69w0dg
-gB5gLlmwKOMJ/ZS8H/fD4ro257j/gMEhfVRroCwPzKSQ+fm7h+XEHSFK7yl6DQ28
-tGIOuyqGADAX7A/CS8BkuAe0WezklG5JphMiEaU4ClLxLb0Nz5avGYvY19UgtE7U
-7E7ani2qtbR2nf97TPi3
-=Xlro
------END PGP SIGNATURE-----
-
---J2SCkAp4GZ/dPZZf--
+diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
+index dde444f932c1..3b20607d581b 100644
+--- a/arch/x86/kernel/acpi/boot.c
++++ b/arch/x86/kernel/acpi/boot.c
+@@ -215,6 +215,10 @@ acpi_parse_x2apic(struct acpi_subtable_header *header, const unsigned long end)
+ 	apic_id = processor->local_apic_id;
+ 	enabled = processor->lapic_flags & ACPI_MADT_ENABLED;
+ 
++	/* Ignore invalid ID */
++	if (apic_id == 0xffffffff)
++		return 0;
++
+ 	/*
+ 	 * We need to register disabled CPU as well to permit
+ 	 * counting disabled CPUs. This allows us to size
+-- 
+2.14.3
