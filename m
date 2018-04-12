@@ -1,153 +1,162 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-891931-1523946198-2-6833290422107698212
+X-Cyrus-Session-Id: sloti22d1t05-1582956-1523557977-2-12993992791143416578
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523946197; b=O9X8ydtknOLaUDFN3fnd04s70yNtrtDRXusbrifrVFrCkgj2aP
-    H1zt0ePUeRk2uOmqHiDloe4tq0Z74XycWuX7TD5T9fsu+JBvKwrmhzn1WywKZOzC
-    Hqes62SCPdkw++rODOkK8dDUbRiaYFA5XEVXSPF62rsEUxI+TGk2mcxkmvSJnCU8
-    Y6RT9M8mDu1wb9FCBVCTpGGDxj9QGRKfQ+Bn5Ijw/ek+5R5im3lRBtUg4A+5YsaG
-    5QUnmFRMvAL+kNz44NdXtMi9DUuci43RTsrRkPXgwYsvt3kD8P/aP6FAsNVVEvt5
-    4kvB3lqZM4f7EGR6smm/foQnMcZlthW42Y4A==
+    1523557976; b=bL2LJ7YUy6TVQmyIa7WngkeQ+TYT0Hl4ulGGwlA8VDAy2noWDW
+    hAGxVRdIb1J5lB5kNch8kltlRYih+hEWEhfm1JxEFb5ocoQZnhauWw5Y3YgFdUC6
+    xrDktGd104Gk/mS0mKyFs9ZZ6K48kD4SxW44ucPAlD/vbO1sPvp8UdcFRTOzbfep
+    +EoXhsi42mjkHwdBrlAit6IffTi2Gh7ISOs9Q/WxK0rVfnynkaBGMS3+zY7Kfk+Z
+    deuDWjP5FyycGcTBFs8xY8sKxJFkuSwYkWMaY5xHr9TKuNMMmVawthXsZX9tQkMw
+    ocjqjxfOnt0KzU5m6ukVgEvYeqnnTo0+RF4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523946197; bh=mtnNg27hXt5NUoEPvbLzqKttLuW/rW
-    JJ2J1hX3tgv+Q=; b=RtRK+pRgGeKFjIB7Px7bg8v13EmGzuEVb6xB1/5DhE1+ha
-    RNMgIwZo0G0YDGFyp3VLChDaM+pKty/Q//AjCzs0pXxdmTH3SPPbogMedO8OIhgJ
-    igetvo+IpHEosrzOS0cZXZTCfrgSNv5CUepoU6ZN7nWAPcyoRro625OVu7MG4CQA
-    DuGjXeu+fK1a+crBcoW7cqUE5peelYCGMboGshVKHrIeC26OQvUCEadxEnJlgeIS
-    S41yxfhdDeNb4yPhWC7NuA/L93gWGIhgeJLW/YCJW+YlaCCITbt3b2apjg1xZefU
-    dOH4YEPWKNx+HhVpMmzReMbCP2FV93GRdh3J2XfQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    messagingengine.com; h=cc:subject:to:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523557976;
+    bh=pXSiezbeROvtDlfeA7/PSwklw57nTOl64afMcXsijs4=; b=ss6ZsN9jNYNh
+    i/rV28cqZfvIkr5zxWUb8OJak4fMm90QoDmYjl3u2nUccO4D337DjQCATm2d4K7J
+    Xz6RqQe3CeI/gmLR5tFUbEsDyDFs3XhrPOOW3+DXUavJFfJyFSVmV1BoCq7D6vGh
+    q6+3NQZWxh5sMCf+GdO4a6IT3Vjz11TF84CeLjo7EcjuBRxjJzs2tAYwf57AiNhS
+    keL6IHtM/bzeJgub0OWiX9rrFoaoarjMfRhF7o4altl7Q3XDBuBZBS7erZEGsX6e
+    OfNCnj2HfCLAzF4vXh9UWP6hiP8kyVnGF6eFnm3eDVUuH8TeXuMf97jn/WqfTmD4
+    PfsDt+Y1/g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HxYoPwIk x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=e7DeYd+1;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HxYoPwIk x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=e7DeYd+1;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMkTvevUEPNatKnZ5YD96zQcA2HzkX3kusIeQQ63ZUdc7o0WeJ+blfGe7EMHFUloBPRKpIagX8xQnaPCcfFHG9lvvf+YOauhKUinaIKQUzF6QeMiRIpR
-    u3JTmr/cqAni1J0xqVAP5ceJpBBaFOyj3B/tEeYg2UWWjlVN75vtib+BkEwQn8vvPszM8vKpx5ICjZt274R6oHQrT2Q3UAA85oZr9w+FEWPClKeWWY986OtV
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=WTNleGlrAjYN4qDeeRgA:9 a=mKWq3M7MdLggV_PW:21
-    a=Xwkrn7m-LCcaa3yX:21 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfONZjWczTtJHEqeDuWIe6o2TdUp5xqJk/J8fzeRYDywrSTp0SlWpUA4ZdNjRgkFII6sYteKmJ0LQ3SB7bAuSM6t0ZTbUxR9H0cQ0NkxYThL4NGMYjP25
+    bPoSZNV+0/XbraZAYh9MtU2fbmhS3lU8NgzjIj/3VF2ITKYIR3qU/bCMUSXTyd1UfpYYbZmfvmFh4obGe9yEbeX88BJgfnfpm2JXJACQSwwn26224KVd+9FZ
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
+    a=ZvkwkgPurpcA:10 a=xqWC_Br6kY4A:10 a=4_-BN3WEXhEA:10 a=Kd1tUaAdevIA:10
+    a=1XWaLZrsAAAA:8 a=Sg8HuZxHAAAA:8 a=VwQbUJbxAAAA:8 a=GcyzOjIWAAAA:8
+    a=gpI8acLqhJ06iL_wKUgA:9 a=OKn5u0scoi39EwHP:21 a=Ug62Kmh5orO8b7MT:21
+    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=JFlNBosjgyz61O-hmi61:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=hQL3dl6oAZ8NdCsdz28n:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751096AbeDQGXQ (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 17 Apr 2018 02:23:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35875 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750831AbeDQGXP (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Tue, 17 Apr 2018 02:23:15 -0400
-Date: Tue, 17 Apr 2018 08:23:10 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Jann Horn <jannh@google.com>
-Cc: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-man <linux-man@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
+        id S1753148AbeDLScr (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 12 Apr 2018 14:32:47 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38710 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752937AbeDLScp (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 12 Apr 2018 14:32:45 -0400
+X-Google-Smtp-Source: AIpwx48gKvFYuuAdObpIaxBfPL7Na/OHz8wUWizsxLDupy0W5y8zfW5s2Wie/NRTAy0EmZgn5qLdIw==
+Cc: mtk.manpages@gmail.com
 Subject: Re: [PATCH] mmap.2: MAP_FIXED is okay if the address range has been
  reserved
-Message-ID: <20180417062310.GW17484@dhcp22.suse.cz>
-References: <CAG48ez3-xtmAt2EpRFR8GNKKPcsDsyg7XdwQ=D5w3Ym6w4Krjw@mail.gmail.com>
- <CAG48ez1PdzMs8hkatbzSLBWYucjTc75o8ovSmeC66+e9mLvSfA@mail.gmail.com>
- <20180416100736.GG17484@dhcp22.suse.cz>
- <CAG48ez3DwRXMtiinUWKnan6hAppLYLdx-w+VzXG6ubioZUacQg@mail.gmail.com>
- <20180416191805.GS17484@dhcp22.suse.cz>
- <CAG48ez1nf96nHj8a+aZy22RwqYTUZBGrsGFcz=ZhZBUWzaEZ9w@mail.gmail.com>
- <20180416195726.GT17484@dhcp22.suse.cz>
- <CAG48ez1bV_zZP3Y2ioDndP+H8mLCcxOtU1vCbWe7Q8myEGfXQQ@mail.gmail.com>
- <20180416211115.GU17484@dhcp22.suse.cz>
- <CAG48ez2fXcQS7sw_aCC6_wBKjYphOxFRN4rrRzSk2+-T_mFaxw@mail.gmail.com>
+To: Jann Horn <jannh@google.com>, linux-man@vger.kernel.org,
+        mhocko@kernel.org, jhubbard@nvidia.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+References: <20180412153941.170849-1-jannh@google.com>
+From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <3ff7472c-23c8-402b-ddfb-871a749c5016@gmail.com>
+Date: Thu, 12 Apr 2018 20:32:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez2fXcQS7sw_aCC6_wBKjYphOxFRN4rrRzSk2+-T_mFaxw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180412153941.170849-1-jannh@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon 16-04-18 23:12:48, Jann Horn wrote:
-> On Mon, Apr 16, 2018 at 11:11 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> > On Mon 16-04-18 22:17:40, Jann Horn wrote:
-> >> On Mon, Apr 16, 2018 at 9:57 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> >> > On Mon 16-04-18 21:30:09, Jann Horn wrote:
-> >> >> On Mon, Apr 16, 2018 at 9:18 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> >> > [...]
-> >> >> > Yes, reasonably well written application will not have this problem.
-> >> >> > That, however, requires an external synchronization and that's why
-> >> >> > called it error prone and racy. I guess that was the main motivation for
-> >> >> > that part of the man page.
-> >> >>
-> >> >> What requires external synchronization? I still don't understand at
-> >> >> all what you're talking about.
-> >> >>
-> >> >> The following code:
-> >> >>
-> >> >> void *try_to_alloc_addr(void *hint, size_t len) {
-> >> >>   char *x = mmap(hint, len, ...);
-> >> >>   if (x == MAP_FAILED) return NULL;
-> >> >>   if (x == hint) return x;
-> >> >
-> >> > Any other thread can modify the address space at this moment.
-> >>
-> >> But not parts of the address space that were returned by this mmap() call.
-> > ?
-> >> > Just
-> >> > consider that another thread would does mmap(x, MAP_FIXED) (or any other
-> >> > address overlapping [x, x+len] range)
-> >>
-> >> If the other thread does that without previously having created a
-> >> mapping covering the area in question, that would be a bug in the
-> >> other thread.
-> >
-> > MAP_FIXED is sometimes used without preallocated address ranges.
+Hello Jann,
+
+On 04/12/2018 05:39 PM, Jann Horn wrote:
+> Clarify that MAP_FIXED is appropriate if the specified address range has
+> been reserved using an existing mapping, but shouldn't be used otherwise.
 > 
-> Wow, really? Can you point to an example?
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+>  man2/mmap.2 | 19 +++++++++++--------
+>  1 file changed, 11 insertions(+), 8 deletions(-)
+> 
+> diff --git a/man2/mmap.2 b/man2/mmap.2
+> index bef8b4432..80c9ec285 100644
+> --- a/man2/mmap.2
+> +++ b/man2/mmap.2
+> @@ -253,8 +253,9 @@ Software that aspires to be portable should use this option with care,
+>  keeping in mind that the exact layout of a process's memory mappings
+>  is allowed to change significantly between kernel versions,
+>  C library versions, and operating system releases.
+> -Furthermore, this option is extremely hazardous (when used on its own),
+> -because it forcibly removes preexisting mappings,
+> +This option should only be used when the specified memory region has
+> +already been reserved using another mapping; otherwise, it is extremely
+> +hazardous because it forcibly removes preexisting mappings,
+>  making it easy for a multithreaded process to corrupt its own address space.
+>  .IP
+>  For example, suppose that thread A looks through
+> @@ -284,13 +285,15 @@ and the PAM libraries
+>  .UR http://www.linux-pam.org
+>  .UE .
+>  .IP
+> -Newer kernels
+> -(Linux 4.17 and later) have a
+> +For cases in which the specified memory region has not been reserved using an
+> +existing mapping, newer kernels (Linux 4.17 and later) provide an option
+>  .B MAP_FIXED_NOREPLACE
+> -option that avoids the corruption problem; if available,
+> -.B MAP_FIXED_NOREPLACE
+> -should be preferred over
+> -.BR MAP_FIXED .
+> +that should be used instead; older kernels require the caller to use
+> +.I addr
+> +as a hint (without
+> +.BR MAP_FIXED )
+> +and take appropriate action if the kernel places the new mapping at a
+> +different address.
+>  .TP
+>  .BR MAP_FIXED_NOREPLACE " (since Linux 4.17)"
+>  .\" commit a4ff8e8620d3f4f50ac4b41e8067b7d395056843
 
-Just from top of my head.
+Thanks! Nice patch! Applied.
 
-Some of that is for historical reasons because the hint address used to
-be ignored on some operating systems so MAP_FIXED had to be used.
+Cheers,
 
-Currently not user I guess but MAP_FIXED for addresses above 47b address
-space AFAIR.
+Michael
 
-And I am pretty sure there would be much more if you actually browsed
-code search.
+
+
 -- 
-Michal Hocko
-SUSE Labs
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
