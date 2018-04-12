@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753107AbeDLLOz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 07:14:55 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:43343 "EHLO
+        id S1753164AbeDLLPE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 07:15:04 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:40536 "EHLO
         mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753042AbeDLLOw (ORCPT
+        with ESMTP id S1753114AbeDLLO5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 07:14:52 -0400
-X-Google-Smtp-Source: AIpwx49leVkWeY/kz02qHj5PfVRAjjZpMnPXBQxGhbQDKTczzkoUEB+B34QFgu3WcwiWcR9UHiDR0w==
+        Thu, 12 Apr 2018 07:14:57 -0400
+X-Google-Smtp-Source: AIpwx4+oizIAQjwuqY4opZcQAGIRiVpy20nn0UkfcUZiZkNEjgsnl5wrvpLQXQQt2Khn3T4TdIa29Q==
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -22,11 +22,10 @@ Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
         Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH v7 07/26] PM / Domains: Add genpd governor for CPUs
-Date: Thu, 12 Apr 2018 13:14:12 +0200
-Message-Id: <1523531671-27491-8-git-send-email-ulf.hansson@linaro.org>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v7 10/26] dt: psci: Update DT bindings to support hierarchical PSCI states
+Date: Thu, 12 Apr 2018 13:14:15 +0200
+Message-Id: <1523531671-27491-11-git-send-email-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
 References: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
@@ -34,138 +33,189 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As it's now perfectly possible that a PM domain managed by genpd contains
-devices belonging to CPUs, we should start to take into account the
-residency values for the idle states during the state selection process.
-The residency value specifies the minimum duration of time, the CPU or a
-group of CPUs, needs to spend in an idle state to not waste energy entering
-it.
+From: Lina Iyer <lina.iyer@linaro.org>
 
-To deal with this, let's add a new genpd governor, pm_domain_cpu_gov, that
-may be used for a PM domain that have CPU devices attached or if the CPUs
-are attached through subdomains.
+Update DT bindings to represent hierarchical CPU and CPU PM domain idle
+states for PSCI. Also update the PSCI examples to clearly show how
+flattened and hierarchical idle states can be represented in DT.
 
-The new governor computes the minimum expected idle duration time for the
-online CPUs being attached to the PM domain and its subdomains. Then in the
-state selection process, trying the deepest state first, it verifies that
-the idle duration time satisfies the state's residency value.
-
-It should be noted that, when computing the minimum expected idle duration
-time, we use the information from tick_nohz_get_next_wakeup(), to find the
-next wakeup for the related CPUs. Future wise, this may deserve to be
-improved, as there are more reasons to why a CPU may be woken up from idle.
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc: Lina Iyer <ilina@codeaurora.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/base/power/domain_governor.c | 58 ++++++++++++++++++++++++++++++++++++
- include/linux/pm_domain.h            |  2 ++
- 2 files changed, 60 insertions(+)
+ Documentation/devicetree/bindings/arm/psci.txt | 156 +++++++++++++++++++++++++
+ 1 file changed, 156 insertions(+)
 
-diff --git a/drivers/base/power/domain_governor.c b/drivers/base/power/domain_governor.c
-index 99896fb..1aad557 100644
---- a/drivers/base/power/domain_governor.c
-+++ b/drivers/base/power/domain_governor.c
-@@ -10,6 +10,9 @@
- #include <linux/pm_domain.h>
- #include <linux/pm_qos.h>
- #include <linux/hrtimer.h>
-+#include <linux/cpumask.h>
-+#include <linux/ktime.h>
-+#include <linux/tick.h>
+diff --git a/Documentation/devicetree/bindings/arm/psci.txt b/Documentation/devicetree/bindings/arm/psci.txt
+index a2c4f1d..17aa3d3 100644
+--- a/Documentation/devicetree/bindings/arm/psci.txt
++++ b/Documentation/devicetree/bindings/arm/psci.txt
+@@ -105,7 +105,163 @@ Case 3: PSCI v0.2 and PSCI v0.1.
+ 		...
+ 	};
  
- static int dev_update_qos_constraint(struct device *dev, void *data)
- {
-@@ -245,6 +248,56 @@ static bool always_on_power_down_ok(struct dev_pm_domain *domain)
- 	return false;
- }
- 
-+static bool cpu_power_down_ok(struct dev_pm_domain *pd)
-+{
-+	struct generic_pm_domain *genpd = pd_to_genpd(pd);
-+	ktime_t domain_wakeup, cpu_wakeup;
-+	s64 idle_duration_ns;
-+	int cpu, i;
++ARM systems can have multiple cores sometimes in hierarchical arrangement.
++This often, but not always, maps directly to the processor power topology of
++the system. Individual nodes in a topology have their own specific power states
++and can be better represented in DT hierarchically.
 +
-+	if (!(genpd->flags & GENPD_FLAG_CPU_DOMAIN))
-+		return true;
++For these cases, the definitions of the idle states for the CPUs and the CPU
++topology, must conform to the domain idle state specification [3]. The domain
++idle states themselves, must be compatible with the defined 'domain-idle-state'
++binding [1], and also need to specify the arm,psci-suspend-param property for
++each idle state.
 +
-+	/*
-+	 * Find the next wakeup for any of the online CPUs within the PM domain
-+	 * and its subdomains. Note, we only need the genpd->cpus, as it already
-+	 * contains a mask of all CPUs from subdomains.
-+	 */
-+	domain_wakeup = ktime_set(KTIME_SEC_MAX, 0);
-+	for_each_cpu_and(cpu, genpd->cpus, cpu_online_mask) {
-+		cpu_wakeup = tick_nohz_get_next_wakeup(cpu);
-+		if (ktime_before(cpu_wakeup, domain_wakeup))
-+			domain_wakeup = cpu_wakeup;
-+	}
++DT allows representing CPUs and CPU idle states in two different ways -
 +
-+	/* The minimum idle duration is from now - until the next wakeup. */
-+	idle_duration_ns = ktime_to_ns(ktime_sub(domain_wakeup, ktime_get()));
++The flattened model as given in Example 1, lists CPU's idle states followed by
++the domain idle state that the CPUs may choose. Note that the idle states are
++all compatible with "arm,idle-state".
 +
-+	/*
-+	 * Find the deepest idle state that has its residency value satisfied
-+	 * and by also taking into account the power off latency for the state.
-+	 * Start at the deepest supported state.
-+	 */
-+	i = genpd->state_count - 1;
-+	do {
-+		if (!genpd->states[i].residency_ns)
-+			break;
++Example 2 represents the hierarchical model of CPUs and domain idle states.
++CPUs define their domain provider in their psci DT node. The domain controls
++the power to the CPU and possibly other h/w blocks that would enter an idle
++state along with the CPU. The CPU's idle states may therefore be considered as
++the domain's idle states and have the compatible "arm,idle-state". Such domains
++may also be embedded within another domain that may represent common h/w blocks
++between these CPUs. The idle states of the CPU topology shall be represented as
++the domain's idle states.
 +
-+		/* Check idle_duration_ns >= 0 to compare signed/unsigned. */
-+		if (idle_duration_ns >= 0 && idle_duration_ns >=
-+		    (genpd->states[i].residency_ns +
-+		     genpd->states[i].power_off_latency_ns))
-+			break;
-+		i--;
-+	} while (i >= 0);
++In PSCI firmware v1.0, the OS-Initiated mode is introduced. In order to use it,
++the hierarchical representation must be used.
 +
-+	if (i < 0)
-+		return false;
++Example 1: Flattened representation of CPU and domain idle states
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+	genpd->state_idx = i;
-+	return true;
-+}
++		CPU0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x0>;
++			enable-method = "psci";
++			cpu-idle-states = <&CPU_PWRDN>, <&CLUSTER_RET>,
++					  <&CLUSTER_PWRDN>;
++		};
 +
- struct dev_power_governor simple_qos_governor = {
- 	.suspend_ok = default_suspend_ok,
- 	.power_down_ok = default_power_down_ok,
-@@ -257,3 +310,8 @@ struct dev_power_governor pm_domain_always_on_gov = {
- 	.power_down_ok = always_on_power_down_ok,
- 	.suspend_ok = default_suspend_ok,
- };
++		CPU1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a57", "arm,armv8";
++			reg = <0x100>;
++			enable-method = "psci";
++			cpu-idle-states = <&CPU_PWRDN>, <&CLUSTER_RET>,
++					  <&CLUSTER_PWRDN>;
++		};
 +
-+struct dev_power_governor pm_domain_cpu_gov = {
-+	.suspend_ok = NULL,
-+	.power_down_ok = cpu_power_down_ok,
-+};
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index ccd7c94..8f60181 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -161,6 +161,7 @@ extern int dev_pm_genpd_set_performance_state(struct device *dev,
- 
- extern struct dev_power_governor simple_qos_governor;
- extern struct dev_power_governor pm_domain_always_on_gov;
-+extern struct dev_power_governor pm_domain_cpu_gov;
- #else
- 
- static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
-@@ -206,6 +207,7 @@ static inline int dev_pm_genpd_set_performance_state(struct device *dev,
- 
- #define simple_qos_governor		(*(struct dev_power_governor *)(NULL))
- #define pm_domain_always_on_gov		(*(struct dev_power_governor *)(NULL))
-+#define pm_domain_cpu_gov		(*(struct dev_power_governor *)(NULL))
- #endif
- 
- static inline int pm_genpd_add_device(struct generic_pm_domain *genpd,
++		idle-states {
++			CPU_PWRDN: cpu-power-down {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x000001>;
++				entry-latency-us = <10>;
++				exit-latency-us = <10>;
++				min-residency-us = <100>;
++			};
++
++			CLUSTER_RET: cluster-retention {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x1000010>;
++				entry-latency-us = <500>;
++				exit-latency-us = <500>;
++				min-residency-us = <2000>;
++			};
++
++			CLUSTER_PWRDN: cluster-power-down {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x1000030>;
++				entry-latency-us = <2000>;
++				exit-latency-us = <2000>;
++				min-residency-us = <6000>;
++			};
++	};
++
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
++
++Example 2: Hierarchical representation of CPU and domain idle states
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		CPU0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53", "arm,armv8";
++			reg = <0x0>;
++			enable-method = "psci";
++			power-domains = <&CPU_PD0>;
++		};
++
++		CPU1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a57", "arm,armv8";
++			reg = <0x100>;
++			enable-method = "psci";
++			power-domains = <&CPU_PD1>;
++		};
++
++		idle-states {
++			CPU_PWRDN: cpu-power-down {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x000001>;
++				entry-latency-us = <10>;
++				exit-latency-us = <10>;
++				min-residency-us = <100>;
++			};
++
++			CLUSTER_RET: cluster-retention {
++				compatible = "domain-idle-state";
++				arm,psci-suspend-param = <0x1000010>;
++				entry-latency-us = <500>;
++				exit-latency-us = <500>;
++				min-residency-us = <2000>;
++			};
++
++			CLUSTER_PWRDN: cluster-power-down {
++				compatible = "domain-idle-state";
++				arm,psci-suspend-param = <0x1000030>;
++				entry-latency-us = <2000>;
++				exit-latency-us = <2000>;
++				min-residency-us = <6000>;
++			};
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-1.0";
++		method = "smc";
++
++		CPU_PD0: cpu-pd0 {
++			#power-domain-cells = <0>;
++			domain-idle-states = <&CPU_PWRDN>;
++			power-domains = <&CLUSTER_PD>;
++		};
++
++		CPU_PD1: cpu-pd1 {
++			#power-domain-cells = <0>;
++			domain-idle-states =  <&CPU_PWRDN>;
++			power-domains = <&CLUSTER_PD>;
++		};
++
++		CLUSTER_PD: cluster-pd {
++			#power-domain-cells = <0>;
++			domain-idle-states = <&CLUSTER_RET>, <&CLUSTER_PWRDN>;
++		};
++	};
++
+ [1] Kernel documentation - ARM idle states bindings
+     Documentation/devicetree/bindings/arm/idle-states.txt
+ [2] Power State Coordination Interface (PSCI) specification
+     http://infocenter.arm.com/help/topic/com.arm.doc.den0022c/DEN0022C_Power_State_Coordination_Interface.pdf
++[3]. PM Domains description
++    Documentation/devicetree/bindings/power/power_domain.txt
 -- 
 2.7.4
