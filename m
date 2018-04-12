@@ -1,88 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751899AbeDLHl1 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 03:41:27 -0400
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:54540 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750743AbeDLHl0 (ORCPT
+        id S1752291AbeDLHrZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 03:47:25 -0400
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:36438 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750743AbeDLHrX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 03:41:26 -0400
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To: Michal Hocko <mhocko@kernel.org>
-CC: "linux-mm@kvack.org" <linux-mm@kvack.org>, Zi Yan <zi.yan@sent.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 0/2] mm: migrate: vm event counter for hugepage
- migration
-Thread-Topic: [PATCH v1 0/2] mm: migrate: vm event counter for hugepage
- migration
-Thread-Index: AQHT0WxxyRxBwyDghE6+dkLRphReNaP8EpCAgAAW0wA=
-Date: Thu, 12 Apr 2018 07:40:41 +0000
-Message-ID: <20180412074039.GA3340@hori1.linux.bs1.fc.nec.co.jp>
-References: <1523434167-19995-1-git-send-email-n-horiguchi@ah.jp.nec.com>
- <20180412061859.GR23400@dhcp22.suse.cz>
-In-Reply-To: <20180412061859.GR23400@dhcp22.suse.cz>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.128.101.30]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <26566DB56A5F954CB0641A6E02F3BC84@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Thu, 12 Apr 2018 03:47:23 -0400
+X-Google-Smtp-Source: AIpwx49BQFhWmS1UQKt0gexivqRmmqXkp8hFonV1xjiihaDonTzlueScuiCXIDfhobn3km70S5FZxQ==
+Date: Thu, 12 Apr 2018 09:47:19 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andy Whitcroft <apw@canonical.com>, yuankuiz@codeaurora.org,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>, paulmck@linux.vnet.ibm.com,
+        Len Brown <len.brown@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] checkpatch: Add a --strict test for structs with bool
+ member definitions
+Message-ID: <20180412074719.pmcddramzyikppco@gmail.com>
+References: <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>
+ <20180410123305.GF4082@hirez.programming.kicks-ass.net>
+ <e22fb871b1b7f2fda4b22f3a24e0d7f092eb612c.camel@perches.com>
+ <95477c93db187bab6da8a8ba7c57836868446179.camel@perches.com>
+ <20180410143950.4b8526073b4e3e34689f68cb@linux-foundation.org>
+ <b3d75281c3a7b4b217b612913894b346eaa3288b.camel@perches.com>
+ <20180410150011.df9e036f57b5bcac7ac19686@linux-foundation.org>
+ <20180411081502.GJ4082@hirez.programming.kicks-ass.net>
+ <20180411092959.e666ec443e4d3bb6f43901d7@linux-foundation.org>
+ <20180411170049.GR4082@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180411170049.GR4082@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 08:18:59AM +0200, Michal Hocko wrote:
-> On Wed 11-04-18 17:09:25, Naoya Horiguchi wrote:
-> > Hi everyone,
-> > 
-> > I wrote patches introducing separate vm event counters for hugepage migration
-> > (both for hugetlb and thp.)
-> > Hugepage migration is different from normal page migration in event frequency
-> > and/or how likely it succeeds, so maintaining statistics for them in mixed
-> > counters might not be helpful both for develors and users.
+
+* Peter Zijlstra <peterz@infradead.org> wrote:
+
+> I still have room in my /dev/null mailbox for pure checkpatch patches.
 > 
-> This is quite a lot of code to be added se we should better document
-> what it is intended for. Sure I understand your reasonaning about huge
-> pages are more likely to fail but is this really worth a separate
-> counter? Do you have an example of how this would be useful?
-
-Our customers periodically collect some log info to understand what
-happened after system failures happen.  Then if we have separate counters
-for hugepage migration and the values show some anomaly, that might
-help admins and developers understand the issue more quickly.
-We have other ways to get this info like checking /proc/pid/pagemap and
-/proc/kpageflags, but they are costly and most users decide not to
-collect them in periodical logging.
-
+> > (ooh, https://lkml.org/lkml/2017/11/21/384 is working this morning)
 > 
-> If we are there then what about different huge page sizes (for hugetlb)?
-> Do we need per-hstate stats?
+> Yes, we really should not use lkml.org for references. Sadly google
+> displays it very prominently when you search for something.
 
-Yes, per-hstate counters are better. And existing hugetlb counters
-htlb_buddy_alloc_* are also affected by this point.
-
-> 
-> In other words, is this really worth it?
-
-Actually, I'm not sure at this point.
+lkml.org is nice in emails that have a short expected life time and relevance - 
+but it probably shouldn't be used for permanent references such as kernel 
+messages, code comments and Git log entries.
 
 Thanks,
-Naoya Horiguchi
 
-> 
-> >  include/linux/vm_event_item.h |   7 +++
-> >  mm/migrate.c                  | 103 +++++++++++++++++++++++++++++++++++-------
-> >  mm/vmstat.c                   |   8 ++++
-> >  3 files changed, 102 insertions(+), 16 deletions(-)
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
+	Ingo
