@@ -1,111 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753315AbeDLSiK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 14:38:10 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:38347 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752962AbeDLSiJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 14:38:09 -0400
-X-Google-Smtp-Source: AIpwx4/cnPtOBda+DnqeoXn3fsA5ltRLuPTmX+3ZMCeLyAeCPQX+9HqgW4I86uD0OOuUlxzDZAODgA==
-Date: Thu, 12 Apr 2018 20:37:54 +0200
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Corentin Labbe <clabbe.montjoie@gmail.com>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Robert Abel <rabel@robertabel.eu>, Sean Young <sean@mess.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] auxdisplay for v4.17-rc1
-Message-ID: <20180412183754.lyql6ihg6tcegebi@gmail.com>
+        id S1753040AbeDLSlO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 14:41:14 -0400
+Received: from mout.gmx.net ([212.227.15.18]:57459 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752896AbeDLSlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 14:41:13 -0400
+Date: Thu, 12 Apr 2018 20:41:01 +0200
+From: Helge Deller <deller@gmx.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        John David Anglin <dave.anglin@bell.net>
+Subject: [GIT PULL] parisc architecture updates for 4.17-rc1
+Message-ID: <20180412184101.GA20775@ls3530.fritz.box>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: elm/2
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Provags-ID: V03:K1:zDPoHSFKcUq2LOoS9Dw63lMrmEhTKpERBgW6ziaYFZpnVNR2DEM
+ gjiInIYuj3Rv3iOK3GMTq6TnYTytYulQiyp62eEpvDWNUxGj2+uSJZ5NQ0yiTG34eyda6/H
+ zXXB9EOMD6ag3hLMcWaXxXotJpfrDVuwYWb4uWmk176mNo9YtyvRDRJmwlscmRXAdOF+kLL
+ D3O1EvswUvMN04bm20hPA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:O97sO+Y8QsY=:WBGUnN1N9B/fZpVv1i9/1+
+ okiQT7EyeDMFcnyLW9Q4oHQmHLJ5eXNbPFzaRRoKIpHiPrgWV7xqpS8w3VnXcOZU2FUjBxgIy
+ mfVdqXqc++HFTM9XYsMQg6evN3hnekuVHCqRvoCR1+RXMabquqoti6Q7+w7+yPd/zTwpZdIau
+ N2Lmwe87UGfuzEtSUsNyn6nxfJgLk3PMGZKlJ+HiDz8lWso6Pg06lNRY1AbctUHoCvr9HsYE4
+ tSL45fW2g4P64cHZp1Bz8j7dAQt0kvlPVZUjiQ3xEfQSM+viMd4WC3aCga8XZAmuWp9Nca2JV
+ bSnAI3J7yG+QI6zd+/bhRf9p1j/zvpDbTpe5Cj875tRv9gx7NbSzc95GLcyHloN0ARQY3Rh5y
+ hX6iHw0ebd69AXUytthlJbbF0nQ4Viw8QUcKbTz/Lx6wTfBTIhwnXMgWyauoA0JeWGJKyC7nW
+ 8ZChXrAM1mjZAMVfJcLCKDkbjL8T4wRGh791bOzcB/ic92F+My6Xe4iUDgQJtBT2salHvMFqs
+ t3Tp446mVjRekAUZrNsEcJR2olz4zxonBaGTEgraRq8B0BGZwcZ7RFLtdhrvb4YUzLUcsJDF6
+ geYdwSbT7DTA32uLXWvL5bjegqcwMLjkr1fbTC14VFS2xmuGmvOT94u7/dZ9NlEDuCJMkcx/m
+ wULYhXi1iGPKRnvtl5eRWrPYcWbV3HP3wHfMKKhixnVw6M5ygK3eLf4NHmfwubTBCE96fbSNv
+ he7dAiRr8PfKO3ucU/EU1BFWnBfS2jxuhhQGBp7DEKHfZqKKON8ANUJ6QD6pn8LZsOQsuDSa8
+ /vX9KDAxtIVCNgH7NH/4eLmXwGfhA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Linus,
 
-Please pull these fixes and cleanups for auxdisplay.
+please pull a few last changes for this merge window for the parisc architecture from:
 
-They are recently rebased -- I am not on my main computer.
+  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git parisc-4.17-2
 
-Cheers,
-Miguel Ojeda
+Changes:
+- Fix panic when halting system via "shutdown -h now"
+- Drop own coding in favour of generic CONFIG_COMPAT_BINFMT_ELF implementation
+- Add FPE_CONDTRAP constant: last outstanding parisc-specific cleanup for Eric
+  Biedermans siginfo patches
+- move some functions to .init and some to .text.hot linker sections
 
-The following changes since commit 0adb32858b0bddf4ada5f364a84ed60b196dbcda:
-
-  Linux 4.16 (2018-04-01 14:20:27 -0700)
-
-are available in the git repository at:
-
-  https://github.com/ojeda/linux.git tags/auxdisplay-for-linus-v4.17-rc1
-
-for you to fetch changes up to 351f683b9823a3d1bffb6e2e3f381601aa0b2671:
-
-  auxdisplay: Replace licenses with SPDX identifiers (2018-04-12 19:02:45 +0200)
+Thanks,
+Helge
 
 ----------------------------------------------------------------
-Mostly small fixes and cleanups, plus a non-trivial fix for charlcd
+Helge Deller (4):
+      parisc/signal: Add FPE_CONDTRAP for conditional trap handling
+      parisc: Move cache flush functions into .text.hot section
+      parisc: Switch to generic COMPAT_BINFMT_ELF
+      parisc: Prevent panic at system halt
 
-  - charlcd: fixes and cleanups
-    From Robert Abel and Sean Young
-
-  - Kconfig fixes
-    From Randy Dunlap, Corentin Labbe and Ulf Magnusson
-
-  - cfag12864bfb: const cleanup
-    From Gustavo A. R. Silva
-
-  - Docs/licenses/warnings cleanups
-
-----------------------------------------------------------------
-Corentin Labbe (1):
-      auxdisplay: img-ascii-lcd: fix typo on select SYSCON/MFD_SYSCON
-
-Gustavo A. R. Silva (1):
-      auxdisplay: cfag12864bfb: constify fb_fix_screeninfo and fb_var_screeninfo structures
-
-Miguel Ojeda (5):
-      Doc: misc-devices: move lcd-panel-cgram.txt to auxdisplay/
-      MAINTAINERS: auxdisplay: remove obsolete webpages
-      auxdisplay: arm-charlcd: Fix struct charlcd doc line
-      auxdisplay: charlcd: Fix and clean up handling of x/y commands
-      auxdisplay: Replace licenses with SPDX identifiers
-
-Randy Dunlap (2):
-      auxdisplay: fix broken menu
-      auxdisplay: make PANEL a menuconfig
-
-Robert Abel (4):
-      auxdisplay: charlcd: use null character instead of zero literal to terminate strings
-      auxdisplay: charlcd: replace octal literal with form-feed escape sequence
-      auxdisplay: charlcd: fix two-line command ^[[LN not marked as processed
-      auxdisplay: charlcd: fix hex literal ranges for graphics command
-
-Sean Young (1):
-      auxdisplay: charlcd: no need to call charlcd_gotoxy() if nothing changes
-
-Ulf Magnusson (1):
-      auxdisplay: img-ascii-lcd: kconfig: Remove MIPS_SEAD3 reference
-
- .../lcd-panel-cgram.txt                            |   0
- MAINTAINERS                                        |   8 --
- drivers/auxdisplay/Kconfig                         |  16 +--
- drivers/auxdisplay/arm-charlcd.c                   |   4 +-
- drivers/auxdisplay/cfag12864b.c                    |  16 +--
- drivers/auxdisplay/cfag12864bfb.c                  |  20 +---
- drivers/auxdisplay/charlcd.c                       | 119 +++++++++++++++------
- drivers/auxdisplay/hd44780.c                       |   6 +-
- drivers/auxdisplay/ht16k33.c                       |  10 +-
- drivers/auxdisplay/ks0108.c                        |  16 +--
- drivers/auxdisplay/panel.c                         |   6 +-
- include/linux/cfag12864b.h                         |  16 +--
- include/linux/ks0108.h                             |  16 +--
- samples/auxdisplay/cfag12864b-example.c            |  16 +--
- 14 files changed, 111 insertions(+), 158 deletions(-)
- rename Documentation/{misc-devices => auxdisplay}/lcd-panel-cgram.txt (100%)
+ arch/parisc/Kconfig                    |  1 +
+ arch/parisc/include/asm/compat.h       |  6 +++
+ arch/parisc/include/asm/elf.h          | 69 ++++++++++++------------
+ arch/parisc/include/uapi/asm/siginfo.h |  7 ---
+ arch/parisc/kernel/binfmt_elf32.c      | 98 ----------------------------------
+ arch/parisc/kernel/cache.c             |  2 +-
+ arch/parisc/kernel/pacache.S           |  9 ++--
+ arch/parisc/kernel/process.c           | 13 ++---
+ arch/parisc/kernel/traps.c             |  7 +--
+ arch/x86/kernel/signal_compat.c        |  2 +-
+ include/uapi/asm-generic/siginfo.h     |  3 +-
+ 11 files changed, 60 insertions(+), 157 deletions(-)
+ delete mode 100644 arch/parisc/kernel/binfmt_elf32.c
