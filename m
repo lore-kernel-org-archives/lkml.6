@@ -1,58 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753362AbeDLQzK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 12:55:10 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:48467 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752846AbeDLQvf (ORCPT
+        id S1753420AbeDLQzZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 12:55:25 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:51228 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752953AbeDLQzV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 12:51:35 -0400
-From: Luca Ceresoli <luca@lucaceresoli.net>
-To: linux-media@vger.kernel.org
-Cc: Luca Ceresoli <luca@lucaceresoli.net>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 10/13] imx274: actually use IMX274_DEFAULT_MODE
-Date: Thu, 12 Apr 2018 18:51:15 +0200
-Message-Id: <1523551878-15754-11-git-send-email-luca@lucaceresoli.net>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523551878-15754-1-git-send-email-luca@lucaceresoli.net>
-References: <1523551878-15754-1-git-send-email-luca@lucaceresoli.net>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Thu, 12 Apr 2018 12:55:21 -0400
+X-Google-Smtp-Source: AIpwx4/OIjlGYQRmEB5D9/UvID0IHH8+u2BfdII2N6t4OtKQldfJM3I1DBucUZbtPFm9yctZyYefC+cFPXXHPXoiePI=
+MIME-Version: 1.0
+In-Reply-To: <1523509711.16235.25.camel@intel.com>
+References: <1523436077.16235.5.camel@intel.com> <CA+55aFzqJ2PfUnkVJ6A-8WRQTciWb8j+25r41JLCvz7h0QEJiA@mail.gmail.com>
+ <1523509711.16235.25.camel@intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 12 Apr 2018 09:55:19 -0700
+X-Google-Sender-Auth: cCzhApYp0QY0P3hcJwKBnDNI5Uc
+Message-ID: <CA+55aFw0C-S0L-cnk0oROG=Khqy9s36O+g3_BxqPfewKGQ9_EQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Thermal management updates for v4.17-rc1
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        "Li, Philip" <philip.li@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IMX274_DEFAULT_MODE is defined but not used. Start using it, so the
-default can be more easily changed without digging into the code.
+On Wed, Apr 11, 2018 at 10:08 PM, Zhang Rui <rui.zhang@intel.com> wrote:
+>
+> could you please illustrate me what the kconfig & warning is?
 
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
----
- drivers/media/i2c/imx274.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Just "make allmodconfig" and the warning is about a uninitialized variable.
 
-diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-index 25907d0817a4..39d548ce30c4 100644
---- a/drivers/media/i2c/imx274.c
-+++ b/drivers/media/i2c/imx274.c
-@@ -1621,7 +1621,7 @@ static int imx274_probe(struct i2c_client *client,
- 	mutex_init(&imx274->lock);
- 
- 	/* initialize format */
--	imx274->mode = &imx274_formats[IMX274_MODE_3840X2160];
-+	imx274->mode = &imx274_formats[IMX274_DEFAULT_MODE];
- 	imx274->format.width = imx274->mode->size.width;
- 	imx274->format.height = imx274->mode->size.height;
- 	imx274->format.field = V4L2_FIELD_NONE;
--- 
-2.7.4
+Line 304 in drivers/thermal/samsung/exynos_tmu.c if my shell history
+is to be believed.
+
+                Linus
