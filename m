@@ -1,55 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752996AbeDLUit convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 16:38:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47834 "EHLO mail.kernel.org"
+        id S1752379AbeDLUk0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 16:40:26 -0400
+Received: from mga18.intel.com ([134.134.136.126]:56517 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751624AbeDLUir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 16:38:47 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08770208FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S1751625AbeDLUkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 16:40:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,443,1517904000";
+   d="scan'208";a="50340404"
+Subject: Re: [RFC PATCH 0/3] Interface for higher order contiguous allocations
+From: Reinette Chatre <reinette.chatre@intel.com>
+To: Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc: Michal Hocko <mhocko@kernel.org>, Christopher Lameter <cl@linux.com>,
+        Guy Shattah <sguy@mellanox.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        Vlastimil Babka <vbabka@suse.cz>, David Nellans <dnellans@nvidia.com>,
+        Laura Abbott <labbott@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Dave Hansen <dave.hansen@intel.com>
+References: <20180212222056.9735-1-mike.kravetz@oracle.com>
+ <770445b3-6caa-a87a-5de7-3157fc5280c2@intel.com>
+Message-ID: <74b7c6e5-bce6-a70a-287a-af44765836c7@intel.com>
+Date: Thu, 12 Apr 2018 13:40:24 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Doug Anderson <dianders@chromium.org>,
-        Manu Gautam <mgautam@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <f8f47dc2-74ab-96c6-b3bd-a476bd19514d@codeaurora.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org,
-        Varadarajan Narayanan <varada@codeaurora.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Fengguang Wu <fengguang.wu@intel.com>
-References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
- <1522321466-21755-3-git-send-email-mgautam@codeaurora.org>
- <CAD=FV=XtviSYq=2w=Ld1xq5U2VPy=u=q6a3+4qd2zVGB+f9P8A@mail.gmail.com>
- <CAD=FV=WGEKy98De_zH9rp+g-tE2YuVK2vRxLJrjeeSx=ijBAww@mail.gmail.com>
- <19c66b02-4f8e-902a-9397-21e7690db7b8@codeaurora.org>
- <CAD=FV=XqH69_LXcCyTS1nF5fHpen=PnRxd-WTz=y3dKvMsRtuw@mail.gmail.com>
- <152338515540.180276.4273344163431724770@swboyd.mtv.corp.google.com>
- <f8f47dc2-74ab-96c6-b3bd-a476bd19514d@codeaurora.org>
-Message-ID: <152356552631.37499.9860530043266211290@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v4 2/7] phy: qcom-qmp: Enable pipe_clk before PHY initialization
-Date: Thu, 12 Apr 2018 13:38:46 -0700
+In-Reply-To: <770445b3-6caa-a87a-5de7-3157fc5280c2@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Manu Gautam (2018-04-11 08:37:38)
-> >
-> > I ask because it may be easier to never expose these clks in Linux, hit
-> > the enable bits in the branches during clk driver probe, and then act
-> > like they never exist because we don't really use them.
-> This sounds better idea. Let me check if I can get a patch for same in msm8996
-> and sdm845 clock drivers.
-> 
+Hi Mike,
 
-Ok! Presumably the PHY has a way to tell if it failed to turn on right?
-Put another way, I'm hoping these branch bits aren't there to help us
-debug and figure out when the PHY PLL fails to lock.
+On 2/15/2018 12:22 PM, Reinette Chatre wrote:
+> On 2/12/2018 2:20 PM, Mike Kravetz wrote:
+>> These patches came out of the "[RFC] mmap(MAP_CONTIG)" discussions at:
+>> http://lkml.kernel.org/r/21f1ec96-2822-1189-1c95-79a2bb491571@oracle.com
+>>
+>> One suggestion in that thread was to create a friendlier interface that
+>> could be used by drivers and others outside core mm code to allocate a
+>> contiguous set of pages.  The alloc_contig_range() interface is used for
+>> this purpose today by CMA and gigantic page allocation.  However, this is
+>> not a general purpose interface.  So, wrap alloc_contig_range() in the
+>> more general interface:
+>>
+>> struct page *find_alloc_contig_pages(unsigned int order, gfp_t gfp, int nid,
+>> 					nodemask_t *nodemask)
+>>
+>> No underlying changes are made to increase the likelihood that a contiguous
+>> set of pages can be found and allocated.  Therefore, any user of this
+>> interface must deal with failure.  The hope is that this interface will be
+>> able to satisfy some use cases today.
+> 
+> As discussed in another thread a new feature, Cache Pseudo-Locking,
+> requires large contiguous regions. Until now I just exposed
+> alloc_gigantic_page() to handle these allocations in my testing. I now
+> moved to using find_alloc_contig_pages() as introduced here and all my
+> tests passed. I do hope that an API supporting large contiguous regions
+> become available.
+> 
+> Thank you very much for creating this.
+> 
+> Tested-by: Reinette Chatre <reinette.chatre@intel.com>
+
+Do you still intend on submitting these changes for inclusion?
+
+I would really like to use this work but unfortunately the original
+patches submitted here do not apply anymore. I am encountering conflicts
+with, for example:
+
+commit d9cc948f6fa1c3384037f500e0acd35f03850d15
+Author: Michal Hocko <mhocko@suse.com>
+Date:   Wed Jan 31 16:20:44 2018 -0800
+
+    mm, hugetlb: integrate giga hugetlb more naturally to the allocation
+path
+
+Thank you very much
+
+Reinette
