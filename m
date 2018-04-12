@@ -1,112 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752751AbeDLNdX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 09:33:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52472 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752490AbeDLNdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 09:33:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4489821785
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=dinguyen@kernel.org
-Subject: Re: [PATCH] ARM: socfpga_defconfig: Remove QSPI Sector 4K size force
-To: thor.thayer@linux.intel.com, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-References: <1522093800-7822-1-git-send-email-thor.thayer@linux.intel.com>
- <1e858591-aaae-72f0-de0f-40aea11e502a@linux.intel.com>
-From: Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <ca2fe13e-4084-c3f7-59eb-9f8129743857@kernel.org>
-Date: Thu, 12 Apr 2018 08:33:18 -0500
+        id S1752446AbeDLNov (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 09:44:51 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36482 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751819AbeDLNou (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 09:44:50 -0400
+Subject: Re: [PATCH v9 21/24] perf tools: Add support for the SPF perf event
+To: David Rientjes <rientjes@google.com>, Andi Kleen <ak@linux.intel.com>
+Cc: paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        akpm@linux-foundation.org, kirill@shutemov.name, mhocko@kernel.org,
+        dave@stgolabs.net, jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+References: <1520963994-28477-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1520963994-28477-22-git-send-email-ldufour@linux.vnet.ibm.com>
+ <alpine.DEB.2.20.1803261443560.255554@chino.kir.corp.google.com>
+ <20180327034936.GO13724@tassilo.jf.intel.com>
+ <alpine.DEB.2.21.1804092346090.225864@chino.kir.corp.google.com>
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Date: Thu, 12 Apr 2018 15:44:36 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1e858591-aaae-72f0-de0f-40aea11e502a@linux.intel.com>
+In-Reply-To: <alpine.DEB.2.21.1804092346090.225864@chino.kir.corp.google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18041213-0044-0000-0000-000005468050
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041213-0045-0000-0000-00002886BBAE
+Message-Id: <de5f854b-fd39-21e1-1ce9-1c5c2d292eb8@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-12_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804120136
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 04/11/2018 10:20 AM, Thor Thayer wrote:
-> Hi. Any comments on this patch?
+On 10/04/2018 08:47, David Rientjes wrote:
+> On Mon, 26 Mar 2018, Andi Kleen wrote:
 > 
-> On 03/26/2018 02:50 PM, thor.thayer@linux.intel.com wrote:
->> From: Thor Thayer <thor.thayer@linux.intel.com>
+>>> Aside: should there be a new spec_flt field for struct task_struct that 
+>>> complements maj_flt and min_flt and be exported through /proc/pid/stat?
 >>
->> Remove QSPI Sector 4K size force which is causing QSPI boot
->> problems with the JFFS2 root filesystem.
->>
->> Fixes the following error:
->>       "Magic bitmask 0x1985 not found at ..."
->>
->> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
->> ---
->>   arch/arm/configs/socfpga_defconfig | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm/configs/socfpga_defconfig
->> b/arch/arm/configs/socfpga_defconfig
->> index 2620ce790db0..371fca4e1ab7 100644
->> --- a/arch/arm/configs/socfpga_defconfig
->> +++ b/arch/arm/configs/socfpga_defconfig
->> @@ -57,6 +57,7 @@ CONFIG_MTD_M25P80=y
->>   CONFIG_MTD_NAND=y
->>   CONFIG_MTD_NAND_DENALI_DT=y
->>   CONFIG_MTD_SPI_NOR=y
->> +# CONFIG_MTD_SPI_NOR_USE_4K_SECTORS is not set
->>   CONFIG_SPI_CADENCE_QUADSPI=y
->>   CONFIG_OF_OVERLAY=y
->>   CONFIG_OF_CONFIGFS=y
+>> No. task_struct is already too bloated. If you need per process tracking 
+>> you can always get it through trace points.
 >>
 > 
+> Hi Andi,
+> 
+> We have
+> 
+> 	count_vm_event(PGFAULT);
+> 	count_memcg_event_mm(vma->vm_mm, PGFAULT);
+> 
+> in handle_mm_fault() but not counterpart for spf.  I think it would be 
+> helpful to be able to determine how much faulting can be done 
+> speculatively if there is no per-process tracking without tracing.
 
-I'll apply it and hopefully get into an v4.17 -rcX.
+That sounds to be a good idea, I will create a separate patch a dedicated
+speculative_pgfault counter as PGFAULT is.
 
-Dinh
+Thanks,
+Laurent.
