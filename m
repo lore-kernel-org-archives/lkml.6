@@ -1,138 +1,196 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1194497-1523281386-2-11833306472076914197
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, T_RP_MATCHES_RCVD -0.01,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523281386; b=HIaULijf5USX4kSmlOX72UJ1Wuo3JInXNve+sac+0RaJURCsjg
-    7rZBLC9ctpzqwJq7B3c1Iw9e+5zB+U6A9qHc8rTQt6RiOT4VpMERV817pMJTmV6B
-    3TNnf/2VY0czel8MLRJ700gqeSmr+7kaKMai9O9QO3UQJ4+/OT87+4ZlUT79l/Z9
-    eE7qx0GCISaEcYJ7BrlhiBz0xmp4C874NUYlDbGFwdv5v/AtR7VudBH58VrvTY8t
-    lwn1OUrtqcm1xWVl7+C8htdDh9j/uIFmNgnJMLSBY7lX7exTxM/cWFI4PtA8IToM
-    3CWUJLM/oVCN73BB3VVgP20sx4doIAZKRu/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523281386; bh=bqaNwgV2PpFT165rMWnDwsikM19Zwg
-    LxEsqkHyyhK6s=; b=ToaUehPt9OZff2FG1OPWGEoWDuiyxA8ytgdiDRRgMNmDgp
-    5mTlELDTbvZLg0MWrkWI+qb2y+W9xnRmS171p/NXhqDIeKxnqIHJVXHcno/M1T6n
-    DYKTOVyTjNt9tuFKPt1Sb7rIc2WGvZI759nXPz3ZJ0oSl4YRuue2UE2lxtHRORkg
-    DbebOKGbUayLWqmueq3FXjPceMHl+vchyNriO91Kwbw+kWaCbcK6lJInzZFAz43C
-    9Ywg99eGrQNhVM2QktlaHSAq7f2ODbpymL55NFg+vQrbH7CUcTme1XKXYNiXa7F8
-    ITYMKRsgkQNCRDge4UjVFK8O1bivgQiKvYoax26Q==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=atomide.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=atomide.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=atomide.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=atomide.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLlW6kLIkqmT3+Xda1RPjGiAFv/6mC9nMoAeCweD61jUjWs2EYaPkBIZZdKXClRYVvsJLZxBGAYQLqY9OCDpR2rqmtux5hQBgTzgS+NJrYKxM7CnyquE
-    pElNJeRDJEh8vWlwwyC/9U3HTkUavRj/XGbjF0y9J5No8Ep+28CQTUFMUNlZnYTTJXBBEarZcyVIIFqtZnIhyMPbmxs+iQ2a3zQLeuahouLls1cXaEIKdO/Y
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=4B6O7k_05uCXav8sBZEA:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751744AbeDINnE (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 9 Apr 2018 09:43:04 -0400
-Received: from muru.com ([72.249.23.125]:35878 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751548AbeDINnE (ORCPT <rfc822;linux-serial@vger.kernel.org>);
-        Mon, 9 Apr 2018 09:43:04 -0400
-Date: Mon, 9 Apr 2018 06:42:59 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Pavel Machek <pavel@ucw.cz>
+Return-Path: <pavel@ucw.cz>
+X-Google-Smtp-Source: AIpwx4/JG6rcmHs8F1p+ADJkLbyjUPSvpm+E/6m9f/9DPK3FccyMYrloWQAdz6MrD8GbMkWlu/Dq
+ARC-Seal: i=1; a=rsa-sha256; t=1523568254; cv=none;
+        d=google.com; s=arc-20160816;
+        b=fFsapxueXh8HV2Qj4aAnUvew15Zf8VK0g8aejf6chNv2uYTgOTND1Ek4c0UnIx+1s5
+         n55pVx7DOohODJcRRx9LvidSGAN3jHos5D3ud+2y4SV1xKJWA5ziZWx809RyXvPAp3iP
+         H5qXFOfN9SBDyp7uEEPUAFESiukAUPjSufO6sdWwOSfe9a6KcTUoEIlN73jOxGPC8j/j
+         aHVzUeNg9LZ0lloTpY/tOmegHilDIS9paDIuhoEsxj2qwDh5CkiodEYMnB0ySkz7X5wm
+         dxlIuu/qbZeQHwtGBfFdHhNtKWnnuKipDUi9n5Cz9/L0H/1964o3Rq5dVJEf8GVDslBq
+         ibwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=frUcmE3D8LuR4UpU9m9XAnQ2rBh+p1jD99uIRipEm2M=;
+        b=xF7aggdtCsYyLNknw8/ukxjqxRoOxA0xilDrX+yY14QZl+gyK9y3AgEiqy5N2Wz5wr
+         i7BAIvU2B+776VAXqEsXOEBK6rXnYetMtRRAG06Wwzbg26hgXfNvZkVgltuDNLobDgOl
+         Mj1EHJzsB+7lCp+1Pg/0tuRyyrgvBZIRek0Z2XNqi8wDAkHm+Rl4tTm1H1pNX/yYYUDb
+         yBSYmaW1YIOJBNrqlXePkoWkBWxUP1K9kytaUBzMxn1SPjFgZDwtBQL1GJcrjJY9Ks2U
+         1Z7/I1VIs6P0mjZD6alYkA6Fe7U7ugBorZwLUpAzh1QPJXP/ODGFKXBzEKg/e5WaWtOo
+         N1Tw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
+Date: Thu, 12 Apr 2018 23:24:12 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Tony Lindgren <tony@atomide.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        Alan Cox <alan@llwyncelyn.cymru>,
-        Dan Williams <dcbw@redhat.com>,
-        Jiri Prchal <jiri.prchal@aksignal.cz>,
-        Jiri Slaby <jslaby@suse.cz>, Marcel Partap <mpartap@gmx.net>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        Michael Scott <michael.scott@linaro.org>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Russ Gorby <russ.gorby@intel.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sebastian Reichel <sre@kernel.org>
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	Alan Cox <alan@llwyncelyn.cymru>, Dan Williams <dcbw@redhat.com>,
+	Jiri Prchal <jiri.prchal@aksignal.cz>, Jiri Slaby <jslaby@suse.cz>,
+	Marcel Partap <mpartap@gmx.net>, Merlijn Wajer <merlijn@wizzup.org>,
+	Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
+	Michael Scott <michael.scott@linaro.org>,
+	Peter Hurley <peter@hurleysoftware.com>,
+	Russ Gorby <russ.gorby@intel.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Sebastian Reichel <sre@kernel.org>
 Subject: Re: [PATCH 1/2] tty: n_gsm: Fix long delays with control frame
  timeouts in ADM mode
-Message-ID: <20180409134259.GO5700@atomide.com>
+Message-ID: <20180412212412.GA29243@amd>
 References: <20180407171951.122759-1-tony@atomide.com>
  <20180408090259.GA8185@amd>
  <20180408165038.GM5700@atomide.com>
  <20180408190600.GA24342@amd>
  <20180408235740.GN5700@atomide.com>
  <20180409105407.GA15315@amd>
+ <20180409134259.GO5700@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
 Content-Disposition: inline
-In-Reply-To: <20180409105407.GA15315@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+In-Reply-To: <20180409134259.GO5700@atomide.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597108755036082132?=
+X-GMAIL-MSGID: =?utf-8?q?1597577105466379203?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-* Pavel Machek <pavel@ucw.cz> [180409 10:56]:
-> Ok, I should have all that enabled. But droid4-ngsm still fails:
-> 
-> user@devuan:/my/droid4-ngsm$ sudo ./droid4-ngsm
-> Starting ngsm..
-> Testing ngsm..
-> Could not open /dev/gsmtty1: Level 2 halted
-> Trying to start ngsm again: Level 2 halted
-> Starting ngsm..
 
-I guess you must have phy-mapphone-mdm6600 enabled as you a have
-working modem over USB. What do you see in dmesg if you enable n_gsm
-debug with modprobe n_gsm debug=0xff or on kernel cmdline?
+--qMm9M+Fa2AknHoGS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> commit 984c7706ff180e33096c57183435d925cb644576 says:
-> 
->     ARM: dts: omap4-droid4: Configure uart1 pins
-> 
->     These are needed to use the n_gsm driver for TS 27.010 UART
->         multiplexing. Note that support for the OOB wake gpio is still
-> 	    missing so the UART is not yet usable for n_gsm.
-> 
-> ...am I still missing the OOB wake gpio support?
+On Mon 2018-04-09 06:42:59, Tony Lindgren wrote:
+> * Pavel Machek <pavel@ucw.cz> [180409 10:56]:
+> > Ok, I should have all that enabled. But droid4-ngsm still fails:
+> >=20
+> > user@devuan:/my/droid4-ngsm$ sudo ./droid4-ngsm
+> > Starting ngsm..
+> > Testing ngsm..
+> > Could not open /dev/gsmtty1: Level 2 halted
+> > Trying to start ngsm again: Level 2 halted
+> > Starting ngsm..
+>=20
+> I guess you must have phy-mapphone-mdm6600 enabled as you a have
+> working modem over USB. What do you see in dmesg if you enable n_gsm
+> debug with modprobe n_gsm debug=3D0xff or on kernel cmdline?
 
-We can get away without OOB wake gpio for a while as mdm6600 is not
-yet suspended over USB. But if you have manually suspended mdm6600
-USB interface via /sys, then it won't respond properly on n_gsm
-either.
+Ok, let me try... Got some debugging output, hopefully you can see
+what is going on there?
 
-Regards,
+Thanks,
+							Pavel
 
-Tony
+sudo insmod /tmp/n_gsm.ko debug=3D0xff
 
+user@devuan:/my/droid4-ngsm$ sudo ./droid4-ngsm
+Starting ngsm..
+Testing ngsm..
+Could not open /dev/gsmtty1: Level 2 halted
+Trying to start ngsm again: Level 2 halted
+Starting ngsm..
+Testing ngsm..
+Could not open /dev/gsmtty1: Level 2 halted
+Trying to start ngsm again: Level 2 halted
+Starting ngsm..
+^CCould not set conf: Interrupted system call
+Could not start ngsm: Interrupted system call
 
+[ 3378.381134] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+[ 3408.460937] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+[ 3413.633239] Q>  0) R: UIH(F)
+[ 3413.639190] C3
+[ 3413.642761] gsm_data_kick: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3413.653564] gsmld_output: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3413.978942] Q>  0) R: UIH(F)
+[ 3413.984924] C3
+[ 3413.988586] gsm_data_kick: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3413.999114] gsmld_output: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3414.328247] Q>  0) R: UIH(F)
+[ 3414.333068] C3
+[ 3414.336608] gsm_data_kick: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3414.346984] gsmld_output: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3414.679870] gsmld_output: 00000000: f9 03 3f 01 1c f9
+=2E.?...
+[ 3414.690979] --> 0) C: SABM(P)
+[ 3414.798370] gsmld_output: 00000000: f9 03 3f 01 1c f9
+=2E.?...
+[ 3414.809570] --> 0) C: SABM(P)
+[ 3414.918243] gsmld_output: 00000000: f9 03 3f 01 1c f9
+=2E.?...
+[ 3414.928588] --> 0) C: SABM(P)
+[ 3416.743682] Q>  0) R: UIH(F)
+[ 3416.748352] C3
+[ 3416.751800] gsm_data_kick: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3416.762145] gsmld_output: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3417.088256] Q>  0) R: UIH(F)
+[ 3417.093078] C3
+[ 3417.096679] gsm_data_kick: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3417.107208] gsmld_output: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3417.438201] Q>  0) R: UIH(F)
+[ 3417.443206] C3
+[ 3417.446990] gsm_data_kick: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3417.457733] gsmld_output: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3417.788330] gsmld_output: 00000000: f9 03 3f 01 1c f9
+=2E.?...
+[ 3417.799163] --> 0) C: SABM(P)
+[ 3417.918243] gsmld_output: 00000000: f9 03 3f 01 1c f9
+=2E.?...
+[ 3417.929107] --> 0) C: SABM(P)
+[ 3418.038208] gsmld_output: 00000000: f9 03 3f 01 1c f9
+=2E.?...
+[ 3418.049102] --> 0) C: SABM(P)
+[ 3419.854248] Q>  0) R: UIH(F)
+[ 3419.859527] C3
+[ 3419.863555] gsm_data_kick: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3419.874481] gsmld_output: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3420.208221] Q>  0) R: UIH(F)
+[ 3420.213500] C3
+[ 3420.217498] gsm_data_kick: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3420.228393] gsmld_output: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3420.598205] Q>  0) R: UIH(F)
+[ 3420.603515] C3
+[ 3420.607513] gsm_data_kick: 00000000: 7e 01 ef c3 aa 7e
+~....~
+[ 3420.618377] gsmld_output: 00000000: 7e 01 ef c3 aa 7e
+~....~
+user@devuan:/my/droid4-ngsm$
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--qMm9M+Fa2AknHoGS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrPznwACgkQMOfwapXb+vLsGwCfevVpkrT7LX6DhpN0ZhV2XLOb
+7T8An2ckSVX52ReGUi6HCj53b3vBLA08
+=LNJ2
+-----END PGP SIGNATURE-----
+
+--qMm9M+Fa2AknHoGS--
