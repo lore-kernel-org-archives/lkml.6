@@ -1,33 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753159AbeDLOsC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 10:48:02 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53970 "EHLO
+        id S1753202AbeDLOsL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 10:48:11 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54216 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752831AbeDLOsA (ORCPT
+        with ESMTP id S1753164AbeDLOsJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 10:48:00 -0400
+        Thu, 12 Apr 2018 10:48:09 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>,
-        Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.com>, liam.r.girdwood@linux.intel.com,
-        Harsha Priya N <harshapriya.n@intel.com>,
-        Mark Brown <broonie@kernel.org>, Naveen M <naveen.m@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Drake <drake@endlessm.com>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: Intel: atom: fix ACPI/PCI Kconfig" to the asoc tree
-In-Reply-To: <20180124002712.28984-1-pierre-louis.bossart@linux.intel.com>
-Message-Id: <E1f6dVv-00057S-5Q@debutante>
-Date: Thu, 12 Apr 2018 15:47:51 +0100
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: rsnd: mark PM functions __maybe_unused" to the asoc tree
+In-Reply-To: <20180328145318.10136-1-arnd@arndb.de>
+Message-Id: <E1f6dW7-00058g-TB@debutante>
+Date: Thu, 12 Apr 2018 15:48:03 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: Intel: atom: fix ACPI/PCI Kconfig
+   ASoC: rsnd: mark PM functions __maybe_unused
 
 has been applied to the asoc tree at
 
@@ -52,93 +49,50 @@ to this mail.
 Thanks,
 Mark
 
->From 90619eb1dc4f19357fef5e9c13c6c9beead0fd80 Mon Sep 17 00:00:00 2001
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Date: Mon, 2 Apr 2018 12:06:14 -0500
-Subject: [PATCH] ASoC: Intel: atom: fix ACPI/PCI Kconfig
+>From 6f5427039c33e149b711c0f973fcac7f6875b768 Mon Sep 17 00:00:00 2001
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 28 Mar 2018 16:53:10 +0200
+Subject: [PATCH] ASoC: rsnd: mark PM functions __maybe_unused
 
-The split between ACPI and PCI platforms generated issues with randconfig:
+The suspend/resume callbacks are now optional, leading to a warning
+when they are unused:
 
-with SND_SST_ATOM_HIFI2_PLATFORM_PCI=y and
-SND_SST_ATOM_HIFI2_PLATFORM=m, we get this module link failure:
+sound/soc/sh/rcar/core.c:1548:12: error: 'rsnd_resume' defined but not used [-Werror=unused-function]
+ static int rsnd_resume(struct device *dev)
+            ^~~~~~~~~~~
+sound/soc/sh/rcar/core.c:1539:12: error: 'rsnd_suspend' defined but not used [-Werror=unused-function]
+ static int rsnd_suspend(struct device *dev)
 
-ERROR: "sst_context_init"
-[sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
+This marks the as __maybe_unused to avoid the warning.
 
-ERROR: "sst_context_cleanup"
-[sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
-
-ERROR: "sst_alloc_drv_context"
-[sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
-
-ERROR: "intel_sst_pm" [sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko]
-undefined!
-
-ERROR: "sst_configure_runtime_pm"
-[sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
-
-To keep things simple, let's expose two configs for
-SND_SST_ATOM_HIFI2_PLATFORM_PCI and SND_SST_ATOM_HIFI2_PLATFORM_ACPI,
-which select a common SND_SST_ATOM_HIFI2_PLATFORM option. To avoid
-breaking existing solutions with the semantics change,
-SND_SST_ATOM_HIFI2_PLATFORM_ACPI uses "default ACPI" so that "make
-oldnoconfig" and "make olddefconfig" still work as expected.
-
-Also remove mentions of Medfield while we are at it since it was
-removed recently.
-
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: 4772c16ede52 ("ASoC: Intel: Kconfig: Simplify-clarify ACPI/PCI
-dependencies")
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-By: Vinod Koul <vinod.koul@intel.com>
+Fixes: f8a9a29c4fe9 ("ASoC: rsnd: set pm_ops in hibernate-compatible way")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/intel/Kconfig | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ sound/soc/sh/rcar/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
-index ceb105cbd461..addac2a8e52a 100644
---- a/sound/soc/intel/Kconfig
-+++ b/sound/soc/intel/Kconfig
-@@ -72,24 +72,28 @@ config SND_SOC_INTEL_BAYTRAIL
- 	  for Baytrail Chromebooks but this option is now deprecated and is
- 	  not recommended, use SND_SST_ATOM_HIFI2_PLATFORM instead.
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 6a76688a8ba9..94f081b93258 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -1536,7 +1536,7 @@ static int rsnd_remove(struct platform_device *pdev)
+ 	return ret;
+ }
  
-+config SND_SST_ATOM_HIFI2_PLATFORM
-+	tristate
-+	select SND_SOC_COMPRESS
-+
- config SND_SST_ATOM_HIFI2_PLATFORM_PCI
--	tristate "PCI HiFi2 (Medfield, Merrifield) Platforms"
-+	tristate "PCI HiFi2 (Merrifield) Platforms"
- 	depends on X86 && PCI
- 	select SND_SST_IPC_PCI
--	select SND_SOC_COMPRESS
-+	select SND_SST_ATOM_HIFI2_PLATFORM
- 	help
--	  If you have a Intel Medfield or Merrifield/Edison platform, then
-+	  If you have a Intel Merrifield/Edison platform, then
- 	  enable this option by saying Y or m. Distros will typically not
--	  enable this option: Medfield devices are not available to
--	  developers and while Merrifield/Edison can run a mainline kernel with
--	  limited functionality it will require a firmware file which
--	  is not in the standard firmware tree
-+	  enable this option: while Merrifield/Edison can run a mainline
-+	  kernel with limited functionality it will require a firmware file
-+	  which is not in the standard firmware tree
+-static int rsnd_suspend(struct device *dev)
++static int __maybe_unused rsnd_suspend(struct device *dev)
+ {
+ 	struct rsnd_priv *priv = dev_get_drvdata(dev);
  
--config SND_SST_ATOM_HIFI2_PLATFORM
-+config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
- 	tristate "ACPI HiFi2 (Baytrail, Cherrytrail) Platforms"
-+	default ACPI
- 	depends on X86 && ACPI
- 	select SND_SST_IPC_ACPI
--	select SND_SOC_COMPRESS
-+	select SND_SST_ATOM_HIFI2_PLATFORM
- 	select SND_SOC_ACPI_INTEL_MATCH
- 	select IOSF_MBI
- 	help
+@@ -1545,7 +1545,7 @@ static int rsnd_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int rsnd_resume(struct device *dev)
++static int __maybe_unused rsnd_resume(struct device *dev)
+ {
+ 	struct rsnd_priv *priv = dev_get_drvdata(dev);
+ 
 -- 
 2.17.0
