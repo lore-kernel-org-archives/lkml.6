@@ -1,73 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752406AbeDLMIq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 08:08:46 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56198 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750763AbeDLMIo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 08:08:44 -0400
-Date: Thu, 12 Apr 2018 14:08:32 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Joe Perches <joe@perches.com>
-Cc: Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andy Whitcroft <apw@canonical.com>, yuankuiz@codeaurora.org,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, paulmck@linux.vnet.ibm.com,
-        Len Brown <len.brown@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] checkpatch: Add a --strict test for structs with bool
- member definitions
-Message-ID: <20180412120832.GZ4082@hirez.programming.kicks-ass.net>
-References: <20180410143950.4b8526073b4e3e34689f68cb@linux-foundation.org>
- <b3d75281c3a7b4b217b612913894b346eaa3288b.camel@perches.com>
- <20180410150011.df9e036f57b5bcac7ac19686@linux-foundation.org>
- <20180411081502.GJ4082@hirez.programming.kicks-ass.net>
- <20180411092959.e666ec443e4d3bb6f43901d7@linux-foundation.org>
- <20180411170049.GR4082@hirez.programming.kicks-ass.net>
- <20180412074719.pmcddramzyikppco@gmail.com>
- <20180412093521.GA6427@andrea>
- <20180412115022.GL4043@hirez.programming.kicks-ass.net>
- <a8677d8c351e4cb49907f9a8addcc261d810655a.camel@perches.com>
+        id S1752735AbeDLMJA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 08:09:00 -0400
+Received: from osg.samsung.com ([64.30.133.232]:41612 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752483AbeDLMI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 08:08:58 -0400
+Subject: Re: [PATCH] net: ieee802154: atusb: Replace GFP_ATOMIC with
+ GFP_KERNEL in atusb_probe
+To: Jia-Ju Bai <baijiaju1990@gmail.com>, alex.aring@gmail.com
+Cc: linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1523412850-2260-1-git-send-email-baijiaju1990@gmail.com>
+From: Stefan Schmidt <stefan@osg.samsung.com>
+Message-ID: <46cf6980-ff83-7d68-9a5e-67d874c1900a@osg.samsung.com>
+Date: Thu, 12 Apr 2018 14:08:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a8677d8c351e4cb49907f9a8addcc261d810655a.camel@perches.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1523412850-2260-1-git-send-email-baijiaju1990@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 05:01:37AM -0700, Joe Perches wrote:
-> On Thu, 2018-04-12 at 13:50 +0200, Peter Zijlstra wrote:
-> > On Thu, Apr 12, 2018 at 11:35:21AM +0200, Andrea Parri wrote:
-> > > Is there a better or recommended way to reference posts on LKML in commit
-> > > messages? (I do like the idea of linking to previous discussions, results,
-> > > ...)
-> > 
-> > Yes:
-> > 
-> >   https://lkml.kernel.org/r/$MSGID
-> > 
-> > that has the added benefit that it immediately includes the msg-id, so
-> > even if you don't have tubes, you can search for it in your local
-> > mailboxes.
-> > 
-> > Also, since we (kernel.org) control the redirection (currently
-> > marc.info) we can always point it to a life archive.
-> 
-> Message IDs are not useful unless you subscribe and
-> keep your emails.
+Hello.
 
-I happen to do so..
 
-> It'd be _much_ nicer if vger.kernel.org stored every email
-> it sent and had a search mechanism available rather than
-> relying on external systems.
+On 04/11/2018 04:14 AM, Jia-Ju Bai wrote:
+> atusb_probe() is never called in atomic context.
+> This function is only set as ".probe" in struct usb_driver.
+>
+> Despite never getting called from atomic context,
+> atusb_probe() calls usb_alloc_urb() with GFP_ATOMIC,
+> which does not sleep for allocation.
+> GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+> which can sleep and improve the possibility of sucessful allocation.
+>
+> This is found by a static analysis tool named DCNS written by myself.
+> And I also manually check it.
+>
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  drivers/net/ieee802154/atusb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/ieee802154/atusb.c b/drivers/net/ieee802154/atusb.c
+> index ef68851..ab6a505 100644
+> --- a/drivers/net/ieee802154/atusb.c
+> +++ b/drivers/net/ieee802154/atusb.c
+> @@ -789,7 +789,7 @@ static int atusb_probe(struct usb_interface *interface,
+>  	atusb->tx_dr.bRequest = ATUSB_TX;
+>  	atusb->tx_dr.wValue = cpu_to_le16(0);
+>  
+> -	atusb->tx_urb = usb_alloc_urb(0, GFP_ATOMIC);
+> +	atusb->tx_urb = usb_alloc_urb(0, GFP_KERNEL);
+>  	if (!atusb->tx_urb)
+>  		goto fail;
+>  
 
-People are looking at that afaik.
+This patch has been applied to the wpan tree and will be
+part of the next pull request to net. Thanks!
+
+regards
+Stefan Schmidt
