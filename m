@@ -1,58 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752424AbeDLI4A (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 04:56:00 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7168 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751589AbeDLIz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 04:55:59 -0400
-Subject: Re: [PATCH] sched/rt.c: pick and check task if double_lock_balance()
- unlock the rq
-To: Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-CC: Zhou Chengming <zhouchengming1@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <mingo@redhat.com>,
-        <guohanjun@huawei.com>
-References: <1505112709-102019-1-git-send-email-zhouchengming1@huawei.com>
- <20180410180546.4159134c@gandalf.local.home>
- <20180411102622.GK4082@hirez.programming.kicks-ass.net>
-From: "Libin (Huawei)" <huawei.libin@huawei.com>
-Message-ID: <c8240950-2deb-954a-bb0f-c4d4551734b0@huawei.com>
-Date: Thu, 12 Apr 2018 16:54:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752587AbeDLI5D (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 04:57:03 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34312 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751835AbeDLI5B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 04:57:01 -0400
+X-Google-Smtp-Source: AIpwx48CStBTNIRKNdLt/FTAyDnRM0nmLJN+gy51eU5UKuFmP7yf3Je0qYYqrAHPCxBn/LVlus65UnF9/bYDxlXSQ8E=
 MIME-Version: 1.0
-In-Reply-To: <20180411102622.GK4082@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.184.31.195]
-X-CFilter-Loop: Reflected
+In-Reply-To: <AT5PR8401MB1169413938950BBB0D30A24CABBD0@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+References: <1523452889-16331-1-git-send-email-jinpu.wangl@profitbricks.com> <AT5PR8401MB1169413938950BBB0D30A24CABBD0@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+From: Jinpu Wang <jinpu.wang@profitbricks.com>
+Date: Thu, 12 Apr 2018 10:56:39 +0200
+Message-ID: <CAMGffEk5p6PVJPF3gmvr80MVGMKY56TEgOgTZUwwE_zq4NgyWw@mail.gmail.com>
+Subject: Re: [PATCH] block: ratelimite pr_err on IO path
+To: "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
+Cc: "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-ÔÚ 2018/4/11 18:26, Peter Zijlstra Ð´µÀ:
-> On Tue, Apr 10, 2018 at 06:05:46PM -0400, Steven Rostedt wrote:
+On Wed, Apr 11, 2018 at 7:07 PM, Elliott, Robert (Persistent Memory)
+<elliott@hpe.com> wrote:
+>> -----Original Message-----
+>> From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-
+>> owner@vger.kernel.org] On Behalf Of Jack Wang
+>> Sent: Wednesday, April 11, 2018 8:21 AM
+>> Subject: [PATCH] block: ratelimite pr_err on IO path
 >>
->> Peter,
->>
->> Going through my inbox, I stumbled across this one. And it doesn't
->> appear to be addressed.
->>
->> I think this patch is a reasonable solution.
-> 
-> Urgh, yeah, also seem to have forgotten about it. The proposed solution
-> is in fact simpler than the existing code. Also, I think deadline.c has
-> the exact same problem.
-> 
-> Zhou, could you respin and fix both?
+>> From: Jack Wang <jinpu.wang@profitbricks.com>
+> ...
+>> -                             pr_err("%s: ref tag error at location %llu " \
+>> -                                    "(rcvd %u)\n", iter->disk_name,
+>> -                                    (unsigned long long)
+>> -                                    iter->seed, be32_to_cpu(pi->ref_tag));
+>> +                             pr_err_ratelimited("%s: ref tag error at "
+>> +                                                "location %llu (rcvd %u)\n",
+>
+> Per process/coding-style.rst, you should keep a string like that on
+> one line even if that exceeds 80 columns:
+>
+>   Statements longer than 80 columns will be broken into sensible chunks, unless
+>   exceeding 80 columns significantly increases readability and does not hide
+>   information. ... However, never break user-visible strings such as
+>   printk messages, because that breaks the ability to grep for them.
+>
+>
+Thanks Robert, as the original code keep the 80 columns, I just
+followed, I will fix it in v2.
 
-Thanks for your reply, and I will fix the deadline.c and resend the two 
-patches together.
 
-Thanks,
-Li Bin
+-- 
+Jack Wang
+Linux Kernel Developer
 
-> 
-> 
+ProfitBricks GmbH
+Greifswalder Str. 207
+D - 10405 Berlin
