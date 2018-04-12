@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1684311-1523561660-2-8464400329076142928
+X-Cyrus-Session-Id: sloti22d1t05-1684311-1523561649-2-8927929778740277423
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523561660; b=ANaCmUxoz+M4s4837GSVULJ9AMeO1CG98563ETRYX8pYS4xmfP
-    cWnqhQmkiw60njodAqWIk7lnTURZecDqmLJVM5rA/6RW2RDi0Wt7fRpfJkYSfYKS
-    fQ6/+Y5ahYAH4hqGFQ7F7kMc4F03M9TmhygGyZHxlK+QZ5jG+3pI2Cwc4VhMVutP
-    BZvng5ZbFdvJ6CtXaUYUGJrDKWRi+1I7ILAinelZqR7Miqia38AHJndQjEGRACPE
-    OUJbp8QN54ezR2zmz+i4opztxHzeG6nNVck9YtAP0sJ7BVxOzSs+Y5jqBBM5Lcef
-    7ZE6dLpRANq594QclRz3hHT7VqV5kLObneqw==
+    1523561648; b=JWxFD5iQoAMggv6SYK1hM0HenU7Y47Bwk8xMIJ4BSQmOAtiy4r
+    FPZf3q+Viq6n1CAWtVAn+LszuYvK9H1RN7t742iALJn57Y/3eaQLhY2tG4Q9IfNX
+    6AYyglbViUh/4fyBOd3upzAzyb4H40AP7v3/B8s4PY3QeslxXrt9ZbXwMN0UZLnI
+    JaocJsG7/doqd2CsBhHOrp6dG/qJQrQ801hvYLE1fQkf7xMbXtGxmksZhLTNbAh1
+    ak4IMRatwdYgxhgG7KT7My4Cdrtza9Vktgm3fvErKIxLil0zWIRlGb2tCvg4bFcG
+    2zA8gfIexb8vtfiVFo0ZwvlRY1u4t2iCQwBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1523561660; bh=
-    z4mYWDuV/CpJt6HnIwgJQIBXa0gF/YVBGLFSodf1kWE=; b=XM8X/W2unxcihphw
-    QnHOsbtiBAPl+Rd+gfvBgrtlRlOztsN2dwYIVIopb70oSsMftSzCXmeaymVozCqM
-    mToDT0jVDlS4c2qumxRjtu2BqPbFCI8SPD8smXEPYBgLdTmmCgJddCzunM6XxjHG
-    aw1LvFhBv5olxBmXrodlwa/NJOWC2Etj67SRVWVgB4Ecb7MdLZednhgQi3FQOxBF
-    5KmUFAvOJzuqKYih+AmI7dpXpsG6OgWZ0+xErJrZTPdXi2rcRFScLnU+cvtQACZ+
-    68SaW/UQxUacrlPEbO0rK+TxLNwkCbq1b3gLkZWI+QMXL8QYRWWrXKIabTJMWZWY
-    +CNjLQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1523561648; bh=
+    phmdIRGKeFkl2sWGnkCOSvrxUfcYIUhVha0VuZnitM8=; b=Ensl2LnsM40bABfd
+    UWMzrB3ZGRS42ICMToM8w8PSuz9R3gtOEwRzGCKAI8PL/GHWV9lQTse3sCqY2Hkr
+    KEp3jN2aVNQVk9PQVIGRuHj3mq6LdbHpcy/RNQmuD6kSi765HICnFq5srBk2m0TO
+    nMk7XUh/E0KqaGy/OoJgOoL+6PX0KS/S5pjzMWmWiem9yR9LsTz1hya1uatuVeKr
+    ixZSN1k4PII9Igo9fTkHXY+VldEyUUOp0TDAmEnfAFXzH5GPk9TLFt7sDSLDVZK2
+    t2i/PB65ZJnphbQh+AN2iSnUVOjpw6IpXn8HgEBzTXnGt/TSQW6pQ97ufAtOMsce
+    wERaTg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
@@ -51,28 +51,28 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfH6ZQRjY8y7Gc3o6O8CdlZtdWgxYyF5lX5102HAgXlslcIVppAvZ29VuTuHvu1jW4UiUojwZniXiTlZVVMguGX8YPlU28GQsCWTp+2OJb77OrUDVbzis
-    j73GA21b4KIo2lcd0NbqXmodc8ZFBsjTd+GUvuDYsMmNWFcVObZKQZt/X2WIal0NyEtJPgrgDUO7km07rVm99dNp7ytLDbdB47HXrbWeG4Fkq57q6x58Htbp
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfDBlmcoAAB7N1TuoAEPeYGOKX9M5Wy8IXRjwriPdrAdBROaTtsGH/4W/IfOMK7FshncCEfemLREvtfDKj1UKD7Z+28mOIAidLlHBlDlS58nl3XcMKC9/
+    2FlkA+ZGcxSaRwPplll2h9GvsyINx1Q+B7hnr7H78s2KlBax6fGtLQgAWa6Iuw6MwgJzzPo2ljDm+m3/gsvEgdcr+ZVpsFm+qlxO1yA/s8q4y0AdzFZR42Sw
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=7d_E57ReAAAA:8
     a=drOt6m5kAAAA:8 a=7CQSdrXTAAAA:8 a=1XWaLZrsAAAA:8 a=JfrnYn6hAAAA:8
     a=SOq6UgPBAAAA:8 a=WfulkdPnAAAA:8 a=FOH2dFAWAAAA:8 a=NufY4J3AAAAA:8
     a=20KFwNOVAAAA:8 a=meVymXHHAAAA:8 a=VnNF1IyMAAAA:8 a=UPm3pfgAAAAA:8
-    a=Z4Rwk6OoAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=g7pywOGN1Paq1EdbV4IA:9
-    a=LOU8yYvvEhgmHtpI:21 a=9BkHEsnc4kFJ77tt:21 a=x8gzFH9gYPwA:10
-    a=jhqOcbufqs7Y1TYCrUUU:22 a=RMMjzBEyIzXRtoq5n5K6:22 a=a-qgeE7W1pNrGK8U0ZQC:22
-    a=1CNFftbPRP8L7MoqJWF3:22 a=3hv5r9HjGAh9o5iR9qwG:22 a=56QPVbyS4OZCpcuOg7Z9:22
-    a=i3VuKzQdj-NEYjvDI-p3:22 a=TPcZfFuj8SYsoCJAFAiX:22 a=2JgSa4NbpEOStq-L5dxp:22
-    a=uD9XBtlS4o1URY3aiGdj:22 a=HkZW87K1Qel5hWWM3VKY:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=Z4Rwk6OoAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=nK1Qfd4pxio8lxmWJb4A:9
+    a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22 a=RMMjzBEyIzXRtoq5n5K6:22
+    a=a-qgeE7W1pNrGK8U0ZQC:22 a=1CNFftbPRP8L7MoqJWF3:22 a=3hv5r9HjGAh9o5iR9qwG:22
+    a=56QPVbyS4OZCpcuOg7Z9:22 a=i3VuKzQdj-NEYjvDI-p3:22 a=TPcZfFuj8SYsoCJAFAiX:22
+    a=2JgSa4NbpEOStq-L5dxp:22 a=uD9XBtlS4o1URY3aiGdj:22 a=HkZW87K1Qel5hWWM3VKY:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754045AbeDLTeI (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 12 Apr 2018 15:34:08 -0400
-Received: from mail.efficios.com ([167.114.142.138]:45492 "EHLO
+        id S1753383AbeDLTdl (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 12 Apr 2018 15:33:41 -0400
+Received: from mail.efficios.com ([167.114.142.138]:45538 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752932AbeDLT2V (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 12 Apr 2018 15:28:21 -0400
+        with ESMTP id S1752952AbeDLT2W (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 12 Apr 2018 15:28:22 -0400
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -95,9 +95,9 @@ Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 4.18 03/23] arm: Add restartable sequences support
-Date: Thu, 12 Apr 2018 15:27:40 -0400
-Message-Id: <20180412192800.15708-4-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 04/23] arm: Wire up restartable sequences system call
+Date: Thu, 12 Apr 2018 15:27:41 -0400
+Message-Id: <20180412192800.15708-5-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
 References: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
@@ -107,11 +107,16 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Call the rseq_handle_notify_resume() function on return to
-userspace if TIF_NOTIFY_RESUME thread flag is set.
+Wire up the rseq system call on 32-bit ARM.
 
-Perform fixup on the pre-signal frame when a signal is delivered on top
-of a restartable sequence critical section.
+This provides an ABI improving the speed of a user-space getcpu
+operation on ARM by skipping the getcpu system call on the fast path, as
+well as improving the speed of user-space operations on per-cpu data
+compared to using load-linked/store-conditional.
+
+TODO: wire up rseq_syscall() on return from system call. It is used with
+CONFIG_DEBUG_RSEQ=y to ensure system calls are not issued within rseq critical
+section
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 CC: Russell King <linux@arm.linux.org.uk>
@@ -135,47 +140,18 @@ CC: Andrew Morton <akpm@linux-foundation.org>
 CC: Boqun Feng <boqun.feng@gmail.com>
 CC: linux-api@vger.kernel.org
 ---
- arch/arm/Kconfig         | 1 +
- arch/arm/kernel/signal.c | 7 +++++++
- 2 files changed, 8 insertions(+)
+ arch/arm/tools/syscall.tbl | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 7e3d53575486..1897d40ddd87 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -90,6 +90,7 @@ config ARM
- 	select HAVE_PERF_USER_STACK_DUMP
- 	select HAVE_RCU_TABLE_FREE if (SMP && ARM_LPAE)
- 	select HAVE_REGS_AND_STACK_ACCESS_API
-+	select HAVE_RSEQ
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_UID16
- 	select HAVE_VIRT_CPU_ACCOUNTING_GEN
-diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
-index bd8810d4acb3..5879ab3f53c1 100644
---- a/arch/arm/kernel/signal.c
-+++ b/arch/arm/kernel/signal.c
-@@ -541,6 +541,12 @@ static void handle_signal(struct ksignal *ksig, struct pt_regs *regs)
- 	int ret;
- 
- 	/*
-+	 * Increment event counter and perform fixup for the pre-signal
-+	 * frame.
-+	 */
-+	rseq_signal_deliver(regs);
-+
-+	/*
- 	 * Set up the stack frame
- 	 */
- 	if (ksig->ka.sa.sa_flags & SA_SIGINFO)
-@@ -660,6 +666,7 @@ do_work_pending(struct pt_regs *regs, unsigned int thread_flags, int syscall)
- 			} else {
- 				clear_thread_flag(TIF_NOTIFY_RESUME);
- 				tracehook_notify_resume(regs);
-+				rseq_handle_notify_resume(regs);
- 			}
- 		}
- 		local_irq_disable();
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index 0bb0e9c6376c..fbc74b5fa3ed 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -412,3 +412,4 @@
+ 395	common	pkey_alloc		sys_pkey_alloc
+ 396	common	pkey_free		sys_pkey_free
+ 397	common	statx			sys_statx
++398	common	rseq			sys_rseq
 -- 
 2.11.0
 
