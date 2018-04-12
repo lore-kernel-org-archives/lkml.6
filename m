@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753219AbeDLLPL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 07:15:11 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:46753 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752621AbeDLLPG (ORCPT
+        id S1753268AbeDLLPS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 07:15:18 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:36290 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753217AbeDLLPL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 07:15:06 -0400
-X-Google-Smtp-Source: AIpwx4+j5+eSgEk0LXcdiOH0Et0QWH2XgEfLgDNuqtd4+zHQIzO4F1fLM5+KKgKgVKAZMAWW5H1tYQ==
+        Thu, 12 Apr 2018 07:15:11 -0400
+X-Google-Smtp-Source: AIpwx48Sp/tWcEjzQqkAvrBqtKm9Rg/ZeTNvMLFDQdCNp6JnMaDEqmLfajm7tK3Pe3AwidGQ9kBB/w==
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -23,9 +23,9 @@ Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 15/26] drivers: firmware: psci: Split psci_dt_cpu_init_idle()
-Date: Thu, 12 Apr 2018 13:14:20 +0200
-Message-Id: <1523531671-27491-16-git-send-email-ulf.hansson@linaro.org>
+Subject: [PATCH v7 18/26] drivers: firmware: psci: Announce support for OS initiated suspend mode
+Date: Thu, 12 Apr 2018 13:14:23 +0200
+Message-Id: <1523531671-27491-19-git-send-email-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
 References: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
@@ -33,82 +33,86 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's split psci_dt_cpu_init_idle() function into two functions, as to
-allow following changes to re-use some of the code.
+PSCI firmware v1.0+, supports two different modes for CPU_SUSPEND. The
+Platform Coordinated mode, which is the default and mandatory mode, while
+support for the OS initiated mode is optional.
+
+This change introduces initial support for the OS initiated mode, in way
+that it adds the related PSCI bits from the spec and prints a message in
+the log to inform whether the mode is supported by the PSCI FW.
 
 Cc: Lina Iyer <ilina@codeaurora.org>
 Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/firmware/psci/psci.c | 42 +++++++++++++++++++++++-------------------
- 1 file changed, 23 insertions(+), 19 deletions(-)
+ drivers/firmware/psci/psci.c | 21 ++++++++++++++++++++-
+ include/uapi/linux/psci.h    |  5 +++++
+ 2 files changed, 25 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-index c80ec1d..9788bfc 100644
+index 3888100..e8f4f84 100644
 --- a/drivers/firmware/psci/psci.c
 +++ b/drivers/firmware/psci/psci.c
-@@ -270,9 +270,26 @@ static int __init psci_features(u32 psci_func_id)
- #ifdef CONFIG_CPU_IDLE
- static DEFINE_PER_CPU_READ_MOSTLY(u32 *, psci_power_state);
+@@ -95,6 +95,11 @@ static inline bool psci_has_ext_power_state(void)
+ 				PSCI_1_0_FEATURES_CPU_SUSPEND_PF_MASK;
+ }
  
-+static int psci_dt_parse_state_node(struct device_node *np, u32 *state)
++static inline bool psci_has_osi_support(void)
 +{
-+	int err = of_property_read_u32(np, "arm,psci-suspend-param", state);
++	return psci_cpu_suspend_feature & PSCI_1_0_OS_INITIATED;
++}
 +
-+	if (err) {
-+		pr_warn("%pOF missing arm,psci-suspend-param property\n", np);
+ static inline bool psci_power_state_loses_context(u32 state)
+ {
+ 	const u32 mask = psci_has_ext_power_state() ?
+@@ -658,10 +663,24 @@ static int __init psci_0_1_init(struct device_node *np)
+ 	return 0;
+ }
+ 
++static int __init psci_1_0_init(struct device_node *np)
++{
++	int err;
++
++	err = psci_0_2_init(np);
++	if (err)
 +		return err;
-+	}
 +
-+	if (!psci_power_state_is_valid(*state)) {
-+		pr_warn("Invalid PSCI power state %#x\n", *state);
-+		return -EINVAL;
-+	}
++	if (psci_has_osi_support())
++		pr_info("OSI mode supported.\n");
 +
 +	return 0;
 +}
 +
- static int psci_dt_cpu_init_idle(struct device_node *cpu_node, int cpu)
- {
--	int i, ret, count = 0;
-+	int i, ret = 0, count = 0;
- 	u32 *psci_states;
- 	struct device_node *state_node;
+ static const struct of_device_id psci_of_match[] __initconst = {
+ 	{ .compatible = "arm,psci",	.data = psci_0_1_init},
+ 	{ .compatible = "arm,psci-0.2",	.data = psci_0_2_init},
+-	{ .compatible = "arm,psci-1.0",	.data = psci_0_2_init},
++	{ .compatible = "arm,psci-1.0",	.data = psci_1_0_init},
+ 	{},
+ };
  
-@@ -291,29 +308,16 @@ static int psci_dt_cpu_init_idle(struct device_node *cpu_node, int cpu)
- 		return -ENOMEM;
+diff --git a/include/uapi/linux/psci.h b/include/uapi/linux/psci.h
+index b3bcabe..581f720 100644
+--- a/include/uapi/linux/psci.h
++++ b/include/uapi/linux/psci.h
+@@ -49,6 +49,7 @@
  
- 	for (i = 0; i < count; i++) {
--		u32 state;
--
- 		state_node = of_parse_phandle(cpu_node, "cpu-idle-states", i);
-+		ret = psci_dt_parse_state_node(state_node, &psci_states[i]);
-+		of_node_put(state_node);
+ #define PSCI_1_0_FN_PSCI_FEATURES		PSCI_0_2_FN(10)
+ #define PSCI_1_0_FN_SYSTEM_SUSPEND		PSCI_0_2_FN(14)
++#define PSCI_1_0_FN_SET_SUSPEND_MODE		PSCI_0_2_FN(15)
  
--		ret = of_property_read_u32(state_node,
--					   "arm,psci-suspend-param",
--					   &state);
--		if (ret) {
--			pr_warn(" * %pOF missing arm,psci-suspend-param property\n",
--				state_node);
--			of_node_put(state_node);
-+		if (ret)
- 			goto free_mem;
--		}
+ #define PSCI_1_0_FN64_SYSTEM_SUSPEND		PSCI_0_2_FN64(14)
  
--		of_node_put(state_node);
--		pr_debug("psci-power-state %#x index %d\n", state, i);
--		if (!psci_power_state_is_valid(state)) {
--			pr_warn("Invalid PSCI power state %#x\n", state);
--			ret = -EINVAL;
--			goto free_mem;
--		}
--		psci_states[i] = state;
-+		pr_debug("psci-power-state %#x index %d\n", psci_states[i], i);
- 	}
+@@ -97,6 +98,10 @@
+ #define PSCI_1_0_FEATURES_CPU_SUSPEND_PF_MASK	\
+ 			(0x1 << PSCI_1_0_FEATURES_CPU_SUSPEND_PF_SHIFT)
+ 
++#define PSCI_1_0_OS_INITIATED			BIT(0)
++#define PSCI_1_0_SUSPEND_MODE_PC		0
++#define PSCI_1_0_SUSPEND_MODE_OSI		1
 +
- 	/* Idle states parsed correctly, initialize per-cpu pointer */
- 	per_cpu(psci_power_state, cpu) = psci_states;
- 	return 0;
+ /* PSCI return values (inclusive of all PSCI versions) */
+ #define PSCI_RET_SUCCESS			0
+ #define PSCI_RET_NOT_SUPPORTED			-1
 -- 
 2.7.4
