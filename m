@@ -1,156 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752245AbeDLMPy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 08:15:54 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:44056 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752327AbeDLMPv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 08:15:51 -0400
-X-Google-Smtp-Source: AIpwx48JA/ibIkr3I6mKvw8onf8GpBSUFle281VYssnCLyq4liL9SuRXJZwPcexePO7BejjVaQzWCxbGYcpie90rgTY=
+        id S1752798AbeDLMSF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 08:18:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52761 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751818AbeDLMSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 08:18:03 -0400
+Date: Thu, 12 Apr 2018 14:18:01 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: Cyrill Gorcunov <gorcunov@gmail.com>, adobriyan@gmail.com,
+        willy@infradead.org, mguzik@redhat.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [v3 PATCH] mm: introduce arg_lock to protect arg_start|end and
+ env_start|end in mm_struct
+Message-ID: <20180412121801.GE23400@dhcp22.suse.cz>
+References: <1523310774-40300-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180410090917.GZ21835@dhcp22.suse.cz>
+ <20180410094047.GB2041@uranus.lan>
+ <20180410104215.GB21835@dhcp22.suse.cz>
+ <20180410110242.GC2041@uranus.lan>
+ <20180410111001.GD21835@dhcp22.suse.cz>
+ <20180410122804.GD2041@uranus.lan>
+ <097488c7-ab18-367b-c435-7c26d149c619@linux.alibaba.com>
+ <8c19f1fb-7baf-fef3-032d-4e93cfc63932@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <7d98027d-e810-a079-49c5-0bf8beef390e@nokia.com>
-References: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
- <CAM_iQpVo0iSXKSR=Qc+7syn77BnhE2R72M2u5YfJF=fBkJHjsw@mail.gmail.com>
- <7fd7e3b3-77b1-0936-b169-d08b946bedc7@iogearbox.net> <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
- <efa5811c-0a01-a4af-ade2-71ef5dbc4eaf@gmail.com> <CADvbK_dgEa5g0ynY4F8pX6LuuBwW4e42rK_TFuRhY1=2G5zinw@mail.gmail.com>
- <CADvbK_fKDbUnAkdLrgm6rgj895Gb06AK7HaT0s9VD=zdF+vf6Q@mail.gmail.com>
- <CACT4Y+aV_v6zNS6Ac1u1cB2GZ7QhjNxBeg0FNabUhrndt5CqZw@mail.gmail.com>
- <5973966e-fcd9-7ee5-a9c4-b79d22c1b9dd@nokia.com> <CACT4Y+beZ2+O=XdjKCpAkXOTBDgHYfn1JW8kn-TGRrph_RmV7Q@mail.gmail.com>
- <20180220162622.GA32068@hmswarspite.think-freely.org> <7d98027d-e810-a079-49c5-0bf8beef390e@nokia.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 12 Apr 2018 14:15:30 +0200
-Message-ID: <CACT4Y+Z2kdjsYUs-H9aSTcNW-FSKqm1__fg3eOq16H-E=X8oZg@mail.gmail.com>
-Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
-To: Tommi Rantala <tommi.t.rantala@nokia.com>
-Cc: Neil Horman <nhorman@tuxdriver.com>, Xin Long <lucien.xin@gmail.com>,
-        David Ahern <dsahern@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Dan Streetman <ddstreet@canonical.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexey Kodanev <alexey.kodanev@oracle.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        linux-sctp@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8c19f1fb-7baf-fef3-032d-4e93cfc63932@linux.alibaba.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 21, 2018 at 3:53 PM, Tommi Rantala
-<tommi.t.rantala@nokia.com> wrote:
-> On 20.02.2018 18:26, Neil Horman wrote:
->>
->> On Tue, Feb 20, 2018 at 09:14:41AM +0100, Dmitry Vyukov wrote:
->>>
->>> On Tue, Feb 20, 2018 at 8:56 AM, Tommi Rantala
->>> <tommi.t.rantala@nokia.com> wrote:
->>>>
->>>> On 19.02.2018 20:59, Dmitry Vyukov wrote:
->>>>>
->>>>> Is this meant to be fixed already? I am still seeing this on the
->>>>> latest upstream tree.
->>>>>
->>>>
->>>> These two commits are in v4.16-rc1:
->>>>
->>>> commit 4a31a6b19f9ddf498c81f5c9b089742b7472a6f8
->>>> Author: Tommi Rantala <tommi.t.rantala@nokia.com>
->>>> Date:   Mon Feb 5 21:48:14 2018 +0200
->>>>
->>>>      sctp: fix dst refcnt leak in sctp_v4_get_dst
->>>> ...
->>>>      Fixes: 410f03831 ("sctp: add routing output fallback")
->>>>      Fixes: 0ca50d12f ("sctp: fix src address selection if using
->>>> secondary
->>>> addresses")
->>>>
->>>>
->>>> commit 957d761cf91cdbb175ad7d8f5472336a4d54dbf2
->>>> Author: Alexey Kodanev <alexey.kodanev@oracle.com>
->>>> Date:   Mon Feb 5 15:10:35 2018 +0300
->>>>
->>>>      sctp: fix dst refcnt leak in sctp_v6_get_dst()
->>>> ...
->>>>      Fixes: dbc2b5e9a09e ("sctp: fix src address selection if using
->>>> secondary
->>>> addresses for ipv6")
->>>>
->>>>
->>>> I guess we missed something if it's still reproducible.
->>>>
->>>> I can check it later this week, unless someone else beat me to it.
->>>
->>>
->>> Hi Tommi,
->>>
->>> Hmmm, I can't claim that it's exactly the same bug. Perhaps it's
->>> another one then. But I am still seeing these:
->>>
->>> [   58.799130] unregister_netdevice: waiting for lo to become free.
->>> Usage count = 4
->>> [   60.847138] unregister_netdevice: waiting for lo to become free.
->>> Usage count = 4
->>> [   62.895093] unregister_netdevice: waiting for lo to become free.
->>> Usage count = 4
->>> [   64.943103] unregister_netdevice: waiting for lo to become free.
->>> Usage count = 4
->>>
->>> on upstream tree pulled ~12 hours ago.
->>>
->> Can you write a systemtap script to probe dev_hold, and dev_put, printing
->> out a
->> backtrace if the device name matches "lo".  That should tell us
->> definitively if
->> the problem is in the same location or not
->
->
-> Hi Dmitry, I tested with the reproducer and the kernel .config file that you
-> sent in the first email in this thread:
->
-> With 4.16-rc2 unable to reproduce.
->
-> With 4.15-rc9 bug reproducible, and I get "unregister_netdevice: waiting for
-> lo to become free. Usage count = 3"
->
-> With 4.15-rc9 and Alexey's "sctp: fix dst refcnt leak in sctp_v6_get_dst()"
-> cherry-picked on top, unable to reproduce.
->
->
-> Is syzkaller doing something else now to trigger the bug...?
-> Can you still trigger the bug with the same reproducer?
+On Tue 10-04-18 11:28:13, Yang Shi wrote:
+> 
+> 
+> On 4/10/18 9:21 AM, Yang Shi wrote:
+> > 
+> > 
+> > On 4/10/18 5:28 AM, Cyrill Gorcunov wrote:
+> > > On Tue, Apr 10, 2018 at 01:10:01PM +0200, Michal Hocko wrote:
+> > > > > Because do_brk does vma manipulations, for this reason it's
+> > > > > running under down_write_killable(&mm->mmap_sem). Or you
+> > > > > mean something else?
+> > > > Yes, all we need the new lock for is to get a consistent view on brk
+> > > > values. I am simply asking whether there is something fundamentally
+> > > > wrong by doing the update inside the new lock while keeping the
+> > > > original
+> > > > mmap_sem locking in the brk path. That would allow us to drop the
+> > > > mmap_sem lock in the proc path when looking at brk values.
+> > > Michal gimme some time. I guess  we might do so, but I need some
+> > > spare time to take more precise look into the code, hopefully today
+> > > evening. Also I've a suspicion that we've wracked check_data_rlimit
+> > > with this new lock in prctl. Need to verify it again.
+> > 
+> > I see you guys points. We might be able to move the drop of mmap_sem
+> > before setting mm->brk in sys_brk since mmap_sem should be used to
+> > protect vma manipulation only, then protect the value modify with the
+> > new arg_lock. Then we can eliminate mmap_sem stuff in prctl path, and it
+> > also prevents from wrecking check_data_rlimit.
+> > 
+> > At the first glance, it looks feasible to me. Will look into deeper
+> > later.
+> 
+> A further look told me this might be *not* feasible.
+> 
+> It looks the new lock will not break check_data_rlimit since in my patch
+> both start_brk and brk is protected by mmap_sem. The code flow might look
+> like below:
+> 
+> CPU A                             CPU B
+> --------                       --------
+> prctl                               sys_brk
+>                                       down_write
+> check_data_rlimit           check_data_rlimit (need mm->start_brk)
+>                                       set brk
+> down_write                    up_write
+> set start_brk
+> set brk
+> up_write
+> 
+> 
+> If CPU A gets the mmap_sem first, it will set start_brk and brk, then CPU B
+> will check with the new start_brk. And, prctl doesn't care if sys_brk is run
+> before it since it gets the new start_brk and brk from parameter.
+> 
+> If we protect start_brk and brk with the new lock, sys_brk might get old
+> start_brk, then sys_brk might break rlimit check silently, is that right?
+> 
+> So, it looks using new lock in prctl and keeping mmap_sem in brk path has
+> race condition.
 
-Hi Neil, Tommi,
+OK, I've admittedly didn't give it too much time to think about. Maybe
+we do something clever to remove the race but can we start at least by
+reducing the write lock to read on prctl side and use the dedicated
+spinlock for updating values? That should close the above race AFAICS
+and the read lock would be much more friendly to other VM operations.
 
-Reviving this old thread about "unregister_netdevice: waiting for lo
-to become free. Usage count = 3" hangs.
-I still did not have time to deep dive into what happens there (too
-many bugs coming from syzbot). But this still actively happens and I
-suspect accounts to a significant portion of various hang reports,
-which are quite unpleasant.
-
-One idea that could make it all simpler:
-
-Is this wait loop in netdev_wait_allrefs() supposed to wait for any
-prolonged periods of time under any non-buggy conditions? E.g. more
-than 1-2 minutes?
-If it only supposed to wait briefly for things that already supposed
-to be shutting down, and we add a WARNING there after some timeout,
-then syzbot will report all info how/when it happens, hopefully
-extracting reproducers, and all the nice things.
-But this WARNING should not have any false positives under any
-realistic conditions (e.g. waiting for arrival of remote packets with
-large timeouts).
-
-Looking at some task hung reports, it seems that this code holds some
-mutexes, takes workqueue thread and prevents any progress with
-destruction of other devices (and net namespace creation/destruction),
-so I guess it should not wait for any indefinite periods of time?
+-- 
+Michal Hocko
+SUSE Labs
