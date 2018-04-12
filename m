@@ -1,131 +1,161 @@
-Return-Path: <kernel-hardening-return-13125-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/Xfn0zx7sLpPnK6o8S7darCFSJASvFoyjG5A39gp+3rwfl4uEU8+gNbwfCCJ3jTZtoJ1Pz
-ARC-Seal: i=1; a=rsa-sha256; t=1524601715; cv=none;
+Return-Path: <linux-kselftest-owner@vger.kernel.org>
+X-Google-Smtp-Source: AIpwx4+XrIGHUbYsxFoa7b9ucG8myeQfYRTPUfGF8FGELEULp0bTAZz/RBHrfN6pi0lgwCUfTdzS
+ARC-Seal: i=1; a=rsa-sha256; t=1523544876; cv=none;
         d=google.com; s=arc-20160816;
-        b=swuRgRfVUhqMydG/lrIR3aBJe0+7oYU3xCtgqf/Zb8nl6fIZFa4M9sLOKDMPYbBxtP
-         +1jSsiE8hs/7bbneah9OVhkCUpumj07HuzeJY7B++YArXAvjdTFD+zERKobmvRdgTc0C
-         EKgmO52KJgTe/uO4DidBZvIl83OmsRlpTMFKxBXFPsmyqDmJLMpjc/Ra7p3Ns0HF7u0b
-         PVByxTxM6zGy0KiWq6EPhTrQDR6ausx2jkVrpXThQXdsmixvNzUvngI3MTePhfvowHFG
-         enQyMLvFQ4CJywqfyhYPC1D/jFsG3Fn3jVDdrEvZIY+LsSrS0mx7FVd+j55mz9jFNLrc
-         C7Dw==
+        b=P812sgj6lNMmjX4IV/ZCm2gILe4CY7fiAALN0vk+oqZ5K8qqM6S8Uu5O5X5oB7SpUI
+         uwW0fvHdb81FN7miCAX4OIN4/nb/Zistdx1F8fqnRYrld2e1hbUMCLAffRVWR9uCVqeb
+         lxv3IVuHUhzScsIEQuhaPuHBNXNhXwWY38VnI7e2phBisWKksh+R9WKUSHHrzHeAC3Rc
+         0tiGedl0krLJU+rKAarnAiqCHHFPoGHtpMRuF/QJEs8NOIkBWwCUEleMrLheRZ/iyN6v
+         DM1p0sgK35Sd6ZMdJGlVBqN8tj71hdCqMU0wVSqoUvJpu4qRGVevGQDiN/r7YRhGOmpA
+         RpdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
+        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=SJErzKT9nbvMFCOiOIf+uqZIZJ+5ZpCdx6U/gxgdK3g=;
-        b=sOhHa1cF6KjyBjEmuZJ5usm7unXYhFt+x/hlvZ/b0zu2OU8vBoZuQiLVe9Qvv+rlgP
-         P13v+gpvJbyb1DwmO4hdHYLCkfWRvRpJSrSWegSu/YUHecdyor/ZLclYGSKienJ6IWiW
-         b7FdMPYifb/bhUbh1gpRdTFGG6k8HB+Iwb03PljO4sgTiyBzIeLNHKsY3dS3afq66EFy
-         uwj5rJEw7KXRdtrnLmA7LtCmsxsiJ4GCyxIguQr4Ye8Tn3W64Wx9JpQOysfgHiCcUsxn
-         bxhk2KATAOZGkh1b986eQ/djIeBa9Ggwcmx9vtIF9UBcKHOdHf1EFTmMwEyOb/70C0Kk
-         cWCw==
+        bh=6VZzGz1UVs3rnUILjpsnKeQrs3uBtTk66OyDxHd1wXU=;
+        b=yFulnnbJlHeImAOqrmMIBUEd304JVqu23AdshhVCiXHI8XhklyJUzyEw09Je4jkw39
+         OLwWISXy5WrxYgDP2rfeFEyPrphFNFllo8W1jYwJMGmPxx7lRV8dknaHjFQ2oM7Vl1HJ
+         kzrAilnh7HGyBaU9c+vAJNrtfUtsdqko1RJjbRJPrhidBBx8yxnsDEqpbZ7BpsTpgb7l
+         c/xHRFS3LGJ3/lASSlCeh7ctCkH4swfFWXMnpio8W/WQlvdhzqy2dxcNui5kMrMfR53E
+         2TGm3Ax7Sco9FgJTEEvuv4BR5PcPHDckL84oZxKgERXoZtLI6KkVZZO5Ow3cmMk6471T
+         MZfA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=sLEWD1Oq;
-       spf=pass (google.com: domain of kernel-hardening-return-13125-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13125-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tycho-ws.20150623.gappssmtp.com header.s=20150623 header.b=sLEWD1Oq;
-       spf=pass (google.com: domain of kernel-hardening-return-13125-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13125-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-From: Tycho Andersen <tycho@tycho.ws>
-To: David Howells <dhowells@redhat.com>
-Cc: keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-hardening@lists.openwall.com,
-	Tycho Andersen <tycho@tycho.ws>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Eric Biggers <ebiggers3@gmail.com>
-Subject: [PATCH v3 2/3] dh key: get rid of stack allocated array
-Date: Tue, 24 Apr 2018 14:26:38 -0600
-Message-Id: <20180424202639.19830-2-tycho@tycho.ws>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180424202639.19830-1-tycho@tycho.ws>
-References: <20180424202639.19830-1-tycho@tycho.ws>
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753070AbeDLOyf (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Thu, 12 Apr 2018 10:54:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40888 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753060AbeDLOye (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Thu, 12 Apr 2018 10:54:34 -0400
+From: Joe Lawrence <joe.lawrence@redhat.com>
+To: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Miroslav Benes <mbenes@suse.cz>,
+        =?UTF-8?q?Libor=20Pech=C3=A1=C4=8Dek?= <lpechacek@suse.com>,
+        Nicolai Stange <nstange@suse.de>,
+        Artem Savkov <asavkov@redhat.com>
+Subject: [PATCH v3] Add livepatch kselftests
+Date: Thu, 12 Apr 2018 10:54:30 -0400
+Message-Id: <1523544871-29444-1-git-send-email-joe.lawrence@redhat.com>
+Sender: linux-kselftest-owner@vger.kernel.org
+X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598660767945455252?=
-X-GMAIL-MSGID: =?utf-8?q?1598660767945455252?=
+X-GMAIL-THRID: =?utf-8?q?1597552592827178262?=
+X-GMAIL-MSGID: =?utf-8?q?1597552592827178262?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-We're interested in getting rid of all of the stack allocated arrays in the
-kernel: https://lkml.org/lkml/2018/3/7/621
+Tests run on top of Petr's v11 atomic replace feature and v2 of the shadow
+variable enhancement patchsets:
 
-This particular vla is used as a temporary output buffer in case there is
-too much hash output for the destination buffer. Instead, let's just
-allocate a buffer that's big enough initially, but only copy back to
-userspace the amount that was originally asked for.
+  [PATCH 0/8] livepatch: Atomic replace feature
+  https://lkml.kernel.org/r/20180323120028.31451-1-pmladek@suse.com
 
-v2: allocate enough in the original output buffer vs creating a temporary
-    output buffer
+  [PATCH v2 0/2] livepatch: Allocate and free shadow variables more safely
+  https://lkml.kernel.org/r/20180405122315.29065-1-pmladek@suse.com
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-CC: David Howells <dhowells@redhat.com>
-CC: James Morris <jmorris@namei.org>
-CC: "Serge E. Hallyn" <serge@hallyn.com>
-CC: Eric Biggers <ebiggers3@gmail.com>
----
- security/keys/dh.c | 29 ++++++++++-------------------
- 1 file changed, 10 insertions(+), 19 deletions(-)
+which have been combined into a git tree, then branched:
 
-diff --git a/security/keys/dh.c b/security/keys/dh.c
-index d1ea9f325f94..9fecaea6c298 100644
---- a/security/keys/dh.c
-+++ b/security/keys/dh.c
-@@ -183,24 +183,13 @@ static int kdf_ctr(struct kdf_sdesc *sdesc, const u8 *src, unsigned int slen,
- 				goto err;
- 		}
- 
--		if (dlen < h) {
--			u8 tmpbuffer[h];
--
--			err = crypto_shash_final(desc, tmpbuffer);
--			if (err)
--				goto err;
--			memcpy(dst, tmpbuffer, dlen);
--			memzero_explicit(tmpbuffer, h);
--			return 0;
--		} else {
--			err = crypto_shash_final(desc, dst);
--			if (err)
--				goto err;
-+		err = crypto_shash_final(desc, dst);
-+		if (err)
-+			goto err;
- 
--			dlen -= h;
--			dst += h;
--			counter = cpu_to_be32(be32_to_cpu(counter) + 1);
--		}
-+		dlen -= h;
-+		dst += h;
-+		counter = cpu_to_be32(be32_to_cpu(counter) + 1);
- 	}
- 
- 	return 0;
-@@ -216,14 +205,16 @@ static int keyctl_dh_compute_kdf(struct kdf_sdesc *sdesc,
- {
- 	uint8_t *outbuf = NULL;
- 	int ret;
-+	size_t outbuf_len = round_up(buflen,
-+			             crypto_shash_digestsize(sdesc->shash.tfm));
- 
--	outbuf = kmalloc(buflen, GFP_KERNEL);
-+	outbuf = kmalloc(outbuf_len, GFP_KERNEL);
- 	if (!outbuf) {
- 		ret = -ENOMEM;
- 		goto err;
- 	}
- 
--	ret = kdf_ctr(sdesc, kbuf, kbuflen, outbuf, buflen, lzero);
-+	ret = kdf_ctr(sdesc, kbuf, kbuflen, outbuf, outbuf_len, lzero);
- 	if (ret)
- 		goto err;
- 
--- 
-2.17.0
+  https://github.com/joe-lawrence/linux/tree/klp_kselftest_base
+  https://github.com/joe-lawrence/linux/tree/klp_kselftest_v3
+
+so that the kbuild test robot could verify:
+
+  Subject: [joe-lawrence:klp_kselftest_v3] BUILD SUCCESS 73f12d67f681e3517a8cdc12ceec07b05543d269
+  From: kbuild test robot <lkp@intel.com>
+  To: Joe Lawrence <joe.lawrence@redhat.com>
+
+  tree/branch: https://github.com/joe-lawrence/linux  klp_kselftest_v3
+  branch HEAD: 73f12d67f681e3517a8cdc12ceec07b05543d269  selftests/livepatch: introduce tests
+
+  elapsed time: 95m
+
+  configs tested: 202
+
+  [ ... snip ... ]
+
+If anyone knows how to indicate an external git tree base to the bot in
+the commit message or header letter, let me know.  Otherwise I'll have
+to keep pushing up to github and ignoring its misfires as reported to
+the list :(
+
+
+changes from v2:
+
+- fix module_exit(test_klp_shadow_vars_exit) in test_klp_shadow_vars.c
+- silence kbuild test robot's "XXX can be static" and "Using plain
+  integer as NULL pointer" complaints
+- re-run tests with CONFIG_LOCKDEP=y and CONFIG_PROVE_LOCKING=y
+- use GFP_ATOMIC in test_klp_shadow_vars.c constructor code
+
+changes from v1:
+- Only add $(CC_FLAGS_FTRACE) for target modules
+- Remove between test delay
+- Reduce RETRY_INTERVAL to .1 sec
+- Reduce test_callback_mod's busymod_work_func delay from 60 to 10 sec
+- s/PASS/ok and s/FAIL/not ok for test output
+- Move test descriptions from Documentation/livepatch/callbacks.txt
+  into tools/testing/selftests/livepatch/test-callbacks.sh
+- Add a shadow variable test script and module
+- Add a short tools/testing/selftests/livepatch/README
+- to += linux-kselftest@vger.kernel.org
+- cc += Libor, Nicolai, Artem
+
+change from rfc:
+- SPDX-License-Identifiers
+- Moved livepatch test modules into lib/livepatch
+- Renamed livepatch.sh (filename suffix)
+- Reduced between-test delay time
+- Split off common functions.sh file
+- Split into separate livepatch, callbacks, and shadow-vars scrips
+- Gave the tests short descriptions instead of TEST1, TEST2, etc.
+
+Joe Lawrence (1):
+  selftests/livepatch: introduce tests
+
+ Documentation/livepatch/callbacks.txt              | 487 -----------------
+ lib/Kconfig.debug                                  |  12 +
+ lib/Makefile                                       |   2 +
+ lib/livepatch/Makefile                             |  15 +
+ lib/livepatch/test_klp_atomic_replace.c            |  69 +++
+ lib/livepatch/test_klp_callbacks_busy.c            |  43 ++
+ lib/livepatch/test_klp_callbacks_demo.c            | 132 +++++
+ lib/livepatch/test_klp_callbacks_demo2.c           | 104 ++++
+ lib/livepatch/test_klp_callbacks_mod.c             |  24 +
+ lib/livepatch/test_klp_livepatch.c                 |  62 +++
+ lib/livepatch/test_klp_shadow_vars.c               | 236 ++++++++
+ tools/testing/selftests/Makefile                   |   1 +
+ tools/testing/selftests/livepatch/Makefile         |   8 +
+ tools/testing/selftests/livepatch/README           |  43 ++
+ tools/testing/selftests/livepatch/config           |   1 +
+ tools/testing/selftests/livepatch/functions.sh     | 196 +++++++
+ .../testing/selftests/livepatch/test-callbacks.sh  | 607 +++++++++++++++++++++
+ .../testing/selftests/livepatch/test-livepatch.sh  | 173 ++++++
+ .../selftests/livepatch/test-shadow-vars.sh        |  60 ++
+ 19 files changed, 1788 insertions(+), 487 deletions(-)
+ create mode 100644 lib/livepatch/Makefile
+ create mode 100644 lib/livepatch/test_klp_atomic_replace.c
+ create mode 100644 lib/livepatch/test_klp_callbacks_busy.c
+ create mode 100644 lib/livepatch/test_klp_callbacks_demo.c
+ create mode 100644 lib/livepatch/test_klp_callbacks_demo2.c
+ create mode 100644 lib/livepatch/test_klp_callbacks_mod.c
+ create mode 100644 lib/livepatch/test_klp_livepatch.c
+ create mode 100644 lib/livepatch/test_klp_shadow_vars.c
+ create mode 100644 tools/testing/selftests/livepatch/Makefile
+ create mode 100644 tools/testing/selftests/livepatch/README
+ create mode 100644 tools/testing/selftests/livepatch/config
+ create mode 100644 tools/testing/selftests/livepatch/functions.sh
+ create mode 100755 tools/testing/selftests/livepatch/test-callbacks.sh
+ create mode 100755 tools/testing/selftests/livepatch/test-livepatch.sh
+ create mode 100755 tools/testing/selftests/livepatch/test-shadow-vars.sh
+
+--
+1.8.3.1
+
