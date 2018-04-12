@@ -1,96 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752840AbeDLLWG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 07:22:06 -0400
-Received: from mail-wr0-f174.google.com ([209.85.128.174]:46233 "EHLO
-        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751589AbeDLLWE (ORCPT
+        id S1752355AbeDLLaD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 07:30:03 -0400
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:44143 "EHLO
+        mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750763AbeDLLaC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 07:22:04 -0400
-X-Google-Smtp-Source: AIpwx4+gaGk/ae427f6/WqHs+l/ZWckGbQG25Iv7Tf+FBHKYgbY3y2ZGLOoNHFsv71ILrrpDL8vE7w==
-Date: Thu, 12 Apr 2018 13:21:55 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: paulmck@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH] memory-model: fix cheat sheet typo
-Message-ID: <20180412112155.GA9154@andrea>
-References: <1523292618-10207-1-git-send-email-pbonzini@redhat.com>
- <20180409184258.GP3948@linux.vnet.ibm.com>
- <20180410203214.GA19606@linux.vnet.ibm.com>
- <8cbda122-6aa3-365b-fd09-52dca0644cbd@redhat.com>
- <20180410213434.GC3948@linux.vnet.ibm.com>
- <156ac07b-7393-449f-518a-6b1c2cff8efb@redhat.com>
- <20180412092303.GA6044@andrea>
- <eda463d8-aa4e-2e6b-9d1d-41a5a4eaa3a7@redhat.com>
+        Thu, 12 Apr 2018 07:30:02 -0400
+X-Google-Smtp-Source: AIpwx4+WtjfDwqt7RZh+QIdp+xpsX+aQ81dQ8E3HrxWx7OHhTmTawYNyEIDCdE3lTnb0Af8gYbFAZS77qUQr9WCM1nQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eda463d8-aa4e-2e6b-9d1d-41a5a4eaa3a7@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180412093735.GF6014@localhost>
+References: <abdda9da96185f764d58bbf61db9010d0f72d1b3.1523346135.git.baolin.wang@linaro.org>
+ <0c2b76aba6a49e583f920ae582d6815fa9cc4361.1523346135.git.baolin.wang@linaro.org>
+ <20180411093634.GC6014@localhost> <CAMz4kuJyKNNuR9WGP8F1NKAET6ZTtN4LtXTTtdnR3Zyxa+OjNw@mail.gmail.com>
+ <20180412093735.GF6014@localhost>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Thu, 12 Apr 2018 19:30:01 +0800
+Message-ID: <CAMz4ku+i+zA0_5U65vc3h3tO-hzWvtCOFDeFU94h3Rm6sJUuKQ@mail.gmail.com>
+Subject: Re: [PATCH 4/5] dmaengine: sprd: Add Spreadtrum DMA configuration
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Eric Long <eric.long@spreadtrum.com>, Mark Brown <broonie@kernel.org>,
+        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 12:18:13PM +0200, Paolo Bonzini wrote:
-> On 12/04/2018 11:23, Andrea Parri wrote:
-> >>
-> >> - smp_store_mb() is missing
-> > 
-> > Good point. In fact, we could add this to the model as well:
-> > following Peter's remark/the generic implementation,
-> 
-> Good idea.  smp_store_mb() can save some clock cycles in the relatively
-> common idiom
-> 
-> 	write a				write b
-> 	read b				read a
-> 	if (b)				if (a)
-> 	  wake 'em			  we've been woken
-> 
-> > Yeah, those 'Ordering is cumulative', 'Ordering propagates' could
-> > mean different things to different readers... IMO, we may even omit
-> > such information; this doc. does not certainly aim for completeness,
-> > after all. OTOH, we ought to refrain from making this doc. an excuse
-> > to transform (what it is really) high-school maths into some black
-> > magic.
-> FWIW, what I miss in explanation.txt (and to some extent in the paper)
-> is a clear pointer to litmus tests that rely on cumulativity and
-> propagation.  In the meanwhile I'll send some patches.  Thanks for the
-> feedback, as it also helps validating my understanding of the model.
+Hi Vinod,
 
-The litmus test that first comes to my mind when I think of cumulativity
-(at least, 'cumulativity' as intended in LKMM) is:
+On 12 April 2018 at 17:37, Vinod Koul <vinod.koul@intel.com> wrote:
+> On Wed, Apr 11, 2018 at 08:13:28PM +0800, Baolin Wang wrote:
+>> Hi Vinod,
+>>
+>> On 11 April 2018 at 17:36, Vinod Koul <vinod.koul@intel.com> wrote:
+>> > On Tue, Apr 10, 2018 at 03:46:06PM +0800, Baolin Wang wrote:
+>> >
+>> >> +/*
+>> >> + * struct sprd_dma_config - DMA configuration structure
+>> >> + * @config: dma slave channel config
+>> >> + * @fragment_len: specify one fragment transfer length
+>> >> + * @block_len: specify one block transfer length
+>> >> + * @transcation_len: specify one transcation transfer length
+>> >> + * @wrap_ptr: wrap pointer address, once the transfer address reaches the
+>> >> + * 'wrap_ptr', the next transfer address will jump to the 'wrap_to' address.
+>> >> + * @wrap_to: wrap jump to address
+>> >> + * @req_mode: specify the DMA request mode
+>> >> + * @int_mode: specify the DMA interrupt type
+>> >> + */
+>> >> +struct sprd_dma_config {
+>> >> +     struct dma_slave_config config;
+>> >> +     u32 fragment_len;
+>> >
+>> > why not use _maxburst?
+>>
+>> Yes, I can use maxburst.
+>>
+>> >
+>> >> +     u32 block_len;
+>> >> +     u32 transcation_len;
+>> >
+>> > what does block and transaction len refer to here
+>>
+>>  Our DMA has 3 transfer mode: transaction transfer, block transfer and
+>> fragment transfer. One transaction transfer can contain several blocks
+>> transfer, and each block can be set proper block step. One block can
+>> contain several fragments transfer with proper fragment step. It can
+>> generate interrupts when one transaction transfer or block transfer or
+>> fragment transfer is completed if user set the interrupt type. So here
+>> we should set the length for transaction transfer, block transfer and
+>> fragment transfer.
+>
+> what are the max size these types support?
 
-   WRC+pooncerelease+rmbonceonce+Once.litmus
+These types max size definition:
 
-for 'propagation', I could mention:
+#define SPRD_DMA_FRG_LEN_MASK GENMASK(16, 0)
 
-   IRIW+mbonceonces+OnceOnce.litmus
+#define SPRD_DMA_BLK_LEN_MASK GENMASK(16, 0)
 
-(both tests are availabe in tools/memory-model/litmus-tests/). It would
-be a nice to mention these properties in the test descriptions, indeed.
+#define SPRD_DMA_TRSC_LEN_MASK GENMASK(27, 0)
 
-You might find it useful to also visualize the 'valid' executions (with
-the main events/relations) associated to each of these tests; for this,
+>>
+>> >
+>> >> +     phys_addr_t wrap_ptr;
+>> >> +     phys_addr_t wrap_to;
+>> >
+>> > this sound sg_list to me, why are we not using that here
+>>
+>> It is similar to sg list, but it is not one software action, we have
+>> hardware registers to help to jump one specified address.
+>>
+>> >
+>> >> +     enum sprd_dma_req_mode req_mode;
+>> >
+>> > Looking at definition of request mode we have frag, block, transaction list
+>> > etc.. That should depend upon dma request. If you have been asked to
+>> > transfer a list, you shall configure list mode. if it is a single
+>> > transaction then it should be transaction mode!
+>>
+>> If I understand your points correctly, you mean we can specify the
+>> request mode when requesting one slave channel by
+>> 'dma_request_slave_channel()'. But we need change the request mode
+>> dynamically following different transfer task for this channel, so I
+>> am afraid we can not specify the request mode of this channel at
+>> requesting time.
+>
+> Nope a channel has nothing to do with request type. You request and grab a
+> channel. Then you prepare a descriptor for a dma transaction. Based on
+> transaction requested you should intelligently break it down and create a
+> descriptor which uses transaction/block/fragment so that DMA throughput is
+> efficient. If prepare has sg list then you should use link list mode.
+> Further if you support max length, say 16KB and request is for 20KB you may
+> break it down for link list with two segments.
 
-   $ herd7 -conf linux-kernel.cfg litmus-tests/your-test.litmus \
-	-show all -gv
+OK. So I can add one more cell to specify the request mode for this channel.
 
-(assuming you have 'gv' installed).
+dmas = <&apdma 11 SPRD_DMA_BLK_REQ>
 
-  Andrea
+>
+> Each prep call has flags associated, that can help you configure interrupt
+> behaviour.
 
+Sounds reasonable. Thanks for your comments.
 
-> 
-> Thanks,
-> 
-> Paolo
+-- 
+Baolin.wang
+Best Regards
