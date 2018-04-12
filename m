@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752622AbeDLHwZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 03:52:25 -0400
-Received: from mail-wr0-f174.google.com ([209.85.128.174]:37360 "EHLO
-        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751759AbeDLHwY (ORCPT
+        id S1752660AbeDLHxn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 03:53:43 -0400
+Received: from mail-wr0-f182.google.com ([209.85.128.182]:36632 "EHLO
+        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752291AbeDLHxl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 03:52:24 -0400
-X-Google-Smtp-Source: AIpwx4+NAJxE4i1+MatIWO9HJkRKXOX1wldMAvwGnBsLoSYehaJsgagfjaqhx7lGZkSMZSZ3SShgAQ==
-Date: Thu, 12 Apr 2018 09:52:20 +0200
+        Thu, 12 Apr 2018 03:53:41 -0400
+X-Google-Smtp-Source: AIpwx491g6tKj6duAWA3Yk5PHnTo6/FpwArkVreQy5va8kx18pwSfrdfubFbcsQqXSpJzLQVQHu7Zw==
+Date: Thu, 12 Apr 2018 09:53:38 +0200
 From: Ingo Molnar <mingo@kernel.org>
 To: Song Liu <songliubraving@fb.com>
 Cc: Vince Weaver <vincent.weaver@maine.edu>,
@@ -16,7 +16,7 @@ Cc: Vince Weaver <vincent.weaver@maine.edu>,
         Peter Zijlstra <peterz@infradead.org>
 Subject: Re: perf: fuzzer leads to trace_kprobe: Could not insert message
  flood
-Message-ID: <20180412075220.l7lqhk3qn4sobfz7@gmail.com>
+Message-ID: <20180412075338.tsu36qh2wcrcp36k@gmail.com>
 References: <alpine.DEB.2.21.1804101043490.6068@macbook-air>
  <A3B3905F-3364-462A-BE02-B01D52482791@fb.com>
  <20180411120447.2gzrwijrtayjv3eg@gmail.com>
@@ -33,39 +33,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 * Song Liu <songliubraving@fb.com> wrote:
 
-> > spamming the kernel log ...
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index d7af828..2d5fe26 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -8400,6 +8400,10 @@ static int perf_kprobe_event_init(struct perf_event *event)
 > 
-> Yeah, the new API allows non-root user to trigger this message. We should only 
-> allow root to create kprobe with perf_event_open(). 
+>         if (event->attr.type != perf_kprobe.type)
+>                 return -ENOENT;
+> +
+> +       if (!capable(CAP_SYS_ADMIN))
+> +               return -EACCES;
+> +
+>         /*
+>          * no branch sampling for probe events
+>          */
+> @@ -8437,6 +8441,10 @@ static int perf_uprobe_event_init(struct perf_event *event)
 > 
-> On the other hand, do we need to fix this for root? In fact, a simple bash loop 
-> can create something similar through the text interface (with root):
-> 
-> root@virt-test:~# for x in {0..5} ; do echo p:xx xx+$x >> /sys/kernel/debug/tracing/kprobe_events ; done
-> -bash: echo: write error: No such file or directory
-> -bash: echo: write error: No such file or directory
-> -bash: echo: write error: No such file or directory
-> -bash: echo: write error: No such file or directory
-> -bash: echo: write error: No such file or directory
-> -bash: echo: write error: No such file or directory
-> root@virt-test:~# dmesg | tail -n 5
-> [  664.208374] trace_kprobe: Could not insert probe at xx+1: -2
-> [  664.237882] trace_kprobe: Could not insert probe at xx+2: -2
-> [  664.268067] trace_kprobe: Could not insert probe at xx+3: -2
-> [  664.297395] trace_kprobe: Could not insert probe at xx+4: -2
-> [  664.327614] trace_kprobe: Could not insert probe at xx+5: -2
-> 
-> This happens before the new API is introduced. 
-> 
-> The following patch does capable(CAP_SYS_ADMIN) for perf_kprobe and 
-> perf_uprobe at an earlier stage, so non-root user cannot trigger 
-> this error message. Please let me know whether we need to fix this 
-> for root. 
+>         if (event->attr.type != perf_uprobe.type)
+>                 return -ENOENT;
+> +
+> +       if (!capable(CAP_SYS_ADMIN))
+> +               return -EACCES;
 
-That's two bugs then, and yes, I think we should fix the log spamming: what's the 
-point? We already get an error code from the write.
-
-I'll apply your CAP_SYS_ADMIN fix.
+This is seriously whitespace damaged: all tabs are spaces ...
 
 Thanks,
 
