@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752401AbeDLDyt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 23:54:49 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:65094 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751833AbeDLDyr (ORCPT
+        id S1752735AbeDLDzF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 23:55:05 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:58104 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752656AbeDLDzC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 23:54:47 -0400
+        Wed, 11 Apr 2018 23:55:02 -0400
 From: Keerthy <j-keerthy@ti.com>
 To: <linus.walleij@linaro.org>, <grygorii.strashko@ti.com>,
         <tony@atomide.com>
@@ -14,10 +14,12 @@ CC: <j-keerthy@ti.com>, <t-kristo@ti.com>, <Russ.Dill@ti.com>,
         <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <ssantosh@kernel.org>, <haojian.zhuang@linaro.org>,
         <linux-arm-kernel@lists.infradead.org>, <d-gerlach@ti.com>
-Subject: [PATCH 00/14] arm: OMAP: AM437X: Save restores patches for rtc mode with DDR In self-refresh
-Date: Thu, 12 Apr 2018 09:23:45 +0530
-Message-ID: <1523505239-16229-1-git-send-email-j-keerthy@ti.com>
+Subject: [PATCH 04/14] ARM: OMAP2: Add functions to save and restore omap hwmod context en-masse.
+Date: Thu, 12 Apr 2018 09:23:49 +0530
+Message-ID: <1523505239-16229-5-git-send-email-j-keerthy@ti.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1523505239-16229-1-git-send-email-j-keerthy@ti.com>
+References: <1523505239-16229-1-git-send-email-j-keerthy@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -25,83 +27,127 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RTC plus DDR in self-refresh is power a saving mode where in the entire
-system including the different voltage rails from PMIC are shutdown except
-the ones feeding on to RTC and DDR. DDR is kept in self-refresh hence the
-contents are preserved. RTC ALARM2 is connected to PMIC_EN line once
-we the ALARM2 is triggered we enter the mode with DDR in self-refresh
-and RTC Ticking. After a predetermined time an RTC ALARM1 triggers waking
-up the system. The control goes to bootloader. The bootloader then checks
-RTC scratchpad registers to confirm it was an rtc_only wakeup and follows
-a different path, configure bare minimal clocks for ddr and then jumps to
-the resume address in another RTC scratchpad registers and transfers the
-control to Kernel. Kernel then restores the saved context.
+From: Russ Dill <Russ.Dill@ti.com>
 
-This series is a prerequisite for the rtc mode with DDR in self
-refresh mode for am437x series of SoCs. As all the voltage domains
-are shut off apart from RTC and DDR is kept in self refresh
-additional save/restores are needed.
+This is used to support suspend modes like RTC-only and hibernate where
+the state of these registers is lost.
 
-The series applies cleanly against linux-next branch.
+After the PRCM loses context in the case of an RTC+DDR cycle omap_hwmod
+attempts to return all hwmods to their previous state, however certain
+hwmods cannot just be disabled when in their default state, which is why
+they need the special handling present in that patch when no driver is
+present.
 
-This mode works only with u-boot built with am43xx_evm_rtconly_defconfig
+In RTC+DDR mode, even if all drivers are present, the modules are all
+returned to their previous state before any driver resume happens so we
+will still face the issue described above. This can be prevented by
+calling _reidle on all hwmods that need it for any module that is being
+disabled to return to it's previous state.
 
-Dave Gerlach (5):
-  memory: ti-emif-sram: Add resume function to recopy sram code
-  ARM: OMAP2+: omap_hwmod: Introduce HWMOD_NEEDS_REIDLE
-  gpio: omap: Restore power_mode configuration at resume time
-  ARM: hwmod: RTC: Don't assume lock/unlock will be called with irq
-    enabled
-  ARM: OMAP2+: prm44xx: Introduce context save/restore for am43 PRCM IO
+Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+Signed-off-by: Russ Dill <Russ.Dill@ti.com>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+---
+ arch/arm/mach-omap2/omap_hwmod.c | 67 ++++++++++++++++++++++++++++++++++++++++
+ arch/arm/mach-omap2/omap_hwmod.h |  4 +++
+ 2 files changed, 71 insertions(+)
 
-Keerthy (1):
-  OMAP: CLK: CLKSRC: Add suspend resume hooks
-
-Russ Dill (7):
-  ARM: OMAP2: Add functions to save and restore clockdomain context
-    en-masse.
-  ARM: OMAP2: Add functions to save and restore omap hwmod context
-    en-masse.
-  ARM: OMAP2: Add functions to save and restore powerdomain context
-  ARM: AM33XX: Add functions to save/restore am33xx control registers.
-  ARM: OMAP2: Add functions to save and restore pinctrl context.
-  ARM: OMAP2: Drop the concept of certain power domains not being able
-    to lose context.
-  gpio: omap: Drop the concept of gpio banks not being able to lose
-    context.
-
-Tero Kristo (1):
-  ARM: AM43XX: Add functions to save/restore am43xx control registers
-
- arch/arm/mach-omap2/clockdomain.c                  |  46 +++++
- arch/arm/mach-omap2/clockdomain.h                  |   8 +
- arch/arm/mach-omap2/cm33xx.c                       |  53 ++++++
- arch/arm/mach-omap2/cminst44xx.c                   |  43 +++++
- arch/arm/mach-omap2/control.c                      | 172 ++++++++++++++++++
- arch/arm/mach-omap2/control.h                      |  65 +++++++
- arch/arm/mach-omap2/omap_device.c                  |  50 +++++
- arch/arm/mach-omap2/omap_device.h                  |   1 +
- arch/arm/mach-omap2/omap_hwmod.c                   | 202 +++++++++++++++++++++
- arch/arm/mach-omap2/omap_hwmod.h                   |  21 +++
- .../mach-omap2/omap_hwmod_33xx_43xx_ipblock_data.c |  14 +-
- arch/arm/mach-omap2/omap_hwmod_33xx_data.c         |   3 +-
- arch/arm/mach-omap2/omap_hwmod_reset.c             |  12 +-
- arch/arm/mach-omap2/powerdomain.c                  |  75 +++++---
- arch/arm/mach-omap2/powerdomain.h                  |   8 +-
- arch/arm/mach-omap2/prm.h                          |   2 +
- arch/arm/mach-omap2/prm33xx.c                      |  31 ++++
- arch/arm/mach-omap2/prm44xx.c                      |  79 ++++++++
- arch/arm/mach-omap2/timer.c                        |  37 ++++
- drivers/gpio/gpio-omap.c                           |  40 ++--
- drivers/memory/ti-emif-pm.c                        |  24 +++
- drivers/pinctrl/core.c                             |   1 +
- drivers/pinctrl/core.h                             |   1 -
- drivers/pinctrl/pinctrl-single.c                   |  50 +++++
- drivers/pinctrl/pinmux.c                           |  22 +++
- include/linux/pinctrl/pinctrl.h                    |   7 +
- include/linux/pinctrl/pinmux.h                     |  16 ++
- include/linux/platform_data/gpio-omap.h            |   1 -
- 28 files changed, 1019 insertions(+), 65 deletions(-)
-
+diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
+index 90ad8e7..f6782b4 100644
+--- a/arch/arm/mach-omap2/omap_hwmod.c
++++ b/arch/arm/mach-omap2/omap_hwmod.c
+@@ -4096,3 +4096,70 @@ const char *omap_hwmod_get_main_clk(struct omap_hwmod *oh)
+ 
+ 	return oh->main_clk;
+ }
++
++/**
++ * omap_hwmod_save_context - Saves the HW reset line state of submodules
++ * @oh: struct omap_hwmod *
++ * @unused: (unused, caller should pass NULL)
++ *
++ * Saves the HW reset line state of all the submodules in the hwmod
++ */
++static int omap_hwmod_save_context(struct omap_hwmod *oh, void *unused)
++{
++	int i;
++
++	for (i = 0; i < oh->rst_lines_cnt; i++)
++		oh->rst_lines[i].context =
++				_read_hardreset(oh, oh->rst_lines[i].name);
++	return 0;
++}
++
++/**
++ * omap_hwmod_restore_context - Restores the HW reset line state of submodules
++ * @oh: struct omap_hwmod *
++ * @unused: (unused, caller should pass NULL)
++ *
++ * Restores the HW reset line state of all the submodules in the hwmod
++ */
++static int omap_hwmod_restore_context(struct omap_hwmod *oh, void *unused)
++{
++	int i;
++
++	for (i = 0; i < oh->rst_lines_cnt; i++)
++		if (oh->rst_lines[i].context)
++			_assert_hardreset(oh, oh->rst_lines[i].name);
++		else
++			_deassert_hardreset(oh, oh->rst_lines[i].name);
++
++	if (oh->_state == _HWMOD_STATE_ENABLED) {
++		if (soc_ops.enable_module)
++			soc_ops.enable_module(oh);
++	} else {
++		if (oh->flags & HWMOD_NEEDS_REIDLE)
++			_reidle(oh);
++		else if (soc_ops.disable_module)
++			soc_ops.disable_module(oh);
++	}
++
++	return 0;
++}
++
++/**
++ * omap_hwmods_save_context - Saves the HW reset line state for all hwmods
++ *
++ * Saves the HW reset line state of all the registered hwmods
++ */
++void omap_hwmods_save_context(void)
++{
++	omap_hwmod_for_each(omap_hwmod_save_context, NULL);
++}
++
++/**
++ * omap_hwmods_restore_context - Restores the HW reset line state for all hwmods
++ *
++ * Restores the HW reset line state of all the registered hwmods
++ */
++void omap_hwmods_restore_context(void)
++{
++	omap_hwmod_for_each(omap_hwmod_restore_context, NULL);
++}
+diff --git a/arch/arm/mach-omap2/omap_hwmod.h b/arch/arm/mach-omap2/omap_hwmod.h
+index f35638b..b5e050e 100644
+--- a/arch/arm/mach-omap2/omap_hwmod.h
++++ b/arch/arm/mach-omap2/omap_hwmod.h
+@@ -168,6 +168,7 @@ struct omap_hwmod_rst_info {
+ 	const char	*name;
+ 	u8		rst_shift;
+ 	u8		st_shift;
++	u8		context;
+ };
+ 
+ /**
+@@ -678,6 +679,9 @@ int omap_hwmod_for_each_by_class(const char *classname,
+ 
+ const char *omap_hwmod_get_main_clk(struct omap_hwmod *oh);
+ 
++void omap_hwmods_save_context(void);
++void omap_hwmods_restore_context(void);
++
+ /*
+  *
+  */
 -- 
 1.9.1
