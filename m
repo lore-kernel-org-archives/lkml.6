@@ -1,63 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753348AbeDLSol (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 14:44:41 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:40503 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753061AbeDLSoj (ORCPT
+        id S1753358AbeDLSp1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 14:45:27 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:43583 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753081AbeDLSp0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 14:44:39 -0400
-X-Google-Smtp-Source: AIpwx4+XAV6rEFk2FBg0vB38stDijZPDk1VzK6DGw7wjmvCdzwS36o5ZyIyBwryVWkQizEIzUCHYzt0fgEFzS3ILI9k=
+        Thu, 12 Apr 2018 14:45:26 -0400
+X-Google-Smtp-Source: AIpwx48tCXb8CdbJil0R+O8aNHsNjvRcavv6O7B3cx5+9rZwE4x+9cEjbivxph2bb+prgxJixfgawg==
+Date: Thu, 12 Apr 2018 20:45:03 +0200
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+To: Willy Tarreau <w@1wt.eu>,
+        Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: panel: Update file paths: drivers/{misc =>
+ auxdisplay}/
+Message-ID: <20180412184503.mva5zmw4qryo73x6@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+-PNYxSc3v+QtQLK0S3wdtFthFSxNM_69kFDnPQX0Gaw@mail.gmail.com>
-References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5jL8oLV2xvjBVYv_SNXr74LdgpXEmU7K+cLYpD7jh2chgw@mail.gmail.com>
- <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com>
- <2679696.GDoj5zcZOu@natalenko.name> <CAGXu5jLG9ia+zBNcPt+q+BpJayoUuYwXitOgeHmh=7sPp-s87A@mail.gmail.com>
- <51a7e805058ef7f35b226cbbf0ccc4ff@natalenko.name> <CAGXu5jKRrdYjuyLSvc4k4mqttkM7zw-96poQ1GYqRRgPqZFOYQ@mail.gmail.com>
- <3d7b5a707e216e19eb3defe0586bfbc8@natalenko.name> <CAGXu5j+9BJcR63bsqQpqaKrvcgOpWyDzgpD-zRrf1qq7v=Z2CA@mail.gmail.com>
- <d53af006c314eb9d326bfb19b08e189b@natalenko.name> <CAGXu5j+ZmgfqdoT_zPZ4qLCdMfjaaGxRCyz8c8ecp=39zQfw2w@mail.gmail.com>
- <CAGXu5jL82QYuJi64EMKsczqBysUY8ZBssWWaY0LfNA1a0orY8A@mail.gmail.com> <CAGXu5j+-PNYxSc3v+QtQLK0S3wdtFthFSxNM_69kFDnPQX0Gaw@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 12 Apr 2018 11:44:37 -0700
-X-Google-Sender-Auth: YG1dFohgbGkvUm_YFZl9MyxAvQc
-Message-ID: <CAGXu5j+_UH0h9qeYCKKjhC7jw-mi_=fg4ASHi2=pCF9xGTpA4Q@mail.gmail.com>
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-To: Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc: David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
-        paolo.valente@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: elm/2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 5:03 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Wed, Apr 11, 2018 at 3:47 PM, Kees Cook <keescook@chromium.org> wrote:
->> On Tue, Apr 10, 2018 at 8:13 PM, Kees Cook <keescook@chromium.org> wrote:
->>> I'll see about booting with my own kernels, etc, and try to narrow this down. :)
->>
->> If I boot kernels I've built, I no longer hit the bug in this VM
->> (though I'll keep trying). What compiler are you using?
->
-> Ignore that: I've reproduced it with my kernels now. I think I messed
-> up the initramfs initially. But with an exact copy of your .config,
-> booting under Arch grub with initramfs, I see it. I'll start removing
-> variables now... :P
+Cc: Willy Tarreau <w@1wt.eu>
+Cc: Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
+Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+---
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-My first bisect attempt gave me commit 5448aca41cd5 ("null_blk: wire
-up timeouts"), which seems insane given that null_blk isn't even built
-in the .config. I managed to get the testing automated now for a "git
-bisect run ...", so I'm restarting again to hopefully get a better
-answer. Normally the Oops happens in the first minute of running. I've
-set the timeout to 10 minutes for a "good" run...
-
--Kees
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f030e360f905..c42a4395b382 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10420,8 +10420,8 @@ PARALLEL LCD/KEYPAD PANEL DRIVER
+ M:	Willy Tarreau <willy@haproxy.com>
+ M:	Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
+ S:	Odd Fixes
+-F:	Documentation/misc-devices/lcd-panel-cgram.txt
+-F:	drivers/misc/panel.c
++F:	Documentation/auxdisplay/lcd-panel-cgram.txt
++F:	drivers/auxdisplay/panel.c
+ 
+ PARALLEL PORT SUBSYSTEM
+ M:	Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 -- 
-Kees Cook
-Pixel Security
+2.14.1
