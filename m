@@ -1,292 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753223AbeDLOaf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 10:30:35 -0400
-Received: from mga14.intel.com ([192.55.52.115]:9549 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753080AbeDLOac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 10:30:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,442,1517904000";
-   d="scan'208";a="33160353"
-Date: Thu, 12 Apr 2018 07:30:11 -0700
-From: Dongwon Kim <dongwon.kim@intel.com>
-To: Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc: Gerd Hoffmann <kraxel@redhat.com>,
-        Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, qemu-devel@nongnu.org,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>,
-        Matt Roper <matthew.d.roper@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: buffer sharing across VMs - xen-zcopy and hyper_dmabuf discussion
-Message-ID: <20180412143011.GA29189@downor-Z87X-UD5H>
+        id S1752896AbeDLOdP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 10:33:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40152 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752303AbeDLOdN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 10:33:13 -0400
+Subject: Re: [PATCH 04/10] KVM: Introduce a new guest mapping API
+To: KarimAllah Ahmed <karahmed@amazon.de>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: hpa@zytor.com, jmattson@google.com, mingo@redhat.com,
+        rkrcmar@redhat.com, tglx@linutronix.de
+References: <1519235241-6500-1-git-send-email-karahmed@amazon.de>
+ <1519235241-6500-5-git-send-email-karahmed@amazon.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <b47f982b-e6fc-905d-ae3b-5a80c12848f2@redhat.com>
+Date: Thu, 12 Apr 2018 16:33:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1519235241-6500-5-git-send-email-karahmed@amazon.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(changed subject and decoupling from udmabuf thread)
+Coming back to this (nice) series.
 
-On Wed, Apr 11, 2018 at 08:59:32AM +0300, Oleksandr Andrushchenko wrote:
-> On 04/10/2018 08:26 PM, Dongwon Kim wrote:
-> >On Tue, Apr 10, 2018 at 09:37:53AM +0300, Oleksandr Andrushchenko wrote:
-> >>On 04/06/2018 09:57 PM, Dongwon Kim wrote:
-> >>>On Fri, Apr 06, 2018 at 03:36:03PM +0300, Oleksandr Andrushchenko wrote:
-> >>>>On 04/06/2018 02:57 PM, Gerd Hoffmann wrote:
-> >>>>>   Hi,
-> >>>>>
-> >>>>>>>I fail to see any common ground for xen-zcopy and udmabuf ...
-> >>>>>>Does the above mean you can assume that xen-zcopy and udmabuf
-> >>>>>>can co-exist as two different solutions?
-> >>>>>Well, udmabuf route isn't fully clear yet, but yes.
-> >>>>>
-> >>>>>See also gvt (intel vgpu), where the hypervisor interface is abstracted
-> >>>>>away into a separate kernel modules even though most of the actual vgpu
-> >>>>>emulation code is common.
-> >>>>Thank you for your input, I'm just trying to figure out
-> >>>>which of the three z-copy solutions intersect and how much
-> >>>>>>And what about hyper-dmabuf?
-> >>>xen z-copy solution is pretty similar fundamentally to hyper_dmabuf
-> >>>in terms of these core sharing feature:
-> >>>
-> >>>1. the sharing process - import prime/dmabuf from the producer -> extract
-> >>>underlying pages and get those shared -> return references for shared pages
-> >Another thing is danvet was kind of against to the idea of importing existing
-> >dmabuf/prime buffer and forward it to the other domain due to synchronization
-> >issues. He proposed to make hyper_dmabuf only work as an exporter so that it
-> >can have a full control over the buffer. I think we need to talk about this
-> >further as well.
-> Yes, I saw this. But this limits the use-cases so much.
+On 21/02/2018 18:47, KarimAllah Ahmed wrote:
+> +bool kvm_vcpu_map(struct kvm_vcpu *vcpu, gfn_t gfn, struct kvm_host_map *map)
+> +{
+> +	kvm_pfn_t pfn;
+> +	void *kaddr = NULL;
 
-I agree. Our current approach is a lot more flexible. You can find very
-similar feedback in my reply to those review messages. However, I also
-understand Daniel's concern as well. I believe we need more dicussion
-regarding this matter.
+Can we s/kaddr/hva/ since that's the standard nomenclature?
 
-> For instance, running Android as a Guest (which uses ION to allocate
-> buffers) means that finally HW composer will import dma-buf into
-> the DRM driver. Then, in case of xen-front for example, it needs to be
-> shared with the backend (Host side). Of course, we can change user-space
-> to make xen-front allocate the buffers (make it exporter), but what we try
-> to avoid is to change user-space which in normal world would have remain
-> unchanged otherwise.
-> So, I do think we have to support this use-case and just have to understand
-> the complexity.
+> +	struct page *page = NULL;
+> +
+> +	if (map->kaddr && map->gfn == gfn)
+> +		/* If the mapping is valid and guest memory is already mapped */
+> +		return true;
+
+Please return 0/-EINVAL instead.  More important, this optimization is
+problematic because:
+
+1) the underlying memslots array could have changed.  You'd also need to
+store the generation count (see kvm_read_guest_cached for an example)
+
+2) worse, the memslots array could have switched between the SMM and
+non-SMM address spaces.  This is by the way the reason why there is no
+kvm_vcpu_read_guest_cached API.
+
+However, all the places you're changing in patches 4-10 are doing
+already kvm_vcpu_gpa_to_page, so I suggest just dropping this optimization.
+
+> +	else if (map->kaddr)
+> +		/* If the mapping is valid but trying to map a different guest pfn */
+> +		kvm_vcpu_unmap(map);
+> +
+> +	pfn = kvm_vcpu_gfn_to_pfn(vcpu, gfn);
+
+Please change the API to:
+
+static int __kvm_map_gfn(struct kvm_memslot *memslots, gfn_t gfn,
+		         struct kvm_host_map *map)
+
+	calling gfn_to_pfn_memslot(memslots, gfn)
+
+int kvm_vcpu_map_gfn(struct kvm_vcpu *vcpu gfn_t gfn,
+		     struct kvm_host_map *map)
+
+	calling kvm_vcpu_gfn_to_memslot + __kvm_map
+
+void kvm_unmap_gfn(struct kvm_host_map *map)
+
+
+> +	if (is_error_pfn(pfn))
+> +		return false;
+
+Should this be is_error_noslot_pfn?
+
+> +	if (pfn_valid(pfn)) {
+> +		page = pfn_to_page(pfn);
+> +		kaddr = vmap(&page, 1, VM_MAP, PAGE_KERNEL);
+> +	} else {
+> +		kaddr = memremap(pfn_to_hpa(pfn), PAGE_SIZE, MEMREMAP_WB);
+> +	}
+> +
+> +	if (!kaddr)
+> +		return false;
+> +
+> +	map->page = page;
+> +	map->kaddr = kaddr;
+> +	map->pfn = pfn;
+> +	map->gfn = gfn;
+> +
+> +	return true;
+> +}
+
 > 
-> >
-> >danvet, can you comment on this topic?
-> >
-> >>>2. the page sharing mechanism - it uses Xen-grant-table.
-> >>>
-> >>>And to give you a quick summary of differences as far as I understand
-> >>>between two implementations (please correct me if I am wrong, Oleksandr.)
-> >>>
-> >>>1. xen-zcopy is DRM specific - can import only DRM prime buffer
-> >>>while hyper_dmabuf can export any dmabuf regardless of originator
-> >>Well, this is true. And at the same time this is just a matter
-> >>of extending the API: xen-zcopy is a helper driver designed for
-> >>xen-front/back use-case, so this is why it only has DRM PRIME API
-> >>>2. xen-zcopy doesn't seem to have dma-buf synchronization between two VMs
-> >>>while (as danvet called it as remote dmabuf api sharing) hyper_dmabuf sends
-> >>>out synchronization message to the exporting VM for synchronization.
-> >>This is true. Again, this is because of the use-cases it covers.
-> >>But having synchronization for a generic solution seems to be a good idea.
-> >Yeah, understood xen-zcopy works ok with your use case. But I am just curious
-> >if it is ok not to have any inter-domain synchronization in this sharing model.
-> The synchronization is done with displif protocol [1]
-> >The buffer being shared is technically dma-buf and originator needs to be able
-> >to keep track of it.
-> As I am working in DRM terms the tracking is done by the DRM core
-> for me for free. (This might be one of the reasons Daniel sees DRM
-> based implementation fit very good from code-reuse POV).
+> +void kvm_vcpu_unmap(struct kvm_host_map *map)
+> +{
+> +	if (!map->kaddr)
+> +		return;
+> +
+> +	if (map->page)
+> +		kunmap(map->page);
+> +	else
+> +		memunmap(map->kaddr);
+> +
+> +	kvm_release_pfn_dirty(map->pfn);
+> +	memset(map, 0, sizeof(*map));
 
-yeah but once you have a DRM object (whether it's dmabuf or not) on a remote
-domain, it is totally new object and out of sync (correct me if I am wrong)
-with original DRM prime, isn't it? How could these two different but based on
-same pages be synchronized?
+This can clear just map->kaddr (map->hva after the above review).
 
-> >
-> >>>3. 1-level references - when using grant-table for sharing pages, there will
-> >>>be same # of refs (each 8 byte)
-> >>To be precise, grant ref is 4 bytes
-> >You are right. Thanks for correction.;)
-> >
-> >>>as # of shared pages, which is passed to
-> >>>the userspace to be shared with importing VM in case of xen-zcopy.
-> >>The reason for that is that xen-zcopy is a helper driver, e.g.
-> >>the grant references come from the display backend [1], which implements
-> >>Xen display protocol [2]. So, effectively the backend extracts references
-> >>from frontend's requests and passes those to xen-zcopy as an array
-> >>of refs.
-> >>>  Compared
-> >>>to this, hyper_dmabuf does multiple level addressing to generate only one
-> >>>reference id that represents all shared pages.
-> >>In the protocol [2] only one reference to the gref directory is passed
-> >>between VMs
-> >>(and the gref directory is a single-linked list of shared pages containing
-> >>all
-> >>of the grefs of the buffer).
-> >ok, good to know. I will look into its implementation in more details but is
-> >this gref directory (chained grefs) something that can be used for any general
-> >memory sharing use case or is it jsut for xen-display (in current code base)?
-> Not to mislead you: one grant ref is passed via displif protocol,
-> but the page it's referencing contains the rest of the grant refs.
-> 
+Thanks,
 
-I checked displif.h. I like the concept of chaining 2nd level grefs.
-As you should have already realized, our multi-level addressing is almost
-identical to gref directory except that we defined another level on top to
-address multiple 2nd level grefs instead of creating a linked list. And I
-see there would be an advantage in terms of memory saving in your method. 
+Paolo
 
-Now I think why it should be remaining as one of displif features. I think
-we could expand this to any type of large buffer sharing use-case in Xen
-(possibly as an extension to grant-table driver?)
-
-> As to if this can be used for any memory: yes. It is the same for
-> sndif and displif Xen protocols, but defined twice as strictly speaking
-> sndif and displif are two separate protocols.
-> 
-> While reviewing your RFC v2 one of the comments I had [2] was that if we
-> can start from defining such a generic protocol for hyper-dmabuf.
-> It can be a header file, which not only has the description part
-> (which then become a part of Documentation/...rst file), but also defines
-> all the required constants for requests, responses, defines message formats,
-> state diagrams etc. all at one place. Of course this protocol must not be
-> Xen specific, but be OS/hypervisor agnostic.
-> Having that will trigger a new round of discussion, so we have it all
-> designed
-> and discussed before we start implementing.
-> 
-> Besides the protocol we have to design UAPI part as well and make sure
-> the hyper-dmabuf is not only accessible from user-space, but there will be
-> number
-> of kernel-space users as well.
-> >
-> >>>4. inter VM messaging (hype_dmabuf only) - hyper_dmabuf has inter-vm msg
-> >>>communication defined for dmabuf synchronization and private data (meta
-> >>>info that Matt Roper mentioned) exchange.
-> >>This is true, xen-zcopy has no means for inter VM sync and meta-data,
-> >>simply because it doesn't have any code for inter VM exchange in it,
-> >>e.g. the inter VM protocol is handled by the backend [1].
-> >>>5. driver-to-driver notification (hyper_dmabuf only) - importing VM gets
-> >>>notified when newdmabuf is exported from other VM - uevent can be optionally
-> >>>generated when this happens.
-> >>>
-> >>>6. structure - hyper_dmabuf is targetting to provide a generic solution for
-> >>>inter-domain dmabuf sharing for most hypervisors, which is why it has two
-> >>>layers as mattrope mentioned, front-end that contains standard API and backend
-> >>>that is specific to hypervisor.
-> >>Again, xen-zcopy is decoupled from inter VM communication
-> >>>>>No idea, didn't look at it in detail.
-> >>>>>
-> >>>>>Looks pretty complex from a distant view.  Maybe because it tries to
-> >>>>>build a communication framework using dma-bufs instead of a simple
-> >>>>>dma-buf passing mechanism.
-> >>>we started with simple dma-buf sharing but realized there are many
-> >>>things we need to consider in real use-case, so we added communication
-> >>>, notification and dma-buf synchronization then re-structured it to
-> >>>front-end and back-end (this made things more compicated..) since Xen
-> >>>was not our only target. Also, we thought passing the reference for the
-> >>>buffer (hyper_dmabuf_id) is not secure so added uvent mechanism later.
-> >>>
-> >>>>Yes, I am looking at it now, trying to figure out the full story
-> >>>>and its implementation. BTW, Intel guys were about to share some
-> >>>>test application for hyper-dmabuf, maybe I have missed one.
-> >>>>It could probably better explain the use-cases and the complexity
-> >>>>they have in hyper-dmabuf.
-> >>>One example is actually in github. If you want take a look at it, please
-> >>>visit:
-> >>>
-> >>>https://github.com/downor/linux_hyper_dmabuf_test/tree/xen/simple_export
-> >>Thank you, I'll have a look
-> >>>>>Like xen-zcopy it seems to depend on the idea that the hypervisor
-> >>>>>manages all memory it is easy for guests to share pages with the help of
-> >>>>>the hypervisor.
-> >>>>So, for xen-zcopy we were not trying to make it generic,
-> >>>>it just solves display (dumb) zero-copying use-cases for Xen.
-> >>>>We implemented it as a DRM helper driver because we can't see any
-> >>>>other use-cases as of now.
-> >>>>For example, we also have Xen para-virtualized sound driver, but
-> >>>>its buffer memory usage is not comparable to what display wants
-> >>>>and it works somewhat differently (e.g. there is no "frame done"
-> >>>>event, so one can't tell when the sound buffer can be "flipped").
-> >>>>At the same time, we do not use virtio-gpu, so this could probably
-> >>>>be one more candidate for shared dma-bufs some day.
-> >>>>>   Which simply isn't the case on kvm.
-> >>>>>
-> >>>>>hyper-dmabuf and xen-zcopy could maybe share code, or hyper-dmabuf build
-> >>>>>on top of xen-zcopy.
-> >>>>Hm, I can imagine that: xen-zcopy could be a library code for hyper-dmabuf
-> >>>>in terms of implementing all that page sharing fun in multiple directions,
-> >>>>e.g. Host->Guest, Guest->Host, Guest<->Guest.
-> >>>>But I'll let Matt and Dongwon to comment on that.
-> >>>I think we can definitely collaborate. Especially, maybe we are using some
-> >>>outdated sharing mechanism/grant-table mechanism in our Xen backend (thanks
-> >>>for bringing that up Oleksandr). However, the question is once we collaborate
-> >>>somehow, can xen-zcopy's usecase use the standard API that hyper_dmabuf
-> >>>provides? I don't think we need different IOCTLs that do the same in the final
-> >>>solution.
-> >>>
-> >>If you think of xen-zcopy as a library (which implements Xen
-> >>grant references mangling) and DRM PRIME wrapper on top of that
-> >>library, we can probably define proper API for that library,
-> >>so both xen-zcopy and hyper-dmabuf can use it. What is more, I am
-> >>about to start upstreaming Xen para-virtualized sound device driver soon,
-> >>which also uses similar code and gref passing mechanism [3].
-> >>(Actually, I was about to upstream drm/xen-front, drm/xen-zcopy and
-> >>snd/xen-front and then propose a Xen helper library for sharing big buffers,
-> >>so common code of the above drivers can use the same code w/o code
-> >>duplication)
-> >I think it is possible to use your functions for memory sharing part in
-> >hyper_dmabuf's backend (this 'backend' means the layer that does page sharing
-> >and inter-vm communication with xen-specific way.), so why don't we work on
-> >"Xen helper library for sharing big buffers" first while we continue our
-> >discussion on the common API layer that can cover any dmabuf sharing cases.
-> >
-> Well, I would love we reuse the code that I have, but I also
-> understand that it was limited by my use-cases. So, I do not
-> insist we have to ;)
-> If we start designing and discussing hyper-dmabuf protocol we of course
-> can work on this helper library in parallel.
-> >>Thank you,
-> >>Oleksandr
-> >>
-> >>P.S. All, is it a good idea to move this out of udmabuf thread into a
-> >>dedicated one?
-> >Either way is fine with me.
-> So, if you can start designing the protocol we may have a dedicated mail
-> thread for that. I will try to help with the protocol as much as I can
-Sure thanks. We can talk about it. just FYI, I have prepared a application
-note that contains definition of hyper_dmabuf messages included in RFC v2
-patch. That would be a great starting point. It will be great if you can
-review it.
-> 
-> >>>>>cheers,
-> >>>>>   Gerd
-> >>>>>
-> >>>>Thank you,
-> >>>>Oleksandr
-> >>>>
-> >>>>P.S. Sorry for making your original mail thread to discuss things much
-> >>>>broader than your RFC...
-> >>>>
-> >>[1] https://github.com/xen-troops/displ_be
-> >>[2] https://elixir.bootlin.com/linux/v4.16-rc7/source/include/xen/interface/io/displif.h#L484
-> >>[3] https://elixir.bootlin.com/linux/v4.16-rc7/source/include/xen/interface/io/sndif.h
-> >>
-> [1] https://elixir.bootlin.com/linux/v4.16-rc7/source/include/xen/interface/io/displif.h
-> [2]
-> https://lists.xenproject.org/archives/html/xen-devel/2018-04/msg00685.html
+> +}
+> +
