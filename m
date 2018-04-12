@@ -1,91 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752849AbeDLQNe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 12:13:34 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56382 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752406AbeDLQNc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 12:13:32 -0400
-Date: Thu, 12 Apr 2018 17:13:23 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Sean Wang <sean.wang@mediatek.com>
-Cc: matthias.bgg@gmail.com, linux-spi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: mediatek: remove redundant MODULE_ALIAS entries
-Message-ID: <20180412161323.GH9929@sirena.org.uk>
-References: <58fc8553bdc3cbad8d107a905947b7e4d9c12b92.1522054975.git.sean.wang@mediatek.com>
- <20180328021416.GK29239@sirena.org.uk>
- <1522206543.18424.23.camel@mtkswgap22>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Bg2esWel0ueIH/G/"
-Content-Disposition: inline
-In-Reply-To: <1522206543.18424.23.camel@mtkswgap22>
-X-Cookie: The coast was clear.
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1752972AbeDLQPU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 12:15:20 -0400
+Received: from 123-192-174-101.dynamic.kbronet.com.tw ([123.192.174.101]:35130
+        "EHLO E6440" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752446AbeDLQPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 12:15:19 -0400
+From: Harry Pan <harry.pan@intel.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: gs0622@gmail.com, Harry Pan <harry.pan@intel.com>,
+        adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org
+Subject: [PATCH] mmc: sdhci-pci: mitigate Intel BXT/APL card detection race in early boot
+Date: Fri, 13 Apr 2018 00:08:46 +0800
+Message-Id: <20180412160846.12776-1-harry.pan@intel.com>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When the APL platform is configured to use card detection GPIO, it is
+observed a race in early boot that makes the inserted card temporary
+malfunction because the driver does not detect the card then it would
+turn off the mmc until user manually remove/insert card, or wait a
+period of time for runtime suspend/resume to revive it automatically;
+from the trace it is generalized the driver has inconsistent status
+between GPIO status and the present state of the host controller.
 
---Bg2esWel0ueIH/G/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+i.e.
+kworker/0:3-88    [000] ....     0.812523: mmc_rescan <-process_one_work
+...
+kworker/0:3-88    [000] ....     0.812527: bxt_get_cd <-mmc_rescan
+kworker/0:3-88    [000] ....     0.812546: mmc_power_off <-mmc_rescan
+kworker/0:3-88    [000] ....     0.812546: mmc_pwrseq_power_off <-mmc_power_off
 
-On Wed, Mar 28, 2018 at 11:09:03AM +0800, Sean Wang wrote:
-> On Wed, 2018-03-28 at 10:14 +0800, Mark Brown wrote:
-> > On Mon, Mar 26, 2018 at 06:04:18PM +0800, sean.wang@mediatek.com wrote:
-> > > From: Sean Wang <sean.wang@mediatek.com>
+Also proved it by adding a hacky dump of GPIO status and present state
+register; the GPIO says card existing while controller says not present.
 
-> > > MODULE_ALIAS exports information to allow the module to be auto-loade=
-d at
-> > > boot for the drivers registered using legacy platform registration.
+Further investigation I realized when the driver successfully configures
+and routes card detection signal to GPIO domain, it immediately decays
+the host controller card detection: pin level follows by inserted status,
+they disappear a while then they would propagate back automatically,
+this generates a small window (while it is one time only) against the card
+detection routine; namely when it falls into this window, it behaves like
+the above trace. While in case the platform software is not required to
+switch the card detection to GPIO, this odd does not happen.
 
-> > > However, currently the driver is always used by DT-only platform,
-> > > MODULE_ALIAS is redundant and should be removed properly.
+To tackle this odd, did experiment to observe the race window period,
+enqueue a mmc detection in 200 ms later when it successfully routes the
+card detection to GPIO, this allows margin to make consensus in between
+the GPIO and the host controller.
 
-> > There is no meaningful cost to having the alias there, why remove it?
+Signed-off-by: Harry Pan <harry.pan@intel.com>
+---
+ drivers/mmc/host/sdhci-pci-core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> It's no explicitly improved to the driver, it only takes less bytes
-> in .secion modinfo from 644 bytes to 620 bytes in the observation with
-> objdump.
-
-OK, that's a *very* small saving though especially given the block sizes
-that filesystems tend to use.
-
-> More importantly, it seems the driver should probably refer to another
-> qualified driver at the initial development, but MODULE_ALIAS is
-> forgetting to be removed to meet real usage for the module autoload.=20
-
-I can't parse the above, sorry.
-
-> Even I was curious whether people for the driver know the actual purpose
-> the macro it's for.
-
-> Removing MODULE_ALIAS is just to correct the driver to where it should
-> be.
-
-To me it's the other way around - ideally platform drivers should
-remember to set up the MODULE_ALIAS, just as a joining the dots thing to
-make sure that things that work when the driver is built in work when
-built as a module.
-
---Bg2esWel0ueIH/G/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrPhaIACgkQJNaLcl1U
-h9DMHwgAhd0vlEUQgTNCsJBgH2eZIifafg8x1AQmq/ics42nbhuEEHZ3M0F1uhsc
-2LX8cjgZhy5umaTVgXQxxRwgVWXdIq1SnGqWmxEpLkym9cOwNrMxEFMk7qJIARFB
-5Pmb04alsMWu16lYGv6KSPpVRIiFV6V+UlTm1BBX/huP4rlOYVEv3WaoXWRMB8vG
-1kltkzZh7AEzyp0l5BUvZD3vFl9M5PMnj/MEb1FCoTjOOg6DK5y87mO2bsAvYhol
-LNjIn7Z3szdcVWT8zDW0vFwkVe1WwTFerAJsZg4wI8LuliIHpnq/DPMTERQmvuTC
-kNzQvILli2+HDInE/yUy0uFp5qbNCA==
-=S7Iz
------END PGP SIGNATURE-----
-
---Bg2esWel0ueIH/G/--
+diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+index 82c4f05f91d8..519a3a5a2be0 100644
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -1719,6 +1719,9 @@ static struct sdhci_pci_slot *sdhci_pci_probe_slot(
+ 	if (slot->cd_idx >= 0) {
+ 		ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
+ 					   slot->cd_override_level, 0, NULL);
++		if (ret == 0)
++			mmc_detect_change(host->mmc, msecs_to_jiffies(200));
++
+ 		if (ret == -EPROBE_DEFER)
+ 			goto remove;
+ 
+-- 
+2.13.5
