@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753393AbeDLLTQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 07:19:16 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:34002 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751719AbeDLLO7 (ORCPT
+        id S1753081AbeDLLOw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 07:14:52 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:39671 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752990AbeDLLOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 07:14:59 -0400
-X-Google-Smtp-Source: AIpwx48Z+Ekp57qDUNM9ouFDrsP6foIHTjb1W5Fbj5jEEg730hrWSccVqo1qNC3tBjioqU4J83wgxw==
+        Thu, 12 Apr 2018 07:14:47 -0400
+X-Google-Smtp-Source: AIpwx4/G3bzENOcM0wSL0k6p8UtTUOq0ZuHsbaScpkrZ+HbXKFLWaTBLGXJdNbaCGXQNaJCN7LRXRg==
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Sudeep Holla <sudeep.holla@arm.com>,
@@ -22,10 +22,10 @@ Cc: Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
         Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v7 11/26] of: base: Add of_get_cpu_state_node() to get idle states for a CPU node
-Date: Thu, 12 Apr 2018 13:14:16 +0200
-Message-Id: <1523531671-27491-12-git-send-email-ulf.hansson@linaro.org>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v7 04/26] PM / Domains: Add support for CPU devices to genpd
+Date: Thu, 12 Apr 2018 13:14:09 +0200
+Message-Id: <1523531671-27491-5-git-send-email-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
 References: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org>
@@ -33,109 +33,189 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CPU's idle state nodes are currently parsed at the common cpuidle DT
-library, but also when initializing back-end data for the arch specific CPU
-operations, as in the PSCI driver case.
+To enable a device belonging to a CPU to be attached to a PM domain managed
+by genpd, let's do a few changes to genpd as to make it convenient to
+manage the specifics around CPUs.
 
-To avoid open-coding, let's introduce of_get_cpu_state_node(), which takes
-the device node for the CPU and the index to the requested idle state node,
-as in-parameters. In case a corresponding idle state node is found, it
-returns the node with the refcount incremented for it, else it returns
-NULL.
+First, as to be able to quickly find out what CPUs that are attached to a
+genpd, which typically becomes useful from a genpd governor as following
+changes is about to show, let's add a cpumask 'cpus' to the struct
+generic_pm_domain.
 
-Moreover, for ARM, there are two generic methods, to describe the CPU's
-idle states, either via the flattened description through the
-"cpu-idle-states" binding [1] or via the hierarchical layout, using the
-"power-domains" and the "domain-idle-states" bindings [2]. Hence, let's
-take both options into account.
+At the point when a device that belongs to a CPU, is attached/detached to
+its corresponding PM domain via genpd_add_device(), let's update the
+cpumask in genpd->cpus. Moreover, propagate the update of the cpumask to
+the master domains, which makes the genpd->cpus to contain a cpumask that
+hierarchically reflect all CPUs for a genpd, including CPUs attached to
+subdomains.
 
-[1]
-Documentation/devicetree/bindings/arm/idle-states.txt
-[2]
-Documentation/devicetree/bindings/arm/psci.txt
+Second, to unconditionally manage CPUs and the cpumask in genpd->cpus, is
+unnecessary for cases when only non-CPU devices are parts of a genpd.
+Let's avoid this by adding a new configuration bit, GENPD_FLAG_CPU_DOMAIN.
+Clients must set the bit before they call pm_genpd_init(), as to instruct
+genpd that it shall deal with CPUs and thus manage the cpumask in
+genpd->cpus.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org
 Cc: Lina Iyer <ilina@codeaurora.org>
-Suggested-by: Sudeep Holla <sudeep.holla@arm.com>
 Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/of/base.c  | 35 +++++++++++++++++++++++++++++++++++
- include/linux/of.h |  8 ++++++++
- 2 files changed, 43 insertions(+)
+ drivers/base/power/domain.c | 69 ++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/pm_domain.h   |  3 ++
+ 2 files changed, 71 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 848f549..97350cc 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -400,6 +400,41 @@ int of_cpu_node_to_id(struct device_node *cpu_node)
- EXPORT_SYMBOL(of_cpu_node_to_id);
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 9aff79d..e178521 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -19,6 +19,7 @@
+ #include <linux/sched.h>
+ #include <linux/suspend.h>
+ #include <linux/export.h>
++#include <linux/cpu.h>
  
- /**
-+ * of_get_cpu_state_node - Get CPU's idle state node at the given index
-+ *
-+ * @cpu_node: The device node for the CPU
-+ * @index: The index in the list of the idle states
-+ *
-+ * Two generic methods can be used to describe a CPU's idle states, either via
-+ * a flattened description through the "cpu-idle-states" binding or via the
-+ * hierarchical layout, using the "power-domains" and the "domain-idle-states"
-+ * bindings. This function check for both and returns the idle state node for
-+ * the requested index.
-+ *
-+ * In case and idle state node is found at index, the refcount incremented for
-+ * it, so call of_node_put() on it when done. Returns NULL if not found.
-+ */
-+struct device_node *of_get_cpu_state_node(struct device_node *cpu_node,
-+					  int index)
-+{
-+	struct of_phandle_args args;
-+	int err;
-+
-+	err = of_parse_phandle_with_args(cpu_node, "power-domains",
-+					"#power-domain-cells", 0, &args);
-+	if (!err) {
-+		struct device_node *state_node =
-+			of_parse_phandle(args.np, "domain-idle-states", index);
-+
-+		of_node_put(args.np);
-+		return state_node;
-+	}
-+
-+	return of_parse_phandle(cpu_node, "cpu-idle-states", index);
-+}
-+EXPORT_SYMBOL(of_get_cpu_state_node);
-+
-+/**
-  * __of_device_is_compatible() - Check if the node matches given constraints
-  * @device: pointer to node
-  * @compat: required compatible string, NULL or "" for any match
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 4d25e4f..15072b1 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -348,6 +348,8 @@ extern const void *of_get_property(const struct device_node *node,
- 				const char *name,
- 				int *lenp);
- extern struct device_node *of_get_cpu_node(int cpu, unsigned int *thread);
-+extern struct device_node *of_get_cpu_state_node(struct device_node *cpu_node,
-+						 int index);
- #define for_each_property_of_node(dn, pp) \
- 	for (pp = dn->properties; pp != NULL; pp = pp->next)
+ #include "power.h"
  
-@@ -733,6 +735,12 @@ static inline struct device_node *of_get_cpu_node(int cpu,
- 	return NULL;
+@@ -125,6 +126,7 @@ static const struct genpd_lock_ops genpd_spin_ops = {
+ #define genpd_is_irq_safe(genpd)	(genpd->flags & GENPD_FLAG_IRQ_SAFE)
+ #define genpd_is_always_on(genpd)	(genpd->flags & GENPD_FLAG_ALWAYS_ON)
+ #define genpd_is_active_wakeup(genpd)	(genpd->flags & GENPD_FLAG_ACTIVE_WAKEUP)
++#define genpd_is_cpu_domain(genpd)	(genpd->flags & GENPD_FLAG_CPU_DOMAIN)
+ 
+ static inline bool irq_safe_dev_in_no_sleep_domain(struct device *dev,
+ 		const struct generic_pm_domain *genpd)
+@@ -1377,6 +1379,62 @@ static void genpd_free_dev_data(struct device *dev,
+ 	dev_pm_put_subsys_data(dev);
  }
  
-+static inline struct device_node *of_get_cpu_state_node(struct device_node *cpu_node,
-+					int index)
++static void __genpd_update_cpumask(struct generic_pm_domain *genpd,
++				   int cpu, bool set, unsigned int depth)
 +{
-+	return NULL;
++	struct gpd_link *link;
++
++	if (!genpd_is_cpu_domain(genpd))
++		return;
++
++	list_for_each_entry(link, &genpd->slave_links, slave_node) {
++		struct generic_pm_domain *master = link->master;
++
++		genpd_lock_nested(master, depth + 1);
++		__genpd_update_cpumask(master, cpu, set, depth + 1);
++		genpd_unlock(master);
++	}
++
++	if (set)
++		cpumask_set_cpu(cpu, genpd->cpus);
++	else
++		cpumask_clear_cpu(cpu, genpd->cpus);
 +}
 +
- static inline int of_n_addr_cells(struct device_node *np)
++static void genpd_update_cpumask(struct generic_pm_domain *genpd,
++				 struct device *dev, bool set)
++{
++	bool is_cpu = false;
++	int cpu;
++
++	if (!genpd_is_cpu_domain(genpd))
++		return;
++
++	for_each_possible_cpu(cpu) {
++		if (get_cpu_device(cpu) == dev) {
++			is_cpu = true;
++			break;
++		}
++	}
++
++	if (!is_cpu)
++		return;
++
++	__genpd_update_cpumask(genpd, cpu, set, 0);
++}
++
++static void genpd_set_cpumask(struct generic_pm_domain *genpd,
++			      struct device *dev)
++{
++	genpd_update_cpumask(genpd, dev, true);
++}
++
++static void genpd_clear_cpumask(struct generic_pm_domain *genpd,
++				struct device *dev)
++{
++	genpd_update_cpumask(genpd, dev, false);
++}
++
+ static int genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
+ 			    struct gpd_timing_data *td)
  {
- 	return 0;
+@@ -1403,6 +1461,8 @@ static int genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
+ 	if (ret)
+ 		goto out;
+ 
++	genpd_set_cpumask(genpd, dev);
++
+ 	dev_pm_domain_set(dev, &genpd->domain);
+ 
+ 	genpd->device_count++;
+@@ -1466,6 +1526,7 @@ static int genpd_remove_device(struct generic_pm_domain *genpd,
+ 	if (genpd->detach_dev)
+ 		genpd->detach_dev(genpd, dev);
+ 
++	genpd_clear_cpumask(genpd, dev);
+ 	dev_pm_domain_set(dev, NULL);
+ 
+ 	list_del_init(&pdd->list_node);
+@@ -1693,11 +1754,16 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
+ 	if (genpd_is_always_on(genpd) && !genpd_status_on(genpd))
+ 		return -EINVAL;
+ 
++	if (!zalloc_cpumask_var(&genpd->cpus, GFP_KERNEL))
++		return -ENOMEM;
++
+ 	/* Use only one "off" state if there were no states declared */
+ 	if (genpd->state_count == 0) {
+ 		ret = genpd_set_default_power_state(genpd);
+-		if (ret)
++		if (ret) {
++			free_cpumask_var(genpd->cpus);
+ 			return ret;
++		}
+ 	} else if (!gov) {
+ 		pr_warn("%s : no governor for states\n", genpd->name);
+ 	}
+@@ -1740,6 +1806,7 @@ static int genpd_remove(struct generic_pm_domain *genpd)
+ 	list_del(&genpd->gpd_list_node);
+ 	genpd_unlock(genpd);
+ 	cancel_work_sync(&genpd->power_off_work);
++	free_cpumask_var(genpd->cpus);
+ 	kfree(genpd->free);
+ 	pr_debug("%s: removed %s\n", __func__, genpd->name);
+ 
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 55ad34d..29ab00c 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -16,12 +16,14 @@
+ #include <linux/of.h>
+ #include <linux/notifier.h>
+ #include <linux/spinlock.h>
++#include <linux/cpumask.h>
+ 
+ /* Defines used for the flags field in the struct generic_pm_domain */
+ #define GENPD_FLAG_PM_CLK	 (1U << 0) /* PM domain uses PM clk */
+ #define GENPD_FLAG_IRQ_SAFE	 (1U << 1) /* PM domain operates in atomic */
+ #define GENPD_FLAG_ALWAYS_ON	 (1U << 2) /* PM domain is always powered on */
+ #define GENPD_FLAG_ACTIVE_WAKEUP (1U << 3) /* Keep devices active if wakeup */
++#define GENPD_FLAG_CPU_DOMAIN	 (1U << 4) /* PM domain manages CPUs */
+ 
+ enum gpd_status {
+ 	GPD_STATE_ACTIVE = 0,	/* PM domain is active */
+@@ -66,6 +68,7 @@ struct generic_pm_domain {
+ 	unsigned int suspended_count;	/* System suspend device counter */
+ 	unsigned int prepared_count;	/* Suspend counter of prepared devices */
+ 	unsigned int performance_state;	/* Aggregated max performance state */
++	cpumask_var_t cpus;		/* A cpumask of the attached CPUs */
+ 	int (*power_off)(struct generic_pm_domain *domain);
+ 	int (*power_on)(struct generic_pm_domain *domain);
+ 	int (*set_performance_state)(struct generic_pm_domain *genpd,
 -- 
 2.7.4
