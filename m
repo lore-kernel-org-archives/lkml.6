@@ -1,164 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752441AbeDLJ7w (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 05:59:52 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55322 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751848AbeDLJ7u (ORCPT
+        id S1752602AbeDLKCD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 06:02:03 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:43156 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751747AbeDLKCB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 05:59:50 -0400
+        Thu, 12 Apr 2018 06:02:01 -0400
+X-Google-Smtp-Source: AIpwx4+dLQofnrZ8Nr0jW4C9i7MEGYuWU1f0aOUCI5L63U1Fe/fLpygpmeyXfABvGM0+g7fZN4uxfoCyZdQd/HLMgwRPMyAXQKkS
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Thu, 12 Apr 2018 15:29:48 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 1/9] mtd: nand: qcom: use the ecc strength from device
- parameter
-In-Reply-To: <20180410100745.625d66f8@bbrezillon>
-References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
- <1522845745-6624-2-git-send-email-absahu@codeaurora.org>
- <20180406143133.67f33d33@xps13>
- <23c8330d00d4d9b62c4c1ab597cbb22b@codeaurora.org>
- <20180410094657.63ac7ec9@xps13> <20180410095558.34c4d91f@xps13>
- <20180410100745.625d66f8@bbrezillon>
-Message-ID: <c1cb40d0d24e50657308a40bb8398d35@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Date: Thu, 12 Apr 2018 03:02:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <001a1140f656c722960569a3d857@google.com>
+Subject: KASAN: slab-out-of-bounds Write in perf_callchain_user
+From: syzbot <syzbot+7c449856228b63ac951e@syzkaller.appspotmail.com>
+To: acme@kernel.org, alexander.shishkin@linux.intel.com, hpa@zytor.com,
+        jolsa@redhat.com, linux-kernel@vger.kernel.org, mingo@redhat.com,
+        namhyung@kernel.org, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-10 13:37, Boris Brezillon wrote:
-> On Tue, 10 Apr 2018 09:55:58 +0200
-> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-> 
->> > Hi Abhishek,
->> >
->> > On Tue, 10 Apr 2018 11:39:35 +0530, Abhishek Sahu
->> > <absahu@codeaurora.org> wrote:
->> >
->> > > On 2018-04-06 18:01, Miquel Raynal wrote:
->> > > > Hi Abhishek,
->> > > >
->> > > > On Wed,  4 Apr 2018 18:12:17 +0530, Abhishek Sahu
->> > > > <absahu@codeaurora.org> wrote:
->> > > >
->> > > >> Currently the driver uses the ECC strength specified in
->> > > >> device tree. The ONFI or JEDEC device parameter page
->> > > >> contains the ‘ECC correctability’ field which indicates the
->> > > >> number of bits that the host should be able to correct per
->> > > >> 512 bytes of data.
->> > > >
->> > > > This is misleading. This field is not about the controller but rather
->> > > > the chip requirements in terms of minimal strength for nominal use.
->> > > >
->> > >
->> > >   Thanks Miquel.
->> > >
->> > >   Yes. Its NAND chip requirement. I have used the description for
->> > >   NAND ONFI param page
->> > >
->> > >   5.6.1.24. Byte 112: Number of bits ECC correctability
->> > >   This field indicates the number of bits that the host should be
->> > >   able to correct per 512 bytes of data.
->> > >
->> > > >> The ecc correctability is assigned in
->> > > >> chip parameter during device probe time. QPIC/EBI2 NAND
->> > > >> supports 4/8-bit ecc correction. The Same kind of board
->> > > >> can have different NAND parts so use the ecc strength
->> > > >> from device parameter (if its non zero) instead of
->> > > >> device tree.
->> > > >
->> > > > That is not what you do.
->> > > >
->> > > > What you do is forcing the strength to be 8-bit per ECC chunk if the
->> > > > NAND chip requires at least 8-bit/chunk strength.
->> > > >
->> > > > The DT property is here to force a strength. Otherwise, Linux will
->> > > > propose to the NAND controller to use the minimum strength required by
->> > > > the chip (from either the ONFI/JEDEC parameter page or from a static
->> > > > table).
->> > > >
->> > >
->> > >   The main problem is that the same kind of boards can have different
->> > >   NAND parts.
->> > >
->> > >   Lets assume, we have following 2 cases.
->> > >
->> > >   1. Non ONFI/JEDEC device for which chip->ecc_strength_ds
->> > >      will be zero. In this case, the ecc->strength from DT
->> > >      will be used
->> >
->> > No, the strength from DT will always be used if the property is
->> > present, no matter the type of chip.
->> >
->> > >   2. ONFI/JEDEC device for which chip->ecc_strength_ds > 8.
->> > >      Since QCOM nand controller can not support
->> > >      ECC correction greater than 8 bits so we can use 8 bit ECC
->> > >      itself instead of failing NAND boot completely.
->> >
->> > I understand that. But this is still not what you do.
->> >
->> > >
->> > > > IMHO, you have two solutions:
->> > > > 1/ Remove these properties from the board DT (breaks DT backward
->> > > > compatibility though);
->> > >
->> > >   - nand-ecc-strength: This is optional property in nand.txt and
->> > >     Required property in qcom_nandc.txt.
->> >
->> > Well, this property is not controller specific but chip specific. The
->> > controller driver does not rely on it, so this property should not be
->> > required.
->> >
->> > > We can't remove since
->> > >     if the device is Non ONFI/JEDEC, then ecc strength will come
->> > >     from DT only.
->> >
->> > We can remove it and let the core handle this (as this is generic to
->> > all raw NANDs and not specific to this controller driver). Try it out!
+Hello,
 
-  Thanks Boris and Miquel for your inputs.
+syzbot hit the following crash on bpf-next commit
+17dec0a949153d9ac00760ba2f5b78cb583e995f (Wed Apr 4 02:15:32 2018 +0000)
+Merge branch 'userns-linus' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=7c449856228b63ac951e
 
-  Just want to confirm if already its implemented in core layer
-  or shall I explore regrading this option.
+So far this crash happened 2 times on bpf-next.
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=4514433808203776
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=5570436679073792
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-2735707888269579554
+compiler: gcc (GCC) 8.0.1 20180301 (experimental)
 
-  I checked by removing this property alone from dtsi and it was
-  failing with
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+7c449856228b63ac951e@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-  "Driver must set ecc.strength when using hardware ECC"
+IPVS: ftp: loaded support on port[0] = 21
+==================================================================
+BUG: KASAN: slab-out-of-bounds in perf_callchain_store  
+include/linux/perf_event.h:1147 [inline]
+BUG: KASAN: slab-out-of-bounds in perf_callchain_user+0xe31/0xfe0  
+arch/x86/events/core.c:2485
+Write of size 8 at addr ffff8801d87f2d40 by task udevd/2377
 
-  I checked the code in nand_base.c also but couldn't get
-  anything related with this.
+CPU: 0 PID: 2377 Comm: udevd Not tainted 4.16.0+ #3
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x1b9/0x29f lib/dump_stack.c:53
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0xac/0x2f5 mm/kasan/report.c:412
+  __asan_report_store8_noabort+0x17/0x20 mm/kasan/report.c:438
+  perf_callchain_store include/linux/perf_event.h:1147 [inline]
+  perf_callchain_user+0xe31/0xfe0 arch/x86/events/core.c:2485
+  get_perf_callchain+0x798/0xb20 kernel/events/callchain.c:227
+  perf_callchain kernel/events/core.c:6354 [inline]
+  perf_prepare_sample+0x123d/0x1900 kernel/events/core.c:6380
+  __perf_event_output kernel/events/core.c:6494 [inline]
+  perf_event_output_forward+0x10a/0x2b0 kernel/events/core.c:6512
+  __perf_event_overflow+0x231/0x4b0 kernel/events/core.c:7748
+  perf_swevent_overflow+0xad/0x150 kernel/events/core.c:7824
+  perf_swevent_event+0x1f0/0x2e0 kernel/events/core.c:7857
+  perf_tp_event+0x4da/0xc30 kernel/events/core.c:8280
+  perf_trace_run_bpf_submit+0x23f/0x370 kernel/events/core.c:8254
+  perf_trace_lock_acquire+0x4f1/0x980 include/trace/events/lock.h:13
+  trace_lock_acquire include/trace/events/lock.h:13 [inline]
+  lock_acquire+0x38e/0x520 kernel/locking/lockdep.c:3919
+  finish_lock_switch kernel/sched/core.c:2602 [inline]
+  finish_task_switch+0x1c2/0x820 kernel/sched/core.c:2701
+  context_switch kernel/sched/core.c:2851 [inline]
+  __schedule+0x80f/0x1e40 kernel/sched/core.c:3490
+  schedule+0xef/0x430 kernel/sched/core.c:3549
+  schedule_hrtimeout_range_clock+0x3c0/0x470 kernel/time/hrtimer.c:1883
+  schedule_hrtimeout_range+0x2a/0x40 kernel/time/hrtimer.c:1940
+  ep_poll+0xf2e/0x11d0 fs/eventpoll.c:1812
+  do_epoll_wait+0x1b0/0x200 fs/eventpoll.c:2191
+  SYSC_epoll_wait fs/eventpoll.c:2201 [inline]
+  SyS_epoll_wait+0x2c/0x40 fs/eventpoll.c:2198
+  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x7fe39adf3943
+RSP: 002b:00007ffc13750708 EFLAGS: 00000246 ORIG_RAX: 00000000000000e8
+RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007fe39adf3943
+RDX: 0000000000000008 RSI: 00007ffc13750800 RDI: 000000000000000a
+RBP: 0000000001b676c0 R08: 0000000000000000 R09: 00007fe39ae3ca60
+R10: 00000000ffffffff R11: 0000000000000246 R12: 0000000000000a56
+R13: 0000000000000000 R14: 0000000001b674a0 R15: 0000000001b4e250
 
-  Thanks,
-  Abhishek
+Allocated by task 4544:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+  set_track mm/kasan/kasan.c:459 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:552
+  __do_kmalloc_node mm/slab.c:3670 [inline]
+  __kmalloc_node+0x47/0x70 mm/slab.c:3677
+  kmalloc_node include/linux/slab.h:554 [inline]
+  alloc_callchain_buffers kernel/events/callchain.c:91 [inline]
+  get_callchain_buffers+0x31a/0x4b0 kernel/events/callchain.c:138
+  perf_event_alloc.part.91+0x2274/0x30a0 kernel/events/core.c:10047
+  perf_event_alloc kernel/events/core.c:10376 [inline]
+  SYSC_perf_event_open+0xa8a/0x2fa0 kernel/events/core.c:10477
+  SyS_perf_event_open+0x35/0x40 kernel/events/core.c:10366
+  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
 
->> >
->> > However if the defaults value do not match your expectations, I think
->> > you can add your non-ONFI/JEDEC chip in 'nand_ids.c', this should fill
->> > your strength_ds field and let you avoid using these properties.
->> 
->> Actually nand_ids.c should not be filled anymore, instead you can
->> implement this detection thanks to the part full name in the vendor
->> code nand_samsung.c, nand_micron.c, nand_macronix.c, nand_hynix.c, 
->> etc.
-> 
-> Usually you don't have to go that far, and the ECC requirements are
-> encoded somewhere in the ID (after byte 2). When that's not the
-> case, you may have to check the full ID.
-> 
->> Depending on what part you are using, it might already work.
-> 
-> Yep.
+Freed by task 0:
+(stack is not available)
+
+The buggy address belongs to the object at ffff8801d87f1c40
+  which belongs to the cache kmalloc-8192 of size 8192
+The buggy address is located 4352 bytes inside of
+  8192-byte region [ffff8801d87f1c40, ffff8801d87f3c40)
+The buggy address belongs to the page:
+page:ffffea000761fc00 count:1 mapcount:0 mapping:ffff8801d87f1c40 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffff8801d87f1c40 0000000000000000 0000000100000001
+raw: ffffea0007612020 ffffea0006b0ff20 ffff8801dac02080 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801d87f2c00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8801d87f2c80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffff8801d87f2d00: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+                                            ^
+  ffff8801d87f2d80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801d87f2e00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
