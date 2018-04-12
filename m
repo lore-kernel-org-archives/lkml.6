@@ -1,124 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752668AbeDLLtJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 07:49:09 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43070 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751832AbeDLLtI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 07:49:08 -0400
-From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@kernel.org,
-        akpm@linux-foundation.org
-Cc: linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-doc@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>,
-        aneesh.kumar@linux.vnet.ibm.com, benh@kernel.crashing.org,
-        paulus@samba.org, Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Vineet Gupta <vgupta@synopsys.com>, Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <albert@sifive.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        David Rientjes <rientjes@google.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christophe LEROY <christophe.leroy@c-s.fr>
-Subject: [PATCH v4] mm: remove odd HAVE_PTE_SPECIAL
-Date: Thu, 12 Apr 2018 13:48:53 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <20180411110936.GG23400@dhcp22.suse.cz>
-References: <20180411110936.GG23400@dhcp22.suse.cz>
-X-TM-AS-GCONF: 00
-x-cbid: 18041211-0008-0000-0000-000004E9BA30
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041211-0009-0000-0000-00001E7DC2FA
-Message-Id: <1523533733-25437-1-git-send-email-ldufour@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-12_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804120121
+        id S1752777AbeDLLtP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 07:49:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32854 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751832AbeDLLtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 07:49:10 -0400
+Subject: Re: [PATCH v3 2/2] vfio: platform: Add generic DT reset support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1523438149-16433-1-git-send-email-geert+renesas@glider.be>
+ <1523438149-16433-4-git-send-email-geert+renesas@glider.be>
+ <e6a70247-14f2-63b6-852b-3d43e45f8fa2@redhat.com>
+ <CAMuHMdU5m=vV9nuVoRkX6tX-A=az3aK6HT7yFqgDam_rCNEfSg@mail.gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        KVM list <kvm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kaya Sinan <okaya@codeaurora.org>
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <2e09425d-0f27-3069-3421-e454ee70e3b2@redhat.com>
+Date: Thu, 12 Apr 2018 13:49:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdU5m=vV9nuVoRkX6tX-A=az3aK6HT7yFqgDam_rCNEfSg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the additional define HAVE_PTE_SPECIAL and rely directly on
-CONFIG_ARCH_HAS_PTE_SPECIAL.
+Hi Geert,
+On 12/04/18 13:32, Geert Uytterhoeven wrote:
+> Hi Eric,
+> 
+> On Thu, Apr 12, 2018 at 12:31 PM, Auger Eric <eric.auger@redhat.com> wrote:
+>> On 11/04/18 11:15, Geert Uytterhoeven wrote:
+>>> Vfio-platform requires reset support, provided either by ACPI, or, on DT
+>>> platforms, by a device-specific reset driver matching against the
+>>> device's compatible value.
+>>>
+>>> On many SoCs, devices are connected to an SoC-internal reset controller.
+>>> If the reset hierarchy is described in DT using "resets" properties,
+>>> such devices can be reset in a generic way through the reset controller
+>>> subsystem.  Hence add support for this, avoiding the need to write
+>>> device-specific reset drivers for each single device on affected SoCs.
+>>>
+>>> Devices that do require a more complex reset procedure can still provide
+>>> a device-specific reset driver, as that takes precedence.
+>>>
+>>> Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
+>>> becomes a no-op (as in: "No reset function found for device") if reset
+>>> controller support is disabled.
+>>>
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> 
+>>> --- a/drivers/vfio/platform/vfio_platform_common.c
+>>> +++ b/drivers/vfio/platform/vfio_platform_common.c
+> 
+>>> @@ -127,8 +130,16 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
+>>>               vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
+>>>                                                       &vdev->reset_module);
+>>>       }
+>>> +     if (vdev->of_reset)
+>>> +             return 0;
+>>> +
+>>> +     rstc = of_reset_control_get_exclusive(vdev->device->of_node, NULL);
+>>
+>> Shouldn't we prefer the top level reset_control_get_exclusive()?
+> 
+> I guess that should work, too.
+> 
+>> To make sure about the exclusive/shared terminology, does
+>> get_reset_control_get_exclusive() check we have an exclusive wire
+>> between this device and the reset controller?
+> 
+> AFAIU, the "exclusive" means that only a single user can obtain access to
+> the reset, and it does not guarantee that we have an exclusive wire between
+> the device and the reset controller.
+> 
+> The latter depends on the SoC's reset topology. If a reset wire is shared
+> by multiple devices (e.g. resets shared by PWM or Display Unit devices on
+> R-Car SoCs), exporting a subset of these devices to a guest is a bad idea,
+> indeed.
 
-There is no functional change introduced by this patch
+So who's going to check this assigned device will not trigger a reset of
+other non assigned devices sharing the same reset controller?
 
-Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
----
- mm/memory.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+> 
+> I guess the same thing can happen with the ACPI "_RST" method?
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 96910c625daa..345e562a138d 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -817,17 +817,12 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
-  * PFNMAP mappings in order to support COWable mappings.
-  *
-  */
--#ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
--# define HAVE_PTE_SPECIAL 1
--#else
--# define HAVE_PTE_SPECIAL 0
--#endif
- struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
- 			     pte_t pte, bool with_public_device)
- {
- 	unsigned long pfn = pte_pfn(pte);
- 
--	if (HAVE_PTE_SPECIAL) {
-+	if (IS_ENABLED(CONFIG_ARCH_HAS_PTE_SPECIAL)) {
- 		if (likely(!pte_special(pte)))
- 			goto check_pfn;
- 		if (vma->vm_ops && vma->vm_ops->find_special_page)
-@@ -862,7 +857,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
- 		return NULL;
- 	}
- 
--	/* !HAVE_PTE_SPECIAL case follows: */
-+	/* !CONFIG_ARCH_HAS_PTE_SPECIAL case follows: */
- 
- 	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
- 		if (vma->vm_flags & VM_MIXEDMAP) {
-@@ -881,6 +876,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
- 
- 	if (is_zero_pfn(pfn))
- 		return NULL;
-+
- check_pfn:
- 	if (unlikely(pfn > highest_memmap_pfn)) {
- 		print_bad_pte(vma, addr, pte, NULL);
-@@ -904,7 +900,7 @@ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
- 	/*
- 	 * There is no pmd_special() but there may be special pmds, e.g.
- 	 * in a direct-access (dax) mapping, so let's just replicate the
--	 * !HAVE_PTE_SPECIAL case from vm_normal_page() here.
-+	 * !CONFIG_ARCH_HAS_PTE_SPECIAL case from vm_normal_page() here.
- 	 */
- 	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
- 		if (vma->vm_flags & VM_MIXEDMAP) {
-@@ -1933,7 +1929,8 @@ static int __vm_insert_mixed(struct vm_area_struct *vma, unsigned long addr,
- 	 * than insert_pfn).  If a zero_pfn were inserted into a VM_MIXEDMAP
- 	 * without pte special, it would there be refcounted as a normal page.
- 	 */
--	if (!HAVE_PTE_SPECIAL && !pfn_t_devmap(pfn) && pfn_t_valid(pfn)) {
-+	if (!IS_ENABLED(CONFIG_ARCH_HAS_PTE_SPECIAL) &&
-+	    !pfn_t_devmap(pfn) && pfn_t_valid(pfn)) {
- 		struct page *page;
- 
- 		/*
--- 
-2.7.4
+ACPI spec _RST chapter says about _RST object:
+
+"This object executes a reset on the associated device
+ or devices. If included in a device context, the
+reset must not affect any other ACPI-described de
+vices; if included in a power resource for reset
+(_PRR, Section 7.3.26) the reset must affect all ACPI-described devices
+that reference it. When this object is described in
+a device context, it executes a function level reset that only affects
+the device it is associated with; neither parent nor children should be
+affected by the execution of this reset. Executing this must only result
+in this device resetting without the device appearing as if it
+has been removed from the bus altogether, to prevent OSPM re-enumeration
+of devices on hot-pluggable buses (e.g. USB)."
+
+Adding Sinan in copy for clarification.
+
+Thanks
+
+Eric
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
