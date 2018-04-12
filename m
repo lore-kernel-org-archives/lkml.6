@@ -1,213 +1,165 @@
-Return-Path: <robert.jarzmik@free.fr>
-X-Google-Smtp-Source: AIpwx48D/1696U9eYp2G4S7pgqUnaNI21kgUlId//RIrgzxZoBH5iWBTfooVq35RvgcPcRtPhNU+
-ARC-Seal: i=1; a=rsa-sha256; t=1522679288; cv=none;
-        d=google.com; s=arc-20160816;
-        b=NK8Ex2zoidXm/yZ/j3rDd27Z+fZObwdXqRHxkeZOh1Ca1zJiN14gnhvbazI42lBFck
-         YWAMHPHD6+xbD/Ds18p15c3MaGv668H9AuO1n0Dx4UaFdgvop3J6o4U2xa3L2wMNw6Cw
-         V54nheneK7SIQfAfaf5KyL9F3IZN3ROUn8YeDBQIbtyS/Pi8p3li6T4im67QhxIBy9UO
-         SKE7d5ibt2+oDDQxw2SlKxxCNdXg/FgdfgJ47Mc3QvuolieESScjp6FhQFNwzNaFm+Eb
-         sR2cvEbRf5SI44hmpEA7EWk9RVivieaax7li17Q67Iox5AmQBIhNoRf0W//Re8ikJByM
-         NcBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=q/HamPhGEnKd3muGMqFv6PnWHBc5AQUvrwQxmjxxrts=;
-        b=ZIQgYlByfDrFT8hVN0ENz0s2SMU10ClUguvEQzk+NXY/FOFosqJHHQvgns2pZfsc0A
-         1rmL90cqA6oI0bEIXpteZs5KCsG0BX7zJuoEWG2OvBy91YkI3cTlTd/tDoczIjtBJQ3b
-         7/kXvLCMBLoU4kJJFggsJRv3mPaHYY0YYGHSM37HBNi2C+4a9V1nKhKRIRGiTDmg6FP8
-         4xf463XZDcek8Ds5jrqTJi4/aoR8sHj0kjj7hRx+PQcIkFLN0N2ijJLO13OM2aMf+XrV
-         NucLMO9qyqOphiVTwuW2ejLsBRAKG2CaESBKkwK7pt2Jad+/7qA5yrfzQL4S1viNCKe1
-         HL2g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 80.12.242.128 is neither permitted nor denied by best guess record for domain of robert.jarzmik@free.fr) smtp.mailfrom=robert.jarzmik@free.fr
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 80.12.242.128 is neither permitted nor denied by best guess record for domain of robert.jarzmik@free.fr) smtp.mailfrom=robert.jarzmik@free.fr
-X-ME-Helo: belgarion.home
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Mon, 02 Apr 2018 16:28:08 +0200
-X-ME-IP: 86.201.130.131
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-To: Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	Tejun Heo <tj@kernel.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Brian Norris <computersforpeace@gmail.com>,
-	Marek Vasut <marek.vasut@gmail.com>,
-	Richard Weinberger <richard@nod.at>,
-	Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-	Nicolas Pitre <nico@fluxnic.net>,
-	Samuel Ortiz <samuel@sortiz.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	netdev@vger.kernel.org,
-	devel@driverdev.osuosl.org,
-	alsa-devel@alsa-project.org
-Subject: [PATCH 08/15] ASoC: pxa: remove the dmaengine compat need
-Date: Mon,  2 Apr 2018 16:26:49 +0200
-Message-Id: <20180402142656.26815-9-robert.jarzmik@free.fr>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180402142656.26815-1-robert.jarzmik@free.fr>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1272426-1523546880-2-1662357957973376442
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii', plain='us-ascii'
+X-Attached: signature.asc
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523546864; b=NKn6CGeRKvwRPvbepuTJT8zdbjLA3Zs2vRwBwrPjECdbP/5FCf
+    Zef0xocLa1WMsWOcD2rVs1NUTXxQtGh6Kupf6T8dY5qLZwBwc0xF3/iSNmqgY52F
+    ZZBFr/5JWlgPDRbrq3cs/47mvpJ7mWIgVpcw/FNyIqTxysQHkGtSohcnhKiwcId6
+    So0vaMw2cuv/NAuFoFyBkDCLQ9e5uO1CkWKmh8KUcs/kcMljfoOWLnmAlyzxFm32
+    xhLPXNRHsh7mI4SCQWUrk/TzlRNou87c1CX8me09uDeOHqLYwsdGWLL2oPFw/BDz
+    PqopEh0am3tFrn1VV5E7GbGTI730H8/zgpgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :sender; s=fm2; t=1523546864; bh=PTf9KrHDuiH3wRAmU612SVq7HG/MQ7D
+    gvD5cUHINKYA=; b=STzDxg1SORKfk8GARyqJ0YpkwYDBh8rs7O5L1LixD/fnzFG
+    WMAELKQRbHKuhO2pOQb5Oc7cSLrKcecfZ8p+MYbR97uFnlkAwM69hOoz17amuMLv
+    OmfmKMwmHcwH8E6iw54ed3qgwQURHNzDL4rerFKrjlmMS9CTGymhlgQIwBixUhza
+    y/D2+L/K3tg5KKUb8sBpsv3Fdv6t6GrZxWAZW9/aJmG2bXWOVMH5rGepSmwhKtmi
+    tOup6N5zG2xFQYuUoDNxlsjsOaJg+IQyJghQKEXrwEp1PplWlb1mCj5aM5lEuifU
+    KREb+RHpZ5PW0XB0yEXKLA70z7l2t5sVMn4dQTg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=sirena.org.uk header.i=@sirena.org.uk header.b=uzdhMMnN x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=20170815-heliosphere;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=sirena.org.uk header.i=@sirena.org.uk header.b=uzdhMMnN x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=20170815-heliosphere;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfFUxKCWS5I/UghQLrL0TwuyQxVY+bdt8yuoywOt4+Hiys8vgQqrALyPVThZvTvaGpDKKi3c542S7TBNBPg/6NdRTTnr3F+2g0i+xl/m4oUj3L9oECq3b
+    89fg73Bn/v1tfE7hgZ1T4KNjY6CrXaNRCpdgFpi0xIuqAX6bDYMghIDKzcm6bt5VbxktJ+n99gv7zQiP7l+mq2enYrbfdhcglFDIeBFisaML6z1G3X1bs3Yh
+    54Qvq+TZ2/XUq8t/d8L9XA==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=VwQbUJbxAAAA:8 a=xqn3uPuMxkSN_LYa0X0A:9
+    a=CjuIK1q_8ugA:10 a=rvfq9AIe_PUhNUYNhkQA:9 a=ONNS8QRKHyMA:10 a=DDOyTI_5AAAA:8
+    a=w27ZC7bHMYj9Vt11HkIA:9 a=pC-h2on8RWMA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Date: Thu, 12 Apr 2018 16:26:32 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: [PATCH 08/15] ASoC: pxa: remove the dmaengine compat need
+Message-ID: <20180412152632.GG9929@sirena.org.uk>
 References: <20180402142656.26815-1-robert.jarzmik@free.fr>
+ <20180402142656.26815-9-robert.jarzmik@free.fr>
+MIME-Version: 1.0
+In-Reply-To: <20180402142656.26815-9-robert.jarzmik@free.fr>
+X-Cookie: The coast was clear.
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, alsa-devel@alsa-project.org,
+ Jaroslav Kysela <perex@perex.cz>, linux-ide@vger.kernel.org,
+ netdev@vger.kernel.org, linux-mtd@lists.infradead.org,
+ devel@driverdev.osuosl.org,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Vinod Koul <vinod.koul@intel.com>, Richard Weinberger <richard@nod.at>,
+ Takashi Iwai <tiwai@suse.com>, Marek Vasut <marek.vasut@gmail.com>,
+ Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
+ linux-media@vger.kernel.org, Samuel Ortiz <samuel@sortiz.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Haojian Zhuang <haojian.zhuang@gmail.com>, dmaengine@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, Nicolas Pitre <nico@fluxnic.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-mmc@vger.kernel.org,
+ Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+ Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Tejun Heo <tj@kernel.org>,
+ Brian Norris <computersforpeace@gmail.com>,
+ David Woodhouse <dwmw2@infradead.org>, Daniel Mack <daniel@zonque.org>
+Content-Type: multipart/mixed; boundary="===============2894887599076401071=="
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596644957830623862?=
-X-GMAIL-MSGID: =?utf-8?q?1596644957830623862?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-As the pxa architecture switched towards the dmaengine slave map, the
-old compatibility mechanism to acquire the dma requestor line number and
-priority are not needed anymore.
 
-This patch simplifies the dma resource acquisition, using the more
-generic function dma_request_slave_channel().
+--===============2894887599076401071==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fCcDWlUEdh43YKr8"
+Content-Disposition: inline
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
----
- sound/arm/pxa2xx-ac97.c     | 14 ++------------
- sound/arm/pxa2xx-pcm-lib.c  |  6 +++---
- sound/soc/pxa/pxa2xx-ac97.c | 32 +++++---------------------------
- 3 files changed, 10 insertions(+), 42 deletions(-)
 
-diff --git a/sound/arm/pxa2xx-ac97.c b/sound/arm/pxa2xx-ac97.c
-index 4bc244c40f80..236a63cdaf9f 100644
---- a/sound/arm/pxa2xx-ac97.c
-+++ b/sound/arm/pxa2xx-ac97.c
-@@ -63,28 +63,18 @@ static struct snd_ac97_bus_ops pxa2xx_ac97_ops = {
- 	.reset	= pxa2xx_ac97_legacy_reset,
- };
- 
--static struct pxad_param pxa2xx_ac97_pcm_out_req = {
--	.prio = PXAD_PRIO_LOWEST,
--	.drcmr = 12,
--};
--
- static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_out = {
- 	.addr		= __PREG(PCDR),
- 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-+	.chan_name	= "pcm_pcm_stereo_out",
- 	.maxburst	= 32,
--	.filter_data	= &pxa2xx_ac97_pcm_out_req,
--};
--
--static struct pxad_param pxa2xx_ac97_pcm_in_req = {
--	.prio = PXAD_PRIO_LOWEST,
--	.drcmr = 11,
- };
- 
- static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_in = {
- 	.addr		= __PREG(PCDR),
- 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-+	.chan_name	= "pcm_pcm_stereo_in",
- 	.maxburst	= 32,
--	.filter_data	= &pxa2xx_ac97_pcm_in_req,
- };
- 
- static struct snd_pcm *pxa2xx_ac97_pcm;
-diff --git a/sound/arm/pxa2xx-pcm-lib.c b/sound/arm/pxa2xx-pcm-lib.c
-index e8da3b8ee721..cbfaba60b79a 100644
---- a/sound/arm/pxa2xx-pcm-lib.c
-+++ b/sound/arm/pxa2xx-pcm-lib.c
-@@ -125,9 +125,9 @@ int __pxa2xx_pcm_open(struct snd_pcm_substream *substream)
- 	if (ret < 0)
- 		return ret;
- 
--	return snd_dmaengine_pcm_open_request_chan(substream,
--					pxad_filter_fn,
--					dma_params->filter_data);
-+	return snd_dmaengine_pcm_open(
-+		substream, dma_request_slave_channel(rtd->platform->dev,
-+						     dma_params->chan_name));
- }
- EXPORT_SYMBOL(__pxa2xx_pcm_open);
- 
-diff --git a/sound/soc/pxa/pxa2xx-ac97.c b/sound/soc/pxa/pxa2xx-ac97.c
-index 803818aabee9..1b41c0f2a8fb 100644
---- a/sound/soc/pxa/pxa2xx-ac97.c
-+++ b/sound/soc/pxa/pxa2xx-ac97.c
-@@ -68,61 +68,39 @@ static struct snd_ac97_bus_ops pxa2xx_ac97_ops = {
- 	.reset	= pxa2xx_ac97_cold_reset,
- };
- 
--static struct pxad_param pxa2xx_ac97_pcm_stereo_in_req = {
--	.prio = PXAD_PRIO_LOWEST,
--	.drcmr = 11,
--};
--
- static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_stereo_in = {
- 	.addr		= __PREG(PCDR),
- 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-+	.chan_name	= "pcm_pcm_stereo_in",
- 	.maxburst	= 32,
--	.filter_data	= &pxa2xx_ac97_pcm_stereo_in_req,
--};
--
--static struct pxad_param pxa2xx_ac97_pcm_stereo_out_req = {
--	.prio = PXAD_PRIO_LOWEST,
--	.drcmr = 12,
- };
- 
- static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_stereo_out = {
- 	.addr		= __PREG(PCDR),
- 	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-+	.chan_name	= "pcm_pcm_stereo_out",
- 	.maxburst	= 32,
--	.filter_data	= &pxa2xx_ac97_pcm_stereo_out_req,
- };
- 
--static struct pxad_param pxa2xx_ac97_pcm_aux_mono_out_req = {
--	.prio = PXAD_PRIO_LOWEST,
--	.drcmr = 10,
--};
- static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_aux_mono_out = {
- 	.addr		= __PREG(MODR),
- 	.addr_width	= DMA_SLAVE_BUSWIDTH_2_BYTES,
-+	.chan_name	= "pcm_aux_mono_out",
- 	.maxburst	= 16,
--	.filter_data	= &pxa2xx_ac97_pcm_aux_mono_out_req,
- };
- 
--static struct pxad_param pxa2xx_ac97_pcm_aux_mono_in_req = {
--	.prio = PXAD_PRIO_LOWEST,
--	.drcmr = 9,
--};
- static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_aux_mono_in = {
- 	.addr		= __PREG(MODR),
- 	.addr_width	= DMA_SLAVE_BUSWIDTH_2_BYTES,
-+	.chan_name	= "pcm_aux_mono_in",
- 	.maxburst	= 16,
--	.filter_data	= &pxa2xx_ac97_pcm_aux_mono_in_req,
- };
- 
--static struct pxad_param pxa2xx_ac97_pcm_aux_mic_mono_req = {
--	.prio = PXAD_PRIO_LOWEST,
--	.drcmr = 8,
--};
- static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_mic_mono_in = {
- 	.addr		= __PREG(MCDR),
- 	.addr_width	= DMA_SLAVE_BUSWIDTH_2_BYTES,
-+	.chan_name	= "pcm_aux_mic_mono",
- 	.maxburst	= 16,
--	.filter_data	= &pxa2xx_ac97_pcm_aux_mic_mono_req,
- };
- 
- static int pxa2xx_ac97_hifi_startup(struct snd_pcm_substream *substream,
--- 
-2.11.0
+--fCcDWlUEdh43YKr8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Apr 02, 2018 at 04:26:49PM +0200, Robert Jarzmik wrote:
+> As the pxa architecture switched towards the dmaengine slave map, the
+> old compatibility mechanism to acquire the dma requestor line number and
+> priority are not needed anymore.
+
+Acked-by: Mark Brown <broonie@kernel.org>
+
+If there's no dependency I'm happy to take this for 4.18.
+
+--fCcDWlUEdh43YKr8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrPeqcACgkQJNaLcl1U
+h9BSZAf/TjOZQziPXrBJ727QgQKnwF8+6GXuQPc3HlwShDoJ9qAWnzcOSwzJ8fkE
+dcG2858Zo0M7NCqcoOokOhM4wKUOn3aCE78wDsjEPX/PohKdI3uHZXBLbSrFaSF8
+y1TYjHDRCKqYTTfaG4bNfONcAb+ymbxjGD4ZOsrkV82pl8tCA+zCT5g6C8PrqshL
+GwwmmJQHGK0CU477p0+QN/EsW/B9VNLNsqpeFS9WAlZcTuA004mW/3YYf8hwpk0i
+pFqD2AXnmrDVsynBm78eKaAtqMRUkd0I/iWRWqFf7DtVVx6Foo8877fCdcVLYgYI
+mArYZJIh+YC/f25ftES/xWmAqIokOQ==
+=INfO
+-----END PGP SIGNATURE-----
+
+--fCcDWlUEdh43YKr8--
+
+--===============2894887599076401071==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+
+--===============2894887599076401071==--
