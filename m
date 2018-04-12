@@ -1,123 +1,45 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4159797-1523509918-2-3720845146371335218
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523509917; b=kwhZ8aWtPtUJ8OzURQoIkcaRHkuOp4lDVsje7zl+OQdh2nthj8
-    90+v1MjRq1kJprBTuCncKY6L2p25FeDZMX6CV4ZSb3jIbm+LDBeuLFZQurQY2503
-    zw1f3+PuqIbCCUyqHZSRN0d5KznorvU85VCzHJXWgqzt50JFW1PyODxWUrYLkCWl
-    IDSCHE/WeMqM7otTnZY3pT955CnWnPgwHFyxfws4epzdbDIf8RpJ9N8SLotBeXGN
-    UGCD/kNRji369GhfrUi0Z3xPzKFBu+wr8TgEQVI/cGThCRxDFoEMIY6ATC2KWnrY
-    /lcUeItLwikafEylcViOOcfl5OLKLCxbVs3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:in-reply-to:references:mime-version
-    :content-type:content-transfer-encoding:subject:to:cc:from
-    :message-id:sender:list-id; s=fm2; t=1523509917; bh=7ApHDS4xcnAY
-    IJEuxIm9rg4SWvTnJW3SmsaepKFBW50=; b=mo2BwZLlrEGFWNHZ5hlAwqH7rOnz
-    jhyK8U5+d7hUNFSLxLDgvAzbjGjKvA2oQhLwpHAZxt+jzFtRkXAee85ew6abhKtE
-    Yl6jDvn8wLRg6bu7z+IEsVqbF/nwz22PuW4uuB2eRkGmLsMXHEI1FTRUMFatsD61
-    554hjigb9A7N/IZimUhJA2VMLv/RwpCk2BGbK4+6EKqR0YWT+LJ5VE81Nk451tw/
-    ivAGSMsWDXM/qL2rCr4Htl0rs+doLzHMHwQg2k5kTsUIah+ZexEw1DNd3fzq++b4
-    qG///Is1g1Hsz+NBZXE60ABw28SofRsyUTb6spmmL4hTi/dNMx6pJKFMhQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=b7e/w5X3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=bbCIf8Xe;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=spam score=190 state=1
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=b7e/w5X3 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=bbCIf8Xe;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=spam score=190 state=1
-X-ME-VSCategory: spam
-X-CM-Envelope: MS4wfDEDFHurcsk2BW78fDn3AYyUR0WF1REQ+AuqsqCSlM9BHfBpfqX4HZvawmFe4dKBxz9Nuq6XWB2Z07XTV45Fob823AFZ7HNOwhLUdZtlMADFNCvS9vuJ
-    hTBR8+oXkI2r4DgQ+ybotMd4arvt4vopYKzo9MAoRPoP2LBk22kmniouS7vKnuM3eA54pZgyarfey+9xK91iKlmO7cvWz3KaeEp230Tv5mpr9KhgoP78PR1H
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=0aEd6-21V0kA:10 a=USzuPbOPRRIA:10 a=Kd1tUaAdevIA:10 a=ag1SF4gXAAAA:8
-    a=VwQbUJbxAAAA:8 a=etD2MYYkJzPjFH1Jjy8A:9 a=QEXdDO2ut3YA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751156AbeDLFL4 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 12 Apr 2018 01:11:56 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:42193 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751094AbeDLFLz (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 12 Apr 2018 01:11:55 -0400
-X-Google-Smtp-Source: AIpwx49dLeNxaaLABVqOursqW5ln3h5Ox0aWzCeKh++PBKJMqsJ+4sa4JIDQNMjXPwbqSKBfdWYmJw==
-Date: Thu, 12 Apr 2018 10:41:48 +0530
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180411183456.195010921@linuxfoundation.org>
-References: <20180411183456.195010921@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Date: Thu, 12 Apr 2018 14:33:26 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Harsh Shandilya <msfjarvis@gmail.com>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net,
+	shuahkh@osg.samsung.com, patches@kernelci.org,
+	ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+	stable@vger.kernel.org
 Subject: Re: [PATCH 3.18 000/121] 3.18.105-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-CC: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuahkh@osg.samsung.com, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-From: Harsh Shandilya <msfjarvis@gmail.com>
-Message-ID: <3477D3C8-7028-46B6-A54A-D7ABF700529A@gmail.com>
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
-X-getmail-retrieved-from-mailbox: INBOX
+Message-ID: <20180412123326.GE20501@kroah.com>
+References: <20180411183456.195010921@linuxfoundation.org>
+ <3477D3C8-7028-46B6-A54A-D7ABF700529A@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3477D3C8-7028-46B6-A54A-D7ABF700529A@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 12 April 2018 12:05:03 AM IST, Greg Kroah-Hartman <gregkh@linuxfoundatio=
-n=2Eorg> wrote:
->This is the start of the stable review cycle for the 3=2E18=2E105 release=
-=2E
->There are 121 patches in this series, all will be posted as a response
->to this one=2E  If anyone has any issues with these being applied, please
->let me know=2E
->
->Responses should be made by Fri Apr 13 18:34:28 UTC 2018=2E
->Anything received after that time might be too late=2E
->
->The whole patch series can be found in one patch at:
->	https://www=2Ekernel=2Eorg/pub/linux/kernel/v3=2Ex/stable-review/patch-3=
-=2E18=2E105-rc1=2Egz
->or in the git tree and branch at:
->	git://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/stable/linux-stable-rc=
-=2Egit
->linux-3=2E18=2Ey
->and the diffstat can be found below=2E
->
->thanks,
->
->greg k-h
-Builds and boots on the OnePlus3T, no immediate regressions noticed, clean=
- merge into msm-3=2E18=2E Thanks for the update :)
---=20
-Harsh Shandilya, PRJKT Development LLC
+On Thu, Apr 12, 2018 at 10:41:48AM +0530, Harsh Shandilya wrote:
+> On 12 April 2018 12:05:03 AM IST, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> >This is the start of the stable review cycle for the 3.18.105 release.
+> >There are 121 patches in this series, all will be posted as a response
+> >to this one.  If anyone has any issues with these being applied, please
+> >let me know.
+> >
+> >Responses should be made by Fri Apr 13 18:34:28 UTC 2018.
+> >Anything received after that time might be too late.
+> >
+> >The whole patch series can be found in one patch at:
+> >	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.105-rc1.gz
+> >or in the git tree and branch at:
+> >	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> >linux-3.18.y
+> >and the diffstat can be found below.
+> >
+> >thanks,
+> >
+> >greg k-h
+> Builds and boots on the OnePlus3T, no immediate regressions noticed, clean merge into msm-3.18. Thanks for the update :)
+
+Great, thanks for testing and letting me know.
+
+greg k-h
