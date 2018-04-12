@@ -1,41 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752381AbeDLABZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 20:01:25 -0400
-Received: from mail-io0-f174.google.com ([209.85.223.174]:40138 "EHLO
-        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751553AbeDLABX (ORCPT
+        id S1752426AbeDLADm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 20:03:42 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:44404 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752411AbeDLADk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 20:01:23 -0400
-X-Google-Smtp-Source: AIpwx48QDP6VJbMb6tiWVESwi86uW8gqzv0WKYA0lUtFDTBJ+2CuE4/CtaUA5H3twg0iSABTnwH2xRDR7Wgb+Cc8vDI=
+        Wed, 11 Apr 2018 20:03:40 -0400
+X-Google-Smtp-Source: AIpwx49Fvyt3d7JXGtHABpvVpCjzKrS/c+sIJMzFoT6g2yahuTDbAOkfUdQuJ4epKqI14Zfoe5agcQQn0ee9vqmKBw4=
 MIME-Version: 1.0
-In-Reply-To: <1523436077.16235.5.camel@intel.com>
-References: <1523436077.16235.5.camel@intel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 11 Apr 2018 17:01:21 -0700
-X-Google-Sender-Auth: FYYtDovJzpGeHqTo3mL_h9HEYEU
-Message-ID: <CA+55aFzqJ2PfUnkVJ6A-8WRQTciWb8j+25r41JLCvz7h0QEJiA@mail.gmail.com>
-Subject: Re: [GIT PULL] Thermal management updates for v4.17-rc1
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>
+In-Reply-To: <CAGXu5jL82QYuJi64EMKsczqBysUY8ZBssWWaY0LfNA1a0orY8A@mail.gmail.com>
+References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5jL8oLV2xvjBVYv_SNXr74LdgpXEmU7K+cLYpD7jh2chgw@mail.gmail.com>
+ <CAGXu5j+mVc6O_=GOF3YQmS4QZxeFgVPQtMxNH8sjBAhpJLjm9w@mail.gmail.com>
+ <2679696.GDoj5zcZOu@natalenko.name> <CAGXu5jLG9ia+zBNcPt+q+BpJayoUuYwXitOgeHmh=7sPp-s87A@mail.gmail.com>
+ <51a7e805058ef7f35b226cbbf0ccc4ff@natalenko.name> <CAGXu5jKRrdYjuyLSvc4k4mqttkM7zw-96poQ1GYqRRgPqZFOYQ@mail.gmail.com>
+ <3d7b5a707e216e19eb3defe0586bfbc8@natalenko.name> <CAGXu5j+9BJcR63bsqQpqaKrvcgOpWyDzgpD-zRrf1qq7v=Z2CA@mail.gmail.com>
+ <d53af006c314eb9d326bfb19b08e189b@natalenko.name> <CAGXu5j+ZmgfqdoT_zPZ4qLCdMfjaaGxRCyz8c8ecp=39zQfw2w@mail.gmail.com>
+ <CAGXu5jL82QYuJi64EMKsczqBysUY8ZBssWWaY0LfNA1a0orY8A@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 11 Apr 2018 17:03:38 -0700
+X-Google-Sender-Auth: f64KMuxrFPkdyWZ-5bzFAcFnJC0
+Message-ID: <CAGXu5j+-PNYxSc3v+QtQLK0S3wdtFthFSxNM_69kFDnPQX0Gaw@mail.gmail.com>
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+To: Oleksandr Natalenko <oleksandr@natalenko.name>
+Cc: David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 1:41 AM, Zhang Rui <rui.zhang@intel.com> wrote:
+On Wed, Apr 11, 2018 at 3:47 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Tue, Apr 10, 2018 at 8:13 PM, Kees Cook <keescook@chromium.org> wrote:
+>> I'll see about booting with my own kernels, etc, and try to narrow this down. :)
 >
-> Please pull from
->   git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next
+> If I boot kernels I've built, I no longer hit the bug in this VM
+> (though I'll keep trying). What compiler are you using?
 
-Pulled, and then immediately unpulled again.
+Ignore that: I've reproduced it with my kernels now. I think I messed
+up the initramfs initially. But with an exact copy of your .config,
+booting under Arch grub with initramfs, I see it. I'll start removing
+variables now... :P
 
-The code causes new compiler warnings, and the warnings are valid.
+-Kees
 
-If people don't care enough about their code to even check the
-warnings, I'm not going to waste one second pulling the resulting
-garbage. It's that simple.
-
-                    Linus
+-- 
+Kees Cook
+Pixel Security
