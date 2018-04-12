@@ -1,66 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753488AbeDLTEl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 15:04:41 -0400
-Received: from vulcan.natalenko.name ([104.207.131.136]:46526 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752831AbeDLTEj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 15:04:39 -0400
-ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1523559876; a=rsa-sha256;
-        cv=none;
-        b=WYNvwEUxbF8UxSKlcLdJXZhUABsZ+4ElYr3KFElmZyRLRqJZnXWjja8HYElMA+wj5qGWqY10JcUrzSgWat1Ej9jq5R7Z28nUJ84l7to5j4Tm2gxch8WITw73gdW6HDZpbnErJ7BvZLxqKv6eDEhxgg1Waxjo02d1Xj//+WolZSg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1523559876;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=6uh1DBLEIt8SIdBPtxSpsIV6kEUfSaykDn2XUUTNOP8=;
-        b=W3KKYEpq2TxCVkjJjdiCmMVwmjGNkd5GcU6BU9/t16kBzfSgv0qjbfDMXAvhCzGyFlCwml
-        THOWKkpMGUL8T9fCmkAO6cPNFVQlkONMcK90BwhXqiogN9PGj31MVmQRUkDfxHHJRLcRGM
-        qDamOksy5QmJ91SKHy6NCU+LDb7up+4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 20AE13371E5
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: Kees Cook <keescook@chromium.org>
-Cc: David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
-        paolo.valente@linaro.org
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-Date: Thu, 12 Apr 2018 21:04:35 +0200
-Message-ID: <2864697.7uzmEJovl2@natalenko.name>
-In-Reply-To: <CAGXu5j+_UH0h9qeYCKKjhC7jw-mi_=fg4ASHi2=pCF9xGTpA4Q@mail.gmail.com>
-References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5j+-PNYxSc3v+QtQLK0S3wdtFthFSxNM_69kFDnPQX0Gaw@mail.gmail.com> <CAGXu5j+_UH0h9qeYCKKjhC7jw-mi_=fg4ASHi2=pCF9xGTpA4Q@mail.gmail.com>
+        id S1753469AbeDLTJ4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 15:09:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50862 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753072AbeDLTJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 15:09:55 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C82205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Thu, 12 Apr 2018 14:09:51 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Desnes A. Nunes do Rosario" <desnesn@linux.vnet.ibm.com>,
+        Sinan Kaya <okaya@codeaurora.org>
+Subject: [GIT PULL] PCI changes for v4.17, part 2
+Message-ID: <20180412190705.GA46420@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3CJ4lM6006733
 
-Hi.
+PCI changes:
 
-On čtvrtek 12. dubna 2018 20:44:37 CEST Kees Cook wrote:
-> My first bisect attempt gave me commit 5448aca41cd5 ("null_blk: wire
-> up timeouts"), which seems insane given that null_blk isn't even built
-> in the .config. I managed to get the testing automated now for a "git
-> bisect run ...", so I'm restarting again to hopefully get a better
-> answer. Normally the Oops happens in the first minute of running. I've
-> set the timeout to 10 minutes for a "good" run...
+  - mark Extended Tags as broken on Broadcom HT1100 and HT2000 Root Ports
+    to fix drm/Xorg hangs and unresponsive keyboards (Sinan Kaya)
 
-Apparently, you do this on Linus' tree, right? If so, I won't compile it here 
-then.
+  - remove useless messages during resource reassignment (Desnes A. Nunes
+    do Rosario)
 
-Thanks for taking care of this.
 
-Regards,
-  Oleksandr
+The following changes since commit c18bb396d3d261ebbb4efbc05129c5d354c541e4:
+
+  Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net (2018-04-09 17:04:10 -0700)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v4.17-changes-2
+
+for you to fetch changes up to adf58458bcb2890efe94e5a58506c27bfecf518d:
+
+  PCI: Remove messages about reassigning resources (2018-04-11 08:46:50 -0500)
+
+----------------------------------------------------------------
+pci-v4.17-changes-2
+
+----------------------------------------------------------------
+Desnes A. Nunes do Rosario (1):
+      PCI: Remove messages about reassigning resources
+
+Sinan Kaya (1):
+      PCI: Mark Broadcom HT1100 and HT2000 Root Port Extended Tags as broken
+
+ drivers/pci/pci.c       | 1 -
+ drivers/pci/quirks.c    | 4 ++++
+ drivers/pci/setup-res.c | 2 --
+ 3 files changed, 4 insertions(+), 3 deletions(-)
