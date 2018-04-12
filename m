@@ -1,102 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754232AbeDLPPk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 11:15:40 -0400
-Received: from mga03.intel.com ([134.134.136.65]:19745 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754133AbeDLPNj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 11:13:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,442,1517904000";
-   d="scan'208";a="36745796"
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
-To: rostedt@goodmis.org
-Cc: tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de, joel.opensrc@gmail.com,
-        joelaf@google.com, mathieu.desnoyers@efficios.com,
-        baohong.liu@intel.com, rajvi.jingar@intel.com, julia@ni.com,
-        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH 3/6] tracing: Save the last hist command's associated event name
-Date: Thu, 12 Apr 2018 10:13:18 -0500
-Message-Id: <1b0ae2e2fb4275fa2ea47df816888c573a87526c.1523545519.git.tom.zanussi@linux.intel.com>
-X-Mailer: git-send-email 1.9.3
-In-Reply-To: <cover.1523545519.git.tom.zanussi@linux.intel.com>
-References: <cover.1523545519.git.tom.zanussi@linux.intel.com>
-In-Reply-To: <cover.1523545519.git.tom.zanussi@linux.intel.com>
-References: <cover.1523545519.git.tom.zanussi@linux.intel.com>
+        id S1754250AbeDLPPt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 11:15:49 -0400
+Received: from resqmta-ch2-08v.sys.comcast.net ([69.252.207.40]:43114 "EHLO
+        resqmta-ch2-08v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753779AbeDLPPp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 11:15:45 -0400
+Date: Thu, 12 Apr 2018 10:15:42 -0500 (CDT)
+From: Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To: Matthew Wilcox <willy@infradead.org>
+cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: Re: [PATCH v2 2/2] slab: __GFP_ZERO is incompatible with a
+ constructor
+In-Reply-To: <20180412142718.GA20398@bombadil.infradead.org>
+Message-ID: <alpine.DEB.2.20.1804121011350.11710@nuc-kabylake>
+References: <20180411060320.14458-1-willy@infradead.org> <20180411060320.14458-3-willy@infradead.org> <alpine.DEB.2.20.1804110842560.3788@nuc-kabylake> <20180411192448.GD22494@bombadil.infradead.org> <alpine.DEB.2.20.1804111601090.7458@nuc-kabylake>
+ <20180411235652.GA28279@bombadil.infradead.org> <alpine.DEB.2.20.1804120907100.11220@nuc-kabylake> <20180412142718.GA20398@bombadil.infradead.org>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-CMAE-Envelope: MS4wfPPhOUX2aBKr8PY8jtnOwbM+GgqVU5y0KO71dJqc8STjL24yOSIoht0v70WqNWFvdfxPXsMmmUor5ir8clG4F087in4usbRsTKPN07r43vLerMJ1GFOp
+ lyRCGt5M2UzTnoFNpFqf13S0J+aLZsWFAPzKeFHmCf41c4LFZlPsO1jJli+dHD158c7R3GO/Litu0olHkjEBtXVqhPXf6D4b+TJFfiMFKlX7vSI9P3qXJ2Lf
+ kU8d6rD9gJF897GOPP6WXIOCYgaC77vIaj08aM7esD12bwnGKcS2PkjNw+Zj186yVATOhgmk7qNj5iSF1ZumXbLzvI9JftcE98foUMJcDtoWPoDD2+wWnfjR
+ LSlmzjy/ycsYLRN4INr9YOFq6Vu8oHswm0zBMDtdgI9mCimRo+LhRqwqXKqL2ytCZyezcJ/GRqAN2AYXz5g4L+ZjdMkExMYU4jFWXK02Y1KLkD+XU45DDi18
+ 04bTv1n5K3Ra76ti
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for making use of the new trace event error log, save
-the subsystem and event name associated with the last hist command -
-it will be passed as the location param in the event_log_err() calls.
+On Thu, 12 Apr 2018, Matthew Wilcox wrote:
 
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
----
- kernel/trace/trace_events_hist.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+> > Thus the next invocation of the fastpath will find that c->freelist is
+> > NULL and go to the slowpath. ...
+>
+> _ah_.  I hadn't figured out that c->page was always NULL in the debugging
+> case too, so ___slab_alloc() always hits the 'new_slab' case.  Thanks!
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 66c87be..4a42df4 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -354,14 +354,32 @@ struct action_data {
- 
- 
- static char last_hist_cmd[MAX_FILTER_STR_VAL];
-+static char last_hist_cmd_event[MAX_FILTER_STR_VAL];
- static char hist_err_str[MAX_FILTER_STR_VAL];
- 
--static void last_cmd_set(char *str)
-+static void last_cmd_set(struct trace_event_file *file, char *str)
- {
-+	const char *system = NULL, *name = NULL;
-+	struct trace_event_call *call;
-+
- 	if (!str)
- 		return;
- 
- 	strncpy(last_hist_cmd, str, MAX_FILTER_STR_VAL - 1);
-+
-+	if (file) {
-+		call = file->event_call;
-+
-+		system = call->class->system;
-+		if (system) {
-+			name = trace_event_name(call);
-+			if (!name)
-+				system = NULL;
-+		}
-+	}
-+
-+	if (system)
-+		snprintf(last_hist_cmd_event, MAX_FILTER_STR_VAL, "%s:%s", system, name);
- }
- 
- static void hist_err(char *str, char *var)
-@@ -401,6 +419,8 @@ static void hist_err_event(char *str, char *system, char *event, char *var)
- static void hist_err_clear(void)
- {
- 	hist_err_str[0] = '\0';
-+	last_hist_cmd[0] = '\0';
-+	last_hist_cmd_event[0] = '\0';
- }
- 
- static bool have_hist_err(void)
-@@ -5478,8 +5498,8 @@ static int event_hist_trigger_func(struct event_command *cmd_ops,
- 	int ret = 0;
- 
- 	if (glob && strlen(glob)) {
--		last_cmd_set(param);
- 		hist_err_clear();
-+		last_cmd_set(file, param);
- 	}
- 
- 	if (!param)
--- 
-1.9.3
+Also note that you can have SLUB also do the build with all debugging on
+without having to use a command like parameter (like SLAB). That requires
+CONFIG_SLUB_DEBUG_ON to be set. CONFIG_SLUB_DEBUG is set by default for
+all distro builds. It only includes the debug code but does not activate
+them by default. Kernel command line parameters allow you to selectively
+switch on debugging features for specific slab caches so that you can
+limit the latency variations introduced by debugging into the production
+kernel. Thus subtle races may be found.
