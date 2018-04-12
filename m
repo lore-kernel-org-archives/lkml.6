@@ -1,141 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752948AbeDLREK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 13:04:10 -0400
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:42278 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752470AbeDLREJ (ORCPT
+        id S1752813AbeDLRLh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 13:11:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37568 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752389AbeDLRLg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 13:04:09 -0400
-X-IronPort-AV: E=Sophos;i="5.48,442,1517875200";
-   d="scan'208";a="339546163"
-From: "Raslan, KarimAllah" <karahmed@amazon.de>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>
-CC: "jmattson@google.com" <jmattson@google.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>
-Subject: Re: [PATCH 1/2] X86/KVM: Properly restore 'tsc_offset' when running
- an L2 guest
-Thread-Topic: [PATCH 1/2] X86/KVM: Properly restore 'tsc_offset' when running
- an L2 guest
-Thread-Index: AQHT0nC4lLvkNnIRDkiE27bl+IOiw6P9U6KAgAAIAIA=
-Date: Thu, 12 Apr 2018 17:04:04 +0000
-Message-ID: <1523552643.32594.18.camel@amazon.de>
-References: <1523545958-28059-1-git-send-email-karahmed@amazon.de>
-         <d03d253a-d184-4c95-91b2-45e94659b9bd@redhat.com>
-In-Reply-To: <d03d253a-d184-4c95-91b2-45e94659b9bd@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.165.101]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F89493FF9F04E549B0C27CCE9A19B5E7@amazon.com>
-MIME-Version: 1.0
+        Thu, 12 Apr 2018 13:11:36 -0400
+From: Sandipan Das <sandipan@linux.vnet.ibm.com>
+To: acme@kernel.org, jolsa@redhat.com
+Cc: linux-kernel@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com,
+        ravi.bangoria@linux.vnet.ibm.com
+Subject: [PATCH 0/2] perf: Fixes for callchain ip handling on powerpc
+Date: Thu, 12 Apr 2018 22:41:27 +0530
+X-Mailer: git-send-email 2.14.3
+X-TM-AS-GCONF: 00
+x-cbid: 18041217-0008-0000-0000-000004E9DBC3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041217-0009-0000-0000-00001E7DE60A
+Message-Id: <20180412171129.4422-1-sandipan@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-12_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804120168
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3CH4Ec4015264
 
-On Thu, 2018-04-12 at 18:35 +0200, Paolo Bonzini wrote:
-> On 12/04/2018 17:12, KarimAllah Ahmed wrote:
-> > 
-> > When the TSC MSR is captured while an L2 guest is running then restored,
-> > the 'tsc_offset' ends up capturing the L02 TSC_OFFSET instead of the L01
-> > TSC_OFFSET. So ensure that this is compensated for when storing the value.
-> > 
-> > Cc: Jim Mattson <jmattson@google.com>
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Radim Krčmář <rkrcmar@redhat.com>
-> > Cc: kvm@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-> > ---
-> >  arch/x86/kvm/vmx.c | 12 +++++++++---
-> >  arch/x86/kvm/x86.c |  1 -
-> >  2 files changed, 9 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> > index cff2f50..2f57571 100644
-> > --- a/arch/x86/kvm/vmx.c
-> > +++ b/arch/x86/kvm/vmx.c
-> > @@ -2900,6 +2900,8 @@ static u64 guest_read_tsc(struct kvm_vcpu *vcpu)
-> >   */
-> >  static void vmx_write_tsc_offset(struct kvm_vcpu *vcpu, u64 offset)
-> >  {
-> > +	u64 l1_tsc_offset = 0;
-> > +
-> >  	if (is_guest_mode(vcpu)) {
-> >  		/*
-> >  		 * We're here if L1 chose not to trap WRMSR to TSC. According
-> > @@ -2908,16 +2910,20 @@ static void vmx_write_tsc_offset(struct kvm_vcpu *vcpu, u64 offset)
-> >  		 * to the newly set TSC to get L2's TSC.
-> >  		 */
-> >  		struct vmcs12 *vmcs12;
-> > +
-> >  		/* recalculate vmcs02.TSC_OFFSET: */
-> >  		vmcs12 = get_vmcs12(vcpu);
-> > -		vmcs_write64(TSC_OFFSET, offset +
-> > -			(nested_cpu_has(vmcs12, CPU_BASED_USE_TSC_OFFSETING) ?
-> > -			 vmcs12->tsc_offset : 0));
-> > +
-> > +		l1_tsc_offset = nested_cpu_has(vmcs12, CPU_BASED_USE_TSC_OFFSETING) ?
-> > +					vmcs12->tsc_offset : 0;
-> > +		vmcs_write64(TSC_OFFSET, offset + l1_tsc_offset);
-> >  	} else {
-> >  		trace_kvm_write_tsc_offset(vcpu->vcpu_id,
-> >  					   vmcs_read64(TSC_OFFSET), offset);
-> >  		vmcs_write64(TSC_OFFSET, offset);
-> >  	}
-> > +
-> > +	vcpu->arch.tsc_offset = offset - l1_tsc_offset;
-> 
-> Using both "offset + l1_tsc_offset" and "offset - l1_tsc_offset" in this 
-> function seems wrong to me: if vcpu->arch.tsc_offset must be "offset - 
-> l1_tsc_offset", then "offset" must be written to TSC_OFFSET.
+The first patch fixes the callchain ip filtering mechanism for powerpc
+from skipping entries in case the LR value is still valid and yet to
+be written to the stack frame. This was previously posted as an RFC
+here: https://lkml.org/lkml/2018/4/4/633
 
-Ooops! I forgot to remove the + l1_tsc_offset :D
+The second patch fixes a shell test which used to fail on powerpc as
+the back trace from perf output did not match the expected pattern.
+Also, because of the issue described in the first patch, some entries
+from the callchain were incorrectly skipped. So, this has also been
+readjusted to work with the fix in the first patch.
 
-> 
-> I think the bug was introduced by commit 3e3f50262.  Before,
-> vmx_read_tsc_offset returned the L02 offset; now it always contains the
-> L01 offset.  So the right fix is to adjust vcpu->arch.tsc_offset on
-> nested vmentry/vmexit.  If is_guest_mode(vcpu), kvm_read_l1_tsc must use
-> a new kvm_x86_ops callback to subtract the L12 offset from the value it
-> returns.
+Sandipan Das (2):
+  perf tools powerpc: Fix callchain ip filtering
+  perf tests: Fix record+probe_libc_inet_pton.sh for powerpc64
 
-ack!
+ tools/perf/arch/powerpc/util/skip-callchain-idx.c  | 58 +++++++++++++++-------
+ .../tests/shell/record+probe_libc_inet_pton.sh     |  8 +++
+ 2 files changed, 49 insertions(+), 17 deletions(-)
 
-> 
-> Thanks,
-> 
-> Paolo
-> 
-> > 
-> >  }
-> >  
-> >  /*
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index ac42c85..1a2ed92 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -1539,7 +1539,6 @@ EXPORT_SYMBOL_GPL(kvm_read_l1_tsc);
-> >  static void kvm_vcpu_write_tsc_offset(struct kvm_vcpu *vcpu, u64 offset)
-> >  {
-> >  	kvm_x86_ops->write_tsc_offset(vcpu, offset);
-> > -	vcpu->arch.tsc_offset = offset;
-> >  }
-> >  
-> >  static inline bool kvm_check_tsc_unstable(void)
-> > 
-> 
-> 
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+-- 
+2.14.3
