@@ -1,74 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752972AbeDLQPU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 12:15:20 -0400
-Received: from 123-192-174-101.dynamic.kbronet.com.tw ([123.192.174.101]:35130
-        "EHLO E6440" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752446AbeDLQPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 12:15:19 -0400
-From: Harry Pan <harry.pan@intel.com>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: gs0622@gmail.com, Harry Pan <harry.pan@intel.com>,
-        adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        linux-mmc@vger.kernel.org
-Subject: [PATCH] mmc: sdhci-pci: mitigate Intel BXT/APL card detection race in early boot
-Date: Fri, 13 Apr 2018 00:08:46 +0800
-Message-Id: <20180412160846.12776-1-harry.pan@intel.com>
-X-Mailer: git-send-email 2.13.5
+        id S1753025AbeDLQQF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 12:16:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60612 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752955AbeDLQQE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 12:16:04 -0400
+Date: Thu, 12 Apr 2018 17:16:01 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH 2/2] ASoC: tfa9879: switch to using .probe_new
+Message-ID: <20180412161601.GI9929@sirena.org.uk>
+References: <20180411124238.9385-1-peda@axentia.se>
+ <20180411124238.9385-2-peda@axentia.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="LYw3s/afESlflPpp"
+Content-Disposition: inline
+In-Reply-To: <20180411124238.9385-2-peda@axentia.se>
+X-Cookie: The coast was clear.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the APL platform is configured to use card detection GPIO, it is
-observed a race in early boot that makes the inserted card temporary
-malfunction because the driver does not detect the card then it would
-turn off the mmc until user manually remove/insert card, or wait a
-period of time for runtime suspend/resume to revive it automatically;
-from the trace it is generalized the driver has inconsistent status
-between GPIO status and the present state of the host controller.
 
-i.e.
-kworker/0:3-88    [000] ....     0.812523: mmc_rescan <-process_one_work
-...
-kworker/0:3-88    [000] ....     0.812527: bxt_get_cd <-mmc_rescan
-kworker/0:3-88    [000] ....     0.812546: mmc_power_off <-mmc_rescan
-kworker/0:3-88    [000] ....     0.812546: mmc_pwrseq_power_off <-mmc_power_off
+--LYw3s/afESlflPpp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Also proved it by adding a hacky dump of GPIO status and present state
-register; the GPIO says card existing while controller says not present.
+On Wed, Apr 11, 2018 at 02:42:38PM +0200, Peter Rosin wrote:
 
-Further investigation I realized when the driver successfully configures
-and routes card detection signal to GPIO domain, it immediately decays
-the host controller card detection: pin level follows by inserted status,
-they disappear a while then they would propagate back automatically,
-this generates a small window (while it is one time only) against the card
-detection routine; namely when it falls into this window, it behaves like
-the above trace. While in case the platform software is not required to
-switch the card detection to GPIO, this odd does not happen.
+> Use the new probe style for i2c drivers.
 
-To tackle this odd, did experiment to observe the race window period,
-enqueue a mmc detection in 200 ms later when it successfully routes the
-card detection to GPIO, this allows margin to make consensus in between
-the GPIO and the host controller.
+This doesn't apply against current code, please check and resend.
 
-Signed-off-by: Harry Pan <harry.pan@intel.com>
----
- drivers/mmc/host/sdhci-pci-core.c | 3 +++
- 1 file changed, 3 insertions(+)
+--LYw3s/afESlflPpp
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-index 82c4f05f91d8..519a3a5a2be0 100644
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -1719,6 +1719,9 @@ static struct sdhci_pci_slot *sdhci_pci_probe_slot(
- 	if (slot->cd_idx >= 0) {
- 		ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
- 					   slot->cd_override_level, 0, NULL);
-+		if (ret == 0)
-+			mmc_detect_change(host->mmc, msecs_to_jiffies(200));
-+
- 		if (ret == -EPROBE_DEFER)
- 			goto remove;
- 
--- 
-2.13.5
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrPhkAACgkQJNaLcl1U
+h9DaCwf8CAIPB1AJZcLOV0maTOnMXhevFM6tDpBlCYSFHCWOA/tg3cZD3GbAD9Pv
+l3dHQ9jVT/39ZI0UPfiRJVqyogQFdDr+WDlRVnIgVx1MoZFAJ93OdIIXCteJl54M
+zSoGSPa9MroAdV1F1nWw8eceJK1/BK44WocxGJPULKThrTQHJDQ1EWeMdzPEGPsE
+EXqbVM8R5RIOiCAuCtLOHDvcOPbxAbXHTTcsO3N1w+foN2kp2ByNSDKXbLm4SMET
++VYtWkLxROBnlj2ouKemWX79UqttjRsowQyXNwwZW2S5v42+GWDs14jtdbwFnRb4
++N1fHifYvPNhiodfkAZCd1d+Oxl97Q==
+=7KdK
+-----END PGP SIGNATURE-----
+
+--LYw3s/afESlflPpp--
