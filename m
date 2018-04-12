@@ -1,77 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753694AbeDLUAO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 16:00:14 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:46836 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752923AbeDLUAL (ORCPT
+        id S1753693AbeDLUDK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 16:03:10 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:49666 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753063AbeDLUDJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 16:00:11 -0400
-X-Google-Smtp-Source: AIpwx4/vhFgewJhFHwAjSbpjbuN2ZSkIKOl7bnKZH8GpuKlxA5MBZNMyvPiau/hnsui/2nBrT+JmSA==
-From: Christian Lamparter <chunkeey@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-gpio@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] gpiolib: add hogs support for machine code
-Date: Thu, 12 Apr 2018 22:00:07 +0200
-Message-ID: <17720832.6ELUnVt0BR@debian64>
-In-Reply-To: <20180410203028.11412-1-brgl@bgdev.pl>
-References: <20180410203028.11412-1-brgl@bgdev.pl>
+        Thu, 12 Apr 2018 16:03:09 -0400
+Subject: Re: [PATCH 11/14] gpio: omap: Restore power_mode configuration at
+ resume time
+To: Tony Lindgren <tony@atomide.com>, Keerthy <j-keerthy@ti.com>
+CC: <linus.walleij@linaro.org>, <t-kristo@ti.com>, <Russ.Dill@ti.com>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <ssantosh@kernel.org>, <haojian.zhuang@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <d-gerlach@ti.com>
+References: <1523505239-16229-1-git-send-email-j-keerthy@ti.com>
+ <1523505239-16229-12-git-send-email-j-keerthy@ti.com>
+ <20180412143932.GA5700@atomide.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <b7e2119e-7bf4-a275-be66-0a83705d807e@ti.com>
+Date: Thu, 12 Apr 2018 15:02:51 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180412143932.GA5700@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Dienstag, 10. April 2018 22:30:28 CEST Bartosz Golaszewski wrote:
-> Board files constitute a significant part of the users of the legacy
-> GPIO framework. In many cases they only export a line and set its
-> desired value. We could use GPIO hogs for that like we do for DT and
-> ACPI but there's no support for that in machine code.
+
+
+On 04/12/2018 09:39 AM, Tony Lindgren wrote:
+> * Keerthy <j-keerthy@ti.com> [180412 03:56]:
+>> From: Dave Gerlach <d-gerlach@ti.com>
+>>
+>> Commit 2dc983c565e0 ("gpio/omap: cleanup prepare_for_idle and
+>> resume_after_idle") introduces omap2_gpio_prepare_for_idle and
+>> omap2_gpio_resume_after_idle to properly configure gpios that are used
+>> as wake sources. When entering off mode, omap2_gpio_prepare_for_idle
+>> can set a flag indicating off-mode entry is desired, however once this
+>> flag is set it is never cleared, so any additional calls to this
+>> function, regardless of the mode, have this flag set.
+>>
+>> This patch restores the pwr_mode flag to 0 in
+>> omap2_gpio_resume_after_idle to ensure the flag is not misconfigured
+>> during non off-mode operation.
 > 
-> This patch proposes to extend the machine.h API with support for
-> registering hog tables in board files.
-> 
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> ---
-> @@ -1326,6 +1364,8 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->  
->  	acpi_gpiochip_add(chip);
->  
-> +	machine_gpiochip_add(chip);
-> +
->  	/*
->  	 * By first adding the chardev, and then adding the device,
->  	 * we get a device node entry in sysfs under
-> @@ -3462,6 +3502,33 @@ void gpiod_remove_lookup_table(struct gpiod_lookup_table *table)
+> Seems like this should be applied as a fix, can you please add
+> a proper Fixes tag?
 
-I think I see the same problem right here in regards to pinctrls
-and gpiohogs that have with DeviceTree:
-<https://patchwork.kernel.org/patch/10313767/>
+Correct. And please send it separate. 
+But not sure about fixes (to many changes) - it has to manually checked for the lowest
+kernel version to apply.
 
-The problem is that unlike native gpio-controllers, pinctrls need 
-to have a "pin/gpio range" defined before any gpio-hogs can be added.
-
-If this is not the case the generic pinctrl_gpio_reguest() [0] will
-fail with -EPROBE_DEFER at this point. (see the call chain in the
-"pinctrl: msm: fix gpio-hog related boot issueslogin register" mail
-starting from gpiod_hog).
-
-And now the crux of the matter is that currently in order for pinctrl
-drivers to register the range they have to call gpiochip_add_pin_range() [1]. 
-But they only can do it after the gpiochip_add_data_with_key() [2], since
-this function initializes the pin_ranges list [3].
-
-So what will happen is that you'll get an
-"gpiochip_machine_hog: unable to hog GPIO line $LABEL $GPIONR -517" error
-for every single gpio-hog and wonder why :(.
-
-Regards,
-Christian
-
-[0] <https://elixir.bootlin.com/linux/v4.16.2/source/drivers/pinctrl/core.c#L743>
-[1] <https://elixir.bootlin.com/linux/latest/source/drivers/gpio/gpiolib.c#L2078>
-[2] <https://elixir.bootlin.com/linux/latest/source/drivers/gpio/gpiolib.c#L1136>
-[3] <https://elixir.bootlin.com/linux/latest/source/drivers/gpio/gpiolib.c#L1253>
+-- 
+regards,
+-grygorii
