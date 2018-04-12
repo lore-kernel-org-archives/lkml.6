@@ -1,127 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752849AbeDLIBB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 04:01:01 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52780 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752810AbeDLIA7 (ORCPT
+        id S1752935AbeDLIBJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 04:01:09 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:36634 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751112AbeDLIBC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 04:00:59 -0400
+        Thu, 12 Apr 2018 04:01:02 -0400
+X-Google-Smtp-Source: AIpwx496nxjW+RWiLA9xVp132Z8S3I5XaJ1xq3EV/ayK16HaKbG2kKnyVfK2uYPqNMLwpSN//NGxasa4aVz74zBnke7UOpkjhGW1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Thu, 12 Apr 2018 13:30:56 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 9/9] mtd: nand: qcom: erased page bitflips detection
-In-Reply-To: <20180410123003.34f4cfaa@xps13>
-References: <1522845745-6624-1-git-send-email-absahu@codeaurora.org>
- <1522845745-6624-10-git-send-email-absahu@codeaurora.org>
- <20180410123003.34f4cfaa@xps13>
-Message-ID: <a28caf668b5dd7a9993d8eabbbdf5fd8@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Date: Thu, 12 Apr 2018 01:01:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <089e082d0cb81b67d10569a2283f@google.com>
+Subject: KMSAN: uninit-value in netif_skb_features
+From: syzbot <syzbot+0bbe42c764feafa82c5a@syzkaller.appspotmail.com>
+To: bpoirier@suse.com, davem@davemloft.net, edumazet@google.com,
+        elena.reshetova@intel.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, maloney@google.com,
+        netdev@vger.kernel.org, rami.rosen@intel.com,
+        syzkaller-bugs@googlegroups.com, willemb@google.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-10 16:00, Miquel Raynal wrote:
-> Hi Abhishek,
-> 
-> On Wed,  4 Apr 2018 18:12:25 +0530, Abhishek Sahu
-> <absahu@codeaurora.org> wrote:
-> 
->> Some of the newer nand parts can have bit flips in an erased
->> page due to the process technology used. In this case, qpic
-> 
-> AFAIK, this has always been possible, it was just rare.
-> 
+Hello,
 
-  Yes Miquel. It was rare earlier.
-  Now, we are observing this more for newer parts coming.
+syzbot hit the following crash on  
+https://github.com/google/kmsan.git/master commit
+e2ab7e8abba47a2f2698216258e5d8727ae58717 (Fri Apr 6 16:24:31 2018 +0000)
+kmsan: temporarily disable visitAsmInstruction() to help syzbot
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=0bbe42c764feafa82c5a
 
->> nand controller is not able to identify that page as an erased
->> page. Currently the driver calls nand_check_erased_ecc_chunk for
->> identifying the erased pages but this won’t work always since the
->> checking is being with ECC engine returned data. In case of
->> bitflips, the ECC engine tries to correct the data and then it
->> generates the uncorrectable error. Now, this data is not equal to
->> original raw data. For erased CW identification, the raw data
->> should be read again from NAND device and this
->> nand_check_erased_ecc_chunk function should be called for raw
->> data only.
-> 
-> Absolutely.
-> 
->> 
->> Now following logic is being added to identify the erased
->> codeword bitflips.
->> 
->> 1. In most of the case, not all the codewords will have bitflips
->>    and only single CW will have bitflips. So, there is no need to
->>    read the complete raw page data. The NAND raw read can be
->>    scheduled for any CW in page. The NAND controller works on CW
->>    basis and it will update the status register after each CW read.
->>    Maintain the bitmask for the CW which generated the uncorrectable
->>    error.
->> 2. Schedule the raw flash read from NAND flash device to
->>    NAND controller buffer for all these CWs between first and last
->>    uncorrectable errors CWs. Copy the content from NAND controller
->>    buffer to actual data buffer only for the uncorrectable errors
->>    CWs so that other CW data content won’t be affected, and
->>    unnecessary data copy can be avoided.
-> 
-> In case of uncorrectable error, the penalty is huge anyway.
-> 
+So far this crash happened 30 times on  
+https://github.com/google/kmsan.git/master.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4850744041668608
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=6289386287136768
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=4577411249209344
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=6627248707860932248
+compiler: clang version 7.0.0 (trunk 329391)
 
-  Yes. We can't avoid that.
-  But we are reducing that by doing raw read for few subpages in
-  which we got uncorrectale error.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+0bbe42c764feafa82c5a@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
->> 3. Both DATA and OOB need to be checked for number of 0. The
->>    top-level API can be called with only data buf or oob buf so use
->>    chip->databuf if data buf is null and chip->oob_poi if
->>    oob buf is null for copying the raw bytes temporarily.
-> 
-> You can do that. But when you do, you should tell the core you used
-> that buffer and that it cannot rely on what is inside. Please
-> invalidate the page cache with:
-> 
-> chip->pagebuf = -1;
-> 
+==================================================================
+BUG: KMSAN: uninit-value in eth_type_vlan include/linux/if_vlan.h:283  
+[inline]
+BUG: KMSAN: uninit-value in skb_vlan_tagged_multi  
+include/linux/if_vlan.h:656 [inline]
+BUG: KMSAN: uninit-value in vlan_features_check include/linux/if_vlan.h:672  
+[inline]
+BUG: KMSAN: uninit-value in dflt_features_check net/core/dev.c:2949 [inline]
+BUG: KMSAN: uninit-value in netif_skb_features+0xd1b/0xdc0  
+net/core/dev.c:3009
+CPU: 1 PID: 3582 Comm: syzkaller435149 Not tainted 4.16.0+ #82
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
+  eth_type_vlan include/linux/if_vlan.h:283 [inline]
+  skb_vlan_tagged_multi include/linux/if_vlan.h:656 [inline]
+  vlan_features_check include/linux/if_vlan.h:672 [inline]
+  dflt_features_check net/core/dev.c:2949 [inline]
+  netif_skb_features+0xd1b/0xdc0 net/core/dev.c:3009
+  validate_xmit_skb+0x89/0x1320 net/core/dev.c:3084
+  __dev_queue_xmit+0x1cb2/0x2b60 net/core/dev.c:3549
+  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3590
+  packet_snd net/packet/af_packet.c:2944 [inline]
+  packet_sendmsg+0x7c57/0x8a10 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  sock_write_iter+0x3b9/0x470 net/socket.c:909
+  do_iter_readv_writev+0x7bb/0x970 include/linux/fs.h:1776
+  do_iter_write+0x30d/0xd40 fs/read_write.c:932
+  vfs_writev fs/read_write.c:977 [inline]
+  do_writev+0x3c9/0x830 fs/read_write.c:1012
+  SYSC_writev+0x9b/0xb0 fs/read_write.c:1085
+  SyS_writev+0x56/0x80 fs/read_write.c:1082
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x43ffa9
+RSP: 002b:00007fff2cff3948 EFLAGS: 00000217 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043ffa9
+RDX: 0000000000000001 RSI: 0000000020000080 RDI: 0000000000000003
+RBP: 00000000006cb018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000217 R12: 00000000004018d0
+R13: 0000000000401960 R14: 0000000000000000 R15: 0000000000000000
 
-  Thanks Miquel. I will check and update the patch.
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+  kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
+  slab_post_alloc_hook mm/slab.h:445 [inline]
+  slab_alloc_node mm/slub.c:2737 [inline]
+  __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
+  __kmalloc_reserve net/core/skbuff.c:138 [inline]
+  __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
+  alloc_skb include/linux/skbuff.h:984 [inline]
+  alloc_skb_with_frags+0x1d4/0xb20 net/core/skbuff.c:5234
+  sock_alloc_send_pskb+0xb56/0x1190 net/core/sock.c:2085
+  packet_alloc_skb net/packet/af_packet.c:2803 [inline]
+  packet_snd net/packet/af_packet.c:2894 [inline]
+  packet_sendmsg+0x6444/0x8a10 net/packet/af_packet.c:2969
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  sock_write_iter+0x3b9/0x470 net/socket.c:909
+  do_iter_readv_writev+0x7bb/0x970 include/linux/fs.h:1776
+  do_iter_write+0x30d/0xd40 fs/read_write.c:932
+  vfs_writev fs/read_write.c:977 [inline]
+  do_writev+0x3c9/0x830 fs/read_write.c:1012
+  SYSC_writev+0x9b/0xb0 fs/read_write.c:1085
+  SyS_writev+0x56/0x80 fs/read_write.c:1082
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+==================================================================
 
->> 4. For each CW, check the number of 0 in cw_data and usable
->>    oob bytes, The bbm and spare bytes bit flip won’t affect the ECC
->>    so don’t check the number of bitflips in this area.
-> 
-> OOB is an area in which you are supposed to find the BBM, the ECC bytes
-> and the spare bytes. Spare bytes == usable OOB bytes. And the BBM
-> should be protected too. I don't get this sentence but I don't see its
-> application neither in the code?
-> 
 
-  QCOM NAND layout does not support the BBM ECC protection.
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
 
-  IN OOB,
-
-  For all the possible layouts (4 bit RS/4 bit BCH/8 bit BCH)
-  it has 16 usable OOB bytes which is protected with ECC.
-
-  All the bytes in OOB other than BBM, ECC bytes and usable
-  OOB bytes are ununsed.
-
-  You can refer qcom_nand_host_setup for layout detail.
-
-  Thanks,
-  Abhishek
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
