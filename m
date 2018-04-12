@@ -1,57 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753525AbeDLWBO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 18:01:14 -0400
-Received: from mail-wr0-f175.google.com ([209.85.128.175]:45473 "EHLO
-        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752943AbeDLWBN (ORCPT
+        id S1753630AbeDLWBo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 18:01:44 -0400
+Received: from mail-vk0-f47.google.com ([209.85.213.47]:41293 "EHLO
+        mail-vk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753536AbeDLWBm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 18:01:13 -0400
-X-Google-Smtp-Source: AIpwx4/KdOnnaazEKXUiJt0MNqZcIqmQBfXFgPl6SfLH0DVPA9ThRPbqUfm1avbeOK1/vhgFUMT2pQ==
-Date: Fri, 13 Apr 2018 01:01:09 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, ebiederm@xmission.com
-Subject: [PATCH] proc: revalidate kernel thread inodes to root:root
-Message-ID: <20180412220109.GA20978@avx2>
+        Thu, 12 Apr 2018 18:01:42 -0400
+X-Google-Smtp-Source: AIpwx48qG82LW5IkF/kgXU/A/j2qHi1ylMQuRS6UtiLzHuNQFuSfklKR4nIAoqp0V5FE+fzEYzJLA9SVPuKj5ZgHgFs=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <2864697.7uzmEJovl2@natalenko.name>
+References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5j+-PNYxSc3v+QtQLK0S3wdtFthFSxNM_69kFDnPQX0Gaw@mail.gmail.com>
+ <CAGXu5j+_UH0h9qeYCKKjhC7jw-mi_=fg4ASHi2=pCF9xGTpA4Q@mail.gmail.com> <2864697.7uzmEJovl2@natalenko.name>
+From: Kees Cook <keescook@chromium.org>
+Date: Thu, 12 Apr 2018 15:01:40 -0700
+X-Google-Sender-Auth: W9_exQBhK9GXlFfgwMskXXF5CEQ
+Message-ID: <CAGXu5jLSmJv9AstzsgSscrv-wA7FwfrxAKRxj-FVBmihQvnj1g@mail.gmail.com>
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+To: Oleksandr Natalenko <oleksandr@natalenko.name>
+Cc: David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3CM1lYh019618
 
-task_dump_owner() has the following code:
+On Thu, Apr 12, 2018 at 12:04 PM, Oleksandr Natalenko
+<oleksandr@natalenko.name> wrote:
+> Hi.
+>
+> On čtvrtek 12. dubna 2018 20:44:37 CEST Kees Cook wrote:
+>> My first bisect attempt gave me commit 5448aca41cd5 ("null_blk: wire
+>> up timeouts"), which seems insane given that null_blk isn't even built
+>> in the .config. I managed to get the testing automated now for a "git
+>> bisect run ...", so I'm restarting again to hopefully get a better
+>> answer. Normally the Oops happens in the first minute of running. I've
+>> set the timeout to 10 minutes for a "good" run...
+>
+> Apparently, you do this on Linus' tree, right? If so, I won't compile it here
+> then.
 
-	mm = task->mm;
-	if (mm) {
-		if (get_dumpable(mm) != SUID_DUMP_USER) {
-			uid = ...
-		}
-	}
+Actually, I didn't test Linus's tree, but I can do that after the most
+recent bisect finishes... I'm just trying to find where it went wrong
+in 4.16.
 
-Check for ->mm is buggy -- kernel thread might be borrowing mm
-and inode will go to some random uid:gid pair.
+> Thanks for taking care of this.
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+Thanks for building the reproducer! :)
 
- fs/proc/base.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+-Kees
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1693,6 +1693,12 @@ void task_dump_owner(struct task_struct *task, umode_t mode,
- 	kuid_t uid;
- 	kgid_t gid;
- 
-+	if (unlikely(task->flags & PF_KTHREAD)) {
-+		*ruid = GLOBAL_ROOT_UID;
-+		*rgid = GLOBAL_ROOT_GID;
-+		return;
-+	}
-+
- 	/* Default to the tasks effective ownership */
- 	rcu_read_lock();
- 	cred = __task_cred(task);
+-- 
+Kees Cook
+Pixel Security
