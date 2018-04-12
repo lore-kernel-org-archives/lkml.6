@@ -1,82 +1,88 @@
-Return-Path: <michel.pollet@bp.renesas.com>
-X-Google-Smtp-Source: AIpwx4/jM9F/vuXkhBc6Uztqe9fSMyJJ+vTxioqQxTG81r0LMaY2mPOE266KlpombhCcUgg2+Abp
-ARC-Seal: i=1; a=rsa-sha256; t=1523969567; cv=none;
+Return-Path: <andreyknvl@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523554175; cv=none;
         d=google.com; s=arc-20160816;
-        b=zLgXlm1+3/3EmqIhfLJDZRPCdvl+RMSbXBInl40Cvim2fM3UKAnn8GHd3OYhwvoyCW
-         KvKTq4tCmJ7IR7uf4IWz335X1ee4JAdWcRkGwkX5Vcm/Wn+UCRyjZuy79OE0i+MkjYe/
-         bRbky7b0yBLsPWQWXIJplAIzda4PN7lYCPuIqVRf9HOZ4SgSmgi2NmVyS+N5LLTpUyHW
-         p5xog6w+sW2+RGTpQo3gPFiW6JaD/D267+AfLjcoYg1w3nHaKmMpe+IYlxYG3+N9R+tY
-         YVZmgFei1LD8oOye7OjAnvGhE5AprQtpDk6XxOEvDfM6sy+6mzSj7k4j+y0IVvLWElkq
-         raAg==
+        b=W/zHIf1mBSGST0OjyHINE0vDvAheVS0niHYYwUBfj8In6VIM0uw2NxXVQ0ajf4bpbd
+         agy5K6lmwyhyfcocejudqmfh38Lzsp0kSXIvCd25JTTZ6tER2IJlbEUqylh7cV5Gbm1k
+         EE8GMS00Yv/58AqnUDUKaYysB8Ho5CHSy7TUWzM0SKB9x+shfuyoJM5KI47PbXLvpTEN
+         LoymYKFE+s6VUp4xTj1IyIp8rYty1BiJ7mvWfulVVRykQKykHZ02Z0CYZyGCKPxIR5LC
+         7gvWIaCZ9d81hW/XlNdE0h4e3ZFAj2myj6UPcYO+MSaU/FeBi5/vtXuw6vAY4yUTpxim
+         tkCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=8hme+0CFQfao087tpheE4AYd3xISuE/t5x1DI+iMNGM=;
-        b=gjshp3g4KPcMyGaQ3Zg6W47fM7AWgtH/CdI4Bwlr68rCLUp5Nw8FLdv8xM+Gdls2KZ
-         Oa9axF5dRj3nsWzC1A/S1CVbWNdcP9AXPP3I0/o9NgKiX9BdyF1stssfKcSPu8BpqPyq
-         hzxacrpGxdXAs4xFL3rcAX59eQx+IqKK1f91sdT1mEH0DFuO75eE9J2htUSD/0Zhdv4q
-         vtvh4IcTGu/VD3jEs8fFoeQhewMI9FROSEwquwRHiqYaQbbTsX39KvG1xq3W3VuKu61m
-         IWsMXOZHCnFOA+bECkp2N3SuBXuA3Z6qCOac+Eea4KTs5lVW7SCsx+vhKY1d08Mozvgw
-         XPqQ==
+        bh=a7Z90e3PWOCEsizE3PXB8sB96UCDSytF1xmCR2dQ2D8=;
+        b=TKB40S3PqnJnYJIP2GKCTw2MrfMQq+Li5DT2c+Dg2jco52Ug+lp0nV99K0Bpo5Qg22
+         L53xpYcyUitJbWnlX/7WgKT1S6G9SQLbbgB1TotLUjdcfhcdo7iUknPQXGiiGPyFkzg/
+         8K7reJrVBmbHAUzeA++KH6qcsNQZ1kZvQ1EgYs297svOCnSfdiZS8/vbLdfL4TG1NnB/
+         8dpBWLG7Xgpj9dTY4x3tq9GuLj2jz0I8oVJwtrAQ5EpMlFg35cECX3lk8bZIf5R1jV1E
+         ch3sWEugX7hxjHv5fRHrqtoqcjPZmZEFGqzY6g+wlMWgxCh60eXxOg5A2FYQsgSRcpc3
+         /AKw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of michel.pollet@bp.renesas.com designates 210.160.252.172 as permitted sender) smtp.mailfrom=michel.pollet@bp.renesas.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=MJ2BQoF2;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of michel.pollet@bp.renesas.com designates 210.160.252.172 as permitted sender) smtp.mailfrom=michel.pollet@bp.renesas.com
-X-IronPort-AV: E=Sophos;i="5.48,463,1517842800";
-   d="scan'208";a="277046823"
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com,
-	Michel Pollet <buserror+upstream@gmail.com>,
-	Michel Pollet <michel.pollet@bp.renesas.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
+       dkim=pass header.i=@google.com header.s=20161025 header.b=MJ2BQoF2;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AIpwx4/NZKplZcMHp1ZOTXT3vKOPyDy0wzbDM8k8/FTuu6NbC+sEnqF+9frxQJDSldUKRbWjeZMSrQ==
+From: Andrey Konovalov <andreyknvl@google.com>
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
+	Alexander Potapenko <glider@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Rientjes <rientjes@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Andrey Konovalov <andreyknvl@google.com>,
+	Will Deacon <will.deacon@arm.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Frank Rowand <frank.rowand@sony.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Stefan Wahren <stefan.wahren@i2se.com>,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-	Carlo Caione <carlo@endlessm.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Juri Lelli <juri.lelli@arm.com>,
-	devicetree@vger.kernel.org,
+	Paul Lawrence <paullawrence@google.com>,
+	Sandipan Das <sandipan@linux.vnet.ibm.com>,
+	Kees Cook <keescook@chromium.org>,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 1/3] dt-bindings: cpu: Add Renesas RZ/N1D SMP enable method.
-Date: Tue, 17 Apr 2018 13:48:00 +0100
-Message-Id: <1523969291-41756-2-git-send-email-michel.pollet@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523969291-41756-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1523969291-41756-1-git-send-email-michel.pollet@bp.renesas.com>
+	kasan-dev@googlegroups.com,
+	linux-mm@kvack.org
+Cc: Kostya Serebryany <kcc@google.com>
+Subject: [PATCH] kasan: add no_sanitize attribute for clang builds
+Date: Thu, 12 Apr 2018 19:29:31 +0200
+Message-Id: <4ad725cc903f8534f8c8a60f0daade5e3d674f8d.1523554166.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597997912964742176?=
-X-GMAIL-MSGID: =?utf-8?q?1597997912964742176?=
+X-GMAIL-THRID: =?utf-8?q?1597562343326181438?=
+X-GMAIL-MSGID: =?utf-8?q?1597562343326181438?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add a special enable method for second CA8 of the Renesas RZ/N1D
-(R9A06G032).
+KASAN uses the __no_sanitize_address macro to disable instrumentation
+of particular functions. Right now it's defined only for GCC build,
+which causes false positives when clang is used.
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+This patch adds a definition for clang.
+
+Note, that clang's revision 329612 or higher is required.
+
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- Documentation/devicetree/bindings/arm/cpus.txt | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/compiler-clang.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
-index 29e1dc5..b395d107 100644
---- a/Documentation/devicetree/bindings/arm/cpus.txt
-+++ b/Documentation/devicetree/bindings/arm/cpus.txt
-@@ -219,6 +219,7 @@ described below.
- 			    "qcom,kpss-acc-v1"
- 			    "qcom,kpss-acc-v2"
- 			    "renesas,apmu"
-+			    "renesas,r9a06g032-smp"
- 			    "rockchip,rk3036-smp"
- 			    "rockchip,rk3066-smp"
- 			    "ste,dbx500-smp"
+diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
+index ceb96ecab96e..5a1d8580febe 100644
+--- a/include/linux/compiler-clang.h
++++ b/include/linux/compiler-clang.h
+@@ -25,6 +25,11 @@
+ #define __SANITIZE_ADDRESS__
+ #endif
+ 
++#ifdef CONFIG_KASAN
++#undef __no_sanitize_address
++#define __no_sanitize_address __attribute__((no_sanitize("address")))
++#endif
++
+ /* Clang doesn't have a way to turn it off per-function, yet. */
+ #ifdef __noretpoline
+ #undef __noretpoline
 -- 
-2.7.4
+2.17.0.484.g0c8726318c-goog
