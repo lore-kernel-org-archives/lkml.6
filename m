@@ -1,100 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752664AbeDLMUA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 08:20:00 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:59708 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751819AbeDLMT7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 08:19:59 -0400
-Date: Thu, 12 Apr 2018 13:19:49 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: "Dmitry V. Levin" <ldv@altlinux.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
- kill() returns wrong values in si_pid and si_uid
-Message-ID: <20180412121949.GD16141@n2100.armlinux.org.uk>
-References: <20180409152253.GD10489@altlinux.org>
- <20180412013435.GA21219@altlinux.org>
- <20180412095811.GC16141@n2100.armlinux.org.uk>
- <20180412110314.GA28070@altlinux.org>
+        id S1752853AbeDLMUP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 08:20:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60676 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752813AbeDLMUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 08:20:13 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F07F217A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 12 Apr 2018 08:20:10 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Li Bin <huawei.libin@huawei.com>, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, guohanjun@huawei.com
+Subject: Re: [PATCH 0/2] sched: pick and check task if double_lock_balance()
+ unlock the rq
+Message-ID: <20180412082010.3f088370@gandalf.local.home>
+In-Reply-To: <20180412121145.GA4082@hirez.programming.kicks-ass.net>
+References: <1523530735-20011-1-git-send-email-huawei.libin@huawei.com>
+        <20180412121145.GA4082@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180412110314.GA28070@altlinux.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 02:03:14PM +0300, Dmitry V. Levin wrote:
-> On Thu, Apr 12, 2018 at 10:58:11AM +0100, Russell King - ARM Linux wrote:
-> > On Thu, Apr 12, 2018 at 04:34:35AM +0300, Dmitry V. Levin wrote:
-> > > A similar commit v4.16-rc1~159^2~37
-> > > ("signal/arm: Document conflicts with SI_USER and SIGFPE") must have
-> > > introduced a similar ABI regression to compat arm.
+On Thu, 12 Apr 2018 14:11:45 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> On Thu, Apr 12, 2018 at 06:58:53PM +0800, Li Bin wrote:
+> > Li Bin (1):
+> >   sched/deadline.c: pick and check task if double_lock_balance() unlock
+> >     the rq
 > > 
-> > So, could you explain how can this change cause a regression?
-> > 
-> > +#define FPE_FIXME      0
-> > -               vfp_raise_sigfpe(0, regs);
-> > +               vfp_raise_sigfpe(FPE_FIXME, regs);
+> > Zhou Chengming (1):
+> >   sched/rt.c: pick and check task if double_lock_balance() unlock the
+> >     rq
+> >   
 > 
-> No, this hunk hasn't caused the regression, but another one did:
+> Much thanks!
 > 
-> diff --git a/arch/arm/include/uapi/asm/siginfo.h b/arch/arm/include/uapi/asm/siginfo.h
-> new file mode 100644
-> index 0000000..d051388
-> --- /dev/null
-> +++ b/arch/arm/include/uapi/asm/siginfo.h
-> @@ -0,0 +1,13 @@
-> +#ifndef __ASM_SIGINFO_H
-> +#define __ASM_SIGINFO_H
-> +
-> +#include <asm-generic/siginfo.h>
-> +
-> +/*
-> + * SIGFPE si_codes
-> + */
-> +#ifdef __KERNEL__
-> +#define FPE_FIXME      0       /* Broken dup of SI_USER */
-> +#endif /* __KERNEL__ */
-> +
-> +#endif
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > 
-> This is due to FPE_FIXME handling in kernel/signal.c
+> Ingo, please apply.
 
-Building strace 4.22 on ARM and running the test suite reveals no
-problems with the signal_receive test, tested on both 4.14 and 4.16
-kernels - there's no "KERNEL BUG" reports in any of the test results.
-However, stock strace 4.22 source doesn't appear to contain the
-"KERNEL BUG" string anywhere, so this may be a Suse specific addition
-to the test:
+You can add my:
 
-~/src/strace-4.22$ grep -ri 'KERNEL BUG' .
-./strace.1:Arguably, every instance of such behavior is a kernel bug.)
-./strace.1.in:Arguably, every instance of such behavior is a kernel bug.)
-./NEWS:  * Worked around a kernel bug in tracing privileged executables.
-./ChangeLog:    aarch64: workaround gcc+kernel bug.
-./ChangeLog:    tests: workaround kernel bugs in seccomp-strict.test and prctl-seccomp-strict.test
-./ChangeLog:    instead.  We don't want the testsuite failing due to kernel bugs.
-./ChangeLog:    First guess is that it's a workaround for old kernel bugs:
-./ChangeLog:    This kernel bug is fixed long ago. This change removes the workaround.
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-Any ideas where the "KERNEL BUG" in Suse builds is coming from?  Any
-ideas how to test it on other architectures (iow, where can we get
-source that contains this test?)
+but I would still like to see the declaration of next_task before the
+comment, just for style concerns.
 
-Based on previous experience, unfortunately folk don't tend to report
-user ABI regressions to kernel developers, so we'd probably never know
-that there's a problem - I do think the safer thing would've been to
-leave it well alone, and just accept that we'll end up copying more
-words to userspace than is actually intended.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+-- Steve
