@@ -1,91 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752501AbeDLGKq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 02:10:46 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6737 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750743AbeDLGKp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 02:10:45 -0400
-Subject: Re: [PATCH v11 0/4] set VSESR_EL2 by user space and support
- NOTIFY_SEI notification
-To: James Morse <james.morse@arm.com>
-CC: <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@linaro.org>,
-        <marc.zyngier@arm.com>, <linux@armlinux.org.uk>,
-        <catalin.marinas@arm.com>, <rjw@rjwysocki.net>, <bp@alien8.de>,
-        <lenb@kernel.org>, <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <linux-acpi@vger.kernel.org>,
-        <devel@acpica.org>, <huangshaoyu@huawei.com>, <zhengxiang9@huawei.com>
-References: <1523309796-36423-1-git-send-email-gengdongjiu@huawei.com>
- <d94439b6-9b9a-9bd0-ddec-3bb63ede9461@arm.com>
-From: gengdongjiu <gengdongjiu@huawei.com>
-Message-ID: <5161fb31-e5bb-872c-3e12-d7d38326aaca@huawei.com>
-Date: Thu, 12 Apr 2018 14:09:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752185AbeDLGTD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 02:19:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49878 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750743AbeDLGTC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 02:19:02 -0400
+Date: Thu, 12 Apr 2018 08:18:59 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: linux-mm@kvack.org, Zi Yan <zi.yan@sent.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] mm: migrate: vm event counter for hugepage
+ migration
+Message-ID: <20180412061859.GR23400@dhcp22.suse.cz>
+References: <1523434167-19995-1-git-send-email-n-horiguchi@ah.jp.nec.com>
 MIME-Version: 1.0
-In-Reply-To: <d94439b6-9b9a-9bd0-ddec-3bb63ede9461@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.142.68.147]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523434167-19995-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James，
-   thanks for this mail.
+On Wed 11-04-18 17:09:25, Naoya Horiguchi wrote:
+> Hi everyone,
+> 
+> I wrote patches introducing separate vm event counters for hugepage migration
+> (both for hugetlb and thp.)
+> Hugepage migration is different from normal page migration in event frequency
+> and/or how likely it succeeds, so maintaining statistics for them in mixed
+> counters might not be helpful both for develors and users.
 
-On 2018/4/10 22:15, James Morse wrote:
-> Hi Dongjiu Geng,
-> 
-> On 09/04/18 22:36, Dongjiu Geng wrote:
->> 1. Detect whether KVM can set set guest SError syndrome
->> 2. Support to Set VSESR_EL2 and inject SError by user space.
->> 3. Support live migration to keep SError pending state and VSESR_EL2 value.
->> 4. ACPI 6.1 adds support for NOTIFY_SEI as a GHES notification mechanism, so support this
->>    notification in software, KVM or kernel ARCH code call handle_guest_sei() to let ACP driver
->>    to handle this notification.
-> 
-> Please don't post code during the merge-window, will this apply to v4.17-rc1? We
-> can't know until its tagged.
-I do not know when it is merge-window. About the apply version, it does not have limited.
+This is quite a lot of code to be added se we should better document
+what it is intended for. Sure I understand your reasonaning about huge
+pages are more likely to fail but is this really worth a separate
+counter? Do you have an example of how this would be useful?
 
-> 
-> 
-> This series is doing two separate things, please split it into two series.
-OK, thanks!
+If we are there then what about different huge page sizes (for hugetlb)?
+Do we need per-hstate stats?
 
-> 
-> But on the ACPI front: I don't see how any OS can support your NOTIFY_SEI when
-> firmware is ignoring the normal world's PSTATE.A.
-> 
-> The latest lobe of that discussion was on the list here:
-> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1611496.html
-I have replied the mail.
-I still have some questions that need to clarify with you.
-After clarification, we will follow that.
-The question is in the reply of this mail "https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1611496.html"
+In other words, is this really worth it?
 
-> 
-> 
-> As it is, we would need to spot SError being delivered while SError is masked,
-> spray nasty messages about firmware being horrifically buggy, then panic(). For
-> a corrected error, this looks bad, but its preferable to letting firmware
-> silently overwrite the exception registers, causing linux to spin through the
-> vectors 'eret' with all exceptions masked.
-> I still think its best to wait for firmware that does the right thing.
-Let us  discuss that in another mail.
-In a summary, I think firmware follow below rule can be OK, right?
-1. The exception came from the EL that SError should be routed to(according to hcr_EL2.{AMO, TGE}),but PSTATE.A was set, EL3 firmware can't deliver SError;
-2. The exception came from the EL that SError should not be routed to(according to hcr_EL2.{AMO, TGE}),even though the PSTATE.A was set,EL3 firmware still deliver SError
+>  include/linux/vm_event_item.h |   7 +++
+>  mm/migrate.c                  | 103 +++++++++++++++++++++++++++++++++++-------
+>  mm/vmstat.c                   |   8 ++++
+>  3 files changed, 102 insertions(+), 16 deletions(-)
 
-> 
-> 
-> Thanks,
-> 
-> James
-> 
-> .
-> 
+-- 
+Michal Hocko
+SUSE Labs
