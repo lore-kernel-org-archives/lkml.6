@@ -1,57 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753025AbeDLQQF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 12:16:05 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60612 "EHLO
+        id S1753069AbeDLQQx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 12:16:53 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33736 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752955AbeDLQQE (ORCPT
+        with ESMTP id S1752860AbeDLQQw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 12:16:04 -0400
-Date: Thu, 12 Apr 2018 17:16:01 +0100
+        Thu, 12 Apr 2018 12:16:52 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
         alsa-devel@alsa-project.org
-Subject: Re: [PATCH 2/2] ASoC: tfa9879: switch to using .probe_new
-Message-ID: <20180412161601.GI9929@sirena.org.uk>
-References: <20180411124238.9385-1-peda@axentia.se>
- <20180411124238.9385-2-peda@axentia.se>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="LYw3s/afESlflPpp"
-Content-Disposition: inline
-In-Reply-To: <20180411124238.9385-2-peda@axentia.se>
-X-Cookie: The coast was clear.
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Subject: Applied "ASoC: max9860: switch to using .probe_new" to the asoc tree
+In-Reply-To: <20180411124238.9385-1-peda@axentia.se>
+Message-Id: <E1f6eu1-0008FY-Ce@debutante>
+Date: Thu, 12 Apr 2018 17:16:49 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The patch
 
---LYw3s/afESlflPpp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+   ASoC: max9860: switch to using .probe_new
 
-On Wed, Apr 11, 2018 at 02:42:38PM +0200, Peter Rosin wrote:
+has been applied to the asoc tree at
 
-> Use the new probe style for i2c drivers.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-This doesn't apply against current code, please check and resend.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
---LYw3s/afESlflPpp
-Content-Type: application/pgp-signature; name="signature.asc"
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
------BEGIN PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrPhkAACgkQJNaLcl1U
-h9DaCwf8CAIPB1AJZcLOV0maTOnMXhevFM6tDpBlCYSFHCWOA/tg3cZD3GbAD9Pv
-l3dHQ9jVT/39ZI0UPfiRJVqyogQFdDr+WDlRVnIgVx1MoZFAJ93OdIIXCteJl54M
-zSoGSPa9MroAdV1F1nWw8eceJK1/BK44WocxGJPULKThrTQHJDQ1EWeMdzPEGPsE
-EXqbVM8R5RIOiCAuCtLOHDvcOPbxAbXHTTcsO3N1w+foN2kp2ByNSDKXbLm4SMET
-+VYtWkLxROBnlj2ouKemWX79UqttjRsowQyXNwwZW2S5v42+GWDs14jtdbwFnRb4
-+N1fHifYvPNhiodfkAZCd1d+Oxl97Q==
-=7KdK
------END PGP SIGNATURE-----
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
---LYw3s/afESlflPpp--
+Thanks,
+Mark
+
+>From ba4e62f653656a0077322eb29c7b8dde3c84399e Mon Sep 17 00:00:00 2001
+From: Peter Rosin <peda@axentia.se>
+Date: Wed, 11 Apr 2018 14:42:37 +0200
+Subject: [PATCH] ASoC: max9860: switch to using .probe_new
+
+Use the new probe style for i2c drivers.
+
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/max9860.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/sound/soc/codecs/max9860.c b/sound/soc/codecs/max9860.c
+index 5bbf889ad98e..96b2db3f2ddd 100644
+--- a/sound/soc/codecs/max9860.c
++++ b/sound/soc/codecs/max9860.c
+@@ -598,8 +598,7 @@ static const struct dev_pm_ops max9860_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(max9860_suspend, max9860_resume, NULL)
+ };
+ 
+-static int max9860_probe(struct i2c_client *i2c,
+-			 const struct i2c_device_id *id)
++static int max9860_probe(struct i2c_client *i2c)
+ {
+ 	struct device *dev = &i2c->dev;
+ 	struct max9860_priv *max9860;
+@@ -736,7 +735,7 @@ static const struct of_device_id max9860_of_match[] = {
+ MODULE_DEVICE_TABLE(of, max9860_of_match);
+ 
+ static struct i2c_driver max9860_i2c_driver = {
+-	.probe	        = max9860_probe,
++	.probe_new      = max9860_probe,
+ 	.remove         = max9860_remove,
+ 	.id_table       = max9860_i2c_id,
+ 	.driver         = {
+-- 
+2.17.0
