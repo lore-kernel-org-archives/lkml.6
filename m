@@ -1,85 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752882AbeDLAuf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 11 Apr 2018 20:50:35 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52342 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751841AbeDLAud (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Apr 2018 20:50:33 -0400
-Date: Thu, 12 Apr 2018 01:50:29 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] proc: fixup (c) sign
-Message-ID: <20180412005029.GQ30522@ZenIV.linux.org.uk>
-References: <CA+55aFxrpn=GdgqgrczUdj-wndFdQvmfytwMiYL5=TQWhfpAjA@mail.gmail.com>
+        id S1753083AbeDLAw3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 11 Apr 2018 20:52:29 -0400
+Received: from tn-76-7-174-50.sta.embarqhsd.net ([76.7.174.50]:57649 "EHLO
+        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753060AbeDLAw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Apr 2018 20:52:27 -0400
+Date: Wed, 11 Apr 2018 20:52:18 -0400
+From: Wakko Warner <wakko@animx.eu.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: 4.15.14 crash with iscsi target and dvd
+Message-ID: <20180412005218.GA12237@animx.eu.org>
+References: <595a10cfb387e6b2ab4d2053b84fed9b3da9e079.camel@wdc.com>
+ <20180406014644.GA16112@animx.eu.org>
+ <20180406020651.GB16112@animx.eu.org>
+ <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
+ <20180407165335.GA2515@animx.eu.org>
+ <1ff8d234cc565ba9701ce31899fca5faa597e050.camel@wdc.com>
+ <20180408160254.GA22869@animx.eu.org>
+ <f9467e78ce05446e7a89f06713c36fb638d1b6ad.camel@wdc.com>
+ <20180409233436.GC6450@ming.t460p>
+ <20180411004525.GA9107@animx.eu.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+55aFxrpn=GdgqgrczUdj-wndFdQvmfytwMiYL5=TQWhfpAjA@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180411004525.GA9107@animx.eu.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 03:41:26PM -0700, Linus Torvalds wrote:
-> On Wed, Apr 11, 2018 at 1:24 PM, Alexey Dobriyan <adobriyan@gmail.com> wrote:
-> >
-> > It got sent from here as iso8859-1.
+Wakko Warner wrote:
+> Ming Lei wrote:
+> > Sure, thanks for your sharing.
+> > 
+> > Wakko, could you test the following patch and see if there is any
+> > difference?
+> > 
+> > --
+> > diff --git a/drivers/target/target_core_pscsi.c b/drivers/target/target_core_pscsi.c
+> > index 0d99b242e82e..6147178f1f37 100644
+> > --- a/drivers/target/target_core_pscsi.c
+> > +++ b/drivers/target/target_core_pscsi.c
+> > @@ -888,7 +888,7 @@ pscsi_map_sg(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
+> >  		if (len > 0 && data_len > 0) {
+> >  			bytes = min_t(unsigned int, len, PAGE_SIZE - off);
+> >  			bytes = min(bytes, data_len);
+> > -
+> > + new_bio:
+> >  			if (!bio) {
+> >  				nr_vecs = min_t(int, BIO_MAX_PAGES, nr_pages);
+> >  				nr_pages -= nr_vecs;
+> > @@ -931,6 +931,7 @@ pscsi_map_sg(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
+> >  				 * be allocated with pscsi_get_bio() above.
+> >  				 */
+> >  				bio = NULL;
+> > +				goto new_bio;
+> >  			}
+> >  
+> >  			data_len -= bytes;
 > 
-> It's probably a good idea to just move away from Latin1 entirely, and
-> encourage people to just use utf-8.
+> Sorry for the delay.  I reverted my change, added this one.  I didn't
+> reboot, I just unloaded and loaded this one.
+> Note: /dev/sr1 as seen from the initiator is /dev/sr0 (physical disc) on the
+> target.
 > 
-> But yes, Andrew's scripts clearly do a horrible job at looking at
-> email encoding, and that really should be fixed.
-> 
-> I worry less about silly copyright signs than about peoples actual
-> _names_, but we've certainly seen problems there too.
+> Doesn't crash, however on the initiator I see this:
+> [9273849.707777] ISO 9660 Extensions: RRIP_1991A
+> [9273863.359718] scsi_io_completion: 13 callbacks suppressed
+> [9273863.359788] sr 26:0:0:0: [sr1] tag#1 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=0x08
+> [9273863.359909] sr 26:0:0:0: [sr1] tag#1 Sense Key : 0x2 [current] 
+> [9273863.359974] sr 26:0:0:0: [sr1] tag#1 ASC=0x8 ASCQ=0x0 
+> [9273863.360036] sr 26:0:0:0: [sr1] tag#1 CDB: opcode=0x28 28 00 00 22 f6 96 00 00 80 00
+> [9273863.360116] blk_update_request: 13 callbacks suppressed
+> [9273863.360177] blk_update_request: I/O error, dev sr1, sector 9165400
+> [9273875.864648] sr 26:0:0:0: [sr1] tag#1 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=0x08
+> [9273875.864738] sr 26:0:0:0: [sr1] tag#1 Sense Key : 0x2 [current] 
+> [9273875.864801] sr 26:0:0:0: [sr1] tag#1 ASC=0x8 ASCQ=0x0 
+> [9273875.864890] sr 26:0:0:0: [sr1] tag#1 CDB: opcode=0x28 28 00 00 22 f7 16 00 00 80 00
+> [9273875.864971] blk_update_request: I/O error, dev sr1, sector 9165912
 
-FWIW, excluding the stuff obviously not in UTF8 (logo.gif and 
-tools/power/cpupower/po/{de,fr}.po) we have
+Just FYI: The jobs that I do that uses the disc over iscsi didn't cause any
+kernel messages on either system (except for the informational when the disc
+was mounted)
 
-lib/fonts/font_7x14.c
-lib/fonts/font_8x16.c
-lib/fonts/font_8x8.c
-lib/fonts/font_pearl_8x8.c
-arch/s390/kernel/ebcdic.c
-	crap in comments
-arch/m68k/hp300/hp300map.map
-drivers/tty/vt/defkeymap.map
-	non-UTF8 - literals for compose statements
-arch/arm/crypto/sha256_glue.c
-arch/arm/crypto/sha256_neon_glue.c
-kernel/events/callchain.c
-	Latin1 copyright symbol (0xa9)
-drivers/staging/rtl8188eu/include/odm.h
-	Latin1 inverted ! (0xa1)
-Documentation/devicetree/bindings/net/nfc/pn544.txt
-	Latin1 superscript 2 (0xb2), in I²C
-arch/arm/boot/dts/sun4i-a10-inet97fv2.dts
-	Latin1 o-umlaut (0xf6) in David Lanzendörfer
-drivers/crypto/vmx/ghashp8-ppc.pl
-	a bunch of Latin1 middle dots (0xb7), in comments inside string constant
-used to produce asm output, no less
-drivers/gpu/drm/amd/include/atombios.h
-	several U+FFFD in there - buggered conversion to UTF8?
-drivers/gpu/drm/r128/r128_drv.h
-	ditto, but here it's possible to figure out what got buggered -
-Michel D�zer <daenzerm@student.ethz.ch> that presumably should've been "Dänzer"
-drivers/iio/dac/ltc2632.c
-	Latin1 e-acute in Maxime Roussin-Bélanger
-drivers/power/reset/ltc2952-poweroff.c
-	ditto in René Moll
-drivers/spi/spi-omap-100k.c
-	a couple of U+FFFD in Juha Yrjölä <juha.yrjola@nokia.com> - o- and a-umlaut
-In this case the actual spelling is trivially googled.
-drivers/spi/spi-omap2-mcspi.c
-	ditto
-drivers/usb/misc/iowarrior.c
-	U+FFFD in Stéphane Doyon <s.doyon@videotron.ca> - e-acute
-drivers/visorbus/visorbus_main.c
-	U+FFFD in place of copyright symbol
+I have a dumb question though.  Could the label be placed just after the
+'if' statement instead of before it?  bio is set to null and the 'if'
+statement checks if it's null, which it always would be after the goto.
+
+-- 
+ Microsoft has beaten Volkswagen's world record.  Volkswagen only created 22
+ million bugs.
