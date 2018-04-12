@@ -1,128 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753183AbeDLVeF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 17:34:05 -0400
-Received: from mail-it0-f74.google.com ([209.85.214.74]:57863 "EHLO
-        mail-it0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751661AbeDLVeB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 17:34:01 -0400
-X-Google-Smtp-Source: AIpwx48GOZwS8T7wRGLNz13k8GgHsMePtX/jhhkR2eC9v5G4Yzam0yLP2CEEkEBE2emTf5WOemSws11sC+uS
+        id S1753331AbeDLViR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 17:38:17 -0400
+Received: from ozlabs.org ([203.11.71.1]:35713 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751891AbeDLViQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 17:38:16 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 13 Apr 2018 07:37:05 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vivek Goyal <vgoyal@redhat.com>
+Subject: linux-next: Signed-off-by missing for commit in the overlayfs tree
+Message-ID: <20180413073705.55178d78@canb.auug.org.au>
 MIME-Version: 1.0
-Date: Thu, 12 Apr 2018 14:33:42 -0700
-Message-Id: <20180412213342.138010-1-hansens@google.com>
-X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
-Subject: [PATCH] Documentation/i2c: sync docs with current state of i2c-tools.
-From: Sam Hansen <hansens@google.com>
-To: linux-i2c@vger.kernel.org, hansens@google.com, wsa@the-dreams.de,
-        corbet@lwn.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Sam Hansen <hansens@google.com>, wsa@the-dreams.de, corbet@lwn.net,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/=jziDdFKrKp=Ao4wRXrhWi1"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, Documentation/i2c/dev-interface describes the use of i2c_smbus_*
-helper routines as static inlined functions provided by linux/i2c-dev.h.  Work
-has been done to refactor the linux/i2c-dev.h file in the i2c-tools project
-out into its own library.  As a result, these docs have become stale.
+--Sig_/=jziDdFKrKp=Ao4wRXrhWi1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This patch corrects the discrepancy and directs the reader to the i2c-tools
-project for more information.  Additionally, some trailing-whitespace cleanups
-were made.
+Hi Miklos,
 
-Signed-off-by: Sam Hansen <hansens@google.com>
----
- Documentation/i2c/dev-interface | 28 +++++++++++-----------------
- 1 file changed, 11 insertions(+), 17 deletions(-)
+Commit
 
-diff --git a/Documentation/i2c/dev-interface b/Documentation/i2c/dev-interface
-index d04e6e4964ee..5323588fe99d 100644
---- a/Documentation/i2c/dev-interface
-+++ b/Documentation/i2c/dev-interface
-@@ -9,8 +9,8 @@ i2c adapters present on your system at a given time. i2cdetect is part of
- the i2c-tools package.
- 
- I2C device files are character device files with major device number 89
--and a minor device number corresponding to the number assigned as 
--explained above. They should be called "i2c-%d" (i2c-0, i2c-1, ..., 
-+and a minor device number corresponding to the number assigned as
-+explained above. They should be called "i2c-%d" (i2c-0, i2c-1, ...,
- i2c-10, ...). All 256 minor device numbers are reserved for i2c.
- 
- 
-@@ -23,11 +23,6 @@ First, you need to include these two headers:
-   #include <linux/i2c-dev.h>
-   #include <i2c/smbus.h>
- 
--(Please note that there are two files named "i2c-dev.h" out there. One is
--distributed with the Linux kernel and the other one is included in the
--source tree of i2c-tools. They used to be different in content but since 2012
--they're identical. You should use "linux/i2c-dev.h").
--
- Now, you have to decide which adapter you want to access. You should
- inspect /sys/class/i2c-dev/ or run "i2cdetect -l" to decide this.
- Adapter numbers are assigned somewhat dynamically, so you can not
-@@ -38,7 +33,7 @@ Next thing, open the device file, as follows:
-   int file;
-   int adapter_nr = 2; /* probably dynamically determined */
-   char filename[20];
--  
-+
-   snprintf(filename, 19, "/dev/i2c-%d", adapter_nr);
-   file = open(filename, O_RDWR);
-   if (file < 0) {
-@@ -72,7 +67,7 @@ the device supports them. Both are illustrated below.
-     /* res contains the read word */
-   }
- 
--  /* Using I2C Write, equivalent of 
-+  /* Using I2C Write, equivalent of
-      i2c_smbus_write_word_data(file, reg, 0x6543) */
-   buf[0] = reg;
-   buf[1] = 0x43;
-@@ -140,14 +135,14 @@ ioctl(file, I2C_RDWR, struct i2c_rdwr_ioctl_data *msgset)
-   set in each message, overriding the values set with the above ioctl's.
- 
- ioctl(file, I2C_SMBUS, struct i2c_smbus_ioctl_data *args)
--  Not meant to be called  directly; instead, use the access functions
--  below.
-+  If possible, use the provided i2c_smbus_* methods described below in favor
-+  of issuing direct ioctls.
- 
- You can do plain i2c transactions by using read(2) and write(2) calls.
- You do not need to pass the address byte; instead, set it through
- ioctl I2C_SLAVE before you try to access the device.
- 
--You can do SMBus level transactions (see documentation file smbus-protocol 
-+You can do SMBus level transactions (see documentation file smbus-protocol
- for details) through the following functions:
-   __s32 i2c_smbus_write_quick(int file, __u8 value);
-   __s32 i2c_smbus_read_byte(int file);
-@@ -158,7 +153,7 @@ for details) through the following functions:
-   __s32 i2c_smbus_write_word_data(int file, __u8 command, __u16 value);
-   __s32 i2c_smbus_process_call(int file, __u8 command, __u16 value);
-   __s32 i2c_smbus_read_block_data(int file, __u8 command, __u8 *values);
--  __s32 i2c_smbus_write_block_data(int file, __u8 command, __u8 length, 
-+  __s32 i2c_smbus_write_block_data(int file, __u8 command, __u8 length,
-                                    __u8 *values);
- All these transactions return -1 on failure; you can read errno to see
- what happened. The 'write' transactions return 0 on success; the
-@@ -166,10 +161,9 @@ what happened. The 'write' transactions return 0 on success; the
- returns the number of values read. The block buffers need not be longer
- than 32 bytes.
- 
--The above functions are all inline functions, that resolve to calls to
--the i2c_smbus_access function, that on its turn calls a specific ioctl
--with the data in a specific format. Read the source code if you
--want to know what happens behind the screens.
-+The above functions are made available by linking against the libi2c library,
-+which is provided by the i2c-tools project.  See:
-+https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/.
- 
- 
- Implementation details
--- 
-2.17.0.484.g0c8726318c-goog
+  0471a9cdb00f ("ovl: cleanup setting OVL_INDEX")
+
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/=jziDdFKrKp=Ao4wRXrhWi1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrP0YIACgkQAVBC80lX
+0GzPewf9F60GFetJCJpgvZ33cwjf8YMvbYnPexvnm5kn2GOahMUhIS1zqnmJERz5
++Ly1EaXjd3kOmjNYjx7Smgl6IcW6PulaH676j+jA2uwrB/9+bqrEU36VGZ4OvaUu
+Mi8V0TsJbw1bcpq9ckcf/um19VTlM4vbj2A/4WvO4dx/gAn276Xmp7YOsNaNrckS
+9kxwxncyfA+rW8Uaux9gXTaN7UEKvRLEAJkhBL1xV7XAxkjX9eb2yOMRMO84Z5nI
+oz1mx1mSx6vZbop+PHqpJKIcHRWNr90BoeovPQaxfteU1UmiMcLRahvzToB+jvCY
+L0j3iaM7cHNJ/sQ/ONpP+vnEqH8RDg==
+=9O6G
+-----END PGP SIGNATURE-----
+
+--Sig_/=jziDdFKrKp=Ao4wRXrhWi1--
