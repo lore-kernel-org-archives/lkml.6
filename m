@@ -1,116 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753254AbeDLO6V (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 10:58:21 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57243 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752918AbeDLO6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 10:58:18 -0400
-Date: Thu, 12 Apr 2018 16:58:06 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 5/5] arm64: allwinner: a64: add SRAM controller device
- tree node
-Message-ID: <20180412145806.hsvxomh6vousrhq5@flea>
-References: <20180411141641.14675-1-icenowy@aosc.io>
- <20180411141641.14675-6-icenowy@aosc.io>
+        id S1752927AbeDLPAA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 11:00:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33454 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752746AbeDLO76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 10:59:58 -0400
+Subject: Re: [PATCH 00/10] KVM/X86: Handle guest memory that does not have a
+ struct page
+To: KarimAllah Ahmed <karahmed@amazon.de>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: hpa@zytor.com, jmattson@google.com, mingo@redhat.com,
+        rkrcmar@redhat.com, tglx@linutronix.de
+References: <1519235241-6500-1-git-send-email-karahmed@amazon.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <cedf2ad3-43ef-c2ec-0455-4dc27842f71a@redhat.com>
+Date: Thu, 12 Apr 2018 16:59:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="evvv32nlsy5xv6f6"
-Content-Disposition: inline
-In-Reply-To: <20180411141641.14675-6-icenowy@aosc.io>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <1519235241-6500-1-git-send-email-karahmed@amazon.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 21/02/2018 18:47, KarimAllah Ahmed wrote:
+> For the most part, KVM can handle guest memory that does not have a struct
+> page (i.e. not directly managed by the kernel). However, There are a few places
+> in the code, specially in the nested code, that does not support that.
+> 
+> Patch 1, 2, and 3 avoid the mapping and unmapping all together and just
+> directly use kvm_guest_read and kvm_guest_write.
+> 
+> Patch 4 introduces a new guest mapping interface that encapsulate all the
+> bioler plate code that is needed to map and unmap guest memory. It also
+> supports guest memory without "struct page".
+> 
+> Patch 5, 6, 7, 8, 9, and 10 switch most of the offending code in VMX and hyperv
+> to use the new guest mapping API.
+> 
+> This patch series is the first set of fixes. Handling SVM and APIC-access page
+> will be handled in a different patch series.
 
---evvv32nlsy5xv6f6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I like the patches and the new API.  However, I'm a bit less convinced
+about the caching aspect; keeping a page pinned is not the nicest thing
+with respect (for example) to memory hot-unplug.
 
-Hi,
+Since you're basically reinventing kmap_high, or alternatively
+(depending on your background) xc_map_foreign_pages, it's not surprising
+that memremap is slow.  How slow is it really (as seen e.g. with
+vmexit.flat running in L1, on EC2 compared to vanilla KVM)?
 
-On Wed, Apr 11, 2018 at 10:16:41PM +0800, Icenowy Zheng wrote:
-> Allwinner A64 has a SRAM controller, and in the device tree currently
-> we have a syscon node to enable EMAC driver to access the EMAC clock
-> register. As SRAM controller driver can now export regmap for this
-> register, replace the syscon node to the SRAM controller device node,
-> and let EMAC driver to acquire its EMAC clock regmap.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 23 +++++++++++++++++++--=
---
->  1 file changed, 19 insertions(+), 4 deletions(-)
->=20
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/b=
-oot/dts/allwinner/sun50i-a64.dtsi
-> index 1b2ef28c42bd..1c37659d9d41 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> @@ -168,10 +168,25 @@
->  		#size-cells =3D <1>;
->  		ranges;
-> =20
-> -		syscon: syscon@1c00000 {
-> -			compatible =3D "allwinner,sun50i-a64-system-controller",
-> -				"syscon";
-> +		sram_controller: sram-controller@1c00000 {
-> +			compatible =3D "allwinner,sun50i-a64-sram-controller";
->  			reg =3D <0x01c00000 0x1000>;
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <1>;
-> +			ranges;
-> +
-> +			sram_c: sram@18000 {
-> +				compatible =3D "mmio-sram";
-> +				reg =3D <0x00018000 0x28000>;
-> +				#address-cells =3D <1>;
-> +				#size-cells =3D <1>;
-> +				ranges =3D <0 0x00018000 0x28000>;
-> +
-> +				de2_sram: sram-section@0 {
-> +					compatible =3D "allwinner,sun50i-a64-sram-c";
-> +					reg =3D <0x0000 0x28000>;
-> +				};
-> +			};
+Perhaps you can keep some kind of per-CPU cache of the last N remapped
+pfns?  This cache would sit between memremap and __kvm_map_gfn and it
+would be completely transparent to the layer below since it takes raw
+pfns.  This removes the need to store the memslots generation etc.  (If
+you go this way please place it in virt/kvm/pfncache.[ch], since
+kvm_main.c is already way too big).
 
-That doesn't look related at all to what's being discussed here, so
-you'd rather add it as part of your DE2-enablement serie (or amend
-your commit log to say why this is important to do it in this patch).
+Thanks,
 
-Maxime
+Paolo
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---evvv32nlsy5xv6f6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrPc/0ACgkQ0rTAlCFN
-r3TrHBAAlGqDDoMf+8nx0kwLHtmuEz29Bgkhid/dvZw0aOu7CTa4ySizpdy2Bx+N
-9eE5A8ygGyvAlR+pJE6r66IpSGh6xc4ApE3FUR/saRLctQMgCGAo/3msTGlKgbIJ
-FZDoFkliZZDS1pKY5Fz3Airkd28x8jaTZBpHLwiAjayjDKX1tseiG0DtifB9/MJN
-mC/4/YT9VQQbdOVwAHoyKASkE6YGgyu4TVVAKdlHIT/r9RGcRhxVOQcrPMpvv0RZ
-sWObQUjpyINwTEPkRWsI0kDGMCCKCjDStYp7AkIBqP5/HY3SYEl1AGbvw3alwsKj
-fHqEp45mWRFYEWM+oZjg4qSVO1YYEUonRw4aasRRw9EUrwxx5Im7KkiywFVYjQbW
-DS/oFSNhP8tzuh7F6ufbDy0sTpHmzfVLHv/xkGY8Vrifaydjng3SoLzaiORViIh0
-zTh1l2SD/5GMs4dYbfN30phXl4+GafhiVgVN8W3eM888k+m2L3PyzwOW3iw9bRar
-oMPywN5B+kPB7Z0u5aFn5WRsCUCA5mr19GAshScPo9RePdiFV3NCAr1W6KJP46lQ
-jGwDrDp0yVk/kCipUI2e0j3IseUiQttzRdYqxw8mZxk8vUiLe8ZrDeuao9Sa7pLJ
-QffezQtUr+OYXurE4Rl6SNw8zsKP0VsPrJ1XANeHN3XCdaCxR+I=
-=Qml+
------END PGP SIGNATURE-----
-
---evvv32nlsy5xv6f6--
+> KarimAllah Ahmed (10):
+>   X86/nVMX: handle_vmon: Read 4 bytes from guest memory instead of
+>     map->read->unmap sequence
+>   X86/nVMX: handle_vmptrld: Copy the VMCS12 directly from guest memory
+>     instead of map->copy->unmap sequence.
+>   X86/nVMX: Update the PML table without mapping and unmapping the page
+>   KVM: Introduce a new guest mapping API
+>   KVM/nVMX: Use kvm_vcpu_map when mapping the L1 MSR bitmap
+>   KVM/nVMX: Use kvm_vcpu_map when mapping the virtual APIC page
+>   KVM/nVMX: Use kvm_vcpu_map when mapping the posted interrupt
+>     descriptor table
+>   KVM/X86: Use kvm_vcpu_map in emulator_cmpxchg_emulated
+>   KVM/X86: hyperv: Use kvm_vcpu_map in synic_clear_sint_msg_pending
+>   KVM/X86: hyperv: Use kvm_vcpu_map in synic_deliver_msg
+> 
+>  arch/x86/kvm/hyperv.c    |  28 ++++-----
+>  arch/x86/kvm/vmx.c       | 144 +++++++++++++++--------------------------------
+>  arch/x86/kvm/x86.c       |  13 ++---
+>  include/linux/kvm_host.h |  15 +++++
+>  virt/kvm/kvm_main.c      |  50 ++++++++++++++++
+>  5 files changed, 129 insertions(+), 121 deletions(-)
+> 
