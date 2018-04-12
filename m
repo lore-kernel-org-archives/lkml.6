@@ -1,106 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753070AbeDLOpm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 10:45:42 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:47323 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752870AbeDLOpk (ORCPT
+        id S1753159AbeDLOsC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 10:48:02 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53970 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752831AbeDLOsA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 10:45:40 -0400
-X-Auth-Info: qzn3QHLZHQ39jrfkrIuTl37N0o5USIzBUbn1rP8XHmg=
-Date: Thu, 12 Apr 2018 16:45:35 +0200
-From: Lukasz Majewski <lukma@denx.de>
-To: Joe Perches <joe@perches.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH 2/2] input: touchscreen mc13xxx: Add mc34708 support
-Message-ID: <20180412164535.324a218a@jawa>
-In-Reply-To: <4690e30b3c4b97847123295f1994c6eafe4e0cbb.camel@perches.com>
-References: <20180411141340.30939-1-lukma@denx.de>
-        <20180411141340.30939-2-lukma@denx.de>
-        <4690e30b3c4b97847123295f1994c6eafe4e0cbb.camel@perches.com>
-Organization: denx.de
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ahDu70l8WIhCE2XFKRzQbVD"; protocol="application/pgp-signature"
+        Thu, 12 Apr 2018 10:48:00 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        alsa-devel@alsa-project.org, Arnd Bergmann <arnd@arndb.de>,
+        Vinod Koul <vinod.koul@intel.com>, linux-kernel@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.com>, liam.r.girdwood@linux.intel.com,
+        Harsha Priya N <harshapriya.n@intel.com>,
+        Mark Brown <broonie@kernel.org>, Naveen M <naveen.m@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Drake <drake@endlessm.com>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: Intel: atom: fix ACPI/PCI Kconfig" to the asoc tree
+In-Reply-To: <20180124002712.28984-1-pierre-louis.bossart@linux.intel.com>
+Message-Id: <E1f6dVv-00057S-5Q@debutante>
+Date: Thu, 12 Apr 2018 15:47:51 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ahDu70l8WIhCE2XFKRzQbVD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The patch
 
-On Wed, 11 Apr 2018 09:01:01 -0700
-Joe Perches <joe@perches.com> wrote:
+   ASoC: Intel: atom: fix ACPI/PCI Kconfig
 
-> On Wed, 2018-04-11 at 16:13 +0200, Lukasz Majewski wrote:
-> > From: Sascha Hauer <s.hauer@pengutronix.de>
-> >=20
-> > The mc34708 has a different bit to enable pen detection. This
-> > adds the driver data and devtype necessary to probe the device
-> > and to distinguish between the mc13783 and the mc34708. =20
->=20
-> style trivia:
->=20
-> > diff --git a/drivers/input/touchscreen/mc13783_ts.c
-> > b/drivers/input/touchscreen/mc13783_ts.c =20
-> []
-> > @@ -96,6 +135,10 @@ static void mc13783_ts_report_sample(struct
-> > mc13783_ts_priv *priv)=20
-> >  	cr0 =3D (cr0 + cr1) / 2;
-> > =20
-> > +	if (priv->drvdata->type =3D=3D MC13XXX_TYPE_MC34708)
-> > +		if (cr0 > 4080)
-> > +			cr0 =3D 0; =20
->=20
-> For easy of reading, this multiple if block should either
-> use braces around the first if like:
->=20
-> 	if (foo) {
-> 		if (bar)
-> 			single_statement;
-> 	}
->=20
-> or be written
->=20
-> 	if (foo && bar)
-> 		single_statement;
->=20
-> I generally prefer the latter style.
->=20
+has been applied to the asoc tree at
 
-+1.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-I will fix it in v2.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Best regards,
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Lukasz Majewski
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
---
+Thanks,
+Mark
 
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
+>From 90619eb1dc4f19357fef5e9c13c6c9beead0fd80 Mon Sep 17 00:00:00 2001
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Date: Mon, 2 Apr 2018 12:06:14 -0500
+Subject: [PATCH] ASoC: Intel: atom: fix ACPI/PCI Kconfig
 
---Sig_/ahDu70l8WIhCE2XFKRzQbVD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+The split between ACPI and PCI platforms generated issues with randconfig:
 
------BEGIN PGP SIGNATURE-----
+with SND_SST_ATOM_HIFI2_PLATFORM_PCI=y and
+SND_SST_ATOM_HIFI2_PLATFORM=m, we get this module link failure:
 
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlrPcQ8ACgkQAR8vZIA0
-zr0w3wf+LFFcRxd7PeY+xB7Eya/OhCLtq/DwUCVi688nQObrhsUn0yvpfoR93LOo
-xyE2WP+08T3dj2Jl/3yhxVATuE92kcf1cXaBbgDnxf7ceiRV1OOPwHRUAHnowKfd
-EiO6FsRsEGDyd4dm6/ZF8upyJIj2l6+HsPabJAzpEYpS8NZAjnsilDW9ohH55FNb
-Cx6f5VD8Wk8JWfkroyKgBTZZWJVDDGzsaLzLysnRHZWJDHg35xRLV46E5q4vV3hI
-2a4TWtltRzz03cf2taTvlBS1S8H7bmx84pNw0PTBIjTHkBT6xOIO8eenMiGkyn4S
-Yf/7IlFPi6zvesEKdMmF4v/3bSZEfw==
-=xOTR
------END PGP SIGNATURE-----
+ERROR: "sst_context_init"
+[sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
 
---Sig_/ahDu70l8WIhCE2XFKRzQbVD--
+ERROR: "sst_context_cleanup"
+[sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
+
+ERROR: "sst_alloc_drv_context"
+[sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
+
+ERROR: "intel_sst_pm" [sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko]
+undefined!
+
+ERROR: "sst_configure_runtime_pm"
+[sound/soc/intel/atom/sst/snd-intel-sst-acpi.ko] undefined!
+
+To keep things simple, let's expose two configs for
+SND_SST_ATOM_HIFI2_PLATFORM_PCI and SND_SST_ATOM_HIFI2_PLATFORM_ACPI,
+which select a common SND_SST_ATOM_HIFI2_PLATFORM option. To avoid
+breaking existing solutions with the semantics change,
+SND_SST_ATOM_HIFI2_PLATFORM_ACPI uses "default ACPI" so that "make
+oldnoconfig" and "make olddefconfig" still work as expected.
+
+Also remove mentions of Medfield while we are at it since it was
+removed recently.
+
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 4772c16ede52 ("ASoC: Intel: Kconfig: Simplify-clarify ACPI/PCI
+dependencies")
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-By: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/intel/Kconfig | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
+index ceb105cbd461..addac2a8e52a 100644
+--- a/sound/soc/intel/Kconfig
++++ b/sound/soc/intel/Kconfig
+@@ -72,24 +72,28 @@ config SND_SOC_INTEL_BAYTRAIL
+ 	  for Baytrail Chromebooks but this option is now deprecated and is
+ 	  not recommended, use SND_SST_ATOM_HIFI2_PLATFORM instead.
+ 
++config SND_SST_ATOM_HIFI2_PLATFORM
++	tristate
++	select SND_SOC_COMPRESS
++
+ config SND_SST_ATOM_HIFI2_PLATFORM_PCI
+-	tristate "PCI HiFi2 (Medfield, Merrifield) Platforms"
++	tristate "PCI HiFi2 (Merrifield) Platforms"
+ 	depends on X86 && PCI
+ 	select SND_SST_IPC_PCI
+-	select SND_SOC_COMPRESS
++	select SND_SST_ATOM_HIFI2_PLATFORM
+ 	help
+-	  If you have a Intel Medfield or Merrifield/Edison platform, then
++	  If you have a Intel Merrifield/Edison platform, then
+ 	  enable this option by saying Y or m. Distros will typically not
+-	  enable this option: Medfield devices are not available to
+-	  developers and while Merrifield/Edison can run a mainline kernel with
+-	  limited functionality it will require a firmware file which
+-	  is not in the standard firmware tree
++	  enable this option: while Merrifield/Edison can run a mainline
++	  kernel with limited functionality it will require a firmware file
++	  which is not in the standard firmware tree
+ 
+-config SND_SST_ATOM_HIFI2_PLATFORM
++config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
+ 	tristate "ACPI HiFi2 (Baytrail, Cherrytrail) Platforms"
++	default ACPI
+ 	depends on X86 && ACPI
+ 	select SND_SST_IPC_ACPI
+-	select SND_SOC_COMPRESS
++	select SND_SST_ATOM_HIFI2_PLATFORM
+ 	select SND_SOC_ACPI_INTEL_MATCH
+ 	select IOSF_MBI
+ 	help
+-- 
+2.17.0
