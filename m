@@ -1,72 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752755AbeDLK7P (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 06:59:15 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:40926 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751920AbeDLK7M (ORCPT
+        id S1752752AbeDLLDR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 07:03:17 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:40884 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751112AbeDLLDQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 06:59:12 -0400
-X-Google-Smtp-Source: AIpwx49KWSQGIBM9Wxs1j1tJHVRBFcSE44FBtlLrsGd5EtYIdQFW+HZru4dZHIaRz9u4Aaa7D/bbjg==
-Date: Thu, 12 Apr 2018 12:59:09 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Lukas Wunner <lukas@wunner.de>, mario.limonciello@dell.com,
-        andy@infradead.org, dvhart@infradead.org, mjg59@srcf.ucam.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] ALSA: hda: Disabled unused audio controller for
- Dell platforms with Switchable Graphics
-Message-ID: <20180412105909.tbyfcjm55sb47hiq@pali>
-References: <20180412104239.25584-1-kai.heng.feng@canonical.com>
- <20180412104239.25584-3-kai.heng.feng@canonical.com>
- <s5hr2nk8zs5.wl-tiwai@suse.de>
+        Thu, 12 Apr 2018 07:03:16 -0400
+Date: Thu, 12 Apr 2018 14:03:14 +0300
+From: "Dmitry V. Levin" <ldv@altlinux.org>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
+ kill() returns wrong values in si_pid and si_uid
+Message-ID: <20180412110314.GA28070@altlinux.org>
+Mail-Followup-To: Russell King - ARM Linux <linux@armlinux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180409152253.GD10489@altlinux.org>
+ <20180412013435.GA21219@altlinux.org>
+ <20180412095811.GC16141@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="LQksG6bCIzRHxTLp"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <s5hr2nk8zs5.wl-tiwai@suse.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180412095811.GC16141@n2100.armlinux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 12 April 2018 12:50:02 Takashi Iwai wrote:
-> > +#if IS_ENABLED(CONFIG_DELL_LAPTOP)
-> > +static bool check_dell_switchable_gfx(struct pci_dev *pdev)
-> > +{
-> > +	bool (*dell_switchable_gfx_is_enabled_func)(void);
-> > +	bool enabled;
-> > +
-> > +	/* Only need to check for Dell laptops and AIOs */
-> > +	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL) ||
-> > +	    !(dmi_match(DMI_CHASSIS_TYPE, "10") ||
-> > +	      dmi_match(DMI_CHASSIS_TYPE, "13")) ||
-> > +	    !(pdev->vendor == PCI_VENDOR_ID_ATI ||
-> > +	      pdev->vendor == PCI_VENDOR_ID_NVIDIA))
-> > +		return false;
-...
-> > @@ -1711,6 +1745,11 @@ static int azx_create(struct snd_card *card, struct pci_dev *pci,
-> >  	if (err < 0)
-> >  		return err;
-> >  
-> > +	if (check_dell_switchable_gfx(pci)) {
-> > +		pci_disable_device(pci);
 
-Hi!
+--LQksG6bCIzRHxTLp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Now looking at it again... This code disables all ATI and NVIDIA sound
-cards available in any Dell System (laptop or AIO) if system says that
-SG is enabled, right?
+On Thu, Apr 12, 2018 at 10:58:11AM +0100, Russell King - ARM Linux wrote:
+> On Thu, Apr 12, 2018 at 04:34:35AM +0300, Dmitry V. Levin wrote:
+> > A similar commit v4.16-rc1~159^2~37
+> > ("signal/arm: Document conflicts with SI_USER and SIGFPE") must have
+> > introduced a similar ABI regression to compat arm.
+>=20
+> So, could you explain how can this change cause a regression?
+>=20
+> +#define FPE_FIXME      0
+> -               vfp_raise_sigfpe(0, regs);
+> +               vfp_raise_sigfpe(FPE_FIXME, regs);
 
-It means that also any external ATI or NVIDIA PCI card with audio device
-connected to Thunderbolt (e.g. via PCI <--> TB bridge) is always
-unconditionally disabled too?
+No, this hunk hasn't caused the regression, but another one did:
 
-> > +		return -ENODEV;
-> > +	}
+diff --git a/arch/arm/include/uapi/asm/siginfo.h b/arch/arm/include/uapi/as=
+m/siginfo.h
+new file mode 100644
+index 0000000..d051388
+--- /dev/null
++++ b/arch/arm/include/uapi/asm/siginfo.h
+@@ -0,0 +1,13 @@
++#ifndef __ASM_SIGINFO_H
++#define __ASM_SIGINFO_H
++
++#include <asm-generic/siginfo.h>
++
++/*
++ * SIGFPE si_codes
++ */
++#ifdef __KERNEL__
++#define FPE_FIXME      0       /* Broken dup of SI_USER */
++#endif /* __KERNEL__ */
++
++#endif
 
--- 
-Pali Rohár
-pali.rohar@gmail.com
+This is due to FPE_FIXME handling in kernel/signal.c
+
+
+--=20
+ldv
+
+--LQksG6bCIzRHxTLp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJazzzyAAoJEAVFT+BVnCUIw1YP/0I5ff8Z4fOIPctdlF7NS3Jh
+c2TAv7D40LUzHOnfXWx2Fy8hzScahtMi1FGOhwFCHvQawI1XYYKG1QAKOtOBV/ut
+bpPe/p/4Ib0Qjep1MNB+nhfmXHUS/GVGoFDp5cueyKqw9axCjkJGU1zZ1s4Frpme
+KMufr8I5JOh7mKh11lHiktGkP4oQFfVhHAnpn3GgsDDr0Lm3ASA759nEHQYSQ0yc
+uDNQrSYjdFoWsXoijWOq5zmABNcYi0c3L+6HJQVXH/FEXLDHyxv3uLSLWQ6KZt1G
+28vT61+SEko2RWM7ethcXc9J0VEgl20cQ5BLsYhExrje872YillIwAVHrbxE8SZh
+u6lHx+VYlHpYP+H3p67/pb1RbMGUNLK8fUv+oOif5FaPwShhRVtJGKhGsg4yyKAz
+3Kh6PkeE5LhRo4OUhq8SjeMHSPlgidmcAXZJSsNlW2A1+5IEnd640JfKyP7jcgOg
+AZEos39gLXAp0iMIff9IdrLmNtqc/LCKP5bE1PKXdpsyhMI/B3tN6h4DkTcU5X5I
+2V4SofWNC084zpxE8fHAQZ+Iwj9AEwCAatCnnoFxFm2AxyiCQmChXoS5RN+hPAOB
+6S70Qob9vxMPPPdHPyDvor6DwKUwHiPYAvfxGRq08nkDkkRLy09NCjofMBwvnGZF
+5FZOXAQ3wERpSpjaklJH
+=kR/I
+-----END PGP SIGNATURE-----
+
+--LQksG6bCIzRHxTLp--
