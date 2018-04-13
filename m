@@ -1,158 +1,110 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1533401-1523556765-2-13151820217249066673
+X-Cyrus-Session-Id: sloti22d1t05-3223379-1523608307-2-10405218914457408899
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523556764; b=pci9dpyEctI4ogoeAMcikDOD5zo0URBCmWe+ljtXNw+lgQRyuR
-    AgLEWMIIAm60nI33J6KyeNJDJCttXW7ll5JIAD42zZ6Y/hXibxmPn11598LAYatQ
-    G/P8JL9yYolKVoxeOf+NJgCwWCAdE4ezZJAsjQDmqcYcWTHLGNKw1LChDAHSUr1L
-    RMEyteHQ7MXLyWIbfHSkQk+Ci9UCl8DWN94QKKBIYv7cN+Pf7iAJus+HqQ6T8SkR
-    zjyIbpdwFWpP05iOXNll5hmyMTSZ9JOzJLmO3w+SLtP+JL1m6Ua4oh2HfaREBP03
-    DVqUwSLVC/KZGXVqzUmpPSWgzoBM1yRN5PZg==
+    1523608307; b=hBXd+VxXhhEmaTY8OYh8BVHPlNmg9/XXvtIs/RHe/XRqmVaxVn
+    V/5TTLkY2C1rJOvw1IuJPjwXt31i4B8EXj3mZLHx5WbxSUl0oIpq9WurelsLI193
+    RUE5urz5zhSS3J9UaWbgjMsw+GDw1KlGSJYlsyT/pTfFsawZMjWi6GIpId7kwchD
+    zS+AtW1Ck5EGSMBbAR6IkqNca4OZnYynnYEsaKxeVBLvpeYbMka9L5/GmTgrA83U
+    CvooN9TxwxIRRG/QCFJPZCl1YrJE8MfelTiWU1qEIPw43vHmITIlxF/8mT5DVpM7
+    WyDNWLyKel2Vriv+hYGnRDP+fQN218RkBrQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1523556764; bh=
-    SFkUKjh+FuqQgilAjijXlfqIaPxDjTkwax6kkxBtPPU=; b=C7fzeMSU7KUBZzCb
-    Be9U6tx34IfW8BnaflVLwhRqeG+3hc69mVm4ArhlyJkNA2wmiPS7LJ85f0rD7fEn
-    98fsCCuSV/iPi/yXFIEb6Pd1N0V+FlST3uHlMk/fN5KFPeBilN4vBGwHH8FwHQKi
-    dKY43g471sKiERniHTmbBlxT8J4cp/b79VjstudjiltQVwtJP3OUufqz6NciQEJE
-    S1S/Tj61PciZq4xawW+w6/FsZ+v/0xunFUoV8jB7mwgTrULLbBNoGMGdO/zedgxe
-    KTE+CdPkywdlSA7Plrs3a7ci5BY22U5aT5PgZZ8L1jfwzwVCGX4QkbiHw/fQK/1q
-    9eBfhA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=d1QCZnLL x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    messagingengine.com; h=message-id:subject:from:to:cc:date
+    :in-reply-to:references:content-type:mime-version
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523608307;
+    bh=NR72XZ21wWlWdxLrRGN24VhQ1QKiw/zvfPiin0SRTSI=; b=UtAWt6bEw15u
+    NnbxWUiZeY1+wRUkrwQGANlB6R77xbPE84ddxgSoTBvXQzXsTAaMxFDe0gLnCfzm
+    DjoPx99R3pYHkTHC60rCuqbjeA5hDXBEhRbWaaPiyLN4J3PNMyJtAfL3v+6H9bnp
+    OAICB21ITy3L52yvs9szUbEg8+gmLTYdhCEkcVec6qu/xuq0OYBHVl8jCSbrEwar
+    1amANCCgz3wfaRf1/qekFl6zd6UKxuN7R8OxiM953RHqZji5uiX40BoVs2uy5BK8
+    ZYcdqM50PO5N4+IfApdVNHvN++U6QDDX8jnb6YHTGZNLwHuwry7LUzlXvLq3rj6X
+    oT50V8YOnw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Zjuict9s;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=d1QCZnLL x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Zjuict9s;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfP7e/NMNLros7JpfwGRFK5y0JpQB/YQsg0xPmpgqqRlDuroBuwtfI5DEKekW4ewfUFTCjRdN2vXDSjyRS3603SJnkTaSW2cuC5qYoWlIQr4LFqSVxDy3
-    b8gfL3P71cKdR/B9+hn9z/TTfAcqaIfnJavlqj327kgWaGgxe8ik7L5u0g1xR0pYQBMfE2iupt27470QR39oNmyuvpA9e2zeauzFSucn7CRbkpwqptGSH0uV
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=206n46q3nOkA:10
-    a=Kd1tUaAdevIA:10 a=20KFwNOVAAAA:8 a=JF9118EUAAAA:8 a=VwQbUJbxAAAA:8
-    a=pGLkceISAAAA:8 a=dLnlp_FASMd5203LdWEA:9 a=xVlTc564ipvMDusKsbsT:22
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfOvBzvN70hVYSn4D9xykw16TOVambaFzjiD9Le4FZ7mUl0gQoEKQH19RNL/4hj1QEj7YbDfGzodSNa8ftUVYn9BWOM+4Sz7qqEy4GSURIOJuT7KtnMGL
+    pUaHsGGY6xeyzn6EYl1H1ylEDo4kW8OCoyBn8rs9Ozt1hc7lu0DXaK1Fovp1kTEsYlEoTGbAditaPrIXQSvziJnn6n/J6MGfBm6oD9hg7IlD5M7axBM7SPSe
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=NEAV23lmAAAA:8 a=dfRfuKr-6qo2v9FbFEoA:9 a=QEXdDO2ut3YA:10 a=VlZU0XKO32wA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752954AbeDLSMj (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 12 Apr 2018 14:12:39 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51409 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752934AbeDLSMh (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 12 Apr 2018 14:12:37 -0400
-X-Google-Smtp-Source: AIpwx48TuaJGKpgvRFaWijoSxnC/4TjUp6ib0U7r7aVm2k2R0VL8uiB1iiRusSlaXgIJGo5NlWycNQ==
-From: Alan Jenkins <alan.christopher.jenkins@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+        id S1753296AbeDMIb3 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 13 Apr 2018 04:31:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49371 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752015AbeDMIb1 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 13 Apr 2018 04:31:27 -0400
+Message-ID: <1523608284.7787.3.camel@suse.de>
+Subject: Re: [PATCH v2] block: do not use interruptible wait anywhere
+From: Johannes Thumshirn <jthumshirn@suse.de>
+To: Alan Jenkins <alan.christopher.jenkins@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
 Cc: Bart Van Assche <Bart.VanAssche@wdc.com>,
-        linux-kernel@vger.kernel.org,
-        Alan Jenkins <alan.christopher.jenkins@gmail.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v2] block: do not use interruptible wait anywhere
-Date: Thu, 12 Apr 2018 19:11:58 +0100
-Message-Id: <20180412181158.8884-1-alan.christopher.jenkins@gmail.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <13e67e1243ebd96f3f56a150d47444ada47ebde0.camel@wdc.com>
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date: Fri, 13 Apr 2018 10:31:24 +0200
+In-Reply-To: <20180412181158.8884-1-alan.christopher.jenkins@gmail.com>
 References: <13e67e1243ebd96f3f56a150d47444ada47ebde0.camel@wdc.com>
+         <20180412181158.8884-1-alan.christopher.jenkins@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-When blk_queue_enter() waits for a queue to unfreeze, or unset the
-PREEMPT_ONLY flag, do not allow it to be interrupted by a signal.
+Hi Alan,
 
-The PREEMPT_ONLY flag was introduced later in commit 3a0a529971ec
-("block, scsi: Make SCSI quiesce and resume work reliably").  Note the SCSI
-device is resumed asynchronously, i.e. after un-freezing userspace tasks.
+On Thu, 2018-04-12 at 19:11 +0100, Alan Jenkins wrote:
+> # dd if=/dev/sda of=/dev/null iflag=direct & \
+>   while killall -SIGUSR1 dd; do sleep 0.1; done & \
+>   echo mem > /sys/power/state ; \
+>   sleep 5; killall dd  # stop after 5 seconds
 
-So that commit exposed the bug as a regression in v4.15.  A mysterious
-SIGBUS (or -EIO) sometimes happened during the time the device was being
-resumed.  Most frequently, there was no kernel log message, and we saw Xorg
-or Xwayland killed by SIGBUS.[1]
+Can you please also add a regression test to blktests[1] for this?
 
-[1] E.g. https://bugzilla.redhat.com/show_bug.cgi?id=1553979
+[1] https://github.com/osandov/blktests
 
-Without this fix, I get an IO error in this test:
-
-# dd if=/dev/sda of=/dev/null iflag=direct & \
-  while killall -SIGUSR1 dd; do sleep 0.1; done & \
-  echo mem > /sys/power/state ; \
-  sleep 5; killall dd  # stop after 5 seconds
-
-The interruptible wait was added to blk_queue_enter in
-commit 3ef28e83ab15 ("block: generic request_queue reference counting").
-Before then, the interruptible wait was only in blk-mq, but I don't think
-it could ever have been correct.
-
-Reviewed-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Alan Jenkins <alan.christopher.jenkins@gmail.com>
----
-v2: fix indentation
-
- block/blk-core.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/block/blk-core.c b/block/blk-core.c
-index abcb8684ba67..1a762f3980f2 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -915,7 +915,6 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
- 
- 	while (true) {
- 		bool success = false;
--		int ret;
- 
- 		rcu_read_lock();
- 		if (percpu_ref_tryget_live(&q->q_usage_counter)) {
-@@ -947,14 +946,12 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
- 		 */
- 		smp_rmb();
- 
--		ret = wait_event_interruptible(q->mq_freeze_wq,
--				(atomic_read(&q->mq_freeze_depth) == 0 &&
--				 (preempt || !blk_queue_preempt_only(q))) ||
--				blk_queue_dying(q));
-+		wait_event(q->mq_freeze_wq,
-+			   (atomic_read(&q->mq_freeze_depth) == 0 &&
-+			    (preempt || !blk_queue_preempt_only(q))) ||
-+			   blk_queue_dying(q));
- 		if (blk_queue_dying(q))
- 			return -ENODEV;
--		if (ret)
--			return ret;
- 	}
- }
- 
+Thanks,
+	Johannes
 -- 
-2.14.3
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
