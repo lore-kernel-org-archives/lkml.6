@@ -1,71 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752927AbeDMQuj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 12:50:39 -0400
-Received: from sauhun.de ([88.99.104.3]:48920 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752235AbeDMQui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 12:50:38 -0400
-Date: Fri, 13 Apr 2018 18:50:36 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Sam Hansen <hansens@google.com>
-Cc: linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] Documentation/i2c: sync docs with current state
- of i2c-tools
-Message-ID: <20180413165036.5h7f6h42opzr64qi@ninjato>
-References: <CAP9bUy7rONNHYeRkYtaWHcfqoZcGKXJz-JocED26zBj9n+-ZbQ@mail.gmail.com>
- <20180413164405.127522-1-hansens@google.com>
- <20180413164405.127522-2-hansens@google.com>
+        id S1752212AbeDMQ7u (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 12:59:50 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:58680 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750867AbeDMQ7s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 12:59:48 -0400
+To: Jinpu Wang <jinpu.wang@profitbricks.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Elliott\, Robert \(Persistent Memory\)" <elliott@hpe.com>,
+        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+        Suganath Prabu Subramani
+        <suganath-prabu.subramani@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        linux-scsi <linux-scsi@vger.kernel.org>
+Subject: Re: [PATCH v2] block: ratelimite pr_err on IO path
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1523524915-25170-1-git-send-email-jinpu.wangl@profitbricks.com>
+        <yq1y3hsunnt.fsf@oracle.com>
+        <CAMGffEkaTLLEs+i-EWUmo-Y8KSNBeyth63L1hXxP++PBcPPXbg@mail.gmail.com>
+Date: Fri, 13 Apr 2018 12:59:38 -0400
+In-Reply-To: <CAMGffEkaTLLEs+i-EWUmo-Y8KSNBeyth63L1hXxP++PBcPPXbg@mail.gmail.com>
+        (Jinpu Wang's message of "Fri, 13 Apr 2018 10:37:25 +0200")
+Message-ID: <yq1bment539.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mg355zbbnwkmajlw"
-Content-Disposition: inline
-In-Reply-To: <20180413164405.127522-2-hansens@google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8861 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=651
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804130156
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---mg355zbbnwkmajlw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Jinpu,
 
-On Fri, Apr 13, 2018 at 09:44:04AM -0700, Sam Hansen wrote:
-> Currently, Documentation/i2c/dev-interface describes the use of
-> i2c_smbus_* helper routines as static inlined functions provided by
-> linux/i2c-dev.h.  Work has been done to refactor the linux/i2c-dev.h file
-> in the i2c-tools project out into its own library.  As a result, these
-> docs have become stale.
->=20
-> This patch corrects the discrepancy and directs the reader to the
-> i2c-tools project for more information.
->=20
-> Signed-off-by: Sam Hansen <hansens@google.com>
+[CC:ed the mpt3sas maintainers]
 
-Looks good to me as well.
+The ratelimit patch is just an attempt to treat the symptom, not the
+cause.
 
+> Thanks for asking, we updated mpt3sas driver which enables DIX support
+> (prot_mask=0x7f), all disks are SATA SSDs, no DIF support.
+> After reboot, kernel reports the IO errors from all the drives behind
+> HBA, seems for almost every read IO, which turns the system unusable:
+> [   13.079375] sda: ref tag error at location 0 (rcvd 143196159)
+> [   13.079989] sda: ref tag error at location 937702912 (rcvd 143196159)
+> [   13.080233] sda: ref tag error at location 937703072 (rcvd 143196159)
+> [   13.080407] sda: ref tag error at location 0 (rcvd 143196159)
+> [   13.080594] sda: ref tag error at location 8 (rcvd 143196159)
 
---mg355zbbnwkmajlw
-Content-Type: application/pgp-signature; name="signature.asc"
+That sounds like a bug in the mpt3sas driver or firmware. I guess the
+HBA could conceivably be operating a SATA device as DIX Type 0 and strip
+the PI on the drive side. But that doesn't seem to be a particularly
+useful mode of operation.
 
------BEGIN PGP SIGNATURE-----
+Jinpu: Which firmware are you running? Also, please send us the output
+of:
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrQ39wACgkQFA3kzBSg
-KbbpQhAAnoYnClgq1EGw78esWIU4N/LWLZ7idsFEdYhdnetF/F4TjKNg8u9Tiw1m
-Blcvwthu/uG7ykHRKR6yXxuMPkfmWUfOMcm/n37PznbLIII3G0Tq775VRadwWypb
-Dt3gv8OGvbn8WB8cvbCGAqjVbqz6/JO/eWsZGvWlSqE2vAcwQr8kTKqek+1x2rGf
-JgkoOJyrTg1vZvmrssE1UyiZRRF1UjTlhqxoelVaa1eApmGpBYoVgX1eL5CRlKVq
-FAelziJ/3rCXm+dBucLDJptNkgFlsFInZE+/BerZhq/HL1nHonJ9gNaO+zbVdJaZ
-UwVM8s3dsGV2JLD5ZrrxYj9YXKb5xYBHaRXWOxHcQFr5xchNWOf9h0w86cqZAk+9
-ahNNIA/DZiqOkkBxswsLSglkykDCPppuU0TQaNAmLimNldMlxTvYopfICfzXeMQv
-Ok3/nX6bbh6cxHP9ru4P/byYyx+6epJA+mfXKUwCbOxgpXSKKVCSFCwNQ29oiJgi
-o5BTc+9KYFE45BL/MFrWP4Lxe9EoxxBiJ9Swfay6meOs0CXS+ouf9OyT4cC3/Sgg
-Q/9KWTnbTmN4OI8u+fyrC6QpA/N/+TWNWjyzvGhomi5hRGuzfG7p5lgEE4cQKSs7
-kEN+1ppYJlqsxWaB78xLCJpnAZKs46R0ISQn1r/mLjPGQSXwgHM=
-=odDK
------END PGP SIGNATURE-----
+        sg_readcap -l /dev/sda
+        sg_inq -x /dev/sda
+        sg_vpd /dev/sda
 
---mg355zbbnwkmajlw--
+Broadcom: How is DIX supposed to work for SATA drives behind an mpt3sas
+controller?
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
