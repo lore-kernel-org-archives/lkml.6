@@ -1,280 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753530AbeDLXwc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 19:52:32 -0400
-Received: from mga09.intel.com ([134.134.136.24]:13959 "EHLO mga09.intel.com"
+        id S1753355AbeDMAJ6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 20:09:58 -0400
+Received: from foss.arm.com ([217.140.101.70]:38452 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752391AbeDLXwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 19:52:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,444,1517904000";
-   d="scan'208";a="46517854"
-Message-ID: <1523577133.11817.31.camel@tzanussi-mobl.amr.corp.intel.com>
-Subject: Re: [PATCH 2/6] tracing: Add trace event error log
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de, joel.opensrc@gmail.com,
-        joelaf@google.com, mathieu.desnoyers@efficios.com,
-        baohong.liu@intel.com, rajvi.jingar@intel.com, julia@ni.com,
-        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Date: Thu, 12 Apr 2018 18:52:13 -0500
-In-Reply-To: <20180412182001.75bfb4e2@gandalf.local.home>
-References: <cover.1523545519.git.tom.zanussi@linux.intel.com>
-         <194bd34e689dd6df9e48855111fd6c5c66e37fc9.1523545519.git.tom.zanussi@linux.intel.com>
-         <20180412182001.75bfb4e2@gandalf.local.home>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4 (3.10.4-4.fc20) 
+        id S1751886AbeDMAJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Apr 2018 20:09:56 -0400
+Date: Thu, 12 Apr 2018 19:09:54 -0500
+From: Kim Phillips <kim.phillips@arm.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, <kernel-team@lge.com>
+Subject: Re: [PATCH] Revert
+ "perf machine: Fix paranoid check in machine__set_kernel_mmap()"
+Message-Id: <20180412190954.4c76039100b990675ec390bd@arm.com>
+In-Reply-To: <20180412015756.GA6962@sejong>
+References: <20180215122635.24029-1-jolsa@kernel.org>
+        <20180215122635.24029-7-jolsa@kernel.org>
+        <20180219022036.GB1583@sejong>
+        <20180219100140.GA17630@krava>
+        <20180219101936.GD1583@sejong>
+        <20180219104917.GA19365@krava>
+        <20180219121817.GC14978@kernel.org>
+        <20180411180752.b64c4d105222fb22c159b852@arm.com>
+        <20180411233109.GA6320@sejong>
+        <20180411192940.de8143a80bd9e5d98d87f6ec@arm.com>
+        <20180412015756.GA6962@sejong>
+Organization: Arm
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+On Thu, 12 Apr 2018 10:57:56 +0900
+Namhyung Kim <namhyung@kernel.org> wrote:
 
-On Thu, 2018-04-12 at 18:20 -0400, Steven Rostedt wrote:
-> On Thu, 12 Apr 2018 10:13:17 -0500
-> Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
+> On Wed, Apr 11, 2018 at 07:29:40PM -0500, Kim Phillips wrote:
+> > On Thu, 12 Apr 2018 08:31:09 +0900
+> > Namhyung Kim <namhyung@kernel.org> wrote:
+> > > On Wed, Apr 11, 2018 at 06:07:52PM -0500, Kim Phillips wrote:
+> > > > ---
+> > > > It's not clear to me what the specific intent of the original commit
+> > > > was, thus the revert.
+> > > 
+> > > Hmm.. maybe your kernel map has non-zero start and zero end.  I
+> > 
+> > On x86, the first line in /proc/kallsyms is:
+> > 
+> > 0000000000000000 A irq_stack_union
+> > 
+> > On arm64, it's:
+> > 
+> > ffff200008080000 t _head
+> > 
+> > Another arm64 box has:
+> > 
+> > ffff000008080000 t _head
+> > 
+> > (neither have RANDOMIZE_BASE set FWIW)
+> > 
+> > > thought it was just from an old or invalid data.  But now I think that
+> > 
+> > It would be good to know what that was, yes.
+> > 
+> > > overflow can create it..  could you please show me the mmap event?
+> > > 
+> > >   $ perf script --show-mmap-events
+> > 
+> > Here you go:
+> > 
+> >          swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffff200008080000(0xdffff7f7ffff) @ 0xffff200008080000]: x [kernel.kallsyms]_text
 > 
-> > diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-> > index 6fb46a0..f2dc7e6 100644
-> > --- a/kernel/trace/trace.h
-> > +++ b/kernel/trace/trace.h
-> > @@ -1765,6 +1765,9 @@ extern ssize_t trace_parse_run_command(struct file *file,
-> >  		const char __user *buffer, size_t count, loff_t *ppos,
-> >  		int (*createfn)(int, char**));
-> >  
-> > +extern void event_log_err(const char *loc, const char *cmd, const char *fmt,
-> > +			  ...);
-> > +
-> >  /*
-> >   * Normal trace_printk() and friends allocates special buffers
-> >   * to do the manipulation, as well as saves the print formats
-> > diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-> > index 05c7172..fd02e22 100644
-> > --- a/kernel/trace/trace_events.c
-> > +++ b/kernel/trace/trace_events.c
-> > @@ -1668,6 +1668,164 @@ static void ignore_task_cpu(void *data)
-> >  	return ret;
-> >  }
-> >  
-> > +#define EVENT_LOG_ERRS_MAX	(PAGE_SIZE / sizeof(struct event_log_err))
+>    0xffff200008080000
+>  +     0xdffff7f7ffff
+>  --------------------
+>    0xffffffffffffffff
 > 
-> > +#define EVENT_ERR_LOG_MASK	(EVENT_LOG_ERRS_MAX - 1)
-> 
-> BTW, the above only works if EVENT_LOG_ERRS_MAX is a power of two,
-> which it's not guaranteed to be.
-> 
+> So it should have ~0ULL of the 'end' already.  I don't know why it
+> caused the problem..  Was it from the `perf.good`?
 
-My assumption was that we'd only ever need a page or two for the
-error_log and so would always would be a power of two, since the size of
-the struct event_log_err is 512.
+There's no difference between the output of perf.good and perf.bad (the
+difference between them is this reversion patch, .good being the one
+that includes it).
 
-Anyway, I should probably have put comments about all this in the code,
-and I will, but the way it works kind of assumes a very small number of
-errors - it's replacing a simple 'last error' facility for the hist
-triggers and making it a common facility for other things that have
-similar needs like Masami's kprobe_events errors.  For those purposes, I
-assumed it would suffice to simply be able to show that last 8 or some
-similar small number of errors and constantly recycle the slots.
+> >          swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffff2000021e0000(0x18000) @ 0]: x /lib/modules/4.16.0+/kernel/drivers/bus/arm-ccn.ko
+> 
+> Hmm.. also it seems arm64 loads modules under the kernel.  Then the
+> fixup logic in machine__create_kernel_maps() won't work.  Also as we
 
-Basically it just splits the page into 16 strings, 2 per error, one for
-the actual error text, the other for the command the user entered.  The
-struct event_log_err just overlays a struct on top of 2 strings just to
-make it easier to manage.
+you mean this:
 
-Anyway, because it is such a small number, and we start with a zeroed
-page, whenever we print the error log, we print all 16 strings even if
-we only have one error (2 strings).  The rest are NULL and print
-nothing.  We start with the tail, which could also be thought of as the
-'oldest' or the 'first' error in the buffer and just cycle through them
-all.  Hope that clears up some of the other questions you had about how
-a non-full log gets printed, etc... 
+void __map_groups__fixup_end(struct map_groups *mg, enum map_type type)
+...
+                if (!curr->end)
+                        curr->end = next->start;
 
-> > +
-> > +struct event_log_err {
-> > +	char			err[MAX_FILTER_STR_VAL];
-> > +	char			cmd[MAX_FILTER_STR_VAL];
-> > +};
-> 
-> I like the event_log_err idea, but the above can be shrunk to:
-> 
-> struct err_info {
-> 	u8	type; /* I can only imagine 254 types */
-> 	u8	pos;  /* MAX_FILTER_STR_VAR = 256 */
-> };
-> 
-> struct event_log_err {
-> 	struct err_info		info;
-> 	char			cmd[MAX_FILTER_STR_VAL];
-> };
-> 
-> There's no reason to put in a bunch of text that's going to be static
-> anyway. Have a lookup table like we do for filters.
-> 
-> +				log_err("Variable name not unique, need to use fully qualified name (%s) for variable: ", fqvar(system, event_name, var_name, true));
-> 
+?  Module symbol resolution is working, however.  Maybe because this
+'paranoid' check was setting all the end addresses to ~0ULL?  Does the
+design assume what maps__first() returns always has the lowest address,
+and they're in sorted order?  If so, what's the fix, to re-sort
+map_groups afterwards?
 
-Hmm, most of the log_errs use printf strings that get expanded, so need
-a destination buffer, the event_log_err->err string, but I think I see
-what you're getting at - that we can get rid of the format strings
-altogether and make them static strings if we use the method of simply
-printing the static string and putting a caret where the error is as
-below.
+> don't use the map_groups__fixup_end() anymore 
 
-> 
-> Instead of making the fqvar, find the location of the variable, and add:
-> 
->  blah blah $var blah blah
->             ^
->   Variable name not unique, need to use fully qualified name for variable
-> 
+?  I see map_groups__fixup_end() still being called.
 
-OK, if we can do this for every error type, then we can use the lookup
-table and the caret position instead of format strings.  Which means
-getting rid of the simple ring of strings, but whatever..
+> I think it's ok just
+> checking the end address.
 
-> > +
-> > +static char *event_err_log;
-> > +static unsigned int event_err_log_tail;
-> > +
-> > +struct event_log_err *get_event_log_err(void)
-> > +{
-> > +	struct event_log_err *err;
-> > +	char *errpos;
-> > +
-> > +	if (!event_err_log) {
-> > +		event_err_log = (char *)get_zeroed_page(GFP_KERNEL);
-> > +		if (!event_err_log)
-> > +			return NULL;
-> > +	}
-> > +
-> > +	errpos = event_err_log + event_err_log_tail * sizeof(*err);
-> > +	err = (struct event_log_err *)errpos;
-> > +
-> > +	event_err_log_tail = (event_err_log_tail + 1) & EVENT_ERR_LOG_MASK;
-> 
-> So you add errors one after the other:
-> 
-> First error:
-> 
->  err1,NULL,NULL,NULL,...
->       ^
->      tail
-> 
-> Second error:
-> 
->  err1,err2,NULL,NULL,...
->            ^
->           tail
-> 
-> Third error:
-> 
->  err1,err2,err3,NULL,
->                 ^
->                tail
-> 
+Where?  In machine__set_kernel_mmap(), like this reversion does?
 
-Yeah, in each case we print all the NULL strings first, which result in
-no output, and then wrap around and print the errors in order.
+The original commit says:
 
-> > +
-> > +	return err;
-> > +}
-> > +
-> > +/**
-> > + * event_log_err - write an error to the trace event error log
-> > + * @loc: A string describing where the error occurred
-> > + * @cmd: The trace event command that caused the error
-> > + * @fmt: snprintf format string
-> > + * @...: variable length list of snprintf args
-> > + *
-> > + * Writes an error into tracing/events/error_log of the form:
-> > + *
-> > + * ERROR(<loc>): <error text ala snprintf>
-> > + *   Command: <command that caused the error>
-> > + *
-> > + * tracing/events/error_log is a small log file containing the last
-> > + * EVENT_LOG_ERRS_MAX errors (8).  Memory for the error log isn't
-> > + * allocated unless there has been a trace event error, and the error
-> > + * log can be cleared and have its memory freed by writing the empty
-> > + * string in truncation mode to it i.e. echo > error_log.
-> > + *
-> > + * Must be called with event_mutex held.
-> > + */
-> > +void event_log_err(const char *loc, const char *cmd, const char *fmt, ...)
-> > +{
-> > +	struct event_log_err *err;
-> > +	va_list args;
-> > +	int len;
-> > +
-> > +	err = get_event_log_err();
-> > +	if (!err)
-> > +		return;
-> > +
-> > +	snprintf(err->cmd, MAX_FILTER_STR_VAL,"\n  Command: %s\n", cmd);
-> > +
-> > +	len = snprintf(err->err, MAX_FILTER_STR_VAL, "ERROR(%s): ", loc);
-> > +	if (len >= MAX_FILTER_STR_VAL)
-> > +		return;
-> > +
-> > +	va_start(args, fmt);
-> > +	vsnprintf(err->err + len, MAX_FILTER_STR_VAL - len, fmt, args);
-> > +	va_end(args);
-> > +}
-> > +
-> > +static void clear_event_err_log(void)
-> > +{
-> > +	free_page((long unsigned int)event_err_log);
-> > +	event_err_log_tail = 0;
-> > +	event_err_log = NULL;
-> > +}
-> > +
-> > +static void *event_err_log_inc(loff_t *pos)
-> > +{
-> > +	struct event_log_err *err = NULL;
-> > +	char *errpos = NULL;
-> > +	int i = *pos;
-> > +
-> > +	++*pos;
-> > +
-> > +	if (i >= EVENT_LOG_ERRS_MAX)
-> > +		return NULL;
-> > +
-> > +	i += event_err_log_tail;
-> > +	i &= EVENT_ERR_LOG_MASK;
-> > +
-> > +	errpos = event_err_log + (i * sizeof(*err));
-> > +	err = (struct event_log_err *)errpos;
-> 
-> Now I'm confused. i += tail, so on *pos = 0, and tail = 3, we have 
-> i = 3 (or i = tail)
-> 
->  err1,err2,err3,NULL,...
->                 ^
->                tail
->                 i
-> 
-> How do we return anything when the buffer isn't full yet?
-> 
-> What did I miss?
-> 
+    The machine__set_kernel_mmap() is to setup addresses of the kernel map
+    using external info.  But it has a check when the address is given from
+    an incorrect input which should have the start and end address of 0
+    (i.e. machine__process_kernel_mmap_event).
+    
+    But we also use the end address of 0 for a valid input so change it to
+    check both start and end addresses.
 
-Just that we're actually printing starting with those NULL strings and
-wrapping around.  It's not a big deal because we only have a handful so
-simplicity over efficiency. ;-)
+yet the comment above the code says:
 
-Tom
+                 * Be a bit paranoid here, some perf.data file came with
+                 * a zero sized synthesized MMAP event for the kernel.
 
-> Wouldn't this need to go backwards?
-> 
-> 	i = event_err_log_tail - (i + 1);
-> 	if (i < 0)
-> 		i = EVENT_ERROR_LOG - 1;
-> 
-> -- Steve
-> 
+I tracked the first comment insertion down to this commit:
+
+commit 10fe12ef631a7e85022ed26304a37f033a6a95b8
+Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+Date:   Sat Feb 20 19:53:13 2010 -0200
+
+    perf symbols: Fix up map end too on modular kernels with no modules installed
+    
+    In 2161db9 we stopped failing when not finding modules when
+    asked too, but then the kernel maps (just one, for vmlinux)
+    wasn't having its ->end field correctly set up, so symbols were
+    not being found for the vmlinux map because its range was 0-0.
+
+which, when reading that last part, one would assume start == end == 0,
+therefore size also == 0, the comment only talks about a zero *sized*
+event...so did the original commit 1d12cec6ce99 "perf machine: Fix
+paranoid check in machine__set_kernel_mmap()" really fix that case?
+Because it checks start == 0, not necessarily the size...
+
+If not, can it be reverted until we figure out what's going on with
+arm64?  It's causing a regression in the meantime...
+
+Thanks,
+
+Kim
