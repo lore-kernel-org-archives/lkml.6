@@ -1,108 +1,83 @@
-Return-Path: <dvhart@infradead.org>
-X-Google-Smtp-Source: AIpwx48t5ViDA9Xl6hAVzLPz5HGax+SeY2HZLvAPw/SMZVczXxO6I1jfMCbBjTe66uZkHioRw5aV
-ARC-Seal: i=1; a=rsa-sha256; t=1523636284; cv=none;
+Return-Path: <maier@linux.ibm.com>
+X-Google-Smtp-Source: AIpwx4+vLE6UAepunz4EzececgpxqY0UWv8Al68gFufb7hTgirk6cU+M5B+2c+6DZk2+uhIJFUxG
+ARC-Seal: i=1; a=rsa-sha256; t=1523637394; cv=none;
         d=google.com; s=arc-20160816;
-        b=iWoU2gRYeGyafL9SmmP9/7mRAW7EsaIgT6ZNCj3cThYg0t8U9vvq51R0i9ZeWqTJgD
-         G7AzEkN0UzHmuTmmYDvH6mkHffs/SYePVFsfHJFLpZuTy1BK82+mEbMQ1tdC1Y4/CWtU
-         Ki1z5S9EqPzQGZi1B+0vE8lVjnWgzCUhVyL5vVMoX/8P3Tj5YtuLpPNdbGHGgjFAE7eS
-         PkJkHOVgjYfQdOXteGcuMuqCN2EW317iFdwnQsH917Cl9EMlWt9DnrtePhKOqsBZYpAA
-         g7WaV2nys0H9HSIym8QQOmw2FBMs1Txuf0xz+bheMyFI/0sIEsRUPeDLAT6cmUe7F9Fe
-         C8UQ==
+        b=zxvFBILKZYw3hY5JuKqax+BhG7qMdAbVfz73PEWhAUdlQ+XHBxUt/19X+RuzYftgsk
+         8ie7DZ0brTZT9ORuiawerHhfqYE04NJ4htqai7chJeWTGz94SmRkpBfoLrKkp+y/89YF
+         y/83WnFsM1DKy/q6t4js435Wjl8vTd2+2bxxjzzPzCNtTdyL6uTV/slJiPBasGhYfwZc
+         ZgrOpV3it9W9DODX2dzTBbwh0UxrqT403+NJDxbFlz1/5n4n/T5oM/QDKqAR46glZj3J
+         +4S+sHh4lwrg5hcGS2Bpl6STRlfPUKi0LON571zxnRlaN0+wWhYDdkvonaNbb0E2CDCj
+         0exg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=X3gOdAClqLD/mCB2ZET9/L5fesxdVZFADjlMtteHe/k=;
-        b=yGHcX1BPQRnO/9BeHbZ4NbZwj3vCK3Oe3f2UAUa+NZtVbursLZ4sTE2z6ZMWlvw9xW
-         XegQ2llPrdeJ5kBy8uyeLEDpN7JIrIoFeHGZgByJpulvLnnKHckgx4vAlu3v8J0nlirJ
-         u6YLXkE0mAsXY7Ijm31PUjK+N/Zxk20rCP277eFty/X391T9gj8tew3WeHw+jJxHDvL6
-         Pp0kwvzx5jdFBfg/ZWFeGJ5Y1PF1yYajN/t46kTW4JcHJsC0kqkmBTkGVRAWbMFfzSDt
-         pDDAeLSnheHUU21D3W2kumZwoHerp5cAJ1Rn1dbIKVR+6HyVlxugYdyADSXlGsFpU9Hw
-         z40A==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=uva7p9p3WKnFtPD3c2luwKxoxLPCIDt1wwuPDknrx2A=;
+        b=IxXSmMh+wTCDTZLjyLe16vMU2Q+QnTdSvo2rnlZR4ICTy38vrRxAJTfnlrYzHT0pN7
+         HjF9CYPlcpALgXIulyDDetOW0kEB333ZNKoM2CkHAD45DgYM3wbRrFtJMtLPkbOxSCMr
+         PTvhEsDNFkJb85AvubASadwZ9QTGOAo+OfMqRX90xcalDxkMPMxVbzyFU4A69Vgzbwqw
+         yGw7WyjHq+bvjL6qohDIf0Wq+/ZR/SnxIzzkKgTjxTFF874AjoT3BELdu+R0xMKlI1ZK
+         D7v66i04zKP3s3LsRUxUq0wUuhpJwUO+Bwwlgui6KosEvgjsqy+rjPs4Z9NQsbIuMqIN
+         9pPA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=sFIrJ1Tj;
-       spf=pass (google.com: best guess record for domain of dvhart@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=dvhart@infradead.org
+       spf=pass (google.com: domain of maier@linux.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=maier@linux.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=sFIrJ1Tj;
-       spf=pass (google.com: best guess record for domain of dvhart@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=dvhart@infradead.org
-Date: Fri, 13 Apr 2018 09:17:55 -0700
-From: Darren Hart <dvhart@infradead.org>
-To: Vadim Pasternak <vadimp@mellanox.com>
-Cc: andy.shevchenko@gmail.com, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	jiri@resnulli.us, michaelsh@mellanox.com, ivecera@redhat.com
-Subject: Re: [PATCH v1 0/7] platform/x86: Mellanox add fixes and new features
-Message-ID: <20180413161755.GB27560@fury>
-References: <1522144927-56512-1-git-send-email-vadimp@mellanox.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1522144927-56512-1-git-send-email-vadimp@mellanox.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+       spf=pass (google.com: domain of maier@linux.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=maier@linux.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+From: Steffen Maier <maier@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, Li Zefan <lizefan@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steffen Maier <maier@linux.ibm.com>
+Subject: [PATCH v2 0/2] tracing/events: block: bring more on a par with blktrace
+Date: Fri, 13 Apr 2018 18:36:20 +0200
+X-Mailer: git-send-email 2.13.5
+X-TM-AS-GCONF: 00
+x-cbid: 18041316-0008-0000-0000-000004EA49D4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041316-0009-0000-0000-00001E7E5897
+Message-Id: <20180413163623.11282-1-maier@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-13_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804130152
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596077324934314192?=
-X-GMAIL-MSGID: =?utf-8?q?1597648440778808741?=
+X-GMAIL-THRID: =?utf-8?q?1597636479596160991?=
+X-GMAIL-MSGID: =?utf-8?q?1597649604336437050?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Mar 27, 2018 at 10:02:00AM +0000, Vadim Pasternak wrote:
-> This patcheset includes:
-> 
-> Document fixes for mlxreg-hotplug driver and mlxreg header file.
-> 
-> Fix for the race condition in mlxreg-hotplug driver.
-> 
-> Adding support for ODM system types.
-> 
-> Activation of Mellanox LED driver from mlx-platform.
-> 
-> Introduction of new mlxreg-io driver.
-> 
-> Activation of mlxreg-io driver from mlx-platform.
+I had the need to understand I/O request processing in detail.
+But I also had the need to enrich block traces with other trace events
+including my own dynamic kprobe events. So I preferred block trace events
+over blktrace to get everything nicely sorted into one ftrace output.
+However, I missed device filtering for (un)plug events and also
+the difference between the two flavors of unplug.
 
-Hi Vadim,
+The first two patches bring block trace events closer to their
+counterpart in blktrace tooling.
 
-As you can see, all the patch names you listed above ^ are automatically
-populated by the tooling below. Please use the message in patch 0/7 to
-provide the reviewer with contextual information about these changes. A
-summary of the series and why its needed is a good start. You want to
-keep specific information to each patch with the patch. Think of this as
-an Introduction to help the reviewer be prepared to review each
-individual patch.
+The last patch is just an RFC. I still kept it in this patch set because
+it is inspired by PATCH 2/2.
 
-This message provides no context, and no introduction, so a reviewer
-will have to figure that out as they go - which is another barrier to
-getting the code reviewed.
+Changes since v1:
+[PATCH v2 1/2]
+Use 0 and 1 instead of false and true for __print_symbolic table.
+Now "trace-cmd report" can decode it. [Steven Rostedt]
 
-Something for next time. OK, on to the review...
+Steffen Maier (3):
+  tracing/events: block: track and print if unplug was explicit or
+    schedule
+  tracing/events: block: dev_t via driver core for plug and unplug
+    events
+  tracing/events: block: also try to get dev_t via driver core for some
+    events
 
-> 
-> Vadim Pasternak (7):
->   platform_data/mlxreg: Document fixes for hotplug device
->   platform/mellanox: mlxreg-hotplug: Document fixes for hotplug private
->     data
->   platform/mellanox: mlxreg-hotplug: add extra cycle for hotplug work
->     queue
->   platform: mellanox: add new ODM system types to mlx-platform
->   platform/x86: mlx-platform: Add LED platform driver activation
->   platform/mellanox: Introduce support for Mellanox register access
->     driver
->   platform/x86: mlx-platform: Add mlxreg-io platform driver activation
-> 
->  drivers/platform/mellanox/Kconfig          |  11 +
->  drivers/platform/mellanox/Makefile         |   1 +
->  drivers/platform/mellanox/mlxreg-hotplug.c |  23 +-
->  drivers/platform/mellanox/mlxreg-io.c      | 221 ++++++++++++++
->  drivers/platform/x86/mlx-platform.c        | 447 +++++++++++++++++++++++++++++
->  include/linux/platform_data/mlxreg.h       |  66 ++++-
->  6 files changed, 765 insertions(+), 4 deletions(-)
->  create mode 100644 drivers/platform/mellanox/mlxreg-io.c
-> 
-> -- 
-> 2.1.4
-> 
-> 
+ include/trace/events/block.h | 33 ++++++++++++++++++++++++++++-----
+ 1 file changed, 28 insertions(+), 5 deletions(-)
 
 -- 
-Darren Hart
-VMware Open Source Technology Center
+2.13.5
