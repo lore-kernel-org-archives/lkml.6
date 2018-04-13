@@ -1,29 +1,30 @@
 Return-Path: <hernan@vanguardiasur.com.ar>
-ARC-Seal: i=1; a=rsa-sha256; t=1523637457; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1523637477; cv=none;
         d=google.com; s=arc-20160816;
-        b=YzEmoERzd596MoD9gYm08RJOB1WwedJVaA437McGO98mzlVsjG3qfcuzsrBnoiJ5ii
-         p6UMJCoIUkjATgYuL7P536QCboEHseJTSTpHdiL6VBdtUijwG/MI+v2h0pRxij93Z/IP
-         bnu7RMAd31JZiA6tTQgTV04qktRsQ8ZgBXnrqFGFks0p6htIB3As8ZxY2372+9Eq1Apu
-         Vc5in2Q8uoYIVElM10hOOd6tUFKj7vupVGS7yCRajjnl2Jcvjwl1XCks6x5aLnZHEPEC
-         vItmnAy13W2lvexnYo5Nz1nP4j/ouWAB1OZAbEuMWdOQa9ul0bWf6hppU1zOkI0UdsML
-         f1wg==
+        b=FhvW6gmh3f0ypjmRGcg2tCL7SR6hbfQ2kqv6mX4T4S3SFTuQ9Ja1JfiF8LuxP5yPHm
+         efJhNGYkuZJqDVum8x97FL50oDpCT4Tp15SpghvhkeZKBMO+fe1qsnQQPQh8EuP1vM4q
+         PBnd62gK2YBJ0AALuM/0903+NKdyebXak34gsMIvVMrwxNVQ234PAlGiQDEQc8Icpj6h
+         V3YSbiEtGhnvqFStimDxAyJRqIs2b2gUfl70dkmM4De6vARLbklfLLKEdShmWUA/j9A4
+         lL22lkdLF3wkjnwphXR8t036l4l+sxljpJHWZzx0XHGLAMIKdUQdBjfWM4o1KtojP4Ka
+         +2vw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:dkim-signature:arc-authentication-results;
-        bh=mrH82JEndP8IlZkjXX5r7VcIOkkdjZGMti8jOuQi3WM=;
-        b=GY9KtNY3Pz0abJ6Y8+ExgMcLbrRclzH57FcQ3CrRZ60Ya4FBFLuD1RHjSMKaoxJPFu
-         yPbewoH1PwN+MH5LitC5bBDUOABUkvNDQR7YekKZhOHTs8+iu/XT2pzvAuWLu6dD4bDW
-         zgiYz6uU6nXMpG4hmAx4Su1+oAvm1580GNe/ZmXh254Rn2UhbCAKZF2gBZnAtoaGAzUv
-         5FooXi48eowZ66RWBAolDe5jdVQcxl8ERPQxDabtby6XbEIkKy9FBvoZypOndPEfejI/
-         A3sWArVeSepTK+6BwGLjxlJqMRTXmKm1nVn5zPDCRaZu1T2n79HmOh0Dt7y7URtQyqnr
-         Mwag==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=AUYcWjSzrPAo1AAFd0fCJjYN3y2sBNkuo6UzBvviTWY=;
+        b=X5U2lbkoqLGciP9wVsW7+Z3FzcipJBZ5KOAOiNR7w+2PcRl5YuAY8L3JYIuGN4N/LQ
+         G7sGbyOFLKWlshn9vKzaDnoE+B8fADB8vBHPIpskgMYN0tm1qX+wFrwcmild0XBWi5VC
+         ZaoYjXO4nEfLymTZ+nOStCTv4Kdbli2ktMCmBD0jUminkfze1qhJkPREQG2ypQQe9alT
+         19SVtHiRCyxv2R64U4W43AGG3t4kfzo2WfDljGvb8xPo+H6tkqPSchQw3SYPzFWTWTPn
+         MBY3Z9utUJZwF+orS7ShSH5eAFBOpWCoqoJncOtg2a3ePMEWHJlRs7rjdh5Rd+/1e7MI
+         NsVw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.s=20150623 header.b=TIykMcQt;
+       dkim=pass header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.s=20150623 header.b=eJn5J1b5;
        spf=pass (google.com: domain of hernan@vanguardiasur.com.ar designates 209.85.220.65 as permitted sender) smtp.mailfrom=hernan@vanguardiasur.com.ar
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.s=20150623 header.b=TIykMcQt;
+       dkim=pass header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.s=20150623 header.b=eJn5J1b5;
        spf=pass (google.com: domain of hernan@vanguardiasur.com.ar designates 209.85.220.65 as permitted sender) smtp.mailfrom=hernan@vanguardiasur.com.ar
-X-Google-Smtp-Source: AIpwx49yRIVh/aAHEBb1qlZ6ZAECFzMdjKtkECiMUtliAsediv7r8swXq+LYu5R5yWELzpkQWuIJoQ==
+X-Google-Smtp-Source: AIpwx48o9zPklx5b4iASPHdOSQaHLWNovWPmheQHXbnC0Y3I/LQnFJCMISBylXQhBCRNVnZVpnMZTQ==
 From: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
 To: jic23@kernel.org,
 	knaack.h@gmx.de,
@@ -34,59 +35,49 @@ To: jic23@kernel.org,
 	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
-Subject: [PATCH v2 00/14] Move ad7746 driver out of staging
-Date: Fri, 13 Apr 2018 13:36:37 -0300
-Message-Id: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
+Subject: [PATCH v2 03/14] staging: iio: ad7746: Fix bound checkings
+Date: Fri, 13 Apr 2018 13:36:40 -0300
+Message-Id: <1523637411-8531-4-git-send-email-hernan@vanguardiasur.com.ar>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
+References: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597649670249077582?=
-X-GMAIL-MSGID: =?utf-8?q?1597649670249077582?=
+X-GMAIL-THRID: =?utf-8?q?1597649691066295032?=
+X-GMAIL-MSGID: =?utf-8?q?1597649691066295032?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Version 2 of the series trying to move ad7746 our of staging.
+Also remove unnecessary parenthesis
 
-Changes in v2: (v1-> https://lkml.org/lkml/2018/3/21/406)
-* Fix some issues pointed out by Jonathan
-* Power down device on remove
-* Add new ABI for the use case
+Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
+---
+ drivers/staging/iio/cdc/ad7746.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Hernán Gonzalez (14):
-  staging: iio: ad7746: Automatically swap values in readings/writings
-  staging: iio: ad7746: Adjust arguments to match open parenthesis
-  staging: iio: ad7746: Fix bound checkings
-  staging: iio: ad7746: Fix multiple line dereference
-  staging: iio: ad7746: Reorder includes alphabetically
-  staging: iio: ad7746: Reorder variable declarations
-  staging: iio: ad7746: Remove unused defines
-  staging: iio: ad7746: Add dt-bindings
-  staging: iio: ad7746: Add remove()
-  staging: iio: ad7746: Add comments
-  staging: iio: ad7746: Add devicetree bindings documentation
-  staging: iio: ad7746: Add ABI documentation
-  Move ad7746 out of staging
-  staging: iio: Remove ad7746 from staging
-
- Documentation/ABI/testing/sysfs-bus-iio-ad7746     |  17 +++
- .../devicetree/bindings/iio/cdc/ad7746.txt         |  34 +++++
- drivers/iio/Kconfig                                |   1 +
- drivers/iio/Makefile                               |   1 +
- drivers/iio/cdc/Kconfig                            |  16 ++
- drivers/iio/cdc/Makefile                           |   5 +
- drivers/{staging => }/iio/cdc/ad7746.c             | 162 ++++++++++++++++-----
- drivers/staging/iio/cdc/Kconfig                    |  10 --
- drivers/staging/iio/cdc/Makefile                   |   1 -
- .../staging => include/linux}/iio/cdc/ad7746.h     |   9 --
- 10 files changed, 201 insertions(+), 55 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-ad7746
- create mode 100644 Documentation/devicetree/bindings/iio/cdc/ad7746.txt
- create mode 100644 drivers/iio/cdc/Kconfig
- create mode 100644 drivers/iio/cdc/Makefile
- rename drivers/{staging => }/iio/cdc/ad7746.c (85%)
- rename {drivers/staging => include/linux}/iio/cdc/ad7746.h (70%)
-
+diff --git a/drivers/staging/iio/cdc/ad7746.c b/drivers/staging/iio/cdc/ad7746.c
+index 516aa93..d793785 100644
+--- a/drivers/staging/iio/cdc/ad7746.c
++++ b/drivers/staging/iio/cdc/ad7746.c
+@@ -458,7 +458,7 @@ static int ad7746_write_raw(struct iio_dev *indio_dev,
+ 		ret = 0;
+ 		break;
+ 	case IIO_CHAN_INFO_CALIBBIAS:
+-		if ((val < 0) | (val > 0xFFFF)) {
++		if (val < 0 || val > 0xFFFF) {
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
+@@ -470,7 +470,7 @@ static int ad7746_write_raw(struct iio_dev *indio_dev,
+ 		ret = 0;
+ 		break;
+ 	case IIO_CHAN_INFO_OFFSET:
+-		if ((val < 0) | (val > 43008000)) { /* 21pF */
++		if (val < 0 || val > 43008000) { /* 21pF */
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
 -- 
 2.7.4
