@@ -1,61 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751335AbeDMEdA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 00:33:00 -0400
-Received: from mx4.wp.pl ([212.77.101.11]:37333 "EHLO mx4.wp.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750824AbeDMEc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 00:32:59 -0400
-Date: Thu, 12 Apr 2018 21:32:49 -0700
-From: Jakub Kicinski <kubakici@wp.pl>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Tal Gilboa <talgi@mellanox.com>, Tariq Toukan <tariqt@mellanox.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        everest-linux-l2@cavium.com, intel-wired-lan@lists.osuosl.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH v5 05/14] PCI: Add pcie_print_link_status() to log link
- speed and whether it's limited
-Message-ID: <20180412213249.06661048@cakuba.netronome.com>
-In-Reply-To: <152244391852.135666.14903825998610307052.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
-        <152244391852.135666.14903825998610307052.stgit@bhelgaas-glaptop.roam.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-WP-MailID: 1857c79c60f285e1999bf1c80990a726
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 000000A [gTNk]                               
+        id S1752182AbeDMFIX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 01:08:23 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:54461 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750885AbeDMFIP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 01:08:15 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w3D56lg4029209
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
+        Emese Revfy <re.emese@gmail.com>, x86@kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 10/30] kconfig: replace $(UNAME_RELEASE) with function call
+Date: Fri, 13 Apr 2018 14:06:19 +0900
+Message-Id: <1523595999-27433-11-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Mar 2018 16:05:18 -0500, Bjorn Helgaas wrote:
-> +	if (bw_avail >= bw_cap)
-> +		pci_info(dev, "%d Mb/s available bandwidth (%s x%d link)\n",
-> +			 bw_cap, PCIE_SPEED2STR(speed_cap), width_cap);
-> +	else
-> +		pci_info(dev, "%d Mb/s available bandwidth, limited by %s x%d link at %s (capable of %d Mb/s with %s x%d link)\n",
-> +			 bw_avail, PCIE_SPEED2STR(speed), width,
-> +			 limiting_dev ? pci_name(limiting_dev) : "<unknown>",
-> +			 bw_cap, PCIE_SPEED2STR(speed_cap), width_cap);
+Now that 'shell' function is supported, this can be self-contained in
+Kconfig.
 
-I was just looking at using this new function to print PCIe BW for a
-NIC, but I'm slightly worried that there is nothing in the message that
-says PCIe...  For a NIC some people may interpret the bandwidth as NIC
-bandwidth:
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
+---
 
-[   39.839989] nfp 0000:04:00.0: Netronome Flow Processor NFP4000/NFP6000 PCIe Card Probe
-[   39.848943] nfp 0000:04:00.0: 63.008 Gb/s available bandwidth (8 GT/s x8 link)
-[   39.857146] nfp 0000:04:00.0: RESERVED BARs: 0.0: General/MSI-X SRAM, 0.1: PCIe XPB/MSI-X PBA, 0.4: Explicit0, 0.5: Explicit1, fre4
+Changes in v3: None
+Changes in v2: None
 
-It's not a 63Gbps NIC...  I'm sorry if this was discussed before and I
-didn't find it.  Would it make sense to add the "PCIe: " prefix to the
-message like bnx2x used to do?  Like:
+ Makefile     | 3 +--
+ init/Kconfig | 4 ++--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-nfp 0000:04:00.0: PCIe: 63.008 Gb/s available bandwidth (8 GT/s x8 link)
-
-Sorry for a very late comment.
+diff --git a/Makefile b/Makefile
+index 5298ad7..ca3e3e8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -284,8 +284,7 @@ include scripts/Kbuild.include
+ # Read KERNELRELEASE from include/config/kernel.release (if it exists)
+ KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
+ KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
+-UNAME_RELEASE := $(shell uname --release)
+-export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION UNAME_RELEASE
++export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION
+ 
+ # SUBARCH tells the usermode build what the underlying arch is.  That is set
+ # first, and if a usermode build is happening, the "ARCH=um" on the command
+diff --git a/init/Kconfig b/init/Kconfig
+index e6dafed5..4b0b636 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -2,9 +2,9 @@ config DEFCONFIG_LIST
+ 	string
+ 	depends on !UML
+ 	option defconfig_list
+-	default "/lib/modules/$(UNAME_RELEASE)/.config"
++	default "/lib/modules/$(shell uname --release)/.config"
+ 	default "/etc/kernel-config"
+-	default "/boot/config-$(UNAME_RELEASE)"
++	default "/boot/config-$(shell uname --release)"
+ 	default ARCH_DEFCONFIG
+ 	default "arch/$(ARCH)/defconfig"
+ 
+-- 
+2.7.4
