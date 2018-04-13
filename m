@@ -1,149 +1,129 @@
-Return-Path: <phil@raspberrypi.org>
-X-Google-Smtp-Source: AIpwx4+1liV2WH35B2jOK0oGEazOG71EGeea+wR7U1xQRaBi0VMNT88Ic9SQ+tyvGRQuPIirkaWa
-ARC-Seal: i=1; a=rsa-sha256; t=1523280377; cv=none;
-        d=google.com; s=arc-20160816;
-        b=nx6nQl3Gv+1wt4Z9SAEXvPE9RYFMNGveHJTxAqlJx7e/8csKI3iTtW+Q1uO8ACz2a2
-         1ODlQuxT1hlnHyf/eAAuOVC19fQobfyyr/1zyql13tG/wAkK6zifrjLeOL2ZqImNUFFC
-         Ez7W24AtqSahf2NRPvRJo354b+BGRWer6Ry/0t7HWkDB3uNdnYQRRCI/6zxHlLpnaRNH
-         lXgzpUSr68L09f2o95gdjYAfxK8VJlRH6btXxK2PcEX2Cw9SS2AkPaJxiqdznicSbbRJ
-         dozrTZ3cmuf0kDqocyXdyrixaA0b2z7CUkMbxAiqEAiEzPmb2wNPTxbZszMtNGgvrVLu
-         XjWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:dkim-signature:arc-authentication-results;
-        bh=ovmJNzEcW+FwEl0EEEQ5bOgEs8MyK2ExSZWR8Bq0R2U=;
-        b=SaYbm5mT1bFIPjQl0fextAPRZmhLSNlOR1uNXvX4Tli5Dd2Tuw7t6LLH7SZfKfNue2
-         S3YjCENeoDhajTsfP3aXGnWg7dK3ZCMhKHM92k6qTZjT1jEx5PzrfPQOQOVtY0IX5htG
-         hTQAKRFCgUdw+w4rZEU07YifpFl9SkV9djybMNpQSY2PpiX/y4a0KoV/LY2ajkjX84Xc
-         dT7ok6Ou8qlJ4qo/s/YCU0cQvwkMylgUaVtEkTLmOhspS65PW+DwoFm93R3uRTEU1Cqm
-         avBg+xDgYj/7kOyRTib7dSxqtCf9j6VKAw4Zs4Y/xHQxsPgkbyRqHWIX1S6QND986K4r
-         KDHw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=fail header.i=@raspberrypi.org header.s=pp header.b=j+cXU8/+;
-       dkim=pass header.i=@raspberrypi-org.20150623.gappssmtp.com header.s=20150623 header.b=qSWnX504;
-       spf=pass (google.com: domain of phil@raspberrypi.org designates 62.209.51.214 as permitted sender) smtp.mailfrom=phil@raspberrypi.org
-Authentication-Results: mx.google.com;
-       dkim=fail header.i=@raspberrypi.org header.s=pp header.b=j+cXU8/+;
-       dkim=pass header.i=@raspberrypi-org.20150623.gappssmtp.com header.s=20150623 header.b=qSWnX504;
-       spf=pass (google.com: domain of phil@raspberrypi.org designates 62.209.51.214 as permitted sender) smtp.mailfrom=phil@raspberrypi.org
-Subject: Re: [PATCH/RFC] soc: bcm2835: Make !RASPBERRYPI_FIRMWARE dummies
- return failure
-To: Stefan Wahren <stefan.wahren@i2se.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, Eric Anholt <eric@anholt.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        bcm-kernel-feedback-list@broadcom.com, Ray Jui <rjui@broadcom.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-rpi-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1523178315-30562-1-git-send-email-geert@linux-m68k.org>
- <2047337098.98106.1523186884813@email.1und1.de>
-From: Phil Elwell <phil@raspberrypi.org>
-Message-ID: <6542f11f-35c0-78ae-30f7-510797105c07@raspberrypi.org>
-Date: Mon, 9 Apr 2018 14:26:16 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <2047337098.98106.1523186884813@email.1und1.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_06:,,
- signatures=0
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-493782-1523655118-3-4608389308332806489
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523655117; b=NlwvICo5CIInhjzOiSZ039tCIfpPe5G8ztlF+hYS6yU+0v50Ge
+    ju3nxtRJ/PLThPDYo9TREv8kxfvMdWRv9wg50V087QV+Y2onkudJUFXOwOqc5yA+
+    8BjWUZfNXEPTMIB6dCS53gGVaJgigrqu6qnyQgFcr82vbJdjpgyNDUaiOYQS/gRX
+    6qgj+/Y0zdOTzVMGruokkIG84hgmWL32PvoNjFb+nDgSk0KTOFg8YQPf/7tw6j6Z
+    9XPaJ9ohEo1bASJspSlW140L3lne/gClp2wx7TmuX8ofVwSZjfqeKkq3jPQfX6GJ
+    QrR3MLUM8hvZ0+dWXYBiTdTReSYzeiBg568Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1523655117; bh=Zv5aNAH0PRA1fFlzI8V6dBk9X8VTnP
+    MWezbQND6J+N8=; b=d0zGYkHkWvRPKfUiGruA/gNbTG87NxjYKU392shIsmM6ab
+    YDm9n1kFEMzwlnUFSF6GxcmwDbDALQ2k8jDpobnp5HS3PPlx85z98rqaimxTCduN
+    VfyvGtSs/tMxW4+ANBuWRStjL4YR+sVT6/hbQXJiNY+9isdLb30uin7mBIspng2T
+    zf8SBzD0TiXIBgyXRohxmWTRcitUNPECSZ34eQaxzFSW6Pc2Fn9XZZN8eMM4rXtW
+    slNepsfN4l337To0h8+Jcvbu4qV9r8IBxG1V+5Z9/up3WGwRvB1kJK5kCYMQzvxE
+    FJWqP6CS58Vqd8JLiNTpL5EDzCGi4spCaXQ5chTQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfDqfkaTOvnuAyu1Sg1y8EKYLKqXof/6jSuybexXec5l7L9QdBNLq0muPoA/gNm+r25VtgPypQGJetXm4uXp7Bq9njeLUAbFeT5YnIf6xFz5bacqjMSJa
+    jWsEa0KydSQuOczajiCkuoa9WzLZ5qYWvs+FA8cupBAA3GlJC70mFwVW1JKEOlq9S4LqWDDehdiOLQJzgxiZuktIbSH4iWqW2SSRJVHXrb/lEF0y/ND7RRKq
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=20KFwNOVAAAA:8
+    a=VwQbUJbxAAAA:8 a=KT1hoV9y9HW_dW_ZMBUA:9 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751111AbeDMVby (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 13 Apr 2018 17:31:54 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51168 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750973AbeDMVby (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 13 Apr 2018 17:31:54 -0400
+From: Lyude Paul <lyude@redhat.com>
+To: nouveau@lists.freedesktop.org
+Cc: stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Martin Peres <martin.peres@free.fr>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/nouveau: Add missing fb SLCG registers for kepler2
+Date: Fri, 13 Apr 2018 17:31:28 -0400
+Message-Id: <20180413213131.9430-1-lyude@redhat.com>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597168233130064314?=
-X-GMAIL-MSGID: =?utf-8?q?1597275245096821219?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 08/04/2018 12:28, Stefan Wahren wrote:
-> Hi Geert,
-> 
-> [add Phil]
-> 
->> Geert Uytterhoeven <geert@linux-m68k.org> hat am 8. April 2018 um 11:05 geschrieben:
->>
->>
->> If CONFIG_RASPBERRYPI_FIRMWARE=n:
->>
->>     drivers/gpio/gpio-raspberrypi-exp.c: In function ‘rpi_exp_gpio_get_polarity’:
->>     drivers/gpio/gpio-raspberrypi-exp.c:71: warning: ‘get.polarity’ is used uninitialized in this function
->>     drivers/gpio/gpio-raspberrypi-exp.c: In function ‘rpi_exp_gpio_get_direction’:
->>     drivers/gpio/gpio-raspberrypi-exp.c:150: warning: ‘get.direction’ is used uninitialized in this function
->>
->> The dummy firmware interface functions return 0, which means success,
->> causing subsequent code to make use of the never initialized output
->> parameter.
-> 
-> i think this is more theoritical, because we need to get rpi_firmware first and in this case it's NULL.
-> 
->>
->> Fix this by making the dummy functions return an error code (-ENOSYS)
->> instead.
-> 
-> Anyway i'm okay with the change.
-> 
->>
->> Note that this assumes the firmware always fills in the requested data
->> in the CONFIG_RASPBERRYPI_FIRMWARE=y case.
-> 
-> Unfortunately i don't know.
+Somehow I didn't manage to notice this the last time I looked at my
+mmiotraces, these seem to be all valid registers.
 
-The firmware overwrites the request code with an error return value. If this appears
-and has an error value of zero (RPI_FIRMWARE_STATUS_SUCCESS) then the firmware has
-written any expected fields.
+Forwarding this to stable, as there's a small chance that not having
+these could cause clockgating to be unstable.
 
-> 
->>
->> Fixes: d45f1a563b92dac7 ("staging: vc04_services: fix up rpi firmware functions")
->> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
->> ---
->> Should get.polarity resp. get.direction be preinitialized instead,
->> like is done for get.state?
->>
->> static int rpi_exp_gpio_get(struct gpio_chip *gc, unsigned int off)
->> {
->>         ...
->>         get.state = 0;          /* storage for returned value */
->>
->>         ret = rpi_firmware_property(gpio->fw, RPI_FIRMWARE_GET_GPIO_STATE,
->>                                          &get, sizeof(get));
->>         ...
->> }
->>
->> This would avoid returning uninitialized data if the firmware did not
->> fill in the requested data.
->> ---
->>  include/soc/bcm2835/raspberrypi-firmware.h | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm2835/raspberrypi-firmware.h
->> index 50df5b28d2c9df6e..8ee8991aa099af3a 100644
->> --- a/include/soc/bcm2835/raspberrypi-firmware.h
->> +++ b/include/soc/bcm2835/raspberrypi-firmware.h
->> @@ -143,13 +143,13 @@ struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node);
->>  static inline int rpi_firmware_property(struct rpi_firmware *fw, u32 tag,
->>  					void *data, size_t len)
->>  {
->> -	return 0;
->> +	return -ENOSYS;
->>  }
->>  
->>  static inline int rpi_firmware_property_list(struct rpi_firmware *fw,
->>  					     void *data, size_t tag_size)
->>  {
->> -	return 0;
->> +	return -ENOSYS;
->>  }
->>  
->>  static inline struct rpi_firmware *rpi_firmware_get(struct device_node *firmware_node)
->> -- 
->> 2.7.4
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Fixes: a0f79082bd174 ("drm/nouveau: Add support for SLCG for Kepler2")
+Cc: stable@vger.kernel.org
+---
+ drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk110.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk110.c b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk110.c
+index 0695e5dd360e..0d9ad9fa7774 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk110.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/fb/gk110.c
+@@ -32,6 +32,18 @@
+  * PGRAPH registers for clockgating
+  *******************************************************************************
+  */
++static const struct nvkm_therm_clkgate_init
++gk110_fb_clkgate_slcg_init_bcast_0[] = {
++	{ 0x10f280, 1, 0x00000000 },
++	{}
++};
++
++static const struct nvkm_therm_clkgate_init
++gk110_fb_clkgate_slcg_init_pxbar_0[] = {
++	{ 0x13cafc, 1, 0x0000007e },
++	{ 0x13cbe4, 1, 0x1ffffffe },
++	{}
++};
+ 
+ static const struct nvkm_therm_clkgate_init
+ gk110_fb_clkgate_blcg_init_unk_0[] = {
+@@ -45,6 +57,8 @@ gk110_fb_clkgate_blcg_init_unk_0[] = {
+ 
+ static const struct nvkm_therm_clkgate_pack
+ gk110_fb_clkgate_pack[] = {
++	{ gk110_fb_clkgate_slcg_init_bcast_0 },
++	{ gk110_fb_clkgate_slcg_init_pxbar_0 },
+ 	{ gk110_fb_clkgate_blcg_init_unk_0 },
+ 	{ gk104_fb_clkgate_blcg_init_vm_0 },
+ 	{ gk104_fb_clkgate_blcg_init_main_0 },
+-- 
+2.14.3
