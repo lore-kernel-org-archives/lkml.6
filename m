@@ -1,96 +1,156 @@
-Return-Path: <kernel-hardening-return-12971-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx48BiS8utOpachMgLJqn/sL2FSalre2DsvH+K2bnOWs7c3OsNucMPcK3SZgX+lP3CiWFHx4V
-ARC-Seal: i=1; a=rsa-sha256; t=1523429646; cv=none;
-        d=google.com; s=arc-20160816;
-        b=cAc1X4IF3rd/ztoRst4ZWbyR8WFgbmcJg7voDdFCmRInF6lw1/Ukrmbw/EFVqdMHje
-         h0KFuqqWHpf3gB6bkS/QEQPxqdulA2nar51yN8cBNKS5k+/i0aVM/TjexdmJ/Wd+7H7s
-         uK39UOnTmfgnlgHJIp5CSGN8jvzx37P8vNO4ikd8yE6shDSW6tiyR3hhkxzTtXfzDiWy
-         UT7jXHIR/S7tZxbyU/C9HDWPLR0IMslMB9cnD1u97xJnsOJiGZ/bSdd+FQ2WFHj0ug5d
-         mbFzZG+2VUBJaS6Y4+ZZ07vk5y7oeZcWS57J3BHfvuacLDc6yEc3+S6ctDDQevssF6r9
-         CMjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:delivered-to:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=27h2DHNjsfcWTToDxWc87ZOYS4/Vyvdt21ZJWKTl/1s=;
-        b=CyT5m2BHO5kkyqYQZ9ATrQuZHyOK9zFZ7qQsJ2+Ytgiqf8hixvz0sr5ZPXv29XTETg
-         tmatGRM6l8HJfpI1i+cOXfC4F57+4B3XRLQr9vvP56HWySZQz0iz2QXluTwCEbC7jdBQ
-         0iTQQXSyf3789sb6Gw8Uzzh2BVkGhQzsyKAgK24AZiLOywY/zA/c4Tmyz8LMUMIGtzds
-         zHXqQZgkevH5s3RcEET+EGwBSe3CLTowFdO2i/add9mmL0YZly6tErdUh4JW20A2No6a
-         iDzy3WpZLKJpbwoK3ZtKRl+BPG5aaRVdzJ7y/nalxwDNdJnXP5PzcW5c7XhNMPJtcEYI
-         1TlA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@rasmusvillemoes.dk header.s=google header.b=jTLLc4cF;
-       spf=pass (google.com: domain of kernel-hardening-return-12971-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12971-gregkh=linuxfoundation.org@lists.openwall.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@rasmusvillemoes.dk header.s=google header.b=jTLLc4cF;
-       spf=pass (google.com: domain of kernel-hardening-return-12971-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12971-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2235763-1523578581-2-13731572092671057962
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, DRUGS_MUSCLE 0.164, FREEMAIL_FORGED_FROMDOMAIN 0.25,
+  FREEMAIL_FROM 0.001, HEADER_FROM_DIFFERENT_DOMAINS 0.25,
+  MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001,
+  LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523578580; b=qweAhZR8OA3/T8BKDE1LVNf+dpB8dOKgjW4rpbARwu5aIB52ok
+    KnKCuSDF7o5L3rWIA1crJyoltA1Kfa1uxtKAXPpk/Q47Dz2AKGcaHKK77vJeo87P
+    0FedaUg+/jOL6lm2nklketBRiwMil6Kt0mrgT/uoP3tcs/h6qCDGNEQYLm7/NNsm
+    /IHSLo0EXKS3YA8h2pYxSZhV2DLmNrEW0hbBiwSenPqqM9F49QXXoCnAFeFCHG4F
+    spqV9hkh9+IADYz/P3zqOtB+GEy99tRNzpQjy8RE9VOmErcAxD+VaketILAnx1TG
+    hKkU3CLAPwp68pG7dprJZOZgz/mWUVPxAKdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1523578580; bh=jrZyo
+    Al+QQnFIP1a2SykUWYzlBeb52ACDyQf1hVOcgs=; b=Wb6GrUts4UvUBYBtiqiLP
+    zg6Tf//pMX6JbGk/X5tRQnZCCED6LA/heYiY1xjlfg34TRPlREBwPPM6rz4Kawfj
+    LMXQc4V/fY2GGU4H7DYTHWzsrhJn8k8vAC0K4vR2aJeWYbD6H5s+RDpFBjpCVs6q
+    QlcLg2HxcbbY5Ze6QTosh7R08LEx2tfaFF0WrwTalUChKxHqLEBBeQ074PWVq9UC
+    FJuCvhe8woARCOfCCZerdbrqIwKY6hhNYV+NAuKm6pw5ewmQ54gZXAUztRG/VQQJ
+    NwoBHRxLas3hIdsnoHJeoEp/4gOcnRdWHy9FefVV6jjSNHRblTv4iB0bxgK4IQMP
+    A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=tTRkexnP x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=q2ygJPr1;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=tTRkexnP x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=q2ygJPr1;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfIm4mfUAt8QMb8YRkpxhBL5y6PuLVDbRPzC5g1SkXNTCP2jB557xeJmeOuEpQSLl36wu4FUPfs/Al2NgknxUXznKyuEmtcAfD4c32fNleTtUUp6Cfl0H
+    6KgGxdd6JllJJJL1uJlWyj4yC3xopSq1eQNAb+EB4Uhqg4MPG+TC1EYPhswQVgdSKQ8r51H1ZVRCce88UV7OUHlCkgaFJigchEQ3duU3fHPXAzZCwYUTqWcM
+    tLJ5bnTiHrUG/WuUFvnCYg==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=Y44SiAWf95kA:10 a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
+    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=oV_6Fk2uNbn53Y0RMnsA:9 a=CjuIK1q_8ugA:10
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AIpwx4/WXbXESd5h8vNyQ2W8pyUpYF8471IgJjx17n7g3v1+2Pezn8cxvKmtynL5gk9wX+lERbdJnw==
+Date: Thu, 12 Apr 2018 21:16:02 -0300
+From: Renato Soma <renatoys08@gmail.com>
+To: thomas.petazzoni@free-electrons.com
+Subject: [PATCH] staging fbtft: Fixed lines exceeding columns limit
+Message-ID: <20180413001602.GA18920@rys-Inspiron-5420>
 MIME-Version: 1.0
-References: <20180411010352.17929-1-labbott@redhat.com>
-In-Reply-To: <20180411010352.17929-1-labbott@redhat.com>
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Date: Wed, 11 Apr 2018 03:44:33 +0000
-Message-ID: <CAKwiHFj2Ram90uPVhX+2PvfgcNwcTMfg+M2E3tCOgi4eGyJ6Sg@mail.gmail.com>
-Subject: Re: [PATCHv4] gpio: Remove VLA from gpiolib
-To: Laura Abbott <labbott@redhat.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Kees Cook <keescook@chromium.org>,
-	Lukas Wunner <lukas@wunner.de>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-hardening@lists.openwall.com
-Content-Type: multipart/alternative; boundary="000000000000aabd4405698a7508"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+ lkcamp@lists.libreplanetbr.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597409764349726473?=
-X-GMAIL-MSGID: =?utf-8?q?1597431765903354589?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---000000000000aabd4405698a7508
-Content-Type: text/plain; charset="UTF-8"
+Fix checkpatch.pl warnings of line sizes exceeding 80 columns.
+Break lines in order to reduce the instructions lengths to less than 80 columns.
 
-On Wed, Apr 11, 2018, 03:04 Laura Abbott <labbott@redhat.com> wrote:
+Signed-off-by: Renato Soma <renatoys08@gmail.com>
+---
+ drivers/staging/fbtft/fbtft-bus.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
->                 ret = gpio_chip_get_multiple(chip, mask, bits);
-> -               if (ret)
-> +               if (ret) {
-> +                       /*
-> +                        * Go against style and intentionally do the check
-> for
-> +                        * performance reasons
-> +                        */
-> +                       if (mask != fastpath)
-> +                               kfree(mask);
->
+diff --git a/drivers/staging/fbtft/fbtft-bus.c b/drivers/staging/fbtft/fbtft-bus.c
+index a263bce2..57742d7 100644
+--- a/drivers/staging/fbtft/fbtft-bus.c
++++ b/drivers/staging/fbtft/fbtft-bus.c
+@@ -22,10 +22,13 @@ void func(struct fbtft_par *par, int len, ...)                                \
+ 	if (unlikely(par->debug & DEBUG_WRITE_REGISTER)) {                    \
+ 		va_start(args, len);                                          \
+ 		for (i = 0; i < len; i++) {                                   \
+-			buf[i] = modifier((data_type)va_arg(args, unsigned int)); \
++			buf[i] = modifier((data_type)va_arg(args,             \
++						unsigned int));               \
+ 		}                                                             \
+ 		va_end(args);                                                 \
+-		fbtft_par_dbg_hex(DEBUG_WRITE_REGISTER, par, par->info->device, buffer_type, buf, len, "%s: ", __func__); \
++		fbtft_par_dbg_hex(DEBUG_WRITE_REGISTER, par,                  \
++				par->info->device, buffer_type,               \
++				buf, len, "%s: ", __func__);                  \
+ 	}                                                                     \
+ 									      \
+ 	va_start(args, len);                                                  \
+@@ -37,7 +40,8 @@ void func(struct fbtft_par *par, int len, ...)                                \
+ 	}                                                                     \
+ 									      \
+ 	*buf = modifier((data_type)va_arg(args, unsigned int));               \
+-	ret = fbtft_write_buf_dc(par, par->buf, sizeof(data_type) + offset, 0); \
++	ret = fbtft_write_buf_dc(par, par->buf,                               \
++			sizeof(data_type) + offset, 0);                       \
+ 	if (ret < 0)							      \
+ 		goto out;						      \
+ 	len--;                                                                \
+@@ -48,7 +52,8 @@ void func(struct fbtft_par *par, int len, ...)                                \
+ 	if (len) {                                                            \
+ 		i = len;                                                      \
+ 		while (i--)						      \
+-			*buf++ = modifier((data_type)va_arg(args, unsigned int)); \
++			*buf++ = modifier((data_type)va_arg(args,             \
++						unsigned int));               \
+ 		fbtft_write_buf_dc(par, par->buf,			      \
+ 				   len * (sizeof(data_type) + offset), 1);    \
+ 	}                                                                     \
+-- 
+2.7.4
 
-Sorry, but that comment is now both unnecessary and actively wrong. You
-can't kfree a stack array, so the check is  required, hence certainly not
-against style :-)
-
---000000000000aabd4405698a7508
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-PGRpdiBkaXI9ImF1dG8iPjxkaXY+PGRpdiBjbGFzcz0iZ21haWxfcXVvdGUiPjxkaXYgZGlyPSJs
-dHIiPk9uIFdlZCwgQXByIDExLCAyMDE4LCAwMzowNCBMYXVyYSBBYmJvdHQgJmx0OzxhIGhyZWY9
-Im1haWx0bzpsYWJib3R0QHJlZGhhdC5jb20iPmxhYmJvdHRAcmVkaGF0LmNvbTwvYT4mZ3Q7IHdy
-b3RlOjwvZGl2PjxibG9ja3F1b3RlIGNsYXNzPSJnbWFpbF9xdW90ZSIgc3R5bGU9Im1hcmdpbjow
-IDAgMCAuOGV4O2JvcmRlci1sZWZ0OjFweCAjY2NjIHNvbGlkO3BhZGRpbmctbGVmdDoxZXgiPg0K
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcmV0ID0gZ3Bpb19jaGlwX2dldF9tdWx0aXBsZShjaGlw
-LCBtYXNrLCBiaXRzKTs8YnI+DQotwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBpZiAocmV0KTxicj4N
-CivCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGlmIChyZXQpIHs8YnI+DQorwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAvKjxicj4NCivCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCAqIEdvIGFnYWluc3Qgc3R5bGUgYW5kIGludGVudGlvbmFsbHkgZG8gdGhlIGNoZWNr
-IGZvcjxicj4NCivCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAqIHBlcmZvcm1h
-bmNlIHJlYXNvbnM8YnI+DQorwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgKi88
-YnI+DQorwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBpZiAobWFzayAhPSBmYXN0
-cGF0aCk8YnI+DQorwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqBrZnJlZShtYXNrKTs8YnI+PC9ibG9ja3F1b3RlPjwvZGl2PjwvZGl2PjxkaXYgZGlyPSJhdXRv
-Ij48YnI+PC9kaXY+PGRpdiBkaXI9ImF1dG8iPlNvcnJ5LCBidXQgdGhhdCBjb21tZW50IGlzIG5v
-dyBib3RoIHVubmVjZXNzYXJ5IGFuZCBhY3RpdmVseSB3cm9uZy4gWW91IGNhbiYjMzk7dCBrZnJl
-ZSBhIHN0YWNrIGFycmF5LCBzbyB0aGUgY2hlY2sgaXPCoCByZXF1aXJlZCwgaGVuY2UgY2VydGFp
-bmx5IG5vdCBhZ2FpbnN0IHN0eWxlIDotKTwvZGl2PjwvZGl2Pg0K
---000000000000aabd4405698a7508--
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
