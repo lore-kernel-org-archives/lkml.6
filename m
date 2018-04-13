@@ -1,87 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754175AbeDMJrI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 05:47:08 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:47607 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753254AbeDMJrG (ORCPT
+        id S1754205AbeDMJsS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 05:48:18 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:36586 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753238AbeDMJsR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 05:47:06 -0400
-Subject: Re: [PATCH v2 1/2] dmaengine: stm32-mdma: align TLEN and buffer
- length on burst
-To: Robin Murphy <robin.murphy@arm.com>, Vinod Koul <vinod.koul@intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "M'boumba Cedric Madianga" <cedric.madianga@gmail.com>,
-        <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1523457879-9869-1-git-send-email-pierre-yves.mordret@st.com>
- <1523457879-9869-2-git-send-email-pierre-yves.mordret@st.com>
- <9a2a267c-2b0b-0d6a-c762-47e7d37f84ea@arm.com>
-From: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
-Message-ID: <22bd0af7-9820-57c5-9215-8185839d7d27@st.com>
-Date: Fri, 13 Apr 2018 11:45:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Fri, 13 Apr 2018 05:48:17 -0400
+X-Google-Smtp-Source: AIpwx4/BwHIBdUgH7NXZhXxbs7hk6jl9Bni1dOoO5LS0dRafhSkTXpIb+ECjOfPDR3J+mxloR91CXQ==
+To: x86@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com
+From: Xiaoming Gao <gxm.linux.kernel@gmail.com>
+Subject: [PATCH] x86/tsc: fix 64bit divisor be truncated in calc_hpet_ref
+Message-ID: <38894564-4fc9-b8ec-353f-de702839e44e@gmail.com>
+Date: Fri, 13 Apr 2018 17:48:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <9a2a267c-2b0b-0d6a-c762-47e7d37f84ea@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-13_05:,,
- signatures=0
+Content-Type: multipart/mixed;
+ boundary="------------B00133F40DFE9772D6ACE9BC"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin
+This is a multi-part message in MIME format.
+--------------B00133F40DFE9772D6ACE9BC
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 04/11/2018 05:14 PM, Robin Murphy wrote:
-> On 11/04/18 15:44, Pierre-Yves MORDRET wrote:
->> Both buffer Transfer Length (TLEN if any) and transfer size have to be
->> aligned on burst size (burst beats*bus width).
->>
->> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
->> ---
->>    Version history:
->>      v1:
->>         * Initial
->>      v2:
->> ---
->> ---
->>   drivers/dma/stm32-mdma.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/dma/stm32-mdma.c b/drivers/dma/stm32-mdma.c
->> index daa1602..fbcffa2 100644
->> --- a/drivers/dma/stm32-mdma.c
->> +++ b/drivers/dma/stm32-mdma.c
->> @@ -413,7 +413,7 @@ static u32 stm32_mdma_get_best_burst(u32 buf_len, u32 tlen, u32 max_burst,
->>   	u32 best_burst = max_burst;
->>   	u32 burst_len = best_burst * width;
->>   
->> -	while ((burst_len > 0) && (tlen % burst_len)) {
->> +	while ((burst_len > 0) && (((tlen | buf_len) & (burst_len - 1)) != 0)) {
->>   		best_burst = best_burst >> 1;
->>   		burst_len = best_burst * width;
->>   	}
-> 
-> FWIW, doesn't that whole loop come down to just:
-> 
-> 	burst_len = min(ffs(tlen | buf_len), max_burst * width);
+ From ba3d2fb699c4d8ee61b05d7e70be48b9c4e22baf Mon Sep 17 00:00:00 2001
+From: Xiaoming Gao <newtongao@tencent.com>
+Date: Fri, 13 Apr 2018 17:05:18 +0800
+Subject: [PATCH] x86/tsc: fix 64bit divisor be truncated in calc_hpet_ref
 
-No sure it ends as expected. or I miss something or don't understand this statement
-I tried with "relevant value" : i.e. best_burst = 32, Tlen=128(default) and
-buf_len = 64, width= 4. This statements gets me something wrong output => 7
-instead of 16 * 4.
-I doubt :)
+the HPET frequency got larger on intel skylake, thus could cause tmp to
+exceed 32bits.
+do_div will truncate 64bits tmp to 32bits, so the frequency calced via
+HPET will be wrong, use div64_u64 can fix it.
 
-> 
-> ?
-> 
-> Robin.
-> 
+Signed-off-by: Xiaoming Gao <newtongao@tencent.com>
+---
+  arch/x86/kernel/tsc.c |    2 +-
+  1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 9714a7a..8700269 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -160,7 +160,7 @@ static unsigned long calc_hpet_ref(u64 deltatsc, u64 
+hpet1, u64 hpet2)
+      hpet2 -= hpet1;
+      tmp = ((u64)hpet2 * hpet_readl(HPET_PERIOD));
+      do_div(tmp, 1000000);
+-    do_div(deltatsc, tmp);
++    deltatsc = div64_u64(deltatsc, tmp);
+
+      return (unsigned long) deltatsc;
+  }
+-- 
+1.7.1
+
+
+
+--------------B00133F40DFE9772D6ACE9BC
+Content-Type: text/plain; charset=UTF-8;
+ name="0001-x86-tsc-fix-64bit-divisor-be-truncated-in-calc_hpet_.patch"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename*0="0001-x86-tsc-fix-64bit-divisor-be-truncated-in-calc_hpet_.pa";
+ filename*1="tch"
+
+RnJvbSBiYTNkMmZiNjk5YzRkOGVlNjFiMDVkN2U3MGJlNDhiOWM0ZTIyYmFmIE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBYaWFvbWluZyBHYW8gPG5ld3Rvbmdhb0B0ZW5jZW50
+LmNvbT4KRGF0ZTogRnJpLCAxMyBBcHIgMjAxOCAxNzowNToxOCArMDgwMApTdWJqZWN0OiBb
+UEFUQ0hdIHg4Ni90c2M6IGZpeCA2NGJpdCBkaXZpc29yIGJlIHRydW5jYXRlZCBpbiBjYWxj
+X2hwZXRfcmVmCgp0aGUgSFBFVCBmcmVxdWVuY3kgZ290IGxhcmdlciBvbiBpbnRlbCBza3ls
+YWtlLCB0aHVzIGNvdWxkIGNhdXNlIHRtcCB0bwpleGNlZWQgMzJiaXRzLgpkb19kaXYgd2ls
+bCB0cnVuY2F0ZSA2NGJpdHMgdG1wIHRvIDMyYml0cywgc28gdGhlIGZyZXF1ZW5jeSBjYWxj
+ZWQgdmlhCkhQRVQgd2lsbCBiZSB3cm9uZywgdXNlIGRpdjY0X3U2NCBjYW4gZml4IGl0LgoK
+U2lnbmVkLW9mZi1ieTogWGlhb21pbmcgR2FvIDxuZXd0b25nYW9AdGVuY2VudC5jb20+Ci0t
+LQogYXJjaC94ODYva2VybmVsL3RzYy5jIHwgICAgMiArLQogMSBmaWxlcyBjaGFuZ2VkLCAx
+IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC94ODYv
+a2VybmVsL3RzYy5jIGIvYXJjaC94ODYva2VybmVsL3RzYy5jCmluZGV4IDk3MTRhN2EuLjg3
+MDAyNjkgMTAwNjQ0Ci0tLSBhL2FyY2gveDg2L2tlcm5lbC90c2MuYworKysgYi9hcmNoL3g4
+Ni9rZXJuZWwvdHNjLmMKQEAgLTE2MCw3ICsxNjAsNyBAQCBzdGF0aWMgdW5zaWduZWQgbG9u
+ZyBjYWxjX2hwZXRfcmVmKHU2NCBkZWx0YXRzYywgdTY0IGhwZXQxLCB1NjQgaHBldDIpCiAJ
+aHBldDIgLT0gaHBldDE7CiAJdG1wID0gKCh1NjQpaHBldDIgKiBocGV0X3JlYWRsKEhQRVRf
+UEVSSU9EKSk7CiAJZG9fZGl2KHRtcCwgMTAwMDAwMCk7Ci0JZG9fZGl2KGRlbHRhdHNjLCB0
+bXApOworCWRlbHRhdHNjID0gZGl2NjRfdTY0KGRlbHRhdHNjLCB0bXApOwogCiAJcmV0dXJu
+ICh1bnNpZ25lZCBsb25nKSBkZWx0YXRzYzsKIH0KLS0gCjEuNy4xCgo=
+--------------B00133F40DFE9772D6ACE9BC--
