@@ -1,118 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752245AbeDMQaR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 12:30:17 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:53265 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750837AbeDMQaP (ORCPT
+        id S1752328AbeDMQdV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 12:33:21 -0400
+Received: from mail-io0-f170.google.com ([209.85.223.170]:34308 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751041AbeDMQdT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 12:30:15 -0400
-X-Originating-IP: 2.224.242.101
-Date: Fri, 13 Apr 2018 18:30:09 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, robin.murphy@arm.com,
-        dalias@libc.org, ysato@users.sourceforge.jp, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org
-Subject: Re: [PATCH] base: dma-mapping: Postpone cpu addr translation on
- mmap()
-Message-ID: <20180413163009.GE6666@w540>
-References: <1523293148-18726-1-git-send-email-jacopo+renesas@jmondi.org>
- <20180409175251.GA5426@infradead.org>
- <20180410075752.GB20945@w540>
+        Fri, 13 Apr 2018 12:33:19 -0400
+X-Google-Smtp-Source: AIpwx4+Y3c+Osv4BmC0ByHEHRoI5Y7rXEqADqtp3ul9GN7RQOtRBivEazncJrBeUC09pC7+DbnFN0gA4Rl/N07oxz/w=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ZRyEpB+iJ+qUx0kp"
-Content-Disposition: inline
-In-Reply-To: <20180410075752.GB20945@w540>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180413094211.GN16141@n2100.armlinux.org.uk>
+References: <20180409152253.GD10489@altlinux.org> <20180412013435.GA21219@altlinux.org>
+ <20180412095811.GC16141@n2100.armlinux.org.uk> <20180412110314.GA28070@altlinux.org>
+ <20180412121949.GD16141@n2100.armlinux.org.uk> <20180412124928.GA29458@altlinux.org>
+ <20180412131404.GE16141@n2100.armlinux.org.uk> <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
+ <20180412172051.GK16141@n2100.armlinux.org.uk> <CA+55aFwjZqd8J0=veki1g+quQg8amEG4NnMe-h7HFksn=F=x_Q@mail.gmail.com>
+ <20180413094211.GN16141@n2100.armlinux.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 13 Apr 2018 09:33:17 -0700
+X-Google-Sender-Auth: 2MKSXjfQiO6udNUqnPslwBNHHFo
+Message-ID: <CA+55aFwoThxqUeAZSsMhf--ODyhGkmOENH5R6=4+CuaopFx9eA@mail.gmail.com>
+Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
+ kill() returns wrong values in si_pid and si_uid
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/mixed; boundary="001a114a4cf2f881360569bd6d69"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--001a114a4cf2f881360569bd6d69
+Content-Type: text/plain; charset="UTF-8"
 
---ZRyEpB+iJ+qUx0kp
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Hello again,
-
-On Tue, Apr 10, 2018 at 09:57:52AM +0200, jacopo mondi wrote:
-> Hi Christoph,
+On Fri, Apr 13, 2018 at 2:42 AM, Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
 >
-> On Mon, Apr 09, 2018 at 10:52:51AM -0700, Christoph Hellwig wrote:
-> > On Mon, Apr 09, 2018 at 06:59:08PM +0200, Jacopo Mondi wrote:
-> > > I'm still a bit puzzled on what happens if dma_mmap_from_dev_coherent() fails.
-> > > Does a dma_mmap_from_dev_coherent() failure guarantee anyhow that the
-> > > successive virt_to_page() isn't problematic as it is today?
-> > > Or is it the
-> > >  	if (off < count && user_count <= (count - off))
-> > > check that makes the translation safe?
-> >
-> > It doesn't.  I think one major issue is that we should not simply fall
-> > to dma_common_mmap if no method is required, but need every instance of
-> > dma_map_ops to explicitly opt into an mmap method that is known to work.
->
-> I see.. this patch thus just postpones the problem...
->
-> >
-> > >  #ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
-> > >  	unsigned long user_count = vma_pages(vma);
-> > >  	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> > > -	unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
-> > >  	unsigned long off = vma->vm_pgoff;
-> > > +	unsigned long pfn;
-> > >
-> > >  	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-> > >
-> > > @@ -235,6 +235,7 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
-> > >  		return ret;
-> > >
-> > >  	if (off < count && user_count <= (count - off)) {
-> > > +		pfn = page_to_pfn(virt_to_page(cpu_addr));
-> > >  		ret = remap_pfn_range(vma, vma->vm_start,
-> > >  				      pfn + off,
-> > >  				      user_count << PAGE_SHIFT,
-> >
-> > Why not:
-> >
-> > 		ret = remap_pfn_range(vma, vma->vm_start,
-> > 				page_to_pfn(virt_to_page(cpu_addr)) + off,
-> >
-> > and save the temp variable?
->
-> Sure, it's better... Should I send a v2 or considering your above
-> comment this patch is just a mitigation and should be ditched in
-> favour of a proper solution (which requires a much more considerable amount
-> of work though)?
+> Yes, it does solve the problem at hand with strace - the exact patch I
+> tested against 4.16 is below.
 
-Don't want to be insistent, but I didn't get from your reply if a v2
-is welcome or not :)
+Ok, good.
 
-Thanks
-  j
+> However, FPE_FLTUNK is not defined in older kernels, so while we can
+> fix it this way for the current merge window, that doesn't help 4.16.
 
---ZRyEpB+iJ+qUx0kp
-Content-Type: application/pgp-signature; name="signature.asc"
+I wonder if we should even bother with FPE_FLTUNK.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+I suspect we might as well use FPE_FLTINV, I suspect, and not have
+this complexity at all. That case is not worth worrying about, since
+it's a "this shouldn't happen anyway" and the *real* reason will be in
+the kernel logs due to vfs_panic().
 
-iQIcBAEBAgAGBQJa0NsRAAoJEHI0Bo8WoVY8GF0QAKn83Ua0fVq/WitRlPQoYE74
-Re1T8GJjmZXt9DjEnbJtpUye+lQzEQn10NyOGGHX6OMwHI3AnZ2C5QNUZzvdJ/+7
-RPHml+RV4pzBW9/nVz7iIqnutjdCYI6qzn+8nfedLlUPvaSx/kxFPhLMzpOJFzkS
-BHFqJF8XE2jI7BGMwOFArbfi/VQIcRWItQgyxUQ3wx7k6cnReB5CUBJ1BnvQW6Pq
-a1ZI1mcmHz/CYwHlzVRPRzPDjWnIzimb1qeFIg0SSqVjSb3N+gsC5D2y/UeAxmfW
-NGQ/JcP1Rmrp6oaNCg+TWFVQERtPJcS1MxXdgfmbTlnqcfTFjqIcTYCtR7G+GjFM
-JTUPZA8sjQED4qQYDxzulfa83MsBrJFb8EdiP6d+9So8+nhY0PiK8EIw1QHevP+O
-8pcqB2WIPn6Tg9Wzot2XAxSiXarZ4YYQSck0Zt0o7tKzFO7mmunbyaSmz6A5KVcV
-uLWemrQcKpyTCp3+NUvGpTM1gjmbXaZjtqVjTTznu7lc0smMmTAxHLCq/Bt12xIk
-abnFAz+HQ6qjRnDQsYc1D8tsoXgbzOf7HZrQA46TPIbzBa19HqNSsyUz+k0yTLdc
-PNjTxN2JGvUZIZtsi0SET4itmnyBsgJjZjibVhGrRnv2mli+ubvnnpHfdyFWSILA
-AB1G1Nw8H2wQlCrVZLEy
-=BgWl
------END PGP SIGNATURE-----
+So it's not like this is something that the user should ever care
+about the si_code about.
 
---ZRyEpB+iJ+qUx0kp--
+> Given that the path we're talking about is unlikely to happen (as
+> mentioned in my second paragraph) I still think reverting Eric's patch
+> is the right way forward for older kernels.
+
+I'd much rather get rid of that FPE_FIXME, and leave that whole mess behind.
+
+So the attached patch seems simple and should work with 4.16 too.
+
+Let's not leave this as some kind of nasty maintenance issue, and just
+go for simple and stupid.
+
+Hmm?
+
+                Linus
+
+--001a114a4cf2f881360569bd6d69
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_jfy68q9b0
+
+IGFyY2gvYXJtL2luY2x1ZGUvdWFwaS9hc20vc2lnaW5mby5oIHwgMTMgLS0tLS0tLS0tLS0tLQog
+YXJjaC9hcm0vdmZwL3ZmcG1vZHVsZS5jICAgICAgICAgICAgfCAgMiArLQogMiBmaWxlcyBjaGFu
+Z2VkLCAxIGluc2VydGlvbigrKSwgMTQgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC9h
+cm0vaW5jbHVkZS91YXBpL2FzbS9zaWdpbmZvLmggYi9hcmNoL2FybS9pbmNsdWRlL3VhcGkvYXNt
+L3NpZ2luZm8uaApkZWxldGVkIGZpbGUgbW9kZSAxMDA2NDQKaW5kZXggZDA1MTM4ODBiZTIxLi4w
+MDAwMDAwMDAwMDAKLS0tIGEvYXJjaC9hcm0vaW5jbHVkZS91YXBpL2FzbS9zaWdpbmZvLmgKKysr
+IC9kZXYvbnVsbApAQCAtMSwxMyArMCwwIEBACi0jaWZuZGVmIF9fQVNNX1NJR0lORk9fSAotI2Rl
+ZmluZSBfX0FTTV9TSUdJTkZPX0gKLQotI2luY2x1ZGUgPGFzbS1nZW5lcmljL3NpZ2luZm8uaD4K
+LQotLyoKLSAqIFNJR0ZQRSBzaV9jb2RlcwotICovCi0jaWZkZWYgX19LRVJORUxfXwotI2RlZmlu
+ZSBGUEVfRklYTUUJMAkvKiBCcm9rZW4gZHVwIG9mIFNJX1VTRVIgKi8KLSNlbmRpZiAvKiBfX0tF
+Uk5FTF9fICovCi0KLSNlbmRpZgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vdmZwL3ZmcG1vZHVsZS5j
+IGIvYXJjaC9hcm0vdmZwL3ZmcG1vZHVsZS5jCmluZGV4IDRjMzc1ZTExYWU5NS4uYWY0ZWUyY2Vm
+MmY5IDEwMDY0NAotLS0gYS9hcmNoL2FybS92ZnAvdmZwbW9kdWxlLmMKKysrIGIvYXJjaC9hcm0v
+dmZwL3ZmcG1vZHVsZS5jCkBAIC0yNTcsNyArMjU3LDcgQEAgc3RhdGljIHZvaWQgdmZwX3JhaXNl
+X2V4Y2VwdGlvbnModTMyIGV4Y2VwdGlvbnMsIHUzMiBpbnN0LCB1MzIgZnBzY3IsIHN0cnVjdCBw
+dF8KIAogCWlmIChleGNlcHRpb25zID09IFZGUF9FWENFUFRJT05fRVJST1IpIHsKIAkJdmZwX3Bh
+bmljKCJ1bmhhbmRsZWQgYm91bmNlIiwgaW5zdCk7Ci0JCXZmcF9yYWlzZV9zaWdmcGUoRlBFX0ZJ
+WE1FLCByZWdzKTsKKwkJdmZwX3JhaXNlX3NpZ2ZwZShGUEVfRkxUSU5WLCByZWdzKTsKIAkJcmV0
+dXJuOwogCX0KIAo=
+--001a114a4cf2f881360569bd6d69--
