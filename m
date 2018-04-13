@@ -1,426 +1,223 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752017AbeDMPti (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 11:49:38 -0400
-Received: from mailhost.informatik.uni-hamburg.de ([134.100.9.70]:34594 "EHLO
-        mailhost.informatik.uni-hamburg.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750923AbeDMPta (ORCPT
+        id S1751797AbeDMPyt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 11:54:49 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:45171 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750994AbeDMPyr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 11:49:30 -0400
-From: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
-To: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        herbert@gondor.apana.org.au, davem@davemloft.net, minchan@kernel.org,
-        sergey.senozhatsky.work@gmail.com, ngupta@vflare.org,
-        pombredanne@nexb.com, ebiggers3@gmail.com, smueller@chronox.de
-Cc: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
-Subject: [PATCH v7 2/5] crypto: add zBeWalgo to crypto-api
-Date: Fri, 13 Apr 2018 17:48:37 +0200
-Message-Id: <20180413154840.5901-3-4bwarnke@informatik.uni-hamburg.de>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180413154840.5901-1-4bwarnke@informatik.uni-hamburg.de>
-References: <20180413154840.5901-1-4bwarnke@informatik.uni-hamburg.de>
+        Fri, 13 Apr 2018 11:54:47 -0400
+X-Google-Smtp-Source: AIpwx4/G/8J6Qw+1vDKs+7irxqQsUBFW63tSskjm4aKgjT6q6PTD4MrR7a0llC4qhlumhynX/cD8dRylFXhsxc7XA2M=
+MIME-Version: 1.0
+In-Reply-To: <CALZtONBFdVsa_dqKTpzAp2wVPPfP4N=P7HT_e5e0vy7oAoxVew@mail.gmail.com>
+References: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
+ <CAM_iQpVo0iSXKSR=Qc+7syn77BnhE2R72M2u5YfJF=fBkJHjsw@mail.gmail.com>
+ <7fd7e3b3-77b1-0936-b169-d08b946bedc7@iogearbox.net> <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
+ <efa5811c-0a01-a4af-ade2-71ef5dbc4eaf@gmail.com> <CADvbK_dgEa5g0ynY4F8pX6LuuBwW4e42rK_TFuRhY1=2G5zinw@mail.gmail.com>
+ <CADvbK_fKDbUnAkdLrgm6rgj895Gb06AK7HaT0s9VD=zdF+vf6Q@mail.gmail.com>
+ <CACT4Y+aV_v6zNS6Ac1u1cB2GZ7QhjNxBeg0FNabUhrndt5CqZw@mail.gmail.com>
+ <5973966e-fcd9-7ee5-a9c4-b79d22c1b9dd@nokia.com> <CACT4Y+beZ2+O=XdjKCpAkXOTBDgHYfn1JW8kn-TGRrph_RmV7Q@mail.gmail.com>
+ <20180220162622.GA32068@hmswarspite.think-freely.org> <7d98027d-e810-a079-49c5-0bf8beef390e@nokia.com>
+ <CACT4Y+Z2kdjsYUs-H9aSTcNW-FSKqm1__fg3eOq16H-E=X8oZg@mail.gmail.com> <CALZtONBFdVsa_dqKTpzAp2wVPPfP4N=P7HT_e5e0vy7oAoxVew@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Fri, 13 Apr 2018 17:54:25 +0200
+Message-ID: <CACT4Y+ao0Z_RT+D+sqb6ysnPVnUZ5DfrHstuFjEAt0mr+xt_4Q@mail.gmail.com>
+Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
+To: Dan Streetman <ddstreet@ieee.org>
+Cc: Tommi Rantala <tommi.t.rantala@nokia.com>,
+        Neil Horman <nhorman@tuxdriver.com>, Xin Long <lucien.xin@gmail.com>,
+        David Ahern <dsahern@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Dan Streetman <ddstreet@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexey Kodanev <alexey.kodanev@oracle.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        linux-sctp@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds zBeWalgo to the crypto api so that zBeWalgo can be used by
-zram.
+On Fri, Apr 13, 2018 at 2:43 PM, Dan Streetman <ddstreet@ieee.org> wrote:
+> On Thu, Apr 12, 2018 at 8:15 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>> On Wed, Feb 21, 2018 at 3:53 PM, Tommi Rantala
+>> <tommi.t.rantala@nokia.com> wrote:
+>>> On 20.02.2018 18:26, Neil Horman wrote:
+>>>>
+>>>> On Tue, Feb 20, 2018 at 09:14:41AM +0100, Dmitry Vyukov wrote:
+>>>>>
+>>>>> On Tue, Feb 20, 2018 at 8:56 AM, Tommi Rantala
+>>>>> <tommi.t.rantala@nokia.com> wrote:
+>>>>>>
+>>>>>> On 19.02.2018 20:59, Dmitry Vyukov wrote:
+>>>>>>>
+>>>>>>> Is this meant to be fixed already? I am still seeing this on the
+>>>>>>> latest upstream tree.
+>>>>>>>
+>>>>>>
+>>>>>> These two commits are in v4.16-rc1:
+>>>>>>
+>>>>>> commit 4a31a6b19f9ddf498c81f5c9b089742b7472a6f8
+>>>>>> Author: Tommi Rantala <tommi.t.rantala@nokia.com>
+>>>>>> Date:   Mon Feb 5 21:48:14 2018 +0200
+>>>>>>
+>>>>>>      sctp: fix dst refcnt leak in sctp_v4_get_dst
+>>>>>> ...
+>>>>>>      Fixes: 410f03831 ("sctp: add routing output fallback")
+>>>>>>      Fixes: 0ca50d12f ("sctp: fix src address selection if using
+>>>>>> secondary
+>>>>>> addresses")
+>>>>>>
+>>>>>>
+>>>>>> commit 957d761cf91cdbb175ad7d8f5472336a4d54dbf2
+>>>>>> Author: Alexey Kodanev <alexey.kodanev@oracle.com>
+>>>>>> Date:   Mon Feb 5 15:10:35 2018 +0300
+>>>>>>
+>>>>>>      sctp: fix dst refcnt leak in sctp_v6_get_dst()
+>>>>>> ...
+>>>>>>      Fixes: dbc2b5e9a09e ("sctp: fix src address selection if using
+>>>>>> secondary
+>>>>>> addresses for ipv6")
+>>>>>>
+>>>>>>
+>>>>>> I guess we missed something if it's still reproducible.
+>>>>>>
+>>>>>> I can check it later this week, unless someone else beat me to it.
+>>>>>
+>>>>>
+>>>>> Hi Tommi,
+>>>>>
+>>>>> Hmmm, I can't claim that it's exactly the same bug. Perhaps it's
+>>>>> another one then. But I am still seeing these:
+>>>>>
+>>>>> [   58.799130] unregister_netdevice: waiting for lo to become free.
+>>>>> Usage count = 4
+>>>>> [   60.847138] unregister_netdevice: waiting for lo to become free.
+>>>>> Usage count = 4
+>>>>> [   62.895093] unregister_netdevice: waiting for lo to become free.
+>>>>> Usage count = 4
+>>>>> [   64.943103] unregister_netdevice: waiting for lo to become free.
+>>>>> Usage count = 4
+>>>>>
+>>>>> on upstream tree pulled ~12 hours ago.
+>>>>>
+>>>> Can you write a systemtap script to probe dev_hold, and dev_put, printing
+>>>> out a
+>>>> backtrace if the device name matches "lo".  That should tell us
+>>>> definitively if
+>>>> the problem is in the same location or not
+>>>
+>>>
+>>> Hi Dmitry, I tested with the reproducer and the kernel .config file that you
+>>> sent in the first email in this thread:
+>>>
+>>> With 4.16-rc2 unable to reproduce.
+>>>
+>>> With 4.15-rc9 bug reproducible, and I get "unregister_netdevice: waiting for
+>>> lo to become free. Usage count = 3"
+>>>
+>>> With 4.15-rc9 and Alexey's "sctp: fix dst refcnt leak in sctp_v6_get_dst()"
+>>> cherry-picked on top, unable to reproduce.
+>>>
+>>>
+>>> Is syzkaller doing something else now to trigger the bug...?
+>>> Can you still trigger the bug with the same reproducer?
+>>
+>> Hi Neil, Tommi,
+>>
+>> Reviving this old thread about "unregister_netdevice: waiting for lo
+>> to become free. Usage count = 3" hangs.
+>> I still did not have time to deep dive into what happens there (too
+>> many bugs coming from syzbot). But this still actively happens and I
+>> suspect accounts to a significant portion of various hang reports,
+>> which are quite unpleasant.
+>>
+>> One idea that could make it all simpler:
+>>
+>> Is this wait loop in netdev_wait_allrefs() supposed to wait for any
+>> prolonged periods of time under any non-buggy conditions? E.g. more
+>> than 1-2 minutes?
+>> If it only supposed to wait briefly for things that already supposed
+>> to be shutting down, and we add a WARNING there after some timeout,
+>> then syzbot will report all info how/when it happens, hopefully
+>> extracting reproducers, and all the nice things.
+>> But this WARNING should not have any false positives under any
+>> realistic conditions (e.g. waiting for arrival of remote packets with
+>> large timeouts).
+>>
+>> Looking at some task hung reports, it seems that this code holds some
+>> mutexes, takes workqueue thread and prevents any progress with
+>> destruction of other devices (and net namespace creation/destruction),
+>> so I guess it should not wait for any indefinite periods of time?
+>
+> I'm working on this currently:
+> https://bugs.launchpad.net/ubuntu/zesty/+source/linux/+bug/1711407
+>
+> I added a summary of what I've found to be the cause (or at least, one
+> possible cause) of this:
+> https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1711407/comments/72
+>
+> I'm working on a patch to work around the main side-effect of this,
+> which is hanging while holding the global net mutex.  Hangs will still
+> happen (e.g. if a dst leaks) but should not affect anything else,
+> other than a leak of the dst and its net namespace.
+>
+> Fixing the dst leaks is important too, of course, but a dst leak (or
+> other cause) shouldn't break the entire system.
 
-Signed-off-by: Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
----
- crypto/Kconfig             |  12 ++++
- crypto/Makefile            |   1 +
- crypto/testmgr.c           |  10 +++
- crypto/testmgr.h           | 134 ++++++++++++++++++++++++++++++++++++
- crypto/zbewalgo.c          | 164 +++++++++++++++++++++++++++++++++++++++++++++
- drivers/block/zram/zcomp.c |   3 +
- 6 files changed, 324 insertions(+)
- create mode 100644 crypto/zbewalgo.c
+Leaking some memory is definitely better than hanging the system.
 
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 76e8c88c..749457a6 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -1686,6 +1686,18 @@ config CRYPTO_LZ4
- 	help
- 	  This is the LZ4 algorithm.
- 
-+config CRYPTO_ZBEWALGO
-+	tristate "zBeWalgo compression algorithm"
-+	select CRYPTO_ALGAPI
-+	select CRYPTO_ACOMP2
-+	select ZBEWALGO_COMPRESS
-+	help
-+	  This is the zBeWalgo compression algorithm. This algorithm
-+	  accepts only input sizes of at most one page at once.
-+	  To achieve high compression ratios zbewalgo can call multiple
-+	  transformation and compression algorithms in a row to optimize
-+	  the compressed size.
-+
- config CRYPTO_LZ4HC
- 	tristate "LZ4HC compression algorithm"
- 	select CRYPTO_ALGAPI
-diff --git a/crypto/Makefile b/crypto/Makefile
-index 4fc69fe9..493cbd65 100644
---- a/crypto/Makefile
-+++ b/crypto/Makefile
-@@ -124,6 +124,7 @@ obj-$(CONFIG_CRYPTO_CRCT10DIF) += crct10dif_common.o crct10dif_generic.o
- obj-$(CONFIG_CRYPTO_AUTHENC) += authenc.o authencesn.o
- obj-$(CONFIG_CRYPTO_LZO) += lzo.o
- obj-$(CONFIG_CRYPTO_LZ4) += lz4.o
-+obj-$(CONFIG_CRYPTO_ZBEWALGO) += zbewalgo.o
- obj-$(CONFIG_CRYPTO_LZ4HC) += lz4hc.o
- obj-$(CONFIG_CRYPTO_842) += 842.o
- obj-$(CONFIG_CRYPTO_RNG2) += rng.o
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index af4a01c5..53fd43d1 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -3611,6 +3611,16 @@ static const struct alg_test_desc alg_test_descs[] = {
- 				.dec = __VECS(tf_xts_dec_tv_template)
- 			}
- 		}
-+	}, {
-+		.alg = "zbewalgo",
-+		.test = alg_test_comp,
-+		.fips_allowed = 1,
-+		.suite = {
-+			.comp = {
-+				.comp = __VECS(zbewalgo_comp_tv_template),
-+				.decomp = __VECS(zbewalgo_decomp_tv_template)
-+			}
-+		}
- 	}, {
- 		.alg = "zlib-deflate",
- 		.test = alg_test_comp,
-diff --git a/crypto/testmgr.h b/crypto/testmgr.h
-index 004c0a0f..960bfbcf 100644
---- a/crypto/testmgr.h
-+++ b/crypto/testmgr.h
-@@ -37009,6 +37009,140 @@ static const struct hash_testvec bfin_crc_tv_template[] = {
- 
- };
- 
-+static const struct comp_testvec zbewalgo_comp_tv_template[] = {
-+	{
-+		.inlen	= 512,
-+		.outlen	= 402,
-+		.input	=
-+			"\x8a\x3a\xf3\xbe\x33\xf9\xab\x3d\xa1\x51\x9f\x7f\xad\xf6\xab\x3d"
-+			"\xad\x29\x8f\x3c\x27\xf4\xab\x3d\x06\x19\xc3\xf5\xa0\xf1\xab\x3d"
-+			"\xfb\x75\x3b\xab\x1a\xef\xab\x3d\xe3\x96\xf8\x5c\x94\xec\xab\x3d"
-+			"\x13\xd2\xfa\x0a\x0e\xea\xab\x3d\xe0\x7d\x42\xb5\x87\xe7\xab\x3d"
-+			"\xa1\xf0\xcf\x5b\x01\xe5\xab\x3d\xad\x80\xa3\xfe\x7a\xe2\xab\x3d"
-+			"\x59\x84\xbd\x9d\xf4\xdf\xab\x3d\xff\x51\x1e\x39\x6e\xdd\xab\x3d"
-+			"\xf5\x3f\xc6\xd0\xe7\xda\xab\x3d\x96\xa4\xb5\x64\x61\xd8\xab\x3d"
-+			"\x3b\xd6\xec\xf4\xda\xd5\xab\x3d\x3b\x2b\x6c\x81\x54\xd3\xab\x3d"
-+			"\xf2\xf9\x33\x0a\xce\xd0\xab\x3d\xbb\x98\x44\x8f\x47\xce\xab\x3d"
-+			"\xed\x5d\x9e\x10\xc1\xcb\xab\x3d\xe7\x9f\x41\x8e\x3a\xc9\xab\x3d"
-+			"\x07\xb5\x2e\x08\xb4\xc6\xab\x3d\xa9\xf3\x65\x7e\x2d\xc4\xab\x3d"
-+			"\x28\xb2\xe7\xf0\xa6\xc1\xab\x3d\xe3\x46\xb4\x5f\x20\xbf\xab\x3d"
-+			"\x38\x08\xcc\xca\x99\xbc\xab\x3d\x85\x4c\x2f\x32\x13\xba\xab\x3d"
-+			"\x2a\x6a\xde\x95\x8c\xb7\xab\x3d\x85\xb7\xd9\xf5\x05\xb5\xab\x3d"
-+			"\xf7\x8a\x21\x52\x7f\xb2\xab\x3d\xe2\x3a\xb6\xaa\xf8\xaf\xab\x3d"
-+			"\xa5\x1d\x98\xff\x71\xad\xab\x3d\xa3\x89\xc7\x50\xeb\xaa\xab\x3d"
-+			"\x3d\xd5\x44\x9e\x64\xa8\xab\x3d\xd6\x56\x10\xe8\xdd\xa5\xab\x3d"
-+			"\xce\x64\x2a\x2e\x57\xa3\xab\x3d\x8d\x55\x93\x70\xd0\xa0\xab\x3d"
-+			"\x76\x7f\x4b\xaf\x49\x9e\xab\x3d\xeb\x38\x53\xea\xc2\x9b\xab\x3d"
-+			"\x53\xd8\xaa\x21\x3c\x99\xab\x3d\x13\xb4\x52\x55\xb5\x96\xab\x3d"
-+			"\x92\x22\x4b\x85\x2e\x94\xab\x3d\x35\x7a\x94\xb1\xa7\x91\xab\x3d"
-+			"\x65\x11\x2f\xda\x20\x8f\xab\x3d\x86\x3e\x1b\xff\x99\x8c\xab\x3d"
-+			"\x02\x58\x59\x20\x13\x8a\xab\x3d\x41\xb4\xe9\x3d\x8c\x87\xab\x3d"
-+			"\xaf\xa9\xcc\x57\x05\x85\xab\x3d\xb5\x8e\x02\x6e\x7e\x82\xab\x3d"
-+			"\xb9\xb9\x8b\x80\xf7\x7f\xab\x3d\x27\x81\x68\x8f\x70\x7d\xab\x3d"
-+			"\x6a\x3b\x99\x9a\xe9\x7a\xab\x3d\xef\x3e\x1e\xa2\x62\x78\xab\x3d"
-+			"\x20\xe2\xf7\xa5\xdb\x75\xab\x3d\x6a\x7b\x26\xa6\x54\x73\xab\x3d"
-+			"\x3b\x61\xaa\xa2\xcd\x70\xab\x3d\xfe\xe9\x83\x9b\x46\x6e\xab\x3d"
-+			"\x22\x6c\xb3\x90\xbf\x6b\xab\x3d\x16\x3e\x39\x82\x38\x69\xab\x3d"
-+			"\x48\xb6\x15\x70\xb1\x66\xab\x3d\x26\x2b\x49\x5a\x2a\x64\xab\x3d"
-+			"\x23\xf3\xd3\x40\xa3\x61\xab\x3d\xae\x64\xb6\x23\x1c\x5f\xab\x3d"
-+			"\x37\xd6\xf0\x02\x95\x5c\xab\x3d\x30\x9e\x83\xde\x0d\x5a\xab\x3d",
-+		.output	=
-+			"\x02\x02\x07\x02\x07\x00\x00\x00\x0f\x00\x02\x8a\xa1\xad\x06\xfb"
-+			"\xe3\x13\xe0\xa1\xad\x59\xff\xf5\x96\x81\x3b\x7f\xf2\xbb\xed\xe7"
-+			"\x07\xa9\x28\xe3\x38\x85\x2a\x85\xf7\xe2\xa5\xa3\x3d\xd6\xce\x8d"
-+			"\x76\xeb\x53\x13\x92\x35\x65\x86\x02\x41\xaf\xb5\xb9\x27\x6a\xef"
-+			"\x20\x6a\x3b\xfe\x22\x16\x48\x26\x23\xae\x37\x30\x3a\x51\x29\x19"
-+			"\x75\x96\xd2\x7d\xf0\x80\x84\x51\x3f\xa4\xd6\x2b\xf9\x98\x5d\x9f"
-+			"\xb5\xf3\xb2\x46\x08\x4c\x6a\xb7\x8a\x3a\x1d\x89\xd5\x56\x64\x55"
-+			"\x7f\x38\xd8\xb4\x22\x7a\x11\x3e\x58\xb4\xa9\x8e\xb9\x81\x3b\x3e"
-+			"\xe2\x7b\x61\xe9\x6c\x3e\xb6\x2b\xf3\x64\xd6\x9e\xf3\x9f\x8f\xc3"
-+			"\x3b\xf8\xfa\x42\xcf\xa3\xbd\x1e\xc6\xb5\xec\x6c\x7f\x33\x44\x9e"
-+			"\x41\x2e\x65\xe7\xb4\xcc\x2f\xde\xd9\x21\xb6\x98\xc7\x44\x10\x2a"
-+			"\x93\x4b\x53\xaa\x52\x4b\x94\x2f\x1b\x59\xe9\xcc\x02\x8b\x68\x99"
-+			"\x1e\xf7\x26\xaa\x83\xb3\x39\x15\x49\xd3\xb6\xf0\x83\xbe\x7f\x3c"
-+			"\xf5\xab\x5c\x0a\xb5\x5b\xfe\x9d\x39\xd0\x64\xf4\x81\x0a\x8f\x10"
-+			"\x8e\x08\x7e\xf0\x5f\xca\x32\x95\xf5\x52\xaa\xff\x50\x9e\xe8\x2e"
-+			"\x70\xaf\xea\x21\x55\x85\xb1\xda\xff\x20\x3d\x57\x6e\x80\x8f\x9a"
-+			"\xa2\xa5\xa6\xa2\x9b\x90\x82\x70\x5a\x40\x23\x02\xde\x33\xad\x27"
-+			"\xa0\x1a\x94\x0e\x87\x01\x7a\xf4\x6e\xe7\x61\xda\x54\x6f\xce\x47"
-+			"\xc1\x3a\xb4\x2d\xa6\x20\x99\x13\x8c\x05\x7f\xf8\x71\xeb\x64\xdd"
-+			"\x57\xd0\x49\xc2\x3c\xb5\x2e\xa7\x20\x99\x13\x8c\x05\x7e\xf7\x70"
-+			"\xe9\x62\xdb\x54\xcd\x46\xbf\x38\xb1\x2a\xa3\x1c\x95\x0d\xf9\xf6"
-+			"\xf4\xf1\xef\xec\xea\xe7\xe5\xe2\xdf\xdd\xda\xd8\xd5\xd3\xd0\xce"
-+			"\xcb\xc9\xc6\xc4\xc1\xbf\xbc\xba\xb7\xb5\xb2\xaf\xad\xaa\xa8\xa5"
-+			"\xa3\xa0\x9e\x9b\x99\x96\x94\x91\x8f\x8c\x8a\x87\x85\x82\x7f\x7d"
-+			"\x7a\x78\x75\x73\x70\x6e\x6b\x69\x66\x64\x61\x5f\x5c\x5a\xbf\xab"
-+			"\xbf\x3d",
-+	},
-+};
-+
-+static const struct comp_testvec zbewalgo_decomp_tv_template[] = {
-+	{
-+		.inlen	= 402,
-+		.outlen	= 512,
-+		.input	=
-+			"\x02\x02\x07\x02\x07\x00\x00\x00\x0f\x00\x02\x8a\xa1\xad\x06\xfb"
-+			"\xe3\x13\xe0\xa1\xad\x59\xff\xf5\x96\x81\x3b\x7f\xf2\xbb\xed\xe7"
-+			"\x07\xa9\x28\xe3\x38\x85\x2a\x85\xf7\xe2\xa5\xa3\x3d\xd6\xce\x8d"
-+			"\x76\xeb\x53\x13\x92\x35\x65\x86\x02\x41\xaf\xb5\xb9\x27\x6a\xef"
-+			"\x20\x6a\x3b\xfe\x22\x16\x48\x26\x23\xae\x37\x30\x3a\x51\x29\x19"
-+			"\x75\x96\xd2\x7d\xf0\x80\x84\x51\x3f\xa4\xd6\x2b\xf9\x98\x5d\x9f"
-+			"\xb5\xf3\xb2\x46\x08\x4c\x6a\xb7\x8a\x3a\x1d\x89\xd5\x56\x64\x55"
-+			"\x7f\x38\xd8\xb4\x22\x7a\x11\x3e\x58\xb4\xa9\x8e\xb9\x81\x3b\x3e"
-+			"\xe2\x7b\x61\xe9\x6c\x3e\xb6\x2b\xf3\x64\xd6\x9e\xf3\x9f\x8f\xc3"
-+			"\x3b\xf8\xfa\x42\xcf\xa3\xbd\x1e\xc6\xb5\xec\x6c\x7f\x33\x44\x9e"
-+			"\x41\x2e\x65\xe7\xb4\xcc\x2f\xde\xd9\x21\xb6\x98\xc7\x44\x10\x2a"
-+			"\x93\x4b\x53\xaa\x52\x4b\x94\x2f\x1b\x59\xe9\xcc\x02\x8b\x68\x99"
-+			"\x1e\xf7\x26\xaa\x83\xb3\x39\x15\x49\xd3\xb6\xf0\x83\xbe\x7f\x3c"
-+			"\xf5\xab\x5c\x0a\xb5\x5b\xfe\x9d\x39\xd0\x64\xf4\x81\x0a\x8f\x10"
-+			"\x8e\x08\x7e\xf0\x5f\xca\x32\x95\xf5\x52\xaa\xff\x50\x9e\xe8\x2e"
-+			"\x70\xaf\xea\x21\x55\x85\xb1\xda\xff\x20\x3d\x57\x6e\x80\x8f\x9a"
-+			"\xa2\xa5\xa6\xa2\x9b\x90\x82\x70\x5a\x40\x23\x02\xde\x33\xad\x27"
-+			"\xa0\x1a\x94\x0e\x87\x01\x7a\xf4\x6e\xe7\x61\xda\x54\x6f\xce\x47"
-+			"\xc1\x3a\xb4\x2d\xa6\x20\x99\x13\x8c\x05\x7f\xf8\x71\xeb\x64\xdd"
-+			"\x57\xd0\x49\xc2\x3c\xb5\x2e\xa7\x20\x99\x13\x8c\x05\x7e\xf7\x70"
-+			"\xe9\x62\xdb\x54\xcd\x46\xbf\x38\xb1\x2a\xa3\x1c\x95\x0d\xf9\xf6"
-+			"\xf4\xf1\xef\xec\xea\xe7\xe5\xe2\xdf\xdd\xda\xd8\xd5\xd3\xd0\xce"
-+			"\xcb\xc9\xc6\xc4\xc1\xbf\xbc\xba\xb7\xb5\xb2\xaf\xad\xaa\xa8\xa5"
-+			"\xa3\xa0\x9e\x9b\x99\x96\x94\x91\x8f\x8c\x8a\x87\x85\x82\x7f\x7d"
-+			"\x7a\x78\x75\x73\x70\x6e\x6b\x69\x66\x64\x61\x5f\x5c\x5a\xbf\xab"
-+			"\xbf\x3d",
-+		.output	=
-+			"\x8a\x3a\xf3\xbe\x33\xf9\xab\x3d\xa1\x51\x9f\x7f\xad\xf6\xab\x3d"
-+			"\xad\x29\x8f\x3c\x27\xf4\xab\x3d\x06\x19\xc3\xf5\xa0\xf1\xab\x3d"
-+			"\xfb\x75\x3b\xab\x1a\xef\xab\x3d\xe3\x96\xf8\x5c\x94\xec\xab\x3d"
-+			"\x13\xd2\xfa\x0a\x0e\xea\xab\x3d\xe0\x7d\x42\xb5\x87\xe7\xab\x3d"
-+			"\xa1\xf0\xcf\x5b\x01\xe5\xab\x3d\xad\x80\xa3\xfe\x7a\xe2\xab\x3d"
-+			"\x59\x84\xbd\x9d\xf4\xdf\xab\x3d\xff\x51\x1e\x39\x6e\xdd\xab\x3d"
-+			"\xf5\x3f\xc6\xd0\xe7\xda\xab\x3d\x96\xa4\xb5\x64\x61\xd8\xab\x3d"
-+			"\x3b\xd6\xec\xf4\xda\xd5\xab\x3d\x3b\x2b\x6c\x81\x54\xd3\xab\x3d"
-+			"\xf2\xf9\x33\x0a\xce\xd0\xab\x3d\xbb\x98\x44\x8f\x47\xce\xab\x3d"
-+			"\xed\x5d\x9e\x10\xc1\xcb\xab\x3d\xe7\x9f\x41\x8e\x3a\xc9\xab\x3d"
-+			"\x07\xb5\x2e\x08\xb4\xc6\xab\x3d\xa9\xf3\x65\x7e\x2d\xc4\xab\x3d"
-+			"\x28\xb2\xe7\xf0\xa6\xc1\xab\x3d\xe3\x46\xb4\x5f\x20\xbf\xab\x3d"
-+			"\x38\x08\xcc\xca\x99\xbc\xab\x3d\x85\x4c\x2f\x32\x13\xba\xab\x3d"
-+			"\x2a\x6a\xde\x95\x8c\xb7\xab\x3d\x85\xb7\xd9\xf5\x05\xb5\xab\x3d"
-+			"\xf7\x8a\x21\x52\x7f\xb2\xab\x3d\xe2\x3a\xb6\xaa\xf8\xaf\xab\x3d"
-+			"\xa5\x1d\x98\xff\x71\xad\xab\x3d\xa3\x89\xc7\x50\xeb\xaa\xab\x3d"
-+			"\x3d\xd5\x44\x9e\x64\xa8\xab\x3d\xd6\x56\x10\xe8\xdd\xa5\xab\x3d"
-+			"\xce\x64\x2a\x2e\x57\xa3\xab\x3d\x8d\x55\x93\x70\xd0\xa0\xab\x3d"
-+			"\x76\x7f\x4b\xaf\x49\x9e\xab\x3d\xeb\x38\x53\xea\xc2\x9b\xab\x3d"
-+			"\x53\xd8\xaa\x21\x3c\x99\xab\x3d\x13\xb4\x52\x55\xb5\x96\xab\x3d"
-+			"\x92\x22\x4b\x85\x2e\x94\xab\x3d\x35\x7a\x94\xb1\xa7\x91\xab\x3d"
-+			"\x65\x11\x2f\xda\x20\x8f\xab\x3d\x86\x3e\x1b\xff\x99\x8c\xab\x3d"
-+			"\x02\x58\x59\x20\x13\x8a\xab\x3d\x41\xb4\xe9\x3d\x8c\x87\xab\x3d"
-+			"\xaf\xa9\xcc\x57\x05\x85\xab\x3d\xb5\x8e\x02\x6e\x7e\x82\xab\x3d"
-+			"\xb9\xb9\x8b\x80\xf7\x7f\xab\x3d\x27\x81\x68\x8f\x70\x7d\xab\x3d"
-+			"\x6a\x3b\x99\x9a\xe9\x7a\xab\x3d\xef\x3e\x1e\xa2\x62\x78\xab\x3d"
-+			"\x20\xe2\xf7\xa5\xdb\x75\xab\x3d\x6a\x7b\x26\xa6\x54\x73\xab\x3d"
-+			"\x3b\x61\xaa\xa2\xcd\x70\xab\x3d\xfe\xe9\x83\x9b\x46\x6e\xab\x3d"
-+			"\x22\x6c\xb3\x90\xbf\x6b\xab\x3d\x16\x3e\x39\x82\x38\x69\xab\x3d"
-+			"\x48\xb6\x15\x70\xb1\x66\xab\x3d\x26\x2b\x49\x5a\x2a\x64\xab\x3d"
-+			"\x23\xf3\xd3\x40\xa3\x61\xab\x3d\xae\x64\xb6\x23\x1c\x5f\xab\x3d"
-+			"\x37\xd6\xf0\x02\x95\x5c\xab\x3d\x30\x9e\x83\xde\x0d\x5a\xab\x3d",
-+	},
-+};
-+
- static const struct comp_testvec lz4_comp_tv_template[] = {
- 	{
- 		.inlen	= 255,
-diff --git a/crypto/zbewalgo.c b/crypto/zbewalgo.c
-new file mode 100644
-index 00000000..044b8811
---- /dev/null
-+++ b/crypto/zbewalgo.c
-@@ -0,0 +1,164 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018 Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>
-+ */
-+
-+#include <crypto/internal/scompress.h>
-+#include <linux/crypto.h>
-+#include <linux/delay.h>
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/vmalloc.h>
-+#include <linux/zbewalgo.h>
-+
-+struct zbewalgo_ctx {
-+	void *zbewalgo_comp_mem;
-+};
-+
-+static void *zbewalgo_alloc_ctx(struct crypto_scomp *tfm)
-+{
-+	void *ctx;
-+
-+	ctx = vmalloc(zbewalgo_get_wrkmem_size());
-+	if (!ctx)
-+		return ERR_PTR(-ENOMEM);
-+	return ctx;
-+}
-+
-+static int zbewalgo_init(struct crypto_tfm *tfm)
-+{
-+	struct zbewalgo_ctx *ctx = crypto_tfm_ctx(tfm);
-+
-+	ctx->zbewalgo_comp_mem = zbewalgo_alloc_ctx(NULL);
-+	if (IS_ERR(ctx->zbewalgo_comp_mem))
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+static void zbewalgo_free_ctx(struct crypto_scomp *tfm, void *ctx)
-+{
-+	vfree(ctx);
-+}
-+
-+static void zbewalgo_exit(struct crypto_tfm *tfm)
-+{
-+	struct zbewalgo_ctx *ctx = crypto_tfm_ctx(tfm);
-+
-+	zbewalgo_free_ctx(NULL, ctx->zbewalgo_comp_mem);
-+}
-+
-+static int __zbewalgo_compress_crypto(const u8 *src, unsigned int slen,
-+				      u8 *dst, unsigned int *dlen, void *ctx)
-+{
-+	int out_len;
-+
-+	if (slen > 4096)
-+		return -EINVAL;
-+	out_len = zbewalgo_compress(src, dst, ctx, slen);
-+	if (!out_len)
-+		return -EINVAL;
-+	*dlen = out_len;
-+	return 0;
-+}
-+
-+static int zbewalgo_scompress(struct crypto_scomp *tfm, const u8 *src,
-+			      unsigned int slen, u8 *dst, unsigned int *dlen,
-+			      void *ctx)
-+{
-+	return __zbewalgo_compress_crypto(src, slen, dst, dlen, ctx);
-+}
-+
-+static int zbewalgo_compress_crypto(struct crypto_tfm *tfm, const u8 *src,
-+				    unsigned int slen, u8 *dst,
-+				    unsigned int *dlen)
-+{
-+	struct zbewalgo_ctx *ctx = crypto_tfm_ctx(tfm);
-+
-+	return __zbewalgo_compress_crypto(src, slen, dst, dlen,
-+		ctx->zbewalgo_comp_mem);
-+}
-+
-+static int __zbewalgo_decompress_crypto(const u8 *src, unsigned int slen,
-+					u8 *dst, unsigned int *dlen, void *ctx)
-+{
-+	int out_len;
-+
-+	out_len = zbewalgo_decompress_safe(src, dst, ctx, slen);
-+	if (out_len < 0)
-+		return -EINVAL;
-+	*dlen = out_len;
-+	return 0;
-+}
-+
-+static int zbewalgo_sdecompress(struct crypto_scomp *tfm, const u8 *src,
-+				unsigned int slen, u8 *dst, unsigned int *dlen,
-+				void *ctx)
-+{
-+	return __zbewalgo_decompress_crypto(src, slen, dst, dlen, ctx);
-+}
-+
-+static int zbewalgo_decompress_crypto(struct crypto_tfm *tfm, const u8 *src,
-+				      unsigned int slen, u8 *dst,
-+				      unsigned int *dlen)
-+{
-+	struct zbewalgo_ctx *ctx = crypto_tfm_ctx(tfm);
-+
-+	return __zbewalgo_decompress_crypto(src, slen, dst, dlen,
-+		ctx->zbewalgo_comp_mem);
-+}
-+
-+static struct crypto_alg crypto_alg_zbewalgo = {
-+	.cra_name = "zbewalgo",
-+	.cra_flags = CRYPTO_ALG_TYPE_COMPRESS,
-+	.cra_ctxsize = sizeof(struct zbewalgo_ctx),
-+	.cra_module = THIS_MODULE,
-+	.cra_init = zbewalgo_init,
-+	.cra_exit = zbewalgo_exit,
-+	.cra_u = {
-+		.compress = {
-+			.coa_compress = zbewalgo_compress_crypto,
-+			.coa_decompress = zbewalgo_decompress_crypto
-+		}
-+	}
-+};
-+
-+static struct scomp_alg scomp = {
-+	.alloc_ctx = zbewalgo_alloc_ctx,
-+	 .free_ctx = zbewalgo_free_ctx,
-+	 .compress = zbewalgo_scompress,
-+	 .decompress = zbewalgo_sdecompress,
-+	 .base = {
-+		 .cra_name = "zbewalgo",
-+		 .cra_driver_name = "zbewalgo-scomp",
-+		 .cra_module = THIS_MODULE,
-+	}
-+};
-+
-+static int __init zbewalgo_mod_init(void)
-+{
-+	int ret;
-+
-+	ret = crypto_register_alg(&crypto_alg_zbewalgo);
-+	if (ret)
-+		return ret;
-+	ret = crypto_register_scomp(&scomp);
-+	if (ret) {
-+		crypto_unregister_alg(&crypto_alg_zbewalgo);
-+		return ret;
-+	}
-+	return ret;
-+}
-+
-+static void __exit zbewalgo_mod_fini(void)
-+{
-+	crypto_unregister_alg(&crypto_alg_zbewalgo);
-+	crypto_unregister_scomp(&scomp);
-+}
-+
-+module_init(zbewalgo_mod_init);
-+module_exit(zbewalgo_mod_fini);
-+
-+MODULE_AUTHOR("Benjamin Warnke <4bwarnke@informatik.uni-hamburg.de>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("zBeWalgo Compression Algorithm");
-+MODULE_ALIAS_CRYPTO("zbewalgo");
-diff --git a/drivers/block/zram/zcomp.c b/drivers/block/zram/zcomp.c
-index 4ed0a78f..15b3a016 100644
---- a/drivers/block/zram/zcomp.c
-+++ b/drivers/block/zram/zcomp.c
-@@ -23,6 +23,9 @@ static const char * const backends[] = {
- #if IS_ENABLED(CONFIG_CRYPTO_LZ4)
- 	"lz4",
- #endif
-+#if IS_ENABLED(CONFIG_CRYPTO_ZBEWALGO)
-+	"zbewalgo",
-+#endif
- #if IS_ENABLED(CONFIG_CRYPTO_LZ4HC)
- 	"lz4hc",
- #endif
--- 
-2.14.1
+So I've made syzkaller to recognize "unregister_netdevice: waiting for
+(.*) to become free" as a kernel bug:
+https://github.com/google/syzkaller/commit/7a67784ca8bdc3b26cce2f0ec9a40d2dd9ec9396
+Unfortunately it does not make it catch these bugs because creating a
+net namespace per test is too damn slow, so namespaces are reused for
+lots of tests and when/if it's eventually destroyed it's already too
+late to find root cause.
+
+But I've run a one-off experiment with prompt net namespace
+destruction and syzkaller was able to easily extract a C reproducer:
+https://gist.githubusercontent.com/dvyukov/d571e8fff24e127ca48a8c4790d42bfa/raw/52050e93ba9afbb5126b9d7bb39b7e71a82af016/gistfile1.txt
+
+On upstream 16e205cf42da1f497b10a4a24f563e6c0d574eec with this config:
+https://gist.githubusercontent.com/dvyukov/9663c57443adb21f2795b92ef0829d62/raw/bbea0652e23746096dd56855a28f6c681aebcdee/gistfile1.txt
+
+this gives me:
+
+[   83.183198] unregister_netdevice: waiting for lo to become free.
+Usage count = 9
+[   85.231202] unregister_netdevice: waiting for lo to become free.
+Usage count = 9
+...
+[  523.511205] unregister_netdevice: waiting for lo to become free.
+Usage count = 9
+...
+
+This is generated from this syzkaller program:
+
+r0 = socket$inet6(0xa, 0x1, 0x84)
+setsockopt$inet6_IPV6_XFRM_POLICY(r0, 0x29, 0x23,
+&(0x7f0000000380)={{{@in6=@remote={0xfe, 0x80, [], 0xbb},
+@in=@dev={0xac, 0x14, 0x14}, 0x0, 0x0, 0x0, 0x0, 0xa}, {}, {}, 0x0,
+0x0, 0x1}, {{@in=@local={0xac, 0x14, 0x14, 0xaa}, 0x0, 0x32}, 0x0,
+@in=@local={0xac, 0x14, 0x14, 0xaa}, 0x3504}}, 0xe8)
+bind$inet6(r0, &(0x7f0000000000)={0xa, 0x4e20}, 0x1c)
+connect$inet(r0, &(0x7f0000000040)={0x2, 0x4e20, @dev={0xac, 0x14,
+0x14, 0xd}}, 0x10)
+syz_emit_ethernet(0x3e, &(0x7f00000001c0)={@local={[0xaa, 0xaa, 0xaa,
+0xaa, 0xaa], 0xaa}, @dev={[0xaa, 0xaa, 0xaa, 0xaa, 0xaa]}, [],
+{@ipv6={0x86dd, {0x0, 0x6, "50a09c", 0x8, 0xffffff11, 0x0,
+@remote={0xfe, 0x80, [], 0xbb}, @local={0xfe, 0x80, [], 0xaa}, {[],
+@udp={0x0, 0x4e20, 0x8}}}}}}, &(0x7f0000000040))
+
+So this seems to be related to IPv6 and/or xfrm and is potentially
+caused by external packets (that syz_emit_ethernet call).
