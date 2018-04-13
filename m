@@ -1,119 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754221AbeDMNT6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 09:19:58 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54530 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750960AbeDMNT4 (ORCPT
+        id S1754234AbeDMNUf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 09:20:35 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39197 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753507AbeDMNUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 09:19:56 -0400
-Date: Fri, 13 Apr 2018 15:19:48 +0200
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [GIT PULL] s390 patches for the 4.17 merge window #2
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Fri, 13 Apr 2018 09:20:33 -0400
+X-Google-Smtp-Source: AIpwx49MrrRBdy8Rycl5OqhH+0LfzQoRMjPj1SfpIct3B/nM/+0y2GAqVsr9m+TzWdn0WrOFLbkEZw==
+X-ME-Sender: <xms:nK7QWqyem4EAilAaTJfXdUOI72jAN9GyUd3-VoJeeEy42H7MZXLJIQ>
+Date: Fri, 13 Apr 2018 21:24:44 +0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [RFC tip/locking/lockdep v6 19/20] rcu: Equip sleepable RCU with
+ lockdep dependency graph checks
+Message-ID: <20180413132444.wb2liczapxxizrne@tardis>
+References: <20180411135110.9217-1-boqun.feng@gmail.com>
+ <20180411135647.21496-1-boqun.feng@gmail.com>
+ <20180411185730.GU3948@linux.vnet.ibm.com>
+ <20180412021233.ewncg5jjuzjw3x62@tardis>
+ <20180412091217.GY4082@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18041313-0020-0000-0000-00000411907E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041313-0021-0000-0000-000042A5C34B
-Message-Id: <20180413151948.6dd1e894@mschwideX1>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-13_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804130124
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="daajw7nzooe3mxat"
+Content-Disposition: inline
+In-Reply-To: <20180412091217.GY4082@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
 
-please pull from the 'for-linus' branch of
+--daajw7nzooe3mxat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git for-linus
+On Thu, Apr 12, 2018 at 11:12:17AM +0200, Peter Zijlstra wrote:
+> On Thu, Apr 12, 2018 at 10:12:33AM +0800, Boqun Feng wrote:
+> > A trivial fix/hack would be adding local_irq_disable() and
+> > local_irq_enable() around srcu_lock_sync() like:
+> >=20
+> > 	static inline void srcu_lock_sync(struct lockdep_map *map)
+> > 	{
+> > 		local_irq_disable();
+> > 		lock_map_acquire(map);
+> > 		lock_map_release(map);
+> > 		local_irq_enable();
+> > 	}
+> >=20
+> > However, it might be better, if lockdep could provide some annotation
+> > API for such an empty critical section to say the grap-and-drop is
+> > atomic. Something like:
+> >=20
+> > 	/*
+> > 	 * Annotate a wait point for all previous critical section to
+> > 	 * go out.
+> > 	 *=20
+> > 	 * This won't make @map a irq unsafe lock, no matter it's called
+> > 	 * w/ or w/o irq disabled.
+> > 	 */
+> > 	lock_wait_unlock(struct lockdep_map *map, ..)
+> >=20
+> > And in this primitive, we do something similar like
+> > lock_acquire()+lock_release(). This primitive could be used elsewhere,
+> > as I bebieve we have several empty grab-and-drop critical section for
+> > lockdep annotations, e.g. in start_flush_work().
+> >=20
+> > Thoughts?
+> >=20
+> > This cerntainly requires a bit more work, in the meanwhile, I will add
+> > another self testcase which has a srcu_read_lock() called in irq.
+>=20
+> Yeah, I've never really bothered to clean those things up, but I don't
+> see any reason to stop you from doing it ;-)
+>=20
+> As to the initial pattern with disabling IRQs, I think I've seen code
+> like that before, and in general performance isn't a top priority
 
-to receive the following updates:
+Yeah, I saw we used that pattern in del_timer_sync()
 
-Three notable larger changes next to the usual bug fixing:
+> (within reason) when you're running lockdep kernels, so I've usually let
+> it be.
 
-* Update the email addresses in MAINTAINERS for the s390 folks to use
-  the simpler linux.ibm.com domain instead of the old linux.vnet.ibm.com
+Turns out it's not very hard to write a working version of
+lock_wait_unlock() ;-) Just call __lock_acquire() and __lock_release()
+back-to-back with the @hardirqoff for __lock_acquire() to be 1:
 
-* An update for the zcrypt device driver that removes some old and
-  obsolete interfaces and add support for up to 256 crypto adapters
+	/*
+	 * lock_sync() - synchronize with all previous critical sections to finish.
+	 *
+	 * Simply a acquire+release annotation with hardirqoff is true, because no=
+ lock
+	 * is actually held, so this annotaion alone is safe to be interrupted as =
+if
+	 * irqs are off
+	 */
+	void lock_sync(struct lockdep_map *lock, unsigned subclass, int read,
+		       int check, struct lockdep_map *nest_lock, unsigned long ip)
+	{
+		unsigned long flags;
 
-* A rework of the IPL aka boot code
+		if (unlikely(current->lockdep_recursion))
+			return;
 
-Harald Freudenberger (6):
-      s390/crypto: Adjust s390 aes and paes cipher priorities
-      s390/zcrypt: remove unused functions and declarations
-      s390/zcrypt: Make ap init functions static.
-      s390/zcrypt: Remove deprecated ioctls.
-      s390/zcrypt: Remove deprecated zcrypt proc interface.
-      s390/zcrypt: Support up to 256 crypto adapters.
+		raw_local_irq_save(flags);
+		check_flags(flags);
 
-Heiko Carstens (2):
-      s390/compat: fix setup_frame32
-      MAINTAINERS: update s390 maintainers email addresses
+		current->lockdep_recursion =3D 1;
+		__lock_acquire(lock, subclass, 0, read, check, 1, nest_lock, ip, 0, 0);
+		if (__lock_release(lock, 0, ip))
+			check_chain_key(current);
 
-Julian Wiedmann (3):
-      s390/ccwgroup: require at least one ccw device
-      s390/qdio: clear intparm during shutdown
-      s390/qdio: lock device while installing IRQ handler
+		current->lockdep_recursion =3D 0;
+		raw_local_irq_restore(flags);
+	}
+	EXPORT_SYMBOL_GPL(lock_sync);
 
-Martin Schwidefsky (1):
-      s390: correct nospec auto detection init order
+I rename as lock_sync(), because most of the time, we annotate with this
+for a "sync point" with other critical sections. We can avoid some
+overhead if we refactor __lock_acquire() and __lock_release() with some
+helper functions, but I think this version is good enough for now, at
+least better than disabling IRQs around lock_map_acquire() +
+lock_map_release() ;-)
 
-Vasily Gorbik (11):
-      s390/ipl: ensure loadparm valid flag is set
-      s390/ipl: unite diag308 and scsi boot ipl blocks
-      s390/ipl: get rid of ipl_ssid and ipl_devno
-      s390/ipl: move ipl_flags to ipl.c
-      s390/ipl: rely on diag308 store to get ipl info
-      s390/ipl: correct ipl parmblock valid checks
-      s390/ipl: avoid adding scpdata to cmdline during ftp/dvd boot
-      s390: assume diag308 set always works
-      s390/ipl: remove non-existing functions declaration
-      s390/ipl: correct kdump reipl block checksum calculation
-      s390/ipl: remove reipl_method and dump_method
+Thoughts?
 
- MAINTAINERS                           |  34 +--
- arch/s390/boot/compressed/misc.c      |  23 --
- arch/s390/crypto/aes_s390.c           |   8 +-
- arch/s390/crypto/paes_s390.c          |   8 +-
- arch/s390/include/asm/ap.h            |   6 +-
- arch/s390/include/asm/cio.h           |  10 -
- arch/s390/include/asm/ipl.h           |  25 +-
- arch/s390/include/asm/nospec-branch.h |   1 +
- arch/s390/include/asm/reset.h         |  20 --
- arch/s390/include/uapi/asm/zcrypt.h   | 163 ++++++------
- arch/s390/kernel/compat_signal.c      |   2 +-
- arch/s390/kernel/early.c              |  14 +-
- arch/s390/kernel/ipl.c                | 376 +++++----------------------
- arch/s390/kernel/machine_kexec.c      |   2 +-
- arch/s390/kernel/nospec-branch.c      |   8 +-
- arch/s390/kernel/reipl.S              |  87 -------
- arch/s390/kernel/relocate_kernel.S    |  54 +---
- arch/s390/kernel/setup.c              |   3 +
- drivers/s390/cio/ccwgroup.c           |   5 +-
- drivers/s390/cio/cio.c                | 257 -------------------
- drivers/s390/cio/ioasm.c              |  24 --
- drivers/s390/cio/ioasm.h              |   1 -
- drivers/s390/cio/qdio_main.c          |   4 +-
- drivers/s390/cio/qdio_setup.c         |   2 +
- drivers/s390/crypto/ap_bus.c          |  32 +--
- drivers/s390/crypto/ap_bus.h          |   5 +-
- drivers/s390/crypto/ap_debug.h        |   3 -
- drivers/s390/crypto/pkey_api.c        |  41 +--
- drivers/s390/crypto/zcrypt_api.c      | 471 ++++++++++------------------------
- drivers/s390/crypto/zcrypt_api.h      |  26 +-
- 30 files changed, 357 insertions(+), 1358 deletions(-)
- delete mode 100644 arch/s390/include/asm/reset.h
+Regards,
+Boqun
+
+
+--daajw7nzooe3mxat
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlrQr5gACgkQSXnow7UH
++rjwTAf/d2oiJk8R5Rc/5yGOs7wHBCXksrQpfCTg/0lmcGzF/Xco9BCmmuav5bCg
+kj5qfEPID0beQcbhXuPDeajsbdrsb/b8LLlwjO5VGi2XSH8tiSzSbjUTQ/97+n6n
+n0bFnEd2eCjHYK/KWuCs0Y8R3Ink7BhvBf4pbZdjKK34GATA/7sUqxOzdQ0Mu5HS
+6ygTKvZMM6XZetlI8A0anWvtgwQPBiHz3Kdy7wA3XeTzFLkrnMJ9KJB/I1ysXDm2
+H5oB60W6Qu7gxYptGIKfuzj1Lq/FQ1Qmx6dMEH5K6bk/HhGHenRdkoVLt0CLMaSb
+puvgtnTmnsOCeuwBa5q1nd7sNKq+zQ==
+=2D6C
+-----END PGP SIGNATURE-----
+
+--daajw7nzooe3mxat--
