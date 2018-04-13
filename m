@@ -1,69 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750980AbeDMRyO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 13:54:14 -0400
-Received: from mail-wr0-f174.google.com ([209.85.128.174]:34143 "EHLO
-        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750761AbeDMRyM (ORCPT
+        id S1751144AbeDMRy1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 13:54:27 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:51034 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751036AbeDMRyZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 13:54:12 -0400
-X-Google-Smtp-Source: AIpwx4+Yc3J3qbCr3wuE21xXh8h6mbnfcp8vYXKORH5WLIRuKYwVH+Kz745aetP6DkaCbPThixMp/g==
-Date: Fri, 13 Apr 2018 20:54:08 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, gs051095@gmail.com
-Subject: [PATCH] proc: fix /proc/loadavg regression
-Message-ID: <20180413175408.GA27246@avx2>
+        Fri, 13 Apr 2018 13:54:25 -0400
+Date: Fri, 13 Apr 2018 18:54:08 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
+ kill() returns wrong values in si_pid and si_uid
+Message-ID: <20180413175407.GO16141@n2100.armlinux.org.uk>
+References: <20180412110314.GA28070@altlinux.org>
+ <20180412121949.GD16141@n2100.armlinux.org.uk>
+ <20180412124928.GA29458@altlinux.org>
+ <20180412131404.GE16141@n2100.armlinux.org.uk>
+ <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
+ <20180412172051.GK16141@n2100.armlinux.org.uk>
+ <CA+55aFwjZqd8J0=veki1g+quQg8amEG4NnMe-h7HFksn=F=x_Q@mail.gmail.com>
+ <20180413094211.GN16141@n2100.armlinux.org.uk>
+ <CA+55aFwoThxqUeAZSsMhf--ODyhGkmOENH5R6=4+CuaopFx9eA@mail.gmail.com>
+ <20180413170827.GB16308@e103592.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.7.2 (2016-11-26)
+In-Reply-To: <20180413170827.GB16308@e103592.cambridge.arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 95846ecf9dac5089aed4b144d912225f8ef86ae4
-"pid: replace pid bitmap implementation with IDR API"
+On Fri, Apr 13, 2018 at 06:08:28PM +0100, Dave Martin wrote:
+> On Fri, Apr 13, 2018 at 09:33:17AM -0700, Linus Torvalds wrote:
+> > On Fri, Apr 13, 2018 at 2:42 AM, Russell King - ARM Linux
+> > <linux@armlinux.org.uk> wrote:
+> > >
+> > > Yes, it does solve the problem at hand with strace - the exact patch I
+> > > tested against 4.16 is below.
+> > 
+> > Ok, good.
+> > 
+> > > However, FPE_FLTUNK is not defined in older kernels, so while we can
+> > > fix it this way for the current merge window, that doesn't help 4.16.
+> > 
+> > I wonder if we should even bother with FPE_FLTUNK.
+> > 
+> > I suspect we might as well use FPE_FLTINV, I suspect, and not have
+> > this complexity at all. That case is not worth worrying about, since
+> > it's a "this shouldn't happen anyway" and the *real* reason will be in
+> > the kernel logs due to vfs_panic().
+> > 
+> > So it's not like this is something that the user should ever care
+> > about the si_code about.
+> 
+> Ack, my intended meaning for FPE_FLTUNK is that the fp exception is
+> either spurious or we can't tell easily (or possibly at all) which
+> FPE_XXX should be returned.  It's up to userspace to figure it out
+> if it really cares.  Previously we were accidentally returning SI_USER
+> in si_code for arm64.
+> 
+> This case on arm looks like a more serious error for which FPE_FLTINV
+> may be more appropriate anyway.
 
-changed last field of /proc/loadavg (last pid allocated)
-to be off by one:
+No.  The cases where we get to this point are:
 
-	# unshare -p -f --mount-proc cat /proc/loadavg
-	0.00 0.00 0.00 1/60 2	<===
+1. A trap concerning a coprocessor register transfer instruction (iow, move
+   between a VFP register and ARM register.)
+2. A trap concerning a coprocessor register load or save instruction.
 
-It should be 1 after first fork into pid namespace.
+(In both of these, "concerning" means that the VFP hardware provides
+such an instruction as the reason for the fault, *not* that it is the
+faulting instruction.)
 
-This is formally a regression but given how useless this field is
-I don't think anyone is affected.
+3. A combination of the exception bits (EX and DEX) on certain VFP
+   implementations.
 
-Bug was found by /proc testsuite!
+All of these can be summarised as "the hardware went wrong in some way"
+rather than "the user program did something wrong."
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+FPE_FLTINV means "floating point invalid operation".  Does it really
+cover the case where hardware has failed, or is it intended to cover
+the case where userspace did something wrong and asked for an invalid
+operation from the FP hardware?
 
- arch/powerpc/platforms/cell/spufs/sched.c |    2 +-
- fs/proc/loadavg.c                         |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
---- a/arch/powerpc/platforms/cell/spufs/sched.c
-+++ b/arch/powerpc/platforms/cell/spufs/sched.c
-@@ -1093,7 +1093,7 @@ static int show_spu_loadavg(struct seq_file *s, void *private)
- 		LOAD_INT(c), LOAD_FRAC(c),
- 		count_active_contexts(),
- 		atomic_read(&nr_spu_contexts),
--		idr_get_cursor(&task_active_pid_ns(current)->idr));
-+		idr_get_cursor(&task_active_pid_ns(current)->idr) - 1);
- 	return 0;
- }
- 
---- a/fs/proc/loadavg.c
-+++ b/fs/proc/loadavg.c
-@@ -24,7 +24,7 @@ static int loadavg_proc_show(struct seq_file *m, void *v)
- 		LOAD_INT(avnrun[1]), LOAD_FRAC(avnrun[1]),
- 		LOAD_INT(avnrun[2]), LOAD_FRAC(avnrun[2]),
- 		nr_running(), nr_threads,
--		idr_get_cursor(&task_active_pid_ns(current)->idr));
-+		idr_get_cursor(&task_active_pid_ns(current)->idr) - 1);
- 	return 0;
- }
- 
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
