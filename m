@@ -1,46 +1,266 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752403AbeDMWu4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 18:50:56 -0400
-Received: from mail-io0-f169.google.com ([209.85.223.169]:37317 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751553AbeDMWuz (ORCPT
+        id S1752460AbeDMXIe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 19:08:34 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33942 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751855AbeDMXIc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 18:50:55 -0400
-X-Google-Smtp-Source: AIpwx4+plAmIyvVlPv9t/b6csNl7wOfj79xd9yP31sKB1jyR0BsD2m3+FnqUcM47esmcBIv8nSb+OH1drDkbAlcab3w=
+        Fri, 13 Apr 2018 19:08:32 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180412183754.lyql6ihg6tcegebi@gmail.com>
-References: <20180412183754.lyql6ihg6tcegebi@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 13 Apr 2018 15:50:53 -0700
-X-Google-Sender-Auth: rwRTDEWor5sGKGP06rGpujkEwrw
-Message-ID: <CA+55aFyoY+cOrU1BnZwu8ytWKuCOfPaxziynAMDSe0dwR-PaGQ@mail.gmail.com>
-Subject: Re: [GIT PULL] auxdisplay for v4.17-rc1
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Corentin Labbe <clabbe.montjoie@gmail.com>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Robert Abel <rabel@robertabel.eu>, Sean Young <sean@mess.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Fri, 13 Apr 2018 16:08:30 -0700
+From: rishabhb@codeaurora.org
+To: Evan Green <evgreen@chromium.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm@lists.infradead.org,
+        linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
+        kyan@codeaurora.org, ckadabi@codeaurora.org,
+        stanimir.varbanov@linaro.org
+Subject: Re: [PATCH v4 2/2] drivers: soc: Add LLCC driver
+In-Reply-To: <CAE=gft6DHtvkLAyAF30p6rwJrs845nxBOxWQ0gmHdJ0VQa4ZxQ@mail.gmail.com>
+References: <1523390893-10904-1-git-send-email-rishabhb@codeaurora.org>
+ <1523390893-10904-3-git-send-email-rishabhb@codeaurora.org>
+ <CAE=gft6DHtvkLAyAF30p6rwJrs845nxBOxWQ0gmHdJ0VQa4ZxQ@mail.gmail.com>
+Message-ID: <a4d0d993c8bf42d9a2e59078606a4b4d@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 11:37 AM, Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> Please pull these fixes and cleanups for auxdisplay.
-
-As far as I can tell, none of this has been in linux-next.
-
-By the end of the merge window, I styart getting a whole lot more anal
-about what I pull. In particular, if people send me pull requests
-late, I had better get the warm fuzzy feeling of "at least it's been
-tested in linux-next".
-
-These may be recently rebased, but there isn't even anything
-*non-rebased* in linux-next as of the beginning of this week.
-
-              Linus
+On 2018-04-12 15:02, Evan Green wrote:
+> Hi Rishabh,
+> 
+> On Tue, Apr 10, 2018 at 1:09 PM Rishabh Bhatnagar 
+> <rishabhb@codeaurora.org>
+> wrote:
+> 
+>> LLCC (Last Level Cache Controller) provides additional cache memory
+>> in the system. LLCC is partitioned into multiple slices and each
+>> slice gets its own priority, size, ID and other config parameters.
+>> LLCC driver programs these parameters for each slice. Clients that
+>> are assigned to use LLCC need to get information such size & ID of the
+>> slice they get and activate or deactivate the slice as needed. LLCC 
+>> driver
+>> provides API for the clients to perform these operations.
+> 
+>> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
+>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+>> ---
+>>   drivers/soc/qcom/Kconfig           |  17 ++
+>>   drivers/soc/qcom/Makefile          |   2 +
+>>   drivers/soc/qcom/llcc-sdm845.c     | 110 ++++++++++
+>>   drivers/soc/qcom/llcc-slice.c      | 404
+> +++++++++++++++++++++++++++++++++++++
+>>   include/linux/soc/qcom/llcc-qcom.h | 168 +++++++++++++++
+>>   5 files changed, 701 insertions(+)
+>>   create mode 100644 drivers/soc/qcom/llcc-sdm845.c
+>>   create mode 100644 drivers/soc/qcom/llcc-slice.c
+>>   create mode 100644 include/linux/soc/qcom/llcc-qcom.h
+> 
+> [...]
+>> diff --git a/drivers/soc/qcom/llcc-sdm845.c
+> b/drivers/soc/qcom/llcc-sdm845.c
+>> new file mode 100644
+>> index 0000000..619b226
+>> --- /dev/null
+>> +++ b/drivers/soc/qcom/llcc-sdm845.c
+>> @@ -0,0 +1,110 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2017-2018, The Linux Foundation. All rights 
+>> reserved.
+>> + *
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/soc/qcom/llcc-qcom.h>
+>> +
+>> +/*
+>> + * SCT(System Cache Table) entry contains of the following parameters
+> 
+> contains the following members:
+> 
+>> + * name: Name of the client's use case for which the llcc slice is 
+>> used
+>> + * uid: Unique id for the client's use case
+> 
+> s/uid/usecase_id/
+> 
+>> + * slice_id: llcc slice id for each client
+>> + * max_cap: The maximum capacity of the cache slice provided in KB
+>> + * priority: Priority of the client used to select victim line for
+> replacement
+>> + * fixed_size: Determine if the slice has a fixed capacity
+> 
+> "Boolean indicating if the slice has a fixed capacity" might be better
+> 
+>> diff --git a/drivers/soc/qcom/llcc-slice.c 
+>> b/drivers/soc/qcom/llcc-slice.c
+>> new file mode 100644
+>> index 0000000..67a81b0
+>> --- /dev/null
+>> +++ b/drivers/soc/qcom/llcc-slice.c
+> ...
+>> +static int llcc_update_act_ctrl(struct llcc_drv_data *drv, u32 sid,
+>> +                               u32 act_ctrl_reg_val, u32 status)
+>> +{
+>> +       u32 act_ctrl_reg;
+>> +       u32 status_reg;
+>> +       u32 slice_status;
+>> +       int ret = 0;
+>> +
+>> +       act_ctrl_reg = drv->bcast_off + LLCC_TRP_ACT_CTRLn(sid);
+>> +       status_reg = drv->bcast_off + LLCC_TRP_STATUSn(sid);
+>> +
+>> +       /*Set the ACTIVE trigger*/
+> 
+> Add spaces around /* */
+> 
+>> +       act_ctrl_reg_val |= ACT_CTRL_ACT_TRIG;
+>> +       ret = regmap_write(drv->regmap, act_ctrl_reg, 
+>> act_ctrl_reg_val);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       /* Clear the ACTIVE trigger */
+>> +       act_ctrl_reg_val &= ~ACT_CTRL_ACT_TRIG;
+>> +       ret = regmap_write(drv->regmap, act_ctrl_reg, 
+>> act_ctrl_reg_val);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       ret = regmap_read_poll_timeout(drv->regmap, status_reg,
+> slice_status,
+>> +                       !(slice_status & status), 0,
+> LLCC_STATUS_READ_DELAY);
+>> +       return ret;
+>> +}
+>> +
+>> +/**
+>> + * llcc_slice_activate - Activate the llcc slice
+>> + * @desc: Pointer to llcc slice descriptor
+>> + *
+>> + * A value zero will be returned on success and a negative errno will
+> 
+> a value of zero
+> 
+>> + * be returned in error cases
+>> + */
+>> +int llcc_slice_activate(struct llcc_slice_desc *desc)
+>> +{
+>> +       int ret;
+>> +       u32 act_ctrl_val;
+>> +       struct llcc_drv_data *drv;
+>> +
+>> +       if (desc == NULL)
+>> +               return -EINVAL;
+> 
+> I think we can remove this check, right?
+> 
+>> +
+>> +       drv = dev_get_drvdata(desc->dev);
+>> +       if (!drv)
+>> +               return -EINVAL;
+>> +
+>> +       mutex_lock(&drv->lock);
+>> +       if (test_bit(desc->slice_id, drv->bitmap)) {
+>> +               mutex_unlock(&drv->lock);
+>> +               return 0;
+>> +       }
+>> +
+>> +       act_ctrl_val = ACT_CTRL_OPCODE_ACTIVATE << 
+>> ACT_CTRL_OPCODE_SHIFT;
+>> +
+>> +       ret = llcc_update_act_ctrl(drv, desc->slice_id, act_ctrl_val,
+>> +                                 DEACTIVATE);
+>> +
+>> +       __set_bit(desc->slice_id, drv->bitmap);
+>> +       mutex_unlock(&drv->lock);
+>> +
+>> +       return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(llcc_slice_activate);
+>> +
+>> +/**
+>> + * llcc_slice_deactivate - Deactivate the llcc slice
+>> + * @desc: Pointer to llcc slice descriptor
+>> + *
+>> + * A value zero will be returned on success and a negative errno will
+>> + * be returned in error cases
+>> + */
+>> +int llcc_slice_deactivate(struct llcc_slice_desc *desc)
+>> +{
+>> +       u32 act_ctrl_val;
+>> +       int ret;
+>> +       struct llcc_drv_data *drv;
+>> +
+>> +       if (desc == NULL)
+>> +               return -EINVAL;
+>> +
+>> +       drv = dev_get_drvdata(desc->dev);
+>> +       if (!drv)
+>> +               return -EINVAL;
+>> +
+>> +       mutex_lock(&drv->lock);
+>> +       if (!test_bit(desc->slice_id, drv->bitmap)) {
+>> +               mutex_unlock(&drv->lock);
+>> +               return 0;
+>> +       }
+>> +       act_ctrl_val = ACT_CTRL_OPCODE_DEACTIVATE <<
+> ACT_CTRL_OPCODE_SHIFT;
+>> +
+>> +       ret = llcc_update_act_ctrl(drv, desc->slice_id, act_ctrl_val,
+>> +                                 ACTIVATE);
+>> +
+>> +       __clear_bit(desc->slice_id, drv->bitmap);
+>> +       mutex_unlock(&drv->lock);
+>> +
+>> +       return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(llcc_slice_deactivate);
+>> +
+>> +/**
+>> + * llcc_get_slice_id - return the slice id
+>> + * @desc: Pointer to llcc slice descriptor
+>> + *
+>> + * A positive value will be returned on success and a negative errno 
+>> will
+>> + * be returned on error
+>> + */
+>> +int llcc_get_slice_id(struct llcc_slice_desc *desc)
+>> +{
+>> +       if (!desc)
+>> +               return -EINVAL;
+> 
+> Can we remove this check too?
+> 
+We need this check and the following one to protect against the
+null pointer access which might happen if client doesn't get
+the descriptor before accessing size and slice_id.
+>> +
+>> +       return desc->slice_id;
+>> +}
+>> +EXPORT_SYMBOL_GPL(llcc_get_slice_id);
+>> +
+>> +/**
+>> + * llcc_get_slice_size - return the slice id
+>> + * @desc: Pointer to llcc slice descriptor
+>> + *
+>> + * A positive value will be returned on success and zero will 
+>> returned on
+>> + * error
+>> + */
+>> +size_t llcc_get_slice_size(struct llcc_slice_desc *desc)
+>> +{
+>> +       if (!desc)
+>> +               return 0;
+> 
+> And this one?
+> 
+> -Evan
