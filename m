@@ -1,69 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753800AbeDMHAT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 03:00:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37342 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753703AbeDMHAQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 03:00:16 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 911D260274
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
-Subject: Re: [PATCH v4 2/7] phy: qcom-qmp: Enable pipe_clk before PHY
- initialization
-To: Stephen Boyd <sboyd@kernel.org>, Doug Anderson <dianders@chromium.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org,
-        Varadarajan Narayanan <varada@codeaurora.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Fengguang Wu <fengguang.wu@intel.com>
-References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
- <1522321466-21755-3-git-send-email-mgautam@codeaurora.org>
- <CAD=FV=XtviSYq=2w=Ld1xq5U2VPy=u=q6a3+4qd2zVGB+f9P8A@mail.gmail.com>
- <CAD=FV=WGEKy98De_zH9rp+g-tE2YuVK2vRxLJrjeeSx=ijBAww@mail.gmail.com>
- <19c66b02-4f8e-902a-9397-21e7690db7b8@codeaurora.org>
- <CAD=FV=XqH69_LXcCyTS1nF5fHpen=PnRxd-WTz=y3dKvMsRtuw@mail.gmail.com>
- <152338515540.180276.4273344163431724770@swboyd.mtv.corp.google.com>
- <f8f47dc2-74ab-96c6-b3bd-a476bd19514d@codeaurora.org>
- <152356552631.37499.9860530043266211290@swboyd.mtv.corp.google.com>
-From: Manu Gautam <mgautam@codeaurora.org>
-Message-ID: <e978fa34-d9a6-281c-6620-c9d10c7b54ae@codeaurora.org>
-Date: Fri, 13 Apr 2018 12:30:09 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        id S1753844AbeDMHBT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 03:01:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41602 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751756AbeDMHBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 03:01:18 -0400
+Subject: Re: [virtio-dev] Re: [PATCH v2] virtio_balloon: export hugetlb page
+ allocation counts
+To: Jonathan Helman <jonathan.helman@oracle.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc: virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        Mihai Carabas <mihai.carabas@oracle.com>
+References: <1521497654-24807-1-git-send-email-jonathan.helman@oracle.com>
+ <db6371af-f93d-4409-c910-2ff712196c5b@redhat.com>
+ <6ED6CAC9-FAD9-4A27-A9B1-C6EFC7627D68@oracle.com>
+ <c09d3570-a8f9-7a84-5dd6-46d385da2e15@redhat.com>
+ <20180322050842-mutt-send-email-mst@kernel.org>
+ <3f8a1b91-c5ba-8a24-72b8-02d884a67826@redhat.com>
+ <b1414be4-84bc-5d02-afff-9e42c1fd7210@oracle.com>
+ <e773c5bb-52a5-4b7d-4ce6-0fc3b189475f@redhat.com>
+ <1d2bcb00-b210-b992-318e-c65607d31dff@oracle.com>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <9b13b742-3970-e322-5a2f-dcfc75c540dc@redhat.com>
+Date: Fri, 13 Apr 2018 15:01:11 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <152356552631.37499.9860530043266211290@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1d2bcb00-b210-b992-318e-c65607d31dff@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
 
-On 4/13/2018 2:08 AM, Stephen Boyd wrote:
-> Quoting Manu Gautam (2018-04-11 08:37:38)
->>> I ask because it may be easier to never expose these clks in Linux, hit
->>> the enable bits in the branches during clk driver probe, and then act
->>> like they never exist because we don't really use them.
->> This sounds better idea. Let me check if I can get a patch for same in msm8996
->> and sdm845 clock drivers.
+On 2018年04月12日 08:24, Jonathan Helman wrote:
+>
+>
+> On 04/10/2018 08:12 PM, Jason Wang wrote:
 >>
-> Ok! Presumably the PHY has a way to tell if it failed to turn on right?
-> Put another way, I'm hoping these branch bits aren't there to help us
-> debug and figure out when the PHY PLL fails to lock.
+>>
+>> On 2018年04月10日 05:11, Jonathan Helman wrote:
+>>>
+>>>
+>>> On 03/22/2018 07:38 PM, Jason Wang wrote:
+>>>>
+>>>>
+>>>> On 2018年03月22日 11:10, Michael S. Tsirkin wrote:
+>>>>> On Thu, Mar 22, 2018 at 09:52:18AM +0800, Jason Wang wrote:
+>>>>>> On 2018年03月20日 12:26, Jonathan Helman wrote:
+>>>>>>>> On Mar 19, 2018, at 7:31 PM, Jason Wang<jasowang@redhat.com> 
+>>>>>>>> wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> On 2018年03月20日 06:14, Jonathan Helman wrote:
+>>>>>>>>> Export the number of successful and failed hugetlb page
+>>>>>>>>> allocations via the virtio balloon driver. These 2 counts
+>>>>>>>>> come directly from the vm_events HTLB_BUDDY_PGALLOC and
+>>>>>>>>> HTLB_BUDDY_PGALLOC_FAIL.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Jonathan Helman<jonathan.helman@oracle.com>
+>>>>>>>> Reviewed-by: Jason Wang<jasowang@redhat.com>
+>>>>>>> Thanks.
+>>>>>>>
+>>>>>>>>> ---
+>>>>>>>>>    drivers/virtio/virtio_balloon.c     | 6 ++++++
+>>>>>>>>>    include/uapi/linux/virtio_balloon.h | 4 +++-
+>>>>>>>>>    2 files changed, 9 insertions(+), 1 deletion(-)
+>>>>>>>>>
+>>>>>>>>> diff --git a/drivers/virtio/virtio_balloon.c 
+>>>>>>>>> b/drivers/virtio/virtio_balloon.c
+>>>>>>>>> index dfe5684..6b237e3 100644
+>>>>>>>>> --- a/drivers/virtio/virtio_balloon.c
+>>>>>>>>> +++ b/drivers/virtio/virtio_balloon.c
+>>>>>>>>> @@ -272,6 +272,12 @@ static unsigned int 
+>>>>>>>>> update_balloon_stats(struct virtio_balloon *vb)
+>>>>>>>>> pages_to_bytes(events[PSWPOUT]));
+>>>>>>>>>        update_stat(vb, idx++, VIRTIO_BALLOON_S_MAJFLT, 
+>>>>>>>>> events[PGMAJFAULT]);
+>>>>>>>>>        update_stat(vb, idx++, VIRTIO_BALLOON_S_MINFLT, 
+>>>>>>>>> events[PGFAULT]);
+>>>>>>>>> +#ifdef CONFIG_HUGETLB_PAGE
+>>>>>>>>> +    update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGALLOC,
+>>>>>>>>> +            events[HTLB_BUDDY_PGALLOC]);
+>>>>>>>>> +    update_stat(vb, idx++, VIRTIO_BALLOON_S_HTLB_PGFAIL,
+>>>>>>>>> +            events[HTLB_BUDDY_PGALLOC_FAIL]);
+>>>>>>>>> +#endif
+>>>>>>>>>    #endif
+>>>>>>>>>        update_stat(vb, idx++, VIRTIO_BALLOON_S_MEMFREE,
+>>>>>>>>>                    pages_to_bytes(i.freeram));
+>>>>>>>>> diff --git a/include/uapi/linux/virtio_balloon.h 
+>>>>>>>>> b/include/uapi/linux/virtio_balloon.h
+>>>>>>>>> index 4e8b830..40297a3 100644
+>>>>>>>>> --- a/include/uapi/linux/virtio_balloon.h
+>>>>>>>>> +++ b/include/uapi/linux/virtio_balloon.h
+>>>>>>>>> @@ -53,7 +53,9 @@ struct virtio_balloon_config {
+>>>>>>>>>    #define VIRTIO_BALLOON_S_MEMTOT   5   /* Total amount of 
+>>>>>>>>> memory */
+>>>>>>>>>    #define VIRTIO_BALLOON_S_AVAIL    6   /* Available memory 
+>>>>>>>>> as in /proc */
+>>>>>>>>>    #define VIRTIO_BALLOON_S_CACHES   7   /* Disk caches */
+>>>>>>>>> -#define VIRTIO_BALLOON_S_NR       8
+>>>>>>>>> +#define VIRTIO_BALLOON_S_HTLB_PGALLOC  8  /* Hugetlb page 
+>>>>>>>>> allocations */
+>>>>>>>>> +#define VIRTIO_BALLOON_S_HTLB_PGFAIL   9  /* Hugetlb page 
+>>>>>>>>> allocation failures */
+>>>>>>>>> +#define VIRTIO_BALLOON_S_NR       10
+>>>>>>>>>      /*
+>>>>>>>>>     * Memory statistics structure.
+>>>>>>>> Not for this patch, but it looks to me that exporting such nr 
+>>>>>>>> through uapi is fragile.
+>>>>>>> Sorry, can you explain what you mean here?
+>>>>>>>
+>>>>>>> Jon
+>>>>>> Spec said "Within an output buffer submitted to the statsq, the 
+>>>>>> device MUST
+>>>>>> ignore entries with tag values that it does not recognize". So 
+>>>>>> exporting
+>>>>>> VIRTIO_BALLOON_S_NR seems useless and device implementation can 
+>>>>>> not depend
+>>>>>> on such number in uapi.
+>>>>>>
+>>>>>> Thanks
+>>>>> Suggestions? I don't like to break build for people ...
+>>>>>
+>>>>
+>>>> Didn't have a good idea. But maybe we should keep 
+>>>> VIRTIO_BALLOON_S_NR unchanged, and add a comment here.
+>>>>
+>>>> Thanks
+>>>
+>>> I think Jason's comment is for a future patch. Didn't see this patch 
+>>> get applied, so wondering if it could be.
+>>>
+>>> Thanks,
+>>> Jon
+>>
+>> Hi Jon:
+>>
+>> Have you tested new driver with old qemu?
+>
+> Yes, this testing scenario looks good. Thanks.
+>
+> Jon 
 
-Yes, PHY has a PCS_STATUS3 register that indicates whether pipe_clk got enabled or
-not.
+Hi Jon:
 
+I mean e.g compiling qemu with new linux headers. E.g current qemu has:
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+static const char *balloon_stat_names[] = {
+    [VIRTIO_BALLOON_S_SWAP_IN] = "stat-swap-in",
+    [VIRTIO_BALLOON_S_SWAP_OUT] = "stat-swap-out",
+    [VIRTIO_BALLOON_S_MAJFLT] = "stat-major-faults",
+    [VIRTIO_BALLOON_S_MINFLT] = "stat-minor-faults",
+    [VIRTIO_BALLOON_S_MEMFREE] = "stat-free-memory",
+    [VIRTIO_BALLOON_S_MEMTOT] = "stat-total-memory",
+    [VIRTIO_BALLOON_S_AVAIL] = "stat-available-memory",
+    [VIRTIO_BALLOON_S_CACHES] = "stat-disk-caches",
+    [VIRTIO_BALLOON_S_NR] = NULL
+};
+
+I'm afraid it will be broken if VIRTIO_BALLOON_S_NR is 10.
+
+Thanks
