@@ -1,133 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753300AbeDMHm5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 03:42:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45333 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750851AbeDMHmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 03:42:55 -0400
-Subject: Re: Query:Regarding percpu_counter debug object destroy
-To: "Kohli, Gaurav" <gkohli@codeaurora.org>, tj@kernel.org,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org
-References: <0754201b-2051-3f1c-7a09-ed1be96a0260@codeaurora.org>
-From: Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- xsFNBFiKBz4BEADNHZmqwhuN6EAzXj9SpPpH/nSSP8YgfwoOqwrP+JR4pIqRK0AWWeWCSwmZ
- T7g+RbfPFlmQp+EwFWOtABXlKC54zgSf+uulGwx5JAUFVUIRBmnHOYi/lUiE0yhpnb1KCA7f
- u/W+DkwGerXqhhe9TvQoGwgCKNfzFPZoM+gZrm+kWv03QLUCr210n4cwaCPJ0Nr9Z3c582xc
- bCUVbsjt7BN0CFa2BByulrx5xD9sDAYIqfLCcZetAqsTRGxM7LD0kh5WlKzOeAXj5r8DOrU2
- GdZS33uKZI/kZJZVytSmZpswDsKhnGzRN1BANGP8sC+WD4eRXajOmNh2HL4P+meO1TlM3GLl
- EQd2shHFY0qjEo7wxKZI1RyZZ5AgJnSmehrPCyuIyVY210CbMaIKHUIsTqRgY5GaNME24w7h
- TyyVCy2qAM8fLJ4Vw5bycM/u5xfWm7gyTb9V1TkZ3o1MTrEsrcqFiRrBY94Rs0oQkZvunqia
- c+NprYSaOG1Cta14o94eMH271Kka/reEwSZkC7T+o9hZ4zi2CcLcY0DXj0qdId7vUKSJjEep
- c++s8ncFekh1MPhkOgNj8pk17OAESanmDwksmzh1j12lgA5lTFPrJeRNu6/isC2zyZhTwMWs
- k3LkcTa8ZXxh0RfWAqgx/ogKPk4ZxOXQEZetkEyTFghbRH2BIwARAQABzSJOaWtvbGF5IEJv
- cmlzb3YgPG5ib3Jpc292QHN1c2UuZGU+wsF4BBMBAgAiBQJYijkSAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAAKCRBxvoJG5T8oV/B6D/9a8EcRPdHg8uLEPywuJR8URwXzkofT5bZE
- IfGF0Z+Lt2ADe+nLOXrwKsamhweUFAvwEUxxnndovRLPOpWerTOAl47lxad08080jXnGfYFS
- Dc+ew7C3SFI4tFFHln8Y22Q9075saZ2yQS1ywJy+TFPADIprAZXnPbbbNbGtJLoq0LTiESnD
- w/SUC6sfikYwGRS94Dc9qO4nWyEvBK3Ql8NkoY0Sjky3B0vL572Gq0ytILDDGYuZVo4alUs8
- LeXS5ukoZIw1QYXVstDJQnYjFxYgoQ5uGVi4t7FsFM/6ykYDzbIPNOx49Rbh9W4uKsLVhTzG
- BDTzdvX4ARl9La2kCQIjjWRg+XGuBM5rxT/NaTS78PXjhqWNYlGc5OhO0l8e5DIS2tXwYMDY
- LuHYNkkpMFksBslldvNttSNei7xr5VwjVqW4vASk2Aak5AleXZS+xIq2FADPS/XSgIaepyTV
- tkfnyreep1pk09cjfXY4A7qpEFwazCRZg9LLvYVc2M2eFQHDMtXsH59nOMstXx2OtNMcx5p8
- 0a5FHXE/HoXz3p9bD0uIUq6p04VYOHsMasHqHPbsMAq9V2OCytJQPWwe46bBjYZCOwG0+x58
- fBFreP/NiJNeTQPOa6FoxLOLXMuVtpbcXIqKQDoEte9aMpoj9L24f60G4q+pL/54ql2VRscK
- d87BTQRYigc+ARAAyJSq9EFk28++SLfg791xOh28tLI6Yr8wwEOvM3wKeTfTZd+caVb9gBBy
- wxYhIopKlK1zq2YP7ZjTP1aPJGoWvcQZ8fVFdK/1nW+Z8/NTjaOx1mfrrtTGtFxVBdSCgqBB
- jHTnlDYV1R5plJqK+ggEP1a0mr/rpQ9dFGvgf/5jkVpRnH6BY0aYFPprRL8ZCcdv2DeeicOO
- YMobD5g7g/poQzHLLeT0+y1qiLIFefNABLN06Lf0GBZC5l8hCM3Rpb4ObyQ4B9PmL/KTn2FV
- Xq/c0scGMdXD2QeWLePC+yLMhf1fZby1vVJ59pXGq+o7XXfYA7xX0JsTUNxVPx/MgK8aLjYW
- hX+TRA4bCr4uYt/S3ThDRywSX6Hr1lyp4FJBwgyb8iv42it8KvoeOsHqVbuCIGRCXqGGiaeX
- Wa0M/oxN1vJjMSIEVzBAPi16tztL/wQtFHJtZAdCnuzFAz8ue6GzvsyBj97pzkBVacwp3/Mw
- qbiu7sDz7yB0d7J2tFBJYNpVt/Lce6nQhrvon0VqiWeMHxgtQ4k92Eja9u80JDaKnHDdjdwq
- FUikZirB28UiLPQV6PvCckgIiukmz/5ctAfKpyYRGfez+JbAGl6iCvHYt/wAZ7Oqe/3Cirs5
- KhaXBcMmJR1qo8QH8eYZ+qhFE3bSPH446+5oEw8A9v5oonKV7zMAEQEAAcLBXwQYAQIACQUC
- WIoHPgIbDAAKCRBxvoJG5T8oV1pyD/4zdXdOL0lhkSIjJWGqz7Idvo0wjVHSSQCbOwZDWNTN
- JBTP0BUxHpPu/Z8gRNNP9/k6i63T4eL1xjy4umTwJaej1X15H8Hsh+zakADyWHadbjcUXCkg
- OJK4NsfqhMuaIYIHbToi9K5pAKnV953xTrK6oYVyd/Rmkmb+wgsbYQJ0Ur1Ficwhp6qU1CaJ
- mJwFjaWaVgUERoxcejL4ruds66LM9Z1Qqgoer62ZneID6ovmzpCWbi2sfbz98+kW46aA/w8r
- 7sulgs1KXWhBSv5aWqKU8C4twKjlV2XsztUUsyrjHFj91j31pnHRklBgXHTD/pSRsN0UvM26
- lPs0g3ryVlG5wiZ9+JbI3sKMfbdfdOeLxtL25ujs443rw1s/PVghphoeadVAKMPINeRCgoJH
- zZV/2Z/myWPRWWl/79amy/9MfxffZqO9rfugRBORY0ywPHLDdo9Kmzoxoxp9w3uTrTLZaT9M
- KIuxEcV8wcVjr+Wr9zRl06waOCkgrQbTPp631hToxo+4rA1jiQF2M80HAet65ytBVR2pFGZF
- zGYYLqiG+mpUZ+FPjxk9kpkRYz61mTLSY7tuFljExfJWMGfgSg1OxfLV631jV1TcdUnx+h3l
- Sqs2vMhAVt14zT8mpIuu2VNxcontxgVr1kzYA/tQg32fVRbGr449j1gw57BV9i0vww==
-Message-ID: <cfd4c608-2662-2338-0ce7-4c90e193bd3c@suse.com>
-Date: Fri, 13 Apr 2018 10:42:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753536AbeDMH7v (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 03:59:51 -0400
+Received: from mail-by2nam03on0060.outbound.protection.outlook.com ([104.47.42.60]:11715
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750960AbeDMH7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 03:59:49 -0400
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; linux.ie; dkim=none (message not signed)
+ header.d=none;linux.ie; dmarc=permerror action=none header.from=amd.com;
+Date: Fri, 13 Apr 2018 16:04:38 +0800
+From: Huang Rui <ray.huang@amd.com>
+To: Mathieu Malaterre <malat@debian.org>
+CC: Alex Deucher <alexander.deucher@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>, <amd-gfx@lists.freedesktop.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Subject: Re: [PATCH] drm/radeon: change function signature to pass full range
+Message-ID: <20180413080437.GB10330@hr-amur2>
+References: <20180412193333.4951-1-malat@debian.org>
 MIME-Version: 1.0
-In-Reply-To: <0754201b-2051-3f1c-7a09-ed1be96a0260@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="gb2312"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180412193333.4951-1-malat@debian.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(39380400002)(346002)(396003)(39860400002)(2980300002)(428003)(199004)(189003)(305945005)(77096007)(33896004)(478600001)(76176011)(186003)(8676002)(26005)(72206003)(59450400001)(47136003)(106466001)(2906002)(68736007)(48336001)(58126008)(5660300001)(54906003)(316002)(33656002)(966005)(2870700001)(356003)(23696002)(486006)(126002)(55016002)(50466002)(47776003)(81156014)(53936002)(81166006)(97736004)(426003)(9686003)(476003)(6306002)(446003)(11346002)(8936002)(229853002)(105586002)(6666003)(6916009)(33716001)(336012)(4326008)(6246003)(104016004)(86362001)(1076002)(18370500001)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2421;H:SATLEXCHOV02.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2NAM03FT017;1:gYSWmok4/FK2uyn2UH2wnEOCg2Gei867cu177xkxXmUcwH0WVdCFtUw8iTbIIdKLAaI4UESA0xFOG1H3JcDg8/x8krb1Mo6abRVc7W73UOW6VTa1z63d+c5YCHnkBf2i
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:DM5PR12MB2421;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2421;3:9m3Z9VFt3tmmJ4nWDE+cShXYiCKJi3dWGp4iQ6GMKyx+yPa1G2FUKthWFcwfF1Pqx+H6fqfnoMcd5AcV0YeovrZuJkGf22fPWHXh13vP3R7cW9ZMrJ639dBpPa3DFrO4znYsJ99OvoCD3MX+pD4taFZ0uLPXOprBRssONGtclXq9fYvyHwD/5RpfyBFLbKvk7W9ic8SaNoyiO5g/LG4TDt1ycXzOAVac2oPfpxlOOqPJUJ9vZ7lCH4cRa/ft6pv5z8dF+ROFqCiZp2XmDnayOBddIRkKSRg2O6RvFqDlxFiRvmjk5pQ/nVDqaVS9fkZuNUFyfQySlDLeh/50QkhMJS+wwOOzGqs34uIMbV+YM3A=;25:pdtp0wZru5Rjhp/7CvTlh7/t5FNIvuH2Uh8sIAyk3gKnhyTeiqtlMU+mCKL7Kz1o5hCwCLdS3dzyKir9t2uaGtBjBIXQCWF26k9IjdQkjtukHX6dXa39UggH3S2lD6eKmznHFX5pHlDnUsrqCSYOh15kiHF1OIwIhsIExaGPfD5VAXX86KE0nf5sAtKAcvJtcpm6cZVoitQE41DjA9Yi6z9Y5v01SUZTJzfL3r93G2a2eqxj4XfOCz2s99a76OfDdr94cOn8W9341IF8PZQtLNJlGtmGi+5q1jJXyLtypejButIWDnpzRy4CN5/Zj0cw0xT7gfOfNYU6+MrTV8pocQ==
+X-MS-TrafficTypeDiagnostic: DM5PR12MB2421:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2421;31:lOmIJIdik9OCqmxVFFQx1R0IMhNpdPQtWEFX2YuJ1PmxS7dSxRcoNo7UP5eSV+kpusABhvLTzcx59VMujKCz8buoNS27Vr62zlSfl8eAbioGJyopLgIuh4M6eU2YUrrchfNZGn3jTPZenHBIc8P3/6/3Vgi3VG/j6UghxDnzl4lLZV2X6YMFdve8bESHkFE35GDJ5H3jqezZe9RjL41dcdS5/C7BMJmJfRBCA6IByrc=;20:U/N7VpYWNDOWXxSPggcTgWcPbOApqPu+PIT4+FfCYJ0T+iY0nPxXgOawQY1/8sxEXvOj+pCjCeaZsSHB7258EzGQzYfgG4FTe/jAtmpdnT9mq2crAhATMBT2tyU0fVQ3oaHt8C/8X4qgEB2F+mrsc3GPXIYVWVVDuyQFv5LI1cPyLlnzhGNkEx/y33Yg9LHbIX2ActogHBZWv0se6jcMw1A6vR+SNTe4VUxtSNNjO8Pg7gj2TbrR2ixxsUGw1e3KP/b+UE0a7RcBzATZYn7CQqdtQwKT5HcxH/gRrSWHimv/s7ZS/ysuK3mmCzAW3ceynmYZbI5e6mZTaG8lE1nEHJvrnTeM50wlNsVSJlO7CeeMqKmpAgtJmwzuzOiIoYCcV5ppNQvd+CHnBhMv+IW049J7/TX05QALryi4JUmsg4E1RaS7Go//srEjBLgfw7ItM2DaCEn67cyCq1vL5A0kTnEfjZp9z4s8e9t9qG2bp+3FFN2UwYa3vzTnecFKRT1u
+X-Microsoft-Antispam-PRVS: <DM5PR12MB2421EEDBC9795CA2A9790618ECB30@DM5PR12MB2421.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110)(217544274631240);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93003095)(3231232)(944501327)(52105095)(10201501046)(3002001)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR12MB2421;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB2421;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2421;4:SmCrgdIUvZGgOG9flA7kq2+aZKkdtjYQ89IOMDwccpxLbs0xDslcayWx2JCdEhDmtUso3oHbjsReB4shl6v6oJvMCKWmBLqNcmsR11x/oJ4+Am9I31sriCXVJtM6w/pppwYJ/kYa08JEaqrQsD8sBDyiuYJP71hLDfb+lt6F9r+Lz/mqJEqBL8faNllNbJxy4kw+6aXKy7Ji+nacIrVa+aIlqOhcw9/0dKf3eKGAqZVgzem+MGFPov2KTeZ3PxRbJyMPrfUAZfqxG7FrSmBXSuG4+NTA72znrkZdlvFiJEzobbmEQK5BaJN2OXpPrvgH3fo5jlcGjXi3w64DqhoKID5g1EXFq5VcWRJcSZrpdxs=
+X-Forefront-PRVS: 0641678E68
+X-Microsoft-Exchange-Diagnostics: =?gb2312?B?MTtETTVQUjEyTUIyNDIxOzIzOjdidkI1OFVxZkdIcEdPbVRCUCs5ZVFwTkJj?=
+ =?gb2312?B?WFJ3d2pGTTNGdEFpRHh4Q0ZZS3c4NzhMOTc1VFIweVBiNnRka2RXcXM2RXQ3?=
+ =?gb2312?B?OEFyRVNPUzYxQkU5azNYZ2Q0MXN3K3RvdG8zRWF0Ri9zQUFxNGJnbGZXeEV5?=
+ =?gb2312?B?YkVVNCt0ZmJaTlM1RUlSc2o5WHpWS3dua09QN0NydjFiL3dmV1dtWEpxcko0?=
+ =?gb2312?B?RWhQdlZ4Q0hvYmJ0SzkwdGFxaHQ4Qk9XMDgzeDZvZU5MdkFLWlZMRTNUSC9O?=
+ =?gb2312?B?dS96Y0QxWEJGUU9ad2VMQko0TXdpUTVBVnhWeHV1OEh5R0p0eEVwcWhGQ21G?=
+ =?gb2312?B?OXV2SEJHenhEZVlzc3h3Z2d5QWVzaTVpdDNFQ2RiNjFSMUFKNVJsT1pHQjNu?=
+ =?gb2312?B?UmJ2S0YvVnN3OHBZdFFjcEdCUjNEWDhsMG5RcnRqcE1mcGdHc240eEtQS1F0?=
+ =?gb2312?B?UzhVaWorTDIxd3ZwRDVRTjIwSWdUaTY4N0dZSU9qU1A5bUdqRS9ENGVZZW1U?=
+ =?gb2312?B?T0NQUjBNQkJuWUI5MDRiNEhOajM4enFBakM1MHpGN1U1ZTc5Q0JIVUc2L2tH?=
+ =?gb2312?B?K2NFTnZzclpjWWIrS1BBd0pDWUxLT0dObG5CaysyZHNGUGNFSFh6b255cFV1?=
+ =?gb2312?B?QVA3WWpUOFRhbFQ3OHlaSmIyWS9WbEtJM1BxZmNmaUJCRmhkZGdKOWZMMENW?=
+ =?gb2312?B?cTFwT3dGUklBZ3hhUi9pR2Mwd3E0Rmo4NTUyL25uTnhSenhXeWJlako0MmdC?=
+ =?gb2312?B?TGRod0NJaklQWUh0dUxKK2JSQzVsTHVGKzdvYi9Qd1F4MTFTa1ArRm1tTm8y?=
+ =?gb2312?B?c0lPdjhOUm1kdnc3QzFRMk1sU0JaOXMxRnBtaUJ6OEJmblZJSkxId2Q5NXo0?=
+ =?gb2312?B?M0o5ckZ0Ti92WVFTeW8xdWtYeTcxbCtHM3REZEZ1bkZGR0hlb0JINjU0YjBV?=
+ =?gb2312?B?ZmpDbjFQc2tJRitJTGwvWE9nWkJLZytkZlJ5YnpEWE1KaE5oV1J1Z2U4cGZE?=
+ =?gb2312?B?WjFkNEdkQmRmNitDRmluaEFZMFY2Q2JYSml1KzZtTTZwY1hkUi8rb0pncndz?=
+ =?gb2312?B?WDNUQjZzakNMaXh5QXNKckhLUGhNM2lTRkZabU00S3ArSUxWZVBmdUZaUGpW?=
+ =?gb2312?B?Q0JJWUkzbVA1Y0RDZG1rQjN5KzhaRWQvVHBtalJ1TUh2N294bFdaTjAvL25X?=
+ =?gb2312?B?ejAvWkoxZWppcVplUUJTOUh0SzF4Z1dwT08zeHg0bThDMnBZTVF1OThCSThR?=
+ =?gb2312?B?Q25iS2xMdUg0TzdJM0RDZE1PR3JiU1hEbDh6M3RtQnFKN1F0T2xTV1pCQkl2?=
+ =?gb2312?B?NVh0b3REUm8xUG9OOXN4NHBuaWpyTUJMVzZ1UUdEL1N6SHNMbE1ReVJyRVd0?=
+ =?gb2312?B?UkRacTJuUm9MaTBROXZqQytmUktwN0VqUFBDcG9iWHRhc3hZcW9idUM5cm5V?=
+ =?gb2312?B?WjA1TkhxZ0w3YXBFM2hIbEwvbEpKeDJxSkZFVlFnRUFOVVVKam1HTlkzVEVv?=
+ =?gb2312?B?K201SUtNczB3UzBBbWxhK01XRWRpNW0xaGZucGZQS2RpWk1PbUE0b1VFZm02?=
+ =?gb2312?B?a01McWtpY3FkRnJybXBUQmgwUTZzZ2VSSXZvL2s4aGs2VUJ1RTN0RkpkbmNS?=
+ =?gb2312?B?NVM5VlVNY0F2ejZTdFl5K3NrVW5tejVHN0h3MmxrZUo0b2NRSTRNU3RFckY2?=
+ =?gb2312?B?QzA2a1BabTh1ekV4czlxcDljSDJzeHlxYm9HL2VBOGZYN2VkVjh2R0ZIUENt?=
+ =?gb2312?B?SmNuaVRuOEtKVVpwcE1HL1NWNjlwN25aWUZqZzdpTzJCK1hqOVdUVTRZdFBW?=
+ =?gb2312?B?Vks2aW12emhTdnlvOXVqQTN2RExrRncxK0tQMmJsUGVRdGZhbGVsRVhjQnNL?=
+ =?gb2312?Q?x8N/wBL2R1U=3D?=
+X-Microsoft-Antispam-Message-Info: skiCuo8Z/AkmOA+RUYOxIu690F0Re3py18RTd+Ls8sQ6l0/GE5T3ftCp/Ijyf/4Mfye4jNSa5gso8HSEvev0YHiD6LmJnsuxwTBkJIJfZr6FAsDipf+s0+QG6w9+8BOZo5zxlq1EiXp/mf/8R01Igjb1rPv5mU7wn1jUyV9TfOghOPhBIUY6/SXRV6WKC5JC
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2421;6:gKaTN1FXDuvneCaqdHucJZWWTBDruWpCaPivrv+eVZmxScoPWCRv9jCY/tMPCPhtIORsq1oUILRFiyM2fRF09/TTQl1Q4wL+d+P7ZAx264uGFZcipe3HVkvLVB0zRTs9ElNMXreW974f5ioSBwgcfi2GKlzPsEJMqNFJhArCw84KZ23DAhyLsyztpbsMFr/i/ZoC1VubAvxynxjRJSNNZ3vuBxRtEm+CzZ1jkY/aAjCJO8G1Ls5TRruX7OL9zxsAAc4aCkLIQ87YD5s8otdCBo3vHL4oViQyuMB5l+vNtr1Q+hODBvp9kklP5kvhkSB/iuqzo+2MYyD5mAaSWgkRFnHSy71B6V+EAaYLjfasn9iAV7BGyB32nMKO/n80sNNcUwJDn9EkytX4CI8sZMue4hV8YYdLbZoMFCzFTWt5lRW6+1leFAB8hLqtqOy5jy450G1zpkxRkJGb94lAazp9wQ==;5:bGA+HRsLLArRwH8cV8GeEVrGLacTHp5GVK2TQTnVqhtEsstSPMZWrGw327OmQLNWjUrc04c55VqlZpBQrlthOvQIvoyi53jDRdOpj1L5Xr/I1oMs3WGe+I0JNRQ/J3697aG+IEKb43lVol7igHCICvIzp6AnlQtS5vX+7T2lhoE=;24:wBY0B6PBrOl6bCjBw982sA2lw07v8UJLpkby+3IPzRvDvQIQL0Pd0v6a4oWL/82Pg/v+jQ+Jiduysy7f9laVyAQuQ+t0BdnzMW9eo55kzzc=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2421;7:iw/Fitx8++2qvhWu5xFzEbJPihLNI9pj8XBuogEyvB8G8KAWPbadIwWieYo8mJ15Op9IIB2feohy26wnm6lw3SvxMNMLUrhoQX/xwI8v5b1eGZwmJQpIm7QQobP/SYfuhPvpSu4c6wdMoF4utC1p8t74jYG2kWOWvGyRRmSK8BhzFbBN97wQDNt/v97uy7k1zNPBBLDD2wLtVsLVWlTohUH1sha/JSDStDFmNfpvH5ZD9CsEo3kJVMUofta93lhP;20:S++a1sRBxRvPDG5DizfT/DHqTYDn1AonDJonA1TT1G5TVQq5pn/WSdvUdp8vLkRFoCKkSvVCnH04na2rOVLd16jXM0r608zbCP8R4BG+HfiZtaLSdB/ukKj3zcpBRM5rZhfDutdFHZQ4ahEf+tPYxn7Vd1FnlGz1hqx7iZpKxFSOt8XonA8caCVsR0ZggIfPvby8H9J+P3yfFJbNEWEtnX8MFZLwENVXGwA9ZdoCIBNnFd70xI+7pW28BPfb9IZW
+X-MS-Office365-Filtering-Correlation-Id: c72e5f2e-8040-4a32-229e-08d5a1148676
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Apr 2018 07:59:46.8537
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c72e5f2e-8040-4a32-229e-08d5a1148676
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV02.amd.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2421
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Apr 12, 2018 at 09:33:33PM +0200, Mathieu Malaterre wrote:
+> In function ��radeon_process_i2c_ch�� a comparison of a u8 value against
+> 255 is done. Since it is always false, change the signature of this
+> function to use an `int` instead, which match the type used in caller:
+> `radeon_atom_hw_i2c_xfer`.
+> 
+> Fix the following warning triggered with W=1:
+> 
+>   CC [M]  drivers/gpu/drm/radeon/atombios_i2c.o
+>   drivers/gpu/drm/radeon/atombios_i2c.c: In function ��radeon_process_i2c_ch��:
+>   drivers/gpu/drm/radeon/atombios_i2c.c:71:11: warning: comparison is always false due to limited range of data type [-Wtype-limits]
+>    if (num > ATOM_MAX_HW_I2C_READ) {
+>            ^
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 
+Reviewed-by: Huang Rui <ray.huang@amd.com>
 
-On 13.04.2018 10:32, Kohli, Gaurav wrote:
-> Hi ,
+> ---
+>  drivers/gpu/drm/radeon/atombios_i2c.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I have checked below code and it seems we are calling debug_object_free
-> twice, ideally we should deactivate and later we
-> have to destroy.
+> diff --git a/drivers/gpu/drm/radeon/atombios_i2c.c b/drivers/gpu/drm/radeon/atombios_i2c.c
+> index 4157780585a0..9022e9af11a0 100644
+> --- a/drivers/gpu/drm/radeon/atombios_i2c.c
+> +++ b/drivers/gpu/drm/radeon/atombios_i2c.c
+> @@ -35,7 +35,7 @@
+>  
+>  static int radeon_process_i2c_ch(struct radeon_i2c_chan *chan,
+>  				 u8 slave_addr, u8 flags,
+> -				 u8 *buf, u8 num)
+> +				 u8 *buf, int num)
+>  {
+>  	struct drm_device *dev = chan->dev;
+>  	struct radeon_device *rdev = dev->dev_private;
+> -- 
+> 2.11.0
 > 
-> 1st call -> percpu_counter_destroy->debug_percpu_counter_deactivate ->
-> debug_object_free
-> 2nd call ->
-> debug_object_free
-> 
-> 
-> 
-> static bool percpu_counter_fixup_free(void *addr, enum debug_obj_state
-> state)
-> {
->         struct percpu_counter *fbc = addr;
-> 
->         switch (state) {
->         case ODEBUG_STATE_ACTIVE:
->                 percpu_counter_destroy(fbc);  -> first call
->                 debug_object_free(fbc, &percpu_counter_debug_descr); 2nd
-
-
-Having looked at the code I'd say this is indeed buggy. I'd say it
-stemmed from same cargo culting since timer_fixup_free follows the same
-structure of code, except that in del_timer_sync there is no code which
-does debug_object_free. The situation is similar in work_fixup_free.
-
-So at this point I guess the question is whether we want to leave the
-debug_object_free call in percpu_counter_fixup_free and just remove
-debug_percpu_counter_deactivate and open-code the call to
-debug_object_deactivate in percpu_counter_destroy. Or remove the
-explicit call in percpu_counter_fixup_free and leave
-debug_percpu_counter_deactivate.
-
-
-In the end it's a matter of style, so perhaps Tejun, as the maintainer,
-has the final say what style he prefers. Personally, I'd go for the
-former solution so that the percpu follows the style of the rest of the
-kernel.
-
-> call
->                 return true;
->         default:
->                 return false;
->         }
-> }
-> 
-> 
-> We are seeing one issue, where one list contain garbage data in
-> obj_hash, just before element of that is percpu_counter but
-> still not sure as it is very difficult to reproduce.
-> 
-> Can some one please review above code or can we remove one instance of
-> debug_object_free from above code.
-> 
-> Regards
-> Gaurav
-> 
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
