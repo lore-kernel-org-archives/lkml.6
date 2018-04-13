@@ -1,143 +1,88 @@
-Return-Path: <jic23@kernel.org>
-X-Google-Smtp-Source: AIpwx489gPCd9J1PgkFbPNEzcWEY1M2sDJ/MRbz6YBEnPyv5nD0Is351Bz3YK55MgUKRHUACVTty
-ARC-Seal: i=1; a=rsa-sha256; t=1523821741; cv=none;
+Return-Path: <hernan@vanguardiasur.com.ar>
+ARC-Seal: i=1; a=rsa-sha256; t=1523637540; cv=none;
         d=google.com; s=arc-20160816;
-        b=mbE284DQRHcQN6MlWcgUhV8o/H+gPMKf20734Hp7gaQdfAROTa6Wut8S4Z7abWmRR1
-         +MmVmGh0HJhNhxumw5HzGMRajN3tJ15+7bMH7BXDRz4OHsMxZlt9Taz2/Vccs2UQYDwL
-         BRe8WAy0sMrX2Yoo8ozmO6U7M65icZUYK1OrAYP/jwPnW8HtqhNT35K7hBWsAd3JT1Jo
-         8i58T7fEjag5M7bcqYix8maFk05iZHXK0I2TzJ8SXD0VJ37AlSIK9EKxc/DLgoqC7j6M
-         hzrkSYrIT9S6evuCJGHsxlXjTEQEKUap46yERZg9mB1a8S7VyCK4Th2E8XWqJU7kIRin
-         qPfA==
+        b=oii4hkZr/KENOMWd/MUPUm68ag/86ZNpV8Ynir3Hw3divL2HONZrfhI+E9QQos05yY
+         MnZvdWlkhFRSviPMshBSfq0nPgYLiMDc03REkY12uXDXqpLcg9u7qANOa46b0WoSRCI7
+         XGy78krQtiIghejJOxR8YfLHBKPTiTnpTDGvIyiOGJMvH6fNcVcPu5SGMZBzyIrYRVbs
+         EcU6GHcrPwnnkZNAQPFbjelDJzJtEawQ3MajlYi0H2j2D4Im2CH5TweruGbwU875bnmu
+         fB+FWRtscXU/pIxywdX+WO95K7t6R5DqBmrltvqRX4FC72fI14aBp/di8cXUUbTNEAsn
+         169g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
+         :message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=kEDCfx2IcOFQ2weBh02x5eXa0hV1yNC7hbbUEsXW4vE=;
-        b=Naa2sh0at/CEUYE51hy6/BHTraxzjKr035yAtV9Vc3NT+U68YnAb0hVSCJ2W3nlzbw
-         nQfn0ECbb1cygnHO20OplsdP2Nj80QeUyqu2+TRaeQdHKoilJfoqluECRHkbbwLhwBZk
-         0pcKSaOjsxNlc3d0qFLgnLx1UmUypOQFpWxb8gNJDLDDkxMOTtmnQpYKi/FdgeTuqZzO
-         ng4MG7O5/JyWPBvqlBO2Prm+LzUJNXfY/tP9SLOAYHNxqQlav+mL1XwiwFX1IIbIxndi
-         YuezHkeAjB1KWHq6P+SQxJEd7x34NGOuhoHCsMlZ6SLAKzkEeFYnrYY4vmJdg7Lauz1f
-         Uiog==
+        bh=UDdekwCEVHwVHb39AdxM698lqP7kSlOsWZhdP4/SteA=;
+        b=POpc1QFjW7i15MOA1Uq6WTgXVzk/ItNtiPNEa51T71cRipyIPT2rh7sJvAi9RD4K1d
+         VzBsLOupiyEyZ0/iQ+JPRUYd4g5aAhLVd1JwaN1WcUpsKLE8VDqnMu4cz89+xQ8bBPFD
+         4iK2Fip82tFXIokQqm8165rnRFCP+K9+yMsh746JVrAOSsA5+agEpKF1DleTvH2aKS2o
+         W4VItnb/R327EGKF7t8b9xTLRDg+bzKx7Pt7AbJ8pJ9iFMMzEK/ht1Sc/ID/IASPN9Qw
+         is0tcJ5FC9o7zR2UzX2roe+YYnnCC+0ZQYgoWf9L/x+bnwuvOeI0wNTl1ZHK2oUIvMBp
+         fOAA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
+       dkim=pass header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.s=20150623 header.b=j/E9ui2s;
+       spf=pass (google.com: domain of hernan@vanguardiasur.com.ar designates 209.85.220.65 as permitted sender) smtp.mailfrom=hernan@vanguardiasur.com.ar
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C44332176F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sun, 15 Apr 2018 20:48:55 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Joe Perches <joe@perches.com>
-Cc: =?UTF-8?B?SGVybsOhbg==?= Gonzalez  <hernan@vanguardiasur.com.ar>,
- knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
- gregkh@linuxfoundation.org, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 13/14] Move ad7746 out of staging
-Message-ID: <20180415204855.4393fbd2@archlinux>
-In-Reply-To: <d59b997761d752877a9942e6be664d2ae1d25637.camel@perches.com>
+       dkim=pass header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.s=20150623 header.b=j/E9ui2s;
+       spf=pass (google.com: domain of hernan@vanguardiasur.com.ar designates 209.85.220.65 as permitted sender) smtp.mailfrom=hernan@vanguardiasur.com.ar
+X-Google-Smtp-Source: AIpwx489bocmG662lDZYeuDUriOaL83M+35DI2X6bPjNjwGNeLGCHT+/Aac/GyBGShECFmQr+FIwUw==
+From: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
+To: jic23@kernel.org,
+	knaack.h@gmx.de,
+	lars@metafoo.de,
+	pmeerw@pmeerw.net,
+	gregkh@linuxfoundation.org,
+	Michael.Hennerich@analog.com,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
+Subject: [PATCH v2 12/14] staging: iio: ad7746: Add ABI documentation
+Date: Fri, 13 Apr 2018 13:36:49 -0300
+Message-Id: <1523637411-8531-13-git-send-email-hernan@vanguardiasur.com.ar>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
 References: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
-	<1523637411-8531-14-git-send-email-hernan@vanguardiasur.com.ar>
-	<20180415180451.4d538830@archlinux>
-	<d59b997761d752877a9942e6be664d2ae1d25637.camel@perches.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597649762786653919?=
-X-GMAIL-MSGID: =?utf-8?q?1597842906485931472?=
+X-GMAIL-THRID: =?utf-8?q?1597649757521827236?=
+X-GMAIL-MSGID: =?utf-8?q?1597649757521827236?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, 15 Apr 2018 11:46:09 -0700
-Joe Perches <joe@perches.com> wrote:
+The use cases for this driver don't comply with the current ABI. The
+ad7746 and ad7152 need an external capacitance or voltage reference to
+automatically calibrate themselves which is not the normal use case of
+the calibscale and calibbias ABIs, a new ABI was needed.
 
-> On Sun, 2018-04-15 at 18:04 +0100, Jonathan Cameron wrote:
-> > On Fri, 13 Apr 2018 13:36:50 -0300
-> > Hern=C3=A1n Gonzalez <hernan@vanguardiasur.com.ar> wrote:
-> >  =20
-> > > Signed-off-by: Hern=C3=A1n Gonzalez <hernan@vanguardiasur.com.ar> =20
-> >=20
-> > A few comments inline. =20
->=20
-> And a trivial typo and other bits
->=20
-> > > diff --git a/drivers/iio/cdc/Makefile b/drivers/iio/cdc/Makefile =20
-> []
-> > > @@ -0,0 +1,5 @@
-> > > +#
-> > > +#Makeefile for industrial I/O CDC drivers =20
->=20
-> Makefile
->=20
-> > > diff --git a/drivers/iio/cdc/ad7746.c b/drivers/iio/cdc/ad7746.c =20
-> []
-> > > @@ -0,0 +1,855 @@ =20
->=20
-> Perhaps use the SPDX tags
-There was some resistance around this so we dropped it from suggested chang=
-es
-before moving these drivers out of staging.  Can sort it out later.
+Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
+---
+ Documentation/ABI/testing/sysfs-bus-iio-ad7746 | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-ad7746
 
->=20
-> > > +/*
-> > > + * AD7746 capacitive sensor driver supporting AD7745, AD7746 and AD7=
-747
-> > > + *
-> > > + * Copyright 2011 Analog Devices Inc.
-> > > + *
-> > > + * Licensed under the GPL-2.
-> > > + */ =20
->=20
-> []
->=20
-> > > +static const struct iio_chan_spec ad7746_channels[] =3D {
-> > > +	[VIN] =3D {
-> > > +		.type =3D IIO_VOLTAGE,
-> > > +		.indexed =3D 1,
-> > > +		.channel =3D 0,
-> > > +		.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW),
-> > > +		.info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE) |
-> > > +			BIT(IIO_CHAN_INFO_SAMP_FREQ),
-> > > +		.address =3D AD7746_REG_VT_DATA_HIGH << 8 |
-> > > +			AD7746_VTSETUP_VTMD_EXT_VIN, =20
-> >=20
-> > Hmm. I never like to see a single location used to hold two different t=
-hings.
-> > I would suggest perhaps having address be an enum then have have a look=
-up
-> > into an array of structures that have the two elements separately.
-> > (use the ad7746_chan enum again for this?) =20
->=20
-> And perhaps it's nicer to align the multiple
-> BIT(identifier) uses like
->=20
-> 		.info_mask_shared_by_type =3D (BIT(IIO_CHAN_INFO_SCALE) |
->  					     BIT(IIO_CHAN_INFO_SAMP_FREQ)),
->=20
-> The extra unnecessary parentheses allow at least emacs
-> to align the BIT uses properly.
->=20
-> []
->=20
-> > > +	[CIN1] =3D {
-> > > +		.type =3D IIO_CAPACITANCE,
-> > > +		.indexed =3D 1,
-> > > +		.channel =3D 0,
-> > > +		.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |
-> > > +		BIT(IIO_CHAN_INFO_CALIBSCALE) | BIT(IIO_CHAN_INFO_OFFSET),
-> > > +		.info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_CALIBBIAS) |
-> > > +		BIT(IIO_CHAN_INFO_SCALE) | BIT(IIO_CHAN_INFO_SAMP_FREQ),
-> > > +		.address =3D AD7746_REG_CAP_DATA_HIGH << 8,
-> > > +	}, =20
->=20
-> So this one could be:
->=20
-> 		.info_mask_shared_by_type =3D (BIT(IIO_CHAN_INFO_CALIBBIAS) |
-> 					     BIT(IIO_CHAN_INFO_SCALE) |
-> 					     BIT(IIO_CHAN_INFO_SAMP_FREQ)),
->=20
-> etc...
->=20
->=20
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio-ad7746 b/Documentation/ABI/testing/sysfs-bus-iio-ad7746
+new file mode 100644
+index 0000000..96a41b7
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-bus-iio-ad7746
+@@ -0,0 +1,17 @@
++What:		/sys/bus/iio/devices/iio:deviceX/in_capacitanceX_calibscale_calibration
++What:		/sys/bus/iio/devices/iio:deviceX/in_voltage0_calibscale_calibration
++KernelVersion:	4.17.0
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Enter gain calibration mode, in which a full-scale
++		{capacitance, voltage reference} must be connected to the
++		{capacitance, voltage} input beforehand to automatically
++		calibrate the device.
++
++What:		/sys/bus/iio/devices/iio:deviceX/in_capacitanceX_calibbias_calibration
++KernelVersion:	4.17.0
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Enter offset calibration mode, in which a zero-scale
++		capacitance must be connected to the capacitance input
++		beforehand to automatically calibrate the device.
+-- 
+2.7.4
