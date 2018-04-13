@@ -1,223 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751797AbeDMPyt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 11:54:49 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:45171 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750994AbeDMPyr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 11:54:47 -0400
-X-Google-Smtp-Source: AIpwx4/G/8J6Qw+1vDKs+7irxqQsUBFW63tSskjm4aKgjT6q6PTD4MrR7a0llC4qhlumhynX/cD8dRylFXhsxc7XA2M=
+        id S1752122AbeDMPz5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 11:55:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37466 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750837AbeDMPzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 11:55:55 -0400
+Date: Fri, 13 Apr 2018 11:55:54 -0400
+From: Vivek Goyal <vgoyal@redhat.com>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 24/35] Revert "ovl: fix relatime for directories"
+Message-ID: <20180413155554.GB2706@redhat.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com>
+ <20180412150826.20988-25-mszeredi@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CALZtONBFdVsa_dqKTpzAp2wVPPfP4N=P7HT_e5e0vy7oAoxVew@mail.gmail.com>
-References: <CACT4Y+ZyUxeUqEB7q1EHcs4j93mtk9UOBuYhJtcnnc8AfApoLw@mail.gmail.com>
- <CAM_iQpVo0iSXKSR=Qc+7syn77BnhE2R72M2u5YfJF=fBkJHjsw@mail.gmail.com>
- <7fd7e3b3-77b1-0936-b169-d08b946bedc7@iogearbox.net> <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
- <efa5811c-0a01-a4af-ade2-71ef5dbc4eaf@gmail.com> <CADvbK_dgEa5g0ynY4F8pX6LuuBwW4e42rK_TFuRhY1=2G5zinw@mail.gmail.com>
- <CADvbK_fKDbUnAkdLrgm6rgj895Gb06AK7HaT0s9VD=zdF+vf6Q@mail.gmail.com>
- <CACT4Y+aV_v6zNS6Ac1u1cB2GZ7QhjNxBeg0FNabUhrndt5CqZw@mail.gmail.com>
- <5973966e-fcd9-7ee5-a9c4-b79d22c1b9dd@nokia.com> <CACT4Y+beZ2+O=XdjKCpAkXOTBDgHYfn1JW8kn-TGRrph_RmV7Q@mail.gmail.com>
- <20180220162622.GA32068@hmswarspite.think-freely.org> <7d98027d-e810-a079-49c5-0bf8beef390e@nokia.com>
- <CACT4Y+Z2kdjsYUs-H9aSTcNW-FSKqm1__fg3eOq16H-E=X8oZg@mail.gmail.com> <CALZtONBFdVsa_dqKTpzAp2wVPPfP4N=P7HT_e5e0vy7oAoxVew@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 13 Apr 2018 17:54:25 +0200
-Message-ID: <CACT4Y+ao0Z_RT+D+sqb6ysnPVnUZ5DfrHstuFjEAt0mr+xt_4Q@mail.gmail.com>
-Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
-To: Dan Streetman <ddstreet@ieee.org>
-Cc: Tommi Rantala <tommi.t.rantala@nokia.com>,
-        Neil Horman <nhorman@tuxdriver.com>, Xin Long <lucien.xin@gmail.com>,
-        David Ahern <dsahern@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Dan Streetman <ddstreet@canonical.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexey Kodanev <alexey.kodanev@oracle.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        linux-sctp@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180412150826.20988-25-mszeredi@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 2:43 PM, Dan Streetman <ddstreet@ieee.org> wrote:
-> On Thu, Apr 12, 2018 at 8:15 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
->> On Wed, Feb 21, 2018 at 3:53 PM, Tommi Rantala
->> <tommi.t.rantala@nokia.com> wrote:
->>> On 20.02.2018 18:26, Neil Horman wrote:
->>>>
->>>> On Tue, Feb 20, 2018 at 09:14:41AM +0100, Dmitry Vyukov wrote:
->>>>>
->>>>> On Tue, Feb 20, 2018 at 8:56 AM, Tommi Rantala
->>>>> <tommi.t.rantala@nokia.com> wrote:
->>>>>>
->>>>>> On 19.02.2018 20:59, Dmitry Vyukov wrote:
->>>>>>>
->>>>>>> Is this meant to be fixed already? I am still seeing this on the
->>>>>>> latest upstream tree.
->>>>>>>
->>>>>>
->>>>>> These two commits are in v4.16-rc1:
->>>>>>
->>>>>> commit 4a31a6b19f9ddf498c81f5c9b089742b7472a6f8
->>>>>> Author: Tommi Rantala <tommi.t.rantala@nokia.com>
->>>>>> Date:   Mon Feb 5 21:48:14 2018 +0200
->>>>>>
->>>>>>      sctp: fix dst refcnt leak in sctp_v4_get_dst
->>>>>> ...
->>>>>>      Fixes: 410f03831 ("sctp: add routing output fallback")
->>>>>>      Fixes: 0ca50d12f ("sctp: fix src address selection if using
->>>>>> secondary
->>>>>> addresses")
->>>>>>
->>>>>>
->>>>>> commit 957d761cf91cdbb175ad7d8f5472336a4d54dbf2
->>>>>> Author: Alexey Kodanev <alexey.kodanev@oracle.com>
->>>>>> Date:   Mon Feb 5 15:10:35 2018 +0300
->>>>>>
->>>>>>      sctp: fix dst refcnt leak in sctp_v6_get_dst()
->>>>>> ...
->>>>>>      Fixes: dbc2b5e9a09e ("sctp: fix src address selection if using
->>>>>> secondary
->>>>>> addresses for ipv6")
->>>>>>
->>>>>>
->>>>>> I guess we missed something if it's still reproducible.
->>>>>>
->>>>>> I can check it later this week, unless someone else beat me to it.
->>>>>
->>>>>
->>>>> Hi Tommi,
->>>>>
->>>>> Hmmm, I can't claim that it's exactly the same bug. Perhaps it's
->>>>> another one then. But I am still seeing these:
->>>>>
->>>>> [   58.799130] unregister_netdevice: waiting for lo to become free.
->>>>> Usage count = 4
->>>>> [   60.847138] unregister_netdevice: waiting for lo to become free.
->>>>> Usage count = 4
->>>>> [   62.895093] unregister_netdevice: waiting for lo to become free.
->>>>> Usage count = 4
->>>>> [   64.943103] unregister_netdevice: waiting for lo to become free.
->>>>> Usage count = 4
->>>>>
->>>>> on upstream tree pulled ~12 hours ago.
->>>>>
->>>> Can you write a systemtap script to probe dev_hold, and dev_put, printing
->>>> out a
->>>> backtrace if the device name matches "lo".  That should tell us
->>>> definitively if
->>>> the problem is in the same location or not
->>>
->>>
->>> Hi Dmitry, I tested with the reproducer and the kernel .config file that you
->>> sent in the first email in this thread:
->>>
->>> With 4.16-rc2 unable to reproduce.
->>>
->>> With 4.15-rc9 bug reproducible, and I get "unregister_netdevice: waiting for
->>> lo to become free. Usage count = 3"
->>>
->>> With 4.15-rc9 and Alexey's "sctp: fix dst refcnt leak in sctp_v6_get_dst()"
->>> cherry-picked on top, unable to reproduce.
->>>
->>>
->>> Is syzkaller doing something else now to trigger the bug...?
->>> Can you still trigger the bug with the same reproducer?
->>
->> Hi Neil, Tommi,
->>
->> Reviving this old thread about "unregister_netdevice: waiting for lo
->> to become free. Usage count = 3" hangs.
->> I still did not have time to deep dive into what happens there (too
->> many bugs coming from syzbot). But this still actively happens and I
->> suspect accounts to a significant portion of various hang reports,
->> which are quite unpleasant.
->>
->> One idea that could make it all simpler:
->>
->> Is this wait loop in netdev_wait_allrefs() supposed to wait for any
->> prolonged periods of time under any non-buggy conditions? E.g. more
->> than 1-2 minutes?
->> If it only supposed to wait briefly for things that already supposed
->> to be shutting down, and we add a WARNING there after some timeout,
->> then syzbot will report all info how/when it happens, hopefully
->> extracting reproducers, and all the nice things.
->> But this WARNING should not have any false positives under any
->> realistic conditions (e.g. waiting for arrival of remote packets with
->> large timeouts).
->>
->> Looking at some task hung reports, it seems that this code holds some
->> mutexes, takes workqueue thread and prevents any progress with
->> destruction of other devices (and net namespace creation/destruction),
->> so I guess it should not wait for any indefinite periods of time?
->
-> I'm working on this currently:
-> https://bugs.launchpad.net/ubuntu/zesty/+source/linux/+bug/1711407
->
-> I added a summary of what I've found to be the cause (or at least, one
-> possible cause) of this:
-> https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1711407/comments/72
->
-> I'm working on a patch to work around the main side-effect of this,
-> which is hanging while holding the global net mutex.  Hangs will still
-> happen (e.g. if a dst leaks) but should not affect anything else,
-> other than a leak of the dst and its net namespace.
->
-> Fixing the dst leaks is important too, of course, but a dst leak (or
-> other cause) shouldn't break the entire system.
+On Thu, Apr 12, 2018 at 05:08:15PM +0200, Miklos Szeredi wrote:
+> This reverts commit cd91304e7190b4c4802f8e413ab2214b233e0260.
+> 
+> Overlayfs no longer relies on the vfs correct atime handling.
+> 
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/inode.c             | 21 ++++-----------------
+>  fs/overlayfs/super.c   |  3 ---
+>  include/linux/dcache.h |  3 ---
+>  3 files changed, 4 insertions(+), 23 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index ef362364d396..163715de8cb2 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1570,24 +1570,11 @@ EXPORT_SYMBOL(bmap);
+>  static void update_ovl_inode_times(struct dentry *dentry, struct inode *inode,
+>  			       bool rcu)
+>  {
+> -	struct dentry *upperdentry;
+> +	if (!rcu) {
+> +		struct inode *realinode = d_real_inode(dentry);
+>  
+> -	/*
+> -	 * Nothing to do if in rcu or if non-overlayfs
+> -	 */
+> -	if (rcu || likely(!(dentry->d_flags & DCACHE_OP_REAL)))
+> -		return;
+> -
+> -	upperdentry = d_real(dentry, NULL, 0, D_REAL_UPPER);
+> -
+> -	/*
+> -	 * If file is on lower then we can't update atime, so no worries about
+> -	 * stale mtime/ctime.
+> -	 */
+> -	if (upperdentry) {
+> -		struct inode *realinode = d_inode(upperdentry);
+> -
+> -		if ((!timespec_equal(&inode->i_mtime, &realinode->i_mtime) ||
+> +		if (unlikely(inode != realinode) &&
+> +		    (!timespec_equal(&inode->i_mtime, &realinode->i_mtime) ||
+>  		     !timespec_equal(&inode->i_ctime, &realinode->i_ctime))) {
+>  			inode->i_mtime = realinode->i_mtime;
+>  			inode->i_ctime = realinode->i_ctime;
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index c3d8c7ea180f..006dc70d7425 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -107,9 +107,6 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
+>  	if (inode && d_inode(dentry) == inode)
+>  		return dentry;
+>  
+> -	if (flags & D_REAL_UPPER)
+> -		return ovl_dentry_upper(dentry);
+> -
+>  	if (!d_is_reg(dentry)) {
+>  		if (!inode || inode == d_inode(dentry))
+>  			return dentry;
+> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+> index 82a99d366aec..4c7ab11c627a 100644
+> --- a/include/linux/dcache.h
+> +++ b/include/linux/dcache.h
+> @@ -565,9 +565,6 @@ static inline struct dentry *d_backing_dentry(struct dentry *upper)
+>  	return upper;
+>  }
+>  
+> -/* d_real() flags */
+> -#define D_REAL_UPPER	0x2	/* return upper dentry or NULL if non-upper */
 
-Leaking some memory is definitely better than hanging the system.
+Good to see this go away. It was a major headache for metacopy only
+patches. 
 
-So I've made syzkaller to recognize "unregister_netdevice: waiting for
-(.*) to become free" as a kernel bug:
-https://github.com/google/syzkaller/commit/7a67784ca8bdc3b26cce2f0ec9a40d2dd9ec9396
-Unfortunately it does not make it catch these bugs because creating a
-net namespace per test is too damn slow, so namespaces are reused for
-lots of tests and when/if it's eventually destroyed it's already too
-late to find root cause.
-
-But I've run a one-off experiment with prompt net namespace
-destruction and syzkaller was able to easily extract a C reproducer:
-https://gist.githubusercontent.com/dvyukov/d571e8fff24e127ca48a8c4790d42bfa/raw/52050e93ba9afbb5126b9d7bb39b7e71a82af016/gistfile1.txt
-
-On upstream 16e205cf42da1f497b10a4a24f563e6c0d574eec with this config:
-https://gist.githubusercontent.com/dvyukov/9663c57443adb21f2795b92ef0829d62/raw/bbea0652e23746096dd56855a28f6c681aebcdee/gistfile1.txt
-
-this gives me:
-
-[   83.183198] unregister_netdevice: waiting for lo to become free.
-Usage count = 9
-[   85.231202] unregister_netdevice: waiting for lo to become free.
-Usage count = 9
-...
-[  523.511205] unregister_netdevice: waiting for lo to become free.
-Usage count = 9
-...
-
-This is generated from this syzkaller program:
-
-r0 = socket$inet6(0xa, 0x1, 0x84)
-setsockopt$inet6_IPV6_XFRM_POLICY(r0, 0x29, 0x23,
-&(0x7f0000000380)={{{@in6=@remote={0xfe, 0x80, [], 0xbb},
-@in=@dev={0xac, 0x14, 0x14}, 0x0, 0x0, 0x0, 0x0, 0xa}, {}, {}, 0x0,
-0x0, 0x1}, {{@in=@local={0xac, 0x14, 0x14, 0xaa}, 0x0, 0x32}, 0x0,
-@in=@local={0xac, 0x14, 0x14, 0xaa}, 0x3504}}, 0xe8)
-bind$inet6(r0, &(0x7f0000000000)={0xa, 0x4e20}, 0x1c)
-connect$inet(r0, &(0x7f0000000040)={0x2, 0x4e20, @dev={0xac, 0x14,
-0x14, 0xd}}, 0x10)
-syz_emit_ethernet(0x3e, &(0x7f00000001c0)={@local={[0xaa, 0xaa, 0xaa,
-0xaa, 0xaa], 0xaa}, @dev={[0xaa, 0xaa, 0xaa, 0xaa, 0xaa]}, [],
-{@ipv6={0x86dd, {0x0, 0x6, "50a09c", 0x8, 0xffffff11, 0x0,
-@remote={0xfe, 0x80, [], 0xbb}, @local={0xfe, 0x80, [], 0xaa}, {[],
-@udp={0x0, 0x4e20, 0x8}}}}}}, &(0x7f0000000040))
-
-So this seems to be related to IPv6 and/or xfrm and is potentially
-caused by external packets (that syz_emit_ethernet call).
+Vivek
+> -
+>  /**
+>   * d_real - Return the real dentry
+>   * @dentry: the dentry to query
+> -- 
+> 2.14.3
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
