@@ -1,59 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751002AbeDMStm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 14:49:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48122 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750761AbeDMStk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 14:49:40 -0400
-Date: Fri, 13 Apr 2018 20:49:37 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Sam Hansen <hansens@google.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        corbet@lwn.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation/i2c: sync docs with current state of
- i2c-tools.
-Message-ID: <20180413204937.440437e9@endymion>
-In-Reply-To: <CAP9bUy7rONNHYeRkYtaWHcfqoZcGKXJz-JocED26zBj9n+-ZbQ@mail.gmail.com>
-References: <20180412213342.138010-1-hansens@google.com>
-        <20180412222457.x4jdwt27ylgi74o3@katana>
-        <20180413141359.793919fb@endymion>
-        <CAP9bUy7rONNHYeRkYtaWHcfqoZcGKXJz-JocED26zBj9n+-ZbQ@mail.gmail.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+        id S1751154AbeDMSud (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 14:50:33 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:51690 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750783AbeDMSub (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 14:50:31 -0400
+Date: Fri, 13 Apr 2018 19:50:17 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
+ kill() returns wrong values in si_pid and si_uid
+Message-ID: <20180413185016.GP16141@n2100.armlinux.org.uk>
+References: <20180412124928.GA29458@altlinux.org>
+ <20180412131404.GE16141@n2100.armlinux.org.uk>
+ <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
+ <20180412172051.GK16141@n2100.armlinux.org.uk>
+ <CA+55aFwjZqd8J0=veki1g+quQg8amEG4NnMe-h7HFksn=F=x_Q@mail.gmail.com>
+ <20180413094211.GN16141@n2100.armlinux.org.uk>
+ <CA+55aFwoThxqUeAZSsMhf--ODyhGkmOENH5R6=4+CuaopFx9eA@mail.gmail.com>
+ <20180413170827.GB16308@e103592.cambridge.arm.com>
+ <20180413175407.GO16141@n2100.armlinux.org.uk>
+ <20180413183527.GC16308@e103592.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180413183527.GC16308@e103592.cambridge.arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Apr 2018 09:02:03 -0700, Sam Hansen wrote:
-> On Fri, Apr 13, 2018 at 5:13 AM, Jean Delvare <jdelvare@suse.de> wrote:
-> > On Fri, 13 Apr 2018 00:24:57 +0200, Wolfram Sang wrote:  
-> >> On Thu, Apr 12, 2018 at 02:33:42PM -0700, Sam Hansen wrote:  
-> >> > -  Not meant to be called  directly; instead, use the access functions
-> >> > -  below.
-> >> > +  If possible, use the provided i2c_smbus_* methods described below in favor
-> >> > +  of issuing direct ioctls.  
-> >>
-> >> Why this change?  
-> >
-> > I'm also not sure if "in favor of" is right. "instead of" would sound
-> > better to me, but I'm no native English speaker, I could be wrong.  
-> 
-> Sounds good, I'll adopt "instead of".  Regarding Wolfram's earlier
-> comment, as an engineer, requiring an out-of-tree library to build
-> drivers felt a little off.  I can revert this section if you want,
-> just let me know.
+On Fri, Apr 13, 2018 at 07:35:38PM +0100, Dave Martin wrote:
+> If that's the case though, I don't see how a userspace testsuite is
+> hitting this code path.  Maybe I've misunderstood the context of this
+> thread.
 
-The i2c dev interface, and the overlaying library, are used by
-user-space applications. This has nothing to do with "building
-drivers", and makes your "out-of-tree" objection irrelevant. I doubt
-libi2c is the only user-space library building on top of a kernel
-interface.
+It isn't hitting this exact case.
+
+The userspace testsuite is hitting an entirely different case:
+
+	kill(getpid(), SIGFPE);
+
+As one expects, this generates a SIGFPE to the current process, which
+then inspects the siginfo structure.  Being a userspace generated
+signal, si_code is set to SI_USER, which has the value 0.
+
+With FPE_FIXME defined to zero, as Eric has done:
+
+enum siginfo_layout siginfo_layout(int sig, int si_code)
+{
+        enum siginfo_layout layout = SIL_KILL;
+        if ((si_code > SI_USER) && (si_code < SI_KERNEL)) {
+...
+        } else {
+...
+#ifdef FPE_FIXME
+                if ((sig == SIGFPE) && (si_code == FPE_FIXME))
+                        layout = SIL_FAULT;
+#endif
+        }
+        return layout;
+}
+
+This causes siginfo_layout() to return SIL_FAULT for this userspace
+generated signal, rather than the correct SIL_KILL.
+
+This affects which fields we copy to userspace.
+
+SI_USER is defined to pass si_pid and si_uid to the userspace process,
+which on ARM are the first two consecutive 32-bit quantities in the
+union, which is done when siginfo_layout() returns SIL_KILL.  However,
+when SIL_FAULT is returned, we only copy si_addr in the union, which
+on ARM is just one 32-bit quantity.
+
+Consequently, userspace sees a correct value for si_pid, and si_uid
+remains set to whatever was there in userspace.  In the case of the
+strace program, that's zero.  This means if you run the strace
+testsuite as root, the problem doesn't appear, but if you run it as
+a non-root user, it will.
+
+So, the testsuite case has little to do with the behaviour of the VFP
+handling - it's to do with the behaviour of the kernel's signal handling.
 
 -- 
-Jean Delvare
-SUSE L3 Support
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
