@@ -1,208 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754635AbeDML1I (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:27:08 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55409 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754482AbeDMLXg (ORCPT
+        id S1754671AbeDML1S (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:27:18 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56850 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754045AbeDML1O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:23:36 -0400
-X-Google-Smtp-Source: AIpwx485U/wvdwZlQTBY0kfvZoT6IB0hF+vh+UP5AzYL8mRcxPm5RHn1BLklIl6q1cL+a+rsT4X9HA==
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: karahmed@amazon.de, jmattson@google.com, rkrcmar@redhat.com
-Subject: [PATCH 1/2] X86/KVM: Properly update 'tsc_offset' to represent the running guest
-Date: Fri, 13 Apr 2018 13:23:26 +0200
-Message-Id: <1523618608-30574-2-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1523618608-30574-1-git-send-email-pbonzini@redhat.com>
-References: <1523618608-30574-1-git-send-email-pbonzini@redhat.com>
+        Fri, 13 Apr 2018 07:27:14 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BFC0F605A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
+Subject: Re: [PATCH] mm: vmalloc: Remove double execution of vunmap_page_range
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>, vbabka@suse.cz,
+        labbott@redhat.com, catalin.marinas@arm.com, hannes@cmpxchg.org,
+        f.fainelli@gmail.com, xieyisheng1@huawei.com,
+        ard.biesheuvel@linaro.org, richard.weiyang@gmail.com,
+        byungchul.park@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1523611019-17679-1-git-send-email-cpandya@codeaurora.org>
+ <a623e12b-bb5e-58fa-c026-de9ea53c5bd9@linux.vnet.ibm.com>
+ <8da9f826-2a3d-e618-e512-4fc8d45c16f2@codeaurora.org>
+ <bbef0a92-f81b-5ba8-c5c1-d8c08444955b@linux.vnet.ibm.com>
+ <fa104cc6-c32a-9081-280f-2e03e4279f65@codeaurora.org>
+ <20180413110949.GA17670@dhcp22.suse.cz>
+From: Chintan Pandya <cpandya@codeaurora.org>
+Message-ID: <696fedc5-6bcd-f0a0-62f5-4f9e7b7c602a@codeaurora.org>
+Date: Fri, 13 Apr 2018 16:57:06 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180413110949.GA17670@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: KarimAllah Ahmed <karahmed@amazon.de>
 
-Update 'tsc_offset' on vmenty/vmexit of L2 guests to ensure that it always
-captures the TSC_OFFSET of the running guest whether it is the L1 or L2
-guest.
 
-Cc: Jim Mattson <jmattson@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-[AMD changes, fix update_ia32_tsc_adjust_msr. - Paolo]
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/include/asm/kvm_host.h |  1 +
- arch/x86/kvm/svm.c              | 17 ++++++++++++++++-
- arch/x86/kvm/vmx.c              | 25 ++++++++++++++++++++-----
- arch/x86/kvm/x86.c              |  6 ++++--
- 4 files changed, 41 insertions(+), 8 deletions(-)
+On 4/13/2018 4:39 PM, Michal Hocko wrote:
+> On Fri 13-04-18 16:15:26, Chintan Pandya wrote:
+>>
+>>
+>> On 4/13/2018 4:10 PM, Anshuman Khandual wrote:
+>>> On 04/13/2018 03:47 PM, Chintan Pandya wrote:
+>>>>
+>>>>
+>>>> On 4/13/2018 3:29 PM, Anshuman Khandual wrote:
+>>>>> On 04/13/2018 02:46 PM, Chintan Pandya wrote:
+>>>>>> Unmap legs do call vunmap_page_range() irrespective of
+>>>>>> debug_pagealloc_enabled() is enabled or not. So, remove
+>>>>>> redundant check and optional vunmap_page_range() routines.
+>>>>>
+>>>>> vunmap_page_range() tears down the page table entries and does
+>>>>> not really flush related TLB entries normally unless page alloc
+>>>>> debug is enabled where it wants to make sure no stale mapping is
+>>>>> still around for debug purpose. Deferring TLB flush improves
+>>>>> performance. This patch will force TLB flush during each page
+>>>>> table tear down and hence not desirable.
+>>>>>
+>>>> Deferred TLB invalidation will surely improve performance. But force
+>>>> flush can help in detecting invalid access right then and there. I
+>>>
+>>> Deferred TLB invalidation was a choice made some time ago with the
+>>> commit db64fe02258f1507e ("mm: rewrite vmap layer") as these vmalloc
+>>> mappings wont be used other than inside the kernel and TLB gets
+>>> flushed when they are reused. This way it can still avail the benefit
+>>> of deferred TLB flushing without exposing itself to invalid accesses.
+>>>
+>>>> chose later. May be I should have clean up the vmap tear down code
+>>>> as well where it actually does the TLB invalidation.
+>>>>
+>>>> Or make TLB invalidation in free_unmap_vmap_area() be dependent upon
+>>>> debug_pagealloc_enabled().
+>>>
+>>> Immediate TLB invalidation needs to be dependent on debug_pagealloc_
+>>> enabled() and should be done only for debug purpose. Contrary to that
+>>> is not desirable.
+>>>
+>> Okay. I will raise v2 for that.
+> 
+> More importantly. Your changelog absolutely lacks the _why_ part. It
+> just states what the code does which is not all that hard to read from
+> the diff. It is usually much more important to present _why_ the patch
+> is an improvement and worth merging.
+> 
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 949c977bc4c9..c25775fad4ed 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1013,6 +1013,7 @@ struct kvm_x86_ops {
- 
- 	bool (*has_wbinvd_exit)(void);
- 
-+	u64 (*read_l1_tsc_offset)(struct kvm_vcpu *vcpu);
- 	void (*write_tsc_offset)(struct kvm_vcpu *vcpu, u64 offset);
- 
- 	void (*get_exit_info)(struct kvm_vcpu *vcpu, u64 *info1, u64 *info2);
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index b3ebc8ad6891..ea7c6d29aca5 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -1424,12 +1424,23 @@ static void init_sys_seg(struct vmcb_seg *seg, uint32_t type)
- 	seg->base = 0;
- }
- 
-+static u64 svm_read_l1_tsc_offset(struct kvm_vcpu *vcpu)
-+{
-+	struct vcpu_svm *svm = to_svm(vcpu);
-+
-+	if (is_guest_mode(vcpu))
-+		return svm->nested.hsave->control.tsc_offset;
-+
-+	return vcpu->arch.tsc_offset;
-+}
-+
- static void svm_write_tsc_offset(struct kvm_vcpu *vcpu, u64 offset)
- {
- 	struct vcpu_svm *svm = to_svm(vcpu);
- 	u64 g_tsc_offset = 0;
- 
- 	if (is_guest_mode(vcpu)) {
-+		/* Write L1's TSC offset.  */
- 		g_tsc_offset = svm->vmcb->control.tsc_offset -
- 			       svm->nested.hsave->control.tsc_offset;
- 		svm->nested.hsave->control.tsc_offset = offset;
-@@ -3323,6 +3334,7 @@ static int nested_svm_vmexit(struct vcpu_svm *svm)
- 	/* Restore the original control entries */
- 	copy_vmcb_control_area(vmcb, hsave);
- 
-+	vcpu->arch.tsc_offset = svm->vmcb->control.tsc_offset;
- 	kvm_clear_exception_queue(&svm->vcpu);
- 	kvm_clear_interrupt_queue(&svm->vcpu);
- 
-@@ -3483,10 +3495,12 @@ static void enter_svm_guest_mode(struct vcpu_svm *svm, u64 vmcb_gpa,
- 	/* We don't want to see VMMCALLs from a nested guest */
- 	clr_intercept(svm, INTERCEPT_VMMCALL);
- 
-+	vcpu->arch.tsc_offset += nested_vmcb->control.tsc_offset;
-+	svm->vmcb->control.tsc_offset = vcpu->arch.tsc_offset;
-+
- 	svm->vmcb->control.virt_ext = nested_vmcb->control.virt_ext;
- 	svm->vmcb->control.int_vector = nested_vmcb->control.int_vector;
- 	svm->vmcb->control.int_state = nested_vmcb->control.int_state;
--	svm->vmcb->control.tsc_offset += nested_vmcb->control.tsc_offset;
- 	svm->vmcb->control.event_inj = nested_vmcb->control.event_inj;
- 	svm->vmcb->control.event_inj_err = nested_vmcb->control.event_inj_err;
- 
-@@ -7102,6 +7116,7 @@ static int svm_unregister_enc_region(struct kvm *kvm,
- 
- 	.has_wbinvd_exit = svm_has_wbinvd_exit,
- 
-+	.read_l1_tsc_offset = svm_read_l1_tsc_offset,
- 	.write_tsc_offset = svm_write_tsc_offset,
- 
- 	.set_tdp_cr3 = set_tdp_cr3,
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index a13c603bdefb..6553419202ee 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -2874,6 +2874,17 @@ static void setup_msrs(struct vcpu_vmx *vmx)
- 		vmx_update_msr_bitmap(&vmx->vcpu);
- }
- 
-+static u64 vmx_read_l1_tsc_offset(struct kvm_vcpu *vcpu)
-+{
-+	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
-+
-+	if (is_guest_mode(vcpu) &&
-+	    (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING))
-+		return vcpu->arch.tsc_offset - vmcs12->tsc_offset;
-+
-+	return vcpu->arch.tsc_offset;
-+}
-+
- /*
-  * reads and returns guest's timestamp counter "register"
-  * guest_tsc = (host_tsc * tsc multiplier) >> 48 + tsc_offset
-@@ -11175,11 +11186,8 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
- 		vmcs_write64(GUEST_IA32_PAT, vmx->vcpu.arch.pat);
- 	}
- 
--	if (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING)
--		vmcs_write64(TSC_OFFSET,
--			vcpu->arch.tsc_offset + vmcs12->tsc_offset);
--	else
--		vmcs_write64(TSC_OFFSET, vcpu->arch.tsc_offset);
-+	vmcs_write64(TSC_OFFSET, vcpu->arch.tsc_offset);
-+
- 	if (kvm_has_tsc_control)
- 		decache_tsc_multiplier(vmx);
- 
-@@ -11489,6 +11497,9 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
- 	if (enable_shadow_vmcs)
- 		copy_shadow_to_vmcs12(vmx);
- 
-+	if (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING)
-+		vcpu->arch.tsc_offset += vmcs12->tsc_offset;
-+
- 	/*
- 	 * The nested entry process starts with enforcing various prerequisites
- 	 * on vmcs12 as required by the Intel SDM, and act appropriately when
-@@ -12035,6 +12046,9 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
- 
- 	leave_guest_mode(vcpu);
- 
-+	if (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING)
-+		vcpu->arch.tsc_offset -= vmcs12->tsc_offset;
-+
- 	if (likely(!vmx->fail)) {
- 		if (exit_reason == -1)
- 			sync_vmcs12(vcpu, vmcs12);
-@@ -12725,6 +12739,7 @@ static int enable_smi_window(struct kvm_vcpu *vcpu)
- 
- 	.has_wbinvd_exit = cpu_has_vmx_wbinvd_exit,
- 
-+	.read_l1_tsc_offset = vmx_read_l1_tsc_offset,
- 	.write_tsc_offset = vmx_write_tsc_offset,
- 
- 	.set_tdp_cr3 = vmx_set_cr3,
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 0334b250e102..3f3fba58c960 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1490,7 +1490,7 @@ static void kvm_track_tsc_matching(struct kvm_vcpu *vcpu)
- 
- static void update_ia32_tsc_adjust_msr(struct kvm_vcpu *vcpu, s64 offset)
- {
--	u64 curr_offset = vcpu->arch.tsc_offset;
-+	u64 curr_offset = kvm_x86_ops->read_l1_tsc_offset(vcpu);
- 	vcpu->arch.ia32_tsc_adjust_msr += offset - curr_offset;
- }
- 
-@@ -1532,7 +1532,9 @@ static u64 kvm_compute_tsc_offset(struct kvm_vcpu *vcpu, u64 target_tsc)
- 
- u64 kvm_read_l1_tsc(struct kvm_vcpu *vcpu, u64 host_tsc)
- {
--	return vcpu->arch.tsc_offset + kvm_scale_tsc(vcpu, host_tsc);
-+	u64 tsc_offset = kvm_x86_ops->read_l1_tsc_offset(vcpu);
-+
-+	return tsc_offset + kvm_scale_tsc(vcpu, host_tsc);
- }
- EXPORT_SYMBOL_GPL(kvm_read_l1_tsc);
- 
+It is improving performance in debug scenario. More than that, I see it
+as a clean up. Sure, I will try to address *why* in next change log.
+
+Chintan
 -- 
-1.8.3.1
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+Inc. is a member of the Code Aurora Forum, a Linux Foundation
+Collaborative Project
