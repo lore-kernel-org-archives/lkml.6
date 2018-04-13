@@ -1,89 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754123AbeDMIzI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 04:55:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37340 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754094AbeDMIzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 04:55:05 -0400
-Subject: Re: [PATCH v3 1/2] vfio: platform: Fix reset module leak in error
- path
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <1523438149-16433-1-git-send-email-geert+renesas@glider.be>
- <1523438149-16433-3-git-send-email-geert+renesas@glider.be>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        kvm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <a948bec8-4674-9dc1-be44-0f7284940149@redhat.com>
-Date: Fri, 13 Apr 2018 10:55:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
-MIME-Version: 1.0
-In-Reply-To: <1523438149-16433-3-git-send-email-geert+renesas@glider.be>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+        id S1754140AbeDMIzW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 04:55:22 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:54733 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754126AbeDMIzQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 04:55:16 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180413085514epoutp026dd59488d21b646afdef61e0ed0db20d~k8vabPb1G1864618646epoutp02L
+X-AuditID: b6c32a36-f6fff70000000fc2-d1-5ad07072c71a
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "Li, Philip" <philip.li@intel.com>
+Subject: Re: [GIT PULL] Thermal management updates for v4.17-rc1
+Date: Fri, 13 Apr 2018 10:55:10 +0200
+Message-id: <2944702.qKZ0LXufY7@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <1523597945.16235.52.camel@intel.com>
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAIsWRmVeSWpSXmKPExsWy7bCmvm5RwYUog7W3dC3mX7nGanF51xw2
+        i8+9RxgtLh26yGTx5GEfm8WjvrfsDmweO2fdZfdYvOclk8eJGb9ZPD5vkgtgieKySUnNySxL
+        LdK3S+DKuLNlC3PBG96KP6t+sDQw3uDqYuTkkBAwkeifdp6pi5GLQ0hgB6PEtwUdzBDOd0aJ
+        h2tWsXQxcoBVbdhgBxHfzSjxZes3FgjnK6NER+tcdpBRbAJWEhPbVzGC2CICyhKLzm1lBCli
+        FrjIKDHlxXVWkISwgINEw4ZrYFNZBFQlnkx2AQnzCmhKtHZ8AesVFfCS2LKvnQnE5hQwktg2
+        ezMrRI2gxI/J91hAbGYBbYkn7y6wQtiaEi++TAI7SEJgB5vE1wMQB0kIuEhcvw9xkISAsMSr
+        41vYIb6Rlrh01Baivhno5R17mCFqJjBK7FkvBGFbSxw+fhFqAZ/Eu689rBC9vBIdbUIQpofE
+        0U4tiGpHiTv310PDZA2jxK4jr5gnMMrOQnL2LCRnz0Jy9gJG5lWMYqkFxbnpqcWGBUZ6xYm5
+        xaV56XrJ+bmbGMHpQMtsB+Oicz6HGAU4GJV4eBUqz0cJsSaWFVfmHmKU4GBWEuFtlrkQJcSb
+        klhZlVqUH19UmpNafIhRmoNFSZz3qc+ZKCGB9MSS1OzU1ILUIpgsEwenVAPjWi6+hwpH9k6W
+        2vFC6H6vXdeG8tPqnyMOy/96l5Tk4mZW/bON3cJ49s7dEt0T78relAh46X7qzq+YRdq7lssU
+        Ztz19Dl25u+bWc7SLx//e1V6Psjyu+aSUEOHdLd1RXVLDt3da1nVt92l4He7U4qK+tud6Sum
+        7p2+eaFrFq/c/jQvy28sTIpflFiKMxINtZiLihMBt1JG2wMDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsVy+t9jAd2iggtRBnMXSlrMv3KN1eLyrjls
+        Fp97jzBaXDp0kcniycM+NotHfW/ZHdg8ds66y+6xeM9LJo8TM36zeHzeJBfAEsVlk5Kak1mW
+        WqRvl8CVcWfLFuaCN7wVf1b9YGlgvMHVxcjBISFgIrFhg10XIxeHkMBORonv+2+wQThfGSV2
+        7TvN2MXIycEmYCUxsX0VmC0ioCyx6NxWRpAiZoHLjBLfDuxkBUkICzhINGy4xgIylUVAVeLJ
+        ZBeQMK+ApkRrxxewXlEBL4kt+9qZQGxOASOJbbM3s0IsW8Mo8fb1QkaIBkGJH5PvsYDYzALa
+        Ek/eXWAFmcksoC4xZUruBEb+WUiqZiGpmoVQtYCReRWjZGpBcW56brFRgWFearlecWJucWle
+        ul5yfu4mRmD4bjus1beD8f6S+EOMAhyMSjy8CpXno4RYE8uKK3MPMUpwMCuJ8DbLXIgS4k1J
+        rKxKLcqPLyrNSS0+xCjNwaIkzns771ikkEB6YklqdmpqQWoRTJaJg1OqgbFsi717xd5n2xki
+        9q+coPhvesS/lgk747lnTjt64uH7v9e1liWc//CBt/VD24Pio7/WphQ/elA/KyThSFqNu8/2
+        25qX4kxc1h/vPmI195fKr89lsw80TPebdH7r6sxLlyevcdfdP8/N9LbltDn38/ma0zIWsaX4
+        XptfJ2UhXsL058amDvaq6OwPSizFGYmGWsxFxYkAbfgy6FsCAAA=
+X-CMS-MailID: 20180413085514epcas1p131019e281e698edbf9d75f16054d49e6
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20180413053914epcas3p3b7e3c278515ffed1b4c019b2c5af3ab4
+X-RootMTR: 20180413053914epcas3p3b7e3c278515ffed1b4c019b2c5af3ab4
+References: <1523436077.16235.5.camel@intel.com>
+        <CGME20180413053914epcas3p3b7e3c278515ffed1b4c019b2c5af3ab4@epcas3p3.samsung.com>
+        <1523597945.16235.52.camel@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3D8tQcZ019330
 
-Hi Geert,
-On 11/04/18 11:15, Geert Uytterhoeven wrote:
-> If the IOMMU group setup fails, the reset module is not released.
+On Friday, April 13, 2018 01:39:05 PM Zhang Rui wrote:
+> Hi, Eduardo,
 > 
-> Fixes: b5add544d677d363 ("vfio, platform: make reset driver a requirement by default")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Eric Auger <eric.auger@redhat.com>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Acked-by: Eric Auger <eric.auger@redhat.com>
+> On 四, 2018-04-12 at 21:08 -0700, Eduardo Valentin wrote:
+> > Hello,
+> > 
+> > On Thu, Apr 12, 2018 at 09:55:19AM -0700, Linus Torvalds wrote:
+> > > 
+> > > On Wed, Apr 11, 2018 at 10:08 PM, Zhang Rui <rui.zhang@intel.com>
+> > > wrote:
+> > > > 
+> > > > 
+> > > > could you please illustrate me what the kconfig & warning is?
+> > > Just "make allmodconfig" and the warning is about a uninitialized
+> > > variable.
+> > > 
+> > > Line 304 in drivers/thermal/samsung/exynos_tmu.c if my shell
+> > > history
+> > > is to be believed.
+> > > 
+> > >                 Linus
+> > Yeah, this has also passed my local compilation error. Somehow my
+> > gcc4.9
+> > is not catching it. Using an older gcc (gcc4.6) does catch it.
+> > 
+> > Anyways, given that the conversion functions are written to cover
+> > for unexpected cal_type, the right way of fixing this is to rewrite
+> > the conversion functions to allow for returning error codes and
+> > adjusting the callers as expected.
+> > 
+> > Rui, bzolnier, please consider the following fix:
+> > 
+> as it is late in this merge window, I'd prefer to
+> 1. drop all the thermal-soc material in the first pull request which I
+> will send out soon.
+> 2. you can prepare another pull request containing the thermal-soc
+> materials except the exynos fixes
+> 3. exynos fixes with the problem solved can be queued for -rc2 or
+> later.
 
-Thanks
+Could you please just merge the obvious fix from Arnd instead?
 
-Eric
-> ---
-> v3:
->   - Add Reviewed-by,
-> 
-> v2:
->   - Add Reviewed-by.
-> ---
->  drivers/vfio/platform/vfio_platform_common.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
-> index 35469af87f88678e..b60bb5326668498c 100644
-> --- a/drivers/vfio/platform/vfio_platform_common.c
-> +++ b/drivers/vfio/platform/vfio_platform_common.c
-> @@ -680,18 +680,23 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
->  	group = vfio_iommu_group_get(dev);
->  	if (!group) {
->  		pr_err("VFIO: No IOMMU group for device %s\n", vdev->name);
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto put_reset;
->  	}
->  
->  	ret = vfio_add_group_dev(dev, &vfio_platform_ops, vdev);
-> -	if (ret) {
-> -		vfio_iommu_group_put(group, dev);
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		goto put_iommu;
->  
->  	mutex_init(&vdev->igate);
->  
->  	return 0;
-> +
-> +put_iommu:
-> +	vfio_iommu_group_put(group, dev);
-> +put_reset:
-> +	vfio_platform_put_reset(vdev);
-> +	return ret;
->  }
->  EXPORT_SYMBOL_GPL(vfio_platform_probe_common);
->  
-> 
+[ it was posted two weeks ago and ACKed by me ]
+
+https://patchwork.kernel.org/patch/10313313/
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
