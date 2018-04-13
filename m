@@ -1,104 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752564AbeDMRnh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 13:43:37 -0400
-Received: from foss.arm.com ([217.140.101.70]:44932 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752270AbeDMRnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 13:43:33 -0400
-Subject: Re: [PATCH v2] base: dma-mapping: Postpone cpu addr translation on
- mmap()
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, hch@infradead.org
-Cc: ysato@users.sourceforge.jp, dalias@libc.org,
-        iommu@lists.linux-foundation.org, linux-sh@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1523640337-26064-1-git-send-email-jacopo+renesas@jmondi.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <c0f27cac-163d-d7b1-7c27-e1476a6d77b0@arm.com>
-Date: Fri, 13 Apr 2018 18:43:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752623AbeDMRoT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 13:44:19 -0400
+Received: from mail-ot0-f201.google.com ([74.125.82.201]:40324 "EHLO
+        mail-ot0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751771AbeDMRnM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 13:43:12 -0400
+X-Google-Smtp-Source: AIpwx48txAh4PDZtm9qwqIDsxAUPXWGBPTqZy5bvbyr51YV+ZWxkouD9EdCgw/342lDF+o99ZzEsaMlAeu3v
 MIME-Version: 1.0
-In-Reply-To: <1523640337-26064-1-git-send-email-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Date: Fri, 13 Apr 2018 10:42:56 -0700
+In-Reply-To: <20180413174257.139182-1-hansens@google.com>
+Message-Id: <20180413174257.139182-2-hansens@google.com>
+References: <20180413174257.139182-1-hansens@google.com>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+Subject: [PATCH v3 2/3] Documentation/i2c: sync docs with current state of i2c-tools
+From: Sam Hansen <hansens@google.com>
+To: linux-i2c@vger.kernel.org, hansens@google.com, wsa@the-dreams.de,
+        corbet@lwn.net, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Sam Hansen <hansens@google.com>, wsa@the-dreams.de, corbet@lwn.net,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/04/18 18:25, Jacopo Mondi wrote:
-> Postpone calling virt_to_page() translation on memory locations not
-> guaranteed to be backed by a struct page. Try first to map memory from
-> device's coherent memory pool, then perform translation if that fails.
-> 
-> On some architectures, specifically SH when configured with SPARSEMEM
-> memory model, assuming a struct page is always assigned to a memory
-> address lead to unexpected hangs during the virtual to page address
-> translation. This patch fixes that specific issue but applies in the
-> general case too.
+Currently, Documentation/i2c/dev-interface describes the use of
+i2c_smbus_* helper routines as static inlined functions provided by
+linux/i2c-dev.h.  Work has been done to refactor the linux/i2c-dev.h file
+in the i2c-tools project out into its own library.  As a result, these
+docs have become stale.
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+This patch corrects the discrepancy and directs the reader to the
+i2c-tools project for more information.
 
-> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> 
-> ---
-> 
-> It has now been clarified this patch does not resolve the issue, but only
-> mitigate it on platforms where dma_mmap_from_dev_coherent() succeeds and
-> delay page_to_pfn() faulty conversion.
-> 
-> A suggested proper solution would be not relying on dma_common_mmap() but
-> require all platforms to implement an mmap methods known to work, as noted
-> by Christoph in v1 review.
+Signed-off-by: Sam Hansen <hansens@google.com>
+---
+No changes from v2.
 
-Note that that "proper solution" should still involve having 
-dma_common_mmap() since we certainly don't want an explosion of code 
-duplication. It just means that architectures that do use it should be 
-defining their dma_map_ops with an explicit ".mmap = dma_common_mmap" 
-instead of relying on dma_mmap_attrs() calling it by default. Thus the 
-more architectures this implementation *is* definitely safe for, the 
-better :)
+ Documentation/i2c/dev-interface | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-Robin.
-
-> v1 -> v2:
-> - Save the 'pfn' temp variable performing the page_to_pfn() conversion in the
->    remap_pfn_range() function call as suggested by Christoph.
-> 
-> ---
->   drivers/base/dma-mapping.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/base/dma-mapping.c b/drivers/base/dma-mapping.c
-> index 3b11835..d82566d 100644
-> --- a/drivers/base/dma-mapping.c
-> +++ b/drivers/base/dma-mapping.c
-> @@ -226,7 +226,6 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
->   #ifndef CONFIG_ARCH_NO_COHERENT_DMA_MMAP
->   	unsigned long user_count = vma_pages(vma);
->   	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> -	unsigned long pfn = page_to_pfn(virt_to_page(cpu_addr));
->   	unsigned long off = vma->vm_pgoff;
-> 
->   	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-> @@ -234,12 +233,11 @@ int dma_common_mmap(struct device *dev, struct vm_area_struct *vma,
->   	if (dma_mmap_from_dev_coherent(dev, vma, cpu_addr, size, &ret))
->   		return ret;
-> 
-> -	if (off < count && user_count <= (count - off)) {
-> +	if (off < count && user_count <= (count - off))
->   		ret = remap_pfn_range(vma, vma->vm_start,
-> -				      pfn + off,
-> +				      page_to_pfn(virt_to_page(cpu_addr)) + off,
->   				      user_count << PAGE_SHIFT,
->   				      vma->vm_page_prot);
-> -	}
->   #endif	/* !CONFIG_ARCH_NO_COHERENT_DMA_MMAP */
-> 
->   	return ret;
-> --
-> 2.7.4
-> 
+diff --git a/Documentation/i2c/dev-interface b/Documentation/i2c/dev-interface
+index c8737d502791..f92ee1f59914 100644
+--- a/Documentation/i2c/dev-interface
++++ b/Documentation/i2c/dev-interface
+@@ -23,11 +23,6 @@ First, you need to include these two headers:
+   #include <linux/i2c-dev.h>
+   #include <i2c/smbus.h>
+ 
+-(Please note that there are two files named "i2c-dev.h" out there. One is
+-distributed with the Linux kernel and the other one is included in the
+-source tree of i2c-tools. They used to be different in content but since 2012
+-they're identical. You should use "linux/i2c-dev.h").
+-
+ Now, you have to decide which adapter you want to access. You should
+ inspect /sys/class/i2c-dev/ or run "i2cdetect -l" to decide this.
+ Adapter numbers are assigned somewhat dynamically, so you can not
+@@ -140,8 +135,8 @@ ioctl(file, I2C_RDWR, struct i2c_rdwr_ioctl_data *msgset)
+   set in each message, overriding the values set with the above ioctl's.
+ 
+ ioctl(file, I2C_SMBUS, struct i2c_smbus_ioctl_data *args)
+-  Not meant to be called  directly; instead, use the access functions
+-  below.
++  If possible, use the provided i2c_smbus_* methods described below instead
++  of issuing direct ioctls.
+ 
+ You can do plain i2c transactions by using read(2) and write(2) calls.
+ You do not need to pass the address byte; instead, set it through
+@@ -166,10 +161,9 @@ what happened. The 'write' transactions return 0 on success; the
+ returns the number of values read. The block buffers need not be longer
+ than 32 bytes.
+ 
+-The above functions are all inline functions, that resolve to calls to
+-the i2c_smbus_access function, that on its turn calls a specific ioctl
+-with the data in a specific format. Read the source code if you
+-want to know what happens behind the screens.
++The above functions are made available by linking against the libi2c library,
++which is provided by the i2c-tools project.  See:
++https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/.
+ 
+ 
+ Implementation details
+-- 
+2.17.0.484.g0c8726318c-goog
