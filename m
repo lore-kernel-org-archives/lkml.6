@@ -1,54 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751335AbeDMQUp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 12:20:45 -0400
-Received: from mga09.intel.com ([134.134.136.24]:56980 "EHLO mga09.intel.com"
+        id S1752091AbeDMQXa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 12:23:30 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:48203 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750837AbeDMQUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 12:20:44 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,446,1517904000";
-   d="scan'208";a="34069572"
-Date: Fri, 13 Apr 2018 09:20:43 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jin Yao <yao.jin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Wang Nan <wangnan0@huawei.com>
-Subject: Re: [PATCH 17/17] perf annotate: Handle variables in 'sub', 'or' and
- many other instructions
-Message-ID: <20180413162043.GD6694@tassilo.jf.intel.com>
-References: <20180413140111.25313-1-acme@kernel.org>
- <20180413140111.25313-18-acme@kernel.org>
+        id S1750928AbeDMQX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 12:23:29 -0400
+Date: Fri, 13 Apr 2018 18:23:27 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Radu Pirea <radu.pirea@microchip.com>
+Cc: broonie@kernel.org, nicolas.ferre@microchip.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: add binding for at91-usart in spi mode
+Message-ID: <20180413162327.GE22187@piout.net>
+References: <20180413161117.20274-1-radu.pirea@microchip.com>
+ <20180413161117.20274-3-radu.pirea@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180413140111.25313-18-acme@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180413161117.20274-3-radu.pirea@microchip.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 11:01:11AM -0300, Arnaldo Carvalho de Melo wrote:
-> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+On 13/04/2018 19:11:16+0300, Radu Pirea wrote:
+> These are bindings for at91-usart IP in spi spi mode. There is no support for
+> internal chip select. Only kind of chip selects available are gpio chip
+> selects.
 > 
-> Just like is done for 'mov' and others that can have as source or
-> targets variables resolved by objdump, to make them more compact:
+> Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
+> ---
+>  .../bindings/spi/microchip,at91-usart-spi.txt | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/spi/microchip,at91-usart-spi.txt
 > 
-> -               orb    $0x4,0x224d71(%rip)        # 226ca4 <_rtld_global+0xca4>
-> +               orb    $0x4,_rtld_global+0xca4
+> diff --git a/Documentation/devicetree/bindings/spi/microchip,at91-usart-spi.txt b/Documentation/devicetree/bindings/spi/microchip,at91-usart-spi.txt
+> new file mode 100644
+> index 000000000000..92d33ccdffae
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/microchip,at91-usart-spi.txt
+> @@ -0,0 +1,24 @@
+> +* Universal Synchronous Asynchronous Receiver/Transmitter (USART) in SPI mode
+> +
+> +Required properties:
+> +- #size-cells      : Must be <0>
+> +- #address-cells   : Must be <1>
+> +- compatible: Should be "microchip,at91sam9g45-usart-spi" or "microchip,sama5d2-usart-spi" 
+> +- reg: Should contain registers location and length
+> +- interrupts: Should contain interrupt
+> +- clocks: phandles to input clocks.
+> +- clock-names: tuple listing input clock names.
+> +	Required elements: "usart"
+> +- cs-gpios: chipselects (internal cs not supported)
+> +
+> +Example:
+> +	spi0: spi@f001c000 {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		compatible = "microchip,sama5d2-usart-spi", "microchip,at91sam9g45-usart-spi";
 
-That's not equivalent.  It could be non rip relative too. You would need
-to keep at least the (%rip).
+I'm pretty sure this will be considered configuration rather than
+hardware description. Why don't you do something like the flexcom mode
+selection?
 
--Andi
+> +		reg = <0xf001c000 0x100>;
+> +		interrupts = <12 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&usart0_clk>;
+> +		clock-names = "usart";
+> +		cs-gpios = <&pioB 3 0>;
+> +	};
+> -- 
+> 2.17.0
+> 
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
