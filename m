@@ -1,70 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754087AbeDMJLo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 05:11:44 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40386 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751776AbeDMJLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 05:11:42 -0400
-Date: Fri, 13 Apr 2018 10:11:36 +0100
-From: Morten Rasmussen <morten.rasmussen@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        LAK <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] sched: support dynamiQ cluster
-Message-ID: <20180413091136.GV4589@e105550-lin.cambridge.arm.com>
-References: <74865492-d9a6-649d-d37c-a5a6a8c28f23@arm.com>
- <CAKfTPtDy2uUj4amA9MARUz9qS=+urwV2edyQn+fW70hkN+CgoQ@mail.gmail.com>
- <e8e6e7d0-7744-1dab-7b24-b7ff37df60c8@arm.com>
- <CAKfTPtCQayuu5-84931ZxzXV1-roV_CfRd_5wXG1oxOEUZmZgw@mail.gmail.com>
- <20180405154630.GS4589@e105550-lin.cambridge.arm.com>
- <CAKfTPtBv7BzAqZWTxU9HaCoNjQa2B8usk6dfO1qgofjGYG7S=w@mail.gmail.com>
- <20180406125825.GT4589@e105550-lin.cambridge.arm.com>
- <CAKfTPtCfCZzuBgdYzWW_KcT34VTgj6utUF+Q5zSpre+Ky2r4eA@mail.gmail.com>
- <20180410131950.GU4589@e105550-lin.cambridge.arm.com>
- <20180412182211.GC4082@hirez.programming.kicks-ass.net>
+        id S1754056AbeDMJOf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 05:14:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45534 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752446AbeDMJOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 05:14:33 -0400
+Subject: Re: [PATCH] vfio: platform: Fix using devices in PM Domains
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <1523438648-17672-1-git-send-email-geert+renesas@glider.be>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, kvm@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <0cc6cead-cd75-0a18-7a53-5ce16b03e823@redhat.com>
+Date: Fri, 13 Apr 2018 11:14:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180412182211.GC4082@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1523438648-17672-1-git-send-email-geert+renesas@glider.be>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 08:22:11PM +0200, Peter Zijlstra wrote:
-> On Tue, Apr 10, 2018 at 02:19:50PM +0100, Morten Rasmussen wrote:
-> > As said above, I see your point about completion time might suffer in
-> > some cases for low utilization tasks, but I don't see how you can fix
-> > that automagically. ASYM_PACKING has a lot of problematic side-effects.
-> > If use-space knows that completion time is important for a task, there
-> > are already ways to improve that somewhat in mainline (task priority and
-> > pinning), and more powerful solutions in the Android kernel which
-> > Patrick is currently pushing upstream.
-> 
-> So I tend to side with Morten on this one. I don't particularly like
-> ASYM_PACKING much, but we already had it for PPC and it works for the
-> small difference in performance ITMI has.
-> 
-> At the time Morten already objected to using it for ITMI, and I just
-> haven't had time to look into his proposal for using capacity.
-> 
-> But I don't see it working right for big.litte/dynamiq, simply because
-> it is a very strong always big preference, which is against the whole
-> design premisis of big.little (as Morten has been trying to argue).
+Hi Geert,
 
-In Vincent's defence, vendors do sometimes make design decisions that I
-don't quite understand. So there could be users that really want a
-non-energy-aware big-first policy, but as I said earlier in this thread,
-that could be implemented better with a small tweak to wake_cap() and
-using the misfit patches.
+On 11/04/18 11:24, Geert Uytterhoeven wrote:
+> If a device is part of a PM Domain (e.g. power and/or clock domain), its
+> power state is managed using Runtime PM.  Without Runtime PM, the device
+> may not be powered up, causing subtle failures, crashes, or system
+> lock-ups when the device is accessed by the guest.
+the device may not be powered up/clcoked or power/clock may be switched
+off while the guest uses it.
+> 
+> Fix this by adding Runtime PM support, powering the device when the VFIO
+> device is opened by the guest.
+> 
+> Note that while more fine-grained power management could be implemented
+> on the guest side, if exported, this would be inherently unsafe, as
+> abusing it may kill the whole system.
+Please can you elaborate on this remark please?
 
-We would have to disable big-first policy and go with the current
-migrate-big-task-to-big-cpus policy as soon as we care about energy. I'm
-happy to give that try and come up with a patch.
+Thanks
+
+Eric
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> This depends on "[PATCH v3 2/2] vfio: platform: Add generic DT reset
+> support" due to a small contextual change (addition of "#include
+> <linux/reset.h>").
+> 
+>  drivers/vfio/platform/vfio_platform_common.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
+> index ef9b9e3220ebe939..4db0a143992c3353 100644
+> --- a/drivers/vfio/platform/vfio_platform_common.c
+> +++ b/drivers/vfio/platform/vfio_platform_common.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/iommu.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/reset.h>
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+> @@ -249,6 +250,8 @@ static void vfio_platform_release(void *device_data)
+>  		const char *extra_dbg = NULL;
+>  		int ret;
+>  
+> +		pm_runtime_put(vdev->device);
+> +
+>  		ret = vfio_platform_call_reset(vdev, &extra_dbg);
+>  		if (ret && vdev->reset_required) {
+>  			dev_warn(vdev->device, "reset driver is required and reset call failed in release (%d) %s\n",
+> @@ -291,6 +294,10 @@ static int vfio_platform_open(void *device_data)
+>  				 ret, extra_dbg ? extra_dbg : "");
+>  			goto err_rst;
+>  		}
+> +
+> +		ret = pm_runtime_get_sync(vdev->device);
+> +		if (ret < 0)
+> +			goto err_rst;
+>  	}
+>  
+>  	vdev->refcnt++;
+> @@ -706,6 +713,7 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
+>  
+>  	mutex_init(&vdev->igate);
+>  
+> +	pm_runtime_enable(vdev->device);
+>  	return 0;
+>  
+>  put_iommu:
+> @@ -723,6 +731,7 @@ struct vfio_platform_device *vfio_platform_remove_common(struct device *dev)
+>  	vdev = vfio_del_group_dev(dev);
+>  
+>  	if (vdev) {
+> +		pm_runtime_disable(vdev->device);
+>  		vfio_platform_put_reset(vdev);
+>  		vfio_iommu_group_put(dev->iommu_group, dev);
+>  	}
+> 
