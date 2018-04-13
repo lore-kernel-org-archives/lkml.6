@@ -1,52 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751144AbeDMPPE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 11:15:04 -0400
-Received: from foss.arm.com ([217.140.101.70]:43386 "EHLO foss.arm.com"
+        id S1751827AbeDMPTG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 11:19:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750837AbeDMPPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 11:15:02 -0400
-From: Robin Murphy <robin.murphy@arm.com>
-To: linux-graphics-maintainer@vmware.com, syeh@vmware.com,
-        thellstrom@vmware.com
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/vmwgfx: Fix scatterlist unmapping
-Date: Fri, 13 Apr 2018 16:14:57 +0100
-Message-Id: <3a08f0343cb4e7a767601c59a381884121f9b751.1523632202.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.16.1.dirty
+        id S1750761AbeDMPTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 11:19:04 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5C4D2177F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AIpwx4874ekNTE4XNzy+HTuv7tcZzpiEM2YBwv9RmZTobevpw11G1nX2e0aM45bowmzmphtEBAq1R9Lx3gOIXwrYdAY=
+MIME-Version: 1.0
+In-Reply-To: <95fa67c09ef009675f6989662b657b6c8b9ac839.1523376423.git.hns@goldelico.com>
+References: <cover.1523376423.git.hns@goldelico.com> <95fa67c09ef009675f6989662b657b6c8b9ac839.1523376423.git.hns@goldelico.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Fri, 13 Apr 2018 10:18:42 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJe+guBSWShfBYDf2Jbwa7ue=gU1jgrOVeiRJZj1f0J5A@mail.gmail.com>
+Message-ID: <CAL_JsqJe+guBSWShfBYDf2Jbwa7ue=gU1jgrOVeiRJZj1f0J5A@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] DTS: Bindings: pca953x: add example how to use
+ interrupt-controller and gpio-controller
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Discussions about the Letux Kernel
+        <letux-kernel@openphoenux.org>,
+        kernel@pyra-handheld.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dma_unmap_sg() should be called with the same number of entries
-originally passed to dma_map_sg(), not the number it returned, which may
-be fewer. Admittedly this driver probably never runs on non-coherent
-architectures where getting that wrong could lead to data loss, but it's
-always good to be correct, and it's trivially easy to fix by just
-restoring the SG table state before the call instead of afterwards.
+On Tue, Apr 10, 2018 at 11:07 AM, H. Nikolaus Schaller
+<hns@goldelico.com> wrote:
+> It is not completely obvious that these are required and
+> how to use them. So we provide a tested example.
+>
+> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+> ---
+>  .../devicetree/bindings/gpio/gpio-pca953x.txt      | 33 ++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
-
-Found by inspection while poking around TTM users.
-
- drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c b/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
-index 21111fd091f9..971223d39469 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
-@@ -369,9 +369,9 @@ static void vmw_ttm_unmap_from_dma(struct vmw_ttm_tt *vmw_tt)
- {
- 	struct device *dev = vmw_tt->dev_priv->dev->dev;
- 
-+	vmw_tt->sgt.nents = vmw_tt->sgt.orig_nents;
- 	dma_unmap_sg(dev, vmw_tt->sgt.sgl, vmw_tt->sgt.nents,
- 		DMA_BIDIRECTIONAL);
--	vmw_tt->sgt.nents = vmw_tt->sgt.orig_nents;
- }
- 
- /**
--- 
-2.16.1.dirty
+Reviewed-by: Rob Herring <robh@kernel.org>
