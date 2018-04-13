@@ -1,53 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751109AbeDMRg7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 13:36:59 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:40360 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750783AbeDMRg4 (ORCPT
+        id S1751002AbeDMRji (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 13:39:38 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:44297 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750761AbeDMRjg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 13:36:56 -0400
-X-Google-Smtp-Source: AIpwx4/gCresFj12KW0+KVX6kUE5MVKzCSAo97Ucu32QPess4rUj0FwDaxwKEOi1D05LEHnQ52CMmg==
-Date: Fri, 13 Apr 2018 12:36:52 -0500
+        Fri, 13 Apr 2018 13:39:36 -0400
+X-Google-Smtp-Source: AIpwx49yVjcu7Jz6Eu0wAAd/ZypoB+ZiKh/jbnw5W2PjBuy8BdfDt+/0LwEZRZJ+NrQqQ0Upb136ng==
+Date: Fri, 13 Apr 2018 12:39:34 -0500
 From: Rob Herring <robh@kernel.org>
-To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, kt.liao@emc.com.tw,
-        Oliver Haessler <oliver@redhat.com>, Benjamin Berg <bberg@redhat.com>,
-        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/9] Input: elan_i2c - add trackstick report
-Message-ID: <20180413173652.d5errnzdoz3elaes@rob-hp-laptop>
-References: <20180409091051.2944-1-benjamin.tissoires@redhat.com>
- <20180409091051.2944-4-benjamin.tissoires@redhat.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/5] dt-bindings: display: bridge: lvds-transmitter: add
+ ti,ds90c185
+Message-ID: <20180413173934.uq7xhbkrq4g77jch@rob-hp-laptop>
+References: <20180409105918.20792-1-peda@axentia.se>
+ <20180409105918.20792-2-peda@axentia.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180409091051.2944-4-benjamin.tissoires@redhat.com>
+In-Reply-To: <20180409105918.20792-2-peda@axentia.se>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 11:10:45AM +0200, Benjamin Tissoires wrote:
-> The Elan touchpads over I2C/SMBus also can handle a
-> trackstick. Unfortunately, nothing tells us if the
-> device supports trackstick (the information lies in
-> the PS/2 node), so rely on a platform data to enable
-> or not the trackstick node.
+On Mon, Apr 09, 2018 at 12:59:14PM +0200, Peter Rosin wrote:
+> Start list of actual chips compatible with "lvds-encoder".
 > 
-> Link: https://bugzilla.redhat.com/show_bug.cgi?id=1313939
-> 
-> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 > ---
-> 
-> changes in v2:
-> - use of generic device property instead of platform data so
->   device tree can also make use of it
-> ---
->  .../devicetree/bindings/input/elan_i2c.txt         |  1 +
+>  .../devicetree/bindings/display/bridge/lvds-transmitter.txt       | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 
-Acked-by: Rob Herring <robh@kernel.org>
-
->  drivers/input/mouse/elan_i2c_core.c                | 90 +++++++++++++++++++++-
->  2 files changed, 88 insertions(+), 3 deletions(-)
+Reviewed-by: Rob Herring <robh@kernel.org>
