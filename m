@@ -1,66 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753751AbeDMHAG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 03:00:06 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54232 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753693AbeDMHAD (ORCPT
+        id S1753800AbeDMHAT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 03:00:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37342 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753703AbeDMHAQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 03:00:03 -0400
-X-Google-Smtp-Source: AIpwx4/UUuDaMaCL6qLhFLuSiQkG74P4AkdPeOJy3s/R8BbZMyIvH2Xp42DAoj95JLM4xwf7EWtdHQ==
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH] media: cx231xx: Add support for AverMedia DVD EZMaker 7
-From: Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <20180326060616.5354-1-kai.heng.feng@canonical.com>
-Date: Fri, 13 Apr 2018 14:59:56 +0800
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+        Fri, 13 Apr 2018 03:00:16 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 911D260274
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+Subject: Re: [PATCH v4 2/7] phy: qcom-qmp: Enable pipe_clk before PHY
+ initialization
+To: Stephen Boyd <sboyd@kernel.org>, Doug Anderson <dianders@chromium.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Rob Herring <robh@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org,
+        Varadarajan Narayanan <varada@codeaurora.org>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        Fengguang Wu <fengguang.wu@intel.com>
+References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
+ <1522321466-21755-3-git-send-email-mgautam@codeaurora.org>
+ <CAD=FV=XtviSYq=2w=Ld1xq5U2VPy=u=q6a3+4qd2zVGB+f9P8A@mail.gmail.com>
+ <CAD=FV=WGEKy98De_zH9rp+g-tE2YuVK2vRxLJrjeeSx=ijBAww@mail.gmail.com>
+ <19c66b02-4f8e-902a-9397-21e7690db7b8@codeaurora.org>
+ <CAD=FV=XqH69_LXcCyTS1nF5fHpen=PnRxd-WTz=y3dKvMsRtuw@mail.gmail.com>
+ <152338515540.180276.4273344163431724770@swboyd.mtv.corp.google.com>
+ <f8f47dc2-74ab-96c6-b3bd-a476bd19514d@codeaurora.org>
+ <152356552631.37499.9860530043266211290@swboyd.mtv.corp.google.com>
+From: Manu Gautam <mgautam@codeaurora.org>
+Message-ID: <e978fa34-d9a6-281c-6620-c9d10c7b54ae@codeaurora.org>
+Date: Fri, 13 Apr 2018 12:30:09 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <152356552631.37499.9860530043266211290@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <BC47F34C-7BF6-4A61-9EA0-BA8C24E71F6E@canonical.com>
-References: <20180326060616.5354-1-kai.heng.feng@canonical.com>
-To: mchehab@kernel.org
-X-Mailer: Apple Mail (2.3445.6.18)
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-> On Mar 26, 2018, at 2:06 PM, Kai-Heng Feng <kai.heng.feng@canonical.com>  
-> wrote:
->
-> User reports AverMedia DVD EZMaker 7 can be driven by VIDEO_GRABBER.
-> Add the device to the id_table to make it work.
 
-*Gentle ping*
-I am hoping this patch can get merged in v4.17.
+On 4/13/2018 2:08 AM, Stephen Boyd wrote:
+> Quoting Manu Gautam (2018-04-11 08:37:38)
+>>> I ask because it may be easier to never expose these clks in Linux, hit
+>>> the enable bits in the branches during clk driver probe, and then act
+>>> like they never exist because we don't really use them.
+>> This sounds better idea. Let me check if I can get a patch for same in msm8996
+>> and sdm845 clock drivers.
+>>
+> Ok! Presumably the PHY has a way to tell if it failed to turn on right?
+> Put another way, I'm hoping these branch bits aren't there to help us
+> debug and figure out when the PHY PLL fails to lock.
 
-Kai-Heng
+Yes, PHY has a PCS_STATUS3 register that indicates whether pipe_clk got enabled or
+not.
 
->
-> BugLink: https://bugs.launchpad.net/bugs/1620762
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
->  drivers/media/usb/cx231xx/cx231xx-cards.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/media/usb/cx231xx/cx231xx-cards.c  
-> b/drivers/media/usb/cx231xx/cx231xx-cards.c
-> index f9ec7fedcd5b..da01c5125acb 100644
-> --- a/drivers/media/usb/cx231xx/cx231xx-cards.c
-> +++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
-> @@ -945,6 +945,9 @@ struct usb_device_id cx231xx_id_table[] = {
->  	 .driver_info = CX231XX_BOARD_CNXT_RDE_250},
->  	{USB_DEVICE(0x0572, 0x58A0),
->  	 .driver_info = CX231XX_BOARD_CNXT_RDU_250},
-> +	/* AverMedia DVD EZMaker 7 */
-> +	{USB_DEVICE(0x07ca, 0xc039),
-> +	 .driver_info = CX231XX_BOARD_CNXT_VIDEO_GRABBER},
->  	{USB_DEVICE(0x2040, 0xb110),
->  	 .driver_info = CX231XX_BOARD_HAUPPAUGE_USB2_FM_PAL},
->  	{USB_DEVICE(0x2040, 0xb111),
-> -- 
-> 2.15.1
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
