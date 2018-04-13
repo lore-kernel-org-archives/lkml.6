@@ -1,35 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754540AbeDMK5I (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 06:57:08 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49938 "EHLO
+        id S1754561AbeDMK5i (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 06:57:38 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47686 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753106AbeDMK5G (ORCPT
+        with ESMTP id S1754424AbeDMKzu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 06:57:06 -0400
+        Fri, 13 Apr 2018 06:55:50 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: atmel_ssc_dai: fix spelling mistake: "Stoping" -> "Stopping"" to the asoc tree
-In-Reply-To: <20180330154420.6903-1-colin.king@canonical.com>
-Message-Id: <E1f6wNs-0007Ig-K7@debutante>
-Date: Fri, 13 Apr 2018 11:56:48 +0100
+Subject: Applied "ASoC: intel: skl_nau88l25_ssm4567: Replace GFP_ATOMIC with GFP_KERNEL in skylake_audio_probe" to the asoc tree
+In-Reply-To: <1523270974-23082-1-git-send-email-baijiaju1990@gmail.com>
+Message-Id: <E1f6wMp-000776-MO@debutante>
+Date: Fri, 13 Apr 2018 11:55:43 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: atmel_ssc_dai: fix spelling mistake: "Stoping" -> "Stopping"
+   ASoC: intel: skl_nau88l25_ssm4567: Replace GFP_ATOMIC with GFP_KERNEL in skylake_audio_probe
 
 has been applied to the asoc tree at
 
@@ -54,34 +48,41 @@ to this mail.
 Thanks,
 Mark
 
->From 78a7d414d5a8e3ea7bc5a636311cfb7ce593ce37 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 30 Mar 2018 16:44:20 +0100
-Subject: [PATCH] ASoC: atmel_ssc_dai: fix spelling mistake: "Stoping" ->
- "Stopping"
+>From fe552c82476f2fb16e87a76ee178465325e57f61 Mon Sep 17 00:00:00 2001
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+Date: Mon, 9 Apr 2018 18:49:34 +0800
+Subject: [PATCH] ASoC: intel: skl_nau88l25_ssm4567: Replace GFP_ATOMIC with
+ GFP_KERNEL in skylake_audio_probe
 
-Trivial fix to spelling mistake in pr_debug message text
+skylake_audio_probe() is never called in atomic context.
+This function is only set as ".probe" in "struct platform_driver".
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Despite never getting called from atomic context,
+skylake_audio_probe() calls devm_kzalloc() with GFP_ATOMIC,
+which waits busily for allocation.
+GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
+to avoid busy waiting and improve the possibility of sucessful allocation.
+
+This is found by a static analysis tool named DCNS written by myself.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/atmel/atmel_ssc_dai.c | 2 +-
+ sound/soc/intel/boards/skl_nau88l25_ssm4567.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-index a1e2c5682dcd..1c7af0ca98ec 100644
---- a/sound/soc/atmel/atmel_ssc_dai.c
-+++ b/sound/soc/atmel/atmel_ssc_dai.c
-@@ -820,7 +820,7 @@ static int atmel_ssc_hw_params(struct snd_pcm_substream *substream,
- 		if (ret < 0) {
- 			printk(KERN_WARNING
- 					"atmel_ssc_dai: request_irq failure\n");
--			pr_debug("Atmel_ssc_dai: Stoping clock\n");
-+			pr_debug("Atmel_ssc_dai: Stopping clock\n");
- 			clk_disable(ssc_p->ssc->clk);
- 			return ret;
- 		}
+diff --git a/sound/soc/intel/boards/skl_nau88l25_ssm4567.c b/sound/soc/intel/boards/skl_nau88l25_ssm4567.c
+index 212ac8971e55..b0610bba3cfa 100644
+--- a/sound/soc/intel/boards/skl_nau88l25_ssm4567.c
++++ b/sound/soc/intel/boards/skl_nau88l25_ssm4567.c
+@@ -696,7 +696,7 @@ static int skylake_audio_probe(struct platform_device *pdev)
+ 	struct skl_nau88125_private *ctx;
+ 	struct skl_machine_pdata *pdata;
+ 
+-	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_ATOMIC);
++	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
+ 	if (!ctx)
+ 		return -ENOMEM;
+ 
 -- 
 2.17.0
