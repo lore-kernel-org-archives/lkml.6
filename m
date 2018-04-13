@@ -1,92 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751021AbeDMSxm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 14:53:42 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:43504 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750783AbeDMSxl (ORCPT
+        id S1751133AbeDMSzU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 14:55:20 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:47172 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750839AbeDMSzT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 14:53:41 -0400
-Subject: Re: [PATCH] virtio_balloon: add array of stat names
-To: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org
-References: <1523627031-370966-1-git-send-email-mst@redhat.com>
-From: Jonathan Helman <jonathan.helman@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <8ac55da5-3c2b-a546-7597-ec6c82ff9590@oracle.com>
-Date: Fri, 13 Apr 2018 11:53:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 13 Apr 2018 14:55:19 -0400
+Smtp-Origin-Hostprefix: devbig
+From: Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig102.frc2.facebook.com
+To: <linux-kernel@vger.kernel.org>
+CC: <kernel-team@fb.com>, <vincent.weaver@maine.edu>,
+        Song Liu <songliubraving@fb.com>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Smtp-Origin-Cluster: frc2c02
+Subject: [PATCH] trace_kprobe: Remove warning message "Could not insert probe at..."
+Date: Fri, 13 Apr 2018 11:55:13 -0700
+Message-ID: <20180413185513.3626052-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.9.5
+X-FB-Internal: Safe
 MIME-Version: 1.0
-In-Reply-To: <1523627031-370966-1-git-send-email-mst@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8862 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804130174
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-13_10:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This warning message is not very helpful, as the return value should
+already show information about the error. Also, this message will
+flush dmesg if the user space do something silly in a loop, like:
 
+    for x in {0..5}
+    do
+        echo p:xx xx+$x >> /sys/kernel/debug/tracing/kprobe_events
+    done
 
-On 04/13/2018 06:44 AM, Michael S. Tsirkin wrote:
-> Jason Wang points out that it's vary hard for users to build an array of
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Reported-by: Vince Weaver <vincent.weaver@maine.edu>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+---
+ kernel/trace/trace_kprobe.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-s/vary/very
-
-> stat names. The naive thing is to use VIRTIO_BALLOON_S_NR but that
-> breaks if we add more stats.
-> 
-> Let's add an array of reasonably readable names.
-
-Thanks for doing this, this is goodness. Clients of this interface will 
-now only require a modification to their internal copy of the header 
-file (if they have one), rather than updating their string array as well.
-
-> 
-> Fixes: 6c64fe7f2 ("virtio_balloon: export hugetlb page allocation counts")
-
-I think this is a tad bit confusing since the only way you'd know why 
-this patch "fixes" 6c64fe7f2 is by reading the LKML archives and finding 
-Jason's comment.
-
-> Cc: Jason Wang <jasowang@redhat.com>
-> Cc: Jonathan Helman <jonathan.helman@oracle.com>, > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-
-Reviewed-by: Jonathan Helman <jonathan.helman@oracle.com>
-
-> ---
->   include/uapi/linux/virtio_balloon.h | 15 +++++++++++++++
->   1 file changed, 15 insertions(+)
-> 
-> diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
-> index 9e02137..1477c17 100644
-> --- a/include/uapi/linux/virtio_balloon.h
-> +++ b/include/uapi/linux/virtio_balloon.h
-> @@ -64,6 +64,21 @@ struct virtio_balloon_config {
->   #define VIRTIO_BALLOON_S_HTLB_PGFAIL   9  /* Hugetlb page allocation failures */
->   #define VIRTIO_BALLOON_S_NR       10
->   
-> +#define VIRTIO_BALLOON_S_NAMES_WITH_PREFIX(VIRTIO_BALLOON_S_NAMES_prefix) { \
-> +	VIRTIO_BALLOON_S_NAMES_prefix "swap-in", \
-> +	VIRTIO_BALLOON_S_NAMES_prefix "swap-out", \
-> +	VIRTIO_BALLOON_S_NAMES_prefix "major-faults", \
-> +	VIRTIO_BALLOON_S_NAMES_prefix "minor-faults", \
-> +	VIRTIO_BALLOON_S_NAMES_prefix "free-memory", \
-> +	VIRTIO_BALLOON_S_NAMES_prefix "total-memory", \
-> +	VIRTIO_BALLOON_S_NAMES_prefix "available-memory", \
-> +	VIRTIO_BALLOON_S_NAMES_prefix "disk-caches", \
-> +	VIRTIO_BALLOON_S_NAMES_prefix "hugetlb-allocations", \
-> +	VIRTIO_BALLOON_S_NAMES_prefix "hugetlb-failures" \ > +}
-> +
-> +#define VIRTIO_BALLOON_S_NAMES VIRTIO_BALLOON_S_NAMES_WITH_PREFIX("")
-> +
->   /*
->    * Memory statistics structure.
->    * Driver fills an array of these structures and passes to device.
-> 
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 1cd3fb4..02aed76 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -512,8 +512,6 @@ static int __register_trace_kprobe(struct trace_kprobe *tk)
+ 	if (ret == 0)
+ 		tk->tp.flags |= TP_FLAG_REGISTERED;
+ 	else {
+-		pr_warn("Could not insert probe at %s+%lu: %d\n",
+-			trace_kprobe_symbol(tk), trace_kprobe_offset(tk), ret);
+ 		if (ret == -ENOENT && trace_kprobe_is_on_module(tk)) {
+ 			pr_warn("This probe might be able to register after target module is loaded. Continue.\n");
+ 			ret = 0;
+-- 
+2.9.5
