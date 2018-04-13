@@ -1,90 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752163AbeDMV4M (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 17:56:12 -0400
-Received: from mail-eopbgr660113.outbound.protection.outlook.com ([40.107.66.113]:61026
-        "EHLO CAN01-QB1-obe.outbound.protection.outlook.com"
+        id S1752222AbeDMV53 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 17:57:29 -0400
+Received: from mail-db5eur01on0065.outbound.protection.outlook.com ([104.47.2.65]:39160
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751847AbeDMV4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 17:56:09 -0400
-From: "Stephen  Bates" <sbates@raithlin.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-CC: Bjorn Helgaas <helgaas@kernel.org>, Sinan Kaya <okaya@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "Christoph Hellwig" <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?utf-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Eric Wehage <Eric.Wehage@huawei.com>
-Subject: Re: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-Thread-Topic: [PATCH v3 01/11] PCI/P2PDMA: Support peer-to-peer memory
-Thread-Index: AQHTujlZo8bTZRn+4ECdETRRU1rPhqPNgjSAgADeTICAFBF4AIAAL2gAgAAdXQCAAR0ogIAbL4UA
-Date: Fri, 13 Apr 2018 21:56:06 +0000
-Message-ID: <178FD8FA-53BA-49DA-807F-F8736157F179@raithlin.com>
-References: <20180312193525.2855-1-logang@deltatee.com>
- <20180312193525.2855-2-logang@deltatee.com>
- <59fd2f5d-177f-334a-a9c4-0f8a6ec7c303@codeaurora.org>
- <24d8e5c2-065d-8bde-3f5d-7f158be9c578@deltatee.com>
- <20180326121138.00005e30@huawei.com>
- <20180326140118.GA221690@bhelgaas-glaptop.roam.corp.google.com>
- <c717eb06-1e83-f0f3-4d6c-15531aa808e0@deltatee.com>
- <20180327094701.0000300d@huawei.com>
-In-Reply-To: <20180327094701.0000300d@huawei.com>
-Accept-Language: en-CA, en-US
+        id S1751042AbeDMV52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 17:57:28 -0400
+From: Han Xu <han.xu@nxp.com>
+To: Stefan Agner <stefan@agner.ch>,
+        "boris.brezillon@free-electrons.com"
+        <boris.brezillon@free-electrons.com>
+CC: "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "cyrille.pitchen@wedev4u.fr" <cyrille.pitchen@wedev4u.fr>,
+        "max.oss.09@gmail.com" <max.oss.09@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] mtd: rawnand: gpmi: add support for specific ECC
+ strength
+Thread-Topic: [PATCH v2 1/2] mtd: rawnand: gpmi: add support for specific ECC
+ strength
+Thread-Index: AQHTs/Q84wpDmjjkQE6xK0KKiElbF6P/fOQA
+Date: Fri, 13 Apr 2018 21:57:24 +0000
+Message-ID: <a82587cc-cccc-40f6-3d27-23a20b3f72c7@nxp.com>
+References: <20180304200602.11475-1-stefan@agner.ch>
+In-Reply-To: <20180304200602.11475-1-stefan@agner.ch>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.c.0.180410
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sbates@raithlin.com;
-x-originating-ip: [70.65.253.218]
+authentication-results: spf=none (sender IP is ) smtp.mailfrom=han.xu@nxp.com; 
+x-originating-ip: [64.157.242.222]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;YTXPR0101MB1934;7:lq9dVTLn9pV4e2ZoQwRf32YWQjsL4jWBWw2rJ6QD6/AJo1Dgl4B86lb//WWnwtFfapuwgaOcTz42V0ET1R/4EQNQstDEalZGRBZJQxDoGMI7qKIq9SLR/Euf+k6NiwU29vapHWAKjEcbuLx+mQYunFFvM1mnuDk+rSZFV1QN2+ME5w3K/5Gn7Xy/G5VysilvRJ1VkEpKNa02aKu+Q9OcpqybePxZmPBVi52y7ze1OgEIEYO2GneqNcQiVzK2lL5W
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:YTXPR0101MB1934;
-x-ms-traffictypediagnostic: YTXPR0101MB1934:
-x-microsoft-antispam-prvs: <YTXPR0101MB19341A30D8AB6DF136B10578AAB30@YTXPR0101MB1934.CANPRD01.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231232)(944501327)(52105095)(10201501046)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(2016111802025)(6072148)(6043046)(201708071742011);SRVR:YTXPR0101MB1934;BCL:0;PCL:0;RULEID:;SRVR:YTXPR0101MB1934;
+x-microsoft-exchange-diagnostics: 1;VI1PR0401MB1997;7:/uMKRHUNdutUhF9qKy2SqPNIp2o1lEWruPJD3nEKhtXv77Ro50N+d3x9Ed9Do3g5OHfrP23I4yYwGvZHO0Y3GryWthkmniKp1nHy8WIqkO8Q8kdiFwdd2OuaO+SGV1FKG34AJVWydOnKtxoe+Y6jpjWBS22EAZQJleCbxCr9TTwy+hLmNOMxOQSHMEJelbch8xABSUfUkBZshDpeCvZNNfqhjXpcEx4k00Tg8Uy8TBAes2wASPUeVC28DjIdg329
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:VI1PR0401MB1997;
+x-ms-traffictypediagnostic: VI1PR0401MB1997:
+x-microsoft-antispam-prvs: <VI1PR0401MB1997C825BEA809C384811C2897B30@VI1PR0401MB1997.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231232)(944501327)(52105095)(93006095)(93001095)(6055026)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:VI1PR0401MB1997;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0401MB1997;
 x-forefront-prvs: 0641678E68
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39830400003)(396003)(39380400002)(376002)(366004)(346002)(189003)(199004)(99286004)(6246003)(58126008)(186003)(102836004)(54906003)(4326008)(53936002)(110136005)(478600001)(106356001)(105586002)(25786009)(7416002)(83716003)(486006)(36756003)(8676002)(8936002)(86362001)(476003)(81156014)(81166006)(76176011)(5660300001)(66066001)(7736002)(97736004)(2616005)(229853002)(2900100001)(33656002)(2906002)(3280700002)(3660700001)(5250100002)(6436002)(6506007)(305945005)(14454004)(68736007)(26005)(6512007)(446003)(11346002)(316002)(93886005)(6486002)(3846002)(82746002)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:YTXPR0101MB1934;H:YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: 1GspblcErftozeBs+6hhjS/UjlxAYNfHI6RyD2lcunxYs9cPeaq0G2KhyYcGSWgVF+7XvoG5BWhfrFzNWscZ3FHTAiXcgD25vFovfs7xdABuIVnj6uAH9koYGseJgXe93bifrJ3H2ItFTeRL5NSmtzzYeDBEQtPvB4rMGtQ9+5+BzBSMsAJDfrwjsJoPu5zO
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(39380400002)(396003)(376002)(346002)(366004)(199004)(189003)(486006)(3846002)(6512007)(446003)(26005)(186003)(478600001)(6246003)(53546011)(11346002)(3280700002)(8676002)(3660700001)(25786009)(5660300001)(44832011)(102836004)(31686004)(2501003)(97736004)(5250100002)(105586002)(2900100001)(2906002)(39060400002)(81156014)(8936002)(6506007)(81166006)(4326008)(53936002)(6436002)(316002)(86362001)(36756003)(76176011)(305945005)(31696002)(68736007)(6486002)(110136005)(99286004)(2616005)(476003)(7736002)(6116002)(14454004)(229853002)(106356001)(66066001)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0401MB1997;H:VI1PR0401MB2221.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: TXGc3XRK1qVUYRMUZbC0KkJnwL6TJUpvKMiMx4bcOYX7/obNZE/NFijrkJJrGAn9ofClWM09zKH9WUE/kSTRqM1dxf/wc6blTBGQfUU0koKuL8Tt4xoeD54QECUp9/DB9d/TvPPNoBzUthwKr+7jNUATTWMReapY4pHjcxP4VOCKjaQE9RvlsEreVD1lgqr7
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <F42E61E08E0A2947848C85545943ECEB@CANPRD01.PROD.OUTLOOK.COM>
+Content-ID: <8B69A6AE8D13EB4AB49159FE9EB9C566@eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: f5a82b3a-a5c4-4fc6-02da-08d5a1895c12
-X-OriginatorOrg: raithlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5a82b3a-a5c4-4fc6-02da-08d5a1895c12
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Apr 2018 21:56:06.8818
+X-MS-Office365-Filtering-Correlation-Id: fe0521d8-b8f9-4da2-4c5c-08d5a1898a7d
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe0521d8-b8f9-4da2-4c5c-08d5a1898a7d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Apr 2018 21:57:24.7914
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTXPR0101MB1934
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0401MB1997
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3DLuHGi027985
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3DLvYmF027994
 
- 
->  I'll see if I can get our PCI SIG people to follow this through 
 
-Hi Jonathan
 
-Can you let me know if this moves forward within PCI-SIG? I would like to track it. I can see this being doable between Root Ports that reside in the same Root Complex but might become more challenging to standardize for RPs that reside in different RCs in the same (potentially multi-socket) system. I know in the past we have seem MemWr TLPS cross the QPI bus in Intel systems but I am sure that is not something that would work in all systems and must fall outside the remit of PCI-SIG ;-).
+On 03/04/2018 02:06 PM, Stefan Agner wrote:
+> Add support for specified ECC strength/size using device tree
+> properties nand-ecc-strength/nand-ecc-step-size.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>   drivers/mtd/nand/gpmi-nand/gpmi-nand.c | 30 ++++++++++++++++++++----------
+>   1 file changed, 20 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+> index 61fdd733492f..d04754289c03 100644
+> --- a/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+> +++ b/drivers/mtd/nand/gpmi-nand/gpmi-nand.c
+> @@ -198,17 +198,16 @@ static inline bool gpmi_check_ecc(struct gpmi_nand_data *this)
+>    *
+>    * We may have available oob space in this case.
+>    */
+> -static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
+> +static int set_geometry_by_ecc_info(struct gpmi_nand_data *this,
+> +				    unsigned int ecc_strength,
+> +				    unsigned int ecc_step)
+>   {
+>   	struct bch_geometry *geo = &this->bch_geometry;
+>   	struct nand_chip *chip = &this->nand;
+>   	struct mtd_info *mtd = nand_to_mtd(chip);
+>   	unsigned int block_mark_bit_offset;
+>   
+> -	if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
+> -		return -EINVAL;
+> -
+> -	switch (chip->ecc_step_ds) {
+> +	switch (ecc_step) {
+>   	case SZ_512:
+>   		geo->gf_len = 13;
+>   		break;
+> @@ -221,8 +220,8 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
+>   			chip->ecc_strength_ds, chip->ecc_step_ds);
+>   		return -EINVAL;
+>   	}
+> -	geo->ecc_chunk_size = chip->ecc_step_ds;
+> -	geo->ecc_strength = round_up(chip->ecc_strength_ds, 2);
+> +	geo->ecc_chunk_size = ecc_step;
+> +	geo->ecc_strength = round_up(ecc_strength, 2);
+>   	if (!gpmi_check_ecc(this))
+>   		return -EINVAL;
+>   
+> @@ -230,7 +229,7 @@ static int set_geometry_by_ecc_info(struct gpmi_nand_data *this)
+>   	if (geo->ecc_chunk_size < mtd->oobsize) {
+>   		dev_err(this->dev,
+>   			"unsupported nand chip. ecc size: %d, oob size : %d\n",
+> -			chip->ecc_step_ds, mtd->oobsize);
+> +			ecc_step, mtd->oobsize);
+>   		return -EINVAL;
+>   	}
+>   
+> @@ -423,9 +422,20 @@ static int legacy_set_geometry(struct gpmi_nand_data *this)
+>   
+>   int common_nfc_set_geometry(struct gpmi_nand_data *this)
+>   {
+> +	struct nand_chip *chip = &this->nand;
+> +
+> +	if (chip->ecc.strength > 0 && chip->ecc.size > 0)
+> +		return set_geometry_by_ecc_info(this, chip->ecc.strength,
+> +						chip->ecc.size);
+> +
+>   	if ((of_property_read_bool(this->dev->of_node, "fsl,use-minimum-ecc"))
+> -				|| legacy_set_geometry(this))
+> -		return set_geometry_by_ecc_info(this);
+> +				|| legacy_set_geometry(this)) {
+> +		if (!(chip->ecc_strength_ds > 0 && chip->ecc_step_ds > 0))
+> +			return -EINVAL;
+> +
+> +		return set_geometry_by_ecc_info(this, chip->ecc_strength_ds,
+> +						chip->ecc_step_ds);
+> +	}
+>   
+>   	return 0;
+>   }
+> 
 
-I agree such a capability bit would be very useful but it's going to be quite some time before we can rely on hardware being available that supports it.
-
-Stephen
-    
+Acked-by: Han Xu <han.xu@nxp.com>
