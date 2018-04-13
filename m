@@ -1,88 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753478AbeDMG1e (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 02:27:34 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:34568 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751692AbeDMG1c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 02:27:32 -0400
-X-Google-Smtp-Source: AIpwx4+T3riSMFuWxydJArHogAnUSJyZi4aMPTLS7QUxSDGUWU8mWVc04p8WNTP3TD1g8YdRdhitnA==
-From: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org, akpm@linux-foundation.org,
-        "Lee, Chun-Yi" <jlee@suse.com>, Randy Wright <rwright@hpe.com>,
-        Takashi Iwai <tiwai@suse.de>, Vivek Goyal <vgoyal@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH] efi: Fix the size not consistent issue when unmapping memory map
-Date: Fri, 13 Apr 2018 14:27:16 +0800
-Message-Id: <20180413062716.8040-1-jlee@suse.com>
-X-Mailer: git-send-email 2.12.3
+        id S1753308AbeDMGcP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 02:32:15 -0400
+Received: from mga01.intel.com ([192.55.52.88]:33912 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752005AbeDMGcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 02:32:14 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,444,1517904000";
+   d="scan'208";a="191174992"
+Date: Fri, 13 Apr 2018 12:06:42 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Eric Long <eric.long@spreadtrum.com>, Mark Brown <broonie@kernel.org>,
+        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/5] dmaengine: sprd: Add Spreadtrum DMA configuration
+Message-ID: <20180413063641.GL6014@localhost>
+References: <abdda9da96185f764d58bbf61db9010d0f72d1b3.1523346135.git.baolin.wang@linaro.org>
+ <0c2b76aba6a49e583f920ae582d6815fa9cc4361.1523346135.git.baolin.wang@linaro.org>
+ <20180411093634.GC6014@localhost>
+ <CAMz4kuJyKNNuR9WGP8F1NKAET6ZTtN4LtXTTtdnR3Zyxa+OjNw@mail.gmail.com>
+ <20180412093735.GF6014@localhost>
+ <CAMz4ku+i+zA0_5U65vc3h3tO-hzWvtCOFDeFU94h3Rm6sJUuKQ@mail.gmail.com>
+ <CAMz4ku+EUtk2phRGkxkW6YwUvBLb-O7tmMoucvVEQZbL9EY8Zg@mail.gmail.com>
+ <20180413034332.GI6014@localhost>
+ <CAMz4kuL_i7u5OCXrtJy92=OisOzgbWk_e-S9dSuBRPenX=ScPA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMz4kuL_i7u5OCXrtJy92=OisOzgbWk_e-S9dSuBRPenX=ScPA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using kdump, SOMETIMES the "size not consistent" warning message
-shows up when the crash kernel boots with early_ioremap_debug parameter:
+On Fri, Apr 13, 2018 at 02:17:34PM +0800, Baolin Wang wrote:
 
-WARNING: CPU: 0 PID: 0 at ../mm/early_ioremap.c:182 early_iounmap+0x4f/0x12c()
-early_iounmap(ffffffffff200180, 00000118) [0] size not consistent 00000120
+> > Agreed, users only care about grabbing a channel, setting a descriptor and
+> > submitting that.
+> >
+> > I think you need to go back and think about this a bit, please do go thru
+> > dmaengine documentation and see other driver examples.
+> >
+> > We don't typically expose these to users, they give us a transfer and we set
+> > that up in hardware for efficient. Its DMA so people expect us to use fastest
+> > mechanism available.
+> 
+> But there are some configuration are really special for Spreadtrum
+> DMA, and must need user to specify how to configure, especially some
+> scenarios of audio. So I wander if we can add one pointer for
+> 'dma_slave_config' to expand some special DMA configuration
+> requirements, like:
+> 
+> struct dma_slave_config {
+>     ......
+>     unsigned int slave_id;
+>     void *platform_data;
+> };
+> 
+> So if some DMA has some special configuration (such as Spreadtrum
+> DMA), they can user this platform_data pointer. Like xilinx DMA, they
+> also have some special configuration.
 
-The root cause is that the unmapping size of memory map doesn't
-match with the original size when mapping:
+Well we all think our HW is special and needs some additional stuff, most of
+the cases turns out not to be the case.
 
-in __efi_memmap_init()
-	map.map = early_memremap(phys_map, data->size);
+Can you explain how audio in this case additional configuration...
 
-in efi_memmap_unmap()
-        size = efi.memmap.desc_size * efi.memmap.nr_map;
-        early_memunmap(efi.memmap.map, size);
-
-But the efi.memmap.nr_map is from __efi_memmap_init(). The remainder
-of size was discarded when calculating the nr_map:
-        map.nr_map = data->size / data->desc_size;
-
-When the original size of memory map region does not equal to the
-result of multiplication. The "size not consistent" warning
-will be triggered.
-
-This issue sometimes was hit by kdump because kexec set the efi map
-size to align with 16 when loading crash kernel image:
-
-in bzImage64_load()
-        efi_map_sz = efi_get_runtime_map_size();
-        efi_map_sz = ALIGN(efi_map_sz, 16);
-
-This patch changes the logic in the unmapping function. Using the
-end address of map to calcuate original size.
-
-Thank Randy Wright for his report and testing. And also thank
-Takashi Iwai for his help to trace issue.
-
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Randy Wright <rwright@hpe.com>
-Cc: Takashi Iwai <tiwai@suse.de>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
----
- drivers/firmware/efi/memmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
-index 5fc7052..1f592d8 100644
---- a/drivers/firmware/efi/memmap.c
-+++ b/drivers/firmware/efi/memmap.c
-@@ -121,7 +121,7 @@ void __init efi_memmap_unmap(void)
- 	if (!efi.memmap.late) {
- 		unsigned long size;
- 
--		size = efi.memmap.desc_size * efi.memmap.nr_map;
-+		size = efi.memmap.map_end - efi.memmap.map;
- 		early_memunmap(efi.memmap.map, size);
- 	} else {
- 		memunmap(efi.memmap.map);
 -- 
-2.10.2
+~Vinod
