@@ -1,112 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751896AbeDMPeN convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 11:34:13 -0400
-Received: from mga04.intel.com ([192.55.52.120]:30323 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751624AbeDMPeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 11:34:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,446,1517904000";
-   d="scan'208";a="191284303"
-From: "Keller, Jacob E" <jacob.e.keller@intel.com>
-To: Bjorn Helgaas <helgaas@kernel.org>, Jakub Kicinski <kubakici@wp.pl>
-CC: Tal Gilboa <talgi@mellanox.com>, Tariq Toukan <tariqt@mellanox.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>,
-        "everest-linux-l2@cavium.com" <everest-linux-l2@cavium.com>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        id S1751948AbeDMPfS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 11:35:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49452 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750761AbeDMPfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 11:35:16 -0400
+Subject: Re: [PATCH 1/2] X86/KVM: Properly update 'tsc_offset' to represent
+ the running guest
+To: "Raslan, KarimAllah" <karahmed@amazon.de>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: RE: [PATCH v5 05/14] PCI: Add pcie_print_link_status() to log link
- speed and whether it's limited
-Thread-Topic: [PATCH v5 05/14] PCI: Add pcie_print_link_status() to log link
- speed and whether it's limited
-Thread-Index: AQHTyGrUSS9MhIAeskOrU+NRjtQ9xqP+pXeAgACgTYD//6MBcA==
-Date: Fri, 13 Apr 2018 15:34:08 +0000
-Message-ID: <02874ECE860811409154E81DA85FBB5882D7BF4B@ORSMSX115.amr.corp.intel.com>
-References: <152244269202.135666.3064353823697623332.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <152244391852.135666.14903825998610307052.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <20180412213249.06661048@cakuba.netronome.com>
- <20180413140633.GD46420@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20180413140633.GD46420@bhelgaas-glaptop.roam.corp.google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGU5YTY4OGQtMGQ1Ni00MTFjLWI2YWUtOWFjMDBjNmZjMjYwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6ImgyZlNQc1RBWCszb1pqVGdVek45cDlQSnNIYm9FUzRVYWVcL1kyZHhNVVEwPSJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Cc: "jmattson@google.com" <jmattson@google.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>
+References: <1523618608-30574-1-git-send-email-pbonzini@redhat.com>
+ <1523618608-30574-2-git-send-email-pbonzini@redhat.com>
+ <1523623218.32594.51.camel@amazon.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <6ae8f089-4c77-d1cb-b79f-ec414f39a8d0@redhat.com>
+Date: Fri, 13 Apr 2018 17:35:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <1523623218.32594.51.camel@amazon.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 13/04/2018 14:40, Raslan, KarimAllah wrote:
+>>  
+>>  static void update_ia32_tsc_adjust_msr(struct kvm_vcpu *vcpu, s64 offset)
+>>  {
+>> -	u64 curr_offset = vcpu->arch.tsc_offset;
+>> +	u64 curr_offset = kvm_x86_ops->read_l1_tsc_offset(vcpu);
+> I might be missing something but is this really strictly needed or is
+> it really a bug?
+> 
+> I can see update_ia32_tsc_adjust_msr called from kvm_write_tsc only 
+> which is called from a) vmx_set_msr or b) kvm_arch_vcpu_postcreate.
+> The adjust_msr would only be called if !host_initiated. So only 
+> vmx_set_msr which is coming from an L1 write (or a restore but that
+> would not be !host_initiated). So the only that tsc_adjust is called is
+> !is_guest_mode.
 
+It can also be called from guest mode if the MSR bitmap says there's no
+L1 vmexit for that MSR; that's what the testcases do.
 
-> -----Original Message-----
-> From: Bjorn Helgaas [mailto:helgaas@kernel.org]
-> Sent: Friday, April 13, 2018 7:07 AM
-> To: Jakub Kicinski <kubakici@wp.pl>
-> Cc: Tal Gilboa <talgi@mellanox.com>; Tariq Toukan <tariqt@mellanox.com>;
-> Keller, Jacob E <jacob.e.keller@intel.com>; Ariel Elior <ariel.elior@cavium.com>;
-> Ganesh Goudar <ganeshgr@chelsio.com>; Kirsher, Jeffrey T
-> <jeffrey.t.kirsher@intel.com>; everest-linux-l2@cavium.com; intel-wired-
-> lan@lists.osuosl.org; netdev@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-pci@vger.kernel.org
-> Subject: Re: [PATCH v5 05/14] PCI: Add pcie_print_link_status() to log link speed
-> and whether it's limited
-> 
-> On Thu, Apr 12, 2018 at 09:32:49PM -0700, Jakub Kicinski wrote:
-> > On Fri, 30 Mar 2018 16:05:18 -0500, Bjorn Helgaas wrote:
-> > > +	if (bw_avail >= bw_cap)
-> > > +		pci_info(dev, "%d Mb/s available bandwidth (%s x%d link)\n",
-> > > +			 bw_cap, PCIE_SPEED2STR(speed_cap), width_cap);
-> > > +	else
-> > > +		pci_info(dev, "%d Mb/s available bandwidth, limited by %s x%d
-> link at %s (capable of %d Mb/s with %s x%d link)\n",
-> > > +			 bw_avail, PCIE_SPEED2STR(speed), width,
-> > > +			 limiting_dev ? pci_name(limiting_dev) : "<unknown>",
-> > > +			 bw_cap, PCIE_SPEED2STR(speed_cap), width_cap);
-> >
-> > I was just looking at using this new function to print PCIe BW for a
-> > NIC, but I'm slightly worried that there is nothing in the message that
-> > says PCIe...  For a NIC some people may interpret the bandwidth as NIC
-> > bandwidth:
-> >
-> > [   39.839989] nfp 0000:04:00.0: Netronome Flow Processor NFP4000/NFP6000
-> PCIe Card Probe
-> > [   39.848943] nfp 0000:04:00.0: 63.008 Gb/s available bandwidth (8 GT/s x8 link)
-> > [   39.857146] nfp 0000:04:00.0: RESERVED BARs: 0.0: General/MSI-X SRAM, 0.1:
-> PCIe XPB/MSI-X PBA, 0.4: Explicit0, 0.5: Explicit1, fre4
-> >
-> > It's not a 63Gbps NIC...  I'm sorry if this was discussed before and I
-> > didn't find it.  Would it make sense to add the "PCIe: " prefix to the
-> > message like bnx2x used to do?  Like:
-> >
-> > nfp 0000:04:00.0: PCIe: 63.008 Gb/s available bandwidth (8 GT/s x8 link)
-> 
-> I agree, that does look potentially confusing.  How about this:
-> 
->   nfp 0000:04:00.0: 63.008 Gb/s available PCIe bandwidth (8 GT/s x8 link)
-> 
-> I did have to look twice at this before I remembered that we're
-> printing Gb/s (not GB/s).  Most of the references I found on the web
-> use GB/s when talking about total PCIe bandwidth.
-> 
-> But either way I think it's definitely worth mentioning PCIe
-> explicitly.
+Paolo
 
-I also agree printing PCIe explicitly is good.
-
-Thanks,
-Jake
+>>  	vcpu->arch.ia32_tsc_adjust_msr += offset - curr_offset;
