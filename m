@@ -1,105 +1,152 @@
-Return-Path: <jic23@kernel.org>
-X-Google-Smtp-Source: AIpwx4+RmYFbTKPjtx6IlL4A4QPJ02kudX5pzfTF6U3zrMPrk4o2z17tSFXAXCP1al0RQzZlKNAu
-ARC-Seal: i=1; a=rsa-sha256; t=1523806818; cv=none;
+Return-Path: <hernan@vanguardiasur.com.ar>
+ARC-Seal: i=1; a=rsa-sha256; t=1523637520; cv=none;
         d=google.com; s=arc-20160816;
-        b=qPxK1mWDP3WYpXb42cGYkkxxudivuSj0uI5URYzc+EWE6jbeAHFkECz1YgFgCuN+zo
-         VpQrOpN1XLBJ+yJ0BKaKgCFo7oDy2Ru/Lp27czXfUl9e8oZKxfd8IcPEx7nUl5/cMnoj
-         eDjwCh0qlv4DxeR4aYLcANK5+cDYtixfFtdb9iVGfESIfHDYyzgRXMI4mLcPFe2XP0Qq
-         7CopcGuJ3TG4vpjoorn05nrXN6m5sIqV/cBTzzqYOanXPPHwQzqZp/vC6X+BaWr+D7H8
-         Bbcvxtwttw36+rYrtEXjVkMgRsTWvjRQfFgYdKg385oheoT6CNu8pUjqGyjnHKAZ4+jG
-         b4VA==
+        b=K9H5epqCzJSotx345HSBxVnW0cZJRkyUakBwj/j4BmJNFf8P+P/36dkcW6CKEaW7wI
+         vz4I67KZR3hSfR1rwwIeLc0k5Oxu5NmLvXVOhdjIIUCNBnGlHXfne8JeISKxKOaI81h1
+         1hZYEUdO0/kQEESQWvc7EnIjFkINJ0hENNuG63TuRgjG3cKlJPHZJH4984jcgbajc5Ze
+         80UmVEWHnNNxdnE/jLrAlG61Q9z2vIFqCgfbC0lbWnSostImTdCG/Yte7s6CBNyPjbr3
+         ma2MRQef44I8VtovFahnmOSVZisKYT8/KbQ2uwpocVEyDhyd8ZGMHD2gCuzmD2Wj8VML
+         XBbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
+         :message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=zlOw+hi13jPYbJFYhN/y+1z592T6+DCmtcPXowAoU28=;
-        b=LPhWx7PpbBQTzZ3nEJcP7UwRhWjXU9zN/ozpNnU1ij46y4IBVK9FMy/vn6kyq0pnL6
-         p5iJhRaqFPAE8BNtqpooTwR3OVDG6nXhxxVrYmfy+Gcs76tOrznAQvME58bwpm1VLogA
-         Un06Ikzyafb+LircokhMFiWB+3h2p1sGOnd+7DCErVfb+PxNKSqzA08a+sm0ScCPjrvB
-         PEFitF/P65kToymoHJBrQ3eETSTcAMbkIxgyyHzirPLSG76nHzAKEL7ItyY6U60jJvrd
-         fmarXpf96Q7Tb+QnB4IjCbfDxNtB86CGtuVi4vLBxUJERF76Ms2Sqyx6n1vsok2bmCQB
-         kSAA==
+        bh=BsKK31nhh5Rq1Mce4tGGl6rCkS6mqlLVjHlIlGfPL+4=;
+        b=eo9kgGGQgjQJdRePm57xuRh7wldXzmgAJfVHCIbs28Pe/psoTqCDQ30/byOfMVEeCP
+         4rbl3ZPINmmRJcbhpFLVev5FaJj+cccQM4UE7WcDS0FdNYPxsJpIHP3eC776oIc7VONF
+         0HRFK6KnKEH3lUs/iLoWcWRG9lyt1aB9/Ptz2h5JcylO3EthwNy45EDnXvgdY59GRpBK
+         n14Mklx6U9edwY4hggkP4HbJsT9nnd3vHKqvZ46Kadr1+LPoUhLWHrODi0jtkITEiNJn
+         BlkyKc/IL+DsaN/V+SS168oi+4IzIk9BAsPe+q8nFMqUO9TXNBlaiu3sQ0F/v6GHeWwG
+         5poA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
+       dkim=pass header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.s=20150623 header.b=GQQoAU/m;
+       spf=pass (google.com: domain of hernan@vanguardiasur.com.ar designates 209.85.220.65 as permitted sender) smtp.mailfrom=hernan@vanguardiasur.com.ar
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 960D72177F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sun, 15 Apr 2018 16:40:12 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: =?UTF-8?B?SGVybsOhbg==?= Gonzalez <hernan@vanguardiasur.com.ar>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
- gregkh@linuxfoundation.org, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 12/14] staging: iio: ad7746: Add ABI documentation
-Message-ID: <20180415164012.3e848d51@archlinux>
-In-Reply-To: <1523637411-8531-13-git-send-email-hernan@vanguardiasur.com.ar>
+       dkim=pass header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.s=20150623 header.b=GQQoAU/m;
+       spf=pass (google.com: domain of hernan@vanguardiasur.com.ar designates 209.85.220.65 as permitted sender) smtp.mailfrom=hernan@vanguardiasur.com.ar
+X-Google-Smtp-Source: AIpwx48rF7FcRkAGxYNmz90v2jbx5wptjVBSarGOsLLoEpczlBoEVMOgC5OmmifBsiERFJfd/YoOGw==
+From: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
+To: jic23@kernel.org,
+	knaack.h@gmx.de,
+	lars@metafoo.de,
+	pmeerw@pmeerw.net,
+	gregkh@linuxfoundation.org,
+	Michael.Hennerich@analog.com,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
+Subject: [PATCH v2 10/14] staging: iio: ad7746: Add comments
+Date: Fri, 13 Apr 2018 13:36:47 -0300
+Message-Id: <1523637411-8531-11-git-send-email-hernan@vanguardiasur.com.ar>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
 References: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
-	<1523637411-8531-13-git-send-email-hernan@vanguardiasur.com.ar>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597649757521827236?=
-X-GMAIL-MSGID: =?utf-8?q?1597827258913741513?=
+X-GMAIL-THRID: =?utf-8?q?1597649736240015580?=
+X-GMAIL-MSGID: =?utf-8?q?1597649736240015580?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 13 Apr 2018 13:36:49 -0300
-Hern=C3=A1n Gonzalez <hernan@vanguardiasur.com.ar> wrote:
+Add comments to clarify some of the calculations made, specially when
+reading or writing values.
 
-> The use cases for this driver don't comply with the current ABI. The
-> ad7746 and ad7152 need an external capacitance or voltage reference to
-> automatically calibrate themselves which is not the normal use case of
-> the calibscale and calibbias ABIs, a new ABI was needed.
+Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
+---
+ drivers/staging/iio/cdc/ad7746.c | 32 +++++++++++++++++++++++++++-----
+ 1 file changed, 27 insertions(+), 5 deletions(-)
 
-I agree with the general aim here.  Would appreciate input from Michael
-in particular on these + ideally others!
-
-One comment inline,
-
-Thanks,
-
-Jonathan
-
->=20
-> Signed-off-by: Hern=C3=A1n Gonzalez <hernan@vanguardiasur.com.ar>
-> ---
->  Documentation/ABI/testing/sysfs-bus-iio-ad7746 | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-ad7746
->=20
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-ad7746 b/Documentati=
-on/ABI/testing/sysfs-bus-iio-ad7746
-> new file mode 100644
-> index 0000000..96a41b7
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio-ad7746
-> @@ -0,0 +1,17 @@
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_capacitanceX_calibscale_calib=
-ration
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltage0_calibscale_calibrati=
-on
-
-Hmm. I wonder if indicating that it causes calibration would be better done=
- by
-in_voltage0_calibscale_calibrate
-
-> +KernelVersion:	4.17.0
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Enter gain calibration mode, in which a full-scale
-> +		{capacitance, voltage reference} must be connected to the
-> +		{capacitance, voltage} input beforehand to automatically
-> +		calibrate the device.
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/in_capacitanceX_calibbias_calibr=
-ation
-> +KernelVersion:	4.17.0
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Enter offset calibration mode, in which a zero-scale
-> +		capacitance must be connected to the capacitance input
-> +		beforehand to automatically calibrate the device.
+diff --git a/drivers/staging/iio/cdc/ad7746.c b/drivers/staging/iio/cdc/ad7746.c
+index 05506bf9..ef0ebb5 100644
+--- a/drivers/staging/iio/cdc/ad7746.c
++++ b/drivers/staging/iio/cdc/ad7746.c
+@@ -429,6 +429,7 @@ static int ad7746_write_raw(struct iio_dev *indio_dev,
+ 			goto out;
+ 		}
+ 
++		/* 2^16 in micro */
+ 		val = (val2 * 1024) / 15625;
+ 
+ 		switch (chan->type) {
+@@ -554,6 +555,13 @@ static int ad7746_read_raw(struct iio_dev *indio_dev,
+ 		if (ret < 0)
+ 			goto out;
+ 
++		/*
++		 * Either for Capacitance, Voltage or Temperature,
++		 * the 0x000000 code represents negative full scale,
++		 * the 0x800000 code represents zero scale, and
++		 * the 0xFFFFFF code represents positive full scale.
++		 */
++
+ 		*val = (be32_to_cpu(chip->data.d32) & 0xFFFFFF) - 0x800000;
+ 
+ 		switch (chan->type) {
+@@ -565,7 +573,13 @@ static int ad7746_read_raw(struct iio_dev *indio_dev,
+ 			*val = (*val * 125) / 256;
+ 			break;
+ 		case IIO_VOLTAGE:
+-			if (chan->channel == 1) /* supply_raw*/
++
++			/*
++			 * The voltage from the VDD pin is internally
++			 * attenuated by 6.
++			 */
++
++			if (chan->channel == 1) /* supply_raw */
+ 				*val = *val * 6;
+ 			break;
+ 		default:
+@@ -606,6 +620,13 @@ static int ad7746_read_raw(struct iio_dev *indio_dev,
+ 		ret = IIO_VAL_INT;
+ 		break;
+ 	case IIO_CHAN_INFO_OFFSET:
++
++		/*
++		 * CAPDAC Scale = 21pF_typ / 127
++		 * CIN Scale = 8.192pF / 2^24
++		 * Offset Scale = CAPDAC Scale / CIN Scale = 338646
++		 */
++
+ 		*val = AD7746_CAPDAC_DACP(chip->capdac[chan->channel]
+ 					  [chan->differential]) * 338646;
+ 
+@@ -614,13 +635,13 @@ static int ad7746_read_raw(struct iio_dev *indio_dev,
+ 	case IIO_CHAN_INFO_SCALE:
+ 		switch (chan->type) {
+ 		case IIO_CAPACITANCE:
+-			/* 8.192pf / 2^24 */
++			/* CIN Scale: 8.192pf / 2^24 */
+ 			*val =  0;
+ 			*val2 = 488;
+ 			ret = IIO_VAL_INT_PLUS_NANO;
+ 			break;
+ 		case IIO_VOLTAGE:
+-			/* 1170mV / 2^23 */
++			/* VIN Scale: 1170mV / 2^23 */
+ 			*val = 1170;
+ 			*val2 = 23;
+ 			ret = IIO_VAL_FRACTIONAL_LOG2;
+@@ -674,7 +695,8 @@ static struct ad7746_platform_data *ad7746_parse_dt(struct device *dev)
+ 	unsigned int tmp;
+ 	int ret;
+ 
+-	/* The default excitation outputs are not inverted, it should be stated
++	/*
++	 * The default excitation outputs are not inverted, it should be stated
+ 	 * in the dt if needed.
+ 	 */
+ 
+@@ -685,7 +707,7 @@ static struct ad7746_platform_data *ad7746_parse_dt(struct device *dev)
+ 	ret = of_property_read_u32(np, "adi,exclvl", &tmp);
+ 	if (ret || tmp > 3) {
+ 		dev_warn(dev, "Wrong exclvl value, using default\n");
+-		pdata->exclvl = 3; /* default value */
++		pdata->exclvl = 3;
+ 	} else {
+ 		pdata->exclvl = tmp;
+ 	}
+-- 
+2.7.4
