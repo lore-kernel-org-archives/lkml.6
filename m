@@ -1,59 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754099AbeDMI0K (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 04:26:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54038 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752512AbeDMIVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 04:21:05 -0400
-From: Eric Auger <eric.auger@redhat.com>
-To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
-        peter.maydell@linaro.org
-Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v3 01/12] KVM: arm/arm64: Set dist->spis to NULL after kfree
-Date: Fri, 13 Apr 2018 10:20:47 +0200
-Message-Id: <1523607658-9166-2-git-send-email-eric.auger@redhat.com>
-In-Reply-To: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
-References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
+        id S1754004AbeDMI1M (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 04:27:12 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:35776 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753122AbeDMI1H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 04:27:07 -0400
+Date: Fri, 13 Apr 2018 10:26:48 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH 1/7] sched/core: uclamp: add CPU clamp groups accounting
+Message-ID: <20180413082648.GP4043@hirez.programming.kicks-ass.net>
+References: <20180409165615.2326-1-patrick.bellasi@arm.com>
+ <20180409165615.2326-2-patrick.bellasi@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409165615.2326-2-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-in case kvm_vgic_map_resources() fails, typically if the vgic
-distributor is not defined, __kvm_vgic_destroy will be called
-several times. Indeed kvm_vgic_map_resources() is called on
-first vcpu run. As a result dist->spis is freeed more than once
-and on the second time it causes a "kernel BUG at mm/slub.c:3912!"
+On Mon, Apr 09, 2018 at 05:56:09PM +0100, Patrick Bellasi wrote:
+> +static inline void uclamp_cpu_get(struct task_struct *p, int cpu, int clamp_id)
+> +{
+> +	struct uclamp_cpu *uc_cpu = &cpu_rq(cpu)->uclamp[clamp_id];
 
-Set dist->spis to NULL to avoid the crash.
+> +static inline void uclamp_cpu_put(struct task_struct *p, int cpu, int clamp_id)
+> +{
+> +	struct uclamp_cpu *uc_cpu = &cpu_rq(cpu)->uclamp[clamp_id];
 
-Fixes: ad275b8bb1e6 ("KVM: arm/arm64: vgic-new: vgic_init: implement
-vgic_init")
+That all seems daft, since you already have rq at the call site.
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+> +static inline void uclamp_task_update(struct rq *rq, struct task_struct *p)
+> +{
+> +	int cpu = cpu_of(rq);
+> +	int clamp_id;
+> +
+> +	/* The idle task does not affect CPU's clamps */
+> +	if (unlikely(p->sched_class == &idle_sched_class))
+> +		return;
+> +	/* DEADLINE tasks do not affect CPU's clamps */
+> +	if (unlikely(p->sched_class == &dl_sched_class))
+> +		return;
 
----
+This is wrong; it misses the stop_sched_class.
 
-v2 -> v3:
-- added Marc's R-b and Fixed commit
----
- virt/kvm/arm/vgic/vgic-init.c | 1 +
- 1 file changed, 1 insertion(+)
+And since you're looking at sched_class anyway, maybe put a marker in
+there:
 
-diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
-index 68378fe..c52f03d 100644
---- a/virt/kvm/arm/vgic/vgic-init.c
-+++ b/virt/kvm/arm/vgic/vgic-init.c
-@@ -308,6 +308,7 @@ static void kvm_vgic_dist_destroy(struct kvm *kvm)
- 	dist->initialized = false;
- 
- 	kfree(dist->spis);
-+	dist->spis = NULL;
- 	dist->nr_spis = 0;
- 
- 	if (vgic_supports_direct_msis(kvm))
--- 
-2.5.5
+	if (!p->sched_class->has_clamping)
+		return;
+
+> +	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
+> +		if (uclamp_task_affects(p, clamp_id))
+> +			uclamp_cpu_put(p, cpu, clamp_id);
+> +		else
+> +			uclamp_cpu_get(p, cpu, clamp_id);
+> +	}
+> +}
