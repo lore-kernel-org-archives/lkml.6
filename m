@@ -1,78 +1,73 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3729524-1523494079-2-4978776644658434701
+X-Cyrus-Session-Id: sloti22d1t05-3230917-1523609215-2-981015518139925640
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_HI -5, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='cz',
+  MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523494078; b=qZzw9MobVIkBBoXBeGo81lmGaYYnMIKLX6ZscXkWBeth3Vl5wh
-    onoISo1u4Cb1Z2+mp7FX8WGwude2oNE5Ld1SDA50rMmHOr3OdDDDln+ZnlgSByoz
-    XB0zNLQ3m5EpxCfrA/jADE8hOBkCiV3rjEq0uFSJX4qCofAzxCPaQ3jD9TuRah7K
-    dwMqATEdgHynxhGxpmgR4umPc1h/KbxqRB3OCYGhi0IEjE7DMegO2mOmk9BEXOVF
-    UgdOC/+wN25rRH27TVY+VWvubWubghT1zVeH2mFxeKkFzkrnIDYvt+8nLoc3tMWV
-    9It+VbzkUxnYkSHeolUHpEFndwU6sXYdvjQg==
+    1523609214; b=Av0Uxo+UdXGqk/Vn7aa/+Dyk7ffYHZkfp+UInMehk6PhTFNfgT
+    e4h29YHgpEqp6MszlEcs/4seX3JQoI0U9hAh1GsG9maEHSStSVeqqpGf4v3TUHsY
+    s+Z3Ayefqpg36AaKv1Z9kW1am1TaHfjmzULSxP3SPysq/U9gfbPik3l0B1h/RI17
+    B21BeReGqT105DA0nCuis5fm6aACka+3JBIAfGSE9adOLRB/6tDmCRSog1iZrXM8
+    oseImBee2Iymb/mzbAUyGhLrlq+Ejw6oBPBMzFXYwpirq3mHB3ehPl8Pe1T7aBBw
+    p+0iGAuCEnSErbT+UnHVcueacyuRSWqh10Bw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523494078; bh=3Nh3WCDESuJMjEpn9vfVkH6Cbmd5a1
-    Y0RTvLMzScBUI=; b=FPhZQKsN1TwJEhTqSOzU16ZUlWNU+slwKnjPJ1UAcCzr7W
-    s7MPMqnB+L8KlWe7ko9XWcjkUvyNemjOEEm2mdZ++2IJuW+hSIYDYwPt6Jh/0uSR
-    quqQje4sLEqqAN6gOCzu+qNqzHwsXbx1twrfEKjV9jofb4VpeICOMqVUlbs0mMC7
-    NgMFUn2fhSSa1YpWJgULdm4lpTS+Qid+DJPdgCPI46aGE0ovIF3T9bN+fjWBmX+r
-    NW26USYRyEsBEjZvBpZ3WL58FYl5LlYru/UOVB8nhMM039INc0WkYDr4HtVvDqk6
-    9weoyLRXB5UFGdCTKt0uIXg9qPNfpGFs97MQVv2g==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=N+7aiN2v x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523609214;
+    bh=sHKRvQODT+9R8PdKRSMBFX3MDsVvVHAfmFhrnUI1roQ=; b=ucLMukvHCmq0
+    vlgC6ud9YvLN0mTRaCQMSggFdQXCldh7b2w8xR0ajCCVLSVtnr/Fr59ZsqrlW+mv
+    uinwUvrUFmgfnCtyNR8BKs0+cD2MNBIgv6gSiypzgkiLVFdSz9UQHYP1IGUaaktd
+    JXGfYS/HhYZZcbSRXBQ7U5DRoNYv9KnkzAgLxT4zFvxJ8oIJpngz5inBraK+GgBJ
+    bEyoiS8eO3A43qNYD3CiQVgmjjIinTPwQf7MYSTyuvxsThRoZwKlYByKo8lg2dkN
+    tJF1O8UXTGEDJ1jHuXFzYO5Uo5b+LkmEF0o9beEvWL0Wc02iNhP8QkFMqz3v88vE
+    b/KjYGzeQQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=A3Trsb2f;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=N+7aiN2v x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=A3Trsb2f;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG4o8SDlUq7N1xb+Q+TJ9u/UauP28A1b4fTXIIwH23Zg2MBZHojKjV5A4YU+21F6whmhN5VPduQJR2ZdD8gYtgm04zDZm2co1uZzlOuOzKXq/YEwHdWU
-    hhJPPmTmkFzPMKrgFpZnJKWMeFf/VYkERzP1BsYaO+HdlFBFu36inc0AqfAyfnxMJnE7E5bp+jCyW2Kb3/ZjuCBRkarRkBsUQ7Gu9MkpAneMwEqFwhf+7Yce
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10
-    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=57SyGIRnAAAA:8 a=1XWaLZrsAAAA:8
-    a=NufY4J3AAAAA:8 a=pGLkceISAAAA:8 a=KKAkSRfTAAAA:8 a=uE1F9PVJpjgRIkcxqz0A:9
-    a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=YzT4AsKTxtEdF6UtD8mD:22
-    a=TPcZfFuj8SYsoCJAFAiX:22 a=cvBusfyB2V15izCimMoJ:22
+X-CM-Envelope: MS4wfBBZxvCgrRKermpJ6Uv6AuQkFJ44W9vASIrFtQERXx0CMdtqmJe/W9x4oikFakUEkW36dU3Rfd9wBSohaHvZR34uTSurs44Udhw/DjiD96ZXRg9g6Jmr
+    bnmIwaHETI3f+xjVRwsjbftl4TetJgU42hiO62cLAP4LKGrFKb07UKI7gcbIsL7aWiEX2oufc6aOKZ9XdO9fa9NYHEoqCBCKARg/a/WHtBBWBOHoDprn7ocS
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=9bmo1EOpP-FgXpdHDIMA:9 a=QEXdDO2ut3YA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751845AbeDLAr4 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 11 Apr 2018 20:47:56 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33482 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751553AbeDLArz (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 11 Apr 2018 20:47:55 -0400
-X-Google-Smtp-Source: AIpwx49Tq9p4BKIxhJ8JZMKHVh2IjHozKAO7XG3/kQBWOLPlZF/dW6NMeaGTZA9RoWGtGeIiB3tjhA==
-Date: Thu, 12 Apr 2018 09:47:47 +0900
-From: Minchan Kim <minchan@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
+        id S1753630AbeDMIqv (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 13 Apr 2018 04:46:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51220 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753456AbeDMIqu (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 13 Apr 2018 04:46:50 -0400
+Subject: Re: [PATCH] mm, slab: reschedule cache_reap() on the same CPU
+To: Minchan Kim <minchan@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, stable@vger.kernel.org,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
@@ -83,70 +78,47 @@ Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         John Stultz <john.stultz@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] mm, slab: reschedule cache_reap() on the same CPU
-Message-ID: <20180412004747.GA253442@rodete-desktop-imager.corp.google.com>
 References: <20180410081531.18053-1-vbabka@suse.cz>
  <20180411070007.32225-1-vbabka@suse.cz>
+ <20180412004747.GA253442@rodete-desktop-imager.corp.google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <41acaf67-cf4c-e5b2-97e4-2d7d5a383ffb@suse.cz>
+Date: Fri, 13 Apr 2018 10:44:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180411070007.32225-1-vbabka@suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180412004747.GA253442@rodete-desktop-imager.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Apr 11, 2018 at 09:00:07AM +0200, Vlastimil Babka wrote:
-> cache_reap() is initially scheduled in start_cpu_timer() via
-> schedule_delayed_work_on(). But then the next iterations are scheduled via
-> schedule_delayed_work(), i.e. using WORK_CPU_UNBOUND.
+On 04/12/2018 02:47 AM, Minchan Kim wrote:
+> On Wed, Apr 11, 2018 at 09:00:07AM +0200, Vlastimil Babka wrote:
+>> cache_reap() is initially scheduled in start_cpu_timer() via
+>> schedule_delayed_work_on(). But then the next iterations are scheduled via
+>> schedule_delayed_work(), i.e. using WORK_CPU_UNBOUND.
+>>
+>> Thus since commit ef557180447f ("workqueue: schedule WORK_CPU_UNBOUND work on
+>> wq_unbound_cpumask CPUs") there is no guarantee the future iterations will run
+>> on the originally intended cpu, although it's still preferred. I was able to
+>> demonstrate this with /sys/module/workqueue/parameters/debug_force_rr_cpu.
+>> IIUC, it may also happen due to migrating timers in nohz context. As a result,
+>> some cpu's would be calling cache_reap() more frequently and others never.
+>>
+>> This patch uses schedule_delayed_work_on() with the current cpu when scheduling
+>> the next iteration.
 > 
-> Thus since commit ef557180447f ("workqueue: schedule WORK_CPU_UNBOUND work on
-> wq_unbound_cpumask CPUs") there is no guarantee the future iterations will run
-> on the originally intended cpu, although it's still preferred. I was able to
-> demonstrate this with /sys/module/workqueue/parameters/debug_force_rr_cpu.
-> IIUC, it may also happen due to migrating timers in nohz context. As a result,
-> some cpu's would be calling cache_reap() more frequently and others never.
-> 
-> This patch uses schedule_delayed_work_on() with the current cpu when scheduling
-> the next iteration.
+> Could you write down part about "so what's the user effect on some condition?".
+> It would really help to pick up the patch.
 
-Could you write down part about "so what's the user effect on some condition?".
-It would really help to pick up the patch.
+Ugh, so let's continue the last paragraph with something like:
 
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> Fixes: ef557180447f ("workqueue: schedule WORK_CPU_UNBOUND work on wq_unbound_cpumask CPUs")
-> CC: <stable@vger.kernel.org>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Pekka Enberg <penberg@kernel.org>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-> Cc: John Stultz <john.stultz@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> ---
->  mm/slab.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/slab.c b/mm/slab.c
-> index 9095c3945425..a76006aae857 100644
-> --- a/mm/slab.c
-> +++ b/mm/slab.c
-> @@ -4074,7 +4074,8 @@ static void cache_reap(struct work_struct *w)
->  	next_reap_node();
->  out:
->  	/* Set up the next iteration */
-> -	schedule_delayed_work(work, round_jiffies_relative(REAPTIMEOUT_AC));
-> +	schedule_delayed_work_on(smp_processor_id(), work,
-> +				round_jiffies_relative(REAPTIMEOUT_AC));
->  }
->  
->  void get_slabinfo(struct kmem_cache *cachep, struct slabinfo *sinfo)
-> -- 
-> 2.16.3
-> 
+After this patch, cache_reap() executions will always remain on the
+expected cpu. This can save some memory that could otherwise remain
+indefinitely in array caches of some cpus or nodes, and prevent waste of
+cpu cycles by executing cache_reap() too often on other cpus.
