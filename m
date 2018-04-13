@@ -1,99 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752304AbeDMV5w (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 17:57:52 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:39362 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751968AbeDMV5u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 17:57:50 -0400
-X-Google-Smtp-Source: AIpwx4/Sge3g65W4gT9kpC4GZp6dUlO/zngggcu31m7H2D//9CqZSAKRtHA7v1qJqKHQ6d7jJIfpsQ==
-Date: Fri, 13 Apr 2018 14:57:46 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: i8042 - Fix KBD port cannot wake up system from
- suspend-to-idle
-Message-ID: <20180413215746.GA27465@dtor-ws>
-References: <20180411085905.22272-1-kai.heng.feng@canonical.com>
+        id S1752493AbeDMV57 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 17:57:59 -0400
+Received: from mail-ve1eur01on0079.outbound.protection.outlook.com ([104.47.1.79]:32035
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752317AbeDMV5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 17:57:55 -0400
+From: Han Xu <han.xu@nxp.com>
+To: Stefan Agner <stefan@agner.ch>,
+        "boris.brezillon@free-electrons.com"
+        <boris.brezillon@free-electrons.com>
+CC: "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "cyrille.pitchen@wedev4u.fr" <cyrille.pitchen@wedev4u.fr>,
+        "max.oss.09@gmail.com" <max.oss.09@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] dt-bindings: mtd: rawnand: gpmi: document specific
+ ECC strength
+Thread-Topic: [PATCH v2 2/2] dt-bindings: mtd: rawnand: gpmi: document
+ specific ECC strength
+Thread-Index: AQHTs/Q8LFy3ZB+PtEefWPRU3UP+6aP/fQUA
+Date: Fri, 13 Apr 2018 21:57:51 +0000
+Message-ID: <1a657c4a-5f2c-e2bd-3d7c-9efb978ea469@nxp.com>
+References: <20180304200602.11475-1-stefan@agner.ch>
+ <20180304200602.11475-2-stefan@agner.ch>
+In-Reply-To: <20180304200602.11475-2-stefan@agner.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is ) smtp.mailfrom=han.xu@nxp.com; 
+x-originating-ip: [64.157.242.222]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0401MB1840;7:XQ9lPfIDxn25GBYZTAkOawlWGM1VYe9hAJDSBSwX8IwPZQGY9FSxdtiOysq7MfQaarY+D84I20/05nuVzIRe20bK3q4zMOuxTv52onSp65J5TR8nt5va0tK3Ipk4VFh/3wSRrHYQa0YiJjH/yG8Ziupljh3a/It+kdAjyhfCIZMSn1lEqeyTOMqPuETyhI/ZjrEs86BbQW8TUyl2FA5mbq66tOV0tX1zikUmcFnWJcy8pas0QkywCLofjGaoooFV
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:VI1PR0401MB1840;
+x-ms-traffictypediagnostic: VI1PR0401MB1840:
+x-microsoft-antispam-prvs: <VI1PR0401MB184036B3C673B97A8B6C6BB097B30@VI1PR0401MB1840.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231232)(944501327)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:VI1PR0401MB1840;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0401MB1840;
+x-forefront-prvs: 0641678E68
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(376002)(39380400002)(366004)(199004)(189003)(5250100002)(2906002)(6506007)(3660700001)(3280700002)(66066001)(3846002)(68736007)(446003)(6512007)(99286004)(105586002)(53936002)(81166006)(8936002)(81156014)(31686004)(8676002)(2900100001)(76176011)(2501003)(6116002)(106356001)(305945005)(7736002)(36756003)(39060400002)(4326008)(97736004)(478600001)(25786009)(5660300001)(316002)(14454004)(6436002)(54906003)(86362001)(6246003)(110136005)(2616005)(53546011)(26005)(476003)(486006)(31696002)(186003)(229853002)(102836004)(11346002)(44832011)(6486002)(71600200001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0401MB1840;H:VI1PR0401MB2221.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: FY7bFh0qObyUdXFClYir+G8W4Z0k1AYLAwKFSFB17wyS9R9g9JG14a49p5aOXxLKc+18IYg9jC1uX1hOgTJ3qv63YfMJ47hhbh2B2lYa03OkSsu0hhFRNwXaSoPmitjXFJmMQKYudwtH4QGK2gnqtSZpNaPOwmzhG0b3DJ+LSxZI7acx9uX71y4lDL3ULmqm
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D6FB1C7FC0942C489754DAA825075C2D@eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180411085905.22272-1-kai.heng.feng@canonical.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-MS-Office365-Filtering-Correlation-Id: 7d675165-ccfb-417f-9b5b-08d5a1899a84
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d675165-ccfb-417f-9b5b-08d5a1899a84
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Apr 2018 21:57:51.6985
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0401MB1840
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3DLw3AZ028004
 
-On Wed, Apr 11, 2018 at 04:59:05PM +0800, Kai-Heng Feng wrote:
-> Commit f13b2065de81 ("Input: i8042 - allow KBD and AUX ports to wake up
-> from suspend-to-idle") make system in s2idle can be woken up by i8042
-> keyboard, but it's disabled by default.
-> 
-> In commit 3e6e15a862a0 ("Input: enable remote wakeup for PNP i8042
-> keyboard ports") states that "Keyboard ports are always supposed to be
-> wakeup-enabled", it should be enabled by default. Keyboard wakeup from
-> s2idles is also the default behavior for other OSes.
-> 
-> But right now we can't wake up the system by keyboard, from s2idle.
-> 
-> In i8042_probe(), device_set_wakeup_enable(), which gets called by
-> i8042_pnp_kbd_probe(), runs before device_set_wakeup_capable(), which
-> gets called by i8042_register_ports(). So device_set_wakeup_enable()
-> doesn't really enable wakeup for keyboard.
 
-You are talking about 2 different devices here, one representing PNP and
-another KBD serio port. Unfortunately there is not really a link between
-the 2.
 
+On 03/04/2018 02:06 PM, Stefan Agner wrote:
+> Document newly supported device tree properties nand-ecc-strength/
+> nand-ecc-step-size to specify ECC strength/size.
 > 
-> We can enable keyboard wakeup in i8042_register_ports() directly.
-
-No, the world is not all x86, what makes sense for x86 does not
-necessarily work for other architectures. We need to come up with a way
-for tying PNP devices and i8042 ports for x86 case.
-
-> 
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 > ---
->  drivers/input/serio/i8042-x86ia64io.h | 3 ---
->  drivers/input/serio/i8042.c           | 4 ++++
->  2 files changed, 4 insertions(+), 3 deletions(-)
+>   Documentation/devicetree/bindings/mtd/gpmi-nand.txt | 5 +++++
+>   1 file changed, 5 insertions(+)
 > 
-> diff --git a/drivers/input/serio/i8042-x86ia64io.h b/drivers/input/serio/i8042-x86ia64io.h
-> index b353d494ad40..e3def9195c2a 100644
-> --- a/drivers/input/serio/i8042-x86ia64io.h
-> +++ b/drivers/input/serio/i8042-x86ia64io.h
-> @@ -925,9 +925,6 @@ static int i8042_pnp_kbd_probe(struct pnp_dev *dev, const struct pnp_device_id *
->  	i8042_pnp_id_to_string(dev->id, i8042_kbd_firmware_id,
->  			       sizeof(i8042_kbd_firmware_id));
->  
-> -	/* Keyboard ports are always supposed to be wakeup-enabled */
-> -	device_set_wakeup_enable(&dev->dev, true);
-> -
->  	i8042_pnp_kbd_devices++;
->  	return 0;
->  }
-> diff --git a/drivers/input/serio/i8042.c b/drivers/input/serio/i8042.c
-> index 824f4c1c1f31..21a16b757931 100644
-> --- a/drivers/input/serio/i8042.c
-> +++ b/drivers/input/serio/i8042.c
-> @@ -1400,6 +1400,10 @@ static void __init i8042_register_ports(void)
->  				i8042_ports[i].irq);
->  			serio_register_port(serio);
->  			device_set_wakeup_capable(&serio->dev, true);
-> +
-> +			/* Keyboard ports are always supposed to be wakeup-enabled */
-> +			if (i == I8042_KBD_PORT_NO)
-> +				device_wakeup_enable(&serio->dev);
->  		}
->  	}
->  }
-> -- 
-> 2.17.0
+> diff --git a/Documentation/devicetree/bindings/mtd/gpmi-nand.txt b/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
+> index b289ef3c1b7e..393588385c6e 100644
+> --- a/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
+> +++ b/Documentation/devicetree/bindings/mtd/gpmi-nand.txt
+> @@ -47,6 +47,11 @@ Optional properties:
+>                          partitions written from Linux with this feature
+>                          turned on may not be accessible by the BootROM
+>                          code.
+> +  - nand-ecc-strength: integer representing the number of bits to correct
+> +                       per ECC step. Needs to be a multiple of 2.
+> +  - nand-ecc-step-size: integer representing the number of data bytes
+> +                       that are covered by a single ECC step. The driver
+> +                       supports 512 and 1024.
+>   
+>   The device tree may optionally contain sub-nodes describing partitions of the
+>   address space. See partition.txt for more detail.
 > 
 
-Thanks.
-
--- 
-Dmitry
+Acked-by: Han Xu <han.xu@nxp.com>
