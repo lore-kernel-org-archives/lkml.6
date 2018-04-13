@@ -1,36 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752512AbeDMQns (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 12:43:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51714 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750923AbeDMQnq (ORCPT
+        id S1752812AbeDMQoZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 12:44:25 -0400
+Received: from mail-yw0-f201.google.com ([209.85.161.201]:36091 "EHLO
+        mail-yw0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751931AbeDMQoV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 12:43:46 -0400
-Date: Fri, 13 Apr 2018 09:43:33 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, robin.murphy@arm.com,
-        dalias@libc.org, ysato@users.sourceforge.jp, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        iommu@lists.linux-foundation.org
-Subject: Re: [PATCH] base: dma-mapping: Postpone cpu addr translation on
- mmap()
-Message-ID: <20180413164333.GA2205@infradead.org>
-References: <1523293148-18726-1-git-send-email-jacopo+renesas@jmondi.org>
- <20180409175251.GA5426@infradead.org>
- <20180410075752.GB20945@w540>
- <20180413163009.GE6666@w540>
+        Fri, 13 Apr 2018 12:44:21 -0400
+X-Google-Smtp-Source: AIpwx48ED9H07Dmaa4qJknbrTvVUVPCbMdRVMvKOOUowV4okfNgV1Gsk4J2xe+1MaOTWKZk+R9RdAiR2U+YK
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180413163009.GE6666@w540>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Date: Fri, 13 Apr 2018 09:44:03 -0700
+In-Reply-To: <CAP9bUy7rONNHYeRkYtaWHcfqoZcGKXJz-JocED26zBj9n+-ZbQ@mail.gmail.com>
+Message-Id: <20180413164405.127522-1-hansens@google.com>
+References: <CAP9bUy7rONNHYeRkYtaWHcfqoZcGKXJz-JocED26zBj9n+-ZbQ@mail.gmail.com>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+Subject: [PATCH v2 1/3] Documentation/i2c: whitespace cleanup
+From: Sam Hansen <hansens@google.com>
+To: linux-i2c@vger.kernel.org, hansens@google.com, wsa@the-dreams.de,
+        corbet@lwn.net, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Sam Hansen <hansens@google.com>, wsa@the-dreams.de, corbet@lwn.net,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please send a v2.
+This strips trailing whitespace in Documentation/i2c/dev-interface.
+
+Signed-off-by: Sam Hansen <hansens@google.com>
+---
+ Documentation/i2c/dev-interface | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/i2c/dev-interface b/Documentation/i2c/dev-interface
+index d04e6e4964ee..c8737d502791 100644
+--- a/Documentation/i2c/dev-interface
++++ b/Documentation/i2c/dev-interface
+@@ -9,8 +9,8 @@ i2c adapters present on your system at a given time. i2cdetect is part of
+ the i2c-tools package.
+ 
+ I2C device files are character device files with major device number 89
+-and a minor device number corresponding to the number assigned as 
+-explained above. They should be called "i2c-%d" (i2c-0, i2c-1, ..., 
++and a minor device number corresponding to the number assigned as
++explained above. They should be called "i2c-%d" (i2c-0, i2c-1, ...,
+ i2c-10, ...). All 256 minor device numbers are reserved for i2c.
+ 
+ 
+@@ -38,7 +38,7 @@ Next thing, open the device file, as follows:
+   int file;
+   int adapter_nr = 2; /* probably dynamically determined */
+   char filename[20];
+-  
++
+   snprintf(filename, 19, "/dev/i2c-%d", adapter_nr);
+   file = open(filename, O_RDWR);
+   if (file < 0) {
+@@ -72,7 +72,7 @@ the device supports them. Both are illustrated below.
+     /* res contains the read word */
+   }
+ 
+-  /* Using I2C Write, equivalent of 
++  /* Using I2C Write, equivalent of
+      i2c_smbus_write_word_data(file, reg, 0x6543) */
+   buf[0] = reg;
+   buf[1] = 0x43;
+@@ -147,7 +147,7 @@ You can do plain i2c transactions by using read(2) and write(2) calls.
+ You do not need to pass the address byte; instead, set it through
+ ioctl I2C_SLAVE before you try to access the device.
+ 
+-You can do SMBus level transactions (see documentation file smbus-protocol 
++You can do SMBus level transactions (see documentation file smbus-protocol
+ for details) through the following functions:
+   __s32 i2c_smbus_write_quick(int file, __u8 value);
+   __s32 i2c_smbus_read_byte(int file);
+@@ -158,7 +158,7 @@ for details) through the following functions:
+   __s32 i2c_smbus_write_word_data(int file, __u8 command, __u16 value);
+   __s32 i2c_smbus_process_call(int file, __u8 command, __u16 value);
+   __s32 i2c_smbus_read_block_data(int file, __u8 command, __u8 *values);
+-  __s32 i2c_smbus_write_block_data(int file, __u8 command, __u8 length, 
++  __s32 i2c_smbus_write_block_data(int file, __u8 command, __u8 length,
+                                    __u8 *values);
+ All these transactions return -1 on failure; you can read errno to see
+ what happened. The 'write' transactions return 0 on success; the
+-- 
+2.17.0.484.g0c8726318c-goog
