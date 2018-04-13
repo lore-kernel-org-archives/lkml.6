@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754675AbeDMOBo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 10:01:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53710 "EHLO mail.kernel.org"
+        id S1754770AbeDMOBt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 10:01:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753859AbeDMOBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:01:40 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA42B21795
+        id S1753859AbeDMOBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 10:01:45 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E2562183B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -26,9 +26,9 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
         Thomas Richter <tmricht@linux.vnet.ibm.com>,
         Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 04/17] perf annotate: Allow showing offsets in more than just jump targets
-Date: Fri, 13 Apr 2018 11:00:58 -0300
-Message-Id: <20180413140111.25313-5-acme@kernel.org>
+Subject: [PATCH 05/17] perf annotate browser: Allow showing offsets in more than just jump targets
+Date: Fri, 13 Apr 2018 11:00:59 -0300
+Message-Id: <20180413140111.25313-6-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180413140111.25313-1-acme@kernel.org>
 References: <20180413140111.25313-1-acme@kernel.org>
@@ -43,13 +43,94 @@ From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
 Jesper wanted to see offsets at callq sites when doing some performance
 investigation related to retpolines, so save him some time by providing
-an 'struct annotation_options' to control where offsets should appear:
-just on jump targets? That + call instructions? All?
+a 'O' hotkey to allow showing offsets from function start at call
+instructions or in all instructions, just go on pressing 'O' till the
+offsets you need appear.
 
-This puts in place the logic to show the offsets, now we need to wire
-this up in the TUI browser (next patch) and on the 'perf annotate --stdio2"
-interface, where we need a more general mechanism to setup the
-'annotation_options' struct from the command line.
+Example:
+
+Starts with:
+
+Samples: 64  of event 'cycles:ppp', 100000 Hz, Event count (approx.): 318963
+ixgbe_read_reg  /proc/kcore
+Percent│    ↑ je     2a
+       │   ┌──cmp    $0xffffffff,%r13d
+       │   ├──je     d0
+       │   │  mov    $0x53e3,%edi
+       │   │→ callq  __const_udelay
+       │   │  sub    $0x1,%r15d
+       │   │↑ jne    83
+       │   │  mov    0x8(%rbp),%rax
+       │   │  testb  $0x20,0x1799(%rax)
+       │   │↑ je     2a
+       │   │  mov    0x200(%rax),%rdi
+       │   │  mov    %r13d,%edx
+       │   │  mov    $0xffffffffc02595d8,%rsi
+       │   │→ callq  netdev_warn
+       │   │↑ jmpq   2a
+       │d0:└─→mov    0x8(%rbp),%rsi
+       │      mov    %rbp,%rdi
+       │      mov    %eax,0x4(%rsp)
+       │    → callq  ixgbe_remove_adapter.isra.77
+       │      mov    0x4(%rsp),%eax
+Press 'h' for help on key bindings
+============================================================================
+
+Pess 'O':
+
+Samples: 64  of event 'cycles:ppp', 100000 Hz, Event count (approx.): 318963
+ixgbe_read_reg  /proc/kcore
+Percent│    ↑ je     2a
+       │   ┌──cmp    $0xffffffff,%r13d
+       │   ├──je     d0
+       │   │  mov    $0x53e3,%edi
+       │99:│→ callq  __const_udelay
+       │   │  sub    $0x1,%r15d
+       │   │↑ jne    83
+       │   │  mov    0x8(%rbp),%rax
+       │   │  testb  $0x20,0x1799(%rax)
+       │   │↑ je     2a
+       │   │  mov    0x200(%rax),%rdi
+       │   │  mov    %r13d,%edx
+       │   │  mov    $0xffffffffc02595d8,%rsi
+       │c6:│→ callq  netdev_warn
+       │   │↑ jmpq   2a
+       │d0:└─→mov    0x8(%rbp),%rsi
+       │      mov    %rbp,%rdi
+       │      mov    %eax,0x4(%rsp)
+       │db: → callq  ixgbe_remove_adapter.isra.77
+       │      mov    0x4(%rsp),%eax
+Press 'h' for help on key bindings
+============================================================================
+
+Press 'O' again:
+
+Samples: 64  of event 'cycles:ppp', 100000 Hz, Event count (approx.): 318963
+ixgbe_read_reg  /proc/kcore
+Percent│8c: ↑ je     2a
+       │8e:┌──cmp    $0xffffffff,%r13d
+       │92:├──je     d0
+       │94:│  mov    $0x53e3,%edi
+       │99:│→ callq  __const_udelay
+       │9e:│  sub    $0x1,%r15d
+       │a2:│↑ jne    83
+       │a4:│  mov    0x8(%rbp),%rax
+       │a8:│  testb  $0x20,0x1799(%rax)
+       │af:│↑ je     2a
+       │b5:│  mov    0x200(%rax),%rdi
+       │bc:│  mov    %r13d,%edx
+       │bf:│  mov    $0xffffffffc02595d8,%rsi
+       │c6:│→ callq  netdev_warn
+       │cb:│↑ jmpq   2a
+       │d0:└─→mov    0x8(%rbp),%rsi
+       │d4:   mov    %rbp,%rdi
+       │d7:   mov    %eax,0x4(%rsp)
+       │db: → callq  ixgbe_remove_adapter.isra.77
+       │e0:   mov    0x4(%rsp),%eax
+Press 'h' for help on key bindings
+============================================================================
+
+Press 'O' again and it will show just jump target offsets.
 
 Suggested-by: Jesper Dangaard Brouer <brouer@redhat.com>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
@@ -65,72 +146,34 @@ Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-m3jc9c3swobye9tj08gnh5i7@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-upp6pfdetwlsx18ec2uf1od4@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/annotate.c | 11 +++++++++--
- tools/perf/util/annotate.h |  9 +++++++++
- 2 files changed, 18 insertions(+), 2 deletions(-)
+ tools/perf/ui/browsers/annotate.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index fbad8dfbb186..5edc565d86c4 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -46,6 +46,7 @@
- struct annotation_options annotation__default_options = {
- 	.use_offset     = true,
- 	.jump_arrows    = true,
-+	.offset_level	= ANNOTATION__OFFSET_JUMP_TARGETS,
- };
- 
- const char 	*disassembler_style;
-@@ -2512,7 +2513,8 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
- 		if (!notes->options->use_offset) {
- 			printed = scnprintf(bf, sizeof(bf), "%" PRIx64 ": ", addr);
- 		} else {
--			if (al->jump_sources) {
-+			if (al->jump_sources &&
-+			    notes->options->offset_level >= ANNOTATION__OFFSET_JUMP_TARGETS) {
- 				if (notes->options->show_nr_jumps) {
- 					int prev;
- 					printed = scnprintf(bf, sizeof(bf), "%*d ",
-@@ -2523,9 +2525,14 @@ static void __annotation_line__write(struct annotation_line *al, struct annotati
- 					obj__printf(obj, bf);
- 					obj__set_color(obj, prev);
- 				}
--
-+print_addr:
- 				printed = scnprintf(bf, sizeof(bf), "%*" PRIx64 ": ",
- 						    notes->widths.target, addr);
-+			} else if (ins__is_call(&disasm_line(al)->ins) &&
-+				   notes->options->offset_level >= ANNOTATION__OFFSET_CALL) {
-+				goto print_addr;
-+			} else if (notes->options->offset_level == ANNOTATION__MAX_OFFSET_LEVEL) {
-+				goto print_addr;
- 			} else {
- 				printed = scnprintf(bf, sizeof(bf), "%-*s  ",
- 						    notes->widths.addr, " ");
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index db8d09bea07e..f28a9e43421d 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -70,8 +70,17 @@ struct annotation_options {
- 	     show_nr_jumps,
- 	     show_nr_samples,
- 	     show_total_period;
-+	u8   offset_level;
- };
- 
-+enum {
-+	ANNOTATION__OFFSET_JUMP_TARGETS = 1,
-+	ANNOTATION__OFFSET_CALL,
-+	ANNOTATION__MAX_OFFSET_LEVEL,
-+};
-+
-+#define ANNOTATION__MIN_OFFSET_LEVEL ANNOTATION__OFFSET_JUMP_TARGETS
-+
- extern struct annotation_options annotation__default_options;
- 
- struct annotation;
+diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+index 12c099a87f8b..3781d74088a7 100644
+--- a/tools/perf/ui/browsers/annotate.c
++++ b/tools/perf/ui/browsers/annotate.c
+@@ -692,6 +692,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
+ 		"J             Toggle showing number of jump sources on targets\n"
+ 		"n             Search next string\n"
+ 		"o             Toggle disassembler output/simplified view\n"
++		"O             Bump offset level (jump targets -> +call -> all -> cycle thru)\n"
+ 		"s             Toggle source code view\n"
+ 		"t             Circulate percent, total period, samples view\n"
+ 		"/             Search string\n"
+@@ -719,6 +720,10 @@ static int annotate_browser__run(struct annotate_browser *browser,
+ 			notes->options->use_offset = !notes->options->use_offset;
+ 			annotation__update_column_widths(notes);
+ 			continue;
++		case 'O':
++			if (++notes->options->offset_level > ANNOTATION__MAX_OFFSET_LEVEL)
++				notes->options->offset_level = ANNOTATION__MIN_OFFSET_LEVEL;
++			continue;
+ 		case 'j':
+ 			notes->options->jump_arrows = !notes->options->jump_arrows;
+ 			continue;
 -- 
 2.14.3
