@@ -1,44 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754375AbeDMNYL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 09:24:11 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:50306 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753920AbeDMNYK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 09:24:10 -0400
-X-Google-Smtp-Source: AIpwx48qBEY1zMQHvP7Y/gW1QQvkTeOVFO+eMBgoSDKBoWGDl0NCbEXGp4k0S5Miwn0zQVyPU7CYIA==
-Date: Thu, 12 Apr 2018 17:28:01 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] x86/mm: vmemmap and vmalloc base addressess are usngined
- longs
-Message-ID: <20180412142801.oi7bzju3frgkdskp@node.shutemov.name>
-References: <nycvar.YFH.7.76.1804121437350.28129@cbobk.fhfr.pm>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.1804121437350.28129@cbobk.fhfr.pm>
-User-Agent: NeoMutt/20180323
+        id S1754352AbeDMNbz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 09:31:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37696 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753254AbeDMNby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 09:31:54 -0400
+From: David Hildenbrand <david@redhat.com>
+To: linux-mm@kvack.org
+Cc: Dave Young <dyoung@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Marc-Andre Lureau <marcandre.lureau@redhat.com>,
+        linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>
+Subject: [PATCH RFC 4/8] kdump: expose PG_offline
+Date: Fri, 13 Apr 2018 15:31:51 +0200
+Message-Id: <20180413133151.3199-1-david@redhat.com>
+In-Reply-To: <20180413131632.1413-1-david@redhat.com>
+References: <20180413131632.1413-1-david@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 02:39:10PM +0200, Jiri Kosina wrote:
-> From: Jiri Kosina <jkosina@suse.cz>
-> 
-> Commits 9b46a051e4 ("x86/mm: Initialize vmemmap_base at boot-time") and 
-> a7412546d8 ("x86/mm: Adjust vmalloc base and size at boot-time") lost the 
-> type information for __VMALLOC_BASE_L4, __VMALLOC_BASE_L5, 
-> __VMEMMAP_BASE_L4 and __VMEMMAP_BASE_L5 constants.
-> 
-> Let's declare them explicitly unsigned long again.
+This allows user space to skip pages that are offline when dumping. This is
+especially relevant when dealing with pages that have been unplugged in
+the context of virtualization, and their backing storage has already
+been freed.
 
-It is just cosmetics, right? I mean these literals are 'unsigned long'
-anyway.
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ kernel/crash_core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+index a93590cdd9e1..d6f21b19aeb3 100644
+--- a/kernel/crash_core.c
++++ b/kernel/crash_core.c
+@@ -463,6 +463,9 @@ static int __init crash_save_vmcoreinfo_init(void)
+ #ifdef CONFIG_HUGETLB_PAGE
+ 	VMCOREINFO_NUMBER(HUGETLB_PAGE_DTOR);
+ #endif
++#ifdef CONFIG_MEMORY_HOTPLUG
++	VMCOREINFO_NUMBER(PG_offline);
++#endif
+ 
+ 	arch_crash_save_vmcoreinfo();
+ 	update_vmcoreinfo_note();
 -- 
- Kirill A. Shutemov
+2.14.3
