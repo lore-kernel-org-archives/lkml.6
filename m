@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754477AbeDMK4B (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 06:56:01 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47968 "EHLO
+        id S1754441AbeDMKzu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 06:55:50 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47616 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754461AbeDMKz7 (ORCPT
+        with ESMTP id S1754421AbeDMKzs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 06:55:59 -0400
+        Fri, 13 Apr 2018 06:55:48 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Jia-Ju Bai <baijiaju1990@gmail.com>
 Cc: Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com, mka@chromium.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: intel: cht_bsw_max98090_ti: Replace GFP_ATOMIC with GFP_KERNEL in snd_cht_mc_probe" to the asoc tree
-In-Reply-To: <1523270890-22889-1-git-send-email-baijiaju1990@gmail.com>
-Message-Id: <E1f6wMz-00079t-ET@debutante>
-Date: Fri, 13 Apr 2018 11:55:53 +0100
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        subhransu.s.prusty@intel.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: intel: skl_rt286: Replace GFP_ATOMIC with GFP_KERNEL in skylake_audio_probe" to the asoc tree
+In-Reply-To: <1523270998-23130-1-git-send-email-baijiaju1990@gmail.com>
+Message-Id: <E1f6wMl-000762-GM@debutante>
+Date: Fri, 13 Apr 2018 11:55:39 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: intel: cht_bsw_max98090_ti: Replace GFP_ATOMIC with GFP_KERNEL in snd_cht_mc_probe
+   ASoC: intel: skl_rt286: Replace GFP_ATOMIC with GFP_KERNEL in skylake_audio_probe
 
 has been applied to the asoc tree at
 
@@ -48,17 +48,17 @@ to this mail.
 Thanks,
 Mark
 
->From f0a0bdcf34579b08acfe0179ad46da4dc123fc91 Mon Sep 17 00:00:00 2001
+>From b614aa81e07d7b9cf1c64b61d02a01d66ef43ed6 Mon Sep 17 00:00:00 2001
 From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Date: Mon, 9 Apr 2018 18:48:10 +0800
-Subject: [PATCH] ASoC: intel: cht_bsw_max98090_ti: Replace GFP_ATOMIC with
- GFP_KERNEL in snd_cht_mc_probe
+Date: Mon, 9 Apr 2018 18:49:58 +0800
+Subject: [PATCH] ASoC: intel: skl_rt286: Replace GFP_ATOMIC with GFP_KERNEL in
+ skylake_audio_probe
 
-snd_cht_mc_probe() is never called in atomic context.
+skylake_audio_probe() is never called in atomic context.
 This function is only set as ".probe" in "struct platform_driver".
 
 Despite never getting called from atomic context,
-snd_cht_mc_probe() calls devm_kzalloc() with GFP_ATOMIC,
+skylake_audio_probe() calls devm_kzalloc() with GFP_ATOMIC,
 which waits busily for allocation.
 GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
 to avoid busy waiting and improve the possibility of sucessful allocation.
@@ -68,20 +68,20 @@ This is found by a static analysis tool named DCNS written by myself.
 Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/intel/boards/cht_bsw_max98090_ti.c | 2 +-
+ sound/soc/intel/boards/skl_rt286.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/intel/boards/cht_bsw_max98090_ti.c b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-index d3e1c7e12004..db6976f4ddaa 100644
---- a/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-+++ b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-@@ -391,7 +391,7 @@ static int snd_cht_mc_probe(struct platform_device *pdev)
- 	int ret_val = 0;
- 	struct cht_mc_private *drv;
+diff --git a/sound/soc/intel/boards/skl_rt286.c b/sound/soc/intel/boards/skl_rt286.c
+index 737d5615b0ef..38a1495c29cf 100644
+--- a/sound/soc/intel/boards/skl_rt286.c
++++ b/sound/soc/intel/boards/skl_rt286.c
+@@ -527,7 +527,7 @@ static int skylake_audio_probe(struct platform_device *pdev)
+ {
+ 	struct skl_rt286_private *ctx;
  
--	drv = devm_kzalloc(&pdev->dev, sizeof(*drv), GFP_ATOMIC);
-+	drv = devm_kzalloc(&pdev->dev, sizeof(*drv), GFP_KERNEL);
- 	if (!drv)
+-	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_ATOMIC);
++	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
+ 	if (!ctx)
  		return -ENOMEM;
  
 -- 
