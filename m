@@ -1,80 +1,72 @@
-Return-Path: <christianvanbrauner@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523635909; cv=none;
+Return-Path: <dvhart@infradead.org>
+X-Google-Smtp-Source: AIpwx49/7mtKdhE5/pnEm+OIWRtgXhhiW72ByR12jw+jyiGwptgMetY7leU08/+yzWwT8SNOrJNR
+ARC-Seal: i=1; a=rsa-sha256; t=1523638476; cv=none;
         d=google.com; s=arc-20160816;
-        b=sCexvbVQGVK64GOxMIEZewSS842A91MPW5R/rzrqj92sxWTiaJaK09998P5X0YrmiM
-         TOL6cpThB3Rr5SUGUMLJJoOLbtAyhaU69FxfSi0p0fyy6+Ut338GCuU8ext6YGKf3zXH
-         ar9UKqM8048vrSDfvXGbPWgBBm1SaSmnhTM7yaZG/js9/G3bJHA1ENgEFT73eW3IFY5L
-         yq9Q8Y3nV28QW/aO12Fi5cS1IVTSzKB7JAJzjSJve96/GNSfZSHW6FfQS9z2ZKEPVbVr
-         B45JER0n7qe7DM+w5SAaF2ULC+SEVr/0PhZBDZ00tKRDXc0e4YL6xy5jVg5hGCknkJ3z
-         0dgg==
+        b=QkKNAyw4idzXheYBFTrxAy7sQMJLjQ1lmv0CdgHycNlBDhVC8XQMXfzLFMlnqtOBBt
+         w6rS869dBFD1jO/VGTDgLNx2E6CfrJ6yBCG2XS+zAYj1R253XZ5jg3ouC4nZzkAh7MGx
+         yqGxaTCayR/qArRSRdC4/01RdB++kks6jVsKE7QuEo/Cc0TWbMNIgeP8cXZkuxRkfjSC
+         GofSFRWnMQ1L2WPXqzcH58OxSwzUvrVKsq2trzH59xW/jtzR2JoyPc9SKCvhTSF0yWGg
+         Ko3wDwCR7XFZJxxSpVXHQQx/sAEbGM+ji7iGZNPA3FC9ainVrNuC3XRhZva2isJAQ3Si
+         69vA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=bQMLvV0Ko6+62/3QhUYTnjSM6q/HltMW5KN/AdFhXts=;
-        b=UagHgmvmrqRbRgtlna/WPiCIxRk40UZbpR1yNdG3M5Ph9vsUPKTMQIGMHQiefPKF5q
-         Ji9OaZgrNieydyHeZ2mwQGdFEUC02aWn9B+WQvhkx1jpEm513VPFji2TSPYpTGTbDWhj
-         BnZE26/iOP9Rc9MYFCgq8irqbG3R9xQXcV9t0DKyxUFl4szcYCLxrT1BKgGvbQmzwMLl
-         cB9LLPTDkahKnfWIAD9T2ZZWP4Lf6to9BuZ6YzYJrY8prjQaUFDd5aYZPQTswbbP6c4n
-         1vfE+86qYYjnhANjshRFzPrQoHIX2tOn6WbJliVHXnn3gaaAKaDGZluxx8Yh2Or456HV
-         9qNg==
+        bh=xb3xCx9Ymh9obC2o5os4UUkamwXXz1eiSHbc7n6abnk=;
+        b=A5f/HNwJ0fxuhPzayMQxB0YPFyxyTaM9SllaMrX2cpv5aLHWc7NnNWSS58iapl8c/c
+         600nUcSGgi/Fg4vjBvUamCmC4Fs9yRGpDCVZ4772MivJcIUME8odnJF5tzhEZU/nZGxj
+         uSRsAun+g1gQ/9VAus3hODxAVxV+eS5m8KZfT63Z6R5XO6X2EgPQrt5iF2pbzD+q1wqv
+         dq9Dct70FJPpU+voim4I2I0xXxD+VMz5TYKpyWNbisiZPeNAaSCg4PHDelhlo82g0sIf
+         MoL3HcasCbAGTAb8XsumFlGitGkLfwPN061kQYVXA3Lq9IM6qJoYLSf5ge90niuWweGM
+         feCg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=RpSYDMxB;
+       spf=pass (google.com: best guess record for domain of dvhart@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=dvhart@infradead.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
-X-Google-Smtp-Source: AIpwx4/XJ6kJIfELH2P0ZHf95DSkvVXLVRh+YyxgKwrEdx/NoaRera0z8SSd0qEb46uEW+YA3tT64w==
-From: Christian Brauner <christian.brauner@ubuntu.com>
-To: viro@zeniv.linux.org.uk,
-	tglx@linutronix.de,
-	kstewart@linuxfoundation.org,
-	gregkh@linuxfoundation.org,
-	pombredanne@nexb.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	serge@hallyn.com
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 3/6] statfs: add ST_UNBINDABLE
-Date: Fri, 13 Apr 2018 18:11:23 +0200
-Message-Id: <20180413161126.31313-4-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180413161126.31313-1-christian.brauner@ubuntu.com>
-References: <20180413161126.31313-1-christian.brauner@ubuntu.com>
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=RpSYDMxB;
+       spf=pass (google.com: best guess record for domain of dvhart@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=dvhart@infradead.org
+Date: Fri, 13 Apr 2018 09:54:33 -0700
+From: Darren Hart <dvhart@infradead.org>
+To: Vadim Pasternak <vadimp@mellanox.com>
+Cc: andy.shevchenko@gmail.com, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	jiri@resnulli.us, michaelsh@mellanox.com, ivecera@redhat.com
+Subject: Re: [PATCH v1 4/7] platform: mellanox: add new ODM system types to
+ mlx-platform
+Message-ID: <20180413165433.GF27560@fury>
+References: <1522144927-56512-1-git-send-email-vadimp@mellanox.com>
+ <1522144927-56512-5-git-send-email-vadimp@mellanox.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1522144927-56512-5-git-send-email-vadimp@mellanox.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597648047105357764?=
-X-GMAIL-MSGID: =?utf-8?q?1597648047105357764?=
+X-GMAIL-THRID: =?utf-8?q?1596077330575695647?=
+X-GMAIL-MSGID: =?utf-8?q?1597650739413272256?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This lets userspace query whether a mountpoint was made MS_UNBINDABLE.
+On Tue, Mar 27, 2018 at 10:02:04AM +0000, Vadim Pasternak wrote:
+> Patch adds new ODM systems, matched according to DMI_BOARD_NAME.
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- fs/statfs.c            | 2 ++
- include/linux/statfs.h | 1 +
- 2 files changed, 3 insertions(+)
+General nit. When writing your messages, please use the imperative (command)
+form. Rather than:
 
-diff --git a/fs/statfs.c b/fs/statfs.c
-index 5b2a24f0f263..61b3063d3921 100644
---- a/fs/statfs.c
-+++ b/fs/statfs.c
-@@ -29,6 +29,8 @@ static int flags_by_mnt(int mnt_flags)
- 		flags |= ST_NODIRATIME;
- 	if (mnt_flags & MNT_RELATIME)
- 		flags |= ST_RELATIME;
-+	if (mnt_flags & MNT_UNBINDABLE)
-+		flags |= ST_UNBINDABLE;
- 	return flags;
- }
- 
-diff --git a/include/linux/statfs.h b/include/linux/statfs.h
-index b336c04e793c..e1b84d0388c1 100644
---- a/include/linux/statfs.h
-+++ b/include/linux/statfs.h
-@@ -40,5 +40,6 @@ struct kstatfs {
- #define ST_NOATIME	(1<<10) /* do not update access times */
- #define ST_NODIRATIME	(1<<11) /* do not update directory access times */
- #define ST_RELATIME	(1<<12) /* update atime relative to mtime/ctime */
-+#define ST_UNBINDABLE	(1<<17)	/* change to unbindable */
- 
- #endif
+"Patch adds" or "It changes" use the same form you use in the subject lines:
+
+"Add new ODM systems", "Fix struct field documentation", etc.
+
+Again, I've been rewriting these, but as a regular contributor, this will help
+reduce the overhead of reviewing your patches - good for you, good for me :-)
+
+> The supported ODM Ids are: VMOD0001, VMOD0002, VMOD0003, VMOD0004,
+> VMOD0005. It doesn't introduce new systems, but allows to
+> ODM companies to set DMI_BOARD_VENDOR and DMI_PRODUCT_NAME on
+> their own. It assumes that ODM company can't change DMI_BOARD_NAME.
+
+You said "it assumes that ODM companies can't change DMI_BOARD_NAME". Is that an
+assumption, or is that how ODMs work with Mellanox?
 -- 
-2.17.0
+Darren Hart
+VMware Open Source Technology Center
