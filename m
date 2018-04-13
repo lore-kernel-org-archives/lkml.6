@@ -1,111 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753831AbeDMBMH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 21:12:07 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:43212 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753309AbeDMBMF (ORCPT
+        id S1753875AbeDMBMi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 12 Apr 2018 21:12:38 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:23093 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753833AbeDMBMg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 21:12:05 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180413011202epoutp0416a22d5120a69ff04239b506a4a5a896~k2a_7qyA60693406934epoutp041
-X-AuditID: b6c32a47-0e3ff70000000fe8-08-5ad001c6e0c6
+        Thu, 12 Apr 2018 21:12:36 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180413011235epoutp021d2890c9de93ee8373311531798da86d~k2bdEzHWk0473504735epoutp02Y
+X-AuditID: b6c32a47-0e3ff70000000fe8-e7-5ad0032f4eb9
 MIME-version: 1.0
 Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="utf-8"
-Message-id: <5AD001C5.2040406@samsung.com>
-Date: Fri, 13 Apr 2018 10:03:01 +0900
+Content-type: text/plain; charset="UTF-8"
+Message-id: <5AD0032E.6020103@samsung.com>
+Date: Fri, 13 Apr 2018 10:09:02 +0900
 From: Chanwoo Choi <cw00.choi@samsung.com>
 Organization: Samsung Electronics
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
         Thunderbird/31.6.0
-To: Arvind Yadav <arvind.yadav.cs@gmail.com>, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] PM / devfreq: use put_device() instead of kfree()
-In-reply-to: <d8d8708d2283349c2c4f3e9f3c9fd5f47126d2bc.1522410143.git.arvind.yadav.cs@gmail.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKKsWRmVeSWpSXmKPExsWy7bCmme4xxgtRBq8ahC2u9S5ktjjb9Ibd
-        4vKuOWwWn3uPMFrcblzB5sDqsXPWXXaPvi2rGD0+b5ILYI5KtclITUxJLVJIzUvOT8nMS7dV
-        8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBWqmkUJaYUwoUCkgsLlbSt7Mpyi8tSVXI
-        yC8usVWKNjQ00jM0MNczMjLSMzGOtTIyBSpJSM1ommVbMJ27Ys/MdWwNjE2cXYwcHBICJhJP
-        WxW7GLk4hAR2MEr8WbuDCcL5zihx6+AHti5GTrCi7vUrWCASuxklFrw5wQiS4BUQlPgx+R4L
-        yCRmAXmJI5eyQcLMApoSL75Mgqq/yyhxfMl/sBpeAS2JJ4utQGpYBFQlzpxpYwax2YDC+1/c
-        ANvFL6AocfXHY7DxogIREjvnf2MHaRURSJZom6UJMd5KYtejPrASYQE3iR93e8FaOQWSJH68
-        a2YEWSshsIZNYvWrRnaI+10krqxdBvWLsMSr41ug4tISz1ZthGpoZ5Ro3zuPGcKZwihx7vo9
-        JogqY4lnC7uYIFbzSXQc/ssOCTpeiY42IYgSD4ln8+4wQ9iOEg1rF7JDPL+ZUWLqtscsExjl
-        ZiGF1yxEeM1CCq8FjMyrGMVSC4pz01OLjQqM9YoTc4tL89L1kvNzNzGCk5iW+w7Gbed8DjEK
-        cDAq8fAqVJ6PEmJNLCuuzD3EKMHBrCTCO/0xUIg3JbGyKrUoP76oNCe1+BCjKTC8JzJLiSbn
-        AxNsXkm8oYmlgYmZmZG5mQUweYnzNvieiRISSE8sSc1OTS1ILYLpY+LglGpgXJTOX/ppa9ee
-        1k7VFyVWFyJfPJI59e5i+uOQd21bK3vueEWtOGjgFDqB9wLfNP7vn7rqg9K1os6nPDH+NvPx
-        Q659/C2husvsn7Aryjl+OMZUrab6LGK99v5PleWaW90yZ/yq9DofuzByyzLR69Kf4vPVVtVa
-        zpq/89eXjsXFH+OPsc0UY28KVGIpzkg01GIuKk4EAMB/Y6Z4AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCLMWRmVeSWpSXmKPExsVy+t9jAd2jjBeiDCa/tbC41ruQ2eJs0xt2
-        i8u75rBZfO49wmhxu3EFmwOrx85Zd9k9+rasYvT4vEkugDmKyyYlNSezLLVI3y6BK6Nplm3B
-        dO6KPTPXsTUwNnF2MXJySAiYSHSvX8HSxcjFISSwk1GibctBVpAEr4CgxI/J94ASHBzMAvIS
-        Ry5lQ5jqElOm5IJUCAncByrfJwUS5hXQkniy2AokzCKgKnHmTBsziM0GFN7/4gYbiM0voChx
-        9cdjRpByUYEIie4TlSBhEYFkiSnbu9lBbGYBK4ldj/oYQWxhATeJH3d72SAO28oosenkRWaQ
-        Xk6BJIlrU3QmMArMQnLmLIQzZyGcuYCReRWjZGpBcW56brFRgVFearlecWJucWleul5yfu4m
-        RmDYbjus1b+D8fGS+EOMAhyMSjy8CpXno4RYE8uKK3MPMUpwMCuJ8E5/DBTiTUmsrEotyo8v
-        Ks1JLT7EKM3BoiTOy59/LFJIID2xJDU7NbUgtQgmy8TBKdXA6BTTc+7NbFU+Htu3djdzo6q7
-        yl1jHx00SZqcUGLQa9rjc/zTAk1rpaTmTQcf7ZixyFDqfNnl2hkzFvTMrkibXXFQTWzDxNlh
-        klf2F93zjnu/4mFosvkdkTUWT913RMde/HueawmnTai3lYzDjbY8n5VXRb65H32fFuqyQ1Lt
-        /JLqjDKOI7v+KbEUZyQaajEXFScCAEg5r5dXAgAA
-X-CMS-MailID: 20180413010302epcas2p35b2181417682089d7a1046fd3559ac43
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH] extcon: int3496: use proper GPIO include
+In-reply-to: <20180410124302.29932-1-wsa+renesas@sang-engineering.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjH9+5sx2mtTvPSm4qtA0Ebbe2i8xQZRWajjAwhahF60Bcn7iI7
+        m6R+WVEpVjNLlGamQqFpatlmZvdpRWJ2EV1R+UVYaVcy1KKynR2jvv2fP7/nyiPCJBPCWFG+
+        xY5sFtpE4hGC7j6ZTrEGe2pQjVVKqeqfzXxquPcsTnknPvGpVwdbcMo1tHWjUP969Caud3la
+        gT7Q1CnQT3UlZAgMaL0R0bnIJkWWHGtuviUvhdyembU5K0mnUivUa6lkUmqhzSiFTE3PUKTl
+        m4JtSWkRbXIErQyaYcg1G9bbrA47khqtjD2F3KdWa5RqVbJSo9EoE7X712mSgkg2MvraL+GF
+        NeEH/M8u4k7gC6sA4SJIJMKWujZBBYgQSYgeAB/5a8K4YAbAKfcwvwKIQtRnr4zzLwNYOzLL
+        Z7PFxBI4e3pMwDIYsRz2Py9gbYyQQe+Nzvk6bwC88PFqGMuICTnsua9mGQGxEjqbu4WsxoP2
+        nXcvcFYvJlbAkdlxwOpoYg+83jAdGjSKyIT+gQeAq18Cq76fCvGRRArsPe8BbPlwIg3676Sx
+        bSHhweFvTwPgxk+FhzpWc/tGwsmHnvnd42Cg9Qrg+DIAy26dw7igGsAh/xifo7Qw0FTB5xov
+        guV9v8K4omJYflTCIXo4ebtWyOlNsPZr1fzuZwD0/bqHnwQJ7v/O5f53Lvd/52oEWCuIQYWM
+        OQ8xmkKtkqHNjMOSp8yxmrtA6M3kW3tA91C6DxAiQC4US4ufGCRCuogpNvsAFGFklLh2PGiJ
+        c+niEmSzZtkcJsT4QFLw3FVYbHSONfi0FnuWOnGtKlGn0yTrqOB7LRU7dwwaJEQebUcFCBUi
+        2988vig81glcq2fwu3O3AwOZbby9vEh53ds+7bUvCS9dlfHustLsBfH+HEp2wj83vHngWKf3
+        8WD64W8N0dZd2olR64cmmRNgjxS8z/3Lru/c0rht5NN7FHfyrtzkW5W6LI6Kf7zpfv0Pd4xh
+        dLBud810n+Y4KTzCc+/t5S1Mri8dAx1Jc9XtpIAx0mo5ZmPoPxMyu1F8AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFLMWRmVeSWpSXmKPExsVy+t9jQV095gtRBr9vallM+bOcyeLyrjls
+        FltfvmOyuN24gs2i75y7A6vHnWt72Dz6tqxi9Hi2cD2Lx+dNcgEsUVw2Kak5mWWpRfp2CVwZ
+        h9auYSuYxllx/eJKtgbGQ+xdjBwcEgImEu+3anYxcnEICaxjlPh+7zJrFyMnB6+AoMSPyfdY
+        QGqYBeQljlzKBgkzC6hLTJq3iBmi/j6jROfN+8wgNbwCWhI7jhqC1LAIqEo0LN8GNoYNKLz/
+        xQ02EJtfQFHi6o/HjCDlogIREt0nKkHCIgLBEs86m1ghxtdI7Dh7BMwWFrCV2LVkCyOILSQw
+        m1HiVmcaSCungJvE9f1uExgFZiG5cxbCnbOQ3LmAkXkVo2RqQXFuem6xUYFRXmq5XnFibnFp
+        Xrpecn7uJkZgCG87rNW/g/HxkvhDjAIcjEo8vAqV56OEWBPLiitzDzFKcDArifBOfwwU4k1J
+        rKxKLcqPLyrNSS0+xCjNwaIkzsuffyxSSCA9sSQ1OzW1ILUIJsvEwSnVwJgv2vDIfxPztqCJ
+        OXqhNz9P+HmT3cR0/+pDq3mZBDzmrbnv/8vRyV7nnKtt4lmbDbdnFi+I3Jta5Hck50p7wNH2
+        eTFKSk1VIZ+sj/dc+sqxkZH7qv787fmFgd/Wl+8pr8ub3l/VNif2hctNkRNsMplrWQT3FuvO
+        3DfvU7l50rS6Kcn/ohmKE5RYijMSDbWYi4oTAbq/NnZdAgAA
+X-CMS-MailID: 20180413010902epcas2p2fc3b7fc70a1bebbf1980309826ef8f19
 X-Msg-Generator: CA
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180330114418epcas5p1affd1c3d97e7422dd33e6d3ca73073be
-X-RootMTR: 20180330114418epcas5p1affd1c3d97e7422dd33e6d3ca73073be
-References: <CGME20180330114418epcas5p1affd1c3d97e7422dd33e6d3ca73073be@epcas5p1.samsung.com>
-        <d8d8708d2283349c2c4f3e9f3c9fd5f47126d2bc.1522410143.git.arvind.yadav.cs@gmail.com>
+X-CMS-RootMailID: 20180410124315epcas5p39971522b55337b5c1369883f128ff43c
+X-RootMTR: 20180410124315epcas5p39971522b55337b5c1369883f128ff43c
+References: <CGME20180410124315epcas5p39971522b55337b5c1369883f128ff43c@epcas5p3.samsung.com>
+        <20180410124302.29932-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-I'm sorry for the late reply.
+On 2018년 04월 10일 21:43, Wolfram Sang wrote:
+> Since commit eca0f13c836a ("extcon: int3496: Ignore incorrect
+> IoRestriction for ID pin"), the driver doesn't use GPIOF_* flags
+> anymore. We can thus now drop the deprecated include file for GPIO and
+> use the new one.
 
-On 2018년 03월 30일 20:44, Arvind Yadav wrote:
-> Never directly free @dev after calling device_register() or
-> device_unregister(), even if device_register() returned an error.
-> Always use put_device() to give up the reference initialized.
+Looks good to me. But, you need to send stable mailing list
+and add 'Fixes' tag on v2.
+
 > 
-> Signed-off-by: Arvind Yadav <arvind.yadav.cs@gmail.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > ---
->  drivers/devfreq/devfreq.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index fe2af6a..a225b94 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -625,7 +625,8 @@ struct devfreq *devfreq_add_device(struct device *dev,
->  	err = device_register(&devfreq->dev);
->  	if (err) {
->  		mutex_unlock(&devfreq->lock);
-> -		goto err_dev;
-> +		put_device(&devfreq->dev);
-> +		goto err_out;
-
-why do you change the goto postion?
-err_out is correct to free the memory of devfreq instance.
-
->  	}
+> Compile tested only.
+> 
+> @linusw: one more gone
+> 
+>  drivers/extcon/extcon-intel-int3496.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/extcon/extcon-intel-int3496.c b/drivers/extcon/extcon-intel-int3496.c
+> index acaccb128fc4..fd24debe58a3 100644
+> --- a/drivers/extcon/extcon-intel-int3496.c
+> +++ b/drivers/extcon/extcon-intel-int3496.c
+> @@ -20,7 +20,7 @@
 >  
->  	devfreq->trans_table =	devm_kzalloc(&devfreq->dev,
-> @@ -671,6 +672,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
->  	mutex_unlock(&devfreq_list_lock);
->  
->  	device_unregister(&devfreq->dev);
-> +	devfreq = NULL;
-
-It is wrong. If you initialize the devfreq as NULL,
-never free the 'devfreq' instance.
-
->  err_dev:
->  	if (devfreq)
->  		kfree(devfreq);
+>  #include <linux/acpi.h>
+>  #include <linux/extcon-provider.h>
+> -#include <linux/gpio.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
 > 
 
 
