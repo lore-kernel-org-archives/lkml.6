@@ -1,53 +1,57 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx49crpxddzN++vPZWRjk2kDyRUgvei0u5hrztY5XfJCiljgrmdi7en7cNJkou6+LPZycNpCR
-ARC-Seal: i=1; a=rsa-sha256; t=1523528613; cv=none;
+X-Google-Smtp-Source: AIpwx4+HzgZo0UQWs/U1RflQFcYU9wkcCHWTQ8/DRGKfN+q+5aieA8X5+0XZQ+v+wnfEOxO+Qegi
+ARC-Seal: i=1; a=rsa-sha256; t=1523610241; cv=none;
         d=google.com; s=arc-20160816;
-        b=Rqqpsx4PpgszYRYIa9GIjK1xAPJIVuUE8oMsLtwWCmZy4FPmsw5VlojP24s2c+WSaL
-         E8yrQtqm1KxB4uc6V/kkySfYVr7jYHzTl17BPvxQIlze4PTzRHBWHc9gxJCGhYWakopn
-         mBIcFvyvEMm7P85GS2YIfprO4MRpggPZcpUP/hM69KJS5W6S0fBlWAFj2ivHCYH7fmTy
-         VJWoE5t6chpHYJ2tcWTO/5ueMAO2GY+Oay4K0wFkjLZI1GQwb4nRQa52vLC0RLOkp78D
-         M+zADNnE85UAQ/InTdW6krJGlDiVay1Sl6YHUVlBI9E+5vnL4xJc/7cP+VH2FpEBHPgk
-         4edw==
+        b=NqAxzUANstzRskhAeQ4DyTZ9zvTD0bwjZVl6Ec7ntzFihQ4XqVkZReXGFT+XQhGb2z
+         d/rdj5hK9x2ZI5mMYy4h9Rd0i19m9L6CgTiHUA7TG73dWZ61shzMJmdsJ+z8vaE867E9
+         CVUeuJ7kDiqHDvf1ergdLV3y9z3EXBL3vqdCJg18OK7YyRaOEMMk9KV2lhJ6Ru8Pnl/Z
+         LrzjM6ktKOgeq4OdpgzzNMAAhZlFOqg1H95Qk7TXj3hnOaXQ20tboE/5iyDJSbYil4ig
+         R2/crZVATjxQP+jyhergpLGGclOxBI535XF9cIRnNxKxgncdVzG2/mgi8RrVkxO9NIk5
+         RFKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=Id1OQ5ez5lATV2e4gVWS0nvE6Gr1QCermEdrCAr0Djs=;
-        b=i1FigzUedFGO3/s+7iJyv1VsaFalG2w2t3LavN9gr7Xq34GAhdX1thF0N04mQZC49A
-         omyiVz18W8YGn24YkXHt405WKMlPzCq20XQgq6QIC6etv/dciCWsoZEbkFkW1rdlw2HS
-         KlGRWD4vpyUQVEI/cTO7uBrnFaqJa0BYHGv2hhJXyP9mcPCcfZR9J/uDRMH1/vBBytL0
-         PDJ3UO7Itrwx01dPkqIn16yMHsrGmqIWrGY7QlI3XOuhCTM2QMbEEh7ycFG8cKLWsick
-         tKXONukzzGsIeSEmTjfF9+//KDCswbqVcV2l3jaz1t+RgXYR+QoUNILn+hJZ4tYtHh1p
-         A5Fw==
+        h=list-id:precedence:sender:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=z0ByjDKZNoymk8XuXcJm4KXoJHEHyCW9YqjWJtuyoME=;
+        b=KsiNiQLZXCjeQqbwkMry4exs1UHTHumCg1cWMEJZEPIYwNYZoBpYZl1itR6leG6FX1
+         2soDbAxHU6BE5UPajRX26Cpa41QN8rd0Ypwi7c6EeNjFwP7mRR/4IqjUWQM/S6bY8EXE
+         yRoQJ0MToeB3fXOTCqJrOkrr9H+wIL7SyIJGsYelr0XxhybIoSuYKL+RYsVNx57gsCwy
+         aJR7L9Ot4LoXaE2PwbOjl1xv8hnjj73uJP9A2R+JHw5H9GfUct3qzSqovLhPHMPv0vRi
+         HY5Lf2XGIJYkK3M933bjEdBWrlRpKqBzf0NcLo/5FrXW4ELX5weJ1q4bIaBN95bPnBd6
+         zu0w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=XKQfezgx;
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=Knrwr7w3;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=XKQfezgx;
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=Knrwr7w3;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752713AbeDLKXU (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Thu, 12 Apr 2018 06:23:20 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:46816 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752552AbeDLKXS (ORCPT
+        id S1754189AbeDMJEB (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Fri, 13 Apr 2018 05:04:01 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:43619 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753644AbeDMJD6 (ORCPT
         <rfc822;linux-kselftest@vger.kernel.org>);
-        Thu, 12 Apr 2018 06:23:18 -0400
+        Fri, 13 Apr 2018 05:03:58 -0400
 From: Anders Roxell <anders.roxell@linaro.org>
-To: shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-gpio@vger.kernel.org,
-        fathi.boudra@linaro.org, Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] selftests: add headers_install to lib.mk
-Date: Thu, 12 Apr 2018 12:23:02 +0200
-Message-Id: <20180412102302.4532-1-anders.roxell@linaro.org>
+To: shuah@kernel.org, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net
+Cc: linux-kselftest@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-gpio@vger.kernel.org, fathi.boudra@linaro.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH v2] selftests: add headers_install to lib.mk
+Date: Fri, 13 Apr 2018 11:03:51 +0200
+Message-Id: <20180413090351.25662-1-anders.roxell@linaro.org>
 X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180412102302.4532-1-anders.roxell@linaro.org>
+References: <20180412102302.4532-1-anders.roxell@linaro.org>
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597535540200601816?=
-X-GMAIL-MSGID: =?utf-8?q?1597535540200601816?=
+X-GMAIL-MSGID: =?utf-8?q?1597621133028313451?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -61,16 +65,63 @@ the kernel headers.
 Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 Reviewed-by: Fathi Boudra <fathi.boudra@linaro.org>
 ---
- tools/testing/selftests/android/Makefile          | 2 +-
- tools/testing/selftests/android/ion/Makefile      | 1 +
- tools/testing/selftests/bpf/Makefile              | 5 ++---
- tools/testing/selftests/futex/functional/Makefile | 1 +
- tools/testing/selftests/gpio/Makefile             | 4 ----
- tools/testing/selftests/kvm/Makefile              | 6 +-----
- tools/testing/selftests/lib.mk                    | 8 ++++++++
- tools/testing/selftests/vm/Makefile               | 3 ---
- 8 files changed, 14 insertions(+), 16 deletions(-)
+ Makefile                                          | 14 +-------------
+ scripts/subarch.include                           | 13 +++++++++++++
+ tools/testing/selftests/android/Makefile          |  2 +-
+ tools/testing/selftests/android/ion/Makefile      |  1 +
+ tools/testing/selftests/bpf/Makefile              |  5 ++---
+ tools/testing/selftests/futex/functional/Makefile |  1 +
+ tools/testing/selftests/gpio/Makefile             |  4 ----
+ tools/testing/selftests/kvm/Makefile              |  6 +-----
+ tools/testing/selftests/lib.mk                    | 10 ++++++++++
+ tools/testing/selftests/vm/Makefile               |  3 ---
+ 10 files changed, 30 insertions(+), 29 deletions(-)
+ create mode 100644 scripts/subarch.include
 
+diff --git a/Makefile b/Makefile
+index 74567b0ec2f0..0c47935d48a2 100644
+--- a/Makefile
++++ b/Makefile
+@@ -286,19 +286,7 @@ KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
+ KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
+ export VERSION PATCHLEVEL SUBLEVEL KERNELRELEASE KERNELVERSION
+ 
+-# SUBARCH tells the usermode build what the underlying arch is.  That is set
+-# first, and if a usermode build is happening, the "ARCH=um" on the command
+-# line overrides the setting of ARCH below.  If a native build is happening,
+-# then ARCH is assigned, getting whatever value it gets normally, and
+-# SUBARCH is subsequently ignored.
+-
+-SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
+-				  -e s/sun4u/sparc64/ \
+-				  -e s/arm.*/arm/ -e s/sa110/arm/ \
+-				  -e s/s390x/s390/ -e s/parisc64/parisc/ \
+-				  -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
+-				  -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ \
+-				  -e s/riscv.*/riscv/)
++include scripts/subarch.include
+ 
+ # Cross compiling and selecting different set of gcc/bin-utils
+ # ---------------------------------------------------------------------------
+diff --git a/scripts/subarch.include b/scripts/subarch.include
+new file mode 100644
+index 000000000000..650682821126
+--- /dev/null
++++ b/scripts/subarch.include
+@@ -0,0 +1,13 @@
++# SUBARCH tells the usermode build what the underlying arch is.  That is set
++# first, and if a usermode build is happening, the "ARCH=um" on the command
++# line overrides the setting of ARCH below.  If a native build is happening,
++# then ARCH is assigned, getting whatever value it gets normally, and
++# SUBARCH is subsequently ignored.
++
++SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
++				  -e s/sun4u/sparc64/ \
++				  -e s/arm.*/arm/ -e s/sa110/arm/ \
++				  -e s/s390x/s390/ -e s/parisc64/parisc/ \
++				  -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
++				  -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ \
++				  -e s/riscv.*/riscv/)
 diff --git a/tools/testing/selftests/android/Makefile b/tools/testing/selftests/android/Makefile
 index f6304d2be90c..087390bbad68 100644
 --- a/tools/testing/selftests/android/Makefile
@@ -151,20 +202,22 @@ index dc44de904797..ba03ce334212 100644
  $(TEST_GEN_PROGS): $(STATIC_LIBS)
 -$(TEST_GEN_PROGS) $(LIBKVM_OBJ): | $(LINUX_HDR_PATH)
 diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-index 195e9d4739a9..e0bfbc5b1f1f 100644
+index 195e9d4739a9..1b1e8135715e 100644
 --- a/tools/testing/selftests/lib.mk
 +++ b/tools/testing/selftests/lib.mk
-@@ -16,8 +16,16 @@ TEST_GEN_PROGS := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS))
+@@ -16,8 +16,18 @@ TEST_GEN_PROGS := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS))
  TEST_GEN_PROGS_EXTENDED := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS_EXTENDED))
  TEST_GEN_FILES := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_FILES))
  
 +top_srcdir ?= ../../../../
++include $(top_srcdir)/scripts/subarch.include
++ARCH		?= $(SUBARCH)
 +
  all: $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES)
  
 +.PHONY: khdr
 +khdr:
-+	make -C $(top_srcdir) headers_install
++	make ARCH=$(ARCH) -C $(top_srcdir) headers_install
 +
 +$(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES):| khdr
 +
