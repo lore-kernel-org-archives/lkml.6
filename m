@@ -1,145 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754494AbeDMMKC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 08:10:02 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44148 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754286AbeDMMKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 08:10:01 -0400
-Date: Fri, 13 Apr 2018 14:09:58 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagannadh.teki@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>, dri-devel@lists.freedesktop.org,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 0/8] drm/sun4i: Allwinner MIPI-DSI support
-Message-ID: <20180413120958.vo4y34q36q2rjyej@flea>
-References: <cover.a3617c4362eac8783f412525e52cf5552d19095d.1522835818.git-series.maxime.ripard@bootlin.com>
- <20180411124325.youvfpws27l2wesf@flea>
- <CAD6G_RRQrj9m=MPdjovEcwJV_fivCMAERSa49Mt0cKGFTicsxA@mail.gmail.com>
+        id S1754613AbeDMMND (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 08:13:03 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36794 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753958AbeDMMNC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 08:13:02 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1E212607C7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
+Subject: Re: [PATCH] mm: vmalloc: Remove double execution of vunmap_page_range
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>, vbabka@suse.cz,
+        labbott@redhat.com, catalin.marinas@arm.com, hannes@cmpxchg.org,
+        f.fainelli@gmail.com, xieyisheng1@huawei.com,
+        ard.biesheuvel@linaro.org, richard.weiyang@gmail.com,
+        byungchul.park@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1523611019-17679-1-git-send-email-cpandya@codeaurora.org>
+ <a623e12b-bb5e-58fa-c026-de9ea53c5bd9@linux.vnet.ibm.com>
+ <8da9f826-2a3d-e618-e512-4fc8d45c16f2@codeaurora.org>
+ <bbef0a92-f81b-5ba8-c5c1-d8c08444955b@linux.vnet.ibm.com>
+ <fa104cc6-c32a-9081-280f-2e03e4279f65@codeaurora.org>
+ <20180413110949.GA17670@dhcp22.suse.cz>
+ <696fedc5-6bcd-f0a0-62f5-4f9e7b7c602a@codeaurora.org>
+ <20180413114133.GJ17484@dhcp22.suse.cz>
+From: Chintan Pandya <cpandya@codeaurora.org>
+Message-ID: <7674bfda-6186-8b32-0144-62c666e05e3c@codeaurora.org>
+Date: Fri, 13 Apr 2018 17:42:53 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="l5tw7h26mt4edepi"
-Content-Disposition: inline
-In-Reply-To: <CAD6G_RRQrj9m=MPdjovEcwJV_fivCMAERSa49Mt0cKGFTicsxA@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180413114133.GJ17484@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---l5tw7h26mt4edepi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 13, 2018 at 05:30:04PM +0530, Jagan Teki wrote:
-> On Wed, Apr 11, 2018 at 6:13 PM, Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> > On Wed, Apr 04, 2018 at 11:57:08AM +0200, Maxime Ripard wrote:
-> >> Hi,
-> >>
-> >> Here is an preliminary version of the MIPI-DSI support for the Allwinn=
-er
-> >> SoCs.
-> >>
-> >> This controller can be found on a number of recent SoCs, such as the
-> >> A31, A33 or the A64.
-> >>
-> >> Given the sparse documentation, there's a number of obscure areas, but
-> >> the current implementation has been tested with a 4-lanes DSI panel on
-> >> an A33.
-> >>
-> >> The support is a bit rough around the edges at the time, and some arti=
-facts
-> >> are still shown on the screen for some reasons. Wider testing with
-> >> different display will hopefully nail those down.
-> >>
-> >> This needs the regmap_mmio_attach_clk, on its way to Linus in 4.17.
-> >>
-> >> Let me know what you think,
-> >> Maxime
-> >>
-> >> Changes from v3:
-> >>   - Rebased on top of current drm-misc-next
-> >>   - Switched to SPDX license header
-> >>   - Made the ECC array const
-> >>   - Split the big DSI patch into two, one to add the DSI driver and on=
-e to
-> >>     add the TCON bits.
-> >>   - Removed the dithering code
-> >>   - Changed the DT labels to remove the indices
-> >>   - Used sleeps instead of delays in the panel driver
-> >>   - Used the backlight_enable / _disable functions
-> >>   - Added Chen-Yu's Reviewed-by
-> >>
-> >> Changes from v2:
-> >>   - Added a ports node under the DSI node
-> >>   - Changed the huarui panel driver to an ili9881c driver
-> >>   - Changed the panel vendor to bananapi
-> >>   - Made the init table static in the panel driver
-> >>   - Dropped the huarui vendor patch for the DT doc.
-> >>
-> >> Changes from v1:
-> >>   - Rebased on 4.16-rc1
-> >>   - Constified a few function arguments and structures
-> >>   - Reworked the DT binding example a bit
-> >>   - Reworked the panel driver to check for DSI return codes, and use D=
-CS
-> >>     helpers when possible
-> >>
-> >> Maxime Ripard (8):
-> >>   drm/sun4i: tcon: Add TRI finish interrupt for vblank
-> >>   dt-bindings: display: Add Allwinner MIPI-DSI bindings
-> >>   drm/sun4i: Add Allwinner A31 MIPI-DSI controller support
-> >>   drm/sun4i: Tie the DSI controller in the TCON
-> >>   dt-bindings: panel: Add the Ilitek ILI9881c panel documentation
-> >>   drm/panel: Add Ilitek ILI9881c panel driver
-> >>   ARM: dts: sun8i: a33: Add the DSI-related nodes
-> >>   [DO NOT MERGE] arm: dts: sun8i: bpi-m2m: Add DSI display
->=20
-> I have reviewed most of the patches and reused for A64 all look fine
-> to me (except the panel driver). May be my issue is not relevant to
-> this thread, but I'm looking for help If I miss anything for A64 [1]
-> and [2] are changes made for A64, the issue is kernel hang while
-> loading sun6i_dsi.
+On 4/13/2018 5:11 PM, Michal Hocko wrote:
+> On Fri 13-04-18 16:57:06, Chintan Pandya wrote:
+>>
+>>
+>> On 4/13/2018 4:39 PM, Michal Hocko wrote:
+>>> On Fri 13-04-18 16:15:26, Chintan Pandya wrote:
+>>>>
+>>>>
+>>>> On 4/13/2018 4:10 PM, Anshuman Khandual wrote:
+>>>>> On 04/13/2018 03:47 PM, Chintan Pandya wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 4/13/2018 3:29 PM, Anshuman Khandual wrote:
+>>>>>>> On 04/13/2018 02:46 PM, Chintan Pandya wrote:
+>>>>>>>> Unmap legs do call vunmap_page_range() irrespective of
+>>>>>>>> debug_pagealloc_enabled() is enabled or not. So, remove
+>>>>>>>> redundant check and optional vunmap_page_range() routines.
+>>>>>>>
+>>>>>>> vunmap_page_range() tears down the page table entries and does
+>>>>>>> not really flush related TLB entries normally unless page alloc
+>>>>>>> debug is enabled where it wants to make sure no stale mapping is
+>>>>>>> still around for debug purpose. Deferring TLB flush improves
+>>>>>>> performance. This patch will force TLB flush during each page
+>>>>>>> table tear down and hence not desirable.
+>>>>>>>
+>>>>>> Deferred TLB invalidation will surely improve performance. But force
+>>>>>> flush can help in detecting invalid access right then and there. I
+>>>>>
+>>>>> Deferred TLB invalidation was a choice made some time ago with the
+>>>>> commit db64fe02258f1507e ("mm: rewrite vmap layer") as these vmalloc
+>>>>> mappings wont be used other than inside the kernel and TLB gets
+>>>>> flushed when they are reused. This way it can still avail the benefit
+>>>>> of deferred TLB flushing without exposing itself to invalid accesses.
+>>>>>
+>>>>>> chose later. May be I should have clean up the vmap tear down code
+>>>>>> as well where it actually does the TLB invalidation.
+>>>>>>
+>>>>>> Or make TLB invalidation in free_unmap_vmap_area() be dependent upon
+>>>>>> debug_pagealloc_enabled().
+>>>>>
+>>>>> Immediate TLB invalidation needs to be dependent on debug_pagealloc_
+>>>>> enabled() and should be done only for debug purpose. Contrary to that
+>>>>> is not desirable.
+>>>>>
+>>>> Okay. I will raise v2 for that.
+>>>
+>>> More importantly. Your changelog absolutely lacks the _why_ part. It
+>>> just states what the code does which is not all that hard to read from
+>>> the diff. It is usually much more important to present _why_ the patch
+>>> is an improvement and worth merging.
+>>>
+>>
+>> It is improving performance in debug scenario.
+> 
+> Do not forget to add some numbers presenting the benefits when
+> resubmitting.
+Okay.
 
-My guess would be that you're not claiming the DE2 SRAM. See:
-https://lkml.org/lkml/2018/3/16/1096
+> 
+>> More than that, I see it
+>> as a clean up. Sure, I will try to address *why* in next change log. >
+> As Anshuman pointed out the current code layout is deliberate. If you
+> believe that reasons mentioned previously are not valid then dispute
+> them and provide your arguments in the changelog.
+> 
+Here, the trade off is, performance vs catching use-after-free. Original
+code is preferring performance gains. At first, it seemed to me that
+stability is more important than performance. But giving more thoughts
+on this (and reading commit db64fe02258f1507e ("mm: rewrite vmap
+layer")), I feel that use-after-free is client side wrong-doing. vmap
+layer need not loose its best case settings for potential client side
+mistakes. For that, vmap layer can provide debug settings. So, I plan
+to do TLB flush conditional on debug settings.
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---l5tw7h26mt4edepi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrQnhUACgkQ0rTAlCFN
-r3Rw5g//bi5ItJEtn4do7/OcCUCHBlDJUzmIdCFKcllgCew6xphqE3OqPRWxDRSr
-kC1zTNnG641CVZu3WGoXt2WB95fTuIuahHlXdg6S6y/MisoEHzsAbbzO687iSq4y
-neNu8Lswn71WGxEW8fXGafnH/ksoKvE8axdC83BKwR9tThlGhbi+odLpX6JUnJJZ
-wVnR2l88rwpqv2TXKabeOLlFqw+irVPw3vMuLmL4hvaLavj8MQkzpG8nmb50wz6b
-LW6GKO1JkUEFE3HLnXYKJDGAvB+YmDlyQ6xfUpBSBaQERh4N39LysBWIFCCx5nBQ
-JUeqPcbnWU3jKiU826tp+zvKeeRR1VOMQzL69mAfZzJjf3vuUuiJezwrdIstYS0H
-/2Z8iKu2MieJFNuiQ2R0TdI60Jang7CVHRKXxUpg53WaPaIMCq6OI0ojOiCCmtJi
-Co5XqPK2QFIV3oiFCBsCJHj2mmPICh1SPhTrKCFVSrEn4e2TgXVP/YA9ZIrEZzjd
-9jwtrgzObNGPwCs72wwsdQaSNg5+uHlZc1x0GQs3hi2QtxRGIblnQ+KYDJAYEpNU
-ucyPJ7xnAE5RwsZ/g8WbyimTkDJgtKyVGh+YERMcSceSkYjVe0xdfNOVhQOxLRMe
-FiaZHroGDDNuRWXm/lPTg3qA/gzWUjg/yqX1cMjCyjMtC9nrBYI=
-=Xru/
------END PGP SIGNATURE-----
-
---l5tw7h26mt4edepi--
+Chintan
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+Inc. is a member of the Code Aurora Forum, a Linux Foundation
+Collaborative Project
