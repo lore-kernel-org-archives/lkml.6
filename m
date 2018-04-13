@@ -1,126 +1,91 @@
 Return-Path: <ruslan.bilovol@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523658285; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1523658283; cv=none;
         d=google.com; s=arc-20160816;
-        b=QMVv3AkDoqUotpv03ubOeUqb0WRo7Hb4IHHlGeuzLvtUJTJiAMvL3ywZZcuWFpsOWR
-         YQyqM9FpSkcL0LaXOgl4XfW8WPtzSRpN0ozIZUPwdu/FFwPPCrE00auDINtCGUYCQvZ0
-         +dD1VQIrX8bACEQT1/mUPTj8e1GgKCVocrdQ5McQWiW/CFQv+JUoP7b3winusCmZf4c2
-         qxZsGuknCYKts/M9iuXg/zMNRv/N47YFXi9dY+l/vwJOvhyRhITowzH+gJ/C3hEdgks8
-         luEl2yS2a0Kg09SJOwysUkZznTUKOxXDHQsxVUj1YAAc4VrLxaoC7DoO+m7ez9BiDPy8
-         0+6A==
+        b=H+ytq9SMZtiqwODlQy5bA8/HxHdJ0dWS0MW4E4iB8Uwc6Q14N2QKnZ/kZUlZjr+zaF
+         yu+LR20o81+RcfUj/S47oumH8DvTKgH26566GjB0KkoY235S2EotUGx8EQvuMw1wJRfj
+         xHh5sqakepVf1nWd+7U6jyAr3C31fVLybS30VRLreAS1Xaqjf8biLx0JgC0KS1a7zFlD
+         GMQ6wD4gIKur1uuEHJPADuTsKkjXjRv6ItHKJKGK1dhNI7QcEI+ukhZofDRFOg/iHwYH
+         5b5spjk1KQkJ/FKtwxoHGXZzS0NFaHhfqbyh5+gG/YWv3gk9VdQ258RvGdtTENGOMo4s
+         RM6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=7NoS2qPIT10HjdIf1i9AOYCOZQJ/0RemsaOpsXR8Swk=;
-        b=Pjftk9cbA4AC2zavBRtjKt3krL25RAWWf49/Djvwcw1MW/xH1zSkPxWK2D8W8Zhx6B
-         WH9X4yYCMFKbD2NJn19IYN8y3zlnQ6GQITxN+hcCxsSmkV3k4vK3FjNXitaHNua9VW67
-         QkG9Ib1aX5VgCcjaxHue3PhY6N/Vn5ATf8Ow9AtVEtdZI9a+HpHBOXIL6P4aSOCiVCzE
-         TVZmZh9DdcD1vywgQ2yTnAIlLmo9mu/XwmZrlDifxVUSkg7DgzkOX8+hHWaSwFOHoWrW
-         QIu4eGXKE2hCl9Admj7Q/m2hvByfqau0WfovMLKLMncjjYz3xP61pk5ABTrdUYIGol/a
-         CebA==
+        bh=uMtwz6KZeVeu/sRPAAhu7jGuHvvZczbRw4yeXDSlWGc=;
+        b=hXlnP1FW6juvaRQVIxwkbALLOcEDxktqT8VlgycqwlozfiIAqcvpUv0gye5Dp09AiY
+         Lz7pz/7dSVE76Z1ptjYN6ShQKDsIZ4tYkkmUMr/yDfzzTQla1oPIQ+sw4jkrLqgR2Rmc
+         HSuY8VAJkfti688Lm/j4Dy52HTUnNpSlnOxzwrk7HvnK87r/ANFo1Ogr/i6jcULGHR/Y
+         JLMsR4OZORWfTeIy9qcz4VWbn5iEjwU4pS9VOJlaBYubt8E0RDp1tST3xFi3x1T+88/z
+         Ir44Nj1JsJ48Amiy3xCp/HqZv8REJp6wjUvdfmAEeGiWNrxjcpaLTLAbXZlbSwu2ZPMG
+         BKuA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=M7vryjld;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=PBeWgduK;
        spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=M7vryjld;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=PBeWgduK;
        spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4+wcVB35nXy2CAejAvDV49Lh5A6OqAVJuOvOk83uA3G0XMhvr9Lmzpy5BJDtGpHTHf47bCcbg==
+X-Google-Smtp-Source: AIpwx4/kzQ4iptw0uEr45D1EpjG9lcs4NDaJyueOKG2N8cdKeWbJENBH18MZkhT3UXW8MzXpoNvCJQ==
 From: Ruslan Bilovol <ruslan.bilovol@gmail.com>
 To: Takashi Iwai <tiwai@suse.com>
 Cc: Jorge <jorge.sanjuan@codethink.co.uk>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	alsa-devel@alsa-project.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] ALSA: usb: Only get AudioControl header for UAC1 class.
-Date: Sat, 14 Apr 2018 01:24:25 +0300
-Message-Id: <1523658266-2259-4-git-send-email-ruslan.bilovol@gmail.com>
+Subject: [PATCH 2/4] include: usb: audio-v3: add BADD-specific values
+Date: Sat, 14 Apr 2018 01:24:24 +0300
+Message-Id: <1523658266-2259-3-git-send-email-ruslan.bilovol@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1523658266-2259-1-git-send-email-ruslan.bilovol@gmail.com>
 References: <1523658266-2259-1-git-send-email-ruslan.bilovol@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597671510128708966?=
-X-GMAIL-MSGID: =?utf-8?q?1597671510128708966?=
+X-GMAIL-THRID: =?utf-8?q?1597671507799755096?=
+X-GMAIL-MSGID: =?utf-8?q?1597671507799755096?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+Add BADD-specific predefined values to audio-v3
+so usb-audio in ALSA and UAC3 gadget can use them
 
-The control header needs to be read from buffer at this point only
-in the case of UAC1 protocol. Move it inside the switch case as other
-protocols such as the Basic Audio Device spec will have an empty buffer
-that is latter filled as inferred.
-
-Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
-[Ruslan: updated with recently added sanity checks]
 Signed-off-by: Ruslan Bilovol <ruslan.bilovol@gmail.com>
 ---
- sound/usb/card.c | 39 +++++++++++++++++++--------------------
- 1 file changed, 19 insertions(+), 20 deletions(-)
+ include/linux/usb/audio-v3.h | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/sound/usb/card.c b/sound/usb/card.c
-index 4a1c6bb..4d866bd 100644
---- a/sound/usb/card.c
-+++ b/sound/usb/card.c
-@@ -221,32 +221,13 @@ static int snd_usb_create_streams(struct snd_usb_audio *chip, int ctrlif)
- 	struct usb_device *dev = chip->dev;
- 	struct usb_host_interface *host_iface;
- 	struct usb_interface_descriptor *altsd;
--	void *control_header;
- 	int i, protocol;
--	int rest_bytes;
+diff --git a/include/linux/usb/audio-v3.h b/include/linux/usb/audio-v3.h
+index a8959aa..38add1d 100644
+--- a/include/linux/usb/audio-v3.h
++++ b/include/linux/usb/audio-v3.h
+@@ -392,4 +392,30 @@ struct uac3_interrupt_data_msg {
+ #define UAC3_AC_ACTIVE_INTERFACE_CONTROL	0x01
+ #define UAC3_AC_POWER_DOMAIN_CONTROL		0x02
  
- 	/* find audiocontrol interface */
- 	host_iface = &usb_ifnum_to_if(dev, ctrlif)->altsetting[0];
--	control_header = snd_usb_find_csint_desc(host_iface->extra,
--						 host_iface->extralen,
--						 NULL, UAC_HEADER);
- 	altsd = get_iface_desc(host_iface);
- 	protocol = altsd->bInterfaceProtocol;
- 
--	if (!control_header) {
--		dev_err(&dev->dev, "cannot find UAC_HEADER\n");
--		return -EINVAL;
--	}
--
--	rest_bytes = (void *)(host_iface->extra + host_iface->extralen) -
--		control_header;
--
--	/* just to be sure -- this shouldn't hit at all */
--	if (rest_bytes <= 0) {
--		dev_err(&dev->dev, "invalid control header\n");
--		return -EINVAL;
--	}
--
- 	switch (protocol) {
- 	default:
- 		dev_warn(&dev->dev,
-@@ -255,7 +236,25 @@ static int snd_usb_create_streams(struct snd_usb_audio *chip, int ctrlif)
- 		/* fall through */
- 
- 	case UAC_VERSION_1: {
--		struct uac1_ac_header_descriptor *h1 = control_header;
-+		struct uac1_ac_header_descriptor *h1;
-+		int rest_bytes;
++/* BADD predefined Unit/Terminal values */
++#define UAC3_BADD_IT_ID1	1  /* Input Terminal ID1: bTerminalID = 1 */
++#define UAC3_BADD_FU_ID2	2  /* Feature Unit ID2: bUnitID = 2 */
++#define UAC3_BADD_OT_ID3	3  /* Output Terminal ID3: bTerminalID = 3 */
++#define UAC3_BADD_IT_ID4	4  /* Input Terminal ID4: bTerminalID = 4 */
++#define UAC3_BADD_FU_ID5	5  /* Feature Unit ID5: bUnitID = 5 */
++#define UAC3_BADD_OT_ID6	6  /* Output Terminal ID6: bTerminalID = 6 */
++#define UAC3_BADD_FU_ID7	7  /* Feature Unit ID7: bUnitID = 7 */
++#define UAC3_BADD_MU_ID8	8  /* Mixer Unit ID8: bUnitID = 8 */
++#define UAC3_BADD_CS_ID9	9  /* Clock Source Entity ID9: bClockID = 9 */
++#define UAC3_BADD_PD_ID10	10 /* Power Domain ID10: bPowerDomainID = 10 */
++#define UAC3_BADD_PD_ID11	11 /* Power Domain ID11: bPowerDomainID = 11 */
 +
-+		h1 = snd_usb_find_csint_desc(host_iface->extra,
-+							 host_iface->extralen,
-+							 NULL, UAC_HEADER);
-+		if (!h1) {
-+			dev_err(&dev->dev, "cannot find UAC_HEADER\n");
-+			return -EINVAL;
-+		}
++/* BADD wMaxPacketSize of AS endpoints */
++#define UAC3_BADD_EP_MAXPSIZE_SYNC_MONO_16		0x0060
++#define UAC3_BADD_EP_MAXPSIZE_ASYNC_MONO_16		0x0062
++#define UAC3_BADD_EP_MAXPSIZE_SYNC_MONO_24		0x0090
++#define UAC3_BADD_EP_MAXPSIZE_ASYNC_MONO_24		0x0093
++#define UAC3_BADD_EP_MAXPSIZE_SYNC_STEREO_16		0x00C0
++#define UAC3_BADD_EP_MAXPSIZE_ASYNC_STEREO_16		0x00C4
++#define UAC3_BADD_EP_MAXPSIZE_SYNC_STEREO_24		0x0120
++#define UAC3_BADD_EP_MAXPSIZE_ASYNC_STEREO_24		0x0126
 +
-+		rest_bytes = (void *)(host_iface->extra +
-+				host_iface->extralen) - (void *)h1;
++/* BADD sample rate is always fixed to 48kHz */
++#define UAC3_BADD_SAMPLING_RATE				48000
 +
-+		/* just to be sure -- this shouldn't hit at all */
-+		if (rest_bytes <= 0) {
-+			dev_err(&dev->dev, "invalid control header\n");
-+			return -EINVAL;
-+		}
- 
- 		if (rest_bytes < sizeof(*h1)) {
- 			dev_err(&dev->dev, "too short v1 buffer descriptor\n");
+ #endif /* __LINUX_USB_AUDIO_V3_H */
 -- 
 1.9.1
