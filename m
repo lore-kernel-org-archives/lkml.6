@@ -1,99 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754047AbeDMIYf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 04:24:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54074 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753117AbeDMIVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 04:21:12 -0400
-From: Eric Auger <eric.auger@redhat.com>
-To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
-        peter.maydell@linaro.org
-Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v3 04/12] KVM: arm/arm64: Helper to locate free rdist index
-Date: Fri, 13 Apr 2018 10:20:50 +0200
-Message-Id: <1523607658-9166-5-git-send-email-eric.auger@redhat.com>
-In-Reply-To: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
-References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
+        id S1754090AbeDMIZ3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 04:25:29 -0400
+Received: from mail-yb0-f174.google.com ([209.85.213.174]:45489 "EHLO
+        mail-yb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753001AbeDMIZY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 04:25:24 -0400
+X-Google-Smtp-Source: AIpwx48Y9BaKUZ2mZlm5qJbc8G78fb/NZo16TJsbx8r4ZBVZX+Llgmm1yRT6C2U3bv+fW+d8D+h0+spNWQyRkHmWLuM=
+MIME-Version: 1.0
+In-Reply-To: <20180412150826.20988-5-mszeredi@redhat.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-5-mszeredi@redhat.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 13 Apr 2018 11:25:23 +0300
+Message-ID: <CAOQ4uxg0+CJaskEVQdGr6+KkWwDvgzdNsrNt1oocnL6VxsDEFA@mail.gmail.com>
+Subject: Re: [RFC PATCH 04/35] ovl: copy up times
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We introduce vgic_v3_rdist_free_slot to help identifying
-where we can place a new 2x64KB redistributor.
+On Thu, Apr 12, 2018 at 6:07 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
+> Copy up mtime and ctime to overlay inode after times in real object are
+> modified.  Be careful not to dirty cachelines when not necessary.
+>
+> This is in preparation for moving overlay functionality out of the VFS.
+>
+> This patch shouldn't have any observable effect.
+>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/overlayfs/dir.c       |  5 +++++
+>  fs/overlayfs/inode.c     |  1 +
+>  fs/overlayfs/overlayfs.h |  7 +++++++
+>  fs/overlayfs/util.c      | 19 +++++++++++++++++++
+>  4 files changed, 32 insertions(+)
+>
+> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> index 839709c7803a..cd0fa2363723 100644
+> --- a/fs/overlayfs/dir.c
+> +++ b/fs/overlayfs/dir.c
+> @@ -507,6 +507,7 @@ static int ovl_create_or_link(struct dentry *dentry, struct inode *inode,
+>                 else
+>                         err = ovl_create_over_whiteout(dentry, inode, attr,
+>                                                         hardlink);
+> +               ovl_copytimes_with_parent(dentry);
+>         }
+>  out_revert_creds:
+>         revert_creds(old_cred);
+> @@ -768,6 +769,7 @@ static int ovl_do_remove(struct dentry *dentry, bool is_dir)
+>                         drop_nlink(dentry->d_inode);
+>         }
+>         ovl_nlink_end(dentry, locked);
+> +       ovl_copytimes_with_parent(dentry);
+>  out_drop_write:
+>         ovl_drop_write(dentry);
+>  out:
+> @@ -1079,6 +1081,9 @@ static int ovl_rename(struct inode *olddir, struct dentry *old,
+>         ovl_dentry_version_inc(new->d_parent, ovl_type_origin(old) ||
+>                                (d_inode(new) && ovl_type_origin(new)));
+>
+> +       ovl_copytimes_with_parent(old);
+> +       ovl_copytimes_with_parent(new);
+> +
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
----
- virt/kvm/arm/vgic/vgic-mmio-v3.c |  3 +--
- virt/kvm/arm/vgic/vgic-v3.c      | 17 +++++++++++++++++
- virt/kvm/arm/vgic/vgic.h         | 11 +++++++++++
- 3 files changed, 29 insertions(+), 2 deletions(-)
+All the ovl_copytimes_with_parent() calls you added can be replaced with a
+single call in ovl_dentry_version_inc(). Just need to change its name and
+pass it the child instead of the parent dentry.
 
-diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-index d1aab18..49ca176 100644
---- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
-+++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-@@ -593,8 +593,7 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
- 	 * function for all VCPUs when the base address is set.  Just return
- 	 * without doing any work for now.
- 	 */
--	rdreg = list_first_entry(&vgic->rd_regions,
--				 struct vgic_redist_region, list);
-+	rdreg = vgic_v3_rdist_free_slot(&vgic->rd_regions);
- 	if (!rdreg)
- 		return 0;
- 
-diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-index 94de6cd..820012a 100644
---- a/virt/kvm/arm/vgic/vgic-v3.c
-+++ b/virt/kvm/arm/vgic/vgic-v3.c
-@@ -444,6 +444,23 @@ bool vgic_v3_check_base(struct kvm *kvm)
- 	return false;
- }
- 
-+/**
-+ * vgic_v3_rdist_free_slot - Look up registered rdist regions and identify one
-+ * which has free space to put a new rdist regions
-+ *
-+ * If any, return this redist region handle, otherwise returns NULL.
-+ */
-+struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rd_regions)
-+{
-+	struct vgic_redist_region *rdreg;
-+
-+	list_for_each_entry(rdreg, rd_regions, list) {
-+		if (!vgic_v3_redist_region_full(rdreg))
-+			return rdreg;
-+	}
-+	return NULL;
-+}
-+
- int vgic_v3_map_resources(struct kvm *kvm)
- {
- 	int ret = 0;
-diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
-index 830e815..fea32cb 100644
---- a/virt/kvm/arm/vgic/vgic.h
-+++ b/virt/kvm/arm/vgic/vgic.h
-@@ -251,6 +251,17 @@ static inline int vgic_v3_max_apr_idx(struct kvm_vcpu *vcpu)
- 	}
- }
- 
-+static inline bool
-+vgic_v3_redist_region_full(struct vgic_redist_region *region)
-+{
-+	if (!region->count)
-+		return false;
-+
-+	return (region->free_index >= region->count);
-+}
-+
-+struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rdregs);
-+
- int vgic_its_resolve_lpi(struct kvm *kvm, struct vgic_its *its,
- 			 u32 devid, u32 eventid, struct vgic_irq **irq);
- struct vgic_its *vgic_msi_to_its(struct kvm *kvm, struct kvm_msi *msi);
--- 
-2.5.5
+Thanks,
+Amir.
