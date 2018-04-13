@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753603AbeDMHfH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 03:35:07 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:42970 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752015AbeDMHfC (ORCPT
+        id S1753507AbeDMHfE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 03:35:04 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:59833 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751010AbeDMHfC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 13 Apr 2018 03:35:02 -0400
-X-Google-Smtp-Source: AIpwx49GKIROxdCU+rItjZZf3RIuoMjti+iJu1rP+1Sx0y/enyVn5r4buN3kYnTYZYomcdLoS9KpFRY3xTWRaDDvJIqtoRlvx9nq
+X-Google-Smtp-Source: AIpwx48y5xQWx35tDx95rC4LIY+oH+gf5Ug6kB6FoTOWuD1M6+sq1sTvkGiQ/XaYVrjzIRROgG2l354QllsOLAwVBw7uKq73X/1z
 MIME-Version: 1.0
 Date: Fri, 13 Apr 2018 00:35:01 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f3d5500569b5e84b@google.com>
-Subject: INFO: rcu detected stall in do_raw_spin_unlock
-From: syzbot <syzbot+1218790c9dd8ec245b16@syzkaller.appspotmail.com>
+Message-ID: <000000000000f0c26d0569b5e8da@google.com>
+Subject: INFO: rcu detected stall in shrink_dcache_parent
+From: syzbot <syzbot+8e4a81166025b5b7fa66@syzkaller.appspotmail.com>
 To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
@@ -29,53 +29,34 @@ c17b0aadb7d8f87de56a4a374a8131519c0f7422 (Thu Apr 12 16:15:48 2018 +0000)
 Merge tag 'asm-generic' of  
 git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=1218790c9dd8ec245b16
+https://syzkaller.appspot.com/bug?extid=8e4a81166025b5b7fa66
 
+So far this crash happened 5 times on upstream.
 Unfortunately, I don't have any reproducer for this crash yet.
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6462287376285696
+https://syzkaller.appspot.com/x/log.txt?id=5775899525906432
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=-5947642240294114534
 compiler: gcc (GCC) 8.0.1 20180301 (experimental)
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1218790c9dd8ec245b16@syzkaller.appspotmail.com
+Reported-by: syzbot+8e4a81166025b5b7fa66@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-random: crng init done
-INFO: rcu_sched self-detected stall on CPU
-	0-...!: (124999 ticks this GP) idle=c56/1/4611686018427387906  
-softirq=21161/21161 fqs=5
-	 (t=125000 jiffies g=10759 c=10758 q=361)
-rcu_sched kthread starved for 124980 jiffies! g10759 c10758 f0x0  
-RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=0
-RCU grace-period kthread stack dump:
-rcu_sched       R  running task    23224     9      2 0x80000000
-Call Trace:
-  context_switch kernel/sched/core.c:2848 [inline]
-  __schedule+0x801/0x1e30 kernel/sched/core.c:3490
-  schedule+0xef/0x430 kernel/sched/core.c:3549
-  schedule_timeout+0x138/0x240 kernel/time/timer.c:1801
-  rcu_gp_kthread+0x6b5/0x1940 kernel/rcu/tree.c:2231
-  kthread+0x345/0x410 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:411
-NMI backtrace for cpu 0
-CPU: 0 PID: 4516 Comm: syz-executor6 Not tainted 4.16.0+ #1
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
+TCP: request_sock_TCPv6: Possible SYN flooding on port 20002. Sending  
+cookies.  Check SNMP counters.
+INFO: rcu_sched detected stalls on CPUs/tasks:
+	(detected by 0, t=125007 jiffies, g=42063, c=42062, q=674)
+All QSes seen, last rcu_sched kthread activity 125014  
+(4295035404-4294910390), jiffies_till_next_fqs=3, root ->qsmask 0x0
+syz-executor7   R  running task    20696  4548   4539 0x00000008
 Call Trace:
   <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
-  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
-  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1376
-  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
-  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
+  sched_show_task.cold.87+0x27a/0x301 kernel/sched/core.c:5325
+  print_other_cpu_stall.cold.79+0x92f/0x9d2 kernel/rcu/tree.c:1481
+  check_cpu_stall.isra.61+0x706/0xf50 kernel/rcu/tree.c:1599
   __rcu_pending kernel/rcu/tree.c:3356 [inline]
   rcu_pending kernel/rcu/tree.c:3401 [inline]
   rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
@@ -89,22 +70,19 @@ Call Trace:
   smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
   apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:862
   </IRQ>
-RIP: 0010:check_memory_region+0xc0/0x1b0 mm/kasan/kasan.c:268
-RSP: 0018:ffff88018d13f900 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: ffffed00356c97c9 RBX: ffff8801ab64be40 RCX: ffffffff815cbe3e
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8801ab64be40
-RBP: ffff88018d13f908 R08: ffffed00356c97c9 R09: ffffed00356c97c8
-R10: ffffed00356c97c8 R11: ffff8801ab64be43 R12: 1ffff10031a27f25
-R13: dffffc0000000000 R14: ffff88018d13f988 R15: ffff88018d13fb30
-  kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
-  atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
-  queued_spin_is_locked include/asm-generic/qspinlock.h:36 [inline]
-  debug_spin_unlock kernel/locking/spinlock_debug.c:98 [inline]
-  do_raw_spin_unlock+0x9e/0x2e0 kernel/locking/spinlock_debug.c:134
-  __raw_spin_unlock include/linux/spinlock_api_smp.h:151 [inline]
-  _raw_spin_unlock+0x22/0x30 kernel/locking/spinlock.c:176
-  spin_unlock include/linux/spinlock.h:350 [inline]
-  d_walk+0x451/0xc80 fs/dcache.c:1298
+RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783  
+[inline]
+RIP: 0010:seqcount_lockdep_reader_access include/linux/seqlock.h:83 [inline]
+RIP: 0010:read_seqcount_begin include/linux/seqlock.h:164 [inline]
+RIP: 0010:read_seqbegin include/linux/seqlock.h:433 [inline]
+RIP: 0010:read_seqbegin_or_lock include/linux/seqlock.h:529 [inline]
+RIP: 0010:d_walk+0x840/0xc80 fs/dcache.c:1248
+RSP: 0018:ffff88018cc0f9d8 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
+RAX: ffff88018cc02740 RBX: 0000000000000293 RCX: 1ffff100319805fd
+RDX: 0000000000000000 RSI: ffffffff81c2a7ab RDI: 0000000000000293
+RBP: ffff88018cc0fb58 R08: ffff88018cc02f78 R09: 0000000000000006
+R10: ffff88018cc02740 R11: 0000000000000000 R12: 0000000000000200
+R13: dffffc0000000000 R14: 1ffff10031981f7e R15: ffff88018cc0fb30
   shrink_dcache_parent+0x179/0x230 fs/dcache.c:1486
   vfs_rmdir+0x202/0x470 fs/namei.c:3850
   do_rmdir+0x523/0x610 fs/namei.c:3911
@@ -113,12 +91,24 @@ R13: dffffc0000000000 R14: ffff88018d13f988 R15: ffff88018d13fb30
   do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x42/0xb7
 RIP: 0033:0x454fe7
-RSP: 002b:00007ffdde8b2138 EFLAGS: 00000202 ORIG_RAX: 0000000000000054
+RSP: 002b:00007ffc1ddb5118 EFLAGS: 00000206 ORIG_RAX: 0000000000000054
 RAX: ffffffffffffffda RBX: 0000000000000065 RCX: 0000000000454fe7
-RDX: 0000000000000000 RSI: 00007ffdde8b3ee0 RDI: 00007ffdde8b3ee0
-RBP: 00007ffdde8b3ee0 R08: 0000000000000000 R09: 0000000000000001
-R10: 000000000000000a R11: 0000000000000202 R12: 0000000000d1c940
-R13: 0000000000000000 R14: 0000000000000115 R15: 000000000001149b
+RDX: 0000000000000000 RSI: 00007ffc1ddb6ec0 RDI: 00007ffc1ddb6ec0
+RBP: 00007ffc1ddb6ec0 R08: 0000000000000000 R09: 0000000000000001
+R10: 000000000000000a R11: 0000000000000206 R12: 00000000011ab940
+R13: 0000000000000000 R14: 00000000000004d0 R15: 000000000003b525
+rcu_sched kthread starved for 125573 jiffies! g42063 c42062 f0x2  
+RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=1
+RCU grace-period kthread stack dump:
+rcu_sched       R  running task    23592     9      2 0x80000000
+Call Trace:
+  context_switch kernel/sched/core.c:2848 [inline]
+  __schedule+0x801/0x1e30 kernel/sched/core.c:3490
+  schedule+0xef/0x430 kernel/sched/core.c:3549
+  schedule_timeout+0x138/0x240 kernel/time/timer.c:1801
+  rcu_gp_kthread+0x6b5/0x1940 kernel/rcu/tree.c:2231
+  kthread+0x345/0x410 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:411
 
 
 ---
