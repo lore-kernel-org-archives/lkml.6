@@ -1,60 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751670AbeDMSRG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 14:17:06 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:44613 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750994AbeDMSRD (ORCPT
+        id S1751797AbeDMSTe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 14:19:34 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42050 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751125AbeDMSTd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 14:17:03 -0400
-X-Google-Smtp-Source: AIpwx4/+yAWptRyxoTPgUyaVqiScbjtI+C0sObKsRXO1ODVuzgHvnm4w+u1TyCimtkNdr7KdT+ceug==
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: oss-drivers@netronome.com, Tal Gilboa <talgi@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH] PCI: Add PCIe to pcie_print_link_status() messages
-Date: Fri, 13 Apr 2018 11:16:38 -0700
-Message-Id: <20180413181638.6424-1-jakub.kicinski@netronome.com>
-X-Mailer: git-send-email 2.16.2
+        Fri, 13 Apr 2018 14:19:33 -0400
+Date: Fri, 13 Apr 2018 20:19:24 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexei Starovoitov <ast@fb.com>
+Cc: Yonghong Song <yhs@fb.com>, mingo@kernel.org, daniel@iogearbox.net,
+        linux-kernel@vger.kernel.org, x86@kernel.org, kernel-team@fb.com,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] x86/cpufeature: guard asm_volatile_goto usage with
+ CC_HAVE_ASM_GOTO
+Message-ID: <20180413181924.GT4064@hirez.programming.kicks-ass.net>
+References: <20180410204259.3981586-1-yhs@fb.com>
+ <20180410210716.GI4082@hirez.programming.kicks-ass.net>
+ <552d5866-912e-afde-f25a-77ae8390816d@fb.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <552d5866-912e-afde-f25a-77ae8390816d@fb.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the pcie_print_link_status() will print PCIe bandwidth
-and link width information but does not mention it is pertaining
-to the PCIe.  Since this and related functions are used exclusively
-by networking drivers today users may get confused into thinking
-that it's the NIC bandwidth that is being talked about.  Insert a
-"PCIe" into the messages.
+On Tue, Apr 10, 2018 at 02:28:04PM -0700, Alexei Starovoitov wrote:
+> Instead of
+> #ifdef CC_HAVE_ASM_GOTO
+> we can replace it with
+> #ifndef __BPF__
+> or some other name,
 
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
----
- drivers/pci/pci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index aa86e904f93c..73a0a4993f6a 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5273,11 +5273,11 @@ void pcie_print_link_status(struct pci_dev *dev)
- 	bw_avail = pcie_bandwidth_available(dev, &limiting_dev, &speed, &width);
- 
- 	if (bw_avail >= bw_cap)
--		pci_info(dev, "%u.%03u Gb/s available bandwidth (%s x%d link)\n",
-+		pci_info(dev, "%u.%03u Gb/s available PCIe bandwidth (%s x%d link)\n",
- 			 bw_cap / 1000, bw_cap % 1000,
- 			 PCIE_SPEED2STR(speed_cap), width_cap);
- 	else
--		pci_info(dev, "%u.%03u Gb/s available bandwidth, limited by %s x%d link at %s (capable of %u.%03u Gb/s with %s x%d link)\n",
-+		pci_info(dev, "%u.%03u Gb/s available PCIe bandwidth, limited by %s x%d link at %s (capable of %u.%03u Gb/s with %s x%d link)\n",
- 			 bw_avail / 1000, bw_avail % 1000,
- 			 PCIE_SPEED2STR(speed), width,
- 			 limiting_dev ? pci_name(limiting_dev) : "<unknown>",
--- 
-2.16.2
+I would prefer the BPF specific hack; otherwise we might be encouraging
+people to build the kernel proper without asm-goto.
