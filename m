@@ -1,60 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751771AbeDMVQi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 17:16:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54682 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750867AbeDMVQh (ORCPT
+        id S1752122AbeDMVQt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 17:16:49 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:45927 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751953AbeDMVQq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 17:16:37 -0400
-Date: Fri, 13 Apr 2018 14:16:34 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Ioan Nicu <ioan.nicu.ext@nokia.com>
-Cc: Alexandre Bounine <alex.bou9@gmail.com>,
-        Barry Wood <barry.wood@idt.com>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Frank Kunz <frank.kunz@nokia.com>,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rapidio: fix rio_dma_transfer error handling
-Message-Id: <20180413141634.4935b2da32aa4705b9181ffd@linux-foundation.org>
-In-Reply-To: <20180413070917.GA2794@nokia.com>
-References: <20180412150605.GA31409@nokia.com>
-        <20180412142803.cd235a40155503700dc73b21@linux-foundation.org>
-        <d77db0b1-2cca-c0f6-987d-32ffb45cb16f@gmail.com>
-        <20180413070917.GA2794@nokia.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 13 Apr 2018 17:16:46 -0400
+X-Google-Smtp-Source: AIpwx499zOuzWXrFErtTAYgDlJA6OmHY0hPSbmbgMtzBQmk53oHH8mlM2mo3CHP6mR7duJlztXVwkQ==
+Date: Fri, 13 Apr 2018 16:16:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
+Message-ID: <20180413211644.wd7lrl4phqtshpzp@rob-hp-laptop>
+References: <1523364701-15383-1-git-send-email-geert+renesas@glider.be>
+ <1523364701-15383-2-git-send-email-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523364701-15383-2-git-send-email-geert+renesas@glider.be>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Apr 2018 09:09:18 +0200 Ioan Nicu <ioan.nicu.ext@nokia.com> wrote:
-
-> > > And please remember to always include all information regarding
-> > > end-user impact when fixing bugs.
-> > > 
-> > This bug fix is applicable to versions starting from v4.6
+On Tue, Apr 10, 2018 at 02:51:37PM +0200, Geert Uytterhoeven wrote:
+> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
+> limited to clock providers.
 > 
-> Actually, this is something I broke with my previous patch where I added a
-> kref to the mport_dma_req structure. Before this patch, all the error paths
-> were doing kfree(req) instead of kref_put(&req->refcount, dma_req_free).
+> Hence move these helpers into their own header file, so callers that are
+> not clock providers no longer have to include <linux/clk-provider.h>.
 > 
-> Now that dma_req_free() is called, it dereferences req->dmach, which is
-> initialized late in do_dma_request(), so dma_req_free() could be called
-> with a NULL req->dmach in some cases.
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+>   - New.
 > 
-> Sorry if I did not make this clear enough in the description.
+> I have't added an SPDX-License-Identifier line, as
+> <linux/clk-provider.h> also doesn't have one yet.
 
-I added
+Should that matter?
 
-Fixes: bbd876adb8c72 ("rapidio: use a reference count for struct mport_dma_req")
+> 
+> Other candidates to be moved here later?
+>   - of_clk_get(),
+>   - of_clk_get_by_name(),
+>   - of_clk_get_from_provider().
+> ---
+>  include/linux/clk-provider.h | 14 +-------------
+>  include/linux/of_clk.h       | 29 +++++++++++++++++++++++++++++
 
-(correct?) and removed cc:stable.
+Please update MAINTAINERS so I am not the maintainer. :)
+
+>  2 files changed, 30 insertions(+), 13 deletions(-)
+>  create mode 100644 include/linux/of_clk.h
