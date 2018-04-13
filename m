@@ -1,121 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754201AbeDMJmZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 05:42:25 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:45630 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753356AbeDMJmX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 05:42:23 -0400
-Date: Fri, 13 Apr 2018 10:42:11 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
- kill() returns wrong values in si_pid and si_uid
-Message-ID: <20180413094211.GN16141@n2100.armlinux.org.uk>
-References: <20180409152253.GD10489@altlinux.org>
- <20180412013435.GA21219@altlinux.org>
- <20180412095811.GC16141@n2100.armlinux.org.uk>
- <20180412110314.GA28070@altlinux.org>
- <20180412121949.GD16141@n2100.armlinux.org.uk>
- <20180412124928.GA29458@altlinux.org>
- <20180412131404.GE16141@n2100.armlinux.org.uk>
- <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
- <20180412172051.GK16141@n2100.armlinux.org.uk>
- <CA+55aFwjZqd8J0=veki1g+quQg8amEG4NnMe-h7HFksn=F=x_Q@mail.gmail.com>
+        id S1754132AbeDMJoz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 05:44:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38860 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752360AbeDMJox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 05:44:53 -0400
+Subject: Re: [PATCH] vfio: platform: Fix using devices in PM Domains
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <1523438648-17672-1-git-send-email-geert+renesas@glider.be>
+ <0cc6cead-cd75-0a18-7a53-5ce16b03e823@redhat.com>
+ <CAMuHMdUHEkamgGORLx37QOns22LTrx_TGYHmxYWZ=TNyhABh=A@mail.gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, KVM list <kvm@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Auger Eric <eric.auger@redhat.com>
+Message-ID: <4eedb2df-4bf8-814e-7e47-60faa646f4bf@redhat.com>
+Date: Fri, 13 Apr 2018 11:44:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFwjZqd8J0=veki1g+quQg8amEG4NnMe-h7HFksn=F=x_Q@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAMuHMdUHEkamgGORLx37QOns22LTrx_TGYHmxYWZ=TNyhABh=A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 10:22:15AM -0700, Linus Torvalds wrote:
-> On Thu, Apr 12, 2018 at 10:20 AM, Russell King - ARM Linux
-> <linux@armlinux.org.uk> wrote:
-> >
-> > This file was created to contain FPE_FIXME, by the "signal/arm: Document
-> > conflicts with SI_USER and SIGFPE" commit so if we're removing it, it
-> > would be better to remove the whole file.
+Hi Geert,
+
+On 13/04/18 11:19, Geert Uytterhoeven wrote:
+> Hi Eric,
 > 
-> Fair enough. I'm not going to commit that anyway since I can't test
-> it, but yes, if it tests ok that sounds like the right thing to do.
+> On Fri, Apr 13, 2018 at 11:14 AM, Auger Eric <eric.auger@redhat.com> wrote:
+>> On 11/04/18 11:24, Geert Uytterhoeven wrote:
+>>> If a device is part of a PM Domain (e.g. power and/or clock domain), its
+>>> power state is managed using Runtime PM.  Without Runtime PM, the device
+>>> may not be powered up, causing subtle failures, crashes, or system
+>>> lock-ups when the device is accessed by the guest.
+>> the device may not be powered up/clcoked or power/clock may be switched
+>> off while the guest uses it.
+>>>
+>>> Fix this by adding Runtime PM support, powering the device when the VFIO
+>>> device is opened by the guest.
+>>>
+>>> Note that while more fine-grained power management could be implemented
+>>> on the guest side, if exported, this would be inherently unsafe, as
+>>> abusing it may kill the whole system.
+>>
+>> Please can you elaborate on this remark please?
+> 
+> If power-management of the device would be delegated to the guest, and the
+> guest forgets to enable device power before accessing the device's registers,
+> this could lock up the system, and thus disturb both the host and other guests.
+Wouldn't you need to assign another device or use para-virt to allow the
+guest to perform this power management control? I think you can remove
+this paragraph from the commit message.
 
-Yes, it does solve the problem at hand with strace - the exact patch I
-tested against 4.16 is below.
+Thanks
 
-Testing this exact code path (exceptions set to VFP_EXCEPTION_ERROR)
-is something that can only happen if the hardware does something stupid,
-and I don't have a way of making it do that, so the code path can't be
-tested.
-
-However, FPE_FLTUNK is not defined in older kernels, so while we can
-fix it this way for the current merge window, that doesn't help 4.16.
-How we solve that depends what happens with Eric's patch (266da65e9156
-("signal: Add FPE_FLTUNK si_code for undiagnosable fp exceptions"))
-that introduces FPE_FLTUNK - and there's also the problem of NSIGFPE,
-which kernel/signal.c uses in the path that selects the siginfo layout.
-
-Given that the path we're talking about is unlikely to happen (as
-mentioned in my second paragraph) I still think reverting Eric's patch
-is the right way forward for older kernels.
-
-(Note, my previous comment about the si_code initialiser was incorrect.)
-
-diff --git a/arch/arm/include/uapi/asm/siginfo.h b/arch/arm/include/uapi/asm/siginfo.h
-deleted file mode 100644
-index d0513880be21..000000000000
---- a/arch/arm/include/uapi/asm/siginfo.h
-+++ /dev/null
-@@ -1,13 +0,0 @@
--#ifndef __ASM_SIGINFO_H
--#define __ASM_SIGINFO_H
--
--#include <asm-generic/siginfo.h>
--
--/*
-- * SIGFPE si_codes
-- */
--#ifdef __KERNEL__
--#define FPE_FIXME	0	/* Broken dup of SI_USER */
--#endif /* __KERNEL__ */
--
--#endif
-diff --git a/arch/arm/vfp/vfpmodule.c b/arch/arm/vfp/vfpmodule.c
-index 4c375e11ae95..8a1a5e6048d2 100644
---- a/arch/arm/vfp/vfpmodule.c
-+++ b/arch/arm/vfp/vfpmodule.c
-@@ -28,6 +28,10 @@
- #include <asm/thread_notify.h>
- #include <asm/vfp.h>
- 
-+#ifndef FPE_FLTUNK
-+#define FPE_FLTUNK 14
-+#endif
-+
- #include "vfpinstr.h"
- #include "vfp.h"
- 
-@@ -257,7 +261,7 @@ static void vfp_raise_exceptions(u32 exceptions, u32 inst, u32 fpscr, struct pt_
- 
- 	if (exceptions == VFP_EXCEPTION_ERROR) {
- 		vfp_panic("unhandled bounce", inst);
--		vfp_raise_sigfpe(FPE_FIXME, regs);
-+		vfp_raise_sigfpe(FPE_FLTUNK, regs);
- 		return;
- 	}
- 
-
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+Eric
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
