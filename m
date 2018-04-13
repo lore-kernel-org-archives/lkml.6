@@ -1,105 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754301AbeDMNWL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 09:22:11 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:42622 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754091AbeDMNWJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 09:22:09 -0400
-X-Google-Smtp-Source: AIpwx48lj33hdHDBGw77S0nOqZckoAYALB7kuEALMKs7SDeY1AhKaGvX/GydclbVd3YHO6kYVd7kBXYU8JPINCA2fUQ=
+        id S1754348AbeDMNWn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 09:22:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37424 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754094AbeDMNWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 09:22:41 -0400
+Date: Fri, 13 Apr 2018 15:22:37 +0200
+From: Jesper Dangaard Brouer <brouer@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+        Daniel Borkmann <borkmann@iogearbox.net>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: brouer@redhat.com, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>
+Subject: Build error for samples/bpf/ due to commit d0266046ad54 ("x86:
+ Remove FAST_FEATURE_TESTS")
+Message-ID: <20180413152237.3727911f@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1522156531-28348-13-git-send-email-suzuki.poulose@arm.com>
-References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com> <1522156531-28348-13-git-send-email-suzuki.poulose@arm.com>
-From: Peter Maydell <peter.maydell@linaro.org>
-Date: Fri, 13 Apr 2018 14:21:48 +0100
-Message-ID: <CAFEAcA-jUSHuwRrWCH6vFENmEi7Xskn9s9BgDmBKj3YKCyXHXQ@mail.gmail.com>
-Subject: Re: [PATCH v2 12/17] kvm: arm/arm64: Expose supported physical
- address limit for VM
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: arm-mail-list <linux-arm-kernel@lists.infradead.org>,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kvmarm@lists.cs.columbia.edu, kvm-devel <kvm@vger.kernel.org>,
-        Christoffer Dall <cdall@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27 March 2018 at 14:15, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
-> Expose the maximum physical address size supported by the host
-> for a VM. This could be later used by the userspace to choose the
-> appropriate size for a given VM. The limit is determined as the
-> minimum of actual CPU limit, the kernel limit (i.e, either 48 or 52)
-> and the stage2 page table support limit (which is 40bits at the moment).
-> For backward compatibility, we support a minimum of 40bits. The limit
-> will be lifted as we add support for the stage2 to support the host
-> kernel PA limit.
->
-> This value may be different from what is exposed to the VM via
-> CPU ID registers. The limit only applies to the stage2 page table.
->
-> Cc: Christoffer Dall <cdall@kernel.org>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Peter Maydel <peter.maydell@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  Documentation/virtual/kvm/api.txt | 14 ++++++++++++++
->  arch/arm/include/asm/kvm_mmu.h    |  5 +++++
->  arch/arm64/include/asm/kvm_mmu.h  |  5 +++++
->  include/uapi/linux/kvm.h          |  6 ++++++
->  virt/kvm/arm/arm.c                |  6 ++++++
->  5 files changed, 36 insertions(+)
->
-> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-> index 792fa87..55908a8 100644
-> --- a/Documentation/virtual/kvm/api.txt
-> +++ b/Documentation/virtual/kvm/api.txt
-> @@ -3500,6 +3500,20 @@ Returns: 0 on success; -1 on error
->  This ioctl can be used to unregister the guest memory region registered
->  with KVM_MEMORY_ENCRYPT_REG_REGION ioctl above.
->
-> +4.113 KVM_ARM_GET_MAX_VM_PHYS_SHIFT
-> +Capability: basic
-> +Architectures: arm, arm64
-> +Type: system ioctl
-> +Parameters: none
-> +Returns: log2(Maximum physical address space size) supported by the
-> +hyperviosr.
+Hi Peter,
 
-typo: "hypervisor".
+Your commit d0266046ad54 ("x86: Remove FAST_FEATURE_TESTS") broke build
+for several samples/bpf programs. I'm unsure what the best way forward
+is to unbreak these...
 
-> +
-> +This ioctl can be used to identify the maximum physical address space size
-> +supported by the hypervisor.
+The issue is that these samples are build with LLVM/clang (which
+doesn't like 'asm goto' constructs).  And they end up including
+arch/x86/include/asm/cpufeature.h via a long include path, see build
+examples below (through different path to include/linux/thread_info.h).
 
-Is that the physical address space on the host, or the physical
-address space size we present to the guest?
+Maybe Alexei or Daniel have an idea how to work around this?
+As tools/testing/selftests/bpf/ does not seem to fail!?
 
-> The returned value indicates the maximum size
-> +of the address that can be resolved by the stage2 translation table on
-> +arm/arm64. On arm64, the value is decided based on the host kernel
-> +configuration and the system wide safe value of ID_AA64MMFR0_EL1:PARange.
-> +This may not match the value exposed to the VM in CPU ID registers.
+-- 
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
 
-Isn't it likely to confuse the guest if we lie to it about the PA range it
-sees? When would the two values differ?
+Build error#1:
+--------------
+clang  -nostdinc -isystem /usr/lib/gcc/x86_64-redhat-linux/7/include -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h  -Isamples/bpf \
+        -I./tools/testing/selftests/bpf/ \
+        -D__KERNEL__ -Wno-unused-value -Wno-pointer-sign \
+        -D__TARGET_ARCH_x86 -Wno-compare-distinct-pointer-types \
+        -Wno-gnu-variable-sized-type-not-at-end \
+        -Wno-address-of-packed-member -Wno-tautological-compare \
+        -Wno-unknown-warning-option  \
+        -O2 -emit-llvm -c samples/bpf/sockex2_kern.c -o -| llc -march=bpf -filetype=obj -o samples/bpf/sockex2_kern.o
+In file included from samples/bpf/sockex2_kern.c:3:
+In file included from ./include/uapi/linux/in.h:24:
+In file included from ./include/linux/socket.h:8:
+In file included from ./include/linux/uio.h:13:
+In file included from ./include/linux/thread_info.h:38:
+In file included from ./arch/x86/include/asm/thread_info.h:53:
+./arch/x86/include/asm/cpufeature.h:150:2: error: 'asm goto' constructs are not supported yet
+        asm_volatile_goto("1: jmp 6f\n"
+        ^
+./include/linux/compiler-gcc.h:290:42: note: expanded from macro 'asm_volatile_goto'
+#define asm_volatile_goto(x...) do { asm goto(x); asm (""); } while (0)
+                                         ^
 
-Do we also need a 'set' operation, so userspace can create a VM
-that has a 40 bit userspace on a CPU that supports more than that,
-or does it just work?
 
-What's the x86 API for KVM to tell userspace about physical address
-range restrictions?
+Build error#2:
+--------------
+clang  -nostdinc -isystem /usr/lib/gcc/x86_64-redhat-linux/7/include -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h  -Isamples/bpf \
+        -I./tools/testing/selftests/bpf/ \
+        -D__KERNEL__ -Wno-unused-value -Wno-pointer-sign \
+        -D__TARGET_ARCH_x86 -Wno-compare-distinct-pointer-types \
+        -Wno-gnu-variable-sized-type-not-at-end \
+        -Wno-address-of-packed-member -Wno-tautological-compare \
+        -Wno-unknown-warning-option  \
+        -O2 -emit-llvm -c samples/bpf/tracex1_kern.c -o -| llc -march=bpf -filetype=obj -o samples/bpf/tracex1_kern.o
+In file included from samples/bpf/tracex1_kern.c:7:
+In file included from ./include/linux/skbuff.h:19:
+In file included from ./include/linux/time.h:6:
+In file included from ./include/linux/seqlock.h:36:
+In file included from ./include/linux/spinlock.h:51:
+In file included from ./include/linux/preempt.h:81:
+In file included from ./arch/x86/include/asm/preempt.h:7:
+In file included from ./include/linux/thread_info.h:38:
+In file included from ./arch/x86/include/asm/thread_info.h:53:
+./arch/x86/include/asm/cpufeature.h:150:2: error: 'asm goto' constructs are not supported yet
+        asm_volatile_goto("1: jmp 6f\n"
+        ^
+./include/linux/compiler-gcc.h:290:42: note: expanded from macro 'asm_volatile_goto'
+#define asm_volatile_goto(x...) do { asm goto(x); asm (""); } while (0)
+                                         ^
 
-thanks
--- PMM
+
+Build error#3:
+--------------
+clang  -nostdinc -isystem /usr/lib/gcc/x86_64-redhat-linux/7/include -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86
+/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h  -Isamples/bpf \
+        -I./tools/testing/selftests/bpf/ \
+        -D__KERNEL__ -Wno-unused-value -Wno-pointer-sign \
+        -D__TARGET_ARCH_x86 -Wno-compare-distinct-pointer-types \
+        -Wno-gnu-variable-sized-type-not-at-end \
+        -Wno-address-of-packed-member -Wno-tautological-compare \
+        -Wno-unknown-warning-option  \
+        -O2 -emit-llvm -c samples/bpf/xdp1_kern.c -o -| llc -march=bpf -filetype=obj -o samples/bpf/xdp1_kern.o
+In file included from samples/bpf/xdp1_kern.c:9:
+In file included from ./include/linux/in.h:23:
+In file included from ./include/uapi/linux/in.h:24:
+In file included from ./include/linux/socket.h:8:
+In file included from ./include/linux/uio.h:13:
+In file included from ./include/linux/thread_info.h:38:
+In file included from ./arch/x86/include/asm/thread_info.h:53:
+./arch/x86/include/asm/cpufeature.h:150:2: error: 'asm goto' constructs are not supported yet
+        asm_volatile_goto("1: jmp 6f\n"
+        ^
+./include/linux/compiler-gcc.h:290:42: note: expanded from macro 'asm_volatile_goto'
+#define asm_volatile_goto(x...) do { asm goto(x); asm (""); } while (0)
