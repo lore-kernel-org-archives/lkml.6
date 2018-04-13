@@ -1,118 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754094AbeDMJTq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 05:19:46 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55234 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751776AbeDMJTo (ORCPT
+        id S1754143AbeDMJT6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 05:19:58 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:38148 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754032AbeDMJT4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 05:19:44 -0400
-X-Google-Smtp-Source: AIpwx4+Vkh0HVWk56dP8MknbgyYGtUtT1RYmFIgG8NUqTvYwclykrOcEdtDy5re/c8xEu5QrRZYrUA==
-Subject: Re: [GIT PULL] Thermal management updates for v4.17-rc1
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "Li, Philip" <philip.li@intel.com>
-References: <1523436077.16235.5.camel@intel.com> <2944702.qKZ0LXufY7@amdc3058>
- <5afdb571-8aaa-941f-ff4f-7c4b031b5efb@linaro.org>
- <CGME20180413090820epcas1p17dd97e3815909e0714f9d5a80eb82be9@epcas1p1.samsung.com>
- <3546651.LUmDXQgY88@amdc3058>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <16cbc915-ad89-7bab-c644-8086cfef082f@linaro.org>
-Date: Fri, 13 Apr 2018 11:19:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 13 Apr 2018 05:19:56 -0400
+X-Google-Smtp-Source: AIpwx4/ioO9vX4/Kbf5H5HxdLeAWl4giYkbam8RaPg51Q0I5WfrFrO4iGSj3KR+PujfvZkhx2h129NmOtMyjR8dJ19s=
 MIME-Version: 1.0
-In-Reply-To: <3546651.LUmDXQgY88@amdc3058>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <0cc6cead-cd75-0a18-7a53-5ce16b03e823@redhat.com>
+References: <1523438648-17672-1-git-send-email-geert+renesas@glider.be> <0cc6cead-cd75-0a18-7a53-5ce16b03e823@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Apr 2018 11:19:54 +0200
+X-Google-Sender-Auth: _otnvTint5eVm85UN_qldy3H-s0
+Message-ID: <CAMuHMdUHEkamgGORLx37QOns22LTrx_TGYHmxYWZ=TNyhABh=A@mail.gmail.com>
+Subject: Re: [PATCH] vfio: platform: Fix using devices in PM Domains
+To: Auger Eric <eric.auger@redhat.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, KVM list <kvm@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/04/2018 11:08, Bartlomiej Zolnierkiewicz wrote:
-> On Friday, April 13, 2018 11:00:43 AM Daniel Lezcano wrote:
->> On 13/04/2018 10:55, Bartlomiej Zolnierkiewicz wrote:
->>> On Friday, April 13, 2018 01:39:05 PM Zhang Rui wrote:
->>>> Hi, Eduardo,
->>>>
->>>> On 四, 2018-04-12 at 21:08 -0700, Eduardo Valentin wrote:
->>>>> Hello,
->>>>>
->>>>> On Thu, Apr 12, 2018 at 09:55:19AM -0700, Linus Torvalds wrote:
->>>>>>
->>>>>> On Wed, Apr 11, 2018 at 10:08 PM, Zhang Rui <rui.zhang@intel.com>
->>>>>> wrote:
->>>>>>>
->>>>>>>
->>>>>>> could you please illustrate me what the kconfig & warning is?
->>>>>> Just "make allmodconfig" and the warning is about a uninitialized
->>>>>> variable.
->>>>>>
->>>>>> Line 304 in drivers/thermal/samsung/exynos_tmu.c if my shell
->>>>>> history
->>>>>> is to be believed.
->>>>>>
->>>>>>                 Linus
->>>>> Yeah, this has also passed my local compilation error. Somehow my
->>>>> gcc4.9
->>>>> is not catching it. Using an older gcc (gcc4.6) does catch it.
->>>>>
->>>>> Anyways, given that the conversion functions are written to cover
->>>>> for unexpected cal_type, the right way of fixing this is to rewrite
->>>>> the conversion functions to allow for returning error codes and
->>>>> adjusting the callers as expected.
->>>>>
->>>>> Rui, bzolnier, please consider the following fix:
->>>>>
->>>> as it is late in this merge window, I'd prefer to
->>>> 1. drop all the thermal-soc material in the first pull request which I
->>>> will send out soon.
->>>> 2. you can prepare another pull request containing the thermal-soc
->>>> materials except the exynos fixes
->>>> 3. exynos fixes with the problem solved can be queued for -rc2 or
->>>> later.
->>>
->>> Could you please just merge the obvious fix from Arnd instead?
->>>
->>> [ it was posted two weeks ago and ACKed by me ]
->>>
->>> https://patchwork.kernel.org/patch/10313313/
->>
->> I'm not sure these are correct fixes.
->>
->> The change 480b5bfc16e1 tells:
->>
->> "There should be no functional changes caused by this patch."
->>
->> but the fix above returns 0 as a default value instead of '50' or '25'
->> for the 5440 and that impacts the threshold etc ...
->>
->> IMO, the correct fix would be to define a default value '50', override
->> it at init time to '25' if it is a 5440. And then the variable 'temp'
->> and 'temp_code' get this value in the default case.
-> 
-> It is okay to return 0 because this code-path (the default one) will be
-> never hit by the driver (probe makes sure of it) - the default case is
-> here is just to silence compilation errors..
+Hi Eric,
 
-The init function is making sure cal_type is one or another. Can you fix
-it correctly by replacing the 'switch' by a 'if' instead of adding dead
-branches to please gcc?
+On Fri, Apr 13, 2018 at 11:14 AM, Auger Eric <eric.auger@redhat.com> wrote:
+> On 11/04/18 11:24, Geert Uytterhoeven wrote:
+>> If a device is part of a PM Domain (e.g. power and/or clock domain), its
+>> power state is managed using Runtime PM.  Without Runtime PM, the device
+>> may not be powered up, causing subtle failures, crashes, or system
+>> lock-ups when the device is accessed by the guest.
+> the device may not be powered up/clcoked or power/clock may be switched
+> off while the guest uses it.
+>>
+>> Fix this by adding Runtime PM support, powering the device when the VFIO
+>> device is opened by the guest.
+>>
+>> Note that while more fine-grained power management could be implemented
+>> on the guest side, if exported, this would be inherently unsafe, as
+>> abusing it may kill the whole system.
+>
+> Please can you elaborate on this remark please?
 
-if (data->cal_type == TYPE_TWO_POINT_TRIMMING) {
-	return ...;
-}
+If power-management of the device would be delegated to the guest, and the
+guest forgets to enable device power before accessing the device's registers,
+this could lock up the system, and thus disturb both the host and other guests.
 
-return ...;
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
