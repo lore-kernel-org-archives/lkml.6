@@ -1,134 +1,324 @@
-Return-Path: <maninder1.s@samsung.com>
-X-Google-Smtp-Source: AIpwx4/SIr57hZRy2B8VpY+Nlj86CEAFPeOLBgvixHm3TLk/n0veB0zhIKe/2k1kKxWeSqzSbfsX
-ARC-Seal: i=1; a=rsa-sha256; t=1524215373; cv=none;
+Return-Path: <kernel-hardening-return-12994-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4+keDsoeRAb5YwfBOiCBcKTwAMbAW4RLHkgUQOIQVtLrup/kUex5yq56GOE7cQogCQHreYm
+ARC-Seal: i=1; a=rsa-sha256; t=1523654691; cv=none;
         d=google.com; s=arc-20160816;
-        b=Dc7We3f+lla7jWGpGaEil+BiPBHq8ZsR/GsNZ6vVpYf/56nruD3VghKUga/2YCMFFG
-         h/Y7NzG9WFoDwz1/U8useQcLlzY4SbxB9MIEGt5i66lfCYhUbKfv7uV9nWN0mNLgiu0x
-         sLvCHZtqH+PXqItXChJropEyWWhszlMz1/anqeed7ukk2TUApsElvSs37KrSDnU+rdIn
-         7zbbLOwcJZ5ZllHKiVB6qr+EKaL4PPy0V5ZuxM3RfdEZDzxqxs9YQEYFPQRu7b92PPnK
-         B8AJM2QCIGhDv+jtaE+kzO86tubH30m7YWnKGFdTvJmTOuuyyGl9nj0fi5mtXIRJx1eS
-         +0Gw==
+        b=DSs1cSlcUyTV9NseKIojeQ51frBwY6vCCZC6jXpmoQzMHviCJMGqsM3q5oBYQIdlaY
+         42XmNuyAeBt+Ym8vp0U0lwmCkd8MvUMNuqrqRTX9zxr2ylR7qcSgY6+e0n3KreS43fTX
+         GXJM1WRlNSVHEcpRg44cqj8SbUzRMu1f8BXeR+QW3R5tjwA2iM2AwyDuYkkzCedelcaw
+         Fls3mkKwcjcldYElsdHd0gPoObr8yslKApJo8fmhFg2YxhzqZJQ1hFORop0Fzq4PGEyt
+         UwV5c/+97OsGvaL3b6wk0K/Q9WZGqRYomcsQWtFMmA3Xl7MC+uzucSuG8l8uKjjL93Wv
+         e/pw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:dlp-filter:cms-type:message-id:date:subject:cc:to:from
-         :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=tkYfi7OAgQcElyGeFm5zD8ukCCd+WlVcguexQbZynvY=;
-        b=rebrTSmakeuGVXDdYWYfeY6uIskfO/mP9uOotgqiRzLMZv2WX/g5z28m1fmGxklKIV
-         vDtFWGp6mITbhP06jc7IodbFSBrkK69t8iWxc7W85L04gs03Sy4gZIXE8obR8q9uE91y
-         kbKjieSnrth0rXm+0LPA8pn/sSnrtfpgFXftTR1TlICCM2ISOcsice1ZywZCJiJMdxKO
-         9hzFxDyIu4nz5UvJa2WHDsKZv/gGJhaXYuLTBy3ZSTgu3xRKdrITe+DIj3noF30dAX2s
-         13Xx6/Dlwkykn+rG8/NhEqjn5HgETLGBkmxMIz1Cr+cAGnjbUKL7oh3wmNKH0WqM2NV1
-         m/YA==
+        h=message-id:date:subject:cc:to:from:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=j8vbUjaAPiLiLb1G28YxDpYKJxkZHP8MzsT1N5dYRmI=;
+        b=Nhfys+zZSR52szFt8VTCIe3Jtn9RAzgcyCTGUx/S25yPKYCgIh6WEF0T92RoFsiQi/
+         TU3qAzI1rGD5xh+FBg3eMuPxJSFnvACpH3Jy35atLeE3ip6YbY/1YQ4yoZzl/b6Dq8Ob
+         SS0TLKi998YoV1fUXNL0eJlWE8UZPiZFQq6xdh3+hofejyjNAMvhgmZt/H2XuXKNJg6N
+         iRJaDKOeiaNFxBKHqK7Y1Cg27Q2CO0eRabUf6M9Om3CEV69CDbG36I0x8lRfM4Et7AHP
+         e5R3InnHDeGUbW7KsMFmPO3rX5xPSaR1+A/RBszIXLa7YFz7IH5CbmiUG5WaeH8yLCmg
+         AM4g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=CFBSOMNx;
-       spf=pass (google.com: domain of maninder1.s@samsung.com designates 203.254.224.33 as permitted sender) smtp.mailfrom=maninder1.s@samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+       spf=pass (google.com: domain of kernel-hardening-return-12994-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12994-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=CFBSOMNx;
-       spf=pass (google.com: domain of maninder1.s@samsung.com designates 203.254.224.33 as permitted sender) smtp.mailfrom=maninder1.s@samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180420090932epoutp030f539feb15ddb6297a66f1d79f27f807~nGc415ECQ0223102231epoutp03o
-X-AuditID: b6c32a4b-fcbff70000000fe6-64-5ad9ae4b4849
-From: Maninder Singh <maninder1.s@samsung.com>
-To: jdike@addtoit.com, richard@nod.at, kstewart@linuxfoundation.org,
-	tglx@linutronix.de, gregkh@linuxfoundation.org, pombredanne@nexb.com
-Cc: user-mode-linux-devel@lists.sourceforge.net,
-	user-mode-linux-user@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	a.sahrawat@samsung.com, pankaj.m@samsung.com, v.narang@samsung.com, Maninder
-	Singh <maninder1.s@samsung.com>
-Subject: [PATCH 1/1] um: add IRQENTRY and SOFTIRQENTRY points.
-Date: Fri, 20 Apr 2018 14:37:10 +0530
-Message-Id: <1524215230-44763-1-git-send-email-maninder1.s@samsung.com>
-X-Mailer: git-send-email 1.9.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjk+LIzCtJLcpLzFFi42LZdlhTQ9d73c0og0u/zCwu7k61aF68ns1i
-	/Z6H7BY9c5oYLS7vmsNmcXh+G4vFvTdbmSz+/z7HajF55xtGi82bpjJbzOqdwmLxZ8YSZotD
-	J+cyOvB6/Pp3md3j3blz7B77565h99i94DOTx/KdJh435xV69G1ZxejxeZNcAEdUqk1GamJK
-	apFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0MFKCmWJOaVAoYDE
-	4mIlfTubovzSklSFjPziElulaENDIz1DA3M9IyMjPRPTWCsjU6CShNSM/vffmQv+8lS8a4tp
-	YLzI1cXIySEhYCLRe/IvC4gtJLCbUeLu7qouRi4g+xOjRP/50+wQiW+MEs0bU7oYOcAabl0K
-	gajZyyhx82EPO4TzhVHi2b/lrCANbAJ6Eqt27WEBSYgIdDNKvD7XAlbFLPCWUWLdge2MIFXC
-	AnYSb750M4PYLAKqEt+7LoDdwSvgLnH4xyoWiPvkJE4em8wK0iwhcIRNYuGybawQd7hIPL3g
-	D1EjLPHq+BZ2CFtK4mV/GztEfTOjxJ0VX5khnCmMEp/mPoSaai/x4MZRdpBBzAKaEut36UOE
-	bSV+XDgDdhyzAJ9E7+8nTBC7eCU62oQgSlQlWm5uYIWwpSU+f/zIAlHiIfH9iixE2FHixOJ3
-	bJCQi5X4tXoL0wRGuVkIuxYwMq5ilEwtKM5NTy02LTDOSy3XK07MLS7NS9dLzs/dxAhOi1re
-	Oxg3nfM5xCjAwajEw/th3Y0oIdbEsuLK3EOMEhzMSiK8CWY3o4R4UxIrq1KL8uOLSnNSiw8x
-	mgLDciKzlGhyPjBl55XEG5pYGpiYmZkbGhhYmiiJ8xqEnYkSEkhPLEnNTk0tSC2C6WPi4JRq
-	YMy3PMVlyv/jlG9cwnarsC+S/z/8n3eYf+9649a+Oc9nPk/uEXCe9vJlWdxT5U0pMWXFW3o1
-	V0092qx2z71hoY1Oi0W3o0hHnQhr7xyp8+xGxbYFwmdOKZdffxFkzqXL9HKD4NV1Cr+CTpzT
-	nyqxd77D1uT+7L/c7xbd+lK/gsH8Mt/BnN4MXyWW4oxEQy3mouJEAEStiSOhAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsWy7bCSnK73uptRBl8OSVpc3J1q0bx4PZvF
-	+j0P2S165jQxWlzeNYfN4vD8NhaLe2+2Mln8/32O1WLyzjeMFps3TWW2mNU7hcXiz4wlzBaH
-	Ts5ldOD1+PXvMrvHu3Pn2D32z13D7rF7wWcmj+U7TTxuziv06NuyitHj8ya5AI4oLpuU1JzM
-	stQifbsEroz+99+ZC/7yVLxri2lgvMjVxcjBISFgInHrUkgXIxeHkMBuRolzL04wdjFyAsWl
-	JX7+e88CYQtLrPz3nB2i6BOjRMuz+8wgCTYBPYlVu/awgCREBCYzSnxd+YoVxGEW+MwocWTa
-	R7BRwgJ2Em++dIN1sAioSnzvugA2llfAXeLwj1VQK+QkTh6bzDqBkWcBI8MqRsnUguLc9Nxi
-	wwLDvNRyveLE3OLSvHS95PzcTYzg0NTS3MF4eUn8IUYBDkYlHl6PjTeihFgTy4orcw8xSnAw
-	K4nwJpjdjBLiTUmsrEotyo8vKs1JLT7EKM3BoiTO+zTvWKSQQHpiSWp2ampBahFMlomDU6qB
-	kfXiLx3dnH3Tn54SiTR6FHX/Txtvr6rs8XQ19duHBXb76RSefJdyeWkhn8O9Q1cPPub73m3/
-	menJ+UNH9Hu3Kblb/dgsGacVMNM63SAvrpT5QHJ28IP5S7Rtfv/t0RYRf+759ZhuZFrS/V+y
-	6bdmqs1JqTuQkf4x/tgDpnC9A8miWxeu2sz9TImlOCPRUIu5qDgRAI/4NhZJAgAA
-X-CMS-MailID: 20180420090931epcas5p47799b0f1aef5b1bb70e33118bc167c84
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180420090931epcas5p47799b0f1aef5b1bb70e33118bc167c84
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180420090931epcas5p47799b0f1aef5b1bb70e33118bc167c84
-X-RootMTR: 20180420090931epcas5p47799b0f1aef5b1bb70e33118bc167c84
-References: <CGME20180420090931epcas5p47799b0f1aef5b1bb70e33118bc167c84@epcas5p4.samsung.com>
+       spf=pass (google.com: domain of kernel-hardening-return-12994-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12994-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Laura Abbott <labbott@redhat.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Kees Cook <keescook@chromium.org>,
+	Lukas Wunner <lukas@wunner.de>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Laura Abbott <labbott@redhat.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com
+Subject: [PATCHv5] gpio: Remove VLA from gpiolib
+Date: Fri, 13 Apr 2018 14:24:27 -0700
+Message-Id: <20180413212427.18261-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.14.3
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598255660237750194?=
-X-GMAIL-MSGID: =?utf-8?q?1598255660237750194?=
+X-GMAIL-THRID: =?utf-8?q?1597409764349726473?=
+X-GMAIL-MSGID: =?utf-8?q?1597667741921505746?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patchs add sections for IRQENTRY and SOFTIRQENTRY.
-Initially added by below kernel patch for all architecture,
-but missed in um.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/commit/?id=be7635e7287e0e8013af3c89a6354a9e0182594c
+The new challenge is to remove VLAs from the kernel
+(see https://lkml.org/lkml/2018/3/7/621) to eventually
+turn on -Wvla.
 
-We need to add both sections because if someone has to use
-stackdepot feature for stacktrace and want to filter IRQ stack
-entries, it will break build for um.
+Using a kmalloc array is the easy way to fix this but kmalloc is still
+more expensive than stack allocation. Introduce a fast path with a
+fixed size stack array to cover most chip with gpios below some fixed
+amount. The slow path dynamically allocates an array to cover those
+chips with a large number of gpios.
 
-Below patch is breaking build break for um.
-mm/page_owner: ignore everything below the IRQ entry point.
-V2:- https://lkml.org/lkml/2018/3/26/178
-V3:- https://lkml.org/lkml/2018/3/27/357
-
-Signed-off-by: Vaneet Narang <v.narang@samsung.com>
-Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
+Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
 ---
- arch/um/kernel/dyn.lds.S | 2 ++
- arch/um/kernel/uml.lds.S | 2 ++
- 2 files changed, 4 insertions(+)
+v5: Dropped some outdated comments and extra whitespace. Switched to
+ARCH_NR_GPIOS per suggestion of Linus Walleij.
+---
+ drivers/gpio/gpiolib.c        | 76 +++++++++++++++++++++++++++++++++----------
+ drivers/gpio/gpiolib.h        |  2 +-
+ include/linux/gpio/consumer.h | 10 +++---
+ 3 files changed, 66 insertions(+), 22 deletions(-)
 
-diff --git a/arch/um/kernel/dyn.lds.S b/arch/um/kernel/dyn.lds.S
-index d417e38..0fb2d3a 100644
---- a/arch/um/kernel/dyn.lds.S
-+++ b/arch/um/kernel/dyn.lds.S
-@@ -71,6 +71,8 @@ SECTIONS
-     SCHED_TEXT
-     CPUIDLE_TEXT
-     LOCK_TEXT
-+    IRQENTRY_TEXT
-+    SOFTIRQENTRY_TEXT
-     *(.fixup)
-     *(.stub .text.* .gnu.linkonce.t.*)
-     /* .gnu.warning sections are handled specially by elf32.em.  */
-diff --git a/arch/um/kernel/uml.lds.S b/arch/um/kernel/uml.lds.S
-index 3d6ed6b..f12b856 100644
---- a/arch/um/kernel/uml.lds.S
-+++ b/arch/um/kernel/uml.lds.S
-@@ -31,6 +31,8 @@ SECTIONS
-     SCHED_TEXT
-     CPUIDLE_TEXT
-     LOCK_TEXT
-+    IRQENTRY_TEXT
-+    SOFTIRQENTRY_TEXT
-     *(.fixup)
-     /* .gnu.warning sections are handled specially by elf32.em.  */
-     *(.gnu.warning)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d66de67ef307..79ec7a29b684 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -61,6 +61,11 @@ static struct bus_type gpio_bus_type = {
+ 	.name = "gpio",
+ };
+ 
++/*
++ * Number of GPIOs to use for the fast path in set array
++ */
++#define FASTPATH_NGPIO ARCH_NR_GPIOS
++
+ /* gpio_lock prevents conflicts during gpio_desc[] table updates.
+  * While any GPIO is requested, its gpio_chip is not removable;
+  * each GPIO's "requested" flag serves as a lock and refcount.
+@@ -399,12 +404,11 @@ static long linehandle_ioctl(struct file *filep, unsigned int cmd,
+ 			vals[i] = !!ghd.values[i];
+ 
+ 		/* Reuse the array setting function */
+-		gpiod_set_array_value_complex(false,
++		return gpiod_set_array_value_complex(false,
+ 					      true,
+ 					      lh->numdescs,
+ 					      lh->descs,
+ 					      vals);
+-		return 0;
+ 	}
+ 	return -EINVAL;
+ }
+@@ -1192,6 +1196,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 		goto err_free_descs;
+ 	}
+ 
++	if (chip->ngpio > FASTPATH_NGPIO)
++		chip_warn(chip, "line cnt %d is greater than fast path cnt %d\n",
++		chip->ngpio, FASTPATH_NGPIO);
++
+ 	gdev->label = kstrdup_const(chip->label ?: "unknown", GFP_KERNEL);
+ 	if (!gdev->label) {
+ 		status = -ENOMEM;
+@@ -2662,16 +2670,28 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 
+ 	while (i < array_size) {
+ 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+-		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+-		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
++		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
++		unsigned long *mask, *bits;
+ 		int first, j, ret;
+ 
++		if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
++			memset(fastpath, 0, sizeof(fastpath));
++			mask = fastpath;
++			bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
++		} else {
++			mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
++					   sizeof(*mask),
++					   can_sleep ? GFP_KERNEL : GFP_ATOMIC);
++			if (!mask)
++				return -ENOMEM;
++			bits = mask + BITS_TO_LONGS(chip->ngpio);
++		}
++
+ 		if (!can_sleep)
+ 			WARN_ON(chip->can_sleep);
+ 
+ 		/* collect all inputs belonging to the same chip */
+ 		first = i;
+-		memset(mask, 0, sizeof(mask));
+ 		do {
+ 			const struct gpio_desc *desc = desc_array[i];
+ 			int hwgpio = gpio_chip_hwgpio(desc);
+@@ -2682,8 +2702,11 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 			 (desc_array[i]->gdev->chip == chip));
+ 
+ 		ret = gpio_chip_get_multiple(chip, mask, bits);
+-		if (ret)
++		if (ret) {
++			if (mask != fastpath)
++				kfree(mask);
+ 			return ret;
++		}
+ 
+ 		for (j = first; j < i; j++) {
+ 			const struct gpio_desc *desc = desc_array[j];
+@@ -2695,6 +2718,9 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 			value_array[j] = value;
+ 			trace_gpio_value(desc_to_gpio(desc), 1, value);
+ 		}
++
++		if (mask != fastpath)
++			kfree(mask);
+ 	}
+ 	return 0;
+ }
+@@ -2878,7 +2904,7 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
+ 	}
+ }
+ 
+-void gpiod_set_array_value_complex(bool raw, bool can_sleep,
++int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 				   unsigned int array_size,
+ 				   struct gpio_desc **desc_array,
+ 				   int *value_array)
+@@ -2887,14 +2913,26 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 
+ 	while (i < array_size) {
+ 		struct gpio_chip *chip = desc_array[i]->gdev->chip;
+-		unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+-		unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
++		unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
++		unsigned long *mask, *bits;
+ 		int count = 0;
+ 
++		if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
++			memset(fastpath, 0, sizeof(fastpath));
++			mask = fastpath;
++			bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
++		} else {
++			mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
++					   sizeof(*mask),
++					   can_sleep ? GFP_KERNEL : GFP_ATOMIC);
++			if (!mask)
++				return -ENOMEM;
++			bits = mask + BITS_TO_LONGS(chip->ngpio);
++		}
++
+ 		if (!can_sleep)
+ 			WARN_ON(chip->can_sleep);
+ 
+-		memset(mask, 0, sizeof(mask));
+ 		do {
+ 			struct gpio_desc *desc = desc_array[i];
+ 			int hwgpio = gpio_chip_hwgpio(desc);
+@@ -2925,7 +2963,11 @@ void gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 		/* push collected bits to outputs */
+ 		if (count != 0)
+ 			gpio_chip_set_multiple(chip, mask, bits);
++
++		if (mask != fastpath)
++			kfree(mask);
+ 	}
++	return 0;
+ }
+ 
+ /**
+@@ -3000,13 +3042,13 @@ EXPORT_SYMBOL_GPL(gpiod_set_value);
+  * This function should be called from contexts where we cannot sleep, and will
+  * complain if the GPIO chip functions potentially sleep.
+  */
+-void gpiod_set_raw_array_value(unsigned int array_size,
++int gpiod_set_raw_array_value(unsigned int array_size,
+ 			 struct gpio_desc **desc_array, int *value_array)
+ {
+ 	if (!desc_array)
+-		return;
+-	gpiod_set_array_value_complex(true, false, array_size, desc_array,
+-				      value_array);
++		return -EINVAL;
++	return gpiod_set_array_value_complex(true, false, array_size,
++					desc_array, value_array);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value);
+ 
+@@ -3326,14 +3368,14 @@ EXPORT_SYMBOL_GPL(gpiod_set_value_cansleep);
+  *
+  * This function is to be called from contexts that can sleep.
+  */
+-void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
++int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 					struct gpio_desc **desc_array,
+ 					int *value_array)
+ {
+ 	might_sleep_if(extra_checks);
+ 	if (!desc_array)
+-		return;
+-	gpiod_set_array_value_complex(true, true, array_size, desc_array,
++		return -EINVAL;
++	return gpiod_set_array_value_complex(true, true, array_size, desc_array,
+ 				      value_array);
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_raw_array_value_cansleep);
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index b17ec6795c81..b64813e3876e 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -188,7 +188,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+ 				  unsigned int array_size,
+ 				  struct gpio_desc **desc_array,
+ 				  int *value_array);
+-void gpiod_set_array_value_complex(bool raw, bool can_sleep,
++int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 				   unsigned int array_size,
+ 				   struct gpio_desc **desc_array,
+ 				   int *value_array);
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index dbd065963296..243112c7fa7d 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -116,7 +116,7 @@ int gpiod_get_raw_array_value(unsigned int array_size,
+ 			      struct gpio_desc **desc_array,
+ 			      int *value_array);
+ void gpiod_set_raw_value(struct gpio_desc *desc, int value);
+-void gpiod_set_raw_array_value(unsigned int array_size,
++int gpiod_set_raw_array_value(unsigned int array_size,
+ 			       struct gpio_desc **desc_array,
+ 			       int *value_array);
+ 
+@@ -134,7 +134,7 @@ int gpiod_get_raw_array_value_cansleep(unsigned int array_size,
+ 				       struct gpio_desc **desc_array,
+ 				       int *value_array);
+ void gpiod_set_raw_value_cansleep(struct gpio_desc *desc, int value);
+-void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
++int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 					struct gpio_desc **desc_array,
+ 					int *value_array);
+ 
+@@ -369,12 +369,13 @@ static inline void gpiod_set_raw_value(struct gpio_desc *desc, int value)
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
+-static inline void gpiod_set_raw_array_value(unsigned int array_size,
++static inline int gpiod_set_raw_array_value(unsigned int array_size,
+ 					     struct gpio_desc **desc_array,
+ 					     int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
++	return 0;
+ }
+ 
+ static inline int gpiod_get_value_cansleep(const struct gpio_desc *desc)
+@@ -423,12 +424,13 @@ static inline void gpiod_set_raw_value_cansleep(struct gpio_desc *desc,
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
+ }
+-static inline void gpiod_set_raw_array_value_cansleep(unsigned int array_size,
++static inline int gpiod_set_raw_array_value_cansleep(unsigned int array_size,
+ 						struct gpio_desc **desc_array,
+ 						int *value_array)
+ {
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
++	return 0;
+ }
+ 
+ static inline int gpiod_set_debounce(struct gpio_desc *desc, unsigned debounce)
 -- 
-1.9.1
+2.14.3
