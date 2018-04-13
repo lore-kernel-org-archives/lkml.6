@@ -1,66 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754342AbeDMMos (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 08:44:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45784 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750940AbeDMMoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 08:44:46 -0400
-Date: Fri, 13 Apr 2018 14:44:41 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Chris Fries <cfries@google.com>, jaegeuk@kernel.org
-Subject: Re: [PATCH v2 0/2] Fix __GFP_ZERO vs constructor
-Message-ID: <20180413124441.GB17670@dhcp22.suse.cz>
-References: <20180411060320.14458-1-willy@infradead.org>
- <20180412005451.GB253442@rodete-desktop-imager.corp.google.com>
- <20180412192424.GB21205@bombadil.infradead.org>
+        id S1754589AbeDMMpO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 08:45:14 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:37016 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751776AbeDMMpM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 08:45:12 -0400
+Date: Fri, 13 Apr 2018 14:44:58 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH 1/7] sched/core: uclamp: add CPU clamp groups accounting
+Message-ID: <20180413124458.GG4082@hirez.programming.kicks-ass.net>
+References: <20180409165615.2326-1-patrick.bellasi@arm.com>
+ <20180409165615.2326-2-patrick.bellasi@arm.com>
+ <20180413084302.GR4043@hirez.programming.kicks-ass.net>
+ <20180413111510.GS14248@e110439-lin>
+ <20180413113650.GR4064@hirez.programming.kicks-ass.net>
+ <20180413114745.GV14248@e110439-lin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180412192424.GB21205@bombadil.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180413114745.GV14248@e110439-lin>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 12-04-18 12:24:24, Matthew Wilcox wrote:
-> On Thu, Apr 12, 2018 at 09:54:51AM +0900, Minchan Kim wrote:
-> > Matthew,
-> > 
-> > Please Cced relevant people so they know what's going on the problem
-> > they spent on much time. Everyone doesn't keep an eye on mailing list.
-> 
-> My apologies; I assumed that git send-email would pick up the people
-> named in the changelog.  I have now read the source code and discovered
-> it only picks up the people listed in Signed-off-by: and Cc:.  That
-> surprises me; I'll submit a patch.
+On Fri, Apr 13, 2018 at 12:47:45PM +0100, Patrick Bellasi wrote:
+> In the past I remember some funny dance in cgroup callbacks when a
+> task was terminating (like being moved in the root-rq just before
+> exiting). But, as you say, if we always have the task_rq_lock we
+> should be safe.
 
-I remember that there was a discussion to add support for more
-$Foo-by: $EMAIL
+The syscall does the whole:
 
-but I do not remember the outcome of the discussion and from a quick
-glance into the perl disaster it doesn't seem to handle generic tags.
-I am using the following
-$ cat cc-cmd.sh
-#!/bin/bash
+	task_rq_lock();
+	queued = task_on_rq_queued();
+	running = task_current();
+	if (queued)
+		dequeue_task();
+	if (running)
+		put_prev_task();
 
-if [[ $1 == *gitsendemail.msg* || $1 == *cover-letter* ]]; then
-        grep '<.*@.*>' -h *.patch | sed 's/^.*: //' | sort | uniq
-else
-        grep '<.*@.*>' -h $1 | sed 's/^.*: //' | sort | uniq
-fi
+	/*
+	 * task is in invariant state here,
+	 * muck with it.
+	 */
 
-and use it as --cc-cmd=
--- 
-Michal Hocko
-SUSE Labs
+	if (queued)
+		enqueue_task();
+	if (running)
+		set_curr_task()
+	task_rq_unlock();
+
+pattern; which because C sucks, we've not found a good template for yet.
+
+Without the dequeue/put,enqueue/set you have to jump a few extra hoops.
