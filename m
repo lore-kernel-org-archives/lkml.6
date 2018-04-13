@@ -1,113 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754556AbeDMNfY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 09:35:24 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:34995 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754239AbeDMNfW (ORCPT
+        id S1754581AbeDMNfb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 09:35:31 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:40211 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753925AbeDMNf1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 09:35:22 -0400
-X-Google-Smtp-Source: AIpwx4/EQBcZas+l6srMDoJoJIugUjSEyo4hD+cMRWK8Lpqa3avETiebbpKwJz58gZ8Z/PSwQ8zPg2s+YY1DsRe/dD8=
+        Fri, 13 Apr 2018 09:35:27 -0400
+X-Google-Smtp-Source: AIpwx49/0VrXxlwdJbe82X407LwiF0GKUV4B0QCjhbJLftM74UEzn/HZDFkfQl/jnXSfpwzC2VK0dg==
+Date: Fri, 13 Apr 2018 22:35:19 +0900
+From: Minchan Kim <minchan@kernel.org>
+To: Roman Gushchin <guro@fb.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 3/3] dcache: account external names as indirectly
+ reclaimable memory
+Message-ID: <20180413133519.GA213834@rodete-laptop-imager.corp.google.com>
+References: <20180305133743.12746-1-guro@fb.com>
+ <20180305133743.12746-5-guro@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <20180412150826.20988-12-mszeredi@redhat.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-12-mszeredi@redhat.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 13 Apr 2018 16:35:21 +0300
-Message-ID: <CAOQ4uxgzVxjtKZomyxy27uEeZ7mpLNXV71NpQoi51NjP4gtyig@mail.gmail.com>
-Subject: Re: [RFC PATCH 11/35] ovl: readd read_iter
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180305133743.12746-5-guro@fb.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 6:08 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
-> Implement stacked reading.
->
-
-I couldn't decipher the meaning of "readd" in the subject of this
-and other file ops pacthes??
-
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+On Mon, Mar 05, 2018 at 01:37:43PM +0000, Roman Gushchin wrote:
+> I was reported about suspicious growth of unreclaimable slabs
+> on some machines. I've found that it happens on machines
+> with low memory pressure, and these unreclaimable slabs
+> are external names attached to dentries.
+> 
+> External names are allocated using generic kmalloc() function,
+> so they are accounted as unreclaimable. But they are held
+> by dentries, which are reclaimable, and they will be reclaimed
+> under the memory pressure.
+> 
+> In particular, this breaks MemAvailable calculation, as it
+> doesn't take unreclaimable slabs into account.
+> This leads to a silly situation, when a machine is almost idle,
+> has no memory pressure and therefore has a big dentry cache.
+> And the resulting MemAvailable is too low to start a new workload.
+> 
+> To address the issue, the NR_INDIRECTLY_RECLAIMABLE_BYTES counter
+> is used to track the amount of memory, consumed by external names.
+> The counter is increased in the dentry allocation path, if an external
+> name structure is allocated; and it's decreased in the dentry freeing
+> path.
+> 
+> To reproduce the problem I've used the following Python script:
+>   import os
+> 
+>   for iter in range (0, 10000000):
+>       try:
+>           name = ("/some_long_name_%d" % iter) + "_" * 220
+>           os.stat(name)
+>       except Exception:
+>           pass
+> 
+> Without this patch:
+>   $ cat /proc/meminfo | grep MemAvailable
+>   MemAvailable:    7811688 kB
+>   $ python indirect.py
+>   $ cat /proc/meminfo | grep MemAvailable
+>   MemAvailable:    2753052 kB
+> 
+> With the patch:
+>   $ cat /proc/meminfo | grep MemAvailable
+>   MemAvailable:    7809516 kB
+>   $ python indirect.py
+>   $ cat /proc/meminfo | grep MemAvailable
+>   MemAvailable:    7749144 kB
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: kernel-team@fb.com
 > ---
->  fs/overlayfs/file.c | 56 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
->
-> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> index 409b542ff30c..a19429c5965d 100644
-> --- a/fs/overlayfs/file.c
-> +++ b/fs/overlayfs/file.c
-> @@ -9,6 +9,7 @@
->  #include <linux/cred.h>
->  #include <linux/file.h>
->  #include <linux/xattr.h>
-> +#include <linux/uio.h>
->  #include "overlayfs.h"
->
->  static struct file *ovl_open_realfile(const struct file *file)
-> @@ -129,8 +130,63 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
->                                         i_size_read(realinode));
+>  fs/dcache.c | 29 ++++++++++++++++++++++++-----
+>  1 file changed, 24 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 5c7df1df81ff..a0312d73f575 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -273,8 +273,16 @@ static void __d_free(struct rcu_head *head)
+>  static void __d_free_external(struct rcu_head *head)
+>  {
+>  	struct dentry *dentry = container_of(head, struct dentry, d_u.d_rcu);
+> -	kfree(external_name(dentry));
+> -	kmem_cache_free(dentry_cache, dentry); 
+> +	struct external_name *name = external_name(dentry);
+> +	unsigned long bytes;
+> +
+> +	bytes = dentry->d_name.len + offsetof(struct external_name, name[1]);
+> +	mod_node_page_state(page_pgdat(virt_to_page(name)),
+> +			    NR_INDIRECTLY_RECLAIMABLE_BYTES,
+> +			    -kmalloc_size(kmalloc_index(bytes)));
+> +
+> +	kfree(name);
+> +	kmem_cache_free(dentry_cache, dentry);
 >  }
->
-> +static void ovl_file_accessed(struct file *file)
-> +{
-> +       struct inode *inode = file_inode(file);
+>  
+>  static inline int dname_external(const struct dentry *dentry)
+> @@ -1598,6 +1606,7 @@ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+>  	struct dentry *dentry;
+>  	char *dname;
+>  	int err;
+> +	size_t reclaimable = 0;
+>  
+>  	dentry = kmem_cache_alloc(dentry_cache, GFP_KERNEL);
+>  	if (!dentry)
+> @@ -1614,9 +1623,11 @@ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+>  		name = &slash_name;
+>  		dname = dentry->d_iname;
+>  	} else if (name->len > DNAME_INLINE_LEN-1) {
+> -		size_t size = offsetof(struct external_name, name[1]);
+> -		struct external_name *p = kmalloc(size + name->len,
+> -						  GFP_KERNEL_ACCOUNT);
+> +		struct external_name *p;
 > +
-> +       if ((file->f_flags & O_NOATIME) || !ovl_inode_upper(inode))
-> +               return;
-> +
-> +       ovl_copytimes(inode);
-> +       touch_atime(&file->f_path);
-> +}
-> +
-> +static rwf_t ovl_iocb_to_rwf(struct kiocb *iocb)
-> +{
-> +       int ifl = iocb->ki_flags;
-> +       rwf_t flags = 0;
-> +
-> +       if (ifl & IOCB_NOWAIT)
-> +               flags |= RWF_NOWAIT;
-> +       if (ifl & IOCB_HIPRI)
-> +               flags |= RWF_HIPRI;
-> +       if (ifl & IOCB_DSYNC)
-> +               flags |= RWF_DSYNC;
-> +       if (ifl & IOCB_SYNC)
-> +               flags |= RWF_SYNC;
-> +
-> +       return flags;
-> +}
-> +
-> +static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
-> +{
-> +       struct file *file = iocb->ki_filp;
-> +       struct fd real;
-> +       const struct cred *old_cred;
-> +       ssize_t ret;
-> +
-> +       if (!iov_iter_count(iter))
-> +               return 0;
-> +
-> +       ret = ovl_real_file(file, &real);
-> +       if (ret)
-> +               return ret;
-> +
-> +       old_cred = ovl_override_creds(file_inode(file)->i_sb);
-> +       ret = vfs_iter_read(real.file, iter, &iocb->ki_pos,
-> +                           ovl_iocb_to_rwf(iocb));
-> +       revert_creds(old_cred);
-> +
-> +       ovl_file_accessed(file);
-> +
-> +       fdput(real);
+> +		reclaimable = offsetof(struct external_name, name[1]) +
+> +			name->len;
+> +		p = kmalloc(reclaimable, GFP_KERNEL_ACCOUNT);
 
-I find it confusing that the name of ovl_real_file() does not suggest it
-may take a reference, so this  fdput() looks unbalanced.
+Can't we use kmem_cache_alloc with own cache created with SLAB_RECLAIM_ACCOUNT
+if they are reclaimable? 
+With that, it would help fragmentation problem with __GFP_RECLAIMABLE for
+page allocation as well as counting problem, IMHO.
 
-All other ovl_XXX_{real,upper,lower} helpers do not take a reference.
-Perhaps something along the lines of ovl_file_real_fdget().
 
-Thanks,
-Amir.
+>  		if (!p) {
+>  			kmem_cache_free(dentry_cache, dentry); 
+>  			return NULL;
+> @@ -1665,6 +1676,14 @@ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+>  		}
+>  	}
+>  
+> +	if (unlikely(reclaimable)) {
+> +		pg_data_t *pgdat;
+> +
+> +		pgdat = page_pgdat(virt_to_page(external_name(dentry)));
+> +		mod_node_page_state(pgdat, NR_INDIRECTLY_RECLAIMABLE_BYTES,
+> +				    kmalloc_size(kmalloc_index(reclaimable)));
+> +	}
+> +
+>  	this_cpu_inc(nr_dentry);
+>  
+>  	return dentry;
+> -- 
+> 2.14.3
+> 
+> --
+> To unsubscribe, send a message with 'unsubscribe linux-mm' in
+> the body to majordomo@kvack.org.  For more info on Linux MM,
+> see: http://www.linux-mm.org/ .
+> Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
