@@ -1,479 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753724AbeDMHSB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 03:18:01 -0400
-Received: from mga11.intel.com ([192.55.52.93]:64877 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751162AbeDMHR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 03:17:59 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,444,1517904000";
-   d="scan'208";a="50456390"
-Date: Fri, 13 Apr 2018 15:15:29 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, wexu@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        jfreimann@redhat.com
-Subject: Re: [RFC v2] virtio: support packed ring
-Message-ID: <20180413071529.f4esh654dakodf4f@debian>
-References: <20180401141216.8969-1-tiwei.bie@intel.com>
- <ebfbfc3e-9e52-9331-61b6-258e131f822d@redhat.com>
+        id S1753317AbeDMH2E (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 03:28:04 -0400
+Received: from mail-he1eur01on0090.outbound.protection.outlook.com ([104.47.0.90]:12832
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750911AbeDMH2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 03:28:02 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se;
+Subject: Re: [PATCH linux dev-4.16 v2] i2c: muxes: pca9641: new driver
+To: =?UTF-8?B?Q2hlbktlbllZIOmZs+awuOeHnyBUQU8=?=
+        <chen.kenyy@inventec.com>
+Cc: linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Wolfram Sang <wsa@the-dreams.de>, Joel Stanley <joel@jms.id.au>,
+        linux-i2c@vger.kernel.org
+References: <20180320061909.5775-1-chen.kenyy@inventec.com>
+ <20180320093200.19179-1-peda@axentia.se>
+ <5053d0d0-e4c5-733e-051d-b5900d05ea2b@axentia.se>
+ <CADo_Z40fZaT8iRSALDv7-YaK0YD-WFph5RwmrngFbC4FzFAp9Q@mail.gmail.com>
+From: Peter Rosin <peda@axentia.se>
+Organization: Axentia Technologies AB
+Message-ID: <3dc71810-a743-9fe0-c8b0-7e42d8167685@axentia.se>
+Date: Fri, 13 Apr 2018 09:27:50 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <CADo_Z40fZaT8iRSALDv7-YaK0YD-WFph5RwmrngFbC4FzFAp9Q@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ebfbfc3e-9e52-9331-61b6-258e131f822d@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: DB3PR0202CA0025.eurprd02.prod.outlook.com
+ (2603:10a6:8:1::38) To VI1PR0202MB2781.eurprd02.prod.outlook.com
+ (2603:10a6:800:da::19)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:VI1PR0202MB2781;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2781;3:34N+RdRCC+zRN0FLLQ0EOdvHPaSv1Dky6E7ne0HESO9+JDvqKWPAGvBA4osocmw5fdZSfG4uXrXHwE5vecC3vF1k63gFyaVlLDgVuC0UGA6ji7EXQUFAkjJ3a567CKqvf1VvDYcpYcuM+n97IYBNAIRxN2//4zAqM61+PJyUtbQb/R51KSMujk4mx9hZRhbXcQArlSlRtoFwTeiTtIGl/F2yJSvcl0DEXkAMrcuijE5DD92dCj4Xz5S/VlANdyu0;25:N2vVynnlU2F7PMctq7IhsRUa95e6TSxb0nxUMDrDEC0YYMJ//pm3waUWUMb2O20HRTyYoiG3KTkyd5QWYdPZsBgPNuJohlgf2oMXSRCOyhKGIVE6uvBggX4Y86aBkxtdmWrCJcZEV7xnFXgkictDoBm0hAhfvWiw0M9AKtkCzogl9kwr91eBmqgiwirx5TnNoITFPMKU5qC+UtPRgfXhA+UZ4bvPEoBlkew4gPwShn/1isy0J6vIU5veDIwH5eOes9OX4reJ+2k/+QMy7ElJFuc70VQT237/ZnT04mJSVqUr8WthVR6+rol8y6MbQEcJ0GBGlp7tqiTPYkm6pHTGLQ==;31:eRc/XPIW5vpjKWJv0g9/GhnAwFhqsZYy31OViQKZoILGHkbAmFT2hj4dBIUcBi94Bc75kE2isro7ezHh7VWGRtI+t78B6jRgkRA2ZWUJUQcfRzgD8kfIXRcOln5OUZq2JnzQbakvzfQGiYqqbEzaDoo8NMdzPXamj7vx4IO1pxO27n6YoMoU0Tmr2TdluH8MZKAQlD4YrR6nUtWxFRtCwEsxusISWZ9iAmFhmGPPlcg=
+X-MS-TrafficTypeDiagnostic: VI1PR0202MB2781:
+X-Microsoft-Antispam-PRVS: <VI1PR0202MB2781034FD18C1843427F8A2BBCB30@VI1PR0202MB2781.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231232)(944501327)(52105095)(93006095)(93001095)(3002001)(10201501046)(6041310)(20161123564045)(20161123562045)(20161123560045)(2016111802025)(20161123558120)(6072148)(6043046)(201708071742011);SRVR:VI1PR0202MB2781;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0202MB2781;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2781;4:U7dpz8hr6pad79GQdDT0ZAMp1MZgrwdufty1g5PeatXUlRta1UhVQRan4dg6RgOlYsf8vpjfq72RkOGSlg7L32ifdAOlqRXjX4heewMcXsjqVT1p0xeFrWHHhSp/nMn+4zdqastDAmphao28Yt2T+2hfyDoY+Idvl5TySkWm89gX8pZkf2Nc5m8MFiuIospe0wbanzBinuJO5eUZEPMT4DozwXKHtzcd2hXdF61V6WcITYGf+PyzL/7KQQ/UZfUPfUeOaL0g6rjqEs7vZp/c8Q==
+X-Forefront-PRVS: 0641678E68
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(39830400003)(346002)(39380400002)(366004)(376002)(396003)(52314003)(377424004)(189003)(199004)(11346002)(956004)(25786009)(2616005)(3260700006)(53546011)(117156002)(6116002)(446003)(97736004)(3846002)(229853002)(76176011)(386003)(31686004)(36916002)(52146003)(52116002)(59450400001)(106356001)(6916009)(23676004)(50466002)(5660300001)(105586002)(2486003)(8936002)(68736007)(6486002)(36756003)(93886005)(478600001)(186003)(26005)(77096007)(31696002)(2870700001)(86362001)(305945005)(64126003)(316002)(53936002)(16526019)(65826007)(6246003)(81156014)(486006)(58126008)(54906003)(8676002)(7736002)(47776003)(65806001)(4326008)(476003)(2906002)(81166006)(66066001)(65956001)(16576012)(74482002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0202MB2781;H:[192.168.13.3];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjAyMDJNQjI3ODE7MjM6am45aFhXR3Y3QmZXZjlsc1N2a1lTZ3pV?=
+ =?utf-8?B?MkcwanBqa3pnTXdna1hZd2hlMlZyVWFHdHJZUThKbXVxZUZyYVVZRm5rMFo5?=
+ =?utf-8?B?MlZhMTc5QjQvcTBEeS9pUFZIN0hiMEtnZnJRV2pmUDlacFRsbXBDZmpvZUlo?=
+ =?utf-8?B?YW5RSEdrc09WcXNORlUzMlVmL1JrcHc2cmNoUTJsanlKSm94bXlORlgwWllE?=
+ =?utf-8?B?dEFuSDRBaVRBci95RkxMOG5rNHNBdmFKb2x1aElYcXVVU0lsR3NBQVJuaER4?=
+ =?utf-8?B?WEdwSGIwRkdHOG5IaGVrSjJWeWU5WjQ2OVJtMk4rSncxSlE4cWJFZXMxSjE2?=
+ =?utf-8?B?SzlQaTdxdlJnZHQzNGV3aGVTS3hHK1pvZkYydjhjWlNlemd4bENWV01WTGtN?=
+ =?utf-8?B?TFNNbkMyQzM1ZEpwUVV6YzdaTURWWjBaOXRiN3hMeWhlYmUydDc4RHpWb3lF?=
+ =?utf-8?B?dG84RDdsL3pIYi9CQ0Fzb1Q4MWJ2UjFSMnpJQjlqcy9LMnhhZWpKRmlnYU4y?=
+ =?utf-8?B?THBrU3BkQUZrWS9pY29IOGNieWp0N0JRQjRXejlGYXBNMElvQ05qcjRadEhy?=
+ =?utf-8?B?cjlibFpYQ1c3cXpGQlZmWjZvb096M2l2Z0l6Q0R4VVJySWw2bTZEQUF2MG43?=
+ =?utf-8?B?cmpaU2xxMUNqSk5zaTlTdlFCT2hZb1RoR29CdmRMVzB5SVlnZjByNmpZV1FJ?=
+ =?utf-8?B?N2Z1WXczWVUxcUZ4Y1lGV21hMlZBZExmTGQ5WlB4aGZRZytWU0J1YXVKelQv?=
+ =?utf-8?B?dGZyNFNKY2x1cUM3VnpqU21tOGdhSldFVVJqUG5MUHZBVWxxandPZlhJOEla?=
+ =?utf-8?B?UHloWGY4NEJSTnZtZUh4cFdERFcxeFJmNjA0K2J5bkI0bHh2enVHWjlkWEo5?=
+ =?utf-8?B?UDBwakFLdlMwSnVuWG85U01tSHNZVnZPRzVzdnFVMytMNTdHb1pTTG5lY1hR?=
+ =?utf-8?B?ZHFPU2oyZytlMndZckN3RTg0eTRoTTU5M2hWMHgrT2RCc0F4TkFVcjNFcGFL?=
+ =?utf-8?B?ZytNQzJhMGJ5a3Frd2FXaytCNndVYkZ1dGFrdTkrYmNGOGppam5oVVRucXN1?=
+ =?utf-8?B?MytZd2w3Mks5ci90SDFVNXNlNXdEU00vcmN6dTh3ZjE2Z3l5YVBoMk9XbVdL?=
+ =?utf-8?B?OEU5M1l0THk5cTNWczZMQ0U2cURCM1BXek9XNXRtQVIvSlRwVERSTjVLZ1BF?=
+ =?utf-8?B?aFh3L2dCY2N2VFI2aU0wMlZWMFFCbE9iUUlnci8xMEE4NEV0WkJWKzYwOVZY?=
+ =?utf-8?B?bm42a2ZQVnU2aDc2WERHSkFzc1NaQWIwNTRCYzZuZXNLU293emdldUFOaE81?=
+ =?utf-8?B?bjIzd0NKQmg2TDF3THBMR0JJYlVhb2VqQ1U3UGQzQ2plREpMd0t4TDVrMmRM?=
+ =?utf-8?B?YXE3U0ZmY0FGajkxSnVCVTBEcWxSVjRCOHpGbUphRk92SW5ZcFhSYUpLUkNP?=
+ =?utf-8?B?QVA5VytVV2tFSEFtR2dIOVVoMVNRdDd6MmljcU1Obk9zMk4ySU1UVHNSWTVS?=
+ =?utf-8?B?aEtwOWhNOHU5TGlPZDlpbFJWVmwwK09HeEt1RzRHdlZteithcVo0RnQ0QW5Y?=
+ =?utf-8?B?dm9QNXdUS2djY0V6RnRRZE1sajJKcUowRlhlSzlkNERNcDhhSnRrdTdUV2lT?=
+ =?utf-8?B?TkxkcDFqYk16dm9rSUpwS3d6Y29RSkxpT1VoOGhaaWlyTHdZWFJ0K1ZNRmQv?=
+ =?utf-8?B?ZDdtQmpSKzB0UjZPbWN1TG1na3NqWGs4ZUx2VUcwbjBRRWZIRkRxdmFaaWFz?=
+ =?utf-8?B?aS8yM2oybUROS2l1OXhJV2VwUmtybUVNYWFVWWQ3VFE3K0dPVFdZaGpHSzJn?=
+ =?utf-8?B?djk4aDM0eUFSUmtqQTV2K0tYOVd1SFoxU0hDWWhHL09lMDRKdm9pVnRlWXJV?=
+ =?utf-8?B?SlZqNWg3bGpjczZaMkxwUXd2dm5vNDJvVnZTNithbXUxRzZwcm5qWFoycjlk?=
+ =?utf-8?B?U01hWmtucEc4VlRueG0vZjR2ajZUZDB5REVjLzZ6MXNIK1A1SDFESFdDdU5y?=
+ =?utf-8?B?WGhyaGcrUHlUV3lNU1I1WjVKL2F5T0h5WHNtc2xOQkgzbGoxcUZMZWgwR3ZZ?=
+ =?utf-8?B?cjdRRWZuajc0QnVZQmkzNjU2NVhMd3g2UUFNSk1LamJhZ2pNbFFHMFFRcFpl?=
+ =?utf-8?B?Sk9tVnJ6UjJ6akR0MkgxSnFQbDZzZ1Y3QTZEMWdLTWdlWkxUZXl1VGs0S2l1?=
+ =?utf-8?B?T2phZ3ZTeENTUGFLVTBub0JKQkZ0Znc9PQ==?=
+X-Microsoft-Antispam-Message-Info: Df85fX6w0gdtZJiFwGI1DMuCEte+qQayAQNVWcSi4KjWNXe03tPYS6+xedvyyU+WsuOBlw8M7PVPQEITYY0Pua1MXM2PH1BK4fSqVOrLAnebnR991S7I9hF4EypvMFwcFrOKNUqHflOz+aqV8z1SpgnMueqJhrsf23eBG9l2N4KDtu6hJYwdIlhAOv01e9zL
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2781;6:OYk6fBszbHYrhmu4WrLYFOlpwC8uG+6eFc3u1c0mZ9fj7o/TF8dddl4hr/OSRZined+7otPQYsYLfMJs6l0vU9FU7q6hucgaRfRpNakViAOxE9iKApgH3+Cb/58F4XZr6xu17R9SFTVT8cOwQGk+TgOjrAxmw3oGId/e9EwSUOg+V1yhdqizgmbcm8/LdJP0+WCOz+GVgutoXK2A4rT4a4cINU2bFo/3Rd+ilR0qhaEem/QwkHPnEKn3OLx7YC8apA7G2Ub8qPes1Pbrg1kDNUIgR++zBqfZXCMMwwwIBLLPbI6bFEQzgIPpHQHW+HVFpk5Abn19D1ATsYFEObgdLooKw3E6UQqz3KUGrTx5ohwAlA4cbnrEO8Kkkso3vUSIgWqQYd5KvEnZP/y/5RSPts9uXmFkrpWFsRpyFKwHaJExTgr+6+Au4UKGfmtMEu3jDri1461jyfUP963tCFXyVw==;5:6Aw47h6K68mmwg9ZFcI5j0EpZs74G48yS9ihGuH2/JeJaAeBZtWveLSstVrIOBlmfAR03ShLxL3frV4FQmOOBpmhz5XvZOKiRMW/8SYGFaEsevBTBINqqxRre2klKVnMr24eeWj2hzUsYjYzHiAJQn5GpP6GWeu3MDNW9packDA=;24:4gqdoE4sFsAHeXjV8+vjoqDJxe4zzlxUC5xm0yd8nItjt8y98pO4hDld/cSUcSF5hoj19Ra/RlOdmdeuhzYQOBeZ9DuAYX7rC8dvbBLiTuI=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2781;7:dS52YQVfbUDCmn9hJsLK+2LDbrRUO6u4y4I5eWvKYcyE7O5e80MivyQZ3MEX5BfaM+Y66FIRzdfZJoFrFP8flBFBANeqxj3TERNFTg87+jyKtkms9rtgFpzFL5zpJUpWxhwSAbrynHxHPlPMOGq7VyqAEFbxRB3QDPjP4pqByCho6yPII9nz516GJB9RDoA3+y3WtpaW3C6lQRNanbhrfj3mhXVLKgt9ktJhOao0rie2LI8PBLBvfO4tMoVCNuib
+X-MS-Office365-Filtering-Correlation-Id: 5c733d49-ea86-4d99-fbb0-08d5a110122e
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Apr 2018 07:27:53.2692 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c733d49-ea86-4d99-fbb0-08d5a110122e
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0202MB2781
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 12:30:24PM +0800, Jason Wang wrote:
-> On 2018年04月01日 22:12, Tiwei Bie wrote:
-> > Hello everyone,
-> > 
-> > This RFC implements packed ring support for virtio driver.
-> > 
-> > The code was tested with DPDK vhost (testpmd/vhost-PMD) implemented
-> > by Jens at http://dpdk.org/ml/archives/dev/2018-January/089417.html
-> > Minor changes are needed for the vhost code, e.g. to kick the guest.
-> > 
-> > TODO:
-> > - Refinements and bug fixes;
-> > - Split into small patches;
-> > - Test indirect descriptor support;
-> > - Test/fix event suppression support;
-> > - Test devices other than net;
-> > 
-> > RFC v1 -> RFC v2:
-> > - Add indirect descriptor support - compile test only;
-> > - Add event suppression supprt - compile test only;
-> > - Move vring_packed_init() out of uapi (Jason, MST);
-> > - Merge two loops into one in virtqueue_add_packed() (Jason);
-> > - Split vring_unmap_one() for packed ring and split ring (Jason);
-> > - Avoid using '%' operator (Jason);
-> > - Rename free_head -> next_avail_idx (Jason);
-> > - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
-> > - Some other refinements and bug fixes;
-> > 
-> > Thanks!
-> > 
-> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > ---
-> >   drivers/virtio/virtio_ring.c       | 1094 +++++++++++++++++++++++++++++-------
-> >   include/linux/virtio_ring.h        |    8 +-
-> >   include/uapi/linux/virtio_config.h |   12 +-
-> >   include/uapi/linux/virtio_ring.h   |   61 ++
-> >   4 files changed, 980 insertions(+), 195 deletions(-)
-[...]
-> > +static struct vring_packed_desc *alloc_indirect_packed(struct virtqueue *_vq,
-> > +						       unsigned int total_sg,
-> > +						       gfp_t gfp)
-> > +{
-> > +	struct vring_packed_desc *desc;
-> > +
-> > +	/*
-> > +	 * We require lowmem mappings for the descriptors because
-> > +	 * otherwise virt_to_phys will give us bogus addresses in the
-> > +	 * virtqueue.
-> > +	 */
-> > +	gfp &= ~__GFP_HIGHMEM;
-> > +
-> > +	desc = kmalloc(total_sg * sizeof(struct vring_packed_desc), gfp);
+On 2018-04-13 08:59, ChenKenYY 陳永營 TAO wrote:
+> Hi Peter,
 > 
-> Can we simply check vq->packed here to avoid duplicating helpers?
-
-Then it would be something like this:
-
-static void *alloc_indirect(struct virtqueue *_vq, unsigned int total_sg,
-			    gfp_t gfp)
-{
-	struct vring_virtqueue *vq = to_vvq(_vq);
-	void *data;
-
-	/*
-	 * We require lowmem mappings for the descriptors because
-	 * otherwise virt_to_phys will give us bogus addresses in the
-	 * virtqueue.
-	 */
-	gfp &= ~__GFP_HIGHMEM;
-
-	if (vq->packed) {
-		data = kmalloc(total_sg * sizeof(struct vring_packed_desc),
-				gfp);
-		if (!data)
-			return NULL;
-	} else {
-		struct vring_desc *desc;
-		unsigned int i;
-
-		desc = kmalloc(total_sg * sizeof(struct vring_desc), gfp);
-		if (!desc)
-			return NULL;
-
-		for (i = 0; i < total_sg; i++)
-			desc[i].next = cpu_to_virtio16(_vq->vdev, i + 1);
-
-		data = desc;
-	}
-
-	return data;
-}
-
-I would prefer to have two simpler helpers (and to the callers,
-it's already very clear about which one they should call), i.e.
-the current implementation:
-
-static struct vring_packed_desc *alloc_indirect_packed(struct virtqueue *_vq,
-						       unsigned int total_sg,
-						       gfp_t gfp)
-{
-	struct vring_packed_desc *desc;
-
-	/*
-	 * We require lowmem mappings for the descriptors because
-	 * otherwise virt_to_phys will give us bogus addresses in the
-	 * virtqueue.
-	 */
-	gfp &= ~__GFP_HIGHMEM;
-
-	desc = kmalloc(total_sg * sizeof(struct vring_packed_desc), gfp);
-
-	return desc;
-}
-
-static struct vring_desc *alloc_indirect_split(struct virtqueue *_vq,
-					       unsigned int total_sg,
-					       gfp_t gfp)
-{
-	struct vring_desc *desc;
-	unsigned int i;
-
-	/*
-	 * We require lowmem mappings for the descriptors because
-	 * otherwise virt_to_phys will give us bogus addresses in the
-	 * virtqueue.
-	 */
-	gfp &= ~__GFP_HIGHMEM;
-
-	desc = kmalloc(total_sg * sizeof(struct vring_desc), gfp);
-	if (!desc)
-		return NULL;
-
-	for (i = 0; i < total_sg; i++)
-		desc[i].next = cpu_to_virtio16(_vq->vdev, i + 1);
-	return desc;
-}
-
+> Sorry for late. Here has some event at my company which needs to pause
+> this work.
 > 
-> > +
-> > +	return desc;
-> > +}
-[...]
-> > +static inline int virtqueue_add_packed(struct virtqueue *_vq,
-> > +				       struct scatterlist *sgs[],
-> > +				       unsigned int total_sg,
-> > +				       unsigned int out_sgs,
-> > +				       unsigned int in_sgs,
-> > +				       void *data,
-> > +				       void *ctx,
-> > +				       gfp_t gfp)
-> > +{
-> > +	struct vring_virtqueue *vq = to_vvq(_vq);
-> > +	struct vring_packed_desc *desc;
-> > +	struct scatterlist *sg;
-> > +	unsigned int i, n, descs_used, uninitialized_var(prev), err_idx;
-> > +	__virtio16 uninitialized_var(head_flags), flags;
-> > +	int head, wrap_counter;
-> > +	bool indirect;
-> > +
-> > +	START_USE(vq);
-> > +
-> > +	BUG_ON(data == NULL);
-> > +	BUG_ON(ctx && vq->indirect);
-> > +
-> > +	if (unlikely(vq->broken)) {
-> > +		END_USE(vq);
-> > +		return -EIO;
-> > +	}
-> > +
-> > +#ifdef DEBUG
-> > +	{
-> > +		ktime_t now = ktime_get();
-> > +
-> > +		/* No kick or get, with .1 second between?  Warn. */
-> > +		if (vq->last_add_time_valid)
-> > +			WARN_ON(ktime_to_ms(ktime_sub(now, vq->last_add_time))
-> > +					    > 100);
-> > +		vq->last_add_time = now;
-> > +		vq->last_add_time_valid = true;
-> > +	}
-> > +#endif
-> > +
-> > +	BUG_ON(total_sg == 0);
-> > +
-> > +	head = vq->next_avail_idx;
-> > +	wrap_counter = vq->wrap_counter;
-> > +
-> > +	/* If the host supports indirect descriptor tables, and we have multiple
-> > +	 * buffers, then go indirect. FIXME: tune this threshold */
-> > +	if (vq->indirect && total_sg > 1 && vq->vq.num_free)
-> 
-> Let's introduce a helper like virtqueue_need_indirect() to avoid duplicating
-> codes and FIXME.
+> If the status changed, I will update my patch.
 
-Okay.
+No worries, I just want to know how to handle my preparatory patches. If
+nothing changes, I think I'll push the first two anyway, but will hold
+off the third until there is some real need from it.
 
-> 
-> > +		desc = alloc_indirect_packed(_vq, total_sg, gfp);
-> > +	else {
-> > +		desc = NULL;
-> > +		WARN_ON_ONCE(total_sg > vq->vring_packed.num && !vq->indirect);
-> > +	}
-> > +
-> > +	if (desc) {
-> > +		/* Use a single buffer which doesn't continue */
-> > +		indirect = true;
-> > +		/* Set up rest to use this indirect table. */
-> > +		i = 0;
-> > +		descs_used = 1;
-> > +	} else {
-> > +		indirect = false;
-> > +		desc = vq->vring_packed.desc;
-> > +		i = head;
-> > +		descs_used = total_sg;
-> > +	}
-> > +
-> > +	if (vq->vq.num_free < descs_used) {
-> > +		pr_debug("Can't add buf len %i - avail = %i\n",
-> > +			 descs_used, vq->vq.num_free);
-> > +		/* FIXME: for historical reasons, we force a notify here if
-> > +		 * there are outgoing parts to the buffer.  Presumably the
-> > +		 * host should service the ring ASAP. */
-> > +		if (out_sgs)
-> > +			vq->notify(&vq->vq);
-> > +		if (indirect)
-> > +			kfree(desc);
-> > +		END_USE(vq);
-> > +		return -ENOSPC;
-> > +	}
-> > +
-> > +	for (n = 0; n < out_sgs + in_sgs; n++) {
-> > +		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
-> > +			dma_addr_t addr = vring_map_one_sg(vq, sg, n < out_sgs ?
-> > +						DMA_TO_DEVICE : DMA_FROM_DEVICE);
-> > +			if (vring_mapping_error(vq, addr))
-> > +				goto unmap_release;
-> > +
-> > +			flags = cpu_to_virtio16(_vq->vdev, VRING_DESC_F_NEXT |
-> > +					(n < out_sgs ? 0 : VRING_DESC_F_WRITE) |
-> > +					VRING_DESC_F_AVAIL(vq->wrap_counter) |
-> > +					VRING_DESC_F_USED(!vq->wrap_counter));
-> > +			if (!indirect && i == head)
-> > +				head_flags = flags;
-> > +			else
-> > +				desc[i].flags = flags;
-> > +
-> > +			desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
-> > +			desc[i].len = cpu_to_virtio32(_vq->vdev, sg->length);
-> > +			desc[i].id = cpu_to_virtio32(_vq->vdev, head);
-> 
-> Similar to V1, we only need this for the last descriptor.
+Or can you perhaps make time to test a patch adding pca9641 if I adapt
+your code to my 3/3 patch? Then I can put these patches behind me.
 
-Okay, will just set it for the last desc.
-
-> 
-> > +			prev = i;
-> 
-> It looks to me there's no need to track prev inside the loop here.
-> 
-> > +			i++;
-> > +			if (!indirect && i >= vq->vring_packed.num) {
-> > +				i = 0;
-> > +				vq->wrap_counter ^= 1;
-> > +			}
-> > +		}
-> > +	}
-> > +	/* Last one doesn't continue. */
-> > +	if (total_sg == 1)
-> > +		head_flags &= cpu_to_virtio16(_vq->vdev, ~VRING_DESC_F_NEXT);
-> > +	else
-> > +		desc[prev].flags &= cpu_to_virtio16(_vq->vdev, ~VRING_DESC_F_NEXT);
-> 
-> The only case when prev != i - 1 is i == 0, we can add a if here.
-
-It's just a mirror of the existing implementation in split ring.
-It seems that split ring implementation needs this just because
-it's much harder for it to find the prev, which is not true for
-packed ring. So I'll take your suggestion. Thanks!
-
-> 
-[...]
-> > +static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
-> > +{
-> > +	struct vring_virtqueue *vq = to_vvq(_vq);
-> > +	u16 new, old, off_wrap;
-> > +	bool needs_kick;
-> > +
-> > +	START_USE(vq);
-> > +	/* We need to expose the new flags value before checking notification
-> > +	 * suppressions. */
-> > +	virtio_mb(vq->weak_barriers);
-> > +
-> > +	old = vq->next_avail_idx - vq->num_added;
-> > +	new = vq->next_avail_idx;
-> > +	vq->num_added = 0;
-> > +
-> > +#ifdef DEBUG
-> > +	if (vq->last_add_time_valid) {
-> > +		WARN_ON(ktime_to_ms(ktime_sub(ktime_get(),
-> > +					      vq->last_add_time)) > 100);
-> > +	}
-> > +	vq->last_add_time_valid = false;
-> > +#endif
-> > +
-> > +	off_wrap = virtio16_to_cpu(_vq->vdev, vq->vring_packed.device->off_wrap);
-> > +
-> > +	if (vq->event) {
-> 
-> It looks to me we should examine RING_EVENT_FLAGS_DESC in desc_event_flags
-> instead of vq->event here. Spec does not forces to use evenf_off and
-> event_wrap if event index is enabled.
-> 
-> > +		// FIXME: fix this!
-> > +		needs_kick = ((off_wrap >> 15) == vq->wrap_counter) &&
-> > +			     vring_need_event(off_wrap & ~(1<<15), new, old);
-> 
-> Why need a & here?
-
-Because wrap_counter (the most significant bit in off_wrap)
-isn't part of the index.
-
-> 
-> > +	} else {
-> 
-> Need a smp_rmb() to make sure desc_event_flags was checked before flags.
-
-I don't get your point, if my understanding is correct,
-desc_event_flags is vq->vring_packed.device->flags. So
-what's the "flags"?
-
-> 
-> > +		needs_kick = (vq->vring_packed.device->flags !=
-> > +			      cpu_to_virtio16(_vq->vdev, VRING_EVENT_F_DISABLE));
-> > +	}
-> > +	END_USE(vq);
-> > +	return needs_kick;
-> > +}
-[...]
-> > +static int detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
-> > +			      void **ctx)
-> > +{
-> > +	struct vring_packed_desc *desc;
-> > +	unsigned int i, j;
-> > +
-> > +	/* Clear data ptr. */
-> > +	vq->desc_state[head].data = NULL;
-> > +
-> > +	i = head;
-> > +
-> > +	for (j = 0; j < vq->desc_state[head].num; j++) {
-> > +		desc = &vq->vring_packed.desc[i];
-> > +		vring_unmap_one_packed(vq, desc);
-> > +		desc->flags = 0x0;
-> 
-> Looks like this is unnecessary.
-
-It's safer to zero it. If we don't zero it, after we
-call virtqueue_detach_unused_buf_packed() which calls
-this function, the desc is still available to the
-device.
-
-> 
-> > +		i++;
-> > +		if (i >= vq->vring_packed.num)
-> > +			i = 0;
-> > +	}
-[...]
-> > +static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
-> > +{
-> > +	struct vring_virtqueue *vq = to_vvq(_vq);
-> > +	u16 last_used_idx, wrap_counter, off_wrap;
-> > +
-> > +	START_USE(vq);
-> > +
-> > +	last_used_idx = vq->last_used_idx;
-> > +	wrap_counter = vq->wrap_counter;
-> > +
-> > +	if (last_used_idx > vq->next_avail_idx)
-> > +		wrap_counter ^= 1;
-> > +
-> > +	off_wrap = last_used_idx | (wrap_counter << 15);
-> > +
-> > +	/* We optimistically turn back on interrupts, then check if there was
-> > +	 * more to do. */
-> > +	/* Depending on the VIRTIO_RING_F_EVENT_IDX feature, we need to
-> > +	 * either clear the flags bit or point the event index at the next
-> > +	 * entry. Always do both to keep code simple. */
-> > +	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
-> > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC:
-> > +						     VRING_EVENT_F_ENABLE;
-> > +		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
-> > +							vq->event_flags_shadow);
-> > +	}
-> 
-> A smp_wmb() is missed here?
-> 
-> > +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev, off_wrap);
-> 
-> And according to the spec, it looks to me write a VRING_EVENT_F_ENABLE is
-> sufficient here.
-
-I didn't think much when implementing the event suppression
-for packed ring previously. After I saw your comments, I found
-something new. Indeed, unlike the split ring, for the packed
-ring, spec doesn't say we must use VRING_EVENT_F_DESC when
-EVENT_IDX is negotiated. So do you think below thought is
-right or makes sense?
-
-- For virtqueue_enable_cb_prepare(), we just need to enable
-  the ring by setting flags to VRING_EVENT_F_ENABLE in any
-  case.
-
-- We will try to use VRING_EVENT_F_DESC (if EVENT_IDX is
-  negotiated) only when we want to delay the interrupts
-  virtqueue_enable_cb_delayed().
-
-> 
-> > +	END_USE(vq);
-> > +	return last_used_idx;
-> > +}
-> > +
-[...]
-> > @@ -1157,14 +1852,18 @@ void vring_transport_features(struct virtio_device *vdev)
-> >   	for (i = VIRTIO_TRANSPORT_F_START; i < VIRTIO_TRANSPORT_F_END; i++) {
-> >   		switch (i) {
-> > -		case VIRTIO_RING_F_INDIRECT_DESC:
-> > +#if 0
-> > +		case VIRTIO_RING_F_INDIRECT_DESC: // FIXME not tested yet.
-> >   			break;
-> > -		case VIRTIO_RING_F_EVENT_IDX:
-> > +		case VIRTIO_RING_F_EVENT_IDX: // FIXME probably not work.
-> >   			break;
-> > +#endif
-> 
-> It would be better if you can split EVENT_IDX and INDIRECT_DESC into
-> separate patches too.
-
-Sure. Will do it in the next version.
-
-Thanks for the review!
-
-> 
-> Thanks
-> 
+Cheers,
+Peter
