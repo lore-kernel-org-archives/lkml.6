@@ -1,225 +1,275 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754281AbeDMNwb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 09:52:31 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6739 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753630AbeDMNw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 09:52:28 -0400
-Subject: Re: [PATCH v9 3/7] acpi: apei: Add SEI notification type support for
- ARMv8
-To: James Morse <james.morse@arm.com>, gengdongjiu <gengdj.1984@gmail.com>
-CC: <lishuo1@hisilicon.com>, <merry.libing@hisilicon.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "Liujun (Jun Liu)" <liujun88@hisilicon.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "robert.moore@intel.com" <robert.moore@intel.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "lv.zheng@intel.com" <lv.zheng@intel.com>,
-        Huangshaoyu <huangshaoyu@huawei.com>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "devel@acpica.org" <devel@acpica.org>
-References: <0184EA26B2509940AA629AE1405DD7F201AC71DE@DGGEMA503-MBS.china.huawei.com>
- <5A85C97C.5080605@arm.com>
- <CAMj-D2CEcNjdi8VkSMw0aTqeb678nFnBKiq5ggix3gJhzkgSEA@mail.gmail.com>
- <649fa2f6-1823-116e-fe69-aeaaa6a508af@arm.com>
-From: gengdongjiu <gengdongjiu@huawei.com>
-Message-ID: <c3cc260b-ed4f-c77c-2fac-36a68eb50c8a@huawei.com>
-Date: Fri, 13 Apr 2018 21:50:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754387AbeDMNwn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 09:52:43 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:29215 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754290AbeDMNwj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 09:52:39 -0400
+From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+To: Vinod Koul <vinod.koul@intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "M'boumba Cedric Madianga" <cedric.madianga@gmail.com>,
+        <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Subject: [PATCH v3 2/2] dmaengine: stm32-mdma: Fix incomplete Hw descriptors allocator
+Date: Fri, 13 Apr 2018 15:52:13 +0200
+Message-ID: <1523627533-7184-3-git-send-email-pierre-yves.mordret@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523627533-7184-1-git-send-email-pierre-yves.mordret@st.com>
+References: <1523627533-7184-1-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
-In-Reply-To: <649fa2f6-1823-116e-fe69-aeaaa6a508af@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.142.68.147]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG7NODE2.st.com (10.75.127.20) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-13_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-James,
-   Thanks for this mail.
+Only 1 Hw Descriptor is allocated. Loop over required Hw descriptor for
+proper allocation.
 
-On 2018/4/13 0:14, James Morse wrote:
-> Hi gengdongjiu,
-> 
-> On 12/04/18 06:00, gengdongjiu wrote:
->> 2018-02-16 1:55 GMT+08:00 James Morse <james.morse@arm.com>:
->>> On 05/02/18 11:24, gengdongjiu wrote:
->>>>> Is the emulated SError routed following the routing rules for HCR_EL2.{AMO,
->>>>> TGE}?
->>>>
->>>> Yes, it is.
->>>
->>> ... and yet ...
->>>
->>>
->>>>> What does your firmware do when it wants to emulate SError but its masked?
->>>>> (e.g.1: The physical-SError interrupted EL2 and the SPSR shows EL2 had
->>>>> PSTATE.A  set.
->>>>>  e.g.2: The physical-SError interrupted EL2 but HCR_EL2 indicates the
->>>>> emulated  SError should go to EL1. This effectively masks SError.)
->>>>
->>>> Currently we does not consider much about the mask status(SPSR).
->>>
->>> .. this is a problem.
->>>
->>> If you ignore SPSR_EL3 you may deliver an SError to EL1 when the exception
->>> interrupted EL2. Even if you setup the EL1 register correctly, EL1 can't eret to
->>> EL2. This should never happen, SError is effectively masked if you are running
->>> at an EL higher than the one its routed to.
->>>
->>> More obviously: if the exception came from the EL that SError should be routed
->>> to, but PSTATE.A was set, you can't deliver SError. Masking SError is the only
-> 
->> James, I  summarized the masking and routing rules for SError to
->> confirm with you for the firmware first solution,
-> 
-> You also said "Currently we does not consider much about the mask status(SPSR)."
-Yes, we currently do not consider much it. After clarification with you, we want to modify the EL3 firmware to follow this rule.
+Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+---
+  Version history:
+    v1:
+       * Initial
+    v2:
+       * Fix kbuild warning format: /0x%08x/%pad/
+    v3:
+       * use of "offsetof" instead of explicit calculation
+---
+---
+ drivers/dma/stm32-mdma.c | 89 ++++++++++++++++++++++++++++++------------------
+ 1 file changed, 55 insertions(+), 34 deletions(-)
 
-> 
-> 
->> 1. If the HCR_EL2.{AMO,TGE} is set,
-> 
-> If one or the other of these bits is set: (AMO==1 || TGE==1)
-> 
->> which means the SError should route to EL2,
->> When system happens SError and trap to EL3,   If EL3 find
->> HCR_EL2.{AMO,TGE} and SPSR_EL3.A are both set,
->> and find this SError come from EL2, it will not deliver an SError:
->> store the RAS error in the BERT and 'reboot'; but if
->> it find that this SError come from EL1 or EL0, it also need to deliver
->> an SError, right?
-> 
-> Yes.
-> 
-> 
->> 2. If the HCR_EL2.{AMO,TGE} is not set,
-> 
-> If neither of these bits is set: (AMO==0 && TGE == 0)
-> 
->> which means the SError should route to EL1,
->> When system happens SError and trap to EL3, If EL3 find
->> HCR_EL2.{AMO,TGE} and SPSR_EL3.A are both not set,
-> 
-> (I'm reading this as all three of these bits are clear)
-sorry, it is a typo issue.
-it should be HCR_EL2.AMO and HCR_EL2.TGE are both clear, but SPSR_EL3.A is set.
-
-> 
->> and find this SError come from EL1, it will not deliver an SError:
->> store the RAS error in the BERT and 'reboot'; 
-> 
-> No, (AMO==0 && TGE == 0) means SError is routed to EL1, this exception
-> interrupted EL1 and the A bit was clear, so EL1 can take an SError.
-
-Agree.
-
-> 
-> The two cases here are:
-> AMO==0,TGE==0 means SError should be routed to EL1. If SPSR_EL3 says the
-> exception interrupted EL1 and the A bit was set, you need to do the BERT trick.
-
-> 
-> If SPSR_EL3 says the exception interrupted EL2, you need to do the BERT trick
-"BERT trick" is storing the RAS error in the BERT and 'reboot, right?
-
-> regardless of the A bit, as SError is implicitly masked by running at a higher
-> exception level than it was routed to.
-
-
-> 
-> 
->>From your v11 reply:
->> 2. The exception came from the EL that SError should not be routed
->> to(according to hcr_EL2.{AMO, TGE}),even though the PSTATE.A was set,EL3
->> firmware still deliver SError
-> 
-> (this is re-iterating the two-cases above:)
-> 'not be routed to' is one of two things: Route-to-EL2+interruted-EL1, or
-> Route-to-EL1+interrupted-EL2.
-> 
-> Route-to-EL2+interrupted-EL1 is fine, regardless of SPSR_EL3.A the emulated
-> SError can be delivered to EL2, as EL2 can't mask SError when executing at a
-> lower EL.
-Agree.
-
-> 
-> Route-to-EL1+interrupted-EL2 is the problem. SError is implicitly masked by
-> running at a higher EL. Regardless of SPSR_EL3.A, the emulated SError can not be
-> delivered.
-"can not be delivered" means storing the RAS error in the BERT and 'reboot, right?
-In the Table D1-15 in "D1.14.2 Asynchronous exception masking", for the case, it is "C"
-"C"means SError is not taken regardless of the value of the Process state interrupt mask.
-for this case, whether it will be unsafe if  BIOS directly reboot?
-
-
-> KVM does this on the way out of a guest, if an SError occurs during this time
-> the CPU will wait until execution returns to EL1 before delivering the SError.
-> Your firmware has to do the same.
-> 
-> Table D1-15 in "D1.14.2 Asynchronous exception masking" has a table with all the
-> combinations. The ARM-ARM is what we need to match with this behaviour.
-> 
-> 
->> but if it find that this SError come from EL0, it also need to deliver an
->> SError, right?
-> 
-> I thought interrupted-EL0 could always be delivered: but re-reading the
-> ARM-ARM's "D1.14.2 Asynchronous exception masking", if asynchronous exceptions
-> are routed to EL1 then EL0&EL1 are treated the same.
-> So if SError is routed to EL1, the exception interrupted EL0, and SPSR_EL3.A was
-> set, you still can't deliver the emulated-SError you have to do the BERT-trick.
-> Linux doesn't do this today, but another OS might (e.g. UEFI), and we might do
-> this in the future.
-For this case, whether it will be unsafe if  BIOS directly reboot?
-For example, for some test purpose, EL0 set PSTATE.A, just right happen SError, then BIOS will reboot system.
-I am afraid that system will become unsafe because BIOS will reboot system.
-
-> 
-> This is really tricky for firmware to get right. Another alternative would be to
-> put the CPER records in a Polled buffer, unless something needs doing right now,
-> in which case a BERT-reboot is probably best.
-
-In summary:
-
-[1]:
-Route-to-EL1 + interrupted-EL1, if SPSR_EL3.A is set, EL3 firmware can't deliver the emulated-SError, store the RAS error in the BERT and 'reboot.
-Route-to-EL2 + interrupted-EL2, if SPSR_EL3.A is set, EL3 firmware can't deliver the emulated-SError, store the RAS error in the BERT and 'reboot.
-
-I agree above two cases, but maybe we need to ensure that only in EL2 SError handler and EL1 SError exception handler the PSTATE.A is set, for other places, the PSTATE.A is not set.
-then BIOS can know this is nested-SError when find the SPSR_EL3.A is set, can we ensure that in the Linux kernel code and KVM code?
-
-[2]:
-Route-to-EL2 + interrupted-EL1, regardless of SPSR_EL3.A the emulated SError can be delivered to EL2.
-Route-to-EL2 + interrupted-EL0, regardless of SPSR_EL3.A the emulated SError can be delivered to EL2.
-
-I agree above two cases.
-
-[3]:
-Route-to-EL1+interrupted-EL0, if SPSR_EL3.A is set, EL3 firmware can't deliver the emulated-SError, store the RAS error in the BERT and 'reboot
-Route-to-EL1+interrupted-EL2, EL3 firmware store the RAS error in the BERT and 'reboot regardless of SPSR_EL3.A.
-
-For above two cases, I am worried system will become unsafe because BIOS will reboot system.
-
-
-> 
-> 
-> Thanks,
-> 
-> James
-> 
-> .
-> 
+diff --git a/drivers/dma/stm32-mdma.c b/drivers/dma/stm32-mdma.c
+index 4c7634c..1ac775f 100644
+--- a/drivers/dma/stm32-mdma.c
++++ b/drivers/dma/stm32-mdma.c
+@@ -252,13 +252,17 @@ struct stm32_mdma_hwdesc {
+ 	u32 cmdr;
+ } __aligned(64);
+ 
++struct stm32_mdma_desc_node {
++	struct stm32_mdma_hwdesc *hwdesc;
++	dma_addr_t hwdesc_phys;
++};
++
+ struct stm32_mdma_desc {
+ 	struct virt_dma_desc vdesc;
+ 	u32 ccr;
+-	struct stm32_mdma_hwdesc *hwdesc;
+-	dma_addr_t hwdesc_phys;
+ 	bool cyclic;
+ 	u32 count;
++	struct stm32_mdma_desc_node node[];
+ };
+ 
+ struct stm32_mdma_chan {
+@@ -344,30 +348,42 @@ static struct stm32_mdma_desc *stm32_mdma_alloc_desc(
+ 		struct stm32_mdma_chan *chan, u32 count)
+ {
+ 	struct stm32_mdma_desc *desc;
++	int i;
+ 
+-	desc = kzalloc(sizeof(*desc), GFP_NOWAIT);
++	desc = kzalloc(offsetof(typeof(*desc), node[count]), GFP_NOWAIT);
+ 	if (!desc)
+ 		return NULL;
+ 
+-	desc->hwdesc = dma_pool_alloc(chan->desc_pool, GFP_NOWAIT,
+-				      &desc->hwdesc_phys);
+-	if (!desc->hwdesc) {
+-		dev_err(chan2dev(chan), "Failed to allocate descriptor\n");
+-		kfree(desc);
+-		return NULL;
++	for (i = 0; i < count; i++) {
++		desc->node[i].hwdesc =
++			dma_pool_alloc(chan->desc_pool, GFP_NOWAIT,
++				       &desc->node[i].hwdesc_phys);
++		if (!desc->node[i].hwdesc)
++			goto err;
+ 	}
+ 
+ 	desc->count = count;
+ 
+ 	return desc;
++
++err:
++	dev_err(chan2dev(chan), "Failed to allocate descriptor\n");
++	while (--i >= 0)
++		dma_pool_free(chan->desc_pool, desc->node[i].hwdesc,
++			      desc->node[i].hwdesc_phys);
++	kfree(desc);
++	return NULL;
+ }
+ 
+ static void stm32_mdma_desc_free(struct virt_dma_desc *vdesc)
+ {
+ 	struct stm32_mdma_desc *desc = to_stm32_mdma_desc(vdesc);
+ 	struct stm32_mdma_chan *chan = to_stm32_mdma_chan(vdesc->tx.chan);
++	int i;
+ 
+-	dma_pool_free(chan->desc_pool, desc->hwdesc, desc->hwdesc_phys);
++	for (i = 0; i < desc->count; i++)
++		dma_pool_free(chan->desc_pool, desc->node[i].hwdesc,
++			      desc->node[i].hwdesc_phys);
+ 	kfree(desc);
+ }
+ 
+@@ -666,18 +682,18 @@ static int stm32_mdma_set_xfer_param(struct stm32_mdma_chan *chan,
+ }
+ 
+ static void stm32_mdma_dump_hwdesc(struct stm32_mdma_chan *chan,
+-				   struct stm32_mdma_hwdesc *hwdesc)
++				   struct stm32_mdma_desc_node *node)
+ {
+-	dev_dbg(chan2dev(chan), "hwdesc:  0x%p\n", hwdesc);
+-	dev_dbg(chan2dev(chan), "CTCR:    0x%08x\n", hwdesc->ctcr);
+-	dev_dbg(chan2dev(chan), "CBNDTR:  0x%08x\n", hwdesc->cbndtr);
+-	dev_dbg(chan2dev(chan), "CSAR:    0x%08x\n", hwdesc->csar);
+-	dev_dbg(chan2dev(chan), "CDAR:    0x%08x\n", hwdesc->cdar);
+-	dev_dbg(chan2dev(chan), "CBRUR:   0x%08x\n", hwdesc->cbrur);
+-	dev_dbg(chan2dev(chan), "CLAR:    0x%08x\n", hwdesc->clar);
+-	dev_dbg(chan2dev(chan), "CTBR:    0x%08x\n", hwdesc->ctbr);
+-	dev_dbg(chan2dev(chan), "CMAR:    0x%08x\n", hwdesc->cmar);
+-	dev_dbg(chan2dev(chan), "CMDR:    0x%08x\n\n", hwdesc->cmdr);
++	dev_dbg(chan2dev(chan), "hwdesc:  %pad\n", &node->hwdesc_phys);
++	dev_dbg(chan2dev(chan), "CTCR:    0x%08x\n", node->hwdesc->ctcr);
++	dev_dbg(chan2dev(chan), "CBNDTR:  0x%08x\n", node->hwdesc->cbndtr);
++	dev_dbg(chan2dev(chan), "CSAR:    0x%08x\n", node->hwdesc->csar);
++	dev_dbg(chan2dev(chan), "CDAR:    0x%08x\n", node->hwdesc->cdar);
++	dev_dbg(chan2dev(chan), "CBRUR:   0x%08x\n", node->hwdesc->cbrur);
++	dev_dbg(chan2dev(chan), "CLAR:    0x%08x\n", node->hwdesc->clar);
++	dev_dbg(chan2dev(chan), "CTBR:    0x%08x\n", node->hwdesc->ctbr);
++	dev_dbg(chan2dev(chan), "CMAR:    0x%08x\n", node->hwdesc->cmar);
++	dev_dbg(chan2dev(chan), "CMDR:    0x%08x\n\n", node->hwdesc->cmdr);
+ }
+ 
+ static void stm32_mdma_setup_hwdesc(struct stm32_mdma_chan *chan,
+@@ -691,7 +707,7 @@ static void stm32_mdma_setup_hwdesc(struct stm32_mdma_chan *chan,
+ 	struct stm32_mdma_hwdesc *hwdesc;
+ 	u32 next = count + 1;
+ 
+-	hwdesc = &desc->hwdesc[count];
++	hwdesc = desc->node[count].hwdesc;
+ 	hwdesc->ctcr = ctcr;
+ 	hwdesc->cbndtr &= ~(STM32_MDMA_CBNDTR_BRC_MK |
+ 			STM32_MDMA_CBNDTR_BRDUM |
+@@ -701,19 +717,20 @@ static void stm32_mdma_setup_hwdesc(struct stm32_mdma_chan *chan,
+ 	hwdesc->csar = src_addr;
+ 	hwdesc->cdar = dst_addr;
+ 	hwdesc->cbrur = 0;
+-	hwdesc->clar = desc->hwdesc_phys + next * sizeof(*hwdesc);
+ 	hwdesc->ctbr = ctbr;
+ 	hwdesc->cmar = config->mask_addr;
+ 	hwdesc->cmdr = config->mask_data;
+ 
+ 	if (is_last) {
+ 		if (is_cyclic)
+-			hwdesc->clar = desc->hwdesc_phys;
++			hwdesc->clar = desc->node[0].hwdesc_phys;
+ 		else
+ 			hwdesc->clar = 0;
++	} else {
++		hwdesc->clar = desc->node[next].hwdesc_phys;
+ 	}
+ 
+-	stm32_mdma_dump_hwdesc(chan, hwdesc);
++	stm32_mdma_dump_hwdesc(chan, &desc->node[count]);
+ }
+ 
+ static int stm32_mdma_setup_xfer(struct stm32_mdma_chan *chan,
+@@ -777,7 +794,7 @@ stm32_mdma_prep_slave_sg(struct dma_chan *c, struct scatterlist *sgl,
+ {
+ 	struct stm32_mdma_chan *chan = to_stm32_mdma_chan(c);
+ 	struct stm32_mdma_desc *desc;
+-	int ret;
++	int i, ret;
+ 
+ 	/*
+ 	 * Once DMA is in setup cyclic mode the channel we cannot assign this
+@@ -803,7 +820,9 @@ stm32_mdma_prep_slave_sg(struct dma_chan *c, struct scatterlist *sgl,
+ 	return vchan_tx_prep(&chan->vchan, &desc->vdesc, flags);
+ 
+ xfer_setup_err:
+-	dma_pool_free(chan->desc_pool, &desc->hwdesc, desc->hwdesc_phys);
++	for (i = 0; i < desc->count; i++)
++		dma_pool_free(chan->desc_pool, desc->node[i].hwdesc,
++			      desc->node[i].hwdesc_phys);
+ 	kfree(desc);
+ 	return NULL;
+ }
+@@ -892,7 +911,9 @@ stm32_mdma_prep_dma_cyclic(struct dma_chan *c, dma_addr_t buf_addr,
+ 	return vchan_tx_prep(&chan->vchan, &desc->vdesc, flags);
+ 
+ xfer_setup_err:
+-	dma_pool_free(chan->desc_pool, &desc->hwdesc, desc->hwdesc_phys);
++	for (i = 0; i < desc->count; i++)
++		dma_pool_free(chan->desc_pool, desc->node[i].hwdesc,
++			      desc->node[i].hwdesc_phys);
+ 	kfree(desc);
+ 	return NULL;
+ }
+@@ -1006,7 +1027,7 @@ stm32_mdma_prep_dma_memcpy(struct dma_chan *c, dma_addr_t dest, dma_addr_t src,
+ 			ctcr |= STM32_MDMA_CTCR_PKE;
+ 
+ 		/* Prepare hardware descriptor */
+-		hwdesc = desc->hwdesc;
++		hwdesc = desc->node[0].hwdesc;
+ 		hwdesc->ctcr = ctcr;
+ 		hwdesc->cbndtr = cbndtr;
+ 		hwdesc->csar = src;
+@@ -1017,7 +1038,7 @@ stm32_mdma_prep_dma_memcpy(struct dma_chan *c, dma_addr_t dest, dma_addr_t src,
+ 		hwdesc->cmar = 0;
+ 		hwdesc->cmdr = 0;
+ 
+-		stm32_mdma_dump_hwdesc(chan, hwdesc);
++		stm32_mdma_dump_hwdesc(chan, &desc->node[0]);
+ 	} else {
+ 		/* Setup a LLI transfer */
+ 		ctcr |= STM32_MDMA_CTCR_TRGM(STM32_MDMA_LINKED_LIST) |
+@@ -1117,7 +1138,7 @@ static void stm32_mdma_start_transfer(struct stm32_mdma_chan *chan)
+ 	}
+ 
+ 	chan->desc = to_stm32_mdma_desc(vdesc);
+-	hwdesc = chan->desc->hwdesc;
++	hwdesc = chan->desc->node[0].hwdesc;
+ 	chan->curr_hwdesc = 0;
+ 
+ 	stm32_mdma_write(dmadev, STM32_MDMA_CCR(id), chan->desc->ccr);
+@@ -1195,7 +1216,7 @@ static int stm32_mdma_resume(struct dma_chan *c)
+ 	unsigned long flags;
+ 	u32 status, reg;
+ 
+-	hwdesc = &chan->desc->hwdesc[chan->curr_hwdesc];
++	hwdesc = chan->desc->node[chan->curr_hwdesc].hwdesc;
+ 
+ 	spin_lock_irqsave(&chan->vchan.lock, flags);
+ 
+@@ -1265,13 +1286,13 @@ static size_t stm32_mdma_desc_residue(struct stm32_mdma_chan *chan,
+ 				      u32 curr_hwdesc)
+ {
+ 	struct stm32_mdma_device *dmadev = stm32_mdma_get_dev(chan);
++	struct stm32_mdma_hwdesc *hwdesc = desc->node[0].hwdesc;
+ 	u32 cbndtr, residue, modulo, burst_size;
+ 	int i;
+ 
+ 	residue = 0;
+ 	for (i = curr_hwdesc + 1; i < desc->count; i++) {
+-		struct stm32_mdma_hwdesc *hwdesc = &desc->hwdesc[i];
+-
++		hwdesc = desc->node[i].hwdesc;
+ 		residue += STM32_MDMA_CBNDTR_BNDT(hwdesc->cbndtr);
+ 	}
+ 	cbndtr = stm32_mdma_read(dmadev, STM32_MDMA_CBNDTR(chan->id));
+-- 
+2.7.4
