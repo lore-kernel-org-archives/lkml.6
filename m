@@ -1,164 +1,479 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753493AbeDMHOF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 03:14:05 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:36305 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750973AbeDMHOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 03:14:03 -0400
-Subject: Re: [PATCH] f2fs: enlarge block plug coverage
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20180404085404.82184-1-yuchao0@huawei.com>
- <20180405035115.GC50337@jaegeuk-macbookpro.roam.corp.google.com>
- <03c21c2f-cb0e-dbd4-b48a-95c2678964d1@huawei.com>
- <20180409180241.GC17558@jaegeuk-macbookpro.roam.corp.google.com>
- <967b8819-da9a-b609-6a22-db8df5c7ec6c@huawei.com>
- <20180410041033.GE47598@jaegeuk-macbookpro.roam.corp.google.com>
- <ff3990f2-5785-045e-30c5-62a9f8352d74@huawei.com>
- <20180413010615.GA53401@jaegeuk-macbookpro.roam.corp.google.com>
- <fd5b56ef-4f27-65b7-d3a2-71ef4425b452@huawei.com>
- <20180413040702.GC59368@jaegeuk-macbookpro.roam.corp.google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <dbbfa423-cf66-eb0b-1102-d00f9c7d396d@huawei.com>
-Date: Fri, 13 Apr 2018 15:13:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1753724AbeDMHSB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 03:18:01 -0400
+Received: from mga11.intel.com ([192.55.52.93]:64877 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751162AbeDMHR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 03:17:59 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,444,1517904000";
+   d="scan'208";a="50456390"
+Date: Fri, 13 Apr 2018 15:15:29 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, wexu@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        jfreimann@redhat.com
+Subject: Re: [RFC v2] virtio: support packed ring
+Message-ID: <20180413071529.f4esh654dakodf4f@debian>
+References: <20180401141216.8969-1-tiwei.bie@intel.com>
+ <ebfbfc3e-9e52-9331-61b6-258e131f822d@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180413040702.GC59368@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ebfbfc3e-9e52-9331-61b6-258e131f822d@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/13 12:07, Jaegeuk Kim wrote:
-> On 04/13, Chao Yu wrote:
->> On 2018/4/13 9:06, Jaegeuk Kim wrote:
->>> On 04/10, Chao Yu wrote:
->>>> On 2018/4/10 12:10, Jaegeuk Kim wrote:
->>>>> On 04/10, Chao Yu wrote:
->>>>>> On 2018/4/10 2:02, Jaegeuk Kim wrote:
->>>>>>> On 04/08, Chao Yu wrote:
->>>>>>>> On 2018/4/5 11:51, Jaegeuk Kim wrote:
->>>>>>>>> On 04/04, Chao Yu wrote:
->>>>>>>>>> This patch enlarges block plug coverage in __issue_discard_cmd, in
->>>>>>>>>> order to collect more pending bios before issuing them, to avoid
->>>>>>>>>> being disturbed by previous discard I/O in IO aware discard mode.
->>>>>>>>>
->>>>>>>>> Hmm, then we need to wait for huge discard IO for over 10 secs, which
->>>>>>>>
->>>>>>>> We found that total discard latency is rely on total discard number we issued
->>>>>>>> last time instead of range or length discard covered. IMO, if we don't change
->>>>>>>> .max_requests value, we will not suffer longer latency.
->>>>>>>>
->>>>>>>>> will affect following read/write IOs accordingly. In order to avoid that,
->>>>>>>>> we actually need to limit the discard size.
->>>>>>
->>>>>> Do you mean limit discard count or discard length?
->>>>>
->>>>> Both of them.
->>>>>
->>>>>>
->>>>>>>>
->>>>>>>> If you are worry about I/O interference in between discard and rw, I suggest to
->>>>>>>> decrease .max_requests value.
->>>>>>>
->>>>>>> What do you mean? This will produce more pending requests in the queue?
->>>>>>
->>>>>> I mean after applying this patch, we can queue more discard IOs in plug inside
->>>>>> task, otherwise, previous issued discard in block layer can make is_idle() be false,
->>>>>> then it can stop IO awared user to issue pending discard command.
->>>>>
->>>>> Then, unplug will issue lots of discard commands, which affects the following rw
->>>>> latencies. My preference would be issuing discard commands one by one as much as
->>>>> possible.
->>>>
->>>> Hmm.. for you concern, we can turn down IO priority of discard from background?
->>>
->>> That makes much more sense to me. :P
->>
->> Then, this patch which enlarge plug coverage will not still a problem, right? ;)
+On Fri, Apr 13, 2018 at 12:30:24PM +0800, Jason Wang wrote:
+> On 2018年04月01日 22:12, Tiwei Bie wrote:
+> > Hello everyone,
+> > 
+> > This RFC implements packed ring support for virtio driver.
+> > 
+> > The code was tested with DPDK vhost (testpmd/vhost-PMD) implemented
+> > by Jens at http://dpdk.org/ml/archives/dev/2018-January/089417.html
+> > Minor changes are needed for the vhost code, e.g. to kick the guest.
+> > 
+> > TODO:
+> > - Refinements and bug fixes;
+> > - Split into small patches;
+> > - Test indirect descriptor support;
+> > - Test/fix event suppression support;
+> > - Test devices other than net;
+> > 
+> > RFC v1 -> RFC v2:
+> > - Add indirect descriptor support - compile test only;
+> > - Add event suppression supprt - compile test only;
+> > - Move vring_packed_init() out of uapi (Jason, MST);
+> > - Merge two loops into one in virtqueue_add_packed() (Jason);
+> > - Split vring_unmap_one() for packed ring and split ring (Jason);
+> > - Avoid using '%' operator (Jason);
+> > - Rename free_head -> next_avail_idx (Jason);
+> > - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
+> > - Some other refinements and bug fixes;
+> > 
+> > Thanks!
+> > 
+> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > ---
+> >   drivers/virtio/virtio_ring.c       | 1094 +++++++++++++++++++++++++++++-------
+> >   include/linux/virtio_ring.h        |    8 +-
+> >   include/uapi/linux/virtio_config.h |   12 +-
+> >   include/uapi/linux/virtio_ring.h   |   61 ++
+> >   4 files changed, 980 insertions(+), 195 deletions(-)
+[...]
+> > +static struct vring_packed_desc *alloc_indirect_packed(struct virtqueue *_vq,
+> > +						       unsigned int total_sg,
+> > +						       gfp_t gfp)
+> > +{
+> > +	struct vring_packed_desc *desc;
+> > +
+> > +	/*
+> > +	 * We require lowmem mappings for the descriptors because
+> > +	 * otherwise virt_to_phys will give us bogus addresses in the
+> > +	 * virtqueue.
+> > +	 */
+> > +	gfp &= ~__GFP_HIGHMEM;
+> > +
+> > +	desc = kmalloc(total_sg * sizeof(struct vring_packed_desc), gfp);
 > 
-> This is different one.
+> Can we simply check vq->packed here to avoid duplicating helpers?
 
-Yup, if there will be no IO interference as you concerned before, can we accept
-it now?
+Then it would be something like this:
 
-Thanks,
+static void *alloc_indirect(struct virtqueue *_vq, unsigned int total_sg,
+			    gfp_t gfp)
+{
+	struct vring_virtqueue *vq = to_vvq(_vq);
+	void *data;
+
+	/*
+	 * We require lowmem mappings for the descriptors because
+	 * otherwise virt_to_phys will give us bogus addresses in the
+	 * virtqueue.
+	 */
+	gfp &= ~__GFP_HIGHMEM;
+
+	if (vq->packed) {
+		data = kmalloc(total_sg * sizeof(struct vring_packed_desc),
+				gfp);
+		if (!data)
+			return NULL;
+	} else {
+		struct vring_desc *desc;
+		unsigned int i;
+
+		desc = kmalloc(total_sg * sizeof(struct vring_desc), gfp);
+		if (!desc)
+			return NULL;
+
+		for (i = 0; i < total_sg; i++)
+			desc[i].next = cpu_to_virtio16(_vq->vdev, i + 1);
+
+		data = desc;
+	}
+
+	return data;
+}
+
+I would prefer to have two simpler helpers (and to the callers,
+it's already very clear about which one they should call), i.e.
+the current implementation:
+
+static struct vring_packed_desc *alloc_indirect_packed(struct virtqueue *_vq,
+						       unsigned int total_sg,
+						       gfp_t gfp)
+{
+	struct vring_packed_desc *desc;
+
+	/*
+	 * We require lowmem mappings for the descriptors because
+	 * otherwise virt_to_phys will give us bogus addresses in the
+	 * virtqueue.
+	 */
+	gfp &= ~__GFP_HIGHMEM;
+
+	desc = kmalloc(total_sg * sizeof(struct vring_packed_desc), gfp);
+
+	return desc;
+}
+
+static struct vring_desc *alloc_indirect_split(struct virtqueue *_vq,
+					       unsigned int total_sg,
+					       gfp_t gfp)
+{
+	struct vring_desc *desc;
+	unsigned int i;
+
+	/*
+	 * We require lowmem mappings for the descriptors because
+	 * otherwise virt_to_phys will give us bogus addresses in the
+	 * virtqueue.
+	 */
+	gfp &= ~__GFP_HIGHMEM;
+
+	desc = kmalloc(total_sg * sizeof(struct vring_desc), gfp);
+	if (!desc)
+		return NULL;
+
+	for (i = 0; i < total_sg; i++)
+		desc[i].next = cpu_to_virtio16(_vq->vdev, i + 1);
+	return desc;
+}
 
 > 
->>
->> Thanks,
->>
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>>
->>>>>>>>
->>>>>>>> Thanks,
->>>>>>>>
->>>>>>>>>
->>>>>>>>> Thanks,
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>>>>>>>> ---
->>>>>>>>>>  fs/f2fs/segment.c | 7 +++++--
->>>>>>>>>>  1 file changed, 5 insertions(+), 2 deletions(-)
->>>>>>>>>>
->>>>>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>>>>>>> index 8f0b5ba46315..4287e208c040 100644
->>>>>>>>>> --- a/fs/f2fs/segment.c
->>>>>>>>>> +++ b/fs/f2fs/segment.c
->>>>>>>>>> @@ -1208,10 +1208,12 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>>>>>>>>>  		pend_list = &dcc->pend_list[i];
->>>>>>>>>>  
->>>>>>>>>>  		mutex_lock(&dcc->cmd_lock);
->>>>>>>>>> +
->>>>>>>>>> +		blk_start_plug(&plug);
->>>>>>>>>> +
->>>>>>>>>>  		if (list_empty(pend_list))
->>>>>>>>>>  			goto next;
->>>>>>>>>>  		f2fs_bug_on(sbi, !__check_rb_tree_consistence(sbi, &dcc->root));
->>>>>>>>>> -		blk_start_plug(&plug);
->>>>>>>>>>  		list_for_each_entry_safe(dc, tmp, pend_list, list) {
->>>>>>>>>>  			f2fs_bug_on(sbi, dc->state != D_PREP);
->>>>>>>>>>  
->>>>>>>>>> @@ -1227,8 +1229,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
->>>>>>>>>>  			if (++iter >= dpolicy->max_requests)
->>>>>>>>>>  				break;
->>>>>>>>>>  		}
->>>>>>>>>> -		blk_finish_plug(&plug);
->>>>>>>>>>  next:
->>>>>>>>>> +		blk_finish_plug(&plug);
->>>>>>>>>> +
->>>>>>>>>>  		mutex_unlock(&dcc->cmd_lock);
->>>>>>>>>>  
->>>>>>>>>>  		if (iter >= dpolicy->max_requests)
->>>>>>>>>> -- 
->>>>>>>>>> 2.15.0.55.gc2ece9dc4de6
->>>>>>>>>
->>>>>>>>> .
->>>>>>>>>
->>>>>>>
->>>>>>> .
->>>>>>>
->>>>>
->>>>> .
->>>>>
->>>
->>> .
->>>
+> > +
+> > +	return desc;
+> > +}
+[...]
+> > +static inline int virtqueue_add_packed(struct virtqueue *_vq,
+> > +				       struct scatterlist *sgs[],
+> > +				       unsigned int total_sg,
+> > +				       unsigned int out_sgs,
+> > +				       unsigned int in_sgs,
+> > +				       void *data,
+> > +				       void *ctx,
+> > +				       gfp_t gfp)
+> > +{
+> > +	struct vring_virtqueue *vq = to_vvq(_vq);
+> > +	struct vring_packed_desc *desc;
+> > +	struct scatterlist *sg;
+> > +	unsigned int i, n, descs_used, uninitialized_var(prev), err_idx;
+> > +	__virtio16 uninitialized_var(head_flags), flags;
+> > +	int head, wrap_counter;
+> > +	bool indirect;
+> > +
+> > +	START_USE(vq);
+> > +
+> > +	BUG_ON(data == NULL);
+> > +	BUG_ON(ctx && vq->indirect);
+> > +
+> > +	if (unlikely(vq->broken)) {
+> > +		END_USE(vq);
+> > +		return -EIO;
+> > +	}
+> > +
+> > +#ifdef DEBUG
+> > +	{
+> > +		ktime_t now = ktime_get();
+> > +
+> > +		/* No kick or get, with .1 second between?  Warn. */
+> > +		if (vq->last_add_time_valid)
+> > +			WARN_ON(ktime_to_ms(ktime_sub(now, vq->last_add_time))
+> > +					    > 100);
+> > +		vq->last_add_time = now;
+> > +		vq->last_add_time_valid = true;
+> > +	}
+> > +#endif
+> > +
+> > +	BUG_ON(total_sg == 0);
+> > +
+> > +	head = vq->next_avail_idx;
+> > +	wrap_counter = vq->wrap_counter;
+> > +
+> > +	/* If the host supports indirect descriptor tables, and we have multiple
+> > +	 * buffers, then go indirect. FIXME: tune this threshold */
+> > +	if (vq->indirect && total_sg > 1 && vq->vq.num_free)
 > 
-> .
+> Let's introduce a helper like virtqueue_need_indirect() to avoid duplicating
+> codes and FIXME.
+
+Okay.
+
+> 
+> > +		desc = alloc_indirect_packed(_vq, total_sg, gfp);
+> > +	else {
+> > +		desc = NULL;
+> > +		WARN_ON_ONCE(total_sg > vq->vring_packed.num && !vq->indirect);
+> > +	}
+> > +
+> > +	if (desc) {
+> > +		/* Use a single buffer which doesn't continue */
+> > +		indirect = true;
+> > +		/* Set up rest to use this indirect table. */
+> > +		i = 0;
+> > +		descs_used = 1;
+> > +	} else {
+> > +		indirect = false;
+> > +		desc = vq->vring_packed.desc;
+> > +		i = head;
+> > +		descs_used = total_sg;
+> > +	}
+> > +
+> > +	if (vq->vq.num_free < descs_used) {
+> > +		pr_debug("Can't add buf len %i - avail = %i\n",
+> > +			 descs_used, vq->vq.num_free);
+> > +		/* FIXME: for historical reasons, we force a notify here if
+> > +		 * there are outgoing parts to the buffer.  Presumably the
+> > +		 * host should service the ring ASAP. */
+> > +		if (out_sgs)
+> > +			vq->notify(&vq->vq);
+> > +		if (indirect)
+> > +			kfree(desc);
+> > +		END_USE(vq);
+> > +		return -ENOSPC;
+> > +	}
+> > +
+> > +	for (n = 0; n < out_sgs + in_sgs; n++) {
+> > +		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
+> > +			dma_addr_t addr = vring_map_one_sg(vq, sg, n < out_sgs ?
+> > +						DMA_TO_DEVICE : DMA_FROM_DEVICE);
+> > +			if (vring_mapping_error(vq, addr))
+> > +				goto unmap_release;
+> > +
+> > +			flags = cpu_to_virtio16(_vq->vdev, VRING_DESC_F_NEXT |
+> > +					(n < out_sgs ? 0 : VRING_DESC_F_WRITE) |
+> > +					VRING_DESC_F_AVAIL(vq->wrap_counter) |
+> > +					VRING_DESC_F_USED(!vq->wrap_counter));
+> > +			if (!indirect && i == head)
+> > +				head_flags = flags;
+> > +			else
+> > +				desc[i].flags = flags;
+> > +
+> > +			desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
+> > +			desc[i].len = cpu_to_virtio32(_vq->vdev, sg->length);
+> > +			desc[i].id = cpu_to_virtio32(_vq->vdev, head);
+> 
+> Similar to V1, we only need this for the last descriptor.
+
+Okay, will just set it for the last desc.
+
+> 
+> > +			prev = i;
+> 
+> It looks to me there's no need to track prev inside the loop here.
+> 
+> > +			i++;
+> > +			if (!indirect && i >= vq->vring_packed.num) {
+> > +				i = 0;
+> > +				vq->wrap_counter ^= 1;
+> > +			}
+> > +		}
+> > +	}
+> > +	/* Last one doesn't continue. */
+> > +	if (total_sg == 1)
+> > +		head_flags &= cpu_to_virtio16(_vq->vdev, ~VRING_DESC_F_NEXT);
+> > +	else
+> > +		desc[prev].flags &= cpu_to_virtio16(_vq->vdev, ~VRING_DESC_F_NEXT);
+> 
+> The only case when prev != i - 1 is i == 0, we can add a if here.
+
+It's just a mirror of the existing implementation in split ring.
+It seems that split ring implementation needs this just because
+it's much harder for it to find the prev, which is not true for
+packed ring. So I'll take your suggestion. Thanks!
+
+> 
+[...]
+> > +static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
+> > +{
+> > +	struct vring_virtqueue *vq = to_vvq(_vq);
+> > +	u16 new, old, off_wrap;
+> > +	bool needs_kick;
+> > +
+> > +	START_USE(vq);
+> > +	/* We need to expose the new flags value before checking notification
+> > +	 * suppressions. */
+> > +	virtio_mb(vq->weak_barriers);
+> > +
+> > +	old = vq->next_avail_idx - vq->num_added;
+> > +	new = vq->next_avail_idx;
+> > +	vq->num_added = 0;
+> > +
+> > +#ifdef DEBUG
+> > +	if (vq->last_add_time_valid) {
+> > +		WARN_ON(ktime_to_ms(ktime_sub(ktime_get(),
+> > +					      vq->last_add_time)) > 100);
+> > +	}
+> > +	vq->last_add_time_valid = false;
+> > +#endif
+> > +
+> > +	off_wrap = virtio16_to_cpu(_vq->vdev, vq->vring_packed.device->off_wrap);
+> > +
+> > +	if (vq->event) {
+> 
+> It looks to me we should examine RING_EVENT_FLAGS_DESC in desc_event_flags
+> instead of vq->event here. Spec does not forces to use evenf_off and
+> event_wrap if event index is enabled.
+> 
+> > +		// FIXME: fix this!
+> > +		needs_kick = ((off_wrap >> 15) == vq->wrap_counter) &&
+> > +			     vring_need_event(off_wrap & ~(1<<15), new, old);
+> 
+> Why need a & here?
+
+Because wrap_counter (the most significant bit in off_wrap)
+isn't part of the index.
+
+> 
+> > +	} else {
+> 
+> Need a smp_rmb() to make sure desc_event_flags was checked before flags.
+
+I don't get your point, if my understanding is correct,
+desc_event_flags is vq->vring_packed.device->flags. So
+what's the "flags"?
+
+> 
+> > +		needs_kick = (vq->vring_packed.device->flags !=
+> > +			      cpu_to_virtio16(_vq->vdev, VRING_EVENT_F_DISABLE));
+> > +	}
+> > +	END_USE(vq);
+> > +	return needs_kick;
+> > +}
+[...]
+> > +static int detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
+> > +			      void **ctx)
+> > +{
+> > +	struct vring_packed_desc *desc;
+> > +	unsigned int i, j;
+> > +
+> > +	/* Clear data ptr. */
+> > +	vq->desc_state[head].data = NULL;
+> > +
+> > +	i = head;
+> > +
+> > +	for (j = 0; j < vq->desc_state[head].num; j++) {
+> > +		desc = &vq->vring_packed.desc[i];
+> > +		vring_unmap_one_packed(vq, desc);
+> > +		desc->flags = 0x0;
+> 
+> Looks like this is unnecessary.
+
+It's safer to zero it. If we don't zero it, after we
+call virtqueue_detach_unused_buf_packed() which calls
+this function, the desc is still available to the
+device.
+
+> 
+> > +		i++;
+> > +		if (i >= vq->vring_packed.num)
+> > +			i = 0;
+> > +	}
+[...]
+> > +static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
+> > +{
+> > +	struct vring_virtqueue *vq = to_vvq(_vq);
+> > +	u16 last_used_idx, wrap_counter, off_wrap;
+> > +
+> > +	START_USE(vq);
+> > +
+> > +	last_used_idx = vq->last_used_idx;
+> > +	wrap_counter = vq->wrap_counter;
+> > +
+> > +	if (last_used_idx > vq->next_avail_idx)
+> > +		wrap_counter ^= 1;
+> > +
+> > +	off_wrap = last_used_idx | (wrap_counter << 15);
+> > +
+> > +	/* We optimistically turn back on interrupts, then check if there was
+> > +	 * more to do. */
+> > +	/* Depending on the VIRTIO_RING_F_EVENT_IDX feature, we need to
+> > +	 * either clear the flags bit or point the event index at the next
+> > +	 * entry. Always do both to keep code simple. */
+> > +	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
+> > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC:
+> > +						     VRING_EVENT_F_ENABLE;
+> > +		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
+> > +							vq->event_flags_shadow);
+> > +	}
+> 
+> A smp_wmb() is missed here?
+> 
+> > +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev, off_wrap);
+> 
+> And according to the spec, it looks to me write a VRING_EVENT_F_ENABLE is
+> sufficient here.
+
+I didn't think much when implementing the event suppression
+for packed ring previously. After I saw your comments, I found
+something new. Indeed, unlike the split ring, for the packed
+ring, spec doesn't say we must use VRING_EVENT_F_DESC when
+EVENT_IDX is negotiated. So do you think below thought is
+right or makes sense?
+
+- For virtqueue_enable_cb_prepare(), we just need to enable
+  the ring by setting flags to VRING_EVENT_F_ENABLE in any
+  case.
+
+- We will try to use VRING_EVENT_F_DESC (if EVENT_IDX is
+  negotiated) only when we want to delay the interrupts
+  virtqueue_enable_cb_delayed().
+
+> 
+> > +	END_USE(vq);
+> > +	return last_used_idx;
+> > +}
+> > +
+[...]
+> > @@ -1157,14 +1852,18 @@ void vring_transport_features(struct virtio_device *vdev)
+> >   	for (i = VIRTIO_TRANSPORT_F_START; i < VIRTIO_TRANSPORT_F_END; i++) {
+> >   		switch (i) {
+> > -		case VIRTIO_RING_F_INDIRECT_DESC:
+> > +#if 0
+> > +		case VIRTIO_RING_F_INDIRECT_DESC: // FIXME not tested yet.
+> >   			break;
+> > -		case VIRTIO_RING_F_EVENT_IDX:
+> > +		case VIRTIO_RING_F_EVENT_IDX: // FIXME probably not work.
+> >   			break;
+> > +#endif
+> 
+> It would be better if you can split EVENT_IDX and INDIRECT_DESC into
+> separate patches too.
+
+Sure. Will do it in the next version.
+
+Thanks for the review!
+
+> 
+> Thanks
 > 
