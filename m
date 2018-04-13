@@ -1,74 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751380AbeDMSpa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 14:45:30 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45384 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750984AbeDMSp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 14:45:27 -0400
-Date: Fri, 13 Apr 2018 19:45:23 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
- kill() returns wrong values in si_pid and si_uid
-Message-ID: <20180413184522.GD16308@e103592.cambridge.arm.com>
-References: <20180412124928.GA29458@altlinux.org>
- <20180412131404.GE16141@n2100.armlinux.org.uk>
- <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
- <20180412172051.GK16141@n2100.armlinux.org.uk>
- <CA+55aFwjZqd8J0=veki1g+quQg8amEG4NnMe-h7HFksn=F=x_Q@mail.gmail.com>
- <20180413094211.GN16141@n2100.armlinux.org.uk>
- <CA+55aFwoThxqUeAZSsMhf--ODyhGkmOENH5R6=4+CuaopFx9eA@mail.gmail.com>
- <20180413170827.GB16308@e103592.cambridge.arm.com>
- <20180413175407.GO16141@n2100.armlinux.org.uk>
- <CA+55aFyya6B9_aq8ZSrZT-S-BGbpbDgFvDff5z8upDirpcoiHA@mail.gmail.com>
+        id S1751002AbeDMStm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 14:49:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48122 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750761AbeDMStk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 14:49:40 -0400
+Date: Fri, 13 Apr 2018 20:49:37 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: Sam Hansen <hansens@google.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        corbet@lwn.net, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation/i2c: sync docs with current state of
+ i2c-tools.
+Message-ID: <20180413204937.440437e9@endymion>
+In-Reply-To: <CAP9bUy7rONNHYeRkYtaWHcfqoZcGKXJz-JocED26zBj9n+-ZbQ@mail.gmail.com>
+References: <20180412213342.138010-1-hansens@google.com>
+        <20180412222457.x4jdwt27ylgi74o3@katana>
+        <20180413141359.793919fb@endymion>
+        <CAP9bUy7rONNHYeRkYtaWHcfqoZcGKXJz-JocED26zBj9n+-ZbQ@mail.gmail.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFyya6B9_aq8ZSrZT-S-BGbpbDgFvDff5z8upDirpcoiHA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 11:23:36AM -0700, Linus Torvalds wrote:
-> On Fri, Apr 13, 2018 at 10:54 AM, Russell King - ARM Linux
-> <linux@armlinux.org.uk> wrote:
+On Fri, 13 Apr 2018 09:02:03 -0700, Sam Hansen wrote:
+> On Fri, Apr 13, 2018 at 5:13 AM, Jean Delvare <jdelvare@suse.de> wrote:
+> > On Fri, 13 Apr 2018 00:24:57 +0200, Wolfram Sang wrote:  
+> >> On Thu, Apr 12, 2018 at 02:33:42PM -0700, Sam Hansen wrote:  
+> >> > -  Not meant to be called  directly; instead, use the access functions
+> >> > -  below.
+> >> > +  If possible, use the provided i2c_smbus_* methods described below in favor
+> >> > +  of issuing direct ioctls.  
+> >>
+> >> Why this change?  
 > >
-> > FPE_FLTINV means "floating point invalid operation".  Does it really
-> > cover the case where hardware has failed, or is it intended to cover
-> > the case where userspace did something wrong and asked for an invalid
-> > operation from the FP hardware?
+> > I'm also not sure if "in favor of" is right. "instead of" would sound
+> > better to me, but I'm no native English speaker, I could be wrong.  
 > 
-> Note that the number of people who actually look at the si_code is
-> approximately zero.
-> 
-> But the ones that _do_ check the si_code are certainly not going to
-> check it against a new code that they don't know about.
-> 
-> I suspect that if you start searching for FLT_xyz occurrences in code,
-> approximately 100% of them are from the kernel code that generates
-> them, not from any actual users.
-> 
-> So I'd be very surprised if you can find *anybody* who cares about
-> that exact value (with the possible exceptions of test-suites).
-> 
-> Sadly, google code-search is no more. It was useful for things like that.
+> Sounds good, I'll adopt "instead of".  Regarding Wolfram's earlier
+> comment, as an engineer, requiring an out-of-tree library to build
+> drivers felt a little off.  I can revert this section if you want,
+> just let me know.
 
-I've found https://codesearch.debian.net/ useful for digging into this
-kind of question, though it tends to throw up a lot of false positives.
+The i2c dev interface, and the overlaying library, are used by
+user-space applications. This has nothing to do with "building
+drivers", and makes your "out-of-tree" objection irrelevant. I doubt
+libi2c is the only user-space library building on top of a kernel
+interface.
 
-Most uses I've seen do nothing more than use the FPE_xyz value to
-format diagnostic messages while dying.  I struggled to find code that
-made a meaningful functional decision based on the value, though that's
-not proof...
-
-Cheers
----Dave
+-- 
+Jean Delvare
+SUSE L3 Support
