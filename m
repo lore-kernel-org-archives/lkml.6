@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754886AbeDMOC1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 10:02:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54242 "EHLO mail.kernel.org"
+        id S1754870AbeDMOCY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 10:02:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754858AbeDMOCZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:02:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F08FF21836
+        id S1754858AbeDMOCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 10:02:21 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08333217DF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -22,9 +22,9 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
         Thomas Richter <tmricht@linux.vnet.ibm.com>,
         Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 16/17] perf annotate: Allow setting the offset level in .perfconfig
-Date: Fri, 13 Apr 2018 11:01:10 -0300
-Message-Id: <20180413140111.25313-17-acme@kernel.org>
+Subject: [PATCH 15/17] perf report: Fix switching to another perf.data file
+Date: Fri, 13 Apr 2018 11:01:09 -0300
+Message-Id: <20180413140111.25313-16-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180413140111.25313-1-acme@kernel.org>
 References: <20180413140111.25313-1-acme@kernel.org>
@@ -37,104 +37,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-The default is 1 (jump_target):
+In the TUI the 's' hotkey can be used to switch to another perf.data
+file in the current directory, but that got broken in Fixes:
+b01141f4f59c ("perf annotate: Initialize the priv are in symbol__new()"),
+that would show this once another file was chosen:
 
-  # perf annotate --ignore-vmlinux --stdio2 _raw_spin_lock_irqsave
-  Samples: 3K of event 'cycles:ppp', 3000 Hz, Event count (approx.): 2766398574
-  _raw_spin_lock_irqsave() /proc/kcore
-    0.26        nop
-    4.61        push   %rbx
-   19.33        pushfq
-    7.97        pop    %rax
-    0.32        nop
-    0.06        mov    %rax,%rbx
-   14.63        cli
-    0.06        nop
-                xor    %eax,%eax
-                mov    $0x1,%edx
-   49.94        lock   cmpxchg %edx,(%rdi)
-    0.16        test   %eax,%eax
-              ↓ jne    2b
-    2.66        mov    %rbx,%rax
-                pop    %rbx
-              ← retq
-          2b:   mov    %eax,%esi
-              → callq  *ffffffffb30eaed0
-                mov    %rbx,%rax
-                pop    %rbx
-              ← retq
-  #
+    ┌─Fatal Error─────────────────────────────────────┐
+    │Annotation needs to be init before symbol__init()│
+    │                                                 │
+    │                                                 │
+    │Press any key...                                 │
+    └─────────────────────────────────────────────────┘
 
-But one can ask for showing offsets for call instructions by setting
-this:
-
-  # perf annotate --ignore-vmlinux --stdio2 _raw_spin_lock_irqsave
-  Samples: 3K of event 'cycles:ppp', 3000 Hz, Event count (approx.): 2766398574
-  _raw_spin_lock_irqsave() /proc/kcore
-    0.26        nop
-    4.61        push   %rbx
-   19.33        pushfq
-    7.97        pop    %rax
-    0.32        nop
-    0.06        mov    %rax,%rbx
-   14.63        cli
-    0.06        nop
-                xor    %eax,%eax
-                mov    $0x1,%edx
-   49.94        lock   cmpxchg %edx,(%rdi)
-    0.16        test   %eax,%eax
-              ↓ jne    2b
-    2.66        mov    %rbx,%rax
-                pop    %rbx
-              ← retq
-          2b:   mov    %eax,%esi
-          2d: → callq  *ffffffffb30eaed0
-                mov    %rbx,%rax
-                pop    %rbx
-              ← retq
-  #
-
-Or using a big value to ask for all offsets to be shown:
-
-  # cat ~/.perfconfig
-  [annotate]
-
-	offset_level = 100
-
-	hide_src_code = true
-  # perf annotate --ignore-vmlinux --stdio2 _raw_spin_lock_irqsave
-  Samples: 3K of event 'cycles:ppp', 3000 Hz, Event count (approx.): 2766398574
-  _raw_spin_lock_irqsave() /proc/kcore
-    0.26   0:   nop
-    4.61   5:   push   %rbx
-   19.33   6:   pushfq
-    7.97   7:   pop    %rax
-    0.32   8:   nop
-    0.06   d:   mov    %rax,%rbx
-   14.63  10:   cli
-    0.06  11:   nop
-          17:   xor    %eax,%eax
-          19:   mov    $0x1,%edx
-   49.94  1e:   lock   cmpxchg %edx,(%rdi)
-    0.16  22:   test   %eax,%eax
-          24: ↓ jne    2b
-    2.66  26:   mov    %rbx,%rax
-          29:   pop    %rbx
-          2a: ← retq
-          2b:   mov    %eax,%esi
-          2d: → callq  *ffffffffb30eaed0
-          32:   mov    %rbx,%rax
-          35:   pop    %rbx
-          36: ← retq
-   #
-
-This also affects the TUI, i.e. the default 'perf annotate' and 'perf
-top/report' -> A hotkey -> annotate interfaces, when slang-devel is present
-in the build, i.e.:
-
-  # perf version --build-options | grep slang
-              libslang: [ on  ]  # HAVE_SLANG_SUPPORT
-  #
+Fix it by just silently bailing out if symbol__annotation_init() was already
+called, just like is done with symbol__init(), i.e. they are done just once at
+session start, not when switching to a new perf.data file.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -146,64 +63,36 @@ Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-venm6x5zrt40eu8hxdsmqxz6@git.kernel.org
+Fixes: b01141f4f59c ("perf annotate: Initialize the priv are in symbol__new()")
+Link: https://lkml.kernel.org/n/tip-ogppdtpzfax7y1h6gjdv5s6u@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-config.txt |  5 +++++
- tools/perf/util/annotate.c               | 15 ++++++++++++---
- 2 files changed, 17 insertions(+), 3 deletions(-)
+ tools/perf/util/symbol.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-config.txt b/tools/perf/Documentation/perf-config.txt
-index 5b4fff3adc4b..32f4a898e3f2 100644
---- a/tools/perf/Documentation/perf-config.txt
-+++ b/tools/perf/Documentation/perf-config.txt
-@@ -334,6 +334,11 @@ annotate.*::
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 62b2dd2253eb..1466814ebada 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -2091,16 +2091,14 @@ static bool symbol__read_kptr_restrict(void)
  
- 		99.93 │      mov    %eax,%eax
- 
-+	annotate.offset_level::
-+		Default is '1', meaning just jump targets will have offsets show right beside
-+		the instruction. When set to '2' 'call' instructions will also have its offsets
-+		shown, 3 or higher will show offsets for all instructions.
+ int symbol__annotation_init(void)
+ {
++	if (symbol_conf.init_annotation)
++		return 0;
 +
- hist.*::
- 	hist.percentage::
- 		This option control the way to calculate overhead of filtered entries -
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 5edc565d86c4..536ee148bff8 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -2649,10 +2649,11 @@ int __annotation__scnprintf_samples_period(struct annotation *notes,
-  */
- static struct annotation_config {
- 	const char *name;
--	bool *value;
-+	void *value;
- } annotation__configs[] = {
- 	ANNOTATION__CFG(hide_src_code),
- 	ANNOTATION__CFG(jump_arrows),
-+	ANNOTATION__CFG(offset_level),
- 	ANNOTATION__CFG(show_linenr),
- 	ANNOTATION__CFG(show_nr_jumps),
- 	ANNOTATION__CFG(show_nr_samples),
-@@ -2684,8 +2685,16 @@ static int annotation__config(const char *var, const char *value,
+ 	if (symbol_conf.initialized) {
+ 		pr_err("Annotation needs to be init before symbol__init()\n");
+ 		return -1;
+ 	}
  
- 	if (cfg == NULL)
- 		pr_debug("%s variable unknown, ignoring...", var);
--	else
--		*cfg->value = perf_config_bool(name, value);
-+	else if (strcmp(var, "annotate.offset_level") == 0) {
-+		perf_config_int(cfg->value, name, value);
-+
-+		if (*(int *)cfg->value > ANNOTATION__MAX_OFFSET_LEVEL)
-+			*(int *)cfg->value = ANNOTATION__MAX_OFFSET_LEVEL;
-+		else if (*(int *)cfg->value < ANNOTATION__MIN_OFFSET_LEVEL)
-+			*(int *)cfg->value = ANNOTATION__MIN_OFFSET_LEVEL;
-+	} else {
-+		*(bool *)cfg->value = perf_config_bool(name, value);
-+	}
+-	if (symbol_conf.init_annotation) {
+-		pr_warning("Annotation being initialized multiple times\n");
+-		return 0;
+-	}
+-
+ 	symbol_conf.priv_size += sizeof(struct annotation);
+ 	symbol_conf.init_annotation = true;
  	return 0;
- }
- 
 -- 
 2.14.3
