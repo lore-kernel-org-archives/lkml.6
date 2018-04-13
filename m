@@ -1,90 +1,111 @@
-Return-Path: <SRS0=YbhT=HC=goodmis.org=rostedt@kernel.org>
-X-Google-Smtp-Source: AIpwx49WBH2Ltn2ReX5K3jk/P1KEV5fFTPu55AuW8mumxWFDVOvv/Z/8lvOYGzktP70jsptqKp+d
-ARC-Seal: i=1; a=rsa-sha256; t=1523641833; cv=none;
+Return-Path: <maier@linux.ibm.com>
+X-Google-Smtp-Source: AIpwx495BaLYFwtG2LHlVG4Ks7FquG1AYBeeC5kZmWtYK5L23h4WYVoIIkHpQmA5qwoemQmnkRN/
+ARC-Seal: i=1; a=rsa-sha256; t=1523637403; cv=none;
         d=google.com; s=arc-20160816;
-        b=WCcXZ0bSedeKCDObw8n2CxlNbf+rfYyQ+dSzumA9Nq/KNu8lCFeNFXBQNhZtfaJ1lr
-         HlKPwBDUdE43Ffrpw1OKd5tmB4lR6KPYtFBFaHZz8c3yhq5rBepoB7F/1SSOVZIAJ+Oh
-         YNli6/ieC/MxZGQKucB7sddF6RehXdzJW28IG33gFeAblBEdaTadzM6v5eqQM0tdKWa6
-         DDzaywhF2Fdokx/rurM+3i/yTJmV/17ZPvn7A+Hmlrb71oAaOyuwmvKxLOiKGf2KZ65V
-         VorETvoL0N7ICBPQXxq6D90ubPROCFDcX32URumcc1lEf6cX3SJSh7k3iJerkGR22KG9
-         K9GQ==
+        b=uTMt2QtCEDOqibbq4leivSSYchhCTnX73c74DswoDC/ooNH7U7oAv1LCXzgtCP0YYZ
+         4CAmuGRfOAiJBPkmdfTQ6Ik3vtGQWQFjJ5XdJS+JxqddiB2DD1hwOaSArKERM7V2cFl6
+         D4e3WmNtyJ5Q/vImYOKRwNOqZni+J4BvpT6kOE636lAW/PyzaoycdRBzhQMJO4ztxw0F
+         SeKJbshV8gX6hUxEQ+4QvkN9diqoZ1tsOsQDIPDAG4oeDdUg0RAlaxxeBzwlToDNmYYc
+         piQyeI4DQvKv4OmE4XAAnWOVkdJ5Znu9SJ8zr3Ep7DQsTPyVzIqDtKK13YgK6RlOn5qw
+         KoXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
+        h=message-id:references:in-reply-to:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=z5bTA1jyP+RxeDNqBYbblg8J8yzS9EbcalZH1QJsIWM=;
-        b=flH0H1DP71Cxt/u/1d0q0PBmC8/kAAtQOXKaAiMwbgCfXTBDuyu3d2SN15XmsIcSvz
-         zuSf/I82OmSpigMZdY24wLyEFkgpLhUFXKYZfNWxDthU2VJQCZ2j5Cp4JahctmHc5qZ5
-         bY9yfEbHTBKQOo/hLpK6IEU6wYL5kulWhHAYGZ5x99ZCplse3Ee+4i8MjT96fmSCoYF+
-         DVLYCHWgMpBxxbqR5ivEdwxVz4352RCl+VqxJfop5z3n351CFCDgjLD5q52T9jrWYdEI
-         c7DXDxSJrN63MJOdgDJYyUVJUAWapSelYJWcnAyNW719lUxCS7Iq3pLxYPmantxMhxj1
-         0o2Q==
+        bh=U6a1jOpL1a/s8g7xqcBg4HcJV2x1hrrKb4vxjMVtW5c=;
+        b=qqsrgB7Scgm6oj26hR9JdKTchouhVNwJ3npB1Nvx3z8k6F8e4o1eexMsJWjF5C02P1
+         79oDArrkkT9RG5EpIBiJtk5SxrBLVnfH9X236AcZMqmFMJRQmAqZhKXS3O6A95Ses0Zv
+         4k2qVycOCs/aHMMout/sUyWE16uZwOrDzvpylGdgwclSdi3rQ5uUS9jxRb6A2ybUM68w
+         V6sgR/lwWMahNxswLPF4WHBtoeRbi8q6EuBT1Fl6Y2rHUZC0OfnSg7wCj2IjRbZ20jNk
+         /fgT8TEyRbx1+Ivsgx9m4Ay4dsRhOZYuSRfrZbZ9LEcM1JiM0QIe5BHcAW9hu452lB2V
+         d7BA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=ybht=hc=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=YbhT=HC=goodmis.org=rostedt@kernel.org
+       spf=pass (google.com: domain of maier@linux.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=maier@linux.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=ybht=hc=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=YbhT=HC=goodmis.org=rostedt@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2919A21771
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 13 Apr 2018 13:50:29 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Steffen Maier <maier@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, Ingo Molnar
- <mingo@redhat.com>, Jens Axboe <axboe@kernel.dk>, Li Zefan
- <lizefan@huawei.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2 0/2] tracing/events: block: bring more on a par with
- blktrace
-Message-ID: <20180413135029.05163827@gandalf.local.home>
+       spf=pass (google.com: domain of maier@linux.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=maier@linux.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+From: Steffen Maier <maier@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, Li Zefan <lizefan@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steffen Maier <maier@linux.ibm.com>
+Subject: [RFC v2] tracing/events: block: also try to get dev_t via driver core for some events
+Date: Fri, 13 Apr 2018 18:36:23 +0200
+X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20180413163623.11282-1-maier@linux.ibm.com>
 References: <20180413163623.11282-1-maier@linux.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+X-TM-AS-GCONF: 00
+x-cbid: 18041316-0008-0000-0000-000004EA49D8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041316-0009-0000-0000-00001E7E589C
+Message-Id: <20180413163623.11282-4-maier@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-13_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804130152
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597636479596160991?=
-X-GMAIL-MSGID: =?utf-8?q?1597654259578469412?=
+X-GMAIL-THRID: =?utf-8?q?1597636512361952197?=
+X-GMAIL-MSGID: =?utf-8?q?1597649613356721194?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 13 Apr 2018 18:36:20 +0200
-Steffen Maier <maier@linux.ibm.com> wrote:
+Complements v2.6.31 commit 55782138e47d ("tracing/events: convert block
+trace points to TRACE_EVENT()") for cases where rq->rq_disk == NULL:
+  block_rq_requeue, block_rq_insert, block_rq_issue;
+and for cases where bio == NULL:
+  block_getrq, block_sleeprq.
 
-> I had the need to understand I/O request processing in detail.
-> But I also had the need to enrich block traces with other trace events
-> including my own dynamic kprobe events. So I preferred block trace events
-> over blktrace to get everything nicely sorted into one ftrace output.
-> However, I missed device filtering for (un)plug events and also
-> the difference between the two flavors of unplug.
->=20
-> The first two patches bring block trace events closer to their
-> counterpart in blktrace tooling.
->=20
-> The last patch is just an RFC. I still kept it in this patch set because
-> it is inspired by PATCH 2/2.
->=20
-> Changes since v1:
-> [PATCH v2 1/2]
-> Use 0 and 1 instead of false and true for __print_symbolic table.
-> Now "trace-cmd report" can decode it. [Steven Rostedt]
->=20
-> Steffen Maier (3):
->   tracing/events: block: track and print if unplug was explicit or
->     schedule
->   tracing/events: block: dev_t via driver core for plug and unplug
->     events
->   tracing/events: block: also try to get dev_t via driver core for some
->     events
->=20
->  include/trace/events/block.h | 33 ++++++++++++++++++++++++++++-----
->  1 file changed, 28 insertions(+), 5 deletions(-)
->=20
+NB: The NULL pointer check for q->kobj.parent is certainly racy and
+I don't have enough experience if it's good enough for a trace event.
 
-=46rom just the tracing point of view:
+Since I don't know when above cases would occur,
+I'm not sure this is worth it.
 
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+---
+ include/trace/events/block.h | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-as for the race conditions in the block layer, I'll let someone else
-decided that.
-
--- Steve
+diff --git a/include/trace/events/block.h b/include/trace/events/block.h
+index 6ea5a3899c2e..001e4f369df9 100644
+--- a/include/trace/events/block.h
++++ b/include/trace/events/block.h
+@@ -86,7 +86,9 @@ TRACE_EVENT(block_rq_requeue,
+ 	),
+ 
+ 	TP_fast_assign(
+-		__entry->dev	   = rq->rq_disk ? disk_devt(rq->rq_disk) : 0;
++		__entry->dev	   = rq->rq_disk ? disk_devt(rq->rq_disk) :
++		(q->kobj.parent ?
++		 container_of(q->kobj.parent, struct device, kobj)->devt : 0);
+ 		__entry->sector    = blk_rq_trace_sector(rq);
+ 		__entry->nr_sector = blk_rq_trace_nr_sectors(rq);
+ 
+@@ -162,7 +164,9 @@ DECLARE_EVENT_CLASS(block_rq,
+ 	),
+ 
+ 	TP_fast_assign(
+-		__entry->dev	   = rq->rq_disk ? disk_devt(rq->rq_disk) : 0;
++		__entry->dev	   = rq->rq_disk ? disk_devt(rq->rq_disk) :
++		(q->kobj.parent ?
++		 container_of(q->kobj.parent, struct device, kobj)->devt : 0);
+ 		__entry->sector    = blk_rq_trace_sector(rq);
+ 		__entry->nr_sector = blk_rq_trace_nr_sectors(rq);
+ 		__entry->bytes     = blk_rq_bytes(rq);
+@@ -397,7 +401,9 @@ DECLARE_EVENT_CLASS(block_get_rq,
+         ),
+ 
+ 	TP_fast_assign(
+-		__entry->dev		= bio ? bio_dev(bio) : 0;
++		__entry->dev		= bio ? bio_dev(bio) :
++		(q->kobj.parent ?
++		 container_of(q->kobj.parent, struct device, kobj)->devt : 0);
+ 		__entry->sector		= bio ? bio->bi_iter.bi_sector : 0;
+ 		__entry->nr_sector	= bio ? bio_sectors(bio) : 0;
+ 		blk_fill_rwbs(__entry->rwbs,
+-- 
+2.13.5
