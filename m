@@ -1,128 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754396AbeDMMAK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 08:00:10 -0400
-Received: from mail-qt0-f170.google.com ([209.85.216.170]:34884 "EHLO
+        id S1754358AbeDMMAJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 08:00:09 -0400
+Received: from mail-qt0-f170.google.com ([209.85.216.170]:43591 "EHLO
         mail-qt0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754255AbeDMMAG (ORCPT
+        with ESMTP id S1754251AbeDMMAG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 13 Apr 2018 08:00:06 -0400
-X-Google-Smtp-Source: AIpwx4+hUrDiPZ6/dDzdfW30hwDzhdJeGoFG6MLgZCFw5vrs33AqhXnDFVZ115FqvQue7YX2acPtFLi9hydzubtdIwo=
+X-Google-Smtp-Source: AIpwx48Yf4OPKZI3Ga2DtYpiU79rgw8iZhhdyOOiqvMfOV5metLpCVyn2REXuzzppbtPfSePukNgxqcZAAhW0MTHQko=
 MIME-Version: 1.0
-In-Reply-To: <20180411124325.youvfpws27l2wesf@flea>
-References: <cover.a3617c4362eac8783f412525e52cf5552d19095d.1522835818.git-series.maxime.ripard@bootlin.com>
- <20180411124325.youvfpws27l2wesf@flea>
-From: Jagan Teki <jagannadh.teki@gmail.com>
-Date: Fri, 13 Apr 2018 17:30:04 +0530
-Message-ID: <CAD6G_RRQrj9m=MPdjovEcwJV_fivCMAERSa49Mt0cKGFTicsxA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] drm/sun4i: Allwinner MIPI-DSI support
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>, dri-devel@lists.freedesktop.org,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+In-Reply-To: <4eedb2df-4bf8-814e-7e47-60faa646f4bf@redhat.com>
+References: <1523438648-17672-1-git-send-email-geert+renesas@glider.be>
+ <0cc6cead-cd75-0a18-7a53-5ce16b03e823@redhat.com> <CAMuHMdUHEkamgGORLx37QOns22LTrx_TGYHmxYWZ=TNyhABh=A@mail.gmail.com>
+ <4eedb2df-4bf8-814e-7e47-60faa646f4bf@redhat.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Apr 2018 14:00:04 +0200
+X-Google-Sender-Auth: EzxC-JK2Kum3lXiHsW733Yq4h3Q
+Message-ID: <CAMuHMdVqX2efW=heQeRUG=iXWaROAtkNwy6VAOBikV+e+fcWLw@mail.gmail.com>
+Subject: Re: [PATCH] vfio: platform: Fix using devices in PM Domains
+To: Auger Eric <eric.auger@redhat.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Baptiste Reynal <b.reynal@virtualopensystems.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, KVM list <kvm@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 6:13 PM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Wed, Apr 04, 2018 at 11:57:08AM +0200, Maxime Ripard wrote:
->> Hi,
->>
->> Here is an preliminary version of the MIPI-DSI support for the Allwinner
->> SoCs.
->>
->> This controller can be found on a number of recent SoCs, such as the
->> A31, A33 or the A64.
->>
->> Given the sparse documentation, there's a number of obscure areas, but
->> the current implementation has been tested with a 4-lanes DSI panel on
->> an A33.
->>
->> The support is a bit rough around the edges at the time, and some artifacts
->> are still shown on the screen for some reasons. Wider testing with
->> different display will hopefully nail those down.
->>
->> This needs the regmap_mmio_attach_clk, on its way to Linus in 4.17.
->>
->> Let me know what you think,
->> Maxime
->>
->> Changes from v3:
->>   - Rebased on top of current drm-misc-next
->>   - Switched to SPDX license header
->>   - Made the ECC array const
->>   - Split the big DSI patch into two, one to add the DSI driver and one to
->>     add the TCON bits.
->>   - Removed the dithering code
->>   - Changed the DT labels to remove the indices
->>   - Used sleeps instead of delays in the panel driver
->>   - Used the backlight_enable / _disable functions
->>   - Added Chen-Yu's Reviewed-by
->>
->> Changes from v2:
->>   - Added a ports node under the DSI node
->>   - Changed the huarui panel driver to an ili9881c driver
->>   - Changed the panel vendor to bananapi
->>   - Made the init table static in the panel driver
->>   - Dropped the huarui vendor patch for the DT doc.
->>
->> Changes from v1:
->>   - Rebased on 4.16-rc1
->>   - Constified a few function arguments and structures
->>   - Reworked the DT binding example a bit
->>   - Reworked the panel driver to check for DSI return codes, and use DCS
->>     helpers when possible
->>
->> Maxime Ripard (8):
->>   drm/sun4i: tcon: Add TRI finish interrupt for vblank
->>   dt-bindings: display: Add Allwinner MIPI-DSI bindings
->>   drm/sun4i: Add Allwinner A31 MIPI-DSI controller support
->>   drm/sun4i: Tie the DSI controller in the TCON
->>   dt-bindings: panel: Add the Ilitek ILI9881c panel documentation
->>   drm/panel: Add Ilitek ILI9881c panel driver
->>   ARM: dts: sun8i: a33: Add the DSI-related nodes
->>   [DO NOT MERGE] arm: dts: sun8i: bpi-m2m: Add DSI display
+Hi Eric,
 
-I have reviewed most of the patches and reused for A64 all look fine
-to me (except the panel driver). May be my issue is not relevant to
-this thread, but I'm looking for help If I miss anything for A64 [1]
-and [2] are changes made for A64, the issue is kernel hang while
-loading sun6i_dsi.
+On Fri, Apr 13, 2018 at 11:44 AM, Auger Eric <eric.auger@redhat.com> wrote:
+> On 13/04/18 11:19, Geert Uytterhoeven wrote:
+>> On Fri, Apr 13, 2018 at 11:14 AM, Auger Eric <eric.auger@redhat.com> wrote:
+>>> On 11/04/18 11:24, Geert Uytterhoeven wrote:
+>>>> If a device is part of a PM Domain (e.g. power and/or clock domain), its
+>>>> power state is managed using Runtime PM.  Without Runtime PM, the device
+>>>> may not be powered up, causing subtle failures, crashes, or system
+>>>> lock-ups when the device is accessed by the guest.
+>>> the device may not be powered up/clcoked or power/clock may be switched
+>>> off while the guest uses it.
+>>>>
+>>>> Fix this by adding Runtime PM support, powering the device when the VFIO
+>>>> device is opened by the guest.
+>>>>
+>>>> Note that while more fine-grained power management could be implemented
+>>>> on the guest side, if exported, this would be inherently unsafe, as
+>>>> abusing it may kill the whole system.
+>>>
+>>> Please can you elaborate on this remark please?
+>>
+>> If power-management of the device would be delegated to the guest, and the
+>> guest forgets to enable device power before accessing the device's registers,
+>> this could lock up the system, and thus disturb both the host and other guests.
+>
+> Wouldn't you need to assign another device or use para-virt to allow the
+> guest to perform this power management control? I think you can remove
+> this paragraph from the commit message.
 
-Log:
+Yes, that needs additional exporting of power-management (cfr. the "if
+exported").
+I just wanted to mention the caveat, as eventually, someone is going to
+suggest doing this ;-)
 
-# modprobe -a sun6i_dsi
-[   18.798684] sun6i-mipi-dsi 1ca0000.dsi: Attached device ts8550b
-[   18.819628] sun4i-drm display-engine: bound 1100000.mixer (ops
-sun8i_mixer_ops)
-[   18.827336] sun4i-drm display-engine: No panel or bridge found...
-RGB output disabled
-[   18.835200] sun4i-drm display-engine: bound 1c0c000.lcd-controller
-(ops sun4i_tcon_ops)
-[   18.843246] sun4i-drm display-engine: bound 1ca0000.dsi (ops
-sun6i_dsi_ops [sun6i_dsi])
-[   18.851263] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-[   18.857878] [drm] No driver support for vblank timestamp query.
+But if you think the comment should be removed, I can of course do so.
 
-<< hang here >>
+Gr{oetje,eeting}s,
 
-[1] https://github.com/openedev/linux-openedev/commit/9030929673b21971ff77b7593e88c26e84ed3742
-[2] https://github.com/openedev/linux-openedev/commit/725afe3ce4507fa975fcb4a04b1bbb90d9d44a91
-
-Jagan.
+                        Geert
 
 -- 
-Jagan Teki
-Free Software Engineer | www.openedev.com
-U-Boot, Linux | Upstream Maintainer
-Hyderabad, India.
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
