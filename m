@@ -1,84 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754208AbeDMLUk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:20:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38622 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750960AbeDMLUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:20:38 -0400
-Date: Fri, 13 Apr 2018 13:20:36 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-        cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] memcg: Remove memcg_cgroup::id from IDR on
- mem_cgroup_css_alloc() failure
-Message-ID: <20180413112036.GH17484@dhcp22.suse.cz>
-References: <152354470916.22460.14397070748001974638.stgit@localhost.localdomain>
- <20180413085553.GF17484@dhcp22.suse.cz>
- <ed75d18c-f516-2feb-53a8-6d2836e1da59@virtuozzo.com>
- <20180413110200.GG17484@dhcp22.suse.cz>
- <06931a83-91d2-3dcf-31cf-0b98d82e957f@virtuozzo.com>
+        id S1754308AbeDMLVQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:21:16 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34064 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753891AbeDMLVP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 07:21:15 -0400
+Date: Fri, 13 Apr 2018 12:21:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH 2/2] ASoC: tfa9879: switch to using .probe_new
+Message-ID: <20180413112112.GD6854@sirena.org.uk>
+References: <20180412161601.GI9929@sirena.org.uk>
+ <20180412211437.21599-1-peda@axentia.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="EP0wieDxd4TSJjHq"
 Content-Disposition: inline
-In-Reply-To: <06931a83-91d2-3dcf-31cf-0b98d82e957f@virtuozzo.com>
+In-Reply-To: <20180412211437.21599-1-peda@axentia.se>
+X-Cookie: You were s'posed to laugh!
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 13-04-18 14:06:40, Kirill Tkhai wrote:
-> On 13.04.2018 14:02, Michal Hocko wrote:
-> > On Fri 13-04-18 12:35:22, Kirill Tkhai wrote:
-> >> On 13.04.2018 11:55, Michal Hocko wrote:
-> >>> On Thu 12-04-18 17:52:04, Kirill Tkhai wrote:
-> >>> [...]
-> >>>> @@ -4471,6 +4477,7 @@ mem_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
-> >>>>  
-> >>>>  	return &memcg->css;
-> >>>>  fail:
-> >>>> +	mem_cgroup_id_remove(memcg);
-> >>>>  	mem_cgroup_free(memcg);
-> >>>>  	return ERR_PTR(-ENOMEM);
-> >>>>  }
-> >>>
-> >>> The only path which jumps to fail: here (in the current mmotm tree) is 
-> >>> 	error = memcg_online_kmem(memcg);
-> >>> 	if (error)
-> >>> 		goto fail;
-> >>>
-> >>> AFAICS and the only failure path in memcg_online_kmem
-> >>> 	memcg_id = memcg_alloc_cache_id();
-> >>> 	if (memcg_id < 0)
-> >>> 		return memcg_id;
-> >>>
-> >>> I am not entirely clear on memcg_alloc_cache_id but it seems we do clean
-> >>> up properly. Or am I missing something?
-> >>
-> >> memcg_alloc_cache_id() may allocate a lot of memory, in case of the system reached
-> >> memcg_nr_cache_ids cgroups. In this case it iterates over all LRU lists, and double
-> >> size of every of them. In case of memory pressure it can fail. If this occurs,
-> >> mem_cgroup::id is not unhashed from IDR and we leak this id.
-> > 
-> > OK, my bad I was looking at the bad code path. So you want to clean up
-> > after mem_cgroup_alloc not memcg_online_kmem. Now it makes much more
-> > sense. Sorry for the confusion on my end.
-> > 
-> > Anyway, shouldn't we do the thing in mem_cgroup_free() to be symmetric
-> > to mem_cgroup_alloc?
-> 
-> We can't, since it's called from mem_cgroup_css_free(), which doesn't have a deal
-> with idr freeing. All the asymmetry, we see, is because of the trick to unhash ID
-> earlier, then from mem_cgroup_css_free().
 
-Are you sure. It's been some time since I've looked at the quite complex
-cgroup tear down code but from what I remember, css_free is called on
-the css release (aka when the reference count drops to zero). mem_cgroup_id_put_many
-seems to unpin the css reference so we should have idr_remove by the
-time when css_free is called. Or am I still wrong and should go over the
-brain hurting cgroup removal code again?
--- 
-Michal Hocko
-SUSE Labs
+--EP0wieDxd4TSJjHq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Apr 12, 2018 at 11:14:32PM +0200, Peter Rosin wrote:
+
+> For the record, I wish to be on Cc for changes to files I maintain.
+> That is one of the core functions of the MAINTAINERS file, right?
+
+Right, people should do that but it's not 100% reliable unfortunately.
+It's not unknown for people to wonder why I've not reviewed patches they
+didn't send me :(
+
+--EP0wieDxd4TSJjHq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrQkqgACgkQJNaLcl1U
+h9AQ7Af/cHs422SLqUVDociesGGUt3iGgrxh7oqzdp4JfY7mrHxjZwXPRuW78byE
+qyuob+hpJI8ktS7BvlEBDbvt9LfJxMZHY5+svGK2pA4J71x17pHOgAjN2GJpSWft
+8RSNvGFqt+NwZMINmHoRwD1B0vn9YKmeekCv6Zkh3HaBP0XkNykvMm2Qw8TACJLM
+lQIPM+tYJ0CEXbvXlXszmzzAysWLiwZY1VEYeY9hHLaju4CGwswdIESrfpq+dTTy
+qs8PqPjs+08Qmf1/zDTZEFPZEI/oKB4jXWrwk929fXRJolZSkV3Zuf9qWK/7MQIt
+rc1tehC+suHQ6rJ82iaB+xwl8kXgsQ==
+=xzk9
+-----END PGP SIGNATURE-----
+
+--EP0wieDxd4TSJjHq--
