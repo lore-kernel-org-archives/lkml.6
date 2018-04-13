@@ -1,71 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754276AbeDMKkZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 06:40:25 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:46419 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750973AbeDMKkX (ORCPT
+        id S1754291AbeDMKkm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 06:40:42 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46352 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753634AbeDMKkk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 06:40:23 -0400
-X-Google-Smtp-Source: AIpwx4+JrAyQ77lEZE/qLNTwr4wAXkl4Hmgqz0LLANZn0NZThUNw55kxTA1K3ZIbm2v7Hn1sd7rV03ypZd9G+mDhfcA=
+        Fri, 13 Apr 2018 06:40:40 -0400
+Subject: Re: [PATCH] mm: vmalloc: Remove double execution of vunmap_page_range
+To: Chintan Pandya <cpandya@codeaurora.org>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>, vbabka@suse.cz,
+        labbott@redhat.com, catalin.marinas@arm.com, hannes@cmpxchg.org,
+        f.fainelli@gmail.com, xieyisheng1@huawei.com,
+        ard.biesheuvel@linaro.org, richard.weiyang@gmail.com,
+        byungchul.park@lge.com
+References: <1523611019-17679-1-git-send-email-cpandya@codeaurora.org>
+ <a623e12b-bb5e-58fa-c026-de9ea53c5bd9@linux.vnet.ibm.com>
+ <8da9f826-2a3d-e618-e512-4fc8d45c16f2@codeaurora.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Date: Fri, 13 Apr 2018 16:10:29 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
 MIME-Version: 1.0
-In-Reply-To: <20180413100921.GM6014@localhost>
-References: <1523457879-9869-1-git-send-email-pierre-yves.mordret@st.com>
- <1523457879-9869-3-git-send-email-pierre-yves.mordret@st.com>
- <20180413040233.GJ6014@localhost> <CAMuHMdWNyvveQ73SDrVy=EwkkO6Gd_4hmOkdstpcgzOL44a_mA@mail.gmail.com>
- <20180413100921.GM6014@localhost>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 13 Apr 2018 12:40:22 +0200
-X-Google-Sender-Auth: K9ybf_V3aCjsuT18i6TVMV1EWuQ
-Message-ID: <CAMuHMdUJifhi+CrrGc4oMGCESyypSAjaEg+crDH_XFVnXd10Qw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] dmaengine: stm32-mdma: Fix incomplete Hw
- descriptors allocator
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dmaengine@vger.kernel.org, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "M'boumba Cedric Madianga" <cedric.madianga@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8da9f826-2a3d-e618-e512-4fc8d45c16f2@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18041310-0020-0000-0000-000004117EDE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041310-0021-0000-0000-000042A5B0FF
+Message-Id: <bbef0a92-f81b-5ba8-c5c1-d8c08444955b@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-13_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804130099
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vinod,
-
-On Fri, Apr 13, 2018 at 12:09 PM, Vinod Koul <vinod.koul@intel.com> wrote:
-> On Fri, Apr 13, 2018 at 10:39:48AM +0200, Geert Uytterhoeven wrote:
->> On Fri, Apr 13, 2018 at 6:02 AM, Vinod Koul <vinod.koul@intel.com> wrote:
->> > On Wed, Apr 11, 2018 at 04:44:39PM +0200, Pierre-Yves MORDRET wrote:
->> >
->> >>  struct stm32_mdma_desc {
->> >>       struct virt_dma_desc vdesc;
->> >>       u32 ccr;
->> >> -     struct stm32_mdma_hwdesc *hwdesc;
->> >> -     dma_addr_t hwdesc_phys;
->> >>       bool cyclic;
->> >>       u32 count;
->> >> +     struct stm32_mdma_desc_node node[];
->> >
->> > some ppl use node[0] for this but i think either is fine..
+On 04/13/2018 03:47 PM, Chintan Pandya wrote:
+> 
+> 
+> On 4/13/2018 3:29 PM, Anshuman Khandual wrote:
+>> On 04/13/2018 02:46 PM, Chintan Pandya wrote:
+>>> Unmap legs do call vunmap_page_range() irrespective of
+>>> debug_pagealloc_enabled() is enabled or not. So, remove
+>>> redundant check and optional vunmap_page_range() routines.
 >>
->> node[] is the correct one, node[0] may hide future bugs, cfr. commit
->> a158531f3c92467d ("gpio: 74x164: Fix crash during .remove()")
->
-> Yeah but it this case it is the last element. But yes it helps to avoid such
-> mistakes in future..
+>> vunmap_page_range() tears down the page table entries and does
+>> not really flush related TLB entries normally unless page alloc
+>> debug is enabled where it wants to make sure no stale mapping is
+>> still around for debug purpose. Deferring TLB flush improves
+>> performance. This patch will force TLB flush during each page
+>> table tear down and hence not desirable.
+>>
+> Deferred TLB invalidation will surely improve performance. But force
+> flush can help in detecting invalid access right then and there. I
 
-It was the last element in 74x164, too. Unless someone changed that.
+Deferred TLB invalidation was a choice made some time ago with the
+commit db64fe02258f1507e ("mm: rewrite vmap layer") as these vmalloc
+mappings wont be used other than inside the kernel and TLB gets
+flushed when they are reused. This way it can still avail the benefit
+of deferred TLB flushing without exposing itself to invalid accesses.
 
-Gr{oetje,eeting}s,
+> chose later. May be I should have clean up the vmap tear down code
+> as well where it actually does the TLB invalidation.
+> 
+> Or make TLB invalidation in free_unmap_vmap_area() be dependent upon
+> debug_pagealloc_enabled().
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Immediate TLB invalidation needs to be dependent on debug_pagealloc_
+enabled() and should be done only for debug purpose. Contrary to that
+is not desirable.
