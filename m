@@ -1,117 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751670AbeDMTzG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 15:55:06 -0400
-Received: from mout.gmx.net ([212.227.15.18]:33135 "EHLO mout.gmx.net"
+        id S1751864AbeDMTz6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 15:55:58 -0400
+Received: from ms.lwn.net ([45.79.88.28]:44834 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750839AbeDMTzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 15:55:04 -0400
-Date: Fri, 13 Apr 2018 21:54:37 +0200
-From: Helge Deller <deller@gmx.de>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org
-Subject: Re: [PATCH] parisc: Switch to generic COMPAT_BINFMT_ELF
-Message-ID: <20180413195437.GA13605@p100.box>
-References: <20180413182904.GA1722@roeck-us.net>
+        id S1750792AbeDMTz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 15:55:56 -0400
+Date: Fri, 13 Apr 2018 13:55:51 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
+        Alexander Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 00/32] docs/vm: convert to ReST format
+Message-ID: <20180413135551.0e6d1b12@lwn.net>
+In-Reply-To: <20180401063857.GA3357@rapoport-lnx>
+References: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
+        <20180329154607.3d8bda75@lwn.net>
+        <20180401063857.GA3357@rapoport-lnx>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180413182904.GA1722@roeck-us.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Provags-ID: V03:K1:kGg6ffv4HEvBZvxQbGFfGIUUhKXLwPLUFpVWb7c8RKW84qdmLNw
- 5aTffvWWKN9HDdauC5BG1kBkmxta+RWxZw/0zeriWmH9oZKARYZvmdmBKZVTOqSslfKUjBY
- xUQpYxW5Bgrex2pSJWMmf9mG/NCIDuc5rSpTMgWh70C2uw1qBHqlJJgy/2nzeK8hiH/584p
- VohmufgXiEFs/7xvcwnew==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:avENVuMin0s=:hgSf8XSYHTMH5mJKAn18SJ
- sXilkci2sbtohwQfdugpC0FQCCtLRZGRixUgVhWMFX8Comzna0g0Ly7Hk4afLERUADf6BVuvC
- 3krBvlbcLPytACN5V40DV76Ex8WTdwfMgz9qMDvGCIrVQQAb+/RWrNsMWd0T0pqcWinoix/3f
- 42fnj7HVGYhHJ7LWERc3KKv2UXI9WTJQFIV1YFV31ZrxLYSsNfvEao0HzJ7KtoYHeJyoZnmbx
- l32Tp95wPgU7RVfFYCwJiQOWWfwU+uFC4RWR0m+kzbMOY8KPOjvCzekuASLed8PvfpneKiIV4
- gTVIPfO1xjGuFU6x7DY98egxbc9C/RKkhJBLlw5X5bZvPC89qRFVPNOguw9Rwo7MzUppaK0F3
- 18C/J4CqQY05DMR4H+P8cqkJc993eQharySgQRy0FQ3mWhEFF5OkYMXUhjtJvsw4jXZMSuysI
- 2kKefYZIBz2OZpDxVi/NDDFILjW7vIIxeDfzqHuqsTaDjXAjYHQB9lW7yT7MqDwErxHE+Hy/C
- tLyWuxJWrOJw6WOpgIeWKtoYhFan0ZEImW4Q7UChVfy5fx/0fRycFjmfe7IpBwD2osbKOn/rw
- Tr8uDZgeOU5snO5fB9cEanSta6UjB5R+nn9NsMRS36lUHBqWAlxHf3vWSOYaXhAIEFvRl3+m5
- jScKh2aiJsz0kkKrbV3Ts7wa0kRhwTRq8Zv2sWyoQIcUh7P9nV8pB6+eFbqjEjVEVwgj+GSuP
- ranTDTMP4mtAzWNjBeeBjiQLC4NEQaA7GWRnKBDuZRAkF8MFEsfIZQ6CNG8gtUMB8k8BBGbC8
- YZTevw6fOI0Rptr8ewXvPXGHGq8Tw==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Guenter Roeck <linux@roeck-us.net>:
-> On Wed, Apr 11, 2018 at 09:09:53AM +0200, Helge Deller wrote:
-> > Drop our own compat binfmt implementation in
-> > arch/parisc/kernel/binfmt_elf32.c in favour of the generic
-> > implementation with CONFIG_COMPAT_BINFMT_ELF.
-> > 
-> > While cleaning up the dependencies, I noticed that ELF_PLATFORM was strangely
-> > defined: On a 32-bit kernel, it was defined to "PARISC", while when running in
-> > compat mode on a 64-bit kernel it was defined to "PARISC32". Since it doesn't
-> > seem to be used in glibc yet, it's now defined in both cases to "PARISC". In
-> > any case, it can be distinguished because it's either a 32-bit or a 64-bit ELF
-> > file.
-> > 
-> > Signed-off-by: Helge Deller <deller@gmx.de>
+Sorry for the silence, I'm pedaling as fast as I can, honest...
+
+On Sun, 1 Apr 2018 09:38:58 +0300
+Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
+
+> My thinking was to start with mechanical RST conversion and then to start
+> working on the contents and ordering of the documentation. Some of the
+> existing files, e.g. ksm.txt, can be moved as is into the appropriate
+> places, others, like transhuge.txt should be at least split into admin/user
+> and developer guides.
 > 
-> This patch results in:
-> 
-> Building parisc:a500_defconfig ... failed
-> --------------
-> Error log:
-> make[2]: *** No rule to make target 'arch/parisc/kernel/binfmt_elf32.o', needed
-> by 'arch/parisc/kernel/built-in.a'.  Stop.
-> make[2]: *** Waiting for unfinished jobs....
-> make[1]: *** [arch/parisc/kernel] Error 2
-> make[1]: *** Waiting for unfinished jobs....
-> make: *** [sub-make] Error 2
-> --------------
-> Building parisc:generic-64bit_defconfig ... failed
-> --------------
-> Error log:
-> make[2]: *** No rule to make target 'arch/parisc/kernel/binfmt_elf32.o', needed
-> by 'arch/parisc/kernel/built-in.a'.  Stop.
-> 
-> Indeed, arch/parisc/kernel/binfmt_elf32.o is still listed in Makefile
-> for 64-bit builds.
-> 
-> $ git grep binfmt_elf32.o arch/parisc/
-> arch/parisc/kernel/Makefile:obj-$(CONFIG_64BIT) += binfmt_elf32.o sys_parisc32.o signal32.o
+> Another problem with many of the existing mm docs is that they are rather
+> developer notes and it wouldn't be really straight forward to assign them
+> to a particular topic.
 
-You are right.
-I got fooled because I still had the binfmt_elf32.o object in my build
-directory and so I didn't faced this build error. And even 0-day builds
-didn't complained...  
+All this sounds good.
 
-Thanks for testing!
+> I believe that keeping the mm docs together will give better visibility of
+> what (little) mm documentation we have and will make the updates easier.
+> The documents that fit well into a certain topic could be linked there. For
+> instance:
 
-Patch below fixes it.
+...but this sounds like just the opposite...?  
 
-Helge
----
+I've had this conversation with folks in a number of subsystems.
+Everybody wants to keep their documentation together in one place - it's
+easier for the developers after all.  But for the readers I think it's
+objectively worse.  It perpetuates the mess that Documentation/ is, and
+forces readers to go digging through all kinds of inappropriate material
+in the hope of finding something that tells them what they need to know.
 
-[PATCH] parisc: Fix missing binfmt_elf32.o build error
+So I would *really* like to split the documentation by audience, as has
+been done for a number of other kernel subsystems (and eventually all, I
+hope).
 
-Commit 71d577db01a5 ("parisc: Switch to generic COMPAT_BINFMT_ELF")
-removed the binfmt_elf32.c source file, but missed to drop the object
-file from list of object files the Makefile too, which then results in a
-build error.
+I can go ahead and apply the RST conversion, that seems like a step in
+the right direction regardless.  But I sure hope we don't really have to
+keep it as an unorganized jumble of stuff...
 
-Fixes: 71d577db01a5 ("parisc: Switch to generic COMPAT_BINFMT_ELF")
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Helge Deller <deller@gmx.de>
+Thanks,
 
-
-diff --git a/arch/parisc/kernel/Makefile b/arch/parisc/kernel/Makefile
-index eafd06a..e5de34d 100644
---- a/arch/parisc/kernel/Makefile
-+++ b/arch/parisc/kernel/Makefile
-@@ -23,7 +23,7 @@ obj-$(CONFIG_SMP)	+= smp.o
- obj-$(CONFIG_PA11)	+= pci-dma.o
- obj-$(CONFIG_PCI)	+= pci.o
- obj-$(CONFIG_MODULES)	+= module.o
--obj-$(CONFIG_64BIT)	+= binfmt_elf32.o sys_parisc32.o signal32.o
-+obj-$(CONFIG_64BIT)	+= sys_parisc32.o signal32.o
- obj-$(CONFIG_STACKTRACE)+= stacktrace.o
- obj-$(CONFIG_AUDIT)	+= audit.o
- obj64-$(CONFIG_AUDIT)	+= compat_audit.o
+jon
