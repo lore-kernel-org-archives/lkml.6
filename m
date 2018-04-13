@@ -1,175 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753372AbeDMHkH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 03:40:07 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:41137 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750713AbeDMHkG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 03:40:06 -0400
-X-Google-Smtp-Source: AIpwx49TWEnuev9UyXgl5qFRnvLAG3qybgTR+6P9CLy3gtJS/YD5bFbhR8SYOb82mb6FrCudDWw8Pg==
-Date: Fri, 13 Apr 2018 16:36:20 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: Kim Phillips <kim.phillips@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>, kernel-team@lge.com
-Subject: Re: [PATCH] Revert "perf machine: Fix paranoid check in
- machine__set_kernel_mmap()"
-Message-ID: <20180413073620.GA21386@danjae.aot.lge.com>
-References: <20180219022036.GB1583@sejong>
- <20180219100140.GA17630@krava>
- <20180219101936.GD1583@sejong>
- <20180219104917.GA19365@krava>
- <20180219121817.GC14978@kernel.org>
- <20180411180752.b64c4d105222fb22c159b852@arm.com>
- <20180411233109.GA6320@sejong>
- <20180411192940.de8143a80bd9e5d98d87f6ec@arm.com>
- <20180412015756.GA6962@sejong>
- <20180412190954.4c76039100b990675ec390bd@arm.com>
+        id S1753300AbeDMHm5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 03:42:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45333 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750851AbeDMHmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 03:42:55 -0400
+Subject: Re: Query:Regarding percpu_counter debug object destroy
+To: "Kohli, Gaurav" <gkohli@codeaurora.org>, tj@kernel.org,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org
+References: <0754201b-2051-3f1c-7a09-ed1be96a0260@codeaurora.org>
+From: Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <cfd4c608-2662-2338-0ce7-4c90e193bd3c@suse.com>
+Date: Fri, 13 Apr 2018 10:42:52 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <0754201b-2051-3f1c-7a09-ed1be96a0260@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180412190954.4c76039100b990675ec390bd@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 07:09:54PM -0500, Kim Phillips wrote:
-> On Thu, 12 Apr 2018 10:57:56 +0900
-> Namhyung Kim <namhyung@kernel.org> wrote:
+
+
+On 13.04.2018 10:32, Kohli, Gaurav wrote:
+> Hi ,
 > 
-> > On Wed, Apr 11, 2018 at 07:29:40PM -0500, Kim Phillips wrote:
-> > > On Thu, 12 Apr 2018 08:31:09 +0900
-> > > Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > overflow can create it..  could you please show me the mmap event?
-> > > > 
-> > > >   $ perf script --show-mmap-events
-> > > 
-> > > Here you go:
-> > > 
-> > >          swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffff200008080000(0xdffff7f7ffff) @ 0xffff200008080000]: x [kernel.kallsyms]_text
-> > 
-> >    0xffff200008080000
-> >  +     0xdffff7f7ffff
-> >  --------------------
-> >    0xffffffffffffffff
-> > 
-> > So it should have ~0ULL of the 'end' already.  I don't know why it
-> > caused the problem..  Was it from the `perf.good`?
+> I have checked below code and it seems we are calling debug_object_free
+> twice, ideally we should deactivate and later we
+> have to destroy.
 > 
-> There's no difference between the output of perf.good and perf.bad (the
-> difference between them is this reversion patch, .good being the one
-> that includes it).
-
-Strange.. I have no idea what's the problem if the end is already
-~0ULL then.
-
-
+> 1st call -> percpu_counter_destroy->debug_percpu_counter_deactivate ->
+> debug_object_free
+> 2nd call ->
+> debug_object_free
 > 
-> > >          swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffff2000021e0000(0x18000) @ 0]: x /lib/modules/4.16.0+/kernel/drivers/bus/arm-ccn.ko
-> > 
-> > Hmm.. also it seems arm64 loads modules under the kernel.  Then the
-> > fixup logic in machine__create_kernel_maps() won't work.  Also as we
 > 
-> you mean this:
 > 
-> void __map_groups__fixup_end(struct map_groups *mg, enum map_type type)
-> ...
->                 if (!curr->end)
->                         curr->end = next->start;
+> static bool percpu_counter_fixup_free(void *addr, enum debug_obj_state
+> state)
+> {
+>         struct percpu_counter *fbc = addr;
 > 
-> ?
-
-Right.  For the fixup routine to work, a map should have 0 end.
-
-
-> Module symbol resolution is working, however.  Maybe because this
-> 'paranoid' check was setting all the end addresses to ~0ULL?
-
-Only if the end was 0.  Modules should have non-zero end.
+>         switch (state) {
+>         case ODEBUG_STATE_ACTIVE:
+>                 percpu_counter_destroy(fbc);  -> first call
+>                 debug_object_free(fbc, &percpu_counter_debug_descr); 2nd
 
 
-> Does the
-> design assume what maps__first() returns always has the lowest address,
-> and they're in sorted order?  If so, what's the fix, to re-sort
-> map_groups afterwards?
+Having looked at the code I'd say this is indeed buggy. I'd say it
+stemmed from same cargo culting since timer_fixup_free follows the same
+structure of code, except that in del_timer_sync there is no code which
+does debug_object_free. The situation is similar in work_fixup_free.
 
-I think it's another problem but agree with you to fix it sorted.
+So at this point I guess the question is whether we want to leave the
+debug_object_free call in percpu_counter_fixup_free and just remove
+debug_percpu_counter_deactivate and open-code the call to
+debug_object_deactivate in percpu_counter_destroy. Or remove the
+explicit call in percpu_counter_fixup_free and leave
+debug_percpu_counter_deactivate.
 
 
+In the end it's a matter of style, so perhaps Tejun, as the maintainer,
+has the final say what style he prefers. Personally, I'd go for the
+former solution so that the percpu follows the style of the rest of the
+kernel.
+
+> call
+>                 return true;
+>         default:
+>                 return false;
+>         }
+> }
 > 
-> > don't use the map_groups__fixup_end() anymore 
 > 
-> ?  I see map_groups__fixup_end() still being called.
-
-Oops, sorry.  I looked a wrong branch (which I removed it but never
-sent to the LKML).
-
-
+> We are seeing one issue, where one list contain garbage data in
+> obj_hash, just before element of that is percpu_counter but
+> still not sure as it is very difficult to reproduce.
 > 
-> > I think it's ok just checking the end address.
+> Can some one please review above code or can we remove one instance of
+> debug_object_free from above code.
 > 
-> Where?  In machine__set_kernel_mmap(), like this reversion does?
-
-Yes, the reason is all other maps (i.e. modules) are already have
-non-zero end and we can fixup the end of kernel manually.
-
-
+> Regards
+> Gaurav
 > 
-> The original commit says:
-> 
->     The machine__set_kernel_mmap() is to setup addresses of the kernel map
->     using external info.  But it has a check when the address is given from
->     an incorrect input which should have the start and end address of 0
->     (i.e. machine__process_kernel_mmap_event).
->     
->     But we also use the end address of 0 for a valid input so change it to
->     check both start and end addresses.
-> 
-> yet the comment above the code says:
-> 
->                  * Be a bit paranoid here, some perf.data file came with
->                  * a zero sized synthesized MMAP event for the kernel.
-> 
-> I tracked the first comment insertion down to this commit:
-> 
-> commit 10fe12ef631a7e85022ed26304a37f033a6a95b8
-> Author: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Date:   Sat Feb 20 19:53:13 2010 -0200
-> 
->     perf symbols: Fix up map end too on modular kernels with no modules installed
->     
->     In 2161db9 we stopped failing when not finding modules when
->     asked too, but then the kernel maps (just one, for vmlinux)
->     wasn't having its ->end field correctly set up, so symbols were
->     not being found for the vmlinux map because its range was 0-0.
-> 
-> which, when reading that last part, one would assume start == end == 0,
-> therefore size also == 0, the comment only talks about a zero *sized*
-> event...so did the original commit 1d12cec6ce99 "perf machine: Fix
-> paranoid check in machine__set_kernel_mmap()" really fix that case?
-> Because it checks start == 0, not necessarily the size...
-
-As I said I thought it only cares the start == end == 0 case and now
-the problem is fixed.  So I added the start check for the fixup
-routine to take care of the end address.  Otherwise kernel might have
-an overlap with some module(s).
-
-> 
-> If not, can it be reverted until we figure out what's going on with
-> arm64?  It's causing a regression in the meantime...
-
-I think the right solution would be
-
-1. sort map groups
-2. set kernel end to ~0ULL in machine__create_kernel_maps()
-3. fix the kernel end to the start of next module (if any) manually
-   instead of calling map_groups__fixup_end()
-
-Thanks,
-Namhyung
