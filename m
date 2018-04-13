@@ -1,49 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754953AbeDMOMh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 10:12:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754229AbeDMOMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:12:36 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 366F02077B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 13 Apr 2018 10:12:33 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
-Message-ID: <20180413101233.0792ebf0@gandalf.local.home>
-In-Reply-To: <20180413124704.19335-1-pmladek@suse.com>
-References: <20180413124704.19335-1-pmladek@suse.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1754767AbeDMOTH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 10:19:07 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:38470 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754364AbeDMOTF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 10:19:05 -0400
+Date: Fri, 13 Apr 2018 17:19:02 +0300
+From: "Dmitry V. Levin" <ldv@altlinux.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Anatoly Pugachev <matorola@gmail.com>, sparclinux@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH] sparc: fix compat siginfo ABI regression
+Message-ID: <20180413141901.GA15253@altlinux.org>
+Mail-Followup-To: "David S. Miller" <davem@davemloft.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Anatoly Pugachev <matorola@gmail.com>, sparclinux@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Apr 2018 14:47:04 +0200
-Petr Mladek <pmladek@suse.com> wrote:
+Starting with commit v4.14-rc1~60^2^2~1, a SIGFPE signal sent via kill
+results to wrong values in si_pid and si_uid fields of compat siginfo_t.
 
+This happens due to FPE_FIXME being defined to 0 for sparc, and at the
+same time siginfo_layout() introduced by the same commit returns
+SIL_FAULT for SIGFPE if si_code == SI_USER and FPE_FIXME is defined to 0.
 
-> The interval is set to one hour. It is rather arbitrary selected time.
-> It is supposed to be a compromise between never print these messages,
-> do not lockup the machine, do not fill the entire buffer too quickly,
-> and get information if something changes over time.
+Fix this regression by removing FPE_FIXME macro and changing all its users
+to assign FPE_FLTUNK to si_code instead of FPE_FIXME.
 
+Note that FPE_FLTUNK is a new macro introduced by commit
+266da65e9156d93e1126e185259a4aae68188d0e.
 
-I think an hour is incredibly long. We only allow 100 lines per hour for
-printks happening inside another printk?
+Tested with commit v4.16-11958-g16e205cf42da.
 
-I think 5 minutes (at most) would probably be plenty. One minute may be
-good enough.
+This bug was found by strace test suite.
 
--- Steve
+Link: https://github.com/strace/strace/issues/21
+Fixes: cc731525f26a ("signal: Remove kernel interal si_code magic")
+Thanks-to: Anatoly Pugachev <matorola@gmail.com>
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+---
+ arch/sparc/include/uapi/asm/siginfo.h | 7 -------
+ arch/sparc/kernel/traps_32.c          | 2 +-
+ arch/sparc/kernel/traps_64.c          | 2 +-
+ 3 files changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/arch/sparc/include/uapi/asm/siginfo.h b/arch/sparc/include/uapi/asm/siginfo.h
+index 896ce44..e704955 100644
+--- a/arch/sparc/include/uapi/asm/siginfo.h
++++ b/arch/sparc/include/uapi/asm/siginfo.h
+@@ -18,13 +18,6 @@
+ #define SI_NOINFO	32767		/* no information in siginfo_t */
+ 
+ /*
+- * SIGFPE si_codes
+- */
+-#ifdef __KERNEL__
+-#define FPE_FIXME	0	/* Broken dup of SI_USER */
+-#endif /* __KERNEL__ */
+-
+-/*
+  * SIGEMT si_codes
+  */
+ #define EMT_TAGOVF	1	/* tag overflow */
+diff --git a/arch/sparc/kernel/traps_32.c b/arch/sparc/kernel/traps_32.c
+index b1ed763..33cd35b 100644
+--- a/arch/sparc/kernel/traps_32.c
++++ b/arch/sparc/kernel/traps_32.c
+@@ -307,7 +307,7 @@ void do_fpe_trap(struct pt_regs *regs, unsigned long pc, unsigned long npc,
+ 	info.si_errno = 0;
+ 	info.si_addr = (void __user *)pc;
+ 	info.si_trapno = 0;
+-	info.si_code = FPE_FIXME;
++	info.si_code = FPE_FLTUNK;
+ 	if ((fsr & 0x1c000) == (1 << 14)) {
+ 		if (fsr & 0x10)
+ 			info.si_code = FPE_FLTINV;
+diff --git a/arch/sparc/kernel/traps_64.c b/arch/sparc/kernel/traps_64.c
+index 462a21a..e81072a 100644
+--- a/arch/sparc/kernel/traps_64.c
++++ b/arch/sparc/kernel/traps_64.c
+@@ -2372,7 +2372,7 @@ static void do_fpe_common(struct pt_regs *regs)
+ 		info.si_errno = 0;
+ 		info.si_addr = (void __user *)regs->tpc;
+ 		info.si_trapno = 0;
+-		info.si_code = FPE_FIXME;
++		info.si_code = FPE_FLTUNK;
+ 		if ((fsr & 0x1c000) == (1 << 14)) {
+ 			if (fsr & 0x10)
+ 				info.si_code = FPE_FLTINV;
+-- 
+ldv
