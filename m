@@ -1,118 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751013AbeDMUMY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 16:12:24 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:33863 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750792AbeDMUMX (ORCPT
+        id S1751380AbeDMUMy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 16:12:54 -0400
+Received: from mail-wr0-f170.google.com ([209.85.128.170]:33701 "EHLO
+        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750839AbeDMUMw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 16:12:23 -0400
-Date: Fri, 13 Apr 2018 13:12:15 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Helge Deller <deller@gmx.de>
-Cc: linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org
-Subject: Re: [PATCH] parisc: Switch to generic COMPAT_BINFMT_ELF
-Message-ID: <20180413201215.GA16813@roeck-us.net>
-References: <20180413182904.GA1722@roeck-us.net>
- <20180413195437.GA13605@p100.box>
+        Fri, 13 Apr 2018 16:12:52 -0400
+X-Google-Smtp-Source: AIpwx4/mud3i4pjjy0glbr+8ZXMTPRRW0tdIW82pT8pQVjhxNFL9TXXVyvoNGShGgwLqvPEY5doIjFJPkn3mF+2l35k=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180413195437.GA13605@p100.box>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+In-Reply-To: <20180406125825.GT4589@e105550-lin.cambridge.arm.com>
+References: <1522223215-23524-1-git-send-email-vincent.guittot@linaro.org>
+ <20180329125324.GR4589@e105550-lin.cambridge.arm.com> <CAKfTPtD4skW_3SAk--vBEC5-m1Ua48bjOQYS0pDqW3nPSpsENg@mail.gmail.com>
+ <74865492-d9a6-649d-d37c-a5a6a8c28f23@arm.com> <CAKfTPtDy2uUj4amA9MARUz9qS=+urwV2edyQn+fW70hkN+CgoQ@mail.gmail.com>
+ <e8e6e7d0-7744-1dab-7b24-b7ff37df60c8@arm.com> <CAKfTPtCQayuu5-84931ZxzXV1-roV_CfRd_5wXG1oxOEUZmZgw@mail.gmail.com>
+ <20180405154630.GS4589@e105550-lin.cambridge.arm.com> <CAKfTPtBv7BzAqZWTxU9HaCoNjQa2B8usk6dfO1qgofjGYG7S=w@mail.gmail.com>
+ <20180406125825.GT4589@e105550-lin.cambridge.arm.com>
+From: "Joel Fernandes (Google)" <joel.opensrc@gmail.com>
+Date: Fri, 13 Apr 2018 13:12:50 -0700
+Message-ID: <CAEi0qNntckRk7dRvb2cutyx6WinbwP7_OznLM82ZzPtxoPfhFQ@mail.gmail.com>
+Subject: Re: [PATCH] sched: support dynamiQ cluster
+To: Morten Rasmussen <morten.rasmussen@arm.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Chris Redpath <chris.redpath@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 09:54:37PM +0200, Helge Deller wrote:
-> * Guenter Roeck <linux@roeck-us.net>:
-> > On Wed, Apr 11, 2018 at 09:09:53AM +0200, Helge Deller wrote:
-> > > Drop our own compat binfmt implementation in
-> > > arch/parisc/kernel/binfmt_elf32.c in favour of the generic
-> > > implementation with CONFIG_COMPAT_BINFMT_ELF.
-> > > 
-> > > While cleaning up the dependencies, I noticed that ELF_PLATFORM was strangely
-> > > defined: On a 32-bit kernel, it was defined to "PARISC", while when running in
-> > > compat mode on a 64-bit kernel it was defined to "PARISC32". Since it doesn't
-> > > seem to be used in glibc yet, it's now defined in both cases to "PARISC". In
-> > > any case, it can be distinguished because it's either a 32-bit or a 64-bit ELF
-> > > file.
-> > > 
-> > > Signed-off-by: Helge Deller <deller@gmx.de>
-> > 
-> > This patch results in:
-> > 
-> > Building parisc:a500_defconfig ... failed
-> > --------------
-> > Error log:
-> > make[2]: *** No rule to make target 'arch/parisc/kernel/binfmt_elf32.o', needed
-> > by 'arch/parisc/kernel/built-in.a'.  Stop.
-> > make[2]: *** Waiting for unfinished jobs....
-> > make[1]: *** [arch/parisc/kernel] Error 2
-> > make[1]: *** Waiting for unfinished jobs....
-> > make: *** [sub-make] Error 2
-> > --------------
-> > Building parisc:generic-64bit_defconfig ... failed
-> > --------------
-> > Error log:
-> > make[2]: *** No rule to make target 'arch/parisc/kernel/binfmt_elf32.o', needed
-> > by 'arch/parisc/kernel/built-in.a'.  Stop.
-> > 
-> > Indeed, arch/parisc/kernel/binfmt_elf32.o is still listed in Makefile
-> > for 64-bit builds.
-> > 
-> > $ git grep binfmt_elf32.o arch/parisc/
-> > arch/parisc/kernel/Makefile:obj-$(CONFIG_64BIT) += binfmt_elf32.o sys_parisc32.o signal32.o
-> 
-> You are right.
-> I got fooled because I still had the binfmt_elf32.o object in my build
-> directory and so I didn't faced this build error. And even 0-day builds
-> didn't complained...  
-> 
-> Thanks for testing!
-> 
-> Patch below fixes it.
-> 
-> Helge
-> ---
-> 
-> [PATCH] parisc: Fix missing binfmt_elf32.o build error
-> 
-> Commit 71d577db01a5 ("parisc: Switch to generic COMPAT_BINFMT_ELF")
-> removed the binfmt_elf32.c source file, but missed to drop the object
-> file from list of object files the Makefile too, which then results in a
-> build error.
-> 
-> Fixes: 71d577db01a5 ("parisc: Switch to generic COMPAT_BINFMT_ELF")
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Helge Deller <deller@gmx.de>
+On Fri, Apr 6, 2018 at 5:58 AM, Morten Rasmussen
+<morten.rasmussen@arm.com> wrote:
+> On Thu, Apr 05, 2018 at 06:22:48PM +0200, Vincent Guittot wrote:
+>> Hi Morten,
+>>
+>> On 5 April 2018 at 17:46, Morten Rasmussen <morten.rasmussen@arm.com> wrote:
+>> > On Wed, Apr 04, 2018 at 03:43:17PM +0200, Vincent Guittot wrote:
+>> >> On 4 April 2018 at 12:44, Valentin Schneider <valentin.schneider@arm.com> wrote:
+>> >> > Hi,
+>> >> >
+>> >> > On 03/04/18 13:17, Vincent Guittot wrote:
+>> >> >> Hi Valentin,
+>> >> >>
+>> >> > [...]
+>> >> >>>
+>> >> >>> I believe ASYM_PACKING behaves better here because the workload is only
+>> >> >>> sysbench threads. As stated above, since task utilization is disregarded, I
+>> >> >>
+>> >> >> It behaves better because it doesn't wait for the task's utilization
+>> >> >> to reach a level before assuming the task needs high compute capacity.
+>> >> >> The utilization gives an idea of the running time of the task not the
+>> >> >> performance level that is needed
+>> >> >>
+>> >> >
+>> >> > [
+>> >> > That's my point actually. ASYM_PACKING disregards utilization and moves those
+>> >> > threads to the big cores ASAP, which is good here because it's just sysbench
+>> >> > threads.
+>> >> >
+>> >> > What I meant was that if the task composition changes, IOW we mix "small"
+>> >> > tasks (e.g. periodic stuff) and "big" tasks (performance-sensitive stuff like
+>> >> > sysbench threads), we shouldn't assume all of those require to run on a big
+>> >> > CPU. The thing is, ASYM_PACKING can't make the difference between those, so
+>> > [Morten]
+>> >>
+>> >> That's the 1st point where I tend to disagree: why big cores are only
+>> >> for long running task and periodic stuff can't need to run on big
+>> >> cores to get max compute capacity ?
+>> >> You make the assumption that only long running tasks need high compute
+>> >> capacity. This patch wants to always provide max compute capacity to
+>> >> the system and not only long running task
+>> >
+>> > There is no way we can tell if a periodic or short-running tasks
+>> > requires the compute capacity of a big core or not based on utilization
+>> > alone. The utilization can only tell us if a task could potentially use
+>> > more compute capacity, i.e. the utilization approaches the compute
+>> > capacity of its current cpu.
+>> >
+>> > How we handle low utilization tasks comes down to how we define
+>> > "performance" and if we care about the cost of "performance" (e.g.
+>> > energy consumption).
+>> >
+>> > Placing a low utilization task on a little cpu should always be fine
+>> > from _throughput_ point of view. As long as the cpu has spare cycles it
+>>
+>> [Vincent]
+>> I disagree, throughput is not only a matter of spare cycle it's also a
+>> matter of how fast you compute the work like with IO activity as an
+>> example
+>
+> [Morten]
+> From a cpu centric point of view it is, but I agree that from a
+> application/user point of view completion time might impact throughput
+> too. For example of if your throughput depends on how fast you can
+> offload work to some peripheral device (GPU for example).
+>
+> However, as I said in the beginning we don't know what the task does.
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+[Joel]
+Just wanted to say about Vincent point of IO loads throughput -
+remembering from when I was playing with the iowait boost stuff, that
+- say you have a little task that does some IO and blocks and does so
+periodically. In the scenario the task will run for little time and is
+a little task by way of looking at utilization. However, if we were to
+run it on the BIG CPUs, the overall throughput of the I/O activity
+would be higher.
 
-> 
-> 
-> diff --git a/arch/parisc/kernel/Makefile b/arch/parisc/kernel/Makefile
-> index eafd06a..e5de34d 100644
-> --- a/arch/parisc/kernel/Makefile
-> +++ b/arch/parisc/kernel/Makefile
-> @@ -23,7 +23,7 @@ obj-$(CONFIG_SMP)	+= smp.o
->  obj-$(CONFIG_PA11)	+= pci-dma.o
->  obj-$(CONFIG_PCI)	+= pci.o
->  obj-$(CONFIG_MODULES)	+= module.o
-> -obj-$(CONFIG_64BIT)	+= binfmt_elf32.o sys_parisc32.o signal32.o
-> +obj-$(CONFIG_64BIT)	+= sys_parisc32.o signal32.o
->  obj-$(CONFIG_STACKTRACE)+= stacktrace.o
->  obj-$(CONFIG_AUDIT)	+= audit.o
->  obj64-$(CONFIG_AUDIT)	+= compat_audit.o
+For this case, it seems its impossible to specify the "default"
+behavior correctly. Like, do we care about performance or energy more?
+This seems more like a policy-decision from userspace and not
+something the scheduler should necessarily have to decide. Like if I/O
+activity is background and not affecting the user experience.
+
+thanks,
+
+- Joel
