@@ -1,73 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751076AbeDMRSO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 13:18:14 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:37456 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750864AbeDMRSL (ORCPT
+        id S1751657AbeDMRS5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 13:18:57 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:37584 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750999AbeDMRSz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 13:18:11 -0400
-X-Google-Smtp-Source: AIpwx4/HawZ4mB9B7zgiH4YS6IwgpKiPDi3TAeYKm/JhjW2/XSOjlYNDWZRqn5s/mZydZtmBjntQMA==
-Content-Type: text/plain; charset="utf-8"
+        Fri, 13 Apr 2018 13:18:55 -0400
+X-Google-Smtp-Source: AIpwx4+lbqrhOGtEYg382Dht2ip9O8Z0S6RjOVFMtQ110l0V+5aF36cBIEfVz3IGOApuTi0mJrkjhQ==
+Date: Fri, 13 Apr 2018 12:18:53 -0500
+From: Rob Herring <robh@kernel.org>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: interrupt-controller: fix the double
+ quotes
+Message-ID: <20180413171853.5blruiakambnzsgr@rob-hp-laptop>
+References: <20180408145700.23520-1-yixun.lan@amlogic.com>
+ <20180408145700.23520-2-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Lina Iyer <ilina@codeaurora.org>
-From: Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20180411000120.GD6727@builder>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, linux-kernel@vger.kernel.org,
-        evgreen@chromium.org, dianders@chromium.org
-References: <20180405161834.3850-1-ilina@codeaurora.org>
- <20180405161834.3850-5-ilina@codeaurora.org> <20180411000120.GD6727@builder>
-Message-ID: <152363988938.51482.11232650494199609730@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v5 04/10] drivers: qcom: rpmh: add RPMH helper functions
-Date: Fri, 13 Apr 2018 10:18:09 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180408145700.23520-2-yixun.lan@amlogic.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3DHIJO7019291
 
-Quoting Bjorn Andersson (2018-04-10 17:01:20)
-> On Thu 05 Apr 09:18 PDT 2018, Lina Iyer wrote:
+On Sun, Apr 08, 2018 at 02:56:58PM +0000, Yixun Lan wrote:
+> The double quotes seems not ASCII type, fix it here.
 > 
-> >  
-> > diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-> > new file mode 100644
-> > index 000000000000..e3c7491e7baf
-> > --- /dev/null
-> > +++ b/drivers/soc/qcom/rpmh.c
-> > @@ -0,0 +1,253 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
-> > + */
-> > +
-> > +#include <linux/atomic.h>
-> > +#include <linux/interrupt.h>
-> > +#include <linux/jiffies.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/mailbox_client.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/types.h>
-> > +#include <linux/wait.h>
-> > +
-> > +#include <soc/qcom/rpmh.h>
-> > +
-> > +#include "rpmh-internal.h"
-> > +
-> > +#define RPMH_MAX_MBOXES                      2
-> > +#define RPMH_TIMEOUT_MS                      10000
-> 
-> Just define this in jiffies and you don't need to do msecs_to_jiffies()
-> every time you use it.
-> 
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> ---
+>  .../bindings/interrupt-controller/amlogic,meson-gpio-intc.txt  | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 
-Put the msecs_to_jiffies() here if you want. The compiler will constant
-fold it to the final value, and then we get the same time in seconds no
-matter what the jiffies frequency is configured for.
+Reviewed-by: Rob Herring <robh@kernel.org>
