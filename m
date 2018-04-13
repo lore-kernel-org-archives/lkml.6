@@ -1,32 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754712AbeDMLZq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:25:46 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41830 "EHLO
+        id S1754556AbeDMLXz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:23:55 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38550 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754568AbeDMLZp (ORCPT
+        with ESMTP id S1754543AbeDMLXx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:25:45 -0400
+        Fri, 13 Apr 2018 07:23:53 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: spi-topcliff-pch: Replace GFP_ATOMIC with GFP_KERNEL in pch_spi_handle_dma" to the spi tree
-In-Reply-To: <1523351176-29741-1-git-send-email-baijiaju1990@gmail.com>
-Message-Id: <E1f6wpr-0000VC-1j@debutante>
-Date: Fri, 13 Apr 2018 12:25:43 +0100
+Cc: Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
+        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: intel: skl_nau88l25_ssm4567: Replace GFP_ATOMIC with GFP_KERNEL in skylake_audio_probe" to the asoc tree
+In-Reply-To: <1523270974-23082-1-git-send-email-baijiaju1990@gmail.com>
+Message-Id: <E1f6wny-00009P-UZ@debutante>
+Date: Fri, 13 Apr 2018 12:23:46 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: spi-topcliff-pch: Replace GFP_ATOMIC with GFP_KERNEL in pch_spi_handle_dma
+   ASoC: intel: skl_nau88l25_ssm4567: Replace GFP_ATOMIC with GFP_KERNEL in skylake_audio_probe
 
-has been applied to the spi tree at
+has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -47,53 +48,41 @@ to this mail.
 Thanks,
 Mark
 
->From d16cd3eb8e5c62cd349987f57e3511b59cbe0198 Mon Sep 17 00:00:00 2001
+>From fe552c82476f2fb16e87a76ee178465325e57f61 Mon Sep 17 00:00:00 2001
 From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Date: Tue, 10 Apr 2018 17:06:16 +0800
-Subject: [PATCH] spi: spi-topcliff-pch: Replace GFP_ATOMIC with GFP_KERNEL in
- pch_spi_handle_dma
+Date: Mon, 9 Apr 2018 18:49:34 +0800
+Subject: [PATCH] ASoC: intel: skl_nau88l25_ssm4567: Replace GFP_ATOMIC with
+ GFP_KERNEL in skylake_audio_probe
 
-pch_spi_handle_dma() is never called in atomic context.
-This function is only called by pch_spi_process_messages().
-pch_spi_process_messages() is only set as a parameter of INIT_WORK() in
-pch_spi_pd_probe().
+skylake_audio_probe() is never called in atomic context.
+This function is only set as ".probe" in "struct platform_driver".
 
 Despite never getting called from atomic context,
-pch_spi_handle_dma() calls kcalloc() with GFP_ATOMIC,
-which does not sleep for allocation.
+skylake_audio_probe() calls devm_kzalloc() with GFP_ATOMIC,
+which waits busily for allocation.
 GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
-which can sleep and improve the possibility of sucessful allocation.
+to avoid busy waiting and improve the possibility of sucessful allocation.
 
 This is found by a static analysis tool named DCNS written by myself.
-And I also manually check it.
 
 Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-topcliff-pch.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/intel/boards/skl_nau88l25_ssm4567.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
-index 97d137591b18..dc93ca9e001c 100644
---- a/drivers/spi/spi-topcliff-pch.c
-+++ b/drivers/spi/spi-topcliff-pch.c
-@@ -1007,7 +1007,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
- 	spin_unlock_irqrestore(&data->lock, flags);
+diff --git a/sound/soc/intel/boards/skl_nau88l25_ssm4567.c b/sound/soc/intel/boards/skl_nau88l25_ssm4567.c
+index 212ac8971e55..b0610bba3cfa 100644
+--- a/sound/soc/intel/boards/skl_nau88l25_ssm4567.c
++++ b/sound/soc/intel/boards/skl_nau88l25_ssm4567.c
+@@ -696,7 +696,7 @@ static int skylake_audio_probe(struct platform_device *pdev)
+ 	struct skl_nau88125_private *ctx;
+ 	struct skl_machine_pdata *pdata;
  
- 	/* RX */
--	dma->sg_rx_p = kcalloc(num, sizeof(*dma->sg_rx_p), GFP_ATOMIC);
-+	dma->sg_rx_p = kcalloc(num, sizeof(*dma->sg_rx_p), GFP_KERNEL);
- 	sg_init_table(dma->sg_rx_p, num); /* Initialize SG table */
- 	/* offset, length setting */
- 	sg = dma->sg_rx_p;
-@@ -1067,7 +1067,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
- 		head = 0;
- 	}
+-	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_ATOMIC);
++	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
+ 	if (!ctx)
+ 		return -ENOMEM;
  
--	dma->sg_tx_p = kcalloc(num, sizeof(*dma->sg_tx_p), GFP_ATOMIC);
-+	dma->sg_tx_p = kcalloc(num, sizeof(*dma->sg_tx_p), GFP_KERNEL);
- 	sg_init_table(dma->sg_tx_p, num); /* Initialize SG table */
- 	/* offset, length setting */
- 	sg = dma->sg_tx_p;
 -- 
 2.17.0
