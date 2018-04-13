@@ -1,85 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751677AbeDMGJE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 02:09:04 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:45446 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750839AbeDMGJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 02:09:03 -0400
-Subject: Re: [PATCH] f2fs: set deadline to drop expired inmem pages
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20180408081312.6190-1-yuchao0@huawei.com>
- <09fd3144-d1c5-ca02-178d-b467d6fbe0e1@huawei.com>
- <20180413010433.GB51348@jaegeuk-macbookpro.roam.corp.google.com>
- <bb7d3b60-0629-ea80-c4ae-976a76abb034@huawei.com>
- <20180413040525.GB59368@jaegeuk-macbookpro.roam.corp.google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <51d2e16a-3a69-71ef-86f5-aee63cd6731c@huawei.com>
-Date: Fri, 13 Apr 2018 14:08:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1752523AbeDMGQ3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 02:16:29 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:30553 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750960AbeDMGQ1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 02:16:27 -0400
+Subject: Re: [PATCH 08/14] ARM: OMAP2: Add functions to save and restore
+ pinctrl context.
+To: Tony Lindgren <tony@atomide.com>
+CC: <linus.walleij@linaro.org>, <grygorii.strashko@ti.com>,
+        <t-kristo@ti.com>, <Russ.Dill@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ssantosh@kernel.org>,
+        <haojian.zhuang@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <d-gerlach@ti.com>, Russ Dill <Russ.Dill@gmail.com>
+References: <1523505239-16229-1-git-send-email-j-keerthy@ti.com>
+ <1523505239-16229-9-git-send-email-j-keerthy@ti.com>
+ <20180412141639.GV5700@atomide.com>
+From: Keerthy <j-keerthy@ti.com>
+Message-ID: <26b80d50-efe1-196a-85b0-4ab22f9bda1c@ti.com>
+Date: Fri, 13 Apr 2018 11:46:04 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <20180413040525.GB59368@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20180412141639.GV5700@atomide.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/13 12:05, Jaegeuk Kim wrote:
-> On 04/13, Chao Yu wrote:
->> On 2018/4/13 9:04, Jaegeuk Kim wrote:
->>> On 04/10, Chao Yu wrote:
->>>> Hi Jaegeuk,
->>>>
->>>> On 2018/4/8 16:13, Chao Yu wrote:
->>>>> f2fs doesn't allow abuse on atomic write class interface, so except
->>>>> limiting in-mem pages' total memory usage capacity, we need to limit
->>>>> start-commit time as well, otherwise we may run into infinite loop
->>>>> during foreground GC because target blocks in victim segment are
->>>>> belong to atomic opened file for long time.
->>>>>
->>>>> Now, we will check the condition with f2fs_balance_fs_bg in
->>>>> background threads, once if user doesn't commit data exceeding 30
->>>>> seconds, we will drop all cached data, so I expect it can keep our
->>>>> system running safely to prevent Dos attack.
->>>>
->>>> Is it worth to add this patch to avoid abuse on atomic write interface by user?
->>>
->>> Hmm, hope to see a real problem first in this case.
->>
->> I think this can be a more critical security leak instead of a potential issue
->> which we can wait for someone reporting that can be too late.
->>
->> For example, user can simply write a huge file whose data spread in all f2fs
->> segments, once user open that file as atomic, foreground GC will suffer
->> deadloop, causing denying any further service of f2fs.
+
+
+On Thursday 12 April 2018 07:46 PM, Tony Lindgren wrote:
+> Hi,
 > 
-> How can you guarantee it won't happen within 30sec? If you want to avoid that,
+> * Keerthy <j-keerthy@ti.com> [180412 03:56]:
+>> From: Russ Dill <Russ.Dill@gmail.com>
+>>
+>> This adds a pair of context save/restore functions to save/restore the
+>> state of a set of pinctrl registers. This simplifies some of the AM33XX
+>> PM code as some of the pinctrl registers are lost when the per power
+>> domain loses power. The pincrtl code can perform the necessary
+>> save/restore.
+> 
+> So where's the patch adding callers to this code?
 
-Now the value is smaller than generic hang task threshold in order to avoid
-foreground GC helding gc_mutex too long, we can tune that parameter?
+This series was to get all the additional save/restores needed for the
+rtc+ddr mode. Caller patch is in the main patch that implements that
+mode that i will be posting once the ground is set.
 
-> you have to take a look at foreground gc.
-
-What do you mean? let GC moves blocks of atomic write opened file?
-
-Thanks,
+Based on enable_off_mode being set this function was called only for
+rtc+ddr mode.
 
 > 
->>
->> Thanks,
->>
->>>
->>>> Thanks,
->>>
->>> .
->>>
+> If this cannot be done from regular driver suspend/resume calls,
+> this probably should be done from cpu_pm notifiers CPU_PM_ENTER and
+> CPU_PM_EXIT. We should also do the same for GPIO BTW.
+
+I will look into that. Thanks for suggestion.
+
 > 
-> .
+> BTW, the subject line is wrong here, it should be "pinctrl" :)
+
+Oops yes that should be pinctrl.
+
+> 
+> Regards,
+> 
+> Tony
 > 
