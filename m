@@ -1,86 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754062AbeDMIrV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 04:47:21 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34323 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754040AbeDMIrS (ORCPT
+        id S1754081AbeDMIro (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 04:47:44 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:37904 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751041AbeDMIrl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 04:47:18 -0400
-X-Google-Smtp-Source: AIpwx49fBxBRpZ/RR15g4EezEABp979xjf4orDxvYZ7EJQjHRrdUmm+dAudUIsRUZEVZYV3JGb44Jg==
-Date: Fri, 13 Apr 2018 10:47:13 +0200
-From: Miklos Szeredi <miklos@szeredi.hu>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Subject: [GIT PULL] overlayfs update for 4.17
-Message-ID: <20180413084713.GD19579@veci.piliscsaba.redhat.com>
+        Fri, 13 Apr 2018 04:47:41 -0400
+X-Google-Smtp-Source: AIpwx4+QpQYRwJZFf7XA8cdfZhKlZDZDavyFd6FknT9+/C19gNUgIio48CguEpwctshwCUf319HOK/BCmp4iQFRRgJY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1523531671-27491-7-git-send-email-ulf.hansson@linaro.org>
+References: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org> <1523531671-27491-7-git-send-email-ulf.hansson@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 13 Apr 2018 10:47:39 +0200
+X-Google-Sender-Auth: eeC4v3yY3HLLj4YurzTS1YeQSxc
+Message-ID: <CAJZ5v0j=TL7Pvc6W+ieJ1D3C-9mJKMzmkcSRoHnquAwZC_k+0w@mail.gmail.com>
+Subject: Re: [PATCH v7 06/26] timer: Export next wakeup time of a CPU
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>, Lina Iyer <lina.iyer@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, Apr 12, 2018 at 1:14 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> From: Lina Iyer <lina.iyer@linaro.org>
+>
+> Knowing the sleep duration of CPUs, is known to be needed while selecting
+> the most energy efficient idle state for a CPU or a group of CPUs.
+>
+> However, to be able to compute the sleep duration, we need to know at what
+> time the next expected wakeup is for the CPU. Therefore, let's export this
+> information via a new function, tick_nohz_get_next_wakeup(). Following
+> changes make use of it.
+>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Lina Iyer <ilina@codeaurora.org>
+> Cc: Frederic Weisbecker <fweisbec@gmail.com>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Signed-off-by: Lina Iyer <lina.iyer@linaro.org>
+> Co-developed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  include/linux/tick.h     | 10 ++++++++++
+>  kernel/time/tick-sched.c | 11 +++++++++++
+>  2 files changed, 21 insertions(+)
+>
+> diff --git a/include/linux/tick.h b/include/linux/tick.h
+> index 389aa25..d341811 100644
+> --- a/include/linux/tick.h
+> +++ b/include/linux/tick.h
+> @@ -125,6 +125,7 @@ extern bool tick_nohz_idle_got_tick(void);
+>  extern ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next);
+>  extern unsigned long tick_nohz_get_idle_calls(void);
+>  extern unsigned long tick_nohz_get_idle_calls_cpu(int cpu);
+> +extern ktime_t tick_nohz_get_next_wakeup(int cpu);
+>  extern u64 get_cpu_idle_time_us(int cpu, u64 *last_update_time);
+>  extern u64 get_cpu_iowait_time_us(int cpu, u64 *last_update_time);
+>
+> @@ -151,6 +152,15 @@ static inline ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next)
+>         *delta_next = TICK_NSEC;
+>         return *delta_next;
+>  }
+> +
+> +static inline ktime_t tick_nohz_get_next_wakeup(int cpu)
+> +{
+> +       ktime_t t;
+> +
+> +       /* Next wake up is the tick period, assume it starts now */
+> +       return ktime_add(tick_nohz_get_sleep_length(&t), ktime_get());
+> +}
 
-Please pull from:
+Well, given that tick_nohz_get_sleep_length() is just the above in
+this case, wouldn't it be simpler to return ktime_add(ktime_get(),
+TICK_NSEC) from here?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git overlayfs-linus
+> +
+>  static inline u64 get_cpu_idle_time_us(int cpu, u64 *unused) { return -1; }
+>  static inline u64 get_cpu_iowait_time_us(int cpu, u64 *unused) { return -1; }
+>
+> diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+> index 646645e..08db7f3 100644
+> --- a/kernel/time/tick-sched.c
+> +++ b/kernel/time/tick-sched.c
+> @@ -1098,6 +1098,17 @@ unsigned long tick_nohz_get_idle_calls(void)
+>         return ts->idle_calls;
+>  }
+>
+> +/**
+> + * tick_nohz_get_next_wakeup - return the next wake up of the CPU
+> + */
+> +ktime_t tick_nohz_get_next_wakeup(int cpu)
+> +{
+> +       struct clock_event_device *dev =
+> +                       per_cpu(tick_cpu_device.evtdev, cpu);
 
-In addition to bug fixes and cleanups there are two new features from Amir:
+I would avoid breaking the line, honestly.
 
- - Consistent inode number support for the case when layers are not all on
-   the same filesystem (feature is dubbed "xino").
+If you really really want to avoid going above the 80 chars line
+length limit, why don't you do
 
- - Optimize overlayfs file handle decoding.  This one touches the exportfs
-   interface to allow detecting the disconnected directory case.
+struct clock_event_device *dev;
 
-Most of the code has been sitting in -next for a while now, but was rebased
-due to a bug fix coming in yesterday.  I decided in favor of rebasing on
-top of that fix to allow automatic stable backporting.
+dev = per_cpu(tick_cpu_device.evtdev, cpu);
 
-Thanks,
-Miklos
-
----
-Amir Goldstein (13):
-      ovl: set i_ino to the value of st_ino for NFS export
-      ovl: fix lookup with middle layer opaque dir and absolute path redirects
-      ovl: set lower layer st_dev only if setting lower st_ino
-      ovl: disambiguate ovl_encode_fh()
-      ovl: do not try to reconnect a disconnected origin dentry
-      ovl: lookup in inode cache first when decoding lower file handle
-      ovl: factor out ovl_map_dev_ino() helper
-      ovl: allocate anon bdev per unique lower fs
-      ovl: constant st_ino for non-samefs with xino
-      ovl: consistent i_ino for non-samefs with xino
-      ovl: consistent d_ino for non-samefs with xino
-      ovl: add support for "xino" mount and config options
-      ovl: update documentation w.r.t "xino" feature
-
-Miklos Szeredi (2):
-      ovl: add WARN_ON() for non-dir redirect cases
-      ovl: cleanup ovl_update_time()
-
-Vivek Goyal (4):
-      ovl: Set d->last properly during lookup
-      ovl: Do not check for redirect if this is last layer
-      ovl: set d->is_dir and d->opaque for last path element
-      ovl: cleanup setting OVL_INDEX
-
----
- Documentation/filesystems/overlayfs.txt |  39 ++++++-
- fs/exportfs/expfs.c                     |   9 ++
- fs/overlayfs/Kconfig                    |  17 +++
- fs/overlayfs/copy_up.c                  |   6 +-
- fs/overlayfs/export.c                   |  75 +++++++------
- fs/overlayfs/inode.c                    | 188 ++++++++++++++++++++------------
- fs/overlayfs/namei.c                    |  67 ++++++++----
- fs/overlayfs/overlayfs.h                |  19 +++-
- fs/overlayfs/ovl_entry.h                |  21 +++-
- fs/overlayfs/readdir.c                  |  45 +++++++-
- fs/overlayfs/super.c                    | 157 ++++++++++++++++++++++----
- fs/overlayfs/util.c                     |  39 ++++++-
- 12 files changed, 510 insertions(+), 172 deletions(-)
+> +
+> +       return dev->next_event;
+> +}
+> +
+>  static void tick_nohz_account_idle_ticks(struct tick_sched *ts)
+>  {
+>  #ifndef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
+> --
