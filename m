@@ -1,78 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754219AbeDMKWK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 06:22:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51410 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753112AbeDMKWJ (ORCPT
+        id S1754007AbeDMKZb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 06:25:31 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:40178 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753082AbeDMKZ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 06:22:09 -0400
-Date: Fri, 13 Apr 2018 12:22:02 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH 1/7] sched/core: uclamp: add CPU clamp groups accounting
-Message-ID: <20180413102202.GN4129@hirez.programming.kicks-ass.net>
-References: <20180409165615.2326-1-patrick.bellasi@arm.com>
- <20180409165615.2326-2-patrick.bellasi@arm.com>
- <20180413082648.GP4043@hirez.programming.kicks-ass.net>
+        Fri, 13 Apr 2018 06:25:29 -0400
+X-Google-Smtp-Source: AIpwx4/6ej/nGU1YDFW5Bvtd2h4OIexsLaRHcxgtWHvcbyLMKC9pq5fJS/5rybcpX703QLfH0eSs4w==
+Date: Fri, 13 Apr 2018 03:25:26 -0700
+From: Eduardo Valentin <edubezval@gmail.com>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "Li, Philip" <philip.li@intel.com>
+Subject: Re: [GIT PULL] Thermal management updates for v4.17-rc1
+Message-ID: <20180413102525.GB22346@localhost.localdomain>
+References: <1523436077.16235.5.camel@intel.com>
+ <CA+55aFzqJ2PfUnkVJ6A-8WRQTciWb8j+25r41JLCvz7h0QEJiA@mail.gmail.com>
+ <1523509711.16235.25.camel@intel.com>
+ <CA+55aFw0C-S0L-cnk0oROG=Khqy9s36O+g3_BxqPfewKGQ9_EQ@mail.gmail.com>
+ <20180413040855.GA29826@localhost.localdomain>
+ <1523597945.16235.52.camel@intel.com>
+ <20180413100801.GA21913@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180413082648.GP4043@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180413100801.GA21913@localhost.localdomain>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 10:26:48AM +0200, Peter Zijlstra wrote:
-> On Mon, Apr 09, 2018 at 05:56:09PM +0100, Patrick Bellasi wrote:
-> > +static inline void uclamp_cpu_get(struct task_struct *p, int cpu, int clamp_id)
-> > +{
-> > +	struct uclamp_cpu *uc_cpu = &cpu_rq(cpu)->uclamp[clamp_id];
-> 
-> > +static inline void uclamp_cpu_put(struct task_struct *p, int cpu, int clamp_id)
-> > +{
-> > +	struct uclamp_cpu *uc_cpu = &cpu_rq(cpu)->uclamp[clamp_id];
-> 
-> That all seems daft, since you already have rq at the call site.
-> 
-> > +static inline void uclamp_task_update(struct rq *rq, struct task_struct *p)
-> > +{
-> > +	int cpu = cpu_of(rq);
-> > +	int clamp_id;
-> > +
-> > +	/* The idle task does not affect CPU's clamps */
-> > +	if (unlikely(p->sched_class == &idle_sched_class))
-> > +		return;
-> > +	/* DEADLINE tasks do not affect CPU's clamps */
-> > +	if (unlikely(p->sched_class == &dl_sched_class))
-> > +		return;
-> 
-> This is wrong; it misses the stop_sched_class.
-> 
-> And since you're looking at sched_class anyway, maybe put a marker in
-> there:
-> 
-> 	if (!p->sched_class->has_clamping)
-> 		return;
+On Fri, Apr 13, 2018 at 03:08:03AM -0700, Eduardo Valentin wrote:
+> On Fri, Apr 13, 2018 at 01:39:05PM +0800, Zhang Rui wrote:
+> > Hi, Eduardo,
+> > 
+> > On 四, 2018-04-12 at 21:08 -0700, Eduardo Valentin wrote:
+> > > Hello,
+> > > 
+> > > On Thu, Apr 12, 2018 at 09:55:19AM -0700, Linus Torvalds wrote:
+> > > > 
+> > > > On Wed, Apr 11, 2018 at 10:08 PM, Zhang Rui <rui.zhang@intel.com>
+> > > > wrote:
+> > > > > 
+> > > > > 
+> > > > > could you please illustrate me what the kconfig & warning is?
+> > > > Just "make allmodconfig" and the warning is about a uninitialized
+> > > > variable.
+> > > > 
+> > > > Line 304 in drivers/thermal/samsung/exynos_tmu.c if my shell
+> > > > history
+> > > > is to be believed.
+> > > > 
+> > > >                 Linus
+> > > Yeah, this has also passed my local compilation error. Somehow my
+> > > gcc4.9
+> > > is not catching it. Using an older gcc (gcc4.6) does catch it.
+> > > 
+> > > Anyways, given that the conversion functions are written to cover
+> > > for unexpected cal_type, the right way of fixing this is to rewrite
+> > > the conversion functions to allow for returning error codes and
+> > > adjusting the callers as expected.
+> > > 
+> > > Rui, bzolnier, please consider the following fix:
+> > > 
+> > as it is late in this merge window, I'd prefer to
+> > 1. drop all the thermal-soc material in the first pull request which I
+> > will send out soon.
+> > 2. you can prepare another pull request containing the thermal-soc
+> > materials except the exynos fixes
 
-Alternatively, we could simply add uclamp_task_{en,de}queue() into
-{en,de}queue_task_{fair,rt}().
+Sent you this
+https://marc.info/?l=linux-pm&m=152361492711499&w=2
 
-> > +	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
-> > +		if (uclamp_task_affects(p, clamp_id))
-> > +			uclamp_cpu_put(p, cpu, clamp_id);
-> > +		else
-> > +			uclamp_cpu_get(p, cpu, clamp_id);
-> > +	}
-> > +}
+> > 3. exynos fixes with the problem solved can be queued for -rc2 or
+> > later.
+
+I see there is still some discussion around the topic of how to fix
+this. So, once we get to a point of agreement, I will send the remaining
+with exynos fixes.
+
+> > 
+> 
+> Agreed
+> 
