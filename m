@@ -1,112 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754780AbeDMNnl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 09:43:41 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46880 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754698AbeDMNnY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 09:43:24 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Peter Rosin <peda@axentia.se>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: tfa9879: switch to SPDX license tag" to the asoc tree
-In-Reply-To: <20180413114751.6464-3-peda@axentia.se>
-Message-Id: <E1f6yz3-0004cD-14@debutante>
-Date: Fri, 13 Apr 2018 14:43:21 +0100
+        id S1754789AbeDMNoI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 09:44:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59872 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754010AbeDMNoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 09:44:06 -0400
+Date: Fri, 13 Apr 2018 16:44:05 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Jason Wang <jasowang@redhat.com>,
+        Jonathan Helman <jonathan.helman@oracle.com>,
+        virtualization@lists.linux-foundation.org
+Subject: [PATCH] virtio_balloon: add array of stat names
+Message-ID: <1523627031-370966-1-git-send-email-mst@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mutt-Fcc: =sent
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Jason Wang points out that it's vary hard for users to build an array of
+stat names. The naive thing is to use VIRTIO_BALLOON_S_NR but that
+breaks if we add more stats.
 
-   ASoC: tfa9879: switch to SPDX license tag
+Let's add an array of reasonably readable names.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 55c19bd95f4dac2ee221272349900dda75a67ebb Mon Sep 17 00:00:00 2001
-From: Peter Rosin <peda@axentia.se>
-Date: Fri, 13 Apr 2018 13:47:51 +0200
-Subject: [PATCH] ASoC: tfa9879: switch to SPDX license tag
-
-It's less overhead, clearer and generally neater.
-
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 6c64fe7f2 ("virtio_balloon: export hugetlb page allocation counts")
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: Jonathan Helman <jonathan.helman@oracle.com>,
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 ---
- sound/soc/codecs/tfa9879.c | 18 ++++++------------
- sound/soc/codecs/tfa9879.h |  7 +------
- 2 files changed, 7 insertions(+), 18 deletions(-)
+ include/uapi/linux/virtio_balloon.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/sound/soc/codecs/tfa9879.c b/sound/soc/codecs/tfa9879.c
-index 4ed020262a27..abc114a3ae2b 100644
---- a/sound/soc/codecs/tfa9879.c
-+++ b/sound/soc/codecs/tfa9879.c
-@@ -1,15 +1,9 @@
--/*
-- * tfa9879.c  --  driver for NXP Semiconductors TFA9879
-- *
-- * Copyright (C) 2014 Axentia Technologies AB
-- * Author: Peter Rosin <peda@axentia.se>
-- *
-- *  This program is free software; you can redistribute  it and/or modify it
-- *  under  the terms of  the GNU General  Public License as published by the
-- *  Free Software Foundation;  either version 2 of the  License, or (at your
-- *  option) any later version.
-- *
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// tfa9879.c  --  driver for NXP Semiconductors TFA9879
-+//
-+// Copyright (C) 2014 Axentia Technologies AB
-+// Author: Peter Rosin <peda@axentia.se>
+diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
+index 9e02137..1477c17 100644
+--- a/include/uapi/linux/virtio_balloon.h
++++ b/include/uapi/linux/virtio_balloon.h
+@@ -64,6 +64,21 @@ struct virtio_balloon_config {
+ #define VIRTIO_BALLOON_S_HTLB_PGFAIL   9  /* Hugetlb page allocation failures */
+ #define VIRTIO_BALLOON_S_NR       10
  
- #include <linux/module.h>
- #include <linux/init.h>
-diff --git a/sound/soc/codecs/tfa9879.h b/sound/soc/codecs/tfa9879.h
-index 3408c90c4628..66c88d0396fe 100644
---- a/sound/soc/codecs/tfa9879.h
-+++ b/sound/soc/codecs/tfa9879.h
-@@ -1,14 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
++#define VIRTIO_BALLOON_S_NAMES_WITH_PREFIX(VIRTIO_BALLOON_S_NAMES_prefix) { \
++	VIRTIO_BALLOON_S_NAMES_prefix "swap-in", \
++	VIRTIO_BALLOON_S_NAMES_prefix "swap-out", \
++	VIRTIO_BALLOON_S_NAMES_prefix "major-faults", \
++	VIRTIO_BALLOON_S_NAMES_prefix "minor-faults", \
++	VIRTIO_BALLOON_S_NAMES_prefix "free-memory", \
++	VIRTIO_BALLOON_S_NAMES_prefix "total-memory", \
++	VIRTIO_BALLOON_S_NAMES_prefix "available-memory", \
++	VIRTIO_BALLOON_S_NAMES_prefix "disk-caches", \
++	VIRTIO_BALLOON_S_NAMES_prefix "hugetlb-allocations", \
++	VIRTIO_BALLOON_S_NAMES_prefix "hugetlb-failures" \
++}
++
++#define VIRTIO_BALLOON_S_NAMES VIRTIO_BALLOON_S_NAMES_WITH_PREFIX("")
++
  /*
-  * tfa9879.h  --  driver for NXP Semiconductors TFA9879
-  *
-  * Copyright (C) 2014 Axentia Technologies AB
-  * Author: Peter Rosin <peda@axentia.se>
-- *
-- *  This program is free software; you can redistribute  it and/or modify it
-- *  under  the terms of  the GNU General  Public License as published by the
-- *  Free Software Foundation;  either version 2 of the  License, or (at your
-- *  option) any later version.
-- *
-  */
- 
- #ifndef _TFA9879_H
+  * Memory statistics structure.
+  * Driver fills an array of these structures and passes to device.
 -- 
-2.17.0
+MST
