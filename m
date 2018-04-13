@@ -1,67 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751042AbeDMSFx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 14:05:53 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:44533 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750792AbeDMSFv (ORCPT
+        id S1751036AbeDMSMA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 14:12:00 -0400
+Received: from mail-it0-f51.google.com ([209.85.214.51]:52949 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750832AbeDMSL6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 14:05:51 -0400
-X-Google-Smtp-Source: AIpwx49OkRvkq3mCqRDHb5wVb66MG0CXrGU2XzZRpgHU0t9g+ZFb1YCkuH99Pgq4lncJhO8LKywk0g==
-Date: Fri, 13 Apr 2018 13:05:49 -0500
-From: Rob Herring <robh@kernel.org>
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        phil.edworthy@renesas.com, buserror+upstream@gmail.com,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 3/8] dt-bindings: mfd: renesas,rzn1-sysctrl: document
- RZ/N1 sysctrl node
-Message-ID: <20180413180549.yjzkl2yf7osz7myt@rob-hp-laptop>
-References: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
- <1523349015-37985-4-git-send-email-michel.pollet@bp.renesas.com>
+        Fri, 13 Apr 2018 14:11:58 -0400
+X-Google-Smtp-Source: AIpwx49HsTKs7bz8GTD81i/feiWnyanZAg2aZ7L/hcaI0spDSgMHwfqgF0zsAT95MZJ2Vph56v18oO8r9DImHesOvsQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523349015-37985-4-git-send-email-michel.pollet@bp.renesas.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAGXu5jLt4xoxXTw83-npD4WmumPzSC9WnbOkkDoR=VYa5R4rYw@mail.gmail.com>
+References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
+ <1523595999-27433-22-git-send-email-yamada.masahiro@socionext.com> <CAGXu5jLt4xoxXTw83-npD4WmumPzSC9WnbOkkDoR=VYa5R4rYw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 13 Apr 2018 11:11:56 -0700
+X-Google-Sender-Auth: GGiVu5v8GwyAr8hUyJLe1fT6dNI
+Message-ID: <CA+55aFyM1uxzvU4SH3c1VYRXBRfGuqKZ4OR-O_pMoxPs7XTFug@mail.gmail.com>
+Subject: Re: [PATCH 21/30] stack-protector: test compiler capability in
+ Kconfig and drop AUTO mode
+To: Kees Cook <keescook@chromium.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>, Emese Revfy <re.emese@gmail.com>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 09:30:03AM +0100, Michel Pollet wrote:
-> The Renesas RZ/N1 Family (Part #R9A06G0xx) has a multi-function
-> system controller. This documents the node used to encapsulate
-> it's sub drivers.
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> ---
->  .../bindings/mfd/renesas,rzn1-sysctrl.txt          | 23 ++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
-> new file mode 100644
-> index 0000000..9897f8f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
-> @@ -0,0 +1,23 @@
-> +DT bindings for the Renesas RZ/N1 System Controller
-> +
-> +== System Controller Node ==
-> +
-> +The system controller node currently only hosts a single sub-node to handle
-> +the rebooting of the CPU. Eventually it will host the clock driver, SMP
-> +start handler, watchdog etc.
+On Fri, Apr 13, 2018 at 9:41 AM, Kees Cook <keescook@chromium.org> wrote:
+>
+> How about something like this instead:
 
-Please submit a complete binding for the h/w block.
+I'd rather avoid the ifdef's in the Makefile if at all possible.
 
-Again, if the only reason you have sub nodes is to define compatible 
-strings and in turn enumerate drivers, then you don't need the nodes in 
-DT. DT is not the only way to instantiate drivers.
+I'd rather expose this as a Kconfig rule, and in the Kconfig just have
+an entry something like this
 
-Rob
+    config STACKPROTECTOR_FLAGS
+        string
+        default "-fstack-protector-strong" if CC_STACKPROTECTOR_STRONG
+        default "-fstack-protector" if CC_STACKPROTECTOR
+        default "-fno-stack-protector" if CC_HAS_STACKPROTECTOR_NONE
+        default ""
+
+which is really simple and straightforward. In the presense of
+multiple defaults, the first is picked, so this _automatically_ does
+that whole priority ordering.
+
+And then the Makefile can just have
+
+        KBUILD_CFLAGS += $(CONFIG_STACKPROTECTOR_FLAGS)
+
+which seems much simpler.
+
+It also makes more complex conditionals easier (ie different compilers
+with different flags, since clang sometimes does the same thing with
+another flag name), so I'd rather see this pattern in general.
+
+I'd also *much* rather do as much as possible at Kconfig time compared
+to build time. Maybe it's just shifting the costs around, but the less
+"clever" things we ask "make" to do, the better.
+
+I find our Makefiles an odd combination of really clean and simply
+(the ones that just have "obj-$(CONFIG_X) += xyz.o" are just lovely)
+and completely incomprehensible (all of our infrastructure support for
+the simple stuff).
+
+I'd rather have more of the simple stuff in Makefiles, less of the
+complex conditionals.
+
+                  Linus
