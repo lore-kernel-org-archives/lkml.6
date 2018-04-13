@@ -1,100 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754560AbeDMLli (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:41:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40396 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753114AbeDMLlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:41:37 -0400
-Date: Fri, 13 Apr 2018 13:41:33 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Chintan Pandya <cpandya@codeaurora.org>
-Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>, vbabka@suse.cz,
-        labbott@redhat.com, catalin.marinas@arm.com, hannes@cmpxchg.org,
-        f.fainelli@gmail.com, xieyisheng1@huawei.com,
-        ard.biesheuvel@linaro.org, richard.weiyang@gmail.com,
-        byungchul.park@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: vmalloc: Remove double execution of vunmap_page_range
-Message-ID: <20180413114133.GJ17484@dhcp22.suse.cz>
-References: <1523611019-17679-1-git-send-email-cpandya@codeaurora.org>
- <a623e12b-bb5e-58fa-c026-de9ea53c5bd9@linux.vnet.ibm.com>
- <8da9f826-2a3d-e618-e512-4fc8d45c16f2@codeaurora.org>
- <bbef0a92-f81b-5ba8-c5c1-d8c08444955b@linux.vnet.ibm.com>
- <fa104cc6-c32a-9081-280f-2e03e4279f65@codeaurora.org>
- <20180413110949.GA17670@dhcp22.suse.cz>
- <696fedc5-6bcd-f0a0-62f5-4f9e7b7c602a@codeaurora.org>
+        id S1754307AbeDMLqO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:46:14 -0400
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:53460 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753126AbeDMLqM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 07:46:12 -0400
+X-Google-Smtp-Source: AIpwx49gYxxaToYoSLwttR4e4lnmWyhK43W0X6a3RpALpqfaSEuGau2PakuCVtwMfv3Y6YE9mZj9Pg==
+Subject: Re: [PATCH v3 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
+ idle cooling driver
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: viresh.kumar@linaro.org, edubezval@gmail.com, kevin.wangtao@linaro.org,
+        leo.yan@linaro.org, vincent.guittot@linaro.org,
+        linux-kernel@vger.kernel.org, javi.merino@kernel.org,
+        rui.zhang@intel.com, linux-pm@vger.kernel.org,
+        Amit Daniel Kachhap <amit.kachhap@gmail.com>
+References: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
+ <1522945005-7165-7-git-send-email-daniel.lezcano@linaro.org>
+ <20180413113848.xj7hg7gsbxpxekbo@holly.lan>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <aa059103-c404-0dc2-f332-e2ea7ddb1c5e@linaro.org>
+Date: Fri, 13 Apr 2018 13:46:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <696fedc5-6bcd-f0a0-62f5-4f9e7b7c602a@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180413113848.xj7hg7gsbxpxekbo@holly.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 13-04-18 16:57:06, Chintan Pandya wrote:
-> 
-> 
-> On 4/13/2018 4:39 PM, Michal Hocko wrote:
-> > On Fri 13-04-18 16:15:26, Chintan Pandya wrote:
-> > > 
-> > > 
-> > > On 4/13/2018 4:10 PM, Anshuman Khandual wrote:
-> > > > On 04/13/2018 03:47 PM, Chintan Pandya wrote:
-> > > > > 
-> > > > > 
-> > > > > On 4/13/2018 3:29 PM, Anshuman Khandual wrote:
-> > > > > > On 04/13/2018 02:46 PM, Chintan Pandya wrote:
-> > > > > > > Unmap legs do call vunmap_page_range() irrespective of
-> > > > > > > debug_pagealloc_enabled() is enabled or not. So, remove
-> > > > > > > redundant check and optional vunmap_page_range() routines.
-> > > > > > 
-> > > > > > vunmap_page_range() tears down the page table entries and does
-> > > > > > not really flush related TLB entries normally unless page alloc
-> > > > > > debug is enabled where it wants to make sure no stale mapping is
-> > > > > > still around for debug purpose. Deferring TLB flush improves
-> > > > > > performance. This patch will force TLB flush during each page
-> > > > > > table tear down and hence not desirable.
-> > > > > > 
-> > > > > Deferred TLB invalidation will surely improve performance. But force
-> > > > > flush can help in detecting invalid access right then and there. I
-> > > > 
-> > > > Deferred TLB invalidation was a choice made some time ago with the
-> > > > commit db64fe02258f1507e ("mm: rewrite vmap layer") as these vmalloc
-> > > > mappings wont be used other than inside the kernel and TLB gets
-> > > > flushed when they are reused. This way it can still avail the benefit
-> > > > of deferred TLB flushing without exposing itself to invalid accesses.
-> > > > 
-> > > > > chose later. May be I should have clean up the vmap tear down code
-> > > > > as well where it actually does the TLB invalidation.
-> > > > > 
-> > > > > Or make TLB invalidation in free_unmap_vmap_area() be dependent upon
-> > > > > debug_pagealloc_enabled().
-> > > > 
-> > > > Immediate TLB invalidation needs to be dependent on debug_pagealloc_
-> > > > enabled() and should be done only for debug purpose. Contrary to that
-> > > > is not desirable.
-> > > > 
-> > > Okay. I will raise v2 for that.
-> > 
-> > More importantly. Your changelog absolutely lacks the _why_ part. It
-> > just states what the code does which is not all that hard to read from
-> > the diff. It is usually much more important to present _why_ the patch
-> > is an improvement and worth merging.
-> > 
-> 
-> It is improving performance in debug scenario.
+On 13/04/2018 13:38, Daniel Thompson wrote:
 
-Do not forget to add some numbers presenting the benefits when
-resubmitting.
+[ ... ]
 
-> More than that, I see it
-> as a clean up. Sure, I will try to address *why* in next change log.
+>> +		/*
+>> +		 * Allocate the cpuidle cooling device with the list
+>> +		 * of the cpus belonging to the cluster.
+>> +		 */
+>> +		idle_cdev = cpuidle_cooling_alloc(topology_core_cpumask(cpu));
+>> +		if (!idle_cdev)
+>> +			goto out;
+> 
+> Perhaps nitpicking but it might be better to set ret to -ENOMEM here 
+> and avoid initializing it during the declarations.
+> 
+> There's no bug in the current form since ret is never assigned to
+> outside of the error paths, but the unwritten assumption that ret keeps
+> its original value throughout the loop seems like a bit of a landmine
+> w.r.t. future maintainance.
 
-As Anshuman pointed out the current code layout is deliberate. If you
-believe that reasons mentioned previously are not valid then dispute
-them and provide your arguments in the changelog.
+Agree.
+
 -- 
-Michal Hocko
-SUSE Labs
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
