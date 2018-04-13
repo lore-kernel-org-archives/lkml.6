@@ -1,77 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751670AbeDMUVa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 16:21:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55250 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751036AbeDMUV1 (ORCPT
+        id S1751208AbeDMU24 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 16:28:56 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33915 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750839AbeDMU2y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 16:21:27 -0400
-Date: Fri, 13 Apr 2018 13:21:08 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
-        Alexander Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-mips@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 00/32] docs/vm: convert to ReST format
-Message-ID: <20180413202108.GA30271@bombadil.infradead.org>
-References: <1521660168-14372-1-git-send-email-rppt@linux.vnet.ibm.com>
- <20180329154607.3d8bda75@lwn.net>
- <20180401063857.GA3357@rapoport-lnx>
- <20180413135551.0e6d1b12@lwn.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180413135551.0e6d1b12@lwn.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 13 Apr 2018 16:28:54 -0400
+X-Google-Smtp-Source: AIpwx48qPBI2oD5nqPm4MBVHZ/27cy/VQvnr7vZp+fceTYqoVENN6ocAV7/7T50bqZ7xpM3SZwz9+g==
+From: Khazhismel Kumykov <khazhy@google.com>
+To: nborisov@suse.com, akpm@linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Khazhismel Kumykov <khazhy@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>, Jeff Mahoney <jeffm@suse.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH] fs/dcache.c: re-add cond_resched() in shrink_dcache_parent()
+Date: Fri, 13 Apr 2018 13:28:23 -0700
+Message-Id: <20180413202823.204377-1-khazhy@google.com>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+In-Reply-To: <20180413181350.88831-1-khazhy@google.com>
+References: <20180413181350.88831-1-khazhy@google.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="f403045dbf568b74990569c0b84a"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 01:55:51PM -0600, Jonathan Corbet wrote:
-> > I believe that keeping the mm docs together will give better visibility of
-> > what (little) mm documentation we have and will make the updates easier.
-> > The documents that fit well into a certain topic could be linked there. For
-> > instance:
-> 
-> ...but this sounds like just the opposite...?  
-> 
-> I've had this conversation with folks in a number of subsystems.
-> Everybody wants to keep their documentation together in one place - it's
-> easier for the developers after all.  But for the readers I think it's
-> objectively worse.  It perpetuates the mess that Documentation/ is, and
-> forces readers to go digging through all kinds of inappropriate material
-> in the hope of finding something that tells them what they need to know.
-> 
-> So I would *really* like to split the documentation by audience, as has
-> been done for a number of other kernel subsystems (and eventually all, I
-> hope).
-> 
-> I can go ahead and apply the RST conversion, that seems like a step in
-> the right direction regardless.  But I sure hope we don't really have to
-> keep it as an unorganized jumble of stuff...
+--f403045dbf568b74990569c0b84a
 
-I've started on Documentation/core-api/memory.rst which covers just
-memory allocation.  So far it has the Overview and GFP flags sections
-written and an outline for 'The slab allocator', 'The page allocator',
-'The vmalloc allocator' and 'The page_frag allocator'.  And typing this
-up, I realise we need a 'The percpu allocator'.  I'm thinking that this
-is *not* the right document for the DMA memory allocators (although it
-should link to that documentation).
+shrink_dcache_parent may spin waiting for a parallel shrink_dentry_list.
+In this case we may have 0 dentries to dispose, so we will never
+schedule out while waiting for the parallel shrink_dentry_list to
+complete.
 
-I suspect the existing Documentation/vm/ should probably stay as an
-unorganised jumble of stuff.  Developers mostly talking to other MM
-developers.  Stuff that people outside the MM fraternity should know
-about needs to be centrally documented.  By all means convert it to
-ReST ... I don't much care, and it may make it easier to steal bits
-or link to it from the organised documentation.
+Tested that this fixes syzbot reports of stalls in shrink_dcache_parent()
+
+Fixes: 32785c0539b7 ("fs/dcache.c: add cond_resched() in shrink_dentry_list()")
+Reported-by: syzbot+ae80b790eb412884ca77@syzkaller.appspotmail.com
+
+Cc: Nikolay Borisov <nborisov@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc: Jeff Mahoney <jeffm@suse.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+---
+ fs/dcache.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 591b34500e41..3507badeb60a 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1489,6 +1489,7 @@ void shrink_dcache_parent(struct dentry *parent)
+ 			break;
+ 
+ 		shrink_dentry_list(&data.dispose);
++		cond_resched();
+ 	}
+ }
+ EXPORT_SYMBOL(shrink_dcache_parent);
+-- 
+2.17.0.484.g0c8726318c-goog
+
+
+--f403045dbf568b74990569c0b84a
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIS5wYJKoZIhvcNAQcCoIIS2DCCEtQCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghBNMIIEXDCCA0SgAwIBAgIOSBtqDm4P/739RPqw/wcwDQYJKoZIhvcNAQELBQAwZDELMAkGA1UE
+BhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExOjA4BgNVBAMTMUdsb2JhbFNpZ24gUGVy
+c29uYWxTaWduIFBhcnRuZXJzIENBIC0gU0hBMjU2IC0gRzIwHhcNMTYwNjE1MDAwMDAwWhcNMjEw
+NjE1MDAwMDAwWjBMMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEiMCAG
+A1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+AQoCggEBALR23lKtjlZW/17kthzYcMHHKFgywfc4vLIjfq42NmMWbXkNUabIgS8KX4PnIFsTlD6F
+GO2fqnsTygvYPFBSMX4OCFtJXoikP2CQlEvO7WooyE94tqmqD+w0YtyP2IB5j4KvOIeNv1Gbnnes
+BIUWLFxs1ERvYDhmk+OrvW7Vd8ZfpRJj71Rb+QQsUpkyTySaqALXnyztTDp1L5d1bABJN/bJbEU3
+Hf5FLrANmognIu+Npty6GrA6p3yKELzTsilOFmYNWg7L838NS2JbFOndl+ce89gM36CW7vyhszi6
+6LqqzJL8MsmkP53GGhf11YMP9EkmawYouMDP/PwQYhIiUO0CAwEAAaOCASIwggEeMA4GA1UdDwEB
+/wQEAwIBBjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwEgYDVR0TAQH/BAgwBgEB/wIB
+ADAdBgNVHQ4EFgQUyzgSsMeZwHiSjLMhleb0JmLA4D8wHwYDVR0jBBgwFoAUJiSSix/TRK+xsBtt
+r+500ox4AAMwSwYDVR0fBEQwQjBAoD6gPIY6aHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9ncy9n
+c3BlcnNvbmFsc2lnbnB0bnJzc2hhMmcyLmNybDBMBgNVHSAERTBDMEEGCSsGAQQBoDIBKDA0MDIG
+CCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzANBgkqhkiG
+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
+BQUHMAKGNGh0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5jb20vY2FjZXJ0L2dzaHZzbWltZWNhMS5j
+cnQwHQYDVR0OBBYEFDNntFDpJlP5hZfZPq3fmoQ/ClRPMB8GA1UdIwQYMBaAFMs4ErDHmcB4koyz
+IZXm9CZiwOA/MEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8v
+d3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMDsGA1UdHwQ0MDIwMKAuoCyGKmh0dHA6Ly9j
+cmwuZ2xvYmFsc2lnbi5jb20vZ3NodnNtaW1lY2ExLmNybDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4IBAQCcYsdtDsMPCsiWtxWK
+v0I9QkCnTCRmIAxfU099lmAl6HJIb6EZAYXhG51MDl9iaGIuH+GO5oxO7mt6QXjZkJJRP2vReyw5
+vi5ViuNmepeIV0P683cromlJaDnnrTIV8cqxomNphwiRQiX+abmRlZ2+Har0cE2a0g47zpdg/Hby
+MERF/SR21AUHupZvBsu6329K3W2rg7YbCPX+MnvEgpZKqCyulTjxFyxJ8a8pjBtznVnMrRrTfYRz
+HfgjoeGEt0kUqvCtVFjEU1tpoYLSys6rl1qk+jX/YW09XZsd18ie8uWVRxG+9KtevbtWe5UPBQ37
+UMq8z8vtmD3G2k6o6TQMMYICXjCCAloCAQEwXDBMMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xv
+YmFsU2lnbiBudi1zYTEiMCAGA1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMQIMD/ndhZX/
+YOFoMzvgMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCDDP499RcFMwzADdfh1k8GK
+54sKPVExhjK6L/eeziDx/TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
+Fw0xODA0MTMyMDI4NTRaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQB
+FjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglg
+hkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAjHVpt2hwAW7sdLuZf+dguA+ilLJW6mbWtmvuCa7M
+Z4bPTt3Q9tL9nveSozMfphsgNojTBfzqoW5hBQJ7PVHECJ60RGhSRnruwdHbk2gNNguMivlN/efu
+erT2tKbIgNmWlMoxhe1AAmRIWJ60cso43Ok2+4wpGNbv/S1F8bEIY/9TPwdobqGK8yLUtn4LN901
+ggPQKKfpXJj7bixQDxCV23KlmHn7sYL6p03YKu5sOMcxSWRmbN9eQHfxWy7vxT4I2Yjg4FGQy4LW
+r0mPPTP37ClwZmBY0wXU7hDglrhSAAn9lC2ZE4G/Blya3MuRIIcuws2hG6dXCeG45bCczS8Mbg==
+--f403045dbf568b74990569c0b84a--
