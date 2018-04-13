@@ -1,101 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754767AbeDMOTH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 10:19:07 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:38470 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754364AbeDMOTF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:19:05 -0400
-Date: Fri, 13 Apr 2018 17:19:02 +0300
-From: "Dmitry V. Levin" <ldv@altlinux.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Anatoly Pugachev <matorola@gmail.com>, sparclinux@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH] sparc: fix compat siginfo ABI regression
-Message-ID: <20180413141901.GA15253@altlinux.org>
-Mail-Followup-To: "David S. Miller" <davem@davemloft.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Anatoly Pugachev <matorola@gmail.com>, sparclinux@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        id S1754707AbeDMOWB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 10:22:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54880 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750980AbeDMOWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 10:22:00 -0400
+Subject: Re: [PATCH 3/3] dcache: account external names as indirectly
+ reclaimable memory
+To: Michal Hocko <mhocko@kernel.org>, Minchan Kim <minchan@kernel.org>
+Cc: Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Johannes Weiner <hannes@cmpxchg.org>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com
+References: <20180305133743.12746-1-guro@fb.com>
+ <20180305133743.12746-5-guro@fb.com>
+ <20180413133519.GA213834@rodete-laptop-imager.corp.google.com>
+ <20180413135923.GT17484@dhcp22.suse.cz>
+From: Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <13f1f5b5-f3f8-956c-145a-4641fb996048@suse.cz>
+Date: Fri, 13 Apr 2018 16:20:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <20180413135923.GT17484@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Starting with commit v4.14-rc1~60^2^2~1, a SIGFPE signal sent via kill
-results to wrong values in si_pid and si_uid fields of compat siginfo_t.
+On 04/13/2018 03:59 PM, Michal Hocko wrote:
+> On Fri 13-04-18 22:35:19, Minchan Kim wrote:
+>> On Mon, Mar 05, 2018 at 01:37:43PM +0000, Roman Gushchin wrote:
+> [...]
+>>> @@ -1614,9 +1623,11 @@ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+>>>  		name = &slash_name;
+>>>  		dname = dentry->d_iname;
+>>>  	} else if (name->len > DNAME_INLINE_LEN-1) {
+>>> -		size_t size = offsetof(struct external_name, name[1]);
+>>> -		struct external_name *p = kmalloc(size + name->len,
+>>> -						  GFP_KERNEL_ACCOUNT);
+>>> +		struct external_name *p;
+>>> +
+>>> +		reclaimable = offsetof(struct external_name, name[1]) +
+>>> +			name->len;
+>>> +		p = kmalloc(reclaimable, GFP_KERNEL_ACCOUNT);
+>>
+>> Can't we use kmem_cache_alloc with own cache created with SLAB_RECLAIM_ACCOUNT
+>> if they are reclaimable? 
+> 
+> No, because names have different sizes and so we would basically have to
+> duplicate many caches.
 
-This happens due to FPE_FIXME being defined to 0 for sparc, and at the
-same time siginfo_layout() introduced by the same commit returns
-SIL_FAULT for SIGFPE if si_code == SI_USER and FPE_FIXME is defined to 0.
+We would need kmalloc-reclaimable-X variants. It could be worth it,
+especially if we find more similar usages. I suspect they would be more
+useful than the existing dma-kmalloc-X :)
 
-Fix this regression by removing FPE_FIXME macro and changing all its users
-to assign FPE_FLTUNK to si_code instead of FPE_FIXME.
-
-Note that FPE_FLTUNK is a new macro introduced by commit
-266da65e9156d93e1126e185259a4aae68188d0e.
-
-Tested with commit v4.16-11958-g16e205cf42da.
-
-This bug was found by strace test suite.
-
-Link: https://github.com/strace/strace/issues/21
-Fixes: cc731525f26a ("signal: Remove kernel interal si_code magic")
-Thanks-to: Anatoly Pugachev <matorola@gmail.com>
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
----
- arch/sparc/include/uapi/asm/siginfo.h | 7 -------
- arch/sparc/kernel/traps_32.c          | 2 +-
- arch/sparc/kernel/traps_64.c          | 2 +-
- 3 files changed, 2 insertions(+), 9 deletions(-)
-
-diff --git a/arch/sparc/include/uapi/asm/siginfo.h b/arch/sparc/include/uapi/asm/siginfo.h
-index 896ce44..e704955 100644
---- a/arch/sparc/include/uapi/asm/siginfo.h
-+++ b/arch/sparc/include/uapi/asm/siginfo.h
-@@ -18,13 +18,6 @@
- #define SI_NOINFO	32767		/* no information in siginfo_t */
- 
- /*
-- * SIGFPE si_codes
-- */
--#ifdef __KERNEL__
--#define FPE_FIXME	0	/* Broken dup of SI_USER */
--#endif /* __KERNEL__ */
--
--/*
-  * SIGEMT si_codes
-  */
- #define EMT_TAGOVF	1	/* tag overflow */
-diff --git a/arch/sparc/kernel/traps_32.c b/arch/sparc/kernel/traps_32.c
-index b1ed763..33cd35b 100644
---- a/arch/sparc/kernel/traps_32.c
-+++ b/arch/sparc/kernel/traps_32.c
-@@ -307,7 +307,7 @@ void do_fpe_trap(struct pt_regs *regs, unsigned long pc, unsigned long npc,
- 	info.si_errno = 0;
- 	info.si_addr = (void __user *)pc;
- 	info.si_trapno = 0;
--	info.si_code = FPE_FIXME;
-+	info.si_code = FPE_FLTUNK;
- 	if ((fsr & 0x1c000) == (1 << 14)) {
- 		if (fsr & 0x10)
- 			info.si_code = FPE_FLTINV;
-diff --git a/arch/sparc/kernel/traps_64.c b/arch/sparc/kernel/traps_64.c
-index 462a21a..e81072a 100644
---- a/arch/sparc/kernel/traps_64.c
-+++ b/arch/sparc/kernel/traps_64.c
-@@ -2372,7 +2372,7 @@ static void do_fpe_common(struct pt_regs *regs)
- 		info.si_errno = 0;
- 		info.si_addr = (void __user *)regs->tpc;
- 		info.si_trapno = 0;
--		info.si_code = FPE_FIXME;
-+		info.si_code = FPE_FLTUNK;
- 		if ((fsr & 0x1c000) == (1 << 14)) {
- 			if (fsr & 0x10)
- 				info.si_code = FPE_FLTINV;
--- 
-ldv
+Maybe create both (dma and reclaimable) on demand?
