@@ -1,64 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751133AbeDMSzU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 14:55:20 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:47172 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750839AbeDMSzT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 14:55:19 -0400
-Smtp-Origin-Hostprefix: devbig
-From: Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig102.frc2.facebook.com
-To: <linux-kernel@vger.kernel.org>
-CC: <kernel-team@fb.com>, <vincent.weaver@maine.edu>,
-        Song Liu <songliubraving@fb.com>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Smtp-Origin-Cluster: frc2c02
-Subject: [PATCH] trace_kprobe: Remove warning message "Could not insert probe at..."
-Date: Fri, 13 Apr 2018 11:55:13 -0700
-Message-ID: <20180413185513.3626052-1-songliubraving@fb.com>
-X-Mailer: git-send-email 2.9.5
-X-FB-Internal: Safe
+        id S1751657AbeDMS4d (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 14:56:33 -0400
+Received: from foss.arm.com ([217.140.101.70]:45474 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750849AbeDMS4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 14:56:31 -0400
+Date: Fri, 13 Apr 2018 19:56:27 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
+ kill() returns wrong values in si_pid and si_uid
+Message-ID: <20180413185627.GE16308@e103592.cambridge.arm.com>
+References: <20180412131404.GE16141@n2100.armlinux.org.uk>
+ <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
+ <20180412172051.GK16141@n2100.armlinux.org.uk>
+ <CA+55aFwjZqd8J0=veki1g+quQg8amEG4NnMe-h7HFksn=F=x_Q@mail.gmail.com>
+ <20180413094211.GN16141@n2100.armlinux.org.uk>
+ <CA+55aFwoThxqUeAZSsMhf--ODyhGkmOENH5R6=4+CuaopFx9eA@mail.gmail.com>
+ <20180413170827.GB16308@e103592.cambridge.arm.com>
+ <20180413175407.GO16141@n2100.armlinux.org.uk>
+ <20180413183527.GC16308@e103592.cambridge.arm.com>
+ <20180413185016.GP16141@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-13_10:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180413185016.GP16141@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This warning message is not very helpful, as the return value should
-already show information about the error. Also, this message will
-flush dmesg if the user space do something silly in a loop, like:
+On Fri, Apr 13, 2018 at 07:50:17PM +0100, Russell King - ARM Linux wrote:
+> On Fri, Apr 13, 2018 at 07:35:38PM +0100, Dave Martin wrote:
+> > If that's the case though, I don't see how a userspace testsuite is
+> > hitting this code path.  Maybe I've misunderstood the context of this
+> > thread.
+> 
+> It isn't hitting this exact case.
+> 
+> The userspace testsuite is hitting an entirely different case:
+> 
+> 	kill(getpid(), SIGFPE);
+> 
+> As one expects, this generates a SIGFPE to the current process, which
+> then inspects the siginfo structure.  Being a userspace generated
+> signal, si_code is set to SI_USER, which has the value 0.
+> 
+> With FPE_FIXME defined to zero, as Eric has done:
+> 
+> enum siginfo_layout siginfo_layout(int sig, int si_code)
+> {
+>         enum siginfo_layout layout = SIL_KILL;
+>         if ((si_code > SI_USER) && (si_code < SI_KERNEL)) {
+> ...
+>         } else {
+> ...
+> #ifdef FPE_FIXME
+>                 if ((sig == SIGFPE) && (si_code == FPE_FIXME))
+>                         layout = SIL_FAULT;
+> #endif
+>         }
+>         return layout;
+> }
+> 
+> This causes siginfo_layout() to return SIL_FAULT for this userspace
+> generated signal, rather than the correct SIL_KILL.
+> 
+> This affects which fields we copy to userspace.
+> 
+> SI_USER is defined to pass si_pid and si_uid to the userspace process,
+> which on ARM are the first two consecutive 32-bit quantities in the
+> union, which is done when siginfo_layout() returns SIL_KILL.  However,
+> when SIL_FAULT is returned, we only copy si_addr in the union, which
+> on ARM is just one 32-bit quantity.
+> 
+> Consequently, userspace sees a correct value for si_pid, and si_uid
+> remains set to whatever was there in userspace.  In the case of the
+> strace program, that's zero.  This means if you run the strace
+> testsuite as root, the problem doesn't appear, but if you run it as
+> a non-root user, it will.
+> 
+> So, the testsuite case has little to do with the behaviour of the VFP
+> handling - it's to do with the behaviour of the kernel's signal handling.
 
-    for x in {0..5}
-    do
-        echo p:xx xx+$x >> /sys/kernel/debug/tracing/kprobe_events
-    done
+Oh, right.  So, going back to the unhandled VFP bounce question,
+is it reasonable for that to be a SIGKILL?  That avoids the question
+of what si_code userspace should see, because userspace doesn't get
+to see siginfo at all in that case: it's dead.
 
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Reported-by: Vince Weaver <vincent.weaver@maine.edu>
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- kernel/trace/trace_kprobe.c | 2 --
- 1 file changed, 2 deletions(-)
+Or do we hit this in real situations that we want userspace to bail out
+of more gracefully?
 
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 1cd3fb4..02aed76 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -512,8 +512,6 @@ static int __register_trace_kprobe(struct trace_kprobe *tk)
- 	if (ret == 0)
- 		tk->tp.flags |= TP_FLAG_REGISTERED;
- 	else {
--		pr_warn("Could not insert probe at %s+%lu: %d\n",
--			trace_kprobe_symbol(tk), trace_kprobe_offset(tk), ret);
- 		if (ret == -ENOENT && trace_kprobe_is_on_module(tk)) {
- 			pr_warn("This probe might be able to register after target module is loaded. Continue.\n");
- 			ret = 0;
--- 
-2.9.5
+Cheers
+---Dave
