@@ -1,71 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754055AbeDMIzC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 04:55:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46126 "EHLO mx1.redhat.com"
+        id S1754123AbeDMIzI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 04:55:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37340 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753136AbeDMIzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 04:55:00 -0400
-Subject: Re: [PATCH v2] vfio: platform: Make printed error messages more
- consistent
+        id S1754094AbeDMIzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 04:55:05 -0400
+Subject: Re: [PATCH v3 1/2] vfio: platform: Fix reset module leak in error
+ path
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
         Baptiste Reynal <b.reynal@virtualopensystems.com>,
         Alex Williamson <alex.williamson@redhat.com>
-References: <1523372051-23716-1-git-send-email-geert+renesas@glider.be>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1523438149-16433-1-git-send-email-geert+renesas@glider.be>
+ <1523438149-16433-3-git-send-email-geert+renesas@glider.be>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        kvm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <e1468eeb-83a9-8537-5d72-f56c19b85858@redhat.com>
-Date: Fri, 13 Apr 2018 10:54:57 +0200
+Message-ID: <a948bec8-4674-9dc1-be44-0f7284940149@redhat.com>
+Date: Fri, 13 Apr 2018 10:55:01 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
  Thunderbird/45.4.0
 MIME-Version: 1.0
-In-Reply-To: <1523372051-23716-1-git-send-email-geert+renesas@glider.be>
+In-Reply-To: <1523438149-16433-3-git-send-email-geert+renesas@glider.be>
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,On 10/04/18 16:54, Geert Uytterhoeven wrote:
->   - Capitalize the first word of error messages,
->   - Unwrap statements that fit on a single line,
->   - Use "VFIO" instead of "vfio" as the error message prefix.
+Hi Geert,
+On 11/04/18 11:15, Geert Uytterhoeven wrote:
+> If the IOMMU group setup fails, the reset module is not released.
 > 
+> Fixes: b5add544d677d363 ("vfio, platform: make reset driver a requirement by default")
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Reviewed-by: Eric Auger <eric.auger@redhat.com>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Acked-by: Eric Auger <eric.auger@redhat.com>
 
 Thanks
 
 Eric
 > ---
+> v3:
+>   - Add Reviewed-by,
+> 
 > v2:
 >   - Add Reviewed-by.
 > ---
->  drivers/vfio/platform/vfio_platform_common.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+>  drivers/vfio/platform/vfio_platform_common.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
 > 
 > diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
-> index 4c27f4be3c3d0385..35469af87f88678e 100644
+> index 35469af87f88678e..b60bb5326668498c 100644
 > --- a/drivers/vfio/platform/vfio_platform_common.c
 > +++ b/drivers/vfio/platform/vfio_platform_common.c
-> @@ -630,8 +630,7 @@ static int vfio_platform_of_probe(struct vfio_platform_device *vdev,
->  	ret = device_property_read_string(dev, "compatible",
->  					  &vdev->compat);
->  	if (ret)
-> -		pr_err("VFIO: cannot retrieve compat for %s\n",
-> -			vdev->name);
-> +		pr_err("VFIO: Cannot retrieve compat for %s\n", vdev->name);
->  
->  	return ret;
->  }
-> @@ -673,7 +672,7 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
->  
->  	ret = vfio_platform_get_reset(vdev);
->  	if (ret && vdev->reset_required) {
-> -		pr_err("vfio: no reset function found for device %s\n",
-> +		pr_err("VFIO: No reset function found for device %s\n",
->  		       vdev->name);
->  		return ret;
+> @@ -680,18 +680,23 @@ int vfio_platform_probe_common(struct vfio_platform_device *vdev,
+>  	group = vfio_iommu_group_get(dev);
+>  	if (!group) {
+>  		pr_err("VFIO: No IOMMU group for device %s\n", vdev->name);
+> -		return -EINVAL;
+> +		ret = -EINVAL;
+> +		goto put_reset;
 >  	}
+>  
+>  	ret = vfio_add_group_dev(dev, &vfio_platform_ops, vdev);
+> -	if (ret) {
+> -		vfio_iommu_group_put(group, dev);
+> -		return ret;
+> -	}
+> +	if (ret)
+> +		goto put_iommu;
+>  
+>  	mutex_init(&vdev->igate);
+>  
+>  	return 0;
+> +
+> +put_iommu:
+> +	vfio_iommu_group_put(group, dev);
+> +put_reset:
+> +	vfio_platform_put_reset(vdev);
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(vfio_platform_probe_common);
+>  
 > 
