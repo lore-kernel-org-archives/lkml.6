@@ -1,39 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752918AbeDMOd2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 10:33:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33022 "EHLO mail.kernel.org"
+        id S1753271AbeDMOfy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 10:35:54 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:51368 "EHLO gum.cmpxchg.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752234AbeDMOd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:33:27 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C5AC2177F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Fri, 13 Apr 2018 11:33:23 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Andi Kleen <andi@firstfloor.org>, jolsa@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Some minor fixes for perf user tools
-Message-ID: <20180413143323.GA26496@kernel.org>
-References: <20180406203812.3087-1-andi@firstfloor.org>
- <20180413131309.GH28241@krava>
+        id S1753103AbeDMOfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 10:35:52 -0400
+Date: Fri, 13 Apr 2018 10:37:16 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Minchan Kim <minchan@kernel.org>,
+        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 3/3] dcache: account external names as indirectly
+ reclaimable memory
+Message-ID: <20180413143716.GA5378@cmpxchg.org>
+References: <20180305133743.12746-1-guro@fb.com>
+ <20180305133743.12746-5-guro@fb.com>
+ <20180413133519.GA213834@rodete-laptop-imager.corp.google.com>
+ <20180413135923.GT17484@dhcp22.suse.cz>
+ <13f1f5b5-f3f8-956c-145a-4641fb996048@suse.cz>
+ <20180413142821.GW17484@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180413131309.GH28241@krava>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180413142821.GW17484@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Apr 13, 2018 at 03:13:09PM +0200, Jiri Olsa escreveu:
-> On Fri, Apr 06, 2018 at 01:38:08PM -0700, Andi Kleen wrote:
-> > This patchkit fixes some random minor issues in the perf user tools
+On Fri, Apr 13, 2018 at 04:28:21PM +0200, Michal Hocko wrote:
+> On Fri 13-04-18 16:20:00, Vlastimil Babka wrote:
+> > We would need kmalloc-reclaimable-X variants. It could be worth it,
+> > especially if we find more similar usages. I suspect they would be more
+> > useful than the existing dma-kmalloc-X :)
 > 
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
+> I am still not sure why __GFP_RECLAIMABLE cannot be made work as
+> expected and account slab pages as SLAB_RECLAIMABLE
 
-Thanks, applied.
-
-- Arnaldo
+Can you outline how this would work without separate caches?
