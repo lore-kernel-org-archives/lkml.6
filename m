@@ -1,133 +1,106 @@
-Return-Path: <jic23@kernel.org>
-X-Google-Smtp-Source: AIpwx49KQ/Sf+XjXBeNhjYEyzXXb6ERb6e//OD2bUfhmCc4NrEQQPoWPG1f8M3dZLqlj6utV9LJG
-ARC-Seal: i=1; a=rsa-sha256; t=1524321622; cv=none;
+Return-Path: <hernan@vanguardiasur.com.ar>
+ARC-Seal: i=1; a=rsa-sha256; t=1523637515; cv=none;
         d=google.com; s=arc-20160816;
-        b=IVjs+NOrVZO4FcgLyz+njUoB98QhXY3jRI60/Sta73vb0jZ9PWmRkoA9YJU/PsnVem
-         poeD0XGN1cjQpzwFaMrf2Uder6GfQ8dJE+ty3ii147IeaBOUtwLoKBH7QnWSoZDwb3tI
-         /2OrRtqD1SH/vNyi0EM1LksjZoboSl++SllJvDCnDlgXUKWSBM4bZzkNI3rNOsHcZcFM
-         D+XuqQiCKhmKisy6f4WSPli2OTb36OlbkAzsNtJeKGuzNyc+kltGtSssggYJJWmxPOFW
-         swHZhY87er95WqXBcU/cczSKFCbUfNIK5i2VFCJ4M6IiVJE28QkPzsO3HcEIuUNsUYV1
-         LK8A==
+        b=qwYTFNEA8wWldnW7K5SDa/CRTLmS7pO+uIftdlRhTaT/T1MjtEJas89lFvObu5YGFC
+         gePIX32HzncEbIOPMOmWpcd5oaMTYDPc3wtdL62FTgP+GZ+ySVGxCdAFNMgEo+2bnKtQ
+         wwxkBTIGVYMGrkbK250OkvlWWh/ekQ4qpu50Flv3kuT75Avke8b//nSJE2kgMyTabAdO
+         mFqCm6KSDH90yaiQ8rFCaz4dohZ7rjBk7VGViaCGXjhDLVgSGjNT+yewui31DuJshQf6
+         Hg59L9mPYQt9b6olrGUHw+X8HC0r7HXQGeB91OjT8w1r+JhSX2aEnmjwrj98Su/EzAs5
+         J0nQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
+         :message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=wSF7hGhR7Posj5/mqa6M7i341iqMqz5NO9vSFM64Cm8=;
-        b=wGyGvoPl92APWA1nBdr011DAqNev5fYoM9or7VEDUtT1OtwPL67R0M1Z94WeT75mIV
-         QXW4lf7qckAl1c7g/MjcH2h6ArgjZ3jCLn8qtSJJhhUKUNO8AI6WoWuBzO6wI1N0uYXP
-         alU/UJXwAW4X/E25CypTjDrKuy8YOSY0pDsRqlBeYSZZKWrqVqEPGKoxi41rytmTeLTh
-         oKS5Mz/PrZ83hfRqgI3GolD36FJ1KFY4I8+6hk2v4qVLe2EDS198Vu/gCt3RnuYaZR08
-         dCbY3WUT2yMZV873fXngkYw+AoiMSytcR+YrFHJvyZSGD3D+OCfh+u60gZN2VuKrfXCg
-         PO8A==
+        bh=g7nGO8bR3Zc6fs6EfJAtMeq6spNuLwzu3LhfHYcCQRY=;
+        b=IPi9bAhPIjlXHLod1pLdDPjayBXcOFp4X7clD/PdqcRrste0/ZgtqP4YCR/+0aJOYo
+         JBQ3U5vp8KrM15r0q9jzVF692al/eq3z5s3gU7pDg0lWAPWySLz9hRZVGlUu1V7HOSsh
+         TCMdnaLgyrjq6vfTDbw7LsGMKYusYkA6c7RBN26nVqZ5YNR5G6z1wawMu581J576aSRs
+         XjiuBdiSUzTMSv2vlebBUC5BAdYzrlYTPVlDH7IXlLtf6/uw31U8VqqKgvf8OnJNpvwD
+         e9/gBonmDvyXM2tJ+wN+yDjVxwag9LdnTekR5Jg0YcGl7IST2EZxsrspYIUbBmg1+Hwa
+         SlfA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
+       dkim=pass header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.s=20150623 header.b=WZAik8LO;
+       spf=pass (google.com: domain of hernan@vanguardiasur.com.ar designates 209.85.220.65 as permitted sender) smtp.mailfrom=hernan@vanguardiasur.com.ar
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BDC5204EF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sat, 21 Apr 2018 15:40:13 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: =?UTF-8?B?SGVybsOhbg==?= Gonzalez <hernan@vanguardiasur.com.ar>,
- <knaack.h@gmx.de>, <lars@metafoo.de>, Peter Meerwald-Stadler
- <pmeerw@pmeerw.net>, <gregkh@linuxfoundation.org>,
- <Michael.Hennerich@analog.com>, <linux-iio@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 03/14] staging: iio: ad7746: Fix bound checkings
-Message-ID: <20180421154013.3e9c3c3e@archlinux>
-In-Reply-To: <20180418103948.00004b93@huawei.com>
+       dkim=pass header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.s=20150623 header.b=WZAik8LO;
+       spf=pass (google.com: domain of hernan@vanguardiasur.com.ar designates 209.85.220.65 as permitted sender) smtp.mailfrom=hernan@vanguardiasur.com.ar
+X-Google-Smtp-Source: AIpwx48x+4Huz3JKhhRp9Cc3xkuvOUiqFzK4XnzHXpRFw+y98q9EnENlHmQkDkZ2pmQiG8j+jtMfvA==
+From: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
+To: jic23@kernel.org,
+	knaack.h@gmx.de,
+	lars@metafoo.de,
+	pmeerw@pmeerw.net,
+	gregkh@linuxfoundation.org,
+	Michael.Hennerich@analog.com,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
+Subject: [PATCH v2 09/14] staging: iio: ad7746: Add remove()
+Date: Fri, 13 Apr 2018 13:36:46 -0300
+Message-Id: <1523637411-8531-10-git-send-email-hernan@vanguardiasur.com.ar>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
 References: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
-	<1523637411-8531-4-git-send-email-hernan@vanguardiasur.com.ar>
-	<20180415160550.4705667e@archlinux>
-	<CALfa3vFgh7jtb=B6doOu-y2Bm77wu4zVdLE1LuxbruTTKjLU=A@mail.gmail.com>
-	<20180418103948.00004b93@huawei.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597649691066295032?=
-X-GMAIL-MSGID: =?utf-8?q?1598367069183260405?=
+X-GMAIL-THRID: =?utf-8?q?1597649731441296741?=
+X-GMAIL-MSGID: =?utf-8?q?1597649731441296741?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 18 Apr 2018 10:39:48 +0100
-Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
+This allows the driver to be probed and removed as a module powering it
+down on remove().
 
-> On Mon, 16 Apr 2018 11:47:05 -0300
-> Hern=C3=A1n Gonzalez <hernan@vanguardiasur.com.ar> wrote:
->=20
-> > On Sun, Apr 15, 2018 at 12:05 PM, Jonathan Cameron <jic23@kernel.org> w=
-rote: =20
-> > > On Fri, 13 Apr 2018 13:36:40 -0300
-> > > Hern=C3=A1n Gonzalez <hernan@vanguardiasur.com.ar> wrote:
-> > >   =20
-> > >> Also remove unnecessary parenthesis   =20
-> > > I am probably missing something.  I'm not sure what you mean
-> > > by fix bound checking?   There are superfluous brackets, but
-> > > I don't see any functional change to indicate there was anything
-> > > wrong with the original checks.
-> > >   =20
-> >=20
-> > Maybe I'm wrong but | is a bitwise operator while || is a logical one.
-> > There are no functional changes as you said but, from K&R, "One must
-> > distinguish the bitwise operators & and | from the logical operators
-> > && and II, which imply left-to-right evaluation of a truth value. For
-> > example, if x is 1 and y is 2, then x & y is zero while x && y is one"
-> > so it'd be slightly faster if the first condition is true, and it
-> > would be the "correct" operator to use in this case, even though it
-> > doesn't affect the result. =20
-> Got you, I missed the operator change entirely. Doh.
->=20
-Applied to the togreg branch of iio.git and pushed out as testing for
-the autobuilders to play with it.
+Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
+---
+ drivers/staging/iio/cdc/ad7746.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-Thanks,
-
-Jonathan
-
-> Jonathan
->=20
-> >  =20
-> > >>
-> > >> Signed-off-by: Hern=C3=A1n Gonzalez <hernan@vanguardiasur.com.ar>
-> > >> ---
-> > >>  drivers/staging/iio/cdc/ad7746.c | 4 ++--
-> > >>  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >>
-> > >> diff --git a/drivers/staging/iio/cdc/ad7746.c b/drivers/staging/iio/=
-cdc/ad7746.c
-> > >> index 516aa93..d793785 100644
-> > >> --- a/drivers/staging/iio/cdc/ad7746.c
-> > >> +++ b/drivers/staging/iio/cdc/ad7746.c
-> > >> @@ -458,7 +458,7 @@ static int ad7746_write_raw(struct iio_dev *indi=
-o_dev,
-> > >>               ret =3D 0;
-> > >>               break;
-> > >>       case IIO_CHAN_INFO_CALIBBIAS:
-> > >> -             if ((val < 0) | (val > 0xFFFF)) {
-> > >> +             if (val < 0 || val > 0xFFFF) {
-> > >>                       ret =3D -EINVAL;
-> > >>                       goto out;
-> > >>               }
-> > >> @@ -470,7 +470,7 @@ static int ad7746_write_raw(struct iio_dev *indi=
-o_dev,
-> > >>               ret =3D 0;
-> > >>               break;
-> > >>       case IIO_CHAN_INFO_OFFSET:
-> > >> -             if ((val < 0) | (val > 43008000)) { /* 21pF */
-> > >> +             if (val < 0 || val > 43008000) { /* 21pF */
-> > >>                       ret =3D -EINVAL;
-> > >>                       goto out;
-> > >>               }   =20
-> > >   =20
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html =20
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/staging/iio/cdc/ad7746.c b/drivers/staging/iio/cdc/ad7746.c
+index c29a221..05506bf9 100644
+--- a/drivers/staging/iio/cdc/ad7746.c
++++ b/drivers/staging/iio/cdc/ad7746.c
+@@ -775,6 +775,31 @@ static int ad7746_probe(struct i2c_client *client,
+ 	return 0;
+ }
+ 
++static int ad7746_remove(struct i2c_client *client)
++{
++	struct iio_dev *indio_dev = i2c_get_clientdata(client);
++	struct ad7746_chip_info *chip = iio_priv(indio_dev);
++	unsigned char regval;
++	int ret;
++
++	mutex_lock(&chip->lock);
++
++	regval = chip->config | AD7746_CONF_MODE_PWRDN;
++	ret = i2c_smbus_write_byte_data(chip->client, AD7746_REG_CFG, regval);
++
++	mutex_unlock(&chip->lock);
++
++	if (ret < 0) {
++		dev_warn(&client->dev, "Could NOT Power Down!\n");
++		goto out;
++	}
++
++	iio_device_unregister(indio_dev);
++
++out:
++	return ret;
++}
++
+ static const struct i2c_device_id ad7746_id[] = {
+ 	{ "ad7745", 7745 },
+ 	{ "ad7746", 7746 },
+@@ -799,6 +824,7 @@ static struct i2c_driver ad7746_driver = {
+ 		.of_match_table = of_match_ptr(ad7746_of_match),
+ 	},
+ 	.probe = ad7746_probe,
++	.remove = ad7746_remove,
+ 	.id_table = ad7746_id,
+ };
+ module_i2c_driver(ad7746_driver);
+-- 
+2.7.4
