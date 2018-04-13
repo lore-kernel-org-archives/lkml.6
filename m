@@ -1,92 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754167AbeDMKsr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 06:48:47 -0400
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:34167 "EHLO
-        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752410AbeDMKsp (ORCPT
+        id S1754270AbeDMKvv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 06:51:51 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:33889 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753859AbeDMKvt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 06:48:45 -0400
-X-Google-Smtp-Source: AIpwx4+bWFv5yVAVCxvbM3a0KZYUJ0xvVpjSHM8u5Km7LhiIJbSQGV7bVbHKoXxx9pJHcd2qFB94Hj3rwnK4MAcY090=
-MIME-Version: 1.0
-In-Reply-To: <20180413101140.GN6014@localhost>
-References: <0c2b76aba6a49e583f920ae582d6815fa9cc4361.1523346135.git.baolin.wang@linaro.org>
- <20180411093634.GC6014@localhost> <CAMz4kuJyKNNuR9WGP8F1NKAET6ZTtN4LtXTTtdnR3Zyxa+OjNw@mail.gmail.com>
- <20180412093735.GF6014@localhost> <CAMz4ku+i+zA0_5U65vc3h3tO-hzWvtCOFDeFU94h3Rm6sJUuKQ@mail.gmail.com>
- <CAMz4ku+EUtk2phRGkxkW6YwUvBLb-O7tmMoucvVEQZbL9EY8Zg@mail.gmail.com>
- <20180413034332.GI6014@localhost> <CAMz4kuL_i7u5OCXrtJy92=OisOzgbWk_e-S9dSuBRPenX=ScPA@mail.gmail.com>
- <20180413063641.GL6014@localhost> <CAMz4ku+dLk2Gi_20ATW5o-MPvpy-2iF_YJCwyStaH8xPNXSE7Q@mail.gmail.com>
- <20180413101140.GN6014@localhost>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Fri, 13 Apr 2018 18:48:43 +0800
-Message-ID: <CAMz4ku++Q5kuwnHjMFJ2gq_MOSh=6oxtSRAg8TAyJTciNf43Fg@mail.gmail.com>
-Subject: Re: [PATCH 4/5] dmaengine: sprd: Add Spreadtrum DMA configuration
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        Eric Long <eric.long@spreadtrum.com>, Mark Brown <broonie@kernel.org>,
-        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 13 Apr 2018 06:51:49 -0400
+X-Google-Smtp-Source: AIpwx4/a7yHElFJ1VJ5c07wJnn93Tw1z1q40JlvrS2UcN7o0fmvCcIv/zm4kp/t+wpHlVfrVYVf1yw==
+From: Gwendal Grignou <gwendal@chromium.org>
+To: jlbec@evilplan.org
+Cc: drosen@google.com, linux-kernel@vger.kernel.org, jorgelo@chromium.org
+Subject: [PATCH] configfs: inherit file and directory owners
+Date: Fri, 13 Apr 2018 03:51:35 -0700
+Message-Id: <20180413105135.216944-1-gwendal@chromium.org>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+In-Reply-To: <CAMHSBOX0sP5vnFJ8uzsRxoHi=cP874FZazp8uJs3UN8wu73ipw@mail.gmail.com>
+References: <CAMHSBOX0sP5vnFJ8uzsRxoHi=cP874FZazp8uJs3UN8wu73ipw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 April 2018 at 18:11, Vinod Koul <vinod.koul@intel.com> wrote:
-> On Fri, Apr 13, 2018 at 02:41:48PM +0800, Baolin Wang wrote:
->> On 13 April 2018 at 14:36, Vinod Koul <vinod.koul@intel.com> wrote:
->> > On Fri, Apr 13, 2018 at 02:17:34PM +0800, Baolin Wang wrote:
->> >
->> >> > Agreed, users only care about grabbing a channel, setting a descriptor and
->> >> > submitting that.
->> >> >
->> >> > I think you need to go back and think about this a bit, please do go thru
->> >> > dmaengine documentation and see other driver examples.
->> >> >
->> >> > We don't typically expose these to users, they give us a transfer and we set
->> >> > that up in hardware for efficient. Its DMA so people expect us to use fastest
->> >> > mechanism available.
->> >>
->> >> But there are some configuration are really special for Spreadtrum
->> >> DMA, and must need user to specify how to configure, especially some
->> >> scenarios of audio. So I wander if we can add one pointer for
->> >> 'dma_slave_config' to expand some special DMA configuration
->> >> requirements, like:
->> >>
->> >> struct dma_slave_config {
->> >>     ......
->> >>     unsigned int slave_id;
->> >>     void *platform_data;
->> >> };
->> >>
->> >> So if some DMA has some special configuration (such as Spreadtrum
->> >> DMA), they can user this platform_data pointer. Like xilinx DMA, they
->> >> also have some special configuration.
->> >
->> > Well we all think our HW is special and needs some additional stuff, most of
->> > the cases turns out not to be the case.
->> >
->> > Can you explain how audio in this case additional configuration...
->> >
->>
->> Beside the general configuration, our audio driver will configure the
->> fragment length, block length, maybe transaction length, and they must
->> specify the request type and interrupt type, these are what we want to
->> export for users.
->
-> First doesn't it use sound dmaengine library, it should :)
+All entries in configfs are currently owned by root,
+regardless of context. Instead, this preserves the
+current ownership, allowing userspace to choose who
+has permissions to configure the system through
+any particular configfs subsystem.
 
-I do not think so. That's the DMA configuration need to set before
-audio use it. Not only audio, but also other drivers using DMA need to
-configure these configuration what we exported in sprd_dma_config.
+This means anyone who can create a group will now
+have the ability to create any groups inside of that
+group.
 
->
-> Second, I think you should calculate the lengths based on given input. Audio
-> is circular buffer so you shall create a circular linked list and submit.
-> See how other driver implement circular prepare callback
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+---
+ fs/configfs/inode.c | 38 +++++++++++++++++++++++++++++++-------
+ 1 file changed, 31 insertions(+), 7 deletions(-)
 
-Yes,  we have not implemented the link list mode for audio now, but in
-our plan. So firstly we want to export these necessary configuration
-for users to configure.
-
+diff --git a/fs/configfs/inode.c b/fs/configfs/inode.c
+index ad718e5e37bb..1b55374de953 100644
+--- a/fs/configfs/inode.c
++++ b/fs/configfs/inode.c
+@@ -54,6 +54,28 @@ static const struct inode_operations configfs_inode_operations ={
+ 	.setattr	= configfs_setattr,
+ };
+ 
++static struct iattr *alloc_iattr(struct configfs_dirent *sd_parent,
++						struct configfs_dirent *sd)
++{
++	struct iattr *sd_iattr;
++
++	sd_iattr = kzalloc(sizeof(struct iattr), GFP_KERNEL);
++	if (!sd_iattr)
++		return NULL;
++	/* assign default attributes */
++	sd_iattr->ia_mode = sd->s_mode;
++	if (sd_parent && sd_parent->s_iattr) {
++		sd_iattr->ia_uid = sd_parent->s_iattr->ia_uid;
++		sd_iattr->ia_gid = sd_parent->s_iattr->ia_gid;
++	} else {
++		sd_iattr->ia_uid = GLOBAL_ROOT_UID;
++		sd_iattr->ia_gid = GLOBAL_ROOT_GID;
++	}
++	sd_iattr->ia_atime = sd_iattr->ia_mtime =
++			sd_iattr->ia_ctime = CURRENT_TIME;
++	return sd_iattr;
++}
++
+ int configfs_setattr(struct dentry * dentry, struct iattr * iattr)
+ {
+ 	struct inode * inode = d_inode(dentry);
+@@ -68,15 +90,9 @@ int configfs_setattr(struct dentry * dentry, struct iattr * iattr)
+ 	sd_iattr = sd->s_iattr;
+ 	if (!sd_iattr) {
+ 		/* setting attributes for the first time, allocate now */
+-		sd_iattr = kzalloc(sizeof(struct iattr), GFP_KERNEL);
++		sd_iattr = alloc_iattr(NULL, sd);
+ 		if (!sd_iattr)
+ 			return -ENOMEM;
+-		/* assign default attributes */
+-		sd_iattr->ia_mode = sd->s_mode;
+-		sd_iattr->ia_uid = GLOBAL_ROOT_UID;
+-		sd_iattr->ia_gid = GLOBAL_ROOT_GID;
+-		sd_iattr->ia_atime = sd_iattr->ia_mtime =
+-			sd_iattr->ia_ctime = current_time(inode);
+ 		sd->s_iattr = sd_iattr;
+ 	}
+ 	/* attributes were changed atleast once in past */
+@@ -184,6 +200,7 @@ int configfs_create(struct dentry * dentry, umode_t mode, void (*init)(struct in
+ 	struct inode *inode = NULL;
+ 	struct configfs_dirent *sd;
+ 	struct inode *p_inode;
++	struct dentry *parent;
+ 
+ 	if (!dentry)
+ 		return -ENOENT;
+@@ -192,6 +209,13 @@ int configfs_create(struct dentry * dentry, umode_t mode, void (*init)(struct in
+ 		return -EEXIST;
+ 
+ 	sd = dentry->d_fsdata;
++	parent = dget_parent(dentry);
++	if (parent && !sd->s_iattr) {
++		sd->s_iattr = alloc_iattr(parent->d_fsdata, sd);
++		if (!sd->s_iattr)
++			return -ENOMEM;
++	}
++	dput(parent);
+ 	inode = configfs_new_inode(mode, sd, dentry->d_sb);
+ 	if (!inode)
+ 		return -ENOMEM;
 -- 
-Baolin.wang
-Best Regards
+2.17.0.484.g0c8726318c-goog
