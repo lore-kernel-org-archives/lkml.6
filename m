@@ -1,106 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754521AbeDMLrw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:47:52 -0400
-Received: from foss.arm.com ([217.140.101.70]:41754 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750940AbeDMLru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:47:50 -0400
-Date: Fri, 13 Apr 2018 12:47:45 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH 1/7] sched/core: uclamp: add CPU clamp groups accounting
-Message-ID: <20180413114745.GV14248@e110439-lin>
-References: <20180409165615.2326-1-patrick.bellasi@arm.com>
- <20180409165615.2326-2-patrick.bellasi@arm.com>
- <20180413084302.GR4043@hirez.programming.kicks-ass.net>
- <20180413111510.GS14248@e110439-lin>
- <20180413113650.GR4064@hirez.programming.kicks-ass.net>
+        id S1754764AbeDMLr4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:47:56 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42045 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754560AbeDMLrx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 07:47:53 -0400
+X-Google-Smtp-Source: AIpwx48/RHsjWYvm4CuESopw++o/Ak4ocEFkrLmtc9h/TAhY4T7+5e3TYTnEGoSmXw1yXDdDJ2mYQw==
+Subject: Re: [PATCH v3 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
+ idle cooling driver
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: viresh.kumar@linaro.org, edubezval@gmail.com, kevin.wangtao@linaro.org,
+        leo.yan@linaro.org, vincent.guittot@linaro.org,
+        linux-kernel@vger.kernel.org, javi.merino@kernel.org,
+        rui.zhang@intel.com, daniel.thompson@linaro.org,
+        linux-pm@vger.kernel.org, Amit Daniel Kachhap <amit.kachhap@gmail.com>
+References: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
+ <1522945005-7165-7-git-send-email-daniel.lezcano@linaro.org>
+ <3f3b3b7a-3b74-aee2-2fac-f2759babe3f0@arm.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <939f7943-feec-aaa2-3bd3-59a6618330c0@linaro.org>
+Date: Fri, 13 Apr 2018 13:47:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180413113650.GR4064@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <3f3b3b7a-3b74-aee2-2fac-f2759babe3f0@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-Apr 13:36, Peter Zijlstra wrote:
-> On Fri, Apr 13, 2018 at 12:15:10PM +0100, Patrick Bellasi wrote:
-> > On 13-Apr 10:43, Peter Zijlstra wrote:
-> > > On Mon, Apr 09, 2018 at 05:56:09PM +0100, Patrick Bellasi wrote:
-> > > > +static inline void uclamp_task_update(struct rq *rq, struct task_struct *p)
-> > > > +{
-> > > > +	int cpu = cpu_of(rq);
-> > > > +	int clamp_id;
-> > > > +
-> > > > +	/* The idle task does not affect CPU's clamps */
-> > > > +	if (unlikely(p->sched_class == &idle_sched_class))
-> > > > +		return;
-> > > > +	/* DEADLINE tasks do not affect CPU's clamps */
-> > > > +	if (unlikely(p->sched_class == &dl_sched_class))
-> > > > +		return;
-> > > > +
-> > > > +	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
-> > > > +		if (uclamp_task_affects(p, clamp_id))
-> > > > +			uclamp_cpu_put(p, cpu, clamp_id);
-> > > > +		else
-> > > > +			uclamp_cpu_get(p, cpu, clamp_id);
-> > > > +	}
-> > > > +}
-> > > 
-> > > Is that uclamp_task_affects() thing there to fix up the fact you failed
-> > > to propagate the calling context (enqueue/dequeue) ?
-> > 
-> > Not really, it's intended by design: we back annotate the clamp_group
-> > a task has been refcounted in.
-> > 
-> > The uclamp_task_affects() tells if we are refcounted now and then we
-> > know from the back-annotation from which refcounter we need to remove
-> > the task.
-> > 
-> > I found this solution much less racy and effective in avoiding to
-> > screw up the refcounter whenever we look at a task at either
-> > dequeue/migration time and these operations can overlaps with the
-> > slow-path. Meaning, when we change the task specific clamp_group
-> > either via syscall or cgroups attributes.
-> > 
-> > IOW, the back annotation allows to decouple refcounting from
-> > clamp_group configuration in a lockless way.
+On 13/04/2018 13:23, Sudeep Holla wrote:
+> Hi Daniel,
 > 
-> But it adds extra state and logic, to a fastpath, for no reason.
+> On 05/04/18 17:16, Daniel Lezcano wrote:
 > 
-> I suspect you messed up the cgroup side; because the syscall should
-> already have done task_rq_lock() and hold both p->pi_lock and rq->lock
-> and have dequeued the task when changing the attribute.
+> [...]
+> 
+>> +/**
+>> + * cpuidle_cooling_register - Idle cooling device initialization function
+>> + *
+>> + * This function is in charge of creating a cooling device per cluster
+>> + * and register it to thermal framework. For this we rely on the
+>> + * topology as there is nothing yet describing better the idle state
+>> + * power domains.
+>> + *
+>> + * We create a cpuidle cooling device per cluster. For this reason we
+>> + * must, for each cluster, allocate and initialize the cooling device
+>> + * and for each cpu belonging to this cluster, do the initialization
+>> + * on a cpu basis.
+>> + *
+>> + * This approach for creating the cooling device is needed as we don't
+>> + * have the guarantee the CPU numbering is sequential.
+>> + *
+>> + * Unfortunately, there is no API to browse from top to bottom the
+>> + * topology, cluster->cpu, only the usual for_each_possible_cpu loop.
+>> + * In order to solve that, we use a cpumask to flag the cluster_id we
+>> + * already processed. The cpumask will always have enough room for all
+>> + * the cluster because it is based on NR_CPUS and it is not possible
+>> + * to have more clusters than cpus.
+>> + *
+>> + */
+>> +void __init cpuidle_cooling_register(void)
+>> +{
+>> +	struct cpuidle_cooling_device *idle_cdev = NULL;
+>> +	struct thermal_cooling_device *cdev;
+>> +	struct device_node *np;
+>> +	cpumask_var_t cpumask;
+>> +	char dev_name[THERMAL_NAME_LENGTH];
+>> +	int ret = -ENOMEM, cpu;
+>> +	int cluster_id;
+>> +
+>> +	if (!zalloc_cpumask_var(&cpumask, GFP_KERNEL))
+>> +		return;
+>> +
+>> +	for_each_possible_cpu(cpu) {
+>> +
+>> +		cluster_id = topology_physical_package_id(cpu);
+>> +		if (cpumask_test_cpu(cluster_id, cpumask))
+>> +			continue;
+> 
+> Sorry for chiming in randomly, I haven't read the patches in detail.
+> But it was brought to my notice that topology_physical_package_id is
+> being used for cluster ID here. It's completely wrong and will
+> changesoon with ACPI topology related changes Jeremy is working on.
+> 
+> You will get the physical socket number(which is mostly 0 on single SoC
+> system). Makes sure that this won't break with that change.
+> 
+> Please note with cluster id not defined architecturally, relying on that
+> is simply problematic.
 
-Yes, actually I'm using task_rq_lock() from the cgroup callback to
-update each task already queued. And I do the same from the
-sched_setattr syscall...
-
-> It is actually really hard to make the syscall do it wrong.
-
-... thus, I'll look better into this.
-
-Not sure now if there was some other corner-case.
-
-In the past I remember some funny dance in cgroup callbacks when a
-task was terminating (like being moved in the root-rq just before
-exiting). But, as you say, if we always have the task_rq_lock we
-should be safe.
+Ok, noted. At the first glance, it should not be a problem.
 
 
 -- 
-#include <best/regards.h>
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Patrick Bellasi
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
