@@ -1,84 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751111AbeDMPNd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 11:13:33 -0400
-Received: from gateway31.websitewelcome.com ([192.185.144.94]:24970 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750923AbeDMPNc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 11:13:32 -0400
-Date: Fri, 13 Apr 2018 10:13:29 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <sfrench@samba.org>
-Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] cifs: smb2ops: Fix NULL check in smb2_query_symlink
-Message-ID: <20180413151329.GA27418@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.172.31.63
-X-Source-L: No
-X-Exim-ID: 1f70OJ-001fzM-AA
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.172.31.63]:41094
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        id S1751144AbeDMPPE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 11:15:04 -0400
+Received: from foss.arm.com ([217.140.101.70]:43386 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750837AbeDMPPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 11:15:02 -0400
+From: Robin Murphy <robin.murphy@arm.com>
+To: linux-graphics-maintainer@vmware.com, syeh@vmware.com,
+        thellstrom@vmware.com
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/vmwgfx: Fix scatterlist unmapping
+Date: Fri, 13 Apr 2018 16:14:57 +0100
+Message-Id: <3a08f0343cb4e7a767601c59a381884121f9b751.1523632202.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.16.1.dirty
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current code null checks variable err_buf, which is always null
-when it is checked, hence utf16_path is free'd and the function
-returns -ENOENT everytime it is called, making it impossible for the
-execution path to reach the following code:
+dma_unmap_sg() should be called with the same number of entries
+originally passed to dma_map_sg(), not the number it returned, which may
+be fewer. Admittedly this driver probably never runs on non-coherent
+architectures where getting that wrong could lead to data loss, but it's
+always good to be correct, and it's trivially easy to fix by just
+restoring the SG table state before the call instead of afterwards.
 
-err_buf = err_iov.iov_base;
-
-Fix this by null checking err_iov.iov_base instead of err_buf. Also,
-notice that err_buf no longer needs to be initialized to NULL.
-
-Addresses-Coverity-ID: 1467876 ("Logically dead code")
-Fixes: 2d636199e400 ("cifs: Change SMB2_open to return an iov for the error parameter")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
- fs/cifs/smb2ops.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-index b4ae932..38ebf3f 100644
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -1452,7 +1452,7 @@ smb2_query_symlink(const unsigned int xid, struct cifs_tcon *tcon,
- 	struct cifs_open_parms oparms;
- 	struct cifs_fid fid;
- 	struct kvec err_iov = {NULL, 0};
--	struct smb2_err_rsp *err_buf = NULL;
-+	struct smb2_err_rsp *err_buf;
- 	struct smb2_symlink_err_rsp *symlink;
- 	unsigned int sub_len;
- 	unsigned int sub_offset;
-@@ -1476,7 +1476,7 @@ smb2_query_symlink(const unsigned int xid, struct cifs_tcon *tcon,
+Found by inspection while poking around TTM users.
+
+ drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c b/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
+index 21111fd091f9..971223d39469 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_buffer.c
+@@ -369,9 +369,9 @@ static void vmw_ttm_unmap_from_dma(struct vmw_ttm_tt *vmw_tt)
+ {
+ 	struct device *dev = vmw_tt->dev_priv->dev->dev;
  
- 	rc = SMB2_open(xid, &oparms, utf16_path, &oplock, NULL, &err_iov);
++	vmw_tt->sgt.nents = vmw_tt->sgt.orig_nents;
+ 	dma_unmap_sg(dev, vmw_tt->sgt.sgl, vmw_tt->sgt.nents,
+ 		DMA_BIDIRECTIONAL);
+-	vmw_tt->sgt.nents = vmw_tt->sgt.orig_nents;
+ }
  
--	if (!rc || !err_buf) {
-+	if (!rc || !err_iov.iov_base) {
- 		kfree(utf16_path);
- 		return -ENOENT;
- 	}
+ /**
 -- 
-2.7.4
+2.16.1.dirty
