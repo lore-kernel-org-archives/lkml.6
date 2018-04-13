@@ -1,65 +1,250 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754007AbeDMIXN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 04:23:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44960 "EHLO mx1.redhat.com"
+        id S1753645AbeDMIVV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 04:21:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36128 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753657AbeDMIVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 04:21:22 -0400
+        id S1750973AbeDMIVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 04:21:18 -0400
 From: Eric Auger <eric.auger@redhat.com>
 To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
         linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
         peter.maydell@linaro.org
 Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v3 08/12] KVM: arm/arm64: Check vcpu redist base before registering an iodev
-Date: Fri, 13 Apr 2018 10:20:54 +0200
-Message-Id: <1523607658-9166-9-git-send-email-eric.auger@redhat.com>
+Subject: [PATCH v3 06/12] KVM: arm/arm64: Helper to register a new redistributor region
+Date: Fri, 13 Apr 2018 10:20:52 +0200
+Message-Id: <1523607658-9166-7-git-send-email-eric.auger@redhat.com>
 In-Reply-To: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
 References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we are going to register several redist regions,
-vgic_register_all_redist_iodevs() may be called several times. We need
-to register a redist_iodev for a given vcpu only once. So let's
-check if the base address has already been set. Initialize this latter
-in kvm_vgic_vcpu_early_init().
+We introduce a new helper that creates and inserts a new redistributor
+region into the rdist region list. This helper both handles the case
+where the redistributor region size is known at registration time
+and the legacy case where it is not (eventually depending on the number
+of online vcpus). Depending on pfns, we perform all the possible checks
+that we can do:
+
+- end of memory crossing
+- incorrect alignment of the base address
+- collision with distributor region if already defined
+- collision with already registered rdist regions
+- check of the new index
+
+Rdist regions must be inserted by increasing order of indices. Indices
+must be contiguous.
+
+We also introduce vgic_v3_rdist_region_from_index() which will be used
+from the vgic kvm-device, later on.
 
 Signed-off-by: Eric Auger <eric.auger@redhat.com>
 ---
- virt/kvm/arm/vgic/vgic-init.c    | 3 +++
- virt/kvm/arm/vgic/vgic-mmio-v3.c | 3 +++
- 2 files changed, 6 insertions(+)
+ virt/kvm/arm/vgic/vgic-mmio-v3.c | 95 +++++++++++++++++++++++++++++++++-------
+ virt/kvm/arm/vgic/vgic-v3.c      | 29 ++++++++++++
+ virt/kvm/arm/vgic/vgic.h         | 14 ++++++
+ 3 files changed, 122 insertions(+), 16 deletions(-)
 
-diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
-index 6456371..7e040e7 100644
---- a/virt/kvm/arm/vgic/vgic-init.c
-+++ b/virt/kvm/arm/vgic/vgic-init.c
-@@ -82,6 +82,9 @@ void kvm_vgic_vcpu_early_init(struct kvm_vcpu *vcpu)
- 	INIT_LIST_HEAD(&vgic_cpu->ap_list_head);
- 	spin_lock_init(&vgic_cpu->ap_list_lock);
- 
-+	vgic_cpu->rd_iodev.base_addr = VGIC_ADDR_UNDEF;
-+	vgic_cpu->sgi_iodev.base_addr = VGIC_ADDR_UNDEF;
-+
- 	/*
- 	 * Enable and configure all SGIs to be edge-triggered and
- 	 * configure all PPIs as level-triggered.
 diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-index 5273fb8..df23e66 100644
+index ce5c927..5273fb8 100644
 --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
 +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-@@ -592,6 +592,9 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
- 	gpa_t rd_base, sgi_base;
+@@ -680,14 +680,66 @@ static int vgic_register_all_redist_iodevs(struct kvm *kvm)
+ 	return ret;
+ }
+ 
+-int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
++/**
++ * vgic_v3_insert_redist_region - Insert a new redistributor region
++ *
++ * Performs various checks before inserting the rdist region in the list.
++ * Those tests depend on whether the size of the rdist region is known
++ * (ie. count != 0). The list is sorted by rdist region index.
++ *
++ * @kvm: kvm handle
++ * @index: redist region index
++ * @base: base of the new rdist region
++ * @count: number of redistributors the region is made of (of 0 in the old style
++ * single region, whose size is induced from the number of vcpus)
++ *
++ * Return 0 on success, < 0 otherwise
++ */
++static int vgic_v3_insert_redist_region(struct kvm *kvm, uint32_t index,
++					gpa_t base, uint32_t count)
+ {
+-	struct vgic_dist *vgic = &kvm->arch.vgic;
++	struct vgic_dist *d = &kvm->arch.vgic;
+ 	struct vgic_redist_region *rdreg;
++	struct list_head *rd_regions = &d->rd_regions;
++	struct list_head *last = rd_regions->prev;
++
++	gpa_t new_start, new_end;
++	size_t size = count * KVM_VGIC_V3_REDIST_SIZE;
  	int ret;
  
-+	if (!IS_VGIC_ADDR_UNDEF(vgic_cpu->rd_iodev.base_addr))
-+		return 0;
+-	/* vgic_check_ioaddr makes sure we don't do this twice */
+-	if (!list_empty(&vgic->rd_regions))
++	/* single rdist region already set ?*/
++	if (!count && !list_empty(rd_regions))
++		return -EINVAL;
 +
++	/* cross the end of memory ? */
++	if (base + size < base)
++		return -EINVAL;
++
++	if (list_empty(rd_regions)) {
++		if (index != 0)
++			return -EINVAL;
++	} else {
++		rdreg = list_entry(last, struct vgic_redist_region, list);
++		if (index != rdreg->index + 1)
++			return -EINVAL;
++
++		/* Cannot add an explicitly sized regions after legacy region */
++		if (!rdreg->count)
++			return -EINVAL;
++	}
++
++	/*
++	 * collision with already set dist region ?
++	 * this assumes we know the size of the new rdist region (pfns != 0)
++	 * otherwise we can only test this when all vcpus are registered
++	 */
++	if (!count && !IS_VGIC_ADDR_UNDEF(d->vgic_dist_base) &&
++		(!(d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE <= base)) &&
++		(!(base + size <= d->vgic_dist_base)))
++		return -EINVAL;
++
++	/* collision with any other rdist region? */
++	if (vgic_v3_rdist_overlap(kvm, base, size))
+ 		return -EINVAL;
+ 
+ 	rdreg = kzalloc(sizeof(*rdreg), GFP_KERNEL);
+@@ -696,17 +748,32 @@ int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
+ 
+ 	rdreg->base = VGIC_ADDR_UNDEF;
+ 
+-	ret = vgic_check_ioaddr(kvm, &rdreg->base, addr, SZ_64K);
++	ret = vgic_check_ioaddr(kvm, &rdreg->base, base, SZ_64K);
+ 	if (ret)
+-		goto out;
++		goto free;
+ 
+-	rdreg->base = addr;
+-	if (!vgic_v3_check_base(kvm)) {
+-		ret = -EINVAL;
+-		goto out;
+-	}
++	rdreg->base = base;
++	rdreg->count = count;
++	rdreg->free_index = 0;
++	rdreg->index = index;
+ 
+-	list_add(&rdreg->list, &vgic->rd_regions);
++	new_start = base;
++	new_end = base + size - 1;
++
++	list_add_tail(&rdreg->list, rd_regions);
++	return 0;
++free:
++	kfree(rdreg);
++	return ret;
++}
++
++int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
++{
++	int ret;
++
++	ret = vgic_v3_insert_redist_region(kvm, 0, addr, 0);
++	if (ret)
++		return ret;
+ 
  	/*
- 	 * We may be creating VCPUs before having set the base address for the
- 	 * redistributor region, in which case we will come back to this
+ 	 * Register iodevs for each existing VCPU.  Adding more VCPUs
+@@ -717,10 +784,6 @@ int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
+ 		return ret;
+ 
+ 	return 0;
+-
+-out:
+-	kfree(rdreg);
+-	return ret;
+ }
+ 
+ int vgic_v3_has_attr_regs(struct kvm_device *dev, struct kvm_device_attr *attr)
+diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+index 820012a..dbcba5f 100644
+--- a/virt/kvm/arm/vgic/vgic-v3.c
++++ b/virt/kvm/arm/vgic/vgic-v3.c
+@@ -410,6 +410,21 @@ int vgic_v3_save_pending_tables(struct kvm *kvm)
+ 	return 0;
+ }
+ 
++/* return true if there is an overlap between any rdist */
++bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size)
++{
++	struct vgic_dist *d = &kvm->arch.vgic;
++	struct vgic_redist_region *rdreg;
++
++	list_for_each_entry(rdreg, &d->rd_regions, list) {
++		if ((base + size <= rdreg->base) ||
++			(rdreg->base + vgic_v3_rd_region_size(kvm, rdreg) <= base))
++			continue;
++		return true;
++	}
++	return false;
++}
++
+ /*
+  * Check for overlapping regions and for regions crossing the end of memory
+  * for base addresses which have already been set.
+@@ -461,6 +476,20 @@ struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rd_regions)
+ 	return NULL;
+ }
+ 
++struct vgic_redist_region *vgic_v3_rdist_region_from_index(struct kvm *kvm,
++							   uint32_t index)
++{
++	struct list_head *rd_regions = &kvm->arch.vgic.rd_regions;
++	struct vgic_redist_region *rdreg;
++
++	list_for_each_entry(rdreg, rd_regions, list) {
++		if (rdreg->index == index)
++			return rdreg;
++	}
++	return NULL;
++}
++
++
+ int vgic_v3_map_resources(struct kvm *kvm)
+ {
+ 	int ret = 0;
+diff --git a/virt/kvm/arm/vgic/vgic.h b/virt/kvm/arm/vgic/vgic.h
+index fea32cb..95b8345 100644
+--- a/virt/kvm/arm/vgic/vgic.h
++++ b/virt/kvm/arm/vgic/vgic.h
+@@ -262,6 +262,20 @@ vgic_v3_redist_region_full(struct vgic_redist_region *region)
+ 
+ struct vgic_redist_region *vgic_v3_rdist_free_slot(struct list_head *rdregs);
+ 
++static inline size_t
++vgic_v3_rd_region_size(struct kvm *kvm, struct vgic_redist_region *rdreg)
++{
++	if (!rdreg->count)
++		return atomic_read(&kvm->online_vcpus) * KVM_VGIC_V3_REDIST_SIZE;
++	else
++		return rdreg->count * KVM_VGIC_V3_REDIST_SIZE;
++}
++
++struct vgic_redist_region *vgic_v3_rdist_region_from_index(struct kvm *kvm,
++							   uint32_t index);
++
++bool vgic_v3_rdist_overlap(struct kvm *kvm, gpa_t base, size_t size);
++
+ int vgic_its_resolve_lpi(struct kvm *kvm, struct vgic_its *its,
+ 			 u32 devid, u32 eventid, struct vgic_irq **irq);
+ struct vgic_its *vgic_msi_to_its(struct kvm *kvm, struct kvm_msi *msi);
 -- 
 2.5.5
