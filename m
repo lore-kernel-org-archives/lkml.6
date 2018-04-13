@@ -1,92 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754205AbeDMJsS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 05:48:18 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:36586 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753238AbeDMJsR (ORCPT
+        id S1754078AbeDMJzA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 05:55:00 -0400
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:36367 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752223AbeDMJy6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 05:48:17 -0400
-X-Google-Smtp-Source: AIpwx4/BwHIBdUgH7NXZhXxbs7hk6jl9Bni1dOoO5LS0dRafhSkTXpIb+ECjOfPDR3J+mxloR91CXQ==
-To: x86@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com
-From: Xiaoming Gao <gxm.linux.kernel@gmail.com>
-Subject: [PATCH] x86/tsc: fix 64bit divisor be truncated in calc_hpet_ref
-Message-ID: <38894564-4fc9-b8ec-353f-de702839e44e@gmail.com>
-Date: Fri, 13 Apr 2018 17:48:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 13 Apr 2018 05:54:58 -0400
+X-Google-Smtp-Source: AIpwx49OWjrHC80RsaIpB10mv4noNzqA/xID7WsmRfkswFjTxwXtCtfAMNmG3w1OjqpMpjpNAcNnjA==
+Date: Fri, 13 Apr 2018 11:54:48 +0200
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH] memory-model: fix cheat sheet typo
+Message-ID: <20180413095448.GA10490@andrea>
+References: <1523292618-10207-1-git-send-email-pbonzini@redhat.com>
+ <20180409184258.GP3948@linux.vnet.ibm.com>
+ <20180410203214.GA19606@linux.vnet.ibm.com>
+ <8cbda122-6aa3-365b-fd09-52dca0644cbd@redhat.com>
+ <20180410213434.GC3948@linux.vnet.ibm.com>
+ <156ac07b-7393-449f-518a-6b1c2cff8efb@redhat.com>
+ <20180412092303.GA6044@andrea>
+ <eda463d8-aa4e-2e6b-9d1d-41a5a4eaa3a7@redhat.com>
+ <20180412112155.GA9154@andrea>
+ <20180412211836.GG3948@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------B00133F40DFE9772D6ACE9BC"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180412211836.GG3948@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------B00133F40DFE9772D6ACE9BC
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+On Thu, Apr 12, 2018 at 02:18:36PM -0700, Paul E. McKenney wrote:
+> On Thu, Apr 12, 2018 at 01:21:55PM +0200, Andrea Parri wrote:
+> > 
+> > The litmus test that first comes to my mind when I think of cumulativity
+> > (at least, 'cumulativity' as intended in LKMM) is:
+> > 
+> >    WRC+pooncerelease+rmbonceonce+Once.litmus
+> 
+> Removing the "cumul-fence* ;" from "let prop" does cause this test to be
+> allowed, so looks plausible.
+> 
+> > for 'propagation', I could mention:
+> > 
+> >    IRIW+mbonceonces+OnceOnce.litmus
+> 
+> And removing the "acyclic pb as propagation" causes this one to be allowed,
+> so again plausible.
+> 
+> > (both tests are availabe in tools/memory-model/litmus-tests/). It would
+> > be a nice to mention these properties in the test descriptions, indeed.
+> 
+> Please see below.
 
- From ba3d2fb699c4d8ee61b05d7e70be48b9c4e22baf Mon Sep 17 00:00:00 2001
-From: Xiaoming Gao <newtongao@tencent.com>
-Date: Fri, 13 Apr 2018 17:05:18 +0800
-Subject: [PATCH] x86/tsc: fix 64bit divisor be truncated in calc_hpet_ref
+Matching what I had in mind ;) thanks!
 
-the HPET frequency got larger on intel skylake, thus could cause tmp to
-exceed 32bits.
-do_div will truncate 64bits tmp to 32bits, so the frequency calced via
-HPET will be wrong, use div64_u64 can fix it.
-
-Signed-off-by: Xiaoming Gao <newtongao@tencent.com>
----
-  arch/x86/kernel/tsc.c |    2 +-
-  1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 9714a7a..8700269 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -160,7 +160,7 @@ static unsigned long calc_hpet_ref(u64 deltatsc, u64 
-hpet1, u64 hpet2)
-      hpet2 -= hpet1;
-      tmp = ((u64)hpet2 * hpet_readl(HPET_PERIOD));
-      do_div(tmp, 1000000);
--    do_div(deltatsc, tmp);
-+    deltatsc = div64_u64(deltatsc, tmp);
-
-      return (unsigned long) deltatsc;
-  }
--- 
-1.7.1
+  Andrea
 
 
-
---------------B00133F40DFE9772D6ACE9BC
-Content-Type: text/plain; charset=UTF-8;
- name="0001-x86-tsc-fix-64bit-divisor-be-truncated-in-calc_hpet_.patch"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename*0="0001-x86-tsc-fix-64bit-divisor-be-truncated-in-calc_hpet_.pa";
- filename*1="tch"
-
-RnJvbSBiYTNkMmZiNjk5YzRkOGVlNjFiMDVkN2U3MGJlNDhiOWM0ZTIyYmFmIE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBYaWFvbWluZyBHYW8gPG5ld3Rvbmdhb0B0ZW5jZW50
-LmNvbT4KRGF0ZTogRnJpLCAxMyBBcHIgMjAxOCAxNzowNToxOCArMDgwMApTdWJqZWN0OiBb
-UEFUQ0hdIHg4Ni90c2M6IGZpeCA2NGJpdCBkaXZpc29yIGJlIHRydW5jYXRlZCBpbiBjYWxj
-X2hwZXRfcmVmCgp0aGUgSFBFVCBmcmVxdWVuY3kgZ290IGxhcmdlciBvbiBpbnRlbCBza3ls
-YWtlLCB0aHVzIGNvdWxkIGNhdXNlIHRtcCB0bwpleGNlZWQgMzJiaXRzLgpkb19kaXYgd2ls
-bCB0cnVuY2F0ZSA2NGJpdHMgdG1wIHRvIDMyYml0cywgc28gdGhlIGZyZXF1ZW5jeSBjYWxj
-ZWQgdmlhCkhQRVQgd2lsbCBiZSB3cm9uZywgdXNlIGRpdjY0X3U2NCBjYW4gZml4IGl0LgoK
-U2lnbmVkLW9mZi1ieTogWGlhb21pbmcgR2FvIDxuZXd0b25nYW9AdGVuY2VudC5jb20+Ci0t
-LQogYXJjaC94ODYva2VybmVsL3RzYy5jIHwgICAgMiArLQogMSBmaWxlcyBjaGFuZ2VkLCAx
-IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC94ODYv
-a2VybmVsL3RzYy5jIGIvYXJjaC94ODYva2VybmVsL3RzYy5jCmluZGV4IDk3MTRhN2EuLjg3
-MDAyNjkgMTAwNjQ0Ci0tLSBhL2FyY2gveDg2L2tlcm5lbC90c2MuYworKysgYi9hcmNoL3g4
-Ni9rZXJuZWwvdHNjLmMKQEAgLTE2MCw3ICsxNjAsNyBAQCBzdGF0aWMgdW5zaWduZWQgbG9u
-ZyBjYWxjX2hwZXRfcmVmKHU2NCBkZWx0YXRzYywgdTY0IGhwZXQxLCB1NjQgaHBldDIpCiAJ
-aHBldDIgLT0gaHBldDE7CiAJdG1wID0gKCh1NjQpaHBldDIgKiBocGV0X3JlYWRsKEhQRVRf
-UEVSSU9EKSk7CiAJZG9fZGl2KHRtcCwgMTAwMDAwMCk7Ci0JZG9fZGl2KGRlbHRhdHNjLCB0
-bXApOworCWRlbHRhdHNjID0gZGl2NjRfdTY0KGRlbHRhdHNjLCB0bXApOwogCiAJcmV0dXJu
-ICh1bnNpZ25lZCBsb25nKSBkZWx0YXRzYzsKIH0KLS0gCjEuNy4xCgo=
---------------B00133F40DFE9772D6ACE9BC--
+> 
+> 							Thanx, Paul
+> 
+> > You might find it useful to also visualize the 'valid' executions (with
+> > the main events/relations) associated to each of these tests; for this,
+> > 
+> >    $ herd7 -conf linux-kernel.cfg litmus-tests/your-test.litmus \
+> > 	-show all -gv
+> > 
+> > (assuming you have 'gv' installed).
+> 
+> ------------------------------------------------------------------------
+> 
+> commit 494f11d10dd7d86e4a381cbe79e77f04cb0cee04
+> Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> Date:   Thu Apr 12 14:15:57 2018 -0700
+> 
+>     EXP tools/memory-model: Flag "cumulativity" and "propagation" tests
+>     
+>     This commit flags WRC+pooncerelease+rmbonceonce+Once.litmus as being
+>     forbidden by LKMM cumulativity and IRIW+mbonceonces+OnceOnce.litmus as
+>     being forbidden by LKMM propagation.
+>     
+>     Suggested-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+>     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> 
+> diff --git a/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus b/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
+> index 50d5db9ea983..98a3716efa37 100644
+> --- a/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
+> +++ b/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
+> @@ -7,7 +7,7 @@ C IRIW+mbonceonces+OnceOnce
+>   * between each pairs of reads.  In other words, is smp_mb() sufficient to
+>   * cause two different reading processes to agree on the order of a pair
+>   * of writes, where each write is to a different variable by a different
+> - * process?
+> + * process?  This litmus test exercises LKMM's "propagation" rule.
+>   *)
+>  
+>  {}
+> diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
+> index 6919909bbd0f..178941d2a51a 100644
+> --- a/tools/memory-model/litmus-tests/README
+> +++ b/tools/memory-model/litmus-tests/README
+> @@ -23,7 +23,8 @@ IRIW+mbonceonces+OnceOnce.litmus
+>  	between each pairs of reads.  In other words, is smp_mb()
+>  	sufficient to cause two different reading processes to agree on
+>  	the order of a pair of writes, where each write is to a different
+> -	variable by a different process?
+> +	variable by a different process?  This litmus test is an example
+> +	that is forbidden by LKMM propagation.
+>  
+>  IRIW+poonceonces+OnceOnce.litmus
+>  	Test of independent reads from independent writes with nothing
+> @@ -121,6 +122,7 @@ WRC+poonceonces+Once.litmus
+>  WRC+pooncerelease+rmbonceonce+Once.litmus
+>  	These two are members of an extension of the MP litmus-test class
+>  	in which the first write is moved to a separate process.
+> +	The second is an example that is forbidden by LKMM cumulativity.
+>  
+>  Z6.0+pooncelock+pooncelock+pombonce.litmus
+>  	Is the ordering provided by a spin_unlock() and a subsequent
+> diff --git a/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus b/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
+> index 97fcbffde9a0..5bda4784eb34 100644
+> --- a/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
+> +++ b/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
+> @@ -5,7 +5,8 @@ C WRC+pooncerelease+rmbonceonce+Once
+>   *
+>   * This litmus test is an extension of the message-passing pattern, where
+>   * the first write is moved to a separate process.  Because it features
+> - * a release and a read memory barrier, it should be forbidden.
+> + * a release and a read memory barrier, it should be forbidden.  This
+> + * litmus test exercises LKMM cumulativity.
+>   *)
+>  
+>  {}
+> 
