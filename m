@@ -1,103 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753878AbeDMIdX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 04:33:23 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:38591 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750973AbeDMIdU (ORCPT
+        id S1753981AbeDMIhw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 04:37:52 -0400
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:37952 "EHLO
+        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753361AbeDMIhr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 04:33:20 -0400
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-        <u.kleine-koenig@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: [PATCH] MAINTAINERS: add personal addresses for Sascha and me
-Date: Fri, 13 Apr 2018 10:33:12 +0200
-Message-Id: <20180413083312.11213-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.16.3
+        Fri, 13 Apr 2018 04:37:47 -0400
+X-Google-Smtp-Source: AIpwx49iOnFNQvwKBNwR0YnsuWSxZILCtCfB6old6HLvIAFHg4ZEFvXCLCTWED4lZ/Y/fUZCVTrs29t8VXKnE51MGpY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <yq1y3hsunnt.fsf@oracle.com>
+References: <1523524915-25170-1-git-send-email-jinpu.wangl@profitbricks.com> <yq1y3hsunnt.fsf@oracle.com>
+From: Jinpu Wang <jinpu.wang@profitbricks.com>
+Date: Fri, 13 Apr 2018 10:37:25 +0200
+Message-ID: <CAMGffEkaTLLEs+i-EWUmo-Y8KSNBeyth63L1hXxP++PBcPPXbg@mail.gmail.com>
+Subject: Re: [PATCH v2] block: ratelimite pr_err on IO path
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The idea behind using kernel@pengutronix.de (i.e. the mail alias for the
-kernel people at Pengutronix) as email address was to have a backup when
-a given developer is on vacation or run over by a bus. Make this more
-explicit by adding the alias as reviewer and use the personal address
-for Sascha and me.
+On Thu, Apr 12, 2018 at 11:20 PM, Martin K. Petersen
+<martin.petersen@oracle.com> wrote:
+>
+> Jack,
+>
+>> +                             pr_err_ratelimited("%s: ref tag error at location %llu (rcvd %u)\n",
+>
+> I'm a bit concerned about dropping records of potential data loss.
+>
+> Also, what are you doing that compels all these to be logged? This
+> should be a very rare occurrence.
+>
+> --
+> Martin K. Petersen      Oracle Linux Engineering
+Hi Martin,
 
-Acked-by: Sascha Hauer <s.hauer@pengutronix.de>
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
-Hello,
+Thanks for asking, we updated mpt3sas driver which enables DIX support
+(prot_mask=0x7f), all disks are SATA SSDs, no DIF support.
+After reboot, kernel reports the IO errors from all the drives behind
+HBA, seems for almost every read IO, which turns the system unusable:
+[   13.079375] sda: ref tag error at location 0 (rcvd 143196159)
+[   13.079989] sda: ref tag error at location 937702912 (rcvd 143196159)
+[   13.080233] sda: ref tag error at location 937703072 (rcvd 143196159)
+[   13.080407] sda: ref tag error at location 0 (rcvd 143196159)
+[   13.080594] sda: ref tag error at location 8 (rcvd 143196159)
+[   13.080996] sda: ref tag error at location 0 (rcvd 143196159)
+[   13.089878] sdb: ref tag error at location 0 (rcvd 143196159)
+[   13.090275] sdb: ref tag error at location 937702912 (rcvd 277413887)
+[   13.090448] sdb: ref tag error at location 937703072 (rcvd 143196159)
+[   13.090655] sdb: ref tag error at location 0 (rcvd 143196159)
+[   13.090823] sdb: ref tag error at location 8 (rcvd 277413887)
+[   13.091218] sdb: ref tag error at location 0 (rcvd 143196159)
+[   13.095412] sdc: ref tag error at location 0 (rcvd 143196159)
+[   13.095859] sdc: ref tag error at location 937702912 (rcvd 143196159)
+[   13.096058] sdc: ref tag error at location 937703072 (rcvd 143196159)
+[   13.096228] sdc: ref tag error at location 0 (rcvd 143196159)
+[   13.096445] sdc: ref tag error at location 8 (rcvd 143196159)
+[   13.096833] sdc: ref tag error at location 0 (rcvd 277413887)
+[   13.097187] sds: ref tag error at location 0 (rcvd 277413887)
+[   13.097707] sds: ref tag error at location 937702912 (rcvd 143196159)
+[   13.097855] sds: ref tag error at location 937703072 (rcvd 277413887)
 
-I'm not sure how feels responsible to apply such a patch. Maybe akpm?
+Kernel version 4.15 and 4.14.28, I scan the commits in upstream,
+haven't found any relevant.
+in  4.4.112, there's no such errors.
+Diable DIX support (prot_mask=0x7) in mpt3sas fixes the problem.
 
-Best regards
-Uwe
-
- MAINTAINERS | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b60179d948bb..efcc1794eea7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1373,7 +1373,8 @@ F:	arch/arm/mach-ebsa110/
- F:	drivers/net/ethernet/amd/am79c961a.*
- 
- ARM/ENERGY MICRO (SILICON LABS) EFM32 SUPPORT
--M:	Uwe Kleine-König <kernel@pengutronix.de>
-+M:	Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-+R:	Pengutronix Kernel Team <kernel@pengutronix.de>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- N:	efm32
-@@ -1401,7 +1402,8 @@ F:	arch/arm/mach-footbridge/
- 
- ARM/FREESCALE IMX / MXC ARM ARCHITECTURE
- M:	Shawn Guo <shawnguo@kernel.org>
--M:	Sascha Hauer <kernel@pengutronix.de>
-+M:	Sascha Hauer <s.hauer@pengutronix.de>
-+R:	Pengutronix Kernel Team <kernel@pengutronix.de>
- R:	Fabio Estevam <fabio.estevam@nxp.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
-@@ -1416,7 +1418,8 @@ F:	include/soc/imx/
- 
- ARM/FREESCALE VYBRID ARM ARCHITECTURE
- M:	Shawn Guo <shawnguo@kernel.org>
--M:	Sascha Hauer <kernel@pengutronix.de>
-+M:	Sascha Hauer <s.hauer@pengutronix.de>
-+R:	Pengutronix Kernel Team <kernel@pengutronix.de>
- R:	Stefan Agner <stefan@agner.ch>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
-@@ -5653,7 +5656,8 @@ F:	drivers/net/ethernet/freescale/fec.h
- F:	Documentation/devicetree/bindings/net/fsl-fec.txt
- 
- FREESCALE IMX / MXC FRAMEBUFFER DRIVER
--M:	Sascha Hauer <kernel@pengutronix.de>
-+M:	Sascha Hauer <s.hauer@pengutronix.de>
-+R:	Pengutronix Kernel Team <kernel@pengutronix.de>
- L:	linux-fbdev@vger.kernel.org
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
-@@ -12790,7 +12794,8 @@ F:	include/linux/siphash.h
- 
- SIOX
- M:	Gavin Schenk <g.schenk@eckelmann.de>
--M:	Uwe Kleine-König <kernel@pengutronix.de>
-+M:	Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-+R:	Pengutronix Kernel Team <kernel@pengutronix.de>
- S:	Supported
- F:	drivers/siox/*
- F:	include/trace/events/siox.h
+Regards,
 -- 
-2.16.3
+Jack Wang
+Linux Kernel Developer            ProfitBricks GmbH
