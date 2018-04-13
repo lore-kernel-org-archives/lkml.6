@@ -1,101 +1,128 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-114809-1524181806-2-11950220666475896914
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3962825-1523632679-2-715599125504452195
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_HI -5, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: to='iso-8859-1', cc='iso-8859-1', plain='iso-8859-1'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524181806; b=OA+jPWDXq4AXPyTY5m3BfUjtItrIIWbWtlCcIw7+6zUWGs0Dxk
-    kvoHTUb0xLMfX2h17yEfgtzgNlmHeoEotLZ1p5xfOZe9bhXtZS4HLGQ/kmQJEL35
-    V3JHzzVebaa9+Syu0UItSzY7xqWPpzzvUvljSuGmHS3/v3e9sR/dV4koVME2roY6
-    S7sg68cFmv69vh8sdFb5pmoNiMAOxhZqPIbepv0bYmNVCxKSq9SrRrBVoSWZunhw
-    BD0MBD9lMDOP0GdMlwE58q+AfUm8eJwljtiArR/18KicLWB0L2mr7a71weGRCNzb
-    aTjuYxOJzCn4T4faBqltP3WKjhtZj3LlU4ig==
+    1523632678; b=V//UDQ4oo6mFlvjQMzbeDDWcB3DsGiNNq8uDG4ufGDBhC1JGPh
+    jIOsI36/JvPHsv2YJidTL0EaGUFQ1mhvQlOIR+EhHkqHbNMtKqj5/W5iUqtXW3wY
+    ZyCXHjuh28p6TPOEU7XQRqtA5qIcO9Opvr0yrZ51V1tJZkAGxVtJ8GsqlCtZfQzL
+    UOYdnTMTUzzl5XEw2GRHifdG8T9DLzuDaz9PSw0bP+8XfOgfvQKVAfNwx4P/CRqU
+    4sEAxHcpf++5tBU3VgHxvjL/nnsUHyrxoL9ouYm0OZ7BMZ1xegw1lSMsEsShtVzq
+    gfkHZhL+3IFgdR4oHdXp6k6L7t0t3adIzadg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=fm2; t=1524181806; bh=u9iDawfcZin
-    JfATyBifLrs+ji4NveS6cmGHfvA7rCq4=; b=XkvXa7WZ7MjI/gzHa+0hQcMisAf
-    jNb4uPGOcozQiRcxYh7TG4HGfMYfDXNe+GXoezbw70pyu4QFyrxbSEADPQy/95Gv
-    isTo2vNgSnkW3yh7ixST1/uqWmNgY8XwjjmEb/ZHV8MaKlS9nkcvnxURQv4KPYyx
-    mARUVFgyvVCroW0TwN3NAl+4Ngay+n+P8Hc4oVaHQ7QKKbSX2dbnHn825oj8tTTV
-    pGrFQ1J2LeR/RD0M66rVoxwau1josgViW3CyChW8Erjf/QWgyncc2YRekEs0Srts
-    eCXm5w+oMKi5T3QQT4eQlvwLYOwnNMAARWES6vLzUBePJrelZaRdmKx40tQ==
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1523632678; bh=8if5CadPDeT7feCcBXlw1M31ka5WXf
+    Le9aXBks3BcsQ=; b=Fd86wwDKGK68TehGZ8ThnaAqRkJS2MskyQynsqffuIm7vY
+    i6m6WkfjPnnGRJAIsuO3NkvjSxTkCsD+c5lFyagqG7v6isYudnZhJbMTJhRDqv4S
+    a1VfPrQ6Xh42vLYTPClOCOGg+uOeWAu5QYPPAgOpKgw8cTYOW9uT6v0IizsPTWlJ
+    MohoK2p1nUhiG1It4U82H2Va5v2k/qCiyMkak7wFUCml8U5Kl1AyOl9C+o0McdR2
+    wl4NhGvbh3atmLVbXduMDbi5As/LOq+Tt5SviUiFx2ged8FCgXW6C8MoCHJyZ2YA
+    GWk36tIdwOnGiAVag4VY++SnE2bgjTWxIYNnOHRQ==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=YvUd9CM4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=JCS1rz2Q x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BpYoYA08;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=YvUd9CM4 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=JCS1rz2Q x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BpYoYA08;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=infradead.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAqJYFPGx0JfYc/JK0J8PprzFmjZxA1N6ey3+dUKoe1b1JYfj7zcYXkRBLkbmdDDXQUCYdhq8KPRyp+/YbktuE13joqZlQQRa+8E8xl7QD6e3l92/50u
-    ZnXmK2AaIc+Ly5j8CtOrwWYirxUcXyExe9f8iXGzkPryzlrMdPQv8xPbSnIzX84jMcuBDVAXlIk2d1GG3rqdbg6lvtNKwhCzeFB9i63WEYCgOw4JGRirfnGW
+X-CM-Envelope: MS4wfGfAZBIbezTgttaVj2qi3x+YOsSxNEIP50D3Wh055BSIiZXcbSIyxDBend7bVhB0NFS9Be77pDe+eBSaSOrMZ74qAZXeD0SMxc0N3wNN4Zr4kxI5cc6c
+    aCcA8KWD96eRDvnzf2IfGLwRB2AS5V9XVPY3chs2XnswIJUfq7G89Wcw3LN7zj+txcPlmD0OOhZdgMfZOV0tHuL/cxZx2XbN/LAvs6Dsonn0RgbH4kV1FI70
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=8nJEP1OIZ-IA:10 a=Kd1tUaAdevIA:10
-    a=x6Se6UaoOFju1KD1qykA:9 a=wPNLvfGTeEIA:10
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=vPq8ayLaFMKpPRGixPQA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753845AbeDSXtz (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 19 Apr 2018 19:49:55 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35276 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753718AbeDSXty (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 19 Apr 2018 19:49:54 -0400
-Date: Thu, 19 Apr 2018 16:49:51 -0700
-From: Darren Hart <dvhart@infradead.org>
-To: =?iso-8859-1?Q?Jo=E3o?= Paulo Rechi Vita <jprvita@gmail.com>
-Cc: Corentin Chary <corentin.chary@gmail.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        acpi4asus-user@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        linux@endlessm.com, Dun Hum <bitter.taste@gmx.com>,
-        =?iso-8859-1?Q?Jo=E3o?= Paulo Rechi Vita
-        <jprvita@endlessm.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2] platform/x86: asus-wireless: Fix NULL pointer
- dereference
-Message-ID: <20180419234951.GB11546@fury>
-References: <CA+A7VXUb-u9=MDRrZxpwGiuFwQAdYCJoxaZHjLPLAcYc6PTEHQ@mail.gmail.com>
- <20180419140434.15131-1-jprvita@endlessm.com>
+        id S1751011AbeDMPRR (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 13 Apr 2018 11:17:17 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34363 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750885AbeDMPRQ (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Fri, 13 Apr 2018 11:17:16 -0400
+X-Google-Smtp-Source: AIpwx4+l28nmaqtDh6mTR5TaLy+gxbM3DI3DYV/W2waoNCXX2MkU+x7WuFFPGJmqjSaZQwccdP1XVQ==
+From: Johan Hovold <johan@kernel.org>
+To: Bin Liu <b-liu@ti.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 0/3] USB: musb: dsps: phy fix and DT-topology support
+Date: Fri, 13 Apr 2018 17:15:02 +0200
+Message-Id: <20180413151505.32663-1-johan@kernel.org>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180419140434.15131-1-jprvita@endlessm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 07:04:34AM -0700, João Paulo Rechi Vita wrote:
-> When the module is removed the led workqueue is destroyed in the remove
-> callback, before the led device is unregistered from the led subsystem.
+I've been carrying a patch out-of-tree since my work on improving the
+USB device-tree support which is needed to be able to describe USB
+topologies for musb based controllers.
 
-Queued up, thanks.
+This patch, which associates the platform controller device with the
+glue device device-tree node, did not play well with the recent changes
+which added generic phy support to USB core however.
+
+Like the recent dwc2 regression fixed by Arnd after the device-tree
+#phy-cell changes, the generic phy code in USB core can now also fail
+indefinitly with -EPROBE_DEFER when the controller uses a legacy USB
+phy.
+
+The second patch addresses this for musb, which handles its own (legacy
+and generic) phys, but something more may possibly now be needed for
+other platforms with legacy phys.
+
+In the process of debugging this, I stumbled over another issue which
+caused the dsps legacy phy init two be called twice on every probe and
+which is fixed by the first patch.
+
+Johan
+
+
+Johan Hovold (3):
+  USB: musb: dsps: drop duplicate phy initialisation
+  USB: musb: host: prevent core phy initialisation
+  USB: musb: dsps: propagate device-tree node
+
+ drivers/usb/musb/musb_dsps.c | 3 +--
+ drivers/usb/musb/musb_host.c | 1 +
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
 -- 
-Darren Hart
-VMware Open Source Technology Center
+2.17.0
+
