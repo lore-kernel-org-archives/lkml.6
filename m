@@ -1,73 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752002AbeDMOXX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 10:23:23 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:58114 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750817AbeDMOXU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:23:20 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w3DEN0YE003068
-X-Nifty-SrcIP: [209.85.217.171]
-X-Google-Smtp-Source: AIpwx49b4pNMSEL8OwqgEdWwtji3vT5BxTwhhbuKVPZyASJ5Rv/tTXMdFZn+/L4I6m3aNFd0iqDIueEyiJcgmCqLnm0=
+        id S1752378AbeDMOXn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 10:23:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52396 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752093AbeDMOXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 10:23:41 -0400
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, x86@kernel.org,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: x86: VMX: hyper-v: Enlightened MSR-Bitmap support
+References: <20180412152508.27617-1-vkuznets@redhat.com>
+        <ef082ed6-1af9-a578-d9da-e0874cc4769c@redhat.com>
+Date: Fri, 13 Apr 2018 16:23:37 +0200
+In-Reply-To: <ef082ed6-1af9-a578-d9da-e0874cc4769c@redhat.com> (Paolo
+        Bonzini's message of "Fri, 13 Apr 2018 15:52:30 +0200")
+Message-ID: <87muy7423a.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180411181525.23902-1-javierm@redhat.com>
-References: <20180411181525.23902-1-javierm@redhat.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 13 Apr 2018 23:22:19 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAROirdNKSFD-X9vBr5nJ4Ys7rn4H-0UF8+p6CR8PqqkfA@mail.gmail.com>
-Message-ID: <CAK7LNAROirdNKSFD-X9vBr5nJ4Ys7rn4H-0UF8+p6CR8PqqkfA@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: rpm-pkg: use kernel-install as a fallback for new-kernel-pkg
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Jones <pjones@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
-        Josh Boyer <jwboyer@redhat.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-12 3:15 GMT+09:00 Javier Martinez Canillas <javierm@redhat.com>:
-> The new-kernel-pkg script is only present when grubby is installed, but it
-> may not always be the case. So if the script isn't present, attempt to use
-> the kernel-install script as a fallback instead.
->
-> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
->
-> ---
->
+Paolo Bonzini <pbonzini@redhat.com> writes:
 
-Applied to linux-kbuild.  Thanks!
-
-
->  scripts/package/mkspec | 2 ++
->  1 file changed, 2 insertions(+)
+> On 12/04/2018 17:25, Vitaly Kuznetsov wrote:
+>> @@ -5335,6 +5353,9 @@ static void __always_inline vmx_disable_intercept_for_msr(unsigned long *msr_bit
+>>  	if (!cpu_has_vmx_msr_bitmap())
+>>  		return;
+>>  
+>> +	if (static_branch_unlikely(&enable_emsr_bitmap))
+>> +		evmcs_touch_msr_bitmap();
+>> +
+>>  	/*
+>>  	 * See Intel PRM Vol. 3, 20.6.9 (MSR-Bitmap Address). Early manuals
+>>  	 * have the write-low and read-high bitmap offsets the wrong way round.
+>> @@ -5370,6 +5391,9 @@ static void __always_inline vmx_enable_intercept_for_msr(unsigned long *msr_bitm
+>>  	if (!cpu_has_vmx_msr_bitmap())
+>>  		return;
+>>  
+>> +	if (static_branch_unlikely(&enable_emsr_bitmap))
+>> +		evmcs_touch_msr_bitmap();
 >
-> diff --git a/scripts/package/mkspec b/scripts/package/mkspec
-> index 61427c6f2209..e05646dc24dc 100755
-> --- a/scripts/package/mkspec
-> +++ b/scripts/package/mkspec
-> @@ -118,6 +118,8 @@ $S$M        ln -sf /usr/src/kernels/$KERNELRELEASE source
->         %preun
->         if [ -x /sbin/new-kernel-pkg ]; then
->         new-kernel-pkg --remove $KERNELRELEASE --rminitrd --initrdfile=/boot/initramfs-$KERNELRELEASE.img
-> +       elif [ -x /usr/bin/kernel-install ]; then
-> +       kernel-install remove $KERNELRELEASE
->         fi
->
->         %postun
-> --
-> 2.14.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> I'm not sure about the "unlikely".  Can you just check current_evmcs
+> instead (dropping the static key completely)?
 
+current_evmcs is just a cast:
 
+ (struct hv_enlightened_vmcs *)this_cpu_read(current_vmcs)
+
+so it is always not NULL here :-) We need to check enable_evmcs static
+key first. Getting rid of the newly added enable_emsr_bitmap is, of
+course, possible.
+
+(Actually, we only call vmx_{dis,en}able_intercept_for_msr in the very
+beginning of vCPUs life so this is not a hotpath and likeliness doesn't
+really matter).
+
+Will do v2 without the static key, thanks!
+
+>
+> The function, also, is small enough that inlining should be beneficial.
+>
+> Paolo
 
 -- 
-Best Regards
-Masahiro Yamada
+  Vitaly
