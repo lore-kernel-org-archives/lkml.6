@@ -1,45 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751002AbeDMRji (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 13:39:38 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:44297 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750761AbeDMRjg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 13:39:36 -0400
-X-Google-Smtp-Source: AIpwx49yVjcu7Jz6Eu0wAAd/ZypoB+ZiKh/jbnw5W2PjBuy8BdfDt+/0LwEZRZJ+NrQqQ0Upb136ng==
-Date: Fri, 13 Apr 2018 12:39:34 -0500
-From: Rob Herring <robh@kernel.org>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/5] dt-bindings: display: bridge: lvds-transmitter: add
- ti,ds90c185
-Message-ID: <20180413173934.uq7xhbkrq4g77jch@rob-hp-laptop>
-References: <20180409105918.20792-1-peda@axentia.se>
- <20180409105918.20792-2-peda@axentia.se>
+        id S1751171AbeDMRjq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 13:39:46 -0400
+Received: from mga02.intel.com ([134.134.136.20]:7682 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751032AbeDMRjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 13:39:41 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,446,1517904000";
+   d="scan'208";a="47690872"
+Date: Fri, 13 Apr 2018 10:39:40 -0700
+From: Andi Kleen <ak@linux.intel.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jin Yao <yao.jin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Wang Nan <wangnan0@huawei.com>
+Subject: Re: [PATCH 17/17] perf annotate: Handle variables in 'sub', 'or' and
+ many other instructions
+Message-ID: <20180413173940.GE6694@tassilo.jf.intel.com>
+References: <20180413140111.25313-1-acme@kernel.org>
+ <20180413140111.25313-18-acme@kernel.org>
+ <20180413162043.GD6694@tassilo.jf.intel.com>
+ <20180413172035.GB26496@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180409105918.20792-2-peda@axentia.se>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180413172035.GB26496@kernel.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 09, 2018 at 12:59:14PM +0200, Peter Rosin wrote:
-> Start list of actual chips compatible with "lvds-encoder".
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Peter Rosin <peda@axentia.se>
-> ---
->  .../devicetree/bindings/display/bridge/lvds-transmitter.txt       | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+> What do I miss? Or where is it that I'm misinterpreting the calculations
+> that objdump did in its output?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+The calculations are right, but these are still two different address modes.
+You cannot just turn one silently into the other.
+
+I think it would be ok to use the syntax in the assembler
+
+symbol(%rip)  with no # ...
+
+> About something mildly related: what do you think about this:
+> http://ref.x86asm.net/, there is a xml file there[1] I'm thinking about
+> using, if available on the developer's HOME or some other standard place,
+> to provide help about the instructions :-)
+
+I don't know how well it's going to be maintained. x86 changes a lot
+and I've seen a lot of disassembler libraries etc. go stale as the
+owner cannot keep up.
+
+The only semi official maintained descriptions are the XED tables (but those
+don't have descriptions) or the PDFs from Intel/AMD.
+I suppose could have some hack that talks to a PDF reader and automatically
+downloads/searches the PDF.
+
+If unofficial is ok I would rather port some functionality
+from https://github.com/HJLebbink/asm-dude
+which has a lot of cool stuff.
+
+-Andi
