@@ -1,63 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751946AbeDMVez (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 17:34:55 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:41710 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751162AbeDMVex (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 17:34:53 -0400
-X-Google-Smtp-Source: AIpwx4+ojH+gjWqhg5AfTEXw91hX8lCZskzANIlMrQcEiMCmUzuy7iYrY6RiDvePFSiDLFcWk0dVJJvigkSucFZPUy4=
-MIME-Version: 1.0
-In-Reply-To: <56a8953c-d833-837c-57d5-fe758d4db02a@canonical.com>
-References: <56a8953c-d833-837c-57d5-fe758d4db02a@canonical.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 13 Apr 2018 23:34:52 +0200
-X-Google-Sender-Auth: yyNqUfw741rMPH4ZjYTTYzPtGmg
-Message-ID: <CAJZ5v0j8GAatWoAra37y3c-ti2Ft5am75KONgEkjB6AaypkCqg@mail.gmail.com>
-Subject: Re: [Regression] PCI / PM: Simplify device wakeup settings code
-To: Joseph Salisbury <joseph.salisbury@canonical.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        1745646@bugs.launchpad.net
-Content-Type: text/plain; charset="UTF-8"
+        id S1751614AbeDMVj6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 17:39:58 -0400
+Received: from mail.ispras.ru ([83.149.199.45]:47506 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751032AbeDMVj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 17:39:57 -0400
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+To: Mark Brown <broonie@kernel.org>, Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org
+Subject: [PATCH] spi: meson-axg: Fix error handling in meson_spicc_probe()
+Date: Sat, 14 Apr 2018 00:39:46 +0300
+Message-Id: <1523655586-4163-1-git-send-email-khoroshilov@ispras.ru>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 7:56 PM, Joseph Salisbury
-<joseph.salisbury@canonical.com> wrote:
-> Hi Rafael,
->
-> A kernel bug report was opened against Ubuntu [0].  After a kernel
-> bisect, it was found that reverting the following two commits resolved
-> this bug:
->
-> 0ce3fcaff929 ("PCI / PM: Restore PME Enable after config space restoration")
-> 0847684cfc5f("PCI / PM: Simplify device wakeup settings code")
->
-> This is a regression introduced in v4.13-rc1 and still exists in
-> mainline.  The bug causes the battery to drain when the system is
-> powered down and unplugged, which does not happed prior to these two
-> commits.
+If devm_spi_register_master() fails in meson_spicc_probe(),
+spicc->core is left undisabled. The patch fixes that.
 
-What system and what do you mean by "powered down"?  How much time
-does it take for the battery to drain now?
+Found by Linux Driver Verification project (linuxtesting.org).
 
-> The bisect actually pointed to commit de3ef1e, but reverting
-> these two commits fixes the issue.
->
-> I was hoping to get your feedback, since you are the patch author.  Do
-> you think gathering any additional data will help diagnose this issue,
-> or would it be best to submit a revert request?
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+---
+ drivers/spi/spi-meson-spicc.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-First, reverting these is not an option or you will break systems
-relying on them now.  4.13 is three releases back at this point.
-
-Second, your issue appears to be related to the suspend/shutdown path
-whereas commit 0ce3fcaff929 is mostly about resume, so presumably the
-change in pci_enable_wake() causes the problem to happen.  Can you try
-to revert this one alone and see if that helps?
+diff --git a/drivers/spi/spi-meson-spicc.c b/drivers/spi/spi-meson-spicc.c
+index 5c82910e3480..7fe4488ace57 100644
+--- a/drivers/spi/spi-meson-spicc.c
++++ b/drivers/spi/spi-meson-spicc.c
+@@ -574,10 +574,15 @@ static int meson_spicc_probe(struct platform_device *pdev)
+ 		master->max_speed_hz = rate >> 2;
+ 
+ 	ret = devm_spi_register_master(&pdev->dev, master);
+-	if (!ret)
+-		return 0;
++	if (ret) {
++		dev_err(&pdev->dev, "spi master registration failed\n");
++		goto out_clk;
++	}
+ 
+-	dev_err(&pdev->dev, "spi master registration failed\n");
++	return 0;
++
++out_clk:
++	clk_disable_unprepare(spicc->core);
+ 
+ out_master:
+ 	spi_master_put(master);
+-- 
+2.7.4
