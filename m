@@ -1,73 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754132AbeDMJoz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 05:44:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38860 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752360AbeDMJox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 05:44:53 -0400
-Subject: Re: [PATCH] vfio: platform: Fix using devices in PM Domains
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-References: <1523438648-17672-1-git-send-email-geert+renesas@glider.be>
- <0cc6cead-cd75-0a18-7a53-5ce16b03e823@redhat.com>
- <CAMuHMdUHEkamgGORLx37QOns22LTrx_TGYHmxYWZ=TNyhABh=A@mail.gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Baptiste Reynal <b.reynal@virtualopensystems.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, KVM list <kvm@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Auger Eric <eric.auger@redhat.com>
-Message-ID: <4eedb2df-4bf8-814e-7e47-60faa646f4bf@redhat.com>
-Date: Fri, 13 Apr 2018 11:44:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S1754136AbeDMJqX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 05:46:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40338 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752360AbeDMJqV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 05:46:21 -0400
+Date: Fri, 13 Apr 2018 11:46:15 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH 1/7] sched/core: uclamp: add CPU clamp groups accounting
+Message-ID: <20180413094615.GT4043@hirez.programming.kicks-ass.net>
+References: <20180409165615.2326-1-patrick.bellasi@arm.com>
+ <20180409165615.2326-2-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUHEkamgGORLx37QOns22LTrx_TGYHmxYWZ=TNyhABh=A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409165615.2326-2-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+On Mon, Apr 09, 2018 at 05:56:09PM +0100, Patrick Bellasi wrote:
+> +static inline void uclamp_cpu_get(struct task_struct *p, int cpu, int clamp_id)
+> +{
+> +	struct uclamp_cpu *uc_cpu = &cpu_rq(cpu)->uclamp[clamp_id];
+> +	int clamp_value;
+> +	int group_id;
+> +
+> +	/* Get task's specific clamp value */
+> +	clamp_value = p->uclamp[clamp_id].value;
+> +	group_id = p->uclamp[clamp_id].group_id;
+> +
+> +	/* No task specific clamp values: nothing to do */
+> +	if (group_id == UCLAMP_NONE)
+> +		return;
+> +
+> +	/* Increment the current group_id */
 
-On 13/04/18 11:19, Geert Uytterhoeven wrote:
-> Hi Eric,
-> 
-> On Fri, Apr 13, 2018 at 11:14 AM, Auger Eric <eric.auger@redhat.com> wrote:
->> On 11/04/18 11:24, Geert Uytterhoeven wrote:
->>> If a device is part of a PM Domain (e.g. power and/or clock domain), its
->>> power state is managed using Runtime PM.  Without Runtime PM, the device
->>> may not be powered up, causing subtle failures, crashes, or system
->>> lock-ups when the device is accessed by the guest.
->> the device may not be powered up/clcoked or power/clock may be switched
->> off while the guest uses it.
->>>
->>> Fix this by adding Runtime PM support, powering the device when the VFIO
->>> device is opened by the guest.
->>>
->>> Note that while more fine-grained power management could be implemented
->>> on the guest side, if exported, this would be inherently unsafe, as
->>> abusing it may kill the whole system.
->>
->> Please can you elaborate on this remark please?
-> 
-> If power-management of the device would be delegated to the guest, and the
-> guest forgets to enable device power before accessing the device's registers,
-> this could lock up the system, and thus disturb both the host and other guests.
-Wouldn't you need to assign another device or use para-virt to allow the
-guest to perform this power management control? I think you can remove
-this paragraph from the commit message.
+That I think qualifies being called a bad comment.
 
-Thanks
+> +	uc_cpu->group[group_id].tasks += 1;
+> +
+> +	/* Mark task as enqueued for this clamp index */
+> +	p->uclamp_group_id[clamp_id] = group_id;
 
-Eric
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Why exactly do we need this? we got group_id from @p in the first place.
+
+I suspect this is because when we update p->uclamp[], we don't update
+this active value (when needed), is that worth it?
+
+> +	/*
+> +	 * If this is the new max utilization clamp value, then we can update
+> +	 * straight away the CPU clamp value. Otherwise, the current CPU clamp
+> +	 * value is still valid and we are done.
+> +	 */
+> +	if (uc_cpu->value < clamp_value)
+> +		uc_cpu->value = clamp_value;
+> +}
