@@ -1,76 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752212AbeDMQ7u (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 12:59:50 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:58680 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750867AbeDMQ7s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 12:59:48 -0400
-To: Jinpu Wang <jinpu.wang@profitbricks.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Elliott\, Robert \(Persistent Memory\)" <elliott@hpe.com>,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        Suganath Prabu Subramani
-        <suganath-prabu.subramani@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH v2] block: ratelimite pr_err on IO path
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1523524915-25170-1-git-send-email-jinpu.wangl@profitbricks.com>
-        <yq1y3hsunnt.fsf@oracle.com>
-        <CAMGffEkaTLLEs+i-EWUmo-Y8KSNBeyth63L1hXxP++PBcPPXbg@mail.gmail.com>
-Date: Fri, 13 Apr 2018 12:59:38 -0400
-In-Reply-To: <CAMGffEkaTLLEs+i-EWUmo-Y8KSNBeyth63L1hXxP++PBcPPXbg@mail.gmail.com>
-        (Jinpu Wang's message of "Fri, 13 Apr 2018 10:37:25 +0200")
-Message-ID: <yq1bment539.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1752466AbeDMRAm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 13:00:42 -0400
+Received: from imap.thunk.org ([74.207.234.97]:39616 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750960AbeDMRAl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 13:00:41 -0400
+Date: Fri, 13 Apr 2018 13:00:37 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Stephan Mueller <smueller@chronox.de>
+Cc: linux-crypto@vger.kernel.org,
+        Linux Kernel Developers List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/5] random: fix crng_ready() test
+Message-ID: <20180413170037.GA28721@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
+        Linux Kernel Developers List <linux-kernel@vger.kernel.org>
+References: <20180413013046.404-1-tytso@mit.edu>
+ <1699469.KmO53oa8XU@tauon.chronox.de>
+ <20180413125313.GA2633@thunk.org>
+ <4393662.RPWnPK42dp@tauon.chronox.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8861 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=651
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804130156
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4393662.RPWnPK42dp@tauon.chronox.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Apr 13, 2018 at 03:05:01PM +0200, Stephan Mueller wrote:
+> 
+> What I would like to point out that more and more folks change to 
+> getrandom(2). As this call will now unblock much later in the boot cycle, 
+> these systems see a significant departure from the current system behavior.
+> 
+> E.g. an sshd using getrandom(2) would be ready shortly after the boot finishes 
+> as of now. Now it can be a matter minutes before it responds. Thus, is such 
+> change in the kernel behavior something for stable?
 
-Jinpu,
+It will have some change on the kernel behavior, but not as much as
+you might think.  That's because in older kernels, we were *already*
+blocking until crng_init > 2 --- if the getrandom(2) call happened
+while crng_init was in state 0.
 
-[CC:ed the mpt3sas maintainers]
+Even before this patch series, we didn't wake up a process blocked on
+crng_init_wait until crng_init state 2 is reached:
 
-The ratelimit patch is just an attempt to treat the symptom, not the
-cause.
+static void crng_reseed(struct crng_state *crng, struct entropy_store *r)
+{
+	...
+	if (crng == &primary_crng && crng_init < 2) {
+		invalidate_batched_entropy();
+		crng_init = 2;
+		process_random_ready_list();
+		wake_up_interruptible(&crng_init_wait);
+		pr_notice("random: crng init done\n");
+	}
+}
 
-> Thanks for asking, we updated mpt3sas driver which enables DIX support
-> (prot_mask=0x7f), all disks are SATA SSDs, no DIF support.
-> After reboot, kernel reports the IO errors from all the drives behind
-> HBA, seems for almost every read IO, which turns the system unusable:
-> [   13.079375] sda: ref tag error at location 0 (rcvd 143196159)
-> [   13.079989] sda: ref tag error at location 937702912 (rcvd 143196159)
-> [   13.080233] sda: ref tag error at location 937703072 (rcvd 143196159)
-> [   13.080407] sda: ref tag error at location 0 (rcvd 143196159)
-> [   13.080594] sda: ref tag error at location 8 (rcvd 143196159)
+This is the reason why there are reports like this: "Boot delayed for
+about 90 seconds until 'random: crng init done'"[1]
 
-That sounds like a bug in the mpt3sas driver or firmware. I guess the
-HBA could conceivably be operating a SATA device as DIX Type 0 and strip
-the PI on the drive side. But that doesn't seem to be a particularly
-useful mode of operation.
+[1] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1685794
 
-Jinpu: Which firmware are you running? Also, please send us the output
-of:
 
-        sg_readcap -l /dev/sda
-        sg_inq -x /dev/sda
-        sg_vpd /dev/sda
+So we have the problem already.  There will be more cases of this
+after this patch series is applied, true.  But what we have already is
+an inconsistent state where if you call getrandom(2) while the kernel
+is in crng_init state 0, you will block until crng_init state 2, but
+if you are in crng_init state 1, you will assume the CRNG is fully
+initialized.
 
-Broadcom: How is DIX supposed to work for SATA drives behind an mpt3sas
-controller?
+Given the documentation of how getrandom(2) works what its documented
+guarantees are, I think it does justify making its behavior both more
+consistent with itself, and more consistent what the security
+guarantees we have promised people.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+I was a little worried that on VM's this could end up causing things
+to block for a long time, but an experiment on a GCE VM shows that
+isn't a problem:
+
+[    0.000000] Linux version 4.16.0-rc3-ext4-00009-gf6b302ebca85 (tytso@cwcc) (gcc version 7.3.0 (Debian 7.3.0-15)) #16 SMP Thu Apr 12 16:57:17 EDT 2018
+[    1.282220] random: fast init done
+[    3.987092] random: crng init done
+[    4.376787] EXT4-fs (sda1): re-mounted. Opts: (null)
+
+There are some desktops where the "crng_init done" report doesn't
+happen until 45-90 seconds into the boot.  I don't think I've seen
+reports where it takes _minutes_ however.  Can you give me some
+examples of such cases?
+
+					- Ted
+
+P.S.  Of course, in a VM environment, if the host supports virtio-rng,
+the boot delay problem is completely not an issue.  You just have to
+enable virtio-rng in the guest kernel, which I believe is already the
+case for most distro kernels.
+
+BTW, for KVM, it's fairly simple to set it the host-side support for
+virtio-rng.  Just add to the kvm command-line options:
+
+    -object rng-random,filename=/dev/urandom,id=rng0 \
+	-device virtio-rng-pci,rng=rng0
