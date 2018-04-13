@@ -1,70 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751877AbeDMRf6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 13:35:58 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:54574 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751782AbeDMRf5 (ORCPT
+        id S1751109AbeDMRg7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 13:36:59 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:40360 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750783AbeDMRg4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 13:35:57 -0400
-Date: Fri, 13 Apr 2018 10:35:55 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Vitaly Wool <vitalywool@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, mawilcox@microsoft.com,
-        asavery@chromium.org, gwendal@chromium.org
-Subject: Re: Crashes/hung tasks with z3pool under memory pressure
-Message-ID: <20180413173555.GA30587@roeck-us.net>
-References: <20180412215501.GA16406@roeck-us.net>
- <CAMJBoFMq8DoWdcrajB_xyMrGXsUsbMjos_U60mOvf01MpK_9Kw@mail.gmail.com>
+        Fri, 13 Apr 2018 13:36:56 -0400
+X-Google-Smtp-Source: AIpwx4/gCresFj12KW0+KVX6kUE5MVKzCSAo97Ucu32QPess4rUj0FwDaxwKEOi1D05LEHnQ52CMmg==
+Date: Fri, 13 Apr 2018 12:36:52 -0500
+From: Rob Herring <robh@kernel.org>
+To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, kt.liao@emc.com.tw,
+        Oliver Haessler <oliver@redhat.com>, Benjamin Berg <bberg@redhat.com>,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/9] Input: elan_i2c - add trackstick report
+Message-ID: <20180413173652.d5errnzdoz3elaes@rob-hp-laptop>
+References: <20180409091051.2944-1-benjamin.tissoires@redhat.com>
+ <20180409091051.2944-4-benjamin.tissoires@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMJBoFMq8DoWdcrajB_xyMrGXsUsbMjos_U60mOvf01MpK_9Kw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+In-Reply-To: <20180409091051.2944-4-benjamin.tissoires@redhat.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 05:21:02AM +0000, Vitaly Wool wrote:
-> Hi Guenter,
+On Mon, Apr 09, 2018 at 11:10:45AM +0200, Benjamin Tissoires wrote:
+> The Elan touchpads over I2C/SMBus also can handle a
+> trackstick. Unfortunately, nothing tells us if the
+> device supports trackstick (the information lies in
+> the PS/2 node), so rely on a platform data to enable
+> or not the trackstick node.
 > 
+> Link: https://bugzilla.redhat.com/show_bug.cgi?id=1313939
 > 
-> Den fre 13 apr. 2018 kl 00:01 skrev Guenter Roeck <linux@roeck-us.net>:
+> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 > 
-> > Hi all,
+> ---
 > 
-> > we are observing crashes with z3pool under memory pressure. The kernel
-> version
-> > used to reproduce the problem is v4.16-11827-g5d1365940a68, but the
-> problem was
-> > also seen with v4.14 based kernels.
-> 
-> 
-> just before I dig into this, could you please try reproducing the errors
-> you see with https://patchwork.kernel.org/patch/10210459/ applied?
-> 
+> changes in v2:
+> - use of generic device property instead of platform data so
+>   device tree can also make use of it
+> ---
+>  .../devicetree/bindings/input/elan_i2c.txt         |  1 +
 
-As mentioned above, I tested with v4.16-11827-g5d1365940a68, which already
-includes this patch.
+Acked-by: Rob Herring <robh@kernel.org>
 
-$ git log --oneline v4.14..5d1365940a68 mm/z3fold.c
-8a97ea546bb6 mm/z3fold.c: use gfpflags_allow_blocking
-1ec6995d1290 z3fold: fix memory leak
-5c9bab592f53 z3fold: limit use of stale list for allocation
-f144c390f905 mm: docs: fix parameter names mismatch
-5d03a6613957 mm/z3fold.c: use kref to prevent page free/compact race
-
-Guenter
+>  drivers/input/mouse/elan_i2c_core.c                | 90 +++++++++++++++++++++-
+>  2 files changed, 88 insertions(+), 3 deletions(-)
