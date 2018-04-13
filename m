@@ -1,83 +1,91 @@
-Return-Path: <andrew.donnellan@au1.ibm.com>
-X-Google-Smtp-Source: AIpwx480egSafwqPRAko4iuQtwM6tqVXtgvavoo19FjiwUyPyaACrsWCACgsCRYbJ7DM7Q4QE/0+
-ARC-Seal: i=1; a=rsa-sha256; t=1524009097; cv=none;
+Return-Path: <kernel-hardening-return-12995-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx48H1vBjaYrwAr+ODohUZzsZ8cGc36/Js84XO39sU/GHFNQSA8XtO/QPBwBJcRGVDhdE8V8s
+ARC-Seal: i=1; a=rsa-sha256; t=1523657541; cv=none;
         d=google.com; s=arc-20160816;
-        b=o44+MIZFeDXkoGKXtOQlUwDMPHXp8BNHcb5ritR+BKU6jk8q1MHKPHLfAIeYilf8MX
-         fJoMx0weiuy3WhAbMbrVndF6ILEkr6t+WiVDyZeNUZ0dPG7PJPXTQjOv4CF5aXx4vYxS
-         Nwll0IkNu0eNdeHOYwzcV2DjEStmOhVSTSeNuxWsXv5LS5RyVZWVWAGz3DBKpKdzk/Px
-         pe7UxNrn9mRL3m7KIlGyV8qcaEEvv+3w3FNe2ZC9hiTu5BhQUj9IHO18+/WaVfs5kmH9
-         wLB6VwG+Im+5UqRd/ZI/HQQbqocMAXVMVi6Fc7+0yZxt+icYutMrzoG2LCt2bHQJiCbd
-         uO1A==
+        b=VDAqX7CuGNiNXW+iDBfeY2nkFtNIK8Z7Dpb3EA2WGmfreVgJGBzL39ONzlfXYxrxRT
+         yYCr0wRt5yW1eUH8xjjvUnIMgmlxiHNyLW2fo8HBq51bkwkfbcM/C4JtIek71WBDDjEz
+         9UQkrxaw46zUpEN/F2wv/JIYiKkIAXG0WRhqtDjmkTGvdbip5V1Pq8b7Sw7eO8fjg+Wy
+         7AbIMNBKkjSl+Kqhw8Z16YgUwaQJ9MSw1rzsXxRC4xYon5X0AWQMQ4/FEQRYSy5RKCf2
+         7/dpMXYvlpvreFJzBXEWpVkcS9szFNrbZVkHFdtW/q801bMvdm2OwqIayPUO0KC+PENz
+         psgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:content-transfer-encoding:content-language:in-reply-to
-         :mime-version:user-agent:date:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=GPURw3QN9bQaSLcU6o4Fck5xhxaegaWb3kQo0LFXmWc=;
-        b=CHhtmyTjHHSPSpu+NExs25I93l48Iag5RJqJHSbKwS82m2V/XrMYBtNtB81Ge4D6zZ
-         cWAr7p3U/NaDnjVQ+ylD8MR03GB4Rje0yvN4cHBuJ9bd7CLwMxcc5Ara4WWLXQTIoxin
-         ldigFV37SjT3HbdDgzygCNZBFBM0wt5r0fv5vL/BUJp5bIA8mpBm8kbj0gacQ7kMEpDD
-         nU4AEosL7oW8ssyCLzZqKTRzkvvW+L1WhhrJj3XdTSrWQG5cNnNLKa0cRcdK4BVb8rnH
-         8mzifIF3Ji3L23nneKEC+72HDAAB+i+ETM3n13Nlwa4qcZyOUsCwn71EWEA6XfgFOU+R
-         M1GA==
+        h=message-id:date:subject:cc:to:from:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=2/8HjuS2UQuxTlH6dZp1Oqp/dVN0PDHwDYfzQSzjByY=;
+        b=bG0yGVkTe1hGv1DsOISjPyspFnRi1vWiJvsihg8mmerNLRLcm+JC7Lw7v7pBeVcQHA
+         eTESbOHgovyacwFNXU4ov5WqHw7nj/sZOJmNa3VmYoYe5Rd5KgJY1NtNWIS8u4nzU2UX
+         +Kellfja33YVqSE5wLYpwST19hnskgU2qWB1hjirXaRRKnD5O2UUYTu01QGTvdvu/4a8
+         YiJxUU+jwnW07X0f61g5Lnu4SBSponei3UY7PZaaTwP2zaJpihqKLXr+loDKy/21rSDM
+         KEJH6+ext6lyfNLcNNwZNNEIiSER6WG8wQB633YnpENAXXF1mMR+EO8aC7uJWaQP80rz
+         3f3w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of andrew.donnellan@au1.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=andrew.donnellan@au1.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       spf=pass (google.com: domain of kernel-hardening-return-12995-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12995-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of andrew.donnellan@au1.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=andrew.donnellan@au1.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Subject: Re: [PATCH] misc: cxl: Change return type to vm_fault_t
-To: Souptick Joarder <jrdr.linux@gmail.com>, fbarrat@linux.vnet.ibm.com,
-        arnd@arndb.de, gregkh@linuxfoundation.org
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        willy@infradead.org
-References: <20180417145354.GA31451@jordon-HP-15-Notebook-PC>
-From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Date: Wed, 18 Apr 2018 09:51:27 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180417145354.GA31451@jordon-HP-15-Notebook-PC>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-AU
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18041723-0040-0000-0000-000004302257
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041723-0041-0000-0000-000026342F99
-Message-Id: <384a35d1-30dd-55d1-4a19-d7c9dc99bdfb@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804170206
+       spf=pass (google.com: domain of kernel-hardening-return-12995-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12995-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Laura Abbott <labbott@redhat.com>
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Juergen Gross <jgross@suse.com>
+Cc: Laura Abbott <labbott@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	x86@kernel.org,
+	xen-devel@lists.xenproject.org,
+	linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com
+Subject: [PATCH] x86/xen: Remove use of VLAs
+Date: Fri, 13 Apr 2018 15:11:46 -0700
+Message-Id: <20180413221146.28476-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.14.3
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598005414798688515?=
-X-GMAIL-MSGID: =?utf-8?q?1598039363533169432?=
+X-GMAIL-THRID: =?utf-8?q?1597670729617678421?=
+X-GMAIL-MSGID: =?utf-8?q?1597670729617678421?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 18/04/18 00:53, Souptick Joarder wrote:
-> Use new return type vm_fault_t for fault handler. For
-> now, this is just documenting that the function returns
-> a VM_FAULT value rather than an errno. Once all instances
-> are converted, vm_fault_t will become a distinct type.
-> 
-> Reference id -> 1c8f422059ae ("mm: change return type to
-> vm_fault_t")
-> 
-> previously cxl_mmap_fault returns VM_FAULT_NOPAGE as
-> default value irrespective of vm_insert_pfn() return
-> value. This bug is fixed with new vmf_insert_pfn()
-> which will return VM_FAULT_ type based on err.
-> 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+There's an ongoing effort to remove VLAs[1] from the kernel to eventually
+turn on -Wvla. The few VLAs in use have an upper bound based on a size
+of 64K. This doesn't produce an excessively large stack so just switch
+the upper bound.
 
-This looks good to me
+[1] https://lkml.org/lkml/2018/3/7/621
 
-Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+---
+ arch/x86/xen/enlighten_pv.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+index c36d23aa6c35..d96a5a535cbb 100644
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -421,8 +421,7 @@ static void xen_load_gdt(const struct desc_ptr *dtr)
+ {
+ 	unsigned long va = dtr->address;
+ 	unsigned int size = dtr->size + 1;
+-	unsigned pages = DIV_ROUND_UP(size, PAGE_SIZE);
+-	unsigned long frames[pages];
++	unsigned long frames[DIV_ROUND_UP(SZ_64K, PAGE_SIZE)];
+ 	int f;
+ 
+ 	/*
+@@ -470,8 +469,7 @@ static void __init xen_load_gdt_boot(const struct desc_ptr *dtr)
+ {
+ 	unsigned long va = dtr->address;
+ 	unsigned int size = dtr->size + 1;
+-	unsigned pages = DIV_ROUND_UP(size, PAGE_SIZE);
+-	unsigned long frames[pages];
++	unsigned long frames[DIV_ROUND_UP(SZ_64K, PAGE_SIZE)];
+ 	int f;
+ 
+ 	/*
 -- 
-Andrew Donnellan              OzLabs, ADL Canberra
-andrew.donnellan@au1.ibm.com  IBM Australia Limited
+2.14.3
