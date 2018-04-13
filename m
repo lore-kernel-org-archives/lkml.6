@@ -1,99 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754574AbeDMK5s (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 06:57:48 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51062 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753602AbeDMK5q (ORCPT
+        id S1754121AbeDMLAc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:00:32 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41872 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752940AbeDMLA3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 06:57:46 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: spi-topcliff-pch: Replace GFP_ATOMIC with GFP_KERNEL in pch_spi_handle_dma" to the spi tree
-In-Reply-To: <1523351176-29741-1-git-send-email-baijiaju1990@gmail.com>
-Message-Id: <E1f6wOm-0007OQ-1a@debutante>
-Date: Fri, 13 Apr 2018 11:57:44 +0100
+        Fri, 13 Apr 2018 07:00:29 -0400
+X-Google-Smtp-Source: AIpwx4+4/JhOLZrdRmxAL4EuX9zepmcJatQzQVDUm6uUxGKUMMujWugoJCVCR/x/xZowMFqBVSZP/Q==
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: b.zolnierkie@samsung.com, edubezval@gmail.com, rui.zhang@intel.com
+Cc: philip.li@intel.com, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, daniel.lezcano@linaro.org,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org (open list:SAMSUNG THERMAL DRIVER),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG EXYNOS
+        ARM ARCHITECTURES)
+Subject: [PATCH] thermal/drivers/exynos_tmu: Fix warnings in temp_to_code / code_to_temp
+Date: Fri, 13 Apr 2018 13:00:09 +0200
+Message-Id: <1523617209-1730-1-git-send-email-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <10298074.ogKH1ypqfx@amdc3058>
+References: <10298074.ogKH1ypqfx@amdc3058>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+The latest driver cleanup introduced a compilation warning
 
-   spi: spi-topcliff-pch: Replace GFP_ATOMIC with GFP_KERNEL in pch_spi_handle_dma
+ drivers/thermal/samsung/exynos_tmu.c: In function ‘exynos_get_temp’:
+ drivers/thermal/samsung/exynos_tmu.c:931:37: warning: ‘temp’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+   *temp = code_to_temp(data, value) * MCELSIUS;
+                                        ^
 
-has been applied to the spi tree at
+ drivers/thermal/samsung/exynos_tmu.c: In function ‘temp_to_code’
+ drivers/thermal/samsung/exynos_tmu.c:304:9: warning: ‘temp_code’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+					  return temp_code;
+					           ^~~~~~~~~
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+The compiler gives a warning because semantically speaking the
+function has no default value. However the code path, were the
+variable is never initialized is a dead branch because the switch
+statement always choose one of the two cases as the data->cal_type is
+initialized in the init function to one of both values.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+This is unclear as it adds a dependency on the initialization function
+and it is prone to error. Make things clearer by converting the
+functions with if ... return statements, thus showing we are expecting
+the values to be correctly filled before calling this function.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+This change fixes the couple of function warnings.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From d16cd3eb8e5c62cd349987f57e3511b59cbe0198 Mon Sep 17 00:00:00 2001
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Date: Tue, 10 Apr 2018 17:06:16 +0800
-Subject: [PATCH] spi: spi-topcliff-pch: Replace GFP_ATOMIC with GFP_KERNEL in
- pch_spi_handle_dma
-
-pch_spi_handle_dma() is never called in atomic context.
-This function is only called by pch_spi_process_messages().
-pch_spi_process_messages() is only set as a parameter of INIT_WORK() in
-pch_spi_pd_probe().
-
-Despite never getting called from atomic context,
-pch_spi_handle_dma() calls kcalloc() with GFP_ATOMIC,
-which does not sleep for allocation.
-GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
-which can sleep and improve the possibility of sucessful allocation.
-
-This is found by a static analysis tool named DCNS written by myself.
-And I also manually check it.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/spi/spi-topcliff-pch.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/thermal/samsung/exynos_tmu.c | 46 ++++++++++--------------------------
+ 1 file changed, 12 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/spi/spi-topcliff-pch.c b/drivers/spi/spi-topcliff-pch.c
-index 97d137591b18..dc93ca9e001c 100644
---- a/drivers/spi/spi-topcliff-pch.c
-+++ b/drivers/spi/spi-topcliff-pch.c
-@@ -1007,7 +1007,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
- 	spin_unlock_irqrestore(&data->lock, flags);
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 2ec8548..197f267 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -284,24 +284,13 @@ static void exynos_report_trigger(struct exynos_tmu_data *p)
+  */
+ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
+ {
+-	int temp_code;
+-
+-	switch (data->cal_type) {
+-	case TYPE_TWO_POINT_TRIMMING:
+-		temp_code = (temp - EXYNOS_FIRST_POINT_TRIM) *
+-			(data->temp_error2 - data->temp_error1) /
+-			(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) +
+-			data->temp_error1;
+-		break;
+-	case TYPE_ONE_POINT_TRIMMING:
+-		temp_code = temp + data->temp_error1 - EXYNOS_FIRST_POINT_TRIM;
+-		break;
+-	default:
+-		WARN_ON(1);
+-		break;
+-	}
++	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
++		return temp + data->temp_error1 - EXYNOS_FIRST_POINT_TRIM;
  
- 	/* RX */
--	dma->sg_rx_p = kcalloc(num, sizeof(*dma->sg_rx_p), GFP_ATOMIC);
-+	dma->sg_rx_p = kcalloc(num, sizeof(*dma->sg_rx_p), GFP_KERNEL);
- 	sg_init_table(dma->sg_rx_p, num); /* Initialize SG table */
- 	/* offset, length setting */
- 	sg = dma->sg_rx_p;
-@@ -1067,7 +1067,7 @@ static void pch_spi_handle_dma(struct pch_spi_data *data, int *bpw)
- 		head = 0;
- 	}
+-	return temp_code;
++	return (temp - EXYNOS_FIRST_POINT_TRIM) *
++		(data->temp_error2 - data->temp_error1) /
++		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) +
++		data->temp_error1;
+ }
  
--	dma->sg_tx_p = kcalloc(num, sizeof(*dma->sg_tx_p), GFP_ATOMIC);
-+	dma->sg_tx_p = kcalloc(num, sizeof(*dma->sg_tx_p), GFP_KERNEL);
- 	sg_init_table(dma->sg_tx_p, num); /* Initialize SG table */
- 	/* offset, length setting */
- 	sg = dma->sg_tx_p;
+ /*
+@@ -310,24 +299,13 @@ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
+  */
+ static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
+ {
+-	int temp;
+-
+-	switch (data->cal_type) {
+-	case TYPE_TWO_POINT_TRIMMING:
+-		temp = (temp_code - data->temp_error1) *
+-			(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
+-			(data->temp_error2 - data->temp_error1) +
+-			EXYNOS_FIRST_POINT_TRIM;
+-		break;
+-	case TYPE_ONE_POINT_TRIMMING:
+-		temp = temp_code - data->temp_error1 + EXYNOS_FIRST_POINT_TRIM;
+-		break;
+-	default:
+-		WARN_ON(1);
+-		break;
+-	}
++	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
++		return temp_code - data->temp_error1 + EXYNOS_FIRST_POINT_TRIM;
+ 
+-	return temp;
++	return (temp_code - data->temp_error1) *
++		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
++		(data->temp_error2 - data->temp_error1) +
++		EXYNOS_FIRST_POINT_TRIM;
+ }
+ 
+ static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_info)
 -- 
-2.17.0
+2.7.4
