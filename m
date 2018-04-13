@@ -1,75 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754856AbeDMOCT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 10:02:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753588AbeDMOCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:02:14 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91558217DF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 13/17] perf tests: Disable breakpoint accounting test for powerpc
-Date: Fri, 13 Apr 2018 11:01:07 -0300
-Message-Id: <20180413140111.25313-14-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180413140111.25313-1-acme@kernel.org>
-References: <20180413140111.25313-1-acme@kernel.org>
+        id S1754841AbeDMOCG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 10:02:06 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:35779 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754818AbeDMOCC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 10:02:02 -0400
+X-Google-Smtp-Source: AIpwx4+U+1i5nDOzIt9sgjWCpkb4iY2FpBr16tclHAa1guDd/Re57mrfcOiUwchR2U9QIAMGdNNMlhDUowxsJIaCCxI=
+MIME-Version: 1.0
+In-Reply-To: <20180412150826.20988-25-mszeredi@redhat.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-25-mszeredi@redhat.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 13 Apr 2018 17:02:00 +0300
+Message-ID: <CAOQ4uxikOObrKptxGUFWkkko0LcaidYpVbDcVJJA3cFF8fwMAA@mail.gmail.com>
+Subject: Re: [RFC PATCH 24/35] Revert "ovl: fix relatime for directories"
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sandipan Das <sandipan@linux.vnet.ibm.com>
+On Thu, Apr 12, 2018 at 6:08 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
+> This reverts commit cd91304e7190b4c4802f8e413ab2214b233e0260.
+>
+> Overlayfs no longer relies on the vfs correct atime handling.
+>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/inode.c             | 21 ++++-----------------
+>  fs/overlayfs/super.c   |  3 ---
+>  include/linux/dcache.h |  3 ---
+>  3 files changed, 4 insertions(+), 23 deletions(-)
+>
+> diff --git a/fs/inode.c b/fs/inode.c
+> index ef362364d396..163715de8cb2 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1570,24 +1570,11 @@ EXPORT_SYMBOL(bmap);
+>  static void update_ovl_inode_times(struct dentry *dentry, struct inode *inode,
+>                                bool rcu)
+>  {
+> -       struct dentry *upperdentry;
+> +       if (!rcu) {
+> +               struct inode *realinode = d_real_inode(dentry);
+>
+> -       /*
+> -        * Nothing to do if in rcu or if non-overlayfs
+> -        */
+> -       if (rcu || likely(!(dentry->d_flags & DCACHE_OP_REAL)))
+> -               return;
+> -
+> -       upperdentry = d_real(dentry, NULL, 0, D_REAL_UPPER);
+> -
+> -       /*
+> -        * If file is on lower then we can't update atime, so no worries about
+> -        * stale mtime/ctime.
+> -        */
+> -       if (upperdentry) {
+> -               struct inode *realinode = d_inode(upperdentry);
+> -
+> -               if ((!timespec_equal(&inode->i_mtime, &realinode->i_mtime) ||
+> +               if (unlikely(inode != realinode) &&
+> +                   (!timespec_equal(&inode->i_mtime, &realinode->i_mtime) ||
+>                      !timespec_equal(&inode->i_ctime, &realinode->i_ctime))) {
+>                         inode->i_mtime = realinode->i_mtime;
+>                         inode->i_ctime = realinode->i_ctime;
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index c3d8c7ea180f..006dc70d7425 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -107,9 +107,6 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
+>         if (inode && d_inode(dentry) == inode)
+>                 return dentry;
+>
+> -       if (flags & D_REAL_UPPER)
+> -               return ovl_dentry_upper(dentry);
+> -
+>         if (!d_is_reg(dentry)) {
+>                 if (!inode || inode == d_inode(dentry))
+>                         return dentry;
+> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+> index 82a99d366aec..4c7ab11c627a 100644
+> --- a/include/linux/dcache.h
+> +++ b/include/linux/dcache.h
+> @@ -565,9 +565,6 @@ static inline struct dentry *d_backing_dentry(struct dentry *upper)
+>         return upper;
+>  }
+>
+> -/* d_real() flags */
+> -#define D_REAL_UPPER   0x2     /* return upper dentry or NULL if non-upper */
+> -
 
-We disable this test as instruction breakpoints (HW_BREAKPOINT_X) are
-not available for powerpc.
+Premature removal of constant. Still in use by may_write_real() at this point.
 
-Before applying patch:
-
-  21: Breakpoint accounting                                 :
-  --- start ---
-  test child forked, pid 3635
-  failed opening event 0
-  failed opening event 0
-  watchpoints count 1, breakpoints count 0, has_ioctl 1, share 0
-  test child finished with -2
-  ---- end ----
-  Breakpoint accounting: Skip
-
-After applying patch:
-
-  21: Breakpoint accounting                                 : Disabled
-
-Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/20180412162140.2992-1-sandipan@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/tests/builtin-test.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index 625f5a6772af..cac8f8889bc3 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -118,6 +118,7 @@ static struct test generic_tests[] = {
- 	{
- 		.desc = "Breakpoint accounting",
- 		.func = test__bp_accounting,
-+		.is_supported = test__bp_signal_is_supported,
- 	},
- 	{
- 		.desc = "Number of exit events of a simple workload",
--- 
-2.14.3
+Thanks,
+Amir.
