@@ -1,134 +1,279 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754819AbeDMLsW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:48:22 -0400
-Received: from mail-db5eur01on0109.outbound.protection.outlook.com ([104.47.2.109]:45246
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754800AbeDMLsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:48:19 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se;
-From: Peter Rosin <peda@axentia.se>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Subject: [PATCH v3 2/2] ASoC: tfa9879: switch to SPDX license tag
-Date: Fri, 13 Apr 2018 13:47:51 +0200
-Message-Id: <20180413114751.6464-3-peda@axentia.se>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180413114751.6464-1-peda@axentia.se>
-References: <20180413111927.GC6854@sirena.org.uk>
- <20180413114751.6464-1-peda@axentia.se>
+        id S1754360AbeDMLs6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:48:58 -0400
+Received: from foss.arm.com ([217.140.101.70]:41786 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751160AbeDMLs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 07:48:57 -0400
+Subject: Re: [PATCH v2 2/2] dmaengine: stm32-mdma: Fix incomplete Hw
+ descriptors allocator
+To: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "M'boumba Cedric Madianga" <cedric.madianga@gmail.com>,
+        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <1523457879-9869-1-git-send-email-pierre-yves.mordret@st.com>
+ <1523457879-9869-3-git-send-email-pierre-yves.mordret@st.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <cedd56ac-f0c5-a015-6349-81d1eaa7ffdb@arm.com>
+Date: Fri, 13 Apr 2018 12:48:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [85.226.244.23]
-X-ClientProxiedBy: AM5PR04CA0033.eurprd04.prod.outlook.com
- (2603:10a6:206:1::46) To VI1PR0202MB2782.eurprd02.prod.outlook.com
- (2603:10a6:800:db::7)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:VI1PR0202MB2782;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2782;3:kImIL3OgT5Q6buotWpTh6qLay+lG4+fE6U38Ib8/cOLon3zRke2HLdTxrZKYPGpC0cIznoNw9gnu9MYfSt7jEyW8lNR920q9f7ZCQrlW2Q7V70SXgOhBxQvB/nrIK/WaQoMt1q6u4PpJkDyzPVetj1ObYuVUIV5AG8dyhTCzZTnmP5eKGAz45UpE94ywUfKTPTsI6d/gPZPouhwWhTWFbYCadX3YcJDzA/pe4f0SnbMRReotVo4Lrj08TpZZOAN1;25:a29ebFWE2MebeqAmHRK8z0yQB/MnjboElvfvKmnfwtlNBVWJsjgwSjIPQ4BadzU4N1Ftcvjc+avi6hMkyqPOBT98ArOPmK5VvYF+koKHugUuDB1XBBZsXx22fh35+y/Cky4nnjF+ATmU+W4Zyua0pWvgTZeryTUIPSc7jOqE3kiC/T6XdfQoJ/qHw2bTU91EwL4rrdDpSpFD/bF4+3AJE32NQHyidEY/XRo2sMjJjt7V+XtEN2cltS2ntWU9sgpcPo2VVYYmcEeg9nmHPgraAgjCBDVRNS+Okl2nukEQdSm95HmDTgDH8ql98fywJVvW/39XWdzi4oYHRcxky451qA==;31:ImyAsfFtLHl+DwP9U/9j8x/Qw328ml9D0r5YZPCta1Rbe2jnGxICBGL3wfBJix91V8dfn7GrSStb87MzjzrcFgD1p++Ddhbotgb5XkkDkIz+QvAdV6eSUeiPRcLS6zjKy5jKaTHIwqDGRzydE8jmUlCneBbdVZs0sZKjQ5XHrHCgPtSMZF8n+0UNSgHxJ2tlxgw3d7Y/rIe7u+9XuUiqLwTm6cn8u2Z84w76YhSQIuY=
-X-MS-TrafficTypeDiagnostic: VI1PR0202MB2782:
-X-Microsoft-Antispam-PRVS: <VI1PR0202MB2782EF1E8D9197166DE26EA8BCB30@VI1PR0202MB2782.eurprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231232)(944501327)(52105095)(10201501046)(93006095)(93001095)(3002001)(6041310)(20161123560045)(20161123564045)(20161123562045)(2016111802025)(20161123558120)(6043046)(6072148)(201708071742011);SRVR:VI1PR0202MB2782;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0202MB2782;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2782;4:lsr3vU4K6u9d4yO+dTu6TS5lg970T5LUsUtUvXaSwkbh3H8BXJ/tTWOGL5j/l7oy11701K+cT1/NnSpQM5p3tOX7SmL6YHp22Gl4suE/2VaanzN7/nABHQTxhnwEljrVijT2bJDu1qAByfHBIgQe/yEoERr8U314kF1XJYMHe2Vl1IyB/2L08ty4HpFWcEqxrSe8mfzbsD2PYCwEXwfXHnLpZHTMPVkQ8TWDlOWJlvZvyqfL8EmFIXp9TmHruadj5DmYmJcPShdrFyKszGM82g==
-X-Forefront-PRVS: 0641678E68
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39830400003)(39380400002)(396003)(376002)(366004)(346002)(199004)(189003)(956004)(11346002)(6116002)(476003)(8676002)(54906003)(386003)(2616005)(6506007)(36756003)(2351001)(81166006)(76176011)(316002)(16586007)(6666003)(86362001)(8936002)(6486002)(81156014)(446003)(74482002)(305945005)(6916009)(26005)(16526019)(186003)(5660300001)(50226002)(106356001)(7736002)(39060400002)(50466002)(6512007)(486006)(48376002)(2906002)(68736007)(53936002)(47776003)(4326008)(105586002)(25786009)(97736004)(2361001)(1076002)(3846002)(51416003)(66066001)(52116002)(478600001)(2004002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0202MB2782;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0202MB2782;23:MyyWriMv/v3USastL2fveYyRWXFSjUf9fc5DrcN?=
- =?us-ascii?Q?p51YmpZ0JYmlwUEn+7ziqgzrViKQeizwisNgXYzWrZcHCnQbzvxe0mSWBOjJ?=
- =?us-ascii?Q?uSS05ED6Qg39QxPfV5MQaqmdlZOkPbKiqs305NvJFB+mErNVt+F0x2Ix48H9?=
- =?us-ascii?Q?Av7bCVZnMycw2DPLJR1MmNnfN+lB9j7LCwOFsJ3tySHvyC1Jtsz4mMtuWvsK?=
- =?us-ascii?Q?HoZZOkJDHl9hR8ktwJKGqyvahPRyHNV9x4Yw1pyiNw4MetbQfRr32UySOqfS?=
- =?us-ascii?Q?z5PAe179KLPNcxhroMbZ8jvR1RQKKngcX1uFRZUdA8UAZANqVBeb0u9loPM7?=
- =?us-ascii?Q?cB0svNNOgZIwadJzvqRW11DGFeGdhmRrHdVn07kOAiffCeJpS9llD8E2E02v?=
- =?us-ascii?Q?aBlJzDlDrToMRrYY/NgoFkBJVTE+tWcKwns7FRail2Bh6VWDFlPbQWf2yE4W?=
- =?us-ascii?Q?OGY7pOwCGFqeE2cN7BQBYYEaPkBYM7xaPnNoMbq//6CKBbO3Z2iTTrj9BeOo?=
- =?us-ascii?Q?uanC3B+8NpSuG9pGZrzd2QCKs0tG/Tdjd+kU7u2a6a5bqC+woHDWLz0IHF11?=
- =?us-ascii?Q?dY06RDK0ZmbPfeNjx0nuHPbYYdkCG/4stkZhuFR5Gv3VfBNyIy/xN7skfMdQ?=
- =?us-ascii?Q?swMtoK9Js3x2lApMzjjxc7GyPrxWzZiu6cb9c60K8B8/2dqNWM1OFdC7YL58?=
- =?us-ascii?Q?+u6Mti8EHAkvexnC6BFyKMB6Np9Zg0WnQpu3gR0hFt+GTBHAeQl1x9U7zHJp?=
- =?us-ascii?Q?j2VP4lYt1xLpqYbnrVFPgEoERukzDaNCLy1lPZquZhhRlzhfpfmYIfQwXJaw?=
- =?us-ascii?Q?XACEo0RjNxfJ711xny4iwyHMQdlfEbgPkzONkRtO1ZIMSP2w1l4222IzPMUl?=
- =?us-ascii?Q?A1NLd38qoHJzYsRRqSjM9kYV5B4aTditd7+31EIJrAxPRr4iWuobzZjKGDE8?=
- =?us-ascii?Q?sVaZnR8+M0ZaXmldO6peH+NBCj6unsPi+462KxlHo3sxDWNWyJsiHrbxb+xs?=
- =?us-ascii?Q?1H9i8eWX4JxkoWtgwtg7IcrfAPq9NwqKoP0JjOTQgexkb2/GF235TVfii9m/?=
- =?us-ascii?Q?KaJye6yrqFMY7TgFUZuMz3g/hk294uOQdukp2pYIvGU9wWa6YRf74TQzO7uI?=
- =?us-ascii?Q?xZ6h1p0gUsf2luRuu/JCTzjnSdx7BdIEA1Jas/ubJ0BijQV+c9rgHmL9+cxk?=
- =?us-ascii?Q?mKA0sDwE0SIszGySO3PHR/flbA5IN73dBFflIIyi7lPxMgo94WS36+GQDOJM?=
- =?us-ascii?Q?wfszx3Q9RqkxXVghiSDTUuTlm2/Mxone0XSdjLP8TwrwqUzsahwvQm8fFPdZ?=
- =?us-ascii?Q?3BKZh+oMgyMY+KpcTU79TPAzIYWFDj/iGO38GOAIchBLS?=
-X-Microsoft-Antispam-Message-Info: FPBluSTWY/ZwZshYCn8c/WzXbZDDqKMeOv7gFajK5RdqNNpCVtAMGqQo6mW1tExS8fs15mFWsP+S6FHt2URkWwoc2GWlFcGkoFcVF17O9X7yzgLohVuW18Z64sOy6MXlh8N6MglpEM8+jahXJiT0VnWYimflf1efVucKt4zP8rNZnXGMjhGUOBy3LhTQ+8YF
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2782;6:AnOksTtOtxpCEn+6GBvjZ19DkDuBZrS9h1yuXn6Yb7I44/j+jNofu8W63pEQ1IDcRZOEuKCA0r33D2g6oKle09wr6fwLZ9C7/MN4ErwD4/bbuq8kvd5zzJTUklSPUZHfIc+3hpTAl3vndAHgGLo2mIMV9Q9RnxzYdsXlDQdceHjA6aQ3Yg3XWP9I0O2tc9ZumUOXWWF3CrvhG5d2rjtGX5nr416Q5zkp84//O/7lGlKatOnTLBRRmyQCpfKn2Qf2/UMlODcPI05U6VimzTcjQP4fkIzph2uCjDVJqEeuvw6wchztdcsCf7rqWEFqnYWnGzlTPcutYw9Z2FS5R8jiViIru7Z1Ap/EYzt5/y5VPeJr8VAXTEMqVFVZzInElsf2T0X2lSFqcuN6F5oCUCHRAl2jUEajY+q7urOhetc3YBofl4FXVMRdeWFJ2IXQujrCtjgOoRqYzJ6Qz5w8EUVZPg==;5:xgNvQUnj65A/bI3b5pQ3hvVgUAJ0LR0cwD7zZjokEAlmoOc0MPrMWn4EpcKzX+qIPEbDfKHPDJ2Fu1nHMGBUfB742eKvhSPFXi0vWS6x3n4z/xdjHikm+FdeX0mTwxD450HIs3lCKcytIvmIHk9/LoK2UB1KVfNqRMm0EzqioC8=;24:V+UYyN7Wo/90ZocgDn3dP7vg6WpMwJFF8PwXpqRjQlqtHLhCwDhd1VPgwPP703uTUwAjuqujhzJkRYcbChSL208R3YeRgVNz31/YfwZ2qhg=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2782;7:Z+08wIU+29ZZIGsipKvY+7xfdZdx/QMs8Fz1SkdHnBLaNUingmRHaTWLmy5/qBYzowneSEqARhEN+D4dCkjCtlIHt883TBCOeT9sz5f2v2nWji6O2XQGWcs58XeOLxMTFI51br05kt55zhVkMg8fl0phNE28/PEs4p90RTQiM8Gie9jT6r7hOPDEvA6DyjOq3YPKXExvtYBnYYnxFeMzl5FvnN3tz8a8XVh3Dl/YQR/o9z7I21MVh98NzyFdynsG
-X-MS-Office365-Filtering-Correlation-Id: de83af9f-8ed8-48db-e7dd-08d5a134726e
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Apr 2018 11:48:16.8347 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: de83af9f-8ed8-48db-e7dd-08d5a134726e
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0202MB2782
+In-Reply-To: <1523457879-9869-3-git-send-email-pierre-yves.mordret@st.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's less overhead, clearer and generally neater.
+On 11/04/18 15:44, Pierre-Yves MORDRET wrote:
+> Only 1 Hw Descriptor is allocated. Loop over required Hw descriptor for
+> proper allocation.
+> 
+> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+> ---
+>    Version history:
+>      v1:
+>         * Initial
+>      v2:
+>         * Fix kbuild warning format: /0x%08x/%pad/
+> ---
+> ---
+>   drivers/dma/stm32-mdma.c | 90 ++++++++++++++++++++++++++++++------------------
+>   1 file changed, 56 insertions(+), 34 deletions(-)
+> 
+> diff --git a/drivers/dma/stm32-mdma.c b/drivers/dma/stm32-mdma.c
+> index fbcffa2..3a477bc 100644
+> --- a/drivers/dma/stm32-mdma.c
+> +++ b/drivers/dma/stm32-mdma.c
+> @@ -252,13 +252,17 @@ struct stm32_mdma_hwdesc {
+>   	u32 cmdr;
+>   } __aligned(64);
+>   
+> +struct stm32_mdma_desc_node {
+> +	struct stm32_mdma_hwdesc *hwdesc;
+> +	dma_addr_t hwdesc_phys;
+> +};
+> +
+>   struct stm32_mdma_desc {
+>   	struct virt_dma_desc vdesc;
+>   	u32 ccr;
+> -	struct stm32_mdma_hwdesc *hwdesc;
+> -	dma_addr_t hwdesc_phys;
+>   	bool cyclic;
+>   	u32 count;
+> +	struct stm32_mdma_desc_node node[];
+>   };
+>   
+>   struct stm32_mdma_chan {
+> @@ -344,30 +348,43 @@ static struct stm32_mdma_desc *stm32_mdma_alloc_desc(
+>   		struct stm32_mdma_chan *chan, u32 count)
+>   {
+>   	struct stm32_mdma_desc *desc;
+> +	int i;
+>   
+> -	desc = kzalloc(sizeof(*desc), GFP_NOWAIT);
+> +	desc = kzalloc(sizeof(*desc) +
+> +		       sizeof(struct stm32_mdma_desc_node) * count, GFP_NOWAIT);
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- sound/soc/codecs/tfa9879.c | 18 ++++++------------
- sound/soc/codecs/tfa9879.h |  7 +------
- 2 files changed, 7 insertions(+), 18 deletions(-)
+You could use "offsetof(typeof(*desc), node[count])" instead of the 
+explicit calculation here.
 
-diff --git a/sound/soc/codecs/tfa9879.c b/sound/soc/codecs/tfa9879.c
-index 4ed020262a27..abc114a3ae2b 100644
---- a/sound/soc/codecs/tfa9879.c
-+++ b/sound/soc/codecs/tfa9879.c
-@@ -1,15 +1,9 @@
--/*
-- * tfa9879.c  --  driver for NXP Semiconductors TFA9879
-- *
-- * Copyright (C) 2014 Axentia Technologies AB
-- * Author: Peter Rosin <peda@axentia.se>
-- *
-- *  This program is free software; you can redistribute  it and/or modify it
-- *  under  the terms of  the GNU General  Public License as published by the
-- *  Free Software Foundation;  either version 2 of the  License, or (at your
-- *  option) any later version.
-- *
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// tfa9879.c  --  driver for NXP Semiconductors TFA9879
-+//
-+// Copyright (C) 2014 Axentia Technologies AB
-+// Author: Peter Rosin <peda@axentia.se>
- 
- #include <linux/module.h>
- #include <linux/init.h>
-diff --git a/sound/soc/codecs/tfa9879.h b/sound/soc/codecs/tfa9879.h
-index 3408c90c4628..66c88d0396fe 100644
---- a/sound/soc/codecs/tfa9879.h
-+++ b/sound/soc/codecs/tfa9879.h
-@@ -1,14 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * tfa9879.h  --  driver for NXP Semiconductors TFA9879
-  *
-  * Copyright (C) 2014 Axentia Technologies AB
-  * Author: Peter Rosin <peda@axentia.se>
-- *
-- *  This program is free software; you can redistribute  it and/or modify it
-- *  under  the terms of  the GNU General  Public License as published by the
-- *  Free Software Foundation;  either version 2 of the  License, or (at your
-- *  option) any later version.
-- *
-  */
- 
- #ifndef _TFA9879_H
--- 
-2.11.0
+Robin.
+
+>   	if (!desc)
+>   		return NULL;
+>   
+> -	desc->hwdesc = dma_pool_alloc(chan->desc_pool, GFP_NOWAIT,
+> -				      &desc->hwdesc_phys);
+> -	if (!desc->hwdesc) {
+> -		dev_err(chan2dev(chan), "Failed to allocate descriptor\n");
+> -		kfree(desc);
+> -		return NULL;
+> +	for (i = 0; i < count; i++) {
+> +		desc->node[i].hwdesc =
+> +			dma_pool_alloc(chan->desc_pool, GFP_NOWAIT,
+> +				       &desc->node[i].hwdesc_phys);
+> +		if (!desc->node[i].hwdesc)
+> +			goto err;
+>   	}
+>   
+>   	desc->count = count;
+>   
+>   	return desc;
+> +
+> +err:
+> +	dev_err(chan2dev(chan), "Failed to allocate descriptor\n");
+> +	while (--i >= 0)
+> +		dma_pool_free(chan->desc_pool, desc->node[i].hwdesc,
+> +			      desc->node[i].hwdesc_phys);
+> +	kfree(desc);
+> +	return NULL;
+>   }
+>   
+>   static void stm32_mdma_desc_free(struct virt_dma_desc *vdesc)
+>   {
+>   	struct stm32_mdma_desc *desc = to_stm32_mdma_desc(vdesc);
+>   	struct stm32_mdma_chan *chan = to_stm32_mdma_chan(vdesc->tx.chan);
+> +	int i;
+>   
+> -	dma_pool_free(chan->desc_pool, desc->hwdesc, desc->hwdesc_phys);
+> +	for (i = 0; i < desc->count; i++)
+> +		dma_pool_free(chan->desc_pool, desc->node[i].hwdesc,
+> +			      desc->node[i].hwdesc_phys);
+>   	kfree(desc);
+>   }
+>   
+> @@ -669,18 +686,18 @@ static int stm32_mdma_set_xfer_param(struct stm32_mdma_chan *chan,
+>   }
+>   
+>   static void stm32_mdma_dump_hwdesc(struct stm32_mdma_chan *chan,
+> -				   struct stm32_mdma_hwdesc *hwdesc)
+> +				   struct stm32_mdma_desc_node *node)
+>   {
+> -	dev_dbg(chan2dev(chan), "hwdesc:  0x%p\n", hwdesc);
+> -	dev_dbg(chan2dev(chan), "CTCR:    0x%08x\n", hwdesc->ctcr);
+> -	dev_dbg(chan2dev(chan), "CBNDTR:  0x%08x\n", hwdesc->cbndtr);
+> -	dev_dbg(chan2dev(chan), "CSAR:    0x%08x\n", hwdesc->csar);
+> -	dev_dbg(chan2dev(chan), "CDAR:    0x%08x\n", hwdesc->cdar);
+> -	dev_dbg(chan2dev(chan), "CBRUR:   0x%08x\n", hwdesc->cbrur);
+> -	dev_dbg(chan2dev(chan), "CLAR:    0x%08x\n", hwdesc->clar);
+> -	dev_dbg(chan2dev(chan), "CTBR:    0x%08x\n", hwdesc->ctbr);
+> -	dev_dbg(chan2dev(chan), "CMAR:    0x%08x\n", hwdesc->cmar);
+> -	dev_dbg(chan2dev(chan), "CMDR:    0x%08x\n\n", hwdesc->cmdr);
+> +	dev_dbg(chan2dev(chan), "hwdesc:  %pad\n", &node->hwdesc_phys);
+> +	dev_dbg(chan2dev(chan), "CTCR:    0x%08x\n", node->hwdesc->ctcr);
+> +	dev_dbg(chan2dev(chan), "CBNDTR:  0x%08x\n", node->hwdesc->cbndtr);
+> +	dev_dbg(chan2dev(chan), "CSAR:    0x%08x\n", node->hwdesc->csar);
+> +	dev_dbg(chan2dev(chan), "CDAR:    0x%08x\n", node->hwdesc->cdar);
+> +	dev_dbg(chan2dev(chan), "CBRUR:   0x%08x\n", node->hwdesc->cbrur);
+> +	dev_dbg(chan2dev(chan), "CLAR:    0x%08x\n", node->hwdesc->clar);
+> +	dev_dbg(chan2dev(chan), "CTBR:    0x%08x\n", node->hwdesc->ctbr);
+> +	dev_dbg(chan2dev(chan), "CMAR:    0x%08x\n", node->hwdesc->cmar);
+> +	dev_dbg(chan2dev(chan), "CMDR:    0x%08x\n\n", node->hwdesc->cmdr);
+>   }
+>   
+>   static void stm32_mdma_setup_hwdesc(struct stm32_mdma_chan *chan,
+> @@ -694,7 +711,7 @@ static void stm32_mdma_setup_hwdesc(struct stm32_mdma_chan *chan,
+>   	struct stm32_mdma_hwdesc *hwdesc;
+>   	u32 next = count + 1;
+>   
+> -	hwdesc = &desc->hwdesc[count];
+> +	hwdesc = desc->node[count].hwdesc;
+>   	hwdesc->ctcr = ctcr;
+>   	hwdesc->cbndtr &= ~(STM32_MDMA_CBNDTR_BRC_MK |
+>   			STM32_MDMA_CBNDTR_BRDUM |
+> @@ -704,19 +721,20 @@ static void stm32_mdma_setup_hwdesc(struct stm32_mdma_chan *chan,
+>   	hwdesc->csar = src_addr;
+>   	hwdesc->cdar = dst_addr;
+>   	hwdesc->cbrur = 0;
+> -	hwdesc->clar = desc->hwdesc_phys + next * sizeof(*hwdesc);
+>   	hwdesc->ctbr = ctbr;
+>   	hwdesc->cmar = config->mask_addr;
+>   	hwdesc->cmdr = config->mask_data;
+>   
+>   	if (is_last) {
+>   		if (is_cyclic)
+> -			hwdesc->clar = desc->hwdesc_phys;
+> +			hwdesc->clar = desc->node[0].hwdesc_phys;
+>   		else
+>   			hwdesc->clar = 0;
+> +	} else {
+> +		hwdesc->clar = desc->node[next].hwdesc_phys;
+>   	}
+>   
+> -	stm32_mdma_dump_hwdesc(chan, hwdesc);
+> +	stm32_mdma_dump_hwdesc(chan, &desc->node[count]);
+>   }
+>   
+>   static int stm32_mdma_setup_xfer(struct stm32_mdma_chan *chan,
+> @@ -780,7 +798,7 @@ stm32_mdma_prep_slave_sg(struct dma_chan *c, struct scatterlist *sgl,
+>   {
+>   	struct stm32_mdma_chan *chan = to_stm32_mdma_chan(c);
+>   	struct stm32_mdma_desc *desc;
+> -	int ret;
+> +	int i, ret;
+>   
+>   	/*
+>   	 * Once DMA is in setup cyclic mode the channel we cannot assign this
+> @@ -806,7 +824,9 @@ stm32_mdma_prep_slave_sg(struct dma_chan *c, struct scatterlist *sgl,
+>   	return vchan_tx_prep(&chan->vchan, &desc->vdesc, flags);
+>   
+>   xfer_setup_err:
+> -	dma_pool_free(chan->desc_pool, &desc->hwdesc, desc->hwdesc_phys);
+> +	for (i = 0; i < desc->count; i++)
+> +		dma_pool_free(chan->desc_pool, desc->node[i].hwdesc,
+> +			      desc->node[i].hwdesc_phys);
+>   	kfree(desc);
+>   	return NULL;
+>   }
+> @@ -895,7 +915,9 @@ stm32_mdma_prep_dma_cyclic(struct dma_chan *c, dma_addr_t buf_addr,
+>   	return vchan_tx_prep(&chan->vchan, &desc->vdesc, flags);
+>   
+>   xfer_setup_err:
+> -	dma_pool_free(chan->desc_pool, &desc->hwdesc, desc->hwdesc_phys);
+> +	for (i = 0; i < desc->count; i++)
+> +		dma_pool_free(chan->desc_pool, desc->node[i].hwdesc,
+> +			      desc->node[i].hwdesc_phys);
+>   	kfree(desc);
+>   	return NULL;
+>   }
+> @@ -1009,7 +1031,7 @@ stm32_mdma_prep_dma_memcpy(struct dma_chan *c, dma_addr_t dest, dma_addr_t src,
+>   			ctcr |= STM32_MDMA_CTCR_PKE;
+>   
+>   		/* Prepare hardware descriptor */
+> -		hwdesc = desc->hwdesc;
+> +		hwdesc = desc->node[0].hwdesc;
+>   		hwdesc->ctcr = ctcr;
+>   		hwdesc->cbndtr = cbndtr;
+>   		hwdesc->csar = src;
+> @@ -1020,7 +1042,7 @@ stm32_mdma_prep_dma_memcpy(struct dma_chan *c, dma_addr_t dest, dma_addr_t src,
+>   		hwdesc->cmar = 0;
+>   		hwdesc->cmdr = 0;
+>   
+> -		stm32_mdma_dump_hwdesc(chan, hwdesc);
+> +		stm32_mdma_dump_hwdesc(chan, &desc->node[0]);
+>   	} else {
+>   		/* Setup a LLI transfer */
+>   		ctcr |= STM32_MDMA_CTCR_TRGM(STM32_MDMA_LINKED_LIST) |
+> @@ -1120,7 +1142,7 @@ static void stm32_mdma_start_transfer(struct stm32_mdma_chan *chan)
+>   	}
+>   
+>   	chan->desc = to_stm32_mdma_desc(vdesc);
+> -	hwdesc = chan->desc->hwdesc;
+> +	hwdesc = chan->desc->node[0].hwdesc;
+>   	chan->curr_hwdesc = 0;
+>   
+>   	stm32_mdma_write(dmadev, STM32_MDMA_CCR(id), chan->desc->ccr);
+> @@ -1198,7 +1220,7 @@ static int stm32_mdma_resume(struct dma_chan *c)
+>   	unsigned long flags;
+>   	u32 status, reg;
+>   
+> -	hwdesc = &chan->desc->hwdesc[chan->curr_hwdesc];
+> +	hwdesc = chan->desc->node[chan->curr_hwdesc].hwdesc;
+>   
+>   	spin_lock_irqsave(&chan->vchan.lock, flags);
+>   
+> @@ -1268,13 +1290,13 @@ static size_t stm32_mdma_desc_residue(struct stm32_mdma_chan *chan,
+>   				      u32 curr_hwdesc)
+>   {
+>   	struct stm32_mdma_device *dmadev = stm32_mdma_get_dev(chan);
+> +	struct stm32_mdma_hwdesc *hwdesc = desc->node[0].hwdesc;
+>   	u32 cbndtr, residue, modulo, burst_size;
+>   	int i;
+>   
+>   	residue = 0;
+>   	for (i = curr_hwdesc + 1; i < desc->count; i++) {
+> -		struct stm32_mdma_hwdesc *hwdesc = &desc->hwdesc[i];
+> -
+> +		hwdesc = desc->node[i].hwdesc;
+>   		residue += STM32_MDMA_CBNDTR_BNDT(hwdesc->cbndtr);
+>   	}
+>   	cbndtr = stm32_mdma_read(dmadev, STM32_MDMA_CBNDTR(chan->id));
+> 
