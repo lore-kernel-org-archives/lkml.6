@@ -1,57 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754960AbeDMODj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 10:03:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54126 "EHLO mail.kernel.org"
+        id S1755000AbeDMOE2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 10:04:28 -0400
+Received: from mga18.intel.com ([134.134.136.126]:37610 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754414AbeDMOCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:02:11 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 481162183C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Takuya Yamamoto <tkydevel@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 12/17] perf sched: Fix documentation for timehist
-Date: Fri, 13 Apr 2018 11:01:06 -0300
-Message-Id: <20180413140111.25313-13-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180413140111.25313-1-acme@kernel.org>
-References: <20180413140111.25313-1-acme@kernel.org>
+        id S1754984AbeDMOEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 10:04:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,445,1517904000";
+   d="scan'208";a="43076940"
+Message-ID: <1523628262.2142.4.camel@intel.com>
+Subject: [GIT PULL V2] Thermal management updates for v4.17-rc1
+From: Zhang Rui <rui.zhang@intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        "Zhang, Rui" <rui.zhang@intel.com>
+Date: Fri, 13 Apr 2018 22:04:22 +0800
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takuya Yamamoto <tkydevel@gmail.com>
+Hi, Linus,
 
-Fixed a incorrect option and usage to those shown by "perf sched timehist -h",
-i.e. the default is really --call-graph, which is equivalent to -g.
+Please pull from
+  git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next
 
-Signed-off-by: Takuya Yamamoto <tkydevel@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lkml.kernel.org/n/tip-8fzo0dlsi1mku5aqx8brep5s@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/Documentation/perf-sched.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+to receive the latest Thermal Management updates for v4.17-rc1 with
+top-most commit b907b408ca64482989cd95dacef804ce509a3673:
 
-diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
-index bb33601a823b..63f938b887dd 100644
---- a/tools/perf/Documentation/perf-sched.txt
-+++ b/tools/perf/Documentation/perf-sched.txt
-@@ -104,8 +104,8 @@ OPTIONS for 'perf sched timehist'
-     kallsyms pathname
- 
- -g::
----no-call-graph::
--	Do not display call chains if present.
-+--call-graph::
-+	Display call chains if present (default on).
- 
- --max-stack::
- 	Maximum number of functions to display in backtrace, default 5.
--- 
-2.14.3
+  Merge branches 'thermal-core' and 'thermal-soc' into next (2018-04-13 
+14:11:53 +0800)
+
+on top of commit 0c8efd610b58cb23cefdfa12015799079aef94ae:
+
+  Linux 4.16-rc5 (2018-03-11 17:25:09 -0700)
+
+Differences in V2:
+- Dropped all patches from thermal-soc tree, including the exynos patch
+that introduces the compiler warnings.
+
+Specifics:
+
+- Fix race condition in imx_thermal_probe(). (Mikhail Lappo)
+
+- Add cooling device's statistics in sysfs. (Viresh Kumar)
+
+thanks,
+rui
+
+----------------------------------------------------------------
+Mikhail Lappo (1):
+      thermal: imx: Fix race condition in imx_thermal_probe()
+
+Viresh Kumar (1):
+      thermal: Add cooling device's statistics in sysfs
+
+Zhang Rui (1):
+      Merge branches 'thermal-core' and 'thermal-soc' into next
+
+ Documentation/thermal/sysfs-api.txt |  31 +++++
+ drivers/thermal/Kconfig             |   7 ++
+ drivers/thermal/imx_thermal.c       |   6 +-
+ drivers/thermal/thermal_core.c      |   3 +-
+ drivers/thermal/thermal_core.h      |  10 ++
+ drivers/thermal/thermal_helpers.c   |   5 +-
+ drivers/thermal/thermal_sysfs.c     | 225
+++++++++++++++++++++++++++++++++++++
+ include/linux/thermal.h             |   1 +
+ 8 files changed, 283 insertions(+), 5 deletions(-)
