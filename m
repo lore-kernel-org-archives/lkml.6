@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752928AbeDMQoc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 12:44:32 -0400
-Received: from mail-ua0-f201.google.com ([209.85.217.201]:38732 "EHLO
-        mail-ua0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752677AbeDMQoZ (ORCPT
+        id S1752973AbeDMQox (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 12:44:53 -0400
+Received: from mail-it0-f73.google.com ([209.85.214.73]:35923 "EHLO
+        mail-it0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752821AbeDMQo3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 12:44:25 -0400
-X-Google-Smtp-Source: AIpwx4+Jh3DNCB357yZN44ys3aOxo4R4VjJnGXEBz40t1YG+Fo/kTBjtPgtf6pIRjm9AkZ1orLsPogEBQ9v+
+        Fri, 13 Apr 2018 12:44:29 -0400
+X-Google-Smtp-Source: AIpwx49tk00eZ2U0SMSgkPfTd7wF76U9r2SYGH8ZomcUM+wKAazadZC+DUCZaot48nGURNOhsfLmjqEeMfMb
 MIME-Version: 1.0
-Date: Fri, 13 Apr 2018 09:44:04 -0700
+Date: Fri, 13 Apr 2018 09:44:05 -0700
 In-Reply-To: <20180413164405.127522-1-hansens@google.com>
-Message-Id: <20180413164405.127522-2-hansens@google.com>
+Message-Id: <20180413164405.127522-3-hansens@google.com>
 References: <CAP9bUy7rONNHYeRkYtaWHcfqoZcGKXJz-JocED26zBj9n+-ZbQ@mail.gmail.com>
  <20180413164405.127522-1-hansens@google.com>
 X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
-Subject: [PATCH v2 2/3] Documentation/i2c: sync docs with current state of i2c-tools
+Subject: [PATCH v2 3/3] Documentation/i2c: adopt kernel commenting style in examples
 From: Sam Hansen <hansens@google.com>
 To: linux-i2c@vger.kernel.org, hansens@google.com, wsa@the-dreams.de,
         corbet@lwn.net, linux-doc@vger.kernel.org,
@@ -27,60 +27,118 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, Documentation/i2c/dev-interface describes the use of
-i2c_smbus_* helper routines as static inlined functions provided by
-linux/i2c-dev.h.  Work has been done to refactor the linux/i2c-dev.h file
-in the i2c-tools project out into its own library.  As a result, these
-docs have become stale.
-
-This patch corrects the discrepancy and directs the reader to the
-i2c-tools project for more information.
+The example I2C code is rewritten to adopt the preferred kernel block
+commenting style.
 
 Signed-off-by: Sam Hansen <hansens@google.com>
 ---
- Documentation/i2c/dev-interface | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+ Documentation/i2c/dev-interface | 57 +++++++++++++++++++++++++--------
+ 1 file changed, 43 insertions(+), 14 deletions(-)
 
 diff --git a/Documentation/i2c/dev-interface b/Documentation/i2c/dev-interface
-index c8737d502791..f92ee1f59914 100644
+index f92ee1f59914..e17f5814c199 100644
 --- a/Documentation/i2c/dev-interface
 +++ b/Documentation/i2c/dev-interface
-@@ -23,11 +23,6 @@ First, you need to include these two headers:
-   #include <linux/i2c-dev.h>
-   #include <i2c/smbus.h>
+@@ -30,24 +30,34 @@ assume much about them. They can even change from one boot to the next.
  
--(Please note that there are two files named "i2c-dev.h" out there. One is
--distributed with the Linux kernel and the other one is included in the
--source tree of i2c-tools. They used to be different in content but since 2012
--they're identical. You should use "linux/i2c-dev.h").
--
- Now, you have to decide which adapter you want to access. You should
- inspect /sys/class/i2c-dev/ or run "i2cdetect -l" to decide this.
- Adapter numbers are assigned somewhat dynamically, so you can not
-@@ -140,8 +135,8 @@ ioctl(file, I2C_RDWR, struct i2c_rdwr_ioctl_data *msgset)
-   set in each message, overriding the values set with the above ioctl's.
+ Next thing, open the device file, as follows:
  
- ioctl(file, I2C_SMBUS, struct i2c_smbus_ioctl_data *args)
--  Not meant to be called  directly; instead, use the access functions
--  below.
-+  If possible, use the provided i2c_smbus_* methods described below instead
-+  of issuing direct ioctls.
++  /*
++   * The adapter is probably dynamically determined.
++   */
+   int file;
+-  int adapter_nr = 2; /* probably dynamically determined */
++  int adapter_nr = 2;
+   char filename[20];
  
- You can do plain i2c transactions by using read(2) and write(2) calls.
- You do not need to pass the address byte; instead, set it through
-@@ -166,10 +161,9 @@ what happened. The 'write' transactions return 0 on success; the
- returns the number of values read. The block buffers need not be longer
- than 32 bytes.
+   snprintf(filename, 19, "/dev/i2c-%d", adapter_nr);
+   file = open(filename, O_RDWR);
+   if (file < 0) {
+-    /* ERROR HANDLING; you can check errno to see what went wrong */
++    /*
++     * ERROR HANDLING; you can check errno to see what went wrong.
++     */
+     exit(1);
+   }
  
--The above functions are all inline functions, that resolve to calls to
--the i2c_smbus_access function, that on its turn calls a specific ioctl
--with the data in a specific format. Read the source code if you
--want to know what happens behind the screens.
-+The above functions are made available by linking against the libi2c library,
-+which is provided by the i2c-tools project.  See:
-+https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/.
+ When you have opened the device, you must specify with what device
+ address you want to communicate:
  
+-  int addr = 0x40; /* The I2C address */
++  /*
++   * The I2C address.
++   */
++  int addr = 0x40;
  
- Implementation details
+   if (ioctl(file, I2C_SLAVE, addr) < 0) {
+-    /* ERROR HANDLING; you can check errno to see what went wrong */
++    /*
++     * ERROR HANDLING; you can check errno to see what went wrong.
++     */
+     exit(1);
+   }
+ 
+@@ -55,32 +65,51 @@ Well, you are all set up now. You can now use SMBus commands or plain
+ I2C to communicate with your device. SMBus commands are preferred if
+ the device supports them. Both are illustrated below.
+ 
+-  __u8 reg = 0x10; /* Device register to access */
++  /*
++   * The device register to access.
++   */
++  __u8 reg = 0x10;
+   __s32 res;
+   char buf[10];
+ 
+-  /* Using SMBus commands */
++  /*
++   * Using SMBus commands.
++   */
+   res = i2c_smbus_read_word_data(file, reg);
+   if (res < 0) {
+-    /* ERROR HANDLING: i2c transaction failed */
++    /*
++     * ERROR HANDLING: i2c transaction failed.
++     */
+   } else {
+-    /* res contains the read word */
++    /*
++     * res contains the read word.
++     */
+   }
+ 
+-  /* Using I2C Write, equivalent of
+-     i2c_smbus_write_word_data(file, reg, 0x6543) */
++  /*
++   * Using I2C Write, equivalent of
++   * i2c_smbus_write_word_data(file, reg, 0x6543).
++   */
+   buf[0] = reg;
+   buf[1] = 0x43;
+   buf[2] = 0x65;
+   if (write(file, buf, 3) != 3) {
+-    /* ERROR HANDLING: i2c transaction failed */
++    /*
++     * ERROR HANDLING: i2c transaction failed.
++     */
+   }
+ 
+-  /* Using I2C Read, equivalent of i2c_smbus_read_byte(file) */
++  /*
++   * Using I2C Read, equivalent of i2c_smbus_read_byte(file).
++   */
+   if (read(file, buf, 1) != 1) {
+-    /* ERROR HANDLING: i2c transaction failed */
++    /*
++     * ERROR HANDLING: i2c transaction failed.
++     */
+   } else {
+-    /* buf[0] contains the read byte */
++    /*
++     * buf[0] contains the read byte.
++     */
+   }
+ 
+ Note that only a subset of the I2C and SMBus protocols can be achieved by
 -- 
 2.17.0.484.g0c8726318c-goog
