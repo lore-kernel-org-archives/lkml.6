@@ -1,82 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754154AbeDMKpe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 06:45:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51828 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751657AbeDMKpd (ORCPT
+        id S1754167AbeDMKsr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 06:48:47 -0400
+Received: from mail-oi0-f49.google.com ([209.85.218.49]:34167 "EHLO
+        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752410AbeDMKsp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 06:45:33 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D94096079B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
-Subject: Re: [PATCH] mm: vmalloc: Remove double execution of vunmap_page_range
-To: Anshuman Khandual <khandual@linux.vnet.ibm.com>, vbabka@suse.cz,
-        labbott@redhat.com, catalin.marinas@arm.com, hannes@cmpxchg.org,
-        f.fainelli@gmail.com, xieyisheng1@huawei.com,
-        ard.biesheuvel@linaro.org, richard.weiyang@gmail.com,
-        byungchul.park@lge.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1523611019-17679-1-git-send-email-cpandya@codeaurora.org>
- <a623e12b-bb5e-58fa-c026-de9ea53c5bd9@linux.vnet.ibm.com>
- <8da9f826-2a3d-e618-e512-4fc8d45c16f2@codeaurora.org>
- <bbef0a92-f81b-5ba8-c5c1-d8c08444955b@linux.vnet.ibm.com>
-From: Chintan Pandya <cpandya@codeaurora.org>
-Message-ID: <fa104cc6-c32a-9081-280f-2e03e4279f65@codeaurora.org>
-Date: Fri, 13 Apr 2018 16:15:26 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 13 Apr 2018 06:48:45 -0400
+X-Google-Smtp-Source: AIpwx4+bWFv5yVAVCxvbM3a0KZYUJ0xvVpjSHM8u5Km7LhiIJbSQGV7bVbHKoXxx9pJHcd2qFB94Hj3rwnK4MAcY090=
 MIME-Version: 1.0
-In-Reply-To: <bbef0a92-f81b-5ba8-c5c1-d8c08444955b@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180413101140.GN6014@localhost>
+References: <0c2b76aba6a49e583f920ae582d6815fa9cc4361.1523346135.git.baolin.wang@linaro.org>
+ <20180411093634.GC6014@localhost> <CAMz4kuJyKNNuR9WGP8F1NKAET6ZTtN4LtXTTtdnR3Zyxa+OjNw@mail.gmail.com>
+ <20180412093735.GF6014@localhost> <CAMz4ku+i+zA0_5U65vc3h3tO-hzWvtCOFDeFU94h3Rm6sJUuKQ@mail.gmail.com>
+ <CAMz4ku+EUtk2phRGkxkW6YwUvBLb-O7tmMoucvVEQZbL9EY8Zg@mail.gmail.com>
+ <20180413034332.GI6014@localhost> <CAMz4kuL_i7u5OCXrtJy92=OisOzgbWk_e-S9dSuBRPenX=ScPA@mail.gmail.com>
+ <20180413063641.GL6014@localhost> <CAMz4ku+dLk2Gi_20ATW5o-MPvpy-2iF_YJCwyStaH8xPNXSE7Q@mail.gmail.com>
+ <20180413101140.GN6014@localhost>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Fri, 13 Apr 2018 18:48:43 +0800
+Message-ID: <CAMz4ku++Q5kuwnHjMFJ2gq_MOSh=6oxtSRAg8TAyJTciNf43Fg@mail.gmail.com>
+Subject: Re: [PATCH 4/5] dmaengine: sprd: Add Spreadtrum DMA configuration
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Eric Long <eric.long@spreadtrum.com>, Mark Brown <broonie@kernel.org>,
+        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 4/13/2018 4:10 PM, Anshuman Khandual wrote:
-> On 04/13/2018 03:47 PM, Chintan Pandya wrote:
+On 13 April 2018 at 18:11, Vinod Koul <vinod.koul@intel.com> wrote:
+> On Fri, Apr 13, 2018 at 02:41:48PM +0800, Baolin Wang wrote:
+>> On 13 April 2018 at 14:36, Vinod Koul <vinod.koul@intel.com> wrote:
+>> > On Fri, Apr 13, 2018 at 02:17:34PM +0800, Baolin Wang wrote:
+>> >
+>> >> > Agreed, users only care about grabbing a channel, setting a descriptor and
+>> >> > submitting that.
+>> >> >
+>> >> > I think you need to go back and think about this a bit, please do go thru
+>> >> > dmaengine documentation and see other driver examples.
+>> >> >
+>> >> > We don't typically expose these to users, they give us a transfer and we set
+>> >> > that up in hardware for efficient. Its DMA so people expect us to use fastest
+>> >> > mechanism available.
+>> >>
+>> >> But there are some configuration are really special for Spreadtrum
+>> >> DMA, and must need user to specify how to configure, especially some
+>> >> scenarios of audio. So I wander if we can add one pointer for
+>> >> 'dma_slave_config' to expand some special DMA configuration
+>> >> requirements, like:
+>> >>
+>> >> struct dma_slave_config {
+>> >>     ......
+>> >>     unsigned int slave_id;
+>> >>     void *platform_data;
+>> >> };
+>> >>
+>> >> So if some DMA has some special configuration (such as Spreadtrum
+>> >> DMA), they can user this platform_data pointer. Like xilinx DMA, they
+>> >> also have some special configuration.
+>> >
+>> > Well we all think our HW is special and needs some additional stuff, most of
+>> > the cases turns out not to be the case.
+>> >
+>> > Can you explain how audio in this case additional configuration...
+>> >
 >>
->>
->> On 4/13/2018 3:29 PM, Anshuman Khandual wrote:
->>> On 04/13/2018 02:46 PM, Chintan Pandya wrote:
->>>> Unmap legs do call vunmap_page_range() irrespective of
->>>> debug_pagealloc_enabled() is enabled or not. So, remove
->>>> redundant check and optional vunmap_page_range() routines.
->>>
->>> vunmap_page_range() tears down the page table entries and does
->>> not really flush related TLB entries normally unless page alloc
->>> debug is enabled where it wants to make sure no stale mapping is
->>> still around for debug purpose. Deferring TLB flush improves
->>> performance. This patch will force TLB flush during each page
->>> table tear down and hence not desirable.
->>>
->> Deferred TLB invalidation will surely improve performance. But force
->> flush can help in detecting invalid access right then and there. I
-> 
-> Deferred TLB invalidation was a choice made some time ago with the
-> commit db64fe02258f1507e ("mm: rewrite vmap layer") as these vmalloc
-> mappings wont be used other than inside the kernel and TLB gets
-> flushed when they are reused. This way it can still avail the benefit
-> of deferred TLB flushing without exposing itself to invalid accesses.
-> 
->> chose later. May be I should have clean up the vmap tear down code
->> as well where it actually does the TLB invalidation.
->>
->> Or make TLB invalidation in free_unmap_vmap_area() be dependent upon
->> debug_pagealloc_enabled().
-> 
-> Immediate TLB invalidation needs to be dependent on debug_pagealloc_
-> enabled() and should be done only for debug purpose. Contrary to that
-> is not desirable.
-> 
-Okay. I will raise v2 for that.
+>> Beside the general configuration, our audio driver will configure the
+>> fragment length, block length, maybe transaction length, and they must
+>> specify the request type and interrupt type, these are what we want to
+>> export for users.
+>
+> First doesn't it use sound dmaengine library, it should :)
 
-Chintan
+I do not think so. That's the DMA configuration need to set before
+audio use it. Not only audio, but also other drivers using DMA need to
+configure these configuration what we exported in sprd_dma_config.
+
+>
+> Second, I think you should calculate the lengths based on given input. Audio
+> is circular buffer so you shall create a circular linked list and submit.
+> See how other driver implement circular prepare callback
+
+Yes,  we have not implemented the link list mode for audio now, but in
+our plan. So firstly we want to export these necessary configuration
+for users to configure.
+
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum, a Linux Foundation
-Collaborative Project
+Baolin.wang
+Best Regards
