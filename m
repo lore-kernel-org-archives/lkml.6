@@ -1,203 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751134AbeDMP3T (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 11:29:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57004 "EHLO mx1.redhat.com"
+        id S1751947AbeDMPaI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 11:30:08 -0400
+Received: from mail-eopbgr10089.outbound.protection.outlook.com ([40.107.1.89]:38112
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750761AbeDMP3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 11:29:17 -0400
-Date: Fri, 13 Apr 2018 17:29:13 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: syzbot <syzbot+7c449856228b63ac951e@syzkaller.appspotmail.com>
-Cc: acme@kernel.org, alexander.shishkin@linux.intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, namhyung@kernel.org,
-        peterz@infradead.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, x86@kernel.org
-Subject: Re: KASAN: slab-out-of-bounds Write in perf_callchain_user
-Message-ID: <20180413152913.GA9167@krava>
-References: <001a1140f656c722960569a3d857@google.com>
+        id S1750885AbeDMPaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 11:30:07 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Ayan.Halder@arm.com;
+From: Ayan Kumar Halder <ayan.halder@arm.com>
+To: ayan.halder@arm.com, liviu.dudau@arm.com, brian.starkey@arm.com,
+        alexandru-cosmin.gheorghe@arm.com, malidp@foss.arm.com,
+        airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Cc: nd@arm.com
+Subject: [PATCH v2] drm/arm/malidp: Ensure that the crtcs are shutdown before removing any encoder/connector
+Date: Fri, 13 Apr 2018 16:29:48 +0100
+Message-Id: <1523633388-15112-1-git-send-email-ayan.halder@arm.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <20180412154727.GJ16141@n2100.armlinux.org.uk>
+References: <20180412154727.GJ16141@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <001a1140f656c722960569a3d857@google.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain
+X-Originating-IP: [217.140.96.140]
+X-ClientProxiedBy: CWXP265CA0015.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:400:2e::27) To AM6PR08MB3031.eurprd08.prod.outlook.com
+ (2603:10a6:209:45::12)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM6PR08MB3031;
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3031;3:xoebhdrTEoTB+cVjmKwB2tz2j62jkyuVg+vT0COf6U6EYjKBBXA4e9o65HZRAHCmyRel66qGklDmamV+xSlOmM66MZ7/FK74yujXROhtNAD9pXt53ZrcKPgV72LjzFdQYPmrNwtWwX/elrnpfkQ8nEgADwhaPReNQtSUkNC9nxvPQRI9B01KZfk4uctljJCqGscHLXk7dekj0yZJzal+c80Z0T0wTjSiZXNzhd42MkadEYKTKZkiqJP9ppIcC0aR;25:gje5HwjFIoLThiCLYvEAjSuPPqAwh3xhV6uzOmdeVgX15BVw1qfn+KO9MpSUBpMHLrJYkJc8IHJfLicUxC7jvQl8e3Ijhez+L4gYc7buFnND4hggzJysee1fvOuUw59SlAirOuyVgLi2zlbBv5yoiYfOzUCCP+aqJsmEuqzgajQda4prz8Ae1OaWRpf3rx3UbN2WCEQVDFuINfLGB0rcx8C3ZuUwl5zsfUvKll9uLMjUJ3qlPJanhRd+wNlYdoEE50v1SSWbv+6eIPi1A4mnvnN8pm/k/uSugwRNaMDpxNbmTRsJgxeFk9Bv6DBoySfFIQJJMhp+2fjztA0mb5X/Bg==;31:6cmFgfAdwOvPiI7uY+m3USM2132QDcpfUq8oh4u8sdoAfMwUFw39rjQglqsx/hIGbaEmvK4QI8+iCSHFM/TU2uoa0n7U0wq0STOtB2UcmSZX67EiOtJzuDRSRQwXwKrfX9UKWpPcLIEWAiEh/rNOhsVxD6pqP3CIAFKIzhiWhYsjb2/iPqCfovnT0v3H7yrpEPTZK+X8HRWN9R8qqcqBXoFAaigdyE2dAPE3v4inE74=
+X-MS-TrafficTypeDiagnostic: AM6PR08MB3031:
+NoDisclaimer: True
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3031;20:YL+qSdoMNiRWi6zUNI5n3yt3ilx14uLwvRO7UzQFZSNlboRGNvdCCnbPrHOy0qClsh/6UiJZhhu5laehl6ApWdLrnShvBGKb4z6YgNwXYUHxy2zsUIqJc50PFBdsHWiOUW3y65gPjqzZsx2ipnbahN8ZeuraDD8A45xYR8Kmqtg=;4:G78ESkluvo6PsKBzqfcp6oAiuHxq1N2OzP0VQZ0AHNExpAUAJJcPNolj+WLYYyZQCtBbwQZCFTqxqS9qRRpjx6iA9dqV9nhprjehNpwHaBgShszKm0sYVxE9iX84OzV4QlcnYR5MRIjJVK+Tc0tuGkvtZ6uCNQjAwB2qV0oaXYJh2qaOxCBtUvY8QZmL+PID8qntWN9U0MiOAKrTWcCM2BSirMuGLBjA8HaAGI124wlIkHU3gsbbbeR8tlsKhuL3N1YXVeHJ1PPItafNPKeMIdclVBFK3Nr2nupAWDbEnbCsFO9TBN0yl5tzaTeQe8/m
+X-Microsoft-Antispam-PRVS: <AM6PR08MB30317844381D07F0B9D16081E4B30@AM6PR08MB3031.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(180628864354917);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231232)(944501327)(52105095)(93006095)(93001095)(6055026)(6041310)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:AM6PR08MB3031;BCL:0;PCL:0;RULEID:;SRVR:AM6PR08MB3031;
+X-Forefront-PRVS: 0641678E68
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(39380400002)(376002)(366004)(346002)(189003)(199004)(72206003)(105586002)(59450400001)(2906002)(52116002)(76176011)(7696005)(51416003)(386003)(53936002)(16586007)(47776003)(316002)(50466002)(25786009)(8676002)(81156014)(68736007)(66066001)(81166006)(8936002)(97736004)(50226002)(36756003)(4326008)(2616005)(476003)(956004)(446003)(11346002)(3846002)(6116002)(26005)(16526019)(486006)(106356001)(5660300001)(86362001)(6666003)(478600001)(7736002)(305945005)(48376002)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR08MB3031;H:e113505-lin.cambridge.arm.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM6PR08MB3031;23:HWgRnzpM6iD44wumUeHwRnl6b8U/txT2urLrwcrZr?=
+ =?us-ascii?Q?a/A81u5s7r96swjprvF0Sh/RVa/DTVNdC39RCfIVDyLTpS28Aiu/n8gf5ugj?=
+ =?us-ascii?Q?RJmSf4EH7QG4y/5KdvxD+idgyHBLeWn7A9i64V1i7B+cg0FP7sDEDpIRPqVw?=
+ =?us-ascii?Q?3SWdveq4WwvRLWTz0cnnqlhX1c/yahHEgd2YtI6bzDARIG+bTEsovrdYFwHt?=
+ =?us-ascii?Q?ax9jb5DkhKehpMb9n4EGr9VhEem10yLBw1HhatTxhma0NVftdSLvd0qWLPzo?=
+ =?us-ascii?Q?HLiRaG5yU9cmBpJ3ddQ3tjAZLtoLncJXevQZ/WB03cRXPVpMgq6KzSAaiTuo?=
+ =?us-ascii?Q?DAavEEjofxFm1zun5oY1ijTn26qZB263UB8i4jOacih+xuMJYc8iUvKCJPTX?=
+ =?us-ascii?Q?lD0PQW9vceenbaQ9X6WHD+kROnSbPXnot39VVDNx9Gzx46hzU3lPidsrY2zI?=
+ =?us-ascii?Q?WfxBG1XG2Kmkf3PheS5wOhs5jyQ98KwJPp9oIijLgwid9CYBLeSeRgcu5+yH?=
+ =?us-ascii?Q?YRw919sNtDeyMjgTU8QJU34xELmPiPIXGQuwp4w5BDB/L+u62NBr4zw7wHam?=
+ =?us-ascii?Q?yqc/0ef1UemX3dRzcKkFT+gm9VwSa41swuq26F6CtAnsey6uDl0ameSzVMDq?=
+ =?us-ascii?Q?+GtstAGg9GcE6y5ifjMO4Oil9USL9F4JktV0j45P3GGrExQT1uwVeJUadrKP?=
+ =?us-ascii?Q?oVshJCcygHomZbyICqugOAd8s0/1K7x4wCaWBU2VTBReF9Ffw62Ivwu7Tgsv?=
+ =?us-ascii?Q?CfcN+5VIHb5lVlqvtkG2j+3I9rOI7lVFXylQ1l5Dbk1vdSVACAsrM1zYkX8O?=
+ =?us-ascii?Q?crUzAf2FKMdUFP5jRBn5kgp//6l3EqygHGVEJEpVaT16E1CxGjB+OhoYr4uc?=
+ =?us-ascii?Q?hmoAzhf522vnmx+bKvxnVMqOFnO66/FxiWnwRDnV5rLy/KNrzNus5jICbiA+?=
+ =?us-ascii?Q?b5v65yHpXam+I67kGqx8EmrlIPhJkecpP5qXiDTPOOAxO82R+q70YaSyJPdo?=
+ =?us-ascii?Q?BunpinLCGqppyvnYC61OlqK0NgmxlOljkV87H8f/5FMRmI2AhXIyMbDZtB/G?=
+ =?us-ascii?Q?AUgC5HV4YoGs8kDhOmJl9FREAmadpHRj7tm+8yx4jkc2xLKgajUn9Iy+EP61?=
+ =?us-ascii?Q?gfb4LwPzghVIWs9YXJzPqX+RRHkUVgmVOvpbxZWRQzGexhL8Xlu1A=3D=3D?=
+X-Microsoft-Antispam-Message-Info: /ez4psLtw3HtjVpRZxPNEKW+Iz2Ql3ackkVHbulPFcw57ezhYbP3gIbsHz/EeLOJ01BUov9WBUYvbJN23qgdcr0dwN1NenMzUpsDsp+dMEcSRt9oMwbloKZ2YMH/v0bz/pTh6MTqj58PNiBUNYYTwngtcAEeoEw+tda+QlmWy3YnpV8+C4HPqN9LBoHPWWz9
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3031;6:3gp13P8ChU26RvILFfoJc5pcJ1OVeRmEp9qQRW+hhL6Lzx9F3L/LhJMTtvGhHlpOE+nKCU/pWUU9KvJFoy28IY7WPRoAn+Y2TUGWwdKMFsJvHLu0dvTobfsaQnFbeshPaLph4i9Wj6nn2iSFHVGYa7+x3lNRN0YBHqeV5Oq8njBmw6r7gueRN0DL8wNw1WEWMw33ECpUPTKl1/03tbZYdm7Wb5aCkmRsrRc/5Ukil0eCLc/0tEh1Frq7huRK6AG+aRKv5XRHp3xhTpqyd+PrTQFFQ1ymo+NAPdoQPaRbOtvpD1+XcklhF3acfH1VVAyA7mBjMk6EEt66J2g0OXDCDEMfX9RLmINv3vpKMKLydEBbOMRijB5nkoAwXtkXjmgJspIgxTL0h3HeGioss6wicJEkCN8PQrTmoD+N+K8lqKh5TA4pCvgxftZX64OmW5paAjhaGSw5RlGABEPHHUWtDg==;5:DsrDTHD9B3xZMVpfrckWkVxk1oygQR7JghHPZz5ZWVOQwWW1JIiPJdCYGeBoq6XfPnMQAlI7/EmqFFqKWSff3ISg54o812fepAvKiQSXpmYCmKKX4Gt79ZamAo7+0D84WP9HSWr5SRnXfWNrfTMp6pMY/nhHQN4CiG+hAzxBFis=;24:IcLQLgXHBKlvJzIW1LHfsIczniuPmQPv1Q9SzeYGxOA9/lCO3vOhc4KKQKuqxmu7Wr9Vi/ovbX54tDXESX4I2dwuL2QF3deyqtcXSQEFgPc=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3031;7:4J3nL/lc5sLjIpX8gZX0XljmlCBBGcxwnWbIwqeNI3nKKmxvFb98y0ige/jBR+FqCcr/D9N6cACgkiRta4L/XLEigof/Iq7FQDqUurvLVqDQFAQlGqliPf9C2FpPgJj2i1D8oww5WYQ5SR7ctMMWo2M5SG8unhUdPoKVQMRQkUg/cLHpDMy9Y6NSI4LY2WcpgUJrA26Z6+IiluvHKnS6+rNLhmFiDD/iMDKhb6myTIRIcD/jAwh6m7o3QvLnXl1e
+X-MS-Office365-Filtering-Correlation-Id: a38c01d0-8588-403c-b63b-08d5a1536e16
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Apr 2018 15:30:04.1164 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a38c01d0-8588-403c-b63b-08d5a1536e16
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3031
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 03:02:01AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot hit the following crash on bpf-next commit
-> 17dec0a949153d9ac00760ba2f5b78cb583e995f (Wed Apr 4 02:15:32 2018 +0000)
-> Merge branch 'userns-linus' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=7c449856228b63ac951e
-> 
-> So far this crash happened 2 times on bpf-next.
-> syzkaller reproducer:
-> https://syzkaller.appspot.com/x/repro.syz?id=4514433808203776
-> Raw console output:
-> https://syzkaller.appspot.com/x/log.txt?id=5570436679073792
-> Kernel config:
-> https://syzkaller.appspot.com/x/.config?id=-2735707888269579554
-> compiler: gcc (GCC) 8.0.1 20180301 (experimental)
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+7c449856228b63ac951e@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> IPVS: ftp: loaded support on port[0] = 21
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in perf_callchain_store
-> include/linux/perf_event.h:1147 [inline]
-> BUG: KASAN: slab-out-of-bounds in perf_callchain_user+0xe31/0xfe0
-> arch/x86/events/core.c:2485
-> Write of size 8 at addr ffff8801d87f2d40 by task udevd/2377
-> 
-> CPU: 0 PID: 2377 Comm: udevd Not tainted 4.16.0+ #3
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x1b9/0x29f lib/dump_stack.c:53
->  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.7+0xac/0x2f5 mm/kasan/report.c:412
->  __asan_report_store8_noabort+0x17/0x20 mm/kasan/report.c:438
->  perf_callchain_store include/linux/perf_event.h:1147 [inline]
->  perf_callchain_user+0xe31/0xfe0 arch/x86/events/core.c:2485
->  get_perf_callchain+0x798/0xb20 kernel/events/callchain.c:227
->  perf_callchain kernel/events/core.c:6354 [inline]
->  perf_prepare_sample+0x123d/0x1900 kernel/events/core.c:6380
->  __perf_event_output kernel/events/core.c:6494 [inline]
->  perf_event_output_forward+0x10a/0x2b0 kernel/events/core.c:6512
->  __perf_event_overflow+0x231/0x4b0 kernel/events/core.c:7748
->  perf_swevent_overflow+0xad/0x150 kernel/events/core.c:7824
->  perf_swevent_event+0x1f0/0x2e0 kernel/events/core.c:7857
->  perf_tp_event+0x4da/0xc30 kernel/events/core.c:8280
->  perf_trace_run_bpf_submit+0x23f/0x370 kernel/events/core.c:8254
->  perf_trace_lock_acquire+0x4f1/0x980 include/trace/events/lock.h:13
->  trace_lock_acquire include/trace/events/lock.h:13 [inline]
->  lock_acquire+0x38e/0x520 kernel/locking/lockdep.c:3919
->  finish_lock_switch kernel/sched/core.c:2602 [inline]
->  finish_task_switch+0x1c2/0x820 kernel/sched/core.c:2701
->  context_switch kernel/sched/core.c:2851 [inline]
->  __schedule+0x80f/0x1e40 kernel/sched/core.c:3490
->  schedule+0xef/0x430 kernel/sched/core.c:3549
->  schedule_hrtimeout_range_clock+0x3c0/0x470 kernel/time/hrtimer.c:1883
->  schedule_hrtimeout_range+0x2a/0x40 kernel/time/hrtimer.c:1940
->  ep_poll+0xf2e/0x11d0 fs/eventpoll.c:1812
->  do_epoll_wait+0x1b0/0x200 fs/eventpoll.c:2191
->  SYSC_epoll_wait fs/eventpoll.c:2201 [inline]
->  SyS_epoll_wait+0x2c/0x40 fs/eventpoll.c:2198
->  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> RIP: 0033:0x7fe39adf3943
-> RSP: 002b:00007ffc13750708 EFLAGS: 00000246 ORIG_RAX: 00000000000000e8
-> RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007fe39adf3943
-> RDX: 0000000000000008 RSI: 00007ffc13750800 RDI: 000000000000000a
-> RBP: 0000000001b676c0 R08: 0000000000000000 R09: 00007fe39ae3ca60
-> R10: 00000000ffffffff R11: 0000000000000246 R12: 0000000000000a56
-> R13: 0000000000000000 R14: 0000000001b674a0 R15: 0000000001b4e250
-> 
-> Allocated by task 4544:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
->  set_track mm/kasan/kasan.c:459 [inline]
->  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:552
->  __do_kmalloc_node mm/slab.c:3670 [inline]
->  __kmalloc_node+0x47/0x70 mm/slab.c:3677
->  kmalloc_node include/linux/slab.h:554 [inline]
->  alloc_callchain_buffers kernel/events/callchain.c:91 [inline]
->  get_callchain_buffers+0x31a/0x4b0 kernel/events/callchain.c:138
->  perf_event_alloc.part.91+0x2274/0x30a0 kernel/events/core.c:10047
->  perf_event_alloc kernel/events/core.c:10376 [inline]
->  SYSC_perf_event_open+0xa8a/0x2fa0 kernel/events/core.c:10477
->  SyS_perf_event_open+0x35/0x40 kernel/events/core.c:10366
->  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+One needs to ensure that the crtcs are shutdown so that the
+drm_crtc_state->connector_mask reflects that no connectors
+are currently active. Further, it reduces the reference
+count for each connector. This ensures that the connectors
+and encoders can be cleanly removed either when _unbind
+is called for the corresponding drivers or by
+drm_mode_config_cleanup().
 
-I think we miss the max-stack check for the initial event
-that creates the buffers.. that allows us to create event
-with max-stack value bigger than the global max:
+Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
+---
 
-
-[root@ibm-x3650m4-01 perf]# sysctl -a | grep perf_event_max_stack
-kernel.perf_event_max_stack = 127
-
-[root@ibm-x3650m4-01 perf]# ./perf record -vv -C 1 -e cycles/max-stack=256/ kill 
-Using CPUID GenuineIntel-6-2D
-------------------------------------------------------------
-perf_event_attr:
-  size                             112
-  { sample_period, sample_freq }   4000
-  sample_type                      IP|TID|TIME|CALLCHAIN|CPU|PERIOD
-  disabled                         1
-  inherit                          1
-  mmap                             1
-  comm                             1
-  freq                             1
-  task                             1
-  sample_id_all                    1
-  exclude_guest                    1
-  mmap2                            1
-  comm_exec                        1
-  sample_max_stack                 256
-------------------------------------------------------------
-sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8 = 4
-
-
-note the '-C 1', which forces perf record to create just single event,
-otherwise it opens event for every cpu and then the test fails on the
-second event and all's fine
-
-attached change should fix it.. I'm running some more tests
-and will post full patch later
-
-thanks,
-jirka
-
+Changes in v2:
+ - Reset the connectors' mask and the reference counts in drm_device
+before unbinding any of its components (ie connectors and 
+encoders).
 
 ---
-diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
-index 772a43fea825..0d97e3fda920 100644
---- a/kernel/events/callchain.c
-+++ b/kernel/events/callchain.c
-@@ -119,19 +119,21 @@ int get_callchain_buffers(int event_max_stack)
- 		goto exit;
- 	}
+ drivers/gpu/drm/arm/malidp_drv.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+index 8d20faa..0a788d7 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.c
++++ b/drivers/gpu/drm/arm/malidp_drv.c
+@@ -278,7 +278,6 @@ static int malidp_init(struct drm_device *drm)
  
--	if (count > 1) {
--		/* If the allocation failed, give up */
--		if (!callchain_cpus_entries)
--			err = -ENOMEM;
--		/*
--		 * If requesting per event more than the global cap,
--		 * return a different error to help userspace figure
--		 * this out.
--		 *
--		 * And also do it here so that we have &callchain_mutex held.
--		 */
--		if (event_max_stack > sysctl_perf_event_max_stack)
--			err = -EOVERFLOW;
-+	/*
-+	 * If requesting per event more than the global cap,
-+	 * return a different error to help userspace figure
-+	 * this out.
-+	 *
-+	 * And also do it here so that we have &callchain_mutex held.
-+	 */
-+	if (event_max_stack > sysctl_perf_event_max_stack) {
-+		err = -EOVERFLOW;
-+		goto exit;
-+	}
-+
-+	/* If the allocation failed, give up */
-+	if (count > 1 && !callchain_cpus_entries) {
-+		err = -ENOMEM;
- 		goto exit;
- 	}
+ static void malidp_fini(struct drm_device *drm)
+ {
+-	drm_atomic_helper_shutdown(drm);
+ 	drm_mode_config_cleanup(drm);
+ }
  
+@@ -646,6 +645,7 @@ static int malidp_bind(struct device *dev)
+ 	malidp_de_irq_fini(drm);
+ 	drm->irq_enabled = false;
+ irq_init_fail:
++	drm_atomic_helper_shutdown(drm);
+ 	component_unbind_all(dev, drm);
+ bind_fail:
+ 	of_node_put(malidp->crtc.port);
+@@ -681,6 +681,7 @@ static void malidp_unbind(struct device *dev)
+ 	malidp_se_irq_fini(drm);
+ 	malidp_de_irq_fini(drm);
+ 	drm->irq_enabled = false;
++	drm_atomic_helper_shutdown(drm);
+ 	component_unbind_all(dev, drm);
+ 	of_node_put(malidp->crtc.port);
+ 	malidp->crtc.port = NULL;
+-- 
+2.7.4
