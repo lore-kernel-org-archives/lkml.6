@@ -1,209 +1,252 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3738064-1523625426-2-8307286119096527425
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523625426; b=v8gJrRxEiqnUEGN5X9VrGl3H5odHOtylWQZTBwp77yb9Kc+0G/
-    /qisYeL6oEHVJe8zka/rkbsZ+iuoXV8tWnb7Otzf9TT8XYNfzg37+/XAikc2F613
-    2Iuh6zG66p52TZlza/jo7aMMXgdOS5G08WELuqXPlI4kpntCyOHghav1CHCmPVMk
-    ccFsG7koEjIHCsnbUFUVgq0YZalQUf/FxNFzdUWnXFJIoN7mmwPmUAaasMpynaNN
-    J+CDpm0Zse+Zb4x2kGyfBgevxsW1P0KVRvdSpMDpAmYgoz0xAEogTpvT7RxKZIKu
-    DgC51G2SAidzLzVcYOjGuWWbfGWQXsdcKvtw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:list-id:list-unsubscribe:list-archive
-    :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1523625426; bh=svHEX
-    atclacpgFqKq8mUf+cwZJQGnphPkeWGfitBMjE=; b=kk+YHFG8R5jge2qh6ZFxe
-    E0kUN5B4bG88Esj1EjhWSTzQFjxXHVpxHTRoOAQmE6S54dlx9M/kY4GBCVvPmsRJ
-    nP8/XJvd1oTKbnFLiy5S+XWbzJrwGrF6PaL9x82+6N69tqkNrwWiV0IlDXKt2/j7
-    HYm+Xguiqfi6wpKZlc44xo+SxeWc5pDTspY7FI8X5ouOcXqa58P9ezq2A1M5VT++
-    J+wKYXnjYuHMUzokfpN0uO50FJ+4oUuxDyfX466kKp0RHe8YzOFLpcEASFUSX3mY
-    UEcKiLjlX3MLP3aqeCHCuMMSAsijhVqcksxOgZuap8hkl6duX6JX/K7sKz7yT/BH
-    g==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKLkf8EIq03XkROiIAPqmR/0fuUQc1/7ZaT7zsRODFsQqup9RTsRhMF4qwbtwPxtmqRLlETsW1TuEtnE6etzA6FujOX89hXd8NtI57HcphoWVgZajnhA
-    7KIzX4hcPoSIX5l3Tny4QabglHbSwg/B/g6fP7kdzJz361hecEgVmsHtYD50j3aV0H7SqAZYaaRY6DA3hPVtQlCV8FxZJjTPKXz67qlmOlDrCjIzIFhiUtYS
-    ZdXWdrj6QbCZOCvAFaHanQ==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=20KFwNOVAAAA:8 a=DDOyTI_5AAAA:8
-    a=0R4KIbz7LFnJGQZbntsA:9 a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Return-Path: <david@redhat.com>
+X-Google-Smtp-Source: AIpwx48nVddD40cZuWkYOCDLNFMPixXikGdz9nFU0H6pTtHIlVN6hbNW97GfmlvqojE/m6SDnfH+
+ARC-Seal: i=1; a=rsa-sha256; t=1523625405; cv=none;
+        d=google.com; s=arc-20160816;
+        b=w5EAkEswOwfvoZd61aut9htnJN6kmRnWFPjRt7+QKjh6a06/txgqsc8Wai2pM6C5Pd
+         hM00dJJPtnlaLyjcjLsm4Sil6Dfips0t5/2sGTLumQv17u5Kq62NNZ7yfkOZwtvaOmSX
+         orEvBEOBPZlg0aJ5m879PbL0JVbhs414KBQcOvjbeGEfLSVeIMEdBkCBEohFCDUMDCbR
+         V7kObogZQjKPBE6Vt3p8GyVSuiO+EcTlrPmLwJbr7zRhWa4t24JTT4AqhPkrpBFC2bVo
+         xAYlYQzRpeL/+JZwrjamYi4Izcj5RAiBcMRkBo7kJvzztqd7pxVh01vU7qPSbrqJLmnM
+         LUUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=n42Yk6PHqHjzap+xA3JX3C04+jr6LlM3LQvMw06iuQw=;
+        b=Bjn0l/EIgPlQyFpTiTrcZi8eiRV8BJ+wiEIHa/BvcsLe4KuAsuaKRe1qi1YwlwqkyV
+         vqKD1Zrov+ARG5Eh9RTEbyZXpNKeN0l0cOtFT1jMxr8ENeiak2dtRwgmMgH1vv72rkSm
+         zIdQeRA3hHhGAyw4/bG/0H2MEzf4NxsbTRxGp2qBH8y3N4LjEymz2Rnbl+lN9w3XC3bn
+         HavpFCgI+hEAF3WStsxirIxpMfyFQlVDaKY/PIOqT/t2skl4cQ3SWaecHxOYJhbUjATu
+         Pch/01jgPiJB9SnFJdXkT0p/FxQOdIWlRDZQbTfr6rByxljz+ZDSpKl8GcQZ+hPjDIuq
+         rO6A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of david@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=david@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of david@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=david@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 From: David Hildenbrand <david@redhat.com>
 To: linux-mm@kvack.org
-Subject: [PATCH RFC 3/8] mm: use PG_offline in online/offlining code
-Date: Fri, 13 Apr 2018 15:16:27 +0200
-Message-Id: <20180413131632.1413-4-david@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Pavel Tatashin <pasha.tatashin@oracle.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michal Hocko <mhocko@suse.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Reza Arbab <arbab@linux.vnet.ibm.com>,
+	Mel Gorman <mgorman@techsingularity.net>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Rientjes <rientjes@google.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH RFC 1/8] mm/memory_hotplug: Revert "mm/memory_hotplug: optimize memory hotplug"
+Date: Fri, 13 Apr 2018 15:16:25 +0200
+Message-Id: <20180413131632.1413-2-david@redhat.com>
 In-Reply-To: <20180413131632.1413-1-david@redhat.com>
 References: <20180413131632.1413-1-david@redhat.com>
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Michal Hocko <mhocko@suse.com>, Stephen Hemminger <sthemmin@microsoft.com>,
- David Hildenbrand <david@redhat.com>,
- Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- Haiyang Zhang <haiyangz@microsoft.com>,
- Pavel Tatashin <pasha.tatashin@oracle.com>,
- Reza Arbab <arbab@linux.vnet.ibm.com>,
- open list <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Johannes Weiner <hannes@cmpxchg.org>,
- "open list:Hyper-V CORE AND DRIVERS" <devel@linuxdriverproject.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Mel Gorman <mgorman@techsingularity.net>,
- Dan Williams <dan.j.williams@intel.com>, Vlastimil Babka <vbabka@suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597637033562508385?=
+X-GMAIL-MSGID: =?utf-8?q?1597637033562508385?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Let's mark all offline pages with PG_offline. We'll continue to mark
-them reserved.
+Conflicts with the possibility to online sub-section chunks. Revert it
+for now.
 
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- drivers/hv/hv_balloon.c |  2 +-
- mm/memory_hotplug.c     | 10 ++++++----
- mm/page_alloc.c         |  5 ++++-
- 3 files changed, 11 insertions(+), 6 deletions(-)
+ drivers/base/node.c    |  2 --
+ include/linux/memory.h |  1 -
+ mm/memory_hotplug.c    | 27 +++++++++++++++++++--------
+ mm/page_alloc.c        | 28 ++++++++++++++++++----------
+ mm/sparse.c            |  8 +-------
+ 5 files changed, 38 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-index b3e9f13f8bc3..04d98d9b6191 100644
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -893,7 +893,7 @@ static unsigned long handle_pg_range(unsigned long pg_start,
- 			 * backed previously) online too.
- 			 */
- 			if (start_pfn > has->start_pfn &&
--			    !PageReserved(pfn_to_page(start_pfn - 1)))
-+			    !PageOffline(pfn_to_page(start_pfn - 1)))
- 				hv_bring_pgs_online(has, start_pfn, pgs_ol);
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index 7a3a580821e0..92b00a7e6a02 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -407,8 +407,6 @@ int register_mem_sect_under_node(struct memory_block *mem_blk, int nid,
  
- 		}
+ 	if (!mem_blk)
+ 		return -EFAULT;
+-
+-	mem_blk->nid = nid;
+ 	if (!node_online(nid))
+ 		return 0;
+ 
+diff --git a/include/linux/memory.h b/include/linux/memory.h
+index 31ca3e28b0eb..9f8cd856ca1e 100644
+--- a/include/linux/memory.h
++++ b/include/linux/memory.h
+@@ -33,7 +33,6 @@ struct memory_block {
+ 	void *hw;			/* optional pointer to fw/hw data */
+ 	int (*phys_callback)(struct memory_block *);
+ 	struct device dev;
+-	int nid;			/* NID for this memory block */
+ };
+ 
+ int arch_get_memory_phys_device(unsigned long start_pfn);
 diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index d4474781c799..3a8d56476233 100644
+index f74826cdceea..d4474781c799 100644
 --- a/mm/memory_hotplug.c
 +++ b/mm/memory_hotplug.c
-@@ -260,8 +260,8 @@ static int __meminit __add_section(int nid, unsigned long phys_start_pfn,
+@@ -250,6 +250,7 @@ static int __meminit __add_section(int nid, unsigned long phys_start_pfn,
+ 		struct vmem_altmap *altmap, bool want_memblock)
+ {
+ 	int ret;
++	int i;
+ 
+ 	if (pfn_valid(phys_start_pfn))
+ 		return -EEXIST;
+@@ -258,6 +259,23 @@ static int __meminit __add_section(int nid, unsigned long phys_start_pfn,
+ 	if (ret < 0)
  		return ret;
  
- 	/*
--	 * Make all the pages reserved so that nobody will stumble over half
--	 * initialized state.
-+	 * Make all the pages offline and reserved so that nobody will stumble
-+	 * over half initialized state.
- 	 * FIXME: We also have to associate it with a node because page_to_nid
- 	 * relies on having page with the proper node.
- 	 */
-@@ -274,6 +274,7 @@ static int __meminit __add_section(int nid, unsigned long phys_start_pfn,
- 		page = pfn_to_page(pfn);
- 		set_page_node(page, nid);
- 		SetPageReserved(page);
-+		SetPageOffline(page);
- 	}
- 
++	/*
++	 * Make all the pages reserved so that nobody will stumble over half
++	 * initialized state.
++	 * FIXME: We also have to associate it with a node because page_to_nid
++	 * relies on having page with the proper node.
++	 */
++	for (i = 0; i < PAGES_PER_SECTION; i++) {
++		unsigned long pfn = phys_start_pfn + i;
++		struct page *page;
++		if (!pfn_valid(pfn))
++			continue;
++
++		page = pfn_to_page(pfn);
++		set_page_node(page, nid);
++		SetPageReserved(page);
++	}
++
  	if (!want_memblock)
-@@ -669,6 +670,7 @@ EXPORT_SYMBOL_GPL(__online_page_increment_counters);
+ 		return 0;
  
- void __online_page_free(struct page *page)
- {
-+	ClearPageOffline(page);
- 	__free_reserved_page(page);
- }
- EXPORT_SYMBOL_GPL(__online_page_free);
-@@ -687,7 +689,7 @@ static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
- 	unsigned long onlined_pages = *(unsigned long *)arg;
- 	struct page *page;
+@@ -891,15 +909,8 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
+ 	int nid;
+ 	int ret;
+ 	struct memory_notify arg;
+-	struct memory_block *mem;
+-
+-	/*
+-	 * We can't use pfn_to_nid() because nid might be stored in struct page
+-	 * which is not yet initialized. Instead, we find nid from memory block.
+-	 */
+-	mem = find_memory_block(__pfn_to_section(pfn));
+-	nid = mem->nid;
  
--	if (PageReserved(pfn_to_page(start_pfn)))
-+	if (PageOffline(pfn_to_page(start_pfn)))
- 		for (i = 0; i < nr_pages; i++) {
- 			page = pfn_to_page(start_pfn + i);
- 			(*online_page_callback)(page);
-@@ -1437,7 +1439,7 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
- }
++	nid = pfn_to_nid(pfn);
+ 	/* associate pfn range with the zone */
+ 	zone = move_pfn_range(online_type, nid, pfn, nr_pages);
  
- /*
-- * remove from free_area[] and mark all as Reserved.
-+ * remove from free_area[] and mark all as Reserved and Offline.
-  */
- static int
- offline_isolated_pages_cb(unsigned long start, unsigned long nr_pages,
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 647c8c6dd4d1..2e5dcfdb0908 100644
+index 905db9d7962f..647c8c6dd4d1 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -8030,6 +8030,7 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
- 		if (unlikely(!PageBuddy(page) && PageHWPoison(page))) {
- 			pfn++;
- 			SetPageReserved(page);
-+			SetPageOffline(page);
- 			continue;
- 		}
+@@ -1172,9 +1172,10 @@ static void free_one_page(struct zone *zone,
+ }
  
-@@ -8043,8 +8044,10 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
- 		list_del(&page->lru);
- 		rmv_page_order(page);
- 		zone->free_area[order].nr_free--;
--		for (i = 0; i < (1 << order); i++)
-+		for (i = 0; i < (1 << order); i++) {
- 			SetPageReserved((page+i));
-+			SetPageOffline(page + i);
-+		}
- 		pfn += (1 << order);
+ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
+-				unsigned long zone, int nid)
++				unsigned long zone, int nid, bool zero)
+ {
+-	mm_zero_struct_page(page);
++	if (zero)
++		mm_zero_struct_page(page);
+ 	set_page_links(page, zone, nid, pfn);
+ 	init_page_count(page);
+ 	page_mapcount_reset(page);
+@@ -1188,6 +1189,12 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
+ #endif
+ }
+ 
++static void __meminit __init_single_pfn(unsigned long pfn, unsigned long zone,
++					int nid, bool zero)
++{
++	return __init_single_page(pfn_to_page(pfn), pfn, zone, nid, zero);
++}
++
+ #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+ static void __meminit init_reserved_page(unsigned long pfn)
+ {
+@@ -1206,7 +1213,7 @@ static void __meminit init_reserved_page(unsigned long pfn)
+ 		if (pfn >= zone->zone_start_pfn && pfn < zone_end_pfn(zone))
+ 			break;
  	}
- 	spin_unlock_irqrestore(&zone->lock, flags);
+-	__init_single_page(pfn_to_page(pfn), pfn, zid, nid);
++	__init_single_pfn(pfn, zid, nid, true);
+ }
+ #else
+ static inline void init_reserved_page(unsigned long pfn)
+@@ -1523,7 +1530,7 @@ static unsigned long  __init deferred_init_pages(int nid, int zid,
+ 		} else {
+ 			page++;
+ 		}
+-		__init_single_page(page, pfn, zid, nid);
++		__init_single_page(page, pfn, zid, nid, true);
+ 		nr_pages++;
+ 	}
+ 	return (nr_pages);
+@@ -5460,7 +5467,6 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ 	pg_data_t *pgdat = NODE_DATA(nid);
+ 	unsigned long pfn;
+ 	unsigned long nr_initialised = 0;
+-	struct page *page;
+ #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ 	struct memblock_region *r = NULL, *tmp;
+ #endif
+@@ -5513,11 +5519,6 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ #endif
+ 
+ not_early:
+-		page = pfn_to_page(pfn);
+-		__init_single_page(page, pfn, zone, nid);
+-		if (context == MEMMAP_HOTPLUG)
+-			SetPageReserved(page);
+-
+ 		/*
+ 		 * Mark the block movable so that blocks are reserved for
+ 		 * movable at startup. This will force kernel allocations
+@@ -5534,8 +5535,15 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ 		 * because this is done early in sparse_add_one_section
+ 		 */
+ 		if (!(pfn & (pageblock_nr_pages - 1))) {
++			struct page *page = pfn_to_page(pfn);
++
++			__init_single_page(page, pfn, zone, nid,
++					context != MEMMAP_HOTPLUG);
+ 			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+ 			cond_resched();
++		} else {
++			__init_single_pfn(pfn, zone, nid,
++					context != MEMMAP_HOTPLUG);
+ 		}
+ 	}
+ }
+diff --git a/mm/sparse.c b/mm/sparse.c
+index 62eef264a7bd..58cab483e81b 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -779,13 +779,7 @@ int __meminit sparse_add_one_section(struct pglist_data *pgdat,
+ 		goto out;
+ 	}
+ 
+-#ifdef CONFIG_DEBUG_VM
+-	/*
+-	 * Poison uninitialized struct pages in order to catch invalid flags
+-	 * combinations.
+-	 */
+-	memset(memmap, PAGE_POISON_PATTERN, sizeof(struct page) * PAGES_PER_SECTION);
+-#endif
++	memset(memmap, 0, sizeof(struct page) * PAGES_PER_SECTION);
+ 
+ 	section_mark_present(ms);
+ 
 -- 
 2.14.3
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
