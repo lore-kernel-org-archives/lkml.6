@@ -1,66 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752970AbeDMGES (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 02:04:18 -0400
-Received: from mga18.intel.com ([134.134.136.126]:17735 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752157AbeDMGER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 02:04:17 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,444,1517904000";
-   d="scan'208";a="36951058"
-Date: Fri, 13 Apr 2018 14:03:59 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: kbuild-all@01.org, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [PATCH 3/5] net: stmmac: dwmac-sun8i: Allow getting syscon
- regmap from device
-Message-ID: <201804131338.J3POccon%fengguang.wu@intel.com>
-References: <20180411141641.14675-4-icenowy@aosc.io>
+        id S1751677AbeDMGJE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 02:09:04 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45446 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750839AbeDMGJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 02:09:03 -0400
+Subject: Re: [PATCH] f2fs: set deadline to drop expired inmem pages
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20180408081312.6190-1-yuchao0@huawei.com>
+ <09fd3144-d1c5-ca02-178d-b467d6fbe0e1@huawei.com>
+ <20180413010433.GB51348@jaegeuk-macbookpro.roam.corp.google.com>
+ <bb7d3b60-0629-ea80-c4ae-976a76abb034@huawei.com>
+ <20180413040525.GB59368@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <51d2e16a-3a69-71ef-86f5-aee63cd6731c@huawei.com>
+Date: Fri, 13 Apr 2018 14:08:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180411141641.14675-4-icenowy@aosc.io>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <20180413040525.GB59368@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chen-Yu,
+On 2018/4/13 12:05, Jaegeuk Kim wrote:
+> On 04/13, Chao Yu wrote:
+>> On 2018/4/13 9:04, Jaegeuk Kim wrote:
+>>> On 04/10, Chao Yu wrote:
+>>>> Hi Jaegeuk,
+>>>>
+>>>> On 2018/4/8 16:13, Chao Yu wrote:
+>>>>> f2fs doesn't allow abuse on atomic write class interface, so except
+>>>>> limiting in-mem pages' total memory usage capacity, we need to limit
+>>>>> start-commit time as well, otherwise we may run into infinite loop
+>>>>> during foreground GC because target blocks in victim segment are
+>>>>> belong to atomic opened file for long time.
+>>>>>
+>>>>> Now, we will check the condition with f2fs_balance_fs_bg in
+>>>>> background threads, once if user doesn't commit data exceeding 30
+>>>>> seconds, we will drop all cached data, so I expect it can keep our
+>>>>> system running safely to prevent Dos attack.
+>>>>
+>>>> Is it worth to add this patch to avoid abuse on atomic write interface by user?
+>>>
+>>> Hmm, hope to see a real problem first in this case.
+>>
+>> I think this can be a more critical security leak instead of a potential issue
+>> which we can wait for someone reporting that can be too late.
+>>
+>> For example, user can simply write a huge file whose data spread in all f2fs
+>> segments, once user open that file as atomic, foreground GC will suffer
+>> deadloop, causing denying any further service of f2fs.
+> 
+> How can you guarantee it won't happen within 30sec? If you want to avoid that,
 
-I love your patch! Perhaps something to improve:
+Now the value is smaller than generic hang task threshold in order to avoid
+foreground GC helding gc_mutex too long, we can tune that parameter?
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on v4.16 next-20180412]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> you have to take a look at foreground gc.
 
-url:    https://github.com/0day-ci/linux/commits/Icenowy-Zheng/Add-support-in-dwmac-sun8i-for-accessing-EMAC-clock/20180413-004816
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+What do you mean? let GC moves blocks of atomic write opened file?
 
+Thanks,
 
-sparse warnings: (new ones prefixed by >>)
-
-   drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c:82:24: sparse: symbol 'old_syscon_reg_field' was not declared. Should it be static?
->> drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c:89:24: sparse: symbol 'single_reg_field' was not declared. Should it be static?
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>>> Thanks,
+>>>
+>>> .
+>>>
+> 
+> .
+> 
