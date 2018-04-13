@@ -1,79 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751818AbeDMPFl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 11:05:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36082 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750761AbeDMPFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 11:05:39 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00AF221795
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
-X-Google-Smtp-Source: AIpwx4/U8UvljI9fRl4lc+HWyPnQKC1M/lBcmoQL36NB9HifEioAz6QbYkkf4GO0LD7L2cjpOm5t4nk0nRlNmvJ+eM8=
+        id S1751380AbeDMPH3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 11:07:29 -0400
+Received: from mail-pf0-f182.google.com ([209.85.192.182]:39202 "EHLO
+        mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750832AbeDMPH1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 11:07:27 -0400
+X-Google-Smtp-Source: AIpwx4/ybyHYocA22OjeRSFbUsrhjXrv9OY+okm0LK5u4Dzf7K0JunOgiFvgkQVoPhqZXVGIWsLb/Q==
+Date: Fri, 13 Apr 2018 08:07:24 -0700
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To: Jesper Dangaard Brouer <brouer@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Daniel Borkmann <borkmann@iogearbox.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>
+Subject: Re: Build error for samples/bpf/ due to commit d0266046ad54 ("x86:
+ Remove FAST_FEATURE_TESTS")
+Message-ID: <20180413150722.33kja5rfgv2a4cpr@ast-mbp>
+References: <20180413152237.3727911f@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1523531671-27491-12-git-send-email-ulf.hansson@linaro.org>
-References: <1523531671-27491-1-git-send-email-ulf.hansson@linaro.org> <1523531671-27491-12-git-send-email-ulf.hansson@linaro.org>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Fri, 13 Apr 2018 10:05:17 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqL=i1mXSW-x2CRAHoyAxG+QtGL1YLGwpJdpQbizrqzv-w@mail.gmail.com>
-Message-ID: <CAL_JsqL=i1mXSW-x2CRAHoyAxG+QtGL1YLGwpJdpQbizrqzv-w@mail.gmail.com>
-Subject: Re: [PATCH v7 11/26] of: base: Add of_get_cpu_state_node() to get
- idle states for a CPU node
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        Kevin Hilman <khilman@kernel.org>, Lina Iyer <ilina@codeaurora.org>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, Juri Lelli <juri.lelli@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180413152237.3727911f@redhat.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 6:14 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> The CPU's idle state nodes are currently parsed at the common cpuidle DT
-> library, but also when initializing back-end data for the arch specific CPU
-> operations, as in the PSCI driver case.
->
-> To avoid open-coding, let's introduce of_get_cpu_state_node(), which takes
-> the device node for the CPU and the index to the requested idle state node,
-> as in-parameters. In case a corresponding idle state node is found, it
-> returns the node with the refcount incremented for it, else it returns
-> NULL.
->
-> Moreover, for ARM, there are two generic methods, to describe the CPU's
-> idle states, either via the flattened description through the
-> "cpu-idle-states" binding [1] or via the hierarchical layout, using the
-> "power-domains" and the "domain-idle-states" bindings [2]. Hence, let's
-> take both options into account.
->
-> [1]
-> Documentation/devicetree/bindings/arm/idle-states.txt
-> [2]
-> Documentation/devicetree/bindings/arm/psci.txt
->
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: Lina Iyer <ilina@codeaurora.org>
-> Suggested-by: Sudeep Holla <sudeep.holla@arm.com>
-> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  drivers/of/base.c  | 35 +++++++++++++++++++++++++++++++++++
->  include/linux/of.h |  8 ++++++++
->  2 files changed, 43 insertions(+)
+On Fri, Apr 13, 2018 at 03:22:37PM +0200, Jesper Dangaard Brouer wrote:
+> Hi Peter,
+> 
+> Your commit d0266046ad54 ("x86: Remove FAST_FEATURE_TESTS") broke build
+> for several samples/bpf programs. I'm unsure what the best way forward
+> is to unbreak these...
+> 
+> The issue is that these samples are build with LLVM/clang (which
+> doesn't like 'asm goto' constructs).  And they end up including
+> arch/x86/include/asm/cpufeature.h via a long include path, see build
+> examples below (through different path to include/linux/thread_info.h).
+> 
+> Maybe Alexei or Daniel have an idea how to work around this?
+> As tools/testing/selftests/bpf/ does not seem to fail!?
 
-Some reason you didn't add my Reviewed-by from v6?
+Right. All of bpf tracing and samples/bpf/ broke.
+Here is the proposed fix that we're asking Peter to apply and send to Linus asap.
+https://lkml.org/lkml/2018/4/10/825
 
-Rob
+> Build error#1:
+> --------------
+> clang  -nostdinc -isystem /usr/lib/gcc/x86_64-redhat-linux/7/include -I./arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h  -Isamples/bpf \
+>         -I./tools/testing/selftests/bpf/ \
+>         -D__KERNEL__ -Wno-unused-value -Wno-pointer-sign \
+>         -D__TARGET_ARCH_x86 -Wno-compare-distinct-pointer-types \
+>         -Wno-gnu-variable-sized-type-not-at-end \
+>         -Wno-address-of-packed-member -Wno-tautological-compare \
+>         -Wno-unknown-warning-option  \
+>         -O2 -emit-llvm -c samples/bpf/sockex2_kern.c -o -| llc -march=bpf -filetype=obj -o samples/bpf/sockex2_kern.o
+> In file included from samples/bpf/sockex2_kern.c:3:
+> In file included from ./include/uapi/linux/in.h:24:
+> In file included from ./include/linux/socket.h:8:
+> In file included from ./include/linux/uio.h:13:
+> In file included from ./include/linux/thread_info.h:38:
+> In file included from ./arch/x86/include/asm/thread_info.h:53:
+> ./arch/x86/include/asm/cpufeature.h:150:2: error: 'asm goto' constructs are not supported yet
+>         asm_volatile_goto("1: jmp 6f\n"
+>         ^
+> ./include/linux/compiler-gcc.h:290:42: note: expanded from macro 'asm_volatile_goto'
+> #define asm_volatile_goto(x...) do { asm goto(x); asm (""); } while (0)
