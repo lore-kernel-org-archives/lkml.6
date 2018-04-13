@@ -1,147 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753114AbeDMHiR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 03:38:17 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:60441 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750713AbeDMHiQ (ORCPT
+        id S1753372AbeDMHkH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 03:40:07 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:41137 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750713AbeDMHkG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 03:38:16 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Yu Chen <yu.c.chen@intel.com>
-Cc: Len Brown <lenb@kernel.org>,
-        Artem Bityutskiy <artem.bityutskiy@intel.com>,
-        Doug Smythies <dsmythies@telus.net>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][v4] tools/power turbostat: if --iterations, print for specific time of iterations
-Date: Fri, 13 Apr 2018 09:38:18 +0200
-Message-ID: <6001773.M4ClJSFhmh@aspire.rjw.lan>
-In-Reply-To: <20180413034047.1240-1-yu.c.chen@intel.com>
-References: <20180413034047.1240-1-yu.c.chen@intel.com>
+        Fri, 13 Apr 2018 03:40:06 -0400
+X-Google-Smtp-Source: AIpwx49TWEnuev9UyXgl5qFRnvLAG3qybgTR+6P9CLy3gtJS/YD5bFbhR8SYOb82mb6FrCudDWw8Pg==
+Date: Fri, 13 Apr 2018 16:36:20 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Kim Phillips <kim.phillips@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, kernel-team@lge.com
+Subject: Re: [PATCH] Revert "perf machine: Fix paranoid check in
+ machine__set_kernel_mmap()"
+Message-ID: <20180413073620.GA21386@danjae.aot.lge.com>
+References: <20180219022036.GB1583@sejong>
+ <20180219100140.GA17630@krava>
+ <20180219101936.GD1583@sejong>
+ <20180219104917.GA19365@krava>
+ <20180219121817.GC14978@kernel.org>
+ <20180411180752.b64c4d105222fb22c159b852@arm.com>
+ <20180411233109.GA6320@sejong>
+ <20180411192940.de8143a80bd9e5d98d87f6ec@arm.com>
+ <20180412015756.GA6962@sejong>
+ <20180412190954.4c76039100b990675ec390bd@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180412190954.4c76039100b990675ec390bd@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, April 13, 2018 5:40:47 AM CEST Yu Chen wrote:
-> From: Chen Yu <yu.c.chen@intel.com>
+On Thu, Apr 12, 2018 at 07:09:54PM -0500, Kim Phillips wrote:
+> On Thu, 12 Apr 2018 10:57:56 +0900
+> Namhyung Kim <namhyung@kernel.org> wrote:
 > 
-> There's a use case during test to only print specific round of iterations
-> if --iterations is specified, for example, with this patch applied:
+> > On Wed, Apr 11, 2018 at 07:29:40PM -0500, Kim Phillips wrote:
+> > > On Thu, 12 Apr 2018 08:31:09 +0900
+> > > Namhyung Kim <namhyung@kernel.org> wrote:
+> > > > overflow can create it..  could you please show me the mmap event?
+> > > > 
+> > > >   $ perf script --show-mmap-events
+> > > 
+> > > Here you go:
+> > > 
+> > >          swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffff200008080000(0xdffff7f7ffff) @ 0xffff200008080000]: x [kernel.kallsyms]_text
+> > 
+> >    0xffff200008080000
+> >  +     0xdffff7f7ffff
+> >  --------------------
+> >    0xffffffffffffffff
+> > 
+> > So it should have ~0ULL of the 'end' already.  I don't know why it
+> > caused the problem..  Was it from the `perf.good`?
 > 
-> turbostat -i 5 -I 4
-> will capture 4 samples with 5 seconds interval.
+> There's no difference between the output of perf.good and perf.bad (the
+> difference between them is this reversion patch, .good being the one
+> that includes it).
+
+Strange.. I have no idea what's the problem if the end is already
+~0ULL then.
+
+
 > 
-> Cc: Len Brown <lenb@kernel.org>
-> Cc: Rafael J Wysocki <rjw@rjwysocki.net>
-> Cc: Artem Bityutskiy <artem.bityutskiy@intel.com>
-> Cc: Doug Smythies <dsmythies@telus.net>
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-> ---
->  tools/power/x86/turbostat/turbostat.c | 23 ++++++++++++++++++++++-
->  1 file changed, 22 insertions(+), 1 deletion(-)
+> > >          swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffff2000021e0000(0x18000) @ 0]: x /lib/modules/4.16.0+/kernel/drivers/bus/arm-ccn.ko
+> > 
+> > Hmm.. also it seems arm64 loads modules under the kernel.  Then the
+> > fixup logic in machine__create_kernel_maps() won't work.  Also as we
 > 
-> diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-> index bd9c6b31a504..a2fe96f038f0 100644
-> --- a/tools/power/x86/turbostat/turbostat.c
-> +++ b/tools/power/x86/turbostat/turbostat.c
-> @@ -48,6 +48,7 @@ char *proc_stat = "/proc/stat";
->  FILE *outf;
->  int *fd_percpu;
->  struct timespec interval_ts = {5, 0};
-> +int iterations;
->  unsigned int debug;
->  unsigned int quiet;
->  unsigned int sums_need_wide_columns;
-> @@ -470,6 +471,7 @@ void help(void)
->  	"		{core | package | j,k,l..m,n-p }\n"
->  	"--quiet	skip decoding system configuration header\n"
->  	"--interval sec	Override default 5-second measurement interval\n"
-> +	"--iterations count	Number of measurement iterations(requires '--interval'\n"
-
-Why does it require --interval?  Surely it should work with the default interval too?
-
->  	"--help		print this help message\n"
->  	"--list		list column headers only\n"
->  	"--out file	create or truncate \"file\" for all output\n"
-> @@ -2565,6 +2567,7 @@ void turbostat_loop()
->  {
->  	int retval;
->  	int restarted = 0;
-> +	int done_iters = 0;
->  
->  restart:
->  	restarted++;
-> @@ -2581,6 +2584,7 @@ void turbostat_loop()
->  		goto restart;
->  	}
->  	restarted = 0;
-> +	done_iters = 0;
->  	gettimeofday(&tv_even, (struct timezone *)NULL);
->  
->  	while (1) {
-> @@ -2607,6 +2611,10 @@ void turbostat_loop()
->  		compute_average(EVEN_COUNTERS);
->  		format_all_counters(EVEN_COUNTERS);
->  		flush_output_stdout();
-> +
-> +		if (iterations && (++done_iters >= iterations))
-> +			break;
-> +
->  		nanosleep(&interval_ts, NULL);
->  		if (snapshot_proc_sysfs_files())
->  			goto restart;
-> @@ -2626,6 +2634,9 @@ void turbostat_loop()
->  		compute_average(ODD_COUNTERS);
->  		format_all_counters(ODD_COUNTERS);
->  		flush_output_stdout();
-> +
-> +		if (iterations && (++done_iters >= iterations))
-> +			break;
->  	}
->  }
->  
-> @@ -4999,6 +5010,7 @@ void cmdline(int argc, char **argv)
->  		{"Dump",	no_argument,		0, 'D'},
->  		{"debug",	no_argument,		0, 'd'},	/* internal, not documented */
->  		{"interval",	required_argument,	0, 'i'},
-> +		{"iterations",	required_argument,	0, 'I'},
-
-I would use "-r" rather (unless assigned already).  It may be interpreted as
-"repetitions" and there's no confusion with "-i".
-
->  		{"help",	no_argument,		0, 'h'},
->  		{"hide",	required_argument,	0, 'H'},	// meh, -h taken by --help
->  		{"Joules",	no_argument,		0, 'J'},
-> @@ -5014,7 +5026,7 @@ void cmdline(int argc, char **argv)
->  
->  	progname = argv[0];
->  
-> -	while ((opt = getopt_long_only(argc, argv, "+C:c:Ddhi:JM:m:o:qST:v",
-> +	while ((opt = getopt_long_only(argc, argv, "+C:c:DdhI:i:JM:m:o:qST:v",
->  				long_options, &option_index)) != -1) {
->  		switch (opt) {
->  		case 'a':
-> @@ -5036,6 +5048,15 @@ void cmdline(int argc, char **argv)
->  		default:
->  			help();
->  			exit(1);
-> +		case 'I':
-> +			iterations = strtod(optarg, NULL);
-> +
-> +			if (iterations <= 0) {
-> +				fprintf(outf, "iterations %d should be positive number\n",
-> +					iterations);
-> +				exit(2);
-> +			}
-> +			break;
->  		case 'i':
->  			{
->  				double interval = strtod(optarg, NULL);
+> you mean this:
 > 
+> void __map_groups__fixup_end(struct map_groups *mg, enum map_type type)
+> ...
+>                 if (!curr->end)
+>                         curr->end = next->start;
+> 
+> ?
 
-What about the man page?
+Right.  For the fixup routine to work, a map should have 0 end.
+
+
+> Module symbol resolution is working, however.  Maybe because this
+> 'paranoid' check was setting all the end addresses to ~0ULL?
+
+Only if the end was 0.  Modules should have non-zero end.
+
+
+> Does the
+> design assume what maps__first() returns always has the lowest address,
+> and they're in sorted order?  If so, what's the fix, to re-sort
+> map_groups afterwards?
+
+I think it's another problem but agree with you to fix it sorted.
+
+
+> 
+> > don't use the map_groups__fixup_end() anymore 
+> 
+> ?  I see map_groups__fixup_end() still being called.
+
+Oops, sorry.  I looked a wrong branch (which I removed it but never
+sent to the LKML).
+
+
+> 
+> > I think it's ok just checking the end address.
+> 
+> Where?  In machine__set_kernel_mmap(), like this reversion does?
+
+Yes, the reason is all other maps (i.e. modules) are already have
+non-zero end and we can fixup the end of kernel manually.
+
+
+> 
+> The original commit says:
+> 
+>     The machine__set_kernel_mmap() is to setup addresses of the kernel map
+>     using external info.  But it has a check when the address is given from
+>     an incorrect input which should have the start and end address of 0
+>     (i.e. machine__process_kernel_mmap_event).
+>     
+>     But we also use the end address of 0 for a valid input so change it to
+>     check both start and end addresses.
+> 
+> yet the comment above the code says:
+> 
+>                  * Be a bit paranoid here, some perf.data file came with
+>                  * a zero sized synthesized MMAP event for the kernel.
+> 
+> I tracked the first comment insertion down to this commit:
+> 
+> commit 10fe12ef631a7e85022ed26304a37f033a6a95b8
+> Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Date:   Sat Feb 20 19:53:13 2010 -0200
+> 
+>     perf symbols: Fix up map end too on modular kernels with no modules installed
+>     
+>     In 2161db9 we stopped failing when not finding modules when
+>     asked too, but then the kernel maps (just one, for vmlinux)
+>     wasn't having its ->end field correctly set up, so symbols were
+>     not being found for the vmlinux map because its range was 0-0.
+> 
+> which, when reading that last part, one would assume start == end == 0,
+> therefore size also == 0, the comment only talks about a zero *sized*
+> event...so did the original commit 1d12cec6ce99 "perf machine: Fix
+> paranoid check in machine__set_kernel_mmap()" really fix that case?
+> Because it checks start == 0, not necessarily the size...
+
+As I said I thought it only cares the start == end == 0 case and now
+the problem is fixed.  So I added the start check for the fixup
+routine to take care of the end address.  Otherwise kernel might have
+an overlap with some module(s).
+
+> 
+> If not, can it be reverted until we figure out what's going on with
+> arm64?  It's causing a regression in the meantime...
+
+I think the right solution would be
+
+1. sort map groups
+2. set kernel end to ~0ULL in machine__create_kernel_maps()
+3. fix the kernel end to the start of next module (if any) manually
+   instead of calling map_groups__fixup_end()
+
+Thanks,
+Namhyung
