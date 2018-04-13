@@ -1,347 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752167AbeDMP4W (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 11:56:22 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:44810 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750837AbeDMP4U (ORCPT
+        id S1752077AbeDMQC1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 12:02:27 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:46317 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751002AbeDMQCZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 11:56:20 -0400
-X-Google-Smtp-Source: AIpwx48qMV3BUjb4IwSiUpKIz5oPha5o/NX4173Sih2jkKk323tLp4qlQcxuhyx5VChjjAig5foHpQ==
-Reply-To: minyard@acm.org
-Subject: Re: [PATCH ipmi/kcs_bmc v1] ipmi: add an NPCM7xx KCS BMC driver
-To: Haiyue Wang <haiyue.wang@linux.intel.com>,
-        openipmi-developer@lists.sourceforge.net, openbmc@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Cc: joel@jms.id.au, avifishman70@gmail.com
-References: <1521723015-19142-1-git-send-email-haiyue.wang@linux.intel.com>
-From: Corey Minyard <minyard@acm.org>
-Message-ID: <4a878c46-9451-8ee6-c067-955a0bd651d0@acm.org>
-Date: Fri, 13 Apr 2018 10:56:17 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 13 Apr 2018 12:02:25 -0400
+X-Google-Smtp-Source: AIpwx4/1yBadeXK0Gv6sNoaYKJmxcHltLoKnVHW4N63Ws05Mevbzq9TyGHyBHW+Mxiz8avAxXN6dt/Pfd1mZ7Q1VTcg=
 MIME-Version: 1.0
-In-Reply-To: <1521723015-19142-1-git-send-email-haiyue.wang@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+In-Reply-To: <20180413141359.793919fb@endymion>
+References: <20180412213342.138010-1-hansens@google.com> <20180412222457.x4jdwt27ylgi74o3@katana>
+ <20180413141359.793919fb@endymion>
+From: Sam Hansen <hansens@google.com>
+Date: Fri, 13 Apr 2018 09:02:03 -0700
+Message-ID: <CAP9bUy7rONNHYeRkYtaWHcfqoZcGKXJz-JocED26zBj9n+-ZbQ@mail.gmail.com>
+Subject: Re: [PATCH] Documentation/i2c: sync docs with current state of i2c-tools.
+To: Jean Delvare <jdelvare@suse.de>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        corbet@lwn.net, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/22/2018 07:50 AM, Haiyue Wang wrote:
-> This driver exposes the Keyboard Controller Style (KCS) interface on
-> Novoton NPCM7xx SoCs as a character device. Such SOCs are commonly used
-> as a BaseBoard Management Controller (BMC) on a server board, and KCS
-> interface is commonly used to perform the in-band IPMI communication
-> between the server and its BMC.
+On Fri, Apr 13, 2018 at 5:13 AM, Jean Delvare <jdelvare@suse.de> wrote:
+> Hi Wolfram, Sam,
+>
+> On Fri, 13 Apr 2018 00:24:57 +0200, Wolfram Sang wrote:
+>> On Thu, Apr 12, 2018 at 02:33:42PM -0700, Sam Hansen wrote:
+>> > Currently, Documentation/i2c/dev-interface describes the use of i2c_smbus_*
+>> > helper routines as static inlined functions provided by linux/i2c-dev.h.  Work
+>> > has been done to refactor the linux/i2c-dev.h file in the i2c-tools project
+>> > out into its own library.  As a result, these docs have become stale.
+>>
+>> Thanks for fixing this!
+>>
+>> > This patch corrects the discrepancy and directs the reader to the i2c-tools
+>> > project for more information.  Additionally, some trailing-whitespace cleanups
+>> > were made.
+>>
+>> Minor nit: Having the whitespace changes in a seperate patch is a tad
+>> easier to review.
+>>
+>> > -  /* Using I2C Write, equivalent of
+>> > +  /* Using I2C Write, equivalent of
+>> >       i2c_smbus_write_word_data(file, reg, 0x6543) */
+>>
+>> Maybe change to Kernel coding style comments while here?
+>>
+>> > -  Not meant to be called  directly; instead, use the access functions
+>> > -  below.
+>> > +  If possible, use the provided i2c_smbus_* methods described below in favor
+>> > +  of issuing direct ioctls.
+>>
+>> Why this change?
+>
+> I'm also not sure if "in favor of" is right. "instead of" would sound
+> better to me, but I'm no native English speaker, I could be wrong.
 
-Sorry, I missed this.  It is queued for the next kernel release.
-
-Thanks,
-
--corey
+Sounds good, I'll adopt "instead of".  Regarding Wolfram's earlier
+comment, as an engineer, requiring an out-of-tree library to build
+drivers felt a little off.  I can revert this section if you want,
+just let me know.
 
 >
-> Signed-off-by: Avi Fishman <avifishman70@gmail.com>
-> Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
-> ---
->   .../devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt   |  39 ++++
->   drivers/char/ipmi/Kconfig                          |  15 ++
->   drivers/char/ipmi/Makefile                         |   1 +
->   drivers/char/ipmi/kcs_bmc_npcm7xx.c                | 204 +++++++++++++++++++++
->   4 files changed, 259 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt
->   create mode 100644 drivers/char/ipmi/kcs_bmc_npcm7xx.c
+>> > -The above functions are all inline functions, that resolve to calls to
+>> > -the i2c_smbus_access function, that on its turn calls a specific ioctl
+>> > -with the data in a specific format. Read the source code if you
+>> > -want to know what happens behind the screens.
+>> > +The above functions are made available by linking against the libi2c library,
+>> > +which is provided by the i2c-tools project.  See:
+>> > +https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/.
+>>
+>> This is fine with me. Maybe Jean has a comment on this?
 >
-> diff --git a/Documentation/devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt b/Documentation/devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt
-> new file mode 100644
-> index 0000000..3538a21
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt
-> @@ -0,0 +1,39 @@
-> +* Nuvoton NPCM7xx KCS (Keyboard Controller Style) IPMI interface
-> +
-> +The Nuvoton SOCs (NPCM7xx) are commonly used as BMCs
-> +(Baseboard Management Controllers) and the KCS interface can be
-> +used to perform in-band IPMI communication with their host.
-> +
-> +Required properties:
-> +- compatible : should be one of
-> +    "nuvoton,npcm750-kcs-bmc"
-> +- interrupts : interrupt generated by the controller
-> +- kcs_chan : The KCS channel number in the controller
-> +
-> +Example:
-> +
-> +    lpc_kcs: lpc_kcs@f0007000 {
-> +        compatible = "nuvoton,npcm750-lpc-kcs", "simple-mfd", "syscon";
-> +        reg = <0xf0007000 0x40>;
-> +        reg-io-width = <1>;
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +        ranges = <0x0 0xf0007000 0x40>;
-> +
-> +        kcs1: kcs1@0 {
-> +            compatible = "nuvoton,npcm750-kcs-bmc";
-> +            reg = <0x0 0x40>;
-> +            interrupts = <0 9 4>;
-> +            kcs_chan = <1>;
-> +            status = "disabled";
-> +        };
-> +
-> +        kcs2: kcs2@0 {
-> +            compatible = "nuvoton,npcm750-kcs-bmc";
-> +            reg = <0x0 0x40>;
-> +            interrupts = <0 9 4>;
-> +            kcs_chan = <2>;
-> +            status = "disabled";
-> +        };
-> +    };
-> \ No newline at end of file
-> diff --git a/drivers/char/ipmi/Kconfig b/drivers/char/ipmi/Kconfig
-> index 3bda116..470f976 100644
-> --- a/drivers/char/ipmi/Kconfig
-> +++ b/drivers/char/ipmi/Kconfig
-> @@ -111,6 +111,21 @@ config ASPEED_KCS_IPMI_BMC
->   	  The driver implements the BMC side of the KCS contorller, it
->   	  provides the access of KCS IO space for BMC side.
->   
-> +config NPCM7XX_KCS_IPMI_BMC
-> +	depends on ARCH_NPCM7XX || COMPILE_TEST
-> +	select IPMI_KCS_BMC
-> +	select REGMAP_MMIO
-> +	tristate "NPCM7xx KCS IPMI BMC driver"
-> +	help
-> +	  Provides a driver for the KCS (Keyboard Controller Style) IPMI
-> +	  interface found on Nuvoton NPCM7xx SOCs.
-> +
-> +	  The driver implements the BMC side of the KCS contorller, it
-> +	  provides the access of KCS IO space for BMC side.
-> +
-> +	  This support is also available as a module.  If so, the module
-> +	  will be called kcs_bmc_npcm7xx.
-> +
->   config ASPEED_BT_IPMI_BMC
->   	depends on ARCH_ASPEED || COMPILE_TEST
->          depends on REGMAP && REGMAP_MMIO && MFD_SYSCON
-> diff --git a/drivers/char/ipmi/Makefile b/drivers/char/ipmi/Makefile
-> index 21e9e87..7a3baf3 100644
-> --- a/drivers/char/ipmi/Makefile
-> +++ b/drivers/char/ipmi/Makefile
-> @@ -24,3 +24,4 @@ obj-$(CONFIG_IPMI_POWEROFF) += ipmi_poweroff.o
->   obj-$(CONFIG_IPMI_KCS_BMC) += kcs_bmc.o
->   obj-$(CONFIG_ASPEED_BT_IPMI_BMC) += bt-bmc.o
->   obj-$(CONFIG_ASPEED_KCS_IPMI_BMC) += kcs_bmc_aspeed.o
-> +obj-$(CONFIG_NPCM7XX_KCS_IPMI_BMC) += kcs_bmc_npcm7xx.o
-> diff --git a/drivers/char/ipmi/kcs_bmc_npcm7xx.c b/drivers/char/ipmi/kcs_bmc_npcm7xx.c
-> new file mode 100644
-> index 0000000..7bc898c
-> --- /dev/null
-> +++ b/drivers/char/ipmi/kcs_bmc_npcm7xx.c
-> @@ -0,0 +1,204 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, Nuvoton Corporation.
-> + * Copyright (c) 2018, Intel Corporation.
-> + */
-> +
-> +#define pr_fmt(fmt) "nuvoton-kcs-bmc: " fmt
-> +
-> +#include <linux/atomic.h>
-> +#include <linux/errno.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +
-> +#include "kcs_bmc.h"
-> +
-> +#define DEVICE_NAME	"npcm-kcs-bmc"
-> +#define KCS_CHANNEL_MAX	3
-> +
-> +#define KCS1ST		0x0C
-> +#define KCS2ST		0x1E
-> +#define KCS3ST		0x30
-> +
-> +#define KCS1DO		0x0E
-> +#define KCS2DO		0x20
-> +#define KCS3DO		0x32
-> +
-> +#define KCS1DI		0x10
-> +#define KCS2DI		0x22
-> +#define KCS3DI		0x34
-> +
-> +#define KCS1CTL		0x18
-> +#define KCS2CTL		0x2A
-> +#define KCS3CTL		0x3C
-> +#define    KCS_CTL_IBFIE	BIT(0)
-> +
-> +/*
-> + * 7.2.4 Core KCS Registers
-> + * Registers in this module are 8 bits. An 8-bit register must be accessed
-> + * by an 8-bit read or write.
-> + *
-> + * sts: KCS Channel n Status Register (KCSnST).
-> + * dob: KCS Channel n Data Out Buffer Register (KCSnDO).
-> + * dib: KCS Channel n Data In Buffer Register (KCSnDI).
-> + * ctl: KCS Channel n Control Register (KCSnCTL).
-> + */
-> +struct npcm7xx_kcs_reg {
-> +	u32 sts;
-> +	u32 dob;
-> +	u32 dib;
-> +	u32 ctl;
-> +};
-> +
-> +struct npcm7xx_kcs_bmc {
-> +	struct regmap *map;
-> +
-> +	const struct npcm7xx_kcs_reg *reg;
-> +};
-> +
-> +static const struct npcm7xx_kcs_reg npcm7xx_kcs_reg_tbl[KCS_CHANNEL_MAX] = {
-> +	{ .sts = KCS1ST, .dob = KCS1DO, .dib = KCS1DI, .ctl = KCS1CTL },
-> +	{ .sts = KCS2ST, .dob = KCS2DO, .dib = KCS2DI, .ctl = KCS2CTL },
-> +	{ .sts = KCS3ST, .dob = KCS3DO, .dib = KCS3DI, .ctl = KCS3CTL },
-> +};
-> +
-> +static u8 npcm7xx_kcs_inb(struct kcs_bmc *kcs_bmc, u32 reg)
-> +{
-> +	struct npcm7xx_kcs_bmc *priv = kcs_bmc_priv(kcs_bmc);
-> +	u32 val = 0;
-> +	int rc;
-> +
-> +	rc = regmap_read(priv->map, reg, &val);
-> +	WARN(rc != 0, "regmap_read() failed: %d\n", rc);
-> +
-> +	return rc == 0 ? (u8)val : 0;
-> +}
-> +
-> +static void npcm7xx_kcs_outb(struct kcs_bmc *kcs_bmc, u32 reg, u8 data)
-> +{
-> +	struct npcm7xx_kcs_bmc *priv = kcs_bmc_priv(kcs_bmc);
-> +	int rc;
-> +
-> +	rc = regmap_write(priv->map, reg, data);
-> +	WARN(rc != 0, "regmap_write() failed: %d\n", rc);
-> +}
-> +
-> +static void npcm7xx_kcs_enable_channel(struct kcs_bmc *kcs_bmc, bool enable)
-> +{
-> +	struct npcm7xx_kcs_bmc *priv = kcs_bmc_priv(kcs_bmc);
-> +
-> +	regmap_update_bits(priv->map, priv->reg->ctl, KCS_CTL_IBFIE,
-> +			   enable ? KCS_CTL_IBFIE : 0);
-> +}
-> +
-> +static irqreturn_t npcm7xx_kcs_irq(int irq, void *arg)
-> +{
-> +	struct kcs_bmc *kcs_bmc = arg;
-> +
-> +	if (!kcs_bmc_handle_event(kcs_bmc))
-> +		return IRQ_HANDLED;
-> +
-> +	return IRQ_NONE;
-> +}
-> +
-> +static int npcm7xx_kcs_config_irq(struct kcs_bmc *kcs_bmc,
-> +				  struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	int irq;
-> +
-> +	irq = platform_get_irq(pdev, 0);
-> +	if (irq < 0)
-> +		return irq;
-> +
-> +	return devm_request_irq(dev, irq, npcm7xx_kcs_irq, IRQF_SHARED,
-> +				dev_name(dev), kcs_bmc);
-> +}
-> +
-> +static int npcm7xx_kcs_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct npcm7xx_kcs_bmc *priv;
-> +	struct kcs_bmc *kcs_bmc;
-> +	u32 chan;
-> +	int rc;
-> +
-> +	rc = of_property_read_u32(dev->of_node, "kcs_chan", &chan);
-> +	if (rc != 0 || chan == 0 || chan > KCS_CHANNEL_MAX) {
-> +		dev_err(dev, "no valid 'kcs_chan' configured\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	kcs_bmc = kcs_bmc_alloc(dev, sizeof(*priv), chan);
-> +	if (!kcs_bmc)
-> +		return -ENOMEM;
-> +
-> +	priv = kcs_bmc_priv(kcs_bmc);
-> +	priv->map = syscon_node_to_regmap(dev->parent->of_node);
-> +	if (IS_ERR(priv->map)) {
-> +		dev_err(dev, "Couldn't get regmap\n");
-> +		return -ENODEV;
-> +	}
-> +	priv->reg = &npcm7xx_kcs_reg_tbl[chan - 1];
-> +
-> +	kcs_bmc->ioreg.idr = priv->reg->dib;
-> +	kcs_bmc->ioreg.odr = priv->reg->dob;
-> +	kcs_bmc->ioreg.str = priv->reg->sts;
-> +	kcs_bmc->io_inputb = npcm7xx_kcs_inb;
-> +	kcs_bmc->io_outputb = npcm7xx_kcs_outb;
-> +
-> +	dev_set_drvdata(dev, kcs_bmc);
-> +
-> +	npcm7xx_kcs_enable_channel(kcs_bmc, true);
-> +	rc = npcm7xx_kcs_config_irq(kcs_bmc, pdev);
-> +	if (rc)
-> +		return rc;
-> +
-> +	rc = misc_register(&kcs_bmc->miscdev);
-> +	if (rc) {
-> +		dev_err(dev, "Unable to register device\n");
-> +		return rc;
-> +	}
-> +
-> +	pr_info("channel=%u idr=0x%x odr=0x%x str=0x%x\n",
-> +		chan,
-> +		kcs_bmc->ioreg.idr, kcs_bmc->ioreg.odr, kcs_bmc->ioreg.str);
-> +
-> +	return 0;
-> +}
-> +
-> +static int npcm7xx_kcs_remove(struct platform_device *pdev)
-> +{
-> +	struct kcs_bmc *kcs_bmc = dev_get_drvdata(&pdev->dev);
-> +
-> +	misc_deregister(&kcs_bmc->miscdev);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id npcm_kcs_bmc_match[] = {
-> +	{ .compatible = "nuvoton,npcm750-kcs-bmc" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, npcm_kcs_bmc_match);
-> +
-> +static struct platform_driver npcm_kcs_bmc_driver = {
-> +	.driver = {
-> +		.name		= DEVICE_NAME,
-> +		.of_match_table	= npcm_kcs_bmc_match,
-> +	},
-> +	.probe	= npcm7xx_kcs_probe,
-> +	.remove	= npcm7xx_kcs_remove,
-> +};
-> +module_platform_driver(npcm_kcs_bmc_driver);
-> +
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_AUTHOR("Avi Fishman <avifishman70@gmail.com>");
-> +MODULE_AUTHOR("Haiyue Wang <haiyue.wang@linux.intel.com>");
-> +MODULE_DESCRIPTION("NPCM7xx device interface to the KCS BMC device");
+> Fixing the documentation is always welcome, thanks Sam for stepping in.
+> However we really want separate patches for whitespace fixes and actual
+> contents change, as Wolfram already mentioned above.
+
+Will do!  I'll send a v2 patch set, thanks.
+
+>
+> --
+> Jean Delvare
+> SUSE L3 Support
