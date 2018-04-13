@@ -1,144 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752973AbeDMQox (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 12:44:53 -0400
-Received: from mail-it0-f73.google.com ([209.85.214.73]:35923 "EHLO
-        mail-it0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752821AbeDMQo3 (ORCPT
+        id S1752914AbeDMQrm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 12:47:42 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:24562 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752339AbeDMQrj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 12:44:29 -0400
-X-Google-Smtp-Source: AIpwx49tk00eZ2U0SMSgkPfTd7wF76U9r2SYGH8ZomcUM+wKAazadZC+DUCZaot48nGURNOhsfLmjqEeMfMb
+        Fri, 13 Apr 2018 12:47:39 -0400
+X-IronPort-AV: E=Sophos;i="5.48,446,1517842800";
+   d="scan'208";a="278132448"
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Hoan Tran <hotran@apm.com>
+CC: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Michel Pollet" <michel.pollet@bp.renesas.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3] gpio: dwapb: Add support for 1 interrupt per port A
+ GPIO
+Thread-Topic: [PATCH v3] gpio: dwapb: Add support for 1 interrupt per port A
+ GPIO
+Thread-Index: AQHT0wSYdC3Wj2qtiEG+OZ/tkhpiS6P+5T2AgAAAjlA=
+Date: Fri, 13 Apr 2018 16:47:30 +0000
+Message-ID: <TY1PR01MB1769DB39F986BEADEF61F8C9F5B30@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1523609472-4481-1-git-send-email-phil.edworthy@renesas.com>
+ <CAFHUOYziPaZC-Zcb7rXqC9p24H+CU4wK4NQShQkYLgH7c5mVwA@mail.gmail.com>
+In-Reply-To: <CAFHUOYziPaZC-Zcb7rXqC9p24H+CU4wK4NQShQkYLgH7c5mVwA@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=phil.edworthy@renesas.com;
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB1103;7:Hc+5S12GBbxtKi3WoFEX9FNnQ35XFujvH/GwBMj+X0OYShRT67yNwv/Et8CiqX0jkG3T7YymLtpLJcOZRGF8N49mXdBOou2tWjAfUo5uuwJ89HDfLHZOB+O2JrNc7h+5Rc03UXkDX1qGI/i2d397+3accDAz5Kzdwv7hU9B5Pxz2VjLs7ULF3yuYZ55k7oogIpu9/Cb4WWgd9FhQc7MUE93vQuWmZZwAqEBMKJUEjKqHZFEbZVBP/K3A9t7w4H39;20:CAUk1it6Tcde188nfnSgpUpESmaanZi/AZ2fLM8LjT6cDBr6lwvgVEkF1yWe7NGfGx5DOr7i49PoKZiIadcVp0MVAudOw5wklulH91VKab58rxGwTtrA+ywyw4nDZhhOqLzkSOHG4f812pdquFa3zA1jyK2aHCYGsP5wy/1E1ZE=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1103;
+x-ms-traffictypediagnostic: TY1PR01MB1103:
+x-microsoft-antispam-prvs: <TY1PR01MB1103263E8EB9E187045183CFF5B30@TY1PR01MB1103.jpnprd01.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231232)(944501327)(52105095)(3002001)(93006095)(93001095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:TY1PR01MB1103;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1103;
+x-forefront-prvs: 0641678E68
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(39380400002)(39860400002)(376002)(396003)(199004)(189003)(7696005)(68736007)(81156014)(6916009)(3280700002)(97736004)(6506007)(9686003)(14454004)(53546011)(59450400001)(26005)(229853002)(33656002)(2906002)(3660700001)(2900100001)(39060400002)(6116002)(3846002)(11346002)(6436002)(55016002)(446003)(5250100002)(8936002)(316002)(186003)(4326008)(54906003)(106356001)(105586002)(478600001)(99286004)(81166006)(102836004)(53936002)(25786009)(6246003)(8676002)(76176011)(476003)(66066001)(486006)(86362001)(7736002)(44832011)(305945005)(74316002)(5660300001)(7416002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1103;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: zt2DSGxcbYISxnDO24dHS/u5qNIaitzovKNZhGgGa62NwlJxnAbQzcqlzHrMDkDn642fuE9/XJbqGjcjTRRYPsAbksZ+4yisPxdHMJQtCaLzZYkANxSPgTD9ZUOVaXe6qryXh/bRH7uNsMjPif4d/+/eR8WEfneSTA6hTfcY0IfGrt6t2wdD/SSzXOtiIM9Q
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Date: Fri, 13 Apr 2018 09:44:05 -0700
-In-Reply-To: <20180413164405.127522-1-hansens@google.com>
-Message-Id: <20180413164405.127522-3-hansens@google.com>
-References: <CAP9bUy7rONNHYeRkYtaWHcfqoZcGKXJz-JocED26zBj9n+-ZbQ@mail.gmail.com>
- <20180413164405.127522-1-hansens@google.com>
-X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
-Subject: [PATCH v2 3/3] Documentation/i2c: adopt kernel commenting style in examples
-From: Sam Hansen <hansens@google.com>
-To: linux-i2c@vger.kernel.org, hansens@google.com, wsa@the-dreams.de,
-        corbet@lwn.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Sam Hansen <hansens@google.com>, wsa@the-dreams.de, corbet@lwn.net,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Office365-Filtering-Correlation-Id: 4c504c36-1437-483c-a7a1-08d5a15e3fb0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c504c36-1437-483c-a7a1-08d5a15e3fb0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Apr 2018 16:47:30.6114
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1103
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3DGllNR016233
 
-The example I2C code is rewritten to adopt the preferred kernel block
-commenting style.
+Hi Hoan,
 
-Signed-off-by: Sam Hansen <hansens@google.com>
----
- Documentation/i2c/dev-interface | 57 +++++++++++++++++++++++++--------
- 1 file changed, 43 insertions(+), 14 deletions(-)
+On 13 April 2018 17:37 Hoan Tran wrote:
+> On Fri, Apr 13, 2018 at 1:51 AM, Phil Edworthy wrote:
+> > The DesignWare GPIO IP can be configured for either 1 interrupt or 1
+> > per GPIO in port A, but the driver currently only supports 1 interrupt.
+> > See the DesignWare DW_apb_gpio Databook description of the
+> > 'GPIO_INTR_IO' parameter.
+> >
+> > This change allows the driver to work with up to 32 interrupts, it
+> > will get as many interrupts as specified in the DT 'interrupts' property.
+> > It doesn't do anything clever with the different interrupts, it just
+> > calls the same handler used for single interrupt hardware.
+> >
+> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> > ---
+> > One point to mention is that I have made it possible for users to have
+> > unconncted interrupts by specifying holes in the list of interrupts.
+> > This is done by supporting the interrupts-extended DT prop.
+> > However, I have no use for this and had to hack some test case for this.
+> > Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
+> >
+> > v3:
+> >  - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid
+> > bisect problems
+> > v2:
+> >  - Replaced interrupt-mask DT prop with support for the interrupts-
+> extended
+> >    prop. This means replacing the call to irq_of_parse_and_map() with calls
+> >    to of_irq_parse_one() and irq_create_of_mapping().
+> >
+> > Note: There are a few *code* lines over 80 chars, but this is just guidance,
+> >    right? Especially as there are already some lines over 80 chars.
+> > ---
+[snip]
 
-diff --git a/Documentation/i2c/dev-interface b/Documentation/i2c/dev-interface
-index f92ee1f59914..e17f5814c199 100644
---- a/Documentation/i2c/dev-interface
-+++ b/Documentation/i2c/dev-interface
-@@ -30,24 +30,34 @@ assume much about them. They can even change from one boot to the next.
- 
- Next thing, open the device file, as follows:
- 
-+  /*
-+   * The adapter is probably dynamically determined.
-+   */
-   int file;
--  int adapter_nr = 2; /* probably dynamically determined */
-+  int adapter_nr = 2;
-   char filename[20];
- 
-   snprintf(filename, 19, "/dev/i2c-%d", adapter_nr);
-   file = open(filename, O_RDWR);
-   if (file < 0) {
--    /* ERROR HANDLING; you can check errno to see what went wrong */
-+    /*
-+     * ERROR HANDLING; you can check errno to see what went wrong.
-+     */
-     exit(1);
-   }
- 
- When you have opened the device, you must specify with what device
- address you want to communicate:
- 
--  int addr = 0x40; /* The I2C address */
-+  /*
-+   * The I2C address.
-+   */
-+  int addr = 0x40;
- 
-   if (ioctl(file, I2C_SLAVE, addr) < 0) {
--    /* ERROR HANDLING; you can check errno to see what went wrong */
-+    /*
-+     * ERROR HANDLING; you can check errno to see what went wrong.
-+     */
-     exit(1);
-   }
- 
-@@ -55,32 +65,51 @@ Well, you are all set up now. You can now use SMBus commands or plain
- I2C to communicate with your device. SMBus commands are preferred if
- the device supports them. Both are illustrated below.
- 
--  __u8 reg = 0x10; /* Device register to access */
-+  /*
-+   * The device register to access.
-+   */
-+  __u8 reg = 0x10;
-   __s32 res;
-   char buf[10];
- 
--  /* Using SMBus commands */
-+  /*
-+   * Using SMBus commands.
-+   */
-   res = i2c_smbus_read_word_data(file, reg);
-   if (res < 0) {
--    /* ERROR HANDLING: i2c transaction failed */
-+    /*
-+     * ERROR HANDLING: i2c transaction failed.
-+     */
-   } else {
--    /* res contains the read word */
-+    /*
-+     * res contains the read word.
-+     */
-   }
- 
--  /* Using I2C Write, equivalent of
--     i2c_smbus_write_word_data(file, reg, 0x6543) */
-+  /*
-+   * Using I2C Write, equivalent of
-+   * i2c_smbus_write_word_data(file, reg, 0x6543).
-+   */
-   buf[0] = reg;
-   buf[1] = 0x43;
-   buf[2] = 0x65;
-   if (write(file, buf, 3) != 3) {
--    /* ERROR HANDLING: i2c transaction failed */
-+    /*
-+     * ERROR HANDLING: i2c transaction failed.
-+     */
-   }
- 
--  /* Using I2C Read, equivalent of i2c_smbus_read_byte(file) */
-+  /*
-+   * Using I2C Read, equivalent of i2c_smbus_read_byte(file).
-+   */
-   if (read(file, buf, 1) != 1) {
--    /* ERROR HANDLING: i2c transaction failed */
-+    /*
-+     * ERROR HANDLING: i2c transaction failed.
-+     */
-   } else {
--    /* buf[0] contains the read byte */
-+    /*
-+     * buf[0] contains the read byte.
-+     */
-   }
- 
- Note that only a subset of the I2C and SMBus protocols can be achieved by
--- 
-2.17.0.484.g0c8726318c-goog
+> > -               if (has_acpi_companion(dev) && pp->idx == 0)
+> > -                       pp->irq = platform_get_irq(to_platform_device(dev), 0);
+> > +               if (has_acpi_companion(dev) && pp->idx == 0) {
+> > +                       pp->irq[0] = platform_get_irq(to_platform_device(dev), 0);
+> > +                       if (pp->irq[0])
+> > +                               pp->has_irq = true;
+> > +               }
+> 
+> It doesn't work for ACPI. Could you do the same logic for ACPI?
+I don’t have access to any device that was baked (i.e. fabbed) with multiple
+output interrupts from the Synopsys GPIO blocks and use ACPI. I don't
+know if any such device exists.
+
+I would prefer not writing code that can be tested easily. I cannot even
+test the current, albeit small, changes to the Intel Quark MFD.
+
+Regards
+Phil
+
+> Thanks
+> Hoan
+> 
+> >
+> >                 pp->irq_shared  = false;
+> >                 pp->gpio_base   = -1;
+> > diff --git a/drivers/mfd/intel_quark_i2c_gpio.c
+> > b/drivers/mfd/intel_quark_i2c_gpio.c
+> > index 90e35de..5bddb84 100644
+> > --- a/drivers/mfd/intel_quark_i2c_gpio.c
+> > +++ b/drivers/mfd/intel_quark_i2c_gpio.c
+> > @@ -233,7 +233,8 @@ static int intel_quark_gpio_setup(struct pci_dev
+> *pdev, struct mfd_cell *cell)
+> >         pdata->properties->idx          = 0;
+> >         pdata->properties->ngpio        = INTEL_QUARK_MFD_NGPIO;
+> >         pdata->properties->gpio_base    = INTEL_QUARK_MFD_GPIO_BASE;
+> > -       pdata->properties->irq          = pdev->irq;
+> > +       pdata->properties->irq[0]       = pdev->irq;
+> > +       pdata->properties->has_irq      = true;
+> >         pdata->properties->irq_shared   = true;
+> >
+> >         cell->platform_data = pdata;
+> > diff --git a/include/linux/platform_data/gpio-dwapb.h
+> > b/include/linux/platform_data/gpio-dwapb.h
+> > index 2dc7f4a..5a52d69 100644
+> > --- a/include/linux/platform_data/gpio-dwapb.h
+> > +++ b/include/linux/platform_data/gpio-dwapb.h
+> > @@ -19,7 +19,8 @@ struct dwapb_port_property {
+> >         unsigned int    idx;
+> >         unsigned int    ngpio;
+> >         unsigned int    gpio_base;
+> > -       unsigned int    irq;
+> > +       unsigned int    irq[32];
+> > +       bool            has_irq;
+> >         bool            irq_shared;
+> >  };
+> >
+> > --
+> > 2.7.4
+> >
