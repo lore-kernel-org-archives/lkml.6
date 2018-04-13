@@ -1,123 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754613AbeDMMND (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 08:13:03 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36794 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753958AbeDMMNC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 08:13:02 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1E212607C7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
-Subject: Re: [PATCH] mm: vmalloc: Remove double execution of vunmap_page_range
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>, vbabka@suse.cz,
-        labbott@redhat.com, catalin.marinas@arm.com, hannes@cmpxchg.org,
-        f.fainelli@gmail.com, xieyisheng1@huawei.com,
-        ard.biesheuvel@linaro.org, richard.weiyang@gmail.com,
-        byungchul.park@lge.com, linux-mm@kvack.org,
+        id S1754830AbeDMMOF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 08:14:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43125 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751847AbeDMMOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 08:14:03 -0400
+Date: Fri, 13 Apr 2018 14:13:59 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Sam Hansen <hansens@google.com>, linux-i2c@vger.kernel.org,
+        corbet@lwn.net, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <1523611019-17679-1-git-send-email-cpandya@codeaurora.org>
- <a623e12b-bb5e-58fa-c026-de9ea53c5bd9@linux.vnet.ibm.com>
- <8da9f826-2a3d-e618-e512-4fc8d45c16f2@codeaurora.org>
- <bbef0a92-f81b-5ba8-c5c1-d8c08444955b@linux.vnet.ibm.com>
- <fa104cc6-c32a-9081-280f-2e03e4279f65@codeaurora.org>
- <20180413110949.GA17670@dhcp22.suse.cz>
- <696fedc5-6bcd-f0a0-62f5-4f9e7b7c602a@codeaurora.org>
- <20180413114133.GJ17484@dhcp22.suse.cz>
-From: Chintan Pandya <cpandya@codeaurora.org>
-Message-ID: <7674bfda-6186-8b32-0144-62c666e05e3c@codeaurora.org>
-Date: Fri, 13 Apr 2018 17:42:53 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Subject: Re: [PATCH] Documentation/i2c: sync docs with current state of
+ i2c-tools.
+Message-ID: <20180413141359.793919fb@endymion>
+In-Reply-To: <20180412222457.x4jdwt27ylgi74o3@katana>
+References: <20180412213342.138010-1-hansens@google.com>
+        <20180412222457.x4jdwt27ylgi74o3@katana>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180413114133.GJ17484@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Wolfram, Sam,
 
-
-On 4/13/2018 5:11 PM, Michal Hocko wrote:
-> On Fri 13-04-18 16:57:06, Chintan Pandya wrote:
->>
->>
->> On 4/13/2018 4:39 PM, Michal Hocko wrote:
->>> On Fri 13-04-18 16:15:26, Chintan Pandya wrote:
->>>>
->>>>
->>>> On 4/13/2018 4:10 PM, Anshuman Khandual wrote:
->>>>> On 04/13/2018 03:47 PM, Chintan Pandya wrote:
->>>>>>
->>>>>>
->>>>>> On 4/13/2018 3:29 PM, Anshuman Khandual wrote:
->>>>>>> On 04/13/2018 02:46 PM, Chintan Pandya wrote:
->>>>>>>> Unmap legs do call vunmap_page_range() irrespective of
->>>>>>>> debug_pagealloc_enabled() is enabled or not. So, remove
->>>>>>>> redundant check and optional vunmap_page_range() routines.
->>>>>>>
->>>>>>> vunmap_page_range() tears down the page table entries and does
->>>>>>> not really flush related TLB entries normally unless page alloc
->>>>>>> debug is enabled where it wants to make sure no stale mapping is
->>>>>>> still around for debug purpose. Deferring TLB flush improves
->>>>>>> performance. This patch will force TLB flush during each page
->>>>>>> table tear down and hence not desirable.
->>>>>>>
->>>>>> Deferred TLB invalidation will surely improve performance. But force
->>>>>> flush can help in detecting invalid access right then and there. I
->>>>>
->>>>> Deferred TLB invalidation was a choice made some time ago with the
->>>>> commit db64fe02258f1507e ("mm: rewrite vmap layer") as these vmalloc
->>>>> mappings wont be used other than inside the kernel and TLB gets
->>>>> flushed when they are reused. This way it can still avail the benefit
->>>>> of deferred TLB flushing without exposing itself to invalid accesses.
->>>>>
->>>>>> chose later. May be I should have clean up the vmap tear down code
->>>>>> as well where it actually does the TLB invalidation.
->>>>>>
->>>>>> Or make TLB invalidation in free_unmap_vmap_area() be dependent upon
->>>>>> debug_pagealloc_enabled().
->>>>>
->>>>> Immediate TLB invalidation needs to be dependent on debug_pagealloc_
->>>>> enabled() and should be done only for debug purpose. Contrary to that
->>>>> is not desirable.
->>>>>
->>>> Okay. I will raise v2 for that.
->>>
->>> More importantly. Your changelog absolutely lacks the _why_ part. It
->>> just states what the code does which is not all that hard to read from
->>> the diff. It is usually much more important to present _why_ the patch
->>> is an improvement and worth merging.
->>>
->>
->> It is improving performance in debug scenario.
+On Fri, 13 Apr 2018 00:24:57 +0200, Wolfram Sang wrote:
+> On Thu, Apr 12, 2018 at 02:33:42PM -0700, Sam Hansen wrote:
+> > Currently, Documentation/i2c/dev-interface describes the use of i2c_smbus_*
+> > helper routines as static inlined functions provided by linux/i2c-dev.h.  Work
+> > has been done to refactor the linux/i2c-dev.h file in the i2c-tools project
+> > out into its own library.  As a result, these docs have become stale.  
 > 
-> Do not forget to add some numbers presenting the benefits when
-> resubmitting.
-Okay.
-
+> Thanks for fixing this!
 > 
->> More than that, I see it
->> as a clean up. Sure, I will try to address *why* in next change log. >
-> As Anshuman pointed out the current code layout is deliberate. If you
-> believe that reasons mentioned previously are not valid then dispute
-> them and provide your arguments in the changelog.
+> > This patch corrects the discrepancy and directs the reader to the i2c-tools
+> > project for more information.  Additionally, some trailing-whitespace cleanups
+> > were made.  
 > 
-Here, the trade off is, performance vs catching use-after-free. Original
-code is preferring performance gains. At first, it seemed to me that
-stability is more important than performance. But giving more thoughts
-on this (and reading commit db64fe02258f1507e ("mm: rewrite vmap
-layer")), I feel that use-after-free is client side wrong-doing. vmap
-layer need not loose its best case settings for potential client side
-mistakes. For that, vmap layer can provide debug settings. So, I plan
-to do TLB flush conditional on debug settings.
+> Minor nit: Having the whitespace changes in a seperate patch is a tad
+> easier to review.
+> 
+> > -  /* Using I2C Write, equivalent of 
+> > +  /* Using I2C Write, equivalent of
+> >       i2c_smbus_write_word_data(file, reg, 0x6543) */  
+> 
+> Maybe change to Kernel coding style comments while here?
+> 
+> > -  Not meant to be called  directly; instead, use the access functions
+> > -  below.
+> > +  If possible, use the provided i2c_smbus_* methods described below in favor
+> > +  of issuing direct ioctls.  
+> 
+> Why this change?
 
-Chintan
+I'm also not sure if "in favor of" is right. "instead of" would sound
+better to me, but I'm no native English speaker, I could be wrong.
+
+> > -The above functions are all inline functions, that resolve to calls to
+> > -the i2c_smbus_access function, that on its turn calls a specific ioctl
+> > -with the data in a specific format. Read the source code if you
+> > -want to know what happens behind the screens.
+> > +The above functions are made available by linking against the libi2c library,
+> > +which is provided by the i2c-tools project.  See:
+> > +https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/.  
+> 
+> This is fine with me. Maybe Jean has a comment on this?
+
+Fixing the documentation is always welcome, thanks Sam for stepping in.
+However we really want separate patches for whitespace fixes and actual
+contents change, as Wolfram already mentioned above.
+
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum, a Linux Foundation
-Collaborative Project
+Jean Delvare
+SUSE L3 Support
