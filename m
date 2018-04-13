@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753967AbeDMFMs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 01:12:48 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:54504 "EHLO
+        id S1753112AbeDMFMr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 01:12:47 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:54508 "EHLO
         conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751042AbeDMFIQ (ORCPT
+        with ESMTP id S1751071AbeDMFIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 13 Apr 2018 01:08:16 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w3D56lg8029209
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w3D56lfv029209
 X-Nifty-SrcIP: [153.142.97.92]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org
@@ -17,9 +17,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Emese Revfy <re.emese@gmail.com>, x86@kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 14/30] kconfig: support append assignment operator
-Date: Fri, 13 Apr 2018 14:06:23 +0900
-Message-Id: <1523595999-27433-15-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 03/30] kbuild: remove CONFIG_CROSS_COMPILE support
+Date: Fri, 13 Apr 2018 14:06:12 +0900
+Message-Id: <1523595999-27433-4-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
@@ -27,110 +27,76 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support += operator.  This appends a space and the text on the
-righthand side to a variable.
+Kbuild provides a couple of ways to specify CROSS_COMPILE:
 
-The timing of the evaluation of the righthand side depends on the
-flavor of the variable.  If the lefthand side was originally defined
-as a simple variable, the righthand side is expanded immediately.
-Otherwise, the expansion is deferred.  Appending something to an
-undefined variable results in a recursive variable.
+[1] Command line
+[2] Environment
+[3] arch/*/Makefile (only some architectures)
+[4] CONFIG_CROSS_COMPILE
 
-To implement this, we need to remember the flavor of variables.
+[4] is problematic for the compiler capability tests in Kconfig.
+CONFIG_CROSS_COMPILE allows users to change the compiler prefix from
+'make menuconfig', etc.  It means, the compiler options would have
+to be all re-calculated everytime CONFIG_CROSS_COMPILE is changed.
+
+To avoid complexity and performance issues, I'd like to evaluate
+the shell commands statically, i.e. only parsing Kconfig files.
+
+I guess the majority is [1] or [2].  Currently, there are only
+5 defconfig files that specify CONFIG_CROSS_COMPILE.
+  arch/arm/configs/lpc18xx_defconfig
+  arch/hexagon/configs/comet_defconfig
+  arch/nds32/configs/defconfig
+  arch/openrisc/configs/or1ksim_defconfig
+  arch/openrisc/configs/simple_smp_defconfig
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
 
-Changes in v3:
-  - newly added
-
+Changes in v3: None
 Changes in v2: None
 
- scripts/kconfig/lkc_proto.h  |  1 +
- scripts/kconfig/preprocess.c | 29 +++++++++++++++++++++++++++--
- scripts/kconfig/zconf.l      |  1 +
- 3 files changed, 29 insertions(+), 2 deletions(-)
+ Makefile     | 3 ---
+ init/Kconfig | 9 ---------
+ 2 files changed, 12 deletions(-)
 
-diff --git a/scripts/kconfig/lkc_proto.h b/scripts/kconfig/lkc_proto.h
-index 6303193..a8b7a33 100644
---- a/scripts/kconfig/lkc_proto.h
-+++ b/scripts/kconfig/lkc_proto.h
-@@ -52,6 +52,7 @@ const char * prop_get_type_name(enum prop_type type);
- enum variable_flavor {
- 	VAR_SIMPLE,
- 	VAR_RECURSIVE,
-+	VAR_APPEND,
- };
- void env_write_dep(FILE *f, const char *auto_conf_name);
- void variable_add(const char *name, const char *value,
-diff --git a/scripts/kconfig/preprocess.c b/scripts/kconfig/preprocess.c
-index a835c94..85972fb 100644
---- a/scripts/kconfig/preprocess.c
-+++ b/scripts/kconfig/preprocess.c
-@@ -86,6 +86,7 @@ static LIST_HEAD(variable_list);
- struct variable {
- 	char *name;
- 	char *value;
-+	enum variable_flavor flavor;
- 	struct list_head node;
- };
+diff --git a/Makefile b/Makefile
+index d85cee0..ca3e3e8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -316,12 +316,9 @@ SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
+ # CROSS_COMPILE can be set on the command line
+ # make CROSS_COMPILE=ia64-linux-
+ # Alternatively CROSS_COMPILE can be set in the environment.
+-# A third alternative is to store a setting in .config so that plain
+-# "make" in the configured kernel build directory always uses that.
+ # Default value for CROSS_COMPILE is not to prefix executables
+ # Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile
+ ARCH		?= $(SUBARCH)
+-CROSS_COMPILE	?= $(CONFIG_CROSS_COMPILE:"%"=%)
  
-@@ -116,18 +117,42 @@ void variable_add(const char *name, const char *value,
- 		  enum variable_flavor flavor)
- {
- 	struct variable *v;
-+	char *new_value;
-+	bool append = false;
+ # Architecture as present in compile.h
+ UTS_MACHINE 	:= $(ARCH)
+diff --git a/init/Kconfig b/init/Kconfig
+index 9d167a5..c1ca920 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -54,15 +54,6 @@ config INIT_ENV_ARG_LIMIT
+ 	  Maximum of each of the number of arguments and environment
+ 	  variables passed to init from the kernel command line.
  
- 	v = variable_lookup(name);
- 	if (v) {
--		free(v->value);
-+		/* For defined variables, += inherits the existing flavor */
-+		if (flavor == VAR_APPEND) {
-+			flavor = v->flavor;
-+			append = true;
-+		} else {
-+			free(v->value);
-+		}
- 	} else {
-+		/* For undefined variables, += assumes the recursive flavor */
-+		if (flavor == VAR_APPEND)
-+			flavor = VAR_RECURSIVE;
-+
- 		v = xmalloc(sizeof(*v));
- 		v->name = xstrdup(name);
- 		list_add_tail(&v->node, &variable_list);
- 	}
- 
--	v->value = (flavor == VAR_SIMPLE) ? expand_string(value) :
-+	v->flavor = flavor;
-+
-+	new_value = (flavor == VAR_SIMPLE) ? expand_string(value) :
- 								xstrdup(value);
-+
-+	if (append) {
-+		v->value = xrealloc(v->value,
-+				    strlen(v->value) + strlen(new_value) + 2);
-+		strcat(v->value, " ");
-+		strcat(v->value, new_value);
-+		free(new_value);
-+	} else {
-+		v->value = new_value;
-+	}
- }
- 
- static void variable_del(struct variable *v)
-diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
-index aa76942..c68ca56b 100644
---- a/scripts/kconfig/zconf.l
-+++ b/scripts/kconfig/zconf.l
-@@ -116,6 +116,7 @@ n	[A-Za-z0-9_-]
- 	}
- 	"="	{ BEGIN(ASSIGN_VAL); yylval.flavor = VAR_RECURSIVE; return T_ASSIGN; }
- 	":="	{ BEGIN(ASSIGN_VAL); yylval.flavor = VAR_SIMPLE; return T_ASSIGN; }
-+	"+="	{ BEGIN(ASSIGN_VAL); yylval.flavor = VAR_APPEND; return T_ASSIGN; }
- 	[[:blank:]]+
- 	.	warn_ignored_character(*yytext);
- 	\n	{
+-
+-config CROSS_COMPILE
+-	string "Cross-compiler tool prefix"
+-	help
+-	  Same as running 'make CROSS_COMPILE=prefix-' but stored for
+-	  default make runs in this kernel build directory.  You don't
+-	  need to set this unless you want the configured kernel build
+-	  directory to select the cross-compiler automatically.
+-
+ config COMPILE_TEST
+ 	bool "Compile also drivers which will not load"
+ 	depends on !UML
 -- 
 2.7.4
