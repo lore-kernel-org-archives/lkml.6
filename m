@@ -1,312 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754071AbeDMIYh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 04:24:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54062 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751108AbeDMIVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 04:21:10 -0400
-From: Eric Auger <eric.auger@redhat.com>
-To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
-        peter.maydell@linaro.org
-Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
-Subject: [PATCH v3 03/12] KVM: arm/arm64: Replace the single rdist region by a list
-Date: Fri, 13 Apr 2018 10:20:49 +0200
-Message-Id: <1523607658-9166-4-git-send-email-eric.auger@redhat.com>
-In-Reply-To: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
-References: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
+        id S1754087AbeDMIYq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 04:24:46 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:48052 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754076AbeDMIYk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 04:24:40 -0400
+X-IronPort-AV: E=Sophos;i="5.48,444,1517842800";
+   d="scan'208";a="278097022"
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Michel Pollet" <michel.pollet@bp.renesas.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 2/2] mfd: intel_quark_i2c_gpio: Update Synopsys GPIO
+ interrupts
+Thread-Topic: [PATCH v2 2/2] mfd: intel_quark_i2c_gpio: Update Synopsys GPIO
+ interrupts
+Thread-Index: AQHT0v60qgJ58lwXlEapH/3DuTSWuaP+WoeAgAAAr8A=
+Date: Fri, 13 Apr 2018 08:24:30 +0000
+Message-ID: <TY1PR01MB176970ECD9C66DCF865E5C17F5B30@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1523606900-2332-1-git-send-email-phil.edworthy@renesas.com>
+ <1523606900-2332-3-git-send-email-phil.edworthy@renesas.com>
+ <CAMuHMdVKi=dDvn29U-S26PtAc_Um_+1Oy=PzKAgYUSU9qvcF-Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdVKi=dDvn29U-S26PtAc_Um_+1Oy=PzKAgYUSU9qvcF-Q@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=phil.edworthy@renesas.com;
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB0636;7:H8S/niOMPYRe6ZDu2EIcgP0aj2UlpTq+nvk+cgqU5vt+12AtyqAdKH1e+2ovyxgiHCn3TLTpdf6lb9qNJv2P88jsLT5JidjHEcSb30CJpfOqxlLlFM+7f54XzNtBIlF5q/A21yCcsOoSvPQhaaXz0GcqZ4zQhenfiLvuCFogDjlUF4H2SWoihM6gRomrza5+qm5apnwGGM23pTQEOUVCXOMBZMStm2n8jAE0ARnPpYZbcjS5BiGLdbiz3HFva7ph;20:Vjb7SZ3CZTa6no34H8sAFoX3rxDU7Bu+2DlYBPVIpNdPk/yI2WouVe/43IzkadHHvMEe1QVpmICaDvoJRCUJin9sqL+MGVrvlXBK+fSgwydhAekLck1ptRVgfxtPdPc3fZ6dnWCgoMDcrhf/8lXPmSSnEGKt/s4X+VAEgUxqeN4=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB0636;
+x-ms-traffictypediagnostic: TY1PR01MB0636:
+x-microsoft-antispam-prvs: <TY1PR01MB0636A82FA7BF5C0394822D95F5B30@TY1PR01MB0636.jpnprd01.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231232)(944501327)(52105095)(3002001)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:TY1PR01MB0636;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB0636;
+x-forefront-prvs: 0641678E68
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(366004)(39860400002)(346002)(396003)(199004)(189003)(2906002)(3280700002)(2900100001)(8936002)(39060400002)(81156014)(81166006)(53936002)(54906003)(3660700001)(102836004)(8676002)(15760500003)(5660300001)(86362001)(9686003)(55016002)(99286004)(6916009)(186003)(5250100002)(7696005)(229853002)(6506007)(59450400001)(6436002)(53546011)(7416002)(316002)(76176011)(26005)(106356001)(14454004)(68736007)(305945005)(105586002)(11346002)(25786009)(4326008)(446003)(15650500001)(7736002)(6246003)(66066001)(486006)(33656002)(44832011)(97736004)(74316002)(6116002)(3846002)(478600001)(476003)(70780200001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB0636;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: +5yKOHsmWwel/+iQdtBPqSr+Y3JREhGvUlY41cBs57mK0+mTgmRTPNS/paQhAtX0eXtskzpBNFNm88uaDo6YYX88eKJl0mRvyqufP7cMtjRjuKQYokLiFz3vAvNUqw0Z2TO2WkgbyjqbRSu6s322i0MC6eoFpVuqN3I+mxidyWeix1Q2w3tWrcn6eId0e9+A
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 61a75e2e-2e1c-4a84-8bf8-08d5a117fab5
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61a75e2e-2e1c-4a84-8bf8-08d5a117fab5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Apr 2018 08:24:30.3596
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB0636
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3D8OqDG015786
 
-At the moment KVM supports a single rdist region. We want to
-support several separate rdist regions so let's introduce a list
-of them. This patch currently only cares about a single
-entry in this list as the functionality to register several redist
-regions is not yet there. So this only translates the existing code
-into something functionally similar using that new data struct.
+Hi Geert,
 
-The redistributor region handle is stored in the vgic_cpu structure
-to allow later computation of the TYPER last bit.
+On 13 April 2018 09:20 Geert Uytterhoeven wrote:
+> On Fri, Apr 13, 2018 at 10:08 AM, Phil Edworthy wrote:
+> > Since the way the Synopsys GPIO interrupts are stored has changed,
+> > this driver needs to be updated in line with the changes.
+> >
+> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> > ---
+> > v2:
+> >  - New patch in v2 to fix the only other user of struct
+> dwapb_port_property.
+> 
+> Thanks for your patch!
+> 
+> To avoid bisection compile failures due to the changed type of
+> dwapb_port_property.irq, I think this should be folded into the first patch,
+Right, thanks for pointing this out!
+Phil
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
----
- include/kvm/arm_vgic.h              | 14 +++++++++----
- virt/kvm/arm/vgic/vgic-init.c       | 16 ++++++++++++--
- virt/kvm/arm/vgic/vgic-kvm-device.c | 13 ++++++++++--
- virt/kvm/arm/vgic/vgic-mmio-v3.c    | 42 ++++++++++++++++++++++++++++---------
- virt/kvm/arm/vgic/vgic-v3.c         | 20 +++++++++++-------
- 5 files changed, 79 insertions(+), 26 deletions(-)
-
-diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
-index 24f0394..e5c16d1 100644
---- a/include/kvm/arm_vgic.h
-+++ b/include/kvm/arm_vgic.h
-@@ -200,6 +200,14 @@ struct vgic_its {
- 
- struct vgic_state_iter;
- 
-+struct vgic_redist_region {
-+	uint32_t index;
-+	gpa_t base;
-+	uint32_t count; /* number of redistributors or 0 if single region */
-+	uint32_t free_index; /* index of the next free redistributor */
-+	struct list_head list;
-+};
-+
- struct vgic_dist {
- 	bool			in_kernel;
- 	bool			ready;
-@@ -219,10 +227,7 @@ struct vgic_dist {
- 		/* either a GICv2 CPU interface */
- 		gpa_t			vgic_cpu_base;
- 		/* or a number of GICv3 redistributor regions */
--		struct {
--			gpa_t		vgic_redist_base;
--			gpa_t		vgic_redist_free_offset;
--		};
-+		struct list_head rd_regions;
- 	};
- 
- 	/* distributor enabled */
-@@ -310,6 +315,7 @@ struct vgic_cpu {
- 	 */
- 	struct vgic_io_device	rd_iodev;
- 	struct vgic_io_device	sgi_iodev;
-+	struct vgic_redist_region *rdreg;
- 
- 	/* Contains the attributes and gpa of the LPI pending tables. */
- 	u64 pendbaser;
-diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
-index c52f03d..6456371 100644
---- a/virt/kvm/arm/vgic/vgic-init.c
-+++ b/virt/kvm/arm/vgic/vgic-init.c
-@@ -167,8 +167,11 @@ int kvm_vgic_create(struct kvm *kvm, u32 type)
- 	kvm->arch.vgic.vgic_model = type;
- 
- 	kvm->arch.vgic.vgic_dist_base = VGIC_ADDR_UNDEF;
--	kvm->arch.vgic.vgic_cpu_base = VGIC_ADDR_UNDEF;
--	kvm->arch.vgic.vgic_redist_base = VGIC_ADDR_UNDEF;
-+
-+	if (type == KVM_DEV_TYPE_ARM_VGIC_V2)
-+		kvm->arch.vgic.vgic_cpu_base = VGIC_ADDR_UNDEF;
-+	else
-+		INIT_LIST_HEAD(&kvm->arch.vgic.rd_regions);
- 
- out_unlock:
- 	for (; vcpu_lock_idx >= 0; vcpu_lock_idx--) {
-@@ -303,6 +306,7 @@ int vgic_init(struct kvm *kvm)
- static void kvm_vgic_dist_destroy(struct kvm *kvm)
- {
- 	struct vgic_dist *dist = &kvm->arch.vgic;
-+	struct vgic_redist_region *rdreg, *next;
- 
- 	dist->ready = false;
- 	dist->initialized = false;
-@@ -311,6 +315,14 @@ static void kvm_vgic_dist_destroy(struct kvm *kvm)
- 	dist->spis = NULL;
- 	dist->nr_spis = 0;
- 
-+	if (kvm->arch.vgic.vgic_model == KVM_DEV_TYPE_ARM_VGIC_V3) {
-+		list_for_each_entry_safe(rdreg, next, &dist->rd_regions, list) {
-+			list_del(&rdreg->list);
-+			kfree(rdreg);
-+		}
-+		INIT_LIST_HEAD(&dist->rd_regions);
-+	}
-+
- 	if (vgic_supports_direct_msis(kvm))
- 		vgic_v4_teardown(kvm);
- }
-diff --git a/virt/kvm/arm/vgic/vgic-kvm-device.c b/virt/kvm/arm/vgic/vgic-kvm-device.c
-index 10ae6f3..e7b5a86 100644
---- a/virt/kvm/arm/vgic/vgic-kvm-device.c
-+++ b/virt/kvm/arm/vgic/vgic-kvm-device.c
-@@ -66,6 +66,7 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
- 	int r = 0;
- 	struct vgic_dist *vgic = &kvm->arch.vgic;
- 	phys_addr_t *addr_ptr, alignment;
-+	uint64_t undef_value = VGIC_ADDR_UNDEF;
- 
- 	mutex_lock(&kvm->lock);
- 	switch (type) {
-@@ -84,7 +85,9 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
- 		addr_ptr = &vgic->vgic_dist_base;
- 		alignment = SZ_64K;
- 		break;
--	case KVM_VGIC_V3_ADDR_TYPE_REDIST:
-+	case KVM_VGIC_V3_ADDR_TYPE_REDIST: {
-+		struct vgic_redist_region *rdreg;
-+
- 		r = vgic_check_type(kvm, KVM_DEV_TYPE_ARM_VGIC_V3);
- 		if (r)
- 			break;
-@@ -92,8 +95,14 @@ int kvm_vgic_addr(struct kvm *kvm, unsigned long type, u64 *addr, bool write)
- 			r = vgic_v3_set_redist_base(kvm, *addr);
- 			goto out;
- 		}
--		addr_ptr = &vgic->vgic_redist_base;
-+		rdreg = list_first_entry(&vgic->rd_regions,
-+					 struct vgic_redist_region, list);
-+		if (!rdreg)
-+			addr_ptr = &undef_value;
-+		else
-+			addr_ptr = &rdreg->base;
- 		break;
-+	}
- 	default:
- 		r = -ENODEV;
- 	}
-diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-index 671fe81..d1aab18 100644
---- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
-+++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
-@@ -580,8 +580,10 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
- {
- 	struct kvm *kvm = vcpu->kvm;
- 	struct vgic_dist *vgic = &kvm->arch.vgic;
-+	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
- 	struct vgic_io_device *rd_dev = &vcpu->arch.vgic_cpu.rd_iodev;
- 	struct vgic_io_device *sgi_dev = &vcpu->arch.vgic_cpu.sgi_iodev;
-+	struct vgic_redist_region *rdreg;
- 	gpa_t rd_base, sgi_base;
- 	int ret;
- 
-@@ -591,13 +593,17 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
- 	 * function for all VCPUs when the base address is set.  Just return
- 	 * without doing any work for now.
- 	 */
--	if (IS_VGIC_ADDR_UNDEF(vgic->vgic_redist_base))
-+	rdreg = list_first_entry(&vgic->rd_regions,
-+				 struct vgic_redist_region, list);
-+	if (!rdreg)
- 		return 0;
- 
- 	if (!vgic_v3_check_base(kvm))
- 		return -EINVAL;
- 
--	rd_base = vgic->vgic_redist_base + vgic->vgic_redist_free_offset;
-+	vgic_cpu->rdreg = rdreg;
-+
-+	rd_base = rdreg->base + rdreg->free_index * KVM_VGIC_V3_REDIST_SIZE;
- 	sgi_base = rd_base + SZ_64K;
- 
- 	kvm_iodevice_init(&rd_dev->dev, &kvm_io_gic_ops);
-@@ -631,7 +637,7 @@ int vgic_register_redist_iodev(struct kvm_vcpu *vcpu)
- 		goto out;
- 	}
- 
--	vgic->vgic_redist_free_offset += 2 * SZ_64K;
-+	rdreg->free_index++;
- out:
- 	mutex_unlock(&kvm->slots_lock);
- 	return ret;
-@@ -673,19 +679,31 @@ static int vgic_register_all_redist_iodevs(struct kvm *kvm)
- int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
- {
- 	struct vgic_dist *vgic = &kvm->arch.vgic;
-+	struct vgic_redist_region *rdreg;
- 	int ret;
- 
- 	/* vgic_check_ioaddr makes sure we don't do this twice */
--	ret = vgic_check_ioaddr(kvm, &vgic->vgic_redist_base, addr, SZ_64K);
--	if (ret)
--		return ret;
--
--	vgic->vgic_redist_base = addr;
--	if (!vgic_v3_check_base(kvm)) {
--		vgic->vgic_redist_base = VGIC_ADDR_UNDEF;
-+	if (!list_empty(&vgic->rd_regions))
- 		return -EINVAL;
-+
-+	rdreg = kzalloc(sizeof(*rdreg), GFP_KERNEL);
-+	if (!rdreg)
-+		return -ENOMEM;
-+
-+	rdreg->base = VGIC_ADDR_UNDEF;
-+
-+	ret = vgic_check_ioaddr(kvm, &rdreg->base, addr, SZ_64K);
-+	if (ret)
-+		goto out;
-+
-+	rdreg->base = addr;
-+	if (!vgic_v3_check_base(kvm)) {
-+		ret = -EINVAL;
-+		goto out;
- 	}
- 
-+	list_add(&rdreg->list, &vgic->rd_regions);
-+
- 	/*
- 	 * Register iodevs for each existing VCPU.  Adding more VCPUs
- 	 * afterwards will register the iodevs when needed.
-@@ -695,6 +713,10 @@ int vgic_v3_set_redist_base(struct kvm *kvm, u64 addr)
- 		return ret;
- 
- 	return 0;
-+
-+out:
-+	kfree(rdreg);
-+	return ret;
- }
- 
- int vgic_v3_has_attr_regs(struct kvm_device *dev, struct kvm_device_attr *attr)
-diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-index 8195f52..94de6cd 100644
---- a/virt/kvm/arm/vgic/vgic-v3.c
-+++ b/virt/kvm/arm/vgic/vgic-v3.c
-@@ -418,6 +418,9 @@ bool vgic_v3_check_base(struct kvm *kvm)
- {
- 	struct vgic_dist *d = &kvm->arch.vgic;
- 	gpa_t redist_size = KVM_VGIC_V3_REDIST_SIZE;
-+	struct vgic_redist_region *rdreg =
-+		list_first_entry(&d->rd_regions,
-+				 struct vgic_redist_region, list);
- 
- 	redist_size *= atomic_read(&kvm->online_vcpus);
- 
-@@ -425,18 +428,17 @@ bool vgic_v3_check_base(struct kvm *kvm)
- 	    d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE < d->vgic_dist_base)
- 		return false;
- 
--	if (!IS_VGIC_ADDR_UNDEF(d->vgic_redist_base) &&
--	    d->vgic_redist_base + redist_size < d->vgic_redist_base)
-+	if (rdreg && (rdreg->base + redist_size < rdreg->base))
- 		return false;
- 
- 	/* Both base addresses must be set to check if they overlap */
--	if (IS_VGIC_ADDR_UNDEF(d->vgic_dist_base) ||
--	    IS_VGIC_ADDR_UNDEF(d->vgic_redist_base))
-+	if (IS_VGIC_ADDR_UNDEF(d->vgic_dist_base) || !rdreg)
- 		return true;
- 
--	if (d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE <= d->vgic_redist_base)
-+	if (d->vgic_dist_base + KVM_VGIC_V3_DIST_SIZE <= rdreg->base)
- 		return true;
--	if (d->vgic_redist_base + redist_size <= d->vgic_dist_base)
-+
-+	if (rdreg->base + redist_size <= d->vgic_dist_base)
- 		return true;
- 
- 	return false;
-@@ -446,12 +448,14 @@ int vgic_v3_map_resources(struct kvm *kvm)
- {
- 	int ret = 0;
- 	struct vgic_dist *dist = &kvm->arch.vgic;
-+	struct vgic_redist_region *rdreg =
-+		list_first_entry(&dist->rd_regions,
-+				 struct vgic_redist_region, list);
- 
- 	if (vgic_ready(kvm))
- 		goto out;
- 
--	if (IS_VGIC_ADDR_UNDEF(dist->vgic_dist_base) ||
--	    IS_VGIC_ADDR_UNDEF(dist->vgic_redist_base)) {
-+	if (IS_VGIC_ADDR_UNDEF(dist->vgic_dist_base) || !rdreg) {
- 		kvm_err("Need to set vgic distributor addresses first\n");
- 		ret = -ENXIO;
- 		goto out;
--- 
-2.5.5
+> > ---
+> >  drivers/mfd/intel_quark_i2c_gpio.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/mfd/intel_quark_i2c_gpio.c
+> > b/drivers/mfd/intel_quark_i2c_gpio.c
+> > index 90e35de..5bddb84 100644
+> > --- a/drivers/mfd/intel_quark_i2c_gpio.c
+> > +++ b/drivers/mfd/intel_quark_i2c_gpio.c
+> > @@ -233,7 +233,8 @@ static int intel_quark_gpio_setup(struct pci_dev
+> *pdev, struct mfd_cell *cell)
+> >         pdata->properties->idx          = 0;
+> >         pdata->properties->ngpio        = INTEL_QUARK_MFD_NGPIO;
+> >         pdata->properties->gpio_base    = INTEL_QUARK_MFD_GPIO_BASE;
+> > -       pdata->properties->irq          = pdev->irq;
+> > +       pdata->properties->irq[0]       = pdev->irq;
+> > +       pdata->properties->has_irq      = true;
+> >         pdata->properties->irq_shared   = true;
+> >
+> >         cell->platform_data = pdata;
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-
+> m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
