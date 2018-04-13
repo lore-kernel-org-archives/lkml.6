@@ -1,63 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753244AbeDMD6H (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 12 Apr 2018 23:58:07 -0400
-Received: from mga04.intel.com ([192.55.52.120]:1746 "EHLO mga04.intel.com"
+        id S1750989AbeDMEF2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 00:05:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752594AbeDMD6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Apr 2018 23:58:05 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,444,1517904000";
-   d="scan'208";a="220061837"
-Date: Fri, 13 Apr 2018 09:32:33 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "M'boumba Cedric Madianga" <cedric.madianga@gmail.com>,
-        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dmaengine: stm32-mdma: Fix incomplete Hw
- descriptors allocator
-Message-ID: <20180413040233.GJ6014@localhost>
-References: <1523457879-9869-1-git-send-email-pierre-yves.mordret@st.com>
- <1523457879-9869-3-git-send-email-pierre-yves.mordret@st.com>
+        id S1750713AbeDMEF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 00:05:27 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3595217A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Thu, 12 Apr 2018 21:05:25 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        chao@kernel.org
+Subject: Re: [PATCH] f2fs: set deadline to drop expired inmem pages
+Message-ID: <20180413040525.GB59368@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180408081312.6190-1-yuchao0@huawei.com>
+ <09fd3144-d1c5-ca02-178d-b467d6fbe0e1@huawei.com>
+ <20180413010433.GB51348@jaegeuk-macbookpro.roam.corp.google.com>
+ <bb7d3b60-0629-ea80-c4ae-976a76abb034@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1523457879-9869-3-git-send-email-pierre-yves.mordret@st.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <bb7d3b60-0629-ea80-c4ae-976a76abb034@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 04:44:39PM +0200, Pierre-Yves MORDRET wrote:
+On 04/13, Chao Yu wrote:
+> On 2018/4/13 9:04, Jaegeuk Kim wrote:
+> > On 04/10, Chao Yu wrote:
+> >> Hi Jaegeuk,
+> >>
+> >> On 2018/4/8 16:13, Chao Yu wrote:
+> >>> f2fs doesn't allow abuse on atomic write class interface, so except
+> >>> limiting in-mem pages' total memory usage capacity, we need to limit
+> >>> start-commit time as well, otherwise we may run into infinite loop
+> >>> during foreground GC because target blocks in victim segment are
+> >>> belong to atomic opened file for long time.
+> >>>
+> >>> Now, we will check the condition with f2fs_balance_fs_bg in
+> >>> background threads, once if user doesn't commit data exceeding 30
+> >>> seconds, we will drop all cached data, so I expect it can keep our
+> >>> system running safely to prevent Dos attack.
+> >>
+> >> Is it worth to add this patch to avoid abuse on atomic write interface by user?
+> > 
+> > Hmm, hope to see a real problem first in this case.
+> 
+> I think this can be a more critical security leak instead of a potential issue
+> which we can wait for someone reporting that can be too late.
+> 
+> For example, user can simply write a huge file whose data spread in all f2fs
+> segments, once user open that file as atomic, foreground GC will suffer
+> deadloop, causing denying any further service of f2fs.
 
->  struct stm32_mdma_desc {
->  	struct virt_dma_desc vdesc;
->  	u32 ccr;
-> -	struct stm32_mdma_hwdesc *hwdesc;
-> -	dma_addr_t hwdesc_phys;
->  	bool cyclic;
->  	u32 count;
-> +	struct stm32_mdma_desc_node node[];
+How can you guarantee it won't happen within 30sec? If you want to avoid that,
+you have to take a look at foreground gc.
 
-some ppl use node[0] for this but i think either is fine..
-
->  static void stm32_mdma_dump_hwdesc(struct stm32_mdma_chan *chan,
-> -				   struct stm32_mdma_hwdesc *hwdesc)
-> +				   struct stm32_mdma_desc_node *node)
->  {
-> -	dev_dbg(chan2dev(chan), "CTCR:    0x%08x\n", hwdesc->ctcr);
-
-> +	dev_dbg(chan2dev(chan), "CTCR:    0x%08x\n", node->hwdesc->ctcr);
-
-this is noise for this patch and IIUC you should be able to pass
-node->hwdesc and keep fn same?
-
--- 
-~Vinod
+> 
+> Thanks,
+> 
+> > 
+> >> Thanks,
+> > 
+> > .
+> > 
