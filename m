@@ -1,101 +1,114 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx48/kfKrRJTgKxOWvmyCcj93SSybnVjPzdCve1rMcy2DfeWiAI8lZWxj9fWmzMzfjV7EwGqS
-ARC-Seal: i=1; a=rsa-sha256; t=1523726919; cv=none;
-        d=google.com; s=arc-20160816;
-        b=oycEZHDULB7v89+hTEe6GkrVZBDoDJvNzTdsZvYajBuDgdCqFZLy+x/zh1iaeUbGz5
-         YnM+vSGZv6VnJjoF6ryfK2gQ5z00gRQpCrbyA2JzBWG6u5EVAvD69V/L8DDWNXlDHHDe
-         M+jUiRM6Kp9yxd+NFx9/HmwuGnvT8biuzUU8xozeWhaRntHYot2lvM7n5MmNT0f5WG1n
-         wASnFdpOO4Lt9AmZRmu9Bt1Um50ARHZNYQzwTZeT8OMGP5OTIaxMkU/AV7R3ncCWICGt
-         Oe/F/SRJCCObhcPJ/42XnSvBt08yly2rS4pYqYzjWoXNmRvS8xIjRvzDQkGgwuL6H8i8
-         aNug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:message-id:user-agent:in-reply-to
-         :content-transfer-encoding:content-disposition:mime-version
-         :references:subject:cc:to:from:date:arc-authentication-results;
-        bh=s5l7KJgk4qIXSEvspifoBWsLRtCc08nAi0ZzOIiytQE=;
-        b=zUBqKMNXeC+6nShihS6T9PVufP0a/wwfjRojL4pJysIFDLIELQVPfBQ9aAbb4H6cez
-         fg2CZiNYw4McyRODmKqx9NL+nWZjac+JdaHEJKW3LQ6eWKi1/UaExcgYu/PtCr5Vkq4h
-         k5exYTnU+x6g3BfrG+Su3XMmhPtEUQplssepZZ0WUTzlc40rwjm2dhSyhxM+SRf187Jn
-         rFqQPIfFbFaG/PWe6XYu5WdlEIK8vpB/Rsc2jnxIE+GpiAtxJQj1QTivNnCoc7RIVPyj
-         18sv6k9oIv65HLxIzsc1zQzPDG6WgqKtFu7HupLcBdtucDY1cC6tayN3s8tr/T85Jzbg
-         CdQg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2235763-1523579430-2-2648296300817435293
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523579430; b=W+qBecU3yYVjoe/AIyBTekaEPGI03pKbDFwd7jy3X+8IFONyye
+    FzT5y9u05bsgeZNf9wODgZS4UvE986mNGipTOPaoRlPGKt20XjXuKjPICedbShWJ
+    0pSQOD8ah6XM9yax+ayTDgM3BvdYg2Wejq6prxV1bqbc7vS5vEX+l4Fgg03EKFMD
+    /yVpwi8nAr2EmcPTlDv61V3X14Y/oj94srodkGQ0xFTE1f1Sf7KBf3mWSXUP/WJ1
+    QeHEhsYVW1gWYlFiDl/N6P6XGvvVO2eeDQOUO+hHGYbJ/3zJ3zpzXKDLg4o6LgTA
+    Ei2RXh6Ed0JPx80ecy89pht7nL9SpiIdXCNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1523579430; bh=1BlayLRfFu+78r5GGrXeh/Qmr0IVrk
+    jt4ObWBQ4LbMk=; b=BmUDqZq8Y2NoUvipADrEk8Rn4It048b9cJoUNvm4AZq+FP
+    BfMWsOI+LjQT6+WI23k3GTc/9ILW9lEFQ033Fbx4NPaGMVxPJTfpME4goGyUpxph
+    NUNv8kZewL+yuwgctEDu93QDrEbUW3ymiHlNfhNUS0DkWKdvD2vsr4R1MjE/WuOV
+    aBITVRotWHSuK7llBlb0L+qFO0qJgI8fs6+XYRSexNtzw1GaZOyhnhDc3UjpPgFU
+    eNX9pTPFH7KELREmpcixdjtHvCoyTdTnP02OExhChOQWf7e3oWgiq9+YtP++dZ+b
+    Rv3iWtQz2ZPkQUQJsVEecdhHt0zTUne8GSfINJYw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=prFBaON8 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=nNqATpdV;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=prFBaON8 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=nNqATpdV;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfJrF0c9aLV7OCVq+xTc5ECYJyhMZpHmaRtg+4mBoQGEn6jCQYIIw1yOadweYq3uoSxDD4EVeuRsXB1Qs0Uod8ihRUhtjDToKdhaRUYKduJuew3LA6Oa3
+    LPSBUU5VaY5QSUgiFUUr+1OvsHs7EMttESGqKFc3Vygkharr+NaGSx2KdL3i7a5G23liwcva3PFeiPqM9q3Wj31wq0TVLaPeSf3+0oMZscyUL5kLbghHAUwm
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=c8hNbdbooHvhgayvCfkA:9
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751138AbeDNR2i (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Sat, 14 Apr 2018 13:28:38 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34260 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751154AbeDNR2g (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Sat, 14 Apr 2018 13:28:36 -0400
-Date: Sat, 14 Apr 2018 20:28:27 +0300
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Peng Hao <peng.hao2@zte.com.cn>
-Cc: shuah@kernel.org, aarcange@redhat.com, akpm@linux-foundation.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests:vm: add include file
-References: <1523732936-42546-1-git-send-email-peng.hao2@zte.com.cn>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1523732936-42546-1-git-send-email-peng.hao2@zte.com.cn>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18041417-0008-0000-0000-000004EA8F5C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041417-0009-0000-0000-00001E7EA08E
-Message-Id: <20180414172826.GA3211@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-14_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804140168
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+        id S1753734AbeDMAaU (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 12 Apr 2018 20:30:20 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:42707 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753696AbeDMAaT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 12 Apr 2018 20:30:19 -0400
+X-Google-Smtp-Source: AIpwx49qvx1uoNwsLdhgtcZ2ipL45dnY1M1TCY1mw3ZvItCibh4JjeDoOdeNWW6HTllbGf80kc9XXg==
+From: Greg Hackmann <ghackmann@google.com>
+To: Adam Wallis <awallis@codeaurora.org>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Badhri Jagan Sridharan <badhri@google.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Greg Hackmann <ghackmann@google.com>, stable@vger.kernel.org
+Subject: [PATCH] Revert "xhci: plat: Register shutdown for xhci_plat"
+Date: Thu, 12 Apr 2018 17:29:51 -0700
+Message-Id: <20180413002951.155762-1-ghackmann@google.com>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597718514051062643?=
-X-GMAIL-MSGID: =?utf-8?q?1597743478896471635?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Apr 15, 2018 at 03:08:56AM +0800, Peng Hao wrote:
-> userfaultfd.c: In function ‘hugetlb_release_pages’:
-> userfaultfd.c:145:25: error: ‘FALLOC_FL_PUNCH_HOLE’ undeclared 
-> (first use in this function)
-> 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> ---
->  tools/testing/selftests/vm/userfaultfd.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-> index de2f9ec..d8fe447 100644
-> --- a/tools/testing/selftests/vm/userfaultfd.c
-> +++ b/tools/testing/selftests/vm/userfaultfd.c
-> @@ -68,6 +68,7 @@
->  #include <linux/userfaultfd.h>
->  #include <setjmp.h>
->  #include <stdbool.h>
-> +#include <linux/falloc.h>
-  
-The FALLOC_FL_PUNCH_HOLE definition should come from #include <fcntl.h>.
-What are the versions of your kernel and the libc-development package?
+Pixel 2 field testers reported that when they tried to reboot their
+phones with some USB devices plugged in, the reboot would get wedged and
+eventually trigger watchdog reset.  Once the Pixel kernel team found a
+reliable repro case, they narrowed it down to this commit's 4.4.y
+backport.  Reverting the change made the issue go away.
 
->  #ifdef __NR_userfaultfd
->  
-> -- 
-> 1.8.3.1
-> 
+This reverts commit b07c12517f2aed0add8ce18146bb426b14099392.
 
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Hackmann <ghackmann@google.com>
+---
+ drivers/usb/host/xhci-plat.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index df327dcc2bac..ea089fdda611 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -420,7 +420,6 @@ MODULE_DEVICE_TABLE(acpi, usb_xhci_acpi_match);
+ static struct platform_driver usb_xhci_driver = {
+ 	.probe	= xhci_plat_probe,
+ 	.remove	= xhci_plat_remove,
+-	.shutdown	= usb_hcd_platform_shutdown,
+ 	.driver	= {
+ 		.name = "xhci-hcd",
+ 		.pm = &xhci_plat_pm_ops,
 -- 
-Sincerely yours,
-Mike.
-
+2.17.0.484.g0c8726318c-goog
