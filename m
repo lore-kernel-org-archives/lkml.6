@@ -1,45 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753271AbeDMOfy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 10:35:54 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:51368 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753103AbeDMOfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:35:52 -0400
-Date: Fri, 13 Apr 2018 10:37:16 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Minchan Kim <minchan@kernel.org>,
-        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 3/3] dcache: account external names as indirectly
- reclaimable memory
-Message-ID: <20180413143716.GA5378@cmpxchg.org>
-References: <20180305133743.12746-1-guro@fb.com>
- <20180305133743.12746-5-guro@fb.com>
- <20180413133519.GA213834@rodete-laptop-imager.corp.google.com>
- <20180413135923.GT17484@dhcp22.suse.cz>
- <13f1f5b5-f3f8-956c-145a-4641fb996048@suse.cz>
- <20180413142821.GW17484@dhcp22.suse.cz>
+        id S1750955AbeDMOlu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 10:41:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41720 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750734AbeDMOlt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 10:41:49 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 55BB86072E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: Thomas Hebb <tommyhebb@gmail.com>
+Cc: linux-kernel@vger.kernel.org, ath10k@lists.infradead.org
+Subject: Re: [PATCH] ath10k: search all IEs for variant before falling back
+References: <d121031bd5eacf212f7ddf49c0440218714f1ae6.1519231419.git.tommyhebb@gmail.com>
+        <87y3jcp0kz.fsf@kamboji.qca.qualcomm.com>
+Date: Fri, 13 Apr 2018 17:41:45 +0300
+In-Reply-To: <87y3jcp0kz.fsf@kamboji.qca.qualcomm.com> (Kalle Valo's message
+        of "Thu, 01 Mar 2018 12:11:24 +0200")
+Message-ID: <87a7u7qic6.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180413142821.GW17484@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 04:28:21PM +0200, Michal Hocko wrote:
-> On Fri 13-04-18 16:20:00, Vlastimil Babka wrote:
-> > We would need kmalloc-reclaimable-X variants. It could be worth it,
-> > especially if we find more similar usages. I suspect they would be more
-> > useful than the existing dma-kmalloc-X :)
-> 
-> I am still not sure why __GFP_RECLAIMABLE cannot be made work as
-> expected and account slab pages as SLAB_RECLAIMABLE
+Kalle Valo <kvalo@codeaurora.org> writes:
 
-Can you outline how this would work without separate caches?
+> Thomas Hebb <tommyhebb@gmail.com> writes:
+>
+>> commit f2593cb1b291 ("ath10k: Search SMBIOS for OEM board file
+>> extension") added a feature to ath10k that allows Board Data File
+>> (BDF) conflicts between multiple devices that use the same device IDs
+>> but have different calibration requirements to be resolved by allowing
+>> a "variant" string to be stored in SMBIOS [and later device tree, added
+>> by commit d06f26c5c8a4 ("ath10k: search DT for qcom,ath10k-calibration-
+>> variant")] that gets appended to the ID stored in board-2.bin.
+>>
+>> This original patch had a regression, however. Namely that devices with
+>> a variant present in SMBIOS that didn't need custom BDFs could no longer
+>> find the default BDF, which has no variant appended. The patch was
+>> reverted and re-applied with a fix for this issue in commit 1657b8f84ed9
+>> ("search SMBIOS for OEM board file extension").
+>>
+>> But the fix to fall back to a default BDF introduced another issue: the
+>> driver currently parses IEs in board-2.bin one by one, and for each one
+>> it first checks to see if it matches the ID with the variant appended.
+>> If it doesn't, it checks to see if it matches the "fallback" ID with no
+>> variant. If a matching BDF is found at any point during this search, the
+>> search is terminated and that BDF is used. The issue is that it's very
+>> possible (and is currently the case for board-2.bin files present in the
+>> ath10k-firmware repository) for the default BDF to occur in an earlier
+>> IE than the variant-specific BDF. In this case, the current code will
+>> happily choose the default BDF even though a better-matching BDF is
+>> present later in the file.
+>>
+>> This patch fixes the issue by first searching the entire file for the ID
+>> with variant, and searching for the fallback ID only if that search
+>> fails. It also includes some code cleanup in the area, as
+>> ath10k_core_fetch_board_data_api_n() no longer does its own string
+>> mangling to remove the variant from an ID, instead leaving that job to a
+>> new flag passed to ath10k_core_create_board_name().
+>>
+>> I've tested this patch on a QCA4019 and verified that the driver behaves
+>> correctly for 1) both fallback and variant BDFs present, 2) only fallback
+>> BDF present, and 3) no matching BDFs present.
+>>
+>> Fixes: 1657b8f84ed9 ("ath10k: search SMBIOS for OEM board file extension")
+>> Signed-off-by: Thomas Hebb <tommyhebb@gmail.com>
+>
+> BTW, you forgot to CC linux-wireless so I don't see this in patchwork.
+>
+> https://wireless.wiki.kernel.org/en/users/drivers/ath10k/submittingpatches
+
+I submitted v2 so that I see it in patchwork:
+
+https://patchwork.kernel.org/patch/10340241/
+
+-- 
+Kalle Valo
