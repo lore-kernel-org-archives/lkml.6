@@ -1,113 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754032AbeDMIrB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 04:47:01 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41388 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754001AbeDMIqy (ORCPT
+        id S1754062AbeDMIrV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 04:47:21 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34323 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754040AbeDMIrS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 04:46:54 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 397F96076C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=gkohli@codeaurora.org
-Subject: Re: Query:Regarding percpu_counter debug object destroy
-To: Nikolay Borisov <nborisov@suse.com>, tj@kernel.org,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org
-References: <0754201b-2051-3f1c-7a09-ed1be96a0260@codeaurora.org>
- <cfd4c608-2662-2338-0ce7-4c90e193bd3c@suse.com>
-From: "Kohli, Gaurav" <gkohli@codeaurora.org>
-Message-ID: <219c8a35-49ac-1dbf-7816-95be0be46a1a@codeaurora.org>
-Date: Fri, 13 Apr 2018 14:16:48 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 13 Apr 2018 04:47:18 -0400
+X-Google-Smtp-Source: AIpwx49fBxBRpZ/RR15g4EezEABp979xjf4orDxvYZ7EJQjHRrdUmm+dAudUIsRUZEVZYV3JGb44Jg==
+Date: Fri, 13 Apr 2018 10:47:13 +0200
+From: Miklos Szeredi <miklos@szeredi.hu>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Subject: [GIT PULL] overlayfs update for 4.17
+Message-ID: <20180413084713.GD19579@veci.piliscsaba.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <cfd4c608-2662-2338-0ce7-4c90e193bd3c@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nikolay,
+Hi Linus,
 
-Thanks for the comment.
+Please pull from:
 
-I agree ,like timer , hrtimer we have to mark inactive in destroy function and finally freeing the debug object
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git overlayfs-linus
 
-after destruction of percpu_counter.
+In addition to bug fixes and cleanups there are two new features from Amir:
 
-But i am still not sure that this double freeing with same address may create race or not in debug_object list.
+ - Consistent inode number support for the case when layers are not all on
+   the same filesystem (feature is dubbed "xino").
 
-Regards
+ - Optimize overlayfs file handle decoding.  This one touches the exportfs
+   interface to allow detecting the disconnected directory case.
 
-Gaurav
+Most of the code has been sitting in -next for a while now, but was rebased
+due to a bug fix coming in yesterday.  I decided in favor of rebasing on
+top of that fix to allow automatic stable backporting.
 
-On 4/13/2018 1:12 PM, Nikolay Borisov wrote:
+Thanks,
+Miklos
 
->
-> On 13.04.2018 10:32, Kohli, Gaurav wrote:
->> Hi ,
->>
->> I have checked below code and it seems we are calling debug_object_free
->> twice, ideally we should deactivate and later we
->> have to destroy.
->>
->> 1st call -> percpu_counter_destroy->debug_percpu_counter_deactivate ->
->> debug_object_free
->> 2nd call ->
->> debug_object_free
->>
->>
->>
->> static bool percpu_counter_fixup_free(void *addr, enum debug_obj_state
->> state)
->> {
->>          struct percpu_counter *fbc = addr;
->>
->>          switch (state) {
->>          case ODEBUG_STATE_ACTIVE:
->>                  percpu_counter_destroy(fbc);  -> first call
->>                  debug_object_free(fbc, &percpu_counter_debug_descr); 2nd
->
-> Having looked at the code I'd say this is indeed buggy. I'd say it
-> stemmed from same cargo culting since timer_fixup_free follows the same
-> structure of code, except that in del_timer_sync there is no code which
-> does debug_object_free. The situation is similar in work_fixup_free.
->
-> So at this point I guess the question is whether we want to leave the
-> debug_object_free call in percpu_counter_fixup_free and just remove
-> debug_percpu_counter_deactivate and open-code the call to
-> debug_object_deactivate in percpu_counter_destroy. Or remove the
-> explicit call in percpu_counter_fixup_free and leave
-> debug_percpu_counter_deactivate.
->
->
-> In the end it's a matter of style, so perhaps Tejun, as the maintainer,
-> has the final say what style he prefers. Personally, I'd go for the
-> former solution so that the percpu follows the style of the rest of the
-> kernel.
->
->> call
->>                  return true;
->>          default:
->>                  return false;
->>          }
->> }
->>
->>
->> We are seeing one issue, where one list contain garbage data in
->> obj_hash, just before element of that is percpu_counter but
->> still not sure as it is very difficult to reproduce.
->>
->> Can some one please review above code or can we remove one instance of
->> debug_object_free from above code.
->>
->> Regards
->> Gaurav
->>
->>
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+---
+Amir Goldstein (13):
+      ovl: set i_ino to the value of st_ino for NFS export
+      ovl: fix lookup with middle layer opaque dir and absolute path redirects
+      ovl: set lower layer st_dev only if setting lower st_ino
+      ovl: disambiguate ovl_encode_fh()
+      ovl: do not try to reconnect a disconnected origin dentry
+      ovl: lookup in inode cache first when decoding lower file handle
+      ovl: factor out ovl_map_dev_ino() helper
+      ovl: allocate anon bdev per unique lower fs
+      ovl: constant st_ino for non-samefs with xino
+      ovl: consistent i_ino for non-samefs with xino
+      ovl: consistent d_ino for non-samefs with xino
+      ovl: add support for "xino" mount and config options
+      ovl: update documentation w.r.t "xino" feature
+
+Miklos Szeredi (2):
+      ovl: add WARN_ON() for non-dir redirect cases
+      ovl: cleanup ovl_update_time()
+
+Vivek Goyal (4):
+      ovl: Set d->last properly during lookup
+      ovl: Do not check for redirect if this is last layer
+      ovl: set d->is_dir and d->opaque for last path element
+      ovl: cleanup setting OVL_INDEX
+
+---
+ Documentation/filesystems/overlayfs.txt |  39 ++++++-
+ fs/exportfs/expfs.c                     |   9 ++
+ fs/overlayfs/Kconfig                    |  17 +++
+ fs/overlayfs/copy_up.c                  |   6 +-
+ fs/overlayfs/export.c                   |  75 +++++++------
+ fs/overlayfs/inode.c                    | 188 ++++++++++++++++++++------------
+ fs/overlayfs/namei.c                    |  67 ++++++++----
+ fs/overlayfs/overlayfs.h                |  19 +++-
+ fs/overlayfs/ovl_entry.h                |  21 +++-
+ fs/overlayfs/readdir.c                  |  45 +++++++-
+ fs/overlayfs/super.c                    | 157 ++++++++++++++++++++++----
+ fs/overlayfs/util.c                     |  39 ++++++-
+ 12 files changed, 510 insertions(+), 172 deletions(-)
