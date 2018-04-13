@@ -1,84 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752706AbeDMQgl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 12:36:41 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58450 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752410AbeDMQgh (ORCPT
+        id S1753224AbeDMQlx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 12:41:53 -0400
+Received: from mail-ua0-f178.google.com ([209.85.217.178]:33740 "EHLO
+        mail-ua0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753183AbeDMQlt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 12:36:37 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CBF936072E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v3 2/2] MIPS: io: add a barrier after register read in
- readX()
-To: David Laight <David.Laight@ACULAB.COM>,
-        "'James Hogan'" <jhogan@kernel.org>
-Cc: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "timur@codeaurora.org" <timur@codeaurora.org>,
-        "sulrich@codeaurora.org" <sulrich@codeaurora.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1522760109-16497-1-git-send-email-okaya@codeaurora.org>
- <1522760109-16497-2-git-send-email-okaya@codeaurora.org>
- <20180412215149.GA27802@saruman>
- <e38a329dfb9c461ab3e91de7b96db3dc@AcuMS.aculab.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <3688d54c-85f3-6eba-7f13-1cef0a0b5d85@codeaurora.org>
-Date: Fri, 13 Apr 2018 12:36:33 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 13 Apr 2018 12:41:49 -0400
+X-Google-Smtp-Source: AIpwx4/u6nd3P8+MIrppNoC/9cwugbzLkGFp+OKe6jQ6MyEs69/pzy4rqf1f4FuyGrbCs0X0EcMjf65nax3JzGRPSBY=
 MIME-Version: 1.0
-In-Reply-To: <e38a329dfb9c461ab3e91de7b96db3dc@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1523595999-27433-22-git-send-email-yamada.masahiro@socionext.com>
+References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com> <1523595999-27433-22-git-send-email-yamada.masahiro@socionext.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Fri, 13 Apr 2018 09:41:48 -0700
+X-Google-Sender-Auth: QCh7mlhHk-rlZ0hsNb74Go2mhus
+Message-ID: <CAGXu5jLt4xoxXTw83-npD4WmumPzSC9WnbOkkDoR=VYa5R4rYw@mail.gmail.com>
+Subject: Re: [PATCH 21/30] stack-protector: test compiler capability in
+ Kconfig and drop AUTO mode
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>, Emese Revfy <re.emese@gmail.com>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/13/2018 11:41 AM, David Laight wrote:
-> From: James Hogan
->> Sent: 12 April 2018 22:52
->> On Tue, Apr 03, 2018 at 08:55:04AM -0400, Sinan Kaya wrote:
->>> While a barrier is present in writeX() function before the register write,
->>> a similar barrier is missing in the readX() function after the register
->>> read. This could allow memory accesses following readX() to observe
->>> stale data.
->>>
->>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
->>> Reported-by: Arnd Bergmann <arnd@arndb.de>
->>
->> Both patches look like obvious improvements to me, so I'm happy to apply
->> to my fixes branch.
-> 
-> Don't you also need at least barrier() between the register write in writeX()
-> and the register read in readX()?
-> On ppc you probably need eieio.
-> Or are drivers expected to insert that one?
-> If they need to insert that one then why not all the others??
-> 
+On Thu, Apr 12, 2018 at 10:06 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> +stackp-flags-$(CONFIG_CC_HAS_STACKPROTECTOR_NONE) := -fno-stack-protector
+> +stackp-flags-$(CONFIG_CC_STACKPROTECTOR)          := -fstack-protector
+> +stackp-flags-$(CONFIG_CC_STACKPROTECTOR_STRONG)   := -fstack-protector-strong
+> +
+> +KBUILD_CFLAGS += $(stackp-flags-y)
 
-Good question. The volatile in here should prevent compiler from reordering the
-register read or write instructions. 
+So, technically, this works just fine. I wonder if it has an overly
+confusing result, in that the compiler under normal situations will
+see:
 
-static inline type pfx##read##bwlq(const volatile void __iomem *mem)
+gcc ... -fno-stack-protector -fstack-protector -fstack-protector-strong ...
 
-This is the solution all other architectures rely on especially via
-__raw_readX() and __raw_writeX() API.
+How about something like this instead:
 
-Now, things can get reordered when it leaves the CPU. This is guaranteed by
-embedding wmb() and rmb() into the writeX() and readX() functions in other
-architectures.
+ifdef CONFIG_CC_STACKPROTECTOR_STRONG
+KBUILD_CFLAGS += -fstack-protector-strong
+else
+ifdef CONFIG_CC_STACKPROTECTOR
+KBUILD_CFLAGS += -fstack-protector
+else
+KBUILD_CFLAGS += -fno-stack-protector
+endif
+endif
 
-This ordering guarantee has been agreed to be the responsibility of the
-architecture not drivers.
+-Kees
 
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Kees Cook
+Pixel Security
