@@ -1,102 +1,181 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754741AbeDMLhd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:37:33 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:33912 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754105AbeDMLgK (ORCPT
+        id S1754749AbeDMLir (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:38:47 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:57622 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754147AbeDMLio (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:36:10 -0400
-X-Google-Smtp-Source: AIpwx48eCu+UXQBh0RstOHmIoArGButQahwe7wv+8jzN+EvGfWq9La70YdgaTdYvS5vJL11655paJg==
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 12/15] memory: tegra: Add Tegra124 memory controller hot resets
-Date: Fri, 13 Apr 2018 14:33:51 +0300
-Message-Id: <0afee59fe60d661e8068763e66db109242a81554.1523301400.git.digetx@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <b063a7d44509189495825e73942329aca51e9e69.1523301400.git.digetx@gmail.com>
-References: <b063a7d44509189495825e73942329aca51e9e69.1523301400.git.digetx@gmail.com>
-In-Reply-To: <cover.1523301400.git.digetx@gmail.com>
-References: <cover.1523301400.git.digetx@gmail.com>
+        Fri, 13 Apr 2018 07:38:44 -0400
+Date: Fri, 13 Apr 2018 07:37:47 -0400
+From: Neil Horman <nhorman@tuxdriver.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Tommi Rantala <tommi.t.rantala@nokia.com>,
+        Xin Long <lucien.xin@gmail.com>, David Ahern <dsahern@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Dan Streetman <ddstreet@canonical.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexey Kodanev <alexey.kodanev@oracle.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        linux-sctp@vger.kernel.org
+Subject: Re: net: hang in unregister_netdevice: waiting for lo to become free
+Message-ID: <20180413113747.GA1699@hmswarspite.think-freely.org>
+References: <991243e2-e7c2-f2b2-72b9-d37b0d569b3b@gmail.com>
+ <efa5811c-0a01-a4af-ade2-71ef5dbc4eaf@gmail.com>
+ <CADvbK_dgEa5g0ynY4F8pX6LuuBwW4e42rK_TFuRhY1=2G5zinw@mail.gmail.com>
+ <CADvbK_fKDbUnAkdLrgm6rgj895Gb06AK7HaT0s9VD=zdF+vf6Q@mail.gmail.com>
+ <CACT4Y+aV_v6zNS6Ac1u1cB2GZ7QhjNxBeg0FNabUhrndt5CqZw@mail.gmail.com>
+ <5973966e-fcd9-7ee5-a9c4-b79d22c1b9dd@nokia.com>
+ <CACT4Y+beZ2+O=XdjKCpAkXOTBDgHYfn1JW8kn-TGRrph_RmV7Q@mail.gmail.com>
+ <20180220162622.GA32068@hmswarspite.think-freely.org>
+ <7d98027d-e810-a079-49c5-0bf8beef390e@nokia.com>
+ <CACT4Y+Z2kdjsYUs-H9aSTcNW-FSKqm1__fg3eOq16H-E=X8oZg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+Z2kdjsYUs-H9aSTcNW-FSKqm1__fg3eOq16H-E=X8oZg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Spam-Score: -2.9 (--)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define the table of memory controller hot resets for Tegra124.
+On Thu, Apr 12, 2018 at 02:15:30PM +0200, Dmitry Vyukov wrote:
+> On Wed, Feb 21, 2018 at 3:53 PM, Tommi Rantala
+> <tommi.t.rantala@nokia.com> wrote:
+> > On 20.02.2018 18:26, Neil Horman wrote:
+> >>
+> >> On Tue, Feb 20, 2018 at 09:14:41AM +0100, Dmitry Vyukov wrote:
+> >>>
+> >>> On Tue, Feb 20, 2018 at 8:56 AM, Tommi Rantala
+> >>> <tommi.t.rantala@nokia.com> wrote:
+> >>>>
+> >>>> On 19.02.2018 20:59, Dmitry Vyukov wrote:
+> >>>>>
+> >>>>> Is this meant to be fixed already? I am still seeing this on the
+> >>>>> latest upstream tree.
+> >>>>>
+> >>>>
+> >>>> These two commits are in v4.16-rc1:
+> >>>>
+> >>>> commit 4a31a6b19f9ddf498c81f5c9b089742b7472a6f8
+> >>>> Author: Tommi Rantala <tommi.t.rantala@nokia.com>
+> >>>> Date:   Mon Feb 5 21:48:14 2018 +0200
+> >>>>
+> >>>>      sctp: fix dst refcnt leak in sctp_v4_get_dst
+> >>>> ...
+> >>>>      Fixes: 410f03831 ("sctp: add routing output fallback")
+> >>>>      Fixes: 0ca50d12f ("sctp: fix src address selection if using
+> >>>> secondary
+> >>>> addresses")
+> >>>>
+> >>>>
+> >>>> commit 957d761cf91cdbb175ad7d8f5472336a4d54dbf2
+> >>>> Author: Alexey Kodanev <alexey.kodanev@oracle.com>
+> >>>> Date:   Mon Feb 5 15:10:35 2018 +0300
+> >>>>
+> >>>>      sctp: fix dst refcnt leak in sctp_v6_get_dst()
+> >>>> ...
+> >>>>      Fixes: dbc2b5e9a09e ("sctp: fix src address selection if using
+> >>>> secondary
+> >>>> addresses for ipv6")
+> >>>>
+> >>>>
+> >>>> I guess we missed something if it's still reproducible.
+> >>>>
+> >>>> I can check it later this week, unless someone else beat me to it.
+> >>>
+> >>>
+> >>> Hi Tommi,
+> >>>
+> >>> Hmmm, I can't claim that it's exactly the same bug. Perhaps it's
+> >>> another one then. But I am still seeing these:
+> >>>
+> >>> [   58.799130] unregister_netdevice: waiting for lo to become free.
+> >>> Usage count = 4
+> >>> [   60.847138] unregister_netdevice: waiting for lo to become free.
+> >>> Usage count = 4
+> >>> [   62.895093] unregister_netdevice: waiting for lo to become free.
+> >>> Usage count = 4
+> >>> [   64.943103] unregister_netdevice: waiting for lo to become free.
+> >>> Usage count = 4
+> >>>
+> >>> on upstream tree pulled ~12 hours ago.
+> >>>
+> >> Can you write a systemtap script to probe dev_hold, and dev_put, printing
+> >> out a
+> >> backtrace if the device name matches "lo".  That should tell us
+> >> definitively if
+> >> the problem is in the same location or not
+> >
+> >
+> > Hi Dmitry, I tested with the reproducer and the kernel .config file that you
+> > sent in the first email in this thread:
+> >
+> > With 4.16-rc2 unable to reproduce.
+> >
+> > With 4.15-rc9 bug reproducible, and I get "unregister_netdevice: waiting for
+> > lo to become free. Usage count = 3"
+> >
+> > With 4.15-rc9 and Alexey's "sctp: fix dst refcnt leak in sctp_v6_get_dst()"
+> > cherry-picked on top, unable to reproduce.
+> >
+> >
+> > Is syzkaller doing something else now to trigger the bug...?
+> > Can you still trigger the bug with the same reproducer?
+> 
+> Hi Neil, Tommi,
+> 
+> Reviving this old thread about "unregister_netdevice: waiting for lo
+> to become free. Usage count = 3" hangs.
+> I still did not have time to deep dive into what happens there (too
+> many bugs coming from syzbot). But this still actively happens and I
+> suspect accounts to a significant portion of various hang reports,
+> which are quite unpleasant.
+> 
+> One idea that could make it all simpler:
+> 
+> Is this wait loop in netdev_wait_allrefs() supposed to wait for any
+> prolonged periods of time under any non-buggy conditions? E.g. more
+> than 1-2 minutes?
+As the name implies, its supposed to wait for the reference count to be zero
+indefinately, but yes, under normal operation, its intended to not have to wait
+very long at all.  The issuance of the NETDEV_UNREGISTER_FINAL notification is
+meant to be a subscribable signal to any code path holding a reference that it
+needs to be dropped so that the progress can be made.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/memory/tegra/tegra124.c | 42 +++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Note that the "waiting for %s to become free" message is triggered after 10
+seconds of waiting, and is likely the trigger you want, Its just an emergency
+level log message rather a WARN.  I don't think we want to change that
+permanently, but you could certainly alter it in the code to cause syzbot to
+catch it (i.e. WARN_ON(time_after(jiffies, warning_time + 10 * HZ)) )
 
-diff --git a/drivers/memory/tegra/tegra124.c b/drivers/memory/tegra/tegra124.c
-index bd16555cca0f..b561a1fe7f46 100644
---- a/drivers/memory/tegra/tegra124.c
-+++ b/drivers/memory/tegra/tegra124.c
-@@ -1012,6 +1012,42 @@ static const struct tegra_smmu_group_soc tegra124_groups[] = {
- 	},
- };
- 
-+#define TEGRA124_MC_RESET(_name, _control, _status, _bit)	\
-+	{							\
-+		.name = #_name,					\
-+		.id = TEGRA124_MC_RESET_##_name,		\
-+		.control = _control,				\
-+		.status = _status,				\
-+		.bit = _bit,					\
-+	}
-+
-+static const struct tegra_mc_reset tegra124_mc_resets[] = {
-+	TEGRA124_MC_RESET(AFI,       0x200, 0x204,  0),
-+	TEGRA124_MC_RESET(AVPC,      0x200, 0x204,  1),
-+	TEGRA124_MC_RESET(DC,        0x200, 0x204,  2),
-+	TEGRA124_MC_RESET(DCB,       0x200, 0x204,  3),
-+	TEGRA124_MC_RESET(HC,        0x200, 0x204,  6),
-+	TEGRA124_MC_RESET(HDA,       0x200, 0x204,  7),
-+	TEGRA124_MC_RESET(ISP2,      0x200, 0x204,  8),
-+	TEGRA124_MC_RESET(MPCORE,    0x200, 0x204,  9),
-+	TEGRA124_MC_RESET(MPCORELP,  0x200, 0x204, 10),
-+	TEGRA124_MC_RESET(MSENC,     0x200, 0x204, 11),
-+	TEGRA124_MC_RESET(PPCS,      0x200, 0x204, 14),
-+	TEGRA124_MC_RESET(SATA,      0x200, 0x204, 15),
-+	TEGRA124_MC_RESET(VDE,       0x200, 0x204, 16),
-+	TEGRA124_MC_RESET(VI,        0x200, 0x204, 17),
-+	TEGRA124_MC_RESET(VIC,       0x200, 0x204, 18),
-+	TEGRA124_MC_RESET(XUSB_HOST, 0x200, 0x204, 19),
-+	TEGRA124_MC_RESET(XUSB_DEV,  0x200, 0x204, 20),
-+	TEGRA124_MC_RESET(TSEC,      0x200, 0x204, 21),
-+	TEGRA124_MC_RESET(SDMMC1,    0x200, 0x204, 22),
-+	TEGRA124_MC_RESET(SDMMC2,    0x200, 0x204, 23),
-+	TEGRA124_MC_RESET(SDMMC3,    0x200, 0x204, 25),
-+	TEGRA124_MC_RESET(SDMMC4,    0x970, 0x974,  0),
-+	TEGRA124_MC_RESET(ISP2B,     0x970, 0x974,  1),
-+	TEGRA124_MC_RESET(GPU,       0x970, 0x974,  2),
-+};
-+
- #ifdef CONFIG_ARCH_TEGRA_124_SOC
- static const struct tegra_smmu_soc tegra124_smmu_soc = {
- 	.clients = tegra124_mc_clients,
-@@ -1038,6 +1074,9 @@ const struct tegra_mc_soc tegra124_mc_soc = {
- 	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
- 		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
- 		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
-+	.reset_ops = &terga_mc_reset_ops_common,
-+	.resets = tegra124_mc_resets,
-+	.num_resets = ARRAY_SIZE(tegra124_mc_resets),
- };
- #endif /* CONFIG_ARCH_TEGRA_124_SOC */
- 
-@@ -1065,5 +1104,8 @@ const struct tegra_mc_soc tegra132_mc_soc = {
- 	.intmask = MC_INT_DECERR_MTS | MC_INT_SECERR_SEC | MC_INT_DECERR_VPR |
- 		   MC_INT_INVALID_APB_ASID_UPDATE | MC_INT_INVALID_SMMU_PAGE |
- 		   MC_INT_SECURITY_VIOLATION | MC_INT_DECERR_EMEM,
-+	.reset_ops = &terga_mc_reset_ops_common,
-+	.resets = tegra124_mc_resets,
-+	.num_resets = ARRAY_SIZE(tegra124_mc_resets),
- };
- #endif /* CONFIG_ARCH_TEGRA_132_SOC */
--- 
-2.17.0
+
+> If it only supposed to wait briefly for things that already supposed
+> to be shutting down, and we add a WARNING there after some timeout,
+> then syzbot will report all info how/when it happens, hopefully
+> extracting reproducers, and all the nice things.
+> But this WARNING should not have any false positives under any
+> realistic conditions (e.g. waiting for arrival of remote packets with
+> large timeouts).
+> 
+> Looking at some task hung reports, it seems that this code holds some
+> mutexes, takes workqueue thread and prevents any progress with
+> destruction of other devices (and net namespace creation/destruction),
+> so I guess it should not wait for any indefinite periods of time?
+Well, it drops everything and sleeps periodically, so its safe in and of itself.
+The problem is its waiting for the reference count of a device to drop to zero,
+and some other execution context isn't taking the appropriate action to do that.
+
+Neil
+
+> 
