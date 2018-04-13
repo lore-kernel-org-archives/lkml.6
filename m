@@ -1,151 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754065AbeDMNQF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 09:16:05 -0400
-Received: from mail.us.es ([193.147.175.20]:57384 "EHLO mail.us.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752899AbeDMNQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 09:16:03 -0400
-Date: Fri, 13 Apr 2018 15:15:58 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] netfilter: fix CONFIG_NF_REJECT_IPV6=m link error
-Message-ID: <20180413131558.3jw5dhub5gcyotyt@salvia>
-References: <20180409105322.2247296-1-arnd@arndb.de>
- <20180409143741.dzooqrzcgi2bnvd5@salvia>
- <CAK8P3a1GH5OSu62TBh46S0OdiXTJODsvV3To5=Jp2nL+fz1Puw@mail.gmail.com>
+        id S1754221AbeDMNT6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 09:19:58 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54530 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750960AbeDMNT4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 09:19:56 -0400
+Date: Fri, 13 Apr 2018 15:19:48 +0200
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [GIT PULL] s390 patches for the 4.17 merge window #2
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="ihxb5r4tqmv6zkwf"
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1GH5OSu62TBh46S0OdiXTJODsvV3To5=Jp2nL+fz1Puw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18041313-0020-0000-0000-00000411907E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041313-0021-0000-0000-000042A5C34B
+Message-Id: <20180413151948.6dd1e894@mschwideX1>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-13_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804130124
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
---ihxb5r4tqmv6zkwf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+please pull from the 'for-linus' branch of
 
-On Mon, Apr 09, 2018 at 04:43:40PM +0200, Arnd Bergmann wrote:
-> On Mon, Apr 9, 2018 at 4:37 PM, Pablo Neira Ayuso <pablo@netfilter.org> wrote:
-> > Hi Arnd,
-> >
-> > On Mon, Apr 09, 2018 at 12:53:12PM +0200, Arnd Bergmann wrote:
-> >> We get a new link error with CONFIG_NFT_REJECT_INET=y and CONFIG_NF_REJECT_IPV6=m
-> >
-> > I think we can update NFT_REJECT_INET so it depends on NFT_REJECT_IPV4
-> > and NFT_REJECT_IPV6. This doesn't allow here CONFIG_NFT_REJECT_INET=y
-> > and CONFIG_NF_REJECT_IPV6=m.
-> >
-> > I mean, just like we do with NFT_FIB_INET.
-> 
-> That can only work if NFT_REJECT_INET can be made a 'tristate' symbol
-> again, so that code gets built as a loadable module if
-> CONFIG_NF_REJECT_IPV6=m.
-> 
-> > BTW, I think this problem has been is not related to the recent patch,
-> > but something older that kbuild robot has triggered more easily for
-> > some reason?
-> 
-> 02c7b25e5f54 is the one that turned NF_TABLES_INET into a 'bool'
-> symbol. NFT_REJECT depends on NF_TABLES_INET, so it used to
-> restricted to a loadable module with IPV6=m, but can now be
-> built-in, which causes that link error.
+	git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git for-linus
 
-Still one more spin on this, I would like to see if we have a way to
-fix this by simplifing things a bit.
+to receive the following updates:
 
-Would this one I'm attaching would work?
+Three notable larger changes next to the usual bug fixing:
 
-Thanks for you patience.
+* Update the email addresses in MAINTAINERS for the s390 folks to use
+  the simpler linux.ibm.com domain instead of the old linux.vnet.ibm.com
 
---ihxb5r4tqmv6zkwf
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="0001-netfilter-CONFIG_NF_REJECT_IPV-4-6-becomes-bool-togg.patch"
+* An update for the zcrypt device driver that removes some old and
+  obsolete interfaces and add support for up to 256 crypto adapters
 
->From af07bc7ff5d34ce54e7913233912c058e6699e3c Mon Sep 17 00:00:00 2001
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Fri, 13 Apr 2018 10:48:40 +0200
-Subject: [PATCH] netfilter: CONFIG_NF_REJECT_IPV{4,6} becomes bool toggle
+* A rework of the IPL aka boot code
 
-Arnd reports that we get a new link error with CONFIG_NFT_REJECT_INET=y
-and CONFIG_NF_REJECT_IPV6=m after larger parts of the nftables modules
-are linked together:
+Harald Freudenberger (6):
+      s390/crypto: Adjust s390 aes and paes cipher priorities
+      s390/zcrypt: remove unused functions and declarations
+      s390/zcrypt: Make ap init functions static.
+      s390/zcrypt: Remove deprecated ioctls.
+      s390/zcrypt: Remove deprecated zcrypt proc interface.
+      s390/zcrypt: Support up to 256 crypto adapters.
 
-net/netfilter/nft_reject_inet.o: In function `nft_reject_inet_eval':
-nft_reject_inet.c:(.text+0x17c): undefined reference to `nf_send_unreach6'
-nft_reject_inet.c:(.text+0x190): undefined reference to `nf_send_reset6'
+Heiko Carstens (2):
+      s390/compat: fix setup_frame32
+      MAINTAINERS: update s390 maintainers email addresses
 
-The problem is that with NF_TABLES_INET set, we implicitly try to use
-the ipv6 version as well for NFT_REJECT, but when CONFIG_IPV6 is set to
-a loadable module, it's impossible to reach that.
+Julian Wiedmann (3):
+      s390/ccwgroup: require at least one ccw device
+      s390/qdio: clear intparm during shutdown
+      s390/qdio: lock device while installing IRQ handler
 
-This patch fixes this problem by building-in nf_reject_ipv{4,6}.c, IPv6
-symbol dependencies for the IPv6 reject infrastructure are located in
-exthdrs_core.c, ip6_checksum.c and ip6_icmp.c which are also built-in,
-so let's do the same to simplify this.
+Martin Schwidefsky (1):
+      s390: correct nospec auto detection init order
 
-Fixes: 02c7b25e5f54 ("netfilter: nf_tables: build-in filter chain type")
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
----
- net/ipv4/netfilter/Kconfig | 3 +--
- net/ipv6/netfilter/Kconfig | 3 +--
- net/netfilter/Kconfig      | 2 ++
- 3 files changed, 4 insertions(+), 4 deletions(-)
+Vasily Gorbik (11):
+      s390/ipl: ensure loadparm valid flag is set
+      s390/ipl: unite diag308 and scsi boot ipl blocks
+      s390/ipl: get rid of ipl_ssid and ipl_devno
+      s390/ipl: move ipl_flags to ipl.c
+      s390/ipl: rely on diag308 store to get ipl info
+      s390/ipl: correct ipl parmblock valid checks
+      s390/ipl: avoid adding scpdata to cmdline during ftp/dvd boot
+      s390: assume diag308 set always works
+      s390/ipl: remove non-existing functions declaration
+      s390/ipl: correct kdump reipl block checksum calculation
+      s390/ipl: remove reipl_method and dump_method
 
-diff --git a/net/ipv4/netfilter/Kconfig b/net/ipv4/netfilter/Kconfig
-index 280048e1e395..3e4e0ae2a9a1 100644
---- a/net/ipv4/netfilter/Kconfig
-+++ b/net/ipv4/netfilter/Kconfig
-@@ -104,8 +104,7 @@ config NF_LOG_IPV4
- 	select NF_LOG_COMMON
- 
- config NF_REJECT_IPV4
--	tristate "IPv4 packet rejection"
--	default m if NETFILTER_ADVANCED=n
-+	bool "IPv4 packet rejection"
- 
- config NF_NAT_IPV4
- 	tristate "IPv4 NAT"
-diff --git a/net/ipv6/netfilter/Kconfig b/net/ipv6/netfilter/Kconfig
-index ccbfa83e4bb0..1e5d040a60b8 100644
---- a/net/ipv6/netfilter/Kconfig
-+++ b/net/ipv6/netfilter/Kconfig
-@@ -87,8 +87,7 @@ config NF_DUP_IPV6
- 	  packet to be rerouted to another destination.
- 
- config NF_REJECT_IPV6
--	tristate "IPv6 packet rejection"
--	default m if NETFILTER_ADVANCED=n
-+	bool "IPv6 packet rejection"
- 
- config NF_LOG_IPV6
- 	tristate "IPv6 packet logging"
-diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index 4189f574f5ec..d7b3272fe821 100644
---- a/net/netfilter/Kconfig
-+++ b/net/netfilter/Kconfig
-@@ -609,6 +609,8 @@ config NFT_REJECT
- 
- config NFT_REJECT_INET
- 	depends on NF_TABLES_INET
-+	select NF_REJECT_IPV4
-+	select NF_REJECT_IPV6
- 	default NFT_REJECT
- 	tristate
- 
--- 
-2.11.0
-
-
---ihxb5r4tqmv6zkwf--
+ MAINTAINERS                           |  34 +--
+ arch/s390/boot/compressed/misc.c      |  23 --
+ arch/s390/crypto/aes_s390.c           |   8 +-
+ arch/s390/crypto/paes_s390.c          |   8 +-
+ arch/s390/include/asm/ap.h            |   6 +-
+ arch/s390/include/asm/cio.h           |  10 -
+ arch/s390/include/asm/ipl.h           |  25 +-
+ arch/s390/include/asm/nospec-branch.h |   1 +
+ arch/s390/include/asm/reset.h         |  20 --
+ arch/s390/include/uapi/asm/zcrypt.h   | 163 ++++++------
+ arch/s390/kernel/compat_signal.c      |   2 +-
+ arch/s390/kernel/early.c              |  14 +-
+ arch/s390/kernel/ipl.c                | 376 +++++----------------------
+ arch/s390/kernel/machine_kexec.c      |   2 +-
+ arch/s390/kernel/nospec-branch.c      |   8 +-
+ arch/s390/kernel/reipl.S              |  87 -------
+ arch/s390/kernel/relocate_kernel.S    |  54 +---
+ arch/s390/kernel/setup.c              |   3 +
+ drivers/s390/cio/ccwgroup.c           |   5 +-
+ drivers/s390/cio/cio.c                | 257 -------------------
+ drivers/s390/cio/ioasm.c              |  24 --
+ drivers/s390/cio/ioasm.h              |   1 -
+ drivers/s390/cio/qdio_main.c          |   4 +-
+ drivers/s390/cio/qdio_setup.c         |   2 +
+ drivers/s390/crypto/ap_bus.c          |  32 +--
+ drivers/s390/crypto/ap_bus.h          |   5 +-
+ drivers/s390/crypto/ap_debug.h        |   3 -
+ drivers/s390/crypto/pkey_api.c        |  41 +--
+ drivers/s390/crypto/zcrypt_api.c      | 471 ++++++++++------------------------
+ drivers/s390/crypto/zcrypt_api.h      |  26 +-
+ 30 files changed, 357 insertions(+), 1358 deletions(-)
+ delete mode 100644 arch/s390/include/asm/reset.h
