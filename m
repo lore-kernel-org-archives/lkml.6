@@ -1,97 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751154AbeDMSud (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 14:50:33 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:51690 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750783AbeDMSub (ORCPT
+        id S1751021AbeDMSxm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 14:53:42 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:43504 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750783AbeDMSxl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 14:50:31 -0400
-Date: Fri, 13 Apr 2018 19:50:17 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
- kill() returns wrong values in si_pid and si_uid
-Message-ID: <20180413185016.GP16141@n2100.armlinux.org.uk>
-References: <20180412124928.GA29458@altlinux.org>
- <20180412131404.GE16141@n2100.armlinux.org.uk>
- <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
- <20180412172051.GK16141@n2100.armlinux.org.uk>
- <CA+55aFwjZqd8J0=veki1g+quQg8amEG4NnMe-h7HFksn=F=x_Q@mail.gmail.com>
- <20180413094211.GN16141@n2100.armlinux.org.uk>
- <CA+55aFwoThxqUeAZSsMhf--ODyhGkmOENH5R6=4+CuaopFx9eA@mail.gmail.com>
- <20180413170827.GB16308@e103592.cambridge.arm.com>
- <20180413175407.GO16141@n2100.armlinux.org.uk>
- <20180413183527.GC16308@e103592.cambridge.arm.com>
+        Fri, 13 Apr 2018 14:53:41 -0400
+Subject: Re: [PATCH] virtio_balloon: add array of stat names
+To: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org
+References: <1523627031-370966-1-git-send-email-mst@redhat.com>
+From: Jonathan Helman <jonathan.helman@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <8ac55da5-3c2b-a546-7597-ec6c82ff9590@oracle.com>
+Date: Fri, 13 Apr 2018 11:53:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180413183527.GC16308@e103592.cambridge.arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1523627031-370966-1-git-send-email-mst@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8862 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804130174
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 07:35:38PM +0100, Dave Martin wrote:
-> If that's the case though, I don't see how a userspace testsuite is
-> hitting this code path.  Maybe I've misunderstood the context of this
-> thread.
 
-It isn't hitting this exact case.
 
-The userspace testsuite is hitting an entirely different case:
+On 04/13/2018 06:44 AM, Michael S. Tsirkin wrote:
+> Jason Wang points out that it's vary hard for users to build an array of
 
-	kill(getpid(), SIGFPE);
+s/vary/very
 
-As one expects, this generates a SIGFPE to the current process, which
-then inspects the siginfo structure.  Being a userspace generated
-signal, si_code is set to SI_USER, which has the value 0.
+> stat names. The naive thing is to use VIRTIO_BALLOON_S_NR but that
+> breaks if we add more stats.
+> 
+> Let's add an array of reasonably readable names.
 
-With FPE_FIXME defined to zero, as Eric has done:
+Thanks for doing this, this is goodness. Clients of this interface will 
+now only require a modification to their internal copy of the header 
+file (if they have one), rather than updating their string array as well.
 
-enum siginfo_layout siginfo_layout(int sig, int si_code)
-{
-        enum siginfo_layout layout = SIL_KILL;
-        if ((si_code > SI_USER) && (si_code < SI_KERNEL)) {
-...
-        } else {
-...
-#ifdef FPE_FIXME
-                if ((sig == SIGFPE) && (si_code == FPE_FIXME))
-                        layout = SIL_FAULT;
-#endif
-        }
-        return layout;
-}
+> 
+> Fixes: 6c64fe7f2 ("virtio_balloon: export hugetlb page allocation counts")
 
-This causes siginfo_layout() to return SIL_FAULT for this userspace
-generated signal, rather than the correct SIL_KILL.
+I think this is a tad bit confusing since the only way you'd know why 
+this patch "fixes" 6c64fe7f2 is by reading the LKML archives and finding 
+Jason's comment.
 
-This affects which fields we copy to userspace.
+> Cc: Jason Wang <jasowang@redhat.com>
+> Cc: Jonathan Helman <jonathan.helman@oracle.com>, > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
-SI_USER is defined to pass si_pid and si_uid to the userspace process,
-which on ARM are the first two consecutive 32-bit quantities in the
-union, which is done when siginfo_layout() returns SIL_KILL.  However,
-when SIL_FAULT is returned, we only copy si_addr in the union, which
-on ARM is just one 32-bit quantity.
+Reviewed-by: Jonathan Helman <jonathan.helman@oracle.com>
 
-Consequently, userspace sees a correct value for si_pid, and si_uid
-remains set to whatever was there in userspace.  In the case of the
-strace program, that's zero.  This means if you run the strace
-testsuite as root, the problem doesn't appear, but if you run it as
-a non-root user, it will.
-
-So, the testsuite case has little to do with the behaviour of the VFP
-handling - it's to do with the behaviour of the kernel's signal handling.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+> ---
+>   include/uapi/linux/virtio_balloon.h | 15 +++++++++++++++
+>   1 file changed, 15 insertions(+)
+> 
+> diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
+> index 9e02137..1477c17 100644
+> --- a/include/uapi/linux/virtio_balloon.h
+> +++ b/include/uapi/linux/virtio_balloon.h
+> @@ -64,6 +64,21 @@ struct virtio_balloon_config {
+>   #define VIRTIO_BALLOON_S_HTLB_PGFAIL   9  /* Hugetlb page allocation failures */
+>   #define VIRTIO_BALLOON_S_NR       10
+>   
+> +#define VIRTIO_BALLOON_S_NAMES_WITH_PREFIX(VIRTIO_BALLOON_S_NAMES_prefix) { \
+> +	VIRTIO_BALLOON_S_NAMES_prefix "swap-in", \
+> +	VIRTIO_BALLOON_S_NAMES_prefix "swap-out", \
+> +	VIRTIO_BALLOON_S_NAMES_prefix "major-faults", \
+> +	VIRTIO_BALLOON_S_NAMES_prefix "minor-faults", \
+> +	VIRTIO_BALLOON_S_NAMES_prefix "free-memory", \
+> +	VIRTIO_BALLOON_S_NAMES_prefix "total-memory", \
+> +	VIRTIO_BALLOON_S_NAMES_prefix "available-memory", \
+> +	VIRTIO_BALLOON_S_NAMES_prefix "disk-caches", \
+> +	VIRTIO_BALLOON_S_NAMES_prefix "hugetlb-allocations", \
+> +	VIRTIO_BALLOON_S_NAMES_prefix "hugetlb-failures" \ > +}
+> +
+> +#define VIRTIO_BALLOON_S_NAMES VIRTIO_BALLOON_S_NAMES_WITH_PREFIX("")
+> +
+>   /*
+>    * Memory statistics structure.
+>    * Driver fills an array of these structures and passes to device.
+> 
