@@ -1,101 +1,209 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754841AbeDMOCG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 10:02:06 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:35779 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754818AbeDMOCC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:02:02 -0400
-X-Google-Smtp-Source: AIpwx4+U+1i5nDOzIt9sgjWCpkb4iY2FpBr16tclHAa1guDd/Re57mrfcOiUwchR2U9QIAMGdNNMlhDUowxsJIaCCxI=
+        id S1754886AbeDMOC1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 10:02:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54242 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754858AbeDMOCZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 10:02:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F08FF21836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, David Ahern <dsahern@gmail.com>,
+        Jin Yao <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        =?UTF-8?q?Martin=20Li=C5=A1ka?= <mliska@suse.cz>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 16/17] perf annotate: Allow setting the offset level in .perfconfig
+Date: Fri, 13 Apr 2018 11:01:10 -0300
+Message-Id: <20180413140111.25313-17-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180413140111.25313-1-acme@kernel.org>
+References: <20180413140111.25313-1-acme@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180412150826.20988-25-mszeredi@redhat.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-25-mszeredi@redhat.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 13 Apr 2018 17:02:00 +0300
-Message-ID: <CAOQ4uxikOObrKptxGUFWkkko0LcaidYpVbDcVJJA3cFF8fwMAA@mail.gmail.com>
-Subject: Re: [RFC PATCH 24/35] Revert "ovl: fix relatime for directories"
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 6:08 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
-> This reverts commit cd91304e7190b4c4802f8e413ab2214b233e0260.
->
-> Overlayfs no longer relies on the vfs correct atime handling.
->
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/inode.c             | 21 ++++-----------------
->  fs/overlayfs/super.c   |  3 ---
->  include/linux/dcache.h |  3 ---
->  3 files changed, 4 insertions(+), 23 deletions(-)
->
-> diff --git a/fs/inode.c b/fs/inode.c
-> index ef362364d396..163715de8cb2 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1570,24 +1570,11 @@ EXPORT_SYMBOL(bmap);
->  static void update_ovl_inode_times(struct dentry *dentry, struct inode *inode,
->                                bool rcu)
->  {
-> -       struct dentry *upperdentry;
-> +       if (!rcu) {
-> +               struct inode *realinode = d_real_inode(dentry);
->
-> -       /*
-> -        * Nothing to do if in rcu or if non-overlayfs
-> -        */
-> -       if (rcu || likely(!(dentry->d_flags & DCACHE_OP_REAL)))
-> -               return;
-> -
-> -       upperdentry = d_real(dentry, NULL, 0, D_REAL_UPPER);
-> -
-> -       /*
-> -        * If file is on lower then we can't update atime, so no worries about
-> -        * stale mtime/ctime.
-> -        */
-> -       if (upperdentry) {
-> -               struct inode *realinode = d_inode(upperdentry);
-> -
-> -               if ((!timespec_equal(&inode->i_mtime, &realinode->i_mtime) ||
-> +               if (unlikely(inode != realinode) &&
-> +                   (!timespec_equal(&inode->i_mtime, &realinode->i_mtime) ||
->                      !timespec_equal(&inode->i_ctime, &realinode->i_ctime))) {
->                         inode->i_mtime = realinode->i_mtime;
->                         inode->i_ctime = realinode->i_ctime;
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index c3d8c7ea180f..006dc70d7425 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -107,9 +107,6 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
->         if (inode && d_inode(dentry) == inode)
->                 return dentry;
->
-> -       if (flags & D_REAL_UPPER)
-> -               return ovl_dentry_upper(dentry);
-> -
->         if (!d_is_reg(dentry)) {
->                 if (!inode || inode == d_inode(dentry))
->                         return dentry;
-> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-> index 82a99d366aec..4c7ab11c627a 100644
-> --- a/include/linux/dcache.h
-> +++ b/include/linux/dcache.h
-> @@ -565,9 +565,6 @@ static inline struct dentry *d_backing_dentry(struct dentry *upper)
->         return upper;
->  }
->
-> -/* d_real() flags */
-> -#define D_REAL_UPPER   0x2     /* return upper dentry or NULL if non-upper */
-> -
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Premature removal of constant. Still in use by may_write_real() at this point.
+The default is 1 (jump_target):
 
-Thanks,
-Amir.
+  # perf annotate --ignore-vmlinux --stdio2 _raw_spin_lock_irqsave
+  Samples: 3K of event 'cycles:ppp', 3000 Hz, Event count (approx.): 2766398574
+  _raw_spin_lock_irqsave() /proc/kcore
+    0.26        nop
+    4.61        push   %rbx
+   19.33        pushfq
+    7.97        pop    %rax
+    0.32        nop
+    0.06        mov    %rax,%rbx
+   14.63        cli
+    0.06        nop
+                xor    %eax,%eax
+                mov    $0x1,%edx
+   49.94        lock   cmpxchg %edx,(%rdi)
+    0.16        test   %eax,%eax
+              ↓ jne    2b
+    2.66        mov    %rbx,%rax
+                pop    %rbx
+              ← retq
+          2b:   mov    %eax,%esi
+              → callq  *ffffffffb30eaed0
+                mov    %rbx,%rax
+                pop    %rbx
+              ← retq
+  #
+
+But one can ask for showing offsets for call instructions by setting
+this:
+
+  # perf annotate --ignore-vmlinux --stdio2 _raw_spin_lock_irqsave
+  Samples: 3K of event 'cycles:ppp', 3000 Hz, Event count (approx.): 2766398574
+  _raw_spin_lock_irqsave() /proc/kcore
+    0.26        nop
+    4.61        push   %rbx
+   19.33        pushfq
+    7.97        pop    %rax
+    0.32        nop
+    0.06        mov    %rax,%rbx
+   14.63        cli
+    0.06        nop
+                xor    %eax,%eax
+                mov    $0x1,%edx
+   49.94        lock   cmpxchg %edx,(%rdi)
+    0.16        test   %eax,%eax
+              ↓ jne    2b
+    2.66        mov    %rbx,%rax
+                pop    %rbx
+              ← retq
+          2b:   mov    %eax,%esi
+          2d: → callq  *ffffffffb30eaed0
+                mov    %rbx,%rax
+                pop    %rbx
+              ← retq
+  #
+
+Or using a big value to ask for all offsets to be shown:
+
+  # cat ~/.perfconfig
+  [annotate]
+
+	offset_level = 100
+
+	hide_src_code = true
+  # perf annotate --ignore-vmlinux --stdio2 _raw_spin_lock_irqsave
+  Samples: 3K of event 'cycles:ppp', 3000 Hz, Event count (approx.): 2766398574
+  _raw_spin_lock_irqsave() /proc/kcore
+    0.26   0:   nop
+    4.61   5:   push   %rbx
+   19.33   6:   pushfq
+    7.97   7:   pop    %rax
+    0.32   8:   nop
+    0.06   d:   mov    %rax,%rbx
+   14.63  10:   cli
+    0.06  11:   nop
+          17:   xor    %eax,%eax
+          19:   mov    $0x1,%edx
+   49.94  1e:   lock   cmpxchg %edx,(%rdi)
+    0.16  22:   test   %eax,%eax
+          24: ↓ jne    2b
+    2.66  26:   mov    %rbx,%rax
+          29:   pop    %rbx
+          2a: ← retq
+          2b:   mov    %eax,%esi
+          2d: → callq  *ffffffffb30eaed0
+          32:   mov    %rbx,%rax
+          35:   pop    %rbx
+          36: ← retq
+   #
+
+This also affects the TUI, i.e. the default 'perf annotate' and 'perf
+top/report' -> A hotkey -> annotate interfaces, when slang-devel is present
+in the build, i.e.:
+
+  # perf version --build-options | grep slang
+              libslang: [ on  ]  # HAVE_SLANG_SUPPORT
+  #
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Martin Liška <mliska@suse.cz>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-venm6x5zrt40eu8hxdsmqxz6@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/Documentation/perf-config.txt |  5 +++++
+ tools/perf/util/annotate.c               | 15 ++++++++++++---
+ 2 files changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/tools/perf/Documentation/perf-config.txt b/tools/perf/Documentation/perf-config.txt
+index 5b4fff3adc4b..32f4a898e3f2 100644
+--- a/tools/perf/Documentation/perf-config.txt
++++ b/tools/perf/Documentation/perf-config.txt
+@@ -334,6 +334,11 @@ annotate.*::
+ 
+ 		99.93 │      mov    %eax,%eax
+ 
++	annotate.offset_level::
++		Default is '1', meaning just jump targets will have offsets show right beside
++		the instruction. When set to '2' 'call' instructions will also have its offsets
++		shown, 3 or higher will show offsets for all instructions.
++
+ hist.*::
+ 	hist.percentage::
+ 		This option control the way to calculate overhead of filtered entries -
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index 5edc565d86c4..536ee148bff8 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -2649,10 +2649,11 @@ int __annotation__scnprintf_samples_period(struct annotation *notes,
+  */
+ static struct annotation_config {
+ 	const char *name;
+-	bool *value;
++	void *value;
+ } annotation__configs[] = {
+ 	ANNOTATION__CFG(hide_src_code),
+ 	ANNOTATION__CFG(jump_arrows),
++	ANNOTATION__CFG(offset_level),
+ 	ANNOTATION__CFG(show_linenr),
+ 	ANNOTATION__CFG(show_nr_jumps),
+ 	ANNOTATION__CFG(show_nr_samples),
+@@ -2684,8 +2685,16 @@ static int annotation__config(const char *var, const char *value,
+ 
+ 	if (cfg == NULL)
+ 		pr_debug("%s variable unknown, ignoring...", var);
+-	else
+-		*cfg->value = perf_config_bool(name, value);
++	else if (strcmp(var, "annotate.offset_level") == 0) {
++		perf_config_int(cfg->value, name, value);
++
++		if (*(int *)cfg->value > ANNOTATION__MAX_OFFSET_LEVEL)
++			*(int *)cfg->value = ANNOTATION__MAX_OFFSET_LEVEL;
++		else if (*(int *)cfg->value < ANNOTATION__MIN_OFFSET_LEVEL)
++			*(int *)cfg->value = ANNOTATION__MIN_OFFSET_LEVEL;
++	} else {
++		*(bool *)cfg->value = perf_config_bool(name, value);
++	}
+ 	return 0;
+ }
+ 
+-- 
+2.14.3
