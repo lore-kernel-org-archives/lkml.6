@@ -1,78 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755000AbeDMOE2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 10:04:28 -0400
-Received: from mga18.intel.com ([134.134.136.126]:37610 "EHLO mga18.intel.com"
+        id S1755024AbeDMOEm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 10:04:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754984AbeDMOEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:04:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,445,1517904000";
-   d="scan'208";a="43076940"
-Message-ID: <1523628262.2142.4.camel@intel.com>
-Subject: [GIT PULL V2] Thermal management updates for v4.17-rc1
-From: Zhang Rui <rui.zhang@intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        "Zhang, Rui" <rui.zhang@intel.com>
-Date: Fri, 13 Apr 2018 22:04:22 +0800
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1754705AbeDMOBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 10:01:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7536D217A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Andi Kleen <andi@firstfloor.org>, David Ahern <dsahern@gmail.com>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        William Cohen <wcohen@redhat.com>
+Subject: [PATCH 06/17] perf jvmti: Give hints about package names needed to build
+Date: Fri, 13 Apr 2018 11:01:00 -0300
+Message-Id: <20180413140111.25313-7-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180413140111.25313-1-acme@kernel.org>
+References: <20180413140111.25313-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Linus,
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Please pull from
-  git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git next
+Give as examples of package names to install to have this built for
+fedora and debian, to help the user a bit.
 
-to receive the latest Thermal Management updates for v4.17-rc1 with
-top-most commit b907b408ca64482989cd95dacef804ce509a3673:
+The part from 'e.g.:' onwards:
 
-  Merge branches 'thermal-core' and 'thermal-soc' into next (2018-04-13 
-14:11:53 +0800)
+  No openjdk development package found, please install JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel
 
-on top of commit 0c8efd610b58cb23cefdfa12015799079aef94ae:
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: William Cohen <wcohen@redhat.com>
+Link: https://lkml.kernel.org/n/tip-edbi4r2pvzn7no6ebxbtczng@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/Makefile.config | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  Linux 4.16-rc5 (2018-03-11 17:25:09 -0700)
-
-Differences in V2:
-- Dropped all patches from thermal-soc tree, including the exynos patch
-that introduces the compiler warnings.
-
-Specifics:
-
-- Fix race condition in imx_thermal_probe(). (Mikhail Lappo)
-
-- Add cooling device's statistics in sysfs. (Viresh Kumar)
-
-thanks,
-rui
-
-----------------------------------------------------------------
-Mikhail Lappo (1):
-      thermal: imx: Fix race condition in imx_thermal_probe()
-
-Viresh Kumar (1):
-      thermal: Add cooling device's statistics in sysfs
-
-Zhang Rui (1):
-      Merge branches 'thermal-core' and 'thermal-soc' into next
-
- Documentation/thermal/sysfs-api.txt |  31 +++++
- drivers/thermal/Kconfig             |   7 ++
- drivers/thermal/imx_thermal.c       |   6 +-
- drivers/thermal/thermal_core.c      |   3 +-
- drivers/thermal/thermal_core.h      |  10 ++
- drivers/thermal/thermal_helpers.c   |   5 +-
- drivers/thermal/thermal_sysfs.c     | 225
-++++++++++++++++++++++++++++++++++++
- include/linux/thermal.h             |   1 +
- 8 files changed, 283 insertions(+), 5 deletions(-)
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index c7abd83a8e19..6b307e97dc57 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -847,7 +847,7 @@ ifndef NO_JVMTI
+   ifeq ($(feature-jvmti), 1)
+     $(call detected_var,JDIR)
+   else
+-    $(warning No openjdk development package found, please install JDK package)
++    $(warning No openjdk development package found, please install JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel)
+     NO_JVMTI := 1
+   endif
+ endif
+-- 
+2.14.3
