@@ -1,41 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751756AbeDMFxC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 01:53:02 -0400
-Received: from mail-ua0-f169.google.com ([209.85.217.169]:36438 "EHLO
-        mail-ua0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750867AbeDMFxA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 01:53:00 -0400
-X-Google-Smtp-Source: AIpwx49Sgfr1UDZdgI6arRnyFT0e3hHCR+IOWVZ9pfBEjnSB0STdVoKI6jITis7UFGSI5BOR1R24HPCYr1cNlg/IotI=
+        id S1753217AbeDMGEU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 02:04:20 -0400
+Received: from mga01.intel.com ([192.55.52.88]:32826 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752182AbeDMGER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 02:04:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,444,1517904000";
+   d="scan'208";a="33957039"
+Date: Fri, 13 Apr 2018 14:03:59 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: kbuild-all@01.org, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [RFC PATCH] net: stmmac: dwmac-sun8i: single_reg_field can be static
+Message-ID: <20180413060359.GA134752@lkp-hsx03>
+References: <20180411141641.14675-4-icenowy@aosc.io>
 MIME-Version: 1.0
-In-Reply-To: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 12 Apr 2018 22:52:58 -0700
-X-Google-Sender-Auth: _d3DIMhpLPkBg3ShrZdJjbT0LAY
-Message-ID: <CAGXu5jJJ+kUZ7ETEDB4hmUUMjFa2A6+vbPkm+0f-S1zZ=ZYT3g@mail.gmail.com>
-Subject: Re: [PATCH 00/30] kconfig: move compiler capability tests to Kconfig
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>, Emese Revfy <re.emese@gmail.com>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180411141641.14675-4-icenowy@aosc.io>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 10:06 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> [Major Changes in V3]
 
-Awesome work! I don't see this pushed to your git tree? I'd like to
-test it, but I'd rather "git fetch" instead of "git am" :)
+Fixes: 529123418105 ("net: stmmac: dwmac-sun8i: Allow getting syscon regmap from device")
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+---
+ dwmac-sun8i.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--Kees
-
--- 
-Kees Cook
-Pixel Security
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+index b61210c..842315a 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+@@ -86,7 +86,7 @@ const struct reg_field old_syscon_reg_field = {
+ };
+ 
+ /* Specially exported regmap which contains only EMAC register */
+-const struct reg_field single_reg_field = {
++static const struct reg_field single_reg_field = {
+ 	.reg = 0,
+ 	.lsb = 0,
+ 	.msb = 31,
