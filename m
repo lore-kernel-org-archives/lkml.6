@@ -1,74 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751036AbeDMSMA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 14:12:00 -0400
-Received: from mail-it0-f51.google.com ([209.85.214.51]:52949 "EHLO
-        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750832AbeDMSL6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 14:11:58 -0400
-X-Google-Smtp-Source: AIpwx49HsTKs7bz8GTD81i/feiWnyanZAg2aZ7L/hcaI0spDSgMHwfqgF0zsAT95MZJ2Vph56v18oO8r9DImHesOvsQ=
+        id S1751676AbeDMSMz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 14:12:55 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50947 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751032AbeDMSMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 14:12:53 -0400
+Date: Fri, 13 Apr 2018 20:12:51 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Radu Pirea <radu.pirea@microchip.com>, broonie@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: add binding for at91-usart in spi mode
+Message-ID: <20180413181251.GG22187@piout.net>
+References: <20180413161117.20274-1-radu.pirea@microchip.com>
+ <20180413161117.20274-3-radu.pirea@microchip.com>
+ <20180413162327.GE22187@piout.net>
+ <8e6c447d-dce5-f9af-e5b2-8d1d863159d6@microchip.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jLt4xoxXTw83-npD4WmumPzSC9WnbOkkDoR=VYa5R4rYw@mail.gmail.com>
-References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
- <1523595999-27433-22-git-send-email-yamada.masahiro@socionext.com> <CAGXu5jLt4xoxXTw83-npD4WmumPzSC9WnbOkkDoR=VYa5R4rYw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 13 Apr 2018 11:11:56 -0700
-X-Google-Sender-Auth: GGiVu5v8GwyAr8hUyJLe1fT6dNI
-Message-ID: <CA+55aFyM1uxzvU4SH3c1VYRXBRfGuqKZ4OR-O_pMoxPs7XTFug@mail.gmail.com>
-Subject: Re: [PATCH 21/30] stack-protector: test compiler capability in
- Kconfig and drop AUTO mode
-To: Kees Cook <keescook@chromium.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>, Emese Revfy <re.emese@gmail.com>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8e6c447d-dce5-f9af-e5b2-8d1d863159d6@microchip.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 9:41 AM, Kees Cook <keescook@chromium.org> wrote:
->
-> How about something like this instead:
+On 13/04/2018 19:12:54+0200, Nicolas Ferre wrote:
+> > > diff --git a/Documentation/devicetree/bindings/spi/microchip,at91-usart-spi.txt b/Documentation/devicetree/bindings/spi/microchip,at91-usart-spi.txt
+> > > new file mode 100644
+> > > index 000000000000..92d33ccdffae
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/spi/microchip,at91-usart-spi.txt
+> > > @@ -0,0 +1,24 @@
+> > > +* Universal Synchronous Asynchronous Receiver/Transmitter (USART) in SPI mode
+> > > +
+> > > +Required properties:
+> > > +- #size-cells      : Must be <0>
+> > > +- #address-cells   : Must be <1>
+> > > +- compatible: Should be "microchip,at91sam9g45-usart-spi" or "microchip,sama5d2-usart-spi"
+> > > +- reg: Should contain registers location and length
+> > > +- interrupts: Should contain interrupt
+> > > +- clocks: phandles to input clocks.
+> > > +- clock-names: tuple listing input clock names.
+> > > +	Required elements: "usart"
+> > > +- cs-gpios: chipselects (internal cs not supported)
+> > > +
+> > > +Example:
+> > > +	spi0: spi@f001c000 {
+> > > +		#address-cells = <1>;
+> > > +		#size-cells = <0>;
+> > > +		compatible = "microchip,sama5d2-usart-spi", "microchip,at91sam9g45-usart-spi";
+> > 
+> > I'm pretty sure this will be considered configuration rather than
+> > hardware description. Why don't you do something like the flexcom mode
+> > selection?
+> 
+> Because we are not in the same situation as having a glue layer that would
+> select one of the already existing peripherals with associated drivers
+> above.
+> This layout of the hardware is completely different from the USART one and
+> it seems to makes sense to address it with a different hardware description
+> and so a different compatible string.
+> 
 
-I'd rather avoid the ifdef's in the Makefile if at all possible.
+But then, you can end up with two drivers trying to use the same IP
+because nothing prevents you from writing a DT with both a usart and an
+spi node enabled for the same IP. request_mem_region() will not help
+here because then the working driver will depend on the probing order.
 
-I'd rather expose this as a Kconfig rule, and in the Kconfig just have
-an entry something like this
 
-    config STACKPROTECTOR_FLAGS
-        string
-        default "-fstack-protector-strong" if CC_STACKPROTECTOR_STRONG
-        default "-fstack-protector" if CC_STACKPROTECTOR
-        default "-fno-stack-protector" if CC_HAS_STACKPROTECTOR_NONE
-        default ""
-
-which is really simple and straightforward. In the presense of
-multiple defaults, the first is picked, so this _automatically_ does
-that whole priority ordering.
-
-And then the Makefile can just have
-
-        KBUILD_CFLAGS += $(CONFIG_STACKPROTECTOR_FLAGS)
-
-which seems much simpler.
-
-It also makes more complex conditionals easier (ie different compilers
-with different flags, since clang sometimes does the same thing with
-another flag name), so I'd rather see this pattern in general.
-
-I'd also *much* rather do as much as possible at Kconfig time compared
-to build time. Maybe it's just shifting the costs around, but the less
-"clever" things we ask "make" to do, the better.
-
-I find our Makefiles an odd combination of really clean and simply
-(the ones that just have "obj-$(CONFIG_X) += xyz.o" are just lovely)
-and completely incomprehensible (all of our infrastructure support for
-the simple stuff).
-
-I'd rather have more of the simple stuff in Makefiles, less of the
-complex conditionals.
-
-                  Linus
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
