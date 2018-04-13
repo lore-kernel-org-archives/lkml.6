@@ -1,353 +1,950 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751771AbeDMPhQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 11:37:16 -0400
-Received: from mail-wr0-f175.google.com ([209.85.128.175]:41320 "EHLO
-        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750923AbeDMPhN (ORCPT
+        id S1752005AbeDMPhc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 11:37:32 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46458 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750864AbeDMPha (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 11:37:13 -0400
-X-Google-Smtp-Source: AIpwx4+TRy549OO4hSFQhWlXcuBchKVjhh5XsL7ZB54MkIt2R1QypVtrabMvSyLZacyZI5FLaRaHtQ==
-Date: Fri, 13 Apr 2018 17:37:08 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc: Dongwon Kim <dongwon.kim@intel.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, qemu-devel@nongnu.org,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-Subject: Re: [RfC PATCH] Add udmabuf misc device
-Message-ID: <20180413153708.GW31310@phenom.ffwll.local>
-Mail-Followup-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        Dongwon Kim <dongwon.kim@intel.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, qemu-devel@nongnu.org,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" <linux-media@vger.kernel.org>
-References: <20180406001117.GD31612@mdroper-desk.amr.corp.intel.com>
- <2411d2c1-33c0-2ba5-67ea-3bb9af5d5ec9@epam.com>
- <20180406090747.gwiegu22z4noj23i@sirius.home.kraxel.org>
- <9a085854-3758-1500-9971-806c611cb54f@gmail.com>
- <20180406115730.jtwcbz5okrphlxli@sirius.home.kraxel.org>
- <7ef89a29-6584-d23c-efd1-f30d9b767a24@gmail.com>
- <20180406185746.GA4983@downor-Z87X-UD5H>
- <c5923162-4144-56ef-ac81-eb1ab3eb5e8f@gmail.com>
- <20180410172605.GA26472@downor-Z87X-UD5H>
- <e4be9524-53d8-640c-e242-8ed3bfd05541@gmail.com>
+        Fri, 13 Apr 2018 11:37:30 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5DE0560717
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Fri, 13 Apr 2018 09:37:25 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, evgreen@chromium.org,
+        dianders@chromium.org
+Subject: Re: [PATCH v5 01/10] drivers: qcom: rpmh-rsc: add RPMH controller
+ for QCOM SoCs
+Message-ID: <20180413153725.GA1209@codeaurora.org>
+References: <20180405161834.3850-1-ilina@codeaurora.org>
+ <20180405161834.3850-2-ilina@codeaurora.org>
+ <152342153642.180276.4927130412537860735@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <e4be9524-53d8-640c-e242-8ed3bfd05541@gmail.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
+In-Reply-To: <152342153642.180276.4927130412537860735@swboyd.mtv.corp.google.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 08:59:32AM +0300, Oleksandr Andrushchenko wrote:
-> On 04/10/2018 08:26 PM, Dongwon Kim wrote:
-> > On Tue, Apr 10, 2018 at 09:37:53AM +0300, Oleksandr Andrushchenko wrote:
-> > > On 04/06/2018 09:57 PM, Dongwon Kim wrote:
-> > > > On Fri, Apr 06, 2018 at 03:36:03PM +0300, Oleksandr Andrushchenko wrote:
-> > > > > On 04/06/2018 02:57 PM, Gerd Hoffmann wrote:
-> > > > > >    Hi,
-> > > > > > 
-> > > > > > > > I fail to see any common ground for xen-zcopy and udmabuf ...
-> > > > > > > Does the above mean you can assume that xen-zcopy and udmabuf
-> > > > > > > can co-exist as two different solutions?
-> > > > > > Well, udmabuf route isn't fully clear yet, but yes.
-> > > > > > 
-> > > > > > See also gvt (intel vgpu), where the hypervisor interface is abstracted
-> > > > > > away into a separate kernel modules even though most of the actual vgpu
-> > > > > > emulation code is common.
-> > > > > Thank you for your input, I'm just trying to figure out
-> > > > > which of the three z-copy solutions intersect and how much
-> > > > > > > And what about hyper-dmabuf?
-> > > > xen z-copy solution is pretty similar fundamentally to hyper_dmabuf
-> > > > in terms of these core sharing feature:
-> > > > 
-> > > > 1. the sharing process - import prime/dmabuf from the producer -> extract
-> > > > underlying pages and get those shared -> return references for shared pages
-> > Another thing is danvet was kind of against to the idea of importing existing
-> > dmabuf/prime buffer and forward it to the other domain due to synchronization
-> > issues. He proposed to make hyper_dmabuf only work as an exporter so that it
-> > can have a full control over the buffer. I think we need to talk about this
-> > further as well.
-> Yes, I saw this. But this limits the use-cases so much.
-> For instance, running Android as a Guest (which uses ION to allocate
-> buffers) means that finally HW composer will import dma-buf into
-> the DRM driver. Then, in case of xen-front for example, it needs to be
-> shared with the backend (Host side). Of course, we can change user-space
-> to make xen-front allocate the buffers (make it exporter), but what we try
-> to avoid is to change user-space which in normal world would have remain
-> unchanged otherwise.
-> So, I do think we have to support this use-case and just have to understand
-> the complexity.
+On Tue, Apr 10 2018 at 22:39 -0600, Stephen Boyd wrote:
+>Quoting Lina Iyer (2018-04-05 09:18:25)
+>> Add controller driver for QCOM SoCs that have hardware based shared
+>> resource management. The hardware IP known as RSC (Resource State
+>> Coordinator) houses multiple Direct Resource Voter (DRV) for different
+>> execution levels. A DRV is a unique voter on the state of a shared
+>> resource. A Trigger Control Set (TCS) is a bunch of slots that can house
+>> multiple resource state requests, that when triggered will issue those
+>> requests through an internal bus to the Resource Power Manager Hardened
+>> (RPMH) blocks. These hardware blocks are capable of adjusting clocks,
+>> voltages, etc. The resource state request from a DRV are aggregated along
+>> with state requests from other processors in the SoC and the aggregate
+>> value is applied on the resource.
+>>
+>> Some important aspects of the RPMH communication -
+>> - Requests are <addr, value> with some header information
+>> - Multiple requests (upto 16) may be sent through a TCS, at a time
+>> - Requests in a TCS are sent in sequence
+>> - Requests may be fire-n-forget or completion (response expected)
+>> - Multiple TCS from the same DRV may be triggered simultaneously
+>> - Cannot send a request if another requesit for the same addr is in
+>
+>s/requesit/request/
+>
+Ok.
+>>   progress from the same DRV
+>> - When all the requests from a TCS are complete, an IRQ is raised
+>> - The IRQ handler needs to clear the TCS before it is available for
+>>   reuse
+>> - TCS configuration is specific to a DRV
+>> - Platform drivers may use DRV from different RSCs to make requests
+>
+>This last point is sort of not true anymore? At least my understanding
+>is that platform drivers are children of the rsc and that they can only
+>use that rsc to do anything with rpmh.
+>
+Platform drivers may talk to multiple RSC+DRV instances and make
+requests from those DRVs.
 
-Erm, why do you need importer capability for this use-case?
+>>
+>> Resource state requests made when CPUs are active are called 'active'
+>> state requests. Requests made when all the CPUs are powered down (idle
+>> state) are called 'sleep' state requests. They are matched by a
+>> corresponding 'wake' state requests which puts the resources back in to
+>> previously requested active state before resuming any CPU. TCSes are
+>> dedicated for each type of requests. Control TCS are used to provide
+>> specific information to the controller.
+>
+>Can you mention AMC here too? I see the acronym but no definition of
+>what it is besides "Active or AMC" which may indicate A == Active.
+>
+Ok.
 
-guest1 -> ION -> xen-front -> hypervisor -> guest 2 -> xen-zcopy exposes
-that dma-buf -> import to the real display hw
+>>
+>> diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
+>> new file mode 100644
+>> index 000000000000..aa73ec4b3e42
+>> --- /dev/null
+>> +++ b/drivers/soc/qcom/rpmh-internal.h
+>> @@ -0,0 +1,89 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +
+>> +#ifndef __RPM_INTERNAL_H__
+>> +#define __RPM_INTERNAL_H__
+>> +
+>> +#include <linux/bitmap.h>
+>> +#include <soc/qcom/tcs.h>
+>> +
+>> +#define TCS_TYPE_NR                    4
+>> +#define MAX_CMDS_PER_TCS               16
+>> +#define MAX_TCS_PER_TYPE               3
+>> +#define MAX_TCS_NR                     (MAX_TCS_PER_TYPE * TCS_TYPE_NR)
+>> +
+>> +struct rsc_drv;
+>> +
+>> +/**
+>> + * struct tcs_response: Response object for a request
+>> + *
+>> + * @drv:   the controller
+>> + * @msg:   the request for this response
+>> + * @m:     the tcs identifier
+>> + * @err:   error reported in the response
+>> + * @list:  element in list of pending response objects
+>> + */
+>> +struct tcs_response {
+>> +       struct rsc_drv *drv;
+>> +       const struct tcs_request *msg;
+>> +       u32 m;
+>> +       int err;
+>> +       struct list_head list;
+>> +};
+>> +
+>> +/**
+>> + * struct tcs_group: group of Trigger Command Sets for a request state
+>
+>Put (ACRONYM) for the acronyms that are spelled out the first time
+>please. Also, make sure we know what 'request state' is.
+>
+Its already in the commit text, but sure.
 
-No where in this chain do you need xen-zcopy to be able to import a
-dma-buf (within linux, it needs to import a bunch of pages from the
-hypervisor).
+>> + *
+>> + * @drv:       the controller
+>> + * @type:      type of the TCS in this group - active, sleep, wake
+>
+>Now 'group' means 'request state'?
+>
+Group of TCSes. TCSes are grouped based on their use - sending requests
+for active, sleep and wake.
 
-Now if your plan is to use xen-zcopy in the guest1 instead of xen-front,
-then you indeed need to import. But that imo doesn't make sense:
-- xen-front gives you clearly defined flip events you can forward to the
-  hypervisor. xen-zcopy would need to add that again. Same for
-  hyperdmabuf (and really we're not going to shuffle struct dma_fence over
-  the wire in a generic fashion between hypervisor guests).
+>> + * @mask:      mask of the TCSes relative to all the TCSes in the RSC
+>> + * @offset:    start of the TCS group relative to the TCSes in the RSC
+>> + * @num_tcs:   number of TCSes in this type
+>> + * @ncpt:      number of commands in each TCS
+>> + * @lock:      lock for synchronizing this TCS writes
+>> + * @responses: response objects for requests sent from each TCS
+>> + */
+>> +struct tcs_group {
+>> +       struct rsc_drv *drv;
+>> +       int type;
+>
+>Is type supposed to be an enum?
+>
+Uses the #defines from include/dt-bindings/qcom,rpmh-rsc.txt.
 
-- xen-front already has the idea of pixel format for the buffer (and any
-  other metadata). Again, xen-zcopy and hyperdmabuf lack that, would need
-  to add it shoehorned in somehow.
+>> +       u32 mask;
+>> +       u32 offset;
+>> +       int num_tcs;
+>> +       int ncpt;
+>> +       spinlock_t lock;
+>> +       struct tcs_response *responses[MAX_TCS_PER_TYPE];
+>> +};
+>> +
+>> +/**
+>> + * struct rsc_drv: the Resource State Coordinator controller
+>> + *
+>> + * @name:       controller identifier
+>> + * @tcs_base:   start address of the TCS registers in this controller
+>> + * @id:         instance id in the controller (Direct Resource Voter)
+>> + * @num_tcs:    number of TCSes in this DRV
+>
+>It changed from an RSC to a DRV here?
+>
+RSC has DRVs. A DRV has TCS(es).
 
-Ofc you won't be able to shovel sound or media stream data over to another
-guest like this, but that's what you have xen-v4l and xen-sound or
-whatever else for. Trying to make a new uapi, which means userspace must
-be changed for all the different use-case, instead of reusing standard
-linux driver uapi (which just happens to send the data to another
-hypervisor guest instead of real hw) imo just doesn't make much sense.
+>> + * @tasklet:    handle responses, off-load work from IRQ handler
+>> + * @response_pending:
+>> + *              list of responses that needs to be sent to caller
+>> + * @tcs:        TCS groups
+>> + * @tcs_in_use: s/w state of the TCS
+>> + * @drv_lock:  synchronize state of the controller
+>> + */
+>> +struct rsc_drv {
+>
+>Is 'drv' in here talking about the DRV acronym?
+>
+Yes.
 
-Also, at least for the gpu subsystem: Any new uapi must have full
-userspace available for it, see:
+>> +       const char *name;
+>> +       void __iomem *tcs_base;
+>> +       int id;
+>> +       int num_tcs;
+>> +       struct tasklet_struct tasklet;
+>> +       struct list_head response_pending;
+>> +       struct tcs_group tcs[TCS_TYPE_NR];
+>> +       DECLARE_BITMAP(tcs_in_use, MAX_TCS_NR);
+>> +       spinlock_t drv_lock;
+>
+>s/drv_lock/lock/
+>
+>? Because otherwise it looks like drv->drv_lock.
+>
+Ok.
 
-https://dri.freedesktop.org/docs/drm/gpu/drm-uapi.html#open-source-userspace-requirements
+>> +};
+>> +
+>> +
+>> +int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
+>
+>Do we send data to anything else in rpmh? Maybe it could just be called
+>rpmh_send_data(), or rpmh_send().
+>
+No, but this file is rpmh_rsc. Hence the rpmh_rsc_ functions.
 
-Adding more uapi is definitely the most painful way to fix a use-case.
-Personally I'd go as far and also change the xen-zcopy side on the
-receiving guest to use some standard linux uapi. E.g. you could write an
-output v4l driver to receive the frames from guest1.
+>> +
+>> +#endif /* __RPM_INTERNAL_H__ */
+>> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+>> new file mode 100644
+>> index 000000000000..8bde1e9bd599
+>> --- /dev/null
+>> +++ b/drivers/soc/qcom/rpmh-rsc.c
+>> @@ -0,0 +1,571 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#define pr_fmt(fmt) "%s " fmt, KBUILD_MODNAME
+>> +
+>> +#include <linux/atomic.h>
+>
+>Is this used?
+>
+Will remove.
 
-> > danvet, can you comment on this topic?
-> > 
-> > > > 2. the page sharing mechanism - it uses Xen-grant-table.
-> > > > 
-> > > > And to give you a quick summary of differences as far as I understand
-> > > > between two implementations (please correct me if I am wrong, Oleksandr.)
-> > > > 
-> > > > 1. xen-zcopy is DRM specific - can import only DRM prime buffer
-> > > > while hyper_dmabuf can export any dmabuf regardless of originator
-> > > Well, this is true. And at the same time this is just a matter
-> > > of extending the API: xen-zcopy is a helper driver designed for
-> > > xen-front/back use-case, so this is why it only has DRM PRIME API
-> > > > 2. xen-zcopy doesn't seem to have dma-buf synchronization between two VMs
-> > > > while (as danvet called it as remote dmabuf api sharing) hyper_dmabuf sends
-> > > > out synchronization message to the exporting VM for synchronization.
-> > > This is true. Again, this is because of the use-cases it covers.
-> > > But having synchronization for a generic solution seems to be a good idea.
-> > Yeah, understood xen-zcopy works ok with your use case. But I am just curious
-> > if it is ok not to have any inter-domain synchronization in this sharing model.
-> The synchronization is done with displif protocol [1]
-> > The buffer being shared is technically dma-buf and originator needs to be able
-> > to keep track of it.
-> As I am working in DRM terms the tracking is done by the DRM core
-> for me for free. (This might be one of the reasons Daniel sees DRM
-> based implementation fit very good from code-reuse POV).
+>> +#include <linux/delay.h>
+>> +#include <linux/export.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/io.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/list.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_irq.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/spinlock.h>
+>> +
+>> +#include <soc/qcom/tcs.h>
+>> +#include <dt-bindings/soc/qcom,rpmh-rsc.h>
+>> +
+>> +#include "rpmh-internal.h"
+>> +
+>> +#define RSC_DRV_TCS_OFFSET             672
+>> +#define RSC_DRV_CMD_OFFSET             20
+>> +
+>> +/* DRV Configuration Information Register */
+>> +#define DRV_PRNT_CHLD_CONFIG           0x0C
+>> +#define DRV_NUM_TCS_MASK               0x3F
+>> +#define DRV_NUM_TCS_SHIFT              6
+>> +#define DRV_NCPT_MASK                  0x1F
+>> +#define DRV_NCPT_SHIFT                 27
+>> +
+>> +/* Register offsets */
+>> +#define RSC_DRV_IRQ_ENABLE             0x00
+>> +#define RSC_DRV_IRQ_STATUS             0x04
+>> +#define RSC_DRV_IRQ_CLEAR              0x08
+>> +#define RSC_DRV_CMD_WAIT_FOR_CMPL      0x10
+>> +#define RSC_DRV_CONTROL                        0x14
+>> +#define RSC_DRV_STATUS                 0x18
+>> +#define RSC_DRV_CMD_ENABLE             0x1C
+>> +#define RSC_DRV_CMD_MSGID              0x30
+>> +#define RSC_DRV_CMD_ADDR               0x34
+>> +#define RSC_DRV_CMD_DATA               0x38
+>> +#define RSC_DRV_CMD_STATUS             0x3C
+>> +#define RSC_DRV_CMD_RESP_DATA          0x40
+>> +
+>> +#define TCS_AMC_MODE_ENABLE            BIT(16)
+>> +#define TCS_AMC_MODE_TRIGGER           BIT(24)
+>> +
+>> +/* TCS CMD register bit mask */
+>> +#define CMD_MSGID_LEN                  8
+>> +#define CMD_MSGID_RESP_REQ             BIT(8)
+>> +#define CMD_MSGID_WRITE                        BIT(16)
+>> +#define CMD_STATUS_ISSUED              BIT(8)
+>> +#define CMD_STATUS_COMPL               BIT(16)
+>> +
+>> +static struct tcs_group *get_tcs_from_index(struct rsc_drv *drv, int m)
+>> +{
+>> +       struct tcs_group *tcs;
+>> +       int i;
+>> +
+>> +       for (i = 0; i < drv->num_tcs; i++) {
+>> +               tcs = &drv->tcs[i];
+>> +               if (tcs->mask & BIT(m))
+>> +                       return tcs;
+>> +       }
+>> +
+>> +       WARN(i == drv->num_tcs, "Incorrect TCS index %d", m);
+>> +
+>> +       return NULL;
+>> +}
+>> +
+>> +static struct tcs_response *setup_response(struct rsc_drv *drv,
+>> +                                          const struct tcs_request *msg, int m)
+>> +{
+>> +       struct tcs_response *resp;
+>> +       struct tcs_group *tcs;
+>> +
+>> +       resp = kzalloc(sizeof(*resp), GFP_ATOMIC);
+>> +       if (!resp)
+>> +               return ERR_PTR(-ENOMEM);
+>> +
+>> +       resp->drv = drv;
+>> +       resp->msg = msg;
+>> +       resp->err = 0;
+>> +
+>> +       tcs = get_tcs_from_index(drv, m);
+>> +       if (!tcs)
+>> +               return ERR_PTR(-EINVAL);
+>> +
+>> +       assert_spin_locked(&tcs->lock);
+>> +       tcs->responses[m - tcs->offset] = resp;
+>> +
+>> +       return resp;
+>> +}
+>> +
+>> +static void free_response(struct tcs_response *resp)
+>
+>const?
+>
+Ok
 
-Hm, not sure what tracking you refer to here all ... I got lost in all the
-replies while catching up.
+>> +{
+>> +       kfree(resp);
+>> +}
+>> +
+>> +static struct tcs_response *get_response(struct rsc_drv *drv, u32 m)
+>> +{
+>> +       struct tcs_group *tcs = get_tcs_from_index(drv, m);
+>> +
+>> +       return tcs->responses[m - tcs->offset];
+>> +}
+>> +
+>> +static u32 read_tcs_reg(struct rsc_drv *drv, int reg, int m, int n)
+>> +{
+>> +       return readl_relaxed(drv->tcs_base + reg + RSC_DRV_TCS_OFFSET * m +
+>> +                            RSC_DRV_CMD_OFFSET * n);
+>> +}
+>> +
+>> +static void write_tcs_reg(struct rsc_drv *drv, int reg, int m, int n, u32 data)
+>
+>Is m the type of TCS (sleep, active, wake) and n is just an offset?
+>Maybe you can replace m with 'tcs_type' and n with 'index' or 'i' or
+>'offset'. And then don't use this function to write the random TCS
+>registers that don't have to do with the TCS command slots? I see
+>various places where there are things like:
+>
+If you look at the spec and the registers, this representation matches
+the usage there.
+d = DRV
+m = TCS number in the DRV
+n = Command slot in the TCS
 
-> > > > 3. 1-level references - when using grant-table for sharing pages, there will
-> > > > be same # of refs (each 8 byte)
-> > > To be precise, grant ref is 4 bytes
-> > You are right. Thanks for correction.;)
-> > 
-> > > > as # of shared pages, which is passed to
-> > > > the userspace to be shared with importing VM in case of xen-zcopy.
-> > > The reason for that is that xen-zcopy is a helper driver, e.g.
-> > > the grant references come from the display backend [1], which implements
-> > > Xen display protocol [2]. So, effectively the backend extracts references
-> > > from frontend's requests and passes those to xen-zcopy as an array
-> > > of refs.
-> > > >   Compared
-> > > > to this, hyper_dmabuf does multiple level addressing to generate only one
-> > > > reference id that represents all shared pages.
-> > > In the protocol [2] only one reference to the gref directory is passed
-> > > between VMs
-> > > (and the gref directory is a single-linked list of shared pages containing
-> > > all
-> > > of the grefs of the buffer).
-> > ok, good to know. I will look into its implementation in more details but is
-> > this gref directory (chained grefs) something that can be used for any general
-> > memory sharing use case or is it jsut for xen-display (in current code base)?
-> Not to mislead you: one grant ref is passed via displif protocol,
-> but the page it's referencing contains the rest of the grant refs.
-> 
-> As to if this can be used for any memory: yes. It is the same for
-> sndif and displif Xen protocols, but defined twice as strictly speaking
-> sndif and displif are two separate protocols.
-> 
-> While reviewing your RFC v2 one of the comments I had [2] was that if we
-> can start from defining such a generic protocol for hyper-dmabuf.
-> It can be a header file, which not only has the description part
-> (which then become a part of Documentation/...rst file), but also defines
-> all the required constants for requests, responses, defines message formats,
-> state diagrams etc. all at one place. Of course this protocol must not be
-> Xen specific, but be OS/hypervisor agnostic.
-> Having that will trigger a new round of discussion, so we have it all
-> designed
-> and discussed before we start implementing.
-> 
-> Besides the protocol we have to design UAPI part as well and make sure
-> the hyper-dmabuf is not only accessible from user-space, but there will be
-> number
-> of kernel-space users as well.
+>> +               write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, m, 0, 0);
+>> +       write_tcs_reg(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, m, 0, cmd_complete);
+>> +       write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, m, 0, cmd_enable);
+>
+>And 'n' is 0, meaning you rely on that 0 killing that last part of the
+>equation (RSC_DRV_CMD_OFFSET * n). But if we had a write_tcs_reg(drv,
+>reg, m, data) and a write_tcs_cmd(drv, reg, m, n, data) then it would be
+>clearer.
+>
+Hmm. ok.
+>Even better, add a void *base to a 'struct tcs' and then pass that
+>struct to the tcs_read/write APIs and then have that pull out a
+>tcs->base + reg or tcs->base + reg + RSC_DRV_CMD_OFFSET * index.
+>
+Based on comments from Bjorn on patch v1, I switched over to using
+rsc_drv* instead of void *base.
 
-Again, why do you want to create new uapi for this? Given the very strict
-requirements we have for new uapi (see above link), it's the toughest way
-to get any kind of support in.
+>> +{
+>> +       writel_relaxed(data, drv->tcs_base + reg + RSC_DRV_TCS_OFFSET * m +
+>> +                      RSC_DRV_CMD_OFFSET * n);
+>> +}
+>> +
+>> +static void write_tcs_reg_sync(struct rsc_drv *drv, int reg, int m, int n,
+>> +                              u32 data)
+>> +{
+>> +       write_tcs_reg(drv, reg, m, n, data);
+>> +       for (;;) {
+>> +               if (data == read_tcs_reg(drv, reg, m, n))
+>> +                       break;
+>> +               udelay(1);
+>> +       }
+>> +}
+>> +
+>> +static bool tcs_is_free(struct rsc_drv *drv, int m)
+>> +{
+>> +       return !test_bit(m, drv->tcs_in_use) &&
+>> +              read_tcs_reg(drv, RSC_DRV_STATUS, m, 0);
+>> +}
+>> +
+>> +static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
+>> +{
+>> +       int i;
+>> +       struct tcs_group *tcs;
+>> +
+>> +       for (i = 0; i < TCS_TYPE_NR; i++) {
+>> +               if (type == drv->tcs[i].type)
+>> +                       break;
+>> +       }
+>> +
+>> +       if (i == TCS_TYPE_NR)
+>> +               return ERR_PTR(-EINVAL);
+>> +
+>> +       tcs = &drv->tcs[i];
+>> +       if (!tcs->num_tcs)
+>> +               return ERR_PTR(-EINVAL);
+>> +
+>> +       return tcs;
+>> +}
+>> +
+>> +static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
+>> +                                        const struct tcs_request *msg)
+>> +{
+>> +       int type;
+>> +
+>> +       switch (msg->state) {
+>> +       case RPMH_ACTIVE_ONLY_STATE:
+>> +               type = ACTIVE_TCS;
+>> +               break;
+>> +       default:
+>> +               return ERR_PTR(-EINVAL);
+>> +       }
+>> +
+>> +       return get_tcs_of_type(drv, type);
+>> +}
+>> +
+>> +static void send_tcs_response(struct tcs_response *resp)
+>> +{
+>> +       struct rsc_drv *drv;
+>> +       unsigned long flags;
+>> +
+>> +       if (!resp)
+>> +               return;
+>
+>Sad.
+>
+>> +
+>> +       drv = resp->drv;
+>> +       spin_lock_irqsave(&drv->drv_lock, flags);
+>> +       INIT_LIST_HEAD(&resp->list);
+>> +       list_add_tail(&resp->list, &drv->response_pending);
+>> +       spin_unlock_irqrestore(&drv->drv_lock, flags);
+>> +
+>> +       tasklet_schedule(&drv->tasklet);
+>> +}
+>> +
+>> +/**
+>> + * tcs_irq_handler: TX Done interrupt handler
+>
+>So call it tcs_tx_done?
+>
+But, but, it's an irq handler.
 
-That's why I had essentially zero big questions for xen-front (except some
-implementation improvements, and stuff to make sure xen-front actually
-implements the real uapi semantics instead of its own), and why I'm asking
-much more questions on this stuff here.
+>> + */
+>> +static irqreturn_t tcs_irq_handler(int irq, void *p)
+>> +{
+>> +       struct rsc_drv *drv = p;
+>> +       int m, i;
+>> +       u32 irq_status, sts;
+>> +       struct tcs_response *resp;
+>> +       struct tcs_cmd *cmd;
+>> +
+>> +       irq_status = read_tcs_reg(drv, RSC_DRV_IRQ_STATUS, 0, 0);
+>> +
+>> +       for (m = 0; m < drv->num_tcs; m++) {
+>> +               if (!(irq_status & (u32)BIT(m)))
+>> +                       continue;
+>> +
+>> +               resp = get_response(drv, m);
+>> +               if (WARN_ON(!resp))
+>> +                       goto skip_resp;
+>> +
+>> +               resp->err = 0;
+>> +               for (i = 0; i < resp->msg->num_cmds; i++) {
+>> +                       cmd = &resp->msg->cmds[i];
+>> +                       sts = read_tcs_reg(drv, RSC_DRV_CMD_STATUS, m, i);
+>> +                       if (!(sts & CMD_STATUS_ISSUED) ||
+>> +                          ((resp->msg->wait_for_compl || cmd->wait) &&
+>> +                          !(sts & CMD_STATUS_COMPL))) {
+>> +                               resp->err = -EIO;
+>> +                               break;
+>> +                       }
+>> +               }
+>> +skip_resp:
+>> +               /* Reclaim the TCS */
+>> +               write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, m, 0, 0);
+>> +               write_tcs_reg(drv, RSC_DRV_IRQ_CLEAR, 0, 0, BIT(m));
+>> +               clear_bit(m, drv->tcs_in_use);
+>
+>Should we reclaim the TCS if the above for loop fails too? It may make
+>more sense to look up the response, reclaim, check if it's NULL and
+>execute a 'continue' and otherwise look through resp->msg->cmds for
+>something that was done and then send_tcs_response(). At the least,
+The TCS will will be reclaimed, even if the for loop fails. We can't
+read the CMD_STATUS reliably after reclaiming the TCS.
+>don't call send_tcs_response() if resp == NULL.
+>
+I could do that.
+>> +               send_tcs_response(resp);
+>> +       }
+>> +
+>> +       return IRQ_HANDLED;
+>> +}
+>> +
+>> +/**
+>> + * tcs_notify_tx_done: TX Done for requests that got a response
+>> + *
+>> + * @data: the tasklet argument
+>> + *
+>> + * Tasklet function to notify MBOX that we are done with the request.
+>> + * Handles all pending reponses whenever run.
+>> + */
+>> +static void tcs_notify_tx_done(unsigned long data)
+>> +{
+>> +       struct rsc_drv *drv = (struct rsc_drv *)data;
+>> +       struct tcs_response *resp;
+>> +       unsigned long flags;
+>> +
+>> +       for (;;) {
+>> +               spin_lock_irqsave(&drv->drv_lock, flags);
+>> +               resp = list_first_entry_or_null(&drv->response_pending,
+>> +                                               struct tcs_response, list);
+>> +               if (!resp) {
+>> +                       spin_unlock_irqrestore(&drv->drv_lock, flags);
+>> +                       break;
+>> +               }
+>> +               list_del(&resp->list);
+>
+>Someone should make a list_deqeue() API. Then this would read as:
+>
+>		spin_lock_irqsave()
+>		resp = list_deqeue();
+>		spin_unlock_irqrestore()
+>		if (!resp)
+>			break;
+>		free_response(resp)
+>
+Hmm.. cleaner.
 
-> > > > 4. inter VM messaging (hype_dmabuf only) - hyper_dmabuf has inter-vm msg
-> > > > communication defined for dmabuf synchronization and private data (meta
-> > > > info that Matt Roper mentioned) exchange.
-> > > This is true, xen-zcopy has no means for inter VM sync and meta-data,
-> > > simply because it doesn't have any code for inter VM exchange in it,
-> > > e.g. the inter VM protocol is handled by the backend [1].
-> > > > 5. driver-to-driver notification (hyper_dmabuf only) - importing VM gets
-> > > > notified when newdmabuf is exported from other VM - uevent can be optionally
-> > > > generated when this happens.
-> > > > 
-> > > > 6. structure - hyper_dmabuf is targetting to provide a generic solution for
-> > > > inter-domain dmabuf sharing for most hypervisors, which is why it has two
-> > > > layers as mattrope mentioned, front-end that contains standard API and backend
-> > > > that is specific to hypervisor.
-> > > Again, xen-zcopy is decoupled from inter VM communication
-> > > > > > No idea, didn't look at it in detail.
-> > > > > > 
-> > > > > > Looks pretty complex from a distant view.  Maybe because it tries to
-> > > > > > build a communication framework using dma-bufs instead of a simple
-> > > > > > dma-buf passing mechanism.
-> > > > we started with simple dma-buf sharing but realized there are many
-> > > > things we need to consider in real use-case, so we added communication
-> > > > , notification and dma-buf synchronization then re-structured it to
-> > > > front-end and back-end (this made things more compicated..) since Xen
-> > > > was not our only target. Also, we thought passing the reference for the
-> > > > buffer (hyper_dmabuf_id) is not secure so added uvent mechanism later.
-> > > > 
-> > > > > Yes, I am looking at it now, trying to figure out the full story
-> > > > > and its implementation. BTW, Intel guys were about to share some
-> > > > > test application for hyper-dmabuf, maybe I have missed one.
-> > > > > It could probably better explain the use-cases and the complexity
-> > > > > they have in hyper-dmabuf.
-> > > > One example is actually in github. If you want take a look at it, please
-> > > > visit:
-> > > > 
-> > > > https://github.com/downor/linux_hyper_dmabuf_test/tree/xen/simple_export
-> > > Thank you, I'll have a look
-> > > > > > Like xen-zcopy it seems to depend on the idea that the hypervisor
-> > > > > > manages all memory it is easy for guests to share pages with the help of
-> > > > > > the hypervisor.
-> > > > > So, for xen-zcopy we were not trying to make it generic,
-> > > > > it just solves display (dumb) zero-copying use-cases for Xen.
-> > > > > We implemented it as a DRM helper driver because we can't see any
-> > > > > other use-cases as of now.
-> > > > > For example, we also have Xen para-virtualized sound driver, but
-> > > > > its buffer memory usage is not comparable to what display wants
-> > > > > and it works somewhat differently (e.g. there is no "frame done"
-> > > > > event, so one can't tell when the sound buffer can be "flipped").
-> > > > > At the same time, we do not use virtio-gpu, so this could probably
-> > > > > be one more candidate for shared dma-bufs some day.
-> > > > > >    Which simply isn't the case on kvm.
-> > > > > > 
-> > > > > > hyper-dmabuf and xen-zcopy could maybe share code, or hyper-dmabuf build
-> > > > > > on top of xen-zcopy.
-> > > > > Hm, I can imagine that: xen-zcopy could be a library code for hyper-dmabuf
-> > > > > in terms of implementing all that page sharing fun in multiple directions,
-> > > > > e.g. Host->Guest, Guest->Host, Guest<->Guest.
-> > > > > But I'll let Matt and Dongwon to comment on that.
-> > > > I think we can definitely collaborate. Especially, maybe we are using some
-> > > > outdated sharing mechanism/grant-table mechanism in our Xen backend (thanks
-> > > > for bringing that up Oleksandr). However, the question is once we collaborate
-> > > > somehow, can xen-zcopy's usecase use the standard API that hyper_dmabuf
-> > > > provides? I don't think we need different IOCTLs that do the same in the final
-> > > > solution.
-> > > > 
-> > > If you think of xen-zcopy as a library (which implements Xen
-> > > grant references mangling) and DRM PRIME wrapper on top of that
-> > > library, we can probably define proper API for that library,
-> > > so both xen-zcopy and hyper-dmabuf can use it. What is more, I am
-> > > about to start upstreaming Xen para-virtualized sound device driver soon,
-> > > which also uses similar code and gref passing mechanism [3].
-> > > (Actually, I was about to upstream drm/xen-front, drm/xen-zcopy and
-> > > snd/xen-front and then propose a Xen helper library for sharing big buffers,
-> > > so common code of the above drivers can use the same code w/o code
-> > > duplication)
-> > I think it is possible to use your functions for memory sharing part in
-> > hyper_dmabuf's backend (this 'backend' means the layer that does page sharing
-> > and inter-vm communication with xen-specific way.), so why don't we work on
-> > "Xen helper library for sharing big buffers" first while we continue our
-> > discussion on the common API layer that can cover any dmabuf sharing cases.
-> > 
-> Well, I would love we reuse the code that I have, but I also
-> understand that it was limited by my use-cases. So, I do not
-> insist we have to ;)
-> If we start designing and discussing hyper-dmabuf protocol we of course
-> can work on this helper library in parallel.
+>> +               spin_unlock_irqrestore(&drv->drv_lock, flags);
+>> +               free_response(resp);
+>> +       }
+>> +}
+>> +
+>> +static void __tcs_buffer_write(struct rsc_drv *drv, int m, int n,
+>> +                              const struct tcs_request *msg)
+>> +{
+>> +       u32 msgid, cmd_msgid;
+>> +       u32 cmd_enable = 0;
+>> +       u32 cmd_complete;
+>> +       struct tcs_cmd *cmd;
+>> +       int i, j;
+>> +
+>> +       cmd_msgid = CMD_MSGID_LEN;
+>> +       cmd_msgid |= msg->wait_for_compl ? CMD_MSGID_RESP_REQ : 0;
+>> +       cmd_msgid |= CMD_MSGID_WRITE;
+>> +
+>> +       cmd_complete = read_tcs_reg(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, m, 0);
+>> +
+>> +       for (i = 0, j = n; i < msg->num_cmds; i++, j++) {
+>> +               cmd = &msg->cmds[i];
+>> +               cmd_enable |= BIT(j);
+>> +               cmd_complete |= cmd->wait << j;
+>> +               msgid = cmd_msgid;
+>> +               msgid |= cmd->wait ? CMD_MSGID_RESP_REQ : 0;
+>> +               write_tcs_reg(drv, RSC_DRV_CMD_MSGID, m, j, msgid);
+>> +               write_tcs_reg(drv, RSC_DRV_CMD_ADDR, m, j, cmd->addr);
+>> +               write_tcs_reg(drv, RSC_DRV_CMD_DATA, m, j, cmd->data);
+>> +       }
+>> +
+>> +       write_tcs_reg(drv, RSC_DRV_CMD_WAIT_FOR_CMPL, m, 0, cmd_complete);
+>> +       cmd_enable |= read_tcs_reg(drv, RSC_DRV_CMD_ENABLE, m, 0);
+>> +       write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, m, 0, cmd_enable);
+>> +}
+>> +
+>> +static void __tcs_trigger(struct rsc_drv *drv, int m)
+>> +{
+>> +       u32 enable;
+>> +
+>> +       /*
+>> +        * HW req: Clear the DRV_CONTROL and enable TCS again
+>> +        * While clearing ensure that the AMC mode trigger is cleared
+>> +        * and then the mode enable is cleared.
+>> +        */
+>> +       enable = read_tcs_reg(drv, RSC_DRV_CONTROL, m, 0);
+>> +       enable &= ~TCS_AMC_MODE_TRIGGER;
+>> +       write_tcs_reg_sync(drv, RSC_DRV_CONTROL, m, 0, enable);
+>> +       enable &= ~TCS_AMC_MODE_ENABLE;
+>> +       write_tcs_reg_sync(drv, RSC_DRV_CONTROL, m, 0, enable);
+>> +
+>> +       /* Enable the AMC mode on the TCS and then trigger the TCS */
+>> +       enable = TCS_AMC_MODE_ENABLE;
+>> +       write_tcs_reg_sync(drv, RSC_DRV_CONTROL, m, 0, enable);
+>> +       enable |= TCS_AMC_MODE_TRIGGER;
+>> +       write_tcs_reg_sync(drv, RSC_DRV_CONTROL, m, 0, enable);
+>> +}
+>> +
+>> +static int check_for_req_inflight(struct rsc_drv *drv, struct tcs_group *tcs,
+>> +                                 const struct tcs_request *msg)
+>> +{
+>> +       unsigned long curr_enabled;
+>> +       u32 addr;
+>> +       int i, j, k;
+>> +       int m = tcs->offset;
+>> +
+>> +       for (i = 0; i < tcs->num_tcs; i++, m++) {
+>> +               if (tcs_is_free(drv, m))
+>> +                       continue;
+>> +
+>> +               curr_enabled = read_tcs_reg(drv, RSC_DRV_CMD_ENABLE, m, 0);
+>> +
+>> +               for_each_set_bit(j, &curr_enabled, MAX_CMDS_PER_TCS) {
+>> +                       addr = read_tcs_reg(drv, RSC_DRV_CMD_ADDR, m, j);
+>> +                       for (k = 0; k < msg->num_cmds; k++) {
+>> +                               if (addr == msg->cmds[k].addr)
+>> +                                       return -EBUSY;
+>> +                       }
+>> +               }
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int find_free_tcs(struct tcs_group *tcs)
+>> +{
+>> +       int m;
+>> +
+>> +       for (m = 0; m < tcs->num_tcs; m++) {
+>> +               if (tcs_is_free(tcs->drv, tcs->offset + m))
+>> +                       return m;
+>> +       }
+>> +
+>> +       return -EBUSY;
+>> +}
+>> +
+>> +static int tcs_mbox_write(struct rsc_drv *drv, const struct tcs_request *msg)
+>> +{
+>> +       struct tcs_group *tcs;
+>> +       int m;
+>> +       struct tcs_response *resp = NULL;
+>> +       unsigned long flags;
+>> +       int ret;
+>> +
+>> +       tcs = get_tcs_for_msg(drv, msg);
+>> +       if (IS_ERR(tcs))
+>> +               return PTR_ERR(tcs);
+>> +
+>> +       spin_lock_irqsave(&tcs->lock, flags);
+>> +       m = find_free_tcs(tcs);
+>> +       if (m < 0) {
+>> +               ret = m;
+>> +               goto done_write;
+>> +       }
+>> +
+>> +       /*
+>> +        * The h/w does not like if we send a request to the same address,
+>> +        * when one is already in-flight or being processed.
+>> +        */
+>> +       ret = check_for_req_inflight(drv, tcs, msg);
+>> +       if (ret)
+>> +               goto done_write;
+>> +
+>> +       resp = setup_response(drv, msg, m);
+>> +       if (IS_ERR(resp)) {
+>> +               ret = PTR_ERR(resp);
+>> +               goto done_write;
+>> +       }
+>> +       resp->m = m;
+>> +
+>> +       set_bit(m, drv->tcs_in_use);
+>> +       __tcs_buffer_write(drv, m, 0, msg);
+>> +       __tcs_trigger(drv, m);
+>> +
+>> +done_write:
+>> +       spin_unlock_irqrestore(&tcs->lock, flags);
+>> +       return ret;
+>> +}
+>> +
+>> +/**
+>> + * rpmh_rsc_send_data: Validate the incoming message and write to the
+>> + * appropriate TCS block.
+>> + *
+>> + * @drv: the controller
+>> + * @msg: the data to be sent
+>> + *
+>> + * Return: 0 on success, -EINVAL on error.
+>> + * Note: This call blocks until a valid data is written to the TCS.
+>> + */
+>> +int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg)
+>> +{
+>> +       int ret;
+>> +
+>> +       if (!msg || !msg->cmds || !msg->num_cmds ||
+>> +           msg->num_cmds > MAX_RPMH_PAYLOAD)
+>> +               return -EINVAL;
+>> +
+>> +       do {
+>> +               ret = tcs_mbox_write(drv, msg);
+>> +               if (ret == -EBUSY) {
+>> +                       pr_info_ratelimited("TCS Busy, retrying RPMH message send: addr=%#x\n",
+>> +                                           msg->cmds[0].addr);
+>> +                       udelay(10);
+>> +               }
+>> +       } while (ret == -EBUSY);
+>
+>This loop never breaks if we can't avoid the BUSY loop. And that printk
+>is informational, shouldn't it be an error? Is there some number of
+>tries we can make and then just give up?
+>
+I could do that. Generally, there are some transient conditions the
+causes these loops to spin for a while, before we get a free TCS to
+write to. Failing after just a handful tries may be calling it quits
+early. If we increase the delay to compensate for it, then we end
+slowing up requests that could have otherwise been faster.
 
-Imo code reuse is overrated. Adding new uapi is what freaks me out here
-:-)
+>> +
+>> +       return ret;
+>> +}
+>> +EXPORT_SYMBOL(rpmh_rsc_send_data);
+>> +
+>> +static int rpmh_probe_tcs_config(struct platform_device *pdev,
+>> +                                struct rsc_drv *drv)
+>> +{
+>> +       struct tcs_type_config {
+>> +               u32 type;
+>> +               u32 n;
+>> +       } tcs_cfg[TCS_TYPE_NR] = { { 0 } };
+>> +       struct device_node *dn = pdev->dev.of_node;
+>> +       u32 config, max_tcs, ncpt;
+>> +       int i, ret, n, st = 0;
+>> +       struct tcs_group *tcs;
+>> +       struct resource *res;
+>> +       void __iomem *base;
+>> +
+>> +       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "drv");
+>> +       base = devm_ioremap_resource(&pdev->dev, res);
+>> +       if (IS_ERR(base))
+>> +               return PTR_ERR(base);
+>> +
+>> +       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "tcs");
+>> +       drv->tcs_base = devm_ioremap_resource(&pdev->dev, res);
+>> +       if (IS_ERR(drv->tcs_base))
+>> +               return PTR_ERR(drv->tcs_base);
+>> +
+>> +       config = readl_relaxed(base + DRV_PRNT_CHLD_CONFIG);
+>> +
+>> +       max_tcs = config;
+>> +       max_tcs &= DRV_NUM_TCS_MASK << (DRV_NUM_TCS_SHIFT * drv->id);
+>> +       max_tcs = max_tcs >> (DRV_NUM_TCS_SHIFT * drv->id);
+>> +
+>> +       ncpt = config & (DRV_NCPT_MASK << DRV_NCPT_SHIFT);
+>> +       ncpt = ncpt >> DRV_NCPT_SHIFT;
+>> +
+>> +       n = of_property_count_u32_elems(dn, "qcom,tcs-config");
+>> +       if (n != 2 * TCS_TYPE_NR)
+>> +               return -EINVAL;
+>> +
+>> +       for (i = 0; i < TCS_TYPE_NR; i++) {
+>> +               ret = of_property_read_u32_index(dn, "qcom,tcs-config",
+>> +                                                i * 2, &tcs_cfg[i].type);
+>> +               if (ret)
+>> +                       return ret;
+>> +               if (tcs_cfg[i].type >= TCS_TYPE_NR)
+>> +                       return -EINVAL;
+>> +
+>> +               ret = of_property_read_u32_index(dn, "qcom,tcs-config",
+>> +                                                i * 2 + 1, &tcs_cfg[i].n);
+>> +               if (ret)
+>> +                       return ret;
+>> +               if (tcs_cfg[i].n > MAX_TCS_PER_TYPE)
+>> +                       return -EINVAL;
+>> +       }
+>> +
+>> +       for (i = 0; i < TCS_TYPE_NR; i++) {
+>> +               tcs = &drv->tcs[tcs_cfg[i].type];
+>> +               if (tcs->drv)
+>> +                       return -EINVAL;
+>> +               tcs->drv = drv;
+>> +               tcs->type = tcs_cfg[i].type;
+>> +               tcs->num_tcs = tcs_cfg[i].n;
+>> +               tcs->ncpt = ncpt;
+>> +               spin_lock_init(&tcs->lock);
+>> +
+>> +               if (!tcs->num_tcs || tcs->type == CONTROL_TCS)
+>> +                       continue;
+>> +
+>> +               if (st + tcs->num_tcs > max_tcs ||
+>> +                   st + tcs->num_tcs >= BITS_PER_BYTE * sizeof(tcs->mask))
+>> +                       return -EINVAL;
+>> +
+>> +               tcs->mask = ((1 << tcs->num_tcs) - 1) << st;
+>> +               tcs->offset = st;
+>> +               st += tcs->num_tcs;
+>> +       }
+>> +
+>> +       drv->num_tcs = st;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int rpmh_rsc_probe(struct platform_device *pdev)
+>> +{
+>> +       struct device_node *dn = pdev->dev.of_node;
+>> +       struct rsc_drv *drv;
+>> +       int ret, irq;
+>> +
+>> +       drv = devm_kzalloc(&pdev->dev, sizeof(*drv), GFP_KERNEL);
+>> +       if (!drv)
+>> +               return -ENOMEM;
+>> +
+>> +       ret = of_property_read_u32(dn, "qcom,drv-id", &drv->id);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       drv->name = of_get_property(dn, "label", NULL);
+>> +       if (!drv->name)
+>> +               drv->name = dev_name(&pdev->dev);
+>> +
+>> +       ret = rpmh_probe_tcs_config(pdev, drv);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       INIT_LIST_HEAD(&drv->response_pending);
+>> +       spin_lock_init(&drv->drv_lock);
+>> +       tasklet_init(&drv->tasklet, tcs_notify_tx_done, (unsigned long)drv);
+>> +       bitmap_zero(drv->tcs_in_use, MAX_TCS_NR);
+>> +
+>> +       irq = platform_get_irq(pdev, 0);
+>> +       if (irq < 0)
+>> +               return irq;
+>> +
+>> +       ret = devm_request_irq(&pdev->dev, irq, tcs_irq_handler,
+>> +                              IRQF_TRIGGER_HIGH | IRQF_NO_SUSPEND,
+>> +                              drv->name, drv);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       /* Enable the active TCS to send requests immediately */
+>> +       write_tcs_reg(drv, RSC_DRV_IRQ_ENABLE, 0, 0, drv->tcs[ACTIVE_TCS].mask);
+>> +
+>> +       return devm_of_platform_populate(&pdev->dev);
+>> +}
+>> +
+>> diff --git a/include/dt-bindings/soc/qcom,rpmh-rsc.h b/include/dt-bindings/soc/qcom,rpmh-rsc.h
+>> new file mode 100644
+>> index 000000000000..868f998ea998
+>> --- /dev/null
+>> +++ b/include/dt-bindings/soc/qcom,rpmh-rsc.h
+>> @@ -0,0 +1,14 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#ifndef __DT_QCOM_RPMH_RSC_H__
+>> +#define __DT_QCOM_RPMH_RSC_H__
+>> +
+>> +#define SLEEP_TCS      0
+>> +#define WAKE_TCS       1
+>> +#define ACTIVE_TCS     2
+>> +#define CONTROL_TCS    3
+>
+>Is anything besides the RSC node going to use these defines? Typically
+>we have defines for things that are used by many nodes in many places
+>and also in C code by drivers so this looks odd if it's mostly used for
+>packing many properties into a single property on the DT side.
+>
+This definition is shared between the DT and the driver. Do you have
+recommendation on sharing enums between DT and driver?
+>> +
+>> +#endif /* __DT_QCOM_RPMH_RSC_H__ */
+>> diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
+>> new file mode 100644
+>> index 000000000000..4b78f881010a
+>> --- /dev/null
+>> +++ b/include/soc/qcom/tcs.h
+>> @@ -0,0 +1,56 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#ifndef __SOC_QCOM_TCS_H__
+>> +#define __SOC_QCOM_TCS_H__
+>> +
+>> +#define MAX_RPMH_PAYLOAD       16
+>> +
+>> +/**
+>> + * rpmh_state: state for the request
+>> + *
+>> + * RPMH_SLEEP_STATE:       State of the resource when the processor subsystem
+>> + *                         is powered down. There is no client using the
+>> + *                         resource actively.
+>> + * RPMH_WAKE_ONLY_STATE:   Resume resource state to the value previously
+>> + *                         requested before the processor was powered down.
+>> + * RPMH_ACTIVE_ONLY_STATE: Active or AMC mode requests. Resource state
+>> + *                         is aggregated immediately.
+>> + */
+>> +enum rpmh_state {
+>> +       RPMH_SLEEP_STATE,
+>> +       RPMH_WAKE_ONLY_STATE,
+>> +       RPMH_ACTIVE_ONLY_STATE,
+>> +};
+>> +
+>> +/**
+>> + * struct tcs_cmd: an individual request to RPMH.
+>> + *
+>> + * @addr: the address of the resource slv_id:18:16 | offset:0:15
+>> + * @data: the resource state request
+>> + * @wait: wait for this request to be complete before sending the next
+>> + */
+>> +struct tcs_cmd {
+>> +       u32 addr;
+>> +       u32 data;
+>> +       bool wait;
+>> +};
+>> +
+>> +/**
+>> + * struct tcs_request: A set of tcs_cmds sent together in a TCS
+>> + *
+>> + * @state:          state for the request.
+>
+>Drop full stop please
+>
+OK.
 
-If we end up with duplicated implementations, even in upstream, meh, not
-great, but also ok. New uapi, and in a similar way, new hypervisor api
-like the dma-buf forwarding that hyperdmabuf does is the kind of thing
-that will lock us in for 10+ years (if we make a mistake).
+Thanks for the review Stephen.
 
-> > > Thank you,
-> > > Oleksandr
-> > > 
-> > > P.S. All, is it a good idea to move this out of udmabuf thread into a
-> > > dedicated one?
-> > Either way is fine with me.
-> So, if you can start designing the protocol we may have a dedicated mail
-> thread for that. I will try to help with the protocol as much as I can
-
-Please don't start with the protocol. Instead start with the concrete
-use-cases, and then figure out why exactly you need new uapi. Once we have
-that answered, we can start thinking about fleshing out the details.
-
-Cheers, Daniel
-
-> 
-> > > > > > cheers,
-> > > > > >    Gerd
-> > > > > > 
-> > > > > Thank you,
-> > > > > Oleksandr
-> > > > > 
-> > > > > P.S. Sorry for making your original mail thread to discuss things much
-> > > > > broader than your RFC...
-> > > > > 
-> > > [1] https://github.com/xen-troops/displ_be
-> > > [2] https://elixir.bootlin.com/linux/v4.16-rc7/source/include/xen/interface/io/displif.h#L484
-> > > [3] https://elixir.bootlin.com/linux/v4.16-rc7/source/include/xen/interface/io/sndif.h
-> > > 
-> [1] https://elixir.bootlin.com/linux/v4.16-rc7/source/include/xen/interface/io/displif.h
-> [2]
-> https://lists.xenproject.org/archives/html/xen-devel/2018-04/msg00685.html
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+-- Lina
