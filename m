@@ -1,71 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751421AbeDMSDM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 14:03:12 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59156 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751013AbeDMSDL (ORCPT
+        id S1751042AbeDMSFx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 14:05:53 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:44533 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750792AbeDMSFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 14:03:11 -0400
-Date: Fri, 13 Apr 2018 19:03:05 +0100
-From: Mark Brown <broonie@kernel.org>
-To: sxauwsk <sxauwsk@163.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        guojian <guojian@innoinstrument.net>,
-        wangshikai <wangshikai@inno-instrument.cn>
-Subject: Re: [PATCH] spi: cadence: Add usleep_range() for
- cdns_spi_fill_tx_fifo()
-Message-ID: <20180413180304.GF6854@sirena.org.uk>
-References: <1523272610-49116-1-git-send-email-sxauwsk@163.com>
+        Fri, 13 Apr 2018 14:05:51 -0400
+X-Google-Smtp-Source: AIpwx49OkRvkq3mCqRDHb5wVb66MG0CXrGU2XzZRpgHU0t9g+ZFb1YCkuH99Pgq4lncJhO8LKywk0g==
+Date: Fri, 13 Apr 2018 13:05:49 -0500
+From: Rob Herring <robh@kernel.org>
+To: Michel Pollet <michel.pollet@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        phil.edworthy@renesas.com, buserror+upstream@gmail.com,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 3/8] dt-bindings: mfd: renesas,rzn1-sysctrl: document
+ RZ/N1 sysctrl node
+Message-ID: <20180413180549.yjzkl2yf7osz7myt@rob-hp-laptop>
+References: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1523349015-37985-4-git-send-email-michel.pollet@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3yNHWXBV/QO9xKNm"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1523272610-49116-1-git-send-email-sxauwsk@163.com>
-X-Cookie: You were s'posed to laugh!
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1523349015-37985-4-git-send-email-michel.pollet@bp.renesas.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---3yNHWXBV/QO9xKNm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Apr 09, 2018 at 07:16:50PM +0800, sxauwsk wrote:
-> In case of xspi work in busy condition, may send bytes failed.
-> Add one bytes delay
-
->  	while ((trans_cnt < CDNS_SPI_FIFO_DEPTH) &&
->  	       (xspi->tx_bytes > 0)) {
+On Tue, Apr 10, 2018 at 09:30:03AM +0100, Michel Pollet wrote:
+> The Renesas RZ/N1 Family (Part #R9A06G0xx) has a multi-function
+> system controller. This documents the node used to encapsulate
+> it's sub drivers.
+> 
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> ---
+>  .../bindings/mfd/renesas,rzn1-sysctrl.txt          | 23 ++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+> new file mode 100644
+> index 0000000..9897f8f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
+> @@ -0,0 +1,23 @@
+> +DT bindings for the Renesas RZ/N1 System Controller
 > +
-> +		/* When xspi in busy condition, bytes may send failed,
-> +		 * caused communication failure so add one byte delay
-> +		 */
-> +		usleep_range(10, 20);
+> +== System Controller Node ==
 > +
->  		if (xspi->txbuf)
->  			cdns_spi_write(xspi, CDNS_SPI_TXD, *xspi->txbuf++);
+> +The system controller node currently only hosts a single sub-node to handle
+> +the rebooting of the CPU. Eventually it will host the clock driver, SMP
+> +start handler, watchdog etc.
 
-This looks like it adds a byte of delay on every read/write - that
-seems like a lot of overhead for something that sounds like it's
-probably only an issue when the FIFO is full?  Do we need to do this for
-every operation, and is it needed for read or is it just write?
+Please submit a complete binding for the h/w block.
 
---3yNHWXBV/QO9xKNm
-Content-Type: application/pgp-signature; name="signature.asc"
+Again, if the only reason you have sub nodes is to define compatible 
+strings and in turn enumerate drivers, then you don't need the nodes in 
+DT. DT is not the only way to instantiate drivers.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrQ8NgACgkQJNaLcl1U
-h9CFvgf8Ce2RR4+sAhzVgT5d0yhSHLIjwr5jYoA9N6jsBCNIl1B/wwjlD5Lna0NK
-JbkK9DI5gV1PPdbR6sIRs5uA4E5yMMR5mAsYWdUITk6QR4r/wY3FnehfiUYHsaaw
-4rNBj3G1FilnwHw3bBd731Jo9DSzEIFHfSv3MfHKfdOsuF3Ut0BDJKIAxQ3OqMOa
-wGzTny7NzLg7mqU931avo8WOl+6N11Ms2UVCqt6YPTXA+KwzvXcqB2cLRuaG8RTJ
-b7l3i3VtiUcVynZURI1RnvIy1/TXVCfIimvES9VkJMBu2uKBTXZ1HQrZaupimVsa
-Ydz1ZhjtVF+ZHLJ/DDJyVmak9NeRQQ==
-=xL/n
------END PGP SIGNATURE-----
-
---3yNHWXBV/QO9xKNm--
+Rob
