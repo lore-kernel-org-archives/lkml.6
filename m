@@ -1,53 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754056AbeDMLQ0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:16:26 -0400
-Received: from mail-pf0-f169.google.com ([209.85.192.169]:44012 "EHLO
-        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751847AbeDMLQZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:16:25 -0400
-X-Google-Smtp-Source: AIpwx4/ej01tAr+PfvK39ARfoJ3qmkLgj82gFW9IPKPjCkYBpcDlvnMAyKOX6CjR9bawi5q1JmPgihrpY/NkF3it08g=
+        id S1754155AbeDMLR7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:17:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41456 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753634AbeDMLR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 07:17:58 -0400
+Date: Fri, 13 Apr 2018 12:17:53 +0100
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH 1/7] sched/core: uclamp: add CPU clamp groups accounting
+Message-ID: <20180413111753.GT14248@e110439-lin>
+References: <20180409165615.2326-1-patrick.bellasi@arm.com>
+ <20180409165615.2326-2-patrick.bellasi@arm.com>
+ <20180413084019.GQ4043@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20180406165338.oa5wmjtknauehafp@treble>
-References: <94eb2c05611408a11a056922c4cb@google.com> <20180406153633.lex32dujz747ycm5@treble>
- <CACT4Y+Zi3cBfjao_VE6ugOXosuCXWoJ58PfuZdYbckfOLzN09A@mail.gmail.com> <20180406165338.oa5wmjtknauehafp@treble>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 13 Apr 2018 13:16:03 +0200
-Message-ID: <CACT4Y+aohBGiVvp-6XwJCuXyQca-EX-C2GL-nFcosryhEycXew@mail.gmail.com>
-Subject: Re: KASAN: alloca-out-of-bounds Read in unwind_next_frame
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: syzbot <syzbot+9d1d9866b0b8ee6e0a8c@syzkaller.appspotmail.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, LKML <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180413084019.GQ4043@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 6, 2018 at 6:53 PM, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> On Fri, Apr 06, 2018 at 05:40:01PM +0200, Dmitry Vyukov wrote:
->> > So at first glance it seemed like a race condition.  However, the
->> > unwinder was only trying to dereference the frame pointer (RBP:
->> > ffff8801b05e67f8), which should have never been poisoned in the first
->> > place.
->> >
->> > So it looks like a bug in the KASAN alloca poisoning.
->>
->> Hi Josh,
->>
->> You seen my previous message, right? Or was it lost somehow?
->>
->> https://groups.google.com/d/msg/syzkaller-bugs/IcKqxHzhmQc/KAL6o7tOCAAJ
->
-> Oops, you're right, I missed it.  Seems like we came to the same
-> conclusion anyway :-)
+On 13-Apr 10:40, Peter Zijlstra wrote:
+> On Mon, Apr 09, 2018 at 05:56:09PM +0100, Patrick Bellasi wrote:
+> > +static inline void init_uclamp(void)
+> 
+> WTH is that inline?
 
+You mean I can avoid the attribute?
+... or that I should do it in another way?
 
-The gcc bug is now fixed
+> > +{
+> > +	struct uclamp_cpu *uc_cpu;
+> > +	int clamp_id;
+> > +	int cpu;
+> > +
+> > +	mutex_init(&uclamp_mutex);
+> > +
+> > +	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
+> > +		/* Init CPU's clamp groups */
+> > +		for_each_possible_cpu(cpu) {
+> > +			uc_cpu = &cpu_rq(cpu)->uclamp[clamp_id];
+> > +			memset(uc_cpu, UCLAMP_NONE, sizeof(struct uclamp_cpu));
+> > +		}
+> > +	}
+> 
+> Those loops are the wrong way around, this shreds your cache. This is a
+> slow path so it doesn't much matter, but it is sloppy.
 
-#syz invalid
+Yess... my bad!... good catch! ;)
+
+> 
+> > +}
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
