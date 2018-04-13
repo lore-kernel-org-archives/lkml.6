@@ -1,112 +1,111 @@
-Return-Path: <SRS0=YbhT=HC=goodmis.org=rostedt@kernel.org>
-X-Google-Smtp-Source: AIpwx48ga5xfw9W78XcHK9aXngRuSBv0nHfm2K6PsCZ2lRQJqLtdwbQt86Syq+Pzul8tFP1F/y5f
-ARC-Seal: i=1; a=rsa-sha256; t=1523628975; cv=none;
+Return-Path: <maier@linux.ibm.com>
+X-Google-Smtp-Source: AIpwx4/oC1OPgjJpoRvd+TOu2SxwvsZpUBUcCvtlqa0F94vL7HlHadeljh6tx6OgYGglkU7HenEA
+ARC-Seal: i=1; a=rsa-sha256; t=1523624908; cv=none;
         d=google.com; s=arc-20160816;
-        b=n4yoE0i82KvuoVCDkvmn5rSQqtbE8bJrmKL8g4Iw4nNvdRd35Vg8Us2/GhbcSBbXpM
-         xwJ2UQQ4RlD2zsCeHM86XXjiIKEuImkh8kOhAVc6rWOh16QWE7K4N0N7gnloD+wX6Ysk
-         qobSinjka9ALuFTwVeFpYWJcrToekPTFbxNVbyPK3tL2U6vLkqZqDLo1LJDDAJiXVI3L
-         ugWJGS4M2K2UdWcb6gaccu1SgBFg7JbHNhfNE3TaYwwGq4ri9eljZr79H8aHvaFIYV4M
-         Ek7vn9jeRnDm/ZCjBa7sfxcgGRAijtQ6KFtZPvozzz08mrVfXmZaJCODXeGbS3InaWLY
-         o68g==
+        b=CxADstESgdYoxYzkpOP5Z5AAdOYYkV2i6B2K79mDc6NcHN38QPe+8DLSDloZDXrqZU
+         8cLI+bLMyDLJqXOzikBH51DppTnrx//RfqrSsAxR53F4g+YOC2YhWFR6BJGxUc5qiAca
+         Aik8lWG6Rj6/77XY1Ah/8sZHcAMZzC67wEO/S73d2A478CL1yU+puuo00Tp+ttaVntN0
+         ClBHjuVWB3ccWs01zpWcpI0pIV1TTapT0YtV8sO+wRZPfrxX+b18iguIEl0V8GQdadF4
+         2sxLgc003lrnGbqKHbZiTqBJjcw69CNS8uUvTZBSK9rvFF4994a4SroQZLG1jvnZgvPD
+         uJrw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
+        h=message-id:references:in-reply-to:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=iFEel/7qDC30MDOqByaiSxUwePdPmJFTw+ccU+zvVf0=;
-        b=iOeIzQnHYrD4TLp7zoM1gXXoAItXDLQ/IzX9sTfBRsd09QBhfek5wwE2bFfC2Kz1Rz
-         dXfw9pqdDLL44HFNgmRbUaI9KPcfJosC/xcsUYsfHVWvzIwNXz4vXqQ0vr1ln2N/JwRp
-         9LH2EcseFm6wxHKdpQmutp8pMVcSJ11ldfUI/+u7HOGZftGdc/ZX1ZNT5tyA3zTfUxUb
-         dekxjgslQ2tYIsT09iYw084/8hYw+0TWBQejdprAyhOk2jc/c+plxjhfWrwpBG4AikSE
-         GuueC+aNsXj+FjD7c7KIkEoad7Rkdl1JvtFMR56CS1yHdseLiFuxwpBV+0itHS90VZAo
-         Fp2g==
+        bh=/Xlp0dSKYL31UAA+zQ2pP7XxsImooCp0UQZjGJZK9VU=;
+        b=MaDjVOK5XoK1UcVfpzB4vfVHxtBP2mPg/XacrHNlUohyW2w/VMIP0kAieVPhrcfREd
+         AXmq1RGL9VrnhTZkh1JQNpJGIKBZOxEcdOS8tV/XDWT+sdtvawPBGO5ApiBEznmtoYpk
+         WLgn2LYGkyVLQaQSFgt4RPSyKlywpIvw7C6jKIbmRw2rRlOFclLjXHbhs/O38tvVKOYt
+         SZ+dzxxhkATvEm++r28+JmijcDYfEvQ+cnEtw8l0b0JQ70uA8wB+8L4L/UbTEPbUuf7N
+         bjRC7Q1vJFUA7e17uE/eUj3jInW5IYACxQGdvyKJD7OW1qMluubh88swvpwdX7UNV6tO
+         sNQA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=ybht=hc=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=YbhT=HC=goodmis.org=rostedt@kernel.org
+       spf=pass (google.com: domain of maier@linux.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=maier@linux.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=ybht=hc=goodmis.org=rostedt@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=YbhT=HC=goodmis.org=rostedt@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4C472077B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 13 Apr 2018 10:16:12 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Steffen Maier <maier@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, Ingo Molnar
- <mingo@redhat.com>, Jens Axboe <axboe@kernel.dk>, Li Zefan
- <lizf@cn.fujitsu.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 1/2] tracing/events: block: track and print if unplug
- was explicit or schedule
-Message-ID: <20180413101612.3999f742@gandalf.local.home>
-In-Reply-To: <20180413130719.22921-2-maier@linux.ibm.com>
+       spf=pass (google.com: domain of maier@linux.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=maier@linux.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+From: Steffen Maier <maier@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, Li Zefan <lizf@cn.fujitsu.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steffen Maier <maier@linux.ibm.com>
+Subject: [RFC] tracing/events: block: also try to get dev_t via driver core for some events
+Date: Fri, 13 Apr 2018 15:07:19 +0200
+X-Mailer: git-send-email 2.13.5
+In-Reply-To: <20180413130719.22921-1-maier@linux.ibm.com>
 References: <20180413130719.22921-1-maier@linux.ibm.com>
-	<20180413130719.22921-2-maier@linux.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18041313-0044-0000-0000-00000546EEAA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041313-0045-0000-0000-000028872E79
+Message-Id: <20180413130719.22921-4-maier@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-13_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804130122
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597636487135013741?=
-X-GMAIL-MSGID: =?utf-8?q?1597640775887760539?=
+X-GMAIL-THRID: =?utf-8?q?1597636512361952197?=
+X-GMAIL-MSGID: =?utf-8?q?1597636512361952197?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 13 Apr 2018 15:07:17 +0200
-Steffen Maier <maier@linux.ibm.com> wrote:
+Complements v2.6.31 commit 55782138e47d ("tracing/events: convert block
+trace points to TRACE_EVENT()") for cases where rq->rq_disk == NULL:
+  block_rq_requeue, block_rq_insert, block_rq_issue;
+and for cases where bio == NULL:
+  block_getrq, block_sleeprq.
 
-> Just like blktrace distinguishes explicit and schedule by means of
-> BLK_TA_UNPLUG_IO and BLK_TA_UNPLUG_TIMER, actually make use of the
-> existing argument "explicit" to distinguish the two cases in the one
-> common tracepoint block_unplug.
-> 
-> Complements v2.6.39 commit 49cac01e1fa7 ("block: make unplug timer trace
-> event correspond to the schedule() unplug") and commit d9c978331790
-> ("block: remove block_unplug_timer() trace point").
-> 
-> Signed-off-by: Steffen Maier <maier@linux.ibm.com>
-> ---
->  include/trace/events/block.h | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/trace/events/block.h b/include/trace/events/block.h
-> index 81b43f5bdf23..a13613d27cee 100644
-> --- a/include/trace/events/block.h
-> +++ b/include/trace/events/block.h
-> @@ -470,6 +470,11 @@ TRACE_EVENT(block_plug,
->  	TP_printk("[%s]", __entry->comm)
->  );
->  
-> +#define show_block_unplug_explicit(val)		\
-> +	__print_symbolic(val,			\
-> +			 {false, "schedule"},	\
-> +			 {true,	 "explicit"})
+NB: The NULL pointer check for q->kobj.parent is certainly racy and
+I don't have enough experience if it's good enough for a trace event.
 
-That's new. I haven't seen "true"/"false" values used for
-print_symbolic before. But could you please use 1 and 0 instead, because
-perf and trace-cmd won't be able to parse that. I could update
-libtraceevent to handle it, but really, the first parameter is suppose
-to be numeric.
+Since I don't know when above cases would occur,
+I'm not sure this is worth it.
 
--- Steve
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+---
+ include/trace/events/block.h | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-> +
->  DECLARE_EVENT_CLASS(block_unplug,
->  
->  	TP_PROTO(struct request_queue *q, unsigned int depth, bool explicit),
-> @@ -478,15 +483,18 @@ DECLARE_EVENT_CLASS(block_unplug,
->  
->  	TP_STRUCT__entry(
->  		__field( int,		nr_rq			)
-> +		__field( bool,		explicit		)
->  		__array( char,		comm,	TASK_COMM_LEN	)
->  	),
->  
->  	TP_fast_assign(
->  		__entry->nr_rq = depth;
-> +		__entry->explicit = explicit;
->  		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
->  	),
->  
-> -	TP_printk("[%s] %d", __entry->comm, __entry->nr_rq)
-> +	TP_printk("[%s] %d %s", __entry->comm, __entry->nr_rq,
-> +		  show_block_unplug_explicit(__entry->explicit))
->  );
->  
->  /**
+diff --git a/include/trace/events/block.h b/include/trace/events/block.h
+index cffedc26e8a3..c476b7af404b 100644
+--- a/include/trace/events/block.h
++++ b/include/trace/events/block.h
+@@ -86,7 +86,9 @@ TRACE_EVENT(block_rq_requeue,
+ 	),
+ 
+ 	TP_fast_assign(
+-		__entry->dev	   = rq->rq_disk ? disk_devt(rq->rq_disk) : 0;
++		__entry->dev	   = rq->rq_disk ? disk_devt(rq->rq_disk) :
++		(q->kobj.parent ?
++		 container_of(q->kobj.parent, struct device, kobj)->devt : 0);
+ 		__entry->sector    = blk_rq_trace_sector(rq);
+ 		__entry->nr_sector = blk_rq_trace_nr_sectors(rq);
+ 
+@@ -162,7 +164,9 @@ DECLARE_EVENT_CLASS(block_rq,
+ 	),
+ 
+ 	TP_fast_assign(
+-		__entry->dev	   = rq->rq_disk ? disk_devt(rq->rq_disk) : 0;
++		__entry->dev	   = rq->rq_disk ? disk_devt(rq->rq_disk) :
++		(q->kobj.parent ?
++		 container_of(q->kobj.parent, struct device, kobj)->devt : 0);
+ 		__entry->sector    = blk_rq_trace_sector(rq);
+ 		__entry->nr_sector = blk_rq_trace_nr_sectors(rq);
+ 		__entry->bytes     = blk_rq_bytes(rq);
+@@ -397,7 +401,9 @@ DECLARE_EVENT_CLASS(block_get_rq,
+         ),
+ 
+ 	TP_fast_assign(
+-		__entry->dev		= bio ? bio_dev(bio) : 0;
++		__entry->dev		= bio ? bio_dev(bio) :
++		(q->kobj.parent ?
++		 container_of(q->kobj.parent, struct device, kobj)->devt : 0);
+ 		__entry->sector		= bio ? bio->bi_iter.bi_sector : 0;
+ 		__entry->nr_sector	= bio ? bio_sectors(bio) : 0;
+ 		blk_fill_rwbs(__entry->rwbs,
+-- 
+2.13.5
