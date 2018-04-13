@@ -1,111 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754020AbeDMLwg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:52:36 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41832 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753306AbeDMLwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:52:34 -0400
-Date: Fri, 13 Apr 2018 12:52:29 +0100
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH 1/7] sched/core: uclamp: add CPU clamp groups accounting
-Message-ID: <20180413115229.GW14248@e110439-lin>
-References: <20180409165615.2326-1-patrick.bellasi@arm.com>
- <20180409165615.2326-2-patrick.bellasi@arm.com>
- <20180413084302.GR4043@hirez.programming.kicks-ass.net>
- <20180413111510.GS14248@e110439-lin>
- <20180413113650.GR4064@hirez.programming.kicks-ass.net>
- <20180413114745.GV14248@e110439-lin>
+        id S1754145AbeDMLy5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:54:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41334 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751160AbeDMLy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 07:54:56 -0400
+Date: Fri, 13 Apr 2018 13:54:54 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        cgroups@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memcg: Remove memcg_cgroup::id from IDR on
+ mem_cgroup_css_alloc() failure
+Message-ID: <20180413115454.GL17484@dhcp22.suse.cz>
+References: <152354470916.22460.14397070748001974638.stgit@localhost.localdomain>
+ <20180413085553.GF17484@dhcp22.suse.cz>
+ <ed75d18c-f516-2feb-53a8-6d2836e1da59@virtuozzo.com>
+ <20180413110200.GG17484@dhcp22.suse.cz>
+ <06931a83-91d2-3dcf-31cf-0b98d82e957f@virtuozzo.com>
+ <20180413112036.GH17484@dhcp22.suse.cz>
+ <6dbc33bb-f3d5-1a46-b454-13c6f5865fcd@virtuozzo.com>
+ <20180413113855.GI17484@dhcp22.suse.cz>
+ <8a81c801-35c8-767d-54b0-df9f1ca0abc0@virtuozzo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180413114745.GV14248@e110439-lin>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <8a81c801-35c8-767d-54b0-df9f1ca0abc0@virtuozzo.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-Apr 12:47, Patrick Bellasi wrote:
-> On 13-Apr 13:36, Peter Zijlstra wrote:
-> > On Fri, Apr 13, 2018 at 12:15:10PM +0100, Patrick Bellasi wrote:
-> > > On 13-Apr 10:43, Peter Zijlstra wrote:
-> > > > On Mon, Apr 09, 2018 at 05:56:09PM +0100, Patrick Bellasi wrote:
-> > > > > +static inline void uclamp_task_update(struct rq *rq, struct task_struct *p)
-> > > > > +{
-> > > > > +	int cpu = cpu_of(rq);
-> > > > > +	int clamp_id;
-> > > > > +
-> > > > > +	/* The idle task does not affect CPU's clamps */
-> > > > > +	if (unlikely(p->sched_class == &idle_sched_class))
-> > > > > +		return;
-> > > > > +	/* DEADLINE tasks do not affect CPU's clamps */
-> > > > > +	if (unlikely(p->sched_class == &dl_sched_class))
-> > > > > +		return;
-> > > > > +
-> > > > > +	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
-> > > > > +		if (uclamp_task_affects(p, clamp_id))
-> > > > > +			uclamp_cpu_put(p, cpu, clamp_id);
-> > > > > +		else
-> > > > > +			uclamp_cpu_get(p, cpu, clamp_id);
-> > > > > +	}
-> > > > > +}
-> > > > 
-> > > > Is that uclamp_task_affects() thing there to fix up the fact you failed
-> > > > to propagate the calling context (enqueue/dequeue) ?
-> > > 
-> > > Not really, it's intended by design: we back annotate the clamp_group
-> > > a task has been refcounted in.
-> > > 
-> > > The uclamp_task_affects() tells if we are refcounted now and then we
-> > > know from the back-annotation from which refcounter we need to remove
-> > > the task.
-> > > 
-> > > I found this solution much less racy and effective in avoiding to
-> > > screw up the refcounter whenever we look at a task at either
-> > > dequeue/migration time and these operations can overlaps with the
-> > > slow-path. Meaning, when we change the task specific clamp_group
-> > > either via syscall or cgroups attributes.
-> > > 
-> > > IOW, the back annotation allows to decouple refcounting from
-> > > clamp_group configuration in a lockless way.
+On Fri 13-04-18 14:49:32, Kirill Tkhai wrote:
+> On 13.04.2018 14:38, Michal Hocko wrote:
+> > On Fri 13-04-18 14:29:11, Kirill Tkhai wrote:
+[...]
+> >> mem_cgroup_id_put_many() unpins css, but this may be not the last reference to the css.
+> >> Thus, we release ID earlier, then all references to css are freed.
 > > 
-> > But it adds extra state and logic, to a fastpath, for no reason.
-> > 
-> > I suspect you messed up the cgroup side; because the syscall should
-> > already have done task_rq_lock() and hold both p->pi_lock and rq->lock
-> > and have dequeued the task when changing the attribute.
+> > Right and so what. If we have released the idr then we are not going to
+> > do that again in css_free. That is why we have that memcg->id.id > 0
+> > check before idr_remove and memcg->id.id = 0 for the last memcg ref.
+> > count. So again, why cannot we do the clean up in mem_cgroup_free and
+> > have a less confusing code? Or am I just not getting your point and
+> > being dense here?
 > 
-> Yes, actually I'm using task_rq_lock() from the cgroup callback to
-> update each task already queued. And I do the same from the
-> sched_setattr syscall...
+> We can, but mem_cgroup_free() called from mem_cgroup_css_alloc() is unlikely case.
+> The likely case is mem_cgroup_free() is called from mem_cgroup_css_free(), where
+> this idr manipulations will be a noop. Noop in likely case looks more confusing
+> for me.
+
+Well, I would really prefer to have _free being symmetric to _alloc so
+that you can rely that the full state is gone after _free is called.
+This confused the hell out of me. Because I _did_ expect that
+mem_cgroup_free would do that and so I was looking at completely
+different place.
+ 
+> Less confusing will be to move
 > 
-> > It is actually really hard to make the syscall do it wrong.
+>         memcg->id.id = idr_alloc(&mem_cgroup_idr, NULL,
+>                                  1, MEM_CGROUP_ID_MAX,
+>                                  GFP_KERNEL);
 > 
-> ... thus, I'll look better into this.
->
-> Not sure now if there was some other corner-case.
+> into mem_cgroup_css_alloc(). How are you think about this?
 
-Actually, I've just remembered another use-case for that
-back-annotation. That's used when we have cgroups and per-task API
-asserting two different clamp values.
-
-For example, a task in a TG with max_clamp=50 is further clamped with a
-task specific max_clamp=10. The back annotation tracks the group_id in
-which we have been refcount right now, which is the task specific group
-in the previous example.
-
+I would have to double check. Maybe it can be done on top. But for the
+actual fix and a stable backport potentially should be as clear as
+possible. Your original patch would be just fine but if I would prefer 
+mem_cgroup_free for the symmetry.
 -- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Michal Hocko
+SUSE Labs
