@@ -1,148 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752191AbeDMOtA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 10:49:00 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:40289 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751111AbeDMOs6 (ORCPT
+        id S1752403AbeDMOwm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 10:52:42 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:34018 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750980AbeDMOwk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 10:48:58 -0400
-X-Google-Smtp-Source: AIpwx48JKM1CJpWsTGyYkIHPEF7qG5ONj0+XpduwxroPevJTIy9F14aOBeYRw/9b6D0Vrxj8w14dWkExFB4vNrc3WZ4=
+        Fri, 13 Apr 2018 10:52:40 -0400
+X-Google-Smtp-Source: AIpwx4+0hL1N9u0kOkvAMFAXi67Cw/flHnJdduId6KrNeKHUfMrE1Shah39fih/jH0VdjzTgdBQWX3ykZUqMXUEVA+0=
 MIME-Version: 1.0
-In-Reply-To: <20180412150826.20988-17-mszeredi@redhat.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-17-mszeredi@redhat.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 13 Apr 2018 17:48:56 +0300
-Message-ID: <CAOQ4uxjcB5_S15khi3yZ4MZcyQTHTup8ka-Oy_ts4bfHE1P8bw@mail.gmail.com>
-Subject: Re: [RFC PATCH 16/35] ovl: readd lsattr/chattr support
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180413131558.3jw5dhub5gcyotyt@salvia>
+References: <20180409105322.2247296-1-arnd@arndb.de> <20180409143741.dzooqrzcgi2bnvd5@salvia>
+ <CAK8P3a1GH5OSu62TBh46S0OdiXTJODsvV3To5=Jp2nL+fz1Puw@mail.gmail.com> <20180413131558.3jw5dhub5gcyotyt@salvia>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 13 Apr 2018 16:52:38 +0200
+X-Google-Sender-Auth: rpcFOCyFHbR4kdxBw--zOT3WXOA
+Message-ID: <CAK8P3a0u-7xVDuhU90GL50S63sd2WTCisKnorG+FDTLp4WDCVg@mail.gmail.com>
+Subject: Re: [PATCH] netfilter: fix CONFIG_NF_REJECT_IPV6=m link error
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 6:08 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
-> Implement FS_IOC_GETFLAGS and FS_IOC_SETFLAGS.
+On Fri, Apr 13, 2018 at 3:15 PM, Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+> On Mon, Apr 09, 2018 at 04:43:40PM +0200, Arnd Bergmann wrote:
+>> On Mon, Apr 9, 2018 at 4:37 PM, Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+>> > Hi Arnd,
+>> >
+>> > On Mon, Apr 09, 2018 at 12:53:12PM +0200, Arnd Bergmann wrote:
+>> >> We get a new link error with CONFIG_NFT_REJECT_INET=y and CONFIG_NF_REJECT_IPV6=m
+>> >
+>> > I think we can update NFT_REJECT_INET so it depends on NFT_REJECT_IPV4
+>> > and NFT_REJECT_IPV6. This doesn't allow here CONFIG_NFT_REJECT_INET=y
+>> > and CONFIG_NF_REJECT_IPV6=m.
+>> >
+>> > I mean, just like we do with NFT_FIB_INET.
+>>
+>> That can only work if NFT_REJECT_INET can be made a 'tristate' symbol
+>> again, so that code gets built as a loadable module if
+>> CONFIG_NF_REJECT_IPV6=m.
+>>
+>> > BTW, I think this problem has been is not related to the recent patch,
+>> > but something older that kbuild robot has triggered more easily for
+>> > some reason?
+>>
+>> 02c7b25e5f54 is the one that turned NF_TABLES_INET into a 'bool'
+>> symbol. NFT_REJECT depends on NF_TABLES_INET, so it used to
+>> restricted to a loadable module with IPV6=m, but can now be
+>> built-in, which causes that link error.
 >
-> Needs vfs_ioctl() exported to modules.
+> Still one more spin on this, I would like to see if we have a way to
+> fix this by simplifing things a bit.
 >
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/internal.h       |  1 -
->  fs/ioctl.c          |  1 +
->  fs/overlayfs/file.c | 59 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/fs.h  |  2 ++
->  4 files changed, 62 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 3319bf39e339..d5108d9c6a2f 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -176,7 +176,6 @@ extern const struct dentry_operations ns_dentry_operations;
->   */
->  extern int do_vfs_ioctl(struct file *file, unsigned int fd, unsigned int cmd,
->                     unsigned long arg);
-> -extern long vfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
->
->  /*
->   * iomap support:
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index 5ace7efb0d04..696f4c46a868 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -49,6 +49,7 @@ long vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->   out:
->         return error;
->  }
-> +EXPORT_SYMBOL(vfs_ioctl);
->
->  static int ioctl_fibmap(struct file *filp, int __user *p)
->  {
-> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> index 05e3e2f80b89..cc004ff1b05b 100644
-> --- a/fs/overlayfs/file.c
-> +++ b/fs/overlayfs/file.c
-> @@ -8,6 +8,7 @@
->
->  #include <linux/cred.h>
->  #include <linux/file.h>
-> +#include <linux/mount.h>
->  #include <linux/xattr.h>
->  #include <linux/uio.h>
->  #include "overlayfs.h"
-> @@ -291,6 +292,63 @@ long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
->         return ret;
->  }
->
-> +static long ovl_real_ioctl(struct file *file, unsigned int cmd,
-> +                          unsigned long arg)
-> +{
-> +       struct fd real;
-> +       const struct cred *old_cred;
-> +       long ret;
-> +
-> +       ret = ovl_real_file(file, &real);
-> +       if (ret)
-> +               return ret;
-> +
-> +       old_cred = ovl_override_creds(file_inode(file)->i_sb);
-> +       ret = vfs_ioctl(real.file, cmd, arg);
-> +       revert_creds(old_cred);
-> +
-> +       fdput(real);
-> +
-> +       return ret;
-> +}
-> +
-> +long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> +{
-> +       long ret;
-> +       struct inode *inode = file_inode(file);
-> +
-> +       switch (cmd) {
-> +       case FS_IOC_GETFLAGS:
-> +               ret = ovl_real_ioctl(file, cmd, arg);
-> +               break;
-> +
-> +       case FS_IOC_SETFLAGS:
-> +               if (!inode_owner_or_capable(inode))
-> +                       return -EACCES;
-> +
-> +               ret = mnt_want_write_file(file);
-> +               if (ret)
-> +                       return ret;
-> +
-> +               ret = ovl_copy_up(file_dentry(file));
-> +               if (!ret) {
-> +                       ret = ovl_real_ioctl(file, cmd, arg);
-> +
-> +                       inode_lock(inode);
-> +                       ovl_copyflags(ovl_inode_real(inode), inode);
-> +                       inode_unlock(inode);
-> +               }
-> +
-> +               mnt_drop_write_file(file);
-> +               break;
-> +
-> +       default:
-> +               ret = -ENOTTY;
+> Would this one I'm attaching would work?
 
-I am wondering out loud.
-This is a change of behavior that fs specific ioctls cannot be executed
-on overlay file - arguably a good change of behavior, but still a change
-that applications may got dependent on.
+One disadvantage is that it makes the vmlinux bigger since
+NF_REJECT_IPV{4,6} can no longer be a module at all now.
 
-Would it have been better to opt-in for this change by a more generic
-config/mount options, for example "consistent_fd" , instead of
-"copy_up_shared" and then we can choose whether or not to
-pass though unknown ioctls to real file.
+I suspect you also stil get a link error with IPV6=m, this time because
+the nf_reject_ipv6.o file fails to link against the ipv6 code, e.g.
+ipv6_skip_exthdr() and icmpv6_send() appear to be unreachable here.
+I haven't tried that though, so I might be missing something.
 
-I know we removed the want_write_file() protection from VFS, but
-still, pass through of ioctls was the legacy behavior. Thoughts?
-I don't mind to wait and see if someone shouts.
-
-Thanks,
-Amir.
+        Arnd
