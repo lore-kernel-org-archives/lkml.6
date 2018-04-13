@@ -1,48 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751776AbeDMVrS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 17:47:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53842 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751002AbeDMVrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 17:47:17 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D77F720652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=vishal@kernel.org
-Message-ID: <1523656035.21394.1.camel@kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: Adding backup maintainers for libnvdimm
- and DAX
-From: Vishal Verma <vishal@kernel.org>
-To: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Dave Jiang <dave.jiang@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
-Date: Fri, 13 Apr 2018 15:47:15 -0600
-In-Reply-To: <20180413210337.GA13316@linux.intel.com>
-References: <152365245998.33329.8224892765972973116.stgit@djiang5-desk3.ch.intel.com>
-         <20180413210337.GA13316@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751896AbeDMVth (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 17:49:37 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:43223 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751109AbeDMVte (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 17:49:34 -0400
+X-IronPort-AV: E=Sophos;i="5.48,446,1517846400";
+   d="scan'208";a="75828832"
+From: Atish Patra <atish.patra@wdc.com>
+To: palmer@sifive.com, linux-riscv@lists.infradead.org
+Cc: albert@sifive.com, tglx@linutronix.de, mjc@sifive.com,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/2] Fix timer initialization and Add support hotplug.
+Date: Fri, 13 Apr 2018 14:49:32 -0700
+Message-Id: <1523656174-249811-1-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-04-13 at 15:03 -0600, Ross Zwisler wrote:
-> On Fri, Apr 13, 2018 at 01:47:40PM -0700, Dave Jiang wrote:
-> > Adding additional maintainers to libnvdimm related code and DAX.
-> > 
-> > Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-> 
-> This is fine with me:
-> 
-> Acked-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+The patch (1/2)fixes issues around timer initialization. This fix is
+required for CPU hotplug to work. That's why they are clubbed into one
+series. I can separate them if required.
 
-Fine by me as well
 
-Acked-by: Vishal Verma <vishal.l.verma@intel.com>
+Atish Patra (2):
+  RISCV: Register clocksource and events correctly
+  RISCV: Support cpu hotplug.
 
-> _______________________________________________
-> Linux-nvdimm mailing list
-> Linux-nvdimm@lists.01.org
-> https://lists.01.org/mailman/listinfo/linux-nvdimm
+ arch/riscv/Kconfig                | 11 +++++-
+ arch/riscv/include/asm/csr.h      |  1 +
+ arch/riscv/include/asm/smp.h      |  9 +++--
+ arch/riscv/kernel/head.S          | 12 +++++++
+ arch/riscv/kernel/process.c       |  7 ++++
+ arch/riscv/kernel/setup.c         | 17 ++++++++++
+ arch/riscv/kernel/smpboot.c       | 70 +++++++++++++++++++++++++++++++++++++--
+ arch/riscv/kernel/time.c          |  9 +----
+ arch/riscv/kernel/traps.c         |  6 ++--
+ drivers/clocksource/riscv_timer.c | 44 +++++++++++++++---------
+ include/linux/cpuhotplug.h        |  1 +
+ 11 files changed, 154 insertions(+), 33 deletions(-)
+
+-- 
+2.7.4
