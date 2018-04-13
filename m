@@ -1,223 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeDMFaE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 01:30:04 -0400
-Received: from mga01.intel.com ([192.55.52.88]:31456 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750859AbeDMFaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 01:30:02 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,444,1517904000";
-   d="scan'208,223";a="47537336"
-Message-ID: <1523597397.16235.45.camel@intel.com>
-Subject: Re: [GIT PULL] Thermal management updates for v4.17-rc1
-From: Zhang Rui <rui.zhang@intel.com>
-To: Eduardo Valentin <edubezval@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "Li, Philip" <philip.li@intel.com>
-Date: Fri, 13 Apr 2018 13:29:57 +0800
-In-Reply-To: <20180413040855.GA29826@localhost.localdomain>
-References: <1523436077.16235.5.camel@intel.com>
-         <CA+55aFzqJ2PfUnkVJ6A-8WRQTciWb8j+25r41JLCvz7h0QEJiA@mail.gmail.com>
-         <1523509711.16235.25.camel@intel.com>
-         <CA+55aFw0C-S0L-cnk0oROG=Khqy9s36O+g3_BxqPfewKGQ9_EQ@mail.gmail.com>
-         <20180413040855.GA29826@localhost.localdomain>
-Content-Type: multipart/mixed; boundary="=-Enux9b8z9l3+25MSJ1H/"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
+        id S1753317AbeDMFii (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 01:38:38 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.217]:14251 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752996AbeDMFig (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 01:38:36 -0400
+X-RZG-AUTH: :P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9zW4DNhHoQE+naq7U2oCocl772u2XiabRKKbHM1HYja5N/pDsB6V17g==
+X-RZG-CLASS-ID: mo00
+From: Stephan Mueller <smueller@chronox.de>
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: linux-crypto@vger.kernel.org,
+        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
+        stable@kernel.org
+Subject: Re: [PATCH 1/5] random: fix crng_ready() test
+Date: Fri, 13 Apr 2018 07:38:30 +0200
+Message-ID: <1699469.KmO53oa8XU@tauon.chronox.de>
+In-Reply-To: <20180413013046.404-1-tytso@mit.edu>
+References: <20180413013046.404-1-tytso@mit.edu>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am Freitag, 13. April 2018, 03:30:42 CEST schrieb Theodore Ts'o:
 
---=-Enux9b8z9l3+25MSJ1H/
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Hi Theodore,
 
-On 四, 2018-04-12 at 21:08 -0700, Eduardo Valentin wrote:
-> Hello,
+> The crng_init variable has three states:
 > 
-> On Thu, Apr 12, 2018 at 09:55:19AM -0700, Linus Torvalds wrote:
-> > 
-> > On Wed, Apr 11, 2018 at 10:08 PM, Zhang Rui <rui.zhang@intel.com>
-> > wrote:
-> > > 
-> > > 
-> > > could you please illustrate me what the kconfig & warning is?
-> > Just "make allmodconfig" and the warning is about a uninitialized
-> > variable.
-> > 
-> > Line 304 in drivers/thermal/samsung/exynos_tmu.c if my shell
-> > history
-> > is to be believed.
-> > 
-> >                 Linus
-> Yeah, this has also passed my local compilation error. Somehow my
-> gcc4.9
-> is not catching it. Using an older gcc (gcc4.6) does catch it.
+> 0: The CRNG is not initialized at all
+> 1: The CRNG has a small amount of entropy, hopefully good enough for
+>    early-boot, non-cryptographical use cases
+> 2: The CRNG is fully initialized and we are sure it is safe for
+>    cryptographic use cases.
 > 
+> The crng_ready() function should only return true once we are in the
+> last state.
+> 
+Do I see that correctly that getrandom(2) will now unblock after the 
+input_pool has obtained 128 bits of entropy? Similarly for 
+get_random_bytes_wait.
 
-I think there are two problems here
+As this seems to be the only real use case for crng_ready (apart from 
+logging), what is the purpose of crng_init == 1?
 
-1. Actually, this error has been raised by 0-day earlier.
-https://marc.info/?l=linux-pm&m=152107340117077&w=2
-Don't know why it still goes into thermal-soc tree.
-
-2. After pulled the thermal-soc changes, I also asked 0-day to run
-build test, but I didn't get any warning report (email attached), CC
-Philip and Shun to look at this issue.
-
-thanks,
-rui
---=-Enux9b8z9l3+25MSJ1H/
-Content-Type: application/mbox;
-	name*0="[rui:next]_BUILD_SUCCESS_f8837aac36cdc7430422cd65f4466071b42654bb";
-	name*1=".mbox"
-Content-Disposition: attachment;
-	filename*0="[rui:next]_BUILD_SUCCESS_f8837aac36cdc7430422cd65f4466071b426";
-	filename*1="54bb.mbox"
-Content-Transfer-Encoding: base64
-
-RnJvbSBmZW5nZ3Vhbmcud3VAaW50ZWwuY29tIFR1ZSBBcHIgIDMgMTA6NDk6NDYgMjAxOApSZWNl
-aXZlZDogZnJvbSBzaHNtc3gxMDEuY2NyLmNvcnAuaW50ZWwuY29tICgxMC4yMzkuNC4xNTMpIGJ5
-CiBTSFNNU1gxMDQuY2NyLmNvcnAuaW50ZWwuY29tICgxMC4yMzkuNC43MCkgd2l0aCBNaWNyb3Nv
-ZnQgU01UUCBTZXJ2ZXIgKFRMUykKIGlkIDE0LjMuMzE5LjI7IFR1ZSwgMyBBcHIgMjAxOCAxMDo0
-OTo0NiArMDgwMApSZWNlaXZlZDogZnJvbSBmbXNtc3gxMDUuYW1yLmNvcnAuaW50ZWwuY29tICgx
-MC4xOC4xMjQuMjAzKSBieQogU0hTTVNYMTAxLmNjci5jb3JwLmludGVsLmNvbSAoMTAuMjM5LjQu
-MTUzKSB3aXRoIE1pY3Jvc29mdCBTTVRQIFNlcnZlcgogKFRMUykgaWQgMTQuMy4zMTkuMjsgVHVl
-LCAzIEFwciAyMDE4IDEwOjQ5OjQ1ICswODAwClJlY2VpdmVkOiBmcm9tIGZtc21nYTAwNi5mbS5p
-bnRlbC5jb20gKDEwLjI1My4yNC4yMCkgYnkKIGZtc21zeDEwNS0yLmNwcy5pbnRlbC5jb20gKDEw
-LjE4LjEyNC4yMTIpIHdpdGggTWljcm9zb2Z0IFNNVFAgU2VydmVyIGlkCiAxNC4zLjMxOS4yOyBN
-b24sIDIgQXByIDIwMTggMTk6NDk6NDQgLTA3MDAKWC1FeHRMb29wMTogMQpYLUlyb25Qb3J0LUFW
-OiBFPVNvcGhvcztpPSI1LjQ4LDM5OCwxNTE3OTA0MDAwIjsgIGQ9InNjYW4nMjA4IjthPSIyMTcw
-MDgxNTEiClJlY2VpdmVkOiBmcm9tIGJlZS5zaC5pbnRlbC5jb20gKEhFTE8gYmVlKSAoWzEwLjIz
-OS45Ny4xNF0pICBieQogZm1zbWdhMDA2LmZtLmludGVsLmNvbSB3aXRoIEVTTVRQOyAwMiBBcHIg
-MjAxOCAxOTo0OTozOSAtMDcwMApSZWNlaXZlZDogZnJvbSBrYnVpbGQgYnkgYmVlIHdpdGggbG9j
-YWwgKEV4aW0gNC44NF8yKQkoZW52ZWxvcGUtZnJvbQogPGZlbmdndWFuZy53dUBpbnRlbC5jb20+
-KQlpZCAxZjNDMHctMDAwSjBrLUI0OyBUdWUsIDAzIEFwciAyMDE4IDEwOjQ5OjM4CiArMDgwMApE
-YXRlOiBUdWUsIDMgQXByIDIwMTggMTA6NDk6MDQgKzA4MDAKRnJvbToga2J1aWxkIHRlc3Qgcm9i
-b3QgPGZlbmdndWFuZy53dUBpbnRlbC5jb20+ClRvOiBaaGFuZyBSdWkgPHJ1aS56aGFuZ0BpbnRl
-bC5jb20+ClN1YmplY3Q6IFtydWk6bmV4dF0gQlVJTEQgU1VDQ0VTUyBmODgzN2FhYzM2Y2RjNzQz
-MDQyMmNkNjVmNDQ2NjA3MWI0MjY1NGJiCk1lc3NhZ2UtSUQ6IDw1YWMyZWJhMC5NOHM4c2VTck4r
-Z01Lajh5JWZlbmdndWFuZy53dUBpbnRlbC5jb20+ClVzZXItQWdlbnQ6IEhlaXJsb29tIG1haWx4
-IDEyLjUgNi8yMC8xMApDb250ZW50LVR5cGU6IHRleHQvcGxhaW47IGNoYXJzZXQ9InVzLWFzY2lp
-IgpYLVNBLUV4aW0tQ29ubmVjdC1JUDogPGxvY2FsbHkgZ2VuZXJhdGVkPgpYLVNBLUV4aW0tTWFp
-bC1Gcm9tOiBmZW5nZ3Vhbmcud3VAaW50ZWwuY29tClgtU0EtRXhpbS1TY2FubmVkOiBObyAob24g
-YmVlKTsgU0FFeGltUnVuQ29uZCBleHBhbmRlZCB0byBmYWxzZQpSZXR1cm4tUGF0aDogZmVuZ2d1
-YW5nLnd1QGludGVsLmNvbQpYLU1TLUV4Y2hhbmdlLU9yZ2FuaXphdGlvbi1BdXRoU291cmNlOiBG
-TVNNU1gxMDUuYW1yLmNvcnAuaW50ZWwuY29tClgtTVMtRXhjaGFuZ2UtT3JnYW5pemF0aW9uLUF1
-dGhBczogSW50ZXJuYWwKWC1NUy1FeGNoYW5nZS1Pcmdhbml6YXRpb24tQXV0aE1lY2hhbmlzbTog
-MTAKWC1NUy1FeGNoYW5nZS1Pcmdhbml6YXRpb24tQVZTdGFtcC1NYWlsYm94OiBOQUk7NTkwOTYz
-MTY7MDtub3ZpcnVzCk1JTUUtVmVyc2lvbjogMS4wClgtRXZvbHV0aW9uLVNvdXJjZTogMTM1MTgz
-Njk2MC4xMDg4Ny4yMUByemhhbmcxLW1vYmw0CkNvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6IDhi
-aXQKCnRyZWUvYnJhbmNoOiBnaXQ6Ly9iZWUuc2guaW50ZWwuY29tL2dpdC9ydWkvbGludXguZ2l0
-ICBuZXh0DQpicmFuY2ggSEVBRDogZjg4MzdhYWMzNmNkYzc0MzA0MjJjZDY1ZjQ0NjYwNzFiNDI2
-NTRiYiAgTWVyZ2UgYnJhbmNoZXMgJ3RoZXJtYWwtY29yZScgYW5kICd0aGVybWFsLXNvYycgaW50
-byBuZXh0DQoNCmVsYXBzZWQgdGltZTogMzdtDQoNCmNvbmZpZ3MgdGVzdGVkOiAxMTYNCg0KVGhl
-IGZvbGxvd2luZyBjb25maWdzIGhhdmUgYmVlbiBidWlsdCBzdWNjZXNzZnVsbHkuDQpNb3JlIGNv
-bmZpZ3MgbWF5IGJlIHRlc3RlZCBpbiB0aGUgY29taW5nIGRheXMuDQoNCmFscGhhICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIGRlZmNvbmZpZw0KcGFyaXNjICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIGFsbG5vY29uZmlnDQpwYXJpc2MgICAgICAgICAgICAgICAgICAgICAgICAgYjE4
-MF9kZWZjb25maWcNCnBhcmlzYyAgICAgICAgICAgICAgICAgICAgICAgIGMzMDAwX2RlZmNvbmZp
-Zw0KcGFyaXNjICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGVmY29uZmlnDQppMzg2ICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHRpbnljb25maWcNCnNoICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICBhbGxub2NvbmZpZw0Kc2ggICAgICAgICAgICAgICAgICAgICAgICAg
-IHJzazcyNjlfZGVmY29uZmlnDQpzaCAgICAgICAgICAgICAgICAgIHNoNzc4NWxjcl8zMmJpdF9k
-ZWZjb25maWcNCnNoICAgICAgICAgICAgICAgICAgICAgICAgICAgIHRpdGFuX2RlZmNvbmZpZw0K
-aTM4NiAgICAgICAgICAgICAgICAgICByYW5kY29uZmlnLXgwMTMtMjAxODEzDQppMzg2ICAgICAg
-ICAgICAgICAgICAgIHJhbmRjb25maWcteDAxNC0yMDE4MTMNCmkzODYgICAgICAgICAgICAgICAg
-ICAgcmFuZGNvbmZpZy14MDEyLTIwMTgxMw0KaTM4NiAgICAgICAgICAgICAgICAgICByYW5kY29u
-ZmlnLXgwMTUtMjAxODEzDQppMzg2ICAgICAgICAgICAgICAgICAgIHJhbmRjb25maWcteDAxNi0y
-MDE4MTMNCmkzODYgICAgICAgICAgICAgICAgICAgcmFuZGNvbmZpZy14MDE5LTIwMTgxMw0KaTM4
-NiAgICAgICAgICAgICAgICAgICByYW5kY29uZmlnLXgwMTAtMjAxODEzDQppMzg2ICAgICAgICAg
-ICAgICAgICAgIHJhbmRjb25maWcteDAxOC0yMDE4MTMNCmkzODYgICAgICAgICAgICAgICAgICAg
-cmFuZGNvbmZpZy14MDExLTIwMTgxMw0KaTM4NiAgICAgICAgICAgICAgICAgICByYW5kY29uZmln
-LXgwMTctMjAxODEzDQptaWNyb2JsYXplICAgICAgICAgICAgICAgICAgICAgIG1tdV9kZWZjb25m
-aWcNCm1pY3JvYmxhemUgICAgICAgICAgICAgICAgICAgIG5vbW11X2RlZmNvbmZpZw0KaTM4NiAg
-ICAgICAgICAgICAgICAgICAgIHJhbmRjb25maWctbjAtMjAxODEzDQppMzg2ICAgICAgICAgICAg
-ICAgICAgICAgcmFuZGNvbmZpZy1pMC0yMDE4MTMNCmkzODYgICAgICAgICAgICAgICAgICAgICBy
-YW5kY29uZmlnLWkxLTIwMTgxMw0KYmxhY2tmaW4gICAgICAgICAgICAgICAgQkY1MjYtRVpCUkRf
-ZGVmY29uZmlnDQpibGFja2ZpbiAgICAgICAgICAgICAgICBCRjUzMy1FWktJVF9kZWZjb25maWcN
-CmJsYWNrZmluICAgICAgICAgICAgQkY1NjEtRVpLSVQtU01QX2RlZmNvbmZpZw0KYmxhY2tmaW4g
-ICAgICAgICAgICAgICAgICBUQ00tQkY1MzdfZGVmY29uZmlnDQpjcmlzICAgICAgICAgICAgICAg
-ICBldHJheC0xMDBseF92Ml9kZWZjb25maWcNCmZydiAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIGRlZmNvbmZpZw0KbW4xMDMwMCAgICAgICAgICAgICAgICAgICAgIGFzYjIzNjRfZGVm
-Y29uZmlnDQpvcGVucmlzYyAgICAgICAgICAgICAgICAgICAgb3Ixa3NpbV9kZWZjb25maWcNCnRp
-bGUgICAgICAgICAgICAgICAgICAgICAgICAgdGlsZWd4X2RlZmNvbmZpZw0KdW0gICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIGkzODZfZGVmY29uZmlnDQp1bSAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHg4Nl82NF9kZWZjb25maWcNCmM2eCAgICAgICAgICAgICAgICAgICAgICAgIGV2bWM2
-Njc4X2RlZmNvbmZpZw0KaDgzMDAgICAgICAgICAgICAgICAgICAgIGg4MzAwaC1zaW1fZGVmY29u
-ZmlnDQptMzJyICAgICAgICAgICAgICAgICAgICAgICBtMzIxMDR1dF9kZWZjb25maWcNCm0zMnIg
-ICAgICAgICAgICAgICAgICAgICBtYXBwaTMuc21wX2RlZmNvbmZpZw0KbTMyciAgICAgICAgICAg
-ICAgICAgICAgICAgICBvcHNwdXRfZGVmY29uZmlnDQptMzJyICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgdXNydl9kZWZjb25maWcNCm5pb3MyICAgICAgICAgICAgICAgICAgICAgICAgIDEwbTUw
-X2RlZmNvbmZpZw0Kc2NvcmUgICAgICAgICAgICAgICAgICAgICAgc3BjdDY2MDBfZGVmY29uZmln
-DQp4dGVuc2EgICAgICAgICAgICAgICAgICAgICAgIGNvbW1vbl9kZWZjb25maWcNCnh0ZW5zYSAg
-ICAgICAgICAgICAgICAgICAgICAgICAgaXNzX2RlZmNvbmZpZw0KaWE2NCAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgYWxsZGVmY29uZmlnDQppYTY0ICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgYWxsbm9jb25maWcNCmlhNjQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRl
-ZmNvbmZpZw0KaTM4NiAgICAgICAgICAgICAgICAgICAgIHJhbmRjb25maWctYTAtMjAxODEzDQpp
-Mzg2ICAgICAgICAgICAgICAgICAgICAgcmFuZGNvbmZpZy1hMS0yMDE4MTMNCng4Nl82NCAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgYWNwaS1yZWRlZg0KeDg2XzY0ICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgYWxseWVzZGViaWFuDQp4ODZfNjQgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIG5mc3Jvb3QNCng4Nl82NCAgICAgICAgICAgICAgICAgcmFuZGNvbmZpZy14MDEwLTIw
-MTgxMw0KeDg2XzY0ICAgICAgICAgICAgICAgICByYW5kY29uZmlnLXgwMTMtMjAxODEzDQp4ODZf
-NjQgICAgICAgICAgICAgICAgIHJhbmRjb25maWcteDAxNC0yMDE4MTMNCng4Nl82NCAgICAgICAg
-ICAgICAgICAgcmFuZGNvbmZpZy14MDE5LTIwMTgxMw0KeDg2XzY0ICAgICAgICAgICAgICAgICBy
-YW5kY29uZmlnLXgwMTEtMjAxODEzDQp4ODZfNjQgICAgICAgICAgICAgICAgIHJhbmRjb25maWct
-eDAxNS0yMDE4MTMNCng4Nl82NCAgICAgICAgICAgICAgICAgcmFuZGNvbmZpZy14MDE4LTIwMTgx
-Mw0KeDg2XzY0ICAgICAgICAgICAgICAgICByYW5kY29uZmlnLXgwMTYtMjAxODEzDQp4ODZfNjQg
-ICAgICAgICAgICAgICAgIHJhbmRjb25maWcteDAxNy0yMDE4MTMNCng4Nl82NCAgICAgICAgICAg
-ICAgICAgcmFuZGNvbmZpZy14MDEyLTIwMTgxMw0KaTM4NiAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgYWxsZGVmY29uZmlnDQppMzg2ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYWxs
-bm9jb25maWcNCmkzODYgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRlZmNvbmZpZw0K
-eDg2XzY0ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByaGVsDQp4ODZfNjQgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgcmhlbC03LjINCmkzODYgICAgICAgICAgICAgICAg
-ICAgICByYW5kY29uZmlnLXMwLTIwMTgxMw0KaTM4NiAgICAgICAgICAgICAgICAgICAgIHJhbmRj
-b25maWctczEtMjAxODEzDQp4ODZfNjQgICAgICAgICAgICAgICAgICAgcmFuZGNvbmZpZy1pMC0y
-MDE4MTMNCnNwYXJjICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRlZmNvbmZpZw0Kc3Bh
-cmM2NCAgICAgICAgICAgICAgICAgICAgICAgICAgIGFsbG5vY29uZmlnDQpzcGFyYzY0ICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBkZWZjb25maWcNCm02OGsgICAgICAgICAgICAgICAgICAg
-ICAgIG01NDc1ZXZiX2RlZmNvbmZpZw0KbTY4ayAgICAgICAgICAgICAgICAgICAgICAgICAgbXVs
-dGlfZGVmY29uZmlnDQptNjhrICAgICAgICAgICAgICAgICAgICAgICAgICAgc3VuM19kZWZjb25m
-aWcNCng4Nl82NCAgICAgICAgICAgICAgICAgICAgICAgICAgIGFsbG1vZGNvbmZpZw0KbWlwcyAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIDMycjJfZGVmY29uZmlnDQptaXBzICAgICAgICAgICAg
-ICAgICAgICAgICAgIDY0cjZlbF9kZWZjb25maWcNCm1pcHMgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBhbGxub2NvbmZpZw0KbWlwcyAgICAgICAgICAgICAgICAgICAgICBmdWxvb25nMmVf
-ZGVmY29uZmlnDQptaXBzICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBqejQ3NDAN
-Cm1pcHMgICAgICAgICAgICAgICAgICAgICAgbWFsdGFfa3ZtX2RlZmNvbmZpZw0KbWlwcyAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB0eHg5DQp4ODZfNjQgICAgICAgICAgICAg
-ICAgIHJhbmRjb25maWcteDAwMi0yMDE4MTMNCng4Nl82NCAgICAgICAgICAgICAgICAgcmFuZGNv
-bmZpZy14MDA2LTIwMTgxMw0KeDg2XzY0ICAgICAgICAgICAgICAgICByYW5kY29uZmlnLXgwMDUt
-MjAxODEzDQp4ODZfNjQgICAgICAgICAgICAgICAgIHJhbmRjb25maWcteDAwNC0yMDE4MTMNCng4
-Nl82NCAgICAgICAgICAgICAgICAgcmFuZGNvbmZpZy14MDA5LTIwMTgxMw0KeDg2XzY0ICAgICAg
-ICAgICAgICAgICByYW5kY29uZmlnLXgwMDEtMjAxODEzDQp4ODZfNjQgICAgICAgICAgICAgICAg
-IHJhbmRjb25maWcteDAwOC0yMDE4MTMNCng4Nl82NCAgICAgICAgICAgICAgICAgcmFuZGNvbmZp
-Zy14MDAzLTIwMTgxMw0KeDg2XzY0ICAgICAgICAgICAgICAgICByYW5kY29uZmlnLXgwMDAtMjAx
-ODEzDQp4ODZfNjQgICAgICAgICAgICAgICAgIHJhbmRjb25maWcteDAwNy0yMDE4MTMNCmkzODYg
-ICAgICAgICAgICAgICAgICAgcmFuZGNvbmZpZy14MDczLTIwMTgxMw0KaTM4NiAgICAgICAgICAg
-ICAgICAgICByYW5kY29uZmlnLXgwNzUtMjAxODEzDQppMzg2ICAgICAgICAgICAgICAgICAgIHJh
-bmRjb25maWcteDA3MS0yMDE4MTMNCmkzODYgICAgICAgICAgICAgICAgICAgcmFuZGNvbmZpZy14
-MDc2LTIwMTgxMw0KaTM4NiAgICAgICAgICAgICAgICAgICByYW5kY29uZmlnLXgwNzktMjAxODEz
-DQppMzg2ICAgICAgICAgICAgICAgICAgIHJhbmRjb25maWcteDA3MC0yMDE4MTMNCmkzODYgICAg
-ICAgICAgICAgICAgICAgcmFuZGNvbmZpZy14MDc3LTIwMTgxMw0KaTM4NiAgICAgICAgICAgICAg
-ICAgICByYW5kY29uZmlnLXgwNzQtMjAxODEzDQppMzg2ICAgICAgICAgICAgICAgICAgIHJhbmRj
-b25maWcteDA3OC0yMDE4MTMNCmkzODYgICAgICAgICAgICAgICAgICAgcmFuZGNvbmZpZy14MDcy
-LTIwMTgxMw0KaTM4NiAgICAgICAgICAgICAgICAgICByYW5kY29uZmlnLXgwMDYtMjAxODEzDQpp
-Mzg2ICAgICAgICAgICAgICAgICAgIHJhbmRjb25maWcteDAwMC0yMDE4MTMNCmkzODYgICAgICAg
-ICAgICAgICAgICAgcmFuZGNvbmZpZy14MDA4LTIwMTgxMw0KaTM4NiAgICAgICAgICAgICAgICAg
-ICByYW5kY29uZmlnLXgwMDktMjAxODEzDQppMzg2ICAgICAgICAgICAgICAgICAgIHJhbmRjb25m
-aWcteDAwNC0yMDE4MTMNCmkzODYgICAgICAgICAgICAgICAgICAgcmFuZGNvbmZpZy14MDAzLTIw
-MTgxMw0KaTM4NiAgICAgICAgICAgICAgICAgICByYW5kY29uZmlnLXgwMDUtMjAxODEzDQppMzg2
-ICAgICAgICAgICAgICAgICAgIHJhbmRjb25maWcteDAwMi0yMDE4MTMNCmkzODYgICAgICAgICAg
-ICAgICAgICAgcmFuZGNvbmZpZy14MDAxLTIwMTgxMw0KaTM4NiAgICAgICAgICAgICAgICAgICBy
-YW5kY29uZmlnLXgwMDctMjAxODEzDQoNClRoYW5rcywNCkZlbmdndWFuZw0KCg==
-
-
---=-Enux9b8z9l3+25MSJ1H/--
+Ciao
+Stephan
