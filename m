@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754388AbeDMLXD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:23:03 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36956 "EHLO
+        id S1754433AbeDMLXO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:23:14 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37364 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754066AbeDMLW7 (ORCPT
+        with ESMTP id S1754155AbeDMLXN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:22:59 -0400
+        Fri, 13 Apr 2018 07:23:13 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Peter Rosin <peda@axentia.se>
 Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
@@ -14,17 +14,17 @@ Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
         Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: tfa9879: fix whitespace issues caused by mindless conversion" to the asoc tree
-In-Reply-To: <20180412211437.21599-3-peda@axentia.se>
-Message-Id: <E1f6wnB-0008ST-D7@debutante>
-Date: Fri, 13 Apr 2018 12:22:57 +0100
+Subject: Applied "ASoC: max9860: fix whitespace issues caused by mindless conversion" to the asoc tree
+In-Reply-To: <20180412211437.21599-2-peda@axentia.se>
+Message-Id: <E1f6wnP-0008US-AI@debutante>
+Date: Fri, 13 Apr 2018 12:23:11 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: tfa9879: fix whitespace issues caused by mindless conversion
+   ASoC: max9860: fix whitespace issues caused by mindless conversion
 
 has been applied to the asoc tree at
 
@@ -49,10 +49,10 @@ to this mail.
 Thanks,
 Mark
 
->From 0d9c948bf87ef48a9c729fbe0ec279733f356d06 Mon Sep 17 00:00:00 2001
+>From 5c1dd6eee4923c89930f35bbc820c5c6af85e096 Mon Sep 17 00:00:00 2001
 From: Peter Rosin <peda@axentia.se>
-Date: Thu, 12 Apr 2018 23:14:34 +0200
-Subject: [PATCH] ASoC: tfa9879: fix whitespace issues caused by mindless
+Date: Thu, 12 Apr 2018 23:14:33 +0200
+Subject: [PATCH] ASoC: max9860: fix whitespace issues caused by mindless
  conversion
 
 Long lines and bad alignment disturbs the reading pleasure.
@@ -60,68 +60,41 @@ Long lines and bad alignment disturbs the reading pleasure.
 Signed-off-by: Peter Rosin <peda@axentia.se>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/tfa9879.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ sound/soc/codecs/max9860.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/tfa9879.c b/sound/soc/codecs/tfa9879.c
-index 6d213c6d3920..c30e0efdbe39 100644
---- a/sound/soc/codecs/tfa9879.c
-+++ b/sound/soc/codecs/tfa9879.c
-@@ -88,13 +88,14 @@ static int tfa9879_hw_params(struct snd_pcm_substream *substream,
+diff --git a/sound/soc/codecs/max9860.c b/sound/soc/codecs/max9860.c
+index 96b2db3f2ddd..c1bd9de5e4a3 100644
+--- a/sound/soc/codecs/max9860.c
++++ b/sound/soc/codecs/max9860.c
+@@ -443,7 +443,8 @@ static int max9860_hw_params(struct snd_pcm_substream *substream,
+ 		ret = regmap_update_bits(max9860->regmap, MAX9860_AUDIOCLKHIGH,
+ 					 MAX9860_PLL, MAX9860_PLL);
+ 		if (ret) {
+-			dev_err(component->dev, "Failed to enable PLL: %d\n", ret);
++			dev_err(component->dev, "Failed to enable PLL: %d\n",
++				ret);
+ 			return ret;
+ 		}
  	}
+@@ -515,7 +516,8 @@ static int max9860_set_bias_level(struct snd_soc_component *component,
+ 		ret = regmap_update_bits(max9860->regmap, MAX9860_PWRMAN,
+ 					 MAX9860_SHDN, MAX9860_SHDN);
+ 		if (ret) {
+-			dev_err(component->dev, "Failed to remove SHDN: %d\n", ret);
++			dev_err(component->dev, "Failed to remove SHDN: %d\n",
++				ret);
+ 			return ret;
+ 		}
+ 		break;
+@@ -697,7 +699,7 @@ static int max9860_probe(struct i2c_client *i2c)
+ 	pm_runtime_idle(dev);
  
- 	if (tfa9879->lsb_justified)
--		snd_soc_component_update_bits(component, TFA9879_SERIAL_INTERFACE_1,
--				    TFA9879_I2S_SET_MASK,
--				    i2s_set << TFA9879_I2S_SET_SHIFT);
-+		snd_soc_component_update_bits(component,
-+					      TFA9879_SERIAL_INTERFACE_1,
-+					      TFA9879_I2S_SET_MASK,
-+					      i2s_set << TFA9879_I2S_SET_SHIFT);
- 
- 	snd_soc_component_update_bits(component, TFA9879_SERIAL_INTERFACE_1,
--			    TFA9879_I2S_FS_MASK,
--			    fs << TFA9879_I2S_FS_SHIFT);
-+				      TFA9879_I2S_FS_MASK,
-+				      fs << TFA9879_I2S_FS_SHIFT);
- 	return 0;
- }
- 
-@@ -103,8 +104,8 @@ static int tfa9879_digital_mute(struct snd_soc_dai *dai, int mute)
- 	struct snd_soc_component *component = dai->component;
- 
- 	snd_soc_component_update_bits(component, TFA9879_MISC_CONTROL,
--			    TFA9879_S_MUTE_MASK,
--			    !!mute << TFA9879_S_MUTE_SHIFT);
-+				      TFA9879_S_MUTE_MASK,
-+				      !!mute << TFA9879_S_MUTE_SHIFT);
- 
- 	return 0;
- }
-@@ -152,11 +153,11 @@ static int tfa9879_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- 	}
- 
- 	snd_soc_component_update_bits(component, TFA9879_SERIAL_INTERFACE_1,
--			    TFA9879_SCK_POL_MASK,
--			    sck_pol << TFA9879_SCK_POL_SHIFT);
-+				      TFA9879_SCK_POL_MASK,
-+				      sck_pol << TFA9879_SCK_POL_SHIFT);
- 	snd_soc_component_update_bits(component, TFA9879_SERIAL_INTERFACE_1,
--			    TFA9879_I2S_SET_MASK,
--			    i2s_set << TFA9879_I2S_SET_SHIFT);
-+				      TFA9879_I2S_SET_MASK,
-+				      i2s_set << TFA9879_I2S_SET_SHIFT);
- 	return 0;
- }
- 
-@@ -298,7 +299,7 @@ static int tfa9879_i2c_probe(struct i2c_client *i2c,
- 			     tfa9879_regs[i].reg, tfa9879_regs[i].def);
- 
- 	return devm_snd_soc_register_component(&i2c->dev, &tfa9879_component,
--				      &tfa9879_dai, 1);
-+					       &tfa9879_dai, 1);
- }
- 
- static const struct i2c_device_id tfa9879_i2c_id[] = {
+ 	ret = devm_snd_soc_register_component(dev, &max9860_component_driver,
+-				     &max9860_dai, 1);
++					      &max9860_dai, 1);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to register CODEC: %d\n", ret);
+ 		goto err_pm;
 -- 
 2.17.0
