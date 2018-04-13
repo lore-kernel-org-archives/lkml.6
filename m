@@ -1,88 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751875AbeDMUrm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 16:47:42 -0400
-Received: from mga07.intel.com ([134.134.136.100]:23692 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751632AbeDMUrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 16:47:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,446,1517904000";
-   d="scan'208";a="31885352"
-Subject: [PATCH] MAINTAINERS: Adding backup maintainers for libnvdimm and DAX
-From: Dave Jiang <dave.jiang@intel.com>
-To: dan.j.williams@intel.com
-Cc: linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
-Date: Fri, 13 Apr 2018 13:47:40 -0700
-Message-ID: <152365245998.33329.8224892765972973116.stgit@djiang5-desk3.ch.intel.com>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1751141AbeDMUyJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 16:54:09 -0400
+Received: from 15.mo1.mail-out.ovh.net ([188.165.38.232]:43630 "EHLO
+        15.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750839AbeDMUyI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 16:54:08 -0400
+From: Andi Shyti <andi@etezian.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andi Shyti <andi@etezian.org>
+Subject: [PATCH v2] media: ir-spi: update Andi's e-mail
+Date: Fri, 13 Apr 2018 22:48:29 +0900
+Message-Id: <20180413134829.18872-1-andi@etezian.org>
+X-Mailer: git-send-email 2.17.0
+X-Ovh-Tracer-Id: 13058187122059494047
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtgedriedvgdeikecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding additional maintainers to libnvdimm related code and DAX.
+From: Andi Shyti <andi.shyti@samsung.com>
 
-Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+Because I will be leaving Samsung soon, update my e-mail to the
+etezian.org mail.
+
+CC: Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: Sean Young <sean@mess.org>
+Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
 ---
- MAINTAINERS |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Hi Sean,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 73d83416d852..958f75ad4193 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4246,6 +4246,9 @@ F:	include/trace/events/fs_dax.h
+thanks for the review and sorry for the late reply. Here is the
+patch with my mail changed also in the MODULE_AUTHOR macro.
+
+Thanks,
+Andi
+
+v1 - v2
+changed the mail also in the MODULE_AUTHOR macro
+
+ drivers/media/rc/ir-spi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/rc/ir-spi.c b/drivers/media/rc/ir-spi.c
+index 7163d5ce2e64..66334e8d63ba 100644
+--- a/drivers/media/rc/ir-spi.c
++++ b/drivers/media/rc/ir-spi.c
+@@ -2,7 +2,7 @@
+ // SPI driven IR LED device driver
+ //
+ // Copyright (c) 2016 Samsung Electronics Co., Ltd.
+-// Copyright (c) Andi Shyti <andi.shyti@samsung.com>
++// Copyright (c) Andi Shyti <andi@etezian.org>
  
- DEVICE DIRECT ACCESS (DAX)
- M:	Dan Williams <dan.j.williams@intel.com>
-+M:	Dave Jiang <dave.jiang@intel.com>
-+M:	Ross Zwisler <ross.zwisler@linux.intel.com>
-+M:	Vishal Verma <vishal.l.verma@intel.com>
- L:	linux-nvdimm@lists.01.org
- S:	Supported
- F:	drivers/dax/
-@@ -8034,6 +8037,9 @@ F:	tools/lib/lockdep/
+ #include <linux/delay.h>
+ #include <linux/fs.h>
+@@ -173,6 +173,6 @@ static struct spi_driver ir_spi_driver = {
  
- LIBNVDIMM BLK: MMIO-APERTURE DRIVER
- M:	Ross Zwisler <ross.zwisler@linux.intel.com>
-+M:	Dan Williams <dan.j.williams@intel.com>
-+M:	Vishal Verma <vishal.l.verma@intel.com>
-+M:	Dave Jiang <dave.jiang@intel.com>
- L:	linux-nvdimm@lists.01.org
- Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
- S:	Supported
-@@ -8042,6 +8048,9 @@ F:	drivers/nvdimm/region_devs.c
+ module_spi_driver(ir_spi_driver);
  
- LIBNVDIMM BTT: BLOCK TRANSLATION TABLE
- M:	Vishal Verma <vishal.l.verma@intel.com>
-+M:	Dan Williams <dan.j.williams@intel.com>
-+M:	Ross Zwisler <ross.zwisler@linux.intel.com>
-+M:	Dave Jiang <dave.jiang@intel.com>
- L:	linux-nvdimm@lists.01.org
- Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
- S:	Supported
-@@ -8049,6 +8058,9 @@ F:	drivers/nvdimm/btt*
- 
- LIBNVDIMM PMEM: PERSISTENT MEMORY DRIVER
- M:	Ross Zwisler <ross.zwisler@linux.intel.com>
-+M:	Dan Williams <dan.j.williams@intel.com>
-+M:	Vishal Verma <vishal.l.verma@intel.com>
-+M:	Dave Jiang <dave.jiang@intel.com>
- L:	linux-nvdimm@lists.01.org
- Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
- S:	Supported
-@@ -8064,6 +8076,9 @@ F:	Documentation/devicetree/bindings/pmem/pmem-region.txt
- 
- LIBNVDIMM: NON-VOLATILE MEMORY DEVICE SUBSYSTEM
- M:	Dan Williams <dan.j.williams@intel.com>
-+M:	Ross Zwisler <ross.zwisler@linux.intel.com>
-+M:	Vishal Verma <vishal.l.verma@intel.com>
-+M:	Dave Jiang <dave.jiang@intel.com>
- L:	linux-nvdimm@lists.01.org
- Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git
+-MODULE_AUTHOR("Andi Shyti <andi.shyti@samsung.com>");
++MODULE_AUTHOR("Andi Shyti <andi@etezian.org>");
+ MODULE_DESCRIPTION("SPI IR LED");
+ MODULE_LICENSE("GPL v2");
+-- 
+2.17.0
