@@ -1,155 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754234AbeDMNUf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 09:20:35 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39197 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753507AbeDMNUd (ORCPT
+        id S1754301AbeDMNWL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 09:22:11 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:42622 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754091AbeDMNWJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 09:20:33 -0400
-X-Google-Smtp-Source: AIpwx49MrrRBdy8Rycl5OqhH+0LfzQoRMjPj1SfpIct3B/nM/+0y2GAqVsr9m+TzWdn0WrOFLbkEZw==
-X-ME-Sender: <xms:nK7QWqyem4EAilAaTJfXdUOI72jAN9GyUd3-VoJeeEy42H7MZXLJIQ>
-Date: Fri, 13 Apr 2018 21:24:44 +0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [RFC tip/locking/lockdep v6 19/20] rcu: Equip sleepable RCU with
- lockdep dependency graph checks
-Message-ID: <20180413132444.wb2liczapxxizrne@tardis>
-References: <20180411135110.9217-1-boqun.feng@gmail.com>
- <20180411135647.21496-1-boqun.feng@gmail.com>
- <20180411185730.GU3948@linux.vnet.ibm.com>
- <20180412021233.ewncg5jjuzjw3x62@tardis>
- <20180412091217.GY4082@hirez.programming.kicks-ass.net>
+        Fri, 13 Apr 2018 09:22:09 -0400
+X-Google-Smtp-Source: AIpwx48lj33hdHDBGw77S0nOqZckoAYALB7kuEALMKs7SDeY1AhKaGvX/GydclbVd3YHO6kYVd7kBXYU8JPINCA2fUQ=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="daajw7nzooe3mxat"
-Content-Disposition: inline
-In-Reply-To: <20180412091217.GY4082@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <1522156531-28348-13-git-send-email-suzuki.poulose@arm.com>
+References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com> <1522156531-28348-13-git-send-email-suzuki.poulose@arm.com>
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Fri, 13 Apr 2018 14:21:48 +0100
+Message-ID: <CAFEAcA-jUSHuwRrWCH6vFENmEi7Xskn9s9BgDmBKj3YKCyXHXQ@mail.gmail.com>
+Subject: Re: [PATCH v2 12/17] kvm: arm/arm64: Expose supported physical
+ address limit for VM
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kvmarm@lists.cs.columbia.edu, kvm-devel <kvm@vger.kernel.org>,
+        Christoffer Dall <cdall@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Punit Agrawal <punit.agrawal@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 27 March 2018 at 14:15, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+> Expose the maximum physical address size supported by the host
+> for a VM. This could be later used by the userspace to choose the
+> appropriate size for a given VM. The limit is determined as the
+> minimum of actual CPU limit, the kernel limit (i.e, either 48 or 52)
+> and the stage2 page table support limit (which is 40bits at the moment).
+> For backward compatibility, we support a minimum of 40bits. The limit
+> will be lifted as we add support for the stage2 to support the host
+> kernel PA limit.
+>
+> This value may be different from what is exposed to the VM via
+> CPU ID registers. The limit only applies to the stage2 page table.
+>
+> Cc: Christoffer Dall <cdall@kernel.org>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Peter Maydel <peter.maydell@linaro.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  Documentation/virtual/kvm/api.txt | 14 ++++++++++++++
+>  arch/arm/include/asm/kvm_mmu.h    |  5 +++++
+>  arch/arm64/include/asm/kvm_mmu.h  |  5 +++++
+>  include/uapi/linux/kvm.h          |  6 ++++++
+>  virt/kvm/arm/arm.c                |  6 ++++++
+>  5 files changed, 36 insertions(+)
+>
+> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+> index 792fa87..55908a8 100644
+> --- a/Documentation/virtual/kvm/api.txt
+> +++ b/Documentation/virtual/kvm/api.txt
+> @@ -3500,6 +3500,20 @@ Returns: 0 on success; -1 on error
+>  This ioctl can be used to unregister the guest memory region registered
+>  with KVM_MEMORY_ENCRYPT_REG_REGION ioctl above.
+>
+> +4.113 KVM_ARM_GET_MAX_VM_PHYS_SHIFT
+> +Capability: basic
+> +Architectures: arm, arm64
+> +Type: system ioctl
+> +Parameters: none
+> +Returns: log2(Maximum physical address space size) supported by the
+> +hyperviosr.
 
---daajw7nzooe3mxat
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+typo: "hypervisor".
 
-On Thu, Apr 12, 2018 at 11:12:17AM +0200, Peter Zijlstra wrote:
-> On Thu, Apr 12, 2018 at 10:12:33AM +0800, Boqun Feng wrote:
-> > A trivial fix/hack would be adding local_irq_disable() and
-> > local_irq_enable() around srcu_lock_sync() like:
-> >=20
-> > 	static inline void srcu_lock_sync(struct lockdep_map *map)
-> > 	{
-> > 		local_irq_disable();
-> > 		lock_map_acquire(map);
-> > 		lock_map_release(map);
-> > 		local_irq_enable();
-> > 	}
-> >=20
-> > However, it might be better, if lockdep could provide some annotation
-> > API for such an empty critical section to say the grap-and-drop is
-> > atomic. Something like:
-> >=20
-> > 	/*
-> > 	 * Annotate a wait point for all previous critical section to
-> > 	 * go out.
-> > 	 *=20
-> > 	 * This won't make @map a irq unsafe lock, no matter it's called
-> > 	 * w/ or w/o irq disabled.
-> > 	 */
-> > 	lock_wait_unlock(struct lockdep_map *map, ..)
-> >=20
-> > And in this primitive, we do something similar like
-> > lock_acquire()+lock_release(). This primitive could be used elsewhere,
-> > as I bebieve we have several empty grab-and-drop critical section for
-> > lockdep annotations, e.g. in start_flush_work().
-> >=20
-> > Thoughts?
-> >=20
-> > This cerntainly requires a bit more work, in the meanwhile, I will add
-> > another self testcase which has a srcu_read_lock() called in irq.
->=20
-> Yeah, I've never really bothered to clean those things up, but I don't
-> see any reason to stop you from doing it ;-)
->=20
-> As to the initial pattern with disabling IRQs, I think I've seen code
-> like that before, and in general performance isn't a top priority
+> +
+> +This ioctl can be used to identify the maximum physical address space size
+> +supported by the hypervisor.
 
-Yeah, I saw we used that pattern in del_timer_sync()
+Is that the physical address space on the host, or the physical
+address space size we present to the guest?
 
-> (within reason) when you're running lockdep kernels, so I've usually let
-> it be.
+> The returned value indicates the maximum size
+> +of the address that can be resolved by the stage2 translation table on
+> +arm/arm64. On arm64, the value is decided based on the host kernel
+> +configuration and the system wide safe value of ID_AA64MMFR0_EL1:PARange.
+> +This may not match the value exposed to the VM in CPU ID registers.
 
-Turns out it's not very hard to write a working version of
-lock_wait_unlock() ;-) Just call __lock_acquire() and __lock_release()
-back-to-back with the @hardirqoff for __lock_acquire() to be 1:
+Isn't it likely to confuse the guest if we lie to it about the PA range it
+sees? When would the two values differ?
 
-	/*
-	 * lock_sync() - synchronize with all previous critical sections to finish.
-	 *
-	 * Simply a acquire+release annotation with hardirqoff is true, because no=
- lock
-	 * is actually held, so this annotaion alone is safe to be interrupted as =
-if
-	 * irqs are off
-	 */
-	void lock_sync(struct lockdep_map *lock, unsigned subclass, int read,
-		       int check, struct lockdep_map *nest_lock, unsigned long ip)
-	{
-		unsigned long flags;
+Do we also need a 'set' operation, so userspace can create a VM
+that has a 40 bit userspace on a CPU that supports more than that,
+or does it just work?
 
-		if (unlikely(current->lockdep_recursion))
-			return;
+What's the x86 API for KVM to tell userspace about physical address
+range restrictions?
 
-		raw_local_irq_save(flags);
-		check_flags(flags);
-
-		current->lockdep_recursion =3D 1;
-		__lock_acquire(lock, subclass, 0, read, check, 1, nest_lock, ip, 0, 0);
-		if (__lock_release(lock, 0, ip))
-			check_chain_key(current);
-
-		current->lockdep_recursion =3D 0;
-		raw_local_irq_restore(flags);
-	}
-	EXPORT_SYMBOL_GPL(lock_sync);
-
-I rename as lock_sync(), because most of the time, we annotate with this
-for a "sync point" with other critical sections. We can avoid some
-overhead if we refactor __lock_acquire() and __lock_release() with some
-helper functions, but I think this version is good enough for now, at
-least better than disabling IRQs around lock_map_acquire() +
-lock_map_release() ;-)
-
-Thoughts?
-
-Regards,
-Boqun
-
-
---daajw7nzooe3mxat
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlrQr5gACgkQSXnow7UH
-+rjwTAf/d2oiJk8R5Rc/5yGOs7wHBCXksrQpfCTg/0lmcGzF/Xco9BCmmuav5bCg
-kj5qfEPID0beQcbhXuPDeajsbdrsb/b8LLlwjO5VGi2XSH8tiSzSbjUTQ/97+n6n
-n0bFnEd2eCjHYK/KWuCs0Y8R3Ink7BhvBf4pbZdjKK34GATA/7sUqxOzdQ0Mu5HS
-6ygTKvZMM6XZetlI8A0anWvtgwQPBiHz3Kdy7wA3XeTzFLkrnMJ9KJB/I1ysXDm2
-H5oB60W6Qu7gxYptGIKfuzj1Lq/FQ1Qmx6dMEH5K6bk/HhGHenRdkoVLt0CLMaSb
-puvgtnTmnsOCeuwBa5q1nd7sNKq+zQ==
-=2D6C
------END PGP SIGNATURE-----
-
---daajw7nzooe3mxat--
+thanks
+-- PMM
