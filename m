@@ -1,85 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754715AbeDMLg4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:36:56 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:41891 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754433AbeDMLgL (ORCPT
+        id S1754726AbeDMLhE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:37:04 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36716 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753541AbeDMLhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:36:11 -0400
-X-Google-Smtp-Source: AIpwx4/iGcifhGPPDBdFoDU1QnkclxGJcinYsviZ0hteiIgTwTvgj31VF9avmAc2bNc7kZzGvCt4bg==
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 13/15] memory: tegra: Add Tegra114 memory controller hot resets
-Date: Fri, 13 Apr 2018 14:33:52 +0300
-Message-Id: <57ac9eca965eaddc04ab8f885b11cc37a6c0c8e6.1523301400.git.digetx@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <b063a7d44509189495825e73942329aca51e9e69.1523301400.git.digetx@gmail.com>
-References: <b063a7d44509189495825e73942329aca51e9e69.1523301400.git.digetx@gmail.com>
-In-Reply-To: <cover.1523301400.git.digetx@gmail.com>
-References: <cover.1523301400.git.digetx@gmail.com>
+        Fri, 13 Apr 2018 07:37:02 -0400
+Date: Fri, 13 Apr 2018 13:36:50 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH 1/7] sched/core: uclamp: add CPU clamp groups accounting
+Message-ID: <20180413113650.GR4064@hirez.programming.kicks-ass.net>
+References: <20180409165615.2326-1-patrick.bellasi@arm.com>
+ <20180409165615.2326-2-patrick.bellasi@arm.com>
+ <20180413084302.GR4043@hirez.programming.kicks-ass.net>
+ <20180413111510.GS14248@e110439-lin>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180413111510.GS14248@e110439-lin>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define the table of memory controller hot resets for Tegra114.
+On Fri, Apr 13, 2018 at 12:15:10PM +0100, Patrick Bellasi wrote:
+> On 13-Apr 10:43, Peter Zijlstra wrote:
+> > On Mon, Apr 09, 2018 at 05:56:09PM +0100, Patrick Bellasi wrote:
+> > > +static inline void uclamp_task_update(struct rq *rq, struct task_struct *p)
+> > > +{
+> > > +	int cpu = cpu_of(rq);
+> > > +	int clamp_id;
+> > > +
+> > > +	/* The idle task does not affect CPU's clamps */
+> > > +	if (unlikely(p->sched_class == &idle_sched_class))
+> > > +		return;
+> > > +	/* DEADLINE tasks do not affect CPU's clamps */
+> > > +	if (unlikely(p->sched_class == &dl_sched_class))
+> > > +		return;
+> > > +
+> > > +	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
+> > > +		if (uclamp_task_affects(p, clamp_id))
+> > > +			uclamp_cpu_put(p, cpu, clamp_id);
+> > > +		else
+> > > +			uclamp_cpu_get(p, cpu, clamp_id);
+> > > +	}
+> > > +}
+> > 
+> > Is that uclamp_task_affects() thing there to fix up the fact you failed
+> > to propagate the calling context (enqueue/dequeue) ?
+> 
+> Not really, it's intended by design: we back annotate the clamp_group
+> a task has been refcounted in.
+> 
+> The uclamp_task_affects() tells if we are refcounted now and then we
+> know from the back-annotation from which refcounter we need to remove
+> the task.
+> 
+> I found this solution much less racy and effective in avoiding to
+> screw up the refcounter whenever we look at a task at either
+> dequeue/migration time and these operations can overlaps with the
+> slow-path. Meaning, when we change the task specific clamp_group
+> either via syscall or cgroups attributes.
+> 
+> IOW, the back annotation allows to decouple refcounting from
+> clamp_group configuration in a lockless way.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/memory/tegra/tegra114.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+But it adds extra state and logic, to a fastpath, for no reason.
 
-diff --git a/drivers/memory/tegra/tegra114.c b/drivers/memory/tegra/tegra114.c
-index 7560b2f558a7..12528aa3062b 100644
---- a/drivers/memory/tegra/tegra114.c
-+++ b/drivers/memory/tegra/tegra114.c
-@@ -938,6 +938,36 @@ static const struct tegra_smmu_soc tegra114_smmu_soc = {
- 	.num_asids = 4,
- };
- 
-+#define TEGRA114_MC_RESET(_name, _control, _status, _bit)	\
-+	{							\
-+		.name = #_name,					\
-+		.id = TEGRA114_MC_RESET_##_name,		\
-+		.control = _control,				\
-+		.status = _status,				\
-+		.bit = _bit,					\
-+	}
-+
-+static const struct tegra_mc_reset tegra114_mc_resets[] = {
-+	TEGRA114_MC_RESET(AFI,      0x200, 0x204,  0),
-+	TEGRA114_MC_RESET(AVPC,     0x200, 0x204,  1),
-+	TEGRA114_MC_RESET(DC,       0x200, 0x204,  2),
-+	TEGRA114_MC_RESET(DCB,      0x200, 0x204,  3),
-+	TEGRA114_MC_RESET(EPP,      0x200, 0x204,  4),
-+	TEGRA114_MC_RESET(2D,       0x200, 0x204,  5),
-+	TEGRA114_MC_RESET(HC,       0x200, 0x204,  6),
-+	TEGRA114_MC_RESET(HDA,      0x200, 0x204,  7),
-+	TEGRA114_MC_RESET(ISP,      0x200, 0x204,  8),
-+	TEGRA114_MC_RESET(MPCORE,   0x200, 0x204,  9),
-+	TEGRA114_MC_RESET(MPCORELP, 0x200, 0x204, 10),
-+	TEGRA114_MC_RESET(MPE,      0x200, 0x204, 11),
-+	TEGRA114_MC_RESET(3D,       0x200, 0x204, 12),
-+	TEGRA114_MC_RESET(3D2,      0x200, 0x204, 13),
-+	TEGRA114_MC_RESET(PPCS,     0x200, 0x204, 14),
-+	TEGRA114_MC_RESET(SATA,     0x200, 0x204, 15),
-+	TEGRA114_MC_RESET(VDE,      0x200, 0x204, 16),
-+	TEGRA114_MC_RESET(VI,       0x200, 0x204, 17),
-+};
-+
- const struct tegra_mc_soc tegra114_mc_soc = {
- 	.clients = tegra114_mc_clients,
- 	.num_clients = ARRAY_SIZE(tegra114_mc_clients),
-@@ -947,4 +977,7 @@ const struct tegra_mc_soc tegra114_mc_soc = {
- 	.smmu = &tegra114_smmu_soc,
- 	.intmask = MC_INT_INVALID_SMMU_PAGE | MC_INT_SECURITY_VIOLATION |
- 		   MC_INT_DECERR_EMEM,
-+	.reset_ops = &terga_mc_reset_ops_common,
-+	.resets = tegra114_mc_resets,
-+	.num_resets = ARRAY_SIZE(tegra114_mc_resets),
- };
--- 
-2.17.0
+I suspect you messed up the cgroup side; because the syscall should
+already have done task_rq_lock() and hold both p->pi_lock and rq->lock
+and have dequeued the task when changing the attribute.
+
+It is actually really hard to make the syscall do it wrong.
