@@ -1,78 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751625AbeDMPjC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 11:39:02 -0400
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:45958 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750832AbeDMPjA (ORCPT
+        id S1751855AbeDMPkP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 11:40:15 -0400
+Received: from smtp-out4.electric.net ([192.162.216.185]:62403 "EHLO
+        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750832AbeDMPkN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 11:39:00 -0400
-Date: Fri, 13 Apr 2018 11:38:58 -0400
-From: Rich Felker <dalias@libc.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux-sh list <linux-sh@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>
-Subject: [GIT PULL] arch/sh updates for 4.17
-Message-ID: <20180413153858.GA24377@brightrain.aerifal.cx>
+        Fri, 13 Apr 2018 11:40:13 -0400
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'James Hogan'" <jhogan@kernel.org>, Sinan Kaya <okaya@codeaurora.org>
+CC: "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "timur@codeaurora.org" <timur@codeaurora.org>,
+        "sulrich@codeaurora.org" <sulrich@codeaurora.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 2/2] MIPS: io: add a barrier after register read in
+ readX()
+Thread-Topic: [PATCH v3 2/2] MIPS: io: add a barrier after register read in
+ readX()
+Thread-Index: AQHT0qikXjJOjqk/vUybR+JVW4DLMKP+1Ukw
+Date: Fri, 13 Apr 2018 15:41:00 +0000
+Message-ID: <e38a329dfb9c461ab3e91de7b96db3dc@AcuMS.aculab.com>
+References: <1522760109-16497-1-git-send-email-okaya@codeaurora.org>
+ <1522760109-16497-2-git-send-email-okaya@codeaurora.org>
+ <20180412215149.GA27802@saruman>
+In-Reply-To: <20180412215149.GA27802@saruman>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3DFeL6c009004
 
-Hi Linus,
+From: James Hogan
+> Sent: 12 April 2018 22:52
+> On Tue, Apr 03, 2018 at 08:55:04AM -0400, Sinan Kaya wrote:
+> > While a barrier is present in writeX() function before the register write,
+> > a similar barrier is missing in the readX() function after the register
+> > read. This could allow memory accesses following readX() to observe
+> > stale data.
+> >
+> > Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> > Reported-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> Both patches look like obvious improvements to me, so I'm happy to apply
+> to my fixes branch.
 
-Please pull these changes for arch/sh. Some of them have been pending
-(and in linux-next) for a long time and address longstanding issues.
+Don't you also need at least barrier() between the register write in writeX()
+and the register read in readX()?
+On ppc you probably need eieio.
+Or are drivers expected to insert that one?
+If they need to insert that one then why not all the others??
 
-Rich
-
-
-
-
-The following changes since commit 0adb32858b0bddf4ada5f364a84ed60b196dbcda:
-
-  Linux 4.16 (2018-04-01 14:20:27 -0700)
-
-are available in the git repository at:
-
-  git://git.libc.org/linux-sh tags/sh-for-4.17
-
-for you to fetch changes up to bf9c7e3d7924f72225f8f9c28438b4a711192ad3:
-
-  arch/sh: pcie-sh7786: handle non-zero DMA offset (2018-04-12 19:47:58 -0400)
-
-----------------------------------------------------------------
-Fixes for bugs in futex, device tree, and userspace breakpoint traps,
-and for PCI issues on SH7786.
-
-----------------------------------------------------------------
-Aurelien Jarno (1):
-      sh: fix futex FUTEX_OP_SET op on userspace addresses
-
-Rich Felker (2):
-      sh: fix memory corruption of unflattened device tree
-      sh: fix debug trap failure to process signals before return to user
-
-Thomas Petazzoni (8):
-      arch/sh: add sh7786_mm_sel() function
-      arch/sh: make the DMA mapping operations observe dev->dma_pfn_offset
-      arch/sh: pci: don't use disabled resources
-      arch/sh: pcie-sh7786: mark unavailable PCI resource as disabled
-      arch/sh: pcie-sh7786: exclude unusable PCI MEM areas
-      arch/sh: pcie-sh7786: adjust PCI MEM and IO regions
-      arch/sh: pcie-sh7786: adjust the memory mapping
-      arch/sh: pcie-sh7786: handle non-zero DMA offset
-
- arch/sh/boards/of-generic.c          |  6 ---
- arch/sh/drivers/pci/pci.c            |  5 +++
- arch/sh/drivers/pci/pcie-sh7786.c    | 78 +++++++++++++++++++++++++-----------
- arch/sh/include/asm/futex.h          |  5 +--
- arch/sh/include/cpu-sh4/cpu/sh7786.h |  7 ++++
- arch/sh/kernel/dma-nommu.c           |  7 +++-
- arch/sh/kernel/entry-common.S        |  2 +-
- arch/sh/kernel/setup.c               |  8 ++++
- arch/sh/mm/consistent.c              |  4 +-
- 9 files changed, 84 insertions(+), 38 deletions(-)
+	David
