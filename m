@@ -1,29 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754666AbeDMLYl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:24:41 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39956 "EHLO
+        id S1754677AbeDMLZK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:25:10 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40754 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754347AbeDMLYj (ORCPT
+        with ESMTP id S1754356AbeDMLZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:24:39 -0400
+        Fri, 13 Apr 2018 07:25:08 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Peter Rosin <peda@axentia.se>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: max9860: switch to using .probe_new" to the asoc tree
-In-Reply-To: <20180411124238.9385-1-peda@axentia.se>
-Message-Id: <E1f6won-0000KU-PV@debutante>
-Date: Fri, 13 Apr 2018 12:24:37 +0100
+Subject: Applied "ASoC: atmel_ssc_dai: fix spelling mistake: "Stoping" -> "Stopping"" to the asoc tree
+In-Reply-To: <20180330154420.6903-1-colin.king@canonical.com>
+Message-Id: <E1f6wp2-0000Mn-DN@debutante>
+Date: Fri, 13 Apr 2018 12:24:52 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: max9860: switch to using .probe_new
+   ASoC: atmel_ssc_dai: fix spelling mistake: "Stoping" -> "Stopping"
 
 has been applied to the asoc tree at
 
@@ -48,41 +54,34 @@ to this mail.
 Thanks,
 Mark
 
->From ba4e62f653656a0077322eb29c7b8dde3c84399e Mon Sep 17 00:00:00 2001
-From: Peter Rosin <peda@axentia.se>
-Date: Wed, 11 Apr 2018 14:42:37 +0200
-Subject: [PATCH] ASoC: max9860: switch to using .probe_new
+>From 78a7d414d5a8e3ea7bc5a636311cfb7ce593ce37 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 30 Mar 2018 16:44:20 +0100
+Subject: [PATCH] ASoC: atmel_ssc_dai: fix spelling mistake: "Stoping" ->
+ "Stopping"
 
-Use the new probe style for i2c drivers.
+Trivial fix to spelling mistake in pr_debug message text
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/max9860.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ sound/soc/atmel/atmel_ssc_dai.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/max9860.c b/sound/soc/codecs/max9860.c
-index 5bbf889ad98e..96b2db3f2ddd 100644
---- a/sound/soc/codecs/max9860.c
-+++ b/sound/soc/codecs/max9860.c
-@@ -598,8 +598,7 @@ static const struct dev_pm_ops max9860_pm_ops = {
- 	SET_RUNTIME_PM_OPS(max9860_suspend, max9860_resume, NULL)
- };
- 
--static int max9860_probe(struct i2c_client *i2c,
--			 const struct i2c_device_id *id)
-+static int max9860_probe(struct i2c_client *i2c)
- {
- 	struct device *dev = &i2c->dev;
- 	struct max9860_priv *max9860;
-@@ -736,7 +735,7 @@ static const struct of_device_id max9860_of_match[] = {
- MODULE_DEVICE_TABLE(of, max9860_of_match);
- 
- static struct i2c_driver max9860_i2c_driver = {
--	.probe	        = max9860_probe,
-+	.probe_new      = max9860_probe,
- 	.remove         = max9860_remove,
- 	.id_table       = max9860_i2c_id,
- 	.driver         = {
+diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
+index a1e2c5682dcd..1c7af0ca98ec 100644
+--- a/sound/soc/atmel/atmel_ssc_dai.c
++++ b/sound/soc/atmel/atmel_ssc_dai.c
+@@ -820,7 +820,7 @@ static int atmel_ssc_hw_params(struct snd_pcm_substream *substream,
+ 		if (ret < 0) {
+ 			printk(KERN_WARNING
+ 					"atmel_ssc_dai: request_irq failure\n");
+-			pr_debug("Atmel_ssc_dai: Stoping clock\n");
++			pr_debug("Atmel_ssc_dai: Stopping clock\n");
+ 			clk_disable(ssc_p->ssc->clk);
+ 			return ret;
+ 		}
 -- 
 2.17.0
