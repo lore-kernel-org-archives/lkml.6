@@ -1,173 +1,95 @@
-Return-Path: <jic23@kernel.org>
-X-Google-Smtp-Source: AIpwx4/aEWe3CMOl5LSUFIQqgtdB4zsB2Wv0uH1qZrNStC3G1M1OV4WgnJ4kvwSKhltCXcbCtzhH
-ARC-Seal: i=1; a=rsa-sha256; t=1523805554; cv=none;
+Return-Path: <hernan@vanguardiasur.com.ar>
+ARC-Seal: i=1; a=rsa-sha256; t=1523637495; cv=none;
         d=google.com; s=arc-20160816;
-        b=Vk2f3QwYyvy/EKuYVZ2zB4TrnEWz4X6oF3G56LDT4hqSP5unO1ycUmoAcnagR1eZfB
-         Xpq1+1dLKIkeE7qhp/M8IU+fBXJ197wl7f/3g39BkTkc9tv/Nc2TV8g+pDRQcuPDQv3Z
-         1WYfJFArAlIF9LNh/ZS72tOa0TgA6Y51+TVH9IqxAkwcnppp5skV33FV2z3+mXR3WD4Z
-         Pz5c5wiAWld/4E/4Q/B/7TSK5XssqNUDX8sLFn0+NLw31RoH+RMwciLCvpRt2E43zrDz
-         HXFfocsLnTrWHSCjjqSfs9DLIPcp47H4P0fM0kM23ArP2yKGu+ufTC92SHkA84t5SwNM
-         H7yQ==
+        b=Mrq+DWMSYA89by3lR80bFi24P5h3Z1zW31yKvlITt6BbE64R7HeW3lYh405KjCtpLF
+         EhwNnFKaVqzfvWTNu+9g1D+xIQFh+ShjM62urEvMJkeVgbRdkvfuwOv8rvLlrU0OW4He
+         HvBmLM6Y3Z2VJmcOQ+A4/+bm0cMXOOWmpHO4tE1Wrnys3WLIKGmA7bc8nqX/3rN1Yhv5
+         KmFzLQ1Mx883W8DUWr4eG1v4AO1OVpjbjMODCJVG5PUz691v4NSWXLJSXknFhhEgdVOs
+         8MIhwGKhd+I4GMPOTaXihtCLI3JYhxfX3ak5sNovEyb3pujeOyYZTay9sqzj5typ+UhW
+         q5Ig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
+         :message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=Hu9tiiO1Cs3e0ZYXNOR7FSWOeZjWzmcDLBgjXRUasWk=;
-        b=ssqDbnkudWkePnoPophMW5a5pLLT5icCW3V1cqZlHbZxkyt/S2/xiLt7N1zWr67ymw
-         lNthxGpIt46qjR7lWH2jcIoVuNhFQyGYCFME35VS2bdeeFIYwn7s39UirhAJATmO8nQH
-         1jpLh5iSOLjkISnfN5yThduV+5Ja0meWR71rSD7AnYcCu5SUz+rdThjcpSKf3Q8TgjrT
-         4uLmep/amND4SaYYiEbEBvBRuug9uPkSHDx5hYQ5AjLwA6NsmWUBrRQJhBNBgQ9nHW4W
-         T/ddr65TbJGsc24DL5suA/ys5k5Hx2JNN0kNWxPNefRMMgoUi8SZngHoZ73r+zvIODPu
-         qnmw==
+        bh=eCgSdFgwB255m0N9UHOWkjZkqY+jO5YLR8ayCqttdPc=;
+        b=blZZgb2RIWGe0n1X9i8KC5mAchkYx7W6gESiIRDz45WoQzZz9jb+uRO+YdeUX7UV7u
+         +0y027CVBqCTIAtuuw4m1AAspe+rgXUBcLqrghx0yJNMBNf2NLIeGN2hrSC3Ge9oeAUa
+         GE6sajQRHK1kEGLnoPk3YphwGLkl88xOmS3kjh+TTbcvu9QjrYqzyaWRdgqD3iLP+1Pk
+         HSKd2VC/WIJb/uZ6nSQYeoD5AUXLqJXHGPmjTl3NBkYP1DNiIJN78Q70rh6eWV8JKBnu
+         RiSmQXHYfIcnGTOCK2VgBh1ClVJCLRs0+fZL3i2cjowy5v8Z/qSJiqUtT+T7JEEVCD80
+         c0dw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
+       dkim=pass header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.s=20150623 header.b=YMuLbwf0;
+       spf=pass (google.com: domain of hernan@vanguardiasur.com.ar designates 209.85.220.65 as permitted sender) smtp.mailfrom=hernan@vanguardiasur.com.ar
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73B63206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sun, 15 Apr 2018 16:19:09 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: =?UTF-8?B?SGVybsOhbg==?= Gonzalez <hernan@vanguardiasur.com.ar>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
- gregkh@linuxfoundation.org, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 08/14] staging: iio: ad7746: Add dt-bindings
-Message-ID: <20180415161909.34877620@archlinux>
-In-Reply-To: <1523637411-8531-9-git-send-email-hernan@vanguardiasur.com.ar>
+       dkim=pass header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.s=20150623 header.b=YMuLbwf0;
+       spf=pass (google.com: domain of hernan@vanguardiasur.com.ar designates 209.85.220.65 as permitted sender) smtp.mailfrom=hernan@vanguardiasur.com.ar
+X-Google-Smtp-Source: AIpwx4/w4j8gHE7QkYcCphnPE54niWE27cjV9nAHP8adE6vpjDLXx8gPnktIEvFvxAyQHuFxzzopfg==
+From: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
+To: jic23@kernel.org,
+	knaack.h@gmx.de,
+	lars@metafoo.de,
+	pmeerw@pmeerw.net,
+	gregkh@linuxfoundation.org,
+	Michael.Hennerich@analog.com,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
+Subject: [PATCH v2 06/14] staging: iio: ad7746: Reorder variable declarations
+Date: Fri, 13 Apr 2018 13:36:43 -0300
+Message-Id: <1523637411-8531-7-git-send-email-hernan@vanguardiasur.com.ar>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
 References: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
-	<1523637411-8531-9-git-send-email-hernan@vanguardiasur.com.ar>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597649726803282916?=
-X-GMAIL-MSGID: =?utf-8?q?1597825933464341727?=
+X-GMAIL-THRID: =?utf-8?q?1597649710321213681?=
+X-GMAIL-MSGID: =?utf-8?q?1597649710321213681?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 13 Apr 2018 13:36:45 -0300
-Hern=C3=A1n Gonzalez <hernan@vanguardiasur.com.ar> wrote:
+Reorder some variable declarations in an inverse-pyramid scheme.
 
-> This patch adds dt bindings by populating a pdata struct in order to
-> modify as little as possible the existing code. It supports both
-> platform_data and dt-bindings but uses only one depending on
-> CONFIG_OF's value.
->=20
-> Signed-off-by: Hern=C3=A1n Gonzalez <hernan@vanguardiasur.com.ar>
+Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
+---
+ drivers/staging/iio/cdc/ad7746.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Please reorder the patches in the next version to put the bindings
-patch next to this one (before preferably, but after is fine as
-well.)
-
-Hmm. I can see why you want to minimize the effect of the older
-code, but given that we will probably (eventually) drop the
-platform data option, I wonder if it wouldn't be better
-to move the data to a sensible location rather than faking
-platform_data.
-
-The pdata is only used in probe and only two bits of
-it at that so it would be fine to use some local variables and
-fill them from platform data or device tree as appropriate.
-
-Jonathan
-
-> ---
->  drivers/staging/iio/cdc/ad7746.c | 54 ++++++++++++++++++++++++++++++++++=
-+++++-
->  1 file changed, 53 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/staging/iio/cdc/ad7746.c b/drivers/staging/iio/cdc/a=
-d7746.c
-> index d39ab34..c29a221 100644
-> --- a/drivers/staging/iio/cdc/ad7746.c
-> +++ b/drivers/staging/iio/cdc/ad7746.c
-> @@ -666,6 +666,43 @@ static const struct iio_info ad7746_info =3D {
->  /*
->   * device probe and remove
->   */
-> +#ifdef CONFIG_OF
-> +static struct ad7746_platform_data *ad7746_parse_dt(struct device *dev)
-> +{
-> +	struct device_node *np =3D dev->of_node;
-> +	struct ad7746_platform_data *pdata;
-> +	unsigned int tmp;
-> +	int ret;
-> +
-> +	/* The default excitation outputs are not inverted, it should be stated
-Please use standard multiline comment syntax.
-
-/*
- * The...
- */
-> +	 * in the dt if needed.
-> +	 */
-> +
-> +	pdata =3D devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-> +	if (!pdata)
-> +		return NULL;
-> +
-> +	ret =3D of_property_read_u32(np, "adi,exclvl", &tmp);
-> +	if (ret || tmp > 3) {
-> +		dev_warn(dev, "Wrong exclvl value, using default\n");
-
-Seems a little odd to have the check in here rather than generic.
-
-> +		pdata->exclvl =3D 3; /* default value */
-> +	} else {
-> +		pdata->exclvl =3D tmp;
-> +	}
-> +
-> +	pdata->exca_en =3D true;
-> +	pdata->excb_en =3D true;
-> +	pdata->exca_inv_en =3D of_property_read_bool(np, "adi,nexca_en");
-> +	pdata->excb_inv_en =3D of_property_read_bool(np, "adi,nexcb_en");
-> +
-> +	return pdata;
-> +}
-> +#else
-> +static struct ad7746_platform_data *ad7746_parse_dt(struct device *dev)
-> +{
-> +	return NULL;
-> +}
-> +#endif
-> =20
->  static int ad7746_probe(struct i2c_client *client,
->  			const struct i2c_device_id *id)
-> @@ -676,6 +713,11 @@ static int ad7746_probe(struct i2c_client *client,
->  	unsigned char regval =3D 0;
->  	int ret =3D 0;
-> =20
-> +	if (client->dev.of_node)
-> +		pdata =3D ad7746_parse_dt(&client->dev);
-> +	else
-> +		pdata =3D client->dev.platform_data;
-> +
->  	indio_dev =3D devm_iio_device_alloc(&client->dev, sizeof(*chip));
->  	if (!indio_dev)
->  		return -ENOMEM;
-> @@ -739,12 +781,22 @@ static const struct i2c_device_id ad7746_id[] =3D {
->  	{ "ad7747", 7747 },
->  	{}
->  };
-> -
->  MODULE_DEVICE_TABLE(i2c, ad7746_id);
-> =20
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id ad7746_of_match[] =3D {
-> +	{ .compatible =3D "adi,ad7745" },
-> +	{ .compatible =3D "adi,ad7746" },
-> +	{ .compatible =3D "adi,ad7747" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, ad7746_of_match);
-> +#endif
-> +
->  static struct i2c_driver ad7746_driver =3D {
->  	.driver =3D {
->  		.name =3D KBUILD_MODNAME,
-> +		.of_match_table =3D of_match_ptr(ad7746_of_match),
->  	},
->  	.probe =3D ad7746_probe,
->  	.id_table =3D ad7746_id,
+diff --git a/drivers/staging/iio/cdc/ad7746.c b/drivers/staging/iio/cdc/ad7746.c
+index 9ef476a..f53612a 100644
+--- a/drivers/staging/iio/cdc/ad7746.c
++++ b/drivers/staging/iio/cdc/ad7746.c
+@@ -220,8 +220,8 @@ static int ad7746_select_channel(struct iio_dev *indio_dev,
+ 				 struct iio_chan_spec const *chan)
+ {
+ 	struct ad7746_chip_info *chip = iio_priv(indio_dev);
+-	int ret, delay, idx;
+ 	u8 vt_setup, cap_setup;
++	int ret, delay, idx;
+ 
+ 	switch (chan->type) {
+ 	case IIO_CAPACITANCE:
+@@ -289,8 +289,8 @@ static inline ssize_t ad7746_start_calib(struct device *dev,
+ {
+ 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+ 	struct ad7746_chip_info *chip = iio_priv(indio_dev);
+-	bool doit;
+ 	int ret, timeout = 10;
++	bool doit;
+ 
+ 	ret = strtobool(buf, &doit);
+ 	if (ret < 0)
+@@ -680,8 +680,8 @@ static int ad7746_probe(struct i2c_client *client,
+ 	struct ad7746_platform_data *pdata = client->dev.platform_data;
+ 	struct ad7746_chip_info *chip;
+ 	struct iio_dev *indio_dev;
+-	int ret = 0;
+ 	unsigned char regval = 0;
++	int ret = 0;
+ 
+ 	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*chip));
+ 	if (!indio_dev)
+-- 
+2.7.4
