@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753944AbeDMFMp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 01:12:45 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:54506 "EHLO
+        id S1753668AbeDMFMn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 01:12:43 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:54529 "EHLO
         conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751047AbeDMFIQ (ORCPT
+        with ESMTP id S1751076AbeDMFIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 13 Apr 2018 01:08:16 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w3D56lgA029209
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w3D56lgH029209
 X-Nifty-SrcIP: [153.142.97.92]
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 To: linux-kbuild@vger.kernel.org
@@ -17,9 +17,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Emese Revfy <re.emese@gmail.com>, x86@kernel.org,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 16/30] kconfig: add 'info' and 'warning' built-in functions
-Date: Fri, 13 Apr 2018 14:06:25 +0900
-Message-Id: <1523595999-27433-17-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 23/30] kconfig: add CC_IS_CLANG and CLANG_VERSION
+Date: Fri, 13 Apr 2018 14:06:32 +0900
+Message-Id: <1523595999-27433-24-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
@@ -27,67 +27,69 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add 'info' and 'warning' functions as in Make.
-
-They print messages during parsing Kconfig files, which is useful
-when debugging Kconfig at least.
+This will be useful to describe the clang version dependency.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
 
 Changes in v3: None
 Changes in v2: None
 
- scripts/kconfig/preprocess.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ init/Kconfig             |  7 +++++++
+ scripts/clang-version.sh | 18 ++++--------------
+ 2 files changed, 11 insertions(+), 14 deletions(-)
 
-diff --git a/scripts/kconfig/preprocess.c b/scripts/kconfig/preprocess.c
-index 85972fb..f8d06d9 100644
---- a/scripts/kconfig/preprocess.c
-+++ b/scripts/kconfig/preprocess.c
-@@ -203,6 +203,19 @@ static char *join_args(int argc, char *argv[])
- 	return out;
- }
+diff --git a/init/Kconfig b/init/Kconfig
+index 145a534..c8f4ba3 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -16,6 +16,13 @@ config GCC_VERSION
+ 	default $(shell $(srctree)/scripts/gcc-version.sh -p $(CC) | sed 's/^0*//') if CC_IS_GCC
+ 	default 0
  
-+static char *do_info(int argc, char *argv[])
-+{
-+	char *msg;
++config CC_IS_CLANG
++	def_bool $(success $(CC) --version | grep -q clang)
 +
-+	msg = join_args(argc, argv);
++config CLANG_VERSION
++	int
++	default $(shell $(srctree)/scripts/clang-version.sh $(CC))
 +
-+	printf("%s\n", msg);
-+
-+	free(msg);
-+
-+	return xstrdup("");
-+}
-+
- static char *do_shell(int argc, char *argv[])
- {
- 	FILE *p;
-@@ -244,8 +257,23 @@ static char *do_shell(int argc, char *argv[])
- 	return xstrdup(buf);
- }
+ config CONSTRUCTORS
+ 	bool
+ 	depends on !UML
+diff --git a/scripts/clang-version.sh b/scripts/clang-version.sh
+index 9780efa..dbf0a31 100755
+--- a/scripts/clang-version.sh
++++ b/scripts/clang-version.sh
+@@ -10,24 +10,14 @@
+ # clang-5.0.1 etc.
+ #
  
-+static char *do_warning(int argc, char *argv[])
-+{
-+	char *msg;
-+
-+	msg = join_args(argc, argv);
-+
-+	fprintf(stderr, "%s:%d: %s\n", current_file->name, yylineno, msg);
-+
-+	free(msg);
-+
-+	return xstrdup("");
-+}
-+
- static const struct function function_table[] = {
-+	{ .name = "info", .func = do_info },
- 	{ .name = "shell", .func = do_shell },
-+	{ .name = "warning", .func = do_warning },
- };
+-if [ "$1" = "-p" ] ; then
+-	with_patchlevel=1;
+-	shift;
+-fi
+-
+ compiler="$*"
  
- static char *function_call(const char *name, int argc, char *argv[])
+-if [ ${#compiler} -eq 0 ]; then
+-	echo "Error: No compiler specified."
+-	printf "Usage:\n\t$0 <clang-command>\n"
++if !( $compiler --version | grep -q clang) ; then
++	echo 0
+ 	exit 1
+ fi
+ 
+ MAJOR=$(echo __clang_major__ | $compiler -E -x c - | tail -n 1)
+ MINOR=$(echo __clang_minor__ | $compiler -E -x c - | tail -n 1)
+-if [ "x$with_patchlevel" != "x" ] ; then
+-	PATCHLEVEL=$(echo __clang_patchlevel__ | $compiler -E -x c - | tail -n 1)
+-	printf "%02d%02d%02d\\n" $MAJOR $MINOR $PATCHLEVEL
+-else
+-	printf "%02d%02d\\n" $MAJOR $MINOR
+-fi
++PATCHLEVEL=$(echo __clang_patchlevel__ | $compiler -E -x c - | tail -n 1)
++printf "%d%02d%02d\\n" $MAJOR $MINOR $PATCHLEVEL
 -- 
 2.7.4
