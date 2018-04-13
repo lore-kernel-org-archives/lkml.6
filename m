@@ -1,85 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754164AbeDMJ3S (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 05:29:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56754 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753588AbeDMJ3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 05:29:16 -0400
-Date: Fri, 13 Apr 2018 17:29:08 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Bjorn Helgaas <helgaas@kernel.org>, Philipp Rudo <prudo@linux.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Dave Young <dyoung@redhat.com>
-Subject: Re: [PATCH v1 0/2] kexec: Remove "weak" annotations from headers
-Message-ID: <20180413092908.GB2119@localhost.localdomain>
-References: <152355706051.36693.9856090891621551967.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <20180413110820.662d4879@ThinkPad>
+        id S1753704AbeDMJaN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 05:30:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56178 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751657AbeDMJaM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 05:30:12 -0400
+Date: Fri, 13 Apr 2018 11:30:05 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH 1/7] sched/core: uclamp: add CPU clamp groups accounting
+Message-ID: <20180413093005.GS4043@hirez.programming.kicks-ass.net>
+References: <20180409165615.2326-1-patrick.bellasi@arm.com>
+ <20180409165615.2326-2-patrick.bellasi@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180413110820.662d4879@ThinkPad>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180409165615.2326-2-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+On Mon, Apr 09, 2018 at 05:56:09PM +0100, Patrick Bellasi wrote:
+> +struct uclamp_group {
+> +	/* Utilization clamp value for tasks on this clamp group */
+> +	int value;
+> +	/* Number of RUNNABLE tasks on this clamp group */
+> +	int tasks;
+> +};
 
-There are changes I have made to solve 5-level conflict with
-kexec/kdump and also interface unification task, they will involve x86
-64 only changes on these functions, I don't think we need remove them if
-without any obvious impact or error reported.
+> +struct uclamp_cpu {
+> +	/* Utilization clamp value for a CPU */
+> +	int value;
+> +	/* Utilization clamp groups affecting this CPU */
+> +	struct uclamp_group group[CONFIG_UCLAMP_GROUPS_COUNT + 1];
+> +};
 
-Thanks
-Baoquan
+> @@ -811,6 +885,11 @@ struct rq {
+>  	unsigned long		cpu_capacity;
+>  	unsigned long		cpu_capacity_orig;
+>  
+> +#ifdef CONFIG_UCLAMP_TASK
+> +	/* util_{min,max} clamp values based on CPU's active tasks */
+> +	struct uclamp_cpu uclamp[UCLAMP_CNT];
+> +#endif
+> +
+>  	struct callback_head	*balance_callback;
+>  
+>  	unsigned char		idle_balance;
 
-On 04/13/18 at 11:08am, Philipp Rudo wrote:
-> Hi Bjorn,
-> 
-> in recent patches AKASHI [1] and I [2] made some changes to the declarations
-> you are touching and already removed some of the weak statements. The patches
-> got accepted on linux-next and will (hopefully) be pulled for v4.17. So you
-> should prepare for some merge conflicts. Nevertheless three weak statements
-> still remain (arch_kexec_walk_mem & arch_kexec_apply_relocations*) so your
-> patch still makes totally sense.
-> 
-> Thanks
-> Philipp
-> 
-> [1] https://lkml.org/lkml/2018/3/6/201
-> [2] https://lkml.org/lkml/2018/3/21/278
-> 
-> On Thu, 12 Apr 2018 13:23:29 -0500
-> Bjorn Helgaas <helgaas@kernel.org> wrote:
-> 
-> > "Weak" annotations in header files are error-prone because they make
-> > every definition weak.  Remove them from include/linux/kexec.h.
-> > 
-> > These were introduced in two separate commits, so this is in two
-> > patches so they can be easily backported to stable kernels (some of
-> > them date back to v4.3 and one only goes back to v4.10).
-> > 
-> > ---
-> > 
-> > Bjorn Helgaas (2):
-> >       kexec: Remove "weak" from kexec_file function declarations
-> >       kexec: Remove "weak" from arch_kexec_walk_mem() declaration
-> > 
-> > 
-> >  include/linux/kexec.h |   24 ++++++++++++------------
-> >  1 file changed, 12 insertions(+), 12 deletions(-)
-> > 
-> > _______________________________________________
-> > kexec mailing list
-> > kexec@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/kexec
-> > 
-> 
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
+So that is:
+
+struct rq {
+
+	struct uclamp_cpu {
+		int value;
+
+		/* 4 byte hole */
+
+		struct uclamp_group {
+			int value;
+			int tasks;
+		} [COUNT + 1];	// size: COUNT+2 * 8 [bytes]
+
+	} [2]; // size: 2 * COUNT+2 * 8 [bytes]
+
+};
+
+Which for the default (4) ends up being 96 bytes, or at least 2 lines.
+Do you want some alignment such that we don't span more lines?
+
+Which touch extra on enqueue/dequeue, at least it's only for tasks that
+have a clamp set.
