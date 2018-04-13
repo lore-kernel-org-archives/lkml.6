@@ -1,86 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754498AbeDMNdZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 09:33:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45246 "EHLO mx1.redhat.com"
+        id S1754535AbeDMNds (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 09:33:48 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37796 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754469AbeDMNdX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 09:33:23 -0400
+        id S1750980AbeDMNdr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 09:33:47 -0400
 From: David Hildenbrand <david@redhat.com>
 To: linux-mm@kvack.org
 Cc: David Hildenbrand <david@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
         Dan Williams <dan.j.williams@intel.com>,
-        Reza Arbab <arbab@linux.vnet.ibm.com>,
         Pavel Tatashin <pasha.tatashin@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH RFC 6/8] mm: offline_pages() is also limited by MAX_ORDER
-Date: Fri, 13 Apr 2018 15:33:18 +0200
-Message-Id: <20180413133320.3557-1-david@redhat.com>
+Subject: [PATCH RFC 8/8] mm: export more functions used to online/offline memory
+Date: Fri, 13 Apr 2018 15:33:42 +0200
+Message-Id: <20180413133344.3672-1-david@redhat.com>
 In-Reply-To: <20180413131632.1413-1-david@redhat.com>
 References: <20180413131632.1413-1-david@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Page blocks might contain references to the next page block. So
-a page block cannot be offlined independently. E.g. on x86: page block
-size is 2MB, MAX_ORDER -1 (10) allows 4MB allocations.
--> Right now, __offline_isolated_pages() will mark pages in the following
-page block as reserved.
-
-Let document offline_pages() while at it.
+Kernel modules that want to control how/when memory is onlined/offlined
+need these functions.
 
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- mm/memory_hotplug.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ mm/memory_hotplug.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 3a8d56476233..1d6054edc241 100644
+index ac14ea772792..3c374d308cf4 100644
 --- a/mm/memory_hotplug.c
 +++ b/mm/memory_hotplug.c
-@@ -1598,11 +1598,14 @@ static int __ref __offline_pages(unsigned long start_pfn,
- 	struct zone *zone;
- 	struct memory_notify arg;
- 
--	/* at least, alignment against pageblock is necessary */
- 	if (!IS_ALIGNED(start_pfn, pageblock_nr_pages))
- 		return -EINVAL;
-+	if (!IS_ALIGNED(start_pfn, (1 << (MAX_ORDER - 1))))
-+		return -EINVAL;
- 	if (!IS_ALIGNED(end_pfn, pageblock_nr_pages))
- 		return -EINVAL;
-+	if (!IS_ALIGNED(end_pfn, (1 << (MAX_ORDER - 1))))
-+		return -EINVAL;
- 	/* This makes hotplug much easier...and readable.
- 	   we assume this for now. .*/
- 	if (!test_pages_in_a_zone(start_pfn, end_pfn, &valid_start, &valid_end))
-@@ -1699,7 +1702,22 @@ static int __ref __offline_pages(unsigned long start_pfn,
+@@ -979,6 +979,7 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
+ 	memory_notify(MEM_CANCEL_ONLINE, &arg);
  	return ret;
  }
++EXPORT_SYMBOL(online_pages);
+ #endif /* CONFIG_MEMORY_HOTPLUG_SPARSE */
  
--/* Must be protected by mem_hotplug_begin() or a device_lock */
-+/**
-+ * offline_pages - offline pages in a given range (that are currently online)
-+ * @start_pfn: start pfn of the memory range
-+ * @nr_pages: the number of pages
-+ *
-+ * This function tries to offline the given pages. The alignment/size that
-+ * can be used is max(pageblock_nr_pages, 1 << (MAX_ORDER - 1)).
-+ *
-+ * Returns 0 if sucessful, -EBUSY if the pages cannot be offlined and
-+ * -EINVAL if start_pfn/nr_pages is not properly aligned or not in a zone.
-+ * -EINTR is returned if interrupted by a signal.
-+ *
-+ * Bad things will happen if pages are already offline.
-+ *
-+ * Must be protected by mem_hotplug_begin() or a device_lock
-+ */
- int offline_pages(unsigned long start_pfn, unsigned long nr_pages)
+ static void reset_node_present_pages(pg_data_t *pgdat)
+@@ -1296,6 +1297,7 @@ bool is_mem_section_removable(unsigned long start_pfn, unsigned long nr_pages)
+ 	/* All pageblocks in the memory block are likely to be hot-removable */
+ 	return true;
+ }
++EXPORT_SYMBOL(is_mem_section_removable);
+ 
+ /*
+  * Confirm all pages in a range [start, end) belong to the same zone.
+@@ -1752,6 +1754,7 @@ int offline_pages(unsigned long start_pfn, unsigned long nr_pages)
  {
  	return __offline_pages(start_pfn, start_pfn + nr_pages);
+ }
++EXPORT_SYMBOL(offline_pages);
+ #endif /* CONFIG_MEMORY_HOTREMOVE */
+ 
+ /**
+@@ -1802,6 +1805,7 @@ int walk_memory_range(unsigned long start_pfn, unsigned long end_pfn,
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL(walk_memory_range);
+ 
+ #ifdef CONFIG_MEMORY_HOTREMOVE
+ static int check_memblock_offlined_cb(struct memory_block *mem, void *arg)
 -- 
 2.14.3
