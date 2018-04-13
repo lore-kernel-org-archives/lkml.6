@@ -1,81 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752223AbeDMIUY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 04:20:24 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:40164 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750940AbeDMIUV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 04:20:21 -0400
-X-Google-Smtp-Source: AIpwx49nkDLY1SOICoteQ7tEYAiVEF7ftCAP592EYIgAs59PRXfgsFXGt/PTF2EDBv9ITfEeklGFxef/ncpNRz99d2g=
-MIME-Version: 1.0
-In-Reply-To: <1523606900-2332-3-git-send-email-phil.edworthy@renesas.com>
-References: <1523606900-2332-1-git-send-email-phil.edworthy@renesas.com> <1523606900-2332-3-git-send-email-phil.edworthy@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 13 Apr 2018 10:20:19 +0200
-X-Google-Sender-Auth: iQKuQ_-L0hCTz3VCimfPrOZse5s
-Message-ID: <CAMuHMdVKi=dDvn29U-S26PtAc_Um_+1Oy=PzKAgYUSU9qvcF-Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mfd: intel_quark_i2c_gpio: Update Synopsys GPIO interrupts
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1753065AbeDMIVG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 04:21:06 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41486 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750973AbeDMIVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 04:21:03 -0400
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com, cdall@kernel.org,
+        peter.maydell@linaro.org
+Cc: andre.przywara@arm.com, drjones@redhat.com, wei@redhat.com
+Subject: [PATCH v3 00/12] KVM: arm/arm64: Allow multiple GICv3 redistributor regions
+Date: Fri, 13 Apr 2018 10:20:46 +0200
+Message-Id: <1523607658-9166-1-git-send-email-eric.auger@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Phil,
+At the moment the KVM VGICv3 only supports a single redistributor
+region (whose base address is set through the GICv3 kvm device
+KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST). There,
+all the redistributors are laid out contiguously. The size of this
+single redistributor region is not set explicitly but instead
+induced at a late stage by the number of online vcpus.
 
-On Fri, Apr 13, 2018 at 10:08 AM, Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
-> Since the way the Synopsys GPIO interrupts are stored has changed, this
-> driver needs to be updated in line with the changes.
->
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> ---
-> v2:
->  - New patch in v2 to fix the only other user of struct dwapb_port_property.
+The GIC specification does not mandate all redistributors to be
+contiguous. Moreover DT and ACPI were specified so that multiple
+redistributors regions can be defined.
 
-Thanks for your patch!
+The current interface brings a limitation on QEMU where ARM
+virt machine available GPA holes only allowed to assign a
+redistributor region fitting a max of 123 vcpus. Overcoming this
+limitation would force either to create a new machine or relocate
+the single rdist region or allow the allocation of multiple rdist
+regions.
 
-To avoid bisection compile failures due to the changed type of
-dwapb_port_property.irq,
-I think this should be folded into the first patch,
+This series enables this last alternative. A new GICv3 KVM device
+KVM_DEV_ARM_VGIC_GRP_ADDR/KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION allows
+to register individual redistributor regions whose size is defined
+explicitly. Those rdist regions then are filled by vcpu rdist frames
+according to the need. The vgic init and related base address checks
+are impacted.
 
-> ---
->  drivers/mfd/intel_quark_i2c_gpio.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_quark_i2c_gpio.c
-> index 90e35de..5bddb84 100644
-> --- a/drivers/mfd/intel_quark_i2c_gpio.c
-> +++ b/drivers/mfd/intel_quark_i2c_gpio.c
-> @@ -233,7 +233,8 @@ static int intel_quark_gpio_setup(struct pci_dev *pdev, struct mfd_cell *cell)
->         pdata->properties->idx          = 0;
->         pdata->properties->ngpio        = INTEL_QUARK_MFD_NGPIO;
->         pdata->properties->gpio_base    = INTEL_QUARK_MFD_GPIO_BASE;
-> -       pdata->properties->irq          = pdev->irq;
-> +       pdata->properties->irq[0]       = pdev->irq;
-> +       pdata->properties->has_irq      = true;
->         pdata->properties->irq_shared   = true;
->
->         cell->platform_data = pdata;
+Best Regards
 
-Gr{oetje,eeting}s,
+Eric
 
-                        Geert
+Git: complete series available at
+https://github.com/eauger/linux/tree/v4.16-rdist-regions-v3
+Previous version:
+https://github.com/eauger/linux/tree/4.16-rc7-rdist-regions-rfc-v2
+
+History:
+
+v2 -> v3:
+- Add details to the user API documentation
+- early exit if vgic_v3_rdist_region_from_index() fails
+- return -EINVAL if legacy and new redist region API are mixed
+
+v1 -> v2:
+- Rework the uapi. Only bits [51:16] of the redist region are
+  exposed. Also a new flags field was introduced
+- Do not store the last bit in the vgic_cpu struct anymore
+- remove dist->spis check in 1st patch
+- add last patch to bump VGIC_V3_MAX_CPUS to 512
+- advertise the new attribute
+
+
+Eric Auger (12):
+  KVM: arm/arm64: Set dist->spis to NULL after kfree
+  KVM: arm/arm64: Document KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Replace the single rdist region by a list
+  KVM: arm/arm64: Helper to locate free rdist index
+  KVM: arm/arm64: Revisit Redistributor TYPER last bit computation
+  KVM: arm/arm64: Helper to register a new redistributor region
+  KVM: arm/arm64: Adapt vgic_v3_check_base to multiple rdist regions
+  KVM: arm/arm64: Check vcpu redist base before registering an iodev
+  KVM: arm/arm64: Check all vcpu redistributors are set on map_resources
+  KVM: arm/arm64: Add KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Implement KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
+  KVM: arm/arm64: Bump VGIC_V3_MAX_CPUS to 512
+
+ Documentation/virtual/kvm/devices/arm-vgic-v3.txt |  25 ++++-
+ arch/arm/include/uapi/asm/kvm.h                   |   7 +-
+ arch/arm64/include/uapi/asm/kvm.h                 |   7 +-
+ include/kvm/arm_vgic.h                            |  16 ++-
+ virt/kvm/arm/vgic/vgic-init.c                     |  20 +++-
+ virt/kvm/arm/vgic/vgic-kvm-device.c               |  55 +++++++++-
+ virt/kvm/arm/vgic/vgic-mmio-v3.c                  | 120 +++++++++++++++++++---
+ virt/kvm/arm/vgic/vgic-v3.c                       |  87 ++++++++++++----
+ virt/kvm/arm/vgic/vgic.h                          |  34 +++++-
+ 9 files changed, 320 insertions(+), 51 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.5.5
