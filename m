@@ -1,91 +1,113 @@
-Return-Path: <jic23@kernel.org>
-X-Google-Smtp-Source: AIpwx4837jrBn49D757jBPrrpLLSasdIiuuCvsIz8/v4p+qAJZgQzWdYC3B4PZ+/nLYLviR+ehXg
-ARC-Seal: i=1; a=rsa-sha256; t=1523804603; cv=none;
+Return-Path: <hernan@vanguardiasur.com.ar>
+ARC-Seal: i=1; a=rsa-sha256; t=1523637465; cv=none;
         d=google.com; s=arc-20160816;
-        b=bGNo0wIH7XQLWfOJDhpc26cjuGSQkISKdn4eH95Y8GpjT9S0v3mkhBrmHK1BgK8g+j
-         Y4nsv+qZamwmKFR4vNwrIgMLa/jZRMhj3SQKeNL+X3YTyg+xgUS2EVSe2SimwbTjJl6b
-         NBI2oLjeeYaL+YOMUM3ZCT/zu05gjnVwsmKCgzXnzW0Abe6FxQDfyMoQkFByQIWGd5Ox
-         gWo/1SVCUxuMD0Un8TYpd8wSwP0EXerlmhHUvtqEt4QmrVgVNfawobusfutdQ/IoCPy3
-         k13dikoim9e1z8kYh+nHrJL1vqfNQLM1uN80N6D5mGdavUZVJ2TU9/jLC6h7wMv/sItW
-         uYCg==
+        b=BgS236gNsEvg+W1S2gt9CfSChcQolpdf32R1Z890kZwWX7GPwbkl5CkDzkqctve/5A
+         hqdMXpZ89paZYdYH0EuDr0o0wEQ9AYbOS/ShYzwmv625zgUeOuBXCuhIK6wp8xOW52EH
+         HHVOLVCrETZdioJ3Q/Nu5IMte5S6rEg+wrLeGFV270JJR8nWSkq7A9LBG/10Xu9skkrj
+         E/KrvBEe+fkocougbFQgVLjfugCR3sWX1ixa+EwKupeiRzjY1pUYevNf7BPyqMDhiGfx
+         jA8+cVoU6RBK4jKDXovX/A8AiG2rQ8I9h01QbvUBaWsoxur6GPvSi8c1uiI3XewOt3d7
+         QAkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dmarc-filter
+         :message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=ZO1gQugFBDzLa0kLD7VqEtLrSa4dHvuP/4m9n5VkfqQ=;
-        b=B9PdpSwFPe31qG2pPcc79wQZzs/VWW1uQ/2O1h69Uc0jTx9ZZg6DQj94BBg6ZUp8wS
-         DOuw3EJkXwSPh0rT8288d5ZgmcICZC6xLRy15M514QZz3olbceAbOLeIqpa+5FgeYBIU
-         zw+iIYr4n9qXN6LyA7P2bJ8zo3cVcG6ifjM7qtIFz2CoWItuF6iEtMvfbAjLmT20gvJx
-         gUrqScZMAz8YI7D9aJUZlzpMNdc+atO8X149XvBJ4MeM0OvgxmFhlpaIsm/rw4PxqyjQ
-         /SRwuDZoesLnadWHjoq5h2PvqH9Kq5vxc/LtXcDG/AR7UFsFMd/TTwm2vtFwcaX0zFeW
-         /opQ==
+        bh=AQ+TIPQWmENrQncV6f3ZGjV/67cQJ+PcqdWnTWyhAFM=;
+        b=zHRf/EBJJovy9AmK/64lLWBygn9oqvEHJ5on1OMr1Wqko5qtAcGsVkmxbe18YOaYUr
+         rSiKdBKUmA13Y9ZaUsRywNzpH/uqcouAui6k3uZEkSxq1Xny4gJ9JlCTLXYFGQrlafkF
+         m31xlyLKMO+D3r9LgpahoJzEzU3nWATAqG4JdLV/22NkAhQKFFW246Tjg656pXYZ4x7R
+         QcZMmgH/km6nmFSAVNdgKAiuEaG3UqsNlwOqk3G68VeXQb22+IeiBwL13WuU5FIUSv/d
+         AkmBQlviz5VEtA125iq8AkMlSCorO1DogNshkTYsltFAOClZd4j8qnh0xtFOgntkMxcD
+         vw9Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
+       dkim=pass header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.s=20150623 header.b=Xbgltohd;
+       spf=pass (google.com: domain of hernan@vanguardiasur.com.ar designates 209.85.220.65 as permitted sender) smtp.mailfrom=hernan@vanguardiasur.com.ar
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A09C20779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sun, 15 Apr 2018 16:03:19 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: =?UTF-8?B?SGVybsOhbg==?= Gonzalez <hernan@vanguardiasur.com.ar>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
- gregkh@linuxfoundation.org, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/14] staging: iio: ad7746: Adjust arguments to
- match open parenthesis
-Message-ID: <20180415160319.4f0d725c@archlinux>
-In-Reply-To: <1523637411-8531-3-git-send-email-hernan@vanguardiasur.com.ar>
+       dkim=pass header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.s=20150623 header.b=Xbgltohd;
+       spf=pass (google.com: domain of hernan@vanguardiasur.com.ar designates 209.85.220.65 as permitted sender) smtp.mailfrom=hernan@vanguardiasur.com.ar
+X-Google-Smtp-Source: AIpwx48W6HGKxbDU/0ZgP1Nt8slwWI/8unAQZzVZcgleOcT0GjGmePdfF7PcM8uswdyJbLZWd0t69A==
+From: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
+To: jic23@kernel.org,
+	knaack.h@gmx.de,
+	lars@metafoo.de,
+	pmeerw@pmeerw.net,
+	gregkh@linuxfoundation.org,
+	Michael.Hennerich@analog.com,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
+Subject: [PATCH v2 01/14] staging: iio: ad7746: Automatically swap values in readings/writings
+Date: Fri, 13 Apr 2018 13:36:38 -0300
+Message-Id: <1523637411-8531-2-git-send-email-hernan@vanguardiasur.com.ar>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
 References: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
-	<1523637411-8531-3-git-send-email-hernan@vanguardiasur.com.ar>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597649684631908375?=
-X-GMAIL-MSGID: =?utf-8?q?1597824936575750694?=
+X-GMAIL-THRID: =?utf-8?q?1597649678648759937?=
+X-GMAIL-MSGID: =?utf-8?q?1597649678648759937?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 13 Apr 2018 13:36:39 -0300
-Hern=C3=A1n Gonzalez <hernan@vanguardiasur.com.ar> wrote:
+Data to read or write was being handled with the swab16() macro instead
+of using i2c_smbus_{read,write}_swapped.
 
-> Clear a couple more checkpatch.pl CHECKS.
->=20
-> Signed-off-by: Hern=C3=A1n Gonzalez <hernan@vanguardiasur.com.ar>
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
+Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
+---
+ drivers/staging/iio/cdc/ad7746.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/staging/iio/cdc/ad7746.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/staging/iio/cdc/ad7746.c b/drivers/staging/iio/cdc/a=
-d7746.c
-> index 53e28ae..516aa93 100644
-> --- a/drivers/staging/iio/cdc/ad7746.c
-> +++ b/drivers/staging/iio/cdc/ad7746.c
-> @@ -556,7 +556,8 @@ static int ad7746_read_raw(struct iio_dev *indio_dev,
->  		/* Now read the actual register */
-> =20
->  		ret =3D i2c_smbus_read_i2c_block_data(chip->client,
-> -			chan->address >> 8, 3, &chip->data.d8[1]);
-> +						    chan->address >> 8, 3,
-> +						    &chip->data.d8[1]);
-> =20
->  		if (ret < 0)
->  			goto out;
-> @@ -614,7 +615,7 @@ static int ad7746_read_raw(struct iio_dev *indio_dev,
->  		break;
->  	case IIO_CHAN_INFO_OFFSET:
->  		*val =3D AD7746_CAPDAC_DACP(chip->capdac[chan->channel]
-> -			[chan->differential]) * 338646;
-> +					  [chan->differential]) * 338646;
-> =20
->  		ret =3D IIO_VAL_INT;
->  		break;
+diff --git a/drivers/staging/iio/cdc/ad7746.c b/drivers/staging/iio/cdc/ad7746.c
+index 4882dbc..53e28ae 100644
+--- a/drivers/staging/iio/cdc/ad7746.c
++++ b/drivers/staging/iio/cdc/ad7746.c
+@@ -451,7 +451,7 @@ static int ad7746_write_raw(struct iio_dev *indio_dev,
+ 			goto out;
+ 		}
+ 
+-		ret = i2c_smbus_write_word_data(chip->client, reg, swab16(val));
++		ret = i2c_smbus_write_word_swapped(chip->client, reg, val);
+ 		if (ret < 0)
+ 			goto out;
+ 
+@@ -462,8 +462,8 @@ static int ad7746_write_raw(struct iio_dev *indio_dev,
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
+-		ret = i2c_smbus_write_word_data(chip->client,
+-				AD7746_REG_CAP_OFFH, swab16(val));
++		ret = i2c_smbus_write_word_swapped(chip->client,
++						   AD7746_REG_CAP_OFFH, val);
+ 		if (ret < 0)
+ 			goto out;
+ 
+@@ -594,21 +594,21 @@ static int ad7746_read_raw(struct iio_dev *indio_dev,
+ 			goto out;
+ 		}
+ 
+-		ret = i2c_smbus_read_word_data(chip->client, reg);
++		ret = i2c_smbus_read_word_swapped(chip->client, reg);
+ 		if (ret < 0)
+ 			goto out;
+ 		/* 1 + gain_val / 2^16 */
+ 		*val = 1;
+-		*val2 = (15625 * swab16(ret)) / 1024;
++		*val2 = (15625 * ret) / 1024;
+ 
+ 		ret = IIO_VAL_INT_PLUS_MICRO;
+ 		break;
+ 	case IIO_CHAN_INFO_CALIBBIAS:
+-		ret = i2c_smbus_read_word_data(chip->client,
+-					       AD7746_REG_CAP_OFFH);
++		ret = i2c_smbus_read_word_swapped(chip->client,
++						  AD7746_REG_CAP_OFFH);
+ 		if (ret < 0)
+ 			goto out;
+-		*val = swab16(ret);
++		*val = ret;
+ 
+ 		ret = IIO_VAL_INT;
+ 		break;
+-- 
+2.7.4
