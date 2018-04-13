@@ -1,104 +1,97 @@
-Return-Path: <rdunlap@infradead.org>
-X-Google-Smtp-Source: AIpwx4+08vG9a9aYMQ0BdTOLUi+nuDAanlw3CEvXLot/amrqveqORktLVNRDE0kYxQToG37tAFLD
-ARC-Seal: i=1; a=rsa-sha256; t=1523638069; cv=none;
+Return-Path: <christianvanbrauner@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523635912; cv=none;
         d=google.com; s=arc-20160816;
-        b=aYk134HgPlFBh3IR16cDAziL9QXlRzjvqkj8h746JkwVvLxsUIPXOvOgNpDpUdDRof
-         nHN7FjyLFfdK9gD9S0EOMd+Q7ua7ru8ixUff/8GmF3BuPWVzPvS2nfHr8ihY1PHJY6ep
-         s17fj2ucZzIQyc7L+pUdSkTbnlUTKzDnR4goS8Z1YEkb8M2sju34vgr1X3myp2cVblw0
-         xHpWxFVJpxUJiwIJo8vrZJDg7luQgFAVJm8M/Lk7UqOuMK5+PlrLzq1HcOGPRE7Yoeq7
-         zoQm2UBgZ7aS5AWM8SI/uV4WS4z05oXweJLFR+8IbHTUW/sfwJeDn27g2owqz6HDQdvz
-         m+8g==
+        b=rlYPMBxHJ+yZWVvKYoukACEodGGk3Q+/QqYm2e82NtduPl/xIXOwaFA1uAIwUinpHf
+         CQJfth1D12FlJnwSePxuFfjwLQ3gN2IkDSyy33Sj8cnPdT3lFKTDfxlypbKFeilTN/Pf
+         MqcAlV1t/MpCO44pxSSX70quuetVsuuOqk0TQQF6uz35ic/qonlfcN17Wg5nq+8/EOEK
+         SrjGJBdBGk2eZ+te3fUU6Ugd4KLWVIh4OLlMKizc9x2QiR24lUTTQH+RbOtHZ+n/cIjI
+         qpP2WEarHXxO1PzM9OXQoW6rqpZ8tEvB2MbJRuhVFtchk5mxbdu8OrpbYAgSigrvikLn
+         wXwQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=/To355o1r3uvE/0MnTVDKGbnuQ+zsoLDPUUU9RfpvwQ=;
-        b=BrAaqxI0jbK8wTxQwWJ07nfWqZJiN/hwaU8OWXBNRomF0Az5skhvOMksz8SQ6Czccj
-         xYja8Ok0NwFTng/9mLe2U8W5Bl84IEX6z45MUYCSl5n4HfPpo4ESd+bF7yLxRomrWB/S
-         a9wmPAGf05BwMMOUWmWq13kTd9SrMLFXWRoZnoMIZWNflnjL56kqThD2xOhHPETW/qNE
-         ELJgnySSODgKSqQxIqHkmkaXUW6zFqqD8a7FROeQmiPv2zM+0+HM127Ky9ef8DxmYZrc
-         1ipOVIKJ1i5qCIcVo20sK6bkUKRWvyuGpou/BXcTkg0xaP/Q1wCf0BTMpDfsDZ7GF13P
-         k50Q==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=MyNoitWFzDCw8mxq7ZpdEBQKh+OqlNEmeY6GVZUUbkI=;
+        b=hWs4/vb6juB+g7ZO7AGwwqUvrXu7K5idoi6oKf+V7a+aRK0GxEyHo7yO1gf63NmW2q
+         I0cSOcUTLVWMt+yTUTlMkDcOstfsJiBYGlH3ToZ/j0sVmzInUegKgw1gmZa3W5Gk0Y8t
+         tHIw3H3aD8EnIIuFKH0j9ktRP6rldjhtN8iiW9nZ8LvoKxGz3Ju0RtF2XKjJkXzi+mGD
+         gS17HfUqyfvHPUzWUUBeYtoRujnYzDF0+mmJBdFmP0WDRXbWj/FIzCW7N+VmvMmWDe4w
+         A7x6ZOjjbrSGkQG7C/omWZcrTQxuSJvI5wPVm4tcD0lZ15/hIuAnadadh2OUEZ8qFCmI
+         k1CQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=I7wvFRjz;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=I7wvFRjz;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
-Subject: Re: [PATCH 2/6] statfs: use << to align with fs header
-To: Christian Brauner <christian.brauner@ubuntu.com>,
- viro@zeniv.linux.org.uk, tglx@linutronix.de, kstewart@linuxfoundation.org,
- gregkh@linuxfoundation.org, pombredanne@nexb.com,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, serge@hallyn.com
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
+X-Google-Smtp-Source: AIpwx49SL12swYktUVHZLRE5as06NpeSBjeBLV6fM/VZMgIpyHFCNLUP34ZG1Hzmk0xTAl0wIrKwqQ==
+From: Christian Brauner <christian.brauner@ubuntu.com>
+To: viro@zeniv.linux.org.uk,
+	tglx@linutronix.de,
+	kstewart@linuxfoundation.org,
+	gregkh@linuxfoundation.org,
+	pombredanne@nexb.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	serge@hallyn.com
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH 6/6] statfs: add ST_SLAVE
+Date: Fri, 13 Apr 2018 18:11:26 +0200
+Message-Id: <20180413161126.31313-7-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180413161126.31313-1-christian.brauner@ubuntu.com>
 References: <20180413161126.31313-1-christian.brauner@ubuntu.com>
- <20180413161126.31313-3-christian.brauner@ubuntu.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <f526b1d7-4240-5617-f185-3b751ace0982@infradead.org>
-Date: Fri, 13 Apr 2018 09:47:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180413161126.31313-3-christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597648046265390168?=
-X-GMAIL-MSGID: =?utf-8?q?1597650313079451773?=
+X-GMAIL-THRID: =?utf-8?q?1597648050461227491?=
+X-GMAIL-MSGID: =?utf-8?q?1597648050461227491?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/13/2018 09:11 AM, Christian Brauner wrote:
-> Consistenly use << to define ST_* constants. This also aligns them with
-> their MS_* counterparts in fs.h
-> 
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> ---
->  include/linux/statfs.h | 26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
+This lets userspace query whether a mountpoint was made MS_SLAVE.
 
-Lots of opportunities to use BIT(n) macro.
-Is there some reason not to do that?
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ fs/statfs.c            | 10 +++++++++-
+ include/linux/statfs.h |  1 +
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-
-> diff --git a/include/linux/statfs.h b/include/linux/statfs.h
-> index 3142e98546ac..b336c04e793c 100644
-> --- a/include/linux/statfs.h
-> +++ b/include/linux/statfs.h
-> @@ -27,18 +27,18 @@ struct kstatfs {
->   * ABI.  The exception is ST_VALID which has the same value as MS_REMOUNT
->   * which doesn't make any sense for statfs.
->   */
-> -#define ST_RDONLY	0x0001	/* mount read-only */
-> -#define ST_NOSUID	0x0002	/* ignore suid and sgid bits */
-> -#define ST_NODEV	0x0004	/* disallow access to device special files */
-> -#define ST_NOEXEC	0x0008	/* disallow program execution */
-> -#define ST_SYNCHRONOUS	0x0010	/* writes are synced at once */
-> -#define ST_VALID	0x0020	/* f_flags support is implemented */
-> -#define ST_MANDLOCK	0x0040	/* allow mandatory locks on an FS */
-> -/* 0x0080 used for ST_WRITE in glibc */
-> -/* 0x0100 used for ST_APPEND in glibc */
-> -/* 0x0200 used for ST_IMMUTABLE in glibc */
-> -#define ST_NOATIME	0x0400	/* do not update access times */
-> -#define ST_NODIRATIME	0x0800	/* do not update directory access times */
-> -#define ST_RELATIME	0x1000	/* update atime relative to mtime/ctime */
-> +#define ST_RDONLY	(1<<0) /* mount read-only */
-> +#define ST_NOSUID	(1<<1) /* ignore suid and sgid bits */
-> +#define ST_NODEV	(1<<2) /* disallow access to device special files */
-> +#define ST_NOEXEC	(1<<3) /* disallow program execution */
-> +#define ST_SYNCHRONOUS	(1<<4) /* writes are synced at once */
-> +#define ST_VALID	(1<<5) /* f_flags support is implemented */
-> +#define ST_MANDLOCK	(1<<6) /* allow mandatory locks on an FS */
-> +/* (1<<7) used for ST_WRITE in glibc */
-> +/* (1<<8) used for ST_APPEND in glibc */
-> +/* (1<<9) used for ST_IMMUTABLE in glibc */
-> +#define ST_NOATIME	(1<<10) /* do not update access times */
-> +#define ST_NODIRATIME	(1<<11) /* do not update directory access times */
-> +#define ST_RELATIME	(1<<12) /* update atime relative to mtime/ctime */
->  
->  #endif
-> 
-
-
+diff --git a/fs/statfs.c b/fs/statfs.c
+index 26cda2586d7e..86e957d16a68 100644
+--- a/fs/statfs.c
++++ b/fs/statfs.c
+@@ -10,6 +10,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/compat.h>
+ #include "internal.h"
++#include "pnode.h"
+ 
+ static int flags_by_mnt(int mnt_flags)
+ {
+@@ -52,8 +53,15 @@ static int flags_by_sb(int s_flags)
+ 
+ static int calculate_f_flags(struct vfsmount *mnt)
+ {
+-	return ST_VALID | flags_by_mnt(mnt->mnt_flags) |
++	int flags = 0;
++
++	flags = ST_VALID | flags_by_mnt(mnt->mnt_flags) |
+ 		flags_by_sb(mnt->mnt_sb->s_flags);
++
++	if (IS_MNT_SLAVE(real_mount(mnt)))
++		flags |= ST_SLAVE;
++
++	return flags;
+ }
+ 
+ static int statfs_by_dentry(struct dentry *dentry, struct kstatfs *buf)
+diff --git a/include/linux/statfs.h b/include/linux/statfs.h
+index 1ea4a45aa6c3..663fa5498a7d 100644
+--- a/include/linux/statfs.h
++++ b/include/linux/statfs.h
+@@ -42,6 +42,7 @@ struct kstatfs {
+ #define ST_RELATIME	(1<<12) /* update atime relative to mtime/ctime */
+ #define ST_UNBINDABLE	(1<<17)	/* change to unbindable */
+ #define ST_PRIVATE	(1<<18)	/* change to private */
++#define ST_SLAVE	(1<<19)	/* change to slave */
+ #define ST_SHARED	(1<<20)	/* change to shared */
+ 
+ #endif
 -- 
-~Randy
+2.17.0
