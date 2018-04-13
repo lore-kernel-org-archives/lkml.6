@@ -1,96 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754291AbeDMLJk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:09:40 -0400
-Received: from foss.arm.com ([217.140.101.70]:41372 "EHLO foss.arm.com"
+        id S1754347AbeDMLJz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:09:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37844 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753919AbeDMLJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:09:39 -0400
-Subject: Re: [PATCH v2 1/2] dmaengine: stm32-mdma: align TLEN and buffer
- length on burst
-To: Pierre Yves MORDRET <pierre-yves.mordret@st.com>,
-        Vinod Koul <vinod.koul@intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "M'boumba Cedric Madianga" <cedric.madianga@gmail.com>,
-        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        id S1754323AbeDMLJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 07:09:54 -0400
+Date: Fri, 13 Apr 2018 13:09:49 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Chintan Pandya <cpandya@codeaurora.org>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>, vbabka@suse.cz,
+        labbott@redhat.com, catalin.marinas@arm.com, hannes@cmpxchg.org,
+        f.fainelli@gmail.com, xieyisheng1@huawei.com,
+        ard.biesheuvel@linaro.org, richard.weiyang@gmail.com,
+        byungchul.park@lge.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-References: <1523457879-9869-1-git-send-email-pierre-yves.mordret@st.com>
- <1523457879-9869-2-git-send-email-pierre-yves.mordret@st.com>
- <9a2a267c-2b0b-0d6a-c762-47e7d37f84ea@arm.com>
- <22bd0af7-9820-57c5-9215-8185839d7d27@st.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <7ab2cfcd-07ed-e380-727a-727e78cc0336@arm.com>
-Date: Fri, 13 Apr 2018 12:09:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Subject: Re: [PATCH] mm: vmalloc: Remove double execution of vunmap_page_range
+Message-ID: <20180413110949.GA17670@dhcp22.suse.cz>
+References: <1523611019-17679-1-git-send-email-cpandya@codeaurora.org>
+ <a623e12b-bb5e-58fa-c026-de9ea53c5bd9@linux.vnet.ibm.com>
+ <8da9f826-2a3d-e618-e512-4fc8d45c16f2@codeaurora.org>
+ <bbef0a92-f81b-5ba8-c5c1-d8c08444955b@linux.vnet.ibm.com>
+ <fa104cc6-c32a-9081-280f-2e03e4279f65@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <22bd0af7-9820-57c5-9215-8185839d7d27@st.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fa104cc6-c32a-9081-280f-2e03e4279f65@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/04/18 10:45, Pierre Yves MORDRET wrote:
-> Hi Robin
+On Fri 13-04-18 16:15:26, Chintan Pandya wrote:
 > 
-> On 04/11/2018 05:14 PM, Robin Murphy wrote:
->> On 11/04/18 15:44, Pierre-Yves MORDRET wrote:
->>> Both buffer Transfer Length (TLEN if any) and transfer size have to be
->>> aligned on burst size (burst beats*bus width).
->>>
->>> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
->>> ---
->>>     Version history:
->>>       v1:
->>>          * Initial
->>>       v2:
->>> ---
->>> ---
->>>    drivers/dma/stm32-mdma.c | 2 +-
->>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/dma/stm32-mdma.c b/drivers/dma/stm32-mdma.c
->>> index daa1602..fbcffa2 100644
->>> --- a/drivers/dma/stm32-mdma.c
->>> +++ b/drivers/dma/stm32-mdma.c
->>> @@ -413,7 +413,7 @@ static u32 stm32_mdma_get_best_burst(u32 buf_len, u32 tlen, u32 max_burst,
->>>    	u32 best_burst = max_burst;
->>>    	u32 burst_len = best_burst * width;
->>>    
->>> -	while ((burst_len > 0) && (tlen % burst_len)) {
->>> +	while ((burst_len > 0) && (((tlen | buf_len) & (burst_len - 1)) != 0)) {
->>>    		best_burst = best_burst >> 1;
->>>    		burst_len = best_burst * width;
->>>    	}
->>
->> FWIW, doesn't that whole loop come down to just:
->>
->> 	burst_len = min(ffs(tlen | buf_len), max_burst * width);
 > 
-> No sure it ends as expected. or I miss something or don't understand this statement
-> I tried with "relevant value" : i.e. best_burst = 32, Tlen=128(default) and
-> buf_len = 64, width= 4. This statements gets me something wrong output => 7
-> instead of 16 * 4.
-> I doubt :)
+> On 4/13/2018 4:10 PM, Anshuman Khandual wrote:
+> > On 04/13/2018 03:47 PM, Chintan Pandya wrote:
+> > > 
+> > > 
+> > > On 4/13/2018 3:29 PM, Anshuman Khandual wrote:
+> > > > On 04/13/2018 02:46 PM, Chintan Pandya wrote:
+> > > > > Unmap legs do call vunmap_page_range() irrespective of
+> > > > > debug_pagealloc_enabled() is enabled or not. So, remove
+> > > > > redundant check and optional vunmap_page_range() routines.
+> > > > 
+> > > > vunmap_page_range() tears down the page table entries and does
+> > > > not really flush related TLB entries normally unless page alloc
+> > > > debug is enabled where it wants to make sure no stale mapping is
+> > > > still around for debug purpose. Deferring TLB flush improves
+> > > > performance. This patch will force TLB flush during each page
+> > > > table tear down and hence not desirable.
+> > > > 
+> > > Deferred TLB invalidation will surely improve performance. But force
+> > > flush can help in detecting invalid access right then and there. I
+> > 
+> > Deferred TLB invalidation was a choice made some time ago with the
+> > commit db64fe02258f1507e ("mm: rewrite vmap layer") as these vmalloc
+> > mappings wont be used other than inside the kernel and TLB gets
+> > flushed when they are reused. This way it can still avail the benefit
+> > of deferred TLB flushing without exposing itself to invalid accesses.
+> > 
+> > > chose later. May be I should have clean up the vmap tear down code
+> > > as well where it actually does the TLB invalidation.
+> > > 
+> > > Or make TLB invalidation in free_unmap_vmap_area() be dependent upon
+> > > debug_pagealloc_enabled().
+> > 
+> > Immediate TLB invalidation needs to be dependent on debug_pagealloc_
+> > enabled() and should be done only for debug purpose. Contrary to that
+> > is not desirable.
+> > 
+> Okay. I will raise v2 for that.
 
-Heh, seems I confused myself halfway through and started thinking 
-max_burst and width were the exponents x rather than the values 2^x...
-
-A more representative guess should be:
-
-	min(1 << __ffs(tlen | buf_len), max_burst * width);
-
-but the general point I was trying to make is that a loop checking 
-whether the bottom n bits of something are zero for different values of 
-n is unnecessary when n can simply be calculated directly*.
-
-Robin.
-
-
-* in the case of this "just the lowest set bit" idiom there's also the 
-shift-free ((x & (x - 1)) ^ x), but as well as being unreadable it's 
-generally less efficient than (1 << __ffs(x)) for most modern ISAs.
+More importantly. Your changelog absolutely lacks the _why_ part. It
+just states what the code does which is not all that hard to read from
+the diff. It is usually much more important to present _why_ the patch
+is an improvement and worth merging.
+-- 
+Michal Hocko
+SUSE Labs
