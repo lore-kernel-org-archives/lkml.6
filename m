@@ -1,98 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754671AbeDML1S (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:27:18 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56850 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754045AbeDML1O (ORCPT
+        id S1754689AbeDML1q (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:27:46 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52083 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754348AbeDMLXf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:27:14 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BFC0F605A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
-Subject: Re: [PATCH] mm: vmalloc: Remove double execution of vunmap_page_range
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>, vbabka@suse.cz,
-        labbott@redhat.com, catalin.marinas@arm.com, hannes@cmpxchg.org,
-        f.fainelli@gmail.com, xieyisheng1@huawei.com,
-        ard.biesheuvel@linaro.org, richard.weiyang@gmail.com,
-        byungchul.park@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1523611019-17679-1-git-send-email-cpandya@codeaurora.org>
- <a623e12b-bb5e-58fa-c026-de9ea53c5bd9@linux.vnet.ibm.com>
- <8da9f826-2a3d-e618-e512-4fc8d45c16f2@codeaurora.org>
- <bbef0a92-f81b-5ba8-c5c1-d8c08444955b@linux.vnet.ibm.com>
- <fa104cc6-c32a-9081-280f-2e03e4279f65@codeaurora.org>
- <20180413110949.GA17670@dhcp22.suse.cz>
-From: Chintan Pandya <cpandya@codeaurora.org>
-Message-ID: <696fedc5-6bcd-f0a0-62f5-4f9e7b7c602a@codeaurora.org>
-Date: Fri, 13 Apr 2018 16:57:06 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 13 Apr 2018 07:23:35 -0400
+X-Google-Smtp-Source: AIpwx4/B9ueAIsNHXnUrE5K9HacGM/M1M1cgiwjwka+5KupHhW5QUZn44pLIdRuM7wyKZbTKpORMpw==
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: karahmed@amazon.de, jmattson@google.com, rkrcmar@redhat.com
+Subject: [PATCH 0/2] MSR_IA32_TSC fixes for nested
+Date: Fri, 13 Apr 2018 13:23:25 +0200
+Message-Id: <1523618608-30574-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-In-Reply-To: <20180413110949.GA17670@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is the final version of Karim's patch including a test for
+MSR_IA32_TSC_ADJUST, SVM support, and a small subsequent cleanup.
+I'm not sure about committing the test, since it seems easier to
+do it in kvm-unit-tests (in fact, I'll shortly send the SVM version
+of the test, for kvm-unit-tests) but I'm sending it anyway for
+everyone's use and to post the linux.git-ized version of Google's
+nested virt test framework.
 
+Thanks,
 
-On 4/13/2018 4:39 PM, Michal Hocko wrote:
-> On Fri 13-04-18 16:15:26, Chintan Pandya wrote:
->>
->>
->> On 4/13/2018 4:10 PM, Anshuman Khandual wrote:
->>> On 04/13/2018 03:47 PM, Chintan Pandya wrote:
->>>>
->>>>
->>>> On 4/13/2018 3:29 PM, Anshuman Khandual wrote:
->>>>> On 04/13/2018 02:46 PM, Chintan Pandya wrote:
->>>>>> Unmap legs do call vunmap_page_range() irrespective of
->>>>>> debug_pagealloc_enabled() is enabled or not. So, remove
->>>>>> redundant check and optional vunmap_page_range() routines.
->>>>>
->>>>> vunmap_page_range() tears down the page table entries and does
->>>>> not really flush related TLB entries normally unless page alloc
->>>>> debug is enabled where it wants to make sure no stale mapping is
->>>>> still around for debug purpose. Deferring TLB flush improves
->>>>> performance. This patch will force TLB flush during each page
->>>>> table tear down and hence not desirable.
->>>>>
->>>> Deferred TLB invalidation will surely improve performance. But force
->>>> flush can help in detecting invalid access right then and there. I
->>>
->>> Deferred TLB invalidation was a choice made some time ago with the
->>> commit db64fe02258f1507e ("mm: rewrite vmap layer") as these vmalloc
->>> mappings wont be used other than inside the kernel and TLB gets
->>> flushed when they are reused. This way it can still avail the benefit
->>> of deferred TLB flushing without exposing itself to invalid accesses.
->>>
->>>> chose later. May be I should have clean up the vmap tear down code
->>>> as well where it actually does the TLB invalidation.
->>>>
->>>> Or make TLB invalidation in free_unmap_vmap_area() be dependent upon
->>>> debug_pagealloc_enabled().
->>>
->>> Immediate TLB invalidation needs to be dependent on debug_pagealloc_
->>> enabled() and should be done only for debug purpose. Contrary to that
->>> is not desirable.
->>>
->> Okay. I will raise v2 for that.
-> 
-> More importantly. Your changelog absolutely lacks the _why_ part. It
-> just states what the code does which is not all that hard to read from
-> the diff. It is usually much more important to present _why_ the patch
-> is an improvement and worth merging.
-> 
+Paolo
 
-It is improving performance in debug scenario. More than that, I see it
-as a clean up. Sure, I will try to address *why* in next change log.
+KarimAllah Ahmed (1):
+  X86/KVM: Properly update 'tsc_offset' to represent the running guest
 
-Chintan
+Paolo Bonzini (2):
+  kvm: x86: move MSR_IA32_TSC handling to x86.c
+  kvm: selftests: add vmx_tsc_adjust_test
+
+ arch/x86/include/asm/kvm_host.h                   |   1 +
+ arch/x86/kvm/svm.c                                |  26 +-
+ arch/x86/kvm/vmx.c                                |  37 +-
+ arch/x86/kvm/x86.c                                |  12 +-
+ tools/testing/selftests/kvm/Makefile              |   3 +-
+ tools/testing/selftests/kvm/include/kvm_util.h    |  15 +-
+ tools/testing/selftests/kvm/include/vmx.h         | 680 ++++++++++++++++++++++
+ tools/testing/selftests/kvm/lib/kvm_util.c        |  18 +-
+ tools/testing/selftests/kvm/lib/vmx.c             |  54 ++
+ tools/testing/selftests/kvm/vmx_tsc_adjust_test.c | 222 +++++++
+ 10 files changed, 1022 insertions(+), 46 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/include/vmx.h
+ create mode 100644 tools/testing/selftests/kvm/lib/vmx.c
+ create mode 100644 tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
+
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum, a Linux Foundation
-Collaborative Project
+1.8.3.1
