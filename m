@@ -1,61 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754318AbeDMKl5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 06:41:57 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52490 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753868AbeDMKlz (ORCPT
+        id S1754154AbeDMKpe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 06:45:34 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51828 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751657AbeDMKpd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 06:41:55 -0400
-Date: Fri, 13 Apr 2018 11:41:30 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        sathyanarayana.nujella@intel.com, Adam.Thomson.Opensource@diasemi.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sound: soc: intel: bxt_da7219_max98357a: Replace
- GFP_ATOMIC with GFP_KERNEL in broxton_audio_probe
-Message-ID: <20180413104130.GA6854@sirena.org.uk>
-References: <1523270781-22627-1-git-send-email-baijiaju1990@gmail.com>
+        Fri, 13 Apr 2018 06:45:33 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D94096079B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
+Subject: Re: [PATCH] mm: vmalloc: Remove double execution of vunmap_page_range
+To: Anshuman Khandual <khandual@linux.vnet.ibm.com>, vbabka@suse.cz,
+        labbott@redhat.com, catalin.marinas@arm.com, hannes@cmpxchg.org,
+        f.fainelli@gmail.com, xieyisheng1@huawei.com,
+        ard.biesheuvel@linaro.org, richard.weiyang@gmail.com,
+        byungchul.park@lge.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1523611019-17679-1-git-send-email-cpandya@codeaurora.org>
+ <a623e12b-bb5e-58fa-c026-de9ea53c5bd9@linux.vnet.ibm.com>
+ <8da9f826-2a3d-e618-e512-4fc8d45c16f2@codeaurora.org>
+ <bbef0a92-f81b-5ba8-c5c1-d8c08444955b@linux.vnet.ibm.com>
+From: Chintan Pandya <cpandya@codeaurora.org>
+Message-ID: <fa104cc6-c32a-9081-280f-2e03e4279f65@codeaurora.org>
+Date: Fri, 13 Apr 2018 16:15:26 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
-Content-Disposition: inline
-In-Reply-To: <1523270781-22627-1-git-send-email-baijiaju1990@gmail.com>
-X-Cookie: You were s'posed to laugh!
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <bbef0a92-f81b-5ba8-c5c1-d8c08444955b@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---3MwIy2ne0vdjdPXF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Mon, Apr 09, 2018 at 06:46:21PM +0800, Jia-Ju Bai wrote:
-> broxton_audio_probe() is never called in atomic context.
-> This function is only set as ".probe" in "struct platform_driver".
+On 4/13/2018 4:10 PM, Anshuman Khandual wrote:
+> On 04/13/2018 03:47 PM, Chintan Pandya wrote:
+>>
+>>
+>> On 4/13/2018 3:29 PM, Anshuman Khandual wrote:
+>>> On 04/13/2018 02:46 PM, Chintan Pandya wrote:
+>>>> Unmap legs do call vunmap_page_range() irrespective of
+>>>> debug_pagealloc_enabled() is enabled or not. So, remove
+>>>> redundant check and optional vunmap_page_range() routines.
+>>>
+>>> vunmap_page_range() tears down the page table entries and does
+>>> not really flush related TLB entries normally unless page alloc
+>>> debug is enabled where it wants to make sure no stale mapping is
+>>> still around for debug purpose. Deferring TLB flush improves
+>>> performance. This patch will force TLB flush during each page
+>>> table tear down and hence not desirable.
+>>>
+>> Deferred TLB invalidation will surely improve performance. But force
+>> flush can help in detecting invalid access right then and there. I
+> 
+> Deferred TLB invalidation was a choice made some time ago with the
+> commit db64fe02258f1507e ("mm: rewrite vmap layer") as these vmalloc
+> mappings wont be used other than inside the kernel and TLB gets
+> flushed when they are reused. This way it can still avail the benefit
+> of deferred TLB flushing without exposing itself to invalid accesses.
+> 
+>> chose later. May be I should have clean up the vmap tear down code
+>> as well where it actually does the TLB invalidation.
+>>
+>> Or make TLB invalidation in free_unmap_vmap_area() be dependent upon
+>> debug_pagealloc_enabled().
+> 
+> Immediate TLB invalidation needs to be dependent on debug_pagealloc_
+> enabled() and should be done only for debug purpose. Contrary to that
+> is not desirable.
+> 
+Okay. I will raise v2 for that.
 
-Please submit patches using subject lines reflecting the style for the
-subsystem.  This makes it easier for people to identify relevant
-patches.  Look at what existing commits in the area you're changing are
-doing and make sure your subject lines visually resemble what they're
-doing.
-
---3MwIy2ne0vdjdPXF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrQiVoACgkQJNaLcl1U
-h9CQPwf9EQIfFL7w6d2apKyJctMJiogjpDcKmRDZkAvAXXhZLRkjYE9+JADLxpi1
-s4ClYXhU1ggARiyLLXGRnWDRCYY7Fh67huCBpKkf5GDPAbC2tAvOBAtbVN9Ex50Z
-PFyzkOW9bENfM3RgdlXP3Sql00XrjNErjrl8Daw+STmlORzXsGLzZZDZH3owI35Z
-cwQ4qzqaMjB5O9EWlse1EJla911Kf6xYjVGeTQw91C4nLxg9Nm32YjBhp4iSHjqW
-1AFBB2L9fmTcWaPAEgmnMlnWE6NGZBdcpXvYSvfkJbdhg0lpp0vE728pykUDmAxz
-rHtKyUeHTsw/59UOl5cQDGs19HtB/A==
-=D/7C
------END PGP SIGNATURE-----
-
---3MwIy2ne0vdjdPXF--
+Chintan
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+Inc. is a member of the Code Aurora Forum, a Linux Foundation
+Collaborative Project
