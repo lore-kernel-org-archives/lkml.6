@@ -1,88 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754591AbeDMLX7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:23:59 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38652 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754567AbeDMLX4 (ORCPT
+        id S1754614AbeDMLYG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:24:06 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:35679 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754567AbeDMLYB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:23:56 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: intel: skl_nau88l25_max98357a: Replace GFP_ATOMIC with GFP_KERNEL in skylake_audio_probe" to the asoc tree
-In-Reply-To: <1523270936-22990-1-git-send-email-baijiaju1990@gmail.com>
-Message-Id: <E1f6wo4-0000AR-3t@debutante>
-Date: Fri, 13 Apr 2018 12:23:52 +0100
+        Fri, 13 Apr 2018 07:24:01 -0400
+X-Google-Smtp-Source: AIpwx4+8XcViYSzq9Mf+G61eusCH2x8MXsokIo6WZnLFJBDz3Vf1niS5UGGEyd2g+BpfNLE8LAzKkJ2FDmbBwrIALGs=
+MIME-Version: 1.0
+In-Reply-To: <20180412150826.20988-36-mszeredi@redhat.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-36-mszeredi@redhat.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 13 Apr 2018 14:23:59 +0300
+Message-ID: <CAOQ4uxiO2zAEe_N_CQQJT1s3CqHn-Bxsbufod1R0FYeWLBHA5w@mail.gmail.com>
+Subject: Re: [RFC PATCH 35/35] ovl: fix documentation of non-standard behavior
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Thu, Apr 12, 2018 at 6:08 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
+> We can now drop description of the ro/rw inconsistency from the
+> documentation.
+>
+> Also clarify, that now fully standard compliant behavior can be enabled
+> with kernel/module/mount options.
+>
 
-   ASoC: intel: skl_nau88l25_max98357a: Replace GFP_ATOMIC with GFP_KERNEL in skylake_audio_probe
+Very nice!
 
-has been applied to the asoc tree at
+Is it maybe a good time to tone down this expectation-lowering
+phrase from the introduction:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+"The result will inevitably fail to look exactly like a normal
+filesystem for various technical reasons.  The expectation is that
+many use cases will be able to ignore these differences."
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 6618d2e864ac0e869c6de47bc85d1552e7443b22 Mon Sep 17 00:00:00 2001
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Date: Mon, 9 Apr 2018 18:48:56 +0800
-Subject: [PATCH] ASoC: intel: skl_nau88l25_max98357a: Replace GFP_ATOMIC with
- GFP_KERNEL in skylake_audio_probe
-
-skylake_audio_probe() is never called in atomic context.
-This function is only set as ".probe" in "struct platform_driver".
-
-Despite never getting called from atomic context,
-skylake_audio_probe() calls devm_kzalloc() with GFP_ATOMIC,
-which waits busily for allocation.
-GFP_ATOMIC is not necessary and can be replaced with GFP_KERNEL,
-to avoid busy waiting and improve the possibility of sucessful allocation.
-
-This is found by a static analysis tool named DCNS written by myself.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/intel/boards/skl_nau88l25_max98357a.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/intel/boards/skl_nau88l25_max98357a.c b/sound/soc/intel/boards/skl_nau88l25_max98357a.c
-index 9a7a0646bffe..3ff6646cfa21 100644
---- a/sound/soc/intel/boards/skl_nau88l25_max98357a.c
-+++ b/sound/soc/intel/boards/skl_nau88l25_max98357a.c
-@@ -643,7 +643,7 @@ static int skylake_audio_probe(struct platform_device *pdev)
- 	struct skl_nau8825_private *ctx;
- 	struct skl_machine_pdata *pdata;
- 
--	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_ATOMIC);
-+	ctx = devm_kzalloc(&pdev->dev, sizeof(*ctx), GFP_KERNEL);
- 	if (!ctx)
- 		return -ENOMEM;
- 
--- 
-2.17.0
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  Documentation/filesystems/overlayfs.txt | 64 ++++++++++++++++++++++-----------
+>  1 file changed, 43 insertions(+), 21 deletions(-)
+>
+> diff --git a/Documentation/filesystems/overlayfs.txt b/Documentation/filesystems/overlayfs.txt
+> index 961b287ef323..095186080d23 100644
+> --- a/Documentation/filesystems/overlayfs.txt
+> +++ b/Documentation/filesystems/overlayfs.txt
+> @@ -306,27 +306,49 @@ the copied layers will fail the verification of the lower root file handle.
+>  Non-standard behavior
+>  ---------------------
+>
+> -The copy_up operation essentially creates a new, identical file and
+> -moves it over to the old name.  Any open files referring to this inode
+> -will access the old data.
+> -
+> -The new file may be on a different filesystem, so both st_dev and st_ino
+> -of the real file may change.  The values of st_dev and st_ino returned by
+> -stat(2) on an overlay object are often not the same as the real file
+> -stat(2) values to prevent the values from changing on copy_up.
+> -
+> -Unless "xino" feature is enabled, when overlay layers are not all on the
+> -same underlying filesystem, the value of st_dev may be different for two
+> -non-directory objects in the same overlay filesystem and the value of
+> -st_ino for directory objects may be non persistent and could change even
+> -while the overlay filesystem is still mounted.
+> -
+> -Unless "inode index" feature is enabled, if a file with multiple hard
+> -links is copied up, then this will "break" the link.  Changes will not be
+> -propagated to other names referring to the same inode.
+> -
+> -Unless "redirect_dir" feature is enabled, rename(2) on a lower or merged
+> -directory will fail with EXDEV.
+> +Overlayfs can now act as a POSIX compliant filesystem with the following
+> +features turned on:
+> +
+> +1) "redirect_dir"
+> +
+> +Enabled with the mount option or module option: "redirect_dir=on" or with
+> +the kernel config option CONFIG_OVERLAY_FS_REDIRECT_DIR=y.
+> +
+> +If this feature is disabled, then rename(2) on a lower or merged directory
+> +will fail with EXDEV ("Invalid cross-device link").
+> +
+> +2) "inode index"
+> +
+> +Enabled with the mount option or module option "index=on" or with the
+> +kernel config option CONFIG_OVERLAY_FS_INDEX=y.
+> +
+> +If this feature is disabled and a file with multiple hard links is copied
+> +up, then this will "break" the link.  Changes will not be propagated to
+> +other names referring to the same inode.
+> +
+> +3) "xino"
+> +
+> +Enabled with the mount option "xino=auto" or "xino=on", with the module
+> +option "xino_auto=on" or with the kernel config option
+> +CONFIG_OVERLAY_FS_XINO_AUTO=y.  Also implicitly enabled by using the same
+> +underlying filesystem for all layers making up the overlay.
+> +
+> +If this feature is disabled or the underlying filesystem doesn't have
+> +enough free bits in the inode number, then overlayfs will not be able to
+> +guarantee that the values of st_ino and st_dev returned by stat(2) and the
+> +value of d_ino returned by readdir(3) will act like on a normal filesystem.
+> +E.g. the value of st_dev may be different for two objects in the same
+> +overlay filesystem and the value of st_ino for directory objects may not be
+> +persistent and could change even while the overlay filesystem is mounted.
+> +
+> +4) "copy_up_shared"
+> +
+> +Enabled with the mount option or module option "copy_up_shared=on" or with
+> +the kernel config option CONFIG_OVERLAY_FS_COPY_UP_SHARED=y.
+> +
+> +If this feature is disabled, then a memory mapping created with MAP_SHARED
+> +might contain stale data if the file has been copied up and modified in the
+> +meantime.
+>
+>
+>  Changes to underlying filesystems
+> --
+> 2.14.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
