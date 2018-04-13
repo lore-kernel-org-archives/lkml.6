@@ -1,81 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754347AbeDMLJz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 07:09:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37844 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754323AbeDMLJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 07:09:54 -0400
-Date: Fri, 13 Apr 2018 13:09:49 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Chintan Pandya <cpandya@codeaurora.org>
-Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>, vbabka@suse.cz,
-        labbott@redhat.com, catalin.marinas@arm.com, hannes@cmpxchg.org,
-        f.fainelli@gmail.com, xieyisheng1@huawei.com,
-        ard.biesheuvel@linaro.org, richard.weiyang@gmail.com,
-        byungchul.park@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: vmalloc: Remove double execution of vunmap_page_range
-Message-ID: <20180413110949.GA17670@dhcp22.suse.cz>
-References: <1523611019-17679-1-git-send-email-cpandya@codeaurora.org>
- <a623e12b-bb5e-58fa-c026-de9ea53c5bd9@linux.vnet.ibm.com>
- <8da9f826-2a3d-e618-e512-4fc8d45c16f2@codeaurora.org>
- <bbef0a92-f81b-5ba8-c5c1-d8c08444955b@linux.vnet.ibm.com>
- <fa104cc6-c32a-9081-280f-2e03e4279f65@codeaurora.org>
+        id S1754384AbeDMLK0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 07:10:26 -0400
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:38832 "EHLO
+        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754143AbeDMLKY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 07:10:24 -0400
+X-Google-Smtp-Source: AIpwx48YgHFMy3Wg85fjwNeofIWSms07xftmpwOUFKrlXrKuTzuc2d8joWtMyXYRjLMUp4wA+T0Djg==
+Subject: Re: [GIT PULL] Thermal management updates for v4.17-rc1
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "Li, Philip" <philip.li@intel.com>
+References: <1523436077.16235.5.camel@intel.com> <4212243.RcCUWlsaar@amdc3058>
+ <3b41052a-233d-9992-223a-d16f48295905@linaro.org>
+ <CGME20180413104120epcas1p319b9e78b025cb68f810f047c67a48362@epcas1p3.samsung.com>
+ <10298074.ogKH1ypqfx@amdc3058>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <417cb724-2fcf-717f-63bf-9a479cc0d540@linaro.org>
+Date: Fri, 13 Apr 2018 13:10:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fa104cc6-c32a-9081-280f-2e03e4279f65@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <10298074.ogKH1ypqfx@amdc3058>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 13-04-18 16:15:26, Chintan Pandya wrote:
+On 13/04/2018 12:41, Bartlomiej Zolnierkiewicz wrote:
+> On Friday, April 13, 2018 12:30:04 PM Daniel Lezcano wrote:
+>> On 13/04/2018 11:28, Bartlomiej Zolnierkiewicz wrote:
+>>
+>> [ ... ]
+>>
+>>>>> It is okay to return 0 because this code-path (the default one) will be
+>>>>> never hit by the driver (probe makes sure of it) - the default case is
+>>>>> here is just to silence compilation errors..
+>>>>
+>>>> The init function is making sure cal_type is one or another. Can you fix
+>>>> it correctly by replacing the 'switch' by a 'if' instead of adding dead
+>>>> branches to please gcc?
+>>>>
+>>>> if (data->cal_type == TYPE_TWO_POINT_TRIMMING) {
+>>>> 	return ...;
+>>>> }
+>>>>
+>>>> return ...;
+>>>
+>>> I'm not the one that added this switch statement (it has been there since
+>>> 2011) and I would be happy to remove it. 
+>>
+>> Actually the switch statement was fine until the cleanup.
 > 
+> I don't see how it was fine before as the driver has never used the default
+> case (always used TYPE_ONE_POINT_TRIMMING or TYPE_TWO_POINT_TRIMMING).
 > 
-> On 4/13/2018 4:10 PM, Anshuman Khandual wrote:
-> > On 04/13/2018 03:47 PM, Chintan Pandya wrote:
-> > > 
-> > > 
-> > > On 4/13/2018 3:29 PM, Anshuman Khandual wrote:
-> > > > On 04/13/2018 02:46 PM, Chintan Pandya wrote:
-> > > > > Unmap legs do call vunmap_page_range() irrespective of
-> > > > > debug_pagealloc_enabled() is enabled or not. So, remove
-> > > > > redundant check and optional vunmap_page_range() routines.
-> > > > 
-> > > > vunmap_page_range() tears down the page table entries and does
-> > > > not really flush related TLB entries normally unless page alloc
-> > > > debug is enabled where it wants to make sure no stale mapping is
-> > > > still around for debug purpose. Deferring TLB flush improves
-> > > > performance. This patch will force TLB flush during each page
-> > > > table tear down and hence not desirable.
-> > > > 
-> > > Deferred TLB invalidation will surely improve performance. But force
-> > > flush can help in detecting invalid access right then and there. I
-> > 
-> > Deferred TLB invalidation was a choice made some time ago with the
-> > commit db64fe02258f1507e ("mm: rewrite vmap layer") as these vmalloc
-> > mappings wont be used other than inside the kernel and TLB gets
-> > flushed when they are reused. This way it can still avail the benefit
-> > of deferred TLB flushing without exposing itself to invalid accesses.
-> > 
-> > > chose later. May be I should have clean up the vmap tear down code
-> > > as well where it actually does the TLB invalidation.
-> > > 
-> > > Or make TLB invalidation in free_unmap_vmap_area() be dependent upon
-> > > debug_pagealloc_enabled().
-> > 
-> > Immediate TLB invalidation needs to be dependent on debug_pagealloc_
-> > enabled() and should be done only for debug purpose. Contrary to that
-> > is not desirable.
-> > 
-> Okay. I will raise v2 for that.
+> Could you please explain this more?
 
-More importantly. Your changelog absolutely lacks the _why_ part. It
-just states what the code does which is not all that hard to read from
-the diff. It is usually much more important to present _why_ the patch
-is an improvement and worth merging.
+>From commit 480b5bfc16e17ef51ca1c
+
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -260,7 +260,7 @@ static int temp_to_code(struct exynos_tmu_data
+*data, u8 temp)
+                temp_code = temp + data->temp_error1 -
+pdata->first_point_trim;
+                break;
+        default:
+-               temp_code = temp + pdata->default_temp_offset;
++               WARN_ON(1);
+                break;
+        }
+
+@@ -287,7 +287,7 @@ static int code_to_temp(struct exynos_tmu_data
+*data, u16 temp_code)
+                temp = temp_code - data->temp_error1 +
+pdata->first_point_trim;
+                break;
+        default:
+-               temp = temp_code - pdata->default_temp_offset;
++               WARN_ON(1);
+                break;
+        }
+
+I'm not saying the code path was fine but from the compiler point of
+view, it was. By removing the defaulting temp value there is a code path
+gcc sees the temp variable as not initialized.
+
+Your cleanups are relevant.
+
+
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+
+
 -- 
-Michal Hocko
-SUSE Labs
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
