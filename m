@@ -1,87 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751371AbeDNSbE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 14:31:04 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:41913 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751152AbeDNSbC (ORCPT
+        id S1751493AbeDNSpS (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 14:45:18 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:18038 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751152AbeDNSpQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 14:31:02 -0400
-X-Google-Smtp-Source: AIpwx4+HixsdkXe4nkjDJk7ah3QYQHky/5Ua5midTT3xkJl5eMsc2asrU8SHRAMBYImH9X4SjYYAPQ==
-Date: Sat, 14 Apr 2018 11:30:53 -0700
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Rui Zhang <rui.zhang@intel.com>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL V3] Thermal SoC management updates for v4.17-rc1
-Message-ID: <20180414183051.GA27921@localhost.localdomain>
+        Sat, 14 Apr 2018 14:45:16 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w3EIio6T012767
+X-Nifty-SrcIP: [209.85.213.47]
+X-Google-Smtp-Source: AIpwx48uRqJWi//iRi1OsQgq/wNpziPeys7mVZ8yPGURnltoONbARWJO5Hserksz9fXtoSZlA1x0sRltpQEbNc5w/8s=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sun, 15 Apr 2018 03:44:09 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASVEe_RSYTys4seqEQ-uSzpJWbrq=Q5=UoL6un_DnHAQA@mail.gmail.com>
+Message-ID: <CAK7LNASVEe_RSYTys4seqEQ-uSzpJWbrq=Q5=UoL6un_DnHAQA@mail.gmail.com>
+Subject: [GIT PULL] Kbuild updates for 4.17 (2nd round)
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        masahiroy@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
+Hi Linus,
 
-Please find thermal-soc changes for v4.17-rc1.
-Rui asked me to send the pull request directly to you
-as we are close to the end of the merge window.
-Essentially this pull removes the series that caused
-warning regression. I will work with the developer
-to get that fixed later on, but I am still sending
-the other few patches that are unrelated to that.
-Let me know if this causes any issues and can still
-be pulled.
-
-Changelog:
-- New i.MX7 thermal sensor
-- Mediatek driver now supports MT7622 SoC
-- Removal of min max cpu cooling DT property
-
-Differences in V3:
-- Rebased on top current linus/master, to avoid and merge issues
-from previous pulled thermal code.
-
-Differences in V2:
-- Reordered the patches to drop exynos changes for now until we get
-agreement on the fix on that driver for the compilation warns
-caused by the confusing conversion functions.
+Please pull more Kbuild updates for v4.17-rc1.
+Thanks!
 
 
-The following changes since commit 48023102b7078a6674516b1fe0d639669336049d:
+The following changes since commit f605ba97fb80522656c7dce9825a908f1e765b57:
 
-  Merge branch 'overlayfs-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs (2018-04-13 16:55:41 -0700)
+  Merge tag 'vfio-v4.17-rc1' of git://github.com/awilliam/linux-vfio
+(2018-04-06 19:44:27 -0700)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal linus
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+tags/kbuild-v4.17-2
 
-for you to fetch changes up to 15a32df1918259be6c23fc36014fc26ee66c836c:
+for you to fetch changes up to 17baab68d337a0bf4654091e2b4cd67c3fdb44d8:
 
-  dt-bindings: thermal: Remove "cooling-{min|max}-level" properties (2018-04-14 09:37:55 -0700)
+  kconfig: extend output of 'listnewconfig' (2018-04-13 23:23:11 +0900)
 
 ----------------------------------------------------------------
-Anson Huang (1):
-      thermal: imx: add i.MX7 thermal sensor support
+Kbuild updates for v4.17 (2nd)
 
-Bartlomiej Zolnierkiewicz (1):
-      dt-bindings: thermal: remove no longer needed samsung thermal properties
+- pass HOSTLDFLAGS when compiling single .c host programs
 
-Sean Wang (2):
-      dt-bindings: thermal: add binding for MT7622 SoC
-      thermal: mediatek: add support for MT7622 SoC
+- build genksyms lexer and parser files instead of using shipped
+  versions
 
-Viresh Kumar (1):
-      dt-bindings: thermal: Remove "cooling-{min|max}-level" properties
+- rename *-asn1.[ch] to *.asn1.[ch] for suffix consistency
 
- .../devicetree/bindings/thermal/exynos-thermal.txt |  23 +-
- .../devicetree/bindings/thermal/imx-thermal.txt    |   9 +-
- .../bindings/thermal/mediatek-thermal.txt          |   1 +
- .../devicetree/bindings/thermal/thermal.txt        |  16 +-
- drivers/thermal/imx_thermal.c                      | 295 ++++++++++++++++-----
- drivers/thermal/mtk_thermal.c                      |  35 +++
- 6 files changed, 281 insertions(+), 98 deletions(-)
+- let the top .gitignore globally ignore artifacts generated by
+  flex, bison, and asn1_compiler
+
+- let the top Makefile globally clean artifacts generated by
+  flex, bison, and asn1_compiler
+
+- use safer .SECONDARY marker instead of .PRECIOUS to prevent
+  intermediate files from being removed
+
+- support -fmacro-prefix-map option to make __FILE__ a relative path
+
+- fix # escaping to prepare for the future GNU Make release
+
+- clean up deb-pkg by using debian tools instead of handrolled
+  source/changes generation
+
+- improve rpm-pkg portability by supporting kernel-install as a
+  fallback of new-kernel-pkg
+
+- extend Kconfig listnewconfig target to provide more information
+
+----------------------------------------------------------------
+Don Zickus (1):
+      kconfig: extend output of 'listnewconfig'
+
+Javier Martinez Canillas (1):
+      kbuild: rpm-pkg: use kernel-install as a fallback for new-kernel-pkg
+
+Masahiro Yamada (10):
+      .gitignore: move *.lex.c *.tab.[ch] patterns to the top-level .gitignore
+      kbuild: clean up *.lex.c and *.tab.[ch] patterns from top-level Makefile
+      genksyms: generate lexer and parser during build instead of shipping
+      kbuild: add %.lex.c and %.tab.[ch] to 'targets' automatically
+      kbuild: add %.dtb.S and %.dtb to 'targets' automatically
+      .gitignore: move *-asn1.[ch] patterns to the top-level .gitignore
+      kbuild: clean up *-asn1.[ch] patterns from top-level Makefile
+      kbuild: rename *-asn1.[ch] to *.asn1.[ch]
+      kbuild: mark $(targets) as .SECONDARY and remove .PRECIOUS markers
+      kbuild: use -fmacro-prefix-map to make __FILE__ a relative path
+
+Rasmus Villemoes (1):
+      Kbuild: fix # escaping in .cmd files for future Make
+
+Riku Voipio (1):
+      kbuild: deb-pkg: split generating packaging and build
+
+Robin Jarry (1):
+      kbuild: use HOSTLDFLAGS for single .c executables
+
+ .gitignore                                  |    7 +-
+ Makefile                                    |    5 +
+ arch/arc/boot/dts/Makefile                  |    2 -
+ arch/arm/crypto/Makefile                    |    2 +-
+ arch/arm64/crypto/Makefile                  |    2 +-
+ arch/sparc/vdso/Makefile                    |    4 +-
+ arch/x86/entry/vdso/Makefile                |    4 +-
+ crypto/.gitignore                           |    1 -
+ crypto/Makefile                             |   14 +-
+ crypto/asymmetric_keys/.gitignore           |    1 -
+ crypto/asymmetric_keys/Makefile             |   31 +-
+ crypto/asymmetric_keys/mscode_parser.c      |    2 +-
+ crypto/asymmetric_keys/pkcs7_parser.c       |    2 +-
+ crypto/asymmetric_keys/x509_cert_parser.c   |    4 +-
+ crypto/rsa_helper.c                         |    4 +-
+ drivers/crypto/qat/qat_common/.gitignore    |    1 -
+ drivers/of/unittest-data/Makefile           |    6 -
+ net/ipv4/netfilter/Makefile                 |    5 +-
+ net/ipv4/netfilter/nf_nat_snmp_basic_main.c |    2 +-
+ scripts/Kbuild.include                      |    5 +-
+ scripts/Makefile.build                      |   23 +-
+ scripts/Makefile.host                       |    2 +-
+ scripts/Makefile.lib                        |   31 +-
+ scripts/asn1_compiler.c                     |    2 +-
+ scripts/dtc/.gitignore                      |    3 -
+ scripts/dtc/Makefile                        |    5 -
+ scripts/genksyms/.gitignore                 |    3 -
+ scripts/genksyms/Makefile                   |   27 +-
+ scripts/genksyms/lex.lex.c_shipped          | 2291 ----------------------------
+ scripts/genksyms/parse.tab.c_shipped        | 2394
+------------------------------
+ scripts/genksyms/parse.tab.h_shipped        |  119 --
+ scripts/kconfig/.gitignore                  |    3 -
+ scripts/kconfig/Makefile                    |    4 +-
+ scripts/kconfig/conf.c                      |   14 +-
+ scripts/package/Makefile                    |   34 +-
+ scripts/package/builddeb                    |  221 +--
+ scripts/package/mkdebian                    |  189 +++
+ scripts/package/mkspec                      |    2 +
+ tools/build/Build.include                   |    5 +-
+ tools/objtool/Makefile                      |    2 +-
+ tools/scripts/Makefile.include              |    2 +
+ 41 files changed, 316 insertions(+), 5164 deletions(-)
+ delete mode 100644 crypto/.gitignore
+ delete mode 100644 crypto/asymmetric_keys/.gitignore
+ delete mode 100644 drivers/crypto/qat/qat_common/.gitignore
+ delete mode 100644 scripts/genksyms/lex.lex.c_shipped
+ delete mode 100644 scripts/genksyms/parse.tab.c_shipped
+ delete mode 100644 scripts/genksyms/parse.tab.h_shipped
+ create mode 100755 scripts/package/mkdebian
+
+
+-- 
+Best Regards
+Masahiro Yamada
