@@ -1,61 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752139AbeDNVrY (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 17:47:24 -0400
-Received: from mail-it0-f50.google.com ([209.85.214.50]:39862 "EHLO
-        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752046AbeDNVrW (ORCPT
+        id S1752138AbeDNW1T (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 18:27:19 -0400
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:34830 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752053AbeDNW1S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 17:47:22 -0400
-X-Google-Smtp-Source: AIpwx4+DOHHKMjEZ9ukfqgJOEgZwrYsqE6FhC4keYK2bmWzgbTyQb4MUM8wpMfsCVaR1f0HkOKHsT2HvDvSace7glns=
+        Sat, 14 Apr 2018 18:27:18 -0400
+X-IronPort-AV: E=Sophos;i="5.48,451,1517875200";
+   d="scan'208";a="715956314"
+From: KarimAllah Ahmed <karahmed@amazon.de>
+To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: KarimAllah Ahmed <karahmed@amazon.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH] KVM: Switch 'requests' to be 64-bit (explicitly)
+Date: Sun, 15 Apr 2018 00:26:44 +0200
+Message-Id: <1523744804-8220-1-git-send-email-karahmed@amazon.de>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180414205846.GW30522@ZenIV.linux.org.uk>
-References: <20180413181350.88831-1-khazhy@google.com> <20180413202823.204377-1-khazhy@google.com>
- <20180413141430.2788e2562e3e24bd273fe78b@linux-foundation.org>
- <3362fb2d-85ff-86af-399f-698c986e46cc@suse.com> <20180414080206.GV30522@ZenIV.linux.org.uk>
- <CA+55aFz4fwzcUWWT78AxK+GeVNVveWPNS+=V+ppb1ksn56TjUA@mail.gmail.com> <20180414205846.GW30522@ZenIV.linux.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 14 Apr 2018 14:47:21 -0700
-X-Google-Sender-Auth: KtCA0tWCQ6N52vJSRJ-MljtPo4c
-Message-ID: <CA+55aFxD1xKqbobvoHQUWc5jc9n7-7KXYeSQy-CpE0SUZHi0PQ@mail.gmail.com>
-Subject: Re: [PATCH] fs/dcache.c: re-add cond_resched() in shrink_dcache_parent()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Nikolay Borisov <nborisov@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>, Jeff Mahoney <jeffm@suse.com>,
-        Davidlohr Bueso <dave@stgolabs.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 14, 2018 at 1:58 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> That breaks d_invalidate(), unfortunately.  Look at the termination
-> conditions in the loop there...
+Switch 'requests' to be explicitly 64-bit and update BUILD_BUG_ON check to
+use the size of "requests" instead of the hard-coded '32'.
 
-Ugh. I was going to say "but that doesn't even use select_collect()",
-but yeah, detach_and_collect() calls it.
+That gives us a bit more room again for arch-specific requests as we
+already ran out of space for x86 due to the hard-coded check.
 
-It would be easy enough to just change the
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+---
+ include/linux/kvm_host.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-                if (!list_empty(&data.select.dispose))
-
-there to
-
-                if (!list_empty(&data.select.found))
-
-too.
-
-In fact, it probably *should* do that, exactly to get the whole
-"cond_resched()" call in that whole call chain too. Because as-is, it
-looks like it has the same issue as shrink_dcache_parent() does..
-
-But yeah, the fact that I didn't notice that makes me a bit nervous.
-But now I triple-checked, there are no other indirect callers.
-
-            Linus
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 6930c63..fe4f46b 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -129,7 +129,7 @@ static inline bool is_error_page(struct page *page)
+ #define KVM_REQUEST_ARCH_BASE     8
+ 
+ #define KVM_ARCH_REQ_FLAGS(nr, flags) ({ \
+-	BUILD_BUG_ON((unsigned)(nr) >= 32 - KVM_REQUEST_ARCH_BASE); \
++	BUILD_BUG_ON((unsigned)(nr) >= (sizeof(((struct kvm_vcpu *)0)->requests) * 8) - KVM_REQUEST_ARCH_BASE); \
+ 	(unsigned)(((nr) + KVM_REQUEST_ARCH_BASE) | (flags)); \
+ })
+ #define KVM_ARCH_REQ(nr)           KVM_ARCH_REQ_FLAGS(nr, 0)
+@@ -223,7 +223,7 @@ struct kvm_vcpu {
+ 	int vcpu_id;
+ 	int srcu_idx;
+ 	int mode;
+-	unsigned long requests;
++	u64 requests;
+ 	unsigned long guest_debug;
+ 
+ 	int pre_pcpu;
+@@ -1122,7 +1122,7 @@ static inline void kvm_make_request(int req, struct kvm_vcpu *vcpu)
+ 	 * caller.  Paired with the smp_mb__after_atomic in kvm_check_request.
+ 	 */
+ 	smp_wmb();
+-	set_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
++	set_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
+ }
+ 
+ static inline bool kvm_request_pending(struct kvm_vcpu *vcpu)
+@@ -1132,12 +1132,12 @@ static inline bool kvm_request_pending(struct kvm_vcpu *vcpu)
+ 
+ static inline bool kvm_test_request(int req, struct kvm_vcpu *vcpu)
+ {
+-	return test_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
++	return test_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
+ }
+ 
+ static inline void kvm_clear_request(int req, struct kvm_vcpu *vcpu)
+ {
+-	clear_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
++	clear_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
+ }
+ 
+ static inline bool kvm_check_request(int req, struct kvm_vcpu *vcpu)
+-- 
+2.7.4
