@@ -1,51 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751257AbeDNQFr (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 12:05:47 -0400
-Received: from smtprelay0251.hostedemail.com ([216.40.44.251]:54446 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750996AbeDNQFq (ORCPT
+        id S1751614AbeDNQ1Q (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 12:27:16 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35728 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751220AbeDNQ1N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 12:05:46 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:541:599:800:960:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3350:3622:3865:3867:3871:4250:4321:5007:10004:10400:10848:11026:11232:11473:11658:11914:12043:12114:12438:12555:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21067:21080:21365:21451:21627:30054:30064:30090:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: stew51_8950c2f38521f
-X-Filterd-Recvd-Size: 1769
-Message-ID: <e4b6b26ff58ee1ec9f92efacdd37e8fabbb7c8d6.camel@perches.com>
-Subject: Re: [PATCH v2] IB: make INFINIBAND_ADDR_TRANS configurable
-From: Joe Perches <joe@perches.com>
-To: Greg Thelen <gthelen@google.com>, dennis.dalessandro@intel.com
-Cc: Bart Van Assche <Bart.VanAssche@wdc.com>,
-        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Tarick Bedeir <tarick@google.com>
-Date: Sat, 14 Apr 2018 09:05:42 -0700
-In-Reply-To: <CAHH2K0YTCa99ZfCdvq0WEJVvszo7+kUiVP_cz0igqE4TZSNYGQ@mail.gmail.com>
-References: <9ad4563e701a38915d58552f9eee5b3602833ddf.camel@wdc.com>
-         <20180413172708.30286-1-gthelen@google.com>
-         <b1f20a68-2ed4-935f-4a9c-8a28c142ceee@intel.com>
-         <CAHH2K0YTCa99ZfCdvq0WEJVvszo7+kUiVP_cz0igqE4TZSNYGQ@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.0-4 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 14 Apr 2018 12:27:13 -0400
+X-Google-Smtp-Source: AIpwx494M+Hw1DkO2gK4zyViY50l8RLRgMM+DhDbyYbE0NydowYmxd5BtjjTF/V283icSEHTWYXNGQ==
+From: =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:SAMSUNG SOC CLOCK DRIVERS"
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-gpio@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] pinctrl/samsung: Correct EINTG banks order
+Date: Sat, 14 Apr 2018 18:27:09 +0200
+Message-ID: <2132977.nF3rHrDWU5@acerlaptop>
+User-Agent: KMail/5.1.3 (Linux/4.13.0-38-generic; KDE/5.18.0; x86_64; ; )
+In-Reply-To: <CAJKOXPcWQUHHhf2gV3u4fu=wuVf3qxOYwNdj0c_JFc+zqfJUkA@mail.gmail.com>
+References: <1523210867-3806-1-git-send-email-pawel.mikolaj.chmiel@gmail.com> <CA+Ln22FAmBHrxEvQpBPV1p=Kg2g+XCHn=HQJCNSUhFv+Jtf6xA@mail.gmail.com> <CAJKOXPcWQUHHhf2gV3u4fu=wuVf3qxOYwNdj0c_JFc+zqfJUkA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3EGRLs4022804
 
-On Sat, 2018-04-14 at 15:34 +0000, Greg Thelen wrote:
-> On Sat, Apr 14, 2018 at 8:13 AM Dennis Dalessandro <
-> dennis.dalessandro@intel.com> wrote:
+On Wednesday, April 11, 2018 11:52:44 AM CEST Krzysztof Kozlowski wrote:
+> On Wed, Apr 11, 2018 at 10:36 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> > 2018-04-10 17:38 GMT+09:00 Tomasz Figa <tomasz.figa@gmail.com>:
+> >> 2018-04-10 16:06 GMT+09:00 Krzysztof Kozlowski <krzk@kernel.org>:
+> >>> On Sun, Apr 8, 2018 at 8:07 PM, Paweł Chmiel
+> >>> <pawel.mikolaj.chmiel@gmail.com> wrote:
+> >>>> All banks with GPIO interrupts should be at beginning
+> >>>> of bank array and without any other types of banks between them.
+> >>>> This order is expected by exynos_eint_gpio_irq, when doing
+> >>>> interrupt group to bank translation.
+> >>>> Otherwise, kernel NULL pointer dereference would happen
+> >>>> when trying to handle interrupt, due to wrong bank being looked up.
+> >>>> Observed on s5pv210, when trying to handle gpj0 interrupt,
+> >>>> where kernel was mapping it to gpi bank.
+> >>>
+> >>> Thanks for the patch. The issue looks real although one thing was
+> >>> missed - there is a gap in SVC group between GPK2 and GPL0 (pointed by
+> >>> Marek Szyprowski):
+> >>>
+> >>> 0x0 - EINT_23 - gpk0
+> >>> 0x1 - EINT_24 - gpk1
+> >>> 0x2 - EINT_25 - gpk2
+> >>> 0x4 - EINT_27 - gpl0
+> >>> 0x7 - EINT_8 - gpm0
+> >>>
+> >>> Maybe this should be done differently - to remove such hidden
+> >>> requirement entirely in favor of another parameter of
+> >>> EXYNOS_PIN_BANK_EINTG argument?
+> >>
+> >> Perhaps let's limit this patch to s5pv210 and Exynos5410 alone, where
+> >> a simple swap of bank order in the arrays should be okay.
+> >>
+> >> We might also need to have some fixes on 4x12, because I noticed that
+> >> in exynos4x12_pin_banks0[] there is a hole in eint_offsets between
+> >> gpd1 and gpf0 and exynos4x12_pin_banks1[] starts with gpk0 that has
+> >> eint_offset equal to 0x08 (not 0).
+> >
+> > To close the loop, after talking offline and checking the
+> > documentation, Exynos4x12 is fine, because the group numbers in SVC
+> > register actually match what is defined in bank arrays.
 > 
-> > On 4/13/2018 1:27 PM, Greg Thelen wrote:
-> > > Allow INFINIBAND without INFINIBAND_ADDR_TRANS.
-> > > 
-> > > Signed-off-by: Greg Thelen <gthelen@google.com>
-> > > Cc: Tarick Bedeir <tarick@google.com>
-> > > Change-Id: I6fbbf8a432e467710fa65e4904b7d61880b914e5
-> > Forgot to remove the Gerrit thing.
-> > -Denny
+> Great! Thanks for checking.
 > 
-> Ack.  My bad.  Will repost.  Unfortunately checkpatch didn't notice.
+> Best regards,
+> Krzysztof
+> 
 
-Probably because Change-Id: is after a Signed-off-by: line
+Thanks for all comments. I'll prepare new version of patches, with all fixes and documentation.
+
+Best regards
+Paweł
