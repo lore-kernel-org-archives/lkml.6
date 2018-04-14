@@ -1,64 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751148AbeDNDAQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 23:00:16 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33205 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750867AbeDNDAP (ORCPT
+        id S1751614AbeDNDBz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 23:01:55 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:36424 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750904AbeDNDBy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 23:00:15 -0400
-X-Google-Smtp-Source: AIpwx4+mCtuYqIgFI5c7KQuxjbA2GmfDfBaZsALWvMD+Bb1gSym/NgUCoH3QRn3BalXaTb236iaWaw==
+        Fri, 13 Apr 2018 23:01:54 -0400
+X-Google-Smtp-Source: AIpwx4/zPrfzgr5lVvmcsWICNjtJnNnN8gmthhSQrPttH3wNRU4v1olNl6DRKnAyV9EvyCGU1j4dMw==
 From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+To: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
+        linux-kernel@vger.kernel.org,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [PATCH 1/2] vsprintf: Tweak pF/pf comment
-Date: Sat, 14 Apr 2018 12:00:05 +0900
-Message-Id: <20180414030005.25831-1-sergey.senozhatsky@gmail.com>
+Subject: [PATCH 2/2] printk: wake up klogd in vprintk_emit
+Date: Sat, 14 Apr 2018 12:01:45 +0900
+Message-Id: <20180414030145.26304-1-sergey.senozhatsky@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reflect changes that have happened to pf/pF (deprecation)
-specifiers in pointer() comment section.
+We wake up klogd very late - only when current console_sem owner
+is done pushing pending kernel messages to the serial/net consoles.
+In some cases this results in lost syslog messages, because kernel
+log buffer is a circular buffer and if we don't wakeup syslog long
+enough there are chances that logbuf simply will wrap around.
+
+The patch moves the klog wake up call to vprintk_emit(), which is
+the only legit way for a kernel message to appear in the logbuf,
+right before we attempt to grab the console_sem (possibly spinning
+on it waiting for the hand off) and call console drivers.
 
 Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 ---
- lib/vsprintf.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ kernel/printk/printk.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-index 30c0cb8cc9bc..dd18bb2a56ef 100644
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1746,10 +1746,10 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
-  *
-  * Right now we handle:
-  *
-- * - 'F' For symbolic function descriptor pointers with offset
-- * - 'f' For simple symbolic function names without offset
-- * - 'S' For symbolic direct pointers with offset
-- * - 's' For symbolic direct pointers without offset
-+ * - 'S' For symbolic direct pointers (or function descriptors) with offset
-+ * - 's' For symbolic direct pointers (or function descriptors) without offset
-+ * - 'F' Same as 'S'
-+ * - 'f' Same as 's'
-  * - '[FfSs]R' as above with __builtin_extract_return_addr() translation
-  * - 'B' For backtraced symbolic direct pointers with offset
-  * - 'R' For decoded struct resource, e.g., [mem 0x0-0x1f 64bit pref]
-@@ -1846,10 +1846,6 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
-  * ** When making changes please also update:
-  *	Documentation/core-api/printk-formats.rst
-  *
-- * Note: The difference between 'S' and 'F' is that on ia64 and ppc64
-- * function pointers are really function descriptors, which contain a
-- * pointer to the real address.
-- *
-  * Note: The default behaviour (unadorned %p) is to hash the address,
-  * rendering it useful as a unique identifier.
-  */
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 2f4af216bd6e..86f0b337cbf6 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1888,6 +1888,7 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 
+ 	printed_len = log_output(facility, level, lflags, dict, dictlen, text, text_len);
+ 
++	wake_up_klogd();
+ 	logbuf_unlock_irqrestore(flags);
+ 
+ 	/* If called from the scheduler, we can not call up(). */
+@@ -2289,9 +2290,7 @@ void console_unlock(void)
+ {
+ 	static char ext_text[CONSOLE_EXT_LOG_MAX];
+ 	static char text[LOG_LINE_MAX + PREFIX_MAX];
+-	static u64 seen_seq;
+ 	unsigned long flags;
+-	bool wake_klogd = false;
+ 	bool do_cond_resched, retry;
+ 
+ 	if (console_suspended) {
+@@ -2335,11 +2334,6 @@ void console_unlock(void)
+ 
+ 		printk_safe_enter_irqsave(flags);
+ 		raw_spin_lock(&logbuf_lock);
+-		if (seen_seq != log_next_seq) {
+-			wake_klogd = true;
+-			seen_seq = log_next_seq;
+-		}
+-
+ 		if (console_seq < log_first_seq) {
+ 			len = sprintf(text, "** %u printk messages dropped **\n",
+ 				      (unsigned)(log_first_seq - console_seq));
+@@ -2397,7 +2391,7 @@ void console_unlock(void)
+ 
+ 		if (console_lock_spinning_disable_and_check()) {
+ 			printk_safe_exit_irqrestore(flags);
+-			goto out;
++			return;
+ 		}
+ 
+ 		printk_safe_exit_irqrestore(flags);
+@@ -2429,10 +2423,6 @@ void console_unlock(void)
+ 
+ 	if (retry && console_trylock())
+ 		goto again;
+-
+-out:
+-	if (wake_klogd)
+-		wake_up_klogd();
+ }
+ EXPORT_SYMBOL(console_unlock);
+ 
 -- 
 2.17.0
