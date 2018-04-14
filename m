@@ -1,45 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751157AbeDNPNE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 11:13:04 -0400
-Received: from mga01.intel.com ([192.55.52.88]:54560 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751103AbeDNPND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 11:13:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,449,1517904000";
-   d="scan'208";a="34255776"
-Subject: Re: [PATCH v2] IB: make INFINIBAND_ADDR_TRANS configurable
-To: Greg Thelen <gthelen@google.com>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>,
-        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tarick Bedeir <tarick@google.com>
-References: <9ad4563e701a38915d58552f9eee5b3602833ddf.camel@wdc.com>
- <20180413172708.30286-1-gthelen@google.com>
-From: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Message-ID: <b1f20a68-2ed4-935f-4a9c-8a28c142ceee@intel.com>
-Date: Sat, 14 Apr 2018 11:13:00 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180413172708.30286-1-gthelen@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1751162AbeDNP1A (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 11:27:00 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:55301 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750993AbeDNP07 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Apr 2018 11:26:59 -0400
+To: dvyukov@google.com
+Cc: axboe@kernel.dk, tom.leiming@gmail.com, mingo@redhat.com,
+        peterz@infradead.org,
+        bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        osandov@fb.com
+Subject: Re: INFO: task hung in __blkdev_get
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <87bdec75-3c59-6587-2436-1470263ab11f@kernel.dk>
+        <59a08949-7e2f-42ff-edda-f24a6c624551@I-love.SAKURA.ne.jp>
+        <CACT4Y+a-_Z69xmLypVi=vrtCEEBGp=zy0Wp8SuLJzYtZ_ShBgw@mail.gmail.com>
+        <201804102204.BDF48937.LMHJVFOFFOOSQt@I-love.SAKURA.ne.jp>
+        <CACT4Y+Z0+r+JknT3uYWbjQ36XrSWfYnVkGYcj6FZ0RvgiCF0Yg@mail.gmail.com>
+In-Reply-To: <CACT4Y+Z0+r+JknT3uYWbjQ36XrSWfYnVkGYcj6FZ0RvgiCF0Yg@mail.gmail.com>
+Message-Id: <201804150026.CFD57853.tHJOFLOSFOMVFQ@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Sun, 15 Apr 2018 00:26:54 +0900
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/13/2018 1:27 PM, Greg Thelen wrote:
-> Allow INFINIBAND without INFINIBAND_ADDR_TRANS.
+OK. The patch was sent to linux.git as commit 1e047eaab3bb5564.
+
+#syz fix: block/loop: fix deadlock after loop_set_status
+
+Dmitry Vyukov <dvyukov@google.com>" wrote:
+> On Tue, Apr 10, 2018 at 3:04 PM, Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> > Dmitry Vyukov wrote:
+> >> On Tue, Apr 10, 2018 at 12:55 PM, Tetsuo Handa
+> >> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >> > Hello.
+> >> >
+> >> > Since syzbot is reporting so many hung up bug which involves /dev/loopX ,
+> >> > is it possible to "temporarily" apply below patch for testing under syzbot
+> >>
+> >> Unfortunately it's not possible, for full explanation please see:
+> >> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#no-custom-patches
+> >>
+> >
+> > I mean, sending custom patch to linux.git for -rc and revert the custom patch
+> > before -final is released. It won't take so much period until we get the result.
 > 
-> Signed-off-by: Greg Thelen <gthelen@google.com>
-> Cc: Tarick Bedeir <tarick@google.com>
-> Change-Id: I6fbbf8a432e467710fa65e4904b7d61880b914e5
+> Ah, I see, then I guess it wasn't a question to me.
+> 
+I noticed that there already is the lockdep report at
 
-Forgot to remove the Gerrit thing.
+  possible deadlock in blkdev_reread_part
+  https://syzkaller.appspot.com/bug?id=bf154052f0eea4bc7712499e4569505907d15889
 
--Denny
+entry, and no patch is proposed yet:
+
+  https://groups.google.com/forum/#!msg/syzkaller-bugs/2Rw8-OM6IbM/SI4DyK-1AQAJ
