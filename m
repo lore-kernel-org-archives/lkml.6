@@ -1,80 +1,101 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx4+COiT7gQ+hx6BBv/ibE8OILHyPHV9CvCEfoKR55AhLGaTTFtAV6yp/nILWMsQQY5HF5wf5
-ARC-Seal: i=1; a=rsa-sha256; t=1523703111; cv=none;
+X-Google-Smtp-Source: AIpwx48/kfKrRJTgKxOWvmyCcj93SSybnVjPzdCve1rMcy2DfeWiAI8lZWxj9fWmzMzfjV7EwGqS
+ARC-Seal: i=1; a=rsa-sha256; t=1523726919; cv=none;
         d=google.com; s=arc-20160816;
-        b=TGcZv4Iczv0nC4NRi7DpAIH7hJX8xB49TKHJCu0qdAecoMXa4qHrXHwreMe7ssPhbh
-         T/02ARD43fdfeS7raf5F0l0kPMceZjflPT3962lS5FUsXAInS8lW7Bv0zgZTQJIpTlCU
-         I8398dBS6h4YXgQh4RmtQ0KNtUJQWozU8KizPplD1QvgFXY7JvnTz98P4ZH/RYQriRHF
-         MIogoeZFLamJ33CNSUO2ZnZ+A/uAGk5yQlT9/Ebx61pht0YJIUjtk2w1wI2UkUWIUOWR
-         uRqV00b2xWO14j3BW1N/vJ5Wmke72MiWP/WZ9Fpxps4oF82vVo5c/KT30E1381t8rALO
-         LCWg==
+        b=oycEZHDULB7v89+hTEe6GkrVZBDoDJvNzTdsZvYajBuDgdCqFZLy+x/zh1iaeUbGz5
+         YnM+vSGZv6VnJjoF6ryfK2gQ5z00gRQpCrbyA2JzBWG6u5EVAvD69V/L8DDWNXlDHHDe
+         M+jUiRM6Kp9yxd+NFx9/HmwuGnvT8biuzUU8xozeWhaRntHYot2lvM7n5MmNT0f5WG1n
+         wASnFdpOO4Lt9AmZRmu9Bt1Um50ARHZNYQzwTZeT8OMGP5OTIaxMkU/AV7R3ncCWICGt
+         Oe/F/SRJCCObhcPJ/42XnSvBt08yly2rS4pYqYzjWoXNmRvS8xIjRvzDQkGgwuL6H8i8
+         aNug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding:mime-version
-         :message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=Ej3Z98ldvKQiQreoMyOQRsZI2j1KxM0ZSiR57fQ3+uM=;
-        b=TbSE0gppkaqX2aa2SuMPAKPP/te1PJPuaCF15jF9p9J7OlMmSJlhvnoZaLecquf80a
-         iwjro1+yxi7inzpTkjDWEeVHur9+x+qLHMs610+8GCs3cOLcdwHVtL8LaOIW6yTyLlNp
-         Q31A+nrJOzfjDqltSYAoDQKtbUN3Dt2RkFbS2MO2nrOP1NBkXoPdHo4hopsnQMDMbOiN
-         4+HK2ZlXZ6WZNmJU0Td2+B75eQqf5zPKxsJqmGU1F0kjWhc3G0nY4lm+wYAQy09UBsuy
-         6/2l/vIfHPfDEZEJA2r1Y/HjZAjY0+iW/PPJkomE0OhAU+wglCPgDw1ejX++wTe7sM0e
-         WAGw==
+        h=list-id:precedence:sender:message-id:user-agent:in-reply-to
+         :content-transfer-encoding:content-disposition:mime-version
+         :references:subject:cc:to:from:date:arc-authentication-results;
+        bh=s5l7KJgk4qIXSEvspifoBWsLRtCc08nAi0ZzOIiytQE=;
+        b=zUBqKMNXeC+6nShihS6T9PVufP0a/wwfjRojL4pJysIFDLIELQVPfBQ9aAbb4H6cez
+         fg2CZiNYw4McyRODmKqx9NL+nWZjac+JdaHEJKW3LQ6eWKi1/UaExcgYu/PtCr5Vkq4h
+         k5exYTnU+x6g3BfrG+Su3XMmhPtEUQplssepZZ0WUTzlc40rwjm2dhSyhxM+SRf187Jn
+         rFqQPIfFbFaG/PWe6XYu5WdlEIK8vpB/Rsc2jnxIE+GpiAtxJQj1QTivNnCoc7RIVPyj
+         18sv6k9oIv65HLxIzsc1zQzPDG6WgqKtFu7HupLcBdtucDY1cC6tayN3s8tr/T85Jzbg
+         CdQg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750965AbeDNKvv convert rfc822-to-8bit (ORCPT
-        <rfc822;gregkh@linuxfoundation.org>); Sat, 14 Apr 2018 06:51:51 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:43558 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750939AbeDNKvu (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Sat, 14 Apr 2018 06:51:50 -0400
-From: Peng Hao <peng.hao2@zte.com.cn>
-To: shuah@kernel.org, aarcange@redhat.com, akpm@linux-foundation.org,
-        rppt@linux.vnet.ibm.com
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH] selftests:vm: add include file
-Date: Sun, 15 Apr 2018 03:08:56 +0800
-Message-Id: <1523732936-42546-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
+        id S1751138AbeDNR2i (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Sat, 14 Apr 2018 13:28:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34260 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751154AbeDNR2g (ORCPT
+        <rfc822;linux-kselftest@vger.kernel.org>);
+        Sat, 14 Apr 2018 13:28:36 -0400
+Date: Sat, 14 Apr 2018 20:28:27 +0300
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: Peng Hao <peng.hao2@zte.com.cn>
+Cc: shuah@kernel.org, aarcange@redhat.com, akpm@linux-foundation.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests:vm: add include file
+References: <1523732936-42546-1-git-send-email-peng.hao2@zte.com.cn>
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-04-14 18:51:53,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-04-14 18:51:23
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-MAIL: mse01.zte.com.cn w3EApggD082811
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1523732936-42546-1-git-send-email-peng.hao2@zte.com.cn>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18041417-0008-0000-0000-000004EA8F5C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041417-0009-0000-0000-00001E7EA08E
+Message-Id: <20180414172826.GA3211@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-14_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804140168
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597718514051062643?=
-X-GMAIL-MSGID: =?utf-8?q?1597718514051062643?=
+X-GMAIL-MSGID: =?utf-8?q?1597743478896471635?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-userfaultfd.c: In function ‘hugetlb_release_pages’:
-userfaultfd.c:145:25: error: ‘FALLOC_FL_PUNCH_HOLE’ undeclared 
-(first use in this function)
+On Sun, Apr 15, 2018 at 03:08:56AM +0800, Peng Hao wrote:
+> userfaultfd.c: In function ‘hugetlb_release_pages’:
+> userfaultfd.c:145:25: error: ‘FALLOC_FL_PUNCH_HOLE’ undeclared 
+> (first use in this function)
+> 
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> ---
+>  tools/testing/selftests/vm/userfaultfd.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
+> index de2f9ec..d8fe447 100644
+> --- a/tools/testing/selftests/vm/userfaultfd.c
+> +++ b/tools/testing/selftests/vm/userfaultfd.c
+> @@ -68,6 +68,7 @@
+>  #include <linux/userfaultfd.h>
+>  #include <setjmp.h>
+>  #include <stdbool.h>
+> +#include <linux/falloc.h>
+  
+The FALLOC_FL_PUNCH_HOLE definition should come from #include <fcntl.h>.
+What are the versions of your kernel and the libc-development package?
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- tools/testing/selftests/vm/userfaultfd.c | 1 +
- 1 file changed, 1 insertion(+)
+>  #ifdef __NR_userfaultfd
+>  
+> -- 
+> 1.8.3.1
+> 
 
-diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-index de2f9ec..d8fe447 100644
---- a/tools/testing/selftests/vm/userfaultfd.c
-+++ b/tools/testing/selftests/vm/userfaultfd.c
-@@ -68,6 +68,7 @@
- #include <linux/userfaultfd.h>
- #include <setjmp.h>
- #include <stdbool.h>
-+#include <linux/falloc.h>
- 
- #ifdef __NR_userfaultfd
- 
 -- 
-1.8.3.1
+Sincerely yours,
+Mike.
 
