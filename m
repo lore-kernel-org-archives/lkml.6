@@ -1,79 +1,112 @@
-Return-Path: <okaya@codeaurora.org>
-X-Google-Smtp-Source: AIpwx4+6G/u6/JKC9ZT0CjUXZEYYgLwZGaEyBdiSuyXj9BjYF77uCPEqqsxZWYMeL+cPiltDXbKr
-ARC-Seal: i=1; a=rsa-sha256; t=1523463821; cv=none;
-        d=google.com; s=arc-20160816;
-        b=CVVMrTMpK2kckCj4bOFhruviO0bnxvO9th8nKfkWSkm3lk/LQlPF9GMEz1Sa+oT4eI
-         k2qPEXzVBkPeh3mol3sILYYSWaD0mW3MjiplP7uoAun82ZVomfj2wWeYUAArS97xtCWl
-         XDDQK1eWD8jCZDqgsODO2zYwQFNQljXO7vBD9M/d5mBBAscMrai16ZOZR4oCWRXy1V9K
-         P5RwgB9GoimfbFEWEHRmdi8sTTNgeh+/BpHO5JZmZ5P4BgPHyRb1BBOT25C3k0IPR5LR
-         k0ekLsMNfHn1xtxKI6QbHQYXAw9L4kiPL92i3NAioDM+13Nn2qSQuV+yXHcDXu+E4bb8
-         Ax9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=7rwtCcjsgkn0UfCjyxlzZv6IBKMBDD6/suCqZADeV4Q=;
-        b=l5tDmpZM69P8DQBaACe/nyJ7kwyPe5fpHckwh2jnfdPrp7WT8WX8Q0f+2w8j2+62HP
-         7Ul4nMDsoaEUaho7KPrAiCNF73m1Eo5Tt9x2JpyzM7+5DZC1onwYJiomLnMSsU/8tWWv
-         sIFOpJRzIVAcUsQKpOZcNObcKOWEDbv+xzaDZ2ZyzwexLW4TafZ/IQB0oU2UzqGk+AT9
-         n80Q8RUapYz2ban3/F0oU1zTyfiz3m4BWU8Q3l9dk/y1KadV1GQmgLOp3Jg2fh2PeXRn
-         b9qgufw2ZyEB60EDEW5enTX1vvztz3NXOSCr1inmLxefqK+Hq9JOUzmh0TgdR2+qTUsN
-         yf2Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=nPb34/Lx;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=nPb34/Lx;
-       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=nPb34/Lx;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=nPb34/Lx;
-       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5FD4F6081C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH] PCI: quirk HT1100 & HT2000 and one HT2100 Root Ports for
- Extended Tags
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
- sulrich@codeaurora.org, timur@codeaurora.org, linux-arm-msm@vger.kernel.org,
- Bjorn Helgaas <bhelgaas@google.com>, open list
- <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
-References: <1522882209-9743-1-git-send-email-okaya@codeaurora.org>
- <20180410194144.GD54986@bhelgaas-glaptop.roam.corp.google.com>
- <20180410195008.GE54986@bhelgaas-glaptop.roam.corp.google.com>
- <1c94361d-7a8d-ad18-12e5-1612326a54db@codeaurora.org>
- <20180411135151.GB91792@bhelgaas-glaptop.roam.corp.google.com>
- <ecdad8f4-6996-cfe0-d005-fbc67ba3cd79@codeaurora.org>
- <20180411140849.GA12557@kroah.com>
- <1290e3d3-e7f0-a4f5-925d-2b7c2cb42b93@codeaurora.org>
- <20180411141922.GA13832@kroah.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <d7b78270-c3ff-8c88-1ac0-f9467fb54da2@codeaurora.org>
-Date: Wed, 11 Apr 2018 12:23:38 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Return-Path: <SRS0=uqI5=HD=gmail.com=adobriyan@kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2748774-1523735971-2-15290912633781930016
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, RCVD_IN_DNSWL_HI -5, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='198.145.29.99', Host='mail.kernel.org', Country='US', FromHeader='com',
+  MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: SRS0=uqI5=HD=gmail.com=adobriyan@kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523735970; b=d8r9II7IdRllYkxVDjo0Q4sJQRw4MoXzqqv36h3TTrn82S1pn2
+    91eRllhHPi4RD1z9ifSt8kkWegNEhUZVoHKbJEJdB5UTcbdR0zsakXFYyUi+uSad
+    OKq/jrQpnsggeYIE9kPpOgLceYmX+tYqn2XXQebk8MNqMHT/q/qccvmHHNpjdMIP
+    tQSAL6DTJcj0Ix/T33FoutQT1y1Zjs/6mNl4Uc4se54n20UOG8GU/5EpNEpCwqLd
+    9UC7BS3RurGlcf3wvPORHtJIijuAweejEaZ0v7eFLfwtw8TJ+wO1ye8OLCNVeIzU
+    hCV3exjg6pCUiDOmQBjDgQFyGSutHXLwWpQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type; s=fm2; t=1523735970; bh=SQlzpE/mjZ9N
+    zyyJq1tHa9K9p5+hKgDUPKFPaaGcxHQ=; b=ldwNFi3sz/cxX5j3QXpGOsbu8631
+    me2xpYlaxV+RVhbWD1t6szn7Z8jnlKMWdATJKdr+/Ekm0keX+jxsjnBLvUQWJ1jq
+    gGvMGiizgYXouZXWkPGeaJ3aqddPdKXTpXw70cyLxKmwdFtvWyyiXPTdrLPeLeES
+    FmNxIzzWemHRX2iZ6/PgDMwV8EyageV8sFft3eBl8k8Hyk2rc8qI2XJbMIlEaXdj
+    rwZNdWa9rhkQt+tHuIhs1Is9qgYjX0eMbl5r+gNyZlXcplIkagxAz9omrIMg5INy
+    dRXDza0Ttp1+X1XF17UFty76vRu/6nEXQlslwo+OdBJTWGakzhj+Zmzd4A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=TT8X3DWh x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
+    spf=none smtp.mailfrom="SRS0=uqI5=HD=gmail.com=adobriyan@kernel.org" smtp.helo=mail.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DlTPPDUH;
+    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
+    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=TT8X3DWh x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
+    spf=none smtp.mailfrom="SRS0=uqI5=HD=gmail.com=adobriyan@kernel.org" smtp.helo=mail.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=DlTPPDUH;
+    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
+    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfBBJdrWqgaJaxcTq61ScePLT/C2iNhjp0msvV2r4Rc6xUkBpICDdh5sDqBJHuLimDYN/4hri5HSeMGunbGgiamhnaV5wpxVT876dWASPtBS7ROFL1mS4
+    MF4V3qDDCFvJTmxq7h+nrgMreUkbygdbHfaczZvAQoczbX/Vx/VHCHCbKT8J7bDFFri13WWUH7sDpoHEv2Bp0ebIHud5/5lgkWg=
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=czNdAM+YcK12vDHDihaDnQ==:117
+    a=czNdAM+YcK12vDHDihaDnQ==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
+    a=aLjZf_mOksQA:10 a=Kd1tUaAdevIA:10 a=d-NkeQXBJoyQO3lm17wA:9 a=QEXdDO2ut3YA:10
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+X-Remote-Delivered-To: security@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3E652077B
+Authentication-Results: mail.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: mail.kernel.org; spf=pass smtp.mailfrom=adobriyan@gmail.com
+X-Google-Smtp-Source: AIpwx494iosWywTGrPxbFaHIRmpWAXY62AvTldcTAq8mIpnrxgBdqGFdTtvPbqWD9VB0sRXcky6rug==
+Date: Sat, 14 Apr 2018 22:59:21 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: linux-kernel@vger.kernel.org, tytso@mit.edu, kvm@vger.kernel.org
+Cc: security@kernel.org
+Subject: repeatable boot randomness inside KVM guest
+Message-ID: <20180414195921.GA10437@avx2>
 MIME-Version: 1.0
-In-Reply-To: <20180411141922.GA13832@kroah.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+User-Agent: Mutt/1.7.2 (2016-11-26)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
-X-GMAIL-THRID: =?utf-8?q?1597458696879800529?=
-X-GMAIL-MSGID: =?utf-8?q?1597467599498460251?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 4/11/2018 10:19 AM, Greg Kroah-Hartman wrote:
-> Next time explicitly ask the question, don't expect someone to rummage
-> through an email to determine what you are thinking.  You are being lazy
-> by just adding someone else to an email thread like this, be considerate
-> and take the time to explain yourself when asking someone else to do
-> work.
+SLAB allocators got CONFIG_SLAB_FREELIST_RANDOM option which randomizes
+allocation pattern inside a slab:
 
-Sorry, I should have stripped irrelevant pieces like you said.
 
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+	#ifdef CONFIG_SLAB_FREELIST_RANDOM
+	/* Pre-initialize the random sequence cache */
+	static int init_cache_random_seq(struct kmem_cache *s)
+	{
+		...
+
+Then I printed actual random sequences for each kmem cache.
+Turned out they were all the same for most of the caches and
+they didn't vary across guest reboots.
+
+	int cache_random_seq_create(struct kmem_cache *cachep, unsigned int count, gfp_t gfp)
+	{
+		...
+		/* Get best entropy at this stage of boot */
+	        prandom_seed_state(&state, get_random_long());
+
+Then I searched internet and turned out KVM can pass randomness via
+virtio-rng or something. So I linked /dev/urandom.
+
+And it didn't help!
+
+The only way to get randomness for SLAB is to enable RDRAND inside guest.
+
+Is it KVM bug?
+
+For the record I'm using qemu 2.11.1-r2 and whatever F27 ships now.
