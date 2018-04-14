@@ -1,107 +1,274 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752138AbeDNW6z (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 18:58:55 -0400
-Received: from ozlabs.org ([203.11.71.1]:42575 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752073AbeDNW6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 18:58:54 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: aneesh.kumar@linux.ibm.com, khandual@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        npiggin@gmail.com
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.17-2 tag
-Date: Sun, 15 Apr 2018 08:58:51 +1000
-Message-ID: <87zi25iedw.fsf@concordia.ellerman.id.au>
+        id S1752200AbeDNXdi (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 19:33:38 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:43874 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751623AbeDNXdh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Apr 2018 19:33:37 -0400
+Subject: Re: [PATCH 17/30] Documentation: kconfig: document a new Kconfig
+ macro language
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
+        Emese Revfy <re.emese@gmail.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
+ <1523595999-27433-18-git-send-email-yamada.masahiro@socionext.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <9086cd96-bbeb-fa6e-6a62-8869ae8c7ee3@infradead.org>
+Date: Sat, 14 Apr 2018 16:33:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1523595999-27433-18-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+On 04/12/18 22:06, Masahiro Yamada wrote:
+> Add a document for the macro language introduced to Kconfig.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+> Changes in v3: None
+> Changes in v2: None
+> 
+>  Documentation/kbuild/kconfig-macro-language.txt | 179 ++++++++++++++++++++++++
+>  MAINTAINERS                                     |   2 +-
+>  2 files changed, 180 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/kbuild/kconfig-macro-language.txt
+> 
+> diff --git a/Documentation/kbuild/kconfig-macro-language.txt b/Documentation/kbuild/kconfig-macro-language.txt
+> new file mode 100644
+> index 0000000..1f6281b
+> --- /dev/null
+> +++ b/Documentation/kbuild/kconfig-macro-language.txt
+> @@ -0,0 +1,179 @@
+> +Concept
+> +-------
+> +
+> +The basic idea was inspired by Make. When we look at Make, we notice sort of
+> +two languages in one. One language describes dependency graphs consisting of
+> +targets and prerequisites. The other is a macro language for performing textual
+> +substitution.
+> +
+> +There is clear distinction between the two language stages. For example, you
+> +can write a makefile like follows:
+> +
+> +    APP := foo
+> +    SRC := foo.c
+> +    CC := gcc
+> +
+> +    $(APP): $(SRC)
+> +            $(CC) -o $(APP) $(SRC)
+> +
+> +The macro language replaces the variable references with their expanded form,
+> +and handles as if the source file were input like follows:
+> +
+> +    foo: foo.c
+> +            gcc -o foo foo.c
+> +
+> +Then, Make analyzes the dependency graph and determines the targets to be
+> +updated.
+> +
+> +The idea is quite similar in Kconfig - it is possible to describe a Kconfig
+> +file like this:
+> +
+> +    CC := gcc
+> +
+> +    config CC_HAS_FOO
+> +            def_bool $(shell $(srctree)/scripts/gcc-check-foo.sh $(CC))
+> +
+> +The macro language in Kconfig processes the source file into the following
+> +intermediate:
+> +
+> +    config CC_HAS_FOO
+> +            def_bool y
+> +
+> +Then, Kconfig moves onto the evaluation stage to resolve inter-symbol
+> +dependency, which is explained in kconfig-language.txt.
+> +
+> +
+> +Variables
+> +---------
+> +
+> +Like in Make, a variable in Kconfig works as a macro variable.  A macro
+> +variable is expanded "in place" to yield a text string that may then expanded
 
-Hi Linus,
+                                                               may then be expanded
 
-Please pull some powerpc fixes for 4.17-rc1 if you can:
+> +further. To get the value of a variable, enclose the variable name in $( ).
+> +As a special case, single-letter variable names can omit the parentheses and is
 
-The following changes since commit 49a695ba723224875df50e327bd7b0b65dd9a56b:
+                                                                            and are
 
-  Merge tag 'powerpc-4.17-1' of git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux (2018-04-07 12:08:19 -0700)
+> +simply referenced like $X. Unlike Make, Kconfig does not support curly braces
+> +as in ${CC}.
+> +
+> +There are two types of variables: simply expanded variables and recursively
+> +expanded variables.
+> +
+> +A simply expanded variable is defined using the := assignment operator. Its
+> +righthand side is expanded immediately upon reading the line from the Kconfig
+> +file.
+> +
+> +A recursively expanded variable is defined using the = assignment operator.
+> +Its righthand side is simply stored as the value of the variable without
+> +expanding it in any way. Instead, the expansion is performed when the variable
+> +is used.
+> +
+> +There is another type of assignment operator; += is used to append text to a
+> +variable. The righthand side of += is expanded immediately if the lefthand
+> +side was originally defined as a simple variable. Otherwise, its evaluation is
+> +deferred.
+> +
+> +
+> +Functions
+> +---------
+> +
+> +Like Make, Kconfig supports both built-in and user-defined functions. A
+> +function invocation looks much like a variable reference, but includes one or
+> +more parameters separated by commas:
+> +
+> +  $(function-name arg1, arg2, arg3)
+> +
+> +Some functions are implemented as a built-in function. Currently, Kconfig
+> +supports the following:
+> +
+> + - $(shell command)
+> +
+> +  The 'shell' function accepts a single argument that is expanded and passed
+> +  to a subshell for execution. The standard output of the command is then read
+> +  and returned as the value of the function. Every newline in the output is
+> +  replaced with a space. Any trailing newlines are deleted. The standard error
+> +  is not returned, nor is any program exit status.
+> +
+> + - $(warning text)
+> +
+> +  The 'warning' function prints its arguments to stderr. The output is prefixed
+> +  with the name of the current Kconfig file, the current line number. It
 
-are available in the git repository at:
+                                          file and the current line number. It
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.17-2
+> +  evaluates to an empty string.
+> +
+> + - $(info text)
+> +
+> +  The 'info' function is similar to 'warning' except that it sends its argument
+> +  to stdout without any Kconfig name or line number.
 
-for you to fetch changes up to 81b654c273914704a4bdf580f28d67aaba1094e4:
+Are current Kconfig file name and line number available so that someone can
+construct their own $(info message) messages?
 
-  powerpc/64s: Fix CPU_FTRS_ALWAYS vs DT CPU features (2018-04-13 23:51:44 +1000)
+> +
+> +A user-defined function is defined by using the = operator. The parameters are
+> +referenced within the body definition with $1, $2, etc. (or $(1), $(2), etc.)
+> +In fact, a user-defined function is internally treated as a recursive variable.
 
-- ----------------------------------------------------------------
-powerpc fixes for 4.17 #2
+so the difference is just whether there are arguments?
+A recursive variable does not have arguments and a function always has at least
+one argument?
 
- - Fix crashes when loading modules built with a different CONFIG_RELOCATABLE
-   value by adding CONFIG_RELOCATABLE to vermagic.
 
- - Fix busy loops in the OPAL NVRAM driver if we get certain error conditions
-   from firmware.
+> +
+> +A user-defined function is referenced in the same way as a built-in function:
+> +
+> +    $(my_func, arg0, arg1, arg2)
 
- - Remove tlbie trace points from KVM code that's called in real mode, because
-   it causes crashes.
+Syntax given above is:
++  $(function-name arg1, arg2, arg3)
 
- - Fix checkstops caused by invalid tlbiel on Power9 Radix.
+with no comma after the function name.  Which is it?
 
- - Ensure the set of CPU features we "know" are always enabled is actually the
-   minimal set when we build with support for firmware supplied CPU features.
+> +
+> +Note 1:
+> +There is a slight difference in the whitespace handling of the function call
+> +between Make and Kconfig. In Make, leading whitespaces are trimmed from the
+> +first argument. So, $(info    FOO) is equivalent to $(info FOO). Kconfig keeps
+> +any leading whitespaces except the one right after the function name, which
+> +works as a separator. So, $(info    FOO) prints "   FOO" to the stdout.
+> +
+> +Note 2:
+> +In Make, a user-defined function is referenced by using a built-in function,
+> +'call', like this:
+> +
+> +    $(call my_func, arg0, arg1, arg2)
+> +
+> +However, Kconfig did not adopt this form just for the purpose of shortening the
+> +syntax.
+> +
+> +
+> +Caveats
+> +-------
+> +
+> +A variable (or function) can not be expanded across tokens. So, you can not use
 
-Thanks to:
-  Aneesh Kumar K.V, Anshuman Khandual, Nicholas Piggin.
+                            cannot                                     cannot
 
-- ----------------------------------------------------------------
-Aneesh Kumar K.V (1):
-      powerpc/8xx: Fix build with hugetlbfs enabled
+> +a variable as a shorthand for an expression that consists of multiple tokens.
+> +The following works:
+> +
+> +    RANGE_MIN := 1
+> +    RANGE_MAX := 3
+> +
+> +    config FOO
+> +            int "foo"
+> +            range $(RANGE_MIN) $(RANGE_MAX)
+> +
+> +But, the following does not work:
+> +
+> +    RANGES := 1 3
+> +
+> +    config FOO
+> +            int "foo"
+> +            range $(RANGES)
+> +
+> +A variable can not be expanded to any keyword in Kconfig.  The following does
 
-Anshuman Khandual (1):
-      powerpc/fscr: Enable interrupts earlier before calling get_user()
+              cannot
 
-Michael Ellerman (4):
-      powerpc/modules: Fix crashes by adding CONFIG_RELOCATABLE to vermagic
-      powerpc/64s: Fix section mismatch warnings from setup_rfi_flush()
-      powerpc/mm/radix: Fix checkstops caused by invalid tlbiel
-      powerpc/64s: Fix CPU_FTRS_ALWAYS vs DT CPU features
+> +not work:
+> +
+> +    MY_TYPE := tristate
+> +
+> +    config FOO
+> +            $(MY_TYPE) "foo"
+> +            default y
+> +
+> +Obviously from the design, $(shell command) is expanded in the textual
+> +substitution phase.  You can not pass symbols to the 'shell' function.
 
-Nicholas Piggin (3):
-      powerpc/powernv: define a standard delay for OPAL_BUSY type retry loops
-      powerpc/powernv: Fix OPAL NVRAM driver OPAL_BUSY loops
-      KVM: PPC: Book3S HV: trace_tlbie must not be called in realmode
+                            cannot
 
- arch/powerpc/include/asm/cputable.h         | 23 +++++++++++++++++++--
- arch/powerpc/include/asm/module.h           | 12 ++++++++++-
- arch/powerpc/include/asm/opal.h             |  3 +++
- arch/powerpc/kernel/dt_cpu_ftrs.c           | 14 +------------
- arch/powerpc/kernel/setup_64.c              |  2 +-
- arch/powerpc/kernel/traps.c                 | 32 +++++++++++++++--------------
- arch/powerpc/kvm/book3s_hv_rm_mmu.c         |  4 ----
- arch/powerpc/mm/slice.c                     |  1 +
- arch/powerpc/mm/tlb-radix.c                 |  5 ++---
- arch/powerpc/platforms/powernv/opal-nvram.c |  7 ++++++-
- 10 files changed, 63 insertions(+), 40 deletions(-)
------BEGIN PGP SIGNATURE-----
+> +The following does not work as expected.
+> +
+> +    config ENDIAN_OPTION
+> +            string
+> +            default "-mbig-endian" if CPU_BIG_ENDIAN
+> +            default "-mlittle-endian" if CPU_LITTLE_ENDIAN
+> +
+> +    config CC_HAS_ENDIAN_OPTION
+> +            def_bool $(shell $(srctree)/scripts/gcc-check-option ENDIAN_OPTION)
+> +
+> +Instead, you can do like follows so that any function call is statically
+> +expanded.
+> +
+> +    config CC_HAS_ENDIAN_OPTION
+> +            bool
 
-iQIcBAEBCAAGBQJa0oerAAoJEFHr6jzI4aWAvCIP/iG5Fv1b3MoslwQkCsAcMtTy
-zO/Ga7H54Kpiopr9F5T4JTKVOMVBb4urs8mP9RXGUzqf9iuNy3ZWGJfbHn1VXw4r
-wKFx5MfZYKNkoi8tGZHmbxhcSzFKsGHdCAEfC/SiNZCZZnbnt4NjWlUV4/QRts4a
-/LEyvrWPGzGCZF1y+LpFREAJakhJ1uklJNbqwMvRtlXmoJoqODNCRPk1Tmy8fQ8E
-eYLtAYGcN0x9w0YRo/1cTkJM/cksLPzJjZZn/6GR1vWRS544+iTSs6xT81RC7/yB
-2QVsKD+V7D3iJ3iQ4DhCNkpMHNZjLqDNymMLjcYM1H/mPobvsegwZuGDm1jr7++D
-3XBZa9wO6/dAOflu+nMlVNd323BMsdhGcI2WiZzsdkBh+aWU6hkQrgEG1uY3XV90
-8zlOk6Cmiq+aYkcemEzMCvV1gYSpiauZx2q8Y/GKww2BVekRUKpsBTgcZvvKbBUX
-XBJtAkRo5hR2o2qLAUwSXiJuGcfrlZBuZT0qCb1SYd9XRxIevvb1iQz2Yngxr6PI
-n9reO01c6a25CJQqNLH07iy+eZcsWUNcrzEjaeHaHWPl+zcl0AWEuGj3Q80/SM6Y
-rqOBMn3YSANpFjmat90c6CSWC/Bdf2nORMEtIHQ5mKsnL4rBv6X+pvMf3/TSwDNa
-QzAeCp1gwX940ngqW3H7
-=VzIU
------END PGP SIGNATURE-----
+fix indentation?
+
+> +	    default $(shell $(srctree)/scripts/gcc-check-option -mbig-endian) if CPU_BIG_ENDIAN
+> +	    default $(shell $(srctree)/scripts/gcc-check-option -mlittle-endian) if CPU_LITTLE_ENDIAN
+
+
+-- 
+~Randy
