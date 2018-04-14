@@ -1,106 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751632AbeDNCDA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 22:03:00 -0400
-Received: from mail-qt0-f176.google.com ([209.85.216.176]:46272 "EHLO
-        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751108AbeDNCC5 (ORCPT
+        id S1752203AbeDNCDO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 22:03:14 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40926 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751836AbeDNCDI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 22:02:57 -0400
-X-Google-Smtp-Source: AIpwx48EgtE75u4JRdyHIMrdDiwXafO2w9eJZoFsk3qPzlRpUtHbl2rJIkt9CA3IydOEgRyP7ym6HQ==
-Message-ID: <6ce634cb82617c2a9a060ba6e2accef2a15dcc15.camel@redhat.com>
-Subject: issues with suspend on Dell XPS 13 2-in-1
-From: Dennis Gilmore <dgilmore@redhat.com>
-To: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Cc: Mario Limonciello <mario.limonciello@dell.com>
-Date: Fri, 13 Apr 2018 21:02:52 -0500
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.0 (3.28.0-1.fc28) 
-Mime-Version: 1.0
+        Fri, 13 Apr 2018 22:03:08 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3A51D6081A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [[PATCH v2] 1/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+To: Rob Herring <robh@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        David Collins <collinsd@codeaurora.org>
+References: <1523183533-23171-1-git-send-email-tdas@codeaurora.org>
+ <1523183533-23171-2-git-send-email-tdas@codeaurora.org>
+ <20180413163705.io4xbukerjkzjmri@rob-hp-laptop>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <cba2a99f-fa6f-42d8-9063-8a642bea6f2c@codeaurora.org>
+Date: Sat, 14 Apr 2018 07:32:59 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180413163705.io4xbukerjkzjmri@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+Hello Rob,
 
-I have a Dell XPS 13 2-in-1 (9365) that when I supend gets warm and has
-much shorter than expected battery life, it is about the same as if the
-laptop just runs. I am currently running Fedora 28 with 4.16.2 kernel.
+Thank you for the review comments.
 
-My laptop has NVMe for storage and is configured for AHCI mode in the
-bios.
+On 4/13/2018 10:07 PM, Rob Herring wrote:
+> On Sun, Apr 08, 2018 at 04:02:12PM +0530, Taniya Das wrote:
+>> From: Amit Nischal <anischal@codeaurora.org>
+>>
+>> Add the RPMh clock driver to control the RPMh managed clock resources on
+>> some of the Qualcomm Technologies, Inc. SoCs.
+>>
+>> Signed-off-by: David Collins <collinsd@codeaurora.org>
+>> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
+>>   drivers/clk/qcom/Kconfig              |   9 +
+>>   drivers/clk/qcom/Makefile             |   1 +
+>>   drivers/clk/qcom/clk-rpmh.c           | 394 ++++++++++++++++++++++++++++++++++
+> 
+>>   include/dt-bindings/clock/qcom,rpmh.h |  25 +++
+> 
+> This goes with the binding patch which should come first in the series.
+> 
 
-powertop by default shows
->> Bad           VM writeback timeout            
-   Bad           NMI watchdog should be turned off
-   Bad           Autosuspend for unknown USB device 1-7 (138a:0091)
-   Bad           Runtime PM for I2C Adapter i2c-0 (i915 gmbus dpc)
-   Bad           Runtime PM for I2C Adapter i2c-1 (i915 gmbus dpb)
-   Bad           Runtime PM for I2C Adapter i2c-2 (i915 gmbus dpd)
-   Bad           Runtime PM for PCI Device Intel Corporation Wireless
-8265 / 8275
-   Bad           Runtime PM for PCI Device Intel Corporation Device
-590c
-   Bad           Runtime PM for PCI Device Realtek Semiconductor Co.,
-Ltd. RTS525A PCI Express Card Reader
-   Bad           Runtime PM for PCI Device Intel Corporation Device
-9d3d
-   Bad           Runtime PM for PCI Device Sandisk Corp WD Black NVMe
-SSD
-   Bad           Runtime PM for PCI Device Intel Corporation Sunrise
-Point-LP PCI Express Root Port #9
-   Bad           Runtime PM for PCI Device Intel Corporation Sunrise
-Point-LP Thermal subsystem
-   Bad           Runtime PM for PCI Device Intel Corporation Sunrise
-Point-LP USB 3.0 xHCI Controller
-   Bad           Runtime PM for PCI Device Intel Corporation Sunrise
-Point-LP PMC
-   Bad           Runtime PM for PCI Device Intel Corporation Sunrise
-Point-LP HD Audio
-   Bad           Runtime PM for PCI Device Intel Corporation Sunrise
-Point-LP PCI Express Root Port #1
-   Bad           Runtime PM for PCI Device Intel Corporation Device
-9d4b
-   Bad           Runtime PM for PCI Device Intel Corporation Xeon E3-
-1200 v5/E3-1500 v5/6th Gen Core Processor Thermal Subsystem
-   Bad           Runtime PM for PCI Device Intel Corporation Sunrise
-Point-LP Integrated Sensor Hub
-   Bad           Runtime PM for PCI Device Intel Corporation Device
-591e
-   Good          Bluetooth device interface status
-   Good          Enable Audio codec power management
-   Good          Runtime PM for I2C Adapter i2c-8 (Synopsys DesignWare
-I2C adapter)
-   Good          Autosuspend for USB device Integrated_Webcam_HD
-[CNFGE16N092020028362]
-   Good          Autosuspend for USB device xHCI Host Controller [usb1]
-   Good          Autosuspend for USB device xHCI Host Controller [usb2]
-   Good          Runtime PM for I2C Adapter i2c-7 (SMBus I801 adapter
-at efa0)
-   Good          Autosuspend for unknown USB device 1-2 (8087:0a2b)
-   Good          Runtime PM for I2C Adapter i2c-6 (Synopsys DesignWare
-I2C adapter)
-   Good          I2C Device i2c-DLL077A:01 has no runtime power
-management
-   Good          I2C Device i2c-WCOM482F:00 has no runtime power
-management
-   Good          Runtime PM for PCI Device Intel Corporation Sunrise
-Point-LP PCI Express Root Port #10
-   Good          Runtime PM for PCI Device Intel Corporation Sunrise
-Point-LP CSME HECI #1
-   Good          Runtime PM for PCI Device Intel Corporation Sunrise
-Point-LP Serial IO I2C Controller #1
-   Good          Runtime PM for PCI Device Intel Corporation Sunrise
-Point-LP SMBus
-   Good          Runtime PM for PCI Device Intel Corporation Sunrise
-Point-LP PCI Express Root Port #5
-   Good          Runtime PM for PCI Device Intel Corporation Sunrise
-Point-LP Serial IO I2C Controller #0
-   Good          Wake-on-lan status for device virbr0-nic
-   Good          Wake-on-lan status for device virbr0
-   Good          Wake-on-lan status for device wlp60s0
+I would make the change in the next patch series.
 
-Regards
+>>   4 files changed, 429 insertions(+)
+>>   create mode 100644 drivers/clk/qcom/clk-rpmh.c
+>>   create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
 
-Dennis
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
