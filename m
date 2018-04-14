@@ -1,152 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751045AbeDNEHs (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 00:07:48 -0400
-Received: from mga03.intel.com ([134.134.136.65]:57900 "EHLO mga03.intel.com"
+        id S1750954AbeDNG1W (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 02:27:22 -0400
+Received: from www.zeus03.de ([194.117.254.33]:53018 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750947AbeDNEHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 00:07:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,447,1517904000";
-   d="scan'208";a="33293079"
-From: Yu Chen <yu.c.chen@intel.com>
-To: Len Brown <lenb@kernel.org>
-Cc: Chen Yu <yu.c.chen@intel.com>, Rafael J Wysocki <rjw@rjwysocki.net>,
-        Artem Bityutskiy <artem.bityutskiy@intel.com>,
-        Doug Smythies <dsmythies@telus.net>, linux-pm@vger.kernel.org,
+        id S1750878AbeDNG1U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Apr 2018 02:27:20 -0400
+X-UD-Smtp-Session: l3s3148p1@eo+YFMlpwKkgAwDPW99LAAId4P/+oMhl
+Date: Sat, 14 Apr 2018 08:27:18 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Sam Hansen <hansens@google.com>
+Cc: Jean Delvare <jdelvare@suse.de>, linux-i2c@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH][v5] tools/power turbostat: if --iterations, print for specific count of iterations
-Date: Sat, 14 Apr 2018 12:10:55 +0800
-Message-Id: <20180414041055.10159-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.13.6
+Subject: Re: [PATCH] Documentation/i2c: sync docs with current state of
+ i2c-tools.
+Message-ID: <20180414062718.3tbsdb6jhjurpfta@katana>
+References: <20180412213342.138010-1-hansens@google.com>
+ <20180412222457.x4jdwt27ylgi74o3@katana>
+ <20180413141359.793919fb@endymion>
+ <CAP9bUy7rONNHYeRkYtaWHcfqoZcGKXJz-JocED26zBj9n+-ZbQ@mail.gmail.com>
+ <20180413204937.440437e9@endymion>
+ <CAP9bUy6Hf+cQzAAckou3QPTk0mJM4xJ4xq-hf+RwyVmD3Le+qg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="63ldwbganmqjq6vv"
+Content-Disposition: inline
+In-Reply-To: <CAP9bUy6Hf+cQzAAckou3QPTk0mJM4xJ4xq-hf+RwyVmD3Le+qg@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen Yu <yu.c.chen@intel.com>
 
-There's a use case during test to only print specific round of iterations
-if --iterations is specified, for example, with this patch applied:
+--63ldwbganmqjq6vv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-turbostat -i 5 -r 4
-will capture 4 samples with 5 seconds interval.
 
-Cc: Len Brown <lenb@kernel.org>
-Cc: Rafael J Wysocki <rjw@rjwysocki.net>
-Cc: Artem Bityutskiy <artem.bityutskiy@intel.com>
-Cc: Doug Smythies <dsmythies@telus.net>
-Cc: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
- tools/power/x86/turbostat/turbostat.8 |  2 ++
- tools/power/x86/turbostat/turbostat.c | 23 ++++++++++++++++++++++-
- 2 files changed, 24 insertions(+), 1 deletion(-)
+> (also, did I send the v3 patch series threaded correctly?)
 
-diff --git a/tools/power/x86/turbostat/turbostat.8 b/tools/power/x86/turbostat/turbostat.8
-index ccf2a69365cc..7452dc42273b 100644
---- a/tools/power/x86/turbostat/turbostat.8
-+++ b/tools/power/x86/turbostat/turbostat.8
-@@ -64,6 +64,8 @@ name as necessary to disambiguate it from others is necessary.  Note that option
- .PP
- \fB--interval seconds\fP overrides the default 5.0 second measurement interval.
- .PP
-+\fB--iterations count\fP number of the measurement iterations.
-+.PP
- \fB--out output_file\fP turbostat output is written to the specified output_file.
- The file is truncated if it already exists, and it is created if it does not exist.
- .PP
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-index bd9c6b31a504..ae9e3d08e3cf 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -48,6 +48,7 @@ char *proc_stat = "/proc/stat";
- FILE *outf;
- int *fd_percpu;
- struct timespec interval_ts = {5, 0};
-+int iterations;
- unsigned int debug;
- unsigned int quiet;
- unsigned int sums_need_wide_columns;
-@@ -470,6 +471,7 @@ void help(void)
- 	"		{core | package | j,k,l..m,n-p }\n"
- 	"--quiet	skip decoding system configuration header\n"
- 	"--interval sec	Override default 5-second measurement interval\n"
-+	"--iterations count	number of the measurement iterations\n"
- 	"--help		print this help message\n"
- 	"--list		list column headers only\n"
- 	"--out file	create or truncate \"file\" for all output\n"
-@@ -2565,6 +2567,7 @@ void turbostat_loop()
- {
- 	int retval;
- 	int restarted = 0;
-+	int done_iters = 0;
- 
- restart:
- 	restarted++;
-@@ -2581,6 +2584,7 @@ void turbostat_loop()
- 		goto restart;
- 	}
- 	restarted = 0;
-+	done_iters = 0;
- 	gettimeofday(&tv_even, (struct timezone *)NULL);
- 
- 	while (1) {
-@@ -2607,6 +2611,10 @@ void turbostat_loop()
- 		compute_average(EVEN_COUNTERS);
- 		format_all_counters(EVEN_COUNTERS);
- 		flush_output_stdout();
-+
-+		if (iterations && (++done_iters >= iterations))
-+			break;
-+
- 		nanosleep(&interval_ts, NULL);
- 		if (snapshot_proc_sysfs_files())
- 			goto restart;
-@@ -2626,6 +2634,9 @@ void turbostat_loop()
- 		compute_average(ODD_COUNTERS);
- 		format_all_counters(ODD_COUNTERS);
- 		flush_output_stdout();
-+
-+		if (iterations && (++done_iters >= iterations))
-+			break;
- 	}
- }
- 
-@@ -4999,6 +5010,7 @@ void cmdline(int argc, char **argv)
- 		{"Dump",	no_argument,		0, 'D'},
- 		{"debug",	no_argument,		0, 'd'},	/* internal, not documented */
- 		{"interval",	required_argument,	0, 'i'},
-+		{"iterations",	required_argument,	0, 'r'},
- 		{"help",	no_argument,		0, 'h'},
- 		{"hide",	required_argument,	0, 'H'},	// meh, -h taken by --help
- 		{"Joules",	no_argument,		0, 'J'},
-@@ -5014,7 +5026,7 @@ void cmdline(int argc, char **argv)
- 
- 	progname = argv[0];
- 
--	while ((opt = getopt_long_only(argc, argv, "+C:c:Ddhi:JM:m:o:qST:v",
-+	while ((opt = getopt_long_only(argc, argv, "+C:c:Ddhi:JM:m:o:qr:ST:v",
- 				long_options, &option_index)) != -1) {
- 		switch (opt) {
- 		case 'a':
-@@ -5063,6 +5075,15 @@ void cmdline(int argc, char **argv)
- 		case 'q':
- 			quiet = 1;
- 			break;
-+		case 'r':
-+			iterations = strtod(optarg, NULL);
-+
-+			if (iterations <= 0) {
-+				fprintf(outf, "iterations %d should be positive number\n",
-+					iterations);
-+				exit(2);
-+			}
-+			break;
- 		case 's':
- 			parse_show_hide(optarg, SHOW_LIST);
- 			break;
--- 
-2.13.6
+Yes, that worked. Thanks!
+
+Things to improve there: I was both in To: and CC: field, so I got mails
+twice. Jean was missing completely.
+
+
+--63ldwbganmqjq6vv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrRn0EACgkQFA3kzBSg
+KbaO5w//W/3a7z6XYo+5KE+Nek2G6K49ZDoMt/c9w4xbvL354cxoh9xzTcuPWJH2
+Nbowz9VejPic0ZtoIdZ+PO+OYj/s3G8KrnKLIUQxW1GwKzE9b13s33TUhICCXqkH
+SI6/U81YUOlOASNvDmIa/SUugZK0AEW7Q1AwnRQurGzNaJ9XjEkCJHzy9QZqEQbp
+7lJDh0qCjSrJpSvYsl1RLMnaQcKrIQ7SiFCCAPH+ilBaho7xfbdFRFgUBDq4O9o2
+y397ZU7Y3npsTP08SL5el3H25DmAaj4sjgiFL/tEsYdNyuqDkC0jBtX8tKT7vv6k
+T+ychYVyNvNFuS9RUBYPWYhhlUPt6eqjq9/jHWz+N2AXNqr1sRHMBMan1hPdww/H
+49niaLHYLuihrvPHSMcJPExusIQpSIyC/xf45xK6fXqdBjOFYoV7CAGBOQy4AUiI
+nhq+MHrJGZHvn/sahlhNG9ZdCIGXtcFj9tBLQX40JjrfVJ7X2g9vvS2kDtpOnnZ8
+JwxXMJupI86FcjiSqsr1cdnQypX4bmLEpNaiFftdDFzegDtB36mBOzlf1y35b0bF
+FNvYIptegwdZLmHHoodDDNmtuLUIT8RRKekXACwS8YNb8GLvLJqjydgv2kD4RODp
+k9B3h0Ee1UybDXrqQc0ShE6vhHf7/SJ7PXuZ2Ew+6NCUVovchYE=
+=Qg3j
+-----END PGP SIGNATURE-----
+
+--63ldwbganmqjq6vv--
