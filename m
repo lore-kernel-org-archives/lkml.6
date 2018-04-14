@@ -1,82 +1,194 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752519AbeDNAJD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 20:09:03 -0400
-Received: from mga02.intel.com ([134.134.136.20]:40560 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751877AbeDNAJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 20:09:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,446,1517904000";
-   d="scan'208";a="220296884"
-From: "Mehta, Sohil" <sohil.mehta@intel.com>
-To: "gary.hook@amd.com" <gary.hook@amd.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] iommu/amd: Add basic debugfs infrastructure for
- AMD IOMMU
-Thread-Topic: [PATCH v3 2/2] iommu/amd: Add basic debugfs infrastructure for
- AMD IOMMU
-Thread-Index: AQHT04THDyVaDNNW7k6hYyQjJLsxvQ==
-Date: Sat, 14 Apr 2018 00:08:55 +0000
-Message-ID: <1523664612.2747.13.camel@intel.com>
-References: <152302042701.47565.17954813724758433858.stgit@sosxen2.amd.com>
-         <152302067362.47565.628887796165116844.stgit@sosxen2.amd.com>
-In-Reply-To: <152302067362.47565.628887796165116844.stgit@sosxen2.amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.110.4]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CF21F5DFCD25FD46A7289FE14D9FBEAD@intel.com>
-MIME-Version: 1.0
+        id S1751177AbeDNA3h (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 20:29:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46868 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750839AbeDNA3f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Apr 2018 20:29:35 -0400
+Date: Fri, 13 Apr 2018 17:29:33 -0700
+From: akpm@linux-foundation.org
+To: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+Subject: mmotm 2018-04-13-17-28 uploaded
+Message-ID: <20180414002933.6h3S5%akpm@linux-foundation.org>
+User-Agent: s-nail v14.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3E09xjj002648
 
-On Fri, 2018-04-06 at 08:17 -0500, Gary R Hook wrote:
-> 
-> +
-> +void amd_iommu_debugfs_setup(struct amd_iommu *iommu)
-> +{
-> +	char name[MAX_NAME_LEN + 1];
-> +	struct dentry *d_top;
-> +
-> +	if (!debugfs_initialized())
+The mm-of-the-moment snapshot 2018-04-13-17-28 has been uploaded to
 
-Probably not needed.
+   http://www.ozlabs.org/~akpm/mmotm/
 
-> +		return;
-> +
-> +	mutex_lock(&amd_iommu_debugfs_lock);
-> +	if (!amd_iommu_debugfs) {
-> +		d_top = iommu_debugfs_setup();
-> +		if (d_top)
-> +			amd_iommu_debugfs =
-> debugfs_create_dir("amd", d_top);
-> +	}
-> +	mutex_unlock(&amd_iommu_debugfs_lock);
+mmotm-readme.txt says
+
+README for mm-of-the-moment:
+
+http://www.ozlabs.org/~akpm/mmotm/
+
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
 
 
-You can do the above only once if you iterate over the IOMMUs here
- instead of doing it in amd_iommu_init.
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
 
-> +	if (amd_iommu_debugfs) {
-> +		snprintf(name, MAX_NAME_LEN, "iommu%02d", iommu-
-> >index);
-> +		iommu->debugfs = debugfs_create_dir(name,
-> +						    amd_iommu_debugf
-> s);
-> +		if (!iommu->debugfs) {
-> +			debugfs_remove_recursive(amd_iommu_debugfs);
-> +			amd_iommu_debugfs = NULL;
-> +		}
-> +	}
-> +}
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
 
--Sohil
+To develop on top of mmotm git:
+
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
+
+To rebase a branch with older patches to a new mmotm release:
+
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
+
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 4.16:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+  i-need-old-gcc.patch
+* resource-fix-integer-overflow-at-reallocation-v1.patch
+* mm-gup_benchmark-handle-gup-failures.patch
+* gup-return-efault-on-access_ok-failure.patch
+* mm-gup-document-return-value.patch
+* mm-filemap-provide-dummy-filemap_page_mkwrite-for-nommu.patch
+* ipc-shm-fix-use-after-free-of-shm-file-via-remap_file_pages.patch
+* kexec-export-pg_swapbacked-to-vmcoreinfo.patch
+* mm-slab-reschedule-cache_reap-on-the-same-cpu.patch
+* proc-revalidate-misc-dentries.patch
+* kexec_file-make-an-use-of-purgatory-optional.patch
+* kexec_filex86powerpc-factor-out-kexec_file_ops-functions.patch
+* x86-kexec_file-purge-system-ram-walking-from-prepare_elf64_headers.patch
+* x86-kexec_file-remove-x86_64-dependency-from-prepare_elf64_headers.patch
+* x86-kexec_file-lift-crash_max_ranges-limit-on-crash_mem-buffer.patch
+* x86-kexec_file-clean-up-prepare_elf64_headers.patch
+* kexec_file-x86-move-re-factored-code-to-generic-side.patch
+* kexec_file-silence-compile-warnings.patch
+* kexec_file-remove-checks-in-kexec_purgatory_load.patch
+* kexec_file-make-purgatory_info-ehdr-const.patch
+* kexec_file-search-symbols-in-read-only-kexec_purgatory.patch
+* kexec_file-use-read-only-sections-in-arch_kexec_apply_relocations.patch
+* kexec_file-split-up-__kexec_load_puragory.patch
+* kexec_file-remove-unneeded-for-loop-in-kexec_purgatory_setup_sechdrs.patch
+* kexec_file-remove-unneeded-variables-in-kexec_purgatory_setup_sechdrs.patch
+* kexec_file-remove-mis-use-of-sh_offset-field-during-purgatory-load.patch
+* kexec_file-allow-archs-to-set-purgatory-load-address.patch
+* kexec_file-move-purgatories-sha256-to-common-code.patch
+* mm-pagemap-fix-swap-offset-value-for-pmd-migration-entry.patch
+* mm-pagemap-fix-swap-offset-value-for-pmd-migration-entry-fix.patch
+* writeback-safer-lock-nesting.patch
+* writeback-safer-lock-nesting-fix.patch
+* writeback-safer-lock-nesting-v4.patch
+* mm-enable-thp-migration-for-shmem-thp.patch
+* memcg-remove-memcg_cgroup-id-from-idr-on-mem_cgroup_css_alloc-failure.patch
+* rapidio-fix-rio_dma_transfer-error-handling.patch
+* kasan-add-no_sanitize-attribute-for-clang-builds.patch
+* maintainers-add-personal-addresses-for-sascha-and-me.patch
+* fs-dcachec-re-add-cond_resched-in-shrink_dcache_parent.patch
+* autofs-mount-point-create-should-honour-passed-in-mode.patch
+* ocfs2-submit-another-bio-if-current-bio-is-full.patch
+* proc-revalidate-kernel-thread-inodes-to-root-root.patch
+* proc-fix-proc-loadavg-regression.patch
+* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
+* prctl-add-pr_et_pdeathsig_proc.patch
+* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery-checkpatch-fixes.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+* dentry-fix-kmemcheck-splat-at-take_dentry_name_snapshot.patch
+  mm.patch
+* mm-sparse-add-a-static-variable-nr_present_sections.patch
+* mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
+* mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
+* mm-fix-race-between-swapoff-and-mincore.patch
+* mmvmscan-mark-register_shrinker-as-__must_check.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
+* mm-oom-refactor-the-oom_kill_process-function.patch
+* mm-implement-mem_cgroup_scan_tasks-for-the-root-memory-cgroup.patch
+* mm-oom-cgroup-aware-oom-killer.patch
+* mm-oom-cgroup-aware-oom-killer-fix.patch
+* mm-oom-introduce-memoryoom_group.patch
+* mm-oom-introduce-memoryoom_group-fix.patch
+* mm-oom-add-cgroup-v2-mount-option-for-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2-fix.patch
+* cgroup-list-groupoom-in-cgroup-features.patch
+* mm-add-strictlimit-knob-v2.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* mm-page_owner-align-with-pageblock_nr_pages.patch
+* mm-page_owner-align-with-pageblock_nr-pages.patch
+* mm-kasan-dont-vfree-nonexistent-vm_area.patch
+* rslib-remove-vlas-by-setting-upper-bound-on-nroots.patch
+* checkpatch-add-a-strict-test-for-structs-with-bool-member-definitions.patch
+* coredump-fix-spam-with-zero-vma-process.patch
+* seq_file-delete-small-value-optimization.patch
+* fork-unconditionally-clear-stack-on-fork.patch
+* exofs-avoid-vla-in-structures.patch
+  linux-next.patch
+  linux-next-rejects.patch
+* resource-add-walk_system_ram_res_rev.patch
+* kexec_file-load-kernel-at-top-of-system-ram-if-required.patch
+* mm-memcg-remote-memcg-charging-for-kmem-allocations.patch
+* mm-memcg-remote-memcg-charging-for-kmem-allocations-fix.patch
+* fs-fsnotify-account-fsnotify-metadata-to-kmemcg.patch
+* fs-fsnotify-account-fsnotify-metadata-to-kmemcg-fix.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+* sparc64-ng4-memset-32-bits-overflow.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  slab-leaks3-default-y.patch
+  workaround-for-a-pci-restoring-bug.patch
