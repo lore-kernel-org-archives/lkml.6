@@ -1,83 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751590AbeDNJvs (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 05:51:48 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:22222 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750920AbeDNJvN (ORCPT
+        id S1750942AbeDNKFZ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 06:05:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41152 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750880AbeDNKFX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 05:51:13 -0400
-From: Vignesh R <vigneshr@ti.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-CC: Vignesh R <vigneshr@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, Tony Lindgren <tony@atomide.com>
-Subject: [PATCH v2 1/3] Input: ti_am335x_tsc - Mark IRQ as wakeup capable
-Date: Sat, 14 Apr 2018 15:21:51 +0530
-Message-ID: <20180414095153.32060-2-vigneshr@ti.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180414095153.32060-1-vigneshr@ti.com>
-References: <20180414095153.32060-1-vigneshr@ti.com>
+        Sat, 14 Apr 2018 06:05:23 -0400
+Date: Sat, 14 Apr 2018 12:05:15 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: mingo@kernel.org, linux-kernel@vger.kernel.org, rjw@rjwysocki.net,
+        juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
+        valentin.schneider@arm.com
+Subject: Re: [PATCH 2/4 v4] sched/rt: add rt_rq utilization tracking
+Message-ID: <20180414100515.GV4064@hirez.programming.kicks-ass.net>
+References: <1521199541-15308-1-git-send-email-vincent.guittot@linaro.org>
+ <1521199541-15308-3-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521199541-15308-3-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On AM335x, ti_am335x_tsc can wake up the system from suspend, mark the
-IRQ as wakeup capable, so that device irq is not disabled during system
-suspend.
+On Fri, Mar 16, 2018 at 12:25:39PM +0100, Vincent Guittot wrote:
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 783eacf..a8003a9 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -592,6 +592,8 @@ struct rt_rq {
+>  	unsigned long		rt_nr_total;
+>  	int			overloaded;
+>  	struct plist_head	pushable_tasks;
+> +
+> +	struct sched_avg avg;
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
----
+We only want this for the root cgroup, right? So why is this per cgroup?
 
-v2: No changes
-
- drivers/input/touchscreen/ti_am335x_tsc.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/input/touchscreen/ti_am335x_tsc.c b/drivers/input/touchscreen/ti_am335x_tsc.c
-index f1043ae71dcc..810e05c9c4f5 100644
---- a/drivers/input/touchscreen/ti_am335x_tsc.c
-+++ b/drivers/input/touchscreen/ti_am335x_tsc.c
-@@ -27,6 +27,7 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/sort.h>
-+#include <linux/pm_wakeirq.h>
- 
- #include <linux/mfd/ti_am335x_tscadc.h>
- 
-@@ -432,6 +433,12 @@ static int titsc_probe(struct platform_device *pdev)
- 		goto err_free_mem;
- 	}
- 
-+	if (device_may_wakeup(tscadc_dev->dev)) {
-+		err = dev_pm_set_wake_irq(tscadc_dev->dev, ts_dev->irq);
-+		if (err)
-+			dev_err(&pdev->dev, "irq wake enable failed.\n");
-+	}
-+
- 	titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_FIFO0THRES);
- 	titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_EOS);
- 	err = titsc_config_wires(ts_dev);
-@@ -462,6 +469,7 @@ static int titsc_probe(struct platform_device *pdev)
- 	return 0;
- 
- err_free_irq:
-+	dev_pm_clear_wake_irq(tscadc_dev->dev);
- 	free_irq(ts_dev->irq, ts_dev);
- err_free_mem:
- 	input_free_device(input_dev);
-@@ -474,6 +482,7 @@ static int titsc_remove(struct platform_device *pdev)
- 	struct titsc *ts_dev = platform_get_drvdata(pdev);
- 	u32 steps;
- 
-+	dev_pm_clear_wake_irq(ts_dev->mfd_tscadc->dev);
- 	free_irq(ts_dev->irq, ts_dev);
- 
- 	/* total steps followed by the enable mask */
--- 
-2.17.0
+That is, I was expecting it to be rq::rt_avg or something.
