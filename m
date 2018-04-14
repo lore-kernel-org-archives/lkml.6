@@ -1,133 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751141AbeDNJsn (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 05:48:43 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:40592 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750880AbeDNJsk (ORCPT
+        id S1751025AbeDNJvO (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 05:51:14 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:22214 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750880AbeDNJvL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 05:48:40 -0400
-X-Google-Smtp-Source: AIpwx48QOYHcqiBiwynLskOcQEgEqotZgeIElFQsOIn7fmp9UItWMMdRPDU5iUtvCgGQzS++afLA6A==
-From: Yafang Shao <laoar.shao@gmail.com>
-To: davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        songliubraving@fb.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH net-next] net: introduce a new tracepoint for tcp_rcv_space_adjust
-Date: Sat, 14 Apr 2018 17:48:23 +0800
-Message-Id: <1523699303-15699-1-git-send-email-laoar.shao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Sat, 14 Apr 2018 05:51:11 -0400
+From: Vignesh R <vigneshr@ti.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+CC: Vignesh R <vigneshr@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, Tony Lindgren <tony@atomide.com>
+Subject: [PATCH v2 0/3] ti_am335x_tsc: Fix suspend/resume
+Date: Sat, 14 Apr 2018 15:21:50 +0530
+Message-ID: <20180414095153.32060-1-vigneshr@ti.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tcp_rcv_space_adjust is called every time data is copied to user space,
-introducing a tcp tracepoint for which could show us when the packet is
-copied to user.
-This could help us figure out whether there's latency in user process.
+This patch series fixes couple of issues wrt suspend/resume with TI AM335x
+TSC driver. Disable and clear any pending IRQs before suspend, and
+handle case where TSC wakeup would fail, if there were touch events
+during suspend.
 
-When a tcp packet arrives, tcp_rcv_established() will be called and with
-the existed tracepoint tcp_probe we could get the time when this packet
-arrives.
-Then this packet will be copied to user, and tcp_rcv_space_adjust will
-be called and with this new introduced tracepoint we could get the time
-when this packet is copied to user.
+v2:
+Rebase onto latest linux-next.
+v1:https://lkml.org/lkml/2016/5/16/150
 
-	arrives time : user process time    => latency caused by user
-	tcp_probe      tcp_rcv_space_adjust
+Grygorii Strashko (2):
+  Input: ti_am335x_tsc - Ack pending IRQs at probe and before suspend
+  Input: ti_am335x_tsc - Prevent system suspend when TSC is in use
 
-Hence in the prink message, sk is printed as a key to connect these two
-tracepoints.
+Vignesh R (1):
+  Input: ti_am335x_tsc - Mark IRQ as wakeup capable
 
-Maybe we could export sockfd in this new tracepoint as well, then we
-could connect this new tracepoint with epoll/read/recv* tracepoint, and
-finally that could show us the whole lifespan of this packet. But we
-could also implement that with pid as these functions are executed in
-process context.
+ drivers/input/touchscreen/ti_am335x_tsc.c | 14 ++++++++++++++
+ include/linux/mfd/ti_am335x_tscadc.h      |  1 +
+ 2 files changed, 15 insertions(+)
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- include/trace/events/tcp.h | 21 +++++++++++++++------
- net/ipv4/tcp_input.c       |  2 ++
- 2 files changed, 17 insertions(+), 6 deletions(-)
-
-diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
-index 878b2be..65a6d22 100644
---- a/include/trace/events/tcp.h
-+++ b/include/trace/events/tcp.h
-@@ -146,10 +146,11 @@
- 			       sk->sk_v6_rcv_saddr, sk->sk_v6_daddr);
- 	),
- 
--	TP_printk("sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c",
-+	TP_printk("sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c sock=0x%p",
- 		  __entry->sport, __entry->dport,
- 		  __entry->saddr, __entry->daddr,
--		  __entry->saddr_v6, __entry->daddr_v6)
-+		  __entry->saddr_v6, __entry->daddr_v6,
-+		  __entry->skaddr)
- );
- 
- DEFINE_EVENT(tcp_event_sk, tcp_receive_reset,
-@@ -166,6 +167,13 @@
- 	TP_ARGS(sk)
- );
- 
-+DEFINE_EVENT(tcp_event_sk, tcp_rcv_space_adjust,
-+
-+	TP_PROTO(const struct sock *sk),
-+
-+	TP_ARGS(sk)
-+);
-+
- TRACE_EVENT(tcp_set_state,
- 
- 	TP_PROTO(const struct sock *sk, const int oldstate, const int newstate),
-@@ -265,6 +273,7 @@
- 	TP_ARGS(sk, skb),
- 
- 	TP_STRUCT__entry(
-+		__field(const void *, skaddr)
- 		/* sockaddr_in6 is always bigger than sockaddr_in */
- 		__array(__u8, saddr, sizeof(struct sockaddr_in6))
- 		__array(__u8, daddr, sizeof(struct sockaddr_in6))
-@@ -285,6 +294,8 @@
- 		const struct tcp_sock *tp = tcp_sk(sk);
- 		const struct inet_sock *inet = inet_sk(sk);
- 
-+		__entry->skaddr = sk;
-+
- 		memset(__entry->saddr, 0, sizeof(struct sockaddr_in6));
- 		memset(__entry->daddr, 0, sizeof(struct sockaddr_in6));
- 
-@@ -305,13 +316,11 @@
- 		__entry->srtt = tp->srtt_us >> 3;
- 	),
- 
--	TP_printk("src=%pISpc dest=%pISpc mark=%#x length=%d snd_nxt=%#x "
--		  "snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u "
--		  "rcv_wnd=%u",
-+	TP_printk("src=%pISpc dest=%pISpc mark=%#x length=%d snd_nxt=%#x snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u rcv_wnd=%u sock=0x%p",
- 		  __entry->saddr, __entry->daddr, __entry->mark,
- 		  __entry->length, __entry->snd_nxt, __entry->snd_una,
- 		  __entry->snd_cwnd, __entry->ssthresh, __entry->snd_wnd,
--		  __entry->srtt, __entry->rcv_wnd)
-+		  __entry->srtt, __entry->rcv_wnd, __entry->skaddr)
- );
- 
- #endif /* _TRACE_TCP_H */
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 367def6..4b4d6b9 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -582,6 +582,8 @@ void tcp_rcv_space_adjust(struct sock *sk)
- 	u32 copied;
- 	int time;
- 
-+	trace_tcp_rcv_space_adjust(sk);
-+
- 	tcp_mstamp_refresh(tp);
- 	time = tcp_stamp_us_delta(tp->tcp_mstamp, tp->rcvq_space.time);
- 	if (time < (tp->rcv_rtt_est.rtt_us >> 3) || tp->rcv_rtt_est.rtt_us == 0)
 -- 
-1.8.3.1
+2.17.0
