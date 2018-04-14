@@ -1,50 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751836AbeDNSZd (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 14:25:33 -0400
-Received: from mail-io0-f180.google.com ([209.85.223.180]:42501 "EHLO
-        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751724AbeDNSZb (ORCPT
+        id S1751371AbeDNSbE (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 14:31:04 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:41913 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751152AbeDNSbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 14:25:31 -0400
-X-Google-Smtp-Source: AIpwx48x9Ynb48MKo2YRjMYPMJl0VSOmdhErQOG8H6xymoagGXn2NYRdPOt6sCYmWFskrICZveyiIrbqiYDZEg43kcU=
+        Sat, 14 Apr 2018 14:31:02 -0400
+X-Google-Smtp-Source: AIpwx4+HixsdkXe4nkjDJk7ah3QYQHky/5Ua5midTT3xkJl5eMsc2asrU8SHRAMBYImH9X4SjYYAPQ==
+Date: Sat, 14 Apr 2018 11:30:53 -0700
+From: Eduardo Valentin <edubezval@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Rui Zhang <rui.zhang@intel.com>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL V3] Thermal SoC management updates for v4.17-rc1
+Message-ID: <20180414183051.GA27921@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+YjD68zBdN7zCViB5ab9-R2JgBEf5OBiDauxMsyuEkLRw@mail.gmail.com>
-References: <CACT4Y+babw_2NJa+oym2VN7-Z4Bt_rZx2sMi68AD+1KzNpr=KQ@mail.gmail.com>
- <CA+55aFzxDYGLUPY802rJN=wgJ1aEZHLRE+W8J82eFz2nzKOMBg@mail.gmail.com>
- <CACT4Y+YDqJMb4mC6c--Ku=ZL9MpELmUKMXe4uQJ6H0av2FJC9w@mail.gmail.com>
- <20180323201634.GA16350@gmail.com> <CA+55aFwZpMB=VUTCNUgc4dcCEy9_T4iE0R0pAfDets=zDFJunQ@mail.gmail.com>
- <CACT4Y+YjD68zBdN7zCViB5ab9-R2JgBEf5OBiDauxMsyuEkLRw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 14 Apr 2018 11:25:30 -0700
-X-Google-Sender-Auth: Aj4FEB4WzBZXyTMEqkpPll-8HDw
-Message-ID: <CA+55aFwJ=fiuV+QF+-b+H58tquCzek6CNpssZn40r0z4E0Q6kA@mail.gmail.com>
-Subject: Re: syzbot dashboard
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Eric Biggers <ebiggers3@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Coming back to this now that the merge window is almost over ]
+Hello Linus,
 
-On Mon, Mar 26, 2018 at 1:46 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> I've switched emails to links instead of attachments, here are few
-> recent examples:
-> https://lkml.org/lkml/2018/3/25/31
-> https://lkml.org/lkml/2018/3/25/256
-> https://lkml.org/lkml/2018/3/25/257
+Please find thermal-soc changes for v4.17-rc1.
+Rui asked me to send the pull request directly to you
+as we are close to the end of the merge window.
+Essentially this pull removes the series that caused
+warning regression. I will work with the developer
+to get that fixed later on, but I am still sending
+the other few patches that are unrelated to that.
+Let me know if this causes any issues and can still
+be pulled.
 
-Looks good to me. I notice that only the last one got any replies, though.
+Changelog:
+- New i.MX7 thermal sensor
+- Mediatek driver now supports MT7622 SoC
+- Removal of min max cpu cooling DT property
 
-I wonder if some people auto-ignore the new reports because of having
-been burned by the previous "huge illegible emails" issue.
+Differences in V3:
+- Rebased on top current linus/master, to avoid and merge issues
+from previous pulled thermal code.
 
-I do see syzbot fixes in rdma, though, just not for that
-cma_listen_on_all issue. So maybe that bug is nastier.
+Differences in V2:
+- Reordered the patches to drop exynos changes for now until we get
+agreement on the fix on that driver for the compilation warns
+caused by the confusing conversion functions.
 
-                  Linus
+
+The following changes since commit 48023102b7078a6674516b1fe0d639669336049d:
+
+  Merge branch 'overlayfs-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs (2018-04-13 16:55:41 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal linus
+
+for you to fetch changes up to 15a32df1918259be6c23fc36014fc26ee66c836c:
+
+  dt-bindings: thermal: Remove "cooling-{min|max}-level" properties (2018-04-14 09:37:55 -0700)
+
+----------------------------------------------------------------
+Anson Huang (1):
+      thermal: imx: add i.MX7 thermal sensor support
+
+Bartlomiej Zolnierkiewicz (1):
+      dt-bindings: thermal: remove no longer needed samsung thermal properties
+
+Sean Wang (2):
+      dt-bindings: thermal: add binding for MT7622 SoC
+      thermal: mediatek: add support for MT7622 SoC
+
+Viresh Kumar (1):
+      dt-bindings: thermal: Remove "cooling-{min|max}-level" properties
+
+ .../devicetree/bindings/thermal/exynos-thermal.txt |  23 +-
+ .../devicetree/bindings/thermal/imx-thermal.txt    |   9 +-
+ .../bindings/thermal/mediatek-thermal.txt          |   1 +
+ .../devicetree/bindings/thermal/thermal.txt        |  16 +-
+ drivers/thermal/imx_thermal.c                      | 295 ++++++++++++++++-----
+ drivers/thermal/mtk_thermal.c                      |  35 +++
+ 6 files changed, 281 insertions(+), 98 deletions(-)
