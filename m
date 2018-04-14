@@ -1,125 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752019AbeDNVeP (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 17:34:15 -0400
-Received: from tn-76-7-174-50.sta.embarqhsd.net ([76.7.174.50]:58184 "EHLO
-        animx.eu.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751748AbeDNVeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 17:34:14 -0400
-Date: Sat, 14 Apr 2018 17:34:08 -0400
-From: Wakko Warner <wakko@animx.eu.org>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "richard.weinberger@gmail.com" <richard.weinberger@gmail.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: 4.15.14 crash with iscsi target and dvd
-Message-ID: <20180414213408.GA3148@animx.eu.org>
-References: <fb0640c203409a84ab1bfbbc41078a5416138ad2.camel@wdc.com>
- <20180407165335.GA2515@animx.eu.org>
- <1ff8d234cc565ba9701ce31899fca5faa597e050.camel@wdc.com>
- <20180408160254.GA22869@animx.eu.org>
- <f9467e78ce05446e7a89f06713c36fb638d1b6ad.camel@wdc.com>
- <20180409233436.GC6450@ming.t460p>
- <20180411004525.GA9107@animx.eu.org>
- <20180412100751.GB4697@ming.t460p>
- <20180413014302.GA3891@animx.eu.org>
- <20180413015551.GA12601@ming.t460p>
+        id S1752139AbeDNVrY (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 17:47:24 -0400
+Received: from mail-it0-f50.google.com ([209.85.214.50]:39862 "EHLO
+        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752046AbeDNVrW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Apr 2018 17:47:22 -0400
+X-Google-Smtp-Source: AIpwx4+DOHHKMjEZ9ukfqgJOEgZwrYsqE6FhC4keYK2bmWzgbTyQb4MUM8wpMfsCVaR1f0HkOKHsT2HvDvSace7glns=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180413015551.GA12601@ming.t460p>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180414205846.GW30522@ZenIV.linux.org.uk>
+References: <20180413181350.88831-1-khazhy@google.com> <20180413202823.204377-1-khazhy@google.com>
+ <20180413141430.2788e2562e3e24bd273fe78b@linux-foundation.org>
+ <3362fb2d-85ff-86af-399f-698c986e46cc@suse.com> <20180414080206.GV30522@ZenIV.linux.org.uk>
+ <CA+55aFz4fwzcUWWT78AxK+GeVNVveWPNS+=V+ppb1ksn56TjUA@mail.gmail.com> <20180414205846.GW30522@ZenIV.linux.org.uk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 14 Apr 2018 14:47:21 -0700
+X-Google-Sender-Auth: KtCA0tWCQ6N52vJSRJ-MljtPo4c
+Message-ID: <CA+55aFxD1xKqbobvoHQUWc5jc9n7-7KXYeSQy-CpE0SUZHi0PQ@mail.gmail.com>
+Subject: Re: [PATCH] fs/dcache.c: re-add cond_resched() in shrink_dcache_parent()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Nikolay Borisov <nborisov@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>, Jeff Mahoney <jeffm@suse.com>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ming Lei wrote:
-> On Thu, Apr 12, 2018 at 09:43:02PM -0400, Wakko Warner wrote:
-> > Ming Lei wrote:
-> > > On Tue, Apr 10, 2018 at 08:45:25PM -0400, Wakko Warner wrote:
-> > > > Sorry for the delay.  I reverted my change, added this one.  I didn't
-> > > > reboot, I just unloaded and loaded this one.
-> > > > Note: /dev/sr1 as seen from the initiator is /dev/sr0 (physical disc) on the
-> > > > target.
-> > > > 
-> > > > Doesn't crash, however on the initiator I see this:
-> > > > [9273849.707777] ISO 9660 Extensions: RRIP_1991A
-> > > > [9273863.359718] scsi_io_completion: 13 callbacks suppressed
-> > > > [9273863.359788] sr 26:0:0:0: [sr1] tag#1 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=0x08
-> > > > [9273863.359909] sr 26:0:0:0: [sr1] tag#1 Sense Key : 0x2 [current] 
-> > > > [9273863.359974] sr 26:0:0:0: [sr1] tag#1 ASC=0x8 ASCQ=0x0 
-> > > > [9273863.360036] sr 26:0:0:0: [sr1] tag#1 CDB: opcode=0x28 28 00 00 22 f6 96 00 00 80 00
-> > > > [9273863.360116] blk_update_request: 13 callbacks suppressed
-> > > > [9273863.360177] blk_update_request: I/O error, dev sr1, sector 9165400
-> > > > [9273875.864648] sr 26:0:0:0: [sr1] tag#1 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=0x08
-> > > > [9273875.864738] sr 26:0:0:0: [sr1] tag#1 Sense Key : 0x2 [current] 
-> > > > [9273875.864801] sr 26:0:0:0: [sr1] tag#1 ASC=0x8 ASCQ=0x0 
-> > > > [9273875.864890] sr 26:0:0:0: [sr1] tag#1 CDB: opcode=0x28 28 00 00 22 f7 16 00 00 80 00
-> > > > [9273875.864971] blk_update_request: I/O error, dev sr1, sector 9165912
-> > > > 
-> > > > To cause this, I mounted the dvd as seen in the first line and ran this
-> > > > command: find /cdrom2 -type f | xargs -tn1 cat > /dev/null
-> > > > I did some various tests.  Each test was done after umount and mount to
-> > > > clear the cache.
-> > > > cat <file> > /dev/null causes the message.
-> > > > dd if=<file> of=/dev/null bs=2048 doesn't
-> > > > 	using bs=4096 doesn't
-> > > > 	using bs=64k doesn't
-> > > > 	using bs=128k does
-> > > > cat uses a blocksize of 128k.
-> > > > 
-> > > > The following was done without being mounted.
-> > > > ddrescue -f -f /dev/sr1 /dev/null 
-> > > > 	doesn't cause the message
-> > > > dd if=/dev/sr1 of=/dev/null bs=128k
-> > > > 	doesn't cause the message
-> > > > using bs=256k causes the message once:
-> > > > [9275916.857409] sr 27:0:0:0: [sr1] tag#0 UNKNOWN(0x2003) Result: hostbyte=0x00 driverbyte=0x08
-> > > > [9275916.857482] sr 27:0:0:0: [sr1] tag#0 Sense Key : 0x2 [current] 
-> > > > [9275916.857520] sr 27:0:0:0: [sr1] tag#0 ASC=0x8 ASCQ=0x0 
-> > > > [9275916.857556] sr 27:0:0:0: [sr1] tag#0 CDB: opcode=0x28 28 00 00 00 00 00 00 00 80 00
-> > > > [9275916.857614] blk_update_request: I/O error, dev sr1, sector 0
-> > > > 
-> > > > If I access the disc from the target natively either by mounting and
-> > > > accessing files or working with the device directly (ie dd) no errors are
-> > > > logged on the target.
-> > > 
-> > > OK, thanks for your test.
-> > > 
-> > > Could you test the following patch and see if there is still the failure
-> > > message?
-> > > 
-> > > diff --git a/drivers/target/target_core_pscsi.c b/drivers/target/target_core_pscsi.c
-> > > index 0d99b242e82e..6137287b52fb 100644
-> > > --- a/drivers/target/target_core_pscsi.c
-> > > +++ b/drivers/target/target_core_pscsi.c
-> > > @@ -913,9 +913,11 @@ pscsi_map_sg(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
-> > >  
-> > >  			rc = bio_add_pc_page(pdv->pdv_sd->request_queue,
-> > >  					bio, page, bytes, off);
-> > > +			if (rc != bytes)
-> > > +				goto fail;
-> > >  			pr_debug("PSCSI: bio->bi_vcnt: %d nr_vecs: %d\n",
-> > >  				bio_segments(bio), nr_vecs);
-> > > -			if (rc != bytes) {
-> > > +			if (/*rc != bytes*/0) {
-> > >  				pr_debug("PSCSI: Reached bio->bi_vcnt max:"
-> > >  					" %d i: %d bio: %p, allocating another"
-> > >  					" bio\n", bio->bi_vcnt, i, bio);
-> > 
-> > Target doesn't crash but the errors on the initiator are still there.
-> 
-> OK, then this error log isn't related with my commit, because the patch
-> I sent to you in last email is to revert my commit simply.
-> 
-> But the following patch is one correct fix for your crash.
-> 
-> https://marc.info/?l=linux-kernel&m=152331690727052&w=2
+On Sat, Apr 14, 2018 at 1:58 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> That breaks d_invalidate(), unfortunately.  Look at the termination
+> conditions in the loop there...
 
-Ok, that'll be the one I used.  Do you know when it'll go upstream?
+Ugh. I was going to say "but that doesn't even use select_collect()",
+but yeah, detach_and_collect() calls it.
 
--- 
- Microsoft has beaten Volkswagen's world record.  Volkswagen only created 22
- million bugs.
+It would be easy enough to just change the
+
+                if (!list_empty(&data.select.dispose))
+
+there to
+
+                if (!list_empty(&data.select.found))
+
+too.
+
+In fact, it probably *should* do that, exactly to get the whole
+"cond_resched()" call in that whole call chain too. Because as-is, it
+looks like it has the same issue as shrink_dcache_parent() does..
+
+But yeah, the fact that I didn't notice that makes me a bit nervous.
+But now I triple-checked, there are no other indirect callers.
+
+            Linus
