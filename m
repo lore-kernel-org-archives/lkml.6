@@ -1,35 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751133AbeDNPd2 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 11:33:28 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:18845 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750939AbeDNPd1 (ORCPT
+        id S1751292AbeDNPeY (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 11:34:24 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:41542 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751137AbeDNPeX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 11:33:27 -0400
-Subject: Re: WARNING: lock held when returning to user space!
-To: Jens Axboe <axboe@kernel.dk>, Dmitry Vyukov <dvyukov@google.com>
-Cc: syzbot <syzbot+31e8daa8b3fc129e75f2@syzkaller.appspotmail.com>,
-        linux-block@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Omar Sandoval <osandov@osandov.com>
-References: <00000000000082922905692da9e1@google.com>
- <0e998b77-14f0-aee0-8d32-bc1dd96fcc4c@kernel.dk>
- <CACT4Y+Y0TVJLDA5-0RGq-a-A6KKLKHZtA4pwUH2rtvR0hkiZQQ@mail.gmail.com>
- <63121c85-f417-cde8-510d-f275dbe81c4d@kernel.dk>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <7e5ab719-ad6b-015f-2e4c-8cba2ee157f8@I-love.SAKURA.ne.jp>
-Date: Sun, 15 Apr 2018 00:33:03 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sat, 14 Apr 2018 11:34:23 -0400
+X-Google-Smtp-Source: AIpwx499x8RT3YPjwoSuSMTMg9/0rLj83k526F1nJOwhKgBBAEB1vTiHldCL2uoN6l3uFVeMNUmxfwZOEYsvlBm9O/4=
 MIME-Version: 1.0
-In-Reply-To: <63121c85-f417-cde8-510d-f275dbe81c4d@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <9ad4563e701a38915d58552f9eee5b3602833ddf.camel@wdc.com>
+ <20180413172708.30286-1-gthelen@google.com> <b1f20a68-2ed4-935f-4a9c-8a28c142ceee@intel.com>
+In-Reply-To: <b1f20a68-2ed4-935f-4a9c-8a28c142ceee@intel.com>
+From: Greg Thelen <gthelen@google.com>
+Date: Sat, 14 Apr 2018 15:34:10 +0000
+Message-ID: <CAHH2K0YTCa99ZfCdvq0WEJVvszo7+kUiVP_cz0igqE4TZSNYGQ@mail.gmail.com>
+Subject: Re: [PATCH v2] IB: make INFINIBAND_ADDR_TRANS configurable
+To: dennis.dalessandro@intel.com
+Cc: Bart Van Assche <Bart.VanAssche@wdc.com>,
+        Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Tarick Bedeir <tarick@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch was sent to linux.git as commit bdac616db9bbadb9.
+On Sat, Apr 14, 2018 at 8:13 AM Dennis Dalessandro <
+dennis.dalessandro@intel.com> wrote:
 
-#syz fix: loop: fix LOOP_GET_STATUS lock imbalance
+> On 4/13/2018 1:27 PM, Greg Thelen wrote:
+> > Allow INFINIBAND without INFINIBAND_ADDR_TRANS.
+> >
+> > Signed-off-by: Greg Thelen <gthelen@google.com>
+> > Cc: Tarick Bedeir <tarick@google.com>
+> > Change-Id: I6fbbf8a432e467710fa65e4904b7d61880b914e5
+
+> Forgot to remove the Gerrit thing.
+
+> -Denny
+
+Ack.  My bad.  Will repost.  Unfortunately checkpatch didn't notice.
