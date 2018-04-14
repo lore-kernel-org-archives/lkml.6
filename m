@@ -1,35 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751617AbeDNHCm (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 03:02:42 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:35905 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751157AbeDNHCi (ORCPT
+        id S1751019AbeDNHzu (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 03:55:50 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:54648 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750914AbeDNHzt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 03:02:38 -0400
-Subject: Re: INFO: rcu detected stall in _raw_spin_unlock
-To: syzbot <syzbot+de49a4f1661f0fa54bc3@syzkaller.appspotmail.com>,
-        viro@zeniv.linux.org.uk
-References: <089e082bb5107aa0f80569b5ec2b@google.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <8880b3f9-508a-dda0-8fbb-1996cf4a549f@I-love.SAKURA.ne.jp>
-Date: Sat, 14 Apr 2018 16:02:28 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sat, 14 Apr 2018 03:55:49 -0400
+Date: Sat, 14 Apr 2018 08:55:45 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Zev Weiss <zev@bewilderbeest.net>
+Cc: "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: avoid fdput() after failed fdget() in
+ vfs_dedupe_file_range()
+Message-ID: <20180414075544.GU30522@ZenIV.linux.org.uk>
+References: <20180414061658.3774-1-zev@bewilderbeest.net>
 MIME-Version: 1.0
-In-Reply-To: <089e082bb5107aa0f80569b5ec2b@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180414061658.3774-1-zev@bewilderbeest.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Infinite loop inside shrink_dcache_parent() due to lack of cond_resched().
-I can reproduce this issue by running the reproducer on one CPU (using "taskset -c 0").
-Reverting commit 32785c0539b7e96f ("fs/dcache.c: add cond_resched() in shrink_dentry_list()")
-solves this issue.
+On Sat, Apr 14, 2018 at 01:16:58AM -0500, Zev Weiss wrote:
+> It's a fairly inconsequential bug, since fdput() won't actually try to
+> fput() the file due to fd.flags (and thus FDPUT_FPUT) being zero in
+> the failure case, but most other vfs code takes steps to avoid this.
 
-#syz dup: INFO: rcu detected stall in d_walk
+Applied.
