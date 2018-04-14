@@ -1,82 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751066AbeDNLWK (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 07:22:10 -0400
-Received: from mail-it0-f51.google.com ([209.85.214.51]:39779 "EHLO
-        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750914AbeDNLWI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 07:22:08 -0400
-X-Google-Smtp-Source: AIpwx49/FKrbq6MO5l2i6PpwLlsBLEKVR7Fy58EN0/sn0Lf27fBHvRp/L2rgF6VLZfhZ2BJsbb56YwOw+ddd07uF3n8=
+        id S1751137AbeDNLYR (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 07:24:17 -0400
+Received: from mga12.intel.com ([192.55.52.136]:49492 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750880AbeDNLYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Apr 2018 07:24:15 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,448,1517904000";
+   d="scan'208";a="216569753"
+Date: Sat, 14 Apr 2018 19:22:11 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: jasowang@redhat.com, wexu@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        jfreimann@redhat.com
+Subject: Re: [RFC v2] virtio: support packed ring
+Message-ID: <20180414112211.pf6on4mzewb2d56c@debian>
+References: <20180401141216.8969-1-tiwei.bie@intel.com>
+ <20180413181808-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <a2b1e908-9e20-0c72-5f8e-bd14d4a7f3b0@gmail.com>
-References: <20180412091822.GG12256@bigcity.dyn.berto.se> <CAKfTPtAE3qeWcTdT-WL8nrbZmP_+OaxPyyjUfVCzn=rax9tQZQ@mail.gmail.com>
- <20180412111519.GH12256@bigcity.dyn.berto.se> <20180412133031.GA551@linaro.org>
- <a2b1e908-9e20-0c72-5f8e-bd14d4a7f3b0@gmail.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Sat, 14 Apr 2018 13:21:47 +0200
-Message-ID: <CAKfTPtB1uaXT9ZnGJ5JDCyduBWkZBv62GDmqP46ms6s9G-Q_Lg@mail.gmail.com>
-Subject: Re: Potential problem with 31e77c93e432dec7 ("sched/fair: Update
- blocked load when newly idle")
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180413181808-mutt-send-email-mst@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Heiner,
+On Fri, Apr 13, 2018 at 06:22:45PM +0300, Michael S. Tsirkin wrote:
+> On Sun, Apr 01, 2018 at 10:12:16PM +0800, Tiwei Bie wrote:
+> > +static inline bool more_used(const struct vring_virtqueue *vq)
+> > +{
+> > +	return vq->packed ? more_used_packed(vq) : more_used_split(vq);
+> > +}
+> > +
+> > +void *virtqueue_get_buf_ctx_split(struct virtqueue *_vq, unsigned int *len,
+> > +				  void **ctx)
+> > +{
+> > +	struct vring_virtqueue *vq = to_vvq(_vq);
+> > +	void *ret;
+> > +	unsigned int i;
+> > +	u16 last_used;
+> > +
+> > +	START_USE(vq);
+> > +
+> > +	if (unlikely(vq->broken)) {
+> > +		END_USE(vq);
+> > +		return NULL;
+> > +	}
+> > +
+> > +	if (!more_used(vq)) {
+> > +		pr_debug("No more buffers in queue\n");
+> > +		END_USE(vq);
+> > +		return NULL;
+> > +	}
+> 
+> So virtqueue_get_buf_ctx_split should only call more_used_split.
 
-On 12 April 2018 at 21:43, Heiner Kallweit <hkallweit1@gmail.com> wrote:
+Yeah, you're right! Will fix this in the next version.
 
->>>>
->>>> I'm going to prepare a debug patch to spy what's happening when entering idle
->>
->> I'd like to narrow the problem a bit more with the 2 patchies aboves. Can you try
->> them separatly on top of c18bb396d3d261eb ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net"))
->> and check if one of them fixes the problem ?i
->>
->> (They should apply on linux-next as well)
->>
->> First patch always kick ilb instead of doing ilb on local cpu before entering idle
->>
->> ---
->>  kernel/sched/fair.c | 3 +--
->>  1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 0951d1c..b21925b 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -9739,8 +9739,7 @@ static void nohz_newidle_balance(struct rq *this_rq)
->>        * candidate for ilb instead of waking up another idle CPU.
->>        * Kick an normal ilb if we failed to do the update.
->>        */
->> -     if (!_nohz_idle_balance(this_rq, NOHZ_STATS_KICK, CPU_NEWLY_IDLE))
->> -             kick_ilb(NOHZ_STATS_KICK);
->> +     kick_ilb(NOHZ_STATS_KICK);
->>       raw_spin_lock(&this_rq->lock);
->>  }
->>
->>
-> I tested both patches, with both of them the issue still occurs. However,
-> on top of linux-next from yesterday I have the impression that it happens
-> less frequent with the second patch.
-> On top of the commit mentioned by you I don't see a change in system behavior
-> with either patch.
+> 
+> to avoid such issues I think we should lay out the code like this:
+> 
+> XXX_split
+> 
+> XXX_packed
+> 
+> XXX wrappers
 
-Thanks for the tests.
-I was expecting to have more differences between the 2 patches and
-especially no problem with the 1st patch which only send a ipi
-reschedule to the other CPU if it is idle.
-It seems to not really be related to what is done but to the fact that
-it is done at that place in the code
+I'll do it. Thanks for the suggestion!
 
-Thanks
->
-> Regards, Heiner
+> 
+> > +/* The standard layout
+> 
+> I'd drop standard here.
+
+Got it. I'll drop the word "standard".
+
+> 
+> > for the packed ring is a continuous chunk of memory
+> > + * which looks like this.
+> > + *
+> > + * struct vring_packed
+> > + * {
+> 
+> Can the opening bracket go on the prev line pls?
+
+Sure.
+
+> 
+> > + *	// The actual descriptors (16 bytes each)
+> > + *	struct vring_packed_desc desc[num];
+> > + *
+> > + *	// Padding to the next align boundary.
+> > + *	char pad[];
+> > + *
+> > + *	// Driver Event Suppression
+> > + *	struct vring_packed_desc_event driver;
+> > + *
+> > + *	// Device Event Suppression
+> > + *	struct vring_packed_desc_event device;
+> 
+> Maybe that's how our driver does it but it's not based on spec
+> so I don't think this belongs in the header.
+
+I will move it to the place where vring_packed_init()
+is defined.
+
+> 
+> > + * };
+> > + */
+> > +
+> > +static inline unsigned vring_packed_size(unsigned int num, unsigned long align)
+> > +{
+> > +	return ((sizeof(struct vring_packed_desc) * num + align - 1)
+> > +		& ~(align - 1)) + sizeof(struct vring_packed_desc_event) * 2;
+> > +}
+> > +
+> 
+> Cant say this API makes sense for me.
+
+Hmm, do you have any suggestion? Also move it out of this header?
+
+Thanks for the review! :)
+
+Best regards,
+Tiwei Bie
+
+> 
+> 
+> >  #endif /* _UAPI_LINUX_VIRTIO_RING_H */
+> > -- 
+> > 2.11.0
