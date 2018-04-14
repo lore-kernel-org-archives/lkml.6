@@ -1,62 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751019AbeDNLRP (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 07:17:15 -0400
-Received: from bmailout3.hostsharing.net ([176.9.242.62]:50429 "EHLO
-        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750880AbeDNLRN (ORCPT
+        id S1751066AbeDNLWK (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 07:22:10 -0400
+Received: from mail-it0-f51.google.com ([209.85.214.51]:39779 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750914AbeDNLWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 07:17:13 -0400
-Date: Sat, 14 Apr 2018 13:17:11 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>, mario.limonciello@dell.com,
-        andy@infradead.org, dvhart@infradead.org, mjg59@srcf.ucam.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] ALSA: hda: Disabled unused audio controller for
- Dell platforms with Switchable Graphics
-Message-ID: <20180414111711.GA4245@wunner.de>
-References: <20180412104239.25584-1-kai.heng.feng@canonical.com>
- <20180412104239.25584-3-kai.heng.feng@canonical.com>
- <s5hr2nk8zs5.wl-tiwai@suse.de>
- <20180412105909.tbyfcjm55sb47hiq@pali>
- <93DC0F40-81A5-49C6-A470-0D1B6AA85725@canonical.com>
- <20180414104512.GA27158@wunner.de>
- <20180414104950.ngomyjy5l5cwhb5i@pali>
+        Sat, 14 Apr 2018 07:22:08 -0400
+X-Google-Smtp-Source: AIpwx49/FKrbq6MO5l2i6PpwLlsBLEKVR7Fy58EN0/sn0Lf27fBHvRp/L2rgF6VLZfhZ2BJsbb56YwOw+ddd07uF3n8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180414104950.ngomyjy5l5cwhb5i@pali>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <a2b1e908-9e20-0c72-5f8e-bd14d4a7f3b0@gmail.com>
+References: <20180412091822.GG12256@bigcity.dyn.berto.se> <CAKfTPtAE3qeWcTdT-WL8nrbZmP_+OaxPyyjUfVCzn=rax9tQZQ@mail.gmail.com>
+ <20180412111519.GH12256@bigcity.dyn.berto.se> <20180412133031.GA551@linaro.org>
+ <a2b1e908-9e20-0c72-5f8e-bd14d4a7f3b0@gmail.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Sat, 14 Apr 2018 13:21:47 +0200
+Message-ID: <CAKfTPtB1uaXT9ZnGJ5JDCyduBWkZBv62GDmqP46ms6s9G-Q_Lg@mail.gmail.com>
+Subject: Re: Potential problem with 31e77c93e432dec7 ("sched/fair: Update
+ blocked load when newly idle")
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 14, 2018 at 12:49:50PM +0200, Pali Rohár wrote:
-> On Saturday 14 April 2018 12:45:12 Lukas Wunner wrote:
-> > On Thu, Apr 12, 2018 at 10:15:41PM +0800, Kai-Heng Feng wrote:
-> > > Do you have any suggestion to check if it connects to the system via
-> > > Thunderbolt?
-> > 
-> > Just use pci_is_thunderbolt_attached(), introduced by 8531e283bee6,
-> > like this:
-> > 
-> > if (check_dell_switchable_gfx(pci) && !pci_is_thunderbolt_attached(pci))
-> 
-> And what about PCI-e device attached to ExpressCard slot?
+Heiner,
 
-I don't know of a bullet-proof way to recognize those.  In theory
-one could check if the PCIe port above the GPU is a non-hotplug
-root port, but I think there are machines with hotplug capable
-root ports with GPUs below them that aren't actually removable.
+On 12 April 2018 at 21:43, Heiner Kallweit <hkallweit1@gmail.com> wrote:
 
-However I think ExpressCard-attached GPUs were rare, much less ones
-with integrated HDA controller, so in reality that's probably a
-non-issue.
+>>>>
+>>>> I'm going to prepare a debug patch to spy what's happening when entering idle
+>>
+>> I'd like to narrow the problem a bit more with the 2 patchies aboves. Can you try
+>> them separatly on top of c18bb396d3d261eb ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net"))
+>> and check if one of them fixes the problem ?i
+>>
+>> (They should apply on linux-next as well)
+>>
+>> First patch always kick ilb instead of doing ilb on local cpu before entering idle
+>>
+>> ---
+>>  kernel/sched/fair.c | 3 +--
+>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 0951d1c..b21925b 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -9739,8 +9739,7 @@ static void nohz_newidle_balance(struct rq *this_rq)
+>>        * candidate for ilb instead of waking up another idle CPU.
+>>        * Kick an normal ilb if we failed to do the update.
+>>        */
+>> -     if (!_nohz_idle_balance(this_rq, NOHZ_STATS_KICK, CPU_NEWLY_IDLE))
+>> -             kick_ilb(NOHZ_STATS_KICK);
+>> +     kick_ilb(NOHZ_STATS_KICK);
+>>       raw_spin_lock(&this_rq->lock);
+>>  }
+>>
+>>
+> I tested both patches, with both of them the issue still occurs. However,
+> on top of linux-next from yesterday I have the impression that it happens
+> less frequent with the second patch.
+> On top of the commit mentioned by you I don't see a change in system behavior
+> with either patch.
 
-Thanks,
+Thanks for the tests.
+I was expecting to have more differences between the 2 patches and
+especially no problem with the 1st patch which only send a ipi
+reschedule to the other CPU if it is idle.
+It seems to not really be related to what is done but to the fact that
+it is done at that place in the code
 
-Lukas
+Thanks
+>
+> Regards, Heiner
