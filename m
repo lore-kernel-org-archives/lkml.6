@@ -1,65 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751078AbeDNMQn (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 08:16:43 -0400
-Received: from mout.gmx.net ([212.227.15.15]:57229 "EHLO mout.gmx.net"
+        id S1751152AbeDNMT1 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 08:19:27 -0400
+Received: from mout.gmx.net ([212.227.17.22]:42481 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750965AbeDNMQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 08:16:42 -0400
+        id S1750883AbeDNMTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Apr 2018 08:19:25 -0400
 From: Chengguang Xu <cgxu519@gmx.com>
-To: jack@suse.cz, dhowells@redhat.com, elfring@users.sourceforge.net,
-        viro@zeniv.linux.org.uk
+To: ooo@electrozaur.com
 Cc: linux-kernel@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>
-Subject: [PATCH] isofs: fix potential memory leak in mount option parsing
-Date: Sat, 14 Apr 2018 20:16:06 +0800
-Message-Id: <1523708166-32728-1-git-send-email-cgxu519@gmx.com>
+Subject: [PATCH] exofs: fix potential memory leak in mount option parsing
+Date: Sat, 14 Apr 2018 20:19:08 +0800
+Message-Id: <1523708348-683-1-git-send-email-cgxu519@gmx.com>
 X-Mailer: git-send-email 1.8.3.1
-X-Provags-ID: V03:K1:DLsM4FB0H9W2y+LkOpeVnZMr/ZFZxlCBOU1rKg5ESTGqRu4/gAh
- MEM4ATSfmoV5XS/51IuiduVZYBHI+So5w9jTAVbcIwSPfz0oJuyhTCqk7gt0Lr/b16XqJzi
- +ZlPXqNcaTHJ7q4M3kBg582SHrFeOjCA+v5InC4FxWWa1Aa7/lmJfGod1vJO9RN62310/t7
- umrbukjGyCnibObAjRDTw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:KFbOoVnCpLs=:XpWycA5as1/BTmAuOHsOJd
- V0aXEfZvK3pd/aO2tQiAQHMEJOEvWO3jJCgYxhXGUx+8mlDUvWhOLm61EwOV+hC6Huf4PXnsV
- JOnqSK9ymBEIeGYqfw0zDtUnAelkM5Rd6BJHKQ6M/iyk2zpoA89tvdITx42p6ItOmQYyLhsoq
- rT5+HNYw+TJtlNuQU05Omytza3MhG7b6EH4fnSFxHU08FKLSR92VNSUeGawt6Aay0BXxxhTqW
- TxDm778NNYrxxi4/p6TGguVTrbIIm8dVih0Ra5CwH/XINJN4FqKG2rc45rK2VkslpFYhYzr/E
- wRzHksEGtq7KiiwJdfE3GanAYF6a4e+ZV8EBBxHReDSFAWfKPlVA2DLEP/wAHgpOZiJy0wmuL
- ARx6zibX+yfq/NEFEnR6ty/2K55qHUVqZ1AZW3jRPR45KxliCepYe+9F3r4geDQ+L1aUCX99V
- 09MAw2EVFxwgf5zw694lGDL7fOso6x2msYXlQqowFPfAaPVlPFWNTlexJZ7akPSrMasIF1eiz
- tjmQsibTlYzCzZn0UYKu8NuUNZ7AhSxE0duFmUqRKrHBgAmFbfsjs+I3GgoQJKio9vljTnTNy
- K657BMwKLT11+SbE9goUnI7HtfcGkM7T3+s3AhzAay/GYfMuZFnRYXotc7KyECd3fYb3iGi6v
- mg4M2WrNWCkK28jbTNZvGVIiqg+hmnkh2NVz9Lig7oifHBjRqMnVyfZYxfdRT594LzesCy/0k
- EztZEXEllapYUDKOnEnDXUZSQHL+o37Uf2SK6MjpzR3xWQHVJgw2mHBIUAm5sbzhV1j3huo3s
- zzzeF+FNLIs5A8FJl3oACLdWSgxiQ==
+X-Provags-ID: V03:K1:/jlOD7RWLsFf0yuRpYqlxx9UCvVwx2n4dkU3O2/4EzrroSFyFTP
+ 7q7Gnw2X03XKRTsUfK09yO4ys3390D9Xl97Y4G0GFqx2hRGJkWXATF6dCEXxN/lTQNZWKUn
+ MJuSiOEMKAm1YDZZ5LdsqHTro7X5/UKsfIwc2fo1gO7lFsb/CjTanah2dCVCIoolf/fQ9OA
+ 5MVXsG34DVtXN8uJuKtVw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:okHqiABKilc=:a3LQdyDfOBgCi/pBxZBTBU
+ Tgci1JzASmPqYxYnzCUmYTdg9L6E6h0hiv6jXbYLCFGkyM0bK0nvLYOmB0rpHIdA6IEk++tPI
+ ED+D9kWTnwcLFdQtByjDBDCDP3X8SrXSXNgw45ytOCSXUhePUp2X+ZSWUlkpKivehOe2mEYw9
+ k476D0JBpRfnY0xtZ6iuDRJPWLmQ5fV8ELWRwNEJ9NdMAX2mH/UVhVZhQUaj84tkwBzbc9YE5
+ evDNdhl2Cqu0aI0/arjYmu2tJjh+5t67dmNraiGidiA2TVuV8CNfVqy3WSs+H6PIYrcugSaPM
+ 2fRbXEk5LwtSefh4V1d427haMjer4aiQELyYObxhIWl3Wt7wyugI2WXaH8FEpiJ8qVymLDy4y
+ kMesFcgp+Bd/9D5LkvaXzvpzAZcxivVKFolPEttDZKfEB1N+bQa3K5cvZzfG+RdjNo4gfDUcC
+ FrWiCQXVRLaD6amR85rwragWLBffDMLTwAlMfIZJutfwhwU9sucse9tNeRtyP/u3CUMoaGGQ3
+ kH4SV4yuX0icMuRNQIiSuEdivtwQwfa7xpnRCBx2fss/PHG7IqaJSoLahF/x/VOUdPGK1VyOH
+ uPEfAYvQZRdp48MMrq7jAwmQrpbD8ewmdwSX37OAORm78N2kv+Hiqm7qdu47EfTCdVvIYZP6s
+ UnIO3LyUENkNDxW2jy2+SMtjAHskVklEOoCfCaicaLv7WlHics+BqYsynCSgd0pcp9+mhOKlP
+ tipkNvIiCF91p/JlkOXYNl3In51un82Fb4RtU5iAwXhm1epMPdtigrAAzMOJyOahNQuGuF/bh
+ C6EltcY91Y1+PTvMF+pbuciakrQ9w==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When specifying string type mount option (e.g., iocharset)
-several times in a mount, current option parsing may
-cause memory leak. Hence, call kfree for previous one
-in this case. Meanwhile, check memory allocation result
-for it.
+When specifying string type mount option several times
+in a mount, current option parsing may cause memory leak.
+Hence, call kfree for previous one in this case.
 
 Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
 ---
- fs/isofs/inode.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/exofs/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-index bc258a4..ec3fba7 100644
---- a/fs/isofs/inode.c
-+++ b/fs/isofs/inode.c
-@@ -394,7 +394,10 @@ static int parse_options(char *options, struct iso9660_options *popt)
- 			break;
- #ifdef CONFIG_JOLIET
- 		case Opt_iocharset:
-+			kfree(popt->iocharset);
- 			popt->iocharset = match_strdup(&args[0]);
-+			if (!popt->iocharset)
-+				return 0;
- 			break;
- #endif
- 		case Opt_map_a:
+diff --git a/fs/exofs/super.c b/fs/exofs/super.c
+index 179cd5c..106b818 100644
+--- a/fs/exofs/super.c
++++ b/fs/exofs/super.c
+@@ -101,6 +101,7 @@ static int parse_options(char *options, struct exofs_mountopt *opts)
+ 		token = match_token(p, tokens, args);
+ 		switch (token) {
+ 		case Opt_name:
++			kfree(opts->dev_name);
+ 			opts->dev_name = match_strdup(&args[0]);
+ 			if (unlikely(!opts->dev_name)) {
+ 				EXOFS_ERR("Error allocating dev_name");
 -- 
 1.8.3.1
