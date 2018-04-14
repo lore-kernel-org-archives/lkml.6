@@ -1,304 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752098AbeDNCvO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 13 Apr 2018 22:51:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33534 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751208AbeDNCut (ORCPT
+        id S1751148AbeDNDAQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 13 Apr 2018 23:00:16 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33205 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750867AbeDNDAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Apr 2018 22:50:49 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 60E0D6081A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
-From: David Collins <collinsd@codeaurora.org>
-To: broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: David Collins <collinsd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rnayak@codeaurora.org, sboyd@kernel.org,
-        dianders@chromium.org
-Subject: [PATCH v2 1/2] regulator: dt-bindings: add QCOM RPMh regulator bindings
-Date: Fri, 13 Apr 2018 19:50:34 -0700
-Message-Id: <39b676d2ba7dac2436196cc5a090c6f151498dc8.1523673467.git.collinsd@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1523673467.git.collinsd@codeaurora.org>
-References: <cover.1523673467.git.collinsd@codeaurora.org>
-In-Reply-To: <cover.1523673467.git.collinsd@codeaurora.org>
-References: <cover.1523673467.git.collinsd@codeaurora.org>
+        Fri, 13 Apr 2018 23:00:15 -0400
+X-Google-Smtp-Source: AIpwx4+mCtuYqIgFI5c7KQuxjbA2GmfDfBaZsALWvMD+Bb1gSym/NgUCoH3QRn3BalXaTb236iaWaw==
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: [PATCH 1/2] vsprintf: Tweak pF/pf comment
+Date: Sat, 14 Apr 2018 12:00:05 +0900
+Message-Id: <20180414030005.25831-1-sergey.senozhatsky@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce bindings for RPMh regulator devices found on some
-Qualcomm Technlogies, Inc. SoCs.  These devices allow a given
-processor within the SoC to make PMIC regulator requests which
-are aggregated within the RPMh hardware block along with requests
-from other processors in the SoC to determine the final PMIC
-regulator hardware state.
+Reflect changes that have happened to pf/pF (deprecation)
+specifiers in pointer() comment section.
 
-Signed-off-by: David Collins <collinsd@codeaurora.org>
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 ---
- .../bindings/regulator/qcom,rpmh-regulator.txt     | 207 +++++++++++++++++++++
- .../dt-bindings/regulator/qcom,rpmh-regulator.h    |  36 ++++
- 2 files changed, 243 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
- create mode 100644 include/dt-bindings/regulator/qcom,rpmh-regulator.h
+ lib/vsprintf.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
-new file mode 100644
-index 0000000..69748ea
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
-@@ -0,0 +1,207 @@
-+Qualcomm Technologies, Inc. RPMh Regulators
-+
-+rpmh-regulator devices support PMIC regulator management via the Voltage
-+Regulator Manager (VRM) and Oscillator Buffer (XOB) RPMh accelerators.  The APPS
-+processor communicates with these hardware blocks via a Resource State
-+Coordinator (RSC) using command packets.  The VRM allows changing four
-+parameters for a given regulator: enable state, output voltage, operating mode,
-+and minimum headroom voltage.  The XOB allows changing only a single parameter
-+for a given regulator: its enable state.  Despite its name, the XOB is capable
-+of controlling the enable state of any PMIC peripheral.  It is used for clock
-+buffers, low-voltage switches, and LDO/SMPS regulators which have a fixed
-+voltage and mode.
-+
-+=======================
-+Required Node Structure
-+=======================
-+
-+RPMh regulators must be described in two levels of device nodes.  The first
-+level describes the PMIC containing the regulators and must reside within an
-+RPMh device node.  The second level describes each regulator within the PMIC
-+which is to be used on the board.  Each of these regulators maps to a single
-+RPMh resource.
-+
-+The names used for regulator nodes must match those supported by a given PMIC.
-+Supported regulator node names:
-+	PM8998:		smps1 - smps13, ldo1 - ldo28, lvs1 - lvs2
-+	PMI8998:	bob
-+	PM8005:		smps1 - smps4
-+
-+========================
-+First Level Nodes - PMIC
-+========================
-+
-+- compatible
-+	Usage:      required
-+	Value type: <string>
-+	Definition: Must be one of: "qcom,pm8998-rpmh-regulators",
-+		    "qcom,pmi8998-rpmh-regulators" or
-+		    "qcom,pm8005-rpmh-regulators".
-+
-+- qcom,pmic-id
-+	Usage:      required
-+	Value type: <string>
-+	Definition: RPMh resource name suffix used for the regulators found on
-+		    this PMIC.  Typical values: "a", "b", "c", "d", "e", "f".
-+
-+- vdd_s1-supply
-+- vdd_s2-supply
-+- vdd_s3-supply
-+- vdd_s4-supply
-+- vdd_s5-supply
-+- vdd_s6-supply
-+- vdd_s7-supply
-+- vdd_s8-supply
-+- vdd_s9-supply
-+- vdd_s10-supply
-+- vdd_s11-supply
-+- vdd_s12-supply
-+- vdd_s13-supply
-+- vdd_l1_l27-supply
-+- vdd_l2_l8_l17-supply
-+- vdd_l3_l11-supply
-+- vdd_l4_l5-supply
-+- vdd_l6-supply
-+- vdd_l7_l12_l14_l15-supply
-+- vdd_l9-supply
-+- vdd_l10_l23_l25-supply
-+- vdd_l13_l19_l21-supply
-+- vdd_l16_l28-supply
-+- vdd_l18_l22-supply
-+- vdd_l20_l24-supply
-+- vdd_l26-supply
-+- vdd_lvs1_lvs2-supply
-+- vdd_lvs1_lvs2-supply
-+	Usage:      optional (PM8998 only)
-+	Value type: <phandle>
-+	Definition: phandle of the parent supply regulator of one or more of the
-+		    regulators for this PMIC.
-+
-+- vdd_bob-supply
-+	Usage:      optional (PMI8998 only)
-+	Value type: <phandle>
-+	Definition: BOB regulator parent supply phandle
-+
-+- vdd_s1-supply
-+- vdd_s2-supply
-+- vdd_s3-supply
-+- vdd_s4-supply
-+	Usage:      optional (PM8005 only)
-+	Value type: <phandle>
-+	Definition: phandle of the parent supply regulator of one or more of the
-+		    regulators for this PMIC.
-+
-+===============================
-+Second Level Nodes - Regulators
-+===============================
-+
-+- qcom,regulator-initial-voltage
-+	Usage:      optional; VRM regulators only
-+	Value type: <u32>
-+	Definition: Specifies the initial voltage in microvolts to request for a
-+		    VRM regulator.
-+
-+- regulator-initial-mode
-+	Usage:      optional; VRM regulators only
-+	Value type: <u32>
-+	Definition: Specifies the initial mode to request for a VRM regulator.
-+		    Supported values are RPMH_REGULATOR_MODE_* which are defined
-+		    in [1] (i.e. 0 to 3).  This property may be specified even
-+		    if the regulator-allow-set-load property is not specified.
-+
-+- qcom,allowed-drms-modes
-+	Usage:      required if regulator-allow-set-load is specified;
-+		    VRM regulators only
-+	Value type: <prop-encoded-array>
-+	Definition: A list of integers specifying the PMIC regulator modes which
-+		    can be configured at runtime based upon consumer load needs.
-+		    Supported values are RPMH_REGULATOR_MODE_* which are defined
-+		    in [1] (i.e. 0 to 3).
-+
-+- qcom,drms-mode-threshold-currents
-+	Usage:      required if regulator-allow-set-load is specified;
-+		    VRM regulators only
-+	Value type: <prop-encoded-array>
-+	Definition: A list of integers specifying the maximum allowed load
-+		    current in microamps for each of the modes listed in
-+		    qcom,allowed-drms-modes (matched 1-to-1 in order).  Elements
-+		    must be specified in order from lowest to highest value.
-+
-+- qcom,headroom-voltage
-+	Usage:      optional; VRM regulators only
-+	Value type: <u32>
-+	Definition: Specifies the headroom voltage in microvolts to request for
-+		    a VRM regulator.  RPMh hardware automatically ensures that
-+		    the parent of this regulator outputs a voltage high enough
-+		    to satisfy the requested headroom.  Supported values are
-+		    0 to 511000.
-+
-+- qcom,always-wait-for-ack
-+	Usage:      optional
-+	Value type: <empty>
-+	Definition: Boolean flag which indicates that the application processor
-+		    must wait for an ACK or a NACK from RPMh for every request
-+		    sent for this regulator including those which are for a
-+		    strictly lower power state.
-+
-+Other properties defined in Documentation/devicetree/bindings/regulator.txt
-+may also be used.
-+
-+[1] include/dt-bindings/regulator/qcom,rpmh-regulator.h
-+
-+========
-+Examples
-+========
-+
-+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+
-+&apps_rsc {
-+	pm8998-rpmh-regulators {
-+		compatible = "qcom,pm8998-rpmh-regulators";
-+		qcom,pmic-id = "a";
-+
-+		vdd_l7_l12_l14_l15-supply = <&pm8998_s5>;
-+
-+		smps2 {
-+			regulator-min-microvolt = <1100000>;
-+			regulator-max-microvolt = <1100000>;
-+			qcom,regulator-initial-voltage = <1100000>;
-+		};
-+
-+		pm8998_s5: smps5 {
-+			regulator-min-microvolt = <1904000>;
-+			regulator-max-microvolt = <2040000>;
-+			qcom,regulator-initial-voltage = <1904000>;
-+		};
-+
-+		ldo7 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			qcom,regulator-initial-voltage = <1800000>;
-+			qcom,headroom-voltage = <56000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_LPM>;
-+			regulator-allow-set-load;
-+			qcom,allowed-drms-modes =
-+				<RPMH_REGULATOR_MODE_LPM
-+				 RPMH_REGULATOR_MODE_HPM>;
-+			qcom,drms-mode-threshold-currents = <10000 1000000>;
-+		};
-+
-+		lvs1 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+	};
-+
-+	pmi8998-rpmh-regulators {
-+		compatible = "qcom,pmi8998-rpmh-regulators";
-+		qcom,pmic-id = "b";
-+
-+		bob {
-+			regulator-min-microvolt = <3312000>;
-+			regulator-max-microvolt = <3600000>;
-+			qcom,regulator-initial-voltage = <3312000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_AUTO>;
-+		};
-+	};
-+};
-diff --git a/include/dt-bindings/regulator/qcom,rpmh-regulator.h b/include/dt-bindings/regulator/qcom,rpmh-regulator.h
-new file mode 100644
-index 0000000..4378c4b
---- /dev/null
-+++ b/include/dt-bindings/regulator/qcom,rpmh-regulator.h
-@@ -0,0 +1,36 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
-+
-+#ifndef __QCOM_RPMH_REGULATOR_H
-+#define __QCOM_RPMH_REGULATOR_H
-+
-+/*
-+ * These mode constants may be used for regulator-initial-mode and
-+ * qcom,allowed-drms-modes properties of an RPMh regulator device tree node.
-+ * Each type of regulator supports a subset of the possible modes.
-+ *
-+ * %RPMH_REGULATOR_MODE_RET:	Retention mode in which only an extremely small
-+ *				load current is allowed.  This mode is supported
-+ *				by LDO and SMPS type regulators.
-+ * %RPMH_REGULATOR_MODE_LPM:	Low power mode in which a small load current is
-+ *				allowed.  This mode corresponds to PFM for SMPS
-+ *				and BOB type regulators.  This mode is supported
-+ *				by LDO, HFSMPS, BOB, and PMIC4 FTSMPS type
-+ *				regulators.
-+ * %RPMH_REGULATOR_MODE_AUTO:	Auto mode in which the regulator hardware
-+ *				automatically switches between LPM and HPM based
-+ *				upon the real-time load current.  This mode is
-+ *				supported by HFSMPS, BOB, and PMIC4 FTSMPS type
-+ *				regulators.
-+ * %RPMH_REGULATOR_MODE_HPM:	High power mode in which the full rated current
-+ *				of the regulator is allowed.  This mode
-+ *				corresponds to PWM for SMPS and BOB type
-+ *				regulators.  This mode is supported by all types
-+ *				of regulators.
-+ */
-+#define RPMH_REGULATOR_MODE_RET		0
-+#define RPMH_REGULATOR_MODE_LPM		1
-+#define RPMH_REGULATOR_MODE_AUTO	2
-+#define RPMH_REGULATOR_MODE_HPM		3
-+
-+#endif
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 30c0cb8cc9bc..dd18bb2a56ef 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1746,10 +1746,10 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
+  *
+  * Right now we handle:
+  *
+- * - 'F' For symbolic function descriptor pointers with offset
+- * - 'f' For simple symbolic function names without offset
+- * - 'S' For symbolic direct pointers with offset
+- * - 's' For symbolic direct pointers without offset
++ * - 'S' For symbolic direct pointers (or function descriptors) with offset
++ * - 's' For symbolic direct pointers (or function descriptors) without offset
++ * - 'F' Same as 'S'
++ * - 'f' Same as 's'
+  * - '[FfSs]R' as above with __builtin_extract_return_addr() translation
+  * - 'B' For backtraced symbolic direct pointers with offset
+  * - 'R' For decoded struct resource, e.g., [mem 0x0-0x1f 64bit pref]
+@@ -1846,10 +1846,6 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
+  * ** When making changes please also update:
+  *	Documentation/core-api/printk-formats.rst
+  *
+- * Note: The difference between 'S' and 'F' is that on ia64 and ppc64
+- * function pointers are really function descriptors, which contain a
+- * pointer to the real address.
+- *
+  * Note: The default behaviour (unadorned %p) is to hash the address,
+  * rendering it useful as a unique identifier.
+  */
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.0
