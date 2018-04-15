@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752849AbeDOVzE (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 17:55:04 -0400
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:24005 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751489AbeDOVyz (ORCPT
+        id S1752978AbeDOVzd (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 17:55:33 -0400
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:21598 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752786AbeDOVzD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 17:54:55 -0400
+        Sun, 15 Apr 2018 17:55:03 -0400
 X-IronPort-AV: E=Sophos;i="5.48,456,1517875200";
-   d="scan'208";a="339950784"
+   d="scan'208";a="735371362"
 From: KarimAllah Ahmed <karahmed@amazon.de>
 To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com,
         rkrcmar@redhat.com
-Cc: Filippo Sironi <sironi@amazon.de>,
-        KarimAllah Ahmed <karahmed@amazon.de>
-Subject: [PATCH v2 04/12] X86/KVM: Handle PFNs outside of kernel reach when touching GPTEs
-Date: Sun, 15 Apr 2018 23:53:10 +0200
-Message-Id: <1523829198-13236-5-git-send-email-karahmed@amazon.de>
+Cc: KarimAllah Ahmed <karahmed@amazon.de>
+Subject: [PATCH v2 10/12] KVM/X86: hyperv: Use kvm_vcpu_map in synic_clear_sint_msg_pending
+Date: Sun, 15 Apr 2018 23:53:16 +0200
+Message-Id: <1523829198-13236-11-git-send-email-karahmed@amazon.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523829198-13236-1-git-send-email-karahmed@amazon.de>
 References: <1523829198-13236-1-git-send-email-karahmed@amazon.de>
@@ -24,74 +23,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filippo Sironi <sironi@amazon.de>
+Use kvm_vcpu_map in synic_clear_sint_msg_pending since using
+kvm_vcpu_gpa_to_page() and kmap() will only work for guest memory that has
+a "struct page".
 
-cmpxchg_gpte() calls get_user_pages_fast() to retrieve the number of
-pages and the respective struct page to map in the kernel virtual
-address space.
-This doesn't work if get_user_pages_fast() is invoked with a userspace
-virtual address that's backed by PFNs outside of kernel reach (e.g., when
-limiting the kernel memory with mem= in the command line and using
-/dev/mem to map memory).
-
-If get_user_pages_fast() fails, look up the VMA that back the userspace
-virtual address, compute the PFN and the physical address, and map it in
-the kernel virtual address space with memremap().
-
-Signed-off-by: Filippo Sironi <sironi@amazon.de>
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 ---
- arch/x86/kvm/paging_tmpl.h | 38 +++++++++++++++++++++++++++++---------
- 1 file changed, 29 insertions(+), 9 deletions(-)
+v1 -> v2:
+- Update to match the new API return codes
+---
+ arch/x86/kvm/hyperv.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/kvm/paging_tmpl.h b/arch/x86/kvm/paging_tmpl.h
-index 6288e9d..31a37e4 100644
---- a/arch/x86/kvm/paging_tmpl.h
-+++ b/arch/x86/kvm/paging_tmpl.h
-@@ -141,15 +141,35 @@ static int FNAME(cmpxchg_gpte)(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
- 	struct page *page;
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index 98618e3..fc33d8f 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -158,26 +158,22 @@ static void synic_clear_sint_msg_pending(struct kvm_vcpu_hv_synic *synic,
+ 					u32 sint)
+ {
+ 	struct kvm_vcpu *vcpu = synic_to_vcpu(synic);
+-	struct page *page;
+-	gpa_t gpa;
++	struct kvm_host_map map;
+ 	struct hv_message *msg;
+ 	struct hv_message_page *msg_page;
  
- 	npages = get_user_pages_fast((unsigned long)ptep_user, 1, 1, &page);
--	/* Check if the user is doing something meaningless. */
--	if (unlikely(npages != 1))
--		return -EFAULT;
--
--	table = kmap_atomic(page);
--	ret = CMPXCHG(&table[index], orig_pte, new_pte);
--	kunmap_atomic(table);
--
+-	gpa = synic->msg_page & PAGE_MASK;
+-	page = kvm_vcpu_gfn_to_page(vcpu, gpa >> PAGE_SHIFT);
+-	if (is_error_page(page)) {
++	if (kvm_vcpu_map(vcpu, gpa_to_gfn(synic->msg_page), &map)) {
+ 		vcpu_err(vcpu, "Hyper-V SynIC can't get msg page, gpa 0x%llx\n",
+-			 gpa);
++			 synic->msg_page);
+ 		return;
+ 	}
+-	msg_page = kmap_atomic(page);
+ 
++	msg_page = map.hva;
+ 	msg = &msg_page->sint_message[sint];
+ 	msg->header.message_flags.msg_pending = 0;
+ 
+-	kunmap_atomic(msg_page);
 -	kvm_release_page_dirty(page);
-+	if (likely(npages == 1)) {
-+		table = kmap_atomic(page);
-+		ret = CMPXCHG(&table[index], orig_pte, new_pte);
-+		kunmap_atomic(table);
-+
-+		kvm_release_page_dirty(page);
-+	} else {
-+		struct vm_area_struct *vma;
-+		unsigned long vaddr = (unsigned long)ptep_user & PAGE_MASK;
-+		unsigned long pfn;
-+		unsigned long paddr;
-+
-+		down_read(&current->mm->mmap_sem);
-+		vma = find_vma_intersection(current->mm, vaddr, vaddr + PAGE_SIZE);
-+		if (!vma || !(vma->vm_flags & VM_PFNMAP)) {
-+			up_read(&current->mm->mmap_sem);
-+			return -EFAULT;
-+		}
-+		pfn = ((vaddr - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
-+		paddr = pfn << PAGE_SHIFT;
-+		table = memremap(paddr, PAGE_SIZE, MEMREMAP_WB);
-+		if (!table) {
-+			up_read(&current->mm->mmap_sem);
-+			return -EFAULT;
-+		}
-+		ret = CMPXCHG(&table[index], orig_pte, new_pte);
-+		memunmap(table);
-+		up_read(&current->mm->mmap_sem);
-+	}
- 
- 	return (ret != orig_pte);
+-	kvm_vcpu_mark_page_dirty(vcpu, gpa >> PAGE_SHIFT);
++	kvm_vcpu_unmap(&map);
++	kvm_vcpu_mark_page_dirty(vcpu, gpa_to_gfn(synic->msg_page));
  }
+ 
+ static void kvm_hv_notify_acked_sint(struct kvm_vcpu *vcpu, u32 sint)
 -- 
 2.7.4
