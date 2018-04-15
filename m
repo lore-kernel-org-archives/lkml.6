@@ -1,79 +1,133 @@
-Return-Path: <ingo.flaschberger@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523817508; cv=none;
-        d=google.com; s=arc-20160816;
-        b=iLdtErZ6d/0FeyqUidBIi7YDmW4W5o5su803Hj5y/IsztqqW7O2UGHTGtoxVq8XJye
-         A4ETAArnDqd2xR+IYDjA/N2yQt/Tce/XnJpYPDbMrKK48/fTKnB/UaIRZVXVwLckjjt0
-         gk2MFgcQnuvVofdRVlWbYMPrOSR2kCu2cyY8MdFNs6YGpjQk7m0kNfRBDSSX8znHAeMd
-         5YPusAw6/fUBYrjp6C9eKhW9XnVWeCqF5wdLgReG73CKSfQq+nJV4EuoraCoJdQMGn1Y
-         wciMdh2JeBzjC+sPTQQcSjjFcjAd1MPZWocjwxM3lDOxRvO25dGLU0S0aISriG9KxK+3
-         onoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:mime-version:user-agent
-         :date:message-id:subject:from:to:resent-user-agent:resent-message-id
-         :resent-date:resent-to:resent-from:dkim-signature
-         :arc-authentication-results;
-        bh=13MQcFiv0AWfmNEIg+64ei445suodT5Kf8iqo8LAGlY=;
-        b=lsgudXRfLLMKQS7PdNYTCg1C6GC2i2PCNzb+Q9UTn/IyiBTb2TxKIgNxcdtFeD4bGc
-         FehVwKm9/ZDh8Ml6oYu6umFP9M6LV2tKJDINiNMUEPDJER4sebNBfFI25iUvzfd//Imc
-         uWIT2afMoRVQAfzLXf4DZy7Ytkd3TlrJMJXKeCHltHFYTp6JCtrcSGWkPiXN1Zts4AoC
-         NnG/bBhW8NG/kcnRB7REkwsoiz6kydmtkBaCAvIgkXqoamWzKduiEUHeQPFieaWq/unz
-         6123U1Gs27osk9v/z6Sxb26zJf9xZpyJiiFxULYMivz5MipfE28C69VhpJ1g6s8RV/92
-         Izmg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=paHMn7qe;
-       spf=pass (google.com: domain of ingo.flaschberger@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ingo.flaschberger@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=paHMn7qe;
-       spf=pass (google.com: domain of ingo.flaschberger@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ingo.flaschberger@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx49atiDhRo3G1XbZ96mF2v4ErhcjCPHQm/AMq1+QArhcx2w1jHgNd6LiL/amZGh1r/+q6kV2zA==
-Resent-From: Ingo Flaschberger <ingo.flaschberger@gmail.com>
-Resent-To: gregkh@linuxfoundation.org
-Resent-Date: Sun, 15 Apr 2018 20:38:26 +0200
-Resent-Message-ID: <48d658d7-8ce5-760b-040e-618be60ec808@gmail.com>
-Resent-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101 Thunderbird/52.7.0
-To: Evgeniy Polyakov <zbr@ioremap.net>, linux-kernel@vger.kernel.org
-From: Ingo Flaschberger <ingo.flaschberger@gmail.com>
-Subject: [PATCH] 1wire: family module autoload fails because of upper/lower,
- case mismatch.
-Message-ID: <46d6cf85-d9db-7355-ae85-0b4206384fc7@gmail.com>
-Date: Thu, 12 Apr 2018 02:20:12 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1009161-1523815741-2-2484252671476622453
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523815741; b=PNgy5bLtbeqbCRjPpfsYhBU+prYGdXSWgyLbtPUBtM1/ksVjCC
+    TgKiCSOxhEF5zb6WpSu9EFk/d9lpTYIuBJ+qjU4ii6Fsw1Q+uIE+c8SiwkmeOvdv
+    zHo8K2amJPDFilqdsQSFQJFID2Ta1QAQb/gzfIsnAQfg1u1A9kyp7/y6WbHDe9qp
+    qazymSf0ayYG/1Ga/kPFfMZHSgfHnvnEB62hIC48mV3A7vuHC8Kwmwaw2vif/gFf
+    HtlPWXtTxcn6XEwsRPzfh+IV9Hi3Dr6NedW4pdOeGdOvtYQW/VPqV/6SgI0CqpUW
+    NliUj3kFntad9AZF7rn0uBiIzmTzGgMZThvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1523815741; bh=DEOJX
+    7r51WLjXsTR+o3gsvJJrfIt6/9X8SBIZ1E2ZoA=; b=ug4TXs/vIzDZvLm4/MKCl
+    2TRD5sNvVuaLpopZNUqkbzKFesY1pLP4zzLAzUpj/O0dwrUbyQ4mxQwkiUf6K5NE
+    F/ojGEndKvgHuCWKr85HJC4Si28J82fMxl/ZEYqV7Rri1tnQ6vVbbY15SdaASdx0
+    bidGsN76U7UpEBJDhV+//DtFvvAT/H9ZMMncZEmKKsx2mt7rApVWucelSjrjzD6b
+    yIOibynaagAtN7jGaNplvzzAHEyfGp152cQZetII+Q4tfAC9X+fkcsQ0pGd4N0lO
+    vzDvtZdtbmXL64myvRfm4qRtKEzzvnlECzf3sONyCn6QtdUvtMb9BufpQ0zNUvbm
+    g==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=E+fxU0qt x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Ro6xYT8U;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=E+fxU0qt x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Ro6xYT8U;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfE2M4r2cqaFzYnb8JFCicc9RAfAyPTTr6LZd7SukzXVIZ/rmjlSFmRf/aCTOym2pCx/QuBE+gZ4KPM8gs76CX7T7iYuZg1eFKwxVS7gHi+UfwlZPlAZU
+    ODjeYqY1teAlqQKgSJnHRNIrK6CEE/S80bfTLDy7hPFvJN0Poj6R/Pyb5mB6aL9ZgZu2tA5rgHT0AvIDnWISchdkzJWi+qNSxM+E69IqyvOfZ83S6osXybYV
+    Zp0TLjbUz0E3qGD9v5snRQ==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=oFiBeRr11AUA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10
+    a=jJxKW8Ag-pUA:10 a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=xOnVCH4iesp3lWdZ7IYA:9
+    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AIpwx49Xmae+VnKkH3kxvLnN7+3DuO7+X/bp5MYoOiwzD2fPHfnFyHjgP/M5VGqd0gkPJbnOHql5Pw==
+Date: Sun, 15 Apr 2018 15:08:42 -0300
+From: Daniel Junho <djunho@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] staging: vboxvideo: Fix line size exceeding 80 columns.
+Message-ID: <20180415180842.kfoxhnm6ys5vtokw@djunho-Latitude-E6410>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: de-AT
+Content-Disposition: inline
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, lkcamp@lists.libreplanetbr.org,
+ linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597647829539753113?=
-X-GMAIL-MSGID: =?utf-8?q?1597838467261992680?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-1wire family module autoload fails because of upper/lower
-  case mismatch.
+This patch fixes the checkpatch.pl warning:
 
-Signed-off-by: Ingo Flaschberger <ingo.flaschberger@gmail.com>
+WARNING: line over 80 characters
++               vbva = (void __force *)vbox->vbva_buffers + i *
+VBVA_MIN_BUFFER_SIZE;
 
+Signed-off-by: Daniel Junho <djunho@gmail.com>
 ---
-  drivers/w1/w1.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/vboxvideo/vbox_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
-index ab0931e..aa458f2 100644
---- a/drivers/w1/w1.c
-+++ b/drivers/w1/w1.c
-@@ -741,7 +741,7 @@ int w1_attach_slave_device(struct w1_master *dev, 
-struct w1_reg_num *rn)
-
-         /* slave modules need to be loaded in a context with unlocked 
-mutex */
-         mutex_unlock(&dev->mutex);
--       request_module("w1-family-0x%02x", rn->family);
-+       request_module("w1-family-0x%02X", rn->family);
-         mutex_lock(&dev->mutex);
-
-         spin_lock(&w1_flock);
+diff --git a/drivers/staging/vboxvideo/vbox_main.c b/drivers/staging/vboxvideo/vbox_main.c
+index 973b3bcc04b1..9d2018cd544e 100644
+--- a/drivers/staging/vboxvideo/vbox_main.c
++++ b/drivers/staging/vboxvideo/vbox_main.c
+@@ -61,7 +61,8 @@ void vbox_enable_accel(struct vbox_private *vbox)
+ 		if (vbox->vbva_info[i].vbva)
+ 			continue;
+ 
+-		vbva = (void __force *)vbox->vbva_buffers + i * VBVA_MIN_BUFFER_SIZE;
++		vbva = (void __force *)vbox->vbva_buffers +
++			i * VBVA_MIN_BUFFER_SIZE;
+ 		if (!vbva_enable(&vbox->vbva_info[i],
+ 				 vbox->guest_pool, vbva, i)) {
+ 			/* very old host or driver error. */
 -- 
-2.7.4
+2.14.1
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
