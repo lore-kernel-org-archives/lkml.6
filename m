@@ -1,22 +1,23 @@
 Return-Path: <jmoreira@suse.de>
-X-Google-Smtp-Source: AIpwx48kc9y597SBjJzYj3aeTEX2ncfRLXPOhCcWdWlJwxPJPxw/ylMKSGlz/LQ1lexJ3zjcPoDU
+X-Google-Smtp-Source: AIpwx48EElZKzX+buRUrUq12svxIWoTfAVXtttxQSNDxnBMGx0QPnZfSSUZf0GRExV4Rvl4RIW4+
 ARC-Seal: i=1; a=rsa-sha256; t=1523765756; cv=none;
         d=google.com; s=arc-20160816;
-        b=w3eVO64FaG1ww6rINpFe8zW8Y9450IX8L60NHw8C9NSAduXgcSEBfNSWwp/ygg7vyi
-         8hQfe4XYbfk2/tRp7d0lLYzR8FYXdHKmycjIgPgswWSLB77ki39TMPhawuxtx0Jl/NjJ
-         UNCbob3RBLVVovo1sJnOHKGY3cyBiRPAKPAAloe899YKtVzA9ig4SKE5IyscM8GocUfn
-         7NxmY6pZRiT0A6EXk0Bdb79rDkBEIkNTDfuN94swjFj/kWpczNYSo6Tcqz34sbkcG/5P
-         CdctjV8Xs4c73doUmPlF8/D4TlsahzGIUbL6J3elrODe/Ww7jmJ7I2aFdJiS9k68cL8H
-         qrWA==
+        b=Omi8iLGMHbUM5YxTQo/H5boziLrNPKasncflbhPnigKVPEYvzlbi+ItypbC1p9aS0K
+         q7Fqh5Ab9dLRsOaXov7p3kz7zUQMSsT6lS6BIlc7rGwjyhZfng2TutPSz4iPsmKLj1J+
+         g/nhYc3VCBfH/z2A6MSvGeOpEs9Jk/Mp+DtDy78WryAC4nmQWyPLSUzg+ccV5KX1IOR8
+         Z0d7pHbBrM6QMpvu7URoRupBc6GuMLHQWq5fpyjPCj1II/qcUfTV8TtgRMIX70/FW3I1
+         iMR9jdr8oQzMq/V5X6QnCIyRmG2R/+bbPdY0by6QdCmqXcZvDk4Kjz0ItDQlYbb5YGIT
+         3OkQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=WhlZErktiGxOcB+8ULB3KTi22gnO899ozs147RPZzlk=;
-        b=UiYrp3sBpNT07QUhiyVW1nU+d94Rt4wxTUNxBHqYyttMC9VHYjE2qz4MPmhZtrxxHT
-         U7bCzfU6bAISWdnuIiP1QV3H8GVV5RIg+JOcrAGN3rr+G0ZqoSaTWLcjbFjHJHoiz7R2
-         +Ev9ovqWGmmxHvjgcMGvtpV+oEJUuNGoRj58AaDSP5622cEwsWkN6/4ZLa0VV+aoNSSK
-         mEiHb9LwvLNXBcfmDt6W0KHURN+0JGkHCaQp4dcyCCYQnOFpA1Ic+mldAQAleEsIUGCE
-         OBipjAkBYfcsSrUod8XxViOEjwtLglLOzyUYQMaKI0c3P4B1X52qiBSZcsUkhBY2XBj4
-         lBTA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=+DmiFNGtZWb1t4WEIGOOmkS/urq4hL1KORr0J8OhkbI=;
+        b=DX4iJeLbkDAydYUjFFxwSqUNtqCr0gF0wdYc1TJM2TPNJ2YDUkST8u6oqiEw8Rblk7
+         oLpQkZnTiQCvRvTlpa50WCAbdz65duKY9ioa+7FUPrpcGXnWMIwe7ycxPWP4m+AdwKsv
+         hkjZt1Ys9lx9/xdPF4YzqzBVoxQBQgNLDPwFd6rqZNAzGkqT/cLP9AOLWk9jylLutuWV
+         lS3RAWWVS7LnA07pcD3/ShxfoZ4hZ30KhwvBW1IQasn284orntZRtJdgINZmsGkAF91K
+         Ccc7tnyEI/uMDAIabHAY/bFd/PKB4jycH3LTWm5t4Z8I4U4bwnmLVINW1yfSYQ+GErxx
+         oDAw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of jmoreira@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jmoreira@suse.de
 Authentication-Results: mx.google.com;
@@ -32,61 +33,205 @@ Cc: linux-kernel@vger.kernel.org,
 	hpa@zytor.com,
 	gregkh@linuxfoundation.org,
 	keescook@chromium.org
-Subject: [PATCH 0/4] x86/crypto: Fix function prototypes
-Date: Sun, 15 Apr 2018 01:15:38 -0300
-Message-Id: <20180415041542.5364-1-jmoreira@suse.de>
+Subject: [PATCH 1/4] x86/crypto: camellia: Fix function prototypes
+Date: Sun, 15 Apr 2018 01:15:39 -0300
+Message-Id: <20180415041542.5364-2-jmoreira@suse.de>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180415041542.5364-1-jmoreira@suse.de>
+References: <20180415041542.5364-1-jmoreira@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597784201953337868?=
-X-GMAIL-MSGID: =?utf-8?q?1597784201953337868?=
+X-GMAIL-THRID: =?utf-8?q?1597784202629370804?=
+X-GMAIL-MSGID: =?utf-8?q?1597784202629370804?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-It is possible to indirectly invoke functions with prototypes that do not
-match those of the respectively used function pointers by using void types.
-This feature is frequently used as a way of relaxing function invocation,
-making it possible that different data structures are passed to different
-functions through the same pointer.
+Convert the use of 'struct camellia_ctx *' to 'void *' in prototypes of
+functions which are referenced through 'struct common_glue_func_entry',
+making their prototypes match those of this struct and, consequently,
+turning them compatible with CFI requirements.
 
-Despite the benefits, this can lead to a situation where functions with a
-given prototype are invoked by pointers with a different prototype, what is
-undesirable as it may prevent the use of heuristics such as prototype
-matching-based Control-Flow Integrity, which can be used to prevent
-ROP-based attacks.
+Whenever needed, cast 'void *' to 'struct camellia_ctx *'.
 
-One way of fixing this situation is through converting the function
-prototypes to the one used in the pointer declaration, what means converting
-function arguments from a given '<type> *' to a 'void *', and later casting
-its uses accordingly throughout the function scope.
-
-Given the above, the current efforts to improve the Linux security, and the
-upcoming kernel support to compilers with CFI features, fix prototypes in
-x86/crypto algorithms: camellia, cast6, serpent, and twofish.
-
-This patch does not introduce semantic changes to the cryptographic
-algorithms, yet, if someone finds relevant, the affected algorithms were
-tested with the help of tcrypt.ko without any visible harm.
-
-Joao Moreira (4):
-  x86/crypto: camellia: Fix function prototypes
-  x86/crypto: cast6: Fix function prototypes
-  x86/crypto: serpent: Fix function prototypes
-  x86/crypto: twofish: Fix function prototypes
-
+Signed-off-by: João Moreira <jmoreira@suse.de>
+---
  arch/x86/crypto/camellia_aesni_avx2_glue.c | 25 ++++++++---------
  arch/x86/crypto/camellia_aesni_avx_glue.c  | 21 +++++++--------
  arch/x86/crypto/camellia_glue.c            |  6 ++---
- arch/x86/crypto/cast6_avx_glue.c           | 22 ++++++---------
- arch/x86/crypto/serpent_avx2_glue.c        | 14 +++++-----
- arch/x86/crypto/serpent_avx_glue.c         | 19 ++++++-------
- arch/x86/crypto/twofish_avx_glue.c         | 30 +++++++++------------
- arch/x86/crypto/twofish_glue.c             |  7 +++--
- arch/x86/crypto/twofish_glue_3way.c        | 10 +++----
  arch/x86/include/asm/crypto/camellia.h     | 43 +++++++++++++-----------------
- arch/x86/include/asm/crypto/serpent-avx.h  | 25 ++++++++---------
- arch/x86/include/asm/crypto/serpent-sse2.h | 30 +++++++++------------
- arch/x86/include/asm/crypto/twofish.h      |  9 +++----
- 13 files changed, 108 insertions(+), 153 deletions(-)
+ 4 files changed, 40 insertions(+), 55 deletions(-)
 
+diff --git a/arch/x86/crypto/camellia_aesni_avx2_glue.c b/arch/x86/crypto/camellia_aesni_avx2_glue.c
+index 60907c139c4e..6fe248ee5efa 100644
+--- a/arch/x86/crypto/camellia_aesni_avx2_glue.c
++++ b/arch/x86/crypto/camellia_aesni_avx2_glue.c
+@@ -27,20 +27,17 @@
+ #define CAMELLIA_AESNI_AVX2_PARALLEL_BLOCKS 32
+ 
+ /* 32-way AVX2/AES-NI parallel cipher functions */
+-asmlinkage void camellia_ecb_enc_32way(struct camellia_ctx *ctx, u8 *dst,
+-				       const u8 *src);
+-asmlinkage void camellia_ecb_dec_32way(struct camellia_ctx *ctx, u8 *dst,
+-				       const u8 *src);
+-
+-asmlinkage void camellia_cbc_dec_32way(struct camellia_ctx *ctx, u8 *dst,
+-				       const u8 *src);
+-asmlinkage void camellia_ctr_32way(struct camellia_ctx *ctx, u8 *dst,
+-				   const u8 *src, le128 *iv);
+-
+-asmlinkage void camellia_xts_enc_32way(struct camellia_ctx *ctx, u8 *dst,
+-				       const u8 *src, le128 *iv);
+-asmlinkage void camellia_xts_dec_32way(struct camellia_ctx *ctx, u8 *dst,
+-				       const u8 *src, le128 *iv);
++asmlinkage void camellia_ecb_enc_32way(void *ctx, u8 *dst, const u8 *src);
++asmlinkage void camellia_ecb_dec_32way(void *ctx, u8 *dst, const u8 *src);
++
++asmlinkage void camellia_cbc_dec_32way(void *ctx, u8 *dst, const u8 *src);
++asmlinkage void camellia_ctr_32way(void *ctx, u8 *dst, const u8 *src,
++				   le128 *iv);
++
++asmlinkage void camellia_xts_enc_32way(void *ctx, u8 *dst, const u8 *src,
++				       le128 *iv);
++asmlinkage void camellia_xts_dec_32way(void *ctx, u8 *dst, const u8 *src,
++				       le128 *iv);
+ 
+ static const struct common_glue_ctx camellia_enc = {
+ 	.num_funcs = 4,
+diff --git a/arch/x86/crypto/camellia_aesni_avx_glue.c b/arch/x86/crypto/camellia_aesni_avx_glue.c
+index d96429da88eb..3ccfd75b4af4 100644
+--- a/arch/x86/crypto/camellia_aesni_avx_glue.c
++++ b/arch/x86/crypto/camellia_aesni_avx_glue.c
+@@ -26,28 +26,25 @@
+ #define CAMELLIA_AESNI_PARALLEL_BLOCKS 16
+ 
+ /* 16-way parallel cipher functions (avx/aes-ni) */
+-asmlinkage void camellia_ecb_enc_16way(struct camellia_ctx *ctx, u8 *dst,
+-				       const u8 *src);
++asmlinkage void camellia_ecb_enc_16way(void *ctx, u8 *dst, const u8 *src);
+ EXPORT_SYMBOL_GPL(camellia_ecb_enc_16way);
+ 
+-asmlinkage void camellia_ecb_dec_16way(struct camellia_ctx *ctx, u8 *dst,
+-				       const u8 *src);
++asmlinkage void camellia_ecb_dec_16way(void *ctx, u8 *dst, const u8 *src);
+ EXPORT_SYMBOL_GPL(camellia_ecb_dec_16way);
+ 
+-asmlinkage void camellia_cbc_dec_16way(struct camellia_ctx *ctx, u8 *dst,
+-				       const u8 *src);
++asmlinkage void camellia_cbc_dec_16way(void *ctx, u8 *dst, const u8 *src);
+ EXPORT_SYMBOL_GPL(camellia_cbc_dec_16way);
+ 
+-asmlinkage void camellia_ctr_16way(struct camellia_ctx *ctx, u8 *dst,
+-				   const u8 *src, le128 *iv);
++asmlinkage void camellia_ctr_16way(void *ctx, u8 *dst, const u8 *src,
++				   le128 *iv);
+ EXPORT_SYMBOL_GPL(camellia_ctr_16way);
+ 
+-asmlinkage void camellia_xts_enc_16way(struct camellia_ctx *ctx, u8 *dst,
+-				       const u8 *src, le128 *iv);
++asmlinkage void camellia_xts_enc_16way(void *ctx, u8 *dst, const u8 *src,
++				       le128 *iv);
+ EXPORT_SYMBOL_GPL(camellia_xts_enc_16way);
+ 
+-asmlinkage void camellia_xts_dec_16way(struct camellia_ctx *ctx, u8 *dst,
+-				       const u8 *src, le128 *iv);
++asmlinkage void camellia_xts_dec_16way(void *ctx, u8 *dst, const u8 *src,
++				       le128 *iv);
+ EXPORT_SYMBOL_GPL(camellia_xts_dec_16way);
+ 
+ void camellia_xts_enc(void *ctx, u128 *dst, const u128 *src, le128 *iv)
+diff --git a/arch/x86/crypto/camellia_glue.c b/arch/x86/crypto/camellia_glue.c
+index af4840ab2a3d..0942b3998de5 100644
+--- a/arch/x86/crypto/camellia_glue.c
++++ b/arch/x86/crypto/camellia_glue.c
+@@ -39,16 +39,14 @@
+ asmlinkage void __camellia_enc_blk(struct camellia_ctx *ctx, u8 *dst,
+ 				   const u8 *src, bool xor);
+ EXPORT_SYMBOL_GPL(__camellia_enc_blk);
+-asmlinkage void camellia_dec_blk(struct camellia_ctx *ctx, u8 *dst,
+-				 const u8 *src);
++asmlinkage void camellia_dec_blk(void *ctx, u8 *dst, const u8 *src);
+ EXPORT_SYMBOL_GPL(camellia_dec_blk);
+ 
+ /* 2-way parallel cipher functions */
+ asmlinkage void __camellia_enc_blk_2way(struct camellia_ctx *ctx, u8 *dst,
+ 					const u8 *src, bool xor);
+ EXPORT_SYMBOL_GPL(__camellia_enc_blk_2way);
+-asmlinkage void camellia_dec_blk_2way(struct camellia_ctx *ctx, u8 *dst,
+-				      const u8 *src);
++asmlinkage void camellia_dec_blk_2way(void *ctx, u8 *dst, const u8 *src);
+ EXPORT_SYMBOL_GPL(camellia_dec_blk_2way);
+ 
+ static void camellia_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
+diff --git a/arch/x86/include/asm/crypto/camellia.h b/arch/x86/include/asm/crypto/camellia.h
+index 10f8d590bcfe..974bea896d96 100644
+--- a/arch/x86/include/asm/crypto/camellia.h
++++ b/arch/x86/include/asm/crypto/camellia.h
+@@ -40,35 +40,29 @@ extern int xts_camellia_setkey(struct crypto_tfm *tfm, const u8 *key,
+ /* regular block cipher functions */
+ asmlinkage void __camellia_enc_blk(struct camellia_ctx *ctx, u8 *dst,
+ 				   const u8 *src, bool xor);
+-asmlinkage void camellia_dec_blk(struct camellia_ctx *ctx, u8 *dst,
+-				 const u8 *src);
++asmlinkage void camellia_dec_blk(void *ctx, u8 *dst, const u8 *src);
+ 
+ /* 2-way parallel cipher functions */
+ asmlinkage void __camellia_enc_blk_2way(struct camellia_ctx *ctx, u8 *dst,
+ 					const u8 *src, bool xor);
+-asmlinkage void camellia_dec_blk_2way(struct camellia_ctx *ctx, u8 *dst,
+-				      const u8 *src);
++asmlinkage void camellia_dec_blk_2way(void *ctx, u8 *dst, const u8 *src);
+ 
+ /* 16-way parallel cipher functions (avx/aes-ni) */
+-asmlinkage void camellia_ecb_enc_16way(struct camellia_ctx *ctx, u8 *dst,
+-				       const u8 *src);
+-asmlinkage void camellia_ecb_dec_16way(struct camellia_ctx *ctx, u8 *dst,
+-				       const u8 *src);
+-
+-asmlinkage void camellia_cbc_dec_16way(struct camellia_ctx *ctx, u8 *dst,
+-				       const u8 *src);
+-asmlinkage void camellia_ctr_16way(struct camellia_ctx *ctx, u8 *dst,
+-				   const u8 *src, le128 *iv);
+-
+-asmlinkage void camellia_xts_enc_16way(struct camellia_ctx *ctx, u8 *dst,
+-				       const u8 *src, le128 *iv);
+-asmlinkage void camellia_xts_dec_16way(struct camellia_ctx *ctx, u8 *dst,
+-				       const u8 *src, le128 *iv);
+-
+-static inline void camellia_enc_blk(struct camellia_ctx *ctx, u8 *dst,
+-				    const u8 *src)
++asmlinkage void camellia_ecb_enc_16way(void *ctx, u8 *dst, const u8 *src);
++asmlinkage void camellia_ecb_dec_16way(void *ctx, u8 *dst, const u8 *src);
++
++asmlinkage void camellia_cbc_dec_16way(void *ctx, u8 *dst, const u8 *src);
++asmlinkage void camellia_ctr_16way(void *ctx, u8 *dst, const u8 *src,
++				   le128 *iv);
++
++asmlinkage void camellia_xts_enc_16way(void *ctx, u8 *dst, const u8 *src,
++				       le128 *iv);
++asmlinkage void camellia_xts_dec_16way(void *ctx, u8 *dst, const u8 *src,
++				       le128 *iv);
++
++static inline void camellia_enc_blk(void *ctx, u8 *dst, const u8 *src)
+ {
+-	__camellia_enc_blk(ctx, dst, src, false);
++	__camellia_enc_blk((struct camellia_ctx *) ctx, dst, src, false);
+ }
+ 
+ static inline void camellia_enc_blk_xor(struct camellia_ctx *ctx, u8 *dst,
+@@ -77,10 +71,9 @@ static inline void camellia_enc_blk_xor(struct camellia_ctx *ctx, u8 *dst,
+ 	__camellia_enc_blk(ctx, dst, src, true);
+ }
+ 
+-static inline void camellia_enc_blk_2way(struct camellia_ctx *ctx, u8 *dst,
+-					 const u8 *src)
++static inline void camellia_enc_blk_2way(void *ctx, u8 *dst, const u8 *src)
+ {
+-	__camellia_enc_blk_2way(ctx, dst, src, false);
++	__camellia_enc_blk_2way((struct camellia_ctx *) ctx, dst, src, false);
+ }
+ 
+ static inline void camellia_enc_blk_xor_2way(struct camellia_ctx *ctx, u8 *dst,
 -- 
 2.12.0
