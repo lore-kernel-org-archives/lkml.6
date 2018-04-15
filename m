@@ -1,59 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752274AbeDOJYK (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 05:24:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47890 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752152AbeDOJYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 05:24:01 -0400
-From: Jiri Olsa <jolsa@kernel.org>
-To: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: lkml <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Andi Kleen <andi@firstfloor.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>, hpa@zytor.com,
-        Namhyung Kim <namhyung@kernel.org>, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, x86@kernel.org
-Subject: [PATCH 3/3] perf: Remove superfluous allocation error check
-Date: Sun, 15 Apr 2018 11:23:52 +0200
-Message-Id: <20180415092352.12403-3-jolsa@kernel.org>
-In-Reply-To: <20180415092352.12403-1-jolsa@kernel.org>
-References: <20180415092352.12403-1-jolsa@kernel.org>
+        id S1752167AbeDOJlW (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 05:41:22 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:35523 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751912AbeDOJlU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Apr 2018 05:41:20 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w3F9f17T021587
+X-Nifty-SrcIP: [209.85.217.169]
+X-Google-Smtp-Source: AIpwx49OpxdQsVZ+5fwRJk1lwGKw+O8inLaJ+YoYT01BgeWEOjZoD8aMkeChgb8rx96eh3snx1AiDii62jYQt7Orb0E=
+MIME-Version: 1.0
+In-Reply-To: <CAGXu5jLt4xoxXTw83-npD4WmumPzSC9WnbOkkDoR=VYa5R4rYw@mail.gmail.com>
+References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
+ <1523595999-27433-22-git-send-email-yamada.masahiro@socionext.com> <CAGXu5jLt4xoxXTw83-npD4WmumPzSC9WnbOkkDoR=VYa5R4rYw@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Sun, 15 Apr 2018 18:40:20 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATM=7b_KReRZ8MqhiLPfP_itaxOW-17zHZpzSn_AOgThw@mail.gmail.com>
+Message-ID: <CAK7LNATM=7b_KReRZ8MqhiLPfP_itaxOW-17zHZpzSn_AOgThw@mail.gmail.com>
+Subject: Re: [PATCH 21/30] stack-protector: test compiler capability in
+ Kconfig and drop AUTO mode
+To: Kees Cook <keescook@chromium.org>
+Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>, Emese Revfy <re.emese@gmail.com>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the get_callchain_buffers fails to allocate the buffer
-it will decrease the nr_callchain_events right away.
+2018-04-14 1:41 GMT+09:00 Kees Cook <keescook@chromium.org>:
+> On Thu, Apr 12, 2018 at 10:06 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> +stackp-flags-$(CONFIG_CC_HAS_STACKPROTECTOR_NONE) := -fno-stack-protector
+>> +stackp-flags-$(CONFIG_CC_STACKPROTECTOR)          := -fstack-protector
+>> +stackp-flags-$(CONFIG_CC_STACKPROTECTOR_STRONG)   := -fstack-protector-strong
+>> +
+>> +KBUILD_CFLAGS += $(stackp-flags-y)
+>
+> So, technically, this works just fine. I wonder if it has an overly
+> confusing result, in that the compiler under normal situations will
+> see:
+>
+> gcc ... -fno-stack-protector -fstack-protector -fstack-protector-strong ...
 
-There's no point of checking the allocation error for
-nr_callchain_events > 1. Removing that check.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- kernel/events/callchain.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+Kees, you are wrong.
 
-diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
-index 73cc26e321de..c187aa3df3c8 100644
---- a/kernel/events/callchain.c
-+++ b/kernel/events/callchain.c
-@@ -131,14 +131,8 @@ int get_callchain_buffers(int event_max_stack)
- 		goto exit;
- 	}
- 
--	if (count > 1) {
--		/* If the allocation failed, give up */
--		if (!callchain_cpus_entries)
--			err = -ENOMEM;
--		goto exit;
--	}
--
--	err = alloc_callchain_buffers();
-+	if (count == 1)
-+		err = alloc_callchain_buffers();
- exit:
- 	if (err)
- 		atomic_dec(&nr_callchain_events);
+Look at my code closely.
+
+I used := operator instead of +=.
+
+$(stackp-flags-y) contains only one flag at most.
+
+
+
+> How about something like this instead:
+>
+> ifdef CONFIG_CC_STACKPROTECTOR_STRONG
+> KBUILD_CFLAGS += -fstack-protector-strong
+> else
+> ifdef CONFIG_CC_STACKPROTECTOR
+> KBUILD_CFLAGS += -fstack-protector
+> else
+> KBUILD_CFLAGS += -fno-stack-protector
+> endif
+> endif
+>
+
+My code is much cleaner, and working fine.
+
+
+
 -- 
-2.13.6
+Best Regards
+Masahiro Yamada
