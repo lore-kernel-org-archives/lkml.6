@@ -1,117 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752271AbeDOCTr (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 14 Apr 2018 22:19:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58478 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751270AbeDOCTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Apr 2018 22:19:46 -0400
-Date: Sun, 15 Apr 2018 10:19:40 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        pagupta@redhat.com, linux-mm@kvack.org,
-        kirill.shutemov@linux.intel.com
-Subject: Re: [PATCH v3 4/4] mm/sparse: Optimize memmap allocation during
- sparse_init()
-Message-ID: <20180415021940.GA1750@localhost.localdomain>
-References: <20180228032657.32385-1-bhe@redhat.com>
- <20180228032657.32385-5-bhe@redhat.com>
- <5dd3942a-cf66-f749-b1c6-217b0c3c94dc@intel.com>
- <20180408082038.GB19345@localhost.localdomain>
- <7cc53287-4570-84d6-502c-c3dfbd279b78@intel.com>
+        id S1752371AbeDOCkZ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 14 Apr 2018 22:40:25 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:40590 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752163AbeDOCkX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Apr 2018 22:40:23 -0400
+Date: Sun, 15 Apr 2018 03:39:44 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nikolay Borisov <nborisov@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>, Jeff Mahoney <jeffm@suse.com>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: [PATCH] fs/dcache.c: re-add cond_resched() in
+ shrink_dcache_parent()
+Message-ID: <20180415023939.GY30522@ZenIV.linux.org.uk>
+References: <20180413181350.88831-1-khazhy@google.com>
+ <20180413202823.204377-1-khazhy@google.com>
+ <20180413141430.2788e2562e3e24bd273fe78b@linux-foundation.org>
+ <3362fb2d-85ff-86af-399f-698c986e46cc@suse.com>
+ <20180414080206.GV30522@ZenIV.linux.org.uk>
+ <CA+55aFz4fwzcUWWT78AxK+GeVNVveWPNS+=V+ppb1ksn56TjUA@mail.gmail.com>
+ <20180414205846.GW30522@ZenIV.linux.org.uk>
+ <CA+55aFxD1xKqbobvoHQUWc5jc9n7-7KXYeSQy-CpE0SUZHi0PQ@mail.gmail.com>
+ <20180415005056.GX30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7cc53287-4570-84d6-502c-c3dfbd279b78@intel.com>
+In-Reply-To: <20180415005056.GX30522@ZenIV.linux.org.uk>
 User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dave,
-
-Sorry for late reply.
-
-On 04/11/18 at 08:48am, Dave Hansen wrote:
-> On 04/08/2018 01:20 AM, Baoquan He wrote:
-> > On 04/06/18 at 07:50am, Dave Hansen wrote:
-> >> The code looks fine to me.  It's a bit of a shame that there's no
-> >> verification to ensure that idx_present never goes beyond the shiny new
-> >> nr_present_sections. 
+On Sun, Apr 15, 2018 at 01:51:07AM +0100, Al Viro wrote:
+> On Sat, Apr 14, 2018 at 02:47:21PM -0700, Linus Torvalds wrote:
+> > On Sat, Apr 14, 2018 at 1:58 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > >
+> > > That breaks d_invalidate(), unfortunately.  Look at the termination
+> > > conditions in the loop there...
 > > 
-> > This is a good point. Do you think it's OK to replace (section_nr <
-> > NR_MEM_SECTIONS) with (section_nr < nr_present_sections) in below
-> > for_each macro? This for_each_present_section_nr() is only used
-> > during sparse_init() execution.
+> > Ugh. I was going to say "but that doesn't even use select_collect()",
+> > but yeah, detach_and_collect() calls it.
 > > 
-> > #define for_each_present_section_nr(start, section_nr)          \
-> >         for (section_nr = next_present_section_nr(start-1);     \
-> >              ((section_nr >= 0) &&                              \
-> >               (section_nr < NR_MEM_SECTIONS) &&                 \                                                                                 
-> >               (section_nr <= __highest_present_section_nr));    \
-> >              section_nr = next_present_section_nr(section_nr))
-> 
-> I was more concerned about the loops that "consume" the section maps.
-> It seems like they might run over the end of the array.
-
-
-
-> 
-> >>> @@ -583,6 +592,7 @@ void __init sparse_init(void)
-> >>>  	unsigned long *usemap;
-> >>>  	unsigned long **usemap_map;
-> >>>  	int size;
-> >>> +	int idx_present = 0;
-> >>
-> >> I wonder whether idx_present is a good name.  Isn't it the number of
-> >> consumed mem_map[]s or usemaps?
+> > It would be easy enough to just change the
 > > 
-> > Yeah, in sparse_init(), it's the index of present memory sections, and
-> > also the number of consumed mem_map[]s or usemaps. And I remember you
-> > suggested nr_consumed_maps instead. seems nr_consumed_maps is a little
-> > long to index array to make code line longer than 80 chars. How about
-> > name it idx_present in sparse_init(), nr_consumed_maps in
-> > alloc_usemap_and_memmap(), the maps allocation function? I am also fine
-> > to use nr_consumed_maps for all of them.
-> 
-> Does the large array index make a bunch of lines wrap or something?  If
-> not, I'd just use the long name.
-
-I am fine with the long name, will use 'nr_consumed_maps' you suggested
-earlier to replace.
-
-> 
-> >>>  		if (!map) {
-> >>>  			ms->section_mem_map = 0;
-> >>> +			idx_present++;
-> >>>  			continue;
-> >>>  		}
-> >>>  
-> >>
-> >>
-> >> This hunk seems logically odd to me.  I would expect a non-used section
-> >> to *not* consume an entry from the temporary array.  Why does it?  The
-> >> error and success paths seem to do the same thing.
+> >                 if (!list_empty(&data.select.dispose))
 > > 
-> > Yes, this place is the hardest to understand. The temorary arrays are
-> > allocated beforehand with the size of 'nr_present_sections'. The error
-> > paths you mentioned is caused by allocation failure of mem_map or
-> > map_map, but whatever it's error or success paths, the sections must be
-> > marked as present in memory_present(). Error or success paths happened
-> > in alloc_usemap_and_memmap(), while checking if it's erorr or success
-> > paths happened in the last for_each_present_section_nr() of
-> > sparse_init(), and clear the ms->section_mem_map if it goes along error
-> > paths. This is the key point of this new allocation way.
+> > there to
+> > 
+> >                 if (!list_empty(&data.select.found))
+> > 
+> > too.
 > 
-> I think you owe some commenting because this is so hard to understand.
+> You would have to do the same in check_and_drop() as well,
+> and that brings back d_invalidate()/d_invalidate() livelock
+> we used to have.  See 81be24d263db...
+> 
+> I'm trying to put something together, but the damn thing is
+> full of potential livelocks, unfortunately ;-/  Will send
+> a followup once I have something resembling a sane solution...
 
-I can arrange and write a code comment above sparse_init() according to
-this patch's git log, do you think it's OK?
+I really wonder if we should just do the following in
+d_invalidate():
+	* grab ->d_lock on victim, check if it's unhashed,
+unlock and bugger off if it is.  Otherwise, unhash and unlock.
+>From that point on any d_set_mounted() in the subtree will
+fail.
+	* shrink_dcache_parent() to reduce the subtree size.
+	* go through the (hopefully shrunk) subtree, picking
+mountpoints.  detach_mounts() for each of them.
+	* shrink_dcache_parent() if any points had been
+encountered, to kick the now-unpinned stuff.
 
-Honestly, it took me several days to write code, while I spent more
-than one week to write the patch log. Writing patch log is really a
-headache to me.
-
-Thanks
-Baoquan
+As a side benefit, we could probably be gentler on rename_lock
+in d_set_mounted() after that change...
