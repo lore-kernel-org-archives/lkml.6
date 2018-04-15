@@ -1,65 +1,92 @@
-Return-Path: <joe@perches.com>
-X-Google-Smtp-Source: AIpwx48/0Ajg3aehFHhiW5mO5Om95JLkKaZbOf90VsNhPPv8yXa2KKIFIwOEzv8WX1MlakT457I+
-ARC-Seal: i=1; a=rsa-sha256; t=1523820270; cv=none;
+Return-Path: <jic23@kernel.org>
+X-Google-Smtp-Source: AIpwx4+0XY5KHvaaGq3s4oqg7yPRx/TrtWndImGvsryOA1zAMtGwreunMMAZy9YBoe4SdWkIhBdN
+ARC-Seal: i=1; a=rsa-sha256; t=1523821930; cv=none;
         d=google.com; s=arc-20160816;
-        b=KWrCDgtWIELN2fUKhNOiC4CfaYh3o5EBplxnunAoJ1OU1GYPO/PdZVjVMhXEH0AC5c
-         8QxPcqcaKbBojyd/fV4ZzUjcwxUtFvzNS0fJdeYs+q4YkvbehX2xHXjkZvYFiRxTbK60
-         AiyPOonrULL0L7bvPco2/cWxECQAcPUeWW73lpXUa6w8zPsy0C17wXXM3yHHACaFPj4K
-         QWR9Jo1tPkeNCFO48qWssRW4Rm8VRLLU9P/6LlioLsQBRWz/yT4kiQktVUgTHnj+Ntgp
-         EYdhWI6opY1qXPFhtseCnk97s7GanfGO7GSpHCS7PvWAelVF3efmRmOR2nct7mtMEhmw
-         jdZg==
+        b=zlivx3uhKaGjaQQVhRXgEO2BsN1/F+t9vvto509cv8Re8ixT8PhbzC6LMw0ZG1wj2U
+         pMFDZqadraqZvrlfXWIeRYCRykBvBheZUQH2K1bVASEIS8uAH+z3BtKHBzF2Zpb7vwjO
+         LfQmEWbwg9r8CaZJqIcuuJzgGro1TjwMWS71PYyLUmgkTmX8tZrPqQMq5IB+OojU9Yd2
+         noYCtHSUBNSt1GopX73NDIwjzFQ8MMxKXWpdbr87f2VCyOs7u/p1Anil0t+i3DQ6bRcw
+         jNGM9jZ3+lJ8KadzScD4DpRDjNFNbHmlss/ZCz8U6kC1sqlynnASIXMzATIgCp4zedhi
+         6vag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:arc-authentication-results;
-        bh=wYTdudFTIFyCx+Q8mNTuLi1XY0pqw7o3rJpolRr64sA=;
-        b=eRb8JGIl9djXYvAcQQPtYD7FtYiZuG1Mnqd0h9VyrYH0iuFpz4jfVJ9rRohRdssl1/
-         hY8Dpc5fw9JNO1DFq7Pc9uAjou8y6BnzKtz5a3gd9HfbQkHdIcfXg4EOl3/QFvhGBP/S
-         DcEHOfsJHWYTN/oganEpfQzDv/LlYU6GD1GxFizqBbaTaIDaXnf7CzdaoSDMPUZSSLbx
-         7GBjG0pwBTHhYSEH4beVvmiEF/ztXWeBXyrv9fWuM1HQNZdzfVieiZC2nZJYg0bpdnT8
-         dHOAONGeOZ/h9iM5sTXqWqs7Y69HTG1gh4jjXiYgY66ophYCbSCR9qn54isbdww7eO8l
-         JbRw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:dmarc-filter
+         :arc-authentication-results;
+        bh=DGdJeaBg76GXeUH3laldN8Sbf4WfC0Xjn1M+d0a5hBU=;
+        b=KLWSUmWhM2rCe6LvoauCxZe8y7bYCgx3zMNKphPncgek9qndYqRBi/plDKlaE9/xte
+         fq+3vSR8C4bcL/rrDVkIe0gMyQWzcCkoRwJCcgRx2Gcr+jYwgWkLtDsAeVjJoVO8EYJx
+         w8zAnVqTMJneWqH2o49B8GLWpu+wPGWVr10P/6Fwb6aPG2ylmtPSN/N9Fk4akPrOnYFk
+         Ve86IRNvPr+uod68lbSpdKud7aRTgWTiyGXZ8O78jHdXKTxG5gkZNVK+f4ShCrcp27BX
+         8QPazSxgDCdH7aDT9VUCsAIQ25jSVpYJ3ftoUrc3bmN8BDTn1hxDORhgxj6bmBo9IJf7
+         O2fw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 216.40.44.51 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
+       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 216.40.44.51 is neither permitted nor denied by best guess record for domain of joe@perches.com) smtp.mailfrom=joe@perches.com
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:541:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2693:2828:2911:3138:3139:3140:3141:3142:3351:3622:3865:3867:3868:3870:3871:4321:4425:5007:7903:10004:10400:10848:10967:11232:11658:11914:12740:12895:13069:13311:13357:13439:13894:14181:14659:14721:21080:21627:30012:30054:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
-X-HE-Tag: cloud50_26c80822f4152
-X-Filterd-Recvd-Size: 1644
-Message-ID: <e82d25e0d82a55eba1097eab3c679ad5f667e999.camel@perches.com>
+       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 778332176F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Sun, 15 Apr 2018 20:52:05 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Joe Perches <joe@perches.com>
+Cc: =?UTF-8?B?SGVybsOhbg==?= Gonzalez <hernan@vanguardiasur.com.ar>,
+ knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+ gregkh@linuxfoundation.org, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v2 14/14] staging: iio: Remove ad7746 from staging
-From: Joe Perches <joe@perches.com>
-To: Jonathan Cameron <jic23@kernel.org>, =?ISO-8859-1?Q?Hern=E1n?= Gonzalez
-	 <hernan@vanguardiasur.com.ar>
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-	gregkh@linuxfoundation.org, Michael.Hennerich@analog.com,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sun, 15 Apr 2018 12:24:23 -0700
-In-Reply-To: <20180415164351.2666a114@archlinux>
+Message-ID: <20180415205205.71c87189@archlinux>
+In-Reply-To: <e82d25e0d82a55eba1097eab3c679ad5f667e999.camel@perches.com>
 References: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
-	 <1523637411-8531-15-git-send-email-hernan@vanguardiasur.com.ar>
-	 <20180415164351.2666a114@archlinux>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.0-4 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+	<1523637411-8531-15-git-send-email-hernan@vanguardiasur.com.ar>
+	<20180415164351.2666a114@archlinux>
+	<e82d25e0d82a55eba1097eab3c679ad5f667e999.camel@perches.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597649768754128760?=
-X-GMAIL-MSGID: =?utf-8?q?1597841363563712016?=
+X-GMAIL-MSGID: =?utf-8?q?1597843104725406364?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, 2018-04-15 at 16:43 +0100, Jonathan Cameron wrote:
-> On Fri, 13 Apr 2018 13:36:51 -0300
-> Hernán Gonzalez <hernan@vanguardiasur.com.ar> wrote:
-> 
-> > Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
-> 
-> Please have a single patch (with move detection turned off) for this and the
-> previous.
+On Sun, 15 Apr 2018 12:24:23 -0700
+Joe Perches <joe@perches.com> wrote:
 
-> Allows easy review by showing us the code but doesn't lead to a stage in which
-> two different versions will build and hence probably break bisectiblity.
+> On Sun, 2018-04-15 at 16:43 +0100, Jonathan Cameron wrote:
+> > On Fri, 13 Apr 2018 13:36:51 -0300
+> > Hern=C3=A1n Gonzalez <hernan@vanguardiasur.com.ar> wrote:
+> >  =20
+> > > Signed-off-by: Hern=C3=A1n Gonzalez <hernan@vanguardiasur.com.ar> =20
+> >=20
+> > Please have a single patch (with move detection turned off) for this an=
+d the
+> > previous. =20
+>=20
+> > Allows easy review by showing us the code but doesn't lead to a stage i=
+n which
+> > two different versions will build and hence probably break bisectiblity=
+. =20
+>=20
+> Moving both files in a single patch is fine but
+> move detection off is much harder to review.
+>=20
+Not in this one case.   Here we want explicitly to review the code,
+not the move.   The point is to put the whole driver code in front
+of people as part of the proposal to move it out of staging.  If we
+leave move detection on then there is a barrier to review as only
+someone who has actually applied all the patches will be able to
+see what state the driver is in.
 
-Moving both files in a single patch is fine but
-move detection off is much harder to review.
+Sure, side effect is we loose the check on whether it is a 'pure'
+move or not, but that is easy to check when I finally apply the patches.
+
+I haven't come up with a better way of reviewing a staging driver
+on the mailing lists in a fashion similar to how we would review
+a newly submitted driver.
+
+Jonathan
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
