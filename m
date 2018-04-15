@@ -1,153 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752403AbeDOMWF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 08:22:05 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:7268 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752277AbeDOMWE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 08:22:04 -0400
-X-IronPort-AV: E=Sophos;i="5.48,454,1517871600";
-   d="scan'208";a="322925558"
-Date: Sun, 15 Apr 2018 14:22:01 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To: Daniel Santos <daniel.santos@pobox.com>
-cc: LKML <linux-kernel@vger.kernel.org>
-Subject: Re: BUILD_BUG_ON_MSG
-In-Reply-To: <9f2e95dc-6f8e-0adc-50d9-578f1077722d@pobox.com>
-Message-ID: <alpine.DEB.2.20.1804151410480.8462@hadrien>
-References: <alpine.DEB.2.20.1804150736110.2673@hadrien> <9f2e95dc-6f8e-0adc-50d9-578f1077722d@pobox.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323329-82193140-1523794922=:8462"
+        id S1752403AbeDOMjf (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 08:39:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35625 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751190AbeDOMjd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Apr 2018 08:39:33 -0400
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>, clm@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs updates for 4.17, part 2
+Date: Sun, 15 Apr 2018 14:36:55 +0200
+Message-Id: <cover.1523794897.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---8323329-82193140-1523794922=:8462
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Hi,
 
+we have queued a few more fixes (error handling, log replay, softlockup)
+and the rest is SPDX update that touches almost all files so the
+diffstat is long. The top patch is a fixup for excessive warning and
+was not in linux-next but I've tested it locally.
 
+Please pull, thanks.
 
-On Sun, 15 Apr 2018, Daniel Santos wrote:
+----------------------------------------------------------------
+The following changes since commit 57599c7e7722daf5f8c2dba4b0e4628f5c500771:
 
-> Hello Julia,
->
-> I'm CCing LKML on this so that others can be involved.
->
->
-> On 04/15/2018 12:43 AM, Julia Lawall wrote:
-> > Hello,
-> >
-> > I saw that you introduced BUILD_BUG_ON_MSG in the Linux kernel a few years
-> > ago.
-> >
-> > BUILD_BUG_ON_MSG is not safe when used in header files.  Via
-> > compiletime_assert, it makes a new function whose name is only determined
-> > by a line number.  When BUILD_BUG_ON_MSG is used in header files,
-> > multiple uses may end up at the same line, in different header files.  The
-> > reported errors are then quite confusing; I guess the last function with
-> > the given name is used.
->
-> Yes, This is an unfortunate side-effect of the implementation, since
-> "error" and "warning" are function attributes.  This issue was discussed
-> during review and it was decided that one should simply not use more
-> than one of such macro on the same line in an implementation file.  I
-> had thought we added a "don't use more than once per line" in the
-> documentation for these macros, but I'm not seeing it right now -- if
-> it's really missing then we probably want to add it.
+  btrfs: lift errors from add_extent_changeset to the callers (2018-03-31 02:03:25 +0200)
 
-The problem is not multiple calls on the same line.  The problem is that
-every header file has eg a line 1, line 2, etc.  __LINE__ gives the line
-number in the header file, and not in the result of expanding the header
-file.  This line may be the same as the line in some other header file
-that also has a BUILD_BUG_ON_MSG.
+are available in the Git repository at:
 
->
-> >
-> > I tried incorporating __func__, but for some reason it didn't expand into
-> > anything.  Perhaps I used it incorrectly in some way.
->
-> Neither __func__ nor __FUNCTION__ are cpp macros, they are just static
-> const char arrays (see
-> https://gcc.gnu.org/onlinedocs/gcc/Function-Names.html).  For some
-> reason I recall believing that __PRETTY_FUNCTION__ *is* a cpp macro, but
-> I'm probably wrong, and even if it was it wouldn't be a valid function
-> prefix.
->
-> > If it is not
-> > possible to get the name of the enclosing function, would it be reasonable
-> > to make a new kind of BUILD_BUG_ON call that takes an extra argument that
-> > can be used in the function name to make it unique?
-> >
-> > thanks,
-> > julia
-> >
-> You're still going to need the function name as a cpp macro.  If you
-> have that, you can just expand _compiletime_assert() directly.  Please
-> post your code when sending an inquiry like this -- it makes it easier
-> for others to help you and we don't have to waste as much time trying to
-> figure out exactly what you might be doing and how.
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-4.17-part2-tag
 
-Here are the adjustments I made for myself; obviously the names are not
-ideal:
+for you to fetch changes up to 5d41be6f702f19f72db816c17175caf9dbdcdfa6:
 
-diff --git a/include/linux/build_bug.h b/include/linux/build_bug.h
-index 43d1fd5..43d6f67 100644
---- a/include/linux/build_bug.h
-+++ b/include/linux/build_bug.h
-@@ -43,6 +43,7 @@
-  * See BUILD_BUG_ON for description.
-  */
- #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-+#define MY_BUILD_BUG_ON_MSG(cond, tok, msg) my_compiletime_assert(!(cond), tok, msg)
+  btrfs: Only check first key for committed tree blocks (2018-04-13 16:16:15 +0200)
 
- /**
-  * BUILD_BUG_ON - break compile if a condition is true.
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index ab4711c..bb19c7a 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -338,6 +350,9 @@ unsigned long read_word_at_a_time(const void *addr)
- #define compiletime_assert(condition, msg) \
- 	_compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+----------------------------------------------------------------
+David Sterba (3):
+      btrfs: replace GPL boilerplate by SPDX -- headers
+      btrfs: replace GPL boilerplate by SPDX -- sources
+      btrfs: add SPDX header to Kconfig
 
-+#define my_compiletime_assert(condition, tok, msg) \
-+	_compiletime_assert(condition, msg, tok ## __my_compiletime_assert_, __LINE__)
-+
- #define compiletime_assert_atomic_type(t)				\
- 	compiletime_assert(__native_word(t),				\
- 		"Need native word sized stores/loads for atomicity.")
+Filipe Manana (1):
+      Btrfs: fix loss of prealloc extents past i_size after fsync log replay
 
-Then my uses would be eg
+Liu Bo (3):
+      Btrfs: fix NULL pointer dereference in log_dir_items
+      Btrfs: bail out on error during replay_dir_deletes
+      Btrfs: clean up resources during umount after trans is aborted
 
-MY_BUILD_BUG_ON_MSG(cond1, callsite, "condition 1 holds");
-MY_BUILD_BUG_ON_MSG(cond2, callsite, "condition 2 holds");
-etc.
+Nikolay Borisov (1):
+      btrfs: Fix possible softlock on single core machines
 
-thanks,
-julia
+Qu Wenruo (1):
+      btrfs: Only check first key for committed tree blocks
 
-
-> I don't remember if
-> doing this inside of an always_inline function (instead of a macro
-> expansion) works or not.
->
-> For a long time I've considered the merits of directly adding a gcc
-> extension to perform these checks without all of these side effects and
-> the lengthy macro expansion backtrace, which is also an ugly artifact of
-> this mechanism.  In fact, I was really disappointed with C11's
-> _Static_assert because I at first thought it was a generic solution, but
-> then came to find out otherwise.
->
-> IMO, the ideal mechanism would behave more like MAYBE_BUILD_BUG_ON, but
-> without all of the cpp fluff currently required.  Does anybody know if
-> this has been proposed or a gcc feature request filed for this yet?
->
-> Daniel
->
->
->
---8323329-82193140-1523794922=:8462--
+ fs/btrfs/Kconfig                       |  2 +
+ fs/btrfs/acl.c                         | 15 +-----
+ fs/btrfs/async-thread.c                | 15 +-----
+ fs/btrfs/async-thread.h                | 21 ++------
+ fs/btrfs/backref.c                     | 15 +-----
+ fs/btrfs/backref.h                     | 19 ++------
+ fs/btrfs/btrfs_inode.h                 | 19 ++------
+ fs/btrfs/check-integrity.c             | 15 +-----
+ fs/btrfs/check-integrity.h             | 19 ++------
+ fs/btrfs/compression.c                 | 15 +-----
+ fs/btrfs/compression.h                 | 19 ++------
+ fs/btrfs/ctree.c                       | 15 +-----
+ fs/btrfs/ctree.h                       | 20 ++------
+ fs/btrfs/dedupe.h                      | 20 ++------
+ fs/btrfs/delayed-inode.c               | 15 +-----
+ fs/btrfs/delayed-inode.h               | 19 ++------
+ fs/btrfs/delayed-ref.c                 | 15 +-----
+ fs/btrfs/delayed-ref.h                 | 21 ++------
+ fs/btrfs/dev-replace.c                 | 16 +-----
+ fs/btrfs/dev-replace.h                 | 20 ++------
+ fs/btrfs/dir-item.c                    | 15 +-----
+ fs/btrfs/disk-io.c                     | 26 +++++-----
+ fs/btrfs/disk-io.h                     | 20 ++------
+ fs/btrfs/export.c                      |  1 +
+ fs/btrfs/export.h                      |  1 +
+ fs/btrfs/extent-tree.c                 | 17 ++-----
+ fs/btrfs/extent_io.c                   |  1 +
+ fs/btrfs/extent_io.h                   |  6 ++-
+ fs/btrfs/extent_map.c                  |  1 +
+ fs/btrfs/extent_map.h                  |  6 ++-
+ fs/btrfs/file-item.c                   | 15 +-----
+ fs/btrfs/file.c                        | 15 +-----
+ fs/btrfs/free-space-cache.c            | 15 +-----
+ fs/btrfs/free-space-cache.h            | 19 ++------
+ fs/btrfs/free-space-tree.c             | 15 +-----
+ fs/btrfs/free-space-tree.h             | 19 ++------
+ fs/btrfs/inode-item.c                  | 15 +-----
+ fs/btrfs/inode-map.c                   | 15 +-----
+ fs/btrfs/inode-map.h                   |  5 +-
+ fs/btrfs/inode.c                       | 15 +-----
+ fs/btrfs/ioctl.c                       | 15 +-----
+ fs/btrfs/locking.c                     | 16 +-----
+ fs/btrfs/locking.h                     | 19 ++------
+ fs/btrfs/lzo.c                         | 15 +-----
+ fs/btrfs/math.h                        | 20 ++------
+ fs/btrfs/ordered-data.c                | 15 +-----
+ fs/btrfs/ordered-data.h                | 20 ++------
+ fs/btrfs/orphan.c                      | 15 +-----
+ fs/btrfs/print-tree.c                  | 15 +-----
+ fs/btrfs/print-tree.h                  | 21 ++------
+ fs/btrfs/props.c                       | 15 +-----
+ fs/btrfs/props.h                       | 19 ++------
+ fs/btrfs/qgroup.c                      | 15 +-----
+ fs/btrfs/qgroup.h                      | 22 ++-------
+ fs/btrfs/raid56.c                      | 16 +-----
+ fs/btrfs/raid56.h                      | 21 ++------
+ fs/btrfs/rcu-string.h                  | 20 +++-----
+ fs/btrfs/reada.c                       | 15 +-----
+ fs/btrfs/ref-verify.c                  | 15 +-----
+ fs/btrfs/ref-verify.h                  | 23 +++------
+ fs/btrfs/relocation.c                  | 15 +-----
+ fs/btrfs/root-tree.c                   | 15 +-----
+ fs/btrfs/scrub.c                       | 15 +-----
+ fs/btrfs/send.c                        | 15 +-----
+ fs/btrfs/send.h                        | 20 +++-----
+ fs/btrfs/struct-funcs.c                | 15 +-----
+ fs/btrfs/super.c                       | 15 +-----
+ fs/btrfs/sysfs.c                       | 15 +-----
+ fs/btrfs/sysfs.h                       |  7 +--
+ fs/btrfs/tests/btrfs-tests.c           | 15 +-----
+ fs/btrfs/tests/btrfs-tests.h           | 19 ++------
+ fs/btrfs/tests/extent-buffer-tests.c   | 15 +-----
+ fs/btrfs/tests/extent-io-tests.c       | 15 +-----
+ fs/btrfs/tests/extent-map-tests.c      | 15 +-----
+ fs/btrfs/tests/free-space-tests.c      | 15 +-----
+ fs/btrfs/tests/free-space-tree-tests.c | 15 +-----
+ fs/btrfs/tests/inode-tests.c           | 15 +-----
+ fs/btrfs/tests/qgroup-tests.c          | 15 +-----
+ fs/btrfs/transaction.c                 | 15 +-----
+ fs/btrfs/transaction.h                 | 20 ++------
+ fs/btrfs/tree-checker.c                | 13 +----
+ fs/btrfs/tree-checker.h                | 17 ++-----
+ fs/btrfs/tree-defrag.c                 | 15 +-----
+ fs/btrfs/tree-log.c                    | 89 +++++++++++++++++++++++++---------
+ fs/btrfs/tree-log.h                    | 20 ++------
+ fs/btrfs/ulist.c                       |  2 +-
+ fs/btrfs/ulist.h                       |  7 ++-
+ fs/btrfs/uuid-tree.c                   | 16 +-----
+ fs/btrfs/volumes.c                     | 16 +-----
+ fs/btrfs/volumes.h                     | 19 ++------
+ fs/btrfs/xattr.c                       | 16 +-----
+ fs/btrfs/xattr.h                       | 21 ++------
+ fs/btrfs/zlib.c                        | 15 +-----
+ fs/btrfs/zstd.c                        | 10 +---
+ 94 files changed, 277 insertions(+), 1234 deletions(-)
