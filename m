@@ -1,78 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752883AbeDOS52 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 14:57:28 -0400
-Received: from vern.gendns.com ([206.190.152.46]:53053 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752554AbeDOS50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 14:57:26 -0400
-Subject: Re: [PATCH] ARM: dts: da850: use gpio-ranges
-To: Sekhar Nori <nsekhar@ti.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1519079371-25493-1-git-send-email-david@lechnology.com>
- <CACRpkdb=wOomi4QxvXLdNJVfB-rvGfKE+QZvmxvT2SzVDjH4tw@mail.gmail.com>
- <be660007-cf4b-bf01-d811-a456af74bb49@ti.com>
-From: David Lechner <david@lechnology.com>
-Message-ID: <e29d0326-fe16-5486-e3a9-53d4d6ebfb0e@lechnology.com>
-Date: Sun, 15 Apr 2018 13:57:22 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752817AbeDOTF1 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 15:05:27 -0400
+Received: from bmailout1.hostsharing.net ([83.223.95.100]:45323 "EHLO
+        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752639AbeDOTF0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Apr 2018 15:05:26 -0400
+Date: Sun, 15 Apr 2018 21:05:23 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>, mario.limonciello@dell.com,
+        andy@infradead.org, dvhart@infradead.org, mjg59@srcf.ucam.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] ALSA: hda: Disabled unused audio controller for
+ Dell platforms with Switchable Graphics
+Message-ID: <20180415190523.GA16129@wunner.de>
+References: <20180412104239.25584-1-kai.heng.feng@canonical.com>
+ <20180412104239.25584-3-kai.heng.feng@canonical.com>
+ <s5hr2nk8zs5.wl-tiwai@suse.de>
+ <20180412105909.tbyfcjm55sb47hiq@pali>
+ <93DC0F40-81A5-49C6-A470-0D1B6AA85725@canonical.com>
+ <20180414104512.GA27158@wunner.de>
+ <20180414104950.ngomyjy5l5cwhb5i@pali>
+ <20180414111711.GA4245@wunner.de>
+ <20180415171746.futkvgbaoj6quy5z@pali>
 MIME-Version: 1.0
-In-Reply-To: <be660007-cf4b-bf01-d811-a456af74bb49@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180415171746.futkvgbaoj6quy5z@pali>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/23/2018 05:44 AM, Sekhar Nori wrote:
-> On Thursday 22 February 2018 09:04 PM, Linus Walleij wrote:
->> On Mon, Feb 19, 2018 at 11:29 PM, David Lechner <david@lechnology.com> wrote:
->>
->>> This makes use of the gpio-ranges feature that connects GPIO
->>> controllers and PINMUX controllers.
->>>
->>> In da850.dtsi, pinctrl-single,gpio-range is added to the pinmux node
->>> and gpio-ranges is added to the GPIO node. Unfortunately, the way the
->>> pinctrl-single driver enumerates the pins (starting with LSB) causes
->>> them to be in reverse order compared to the way the gpios are assigned.
->>> As a result, we have to declare the mapping for each GPIO individually.
->>>
->>> This also lets us remove all of the GPIO pinmuxes from
->>> da850-lego-ev3.dts. (Other da850 boards do not currently have any
->>> GPIO pinmuxes declared.)
->>>
->>> Signed-off-by: David Lechner <david@lechnology.com>
->>
->> Nice,
->> Acked-by: Linus Walleij <linus.wallei@linaro.org>
+On Sun, Apr 15, 2018 at 07:17:46PM +0200, Pali Rohár wrote:
+> On Saturday 14 April 2018 13:17:11 Lukas Wunner wrote:
+> > On Sat, Apr 14, 2018 at 12:49:50PM +0200, Pali Rohár wrote:
+> > > On Saturday 14 April 2018 12:45:12 Lukas Wunner wrote:
+> > > > On Thu, Apr 12, 2018 at 10:15:41PM +0800, Kai-Heng Feng wrote:
+> > > > > Do you have any suggestion to check if it connects to the system via
+> > > > > Thunderbolt?
+> > > > 
+> > > > Just use pci_is_thunderbolt_attached(), introduced by 8531e283bee6,
+> > > > like this:
+> > > > 
+> > > > if (check_dell_switchable_gfx(pci) && !pci_is_thunderbolt_attached(pci))
+> > > 
+> > > And what about PCI-e device attached to ExpressCard slot?
+> > 
+> > I don't know of a bullet-proof way to recognize those.  In theory
+> > one could check if the PCIe port above the GPU is a non-hotplug
+> > root port, but I think there are machines with hotplug capable
+> > root ports with GPUs below them that aren't actually removable.
+> > 
+> > However I think ExpressCard-attached GPUs were rare, much less ones
+> > with integrated HDA controller, so in reality that's probably a
+> > non-issue.
 > 
-> Looks good to me too. And quite painstakingly done!
-> 
-> I suppose this needs to wait a bit due to the dependencies? Let me know
-> once its okay to merge.
-> 
-> Thanks,
-> Sekhar
-> 
+> Hm... maybe another idea: Is it possible to detect which audio pci
+> device belongs to graphics card via vga_switcheroo? Currently, looking
+> at output it is same PCI device as graphic card, just different PCI
+> function.
 
-Hi Sekhar,
+No, the DRM drivers don't filter ExpressCard-attached GPUs when
+registering with vga_switcheroo.  They do filter Thunderbolt-
+attached GPUs.
 
-The dependencies are in v4.17-rc1 so you can pick up this patch now.
+The ExpressCard 2.0 spec defines some ACPI stuff that *might* be
+used to recognize root ports that are ExpressCard slots, but I'm
+not sure how reliable that is.  I don't have such a machine and
+have no experience with it.
+
+This is from the MacBookPro8,3 DSDT:
+
+            Device (RP04)
+            {
+                Name (_ADR, 0x001C0003)
+                OperationRegion (A1E0, PCI_Config, 0x19, 0x01)
+                Field (A1E0, ByteAcc, NoLock, Preserve)
+                {
+                    SECB,   8
+                }
+
+                Device (EXCD)
+                {
+                    Name (_ADR, 0x00)
+                    Name (_SUN, 0x01)
+                    Method (_RMV, 0, NotSerialized)
+                    {
+                        Return (0x01)
+                    }
+
+                    Name (_EJD, "\\_SB.PCI0.EHC2.HUBN.PRTN.PRT4")
+                }
+                ...
+            }
+
+Thanks,
+
+Lukas
