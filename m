@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752815AbeDOP7n (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 11:59:43 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:60009 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752371AbeDOP7l (ORCPT
+        id S1752821AbeDOQAq (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 12:00:46 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:48649 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752470AbeDOQAo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 11:59:41 -0400
+        Sun, 15 Apr 2018 12:00:44 -0400
 From: ebiederm@xmission.com (Eric W. Biederman)
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Dave Martin <Dave.Martin@arm.com>,
@@ -29,167 +29,92 @@ References: <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
         <CA+55aFwMUQbALx60b3JDrTcWVSBS7imS+zCYEMz8NOs=6rE6+A@mail.gmail.com>
         <20180415131206.GR16141@n2100.armlinux.org.uk>
         <87604sa2fu.fsf_-_@xmission.com>
-Date: Sun, 15 Apr 2018 10:58:21 -0500
+Date: Sun, 15 Apr 2018 10:59:09 -0500
 In-Reply-To: <87604sa2fu.fsf_-_@xmission.com> (Eric W. Biederman's message of
         "Sun, 15 Apr 2018 10:56:21 -0500")
-Message-ID: <87tvsc8ns2.fsf_-_@xmission.com>
+Message-ID: <87muy48nqq.fsf_-_@xmission.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1f7k44-0002YT-4t;;;mid=<87tvsc8ns2.fsf_-_@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/yA4hqlTcudoOW4hVk87kMmgbn2/nRp1c=
+X-XM-SPF: eid=1f7k4q-0006e6-2i;;;mid=<87muy48nqq.fsf_-_@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/1TXbHRQ/NgjXC1GqqK3+craTezWqgpgc=
 X-SA-Exim-Connect-IP: 97.119.174.25
 X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.5 XMGappySubj_01 Very gappy subject
         *  0.7 XMSubLong Long Subject
         *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        * -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
-        *      [score: 0.3664]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4994]
         * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
         *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Linus Torvalds <torvalds@linux-foundation.org>
+        *  1.0 T_XMDrugObfuBody_04 obfuscated drug references
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ***;Linus Torvalds <torvalds@linux-foundation.org>
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 358 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 3.9 (1.1%), b_tie_ro: 2.6 (0.7%), parse: 1.78 (0.5%),
-        extract_message_metadata: 18 (5.2%), get_uri_detail_list: 4.0 (1.1%),
-        tests_pri_-1000: 9 (2.5%), tests_pri_-950: 1.80 (0.5%), tests_pri_-900: 1.44
-        (0.4%), tests_pri_-400: 34 (9.4%), check_bayes: 32 (8.9%), b_tokenize: 14
-        (4.0%), b_tok_get_all: 9 (2.4%), b_comp_prob: 3.2 (0.9%), b_tok_touch_all:
-        3.1 (0.9%), b_finish: 0.76 (0.2%), tests_pri_0: 275 (77.0%),
-        check_dkim_signature: 0.69 (0.2%), check_dkim_adsp: 3.7 (1.0%),
-        tests_pri_500: 8 (2.1%), rewrite_mail: 0.00 (0.0%)
-Subject: [RFC PATCH 2/3] signal: Reduce copy_siginfo_to_user to just copy_to_user
+X-Spam-Timing: total 15022 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 2.7 (0.0%), b_tie_ro: 1.90 (0.0%), parse: 0.77 (0.0%),
+        extract_message_metadata: 9 (0.1%), get_uri_detail_list: 1.08 (0.0%),
+        tests_pri_-1000: 3.0 (0.0%), tests_pri_-950: 1.17 (0.0%), tests_pri_-900:
+        0.97 (0.0%), tests_pri_-400: 19 (0.1%), check_bayes: 18 (0.1%), b_tokenize: 6
+        (0.0%), b_tok_get_all: 6 (0.0%), b_comp_prob: 1.69 (0.0%), b_tok_touch_all:
+        2.3 (0.0%), b_finish: 0.56 (0.0%), tests_pri_0: 147 (1.0%),
+        check_dkim_signature: 0.46 (0.0%), check_dkim_adsp: 3.2 (0.0%),
+        tests_pri_500: 14836 (98.8%), poll_dns_idle: 14827 (98.7%), rewrite_mail:
+        0.00 (0.0%)
+Subject: [RFC PATCH 3/3] signal: Stop special casing TRAP_FIXME and FPE_FIXME in siginfo_layout
 X-Spam-Flag: No
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Now that every instance of struct siginfo is now initialized it is no
-longer necessary to copy struct siginfo piece by piece to userspace
-but instead the entire structure can be copied.
+After more experience with the cases where no one the si_code of 0 is
+used both as a signal specific si_code, and as SI_USER it appears that
+no one cares about the signal specific si_code case and the good
+solution is to just fix the architectures by using a different si_code.
 
-As well as making the code simpler and more efficient this means that
-copy_sinfo_to_user no longer cares which union member of struct
-siginfo is in use.
+In none of the conversations has anyone even suggested that anything
+depends on the signal specific redefinition of SI_USER.
 
-In practice this means that all 32bit architectures that define
-FPE_FIXME will handle properly send SI_USER when kill(SIGFPE) is sent.
-While still performing their historic architectural brokenness when 0
-is used a floating pointer signal.  This matches the current behavior
-of 64bit architectures that define FPE_FIXME who get lucky and an
-overloaded SI_USER has continuted to work through copy_siginfo_to_user
-because the 8 byte si_addr occupies the same bytes in struct siginfo
-as the 4 byte si_pid and the 4 byte si_uid.
+There are at least test cases that care when si_code as 0 does not work
+as si_user.
 
-Problematic architectures still need to fix their ABI so that signalfd
-and 32bit compat code will work properly.
+So make things simple and keep the generic code from introducing
+problems by removing the special casing of TRAP_FIXME and FPE_FIXME.
+This will ensure the generic case of sending a signal with kill will
+always set SI_USER and work.
+
+The architecture specific, and signal specific overloads that set
+si_code to 0 will now have problems with signalfd and the 32bit compat
+versions of siginfo copying.  At least until they are fixed.
 
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- kernel/signal.c | 84 ++-------------------------------------------------------
- 1 file changed, 2 insertions(+), 82 deletions(-)
+ kernel/signal.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
 diff --git a/kernel/signal.c b/kernel/signal.c
-index d4ccea599692..d56f4d496c89 100644
+index d56f4d496c89..fc82d2c0918f 100644
 --- a/kernel/signal.c
 +++ b/kernel/signal.c
-@@ -2850,89 +2850,9 @@ enum siginfo_layout siginfo_layout(int sig, int si_code)
- 
- int copy_siginfo_to_user(siginfo_t __user *to, const siginfo_t *from)
- {
--	int err;
--
--	if (!access_ok (VERIFY_WRITE, to, sizeof(siginfo_t)))
-+	if (copy_to_user(to, from , sizeof(struct siginfo)))
- 		return -EFAULT;
--	if (from->si_code < 0)
--		return __copy_to_user(to, from, sizeof(siginfo_t))
--			? -EFAULT : 0;
--	/*
--	 * If you change siginfo_t structure, please be sure
--	 * this code is fixed accordingly.
--	 * Please remember to update the signalfd_copyinfo() function
--	 * inside fs/signalfd.c too, in case siginfo_t changes.
--	 * It should never copy any pad contained in the structure
--	 * to avoid security leaks, but must copy the generic
--	 * 3 ints plus the relevant union member.
--	 */
--	err = __put_user(from->si_signo, &to->si_signo);
--	err |= __put_user(from->si_errno, &to->si_errno);
--	err |= __put_user(from->si_code, &to->si_code);
--	switch (siginfo_layout(from->si_signo, from->si_code)) {
--	case SIL_KILL:
--		err |= __put_user(from->si_pid, &to->si_pid);
--		err |= __put_user(from->si_uid, &to->si_uid);
--		break;
--	case SIL_TIMER:
--		/* Unreached SI_TIMER is negative */
--		break;
--	case SIL_POLL:
--		err |= __put_user(from->si_band, &to->si_band);
--		err |= __put_user(from->si_fd, &to->si_fd);
--		break;
--	case SIL_FAULT:
--		err |= __put_user(from->si_addr, &to->si_addr);
--#ifdef __ARCH_SI_TRAPNO
--		err |= __put_user(from->si_trapno, &to->si_trapno);
+@@ -2835,15 +2835,6 @@ enum siginfo_layout siginfo_layout(int sig, int si_code)
+ 			layout = SIL_POLL;
+ 		else if (si_code < 0)
+ 			layout = SIL_RT;
+-		/* Tests to support buggy kernel ABIs */
+-#ifdef TRAP_FIXME
+-		if ((sig == SIGTRAP) && (si_code == TRAP_FIXME))
+-			layout = SIL_FAULT;
 -#endif
--#ifdef __ia64__
--		err |= __put_user(from->si_imm, &to->si_imm);
--		err |= __put_user(from->si_flags, &to->si_flags);
--		err |= __put_user(from->si_isr, &to->si_isr);
+-#ifdef FPE_FIXME
+-		if ((sig == SIGFPE) && (si_code == FPE_FIXME))
+-			layout = SIL_FAULT;
 -#endif
--		/*
--		 * Other callers might not initialize the si_lsb field,
--		 * so check explicitly for the right codes here.
--		 */
--#ifdef BUS_MCEERR_AR
--		if (from->si_signo == SIGBUS && from->si_code == BUS_MCEERR_AR)
--			err |= __put_user(from->si_addr_lsb, &to->si_addr_lsb);
--#endif
--#ifdef BUS_MCEERR_AO
--		if (from->si_signo == SIGBUS && from->si_code == BUS_MCEERR_AO)
--			err |= __put_user(from->si_addr_lsb, &to->si_addr_lsb);
--#endif
--#ifdef SEGV_BNDERR
--		if (from->si_signo == SIGSEGV && from->si_code == SEGV_BNDERR) {
--			err |= __put_user(from->si_lower, &to->si_lower);
--			err |= __put_user(from->si_upper, &to->si_upper);
--		}
--#endif
--#ifdef SEGV_PKUERR
--		if (from->si_signo == SIGSEGV && from->si_code == SEGV_PKUERR)
--			err |= __put_user(from->si_pkey, &to->si_pkey);
--#endif
--		break;
--	case SIL_CHLD:
--		err |= __put_user(from->si_pid, &to->si_pid);
--		err |= __put_user(from->si_uid, &to->si_uid);
--		err |= __put_user(from->si_status, &to->si_status);
--		err |= __put_user(from->si_utime, &to->si_utime);
--		err |= __put_user(from->si_stime, &to->si_stime);
--		break;
--	case SIL_RT:
--		err |= __put_user(from->si_pid, &to->si_pid);
--		err |= __put_user(from->si_uid, &to->si_uid);
--		err |= __put_user(from->si_ptr, &to->si_ptr);
--		break;
--	case SIL_SYS:
--		err |= __put_user(from->si_call_addr, &to->si_call_addr);
--		err |= __put_user(from->si_syscall, &to->si_syscall);
--		err |= __put_user(from->si_arch, &to->si_arch);
--		break;
--	}
--	return err;
-+	return 0;
+ 	}
+ 	return layout;
  }
- 
- #ifdef CONFIG_COMPAT
 -- 
 2.14.1
