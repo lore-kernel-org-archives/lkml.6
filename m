@@ -1,59 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752352AbeDONJt (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 09:09:49 -0400
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:35854 "EHLO
-        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752138AbeDONJr (ORCPT
+        id S1752459AbeDONMe (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 09:12:34 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:50012 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751190AbeDONMc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 09:09:47 -0400
-X-Google-Smtp-Source: AIpwx49bwUmwaazEXLZc4Ma6ZJ7HkUFxWiY5Nc/OJWm3LahaSIidvaeC/xrw6uJGaLRQhG6iewc7zdD00Lx+/5Fnwks=
+        Sun, 15 Apr 2018 09:12:32 -0400
+Date: Sun, 15 Apr 2018 14:12:06 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Martin <Dave.Martin@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
+ kill() returns wrong values in si_pid and si_uid
+Message-ID: <20180415131206.GR16141@n2100.armlinux.org.uk>
+References: <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
+ <20180412172051.GK16141@n2100.armlinux.org.uk>
+ <CA+55aFwjZqd8J0=veki1g+quQg8amEG4NnMe-h7HFksn=F=x_Q@mail.gmail.com>
+ <20180413094211.GN16141@n2100.armlinux.org.uk>
+ <CA+55aFwoThxqUeAZSsMhf--ODyhGkmOENH5R6=4+CuaopFx9eA@mail.gmail.com>
+ <20180413170827.GB16308@e103592.cambridge.arm.com>
+ <20180413175407.GO16141@n2100.armlinux.org.uk>
+ <CA+55aFyya6B9_aq8ZSrZT-S-BGbpbDgFvDff5z8upDirpcoiHA@mail.gmail.com>
+ <20180413184522.GD16308@e103592.cambridge.arm.com>
+ <CA+55aFwMUQbALx60b3JDrTcWVSBS7imS+zCYEMz8NOs=6rE6+A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <c295bc5b-e67a-290c-3316-56a1cc001538@synopsys.com>
-References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
- <5181f7ffbb9d2889974c49d84e72042251adf8b6.1523266508.git.gustavo.pimentel@synopsys.com>
- <003001d3d128$39f3eaa0$addbbfe0$@gmail.com> <c295bc5b-e67a-290c-3316-56a1cc001538@synopsys.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Sun, 15 Apr 2018 10:09:46 -0300
-Message-ID: <CAOMZO5Acd-5ed_FivBf=GMmKLxipnossDtG4ptzq5-LzcNBhjA@mail.gmail.com>
-Subject: Re: [PATCH v2 8/9] PCI: dwc: Small computation improvement
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFwMUQbALx60b3JDrTcWVSBS7imS+zCYEMz8NOs=6rE6+A@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+On Fri, Apr 13, 2018 at 12:53:49PM -0700, Linus Torvalds wrote:
+> On Fri, Apr 13, 2018 at 11:45 AM, Dave Martin <Dave.Martin@arm.com> wrote:
+> >
+> > Most uses I've seen do nothing more than use the FPE_xyz value to
+> > format diagnostic messages while dying.  I struggled to find code that
+> > made a meaningful functional decision based on the value, though that's
+> > not proof...
+> 
+> Yeah. I've seen code that cares about SIGFPE deeply, but it's almost
+> invariably about some emulated environment (eg Java VM, or CPU
+> emulation).
+> 
+> And the siginfo data is basically never good enough for those
+> environments anyway on its own, so they will go and look at the actual
+> instruction that caused the fault and the register state instead,
+> because they need *all* the information.
+> 
+> The cases that use si_code are the ones that just trapped signals in
+> order to give a more helpful abort message.
+> 
+> So I could certainly imagine that si_code is actually used by somebody
+> who then decides to actuall act differently on it, but aside from
+> perhaps printing out a different message, it sounds far-fetched.
 
-On Wed, Apr 11, 2018 at 4:40 AM, Gustavo Pimentel
-<gustavo.pimentel@synopsys.com> wrote:
+Okay, in that case let's just use FPE_FLTINV.  That makes the patch
+easily back-portable for stable kernels.
 
-> Can be this one?
->
-> Probably any recent and decent compiler does this kind of substitution
-> in order to improve code performance. Nevertheless it's a coding good
-> practice whenever there is a division / multiplication by multiple of 2
-> to replace it by the equivalent operation in this case, the shift
-> rotation.
-
-Subject says that this patch provides a computation improvement, but
-as you said above the compiler
-will perform the shift, so it doesn't seem we will get any benefit.
-
-IMHO the original code has better readability as it makes easier to
-understand that pp->cfg0_size will get the half of
-resource_size(pp->cfg) size.
-
-I would say it is better to drop this patch from the series.
-
-Thanks
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
