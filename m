@@ -1,79 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752167AbeDOJlW (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 05:41:22 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:35523 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751912AbeDOJlU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 05:41:20 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w3F9f17T021587
-X-Nifty-SrcIP: [209.85.217.169]
-X-Google-Smtp-Source: AIpwx49OpxdQsVZ+5fwRJk1lwGKw+O8inLaJ+YoYT01BgeWEOjZoD8aMkeChgb8rx96eh3snx1AiDii62jYQt7Orb0E=
+        id S1752345AbeDOK3C (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 06:29:02 -0400
+Received: from smtp2-g21.free.fr ([212.27.42.2]:7728 "EHLO smtp2-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752244AbeDOK3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Apr 2018 06:29:00 -0400
+Date: Sun, 15 Apr 2018 12:28:51 +0200
+From: Alban <albeu@free.fr>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Aban Bedel <albeu@free.fr>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] phy: Add a driver for the ATH79 USB phy
+Message-ID: <20180415122851.1c168d73@tock>
+In-Reply-To: <1521931120-31118-1-git-send-email-albeu@free.fr>
+References: <1521931120-31118-1-git-send-email-albeu@free.fr>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jLt4xoxXTw83-npD4WmumPzSC9WnbOkkDoR=VYa5R4rYw@mail.gmail.com>
-References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
- <1523595999-27433-22-git-send-email-yamada.masahiro@socionext.com> <CAGXu5jLt4xoxXTw83-npD4WmumPzSC9WnbOkkDoR=VYa5R4rYw@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sun, 15 Apr 2018 18:40:20 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATM=7b_KReRZ8MqhiLPfP_itaxOW-17zHZpzSn_AOgThw@mail.gmail.com>
-Message-ID: <CAK7LNATM=7b_KReRZ8MqhiLPfP_itaxOW-17zHZpzSn_AOgThw@mail.gmail.com>
-Subject: Re: [PATCH 21/30] stack-protector: test compiler capability in
- Kconfig and drop AUTO mode
-To: Kees Cook <keescook@chromium.org>
-Cc: linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>, Emese Revfy <re.emese@gmail.com>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Cyqi4uvnLRhpCUMWi3OlXdM"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-14 1:41 GMT+09:00 Kees Cook <keescook@chromium.org>:
-> On Thu, Apr 12, 2018 at 10:06 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> +stackp-flags-$(CONFIG_CC_HAS_STACKPROTECTOR_NONE) := -fno-stack-protector
->> +stackp-flags-$(CONFIG_CC_STACKPROTECTOR)          := -fstack-protector
->> +stackp-flags-$(CONFIG_CC_STACKPROTECTOR_STRONG)   := -fstack-protector-strong
->> +
->> +KBUILD_CFLAGS += $(stackp-flags-y)
->
-> So, technically, this works just fine. I wonder if it has an overly
-> confusing result, in that the compiler under normal situations will
-> see:
->
-> gcc ... -fno-stack-protector -fstack-protector -fstack-protector-strong ...
+--Sig_/Cyqi4uvnLRhpCUMWi3OlXdM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, 24 Mar 2018 23:38:40 +0100
+Alban Bedel <albeu@free.fr> wrote:
 
-Kees, you are wrong.
+> The ATH79 USB phy is very simple, it only have a reset. On some SoC a
+> second reset is used to force the phy in suspend mode regardless of the
+> USB controller status.
+>=20
+> This driver is added to the qualcom directory as atheros is now part
+> of qualcom and newer SoC of this familly are marketed under the
+> qualcom name.
 
-Look at my code closely.
+Does this patch need any improvement or will it be applied?
 
-I used := operator instead of +=.
+Alban
 
-$(stackp-flags-y) contains only one flag at most.
+--Sig_/Cyqi4uvnLRhpCUMWi3OlXdM
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
+iQIcBAEBCAAGBQJa0ylkAAoJEHSUmkuduC28qJYQAKC8vQJLU/W2PMCQUZm2sv9D
+7R1iyR6ee6ulRddDwjclinCMiaXM4cItOXQ9d1EoEIaYpQLrgzBIQDhlHEmfNtEX
+rmLKVrNG5PsJjjOjBlAQpUtMZaBX6TCw981oFEB1EER8LnFnyeRHHNye84oFljq+
+zWq937YmlHoYJKECD6j9Skwjv9/CpY1EtV2lI4PXrEQTkk1wStJ7K/Cc3lTNgHfQ
+571hn5Gdb1tzhT/VPhTN8N02jO/DH5jrQCwqAr7sw3lM5HqNnTBBxGoSoktMJeQI
+LkgGemov0rpTwtyjtiOtd72+hLQCVtm0GLQ28iXQxZFSqAWVi1o0ad3pC5VGNyVg
+EBBLfH39oJhODIqsEwPj1bNV5EEb9AC9paVUnZpVkK2urlAS82SmfvDW1ADwyFo8
+85TTIPlht07h1zeM0eUiSnRKBgTCB1Lqgsh90i9qtKG/IoSr5KFGebkoDQpmK1Ak
+dVhJVL6pjxzDGfVD6p6CuA65yC+3H/9Ibw5g5Oz82YsxwE1mX16A1/nNKIpAKL8y
+Xxu/0lRbmDJByPNsV6A4LW4lQy0wfEYCmETPOPN57DF0Ob3Gy2TVnwWVRVer/gjG
+C8ALlEWfEPXQfB7iXxlRrMppGe29DcOrGVOLiZRMkP3dkIvQ6xSAiitkfgnMaOdO
+Ux6PhT5S9TayCBcBCuDf
+=0wLi
+-----END PGP SIGNATURE-----
 
-> How about something like this instead:
->
-> ifdef CONFIG_CC_STACKPROTECTOR_STRONG
-> KBUILD_CFLAGS += -fstack-protector-strong
-> else
-> ifdef CONFIG_CC_STACKPROTECTOR
-> KBUILD_CFLAGS += -fstack-protector
-> else
-> KBUILD_CFLAGS += -fno-stack-protector
-> endif
-> endif
->
-
-My code is much cleaner, and working fine.
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+--Sig_/Cyqi4uvnLRhpCUMWi3OlXdM--
