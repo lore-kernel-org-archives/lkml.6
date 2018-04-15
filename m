@@ -1,72 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752459AbeDONMe (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 09:12:34 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:50012 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751190AbeDONMc (ORCPT
+        id S1752567AbeDONMu (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 09:12:50 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:2295 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752498AbeDONMs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 09:12:32 -0400
-Date: Sun, 15 Apr 2018 14:12:06 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Martin <Dave.Martin@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: sparc/ppc/arm compat siginfo ABI regressions: sending SIGFPE via
- kill() returns wrong values in si_pid and si_uid
-Message-ID: <20180415131206.GR16141@n2100.armlinux.org.uk>
-References: <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
- <20180412172051.GK16141@n2100.armlinux.org.uk>
- <CA+55aFwjZqd8J0=veki1g+quQg8amEG4NnMe-h7HFksn=F=x_Q@mail.gmail.com>
- <20180413094211.GN16141@n2100.armlinux.org.uk>
- <CA+55aFwoThxqUeAZSsMhf--ODyhGkmOENH5R6=4+CuaopFx9eA@mail.gmail.com>
- <20180413170827.GB16308@e103592.cambridge.arm.com>
- <20180413175407.GO16141@n2100.armlinux.org.uk>
- <CA+55aFyya6B9_aq8ZSrZT-S-BGbpbDgFvDff5z8upDirpcoiHA@mail.gmail.com>
- <20180413184522.GD16308@e103592.cambridge.arm.com>
- <CA+55aFwMUQbALx60b3JDrTcWVSBS7imS+zCYEMz8NOs=6rE6+A@mail.gmail.com>
+        Sun, 15 Apr 2018 09:12:48 -0400
+X-IronPort-AV: E=Sophos;i="5.48,454,1517875200";
+   d="scan'208";a="339808256"
+From: "Raslan, KarimAllah" <karahmed@amazon.de>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+CC: "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>
+Subject: Re: [PATCH] KVM: Switch 'requests' to be 64-bit (explicitly)
+Thread-Topic: [PATCH] KVM: Switch 'requests' to be 64-bit (explicitly)
+Thread-Index: AQHT1D++Gdqnz/tFy0K4EdrtXKZQKaQBzl8A
+Date: Sun, 15 Apr 2018 13:12:42 +0000
+Message-ID: <1523797962.32594.75.camel@amazon.de>
+References: <1523744804-8220-1-git-send-email-karahmed@amazon.de>
+In-Reply-To: <1523744804-8220-1-git-send-email-karahmed@amazon.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.164.76]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8B7BA61B78C64546807A759978070361@amazon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFwMUQbALx60b3JDrTcWVSBS7imS+zCYEMz8NOs=6rE6+A@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3FDCxeF006760
 
-On Fri, Apr 13, 2018 at 12:53:49PM -0700, Linus Torvalds wrote:
-> On Fri, Apr 13, 2018 at 11:45 AM, Dave Martin <Dave.Martin@arm.com> wrote:
-> >
-> > Most uses I've seen do nothing more than use the FPE_xyz value to
-> > format diagnostic messages while dying.  I struggled to find code that
-> > made a meaningful functional decision based on the value, though that's
-> > not proof...
+On Sun, 2018-04-15 at 00:26 +0200, KarimAllah Ahmed wrote:
+> Switch 'requests' to be explicitly 64-bit and update BUILD_BUG_ON check to
+> use the size of "requests" instead of the hard-coded '32'.
 > 
-> Yeah. I've seen code that cares about SIGFPE deeply, but it's almost
-> invariably about some emulated environment (eg Java VM, or CPU
-> emulation).
+> That gives us a bit more room again for arch-specific requests as we
+> already ran out of space for x86 due to the hard-coded check.
 > 
-> And the siginfo data is basically never good enough for those
-> environments anyway on its own, so they will go and look at the actual
-> instruction that caused the fault and the register state instead,
-> because they need *all* the information.
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: kvm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+> ---
+>  include/linux/kvm_host.h | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> The cases that use si_code are the ones that just trapped signals in
-> order to give a more helpful abort message.
-> 
-> So I could certainly imagine that si_code is actually used by somebody
-> who then decides to actuall act differently on it, but aside from
-> perhaps printing out a different message, it sounds far-fetched.
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 6930c63..fe4f46b 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -129,7 +129,7 @@ static inline bool is_error_page(struct page *page)
+>  #define KVM_REQUEST_ARCH_BASE     8
+>  
+>  #define KVM_ARCH_REQ_FLAGS(nr, flags) ({ \
+> -	BUILD_BUG_ON((unsigned)(nr) >= 32 - KVM_REQUEST_ARCH_BASE); \
+> +	BUILD_BUG_ON((unsigned)(nr) >= (sizeof(((struct kvm_vcpu *)0)->requests) * 8) - KVM_REQUEST_ARCH_BASE); \
 
-Okay, in that case let's just use FPE_FLTINV.  That makes the patch
-easily back-portable for stable kernels.
+While looking at a completely unrelated code I realize that there 
+is FIELD_SIZEOF that is doing exactly what I did. Will use it in v2.
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+>  	(unsigned)(((nr) + KVM_REQUEST_ARCH_BASE) | (flags)); \
+>  })
+>  #define KVM_ARCH_REQ(nr)           KVM_ARCH_REQ_FLAGS(nr, 0)
+> @@ -223,7 +223,7 @@ struct kvm_vcpu {
+>  	int vcpu_id;
+>  	int srcu_idx;
+>  	int mode;
+> -	unsigned long requests;
+> +	u64 requests;
+>  	unsigned long guest_debug;
+>  
+>  	int pre_pcpu;
+> @@ -1122,7 +1122,7 @@ static inline void kvm_make_request(int req, struct kvm_vcpu *vcpu)
+>  	 * caller.  Paired with the smp_mb__after_atomic in kvm_check_request.
+>  	 */
+>  	smp_wmb();
+> -	set_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
+> +	set_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
+>  }
+>  
+>  static inline bool kvm_request_pending(struct kvm_vcpu *vcpu)
+> @@ -1132,12 +1132,12 @@ static inline bool kvm_request_pending(struct kvm_vcpu *vcpu)
+>  
+>  static inline bool kvm_test_request(int req, struct kvm_vcpu *vcpu)
+>  {
+> -	return test_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
+> +	return test_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
+>  }
+>  
+>  static inline void kvm_clear_request(int req, struct kvm_vcpu *vcpu)
+>  {
+> -	clear_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
+> +	clear_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
+>  }
+>  
+>  static inline bool kvm_check_request(int req, struct kvm_vcpu *vcpu)
+Amazon Development Center Germany GmbH
+Berlin - Dresden - Aachen
+main office: Krausenstr. 38, 10117 Berlin
+Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+Ust-ID: DE289237879
+Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
