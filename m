@@ -1,53 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752777AbeDOSMd (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 14:12:33 -0400
-Received: from mail-io0-f173.google.com ([209.85.223.173]:38822 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752479AbeDOSMb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 14:12:31 -0400
-X-Google-Smtp-Source: AIpwx4/0hPySpPHGT+sjw1ps8J+MK21jMT2U44Ccw9SrvyOCgsrc9YjV6BLhajeY3rbf85Oq6PLAdztqVTlStL66mvQ=
+        id S1752821AbeDOSN7 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 14:13:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48492 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752524AbeDOSN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Apr 2018 14:13:58 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33BB32176F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Sun, 15 Apr 2018 19:13:53 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Stefan Popa <stefan.popa@analog.com>
+Cc: <Michael.Hennerich@analog.com>, <lars@metafoo.de>, <knaack.h@gmx.de>,
+        <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/7] iio:dac:ad5686: Change license description
+Message-ID: <20180415191353.49caf603@archlinux>
+In-Reply-To: <1523447532-13170-1-git-send-email-stefan.popa@analog.com>
+References: <1523375929-29830-1-git-send-email-stefan.popa@analog.com>
+        <1523447532-13170-1-git-send-email-stefan.popa@analog.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180410153718.GS6014@localhost>
-References: <20180311150151.GB15443@localhost> <2863317.1ZoR41yQkl@bear>
- <CAJz5OpdV1=L3fsQESZusAp8Cir9wE-VqPXqBa=zOGjBcPE78DA@mail.gmail.com> <20180410153718.GS6014@localhost>
-From: Frank Mori Hess <fmh6jj@gmail.com>
-Date: Sun, 15 Apr 2018 14:12:30 -0400
-Message-ID: <CAJz5Opdx26WZ-M8q2UayWz3o6SmR6VJMqUetQsX8k7YotK5XGg@mail.gmail.com>
-Subject: Re: [PATCH v4] dmaengine: pl330: flush before wait, and add dev burst support.
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 10, 2018 at 11:37 AM, Vinod Koul <vinod.koul@intel.com> wrote:
->>
->> Hi, what is the state of this patch?  I just noticed in patchwork it
->> is now listed as "Not applicable"?  The original broken-by-wordwrap
->> patch is listed as "Accepted"?
->>
->> https://patchwork.kernel.org/project/linux-dmaengine/list/?submitter=178687&state=*
->
-> That is not correct state, my script would update as not applicable when it
-> doesn't find patch in my queue..
->
->> I found it has a bug handling dregs btw, I'll include a fix for that
->> in the next version or as a follow-on patch as appropriate.
->
-> Looks like I have missed this one somehow, so please update the patch with
-> fix and I shall look into it.
->
+On Wed, 11 Apr 2018 14:52:12 +0300
+Stefan Popa <stefan.popa@analog.com> wrote:
 
-Ok, I tested the v4 patch and it turns out it was a false alarm about
-the bug in handling dregs.  It works fine.  I've registered in the
-dmaengine patchwork, and changed the state of the v4 patch back to
-"new".
+> Add GPLv2+ SPDX identifier and remove license notice to keep the whole
+> purpose of using an SPDx id.
+> 
+> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+Applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to play with it.
 
+Thanks,
 
+Jonathan
 
--- 
-Frank
+> ---
+> Changes in v3:
+> 	- Created a new patch to use the SPDx identifier
+> 
+>  drivers/iio/dac/ad5686.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/dac/ad5686.c b/drivers/iio/dac/ad5686.c
+> index f7f975c..e328513 100644
+> --- a/drivers/iio/dac/ad5686.c
+> +++ b/drivers/iio/dac/ad5686.c
+> @@ -1,9 +1,8 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+>  /*
+>   * AD5686R, AD5685R, AD5684R Digital to analog converters  driver
+>   *
+>   * Copyright 2011 Analog Devices Inc.
+> - *
+> - * Licensed under the GPL-2.
+>   */
+>  
+>  #include <linux/interrupt.h>
