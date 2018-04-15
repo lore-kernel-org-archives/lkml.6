@@ -1,111 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751890AbeDOHlK (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 03:41:10 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:39017 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750922AbeDOHlI (ORCPT
+        id S1751948AbeDOHmh (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 03:42:37 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33285 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751043AbeDOHmg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 03:41:08 -0400
-X-Google-Smtp-Source: AIpwx487WDo8VvDOirJy3W0JTJ6CJdBn3A4zdtZJKwChjMQAELDpsV6GwSZoZRM+mQS2yK932pOLcOn2r0PvII33/FM=
-MIME-Version: 1.0
-In-Reply-To: <1523595999-27433-21-git-send-email-yamada.masahiro@socionext.com>
-References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com> <1523595999-27433-21-git-send-email-yamada.masahiro@socionext.com>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Sun, 15 Apr 2018 09:41:07 +0200
-Message-ID: <CAFkk2KRTan6BLJEtLaa+6eFhTEQOJqDkQaKpKtVwd8iCvLuFMw@mail.gmail.com>
-Subject: Re: [PATCH 20/30] kconfig: add basic helper macros to scripts/Kconfig.include
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Nicholas Piggin <npiggin@gmail.com>,
-        Kees Cook <keescook@chromium.org>, Emese Revfy <re.emese@gmail.com>,
-        X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 15 Apr 2018 03:42:36 -0400
+X-Google-Smtp-Source: AIpwx49JWmHn4VHDbZVIujOvyxPbiheEjiYQue3qInRm8Cbf5o4E6fzUsQ/O2x22zwxm6R4cQB0SNg==
+From: Omar Sandoval <osandov@osandov.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, kernel-team@fb.com
+Subject: [PATCH] lockdep: fix fs_reclaim annotation
+Date: Sun, 15 Apr 2018 00:42:25 -0700
+Message-Id: <9f8aa70652a98e98d7c4de0fc96a4addcee13efe.1523778026.git.osandov@fb.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 7:06 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> Kconfig got text processing tools like we see in Make.  Add Kconfig
-> helper macros to scripts/Kconfig.include like we collect Makefile
-> macros in scripts/Kbuild.include.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
-> ---
->
-> Changes in v3:
->   - Move helpers to scripts/Kconfig.include
->
-> Changes in v2: None
->
->  Kconfig                 |  2 ++
->  MAINTAINERS             |  1 +
->  scripts/Kconfig.include | 17 +++++++++++++++++
->  3 files changed, 20 insertions(+)
->  create mode 100644 scripts/Kconfig.include
->
-> diff --git a/Kconfig b/Kconfig
-> index 5b55d87..a90d9f9 100644
-> --- a/Kconfig
-> +++ b/Kconfig
-> @@ -7,4 +7,6 @@ mainmenu "Linux/$(ARCH) $(KERNELVERSION) Kernel Configuration"
->
->  comment "Compiler: $(CC_VERSION_TEXT)"
->
-> +source "scripts/Kconfig.include"
-> +
->  source "arch/$(SRCARCH)/Kconfig"
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b9dab38..d962f4a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7624,6 +7624,7 @@ L:        linux-kbuild@vger.kernel.org
->  S:     Maintained
->  F:     Documentation/kbuild/kconfig*
->  F:     scripts/kconfig/
-> +F:     scripts/Kconfig.include
->
->  KDUMP
->  M:     Dave Young <dyoung@redhat.com>
-> diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
-> new file mode 100644
-> index 0000000..cac7a81
-> --- /dev/null
-> +++ b/scripts/Kconfig.include
-> @@ -0,0 +1,17 @@
-> +# Kconfig helper macros
-> +
-> +# Convenient variables
-> +comma   := ,
-> +quote   := "
-> +squote  := '
-> +empty   :=
-> +space   := $(empty) $(empty)
-> +
-> +# y if the command exits with 0, n otherwise
-> +success = $(shell ($(1)) >/dev/null 2>&1 && echo y || echo n)
+From: Omar Sandoval <osandov@fb.com>
 
-'{ $(1); }' might work here, to avoid the extra subshell.
+While revisiting my Btrfs swapfile series [1], I introduced a situation
+in which reclaim would lock i_rwsem, and even though the swapon() path
+clearly made GFP_KERNEL allocations while holding i_rwsem, I got no
+complaints from lockdep. It turns out that the rework of the fs_reclaim
+annotation was broken: if the current task has PF_MEMALLOC set, we don't
+acquire the dummy fs_reclaim lock, but when reclaiming we always check
+this _after_ we've just set the PF_MEMALLOC flag. In most cases, we can
+fix this by moving the fs_reclaim_{acquire,release}() outside of the
+memalloc_noreclaim_{save,restore}(), althought kswapd is slightly
+different. After applying this, I got the expected lockdep splats.
 
-Shaves 20-30% off the runtime here in a silly
-system("(true) >/dev/null 2>&1 && echo y || echo n") vs.
-system("{ true; } >/dev/null 2>&1 && echo y || echo n")
-comparison.
+1: https://lwn.net/Articles/625412/
+Fixes: d92a8cfcb37e ("locking/lockdep: Rework FS_RECLAIM annotation")
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+---
+ include/linux/sched/mm.h |  4 ++++
+ mm/page_alloc.c          | 20 +++++++++++++++-----
+ mm/vmscan.c              | 20 +++++++++++++-------
+ 3 files changed, 32 insertions(+), 12 deletions(-)
 
-> +
-> +# y if the given compiler flag is supported, n otherwise
-> +cc-option = $(success $(CC) -Werror $(1) -c -x c /dev/null -o /dev/null)
-> +
-> +# y if the given linker flag is supported, n otherwise
-> +ld-option = $(success $(LD) -v $(1))
-> --
-> 2.7.4
->
-
-Cheers,
-Ulf
+diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+index 2c570cd934af..93294695688a 100644
+--- a/include/linux/sched/mm.h
++++ b/include/linux/sched/mm.h
+@@ -163,9 +163,13 @@ static inline gfp_t current_gfp_context(gfp_t flags)
+ }
+ 
+ #ifdef CONFIG_LOCKDEP
++extern void __fs_reclaim_acquire(void);
++extern void __fs_reclaim_release(void);
+ extern void fs_reclaim_acquire(gfp_t gfp_mask);
+ extern void fs_reclaim_release(gfp_t gfp_mask);
+ #else
++static inline void __fs_reclaim_acquire(void) { }
++static inline void __fs_reclaim_release(void) { }
+ static inline void fs_reclaim_acquire(gfp_t gfp_mask) { }
+ static inline void fs_reclaim_release(gfp_t gfp_mask) { }
+ #endif
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 905db9d7962f..ddcbcf8dae05 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3708,7 +3708,7 @@ should_compact_retry(struct alloc_context *ac, unsigned int order, int alloc_fla
+ #endif /* CONFIG_COMPACTION */
+ 
+ #ifdef CONFIG_LOCKDEP
+-struct lockdep_map __fs_reclaim_map =
++static struct lockdep_map __fs_reclaim_map =
+ 	STATIC_LOCKDEP_MAP_INIT("fs_reclaim", &__fs_reclaim_map);
+ 
+ static bool __need_fs_reclaim(gfp_t gfp_mask)
+@@ -3733,17 +3733,27 @@ static bool __need_fs_reclaim(gfp_t gfp_mask)
+ 	return true;
+ }
+ 
++void __fs_reclaim_acquire(void)
++{
++	lock_map_acquire(&__fs_reclaim_map);
++}
++
++void __fs_reclaim_release(void)
++{
++	lock_map_release(&__fs_reclaim_map);
++}
++
+ void fs_reclaim_acquire(gfp_t gfp_mask)
+ {
+ 	if (__need_fs_reclaim(gfp_mask))
+-		lock_map_acquire(&__fs_reclaim_map);
++		__fs_reclaim_acquire();
+ }
+ EXPORT_SYMBOL_GPL(fs_reclaim_acquire);
+ 
+ void fs_reclaim_release(gfp_t gfp_mask)
+ {
+ 	if (__need_fs_reclaim(gfp_mask))
+-		lock_map_release(&__fs_reclaim_map);
++		__fs_reclaim_release();
+ }
+ EXPORT_SYMBOL_GPL(fs_reclaim_release);
+ #endif
+@@ -3761,8 +3771,8 @@ __perform_reclaim(gfp_t gfp_mask, unsigned int order,
+ 
+ 	/* We now go into synchronous reclaim */
+ 	cpuset_memory_pressure_bump();
+-	noreclaim_flag = memalloc_noreclaim_save();
+ 	fs_reclaim_acquire(gfp_mask);
++	noreclaim_flag = memalloc_noreclaim_save();
+ 	reclaim_state.reclaimed_slab = 0;
+ 	current->reclaim_state = &reclaim_state;
+ 
+@@ -3770,8 +3780,8 @@ __perform_reclaim(gfp_t gfp_mask, unsigned int order,
+ 								ac->nodemask);
+ 
+ 	current->reclaim_state = NULL;
+-	fs_reclaim_release(gfp_mask);
+ 	memalloc_noreclaim_restore(noreclaim_flag);
++	fs_reclaim_release(gfp_mask);
+ 
+ 	cond_resched();
+ 
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 8b920ce3ae02..68ed72b52c59 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3299,11 +3299,15 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
+ 		.may_unmap = 1,
+ 		.may_swap = 1,
+ 	};
++
++	__fs_reclaim_acquire();
++
+ 	count_vm_event(PAGEOUTRUN);
+ 
+ 	do {
+ 		unsigned long nr_reclaimed = sc.nr_reclaimed;
+ 		bool raise_priority = true;
++		bool ret;
+ 
+ 		sc.reclaim_idx = classzone_idx;
+ 
+@@ -3376,7 +3380,10 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
+ 			wake_up_all(&pgdat->pfmemalloc_wait);
+ 
+ 		/* Check if kswapd should be suspending */
+-		if (try_to_freeze() || kthread_should_stop())
++		__fs_reclaim_release();
++		ret = try_to_freeze();
++		__fs_reclaim_acquire();
++		if (ret || kthread_should_stop())
+ 			break;
+ 
+ 		/*
+@@ -3393,6 +3400,7 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
+ 
+ out:
+ 	snapshot_refaults(NULL, pgdat);
++	__fs_reclaim_release();
+ 	/*
+ 	 * Return the order kswapd stopped reclaiming at as
+ 	 * prepare_kswapd_sleep() takes it into account. If another caller
+@@ -3581,9 +3589,7 @@ static int kswapd(void *p)
+ 		 */
+ 		trace_mm_vmscan_kswapd_wake(pgdat->node_id, classzone_idx,
+ 						alloc_order);
+-		fs_reclaim_acquire(GFP_KERNEL);
+ 		reclaim_order = balance_pgdat(pgdat, alloc_order, classzone_idx);
+-		fs_reclaim_release(GFP_KERNEL);
+ 		if (reclaim_order < alloc_order)
+ 			goto kswapd_try_sleep;
+ 	}
+@@ -3665,16 +3671,16 @@ unsigned long shrink_all_memory(unsigned long nr_to_reclaim)
+ 	unsigned long nr_reclaimed;
+ 	unsigned int noreclaim_flag;
+ 
+-	noreclaim_flag = memalloc_noreclaim_save();
+ 	fs_reclaim_acquire(sc.gfp_mask);
++	noreclaim_flag = memalloc_noreclaim_save();
+ 	reclaim_state.reclaimed_slab = 0;
+ 	p->reclaim_state = &reclaim_state;
+ 
+ 	nr_reclaimed = do_try_to_free_pages(zonelist, &sc);
+ 
+ 	p->reclaim_state = NULL;
+-	fs_reclaim_release(sc.gfp_mask);
+ 	memalloc_noreclaim_restore(noreclaim_flag);
++	fs_reclaim_release(sc.gfp_mask);
+ 
+ 	return nr_reclaimed;
+ }
+@@ -3851,6 +3857,7 @@ static int __node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned in
+ 	};
+ 
+ 	cond_resched();
++	fs_reclaim_acquire(sc.gfp_mask);
+ 	/*
+ 	 * We need to be able to allocate from the reserves for RECLAIM_UNMAP
+ 	 * and we also need to be able to write out pages for RECLAIM_WRITE
+@@ -3858,7 +3865,6 @@ static int __node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned in
+ 	 */
+ 	noreclaim_flag = memalloc_noreclaim_save();
+ 	p->flags |= PF_SWAPWRITE;
+-	fs_reclaim_acquire(sc.gfp_mask);
+ 	reclaim_state.reclaimed_slab = 0;
+ 	p->reclaim_state = &reclaim_state;
+ 
+@@ -3873,9 +3879,9 @@ static int __node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned in
+ 	}
+ 
+ 	p->reclaim_state = NULL;
+-	fs_reclaim_release(gfp_mask);
+ 	current->flags &= ~PF_SWAPWRITE;
+ 	memalloc_noreclaim_restore(noreclaim_flag);
++	fs_reclaim_release(sc.gfp_mask);
+ 	return sc.nr_reclaimed >= nr_pages;
+ }
+ 
+-- 
+2.17.0
