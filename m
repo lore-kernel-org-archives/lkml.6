@@ -1,84 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752902AbeDOUtR (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 16:49:17 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:40758 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752464AbeDOUtQ (ORCPT
+        id S1752934AbeDOU6L (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 16:58:11 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52911 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752604AbeDOU6J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 16:49:16 -0400
-X-Google-Smtp-Source: AIpwx4+6nbJKSnD+R4GMgUsVRNAAB4gUjY7lifmSvRhNqb4YxjhO+d7E1KOUaL170uSP6xJfE83X1Q==
-Date: Sun, 15 Apr 2018 23:49:13 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: adobriyan@gmail.com, mhocko@kernel.org, willy@infradead.org,
-        mguzik@redhat.com, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v4 PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-Message-ID: <20180415204913.GC19578@uranus.lan>
-References: <1523730291-109696-1-git-send-email-yang.shi@linux.alibaba.com>
+        Sun, 15 Apr 2018 16:58:09 -0400
+Date: Sun, 15 Apr 2018 22:58:07 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Kees Cook <keescook@chromium.org>
+Cc: Daniel Micay <danielmicay@gmail.com>, Tony Lindgren <tony@atomide.com>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        pali.rohar@gmail.com, sre@kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, Kevin Hilman <khilman@kernel.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, ivo.g.dimitrov.75@gmail.com,
+        Patrik Bachan <patrikbachan@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        =?utf-8?B?TWlja3Vsw6HFoQ==?= Qwertz <abcloriens@gmail.com>,
+        Clayton Craft <clayton@craftyguy.net>,
+        Martijn Braam <martijn@brixit.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Jinbum Park <jinb.park7@gmail.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: Re: [regression v4.17-rc0] Re: FORTIFY_SOURCE breaks ARM compilation
+ in -next -- was Re: ARM compile failure in Re: linux-next: Tree for Apr 4
+Message-ID: <20180415205807.GA4182@amd>
+References: <20180404165559.4cd0c12c@canb.auug.org.au>
+ <20180404074856.GA9342@amd>
+ <20180404175852.GI5700@atomide.com>
+ <20180404184622.GA8608@amd>
+ <20180404195951.GJ5700@atomide.com>
+ <20180404201837.GA9710@amd>
+ <20180415173908.GA2024@amd>
+ <CAGXu5jK9f62n95sOdJViXHXzQFyCdcsWt9HPvcdSFRp9Qqg0bg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="l76fUT7nc3MelDdI"
 Content-Disposition: inline
-In-Reply-To: <1523730291-109696-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAGXu5jK9f62n95sOdJViXHXzQFyCdcsWt9HPvcdSFRp9Qqg0bg@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 15, 2018 at 02:24:51AM +0800, Yang Shi wrote:
-> mmap_sem is on the hot path of kernel, and it very contended, but it is
-> abused too. It is used to protect arg_start|end and evn_start|end when
-> reading /proc/$PID/cmdline and /proc/$PID/environ, but it doesn't make
-> sense since those proc files just expect to read 4 values atomically and
-> not related to VM, they could be set to arbitrary values by C/R.
-> 
-> And, the mmap_sem contention may cause unexpected issue like below:
-> 
-> INFO: task ps:14018 blocked for more than 120 seconds.
->        Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> message.
->  ps              D    0 14018      1 0x00000004
->   ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->   ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->   00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->  Call Trace:
->   [<ffffffff817154d0>] ? __schedule+0x250/0x730
->   [<ffffffff817159e6>] schedule+0x36/0x80
->   [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->   [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->   [<ffffffff81717db0>] down_read+0x20/0x40
->   [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->   [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
->   [<ffffffff81241d87>] __vfs_read+0x37/0x150
->   [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
->   [<ffffffff81242266>] vfs_read+0x96/0x130
->   [<ffffffff812437b5>] SyS_read+0x55/0xc0
->   [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
-> 
-> Both Alexey Dobriyan and Michal Hocko suggested to use dedicated lock
-> for them to mitigate the abuse of mmap_sem.
-> 
-> So, introduce a new spinlock in mm_struct to protect the concurrent
-> access to arg_start|end, env_start|end and others, as well as replace
-> write map_sem to read to protect the race condition between prctl and
-> sys_brk which might break check_data_rlimit(), and makes prctl more
-> friendly to other VM operations.
-> 
-> This patch just eliminates the abuse of mmap_sem, but it can't resolve the
-> above hung task warning completely since the later access_remote_vm() call
-> needs acquire mmap_sem. The mmap_sem scalability issue will be solved in the
-> future.
-> 
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> Cc: Alexey Dobriyan <adobriyan@gmail.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Mateusz Guzik <mguzik@redhat.com>
-> Cc: Cyrill Gorcunov <gorcunov@gmail.com>
-> ---
 
-Looks ok to me, thanks!
-Reviewed-by: Cyrill Gorcunov <gorcunov@openvz.org>
+--l76fUT7nc3MelDdI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun 2018-04-15 11:00:06, Kees Cook wrote:
+> On Sun, Apr 15, 2018 at 10:39 AM, Pavel Machek <pavel@ucw.cz> wrote:
+> > Hi!
+> >
+> >> Thanks.
+> >>
+> >> Ok, let me try to bisect it. Compile-problem should be easy...
+> >>
+> >> Hmm. And as it is compile-problem in single file, it should even be
+> >> reasonably fast. I did not realize how easy it would be:
+> >>
+> >> #!/bin/bash
+> >> set -e
+> >> cp config.ok .config
+> >> yes '' | ARCH=3Darm make lib/string.o
+> >>
+> >> And the winner is:
+> >>
+> >> ee333554fed55555a986a90bb097ac7f9d6f05bf is the first bad commit
+> >> commit ee333554fed55555a986a90bb097ac7f9d6f05bf
+> >> Author: Jinbum Park <jinb.park7@gmail.com>
+> >> Date:   Tue Mar 6 01:39:24 2018 +0100
+> > ...
+> >
+> >>     Acked-by: Kees Cook <keescook@chromium.org>
+> >>     Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
+> >>     Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+> >
+> > So I bisect a problem in -next, and patch is merged to Linus,
+> > _anyway_, breaking compilation there? Neither Jinbum nor Russell even
+> > bother to comment.
+>=20
+> Hi! Sorry I lost this email in my inbox. It seems this is specific to
+> a particular subset of arm architectures? (My local builds of arm all
+> succeed, for example. Can you send your failing config?) I'll take a
+> closer look on Monday if Daniel doesn't beat me to it.
+
+I believe it depends on gcc version really. I should get some sleep
+now, but details should be in the corresponding thread on lkml.
+
+I'll send you my .config privately.
+								Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--l76fUT7nc3MelDdI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrTvN8ACgkQMOfwapXb+vLhTgCcDvOONplDwZ2uDNCkiG3G/Bdl
+r+IAnRjHLy9V9BdOAYE8Gwk4ejKlbl0k
+=MBNZ
+-----END PGP SIGNATURE-----
+
+--l76fUT7nc3MelDdI--
