@@ -1,66 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752821AbeDOSN7 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 14:13:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48492 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752524AbeDOSN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 14:13:58 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33BB32176F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
-Date: Sun, 15 Apr 2018 19:13:53 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Stefan Popa <stefan.popa@analog.com>
-Cc: <Michael.Hennerich@analog.com>, <lars@metafoo.de>, <knaack.h@gmx.de>,
-        <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/7] iio:dac:ad5686: Change license description
-Message-ID: <20180415191353.49caf603@archlinux>
-In-Reply-To: <1523447532-13170-1-git-send-email-stefan.popa@analog.com>
-References: <1523375929-29830-1-git-send-email-stefan.popa@analog.com>
-        <1523447532-13170-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752835AbeDOSQK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 14:16:10 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:40463 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752524AbeDOSQG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Apr 2018 14:16:06 -0400
+X-Google-Smtp-Source: AIpwx493fQgTAcdxsFjfY1SUURlhgVtgGzbttLMYXRuhcd+5bgrDV3Kn8ZVSvzx50eQ+egzOleT6qOu31+S+j33uIVw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <87604sa2fu.fsf_-_@xmission.com>
+References: <CA+55aFxdg2bYHtbKXb4mT5UuP2GH_qjkc=WeZY-RYHWZFQ2Gng@mail.gmail.com>
+ <20180412172051.GK16141@n2100.armlinux.org.uk> <CA+55aFwjZqd8J0=veki1g+quQg8amEG4NnMe-h7HFksn=F=x_Q@mail.gmail.com>
+ <20180413094211.GN16141@n2100.armlinux.org.uk> <CA+55aFwoThxqUeAZSsMhf--ODyhGkmOENH5R6=4+CuaopFx9eA@mail.gmail.com>
+ <20180413170827.GB16308@e103592.cambridge.arm.com> <20180413175407.GO16141@n2100.armlinux.org.uk>
+ <CA+55aFyya6B9_aq8ZSrZT-S-BGbpbDgFvDff5z8upDirpcoiHA@mail.gmail.com>
+ <20180413184522.GD16308@e103592.cambridge.arm.com> <CA+55aFwMUQbALx60b3JDrTcWVSBS7imS+zCYEMz8NOs=6rE6+A@mail.gmail.com>
+ <20180415131206.GR16141@n2100.armlinux.org.uk> <87604sa2fu.fsf_-_@xmission.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 15 Apr 2018 11:16:04 -0700
+X-Google-Sender-Auth: 7HsqwfDl70fKELUEI297hYcpg-I
+Message-ID: <CA+55aFw1gmfFH1o+oWMo4TnU5hEczAOiY1g=eMxqYZmy9JqDYw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3] Dealing with the aliases of SI_USER
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Dave Martin <Dave.Martin@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Apr 2018 14:52:12 +0300
-Stefan Popa <stefan.popa@analog.com> wrote:
+(
 
-> Add GPLv2+ SPDX identifier and remove license notice to keep the whole
-> purpose of using an SPDx id.
-> 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-Applied to the togreg branch of iio.git and pushed out as testing for
-the autobuilders to play with it.
+On Sun, Apr 15, 2018 at 8:56 AM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+>
+> Would you consider the patchset below for -rc2?
 
-Thanks,
+Ugh.
 
-Jonathan
+I have an irrational dislike of "clear_siginfo()". It's a nasty broken
+interface, which just mis-spells "memset()", and makes it non-obvious
+that you could clear it other ways too (eg "kzalloc()" or whatever).
 
-> ---
-> Changes in v3:
-> 	- Created a new patch to use the SPDx identifier
-> 
->  drivers/iio/dac/ad5686.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/dac/ad5686.c b/drivers/iio/dac/ad5686.c
-> index f7f975c..e328513 100644
-> --- a/drivers/iio/dac/ad5686.c
-> +++ b/drivers/iio/dac/ad5686.c
-> @@ -1,9 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   * AD5686R, AD5685R, AD5684R Digital to analog converters  driver
->   *
->   * Copyright 2011 Analog Devices Inc.
-> - *
-> - * Licensed under the GPL-2.
->   */
->  
->  #include <linux/interrupt.h>
+And this series brings in a lot of new users.
+
+Honestly, both "clear_siginfo()" and "copy_siginfo()" are crazy
+interfaces. They may have made sense when converting code, but not so
+much now.
+
+If we want to have a function that initializes a siginfo, I think it
+should _actually_ initialize it, and at least take the two fields that
+a siginfo has to have to be valid: si_signo and si_code.
+
+So I'd rather see a patch that does something like this:
+
+  -             clear_siginfo(info);
+  -             info->si_signo = sig;
+  -             info->si_errno = 0;
+  -             info->si_code = SI_USER;
+  -             info->si_pid = 0;
+  -             info->si_uid = 0;
+  +             init_siginfo(info, sig, SI_USER);
+
+which at least makes that function be *worth* something, not just a
+bad spelling of memset. It's not just the removal of pointless "set to
+zero", it's the whole concept of "this function actually makes a valid
+siginfo", which is lacking in the existing function.
+
+(Yeah, yeah, si_errno is "generic" too and always part of a siginfo,
+but nobody cares. It's pretty much always set to zero, it would be
+stupid to add that interface to the "init_siginfo()" function. So just
+clearing it is fine, the one or two places that want to set it to some
+silly value can do it themselves).
+
+Then your series would incidentally also:
+
+ (a) make for fewer lines overall, rather than add lines
+
+ (b) make it clear that we always initialize si_code, which now *must*
+be a valid value with all the recent siginfo changes.
+
+Hmm?
+
+The other thing we should do is to get rid of the stupid padding.
+Right now "struct siginfo" is pointlessly padded to 128 bytes. That is
+completely insane, when it's always just zero in the kernel.
+
+So put that _pad[] thing inside #ifndef __KERNEL__, and make
+copy_siginfo_to_user() write the padding zeroes when copying to user
+space. The reason for the padding is "future expansion", so we do want
+to tell the user space that it's maybe up to 128 bytes in size, but if
+we don't fill it all, we shouldn't waste time and memory on clearing
+the padding internally.
+
+I'm certainly *hoping* nobody depends on the whole 128 bytes in
+rt_sigqueueinfo(). In theory you can fill it all (as long as si_code
+is negative), but the man-page only says "si_value", and the compat
+function doesn't copy any more than that either, so any user that
+tries to fill in more than si_value is already broken. In fact, it
+might even be worth enforcing that in rt_sigqueueinfo(), just to see
+if anybody plays any games..
+
+On x86-64, without the pointless padding, the size of 'struct siginfo'
+inside the kernel would be 48 bytes. That's quite a big difference for
+something that is often allocated on the kernel stack.
+
+So I'm certainly willing to make those kinds of changes, but let's
+make them real *improvements* now, ok? Wasn't that the point of all
+the cleanups in the end?
+
+                       Linus
