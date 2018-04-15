@@ -1,66 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752345AbeDOK3C (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 06:29:02 -0400
-Received: from smtp2-g21.free.fr ([212.27.42.2]:7728 "EHLO smtp2-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752244AbeDOK3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 06:29:00 -0400
-Date: Sun, 15 Apr 2018 12:28:51 +0200
-From: Alban <albeu@free.fr>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Aban Bedel <albeu@free.fr>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: Add a driver for the ATH79 USB phy
-Message-ID: <20180415122851.1c168d73@tock>
-In-Reply-To: <1521931120-31118-1-git-send-email-albeu@free.fr>
-References: <1521931120-31118-1-git-send-email-albeu@free.fr>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1752347AbeDOL5D (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 07:57:03 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52012 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751190AbeDOL5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Apr 2018 07:57:02 -0400
+Subject: Re: [PATCH 0/4 v4] sched/rt: track rt rq utilization
+To: Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, rjw@rjwysocki.net
+Cc: juri.lelli@redhat.com, Morten.Rasmussen@arm.com,
+        viresh.kumar@linaro.org, valentin.schneider@arm.com
+References: <1521199541-15308-1-git-send-email-vincent.guittot@linaro.org>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <08e478a1-e1ff-4547-b95b-2975bc5c5b5d@arm.com>
+Date: Sun, 15 Apr 2018 13:56:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Cyqi4uvnLRhpCUMWi3OlXdM"; protocol="application/pgp-signature"
+In-Reply-To: <1521199541-15308-1-git-send-email-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Cyqi4uvnLRhpCUMWi3OlXdM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 03/16/2018 12:25 PM, Vincent Guittot wrote:
 
-On Sat, 24 Mar 2018 23:38:40 +0100
-Alban Bedel <albeu@free.fr> wrote:
+[...]
 
-> The ATH79 USB phy is very simple, it only have a reset. On some SoC a
-> second reset is used to force the phy in suspend mode regardless of the
-> USB controller status.
->=20
-> This driver is added to the qualcom directory as atheros is now part
-> of qualcom and newer SoC of this familly are marketed under the
-> qualcom name.
+> For a 15 seconds long test on a hikey 6220 (octo core cortex A53 platfrom),
+> the cpufreq statistics outputs (stats are reset just before the test) :
+> $ cat /sys/devices/system/cpu/cpufreq/policy0/stats/total_trans
+> without patchset : 1230
+> with patchset : 14
+> 
+> If we replace the cfs thread of rt-app by a sysbench cpu test, we can see
+> performance improvements:
+> 
+> - Without patchset :
+> Test execution summary:
+>      total time:                          15.0009s
+>      total number of events:              4903
+>      total time taken by event execution: 14.9972
+>      per-request statistics:
+>           min:                                  1.23ms
+>           avg:                                  3.06ms
+>           max:                                 13.16ms
+>           approx.  95 percentile:              12.73ms
+> 
+> Threads fairness:
+>      events (avg/stddev):           4903.0000/0.00
+>      execution time (avg/stddev):   14.9972/0.00
+> 
+> - With patchset:
+> Test execution summary:
+>      total time:                          15.0014s
+>      total number of events:              7694
+>      total time taken by event execution: 14.9979
+>      per-request statistics:
+>           min:                                  1.23ms
+>           avg:                                  1.95ms
+>           max:                                 10.49ms
+>           approx.  95 percentile:              10.39ms
+> 
+> Threads fairness:
+>      events (avg/stddev):           7694.0000/0.00
+>      execution time (avg/stddev):   14.9979/0.00
+> 
+> The performance improvement is 56% for this use case.
 
-Does this patch need any improvement or will it be applied?
+How do you get this number? Normally we use the 'total time' value.
 
-Alban
-
---Sig_/Cyqi4uvnLRhpCUMWi3OlXdM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJa0ylkAAoJEHSUmkuduC28qJYQAKC8vQJLU/W2PMCQUZm2sv9D
-7R1iyR6ee6ulRddDwjclinCMiaXM4cItOXQ9d1EoEIaYpQLrgzBIQDhlHEmfNtEX
-rmLKVrNG5PsJjjOjBlAQpUtMZaBX6TCw981oFEB1EER8LnFnyeRHHNye84oFljq+
-zWq937YmlHoYJKECD6j9Skwjv9/CpY1EtV2lI4PXrEQTkk1wStJ7K/Cc3lTNgHfQ
-571hn5Gdb1tzhT/VPhTN8N02jO/DH5jrQCwqAr7sw3lM5HqNnTBBxGoSoktMJeQI
-LkgGemov0rpTwtyjtiOtd72+hLQCVtm0GLQ28iXQxZFSqAWVi1o0ad3pC5VGNyVg
-EBBLfH39oJhODIqsEwPj1bNV5EEb9AC9paVUnZpVkK2urlAS82SmfvDW1ADwyFo8
-85TTIPlht07h1zeM0eUiSnRKBgTCB1Lqgsh90i9qtKG/IoSr5KFGebkoDQpmK1Ak
-dVhJVL6pjxzDGfVD6p6CuA65yC+3H/9Ibw5g5Oz82YsxwE1mX16A1/nNKIpAKL8y
-Xxu/0lRbmDJByPNsV6A4LW4lQy0wfEYCmETPOPN57DF0Ob3Gy2TVnwWVRVer/gjG
-C8ALlEWfEPXQfB7iXxlRrMppGe29DcOrGVOLiZRMkP3dkIvQ6xSAiitkfgnMaOdO
-Ux6PhT5S9TayCBcBCuDf
-=0wLi
------END PGP SIGNATURE-----
-
---Sig_/Cyqi4uvnLRhpCUMWi3OlXdM--
+[...]
