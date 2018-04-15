@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753199AbeDOV4e (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 17:56:34 -0400
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:40933 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752775AbeDOVzB (ORCPT
+        id S1752770AbeDOVzA (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 17:55:00 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:59935 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750960AbeDOVyy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 17:55:01 -0400
+        Sun, 15 Apr 2018 17:54:54 -0400
 X-IronPort-AV: E=Sophos;i="5.48,456,1517875200";
-   d="scan'208";a="726275415"
+   d="scan'208";a="339837512"
 From: KarimAllah Ahmed <karahmed@amazon.de>
 To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com,
         rkrcmar@redhat.com
 Cc: KarimAllah Ahmed <karahmed@amazon.de>
-Subject: [PATCH v2 08/12] KVM/nVMX: Use kvm_vcpu_map when mapping the posted interrupt descriptor table
-Date: Sun, 15 Apr 2018 23:53:14 +0200
-Message-Id: <1523829198-13236-9-git-send-email-karahmed@amazon.de>
+Subject: [PATCH v2 03/12] X86/nVMX: Update the PML table without mapping and unmapping the page
+Date: Sun, 15 Apr 2018 23:53:09 +0200
+Message-Id: <1523829198-13236-4-git-send-email-karahmed@amazon.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523829198-13236-1-git-send-email-karahmed@amazon.de>
 References: <1523829198-13236-1-git-send-email-karahmed@amazon.de>
@@ -23,100 +23,53 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use kvm_vcpu_map when mapping the posted interrupt descriptor table since
-using kvm_vcpu_gpa_to_page() and kmap() will only work for guest memory
-that has a "struct page".
-
-One additional semantic change is that the virtual host mapping lifecycle
-has changed a bit. It now has the same lifetime of the pinning of the
-interrupt descriptor table page on the host side.
+Update the PML table without mapping and unmapping the page. This also
+avoids using kvm_vcpu_gpa_to_page(..) which assumes that there is a "struct
+page" for guest memory.
 
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 ---
 v1 -> v2:
-- Do not change the lifecycle of the mapping (pbonzini)
+- Use kvm_write_guest_page instead of kvm_write_guest (pbonzini)
+- Do not use pointer arithmetic for pml_address (pbonzini)
 ---
- arch/x86/kvm/vmx.c | 45 +++++++++++++++------------------------------
- 1 file changed, 15 insertions(+), 30 deletions(-)
+ arch/x86/kvm/vmx.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
 diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index b55053a..3dd8bb2 100644
+index 810ba7a..179061d 100644
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -493,7 +493,7 @@ struct nested_vmx {
- 	 */
- 	struct page *apic_access_page;
- 	struct kvm_host_map virtual_apic_map;
--	struct page *pi_desc_page;
-+	struct kvm_host_map pi_desc_map;
- 	struct kvm_host_map msr_bitmap_map;
+@@ -12294,9 +12294,7 @@ static int vmx_write_pml_buffer(struct kvm_vcpu *vcpu)
+ {
+ 	struct vmcs12 *vmcs12;
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+-	gpa_t gpa;
+-	struct page *page = NULL;
+-	u64 *pml_address;
++	gpa_t gpa, dst;
  
- 	struct pi_desc *pi_desc;
-@@ -7807,12 +7807,8 @@ static void free_nested(struct vcpu_vmx *vmx)
- 		vmx->nested.apic_access_page = NULL;
- 	}
- 	kvm_vcpu_unmap(&vmx->nested.virtual_apic_map);
--	if (vmx->nested.pi_desc_page) {
--		kunmap(vmx->nested.pi_desc_page);
--		kvm_release_page_dirty(vmx->nested.pi_desc_page);
--		vmx->nested.pi_desc_page = NULL;
--		vmx->nested.pi_desc = NULL;
--	}
-+	kvm_vcpu_unmap(&vmx->nested.pi_desc_map);
-+	vmx->nested.pi_desc = NULL;
- 
- 	free_loaded_vmcs(&vmx->nested.vmcs02);
- }
-@@ -10413,24 +10409,16 @@ static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu)
- 	}
- 
- 	if (nested_cpu_has_posted_intr(vmcs12)) {
--		if (vmx->nested.pi_desc_page) { /* shouldn't happen */
--			kunmap(vmx->nested.pi_desc_page);
--			kvm_release_page_dirty(vmx->nested.pi_desc_page);
--			vmx->nested.pi_desc_page = NULL;
-+		map = &vmx->nested.pi_desc_map;
-+
-+		if (!kvm_vcpu_map(vcpu, gpa_to_gfn(vmcs12->posted_intr_desc_addr), map)) {
-+			vmx->nested.pi_desc =
-+				(struct pi_desc *)(((void *)map->hva) +
-+				offset_in_page(vmcs12->posted_intr_desc_addr));
-+			vmcs_write64(POSTED_INTR_DESC_ADDR, pfn_to_hpa(map->pfn) +
-+							    offset_in_page(vmcs12->posted_intr_desc_addr));
+ 	if (is_guest_mode(vcpu)) {
+ 		WARN_ON_ONCE(vmx->nested.pml_full);
+@@ -12316,15 +12314,13 @@ static int vmx_write_pml_buffer(struct kvm_vcpu *vcpu)
  		}
--		page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->posted_intr_desc_addr);
--		if (is_error_page(page))
--			return;
--		vmx->nested.pi_desc_page = page;
--		vmx->nested.pi_desc = kmap(vmx->nested.pi_desc_page);
--		vmx->nested.pi_desc =
--			(struct pi_desc *)((void *)vmx->nested.pi_desc +
--			(unsigned long)(vmcs12->posted_intr_desc_addr &
--			(PAGE_SIZE - 1)));
--		vmcs_write64(POSTED_INTR_DESC_ADDR,
--			page_to_phys(vmx->nested.pi_desc_page) +
--			(unsigned long)(vmcs12->posted_intr_desc_addr &
--			(PAGE_SIZE - 1)));
-+
- 	}
- 	if (nested_vmx_prepare_msr_bitmap(vcpu, vmcs12))
- 		vmcs_set_bits(CPU_BASED_VM_EXEC_CONTROL,
-@@ -12067,13 +12055,10 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
- 		kvm_release_page_dirty(vmx->nested.apic_access_page);
- 		vmx->nested.apic_access_page = NULL;
- 	}
-+
- 	kvm_vcpu_unmap(&vmx->nested.virtual_apic_map);
--	if (vmx->nested.pi_desc_page) {
--		kunmap(vmx->nested.pi_desc_page);
--		kvm_release_page_dirty(vmx->nested.pi_desc_page);
--		vmx->nested.pi_desc_page = NULL;
--		vmx->nested.pi_desc = NULL;
--	}
-+	kvm_vcpu_unmap(&vmx->nested.pi_desc_map);
-+	vmx->nested.pi_desc = NULL;
  
- 	/*
- 	 * We are now running in L2, mmu_notifier will force to reload the
+ 		gpa = vmcs_read64(GUEST_PHYSICAL_ADDRESS) & ~0xFFFull;
++		dst = vmcs12->pml_address + sizeof(u64) * vmcs12->guest_pml_index;
+ 
+-		page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->pml_address);
+-		if (is_error_page(page))
++		if (kvm_write_guest_page(vcpu->kvm, gpa_to_gfn(dst), &gpa,
++					 offset_in_page(dst), sizeof(gpa)))
+ 			return 0;
+ 
+-		pml_address = kmap(page);
+-		pml_address[vmcs12->guest_pml_index--] = gpa;
+-		kunmap(page);
+-		kvm_release_page_clean(page);
++		vmcs12->guest_pml_index--;
+ 	}
+ 
+ 	return 0;
 -- 
 2.7.4
