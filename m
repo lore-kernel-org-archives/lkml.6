@@ -1,62 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752410AbeDOMME (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 08:12:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36282 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751190AbeDOMMC (ORCPT
+        id S1752494AbeDOMRA (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 08:17:00 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:36621 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751190AbeDOMQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 08:12:02 -0400
-Date: Sun, 15 Apr 2018 05:11:57 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>, robh@kernel.org, aik@ozlabs.ru,
-        jasowang@redhat.com, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, joe@perches.com,
-        david@gibson.dropbear.id.au, linuxppc-dev@lists.ozlabs.org,
-        elfring@users.sourceforge.net
-Subject: Re: [RFC] virtio: Use DMA MAP API for devices without an IOMMU
-Message-ID: <20180415121157.GA17726@infradead.org>
-References: <20180405105631.9514-1-khandual@linux.vnet.ibm.com>
- <3e1b113b-79ca-b700-5be9-10c66d74aabe@linux.vnet.ibm.com>
- <20180405175326-mutt-send-email-mst@kernel.org>
- <1522940983.21446.205.camel@kernel.crashing.org>
- <20180405213042-mutt-send-email-mst@kernel.org>
- <1522963113.21446.211.camel@kernel.crashing.org>
- <70cb433f-a8f7-5199-3c96-a760c7624804@linux.vnet.ibm.com>
- <20180406071634.GA31108@infradead.org>
- <1523003838.21446.238.camel@kernel.crashing.org>
+        Sun, 15 Apr 2018 08:16:59 -0400
+X-Google-Smtp-Source: AIpwx4+bujQZF1Lv78XaKLrkEclQIJ2I0nk2/hHIwOfFop6jRiD6hf2A6dPSpKDI/3bj0sf+4sAbbEI/7ZLLQmP6RE8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523003838.21446.238.camel@kernel.crashing.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <95f22502-16e6-555c-fb61-e1a9e88f1163@arm.com>
+References: <1521199541-15308-1-git-send-email-vincent.guittot@linaro.org>
+ <1521199541-15308-2-git-send-email-vincent.guittot@linaro.org> <95f22502-16e6-555c-fb61-e1a9e88f1163@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Sun, 15 Apr 2018 14:16:37 +0200
+Message-ID: <CAKfTPtCp2Qy7pZoTQH-550pJ2DZqwR2aAzk0+2B5b8DOenU4uA@mail.gmail.com>
+Subject: Re: [PATCH 1/4 v4] sched/pelt: Move pelt related code in a dedicated file
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, rjw@rjwysocki.net,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 06, 2018 at 06:37:18PM +1000, Benjamin Herrenschmidt wrote:
-> > > implemented as DMA API which the virtio core understands. There is no
-> > > need for an IOMMU to be involved for the device representation in this
-> > > case IMHO.
-> > 
-> > This whole virtio translation issue is a mess.  I think we need to
-> > switch it to the dma API, and then quirk the legacy case to always
-> > use the direct mapping inside the dma API.
-> 
-> Fine with using a dma API always on the Linux side, but we do want to
-> special case virtio still at the arch and qemu side to have a "direct
-> mapping" mode. Not sure how (special flags on PCI devices) to avoid
-> actually going through an emulated IOMMU on the qemu side, because that
-> slows things down, esp. with vhost.
-> 
-> IE, we can't I think just treat it the same as a physical device.
+On 15 April 2018 at 13:58, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+> On 03/16/2018 12:25 PM, Vincent Guittot wrote:
+>>
+>> We want to track rt_rq's utilization as a part of the estimation of the
+>> whole rq's utilization. This is necessary because rt tasks can steal
+>> utilization to cfs tasks and make them lighter than they are.
+>> As we want to use the same load tracking mecanism for both and prevent
+>> useless dependency between cfs and rt code, pelt code is moved in a
+>> dedicated file.
+>
+>
+> This would mean that we introduce function calls into the cfs scheduler
+> fast-path, something we avoided so far (e.g. the cpu and frequency
+> invariance hooks). Are we OK with that?
+>
+> Quentin mentioned this already during v3 review back in December.
 
-We should have treated it like a physical device from the start, but
-that device has unfortunately sailed.
+Yes and I hadn't seen any differences in the code size with the patch
+which should have been the case if inline function where replaced by
+function call
 
-But yes, we'll need a per-device quirk that says 'don't attach an
-iommu'.
+
+>
+> [...]
