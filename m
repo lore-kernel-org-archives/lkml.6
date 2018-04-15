@@ -1,110 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752567AbeDONMu (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 09:12:50 -0400
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:2295 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752498AbeDONMs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 09:12:48 -0400
-X-IronPort-AV: E=Sophos;i="5.48,454,1517875200";
-   d="scan'208";a="339808256"
-From: "Raslan, KarimAllah" <karahmed@amazon.de>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-CC: "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>
-Subject: Re: [PATCH] KVM: Switch 'requests' to be 64-bit (explicitly)
-Thread-Topic: [PATCH] KVM: Switch 'requests' to be 64-bit (explicitly)
-Thread-Index: AQHT1D++Gdqnz/tFy0K4EdrtXKZQKaQBzl8A
-Date: Sun, 15 Apr 2018 13:12:42 +0000
-Message-ID: <1523797962.32594.75.camel@amazon.de>
-References: <1523744804-8220-1-git-send-email-karahmed@amazon.de>
-In-Reply-To: <1523744804-8220-1-git-send-email-karahmed@amazon.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.164.76]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8B7BA61B78C64546807A759978070361@amazon.com>
+        id S1752304AbeDON2J (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 09:28:09 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52308 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751190AbeDON2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Apr 2018 09:28:08 -0400
+Subject: Re: [PATCH 1/4 v4] sched/pelt: Move pelt related code in a dedicated
+ file
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, rjw@rjwysocki.net,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Valentin Schneider <valentin.schneider@arm.com>
+References: <1521199541-15308-1-git-send-email-vincent.guittot@linaro.org>
+ <1521199541-15308-2-git-send-email-vincent.guittot@linaro.org>
+ <95f22502-16e6-555c-fb61-e1a9e88f1163@arm.com>
+ <CAKfTPtCp2Qy7pZoTQH-550pJ2DZqwR2aAzk0+2B5b8DOenU4uA@mail.gmail.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <3dfcbb67-746f-87b5-6167-6e5e220c4a69@arm.com>
+Date: Sun, 15 Apr 2018 15:27:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <CAKfTPtCp2Qy7pZoTQH-550pJ2DZqwR2aAzk0+2B5b8DOenU4uA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3FDCxeF006760
 
-On Sun, 2018-04-15 at 00:26 +0200, KarimAllah Ahmed wrote:
-> Switch 'requests' to be explicitly 64-bit and update BUILD_BUG_ON check to
-> use the size of "requests" instead of the hard-coded '32'.
+On 04/15/2018 02:16 PM, Vincent Guittot wrote:
+> On 15 April 2018 at 13:58, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>> On 03/16/2018 12:25 PM, Vincent Guittot wrote:
+>>>
+>>> We want to track rt_rq's utilization as a part of the estimation of the
+>>> whole rq's utilization. This is necessary because rt tasks can steal
+>>> utilization to cfs tasks and make them lighter than they are.
+>>> As we want to use the same load tracking mecanism for both and prevent
+>>> useless dependency between cfs and rt code, pelt code is moved in a
+>>> dedicated file.
+>>
+>>
+>> This would mean that we introduce function calls into the cfs scheduler
+>> fast-path, something we avoided so far (e.g. the cpu and frequency
+>> invariance hooks). Are we OK with that?
+>>
+>> Quentin mentioned this already during v3 review back in December.
 > 
-> That gives us a bit more room again for arch-specific requests as we
-> already ran out of space for x86 due to the hard-coded check.
-> 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: kvm@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-> ---
->  include/linux/kvm_host.h | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index 6930c63..fe4f46b 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -129,7 +129,7 @@ static inline bool is_error_page(struct page *page)
->  #define KVM_REQUEST_ARCH_BASE     8
->  
->  #define KVM_ARCH_REQ_FLAGS(nr, flags) ({ \
-> -	BUILD_BUG_ON((unsigned)(nr) >= 32 - KVM_REQUEST_ARCH_BASE); \
-> +	BUILD_BUG_ON((unsigned)(nr) >= (sizeof(((struct kvm_vcpu *)0)->requests) * 8) - KVM_REQUEST_ARCH_BASE); \
+> Yes and I hadn't seen any differences in the code size with the patch
+> which should have been the case if inline function where replaced by
+> function call
 
-While looking at a completely unrelated code I realize that there 
-is FIELD_SIZEOF that is doing exactly what I did. Will use it in v2.
+I see a diff (e.g. for arm64 defconfig):
 
->  	(unsigned)(((nr) + KVM_REQUEST_ARCH_BASE) | (flags)); \
->  })
->  #define KVM_ARCH_REQ(nr)           KVM_ARCH_REQ_FLAGS(nr, 0)
-> @@ -223,7 +223,7 @@ struct kvm_vcpu {
->  	int vcpu_id;
->  	int srcu_idx;
->  	int mode;
-> -	unsigned long requests;
-> +	u64 requests;
->  	unsigned long guest_debug;
->  
->  	int pre_pcpu;
-> @@ -1122,7 +1122,7 @@ static inline void kvm_make_request(int req, struct kvm_vcpu *vcpu)
->  	 * caller.  Paired with the smp_mb__after_atomic in kvm_check_request.
->  	 */
->  	smp_wmb();
-> -	set_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
-> +	set_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
->  }
->  
->  static inline bool kvm_request_pending(struct kvm_vcpu *vcpu)
-> @@ -1132,12 +1132,12 @@ static inline bool kvm_request_pending(struct kvm_vcpu *vcpu)
->  
->  static inline bool kvm_test_request(int req, struct kvm_vcpu *vcpu)
->  {
-> -	return test_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
-> +	return test_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
->  }
->  
->  static inline void kvm_clear_request(int req, struct kvm_vcpu *vcpu)
->  {
-> -	clear_bit(req & KVM_REQUEST_MASK, &vcpu->requests);
-> +	clear_bit(req & KVM_REQUEST_MASK, (void *)&vcpu->requests);
->  }
->  
->  static inline bool kvm_check_request(int req, struct kvm_vcpu *vcpu)
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+6d626e0aaf91 - (HEAD -> tip/sched/core_rt_rq_util_tracking) sched/nohz: 
+monitor rt utilization (2018-04-15 Vincent Guittot)
+3111c6206f0c - cpufreq/schedutil: add rt utilization tracking 
+(2018-04-15 Vincent Guittot)
+62e103d266ed - sched/rt: add rt_rq utilization tracking (2018-04-15 
+Vincent Guittot)
+8f78fef6b1a2 - sched/pelt: Move pelt related code in a dedicated file 
+(2018-04-15 Vincent Guittot)
+31e77c93e432 - (tip/sched/core_rt_rq_util_tracking_base) sched/fair: 
+Update blocked load when newly idle (2018-03-09 Vincent Guittot)
+
+deggeman-mac:/opt/git/kernel_org:tip/sched/core_rt_rq_util_tracking$ 
+size vmlinux
+    text    data     bss     dec     hex filename
+11286856        6154896  410296 17852048        1106690 vmlinux
+
+versus:
+
+31e77c93e432 - (HEAD -> tip/sched/core_rt_rq_util_tracking_base) 
+sched/fair: Update blocked load when ne$
+ly idle (2018-03-09 Vincent Guittot)
+
+deggeman-mac:/opt/git/kernel_org:tip/sched/core_rt_rq_util_tracking_base$ 
+size vmlinux
+    text    data     bss     dec     hex filename 
+
+11295048        6154896  410296 17860240        1108690 vmlinux
+
+So I assume that in kernel/sched/fair.o:
+
+U __update_load_avg_blocked_se
+U __update_load_avg_cfs_rq
+U __update_load_avg_se
+
+are function calls now.
