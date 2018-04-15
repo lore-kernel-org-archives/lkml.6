@@ -1,66 +1,77 @@
-Return-Path: <robherring2@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523909287; cv=none;
+Return-Path: <jic23@kernel.org>
+X-Google-Smtp-Source: AIpwx48VYrCvhE4fW/n3jW4+UNSo2+wqbJy6yo2yHt3HNUKxkmlYwBxi1IvQDWMSjuF7w9jDfpOR
+ARC-Seal: i=1; a=rsa-sha256; t=1523806669; cv=none;
         d=google.com; s=arc-20160816;
-        b=xBqU0DEy8UF6ofuJEClQvYlRlph6DfSiZcvEWtti5XOYhxOFjuQfqMtcLj0Ie1BC6W
-         8/GJ4zoItBAC44gy+TMBwJTvemqgNUYcxAzxRN0/xzpL4naV6xO25YnmT9hltbOY2byg
-         5IOJIQRR27cyj5Wyg60/x2B6VE9USi0vTs82tPgNUWzMQKMqilAg5EuyDt4roTAOLtHL
-         kBdW4ejObzs+OKhBI2N3T1KcTSo3mujnFlw/adjDTb5vvXqS4Q0op3l8WBJsb7iQAmti
-         3jD/VJQWXBUZwzntaDW9Zd89HH5HUHwABnMxtUapp31wJv5eCp3Jmnkg5ztTRGTnpUU7
-         u5pQ==
+        b=jFqbx1s70BinPX12DEN9qvEaJd5SdnBR2XxzYxrpiIOalZvuNxvmK/NeU5/xieaFpj
+         QGTE3+ENecx56QOf5HhNTwuQagLM4ZNZoIMW8tGk4yEFEARkAApek6UzYI0RuTbyv8K4
+         W9yZippi8y+r1n8gUf89ACl5obPJMqjktxFLKmP7zcJSLteR15bnIoqlO1sTEMQElmFy
+         uNr3h3oMsfVajDY2kxCM5+j5x5cLlYD6oaR4bWOlStS/04ToPTjcgYlWbse/ViaPxW5C
+         UPrCmNxq67y/snfIQI4iy1qTZTbEqV75VWEuGKG2ee2VVQ33nd7Hhz73cIIiF/0OqPdf
+         NEcg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:arc-authentication-results;
-        bh=Nr4jeu7yimzwsnMut3ry7eSf8QOa34c+p2HHnHyikIg=;
-        b=mkEa4mcQYonQBrZ6OA1WbevoG7BvW1WF8j8LUrYeAoyoqcVgzeVSTgooRtEHbCrwsr
-         zyJ3y+/LLO6TVSFyhslus08wzZC7GwaOT2rt1EvZ/nrMw/4bvE57FfjRRIKC4WJhWtNH
-         d5wvGZJqRgca6o0fxDdD3xGLU3ywgIuIWa1Fz6wX3D9OcxndTwu7BFNdXy9sWqvNaiKO
-         8j3w1GHL5nznR9tGo/8YpwKk07lc0dHdWk07sCWHumx/lTnOcXFxQKuEA3MKomaRW70S
-         PoZ8qwchXwxObOC/oEOsOgGS3dWdIIKlvbLI71sr10IwgjoYFWqmytBbZLGXxOLkbG3j
-         JXGQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:dmarc-filter
+         :arc-authentication-results;
+        bh=A1KmijpIMUPkUnO/eB8moBV0WmyhvJIBH2NjhFdpB6I=;
+        b=AFuEN6judjUCoJESwgnk+6wAUjMN57Q01cqq0vPCbxjRqRYgwcRaHLFJaXR4rbsHcx
+         Jc6W1oMCp5HlJugpYKzvtwwHwdPhTwNLOCwRDHvuRFVeEe3CnNB15HjSwTQsdSWbsIMa
+         u62rRZrld+wZ5/Zm+o46Z4KFXkTUmLYAMpCC+SGsu+T72uhgF+NkDDWbCpIbrGP77Pw2
+         21TWJ2d9Tw6S14txdi4V6NZ24VwCtJ6OG7Vd4dQR6xRFKNWPpUFSlyYRtg7UteOxDRrB
+         s9IakysuKqfOR7lPNmjD25bQ4+EC0FmIxyAcBQBLWiUJ3q5Z+S6/J2qPjYDRBQlMEH4j
+         q1tQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
+       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
-X-Google-Smtp-Source: AIpwx49zMka6XCbIEV6taiaXfp6E7AG6pTPuqLuZ4ColfJMyO8DQEybX8m2bQHQMJIoYDV26ApsKUA==
-Date: Mon, 16 Apr 2018 15:08:05 -0500
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?Hern=E1n?= Gonzalez <hernan@vanguardiasur.com.ar>
-Cc: jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-	gregkh@linuxfoundation.org, Michael.Hennerich@analog.com,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of jic23@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jic23@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75DFD2176F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Sun, 15 Apr 2018 16:37:43 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: =?UTF-8?B?SGVybsOhbg==?= Gonzalez <hernan@vanguardiasur.com.ar>
+Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+ gregkh@linuxfoundation.org, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring
+ <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ devicetree@vger.kernel.org
 Subject: Re: [PATCH v2 11/14] staging: iio: ad7746: Add devicetree bindings
  documentation
-Message-ID: <20180416200805.nybyyrribqvnigh3@rob-hp-laptop>
-References: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
- <1523637411-8531-12-git-send-email-hernan@vanguardiasur.com.ar>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Message-ID: <20180415163743.2fa992f9@archlinux>
 In-Reply-To: <1523637411-8531-12-git-send-email-hernan@vanguardiasur.com.ar>
-User-Agent: NeoMutt/20170609 (1.8.3)
+References: <1523637411-8531-1-git-send-email-hernan@vanguardiasur.com.ar>
+	<1523637411-8531-12-git-send-email-hernan@vanguardiasur.com.ar>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597649752365907922?=
-X-GMAIL-MSGID: =?utf-8?q?1597934705377112788?=
+X-GMAIL-MSGID: =?utf-8?q?1597827101795250940?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Apr 13, 2018 at 01:36:48PM -0300, Hernán Gonzalez wrote:
-
-Commit msg?
+On Fri, 13 Apr 2018 13:36:48 -0300
+Hern=C3=A1n Gonzalez <hernan@vanguardiasur.com.ar> wrote:
 
 > Cc: Rob Herring <robh+dt@kernel.org>
 > Cc: Mark Rutland <mark.rutland@arm.com>
 > Cc: devicetree@vger.kernel.org
-> Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
+> Signed-off-by: Hern=C3=A1n Gonzalez <hernan@vanguardiasur.com.ar>
+A few comments inline.
+
+Thanks,
+
+Jonathan
+
 > ---
->  .../devicetree/bindings/staging/iio/cdc/ad7746.txt | 34 ++++++++++++++++++++++
+>  .../devicetree/bindings/staging/iio/cdc/ad7746.txt | 34 ++++++++++++++++=
+++++++
 >  1 file changed, 34 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/staging/iio/cdc/ad7746.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/staging/iio/cdc/ad7746.txt b/Documentation/devicetree/bindings/staging/iio/cdc/ad7746.txt
+>  create mode 100644 Documentation/devicetree/bindings/staging/iio/cdc/ad7=
+746.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/staging/iio/cdc/ad7746.txt=
+ b/Documentation/devicetree/bindings/staging/iio/cdc/ad7746.txt
 > new file mode 100644
 > index 0000000..7740f05
 > --- /dev/null
@@ -73,23 +84,20 @@ Commit msg?
 > +		* "adi,ad7745"
 > +		* "adi,ad7746"
 > +	  * "adi,ad7747"
-
-Alignment.
-
 > +	- reg: The 7-bits long I2c address of the device
 > +
 > +Optional properties:
 > +	- adi,exclvl: This property defines the excitation voltage level for the
 > +    capacitance to be measured. Possible values are:
-> +      * 0 = +-VDD/8
-> +      * 1 = +-VDD/4
-> +      * 2 = +-VDD * 3/8
-> +      * 3 = +-VDD/2 (Default)
+> +      * 0 =3D +-VDD/8
+> +      * 1 =3D +-VDD/4
+> +      * 2 =3D +-VDD * 3/8
+> +      * 3 =3D +-VDD/2 (Default)
 > +	- adi,nexca_en: Invert excitation output A.
+
+The naming is rather odd.  Why _en?
+
 > +	- adi,nexcb_en:	Invert excitation output B.
-
-s/_/-/
-
 > +
 > +Example:
 > +Here exclvl would be 1 (VDD/4), Excitation pin A would be inverted and
@@ -98,14 +106,14 @@ s/_/-/
 > +i2c2 {
 > +
 > +      < . . . >
+What does this spacer add to the example?
+Sure, there can be other devices, but no need to illustrate that here.
+
 > +
 > +      ad7746: ad7746@60 {
-> +              compatible = "ad7746";
-> +              reg = <0x60>;
-> +              adi,exclvl = <1>;
+> +              compatible =3D "ad7746";
+> +              reg =3D <0x60>;
+> +              adi,exclvl =3D <1>;
 > +              adi,nexca_en;
 > +      };
 > +};
-> -- 
-> 2.7.4
-> 
