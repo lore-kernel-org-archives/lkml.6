@@ -1,182 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752824AbeDOSWV (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 14:22:21 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:58708 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752493AbeDOSWT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 14:22:19 -0400
-From: Mike Kravetz <mike.kravetz@oracle.com>
-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@gmail.com>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [PATCH v4 2/3] mm/shmem: update file sealing comments and file checking
-Date: Sun, 15 Apr 2018 11:21:18 -0700
-Message-Id: <20180415182119.4517-3-mike.kravetz@oracle.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180415182119.4517-1-mike.kravetz@oracle.com>
-References: <20180415182119.4517-1-mike.kravetz@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8864 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804150185
+        id S1753076AbeDOSX4 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 14:23:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752669AbeDOSXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Apr 2018 14:23:55 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3A3C2176F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jic23@kernel.org
+Date: Sun, 15 Apr 2018 19:23:48 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Stefan Popa <stefan.popa@analog.com>
+Cc: <Michael.Hennerich@analog.com>, <lars@metafoo.de>, <knaack.h@gmx.de>,
+        <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 5/7] iio:dac:ad5686: Add AD5672R/76/76R/84R/86R
+ support
+Message-ID: <20180415192348.16165da9@archlinux>
+In-Reply-To: <1523447581-13496-1-git-send-email-stefan.popa@analog.com>
+References: <1523375867-29616-1-git-send-email-stefan.popa@analog.com>
+        <1523447581-13496-1-git-send-email-stefan.popa@analog.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for memfd code restructure, update comments,
-definitions and function names dealing with file sealing to
-indicate that tmpfs and hugetlbfs are the supported filesystems.
-Also, change file pointer checks in memfd_file_seals_ptr
-to use defined interfaces instead of directly referencing
-file_operation structs.
+On Wed, 11 Apr 2018 14:53:01 +0300
+Stefan Popa <stefan.popa@analog.com> wrote:
 
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
----
- mm/shmem.c | 50 ++++++++++++++++++++++++++------------------------
- 1 file changed, 26 insertions(+), 24 deletions(-)
+> The AD5684R/AD5686R are a family of 4 channel DACs with 12-bit, 14-bit and
+> 16-bit precision respectively. The devices come either with a built-in
+> reference or no built-in reference.
+> 
+> The AD5672R/AD5676/AD5676R are similar, except that they have 8 channels
+> instead of 4.
+> 
+> Datasheets:
+> http://www.analog.com/media/en/technical-documentation/data-sheets/AD5672R_5676R.pdf
+> http://www.analog.com/media/en/technical-documentation/data-sheets/AD5686R_5685R_5684R.pdf
+> 
+> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+Applied.  My tweak to the previous patch made this fiddly, so please
+check I didn't mess it up.
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index c7bad16fe884..a8bff40a10cd 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2621,12 +2621,13 @@ static loff_t shmem_file_llseek(struct file *file, loff_t offset, int whence)
- 
- /*
-  * We need a tag: a new tag would expand every radix_tree_node by 8 bytes,
-- * so reuse a tag which we firmly believe is never set or cleared on shmem.
-+ * so reuse a tag which we firmly believe is never set or cleared on tmpfs
-+ * or hugetlbfs because they are memory only filesystems.
-  */
--#define SHMEM_TAG_PINNED        PAGECACHE_TAG_TOWRITE
-+#define MEMFD_TAG_PINNED        PAGECACHE_TAG_TOWRITE
- #define LAST_SCAN               4       /* about 150ms max */
- 
--static void shmem_tag_pins(struct address_space *mapping)
-+static void memfd_tag_pins(struct address_space *mapping)
- {
- 	struct radix_tree_iter iter;
- 	void __rcu **slot;
-@@ -2647,7 +2648,7 @@ static void shmem_tag_pins(struct address_space *mapping)
- 		} else if (page_count(page) - page_mapcount(page) > 1) {
- 			spin_lock_irq(&mapping->tree_lock);
- 			radix_tree_tag_set(&mapping->page_tree, iter.index,
--					   SHMEM_TAG_PINNED);
-+					   MEMFD_TAG_PINNED);
- 			spin_unlock_irq(&mapping->tree_lock);
- 		}
- 
-@@ -2668,7 +2669,7 @@ static void shmem_tag_pins(struct address_space *mapping)
-  * The caller must guarantee that no new user will acquire writable references
-  * to those pages to avoid races.
-  */
--static int shmem_wait_for_pins(struct address_space *mapping)
-+static int memfd_wait_for_pins(struct address_space *mapping)
- {
- 	struct radix_tree_iter iter;
- 	void __rcu **slot;
-@@ -2676,11 +2677,11 @@ static int shmem_wait_for_pins(struct address_space *mapping)
- 	struct page *page;
- 	int error, scan;
- 
--	shmem_tag_pins(mapping);
-+	memfd_tag_pins(mapping);
- 
- 	error = 0;
- 	for (scan = 0; scan <= LAST_SCAN; scan++) {
--		if (!radix_tree_tagged(&mapping->page_tree, SHMEM_TAG_PINNED))
-+		if (!radix_tree_tagged(&mapping->page_tree, MEMFD_TAG_PINNED))
- 			break;
- 
- 		if (!scan)
-@@ -2691,7 +2692,7 @@ static int shmem_wait_for_pins(struct address_space *mapping)
- 		start = 0;
- 		rcu_read_lock();
- 		radix_tree_for_each_tagged(slot, &mapping->page_tree, &iter,
--					   start, SHMEM_TAG_PINNED) {
-+					   start, MEMFD_TAG_PINNED) {
- 
- 			page = radix_tree_deref_slot(slot);
- 			if (radix_tree_exception(page)) {
-@@ -2718,7 +2719,7 @@ static int shmem_wait_for_pins(struct address_space *mapping)
- 
- 			spin_lock_irq(&mapping->tree_lock);
- 			radix_tree_tag_clear(&mapping->page_tree,
--					     iter.index, SHMEM_TAG_PINNED);
-+					     iter.index, MEMFD_TAG_PINNED);
- 			spin_unlock_irq(&mapping->tree_lock);
- continue_resched:
- 			if (need_resched()) {
-@@ -2734,11 +2735,11 @@ static int shmem_wait_for_pins(struct address_space *mapping)
- 
- static unsigned int *memfd_file_seals_ptr(struct file *file)
- {
--	if (file->f_op == &shmem_file_operations)
-+	if (shmem_file(file))
- 		return &SHMEM_I(file_inode(file))->seals;
- 
- #ifdef CONFIG_HUGETLBFS
--	if (file->f_op == &hugetlbfs_file_operations)
-+	if (is_file_hugepages(file))
- 		return &HUGETLBFS_I(file_inode(file))->seals;
- #endif
- 
-@@ -2758,16 +2759,17 @@ static int memfd_add_seals(struct file *file, unsigned int seals)
- 
- 	/*
- 	 * SEALING
--	 * Sealing allows multiple parties to share a shmem-file but restrict
--	 * access to a specific subset of file operations. Seals can only be
--	 * added, but never removed. This way, mutually untrusted parties can
--	 * share common memory regions with a well-defined policy. A malicious
--	 * peer can thus never perform unwanted operations on a shared object.
-+	 * Sealing allows multiple parties to share a tmpfs or hugetlbfs file
-+	 * but restrict access to a specific subset of file operations. Seals
-+	 * can only be added, but never removed. This way, mutually untrusted
-+	 * parties can share common memory regions with a well-defined policy.
-+	 * A malicious peer can thus never perform unwanted operations on a
-+	 * shared object.
- 	 *
--	 * Seals are only supported on special shmem-files and always affect
--	 * the whole underlying inode. Once a seal is set, it may prevent some
--	 * kinds of access to the file. Currently, the following seals are
--	 * defined:
-+	 * Seals are only supported on special tmpfs or hugetlbfs files and
-+	 * always affect the whole underlying inode. Once a seal is set, it
-+	 * may prevent some kinds of access to the file. Currently, the
-+	 * following seals are defined:
- 	 *   SEAL_SEAL: Prevent further seals from being set on this file
- 	 *   SEAL_SHRINK: Prevent the file from shrinking
- 	 *   SEAL_GROW: Prevent the file from growing
-@@ -2781,9 +2783,9 @@ static int memfd_add_seals(struct file *file, unsigned int seals)
- 	 * added.
- 	 *
- 	 * Semantics of sealing are only defined on volatile files. Only
--	 * anonymous shmem files support sealing. More importantly, seals are
--	 * never written to disk. Therefore, there's no plan to support it on
--	 * other file types.
-+	 * anonymous tmpfs and hugetlbfs files support sealing. More
-+	 * importantly, seals are never written to disk. Therefore, there's
-+	 * no plan to support it on other file types.
- 	 */
- 
- 	if (!(file->f_mode & FMODE_WRITE))
-@@ -2809,7 +2811,7 @@ static int memfd_add_seals(struct file *file, unsigned int seals)
- 		if (error)
- 			goto unlock;
- 
--		error = shmem_wait_for_pins(file->f_mapping);
-+		error = memfd_wait_for_pins(file->f_mapping);
- 		if (error) {
- 			mapping_allow_writable(file->f_mapping);
- 			goto unlock;
--- 
-2.13.6
+Thanks,
+
+Jonathan
+
+> ---
+> Changes in v2:
+> 	- Refactored the patch to add support for new parts
+> Changes in v3:
+> 	- Nothing changed, just to follow the patch set version
+> 
+>  drivers/iio/dac/ad5686.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+> 
+> diff --git a/drivers/iio/dac/ad5686.c b/drivers/iio/dac/ad5686.c
+> index a753ffd..54f67d5 100644
+> --- a/drivers/iio/dac/ad5686.c
+> +++ b/drivers/iio/dac/ad5686.c
+> @@ -87,9 +87,14 @@ struct ad5686_state {
+>   */
+>  
+>  enum ad5686_supported_device_ids {
+> +	ID_AD5672R,
+> +	ID_AD5676,
+> +	ID_AD5676R,
+>  	ID_AD5684,
+> +	ID_AD5684R,
+>  	ID_AD5685R,
+>  	ID_AD5686,
+> +	ID_AD5686R
+>  };
+>  static int ad5686_spi_write(struct ad5686_state *st,
+>  			     u8 cmd, u8 addr, u16 val, u8 shift)
+> @@ -293,15 +298,47 @@ static struct iio_chan_spec name[] = {				\
+>  		AD5868_CHANNEL(3, 8, bits, _shift),		\
+>  }
+>  
+> +#define DECLARE_AD5676_CHANNELS(name, bits, _shift)		\
+> +static struct iio_chan_spec name[] = {				\
+> +		AD5868_CHANNEL(0, 0, bits, _shift),		\
+> +		AD5868_CHANNEL(1, 1, bits, _shift),		\
+> +		AD5868_CHANNEL(2, 2, bits, _shift),		\
+> +		AD5868_CHANNEL(3, 3, bits, _shift),		\
+> +		AD5868_CHANNEL(4, 4, bits, _shift),		\
+> +		AD5868_CHANNEL(5, 5, bits, _shift),		\
+> +		AD5868_CHANNEL(6, 6, bits, _shift),		\
+> +		AD5868_CHANNEL(7, 7, bits, _shift),		\
+> +}
+> +
+> +DECLARE_AD5676_CHANNELS(ad5672_channels, 12, 4);
+> +DECLARE_AD5676_CHANNELS(ad5676_channels, 16, 0);
+>  DECLARE_AD5686_CHANNELS(ad5684_channels, 12, 4);
+>  DECLARE_AD5686_CHANNELS(ad5685r_channels, 14, 2);
+>  DECLARE_AD5686_CHANNELS(ad5686_channels, 16, 0);
+>  
+>  static const struct ad5686_chip_info ad5686_chip_info_tbl[] = {
+> +	[ID_AD5672R] = {
+> +		.channels = ad5672_channels,
+> +		.int_vref_mv = 2500,
+> +		.num_channels = 8,
+> +	},
+> +	[ID_AD5676] = {
+> +		.channels = ad5676_channels,
+> +		.num_channels = 8,
+> +	},
+> +	[ID_AD5676R] = {
+> +		.channels = ad5676_channels,
+> +		.int_vref_mv = 2500,
+> +		.num_channels = 8,
+> +	},
+>  	[ID_AD5684] = {
+>  		.channels = ad5684_channels,
+>  		.num_channels = 4,
+> +	},
+> +	[ID_AD5684R] = {
+> +		.channels = ad5684_channels,
+>  		.int_vref_mv = 2500,
+> +		.num_channels = 4,
+>  	},
+>  	[ID_AD5685R] = {
+>  		.channels = ad5685r_channels,
+> @@ -311,7 +348,11 @@ static const struct ad5686_chip_info ad5686_chip_info_tbl[] = {
+>  	[ID_AD5686] = {
+>  		.channels = ad5686_channels,
+>  		.num_channels = 4,
+> +	},
+> +	[ID_AD5686R] = {
+> +		.channels = ad5686_channels,
+>  		.int_vref_mv = 2500,
+> +		.num_channels = 4,
+>  	},
+>  };
+>  
+> @@ -391,9 +432,14 @@ static int ad5686_remove(struct spi_device *spi)
+>  }
+>  
+>  static const struct spi_device_id ad5686_id[] = {
+> +	{"ad5672r", ID_AD5672R},
+> +	{"ad5676", ID_AD5676},
+> +	{"ad5676r", ID_AD5676R},
+>  	{"ad5684", ID_AD5684},
+> +	{"ad5684r", ID_AD5684R},
+>  	{"ad5685r", ID_AD5685R},
+>  	{"ad5686", ID_AD5686},
+> +	{"ad5686r", ID_AD5686R},
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(spi, ad5686_id);
