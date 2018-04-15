@@ -1,219 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752557AbeDOOVN (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 10:21:13 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:48034 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752457AbeDOOVL (ORCPT
+        id S1753394AbeDOPDf (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 11:03:35 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:45789 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753340AbeDOPDb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 10:21:11 -0400
-Date: Sun, 15 Apr 2018 15:21:01 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Nikolay Borisov <nborisov@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>, Jeff Mahoney <jeffm@suse.com>,
-        Davidlohr Bueso <dave@stgolabs.net>
-Subject: Re: [PATCH] fs/dcache.c: re-add cond_resched() in
- shrink_dcache_parent()
-Message-ID: <20180415142101.GZ30522@ZenIV.linux.org.uk>
-References: <20180413181350.88831-1-khazhy@google.com>
- <20180413202823.204377-1-khazhy@google.com>
- <20180413141430.2788e2562e3e24bd273fe78b@linux-foundation.org>
- <3362fb2d-85ff-86af-399f-698c986e46cc@suse.com>
- <20180414080206.GV30522@ZenIV.linux.org.uk>
- <CA+55aFz4fwzcUWWT78AxK+GeVNVveWPNS+=V+ppb1ksn56TjUA@mail.gmail.com>
- <20180414205846.GW30522@ZenIV.linux.org.uk>
- <CA+55aFxD1xKqbobvoHQUWc5jc9n7-7KXYeSQy-CpE0SUZHi0PQ@mail.gmail.com>
- <20180415005056.GX30522@ZenIV.linux.org.uk>
- <20180415023939.GY30522@ZenIV.linux.org.uk>
+        Sun, 15 Apr 2018 11:03:31 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w3FF3F3G009865
+X-Nifty-SrcIP: [209.85.217.170]
+X-Google-Smtp-Source: AIpwx4/GoEM1oqFo2ZyvpnMqSdCkIx5xMbLlMTqTtPjaqJEAICv1W0dG2IqCCmND8E5VeckHalipYFm3bVjXJdUU/14=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180415023939.GY30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAFkk2KRTan6BLJEtLaa+6eFhTEQOJqDkQaKpKtVwd8iCvLuFMw@mail.gmail.com>
+References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
+ <1523595999-27433-21-git-send-email-yamada.masahiro@socionext.com> <CAFkk2KRTan6BLJEtLaa+6eFhTEQOJqDkQaKpKtVwd8iCvLuFMw@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 16 Apr 2018 00:02:34 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARkwhBZGsUbg29vB3L8U2dKvV0i0CFYKgXrGuVk65bjaQ@mail.gmail.com>
+Message-ID: <CAK7LNARkwhBZGsUbg29vB3L8U2dKvV0i0CFYKgXrGuVk65bjaQ@mail.gmail.com>
+Subject: Re: [PATCH 20/30] kconfig: add basic helper macros to scripts/Kconfig.include
+To: Ulf Magnusson <ulfalizer@gmail.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Nicholas Piggin <npiggin@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Emese Revfy <re.emese@gmail.com>,
+        X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 15, 2018 at 03:39:44AM +0100, Al Viro wrote:
+2018-04-15 16:41 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+> On Fri, Apr 13, 2018 at 7:06 AM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> Kconfig got text processing tools like we see in Make.  Add Kconfig
+>> helper macros to scripts/Kconfig.include like we collect Makefile
+>> macros in scripts/Kbuild.include.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>> Reviewed-by: Ulf Magnusson <ulfalizer@gmail.com>
+>> ---
+>>
+>> Changes in v3:
+>>   - Move helpers to scripts/Kconfig.include
+>>
+>> Changes in v2: None
+>>
+>>  Kconfig                 |  2 ++
+>>  MAINTAINERS             |  1 +
+>>  scripts/Kconfig.include | 17 +++++++++++++++++
+>>  3 files changed, 20 insertions(+)
+>>  create mode 100644 scripts/Kconfig.include
+>>
+>> diff --git a/Kconfig b/Kconfig
+>> index 5b55d87..a90d9f9 100644
+>> --- a/Kconfig
+>> +++ b/Kconfig
+>> @@ -7,4 +7,6 @@ mainmenu "Linux/$(ARCH) $(KERNELVERSION) Kernel Configuration"
+>>
+>>  comment "Compiler: $(CC_VERSION_TEXT)"
+>>
+>> +source "scripts/Kconfig.include"
+>> +
+>>  source "arch/$(SRCARCH)/Kconfig"
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index b9dab38..d962f4a 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -7624,6 +7624,7 @@ L:        linux-kbuild@vger.kernel.org
+>>  S:     Maintained
+>>  F:     Documentation/kbuild/kconfig*
+>>  F:     scripts/kconfig/
+>> +F:     scripts/Kconfig.include
+>>
+>>  KDUMP
+>>  M:     Dave Young <dyoung@redhat.com>
+>> diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
+>> new file mode 100644
+>> index 0000000..cac7a81
+>> --- /dev/null
+>> +++ b/scripts/Kconfig.include
+>> @@ -0,0 +1,17 @@
+>> +# Kconfig helper macros
+>> +
+>> +# Convenient variables
+>> +comma   := ,
+>> +quote   := "
+>> +squote  := '
+>> +empty   :=
+>> +space   := $(empty) $(empty)
+>> +
+>> +# y if the command exits with 0, n otherwise
+>> +success = $(shell ($(1)) >/dev/null 2>&1 && echo y || echo n)
+>
+> '{ $(1); }' might work here, to avoid the extra subshell.
+>
+> Shaves 20-30% off the runtime here in a silly
+> system("(true) >/dev/null 2>&1 && echo y || echo n") vs.
+> system("{ true; } >/dev/null 2>&1 && echo y || echo n")
+> comparison.
 
-> I really wonder if we should just do the following in
-> d_invalidate():
-> 	* grab ->d_lock on victim, check if it's unhashed,
-> unlock and bugger off if it is.  Otherwise, unhash and unlock.
-> >From that point on any d_set_mounted() in the subtree will
-> fail.
-> 	* shrink_dcache_parent() to reduce the subtree size.
-> 	* go through the (hopefully shrunk) subtree, picking
-> mountpoints.  detach_mounts() for each of them.
-> 	* shrink_dcache_parent() if any points had been
-> encountered, to kick the now-unpinned stuff.
-> 
-> As a side benefit, we could probably be gentler on rename_lock
-> in d_set_mounted() after that change...
 
-Something like this, IOW:
+You are right.   Will do so in the next version.
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 86d2de63461e..e61c07ff2d95 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1230,13 +1230,11 @@ enum d_walk_ret {
-  * @parent:	start of walk
-  * @data:	data passed to @enter() and @finish()
-  * @enter:	callback when first entering the dentry
-- * @finish:	callback when successfully finished the walk
-  *
-  * The @enter() and @finish() callbacks are called with d_lock held.
-  */
- static void d_walk(struct dentry *parent, void *data,
--		   enum d_walk_ret (*enter)(void *, struct dentry *),
--		   void (*finish)(void *))
-+		   enum d_walk_ret (*enter)(void *, struct dentry *))
- {
- 	struct dentry *this_parent;
- 	struct list_head *next;
-@@ -1325,8 +1323,6 @@ static void d_walk(struct dentry *parent, void *data,
- 	if (need_seqretry(&rename_lock, seq))
- 		goto rename_retry;
- 	rcu_read_unlock();
--	if (finish)
--		finish(data);
- 
- out_unlock:
- 	spin_unlock(&this_parent->d_lock);
-@@ -1375,7 +1371,7 @@ int path_has_submounts(const struct path *parent)
- 	struct check_mount data = { .mnt = parent->mnt, .mounted = 0 };
- 
- 	read_seqlock_excl(&mount_lock);
--	d_walk(parent->dentry, &data, path_check_mount, NULL);
-+	d_walk(parent->dentry, &data, path_check_mount);
- 	read_sequnlock_excl(&mount_lock);
- 
- 	return data.mounted;
-@@ -1483,7 +1479,7 @@ void shrink_dcache_parent(struct dentry *parent)
- 		data.start = parent;
- 		data.found = 0;
- 
--		d_walk(parent, &data, select_collect, NULL);
-+		d_walk(parent, &data, select_collect);
- 		if (!data.found)
- 			break;
- 
-@@ -1518,7 +1514,7 @@ static enum d_walk_ret umount_check(void *_data, struct dentry *dentry)
- static void do_one_tree(struct dentry *dentry)
- {
- 	shrink_dcache_parent(dentry);
--	d_walk(dentry, dentry, umount_check, NULL);
-+	d_walk(dentry, dentry, umount_check);
- 	d_drop(dentry);
- 	dput(dentry);
- }
-@@ -1542,78 +1538,48 @@ void shrink_dcache_for_umount(struct super_block *sb)
- 	}
- }
- 
--struct detach_data {
--	struct select_data select;
--	struct dentry *mountpoint;
--};
--static enum d_walk_ret detach_and_collect(void *_data, struct dentry *dentry)
-+static enum d_walk_ret find_submount(void *_data, struct dentry *dentry)
- {
--	struct detach_data *data = _data;
--
- 	if (d_mountpoint(dentry)) {
- 		__dget_dlock(dentry);
--		data->mountpoint = dentry;
-+		*(struct dentry **)_data = dentry;
- 		return D_WALK_QUIT;
- 	}
- 
--	return select_collect(&data->select, dentry);
--}
--
--static void check_and_drop(void *_data)
--{
--	struct detach_data *data = _data;
--
--	if (!data->mountpoint && list_empty(&data->select.dispose))
--		__d_drop(data->select.start);
-+	return D_WALK_CONTINUE;
- }
- 
- /**
-  * d_invalidate - detach submounts, prune dcache, and drop
-  * @dentry: dentry to invalidate (aka detach, prune and drop)
-- *
-- * no dcache lock.
-- *
-- * The final d_drop is done as an atomic operation relative to
-- * rename_lock ensuring there are no races with d_set_mounted.  This
-- * ensures there are no unhashed dentries on the path to a mountpoint.
-  */
- void d_invalidate(struct dentry *dentry)
- {
--	/*
--	 * If it's already been dropped, return OK.
--	 */
-+	bool had_submounts = false;
- 	spin_lock(&dentry->d_lock);
- 	if (d_unhashed(dentry)) {
- 		spin_unlock(&dentry->d_lock);
- 		return;
- 	}
-+	__d_drop(dentry);
- 	spin_unlock(&dentry->d_lock);
- 
- 	/* Negative dentries can be dropped without further checks */
--	if (!dentry->d_inode) {
--		d_drop(dentry);
-+	if (!dentry->d_inode)
- 		return;
--	}
- 
-+	shrink_dcache_parent(dentry);
- 	for (;;) {
--		struct detach_data data;
--
--		data.mountpoint = NULL;
--		INIT_LIST_HEAD(&data.select.dispose);
--		data.select.start = dentry;
--		data.select.found = 0;
--
--		d_walk(dentry, &data, detach_and_collect, check_and_drop);
--
--		if (!list_empty(&data.select.dispose))
--			shrink_dentry_list(&data.select.dispose);
--		else if (!data.mountpoint)
-+		struct dentry *victim = NULL;
-+		d_walk(dentry, &victim, find_submount);
-+		if (!victim) {
-+			if (had_submounts)
-+				shrink_dcache_parent(dentry);
- 			return;
--
--		if (data.mountpoint) {
--			detach_mounts(data.mountpoint);
--			dput(data.mountpoint);
- 		}
-+		had_submounts = true;
-+		detach_mounts(victim);
-+		dput(victim);
- 	}
- }
- EXPORT_SYMBOL(d_invalidate);
-@@ -3112,7 +3078,7 @@ static enum d_walk_ret d_genocide_kill(void *data, struct dentry *dentry)
- 
- void d_genocide(struct dentry *parent)
- {
--	d_walk(parent, parent, d_genocide_kill, NULL);
-+	d_walk(parent, parent, d_genocide_kill);
- }
- 
- EXPORT_SYMBOL(d_genocide);
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
