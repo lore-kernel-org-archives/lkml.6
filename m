@@ -1,106 +1,208 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752750AbeDORjM (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 13:39:12 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49302 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752460AbeDORjK (ORCPT
+        id S1752786AbeDORoC (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 13:44:02 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:47405 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752460AbeDORoA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 13:39:10 -0400
-Date: Sun, 15 Apr 2018 19:39:08 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Tony Lindgren <tony@atomide.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        Linus Torvalds <torvalds@linux-foundation.org>, arnd@arndb.de
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        pali.rohar@gmail.com, sre@kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi,
-        ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com,
-        abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl,
-        sakari.ailus@linux.intel.com,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        jinb.park7@gmail.com, keescook@chromium.org,
-        rmk+kernel@armlinux.org.uk
-Subject: [regression v4.17-rc0] Re: FORTIFY_SOURCE breaks ARM compilation in
- -next -- was Re: ARM compile failure in Re: linux-next: Tree for Apr 4
-Message-ID: <20180415173908.GA2024@amd>
-References: <20180404165559.4cd0c12c@canb.auug.org.au>
- <20180404074856.GA9342@amd>
- <20180404175852.GI5700@atomide.com>
- <20180404184622.GA8608@amd>
- <20180404195951.GJ5700@atomide.com>
- <20180404201837.GA9710@amd>
+        Sun, 15 Apr 2018 13:44:00 -0400
+Date: Sun, 15 Apr 2018 19:43:58 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
+Subject: [GIT pull] scheduler updates for 4.17
+Message-ID: <alpine.DEB.2.21.1804151936170.17929@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
-Content-Disposition: inline
-In-Reply-To: <20180404201837.GA9710@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus,
 
---7AUc2qLy4jB3hD7Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+please pull the latest sched-urgent-for-linus git tree from:
 
-Hi!
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-for-linus
 
-> Thanks.
->=20
-> Ok, let me try to bisect it. Compile-problem should be easy...
->=20
-> Hmm. And as it is compile-problem in single file, it should even be
-> reasonably fast. I did not realize how easy it would be:
->=20
-> #!/bin/bash
-> set -e
-> cp config.ok .config
-> yes '' | ARCH=3Darm make lib/string.o
->=20
-> And the winner is:
->=20
-> ee333554fed55555a986a90bb097ac7f9d6f05bf is the first bad commit
-> commit ee333554fed55555a986a90bb097ac7f9d6f05bf
-> Author: Jinbum Park <jinb.park7@gmail.com>
-> Date:   Tue Mar 6 01:39:24 2018 +0100
-=2E..
+A few scheduler fixes:
 
->     Acked-by: Kees Cook <keescook@chromium.org>
->     Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
->     Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+ - Prevent a bogus warning vs. runqueue clock update flags in
+   do_sched_rt_period_timer()
 
-So I bisect a problem in -next, and patch is merged to Linus,
-_anyway_, breaking compilation there? Neither Jinbum nor Russell even
-bother to comment.
+ - Simplify the helper functions which handle requests for skipping the
+   runqueue clock updat.
 
-And BTW, Russell, there's another regression I bisected to your
-commit, that one is like two releases old, and "only" causes
-compilation warnings during build with non-US locale. I even proposed
-fix for that. Guess what? Ignored too.
+ - Do not unlock the tunables mutex in the error path of the cpu frequency
+   scheduler utils. Its not held.
+
+ - Enforce proper alignement for 'struct util_est' in sched_avg to prevent
+   a misalignment fault on IA64
+
+Thanks,
+
+	tglx
+
+------------------>
+Davidlohr Bueso (2):
+      sched/rt: Fix rq->clock_update_flags < RQCF_ACT_SKIP warning
+      sched/core: Simplify helpers for rq clock update skip requests
+
+Jules Maselbas (1):
+      sched/cpufreq/schedutil: Fix error path mutex unlock
+
+Peter Zijlstra (1):
+      sched/core: Force proper alignment of 'struct util_est'
 
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+ include/linux/sched.h            |  6 +++---
+ kernel/sched/core.c              |  2 +-
+ kernel/sched/cpufreq_schedutil.c |  3 +--
+ kernel/sched/deadline.c          |  2 +-
+ kernel/sched/fair.c              |  2 +-
+ kernel/sched/rt.c                |  4 +++-
+ kernel/sched/sched.h             | 17 ++++++++++++-----
+ 7 files changed, 22 insertions(+), 14 deletions(-)
 
---7AUc2qLy4jB3hD7Z
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrTjjsACgkQMOfwapXb+vIcAACgmioGofAJBgF03vtQH/LNcj5h
-dE8AnjGHjSgaydJZ0aK2WsMq1PKW9y/H
-=+TKb
------END PGP SIGNATURE-----
-
---7AUc2qLy4jB3hD7Z--
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index f228c6033832..b3d697f3b573 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -300,7 +300,7 @@ struct util_est {
+ 	unsigned int			enqueued;
+ 	unsigned int			ewma;
+ #define UTIL_EST_WEIGHT_SHIFT		2
+-};
++} __attribute__((__aligned__(sizeof(u64))));
+ 
+ /*
+  * The load_avg/util_avg accumulates an infinite geometric series
+@@ -364,7 +364,7 @@ struct sched_avg {
+ 	unsigned long			runnable_load_avg;
+ 	unsigned long			util_avg;
+ 	struct util_est			util_est;
+-};
++} ____cacheline_aligned;
+ 
+ struct sched_statistics {
+ #ifdef CONFIG_SCHEDSTATS
+@@ -435,7 +435,7 @@ struct sched_entity {
+ 	 * Put into separate cache line so it does not
+ 	 * collide with read-mostly values above.
+ 	 */
+-	struct sched_avg		avg ____cacheline_aligned_in_smp;
++	struct sched_avg		avg;
+ #endif
+ };
+ 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 28b68995a417..550a07f648b6 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -874,7 +874,7 @@ void check_preempt_curr(struct rq *rq, struct task_struct *p, int flags)
+ 	 * this case, we can save a useless back to back clock update.
+ 	 */
+ 	if (task_on_rq_queued(rq->curr) && test_tsk_need_resched(rq->curr))
+-		rq_clock_skip_update(rq, true);
++		rq_clock_skip_update(rq);
+ }
+ 
+ #ifdef CONFIG_SMP
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 2b124811947d..d2c6083304b4 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -631,10 +631,9 @@ static int sugov_init(struct cpufreq_policy *policy)
+ 
+ stop_kthread:
+ 	sugov_kthread_stop(sg_policy);
+-
+-free_sg_policy:
+ 	mutex_unlock(&global_tunables_lock);
+ 
++free_sg_policy:
+ 	sugov_policy_free(sg_policy);
+ 
+ disable_fast_switch:
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index d1c7bf7c7e5b..e7b3008b85bb 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1560,7 +1560,7 @@ static void yield_task_dl(struct rq *rq)
+ 	 * so we don't do microscopic update in schedule()
+ 	 * and double the fastpath cost.
+ 	 */
+-	rq_clock_skip_update(rq, true);
++	rq_clock_skip_update(rq);
+ }
+ 
+ #ifdef CONFIG_SMP
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 0951d1c58d2f..54dc31e7ab9b 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -7089,7 +7089,7 @@ static void yield_task_fair(struct rq *rq)
+ 		 * so we don't do microscopic update in schedule()
+ 		 * and double the fastpath cost.
+ 		 */
+-		rq_clock_skip_update(rq, true);
++		rq_clock_skip_update(rq);
+ 	}
+ 
+ 	set_skip_buddy(se);
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 86b77987435e..7aef6b4e885a 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -839,6 +839,8 @@ static int do_sched_rt_period_timer(struct rt_bandwidth *rt_b, int overrun)
+ 			continue;
+ 
+ 		raw_spin_lock(&rq->lock);
++		update_rq_clock(rq);
++
+ 		if (rt_rq->rt_time) {
+ 			u64 runtime;
+ 
+@@ -859,7 +861,7 @@ static int do_sched_rt_period_timer(struct rt_bandwidth *rt_b, int overrun)
+ 				 * 'runtime'.
+ 				 */
+ 				if (rt_rq->rt_nr_running && rq->curr == rq->idle)
+-					rq_clock_skip_update(rq, false);
++					rq_clock_cancel_skipupdate(rq);
+ 			}
+ 			if (rt_rq->rt_time || rt_rq->rt_nr_running)
+ 				idle = 0;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index c3deaee7a7a2..15750c222ca2 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -976,13 +976,20 @@ static inline u64 rq_clock_task(struct rq *rq)
+ 	return rq->clock_task;
+ }
+ 
+-static inline void rq_clock_skip_update(struct rq *rq, bool skip)
++static inline void rq_clock_skip_update(struct rq *rq)
+ {
+ 	lockdep_assert_held(&rq->lock);
+-	if (skip)
+-		rq->clock_update_flags |= RQCF_REQ_SKIP;
+-	else
+-		rq->clock_update_flags &= ~RQCF_REQ_SKIP;
++	rq->clock_update_flags |= RQCF_REQ_SKIP;
++}
++
++/*
++ * See rt task throttoling, which is the only time a skip
++ * request is cancelled.
++ */
++static inline void rq_clock_cancel_skipupdate(struct rq *rq)
++{
++	lockdep_assert_held(&rq->lock);
++	rq->clock_update_flags &= ~RQCF_REQ_SKIP;
+ }
+ 
+ struct rq_flags {
