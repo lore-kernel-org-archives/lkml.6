@@ -1,59 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752776AbeDOWZZ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 18:25:25 -0400
-Received: from vulcan.natalenko.name ([104.207.131.136]:48318 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750960AbeDOWZY (ORCPT
+        id S1752670AbeDOWeq (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 18:34:46 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:54422 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750960AbeDOWeo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 18:25:24 -0400
-ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1523831124; a=rsa-sha256;
-        cv=none;
-        b=bYgnlQUnYC8H9Y22tEPtQUnIaEbGNmUluxmmnm4dDEATgHDhkWlQ94Sc1t45aF4GK5nqhc1AfnkDzpSFL2DSnh6dyKw2yP7VdruL9exwl8Z0WxtAMSESdavfcZ0KwwFpS+oN0mez8sJCGAxZJ93uYBH71S/uPRcqlOAl7mt2xOc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1523831124;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=mULl4NtigtnlCQSIdqHnjwB/gY6ou5IL8zcM5A/0W+0=;
-        b=K2jTp2dyzA88REGkka19E8yFC93Z2+TNOUbzVeImUNZHfMOWsxCJtPi2khdvxdirkz8Is4
-        vuyrzAmrNu3NJT9PkHgGwjrS/0diAKfvp0X6hNz0GKTCX3oSRSlu9QK9Y00y7eNw7gAGfP
-        Zs+aGE0EIggGZy+JNWwCO1pYGJL4tXk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 9164733ADA5
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: Hansjoerg Lipp <hjlipp@web.de>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Passing luks passphrase from grub to systemd
-Date: Mon, 16 Apr 2018 00:25:22 +0200
-Message-ID: <2907407.5HaPOCmciK@natalenko.name>
+        Sun, 15 Apr 2018 18:34:44 -0400
+Date: Sun, 15 Apr 2018 23:34:39 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nikolay Borisov <nborisov@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>, Jeff Mahoney <jeffm@suse.com>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: [PATCH] fs/dcache.c: re-add cond_resched() in
+ shrink_dcache_parent()
+Message-ID: <20180415223439.GC30522@ZenIV.linux.org.uk>
+References: <20180413141430.2788e2562e3e24bd273fe78b@linux-foundation.org>
+ <3362fb2d-85ff-86af-399f-698c986e46cc@suse.com>
+ <20180414080206.GV30522@ZenIV.linux.org.uk>
+ <CA+55aFz4fwzcUWWT78AxK+GeVNVveWPNS+=V+ppb1ksn56TjUA@mail.gmail.com>
+ <20180414205846.GW30522@ZenIV.linux.org.uk>
+ <CA+55aFxD1xKqbobvoHQUWc5jc9n7-7KXYeSQy-CpE0SUZHi0PQ@mail.gmail.com>
+ <20180415005056.GX30522@ZenIV.linux.org.uk>
+ <CA+55aFwB0A-F8HW=QZu9O7Mtt4ryB1prB6cwh+6cwHv9b5bLNw@mail.gmail.com>
+ <20180415204054.GA30522@ZenIV.linux.org.uk>
+ <20180415215455.GB30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180415215455.GB30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+On Sun, Apr 15, 2018 at 10:54:55PM +0100, Al Viro wrote:
+> On Sun, Apr 15, 2018 at 09:40:54PM +0100, Al Viro wrote:
+> 
+> > BTW, the current placement of cond_resched() looks bogus; suppose we
+> > have collected a lot of victims and ran into need_resched().  We leave
+> > d_walk() and call shrink_dentry_list().  At that point there's a lot
+> > of stuff on our shrink list and anybody else running into them will
+> > have to keep scanning.  Giving up the timeslice before we take care
+> > of any of those looks like a bad idea, to put it mildly, and that's
+> > precisely what will happen.
+> > 
+> > What about doing that in the end of __dentry_kill() instead?  And to
+> > hell with both existing call sites - dput() one (before going to
+> > the parent) is obviously covered by that (dentry_kill() only returns
+> > non-NULL after having called __dentry_kill()) and in shrink_dentry_list()
+> > we'll get to it as soon as we go through all dentries that can be
+> > immediately kicked off the shrink list.  Which, AFAICS, improves the
+> > situation, now that shrink_lock_dentry() contains no trylock loops...
+> > 
+> > Comments?
+> 
+> What I mean is something like this (cumulative diff, it'll obviously need
+> to be carved up into 3--4 commits):
 
-> as I'm stuck with a (non-EFI x86_64) system with encrypted root
-> partition, I have to enter the passphrase twice (grub needs it for
-> getting the kernel etc., systemd needs it for mounting the root
-> partition). This can be quite inconvenient, especially if the passphrase
-> is long and contains special characters, and grub assumes a different
-> keyboard layout.
-
-Just fill another LUKS slot with a randomly generated key file and add that 
-file to your initramfs (which already resides on encrypted /boot, right?). If 
-your distro cannot do that, you should probably fixing things there, not 
-adding ugly hacks to the kernel.
-
-Check how it is implemented in Arch, for instance [1]. I'm not sure whether 
-this is currently possible with openSUSE, though.
-
-Regards,
-  Oleksandr
-
-[1] https://klmlinks.wordpress.com/2016/03/
+... and carved-up version is in vfs.git#work.dcache.  Could syzbot folks
+hit it with their reproducers?
