@@ -1,119 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752934AbeDOU6L (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 16:58:11 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52911 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752604AbeDOU6J (ORCPT
+        id S1753028AbeDOVWk (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 17:22:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57310 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752944AbeDOVWh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 16:58:09 -0400
-Date: Sun, 15 Apr 2018 22:58:07 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Kees Cook <keescook@chromium.org>
-Cc: Daniel Micay <danielmicay@gmail.com>, Tony Lindgren <tony@atomide.com>,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        pali.rohar@gmail.com, sre@kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, Kevin Hilman <khilman@kernel.org>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>, ivo.g.dimitrov.75@gmail.com,
-        Patrik Bachan <patrikbachan@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        =?utf-8?B?TWlja3Vsw6HFoQ==?= Qwertz <abcloriens@gmail.com>,
-        Clayton Craft <clayton@craftyguy.net>,
-        Martijn Braam <martijn@brixit.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Jinbum Park <jinb.park7@gmail.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: Re: [regression v4.17-rc0] Re: FORTIFY_SOURCE breaks ARM compilation
- in -next -- was Re: ARM compile failure in Re: linux-next: Tree for Apr 4
-Message-ID: <20180415205807.GA4182@amd>
-References: <20180404165559.4cd0c12c@canb.auug.org.au>
- <20180404074856.GA9342@amd>
- <20180404175852.GI5700@atomide.com>
- <20180404184622.GA8608@amd>
- <20180404195951.GJ5700@atomide.com>
- <20180404201837.GA9710@amd>
- <20180415173908.GA2024@amd>
- <CAGXu5jK9f62n95sOdJViXHXzQFyCdcsWt9HPvcdSFRp9Qqg0bg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="l76fUT7nc3MelDdI"
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jK9f62n95sOdJViXHXzQFyCdcsWt9HPvcdSFRp9Qqg0bg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sun, 15 Apr 2018 17:22:37 -0400
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        akrowiak@linux.vnet.ibm.com
+Subject: [PATCH v4 01/15] s390: zcrypt: externalize AP instructions available function
+Date: Sun, 15 Apr 2018 17:22:11 -0400
+X-Mailer: git-send-email 1.7.1
+In-Reply-To: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18041521-2213-0000-0000-000002920E50
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008862; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01018429; UDB=6.00519481; IPR=6.00797666;
+ MB=3.00020592; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-15 21:22:35
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041521-2214-0000-0000-000059C49247
+Message-Id: <1523827345-11600-2-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-15_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804150214
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If the AP instructions are not available on the linux host, then
+AP devices can not be interpreted by the SIE. The AP bus has a
+function it uses to determine if the AP instructions are
+available. This patch provides a new function that wraps the
+AP bus's function to externalize it for use by KVM.
 
---l76fUT7nc3MelDdI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Reviewed-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Reviewed-by: Harald Freudenberger <freude@linux.vnet.ibm.com>
+---
+ arch/s390/include/asm/ap.h     |    7 +++++++
+ arch/s390/include/asm/kvm-ap.h |   23 +++++++++++++++++++++++
+ arch/s390/kvm/Makefile         |    2 +-
+ arch/s390/kvm/kvm-ap.c         |   21 +++++++++++++++++++++
+ drivers/s390/crypto/ap_bus.c   |    6 ++++++
+ 5 files changed, 58 insertions(+), 1 deletions(-)
+ create mode 100644 arch/s390/include/asm/kvm-ap.h
+ create mode 100644 arch/s390/kvm/kvm-ap.c
 
-On Sun 2018-04-15 11:00:06, Kees Cook wrote:
-> On Sun, Apr 15, 2018 at 10:39 AM, Pavel Machek <pavel@ucw.cz> wrote:
-> > Hi!
-> >
-> >> Thanks.
-> >>
-> >> Ok, let me try to bisect it. Compile-problem should be easy...
-> >>
-> >> Hmm. And as it is compile-problem in single file, it should even be
-> >> reasonably fast. I did not realize how easy it would be:
-> >>
-> >> #!/bin/bash
-> >> set -e
-> >> cp config.ok .config
-> >> yes '' | ARCH=3Darm make lib/string.o
-> >>
-> >> And the winner is:
-> >>
-> >> ee333554fed55555a986a90bb097ac7f9d6f05bf is the first bad commit
-> >> commit ee333554fed55555a986a90bb097ac7f9d6f05bf
-> >> Author: Jinbum Park <jinb.park7@gmail.com>
-> >> Date:   Tue Mar 6 01:39:24 2018 +0100
-> > ...
-> >
-> >>     Acked-by: Kees Cook <keescook@chromium.org>
-> >>     Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
-> >>     Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> >
-> > So I bisect a problem in -next, and patch is merged to Linus,
-> > _anyway_, breaking compilation there? Neither Jinbum nor Russell even
-> > bother to comment.
->=20
-> Hi! Sorry I lost this email in my inbox. It seems this is specific to
-> a particular subset of arm architectures? (My local builds of arm all
-> succeed, for example. Can you send your failing config?) I'll take a
-> closer look on Monday if Daniel doesn't beat me to it.
-
-I believe it depends on gcc version really. I should get some sleep
-now, but details should be in the corresponding thread on lkml.
-
-I'll send you my .config privately.
-								Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---l76fUT7nc3MelDdI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrTvN8ACgkQMOfwapXb+vLhTgCcDvOONplDwZ2uDNCkiG3G/Bdl
-r+IAnRjHLy9V9BdOAYE8Gwk4ejKlbl0k
-=MBNZ
------END PGP SIGNATURE-----
-
---l76fUT7nc3MelDdI--
+diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
+index c1bedb4..7773bfd 100644
+--- a/arch/s390/include/asm/ap.h
++++ b/arch/s390/include/asm/ap.h
+@@ -120,4 +120,11 @@ struct ap_queue_status ap_queue_irq_ctrl(ap_qid_t qid,
+ 					 struct ap_qirq_ctrl qirqctrl,
+ 					 void *ind);
+ 
++/**
++ * ap_instructions_installed() - Tests whether AP instructions are installed
++ *
++ * Returns 1 if the AP instructions are installed, otherwise; returns 0
++ */
++int ap_instructions_installed(void);
++
+ #endif /* _ASM_S390_AP_H_ */
+diff --git a/arch/s390/include/asm/kvm-ap.h b/arch/s390/include/asm/kvm-ap.h
+new file mode 100644
+index 0000000..84412a9
+--- /dev/null
++++ b/arch/s390/include/asm/kvm-ap.h
+@@ -0,0 +1,23 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Adjunct Processor (AP) configuration management for KVM guests
++ *
++ * Copyright IBM Corp. 2018
++ *
++ * Author(s): Tony Krowiak <akrowia@linux.vnet.ibm.com>
++ */
++
++#ifndef _ASM_KVM_AP
++#define _ASM_KVM_AP
++
++/**
++ * kvm_ap_instructions_installed()
++ *
++ * Tests whether AP instructions are installed on the linux host
++ *
++ * Returns 1 if the AP instructions are installed on the host, otherwise;
++ * returns 0
++ */
++int kvm_ap_instructions_installed(void);
++
++#endif /* _ASM_KVM_AP */
+diff --git a/arch/s390/kvm/Makefile b/arch/s390/kvm/Makefile
+index 05ee90a..1876bfe 100644
+--- a/arch/s390/kvm/Makefile
++++ b/arch/s390/kvm/Makefile
+@@ -9,6 +9,6 @@ common-objs = $(KVM)/kvm_main.o $(KVM)/eventfd.o  $(KVM)/async_pf.o $(KVM)/irqch
+ ccflags-y := -Ivirt/kvm -Iarch/s390/kvm
+ 
+ kvm-objs := $(common-objs) kvm-s390.o intercept.o interrupt.o priv.o sigp.o
+-kvm-objs += diag.o gaccess.o guestdbg.o vsie.o
++kvm-objs += diag.o gaccess.o guestdbg.o vsie.o kvm-ap.o
+ 
+ obj-$(CONFIG_KVM) += kvm.o
+diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
+new file mode 100644
+index 0000000..1267588
+--- /dev/null
++++ b/arch/s390/kvm/kvm-ap.c
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Adjunct Processor (AP) configuration management for KVM guests
++ *
++ * Copyright IBM Corp. 2018
++ *
++ * Author(s): Tony Krowiak <akrowia@linux.vnet.ibm.com>
++ */
++#include <linux/kernel.h>
++#include <asm/kvm-ap.h>
++#include <asm/ap.h>
++
++int kvm_ap_instructions_installed(void)
++{
++#ifdef CONFIG_ZCRYPT
++	return ap_instructions_installed();
++#else
++	return 0;
++#endif
++}
++EXPORT_SYMBOL(kvm_ap_instructions_installed);
+diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
+index 35a0c2b..9d108b6 100644
+--- a/drivers/s390/crypto/ap_bus.c
++++ b/drivers/s390/crypto/ap_bus.c
+@@ -210,6 +210,12 @@ int ap_query_configuration(struct ap_config_info *info)
+ }
+ EXPORT_SYMBOL(ap_query_configuration);
+ 
++int ap_instructions_installed(void)
++{
++	return (ap_instructions_available() == 0);
++}
++EXPORT_SYMBOL(ap_instructions_installed);
++
+ /**
+  * ap_init_configuration(): Allocate and query configuration array.
+  */
+-- 
+1.7.1
