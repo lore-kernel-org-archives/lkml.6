@@ -1,86 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751325AbeDPGhv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 02:37:51 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:43320 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750707AbeDPGhu (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Mon, 16 Apr 2018 02:37:50 -0400
-Date: Mon, 16 Apr 2018 14:37:38 +0800
-From: joeyli <jlee@suse.com>
-To: Randy Wright <rwright@hpe.com>
-Cc: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>, linux-efi@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Takashi Iwai <tiwai@suse.de>, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Randy Wright <rwright@hpe.com>,
-        Ingo Molnar <mingo@redhat.com>, akpm@linux-foundation.org,
-        Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>
-Subject: Re: [PATCH] efi: Fix the size not consistent issue when unmapping
- memory map
-Message-ID: <20180416063738.GH16023@linux-l9pv.suse>
-References: <20180413062716.8040-1-jlee@suse.com>
- <20180416025734.GA26685@dhcp-128-65.nay.redhat.com>
- <20180416030904.GB26685@dhcp-128-65.nay.redhat.com>
+        id S1752806AbeDPGl7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 02:41:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41883 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752654AbeDPGl5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 02:41:57 -0400
+Date: Sun, 15 Apr 2018 23:41:33 -0700
+From: tip-bot for Mark Rutland <tipbot@zytor.com>
+Message-ID: <tip-4d3b57da1593c66835d8e3a757e4751b35493fb8@git.kernel.org>
+Cc: acme@redhat.com, lizhijian@cn.fujitsu.com, mingo@kernel.org,
+        mark.rutland@arm.com, tglx@linutronix.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, sandipan@linux.vnet.ibm.com
+Reply-To: tglx@linutronix.de, mark.rutland@arm.com, lizhijian@cn.fujitsu.com,
+        mingo@kernel.org, acme@redhat.com, sandipan@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com
+In-Reply-To: <20180404163445.16492-1-mark.rutland@arm.com>
+References: <20180404163445.16492-1-mark.rutland@arm.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] tools headers: Restore READ_ONCE() C++
+ compatibility
+Git-Commit-ID: 4d3b57da1593c66835d8e3a757e4751b35493fb8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180416030904.GB26685@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randy,
+Commit-ID:  4d3b57da1593c66835d8e3a757e4751b35493fb8
+Gitweb:     https://git.kernel.org/tip/4d3b57da1593c66835d8e3a757e4751b35493fb8
+Author:     Mark Rutland <mark.rutland@arm.com>
+AuthorDate: Wed, 4 Apr 2018 17:34:45 +0100
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 12 Apr 2018 09:30:09 -0300
 
-On Mon, Apr 16, 2018 at 11:09:04AM +0800, Dave Young wrote:
-> On 04/16/18 at 10:57am, Dave Young wrote:
-> > On 04/13/18 at 02:27pm, Lee, Chun-Yi wrote:
-> > > When using kdump, SOMETIMES the "size not consistent" warning message
-> > > shows up when the crash kernel boots with early_ioremap_debug parameter:
-> > > 
-> > > WARNING: CPU: 0 PID: 0 at ../mm/early_ioremap.c:182 early_iounmap+0x4f/0x12c()
-> > > early_iounmap(ffffffffff200180, 00000118) [0] size not consistent 00000120
-> > >
-[...snip] 
-> > 
-> > Good catch.  The kexec code need to be fixed to use a separate buffer so
-> > avoid the alignment like what kexec-tools did.  I can submit a fix for
-> > that.
-> 
-> Can you try below code, see if it works?
->
+tools headers: Restore READ_ONCE() C++ compatibility
 
-Randy, do you want to try Dave's kexec patch on your environment? Please remove
-my patch first.  
+Our userspace <linux/compiler.h> defines READ_ONCE() in a way that clang
+doesn't like, as we have an anonymous union in which neither field is
+initialized.
 
-Thanks a lot!
-Joey Lee
+WRITE_ONCE() is fine since it initializes the __val field. For
+READ_ONCE() we can keep clang and GCC happy with a dummy initialization
+of the __c field, so let's do that.
+
+At the same time, let's split READ_ONCE() and WRITE_ONCE() over several
+lines for legibility, as we do in the in-kernel <linux/compiler.h>.
+
+Reported-by: Li Zhijian <lizhijian@cn.fujitsu.com>
+Reported-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Tested-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Fixes: 6aa7de059173a986 ("locking/atomics: COCCINELLE/treewide: Convert trivial ACCESS_ONCE() patterns to READ_ONCE()/WRITE_ONCE()")
+Link: http://lkml.kernel.org/r/20180404163445.16492-1-mark.rutland@arm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/include/linux/compiler.h | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/tools/include/linux/compiler.h b/tools/include/linux/compiler.h
+index 04e32f965ad7..1827c2f973f9 100644
+--- a/tools/include/linux/compiler.h
++++ b/tools/include/linux/compiler.h
+@@ -151,11 +151,21 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
+  * required ordering.
+  */
  
-> 
-> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> index 3182908b7e6c..eaee37c54b7b 100644
-> --- a/arch/x86/kernel/kexec-bzimage64.c
-> +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -398,11 +398,10 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
->  	 * little bit simple
->  	 */
->  	efi_map_sz = efi_get_runtime_map_size();
-> -	efi_map_sz = ALIGN(efi_map_sz, 16);
->  	params_cmdline_sz = sizeof(struct boot_params) + cmdline_len +
->  				MAX_ELFCOREHDR_STR_LEN;
->  	params_cmdline_sz = ALIGN(params_cmdline_sz, 16);
-> -	kbuf.bufsz = params_cmdline_sz + efi_map_sz +
-> +	kbuf.bufsz = params_cmdline_sz + ALIGN(efi_map_sz, 16)+
->  				sizeof(struct setup_data) +
->  				sizeof(struct efi_setup_data);
->  
-> @@ -410,7 +409,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
->  	if (!params)
->  		return ERR_PTR(-ENOMEM);
->  	efi_map_offset = params_cmdline_sz;
-> -	efi_setup_data_offset = efi_map_offset + efi_map_sz;
-> +	efi_setup_data_offset = efi_map_offset + ALIGN(efi_map_sz, 16);
->  
->  	/* Copy setup header onto bootparams. Documentation/x86/boot.txt */
->  	setup_header_size = 0x0202 + kernel[0x0201] - setup_hdr_offset;
+-#define READ_ONCE(x) \
+-	({ union { typeof(x) __val; char __c[1]; } __u; __read_once_size(&(x), __u.__c, sizeof(x)); __u.__val; })
+-
+-#define WRITE_ONCE(x, val) \
+-	({ union { typeof(x) __val; char __c[1]; } __u = { .__val = (val) }; __write_once_size(&(x), __u.__c, sizeof(x)); __u.__val; })
++#define READ_ONCE(x)					\
++({							\
++	union { typeof(x) __val; char __c[1]; } __u =	\
++		{ .__c = { 0 } };			\
++	__read_once_size(&(x), __u.__c, sizeof(x));	\
++	__u.__val;					\
++})
++
++#define WRITE_ONCE(x, val)				\
++({							\
++	union { typeof(x) __val; char __c[1]; } __u =	\
++		{ .__val = (val) }; 			\
++	__write_once_size(&(x), __u.__c, sizeof(x));	\
++	__u.__val;					\
++})
+ 
+ 
+ #ifndef __fallthrough
