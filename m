@@ -1,90 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753213AbeDPSBy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 14:01:54 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:42391 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752376AbeDPSBv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 14:01:51 -0400
-X-Google-Smtp-Source: AIpwx4+rvYPE+R7neK2iK35cJLpCqCsInRob8NXdlfUOG3UJoqNwoR2Dxyurfhejwo0tWSZGUSv9mQ==
-Date: Mon, 16 Apr 2018 11:01:48 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Vignesh R <vigneshr@ti.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v2 3/3] Input: ti_am335x_tsc - Prevent system suspend
- when TSC is in use
-Message-ID: <20180416180148.GD77055@dtor-ws>
-References: <20180414095153.32060-1-vigneshr@ti.com>
- <20180414095153.32060-4-vigneshr@ti.com>
+        id S1753013AbeDPSGw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 14:06:52 -0400
+Received: from ms.lwn.net ([45.79.88.28]:58332 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752786AbeDPSGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 14:06:51 -0400
+Date: Mon, 16 Apr 2018 12:06:50 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 4.17-rc1
+Message-ID: <20180416120650.6174a601@lwn.net>
+In-Reply-To: <CA+55aFx62iBkj+hOmhLksUtvjwTcm_o1dwcyvaNnVpJ-AmvzVQ@mail.gmail.com>
+References: <CA+55aFx62iBkj+hOmhLksUtvjwTcm_o1dwcyvaNnVpJ-AmvzVQ@mail.gmail.com>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180414095153.32060-4-vigneshr@ti.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 14, 2018 at 03:21:53PM +0530, Vignesh R wrote:
-> From: Grygorii Strashko <grygorii.strashko@ti.com>
-> 
-> Prevent system suspend while user has finger on touch screen,
-> because TSC is wakeup source and suspending device while in use will
-> result in failure to disable the module.
-> This patch uses pm_stay_awake() and pm_relax() APIs to prevent and
-> resume system suspend as required.
+On Sun, 15 Apr 2018 18:55:38 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-This looks like common behavior for all touchscreens and many other
-input devices, but other systems seem to cope without having to add
-pm_stay_awake() and pm_relax(). I wonder why your system requires it and
-whether we can generalize this somehow.
+> End result: we actually removed more lines than we added:
+> 
+>  13538 files changed, 627723 insertions(+), 818855 deletions(-)
+> 
+> which is probably a first. Ever. In the history of the universe. Or at
+> least kernel releases.
 
-> 
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> ---
-> 
-> v2: No changes.
-> 
->  drivers/input/touchscreen/ti_am335x_tsc.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/input/touchscreen/ti_am335x_tsc.c b/drivers/input/touchscreen/ti_am335x_tsc.c
-> index dcd9db768169..43b22e071842 100644
-> --- a/drivers/input/touchscreen/ti_am335x_tsc.c
-> +++ b/drivers/input/touchscreen/ti_am335x_tsc.c
-> @@ -275,6 +275,7 @@ static irqreturn_t titsc_irq(int irq, void *dev)
->  	if (status & IRQENB_HW_PEN) {
->  		ts_dev->pen_down = true;
->  		irqclr |= IRQENB_HW_PEN;
-> +		pm_stay_awake(ts_dev->mfd_tscadc->dev);
->  	}
->  
->  	if (status & IRQENB_PENUP) {
-> @@ -284,6 +285,7 @@ static irqreturn_t titsc_irq(int irq, void *dev)
->  			input_report_key(input_dev, BTN_TOUCH, 0);
->  			input_report_abs(input_dev, ABS_PRESSURE, 0);
->  			input_sync(input_dev);
-> +			pm_relax(ts_dev->mfd_tscadc->dev);
->  		} else {
->  			ts_dev->pen_down = true;
->  		}
-> @@ -524,6 +526,7 @@ static int __maybe_unused titsc_resume(struct device *dev)
->  		titsc_writel(ts_dev, REG_IRQWAKEUP,
->  				0x00);
->  		titsc_writel(ts_dev, REG_IRQCLR, IRQENB_HW_PEN);
-> +		pm_relax(ts_dev->mfd_tscadc->dev);
->  	}
->  	titsc_step_config(ts_dev);
->  	titsc_writel(ts_dev, REG_FIFO0THR,
-> -- 
-> 2.17.0
-> 
+For the curious...that's not quite the case.  We shrunk a bit for 2.6.36,
+due to the removal of all those defconfig files.  3.17 was also slightly
+smaller than 3.16 - removal of POWER3 and a whole bunch of staging stuff.
+So...third time's the charm!
 
-Thanks.
+Of course, one could look at the numbers involved and conclude that a
+release with more lines removed than added is a harbinger of a dot-zero
+release in the near future :)
 
--- 
-Dmitry
+jon
