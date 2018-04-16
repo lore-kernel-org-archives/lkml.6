@@ -1,930 +1,220 @@
 Return-Path: <andresx7@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523983802; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1523917488; cv=none;
         d=google.com; s=arc-20160816;
-        b=Xe//CsH02Qw2KZtLAimkrGM1qxhbKWcoxDD2HhoMnAJEGOSzHjYUjgTjJ9FkcxDYAr
-         NwXbDddv7tgqos8nsbQdeiL1NLKPqsSL95rvUIcyBImzcXDbtekOinGhWC2+56ynz1D+
-         tcJyZaSMiOJ/0ppSFzLmPC3yAdoVvyKhlaWo3mFsvUJAh4haLhC4BJu3OFutP+ZmiE2h
-         3HYW9DTeMHbwp99oQPDd9gJXBWdgS5pBZ67YIlkB3QhUrspOu33DA5LsXKdvEQq56IFh
-         NukbeDvWn7mbk61C+7Q6i//LGNLcb/0dzHfnZ2bp93cTdq8MNhO4iUQ8sEZaE5a80/qq
-         uYUg==
+        b=IikVbSInusJGoSI7wYRFCnQ+zgyq1RkYrF2TbN4B5XVU71Thzvw5CbDTT+rJvFmvsi
+         pxiR6WVs5mNd8QgEkaLmVgq7yvSD3Opxx2yOOtQKwsepK4VRQ8Wmp1qve5GAUTimi4PD
+         Le5Uq11WIbixRE3WtGV1/Am+B35fjDP10HClVH5dhQ9fD2WCTAj0EjxfTHnIr6URyiNt
+         VaMKSXFZCC+k1sEbQwwvBRjtFpUhKaY40TffZbMryB1Hagvs75TNZ9x2wFBuh3rjFC0M
+         SadrDYqBhYyC4NCnTz0iwgBiQvLSpLJgxEuwuHdKjxBDBnRtqpvzgotYe/Uvye68VaHf
+         NClg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:to:subject:cc
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=Ol8FMurtIgIw0vX/aqUL0yExvkIEntnWkN0FtDT4AV4=;
-        b=UUB2Ww4SUGNQqEwyQrf3iGwhA/JKcZfLWTr8l+J4FVKKrwoJ64IKMrv69Cbg6bqRD7
-         7DnBI4wKk3ZQ82OfRbd6eQ58qQLhFDp5hR8adGU4AirubiACxh6uWppRlQS/vcSsBC61
-         ywCnO9KFVEFULpvkFudnpEJLyscrBTLP4+0qbtgXWMPTjo0cMiOHPEE1WwTU2swxTuKs
-         2cs45VeM1UyimYEkXW6rN+BQHZY+rx6m0juIMM51Top2uv2Dg/el03oWLHgagwJYL5UM
-         ABFEwz7boLPleAJMkceRw9PY1kcAdXSKqGRZamDzH3dJJKexdaOc63mPwFY7UjKQwtZs
-         X5xw==
+        bh=BDB39gni7NYB96wEPMGglZ+K36ylZrTWrPmUdfeoeGM=;
+        b=j2jJVKVQpDVCRrdFiDz97YDqQ5MS1yuDNXX88l6Fb17oHp5ZjEtbrthh12yEPvDdCH
+         p8p1KHzawPDSvFlbqI+Uck5tg2yKcn9m7ky9WuSi6VrA8wXhNjbJrVZ59HoHOS5t8anY
+         MsnFJaGgN16vQhjK7NSM21JS1dETl5CXMOEUlpzWXgLpEViYESVE9sfYKdSjnLXxIAZ7
+         0hM1NPiYuQNgjZnysj7ZrEqyI3ozV0inqlYkmg/FMbdVAwTgffk8enRZltE9qNmgZWTy
+         H4G3rPAJoDk3Mi7ULj/MVEbil7f4lsRAtDOtjfTrh3rU7uC12/cZUQlo3jtXmEgUeTAC
+         /Jww==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rjvcUOGd;
-       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HGzZkOO5;
+       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=rjvcUOGd;
-       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HGzZkOO5;
+       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4/vC4FNmc7jDKrjVkhf4kPQaS69mSP6PpK9ewOFFK8e6gemYvdCZMx1AEEcZJvSTumxx7pVig==
-Cc: andresx7@gmail.com, gregkh@linuxfoundation.org, mcgrof@kernel.org,
- alexdeucher@gmail.com, kvalo@codeaurora.org, arend.vanspriel@broadcom.com
-Subject: Re: [PATCH 6/8] drm/amdgpu: use firmware_request_nowarn to load
- firmware
-To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
- linux-kernel@vger.kernel.org
-References: <20180416222427.29683-1-andresx7@gmail.com>
- <20180416222427.29683-7-andresx7@gmail.com>
- <2c27b97a-5cb7-92c3-d4d8-a9d274a2f1cf@amd.com>
- <c5980ac2-2b7c-2a4c-d0c2-5eab0ff01a5d@gmail.com>
- <459ec1e2-bb64-c5c5-75c0-47f443b35cc6@amd.com>
- <01911e9a-36f6-5fee-41d0-2eb5fc187ec1@gmail.com>
- <afa5b25d-11c6-94ba-81ec-ecb33af8c79e@amd.com>
- <e87409eb-3bf2-8f78-ba0e-a2b9821c5945@gmail.com>
+X-Google-Smtp-Source: AIpwx48cZb46/2Km0Dxd2AMDlF32D+T6hhIYvrO60oR4vupZ6nOIv6rwfBciP/l1OQhnnSi60wlqnQ==
 From: Andres Rodriguez <andresx7@gmail.com>
-Message-ID: <26e2a9e3-3f98-695b-a6f4-c0cd707c3ef4@gmail.com>
-Date: Tue, 17 Apr 2018 12:50:00 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <e87409eb-3bf2-8f78-ba0e-a2b9821c5945@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+To: linux-kernel@vger.kernel.org
+Cc: andresx7@gmail.com,
+	gregkh@linuxfoundation.org,
+	mcgrof@kernel.org,
+	alexdeucher@gmail.com,
+	ckoenig.leichtzumerken@gmail.com,
+	kvalo@codeaurora.org,
+	arend.vanspriel@broadcom.com
+Subject: [PATCH 4/8] firmware: add functions to load firmware without warnings v3
+Date: Mon, 16 Apr 2018 18:24:23 -0400
+Message-Id: <20180416222427.29683-5-andresx7@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180416222427.29683-1-andresx7@gmail.com>
+References: <20180416222427.29683-1-andresx7@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597943307609478014?=
-X-GMAIL-MSGID: =?utf-8?q?1598012839735897782?=
+X-GMAIL-THRID: =?utf-8?q?1597943305003671369?=
+X-GMAIL-MSGID: =?utf-8?q?1597943305003671369?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Currently the firmware loader only exposes one silent path for querying
+optional firmware, and that is firmware_request_direct(). This function
+also disables the fallback path, which might not always be the
+desired behaviour. [0]
 
+This patch introduces variations of firmware_request() and
+firmware_request_nowait() that enable the caller to disable the
+undesired warning messages. This is equivalent to adding FW_OPT_NO_WARN,
+to the old behaviour.
 
-On 2018-04-17 12:41 PM, Andres Rodriguez wrote:
-> 
-> 
-> On 2018-04-17 11:52 AM, Christian König wrote:
->> Am 17.04.2018 um 17:41 schrieb Andres Rodriguez:
->>>
->>>
->>> On 2018-04-17 11:33 AM, Christian König wrote:
->>>> Am 17.04.2018 um 17:07 schrieb Andres Rodriguez:
->>>>>
->>>>>
->>>>> On 2018-04-17 04:48 AM, Christian König wrote:
->>>>>> Well this is a rather big NAK for this patch.
->>>>>>
->>>>>> Only a small fraction of the firmware files amdgpu uses are 
->>>>>> actually optional (the ones with the *_2.bin name). All other 
->>>>>> files are mandatory for correct driver operation.
->>>>>>
->>>>>> There is a fallback when actually no firmware files at all are 
->>>>>> found, in this case we at least try to get a picture on the screen 
->>>>>> so that the user gets a hint on what is wrong. But this path isn't 
->>>>>> tested well and breaks from time to time.
->>>>>>
->>>>>> So when you get a message like "Direct firmware load for * failed 
->>>>>> with error -2" even if it's one of the "*_2.bin" files that is a 
->>>>>> clear hint that you should update your firmware package.
->>>>>
->>>>> The amdgpu driver already provides clear messages when a required 
->>>>> firmware file is not found. After request_firmware() returns an 
->>>>> error, we will print:
->>>>> "{ip_name}: Failed to load firmware {fw_name}"
->>>>>
->>>>> When the firmware is optional, we won't print that message, and 
->>>>> handle the firmware load in an appropriate way (re-use _1 firmware 
->>>>> for_2 etc.)
->>>>>
->>>>> Note that we care about informing the user *only* if the firmware 
->>>>> was not found. If the firmware ends up coming from the fallback 
->>>>> loader, but we do receive it, then we don't really care.
->>>>
->>>> And that is exactly what I disagree on. Even when we used the 
->>>> fallback there should definitely be an error message that the real 
->>>> firmware wasn't found
->>>
->>> The request_firmware() fallback does fetch the real firmware. Why 
->>> should a user configuration knob produce an error message if the 
->>> behaviour is valid?
->>
->> Because the behavior isn't valid.
->>
->> We ran the fallback path which is not optimal and the user should 
->> consider installing the missing firmware. There definitely should be a 
->> message about that.
-> 
-> I think I misused the word fallback and that has led to some confusion, 
-> sorry about that. There is the fallback path inside request_firmware() 
-> (formerly known as the usermode helper), and there is the fallback path 
-> in amdgpu.
-> 
-> The first, if request_firmware() can't find built-in firmware it can 
-> query the usermodehelper for the file and retrieve it. This will result 
-> in the real firmware file being retrieved and optimal behaviour from the 
-> amdgpu side. In this case request_firmware() returns success.
-> 
-> The second, if request_firmware() completely fails, we will try some 
-> strategies like loading the firmware of the primary engine into the 
-> secondary engine. Or disabling the engine, etc. This leads to less than 
-> optimal behaviour in some cases, and we should warn the user 
-> appropriately. We do produce errors where appropriate in this scenario 
-> inside amdgpu.
-> 
-> Maybe I'm going a bit overzealous here trying two kill two birds with 
-> one stone. There are two cases that I wanted to improve on the amdgpu side:
-> 
-> First case, Usermodehelper: disabled - Firmware: not found, but optional
-> ------------------------------------------------------------------------
-> 
-> This was my main motivation for writing these changes. In this scenario 
-> we would get the "Direct firmware load failed with error..." message. 
-> And then the driver would self correct and load correctly.
-> 
-> For some combinations of ASICs + fw files this is expected behaviour, 
-> e.g. mec_2.bin on polaris10. And having that error message in the kernel 
-> log would lead users to think there is something wrong with their 
-> firmware install, when in reality everything is ok.
-> 
-> Second case, Usermodehelper: enabled - Firmware: found
-> ------------------------------------------------------
-> 
-> This is where I might be overextending myself, but I think we do have an 
-> opportunity for a big improvement.
-> 
-> In this scenario we will produce the output:
-> "Direct firmware load for * failed with error -2"
-> "Falling back to user helper"
-> 
-> I don't think those messages are particularly useful in the amdgpu case. 
-> If the user configured their system to use the usermodehelper, why 
-> should we be producing two*n_firmware_files lines of spew for regular 
-> operation? That is a lot of message flooding, and I don't see the purpose.
-> 
-> If the intent of the message is to help the user know that they need to 
-> install/update their linux-firmware package, then we have the error 
-> message:
-> "{ip_name}: Failed to load firmware {fw_name}"
-> 
-> And that should point the user in the proper direction to fix their issue.
-> 
+v2: add header prototype, use updated opt_flags
+v3: split debug message to separate patch
+    added _nowait variant
+    added documentation
 
-I should also point out, I'm not a user of the usermodehelper and I 
-don't really like it much as a configuration option. I think most 
-distros have phased it out (or are in the process of).
+[0]: https://git.kernel.org/linus/c0cc00f250e1
 
-So, while I would prefer if we take the approach of switching everything 
-to _nowarn(), I wouldn't be opposed to switching just the optional 
-firmware files.
+Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
+---
+ .../driver-api/firmware/request_firmware.rst       | 13 ++++--
+ drivers/base/firmware_loader/main.c                | 52 ++++++++++++++++++++--
+ include/linux/firmware.h                           |  6 +++
+ 3 files changed, 63 insertions(+), 8 deletions(-)
 
-Regards,
-Andres
-
-
-> Regards,
-> Andres
-> 
-> 
->>
->> I agree that it's also a good idea to note that we hit the fallback 
->> and not only that the firmware was missing, but that is a different 
->> issue.
->>
->> Additional to that it isn't the job of the driver to print messages 
->> about missing firmware, so the extra message about that should be 
->> removed.
->>
-> 
->> Regards,
->> Christian.
->>
->>>
->>> Regards,
->>> Andres
->>>
->>>
->>>>
->>>> We should probably add a message that the fallback is used and 
->>>> remove the error message that the firmware couldn't be loaded.
->>>>
->>>> Regards,
->>>> Christian.
->>>>
->>>>>
->>>>> This is specially important since we don't print a success message 
->>>>> on firmware load. So if we hit the fallback loader, the user will 
->>>>> see a warning followed by silence, so it could cause confusion on 
->>>>> whether the firmware load succeed or not.
->>>>>
->>>>> These are my 2c in the matter.
->>>>>
->>>>> Regards,
->>>>> Andres
->>>>>
->>>>>
->>>>>>
->>>>>> Regards,
->>>>>> Christian.
->>>>>>
->>>>>> Am 17.04.2018 um 00:24 schrieb Andres Rodriguez:
->>>>>>> Currently, during the normal boot process the amdgpu driver will 
->>>>>>> produce
->>>>>>> spew like the following in dmesg:
->>>>>>> Direct firmware load for amdgpu/polaris10_mec_2.bin failed with 
->>>>>>> error -2
->>>>>>>
->>>>>>> This happens when amdgpu tries to load optional firmware files. 
->>>>>>> So the
->>>>>>> error does not affect the startup sequence.
->>>>>>>
->>>>>>> This patch switches the amdgpu to use firmware_request_nowarn(), 
->>>>>>> which
->>>>>>> will not produce the warnings mentioned above. Hopefully 
->>>>>>> resulting in a
->>>>>>> cleaner bootup log.
->>>>>>>
->>>>>>> Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
->>>>>>> ---
->>>>>>>   drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c    |  2 +-
->>>>>>>   drivers/gpu/drm/amd/amdgpu/amdgpu_device.c |  4 ++--
->>>>>>>   drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h  |  2 +-
->>>>>>>   drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c    |  2 +-
->>>>>>>   drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c    |  2 +-
->>>>>>>   drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c    |  2 +-
->>>>>>>   drivers/gpu/drm/amd/amdgpu/ci_dpm.c        |  2 +-
->>>>>>>   drivers/gpu/drm/amd/amdgpu/cik_sdma.c      |  2 +-
->>>>>>>   drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c      |  8 ++++----
->>>>>>>   drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c      | 12 +++++------
->>>>>>>   drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c      | 32 
->>>>>>> +++++++++++++++---------------
->>>>>>>   drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c      | 12 +++++------
->>>>>>>   drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c      |  2 +-
->>>>>>>   drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c      |  2 +-
->>>>>>>   drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c      |  2 +-
->>>>>>>   drivers/gpu/drm/amd/amdgpu/psp_v10_0.c     |  2 +-
->>>>>>>   drivers/gpu/drm/amd/amdgpu/psp_v3_1.c      |  4 ++--
->>>>>>>   drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c     |  2 +-
->>>>>>>   drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c     |  2 +-
->>>>>>>   drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c     |  2 +-
->>>>>>>   drivers/gpu/drm/amd/amdgpu/si_dpm.c        |  2 +-
->>>>>>>   21 files changed, 51 insertions(+), 51 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
->>>>>>> index 4466f3535e2d..6c950811c0a5 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
->>>>>>> @@ -811,7 +811,7 @@ static int 
->>>>>>> amdgpu_cgs_get_firmware_info(struct cgs_device *cgs_device,
->>>>>>>                   return -EINVAL;
->>>>>>>               }
->>>>>>> -            err = request_firmware(&adev->pm.fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +            err = firmware_request_nowarn(&adev->pm.fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>               if (err) {
->>>>>>>                   DRM_ERROR("Failed to request firmware\n");
->>>>>>>                   return err;
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
->>>>>>> index af1b879a9ee9..d6225619e69f 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
->>>>>>> @@ -696,7 +696,7 @@ bool amdgpu_device_need_post(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>           if (adev->asic_type == CHIP_FIJI) {
->>>>>>>               int err;
->>>>>>>               uint32_t fw_ver;
->>>>>>> -            err = request_firmware(&adev->pm.fw, 
->>>>>>> "amdgpu/fiji_smc.bin", adev->dev);
->>>>>>> +            err = firmware_request_nowarn(&adev->pm.fw, 
->>>>>>> "amdgpu/fiji_smc.bin", adev->dev);
->>>>>>>               /* force vPost if error occured */
->>>>>>>               if (err)
->>>>>>>                   return true;
->>>>>>> @@ -1133,7 +1133,7 @@ static int 
->>>>>>> amdgpu_device_parse_gpu_info_fw(struct amdgpu_device *adev)
->>>>>>>       }
->>>>>>>       snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_gpu_info.bin", chip_name);
->>>>>>> -    err = request_firmware(&adev->firmware.gpu_info_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->firmware.gpu_info_fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>>       if (err) {
->>>>>>>           dev_err(adev->dev,
->>>>>>>               "Failed to load gpu_info firmware \"%s\"\n",
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h
->>>>>>> index 30b5500dc152..0acd1f3d14c8 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.h
->>>>>>> @@ -196,7 +196,7 @@ enum AMDGPU_UCODE_STATUS {
->>>>>>>   struct amdgpu_firmware_info {
->>>>>>>       /* ucode ID */
->>>>>>>       enum AMDGPU_UCODE_ID ucode_id;
->>>>>>> -    /* request_firmware */
->>>>>>> +    /* firmware_request */
->>>>>>>       const struct firmware *fw;
->>>>>>>       /* starting mc address */
->>>>>>>       uint64_t mc_addr;
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
->>>>>>> index b2eae86bf906..4de018d45081 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
->>>>>>> @@ -171,7 +171,7 @@ int amdgpu_uvd_sw_init(struct amdgpu_device 
->>>>>>> *adev)
->>>>>>>           return -EINVAL;
->>>>>>>       }
->>>>>>> -    r = request_firmware(&adev->uvd.fw, fw_name, adev->dev);
->>>>>>> +    r = firmware_request_nowarn(&adev->uvd.fw, fw_name, adev->dev);
->>>>>>>       if (r) {
->>>>>>>           dev_err(adev->dev, "amdgpu_uvd: Can't load firmware 
->>>>>>> \"%s\"\n",
->>>>>>>               fw_name);
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
->>>>>>> index d274ae535530..b6af824a2f44 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c
->>>>>>> @@ -138,7 +138,7 @@ int amdgpu_vce_sw_init(struct amdgpu_device 
->>>>>>> *adev, unsigned long size)
->>>>>>>           return -EINVAL;
->>>>>>>       }
->>>>>>> -    r = request_firmware(&adev->vce.fw, fw_name, adev->dev);
->>>>>>> +    r = firmware_request_nowarn(&adev->vce.fw, fw_name, adev->dev);
->>>>>>>       if (r) {
->>>>>>>           dev_err(adev->dev, "amdgpu_vce: Can't load firmware 
->>>>>>> \"%s\"\n",
->>>>>>>               fw_name);
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
->>>>>>> index 837962118dbc..bd650b87e281 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c
->>>>>>> @@ -67,7 +67,7 @@ int amdgpu_vcn_sw_init(struct amdgpu_device *adev)
->>>>>>>           return -EINVAL;
->>>>>>>       }
->>>>>>> -    r = request_firmware(&adev->vcn.fw, fw_name, adev->dev);
->>>>>>> +    r = firmware_request_nowarn(&adev->vcn.fw, fw_name, adev->dev);
->>>>>>>       if (r) {
->>>>>>>           dev_err(adev->dev, "amdgpu_vcn: Can't load firmware 
->>>>>>> \"%s\"\n",
->>>>>>>               fw_name);
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/ci_dpm.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/ci_dpm.c
->>>>>>> index a0943aa8d1d3..95e1edc1311d 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/ci_dpm.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/ci_dpm.c
->>>>>>> @@ -5849,7 +5849,7 @@ static int ci_dpm_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       }
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "radeon/%s_smc.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->pm.fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->pm.fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->pm.fw);
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
->>>>>>> index 6e8278e689b1..93c8acca0360 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/cik_sdma.c
->>>>>>> @@ -135,7 +135,7 @@ static int cik_sdma_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>               snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "radeon/%s_sdma.bin", chip_name);
->>>>>>>           else
->>>>>>>               snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "radeon/%s_sdma1.bin", chip_name);
->>>>>>> -        err = request_firmware(&adev->sdma.instance[i].fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>> +        err = 
->>>>>>> firmware_request_nowarn(&adev->sdma.instance[i].fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>           if (err)
->>>>>>>               goto out;
->>>>>>>           err = amdgpu_ucode_validate(adev->sdma.instance[i].fw);
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
->>>>>>> index 9870d83b68c1..8aebab5edf15 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v6_0.c
->>>>>>> @@ -335,7 +335,7 @@ static int gfx_v6_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       }
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "radeon/%s_pfp.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.pfp_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.pfp_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->gfx.pfp_fw);
->>>>>>> @@ -346,7 +346,7 @@ static int gfx_v6_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       adev->gfx.pfp_feature_version = 
->>>>>>> le32_to_cpu(cp_hdr->ucode_feature_version);
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "radeon/%s_me.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.me_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.me_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->gfx.me_fw);
->>>>>>> @@ -357,7 +357,7 @@ static int gfx_v6_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       adev->gfx.me_feature_version = 
->>>>>>> le32_to_cpu(cp_hdr->ucode_feature_version);
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "radeon/%s_ce.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.ce_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.ce_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->gfx.ce_fw);
->>>>>>> @@ -368,7 +368,7 @@ static int gfx_v6_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       adev->gfx.ce_feature_version = 
->>>>>>> le32_to_cpu(cp_hdr->ucode_feature_version);
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "radeon/%s_rlc.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.rlc_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.rlc_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->gfx.rlc_fw);
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
->>>>>>> index a066c5eda135..35a0e46464a5 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
->>>>>>> @@ -926,7 +926,7 @@ static int gfx_v7_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       }
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "radeon/%s_pfp.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.pfp_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.pfp_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->gfx.pfp_fw);
->>>>>>> @@ -934,7 +934,7 @@ static int gfx_v7_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>           goto out;
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "radeon/%s_me.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.me_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.me_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->gfx.me_fw);
->>>>>>> @@ -942,7 +942,7 @@ static int gfx_v7_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>           goto out;
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "radeon/%s_ce.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.ce_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.ce_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->gfx.ce_fw);
->>>>>>> @@ -950,7 +950,7 @@ static int gfx_v7_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>           goto out;
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "radeon/%s_mec.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.mec_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.mec_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->gfx.mec_fw);
->>>>>>> @@ -959,7 +959,7 @@ static int gfx_v7_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       if (adev->asic_type == CHIP_KAVERI) {
->>>>>>>           snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "radeon/%s_mec2.bin", chip_name);
->>>>>>> -        err = request_firmware(&adev->gfx.mec2_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +        err = firmware_request_nowarn(&adev->gfx.mec2_fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>>           if (err)
->>>>>>>               goto out;
->>>>>>>           err = amdgpu_ucode_validate(adev->gfx.mec2_fw);
->>>>>>> @@ -968,7 +968,7 @@ static int gfx_v7_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       }
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "radeon/%s_rlc.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.rlc_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.rlc_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->gfx.rlc_fw);
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
->>>>>>> index 4e694ae9f308..c16cd96a1557 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
->>>>>>> @@ -936,14 +936,14 @@ static int gfx_v8_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       if (adev->asic_type >= CHIP_POLARIS10 && adev->asic_type <= 
->>>>>>> CHIP_POLARIS12) {
->>>>>>>           snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_pfp_2.bin", chip_name);
->>>>>>> -        err = request_firmware(&adev->gfx.pfp_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +        err = firmware_request_nowarn(&adev->gfx.pfp_fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>>           if (err == -ENOENT) {
->>>>>>>               snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_pfp.bin", chip_name);
->>>>>>> -            err = request_firmware(&adev->gfx.pfp_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +            err = firmware_request_nowarn(&adev->gfx.pfp_fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>>           }
->>>>>>>       } else {
->>>>>>>           snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_pfp.bin", 
->>>>>>> chip_name);
->>>>>>> -        err = request_firmware(&adev->gfx.pfp_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +        err = firmware_request_nowarn(&adev->gfx.pfp_fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>>       }
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>> @@ -956,14 +956,14 @@ static int gfx_v8_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       if (adev->asic_type >= CHIP_POLARIS10 && adev->asic_type <= 
->>>>>>> CHIP_POLARIS12) {
->>>>>>>           snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_me_2.bin", chip_name);
->>>>>>> -        err = request_firmware(&adev->gfx.me_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +        err = firmware_request_nowarn(&adev->gfx.me_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>           if (err == -ENOENT) {
->>>>>>>               snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_me.bin", chip_name);
->>>>>>> -            err = request_firmware(&adev->gfx.me_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +            err = firmware_request_nowarn(&adev->gfx.me_fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>>           }
->>>>>>>       } else {
->>>>>>>           snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_me.bin", 
->>>>>>> chip_name);
->>>>>>> -        err = request_firmware(&adev->gfx.me_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +        err = firmware_request_nowarn(&adev->gfx.me_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       }
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>> @@ -977,14 +977,14 @@ static int gfx_v8_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       if (adev->asic_type >= CHIP_POLARIS10 && adev->asic_type <= 
->>>>>>> CHIP_POLARIS12) {
->>>>>>>           snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_ce_2.bin", chip_name);
->>>>>>> -        err = request_firmware(&adev->gfx.ce_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +        err = firmware_request_nowarn(&adev->gfx.ce_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>           if (err == -ENOENT) {
->>>>>>>               snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_ce.bin", chip_name);
->>>>>>> -            err = request_firmware(&adev->gfx.ce_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +            err = firmware_request_nowarn(&adev->gfx.ce_fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>>           }
->>>>>>>       } else {
->>>>>>>           snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_ce.bin", 
->>>>>>> chip_name);
->>>>>>> -        err = request_firmware(&adev->gfx.ce_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +        err = firmware_request_nowarn(&adev->gfx.ce_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       }
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>> @@ -1007,7 +1007,7 @@ static int gfx_v8_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>           adev->virt.chained_ib_support = false;
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_rlc.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.rlc_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.rlc_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->gfx.rlc_fw);
->>>>>>> @@ -1057,14 +1057,14 @@ static int gfx_v8_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       if (adev->asic_type >= CHIP_POLARIS10 && adev->asic_type <= 
->>>>>>> CHIP_POLARIS12) {
->>>>>>>           snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_mec_2.bin", chip_name);
->>>>>>> -        err = request_firmware(&adev->gfx.mec_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +        err = firmware_request_nowarn(&adev->gfx.mec_fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>>           if (err == -ENOENT) {
->>>>>>>               snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_mec.bin", chip_name);
->>>>>>> -            err = request_firmware(&adev->gfx.mec_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +            err = firmware_request_nowarn(&adev->gfx.mec_fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>>           }
->>>>>>>       } else {
->>>>>>>           snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_mec.bin", 
->>>>>>> chip_name);
->>>>>>> -        err = request_firmware(&adev->gfx.mec_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +        err = firmware_request_nowarn(&adev->gfx.mec_fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>>       }
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>> @@ -1079,14 +1079,14 @@ static int gfx_v8_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>           (adev->asic_type != CHIP_TOPAZ)) {
->>>>>>>           if (adev->asic_type >= CHIP_POLARIS10 && 
->>>>>>> adev->asic_type <= CHIP_POLARIS12) {
->>>>>>>               snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_mec2_2.bin", chip_name);
->>>>>>> -            err = request_firmware(&adev->gfx.mec2_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +            err = firmware_request_nowarn(&adev->gfx.mec2_fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>>               if (err == -ENOENT) {
->>>>>>>                   snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_mec2.bin", chip_name);
->>>>>>> -                err = request_firmware(&adev->gfx.mec2_fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>> +                err = 
->>>>>>> firmware_request_nowarn(&adev->gfx.mec2_fw, fw_name, adev->dev);
->>>>>>>               }
->>>>>>>           } else {
->>>>>>>               snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_mec2.bin", chip_name);
->>>>>>> -            err = request_firmware(&adev->gfx.mec2_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>> +            err = firmware_request_nowarn(&adev->gfx.mec2_fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>>           }
->>>>>>>           if (!err) {
->>>>>>>               err = amdgpu_ucode_validate(adev->gfx.mec2_fw);
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
->>>>>>> index c06479615e8a..9f70012c81ad 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
->>>>>>> @@ -370,7 +370,7 @@ static int gfx_v9_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       }
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_pfp.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.pfp_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.pfp_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->gfx.pfp_fw);
->>>>>>> @@ -381,7 +381,7 @@ static int gfx_v9_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       adev->gfx.pfp_feature_version = 
->>>>>>> le32_to_cpu(cp_hdr->ucode_feature_version);
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_me.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.me_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.me_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->gfx.me_fw);
->>>>>>> @@ -392,7 +392,7 @@ static int gfx_v9_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       adev->gfx.me_feature_version = 
->>>>>>> le32_to_cpu(cp_hdr->ucode_feature_version);
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_ce.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.ce_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.ce_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->gfx.ce_fw);
->>>>>>> @@ -403,7 +403,7 @@ static int gfx_v9_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       adev->gfx.ce_feature_version = 
->>>>>>> le32_to_cpu(cp_hdr->ucode_feature_version);
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_rlc.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.rlc_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.rlc_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->gfx.rlc_fw);
->>>>>>> @@ -449,7 +449,7 @@ static int gfx_v9_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>           adev->gfx.rlc.register_restore[i] = le32_to_cpu(tmp[i]);
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_mec.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.mec_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.mec_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->gfx.mec_fw);
->>>>>>> @@ -461,7 +461,7 @@ static int gfx_v9_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_mec2.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->gfx.mec2_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->gfx.mec2_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (!err) {
->>>>>>>           err = amdgpu_ucode_validate(adev->gfx.mec2_fw);
->>>>>>>           if (err)
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
->>>>>>> index 8e28270d1ea9..4192a5a0c444 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c
->>>>>>> @@ -136,7 +136,7 @@ static int gmc_v6_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>           snprintf(fw_name, sizeof(fw_name), "radeon/si58_mc.bin");
->>>>>>>       else
->>>>>>>           snprintf(fw_name, sizeof(fw_name), "radeon/%s_mc.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->mc.fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->mc.fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
->>>>>>> index 86e9d682c59e..06deba7f707d 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c
->>>>>>> @@ -151,7 +151,7 @@ static int gmc_v7_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       else
->>>>>>>           snprintf(fw_name, sizeof(fw_name), "radeon/%s_mc.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->mc.fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->mc.fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->mc.fw);
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
->>>>>>> index 9a813d834f1a..cbce96198dbc 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c
->>>>>>> @@ -235,7 +235,7 @@ static int gmc_v8_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       }
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_mc.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->mc.fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->mc.fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->mc.fw);
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
->>>>>>> index 5a9fe24697f9..718722ef1835 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
->>>>>>> @@ -105,7 +105,7 @@ int psp_v10_0_init_microcode(struct 
->>>>>>> psp_context *psp)
->>>>>>>       }
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_asd.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->psp.asd_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->psp.asd_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
->>>>>>> index 19bd1934e63d..dd5261577d9b 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/psp_v3_1.c
->>>>>>> @@ -111,7 +111,7 @@ int psp_v3_1_init_microcode(struct 
->>>>>>> psp_context *psp)
->>>>>>>       }
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_sos.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->psp.sos_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->psp.sos_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>> @@ -131,7 +131,7 @@ int psp_v3_1_init_microcode(struct 
->>>>>>> psp_context *psp)
->>>>>>>                   le32_to_cpu(hdr->sos_offset_bytes);
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "amdgpu/%s_asd.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->psp.asd_fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->psp.asd_fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
->>>>>>> index d4787ad4d346..a2afbaacc7e5 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v2_4.c
->>>>>>> @@ -146,7 +146,7 @@ static int sdma_v2_4_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>               snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_sdma.bin", chip_name);
->>>>>>>           else
->>>>>>>               snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_sdma1.bin", chip_name);
->>>>>>> -        err = request_firmware(&adev->sdma.instance[i].fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>> +        err = 
->>>>>>> firmware_request_nowarn(&adev->sdma.instance[i].fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>           if (err)
->>>>>>>               goto out;
->>>>>>>           err = amdgpu_ucode_validate(adev->sdma.instance[i].fw);
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
->>>>>>> index 521978c40537..75d2a9cc9268 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v3_0.c
->>>>>>> @@ -298,7 +298,7 @@ static int sdma_v3_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>               snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_sdma.bin", chip_name);
->>>>>>>           else
->>>>>>>               snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_sdma1.bin", chip_name);
->>>>>>> -        err = request_firmware(&adev->sdma.instance[i].fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>> +        err = 
->>>>>>> firmware_request_nowarn(&adev->sdma.instance[i].fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>           if (err)
->>>>>>>               goto out;
->>>>>>>           err = amdgpu_ucode_validate(adev->sdma.instance[i].fw);
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
->>>>>>> index 91cf95a8c39c..e1ebfb9e2650 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c
->>>>>>> @@ -176,7 +176,7 @@ static int sdma_v4_0_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>               snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_sdma.bin", chip_name);
->>>>>>>           else
->>>>>>>               snprintf(fw_name, sizeof(fw_name), 
->>>>>>> "amdgpu/%s_sdma1.bin", chip_name);
->>>>>>> -        err = request_firmware(&adev->sdma.instance[i].fw, 
->>>>>>> fw_name, adev->dev);
->>>>>>> +        err = 
->>>>>>> firmware_request_nowarn(&adev->sdma.instance[i].fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>           if (err)
->>>>>>>               goto out;
->>>>>>>           err = amdgpu_ucode_validate(adev->sdma.instance[i].fw);
->>>>>>> diff --git a/drivers/gpu/drm/amd/amdgpu/si_dpm.c 
->>>>>>> b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
->>>>>>> index ce675a7f179a..5538a5269417 100644
->>>>>>> --- a/drivers/gpu/drm/amd/amdgpu/si_dpm.c
->>>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/si_dpm.c
->>>>>>> @@ -7687,7 +7687,7 @@ static int si_dpm_init_microcode(struct 
->>>>>>> amdgpu_device *adev)
->>>>>>>       }
->>>>>>>       snprintf(fw_name, sizeof(fw_name), "radeon/%s_smc.bin", 
->>>>>>> chip_name);
->>>>>>> -    err = request_firmware(&adev->pm.fw, fw_name, adev->dev);
->>>>>>> +    err = firmware_request_nowarn(&adev->pm.fw, fw_name, 
->>>>>>> adev->dev);
->>>>>>>       if (err)
->>>>>>>           goto out;
->>>>>>>       err = amdgpu_ucode_validate(adev->pm.fw);
->>>>>>
->>>>
->>
+diff --git a/Documentation/driver-api/firmware/request_firmware.rst b/Documentation/driver-api/firmware/request_firmware.rst
+index 7632f8807472..913e7d2e0cb7 100644
+--- a/Documentation/driver-api/firmware/request_firmware.rst
++++ b/Documentation/driver-api/firmware/request_firmware.rst
+@@ -20,6 +20,11 @@ firmware_request
+ .. kernel-doc:: drivers/base/firmware_loader/main.c
+    :functions: firmware_request
+ 
++firmware_request_nowarn
++-----------------------
++.. kernel-doc:: drivers/base/firmware_loader/main.c
++   :functions: firmware_request_nowarn
++
+ firmware_request_direct
+ -----------------------
+ .. kernel-doc:: drivers/base/firmware_loader/main.c
+@@ -36,13 +41,13 @@ Asynchronous firmware requests
+ Asynchronous firmware requests allow driver code to not have to wait
+ until the firmware or an error is returned. Function callbacks are
+ provided so that when the firmware or an error is found the driver is
+-informed through the callback. firmware_request_nowait() cannot be called
++informed through the callback. firmware_request_nowait2() cannot be called
+ in atomic contexts.
+ 
+-firmware_request_nowait
+------------------------
++firmware_request_nowait2
++------------------------
+ .. kernel-doc:: drivers/base/firmware_loader/main.c
+-   :functions: firmware_request_nowait
++   :functions: firmware_request_nowait2
+ 
+ Special optimizations on reboot
+ ===============================
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index 5baadad3012d..14ded1de84bf 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -631,6 +631,30 @@ firmware_request(const struct firmware **firmware_p, const char *name,
+ }
+ EXPORT_SYMBOL(firmware_request);
+ 
++/**
++ * firmware_request_nowarn: - request for an optional fw module
++ * @firmware: pointer to firmware image
++ * @name: name of firmware file
++ * @device: device for which firmware is being loaded
++ *
++ * This function is similar in behaviour to firmware_request(), except
++ * it doesn't produce warning messages when the file is not found.
++ **/
++int
++firmware_request_nowarn(const struct firmware **firmware, const char *name,
++			struct device *device)
++{
++	int ret;
++
++	/* Need to pin this module until return */
++	__module_get(THIS_MODULE);
++	ret = _firmware_request(firmware, name, device, NULL, 0,
++				FW_OPT_UEVENT | FW_OPT_NO_WARN);
++	module_put(THIS_MODULE);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(firmware_request_nowarn);
++
+ /**
+  * firmware_request_direct: - load firmware directly without usermode helper
+  * @firmware_p: pointer to firmware image
+@@ -755,10 +779,11 @@ static void firmware_request_work_func(struct work_struct *work)
+ }
+ 
+ /**
+- * firmware_request_nowait - asynchronous version of firmware_request
++ * firmware_request_nowait2 - asynchronous version of firmware_request
+  * @module: module requesting the firmware
+  * @uevent: sends uevent to copy the firmware image if this flag
+  *	is non-zero else the firmware copy must be done manually.
++ * @warn: enable warnings
+  * @name: name of firmware file
+  * @device: device for which firmware is being loaded
+  * @gfp: allocation flags
+@@ -778,8 +803,8 @@ static void firmware_request_work_func(struct work_struct *work)
+  *		- can't sleep at all if @gfp is GFP_ATOMIC.
+  **/
+ int
+-firmware_request_nowait(
+-	struct module *module, bool uevent,
++firmware_request_nowait2(
++	struct module *module, bool uevent, bool warn,
+ 	const char *name, struct device *device, gfp_t gfp, void *context,
+ 	void (*cont)(const struct firmware *fw, void *context))
+ {
+@@ -799,7 +824,8 @@ firmware_request_nowait(
+ 	fw_work->context = context;
+ 	fw_work->cont = cont;
+ 	fw_work->opt_flags = FW_OPT_NOWAIT |
+-		(uevent ? FW_OPT_UEVENT : FW_OPT_USERHELPER);
++		(uevent ? FW_OPT_UEVENT : FW_OPT_USERHELPER) |
++		(warn ? 0 : FW_OPT_NO_WARN);
+ 
+ 	if (!uevent && fw_cache_is_setup(device, name)) {
+ 		kfree_const(fw_work->name);
+@@ -818,6 +844,24 @@ firmware_request_nowait(
+ 	schedule_work(&fw_work->work);
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(firmware_request_nowait2);
++
++/**
++ * firmware_request_nowait - compatibility version of firmware_request_nowait2
++ *
++ * This is equivalent to calling firmware_request_nowait2 with warnings enabled.
++ *
++ * Refer to firmware_request_nowait2 for further details.
++ **/
++int
++firmware_request_nowait(
++	struct module *module, bool uevent,
++	const char *name, struct device *device, gfp_t gfp, void *context,
++	void (*cont)(const struct firmware *fw, void *context))
++{
++	return firmware_request_nowait2(module, uevent, true, name, device,
++					gfp, context, cont);
++}
+ EXPORT_SYMBOL(firmware_request_nowait);
+ 
+ #ifdef CONFIG_PM_SLEEP
+diff --git a/include/linux/firmware.h b/include/linux/firmware.h
+index db8351a42405..2623d3f853ba 100644
+--- a/include/linux/firmware.h
++++ b/include/linux/firmware.h
+@@ -42,6 +42,12 @@ struct builtin_fw {
+ #if defined(CONFIG_FW_LOADER) || (defined(CONFIG_FW_LOADER_MODULE) && defined(MODULE))
+ int firmware_request(const struct firmware **fw, const char *name,
+ 		     struct device *device);
++int firmware_request_nowarn(const struct firmware **fw, const char *name,
++			    struct device *device);
++int firmware_request_nowait2(
++	struct module *module, bool uevent, bool warn,
++	const char *name, struct device *device, gfp_t gfp, void *context,
++	void (*cont)(const struct firmware *fw, void *context));
+ int firmware_request_nowait(
+ 	struct module *module, bool uevent,
+ 	const char *name, struct device *device, gfp_t gfp, void *context,
+-- 
+2.14.1
