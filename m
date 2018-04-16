@@ -1,83 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753156AbeDPRPr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 13:15:47 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:48050 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753105AbeDPRPo (ORCPT
+        id S1753056AbeDPRPg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 13:15:36 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56464 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752974AbeDPRPd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 13:15:44 -0400
-X-IronPort-AV: E=Sophos;i="5.48,459,1517875200";
-   d="scan'208";a="675003615"
-From: "Raslan, KarimAllah" <karahmed@amazon.de>
-To: "jmattson@google.com" <jmattson@google.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>
-Subject: Re: [PATCH 2/2] kvm: nVMX: Introduce KVM_CAP_STATE
-Thread-Topic: [PATCH 2/2] kvm: nVMX: Introduce KVM_CAP_STATE
-Thread-Index: AQHT0nC6+MLPx/lKCUKGTnSUimWtFqQDmW6AgAAOw4A=
-Date: Mon, 16 Apr 2018 17:15:37 +0000
-Message-ID: <1523898937.22952.13.camel@amazon.de>
-References: <1523545958-28059-1-git-send-email-karahmed@amazon.de>
-         <1523545958-28059-2-git-send-email-karahmed@amazon.de>
-         <CALMp9eSS4nL1-1i1Df=vyPFT1FZVprPB0Yx-JX0auknNc09Gtg@mail.gmail.com>
-In-Reply-To: <CALMp9eSS4nL1-1i1Df=vyPFT1FZVprPB0Yx-JX0auknNc09Gtg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.166.213]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C865D56FD93A604FBB6A7AC3A6AEFBD2@amazon.com>
-MIME-Version: 1.0
+        Mon, 16 Apr 2018 13:15:33 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Kirill Marinushkin <k.marinushkin@gmail.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>,
+        Mark Brown <broonie@kernel.org>, Pan Xiuli <xiuli.pan@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>,
+        alsa-devel@alsa-project.org, Pan Xiuli <xiuli.pan@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-kernel@vger.kernel.org,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: topology: Add missing clock gating parameter when parsing hw_configs" to the asoc tree
+In-Reply-To: <20180327205632.3677-3-k.marinushkin@gmail.com>
+Message-Id: <E1f87iy-0002y5-QX@debutante>
+Date: Mon, 16 Apr 2018 18:15:28 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3GHFv4Z020926
 
-On Mon, 2018-04-16 at 09:22 -0700, Jim Mattson wrote:
-> On Thu, Apr 12, 2018 at 8:12 AM, KarimAllah Ahmed <karahmed@amazon.de> wrote:
-> 
-> > 
-> > v2 -> v3:
-> > - Remove the forced VMExit from L2 after reading the kvm_state. The actual
-> >   problem is solved.
-> > - Rebase again!
-> > - Set nested_run_pending during restore (not sure if it makes sense yet or
-> >   not).
-> 
-> This doesn't actually make sense. Nested_run_pending should only be
-> set between L1 doing a VMLAUNCH/VMRESUME and the first instruction
-> executing in L2. That is extremely unlikely at a restore point.
+The patch
 
-Yeah, I am afraid I put very little thought into it as I was focused
-on the TSC issue :)
+   ASoC: topology: Add missing clock gating parameter when parsing hw_configs
 
-Will handle it properly in next version.
+has been applied to the asoc tree at
 
-> 
-> To deal with nested_run_pending and nested save/restore,
-> nested_run_pending should be set to 1 before calling
-> enter_vmx_non_root_mode, as it was prior to commit 7af40ad37b3f. That
-> means that it has to be cleared when emulating VM-entry to the halted
-> state (prior to calling kvm_vcpu_halt). And all of the from_vmentry
-> arguments that Paolo added when rebasing commit cf8b84f48a59 should be
-> removed, so that nested_run_pending is propagated correctly duting a
-> restore.
-> 
-> It should be possible to eliminate this strange little wart, but I
-> haven't looked deeply into it.
-> 
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 933e1c4a667103c4d10ebdc9505a0a6abd8c3fbd Mon Sep 17 00:00:00 2001
+From: Kirill Marinushkin <k.marinushkin@gmail.com>
+Date: Wed, 4 Apr 2018 06:19:38 +0200
+Subject: [PATCH] ASoC: topology: Add missing clock gating parameter when
+ parsing hw_configs
+
+Clock gating parameter is a part of `dai_fmt`. It is supported by
+`alsa-lib` when creating a topology binary file, but ignored by kernel
+when loading this topology file.
+
+After applying this commit, the clock gating parameter is not ignored any
+more. This solution is backwards compatible. The existing behaviour is
+not broken, because by default the parameter value is 0 and is ignored.
+
+snd_soc_tplg_hw_config.clock_gated = 0 => no effect
+snd_soc_tplg_hw_config.clock_gated = 1 => SND_SOC_DAIFMT_GATED
+snd_soc_tplg_hw_config.clock_gated = 2 => SND_SOC_DAIFMT_CONT
+
+For example, the following config, based on
+alsa-lib/src/conf/topology/broadwell/broadwell.conf, is now supported:
+
+~~~~
+SectionHWConfig."CodecHWConfig" {
+        id "1"
+        format "I2S"            # physical audio format.
+        pm_gate_clocks "true"   # clock can be gated
+}
+
+SectionLink."Codec" {
+
+        # used for binding to the physical link
+        id "0"
+
+        hw_configs [
+                "CodecHWConfig"
+        ]
+
+        default_hw_conf_id "1"
+}
+~~~~
+
+Signed-off-by: Kirill Marinushkin <k.marinushkin@gmail.com>
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Pan Xiuli <xiuli.pan@linux.intel.com>
+Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: alsa-devel@alsa-project.org
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ include/uapi/sound/asoc.h | 7 ++++++-
+ sound/soc/soc-topology.c  | 7 +++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/include/uapi/sound/asoc.h b/include/uapi/sound/asoc.h
+index f0e5e21efa54..f3c4b46e39d8 100644
+--- a/include/uapi/sound/asoc.h
++++ b/include/uapi/sound/asoc.h
+@@ -139,6 +139,11 @@
+ #define SND_SOC_TPLG_DAI_FLGBIT_SYMMETRIC_CHANNELS      (1 << 1)
+ #define SND_SOC_TPLG_DAI_FLGBIT_SYMMETRIC_SAMPLEBITS    (1 << 2)
+ 
++/* DAI clock gating */
++#define SND_SOC_TPLG_DAI_CLK_GATE_UNDEFINED	0
++#define SND_SOC_TPLG_DAI_CLK_GATE_GATED	1
++#define SND_SOC_TPLG_DAI_CLK_GATE_CONT		2
++
+ /* DAI physical PCM data formats.
+  * Add new formats to the end of the list.
+  */
+@@ -324,7 +329,7 @@ struct snd_soc_tplg_hw_config {
+ 	__le32 size;            /* in bytes of this structure */
+ 	__le32 id;		/* unique ID - - used to match */
+ 	__le32 fmt;		/* SND_SOC_DAI_FORMAT_ format value */
+-	__u8 clock_gated;	/* 1 if clock can be gated to save power */
++	__u8 clock_gated;	/* SND_SOC_TPLG_DAI_CLK_GATE_ value */
+ 	__u8 invert_bclk;	/* 1 for inverted BCLK, 0 for normal */
+ 	__u8 invert_fsync;	/* 1 for inverted frame clock, 0 for normal */
+ 	__u8 bclk_master;	/* SND_SOC_TPLG_BCLK_ value */
+diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+index 1c55252641f3..aab31144f683 100644
+--- a/sound/soc/soc-topology.c
++++ b/sound/soc/soc-topology.c
+@@ -2006,6 +2006,13 @@ static void set_link_hw_format(struct snd_soc_dai_link *link,
+ 
+ 		link->dai_fmt = hw_config->fmt & SND_SOC_DAIFMT_FORMAT_MASK;
+ 
++		/* clock gating */
++		if (hw_config->clock_gated == SND_SOC_TPLG_DAI_CLK_GATE_GATED)
++			link->dai_fmt |= SND_SOC_DAIFMT_GATED;
++		else if (hw_config->clock_gated ==
++			 SND_SOC_TPLG_DAI_CLK_GATE_CONT)
++			link->dai_fmt |= SND_SOC_DAIFMT_CONT;
++
+ 		/* clock signal polarity */
+ 		invert_bclk = hw_config->invert_bclk;
+ 		invert_fsync = hw_config->invert_fsync;
+-- 
+2.17.0
