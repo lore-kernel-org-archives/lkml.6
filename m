@@ -1,54 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754243AbeDPJeq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 05:34:46 -0400
-Received: from foss.arm.com ([217.140.101.70]:56924 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752511AbeDPJep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 05:34:45 -0400
-Date: Mon, 16 Apr 2018 10:34:31 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, edubezval@gmail.com,
-        kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
-        javi.merino@kernel.org, rui.zhang@intel.com,
-        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@gmail.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v3 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
- idle cooling driver
-Message-ID: <20180416093431.GA27901@e107533-lin>
-References: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
- <1522945005-7165-7-git-send-email-daniel.lezcano@linaro.org>
- <3f3b3b7a-3b74-aee2-2fac-f2759babe3f0@arm.com>
- <939f7943-feec-aaa2-3bd3-59a6618330c0@linaro.org>
- <20180416073729.GA4244@vireshk-i7>
- <0a3164f9-4738-e24e-6ed0-2c75024c304c@linaro.org>
+        id S1754635AbeDPJgD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 05:36:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50734 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754609AbeDPJgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 05:36:01 -0400
+Date: Mon, 16 Apr 2018 11:35:57 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+Cc: Dong Jia Shi <bjsdjshi@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfio-ccw: process ssch with interrupts disabled
+Message-ID: <20180416113557.25d4fbbb.cohuck@redhat.com>
+In-Reply-To: <20180416021312.GO12194@bjsdjshi@linux.vnet.ibm.com>
+References: <20180413140509.9042-1-cohuck@redhat.com>
+        <20180416021312.GO12194@bjsdjshi@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0a3164f9-4738-e24e-6ed0-2c75024c304c@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 09:44:51AM +0200, Daniel Lezcano wrote:
-> On 16/04/2018 09:37, Viresh Kumar wrote:
-> > On 13-04-18, 13:47, Daniel Lezcano wrote:
-> >> Ok, noted. At the first glance, it should not be a problem.
+On Mon, 16 Apr 2018 10:13:12 +0800
+Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
+
+> * Cornelia Huck <cohuck@redhat.com> [2018-04-13 16:05:09 +0200]:
+> 
+> > When we call ssch, an interrupt might already be pending once we
+> > return from the START SUBCHANNEL instruction. Therefore we need to
+> > make sure interrupts are disabled until after we're done with our
+> > processing.  
+> Sounds right.
+> 
 > > 
-> > Why do you think it wouldn't be a problem ?
+> > Note that the subchannel lock is the same as the ccwdevice lock that
+> > is mentioned in the documentation for ccw_device_start() and friends.  
+> I think this is helpful hint for me to understand the correct way of
+> using sch->lock in our context, but not sure if the word "same" brings
+> confusion to the others. There are many difference between them,
+> considering the fact that sch->lock exists in the CSS driver for a long
+> time already, and it is not external interface like ccw_dev->lock, and
+> its usage is different with ccw_dev->lock in the existing code.
+> It's because vfio-ccw are offering interface to the external world based
+> directly on the css driver level, it makes the purpose of protecting
+> what should be protected with it becomes the same.
 > 
-> Because we rely on the number to identify the cluster and flag it
-> 'processed'. The number itself is not important.
+> Not a problem for me, but better with a better rewording?
+
+Huh, my intention was to clarify things, not to make them more
+confusing :)
+
+The documentation for ccw_device_start() and friends seems to be the
+only place where we explicitly state locking requirements, so that's
+where I came from. Maybe simply reword the first paragraph to mention
+the lock?
+
+"When we call ssch, an interrupt might already be pending once we
+return from the START SUBCHANNEL instruction. Therefore we need to make
+sure interrupts are disabled while holding the subchannel lock until
+after we're done with our processing."
+
+Or maybe things are already clear enough from the code?
+> 
+> > 
+> > Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+> > ---
+> >  drivers/s390/cio/vfio_ccw_fsm.c | 19 ++++++++++++-------
+> >  1 file changed, 12 insertions(+), 7 deletions(-)
+
+> LGTM:
+> Reviewed-by: Dong Jia Shi <bjsdjshi@linux.ibm.com>
 > 
 
-In that case, why can't cpu_possible_mask be used for simplicity if all
-you need is the tracking and that need not be grouped under the "cluster"
-banner.
-
---
-Regards,
-Sudeep
+Thanks!
