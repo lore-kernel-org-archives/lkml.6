@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753795AbeDPVwA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 17:52:00 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40804 "EHLO mail.bootlin.com"
+        id S1753361AbeDPVxj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 17:53:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40697 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753747AbeDPVv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 17:51:57 -0400
+        id S1752652AbeDPVvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 17:51:01 -0400
 From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
 To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
         marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
@@ -14,9 +14,9 @@ Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
         thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v6 10/11] ARM: dts: sun8i: Add enable-method for SMP support for the A83T SoC
-Date: Mon, 16 Apr 2018 23:50:31 +0200
-Message-Id: <20180416215032.5023-11-mylene.josserand@bootlin.com>
+Subject: [PATCH v6 01/11] ARM: sunxi: smp: Move assembly code into a file
+Date: Mon, 16 Apr 2018 23:50:22 +0200
+Message-Id: <20180416215032.5023-2-mylene.josserand@bootlin.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180416215032.5023-1-mylene.josserand@bootlin.com>
 References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
@@ -27,83 +27,223 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the use of enable-method property for SMP support which allows
-to handle the SMP support for this specific SoC.
+Move the assembly code for cluster cache enabling and resuming
+into an assembly file instead of having it directly in C code.
 
-This commit adds enable-method properties to all CPU nodes.
+Remove the CFLAGS because we are using the ARM directive "arch"
+instead.
 
 Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/mach-sunxi/Makefile  |  4 +--
+ arch/arm/mach-sunxi/headsmp.S | 80 +++++++++++++++++++++++++++++++++++++++++
+ arch/arm/mach-sunxi/mc_smp.c  | 82 +++----------------------------------------
+ 3 files changed, 85 insertions(+), 81 deletions(-)
+ create mode 100644 arch/arm/mach-sunxi/headsmp.S
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 42539267e329..c9b60047b0b8 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -67,6 +67,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0>;
- 		};
+diff --git a/arch/arm/mach-sunxi/Makefile b/arch/arm/mach-sunxi/Makefile
+index 7de9cc286d53..7f45071ae74a 100644
+--- a/arch/arm/mach-sunxi/Makefile
++++ b/arch/arm/mach-sunxi/Makefile
+@@ -1,5 +1,3 @@
+-CFLAGS_mc_smp.o	+= -march=armv7-a
+-
+ obj-$(CONFIG_ARCH_SUNXI) += sunxi.o
+-obj-$(CONFIG_ARCH_SUNXI_MC_SMP) += mc_smp.o
++obj-$(CONFIG_ARCH_SUNXI_MC_SMP) += mc_smp.o headsmp.o
+ obj-$(CONFIG_SMP) += platsmp.o
+diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
+new file mode 100644
+index 000000000000..37dc772701f3
+--- /dev/null
++++ b/arch/arm/mach-sunxi/headsmp.S
+@@ -0,0 +1,80 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright (c) 2018 Chen-Yu Tsai
++ * Copyright (c) 2018 Bootlin
++ *
++ * Chen-Yu Tsai <wens@csie.org>
++ * Mylène Josserand <mylene.josserand@bootlin.com>
++ *
++ * SMP support for sunxi based systems with Cortex A7/A15
++ *
++ */
++
++#include <linux/linkage.h>
++#include <asm/assembler.h>
++#include <asm/cputype.h>
++
++ENTRY(sunxi_mc_smp_cluster_cache_enable)
++	.arch	armv7-a
++	/*
++	 * Enable cluster-level coherency, in preparation for turning on the MMU.
++	 *
++	 * Also enable regional clock gating and L2 data latency settings for
++	 * Cortex-A15. These settings are from the vendor kernel.
++	 */
++	mrc	p15, 0, r1, c0, c0, 0
++	movw	r2, #(ARM_CPU_PART_MASK & 0xffff)
++	movt	r2, #(ARM_CPU_PART_MASK >> 16)
++	and	r1, r1, r2
++	movw	r2, #(ARM_CPU_PART_CORTEX_A15 & 0xffff)
++	movt	r2, #(ARM_CPU_PART_CORTEX_A15 >> 16)
++	cmp	r1, r2
++	bne	not_a15
++
++	/* The following is Cortex-A15 specific */
++
++	/* ACTLR2: Enable CPU regional clock gates */
++	mrc p15, 1, r1, c15, c0, 4
++	orr r1, r1, #(0x1 << 31)
++	mcr p15, 1, r1, c15, c0, 4
++
++	/* L2ACTLR */
++	mrc p15, 1, r1, c15, c0, 0
++	/* Enable L2, GIC, and Timer regional clock gates */
++	orr r1, r1, #(0x1 << 26)
++	/* Disable clean/evict from being pushed to external */
++	orr r1, r1, #(0x1<<3)
++	mcr p15, 1, r1, c15, c0, 0
++
++	/* L2CTRL: L2 data RAM latency */
++	mrc p15, 1, r1, c9, c0, 2
++	bic r1, r1, #(0x7 << 0)
++	orr r1, r1, #(0x3 << 0)
++	mcr p15, 1, r1, c9, c0, 2
++
++	/* End of Cortex-A15 specific setup */
++	not_a15:
++
++	/* Get value of sunxi_mc_smp_first_comer */
++	adr	r1, first
++	ldr	r0, [r1]
++	ldr	r0, [r1, r0]
++
++	/* Skip cci_enable_port_for_self if not first comer */
++	cmp	r0, #0
++	bxeq	lr
++	b	cci_enable_port_for_self
++
++	.align 2
++	first: .word sunxi_mc_smp_first_comer - .
++ENDPROC(sunxi_mc_smp_cluster_cache_enable)
++
++ENTRY(sunxi_mc_smp_secondary_startup)
++	bl	sunxi_mc_smp_cluster_cache_enable
++	b	secondary_startup
++ENDPROC(sunxi_mc_smp_secondary_startup)
++
++ENTRY(sunxi_mc_smp_resume)
++	bl	sunxi_mc_smp_cluster_cache_enable
++	b	cpu_resume
++ENDPROC(sunxi_mc_smp_resume)
+diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+index c0246ec54a0a..727968d6a3e5 100644
+--- a/arch/arm/mach-sunxi/mc_smp.c
++++ b/arch/arm/mach-sunxi/mc_smp.c
+@@ -72,6 +72,9 @@ static void __iomem *cpucfg_base;
+ static void __iomem *prcm_base;
+ static void __iomem *sram_b_smp_base;
  
-@@ -75,6 +76,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <1>;
- 		};
++extern void sunxi_mc_smp_secondary_startup(void);
++extern void sunxi_mc_smp_resume(void);
++
+ static bool sunxi_core_is_cortex_a15(unsigned int core, unsigned int cluster)
+ {
+ 	struct device_node *node;
+@@ -300,74 +303,7 @@ static void sunxi_cluster_cache_disable_without_axi(void)
+ }
  
-@@ -83,6 +85,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <2>;
- 		};
+ static int sunxi_mc_smp_cpu_table[SUNXI_NR_CLUSTERS][SUNXI_CPUS_PER_CLUSTER];
+-static int sunxi_mc_smp_first_comer;
+-
+-/*
+- * Enable cluster-level coherency, in preparation for turning on the MMU.
+- *
+- * Also enable regional clock gating and L2 data latency settings for
+- * Cortex-A15. These settings are from the vendor kernel.
+- */
+-static void __naked sunxi_mc_smp_cluster_cache_enable(void)
+-{
+-	asm volatile (
+-		"mrc	p15, 0, r1, c0, c0, 0\n"
+-		"movw	r2, #" __stringify(ARM_CPU_PART_MASK & 0xffff) "\n"
+-		"movt	r2, #" __stringify(ARM_CPU_PART_MASK >> 16) "\n"
+-		"and	r1, r1, r2\n"
+-		"movw	r2, #" __stringify(ARM_CPU_PART_CORTEX_A15 & 0xffff) "\n"
+-		"movt	r2, #" __stringify(ARM_CPU_PART_CORTEX_A15 >> 16) "\n"
+-		"cmp	r1, r2\n"
+-		"bne	not_a15\n"
+-
+-		/* The following is Cortex-A15 specific */
+-
+-		/* ACTLR2: Enable CPU regional clock gates */
+-		"mrc p15, 1, r1, c15, c0, 4\n"
+-		"orr r1, r1, #(0x1<<31)\n"
+-		"mcr p15, 1, r1, c15, c0, 4\n"
+-
+-		/* L2ACTLR */
+-		"mrc p15, 1, r1, c15, c0, 0\n"
+-		/* Enable L2, GIC, and Timer regional clock gates */
+-		"orr r1, r1, #(0x1<<26)\n"
+-		/* Disable clean/evict from being pushed to external */
+-		"orr r1, r1, #(0x1<<3)\n"
+-		"mcr p15, 1, r1, c15, c0, 0\n"
+-
+-		/* L2CTRL: L2 data RAM latency */
+-		"mrc p15, 1, r1, c9, c0, 2\n"
+-		"bic r1, r1, #(0x7<<0)\n"
+-		"orr r1, r1, #(0x3<<0)\n"
+-		"mcr p15, 1, r1, c9, c0, 2\n"
+-
+-		/* End of Cortex-A15 specific setup */
+-		"not_a15:\n"
+-
+-		/* Get value of sunxi_mc_smp_first_comer */
+-		"adr	r1, first\n"
+-		"ldr	r0, [r1]\n"
+-		"ldr	r0, [r1, r0]\n"
+-
+-		/* Skip cci_enable_port_for_self if not first comer */
+-		"cmp	r0, #0\n"
+-		"bxeq	lr\n"
+-		"b	cci_enable_port_for_self\n"
+-
+-		".align 2\n"
+-		"first: .word sunxi_mc_smp_first_comer - .\n"
+-	);
+-}
+-
+-static void __naked sunxi_mc_smp_secondary_startup(void)
+-{
+-	asm volatile(
+-		"bl	sunxi_mc_smp_cluster_cache_enable\n"
+-		"b	secondary_startup"
+-		/* Let compiler know about sunxi_mc_smp_cluster_cache_enable */
+-		:: "i" (sunxi_mc_smp_cluster_cache_enable)
+-	);
+-}
++int sunxi_mc_smp_first_comer;
  
-@@ -91,6 +94,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <3>;
- 		};
+ static DEFINE_SPINLOCK(boot_lock);
  
-@@ -101,6 +105,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x100>;
- 		};
+@@ -637,16 +573,6 @@ static bool __init sunxi_mc_smp_cpu_table_init(void)
+  */
+ typedef typeof(cpu_reset) phys_reset_t;
  
-@@ -109,6 +114,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x101>;
- 		};
- 
-@@ -117,6 +123,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x102>;
- 		};
- 
-@@ -125,6 +132,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x103>;
- 		};
- 	};
+-static void __init __naked sunxi_mc_smp_resume(void)
+-{
+-	asm volatile(
+-		"bl	sunxi_mc_smp_cluster_cache_enable\n"
+-		"b	cpu_resume"
+-		/* Let compiler know about sunxi_mc_smp_cluster_cache_enable */
+-		:: "i" (sunxi_mc_smp_cluster_cache_enable)
+-	);
+-}
+-
+ static int __init nocache_trampoline(unsigned long __unused)
+ {
+ 	phys_reset_t phys_reset;
 -- 
 2.11.0
