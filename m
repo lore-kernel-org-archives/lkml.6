@@ -1,97 +1,76 @@
-Return-Path: <jroedel@suse.de>
-X-Google-Smtp-Source: AIpwx4/USQ+m1JwkVSv//vnABNr3OOxfw5AHFc0ZZ52V/B1QvwzJL827s5MFy0ulwneFi59YNxFb
-ARC-Seal: i=1; a=rsa-sha256; t=1524036964; cv=none;
+Return-Path: <hpa@zytor.com>
+X-Google-Smtp-Source: AIpwx4+BYCs1hcOfawYTC1l2sKT3vdL8SSIjTGtfi6u3fqLVkFLnxtLdDIpmL5fyBTi6cZPsnd+7
+ARC-Seal: i=1; a=rsa-sha256; t=1523901574; cv=none;
         d=google.com; s=arc-20160816;
-        b=Fu3k8995DpFMldyTlpH7hqT/dFnD34oCv2F14jEY/OOgU9KX0rPFTF/NReHJzB8kHl
-         rSCePfFzbuYTflAqqi2fbwyreJJOnbHNCtlxCFzhlzMVuhXCIhqZ6eZoins1YopgAmI3
-         +Ozu5GPtKX4apVMftoV8kAtgojz9FFtzdNjcxbbutzEh8ToVlZjEeZt/aZ1zgHKOQi2G
-         4m3iYHyntHaKpLxM6ZynpS5Bhrtsr8ej3TKoLX3ZuPUB6bTH5FGrabn/Yy6e1HgpJlP0
-         k8Z+16er6QQHpelKzSJueF0HEMBECjW5MiCpEUoGtPMq+7etXvEszhri7C85NntPwzHp
-         uN8Q==
+        b=0FkB+5VcE2c/c5xANOZ1BA5Qt6bT1RonNZOmwjkwkMK/RopTPGxU1JIwhzIY03Hwgt
+         DOyFZxayVq7m4NUsW/cLG6iLFB0dHUkfyKdhqDzVnc4GATFd+lWAlc1q6QgO+j9XabDD
+         GV6FJg9+JngyMSHz5bmFDn4DquNY69xPLTgO7AQZ+Nh5sI45h3H8U6HTXUAv989E0w0U
+         hh09ICjujbKHmeJO1aOJacQxc2e3csJzAaThtk81XuYRY2WiM7Io/ZILaXfZ3PpVc6tA
+         0lHQRo5VyBfQLArcOhiafzU4JLSDCAxyORwmoD8x8yrD6gYUnT0bbud7oO7AyAa7HqtY
+         MPmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=UQZZH1svp6rhZf0mhmGDfiD/yPiqCw+AxLV8Qgp3aBk=;
-        b=tPQioYcOGB/GnpRbDB+GrGsEldvqLqVmgyiNU4yC55sqFCWSDJSprJ2HuX6k2f0fMe
-         royp/NZ2begobLikkuMZT9XtmdnnOu58savngULLb5N+QVhM7KDKU/4fmXLCupBUrTt/
-         XZc5TjMm3ofkf10GSOLXvbl+VSR22bGHc9cmNgcH1U0lWLPBA7Wg0OVDkytesuJ34f7h
-         4P+wLo3JqBsbKbb3qvcQJZ/gs1WDehKMflRrPXBkXEM/tPlYVHP/o6CwTIMxhm777Ytl
-         LryWWdnV45CWiK/arCibb8zwzK202MkoOaTxJuOfZPmy1LdbL9iRPIJUaexSa/gqV4JK
-         c8rg==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=UzT3jw/ok+v1sp6XmMSlHc5AObceOaK/CjiD+1oE7XQ=;
+        b=hOMJyFQnSEqrJeHOIvOg3QJcBv+AeM1W3tQ+sFrHbg1Z3UetJAdY6R1YFC4RuhRCyS
+         weSvc5uUN6wF/oEFTy9FjK6MC4EXMoy9FM0aEdLJ6HczUuPDuRJ+GcQ8HBjRXOeaPGK9
+         vDMdOK03iNjsyzFsfTfPNLa+AYD0HJZoDn30nAPQWkSpLyUbdHY0Oi3IsLvMF+6EN5PI
+         +FbFWfIGnSLZ//VGVtr4X3fcBLGS7no3Q0rOEMG37K6WN8NigJ/3vmuFeLCWsWYQBBDT
+         8mHgUtGGuYCNx0Qc19h7aLgeEuR4Ucf2n6T/Bk09rP2tDhFw3Tae4Y8B2kUlO9ywXbEM
+         /qgg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jroedel@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jroedel@suse.de
+       spf=pass (google.com: domain of hpa@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=hpa@zytor.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jroedel@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jroedel@suse.de
-Date: Wed, 18 Apr 2018 09:35:58 +0200
-From: Joerg Roedel <jroedel@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	the arch/x86 maintainers <x86@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-mm <linux-mm@kvack.org>, Andy Lutomirski <luto@kernel.org>,
-	Dave Hansen <dave.hansen@intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Juergen Gross <jgross@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	David Laight <David.Laight@aculab.com>,
-	Denys Vlasenko <dvlasenk@redhat.com>,
-	Eduardo Valentin <eduval@amazon.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Will Deacon <will.deacon@arm.com>,
-	"Liguori, Anthony" <aliguori@amazon.com>,
-	Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-	Hugh Dickins <hughd@google.com>, Kees Cook <keescook@google.com>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-	"David H . Gutteridge" <dhgutteridge@sympatico.ca>
+       spf=pass (google.com: domain of hpa@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=hpa@zytor.com
 Subject: Re: [PATCH 00/35 v5] PTI support for x32
-Message-ID: <20180418073558.mebtl457ss2rzhrm@suse.de>
+To: Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+        Andrea Arcangeli <aarcange@redhat.com>, Waiman Long <llong@redhat.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>, jroedel@suse.de
 References: <1523892323-14741-1-git-send-email-joro@8bytes.org>
- <CA+55aFwGTOgSonVquab63PZG5z_NfgVF2A08iHaNeeqY5pdfnA@mail.gmail.com>
- <20180416160154.GE15462@8bytes.org>
- <CA+55aFzrYbTMXyZBVqRV875HwQJNxD+822RGeeDb7BLDLU8aWA@mail.gmail.com>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <db40f8f6-7990-676c-e536-b876254e66c0@zytor.com>
+Date: Mon, 16 Apr 2018 10:57:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFzrYbTMXyZBVqRV875HwQJNxD+822RGeeDb7BLDLU8aWA@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <1523892323-14741-1-git-send-email-joro@8bytes.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597916931664810234?=
-X-GMAIL-MSGID: =?utf-8?q?1598068583678225784?=
+X-GMAIL-MSGID: =?utf-8?q?1597926617757016738?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 16, 2018 at 09:13:22AM -0700, Linus Torvalds wrote:
-> See for example commit 8c06c7740d19 ("x86/pti: Leave kernel text
-> global for !PCID") and in particular the performance numbers (that's
-> an Atom microserver, but it was chosen due to lack of PCID).
+On 04/16/18 08:24, Joerg Roedel wrote:
+> Hi,
+> 
+> here is the 5th iteration of my PTI enablement patches for
+> x86-32. There are no real changes between v4 and v5 besides
+> that I rebased the whole patch-set to v4.17-rc1 and resolved
+> the numerous conflicts that this caused.
+> 
 
-Okay, I checked this on 32 bit and after some small changes I got
-identical mappings with GLB set in all page-tables. The changes were:
+Please don't use the term "x32" for i386/x86-32.  "x32" generally refers
+to the x32 ABI for x86-64.  "x64" in Microsoft terminology for x86-64
+corresponds to "x86" for x86-32.
 
-	* Don't change permission bits in pti_clone_kernel_text().
-	  Changing them does not make a difference on 64 bit as
-	  everything cloned in this function is RO anyway. On 32 bit
-	  some areas are mapped RW, so it does make a difference there.
-	  
-	  Having different permissions between kernel and user
-	  page-table does also not make sense, because a permission
-	  mismatch in the TLB will cause a re-walk, which is as fast as
-	  not mapping it at all.
-
-	* Mapping kernel-text to user-space on 32 bit too. Since there
-	  is no PCID this should improve performance. I have not
-	  measured that yet, but will do so before posting the next
-	  version.
-
-I do some more testing and performance measurements and will send
-version 6 of my patches beginning of next week when v4.17-rc2 is out.
-
-
-Regards,
-
-	Joerg
+	-hpa
