@@ -1,60 +1,63 @@
-Return-Path: <kernel-hardening-return-13009-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/cIak7Nzh7JAYc7uqOwJjgB1m05KsVRRWgAiqWxO0Ps7gXMG1ITGh3YepO9T68/BnTWW+g
-ARC-Seal: i=1; a=rsa-sha256; t=1523872069; cv=none;
+Return-Path: <kernel-hardening-return-13008-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx48Atgvy+ktcvVWwdhVXUpyPgPF7yuc2X1sOIsMpYUKpuE2ZK4CTQoPkbwEfy0ysa2RNYHfc
+ARC-Seal: i=1; a=rsa-sha256; t=1523871630; cv=none;
         d=google.com; s=arc-20160816;
-        b=FrQ69n240jQ1zbmYfBPukVqgw401EmLQWEAFFSSREc+Ki5R1wgV8NaKu25VEESJyrH
-         258UfpuGpcAH9pJ7AL4CqSWgD7IF68b1sly/PnFUdB3ZPhF0JmFcmFZsVK7zTWjTbSAI
-         HYKPpBT4qkzQ0KqjD2wmLJ3PUmY9Y4L+qqlidaqevpIxuHFiNA+E61ZGoXjEOiKzvp1d
-         vxLJ8+htBdkkf88+ei4MbEFWJLoiae2AlFZjIKALfPSBxvMR2F631F/lj2Jucuw036xV
-         Ahvfwx3qNTl5curA/ZtPpppLsK50jzTWKrMicX/MOodBLY3HFm1/yAHIJyLLKWZN7eAS
-         5U/A==
+        b=zHEf6dyC3QyvN5Uhm+mKxbGDyNvLRiegvNkyENnhVzD7awFYV7R0WCR+I47SyYQIwZ
+         VJCVXIhT+Ll8GYHfQcIXtWAiCNNDDUR0TVsuMxCv0Tuce5anAX8Vv5VumUzVQbXYkK0d
+         GqVbQFbaH3+EGyDQgCqheXSO0jYF5LAYWX31Ojqm39/t/onhYalq6Yeox+GFRqpkZmZP
+         +RKsiIEBp+LiDwI2VtHsDkjbuFj9EJoP1Du8qzi6Sjg8KsOsa5Kpa87kzZprSY+xlfGV
+         8RjKHFPnGNI6fF3Ek6UX3y31wbFu6VjyCcT/4xGwLAIkN9q1JQgNPg2u9dvkAG9jS/Jc
+         ebJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :delivered-to:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=qVIt6qIA/r6WPJvrrHjUryd1fwA9aLYINWbSr3L0Wag=;
-        b=l5df2SuhUn4PQupLW1+/hShEiOFi9Fo5MCoi0J8LNz7eho2mnH52lW5tI3tptSNHbJ
-         QhzU1Xxs5khO2jyK/cAUMG5/IyN2puavyFGb5QqAuIozeCJD+7ZFEWZ4kJVUlaKbC4Fr
-         0OPs/7Ga2XE75ouAfh4J87ucNTbuiMRH2ZiTAgS/cj16LWeeAmXXUwbf+xLQHysS7m4v
-         CUjF7pjvJUvwtDjvlb/kENUwklp9XIlJagk3z3Eu0Q7WKGGpFj4V/P45ZjUFMeN6n1MK
-         F6vILucPmEiSWe2eIhkCNWvUGwWpHkmeOQeXyMcxQmyEOqiIAl7CFaCjGLWfQN0vv/nL
-         b1bw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:sender:dkim-signature
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=tHLVbh7OfgkyX/fwEdPPeyWW9h8PuXa79SBPQId2mkY=;
+        b=MXzQPoh2kSD3wdnjJ2wqZ3IQ4rcRdQLNY9QBojceTg572ukcNOtkVK6LFnM7AnT4Ij
+         Gq6VSiXsC6uBece4j81N+T0tgGzMtDiDxYAUBQ3ic/7eZ9Or/6SvcEvroc3yqHUIR66X
+         SqXD8KZUP3dE/CzDOF80Z2elUBzNPq5KiPdBTt/GS/ANY4PQIr/IDcfTwulEjqEhZKBS
+         E19yce73Fow3nWLU8DG5y28GFFWdUIdxncaoamfR8qNRgVgKnH7+KoGcxd7WpSskT1qR
+         ssOqHBRtZzFzuhiLjo8u60hSD3H4yvSgiSd2QzrXRc0y2qgW/YwSSV+Yy1RedJ4Fd+An
+         QsJA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13009-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13009-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Ws+RLAXO;
+       spf=pass (google.com: domain of kernel-hardening-return-13008-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13008-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13009-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13009-gregkh=linuxfoundation.org@lists.openwall.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Ws+RLAXO;
+       spf=pass (google.com: domain of kernel-hardening-return-13008-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13008-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Mon, 16 Apr 2018 11:40:07 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Laura Abbott <labbott@redhat.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Juergen Gross <jgross@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	x86@kernel.org, xen-devel@lists.xenproject.org,
+	linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
 Subject: Re: [PATCH] x86/xen: Remove use of VLAs
-To: Laura Abbott <labbott@redhat.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
- xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
- kernel-hardening@lists.openwall.com
+Message-ID: <20180416094007.diuobump2qxraybx@gmail.com>
 References: <20180413221146.28476-1-labbott@redhat.com>
-From: Juergen Gross <jgross@suse.com>
-Message-ID: <49e13c53-718f-879c-fc0d-b0f5dd7ea23d@suse.com>
-Date: Mon, 16 Apr 2018 10:11:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20180413221146.28476-1-labbott@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+User-Agent: NeoMutt/20170609 (1.8.3)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597670729617678421?=
-X-GMAIL-MSGID: =?utf-8?q?1597895679725346894?=
+X-GMAIL-MSGID: =?utf-8?q?1597895219048226986?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 14/04/18 00:11, Laura Abbott wrote:
+
+* Laura Abbott <labbott@redhat.com> wrote:
+
 > There's an ongoing effort to remove VLAs[1] from the kernel to eventually
 > turn on -Wvla. The few VLAs in use have an upper bound based on a size
 > of 64K. This doesn't produce an excessively large stack so just switch
@@ -63,8 +66,35 @@ On 14/04/18 00:11, Laura Abbott wrote:
 > [1] https://lkml.org/lkml/2018/3/7/621
 > 
 > Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+>  arch/x86/xen/enlighten_pv.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+> index c36d23aa6c35..d96a5a535cbb 100644
+> --- a/arch/x86/xen/enlighten_pv.c
+> +++ b/arch/x86/xen/enlighten_pv.c
+> @@ -421,8 +421,7 @@ static void xen_load_gdt(const struct desc_ptr *dtr)
+>  {
+>  	unsigned long va = dtr->address;
+>  	unsigned int size = dtr->size + 1;
+> -	unsigned pages = DIV_ROUND_UP(size, PAGE_SIZE);
+> -	unsigned long frames[pages];
+> +	unsigned long frames[DIV_ROUND_UP(SZ_64K, PAGE_SIZE)];
+>  	int f;
+>  
+>  	/*
+> @@ -470,8 +469,7 @@ static void __init xen_load_gdt_boot(const struct desc_ptr *dtr)
+>  {
+>  	unsigned long va = dtr->address;
+>  	unsigned int size = dtr->size + 1;
+> -	unsigned pages = DIV_ROUND_UP(size, PAGE_SIZE);
+> -	unsigned long frames[pages];
+> +	unsigned long frames[DIV_ROUND_UP(SZ_64K, PAGE_SIZE)];
+>  	int f;
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
 
+Thanks,
 
-Juergen
+	Ingo
