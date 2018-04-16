@@ -1,41 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751210AbeDPPGn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 11:06:43 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:36351 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750709AbeDPPGl (ORCPT
+        id S1751270AbeDPPH1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 11:07:27 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:49166 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750708AbeDPPH0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 11:06:41 -0400
-X-Google-Smtp-Source: AIpwx4/goVk7qLNcmoenZ7/ln2v71Exh4hXyCFH+F/uYpcFbcJSDpQ1gYgPRlWyMAPFSngmWCTJ7Bg==
-Date: Mon, 16 Apr 2018 10:06:39 -0500
-From: Rob Herring <robh@kernel.org>
-To: Matheus Castello <matheus@castello.eng.br>
-Cc: stefan.wahren@i2se.com, eric@anholt.net, linus.walleij@linaro.org,
-        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] dt-bindings: pinctrl: bcm2835-gpio: Add generic
- pinctrl support
-Message-ID: <20180416150639.wt74teumpzah4x7o@rob-hp-laptop>
-References: <f500b25c-eea0-9f01-7d7b-5a9dd90c50fa@castello.eng.br>
- <1523422726-7910-1-git-send-email-matheus@castello.eng.br>
- <1523422726-7910-2-git-send-email-matheus@castello.eng.br>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523422726-7910-2-git-send-email-matheus@castello.eng.br>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Mon, 16 Apr 2018 11:07:26 -0400
+Message-ID: <1523891242.27555.9.camel@surriel.com>
+Subject: Re: [PATCH] mm: allow to decrease swap.max below actual swap usage
+From: Rik van Riel <riel@surriel.com>
+To: Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>
+Cc: linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>, Shaohua Li <shli@fb.com>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        kernel-team@fb.com
+Date: Mon, 16 Apr 2018 11:07:22 -0400
+In-Reply-To: <20180416013902.GD1911913@devbig577.frc2.facebook.com>
+References: <20180412132705.30316-1-guro@fb.com>
+         <20180416013902.GD1911913@devbig577.frc2.facebook.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-tBA0idIUGrNb7kCfECyR"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 12:58:44AM -0400, Matheus Castello wrote:
-> Added generic pin configuration and multiplexing support,
-> and should be preferred than brcm legacy one.
-> 
-> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
-> ---
->  .../devicetree/bindings/pinctrl/brcm,bcm2835-gpio.txt  | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+--=-tBA0idIUGrNb7kCfECyR
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, 2018-04-15 at 18:39 -0700, Tejun Heo wrote:
+> Hello, Roman.
+>=20
+> The reclaim behavior is a bit worrisome.
+>=20
+> * It disables an entire swap area while reclaim is in progress.  Most
+>   systems only have one swap area, so this would disable allocating
+>   new swap area for everyone.
+
+That could easily cause OOM kills on systems.
+
+I prefer Tejun's simple approach, of having
+the system slowly reduce swap use below the
+new maximum limit.
+
+> * The reclaim seems very inefficient.  IIUC, it has to read every
+> swap
+>   page to see whether the page belongs to the target memcg and for
+>   each matching page, which involves walking page mm's and page
+>   tables.
+
+One of my Outreachy interns, Kelley Nielsen,
+worked on making swap reclaim more efficient
+by scanning the virtual address space of
+processes.
+
+Unfortunately, we ran into some unforseen
+issues with that approach that we never managed
+to sort out :(
+
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+
+Acked-by: Rik van Riel <riel@surriel.com>
+
+--=20
+All Rights Reversed.
+--=-tBA0idIUGrNb7kCfECyR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlrUvCoACgkQznnekoTE
+3oP/Bwf+Nc+IRCKzX3QEdvTpUJOaiAFrdGROFUtrGHvZSc9qSvdN+z6TMsCUi6r6
+FnXQf1Uf0TRve+ASaJq7O69vpGQTpdhWPQimB1U+aE/JsNmOqAbxwOfsj7fMrkbA
+NjsP69KQ8/lAoDEP5ZdZda8VAPm5+psbqj+wagvTTP5IiVAUN/56iafSgHZ+3zmU
+NPsEfjXSDUrn7TwoNhTAdM55E5fCgZoUTuajhO6nsROlEqH5k/P+L/o2FPmdUYd2
+CzCuKoWprBjrf8MAmX8W0a90DtWiu7q5MKeAwVfEh29OO+kf1w5hVXhBKHf0BVUX
+Z4K0PBihXKOZMhzCTq8+IU83zeFeFw==
+=YMrS
+-----END PGP SIGNATURE-----
+
+--=-tBA0idIUGrNb7kCfECyR--
