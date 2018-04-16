@@ -1,129 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754684AbeDPK22 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 06:28:28 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:35576 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752831AbeDPKZm (ORCPT
+        id S1754391AbeDPK3s (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 06:29:48 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:37715 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753916AbeDPK3p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 06:25:42 -0400
-X-Google-Smtp-Source: AIpwx49NKKzhdxeHcCemG+d6IH6X9eTi2cWGcJ0kEwBojoXnHWD/ou1iY1ghJ8RXuVWio5EhwFkzWQ==
-From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
-X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-To: mb@lightnvm.io
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH 01/11] lightnvm: pblk: fail gracefully on line alloc. failure
-Date: Mon, 16 Apr 2018 12:25:22 +0200
-Message-Id: <1523874332-6272-2-git-send-email-javier@cnexlabs.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523874332-6272-1-git-send-email-javier@cnexlabs.com>
-References: <1523874332-6272-1-git-send-email-javier@cnexlabs.com>
+        Mon, 16 Apr 2018 06:29:45 -0400
+Subject: Re: [PATCH 01/14] memory: ti-emif-sram: Add resume function to recopy
+ sram code
+To: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>,
+        <linus.walleij@linaro.org>, <grygorii.strashko@ti.com>,
+        <tony@atomide.com>
+CC: <t-kristo@ti.com>, <Russ.Dill@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ssantosh@kernel.org>,
+        <haojian.zhuang@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <d-gerlach@ti.com>
+References: <1523505239-16229-1-git-send-email-j-keerthy@ti.com>
+ <1523505239-16229-2-git-send-email-j-keerthy@ti.com>
+ <31688cf4-b6ca-e7ce-3407-46262006b38f@oracle.com>
+From: Keerthy <j-keerthy@ti.com>
+Message-ID: <d52373eb-1707-17ff-fabb-9f7200cf54c0@ti.com>
+Date: Mon, 16 Apr 2018 15:59:14 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <31688cf4-b6ca-e7ce-3407-46262006b38f@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the event of a line failing to allocate, fail gracefully and stop the
-pipeline to avoid more write failing in the same place.
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
----
- drivers/lightnvm/pblk-init.c |  5 +++++
- drivers/lightnvm/pblk-map.c  | 33 ++++++++++++++++++++++++---------
- 2 files changed, 29 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 91a5bc2556a3..dee64f91227d 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -1047,6 +1047,11 @@ static int pblk_lines_init(struct pblk *pblk)
- 		nr_free_chks += pblk_setup_line_meta(pblk, line, chunk_meta, i);
- 	}
- 
-+	if (!nr_free_chks) {
-+		pr_err("pblk: too many bad blocks prevent for sane instance\n");
-+		return -EINTR;
-+	}
-+
- 	pblk_set_provision(pblk, nr_free_chks);
- 
- 	kfree(chunk_meta);
-diff --git a/drivers/lightnvm/pblk-map.c b/drivers/lightnvm/pblk-map.c
-index 20dbaa89c9df..953ca31dda68 100644
---- a/drivers/lightnvm/pblk-map.c
-+++ b/drivers/lightnvm/pblk-map.c
-@@ -18,11 +18,11 @@
- 
- #include "pblk.h"
- 
--static void pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
--			       struct ppa_addr *ppa_list,
--			       unsigned long *lun_bitmap,
--			       struct pblk_sec_meta *meta_list,
--			       unsigned int valid_secs)
-+static int pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
-+			      struct ppa_addr *ppa_list,
-+			      unsigned long *lun_bitmap,
-+			      struct pblk_sec_meta *meta_list,
-+			      unsigned int valid_secs)
- {
- 	struct pblk_line *line = pblk_line_get_data(pblk);
- 	struct pblk_emeta *emeta;
-@@ -35,8 +35,14 @@ static void pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
- 	if (pblk_line_is_full(line)) {
- 		struct pblk_line *prev_line = line;
- 
-+		/* If we cannot allocate a new line, make sure to store metadata
-+		 * on current line and then fail
-+		 */
- 		line = pblk_line_replace_data(pblk);
- 		pblk_line_close_meta(pblk, prev_line);
-+
-+		if (!line)
-+			return -EINTR;
- 	}
- 
- 	emeta = line->emeta;
-@@ -74,6 +80,7 @@ static void pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
- 	}
- 
- 	pblk_down_rq(pblk, ppa_list, nr_secs, lun_bitmap);
-+	return 0;
- }
- 
- void pblk_map_rq(struct pblk *pblk, struct nvm_rq *rqd, unsigned int sentry,
-@@ -87,8 +94,12 @@ void pblk_map_rq(struct pblk *pblk, struct nvm_rq *rqd, unsigned int sentry,
- 
- 	for (i = off; i < rqd->nr_ppas; i += min) {
- 		map_secs = (i + min > valid_secs) ? (valid_secs % min) : min;
--		pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
--					lun_bitmap, &meta_list[i], map_secs);
-+		if (pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
-+					lun_bitmap, &meta_list[i], map_secs)) {
-+			bio_put(rqd->bio);
-+			pblk_free_rqd(pblk, rqd, PBLK_WRITE);
-+			pblk_pipeline_stop(pblk);
-+		}
- 	}
- }
- 
-@@ -108,8 +119,12 @@ void pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
- 
- 	for (i = 0; i < rqd->nr_ppas; i += min) {
- 		map_secs = (i + min > valid_secs) ? (valid_secs % min) : min;
--		pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
--					lun_bitmap, &meta_list[i], map_secs);
-+		if (pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
-+					lun_bitmap, &meta_list[i], map_secs)) {
-+			bio_put(rqd->bio);
-+			pblk_free_rqd(pblk, rqd, PBLK_WRITE);
-+			pblk_pipeline_stop(pblk);
-+		}
- 
- 		erase_lun = pblk_ppa_to_pos(geo, rqd->ppa_list[i]);
- 
--- 
-2.7.4
+On Thursday 12 April 2018 10:14 PM, santosh.shilimkar@oracle.com wrote:
+> On 4/11/18 9:53 PM, Keerthy wrote:
+>> From: Dave Gerlach <d-gerlach@ti.com>
+>>
+>> After an RTC+DDR cycle we lose sram context so emif pm functions present
+>> in sram are lost. We can check if the first byte of the original
+>> code in DDR contains the same first byte as the code in sram, and if
+>> they do not match we know we have lost context and must recopy the
+>> functions to the previous address to maintain PM functionality.
+>>
+>> Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> ---
+>>   drivers/memory/ti-emif-pm.c | 24 ++++++++++++++++++++++++
+>>   1 file changed, 24 insertions(+)
+>>
+>> diff --git a/drivers/memory/ti-emif-pm.c b/drivers/memory/ti-emif-pm.c
+>> index 632651f..ec4a62c 100644
+>> --- a/drivers/memory/ti-emif-pm.c
+>> +++ b/drivers/memory/ti-emif-pm.c
+>> @@ -249,6 +249,25 @@ int ti_emif_get_mem_type(void)
+>>   };
+>>   MODULE_DEVICE_TABLE(of, ti_emif_of_match);
+>>   +#ifdef CONFIG_PM_SLEEP
+>> +static int ti_emif_resume(struct device *dev)
+>> +{
+>> +    unsigned long tmp =
+>> +            __raw_readl((void *)emif_instance->ti_emif_sram_virt);
+>> +
+>> +    /*
+>> +     * Check to see if what we are copying is already present in the
+>> +     * first byte at the destination, only copy if it is not which
+>> +     * indicates we have lost context and sram no longer contains
+>> +     * the PM code
+>> +     */
+> 
+>> +    if (tmp != ti_emif_sram)
+>> +        ti_emif_push_sram(dev, emif_instance);
+>> +
+>> +    return 0;
+>> +}
+>> +#endif /* CONFIG_PM_SLEEP */
+> Instead of this indirect method , why can't just check the previous
+> deep sleep mode and based on that do copy or not. EMIF power status
+> register should have something like that ?
+
+I will check if we have a register that tells the previous state of sram.
+
+> 
+> Another minor point is even though there is nothing to do in suspend,
+> might be good to have a callback with comment that nothing to do with
+> some explanation why not. Don't have strong preference but may for
+> better readability.
+
+Okay. Thanks a lot for the quick feedback!
+
+> 
+> Regards,
+> Santosh
+> 
+> 
