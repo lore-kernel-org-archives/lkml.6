@@ -1,63 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751398AbeDPPvN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 11:51:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57094 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751169AbeDPPvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 11:51:12 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AE3421776
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jeyu@kernel.org
-Date: Mon, 16 Apr 2018 17:51:05 +0200
-From: Jessica Yu <jeyu@kernel.org>
-To: Jia Zhang <zhang.jia@linux.alibaba.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] module: Allow to always show the status of modsign
-Message-ID: <20180416155105.vbog5ynqk2p2ogz3@redbean>
-References: <1523418814-6857-1-git-send-email-zhang.jia@linux.alibaba.com>
- <1523418814-6857-2-git-send-email-zhang.jia@linux.alibaba.com>
+        id S1751940AbeDPPyV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 11:54:21 -0400
+Received: from mail-ua0-f169.google.com ([209.85.217.169]:41960 "EHLO
+        mail-ua0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751227AbeDPPyT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 11:54:19 -0400
+X-Google-Smtp-Source: AIpwx4+WenuB2vm9ccDCC6pYX8l4ySSI0bo5lkkwph/wCuJuZVq65QBNiVNPzBI1L4Gi0bSXh+97v+kNWPEZlG2sEoo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1523418814-6857-2-git-send-email-zhang.jia@linux.alibaba.com>
-X-OS: Linux redbean 4.15.3-200.fc26.x86_64 x86_64
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180414224419.GA21830@thunk.org>
+References: <20180414195921.GA10437@avx2> <20180414224419.GA21830@thunk.org>
+From: Kees Cook <keescook@chromium.org>
+Date: Mon, 16 Apr 2018 08:54:17 -0700
+X-Google-Sender-Auth: b4iHoUSnfByOrwY0xUHJF0kovmg
+Message-ID: <CAGXu5j+qQE-MmpB7xq6z_SsXm9AhJe2QQAEVQnenYD=iLzJqWQ@mail.gmail.com>
+Subject: Re: repeatable boot randomness inside KVM guest
+To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        Thomas Garnier <thgarnie@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Jia Zhang [11/04/18 11:53 +0800]:
->The sig_enforce parameter could be always shown to reflect the
->current status of modsign. For the case of CONFIG_MODULE_SIG_FORCE=y,
->this modification does nothing harmless.
+On Sat, Apr 14, 2018 at 3:44 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> +linux-mm@kvack.org
+> kvm@vger.kernel.org, security@kernel.org moved to bcc
 >
->Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
+> On Sat, Apr 14, 2018 at 10:59:21PM +0300, Alexey Dobriyan wrote:
+>> SLAB allocators got CONFIG_SLAB_FREELIST_RANDOM option which randomizes
+>> allocation pattern inside a slab:
+>>
+>>       int cache_random_seq_create(struct kmem_cache *cachep, unsigned int count, gfp_t gfp)
+>>       {
+>>               ...
+>>               /* Get best entropy at this stage of boot */
+>>               prandom_seed_state(&state, get_random_long());
+>>
+>> Then I printed actual random sequences for each kmem cache.
+>> Turned out they were all the same for most of the caches and
+>> they didn't vary across guest reboots.
+>
+> The problem is at the super-early state of the boot path, kernel code
+> can't allocate memory.  This is something most device drivers kinda
+> assume they can do.  :-)
+>
+> So it means we haven't yet initialized the virtio-rng driver, and it's
+> before interrupts have been enabled, so we can't harvest any entropy
+> from interrupt timing.  So that's why trying to use virtio-rng didn't
+> help.
+>
+>> The only way to get randomness for SLAB is to enable RDRAND inside guest.
+>>
+>> Is it KVM bug?
+>
+> No, it's not a KVM bug.  The fundamental issue is in how the
+> CONFIG_SLAB_FREELIST_RANDOM is currently implemented.
+>
+> What needs to happen is freelist should get randomized much later in
+> the boot sequence.  Doing it later will require locking; I don't know
+> enough about the slab/slub code to know whether the slab_mutex would
+> be sufficient, or some other lock might need to be added.
+>
+> The other thing I would note that is that using prandom_u32_state() doesn't
+> really provide much security.  In fact, if the the goal is to protect
+> against a malicious attacker trying to guess what addresses will be
+> returned by the slab allocator, I suspect it's much like the security
+> patdowns done at airports.  It might protect against a really stupid
+> attacker, but it's mostly security theater.
+>
+> The freelist randomization is only being done once; so it's not like
+> performance is really an issue.  It would be much better to just use
+> get_random_u32() and be done with it.  I'd drop using prandom_*
+> functions in slab.c and slubct and slab_common.c, and just use a
+> really random number generator, if the goal is real security as
+> opposed to security for show....
+>
+> (Not that there's necessarily any thing wrong with security theater;
+> the US spends over 3 billion dollars a year on security theater.  As
+> politicians know, symbolism can be important.  :-)
 
-Both patches look fine to me. Queued on modules-next.
+I've added Thomas Garnier to CC (since he wrote this originally). He
+can speak to its position in the boot ordering and the effective
+entropy.
 
-Thanks,
+-Kees
 
-Jessica
-
->---
-> kernel/module.c | 2 --
-> 1 file changed, 2 deletions(-)
->
->diff --git a/kernel/module.c b/kernel/module.c
->index f695474..1e3337b 100644
->--- a/kernel/module.c
->+++ b/kernel/module.c
->@@ -274,9 +274,7 @@ static void module_assert_mutex_or_preempt(void)
-> }
->
-> static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
->-#ifndef CONFIG_MODULE_SIG_FORCE
-> module_param(sig_enforce, bool_enable_only, 0644);
->-#endif /* !CONFIG_MODULE_SIG_FORCE */
->
-> /*
->  * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
->-- 
->1.8.3.1
->
+-- 
+Kees Cook
+Pixel Security
