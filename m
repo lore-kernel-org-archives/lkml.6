@@ -1,329 +1,152 @@
-Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AIpwx4/k0VgIpkmDh63mw22j7qHtzl09zP1cm0HGFxzhZtjOVFRBO5e9GP4WY4Tora+pOOL0xMEk
-ARC-Seal: i=1; a=rsa-sha256; t=1523483721; cv=none;
-        d=google.com; s=arc-20160816;
-        b=sGJgdCy2hrEDibQOmnPhVAl8i4vWYqmAjqgMJCdfY7W/X/WyH8Ef8k+nISc/QIKJ7k
-         s8hct/vjEnFmaiXm8TIG1zsm922LKjnFqH/fDc05lIz4pKdXUCARa6tB6KRdTHqexa61
-         B27FUMdzmxVbJlEQTa7wYTEz/evbe7HTD0qwz5mI4G5jY7s5SSlj4DWy1RCbp4OJ8JPZ
-         HrBPFENUUMH1pJQhnqHhv9JYbxIb9yGkuJjiIhYNIcgZT8VqY8BVCVGb8mBYjyeT0Aqq
-         AYpzHdPr+VFtqc5dYXuGeGJmIWmEcU2M+fBG8L9Snfdz3OGDk6tw9yj19/oVZoquxfFA
-         ls8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:message-id:cc:subject:date:to:from
-         :arc-authentication-results;
-        bh=QR21hNhAlwt2u4U/XcfuT7Gm7KzdBKJsMEcuO21aadI=;
-        b=FyaEOZs9LE4+nwT7QOkphmtzgI5Q5oxvjvkhcOXzDZT11suRlcEg3tDINNztLrEFRT
-         ala24Ux52nrOvoR9cLxL5DS2jSVZeRZ78Jj/jRh7FTIc6n9IoXm8HPVfTdozv4BVMyOW
-         MI3eEx6u0FhjgOx28NbFwH859NcNlumxJzKLJgnOsvCM5QWpFFgnU+vpqJ75fw4EscnL
-         mzXQaLI3c3FDFCl2weP1tcXeyOgHvHoOetjNPzRFISrv25DX9rz5A+U83F2Axcd6PTgo
-         7Gyp/oAfJQS2Tp3SArvGYSHe+SVmyUU5CU2QQM9JvXwnhwAyvRLZvNAiSwgd1p5xvv5o
-         mKSw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
-From: NeilBrown <neilb@suse.com>
-To: Oleg Drokin <oleg.drokin@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- James Simmons <jsimmons@infradead.org>,
- Andreas Dilger <andreas.dilger@intel.com>
-Date: Thu, 12 Apr 2018 07:54:48 +1000
-Subject: [PATCH 01/20] staging: lustre: ptlrpc: convert conn_hash to
- rhashtable
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2210789-1523851820-2-6714487304017122990
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523851820; b=OfRKmBqywtFUkaV8JsxTDDhU4q2g3x16Rjl5s2LJZoNoWON15/
+    tUJUu8rerZ/1Z95BHVqD7hX4aT2YIzQSJOd1aA8Tph78ss7swEmdIDjbcd880d+f
+    FXht+8PBrwsq1+skEvA7tqqYuufsx1fV/g3RhwCKXYDdUoiQUipL1B7GcAThakBh
+    q6oSsOMwPOYQLd1tM6xo2ReoENZmRJSVQjygGucab6Shb9aZAWn3Tk3fh0aJOD2a
+    /WQqqDsDp0ov7WfQQBb1UjAIkOudbIjZe9iy318g+wg4jSl8pyMxOSJtH+BbQd3t
+    4dB6lig53VHFbD6M2wn1PEZjwQABwhBdmVJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1523851820; bh=keiXm
+    JEAdGuCuKX7sip29Q+gpRD+zxGT7I1sRomJkn8=; b=lPbJjAq734Z0WvR3DEbuE
+    c3DU19oEtjQqSfwxg3CF9NEof9VfNOO5tjLDyxixgdwd6CGncBb5lVMDagzwK1Js
+    UhE8VxMWmG5thP4mi4pS6CrGhsEG5jaVJ9VnSZNnxtDh5Zsh88QBSicv0ADq2DmU
+    CPSkQ1JCJ8bjzjtgJR31I4fC1Too4yKa8xMLrGO3hVZEOnWRojkuonV/0T+D/8hU
+    bpNFqKh795wTIuUXN6Ez5spUB3DsYd3omSBUAAUiRnvimBPe1CKUBb1PR6WAsDkM
+    YLybLBIRDSKUI5jjy3qZwDonpQ9dCj9XYdHi452lA/zKXMfB5cglwwl4RwLqtmgy
+    g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=infradead.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=infradead.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfNJWqq57XX05YkfXv5pkg/B/sfUwY9KfMQXqhM6WBT6KZcRVYIHsIVWypOJD5MHF2888zzk2YXVisR6oU2KI5Btn/P9c33ilZmThRR3lc1Kg/4QsWj3n
+    Dj6AwlBvrjI1UpqAbczQW/zFdWLjsprryy3f3vMzIf1MXh3rqsG5K9SQoAC0dnt0llq0S8v/dth5IGs7nYBczoWv712QFv70TgyX/Y8It4nWI5cGrqCGxTBo
+    UeeObelHs2K+vExs6Tr46Q==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=RQeF5LcUpVqnTIu5x5MA:9
+    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: James Simmons <jsimmons@infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
+ Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>
+Subject: [PATCH 00/25] staging: lustre: libcfs: SMP rework
+Date: Mon, 16 Apr 2018 00:09:42 -0400
+Message-Id: <1523851807-16573-1-git-send-email-jsimmons@infradead.org>
+X-Mailer: git-send-email 1.8.3.1
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152348368853.12394.3972511682718703007.stgit@noble>
-In-Reply-To: <152348312863.12394.11915752362061083241.stgit@noble>
-References: <152348312863.12394.11915752362061083241.stgit@noble>
-User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597488467219482696?=
-X-GMAIL-MSGID: =?utf-8?q?1597488467219482696?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Linux has a resizeable hashtable implementation in lib,
-so we should use that instead of having one in libcfs.
+Recently lustre support has been expanded to extreme machines with as
+many as a 1000+ cores. On the other end lustre also has been ported
+to platforms like ARM and KNL which have uniquie NUMA and core setup.
+For example some devices exist that have NUMA nodes with no cores.
+With these new platforms the limitations of the Lustre's SMP code
+came to light so a lot of work was needed. This resulted in this
+patch set which has been tested on these platforms.
 
-This patch converts the ptlrpc conn_hash to use rhashtable.
-In the process we gain lockless lookup.
+Amir Shehata (9):
+  staging: lustre: libcfs: implement cfs_cpt_cpumask for UMP case
+  staging: lustre: libcfs: replace MAX_NUMNODES with nr_node_ids
+  staging: lustre: libcfs: remove excess space
+  staging: lustre: libcfs: replace num_possible_cpus() with nr_cpu_ids
+  staging: lustre: libcfs: NUMA support
+  staging: lustre: libcfs: add cpu distance handling
+  staging: lustre: libcfs: use distance in cpu and node handling
+  staging: lustre: libcfs: provide debugfs files for distance handling
+  staging: lustre: libcfs: invert error handling for cfs_cpt_table_print
 
-As connections are never deleted until the hash table is destroyed,
-there is no need to count the reference in the hash table.  There
-is also no need to enable automatic_shrinking.
+Dmitry Eremin (15):
+  staging: lustre: libcfs: remove useless CPU partition code
+  staging: lustre: libcfs: rename variable i to cpu
+  staging: lustre: libcfs: fix libcfs_cpu coding style
+  staging: lustre: libcfs: use int type for CPT identification.
+  staging: lustre: libcfs: rename i to node for cfs_cpt_set_nodemask
+  staging: lustre: libcfs: rename i to cpu for cfs_cpt_bind
+  staging: lustre: libcfs: rename cpumask_var_t variables to *_mask
+  staging: lustre: libcfs: rename goto label in cfs_cpt_table_print
+  staging: lustre: libcfs: clear up failure patch in cfs_cpt_*_print
+  staging: lustre: libcfs: update debug messages
+  staging: lustre: libcfs: make tolerant to offline CPUs and empty NUMA nodes
+  staging: lustre: libcfs: report NUMA node instead of just node
+  staging: lustre: libcfs: update debug messages in CPT creation code
+  staging: lustre: libcfs: rework CPU pattern parsing code
+  staging: lustre: libcfs: change CPT estimate algorithm
 
-Signed-off-by: NeilBrown <neilb@suse.com>
----
- drivers/staging/lustre/lustre/include/lustre_net.h |    4 
- .../staging/lustre/lustre/include/obd_support.h    |    3 
- drivers/staging/lustre/lustre/ptlrpc/connection.c  |  164 +++++++-------------
- 3 files changed, 64 insertions(+), 107 deletions(-)
+James Simmons (1):
+  staging: lustre: libcfs: merge UMP and SMP libcfs cpu header code
 
-diff --git a/drivers/staging/lustre/lustre/include/lustre_net.h b/drivers/staging/lustre/lustre/include/lustre_net.h
-index d13db55b7242..35b43a77eb18 100644
---- a/drivers/staging/lustre/lustre/include/lustre_net.h
-+++ b/drivers/staging/lustre/lustre/include/lustre_net.h
-@@ -67,6 +67,8 @@
- #include <obd_support.h>
- #include <uapi/linux/lustre/lustre_ver.h>
- 
-+#include <linux/rhashtable.h>
-+
- /* MD flags we _always_ use */
- #define PTLRPC_MD_OPTIONS  0
- 
-@@ -286,7 +288,7 @@ struct ptlrpc_replay_async_args {
-  */
- struct ptlrpc_connection {
- 	/** linkage for connections hash table */
--	struct hlist_node	c_hash;
-+	struct rhash_head	c_hash;
- 	/** Our own lnet nid for this connection */
- 	lnet_nid_t	      c_self;
- 	/** Remote side nid for this connection */
-diff --git a/drivers/staging/lustre/lustre/include/obd_support.h b/drivers/staging/lustre/lustre/include/obd_support.h
-index eb2d6cb6b40b..aebcab191442 100644
---- a/drivers/staging/lustre/lustre/include/obd_support.h
-+++ b/drivers/staging/lustre/lustre/include/obd_support.h
-@@ -67,9 +67,6 @@ extern char obd_jobid_var[];
- #define HASH_UUID_BKT_BITS 5
- #define HASH_UUID_CUR_BITS 7
- #define HASH_UUID_MAX_BITS 12
--#define HASH_CONN_BKT_BITS 5
--#define HASH_CONN_CUR_BITS 5
--#define HASH_CONN_MAX_BITS 15
- /* Timeout definitions */
- #define OBD_TIMEOUT_DEFAULT	     100
- /* Time to wait for all clients to reconnect during recovery (hard limit) */
-diff --git a/drivers/staging/lustre/lustre/ptlrpc/connection.c b/drivers/staging/lustre/lustre/ptlrpc/connection.c
-index dfdb4587d49d..fb35a89ca6c6 100644
---- a/drivers/staging/lustre/lustre/ptlrpc/connection.c
-+++ b/drivers/staging/lustre/lustre/ptlrpc/connection.c
-@@ -38,8 +38,41 @@
- 
- #include "ptlrpc_internal.h"
- 
--static struct cfs_hash *conn_hash;
--static struct cfs_hash_ops conn_hash_ops;
-+static struct rhashtable conn_hash;
-+
-+/*
-+ * struct lnet_process_id may contain unassigned bytes which might not
-+ * be zero, so we cannot just hash and compare bytes.
-+ */
-+
-+static u32 lnet_process_id_hash(const void *data, u32 len, u32 seed)
-+{
-+	const struct lnet_process_id *lpi = data;
-+
-+	seed = hash_32(seed ^ lpi->pid, 32);
-+	seed ^= hash_64(lpi->nid, 32);
-+	return seed;
-+}
-+
-+static int lnet_process_id_cmp(struct rhashtable_compare_arg *arg,
-+			       const void *obj)
-+{
-+	const struct lnet_process_id *lpi = arg->key;
-+	const struct ptlrpc_connection *con = obj;
-+
-+	if (lpi->nid == con->c_peer.nid &&
-+	    lpi->pid == con->c_peer.pid)
-+		return 0;
-+	return -ESRCH;
-+}
-+
-+static const struct rhashtable_params conn_hash_params = {
-+	.key_len	= 1, /* actually variable-length */
-+	.key_offset	= offsetof(struct ptlrpc_connection, c_peer),
-+	.head_offset	= offsetof(struct ptlrpc_connection, c_hash),
-+	.hashfn		= lnet_process_id_hash,
-+	.obj_cmpfn	= lnet_process_id_cmp,
-+};
- 
- struct ptlrpc_connection *
- ptlrpc_connection_get(struct lnet_process_id peer, lnet_nid_t self,
-@@ -47,9 +80,11 @@ ptlrpc_connection_get(struct lnet_process_id peer, lnet_nid_t self,
- {
- 	struct ptlrpc_connection *conn, *conn2;
- 
--	conn = cfs_hash_lookup(conn_hash, &peer);
--	if (conn)
-+	conn = rhashtable_lookup_fast(&conn_hash, &peer, conn_hash_params);
-+	if (conn) {
-+		ptlrpc_connection_addref(conn);
- 		goto out;
-+	}
- 
- 	conn = kzalloc(sizeof(*conn), GFP_NOFS);
- 	if (!conn)
-@@ -57,7 +92,6 @@ ptlrpc_connection_get(struct lnet_process_id peer, lnet_nid_t self,
- 
- 	conn->c_peer = peer;
- 	conn->c_self = self;
--	INIT_HLIST_NODE(&conn->c_hash);
- 	atomic_set(&conn->c_refcount, 1);
- 	if (uuid)
- 		obd_str2uuid(&conn->c_remote_uuid, uuid->uuid);
-@@ -65,17 +99,18 @@ ptlrpc_connection_get(struct lnet_process_id peer, lnet_nid_t self,
- 	/*
- 	 * Add the newly created conn to the hash, on key collision we
- 	 * lost a racing addition and must destroy our newly allocated
--	 * connection.  The object which exists in the has will be
--	 * returned and may be compared against out object.
--	 */
--	/* In the function below, .hs_keycmp resolves to
--	 * conn_keycmp()
-+	 * connection.  The object which exists in the hash will be
-+	 * returned, otherwise NULL is returned on success.
- 	 */
--	/* coverity[overrun-buffer-val] */
--	conn2 = cfs_hash_findadd_unique(conn_hash, &peer, &conn->c_hash);
--	if (conn != conn2) {
-+	conn2 = rhashtable_lookup_get_insert_fast(&conn_hash, &conn->c_hash,
-+						  conn_hash_params);
-+	if (conn2 != NULL) {
-+		/* insertion failed */
- 		kfree(conn);
-+		if (IS_ERR(conn2))
-+			return NULL;
- 		conn = conn2;
-+		ptlrpc_connection_addref(conn);
- 	}
- out:
- 	CDEBUG(D_INFO, "conn=%p refcount %d to %s\n",
-@@ -91,7 +126,7 @@ int ptlrpc_connection_put(struct ptlrpc_connection *conn)
- 	if (!conn)
- 		return rc;
- 
--	LASSERT(atomic_read(&conn->c_refcount) > 1);
-+	LASSERT(atomic_read(&conn->c_refcount) > 0);
- 
- 	/*
- 	 * We do not remove connection from hashtable and
-@@ -109,7 +144,7 @@ int ptlrpc_connection_put(struct ptlrpc_connection *conn)
- 	 * when ptlrpc_connection_fini()->lh_exit->conn_exit()
- 	 * path is called.
- 	 */
--	if (atomic_dec_return(&conn->c_refcount) == 1)
-+	if (atomic_dec_return(&conn->c_refcount) == 0)
- 		rc = 1;
- 
- 	CDEBUG(D_INFO, "PUT conn=%p refcount %d to %s\n",
-@@ -130,88 +165,11 @@ ptlrpc_connection_addref(struct ptlrpc_connection *conn)
- 	return conn;
- }
- 
--int ptlrpc_connection_init(void)
--{
--	conn_hash = cfs_hash_create("CONN_HASH",
--				    HASH_CONN_CUR_BITS,
--				    HASH_CONN_MAX_BITS,
--				    HASH_CONN_BKT_BITS, 0,
--				    CFS_HASH_MIN_THETA,
--				    CFS_HASH_MAX_THETA,
--				    &conn_hash_ops, CFS_HASH_DEFAULT);
--	if (!conn_hash)
--		return -ENOMEM;
--
--	return 0;
--}
--
--void ptlrpc_connection_fini(void)
--{
--	cfs_hash_putref(conn_hash);
--}
--
--/*
-- * Hash operations for net_peer<->connection
-- */
--static unsigned int
--conn_hashfn(struct cfs_hash *hs, const void *key, unsigned int mask)
--{
--	return cfs_hash_djb2_hash(key, sizeof(struct lnet_process_id), mask);
--}
--
--static int
--conn_keycmp(const void *key, struct hlist_node *hnode)
--{
--	struct ptlrpc_connection *conn;
--	const struct lnet_process_id *conn_key;
--
--	LASSERT(key);
--	conn_key = key;
--	conn = hlist_entry(hnode, struct ptlrpc_connection, c_hash);
--
--	return conn_key->nid == conn->c_peer.nid &&
--	       conn_key->pid == conn->c_peer.pid;
--}
--
--static void *
--conn_key(struct hlist_node *hnode)
--{
--	struct ptlrpc_connection *conn;
--
--	conn = hlist_entry(hnode, struct ptlrpc_connection, c_hash);
--	return &conn->c_peer;
--}
--
--static void *
--conn_object(struct hlist_node *hnode)
--{
--	return hlist_entry(hnode, struct ptlrpc_connection, c_hash);
--}
--
- static void
--conn_get(struct cfs_hash *hs, struct hlist_node *hnode)
-+conn_exit(void *vconn, void *data)
- {
--	struct ptlrpc_connection *conn;
-+	struct ptlrpc_connection *conn = vconn;
- 
--	conn = hlist_entry(hnode, struct ptlrpc_connection, c_hash);
--	atomic_inc(&conn->c_refcount);
--}
--
--static void
--conn_put_locked(struct cfs_hash *hs, struct hlist_node *hnode)
--{
--	struct ptlrpc_connection *conn;
--
--	conn = hlist_entry(hnode, struct ptlrpc_connection, c_hash);
--	atomic_dec(&conn->c_refcount);
--}
--
--static void
--conn_exit(struct cfs_hash *hs, struct hlist_node *hnode)
--{
--	struct ptlrpc_connection *conn;
--
--	conn = hlist_entry(hnode, struct ptlrpc_connection, c_hash);
- 	/*
- 	 * Nothing should be left. Connection user put it and
- 	 * connection also was deleted from table by this time
-@@ -223,12 +181,12 @@ conn_exit(struct cfs_hash *hs, struct hlist_node *hnode)
- 	kfree(conn);
- }
- 
--static struct cfs_hash_ops conn_hash_ops = {
--	.hs_hash	= conn_hashfn,
--	.hs_keycmp      = conn_keycmp,
--	.hs_key		= conn_key,
--	.hs_object      = conn_object,
--	.hs_get		= conn_get,
--	.hs_put_locked  = conn_put_locked,
--	.hs_exit	= conn_exit,
--};
-+int ptlrpc_connection_init(void)
-+{
-+	return rhashtable_init(&conn_hash, &conn_hash_params);
-+}
-+
-+void ptlrpc_connection_fini(void)
-+{
-+	rhashtable_free_and_destroy(&conn_hash, conn_exit, NULL);
-+}
+ .../lustre/include/linux/libcfs/libcfs_cpu.h       | 135 +--
+ .../lustre/include/linux/libcfs/linux/libcfs.h     |   1 -
+ .../lustre/include/linux/libcfs/linux/linux-cpu.h  |  78 --
+ drivers/staging/lustre/lnet/libcfs/libcfs_cpu.c    | 126 ++-
+ .../staging/lustre/lnet/libcfs/linux/linux-cpu.c   | 912 +++++++++++----------
+ drivers/staging/lustre/lnet/libcfs/module.c        |  53 ++
+ drivers/staging/lustre/lnet/lnet/lib-msg.c         |   2 +
+ 7 files changed, 676 insertions(+), 631 deletions(-)
+ delete mode 100644 drivers/staging/lustre/include/linux/libcfs/linux/linux-cpu.h
+
+-- 
+1.8.3.1
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
