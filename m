@@ -1,115 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751940AbeDPQTy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 12:19:54 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:21346 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752209AbeDPQTw (ORCPT
+        id S1753206AbeDPQUP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 12:20:15 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:14885 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751135AbeDPQUL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 12:19:52 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180416161950epoutp02bf77d18bd6b1732e0e6d823f9e208484~l9vco9rlU1509215092epoutp02M
-X-AuditID: b6c32a39-579ff70000000ff4-0d-5ad4cd25153d
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: kishon@ti.com
-Cc: krzk@kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
-        b.zolnierkie@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] phy: exynos-mipi-video: Simplify code by using
- regmap_update_bits()
-Date: Mon, 16 Apr 2018 18:19:38 +0200
-Message-id: <20180416161938.26958-1-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.14.2
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsWy7bCmvq7q2StRBudfWlhsnLGe1eLC0x42
-        i/PnN7BbXN41h81ixvl9TBZrj9xltzj8pp3Vgd1j06pONo++LasYPY7f2M7k8XmTXABLFJdN
-        SmpOZllqkb5dAlfG3Tu/GQveCVZ8XveKpYHxP18XIyeHhICJxLt3DYxdjFwcQgI7GCWeHJ/P
-        CuF8Z5Q4cmEhG0zV7fWdzCC2kMAGRon2UxIQRb8YJa63tbOAJNgEDCV6j/YBjeLgEBEQlPj0
-        CWwqs8BORomFD78ygtQIC4RJ/JrwmR3EZhFQlTjwbiorSD2vgLXEl1WMELvkJd4vuA/WKyHw
-        klVi24KnLBAJF4m2Q1egDhKWeHV8CztIr4SAtMSlo7YQ4WqJzrYudojeFkaJP9MuQdVbSxw+
-        fpEVxGYW4JN497WHFaKXV6KjTQiixEPi96f1UOWOEmtmHWKH+DdWYtKa7UwTGCUXMDKsYhRL
-        LSjOTU8tNiww1StOzC0uzUvXS87P3cQIjjctyx2Mx875HGIU4GBU4uGV2HElSog1say4MvcQ
-        owQHs5II7/xDQCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8T33ORAkJpCeWpGanphakFsFkmTg4
-        pRoYXboez3gge2neOjsdFk/riFepM26LvlgYv+e20z7OXcFHLr2bsfthxCmHZQa99yPFDGK/
-        uvNayp/R/tct5eRaFblJ8s4Cz+lMEk1XJ1sz71TOn2E7y6b9bNfS1pMHVFRSOzgEN/mUbN/2
-        yfVQaDD70okN/+6v35UvLJVTuT/MpdKLe5dm28oIJZbijERDLeai4kQAVGGrubMCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHJMWRmVeSWpSXmKPExsVy+t9jQV3Vs1eiDA6dELHYOGM9q8WFpz1s
-        FufPb2C3uLxrDpvFjPP7mCzWHrnLbnH4TTurA7vHplWdbB59W1Yxehy/sZ3J4/MmuQCWKC6b
-        lNSczLLUIn27BK6Mu3d+Mxa8E6z4vO4VSwPjf74uRk4OCQETidvrO5m7GLk4hATWMUp0bDvA
-        COH8YpT40XyTCaSKTcBQovdoH1CCg0NEQFDi0yewGmaBnYwSj/b2sYPUCAuESfya8BnMZhFQ
-        lTjwbiorSD2vgLXEl1WMEMvkJd4vuM84gZFrASPDKkbJ1ILi3PTcYqMCw7zUcr3ixNzi0rx0
-        veT83E2MwFDYdlirbwfj/SXxhxgFOBiVeHgldlyJEmJNLCuuzD3EKMHBrCTCO/8QUIg3JbGy
-        KrUoP76oNCe1+BCjNAeLkjjv7bxjkUIC6YklqdmpqQWpRTBZJg5OqQbGoMvZouUCAg56ug9W
-        rwh7bHtF9Sn/hSrnTQW6DH6SVw7Mmr9BZD7zTqO+WZVxMqGXNDWe71ihmHx+nVeNT8C1C0Ih
-        7vWly4LONLHEn+T/Wupr9octWz+uXFb0cN7L/qt7u9afCjBw4GgwcMy6dZnr6t/fgQv9+383
-        OFwqNLKNCTVe08OlfEqJpTgj0VCLuag4EQAMd01AAQIAAA==
-X-CMS-MailID: 20180416161949epcas1p11b738f30a12bd2f62ad9422f7c4e7ed6
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20180416161949epcas1p11b738f30a12bd2f62ad9422f7c4e7ed6
-X-RootMTR: 20180416161949epcas1p11b738f30a12bd2f62ad9422f7c4e7ed6
-References: <CGME20180416161949epcas1p11b738f30a12bd2f62ad9422f7c4e7ed6@epcas1p1.samsung.com>
+        Mon, 16 Apr 2018 12:20:11 -0400
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
+To: <lee.jones@linaro.org>, <alexandre.torgue@st.com>
+CC: <thierry.reding@gmail.com>, <benjamin.gaignard@linaro.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
+        <mcoquelin.stm32@gmail.com>, <fabrice.gasnier@st.com>,
+        <benjamin.gaignard@st.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pwm@vger.kernel.org>
+Subject: [PATCH v4 1/6] dt-bindings: mfd: stm32-timers: add support for dmas
+Date: Mon, 16 Apr 2018 18:19:16 +0200
+Message-ID: <1523895561-4073-2-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1523895561-4073-1-git-send-email-fabrice.gasnier@st.com>
+References: <1523895561-4073-1-git-send-email-fabrice.gasnier@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.116]
+X-ClientProxiedBy: GPXDAG4NODE5.st.com (10.75.127.75) To GPXDAG5NODE6.st.com
+ (10.75.127.79)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no functional change, just replacing regmap_read()/modify/
-regmap_write() with regmap_update_bits() function calls.
+Add support for DMAs to STM32 timers. STM32 Timers can support up to 7
+dma requests: up to 4 channels, update, compare and trigger.
+DMAs may be used to transfer data from pwm capture for instance.
+DMA support is made optional, PWM capture support is also an option.
+This is much more wise system-wide to avoid shortage on DMA request
+lines as there's significant amount of timer instances that can
+request up to 7 channels.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
 ---
- drivers/phy/samsung/phy-exynos-mipi-video.c | 34 ++++++++++++-----------------
- 1 file changed, 14 insertions(+), 20 deletions(-)
+ .../devicetree/bindings/mfd/stm32-timers.txt         | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/phy/samsung/phy-exynos-mipi-video.c b/drivers/phy/samsung/phy-exynos-mipi-video.c
-index c198886f80a3..00d89599c67d 100644
---- a/drivers/phy/samsung/phy-exynos-mipi-video.c
-+++ b/drivers/phy/samsung/phy-exynos-mipi-video.c
-@@ -231,33 +231,27 @@ struct exynos_mipi_video_phy {
- static int __set_phy_state(const struct exynos_mipi_phy_desc *data,
- 			   struct exynos_mipi_video_phy *state, unsigned int on)
- {
--	u32 val;
-+	struct regmap *enable_map = state->regmaps[data->enable_map];
-+	struct regmap *resetn_map = state->regmaps[data->resetn_map];
+diff --git a/Documentation/devicetree/bindings/mfd/stm32-timers.txt b/Documentation/devicetree/bindings/mfd/stm32-timers.txt
+index 1db6e00..0e900b5 100644
+--- a/Documentation/devicetree/bindings/mfd/stm32-timers.txt
++++ b/Documentation/devicetree/bindings/mfd/stm32-timers.txt
+@@ -19,6 +19,11 @@ Required parameters:
+ Optional parameters:
+ - resets:		Phandle to the parent reset controller.
+ 			See ../reset/st,stm32-rcc.txt
++- dmas:			List of phandle to dma channels that can be used for
++			this timer instance. There may be up to 7 dma channels.
++- dma-names:		List of dma names. Must match 'dmas' property. Valid
++			names are: "ch1", "ch2", "ch3", "ch4", "up", "trig",
++			"com".
  
- 	spin_lock(&state->slock);
- 
- 	/* disable in PMU sysreg */
- 	if (!on && data->coupled_phy_id >= 0 &&
--	    state->phys[data->coupled_phy_id].phy->power_count == 0) {
--		regmap_read(state->regmaps[data->enable_map], data->enable_reg,
--			    &val);
--		val &= ~data->enable_val;
--		regmap_write(state->regmaps[data->enable_map], data->enable_reg,
--			     val);
--	}
--
-+	    state->phys[data->coupled_phy_id].phy->power_count == 0)
-+		regmap_update_bits(enable_map, data->enable_reg,
-+				   data->enable_val, 0);
- 	/* PHY reset */
--	regmap_read(state->regmaps[data->resetn_map], data->resetn_reg, &val);
--	val = on ? (val | data->resetn_val) : (val & ~data->resetn_val);
--	regmap_write(state->regmaps[data->resetn_map], data->resetn_reg, val);
--
-+	if (on)
-+		regmap_update_bits(resetn_map, data->resetn_reg,
-+				   data->resetn_val, data->resetn_val);
-+	else
-+		regmap_update_bits(resetn_map, data->resetn_reg,
-+				   data->resetn_val, 0);
- 	/* enable in PMU sysreg */
--	if (on) {
--		regmap_read(state->regmaps[data->enable_map], data->enable_reg,
--			    &val);
--		val |= data->enable_val;
--		regmap_write(state->regmaps[data->enable_map], data->enable_reg,
--			     val);
--	}
-+	if (on)
-+		regmap_update_bits(enable_map, data->enable_reg,
-+				   data->enable_val, data->enable_val);
- 
- 	spin_unlock(&state->slock);
- 
+ Optional subnodes:
+ - pwm:			See ../pwm/pwm-stm32.txt
+@@ -44,3 +49,18 @@ Example:
+ 			reg = <0>;
+ 		};
+ 	};
++
++Example with all dmas:
++	timer@40010000 {
++		...
++		dmas = <&dmamux1 11 0x400 0x0>,
++		       <&dmamux1 12 0x400 0x0>,
++		       <&dmamux1 13 0x400 0x0>,
++		       <&dmamux1 14 0x400 0x0>,
++		       <&dmamux1 15 0x400 0x0>,
++		       <&dmamux1 16 0x400 0x0>,
++		       <&dmamux1 17 0x400 0x0>;
++		dma-names = "ch1", "ch2", "ch3", "ch4", "up", "trig", "com";
++		...
++		child nodes...
++	};
 -- 
-2.14.2
+1.9.1
