@@ -1,109 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754564AbeDPJPU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 05:15:20 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:33957 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754113AbeDPJPT (ORCPT
+        id S1752876AbeDPJTE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 05:19:04 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:1372 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751886AbeDPJTD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 05:15:19 -0400
-X-Google-Smtp-Source: AIpwx48B5eVoldoIVgrZByBYaQ2rnpv/2OAG/mf+O0dzfbqqNleG+L7joxyb04OH9EqoLYMMKgZ7nw==
-Date: Mon, 16 Apr 2018 12:15:14 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: instant reboot caused by 194a9749c73d650c0
-Message-ID: <20180416091514.wqig3l4lrc72tyrs@node.shutemov.name>
-References: <5ecfeb13-84e4-f1ef-bd30-391674b2050a@gmail.com>
- <20180416060709.mnzk7fb5y45dnpmg@gmail.com>
+        Mon, 16 Apr 2018 05:19:03 -0400
+From: Yannick FERTRE <yannick.fertre@st.com>
+To: Philippe CORNU <philippe.cornu@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent ABRIOU <vincent.abriou@st.com>,
+        "Dan Carpenter" <dan.carpenter@oracle.com>,
+        David Airlie <airlied@linux.ie>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: Alexandre TORGUE <alexandre.torgue@st.com>
+Subject: Re: [PATCH] drm/stm: ltdc: fix warning in ltdc_crtc_update_clut()
+Thread-Topic: [PATCH] drm/stm: ltdc: fix warning in ltdc_crtc_update_clut()
+Thread-Index: AQHT0NNJNWz7J5w5Gk+8HKZUkR0J66QDBKwA
+Date: Mon, 16 Apr 2018 09:18:49 +0000
+Message-ID: <f5b79561-0084-96f9-6986-0f17c11f0143@st.com>
+References: <20180410135312.3553-1-philippe.cornu@st.com>
+In-Reply-To: <20180410135312.3553-1-philippe.cornu@st.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.121]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9791A8EB339C6544B65119B0B954A0E1@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180416060709.mnzk7fb5y45dnpmg@gmail.com>
-User-Agent: NeoMutt/20180323
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3G9J7Oi019049
 
-On Mon, Apr 16, 2018 at 08:07:09AM +0200, Ingo Molnar wrote:
-> 
-> * Eric Dumazet <eric.dumazet@gmail.com> wrote:
-> 
-> > Hi Kirill
-> > 
-> > For some reason, my hosts instantly crash at boot time, with absolutely no log on console.
-> > 
-> > Bisection pointed to :
-> > 
-> > $ git bisect bad
-> > 194a9749c73d650c0b1dfdee04fb0bdf0a888ba8 is the first bad commit
-> > commit 194a9749c73d650c0b1dfdee04fb0bdf0a888ba8
-> > Author: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > Date:   Mon Mar 12 13:02:46 2018 +0300
-> > 
-> >     x86/boot/compressed/64: Handle 5-level paging boot if kernel is above 4G
-> 
-> Could you please send your .config? These early boot problems are sometimes build 
-> and Kconfig environment sensitive.
-> 
-> A high level description of your hardware and the distro you are using would also 
-> be useful.
+Reviewed-by: yannick fertre <yannick.fertre@st.com>
 
-And how do you start the kernel? EFI? Legacy boot? kexec?
 
-> 
-> Kirill, I'm curious about this change:
-> 
-> -       /* Calculate address we are running at */
-> -       call    1f
-> -1:     popl    %edi
-> -       subl    $1b, %edi
-> +       /* Calculate address of paging_enabled() once we are executing in the 
-> trampoline */
-> +       leal    paging_enabled - trampoline_32bit_src + TRAMPOLINE_32BIT_CODE_OFFSET(%ecx), %eax
-> 
-> Here we change the calculation from a "discover where we are executing" method to 
-> a calculation method (which is fundamentally more fragile) - why?
-
-I guess, I tried to save one register -- %rdi is used for return from
-trampoline.
-
-But you're right there's no reason to do this and it may be more fragile.
-
-Eric, could you check if the patch makes any difference?
-
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index fca012baba19..395c122ef70b 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -562,7 +562,10 @@ ENTRY(trampoline_32bit_src)
- 	movl	%eax, %cr4
- 
- 	/* Calculate address of paging_enabled() once we are executing in the trampoline */
--	leal	paging_enabled - trampoline_32bit_src + TRAMPOLINE_32BIT_CODE_OFFSET(%ecx), %eax
-+	call	1f
-+1:	popl	%eax
-+	subl	$1b, %eax
-+	leal	paging_enabled(%eax), %eax
- 
- 	/* Prepare the stack for far return to Long Mode */
- 	pushl	$__KERNEL_CS
-diff --git a/arch/x86/boot/compressed/pgtable.h b/arch/x86/boot/compressed/pgtable.h
-index 91f75638f6e6..6ff7e81b5628 100644
---- a/arch/x86/boot/compressed/pgtable.h
-+++ b/arch/x86/boot/compressed/pgtable.h
-@@ -6,7 +6,7 @@
- #define TRAMPOLINE_32BIT_PGTABLE_OFFSET	0
- 
- #define TRAMPOLINE_32BIT_CODE_OFFSET	PAGE_SIZE
--#define TRAMPOLINE_32BIT_CODE_SIZE	0x60
-+#define TRAMPOLINE_32BIT_CODE_SIZE	0x70
- 
- #define TRAMPOLINE_32BIT_STACK_END	TRAMPOLINE_32BIT_SIZE
- 
--- 
- Kirill A. Shutemov
+On 04/10/2018 03:53 PM, Philippe Cornu wrote:
+> Fix the warning
+> "warn: variable dereferenced before check 'crtc' (see line 390)"
+> by removing unnecessary checks as ltdc_crtc_update_clut() is
+> only called from ltdc_crtc_atomic_flush() where crtc and
+> crtc->state are not NULL.
+>
+> Many thanks to Dan Carpenter for the bug report
+> https://lists.freedesktop.org/archives/dri-devel/2018-February/166918.html
+>
+> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+>   drivers/gpu/drm/stm/ltdc.c | 3 ---
+>   1 file changed, 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
+> index 061d2b6e5157..e3121d9e4230 100644
+> --- a/drivers/gpu/drm/stm/ltdc.c
+> +++ b/drivers/gpu/drm/stm/ltdc.c
+> @@ -392,9 +392,6 @@ static void ltdc_crtc_update_clut(struct drm_crtc *crtc)
+>   	u32 val;
+>   	int i;
+>   
+> -	if (!crtc || !crtc->state)
+> -		return;
+> -
+>   	if (!crtc->state->color_mgmt_changed || !crtc->state->gamma_lut)
+>   		return;
+>   
