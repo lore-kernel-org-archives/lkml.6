@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755380AbeDPMRk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 08:17:40 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:41300 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755178AbeDPMRh (ORCPT
+        id S1755393AbeDPMRr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 08:17:47 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45442 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754029AbeDPMRl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 08:17:37 -0400
-X-Google-Smtp-Source: AIpwx49IY+rwcWDZtOPk1VBsVWm7ECPJWq5TAvDWomSApTlQ7TggEeXlsYhk5nNPGqK0ZKbueZJf7g==
+        Mon, 16 Apr 2018 08:17:41 -0400
+X-Google-Smtp-Source: AIpwx4/3wcKzkww0nBz6FEdRq0g9BD4CH+AQmHZs/CVqxMmI7XzZ+ek+Sy18JxQz3JTotobSpjWVHQ==
 From: Dmitry Osipenko <digetx@gmail.com>
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/4] drm/tegra: plane: Add custom colorkey properties for older Tegra's
-Date: Mon, 16 Apr 2018 15:16:27 +0300
-Message-Id: <d78f7339de922d6a8114c73f0919534f4195f572.1523880381.git.digetx@gmail.com>
+Subject: [PATCH v1 4/4] drm/tegra: plane: Add custom CSC BLOB property
+Date: Mon, 16 Apr 2018 15:16:28 +0300
+Message-Id: <dac33c4b27107fee37d187d97187431353fe6afc.1523880381.git.digetx@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1523880381.git.digetx@gmail.com>
 References: <cover.1523880381.git.digetx@gmail.com>
@@ -24,397 +24,340 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colorkey'ing allows to draw on top of overlapping planes, like for example
-on top of a video plane. Older Tegra's have a limited colorkey'ing
-capability such that blending features are reduced when colorkey'ing is
-enabled. In particular dependent weighting isn't possible, meaning that
-cursors plane can't be displayed properly. In most cases it is more useful
-to display content on top of video overlay, sacrificing mouse cursor
-in the area of three planes intersection with colorkey mismatch. This
-patch adds a custom colorkey properties to primary plane and CRTC's of
-older Tegra's, allowing userspace like Opentegra Xorg driver to implement
-colorkey support for XVideo extension.
+This new property allows userspace to apply custom color conversion
+coefficients per plane, making possible to utilize display controller
+for color adjustments of a video overlay.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/drm/tegra/dc.c    | 166 ++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/tegra/dc.h    |  18 +++-
- drivers/gpu/drm/tegra/plane.c |  40 ++++++++
- drivers/gpu/drm/tegra/plane.h |   9 +-
- 4 files changed, 231 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/tegra/dc.c    | 86 +++++++++++++++++++++++++++++++----
+ drivers/gpu/drm/tegra/dc.h    | 11 +++++
+ drivers/gpu/drm/tegra/plane.c | 35 ++++++++++++++
+ drivers/gpu/drm/tegra/plane.h |  5 ++
+ include/uapi/drm/tegra_drm.h  | 11 +++++
+ 5 files changed, 139 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index a54eefea2513..b19e954a223f 100644
+index b19e954a223f..24a1317871d4 100644
 --- a/drivers/gpu/drm/tegra/dc.c
 +++ b/drivers/gpu/drm/tegra/dc.c
-@@ -172,6 +172,24 @@ static void tegra_plane_setup_blending_legacy(struct tegra_plane *plane)
+@@ -435,15 +435,15 @@ static void tegra_dc_setup_window(struct tegra_plane *plane,
+ 	value = WIN_ENABLE;
  
- 	state = to_tegra_plane_state(plane->base.state);
+ 	if (yuv) {
+-		/* setup default colorspace conversion coefficients */
+-		tegra_plane_writel(plane, 0x00f0, DC_WIN_CSC_YOF);
+-		tegra_plane_writel(plane, 0x012a, DC_WIN_CSC_KYRGB);
+-		tegra_plane_writel(plane, 0x0000, DC_WIN_CSC_KUR);
+-		tegra_plane_writel(plane, 0x0198, DC_WIN_CSC_KVR);
+-		tegra_plane_writel(plane, 0x039b, DC_WIN_CSC_KUG);
+-		tegra_plane_writel(plane, 0x032f, DC_WIN_CSC_KVG);
+-		tegra_plane_writel(plane, 0x0204, DC_WIN_CSC_KUB);
+-		tegra_plane_writel(plane, 0x0000, DC_WIN_CSC_KVB);
++		/* setup colorspace conversion coefficients */
++		tegra_plane_writel(plane, window->csc.yof, DC_WIN_CSC_YOF);
++		tegra_plane_writel(plane, window->csc.kyrgb, DC_WIN_CSC_KYRGB);
++		tegra_plane_writel(plane, window->csc.kur, DC_WIN_CSC_KUR);
++		tegra_plane_writel(plane, window->csc.kvr, DC_WIN_CSC_KVR);
++		tegra_plane_writel(plane, window->csc.kug, DC_WIN_CSC_KUG);
++		tegra_plane_writel(plane, window->csc.kvg, DC_WIN_CSC_KVG);
++		tegra_plane_writel(plane, window->csc.kub, DC_WIN_CSC_KUB);
++		tegra_plane_writel(plane, window->csc.kvb, DC_WIN_CSC_KVB);
  
-+	/*
-+	 * Assuming default zPos window order, enable color keying for cases
-+	 * of overlapping with topping windows, excluding overlap with
-+	 * window B. Due to limited HW capabilities, this allows to draw
-+	 * primary plane on top of video overlay in areas where key isn't
-+	 * matching. Though window C will be completely transparent in a
-+	 * region of three windows intersection + key mismatch.
-+	 */
-+	if (state->ckey0_enabled) {
-+		background[0] |= BLEND_COLOR_KEY_0;
-+		background[2] |= BLEND_COLOR_KEY_0;
+ 		value |= CSC_ENABLE;
+ 	} else if (window->bits_per_pixel < 24) {
+@@ -624,6 +624,7 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
+ 	struct drm_framebuffer *fb = plane->state->fb;
+ 	struct tegra_plane *p = to_tegra_plane(plane);
+ 	struct tegra_dc_window window;
++	const struct drm_tegra_plane_csc_blob *csc;
+ 	unsigned int i;
+ 
+ 	/* rien ne va plus */
+@@ -665,6 +666,28 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
+ 			window.stride[i] = fb->pitches[i];
+ 	}
+ 
++	if (state->csc_blob) {
++		csc = state->csc_blob->data;
++
++		window.csc.yof = csc->yof;
++		window.csc.kyrgb = csc->kyrgb;
++		window.csc.kur = csc->kur;
++		window.csc.kvr = csc->kvr;
++		window.csc.kug = csc->kug;
++		window.csc.kvg = csc->kvg;
++		window.csc.kub = csc->kub;
++		window.csc.kvb = csc->kvb;
++	} else {
++		window.csc.yof = 0x00f0;
++		window.csc.kyrgb = 0x012a;
++		window.csc.kur = 0x0000;
++		window.csc.kvr = 0x0198;
++		window.csc.kug = 0x039b;
++		window.csc.kvg = 0x032f;
++		window.csc.kub = 0x0204;
++		window.csc.kvb = 0x0000;
 +	}
 +
-+	if (state->ckey1_enabled) {
-+		background[0] |= BLEND_COLOR_KEY_1;
-+		background[2] |= BLEND_COLOR_KEY_1;
-+	}
-+
- 	if (state->opaque) {
- 		/*
- 		 * Since custom fix-weight blending isn't utilized and weight
-@@ -729,6 +747,35 @@ static unsigned long tegra_plane_get_possible_crtcs(struct drm_device *drm)
- 	return 1 << drm->mode_config.num_crtc;
+ 	tegra_dc_setup_window(p, &window);
  }
  
-+static void tegra_plane_create_legacy_properties(struct tegra_plane *plane,
-+						 struct drm_device *drm)
+@@ -776,6 +799,42 @@ static void tegra_plane_create_legacy_properties(struct tegra_plane *plane,
+ 	dev_err(plane->dc->dev, "failed to create legacy plane properties\n");
+ }
+ 
++static void tegra_plane_create_csc_property(struct tegra_plane *plane)
 +{
-+	plane->props.color_key0 = drm_property_create_bool(
-+						drm, 0, "color key 0");
-+	plane->props.color_key1 = drm_property_create_bool(
-+						drm, 0, "color key 1");
++	/* set default colorspace conversion coefficients to ITU-R BT.601 */
++	struct drm_tegra_plane_csc_blob csc_bt601 = {
++		.yof   = 0x00f0,
++		.kyrgb = 0x012a,
++		.kur   = 0x0000,
++		.kvr   = 0x0198,
++		.kug   = 0x039b,
++		.kvg   = 0x032f,
++		.kub   = 0x0204,
++		.kvb   = 0x0000,
++	};
++	struct drm_property_blob *blob;
 +
-+	if (!plane->props.color_key0 ||
-+	    !plane->props.color_key1)
-+		goto err_cleanup;
++	blob = drm_property_create_blob(plane->base.dev, sizeof(csc_bt601),
++					&csc_bt601);
++	if (!blob) {
++		dev_err(plane->dc->dev, "failed to create CSC BLOB\n");
++		return;
++	}
 +
-+	drm_object_attach_property(&plane->base.base, plane->props.color_key0,
-+				   false);
-+	drm_object_attach_property(&plane->base.base, plane->props.color_key1,
-+				   false);
++	plane->props.csc_blob = drm_property_create(
++		plane->base.dev, DRM_MODE_PROP_BLOB, "YUV to RGB CSC", 0);
 +
-+	return;
++	if (!plane->props.csc_blob) {
++		dev_err(plane->dc->dev, "failed to create CSC property\n");
++		drm_property_blob_put(blob);
++		return;
++	}
 +
-+err_cleanup:
-+	if (plane->props.color_key0)
-+		drm_property_destroy(drm, plane->props.color_key0);
++	drm_object_attach_property(&plane->base.base, plane->props.csc_blob, 0);
 +
-+	if (plane->props.color_key1)
-+		drm_property_destroy(drm, plane->props.color_key1);
-+
-+	dev_err(plane->dc->dev, "failed to create legacy plane properties\n");
++	plane->csc_default = blob;
 +}
 +
  static struct drm_plane *tegra_primary_plane_create(struct drm_device *drm,
  						    struct tegra_dc *dc)
  {
-@@ -764,6 +811,9 @@ static struct drm_plane *tegra_primary_plane_create(struct drm_device *drm,
- 	drm_plane_helper_add(&plane->base, &tegra_plane_helper_funcs);
- 	drm_plane_create_zpos_property(&plane->base, plane->index, 0, 255);
+@@ -814,6 +873,9 @@ static struct drm_plane *tegra_primary_plane_create(struct drm_device *drm,
+ 	if (dc->soc->legacy_blending)
+ 		tegra_plane_create_legacy_properties(plane, drm);
  
-+	if (dc->soc->legacy_blending)
-+		tegra_plane_create_legacy_properties(plane, drm);
++	if (dc->soc->has_win_a_csc)
++		tegra_plane_create_csc_property(plane);
 +
  	return &plane->base;
  }
  
-@@ -1153,6 +1203,8 @@ tegra_crtc_atomic_duplicate_state(struct drm_crtc *crtc)
- 	copy->pclk = state->pclk;
- 	copy->div = state->div;
- 	copy->planes = state->planes;
-+	copy->ckey0 = state->ckey0;
-+	copy->ckey1 = state->ckey1;
+@@ -1092,6 +1154,7 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
  
- 	return &copy->base;
- }
-@@ -1537,6 +1589,50 @@ static void tegra_dc_disable_vblank(struct drm_crtc *crtc)
- 	tegra_dc_writel(dc, value, DC_CMD_INT_MASK);
- }
+ 	drm_plane_helper_add(&plane->base, &tegra_plane_helper_funcs);
+ 	drm_plane_create_zpos_property(&plane->base, plane->index, 0, 255);
++	tegra_plane_create_csc_property(plane);
  
-+static int tegra_crtc_atomic_set_property(struct drm_crtc *crtc,
-+					  struct drm_crtc_state *state,
-+					  struct drm_property *property,
-+					  uint64_t value)
-+{
-+	struct tegra_dc_state *tegra_state = to_dc_state(state);
-+	struct tegra_dc *dc = to_tegra_dc(crtc);
-+
-+	if (property == dc->props.ckey0_lower)
-+		tegra_state->ckey0.lower = value;
-+	else if (property == dc->props.ckey0_upper)
-+		tegra_state->ckey0.upper = value;
-+	else if (property == dc->props.ckey1_lower)
-+		tegra_state->ckey1.lower = value;
-+	else if (property == dc->props.ckey1_upper)
-+		tegra_state->ckey1.upper = value;
-+	else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int tegra_crtc_atomic_get_property(struct drm_crtc *crtc,
-+					  const struct drm_crtc_state *state,
-+					  struct drm_property *property,
-+					  uint64_t *value)
-+{
-+	struct tegra_dc_state *tegra_state = to_dc_state(state);
-+	struct tegra_dc *dc = to_tegra_dc(crtc);
-+
-+	if (property == dc->props.ckey0_lower)
-+		*value = tegra_state->ckey0.lower;
-+	else if (property == dc->props.ckey0_upper)
-+		*value = tegra_state->ckey0.upper;
-+	else if (property == dc->props.ckey1_lower)
-+		*value = tegra_state->ckey1.lower;
-+	else if (property == dc->props.ckey1_upper)
-+		*value = tegra_state->ckey1.upper;
-+	else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static const struct drm_crtc_funcs tegra_crtc_funcs = {
- 	.page_flip = drm_atomic_helper_page_flip,
- 	.set_config = drm_atomic_helper_set_config,
-@@ -1549,6 +1645,8 @@ static const struct drm_crtc_funcs tegra_crtc_funcs = {
- 	.get_vblank_counter = tegra_dc_get_vblank_counter,
- 	.enable_vblank = tegra_dc_enable_vblank,
- 	.disable_vblank = tegra_dc_disable_vblank,
-+	.atomic_set_property = tegra_crtc_atomic_set_property,
-+	.atomic_get_property = tegra_crtc_atomic_get_property,
+ 	return &plane->base;
+ }
+@@ -2269,6 +2332,7 @@ static const struct tegra_dc_soc_info tegra20_dc_soc_info = {
+ 	.num_overlay_formats = ARRAY_SIZE(tegra20_overlay_formats),
+ 	.overlay_formats = tegra20_overlay_formats,
+ 	.modifiers = tegra20_modifiers,
++	.has_win_a_csc = false,
  };
  
- static int tegra_dc_set_timings(struct tegra_dc *dc,
-@@ -1883,6 +1981,18 @@ static void tegra_crtc_atomic_flush(struct drm_crtc *crtc,
- 	struct tegra_dc *dc = to_tegra_dc(crtc);
- 	u32 value;
+ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
+@@ -2287,6 +2351,7 @@ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
+ 	.num_overlay_formats = ARRAY_SIZE(tegra20_overlay_formats),
+ 	.overlay_formats = tegra20_overlay_formats,
+ 	.modifiers = tegra20_modifiers,
++	.has_win_a_csc = false,
+ };
  
-+	if (dc->soc->legacy_blending) {
-+		tegra_dc_writel(dc, state->ckey0.lower,
-+				DC_DISP_COLOR_KEY0_LOWER);
-+		tegra_dc_writel(dc, state->ckey0.upper,
-+				DC_DISP_COLOR_KEY0_UPPER);
-+
-+		tegra_dc_writel(dc, state->ckey1.lower,
-+				DC_DISP_COLOR_KEY1_LOWER);
-+		tegra_dc_writel(dc, state->ckey1.upper,
-+				DC_DISP_COLOR_KEY1_UPPER);
-+	}
-+
- 	value = state->planes << 8 | GENERAL_UPDATE;
- 	tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
- 	value = tegra_dc_readl(dc, DC_CMD_STATE_CONTROL);
-@@ -1944,6 +2054,56 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
- 	return IRQ_HANDLED;
- }
+ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
+@@ -2305,6 +2370,7 @@ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
+ 	.num_overlay_formats = ARRAY_SIZE(tegra114_overlay_formats),
+ 	.overlay_formats = tegra114_overlay_formats,
+ 	.modifiers = tegra20_modifiers,
++	.has_win_a_csc = true,
+ };
  
-+static int tegra_dc_create_legacy_properties(struct tegra_dc *dc,
-+					     struct drm_device *drm)
-+{
-+	/*
-+	 * Each color key value is represented in RGB888 format.
-+	 * All planes share the same color key values and free to choose
-+	 * among the ckey0 and ckey1.
-+	 */
-+	dc->props.ckey0_lower = drm_property_create_range(
-+			drm, 0, "color key 0 lower margin", 0, 0xffffff);
-+	dc->props.ckey0_upper = drm_property_create_range(
-+			drm, 0, "color key 0 upper margin", 0, 0xffffff);
-+	dc->props.ckey1_lower = drm_property_create_range(
-+			drm, 0, "color key 1 lower margin", 0, 0xffffff);
-+	dc->props.ckey1_upper = drm_property_create_range(
-+			drm, 0, "color key 1 upper margin", 0, 0xffffff);
-+
-+	if (!dc->props.ckey0_lower ||
-+	    !dc->props.ckey0_upper ||
-+	    !dc->props.ckey1_lower ||
-+	    !dc->props.ckey1_upper)
-+		goto err_cleanup;
-+
-+	drm_object_attach_property(&dc->base.base, dc->props.ckey0_lower,
-+				   0x000000);
-+	drm_object_attach_property(&dc->base.base, dc->props.ckey0_upper,
-+				   0x000000);
-+	drm_object_attach_property(&dc->base.base, dc->props.ckey1_lower,
-+				   0x000000);
-+	drm_object_attach_property(&dc->base.base, dc->props.ckey1_upper,
-+				   0x000000);
-+
-+	return 0;
-+
-+err_cleanup:
-+	if (dc->props.ckey0_lower)
-+		drm_property_destroy(drm, dc->props.ckey0_lower);
-+
-+	if (dc->props.ckey0_upper)
-+		drm_property_destroy(drm, dc->props.ckey0_upper);
-+
-+	if (dc->props.ckey1_lower)
-+		drm_property_destroy(drm, dc->props.ckey1_lower);
-+
-+	if (dc->props.ckey1_upper)
-+		drm_property_destroy(drm, dc->props.ckey1_upper);
-+
-+	return -ENOMEM;
-+}
-+
- static int tegra_dc_init(struct host1x_client *client)
- {
- 	struct drm_device *drm = dev_get_drvdata(client->parent);
-@@ -2031,6 +2191,12 @@ static int tegra_dc_init(struct host1x_client *client)
- 		goto cleanup;
- 	}
+ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
+@@ -2323,6 +2389,7 @@ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
+ 	.num_overlay_formats = ARRAY_SIZE(tegra124_overlay_formats),
+ 	.overlay_formats = tegra124_overlay_formats,
+ 	.modifiers = tegra124_modifiers,
++	.has_win_a_csc = true,
+ };
  
-+	if (dc->soc->legacy_blending) {
-+		err = tegra_dc_create_legacy_properties(dc, drm);
-+		if (err < 0)
-+			dev_err(dc->dev, "failed to create CRTC properties\n");
-+	}
-+
- 	return 0;
+ static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
+@@ -2341,6 +2408,7 @@ static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
+ 	.num_overlay_formats = ARRAY_SIZE(tegra114_overlay_formats),
+ 	.overlay_formats = tegra114_overlay_formats,
+ 	.modifiers = tegra124_modifiers,
++	.has_win_a_csc = true,
+ };
  
- cleanup:
+ static const struct tegra_windowgroup_soc tegra186_dc_wgrps[] = {
 diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-index 3156006e75c6..3913d047abac 100644
+index 3913d047abac..23439eaaa4de 100644
 --- a/drivers/gpu/drm/tegra/dc.h
 +++ b/drivers/gpu/drm/tegra/dc.h
-@@ -18,6 +18,11 @@
- 
- struct tegra_output;
- 
-+struct tegra_dc_color_key_state {
-+	u32 lower;
-+	u32 upper;
-+};
-+
- struct tegra_dc_state {
- 	struct drm_crtc_state base;
- 
-@@ -26,9 +31,13 @@ struct tegra_dc_state {
- 	unsigned int div;
- 
- 	u32 planes;
-+
-+	struct tegra_dc_color_key_state ckey0;
-+	struct tegra_dc_color_key_state ckey1;
+@@ -77,6 +77,7 @@ struct tegra_dc_soc_info {
+ 	const u32 *overlay_formats;
+ 	unsigned int num_overlay_formats;
+ 	const u64 *modifiers;
++	bool has_win_a_csc;
  };
  
--static inline struct tegra_dc_state *to_dc_state(struct drm_crtc_state *state)
-+static inline struct tegra_dc_state *
-+to_dc_state(const struct drm_crtc_state *state)
- {
- 	if (state)
- 		return container_of(state, struct tegra_dc_state, base);
-@@ -94,6 +103,13 @@ struct tegra_dc {
- 	const struct tegra_dc_soc_info *soc;
- 
- 	struct iommu_domain *domain;
-+
+ struct tegra_dc {
+@@ -152,6 +153,16 @@ struct tegra_dc_window {
+ 		unsigned int w;
+ 		unsigned int h;
+ 	} dst;
 +	struct {
-+		struct drm_property *ckey0_lower;
-+		struct drm_property *ckey0_upper;
-+		struct drm_property *ckey1_lower;
-+		struct drm_property *ckey1_upper;
-+	} props;
- };
- 
- static inline struct tegra_dc *
++		unsigned int yof;
++		unsigned int kyrgb;
++		unsigned int kur;
++		unsigned int kvr;
++		unsigned int kug;
++		unsigned int kvg;
++		unsigned int kub;
++		unsigned int kvb;
++	} csc;
+ 	unsigned int bits_per_pixel;
+ 	unsigned int stride[2];
+ 	unsigned long base[3];
 diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
-index 0406c2ef432c..4d794f2b44df 100644
+index 4d794f2b44df..c5733c5a66e9 100644
 --- a/drivers/gpu/drm/tegra/plane.c
 +++ b/drivers/gpu/drm/tegra/plane.c
-@@ -57,6 +57,8 @@ tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
- 	copy->format = state->format;
- 	copy->swap = state->swap;
- 	copy->opaque = state->opaque;
-+	copy->ckey0_enabled = state->ckey0_enabled;
-+	copy->ckey1_enabled = state->ckey1_enabled;
+@@ -17,6 +17,9 @@ static void tegra_plane_destroy(struct drm_plane *plane)
+ {
+ 	struct tegra_plane *p = to_tegra_plane(plane);
  
- 	for (i = 0; i < 2; i++)
- 		copy->blending[i] = state->blending[i];
-@@ -86,6 +88,42 @@ static bool tegra_plane_format_mod_supported(struct drm_plane *plane,
- 	return false;
++	if (p->csc_default)
++		drm_property_blob_put(p->csc_default);
++
+ 	drm_plane_cleanup(plane);
+ 	kfree(p);
+ }
+@@ -38,6 +41,9 @@ static void tegra_plane_reset(struct drm_plane *plane)
+ 		plane->state->plane = plane;
+ 		plane->state->zpos = p->index;
+ 		plane->state->normalized_zpos = p->index;
++
++		if (p->csc_default)
++			state->csc_blob = drm_property_blob_get(p->csc_default);
+ 	}
  }
  
-+static int tegra_plane_set_property(struct drm_plane *plane,
-+				    struct drm_plane_state *state,
-+				    struct drm_property *property,
-+				    uint64_t value)
-+{
-+	struct tegra_plane_state *tegra_state = to_tegra_plane_state(state);
-+	struct tegra_plane *tegra = to_tegra_plane(plane);
-+
-+	if (property == tegra->props.color_key0)
-+		tegra_state->ckey0_enabled = value;
-+	else if (property == tegra->props.color_key1)
-+		tegra_state->ckey1_enabled = value;
-+	else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int tegra_plane_get_property(struct drm_plane *plane,
-+				    const struct drm_plane_state *state,
-+				    struct drm_property *property,
-+				    uint64_t *value)
-+{
-+	struct tegra_plane_state *tegra_state = to_tegra_plane_state(state);
-+	struct tegra_plane *tegra = to_tegra_plane(plane);
-+
-+	if (property == tegra->props.color_key0)
-+		*value = tegra_state->ckey0_enabled;
-+	else if (property == tegra->props.color_key1)
-+		*value = tegra_state->ckey1_enabled;
-+	else
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- const struct drm_plane_funcs tegra_plane_funcs = {
- 	.update_plane = drm_atomic_helper_update_plane,
- 	.disable_plane = drm_atomic_helper_disable_plane,
-@@ -94,6 +132,8 @@ const struct drm_plane_funcs tegra_plane_funcs = {
- 	.atomic_duplicate_state = tegra_plane_atomic_duplicate_state,
- 	.atomic_destroy_state = tegra_plane_atomic_destroy_state,
- 	.format_mod_supported = tegra_plane_format_mod_supported,
-+	.atomic_set_property = tegra_plane_set_property,
-+	.atomic_get_property = tegra_plane_get_property,
- };
+@@ -63,12 +69,22 @@ tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
+ 	for (i = 0; i < 2; i++)
+ 		copy->blending[i] = state->blending[i];
  
- int tegra_plane_state_add(struct tegra_plane *plane,
++	if (state->csc_blob)
++		copy->csc_blob = drm_property_blob_get(state->csc_blob);
++	else
++		copy->csc_blob = NULL;
++
+ 	return &copy->base;
+ }
+ 
+ static void tegra_plane_atomic_destroy_state(struct drm_plane *plane,
+ 					     struct drm_plane_state *state)
+ {
++	struct tegra_plane_state *tegra = to_tegra_plane_state(state);
++
++	if (tegra->csc_blob)
++		drm_property_blob_put(tegra->csc_blob);
++
+ 	__drm_atomic_helper_plane_destroy_state(state);
+ 	kfree(state);
+ }
+@@ -95,6 +111,23 @@ static int tegra_plane_set_property(struct drm_plane *plane,
+ {
+ 	struct tegra_plane_state *tegra_state = to_tegra_plane_state(state);
+ 	struct tegra_plane *tegra = to_tegra_plane(plane);
++	struct drm_property_blob *blob;
++
++	if (property == tegra->props.csc_blob) {
++		blob = drm_property_lookup_blob(plane->dev, value);
++		if (!blob)
++			return -EINVAL;
++
++		if (blob->length != sizeof(struct drm_tegra_plane_csc_blob)) {
++			drm_property_blob_put(blob);
++			return -EINVAL;
++		}
++
++		drm_property_blob_put(tegra_state->csc_blob);
++		tegra_state->csc_blob = blob;
++
++		return 0;
++	}
+ 
+ 	if (property == tegra->props.color_key0)
+ 		tegra_state->ckey0_enabled = value;
+@@ -118,6 +151,8 @@ static int tegra_plane_get_property(struct drm_plane *plane,
+ 		*value = tegra_state->ckey0_enabled;
+ 	else if (property == tegra->props.color_key1)
+ 		*value = tegra_state->ckey1_enabled;
++	else if (property == tegra->props.csc_blob)
++		*value = tegra_state->csc_blob->base.id;
+ 	else
+ 		return -EINVAL;
+ 
 diff --git a/drivers/gpu/drm/tegra/plane.h b/drivers/gpu/drm/tegra/plane.h
-index 7360ddfafee8..dafecea73b29 100644
+index dafecea73b29..dc9efa7be502 100644
 --- a/drivers/gpu/drm/tegra/plane.h
 +++ b/drivers/gpu/drm/tegra/plane.h
-@@ -19,6 +19,11 @@ struct tegra_plane {
- 	struct tegra_dc *dc;
- 	unsigned int offset;
- 	unsigned int index;
+@@ -23,7 +23,10 @@ struct tegra_plane {
+ 	struct {
+ 		struct drm_property *color_key0;
+ 		struct drm_property *color_key1;
++		struct drm_property *csc_blob;
+ 	} props;
 +
-+	struct {
-+		struct drm_property *color_key0;
-+		struct drm_property *color_key1;
-+	} props;
++	struct drm_property_blob *csc_default;
  };
  
  struct tegra_cursor {
-@@ -49,10 +54,12 @@ struct tegra_plane_state {
+@@ -51,6 +54,8 @@ struct tegra_plane_state {
+ 	u32 format;
+ 	u32 swap;
+ 
++	struct drm_property_blob *csc_blob;
++
  	/* used for legacy blending support only */
  	struct tegra_plane_legacy_blending_state blending[2];
  	bool opaque;
-+	bool ckey0_enabled;
-+	bool ckey1_enabled;
- };
+diff --git a/include/uapi/drm/tegra_drm.h b/include/uapi/drm/tegra_drm.h
+index a5da44209a68..a3054ea7b222 100644
+--- a/include/uapi/drm/tegra_drm.h
++++ b/include/uapi/drm/tegra_drm.h
+@@ -29,6 +29,17 @@
+ extern "C" {
+ #endif
  
- static inline struct tegra_plane_state *
--to_tegra_plane_state(struct drm_plane_state *state)
-+to_tegra_plane_state(const struct drm_plane_state *state)
- {
- 	if (state)
- 		return container_of(state, struct tegra_plane_state, base);
++struct drm_tegra_plane_csc_blob {
++	__u32 yof;
++	__u32 kyrgb;
++	__u32 kur;
++	__u32 kvr;
++	__u32 kug;
++	__u32 kvg;
++	__u32 kub;
++	__u32 kvb;
++};
++
+ #define DRM_TEGRA_GEM_CREATE_TILED     (1 << 0)
+ #define DRM_TEGRA_GEM_CREATE_BOTTOM_UP (1 << 1)
+ #define DRM_TEGRA_GEM_CREATE_SCATTERED (1 << 2)
 -- 
 2.17.0
