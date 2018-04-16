@@ -1,177 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753421AbeDPHtI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 03:49:08 -0400
-Received: from mout.gmx.net ([212.227.17.21]:44045 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753299AbeDPHtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 03:49:06 -0400
-From: Chengguang Xu <cgxu519@gmx.com>
-To: ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net
-Cc: v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Chengguang Xu <cgxu519@gmx.com>
-Subject: [PATCH 2/2] fs/9p: detecting invalid options as much as possible
-Date: Mon, 16 Apr 2018 15:48:29 +0800
-Message-Id: <1523864909-4337-2-git-send-email-cgxu519@gmx.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1523864909-4337-1-git-send-email-cgxu519@gmx.com>
-References: <1523864909-4337-1-git-send-email-cgxu519@gmx.com>
-X-Provags-ID: V03:K1:4E3qBia6Z85szOg6SZU1D63mSQ93nEgy5h6qrUzgr0kACBajSie
- UliZZOpUHDLImAPh/wYr4KiA180FQeS+ygXWfd6sajxZ+Bn75QfIccwjX7wfzVPAyJwJ3CX
- wzX0aR685e1RtWekFXIA5pjTjktiMvFmV0NHtfx5Vt9SaLP/4jHVlAEzbqGJqOU0tgqYWtc
- V4YOzbb44XarmT8xIihoQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:k/wUnz9Se1s=:um2uhtqJPA0egRhBsEvhqp
- 5caA02hwF5Ph63u+HnOp64dvN0G2WcUF7CfGAoQjurtbkti/ZQLHit8OE/nI9rEVONuLw3IDH
- jVQfiXTNpclultKh8ezKdhYhIJCMtkI2sNgTHNiknonjtuNuNj+rhMGcMroG+tt1aQSq9e82r
- AuXVzoo9uhDxWJUX5Mof81MZbovcyZMCtqfahIQ7IRVeU+IoxlxuoKs7cDaF/ki/Ko3rCExFe
- WXfeD6mSGKuSao4WnvkXrBbl70ADBbpz9DIqsrCGMsZxJ1gizrR59B5LzyzJRO+VJbduuorTz
- m3CAhlzw9R58CgN5INrBeyXJi2arDldlqIiwEKL29TecUJCdazFhs/411VXF1j2gUQbs77ahe
- XoqrTKYXMbbyMrzTrTecJnnOE07Gsk6mr0t33K0nyBzP6HBqyIxFRaJygmjfScdfZYsgjc3ek
- CbDF0nP8f1RMuA+qXVqxwdKu85X8eoL5Mq3gdfFxzWDunfbm/Eo41cUaKybI0Tu/Rl1qHEUUv
- K2hqKC394N+1WVwJfMsXWdZxhMKYEkXmq0soHJNVVW+otqds4rNQ8accKNpPfc4ATvLtu7a7z
- qi82tRK0/7gi+eLyNpZOohSalbc36moRugkq1CpjmPYVwlcNHkoSYUOdiYRZJi0WmqFKZors8
- bPjv89dhOBHMy+FDEXjpsJ1A4UTWTOBMTADMcEPauLUEQw7acC5X6z1PLwDUy1tlXO0p+E2AY
- kxs4Iexi/04U3bZcnC/PyysQcXKBgezUgBiUz3CkSXEYu7cZm9fiJjgYvet6cwSrqFKoQJmrr
- 89B6tYdL80jS4TOcYzKPv4xko2DbA==
+        id S1753337AbeDPHzV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 03:55:21 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:60318 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752961AbeDPHzT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 03:55:19 -0400
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: axboe@kernel.dk, ming.lei@redhat.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] blk-mq: mark hctx RESTART when get budget fails
+Date: Mon, 16 Apr 2018 15:55:36 +0800
+Message-Id: <1523865336-17326-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8864 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804160073
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently when detecting invalid options in option parsing,
-some options(e.g. debug) just set errno and allow to continusly
-validate other options so that it can detect invalid options
-as much as possible and give proper error messages together.
+When get budget fails, blk_mq_sched_dispatch_requests does not do
+anything to ensure the hctx to be restarted. We can survive from
+this, because only the scsi implements .get_budget and it always
+runs the hctx queues when request is completed.
 
-This patch apply this policy to all options and the case of memory
-allocation error in option parsing.
-
-Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 ---
- fs/9p/v9fs.c | 49 ++++++++++++++++++++++++-------------------------
- 1 file changed, 24 insertions(+), 25 deletions(-)
+ block/blk-mq-sched.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
-index e622f0f..29ba937 100644
---- a/fs/9p/v9fs.c
-+++ b/fs/9p/v9fs.c
-@@ -192,10 +192,9 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
- 		return 0;
- 
- 	tmp_options = kstrdup(opts, GFP_KERNEL);
--	if (!tmp_options) {
--		ret = -ENOMEM;
--		goto fail_option_alloc;
--	}
-+	if (!tmp_options)
-+		return -ENOMEM;
-+
- 	options = tmp_options;
- 
- 	while ((p = strsep(&options, ",")) != NULL) {
-@@ -263,18 +262,16 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
- 		case Opt_uname:
- 			kfree(v9ses->uname);
- 			v9ses->uname = match_strdup(&args[0]);
--			if (!v9ses->uname) {
--				ret = -ENOMEM;
--				goto free_and_return;
--			}
-+			if (!v9ses->uname)
-+				if (!ret)
-+					ret = -ENOMEM;
- 			break;
- 		case Opt_remotename:
- 			kfree(v9ses->aname);
- 			v9ses->aname = match_strdup(&args[0]);
--			if (!v9ses->aname) {
--				ret = -ENOMEM;
--				goto free_and_return;
--			}
-+			if (!v9ses->aname)
-+				if (!ret)
-+					ret = -ENOMEM;
- 			break;
- 		case Opt_nodevmap:
- 			v9ses->nodev = 1;
-@@ -292,24 +289,24 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
- #ifdef CONFIG_9P_FSCACHE
- 			kfree(v9ses->cachetag);
- 			v9ses->cachetag = match_strdup(&args[0]);
--			if (!v9ses->cachetag) {
--				ret = -ENOMEM;
--				goto free_and_return;
--			}
-+			if (!v9ses->cachetag)
-+				if (!ret)
-+					ret = -ENOMEM;
- #endif
- 			break;
- 		case Opt_cache:
- 			s = match_strdup(&args[0]);
- 			if (!s) {
--				ret = -ENOMEM;
-+				if (!ret)
-+					ret = -ENOMEM;
- 				p9_debug(P9_DEBUG_ERROR,
- 					 "problem allocating copy of cache arg\n");
--				goto free_and_return;
-+				continue;
- 			}
- 			ret = get_cache_mode(s);
- 			if (ret == -EINVAL) {
- 				kfree(s);
--				goto free_and_return;
-+				continue;
- 			}
- 
- 			v9ses->cache = ret;
-@@ -319,10 +316,11 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
- 		case Opt_access:
- 			s = match_strdup(&args[0]);
- 			if (!s) {
--				ret = -ENOMEM;
-+				if (!ret)
-+					ret = -ENOMEM;
- 				p9_debug(P9_DEBUG_ERROR,
- 					 "problem allocating copy of access arg\n");
--				goto free_and_return;
-+				continue;
- 			}
- 
- 			v9ses->flags &= ~V9FS_ACCESS_MASK;
-@@ -341,14 +339,14 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
- 					pr_info("Unknown access argument %s\n",
- 						s);
- 					kfree(s);
--					goto free_and_return;
-+					continue;
- 				}
- 				v9ses->uid = make_kuid(current_user_ns(), uid);
- 				if (!uid_valid(v9ses->uid)) {
- 					ret = -EINVAL;
- 					pr_info("Uknown uid %s\n", s);
- 					kfree(s);
--					goto free_and_return;
-+					continue;
- 				}
- 			}
- 
-@@ -365,13 +363,14 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
+diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
+index 25c14c5..49e7cd9 100644
+--- a/block/blk-mq-sched.c
++++ b/block/blk-mq-sched.c
+@@ -102,8 +102,10 @@ static void blk_mq_do_dispatch_sched(struct blk_mq_hw_ctx *hctx)
+ 				!e->type->ops.mq.has_work(hctx))
  			break;
  
- 		default:
-+			p9_debug(P9_DEBUG_ERROR,
-+				"unrecognized mount option \"%s\" or missing value\n",
-+					p);
- 			continue;
- 		}
- 	}
+-		if (!blk_mq_get_dispatch_budget(hctx))
++		if (!blk_mq_get_dispatch_budget(hctx)) {
++			blk_mq_sched_mark_restart_hctx(hctx);
+ 			break;
++		}
  
--free_and_return:
- 	kfree(tmp_options);
--fail_option_alloc:
- 	return ret;
- }
+ 		rq = e->type->ops.mq.dispatch_request(hctx);
+ 		if (!rq) {
+@@ -148,8 +150,10 @@ static void blk_mq_do_dispatch_ctx(struct blk_mq_hw_ctx *hctx)
+ 		if (!sbitmap_any_bit_set(&hctx->ctx_map))
+ 			break;
  
+-		if (!blk_mq_get_dispatch_budget(hctx))
++		if (!blk_mq_get_dispatch_budget(hctx)) {
++			blk_mq_sched_mark_restart_hctx(hctx);
+ 			break;
++		}
+ 
+ 		rq = blk_mq_dequeue_from_ctx(hctx, ctx);
+ 		if (!rq) {
 -- 
-1.8.3.1
+2.7.4
