@@ -1,76 +1,148 @@
-Return-Path: <hpa@zytor.com>
-X-Google-Smtp-Source: AIpwx4+BYCs1hcOfawYTC1l2sKT3vdL8SSIjTGtfi6u3fqLVkFLnxtLdDIpmL5fyBTi6cZPsnd+7
-ARC-Seal: i=1; a=rsa-sha256; t=1523901574; cv=none;
+Return-Path: <joro@8bytes.org>
+X-Google-Smtp-Source: AIpwx48hwTWBg3kVeEsMwW42Gizo5qKHDXrz6HsTHUFb66dezLLi89VInnfrnlR92qaCqvEnkyg/
+ARC-Seal: i=1; a=rsa-sha256; t=1523892345; cv=none;
         d=google.com; s=arc-20160816;
-        b=0FkB+5VcE2c/c5xANOZ1BA5Qt6bT1RonNZOmwjkwkMK/RopTPGxU1JIwhzIY03Hwgt
-         DOyFZxayVq7m4NUsW/cLG6iLFB0dHUkfyKdhqDzVnc4GATFd+lWAlc1q6QgO+j9XabDD
-         GV6FJg9+JngyMSHz5bmFDn4DquNY69xPLTgO7AQZ+Nh5sI45h3H8U6HTXUAv989E0w0U
-         hh09ICjujbKHmeJO1aOJacQxc2e3csJzAaThtk81XuYRY2WiM7Io/ZILaXfZ3PpVc6tA
-         0lHQRo5VyBfQLArcOhiafzU4JLSDCAxyORwmoD8x8yrD6gYUnT0bbud7oO7AyAa7HqtY
-         MPmQ==
+        b=q/9AHDqq7/MTGKEn8tAh+rd0Vn7bpu99O1QzGNQbqeCKHp4qZIFjh2nDKOlQDo9yIA
+         CzbGme7dXGooFfxU+zR/KP6sOe1MA9igue9cgArjp+qLtEQL6NncbRYz4zx4ZX5Ixn55
+         ZS/P+XxG6qKFNjiAqK0Vx2NiA3hGa/iG60ULB/N0jf4oVLM9ajzkap3gepctbmJaJewE
+         SDCtSNeGW9ENqgkLCo40FBex3JUI4dn+127VPfWzO5SaKee/cwG6BLmID795ZzFQyXLp
+         Z7ad+2w2PypV1Krw+UKAtAa/zruXkmas0hOXkV82KvzOV1CwON62fJFerjnc1J979gpu
+         j/cQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=UzT3jw/ok+v1sp6XmMSlHc5AObceOaK/CjiD+1oE7XQ=;
-        b=hOMJyFQnSEqrJeHOIvOg3QJcBv+AeM1W3tQ+sFrHbg1Z3UetJAdY6R1YFC4RuhRCyS
-         weSvc5uUN6wF/oEFTy9FjK6MC4EXMoy9FM0aEdLJ6HczUuPDuRJ+GcQ8HBjRXOeaPGK9
-         vDMdOK03iNjsyzFsfTfPNLa+AYD0HJZoDn30nAPQWkSpLyUbdHY0Oi3IsLvMF+6EN5PI
-         +FbFWfIGnSLZ//VGVtr4X3fcBLGS7no3Q0rOEMG37K6WN8NigJ/3vmuFeLCWsWYQBBDT
-         8mHgUtGGuYCNx0Qc19h7aLgeEuR4Ucf2n6T/Bk09rP2tDhFw3Tae4Y8B2kUlO9ywXbEM
-         /qgg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=Y8N4hCCOk7avYFElYs/3evka9+flYYVqAWJN/ObKGmk=;
+        b=O0qLmhrIg5Bydiq7U7asNjnlwUdFXUdBYAhXc90n+oUkUiTRpEBO/5jqbuH0bjcJz0
+         fVdH4UJAUXmPigaAABHaINJrXzToFVTQo/pCYijXWCwJdrUQinhQhAdynxIBtwM9JkuO
+         Ab5jHRI3rthsIoNQlAskclkUR0dkvz1XYOEXfzdSfoZbQcQwJPk96PYDyXqAid4wxp06
+         jSy3QPDjKCfXJe72w9EeDhlwzSWqhYScC3th/qR2V1zwFsFEHfyjpG0Euhn9GCL5FI0r
+         3VFxdpXEMDAjxYV7Hv9DAhGC25ePvi2jCbEbOaxeZngf6jHS+HiG6ZEIoGGDJ6/frQN0
+         G3+g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hpa@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=hpa@zytor.com
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=fkLzrinP;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hpa@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=hpa@zytor.com
-Subject: Re: [PATCH 00/35 v5] PTI support for x32
-To: Joerg Roedel <joro@8bytes.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>, Waiman Long <llong@redhat.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>, jroedel@suse.de
-References: <1523892323-14741-1-git-send-email-joro@8bytes.org>
-From: "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <db40f8f6-7990-676c-e536-b876254e66c0@zytor.com>
-Date: Mon, 16 Apr 2018 10:57:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=fkLzrinP;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+From: Joerg Roedel <joro@8bytes.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Dave Hansen <dave.hansen@intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Jiri Kosina <jkosina@suse.cz>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	David Laight <David.Laight@aculab.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	Eduardo Valentin <eduval@amazon.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Will Deacon <will.deacon@arm.com>,
+	aliguori@amazon.com,
+	daniel.gruss@iaik.tugraz.at,
+	hughd@google.com,
+	keescook@google.com,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Waiman Long <llong@redhat.com>,
+	Pavel Machek <pavel@ucw.cz>,
+	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+	jroedel@suse.de,
+	joro@8bytes.org
+Subject: [PATCH 15/35] x86/pgtable: Rename pti_set_user_pgd to pti_set_user_pgtbl
+Date: Mon, 16 Apr 2018 17:25:03 +0200
+Message-Id: <1523892323-14741-16-git-send-email-joro@8bytes.org>
+X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523892323-14741-1-git-send-email-joro@8bytes.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1523892323-14741-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597916931664810234?=
-X-GMAIL-MSGID: =?utf-8?q?1597926617757016738?=
+X-GMAIL-THRID: =?utf-8?q?1597916939516404451?=
+X-GMAIL-MSGID: =?utf-8?q?1597916939516404451?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/16/18 08:24, Joerg Roedel wrote:
-> Hi,
-> 
-> here is the 5th iteration of my PTI enablement patches for
-> x86-32. There are no real changes between v4 and v5 besides
-> that I rebased the whole patch-set to v4.17-rc1 and resolved
-> the numerous conflicts that this caused.
-> 
+From: Joerg Roedel <jroedel@suse.de>
 
-Please don't use the term "x32" for i386/x86-32.  "x32" generally refers
-to the x32 ABI for x86-64.  "x64" in Microsoft terminology for x86-64
-corresponds to "x86" for x86-32.
+With the way page-table folding is implemented on 32 bit, we
+are not only setting PGDs with this functions, but also PUDs
+and even PMDs. Give the function a more generic name to
+reflect that.
 
-	-hpa
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ arch/x86/include/asm/pgtable_64.h | 12 ++++++------
+ arch/x86/mm/pti.c                 |  2 +-
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index 877bc27..c863816 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -196,21 +196,21 @@ static inline bool pgdp_maps_userspace(void *__ptr)
+ }
+ 
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
+-pgd_t __pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd);
++pgd_t __pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd);
+ 
+ /*
+  * Take a PGD location (pgdp) and a pgd value that needs to be set there.
+  * Populates the user and returns the resulting PGD that must be set in
+  * the kernel copy of the page tables.
+  */
+-static inline pgd_t pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
++static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
+ {
+ 	if (!static_cpu_has(X86_FEATURE_PTI))
+ 		return pgd;
+-	return __pti_set_user_pgd(pgdp, pgd);
++	return __pti_set_user_pgtbl(pgdp, pgd);
+ }
+ #else
+-static inline pgd_t pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
++static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
+ {
+ 	return pgd;
+ }
+@@ -226,7 +226,7 @@ static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
+ 	}
+ 
+ 	pgd = native_make_pgd(native_p4d_val(p4d));
+-	pgd = pti_set_user_pgd((pgd_t *)p4dp, pgd);
++	pgd = pti_set_user_pgtbl((pgd_t *)p4dp, pgd);
+ 	*p4dp = native_make_p4d(native_pgd_val(pgd));
+ }
+ 
+@@ -237,7 +237,7 @@ static inline void native_p4d_clear(p4d_t *p4d)
+ 
+ static inline void native_set_pgd(pgd_t *pgdp, pgd_t pgd)
+ {
+-	*pgdp = pti_set_user_pgd(pgdp, pgd);
++	*pgdp = pti_set_user_pgtbl(pgdp, pgd);
+ }
+ 
+ static inline void native_pgd_clear(pgd_t *pgd)
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index f1fd52f..9bea9c3 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -117,7 +117,7 @@ void __init pti_check_boottime_disable(void)
+ 	setup_force_cpu_cap(X86_FEATURE_PTI);
+ }
+ 
+-pgd_t __pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
++pgd_t __pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
+ {
+ 	/*
+ 	 * Changes to the high (kernel) portion of the kernelmode page
+-- 
+2.7.4
