@@ -1,95 +1,119 @@
-Return-Path: <jrdr.linux@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523889860; cv=none;
-        d=google.com; s=arc-20160816;
-        b=xbNKkWeBSYcVVEOYRn2YrxoaFnG3u0Ts2QFCf2GIRZ2sujQ9iVYPL4HpWYsLC4toeJ
-         AocCXqXBMZeK0EL/UkrCdqslfAW4InyxD8sRuLPltgtMGt89BvydY/ol7EiQQVqc7glT
-         9gK3GfS6TM6gV2q4rI3gE+STmi/jF4Pa0YJprI9pEq1qyBXQQl5pyhBsWOpwKL4kqVsV
-         S+tUZhdByRrd93YsBbbazYcgsbZ2IXQjmLgxIGMoQfU/jmRt+Boi6zEAfuCEoT+nTaw5
-         3/+6kRcILIxYwmqkZZz609PxRu2hn3xDzJXm46B/IzjgavPDZBFLwijWzbq1gH6+fJhP
-         EH8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:dkim-signature:arc-authentication-results;
-        bh=P9AF9fMTia/EJg+/D5+G119jcXDqULhBnJ6DLMWJvTA=;
-        b=PnlJr4637rYYhpn8OBAvWLF4mIpbpDR8RzU7uCQqL1tpP2tBRBrykunNWhz/3qC9bw
-         0uk3TvGt/pBEx6AGjQgMEVlQYnNS312CMF++EUXteWp0v6cFBzVP9Bj026olaOe38zkf
-         a1gwLJ2NMNSdfKFlgjB37sM0KAUhifFsqpMIrJSVZtb33h8GO7dSCGs09y7hn6++IcAH
-         fuN09AsAidqc81cj4aXijmfMt+THdKduBIRoY4IEf2y/s2w7r+ZUt0i9LpCwoFZlMAKw
-         p3gXdIwMzcYlfSa9wQgirdlf7fx5/ckTChtsrujeYN8A4rtNVC7Seq7aFSBtdzv3u+sy
-         DObA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=tqJuM0iU;
-       spf=pass (google.com: domain of jrdr.linux@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jrdr.linux@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=tqJuM0iU;
-       spf=pass (google.com: domain of jrdr.linux@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jrdr.linux@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4+E/yiiF5TUSoT8NtIhGN57kJr8TtHoKxyVHzr/VQyaMa4MC1j6pXV9u0ks46KwDRUMpp3Vng==
-Date: Mon, 16 Apr 2018 20:16:13 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: gregkh@linuxfoundation.org, tj@kernel.org
-Cc: linux-kernel@vger.kernel.org, willy@infradead.org
-Subject: [PATCH v2] fs: kernfs: Adding new return type vm_fault_t
-Message-ID: <20180416144613.GA26650@jordon-HP-15-Notebook-PC>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3398102-1523887672-2-10600714813765315743
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523887672; b=Hb8k1f602CkscbAFJQEIs9WZlTGLdq2pqtktrVwcp6C33058a4
+    +tjdWH/EoGrkm6fo3n7LTVfP1j7wfTT2szaIQ2ZydQ//ibsObHtwWG5WOwYYmUcu
+    Hq822aaH4qyWmlVFN4HQ/iXnLkbdU9lDCCfEDucnMFwR7/qlDcv/qyel1wxVdzXe
+    MVM3EgeF7frJthVSCVNNA9PW3F3xyEOWx+nLrEBPUvjNv7UD9DRJwlXrNmeT4nIr
+    cxI3BAvB+8jUsvhggSLowJ6QQc3leaav+Vi7QJDGbY8EQSqCTCC3jTtmZoyGrY5K
+    XXUaFOg4+wfP/+x/aBlszpUpwkCQr0jQ3izw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:content-transfer-encoding
+    :in-reply-to:sender:list-id; s=fm2; t=1523887672; bh=jxveb8jCoBU
+    1WbiKBbGQussSlLpN0wv8km03toJZnkw=; b=J9Z3T9nLvEnBTwmHvOZsWjjsYv8
+    XJ//+Pkj39QfW19jZmGrJbjUJsBl9lqy5uyVL9Hps/FWoJm9V1WsM79aDlEP0V8p
+    348+Mv5fNwVUNonsxPgNwZSqyjBD8kihb1n4IGu1dJ3D5QFzgo3IXGCNoXVMqUid
+    uaPe8b7BChQeq4t+I9/9JeOIbXa9Hpu4z5xSBTPnfa/F9/9tQnCV0DxF0ePR70Rs
+    Y7WskVZTd6e8E0+e43keHnvGcGB5MQFGNsGVAI5dLhEFk0k0TSsH1H6812s1hN+b
+    x2b7XWFeVSwpaWOi6VVk2USu0UDG9KhHGD4ZsTx8/B8Y72CBk8MsxpTAkNQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=NCLA/zkt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BxnA/0W5;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=NCLA/zkt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BxnA/0W5;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfENDEryCLewDT+Nfi9dVky4xP36MlrmndLPl+HnnuKDx3Qs+5VthPAxO4xHakwECj8cGszgbhstFL68PLDLEHePkBiZFOxnVyVTJDCTG7Bl4zU7fBZzy
+    ZsfB9NktcDP3b04w/8+4lI54jEJ+5xpc4oiH9lHmE8ns9P//zEdSdn7XicM2l2NvYzCJ3icxc9SkcBTQhyjqqvFKsBIW5IBvJOoYKWNaNLA+pAiqWyPiBHBN
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=sozttTNsAAAA:8 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=4zGRZ9gJ3Tx9_e93Am8A:9
+    a=QEXdDO2ut3YA:10 a=aeg5Gbbo78KNqacMgKqU:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=cvBusfyB2V15izCimMoJ:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1755163AbeDPOHt (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 16 Apr 2018 10:07:49 -0400
+Received: from mail-wr0-f180.google.com ([209.85.128.180]:38253 "EHLO
+        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751159AbeDPOHs (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 16 Apr 2018 10:07:48 -0400
+X-Google-Smtp-Source: AIpwx48hIrV7i8N1yrku1Btcw9+kixtp/NCb7gzEHb000o6eTBf0pYgGFdd6ye67qwrjAWZtINGLwQ==
+Date: Mon, 16 Apr 2018 15:07:43 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: tony@atomide.com, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hns@goldelico.com,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2] mfd: twl-core: Fix clock initialization
+Message-ID: <20180416140743.fv5njvszyw6umz3b@dell>
+References: <20180409084539.14365-1-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180409084539.14365-1-peter.ujfalusi@ti.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597914334924001991?=
-X-GMAIL-MSGID: =?utf-8?q?1597914334924001991?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use new return type vm_fault_t for page_mkwrite
-and fault handler. For now, this is just documenting
-that the function returns a VM_FAULT value rather
-than an errno.  Once all instances are converted,
-vm_fault_t will become a distinct type.
+On Mon, 09 Apr 2018, Peter Ujfalusi wrote:
 
-Reference commit id->
-1c8f422059ae5da07db7406ab916203f9417e396
+> When looking up the clock we must use the client->dev as device since that
+> is the one which is probed via DT.
+> 
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> Cc: stable@vger.kernel.org # 4.16+
+> ---
+> Hi,
+> 
+> Changes since v1:
+> - Removed the Fixes line and add tag only for v4.16 to avoid possible breakage
+>   in pre v4.16.
+>  
+> Regards,
+> Peter
+> 
+>  drivers/mfd/twl-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
----
-v2: Modified the change log.
+Applied, thanks.
 
- fs/kernfs/file.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
-index fd5ce88..2015d8c 100644
---- a/fs/kernfs/file.c
-+++ b/fs/kernfs/file.c
-@@ -348,11 +348,11 @@ static void kernfs_vma_open(struct vm_area_struct *vma)
- 	kernfs_put_active(of->kn);
- }
- 
--static int kernfs_vma_fault(struct vm_fault *vmf)
-+static vm_fault_t kernfs_vma_fault(struct vm_fault *vmf)
- {
- 	struct file *file = vmf->vma->vm_file;
- 	struct kernfs_open_file *of = kernfs_of(file);
--	int ret;
-+	vm_fault_t ret;
- 
- 	if (!of->vm_ops)
- 		return VM_FAULT_SIGBUS;
-@@ -368,11 +368,11 @@ static int kernfs_vma_fault(struct vm_fault *vmf)
- 	return ret;
- }
- 
--static int kernfs_vma_page_mkwrite(struct vm_fault *vmf)
-+static vm_fault_t kernfs_vma_page_mkwrite(struct vm_fault *vmf)
- {
- 	struct file *file = vmf->vma->vm_file;
- 	struct kernfs_open_file *of = kernfs_of(file);
--	int ret;
-+	vm_fault_t ret;
- 
- 	if (!of->vm_ops)
- 		return VM_FAULT_SIGBUS;
 -- 
-1.9.1
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
