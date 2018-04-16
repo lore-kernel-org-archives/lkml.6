@@ -1,62 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752829AbeDPQKo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 12:10:44 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:50214 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751970AbeDPQKm (ORCPT
+        id S1752940AbeDPQLJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 12:11:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50782 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751151AbeDPQLH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 12:10:42 -0400
-Date: Mon, 16 Apr 2018 18:10:41 +0200
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 4.17-rc1
-Message-ID: <20180416161041.GA23075@isilmar-4.linta.de>
-References: <CA+55aFx62iBkj+hOmhLksUtvjwTcm_o1dwcyvaNnVpJ-AmvzVQ@mail.gmail.com>
- <CAMuHMdUQyiY6cPqYViHtgEX1rnBmSbrmQOivtCmSAO_b3ci5Uw@mail.gmail.com>
+        Mon, 16 Apr 2018 12:11:07 -0400
+Date: Mon, 16 Apr 2018 09:12:09 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Cc: mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com
+Subject: [PATCH tools/memory-model 0/17] Memory-model changes
+Reply-To: paulmck@linux.vnet.ibm.com
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdUQyiY6cPqYViHtgEX1rnBmSbrmQOivtCmSAO_b3ci5Uw@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18041616-0024-0000-0000-00000347CE50
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008863; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01018801; UDB=6.00519703; IPR=6.00798042;
+ MB=3.00020599; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-16 16:11:05
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041616-0025-0000-0000-000047AEE9F9
+Message-Id: <20180416161209.GA6895@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=34
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804160146
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 11:01:57AM +0200, Geert Uytterhoeven wrote:
-> On Mon, Apr 16, 2018 at 3:55 AM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> > We actually have a fair amount of other removal and cleanups too. I
-> > was somewhat pleasantly surprised by the number of pull requests that
-> > actually ended up removing a lot of lines. Some of it was staging
-> > drivers that finally gave up the ghost (like irda), but we also got
-> > rid of some copyright language boiler-plate in favor of just the spdx
-> > lines. And some pre-shipped lexer/parser files are no more, we're
-> > better off just generating them.
-> >
-> > End result: we actually removed more lines than we added:
-> >
-> >  13538 files changed, 627723 insertions(+), 818855 deletions(-)
-> >
-> > which is probably a first. Ever. In the history of the universe. Or at
-> > least kernel releases.
-> >
-> > I'd call it momentous, but I think the arch removal was most of it,
-> > and I'm sure people will quickly rectify that momentary glitch of
-> > actually shrinking the kernel source code.
-> 
-> For the first time ever(?), we also had a kernel size reduction, according
-> to bloat-o-meter (for an m68k atari_defconfig kernel):
-> 
->     add/remove: 341/440 grow/shrink: 445/359 up/down: 60125/-133422 (-73297)
-> 
-> which brings us (size-wise) back to v4.13-and-a-half.
-> This is mostly attributed to the removal of lots of SyS_* functions.
+Hello!
 
-Please note that the SyS_* stubs were renamed to __se_sys_* () [__se for
-sign-extending], which bloat-o-meter does not handle well.
+This series contains changes to the memory model, including the formal
+model in tools/memory-model and documentation in memory-barriers.txt (plus
+the Korean translation).  These changes are ready for inclusion in -tip.
 
-Thanks,
-	Dominik
+1.	Rename LKMM's "link" and "rcu-path" relations to "rcu-link"
+	and "rb", respectively, courtesy of Alan Stern.
+
+2.	Redefine LKMM's "rb" relation in terms of rcu-fence in order
+	to match the structure of LKMM's other strong fences, courtesy
+	of Alan Stern.
+
+3.	Fix memory-barriers.txt's ordering example contrasting DMA to
+	MMIO, courtesy of Will Deacon.
+
+4-6.	Fixes related to spin_is_locked(), courtesy of Andrea Parri.
+
+7-11.	Updates to Korean translation of memory-barriers.txt, courtesy
+	of SeongJae Park.
+
+12.	Update required version of the herd7 tool, courtesy of Akira
+	Yokosawa.
+
+13.	Fix "RWM" typo in cheatsheet.txt, courtesy of Paolo Bonzini.
+
+14.	Improve cheatsheet.txt's key.
+
+15.	Fix cheatsheet.txt's ordering rules for smp_mb__after_atomic().
+
+16.	Add smp_store_mb() to LKMM, courtesy of Andrea Parri.
+
+17.	Use consistent coding style in linux-kernel.def, courtesy of
+	Andrea Parri.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ Documentation/memory-barriers.txt                    |   17 -
+ Documentation/translations/ko_KR/memory-barriers.txt |   56 ++--
+ arch/arm64/include/asm/spinlock.h                    |    5 
+ include/asm-generic/qspinlock.h                      |    2 
+ include/linux/mutex.h                                |    3 
+ include/linux/spinlock.h                             |   18 +
+ tools/memory-model/Documentation/cheatsheet.txt      |    7 
+ tools/memory-model/Documentation/explanation.txt     |  261 +++++++++++--------
+ tools/memory-model/README                            |    2 
+ tools/memory-model/linux-kernel.cat                  |   49 ++-
+ tools/memory-model/linux-kernel.def                  |   29 +-
+ 11 files changed, 268 insertions(+), 181 deletions(-)
