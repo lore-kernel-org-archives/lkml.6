@@ -1,39 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754234AbeDPKv5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 06:51:57 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48590 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753904AbeDPKvz (ORCPT
+        id S1754290AbeDPKxc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 06:53:32 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46762 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754094AbeDPKxb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 06:51:55 -0400
-Subject: Re: [PATCH v4 05/15] KVM: s390: enable/disable AP interpretive
- execution
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1523827345-11600-6-git-send-email-akrowiak@linux.vnet.ibm.com>
-From: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Date: Mon, 16 Apr 2018 12:51:46 +0200
+        Mon, 16 Apr 2018 06:53:31 -0400
+Subject: Re: Wrong module .text address in 4.16.0
+From: Christian Borntraeger <borntraeger@de.ibm.com>
+To: Thomas-Mich Richter <tmricht@linux.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <7e17e3b1-25c3-cb61-ae94-dcbb1bf3473e@linux.ibm.com>
+ <3836add7-8691-77c1-33d2-0fbee7051795@de.ibm.com>
+Openpgp: preference=signencrypt
+Date: Mon, 16 Apr 2018 12:53:24 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1523827345-11600-6-git-send-email-akrowiak@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <3836add7-8691-77c1-33d2-0fbee7051795@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-x-cbid: 18041610-0020-0000-0000-00000412683D
+x-cbid: 18041610-0044-0000-0000-00000548B926
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041610-0021-0000-0000-000042A6A203
-Message-Id: <15b60572-40d6-0f03-11f9-c50cb7eb00e8@linux.vnet.ibm.com>
+x-cbparentid: 18041610-0045-0000-0000-00002888C00B
+Message-Id: <2dc648ad-0a6b-ba79-5d6a-fb3e3029994f@de.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -45,124 +45,59 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/04/2018 23:22, Tony Krowiak wrote:
-> The VFIO AP device model exploits interpretive execution of AP
-> instructions (APIE) to provide guests passthrough access to AP
-> devices. This patch introduces a new interface to enable and
-> disable APIE.
->
-> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-> ---
->   arch/s390/include/asm/kvm-ap.h   |   16 ++++++++++++++++
->   arch/s390/include/asm/kvm_host.h |    1 +
->   arch/s390/kvm/kvm-ap.c           |   20 ++++++++++++++++++++
->   arch/s390/kvm/kvm-s390.c         |    9 +++++++++
->   4 files changed, 46 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/s390/include/asm/kvm-ap.h b/arch/s390/include/asm/kvm-ap.h
-> index 736e93e..a6c092e 100644
-> --- a/arch/s390/include/asm/kvm-ap.h
-> +++ b/arch/s390/include/asm/kvm-ap.h
-> @@ -35,4 +35,20 @@
->    */
->   void kvm_ap_build_crycbd(struct kvm *kvm);
->
-> +/**
-> + * kvm_ap_interpret_instructions
-> + *
-> + * Indicate whether AP instructions shall be interpreted. If they are not
-> + * interpreted, all AP instructions will be intercepted and routed back to
-> + * userspace.
-> + *
-> + * @kvm: the virtual machine attributes
-> + * @enable: indicates whether AP instructions are to be interpreted (true) or
-> + *	    or not (false).
-> + *
-> + * Returns 0 if completed successfully; otherwise, returns -EOPNOTSUPP
-> + * indicating that AP instructions are not installed on the guest.
-> + */
-> +int kvm_ap_interpret_instructions(struct kvm *kvm, bool enable);
-> +
->   #endif /* _ASM_KVM_AP */
-> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-> index 3162783..5470685 100644
-> --- a/arch/s390/include/asm/kvm_host.h
-> +++ b/arch/s390/include/asm/kvm_host.h
-> @@ -715,6 +715,7 @@ struct kvm_s390_crypto {
->   	__u32 crycbd;
->   	__u8 aes_kw;
->   	__u8 dea_kw;
-> +	__u8 apie;
->   };
->
->   #define APCB0_MASK_SIZE 1
-> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
-> index 991bae4..55d11b5 100644
-> --- a/arch/s390/kvm/kvm-ap.c
-> +++ b/arch/s390/kvm/kvm-ap.c
-> @@ -58,3 +58,23 @@ void kvm_ap_build_crycbd(struct kvm *kvm)
->   	}
->   }
->   EXPORT_SYMBOL(kvm_ap_build_crycbd);
-> +
-> +int kvm_ap_interpret_instructions(struct kvm *kvm, bool enable)
-> +{
-> +	int ret = 0;
-> +
-> +	mutex_lock(&kvm->lock);
-> +
-> +	if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP)) {
+Can this be related to 
+commit ef0010a30935de4e0211cbc7bdffc30446cdee9b
+    vsprintf: don't use 'restricted_pointer()' when not restricting
+and related commits?
 
-Do we really need to test CPU_FEAT_AP?
 
-I understand that KVM_S390_VM_CPU_FEAT_AP means AP instructions are 
-interpreted.
-shouldn't we add this information in the name?
-like KVM_S390_VM_CPU_FEAT_APIE
+To me it looks like %pk is always printing the hash, but never the real pointer - 
+no matter what kernel.kptr_restrict says.
 
-> +		ret = -EOPNOTSUPP;
-> +		goto done;
-> +	}
-> +
-> +	kvm->arch.crypto.apie = enable;
-> +	kvm_s390_vcpu_crypto_reset_all(kvm);
-> +
-> +done:
-> +	mutex_unlock(&kvm->lock);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(kvm_ap_interpret_instructions);
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index 55cd897..1dc8566 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -1901,6 +1901,9 @@ static void kvm_s390_crypto_init(struct kvm *kvm)
->   	kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
->   	kvm_ap_build_crycbd(kvm);
->
-> +	/* Default setting indicating SIE shall interpret AP instructions */
-> +	kvm->arch.crypto.apie = 1;
-> +
->   	if (!test_kvm_facility(kvm, 76))
->   		return;
->
-> @@ -2434,6 +2437,12 @@ static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
->   {
->   	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->
-> +	vcpu->arch.sie_block->eca &= ~ECA_APIE;
-> +	if (vcpu->kvm->arch.crypto.apie &&
-> +	    test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP))
 
-Do we call xxx_crypto_setup() if KVM does not support AP interpretation?
 
-> +		vcpu->arch.sie_block->eca |= ECA_APIE;
-> +
-> +
->   	if (!test_kvm_facility(vcpu->kvm, 76))
->   		return;
->
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+On 04/16/2018 08:23 AM, Christian Borntraeger wrote:
+> FWIW, this breaks at least perf capability to resolve module symbols.
+> Adding some more CCs for perf and module.
+> 
+> 
+> On 04/16/2018 07:51 AM, Thomas-Mich Richter wrote:
+>> I just installed 4.16.0 and discovered the module .text address is
+>> wrong. It happens on s390 and x86 platforms. I have not tested others.
+>>
+>> Here is the issue, I have used module qeth_l2 on s390 which is the
+>> ethernet device driver:
+>>
+>> root@s35lp76 ~]# lsmod
+>> Module                  Size  Used by
+>> qeth_l2                94208  1
+>> ...
+>>
+>> [root@s35lp76 ~]# cat /proc/modules | egrep '^qeth_l2'
+>> qeth_l2 94208 1 - Live 0x000003ff80401000   <---- This is the correct address in memory
+>> [root@s35lp76 ~]# cat /sys/module/qeth_l2/sections/.text 
+>> 0x0000000018ea8363      <---- This is the wrong address
+>> [root@s35lp76 ~]# 
+>>
+>> File /sys/module/qeth_l2/sections/.text displays a very strange
+>> address which is definitely wrong. It should be something like
+>> 0x000003ff80401xxx.
+>>
+>> Same on x86.
+>>
+>> I have checked file kernel/module.c function add_sect_attrs()
+>> and it calls module_sect_show() when the sysfs file is read.
+>> And module_sect_show() uses 
+>>
+>>   sprintf(buf, "0x%pK\n", (void *)sattr->address);
+>>
+>> and my sysctl setting should be correct:
+>> [root@s35lp76 linux]# sysctl -a | fgrep kernel.kptr_restrict
+>> kernel.kptr_restrict = 0
+>> [root@s35lp76 linux]#
+>>
+>> I wonder if somebody else has seen this issue?
+>> Ideas how to fix this?
+>>
+>> Thanks
+>>
