@@ -1,73 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753041AbeDPRIO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 13:08:14 -0400
-Received: from mailout.micron.com ([137.201.242.129]:34977 "EHLO
-        mailout.micron.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752652AbeDPRIM (ORCPT
+        id S1753187AbeDPRI3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 13:08:29 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:53364 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753099AbeDPRI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 13:08:12 -0400
-From: "Bean Huo (beanhuo)" <beanhuo@micron.com>
-To: Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "rajatja@google.com" <rajatja@google.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "mingo@redhad.com" <mingo@redhad.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>
-Subject: Re: [RESEND PATCH v1 1/2] trace: events: scsi: Add tag in SCSI trace
- events
-Thread-Topic: [RESEND PATCH v1 1/2] trace: events: scsi: Add tag in SCSI trace
- events
-Thread-Index: AdPVpS/NqOtYca0xRKWV1f/VxYkLww==
-Date: Mon, 16 Apr 2018 17:05:59 +0000
-Message-ID: <b46de00ee67e4ec9955bb3f09faa36c4@SIWEX5A.sing.micron.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.160.29.124]
-X-TM-AS-Product-Ver: SMEX-12.0.0.1782-8.200.1013-23786.005
-X-TM-AS-Result: No--9.017400-0.000000-31
-X-TM-AS-MatchedID: 150567-139010-700022-700075-851106-707163-707451-702931-7
-        04425-707663-700023-704421-711432-702020-705901-148004-148046-148133-148980
-        -10019-41000-42000-42003-29961-63
-X-TM-AS-User-Approved-Sender: Yes
-X-TM-AS-User-Blocked-Sender: No
-x-mt-checkinternalsenderrule: True
-Content-Type: text/plain; charset="utf-8"
+        Mon, 16 Apr 2018 13:08:28 -0400
+Subject: [PATCH 1/1] hwmon: (ina2xx) initialize mutex before locking
+CC: <linux@roeck-us.net>, <jdelvare@suse.com>,
+        <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        chombour <Cedric_Hombourger@mentor.com>,
+        ahsann <Noor_Ahsan@mentor.com>, <m.purski@samsung.com>
+From: Ahsan Hussain <ahsan_hussain@mentor.com>
+Organization: Mentor Graphics
+Message-ID: <f286b0f4-948f-74a7-6dc1-90ca88f3dcdc@mentor.com>
+Date: Mon, 16 Apr 2018 22:08:19 +0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [137.202.0.87]
+X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
+ svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3GH8JJk018692
 
-Hi, Bart
 
->On Mon, 2018-04-16 at 09:41 -0700, Rajat Jain wrote:
->> On Mon, Apr 16, 2018 at 8:28 AM, Steven Rostedt <rostedt@goodmis.org>
->wrote:
->> > On Mon, 16 Apr 2018 14:31:49 +0000
->> > "Bean Huo (beanhuo)" <beanhuo@micron.com> wrote:
->> >
->> > > Print the request tag along with other information while tracing a
->> > > command.
->> > >
->> > > Signed-off-by: Bean Huo <beanhuo@micron.com>
->>
->> Acked-by: Rajat Jain <rajatja@google.com>
->
->This patch is not acceptable because it adds support for tag tracing to the
->legacy block layer only. Any patch that adds a new feature to the legacy block
->layer must also add it to blk-mq.
->
-To be honest, I don't understand your point, can you give me more explanation?
+Upstream commit
 
->Bart.
->
->
+8d008c0c ("hwmon: (ina2xx) Make calibration register value fixed")
+
+makes ina2xx_set_shunt() call mutex_lock on an un-initialized mutex.
+Initialize it prior so we don't get a NULL pointer dereference error
+
+Signed-off-by: Ahsan Hussain <ahsan_hussain@mentor.com>
+---
+ drivers/hwmon/ina2xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
+index a629f7c..1304f01 100644
+--- a/drivers/hwmon/ina2xx.c
++++ b/drivers/hwmon/ina2xx.c
+@@ -457,6 +457,8 @@ static int ina2xx_probe(struct i2c_client *client,
+ 			val = INA2XX_RSHUNT_DEFAULT;
+ 	}
+ +	mutex_init(&data->config_lock);
++
+ 	ina2xx_set_shunt(data, val);
+  	ina2xx_regmap_config.max_register = data->config->registers;
+@@ -473,8 +475,6 @@ static int ina2xx_probe(struct i2c_client *client,
+ 		return -ENODEV;
+ 	}
+ -	mutex_init(&data->config_lock);
+-
+ 	data->groups[group++] = &ina2xx_group;
+ 	if (id->driver_data == ina226)
+ 		data->groups[group++] = &ina226_group;
+-- 
+2.7.4
