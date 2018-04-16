@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754233AbeDPIus (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 04:50:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44710 "EHLO
+        id S1754255AbeDPIuv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 04:50:51 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44732 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753950AbeDPIuo (ORCPT
+        with ESMTP id S1753950AbeDPIut (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 04:50:44 -0400
+        Mon, 16 Apr 2018 04:50:49 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: iommu@lists.linux-foundation.org, linux-arch@vger.kernel.org,
         linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
         linux-scsi@vger.kernel.org, netdev@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 02/12] storsvc: don't set a bounce limit
-Date: Mon, 16 Apr 2018 10:50:22 +0200
-Message-Id: <20180416085032.7367-3-hch@lst.de>
+Subject: [PATCH 03/12] mtip32xx: don't use block layer bounce buffers
+Date: Mon, 16 Apr 2018 10:50:23 +0200
+Message-Id: <20180416085032.7367-4-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180416085032.7367-1-hch@lst.de>
 References: <20180416085032.7367-1-hch@lst.de>
@@ -23,26 +23,26 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The default already is to never bounce, so the call is a no-op.
+mtip32xx just sets the block bounce limit to the dma mask, which means
+that the iommu or swiotlb already take care of the bounce buffering,
+and the block bouncing can be removed.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/scsi/storvsc_drv.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/block/mtip32xx/mtip32xx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
-index 8c51d628b52e..5f2d177c3bd9 100644
---- a/drivers/scsi/storvsc_drv.c
-+++ b/drivers/scsi/storvsc_drv.c
-@@ -1382,9 +1382,6 @@ static int storvsc_device_alloc(struct scsi_device *sdevice)
+diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
+index 769c551e3d71..b03bb27dcc58 100644
+--- a/drivers/block/mtip32xx/mtip32xx.c
++++ b/drivers/block/mtip32xx/mtip32xx.c
+@@ -3862,7 +3862,6 @@ static int mtip_block_initialize(struct driver_data *dd)
+ 	blk_queue_max_hw_sectors(dd->queue, 0xffff);
+ 	blk_queue_max_segment_size(dd->queue, 0x400000);
+ 	blk_queue_io_min(dd->queue, 4096);
+-	blk_queue_bounce_limit(dd->queue, dd->pdev->dma_mask);
  
- static int storvsc_device_configure(struct scsi_device *sdevice)
- {
--
--	blk_queue_bounce_limit(sdevice->request_queue, BLK_BOUNCE_ANY);
--
- 	blk_queue_rq_timeout(sdevice->request_queue, (storvsc_timeout * HZ));
- 
- 	/* Ensure there are no gaps in presented sgls */
+ 	/* Signal trim support */
+ 	if (dd->trim_supp == true) {
 -- 
 2.17.0
