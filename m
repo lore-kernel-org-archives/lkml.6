@@ -1,67 +1,67 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2217916-1523852125-2-14719330071987163497
+X-Cyrus-Session-Id: sloti22d1t05-2217885-1523852124-2-9191861496155077170
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enro,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523852124; b=inV8ZiPURGb2zvwIBmxDbGcWPvS2HsI7cPWKkaasnYiGljuyk+
-    QzqAHmOoe1toUOoZ3LtulHb89Uip+CTww8Z1ha1UbF3dUOAmrAS28PSwgqQWzxEW
-    EE8dRx8yVUwDaL/sUu6RWFsRdaTKdmv3qlaAPYz3GlMHzBdc8ttVZeCO4Z7i8jFd
-    Z6qmexRlmnYjq+o/YRXRjuzG5MjeVDJXYYxzjK60AXIzyL2mihtft6UOlfrS3pbK
-    EHyIhU6BXFEb8dvevWJswSHZAlKVQ0Rp5d3D5A31n5BnUYnfD7GGbCu14txDdBpr
-    fNcZgtwSvMtscZ2/oYMGv8ol3dLixY4bqJCg==
+    1523852123; b=X7AhFHqBAJGST6sMIdldr0lXelT4VrA5sVBxgP3jG2KCFqagfF
+    uqbi4Snkjr1G1Oo6rAQRLm/jIJihL/QHTP74/gZ9I0Vm3yvS9zCkXC/fpes5njDU
+    K9Fz9dmgkOPugZ3D2nuXY8RN/+ijqVl8slWnLr2mxxtrGudIPzBBjuc7al7a/q4v
+    jGb8utz1IddOyITZd3JLo7X+Al47qLoGWy8Xb0j3NKl/cPNKodjqlWMI5TQTtIO2
+    +F2qjBcSeZxMwYtr52BiPNuyT08NinfZiXsVtfGRYrxpyxt23J+CyYJFGFot2rz2
+    pq8/rSy+zG9iVtUYebPzpWmCBMVzhVWNX6WQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1523852124; bh=TK2SE
-    k/lQZP5aCRZYqvZoaaefSXAjn5UkMn+L4MonH4=; b=lLxdWz1qECopI6xLy2H4E
-    mcpCvaTWVBxk6Z6w8YcjbiOnyFvzn1xgrWXJFovCWfjV9rl+2W/WMyx+5VKsMGyR
-    e5Rl218ywGbTwJjFpT6aDfD90SzmnrZDJ7JPIy/SdpHE5RdCDkR+xnmxoFRHpgOC
-    FBcysMu+Ro54J1H7tKd220dRvS/45MUgijEBGv4Q75Y8hzRiChUFj0kipJ0MWcCG
-    dS57a1Cm01/pyUgZNsa4lpal1wZnakLh/jz+tPVXDSDutLUh7RtNtkv36GNtuA/j
-    yQ34dwLBy+H5BbDdxpOllhRS+Fo74bssTQzfnBEDgaPf9KtXJO9NnbzmJEFJp1R1
-    w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1523852123; bh=Euhof
+    8L/ajGJBgYJUBGWnWUtCP2E5qUQ01nh9k9OQiU=; b=WZp/OZPjNTR5qfDHlFeIf
+    sHVqSnClsfKc719P66WpAUh+T+sR8DNWhU5XwHI76Ps9eD/25714hxM2ZRmUpukN
+    oaXxTwgSPXi5GdqZny6gA3a+eMLPFxelAcV9DgcDfk1ri87dH9t0UPjTwROjjBYT
+    3fYTyzJEqpGtk/1ZKfnJ7cD1oBRTI+HPG4b/C3OYmkt/zhwO4v+kwLO5c7nCb3Iw
+    +tzGMmIc08cUHw11aPE4ItuyfVqk8sxv8jDsJvUDEaoxMGOSok6m+eidKnLC3aLn
+    RinuU9lIbEtm9ZlAbC1JVj3QBaGNpb8RdRfhyAGyKKjyrFyVUC+8fGkmBtuplWfT
+    A==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=infradead.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=infradead.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIFGYKvdQQv44xQ5fkDOH1RRh46bfTnxGW1fbyX/UtKWEq4kylMnad1q6rGWxjytxYRJbjpcl+W/IGfWfagTWGHSk0Vk8lGXnIg4LhxWTdb2Jf0t47Mo
-    eplINExvj1Jr475/5nC/edvoTtNtPV75n/NPdU1gI1rvIuTf4ut+db/i9+FppdSJNKeCfqSnX+QE2Qgud++EMOmT0vZ6cbADWOQgvLTjprJA+I7jkKntO4XQ
-    HTO3j0gQ4WHusL6i4/G0ug==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+X-CM-Envelope: MS4wfJrTJhOWRIOfoyutCHCbneTsktt5TyctmhciqikhAXjT1R8pyUvsAYWcGmx+lZyUyUpiG7ppUg1YrccE3FcMq/CRhZPSjkgw7eyC8n1NoU075ceZPZwm
+    8w8iWS1E2KTXReOrML12pIcs88pAS7wc9hZXYfKqlcbB9vJknON4QOrAutPxI1dboXu0H1FCt4lpvLv0KD/H5ci55xChfWd/A18+0ef+phtG78oKs/me59Wy
+    BDo2d9SFmBM4WREGLjUaJQ==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=3go8odswAAAA:8 a=QyXUC8HyAAAA:8
-    a=ySfo2T4IAAAA:8 a=JfrnYn6hAAAA:8 a=DDOyTI_5AAAA:8 a=H-RkfYE6CuBbyF8ueEYA:9
+    a=ySfo2T4IAAAA:8 a=JfrnYn6hAAAA:8 a=DDOyTI_5AAAA:8 a=0WxA1dbfkC2TWfam0DkA:9
     a=CjuIK1q_8ugA:10 a=WCphLhRDQySbTNkkd-8K:22 a=ZUkhVnNHqyo2at-WnAgH:22
     a=1CNFftbPRP8L7MoqJWF3:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
@@ -71,10 +71,9 @@ From: James Simmons <jsimmons@infradead.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
  Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>
-Subject: [PATCH 03/22] staging: lustre: obd: change debug reporting in
- lmv_enqueue()
-Date: Mon, 16 Apr 2018 00:14:52 -0400
-Message-Id: <1523852111-17321-4-git-send-email-jsimmons@infradead.org>
+Subject: [PATCH 02/22] staging: lustre: obd: create it_has_reply_body()
+Date: Mon, 16 Apr 2018 00:14:51 -0400
+Message-Id: <1523852111-17321-3-git-send-email-jsimmons@infradead.org>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1523852111-17321-1-git-send-email-jsimmons@infradead.org>
 References: <1523852111-17321-1-git-send-email-jsimmons@infradead.org>
@@ -102,8 +101,9 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Vitaly Fertman <vitaly.fertman@seagate.com>
 
-Remove LL_IT2STR(it) from debug macros in lmv_enqueue(). The
-removal makes it possible to simplify the md_enqueue() functions.
+The lookup_intent it_op fields in many cases will be compared
+to the settings of IT_OPEN | IT_UNLINK | IT_LOOKUP | IT_GETATTR.
+Create a simple inline function for this common case.
 
 Signed-off-by: Vitaly Fertman <vitaly.fertman@seagate.com>
 Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-7433
@@ -117,32 +117,44 @@ Reviewed-by: Lai Siyao <lai.siyao@intel.com>
 Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
 Signed-off-by: James Simmons <jsimmons@infradead.org>
 ---
- drivers/staging/lustre/lustre/lmv/lmv_obd.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/staging/lustre/lustre/include/obd.h   | 10 ++++++++++
+ drivers/staging/lustre/lustre/mdc/mdc_locks.c |  2 +-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/lustre/lustre/lmv/lmv_obd.c b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
-index 7be9310..e1c93cd 100644
---- a/drivers/staging/lustre/lustre/lmv/lmv_obd.c
-+++ b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
-@@ -1660,15 +1660,14 @@ static int lmv_create(struct obd_export *exp, struct md_op_data *op_data,
- 	struct lmv_obd	   *lmv = &obd->u.lmv;
- 	struct lmv_tgt_desc      *tgt;
+diff --git a/drivers/staging/lustre/lustre/include/obd.h b/drivers/staging/lustre/lustre/include/obd.h
+index f1233ca..ea6056b 100644
+--- a/drivers/staging/lustre/lustre/include/obd.h
++++ b/drivers/staging/lustre/lustre/include/obd.h
+@@ -686,6 +686,16 @@ enum md_cli_flags {
+ 	CLI_MIGRATE	= BIT(4),
+ };
  
--	CDEBUG(D_INODE, "ENQUEUE '%s' on " DFID "\n",
--	       LL_IT2STR(it), PFID(&op_data->op_fid1));
-+	CDEBUG(D_INODE, "ENQUEUE on " DFID "\n", PFID(&op_data->op_fid1));
++/**
++ * GETXATTR is not included as only a couple of fields in the reply body
++ * is filled, but not FID which is needed for common intent handling in
++ * mdc_finish_intent_lock()
++ */
++static inline bool it_has_reply_body(const struct lookup_intent *it)
++{
++	return it->it_op & (IT_OPEN | IT_UNLINK | IT_LOOKUP | IT_GETATTR);
++}
++
+ struct md_op_data {
+ 	struct lu_fid	   op_fid1; /* operation fid1 (usually parent) */
+ 	struct lu_fid	   op_fid2; /* operation fid2 (usually child) */
+diff --git a/drivers/staging/lustre/lustre/mdc/mdc_locks.c b/drivers/staging/lustre/lustre/mdc/mdc_locks.c
+index 695ef44..309ead1 100644
+--- a/drivers/staging/lustre/lustre/mdc/mdc_locks.c
++++ b/drivers/staging/lustre/lustre/mdc/mdc_locks.c
+@@ -568,7 +568,7 @@ static int mdc_finish_enqueue(struct obd_export *exp,
+ 		  it->it_op, it->it_disposition, it->it_status);
  
- 	tgt = lmv_locate_mds(lmv, op_data, &op_data->op_fid1);
- 	if (IS_ERR(tgt))
- 		return PTR_ERR(tgt);
+ 	/* We know what to expect, so we do any byte flipping required here */
+-	if (it->it_op & (IT_OPEN | IT_UNLINK | IT_LOOKUP | IT_GETATTR)) {
++	if (it_has_reply_body(it)) {
+ 		struct mdt_body *body;
  
--	CDEBUG(D_INODE, "ENQUEUE '%s' on " DFID " -> mds #%u\n",
--	       LL_IT2STR(it), PFID(&op_data->op_fid1), tgt->ltd_idx);
-+	CDEBUG(D_INODE, "ENQUEUE on " DFID " -> mds #%u\n",
-+	       PFID(&op_data->op_fid1), tgt->ltd_idx);
- 
- 	return md_enqueue(tgt->ltd_exp, einfo, policy, it, op_data, lockh,
- 			extra_lock_flags);
+ 		body = req_capsule_server_get(pill, &RMF_MDT_BODY);
 -- 
 1.8.3.1
 
