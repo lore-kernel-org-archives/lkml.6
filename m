@@ -1,276 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753332AbeDPQWZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 12:22:25 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47542 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753122AbeDPQVw (ORCPT
+        id S1753409AbeDPQWw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 12:22:52 -0400
+Received: from mail-oi0-f52.google.com ([209.85.218.52]:33143 "EHLO
+        mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752221AbeDPQWt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 12:21:52 -0400
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Cc: mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com,
-        Luc Maranget <Luc.Maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH RFC tools/memory-model 4/5] tools/memory-model: Add model support for spin_is_locked
-Date: Mon, 16 Apr 2018 09:22:50 -0700
-X-Mailer: git-send-email 2.5.2
-In-Reply-To: <20180416162228.GA18167@linux.vnet.ibm.com>
-References: <20180416162228.GA18167@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18041616-0024-0000-0000-00000347CF2B
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008863; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01018805; UDB=6.00519705; IPR=6.00798046;
- MB=3.00020599; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-16 16:21:49
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041616-0025-0000-0000-000047AEEFDA
-Message-Id: <1523895771-19224-4-git-send-email-paulmck@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804160148
+        Mon, 16 Apr 2018 12:22:49 -0400
+X-Google-Smtp-Source: AIpwx48ozxEchXoEMjPOnQo4K322EYL+SWA0wsxO3OT59qEjN6f/Uld5EDi+DXIoEb8EX16pJHxHNPRsY3wmp+3C1PM=
+MIME-Version: 1.0
+In-Reply-To: <1523545958-28059-2-git-send-email-karahmed@amazon.de>
+References: <1523545958-28059-1-git-send-email-karahmed@amazon.de> <1523545958-28059-2-git-send-email-karahmed@amazon.de>
+From: Jim Mattson <jmattson@google.com>
+Date: Mon, 16 Apr 2018 09:22:47 -0700
+Message-ID: <CALMp9eSS4nL1-1i1Df=vyPFT1FZVprPB0Yx-JX0auknNc09Gtg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] kvm: nVMX: Introduce KVM_CAP_STATE
+To: KarimAllah Ahmed <karahmed@amazon.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kvm list <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luc Maranget <Luc.Maranget@inria.fr>
+On Thu, Apr 12, 2018 at 8:12 AM, KarimAllah Ahmed <karahmed@amazon.de> wrote:
 
-This commit first adds a trivial macro for spin_is_locked() to
-linux-kernel.def.
+> v2 -> v3:
+> - Remove the forced VMExit from L2 after reading the kvm_state. The actual
+>   problem is solved.
+> - Rebase again!
+> - Set nested_run_pending during restore (not sure if it makes sense yet or
+>   not).
 
-It also adds cat code for enumerating all possible matches of lock
-write events (set LKW) with islocked events returning true (set RL,
-for Read from Lock), and unlock write events (set UL) with islocked
-events returning false (set RU, for Read from Unlock).  Note that this
-intentionally does not model uniprocessor kernels (CONFIG_SMP=n) built
-with CONFIG_DEBUG_SPINLOCK=n, in which spin_is_locked() unconditionally
-returns zero.
+This doesn't actually make sense. Nested_run_pending should only be
+set between L1 doing a VMLAUNCH/VMRESUME and the first instruction
+executing in L2. That is extremely unlikely at a restore point.
 
-It also adds a pair of litmus tests demonstrating the minimal ordering
-provided by spin_is_locked() in conjunction with spin_lock().  Will Deacon
-noted that this minimal ordering happens on ARMv8:
-https://lkml.kernel.org/r/20180226162426.GB17158@arm.com
+To deal with nested_run_pending and nested save/restore,
+nested_run_pending should be set to 1 before calling
+enter_vmx_non_root_mode, as it was prior to commit 7af40ad37b3f. That
+means that it has to be cleared when emulating VM-entry to the halted
+state (prior to calling kvm_vcpu_halt). And all of the from_vmentry
+arguments that Paolo added when rebasing commit cf8b84f48a59 should be
+removed, so that nested_run_pending is propagated correctly duting a
+restore.
 
-Notice that herd7 installations strictly older than version 7.49
-do not handle the new constructs.
-
-Signed-off-by: Luc Maranget <luc.maranget@inria.fr>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-Cc: Luc Maranget <luc.maranget@inria.fr>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Akira Yokosawa <akiyks@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
----
- tools/memory-model/linux-kernel.def                |  1 +
- .../MP+polockmbonce+poacquiresilsil.litmus         | 30 ++++++++++++
- .../MP+polockonce+poacquiresilsil.litmus           | 29 ++++++++++++
- tools/memory-model/litmus-tests/README             | 10 ++++
- tools/memory-model/lock.cat                        | 53 ++++++++++++++++++++--
- 5 files changed, 119 insertions(+), 4 deletions(-)
- create mode 100644 tools/memory-model/litmus-tests/MP+polockmbonce+poacquiresilsil.litmus
- create mode 100644 tools/memory-model/litmus-tests/MP+polockonce+poacquiresilsil.litmus
-
-diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
-index 6bd3bc431b3d..f0553bd37c08 100644
---- a/tools/memory-model/linux-kernel.def
-+++ b/tools/memory-model/linux-kernel.def
-@@ -38,6 +38,7 @@ cmpxchg_release(X,V,W) __cmpxchg{release}(X,V,W)
- spin_lock(X) { __lock(X); }
- spin_unlock(X) { __unlock(X); }
- spin_trylock(X) __trylock(X)
-+spin_is_locked(X) __islocked(X)
- 
- // RCU
- rcu_read_lock() { __fence{rcu-lock}; }
-diff --git a/tools/memory-model/litmus-tests/MP+polockmbonce+poacquiresilsil.litmus b/tools/memory-model/litmus-tests/MP+polockmbonce+poacquiresilsil.litmus
-new file mode 100644
-index 000000000000..37357404a08d
---- /dev/null
-+++ b/tools/memory-model/litmus-tests/MP+polockmbonce+poacquiresilsil.litmus
-@@ -0,0 +1,30 @@
-+C MP+polockmbonce+poacquiresilsil
-+
-+(*
-+ * Result: Never
-+ *
-+ * Do spinlocks combined with smp_mb__after_spinlock() provide order
-+ * to outside observers using spin_is_locked() to sense the lock-held
-+ * state, ordered by acquire?  Note that when the first spin_is_locked()
-+ * returns false and the second true, we know that the smp_load_acquire()
-+ * executed before the lock was acquired (loosely speaking).
-+ *)
-+
-+{
-+}
-+
-+P0 (spinlock_t *lo, int *x) {
-+	spin_lock(lo);
-+	smp_mb__after_spinlock();
-+	WRITE_ONCE(*x,1);
-+	spin_unlock(lo);
-+}
-+
-+P1 (spinlock_t *lo, int *x) {
-+	int r1; int r2; int r3;
-+	r1 = smp_load_acquire(x);
-+        r2 = spin_is_locked(lo);
-+	r3 = spin_is_locked(lo);
-+}
-+
-+exists (1:r1=1 /\ 1:r2=0 /\ 1:r3=1)
-diff --git a/tools/memory-model/litmus-tests/MP+polockonce+poacquiresilsil.litmus b/tools/memory-model/litmus-tests/MP+polockonce+poacquiresilsil.litmus
-new file mode 100644
-index 000000000000..ebc2668f95ff
---- /dev/null
-+++ b/tools/memory-model/litmus-tests/MP+polockonce+poacquiresilsil.litmus
-@@ -0,0 +1,29 @@
-+C MP+polockonce+poacquiresilsil
-+
-+(*
-+ * Result: Sometimes
-+ *
-+ * Do spinlocks provide order to outside observers using spin_is_locked()
-+ * to sense the lock-held state, ordered by acquire?  Note that when the
-+ * first spin_is_locked() returns false and the second true, we know that
-+ * the smp_load_acquire() executed before the lock was acquired (loosely
-+ * speaking).
-+ *)
-+
-+{
-+}
-+
-+P0 (spinlock_t *lo, int *x) {
-+	spin_lock(lo);
-+	WRITE_ONCE(*x,1);
-+	spin_unlock(lo);
-+}
-+
-+P1 (spinlock_t *lo, int *x) {
-+	int r1; int r2; int r3;
-+	r1 = smp_load_acquire(x);
-+        r2 = spin_is_locked(lo);
-+	r3 = spin_is_locked(lo);
-+}
-+
-+exists (1:r1=1 /\ 1:r2=0 /\ 1:r3=1)
-diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
-index 04096fb8b8d9..6919909bbd0f 100644
---- a/tools/memory-model/litmus-tests/README
-+++ b/tools/memory-model/litmus-tests/README
-@@ -63,6 +63,16 @@ LB+poonceonces.litmus
- MP+onceassign+derefonce.litmus
- 	As below, but with rcu_assign_pointer() and an rcu_dereference().
- 
-+MP+polockmbonce+poacquiresilsil.litmus
-+	Protect the access with a lock and an smp_mb__after_spinlock()
-+	in one process, and use an acquire load followed by a pair of
-+	spin_is_locked() calls in the other process.
-+
-+MP+polockonce+poacquiresilsil.litmus
-+	Protect the access with a lock in one process, and use an
-+	acquire load followed by a pair of spin_is_locked() calls
-+	in the other process.
-+
- MP+polocks.litmus
- 	As below, but with the second access of the writer process
- 	and the first access of reader process protected by a lock.
-diff --git a/tools/memory-model/lock.cat b/tools/memory-model/lock.cat
-index ba4a4ec6d313..3b1439edc818 100644
---- a/tools/memory-model/lock.cat
-+++ b/tools/memory-model/lock.cat
-@@ -5,7 +5,11 @@
-  *)
- 
- (* Generate coherence orders and handle lock operations *)
--
-+(*
-+ * Warning, crashes with herd7 versions strictly before 7.48.
-+ * spin_islocked is functional from version 7.49.
-+ *
-+ *)
- include "cross.cat"
- 
- (* From lock reads to their partner lock writes *)
-@@ -32,12 +36,16 @@ flag ~empty [M \ IW] ; loc ; [ALL-LOCKS] as mixed-lock-accesses
- (* The final value of a spinlock should not be tested *)
- flag ~empty [FW] ; loc ; [ALL-LOCKS] as lock-final
- 
--
-+(*
-+ * Backward compatibility
-+ *)
-+let RL = try RL with emptyset (* defined herd7 >= 7.49 *)
-+let RU = try RU with emptyset (* defined herd7 >= 7.49 *)
- (*
-  * Put lock operations in their appropriate classes, but leave UL out of W
-  * until after the co relation has been generated.
-  *)
--let R = R | LKR | LF
-+let R = R | LKR | LF | RL | RU
- let W = W | LKW
- 
- let Release = Release | UL
-@@ -72,8 +80,45 @@ let all-possible-rfe-lf =
- 
- (* Generate all rf relations for LF events *)
- with rfe-lf from cross(all-possible-rfe-lf)
--let rf = rf | rfi-lf | rfe-lf
- 
-+let rf-lf = rfe-lf | rfi-lf
-+
-+(* rf for RL events, ie islocked returning true, similar to LF above *)
-+
-+(* islocked returning true inside a critical section
-+ * must read from the opening lock
-+ *)
-+let rfi-rl = ([LKW] ; po-loc ; [RL]) \ ([LKW] ; po-loc ; [UL] ; po-loc)
-+
-+(* islocked returning true outside critical sections can match any
-+ * external lock.
-+ *)
-+let all-possible-rfe-rl =
-+  let possible-rfe-lf r =
-+    let pair-to-relation p = p ++ 0
-+    in map pair-to-relation ((LKW * {r}) & loc & ext)
-+  in map possible-rfe-lf (RL \ range(rfi-rl))
-+
-+with rfe-rl from cross(all-possible-rfe-rl)
-+let rf-rl = rfe-rl | rfi-rl
-+
-+(* Read from unlock, ie islocked returning false, slightly different *)
-+
-+(* islocked returning false can read from the last po-previous unlock *)
-+let rfi-ru = ([UL] ; po-loc ; [RU]) \ ([UL] ; po-loc ; [LKW] ; po-loc)
-+
-+(* any islocked returning false can read from any external unlock *)
-+let all-possible-rfe-ru =
-+   let possible-rfe-ru r =
-+     let pair-to-relation p = p ++ 0
-+     in map pair-to-relation (((UL|IW) * {r}) & loc & ext)
-+  in map possible-rfe-ru RU
-+
-+with rfe-ru from cross(all-possible-rfe-ru)
-+let rf-ru = rfe-ru | rfi-ru
-+
-+(* Final rf relation *)
-+let rf = rf | rf-lf | rf-rl | rf-ru
- 
- (* Generate all co relations, including LKW events but not UL *)
- let co0 = co0 | ([IW] ; loc ; [LKW]) |
--- 
-2.5.2
+It should be possible to eliminate this strange little wart, but I
+haven't looked deeply into it.
