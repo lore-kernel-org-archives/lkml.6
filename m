@@ -1,53 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754107AbeDPJsV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 05:48:21 -0400
-Received: from zxshcas2.zhaoxin.com ([180.169.121.92]:50001 "EHLO
-        ZXSHCAS2.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752931AbeDPJsT (ORCPT
+        id S1754304AbeDPJt1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 05:49:27 -0400
+Received: from mail-wr0-f182.google.com ([209.85.128.182]:34403 "EHLO
+        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754046AbeDPJtZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 05:48:19 -0400
-From: David Wang <davidwang@zhaoxin.com>
-To: <perex@perex.cz>, <tiwai@suse.com>, <vinod.koul@intel.com>,
-        <Vijendar.Mukunda@amd.com>, <subhransu.s.prusty@intel.com>,
-        <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>
-CC: <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
-        <qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>,
-        <lukelin@viacpu.com>, <timguo@zhaoxin.com>,
-        David Wang <davidwang@zhaoxin.com>
-Subject: [PATCH] ALSA: hda - New VIA controller suppor no-snoop path
-Date: Mon, 16 Apr 2018 17:48:09 +0800
-Message-ID: <1523872089-6381-1-git-send-email-davidwang@zhaoxin.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 16 Apr 2018 05:49:25 -0400
+X-Google-Smtp-Source: AIpwx4/q5cUyX3v0vuK2z+BhGVjFO0oso5W935HFU6irQdgnlwgtkiNaaDDdrQkiCeRPokraFd4tvQ==
+Date: Mon, 16 Apr 2018 11:49:20 +0200
+From: Miklos Szeredi <miklos@szeredi.hu>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [GIT PULL] fuse update for 4.17
+Message-ID: <20180416094920.GE19579@veci.piliscsaba.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.29.8.54]
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- zxbjmbx3.zhaoxin.com (10.29.252.165)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is used to tell kernel that new VIA HDAC controller also
-support no-snoop path.
+Hi Linus,
 
-Signed-off-by: David Wang <davidwang@zhaoxin.com>
+Please pull from:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git for-linus
+
+Late pull request, sorry.  I just totally forgot about it, probably because fuse
+updates are so rare these days (hoping to get back to regular fuse updates once
+overlayfs is "finished").
+
+This contains a few fixes and minor improvements, but the most interesting part
+is user namespace support, mostly done by Eric Biederman.  This doesn't yet
+enable unprivileged mounting of fuse filesystems, but that's now a really simple
+step, since all support for that should be in place.
+
+Thanks,
+Miklos
+
 ---
- sound/pci/hda/hda_intel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Eric W. Biederman (3):
+      fuse: Remove the buggy retranslation of pids in fuse_dev_do_read
+      fuse: Fail all requests with invalid uids or gids
+      fuse: Support fuse filesystems outside of init_user_ns
 
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index 96143df..439e8e9 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -1640,7 +1640,7 @@ static void azx_check_snoop_available(struct azx *chip)
- 		 */
- 		u8 val;
- 		pci_read_config_byte(chip->pci, 0x42, &val);
--		if (!(val & 0x80) && chip->pci->revision == 0x30)
-+		if (!(val & 0x80) && (chip->pci->revision == 0x30 || chip->pci->revision == 0x20))
- 			snoop = false;
- 	}
- 
--- 
-1.9.1
+Miklos Szeredi (4):
+      fuse: atomic_o_trunc should truncate pagecache
+      fuse: honor AT_STATX_DONT_SYNC
+      fuse: honor AT_STATX_FORCE_SYNC
+      fuse: add writeback documentation
+
+Seth Forshee (1):
+      fuse: Restrict allow_other to the superblock's namespace or a descendant
+
+Szymon Lukasz (1):
+      fuse: return -ECONNABORTED on /dev/fuse read after abort
+
+---
+ Documentation/filesystems/fuse-io.txt | 38 +++++++++++++++++++++++++++++
+ fs/fuse/acl.c                         |  4 ++--
+ fs/fuse/control.c                     |  2 +-
+ fs/fuse/cuse.c                        | 11 ++++++---
+ fs/fuse/dev.c                         | 40 +++++++++++++++----------------
+ fs/fuse/dir.c                         | 45 +++++++++++++++++++++++++----------
+ fs/fuse/fuse_i.h                      | 14 +++++++++--
+ fs/fuse/inode.c                       | 40 +++++++++++++++++++------------
+ include/uapi/linux/fuse.h             |  7 +++++-
+ kernel/user_namespace.c               |  1 +
+ 10 files changed, 145 insertions(+), 57 deletions(-)
+ create mode 100644 Documentation/filesystems/fuse-io.txt
