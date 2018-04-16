@@ -1,74 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752359AbeDPWhn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 18:37:43 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:34967 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750989AbeDPWhl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 18:37:41 -0400
-Date: Mon, 16 Apr 2018 15:37:07 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Vitaly Wool <vitalywool@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, mawilcox@microsoft.com,
-        asavery@chromium.org, gwendal@chromium.org
-Subject: Re: Crashes/hung tasks with z3pool under memory pressure
-Message-ID: <20180416223707.GA26180@roeck-us.net>
-References: <20180412215501.GA16406@roeck-us.net>
- <CAMJBoFMq8DoWdcrajB_xyMrGXsUsbMjos_U60mOvf01MpK_9Kw@mail.gmail.com>
- <20180413173555.GA30587@roeck-us.net>
- <CAMJBoFPXObpXyQWz-zPJ7JnC-Z5FqqrLfr5BFWKdh+szZrPZ7A@mail.gmail.com>
- <20180413175615.GA30242@roeck-us.net>
- <b241e25a-50a3-fefb-0443-ad6c0a200898@gmail.com>
- <20180416155832.GB12015@roeck-us.net>
- <b5158eef-2fbd-ce8c-1c8c-6c38ec837f1d@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b5158eef-2fbd-ce8c-1c8c-6c38ec837f1d@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S1752896AbeDPWsO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 18:48:14 -0400
+Received: from foss.arm.com ([217.140.101.70]:37044 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750972AbeDPWsN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 18:48:13 -0400
+Date: Mon, 16 Apr 2018 17:48:11 -0500
+From: Kim Phillips <kim.phillips@arm.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, Jiri Olsa <jolsa@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, <kernel-team@lge.com>
+Subject: Re: [PATCH] perf tools: set kernel end address properly
+Message-Id: <20180416174811.1aca9106364effe435f363c8@arm.com>
+In-Reply-To: <20180416122407.0d90863b69fed80166384850@arm.com>
+References: <20180416042240.21528-1-namhyung@kernel.org>
+        <20180416092345.GA23274@krava>
+        <20180416135125.GA23802@kernel.org>
+        <20180416110730.1dd12801e43be66ea5d0cc48@arm.com>
+        <20180416165800.GD3202@kernel.org>
+        <20180416122407.0d90863b69fed80166384850@arm.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 12:14:37AM +0200, Vitaly Wool wrote:
-[ ... ]
-> Ugh. Could you please keep that patch and apply this on top:
+On Mon, 16 Apr 2018 12:24:07 -0500
+Kim Phillips <kim.phillips@arm.com> wrote:
+
+> On Mon, 16 Apr 2018 13:58:00 -0300
+> Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 > 
-> diff --git a/mm/z3fold.c b/mm/z3fold.c
-> index c0bca6153b95..e8a80d044d9e 100644
-> --- a/mm/z3fold.c
-> +++ b/mm/z3fold.c
-> @@ -840,6 +840,7 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
->  			kref_get(&zhdr->refcount);
->  			list_del_init(&zhdr->buddy);
->  			zhdr->cpu = -1;
-> +			break;
->  		}
->  		list_del_init(&page->lru);
+> > Em Mon, Apr 16, 2018 at 11:07:30AM -0500, Kim Phillips escreveu:
+> > > On Mon, 16 Apr 2018 10:51:25 -0300
+> > > Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > > 
+> > > > Em Mon, Apr 16, 2018 at 11:23:45AM +0200, Jiri Olsa escreveu:
+> > > > > On Mon, Apr 16, 2018 at 01:22:40PM +0900, Namhyung Kim wrote:
+> > > > > > The map_groups__fixup_end() was called to set end addresses of kernel
+> > > > > > map and module maps.  But now machine__create_modules() is set the end
+> > > > > > address of modules properly so the only remaining piece is the kernel
+> > > > > > map.  We can set it with adjacent module's address directly instead of
+> > > > > > calling the map_groups__fixup_end().  If there's no module after the
+> > > > > > kernel map, the end address will be ~0ULL.
+> > > > 
+> > > > I wonder if it wouldn't be better to have it as last symbol + PAGE_SIZE
+> > > > or something like that...
+> > > > 
+> > > > But, anyway, Kim, does this fix things for you? Can I have your
+> > > > Tested-by?
+> > > 
+> > > No, perf test 1 still fails:
+> > > 
+> > > vmlinux symtab matches kallsyms: FAILED!
+> > 
+> > Ok, -vv please
 > 
-Much better, in a way. The system now takes much longer to crash,
-and the crash reason is a bit different. The log is too long to attach,
-so I copied it to [1].
+> a perf/urgent from last week (commit 918965d4897) + this patch:
+> 
+> $ sudo ./perf test -vv 1 |& head 
+>  1: vmlinux symtab matches kallsyms                       :
+> --- start ---
+> test child forked, pid 6194
+> Looking at the vmlinux_path (8 entries long)
+> Using /lib/modules/4.16.0+/build/vmlinux for symbols
+> ERR : 0xffff200008081000: do_undefinstr not on kallsyms
+> ERR : 0xffff2000080810b8: do_sysinstr not on kallsyms
+> ERR : 0xffff200008081258: do_debug_exception not on kallsyms
+> ERR : 0xffff200008081648: do_mem_abort not on kallsyms
+> ERR : 0xffff2000080818b8: do_el0_irq_bp_hardening not on kallsyms
+> $ sudo ./perf test -vv 1 |& tail
+> ERR : 0xffff20000a1d37c8: tramp_exit_native not on kallsyms
+> ERR : 0xffff20000a1d37e8: tramp_exit_compat not on kallsyms
+> ERR : 0xffff20000a1d4000: __entry_tramp_text_end not on kallsyms
+> WARN: Maps only in vmlinux:
+>  ffff200008080000-ffff200008081000 10000 [kernel].head.text
+>  ffff20000aec0000-ffff20000aff7548 2e50000 [kernel].init.text
+>  ffff20000aff7548-ffff20000b0126d4 2f87548 [kernel].exit.text
+> test child finished with -1
+> ---- end ----
+> vmlinux symtab matches kallsyms: FAILED!
 
-crashdump.0002			Latest log
-000[12]-Fix-attempt-[12].patch	Patches applied on top of v4.17.0-rc1.
+this patch's advertised "If there's no module after the kernel map, the
+end address will be ~0ULL." doesn't seem to be working: the value it
+gets for 'end' is 0xffff200008080000.
 
-Hope it helps,
-Guenter
+I even hardcoded 'end' variable to the value for '_end' in kallsyms
+prior to the machine__set_kernel_mmap() call, and test 1 still fails.
 
+The problem is earlier on in the code, somewhere.
 
-[1] http://server.roeck-us.net/qemu/z3pool/
+I've moved to working on the updated perf/urgent.  Reverting the
+original patch doesn't make test 1 resume succeeding anymore.
+
+Pointers appreciated.
+
+Kim
