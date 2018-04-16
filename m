@@ -1,288 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752511AbeDQDDI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 23:03:08 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:55492 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751206AbeDQDDG (ORCPT
+        id S1751980AbeDQDGA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 23:06:00 -0400
+Received: from mail-wr0-f179.google.com ([209.85.128.179]:38029 "EHLO
+        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751086AbeDQDF7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 23:03:06 -0400
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [RFC PATCH 1/1] vmscan: Support multiple kswapd threads per node
-From: Buddy Lumpkin <buddy.lumpkin@oracle.com>
-In-Reply-To: <20180412131634.GF23400@dhcp22.suse.cz>
-Date: Mon, 16 Apr 2018 20:02:22 -0700
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, hannes@cmpxchg.org,
-        riel@surriel.com, mgorman@suse.de, willy@infradead.org,
-        akpm@linux-foundation.org
-Message-Id: <0D92091A-A135-4707-A981-9A4559ED8701@oracle.com>
-References: <1522661062-39745-1-git-send-email-buddy.lumpkin@oracle.com>
- <1522661062-39745-2-git-send-email-buddy.lumpkin@oracle.com>
- <20180403133115.GA5501@dhcp22.suse.cz>
- <EB9E8FC6-8B02-4D7C-AA50-2B5B6BD2AF40@oracle.com>
- <20180412131634.GF23400@dhcp22.suse.cz>
-To: Michal Hocko <mhocko@kernel.org>
-X-Mailer: Apple Mail (2.3273)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8865 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804170029
+        Mon, 16 Apr 2018 23:05:59 -0400
+X-Google-Smtp-Source: AIpwx48W+NY+xfF1DduNM5YRxHiNf9Rkvw1w3/8chWdHx3xeWKB74mx2SwCiEEh2TIH3gWH5kB5y1g==
+Date: Mon, 16 Apr 2018 20:37:52 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Greg Thelen <gthelen@google.com>
+Subject: Re: instant reboot caused by 194a9749c73d650c0
+Message-ID: <20180416173752.jah2mritvhket7ji@node.shutemov.name>
+References: <5ecfeb13-84e4-f1ef-bd30-391674b2050a@gmail.com>
+ <20180416060709.mnzk7fb5y45dnpmg@gmail.com>
+ <20180416091514.wqig3l4lrc72tyrs@node.shutemov.name>
+ <4df21e12-709b-891f-13a8-cd19e92d44f5@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4df21e12-709b-891f-13a8-cd19e92d44f5@gmail.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3H33Foh004096
 
-
-> On Apr 12, 2018, at 6:16 AM, Michal Hocko <mhocko@kernel.org> wrote:
+On Mon, Apr 16, 2018 at 08:36:57AM -0700, Eric Dumazet wrote:
 > 
-> On Tue 03-04-18 12:41:56, Buddy Lumpkin wrote:
->> 
->>> On Apr 3, 2018, at 6:31 AM, Michal Hocko <mhocko@kernel.org> wrote:
->>> 
->>> On Mon 02-04-18 09:24:22, Buddy Lumpkin wrote:
->>>> Page replacement is handled in the Linux Kernel in one of two ways:
->>>> 
->>>> 1) Asynchronously via kswapd
->>>> 2) Synchronously, via direct reclaim
->>>> 
->>>> At page allocation time the allocating task is immediately given a page
->>>> from the zone free list allowing it to go right back to work doing
->>>> whatever it was doing; Probably directly or indirectly executing business
->>>> logic.
->>>> 
->>>> Just prior to satisfying the allocation, free pages is checked to see if
->>>> it has reached the zone low watermark and if so, kswapd is awakened.
->>>> Kswapd will start scanning pages looking for inactive pages to evict to
->>>> make room for new page allocations. The work of kswapd allows tasks to
->>>> continue allocating memory from their respective zone free list without
->>>> incurring any delay.
->>>> 
->>>> When the demand for free pages exceeds the rate that kswapd tasks can
->>>> supply them, page allocation works differently. Once the allocating task
->>>> finds that the number of free pages is at or below the zone min watermark,
->>>> the task will no longer pull pages from the free list. Instead, the task
->>>> will run the same CPU-bound routines as kswapd to satisfy its own
->>>> allocation by scanning and evicting pages. This is called a direct reclaim.
->>>> 
->>>> The time spent performing a direct reclaim can be substantial, often
->>>> taking tens to hundreds of milliseconds for small order0 allocations to
->>>> half a second or more for order9 huge-page allocations. In fact, kswapd is
->>>> not actually required on a linux system. It exists for the sole purpose of
->>>> optimizing performance by preventing direct reclaims.
->>>> 
->>>> When memory shortfall is sufficient to trigger direct reclaims, they can
->>>> occur in any task that is running on the system. A single aggressive
->>>> memory allocating task can set the stage for collateral damage to occur in
->>>> small tasks that rarely allocate additional memory. Consider the impact of
->>>> injecting an additional 100ms of latency when nscd allocates memory to
->>>> facilitate caching of a DNS query.
->>>> 
->>>> The presence of direct reclaims 10 years ago was a fairly reliable
->>>> indicator that too much was being asked of a Linux system. Kswapd was
->>>> likely wasting time scanning pages that were ineligible for eviction.
->>>> Adding RAM or reducing the working set size would usually make the problem
->>>> go away. Since then hardware has evolved to bring a new struggle for
->>>> kswapd. Storage speeds have increased by orders of magnitude while CPU
->>>> clock speeds stayed the same or even slowed down in exchange for more
->>>> cores per package. This presents a throughput problem for a single
->>>> threaded kswapd that will get worse with each generation of new hardware.
->>> 
->>> AFAIR we used to scale the number of kswapd workers many years ago. It
->>> just turned out to be not all that great. We have a kswapd reclaim
->>> window for quite some time and that can allow to tune how much proactive
->>> kswapd should be.
->> 
->> Are you referring to vm.watermark_scale_factor?
 > 
-> Yes along with min_free_kbytes
-> 
->> This helps quite a bit. Previously
->> I had to increase min_free_kbytes in order to get a larger gap between the low
->> and min watemarks. I was very excited when saw that this had been added
->> upstream. 
->> 
->>> 
->>> Also please note that the direct reclaim is a way to throttle overly
->>> aggressive memory consumers.
->> 
->> I totally agree, in fact I think this should be the primary role of direct reclaims
->> because they have a substantial impact on performance. Direct reclaims are
->> the emergency brakes for page allocation, and the case I am making here is 
->> that they used to only occur when kswapd had to skip over a lot of pages. 
-> 
-> Or when it is busy reclaiming which can be the case quite easily if you
-> do not have the inactive file LRU full of clean page cache. And that is
-> another problem. If you have a trivial reclaim situation then a single
-> kswapd thread can reclaim quickly enough.
+> On 04/16/2018 02:15 AM, Kirill A. Shutemov wrote:
+> In the mean time, Greg told me that using gcc-4.9 instead of our old
+> gcc-4.7 based toolchain was working better.
 
-A single kswapd thread does not help quickly enough. That is the entire point
-of this patch.
+Hm. Are you saing that switching from gcc-4.7 to gcc-4.9 fixed the issue
+for you? That's worth investigating.
 
-> But once you hit a wall with
-> hard-to-reclaim pages then I would expect multiple threads will simply
-> contend more (e.g. on fs locks in shrinkers etc…).
-
-If that is the case, this is already happening since direct reclaims do just about
-everything that kswapd does. I have tested with a mix of filesystem reads, writes
-and anonymous memory with and without a swap device. The only locking
-problems I have run into so far are related to routines in mm/workingset.c.
-
-It is a lot harder to burden the page scan logic than it used to be. Somewhere
-around 2007 a change was made where page types that had to be skipped
-over were simply removed from the LRU list. Anonymous pages were only
-scanned if a swap device exists, mlocked pages are not scanned at all. It took
-a couple years before this was available in the common distros though.
-Also, 64 bit kernels help as well as you don’t have the problem where objects
-held in ZONE_NORMAL pin pages in ZONE_HIGHMEM.
-
-Getting real world results is a waiting game on my end. Once we have a version
-available to service owners, they need to coordinate an outage so that systems
-can be rebooted. Only then can I coordinate with them to test for improvements.
-
-> Or how do you want
-> to prevent that?
-
-Kswapd has a throughput problem. Once that problem is solved new bottlenecks
-will reveal themselves. There is nothing to prevent here. When you remove
-bottlenecks, new bottlenecks materialize and someone will need to identify
-them and make them go away.
-> 
-> Or more specifically. How is the admin supposed to know how many
-> background threads are still improving the situation?
-
-Reduce the setting and check to see if pgscan_direct is still incrementing.
-
-> 
->> This changed over time as the rate a system can allocate pages increased. 
->> Direct reclaims slowly became a normal part of page replacement. 
->> 
->>> The more we do in the background context
->>> the easier for them it will be to allocate faster. So I am not really
->>> sure that more background threads will solve the underlying problem. It
->>> is just a matter of memory hogs tunning to end in the very same
->>> situtation AFAICS. Moreover the more they are going to allocate the more
->>> less CPU time will _other_ (non-allocating) task get.
->> 
->> The important thing to realize here is that kswapd and direct reclaims run the
->> same code paths. There is very little that they do differently.
-> 
-> Their target is however completely different. Kswapd want to keep nodes
-> balanced while direct reclaim aims to reclaim _some_ memory. That is
-> quite some difference. Especially for the throttle by reclaiming memory
-> part.
-
-Routines like balance_pgdat showed up in 2.4.10 when Andrea Arcangeli
-rewrote a lot of the page replacement logic. He referred to his work as the
-classzone patch and the whole selling point on what it would provide was
-making allocation and page replacement more cohesive and balanced to
-avoid cases where kswapd would behave pathologically, scanning to evict
-pages in the wrong location, or in the wrong order. That doesn’t mean that
-kswapd’s primary occupation is balancing, in fact if you read the comments
-direct reclaims and kswapd sound pretty similar to me:
-
-/*
- * This is the direct reclaim path, for page-allocating processes.  We only
- * try to reclaim pages from zones which will satisfy the caller's allocation
- * request.
- *
- * If a zone is deemed to be full of pinned pages then just give it a light
- * scan then give up on it.
- */
-static void shrink_zones(struct zonelist *zonelist, struct scan_control *sc)
-
-/*
- * For kswapd, balance_pgdat() will reclaim pages across a node from zones
- * that are eligible for use by the caller until at least one zone is
- * balanced.
- *
- * Returns the order kswapd finished reclaiming at.
- *
- * kswapd scans the zones in the highmem->normal->dma direction.  It skips
- * zones which have free_pages > high_wmark_pages(zone), but once a zone is
- * found to have free_pages <= high_wmark_pages(zone), any page is that zone
- * or lower is eligible for reclaim until at least one usable zone is
- * balanced.
- */
-static int balance_pgdat(pg_data_t *pgdat, int order, int classzone_idx)
-
-Kswapd makes an effort toward proving balance, but that is clearly not the
-main goal. Both code paths are triggered by a need for memory, and both
-code paths scan zones that are eligible to satisfy the allocation that triggered
-them.
-
-> 
->> If you compare
->> my test results with one kswapd vs four, your an see that direct reclaims
->> increase the kernel mode CPU consumption considerably. By dedicating
->> more threads to proactive page replacement, you eliminate direct reclaims
->> which reduces the total number of parallel threads that are spinning on the
->> CPU.
-> 
-> I still haven't looked at your test results in detail because they seem
-> quite artificial. Clean pagecache reclaim is not all that interesting
-> IMHO
-
-Clean page cache is extremely interesting for demonstrating this bottleneck.
-kswapd reads from the tail of the inactive list, and practically every page it
-encounters is eligible for eviction, and yet it still cannot keep up with the demand
-for fresh pages.
-
-In the test data I provided, you can see that peak throughput with direct IO was:
-
-26,254,215 Kbytes/s
-
-Peak throughput without direct IO and 1 kswapd thread was:
-
-18,001,910 Kbytes/s
-
-Direct IO is 46% higher, and this gap is only going to continue to increase. It used
-to be around 10%.
-
-Any negative effects that can be seen with additional kswapd threads can already be
-seen with multiple concurrent direct reclaims. The additional throughput that is gained
-by scanning proactively in kswapd can certainly push harder against any additional
-lock contention. In that case kswapd is just the canary in the coal mine, finding
-problems that would eventually need to be solved anyway.
-
-> 
-> [...]
->>> I would be also very interested
->>> to see how to scale the number of threads based on how CPUs are utilized
->>> by other workloads.
->> 
->> I think we have reached the point where it makes sense for page replacement to have more
->> than one mode. Enterprise class servers with lots of memory and a large number of CPU
->> cores would benefit heavily if more threads could be devoted toward proactive page
->> replacement. The polar opposite case is my Raspberry PI which I want to run as efficiently
->> as possible. This problem is only going to get worse. I think it makes sense to be able to 
->> choose between efficiency and performance (throughput and latency reduction).
-> 
-> The thing is that as long as this would require admin to guess then this
-> is not all that useful. People will simply not know what to set and we
-> are going to end up with stupid admin guides claiming that you should
-> use 1/N of per node cpus for kswapd and that will not work.
-
-I think this sysctl is very intuitive to use. Only use it if direct reclaims are
-occurring. This can be seen with sar -B. Justify any increase with testing.
-That is a whole lot easier to wrap your head around than a lot of the other
-sysctls that are available today. Find me an admin that actually understands
-what the swappiness tunable does. 
-
-> Not to
-> mention that the reclaim logic is full of heuristics which change over
-> time and a subtle implementation detail that would work for a particular
-> scaling might break without anybody noticing. Really, if we are not able
-> to come up with some auto tuning then I think that this is not really
-> worth it.
-
-This is all speculation about how a patch behaves that you have not even
-tested. Similar arguments can be made about most of the sysctls that are
-available. 
-
-
-> -- 
-> Michal Hocko
-> SUSE Labs
+-- 
+ Kirill A. Shutemov
