@@ -1,87 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753145AbeDPDyF (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 23:54:05 -0400
-Received: from mga17.intel.com ([192.55.52.151]:52593 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753107AbeDPDyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 23:54:03 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,458,1517904000";
-   d="scan'208";a="216849434"
-Date: Mon, 16 Apr 2018 09:28:33 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        Eric Long <eric.long@spreadtrum.com>, Mark Brown <broonie@kernel.org>,
-        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/5] dmaengine: sprd: Add Spreadtrum DMA configuration
-Message-ID: <20180416035831.GO6014@localhost>
-References: <0c2b76aba6a49e583f920ae582d6815fa9cc4361.1523346135.git.baolin.wang@linaro.org>
- <20180411093634.GC6014@localhost>
- <CAMz4kuJyKNNuR9WGP8F1NKAET6ZTtN4LtXTTtdnR3Zyxa+OjNw@mail.gmail.com>
- <20180412093735.GF6014@localhost>
- <CAMz4ku+i+zA0_5U65vc3h3tO-hzWvtCOFDeFU94h3Rm6sJUuKQ@mail.gmail.com>
- <CAMz4ku+EUtk2phRGkxkW6YwUvBLb-O7tmMoucvVEQZbL9EY8Zg@mail.gmail.com>
- <20180413034332.GI6014@localhost>
- <CAMz4kuL_i7u5OCXrtJy92=OisOzgbWk_e-S9dSuBRPenX=ScPA@mail.gmail.com>
- <20180413063641.GL6014@localhost>
- <CAMz4ku+dLk2Gi_20ATW5o-MPvpy-2iF_YJCwyStaH8xPNXSE7Q@mail.gmail.com>
+        id S1750881AbeDPECZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 00:02:25 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:37901 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750708AbeDPECY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 00:02:24 -0400
+X-Google-Smtp-Source: AIpwx4/vZgdfHKnfK79V0xAH8yhnvOd2wLx4+nrabmWlO8j1dV4veTHQscTZWoR79Ed8oIn6iWau1mtvaZfwsURVbP4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMz4ku+dLk2Gi_20ATW5o-MPvpy-2iF_YJCwyStaH8xPNXSE7Q@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20180413070644.11974-1-gthelen@google.com> <20180415120636.GA10759@infradead.org>
+In-Reply-To: <20180415120636.GA10759@infradead.org>
+From: Greg Thelen <gthelen@google.com>
+Date: Mon, 16 Apr 2018 04:02:12 +0000
+Message-ID: <CAHH2K0ZKqDt2OS1RN7i6qqc=VyPfhzC5sfSSb4ktDdtZnzAhCA@mail.gmail.com>
+Subject: Re: [PATCH] IB: make INFINIBAND_ADDR_TRANS configurable
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Tarick Bedeir <tarick@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 02:41:48PM +0800, Baolin Wang wrote:
-> On 13 April 2018 at 14:36, Vinod Koul <vinod.koul@intel.com> wrote:
-> > On Fri, Apr 13, 2018 at 02:17:34PM +0800, Baolin Wang wrote:
-> >
-> >> > Agreed, users only care about grabbing a channel, setting a descriptor and
-> >> > submitting that.
-> >> >
-> >> > I think you need to go back and think about this a bit, please do go thru
-> >> > dmaengine documentation and see other driver examples.
-> >> >
-> >> > We don't typically expose these to users, they give us a transfer and we set
-> >> > that up in hardware for efficient. Its DMA so people expect us to use fastest
-> >> > mechanism available.
-> >>
-> >> But there are some configuration are really special for Spreadtrum
-> >> DMA, and must need user to specify how to configure, especially some
-> >> scenarios of audio. So I wander if we can add one pointer for
-> >> 'dma_slave_config' to expand some special DMA configuration
-> >> requirements, like:
-> >>
-> >> struct dma_slave_config {
-> >>     ......
-> >>     unsigned int slave_id;
-> >>     void *platform_data;
-> >> };
-> >>
-> >> So if some DMA has some special configuration (such as Spreadtrum
-> >> DMA), they can user this platform_data pointer. Like xilinx DMA, they
-> >> also have some special configuration.
-> >
-> > Well we all think our HW is special and needs some additional stuff, most of
-> > the cases turns out not to be the case.
-> >
-> > Can you explain how audio in this case additional configuration...
-> 
-> Beside the general configuration, our audio driver will configure the
-> fragment length, block length, maybe transaction length, and they must
-> specify the request type and interrupt type, these are what we want to
-> export for users.
+On Sun, Apr 15, 2018 at 5:06 AM Christoph Hellwig <hch@infradead.org> wrote:
 
-As I said before, you need to derive fragment, block or transaction from
-given prep_cyclic values. Interrupt type needs to be derived with the flags
-passed. Please do see how other drivers make use of it.
+> On Fri, Apr 13, 2018 at 12:06:44AM -0700, Greg Thelen wrote:
+> > Allow INFINIBAND without INFINIBAND_ADDR_TRANS.
 
--- 
-~Vinod
+> Why?  We are pushing everyone heavily to use RDMA/CM, so making it
+> optional seems rather counter-intuitive.
+
+Bugs.  We don't currently use CM.  But fuzzy testing has been finding a
+fair number CM bugs, so we were thinking of disabling it until we need it.
+
+> You'll also have to fix tons of ULPs to explicitly depend on
+> INFINIBAND_ADDR_TRANS, or make code conditional on it.
+
+I think I've identified the set of options which use
+INFINIBAND_ADDR_TRANS without a kconfig depends:
+* CIFS_SMB_DIRECT
+* INFINIBAND_SRPT
+* NVME_RDMA
+* NVME_TARGET_RDMA
+
+I have patches for the above, but need to finish the commit logs.  Let me
+know if they'll be nacked and I'll just patch my kernel and forget
+upstreaming.
