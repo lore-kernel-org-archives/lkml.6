@@ -1,16 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754956AbeDPLK4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 07:10:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45990 "EHLO mx1.redhat.com"
+        id S1754982AbeDPLLE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 07:11:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48530 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752648AbeDPLKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 07:10:53 -0400
-Subject: Re: [PATCH v2 00/12] KVM/X86: Introduce a new guest mapping interface
+        id S1754961AbeDPLLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 07:11:01 -0400
+Subject: Re: [PATCH v2 03/12] X86/nVMX: Update the PML table without mapping
+ and unmapping the page
 To: KarimAllah Ahmed <karahmed@amazon.de>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, rkrcmar@redhat.com,
-        David Hildenbrand <david@redhat.com>
+        kvm@vger.kernel.org, rkrcmar@redhat.com
 References: <1523829198-13236-1-git-send-email-karahmed@amazon.de>
+ <1523829198-13236-4-git-send-email-karahmed@amazon.de>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -48,12 +49,12 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <b390f953-6fe3-1119-15eb-e3b31e609305@redhat.com>
-Date: Mon, 16 Apr 2018 13:10:50 +0200
+Message-ID: <5dc50744-9cb1-08ea-098b-d991e7e2ce70@redhat.com>
+Date: Mon, 16 Apr 2018 13:10:56 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1523829198-13236-1-git-send-email-karahmed@amazon.de>
+In-Reply-To: <1523829198-13236-4-git-send-email-karahmed@amazon.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -62,24 +63,20 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 15/04/2018 23:53, KarimAllah Ahmed wrote:
-> Guest memory can either be directly managed by the kernel (i.e. have a "struct
-> page") or they can simply live outside kernel control (i.e. do not have a
-> "struct page"). KVM mostly support these two modes, except in a few places
-> where the code seems to assume that guest memory must have a "struct page".
-> 
-> This patchset introduces a new mapping interface to map guest memory into host
-> kernel memory which also supports PFN-based memory (i.e. memory without 'struct
-> page'). It also converts all offending code to this interface or simply
-> read/write directly from guest memory.
-> 
-> As far as I can see all offending code is now fixed except the APIC-access page
-> which I will handle in a seperate patch.
+> +		dst = vmcs12->pml_address + sizeof(u64) * vmcs12->guest_pml_index;
+>  
+> -		page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->pml_address);
+> -		if (is_error_page(page))
+> +		if (kvm_write_guest_page(vcpu->kvm, gpa_to_gfn(dst), &gpa,
+> +					 offset_in_page(dst), sizeof(gpa)))
 
-I assume the caching will also be a separate patch.
+If you want to use kvm_write_guest_page, this can also be
 
-It looks good except that I'd squash patches 4 and 9 together.  But I'd
-like a second set of eyes to look at it.
+		if (kvm_write_guest_page(vcpu->kvm,
+					 gpa_to_gfn(vmcs12->pml_address), &gpa,
+					 sizeof(gpa) * vmcs12->guest_pml_index,
+					 sizeof(gpa)))
 
-Thanks,
+(I should have been more verbose on _why_ I suggested that function; my bad).
 
 Paolo
