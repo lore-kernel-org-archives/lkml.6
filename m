@@ -1,64 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753065AbeDPP2t (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 11:28:49 -0400
-Received: from mga14.intel.com ([192.55.52.115]:61174 "EHLO mga14.intel.com"
+        id S1753306AbeDPP3c (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 11:29:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752273AbeDPP2r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 11:28:47 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,459,1517904000";
-   d="scan'208";a="34660076"
-Date: Mon, 16 Apr 2018 21:03:17 +0530
-From: Vinod Koul <vinod.koul@intel.com>
-To: Frank Mori Hess <fmh6jj@gmail.com>
-Cc: dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] dmaengine: pl330: flush before wait, and add dev
- burst support.
-Message-ID: <20180416153315.GP6014@localhost>
-References: <20180311150151.GB15443@localhost>
- <2863317.1ZoR41yQkl@bear>
- <CAJz5OpdV1=L3fsQESZusAp8Cir9wE-VqPXqBa=zOGjBcPE78DA@mail.gmail.com>
- <20180410153718.GS6014@localhost>
- <CAJz5Opdx26WZ-M8q2UayWz3o6SmR6VJMqUetQsX8k7YotK5XGg@mail.gmail.com>
+        id S1753160AbeDPP33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 11:29:29 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EAA721836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 16 Apr 2018 11:29:26 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Bean Huo (beanhuo)" <beanhuo@micron.com>
+Cc: "axboe@kernel.dk" <axboe@kernel.dk>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mingo@redhad.com" <mingo@redhad.com>,
+        "Bart.VanAssche@sandisk.com" <Bart.VanAssche@sandisk.com>,
+        "rajatja@google.com" <rajatja@google.com>
+Subject: Re: [RESEND PATCH v1 2/2] trace: events: block: Add tag in block
+ trace events
+Message-ID: <20180416112926.7b44d03f@gandalf.local.home>
+In-Reply-To: <64d6073b28b140cda3e5870a54e0a7bc@SIWEX5A.sing.micron.com>
+References: <64d6073b28b140cda3e5870a54e0a7bc@SIWEX5A.sing.micron.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJz5Opdx26WZ-M8q2UayWz3o6SmR6VJMqUetQsX8k7YotK5XGg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 15, 2018 at 02:12:30PM -0400, Frank Mori Hess wrote:
-> On Tue, Apr 10, 2018 at 11:37 AM, Vinod Koul <vinod.koul@intel.com> wrote:
-> >>
-> >> Hi, what is the state of this patch?  I just noticed in patchwork it
-> >> is now listed as "Not applicable"?  The original broken-by-wordwrap
-> >> patch is listed as "Accepted"?
-> >>
-> >> https://patchwork.kernel.org/project/linux-dmaengine/list/?submitter=178687&state=*
-> >
-> > That is not correct state, my script would update as not applicable when it
-> > doesn't find patch in my queue..
-> >
-> >> I found it has a bug handling dregs btw, I'll include a fix for that
-> >> in the next version or as a follow-on patch as appropriate.
-> >
-> > Looks like I have missed this one somehow, so please update the patch with
-> > fix and I shall look into it.
-> >
+On Mon, 16 Apr 2018 14:33:29 +0000
+"Bean Huo (beanhuo)" <beanhuo@micron.com> wrote:
+
+> Print the request tag along with other information in block trace events
+> when tracing request , and unplug type (Sync / Async).
 > 
-> Ok, I tested the v4 patch and it turns out it was a false alarm about
-> the bug in handling dregs.  It works fine.  I've registered in the
-> dmaengine patchwork, and changed the state of the v4 patch back to
-> "new".
+> Signed-off-by: Bean Huo <beanhuo@micron.com>
 
-Can you please repost this one after rebasing to dmaengine -next
+I don't see any issue with the tracing part.
 
--- 
-~Vinod
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+Others need to check the content.
+
+-- Steve
+
+
+> ---
+>  include/trace/events/block.h | 36 +++++++++++++++++++++++++-----------
+>  1 file changed, 25 insertions(+), 11 deletions(-)
+> 
