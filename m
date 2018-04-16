@@ -1,53 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753058AbeDPQHd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 12:07:33 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33280 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753025AbeDPQHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 12:07:32 -0400
-Date: Mon, 16 Apr 2018 11:07:30 -0500
-From: Kim Phillips <kim.phillips@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>, Jiri Olsa <jolsa@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, <kernel-team@lge.com>
-Subject: Re: [PATCH] perf tools: set kernel end address properly
-Message-Id: <20180416110730.1dd12801e43be66ea5d0cc48@arm.com>
-In-Reply-To: <20180416135125.GA23802@kernel.org>
-References: <20180416042240.21528-1-namhyung@kernel.org>
-        <20180416092345.GA23274@krava>
-        <20180416135125.GA23802@kernel.org>
-Organization: Arm
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1753105AbeDPQHr convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 12:07:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32826 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751150AbeDPQHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 12:07:46 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 904A6217D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+To: Arnd Bergmann <arnd@arndb.de>,
+        Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180409105438.2402477-1-arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Gaku Inami <gaku.inami.xw@bp.renesas.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180409105438.2402477-1-arnd@arndb.de>
+Message-ID: <152389486496.51482.1409018821443408273@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: cs2000: mark resume function as __maybe_unused
+Date: Mon, 16 Apr 2018 09:07:44 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Apr 2018 10:51:25 -0300
-Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-
-> Em Mon, Apr 16, 2018 at 11:23:45AM +0200, Jiri Olsa escreveu:
-> > On Mon, Apr 16, 2018 at 01:22:40PM +0900, Namhyung Kim wrote:
-> > > The map_groups__fixup_end() was called to set end addresses of kernel
-> > > map and module maps.  But now machine__create_modules() is set the end
-> > > address of modules properly so the only remaining piece is the kernel
-> > > map.  We can set it with adjacent module's address directly instead of
-> > > calling the map_groups__fixup_end().  If there's no module after the
-> > > kernel map, the end address will be ~0ULL.
+Quoting Arnd Bergmann (2018-04-09 03:54:34)
+> When power management is disabled, we get a harmless warning:
 > 
-> I wonder if it wouldn't be better to have it as last symbol + PAGE_SIZE
-> or something like that...
+> drivers/clk/clk-cs2000-cp.c:544:12: error: 'cs2000_resume' defined but not used [-Werror=unused-function]
 > 
-> But, anyway, Kim, does this fix things for you? Can I have your
-> Tested-by?
+> Marking the function as __maybe_unused lets the compiler silently
+> drop it instead.
+> 
+> Fixes: eade4ccdb087 ("clk: cs2000: set pm_ops in hibernate-compatible way")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-No, perf test 1 still fails:
-
-vmlinux symtab matches kallsyms: FAILED!
-
-Kim
+Applied to clk-fixes
