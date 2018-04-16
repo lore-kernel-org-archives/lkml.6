@@ -1,101 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754897AbeDPNO0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 09:14:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46983 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753479AbeDPNOY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 09:14:24 -0400
-Date: Mon, 16 Apr 2018 15:14:21 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Christopher Lameter <cl@linux.com>,
-        Guy Shattah <sguy@mellanox.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Michal Nazarewicz <mina86@mina86.com>,
-        Vlastimil Babka <vbabka@suse.cz>, David Nellans <dnellans@nvidia.com>,
-        Laura Abbott <labbott@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [RFC PATCH 0/3] Interface for higher order contiguous allocations
-Message-ID: <20180416131421.GQ17484@dhcp22.suse.cz>
-References: <20180212222056.9735-1-mike.kravetz@oracle.com>
- <770445b3-6caa-a87a-5de7-3157fc5280c2@intel.com>
- <74b7c6e5-bce6-a70a-287a-af44765836c7@intel.com>
- <8f67cb20-3d70-274b-871b-11bedc687bd9@oracle.com>
+        id S1754919AbeDPNPi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 09:15:38 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:42700 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753909AbeDPNPg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 09:15:36 -0400
+X-Google-Smtp-Source: AIpwx4/RQWhH6JjoQi94Wbbgxdj8Xg8x4q8AwRHOCiu3wOuS9bNaPajry4taUKkoEVFAR/0JSU4hpA==
+Subject: Re: [PATCH 08/14] thermal: exynos: remove parsing of
+ samsung,tmu[_min,_max]_efuse_value properties
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
+ <CGME20180416101409epcas1p4f8e0279a94322d1cc423ced6dfce3362@epcas1p4.samsung.com>
+ <1523873525-23718-9-git-send-email-b.zolnierkie@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <79d94b60-3dec-c4bf-6df4-5a4f1319760c@linaro.org>
+Date: Mon, 16 Apr 2018 15:15:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f67cb20-3d70-274b-871b-11bedc687bd9@oracle.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1523873525-23718-9-git-send-email-b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 12-04-18 13:58:47, Mike Kravetz wrote:
-> On 04/12/2018 01:40 PM, Reinette Chatre wrote:
-> > Hi Mike,
-> > 
-> > On 2/15/2018 12:22 PM, Reinette Chatre wrote:
-> >> On 2/12/2018 2:20 PM, Mike Kravetz wrote:
-> >>> These patches came out of the "[RFC] mmap(MAP_CONTIG)" discussions at:
-> >>> http://lkml.kernel.org/r/21f1ec96-2822-1189-1c95-79a2bb491571@oracle.com
-> >>>
-> >>> One suggestion in that thread was to create a friendlier interface that
-> >>> could be used by drivers and others outside core mm code to allocate a
-> >>> contiguous set of pages.  The alloc_contig_range() interface is used for
-> >>> this purpose today by CMA and gigantic page allocation.  However, this is
-> >>> not a general purpose interface.  So, wrap alloc_contig_range() in the
-> >>> more general interface:
-> >>>
-> >>> struct page *find_alloc_contig_pages(unsigned int order, gfp_t gfp, int nid,
-> >>> 					nodemask_t *nodemask)
-> >>>
-> >>> No underlying changes are made to increase the likelihood that a contiguous
-> >>> set of pages can be found and allocated.  Therefore, any user of this
-> >>> interface must deal with failure.  The hope is that this interface will be
-> >>> able to satisfy some use cases today.
-> >>
-> >> As discussed in another thread a new feature, Cache Pseudo-Locking,
-> >> requires large contiguous regions. Until now I just exposed
-> >> alloc_gigantic_page() to handle these allocations in my testing. I now
-> >> moved to using find_alloc_contig_pages() as introduced here and all my
-> >> tests passed. I do hope that an API supporting large contiguous regions
-> >> become available.
-> >>
-> >> Thank you very much for creating this.
-> >>
-> >> Tested-by: Reinette Chatre <reinette.chatre@intel.com>
-> > 
-> > Do you still intend on submitting these changes for inclusion?
-> > 
-> > I would really like to use this work but unfortunately the original
-> > patches submitted here do not apply anymore. I am encountering conflicts
-> > with, for example:
-> > 
-> > commit d9cc948f6fa1c3384037f500e0acd35f03850d15
-> > Author: Michal Hocko <mhocko@suse.com>
-> > Date:   Wed Jan 31 16:20:44 2018 -0800
-> > 
-> >     mm, hugetlb: integrate giga hugetlb more naturally to the allocation
-> > path
-> > 
-> > Thank you very much
+On 16/04/2018 12:11, Bartlomiej Zolnierkiewicz wrote:
+> Since pdata efuse values are SoC (not platform) specific just move
+> them from platform data to struct exynos_tmu_data instance. Then
+> remove parsing of samsung,tmu[_,min_,max]_efuse_value properties.
 > 
-> Thanks for the reminder Reinette.
+> There should be no functional changes caused by this patch.
 > 
-> You were the only one to comment on the original proposal.  In addition,
-> my original use case may have gone away.  So, this effort went to the
-> bottom of my priority list.
-> 
-> I am happy rebase the patches, but would really like to get additional
-> comments.  Allocation of hugetlbfs gigantic pages is the only existing
-> user.  Perhaps this is a natural progression of Michal's patch above
-> as it moves all that special pfn range scanning out of hugetlb code.
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c | 49 +++++++++++++++++++++++-------------
+>
 
-Yes, that was and still is the plan. Turn the hackish contig allocator
-into something more usable so I guess it would be in line with what
-Reinette is after.
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
+
 -- 
-Michal Hocko
-SUSE Labs
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
