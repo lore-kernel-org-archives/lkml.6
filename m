@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752790AbeDPXOV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 19:14:21 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:35270 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751182AbeDPXN3 (ORCPT
+        id S1752848AbeDPXOl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 19:14:41 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:41106 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750989AbeDPXOk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 19:13:29 -0400
+        Mon, 16 Apr 2018 19:14:40 -0400
 From: Maran Wilson <maran.wilson@oracle.com>
-To: x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com,
-        jgross@suse.com
-Cc: boris.ostrovsky@oracle.com, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, roger.pau@citrix.com, rkrcmar@redhat.com,
+To: x86@kernel.org, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, jgross@suse.com
+Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        roger.pau@citrix.com, boris.ostrovsky@oracle.com, rkrcmar@redhat.com,
         maran.wilson@oracle.com
-Subject: [PATCH v7 5/7] xen/pvh: Move Xen code for getting mem map via hcall out of common file
-Date: Mon, 16 Apr 2018 16:12:40 -0700
-Message-Id: <1523920360-27743-3-git-send-email-maran.wilson@oracle.com>
+Subject: [PATCH v7 7/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
+Date: Mon, 16 Apr 2018 16:13:50 -0700
+Message-Id: <1523920430-27952-1-git-send-email-maran.wilson@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1523920175-27287-1-git-send-email-maran.wilson@oracle.com>
 References: <1523920175-27287-1-git-send-email-maran.wilson@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8865 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=7 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1804160192
@@ -29,118 +29,163 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need to refactor PVH entry code so that support for other hypervisors
-like Qemu/KVM can be added more easily.
+For certain applications it is desirable to rapidly boot a KVM virtual
+machine. In cases where legacy hardware and software support within the
+guest is not needed, Qemu should be able to boot directly into the
+uncompressed Linux kernel binary without the need to run firmware.
 
-The original design for PVH entry in Xen guests relies on being able to
-obtain the memory map from the hypervisor using a hypercall. When we
-extend the PVH entry ABI to support other hypervisors like Qemu/KVM,
-a new mechanism will be added that allows the guest to get the memory
-map without needing to use hypercalls.
+There already exists an ABI to allow this for Xen PVH guests and the ABI
+is supported by Linux and FreeBSD:
 
-For Xen guests, the hypercall approach will still be supported. In
-preparation for adding support for other hypervisors, we can move the
-code that uses hypercalls into the Xen specific file. This will allow us
-to compile kernels in the future without CONFIG_XEN that are still capable
-of being booted as a Qemu/KVM guest via the PVH entry point.
+   https://xenbits.xen.org/docs/unstable/misc/pvh.html
+
+This patch enables Qemu to use that same entry point for booting KVM
+guests.
 
 Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Suggested-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Tested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 ---
- arch/x86/platform/pvh/enlighten.c | 29 ++++++++++++++---------------
- arch/x86/xen/enlighten_pvh.c      | 20 ++++++++++++++++++++
- 2 files changed, 34 insertions(+), 15 deletions(-)
+ arch/x86/Kbuild                   |  2 +-
+ arch/x86/Kconfig                  |  8 ++++++++
+ arch/x86/platform/pvh/Makefile    |  4 ++--
+ arch/x86/platform/pvh/enlighten.c | 42 +++++++++++++++++++++++++++++----------
+ 4 files changed, 42 insertions(+), 14 deletions(-)
 
+diff --git a/arch/x86/Kbuild b/arch/x86/Kbuild
+index 2089e4414300..c625f57472f7 100644
+--- a/arch/x86/Kbuild
++++ b/arch/x86/Kbuild
+@@ -7,7 +7,7 @@ obj-$(CONFIG_KVM) += kvm/
+ # Xen paravirtualization support
+ obj-$(CONFIG_XEN) += xen/
+ 
+-obj-$(CONFIG_XEN_PVH) += platform/pvh/
++obj-$(CONFIG_PVH) += platform/pvh/
+ 
+ # Hyper-V paravirtualization support
+ obj-$(subst m,y,$(CONFIG_HYPERV)) += hyperv/
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 8511d419e39f..26fef538d3ef 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -787,6 +787,14 @@ config PVH
+ 	  This option enables the PVH entry point for guest virtual machines
+ 	  as specified in the x86/HVM direct boot ABI.
+ 
++config KVM_GUEST_PVH
++	bool "Support for running as a KVM PVH guest"
++	depends on KVM_GUEST
++	select PVH
++	---help---
++	  This option enables starting KVM guests via the PVH entry point as
++	  specified in the x86/HVM direct boot ABI.
++
+ config KVM_DEBUG_FS
+ 	bool "Enable debug information for KVM Guests in debugfs"
+ 	depends on KVM_GUEST && DEBUG_FS
+diff --git a/arch/x86/platform/pvh/Makefile b/arch/x86/platform/pvh/Makefile
+index 9fd25efcd2a3..5dec5067c9fb 100644
+--- a/arch/x86/platform/pvh/Makefile
++++ b/arch/x86/platform/pvh/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+ OBJECT_FILES_NON_STANDARD_head.o := y
+ 
+-obj-$(CONFIG_XEN_PVH) += enlighten.o
+-obj-$(CONFIG_XEN_PVH) += head.o
++obj-$(CONFIG_PVH) += enlighten.o
++obj-$(CONFIG_PVH) += head.o
 diff --git a/arch/x86/platform/pvh/enlighten.c b/arch/x86/platform/pvh/enlighten.c
-index edcff7de0529..c42a9f36ee9c 100644
+index c42a9f36ee9c..0c7f570d3c16 100644
 --- a/arch/x86/platform/pvh/enlighten.c
 +++ b/arch/x86/platform/pvh/enlighten.c
-@@ -8,10 +8,6 @@
+@@ -8,6 +8,8 @@
  #include <asm/e820/api.h>
  #include <asm/x86_init.h>
  
--#include <asm/xen/interface.h>
--#include <asm/xen/hypercall.h>
--
--#include <xen/interface/memory.h>
++#include <asm/xen/interface.h>
++
  #include <xen/interface/hvm/start_info.h>
  
  /*
-@@ -30,21 +26,24 @@ static u64 pvh_get_root_pointer(void)
- 	return pvh_start_info.rsdp_paddr;
+@@ -39,11 +41,28 @@ void __init __weak mem_map_via_hcall(struct boot_params *ptr __maybe_unused)
+ 	BUG();
  }
  
-+/*
-+ * Xen guests are able to obtain the memory map from the hypervisor via the
-+ * HYPERVISOR_memory_op hypercall.
-+ * If we are trying to boot a Xen PVH guest, it is expected that the kernel
-+ * will have been configured to provide an override for this routine to do
-+ * just that.
-+ */
-+void __init __weak mem_map_via_hcall(struct boot_params *ptr __maybe_unused)
-+{
-+	xen_raw_printk("Error: Could not find memory map\n");
-+	BUG();
-+}
-+
- static void __init init_pvh_bootparams(void)
+-static void __init init_pvh_bootparams(void)
++static void __init init_pvh_bootparams(bool xen_guest)
  {
--	struct xen_memory_map memmap;
--	int rc;
--
  	memset(&pvh_bootparams, 0, sizeof(pvh_bootparams));
  
--	memmap.nr_entries = ARRAY_SIZE(pvh_bootparams.e820_table);
--	set_xen_guest_handle(memmap.buffer, pvh_bootparams.e820_table);
--	rc = HYPERVISOR_memory_op(XENMEM_memory_map, &memmap);
--	if (rc) {
--		xen_raw_printk("XENMEM_memory_map failed (%d)\n", rc);
--		BUG();
--	}
--	pvh_bootparams.e820_entries = memmap.nr_entries;
-+	mem_map_via_hcall(&pvh_bootparams);
+-	mem_map_via_hcall(&pvh_bootparams);
++	if ((pvh_start_info.version > 0) && (pvh_start_info.memmap_entries)) {
++		struct hvm_memmap_table_entry *ep;
++		int i;
++
++		ep = __va(pvh_start_info.memmap_paddr);
++		pvh_bootparams.e820_entries = pvh_start_info.memmap_entries;
++
++		for (i = 0; i < pvh_bootparams.e820_entries ; i++, ep++) {
++			pvh_bootparams.e820_table[i].addr = ep->addr;
++			pvh_bootparams.e820_table[i].size = ep->size;
++			pvh_bootparams.e820_table[i].type = ep->type;
++		}
++	} else if (xen_guest) {
++		mem_map_via_hcall(&pvh_bootparams);
++	} else {
++		/* Non-xen guests are not supported by version 0 */
++		BUG();
++	}
  
  	if (pvh_bootparams.e820_entries < E820_MAX_ENTRIES_ZEROPAGE - 1) {
  		pvh_bootparams.e820_table[pvh_bootparams.e820_entries].addr =
-diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
-index bb5784f354b8..0141dd1d21e2 100644
---- a/arch/x86/xen/enlighten_pvh.c
-+++ b/arch/x86/xen/enlighten_pvh.c
-@@ -1,11 +1,16 @@
- #include <linux/acpi.h>
+@@ -74,7 +93,7 @@ static void __init init_pvh_bootparams(void)
+ 	 * environment (i.e. hardware_subarch 0).
+ 	 */
+ 	pvh_bootparams.hdr.version = 0x212;
+-	pvh_bootparams.hdr.type_of_loader = (9 << 4) | 0; /* Xen loader */
++	pvh_bootparams.hdr.type_of_loader = ((xen_guest ? 0x9 : 0xb) << 4) | 0;
  
-+#include <xen/hvc-console.h>
-+
- #include <asm/io_apic.h>
- #include <asm/hypervisor.h>
-+#include <asm/e820/api.h>
- 
- #include <asm/xen/interface.h>
- #include <asm/xen/hypercall.h>
- 
-+#include <xen/interface/memory.h>
-+
- /*
-  * PVH variables.
-  *
-@@ -25,3 +30,18 @@ void __init xen_pvh_init(void)
- 	pfn = __pa(hypercall_page);
- 	wrmsr_safe(msr, (u32)pfn, (u32)(pfn >> 32));
+ 	x86_init.acpi.get_root_pointer = pvh_get_root_pointer;
  }
+@@ -89,13 +108,10 @@ void __init __weak xen_pvh_init(void)
+ 	BUG();
+ }
+ 
+-/*
+- * When we add support for other hypervisors like Qemu/KVM, this routine can
+- * selectively invoke the appropriate initialization based on guest type.
+- */
+-static void hypervisor_specific_init(void)
++static void hypervisor_specific_init(bool xen_guest)
+ {
+-	xen_pvh_init();
++	if (xen_guest)
++		xen_pvh_init();
+ }
+ 
+ /*
+@@ -104,13 +120,17 @@ static void hypervisor_specific_init(void)
+  */
+ void __init xen_prepare_pvh(void)
+ {
 +
-+void __init mem_map_via_hcall(struct boot_params *boot_params_p)
-+{
-+	struct xen_memory_map memmap;
-+	int rc;
++	u32 msr = xen_cpuid_base();
++	bool xen_guest = !!msr;
 +
-+	memmap.nr_entries = ARRAY_SIZE(boot_params_p->e820_table);
-+	set_xen_guest_handle(memmap.buffer, boot_params_p->e820_table);
-+	rc = HYPERVISOR_memory_op(XENMEM_memory_map, &memmap);
-+	if (rc) {
-+		xen_raw_printk("XENMEM_memory_map failed (%d)\n", rc);
-+		BUG();
-+	}
-+	boot_params_p->e820_entries = memmap.nr_entries;
-+}
+ 	if (pvh_start_info.magic != XEN_HVM_START_MAGIC_VALUE) {
+ 		xen_raw_printk("Error: Unexpected magic value (0x%08x)\n",
+ 				pvh_start_info.magic);
+ 		BUG();
+ 	}
+ 
+-	hypervisor_specific_init();
++	hypervisor_specific_init(xen_guest);
+ 
+-	init_pvh_bootparams();
++	init_pvh_bootparams(xen_guest);
+ }
 -- 
 2.16.1
