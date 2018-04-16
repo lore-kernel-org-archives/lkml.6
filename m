@@ -1,161 +1,70 @@
-Return-Path: <kernel-hardening-return-13035-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx49rwEDAC84LAlHCy7fUYp7zcZx6zRR6JRPl5Ozb3ib+NqtVSEw+90jTfyd6Qpg8/51rJTWE
-ARC-Seal: i=1; a=rsa-sha256; t=1524008330; cv=none;
+Return-Path: <kernel-hardening-return-13009-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4/cIak7Nzh7JAYc7uqOwJjgB1m05KsVRRWgAiqWxO0Ps7gXMG1ITGh3YepO9T68/BnTWW+g
+ARC-Seal: i=1; a=rsa-sha256; t=1523872069; cv=none;
         d=google.com; s=arc-20160816;
-        b=iJZgwPkiqpqVVG/6sj0xJ3gxAfLfXVkp21rfZTlh+T58mWPry0PMEsXl+ysjor0RvL
-         0dNhAnB5NISv1IDpCwTayolk7iSo4Argte9sVloMnEufkJqvai8TyKU+bTa+I5zE1lUG
-         fK3cL8iZGeO3I8dpROZ5gX5gcHU1oKdPH5AMET/u9GFXBPgZe6WEEVT/L40qAPt2AUua
-         Gjp+Ep7IugM4A/oMYezMi40bnD1G/Fdy02DRfD3TQoOL2QIHCWxDrdvDICQFrqj2HIjW
-         G8jgNnlWwGNzTNaPwuDHFMdt72RZ5qOKj1sT15mgg8ROf8i+GnZXuD+9Uthic+mq+Lzg
-         P0GQ==
+        b=FrQ69n240jQ1zbmYfBPukVqgw401EmLQWEAFFSSREc+Ki5R1wgV8NaKu25VEESJyrH
+         258UfpuGpcAH9pJ7AL4CqSWgD7IF68b1sly/PnFUdB3ZPhF0JmFcmFZsVK7zTWjTbSAI
+         HYKPpBT4qkzQ0KqjD2wmLJ3PUmY9Y4L+qqlidaqevpIxuHFiNA+E61ZGoXjEOiKzvp1d
+         vxLJ8+htBdkkf88+ei4MbEFWJLoiae2AlFZjIKALfPSBxvMR2F631F/lj2Jucuw036xV
+         Ahvfwx3qNTl5curA/ZtPpppLsK50jzTWKrMicX/MOodBLY3HFm1/yAHIJyLLKWZN7eAS
+         5U/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:autocrypt:openpgp:from:references:cc:to
-         :subject:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :delivered-to:delivered-to:list-id:list-subscribe:list-unsubscribe
+         :list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=0pDBAgf1JndxcqL0dvglAUr5gy17n37HjsUD/uxmIuk=;
-        b=dINk6Nrts9Y4CM8wfXHiRg1cXyi2MvVSevEDMBTyeZVSujdU4FB5jb/IbuhTt6tU8j
-         KumJUuh7aSGOxQvGMJPQmV/F24OOw+FkOQmR1XOVE3xy0NaC8PWz9KsxosczdboK+ejR
-         wGd78yepkHA3X5jV7hExgtnhvHlRQ+y5CgqA/lsGpIadngrgWgWLoT02quR9mWmdF3Ws
-         QPYTzZTxZVJrQrfE3IhAHJgTHSMQNZgT6drUjqDyppj3Hfda9EjtrPb6uMl6DlzNp4QA
-         kLopUC/DzDSUrinZzYueH3zr7XmaEcXolSjv3rqsGZL0f83amrvDyA43BtW+VsF4o9gL
-         Il6w==
+        bh=qVIt6qIA/r6WPJvrrHjUryd1fwA9aLYINWbSr3L0Wag=;
+        b=l5df2SuhUn4PQupLW1+/hShEiOFi9Fo5MCoi0J8LNz7eho2mnH52lW5tI3tptSNHbJ
+         QhzU1Xxs5khO2jyK/cAUMG5/IyN2puavyFGb5QqAuIozeCJD+7ZFEWZ4kJVUlaKbC4Fr
+         0OPs/7Ga2XE75ouAfh4J87ucNTbuiMRH2ZiTAgS/cj16LWeeAmXXUwbf+xLQHysS7m4v
+         CUjF7pjvJUvwtDjvlb/kENUwklp9XIlJagk3z3Eu0Q7WKGGpFj4V/P45ZjUFMeN6n1MK
+         F6vILucPmEiSWe2eIhkCNWvUGwWpHkmeOQeXyMcxQmyEOqiIAl7CFaCjGLWfQN0vv/nL
+         b1bw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=WPoG6VOK;
-       spf=pass (google.com: domain of kernel-hardening-return-13035-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13035-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+       spf=pass (google.com: domain of kernel-hardening-return-13009-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13009-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=WPoG6VOK;
-       spf=pass (google.com: domain of kernel-hardening-return-13035-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13035-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+       spf=pass (google.com: domain of kernel-hardening-return-13009-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13009-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
 Subject: Re: [PATCH] x86/xen: Remove use of VLAs
-To: Laura Abbott <labbott@redhat.com>, Juergen Gross <jgross@suse.com>
+To: Laura Abbott <labbott@redhat.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
+ "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+ xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+ kernel-hardening@lists.openwall.com
 References: <20180413221146.28476-1-labbott@redhat.com>
- <7cf66c00-74c2-62bb-81f5-4332313a5a6e@oracle.com>
- <e63f261b-9ef3-5750-20df-555291a8a0d8@suse.com>
- <9fe26cf5-01dc-1fb0-25fd-29bf8615047f@redhat.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <aa447403-766c-8311-5c95-a352b39e019a@oracle.com>
-Date: Tue, 17 Apr 2018 19:40:13 -0400
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <49e13c53-718f-879c-fc0d-b0f5dd7ea23d@suse.com>
+Date: Mon, 16 Apr 2018 10:11:54 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <9fe26cf5-01dc-1fb0-25fd-29bf8615047f@redhat.com>
+In-Reply-To: <20180413221146.28476-1-labbott@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8866 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804170204
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597670729617678421?=
-X-GMAIL-MSGID: =?utf-8?q?1598038559173372980?=
+X-GMAIL-MSGID: =?utf-8?q?1597895679725346894?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/17/2018 07:33 PM, Laura Abbott wrote:
-> On 04/17/2018 12:16 AM, Juergen Gross wrote:
->> On 16/04/18 15:27, Boris Ostrovsky wrote:
->>> On 04/13/2018 06:11 PM, Laura Abbott wrote:
->>>> There's an ongoing effort to remove VLAs[1] from the kernel to
->>>> eventually
->>>> turn on -Wvla. The few VLAs in use have an upper bound based on a size
->>>> of 64K. This doesn't produce an excessively large stack so just switch
->>>> the upper bound.
->>>>
->>>> [1] https://lkml.org/lkml/2018/3/7/621
->>>>
->>>> Signed-off-by: Laura Abbott <labbott@redhat.com>
->>>> ---
->>>>   arch/x86/xen/enlighten_pv.c | 6 ++----
->>>>   1 file changed, 2 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
->>>> index c36d23aa6c35..d96a5a535cbb 100644
->>>> --- a/arch/x86/xen/enlighten_pv.c
->>>> +++ b/arch/x86/xen/enlighten_pv.c
->>>> @@ -421,8 +421,7 @@ static void xen_load_gdt(const struct desc_ptr
->>>> *dtr)
->>>>   {
->>>>       unsigned long va = dtr->address;
->>>>       unsigned int size = dtr->size + 1;
->>>> -    unsigned pages = DIV_ROUND_UP(size, PAGE_SIZE);
->>>
->>>
->>>
->>> Isn't dtr->size always either GDT_SIZE or 0?
->>
->> GDT_SIZE - 1 :-)
->>
->>>> -    unsigned long frames[pages];
->>>> +    unsigned long frames[DIV_ROUND_UP(SZ_64K, PAGE_SIZE)];
->>
->> So we could just go with one frame and modify the BUG_ON() further below
->> accordingly.
->>
->
-> Do you want to just remove the loop as well since we're never going
-> to do more than one frame? We end up with net code deletion.
->
+On 14/04/18 00:11, Laura Abbott wrote:
+> There's an ongoing effort to remove VLAs[1] from the kernel to eventually
+> turn on -Wvla. The few VLAs in use have an upper bound based on a size
+> of 64K. This doesn't produce an excessively large stack so just switch
+> the upper bound.
+> 
+> [1] https://lkml.org/lkml/2018/3/7/621
+> 
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
 
-Yes, the loop, as well as the comment about max size being 64K can all
-be removed.
-
--boris
+Juergen
