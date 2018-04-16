@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753694AbeDPKVO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 06:21:14 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:37659 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752979AbeDPKVM (ORCPT
+        id S1753833AbeDPKWo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 06:22:44 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40917 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753154AbeDPKWm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 06:21:12 -0400
-X-Google-Smtp-Source: AIpwx49UXo3EIKLupQaxYXDn1KdzH7kkE1nr74eudmj1P77WsWg9MDhf2e1uzD22wHim0jJRyxCjjA==
+        Mon, 16 Apr 2018 06:22:42 -0400
+X-Google-Smtp-Source: AIpwx49E7Owvw8ZLdLe4ZqniNgt6r+huCZWn5EJAjZUAJLKBWPNFgswZ2Yqh/9x9DUGWHLgfN6zTXw==
 From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
 X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
 To: mb@lightnvm.io
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH] lightnvm: pblk: take bitmap alloc. out of critical section
-Date: Mon, 16 Apr 2018 12:21:06 +0200
-Message-Id: <1523874066-4459-1-git-send-email-javier@cnexlabs.com>
+Subject: [PATCH] lightnvm: pblk: remove unnecessary bio_get/put
+Date: Mon, 16 Apr 2018 12:22:37 +0200
+Message-Id: <1523874157-5216-1-git-send-email-javier@cnexlabs.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -24,197 +25,200 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allocate line bitmaps outside of the line lock on line preparation.
+In the read path, pblk gets a reference to the incoming bio and puts it
+after ending the bio. Though this behavior is correct, it is unnecessary
+since pblk is the one putting the bio, therefore, it cannot disappear
+underneath it.
+
+Removing this reference, allows to clean up rqd->bio and avoid pointer
+bouncing for the different read paths. Now, the incoming bio always
+resides in the read context and pblk's internal bios (if any) reside in
+rqd->bio.
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 ---
- drivers/lightnvm/pblk-core.c | 96 +++++++++++++++++++++++++-------------------
- 1 file changed, 55 insertions(+), 41 deletions(-)
+ drivers/lightnvm/pblk-read.c | 57 +++++++++++++++++++-------------------------
+ 1 file changed, 24 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 5f960a6609c8..7762e89984ee 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -1058,6 +1058,25 @@ static int pblk_line_init_metadata(struct pblk *pblk, struct pblk_line *line,
- 	return 1;
+diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
+index 2f8224354c62..5464e4177c87 100644
+--- a/drivers/lightnvm/pblk-read.c
++++ b/drivers/lightnvm/pblk-read.c
+@@ -39,10 +39,10 @@ static int pblk_read_from_cache(struct pblk *pblk, struct bio *bio,
  }
  
-+static int pblk_line_alloc_bitmaps(struct pblk *pblk, struct pblk_line *line)
-+{
-+	struct pblk_line_meta *lm = &pblk->lm;
-+
-+	line->map_bitmap = kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
-+	if (!line->map_bitmap)
-+		return -ENOMEM;
-+
-+	/* will be initialized using bb info from map_bitmap */
-+	line->invalid_bitmap = kmalloc(lm->sec_bitmap_len, GFP_KERNEL);
-+	if (!line->invalid_bitmap) {
-+		kfree(line->map_bitmap);
-+		line->map_bitmap = NULL;
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
- /* For now lines are always assumed full lines. Thus, smeta former and current
-  * lun bitmaps are omitted.
-  */
-@@ -1162,18 +1181,7 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
+ static void pblk_read_ppalist_rq(struct pblk *pblk, struct nvm_rq *rqd,
+-				 sector_t blba, unsigned long *read_bitmap)
++				 struct bio *bio, sector_t blba,
++				 unsigned long *read_bitmap)
  {
- 	struct pblk_line_meta *lm = &pblk->lm;
- 	int blk_in_line = atomic_read(&line->blk_in_line);
--	int blk_to_erase, ret;
--
--	line->map_bitmap = kzalloc(lm->sec_bitmap_len, GFP_ATOMIC);
--	if (!line->map_bitmap)
--		return -ENOMEM;
--
--	/* will be initialized using bb info from map_bitmap */
--	line->invalid_bitmap = kmalloc(lm->sec_bitmap_len, GFP_ATOMIC);
--	if (!line->invalid_bitmap) {
--		ret = -ENOMEM;
--		goto fail_free_map_bitmap;
--	}
-+	int blk_to_erase;
- 
- 	/* Bad blocks do not need to be erased */
- 	bitmap_copy(line->erase_bitmap, line->blk_bitmap, lm->blk_per_line);
-@@ -1191,15 +1199,15 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
- 	}
- 
- 	if (blk_in_line < lm->min_blk_line) {
--		ret = -EAGAIN;
--		goto fail_free_invalid_bitmap;
-+		spin_unlock(&line->lock);
-+		return -EAGAIN;
- 	}
- 
- 	if (line->state != PBLK_LINESTATE_FREE) {
- 		WARN(1, "pblk: corrupted line %d, state %d\n",
- 							line->id, line->state);
--		ret = -EINTR;
--		goto fail_free_invalid_bitmap;
-+		spin_unlock(&line->lock);
-+		return -EINTR;
- 	}
- 
- 	line->state = PBLK_LINESTATE_OPEN;
-@@ -1213,16 +1221,6 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
- 	kref_init(&line->ref);
- 
- 	return 0;
--
--fail_free_invalid_bitmap:
--	spin_unlock(&line->lock);
--	kfree(line->invalid_bitmap);
--	line->invalid_bitmap = NULL;
--fail_free_map_bitmap:
--	kfree(line->map_bitmap);
--	line->map_bitmap = NULL;
--
--	return ret;
+ 	struct pblk_sec_meta *meta_list = rqd->meta_list;
+-	struct bio *bio = rqd->bio;
+ 	struct ppa_addr ppas[PBLK_MAX_REQ_ADDRS];
+ 	int nr_secs = rqd->nr_ppas;
+ 	bool advanced_bio = false;
+@@ -189,7 +189,6 @@ static void pblk_end_user_read(struct bio *bio)
+ 	WARN_ONCE(bio->bi_status, "pblk: corrupted read bio\n");
+ #endif
+ 	bio_endio(bio);
+-	bio_put(bio);
  }
  
- int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
-@@ -1242,13 +1240,15 @@ int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
- 	}
- 	spin_unlock(&l_mg->free_lock);
- 
--	pblk_rl_free_lines_dec(&pblk->rl, line, true);
-+	if (pblk_line_alloc_bitmaps(pblk, line))
-+		return -EINTR;
- 
- 	if (!pblk_line_init_bb(pblk, line, 0)) {
- 		list_add(&line->list, &l_mg->free_list);
- 		return -EINTR;
- 	}
- 
-+	pblk_rl_free_lines_dec(&pblk->rl, line, true);
- 	return 0;
- }
- 
-@@ -1260,6 +1260,24 @@ void pblk_line_recov_close(struct pblk *pblk, struct pblk_line *line)
- 	line->emeta = NULL;
- }
- 
-+static void pblk_line_clear(struct pblk_line *line)
-+{
-+	*line->vsc = cpu_to_le32(EMPTY_ENTRY);
-+
-+	line->map_bitmap = NULL;
-+	line->invalid_bitmap = NULL;
-+	line->smeta = NULL;
-+	line->emeta = NULL;
-+}
-+
-+void pblk_line_free(struct pblk_line *line)
-+{
-+	kfree(line->map_bitmap);
-+	kfree(line->invalid_bitmap);
-+
-+	pblk_line_clear(line);
-+}
-+
- struct pblk_line *pblk_line_get(struct pblk *pblk)
+ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
+@@ -197,23 +196,18 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
  {
- 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
-@@ -1326,11 +1344,14 @@ static struct pblk_line *pblk_line_retry(struct pblk *pblk,
- 		return NULL;
- 	}
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct pblk_g_ctx *r_ctx = nvm_rq_to_pdu(rqd);
+-	struct bio *bio = rqd->bio;
++	struct bio *int_bio = rqd->bio;
+ 	unsigned long start_time = r_ctx->start_time;
  
-+	retry_line->map_bitmap = line->map_bitmap;
-+	retry_line->invalid_bitmap = line->invalid_bitmap;
- 	retry_line->smeta = line->smeta;
- 	retry_line->emeta = line->emeta;
- 	retry_line->meta_line = line->meta_line;
+ 	generic_end_io_acct(dev->q, READ, &pblk->disk->part0, start_time);
  
--	pblk_line_free(line);
-+	pblk_line_clear(line);
-+
- 	l_mg->data_line = retry_line;
- 	spin_unlock(&l_mg->free_lock);
+ 	if (rqd->error)
+ 		pblk_log_read_err(pblk, rqd);
+-#ifdef CONFIG_NVM_DEBUG
+-	else
+-		WARN_ONCE(bio->bi_status, "pblk: corrupted read error\n");
+-#endif
  
-@@ -1383,6 +1404,9 @@ struct pblk_line *pblk_line_get_first_data(struct pblk *pblk)
- 	}
- 	spin_unlock(&l_mg->free_lock);
+ 	pblk_read_check_seq(pblk, rqd, r_ctx->lba);
  
-+	if (pblk_line_alloc_bitmaps(pblk, line))
-+		return NULL;
-+
- 	if (pblk_line_erase(pblk, line)) {
- 		line = pblk_line_retry(pblk, line);
- 		if (!line)
-@@ -1527,6 +1551,9 @@ struct pblk_line *pblk_line_replace_data(struct pblk *pblk)
- 		goto retry_erase;
- 	}
+-	bio_put(bio);
+-	if (r_ctx->private)
+-		pblk_end_user_read((struct bio *)r_ctx->private);
++	if (int_bio)
++		bio_put(int_bio);
  
-+	if (pblk_line_alloc_bitmaps(pblk, new))
-+		return NULL;
-+
- retry_setup:
- 	if (!pblk_line_init_metadata(pblk, new, cur)) {
- 		new = pblk_line_retry(pblk, new);
-@@ -1566,19 +1593,6 @@ struct pblk_line *pblk_line_replace_data(struct pblk *pblk)
- 	return new;
+ 	if (put_line)
+ 		pblk_read_put_rqd_kref(pblk, rqd);
+@@ -230,16 +224,19 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
+ static void pblk_end_io_read(struct nvm_rq *rqd)
+ {
+ 	struct pblk *pblk = rqd->private;
++	struct pblk_g_ctx *r_ctx = nvm_rq_to_pdu(rqd);
++	struct bio *bio = (struct bio *)r_ctx->private;
+ 
++	pblk_end_user_read(bio);
+ 	__pblk_end_io_read(pblk, rqd, true);
  }
  
--void pblk_line_free(struct pblk_line *line)
--{
--	kfree(line->map_bitmap);
--	kfree(line->invalid_bitmap);
--
--	*line->vsc = cpu_to_le32(EMPTY_ENTRY);
--
--	line->map_bitmap = NULL;
--	line->invalid_bitmap = NULL;
--	line->smeta = NULL;
--	line->emeta = NULL;
--}
--
- static void __pblk_line_put(struct pblk *pblk, struct pblk_line *line)
+-static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+-				 unsigned int bio_init_idx,
+-				 unsigned long *read_bitmap)
++static int pblk_partial_read(struct pblk *pblk, struct nvm_rq *rqd,
++			     struct bio *orig_bio, unsigned int bio_init_idx,
++			     unsigned long *read_bitmap)
  {
- 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
+-	struct bio *new_bio, *bio = rqd->bio;
+ 	struct pblk_sec_meta *meta_list = rqd->meta_list;
++	struct bio *new_bio;
+ 	struct bio_vec src_bv, dst_bv;
+ 	void *ppa_ptr = NULL;
+ 	void *src_p, *dst_p;
+@@ -319,7 +316,7 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+ 		meta_list[hole].lba = lba_list_media[i];
+ 
+ 		src_bv = new_bio->bi_io_vec[i++];
+-		dst_bv = bio->bi_io_vec[bio_init_idx + hole];
++		dst_bv = orig_bio->bi_io_vec[bio_init_idx + hole];
+ 
+ 		src_p = kmap_atomic(src_bv.bv_page);
+ 		dst_p = kmap_atomic(dst_bv.bv_page);
+@@ -338,28 +335,26 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
+ 
+ 	bio_put(new_bio);
+ 
+-	/* Complete the original bio and associated request */
+-	bio_endio(bio);
+-	rqd->bio = bio;
++	/* restore original request */
++	rqd->bio = NULL;
+ 	rqd->nr_ppas = nr_secs;
+ 
+ 	__pblk_end_io_read(pblk, rqd, false);
+-	return NVM_IO_OK;
++	return NVM_IO_DONE;
+ 
+ err:
+ 	pr_err("pblk: failed to perform partial read\n");
+ 
+ 	/* Free allocated pages in new bio */
+-	pblk_bio_free_pages(pblk, bio, 0, new_bio->bi_vcnt);
++	pblk_bio_free_pages(pblk, orig_bio, 0, new_bio->bi_vcnt);
+ 	__pblk_end_io_read(pblk, rqd, false);
+ 	return NVM_IO_ERR;
+ }
+ 
+-static void pblk_read_rq(struct pblk *pblk, struct nvm_rq *rqd,
++static void pblk_read_rq(struct pblk *pblk, struct nvm_rq *rqd, struct bio *bio,
+ 			 sector_t lba, unsigned long *read_bitmap)
+ {
+ 	struct pblk_sec_meta *meta_list = rqd->meta_list;
+-	struct bio *bio = rqd->bio;
+ 	struct ppa_addr ppa;
+ 
+ 	pblk_lookup_l2p_seq(pblk, &ppa, lba, 1);
+@@ -423,14 +418,15 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+ 	rqd = pblk_alloc_rqd(pblk, PBLK_READ);
+ 
+ 	rqd->opcode = NVM_OP_PREAD;
+-	rqd->bio = bio;
+ 	rqd->nr_ppas = nr_secs;
++	rqd->bio = NULL; /* cloned bio if needed */
+ 	rqd->private = pblk;
+ 	rqd->end_io = pblk_end_io_read;
+ 
+ 	r_ctx = nvm_rq_to_pdu(rqd);
+ 	r_ctx->start_time = jiffies;
+ 	r_ctx->lba = blba;
++	r_ctx->private = bio; /* original bio */
+ 
+ 	/* Save the index for this bio's start. This is needed in case
+ 	 * we need to fill a partial read.
+@@ -448,17 +444,15 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+ 		rqd->ppa_list = rqd->meta_list + pblk_dma_meta_size;
+ 		rqd->dma_ppa_list = rqd->dma_meta_list + pblk_dma_meta_size;
+ 
+-		pblk_read_ppalist_rq(pblk, rqd, blba, &read_bitmap);
++		pblk_read_ppalist_rq(pblk, rqd, bio, blba, &read_bitmap);
+ 	} else {
+-		pblk_read_rq(pblk, rqd, blba, &read_bitmap);
++		pblk_read_rq(pblk, rqd, bio, blba, &read_bitmap);
+ 	}
+ 
+-	bio_get(bio);
+ 	if (bitmap_full(&read_bitmap, nr_secs)) {
+-		bio_endio(bio);
+ 		atomic_inc(&pblk->inflight_io);
+ 		__pblk_end_io_read(pblk, rqd, false);
+-		return NVM_IO_OK;
++		return NVM_IO_DONE;
+ 	}
+ 
+ 	/* All sectors are to be read from the device */
+@@ -473,13 +467,10 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+ 		}
+ 
+ 		rqd->bio = int_bio;
+-		r_ctx->private = bio;
+ 
+ 		ret = pblk_submit_io(pblk, rqd);
+ 		if (ret) {
+ 			pr_err("pblk: read IO submission failed\n");
+-			if (int_bio)
+-				bio_put(int_bio);
+ 			goto fail_end_io;
+ 		}
+ 
+@@ -489,7 +480,7 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
+ 	/* The read bio request could be partially filled by the write buffer,
+ 	 * but there are some holes that need to be read from the drive.
+ 	 */
+-	return pblk_partial_read_bio(pblk, rqd, bio_init_idx, &read_bitmap);
++	return pblk_partial_read(pblk, rqd, bio, bio_init_idx, &read_bitmap);
+ 
+ fail_rqd_free:
+ 	pblk_free_rqd(pblk, rqd, PBLK_READ);
 -- 
 2.7.4
