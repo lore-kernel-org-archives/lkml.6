@@ -1,55 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755278AbeDPNyE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 09:54:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32878 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754291AbeDPNyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 09:54:02 -0400
-Date: Mon, 16 Apr 2018 15:53:53 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Cc: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, freude@de.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v4 15/15] s390: doc: detailed specifications for AP
- virtualization
-Message-ID: <20180416155353.01bee181.cohuck@redhat.com>
-In-Reply-To: <04a0cf49-71a1-214a-7261-d8e55adee1de@linux.vnet.ibm.com>
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1523827345-11600-16-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <04a0cf49-71a1-214a-7261-d8e55adee1de@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1755295AbeDPNyz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 09:54:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755006AbeDPNyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 09:54:54 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E52922170D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
+Date: Mon, 16 Apr 2018 21:54:18 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux@armlinux.org.uk, Linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: imx7d-sdb: add gpio key support
+Message-ID: <20180416135416.GI25429@dragon>
+References: <1521190471-25242-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521190471-25242-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Apr 2018 15:13:59 +0200
-Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
-
-> On 15/04/2018 23:22, Tony Krowiak wrote:
-
-> > +* Register with the ap_bus for AP queue devices of type CEX4, CEX5 and
-> > +  CEX6 and to provide the vfio_ap driver's probe and remove callback interfaces.  
+On Fri, Mar 16, 2018 at 04:54:31PM +0800, Anson Huang wrote:
+> Add support for imx7d-sdb board's gpio keys:
 > 
-> I wonder why the type of card has anything to do with this driver.
-> It should be transparent, the driver should be able to provide the 
-> matrix (APM/AQM/ADM)
-> independently from the type of card in the slot.
+> S1(FUNC1): KEY_VOLUMEUP
+> S3(FUNC2): KEY_VOLUMEDOWN
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Would also be interested why this is limited to certain, newer cards.
-Did some kind of interface change (I dimly recall something like that),
-or are simply no old systems with those older card types around to check
-whether it works?
-
-In either case, a short note would be good (does not need to go into
-any details).
+Applied, thanks.
