@@ -1,38 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753267AbeDPGps (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 02:45:48 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51309 "EHLO
+        id S1753306AbeDPGqG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 02:46:06 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60449 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752860AbeDPGpr (ORCPT
+        with ESMTP id S1752662AbeDPGqF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 02:45:47 -0400
-Date: Sun, 15 Apr 2018 23:44:41 -0700
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-nqozcv8loq40tkqpfw997993@git.kernel.org>
-Cc: aryabinin@virtuozzo.com, torvalds@linux-foundation.org,
-        jpoimboe@redhat.com, adrian.hunter@intel.com, luto@kernel.org,
-        glider@google.com, peterz@infradead.org, mingo@kernel.org,
-        dsahern@gmail.com, arnd@arndb.de, yhs@fb.com,
-        alexei.starovoitov@gmail.com, acme@redhat.com, hpa@zytor.com,
-        jolsa@kernel.org, daniel@iogearbox.net, wangnan0@huawei.com,
-        dvyukov@google.com, miguel.bernal.marin@linux.intel.com,
-        mka@chromium.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org
-Reply-To: dsahern@gmail.com, luto@kernel.org, glider@google.com,
-        peterz@infradead.org, mingo@kernel.org, aryabinin@virtuozzo.com,
-        torvalds@linux-foundation.org, jpoimboe@redhat.com,
-        adrian.hunter@intel.com, mka@chromium.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org, wangnan0@huawei.com,
-        dvyukov@google.com, miguel.bernal.marin@linux.intel.com,
-        alexei.starovoitov@gmail.com, acme@redhat.com, hpa@zytor.com,
-        jolsa@kernel.org, daniel@iogearbox.net, arnd@arndb.de, yhs@fb.com
-In-Reply-To: <613f0a0d-c433-8f4d-dcc1-c9889deae39e@fb.com>
-References: <613f0a0d-c433-8f4d-dcc1-c9889deae39e@fb.com>
+        Mon, 16 Apr 2018 02:46:05 -0400
+Date: Sun, 15 Apr 2018 23:45:44 -0700
+From: tip-bot for Jin Yao <tipbot@zytor.com>
+Message-ID: <tip-22e9af4e94801bbdf6945e55db64b877be7c71b3@git.kernel.org>
+Cc: yao.jin@linux.intel.com, alexander.shishkin@linux.intel.com,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org, acme@redhat.com,
+        ak@linux.intel.com, kan.liang@linux.intel.com, hpa@zytor.com,
+        peterz@infradead.org, mingo@kernel.org, tglx@linutronix.de
+Reply-To: acme@redhat.com, kan.liang@linux.intel.com, ak@linux.intel.com,
+        mingo@kernel.org, tglx@linutronix.de, peterz@infradead.org,
+        hpa@zytor.com, yao.jin@linux.intel.com,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org
+In-Reply-To: <1523269609-28824-3-git-send-email-yao.jin@linux.intel.com>
+References: <1523269609-28824-3-git-send-email-yao.jin@linux.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] Revert "x86/asm: Allow again using asm.h when
- building for the 'bpf' clang target"
-Git-Commit-ID: fd97d39b0aa49a4beb429aec344604c1b689f089
+Subject: [tip:perf/urgent] perf tools: Rename HAVE_SYSCALL_TABLE to
+ HAVE_SYSCALL_TABLE_SUPPORT
+Git-Commit-ID: 22e9af4e94801bbdf6945e55db64b877be7c71b3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -45,65 +37,122 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  fd97d39b0aa49a4beb429aec344604c1b689f089
-Gitweb:     https://git.kernel.org/tip/fd97d39b0aa49a4beb429aec344604c1b689f089
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 11 Apr 2018 18:03:33 -0300
+Commit-ID:  22e9af4e94801bbdf6945e55db64b877be7c71b3
+Gitweb:     https://git.kernel.org/tip/22e9af4e94801bbdf6945e55db64b877be7c71b3
+Author:     Jin Yao <yao.jin@linux.intel.com>
+AuthorDate: Mon, 9 Apr 2018 18:26:48 +0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 12 Apr 2018 10:33:27 -0300
+CommitDate: Thu, 12 Apr 2018 10:33:31 -0300
 
-Revert "x86/asm: Allow again using asm.h when building for the 'bpf' clang target"
+perf tools: Rename HAVE_SYSCALL_TABLE to HAVE_SYSCALL_TABLE_SUPPORT
 
-This reverts commit ca26cffa4e4aaeb09bb9e308f95c7835cb149248.
+To be consistent with other HAVE_XXX_SUPPORT uses in Makefile.config,
+this patch renames HAVE_SYSCALL_TABLE to HAVE_SYSCALL_TABLE_SUPPORT and
+updates the C code accordingly.
 
-Newer clang versions accept that asm(_ASM_SP) construct, and now that
-the bpf-script-test-kbuild.c script, used in one of the 'perf test LLVM'
-subtests doesn't include ptrace.h, which ended up including
-arch/x86/include/asm/asm.h, we can revert this patch.
-
-Suggested-by: Yonghong Song <yhs@fb.com>
-Link: https://lkml.kernel.org/r/613f0a0d-c433-8f4d-dcc1-c9889deae39e@fb.com
-Acked-by: Yonghong Song <yhs@fb.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Dmitriy Vyukov <dvyukov@google.com>
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Suggested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthias Kaehlcke <mka@chromium.org>
-Cc: Miguel Bernal Marin <miguel.bernal.marin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-nqozcv8loq40tkqpfw997993@git.kernel.org
+Link: http://lkml.kernel.org/r/1523269609-28824-3-git-send-email-yao.jin@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- arch/x86/include/asm/asm.h | 2 --
- 1 file changed, 2 deletions(-)
+ tools/perf/Makefile.config          | 2 +-
+ tools/perf/builtin-help.c           | 2 +-
+ tools/perf/perf.c                   | 4 ++--
+ tools/perf/util/generate-cmdlist.sh | 2 +-
+ tools/perf/util/syscalltbl.c        | 6 +++---
+ 5 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
-index 386a6900e206..219faaec51df 100644
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -136,7 +136,6 @@
- #endif
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 6b307e97dc57..ae7dc46e8f8a 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -68,7 +68,7 @@ ifeq ($(NO_PERF_REGS),0)
+ endif
  
- #ifndef __ASSEMBLY__
--#ifndef __BPF__
- /*
-  * This output constraint should be used for any inline asm which has a "call"
-  * instruction.  Otherwise the asm may be inserted before the frame pointer
-@@ -146,6 +145,5 @@
- register unsigned long current_stack_pointer asm(_ASM_SP);
- #define ASM_CALL_CONSTRAINT "+r" (current_stack_pointer)
- #endif
--#endif
+ ifneq ($(NO_SYSCALL_TABLE),1)
+-  CFLAGS += -DHAVE_SYSCALL_TABLE
++  CFLAGS += -DHAVE_SYSCALL_TABLE_SUPPORT
+ endif
  
- #endif /* _ASM_X86_ASM_H */
+ # So far there's only x86 and arm libdw unwind support merged in perf.
+diff --git a/tools/perf/builtin-help.c b/tools/perf/builtin-help.c
+index 4aca13f23b9d..1c41b4eaf73c 100644
+--- a/tools/perf/builtin-help.c
++++ b/tools/perf/builtin-help.c
+@@ -439,7 +439,7 @@ int cmd_help(int argc, const char **argv)
+ #ifdef HAVE_LIBELF_SUPPORT
+ 		"probe",
+ #endif
+-#if defined(HAVE_LIBAUDIT_SUPPORT) || defined(HAVE_SYSCALL_TABLE)
++#if defined(HAVE_LIBAUDIT_SUPPORT) || defined(HAVE_SYSCALL_TABLE_SUPPORT)
+ 		"trace",
+ #endif
+ 	NULL };
+diff --git a/tools/perf/perf.c b/tools/perf/perf.c
+index 1659029d03fc..20a08cb32332 100644
+--- a/tools/perf/perf.c
++++ b/tools/perf/perf.c
+@@ -73,7 +73,7 @@ static struct cmd_struct commands[] = {
+ 	{ "lock",	cmd_lock,	0 },
+ 	{ "kvm",	cmd_kvm,	0 },
+ 	{ "test",	cmd_test,	0 },
+-#if defined(HAVE_LIBAUDIT_SUPPORT) || defined(HAVE_SYSCALL_TABLE)
++#if defined(HAVE_LIBAUDIT_SUPPORT) || defined(HAVE_SYSCALL_TABLE_SUPPORT)
+ 	{ "trace",	cmd_trace,	0 },
+ #endif
+ 	{ "inject",	cmd_inject,	0 },
+@@ -491,7 +491,7 @@ int main(int argc, const char **argv)
+ 		argv[0] = cmd;
+ 	}
+ 	if (strstarts(cmd, "trace")) {
+-#if defined(HAVE_LIBAUDIT_SUPPORT) || defined(HAVE_SYSCALL_TABLE)
++#if defined(HAVE_LIBAUDIT_SUPPORT) || defined(HAVE_SYSCALL_TABLE_SUPPORT)
+ 		setup_path();
+ 		argv[0] = "trace";
+ 		return cmd_trace(argc, argv);
+diff --git a/tools/perf/util/generate-cmdlist.sh b/tools/perf/util/generate-cmdlist.sh
+index ff17920a5ebc..c3cef36d4176 100755
+--- a/tools/perf/util/generate-cmdlist.sh
++++ b/tools/perf/util/generate-cmdlist.sh
+@@ -38,7 +38,7 @@ do
+ done
+ echo "#endif /* HAVE_LIBELF_SUPPORT */"
+ 
+-echo "#if defined(HAVE_LIBAUDIT_SUPPORT) || defined(HAVE_SYSCALL_TABLE)"
++echo "#if defined(HAVE_LIBAUDIT_SUPPORT) || defined(HAVE_SYSCALL_TABLE_SUPPORT)"
+ sed -n -e 's/^perf-\([^ 	]*\)[ 	].* audit*/\1/p' command-list.txt |
+ sort |
+ while read cmd
+diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
+index 895122d638dd..0ee7f568d60c 100644
+--- a/tools/perf/util/syscalltbl.c
++++ b/tools/perf/util/syscalltbl.c
+@@ -17,7 +17,7 @@
+ #include <stdlib.h>
+ #include <linux/compiler.h>
+ 
+-#ifdef HAVE_SYSCALL_TABLE
++#ifdef HAVE_SYSCALL_TABLE_SUPPORT
+ #include <string.h>
+ #include "string2.h"
+ #include "util.h"
+@@ -139,7 +139,7 @@ int syscalltbl__strglobmatch_first(struct syscalltbl *tbl, const char *syscall_g
+ 	return syscalltbl__strglobmatch_next(tbl, syscall_glob, idx);
+ }
+ 
+-#else /* HAVE_SYSCALL_TABLE */
++#else /* HAVE_SYSCALL_TABLE_SUPPORT */
+ 
+ #include <libaudit.h>
+ 
+@@ -176,4 +176,4 @@ int syscalltbl__strglobmatch_first(struct syscalltbl *tbl, const char *syscall_g
+ {
+ 	return syscalltbl__strglobmatch_next(tbl, syscall_glob, idx);
+ }
+-#endif /* HAVE_SYSCALL_TABLE */
++#endif /* HAVE_SYSCALL_TABLE_SUPPORT */
