@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752774AbeDPQye (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 12:54:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44854 "EHLO mail.kernel.org"
+        id S1753016AbeDPQzN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 12:55:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751489AbeDPQyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 12:54:33 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10C6821789
+        id S1752850AbeDPQzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 12:55:12 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AA8221789
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Mon, 16 Apr 2018 13:54:30 -0300
+Date: Mon, 16 Apr 2018 13:55:09 -0300
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Jiri Olsa <jolsa@kernel.org>
 Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>,
@@ -19,49 +19,54 @@ Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Namhyung Kim <namhyung@kernel.org>, syzkaller-bugs@googlegroups.com,
         tglx@linutronix.de, x86@kernel.org
 Subject: Re: [PATCH 1/3] perf: Return proper values for user stack errors
-Message-ID: <20180416165430.GB3202@kernel.org>
+Message-ID: <20180416165509.GC3202@kernel.org>
 References: <20180415092352.12403-1-jolsa@kernel.org>
+ <20180416165430.GB3202@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180415092352.12403-1-jolsa@kernel.org>
+In-Reply-To: <20180416165430.GB3202@kernel.org>
 X-Url: http://acmel.wordpress.com
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Sun, Apr 15, 2018 at 11:23:50AM +0200, Jiri Olsa escreveu:
-> Return immediately when we find issue in the user
-> stack checks. The error value could get overwritten
-> by following check for PERF_SAMPLE_REGS_INTR.
+Em Mon, Apr 16, 2018 at 01:54:30PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Sun, Apr 15, 2018 at 11:23:50AM +0200, Jiri Olsa escreveu:
+> > Return immediately when we find issue in the user
+> > stack checks. The error value could get overwritten
+> > by following check for PERF_SAMPLE_REGS_INTR.
+> > 
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 > 
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> Also, since you're sending this to syskaller-bugs, was this something
+> reported by that tool? If so I think we should communicate with him,
+> like described in its docs, no? /me goes to find the doc snippet...
 
-Also, since you're sending this to syskaller-bugs, was this something
-reported by that tool? If so I think we should communicate with him,
-like described in its docs, no? /me goes to find the doc snippet...
-
-
-
->  kernel/events/core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Ok, you did it in 2/3, nevermind then :-)
+ 
+- Arnaldo
 > 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index fc1c330c6bd6..4d997bc064d2 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -10191,9 +10191,9 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
->  		 * __u16 sample size limit.
->  		 */
->  		if (attr->sample_stack_user >= USHRT_MAX)
-> -			ret = -EINVAL;
-> +			return -EINVAL;
->  		else if (!IS_ALIGNED(attr->sample_stack_user, sizeof(u64)))
-> -			ret = -EINVAL;
-> +			return -EINVAL;
->  	}
->  
->  	if (!attr->sample_max_stack)
-> -- 
-> 2.13.6
+> 
+> >  kernel/events/core.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > index fc1c330c6bd6..4d997bc064d2 100644
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
+> > @@ -10191,9 +10191,9 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
+> >  		 * __u16 sample size limit.
+> >  		 */
+> >  		if (attr->sample_stack_user >= USHRT_MAX)
+> > -			ret = -EINVAL;
+> > +			return -EINVAL;
+> >  		else if (!IS_ALIGNED(attr->sample_stack_user, sizeof(u64)))
+> > -			ret = -EINVAL;
+> > +			return -EINVAL;
+> >  	}
+> >  
+> >  	if (!attr->sample_max_stack)
+> > -- 
+> > 2.13.6
