@@ -1,117 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753473AbeDPKNp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 06:13:45 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:61625 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752850AbeDPKNm (ORCPT
+        id S1754106AbeDPKOJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 06:14:09 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:14169 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753975AbeDPKOF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 06:13:42 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180416101340epoutp01a0e00bc80b8562001c08a280f9c06e78~l4vv5aIUd2855528555epoutp01O
-X-AuditID: b6c32a45-6ebff70000000fe4-19-5ad477543f09
+        Mon, 16 Apr 2018 06:14:05 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180416101404epoutp046abe507d098dd08ff12f17a9e68d1b0c~l4wFqzjXE0715307153epoutp04V
+X-AuditID: b6c32a45-6d3ff70000000fe4-66-5ad4776bdb19
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To: Eduardo Valentin <edubezval@gmail.com>
 Cc: Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 01/14] thermal: exynos: Reading temperature makes sense only
- when TMU is turned on
-Date: Mon, 16 Apr 2018 12:11:52 +0200
-Message-id: <1523873525-23718-2-git-send-email-b.zolnierkie@samsung.com>
+        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+Subject: [PATCH 06/14] thermal: exynos: remove parsing of
+ samsung,tmu_[first,second]_point_trim properties
+Date: Mon, 16 Apr 2018 12:11:57 +0200
+Message-id: <1523873525-23718-7-git-send-email-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 1.9.1
 In-reply-to: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBIsWRmVeSWpSXmKPExsWy7bCmmW5I+ZUog7ZLIhYbZ6xntZj3WdZi
-        /pVrrBb9j18zW5w/v4Hd4vKuOWwWn3uPMFrMOL+PyWLtkbvsFk8e9rE5cHnsnHWX3WPxnpdM
-        HptWdbJ53Lm2h82jb8sqRo/Pm+QC2KK4bFJSczLLUov07RK4Mh4tW8RacFuwYu7L34wNjM/5
-        uhg5OSQETCQW3XzK3sXIxSEksINR4tvu+cwQzndGialPtrDDVE1f+QkqsYFR4u3tw1DOL0aJ
-        DSv2MoJUsQlYSUxsXwVmiwhoSZy4tJ0JpIhZYD+TRO+yuawgCWGBFIndK4+BjWURUJU4cuoA
-        UJyDg1fAQ2Lm1VCIbXISJ49NBivnFPCUaFpzjQ1kjoTACjaJLVtAzgApcpE4fOsN1HnCEq+O
-        w5wqLfFs1UZGiIZmoId27IFqmMAosWe9EIRtLXH4+EWwDcwCfBIdh/+ygxwhIcAr0dEGVeIh
-        8fHNTxYI21Hiz9oTLBAfz2GUuNb0i3UCo9QCRoZVjGKpBcW56anFRgWGesWJucWleel6yfm5
-        mxjB8avluoNxxjmfQ4wCHIxKPLw7zl6OEmJNLCuuzD3EKMHBrCTCuywRKMSbklhZlVqUH19U
-        mpNafIhRmoNFSZy3wfdMlJBAemJJanZqakFqEUyWiYNTqoExdeGN3OTDH2a1By9jW/DcqGr1
-        qn1yYtWrRfxlb1j09lzpn/M5oNPxeFva+SsxT/r9Jy/anW17rUnomP2JpXsZI4LTz8nfPXbh
-        1K2o6dP+SS4xqBD+czNNsq/myEOFktZ92Wk9N9fNcF6Wv0H+Xu/+H09Swtfd/a+1eOt50902
-        ytOVV0jnqXjFK7EUZyQaajEXFScCAE+NuKzbAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPLMWRmVeSWpSXmKPExsVy+t9jQd3g8itRBp+eGlpsnLGe1WLeZ1mL
-        +VeusVr0P37NbHH+/AZ2i8u75rBZfO49wmgx4/w+Jou1R+6yWzx52MfmwOWxc9Zddo/Fe14y
-        eWxa1cnmcefaHjaPvi2rGD0+b5ILYIvisklJzcksSy3St0vgyni0bBFrwW3BirkvfzM2MD7n
-        62Lk5JAQMJGYvvITcxcjF4eQwDpGiVMbvjBBOL+AnIcfGUGq2ASsJCa2rwKzRQS0JE5c2g5W
-        xCywn0niw7TrLCAJYYEUid0rj7GD2CwCqhJHTh1g7WLk4OAV8JCYeTUUYpucxMljk1lBbE4B
-        T4mmNdfYQGwhoJLGiVcZJzDyLGBkWMUomVpQnJueW2xUYJSXWq5XnJhbXJqXrpecn7uJERhs
-        2w5r9e9gfLwk/hCjAAejEg/vjrOXo4RYE8uKK3MPMUpwMCuJ8C5LBArxpiRWVqUW5ccXleak
-        Fh9ilOZgURLn5c8/FikkkJ5YkpqdmlqQWgSTZeLglGpgVDhyeP3F9a7rdkqoCFp92P1zkbNI
-        1w59SaWjZ6PuChjPOOfC9bT83wKxBpkt23cGqM569tbs29rz+9n52I8Ezn43758T96PurEf5
-        HkFr89ce3G3yZa6ioMm7rkdGXYUKOzk+LL+ZKmdy1UmFvc6bcfrZlnbZmQGsG/hZlBcud1v2
-        K0S1NvzGcyWW4oxEQy3mouJEAJmMA8cyAgAA
-X-CMS-MailID: 20180416101339epcas2p171d462b70a85a6fff3bb939fca6d469d
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsWy7bCmmW52+ZUog0sLTSw2zljPajHvs6zF
+        /CvXWC36H79mtjh/fgO7xeVdc9gsPvceYbSYcX4fk8WTh31sDpweO2fdZfdYvOclk8emVZ1s
+        Hneu7WHz6NuyitHj8ya5ALYoLpuU1JzMstQifbsErowNXRoFl6Uq2q4vZWpgPCPWxcjJISFg
+        InFi4Td2EFtIYAejxN5+my5GLiD7O6PEvOW/mWGKjrVcYIRIbGCUOPrxBDOE84tR4t2KdjaQ
+        KjYBK4mJ7asYQWwRAS2JE5e2M4EUMQtMYJJ4+momWJGwQI7EspcLwIpYBFQlLrR/YAGxeQU8
+        JGbcvccCsU5O4uSxyawgNqeAp0TTmmtsIIMkBBawSdw5/50NoshFon11L9R9whKvjm9hh7Cl
+        JZ6t2sgI0dDMKPFtxx6oogmMEnvWC0HY1hKHj18E28AswCfRcfgvUDMHUJxXoqMNqsRD4sTb
+        78wQYUeJW290ID6ewyixeWkzywRGqQWMDKsYxVILinPTU4uNCgz1ihNzi0vz0vWS83M3MYIj
+        Vst1B+OMcz6HGAU4GJV4eHecvRwlxJpYVlyZe4hRgoNZSYR3WSJQiDclsbIqtSg/vqg0J7X4
+        EKM0B4uSOG+D75koIYH0xJLU7NTUgtQimCwTB6dUA2PepDcfQ9n3Xtbs1CiQ1+H4dSjvyxxx
+        7aDPzBmLdNRquaXamuOWl69fuWEej4LYIe8bJWcMvywQeFzAGOT3fd2LNoM5l/eujol8eGHb
+        PHtxDZtt0QL/P/HJreiqtcnfyPq57+HtX5HzjO53GZ3037qEfZHooo0p73b4ti6X/s/X/qaA
+        VVe3/JoSS3FGoqEWc1FxIgAguRfS1AIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFLMWRmVeSWpSXmKPExsVy+t9jQd3s8itRBivu8VpsnLGe1WLeZ1mL
+        +VeusVr0P37NbHH+/AZ2i8u75rBZfO49wmgx4/w+JosnD/vYHDg9ds66y+6xeM9LJo9NqzrZ
+        PO5c28Pm0bdlFaPH501yAWxRXDYpqTmZZalF+nYJXBkbujQKLktVtF1fytTAeEasi5GTQ0LA
+        ROJYywXGLkYuDiGBdYwSb2eeYYFwfjFKPN66hBWkik3ASmJi+ypGEFtEQEvixKXtTCBFzAIT
+        mCSWrF3EDpIQFsiRWPZyAVgRi4CqxIX2DywgNq+Ah8SMu/dYINbJSZw8NhlsKKeAp0TTmmts
+        ILYQUE3jxKuMExh5FjAyrGKUTC0ozk3PLTYqMMpLLdcrTswtLs1L10vOz93ECAyxbYe1+ncw
+        Pl4Sf4hRgINRiYd3x9nLUUKsiWXFlbmHGCU4mJVEeJclAoV4UxIrq1KL8uOLSnNSiw8xSnOw
+        KInz8ucfixQSSE8sSc1OTS1ILYLJMnFwSjUwzmnQ2Onj9rl23p37yupS1u6Ksw4ZFzNHO8T5
+        pim8WcMe8/L06xhDi4PhBQZVcgGHdPknbHTIUttb+XtFaOWble+Wp2/cK7pvR9DLL61r9y6f
+        sChywpI70zvfqRoUXd3YOiNJUWUTR37seeH5Dwq+a5WGBp41anzPcScuc7e44quSFb5B/wPT
+        lFiKMxINtZiLihMBYJX9Ri0CAAA=
+X-CMS-MailID: 20180416101403epcas2p23c050a54c2cc8af9c8be76061d560937
 X-Msg-Generator: CA
 CMS-TYPE: 102P
-X-CMS-RootMailID: 20180416101339epcas2p171d462b70a85a6fff3bb939fca6d469d
-X-RootMTR: 20180416101339epcas2p171d462b70a85a6fff3bb939fca6d469d
+X-CMS-RootMailID: 20180416101403epcas2p23c050a54c2cc8af9c8be76061d560937
+X-RootMTR: 20180416101403epcas2p23c050a54c2cc8af9c8be76061d560937
 References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180416101339epcas2p171d462b70a85a6fff3bb939fca6d469d@epcas2p1.samsung.com>
+        <CGME20180416101403epcas2p23c050a54c2cc8af9c8be76061d560937@epcas2p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+All SoCs use the same values (25, 85) for trim points (except
+Exynos5440 which currently specifices value 70 for the second trim
+point -> it seems to be a mistake because documentation uses value
+85 and two points based trimming has never been used by the driver
+for this SoC anyway) so just make it explicit and remove parsing of
+samsung,tmu_[first,second]_point_trim properties.
 
-When thermal sensor is not yet enabled, reading temperature might return
-random value. This might even result in stopping system booting when such
-temperature is higher than the critical value. Fix this by checking if TMU
-has been actually enabled before reading the temperature.
+There should be no functional changes caused by this patch.
 
-This change fixes booting of Exynos4210-based board with TMU enabled (for
-example Samsung Trats board), which was broken since v4.4 kernel release.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Fixes: 9e4249b40340 ("thermal: exynos: Fix first temperature read after registering sensor")
-CC: stable@vger.kernel.org # v4.6+
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/thermal/samsung/exynos_tmu.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/thermal/samsung/exynos_tmu.c | 20 +++++++++-----------
+ drivers/thermal/samsung/exynos_tmu.h |  2 --
+ 2 files changed, 9 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index ed805c7..986cbd0 100644
+index 958a7c4..7ec8061 100644
 --- a/drivers/thermal/samsung/exynos_tmu.c
 +++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -185,6 +185,7 @@
-  * @regulator: pointer to the TMU regulator structure.
-  * @reg_conf: pointer to structure to register with core thermal.
-  * @ntrip: number of supported trip points.
-+ * @enabled: current status of TMU device
-  * @tmu_initialize: SoC specific TMU initialization method
-  * @tmu_control: SoC specific TMU control method
-  * @tmu_read: SoC specific TMU temperature read method
-@@ -205,6 +206,7 @@ struct exynos_tmu_data {
- 	struct regulator *regulator;
- 	struct thermal_zone_device *tzd;
- 	unsigned int ntrip;
-+	bool enabled;
+@@ -165,6 +165,9 @@
+ #define EXYNOS7_EMUL_DATA_SHIFT			7
+ #define EXYNOS7_EMUL_DATA_MASK			0x1ff
  
- 	int (*tmu_initialize)(struct platform_device *pdev);
- 	void (*tmu_control)(struct platform_device *pdev, bool on);
-@@ -398,6 +400,7 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
- 	mutex_lock(&data->lock);
- 	clk_enable(data->clk);
- 	data->tmu_control(pdev, on);
-+	data->enabled = on;
- 	clk_disable(data->clk);
- 	mutex_unlock(&data->lock);
++#define EXYNOS_FIRST_POINT_TRIM			25
++#define EXYNOS_SECOND_POINT_TRIM		85
++
+ #define MCELSIUS	1000
+ /**
+  * struct exynos_tmu_data : A structure to hold the private data of the TMU
+@@ -251,11 +254,11 @@ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
+ 	struct exynos_tmu_platform_data *pdata = data->pdata;
+ 
+ 	if (pdata->cal_type == TYPE_ONE_POINT_TRIMMING)
+-		return temp + data->temp_error1 - pdata->first_point_trim;
++		return temp + data->temp_error1 - EXYNOS_FIRST_POINT_TRIM;
+ 
+-	return (temp - pdata->first_point_trim) *
++	return (temp - EXYNOS_FIRST_POINT_TRIM) *
+ 		(data->temp_error2 - data->temp_error1) /
+-		(pdata->second_point_trim - pdata->first_point_trim) +
++		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) +
+ 		data->temp_error1;
  }
-@@ -890,7 +893,7 @@ static int exynos_get_temp(void *p, int *temp)
- {
- 	struct exynos_tmu_data *data = p;
  
--	if (!data || !data->tmu_read)
-+	if (!data || !data->tmu_read || !data->enabled)
- 		return -EINVAL;
+@@ -268,12 +271,12 @@ static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
+ 	struct exynos_tmu_platform_data *pdata = data->pdata;
  
- 	mutex_lock(&data->lock);
+ 	if (pdata->cal_type == TYPE_ONE_POINT_TRIMMING)
+-		return temp_code - data->temp_error1 + pdata->first_point_trim;
++		return temp_code - data->temp_error1 + EXYNOS_FIRST_POINT_TRIM;
+ 
+ 	return (temp_code - data->temp_error1) *
+-		(pdata->second_point_trim - pdata->first_point_trim) /
++		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
+ 		(data->temp_error2 - data->temp_error1) +
+-		pdata->first_point_trim;
++		EXYNOS_FIRST_POINT_TRIM;
+ }
+ 
+ static void sanitize_temp_error(struct exynos_tmu_data *data, u32 trim_info)
+@@ -1142,11 +1145,6 @@ static int exynos_of_sensor_conf(struct device_node *np,
+ 	of_property_read_u32(np, "samsung,tmu_max_efuse_value",
+ 			     &pdata->max_efuse_value);
+ 
+-	of_property_read_u32(np, "samsung,tmu_first_point_trim", &value);
+-	pdata->first_point_trim = (u8)value;
+-	of_property_read_u32(np, "samsung,tmu_second_point_trim", &value);
+-	pdata->second_point_trim = (u8)value;
+-
+ 	of_property_read_u32(np, "samsung,tmu_cal_type", &pdata->cal_type);
+ 
+ 	of_node_put(np);
+diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
+index a7e81b4..a5d8c9c 100644
+--- a/drivers/thermal/samsung/exynos_tmu.h
++++ b/drivers/thermal/samsung/exynos_tmu.h
+@@ -62,8 +62,6 @@ struct exynos_tmu_platform_data {
+ 	u32 efuse_value;
+ 	u32 min_efuse_value;
+ 	u32 max_efuse_value;
+-	u8 first_point_trim;
+-	u8 second_point_trim;
+ 
+ 	u32 cal_type;
+ };
 -- 
 1.9.1
