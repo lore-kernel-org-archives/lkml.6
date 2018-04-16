@@ -1,31 +1,31 @@
 Return-Path: <andresx7@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523917487; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1523917486; cv=none;
         d=google.com; s=arc-20160816;
-        b=C1PbVW5vf1PD0SIeeNscllkmj3uojP+DZwAVSs0dJ88toFumseIwiglGhhSKn2rsxv
-         KuVfywaEPuT7doOrecVv6dJucliWJYZdJhZrimQnJ0zelsB2vPwnowGUAnPxZ2JYuW9M
-         va4wh0gLG3YjUQddARaZ5q4Lxdck/PCxTHhCqrrRGBrXDn9WKx9M0L3ECN9mFkcRX5Br
-         IA6uOr9z6cye6U+qTwaeFfEoRlU1oVTcYu9qLN0RtqA9aDVCDBdzBtt88swDokahrpbi
-         jGU533n7caVYKGDZ1s7xmH45Zl00G79FjTJGE5fs94hspkhm0mz2YhIjOS8Uha1dfaK1
-         r22g==
+        b=Q0tTReETKqWYUhGDzir0yreH6yEN2luJZ3swzcgj7h+8qvZyoKNJbYbVTb6k8NgI5N
+         mgXKHe6uYR1Es+xOsFJNv51EXXCiH49AK03E6/ABXfYOTaC7KyB+94I7Z9Nh/RZy8pLV
+         /7WUWnkdRNjnRZBiejbFcxqrTSBklR9eAdplydaX6HNZqNx+BMPHIXJh1EeUGpf4SEe9
+         uz1CdUMDbkmE5ZDgJ0YCi5LQFMRT1usiOMuGDuduceHjM+TCnp9UNLXdxKaL9b2nVsac
+         mUGnbPvFXA+8fKFO0R6RVZGrOSWPcn5yRZYf2+UbrMjk4zx9uOBvLQYmBoOK4qjM6vPG
+         tQkA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=sZNDez+BKRD/LkLHyHwp97KQJeMerjpoJlKDi2AEzxU=;
-        b=Ayk3q6Rfmxv7OfrFPGYvHIWW/8JflkTx+2WhZ2Yk7/vOw50ZTuS+1cyL/5/0E+1DD3
-         Ftcm6lI35LZ4uKjZonfWk2OOvaQufcNHAfRCtEop1bAkSfJWnEnNQfzcGN56XTGSP7th
-         04jQnHES9L5M3YeHKYBHQ9ugMqyY2R0RCJmCWaEk3TXGlodCz/4A64LL8PnxT3GXje0V
-         MIeE4l23DVK00TigTeo7dwOambXyexHsN0z+Uzl3/iFpD7xkrKQz2bHnZ0QEvvbEZb1j
-         ReWWoKFkVGBlOLtOjjJS8GpdxzBv4oiNEwGpCxwlnB+6TBXSYQIdhir3Ut7rMABl1jpq
-         JFkg==
+        bh=vfdPZChF2uLrOJXQB98PLvn66PKmIqh3dyZYkGe6C20=;
+        b=NywRRTzQTwbfmGEGMlBM+3VXl3WYv24YjHk9Rht24VIJ2W+E5+8EkwSmjVp5j1VsoU
+         I2h8W7xJDbRGEHjv+eiAkPj0HRMREIxR0QCf92n2KoZdos7o/o6zOzOa/3sQ3y0ikrGl
+         Nbgsw0RwxU58RRSauEST3VqEeZcmYMhaOPne+jD1cbsvmmrK1qMDyb7L39NiT5YB9bUD
+         jgv+Nk7MHOy2Ce3R9W9PXm/2AzkCFvdEEIpmH7qf6qV2fOwXv9jLspPH+yrTo3epbl5K
+         TwXFVviETYa15/VP+i+Xpnr4Ofau7vx1Xmc7c7T4BnfzTVS+RCqAqorRMf8YOWovllgq
+         5CXQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=bfTualF8;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZW8zApbH;
        spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=bfTualF8;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZW8zApbH;
        spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4/Ax9PvSkgq142OOLuwft4vCPpC7JD36hr4doA9mndWYiPdKycOvv6qPXhg+crT2yMY8sA5Fw==
+X-Google-Smtp-Source: AIpwx48UtPQYPJP0U6W+59UOHBqVNOfNMMmxtXXn8xpS7BCnSYvyGODU4NBn5xhgq6+LpjZDpvhDng==
 From: Andres Rodriguez <andresx7@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: andresx7@gmail.com,
@@ -35,46 +35,181 @@ Cc: andresx7@gmail.com,
 	ckoenig.leichtzumerken@gmail.com,
 	kvalo@codeaurora.org,
 	arend.vanspriel@broadcom.com
-Subject: [PATCH 3/8] firmware: add kernel-doc for enum fw_opt
-Date: Mon, 16 Apr 2018 18:24:22 -0400
-Message-Id: <20180416222427.29683-4-andresx7@gmail.com>
+Subject: [PATCH 2/8] firmware: wrap FW_OPT_* into an enum
+Date: Mon, 16 Apr 2018 18:24:21 -0400
+Message-Id: <20180416222427.29683-3-andresx7@gmail.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180416222427.29683-1-andresx7@gmail.com>
 References: <20180416222427.29683-1-andresx7@gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597943303808295565?=
-X-GMAIL-MSGID: =?utf-8?q?1597943303808295565?=
+X-GMAIL-THRID: =?utf-8?q?1597943301940887600?=
+X-GMAIL-MSGID: =?utf-8?q?1597943301940887600?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Some basic definitions for the FW_OPT_* values
+This should let us associate enum kdoc to these values.
 
 Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
 ---
- drivers/base/firmware_loader/firmware.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/base/firmware_loader/fallback.c | 12 ++++++------
+ drivers/base/firmware_loader/fallback.h |  6 ++++--
+ drivers/base/firmware_loader/firmware.h | 17 +++++++++--------
+ drivers/base/firmware_loader/main.c     |  6 +++---
+ 4 files changed, 22 insertions(+), 19 deletions(-)
 
+diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+index da97fc26119c..ecc49a619298 100644
+--- a/drivers/base/firmware_loader/fallback.c
++++ b/drivers/base/firmware_loader/fallback.c
+@@ -511,7 +511,7 @@ static const struct attribute_group *fw_dev_attr_groups[] = {
+ 
+ static struct fw_sysfs *
+ fw_create_instance(struct firmware *firmware, const char *fw_name,
+-		   struct device *device, unsigned int opt_flags)
++		   struct device *device, enum fw_opt opt_flags)
+ {
+ 	struct fw_sysfs *fw_sysfs;
+ 	struct device *f_dev;
+@@ -544,7 +544,7 @@ fw_create_instance(struct firmware *firmware, const char *fw_name,
+  * In charge of constructing a sysfs fallback interface for firmware loading.
+  **/
+ static int fw_load_sysfs_fallback(struct fw_sysfs *fw_sysfs,
+-				  unsigned int opt_flags, long timeout)
++				  enum fw_opt opt_flags, long timeout)
+ {
+ 	int retval = 0;
+ 	struct device *f_dev = &fw_sysfs->dev;
+@@ -598,7 +598,7 @@ static int fw_load_sysfs_fallback(struct fw_sysfs *fw_sysfs,
+ 
+ static int fw_load_from_user_helper(struct firmware *firmware,
+ 				    const char *name, struct device *device,
+-				    unsigned int opt_flags)
++				    enum fw_opt opt_flags)
+ {
+ 	struct fw_sysfs *fw_sysfs;
+ 	long timeout;
+@@ -639,7 +639,7 @@ static int fw_load_from_user_helper(struct firmware *firmware,
+ 	return ret;
+ }
+ 
+-static bool fw_force_sysfs_fallback(unsigned int opt_flags)
++static bool fw_force_sysfs_fallback(enum fw_opt opt_flags)
+ {
+ 	if (fw_fallback_config.force_sysfs_fallback)
+ 		return true;
+@@ -648,7 +648,7 @@ static bool fw_force_sysfs_fallback(unsigned int opt_flags)
+ 	return true;
+ }
+ 
+-static bool fw_run_sysfs_fallback(unsigned int opt_flags)
++static bool fw_run_sysfs_fallback(enum fw_opt opt_flags)
+ {
+ 	if (fw_fallback_config.ignore_sysfs_fallback) {
+ 		pr_info_once("Ignoring firmware sysfs fallback due to sysctl knob\n");
+@@ -663,7 +663,7 @@ static bool fw_run_sysfs_fallback(unsigned int opt_flags)
+ 
+ int fw_sysfs_fallback(struct firmware *fw, const char *name,
+ 		      struct device *device,
+-		      unsigned int opt_flags,
++		      enum fw_opt opt_flags,
+ 		      int ret)
+ {
+ 	if (!fw_run_sysfs_fallback(opt_flags))
+diff --git a/drivers/base/firmware_loader/fallback.h b/drivers/base/firmware_loader/fallback.h
+index f8255670a663..a3b73a09db6c 100644
+--- a/drivers/base/firmware_loader/fallback.h
++++ b/drivers/base/firmware_loader/fallback.h
+@@ -5,6 +5,8 @@
+ #include <linux/firmware.h>
+ #include <linux/device.h>
+ 
++#include "firmware.h"
++
+ /**
+  * struct firmware_fallback_config - firmware fallback configuration settings
+  *
+@@ -31,7 +33,7 @@ struct firmware_fallback_config {
+ #ifdef CONFIG_FW_LOADER_USER_HELPER
+ int fw_sysfs_fallback(struct firmware *fw, const char *name,
+ 		      struct device *device,
+-		      unsigned int opt_flags,
++		      enum fw_opt opt_flags,
+ 		      int ret);
+ void kill_pending_fw_fallback_reqs(bool only_kill_custom);
+ 
+@@ -43,7 +45,7 @@ void unregister_sysfs_loader(void);
+ #else /* CONFIG_FW_LOADER_USER_HELPER */
+ static inline int fw_sysfs_fallback(struct firmware *fw, const char *name,
+ 				    struct device *device,
+-				    unsigned int opt_flags,
++				    enum fw_opt opt_flags,
+ 				    int ret)
+ {
+ 	/* Keep carrying over the same error */
 diff --git a/drivers/base/firmware_loader/firmware.h b/drivers/base/firmware_loader/firmware.h
-index 957396293b92..8ef23c334135 100644
+index d11d37db370b..957396293b92 100644
 --- a/drivers/base/firmware_loader/firmware.h
 +++ b/drivers/base/firmware_loader/firmware.h
-@@ -10,6 +10,17 @@
+@@ -10,13 +10,14 @@
  
  #include <generated/utsrelease.h>
  
-+/**
-+ * enum fw_opt - options to control firmware loading behaviour
-+ *
-+ * @FW_OPT_UEVENT: Enable the uevent fallback path.
-+ * @FW_OPT_NOWAIT: Executing inside an asynchronous firmware request.
-+ * @FW_OPT_USERHELPER: Enable the usermode fallback path.
-+ * @FW_OPT_NO_WARN: Quiet, avoid printing warning messages.
-+ * @FW_OPT_NOCACHE: Firmware caching will be disabled for this request.
-+ * @FW_OPT_NOFALLBACK: Disable the fallback path. Takes precedence over
-+ *                     &FW_OPT_UEVENT and &FW_OPT_USERHELPER.
-+ */
- enum fw_opt {
- 	FW_OPT_UEVENT =         (1U << 0),
- 	FW_OPT_NOWAIT =         (1U << 1),
+-/* firmware behavior options */
+-#define FW_OPT_UEVENT			(1U << 0)
+-#define FW_OPT_NOWAIT			(1U << 1)
+-#define FW_OPT_USERHELPER		(1U << 2)
+-#define FW_OPT_NO_WARN			(1U << 3)
+-#define FW_OPT_NOCACHE			(1U << 4)
+-#define FW_OPT_NOFALLBACK		(1U << 5)
++enum fw_opt {
++	FW_OPT_UEVENT =         (1U << 0),
++	FW_OPT_NOWAIT =         (1U << 1),
++	FW_OPT_USERHELPER =     (1U << 2),
++	FW_OPT_NO_WARN =        (1U << 3),
++	FW_OPT_NOCACHE =        (1U << 4),
++	FW_OPT_NOFALLBACK =     (1U << 5),
++};
+ 
+ enum fw_status {
+ 	FW_STATUS_UNKNOWN,
+@@ -110,6 +111,6 @@ static inline void fw_state_done(struct fw_priv *fw_priv)
+ }
+ 
+ int assign_fw(struct firmware *fw, struct device *device,
+-	      unsigned int opt_flags);
++	      enum fw_opt opt_flags);
+ 
+ #endif /* __FIRMWARE_LOADER_H */
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index 5812148694b6..5baadad3012d 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -443,7 +443,7 @@ static int fw_add_devm_name(struct device *dev, const char *name)
+ #endif
+ 
+ int assign_fw(struct firmware *fw, struct device *device,
+-	      unsigned int opt_flags)
++	      enum fw_opt opt_flags)
+ {
+ 	struct fw_priv *fw_priv = fw->priv;
+ 	int ret;
+@@ -558,7 +558,7 @@ static void fw_abort_batch_reqs(struct firmware *fw)
+ static int
+ _firmware_request(const struct firmware **firmware_p, const char *name,
+ 		  struct device *device, void *buf, size_t size,
+-		  unsigned int opt_flags)
++		  enum fw_opt opt_flags)
+ {
+ 	struct firmware *fw = NULL;
+ 	int ret;
+@@ -734,7 +734,7 @@ struct firmware_work {
+ 	struct device *device;
+ 	void *context;
+ 	void (*cont)(const struct firmware *fw, void *context);
+-	unsigned int opt_flags;
++	enum fw_opt opt_flags;
+ };
+ 
+ static void firmware_request_work_func(struct work_struct *work)
 -- 
 2.14.1
