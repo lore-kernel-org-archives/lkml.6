@@ -1,87 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753210AbeDPE0A (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 00:26:00 -0400
-Received: from mail-pg0-f42.google.com ([74.125.83.42]:44507 "EHLO
-        mail-pg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750774AbeDPEZ7 (ORCPT
+        id S1753315AbeDPE1z (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 00:27:55 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:58678 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751113AbeDPE1y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 00:25:59 -0400
-X-Google-Smtp-Source: AIpwx4+7tXyYqSAnSp2dQLe+dk6OoIshUJEUtpk55MnDzoW3GVLnfyXu/CZ1/0BSzaziGNlHRXN90w==
-Date: Mon, 16 Apr 2018 13:25:53 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
-Message-ID: <20180416042553.GA555@jagdpanzerIV>
-References: <20180413124704.19335-1-pmladek@suse.com>
- <20180413101233.0792ebf0@gandalf.local.home>
- <20180414023516.GA17806@tigerII.localdomain>
- <20180416014729.GB1034@jagdpanzerIV>
+        Mon, 16 Apr 2018 00:27:54 -0400
+X-UUID: 12908bfa7aa54a27993f2282ef898600-20180416
+Message-ID: <1523852857.14673.30.camel@mhfsdcap03>
+Subject: Re: [PATCH] mtd: nand: mtk: use of_device_get_match_data()
+From: xiaolei li <xiaolei.li@mediatek.com>
+To: Ryder Lee <ryder.lee@mediatek.com>
+CC: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Date: Mon, 16 Apr 2018 12:27:37 +0800
+In-Reply-To: <c3af6d5035e43b53b5cc7ee68f9f1a853ce2a8f9.1523347340.git.ryder.lee@mediatek.com>
+References: <31f944ab8dfcc1d7b6f03b35657a2a34825b5246.1523347340.git.ryder.lee@mediatek.com>
+         <c3af6d5035e43b53b5cc7ee68f9f1a853ce2a8f9.1523347340.git.ryder.lee@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180416014729.GB1034@jagdpanzerIV>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (04/16/18 10:47), Sergey Senozhatsky wrote:
-> On (04/14/18 11:35), Sergey Senozhatsky wrote:
-> > On (04/13/18 10:12), Steven Rostedt wrote:
-> > > 
-> > > > The interval is set to one hour. It is rather arbitrary selected time.
-> > > > It is supposed to be a compromise between never print these messages,
-> > > > do not lockup the machine, do not fill the entire buffer too quickly,
-> > > > and get information if something changes over time.
-> > > 
-> > > 
-> > > I think an hour is incredibly long. We only allow 100 lines per hour for
-> > > printks happening inside another printk?
-> > > 
-> > > I think 5 minutes (at most) would probably be plenty. One minute may be
-> > > good enough.
-> > 
-> > Besides 100 lines is absolutely not enough for any real lockdep splat.
-> > My call would be - up to 1000 lines in a 1 minute interval.
+On Mon, 2018-04-16 at 10:33 +0800, Ryder Lee wrote:
+> The usage of of_device_get_match_data() reduce the code size a bit.
 > 
-> Well, if we want to basically turn printk_safe() into printk_safe_ratelimited().
-> I'm not so sure about it.
+> Also, the only way to call .probe() is to match an entry in
+> .of_match_table[], so of_device_id cannot be NULL.
 > 
-> Besides the patch also rate limits printk_nmi->logbuf - the logbuf
-> PRINTK_NMI_DEFERRED_CONTEXT_MASK bypass, which is way too important
-> to rate limit it - for no reason.
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+>  drivers/mtd/nand/raw/mtk_ecc.c  |  7 +------
+>  drivers/mtd/nand/raw/mtk_nand.c | 10 +---------
+>  2 files changed, 2 insertions(+), 15 deletions(-)
 > 
-> Dunno, can we keep printk_safe() the way it is and introduce a new
-> printk_safe_ratelimited() specifically for call_console_drivers()?
-> 
-> Lockdep splat is a one time event, if we lose half of it - we, most
-> like, lose the entire report. And call_console_drivers() is not the
-> one and only source of warnings/errors/etc. So if we turn printk_safe
-> into printk_safe_ratelimited() [not sure we want to do it] for all
-> then I want restrictions to be as low as possible, IOW to log_store()
-> as many lines as possible.
+> diff --git a/drivers/mtd/nand/mtk_ecc.c b/drivers/mtd/nand/mtk_ecc.c
+> index 40d86a8..6432bd7 100644
+> --- a/drivers/mtd/nand/raw/mtk_ecc.c
+> +++ b/drivers/mtd/nand/raw/mtk_ecc.c
+> @@ -500,7 +500,6 @@ static int mtk_ecc_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct mtk_ecc *ecc;
+>  	struct resource *res;
+> -	const struct of_device_id *of_ecc_id = NULL;
+>  	u32 max_eccdata_size;
+>  	int irq, ret;
+>  
+> @@ -508,11 +507,7 @@ static int mtk_ecc_probe(struct platform_device *pdev)
+>  	if (!ecc)
+>  		return -ENOMEM;
+>  
+> -	of_ecc_id = of_match_device(mtk_ecc_dt_match, &pdev->dev);
+> -	if (!of_ecc_id)
+> -		return -ENODEV;
+> -
+> -	ecc->caps = of_ecc_id->data;
+> +	ecc->caps = of_device_get_match_data(dev);
+>  
+Thanks.
 
-One more thing,
-I'd really prefer to rate limit the function which flushes per-CPU
-printk_safe buffers; not the function that appends new messages to
-the per-CPU printk_safe buffers. There is a significant difference.
+Reviewed-by: Xiaolei Li <xiaolei.li@mediatek.com>
 
-printk_safe does not help us when we are dealing with any external
-locks - and call_console_drivers() is precisely that type of case.
-The very next thing to happen after lockdep splat, or spin_lock
-debugging report, etc. can be an actual deadlock->panic(). Thus I
-want to have the entire report in per-CPU buffer [if possible],
-so we can flush_on_panic() per-CPU buffers, or at least move the
-data to the logbuf and make it accessible in vmcore. If we rate
-limit the function that appends data to the per-CPU buffer then we
-may simply suppress [rate limit] the report, so there will be
-nothing to flush_on_panic().
-
-	-ss
+>  	max_eccdata_size = ecc->caps->num_ecc_strength - 1;
+>  	max_eccdata_size = ecc->caps->ecc_strength[max_eccdata_size];
+> diff --git a/drivers/mtd/nand/mtk_nand.c b/drivers/mtd/nand/mtk_nand.c
+> index 6977da3..75c845a 100644
+> --- a/drivers/mtd/nand/raw/mtk_nand.c
+> +++ b/drivers/mtd/nand/raw/mtk_nand.c
+> @@ -1434,7 +1434,6 @@ static int mtk_nfc_probe(struct platform_device *pdev)
+>  	struct device_node *np = dev->of_node;
+>  	struct mtk_nfc *nfc;
+>  	struct resource *res;
+> -	const struct of_device_id *of_nfc_id = NULL;
+>  	int ret, irq;
+>  
+>  	nfc = devm_kzalloc(dev, sizeof(*nfc), GFP_KERNEL);
+> @@ -1452,6 +1451,7 @@ static int mtk_nfc_probe(struct platform_device *pdev)
+>  	else if (!nfc->ecc)
+>  		return -ENODEV;
+>  
+> +	nfc->caps = of_device_get_match_data(dev);
+>  	nfc->dev = dev;
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> @@ -1498,14 +1498,6 @@ static int mtk_nfc_probe(struct platform_device *pdev)
+>  		goto clk_disable;
+>  	}
+>  
+> -	of_nfc_id = of_match_device(mtk_nfc_id_table, &pdev->dev);
+> -	if (!of_nfc_id) {
+> -		ret = -ENODEV;
+> -		goto clk_disable;
+> -	}
+> -
+> -	nfc->caps = of_nfc_id->data;
+> -
+>  	platform_set_drvdata(pdev, nfc);
+>  
+>  	ret = mtk_nfc_nand_chips_init(dev, nfc);
